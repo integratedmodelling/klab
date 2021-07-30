@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -30,8 +31,6 @@ import org.integratedmodelling.klab.auth.NetworkSession;
 import org.integratedmodelling.klab.auth.Node;
 import org.integratedmodelling.klab.auth.Partner;
 import org.integratedmodelling.klab.communication.client.Client;
-import org.integratedmodelling.klab.engine.runtime.Session;
-import org.integratedmodelling.klab.engine.runtime.Session.Listener;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabMissingCredentialsException;
@@ -43,7 +42,6 @@ import org.integratedmodelling.klab.rest.HubReference;
 import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.rest.ObservableReference;
 import org.integratedmodelling.klab.utils.FileCatalog;
-import org.integratedmodelling.klab.utils.FileUtils;
 import org.joda.time.DateTime;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 
@@ -168,9 +166,9 @@ public enum Authentication implements IAuthenticationService {
 	 * 
 	 * @param session
 	 */
-	public void registerSession(Session session) {
+	public void registerSession(ISession session) {
 
-		session.addListener(new Listener() {
+		session.addListener(new ISession.Listener() {
 			@Override
 			public void onClose(ISession session) {
 				identities.remove(session.getId());
@@ -210,7 +208,7 @@ public enum Authentication implements IAuthenticationService {
 	 */
 	public ISession getDefaultSession() {
 		for (IIdentity id : identities.values()) {
-			if (id instanceof Session && ((Session) id).isDefault()) {
+			if (id instanceof ISession && ((ISession) id).isDefault()) {
 				return (ISession) id;
 			}
 		}

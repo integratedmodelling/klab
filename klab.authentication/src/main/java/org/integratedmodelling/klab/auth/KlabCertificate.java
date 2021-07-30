@@ -12,15 +12,13 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.io.FileUtils;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.auth.ICertificate;
-import org.integratedmodelling.klab.api.knowledge.IWorldview;
-import org.integratedmodelling.klab.engine.resources.Worldview;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
-import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.NameGenerator;
-import org.integratedmodelling.klab.utils.StringUtils;
+import org.integratedmodelling.klab.utils.StringUtil;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.springframework.http.HttpEntity;
@@ -47,7 +45,7 @@ public class KlabCertificate implements ICertificate {
 	private String cause = null;
 	private DateTime expiry;
 	private String worldview = DEFAULT_WORLDVIEW;
-	private Collection<String> worldview_repositories = StringUtils.splitOnCommas(DEFAULT_WORLDVIEW_REPOSITORIES);
+	private Collection<String> worldview_repositories = StringUtil.splitOnCommas(DEFAULT_WORLDVIEW_REPOSITORIES);
 	private Type type = Type.ENGINE;
 	private Level level = Level.USER;
 
@@ -312,10 +310,14 @@ public class KlabCertificate implements ICertificate {
 	}
 
 	@Override
-	public IWorldview getWorldview() {
-		return new Worldview(worldview, Configuration.INSTANCE.getDataPath("worldview"), worldview_repositories);
+	public String getWorldview() {
+		return worldview;
 	}
 
+	public Collection<String> getWorldviewRepositories() {
+		return worldview_repositories;
+	}
+	
 	@Override
 	public String getProperty(String property) {
 		return properties == null ? null : properties.getProperty(property);

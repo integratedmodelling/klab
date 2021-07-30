@@ -18,8 +18,8 @@ package org.integratedmodelling.klab.api.services;
 import java.io.File;
 import java.util.Map;
 
-import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.IPublicResourceCatalog;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResourceCalculator;
 import org.integratedmodelling.klab.api.data.IResourceCatalog;
@@ -36,7 +36,6 @@ import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.utils.Pair;
 
 /**
  * The <code>IResourceService</code> service provides access to all
@@ -278,5 +277,7 @@ public interface IResourceService {
 	 * @return
 	 */
 	File getFilesystemLocation(IResource resource);
+
+	IPublicResourceCatalog getPublicResourceCatalog();
 
 }

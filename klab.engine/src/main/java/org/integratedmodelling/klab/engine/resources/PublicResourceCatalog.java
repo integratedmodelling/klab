@@ -13,11 +13,12 @@ import org.integratedmodelling.klab.Network;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
+import org.integratedmodelling.klab.api.data.IPublicResourceCatalog;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.rest.ResourceReference;
 
-public class PublicResourceCatalog {
+public class PublicResourceCatalog implements IPublicResourceCatalog {
 
 	class ResourceDescriptor {
 		Set<String> nodes = new HashSet<>();
@@ -37,7 +38,8 @@ public class PublicResourceCatalog {
 		return ret;
 	}
 
-	public void update(INodeIdentity node) {
+	@Override
+	public void updateNode(INodeIdentity node) {
 		for (String urn : node.getResources()) {
 			ResourceDescriptor descriptor = descriptors.get(urn);
 			if (descriptor == null) {
@@ -100,7 +102,8 @@ public class PublicResourceCatalog {
 		return descriptor.metadata == null ? null : new Resource(descriptor.metadata);
 	}
 
-	public void remove(INodeIdentity node) {
+	@Override
+	public void removeNode(INodeIdentity node) {
 		for (ResourceDescriptor descriptor : descriptors.values()) {
 			if (descriptor.nodes.remove(node.getId())) {
 				descriptor.online = descriptor.nodes.size() > 0;
@@ -108,6 +111,7 @@ public class PublicResourceCatalog {
 		}
 	}
 
+	@Override
 	public Collection<String> getNodes(String urn) {
 		ResourceDescriptor descriptor = descriptors.get(urn);
 		if (descriptor == null || !descriptor.online) {

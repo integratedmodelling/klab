@@ -3,45 +3,26 @@ package org.integratedmodelling.klab.auth;
 import java.util.Date;
 
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.klab.Actors;
+import org.integratedmodelling.klab.Services;
 import org.integratedmodelling.klab.api.actors.IBehavior;
+import org.integratedmodelling.klab.api.auth.IActorIdentity;
 import org.integratedmodelling.klab.api.auth.IEngineIdentity;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
-import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior;
-import org.integratedmodelling.klab.components.runtime.actors.UserActor;
-import org.integratedmodelling.klab.engine.runtime.ViewImpl;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
-import org.integratedmodelling.klab.rest.Layout;
+import org.integratedmodelling.klab.api.services.IActorsService;
+import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-
-import akka.actor.typed.ActorRef;
 
 public class EngineUser extends UserIdentity implements IEngineUserIdentity {
 
 	private static final long serialVersionUID = -134196454400472128L;
 	private IEngineIdentity parent;
-	private ActorRef<KlabMessage> actor;
+	private IActorIdentity.Reference actor;
 	private IParameters<String> globalState = Parameters.createSynchronized();
-	private View view;
-//	private Map<String, BiConsumer<String, Object>> stateChangeListeners = Collections.synchronizedMap(new HashMap<>());
-
-//	@Override
-//	public <V> V getState(String key, Class<V> cls) {
-//		return this.globalState.get(key, cls);
-//	}
-//
-//	@Override
-//	public void setState(String key, Object value) {
-//		this.globalState.put(key, value);
-//		for (BiConsumer<String, Object> listener : stateChangeListeners.values()) {
-//			listener.accept(key, value);
-//		}
-//	}
+	private IActorIdentity.View view;
 
 	public EngineUser(String username, IEngineIdentity parent) {
 		super(username);
@@ -138,9 +119,9 @@ public class EngineUser extends UserIdentity implements IEngineUserIdentity {
 	}
 
 	@Override
-	public ActorRef<KlabMessage> getActor() {
-		if (this.actor == null) {
-			this.actor = Actors.INSTANCE.createActor(UserActor.create(this), this);
+	public Reference getActor() {
+		if (this.actor == null && Services.INSTANCE.getService(IActorsService.class) != null) {
+			this.actor = Services.INSTANCE.getService(IActorsService.class).createUserActor(this);
 		}
 		return this.actor;
 	}
@@ -148,13 +129,14 @@ public class EngineUser extends UserIdentity implements IEngineUserIdentity {
 	// TODO pass new SimpleRuntimeScope(Klab.INSTANCE.getRootMonitor())
 	@Override
 	public String load(IBehavior behavior, IContextualizationScope scope) {
-		// TODO this gets a sucky runtime scope that is used to run main messages.
-		getActor().tell(new SystemBehavior.Load(this, behavior.getId(), getId(), (IRuntimeScope) scope));
-		return getId();
+//		// TODO this gets a sucky runtime scope that is used to run main messages.
+//		getActor().tell(new SystemBehavior.Load(this, behavior.getId(), getId(), (IRuntimeScope) scope));
+//		return getId();
+		throw new KlabUnsupportedFeatureException("load in engine user WAS called after all. Please implement");
 	}
 
 	@Override
-	public void instrument(ActorRef<KlabMessage> actor) {
+	public void instrument(Reference actor) {
 		this.actor = actor;
 	}
 
@@ -164,8 +146,8 @@ public class EngineUser extends UserIdentity implements IEngineUserIdentity {
 	}
 
 	@Override
-	public void setLayout(Layout layout) {
-		this.view = new ViewImpl(layout);
+	public void setView(View layout) {
+		this.view = layout;
 	}
 
 	@Override
@@ -185,16 +167,6 @@ public class EngineUser extends UserIdentity implements IEngineUserIdentity {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-//	@Override
-//	public void setStateChangeListener(String name, BiConsumer<String, Object> listener) {
-//		this.stateChangeListeners.put(name, listener);
-//	}
-//
-//	@Override
-//	public void removeStateChangeListener(String name) {
-//		this.stateChangeListeners.remove(name);
-//	}
 
 	@Override
 	public IParameters<String> getState() {

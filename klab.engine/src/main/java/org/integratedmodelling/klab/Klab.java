@@ -117,6 +117,7 @@ public enum Klab implements IRuntimeService {
 	private Timer timer = new Timer("Ticket checking");
 
 	private Klab() {
+
 		rootMonitor = new RootMonitor();
 		setupExtensions();
 		this.ticketManager = new TicketManager(
@@ -140,6 +141,7 @@ public enum Klab implements IRuntimeService {
 				checkPendingEventNotifications();
 			}
 		}, 1000, TICKET_CHECK_NOTIFICATIONS_SECONDS * 1000);
+		
 	}
 
 	public void setNetworkServiceApplication(Runnable runnable) {

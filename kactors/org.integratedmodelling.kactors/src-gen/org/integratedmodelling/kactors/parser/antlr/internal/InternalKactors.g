@@ -2385,31 +2385,56 @@ ruleAssertion returns [EObject current=null]
 	(
 		(
 			(
-				lv_expression_0_0=RULE_EXPR
-				{
-					newLeafNode(lv_expression_0_0, grammarAccess.getAssertionAccess().getExpressionEXPRTerminalRuleCall_0_0());
-				}
-				{
-					if ($current==null) {
-						$current = createModelElement(grammarAccess.getAssertionRule());
+				(
+					lv_expression_0_0=RULE_EXPR
+					{
+						newLeafNode(lv_expression_0_0, grammarAccess.getAssertionAccess().getExpressionEXPRTerminalRuleCall_0_0_0());
 					}
-					setWithLastConsumed(
-						$current,
-						"expression",
-						lv_expression_0_0,
-						"org.integratedmodelling.kactors.Kactors.EXPR");
-				}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getAssertionRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"expression",
+							lv_expression_0_0,
+							"org.integratedmodelling.kactors.Kactors.EXPR");
+					}
+				)
 			)
-		)
-		    |
-		(
+			    |
 			(
 				(
 					(
+						(
+							{
+								newCompositeNode(grammarAccess.getAssertionAccess().getMethodCallsMethodCallParserRuleCall_0_1_0_0_0());
+							}
+							lv_methodCalls_1_0=ruleMethodCall
+							{
+								if ($current==null) {
+									$current = createModelElementForParent(grammarAccess.getAssertionRule());
+								}
+								add(
+									$current,
+									"methodCalls",
+									lv_methodCalls_1_0,
+									"org.integratedmodelling.kactors.Kactors.MethodCall");
+								afterParserOrEnumRuleCall();
+							}
+						)
+					)
+					otherlv_2='.'
+					{
+						newLeafNode(otherlv_2, grammarAccess.getAssertionAccess().getFullStopKeyword_0_1_0_1());
+					}
+				)*
+				(
+					(
 						{
-							newCompositeNode(grammarAccess.getAssertionAccess().getMethodCallsMethodCallParserRuleCall_1_0_0_0());
+							newCompositeNode(grammarAccess.getAssertionAccess().getMethodCallsMethodCallWithActionsParserRuleCall_0_1_1_0());
 						}
-						lv_methodCalls_1_0=ruleMethodCall
+						lv_methodCalls_3_0=ruleMethodCallWithActions
 						{
 							if ($current==null) {
 								$current = createModelElementForParent(grammarAccess.getAssertionRule());
@@ -2417,37 +2442,39 @@ ruleAssertion returns [EObject current=null]
 							add(
 								$current,
 								"methodCalls",
-								lv_methodCalls_1_0,
-								"org.integratedmodelling.kactors.Kactors.MethodCall");
+								lv_methodCalls_3_0,
+								"org.integratedmodelling.kactors.Kactors.MethodCallWithActions");
 							afterParserOrEnumRuleCall();
 						}
 					)
 				)
-				otherlv_2='.'
-				{
-					newLeafNode(otherlv_2, grammarAccess.getAssertionAccess().getFullStopKeyword_1_0_1());
-				}
-			)*
+			)
+		)
+		(
+			otherlv_4='is'
+			{
+				newLeafNode(otherlv_4, grammarAccess.getAssertionAccess().getIsKeyword_1_0());
+			}
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getAssertionAccess().getMethodCallsMethodCallWithActionsParserRuleCall_1_1_0());
+						newCompositeNode(grammarAccess.getAssertionAccess().getValueValueParserRuleCall_1_1_0());
 					}
-					lv_methodCalls_3_0=ruleMethodCallWithActions
+					lv_value_5_0=ruleValue
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getAssertionRule());
 						}
-						add(
+						set(
 							$current,
-							"methodCalls",
-							lv_methodCalls_3_0,
-							"org.integratedmodelling.kactors.Kactors.MethodCallWithActions");
+							"value",
+							lv_value_5_0,
+							"org.integratedmodelling.kactors.Kactors.Value");
 						afterParserOrEnumRuleCall();
 					}
 				)
 			)
-		)
+		)?
 	)
 ;
 

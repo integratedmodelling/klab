@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
 import org.integratedmodelling.klab.Configuration;
+import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
 import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.components.runtime.actors.UserBehavior.UnknownMessage;
 

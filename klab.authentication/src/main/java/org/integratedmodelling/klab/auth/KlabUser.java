@@ -1,12 +1,7 @@
 package org.integratedmodelling.klab.auth;
 
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.actors.IBehavior;
@@ -15,14 +10,9 @@ import org.integratedmodelling.klab.api.auth.IKlabUserIdentity;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
-import org.integratedmodelling.klab.engine.runtime.ViewImpl;
 import org.integratedmodelling.klab.rest.AuthenticatedIdentity;
-import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.springframework.security.core.GrantedAuthority;
-
-import akka.actor.typed.ActorRef;
 
 public class KlabUser extends UserIdentity implements IKlabUserIdentity {
 
@@ -31,7 +21,7 @@ public class KlabUser extends UserIdentity implements IKlabUserIdentity {
 	protected boolean online;
 	private IParameters<String> globalState = Parameters.createSynchronized();
 	private View view;
-	private ActorRef<KlabMessage> actor;
+	private Reference actor;
 //	private Map<String, BiConsumer<String, Object>> stateChangeListeners = Collections.synchronizedMap(new HashMap<>());
 
 	public KlabUser(String username, INodeIdentity node) {
@@ -114,7 +104,7 @@ public class KlabUser extends UserIdentity implements IKlabUserIdentity {
 	}
 
 	@Override
-	public ActorRef<KlabMessage> getActor() {
+	public Reference getActor() {
 		// TODO if actor == null, get the user actor from the supervisor
 		// find the user.kactor file in ~/.klab and load it if there
 		return null;
@@ -127,7 +117,7 @@ public class KlabUser extends UserIdentity implements IKlabUserIdentity {
 	}
 
 	@Override
-	public void instrument(ActorRef<KlabMessage> actor) {
+	public void instrument(Reference actor) {
 		// TODO Auto-generated method stub
 	}
 
@@ -156,8 +146,8 @@ public class KlabUser extends UserIdentity implements IKlabUserIdentity {
 	}
 
 	@Override
-	public void setLayout(Layout layout) {
-		this.view = new ViewImpl(layout);
+	public void setView(View layout) {
+		this.view = layout;
 	}
 
 	@Override

@@ -250,62 +250,6 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
     }
 
     /**
-     * Split a string of comma-separated values into components. Handles whitespace between commas
-     * and strings and returns an empty collection if the passed string is null.
-     *
-     * @param s the s
-     * @return split string
-     */
-    static public List<String> splitOnCommas(String s) {
-
-        List<String> ret = new ArrayList<>();
-        if (s == null) {
-            return ret;
-        }
-        String[] sp = s.split(",");
-        for (String ss : sp) {
-            ret.add(ss.trim());
-        }
-        return ret;
-    }
-
-    /**
-     * Split a string of comma-separated values into doubles. Handles whitespace between commas and
-     * strings and returns an empty collection if the passed string is null.
-     *
-     * @param s the s
-     * @return doubles
-     */
-    static public double[] splitToDoubles(String s) {
-
-        List<String> r = splitOnCommas(s);
-        int i = 0;
-        double[] ret = new double[r.size()];
-        for (String ss : r) {
-            ret[i++] = Double.parseDouble(ss);
-        }
-        return ret;
-    }
-
-    /**
-     * Split a string of comma-separated values into integers. Handles whitespace between commas and
-     * strings and returns an empty collection if the passed string is null.
-     *
-     * @param s the s
-     * @return ints
-     */
-    static public int[] splitToIntegers(String s) {
-
-        List<String> r = splitOnCommas(s);
-        int i = 0;
-        int[] ret = new int[r.size()];
-        for (String ss : r) {
-            ret[i++] = Integer.parseInt(ss);
-        }
-        return ret;
-    }
-
-    /**
      * Divide up a string into tokens, correctly handling double quotes.
      *
      * @param s the s

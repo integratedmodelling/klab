@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.components.runtime.actors;
 
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.api.actors.IBehavior.Action;
+import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Transition;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 

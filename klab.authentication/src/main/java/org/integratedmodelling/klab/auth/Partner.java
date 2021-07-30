@@ -8,14 +8,9 @@ import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IPartnerIdentity;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
-import org.integratedmodelling.klab.engine.runtime.ViewImpl;
 import org.integratedmodelling.klab.rest.IdentityReference;
-import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import akka.actor.typed.ActorRef;
 
 public class Partner extends UserIdentity implements IPartnerIdentity, UserDetails {
 
@@ -23,7 +18,7 @@ public class Partner extends UserIdentity implements IPartnerIdentity, UserDetai
 
 	private IParameters<String> globalState = Parameters.createSynchronized();
 	private View view;
-	private ActorRef<KlabMessage> actor;
+	private Reference actor;
 //	private Map<String, BiConsumer<String, Object>> stateChangeListeners = Collections.synchronizedMap(new HashMap<>());
 
 	public Partner(String partnerName) {
@@ -98,13 +93,13 @@ public class Partner extends UserIdentity implements IPartnerIdentity, UserDetai
 	}
 
 	@Override
-	public ActorRef<KlabMessage> getActor() {
+	public Reference getActor() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void instrument(ActorRef<KlabMessage> actor) {
+	public void instrument(Reference actor) {
 		// TODO Auto-generated method stub
 
 	}
@@ -128,8 +123,8 @@ public class Partner extends UserIdentity implements IPartnerIdentity, UserDetai
 	}
 
 	@Override
-	public void setLayout(Layout layout) {
-		this.view = new ViewImpl(layout);
+	public void setView(View layout) {
+		this.view = layout;
 	}
 
 	@Override

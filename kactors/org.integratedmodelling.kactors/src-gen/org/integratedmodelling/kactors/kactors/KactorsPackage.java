@@ -973,13 +973,22 @@ public interface KactorsPackage extends EPackage
   int ASSERTION__METHOD_CALLS = 1;
 
   /**
+   * The feature id for the '<em><b>Value</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ASSERTION__VALUE = 2;
+
+  /**
    * The number of structural features of the '<em>Assertion</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ASSERTION_FEATURE_COUNT = 2;
+  int ASSERTION_FEATURE_COUNT = 3;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.AssignmentImpl <em>Assignment</em>}' class.
@@ -4710,6 +4719,17 @@ public interface KactorsPackage extends EPackage
   EReference getAssertion_MethodCalls();
 
   /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Assertion#getValue <em>Value</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Value</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Assertion#getValue()
+   * @see #getAssertion()
+   * @generated
+   */
+  EReference getAssertion_Value();
+
+  /**
    * Returns the meta object for class '{@link org.integratedmodelling.kactors.kactors.Assignment <em>Assignment</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -8353,6 +8373,14 @@ public interface KactorsPackage extends EPackage
      * @generated
      */
     EReference ASSERTION__METHOD_CALLS = eINSTANCE.getAssertion_MethodCalls();
+
+    /**
+     * The meta object literal for the '<em><b>Value</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference ASSERTION__VALUE = eINSTANCE.getAssertion_Value();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kactors.kactors.impl.AssignmentImpl <em>Assignment</em>}' class.

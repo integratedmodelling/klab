@@ -489,6 +489,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>${joda-time-version}</version>
+		</dependency>
+		
+		<dependency>
 			<groupId>net.sf.jopt-simple</groupId>
 			<artifactId>jopt-simple </artifactId>
 			<version>4.6</version>
@@ -515,11 +521,6 @@
 			<version>${xtextVersion}</version>
 		</dependency>
 
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-			<version>${joda-time-version}</version>
-		</dependency>
 
 		<!-- classpath scanning; this can be removed in favor of Spring's PathMatchingResourcePatternResolver, 
 			but Spring shouldn't be needed in the embedded engine and the API is better 
@@ -733,6 +734,11 @@
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>org.integratedmodelling.kdl</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>klab.authentication</artifactId>
 			<version>${klab.version}</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.verhas/license3j -->
