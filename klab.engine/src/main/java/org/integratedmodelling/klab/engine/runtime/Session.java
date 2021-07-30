@@ -42,6 +42,8 @@ import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.actors.IBehavior;
+import org.integratedmodelling.klab.api.auth.IActorIdentity;
+import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.INetworkSessionIdentity;
@@ -80,7 +82,7 @@ import org.integratedmodelling.klab.common.monitoring.TicketManager;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.geocoding.Geocoder;
 import org.integratedmodelling.klab.components.geospace.geocoding.Geocoder.Location;
-import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
+import org.integratedmodelling.klab.components.runtime.actors.KlabActor.ActorReference;
 import org.integratedmodelling.klab.components.runtime.actors.SessionActor;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Spawn;
@@ -92,7 +94,6 @@ import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.debugger.Debug;
 import org.integratedmodelling.klab.engine.resources.Project;
-import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -284,10 +285,6 @@ public class Session extends GroovyObjectSupport
 
     }
 
-    public interface Listener {
-
-        void onClose(ISession session);
-    }
 
     public Session(Engine engine, IEngineUserIdentity user) {
         this.user = user;
@@ -1518,6 +1515,7 @@ public class Session extends GroovyObjectSupport
         relayIdentities.add(relayId);
     }
 
+	@Override
     public boolean isDefault() {
         return isDefault;
     }
@@ -1545,14 +1543,14 @@ public class Session extends GroovyObjectSupport
     }
 
     @Override
-    public ActorRef<KlabMessage> getActor() {
+    public Reference getActor() {
 
         if (this.actor == null) {
 
             EngineUser engine = getParentIdentity(EngineUser.class);
             if (engine != null) {
 
-                ActorRef<KlabMessage> parentActor = engine.getActor();
+                ActorRef<KlabMessage> parentActor = ((ActorReference)engine.getActor()).actor;
                 parentActor.tell(new Spawn(this, null));
 
                 /*
@@ -1575,7 +1573,7 @@ public class Session extends GroovyObjectSupport
             this.actor = Actors.INSTANCE.createActor(SessionActor.create(this, null), this);
         }
 
-        return this.actor;
+        return new ActorReference(this.actor);
     }
 
     @Override
@@ -1598,8 +1596,8 @@ public class Session extends GroovyObjectSupport
         return false;
     }
 
-    public void instrument(ActorRef<KlabMessage> actor) {
-        this.actor = actor;
+    public void instrument(Reference actor) {
+        this.actor = ((ActorReference)actor).actor;
         this.actorSet.set(true);
     }
 
@@ -1609,8 +1607,8 @@ public class Session extends GroovyObjectSupport
     }
 
     @Override
-    public void setLayout(Layout layout) {
-        this.view = new ViewImpl(layout);
+    public void setView(View layout) {
+        this.view = layout;
     }
 
     @Override

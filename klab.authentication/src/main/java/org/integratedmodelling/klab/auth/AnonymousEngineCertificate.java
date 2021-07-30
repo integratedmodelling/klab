@@ -2,16 +2,13 @@ package org.integratedmodelling.klab.auth;
 
 import java.util.Collection;
 
-import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.auth.ICertificate;
-import org.integratedmodelling.klab.api.knowledge.IWorldview;
-import org.integratedmodelling.klab.engine.resources.Worldview;
-import org.integratedmodelling.klab.utils.StringUtils;
+import org.integratedmodelling.klab.utils.StringUtil;
 
 public class AnonymousEngineCertificate implements ICertificate {
 
 	private String worldview = KlabCertificate.DEFAULT_WORLDVIEW;
-	private Collection<String> worldview_repositories = StringUtils
+	private Collection<String> worldview_repositories = StringUtil
 			.splitOnCommas(KlabCertificate.DEFAULT_WORLDVIEW_REPOSITORIES);
 
 	public AnonymousEngineCertificate() {
@@ -19,8 +16,13 @@ public class AnonymousEngineCertificate implements ICertificate {
 	}
 
 	@Override
-	public IWorldview getWorldview() {
-		return new Worldview(worldview, Configuration.INSTANCE.getDataPath("worldview"), worldview_repositories);
+	public String getWorldview() {
+		return worldview;
+	}
+	
+	@Override
+	public Collection<String> getWorldviewRepositories() {
+		return worldview_repositories;
 	}
 
 	@Override

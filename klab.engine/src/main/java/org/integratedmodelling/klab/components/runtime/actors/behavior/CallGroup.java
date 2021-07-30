@@ -3,7 +3,7 @@ package org.integratedmodelling.klab.components.runtime.actors.behavior;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
+import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
 
 /**
  * Asynchronous group of call sequences (set semantics).

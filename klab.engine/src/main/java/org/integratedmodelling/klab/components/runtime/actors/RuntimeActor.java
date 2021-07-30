@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
+import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
 import org.integratedmodelling.klab.engine.runtime.Session;
 
 import akka.actor.typed.Behavior;

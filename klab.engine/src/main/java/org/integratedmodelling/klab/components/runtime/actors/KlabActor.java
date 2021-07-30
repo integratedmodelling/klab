@@ -39,6 +39,9 @@ import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.actors.IBehavior.Action;
+import org.integratedmodelling.klab.api.auth.IActorIdentity;
+import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
+import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage.Semaphore;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
 import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
@@ -48,7 +51,6 @@ import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActionExecutor.Actor;
-import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage.Semaphore;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.AddComponentToGroup;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.AppReset;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.BindUserAction;
@@ -67,7 +69,7 @@ import org.integratedmodelling.klab.components.runtime.actors.ViewBehavior.KlabW
 import org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior.Match;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.engine.runtime.Session;
-import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
+import org.integratedmodelling.klab.engine.runtime.ViewImpl;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.code.ObjectExpression;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -98,7 +100,20 @@ import akka.actor.typed.javadsl.ReceiveBuilder;
  * 
  * @author Ferd
  */
-public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
+public class KlabActor extends AbstractBehavior<KlabMessage> {
+
+	public static class ActorReference implements IActorIdentity.Reference {
+		public ActorReference(ActorRef<KlabMessage> actor) {
+			this.actor = actor;
+		}
+
+		public ActorRef<KlabMessage> actor;
+
+		@Override
+		public void tell(KlabMessage message) {
+			actor.tell(message);
+		}
+	}
 
 	protected IBehavior behavior;
 	/*
@@ -144,7 +159,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		if (this.appId == null) {
 			return getContext().getSelf();
 		}
-		return identity.getActor();
+		return ((ActorReference)identity.getActor()).actor;
 	}
 
 	/**
@@ -178,76 +193,6 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		public MatchActions(Scope scope) {
 			this.scope = scope;
 		}
-	}
-
-	/**
-	 * The main message for anything sent through k.Actors. Dispatched to receivers
-	 * running applications, unless direct (application ID is null, i.e. it's for
-	 * this actor).
-	 * 
-	 * @author Ferd
-	 */
-	public interface KlabMessage {
-
-		/**
-		 * Message may contain one or more of these, which trigger messages at the
-		 * recipient's side which the sender can intercept to synchronize operations
-		 * when requested or needed. Because concurrent message exchange is problematic
-		 * during message execution, we use the Actors instance to organize these.
-		 * 
-		 * @author Ferd
-		 */
-		public interface Semaphore {
-
-			public enum Type {
-				/**
-				 * if a LOAD semaphore is in a Load message, wait for the semaphore to go green
-				 * before moving on.
-				 */
-				LOAD,
-
-				/**
-				 * if a FIRE semaphore is in a KActorsCall message, wait for the action to fire
-				 * before moving on to the next instruction.
-				 */
-				FIRE
-			}
-
-			Type getType();
-
-			/**
-			 * For notification: return true if a potential deadlock warning was issued
-			 * 
-			 * @return
-			 */
-			boolean isWarned();
-
-			void setWarned();
-		}
-
-		/**
-		 * Get another message identical to this but with no application ID, intended
-		 * for execution and not for dispatching.
-		 * 
-		 * @return
-		 */
-		KlabMessage direct();
-
-		/**
-		 * Add a semaphore for the recipient to honor after message execution and return
-		 * self for fluency.
-		 * 
-		 * @param semaphor
-		 */
-		KlabMessage withSemaphore(Semaphore semaphor);
-
-		/**
-		 * Get all semaphors of the specified type.
-		 * 
-		 * @param type
-		 * @return
-		 */
-		List<Semaphore> getSemaphores(Semaphore.Type type);
 	}
 
 	/**
@@ -289,11 +234,11 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		 * the following two support chaining of actions, with the ones before the last
 		 * "returning" values (may be defined using 'function' or be system actions)
 		 * which end up in the scope passed to the next. Because null is a legitimate
-		 * return value, we also use a boolean to check if the scope contains a
-		 * "context" result from a previous function.
+		 * value scope, we also use a boolean to check if the scope contains a "context"
+		 * value from a previous function.
 		 */
-		boolean hasFunctionResult = false;
-		Object functionResult = null;
+		boolean hasValueScope = false;
+		Object valueScope = null;
 
 		/**
 		 * Only instantiated in tests.
@@ -515,6 +460,16 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		public Scope forWindow(IAnnotation wspecs, String actionId) {
 			Scope ret = new Scope(this);
 			ret.viewScope = ret.viewScope.createLayout(wspecs, actionId);
+			return ret;
+		}
+
+		public Scope forAction(IBehavior.Action action) {
+			return action.getStatement().isFunction() ? this : functional();
+		}
+
+		public Scope functional() {
+			Scope ret = new Scope(this);
+			ret.functional = true;
 			return ret;
 		}
 
@@ -831,7 +786,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
 		try {
 
-			execute(action.getStatement().getCode(), scope);
+			execute(action.getStatement().getCode(), scope.forAction(action));
 
 		} catch (Throwable t) {
 
@@ -871,14 +826,14 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			if (Configuration.INSTANCE.isEchoEnabled()) {
 				System.out.println(Actors.INSTANCE.dumpView(scope.viewScope.layout));
 			}
-			KlabActor.this.identity.setLayout(scope.viewScope.layout);
+			KlabActor.this.identity.setView(new ViewImpl(scope.viewScope.layout));
 			KlabActor.this.identity.getMonitor().send(IMessage.MessageClass.UserInterface,
 					"modal".equals(wspecs.getName()) ? IMessage.Type.CreateModalWindow : IMessage.Type.CreateWindow,
 					scope.viewScope.layout);
 		}
 	}
 
-	private void execute(IKActorsStatement code, Scope scope) {
+	private boolean execute(IKActorsStatement code, Scope scope) {
 
 		try {
 			switch (code.getType()) {
@@ -892,8 +847,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 				executeDo((IKActorsStatement.Do) code, scope);
 				break;
 			case FIRE_VALUE:
-				executeFire((IKActorsStatement.FireValue) code, scope);
-				break;
+				return executeFire((IKActorsStatement.FireValue) code, scope);
 			case FOR_STATEMENT:
 				executeFor((IKActorsStatement.For) code, scope);
 				break;
@@ -924,6 +878,8 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		} catch (Throwable t) {
 			Logging.INSTANCE.warn("Exception thrown in k.Actors interpreter: " + t.getMessage());
 		}
+
+		return true;
 	}
 
 	private void executeInstantiation(Instantiation code, Scope scope) {
@@ -1064,7 +1020,9 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			execute(code.getStatements().get(0), scope);
 		} else {
 			for (IKActorsStatement statement : code.getStatements()) {
-				execute(statement, scope.synchronous());
+				if (!execute(statement, scope.synchronous())) {
+					break;
+				}
 				// TODO waitForCompletion(message);
 			}
 		}
@@ -1080,7 +1038,9 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 					new GroupHandler(this.identity, appId, groupScope, this.getContext().getSelf(), null));
 		}
 		for (IKActorsStatement statement : code.getStatements()) {
-			execute(statement, groupScope);
+			if (!execute(statement, groupScope)) {
+				break;
+			}
 		}
 	}
 
@@ -1111,7 +1071,9 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			// TODO handle break action - needs a statement, then separate the scope and
 			// check for
 			// break at each iteration
-			execute(code.getBody(), scope.withValue(code.getVariable(), o));
+			if (!execute(code.getBody(), scope.withValue(code.getVariable(), o))) {
+				break;
+			}
 		}
 	}
 
@@ -1124,9 +1086,16 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	 * intercepted
 	 * 
 	 * @param code
-	 * @param scope
+	 * @param scope\
+	 * @return false if the scope is functional and execution should stop.
 	 */
-	private void executeFire(FireValue code, Scope scope) {
+	private boolean executeFire(FireValue code, Scope scope) {
+
+		if (scope.functional) {
+			scope.hasValueScope = true;
+			scope.valueScope = code.getValue().evaluate(scope, identity, false);
+			return false;
+		}
 
 		if (scope.getNotifyId() != null) {
 			// TODO don't think this is handled properly. Should catch its own fire in the
@@ -1166,6 +1135,8 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			 */
 
 		}
+
+		return true;
 	}
 
 	private void executeDo(Do code, Scope scope) {
@@ -1392,7 +1363,8 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			ActorRef<KlabMessage> recipient = null;
 			if (scope.symbolTable.get(receiverName) instanceof IActorIdentity) {
 				try {
-					recipient = ((IActorIdentity<KlabMessage>) scope.symbolTable.get(receiverName)).getActor();
+					recipient = ((ActorReference) ((IActorIdentity<KlabMessage>) scope.symbolTable.get(receiverName))
+							.getActor()).actor;
 				} catch (Throwable t) {
 					// TODO do something with the failed call, the actor should probably remember
 					if (this.identity instanceof IRuntimeIdentity) {
@@ -1415,7 +1387,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 				 * into whatever is set for unknown messages. This not returning null guarantees
 				 * that the message will arrive.
 				 */
-				recipient = identity.getParentIdentity(EngineUser.class).getActor();
+				recipient = ((ActorReference)(identity.getParentIdentity(EngineUser.class).getActor())).actor;
 			}
 
 			if (synchronize) {
@@ -1730,12 +1702,20 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 				 * the interpreter.
 				 */
 				if (!receivers.containsKey("user")) {
+					ActorRef<KlabMessage> sact = null;
+					ActorRef<KlabMessage> eact = null;
+					if ((ActorReference)identity.getParentIdentity(Session.class).getActor() != null) {
+						sact = ((ActorReference)identity.getParentIdentity(Session.class).getActor()).actor;
+					}
+					if (identity.getParentIdentity(EngineUser.class).getActor() != null) {
+						eact = ((ActorReference)identity.getParentIdentity(EngineUser.class).getActor()).actor;
+					}
 					// these three are the same. TODO check
-					receivers.put("session", identity.getParentIdentity(Session.class).getActor());
-					receivers.put("view", identity.getParentIdentity(Session.class).getActor());
-					receivers.put("system", identity.getParentIdentity(Session.class).getActor());
+					receivers.put("session", sact);
+					receivers.put("view", sact);
+					receivers.put("system", sact);
 					// user actor
-					receivers.put("user", identity.getParentIdentity(EngineUser.class).getActor());
+					receivers.put("user", eact);
 					// TODO modeler actor - which can create and modify projects and code
 				}
 
@@ -1789,7 +1769,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 					if (Configuration.INSTANCE.isEchoEnabled()) {
 						System.out.println(Actors.INSTANCE.dumpView(message.scope.viewScope.layout));
 					}
-					KlabActor.this.identity.setLayout(message.scope.viewScope.layout);
+					KlabActor.this.identity.setView(new ViewImpl(message.scope.viewScope.layout));
 					KlabActor.this.identity.getMonitor().send(IMessage.MessageClass.UserInterface,
 							IMessage.Type.SetupInterface, message.scope.viewScope.layout);
 				} /*
@@ -1876,7 +1856,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			ActorRef<KlabMessage> actor = getContext().spawn(
 					Behaviors.supervise(behavior).onFailure(SupervisorStrategy.resume().withLoggingEnabled(true)),
 					message.identity.getId());
-			message.identity.instrument(actor);
+			message.identity.instrument(new ActorReference(actor));
 		}
 
 		return Behaviors.same();

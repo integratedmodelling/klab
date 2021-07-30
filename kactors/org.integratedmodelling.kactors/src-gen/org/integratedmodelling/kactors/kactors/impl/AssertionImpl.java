@@ -22,6 +22,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
 import org.integratedmodelling.kactors.kactors.Assertion;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
 import org.integratedmodelling.kactors.kactors.MessageCall;
+import org.integratedmodelling.kactors.kactors.Value;
 
 /**
  * <!-- begin-user-doc -->
@@ -33,6 +34,7 @@ import org.integratedmodelling.kactors.kactors.MessageCall;
  * <ul>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.AssertionImpl#getExpression <em>Expression</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.AssertionImpl#getMethodCalls <em>Method Calls</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.AssertionImpl#getValue <em>Value</em>}</li>
  * </ul>
  *
  * @generated
@@ -68,6 +70,16 @@ public class AssertionImpl extends MinimalEObjectImpl.Container implements Asser
    * @ordered
    */
   protected EList<MessageCall> methodCalls;
+
+  /**
+   * The cached value of the '{@link #getValue() <em>Value</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getValue()
+   * @generated
+   * @ordered
+   */
+  protected Value value;
 
   /**
    * <!-- begin-user-doc -->
@@ -136,12 +148,64 @@ public class AssertionImpl extends MinimalEObjectImpl.Container implements Asser
    * @generated
    */
   @Override
+  public Value getValue()
+  {
+    return value;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetValue(Value newValue, NotificationChain msgs)
+  {
+    Value oldValue = value;
+    value = newValue;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.ASSERTION__VALUE, oldValue, newValue);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setValue(Value newValue)
+  {
+    if (newValue != value)
+    {
+      NotificationChain msgs = null;
+      if (value != null)
+        msgs = ((InternalEObject)value).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.ASSERTION__VALUE, null, msgs);
+      if (newValue != null)
+        msgs = ((InternalEObject)newValue).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.ASSERTION__VALUE, null, msgs);
+      msgs = basicSetValue(newValue, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.ASSERTION__VALUE, newValue, newValue));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
     switch (featureID)
     {
       case KactorsPackage.ASSERTION__METHOD_CALLS:
         return ((InternalEList<?>)getMethodCalls()).basicRemove(otherEnd, msgs);
+      case KactorsPackage.ASSERTION__VALUE:
+        return basicSetValue(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -160,6 +224,8 @@ public class AssertionImpl extends MinimalEObjectImpl.Container implements Asser
         return getExpression();
       case KactorsPackage.ASSERTION__METHOD_CALLS:
         return getMethodCalls();
+      case KactorsPackage.ASSERTION__VALUE:
+        return getValue();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -182,6 +248,9 @@ public class AssertionImpl extends MinimalEObjectImpl.Container implements Asser
         getMethodCalls().clear();
         getMethodCalls().addAll((Collection<? extends MessageCall>)newValue);
         return;
+      case KactorsPackage.ASSERTION__VALUE:
+        setValue((Value)newValue);
+        return;
     }
     super.eSet(featureID, newValue);
   }
@@ -202,6 +271,9 @@ public class AssertionImpl extends MinimalEObjectImpl.Container implements Asser
       case KactorsPackage.ASSERTION__METHOD_CALLS:
         getMethodCalls().clear();
         return;
+      case KactorsPackage.ASSERTION__VALUE:
+        setValue((Value)null);
+        return;
     }
     super.eUnset(featureID);
   }
@@ -220,6 +292,8 @@ public class AssertionImpl extends MinimalEObjectImpl.Container implements Asser
         return EXPRESSION_EDEFAULT == null ? expression != null : !EXPRESSION_EDEFAULT.equals(expression);
       case KactorsPackage.ASSERTION__METHOD_CALLS:
         return methodCalls != null && !methodCalls.isEmpty();
+      case KactorsPackage.ASSERTION__VALUE:
+        return value != null;
     }
     return super.eIsSet(featureID);
   }

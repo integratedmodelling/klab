@@ -11,6 +11,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.actors.IBehavior;
+import org.integratedmodelling.klab.api.auth.IActorIdentity;
+import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.data.ILocator;
@@ -24,7 +26,8 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
-import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
+import org.integratedmodelling.klab.components.runtime.actors.KlabActor;
+import org.integratedmodelling.klab.components.runtime.actors.KlabActor.ActorReference;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Load;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Spawn;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
@@ -32,7 +35,6 @@ import org.integratedmodelling.klab.engine.debugger.Debugger;
 import org.integratedmodelling.klab.engine.debugger.Debugger.Watcher;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.ViewImpl;
-import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.api.IModificationListener;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
@@ -352,7 +354,7 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	}
 
 	@Override
-	public ActorRef<KlabMessage> getActor() {
+	public Reference getActor() {
 
 		IActorIdentity<KlabMessage> parent = null;
 
@@ -365,7 +367,7 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 			}
 
 			// use the runtime actor, which is not running any actor code
-			final ActorRef<KlabMessage> parentActor = parent.getActor();
+			final ActorRef<KlabMessage> parentActor = ((ActorReference)parent.getActor()).actor;
 
 			parentActor.tell(new Spawn(this, null));
 
@@ -388,7 +390,7 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 				}
 			}
 		}
-		return this.actor;
+		return new KlabActor.ActorReference(actor);
 	}
 
 	@Override
@@ -409,8 +411,8 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	}
 
 	@Override
-	public void instrument(ActorRef<KlabMessage> actor) {
-		this.actor = actor;
+	public void instrument(Reference actor) {
+		this.actor = ((ActorReference)actor).actor;
 		this.actorSet.set(Boolean.TRUE);
 	}
 
@@ -486,8 +488,8 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	}
 
 	@Override
-	public void setLayout(Layout layout) {
-		this.view = new ViewImpl(layout);
+	public void setView(View layout) {
+		this.view = layout;
 	}
 
 	@Override

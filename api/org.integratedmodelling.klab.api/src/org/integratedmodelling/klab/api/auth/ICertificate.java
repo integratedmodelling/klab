@@ -13,6 +13,8 @@
  */
 package org.integratedmodelling.klab.api.auth;
 
+import java.util.Collection;
+
 import org.integratedmodelling.klab.api.knowledge.IWorldview;
 
 /**
@@ -114,7 +116,7 @@ public interface ICertificate {
 	 * @return a {@link org.integratedmodelling.klab.api.knowledge.IWorldview}
 	 *         object. Can only be null in hub certificates.
 	 */
-	IWorldview getWorldview();
+	String getWorldview();
 
 	/**
 	 * The type of this certificate.
@@ -161,4 +163,6 @@ public interface ICertificate {
 	 * @return the value of the property, or null.
 	 */
 	String getProperty(String property);
+
+	Collection<String> getWorldviewRepositories();
 }

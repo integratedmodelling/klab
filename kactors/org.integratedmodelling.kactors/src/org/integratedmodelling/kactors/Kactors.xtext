@@ -121,7 +121,8 @@ AssertStatement:
 
 Assertion:
 		(expression=EXPR | 
-		(methodCalls+=MethodCall '.')* methodCalls+=MethodCallWithActions)
+		(methodCalls+=MethodCall '.')* methodCalls+=MethodCallWithActions) 
+		('is' value=Value)?
 ;
 
 NextStatement returns Statement:
