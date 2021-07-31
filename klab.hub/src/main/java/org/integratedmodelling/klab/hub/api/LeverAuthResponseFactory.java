@@ -11,12 +11,12 @@ import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.hub.commands.GenerateHubReference;
 import org.integratedmodelling.klab.hub.license.controllers.LeverService;
 import org.integratedmodelling.klab.hub.tokens.services.LeverAuthTokenService;
+import org.integratedmodelling.klab.hub.utils.IPUtils;
 import org.integratedmodelling.klab.rest.AuthenticatedIdentity;
 import org.integratedmodelling.klab.rest.HubReference;
 import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.rest.LeverAuthenticationRequest;
 import org.integratedmodelling.klab.rest.LeverAuthenticationResponse;
-import org.integratedmodelling.klab.utils.IPUtils;
 import org.joda.time.DateTime;
 
 public class LeverAuthResponseFactory {

@@ -61,17 +61,17 @@
 					<artifactId>spring-boot-starter-logging</artifactId>
 				</exclusion>
 			</exclusions>
-			<version>${spring-boot-version}</version>
+			<version>${spring-boot.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
-			<version>${spring-boot-version}</version>
+			<version>${spring-boot.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
-			<version>${spring-boot-version}</version>
+			<version>${spring-boot.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>

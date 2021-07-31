@@ -113,7 +113,7 @@ public class RegistrationTests extends ApplicationCheck {
 	    while (m.find()) {
 			s = new URL(m.group(0));
 		}
-	    List<NameValuePair> params = URLEncodedUtils.parse(new URI(s.toString().replace("#", "")), Charset.forName("UTF-8"));
+	    List<NameValuePair> params = URLEncodedUtils.parse((s.toString().replace("#", "")), Charset.forName("UTF-8"));
 	    
 	    
 	    URI verify = new URIBuilder(baseUrl.concat("/" + params.get(0).getValue()))
@@ -174,7 +174,7 @@ public class RegistrationTests extends ApplicationCheck {
 	    while (m.find()) {
 			s = new URL(m.group(0));
 		}
-	    List<NameValuePair> params = URLEncodedUtils.parse(new URI(s.toString().replace("#", "")), Charset.forName("UTF-8"));
+	    List<NameValuePair> params = URLEncodedUtils.parse((s.toString().replace("#", "")), Charset.forName("UTF-8"));
 	    
 	    URI setNewPassword = new URIBuilder(baseUrl.concat("/" + params.get(0).getValue()))
 		          .addParameter(API.HUB.PARAMETERS.USER_SET_PASSWORD, params.get(1).getValue()).build();

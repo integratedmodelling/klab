@@ -23,7 +23,7 @@ import org.integratedmodelling.klab.rest.HubNotificationMessage;
 import org.integratedmodelling.klab.rest.HubReference;
 import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.rest.HubNotificationMessage.ExtendedInfo;
-import org.integratedmodelling.klab.utils.IPUtils;
+import org.integratedmodelling.klab.hub.utils.IPUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
