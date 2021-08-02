@@ -5,3 +5,4 @@ target
 /workspace/
 **/*.xtendbin
 **/.temp-*
+**/*._trace

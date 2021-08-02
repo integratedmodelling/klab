@@ -9,6 +9,7 @@
   <packaging>pom</packaging>
   <modules>
   	<module>klab.ogc</module>
+  	<module>klab.adapter.datacube</module>
   </modules>
   <build>
   	<plugins>
