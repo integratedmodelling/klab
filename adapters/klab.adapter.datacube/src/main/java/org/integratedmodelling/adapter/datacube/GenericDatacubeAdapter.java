@@ -2,6 +2,7 @@ package org.integratedmodelling.adapter.datacube;
 
 import java.util.Collection;
 
+import org.apache.poi.ss.formula.functions.T;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -10,12 +11,12 @@ import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 
-public class GenericDatacubeAdapter<T extends Datacube> implements IUrnAdapter {
+public class GenericDatacubeAdapter implements IUrnAdapter {
 
     private String name;
-    private T datacube;
+    private Datacube datacube;
     
-    protected GenericDatacubeAdapter(String name, T datacube) {
+    protected GenericDatacubeAdapter(String name, Datacube datacube) {
         this.name = name;
         this.datacube = datacube;
     }

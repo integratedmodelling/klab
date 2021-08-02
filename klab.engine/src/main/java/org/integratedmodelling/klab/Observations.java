@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.atteo.evo.inflector.English;
 import org.integratedmodelling.kim.api.IKimConcept.Type;

@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-public class StringUtils extends org.apache.commons.lang.StringUtils {
+public class StringUtils extends org.apache.commons.lang3.StringUtils {
 
     /** The Constant WHITESPACE. */
     public static final int WHITESPACE = 0x0001;

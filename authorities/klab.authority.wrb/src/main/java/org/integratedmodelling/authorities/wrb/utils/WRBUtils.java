@@ -12,7 +12,7 @@ import java.util.Set;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.integratedmodelling.authorities.wrb.model.Identity;
 import org.integratedmodelling.authorities.wrb.model.Qualifier;
 import org.integratedmodelling.authorities.wrb.model.ReferenceSoilGroup;
