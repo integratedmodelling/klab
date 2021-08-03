@@ -17,6 +17,7 @@ package org.integratedmodelling.klab.api.extensions.component;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Properties;
 
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -72,4 +73,11 @@ public interface IComponent extends IProject {
 	 * @return arbitrary metadata
 	 */
 	IMetadata getStatus();
+	
+	/**
+	 * Properties corresponding to ~/.klab/<name>.properties. Never null, possiblyl empty.
+	 * 
+	 * @return
+	 */
+	Properties getProperties();
 }

@@ -1,8 +1,11 @@
 package org.integratedmodelling.adapter.datacube;
 
+import java.io.File;
+
 import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.reflect.ConstructorUtils;
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.data.IGeometry;
 
@@ -18,21 +21,25 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 public class Datacube {
 
 	private boolean online = false;
-
+	private String name; 
 	private UrnTranslationService urnTranslation;
 	private AvailabilityService availability;
 	private IngestionService ingestion;
 	private CachingService caching;
 	private EncodingService encoding;
 	private MaintenanceService maintenance;
+	private File scratchArea;
 
-	public Datacube(Class<? extends UrnTranslationService> translationServiceClass,
+	public Datacube(String name, Class<? extends UrnTranslationService> translationServiceClass,
 			@Nullable Class<? extends AvailabilityService> availabilityServiceClass,
 			@Nullable Class<? extends IngestionService> ingestionServiceClass,
 			@Nullable Class<? extends CachingService> cachingServiceClass,
 			Class<? extends EncodingService> encodingServiceClass,
 			Class<? extends MaintenanceService> maintenanceServiceClass) {
-
+		
+		this.name = name;
+		this.scratchArea = Configuration.INSTANCE.getDataPath(this.name);
+		
 		try {
 			urnTranslation = ConstructorUtils.invokeConstructor(translationServiceClass);
 			encoding = ConstructorUtils.invokeConstructor(encodingServiceClass);
@@ -51,9 +58,8 @@ public class Datacube {
 			Logging.INSTANCE.error("cannot initialize datacube services: datacube is offline");
 		}
 
-		maintenance.initialize();
-		online = maintenance.checkService();
-
+		maintenance.initialize(this);
+		online = maintenance.checkService(this);
 	}
 
 	/**
@@ -80,7 +86,7 @@ public class Datacube {
 			IMMEDIATE, DELAYED, NONE
 		}
 
-		Availability checkAvailability(IGeometry geometry, String variable);
+		Availability checkAvailability(IGeometry geometry, String variable, Datacube datacube);
 	}
 
 	/**
@@ -119,33 +125,45 @@ public class Datacube {
 		/**
 		 * One-time setup if never done, or on demand
 		 */
-		void setup();
+		void setup(Datacube datacube);
 
 		/**
 		 * Initialization at each construction of the datacube service.
 		 */
-		void initialize();
+		void initialize(Datacube datacube);
 
 		/**
 		 * At regular intervals, set through properties
 		 */
-		void maintain();
+		void maintain(Datacube datacube);
 
 		/**
 		 * Check for the availability of the datacube service. Quickly please.
 		 * 
 		 * @return
 		 */
-		boolean checkService();
+		boolean checkService(Datacube datacube);
 
 		/**
 		 * Before each request
 		 */
-		void cleanupBefore();
+		void cleanupBefore(Datacube datacube);
 
 		/**
 		 * After each request
 		 */
-		void cleanupAfter();
+		void cleanupAfter(Datacube datacube);
+	}
+	
+	public boolean isOnline() {
+		return this.online;
+	}
+	
+	protected File getScratchArea() {
+		return scratchArea;
+	}
+	
+	protected void setOnline(boolean b) {
+		this.online = b;
 	}
 }

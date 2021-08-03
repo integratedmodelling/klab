@@ -1,6 +1,8 @@
 package org.integratedmodelling.klab.engine.extensions;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -17,6 +19,7 @@ import org.integratedmodelling.kdl.api.IKdlDataflow;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.Annotations;
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
@@ -71,6 +74,16 @@ public class Component implements IComponent {
 		this.name = annotation.id();
 		this.version = Version.create(annotation.version());
 		this.implementingClass = implementation;
+		this.properties = new Properties();
+
+		File propertyFile = new File(Configuration.INSTANCE.getDataPath() + File.separator + name + ".properties");
+		if (propertyFile.exists()) {
+			try (InputStream input = new FileInputStream(propertyFile)) {
+				properties.load(input);
+			} catch (IOException e) {
+				Logging.INSTANCE.error(e);
+			}
+		}
 
 		try {
 			// TODO scan methods and exec/store setup and initialization
@@ -492,6 +505,11 @@ public class Component implements IComponent {
 			}
 		}
 		return ret;
+	}
+
+	@Override
+	public Properties getProperties() {
+		return properties;
 	}
 
 }

@@ -29,8 +29,7 @@ public class GenericDatacubeAdapter implements IUrnAdapter {
 
     @Override
     public boolean isOnline(Urn urn) {
-        // TODO Auto-generated method stub
-        return false;
+        return datacube.isOnline();
     }
 
     @Override
