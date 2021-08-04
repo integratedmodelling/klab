@@ -4,8 +4,9 @@
 * API docs are at https://cds.climate.copernicus.eu/modules/custom/cds_apikeys/app/apidocs.html, basically impossible to find
 * API endpoint seems to be https://cds.climate.copernicus.eu/api/v2 
 * Dataset key is `sis-agrometeorological-indicators`. Sample request is a POST to the toolbox API endpoint (`resources/dataset/{resourceName}`) :
+
 ```
-{
+ {
 	"variable": "2m_temperature",
 	"statistic": "24_hour_maximum",
 	"year": "1990",
@@ -25,12 +26,13 @@
         "28", "29", "30",
     	"31"
     ]
-}
-
+ }
 ```
+
 POST with Accept=application/json to https://cds.climate.copernicus.eu/api/v2/resources/datasets/sis-agrometeorological-indicators; returns 202 Accepted even 
 if wrong parameters (sent "dataset" instead of "datasets", returns this):
-```
+
+---
 {
     "state": "queued",
     "request_id": "c6520f3e-bb78-4d06-b31e-180ee1fa6015",
@@ -51,7 +53,7 @@ which sends back with /api/v2/tasks/c6520f3e-bb78-4d06-b31e-180ee1fa6015:
 
 so: error if "state" isn't there
 
-```
+---
 Resend correctly with "datasets": returns 200 (not 202) and
 
 --- 

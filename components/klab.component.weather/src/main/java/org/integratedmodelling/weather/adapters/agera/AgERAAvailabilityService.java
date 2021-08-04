@@ -1,8 +1,22 @@
 package org.integratedmodelling.weather.adapters.agera;
 
-import org.integratedmodelling.adapter.datacube.Datacube;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.integratedmodelling.adapter.datacube.Datacube.AvailabilityService;
+import org.integratedmodelling.adapter.datacube.Datacube.IngestionService;
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
+import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
+import org.integratedmodelling.klab.components.time.extents.TimeInstant;
+import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.Pair;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 public class AgERAAvailabilityService implements AvailabilityService {
 		
@@ -37,15 +51,108 @@ public class AgERAAvailabilityService implements AvailabilityService {
 	 */
 
 	@Override
-	public Availability checkAvailability(IGeometry geometry, String variable, Datacube datacube) {
+	public Availability checkAvailability(IGeometry geometry, String variable, IngestionService ingestion) {
 
+		IScale scale = geometry instanceof IScale ? (IScale)geometry : Scale.create(geometry);
+		boolean downloading = false;
+		for (String chunk : getChunkIds(scale.getTime(), variable)) {
+			if (!isAvailable(chunk)) {
+				downloading = true;
+				ingestion.queueDownload(chunk);
+			}
+ 		}
 		
-		
-		/*
-		 * we only worry about temporal availability because all AgERA datasets are
-		 * global.
-		 */
-		return Availability.NONE;
+		return downloading ? Availability.DELAYED : Availability.NONE;
 	}
 	
+
+
+	/**
+	 * Return the highest useful chunk ID for the variable, assuming that the
+	 * 3-month chunk before the current time will be available (data are updated
+	 * every week).
+	 */
+	public Pair<Integer, Integer> getLatestAvailableChunk() {
+		DateTime now = DateTime.now(DateTimeZone.UTC);
+		int monthId = ((now.getMonthOfYear() - 1) / 4) + 1;
+		int year = now.getYear();
+		if (monthId == 0) {
+			monthId = 3;
+			year--;
+		} else {
+			monthId--;
+		}
+		return new Pair<>(year, monthId);
+	}
+
+	/**
+	 * Return the integer fields for the chunk that will cover the passed date.
+	 * 
+	 * @param variable
+	 * @param date
+	 * @return
+	 */
+	public Pair<Integer, Integer> getChunkData(ITimeInstant date) {
+		int monthId = ((((TimeInstant) date).asDate().getMonthOfYear() - 1) / 4) + 1;
+		int year = date.getYear();
+		return new Pair<>(year, monthId);
+
+	}
+
+	/**
+	 * Return the list of chunk IDs needed to address the query in the passed
+	 * geometry.
+	 * 
+	 * Get all the chunk IDs necessary to cover the passed variable in the given
+	 * time. If the time isn't fully covered, the last chunk will be the special
+	 * form "INCOMPLETE/year/month" indicating the year and month when the series
+	 * must stop. A completely non-covered extent will contain only the latter ID.
+	 * 
+	 * 
+	 * @param time
+	 * @param variable
+	 * @return
+	 */
+	public Collection<String> getChunkIds(ITime time, String variable) {
+
+		List<String> ret = new ArrayList<>();
+
+		Pair<Integer, Integer> chunkStart = getChunkData(time.getStart());
+		Pair<Integer, Integer> chunkEnd = getChunkData(time.getEnd());
+		Pair<Integer, Integer> stopHere = getLatestAvailableChunk();
+
+		boolean tooMuch = false;
+		for (int year = chunkStart.getFirst(); !tooMuch && year <= chunkEnd.getFirst(); year++) {
+			boolean last = chunkEnd.getFirst() == year;
+			if (year > stopHere.getFirst()) {
+				ret.add("INCOMPLETE." + year + ".0");
+				break;
+			}
+			for (int month = 0; month < 4; month++) {
+				if (stopHere.getFirst() == year && month > stopHere.getSecond()) {
+					ret.add("INCOMPLETE." + year + "." + month);
+					tooMuch = true;
+					break;
+				}
+				if (last && month > chunkEnd.getSecond()) {
+					break;
+				}
+				ret.add(variable + "." + year + "." + month);
+			}
+		}
+
+		return ret;
+	}
+	
+	public boolean isAvailable(String chunk) {
+		File chunkDir = new File(Configuration.INSTANCE.getDataPath(AgERADatacube.ID) + File.separator + chunk);
+		if (chunkDir.isDirectory()) {
+			// check that processing has completed
+			File procFile = new File(chunkDir + File.separator + "chunk.properties");
+			// TODO may want to read the file and check its contents. Should contain the
+			// time to download for estimation.
+			return procFile.exists();
+		}
+		return false;
+	}
 }

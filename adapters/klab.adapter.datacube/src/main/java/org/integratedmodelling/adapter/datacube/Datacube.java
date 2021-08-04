@@ -1,11 +1,8 @@
 package org.integratedmodelling.adapter.datacube;
 
-import java.io.File;
-
 import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.reflect.ConstructorUtils;
-import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.data.IGeometry;
 
@@ -21,14 +18,13 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 public class Datacube {
 
 	private boolean online = false;
-	private String name; 
-	private UrnTranslationService urnTranslation;
-	private AvailabilityService availability;
-	private IngestionService ingestion;
-	private CachingService caching;
-	private EncodingService encoding;
-	private MaintenanceService maintenance;
-	private File scratchArea;
+	private String name;
+	protected UrnTranslationService urnTranslation;
+	protected AvailabilityService availability;
+	protected IngestionService ingestion;
+	protected CachingService caching;
+	protected EncodingService encoding;
+	protected MaintenanceService maintenance;
 
 	public Datacube(String name, Class<? extends UrnTranslationService> translationServiceClass,
 			@Nullable Class<? extends AvailabilityService> availabilityServiceClass,
@@ -36,10 +32,9 @@ public class Datacube {
 			@Nullable Class<? extends CachingService> cachingServiceClass,
 			Class<? extends EncodingService> encodingServiceClass,
 			Class<? extends MaintenanceService> maintenanceServiceClass) {
-		
+
 		this.name = name;
-		this.scratchArea = Configuration.INSTANCE.getDataPath(this.name);
-		
+
 		try {
 			urnTranslation = ConstructorUtils.invokeConstructor(translationServiceClass);
 			encoding = ConstructorUtils.invokeConstructor(encodingServiceClass);
@@ -83,10 +78,20 @@ public class Datacube {
 	public interface AvailabilityService {
 
 		enum Availability {
-			IMMEDIATE, DELAYED, NONE
+			COMPLETE, PARTIAL, DELAYED, NONE
 		}
 
-		Availability checkAvailability(IGeometry geometry, String variable, Datacube datacube);
+		/**
+		 * Check if the needed data for the passed geometry and variable are available,
+		 * and if not, use the ingestion service to start a download. Return the
+		 * appropriate response for the action.
+		 * 
+		 * @param geometry
+		 * @param variable
+		 * @param ingestion
+		 * @return
+		 */
+		Availability checkAvailability(IGeometry geometry, String variable, IngestionService ingestion);
 	}
 
 	/**
@@ -96,6 +101,17 @@ public class Datacube {
 	 *
 	 */
 	public interface IngestionService {
+
+		/**
+		 * Enqueue the download of whatever is needed to populate the data for a
+		 * request. The object with the specs of what is needed can be anything. Should
+		 * start a thread and return immediately, throwing no error even if things don't
+		 * work: the availability service is in charge of checking if downloads have
+		 * succeeded.
+		 * 
+		 * @param downloadSpecs
+		 */
+		void queueDownload(Object downloadSpecs);
 	}
 
 	/**
@@ -154,15 +170,11 @@ public class Datacube {
 		 */
 		void cleanupAfter(Datacube datacube);
 	}
-	
+
 	public boolean isOnline() {
 		return this.online;
 	}
-	
-	protected File getScratchArea() {
-		return scratchArea;
-	}
-	
+
 	protected void setOnline(boolean b) {
 		this.online = b;
 	}
