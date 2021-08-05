@@ -1155,7 +1155,7 @@ public class Scheduler implements IScheduler {
          * first time interval in registration, skip initialization
          */
         if (first) {
-            registration.time = (ITime) ((AbstractExtent) registration.scale.getTime()).getExtent(1);
+            registration.time = registration.scale.getTime().earliest();
         } else {
             registration.time = registration.time.getNext();
         }

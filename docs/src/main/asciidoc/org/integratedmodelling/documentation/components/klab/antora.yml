@@ -1,0 +1,6 @@
+name: klab
+version: master
+title: k.LAB Documentation
+display_version: Latest
+nav: 
+   - modules/ROOT/nav.adoc

@@ -1,12 +1,17 @@
 package org.integratedmodelling.controlcenter.product;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.integratedmodelling.controlcenter.ControlCenter;
 import org.integratedmodelling.controlcenter.api.IInstance;
 import org.integratedmodelling.controlcenter.api.IProduct;
@@ -157,6 +162,9 @@ public enum ProductService {
 			switch (productId) {
 			case PRODUCT_ENGINE:
 				instance = new EngineInstance(product);
+				if (ControlCenter.INSTANCE.getSettings().swichBranches()) {
+				    switchRepositories(this.currentBranch);
+				}
 				break;
 			case PRODUCT_MODELER:
 				instance = new ModelerInstance(product);
@@ -167,8 +175,25 @@ public enum ProductService {
 			localInstances.put(productId, instance);
 		}
 		
+		// switch worldview and workspace branches
+		
+		
 		return true;
 	}
+	
+    private void switchRepositories(String branch) {
+        File[] worldview = new File(ControlCenter.INSTANCE.getSettings().getWorkDirectory().getAbsolutePath() + File.separator + "worldview").listFiles(File::isDirectory);
+        File[] workspace = new File(ControlCenter.INSTANCE.getSettings().getKlabWorkspace().getAbsolutePath() + File.separator + "deploy").listFiles(File::isDirectory);
+        File[] folders = Stream.concat(Arrays.stream(worldview), Arrays.stream(workspace)).toArray(File[]::new);
+        for(File f : folders) {
+            try { 
+                Git.open(f).checkout().setName(branch).call();
+                System.out.println("Switch " + f + " to " + branch);
+            } catch (GitAPIException | IOException e) { 
+                System.err.println("Error changing " + f + " to " + branch + ": " + e); 
+            } 
+        }
+    } 
 	
 	/**
 	 * Return a product, which may be locally unavailable and needs syncronization.

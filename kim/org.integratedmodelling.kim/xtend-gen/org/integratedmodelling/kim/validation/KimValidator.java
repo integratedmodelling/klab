@@ -1934,7 +1934,7 @@ public class KimValidator extends AbstractKimValidator {
             String _type = concept.getName().getType();
             boolean _tripleNotEquals_3 = (_type != null);
             if (_tripleNotEquals_3) {
-              ret.addAll(Kim.INSTANCE.getType(concept.getName().getType()));
+              ret.addAll(Kim.INSTANCE.getType(concept.getName().getType(), null));
             }
           }
         } else {
@@ -2031,6 +2031,9 @@ public class KimValidator extends AbstractKimValidator {
                         KimPackage.CONCEPT__CONCEPT);
                     }
                     operator.add(IKimConcept.Type.RATE);
+                    if ((flags.contains(IKimConcept.Type.EXTENSIVE_PROPERTY) || flags.contains(IKimConcept.Type.INTENSIVE_PROPERTY))) {
+                      operator.add(IKimConcept.Type.INTENSIVE_PROPERTY);
+                    }
                   } else {
                     boolean _isChanged = concept.isChanged();
                     if (_isChanged) {
@@ -2191,7 +2194,7 @@ public class KimValidator extends AbstractKimValidator {
         KimPackage.Literals.CONCEPT_STATEMENT__BODY);
       ok = false;
     }
-    EnumSet<IKimConcept.Type> type = Kim.INSTANCE.getType(statement.getConcept());
+    EnumSet<IKimConcept.Type> type = Kim.INSTANCE.getType(statement.getConcept(), null);
     boolean _isAbstract = statement.isAbstract();
     if (_isAbstract) {
       type.add(IKimConcept.Type.ABSTRACT);
@@ -2376,7 +2379,7 @@ public class KimValidator extends AbstractKimValidator {
           } else {
             String coreconcept = concept.getParents().get(0).getMain().get(0).getName().getName();
             EObject _eContainer = concept.eContainer();
-            EnumSet<IKimConcept.Type> corectype = Kim.INSTANCE.getType(((ConceptStatement) _eContainer).getConcept());
+            EnumSet<IKimConcept.Type> corectype = Kim.INSTANCE.getType(((ConceptStatement) _eContainer).getConcept(), null);
             EnumSet<IKimConcept.Type> a = Kim.intersection(type, IKimConcept.DECLARABLE_TYPES);
             EnumSet<IKimConcept.Type> b = Kim.intersection(corectype, IKimConcept.DECLARABLE_TYPES);
             if ((((a.size() != 1) || (b.size() != 1)) || (!Objects.equal(((IKimConcept.Type[])Conversions.unwrapArray(a, IKimConcept.Type.class))[0], ((Object[])Conversions.unwrapArray(b, Object.class))[0])))) {

@@ -1,10 +1,7 @@
 package org.integratedmodelling.controlcenter.product;
 
-import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -22,11 +19,8 @@ import org.apache.commons.io.FileUtils;
 import org.integratedmodelling.controlcenter.ControlCenter;
 import org.integratedmodelling.controlcenter.api.IInstance;
 import org.integratedmodelling.controlcenter.api.IProduct;
-import org.integratedmodelling.controlcenter.jre.JreModel;
 import org.integratedmodelling.controlcenter.product.Distribution.SyncListener;
 import org.integratedmodelling.controlcenter.product.Product.Build;
-import org.integratedmodelling.controlcenter.runtime.ModelerInstance;
-import org.integratedmodelling.klab.utils.OS;
 
 public abstract class Instance implements IInstance {
 
@@ -122,17 +116,7 @@ public abstract class Instance implements IInstance {
 	public List<Integer> getInstalledBuilds() {
 		List<Integer> ret = new ArrayList<>();
 		File ws = this.product.getLocalWorkspace();
-		/*
-		 * TODO: implementation of delete folder
 		
-		int toKeep = ControlCenter.INSTANCE.getSettings().resetAllBuildsButLatest() ? 1 : ControlCenter.INSTANCE.getSettings().buildsToKeep();
-		Arrays.stream(ws.listFiles())
-		.sorted(Comparator.comparing(File::getName).reversed())
-        .skip(toKeep)
-        .forEach((x) -> {
-            this.deleteDirectory(x);
-        });
-        */
 		for (File bws : ws.listFiles()) {
 			if (bws.isDirectory() && new File(bws + File.separator + "filelist.txt").exists()) {
 				ret.add(Integer.parseInt(bws.getName()));
@@ -146,15 +130,19 @@ public abstract class Instance implements IInstance {
 		return ret;
 	}
 	
-	private boolean deleteDirectory(File directoryToBeDeleted) {
-	    System.out.println("Try to delete "+directoryToBeDeleted);
-	    File[] allContents = directoryToBeDeleted.listFiles();
-	    if (allContents != null) {
-	        for (File file : allContents) {
-	            deleteDirectory(file);
-	        }
-	    }
-	    return directoryToBeDeleted.delete();
+	public void cleanOldBuilds() {
+	    File ws = this.product.getLocalWorkspace();
+	    int toKeep = ControlCenter.INSTANCE.getSettings().resetAllBuildsButLatest() ? 1 : ControlCenter.INSTANCE.getSettings().buildsToKeep();
+        Arrays.stream(ws.listFiles())
+        .sorted(Comparator.comparing(File::getName).reversed())
+        .skip(toKeep)
+        .forEach((folder) -> {
+            try {
+                FileUtils.deleteDirectory(folder);
+            } catch (IOException e) {
+                System.err.println("Exception deleting " + folder + ": " + e);
+            }
+        });
 	}
 
 	@Override

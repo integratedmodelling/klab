@@ -257,7 +257,7 @@ public enum Network implements INetworkService {
             } catch (Exception e) {
                 Long l = nodeWarnings.get(node.getName());
                 if (l == null || (System.currentTimeMillis() - l) > (1000 * 60 * 10)) {
-                    Logging.INSTANCE.error("exception while checking offline node " + node.getName() + ": " + e.getMessage());
+                    Logging.INSTANCE.debug("Exception while checking offline node " + node.getName() + ": " + e.getMessage());
                     nodeWarnings.put(node.getName(), System.currentTimeMillis());
                 }
             }

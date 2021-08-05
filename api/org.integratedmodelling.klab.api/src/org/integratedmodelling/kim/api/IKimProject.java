@@ -11,6 +11,7 @@ public interface IKimProject {
 
 	static final String KLAB_CONFIGURATION_DEFINED_WORLDVIEW_ID = "klab.defined.worldview";
 	static final String KLAB_CONFIGURATION_WORLDVIEW_ID = "klab.worldview";
+	static final String KLAB_CONFIGURATION_CLOSED_PROJECT = "klab.closed";
     static final String KLAB_CONFIGURATION_PREREQUISITES = "klab.prerequisites";
 
 	static public final String SOURCE_FOLDER = "src";
@@ -113,5 +114,7 @@ public interface IKimProject {
 	boolean isErrors();
 
 	boolean isWarnings();
+
+	boolean isOpen();
 
 }

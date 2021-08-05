@@ -8,7 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.IntStream;
 
+import org.integratedmodelling.controlcenter.ControlCenter;
 import org.integratedmodelling.controlcenter.api.IProduct;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.utils.NumberUtils;
@@ -86,7 +88,15 @@ public class Product implements IProduct {
 			this.description = properties.getProperty(PRODUCT_DESCRIPTION_PROPERTY, "No description provided");
 			this.osSpecific = Boolean.parseBoolean(properties.getProperty(PRODUCT_OSSPECIFIC_PROPERTY, "false"));
 			this.type = Type.valueOf(properties.getProperty(PRODUCT_TYPE_PROPERTY, "UNKNOWN"));
-			for (int b : NumberUtils.intArrayFromString(properties.getProperty(PRODUCT_AVAILABLE_BUILDS_PROPERTY, ""), ",")) {
+			int toKeep = ControlCenter.INSTANCE.getSettings().resetAllBuildsButLatest() ? 1 : ControlCenter.INSTANCE.getSettings().buildsToKeep();
+			int[] originalBuildsArray = NumberUtils.intArrayFromString(properties.getProperty(PRODUCT_AVAILABLE_BUILDS_PROPERTY, ""), ",");
+			int[] buildsArray;
+			if (toKeep < originalBuildsArray.length) {
+			    buildsArray = IntStream.range(0, toKeep).map(i -> originalBuildsArray[i]).toArray();
+			} else {
+			    buildsArray = originalBuildsArray;
+			}
+			for (int b : buildsArray) {
 				buildIds.add(b);
 				builds.put(b, new Build(b));
 			}

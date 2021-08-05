@@ -14,7 +14,11 @@ public abstract class AuthenticationRequest {
 	protected String email;
 	protected String certificate;
 	protected String key;
-	protected ICertificate.Level level = ICertificate.Level.INSTITUTIONAL;
+	protected ICertificate.Level level;
+	
+	public AuthenticationRequest() {
+	    this.setLevel(ICertificate.Level.INSTITUTIONAL);
+	}
 	
 	public String getName() {
 		return name;

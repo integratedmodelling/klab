@@ -1,0 +1,6 @@
+name: technote
+version: master
+display_version: Latest
+title: Technical note
+nav: 
+   - modules/ROOT/nav.adoc

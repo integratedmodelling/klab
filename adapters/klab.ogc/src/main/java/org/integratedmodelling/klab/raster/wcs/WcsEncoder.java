@@ -48,11 +48,14 @@ public class WcsEncoder implements IResourceEncoder {
     @Override
     public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry, Builder builder,
             IContextualizationScope context) {
+    	
+    	String interpolation = urnParameters.get("interpolation");
+    	
         WCSService service = WcsAdapter.getService(resource.getParameters().get("serviceUrl", String.class),
                 Version.create(resource.getParameters().get("wcsVersion", String.class)));
         WCSLayer layer = service.getLayer(resource.getParameters().get("wcsIdentifier", String.class));
         if (layer != null) {
-            encoder.encodeFromCoverage(resource, urnParameters, getCoverage(layer, resource, geometry), geometry, builder,
+            encoder.encodeFromCoverage(resource, urnParameters, getCoverage(layer, resource, geometry, interpolation), geometry, builder,
                     context);
         } else {
             context.getMonitor()
@@ -60,14 +63,14 @@ public class WcsEncoder implements IResourceEncoder {
         }
     }
 
-    private GridCoverage getCoverage(WCSLayer layer, IResource resource, IGeometry geometry) {
+    private GridCoverage getCoverage(WCSLayer layer, IResource resource, IGeometry geometry, String interpolation) {
 
         File coverageFile = WcsAdapter.getCachedFile(layer.getIdentifier(), geometry);
 
         if (coverageFile == null) {
 
             // forcing v1.0.0 for now, while I figure out the pain of WCS requests
-            URL getCov = layer.getService().buildRetrieveUrl(layer, Version.create("1.0.0"), geometry);
+            URL getCov = layer.getService().buildRetrieveUrl(layer, Version.create("1.0.0"), geometry, interpolation);
 
             // URLConnection connection = getCov.openConnection();
             // /*

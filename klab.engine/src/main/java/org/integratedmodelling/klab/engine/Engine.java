@@ -20,6 +20,7 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 
 import org.eclipse.xtext.testing.IInjectorProvider;
+import org.integratedmodelling.kactors.model.KActors;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.validation.KimNotification;
@@ -73,6 +74,7 @@ import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.NotificationUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
+import org.integratedmodelling.klab.utils.xtext.KactorsInjectorProvider;
 import org.integratedmodelling.klab.utils.xtext.KimInjectorProvider;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -487,6 +489,15 @@ public class Engine extends Server implements IEngine, UserDetails {
 		Injector injector = injectorProvider.getInjector();
 		if (injector != null) {
 			Kim.INSTANCE.setup(injector);
+		}
+
+		/*
+		 * ...and k.Actors
+		 */
+		IInjectorProvider kActorsInjectorProvider = new KactorsInjectorProvider();
+		Injector kActorsInjector = kActorsInjectorProvider.getInjector();
+		if (kActorsInjector != null) {
+			KActors.INSTANCE.setup(kActorsInjector);
 		}
 
 		if (certificate == null) {

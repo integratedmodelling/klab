@@ -1,0 +1,157 @@
+.hljs{
+    display:block;
+    overflow-x:auto;
+    padding:.5em;
+    color:#333;
+    background:#f8f8f8
+}
+.hljs-comment,.hljs-quote{
+    color:#998;
+    font-style:italic
+}
+.hljs-keyword,.hljs-selector-tag,.hljs-subst{
+    color:#333;
+    font-weight:700
+}
+.hljs-predicate,.hljs-selector-tag,.hljs-subst{
+    color:#0066cc;
+    font-weight:500
+}
+.hljs-apredicate,.hljs-selector-tag,.hljs-subst{
+    color:#0066cc;
+    font-weight:500;
+    font-style:italic
+}
+.hljs-subject,.hljs-selector-tag,.hljs-subst{
+    color:#993300;
+    font-weight:500
+}
+.hljs-asubject,.hljs-selector-tag,.hljs-subst{
+    color:#993300;
+    font-weight:500;
+    font-style:italic
+}
+.hljs-quality,.hljs-selector-tag,.hljs-subst{
+    color:#00cc00;
+    font-weight:500
+}
+.hljs-aquality,.hljs-selector-tag,.hljs-subst{
+    color:#00cc00;
+    font-weight:500;
+    font-style:italic
+}
+.hljs-relationship,.hljs-selector-tag,.hljs-subst{
+    color:#d2aa00 ;
+    font-weight:500
+}
+.hljs-arelationship,.hljs-selector-tag,.hljs-subst{
+    color:#d2aa00;
+    font-weight:500;
+    font-style:italic
+}
+.hljs-event,.hljs-selector-tag,.hljs-subst{
+    color:#999900;
+    font-weight:500
+}
+.hljs-aevent,.hljs-selector-tag,.hljs-subst{
+    color:#999900;
+    font-weight:500;
+    font-style:italic
+}
+.hljs-configuration,.hljs-selector-tag,.hljs-subst{
+    color:#006666;
+    font-weight:500
+}
+.hljs-aconfiguration,.hljs-selector-tag,.hljs-subst{
+    color:#006666;
+    font-weight:500;
+    font-style:italic
+}
+.hljs-process,.hljs-selector-tag,.hljs-subst{
+    color:#cc0000;
+    font-weight:500
+}
+.hljs-aprocess,.hljs-selector-tag,.hljs-subst{
+    color:#cc0000;
+    font-weight:500;
+    font-style:italic
+}
+.hljs-viewverb,.hljs-selector-tag,.hljs-subst{
+    color: rgb(63, 8, 165);
+    font-weight:700
+}
+.hljs-userverb,.hljs-selector-tag,.hljs-subst{
+    color:rgb(57, 69, 127);
+    font-weight:700
+}
+.hljs-objectverb,.hljs-selector-tag,.hljs-subst{
+    color:rgb(127, 62, 6);
+    font-weight:700
+}
+.hljs-stateverb,.hljs-selector-tag,.hljs-subst{
+    color:rgb(6, 127, 16);
+    font-weight:700
+}
+.hljs-sessionverb,.hljs-selector-tag,.hljs-subst{
+    color:rgb(204, 68, 10);
+    font-weight:700
+}
+.hljs-explorerverb,.hljs-selector-tag,.hljs-subst{
+    color:rgb(218, 165, 32);
+    font-weight:700
+}
+.hljs-importedverb,.hljs-selector-tag,.hljs-subst{
+    color:rgb(20, 20, 20);
+    font-weight:700
+}
+.hljs-textblock,.hljs-selector-tag,.hljs-subst{
+    color:rgb(0, 120, 120);
+    font-weight:400
+}
+.hljs-literal,.hljs-number,.hljs-tag .hljs-attr,.hljs-template-variable,.hljs-variable{
+    color:teal
+}
+.hljs-doctag,.hljs-string{
+    color:#d14
+}
+.hljs-section,.hljs-selector-id,.hljs-title{
+    color:#900;
+    font-weight:700
+}
+.hljs-subst{
+    font-weight:400
+}
+.hljs-class .hljs-title,.hljs-type{
+    color:#458;
+    font-weight:700
+}
+.hljs-attribute,.hljs-name,.hljs-tag{
+    color:navy;
+    font-weight:400
+}
+.hljs-link,.hljs-regexp{
+    color:#009926
+}
+.hljs-bullet,.hljs-symbol{
+    color:#990073
+}
+.hljs-built_in,.hljs-builtin-name{
+    color:#0086b3
+}
+.hljs-meta{
+    color:#999;
+    font-weight:400
+}
+.hljs-deletion{
+    background:#fdd
+}
+.hljs-addition{
+    background:#dfd
+}
+.hljs-emphasis{
+    font-style:italic
+}
+.hljs-strong{
+    font-weight:700
+}
+ 

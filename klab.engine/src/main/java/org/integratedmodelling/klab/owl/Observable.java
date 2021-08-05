@@ -778,6 +778,9 @@ public class Observable extends GroovyObjectSupport implements IObservable {
     }
 
     public void setReferenceName(String name) {
+    	if (name.contains("in_watershed")) {
+    		System.out.println("SOSOSO");
+    	}
         this.referenceName = name;
     }
 

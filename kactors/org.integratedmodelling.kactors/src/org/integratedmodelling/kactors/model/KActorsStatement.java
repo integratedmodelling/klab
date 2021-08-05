@@ -85,6 +85,8 @@ public abstract class KActorsStatement extends KActorCodeStatement implements IK
 			ret = new KActorsConcurrentGroup(statement.getGroup(), parent);
 		} else if (statement.getInstantiation() != null) {
 			ret = new KActorsInstantiation(statement.getInstantiation(), statement.getTag(), parent);
+		} else if (statement.getAssert() != null) {
+			ret = new KActorsAssert(statement.getAssert(), parent);
 		}
 
 		if (ret != null) {

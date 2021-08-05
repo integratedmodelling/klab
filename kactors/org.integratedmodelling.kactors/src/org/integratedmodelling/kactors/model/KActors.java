@@ -46,11 +46,20 @@ public enum KActors {
 
 	private Map<String, BehaviorReference> behaviorManifest = Collections.synchronizedMap(new HashMap<>());
 
-    @Inject
-    private IGrammarAccess grammarAccess;
-    
+	@Inject
+	private IGrammarAccess grammarAccess;
+
 	public interface Notifier {
 		void notify(IKActorsBehavior behavior);
+	}
+
+	/**
+	 * Call before keyword list can be obtained
+	 * 
+	 * @param injector
+	 */
+	public void setup(Injector injector) {
+		injector.injectMembers(this);
 	}
 
 	public interface ValueTranslator {
@@ -119,9 +128,9 @@ public enum KActors {
 	}
 
 	public Set<String> getKeywords() {
-	    return GrammarUtil.getAllKeywords(grammarAccess.getGrammar());
+		return GrammarUtil.getAllKeywords(grammarAccess.getGrammar());
 	}
-	
+
 	public boolean isKActorsFile(File file) {
 		return file.toString().endsWith(".kactor");
 	}
@@ -301,7 +310,7 @@ public enum KActors {
 	 * 
 	 * @param valueTranslator
 	 */
-    public void setValueTranslator(ValueTranslator valueTranslator) {
+	public void setValueTranslator(ValueTranslator valueTranslator) {
 		this.valueTranslator = valueTranslator;
 	}
 
