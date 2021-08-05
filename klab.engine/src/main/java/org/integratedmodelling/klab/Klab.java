@@ -421,6 +421,18 @@ public enum Klab implements IRuntimeService {
 		public boolean isInterrupted() {
 			return false;
 		}
+
+		@Override
+		public void addWait(int seconds) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public int getWaitTime() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
 	}
 
 	@Override

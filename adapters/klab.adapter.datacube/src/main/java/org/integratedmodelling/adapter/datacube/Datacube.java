@@ -4,7 +4,9 @@ import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.reflect.ConstructorUtils;
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 
 /**
  * Implement this to make a (k.LAB-extended) datacube out of any datathing.
@@ -15,7 +17,7 @@ import org.integratedmodelling.klab.api.data.IGeometry;
  * @author Ferd
  *
  */
-public class Datacube {
+public abstract class Datacube {
 
 	private boolean online = false;
 	private String name;
@@ -178,4 +180,10 @@ public class Datacube {
 	protected void setOnline(boolean b) {
 		this.online = b;
 	}
+
+	protected abstract Type getResourceType(Urn urn);
+
+	protected abstract IGeometry getResourceGeometry(Urn urn);
+
+	protected abstract String getDescription();
 }

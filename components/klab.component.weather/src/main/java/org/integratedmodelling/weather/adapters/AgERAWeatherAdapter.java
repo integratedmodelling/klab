@@ -1,6 +1,5 @@
 package org.integratedmodelling.weather.adapters;
 
-import org.integratedmodelling.adapter.datacube.Datacube;
 import org.integratedmodelling.adapter.datacube.GenericDatacubeAdapter;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.extensions.UrnAdapter;

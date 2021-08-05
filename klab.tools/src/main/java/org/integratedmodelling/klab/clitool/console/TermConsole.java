@@ -142,6 +142,18 @@ public class TermConsole implements IConsole {
 			return false;
 		}
 
+		@Override
+		public void addWait(int seconds) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public int getWaitTime() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
 	}
 
 	public void start(CliStartupOptions options) throws Exception {

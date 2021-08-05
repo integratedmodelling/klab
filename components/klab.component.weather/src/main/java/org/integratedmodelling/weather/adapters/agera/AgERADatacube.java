@@ -6,11 +6,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.adapter.datacube.Datacube;
-import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Urn;
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
+import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
+import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.weather.WeatherComponent;
@@ -39,17 +41,22 @@ public class AgERADatacube extends Datacube {
 
 	public enum Statistic {
 
-		MAX_24H("24_hour_maximum"), MIN_24H("24_hour_minimum"), DAY_MEAN("day_time_mean"),
-		NIGHT_MEAN("night_time_mean"), MEAN_24H("24_hour_mean"), NIGHT_MIN("night_time_minimum"),
-		DAY_MAX("day_time_maximum");
+		MAX_24H("24_hour_maximum", "max"), MIN_24H("24_hour_minimum", "min"), DAY_MEAN("day_time_mean", "day"),
+		NIGHT_MEAN("night_time_mean", "night"), MEAN_24H("24_hour_mean", "mean"),
+		NIGHT_MIN("night_time_minimum", "night_min"), DAY_MAX("day_time_maximum", "day_max");
 
 		public String cdsname;
+		public String codename;
 
-		Statistic(String cdsname) {
+		Statistic(String cdsname, String codename) {
 			this.cdsname = cdsname;
+			this.codename = codename;
 		}
 	}
 
+	/*
+	 * codename is name()
+	 */
 	public enum Timepoint {
 
 		h06("06_00"), h09("09_00"), h12("12_00"), h15("15_00"), h18("18_00");
@@ -62,7 +69,7 @@ public class AgERADatacube extends Datacube {
 	}
 
 	/**
-	 * Variables with their codenames and available statistics and timepoints.
+	 * Variables with their codenames and applicable statistics and timepoints.
 	 * 
 	 * @author Ferd
 	 *
@@ -138,6 +145,16 @@ public class AgERADatacube extends Datacube {
 		}
 
 	}
+	
+	class VariableConfiguration {
+		public VariableConfiguration(String[] fields) {
+			this.variable = variables.get(fields[0]);
+		}
+		
+		public Variable variable;
+		public Timepoint timepoint;
+		public Statistic statistic;
+	}
 
 	public AgERADatacube() {
 
@@ -167,16 +184,25 @@ public class AgERADatacube extends Datacube {
 		}
 	}
 
-	public Variable getVariable(Urn urn) {
-		String var = urn.getParameters().containsKey(IServiceCall.DEFAULT_PARAMETER_NAME)
-				? urn.getParameters().get(IServiceCall.DEFAULT_PARAMETER_NAME)
-				: urn.getResourceId();
-		/*
-		 * TODO add all the mandatory OR optional pieces based on the URN and the
-		 * defaults for the variable.
-		 */
-
-		return variables.get(var);
+	/**
+	 * Variable URN examples:
+	 * 
+	 * <pre>
+	 * 		klab:weather:agera5:temperature            -> default statistic (mean)
+	 * 		klab:weather:agera5:temperature.min        -> use min statistic
+	 * 		klab:weather:agera5:relative_humidity.h12  -> ignore statistic (n/a) and use one timepoint
+	 * 		klab:weather:agera5:relative_humidity.h12  -> ignore statistic (n/a) and use one timepoint
+	 * 		klab:weather:agera5:relative_humidity      -> ignore statistic (n/a) and aggregate available timepoints
+	 * </pre>
+	 * 
+	 * No variable has both timepoint and statistic options, so the split is
+	 * unambiguous
+	 * 
+	 * @param urn
+	 * @return
+	 */
+	public VariableConfiguration getVariable(Urn urn) {
+		return getVariable(urn.getResourceId().split("\\."));
 	}
 
 	public static void main(String[] args) {
@@ -199,8 +225,25 @@ public class AgERADatacube extends Datacube {
 		return "https://cds.climate.copernicus.eu/api/v2/" + request;
 	}
 
-	public Variable getVariable(String string) {
-		return variables.get(string);
+	public VariableConfiguration getVariable(String[] string) {
+		return new VariableConfiguration(string);
+	}
+
+	@Override
+	public Type getResourceType(Urn urn) {
+		return Type.NUMBER;
+	}
+
+	@Override
+	protected IGeometry getResourceGeometry(Urn urn) {
+		// TODO Auto-generated method stub
+		return Geometry.create("\u03c41\u03c32");
+	}
+
+	@Override
+	protected String getDescription() {
+		// TODO Auto-generated method stub
+		return "Zio peperone";
 	}
 
 }

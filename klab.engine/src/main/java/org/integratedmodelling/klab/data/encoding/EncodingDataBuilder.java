@@ -105,6 +105,18 @@ public class EncodingDataBuilder implements IKlabData.Builder {
 			
 		}
 
+		@Override
+		public void addWait(int seconds) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public int getWaitTime() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
 	}
 	
 	/**

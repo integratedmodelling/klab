@@ -2,14 +2,16 @@ package org.integratedmodelling.adapter.datacube;
 
 import java.util.Collection;
 
-import org.apache.poi.ss.formula.functions.T;
 import org.integratedmodelling.klab.Urn;
+import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.data.resources.Resource;
+import org.integratedmodelling.klab.rest.ResourceReference;
 
 public class GenericDatacubeAdapter implements IUrnAdapter {
 
@@ -23,8 +25,17 @@ public class GenericDatacubeAdapter implements IUrnAdapter {
     
     @Override
     public IResource getResource(String urn) {
-        // TODO Auto-generated method stub
-        return null;
+    	
+        Urn kurn = new Urn(urn);
+        ResourceReference ref = new ResourceReference();
+        ref.setUrn(kurn.getUrn());
+        ref.setAdapterType(getName());
+        ref.setLocalName(kurn.getResourceId());
+        ref.setGeometry(getGeometry(kurn).encode());
+        ref.setVersion(Version.CURRENT);
+        ref.setType(getType(kurn));
+
+        return new Resource(ref);
     }
 
     @Override
@@ -40,20 +51,17 @@ public class GenericDatacubeAdapter implements IUrnAdapter {
 
     @Override
     public Type getType(Urn urn) {
-        // TODO Auto-generated method stub
-        return null;
+        return datacube.getResourceType(urn);
     }
 
     @Override
     public IGeometry getGeometry(Urn urn) {
-        // TODO Auto-generated method stub
-        return null;
+        return datacube.getResourceGeometry(urn);
     }
 
     @Override
     public String getDescription() {
-        // TODO Auto-generated method stub
-        return null;
+        return datacube.getDescription();
     }
 
     @Override

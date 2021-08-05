@@ -570,6 +570,10 @@ public class Resource implements IResource {
 	@Override
 	public IResource contextualize(IScale scale, IArtifact observation, Map<String, String> urnParameters,
 			IContextualizationScope scope) {
+		/**
+		 * TODO must handle remote adapters! These may prepare and return an ID to be added to the
+		 * metadata. 
+		 */
 		IResourceAdapter adapter = Resources.INSTANCE.getResourceAdapter(this.adapterType);
 		if (adapter != null) {
 			IResourceEncoder encoder = adapter.getEncoder();

@@ -283,6 +283,18 @@ public class Session extends GroovyObjectSupport
             return errors > 0;
         }
 
+		@Override
+		public void addWait(int seconds) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public int getWaitTime() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
     }
 
 
