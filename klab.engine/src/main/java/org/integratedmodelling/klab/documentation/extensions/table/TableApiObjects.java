@@ -105,7 +105,7 @@ public class TableApiObjects {
             }
 
             Object oFrom = ((TableDimension) from).getState(((IScale) this.locator).at((ILocator) locateFrom));
-            return oFrom != null && oFrom.equals(cFrom);
+            return oFrom != null &&  (from.equals(to) ? oFrom.equals(cTo) : oFrom.equals(cFrom));
         }
 
         public Object getProperty(String state) {
