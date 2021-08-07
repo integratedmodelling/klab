@@ -676,7 +676,7 @@ public class Geometry implements IGeometry {
                 return false;
             }
 
-            if (generic && !dimension.isGeneric() || !generic && dimension.isGeneric()) {
+            if ((generic && !dimension.isGeneric()) /* || (!generic && dimension.isGeneric()) */) {
                 return false;
             }
 

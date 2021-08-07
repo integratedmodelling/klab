@@ -12,6 +12,7 @@ import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
 import org.integratedmodelling.klab.api.extensions.UrnAdapter;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
@@ -125,5 +126,11 @@ public class OSMUrnAdapter implements IUrnAdapter {
 		ref.setType(Type.VALUE); // for now
 		return new Resource(ref);
 	}
+
+    @Override
+    public IResource contextualize(IResource resource, IGeometry scale, IGeometry overallScale, IObservable semantics) {
+        /* TODO should check that OSM is online */
+        return resource;
+    }
 
 }

@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.integratedmodelling.klab.api.data.IResource.Availability;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator.Operation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 
@@ -50,6 +51,41 @@ public class ResourceReference {
         }
     }
 
+    /**
+     * One of these can be added by a resource adapter to check on the availability before use. If
+     * availability is DELAYED, the client should check the wait time and decide according to user
+     * workflow chosen.
+     * 
+     * @author Ferd
+     *
+     */
+    public static class AvailabilityReference {
+
+        private Availability availability;
+        private int retryTimeSeconds;
+        private String message;
+
+        public Availability getAvailability() {
+            return availability;
+        }
+        public void setAvailability(Availability availability) {
+            this.availability = availability;
+        }
+        public int getRetryTimeSeconds() {
+            return retryTimeSeconds;
+        }
+        public void setRetryTimeSeconds(int retryTimeSeconds) {
+            this.retryTimeSeconds = retryTimeSeconds;
+        }
+        public String getMessage() {
+            return message;
+        }
+        public void setMessage(String message) {
+            this.message = message;
+        }
+
+    }
+
     private String urn;
     private String version;
     private String adapterType;
@@ -71,6 +107,12 @@ public class ResourceReference {
     private List<AttributeReference> dependencies = null;
     private List<AttributeReference> outputs = null;
     private List<String> categorizables = new ArrayList<>();
+
+    /**
+     * This will never be stored in a catalog: it's only for real-time operations such as
+     * contextualization of the resource before data are extracted.
+     */
+    private AvailabilityReference availability = null;
 
     public List<AttributeReference> getOutputs() {
         return outputs;
@@ -258,6 +300,14 @@ public class ResourceReference {
 
     public void setCategorizables(List<String> categorizables) {
         this.categorizables = categorizables;
+    }
+
+    public AvailabilityReference getAvailability() {
+        return availability;
+    }
+
+    public void setAvailability(AvailabilityReference availability) {
+        this.availability = availability;
     }
 
 }

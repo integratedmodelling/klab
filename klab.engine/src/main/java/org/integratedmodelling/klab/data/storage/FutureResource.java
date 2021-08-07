@@ -25,6 +25,7 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.rest.ResourceReference.AvailabilityReference;
 
 /**
  * The k.LAB resource is identified by a URN. A URN is resolved (using the
@@ -238,6 +239,12 @@ public class FutureResource implements IResource, Future<IResource> {
     @Override
     public Collection<String> getCategorizables() {
         return getDelegate(timeout).getCategorizables();
+    }
+
+    @Override
+    public AvailabilityReference getAvailability() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

@@ -1061,7 +1061,7 @@ public class Model extends KimObject implements IModel {
             // ensure resource is online; turn model off if not
             IResource res = Resources.INSTANCE.resolveResource(resource.getUrn());
             if (res == null) {
-                // monitor.send(new CompileNo);
+                monitor.error("resource " + resource.getUrn() + " is unknown or has errors", getStatement());
                 this.setInactive(true);
             }
             if (res != null) {

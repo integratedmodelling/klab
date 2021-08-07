@@ -13,7 +13,6 @@ import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
@@ -58,6 +57,7 @@ public class UrnResolver implements IExpression, IResolver<IArtifact> {
          * Contextualize the resource to the passed context and parameters.
          */
         IResource res = this.resource.contextualize(context.getScale(), observation, urnParameters, context);
+        
         Map<String, String> parameters = urnParameters;
         // this.localized = true;
 

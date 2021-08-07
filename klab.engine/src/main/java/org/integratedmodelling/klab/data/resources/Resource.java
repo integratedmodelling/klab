@@ -35,7 +35,6 @@ import org.integratedmodelling.klab.Services;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
-import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IProject;
@@ -53,6 +52,7 @@ import org.integratedmodelling.klab.rest.AttributeReference;
 import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 import org.integratedmodelling.klab.rest.ResourceReference;
+import org.integratedmodelling.klab.rest.ResourceReference.AvailabilityReference;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Path;
@@ -117,7 +117,7 @@ public class Resource implements IResource {
 	// for display in resource descriptors
 	SpatialExtent spatialExtent;
 	List<String> dependencies = new ArrayList<>();
-
+	AvailabilityReference availability;
 	/*
 	 * This is an absolute location only defined in node (public) resources.
 	 */
@@ -157,7 +157,8 @@ public class Resource implements IResource {
 		this.attributes.addAll(reference.getAttributes());
 		this.categorizables.addAll(reference.getCategorizables());
 		this.exports.putAll(reference.getExportFormats());
-
+		this.availability = reference.getAvailability();
+		
 		for (ResourceReference ref : reference.getHistory()) {
 			this.history.add(ref);
 		}
@@ -227,6 +228,8 @@ public class Resource implements IResource {
 			}
 		}
 
+		ret.setAvailability(this.availability);
+		
 		return ret;
 	}
 
@@ -570,18 +573,7 @@ public class Resource implements IResource {
 	@Override
 	public IResource contextualize(IScale scale, IArtifact observation, Map<String, String> urnParameters,
 			IContextualizationScope scope) {
-		/**
-		 * TODO must handle remote adapters! These may prepare and return an ID to be added to the
-		 * metadata. 
-		 */
-		IResourceAdapter adapter = Resources.INSTANCE.getResourceAdapter(this.adapterType);
-		if (adapter != null) {
-			IResourceEncoder encoder = adapter.getEncoder();
-			if (encoder != null) {
-				return encoder.contextualize(this, scale, observation, urnParameters, scope);
-			}
-		}
-		return this;
+	    return Resources.INSTANCE.contextualizeResource(this, urnParameters, scale, observation, scope);
 	}
 
 	public void setGeometry(IGeometry geometry) {
@@ -610,6 +602,11 @@ public class Resource implements IResource {
     @Override
     public Collection<String> getCategorizables() {
         return this.categorizables;
+    }
+
+    @Override
+    public AvailabilityReference getAvailability() {
+        return availability;
     }
 
 }
