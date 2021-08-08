@@ -2,23 +2,39 @@ package org.integratedmodelling.weather.adapters.agera;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
+import org.geotools.coverage.grid.GridCoverage2D;
+import org.geotools.gce.geotiff.GeoTiffReader;
 import org.integratedmodelling.adapter.datacube.Datacube.IngestionService;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
+import org.integratedmodelling.klab.exceptions.KlabConfigurationException;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.ogc.integration.Geoserver;
 import org.integratedmodelling.klab.utils.JsonUtils;
+import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.StringUtil;
+import org.integratedmodelling.klab.utils.URLUtils;
+import org.integratedmodelling.klab.utils.ZipUtils;
+import org.integratedmodelling.weather.adapters.agera.AgERADatacube.Variable;
 import org.integratedmodelling.weather.adapters.agera.AgERADatacube.VariableConfiguration;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -27,11 +43,15 @@ import org.joda.time.Period;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
+import ucar.nc2.dt.GridDatatype;
+import ucar.nc2.dt.grid.GridDataset;
+import ucar.nc2.geotiff.GeoTiffWriter2;
 
 public class AgERAIngestionService implements IngestionService {
 
     private Executor executor = null;
     private AgERADatacube cube;
+    Geoserver geoserver;
 
     public static final String CHUNK_DOWNLOAD_TIME_MS = "time.download.ms";
     public static final String CHUNK_PROCESSING_TIME_MS = "time.processing.ms";
@@ -63,6 +83,12 @@ public class AgERAIngestionService implements IngestionService {
                 Integer.parseInt(Configuration.INSTANCE.getProperty(AgERADatacube.CDS_DOWNLOAD_THREADS_PROPERTY, "1")), 60L,
                 TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
 
+        this.geoserver = Geoserver.create();
+
+        if (!this.geoserver.isOnline()) {
+            throw new KlabConfigurationException("AgERA5 ingestor: no Geoserver is available");
+        }
+
         /*
          * TODO estimate mean download time based on contents of chunk properties and number of
          * threads in executor.
@@ -71,7 +97,7 @@ public class AgERAIngestionService implements IngestionService {
     }
 
     @Override
-    public void queueDownload(Object downloadSpecs) {
+    public void queueDownload(Object downloadSpecs, Object variableSpecs) {
 
         executor.execute(new Thread(){
 
@@ -85,7 +111,7 @@ public class AgERAIngestionService implements IngestionService {
                 if (dir != null) {
                     properties.setProperty(CHUNK_DOWNLOAD_TIME_MS, "" + (System.currentTimeMillis() - start));
                     start = System.currentTimeMillis();
-                    if (processChunk(dir)) {
+                    if (processChunk(downloadSpecs.toString(), (Variable) variableSpecs, dir)) {
                         properties.setProperty(CHUNK_PROCESSING_TIME_MS, "" + (System.currentTimeMillis() - start));
                         try (OutputStream out = new FileOutputStream(new File(dir + File.separator + "chunk.properties"))) {
                             properties.store(out,
@@ -116,7 +142,7 @@ public class AgERAIngestionService implements IngestionService {
         Collection<VariableConfiguration> vars = cube.getVariable(StringUtil.join(fields, ".", fields.length - 2));
 
         for (VariableConfiguration var : vars) {
-            
+
             int year = Integer.parseInt(fields[fields.length - 2]);
             int mont = Integer.parseInt(fields[fields.length - 1]);
 
@@ -146,6 +172,7 @@ public class AgERAIngestionService implements IngestionService {
                     String url = null;
 
                     while(time < TIMEOUT_SECONDS && !"completed".equals(response.getBody().getObject().get("state"))) {
+
                         String requestId = response.getBody().getObject().getString("request_id");
                         try {
                             Thread.sleep(tryafter * 1000);
@@ -157,8 +184,7 @@ public class AgERAIngestionService implements IngestionService {
                          * inquire about task
                          */
                         response = Unirest.post(cube.getEndpointUrl("tasks/" + requestId))
-                                .basicAuth(cube.getUsername(), cube.getApiKey()).header("Accept", "application/json")
-                                .body(JsonUtils.printAsJson(body)).asJson();
+                                .basicAuth(cube.getUsername(), cube.getApiKey()).asJson();
 
                         if (response.getBody().getObject().has("error")) {
                             break;
@@ -175,10 +201,24 @@ public class AgERAIngestionService implements IngestionService {
                         url = response.getBody().getObject().getString("location");
                         if (url.endsWith(".zip")) {
 
-                            /*
-                             * Download the zip
-                             */
+                            File chunkDir = new File(
+                                    Configuration.INSTANCE.getDataPath(AgERADatacube.ID) + File.separator + string);
 
+                            /*
+                             * Download the zip and unzip in chunk directory
+                             */
+                            try {
+                                URL uurl = new URL(url);
+                                File zipFile = File.createTempFile("agera", ".zip");
+                                URLUtils.copyChanneled(uurl, zipFile);
+                                ZipUtils.unzip(zipFile, chunkDir);
+                                FileUtils.deleteQuietly(zipFile);
+                                break;
+                            } catch (Throwable e) {
+                                Logging.INSTANCE
+                                        .warn("Download of AgERA5 chunk " + string + " returned exception: " + e.getMessage());
+                                break;
+                            }
                         }
                     }
 
@@ -198,13 +238,108 @@ public class AgERAIngestionService implements IngestionService {
     }
 
     // process, return true if all OK
-    protected boolean processChunk(File dir) {
-        // TODO Auto-generated method stub
+    protected boolean processChunk(String chunk, Variable variable, File dir) {
+
+        List<File> toIngest = new ArrayList<>();
+        Pattern pattern = Pattern.compile(".*(_[0-9]{8}_).*");
+
+        for (File f : dir.listFiles(new FilenameFilter(){
+
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".nc");
+            }
+        })) {
+
+            /*
+             * parse the file name and get year, month and day
+             */
+            Matcher matcher = pattern.matcher(MiscUtilities.getFileBaseName(f));
+            if (!matcher.matches()) {
+                Logging.INSTANCE.warn("CDS file does not match naming pattern: ignoring " + f);
+                continue;
+            }
+
+            String daySignature = matcher.group(1).substring(1, 8);
+            int year = Integer.parseInt(daySignature.substring(0, 4));
+            int month = Integer.parseInt(daySignature.substring(4, 6));
+            int day = Integer.parseInt(daySignature.substring(6));
+
+            /*
+             * Save the netcdf as geotiff so we don't need a specially configured geoserver; create
+             * weekly and monthly aggregations based on variable
+             */
+            String layerId = variable.cdsname + "_" + daySignature;
+            File outfile = new File(dir + File.separator + layerId + ".tiff");
+            try (GeoTiffWriter2 writer = new GeoTiffWriter2(outfile.toString());
+                    GridDataset dataset = GridDataset.open(f.toString())) {
+
+                GridDatatype gridvar = dataset.getGrids().get(0);
+                writer.writeGrid(f.toString(), gridvar.getName(), 0, 0, false, dataset.getBoundingBox());
+                if (!geoserver.createCoverageStore("agera5", layerId, outfile)) {
+                    Logging.INSTANCE.warn("Geoserver ingestion of " + outfile + " returned a failure code");
+                }
+                // remove the original netcdf
+                // FileUtils.deleteQuietly(f);
+
+            } catch (IOException e) {
+                throw new KlabIOException(e);
+            }
+
+        }
+
+        /*
+         * gobble the whole thing into the GS using the standardized name
+         */
+
+        System.out.println("Vai col geoserver hostia");
+
         return true;
     }
 
     public void setDatacube(AgERADatacube agERADatacube) {
         this.cube = agERADatacube;
+    }
+
+    // TODO remove
+    public static void main(String[] dio) {
+
+        List<File> toIngest = new ArrayList<>();
+        File dir = new File(
+                "E:\\Dropbox\\Data\\AgERA5\\dataset-sis-agrometeorological-indicators-5a0fb25d-193a-416b-82e1-69200c300954");
+        Pattern pattern = Pattern.compile(".*(_[0-9]{8}_).*");
+        Variable variable = Variable.LIQUID_PRECIPITATION_VOLUME;
+        Geoserver geoserver = Geoserver.create();
+
+        for (File f : dir.listFiles(new FilenameFilter(){
+
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".nc");
+            }
+        })) {
+
+            /*
+             * parse the file name and get year, month and day
+             */
+            Matcher matcher = pattern.matcher(MiscUtilities.getFileBaseName(f));
+            if (!matcher.matches()) {
+                Logging.INSTANCE.warn("CDS file does not match naming pattern: ignoring " + f);
+                continue;
+            }
+
+            String daySignature = matcher.group(1).substring(1, 9);
+            int year = Integer.parseInt(daySignature.substring(0, 4));
+            int month = Integer.parseInt(daySignature.substring(4, 6));
+            int day = Integer.parseInt(daySignature.substring(6));
+
+            String layerId = variable.cdsname + "_" + daySignature;
+            if (!geoserver.createCoverageLayer("agera5", layerId, f)) {
+                Logging.INSTANCE.warn("Geoserver ingestion of " + f + " returned a failure code");
+            }
+
+        }
+
     }
 
 }

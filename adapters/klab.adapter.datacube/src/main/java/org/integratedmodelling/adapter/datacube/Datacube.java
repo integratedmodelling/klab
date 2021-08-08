@@ -113,7 +113,7 @@ public abstract class Datacube {
          * 
          * @param downloadSpecs
          */
-        void queueDownload(Object downloadSpecs);
+        void queueDownload(Object downloadSpecs, Object variableSpecs);
     }
 
     /**

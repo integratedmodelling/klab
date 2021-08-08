@@ -83,7 +83,6 @@
 			<version>${klab.version}</version>
 		</dependency> -->
 
-
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.component.tables</artifactId>

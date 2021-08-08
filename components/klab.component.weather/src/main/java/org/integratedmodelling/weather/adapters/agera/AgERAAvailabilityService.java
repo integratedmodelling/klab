@@ -75,7 +75,7 @@ public class AgERAAvailabilityService implements AvailabilityService {
                     secs += seconds;
                     if (seconds > 0) {
                         downloading = true;
-                        ingestion.queueDownload(chunk);
+                        ingestion.queueDownload(chunk, var.variable);
                     }
                 }
             }

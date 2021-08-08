@@ -655,7 +655,12 @@
 			<artifactId>gt-process-raster</artifactId>
 			<version>${geotools.version}</version>
 		</dependency>
-
+<!-- 		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-netcdf</artifactId>
+			<version>${geotools.version}</version>
+		</dependency>
+ -->
 		<!-- GEOTOOLS mess ends -->
 
 		<!-- NO2 database (for local storage of file metadata and URN metadata 
@@ -775,11 +780,8 @@
 			<artifactId>commons-codec </artifactId>
 			<version>1.9</version>
 		</dependency>
-<!-- 		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
-			<version>2.6</version>
-		</dependency> -->
+		<!-- <dependency> <groupId>commons-lang</groupId> <artifactId>commons-lang</artifactId> 
+			<version>2.6</version> </dependency> -->
 		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
