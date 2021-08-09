@@ -123,6 +123,17 @@
 		</dependency>
 		<!-- ////////////////////////////////////////////////////////////////// -->
 		
+		<!-- This section is for Spring Cloud Dependencies -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-consul-discovery</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-consul-config</artifactId>
+		</dependency>
+		<!-- ////////////////////////////////////////////////////////////////// -->
+		
 		<!-- This section is for Spring Boot Dependencies -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -170,17 +181,6 @@
           			<artifactId>javax.annotation-api</artifactId>
         		</exclusion>
 			</exclusions>
-		</dependency>
-		<!-- ////////////////////////////////////////////////////////////////// -->
-		
-		<!-- This section is for Spring Cloud Dependencies -->
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-consul-discovery</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-consul-config</artifactId>
 		</dependency>
 		<!-- ////////////////////////////////////////////////////////////////// -->
 		
@@ -234,10 +234,11 @@
 		    <artifactId>commons-text</artifactId>
 		    <version>1.9</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.reflections/reflections -->
 		<dependency>
-		    <groupId>net.oneandone.reflections8</groupId>
-		    <artifactId>reflections8</artifactId>
-		    <version>0.11.5</version>
+		    <groupId>org.reflections</groupId>
+		    <artifactId>reflections</artifactId>
+		    <version>0.9.12</version>
 		</dependency>
 		<dependency>
 		    <groupId>args4j</groupId>
