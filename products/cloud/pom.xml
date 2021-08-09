@@ -38,7 +38,7 @@
             			</auth>
       				</from>
                     <to>
-                        <image>${env.REGISTRY}/engine-server</image>
+                        <image>${env.REGISTRY}/${env.ENGINE_TAG}</image>
                         <tags>
                         	<tag>${env.ENGINE_TAG}</tag>
 				      		<tag>latest</tag>

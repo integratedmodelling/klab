@@ -74,12 +74,6 @@
 			<version>${spring-boot.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.integratedmodelling</groupId>
-			<artifactId>org.integratedmodelling.klab.api</artifactId>
-			<version>${klab.version}</version>
-		</dependency>
-
-		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>
 			<version>${joda-time-version}</version>
