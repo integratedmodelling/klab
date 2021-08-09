@@ -103,9 +103,9 @@ public class TableApiObjects {
             if (!cTo.equals(this.target)) {
                 return false;
             }
-
+            // if ((from.equals(to) && oFrom.equals(cTo) && oFrom.equals(cFrom)) --> true
             Object oFrom = ((TableDimension) from).getState(((IScale) this.locator).at((ILocator) locateFrom));
-            return oFrom != null &&  (from.equals(to) ? oFrom.equals(cTo) : oFrom.equals(cFrom));
+            return oFrom != null &&  oFrom.equals(cFrom) && !oFrom.equals(cTo); 
         }
 
         public Object getProperty(String state) {
