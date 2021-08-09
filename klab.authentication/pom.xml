@@ -9,7 +9,20 @@
 	</parent>
 	<artifactId>klab.authentication</artifactId>
 	<name>Authentication support for k.LAB</name>
-
+	
+	<build>
+	  	<plugins>
+	  		<plugin>
+	  			<groupId>com.google.cloud.tools</groupId>
+	  			<artifactId>jib-maven-plugin</artifactId>
+	  			<configuration>
+	  				<!-- we don't want jib to execute on this module -->
+	  				<skip>true</skip>
+	  			</configuration>
+	      	</plugin>
+	    </plugins>
+    </build>
+    
 	<dependencies>
 
 		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
