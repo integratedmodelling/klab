@@ -96,16 +96,15 @@ public class TableApiObjects {
          * @return
          */
         public boolean changed(Object from, Object to, Object locateFrom) {
-
             IConcept cTo = ((TableDimension) to).getConcept();
             IConcept cFrom = ((TableDimension) from).getConcept();
 
             if (!cTo.equals(this.target)) {
                 return false;
             }
-
+            // if ((from.equals(to) && oFrom.equals(cTo) && oFrom.equals(cFrom)) --> true
             Object oFrom = ((TableDimension) from).getState(((IScale) this.locator).at((ILocator) locateFrom));
-			return oFrom != null && oFrom.equals(cFrom);
+            return oFrom != null &&  oFrom.equals(cFrom) && !oFrom.equals(cTo); 
         }
 
         public Object getProperty(String state) {

@@ -12,8 +12,7 @@ public class AgERAEncodingService implements EncodingService {
     
     @Override
     public void encodeData(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope scope) {
-        // TODO Auto-generated method stub
-
+    	
     }
 
     public void setDatacube(AgERADatacube cube) {

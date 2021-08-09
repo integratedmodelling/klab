@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -179,7 +181,7 @@ public class Geoserver {
         return false;
     }
 
-    public boolean createCoverageLayer(String namespace, String name, File file) {
+    public boolean createCoverageLayer(String namespace, String name, File file, @Nullable String nativeName) {
 
         if (createCoverageStore(namespace, name, file)) {
 
@@ -188,6 +190,7 @@ public class Geoserver {
 
             data.put("name", name);
             data.put("title", name);
+            data.put("nativeCoverageName", nativeName == null ? name : nativeName);
             data.put("recalculate", "nativebbox,latlonbbox");
 
             payload.put("coverage", data);
