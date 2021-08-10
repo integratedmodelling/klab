@@ -7,8 +7,11 @@ import java.util.List;
 import org.integratedmodelling.klab.api.data.IResource.Availability;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
+import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.rest.ResourceReference.AvailabilityReference;
+import org.joda.time.Seconds;
+import org.springframework.format.datetime.joda.MillisecondInstantPrinter;
 
 /**
  * A repository where data are organized in chunk directories containing a set
@@ -95,13 +98,23 @@ public class ChunkedDatacubeRepository {
 	}
 
 	/**
-	 * Get the chunk numbers needed to cover the passed time.
+	 * Get the chunk numbers needed to cover the passed time. The numbers represent blocks of N seconds, where N is 
+	 * the resolution of the chunk (chunkResolution.getSpan()).
 	 * 
 	 * @param time
 	 * @return
 	 */
 	List<Integer> getChunks(ITime time) {
 		List<Integer> ret = new ArrayList<>();
+		long startchunk = Seconds
+				.secondsBetween(((TimeInstant) timeBase).asDate(), ((TimeInstant) time.getStart()).asDate())
+				.getSeconds()/(chunkResolution.getSpan()/1000);
+		long endchunk = Seconds
+				.secondsBetween(((TimeInstant) timeBase).asDate(), ((TimeInstant) time.getEnd()).asDate())
+				.getSeconds()/(chunkResolution.getSpan()/1000);
+		for (long n = startchunk; n <= endchunk; n++) {
+			ret.add((int)n);
+		}
 		return ret;
 	}
 
@@ -117,4 +130,8 @@ public class ChunkedDatacubeRepository {
 		return ret;
 	}
 
+	public static void main(String[] dio) {
+		
+	}
+	
 }
