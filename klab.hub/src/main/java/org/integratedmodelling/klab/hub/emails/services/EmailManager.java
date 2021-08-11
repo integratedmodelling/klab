@@ -4,6 +4,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.mail.MessagingException;
@@ -118,9 +119,23 @@ public class EmailManager {
 		
 	}
 	
+	public void sendNewGroupRequest(String user, List<String> groups) {
+	    String subject = "[AUTOMATIC] - New group request";
+        StringBuffer msg = new StringBuffer().append("<p>New group(s) renewal request received from user <strong>").append(user).append("</strong></p><p>Groups: </p>").append("<ul>");
+        for(String group: groups) {
+            msg.append("<li>").append(group).append("</li>");
+        }
+        msg.append("</ul>");
+        sendInternalEmail(emailConfig.senderEmail(), emailConfig.replyableSupportEmailAddress(), subject, msg.toString(), true);
+	}
+	
+	private void sendInternalEmail(String from, String to, String subject, String message, boolean isHtml) {
+	    Set<String> receipts = new HashSet<>(Arrays.asList(to));
+        send(from, receipts, null, subject, message, isHtml);
+	}
+	
 	private void sendInternalEmail(String from, String to, String subject, String message) {
-		Set<String> receipts = new HashSet<>(Arrays.asList(to));
-		send(from, receipts, null, subject, message, false);
+	    sendInternalEmail(from, to, subject, message, false);
 	}
 	
 	/**
