@@ -6,11 +6,13 @@ import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
+import org.integratedmodelling.klab.hub.api.GroupRequestTask;
 import org.integratedmodelling.klab.hub.api.Task;
 import org.integratedmodelling.klab.hub.api.TaskBuilder;
 import org.integratedmodelling.klab.hub.api.TaskParameters;
 import org.integratedmodelling.klab.hub.api.TaskStatus;
 import org.integratedmodelling.klab.hub.api.TokenClickback;
+import org.integratedmodelling.klab.hub.emails.services.EmailManager;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,8 @@ public class TaskServiceImpl implements TaskService{
 	
 	@Autowired
 	TaskRepository taskRepository;
+	@Autowired
+	EmailManager emailManager;
 
 	@Override
 	public List<Task> createTasks(Class<? extends Task> clazz, TaskParameters parameters) {
@@ -39,6 +43,9 @@ public class TaskServiceImpl implements TaskService{
 		for(Task task: tasks) {
 			if (task.getParentStatus() != TaskStatus.pending && task.isAutoAccepted()) {
 				acceptTask(task, parameters.getRequest());
+			} else if (task instanceof GroupRequestTask) {
+			    GroupRequestTask grt = (GroupRequestTask)task;
+			    emailManager.sendNewGroupRequest(grt.getUser(), grt.getGroupsName());
 			}
 		}
 		return tasks;
