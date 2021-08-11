@@ -186,12 +186,12 @@ public class AgERADatacube extends Datacube {
 		((AgERAUrnTranslationService) urnTranslation).setDatacube(this);
 		((AgERAAvailabilityService) availability).setDatacube(this);
 
-		this.repository = new ChunkedDatacubeRepository(Time.resolution(1, Resolution.Type.DAY),
-				Time.resolution(3, Resolution.Type.MONTH), TimeInstant.create(1979, 1, 1),
-				Configuration.INSTANCE.getDataPath(ID));
-
-		this.repository.setAggregationPoints(Time.resolution(1, Resolution.Type.WEEK),
-				Time.resolution(1, Resolution.Type.MONTH), Time.resolution(1, Resolution.Type.YEAR));
+//		this.repository = new ChunkedDatacubeRepository(Time.resolution(1, Resolution.Type.DAY),
+//				Time.resolution(3, Resolution.Type.MONTH), TimeInstant.create(1979, 1, 1),
+//				Configuration.INSTANCE.getDataPath(ID));
+//
+//		this.repository.setAggregationPoints(Time.resolution(1, Resolution.Type.WEEK),
+//				Time.resolution(1, Resolution.Type.MONTH), Time.resolution(1, Resolution.Type.YEAR));
 
 		for (Variable v : Variable.values()) {
 			variables.put(v.codename, v);

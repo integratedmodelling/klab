@@ -15,6 +15,8 @@
  */
 package org.integratedmodelling.klab.api.observations.scale.time;
 
+import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
+
 /**
  * The Interface ITimeInstant.
  *
@@ -23,18 +25,20 @@ package org.integratedmodelling.klab.api.observations.scale.time;
  */
 public interface ITimeInstant extends Comparable<ITimeInstant> {
 
-    /**
-     * <p>getMillis.</p>
-     *
-     * @return a long.
-     */
-    long getMilliseconds();
+	/**
+	 * <p>
+	 * getMillis.
+	 * </p>
+	 *
+	 * @return a long.
+	 */
+	long getMilliseconds();
 
-    /**
-     * 
-     * @param end
-     * @return
-     */
+	/**
+	 * 
+	 * @param end
+	 * @return
+	 */
 	boolean isAfter(ITimeInstant end);
 
 	/**
@@ -62,6 +66,22 @@ public interface ITimeInstant extends Comparable<ITimeInstant> {
 	 * 
 	 * @return
 	 */
-    int getYear();
+	int getYear();
+
+	long getPeriods(ITimeInstant other, Resolution resolution);
+
+	ITimeInstant minus(int periods, Resolution resolution);
+
+	ITimeInstant plus(int periods, Resolution resolution);
+
+	/**
+	 * True if this time starts at a point correspondent with the beginning of the
+	 * passed resolution - e.g. if the resolution is Months, return true if the 
+	 * time is the beginning of a month.
+	 * 
+	 * @param res
+	 * @return
+	 */
+	boolean isAlignedWith(Resolution res);
 
 }

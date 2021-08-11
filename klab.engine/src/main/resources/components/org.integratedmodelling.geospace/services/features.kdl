@@ -58,7 +58,7 @@ export object concavehull
 
 }
 
-export object concavexhull 
+export object convexhull 
 	"Extract one polygonal feature from a raster map based on the convex hull of all matching points."
 	label 'Convex hull'
 {
@@ -69,7 +69,6 @@ export object concavexhull
 	    default ""
 
 	class org.integratedmodelling.klab.components.geospace.processing.ConvexHullInstantiator
-
 }
 
 export object cluster 
