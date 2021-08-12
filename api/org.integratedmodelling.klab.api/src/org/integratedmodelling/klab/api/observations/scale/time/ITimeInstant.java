@@ -84,4 +84,11 @@ public interface ITimeInstant extends Comparable<ITimeInstant> {
 	 */
 	boolean isAlignedWith(Resolution res);
 
+	int getDay();
+
+	int getMonth();
+
+	int getHour();
+	
+	int getMinute();
 }
