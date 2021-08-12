@@ -10,8 +10,10 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.Executor;
@@ -65,6 +67,8 @@ public abstract class ChunkedDatacubeRepository {
 	private List<Resolution> aggregationPoints;
 	private TimeInstant timeBase;
 	private Executor executor = null;
+
+	private Map<Integer, Set<Strategy>> beingProcessed = Collections.synchronizedMap(new HashMap<>());
 
 	/*
 	 * estimated by averaging actual downloads as long as there is at least one
@@ -121,6 +125,16 @@ public abstract class ChunkedDatacubeRepository {
 			ret.append("Estimated processing time: " + ttime + " seconds");
 
 			return ret.toString();
+		}
+
+		/**
+		 * Start any necessary processing, recording the ongoing operations so that
+		 * successive calls don't make a mess. Exits after enqueuing tasks and before
+		 * they complete. Keeps the strategy and sets the enabled field when it ends,
+		 * releasing just afterwards to be GC'd.
+		 */
+		public void enable() {
+
 		}
 
 	}
@@ -183,16 +197,22 @@ public abstract class ChunkedDatacubeRepository {
 		int secs = 0;
 		for (int chunk : getChunks(time)) {
 			int seconds = isChunkAvailable(chunk, variable);
-			// TODO divide this by number of threads in ingestor and add something
-			secs += seconds;
-			if (startCaching && seconds > 0) {
-				downloading = true;
-				startChunkDownload(chunk, variable);
+			if (seconds >= 0) {
+				// TODO divide this by number of threads in ingestor and add something
+				secs += seconds;
+				if (startCaching && seconds > 0) {
+					downloading = true;
+					startChunkDownload(chunk, variable);
+				}
+			} else {
+				secs = seconds;
+				break;
 			}
 		}
 
 		ret.setRetryTimeSeconds(secs);
-		ret.setAvailability(downloading ? Availability.DELAYED : Availability.NONE);
+		ret.setAvailability(
+				downloading ? Availability.DELAYED : (secs == 0 ? Availability.COMPLETE : Availability.NONE));
 
 		return ret;
 	}
@@ -275,20 +295,77 @@ public abstract class ChunkedDatacubeRepository {
 	private int isChunkAvailable(int chunk, String variable) {
 		File pfile = new File(
 				this.mainDirectory + File.separator + variable + "_" + chunk + File.separator + "chunk.properties");
-		return pfile.exists() ? 0 : estimatedChunkDownloadTimeSeconds;
+		return pfile.exists() ? 0 : (checkRemoteAvailability(chunk, variable) ? estimatedChunkDownloadTimeSeconds : -1);
 
 	}
 
+	/**
+	 * Check if passed chunk is available remotely for download.
+	 * 
+	 * @param chunk
+	 * @param variable
+	 * @return
+	 */
+	protected abstract boolean checkRemoteAvailability(int chunk, String variable);
+
+	/**
+	 * Download the passed chunk into the passed directory so that each tick in the
+	 * chunk corresponds to the filename returned by
+	 * {@link #getDataFilename(String, int)}. If something goes wrong, return false
+	 * after deleting any turds.
+	 * 
+	 * @param chunk
+	 * @param variable
+	 * @param destinationDirectory
+	 * @return
+	 */
 	protected abstract boolean downloadChunk(int chunk, String variable, File destinationDirectory);
 
+	/**
+	 * Called after {@link #downloadChunk(int, String, File)} has returned true. Do
+	 * anything you need to get the files ingested and validated for use.
+	 * 
+	 * @param chunk
+	 * @param variable
+	 * @param destinationDirectory
+	 * @return
+	 */
 	protected abstract boolean processChunk(int chunk, String variable, File destinationDirectory);
 
+	/**
+	 * Return the file name corresponding to the passed tick.
+	 * 
+	 * @param variable
+	 * @param tick
+	 * @return
+	 */
 	protected abstract String getDataFilename(String variable, int tick);
 
+	/**
+	 * Return the filename corresponding to the aggregation of the data in
+	 * subsequent file ticks between start and end, both inclusive. Aggregation
+	 * should be done according to data semantics as either sum or average.
+	 * 
+	 * @param variable
+	 * @param startTick
+	 * @param endTick
+	 * @return
+	 */
 	protected abstract String getAggregatedFilename(String variable, int startTick, int endTick);
 
-	protected abstract boolean createAggregatedData(String variable, int startTick, int endTick,
-			File destinationDirectory);
+	/**
+	 * Actually perform the aggregation between the ticks indicated and produce a
+	 * file (could be a placeholder if encoding happens in other ways) with the
+	 * passed path, which is a fully specified path created using the result of
+	 * {@link #getAggregatedFilename(String, int, int)}.
+	 * 
+	 * @param variable
+	 * @param startTick
+	 * @param endTick
+	 * @param destinationDirectory
+	 * @return
+	 */
+	protected abstract boolean createAggregatedData(String variable, int startTick, int endTick, File destinationFile);
 
 	/**
 	 * Return all the granules needed to cover the passed extent, with the estimated
@@ -453,6 +530,8 @@ public abstract class ChunkedDatacubeRepository {
 
 	public static void main(String[] dio) {
 
+		System.out.println();
+
 		ChunkedDatacubeRepository dr = new ChunkedDatacubeRepository(Time.resolution(1, Type.DAY),
 				Time.resolution(3, Type.MONTH), TimeInstant.create(1970, 1, 1),
 				Configuration.INSTANCE.getDataPath("testrep")) {
@@ -472,12 +551,15 @@ public abstract class ChunkedDatacubeRepository {
 			@Override
 			protected String getDataFilename(String variable, int tick) {
 				ITimeInstant start = getTickStart(tick);
-				return variable + "_" + tick;
+				return variable + "_" + String.format("%4d%02d%02d", start.getYear(), start.getMonth(), start.getDay());
 			}
 
 			@Override
 			protected String getAggregatedFilename(String variable, int startTick, int endTick) {
-				return variable + "__" + startTick + "_" + endTick + ".nc";
+				ITimeInstant start = getTickStart(startTick);
+				ITimeInstant end = getTickStart(endTick);
+				return variable + "__" + String.format("%4d%02d%02d", start.getYear(), start.getMonth(), start.getDay())
+						+ "_" + String.format("%4d%02d%02d", end.getYear(), end.getMonth(), end.getDay()) + ".nc";
 			}
 
 			@Override
@@ -487,12 +569,18 @@ public abstract class ChunkedDatacubeRepository {
 				return false;
 			}
 
+			@Override
+			protected boolean checkRemoteAvailability(int chunk, String variable) {
+				return true;
+			}
+
 		};
 
-		dr.setAggregationPoints(Time.resolution(1, Type.WEEK), Time.resolution(1, Type.MONTH));
+		dr.setAggregationPoints(Time.resolution(1, Type.WEEK), Time.resolution(1, Type.MONTH),
+				Time.resolution(1, Type.YEAR));
 
-		for (int chunk : dr.getChunks(
-				Time.create(TimeInstant.create(2010), TimeInstant.create(2012, 3, 23), Time.resolution(1, Type.YEAR)))) {
+		for (int chunk : dr.getChunks(Time.create(TimeInstant.create(2010), TimeInstant.create(2012, 3, 23),
+				Time.resolution(1, Type.YEAR)))) {
 			System.out.println("Chunk " + chunk + ": " + dr.getChunkStart(chunk) + " to " + dr.getChunkEnd(chunk));
 			for (int tick : dr.getChunkTicks(chunk)) {
 				System.out.println("  Tick " + tick + ": " + dr.getTickStart(tick) + " to " + dr.getTickEnd(tick));

@@ -237,4 +237,24 @@ public class TimeInstant implements ITimeInstant {
 		return false;
 	}
 
+	@Override
+	public int getDay() {
+		return time.getDayOfMonth();
+	}
+
+	@Override
+	public int getMonth() {
+		return time.getMonthOfYear();
+	}
+
+	@Override
+	public int getHour() {
+		return time.getHourOfDay();
+	}
+
+	@Override
+	public int getMinute() {
+		return time.getMinuteOfHour();
+	}
+
 }
