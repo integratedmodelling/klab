@@ -308,7 +308,6 @@ public abstract class ChunkedDatacubeRepository {
 		for (Pair<Integer, Integer> cp : getTicks(time)) {
 
 			ITimeInstant start = getTickStart(cp.getFirst());
-			ITimeInstant end = getTickEnd(cp.getFirst());
 
 			/*
 			 * We technically don't need the chunks if we have an aggregation, but we don't
@@ -324,62 +323,54 @@ public abstract class ChunkedDatacubeRepository {
 				continue;
 			}
 
-			if (this.aggregationPoints == null) {
-				
-				Granule granule = new Granule();
-				granule.multiplier = 1;
-				granule.dataFile = new File(getChunkDirectory(variable, cp.getSecond()) + File.separator
-						+ getDataFilename(variable, cp.getFirst()));
-				granule.aggregationTimeSeconds = 0;
-
-				ret.ticks.add(cp.getFirst());
-				ret.granules.add(granule);
-
-			} else {
-				
+			boolean aggregated = false;
+			if (this.aggregationPoints != null) {
 				for (ITime.Resolution res : this.aggregationPoints) {
 
-					if (start.plus(1, res).getMilliseconds() < time.getEnd().getMilliseconds()
-							&& start.isAlignedWith(res) && getTickEnd(cp.getFirst()).isAlignedWith(res)) {
+					if (start.plus(1, res).getMilliseconds() <= time.getEnd().getMilliseconds()
+							&& start.isAlignedWith(res)) {
 
 						/*
 						 * use this resolution and move forward to next period
 						 */
 						Granule granule = new Granule();
-						granule.multiplier = skipping = (int) start.getPeriods(start.plus(1, res), fileResolution);
+						granule.multiplier = (int) start.getPeriods(start.plus(1, res), fileResolution);
+						skipping = granule.multiplier - 1;
 						granule.dataFile = new File(aggregationDirectory + File.separator
 								+ getAggregatedFilename(variable, cp.getFirst(), cp.getFirst() + skipping));
 						granule.aggregationTimeSeconds = granule.dataFile.exists() ? 0
-								: (int) (getEstimatedAggregationTime(res.getType()) * res.getMultiplier());
+								: (int) (getEstimatedAggregationTime(res.getType()) * granule.multiplier);
 
 						ret.granules.add(granule);
 
-					} else {
-
-						Granule granule = new Granule();
-						granule.multiplier = 1;
-						granule.dataFile = new File(getChunkDirectory(variable, cp.getSecond()) + File.separator
-								+ getDataFilename(variable, cp.getFirst()));
-						granule.aggregationTimeSeconds = 0;
-
-						ret.ticks.add(cp.getFirst());
-						ret.granules.add(granule);
-
+						aggregated = true;
+						break;
 					}
 				}
-			}
 
-			/*
-			 * TODO scan the chunk set and add the total time to availability for all the
-			 * missing ones
-			 */
-			for (Integer chunk : chunks) {
-				ret.chunks.add(chunk);
-				if (!getChunkDirectory(variable, chunk).exists()) {
-					ret.timeToAvailabilitySeconds += this.estimatedChunkDownloadTimeSeconds;
+				if (!aggregated) {
+
+					Granule granule = new Granule();
+					granule.multiplier = 1;
+					granule.dataFile = new File(getChunkDirectory(variable, cp.getSecond()) + File.separator
+							+ getDataFilename(variable, cp.getFirst()));
+					granule.aggregationTimeSeconds = 0;
+
+					ret.ticks.add(cp.getFirst());
+					ret.granules.add(granule);
 				}
 			}
+		}
 
+		/*
+		 * TODO scan the chunk set and add the total time to availability for all the
+		 * missing ones
+		 */
+		for (Integer chunk : chunks) {
+			ret.chunks.add(chunk);
+			if (!getChunkDirectory(variable, chunk).exists()) {
+				ret.timeToAvailabilitySeconds += this.estimatedChunkDownloadTimeSeconds;
+			}
 		}
 
 		return ret;
@@ -406,7 +397,7 @@ public abstract class ChunkedDatacubeRepository {
 		List<Integer> ret = new ArrayList<>();
 		long startchunk = time.getStart().getPeriods(this.timeBase, chunkResolution);
 		long endchunk = time.getEnd().getPeriods(this.timeBase, chunkResolution);
-		for (long n = startchunk; n < endchunk; n++) {
+		for (long n = startchunk; n <= endchunk; n++) {
 			ret.add((int) n);
 		}
 		return ret;
@@ -424,7 +415,7 @@ public abstract class ChunkedDatacubeRepository {
 		for (int chunk : getChunks(time)) {
 			for (int tick : getChunkTicks(chunk)) {
 				if (time.getStart().getMilliseconds() <= getTickStart(tick).getMilliseconds()
-						&& time.getEnd().getMilliseconds() > getTickEnd(tick).getMilliseconds())
+						&& time.getEnd().getMilliseconds() >= getTickEnd(tick).getMilliseconds())
 					ret.add(new Pair<>(tick, chunk));
 			}
 		}
@@ -499,9 +490,9 @@ public abstract class ChunkedDatacubeRepository {
 		};
 
 		dr.setAggregationPoints(Time.resolution(1, Type.WEEK), Time.resolution(1, Type.MONTH));
-		
+
 		for (int chunk : dr.getChunks(
-				Time.create(TimeInstant.create(2010), TimeInstant.create(2012), Time.resolution(1, Type.YEAR)))) {
+				Time.create(TimeInstant.create(2010), TimeInstant.create(2012, 3, 23), Time.resolution(1, Type.YEAR)))) {
 			System.out.println("Chunk " + chunk + ": " + dr.getChunkStart(chunk) + " to " + dr.getChunkEnd(chunk));
 			for (int tick : dr.getChunkTicks(chunk)) {
 				System.out.println("  Tick " + tick + ": " + dr.getTickStart(tick) + " to " + dr.getTickEnd(tick));
@@ -509,7 +500,7 @@ public abstract class ChunkedDatacubeRepository {
 		}
 
 		Strategy strategy = dr.getStrategy("precipitation",
-				Time.create(TimeInstant.create(2010), TimeInstant.create(2012), Time.resolution(1, Type.YEAR)));
+				Time.create(TimeInstant.create(2010), TimeInstant.create(2012, 3, 23), Time.resolution(1, Type.DAY)));
 
 		System.out.println(strategy.dump());
 	}

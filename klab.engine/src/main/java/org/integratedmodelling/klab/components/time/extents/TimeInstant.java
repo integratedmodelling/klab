@@ -225,7 +225,7 @@ public class TimeInstant implements ITimeInstant {
 		case MINUTE:
 			return time.getSecondOfMinute() == 0;
 		case MONTH:
-			return time.getDayOfMonth() == 0 && time.getSecondOfDay() == 0;
+			return time.getDayOfMonth() == 1 && time.getSecondOfDay() == 0;
 		case SECOND:
 			return time.getMillis() % 1000 == 0;
 		case WEEK:
