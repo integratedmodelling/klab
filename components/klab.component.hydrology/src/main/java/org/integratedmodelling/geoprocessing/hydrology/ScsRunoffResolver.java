@@ -40,6 +40,7 @@ public class ScsRunoffResolver implements IResolver<IProcess>, IExpression {
 		IState runoffState = context.getArtifact("runoff_water_volume", IState.class);
 
 		OmsScsRunoff scsRunoff = new OmsScsRunoff();
+		scsRunoff.pm = taskMonitor;
 		scsRunoff.inRainfall = getGridCoverage(context, rainfallVolumeState);
 		scsRunoff.inNet = getGridCoverage(context, streamPresenceState);
 		scsRunoff.inCurveNumber = getGridCoverage(context, curveNumberState);
