@@ -9,7 +9,6 @@ import org.geotools.coverage.grid.GridCoverage2D;
 import org.hortonmachine.hmachine.modules.geomorphology.flow.OmsLeastCostFlowDirections;
 import org.integratedmodelling.geoprocessing.TaskMonitor;
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -34,7 +33,7 @@ public class LeastCostFlowDirectionsResolver implements IResolver<IState>, IExpr
         IState dem = context.getArtifact("elevation", IState.class);
 
         OmsLeastCostFlowDirections algorithm = new OmsLeastCostFlowDirections();
-        algorithm.inElev = GeotoolsUtils.INSTANCE.stateToCoverage(dem, context.getScale(), DataBuffer.TYPE_INT, floatNovalue,
+        algorithm.inElev = GeotoolsUtils.INSTANCE.stateToCoverage(dem, context.getScale(), DataBuffer.TYPE_FLOAT, floatNovalue,
                 false);
         algorithm.doAspect = false;
         algorithm.doSlope = false;

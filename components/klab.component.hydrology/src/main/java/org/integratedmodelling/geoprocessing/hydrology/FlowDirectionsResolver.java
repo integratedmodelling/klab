@@ -15,12 +15,11 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.geospace.Geospace;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.utils.Utils;
 
 public class FlowDirectionsResolver implements IResolver<IState>, IExpression {
 
 	boolean computeAngles = false;
-	
+
 	@Override
 	public Type getType() {
 		return Type.NUMBER;
@@ -32,7 +31,8 @@ public class FlowDirectionsResolver implements IResolver<IState>, IExpression {
 		IState dem = context.getArtifact("hydrologically_corrected_elevation", IState.class);
 
 		OmsFlowDirections algorithm = new OmsFlowDirections();
-		algorithm.inPit = GeotoolsUtils.INSTANCE.stateToCoverage(dem, context.getScale(), DataBuffer.TYPE_INT, floatNovalue, false);
+		algorithm.inPit = GeotoolsUtils.INSTANCE.stateToCoverage(dem, context.getScale(), DataBuffer.TYPE_FLOAT,
+				floatNovalue, false);
 		algorithm.pm = new TaskMonitor(context.getMonitor());
 		algorithm.doProcess = true;
 		algorithm.doReset = false;
@@ -60,9 +60,9 @@ public class FlowDirectionsResolver implements IResolver<IState>, IExpression {
 		if (Double.isNaN(code)) {
 			return code;
 		}
-		return Geospace.getHeading((int)code);
+		return Geospace.getHeading((int) code);
 	}
-	
+
 	@Override
 	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
 		FlowDirectionsResolver ret = new FlowDirectionsResolver();
