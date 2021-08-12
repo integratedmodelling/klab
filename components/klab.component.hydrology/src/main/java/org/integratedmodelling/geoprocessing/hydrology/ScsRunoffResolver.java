@@ -19,54 +19,53 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 
 public class ScsRunoffResolver implements IResolver<IProcess>, IExpression {
 
-	@Override
-	public Type getType() {
-		return Type.PROCESS;
-	}
+    @Override
+    public Type getType() {
+        return Type.PROCESS;
+    }
 
-	@Override
-	public IProcess resolve(IProcess runoffProcess, IContextualizationScope context) throws KlabException {
-		TaskMonitor taskMonitor = new TaskMonitor(context.getMonitor());
-		taskMonitor.setTaskName("SCS Runoff");
+    @Override
+    public IProcess resolve(IProcess runoffProcess, IContextualizationScope context) throws KlabException {
+        TaskMonitor taskMonitor = new TaskMonitor(context.getMonitor());
+        taskMonitor.setTaskName("SCS Runoff");
 
-		IState rainfallVolumeState = context.getArtifact("rainfall_volume", IState.class);
-		IState streamPresenceState = context.getArtifact("presence_of_stream", IState.class);
-		IState curveNumberState = context.getArtifact("curve_number", IState.class);
-		IState numberOfEventsState = context.getArtifact("number_of_events", IState.class);
-		if (numberOfEventsState == null) {
-			context.getMonitor().warn("No number of events available, default to 1.");
-		}
+        IState rainfallVolumeState = context.getArtifact("rainfall_volume", IState.class);
+        IState streamPresenceState = context.getArtifact("presence_of_stream", IState.class);
+        IState curveNumberState = context.getArtifact("curve_number", IState.class);
+        IState numberOfEventsState = context.getArtifact("number_of_events", IState.class);
+        if (numberOfEventsState == null) {
+            context.getMonitor().warn("No number of events available, default to 1.");
+        }
 
-		IState runoffState = context.getArtifact("runoff_water_volume", IState.class);
+        IState runoffState = context.getArtifact("runoff_water_volume", IState.class);
 
-		OmsScsRunoff scsRunoff = new OmsScsRunoff();
-		scsRunoff.pm = taskMonitor;
-		scsRunoff.inRainfall = getGridCoverage(context, rainfallVolumeState);
-		scsRunoff.inNet = getGridCoverage(context, streamPresenceState);
-		scsRunoff.inCurveNumber = getGridCoverage(context, curveNumberState);
-		scsRunoff.inNumberOfEvents = getGridCoverage(context, numberOfEventsState);
-		try {
-			scsRunoff.process();
-		} catch (Exception e) {
-			throw new KlabException(e);
-		}
-		if (!context.getMonitor().isInterrupted()) {
-			GeotoolsUtils.INSTANCE.coverageToState(scsRunoff.outputDischarge, runoffState, context.getScale(), null);
-		}
-		return runoffProcess;
-	}
+        OmsScsRunoff scsRunoff = new OmsScsRunoff();
+        scsRunoff.pm = taskMonitor;
+        scsRunoff.inRainfall = getGridCoverage(context, rainfallVolumeState);
+        scsRunoff.inNet = getGridCoverage(context, streamPresenceState);
+        scsRunoff.inCurveNumber = getGridCoverage(context, curveNumberState);
+        scsRunoff.inNumberOfEvents = getGridCoverage(context, numberOfEventsState);
+        try {
+            scsRunoff.process();
+        } catch (Exception e) {
+            throw new KlabException(e);
+        }
+        if (!context.getMonitor().isInterrupted()) {
+            GeotoolsUtils.INSTANCE.coverageToState(scsRunoff.outputDischarge, runoffState, context.getScale(), null);
+        }
+        return runoffProcess;
+    }
 
-	private GridCoverage2D getGridCoverage(IContextualizationScope context, IState state) {
-		if (state == null) {
-			return null;
-		}
-		return GeotoolsUtils.INSTANCE.stateToCoverage(state, context.getScale(), DataBuffer.TYPE_FLOAT, floatNovalue,
-				false);
-	}
+    private GridCoverage2D getGridCoverage(IContextualizationScope context, IState state) {
+        if (state == null) {
+            return null;
+        }
+        return GeotoolsUtils.INSTANCE.stateToCoverage(state, context.getScale(), DataBuffer.TYPE_FLOAT, floatNovalue, false);
+    }
 
-	@Override
-	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
-		return new ScsRunoffResolver();
-	}
+    @Override
+    public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
+        return new ScsRunoffResolver();
+    }
 
 }

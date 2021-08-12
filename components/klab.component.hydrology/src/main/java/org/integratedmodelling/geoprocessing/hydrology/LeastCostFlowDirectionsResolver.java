@@ -52,7 +52,7 @@ public class LeastCostFlowDirectionsResolver implements IResolver<IState>, IExpr
         }
         if (!context.getMonitor().isInterrupted()) {
             GridCoverage2D outCoverage = doTca ? algorithm.outTca : algorithm.outFlow;
-			Function<Double, Double> transformation = /* doTca ? null : */ (a) -> {
+            Function<Double, Double> transformation = /* doTca ? null : */ (a) -> {
                 if (a == (double) floatNovalue) {
                     return Double.NaN;
                 }
