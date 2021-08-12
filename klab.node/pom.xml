@@ -78,20 +78,7 @@
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-consul-discovery</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-consul-config</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-kubernetes-all</artifactId>
-			<version>1.1.10.RELEASE</version>
-		</dependency>
-
+	
 		<dependency>
 			<groupId>io.dekorate</groupId>
 			<artifactId>kubernetes-annotations</artifactId>
@@ -218,5 +205,33 @@
 			<artifactId>org.integratedmodelling.klab.api</artifactId>
 			<version>${klab.version}</version>
 		</dependency>
+ 		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+			<version>${spring-boot.version}</version>
+			<exclusions>
+		        <exclusion>
+		            <groupId>ch.qos.logback</groupId>
+		            <artifactId>logback-classic</artifactId>
+		        </exclusion>
+		    </exclusions>
+		</dependency>
+ 		<dependency>
+		    <groupId>org.springframework.cloud</groupId>
+		    <artifactId>spring-cloud-starter-bootstrap</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-consul-discovery</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-consul-config</artifactId>
+		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.springframework.cloud</groupId> -->
+<!-- 			<artifactId>spring-cloud-starter-kubernetes-all</artifactId> -->
+<!-- 			<version>1.1.10.RELEASE</version> -->
+<!-- 		</dependency> -->
 	</dependencies>
 </project>
