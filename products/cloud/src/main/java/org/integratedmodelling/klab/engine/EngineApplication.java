@@ -7,7 +7,7 @@ import java.util.List;
 import javax.annotation.PreDestroy;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-//import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -24,7 +24,7 @@ import org.springframework.web.client.RestTemplate;
  *
  */
 @EnableAutoConfiguration
-//@EnableDiscoveryClient
+@EnableDiscoveryClient
 @ComponentScan
 public class EngineApplication {
 	
