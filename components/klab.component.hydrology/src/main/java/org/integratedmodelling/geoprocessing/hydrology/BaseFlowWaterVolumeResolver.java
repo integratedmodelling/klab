@@ -38,7 +38,7 @@ public class BaseFlowWaterVolumeResolver implements IResolver<IProcess>, IExpres
         IState baseflowWaterVolumeState = context.getArtifact("base_flow_water_volume", IState.class);
 
         TaskMonitor taskMonitor = new TaskMonitor(context.getMonitor());
-        taskMonitor.setTaskName("Infiltration");
+        taskMonitor.setTaskName("Baseflow");
         OmsBaseflowWaterVolume b = new OmsBaseflowWaterVolume();
         b.pm = taskMonitor;
         b.inInfiltration = getGridCoverage(context, infiltratedWaterVolumeState);
