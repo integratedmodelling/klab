@@ -9,10 +9,6 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.measure.Dimension;
-import tech.units.indriya.unit.ProductUnit;
-import tech.units.indriya.unit.UnitDimension;
-
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -36,6 +32,9 @@ import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.scale.Scale;
 
 import com.google.common.collect.Sets;
+
+import tech.units.indriya.unit.ProductUnit;
+import tech.units.indriya.unit.UnitDimension;
 
 public enum Units implements IUnitService {
 
