@@ -86,7 +86,7 @@
 		<module>products</module>
 		<module>components</module>
 		<!-- later (requires mvn 3.0.5 which can't be installed on sua) -->
-		<!--  <module>docs</module> -->
+		<!-- <module>docs</module> -->
 		<module>authorities</module>
 		<module>klab.authentication</module>
 	</modules>
@@ -99,8 +99,7 @@
 		<project.reporting.outputEncoding>utf-8</project.reporting.outputEncoding>
 		<java.version>11</java.version>
 		<!-- Careful here: geotools must be right for hortonmachine to work; JTS 
-			should be the same one that geotools and HM needs.
-			 -->
+			should be the same one that geotools and HM needs. -->
 		<geotools.version>25.0</geotools.version>
 		<hortonmachine.version>0.10.4-SNAPSHOT</hortonmachine.version>
 		<jts.version>1.18.1</jts.version>
@@ -123,12 +122,12 @@
 		<jackson-version>2.12.4</jackson-version>
 		<!-- end versions that need to be in lock-step to avoid multiple Spring 
 			issues -->
-	
-<!--     	<scala.version>2.13.1</scala.version>-->
+
+		<!-- <scala.version>2.13.1</scala.version> -->
 		<joda-time-version>2.3</joda-time-version>
 		<javax.mail-api.version>1.5.2</javax.mail-api.version>
 		<jung.version>2.1.1</jung.version>
-		
+
 	</properties>
 
 	<build>
@@ -143,11 +142,11 @@
 						<target>${maven.compiler.target}</target>
 					</configuration>
 				</plugin>
-		        <plugin>
-		        	<groupId>com.google.cloud.tools</groupId>
-		        	<artifactId>jib-maven-plugin</artifactId>
-		        	<version>${googleJibVersion}</version>
-		        </plugin>
+				<plugin>
+					<groupId>com.google.cloud.tools</groupId>
+					<artifactId>jib-maven-plugin</artifactId>
+					<version>${googleJibVersion}</version>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
@@ -249,10 +248,20 @@
 								</goals>
 							</execution>
 						</executions>
-					</plugin> 
+					</plugin>
 				</plugins>
 			</build>
 		</profile>
 	</profiles>
-
+	
+	<repositories>
+		<repository>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<id>sonatype-nexus-snapshots</id>
+			<name>Maven Central snapshots</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</repository>
+	</repositories>
 </project>
