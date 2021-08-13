@@ -3,6 +3,8 @@ package org.integratedmodelling.weather.adapters;
 import java.util.ArrayList;
 
 import org.integratedmodelling.adapter.datacube.GenericDatacubeAdapter;
+import org.integratedmodelling.adapter.datacube.copernicus.AgERA5Repository;
+import org.integratedmodelling.adapter.datacube.copernicus.AgERA5Repository.VariableConfiguration;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -10,13 +12,11 @@ import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.rest.AttributeReference;
 import org.integratedmodelling.klab.rest.ResourceReference;
-import org.integratedmodelling.weather.adapters.agera.AgERADatacube;
-import org.integratedmodelling.weather.adapters.agera.AgERADatacube.VariableConfiguration;
 
 public class AgERAWeatherAdapter extends GenericDatacubeAdapter {
 
 	protected AgERAWeatherAdapter() {
-		super("agera5", new AgERADatacube());
+		super("agera5", new AgERA5Repository());
 	}
 	
     @Override
@@ -33,7 +33,7 @@ public class AgERAWeatherAdapter extends GenericDatacubeAdapter {
         
         int i = 0;
         ref.setOutputs(new ArrayList<>());
-        for (VariableConfiguration v : ((AgERADatacube)datacube).getVariable(kurn.getResourceId())) {
+        for (VariableConfiguration v : ((AgERA5Repository)datacube).getVariable(kurn.getResourceId())) {
             try {
                 AttributeReference attr = new AttributeReference();
                 attr.setIndex(i++);

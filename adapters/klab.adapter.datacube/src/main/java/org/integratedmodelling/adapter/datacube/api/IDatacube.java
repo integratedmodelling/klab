@@ -1,0 +1,51 @@
+package org.integratedmodelling.adapter.datacube.api;
+
+import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.rest.ResourceReference.AvailabilityReference;
+
+/**
+ * Experimental; can go in the API package if it gets generic enough.
+ * 
+ * @author Ferd
+ *
+ */
+public interface IDatacube {
+
+    interface SyncStrategy {
+
+        /**
+         * Execute the synchronization strategy, with an expected wait time of
+         * {@link #getTimeToAvailabilitySeconds()}. If the wait time is 0, no need to call
+         * execute(). The returned descriptor may contain an updated wait time or an error
+         * notification.
+         * 
+         * @return
+         */
+        AvailabilityReference execute();
+
+        /**
+         * Check before any operation and call execute() as needed. If < 0, no strategy is going to
+         * succeed.
+         * 
+         * @return
+         */
+        int getTimeToAvailabilitySeconds();
+    }
+
+    /**
+     * Return the sync strategy needed to cover the passed extents, with the estimated time
+     * considering both download, if needed, and aggregation.
+     * 
+     * @param time
+     * @return
+     */
+    SyncStrategy getStrategy(String variable, IGeometry geometry);
+
+    /**
+     * Repository should be online for anything to work.
+     * 
+     * @return
+     */
+    boolean isOnline();
+
+}

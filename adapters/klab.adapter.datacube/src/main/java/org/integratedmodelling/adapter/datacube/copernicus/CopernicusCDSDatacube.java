@@ -40,7 +40,7 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
     String apiKey;
     String user;
     Geoserver geoserver;
-
+    
     private int TIMEOUT_SECONDS = 30;
 
     /*
@@ -64,9 +64,10 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
         this.geoserver = Geoserver.create();
 
         if (!this.geoserver.isOnline()) {
-            throw new KlabConfigurationException("AgERA5 ingestor: no Geoserver is available");
+           setOnline(false, "AgERA5 ingestor: no Geoserver is available");
         }
     }
+
 
     /**
      * Put the necessary informations in the map that will be sent as json in the CDS API request
@@ -218,20 +219,9 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
     }
 
     @Override
-    protected String getDataFilename(String variable, int tick) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     protected String getAggregatedFilename(String variable, int startTick, int endTick) {
         return variable + "__" + startTick + "_" + endTick + ".nc";
     }
 
-    @Override
-    protected boolean createAggregatedData(String variable, int startTick, int endTick, File destinationDirectory) {
-        // TODO Auto-generated method stub
-        return false;
-    }
 
 }
