@@ -15,58 +15,58 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.geospace.Geospace;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.utils.Utils;
 
 public class FlowDirectionsResolver implements IResolver<IState>, IExpression {
 
-	boolean computeAngles = false;
-	
-	@Override
-	public Type getType() {
-		return Type.NUMBER;
-	}
+    boolean computeAngles = false;
 
-	@Override
-	public IState resolve(IState target, IContextualizationScope context) throws KlabException {
+    @Override
+    public Type getType() {
+        return Type.NUMBER;
+    }
 
-		IState dem = context.getArtifact("hydrologically_corrected_elevation", IState.class);
+    @Override
+    public IState resolve(IState target, IContextualizationScope context) throws KlabException {
 
-		OmsFlowDirections algorithm = new OmsFlowDirections();
-		algorithm.inPit = GeotoolsUtils.INSTANCE.stateToCoverage(dem, context.getScale(), DataBuffer.TYPE_INT, floatNovalue, false);
-		algorithm.pm = new TaskMonitor(context.getMonitor());
-		algorithm.doProcess = true;
-		algorithm.doReset = false;
-		context.getMonitor().info("computing flow directions...");
-		try {
-			algorithm.process();
-		} catch (Exception e) {
-			throw new KlabException(e);
-		}
-		if (!context.getMonitor().isInterrupted()) {
-			GeotoolsUtils.INSTANCE.coverageToState(algorithm.outFlow, target, context.getScale(), (a) -> {
-				if (a == (double) floatNovalue) {
-					return Double.NaN;
-				}
-				if (computeAngles) {
-					return toAngle(a);
-				}
-				return a;
-			});
-		}
-		return target;
-	}
+        IState dem = context.getArtifact("hydrologically_corrected_elevation", IState.class);
 
-	public double toAngle(double code) {
-		if (Double.isNaN(code)) {
-			return code;
-		}
-		return Geospace.getHeading((int)code);
-	}
-	
-	@Override
-	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
-		FlowDirectionsResolver ret = new FlowDirectionsResolver();
-		ret.computeAngles = parameters.get("angles", Boolean.FALSE);
-		return ret;
-	}
+        OmsFlowDirections algorithm = new OmsFlowDirections();
+        algorithm.inPit = GeotoolsUtils.INSTANCE.stateToCoverage(dem, context.getScale(), DataBuffer.TYPE_FLOAT, floatNovalue,
+                false);
+        algorithm.pm = new TaskMonitor(context.getMonitor());
+        algorithm.doProcess = true;
+        algorithm.doReset = false;
+        context.getMonitor().info("computing flow directions...");
+        try {
+            algorithm.process();
+        } catch (Exception e) {
+            throw new KlabException(e);
+        }
+        if (!context.getMonitor().isInterrupted()) {
+            GeotoolsUtils.INSTANCE.coverageToState(algorithm.outFlow, target, context.getScale(), (a) -> {
+                if (a == (double) floatNovalue) {
+                    return Double.NaN;
+                }
+                if (computeAngles) {
+                    return toAngle(a);
+                }
+                return a;
+            });
+        }
+        return target;
+    }
+
+    public double toAngle(double code) {
+        if (Double.isNaN(code)) {
+            return code;
+        }
+        return Geospace.getHeading((int) code);
+    }
+
+    @Override
+    public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
+        FlowDirectionsResolver ret = new FlowDirectionsResolver();
+        ret.computeAngles = parameters.get("angles", Boolean.FALSE);
+        return ret;
+    }
 }

@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.integratedmodelling.adapter.datacube.api.IDatacube;
+import org.integratedmodelling.adapter.datacube.api.IDatacube.SyncStrategy;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -20,9 +22,47 @@ import org.integratedmodelling.klab.rest.ResourceReference.AvailabilityReference
 public abstract class GenericDatacubeAdapter implements IUrnAdapter {
 
     private String name;
-    protected Datacube datacube;
+    protected ChunkedDatacubeRepository datacube;
 
-    protected GenericDatacubeAdapter(String name, Datacube datacube) {
+    /**
+     * Maintains the datacube.
+     */
+    public interface MaintenanceService {
+
+        /**
+         * One-time setup if never done, or on demand
+         */
+        void setup(IDatacube datacube);
+
+        /**
+         * Initialization at each construction of the datacube service.
+         */
+        void initialize(IDatacube datacube);
+
+        /**
+         * At regular intervals, set through properties
+         */
+        void maintain(IDatacube datacube);
+
+        /**
+         * Check for the availability of the datacube service. Quickly please.
+         * 
+         * @return
+         */
+        boolean checkService(IDatacube datacube);
+
+        /**
+         * Before each request
+         */
+        void cleanupBefore(IDatacube datacube);
+
+        /**
+         * After each request
+         */
+        void cleanupAfter(IDatacube datacube);
+    }
+
+    protected GenericDatacubeAdapter(String name, ChunkedDatacubeRepository datacube) {
         this.name = name;
         this.datacube = datacube;
     }
@@ -35,17 +75,27 @@ public abstract class GenericDatacubeAdapter implements IUrnAdapter {
     @Override
     public void encodeData(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope scope) {
 
-        AvailabilityReference availability = datacube.availability.checkAvailability(geometry,
-                datacube.urnTranslation.getVariable(urn, geometry), datacube.ingestion);
-        if (availability.getAvailability() == Availability.DELAYED) {
-            scope.getMonitor().addWait(availability.getRetryTimeSeconds());
-        } else if (availability.getAvailability() == Availability.NONE) {
+        // just in case
+        if (!datacube.isOnline()) {
+            scope.getMonitor().error(
+                    "datacube is offline" + (datacube.getStatusMessage() == null ? "" : (": " + datacube.getStatusMessage())));
+        }
+
+        SyncStrategy strategy = datacube.getStrategy(urn.getResourceId(), geometry);
+        if (strategy.getTimeToAvailabilitySeconds() < 0) {
             scope.getMonitor().error(name + " adapter cannot fulfill request for " + urn + ": resource unavailable");
-        } else {
-            if (availability.getAvailability() == Availability.PARTIAL) {
-                scope.getMonitor().warn(name + " adapter can only partially fulfill '" + urn + "' request");
+        } else if (strategy.getTimeToAvailabilitySeconds() > 0) {
+            AvailabilityReference availability = strategy.execute();
+            if (availability.getAvailability() == Availability.DELAYED) {
+                scope.getMonitor().addWait(availability.getRetryTimeSeconds());
+            } else if (availability.getAvailability() == Availability.NONE) {
+                scope.getMonitor().error(name + " adapter cannot fulfill request for " + urn + ": resource unavailable");
             }
-            datacube.encoding.encodeData(urn, builder, geometry, scope);
+        } else {
+            /*
+             * Execute hostia!
+             */
+
         }
     }
 
@@ -75,17 +125,27 @@ public abstract class GenericDatacubeAdapter implements IUrnAdapter {
     public String getName() {
         return name;
     }
-    
+
     @Override
     public IResource contextualize(IResource resource, IGeometry scale, IGeometry overallScale, IObservable semantics) {
-        AvailabilityReference availability = datacube.availability.checkAvailability(overallScale,
-                datacube.urnTranslation.getVariable(new Urn(resource.getUrn()), overallScale), datacube.ingestion);
-        if (availability.getAvailability() != Availability.COMPLETE) {
-            ResourceReference ref = ((Resource)resource).getReference();
-            ref.setAvailability(availability);
-            return new Resource(ref);
+
+        /*
+         * Logic should be: the first time that the availability for the current geometry isn't
+         * immediate, enqueue the sync strategy for the overall scale. This may return delayed a
+         * second time but guarantees that the sync is complete after the first wait, and the
+         * strategy we get at encode() should be quick.
+         */
+        SyncStrategy strategy = datacube.getStrategy(resource.getUrn(), scale);
+        AvailabilityReference availability = AvailabilityReference.immediate();
+        if (strategy.getTimeToAvailabilitySeconds() < 0) {
+            availability.setAvailability(Availability.NONE);
+        } else if (strategy.getTimeToAvailabilitySeconds() > 0) {
+            SyncStrategy overallStrategy = datacube.getStrategy(resource.getUrn(), overallScale);
+            availability = overallStrategy.execute();
         }
-        return resource;
+        ResourceReference ref = ((Resource) resource).getReference();
+        ref.setAvailability(availability);
+        return new Resource(ref);
     }
 
 }

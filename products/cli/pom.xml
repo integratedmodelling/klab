@@ -76,12 +76,12 @@
 			<version>${klab.version}</version>
 		</dependency>
 
-		<!-- TODO REMOVE! We don't want this to be available locally. 
+		<!-- TODO REMOVE! We don't want this to be available locally.  -->
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.component.weather</artifactId>
 			<version>${klab.version}</version>
-		</dependency> -->
+		</dependency>
 
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>

@@ -84,6 +84,18 @@ public class ResourceReference {
             this.message = message;
         }
 
+        public static AvailabilityReference immediate() {
+            AvailabilityReference ret = new AvailabilityReference();
+            ret.setAvailability(Availability.COMPLETE);
+            return ret;
+        }
+
+        public static AvailabilityReference none() {
+            AvailabilityReference ret = new AvailabilityReference();
+            ret.setAvailability(Availability.NONE);
+            return ret;
+        }
+
     }
 
     private String urn;
