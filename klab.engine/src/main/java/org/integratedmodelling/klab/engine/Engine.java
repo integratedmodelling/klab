@@ -121,6 +121,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 		private int errorCount = 0;
 		private AtomicBoolean isInterrupted = new AtomicBoolean(false);
 		List<Listener> listeners = new ArrayList<>();
+        private int waitTime;
 
 		protected Monitor(IIdentity engine) {
 			this.identity = engine;
@@ -286,17 +287,18 @@ public class Engine extends Server implements IEngine, UserDetails {
 			return isInterrupted.get();
 		}
 
-		@Override
-		public void addWait(int seconds) {
-			// TODO Auto-generated method stub
-			
-		}
+        @Override
+        public void addWait(int seconds) {
+            // TODO improve with specific messages
+            this.waitTime = seconds;
+            warn("Please try this operation again in " + seconds + " seconds");
+        }
 
-		@Override
-		public int getWaitTime() {
-			// TODO Auto-generated method stub
-			return 0;
-		}
+        @Override
+        public int getWaitTime() {
+            // TODO Auto-generated method stub
+            return this.waitTime;
+        }
 	}
 
 	public Engine(ICertificate certificate) {

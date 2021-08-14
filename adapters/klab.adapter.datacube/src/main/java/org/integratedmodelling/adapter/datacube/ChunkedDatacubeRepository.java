@@ -18,6 +18,10 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
 import org.integratedmodelling.adapter.datacube.api.IDatacube;
@@ -63,7 +67,8 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 
     public static final String CHUNK_DOWNLOAD_TIME_MS = "time.download.ms";
     public static final String CHUNK_PROCESSING_TIME_MS = "time.processing.ms";
-
+    public static final String DATACUBE_DOWNLOAD_THREADS_PROPERTY = "datacube.download.threads";
+    
     private Resolution fileResolution;
     private Resolution chunkResolution;
     private File mainDirectory;
@@ -240,6 +245,9 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
         this.aggregationDirectory = new File(this.mainDirectory + File.separator + "aggregated");
         this.aggregationDirectory.mkdirs();
         recomputeProcessingTime();
+
+        int maxConcurrentThreads = Integer.parseInt(Configuration.INSTANCE.getProperty(DATACUBE_DOWNLOAD_THREADS_PROPERTY, "1"));
+        this.executor = Executors.newFixedThreadPool(maxConcurrentThreads);
     }
 
     /**
@@ -497,7 +505,7 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
          */
         for (Integer chunk : chunks) {
             ret.chunks.add(chunk);
-            if (!getChunkDirectory(variable, chunk).exists()) {
+            if (!new File(getChunkDirectory(variable, chunk) + File.separator + "chunk.properties").exists()) {
                 ret.timeToAvailabilitySeconds += this.estimatedChunkDownloadTimeSeconds;
             }
         }

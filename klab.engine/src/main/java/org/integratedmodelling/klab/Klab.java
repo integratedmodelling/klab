@@ -321,6 +321,7 @@ public enum Klab implements IRuntimeService {
 	class RootMonitor implements IMonitor {
 
 		int errors = 0;
+        private int waitTime;
 
 		@Override
 		public void info(Object... info) {
@@ -424,14 +425,15 @@ public enum Klab implements IRuntimeService {
 
 		@Override
 		public void addWait(int seconds) {
-			// TODO Auto-generated method stub
-			
+		    // TODO improve with specific messages
+		    this.waitTime = seconds;
+		    warn("Please try this operation again in " + seconds + " seconds");
 		}
 
 		@Override
 		public int getWaitTime() {
 			// TODO Auto-generated method stub
-			return 0;
+			return this.waitTime;
 		}
 	}
 

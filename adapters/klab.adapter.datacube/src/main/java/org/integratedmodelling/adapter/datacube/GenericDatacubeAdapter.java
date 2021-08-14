@@ -135,12 +135,13 @@ public abstract class GenericDatacubeAdapter implements IUrnAdapter {
          * second time but guarantees that the sync is complete after the first wait, and the
          * strategy we get at encode() should be quick.
          */
-        SyncStrategy strategy = datacube.getStrategy(resource.getUrn(), scale);
+        Urn urn = new Urn(resource.getUrn());
+        SyncStrategy strategy = datacube.getStrategy(urn.getResourceId(), scale);
         AvailabilityReference availability = AvailabilityReference.immediate();
         if (strategy.getTimeToAvailabilitySeconds() < 0) {
             availability.setAvailability(Availability.NONE);
         } else if (strategy.getTimeToAvailabilitySeconds() > 0) {
-            SyncStrategy overallStrategy = datacube.getStrategy(resource.getUrn(), overallScale);
+            SyncStrategy overallStrategy = datacube.getStrategy(urn.getResourceId(), overallScale);
             availability = overallStrategy.execute();
         }
         ResourceReference ref = ((Resource) resource).getReference();

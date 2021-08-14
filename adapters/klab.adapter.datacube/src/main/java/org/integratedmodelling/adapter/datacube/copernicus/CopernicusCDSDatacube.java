@@ -16,7 +16,6 @@ import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution.Type;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.components.time.extents.Time;
-import org.integratedmodelling.klab.exceptions.KlabConfigurationException;
 import org.integratedmodelling.klab.ogc.integration.Geoserver;
 import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
@@ -40,7 +39,9 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
     String apiKey;
     String user;
     Geoserver geoserver;
-    
+
+    public static final String CDS_USER_NUMBER_PROPERTY = "copernicus.cds.user";
+    public static final String CDS_API_KEY_PROPERTY = "copernicus.cds.apikey";
     private int TIMEOUT_SECONDS = 30;
 
     /*
@@ -55,19 +56,27 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
             "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"};
 
     public CopernicusCDSDatacube(String dataset, ITimeInstant dataStart) {
+
         super(Time.resolution(1, Type.DAY), Time.resolution(3, Type.MONTH), dataStart,
                 Configuration.INSTANCE.getDataPath("copernicus/" + dataset));
         this.dataset = dataset;
-        this.user = Configuration.INSTANCE.getProperties().getProperty("copernicus.cds.user");
-        this.apiKey = Configuration.INSTANCE.getProperties().getProperty("copernicus.cds.apikey");
+        this.user = Configuration.INSTANCE.getProperties().getProperty(CDS_USER_NUMBER_PROPERTY);
+        this.apiKey = Configuration.INSTANCE.getProperties().getProperty(CDS_API_KEY_PROPERTY);
 
-        this.geoserver = Geoserver.create();
+        if (this.apiKey == null || this.user == null) {
+            setOnline(false, "Copernicus CDS datacube: no CDS credentials provided in configuration");
+        } else {
 
-        if (!this.geoserver.isOnline()) {
-           setOnline(false, "AgERA5 ingestor: no Geoserver is available");
+            this.geoserver = Geoserver.create();
+            if (!this.geoserver.isOnline()) {
+                setOnline(false, "Copernicus CDS datacube: no Geoserver is available");
+            } else {
+                // TODO should also check the Copernicus service but that may be unnecessary if we
+                // have the data.
+                setOnline(true, "Geoserver is connected and responding");
+            }
         }
     }
-
 
     /**
      * Put the necessary informations in the map that will be sent as json in the CDS API request
@@ -90,13 +99,31 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
         boolean ret = false;
         ITimeInstant date = getChunkStart(chunk);
 
-        // body.put("variable", cdsname);
-        // if (var.timepoint != null) {
-        //
-        // }
-        // if (var.statistic != null) {
-        // body.put("statistic", var.timepoint.cdsname);
-        // }
+        /*
+         * check if it was downloaded and not processed, or added by hand. If we have the expected
+         * number of files, all with the expected tick number, we have them and we can return true.
+         */
+        boolean partial = false;
+        boolean present = true;
+        for (int tick : getChunkTicks(chunk)) {
+            File tickFile = new File(
+                    destinationDirectory + File.separator + getDataFilename(variable, tick, destinationDirectory));
+            if (tickFile.exists()) {
+                partial = true;
+            } else {
+                present = false;
+            }
+        }
+
+        if (present) {
+            return true;
+        }
+        
+        if (partial) {
+            FileUtils.deleteQuietly(destinationDirectory);
+            destinationDirectory.mkdirs();
+        }
+        
         body.put("year", "" + date.getYear());
         body.put("month", this.monts[(date.getMonth() - 1) / 3]);
         body.put("day", this.days);
@@ -110,6 +137,8 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
 
         if (response.isSuccess()) {
 
+            System.out.println(response.getBody().getObject());
+
             if (response.getBody().getObject().has("state")) {
 
                 int time = 0;
@@ -118,17 +147,28 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
 
                 while(time < TIMEOUT_SECONDS && !"completed".equals(response.getBody().getObject().get("state"))) {
 
-                    String requestId = response.getBody().getObject().getString("request_id");
+                    String requestId = response.getBody().getObject().has("request_id")
+                            ? response.getBody().getObject().getString("request_id")
+                            : null;
+
+                    if (requestId == null || response.getBody().getObject().has("error")) {
+                        break;
+                    }
+
                     try {
                         Thread.sleep(tryafter * 1000);
                     } catch (InterruptedException e) {
                         break;
                     }
+
                     time += tryafter;
+
                     /*
                      * inquire about task
                      */
-                    response = Unirest.post(getEndpointUrl("tasks/" + requestId)).basicAuth(user, apiKey).asJson();
+                    response = Unirest.get(getEndpointUrl("tasks/" + requestId)).basicAuth(user, apiKey).asJson();
+
+                    System.out.println(response.getBody().getObject());
 
                     if (response.getBody().getObject().has("error")) {
                         break;
@@ -136,7 +176,7 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
 
                     // heed their fucking advice
                     if (response.getHeaders().containsKey("Retry-After")) {
-                        tryafter = Integer.parseInt(response.getHeaders().get("Retry-After").get(0));
+                        tryafter = (int) Math.ceil(Double.parseDouble(response.getHeaders().get("Retry-After").get(0)));
                     }
                 }
 
@@ -223,5 +263,8 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
         return variable + "__" + startTick + "_" + endTick + ".nc";
     }
 
+    public String getDataset() {
+        return dataset;
+    }
 
 }

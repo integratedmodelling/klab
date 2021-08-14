@@ -3,8 +3,6 @@ package org.integratedmodelling.weather.adapters;
 import java.util.ArrayList;
 
 import org.integratedmodelling.adapter.datacube.GenericDatacubeAdapter;
-import org.integratedmodelling.adapter.datacube.copernicus.AgERA5Repository;
-import org.integratedmodelling.adapter.datacube.copernicus.AgERA5Repository.VariableConfiguration;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -12,6 +10,8 @@ import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.rest.AttributeReference;
 import org.integratedmodelling.klab.rest.ResourceReference;
+import org.integratedmodelling.weather.adapters.agera.AgERA5Repository;
+import org.integratedmodelling.weather.adapters.agera.AgERA5Repository.VariableConfiguration;
 
 public class AgERAWeatherAdapter extends GenericDatacubeAdapter {
 

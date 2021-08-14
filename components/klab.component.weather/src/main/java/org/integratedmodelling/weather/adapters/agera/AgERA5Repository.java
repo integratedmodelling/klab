@@ -1,6 +1,7 @@
-package org.integratedmodelling.adapter.datacube.copernicus;
+package org.integratedmodelling.weather.adapters.agera;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
@@ -8,21 +9,36 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.integratedmodelling.adapter.datacube.copernicus.CopernicusCDSDatacube;
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
+import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.utils.MiscUtilities;
 
+/**
+ * AgERA4 Meteo data. The humidity data are 3-hourly and can only be downloaded daily in this
+ * implementation. A time among the available will be forced and can be selected through
+ * configuration. If 3-hourly data are needed, a dedicated adapter should be derived from this one.
+ * 
+ * @author Ferd
+ *
+ */
 public class AgERA5Repository extends CopernicusCDSDatacube {
 
     private Map<String, Variable> variables = new HashMap<>();
+    private Map<String, String> fileTemplates = new HashMap<>();
 
     public enum Statistic {
 
@@ -154,6 +170,12 @@ public class AgERA5Repository extends CopernicusCDSDatacube {
             String[] fields = string.split("\\.");
             this.id = string;
             this.variable = variables.get(fields[0]);
+
+            /*
+             * TODO! fill in statistics and defaults, including the forced time for humidity data if
+             * requested.
+             */
+
         }
 
         private String id;
@@ -201,41 +223,75 @@ public class AgERA5Repository extends CopernicusCDSDatacube {
 
         VariableConfiguration var = new VariableConfiguration(variable);
         if (!var.isOK()) {
-            throw new KlabValidationException("CDS repository for " + this.dataset + " does not recognize variable " + variable);
+            throw new KlabValidationException(
+                    "CDS repository for " + this.getDataset() + " does not recognize variable " + variable);
         }
         payload.put("variable", var.variable.cdsname);
         if (var.statistic != null) {
             payload.put("statistic", var.statistic.cdsname);
         }
         if (var.timepoint != null) {
-            // TODO
+            payload.put("time", var.timepoint.cdsname);
         }
     }
 
     @Override
     protected boolean checkRemoteAvailability(int chunk, String variable) {
-        // TODO Auto-generated method stub
-        return true;
+        ITimeInstant endChunk = getChunkEnd(chunk);
+        return endChunk.isBefore(TimeInstant.create().minus(1, Time.resolution(1, Resolution.Type.WEEK)));
     }
 
     @Override
     protected String getDataFilename(String variable, int tick, File containingDirectory) {
+
         VariableConfiguration var = new VariableConfiguration(variable);
         if (!var.isOK()) {
-            throw new KlabValidationException("CDS repository for " + this.dataset + " does not recognize variable " + variable);
+            throw new KlabValidationException(
+                    "CDS repository for " + this.getDataset() + " does not recognize variable " + variable);
         }
-        return null;
+
+        ITimeInstant start = getTickStart(tick);
+        String template = fileTemplates.get(var.variable.codename);
+        if (template == null) {
+
+            Pattern pattern = Pattern.compile(".*(_[0-9]{8}_).*");
+            for (File f : containingDirectory.listFiles(new FileFilter(){
+
+                @Override
+                public boolean accept(File pathname) {
+                    return pathname.toString().endsWith(".nc");
+                }
+            })) {
+                /*
+                 * use as template
+                 */
+                String filename = MiscUtilities.getFileBaseName(f);
+                Matcher matcher = pattern.matcher(filename);
+                if (!matcher.matches()) {
+                    continue;
+                }
+                template = filename.replace(matcher.group(1), "XXXXXXXX");
+                fileTemplates.put(var.variable.codename, template);
+                break;
+            }
+        }
+
+        return template == null
+                ? "no_idea.boh"
+                : (template.replace("XXXXXXXX",
+                        "_" + String.format("%4d%02d%02d", start.getYear(), start.getMonth(), start.getDay()) + "_") + ".nc");
     }
 
     @Override
     protected boolean createAggregatedData(String variable, int startTick, int endTick, File destinationFile) {
         VariableConfiguration var = new VariableConfiguration(variable);
         if (!var.isOK()) {
-            throw new KlabValidationException("CDS repository for " + this.dataset + " does not recognize variable " + variable);
+            throw new KlabValidationException(
+                    "CDS repository for " + this.getDataset() + " does not recognize variable " + variable);
         }
         return false;
     }
-    
+
     @Override
     protected Type getResourceType(Urn urn) {
         return Type.PROCESS;
@@ -243,13 +299,13 @@ public class AgERA5Repository extends CopernicusCDSDatacube {
 
     @Override
     protected IGeometry getResourceGeometry(Urn urn) {
-        // TODO Auto-generated method stub
+        // TODO add 10km grid for globe
         return Geometry.create("\u03c41\u03c32");
     }
 
     @Override
     protected String getDescription() {
-        // TODO Auto-generated method stub
+        // TODO Auto-generated method stub.
         return "Zio peperone";
     }
 
