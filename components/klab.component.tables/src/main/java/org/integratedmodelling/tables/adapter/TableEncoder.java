@@ -328,7 +328,7 @@ public class TableEncoder implements IResourceEncoder {
                     }
                 }
 
-                builder.add(value, locator);
+                builder.set(value, locator);
             }
 
         }

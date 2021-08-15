@@ -1,6 +1,8 @@
 package org.integratedmodelling.adapter.datacube.api;
 
 import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.adapters.IKlabData;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.rest.ResourceReference.AvailabilityReference;
 
 /**
@@ -11,7 +13,18 @@ import org.integratedmodelling.klab.rest.ResourceReference.AvailabilityReference
  */
 public interface IDatacube {
 
-    interface SyncStrategy {
+    interface ObservationStrategy {
+
+        /**
+         * Execute the strategy, setting the requested data into the builder. Called only when
+         * availability for this strategy returned immediate.
+         * 
+         * @param geometry
+         * @param builder
+         * @param scope
+         * @return true if successful
+         */
+        boolean execute(IGeometry geometry, IKlabData.Builder builder, IContextualizationScope scope);
 
         /**
          * Execute the synchronization strategy, with an expected wait time of
@@ -21,7 +34,7 @@ public interface IDatacube {
          * 
          * @return
          */
-        AvailabilityReference execute();
+        AvailabilityReference buildCache();
 
         /**
          * Check before any operation and call execute() as needed. If < 0, no strategy is going to
@@ -39,7 +52,7 @@ public interface IDatacube {
      * @param time
      * @return
      */
-    SyncStrategy getStrategy(String variable, IGeometry geometry);
+    ObservationStrategy getStrategy(String variable, IGeometry geometry);
 
     /**
      * Repository should be online for anything to work.

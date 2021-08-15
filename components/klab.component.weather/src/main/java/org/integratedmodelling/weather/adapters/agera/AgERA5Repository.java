@@ -13,8 +13,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.integratedmodelling.adapter.datacube.copernicus.CopernicusCDSDatacube;
-import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.cdm.utils.NetCDFUtils;
 import org.integratedmodelling.klab.Urn;
+import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
@@ -242,7 +243,7 @@ public class AgERA5Repository extends CopernicusCDSDatacube {
     }
 
     @Override
-    protected String getDataFilename(String variable, int tick, File containingDirectory) {
+    protected String getOriginalDataFilename(String variable, int tick, File containingDirectory) {
 
         VariableConfiguration var = new VariableConfiguration(variable);
         if (!var.isOK()) {
@@ -284,12 +285,49 @@ public class AgERA5Repository extends CopernicusCDSDatacube {
 
     @Override
     protected boolean createAggregatedData(String variable, int startTick, int endTick, File destinationFile) {
+
         VariableConfiguration var = new VariableConfiguration(variable);
         if (!var.isOK()) {
             throw new KlabValidationException(
                     "CDS repository for " + this.getDataset() + " does not recognize variable " + variable);
         }
+
+        List<File> toAggregate = new ArrayList<>();
+        for (int tick = startTick; tick <= endTick; tick++) {
+            toAggregate.add(getDataFile(variable, tick));
+        }
+
+        /*
+         * Create the aggregation and return the variable
+         */
+        String varName = NetCDFUtils.aggregateFiles(toAggregate, destinationFile, getAggregation(var.variable));
+
+        if (varName != null) {
+            /*
+             * ingest in GS
+             */
+            return getGeoserver().createCoverageLayer(this.getDataset(),
+                    getAggregatedLayer(var.variable.codename, startTick, endTick), destinationFile, varName);
+        }
+
         return false;
+    }
+
+    @Override
+    protected String getAggregatedLayer(String variable, int startTick, int endTick) {
+        ITimeInstant start = getTickStart(startTick);
+        ITimeInstant end = getTickEnd(endTick);
+        return variable + "__" + String.format("%4d%02d%02d", start.getYear(), start.getMonth(), start.getDay()) + "_"
+                + String.format("%4d%02d%02d", end.getYear(), end.getMonth(), end.getDay());
+    }
+
+    @Override
+    protected String getAggregatedFilename(String variable, int startTick, int endTick) {
+        return getAggregatedLayer(variable, startTick, endTick) + ".nc";
+    }
+
+    private Aggregation getAggregation(Variable variable) {
+        return null;
     }
 
     @Override

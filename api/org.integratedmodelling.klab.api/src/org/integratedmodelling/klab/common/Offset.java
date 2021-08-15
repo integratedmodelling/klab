@@ -352,4 +352,13 @@ public class Offset implements ILocator {
 		pos[spaceDimension] = offset;
 	}
 
+    public ILocator at(long...offsets) {
+        for (int i = 0; i < offsets.length; i ++) {
+            this.pos[i] = offsets[i];
+        }
+        this.linear = this.pos.length == 1 ? this.pos[0] : Geometry.computeOffset(this.pos, geometry);
+        
+        return this;
+    }
+
 }

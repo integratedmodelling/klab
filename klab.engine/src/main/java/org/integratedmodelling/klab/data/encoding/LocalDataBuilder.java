@@ -93,7 +93,7 @@ public class LocalDataBuilder implements IKlabData.Builder {
     }
 
     @Override
-    public void add(Object value, ILocator locator) {
+    public void set(Object value, ILocator locator) {
         if (state != null) {
             state.set(locator, value);
         } else {

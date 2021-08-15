@@ -107,7 +107,7 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
         boolean present = true;
         for (int tick : getChunkTicks(chunk)) {
             File tickFile = new File(
-                    destinationDirectory + File.separator + getDataFilename(variable, tick, destinationDirectory));
+                    destinationDirectory + File.separator + getOriginalDataFilename(variable, tick, destinationDirectory));
             if (tickFile.exists()) {
                 partial = true;
             } else {
@@ -259,10 +259,14 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
     }
 
     @Override
-    protected String getAggregatedFilename(String variable, int startTick, int endTick) {
-        return variable + "__" + startTick + "_" + endTick + ".nc";
+    protected String getDataLayer(String variable, int tick) {
+        return null;
     }
 
+    protected Geoserver getGeoserver() {
+        return geoserver;
+    }
+    
     public String getDataset() {
         return dataset;
     }

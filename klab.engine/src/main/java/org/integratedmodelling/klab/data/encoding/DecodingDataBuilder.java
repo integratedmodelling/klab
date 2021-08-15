@@ -77,7 +77,7 @@ public class DecodingDataBuilder implements IKlabData.Builder {
 	}
 
 	@Override
-	public void add(Object value, ILocator offset) {
+	public void set(Object value, ILocator offset) {
 		throw new IllegalStateException("modifying methods should not be called on a decoding builder");
 	}
 

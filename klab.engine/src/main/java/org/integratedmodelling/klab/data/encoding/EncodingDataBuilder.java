@@ -216,7 +216,7 @@ public class EncodingDataBuilder implements IKlabData.Builder {
 	}
 
 	@Override
-	public void add(Object value, ILocator offset) {
+	public void set(Object value, ILocator offset) {
 		if (this.stateBuilder != null) {
 			long index = -1;
 			// TODO there should be a simpler way to turn a locator into an index, given

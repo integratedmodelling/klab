@@ -19,9 +19,6 @@ import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
 import org.integratedmodelling.adapter.datacube.api.IDatacube;
@@ -30,12 +27,14 @@ import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource.Availability;
+import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution.Type;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.rest.ResourceReference.AvailabilityReference;
@@ -119,7 +118,7 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
      * @author Ferd
      *
      */
-    public class Strategy implements SyncStrategy {
+    public class Strategy implements ObservationStrategy {
 
         public List<Granule> granules = new ArrayList<>();
         public List<Integer> chunks = new ArrayList<>();
@@ -162,7 +161,7 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
          * they complete, reporting an estimated time to completion for retrying.
          */
         @Override
-        public AvailabilityReference execute() {
+        public AvailabilityReference buildCache() {
 
             AvailabilityReference ret = new AvailabilityReference();
             ret.setRetryTimeSeconds(this.timeToAvailabilitySeconds);
@@ -221,6 +220,12 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
             }
 
             return ret;
+        }
+
+        @Override
+        public boolean execute(IGeometry geometry, Builder builder, IContextualizationScope scope) {
+            // TODO Auto-generated method stub
+            return false;
         }
 
     }
@@ -402,7 +407,7 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
      * @param tick
      * @return
      */
-    protected abstract String getDataFilename(String variable, int tick, File containingDirectory);
+    protected abstract String getOriginalDataFilename(String variable, int tick, File containingDirectory);
 
     /**
      * Return the filename corresponding to the aggregation of the data in subsequent file ticks
@@ -491,7 +496,7 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
                     Granule granule = new Granule();
                     granule.multiplier = 1;
                     File directory = getChunkDirectory(variable, cp.getSecond());
-                    granule.dataFile = new File(directory + File.separator + getDataFilename(variable, cp.getFirst(), directory));
+                    granule.dataFile = new File(directory + File.separator + getOriginalDataFilename(variable, cp.getFirst(), directory));
                     granule.aggregationTimeSeconds = 0;
 
                     ret.ticks.add(cp.getFirst());
@@ -517,6 +522,11 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
         return new File(mainDirectory + File.separator + variable + "_" + chunk);
     }
 
+    private int getChunk(int tick) {
+        ITimeInstant tickTime = getTickStart(tick);
+        return (int)tickTime.getPeriods(this.timeBase, chunkResolution);
+    }
+    
     protected int getEstimatedAggregationTime(Type type) {
         // TODO keep statistics
         return 1;
@@ -574,6 +584,11 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
         return timeBase.plus(tick + 1, fileResolution);
     }
 
+    protected File getDataFile(String variable, int tick) {
+        File dir = getChunkDirectory(variable, getChunk(tick));
+        return new File(dir + File.separator + getOriginalDataFilename(variable, tick, dir));
+    }
+    
     public List<Integer> getChunkTicks(int chunk) {
         List<Integer> ret = new ArrayList<>();
         ITimeInstant start = getChunkStart(chunk);
@@ -607,7 +622,7 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
             }
 
             @Override
-            protected String getDataFilename(String variable, int tick, File containingDirectory) {
+            protected String getOriginalDataFilename(String variable, int tick, File containingDirectory) {
                 ITimeInstant start = getTickStart(tick);
                 return variable + "_" + String.format("%4d%02d%02d", start.getYear(), start.getMonth(), start.getDay());
             }
@@ -649,6 +664,18 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
                 return null;
             }
 
+            @Override
+            protected String getAggregatedLayer(String variable, int startTick, int endTick) {
+                // TODO Auto-generated method stub
+                return null;
+            }
+
+            @Override
+            protected String getDataLayer(String variable, int tick) {
+                // TODO Auto-generated method stub
+                return null;
+            }
+
         };
 
         dr.setAggregationPoints(Time.resolution(1, Type.WEEK), Time.resolution(1, Type.MONTH), Time.resolution(1, Type.YEAR));
@@ -675,10 +702,14 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
         return statusMessage;
     }
 
-    protected abstract org.integratedmodelling.klab.api.provenance.IArtifact.Type getResourceType(Urn urn);
+    protected abstract IArtifact.Type getResourceType(Urn urn);
 
     protected abstract IGeometry getResourceGeometry(Urn urn);
 
     protected abstract String getDescription();
+
+    protected abstract String getAggregatedLayer(String variable, int startTick, int endTick);
+
+    protected abstract String getDataLayer(String variable, int tick);
 
 }

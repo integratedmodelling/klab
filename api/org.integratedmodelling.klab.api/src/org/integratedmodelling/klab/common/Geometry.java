@@ -309,7 +309,7 @@ public class Geometry implements IGeometry {
 
         String spec = scaleRef.getSpaceUnit() == null ? "S1" : "S2";
         boolean hasTime = false;
-        
+
         Geometry ret = Geometry.create(spec).withProjection("EPSG:4326").withBoundingBox(scaleRef.getEast(), scaleRef.getWest(),
                 scaleRef.getSouth(), scaleRef.getNorth());
 
@@ -335,11 +335,11 @@ public class Geometry implements IGeometry {
         } else if (hasTime) {
             ret = ret.withTimeType("LOGICAL");
         }
-        
+
         for (String key : scaleRef.getMetadata().keySet()) {
             ret = ret.withSpatialParameter(key, scaleRef.getMetadata().get(key));
         }
-        
+
         return ret;
     }
 
@@ -394,7 +394,7 @@ public class Geometry implements IGeometry {
         for (String key : scaleRef.getMetadata().keySet()) {
             ret = ret.withSpatialParameter(key, scaleRef.getMetadata().get(key));
         }
-        
+
         return ret;
     }
 
@@ -715,6 +715,8 @@ public class Geometry implements IGeometry {
     private boolean scalar;
     private Double coverage = null;
 
+    private MultidimensionalCursor cursor;
+
     @Override
     public double getCoverage() {
         if (this.coverage == null) {
@@ -810,7 +812,7 @@ public class Geometry implements IGeometry {
         }
         return this;
     }
-    
+
     /**
      * Return self if we have space, otherwise create a spatial dimension according to parameters
      * and return the merged geometry.
@@ -1216,12 +1218,19 @@ public class Geometry implements IGeometry {
         return this;
     }
 
+    private MultidimensionalCursor getCursor() {
+        if (this.cursor == null) {
+            this.cursor = new MultidimensionalCursor(this);
+        }
+        return this.cursor;
+    }
+
     public static long computeOffset(long[] pos, IGeometry geometry) {
-        return new MultidimensionalCursor(geometry).getElementOffset(pos);
+        return ((Geometry) geometry).getCursor().getElementOffset(pos);
     }
 
     public static long[] computeOffsets(long pos, IGeometry geometry) {
-        return new MultidimensionalCursor(geometry).getElementIndexes(pos);
+        return ((Geometry) geometry).getCursor().getElementIndexes(pos);
     }
 
     @Override

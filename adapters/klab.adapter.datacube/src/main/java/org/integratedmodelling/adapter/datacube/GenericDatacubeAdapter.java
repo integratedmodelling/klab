@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.integratedmodelling.adapter.datacube.api.IDatacube;
-import org.integratedmodelling.adapter.datacube.api.IDatacube.SyncStrategy;
+import org.integratedmodelling.adapter.datacube.api.IDatacube.ObservationStrategy;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -81,11 +81,11 @@ public abstract class GenericDatacubeAdapter implements IUrnAdapter {
                     "datacube is offline" + (datacube.getStatusMessage() == null ? "" : (": " + datacube.getStatusMessage())));
         }
 
-        SyncStrategy strategy = datacube.getStrategy(urn.getResourceId(), geometry);
+        ObservationStrategy strategy = datacube.getStrategy(urn.getResourceId(), geometry);
         if (strategy.getTimeToAvailabilitySeconds() < 0) {
             scope.getMonitor().error(name + " adapter cannot fulfill request for " + urn + ": resource unavailable");
         } else if (strategy.getTimeToAvailabilitySeconds() > 0) {
-            AvailabilityReference availability = strategy.execute();
+            AvailabilityReference availability = strategy.buildCache();
             if (availability.getAvailability() == Availability.DELAYED) {
                 scope.getMonitor().addWait(availability.getRetryTimeSeconds());
             } else if (availability.getAvailability() == Availability.NONE) {
@@ -95,7 +95,7 @@ public abstract class GenericDatacubeAdapter implements IUrnAdapter {
             /*
              * Execute hostia!
              */
-
+            System.out.println("Son qua");
         }
     }
 
@@ -136,13 +136,13 @@ public abstract class GenericDatacubeAdapter implements IUrnAdapter {
          * strategy we get at encode() should be quick.
          */
         Urn urn = new Urn(resource.getUrn());
-        SyncStrategy strategy = datacube.getStrategy(urn.getResourceId(), scale);
+        ObservationStrategy strategy = datacube.getStrategy(urn.getResourceId(), scale);
         AvailabilityReference availability = AvailabilityReference.immediate();
         if (strategy.getTimeToAvailabilitySeconds() < 0) {
             availability.setAvailability(Availability.NONE);
         } else if (strategy.getTimeToAvailabilitySeconds() > 0) {
-            SyncStrategy overallStrategy = datacube.getStrategy(urn.getResourceId(), overallScale);
-            availability = overallStrategy.execute();
+            ObservationStrategy overallStrategy = datacube.getStrategy(urn.getResourceId(), overallScale);
+            availability = overallStrategy.buildCache();
         }
         ResourceReference ref = ((Resource) resource).getReference();
         ref.setAvailability(availability);

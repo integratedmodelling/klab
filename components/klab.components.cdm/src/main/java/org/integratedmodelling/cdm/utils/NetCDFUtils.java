@@ -14,9 +14,12 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Formatter;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.logging.Level;
@@ -31,24 +34,28 @@ import javax.xml.transform.stream.StreamSource;
 import org.geotools.data.DataUtilities;
 import org.geotools.referencing.operation.projection.MapProjection;
 import org.geotools.util.NumberRange;
+import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.Observations;
+import org.integratedmodelling.klab.api.data.Aggregation;
+import org.integratedmodelling.klab.data.storage.BasicFileMappedStorage;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
+import org.integratedmodelling.klab.utils.FileUtils;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /*
- *    GeoTools - The Open Source Java GIS Toolkit
- *    http://geotools.org
+ * GeoTools - The Open Source Java GIS Toolkit http://geotools.org
  *
- *    (C) 2007-2018, Open Source Geospatial Foundation (OSGeo)
+ * (C) 2007-2018, Open Source Geospatial Foundation (OSGeo)
  *
- *    This library is free software; you can redistribute it and/or
- *    modify it under the terms of the GNU Lesser General Public
- *    License as published by the Free Software Foundation;
- *    version 2.1 of the License.
+ * This library is free software; you can redistribute it and/or modify it under the terms of the
+ * GNU Lesser General Public License as published by the Free Software Foundation; version 2.1 of
+ * the License.
  *
- *    This library is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *    Lesser General Public License for more details.
+ * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
  */
 
 import it.geosolutions.imageio.stream.AccessibleStream;
@@ -66,12 +73,16 @@ import ucar.ma2.DataType;
 import ucar.nc2.Attribute;
 import ucar.nc2.Dimension;
 import ucar.nc2.Group;
+import ucar.nc2.NetcdfFile;
+import ucar.nc2.NetcdfFileWriter;
+import ucar.nc2.NetcdfFileWriter.Version;
 import ucar.nc2.Variable;
 import ucar.nc2.VariableIF;
 import ucar.nc2.constants.AxisType;
 import ucar.nc2.dataset.CoordinateAxis1D;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.dataset.VariableDS;
+import ucar.nc2.dt.grid.GridDataset;
 import ucar.nc2.ft.fmrc.Fmrc;
 import ucar.nc2.jni.netcdf.Nc4Iosp;
 
@@ -102,32 +113,23 @@ public class NetCDFUtils {
 
     public static final String NETCDF_3 = "NetCDF-3";
 
-    public static final String STANDARD_PARALLEL_1 =
-            MapProjection.AbstractProvider.STANDARD_PARALLEL_1.getName().getCode();
+    public static final String STANDARD_PARALLEL_1 = MapProjection.AbstractProvider.STANDARD_PARALLEL_1.getName().getCode();
 
-    public static final String STANDARD_PARALLEL_2 =
-            MapProjection.AbstractProvider.STANDARD_PARALLEL_2.getName().getCode();
+    public static final String STANDARD_PARALLEL_2 = MapProjection.AbstractProvider.STANDARD_PARALLEL_2.getName().getCode();
 
-    public static final String CENTRAL_MERIDIAN =
-            MapProjection.AbstractProvider.CENTRAL_MERIDIAN.getName().getCode();
+    public static final String CENTRAL_MERIDIAN = MapProjection.AbstractProvider.CENTRAL_MERIDIAN.getName().getCode();
 
-    public static final String LATITUDE_OF_ORIGIN =
-            MapProjection.AbstractProvider.LATITUDE_OF_ORIGIN.getName().getCode();
+    public static final String LATITUDE_OF_ORIGIN = MapProjection.AbstractProvider.LATITUDE_OF_ORIGIN.getName().getCode();
 
-    public static final String SCALE_FACTOR =
-            MapProjection.AbstractProvider.SCALE_FACTOR.getName().getCode();
+    public static final String SCALE_FACTOR = MapProjection.AbstractProvider.SCALE_FACTOR.getName().getCode();
 
-    public static final String FALSE_EASTING =
-            MapProjection.AbstractProvider.FALSE_EASTING.getName().getCode();
+    public static final String FALSE_EASTING = MapProjection.AbstractProvider.FALSE_EASTING.getName().getCode();
 
-    public static final String FALSE_NORTHING =
-            MapProjection.AbstractProvider.FALSE_NORTHING.getName().getCode();
+    public static final String FALSE_NORTHING = MapProjection.AbstractProvider.FALSE_NORTHING.getName().getCode();
 
-    public static final String SEMI_MINOR =
-            MapProjection.AbstractProvider.SEMI_MINOR.getName().getCode();
+    public static final String SEMI_MINOR = MapProjection.AbstractProvider.SEMI_MINOR.getName().getCode();
 
-    public static final String SEMI_MAJOR =
-            MapProjection.AbstractProvider.SEMI_MAJOR.getName().getCode();
+    public static final String SEMI_MAJOR = MapProjection.AbstractProvider.SEMI_MAJOR.getName().getCode();
 
     public static final String INVERSE_FLATTENING = "inverse_flattening";
 
@@ -138,10 +140,10 @@ public class NetCDFUtils {
      * When true, the stack trace that created a reader that wasn't closed is recorded and then
      * printed out when warning the user about this.
      */
-    public static final Boolean TRACE_ENABLED =
-            "true".equalsIgnoreCase(System.getProperty("gt2.netcdf.trace"));
+    public static final Boolean TRACE_ENABLED = "true".equalsIgnoreCase(System.getProperty("gt2.netcdf.trace"));
 
-    private NetCDFUtils() {}
+    private NetCDFUtils() {
+    }
 
     /** The LOGGER for this class. */
     private static final Logger LOGGER = Logger.getLogger(NetCDFUtils.class.toString());
@@ -232,9 +234,9 @@ public class NetCDFUtils {
 
     public static final String LONG_NAME = "long_name";
 
-//    public static final String ELEVATION_DIM = ImageMosaicFormat.ELEVATION.getName().toString();
-//
-//    public static final String TIME_DIM = ImageMosaicFormat.TIME.getName().toString();
+    // public static final String ELEVATION_DIM = ImageMosaicFormat.ELEVATION.getName().toString();
+    //
+    // public static final String TIME_DIM = ImageMosaicFormat.TIME.getName().toString();
 
     public static final String STANDARD_NAME = "standard_name";
 
@@ -289,17 +291,13 @@ public class NetCDFUtils {
 
     static final Set<String> EXCLUDED_ATTRIBUTES = new HashSet<String>();
 
-    public static final String ENHANCE_COORD_SYSTEMS =
-            "org.geotools.coverage.io.netcdf.enhance.CoordSystems";
+    public static final String ENHANCE_COORD_SYSTEMS = "org.geotools.coverage.io.netcdf.enhance.CoordSystems";
 
-    public static final String ENHANCE_SCALE_MISSING =
-            "org.geotools.coverage.io.netcdf.enhance.ScaleMissing";
+    public static final String ENHANCE_SCALE_MISSING = "org.geotools.coverage.io.netcdf.enhance.ScaleMissing";
 
-    public static final String ENHANCE_CONVERT_ENUMS =
-            "org.geotools.coverage.io.netcdf.enhance.ConvertEnums";
+    public static final String ENHANCE_CONVERT_ENUMS = "org.geotools.coverage.io.netcdf.enhance.ConvertEnums";
 
-    public static final String ENHANCE_SCALE_MISSING_DEFER =
-            "org.geotools.coverage.io.netcdf.enhance.ScaleMissingDefer";
+    public static final String ENHANCE_SCALE_MISSING_DEFER = "org.geotools.coverage.io.netcdf.enhance.ScaleMissingDefer";
 
     public static boolean ENHANCE_SCALE_OFFSET = false;
 
@@ -317,26 +315,24 @@ public class NetCDFUtils {
         // params
 
         // Default used to be to just enhance coord systems
-        EnumSet<NetcdfDataset.Enhance> defaultEnhanceMode =
-                EnumSet.of(NetcdfDataset.Enhance.CoordSystems);
+        EnumSet<NetcdfDataset.Enhance> defaultEnhanceMode = EnumSet.of(NetcdfDataset.Enhance.CoordSystems);
 
-        if (System.getProperty(ENHANCE_COORD_SYSTEMS) != null
-                && !Boolean.getBoolean(ENHANCE_COORD_SYSTEMS)) {
+        if (System.getProperty(ENHANCE_COORD_SYSTEMS) != null && !Boolean.getBoolean(ENHANCE_COORD_SYSTEMS)) {
             defaultEnhanceMode.remove(NetcdfDataset.Enhance.CoordSystems);
         }
 
-//        if (Boolean.getBoolean(ENHANCE_SCALE_MISSING)) {
-//            defaultEnhanceMode.add(NetcdfDataset.Enhance.ScaleMissing);
-//            ENHANCE_SCALE_OFFSET = true;
-//        }
+        // if (Boolean.getBoolean(ENHANCE_SCALE_MISSING)) {
+        // defaultEnhanceMode.add(NetcdfDataset.Enhance.ScaleMissing);
+        // ENHANCE_SCALE_OFFSET = true;
+        // }
 
         if (Boolean.getBoolean(ENHANCE_CONVERT_ENUMS)) {
             defaultEnhanceMode.add(NetcdfDataset.Enhance.ConvertEnums);
         }
 
-//        if (Boolean.getBoolean(ENHANCE_SCALE_MISSING_DEFER)) {
-//            defaultEnhanceMode.add(NetcdfDataset.Enhance.ScaleMissingDefer);
-//        }
+        // if (Boolean.getBoolean(ENHANCE_SCALE_MISSING_DEFER)) {
+        // defaultEnhanceMode.add(NetcdfDataset.Enhance.ScaleMissingDefer);
+        // }
 
         NetcdfDataset.setDefaultEnhanceMode(defaultEnhanceMode);
     }
@@ -347,26 +343,15 @@ public class NetCDFUtils {
      * @author Simone Giannecchini, GeoSolutions S.A.S.
      */
     public static enum Axis {
-        X,
-        Y,
-        Z,
-        T;
+        X, Y, Z, T;
     }
 
     public static enum CheckType {
-        NONE,
-        UNSET,
-        NOSCALARS,
-        ONLYGEOGRIDS
+        NONE, UNSET, NOSCALARS, ONLYGEOGRIDS
     }
 
     public static enum FileFormat {
-        NONE,
-        CDF,
-        HDF5,
-        GRIB,
-        NCML,
-        FC
+        NONE, CDF, HDF5, GRIB, NCML, FC
     }
 
     /**
@@ -397,11 +382,10 @@ public class NetCDFUtils {
      */
     public static final Set<DataType> VALID_TYPES = new HashSet<DataType>(12);
 
-    public static final String NC4_ERROR_MESSAGE =
-            "Native NetCDF C library is not available. "
-                    + "Unable to handle NetCDF4 files on input/output."
-                    + "\nPlease make sure to add the paht of the Native NetCDF C libraries to the "
-                    + "PATH environment variable\n if you want to support NetCDF4-Classic files";
+    public static final String NC4_ERROR_MESSAGE = "Native NetCDF C library is not available. "
+            + "Unable to handle NetCDF4 files on input/output."
+            + "\nPlease make sure to add the paht of the Native NetCDF C libraries to the "
+            + "PATH environment variable\n if you want to support NetCDF4-Classic files";
 
     static {
         String property = System.getProperty(CHECK_COORDINATE_PLUGINS_KEY);
@@ -411,7 +395,7 @@ public class NetCDFUtils {
             LOGGER.info("Should check for coordinate handler plugins:" + CHECK_COORDINATE_PLUGINS);
         }
 
-//        IGNORED_DIMENSIONS = initializeIgnoreSet();
+        // IGNORED_DIMENSIONS = initializeIgnoreSet();
 
         // Setting the LINUX Epoch as start time
         final GregorianCalendar calendar = new GregorianCalendar(1970, 00, 01, 00, 00, 00);
@@ -470,54 +454,41 @@ public class NetCDFUtils {
         return bandName.equalsIgnoreCase(LON) || bandName.equalsIgnoreCase(LAT);
     }
 
-//    private static Set<String> initializeIgnoreSet() {
-//        Set<CoordinateHandlerSpi> handlers = CoordinateHandlerFinder.getAvailableHandlers();
-//        Iterator<CoordinateHandlerSpi> iterator = handlers.iterator();
-//        Set<String> ignoredSet = new HashSet<String>();
-//        while (iterator.hasNext()) {
-//            CoordinateHandlerSpi handler = iterator.next();
-//            Set<String> ignored = handler.getIgnoreSet();
-//            if (ignored != null && !ignored.isEmpty()) {
-//                ignoredSet.addAll(ignored);
-//            }
-//        }
-//        if (!ignoredSet.isEmpty()) {
-//            return ignoredSet;
-//        }
-//        return new HashSet<>();
-//    }
+    // private static Set<String> initializeIgnoreSet() {
+    // Set<CoordinateHandlerSpi> handlers = CoordinateHandlerFinder.getAvailableHandlers();
+    // Iterator<CoordinateHandlerSpi> iterator = handlers.iterator();
+    // Set<String> ignoredSet = new HashSet<String>();
+    // while (iterator.hasNext()) {
+    // CoordinateHandlerSpi handler = iterator.next();
+    // Set<String> ignored = handler.getIgnoreSet();
+    // if (ignored != null && !ignored.isEmpty()) {
+    // ignoredSet.addAll(ignored);
+    // }
+    // }
+    // if (!ignoredSet.isEmpty()) {
+    // return ignoredSet;
+    // }
+    // return new HashSet<>();
+    // }
 
     public static boolean isValidDir(File file) {
         String dir = file.getAbsolutePath();
         if (!file.exists()) {
             if (LOGGER.isLoggable(Level.WARNING)) {
-                LOGGER.warning(
-                        "The specified "
-                                + NETCDF_DATA_DIR
-                                + " property doesn't refer "
-                                + "to an existing folder. Please check the path: "
-                                + dir);
+                LOGGER.warning("The specified " + NETCDF_DATA_DIR + " property doesn't refer "
+                        + "to an existing folder. Please check the path: " + dir);
             }
             return false;
         } else if (!file.isDirectory()) {
             if (LOGGER.isLoggable(Level.WARNING)) {
-                LOGGER.warning(
-                        "The specified "
-                                + NETCDF_DATA_DIR
-                                + " property doesn't refer "
-                                + "to a directory. Please check the path: "
-                                + dir);
+                LOGGER.warning("The specified " + NETCDF_DATA_DIR + " property doesn't refer "
+                        + "to a directory. Please check the path: " + dir);
             }
             return false;
         } else if (!file.canWrite()) {
             if (LOGGER.isLoggable(Level.WARNING)) {
-                LOGGER.warning(
-                        "The specified "
-                                + NETCDF_DATA_DIR
-                                + " property refers to "
-                                + "a directory which can't be written. Please check the path and"
-                                + " the permissions for: "
-                                + dir);
+                LOGGER.warning("The specified " + NETCDF_DATA_DIR + " property refers to "
+                        + "a directory which can't be written. Please check the path and" + " the permissions for: " + dir);
             }
             return false;
         }
@@ -545,8 +516,8 @@ public class NetCDFUtils {
 
     /**
      * Returns the data type which most closely represents the "raw" internal data of the variable.
-     * This is the value returned by the default implementation of {@link
-     * NetcdfImageReader#getRawDataType}.
+     * This is the value returned by the default implementation of
+     * {@link NetcdfImageReader#getRawDataType}.
      *
      * @param variable The variable.
      * @return The data type, or {@link DataBuffer#TYPE_UNDEFINED} if unknown.
@@ -604,8 +575,7 @@ public class NetCDFUtils {
      * NetCDF files may contains a wide set of coverageDescriptorsCache. Some of them are unuseful
      * for our purposes. The method returns {@code true} if the specified variable is accepted.
      */
-    public static boolean isVariableAccepted(
-            final Variable var, final CheckType checkType, final NetcdfDataset dataset) {
+    public static boolean isVariableAccepted(final Variable var, final CheckType checkType, final NetcdfDataset dataset) {
         if (var instanceof CoordinateAxis1D) {
             return false;
         } else if (checkType == CheckType.NOSCALARS) {
@@ -649,15 +619,15 @@ public class NetCDFUtils {
                     if (axisType == null) {
                         return false;
                     }
-                    switch (axisType) {
-                        case GeoX:
-                        case GeoY:
-                        case Lat:
-                        case Lon:
-                            twoDimensionalCoordinates++;
-                            break;
-                        default:
-                            break;
+                    switch(axisType) {
+                    case GeoX:
+                    case GeoY:
+                    case Lat:
+                    case Lon:
+                        twoDimensionalCoordinates++;
+                        break;
+                    default:
+                        break;
                     }
                 }
             }
@@ -676,8 +646,7 @@ public class NetCDFUtils {
         }
     }
 
-    private static Variable getAuxiliaryCoordinate(
-            NetcdfDataset dataset, Group group, Variable var, String dimName) {
+    private static Variable getAuxiliaryCoordinate(NetcdfDataset dataset, Group group, Variable var, String dimName) {
         Variable coordinateVariable = null;
         Attribute attribute = var.findAttribute(NetCDFUtils.COORDINATES);
         if (attribute != null) {
@@ -686,8 +655,7 @@ public class NetCDFUtils {
             for (String coord : coords) {
                 Variable coordVar = dataset.findVariable(group, coord);
                 List<Dimension> varDimensions = coordVar.getDimensions();
-                if (varDimensions != null
-                        && varDimensions.size() == 1
+                if (varDimensions != null && varDimensions.size() == 1
                         && varDimensions.get(0).getFullName().equalsIgnoreCase(dimName)) {
                     coordinateVariable = coordVar;
                     break;
@@ -704,17 +672,10 @@ public class NetCDFUtils {
     public static boolean isVariableAccepted(final String name, final CheckType checkType) {
         if (checkType == CheckType.NONE) {
             return true;
-        } else if (name.equalsIgnoreCase(LATITUDE)
-                || name.equalsIgnoreCase(LONGITUDE)
-                || name.equalsIgnoreCase(LON)
-                || name.equalsIgnoreCase(LAT)
-                || name.equalsIgnoreCase(TIME)
-                || name.equalsIgnoreCase(DEPTH)
-                || name.equalsIgnoreCase(ZETA)
-                || name.equalsIgnoreCase(HEIGHT)
-                || name.toLowerCase().contains(COORDSYS.toLowerCase())
-                || name.endsWith(BOUNDS)
-                || name.endsWith(BNDS)
+        } else if (name.equalsIgnoreCase(LATITUDE) || name.equalsIgnoreCase(LONGITUDE) || name.equalsIgnoreCase(LON)
+                || name.equalsIgnoreCase(LAT) || name.equalsIgnoreCase(TIME) || name.equalsIgnoreCase(DEPTH)
+                || name.equalsIgnoreCase(ZETA) || name.equalsIgnoreCase(HEIGHT)
+                || name.toLowerCase().contains(COORDSYS.toLowerCase()) || name.endsWith(BOUNDS) || name.endsWith(BNDS)
                 || UNSUPPORTED_DIMENSIONS.contains(name)) {
             return false;
         } else {
@@ -741,10 +702,7 @@ public class NetCDFUtils {
             }
             // Search for GRIB signature in first count bytes (up to GRIB_SEARCH_BYTES)
             for (int i = 0; i < count - 3; i++) {
-                if (b[i] == (byte) 0x47
-                        && b[i + 1] == (byte) 0x52
-                        && b[i + 2] == (byte) 0x49
-                        && b[i + 3] == (byte) 0x42) {
+                if (b[i] == (byte) 0x47 && b[i + 1] == (byte) 0x52 && b[i + 2] == (byte) 0x49 && b[i + 3] == (byte) 0x42) {
                     return FileFormat.GRIB;
                 }
             }
@@ -790,9 +748,11 @@ public class NetCDFUtils {
     public static NetcdfDataset acquireFeatureCollection(String path) throws IOException {
         Formatter formatter = new Formatter(System.err);
         FeatureCollectionConfigBuilder builder = new FeatureCollectionConfigBuilder(formatter);
-        FeatureCollectionConfig config =
-                builder.readConfigFromFile(
-                        path.toString()); // this is the path to the feature collection XML
+        FeatureCollectionConfig config = builder.readConfigFromFile(path.toString()); // this is the
+                                                                                      // path to the
+                                                                                      // feature
+                                                                                      // collection
+                                                                                      // XML
         Fmrc fmrc = Fmrc.open(config, formatter);
         NetcdfDataset dataset = new NetcdfDataset();
         fmrc.getDataset2D(dataset);
@@ -800,81 +760,81 @@ public class NetCDFUtils {
         return dataset;
     }
 
-//    public static NetcdfDataset acquireDataset(URI uri) throws IOException {
-//        if (getFormat(uri) == FileFormat.FC) {
-//            return acquireFeatureCollection(uri.toString());
-//        } else {
-//            return NetcdfDataset.acquireDataset(new DatasetUrl(uri.toString(), null);
-//        }
-//    }
+    // public static NetcdfDataset acquireDataset(URI uri) throws IOException {
+    // if (getFormat(uri) == FileFormat.FC) {
+    // return acquireFeatureCollection(uri.toString());
+    // } else {
+    // return NetcdfDataset.acquireDataset(new DatasetUrl(uri.toString(), null);
+    // }
+    // }
 
-//    /**
-//     * Returns a {@code NetcdfDataset} given an input object
-//     *
-//     * @param input
-//     *                the input object (usually a {@code File}, a
-//     *                {@code String} or a {@code FileImageInputStreamExt).
-//     * @return {@code NetcdfDataset} in case of success.
-//     * @throws IOException
-//     *                 if some error occur while opening the dataset.
-//     * @throws {@link IllegalArgumentException}
-//     *                 in case the specified input is a directory
-//     */
-//    public static NetcdfDataset getDataset(Object input) throws IOException {
-//        NetcdfDataset dataset = null;
-//        if (input instanceof URI) {
-//            dataset = acquireDataset((URI) input);
-//        } else if (input instanceof File) {
-//            final File file = (File) input;
-//            if (!file.isDirectory()) {
-//                dataset = acquireDataset(file.toURI());
-//            } else {
-//                throw new IllegalArgumentException(
-//                        "Error occurred during NetCDF file reading: The input file is a Directory.");
-//            }
-//        } else if (input instanceof String) {
-//            File file = new File((String) input);
-//            if (!file.isDirectory()) {
-//                dataset = acquireDataset(file.toURI());
-//            } else {
-//                throw new IllegalArgumentException(
-//                        "Error occurred during NetCDF file reading: The input file is a Directory.");
-//            }
-//        } else if (input instanceof URL) {
-//            final URL tempURL = (URL) input;
-//            String protocol = tempURL.getProtocol();
-//            if (protocol.equalsIgnoreCase("file")) {
-//                File file = ImageIOUtilities.urlToFile(tempURL);
-//                if (!file.isDirectory()) {
-//                    dataset = acquireDataset(file.toURI());
-//                } else {
-//                    throw new IllegalArgumentException(
-//                            "Error occurred during NetCDF file reading: The input file is a Directory.");
-//                }
-//            } else if (protocol.equalsIgnoreCase("http") || protocol.equalsIgnoreCase("dods")) {
-//                try {
-//                    dataset = acquireDataset(tempURL.toURI());
-//                } catch (URISyntaxException e) {
-//                    throw new IOException(e);
-//                }
-//            }
-//        } else if (input instanceof AccessibleStream) {
-//            final AccessibleStream<?> stream = (AccessibleStream<?>) input;
-//            if (stream.getBinding().isAssignableFrom(File.class)) {
-//                final File file = ((AccessibleStream<File>) input).getTarget();
-//                if (!file.isDirectory()) {
-//                    dataset = acquireDataset(file.toURI());
-//                } else {
-//                    throw new IllegalArgumentException(
-//                            "Error occurred during NetCDF file reading: The input file is a Directory.");
-//                }
-//            } else if (stream.getBinding().isAssignableFrom(URI.class)) {
-//                final URI uri = ((AccessibleStream<URI>) input).getTarget();
-//                dataset = acquireDataset(uri);
-//            }
-//        }
-//        return dataset;
-//    }
+    // /**
+    // * Returns a {@code NetcdfDataset} given an input object
+    // *
+    // * @param input
+    // * the input object (usually a {@code File}, a
+    // * {@code String} or a {@code FileImageInputStreamExt).
+    // * @return {@code NetcdfDataset} in case of success.
+    // * @throws IOException
+    // * if some error occur while opening the dataset.
+    // * @throws {@link IllegalArgumentException}
+    // * in case the specified input is a directory
+    // */
+    // public static NetcdfDataset getDataset(Object input) throws IOException {
+    // NetcdfDataset dataset = null;
+    // if (input instanceof URI) {
+    // dataset = acquireDataset((URI) input);
+    // } else if (input instanceof File) {
+    // final File file = (File) input;
+    // if (!file.isDirectory()) {
+    // dataset = acquireDataset(file.toURI());
+    // } else {
+    // throw new IllegalArgumentException(
+    // "Error occurred during NetCDF file reading: The input file is a Directory.");
+    // }
+    // } else if (input instanceof String) {
+    // File file = new File((String) input);
+    // if (!file.isDirectory()) {
+    // dataset = acquireDataset(file.toURI());
+    // } else {
+    // throw new IllegalArgumentException(
+    // "Error occurred during NetCDF file reading: The input file is a Directory.");
+    // }
+    // } else if (input instanceof URL) {
+    // final URL tempURL = (URL) input;
+    // String protocol = tempURL.getProtocol();
+    // if (protocol.equalsIgnoreCase("file")) {
+    // File file = ImageIOUtilities.urlToFile(tempURL);
+    // if (!file.isDirectory()) {
+    // dataset = acquireDataset(file.toURI());
+    // } else {
+    // throw new IllegalArgumentException(
+    // "Error occurred during NetCDF file reading: The input file is a Directory.");
+    // }
+    // } else if (protocol.equalsIgnoreCase("http") || protocol.equalsIgnoreCase("dods")) {
+    // try {
+    // dataset = acquireDataset(tempURL.toURI());
+    // } catch (URISyntaxException e) {
+    // throw new IOException(e);
+    // }
+    // }
+    // } else if (input instanceof AccessibleStream) {
+    // final AccessibleStream<?> stream = (AccessibleStream<?>) input;
+    // if (stream.getBinding().isAssignableFrom(File.class)) {
+    // final File file = ((AccessibleStream<File>) input).getTarget();
+    // if (!file.isDirectory()) {
+    // dataset = acquireDataset(file.toURI());
+    // } else {
+    // throw new IllegalArgumentException(
+    // "Error occurred during NetCDF file reading: The input file is a Directory.");
+    // }
+    // } else if (stream.getBinding().isAssignableFrom(URI.class)) {
+    // final URI uri = ((AccessibleStream<URI>) input).getTarget();
+    // dataset = acquireDataset(uri);
+    // }
+    // }
+    // return dataset;
+    // }
 
     /**
      * Checks if the input is file based, and if yes, returns the file.
@@ -921,20 +881,22 @@ public class NetCDFUtils {
      * <p>
      *
      * <ul>
-     *   <li>For {@linkplain AxisType#Time time axis}, a {@link DateFormat} using the {@code
+     * <li>For {@linkplain AxisType#Time time axis}, a {@link DateFormat} using the {@code
      *       "yyyy-MM-dd HH:mm:ss"} pattern in UTC {@linkplain TimeZone timezone}.
-     *   <li>For all other kind of axis, a {@link NumberFormat}.
+     * <li>For all other kind of axis, a {@link NumberFormat}.
      * </ul>
      *
-     * <p>The {@linkplain Locale#CANADA Canada locale} is used by default for most formats because
-     * it is relatively close to ISO (for example regarding days and months order in dates) while
-     * using the English symbols.
+     * <p>
+     * The {@linkplain Locale#CANADA Canada locale} is used by default for most formats because it
+     * is relatively close to ISO (for example regarding days and months order in dates) while using
+     * the English symbols.
      *
      * @param type The type of the axis.
      * @param prototype An example of the values to be parsed. Implementations may parse this
-     *     prototype when the axis type alone is not sufficient. For example the {@linkplain
-     *     AxisType#Time time axis type} should uses the {@code "yyyy-MM-dd"} date pattern, but some
-     *     files do not follow this convention and use the default local instead.
+     *        prototype when the axis type alone is not sufficient. For example the
+     *        {@linkplain AxisType#Time time axis type} should uses the {@code "yyyy-MM-dd"} date
+     *        pattern, but some files do not follow this convention and use the default local
+     *        instead.
      * @return The format for parsing values along the axis.
      */
     public static Format getAxisFormat(final AxisType type, final String prototype) {
@@ -951,11 +913,10 @@ public class NetCDFUtils {
         int dateLength = 0;
         if (prototype != null) {
             /*
-             * Performs a quick check on the prototype content. If the prototype
-             * seems to use a different date separator than the ISO one, we will
-             * adjust the pattern accordingly. Also checks if the year seems to
-             * appears last rather than first, and if the month seems to be
-             * written using letters rather than digits.
+             * Performs a quick check on the prototype content. If the prototype seems to use a
+             * different date separator than the ISO one, we will adjust the pattern accordingly.
+             * Also checks if the year seems to appears last rather than first, and if the month
+             * seems to be written using letters rather than digits.
              */
             int field = 1;
             int digitCount = 0;
@@ -1006,9 +967,7 @@ public class NetCDFUtils {
         }
         String pattern = null;
         if (yearLast) {
-            pattern =
-                    (monthFirst ? "MMM dd-" : "dd-" + (namedMonth ? "MMM-" : "MM-"))
-                            + (twoDigitYear ? "yy" : "yyyy");
+            pattern = (monthFirst ? "MMM dd-" : "dd-" + (namedMonth ? "MMM-" : "MM-")) + (twoDigitYear ? "yy" : "yyyy");
         } else {
             pattern = (twoDigitYear ? "yy-" : "yyyy-") + (namedMonth ? "MMM-" : "MM-") + "dd";
             if (dateLength < pattern.length()) {
@@ -1053,22 +1012,19 @@ public class NetCDFUtils {
      * @param crs
      * @return
      */
-    public static SimpleFeatureType createFeatureType(
-            String schemaName, String schemaDef, CoordinateReferenceSystem crs) {
+    public static SimpleFeatureType createFeatureType(String schemaName, String schemaDef, CoordinateReferenceSystem crs) {
         SimpleFeatureType indexSchema = null;
         if (schemaDef == null) {
-            throw new IllegalArgumentException(
-                    "Unable to create feature type from null definition!");
+            throw new IllegalArgumentException("Unable to create feature type from null definition!");
         }
         schemaDef = schemaDef.trim();
         // get the schema
         try {
             indexSchema = DataUtilities.createType(schemaName, schemaDef);
-            indexSchema =
-                    DataUtilities.createSubType(
-                            indexSchema, DataUtilities.attributeNames(indexSchema), crs);
+            indexSchema = DataUtilities.createSubType(indexSchema, DataUtilities.attributeNames(indexSchema), crs);
         } catch (Throwable e) {
-            if (LOGGER.isLoggable(Level.FINE)) LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
+            if (LOGGER.isLoggable(Level.FINE))
+                LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
             indexSchema = null;
         }
         return indexSchema;
@@ -1095,7 +1051,7 @@ public class NetCDFUtils {
 
     /**
      * @return an unmodifiable Set of the Dimensions to be ignored by the Coordinate parsing
-     *     machinery
+     *         machinery
      */
     public static Set<String> getIgnoredDimensions() {
         return Collections.unmodifiableSet(IGNORED_DIMENSIONS);
@@ -1120,8 +1076,7 @@ public class NetCDFUtils {
             // Searching for FILL_VALUE or MISSING_VALUE attributes
             for (Attribute attribute : attributes) {
                 fullName = attribute.getFullName();
-                if (fullName.equalsIgnoreCase(FILL_VALUE)
-                        || fullName.equalsIgnoreCase(MISSING_VALUE)) {
+                if (fullName.equalsIgnoreCase(FILL_VALUE) || fullName.equalsIgnoreCase(MISSING_VALUE)) {
                     return attribute.getNumericValue();
                 }
             }
@@ -1163,9 +1118,7 @@ public class NetCDFUtils {
                 // For integer types, there should be a difference of 1 between the _FillValue and
                 // this valid minimum or maximum.
                 // Force this constraints to also avoid overlapping categories
-                if (dataType == DataType.BYTE
-                        || dataType == DataType.INT
-                        || dataType == DataType.SHORT
+                if (dataType == DataType.BYTE || dataType == DataType.INT || dataType == DataType.SHORT
                         || dataType == DataType.LONG) {
                     Number noData = getNodata(var);
                     if (noData != null && (noData.intValue() == min)) {
@@ -1205,20 +1158,20 @@ public class NetCDFUtils {
      * @return an NetCDF DataType type.
      */
     public static DataType transcodeImageDataType(final int dataType) {
-        switch (dataType) {
-            case DataBuffer.TYPE_BYTE:
-                return DataType.BYTE;
-            case DataBuffer.TYPE_SHORT:
-                return DataType.SHORT;
-            case DataBuffer.TYPE_INT:
-                return DataType.INT;
-            case DataBuffer.TYPE_DOUBLE:
-                return DataType.DOUBLE;
-            case DataBuffer.TYPE_FLOAT:
-                return DataType.FLOAT;
-            case DataBuffer.TYPE_UNDEFINED:
-            default:
-                throw new IllegalArgumentException("Invalid input data type:" + dataType);
+        switch(dataType) {
+        case DataBuffer.TYPE_BYTE:
+            return DataType.BYTE;
+        case DataBuffer.TYPE_SHORT:
+            return DataType.SHORT;
+        case DataBuffer.TYPE_INT:
+            return DataType.INT;
+        case DataBuffer.TYPE_DOUBLE:
+            return DataType.DOUBLE;
+        case DataBuffer.TYPE_FLOAT:
+            return DataType.FLOAT;
+        case DataBuffer.TYPE_UNDEFINED:
+        default:
+            throw new IllegalArgumentException("Invalid input data type:" + dataType);
         }
     }
 
@@ -1241,198 +1194,120 @@ public class NetCDFUtils {
      * @return
      */
     public static Array getArray(int[] dimensions, DataType varDataType) {
-        if (dimensions == null) throw new IllegalArgumentException("Illegal dimensions");
+        if (dimensions == null)
+            throw new IllegalArgumentException("Illegal dimensions");
         final int nDims = dimensions.length;
-        switch (nDims) {
-            case 7:
-                // 7D Arrays
-                if (varDataType == DataType.FLOAT) {
-                    return new ArrayFloat.D7(
-                            dimensions[0],
-                            dimensions[1],
-                            dimensions[2],
-                            dimensions[3],
-                            dimensions[4],
-                            dimensions[5],
-                            dimensions[6]);
-                } else if (varDataType == DataType.DOUBLE) {
-                    return new ArrayDouble.D7(
-                            dimensions[0],
-                            dimensions[1],
-                            dimensions[2],
-                            dimensions[3],
-                            dimensions[4],
-                            dimensions[5],
-                            dimensions[6]);
-                } else if (varDataType == DataType.BYTE) {
-                    return new ArrayByte.D7(
-                            dimensions[0],
-                            dimensions[1],
-                            dimensions[2],
-                            dimensions[3],
-                            dimensions[4],
-                            dimensions[5],
-                            dimensions[6], false);
-                } else if (varDataType == DataType.SHORT) {
-                    return new ArrayShort.D7(
-                            dimensions[0],
-                            dimensions[1],
-                            dimensions[2],
-                            dimensions[3],
-                            dimensions[4],
-                            dimensions[5],
-                            dimensions[6], false);
-                } else if (varDataType == DataType.INT) {
-                    return new ArrayInt.D7(
-                            dimensions[0],
-                            dimensions[1],
-                            dimensions[2],
-                            dimensions[3],
-                            dimensions[4],
-                            dimensions[5],
-                            dimensions[6], false);
-                } else throw new IllegalArgumentException("unsupported Datatype");
-            case 6:
-                // 6D Arrays
-                if (varDataType == DataType.FLOAT) {
-                    return new ArrayFloat.D6(
-                            dimensions[0],
-                            dimensions[1],
-                            dimensions[2],
-                            dimensions[3],
-                            dimensions[4],
-                            dimensions[5]);
-                } else if (varDataType == DataType.DOUBLE) {
-                    return new ArrayDouble.D6(
-                            dimensions[0],
-                            dimensions[1],
-                            dimensions[2],
-                            dimensions[3],
-                            dimensions[4],
-                            dimensions[5]);
-                } else if (varDataType == DataType.BYTE) {
-                    return new ArrayByte.D6(
-                            dimensions[0],
-                            dimensions[1],
-                            dimensions[2],
-                            dimensions[3],
-                            dimensions[4],
-                            dimensions[5], false);
-                } else if (varDataType == DataType.SHORT) {
-                    return new ArrayShort.D6(
-                            dimensions[0],
-                            dimensions[1],
-                            dimensions[2],
-                            dimensions[3],
-                            dimensions[4],
-                            dimensions[5], false);
-                } else if (varDataType == DataType.INT) {
-                    return new ArrayInt.D6(
-                            dimensions[0],
-                            dimensions[1],
-                            dimensions[2],
-                            dimensions[3],
-                            dimensions[4],
-                            dimensions[5], false);
-                } else throw new IllegalArgumentException("unsupported Datatype");
-            case 5:
-                // 5D Arrays
-                if (varDataType == DataType.FLOAT) {
-                    return new ArrayFloat.D5(
-                            dimensions[0],
-                            dimensions[1],
-                            dimensions[2],
-                            dimensions[3],
-                            dimensions[4]);
-                } else if (varDataType == DataType.DOUBLE) {
-                    return new ArrayDouble.D5(
-                            dimensions[0],
-                            dimensions[1],
-                            dimensions[2],
-                            dimensions[3],
-                            dimensions[4]);
-                } else if (varDataType == DataType.BYTE) {
-                    return new ArrayByte.D5(
-                            dimensions[0],
-                            dimensions[1],
-                            dimensions[2],
-                            dimensions[3],
-                            dimensions[4], false);
-                } else if (varDataType == DataType.SHORT) {
-                    return new ArrayShort.D5(
-                            dimensions[0],
-                            dimensions[1],
-                            dimensions[2],
-                            dimensions[3],
-                            dimensions[4], false);
-                } else if (varDataType == DataType.INT) {
-                    return new ArrayInt.D5(
-                            dimensions[0],
-                            dimensions[1],
-                            dimensions[2],
-                            dimensions[3],
-                            dimensions[4], false);
-                } else throw new IllegalArgumentException("unsupported Datatype");
-            case 4:
-                // 4D Arrays
-                if (varDataType == DataType.FLOAT) {
-                    return new ArrayFloat.D4(
-                            dimensions[0], dimensions[1], dimensions[2], dimensions[3]);
-                } else if (varDataType == DataType.DOUBLE) {
-                    return new ArrayDouble.D4(
-                            dimensions[0], dimensions[1], dimensions[2], dimensions[3]);
-                } else if (varDataType == DataType.BYTE) {
-                    return new ArrayByte.D4(
-                            dimensions[0], dimensions[1], dimensions[2], dimensions[3], false);
-                } else if (varDataType == DataType.SHORT) {
-                    return new ArrayShort.D4(
-                            dimensions[0], dimensions[1], dimensions[2], dimensions[3], false);
-                } else if (varDataType == DataType.INT) {
-                    return new ArrayInt.D4(
-                            dimensions[0], dimensions[1], dimensions[2], dimensions[3], false);
-                } else throw new IllegalArgumentException("unsupported Datatype");
-            case 3:
-                // 3D Arrays
-                if (varDataType == DataType.FLOAT) {
-                    return new ArrayFloat.D3(dimensions[0], dimensions[1], dimensions[2]);
-                } else if (varDataType == DataType.DOUBLE) {
-                    return new ArrayDouble.D3(dimensions[0], dimensions[1], dimensions[2]);
-                } else if (varDataType == DataType.BYTE) {
-                    return new ArrayByte.D3(dimensions[0], dimensions[1], dimensions[2], false);
-                } else if (varDataType == DataType.SHORT) {
-                    return new ArrayShort.D3(dimensions[0], dimensions[1], dimensions[2], false);
-                } else if (varDataType == DataType.INT) {
-                    return new ArrayInt.D3(dimensions[0], dimensions[1], dimensions[2], false);
-                } else throw new IllegalArgumentException("unsupported Datatype");
-            case 2:
-                // 2D Arrays
-                if (varDataType == DataType.FLOAT) {
-                    return new ArrayFloat.D2(dimensions[0], dimensions[1]);
-                } else if (varDataType == DataType.DOUBLE) {
-                    return new ArrayDouble.D2(dimensions[0], dimensions[1]);
-                } else if (varDataType == DataType.BYTE) {
-                    return new ArrayByte.D2(dimensions[0], dimensions[1], false);
-                } else if (varDataType == DataType.SHORT) {
-                    return new ArrayShort.D2(dimensions[0], dimensions[1], false);
-                } else if (varDataType == DataType.INT) {
-                    return new ArrayInt.D2(dimensions[0], dimensions[1], false);
-                } else throw new IllegalArgumentException("unsupported Datatype");
-            case 1:
-                // 1D Arrays
-                if (varDataType == DataType.FLOAT) {
-                    return new ArrayFloat.D1(dimensions[0]);
-                } else if (varDataType == DataType.DOUBLE) {
-                    return new ArrayDouble.D1(dimensions[0]);
-                } else if (varDataType == DataType.BYTE) {
-                    return new ArrayByte.D1(dimensions[0], false);
-                } else if (varDataType == DataType.SHORT) {
-                    return new ArrayShort.D1(dimensions[0], false);
-                } else if (varDataType == DataType.INT) {
-                    return new ArrayInt.D1(dimensions[0], false);
-                } else throw new IllegalArgumentException("unsupported Datatype");
+        switch(nDims) {
+        case 7:
+            // 7D Arrays
+            if (varDataType == DataType.FLOAT) {
+                return new ArrayFloat.D7(dimensions[0], dimensions[1], dimensions[2], dimensions[3], dimensions[4], dimensions[5],
+                        dimensions[6]);
+            } else if (varDataType == DataType.DOUBLE) {
+                return new ArrayDouble.D7(dimensions[0], dimensions[1], dimensions[2], dimensions[3], dimensions[4],
+                        dimensions[5], dimensions[6]);
+            } else if (varDataType == DataType.BYTE) {
+                return new ArrayByte.D7(dimensions[0], dimensions[1], dimensions[2], dimensions[3], dimensions[4], dimensions[5],
+                        dimensions[6], false);
+            } else if (varDataType == DataType.SHORT) {
+                return new ArrayShort.D7(dimensions[0], dimensions[1], dimensions[2], dimensions[3], dimensions[4], dimensions[5],
+                        dimensions[6], false);
+            } else if (varDataType == DataType.INT) {
+                return new ArrayInt.D7(dimensions[0], dimensions[1], dimensions[2], dimensions[3], dimensions[4], dimensions[5],
+                        dimensions[6], false);
+            } else
+                throw new IllegalArgumentException("unsupported Datatype");
+        case 6:
+            // 6D Arrays
+            if (varDataType == DataType.FLOAT) {
+                return new ArrayFloat.D6(dimensions[0], dimensions[1], dimensions[2], dimensions[3], dimensions[4],
+                        dimensions[5]);
+            } else if (varDataType == DataType.DOUBLE) {
+                return new ArrayDouble.D6(dimensions[0], dimensions[1], dimensions[2], dimensions[3], dimensions[4],
+                        dimensions[5]);
+            } else if (varDataType == DataType.BYTE) {
+                return new ArrayByte.D6(dimensions[0], dimensions[1], dimensions[2], dimensions[3], dimensions[4], dimensions[5],
+                        false);
+            } else if (varDataType == DataType.SHORT) {
+                return new ArrayShort.D6(dimensions[0], dimensions[1], dimensions[2], dimensions[3], dimensions[4], dimensions[5],
+                        false);
+            } else if (varDataType == DataType.INT) {
+                return new ArrayInt.D6(dimensions[0], dimensions[1], dimensions[2], dimensions[3], dimensions[4], dimensions[5],
+                        false);
+            } else
+                throw new IllegalArgumentException("unsupported Datatype");
+        case 5:
+            // 5D Arrays
+            if (varDataType == DataType.FLOAT) {
+                return new ArrayFloat.D5(dimensions[0], dimensions[1], dimensions[2], dimensions[3], dimensions[4]);
+            } else if (varDataType == DataType.DOUBLE) {
+                return new ArrayDouble.D5(dimensions[0], dimensions[1], dimensions[2], dimensions[3], dimensions[4]);
+            } else if (varDataType == DataType.BYTE) {
+                return new ArrayByte.D5(dimensions[0], dimensions[1], dimensions[2], dimensions[3], dimensions[4], false);
+            } else if (varDataType == DataType.SHORT) {
+                return new ArrayShort.D5(dimensions[0], dimensions[1], dimensions[2], dimensions[3], dimensions[4], false);
+            } else if (varDataType == DataType.INT) {
+                return new ArrayInt.D5(dimensions[0], dimensions[1], dimensions[2], dimensions[3], dimensions[4], false);
+            } else
+                throw new IllegalArgumentException("unsupported Datatype");
+        case 4:
+            // 4D Arrays
+            if (varDataType == DataType.FLOAT) {
+                return new ArrayFloat.D4(dimensions[0], dimensions[1], dimensions[2], dimensions[3]);
+            } else if (varDataType == DataType.DOUBLE) {
+                return new ArrayDouble.D4(dimensions[0], dimensions[1], dimensions[2], dimensions[3]);
+            } else if (varDataType == DataType.BYTE) {
+                return new ArrayByte.D4(dimensions[0], dimensions[1], dimensions[2], dimensions[3], false);
+            } else if (varDataType == DataType.SHORT) {
+                return new ArrayShort.D4(dimensions[0], dimensions[1], dimensions[2], dimensions[3], false);
+            } else if (varDataType == DataType.INT) {
+                return new ArrayInt.D4(dimensions[0], dimensions[1], dimensions[2], dimensions[3], false);
+            } else
+                throw new IllegalArgumentException("unsupported Datatype");
+        case 3:
+            // 3D Arrays
+            if (varDataType == DataType.FLOAT) {
+                return new ArrayFloat.D3(dimensions[0], dimensions[1], dimensions[2]);
+            } else if (varDataType == DataType.DOUBLE) {
+                return new ArrayDouble.D3(dimensions[0], dimensions[1], dimensions[2]);
+            } else if (varDataType == DataType.BYTE) {
+                return new ArrayByte.D3(dimensions[0], dimensions[1], dimensions[2], false);
+            } else if (varDataType == DataType.SHORT) {
+                return new ArrayShort.D3(dimensions[0], dimensions[1], dimensions[2], false);
+            } else if (varDataType == DataType.INT) {
+                return new ArrayInt.D3(dimensions[0], dimensions[1], dimensions[2], false);
+            } else
+                throw new IllegalArgumentException("unsupported Datatype");
+        case 2:
+            // 2D Arrays
+            if (varDataType == DataType.FLOAT) {
+                return new ArrayFloat.D2(dimensions[0], dimensions[1]);
+            } else if (varDataType == DataType.DOUBLE) {
+                return new ArrayDouble.D2(dimensions[0], dimensions[1]);
+            } else if (varDataType == DataType.BYTE) {
+                return new ArrayByte.D2(dimensions[0], dimensions[1], false);
+            } else if (varDataType == DataType.SHORT) {
+                return new ArrayShort.D2(dimensions[0], dimensions[1], false);
+            } else if (varDataType == DataType.INT) {
+                return new ArrayInt.D2(dimensions[0], dimensions[1], false);
+            } else
+                throw new IllegalArgumentException("unsupported Datatype");
+        case 1:
+            // 1D Arrays
+            if (varDataType == DataType.FLOAT) {
+                return new ArrayFloat.D1(dimensions[0]);
+            } else if (varDataType == DataType.DOUBLE) {
+                return new ArrayDouble.D1(dimensions[0]);
+            } else if (varDataType == DataType.BYTE) {
+                return new ArrayByte.D1(dimensions[0], false);
+            } else if (varDataType == DataType.SHORT) {
+                return new ArrayShort.D1(dimensions[0], false);
+            } else if (varDataType == DataType.INT) {
+                return new ArrayInt.D1(dimensions[0], false);
+            } else
+                throw new IllegalArgumentException("unsupported Datatype");
         }
-        throw new IllegalArgumentException(
-                "Unable to create a proper array unsupported Datatype; nDims not between 1 and 7");
+        throw new IllegalArgumentException("Unable to create a proper array unsupported Datatype; nDims not between 1 and 7");
     }
 
     /**
@@ -1455,8 +1330,7 @@ public class NetCDFUtils {
         } else if (DataType.BYTE.equals(type)) {
             return Byte.valueOf(value.byteValue());
         }
-        throw new IllegalArgumentException(
-                "Unsupported type or value: type = " + type.toString() + " value = " + value);
+        throw new IllegalArgumentException("Unsupported type or value: type = " + type.toString() + " value = " + value);
     }
 
     /**
@@ -1476,7 +1350,7 @@ public class NetCDFUtils {
     }
 
     public static void refreshParameterBehaviors() {
-    	
+
         PARAMS_MAX = new HashSet<String>();
         String maxProperty = System.getProperty(PARAMS_MAX_KEY);
         if (maxProperty != null) {
@@ -1495,9 +1369,7 @@ public class NetCDFUtils {
     }
 
     public enum ParameterBehaviour {
-        DO_NOTHING,
-        MAX,
-        MIN
+        DO_NOTHING, MAX, MIN
     }
 
     public static ParameterBehaviour getParameterBehaviour(String parameter) {
@@ -1508,5 +1380,251 @@ public class NetCDFUtils {
         } else {
             return ParameterBehaviour.DO_NOTHING;
         }
+    }
+
+    /**
+     * Ugly and ad-hoc aggregator. Creates a file with the same dimensions and variables as the
+     * inputs, which must be all the same except for the time dimension, but with the values
+     * aggregated as per the passed aggregation. "Variables" are defined as those that have a
+     * 2-dimensional shape, i.e. grids. All 1-dimensional variables are copied as they are. This
+     * only supports aggregation of 2d grids defined over 1d dimensions, and the dimensions in the
+     * output file will be the same as those of the first file aggregated, for now including time
+     * which should actually reflect the aggregation period. Limited to numeric data of course,
+     * without much checking.
+     * 
+     * @param toAggregate
+     * @param destinationFile
+     * @param aggregation
+     * 
+     * @return the name of the last non-dimension variable aggregated.
+     */
+    public static String aggregateFiles(List<File> toAggregate, File destinationFile, Aggregation aggregation) {
+
+        int times = 1;
+        int rows = 0;
+        int cols = 0;
+        String ret = null;
+        Map<String, BasicFileMappedStorage<Float>> storage = new HashMap<>();
+
+        /*
+         * if it's just one file, extract the first grid name, copy the file and return
+         */
+        if (toAggregate.size() == 1) {
+
+            String nativeName = null;
+            try (GridDataset dataset = GridDataset.open(toAggregate.get(0).toString())) {
+                nativeName = dataset.getGrids().get(0).getName();
+            } catch (IOException e) {
+                throw new KlabIOException(e);
+            }
+            try {
+                FileUtils.copyFile(toAggregate.get(0), destinationFile);
+            } catch (IOException e) {
+                throw new KlabIOException(e);
+            }
+            return nativeName;
+        }
+
+        try (NetcdfFileWriter outfile = NetcdfFileWriter.createNew(Version.netcdf4, destinationFile.toString())) {
+
+            boolean isNew = true;
+            Map<String, float[]> dimVariables = new LinkedHashMap<>();
+            int nd = 0;
+            boolean first = true;
+
+            for (File infile : toAggregate) {
+
+                try (NetcdfFile ncfile = NetcdfFile.open(infile.toURI().toURL().toString())) {
+
+                    if (isNew) {
+
+                        isNew = false;
+
+                        /*
+                         * gather and store all dimensions
+                         */
+                        for (Dimension dim : ncfile.getDimensions()) {
+
+                            /*
+                             * add to output file as is
+                             */
+                            if (dim.isUnlimited()) {
+                                outfile.addUnlimitedDimension(dim.getFullNameEscaped());
+                            } else {
+                                outfile.addDimension(dim.getFullNameEscaped(), dim.getLength());
+                            }
+                            Variable dimvar = ncfile.findVariable(dim.getFullNameEscaped());
+                            outfile.addVariable(dimvar.getFullNameEscaped(), dimvar.getDataType(), dimvar.getDimensionsString());
+                            for (Attribute v : dimvar.getAttributes()) {
+                                outfile.addVariableAttribute(dimvar.getFullNameEscaped(), v);
+                            }
+                            int[] origin = new int[]{0};
+                            int[] shape = new int[]{(int) dimvar.getSize()};
+                            float[] data = new float[(int) dimvar.getSize()];
+                            Array array = dimvar.read(origin, shape);
+                            for (int i = 0; i < dimvar.getSize(); i++) {
+                                data[i] = array.getFloat(i);
+                            }
+                            dimVariables.put(dim.getFullNameEscaped(), data);
+
+                        }
+
+                        nd = dimVariables.size();
+
+                    }
+
+                    for (Variable v : ncfile.getVariables()) {
+
+                        if (v.getShape().length == dimVariables.size()) {
+                            /*
+                             * It's a "variable"
+                             */
+                            if (rows == 0 && cols == 0) {
+
+                                times = nd > 2 ? v.getShape()[0] : 1;
+                                rows = v.getShape()[nd > 2 ? 1 : 0];
+                                cols = v.getShape()[nd > 2 ? 2 : 1];
+                                ret = v.getFullName();
+
+                                /*
+                                 * Create storage for aggregation and open the writable file
+                                 */
+                                storage.put(v.getFullName(), new BasicFileMappedStorage<Float>(rows * cols, Float.class));
+
+                                /*
+                                 * add the variable to the output file
+                                 */
+                                outfile.addVariable(v.getFullNameEscaped(), v.getDataType(), v.getDimensionsString());
+                                for (Attribute va : v.getAttributes()) {
+                                    outfile.addVariableAttribute(v.getFullNameEscaped(), va);
+                                }
+
+
+                            } else if (rows != v.getShape()[1] || cols != v.getShape()[2]) {
+                                throw new KlabIllegalArgumentException(
+                                        "NetCDF files to aggregate have different shapes: " + infile);
+                            }
+
+                            /*
+                             * Read the variable
+                             */
+                            if (!storage.containsKey(v.getFullName())) {
+                                throw new KlabIllegalArgumentException(
+                                        "NetCDF files to aggregate have different variables: " + v.getFullName());
+                            }
+
+                            /*
+                             * Read up one row at a time
+                             */
+                            int[] readOrigin = new int[dimVariables.size()];
+                            int[] readShape = new int[dimVariables.size()];
+                            BasicFileMappedStorage<Float> store = storage.get(v.getFullName());
+
+                            for (int time = 0; time < times; time++) {
+                                for (int iRow = 0; iRow < rows; iRow++) {
+                                    if (nd > 2) {
+                                        readOrigin[0] = time;
+                                        readShape[0] = 1;
+                                    }
+
+                                    // set up to read the entire row, but just one row.
+                                    readOrigin[nd > 2 ? 1 : 0] = iRow; // rows are numbered from
+                                                                       // zero
+                                    readOrigin[nd > 2 ? 2 : 1] = 0; // columns are numbered from
+                                                                    // zero
+
+                                    readShape[nd > 2 ? 1 : 0] = 1; // read one row
+                                    readShape[nd > 2 ? 2 : 1] = cols; // read the entire set of
+                                                                      // columns for that
+                                    // row
+
+                                    Array array = v.read(readOrigin, readShape);
+                                    for (int iCol = 0; iCol < cols; iCol++) {
+
+                                        long ofs = iRow * rows + iCol;
+
+                                        Float sample = array.getFloat(iCol);
+
+                                        if (first || /* TODO */ sample == -9999) {
+                                            store.set(sample, ofs);
+                                        } else {
+                                            Float d = store.get(ofs);
+                                            if (Observations.INSTANCE.isData(d)) {
+                                                d = d + sample;
+                                            } else {
+                                                d = sample;
+                                            }
+                                            store.set(d, ofs);
+                                        }
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+
+                } catch (Throwable e) {
+                    Logging.INSTANCE.error(e);
+                }
+
+                first = false;
+
+                System.out.println("Done " + infile);
+
+            }
+
+            /*
+             * create file and write output variables
+             */
+            outfile.create();
+
+            /*
+             * write dimensions
+             */
+            for (String dim : dimVariables.keySet()) {
+                float[] data = dimVariables.get(dim);
+                ArrayFloat.D1 dimvar = new ArrayFloat.D1(data.length);
+                for (int i = 0; i < data.length; i++) {
+                    dimvar.setFloat(i, data[i]);
+                }
+                outfile.write(dim, dimvar);
+            }
+
+            /*
+             * write data
+             */
+            for (String var : storage.keySet()) {
+
+                BasicFileMappedStorage<Float> data = storage.get(var);
+                ArrayFloat.D2 dimvar = new ArrayFloat.D2(rows, cols);
+                for (int iRow = 0; iRow < rows; iRow++) {
+                    for (int iCol = 0; iCol < cols; iCol++) {
+                        long ofs = iRow * rows + iCol;
+                        dimvar.set(iRow, iCol, data.get(ofs));
+                    }
+                }
+                outfile.write(var, dimvar);
+            }
+
+        } catch (Exception e1) {
+
+            Logging.INSTANCE.error(e1);
+            return null;
+
+        } finally {
+
+            /*
+             * close the storage
+             */
+            for (BasicFileMappedStorage<?> store : storage.values()) {
+                try {
+                    store.close();
+                } catch (Exception e) {
+                    Logging.INSTANCE.error(e);
+                }
+            }
+        }
+
+        return ret;
     }
 }
