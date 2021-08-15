@@ -1404,7 +1404,7 @@ public class NetCDFUtils {
         int rows = 0;
         int cols = 0;
         String ret = null;
-        Map<String, BasicFileMappedStorage<Float>> storage = new HashMap<>();
+        Map<String, BasicFileMappedStorage<Double>> storage = new HashMap<>();
 
         /*
          * if it's just one file, extract the first grid name, copy the file and return
@@ -1428,7 +1428,7 @@ public class NetCDFUtils {
         try (NetcdfFileWriter outfile = NetcdfFileWriter.createNew(Version.netcdf4, destinationFile.toString())) {
 
             boolean isNew = true;
-            Map<String, float[]> dimVariables = new LinkedHashMap<>();
+            Map<String, double[]> dimVariables = new LinkedHashMap<>();
             int nd = 0;
             boolean first = true;
 
@@ -1449,7 +1449,7 @@ public class NetCDFUtils {
                              * add to output file as is
                              */
                             if (dim.isUnlimited()) {
-                                outfile.addUnlimitedDimension(dim.getFullNameEscaped());
+                                outfile.addDimension(dim.getFullNameEscaped(), 1);
                             } else {
                                 outfile.addDimension(dim.getFullNameEscaped(), dim.getLength());
                             }
@@ -1460,10 +1460,10 @@ public class NetCDFUtils {
                             }
                             int[] origin = new int[]{0};
                             int[] shape = new int[]{(int) dimvar.getSize()};
-                            float[] data = new float[(int) dimvar.getSize()];
+                            double[] data = new double[(int) dimvar.getSize()];
                             Array array = dimvar.read(origin, shape);
                             for (int i = 0; i < dimvar.getSize(); i++) {
-                                data[i] = array.getFloat(i);
+                                data[i] = array.getDouble(i);
                             }
                             dimVariables.put(dim.getFullNameEscaped(), data);
 
@@ -1489,7 +1489,7 @@ public class NetCDFUtils {
                                 /*
                                  * Create storage for aggregation and open the writable file
                                  */
-                                storage.put(v.getFullName(), new BasicFileMappedStorage<Float>(rows * cols, Float.class));
+                                storage.put(v.getFullName(), new BasicFileMappedStorage<Double>(rows * cols, Double.class));
 
                                 /*
                                  * add the variable to the output file
@@ -1518,7 +1518,7 @@ public class NetCDFUtils {
                              */
                             int[] readOrigin = new int[dimVariables.size()];
                             int[] readShape = new int[dimVariables.size()];
-                            BasicFileMappedStorage<Float> store = storage.get(v.getFullName());
+                            BasicFileMappedStorage<Double> store = storage.get(v.getFullName());
 
                             for (int time = 0; time < times; time++) {
                                 for (int iRow = 0; iRow < rows; iRow++) {
@@ -1543,12 +1543,12 @@ public class NetCDFUtils {
 
                                         long ofs = iRow * rows + iCol;
 
-                                        Float sample = array.getFloat(iCol);
+                                        Double sample = array.getDouble(iCol);
 
                                         if (first || /* TODO */ sample == -9999) {
                                             store.set(sample, ofs);
                                         } else {
-                                            Float d = store.get(ofs);
+                                            Double d = store.get(ofs);
                                             if (Observations.INSTANCE.isData(d)) {
                                                 d = d + sample;
                                             } else {
@@ -1582,10 +1582,10 @@ public class NetCDFUtils {
              * write dimensions
              */
             for (String dim : dimVariables.keySet()) {
-                float[] data = dimVariables.get(dim);
-                ArrayFloat.D1 dimvar = new ArrayFloat.D1(data.length);
+                double[] data = dimVariables.get(dim);
+                ArrayDouble.D1 dimvar = new ArrayDouble.D1(data.length);
                 for (int i = 0; i < data.length; i++) {
-                    dimvar.setFloat(i, data[i]);
+                    dimvar.setDouble(i, data[i]);
                 }
                 outfile.write(dim, dimvar);
             }
@@ -1595,8 +1595,8 @@ public class NetCDFUtils {
              */
             for (String var : storage.keySet()) {
 
-                BasicFileMappedStorage<Float> data = storage.get(var);
-                ArrayFloat.D2 dimvar = new ArrayFloat.D2(rows, cols);
+                BasicFileMappedStorage<Double> data = storage.get(var);
+                ArrayDouble.D2 dimvar = new ArrayDouble.D2(rows, cols);
                 for (int iRow = 0; iRow < rows; iRow++) {
                     for (int iCol = 0; iCol < cols; iCol++) {
                         long ofs = iRow * rows + iCol;

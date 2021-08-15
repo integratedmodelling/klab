@@ -67,7 +67,7 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
     public static final String CHUNK_DOWNLOAD_TIME_MS = "time.download.ms";
     public static final String CHUNK_PROCESSING_TIME_MS = "time.processing.ms";
     public static final String DATACUBE_DOWNLOAD_THREADS_PROPERTY = "datacube.download.threads";
-    
+
     private Resolution fileResolution;
     private Resolution chunkResolution;
     private File mainDirectory;
@@ -197,27 +197,47 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
                 startChunkDownload(c, variable, latch);
             }
 
-            for (Granule g : granules) {
-                if (g.multiplier > 1 && !g.dataFile.exists()) {
-                    Logging.INSTANCE
-                            .info("CDS adapter: enqueuing aggregation for " + g.multiplier + " chunks into " + g.dataFile);
-                    executor.execute(new Thread(){
-                        @Override
-                        public void run() {
+            executor.execute(new Thread(){
+                @Override
+                public void run() {
 
-                            try {
-                                // wait for all chunks to download
-                                latch.await();
-                            } catch (InterruptedException e) {
-                                Logging.INSTANCE.error("sync error in chunk processing: " + e.getMessage());
-                            }
+                    try {
+                        // wait for all chunks to download
+                        latch.await();
+                    } catch (InterruptedException e) {
+                        Logging.INSTANCE.error("sync error in chunk processing: " + e.getMessage());
+                    }
 
-                            createAggregatedData(variable, g.startTick, g.endTick, g.dataFile);
+                    /*
+                     * compute all useful aggregations within the chunks
+                     */
+                    List<Integer> allticks = new ArrayList<>();
+                    for (int chunk : chunks) {
+                        for (int tick : getChunkTicks(chunk)) {
+                            allticks.add(tick);
                         }
-
-                    });
+                    }
+                    // add 1 to aggregate all including the very last period
+                    allticks.add(allticks.get(allticks.size() - 1) + 1);
+                    Map<Resolution, Integer> checkpoints = new HashMap<>();
+                    for (Resolution aggregationPoint : aggregationPoints) {
+                        for (int tick : allticks) {
+                            ITimeInstant start = getTickStart(tick);
+                            if (start.isAlignedWith(aggregationPoint)) {
+                                if (checkpoints.containsKey(aggregationPoint)) {
+                                    File aggregatedFile = new File(aggregationDirectory + File.separator
+                                            + getAggregatedFilename(variable, checkpoints.get(aggregationPoint), tick - 1));
+                                    if (createAggregatedData(variable, checkpoints.get(aggregationPoint), tick - 1,
+                                            aggregatedFile)) {
+                                        // TODO geoserver ingestion
+                                    }
+                                }
+                                checkpoints.put(aggregationPoint, tick);
+                            }
+                        }
+                    }
                 }
-            }
+            });
 
             return ret;
         }
@@ -234,7 +254,7 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
         this.online = b;
         this.statusMessage = string;
     }
-    
+
     /**
      * 
      * @param fileResolution the period covered by each file in a chunk
@@ -496,7 +516,8 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
                     Granule granule = new Granule();
                     granule.multiplier = 1;
                     File directory = getChunkDirectory(variable, cp.getSecond());
-                    granule.dataFile = new File(directory + File.separator + getOriginalDataFilename(variable, cp.getFirst(), directory));
+                    granule.dataFile = new File(
+                            directory + File.separator + getOriginalDataFilename(variable, cp.getFirst(), directory));
                     granule.aggregationTimeSeconds = 0;
 
                     ret.ticks.add(cp.getFirst());
@@ -524,9 +545,9 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 
     private int getChunk(int tick) {
         ITimeInstant tickTime = getTickStart(tick);
-        return (int)tickTime.getPeriods(this.timeBase, chunkResolution);
+        return (int) tickTime.getPeriods(this.timeBase, chunkResolution);
     }
-    
+
     protected int getEstimatedAggregationTime(Type type) {
         // TODO keep statistics
         return 1;
@@ -588,7 +609,7 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
         File dir = getChunkDirectory(variable, getChunk(tick));
         return new File(dir + File.separator + getOriginalDataFilename(variable, tick, dir));
     }
-    
+
     public List<Integer> getChunkTicks(int chunk) {
         List<Integer> ret = new ArrayList<>();
         ITimeInstant start = getChunkStart(chunk);
@@ -645,7 +666,7 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
             protected boolean checkRemoteAvailability(int chunk, String variable) {
                 return true;
             }
-            
+
             @Override
             protected IArtifact.Type getResourceType(Urn urn) {
                 // TODO Auto-generated method stub
@@ -693,11 +714,11 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 
         System.out.println(strategy.dump());
     }
-    
+
     public boolean isOnline() {
         return this.online;
     }
-    
+
     public String getStatusMessage() {
         return statusMessage;
     }
