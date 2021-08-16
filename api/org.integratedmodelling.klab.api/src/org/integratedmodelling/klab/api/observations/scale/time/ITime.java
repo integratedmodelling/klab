@@ -122,6 +122,37 @@ public interface ITime extends IExtent {
 				return 0;
 			}
 
+			public String getPredicate() {
+				switch (this) {
+				case MILLISECOND:
+					return "millisecond";
+				case SECOND:
+					return "second";
+				case MINUTE:
+					return "minute";
+				case HOUR:
+					return "hourly";
+				case DAY:
+					return "daily";
+				case WEEK:
+					return "weekly";
+				case MONTH:
+					return "monthly";
+				case YEAR:
+					return "yearly";
+				case DECADE:
+					return "decadal";
+				case CENTURY:
+					return "century";
+				case MILLENNIUM:
+					return "millennial";
+				default:
+					break;
+
+				}
+				return "what?";
+			}
+			
 			public static Type parse(String unit) {
 
 				if (unit.length() > 1) {

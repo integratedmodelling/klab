@@ -1,5 +1,7 @@
 package org.integratedmodelling.cdm;
 
+import java.io.RandomAccessFile;
+
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Version;
@@ -12,7 +14,6 @@ import ucar.httpservices.HTTPSession;
 import ucar.ma2.DataType;
 import ucar.nc2.dods.DODSNetcdfFile;
 import ucar.nc2.grib.collection.GribCdmIndex;
-import ucar.unidata.io.RandomAccessFile;
 
 @Component(id = "org.integratedmodelling.cdm", version = Version.CURRENT)
 public class CDMComponent {
@@ -24,7 +25,7 @@ public class CDMComponent {
 		DODSNetcdfFile.setAllowCompression(true);
 		DODSNetcdfFile.setAllowSessions(true);
 		// caching
-		RandomAccessFile.enableDefaultGlobalFileCache();
+//		RandomAccessFile.enableDefaultGlobalFileCache();
 		GribCdmIndex.initDefaultCollectionCache(100, 200, -1);
 
 		try {

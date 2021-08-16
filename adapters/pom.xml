@@ -10,6 +10,7 @@
   <modules>
   	<module>klab.ogc</module>
   	<module>klab.adapter.datacube</module>
+  	<module>klab.adapter.copernicus</module>
   </modules>
   <build>
   	<plugins>

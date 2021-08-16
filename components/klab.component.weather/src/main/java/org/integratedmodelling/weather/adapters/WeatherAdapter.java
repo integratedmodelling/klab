@@ -48,7 +48,7 @@ import org.integratedmodelling.weather.data.WeatherFactory;
 @UrnAdapter(type = "weather", version = Version.CURRENT)
 public class WeatherAdapter implements IUrnAdapter {
 
-    AgERAWeatherAdapter agera = new AgERAWeatherAdapter();
+//    AgERAWeatherAdapter agera = new AgERAWeatherAdapter();
     
     public enum Services {
         /**
@@ -62,11 +62,7 @@ public class WeatherAdapter implements IUrnAdapter {
         /**
          * Return individual storm events for the context
          */
-        storms,
-        /**
-         * AgERA5 raster data, interpolated and downloaded on demand
-         */
-        agera5
+        storms
     }
 
     @Override
@@ -78,8 +74,8 @@ public class WeatherAdapter implements IUrnAdapter {
     @Override
     public boolean isOnline(Urn urn) {
         switch(Services.valueOf(urn.getNamespace())) {
-        case agera5:
-            return agera.isOnline(urn);
+//        case agera5:
+//            return agera.isOnline(urn);
         case data:
         case stations:
             // TODO check catalog and args before saying OK!
@@ -95,9 +91,9 @@ public class WeatherAdapter implements IUrnAdapter {
     public void encodeData(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope scope) {
 
         switch(Services.valueOf(urn.getNamespace())) {
-        case agera5:
-            agera.encodeData(urn, builder, geometry, scope);
-            return;
+//        case agera5:
+//            agera.encodeData(urn, builder, geometry, scope);
+//            return;
         case data:
             getInterpolatedData(urn, builder, geometry, scope);
             return;
@@ -232,8 +228,8 @@ public class WeatherAdapter implements IUrnAdapter {
     public IGeometry getGeometry(Urn urn) {
 
         switch(Services.valueOf(urn.getNamespace())) {
-        case agera5:
-            return agera.getGeometry(urn);
+//        case agera5:
+//            return agera.getGeometry(urn);
         case data:
             return Geometry.create("\u03c41\u03c32");
         case stations:
@@ -255,9 +251,9 @@ public class WeatherAdapter implements IUrnAdapter {
 
         Urn kurn = new Urn(urn);
 
-        if ("agera5".equals(kurn.getNamespace())) {
-            return agera.getResource(urn);
-        }
+//        if ("agera5".equals(kurn.getNamespace())) {
+//            return agera.getResource(urn);
+//        }
         
         ResourceReference ref = new ResourceReference();
         ref.setUrn(kurn.getUrn());
@@ -275,9 +271,9 @@ public class WeatherAdapter implements IUrnAdapter {
     public IResource contextualize(IResource resource, IGeometry scale, IGeometry overallScale, IObservable semantics) {
         Urn kurn = new Urn(resource.getUrn());
 
-        if ("agera5".equals(kurn.getNamespace())) {
-            return agera.contextualize(resource, scale, overallScale, semantics);
-        }
+//        if ("agera5".equals(kurn.getNamespace())) {
+//            return agera.contextualize(resource, scale, overallScale, semantics);
+//        }
         
         // TODO
         return resource;

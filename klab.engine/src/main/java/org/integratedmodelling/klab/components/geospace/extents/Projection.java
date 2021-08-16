@@ -244,6 +244,10 @@ public class Projection implements IProjection {
 		return ret;
 	}
 
+	public CoordinateReferenceSystem getCRS() {
+		return crs;
+	}
+	
 	public int getSRID() {
 		return Integer.parseInt(code.split(":")[1]);
 	}

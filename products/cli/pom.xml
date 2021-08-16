@@ -79,7 +79,7 @@
 		<!-- TODO REMOVE! We don't want this to be available locally.  -->
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
-			<artifactId>klab.component.weather</artifactId>
+			<artifactId>klab.adapter.copernicus</artifactId>
 			<version>${klab.version}</version>
 		</dependency>
 
