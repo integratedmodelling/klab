@@ -189,10 +189,8 @@ public class AgERA5Repository extends CopernicusCDSDatacube {
 
 	public AgERA5Repository() {
 		super("sis-agrometeorological-indicators", TimeInstant.create(1979, 1, 1));
-		this.setAggregationPoints(Time.resolution(1, Resolution.Type.WEEK),
-				Time.resolution(1, Resolution.Type.MONTH)/*
-															 * , Time.resolution(1, Resolution.Type.YEAR)
-															 */);
+		this.setAggregationPoints(Time.resolution(1, Resolution.Type.WEEK), Time.resolution(1, Resolution.Type.MONTH),
+				Time.resolution(1, Resolution.Type.YEAR));
 		for (Variable v : Variable.values()) {
 			variables.put(v.codename, v);
 		}
@@ -318,7 +316,7 @@ public class AgERA5Repository extends CopernicusCDSDatacube {
 
 	@Override
 	protected String getAggregatedFilename(String variable, int startTick, int endTick) {
-		return getAggregatedLayer(variable, startTick, endTick) + ".nc";
+		return getAggregatedLayer(variable, startTick, endTick) + ".tiff";
 	}
 
 	private Aggregation getAggregation(Variable variable) {
