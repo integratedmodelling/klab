@@ -43,6 +43,7 @@ import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.operation.projection.MapProjection;
 import org.geotools.util.NumberRange;
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
@@ -1848,6 +1849,8 @@ public class NetCDFUtils {
 						Double value = data.get(x, y);
 						if (NumberUtils.equal(value, noDataValue)) {
 							value = Double.NaN;
+						} else if (Observations.INSTANCE.isData(value)) {
+							value = aggregation == Aggregation.SUM ? value : (value/(double)toAggregate.size());
 						}
 						raster.setSample(x, y, band, value);
 					}

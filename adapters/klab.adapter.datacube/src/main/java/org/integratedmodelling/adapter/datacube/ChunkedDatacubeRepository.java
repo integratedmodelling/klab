@@ -106,6 +106,11 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 		public int aggregationTimeSeconds;
 
 		/**
+		 * Layer for the granule in Geoserver WCS, including namespace
+		 */
+		public String layerName;
+
+		/**
 		 * Ticks for aggregation
 		 */
 		public int startTick, endTick;
@@ -518,7 +523,9 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 								: (int) (getEstimatedAggregationTime(res.getType()) * granule.multiplier);
 						granule.startTick = cp.getFirst();
 						granule.endTick = cp.getFirst() + skipping;
-
+						granule.layerName = granule.multiplier > 1
+								? getAggregatedLayer(variable, cp.getFirst(), cp.getFirst() + skipping)
+								: getDataLayer(variable, cp.getFirst());
 						ret.granules.add(granule);
 
 						aggregated = true;
