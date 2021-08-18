@@ -11,18 +11,21 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>${spring-boot.version}</version>
-				<configuration>
-					<fork>true</fork>
-					<mainClass>org.integratedmodelling.klab.engine.EngineApplication</mainClass>
-				</configuration>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
 				<executions>
 					<execution>
+						<id>copy-dependencies</id>
+						<phase>prepare-package</phase>
 						<goals>
-							<goal>repackage</goal>
+							<goal>copy-dependencies</goal>
 						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/lib</outputDirectory>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>false</overWriteSnapshots>
+							<overWriteIfNewer>true</overWriteIfNewer>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
@@ -49,6 +52,7 @@
             			</auth>
                     </to>
 					<container>
+						<expandClasspathDependencies>true</expandClasspathDependencies>
 						<user>klab:klab</user>
 						<jvmFlags>
 						</jvmFlags>
@@ -61,6 +65,7 @@
 						</ports>
 						<labels>
 						</labels>
+						
 					</container>
                 </configuration>
             </plugin>
@@ -78,6 +83,34 @@
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
+ 		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+			<version>${spring-boot.version}</version>
+			<exclusions>
+		        <exclusion>
+		            <groupId>ch.qos.logback</groupId>
+		            <artifactId>logback-classic</artifactId>
+		        </exclusion>
+		    </exclusions>
+		</dependency>
+ 		<dependency>
+		    <groupId>org.springframework.cloud</groupId>
+		    <artifactId>spring-cloud-starter-bootstrap</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-consul-discovery</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-consul-config</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-joda</artifactId>
+			<version>${jackson-version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.authority.gbif</artifactId>
@@ -98,11 +131,20 @@
 			<artifactId>klab.component.landcover</artifactId>
 			<version>${klab.version}</version>
 		</dependency>
+
+		<!-- TODO REMOVE! We don't want this to be available locally.  -->
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>klab.adapter.copernicus</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.component.tables</artifactId>
 			<version>${klab.version}</version>
 		</dependency>
+		<!-- TODO remove - superceded by table adapter -->
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.components.cdm</artifactId>
@@ -134,32 +176,20 @@
 			<version>${klab.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>klab.modeler</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
+		<!-- Command line tool dependencies -->
+		<dependency>
+			<groupId>net.sf.jopt-simple</groupId>
+			<artifactId>jopt-simple </artifactId>
+			<version>4.6</version>
+		</dependency>
+		<dependency>
 			<groupId>org.eclipse.xtext</groupId>
 			<artifactId>org.eclipse.xtext.testing</artifactId>
 			<version>${xtextVersion}</version>
-		</dependency>
- 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-			<version>${spring-boot.version}</version>
-			<exclusions>
-		        <exclusion>
-		            <groupId>ch.qos.logback</groupId>
-		            <artifactId>logback-classic</artifactId>
-		        </exclusion>
-		    </exclusions>
-		</dependency>
- 		<dependency>
-		    <groupId>org.springframework.cloud</groupId>
-		    <artifactId>spring-cloud-starter-bootstrap</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-consul-discovery</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-consul-config</artifactId>
 		</dependency>
 	</dependencies>
 </project>
