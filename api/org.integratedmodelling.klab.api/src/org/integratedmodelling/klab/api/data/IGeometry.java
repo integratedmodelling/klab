@@ -7,6 +7,7 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
+import org.integratedmodelling.klab.utils.MultidimensionalCursor;
 
 /**
  * A IGeometry is the declaration of the topological dimensions for the
@@ -377,5 +378,10 @@ public interface IGeometry extends Serializable, ILocator {
 	 * @return true if compatible.
 	 */
 	boolean is(String dimensionSpecifications);
+
+	/*
+	 * TODO should be out of the API
+	 */
+	MultidimensionalCursor getCursor();
 
 }

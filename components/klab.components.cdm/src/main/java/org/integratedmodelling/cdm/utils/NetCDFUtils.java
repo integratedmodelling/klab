@@ -43,6 +43,7 @@ import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.operation.projection.MapProjection;
 import org.geotools.util.NumberRange;
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
@@ -1548,7 +1549,7 @@ public class NetCDFUtils {
 								 * Create storage for aggregation and open the writable file
 								 */
 								storage.put(v.getFullName(),
-										new BasicFileMappedStorage<Double>(rows * cols, Double.class));
+										new BasicFileMappedStorage<Double>(Double.class, rows, cols));
 
 								/*
 								 * add the variable to the output file
@@ -1602,20 +1603,20 @@ public class NetCDFUtils {
 									Array array = v.read(readOrigin, readShape);
 									for (int iCol = 0; iCol < cols; iCol++) {
 
-										long ofs = iRow * rows + iCol;
+//										long ofs = iRow * rows + iCol;
 
 										Double sample = array.getDouble(iCol);
 
 										if (first) {
-											store.set(sample, ofs);
+											store.set(sample, iRow, iCol);
 										} else {
-											Double d = store.get(ofs);
+											Double d = store.get(iRow, iCol);
 											if (!NumberUtils.equal(d, noDataValue)) {
 												d = d + sample;
 											} else {
 												d = sample;
 											}
-											store.set(d, ofs);
+											store.set(d, iRow, iCol);
 										}
 									}
 
@@ -1691,6 +1692,12 @@ public class NetCDFUtils {
 		return ret;
 	}
 
+	public static void main(String[] dio) {
+		String tofuck = "C:\\Users\\Ferd\\.klab\\copernicus\\sis-agrometeorological-indicators\\liquid_precipitation_volume_144\\Precipitation-Flux_C3S-glob-agric_AgERA5_20150129_final-v1.0.nc";
+		String tocock = "C:\\Users\\Ferd\\.klab\\copernicus\\sis-agrometeorological-indicators\\aggregated\\cock.tiff";
+		aggregateGrid(Collections.singletonList(new File(tofuck)), new File(tocock), null, Aggregation.SUM, -9999.0);
+	}
+
 	/**
 	 * Same as {@link #aggregateFiles(List, File, Resolution, Aggregation, double)}
 	 * but limited to one grid and producing a GeoTIFF instead of a netcdf. Created
@@ -1719,9 +1726,6 @@ public class NetCDFUtils {
 		try {
 
 			boolean isNew = true;
-
-			Map<String, double[]> dimVariables = new LinkedHashMap<>();
-
 			boolean first = true;
 
 			int nfile = 1;
@@ -1759,7 +1763,7 @@ public class NetCDFUtils {
 							/*
 							 * Create storage for aggregation and open the writable file
 							 */
-							storage.put(v.getFullName(), new BasicFileMappedStorage<Double>(rows * cols, Double.class));
+							storage.put(v.getFullName(), new BasicFileMappedStorage<Double>(Double.class, cols, rows));
 
 						} else if (rows != v.getShape()[1] || cols != v.getShape()[2]) {
 							throw new KlabIllegalArgumentException(
@@ -1802,20 +1806,18 @@ public class NetCDFUtils {
 								Array array = v.read(readOrigin, readShape);
 								for (int iCol = 0; iCol < cols; iCol++) {
 
-									long ofs = iRow * rows + iCol;
-
 									Double sample = array.getDouble(iCol);
 
 									if (first) {
-										store.set(sample, ofs);
+										store.set(sample, iCol, iRow);
 									} else {
-										Double d = store.get(ofs);
+										Double d = store.get(iCol, iRow);
 										if (!NumberUtils.equal(d, noDataValue)) {
 											d = d + sample;
 										} else {
 											d = sample;
 										}
-										store.set(d, ofs);
+										store.set(d, iCol, iRow);
 									}
 								}
 
@@ -1844,10 +1846,11 @@ public class NetCDFUtils {
 				BasicFileMappedStorage<Double> data = storage.get(var);
 				for (int x = 0; x < cols; x++) {
 					for (int y = 0; y < rows; y++) {
-						long ofs = x * cols + y;
-						Double value = data.get(ofs);
+						Double value = data.get(x, y);
 						if (NumberUtils.equal(value, noDataValue)) {
 							value = Double.NaN;
+						} else if (Observations.INSTANCE.isData(value)) {
+							value = aggregation == Aggregation.SUM ? value : (value/(double)toAggregate.size());
 						}
 						raster.setSample(x, y, band, value);
 					}
@@ -1859,7 +1862,7 @@ public class NetCDFUtils {
 
 			GeoTiffWriteParams wp = new GeoTiffWriteParams();
 			wp.setCompressionMode(GeoTiffWriteParams.MODE_EXPLICIT);
-//			wp.setCompressionType("LZW");
+			wp.setCompressionType("LZW");
 			ParameterValueGroup params = new GeoTiffFormat().getWriteParameters();
 			params.parameter(AbstractGridFormat.GEOTOOLS_WRITE_PARAMS.getName().toString()).setValue(wp);
 			new GeoTiffWriter(destinationFile).write(coverage,

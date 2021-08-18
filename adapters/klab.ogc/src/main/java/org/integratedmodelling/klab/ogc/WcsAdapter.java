@@ -95,8 +95,8 @@ public class WcsAdapter implements IResourceAdapter {
 		return new WcsEncoder();
 	}
 
-	public static File getCachedFile(String identifier, IGeometry geometry) {
-		String key = identifier + "#" + geometry.toString();
+	public static File getCachedFile(String identifier, String geometry) {
+		String key = identifier + "#" + geometry;
 		File ret = fileCache.get(key);
 		if (ret != null && ret.exists()) {
 			return ret;
@@ -105,8 +105,8 @@ public class WcsAdapter implements IResourceAdapter {
 		return null;
 	}
 	
-	public static void setCachedFile(File file, String identifier, IGeometry geometry) {
-		String key = identifier + "#" + geometry.toString();
+	public static void setCachedFile(File file, String identifier, String geometry) {
+		String key = identifier + "#" + geometry;
 		fileCache.put(key, file);
 	}
 

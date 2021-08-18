@@ -71,7 +71,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
-import groovy.util.Eval;
 
 /**
  * The {@code RasterEncoder} adapts a raster resource (file-based) to a passed geometry and returns

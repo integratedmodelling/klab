@@ -1218,7 +1218,8 @@ public class Geometry implements IGeometry {
         return this;
     }
 
-    private MultidimensionalCursor getCursor() {
+    @Override
+    public MultidimensionalCursor getCursor() {
         if (this.cursor == null) {
             this.cursor = new MultidimensionalCursor(this);
         }
@@ -1226,11 +1227,11 @@ public class Geometry implements IGeometry {
     }
 
     public static long computeOffset(long[] pos, IGeometry geometry) {
-        return ((Geometry) geometry).getCursor().getElementOffset(pos);
+        return geometry.getCursor().getElementOffset(pos);
     }
 
     public static long[] computeOffsets(long pos, IGeometry geometry) {
-        return ((Geometry) geometry).getCursor().getElementIndexes(pos);
+        return geometry.getCursor().getElementIndexes(pos);
     }
 
     @Override

@@ -25,7 +25,7 @@ public class CopernicusComponent {
 	public boolean setupEvents() {
 		return true;
 	}
-	
+
 	@GetStatus
 	public void getStatus(IMetadata metadata) {
 //		metadata.put("stations.count", "" + WeatherFactory.INSTANCE.getStationsCount());
