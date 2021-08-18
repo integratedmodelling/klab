@@ -20,6 +20,9 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import javax.media.jai.iterator.RandomIter;
+import javax.media.jai.iterator.RandomIterFactory;
+
 import org.apache.commons.io.FileUtils;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.integratedmodelling.adapter.datacube.api.IDatacube;
@@ -39,6 +42,7 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.data.storage.BasicFileMappedStorage;
@@ -46,6 +50,7 @@ import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.ogc.integration.Geoserver;
 import org.integratedmodelling.klab.rest.ResourceReference.AvailabilityReference;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -266,17 +271,19 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 		public boolean execute(IGeometry geometry, Builder builder, IContextualizationScope scope) {
 
 			System.out.println(this.dump());
-			
+
 			if (!(scope.getScale().getSpace() instanceof Space)
 					|| ((Space) scope.getScale().getSpace()).getGrid() == null) {
 				throw new KlabIllegalStateException("Copernicus adapter only support grid geometries for now");
 			}
 
+			boolean first = true;
 			IGrid grid = ((Space) scope.getScale().getSpace()).getGrid();
 			BasicFileMappedStorage<Double> data = null;
 			for (Granule g : granules) {
 				GridCoverage2D coverage = getCoverage(g.layerName, scope.getScale().getSpace());
 				if (granules.size() == 1) {
+					// FIXME parameterize nodata
 					geoserver.encode(coverage, grid, builder, variable, 0, -9999.0);
 					return true;
 				} else {
@@ -287,7 +294,28 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 						data = new BasicFileMappedStorage<>(Double.class, grid.getXCells(), grid.getYCells());
 					}
 
+					RandomIter iterator = RandomIterFactory.create(coverage.getRenderedImage(), null);
+					for (long ofs = 0; ofs < grid.getCellCount(); ofs++) {
+
+						long[] xy = Grid.getXYCoordinates(ofs, grid.getXCells(), grid.getYCells());
+						double value = iterator.getSampleDouble((int) xy[0], (int) xy[1], 0);
+						if (first) {
+							data.set(value, xy);
+						} else {
+							Double d = data.get(xy);
+							// FIXME parameterize nodata
+							// FIXME use weighted means
+							if (!NumberUtils.equal(d, -9999.0)) {
+								d = d + value;
+							} else {
+								d = value;
+							}
+							data.set(d, xy);
+						}
+					}
+
 				}
+				first = false;
 			}
 
 			if (data != null) {
@@ -295,7 +323,19 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 				/*
 				 * aggregation and builderation
 				 */
-
+				builder.startState(variable);
+				for (long ofs = 0; ofs < grid.getCellCount(); ofs++) {
+					long[] xy = Grid.getXYCoordinates(ofs, grid.getXCells(), grid.getYCells());
+					double value = data.get(xy);
+					// FIXME parameterize nodata
+					if (NumberUtils.equal(value, -9999.0)) {
+						value = Double.NaN;
+					}
+					// TODO apply needed transformations
+					builder.add(value);
+				}
+				builder.finishState();
+				
 				return true;
 			}
 
