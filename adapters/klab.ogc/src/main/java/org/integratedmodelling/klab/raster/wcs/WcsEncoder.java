@@ -65,7 +65,7 @@ public class WcsEncoder implements IResourceEncoder {
 
     private GridCoverage getCoverage(WCSLayer layer, IResource resource, IGeometry geometry, String interpolation) {
 
-        File coverageFile = WcsAdapter.getCachedFile(layer.getIdentifier(), geometry);
+        File coverageFile = WcsAdapter.getCachedFile(layer.getIdentifier(), geometry.toString());
 
         if (coverageFile == null) {
 
@@ -95,7 +95,7 @@ public class WcsEncoder implements IResourceEncoder {
                 if (Configuration.INSTANCE.isEchoEnabled()) {
                     System.out.println("Data have arrived in " + coverageFile);
                 }
-                WcsAdapter.setCachedFile(coverageFile, layer.getIdentifier(), geometry);
+                WcsAdapter.setCachedFile(coverageFile, layer.getIdentifier(), geometry.toString());
             } catch (Throwable e) {
                 throw new KlabIOException(e);
             }

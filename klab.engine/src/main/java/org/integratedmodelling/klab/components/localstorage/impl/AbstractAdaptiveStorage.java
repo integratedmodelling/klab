@@ -29,8 +29,6 @@ import org.integratedmodelling.klab.scale.Extent;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.StringUtil;
 
-import com.ibm.icu.text.DateFormat;
-
 /**
  * Smart storage using a configurable backend to store slices that are only created when the values
  * are different from others. This guarantees optimization of storage and scales from scalars to

@@ -21,6 +21,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import org.apache.commons.io.FileUtils;
+import org.geotools.coverage.grid.GridCoverage2D;
 import org.integratedmodelling.adapter.datacube.api.IDatacube;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
@@ -30,13 +31,19 @@ import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Availability;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution.Type;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.time.extents.TimeInstant;
+import org.integratedmodelling.klab.data.storage.BasicFileMappedStorage;
+import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
+import org.integratedmodelling.klab.ogc.integration.Geoserver;
 import org.integratedmodelling.klab.rest.ResourceReference.AvailabilityReference;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
@@ -80,6 +87,7 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 	private Executor executor = null;
 	private boolean online;
 	private String statusMessage;
+	protected Geoserver geoserver;
 
 	private Map<Integer, Strategy> beingProcessed = Collections.synchronizedMap(new HashMap<>());
 
@@ -151,7 +159,7 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 			int ttime = timeToAvailabilitySeconds;
 			int ng = 0;
 			for (Granule g : granules) {
-				ret.append("   " + ng + ": " + g.dataFile + " ["
+				ret.append("   " + ng + ": " + g.layerName + " ["
 						+ (g.multiplier == 1 ? "data"
 								: ("aggregating " + g.multiplier + " est. " + g.aggregationTimeSeconds + " sec"))
 						+ "]\n");
@@ -256,7 +264,41 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 
 		@Override
 		public boolean execute(IGeometry geometry, Builder builder, IContextualizationScope scope) {
-			// TODO Auto-generated method stub
+
+			System.out.println(this.dump());
+			
+			if (!(scope.getScale().getSpace() instanceof Space)
+					|| ((Space) scope.getScale().getSpace()).getGrid() == null) {
+				throw new KlabIllegalStateException("Copernicus adapter only support grid geometries for now");
+			}
+
+			IGrid grid = ((Space) scope.getScale().getSpace()).getGrid();
+			BasicFileMappedStorage<Double> data = null;
+			for (Granule g : granules) {
+				GridCoverage2D coverage = getCoverage(g.layerName, scope.getScale().getSpace());
+				if (granules.size() == 1) {
+					geoserver.encode(coverage, grid, builder, variable, 0, -9999.0);
+					return true;
+				} else {
+					/*
+					 * create temp storage if needed
+					 */
+					if (data == null) {
+						data = new BasicFileMappedStorage<>(Double.class, grid.getXCells(), grid.getYCells());
+					}
+
+				}
+			}
+
+			if (data != null) {
+
+				/*
+				 * aggregation and builderation
+				 */
+
+				return true;
+			}
+
 			return false;
 		}
 
@@ -265,6 +307,14 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 	protected void setOnline(boolean b, String string) {
 		this.online = b;
 		this.statusMessage = string;
+	}
+
+	protected GridCoverage2D getCoverage(String layerName, ISpace space) {
+		return this.geoserver.getWCSCoverage(space, getName(), layerName);
+	}
+
+	protected String getOriginalFile(String variable, int tick) {
+		return getOriginalDataFilename(variable, tick, getChunkDirectory(variable, getChunk(tick)));
 	}
 
 	/**
@@ -286,6 +336,17 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 		int maxConcurrentThreads = Integer
 				.parseInt(Configuration.INSTANCE.getProperty(DATACUBE_DOWNLOAD_THREADS_PROPERTY, "1"));
 		this.executor = Executors.newFixedThreadPool(maxConcurrentThreads);
+
+		this.geoserver = initializeGeoserver();
+		if (!this.geoserver.isOnline()) {
+			setOnline(false, "Copernicus CDS datacube: no Geoserver is available");
+		} else {
+			// TODO should also check the Copernicus service but that may be unnecessary if
+			// we
+			// have the data.
+			setOnline(true, "Geoserver is connected and responding");
+		}
+
 	}
 
 	/**
@@ -523,9 +584,7 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 								: (int) (getEstimatedAggregationTime(res.getType()) * granule.multiplier);
 						granule.startTick = cp.getFirst();
 						granule.endTick = cp.getFirst() + skipping;
-						granule.layerName = granule.multiplier > 1
-								? getAggregatedLayer(variable, cp.getFirst(), cp.getFirst() + skipping)
-								: getDataLayer(variable, cp.getFirst());
+						granule.layerName = getAggregatedLayer(variable, cp.getFirst(), cp.getFirst() + skipping);
 						ret.granules.add(granule);
 
 						aggregated = true;
@@ -541,6 +600,7 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 					granule.dataFile = new File(
 							directory + File.separator + getOriginalDataFilename(variable, cp.getFirst(), directory));
 					granule.aggregationTimeSeconds = 0;
+					granule.layerName = getDataLayer(variable, cp.getFirst());
 
 					ret.ticks.add(cp.getFirst());
 					ret.granules.add(granule);
@@ -656,6 +716,8 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 	}
 
 	public abstract String getName();
+
+	protected abstract Geoserver initializeGeoserver();
 
 	protected abstract IArtifact.Type getResourceType(Urn urn);
 

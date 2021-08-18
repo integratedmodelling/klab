@@ -218,7 +218,7 @@ public class AgERA5Repository extends CopernicusCDSDatacube {
 		VariableConfiguration var = new VariableConfiguration(variable);
 		if (!var.isOK()) {
 			throw new KlabValidationException(
-					"CDS repository for " + this.getDataset() + " does not recognize variable " + variable);
+					"CDS repository for " + this.getName() + " does not recognize variable " + variable);
 		}
 		payload.put("variable", var.variable.cdsname);
 		if (var.statistic != null) {
@@ -241,7 +241,7 @@ public class AgERA5Repository extends CopernicusCDSDatacube {
 		VariableConfiguration var = new VariableConfiguration(variable);
 		if (!var.isOK()) {
 			throw new KlabValidationException(
-					"CDS repository for " + this.getDataset() + " does not recognize variable " + variable);
+					"CDS repository for " + this.getName() + " does not recognize variable " + variable);
 		}
 
 		ITimeInstant start = getTickStart(tick);
@@ -283,7 +283,7 @@ public class AgERA5Repository extends CopernicusCDSDatacube {
 		VariableConfiguration var = new VariableConfiguration(variable);
 		if (!var.isOK()) {
 			throw new KlabValidationException(
-					"CDS repository for " + this.getDataset() + " does not recognize variable " + variable);
+					"CDS repository for " + this.getName() + " does not recognize variable " + variable);
 		}
 
 		List<File> toAggregate = new ArrayList<>();
@@ -299,7 +299,7 @@ public class AgERA5Repository extends CopernicusCDSDatacube {
 			/*
 			 * ingest in GS
 			 */
-			return getGeoserver().createCoverageLayer(this.getDataset(),
+			return getGeoserver().createCoverageLayer(this.getName(),
 					getAggregatedLayer(var.variable.codename, startTick, endTick), destinationFile, null);
 		}
 
@@ -363,9 +363,5 @@ public class AgERA5Repository extends CopernicusCDSDatacube {
 		return Geometry.create("\u03c41\u03c32");
 	}
 
-	@Override
-	public String getName() {
-		return getDataset();
-	}
 
 }

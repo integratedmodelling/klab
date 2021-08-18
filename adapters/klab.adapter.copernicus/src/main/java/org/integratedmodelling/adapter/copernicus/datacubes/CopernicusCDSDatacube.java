@@ -35,14 +35,14 @@ import ucar.nc2.dt.grid.GridDataset;
  */
 public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
 
-	String dataset;
-	String apiKey;
-	String user;
-	Geoserver geoserver;
+	private String dataset;
+	private String apiKey;
+	private String user;
 
 	public static final String CDS_USER_NUMBER_PROPERTY = "copernicus.cds.user";
 	public static final String CDS_API_KEY_PROPERTY = "copernicus.cds.apikey";
 	private int TIMEOUT_SECONDS = 30;
+	private static Pattern pattern = Pattern.compile(".*(_[0-9]{8}_).*");
 
 	/*
 	 * tabulate and shut up
@@ -62,23 +62,17 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
 		this.dataset = dataset;
 		this.user = Configuration.INSTANCE.getProperties().getProperty(CDS_USER_NUMBER_PROPERTY);
 		this.apiKey = Configuration.INSTANCE.getProperties().getProperty(CDS_API_KEY_PROPERTY);
-
 		if (this.apiKey == null || this.user == null) {
 			setOnline(false, "Copernicus CDS datacube: no CDS credentials provided in configuration");
 		} else {
-
-			this.geoserver = Geoserver.create();
-			if (!this.geoserver.isOnline()) {
-				setOnline(false, "Copernicus CDS datacube: no Geoserver is available");
-			} else {
-				// TODO should also check the Copernicus service but that may be unnecessary if
-				// we
-				// have the data.
-				setOnline(true, "Geoserver is connected and responding");
-			}
+			setOnline(true, null);
 		}
 	}
 
+	protected Geoserver initializeGeoserver() {
+		return Geoserver.create();
+	}
+	
 	/**
 	 * Put the necessary informations in the map that will be sent as json in the
 	 * CDS API request based on the variable string in the URN. At a minimum it
@@ -214,7 +208,7 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
 
 		return ret;
 	}
-
+	
 	public String getEndpointUrl(String request) {
 		return "https://cds.climate.copernicus.eu/api/v2/" + request;
 	}
@@ -224,7 +218,6 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
 
 		String[] fields = variable.split("\\.");
 		String cdsname = fields[0];
-		Pattern pattern = Pattern.compile(".*(_[0-9]{8}_).*");
 		String nativeName = null;
 
 		for (File f : destinationDirectory.listFiles(new FilenameFilter() {
@@ -243,7 +236,8 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
 				Logging.INSTANCE.warn("CDS file does not match naming pattern: ignoring " + f);
 				continue;
 			}
-
+			
+			// layer naming logic is repeated in #getDataLayer()
 			String daySignature = matcher.group(1).substring(1, 9);
 			String layerId = cdsname + "_" + daySignature;
 
@@ -266,6 +260,14 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
 
 	@Override
 	protected String getDataLayer(String variable, int tick) {
+		String[] fields = variable.split("\\.");
+		String cdsname = fields[0];
+		String file = getOriginalFile(variable, tick);
+		Matcher matcher = pattern.matcher(MiscUtilities.getFileBaseName(file));
+		if (matcher.matches()) {
+			String daySignature = matcher.group(1).substring(1, 9);
+			return cdsname + "_" + daySignature;
+		}
 		return null;
 	}
 
@@ -273,7 +275,8 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
 		return geoserver;
 	}
 
-	public String getDataset() {
+	@Override
+	public String getName() {
 		return dataset;
 	}
 

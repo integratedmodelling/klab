@@ -993,7 +993,7 @@ public class Scale implements IScale {
         }
 
         if (overall != null) {
-            return new Scale(scale, new Offset(scale, overall.offsets));
+            return new Scale(scale, new Offset(scale.asGeometry(), overall.offsets));
         }
 
         Map<Dimension.Type, Object[]> extdef = new HashMap<>();
@@ -1695,5 +1695,10 @@ public class Scale implements IScale {
         }
         return this.coverage;
     }
+
+	@Override
+	public MultidimensionalCursor getCursor() {
+		return this.cursor;
+	}
 
 }
