@@ -188,7 +188,7 @@ public class AgERA5Repository extends CopernicusCDSDatacube {
 	}
 
 	public AgERA5Repository() {
-		super("sis-agrometeorological-indicators", TimeInstant.create(1979, 1, 1));
+		super("sis-agrometeorological-indicators", TimeInstant.create(1979, 1, 1), -9999.0);
 		this.setAggregationPoints(Time.resolution(1, Resolution.Type.WEEK), Time.resolution(1, Resolution.Type.MONTH),
 				Time.resolution(1, Resolution.Type.YEAR));
 		for (Variable v : Variable.values()) {
@@ -319,6 +319,12 @@ public class AgERA5Repository extends CopernicusCDSDatacube {
 		return getAggregatedLayer(variable, startTick, endTick) + ".tiff";
 	}
 
+	@Override
+	public Aggregation getAggregation(String variable) {
+		VariableConfiguration v = new VariableConfiguration(variable);
+		return getAggregation(v.variable);
+	}
+	
 	private Aggregation getAggregation(Variable variable) {
 		return variable == Variable.LIQUID_PRECIPITATION_VOLUME ? Aggregation.SUM : Aggregation.MEAN;
 	}

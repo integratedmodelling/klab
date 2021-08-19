@@ -55,10 +55,10 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
 	String[] days = { "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16",
 			"17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31" };
 
-	public CopernicusCDSDatacube(String dataset, ITimeInstant dataStart) {
+	public CopernicusCDSDatacube(String dataset, ITimeInstant dataStart, double noDataValue) {
 
 		super(Time.resolution(1, Type.DAY), Time.resolution(3, Type.MONTH), dataStart,
-				Configuration.INSTANCE.getDataPath("copernicus/" + dataset));
+				Configuration.INSTANCE.getDataPath("copernicus/" + dataset), noDataValue);
 		this.dataset = dataset;
 		this.user = Configuration.INSTANCE.getProperties().getProperty(CDS_USER_NUMBER_PROPERTY);
 		this.apiKey = Configuration.INSTANCE.getProperties().getProperty(CDS_API_KEY_PROPERTY);

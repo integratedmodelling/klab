@@ -28,7 +28,9 @@ import org.geotools.coverage.grid.GridCoverage2D;
 import org.integratedmodelling.adapter.datacube.api.IDatacube;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Urn;
+import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Availability;
@@ -93,6 +95,7 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 	private boolean online;
 	private String statusMessage;
 	protected Geoserver geoserver;
+	protected Double noDataValue;
 
 	private Map<Integer, Strategy> beingProcessed = Collections.synchronizedMap(new HashMap<>());
 
@@ -280,13 +283,20 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 			boolean first = true;
 			IGrid grid = ((Space) scope.getScale().getSpace()).getGrid();
 			BasicFileMappedStorage<Double> data = null;
+			
+			double wsum = 0.0;
+			Aggregation aggregation = getAggregation(variable);
+			
 			for (Granule g : granules) {
 				GridCoverage2D coverage = getCoverage(g.layerName, scope.getScale().getSpace());
 				if (granules.size() == 1) {
 					// FIXME parameterize nodata
-					geoserver.encode(coverage, grid, builder, variable, 0, -9999.0);
+					geoserver.encode(coverage, grid, builder, variable, 0, noDataValue);
 					return true;
 				} else {
+
+					wsum += granules.size();
+					
 					/*
 					 * create temp storage if needed
 					 */
@@ -303,9 +313,15 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 							data.set(value, xy);
 						} else {
 							Double d = data.get(xy);
+							
+							if (aggregation == Aggregation.MEAN) {
+								// weighted average
+								d *= wsum;
+							}
+							
 							// FIXME parameterize nodata
 							// FIXME use weighted means
-							if (!NumberUtils.equal(d, -9999.0)) {
+							if (!NumberUtils.equal(d, noDataValue)) {
 								d = d + value;
 							} else {
 								d = value;
@@ -328,10 +344,11 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 					long[] xy = Grid.getXYCoordinates(ofs, grid.getXCells(), grid.getYCells());
 					double value = data.get(xy);
 					// FIXME parameterize nodata
-					if (NumberUtils.equal(value, -9999.0)) {
+					if (NumberUtils.equal(value, noDataValue)) {
 						value = Double.NaN;
+					} else if (aggregation == Aggregation.MEAN && wsum > 1 && Observations.INSTANCE.isData(value)) {
+						value /= wsum;
 					}
-					// TODO apply needed transformations
 					builder.add(value);
 				}
 				builder.finishState();
@@ -361,16 +378,19 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 	 * 
 	 * @param fileResolution  the period covered by each file in a chunk
 	 * @param chunkResolution the period covered by each chunk
+	 * @param repositoryStart date of first observation in remote repository
 	 * @param mainDirectory   the directory where the chunks are located
+	 * @param noDataValue     value for nodata in remote observations
 	 */
 	public ChunkedDatacubeRepository(ITime.Resolution fileResolution, ITime.Resolution chunkResolution,
-			ITimeInstant repositoryStart, File mainDirectory) {
+			ITimeInstant repositoryStart, File mainDirectory, double noDataValue) {
 		this.fileResolution = fileResolution;
 		this.chunkResolution = chunkResolution;
 		this.mainDirectory = mainDirectory;
 		this.timeBase = (TimeInstant) repositoryStart;
 		this.aggregationDirectory = new File(this.mainDirectory + File.separator + "aggregated");
 		this.aggregationDirectory.mkdirs();
+		this.noDataValue = noDataValue;
 		recomputeProcessingTime();
 
 		int maxConcurrentThreads = Integer
