@@ -114,6 +114,15 @@ public class PublicResourceCatalog implements IPublicResourceCatalog {
 	@Override
 	public Collection<String> getNodes(String urn) {
 		ResourceDescriptor descriptor = descriptors.get(urn);
+		if (descriptor == null) {
+			// no resource was reported, see if the original node serving it is online and
+			// if so, use that
+			Urn kurn = new Urn(urn);
+			INodeIdentity node = Network.INSTANCE.getNode(kurn.getNodeName());
+			if (node != null && node.isOnline()) {
+				return Collections.singleton(node.getName());
+			}
+		}
 		if (descriptor == null || !descriptor.online) {
 			return new ArrayList<>();
 		}
