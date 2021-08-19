@@ -295,7 +295,7 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 					return true;
 				} else {
 
-					wsum += granules.size();
+					wsum += g.multiplier;
 					
 					/*
 					 * create temp storage if needed
@@ -316,7 +316,7 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 							
 							if (aggregation == Aggregation.MEAN) {
 								// weighted average
-								d *= wsum;
+								d *= g.multiplier;
 							}
 							
 							// FIXME parameterize nodata
