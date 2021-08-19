@@ -85,7 +85,7 @@ public class VectorValidator implements IResourceValidator {
 
 			ret.withParameter("fileUrl", url).withLocalName(MiscUtilities.getFileName(url.getFile()));
 			Map<String, Object> map = new HashMap<>();
-			map.put("umy orl", url);
+			map.put("url", url);
 
 			if (userData.contains("filter")) {
 				try {
