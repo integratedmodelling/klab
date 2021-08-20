@@ -80,7 +80,10 @@ public class Message implements IMessage, Serializable {
 				notype = (INotification.Type) ob;
 			} else if (ob instanceof Repeatability) {
 				ret.repeatability = (Repeatability)ob;
-			} else if (ob != null) {
+			}  else if (ob instanceof INotification) {
+               notype = ((INotification)ob).getType();
+               ret.payload = ((INotification)ob).getMessage();
+            } else if (ob != null) {
 				if (ret.payload == null) {
 					ret.payload = ob;
 					ret.payloadClass = Path.getLast(ob.getClass().getCanonicalName(), '.');

@@ -1084,7 +1084,13 @@ public enum Actors implements IActorsService {
 			clss[i++] = jarg == null ? Object.class : jarg.getClass();
 		}
 
-		Method method = MethodUtils.getMatchingMethod(reactor.getClass(), methodName, clss);
+		Method method = null;
+		try {
+		    method = MethodUtils.getMatchingAccessibleMethod(reactor.getClass(), methodName, clss);
+		} catch (Throwable t) {
+		    Logging.INSTANCE.error("invokeReactorMethod threw exception: " + t.getMessage());
+		    // leave method = null
+		}
 
 		if (method != null) {
 			try {

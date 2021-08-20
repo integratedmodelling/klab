@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.logging.Level;
 
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
@@ -62,6 +63,7 @@ import org.integratedmodelling.klab.api.provenance.IActivity.Description;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.api.services.IDocumentationService;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.LogicalConnector;
@@ -69,6 +71,7 @@ import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.data.classification.Classification;
+import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.data.table.LookupTable;
 import org.integratedmodelling.klab.engine.resources.CoreOntology;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
@@ -1065,6 +1068,29 @@ public class Model extends KimObject implements IModel {
                 this.setInactive(true);
             }
             if (res != null) {
+
+                if (res instanceof Resource) {
+                    for (INotification notification : ((Resource) res).getNotifications()) {
+                        switch(notification.getLevel()) {
+                        case "SEVERE":
+                            monitor.error(notification.getMessage(), getStatement());
+                            break;
+                        case "WARNING":
+                            monitor.warn(notification.getMessage(), getStatement());
+                            break;
+                        case "INFO":
+                            monitor.info(notification.getMessage(), getStatement());
+                            break;
+                        case "FINE":
+                            monitor.debug(notification.getMessage(), getStatement());
+                            break;
+                        }
+                    }
+                }
+                
+                if (res.hasErrors()) {
+                    this.setInactive(true);
+                }
 
                 // store resource
                 resourcesUsed.add(res);

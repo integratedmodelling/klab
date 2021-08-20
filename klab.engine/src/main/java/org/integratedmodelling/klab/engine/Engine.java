@@ -144,7 +144,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 		public void addListener(Listener listener) {
 			this.listeners.add(listener);
 		}
-
+		
 		@Override
 		public void info(Object... info) {
 			Pair<String, INotification.Type> message = NotificationUtils.getMessage(info);

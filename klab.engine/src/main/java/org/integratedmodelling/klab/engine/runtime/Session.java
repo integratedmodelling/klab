@@ -110,7 +110,6 @@ import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.GroupReference;
 import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.rest.InterruptTask;
-import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.rest.LoadApplicationRequest;
 import org.integratedmodelling.klab.rest.MenuAction;
 import org.integratedmodelling.klab.rest.NetworkReference;

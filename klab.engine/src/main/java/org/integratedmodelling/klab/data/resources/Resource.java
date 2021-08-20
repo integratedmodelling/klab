@@ -331,6 +331,10 @@ public class Resource implements IResource {
 		return false;
 	}
 
+	public List<INotification> getNotifications() {
+	    return notifications;
+	}
+	
 	/**
 	 * Set the upload folder
 	 * 

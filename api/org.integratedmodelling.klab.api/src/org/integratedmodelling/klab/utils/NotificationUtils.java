@@ -47,6 +47,9 @@ public class NotificationUtils {
                 ret.insert(0, ((IKimScope)o).getLocationDescriptor() + ": ");
             } else if (o instanceof INotification.Type) {
             	ntype = (INotification.Type)o;
+            } else if (o instanceof INotification) {
+                ntype = ((INotification)o).getType();
+                ret.append(((INotification)o).getMessage());
             }
             // TODO continue
         }
