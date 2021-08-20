@@ -24,6 +24,7 @@ import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
+import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
@@ -50,8 +51,8 @@ import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
-import org.integratedmodelling.klab.components.geospace.processing.GeometrySanitizer;
 import org.integratedmodelling.klab.components.geospace.processing.Rasterizer;
+import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -64,6 +65,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * The Class RasterEncoder.
@@ -102,7 +104,8 @@ public class VectorEncoder implements IResourceEncoder {
 			map.put(ShapefileDataStoreFactory.DBFCHARSET.key, "UTF-8");
 			DataStore dataStore = DataStoreFinder.getDataStore(map);
 			String typeName = dataStore.getTypeNames()[0];
-			return dataStore.getFeatureSource(typeName);
+			SimpleFeatureSource featureSource = dataStore.getFeatureSource(typeName);
+            return featureSource;
 
 		} catch (Exception e) {
 			throw new KlabIOException(e);
@@ -184,7 +187,9 @@ public class VectorEncoder implements IResourceEncoder {
 			throw new KlabIOException(e);
 		}
 
-		Projection originalProjection = Projection.create(fc.getSchema().getCoordinateReferenceSystem());
+		CoordinateReferenceSystem crs = fc.getSchema().getCoordinateReferenceSystem();
+        crs = GeotoolsUtils.INSTANCE.checkCrs(crs);
+        Projection originalProjection = Projection.create(crs);
 		IEnvelope envelopeInOriginalProjection = requestScale.getSpace().getEnvelope().transform(originalProjection,
 				true);
 
