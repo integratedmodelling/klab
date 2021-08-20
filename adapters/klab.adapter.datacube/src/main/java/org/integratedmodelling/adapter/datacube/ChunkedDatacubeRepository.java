@@ -62,742 +62,763 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.Period;
 
 /**
- * A repository where data are organized in chunk directories containing a set of files for a
- * variable, with uniform temporal coverage according to a predefined "tick". The chunk is a unit of
- * download, the file a unit of ingestion. It's able to collect all the data for a period with the
- * necessary aggregation, using caching based on a specified set of temporal intervals to minimize
- * access.
+ * A repository where data are organized in chunk directories containing a set
+ * of files for a variable, with uniform temporal coverage according to a
+ * predefined "tick". The chunk is a unit of download, the file a unit of
+ * ingestion. It's able to collect all the data for a period with the necessary
+ * aggregation, using caching based on a specified set of temporal intervals to
+ * minimize access.
  * <p>
- * ACHTUNG: assumes the various resolutions are chosen to match perfectly. Fractional resolutions
- * won't work correctly. Uses real time units and handles months and years appropriately.
+ * ACHTUNG: assumes the various resolutions are chosen to match perfectly.
+ * Fractional resolutions won't work correctly. Uses real time units and handles
+ * months and years appropriately.
  * <p>
- * The repository will malfunction unless the base for the chunk numbering (time of first possible
- * observation in fileResolution units) is not set.
+ * The repository will malfunction unless the base for the chunk numbering (time
+ * of first possible observation in fileResolution units) is not set.
  * <p>
- * The abstract Datacube class does not use this, but it can be used in derived classes.
+ * The abstract Datacube class does not use this, but it can be used in derived
+ * classes.
  * 
  * @author Ferd
  *
  */
 public abstract class ChunkedDatacubeRepository implements IDatacube {
 
-    public static final String CHUNK_DOWNLOAD_TIME_MS = "time.download.ms";
-    public static final String CHUNK_PROCESSING_TIME_MS = "time.processing.ms";
-    public static final String DATACUBE_DOWNLOAD_THREADS_PROPERTY = "datacube.download.threads";
-
-    private Resolution fileResolution;
-    private Resolution chunkResolution;
-    private File mainDirectory;
-    private File aggregationDirectory;
-    private List<Resolution> aggregationPoints;
-    private TimeInstant timeBase;
-    private Executor executor = null;
-    private boolean online;
-    private String statusMessage;
-    protected Geoserver geoserver;
-    protected Double noDataValue;
-
-    private Map<Integer, Strategy> beingProcessed = Collections.synchronizedMap(new HashMap<>());
-
-    /*
-     * estimated by averaging actual downloads as long as there is at least one chunk.
-     */
-    int estimatedChunkDownloadTimeSeconds = 80;
-
-    public class Granule {
-        /**
-         * The datafile to use for data retrieval
-         */
-        public File dataFile;
-        /**
-         * How many of the data resolution units are represented by this (possibly aggregated) file.
-         * Files that result from aggregation have multipliers > 1.
-         */
-        public int multiplier;
-        /**
-         * If > 0, the file does not exist and the value is the estimated number of seconds required
-         * to produce it or download the chunk it's in.
-         */
-        public int aggregationTimeSeconds;
-
-        /**
-         * Layer for the granule in Geoserver WCS, including namespace
-         */
-        public String layerName;
-
-        /**
-         * Ticks for aggregation
-         */
-        public int startTick, endTick;
-
-    }
-
-    /**
-     * All the information pertaining to an observation strategy, including all data files needed
-     * (existing or not) along with an estimated time to download completion (if 0, all data are
-     * available).
-     * 
-     * TODO extract the interface and put it in IDatacube along with the generator.
-     * 
-     * @author Ferd
-     *
-     */
-    public class Strategy implements ObservationStrategy {
-
-        public List<Granule> granules = new ArrayList<>();
-        public List<Integer> chunks = new ArrayList<>();
-        public List<Integer> ticks = new ArrayList<>();
-        private int timeToAvailabilitySeconds;
-
-        @Override
-        public int getTimeToAvailabilitySeconds() {
-            return timeToAvailabilitySeconds;
-        }
-
-        private String variable;
-
-        public Strategy(String variable) {
-            this.variable = variable;
-        }
-
-        public String dump() {
-            StringBuffer ret = new StringBuffer(1024);
-            ret.append("Download strategy\n");
-            int ttime = timeToAvailabilitySeconds;
-            int ng = 0;
-            for (Granule g : granules) {
-                ret.append("   " + ng + ": " + g.layerName + " ["
-                        + (g.multiplier == 1
-                                ? "data"
-                                : ("aggregating " + g.multiplier + " est. " + g.aggregationTimeSeconds + " sec"))
-                        + "]\n");
-                ng++;
-                ttime += g.aggregationTimeSeconds;
-            }
-            ret.append("Estimated processing time: " + ttime + " seconds");
-
-            return ret.toString();
-        }
-
-        /**
-         * Start any necessary processing, recording the ongoing operations so that successive calls
-         * don't make a mess. If availability is delayed, exits after enqueuing tasks and before
-         * they complete, reporting an estimated time to completion for retrying.
-         */
-        @Override
-        public AvailabilityReference buildCache() {
-
-            AvailabilityReference ret = new AvailabilityReference();
-            ret.setRetryTimeSeconds(this.timeToAvailabilitySeconds);
-
-            List<Integer> toDownload = new ArrayList<>();
-            List<Integer> candidates = new ArrayList<>();
-
-            for (int chunk : chunks) {
-                int delay = isChunkAvailable(chunk, variable);
-                if (delay < 0) {
-                    ret.setAvailability(Availability.NONE);
-                    break;
-                } else if (delay > 0) {
-                    candidates.add(chunk);
-                    ret.setAvailability(Availability.DELAYED);
-                }
-            }
-
-            if (candidates.isEmpty()) {
-                ret.setAvailability(Availability.COMPLETE);
-            }
-
-            for (int c : candidates) {
-                if (!beingProcessed.containsKey(c)) {
-                    beingProcessed.put(c, this);
-                    toDownload.add(c);
-                }
-            }
-
-            CountDownLatch latch = new CountDownLatch(toDownload.size());
-
-            for (int c : toDownload) {
-                startChunkDownload(c, variable, latch);
-            }
-
-            executor.execute(new Thread(){
-                @Override
-                public void run() {
-
-                    try {
-                        // wait for all chunks to download
-                        latch.await();
-                    } catch (InterruptedException e) {
-                        Logging.INSTANCE.error("sync error in chunk processing: " + e.getMessage());
-                    }
-
-                    /*
-                     * compute all useful aggregations within the chunks
-                     */
-                    List<Integer> allticks = new ArrayList<>();
-                    for (int chunk : chunks) {
-                        for (int tick : getChunkTicks(chunk)) {
-                            allticks.add(tick);
-                        }
-                    }
-                    // add 1 to aggregate all including the very last period
-                    allticks.add(allticks.get(allticks.size() - 1) + 1);
-                    Map<Resolution, Integer> checkpoints = new HashMap<>();
-                    for (Resolution aggregationPoint : aggregationPoints) {
-                        for (int tick : allticks) {
-                            ITimeInstant start = getTickStart(tick);
-                            if (start.isAlignedWith(aggregationPoint)) {
-                                if (checkpoints.containsKey(aggregationPoint)) {
-                                    File aggregatedFile = new File(aggregationDirectory + File.separator
-                                            + getAggregatedFilename(variable, checkpoints.get(aggregationPoint), tick - 1));
-                                    if (!createAggregatedLayer(variable, checkpoints.get(aggregationPoint), tick - 1,
-                                            aggregationPoint, aggregatedFile)) {
-                                        Logging.INSTANCE
-                                                .warn("aggregation between " + getTickStart(checkpoints.get(aggregationPoint))
-                                                        + " and " + getTickEnd(tick - 1) + " returned a failure code");
-                                    }
-                                }
-                                checkpoints.put(aggregationPoint, tick);
-                            }
-                        }
-                    }
-                }
-            });
-
-            return ret;
-        }
-
-        @Override
-        public boolean execute(IGeometry geometry, Builder builder, IContextualizationScope scope) {
-
-            System.out.println(this.dump());
-
-            if (!(scope.getScale().getSpace() instanceof Space) || ((Space) scope.getScale().getSpace()).getGrid() == null) {
-                throw new KlabIllegalStateException("Copernicus adapter only support grid geometries for now");
-            }
-
-            boolean first = true;
-            IGrid grid = ((Space) scope.getScale().getSpace()).getGrid();
-            BasicFileMappedStorage<Double> data = null;
-
-            double wsum = 0.0;
-            Aggregation aggregation = getAggregation(variable);
-
-            for (Granule g : granules) {
-
-                if (!g.dataFile.exists()) {
-                    if (g.multiplier == 1) {
-                        scope.getMonitor().error(
-                                "repository error: " + getName() + ": missing datafile " + MiscUtilities.getFileName(g.dataFile));
-                    } else {
-                        scope.getMonitor().info("repository " + getName() + ": creating missing aggregated datafile "
-                                + MiscUtilities.getFileName(g.dataFile));
-                        createAggregatedLayer(variable, g.startTick, g.endTick, null, aggregationDirectory);
-                    }
-                }
-
-                GridCoverage2D coverage = getCoverage(g.layerName, scope.getScale().getSpace());
-                if (granules.size() == 1) {
-                    // FIXME parameterize nodata
-                    geoserver.encode(coverage, grid, builder, variable, 0, noDataValue);
-                    return true;
-                } else {
-
-                    wsum += g.multiplier;
-
-                    /*
-                     * create temp storage if needed
-                     */
-                    if (data == null) {
-                        data = new BasicFileMappedStorage<>(Double.class, grid.getXCells(), grid.getYCells());
-                    }
-
-                    RandomIter iterator = RandomIterFactory.create(coverage.getRenderedImage(), null);
-                    for (long ofs = 0; ofs < grid.getCellCount(); ofs++) {
-
-                        long[] xy = Grid.getXYCoordinates(ofs, grid.getXCells(), grid.getYCells());
-                        double value = iterator.getSampleDouble((int) xy[0], (int) xy[1], 0);
-                        if (first) {
-                            data.set(value, xy);
-                        } else {
-                            Double d = data.get(xy);
-
-                            if (aggregation == Aggregation.MEAN) {
-                                // weighted average
-                                d *= g.multiplier;
-                            }
-
-                            // FIXME parameterize nodata
-                            // FIXME use weighted means
-                            if (!NumberUtils.equal(d, noDataValue)) {
-                                d = d + value;
-                            } else {
-                                d = value;
-                            }
-                            data.set(d, xy);
-                        }
-                    }
-
-                }
-                first = false;
-            }
-
-            if (data != null) {
-
-                /*
-                 * aggregation and builderation
-                 */
-                builder.startState(variable);
-                for (long ofs = 0; ofs < grid.getCellCount(); ofs++) {
-                    long[] xy = Grid.getXYCoordinates(ofs, grid.getXCells(), grid.getYCells());
-                    double value = data.get(xy);
-                    // FIXME parameterize nodata
-                    if (NumberUtils.equal(value, noDataValue)) {
-                        value = Double.NaN;
-                    } else if (aggregation == Aggregation.MEAN && wsum > 1 && Observations.INSTANCE.isData(value)) {
-                        value /= wsum;
-                    }
-                    builder.add(value);
-                }
-                builder.finishState();
-
-                return true;
-            }
-
-            return false;
-        }
-
-    }
-
-    protected void setOnline(boolean b, String string) {
-        this.online = b;
-        this.statusMessage = string;
-    }
-
-    protected GridCoverage2D getCoverage(String layerName, ISpace space) {
-        return this.geoserver.getWCSCoverage(space, getName(), layerName);
-    }
-
-    protected String getOriginalFile(String variable, int tick) {
-        return getOriginalDataFilename(variable, tick, getChunkDirectory(variable, getChunk(tick)));
-    }
-
-    /**
-     * 
-     * @param fileResolution the period covered by each file in a chunk
-     * @param chunkResolution the period covered by each chunk
-     * @param repositoryStart date of first observation in remote repository
-     * @param mainDirectory the directory where the chunks are located
-     * @param noDataValue value for nodata in remote observations
-     */
-    public ChunkedDatacubeRepository(ITime.Resolution fileResolution, ITime.Resolution chunkResolution,
-            ITimeInstant repositoryStart, File mainDirectory, double noDataValue) {
-        
-        this.fileResolution = fileResolution;
-        this.chunkResolution = chunkResolution;
-        this.mainDirectory = mainDirectory;
-        this.timeBase = (TimeInstant) repositoryStart;
-        this.aggregationDirectory = new File(this.mainDirectory + File.separator + "aggregated");
-        this.aggregationDirectory.mkdirs();
-        this.noDataValue = noDataValue;
-        recomputeProcessingTime();
-
-        int maxConcurrentThreads = Integer.parseInt(Configuration.INSTANCE.getProperty(DATACUBE_DOWNLOAD_THREADS_PROPERTY, "1"));
-        this.executor = Executors.newFixedThreadPool(maxConcurrentThreads);
-
-        this.geoserver = initializeGeoserver();
-        if (!this.geoserver.isOnline()) {
-            setOnline(false, "Copernicus CDS datacube: no Geoserver is available");
-        } else {
-            // TODO should also check the Copernicus service but that may be unnecessary if
-            // we
-            // have the data.
-            setOnline(true, "Geoserver is connected and responding");
-        }
-
-    }
-
-    /**
-     * Set the aggregation points for the datacube caching. If these aren't passed, no aggregation
-     * will happen.
-     * 
-     * @param resolutions
-     */
-    public void setAggregationPoints(ITime.Resolution... resolutions) {
-        this.aggregationPoints = new ArrayList<>();
-        for (ITime.Resolution r : resolutions) {
-            this.aggregationPoints.add(r);
-        }
-
-        /**
-         * Sort by descending coverage, to use during strategy assessment
-         */
-        Collections.sort(this.aggregationPoints, new Comparator<ITime.Resolution>(){
-            @Override
-            public int compare(ITime.Resolution o1, ITime.Resolution o2) {
-                return Long.compare(o2.getSpan(), o1.getSpan());
-            }
-        });
-    }
-
-    void recomputeProcessingTime() {
-
-        /*
-         * estimate mean processing time per chunk based on contents of chunk properties and number
-         * of threads in executor.
-         */
-        long secs = 0;
-        int dirs = 0;
-
-        for (File chunkDir : mainDirectory.listFiles(new FileFilter(){
-            @Override
-            public boolean accept(File pathname) {
-                return pathname.isDirectory();
-            }
-        })) {
-
-            File properties = new File(chunkDir + File.separator + "chunk.properties");
-            if (properties.exists()) {
-                Properties props = new Properties();
-                try (InputStream input = new FileInputStream(properties)) {
-                    props.load(input);
-                    secs += Long.parseLong(props.getProperty(CHUNK_DOWNLOAD_TIME_MS))
-                            + Long.parseLong(props.getProperty(CHUNK_PROCESSING_TIME_MS));
-                    dirs++;
-                } catch (IOException e) {
-                    // just ignore, although this is likely a bad dir
-                }
-            }
-        }
-
-        if (dirs > 0) {
-            this.estimatedChunkDownloadTimeSeconds = (int) (secs / (1000 * dirs));
-        }
-
-    }
-
-    private void startChunkDownload(int chunk, String variable, CountDownLatch latch) {
-
-        executor.execute(new Thread(){
-
-            @Override
-            public void run() {
-                long start = System.currentTimeMillis();
-                long begin = start;
-                boolean failure = false;
-                File dir = new File(mainDirectory + File.separator + variable + "_" + chunk);
-                dir.mkdirs();
-                Properties properties = new Properties();
-                if (downloadChunk(chunk, variable, dir)) {
-                    properties.setProperty(CHUNK_DOWNLOAD_TIME_MS, "" + (System.currentTimeMillis() - start));
-                    start = System.currentTimeMillis();
-                    if (processChunk(chunk, variable, dir)) {
-                        properties.setProperty(CHUNK_PROCESSING_TIME_MS, "" + (System.currentTimeMillis() - start));
-                        try (OutputStream out = new FileOutputStream(new File(dir + File.separator + "chunk.properties"))) {
-                            properties.store(out,
-                                    "Chunk " + chunk + " of " + variable + " finished downloaded and processing at "
-                                            + DateTime.now(DateTimeZone.UTC) + ": total processing time = "
-                                            + new Period(System.currentTimeMillis() - begin));
-                        } catch (IOException e) {
-                            failure = true;
-                        }
-                    }
-                    if (failure) {
-                        Logging.INSTANCE.error("Transfer of chunk " + chunk + " for " + variable + " failed");
-                        FileUtils.deleteQuietly(dir);
-                    } else {
-                        recomputeProcessingTime();
-                    }
-                }
-
-                latch.countDown();
-                beingProcessed.remove(chunk);
-
-            }
-
-        });
-    }
-
-    private int isChunkAvailable(int chunk, String variable) {
-        if (this.beingProcessed.containsKey(chunk)) {
-            // let's not decrement this for now
-            return this.beingProcessed.get(chunk).timeToAvailabilitySeconds;
-        }
-        File pfile = new File(this.mainDirectory + File.separator + variable + "_" + chunk + File.separator + "chunk.properties");
-        return pfile.exists() ? 0 : (checkRemoteAvailability(chunk, variable) ? estimatedChunkDownloadTimeSeconds : -1);
-
-    }
-
-    /**
-     * Check if passed chunk is available remotely for download.
-     * 
-     * @param chunk
-     * @param variable
-     * @return
-     */
-    protected abstract boolean checkRemoteAvailability(int chunk, String variable);
-
-    /**
-     * Download the passed chunk into the passed directory so that each tick in the chunk
-     * corresponds to the filename returned by {@link #getDataFilename(String, int)}. If something
-     * goes wrong, return false after deleting any turds.
-     * 
-     * @param chunk
-     * @param variable
-     * @param destinationDirectory
-     * @return
-     */
-    protected abstract boolean downloadChunk(int chunk, String variable, File destinationDirectory);
-
-    /**
-     * Called after {@link #downloadChunk(int, String, File)} has returned true. Do anything you
-     * need to get the files ingested and validated for use.
-     * 
-     * @param chunk
-     * @param variable
-     * @param destinationDirectory
-     * @return
-     */
-    protected abstract boolean processChunk(int chunk, String variable, File destinationDirectory);
-
-    /**
-     * Return the file name corresponding to the passed tick. This is only called after the chunk
-     * has been successfully downloaded, so the containing directory is valid in case the filename
-     * can only be computed after the fact.
-     * 
-     * @param variable
-     * @param tick
-     * @return
-     */
-    protected abstract String getOriginalDataFilename(String variable, int tick, File containingDirectory);
-
-    /**
-     * Return the filename corresponding to the aggregation of the data in subsequent file ticks
-     * between start and end, both inclusive. Aggregation should be done according to data semantics
-     * as either sum or average.
-     * 
-     * @param variable
-     * @param startTick
-     * @param endTick
-     * @return
-     */
-    protected abstract String getAggregatedFilename(String variable, int startTick, int endTick);
-
-    /**
-     * Actually perform the aggregation between the ticks indicated and produce a file (could be a
-     * placeholder if encoding happens in other ways) with the passed path, which is a fully
-     * specified path created using the result of {@link #getAggregatedFilename(String, int, int)}.
-     * After this has returned true, a call for the result of
-     * {@link #getAggregatedLayer(String, int, int)} to the linked geoserver must succeed.
-     * 
-     * @param variable
-     * @param startTick
-     * @param endTick
-     * @param destinationDirectory
-     * @return
-     */
-    protected abstract boolean createAggregatedLayer(String variable, int startTick, int endTick,
-            @Nullable ITime.Resolution resolution, File destinationFile);
-
-    @Override
-    public Strategy getStrategy(String variable, IGeometry geometry) {
-
-        Strategy ret = new Strategy(variable);
-        IScale scale = geometry instanceof IScale ? (IScale) geometry : Scale.create(geometry);
-        ITime time = scale.getTime();
-
-        int skipping = 0;
-
-        // chunks we have to download
-        Set<Integer> chunks = new LinkedHashSet<>();
-
-        for (Pair<Integer, Integer> cp : getTicks(time)) {
-
-            ITimeInstant start = getTickStart(cp.getFirst());
-
-            /*
-             * We technically don't need the chunks if we have an aggregation, but we don't need to
-             * support the case when only the aggregated data are available for now. Whoever deletes
-             * stuff from the repository deserves a NPE.
-             */
-            chunks.add(cp.getSecond());
-
-            // if there is a current aggregation and it covers the current tick,
-            // continue
-            if (skipping > 0) {
-                skipping--;
-                continue;
-            }
-
-            boolean aggregated = false;
-            if (this.aggregationPoints != null) {
-                for (ITime.Resolution res : this.aggregationPoints) {
-
-                    if (start.plus(1, res).getMilliseconds() <= time.getEnd().getMilliseconds() && start.isAlignedWith(res)) {
-
-                        /*
-                         * use this resolution and move forward to next period
-                         */
-                        Granule granule = new Granule();
-                        granule.multiplier = (int) start.getPeriods(start.plus(1, res), fileResolution);
-                        skipping = granule.multiplier - 1;
-                        granule.dataFile = new File(aggregationDirectory + File.separator
-                                + getAggregatedFilename(variable, cp.getFirst(), cp.getFirst() + skipping));
-                        granule.aggregationTimeSeconds = granule.dataFile.exists()
-                                ? 0
-                                : (int) (getEstimatedAggregationTime(res.getType()) * granule.multiplier);
-                        granule.startTick = cp.getFirst();
-                        granule.endTick = cp.getFirst() + skipping;
-                        granule.layerName = getAggregatedLayer(variable, cp.getFirst(), cp.getFirst() + skipping);
-                        ret.granules.add(granule);
-
-                        aggregated = true;
-                        break;
-                    }
-                }
-
-                if (!aggregated) {
-
-                    Granule granule = new Granule();
-                    granule.multiplier = 1;
-                    File directory = getChunkDirectory(variable, cp.getSecond());
-                    granule.dataFile = new File(
-                            directory + File.separator + getOriginalDataFilename(variable, cp.getFirst(), directory));
-                    granule.aggregationTimeSeconds = 0;
-                    granule.layerName = getDataLayer(variable, cp.getFirst());
-
-                    ret.ticks.add(cp.getFirst());
-                    ret.granules.add(granule);
-                }
-            }
-        }
-
-        /*
-         * TODO scan the chunk set and add the total time to availability for all the missing ones
-         */
-        for (Integer chunk : chunks) {
-            ret.chunks.add(chunk);
-            if (!new File(getChunkDirectory(variable, chunk) + File.separator + "chunk.properties").exists()) {
-                ret.timeToAvailabilitySeconds += this.estimatedChunkDownloadTimeSeconds;
-            }
-        }
-
-        return ret;
-    }
-
-    private File getChunkDirectory(String variable, Integer chunk) {
-        return new File(mainDirectory + File.separator + variable + "_" + chunk);
-    }
-
-    private int getChunk(int tick) {
-        ITimeInstant tickTime = getTickStart(tick);
-        return (int) tickTime.getPeriods(this.timeBase, chunkResolution);
-    }
-
-    protected int getEstimatedAggregationTime(Type type) {
-        // TODO keep statistics
-        return 1;
-    }
-
-    /**
-     * Get the chunk numbers needed to cover the passed time. The numbers represent blocks of N
-     * seconds, where N is the resolution of the chunk (chunkResolution.getSpan()).
-     * 
-     * @param time
-     * @return
-     */
-    List<Integer> getChunks(ITime time) {
-        List<Integer> ret = new ArrayList<>();
-        long startchunk = time.getStart().getPeriods(this.timeBase, chunkResolution);
-        long endchunk = time.getEnd().getPeriods(this.timeBase, chunkResolution);
-        for (long n = startchunk; n <= endchunk; n++) {
-            ret.add((int) n);
-        }
-        return ret;
-    }
-
-    /**
-     * Get all the file ticks and the corresponding chunks necessary to cover one observation along
-     * a period. No aggregation strategy is considered here.
-     * 
-     * @param time
-     * @return
-     */
-    List<Pair<Integer, Integer>> getTicks(ITime time) {
-        List<Pair<Integer, Integer>> ret = new ArrayList<>();
-        for (int chunk : getChunks(time)) {
-            for (int tick : getChunkTicks(chunk)) {
-                if (time.getStart().getMilliseconds() <= getTickStart(tick).getMilliseconds()
-                        && time.getEnd().getMilliseconds() >= getTickEnd(tick).getMilliseconds())
-                    ret.add(new Pair<>(tick, chunk));
-            }
-        }
-        return ret;
-    }
-
-    public ITimeInstant getChunkStart(int chunk) {
-        return timeBase.plus(chunk, chunkResolution);
-    }
-
-    public ITimeInstant getChunkEnd(int chunk) {
-        return timeBase.plus(chunk + 1, chunkResolution);
-    }
-
-    public ITimeInstant getTickStart(int tick) {
-        return timeBase.plus(tick, fileResolution);
-    }
-
-    public ITimeInstant getTickEnd(int tick) {
-        return timeBase.plus(tick + 1, fileResolution);
-    }
-
-    protected File getDataFile(String variable, int tick) {
-        File dir = getChunkDirectory(variable, getChunk(tick));
-        return new File(dir + File.separator + getOriginalDataFilename(variable, tick, dir));
-    }
-
-    public List<Integer> getChunkTicks(int chunk) {
-        List<Integer> ret = new ArrayList<>();
-        ITimeInstant start = getChunkStart(chunk);
-        ITimeInstant end = getChunkEnd(chunk);
-        long tick = start.getPeriods(this.timeBase, fileResolution);
-        while(start.isBefore(end)) {
-            ret.add((int) tick);
-            start = start.plus(1, fileResolution);
-            tick++;
-        }
-        return ret;
-    }
-
-    public boolean isOnline() {
-        return this.online;
-    }
-
-    public String getStatusMessage() {
-        return statusMessage;
-    }
-
-    public abstract String getName();
-
-    protected abstract Geoserver initializeGeoserver();
-
-    protected abstract IArtifact.Type getResourceType(Urn urn);
-
-    protected abstract IGeometry getResourceGeometry(Urn urn);
-
-    protected abstract String getAggregatedLayer(String variable, int startTick, int endTick);
-
-    protected abstract String getDataLayer(String variable, int tick);
-
-    public abstract IResource getResource(String urn);
-
-    /**
-     * Return a stable variable name for a given URN
-     * 
-     * @param urn
-     * @return
-     */
-    protected abstract Collection<String> getVariableNames(Urn urn);
+	public static final String CHUNK_DOWNLOAD_TIME_MS = "time.download.ms";
+	public static final String CHUNK_PROCESSING_TIME_MS = "time.processing.ms";
+	public static final String DATACUBE_DOWNLOAD_THREADS_PROPERTY = "datacube.download.threads";
+
+	private Resolution fileResolution;
+	private Resolution chunkResolution;
+	private File mainDirectory;
+	private File aggregationDirectory;
+	private List<Resolution> aggregationPoints;
+	private TimeInstant timeBase;
+	private Executor executor = null;
+	private boolean online;
+	private String statusMessage;
+	protected Geoserver geoserver;
+	protected Double noDataValue;
+
+	private Map<Integer, Strategy> beingProcessed = Collections.synchronizedMap(new HashMap<>());
+
+	/*
+	 * estimated by averaging actual downloads as long as there is at least one
+	 * chunk.
+	 */
+	int estimatedChunkDownloadTimeSeconds = 80;
+
+	public class Granule {
+		/**
+		 * The datafile to use for data retrieval
+		 */
+		public File dataFile;
+		/**
+		 * How many of the data resolution units are represented by this (possibly
+		 * aggregated) file. Files that result from aggregation have multipliers > 1.
+		 */
+		public int multiplier;
+		/**
+		 * If > 0, the file does not exist and the value is the estimated number of
+		 * seconds required to produce it or download the chunk it's in.
+		 */
+		public int aggregationTimeSeconds;
+
+		/**
+		 * Layer for the granule in Geoserver WCS, including namespace
+		 */
+		public String layerName;
+
+		/**
+		 * Ticks for aggregation
+		 */
+		public int startTick, endTick;
+
+	}
+
+	/**
+	 * All the information pertaining to an observation strategy, including all data
+	 * files needed (existing or not) along with an estimated time to download
+	 * completion (if 0, all data are available).
+	 * 
+	 * TODO extract the interface and put it in IDatacube along with the generator.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	public class Strategy implements ObservationStrategy {
+
+		public List<Granule> granules = new ArrayList<>();
+		public List<Integer> chunks = new ArrayList<>();
+		public List<Integer> ticks = new ArrayList<>();
+		private int timeToAvailabilitySeconds;
+
+		@Override
+		public int getTimeToAvailabilitySeconds() {
+			return timeToAvailabilitySeconds;
+		}
+
+		private String variable;
+
+		public Strategy(String variable) {
+			this.variable = variable;
+		}
+
+		public String dump() {
+			StringBuffer ret = new StringBuffer(1024);
+			ret.append("Download strategy\n");
+			int ttime = timeToAvailabilitySeconds;
+			int ng = 0;
+			for (Granule g : granules) {
+				ret.append("   " + ng + ": " + g.layerName + " ["
+						+ (g.multiplier == 1 ? "data"
+								: ("aggregating " + g.multiplier + " est. " + g.aggregationTimeSeconds + " sec"))
+						+ "]\n");
+				ng++;
+				ttime += g.aggregationTimeSeconds;
+			}
+			ret.append("Estimated processing time: " + ttime + " seconds");
+
+			return ret.toString();
+		}
+
+		/**
+		 * Start any necessary processing, recording the ongoing operations so that
+		 * successive calls don't make a mess. If availability is delayed, exits after
+		 * enqueuing tasks and before they complete, reporting an estimated time to
+		 * completion for retrying.
+		 */
+		@Override
+		public AvailabilityReference buildCache() {
+
+			AvailabilityReference ret = new AvailabilityReference();
+			ret.setRetryTimeSeconds(this.timeToAvailabilitySeconds);
+
+			List<Integer> toDownload = new ArrayList<>();
+			List<Integer> candidates = new ArrayList<>();
+
+			for (int chunk : chunks) {
+				int delay = isChunkAvailable(chunk, variable);
+				if (delay < 0) {
+					ret.setAvailability(Availability.NONE);
+					break;
+				} else if (delay > 0) {
+					candidates.add(chunk);
+					ret.setAvailability(Availability.DELAYED);
+				}
+			}
+
+			if (candidates.isEmpty()) {
+				ret.setAvailability(Availability.COMPLETE);
+			}
+
+			for (int c : candidates) {
+				if (!beingProcessed.containsKey(c)) {
+					beingProcessed.put(c, this);
+					toDownload.add(c);
+				}
+			}
+
+			CountDownLatch latch = new CountDownLatch(toDownload.size());
+
+			for (int c : toDownload) {
+				startChunkDownload(c, variable, latch);
+			}
+
+			if (toDownload.size() > 0) {
+				executor.execute(new Thread() {
+					@Override
+					public void run() {
+
+						try {
+							// wait for all chunks to download
+							latch.await();
+						} catch (InterruptedException e) {
+							Logging.INSTANCE.error("sync error in chunk processing: " + e.getMessage());
+						}
+
+						/*
+						 * compute all useful aggregations within the chunks
+						 */
+						List<Integer> allticks = new ArrayList<>();
+						for (int chunk : chunks) {
+							for (int tick : getChunkTicks(chunk)) {
+								allticks.add(tick);
+							}
+						}
+						// add 1 to aggregate all including the very last period
+						allticks.add(allticks.get(allticks.size() - 1) + 1);
+						Map<Resolution, Integer> checkpoints = new HashMap<>();
+						for (Resolution aggregationPoint : aggregationPoints) {
+							for (int tick : allticks) {
+								ITimeInstant start = getTickStart(tick);
+								if (start.isAlignedWith(aggregationPoint)) {
+									if (checkpoints.containsKey(aggregationPoint)) {
+										File aggregatedFile = new File(
+												aggregationDirectory + File.separator + getAggregatedFilename(variable,
+														checkpoints.get(aggregationPoint), tick - 1));
+										
+										if (aggregatedFile.exists()) {
+											continue;
+										}
+										
+										if (!createAggregatedLayer(variable, checkpoints.get(aggregationPoint),
+												tick - 1, aggregationPoint, aggregatedFile)) {
+											Logging.INSTANCE.warn("aggregation between "
+													+ getTickStart(checkpoints.get(aggregationPoint)) + " and "
+													+ getTickEnd(tick - 1) + " returned a failure code");
+										}
+									}
+									checkpoints.put(aggregationPoint, tick);
+								}
+							}
+						}
+					}
+				});
+			}
+			
+			return ret;
+		}
+
+		@Override
+		public boolean execute(IGeometry geometry, Builder builder, IContextualizationScope scope) {
+
+			System.out.println(this.dump());
+
+			if (!(scope.getScale().getSpace() instanceof Space)
+					|| ((Space) scope.getScale().getSpace()).getGrid() == null) {
+				throw new KlabIllegalStateException("Copernicus adapter only support grid geometries for now");
+			}
+
+			boolean first = true;
+			IGrid grid = ((Space) scope.getScale().getSpace()).getGrid();
+			BasicFileMappedStorage<Double> data = null;
+
+			double wsum = 0.0;
+			Aggregation aggregation = getAggregation(variable);
+
+			for (Granule g : granules) {
+
+				if (!g.dataFile.exists()) {
+					if (g.multiplier == 1) {
+						scope.getMonitor().error("repository error: " + getName() + ": missing datafile "
+								+ MiscUtilities.getFileName(g.dataFile));
+					} else {
+						scope.getMonitor().info("repository " + getName() + ": creating missing aggregated datafile "
+								+ MiscUtilities.getFileName(g.dataFile));
+						createAggregatedLayer(variable, g.startTick, g.endTick, null, aggregationDirectory);
+					}
+				}
+
+				GridCoverage2D coverage = getCoverage(g.layerName, scope.getScale().getSpace());
+				if (granules.size() == 1) {
+					// FIXME parameterize nodata
+					geoserver.encode(coverage, grid, builder, variable, 0, noDataValue);
+					return true;
+				} else {
+
+					wsum += g.multiplier;
+
+					/*
+					 * create temp storage if needed
+					 */
+					if (data == null) {
+						data = new BasicFileMappedStorage<>(Double.class, grid.getXCells(), grid.getYCells());
+					}
+
+					RandomIter iterator = RandomIterFactory.create(coverage.getRenderedImage(), null);
+					for (long ofs = 0; ofs < grid.getCellCount(); ofs++) {
+
+						long[] xy = Grid.getXYCoordinates(ofs, grid.getXCells(), grid.getYCells());
+						double value = iterator.getSampleDouble((int) xy[0], (int) xy[1], 0);
+						if (first) {
+							data.set(value, xy);
+						} else {
+							Double d = data.get(xy);
+
+							if (aggregation == Aggregation.MEAN) {
+								// weighted average
+								d *= g.multiplier;
+							}
+
+							// FIXME parameterize nodata
+							// FIXME use weighted means
+							if (!NumberUtils.equal(d, noDataValue)) {
+								d = d + value;
+							} else {
+								d = value;
+							}
+							data.set(d, xy);
+						}
+					}
+
+				}
+				first = false;
+			}
+
+			if (data != null) {
+
+				/*
+				 * aggregation and builderation
+				 */
+				builder.startState(variable);
+				for (long ofs = 0; ofs < grid.getCellCount(); ofs++) {
+					long[] xy = Grid.getXYCoordinates(ofs, grid.getXCells(), grid.getYCells());
+					double value = data.get(xy);
+					// FIXME parameterize nodata
+					if (NumberUtils.equal(value, noDataValue)) {
+						value = Double.NaN;
+					} else if (aggregation == Aggregation.MEAN && wsum > 1 && Observations.INSTANCE.isData(value)) {
+						value /= wsum;
+					}
+					builder.add(value);
+				}
+				builder.finishState();
+
+				return true;
+			}
+
+			return false;
+		}
+
+	}
+
+	protected void setOnline(boolean b, String string) {
+		this.online = b;
+		this.statusMessage = string;
+	}
+
+	protected GridCoverage2D getCoverage(String layerName, ISpace space) {
+		return this.geoserver.getWCSCoverage(space, getName(), layerName);
+	}
+
+	protected String getOriginalFile(String variable, int tick) {
+		return getOriginalDataFilename(variable, tick, getChunkDirectory(variable, getChunk(tick)));
+	}
+
+	/**
+	 * 
+	 * @param fileResolution  the period covered by each file in a chunk
+	 * @param chunkResolution the period covered by each chunk
+	 * @param repositoryStart date of first observation in remote repository
+	 * @param mainDirectory   the directory where the chunks are located
+	 * @param noDataValue     value for nodata in remote observations
+	 */
+	public ChunkedDatacubeRepository(ITime.Resolution fileResolution, ITime.Resolution chunkResolution,
+			ITimeInstant repositoryStart, File mainDirectory, double noDataValue) {
+
+		this.fileResolution = fileResolution;
+		this.chunkResolution = chunkResolution;
+		this.mainDirectory = mainDirectory;
+		this.timeBase = (TimeInstant) repositoryStart;
+		this.aggregationDirectory = new File(this.mainDirectory + File.separator + "aggregated");
+		this.aggregationDirectory.mkdirs();
+		this.noDataValue = noDataValue;
+		recomputeProcessingTime();
+
+		int maxConcurrentThreads = Integer
+				.parseInt(Configuration.INSTANCE.getProperty(DATACUBE_DOWNLOAD_THREADS_PROPERTY, "1"));
+		this.executor = Executors.newFixedThreadPool(maxConcurrentThreads);
+
+		this.geoserver = initializeGeoserver();
+		if (!this.geoserver.isOnline()) {
+			setOnline(false, "Copernicus CDS datacube: no Geoserver is available");
+		} else {
+			// TODO should also check the Copernicus service but that may be unnecessary if
+			// we
+			// have the data.
+			setOnline(true, "Geoserver is connected and responding");
+		}
+
+	}
+
+	/**
+	 * Set the aggregation points for the datacube caching. If these aren't passed,
+	 * no aggregation will happen.
+	 * 
+	 * @param resolutions
+	 */
+	public void setAggregationPoints(ITime.Resolution... resolutions) {
+		this.aggregationPoints = new ArrayList<>();
+		for (ITime.Resolution r : resolutions) {
+			this.aggregationPoints.add(r);
+		}
+
+		/**
+		 * Sort by descending coverage, to use during strategy assessment
+		 */
+		Collections.sort(this.aggregationPoints, new Comparator<ITime.Resolution>() {
+			@Override
+			public int compare(ITime.Resolution o1, ITime.Resolution o2) {
+				return Long.compare(o2.getSpan(), o1.getSpan());
+			}
+		});
+	}
+
+	void recomputeProcessingTime() {
+
+		/*
+		 * estimate mean processing time per chunk based on contents of chunk properties
+		 * and number of threads in executor.
+		 */
+		long secs = 0;
+		int dirs = 0;
+
+		for (File chunkDir : mainDirectory.listFiles(new FileFilter() {
+			@Override
+			public boolean accept(File pathname) {
+				return pathname.isDirectory();
+			}
+		})) {
+
+			File properties = new File(chunkDir + File.separator + "chunk.properties");
+			if (properties.exists()) {
+				Properties props = new Properties();
+				try (InputStream input = new FileInputStream(properties)) {
+					props.load(input);
+					secs += Long.parseLong(props.getProperty(CHUNK_DOWNLOAD_TIME_MS))
+							+ Long.parseLong(props.getProperty(CHUNK_PROCESSING_TIME_MS));
+					dirs++;
+				} catch (IOException e) {
+					// just ignore, although this is likely a bad dir
+				}
+			}
+		}
+
+		if (dirs > 0) {
+			this.estimatedChunkDownloadTimeSeconds = (int) (secs / (1000 * dirs));
+		}
+
+	}
+
+	private void startChunkDownload(int chunk, String variable, CountDownLatch latch) {
+
+		executor.execute(new Thread() {
+
+			@Override
+			public void run() {
+				long start = System.currentTimeMillis();
+				long begin = start;
+				boolean failure = false;
+				File dir = new File(mainDirectory + File.separator + variable + "_" + chunk);
+				dir.mkdirs();
+				Properties properties = new Properties();
+				if (downloadChunk(chunk, variable, dir)) {
+					properties.setProperty(CHUNK_DOWNLOAD_TIME_MS, "" + (System.currentTimeMillis() - start));
+					start = System.currentTimeMillis();
+					if (processChunk(chunk, variable, dir)) {
+						properties.setProperty(CHUNK_PROCESSING_TIME_MS, "" + (System.currentTimeMillis() - start));
+						try (OutputStream out = new FileOutputStream(
+								new File(dir + File.separator + "chunk.properties"))) {
+							properties.store(out,
+									"Chunk " + chunk + " of " + variable + " finished downloaded and processing at "
+											+ DateTime.now(DateTimeZone.UTC) + ": total processing time = "
+											+ new Period(System.currentTimeMillis() - begin));
+						} catch (IOException e) {
+							failure = true;
+						}
+					}
+					if (failure) {
+						Logging.INSTANCE.error("Transfer of chunk " + chunk + " for " + variable + " failed");
+						FileUtils.deleteQuietly(dir);
+					} else {
+						recomputeProcessingTime();
+					}
+				}
+
+				latch.countDown();
+				beingProcessed.remove(chunk);
+
+			}
+
+		});
+	}
+
+	private int isChunkAvailable(int chunk, String variable) {
+		if (this.beingProcessed.containsKey(chunk)) {
+			// let's not decrement this for now
+			return this.beingProcessed.get(chunk).timeToAvailabilitySeconds;
+		}
+		File pfile = new File(
+				this.mainDirectory + File.separator + variable + "_" + chunk + File.separator + "chunk.properties");
+		return pfile.exists() ? 0 : (checkRemoteAvailability(chunk, variable) ? estimatedChunkDownloadTimeSeconds : -1);
+
+	}
+
+	/**
+	 * Check if passed chunk is available remotely for download.
+	 * 
+	 * @param chunk
+	 * @param variable
+	 * @return
+	 */
+	protected abstract boolean checkRemoteAvailability(int chunk, String variable);
+
+	/**
+	 * Download the passed chunk into the passed directory so that each tick in the
+	 * chunk corresponds to the filename returned by
+	 * {@link #getDataFilename(String, int)}. If something goes wrong, return false
+	 * after deleting any turds.
+	 * 
+	 * @param chunk
+	 * @param variable
+	 * @param destinationDirectory
+	 * @return
+	 */
+	protected abstract boolean downloadChunk(int chunk, String variable, File destinationDirectory);
+
+	/**
+	 * Called after {@link #downloadChunk(int, String, File)} has returned true. Do
+	 * anything you need to get the files ingested and validated for use.
+	 * 
+	 * @param chunk
+	 * @param variable
+	 * @param destinationDirectory
+	 * @return
+	 */
+	protected abstract boolean processChunk(int chunk, String variable, File destinationDirectory);
+
+	/**
+	 * Return the file name corresponding to the passed tick. This is only called
+	 * after the chunk has been successfully downloaded, so the containing directory
+	 * is valid in case the filename can only be computed after the fact.
+	 * 
+	 * @param variable
+	 * @param tick
+	 * @return
+	 */
+	protected abstract String getOriginalDataFilename(String variable, int tick, File containingDirectory);
+
+	/**
+	 * Return the filename corresponding to the aggregation of the data in
+	 * subsequent file ticks between start and end, both inclusive. Aggregation
+	 * should be done according to data semantics as either sum or average.
+	 * 
+	 * @param variable
+	 * @param startTick
+	 * @param endTick
+	 * @return
+	 */
+	protected abstract String getAggregatedFilename(String variable, int startTick, int endTick);
+
+	/**
+	 * Actually perform the aggregation between the ticks indicated and produce a
+	 * file (could be a placeholder if encoding happens in other ways) with the
+	 * passed path, which is a fully specified path created using the result of
+	 * {@link #getAggregatedFilename(String, int, int)}. After this has returned
+	 * true, a call for the result of {@link #getAggregatedLayer(String, int, int)}
+	 * to the linked geoserver must succeed.
+	 * 
+	 * @param variable
+	 * @param startTick
+	 * @param endTick
+	 * @param destinationDirectory
+	 * @return
+	 */
+	protected abstract boolean createAggregatedLayer(String variable, int startTick, int endTick,
+			@Nullable ITime.Resolution resolution, File destinationFile);
+
+	@Override
+	public Strategy getStrategy(String variable, IGeometry geometry) {
+
+		Strategy ret = new Strategy(variable);
+		IScale scale = geometry instanceof IScale ? (IScale) geometry : Scale.create(geometry);
+		ITime time = scale.getTime();
+
+		int skipping = 0;
+
+		// chunks we have to download
+		Set<Integer> chunks = new LinkedHashSet<>();
+
+		for (Pair<Integer, Integer> cp : getTicks(time)) {
+
+			ITimeInstant start = getTickStart(cp.getFirst());
+
+			/*
+			 * We technically don't need the chunks if we have an aggregation, but we don't
+			 * need to support the case when only the aggregated data are available for now.
+			 * Whoever deletes stuff from the repository deserves a NPE.
+			 */
+			chunks.add(cp.getSecond());
+
+			// if there is a current aggregation and it covers the current tick,
+			// continue
+			if (skipping > 0) {
+				skipping--;
+				continue;
+			}
+
+			boolean aggregated = false;
+			if (this.aggregationPoints != null) {
+				for (ITime.Resolution res : this.aggregationPoints) {
+
+					if (start.plus(1, res).getMilliseconds() <= time.getEnd().getMilliseconds()
+							&& start.isAlignedWith(res)) {
+
+						/*
+						 * use this resolution and move forward to next period
+						 */
+						Granule granule = new Granule();
+						granule.multiplier = (int) start.getPeriods(start.plus(1, res), fileResolution);
+						skipping = granule.multiplier - 1;
+						granule.dataFile = new File(aggregationDirectory + File.separator
+								+ getAggregatedFilename(variable, cp.getFirst(), cp.getFirst() + skipping));
+						granule.aggregationTimeSeconds = granule.dataFile.exists() ? 0
+								: (int) (getEstimatedAggregationTime(res.getType()) * granule.multiplier);
+						granule.startTick = cp.getFirst();
+						granule.endTick = cp.getFirst() + skipping;
+						granule.layerName = getAggregatedLayer(variable, cp.getFirst(), cp.getFirst() + skipping);
+						ret.granules.add(granule);
+
+						aggregated = true;
+						break;
+					}
+				}
+
+				if (!aggregated) {
+
+					Granule granule = new Granule();
+					granule.multiplier = 1;
+					File directory = getChunkDirectory(variable, cp.getSecond());
+					directory.mkdirs();
+					granule.dataFile = new File(
+							directory + File.separator + getOriginalDataFilename(variable, cp.getFirst(), directory));
+					granule.aggregationTimeSeconds = 0;
+					granule.layerName = getDataLayer(variable, cp.getFirst());
+
+					ret.ticks.add(cp.getFirst());
+					ret.granules.add(granule);
+				}
+			}
+		}
+
+		/*
+		 * TODO scan the chunk set and add the total time to availability for all the
+		 * missing ones
+		 */
+		for (Integer chunk : chunks) {
+			ret.chunks.add(chunk);
+			if (!new File(getChunkDirectory(variable, chunk) + File.separator + "chunk.properties").exists()) {
+				ret.timeToAvailabilitySeconds += this.estimatedChunkDownloadTimeSeconds;
+			}
+		}
+
+		return ret;
+	}
+
+	private File getChunkDirectory(String variable, Integer chunk) {
+		return new File(mainDirectory + File.separator + variable + "_" + chunk);
+	}
+
+	private int getChunk(int tick) {
+		ITimeInstant tickTime = getTickStart(tick);
+		return (int) tickTime.getPeriods(this.timeBase, chunkResolution);
+	}
+
+	protected int getEstimatedAggregationTime(Type type) {
+		// TODO keep statistics
+		return 1;
+	}
+
+	/**
+	 * Get the chunk numbers needed to cover the passed time. The numbers represent
+	 * blocks of N seconds, where N is the resolution of the chunk
+	 * (chunkResolution.getSpan()).
+	 * 
+	 * @param time
+	 * @return
+	 */
+	List<Integer> getChunks(ITime time) {
+		List<Integer> ret = new ArrayList<>();
+		long startchunk = time.getStart().getPeriods(this.timeBase, chunkResolution);
+		long endchunk = time.getEnd().getPeriods(this.timeBase, chunkResolution);
+		for (long n = startchunk; n <= endchunk; n++) {
+			ret.add((int) n);
+		}
+		return ret;
+	}
+
+	/**
+	 * Get all the file ticks and the corresponding chunks necessary to cover one
+	 * observation along a period. No aggregation strategy is considered here.
+	 * 
+	 * @param time
+	 * @return
+	 */
+	List<Pair<Integer, Integer>> getTicks(ITime time) {
+		List<Pair<Integer, Integer>> ret = new ArrayList<>();
+		for (int chunk : getChunks(time)) {
+			for (int tick : getChunkTicks(chunk)) {
+				if (time.getStart().getMilliseconds() <= getTickStart(tick).getMilliseconds()
+						&& time.getEnd().getMilliseconds() >= getTickEnd(tick).getMilliseconds())
+					ret.add(new Pair<>(tick, chunk));
+			}
+		}
+		return ret;
+	}
+
+	public ITimeInstant getChunkStart(int chunk) {
+		return timeBase.plus(chunk, chunkResolution);
+	}
+
+	public ITimeInstant getChunkEnd(int chunk) {
+		return timeBase.plus(chunk + 1, chunkResolution);
+	}
+
+	public ITimeInstant getTickStart(int tick) {
+		return timeBase.plus(tick, fileResolution);
+	}
+
+	public ITimeInstant getTickEnd(int tick) {
+		return timeBase.plus(tick + 1, fileResolution);
+	}
+
+	protected File getDataFile(String variable, int tick) {
+		File dir = getChunkDirectory(variable, getChunk(tick));
+		return new File(dir + File.separator + getOriginalDataFilename(variable, tick, dir));
+	}
+
+	public List<Integer> getChunkTicks(int chunk) {
+		List<Integer> ret = new ArrayList<>();
+		ITimeInstant start = getChunkStart(chunk);
+		ITimeInstant end = getChunkEnd(chunk);
+		long tick = start.getPeriods(this.timeBase, fileResolution);
+		while (start.isBefore(end)) {
+			ret.add((int) tick);
+			start = start.plus(1, fileResolution);
+			tick++;
+		}
+		return ret;
+	}
+
+	public boolean isOnline() {
+		return this.online;
+	}
+
+	public String getStatusMessage() {
+		return statusMessage;
+	}
+
+	public abstract String getName();
+
+	protected abstract Geoserver initializeGeoserver();
+
+	protected abstract IArtifact.Type getResourceType(Urn urn);
+
+	protected abstract IGeometry getResourceGeometry(Urn urn);
+
+	protected abstract String getAggregatedLayer(String variable, int startTick, int endTick);
+
+	protected abstract String getDataLayer(String variable, int tick);
+
+	public abstract IResource getResource(String urn);
+
+	/**
+	 * Return a stable variable name for a given URN
+	 * 
+	 * @param urn
+	 * @return
+	 */
+	protected abstract Collection<String> getVariableNames(Urn urn);
 
 }
