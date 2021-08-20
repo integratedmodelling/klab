@@ -16,7 +16,6 @@ import java.util.EnumSet;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -48,10 +47,8 @@ import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.data.storage.BasicFileMappedStorage;
-import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
-import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.parameter.GeneralParameterValue;
@@ -76,13 +73,10 @@ import it.geosolutions.imageio.stream.AccessibleStream;
 import it.geosolutions.imageio.stream.input.URIImageInputStream;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import ucar.ma2.Array;
-import ucar.ma2.ArrayDouble;
 import ucar.ma2.DataType;
 import ucar.nc2.Attribute;
 import ucar.nc2.Dimension;
 import ucar.nc2.Group;
-import ucar.nc2.NetcdfFile;
-import ucar.nc2.NetcdfFiles;
 import ucar.nc2.Variable;
 import ucar.nc2.VariableIF;
 import ucar.nc2.constants.AxisType;
@@ -93,8 +87,6 @@ import ucar.nc2.dt.GridCoordSystem;
 import ucar.nc2.dt.GridDatatype;
 import ucar.nc2.dt.grid.GridDataset;
 import ucar.nc2.jni.netcdf.Nc4Iosp;
-import ucar.nc2.write.NetcdfFileFormat;
-import ucar.nc2.write.NetcdfFormatWriter;
 import ucar.unidata.geoloc.ProjectionRect;
 
 /**
@@ -1429,268 +1421,268 @@ public class NetCDFUtils {
 		}
 	}
 
-	/**
-	 * Ugly and ad-hoc aggregator. Creates a file with the same dimensions and
-	 * variables as the inputs, which must be all the same except for the time
-	 * dimension, but with the values aggregated as per the passed aggregation.
-	 * "Variables" are defined as those that have a 2-dimensional shape, i.e. grids.
-	 * All 1-dimensional variables are copied as they are. This only supports
-	 * aggregation of 2d grids defined over 1d dimensions, and the dimensions in the
-	 * output file will be the same as those of the first file aggregated, for now
-	 * including time which should actually reflect the aggregation period. Limited
-	 * to numeric data of course, without much checking.
-	 * 
-	 * @param toAggregate
-	 * @param destinationFile
-	 * @param resolution
-	 * @param aggregation
-	 * 
-	 * @return the name of the last non-dimension variable aggregated.
-	 */
-	public static String aggregateFiles(List<File> toAggregate, File destinationFile, Resolution resolution,
-			Aggregation aggregation, double noDataValue) {
-
-		int times = 1;
-		int rows = 0;
-		int cols = 0;
-		String ret = null;
-		Map<String, BasicFileMappedStorage<Double>> storage = new HashMap<>();
-
-		/*
-		 * if it's just one file, extract the first grid name, copy the file and return
-		 */
-		if (toAggregate.size() == 1) {
-
-			String nativeName = null;
-			try (GridDataset dataset = GridDataset.open(toAggregate.get(0).toString())) {
-				nativeName = dataset.getGrids().get(0).getName();
-			} catch (IOException e) {
-				throw new KlabIOException(e);
-			}
-			try {
-				FileUtils.copyFile(toAggregate.get(0), destinationFile);
-			} catch (IOException e) {
-				throw new KlabIOException(e);
-			}
-			return nativeName;
-		}
-
-		try {
-
-			NetcdfFormatWriter.Builder outfile = NetcdfFormatWriter.createNewNetcdf4(NetcdfFileFormat.NETCDF4,
-					destinationFile.toString(), null);
-
-			boolean isNew = true;
-
-			Map<String, double[]> dimVariables = new LinkedHashMap<>();
-			int nd = 0;
-
-			boolean first = true;
-
-			int nfile = 1;
-			for (File infile : toAggregate) {
-
-				try (NetcdfFile ncfile = NetcdfFiles.open(infile.toURI().toURL().toString())) {
-
-					if (isNew) {
-
-						isNew = false;
-
-						/*
-						 * gather and store all dimensions
-						 */
-						for (Dimension dim : ncfile.getRootGroup().getDimensions()) {
-
-							/*
-							 * add to output file as is
-							 */
-							if (dim.isUnlimited()) {
-								outfile.addDimension(dim.getName(), 1);
-							} else {
-								outfile.addDimension(dim.getName(), dim.getLength());
-							}
-							Variable dimvar = ncfile.findVariable(dim.getName());
-							Variable.Builder<?> varbuilder = outfile.addVariable(dimvar.getFullName(),
-									dimvar.getDataType(), dimvar.getDimensionsString());
-							for (Attribute v : dimvar.attributes()) {
-								varbuilder.addAttribute(v);
-							}
-							varbuilder.build(ncfile.getRootGroup());
-
-							int[] origin = new int[] { 0 };
-							int[] shape = new int[] { (int) dimvar.getSize() };
-							double[] data = new double[(int) dimvar.getSize()];
-							Array array = dimvar.read(origin, shape);
-							for (int i = 0; i < dimvar.getSize(); i++) {
-								data[i] = array.getDouble(i);
-							}
-							dimVariables.put(dim.getName(), data);
-
-						}
-
-						nd = dimVariables.size();
-
-					}
-
-					for (Variable v : ncfile.getVariables()) {
-
-						if (v.getShape().length == dimVariables.size()) {
-							/*
-							 * It's a "variable"
-							 */
-							if (rows == 0 && cols == 0) {
-
-								times = nd > 2 ? v.getShape()[0] : 1;
-								rows = v.getShape()[nd > 2 ? 1 : 0];
-								cols = v.getShape()[nd > 2 ? 2 : 1];
-								ret = v.getFullName();
-
-								/*
-								 * Create storage for aggregation and open the writable file
-								 */
-								storage.put(v.getFullName(),
-										new BasicFileMappedStorage<Double>(Double.class, rows, cols));
-
-								/*
-								 * add the variable to the output file
-								 */
-								outfile.addVariable(v.getFullName(), v.getDataType(), v.getDimensionsString());
-								Variable.Builder<?> varbuilder = outfile.addVariable(v.getFullName(), v.getDataType(),
-										v.getDimensionsString());
-								for (Attribute va : v.attributes()) {
-									varbuilder.addAttribute(va);
-								}
-								varbuilder.build(ncfile.getRootGroup());
-
-							} else if (rows != v.getShape()[1] || cols != v.getShape()[2]) {
-								throw new KlabIllegalArgumentException(
-										"NetCDF files to aggregate have different shapes: " + infile);
-							}
-
-							/*
-							 * Read the variable
-							 */
-							if (!storage.containsKey(v.getFullName())) {
-								throw new KlabIllegalArgumentException(
-										"NetCDF files to aggregate have different variables: " + v.getFullName());
-							}
-
-							/*
-							 * Read up one row at a time
-							 */
-							int[] readOrigin = new int[dimVariables.size()];
-							int[] readShape = new int[dimVariables.size()];
-							BasicFileMappedStorage<Double> store = storage.get(v.getFullName());
-
-							for (int time = 0; time < times; time++) {
-								for (int iRow = 0; iRow < rows; iRow++) {
-									if (nd > 2) {
-										readOrigin[0] = time;
-										readShape[0] = 1;
-									}
-
-									// set up to read the entire row, but just one row.
-									readOrigin[nd > 2 ? 1 : 0] = iRow; // rows are numbered from
-																		// zero
-									readOrigin[nd > 2 ? 2 : 1] = 0; // columns are numbered from
-																	// zero
-
-									readShape[nd > 2 ? 1 : 0] = 1; // read one row
-									readShape[nd > 2 ? 2 : 1] = cols; // read the entire set of
-																		// columns for that
-									// row
-
-									Array array = v.read(readOrigin, readShape);
-									for (int iCol = 0; iCol < cols; iCol++) {
-
-//										long ofs = iRow * rows + iCol;
-
-										Double sample = array.getDouble(iCol);
-
-										if (first) {
-											store.set(sample, iRow, iCol);
-										} else {
-											Double d = store.get(iRow, iCol);
-											if (!NumberUtils.equal(d, noDataValue)) {
-												d = d + sample;
-											} else {
-												d = sample;
-											}
-											store.set(d, iRow, iCol);
-										}
-									}
-
-								}
-							}
-						}
-					}
-
-				} catch (Throwable e) {
-					Logging.INSTANCE.error(e);
-				}
-
-				first = false;
-
-				System.out.println("Done " + (nfile++) + "/" + toAggregate.size() + ": " + infile);
-
-			}
-
-			/*
-			 * create file and write output variables
-			 */
-			NetcdfFormatWriter out = outfile.build();
-
-			/*
-			 * write dimensions
-			 */
-			for (String dim : dimVariables.keySet()) {
-				double[] data = dimVariables.get(dim);
-				ArrayDouble.D1 dimvar = new ArrayDouble.D1(data.length);
-				for (int i = 0; i < data.length; i++) {
-					dimvar.setDouble(i, data[i]);
-				}
-				out.write(dim, dimvar);
-			}
-
-			/*
-			 * write data
-			 */
-			for (String var : storage.keySet()) {
-
-				BasicFileMappedStorage<Double> data = storage.get(var);
-				ArrayDouble.D2 dimvar = new ArrayDouble.D2(rows, cols);
-				for (int iRow = 0; iRow < rows; iRow++) {
-					for (int iCol = 0; iCol < cols; iCol++) {
-						long ofs = iRow * rows + iCol;
-						dimvar.set(iRow, iCol, data.get(ofs));
-					}
-				}
-				out.write(var, dimvar);
-			}
-
-			out.close();
-
-		} catch (Throwable e1) {
-
-			Logging.INSTANCE.error(e1);
-			return null;
-
-		} finally {
-
-			/*
-			 * close the storage
-			 */
-			for (BasicFileMappedStorage<?> store : storage.values()) {
-				try {
-					store.close();
-				} catch (Exception e) {
-					Logging.INSTANCE.error(e);
-				}
-			}
-		}
-
-		return ret;
-	}
+//	/**
+//	 * Ugly and ad-hoc aggregator. Creates a file with the same dimensions and
+//	 * variables as the inputs, which must be all the same except for the time
+//	 * dimension, but with the values aggregated as per the passed aggregation.
+//	 * "Variables" are defined as those that have a 2-dimensional shape, i.e. grids.
+//	 * All 1-dimensional variables are copied as they are. This only supports
+//	 * aggregation of 2d grids defined over 1d dimensions, and the dimensions in the
+//	 * output file will be the same as those of the first file aggregated, for now
+//	 * including time which should actually reflect the aggregation period. Limited
+//	 * to numeric data of course, without much checking.
+//	 * 
+//	 * @param toAggregate
+//	 * @param destinationFile
+//	 * @param resolution
+//	 * @param aggregation
+//	 * 
+//	 * @return the name of the last non-dimension variable aggregated.
+//	 */
+//	public static String aggregateFiles(List<File> toAggregate, File destinationFile, Resolution resolution,
+//			Aggregation aggregation, double noDataValue) {
+//
+//		int times = 1;
+//		int rows = 0;
+//		int cols = 0;
+//		String ret = null;
+//		Map<String, BasicFileMappedStorage<Double>> storage = new HashMap<>();
+//
+//		/*
+//		 * if it's just one file, extract the first grid name, copy the file and return
+//		 */
+//		if (toAggregate.size() == 1) {
+//
+//			String nativeName = null;
+//			try (GridDataset dataset = GridDataset.open(toAggregate.get(0).toString())) {
+//				nativeName = dataset.getGrids().get(0).getName();
+//			} catch (IOException e) {
+//				throw new KlabIOException(e);
+//			}
+//			try {
+//				FileUtils.copyFile(toAggregate.get(0), destinationFile);
+//			} catch (IOException e) {
+//				throw new KlabIOException(e);
+//			}
+//			return nativeName;
+//		}
+//
+//		try {
+//
+//			NetcdfFormatWriter.Builder outfile = NetcdfFormatWriter.createNewNetcdf4(NetcdfFileFormat.NETCDF4,
+//					destinationFile.toString(), null);
+//
+//			boolean isNew = true;
+//
+//			Map<String, double[]> dimVariables = new LinkedHashMap<>();
+//			int nd = 0;
+//
+//			boolean first = true;
+//
+//			int nfile = 1;
+//			for (File infile : toAggregate) {
+//
+//				try (NetcdfFile ncfile = NetcdfFiles.open(infile.toURI().toURL().toString())) {
+//
+//					if (isNew) {
+//
+//						isNew = false;
+//
+//						/*
+//						 * gather and store all dimensions
+//						 */
+//						for (Dimension dim : ncfile.getRootGroup().getDimensions()) {
+//
+//							/*
+//							 * add to output file as is
+//							 */
+//							if (dim.isUnlimited()) {
+//								outfile.addDimension(dim.getName(), 1);
+//							} else {
+//								outfile.addDimension(dim.getName(), dim.getLength());
+//							}
+//							Variable dimvar = ncfile.findVariable(dim.getName());
+//							Variable.Builder<?> varbuilder = outfile.addVariable(dimvar.getFullName(),
+//									dimvar.getDataType(), dimvar.getDimensionsString());
+//							for (Attribute v : dimvar.attributes()) {
+//								varbuilder.addAttribute(v);
+//							}
+//							varbuilder.build(ncfile.getRootGroup());
+//
+//							int[] origin = new int[] { 0 };
+//							int[] shape = new int[] { (int) dimvar.getSize() };
+//							double[] data = new double[(int) dimvar.getSize()];
+//							Array array = dimvar.read(origin, shape);
+//							for (int i = 0; i < dimvar.getSize(); i++) {
+//								data[i] = array.getDouble(i);
+//							}
+//							dimVariables.put(dim.getName(), data);
+//
+//						}
+//
+//						nd = dimVariables.size();
+//
+//					}
+//
+//					for (Variable v : ncfile.getVariables()) {
+//
+//						if (v.getShape().length == dimVariables.size()) {
+//							/*
+//							 * It's a "variable"
+//							 */
+//							if (rows == 0 && cols == 0) {
+//
+//								times = nd > 2 ? v.getShape()[0] : 1;
+//								rows = v.getShape()[nd > 2 ? 1 : 0];
+//								cols = v.getShape()[nd > 2 ? 2 : 1];
+//								ret = v.getFullName();
+//
+//								/*
+//								 * Create storage for aggregation and open the writable file
+//								 */
+//								storage.put(v.getFullName(),
+//										new BasicFileMappedStorage<Double>(Double.class, rows, cols));
+//
+//								/*
+//								 * add the variable to the output file
+//								 */
+//								outfile.addVariable(v.getFullName(), v.getDataType(), v.getDimensionsString());
+//								Variable.Builder<?> varbuilder = outfile.addVariable(v.getFullName(), v.getDataType(),
+//										v.getDimensionsString());
+//								for (Attribute va : v.attributes()) {
+//									varbuilder.addAttribute(va);
+//								}
+//								varbuilder.build(ncfile.getRootGroup());
+//
+//							} else if (rows != v.getShape()[1] || cols != v.getShape()[2]) {
+//								throw new KlabIllegalArgumentException(
+//										"NetCDF files to aggregate have different shapes: " + infile);
+//							}
+//
+//							/*
+//							 * Read the variable
+//							 */
+//							if (!storage.containsKey(v.getFullName())) {
+//								throw new KlabIllegalArgumentException(
+//										"NetCDF files to aggregate have different variables: " + v.getFullName());
+//							}
+//
+//							/*
+//							 * Read up one row at a time
+//							 */
+//							int[] readOrigin = new int[dimVariables.size()];
+//							int[] readShape = new int[dimVariables.size()];
+//							BasicFileMappedStorage<Double> store = storage.get(v.getFullName());
+//
+//							for (int time = 0; time < times; time++) {
+//								for (int iRow = 0; iRow < rows; iRow++) {
+//									if (nd > 2) {
+//										readOrigin[0] = time;
+//										readShape[0] = 1;
+//									}
+//
+//									// set up to read the entire row, but just one row.
+//									readOrigin[nd > 2 ? 1 : 0] = iRow; // rows are numbered from
+//																		// zero
+//									readOrigin[nd > 2 ? 2 : 1] = 0; // columns are numbered from
+//																	// zero
+//
+//									readShape[nd > 2 ? 1 : 0] = 1; // read one row
+//									readShape[nd > 2 ? 2 : 1] = cols; // read the entire set of
+//																		// columns for that
+//									// row
+//
+//									Array array = v.read(readOrigin, readShape);
+//									for (int iCol = 0; iCol < cols; iCol++) {
+//
+////										long ofs = iRow * rows + iCol;
+//
+//										Double sample = array.getDouble(iCol);
+//
+//										if (first) {
+//											store.set(sample, iRow, iCol);
+//										} else {
+//											Double d = store.get(iRow, iCol);
+//											if (!NumberUtils.equal(d, noDataValue)) {
+//												d = d + sample;
+//											} else {
+//												d = sample;
+//											}
+//											store.set(d, iRow, iCol);
+//										}
+//									}
+//
+//								}
+//							}
+//						}
+//					}
+//
+//				} catch (Throwable e) {
+//					Logging.INSTANCE.error(e);
+//				}
+//
+//				first = false;
+//
+//				System.out.println("Done " + (nfile++) + "/" + toAggregate.size() + ": " + infile);
+//
+//			}
+//
+//			/*
+//			 * create file and write output variables
+//			 */
+//			NetcdfFormatWriter out = outfile.build();
+//
+//			/*
+//			 * write dimensions
+//			 */
+//			for (String dim : dimVariables.keySet()) {
+//				double[] data = dimVariables.get(dim);
+//				ArrayDouble.D1 dimvar = new ArrayDouble.D1(data.length);
+//				for (int i = 0; i < data.length; i++) {
+//					dimvar.setDouble(i, data[i]);
+//				}
+//				out.write(dim, dimvar);
+//			}
+//
+//			/*
+//			 * write data
+//			 */
+//			for (String var : storage.keySet()) {
+//
+//				BasicFileMappedStorage<Double> data = storage.get(var);
+//				ArrayDouble.D2 dimvar = new ArrayDouble.D2(rows, cols);
+//				for (int iRow = 0; iRow < rows; iRow++) {
+//					for (int iCol = 0; iCol < cols; iCol++) {
+//						long ofs = iRow * rows + iCol;
+//						dimvar.set(iRow, iCol, data.get(ofs));
+//					}
+//				}
+//				out.write(var, dimvar);
+//			}
+//
+//			out.close();
+//
+//		} catch (Throwable e1) {
+//
+//			Logging.INSTANCE.error(e1);
+//			return null;
+//
+//		} finally {
+//
+//			/*
+//			 * close the storage
+//			 */
+//			for (BasicFileMappedStorage<?> store : storage.values()) {
+//				try {
+//					store.close();
+//				} catch (Exception e) {
+//					Logging.INSTANCE.error(e);
+//				}
+//			}
+//		}
+//
+//		return ret;
+//	}
 
 	public static void main(String[] dio) {
 		String tofuck = "C:\\Users\\Ferd\\.klab\\copernicus\\sis-agrometeorological-indicators\\liquid_precipitation_volume_144\\Precipitation-Flux_C3S-glob-agric_AgERA5_20150129_final-v1.0.nc";
@@ -1712,7 +1704,7 @@ public class NetCDFUtils {
 	 * 
 	 * @return the name of the last non-dimension variable aggregated.
 	 */
-	public static boolean aggregateGrid(List<File> toAggregate, File destinationFile, Resolution resolution,
+	public static boolean aggregateGridX(List<File> toAggregate, File destinationFile, Resolution resolution,
 			Aggregation aggregation, double noDataValue) {
 
 		int times = 1;
@@ -1750,22 +1742,20 @@ public class NetCDFUtils {
 							envelope = new ReferencedEnvelope(bbox.getMinX(), bbox.getMaxX(), bbox.getMinY(),
 									bbox.getMaxY(), Projection.getLatLon().getCRS());
 						}
-
-						Variable v = dataset.getNetcdfFile().findVariable(grid.getFullName());
-
+						
 						if (rows == 0 && cols == 0) {
 
-							nd = v.getShape().length;
-							times = nd > 2 ? v.getShape()[0] : 1;
-							rows = v.getShape()[nd > 2 ? 1 : 0];
-							cols = v.getShape()[nd > 2 ? 2 : 1];
+							nd = grid.getShape().length;
+							times = nd > 2 ? grid.getShape()[0] : 1;
+							rows = grid.getShape()[nd > 2 ? 1 : 0];
+							cols = grid.getShape()[nd > 2 ? 2 : 1];
 
 							/*
 							 * Create storage for aggregation and open the writable file
 							 */
-							storage.put(v.getFullName(), new BasicFileMappedStorage<Double>(Double.class, cols, rows));
+							storage.put(grid.getFullName(), new BasicFileMappedStorage<Double>(Double.class, cols, rows));
 
-						} else if (rows != v.getShape()[1] || cols != v.getShape()[2]) {
+						} else if (rows != grid.getShape()[1] || cols != grid.getShape()[2]) {
 							throw new KlabIllegalArgumentException(
 									"NetCDF files to aggregate have different shapes: " + infile);
 						}
@@ -1773,37 +1763,19 @@ public class NetCDFUtils {
 						/*
 						 * Read the variable
 						 */
-						if (!storage.containsKey(v.getFullName())) {
+						if (!storage.containsKey(grid.getFullName())) {
 							throw new KlabIllegalArgumentException(
-									"NetCDF files to aggregate have different variables: " + v.getFullName());
+									"NetCDF files to aggregate have different variables: " + grid.getFullName());
 						}
 
 						/*
 						 * Read up one row at a time
 						 */
-						int[] readOrigin = new int[nd];
-						int[] readShape = new int[nd];
-						BasicFileMappedStorage<Double> store = storage.get(v.getFullName());
+						BasicFileMappedStorage<Double> store = storage.get(grid.getFullName());
 
 						for (int time = 0; time < times; time++) {
 							for (int iRow = 0; iRow < rows; iRow++) {
-								if (nd > 2) {
-									readOrigin[0] = time;
-									readShape[0] = 1;
-								}
-
-								// set up to read the entire row, but just one row.
-								readOrigin[nd > 2 ? 1 : 0] = iRow; // rows are numbered from
-																	// zero
-								readOrigin[nd > 2 ? 2 : 1] = 0; // columns are numbered from
-																// zero
-
-								readShape[nd > 2 ? 1 : 0] = 1; // read one row
-								readShape[nd > 2 ? 2 : 1] = cols; // read the entire set of
-																	// columns for that
-								// row
-
-								Array array = v.read(readOrigin, readShape);
+								Array array =  grid.readDataSlice(0, 0, iRow, -1);
 								for (int iCol = 0; iCol < cols; iCol++) {
 
 									Double sample = array.getDouble(iCol);
@@ -1889,4 +1861,195 @@ public class NetCDFUtils {
 
 		return true;
 	}
+	
+	   /**
+     * Same as {@link #aggregateFiles(List, File, Resolution, Aggregation, double)}
+     * but limited to one grid and producing a GeoTIFF instead of a netcdf. Created
+     * out of frustration with NetCDF constantly changing and never working write
+     * implementations, plus complete unreliability due to the need of native
+     * support that only works if a machine has been blessed by the right priest.
+     * 
+     * @param toAggregate
+     * @param destinationFile
+     * @param resolution
+     * @param aggregation
+     * 
+     * @return the name of the last non-dimension variable aggregated.
+     */
+    public static boolean aggregateGrid(List<File> toAggregate, File destinationFile, Resolution resolution,
+            Aggregation aggregation, double noDataValue) {
+
+        int times = 1;
+        int rows = 0;
+        int cols = 0;
+        String nativeName = null;
+        Map<String, BasicFileMappedStorage<Double>> storage = new HashMap<>();
+        ReferencedEnvelope envelope = null;
+        int nd = 0;
+
+        try {
+
+            boolean isNew = true;
+            boolean first = true;
+
+            int nfile = 1;
+            for (File infile : toAggregate) {
+
+                try (GridDataset dataset = GridDataset.open(toAggregate.get(0).toString())) {
+
+                    for (GridDatatype grid : dataset.getGrids()) {
+
+                        if (isNew) {
+                            /*
+                             * extract grid parameters
+                             */
+                            isNew = false;
+                            nativeName = grid.getName();
+                            GridCoordSystem crs = grid.getCoordinateSystem();
+                            if (!crs.isLatLon()) {
+                                throw new KlabUnsupportedFeatureException(
+                                        "NetCDF grids are only supported in lat/lon for the time being");
+                            }
+                            ProjectionRect bbox = crs.getBoundingBox();
+                            envelope = new ReferencedEnvelope(bbox.getMinX(), bbox.getMaxX(), bbox.getMinY(),
+                                    bbox.getMaxY(), Projection.getLatLon().getCRS());
+                        }
+
+                        Variable v = dataset.getNetcdfFile().findVariable(grid.getFullName());
+
+                        if (rows == 0 && cols == 0) {
+
+                            nd = v.getShape().length;
+                            times = nd > 2 ? v.getShape()[0] : 1;
+                            rows = v.getShape()[nd > 2 ? 1 : 0];
+                            cols = v.getShape()[nd > 2 ? 2 : 1];
+
+                            /*
+                             * Create storage for aggregation and open the writable file
+                             */
+                            storage.put(v.getFullName(), new BasicFileMappedStorage<Double>(Double.class, cols, rows));
+
+                        } else if (rows != v.getShape()[1] || cols != v.getShape()[2]) {
+                            throw new KlabIllegalArgumentException(
+                                    "NetCDF files to aggregate have different shapes: " + infile);
+                        }
+
+                        /*
+                         * Read the variable
+                         */
+                        if (!storage.containsKey(v.getFullName())) {
+                            throw new KlabIllegalArgumentException(
+                                    "NetCDF files to aggregate have different variables: " + v.getFullName());
+                        }
+
+                        /*
+                         * Read up one row at a time
+                         */
+                        int[] readOrigin = new int[nd];
+                        int[] readShape = new int[nd];
+                        BasicFileMappedStorage<Double> store = storage.get(v.getFullName());
+
+                        for (int time = 0; time < times; time++) {
+                            for (int iRow = 0; iRow < rows; iRow++) {
+                                if (nd > 2) {
+                                    readOrigin[0] = time;
+                                    readShape[0] = 1;
+                                }
+
+                                // set up to read the entire row, but just one row.
+                                readOrigin[nd > 2 ? 1 : 0] = iRow; // rows are numbered from
+                                                                    // zero
+                                readOrigin[nd > 2 ? 2 : 1] = 0; // columns are numbered from
+                                                                // zero
+
+                                readShape[nd > 2 ? 1 : 0] = 1; // read one row
+                                readShape[nd > 2 ? 2 : 1] = cols; // read the entire set of
+                                                                    // columns for that
+                                // row
+
+                                Array array = v.read(readOrigin, readShape);
+                                for (int iCol = 0; iCol < cols; iCol++) {
+
+                                    Double sample = array.getDouble(iCol);
+
+                                    if (first) {
+                                        store.set(sample, iCol, iRow);
+                                    } else {
+                                        Double d = store.get(iCol, iRow);
+                                        if (!NumberUtils.equal(d, noDataValue)) {
+                                            d = d + sample;
+                                        } else {
+                                            d = sample;
+                                        }
+                                        store.set(d, iCol, iRow);
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+
+                } catch (Throwable e) {
+                    Logging.INSTANCE.error(e);
+                }
+
+                first = false;
+
+                System.out.println("Done " + (nfile++) + "/" + toAggregate.size() + ": " + infile);
+
+            }
+
+            /**
+             * Create the output coverage (one band per variable).
+             */
+            WritableRaster raster = RasterFactory.createBandedRaster(DataBuffer.TYPE_FLOAT, cols, rows, storage.size(),
+                    null);
+
+            int band = 0;
+            for (String var : storage.keySet()) {
+                BasicFileMappedStorage<Double> data = storage.get(var);
+                for (int x = 0; x < cols; x++) {
+                    for (int y = 0; y < rows; y++) {
+                        Double value = data.get(x, y);
+                        if (NumberUtils.equal(value, noDataValue)) {
+                            value = Double.NaN;
+                        }
+                        raster.setSample(x, y, band, value);
+                    }
+                }
+                band++;
+            }
+
+            GridCoverage2D coverage = rasterFactory.create(nativeName, raster, envelope);
+
+            GeoTiffWriteParams wp = new GeoTiffWriteParams();
+            wp.setCompressionMode(GeoTiffWriteParams.MODE_EXPLICIT);
+            wp.setCompressionType("LZW");
+            ParameterValueGroup params = new GeoTiffFormat().getWriteParameters();
+            params.parameter(AbstractGridFormat.GEOTOOLS_WRITE_PARAMS.getName().toString()).setValue(wp);
+            new GeoTiffWriter(destinationFile).write(coverage,
+                    (GeneralParameterValue[]) params.values().toArray(new GeneralParameterValue[1]));
+
+        } catch (Throwable e1) {
+
+            Logging.INSTANCE.error(e1);
+            return false;
+
+        } finally {
+
+            /*
+             * close the storage
+             */
+            for (BasicFileMappedStorage<?> store : storage.values()) {
+                try {
+                    store.close();
+                } catch (Exception e) {
+                    Logging.INSTANCE.error(e);
+                }
+            }
+        }
+
+        return true;
+    }
+	
 }

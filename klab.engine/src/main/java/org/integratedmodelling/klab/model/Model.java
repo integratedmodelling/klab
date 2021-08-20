@@ -1079,15 +1079,27 @@ public class Model extends KimObject implements IModel {
                             monitor.warn(notification.getMessage(), getStatement());
                             break;
                         case "INFO":
-                            monitor.info(notification.getMessage(), getStatement());
+                            if (Urns.INSTANCE.isLocal(res.getUrn()) || Urns.INSTANCE.isUniversal(res.getUrn())) {
+                                /*
+                                 * node resources shouldn't talk as they contain lots of import
+                                 * history
+                                 */
+                                monitor.info(notification.getMessage(), getStatement());
+                            }
                             break;
                         case "FINE":
-                            monitor.debug(notification.getMessage(), getStatement());
+                            if (Urns.INSTANCE.isLocal(res.getUrn()) || Urns.INSTANCE.isUniversal(res.getUrn())) {
+                                /*
+                                 * node resources shouldn't talk as they contain lots of import
+                                 * history
+                                 */
+                                monitor.debug(notification.getMessage(), getStatement());
+                            }
                             break;
                         }
                     }
                 }
-                
+
                 if (res.hasErrors()) {
                     this.setInactive(true);
                 }

@@ -14,7 +14,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.integratedmodelling.adapter.copernicus.CopernicusAdapter;
-import org.integratedmodelling.adapter.copernicus.CopernicusComponent;
 import org.integratedmodelling.adapter.copernicus.datacubes.CopernicusCDSDatacube;
 import org.integratedmodelling.cdm.utils.NetCDFUtils;
 import org.integratedmodelling.klab.Urn;
@@ -393,6 +392,19 @@ public class AgERA5Repository extends CopernicusCDSDatacube {
     protected IGeometry getResourceGeometry(Urn urn) {
         // TODO add 10km grid for globe
         return Geometry.create("\u03c41\u03c32");
+    }
+
+    @Override
+    protected Collection<String> getVariableNames(Urn urn) {
+        List<String> ret = new ArrayList<>();
+        String[] vars = urn.getResourceId().split(",");
+        for (String var : vars) {
+            VariableConfiguration vc = new VariableConfiguration(var);
+            if (vc.variable != null) {
+                ret.add(vc.variable.codename);
+            }
+        }
+        return ret;
     }
 
 }

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -392,6 +393,7 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
      */
     public ChunkedDatacubeRepository(ITime.Resolution fileResolution, ITime.Resolution chunkResolution,
             ITimeInstant repositoryStart, File mainDirectory, double noDataValue) {
+        
         this.fileResolution = fileResolution;
         this.chunkResolution = chunkResolution;
         this.mainDirectory = mainDirectory;
@@ -789,5 +791,13 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
     protected abstract String getDataLayer(String variable, int tick);
 
     public abstract IResource getResource(String urn);
+
+    /**
+     * Return a stable variable name for a given URN
+     * 
+     * @param urn
+     * @return
+     */
+    protected abstract Collection<String> getVariableNames(Urn urn);
 
 }
