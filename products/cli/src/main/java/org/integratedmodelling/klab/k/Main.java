@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.k;
 
-import org.apache.commons.lang.StringUtils;
+import org.integratedmodelling.klab.Actors;
+import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.clitool.CliRuntime;
 import org.integratedmodelling.klab.clitool.CliStartupOptions;
 import org.integratedmodelling.klab.clitool.console.SysConsole;
@@ -32,12 +33,14 @@ public class Main {
 			console.start(options);
 		} else {
 			SysConsole console = new SysConsole();
-			CliRuntime.INSTANCE.initialize(console, options);
-			String command = StringUtils.join(options.getArguments(), ' ');
-			if (!command.trim().isEmpty()) {
-				CliRuntime.INSTANCE.getCommandProcessor().processCommand(command);
+			ISession session = CliRuntime.INSTANCE.initialize(console, options);
+			for (String argument : options.getArguments()) {
+			    if (argument.endsWith(".kactors")) {
+			        Actors.INSTANCE.run(argument, session);
+			    }
 			}
 			CliRuntime.INSTANCE.shutdown();
+			System.exit(0);
 		}
 	}
 }

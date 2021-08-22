@@ -341,4 +341,23 @@ public enum Configuration implements IConfigurationService {
     public boolean isEchoEnabled() {
         return !"true".equals(getProperty(Configuration.KLAB_DISABLE_CONSOLE_ECHO, "false"));
     }
+
+    /**
+     * Find a file correspondent to the passed argument. If the string encodes a full path, just
+     * return the correspondent file; otherwise explore any configured filepath. In all case only
+     * return non-null if the file exists and is readable.
+     * 
+     * @param argument
+     * @return
+     */
+    public File findFile(String argument) {
+        File ret = new File(argument);
+        if (ret.exists() && ret.isFile()) {
+            return ret;
+        }
+        /*
+         * TODO the rest
+         */
+        return null;
+    }
 }

@@ -37,7 +37,7 @@ public enum CliRuntime {
 		return engine;
 	}
 
-	public void initialize(IConsole console, CliStartupOptions options) {
+	public ISession initialize(IConsole console, CliStartupOptions options) {
 		console.disableInput();
 		this.engine = Engine.start(options);
 		this.session = engine.createSession().setDefault();
@@ -52,6 +52,8 @@ public enum CliRuntime {
 		    console.echo("Starting network services....\n");
 		    startNetwork(() -> console.scream("Network services started."));
 		}
+		
+		return this.session;
 
 	}
 
@@ -82,7 +84,8 @@ public enum CliRuntime {
 			} catch (IOException e) {
 				Logging.INSTANCE.error(e);
 			}
-			this.engine.stop();
+//			this.engine.stop();
+			this.modeler.shutdown();
 		}
 	}
 

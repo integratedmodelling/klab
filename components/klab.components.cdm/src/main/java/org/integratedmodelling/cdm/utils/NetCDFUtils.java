@@ -78,7 +78,7 @@ import ucar.nc2.Attribute;
 import ucar.nc2.Dimension;
 import ucar.nc2.Group;
 import ucar.nc2.Variable;
-import ucar.nc2.VariableIF;
+//import ucar.nc2.VariableIF;
 import ucar.nc2.constants.AxisType;
 import ucar.nc2.dataset.CoordinateAxis1D;
 import ucar.nc2.dataset.NetcdfDataset;
@@ -86,7 +86,7 @@ import ucar.nc2.dataset.VariableDS;
 import ucar.nc2.dt.GridCoordSystem;
 import ucar.nc2.dt.GridDatatype;
 import ucar.nc2.dt.grid.GridDataset;
-import ucar.nc2.jni.netcdf.Nc4Iosp;
+//import ucar.nc2.jni.netcdf.Nc4Iosp;
 import ucar.unidata.geoloc.ProjectionRect;
 
 /**
@@ -461,10 +461,10 @@ public class NetCDFUtils {
 			IS_GRIB_AVAILABLE = false;
 		}
 
-		IS_NC4_LIBRARY_AVAILABLE = Nc4Iosp.isClibraryPresent();
-		if (!IS_NC4_LIBRARY_AVAILABLE && LOGGER.isLoggable(Level.FINE)) {
-			LOGGER.fine(NC4_ERROR_MESSAGE);
-		}
+//		IS_NC4_LIBRARY_AVAILABLE = Nc4Iosp.isClibraryPresent();
+//		if (!IS_NC4_LIBRARY_AVAILABLE && LOGGER.isLoggable(Level.FINE)) {
+//			LOGGER.fine(NC4_ERROR_MESSAGE);
+//		}
 	}
 
 	static boolean isLatLon(String bandName) {
@@ -533,25 +533,25 @@ public class NetCDFUtils {
 		return var.getDimension(dimensionIndex).getLength();
 	}
 
-	/**
-	 * Returns the data type which most closely represents the "raw" internal data
-	 * of the variable. This is the value returned by the default implementation of
-	 * {@link NetcdfImageReader#getRawDataType}.
-	 *
-	 * @param variable The variable.
-	 * @return The data type, or {@link DataBuffer#TYPE_UNDEFINED} if unknown.
-	 * @see NetcdfImageReader#getRawDataType
-	 */
-	public static int getRawDataType(final VariableIF variable) {
-		VariableDS ds = (VariableDS) variable;
-		final DataType type;
-		if (Boolean.getBoolean(ENHANCE_SCALE_MISSING)) {
-			type = ds.getDataType();
-		} else {
-			type = ds.getOriginalDataType();
-		}
-		return transcodeNetCDFDataType(type, false);
-	}
+//	/**
+//	 * Returns the data type which most closely represents the "raw" internal data
+//	 * of the variable. This is the value returned by the default implementation of
+//	 * {@link NetcdfImageReader#getRawDataType}.
+//	 *
+//	 * @param variable The variable.
+//	 * @return The data type, or {@link DataBuffer#TYPE_UNDEFINED} if unknown.
+//	 * @see NetcdfImageReader#getRawDataType
+//	 */
+//	public static int getRawDataType(final VariableIF variable) {
+//		VariableDS ds = (VariableDS) variable;
+//		final DataType type;
+//		if (Boolean.getBoolean(ENHANCE_SCALE_MISSING)) {
+//			type = ds.getDataType();
+//		} else {
+//			type = ds.getOriginalDataType();
+//		}
+//		return transcodeNetCDFDataType(type, false);
+//	}
 
 	/**
 	 * Transcode a NetCDF data type into a java2D DataBuffer type.

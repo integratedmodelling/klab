@@ -16,19 +16,19 @@
 		<dependency>
 			<groupId>edu.ucar</groupId>
 			<artifactId>netcdf4</artifactId>
-			<version>4.6.16</version>
+			<version>5.4.1</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.opendap/opendap -->
 		<dependency>
 			<groupId>edu.ucar</groupId>
 			<artifactId>opendap</artifactId>
-			<version>4.6.16</version>
+			<version>5.4.1</version>
 		</dependency>
 		<dependency>
 			<groupId>edu.ucar</groupId>
 			<artifactId>grib</artifactId>
-			<version>4.6.16</version>
+			<version>5.4.1</version>
 		</dependency>
 		
 		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
@@ -37,7 +37,6 @@
 			<artifactId>httpclient</artifactId>
 			<version>4.5.2</version>
 		</dependency>
-
 
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
