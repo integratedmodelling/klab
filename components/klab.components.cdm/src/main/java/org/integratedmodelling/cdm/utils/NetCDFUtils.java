@@ -11,6 +11,7 @@ import java.text.DateFormat;
 import java.text.Format;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.GregorianCalendar;
@@ -55,6 +56,8 @@ import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import akka.util.PrettyByteString.asPretty;
+
 /*
  * GeoTools - The Open Source Java GIS Toolkit http://geotools.org
  *
@@ -74,6 +77,7 @@ import it.geosolutions.imageio.stream.input.URIImageInputStream;
 import it.geosolutions.imageio.utilities.ImageIOUtilities;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
+import ucar.ma2.Index;
 import ucar.nc2.Attribute;
 import ucar.nc2.Dimension;
 import ucar.nc2.Group;
@@ -82,7 +86,6 @@ import ucar.nc2.Variable;
 import ucar.nc2.constants.AxisType;
 import ucar.nc2.dataset.CoordinateAxis1D;
 import ucar.nc2.dataset.NetcdfDataset;
-import ucar.nc2.dataset.VariableDS;
 import ucar.nc2.dt.GridCoordSystem;
 import ucar.nc2.dt.GridDatatype;
 import ucar.nc2.dt.grid.GridDataset;
@@ -1685,9 +1688,40 @@ public class NetCDFUtils {
 //	}
 
 	public static void main(String[] dio) {
-		String tofuck = "C:\\Users\\Ferd\\.klab\\copernicus\\sis-agrometeorological-indicators\\liquid_precipitation_volume_144\\Precipitation-Flux_C3S-glob-agric_AgERA5_20150129_final-v1.0.nc";
+
 		String tocock = "C:\\Users\\Ferd\\.klab\\copernicus\\sis-agrometeorological-indicators\\aggregated\\cock.tiff";
-		aggregateGrid(Collections.singletonList(new File(tofuck)), new File(tocock), null, Aggregation.SUM, -9999.0);
+
+		List<File> f2016 = new ArrayList<>();
+		f2016.add(new File(
+				"C:\\Users\\Ferd\\.klab\\copernicus\\sis-agrometeorological-indicators\\liquid_precipitation_volume_148\\Precipitation-Flux_C3S-glob-agric_AgERA5_20160101_final-v1.0.nc"));
+		f2016.add(new File(
+				"C:\\Users\\Ferd\\.klab\\copernicus\\sis-agrometeorological-indicators\\liquid_precipitation_volume_148\\Precipitation-Flux_C3S-glob-agric_AgERA5_20160102_final-v1.0.nc"));
+		f2016.add(new File(
+				"C:\\Users\\Ferd\\.klab\\copernicus\\sis-agrometeorological-indicators\\liquid_precipitation_volume_148\\Precipitation-Flux_C3S-glob-agric_AgERA5_20160103_final-v1.0.nc"));
+		f2016.add(new File(
+				"C:\\Users\\Ferd\\.klab\\copernicus\\sis-agrometeorological-indicators\\liquid_precipitation_volume_148\\Precipitation-Flux_C3S-glob-agric_AgERA5_20160104_final-v1.0.nc"));
+		f2016.add(new File(
+				"C:\\Users\\Ferd\\.klab\\copernicus\\sis-agrometeorological-indicators\\liquid_precipitation_volume_148\\Precipitation-Flux_C3S-glob-agric_AgERA5_20160105_final-v1.0.nc"));
+		f2016.add(new File(
+				"C:\\Users\\Ferd\\.klab\\copernicus\\sis-agrometeorological-indicators\\liquid_precipitation_volume_148\\Precipitation-Flux_C3S-glob-agric_AgERA5_20160106_final-v1.0.nc"));
+
+		List<File> f2019 = new ArrayList<>();
+		f2019.add(new File(
+				"C:\\Users\\Ferd\\.klab\\copernicus\\sis-agrometeorological-indicators\\liquid_precipitation_volume_160\\Precipitation-Flux_C3S-glob-agric_AgERA5_20190101_final-v1.0.nc"));
+		f2019.add(new File(
+				"C:\\Users\\Ferd\\.klab\\copernicus\\sis-agrometeorological-indicators\\liquid_precipitation_volume_160\\Precipitation-Flux_C3S-glob-agric_AgERA5_20190102_final-v1.0.nc"));
+		f2019.add(new File(
+				"C:\\Users\\Ferd\\.klab\\copernicus\\sis-agrometeorological-indicators\\liquid_precipitation_volume_160\\Precipitation-Flux_C3S-glob-agric_AgERA5_20190103_final-v1.0.nc"));
+		f2019.add(new File(
+				"C:\\Users\\Ferd\\.klab\\copernicus\\sis-agrometeorological-indicators\\liquid_precipitation_volume_160\\Precipitation-Flux_C3S-glob-agric_AgERA5_20190104_final-v1.0.nc"));
+		f2019.add(new File(
+				"C:\\Users\\Ferd\\.klab\\copernicus\\sis-agrometeorological-indicators\\liquid_precipitation_volume_160\\Precipitation-Flux_C3S-glob-agric_AgERA5_20190105_final-v1.0.nc"));
+		f2019.add(new File(
+				"C:\\Users\\Ferd\\.klab\\copernicus\\sis-agrometeorological-indicators\\liquid_precipitation_volume_160\\Precipitation-Flux_C3S-glob-agric_AgERA5_20190106_final-v1.0.nc"));
+
+		aggregateGrid(f2019, new File(tocock), null, Aggregation.SUM, -9999.0);
+		aggregateGrid(f2016, new File(tocock), null, Aggregation.SUM, -9999.0);
+
 	}
 
 	/**
@@ -1696,6 +1730,11 @@ public class NetCDFUtils {
 	 * out of frustration with NetCDF constantly changing and never working write
 	 * implementations, plus complete unreliability due to the need of native
 	 * support that only works if a machine has been blessed by the right priest.
+	 * 
+	 * FIXME this does not incorporate chunk-based read, which is the key for this
+	 * to work at acceptable speeds. If revisited, make sure to incorporate the same
+	 * logics as
+	 * {@link #aggregateGrid(List, File, Resolution, Aggregation, double)}.
 	 * 
 	 * @param toAggregate
 	 * @param destinationFile
@@ -1742,7 +1781,7 @@ public class NetCDFUtils {
 							envelope = new ReferencedEnvelope(bbox.getMinX(), bbox.getMaxX(), bbox.getMinY(),
 									bbox.getMaxY(), Projection.getLatLon().getCRS());
 						}
-						
+
 						if (rows == 0 && cols == 0) {
 
 							nd = grid.getShape().length;
@@ -1753,7 +1792,8 @@ public class NetCDFUtils {
 							/*
 							 * Create storage for aggregation and open the writable file
 							 */
-							storage.put(grid.getFullName(), new BasicFileMappedStorage<Double>(Double.class, cols, rows));
+							storage.put(grid.getFullName(),
+									new BasicFileMappedStorage<Double>(Double.class, cols, rows));
 
 						} else if (rows != grid.getShape()[1] || cols != grid.getShape()[2]) {
 							throw new KlabIllegalArgumentException(
@@ -1775,7 +1815,7 @@ public class NetCDFUtils {
 
 						for (int time = 0; time < times; time++) {
 							for (int iRow = 0; iRow < rows; iRow++) {
-								Array array =  grid.readDataSlice(0, 0, iRow, -1);
+								Array array = grid.readDataSlice(0, 0, iRow, -1);
 								for (int iCol = 0; iCol < cols; iCol++) {
 
 									Double sample = array.getDouble(iCol);
@@ -1822,7 +1862,7 @@ public class NetCDFUtils {
 						if (NumberUtils.equal(value, noDataValue)) {
 							value = Double.NaN;
 						} else if (Observations.INSTANCE.isData(value)) {
-							value = aggregation == Aggregation.SUM ? value : (value/(double)toAggregate.size());
+							value = aggregation == Aggregation.SUM ? value : (value / (double) toAggregate.size());
 						}
 						raster.setSample(x, y, band, value);
 					}
@@ -1861,195 +1901,279 @@ public class NetCDFUtils {
 
 		return true;
 	}
-	
-	   /**
-     * Same as {@link #aggregateFiles(List, File, Resolution, Aggregation, double)}
-     * but limited to one grid and producing a GeoTIFF instead of a netcdf. Created
-     * out of frustration with NetCDF constantly changing and never working write
-     * implementations, plus complete unreliability due to the need of native
-     * support that only works if a machine has been blessed by the right priest.
-     * 
-     * @param toAggregate
-     * @param destinationFile
-     * @param resolution
-     * @param aggregation
-     * 
-     * @return the name of the last non-dimension variable aggregated.
-     */
-    public static boolean aggregateGrid(List<File> toAggregate, File destinationFile, Resolution resolution,
-            Aggregation aggregation, double noDataValue) {
 
-        int times = 1;
-        int rows = 0;
-        int cols = 0;
-        String nativeName = null;
-        Map<String, BasicFileMappedStorage<Double>> storage = new HashMap<>();
-        ReferencedEnvelope envelope = null;
-        int nd = 0;
+	/**
+	 * Same as {@link #aggregateFiles(List, File, Resolution, Aggregation, double)}
+	 * but limited to one grid and producing a GeoTIFF instead of a netcdf. Created
+	 * out of frustration with NetCDF constantly changing and never working write
+	 * implementations, plus complete unreliability due to the need of native
+	 * support that only works if a machine has been blessed by the right priest.
+	 * 
+	 * @param toAggregate
+	 * @param destinationFile
+	 * @param resolution
+	 * @param aggregation
+	 * 
+	 * @return the name of the last non-dimension variable aggregated.
+	 */
+	public static boolean aggregateGrid(List<File> toAggregate, File destinationFile, Resolution resolution,
+			Aggregation aggregation, double noDataValue) {
 
-        try {
+		int times = 1;
+		int rows = 0;
+		int cols = 0;
+		int rowDim = 0;
+		int colDim = 0;
+		String nativeName = null;
+		Map<String, BasicFileMappedStorage<Double>> storage = new HashMap<>();
+		ReferencedEnvelope envelope = null;
+		int nd = 0;
 
-            boolean isNew = true;
-            boolean first = true;
+		try {
 
-            int nfile = 1;
-            for (File infile : toAggregate) {
+			boolean isNew = true;
+			boolean first = true;
 
-                try (GridDataset dataset = GridDataset.open(toAggregate.get(0).toString())) {
+			int nfile = 1;
+			for (File infile : toAggregate) {
 
-                    for (GridDatatype grid : dataset.getGrids()) {
+				System.out.println("Reading " + infile + "...");
 
-                        if (isNew) {
-                            /*
-                             * extract grid parameters
-                             */
-                            isNew = false;
-                            nativeName = grid.getName();
-                            GridCoordSystem crs = grid.getCoordinateSystem();
-                            if (!crs.isLatLon()) {
-                                throw new KlabUnsupportedFeatureException(
-                                        "NetCDF grids are only supported in lat/lon for the time being");
-                            }
-                            ProjectionRect bbox = crs.getBoundingBox();
-                            envelope = new ReferencedEnvelope(bbox.getMinX(), bbox.getMaxX(), bbox.getMinY(),
-                                    bbox.getMaxY(), Projection.getLatLon().getCRS());
-                        }
+				try (GridDataset dataset = GridDataset.open(toAggregate.get(0).toString())) {
 
-                        Variable v = dataset.getNetcdfFile().findVariable(grid.getFullName());
+					for (GridDatatype grid : dataset.getGrids()) {
 
-                        if (rows == 0 && cols == 0) {
+						if (isNew) {
+							/*
+							 * extract grid parameters
+							 */
+							isNew = false;
+							nativeName = grid.getName();
+							GridCoordSystem crs = grid.getCoordinateSystem();
+							if (!crs.isLatLon()) {
+								throw new KlabUnsupportedFeatureException(
+										"NetCDF grids are only supported in lat/lon for the time being");
+							}
+							ProjectionRect bbox = crs.getBoundingBox();
+							envelope = new ReferencedEnvelope(bbox.getMinX(), bbox.getMaxX(), bbox.getMinY(),
+									bbox.getMaxY(), Projection.getLatLon().getCRS());
+						}
 
-                            nd = v.getShape().length;
-                            times = nd > 2 ? v.getShape()[0] : 1;
-                            rows = v.getShape()[nd > 2 ? 1 : 0];
-                            cols = v.getShape()[nd > 2 ? 2 : 1];
+						Variable v = dataset.getNetcdfFile().findVariable(grid.getFullName());
 
-                            /*
-                             * Create storage for aggregation and open the writable file
-                             */
-                            storage.put(v.getFullName(), new BasicFileMappedStorage<Double>(Double.class, cols, rows));
+						/*
+						 * each fucking variable and each fucking file can have a different fucking
+						 * chunk size; reading anything else than one fucking chunk at a time slows
+						 * things down to a fucking crawl.
+						 */
+						int[] chunkSizes = new int[v.getShape().length];
+						for (Attribute a : v.attributes()) {
+							if ("_ChunkSizes".equals(a.getName())) {
+								for (int i = 0; i < a.getValues().getSize(); i++) {
+									chunkSizes[i] = ((Number) a.getValue(i)).intValue();
+								}
+								break;
+							}
+						}
 
-                        } else if (rows != v.getShape()[1] || cols != v.getShape()[2]) {
-                            throw new KlabIllegalArgumentException(
-                                    "NetCDF files to aggregate have different shapes: " + infile);
-                        }
+						if (rows == 0 && cols == 0) {
 
-                        /*
-                         * Read the variable
-                         */
-                        if (!storage.containsKey(v.getFullName())) {
-                            throw new KlabIllegalArgumentException(
-                                    "NetCDF files to aggregate have different variables: " + v.getFullName());
-                        }
+							nd = v.getShape().length;
+							times = nd > 2 ? v.getShape()[0] : 1;
+							rowDim = nd > 2 ? 1 : 0;
+							colDim = nd > 2 ? 2 : 1;
+							rows = v.getShape()[rowDim];
+							cols = v.getShape()[colDim];
 
-                        /*
-                         * Read up one row at a time
-                         */
-                        int[] readOrigin = new int[nd];
-                        int[] readShape = new int[nd];
-                        BasicFileMappedStorage<Double> store = storage.get(v.getFullName());
+							/*
+							 * Create storage for aggregation and open the writable file
+							 */
+							storage.put(v.getFullName(), new BasicFileMappedStorage<Double>(Double.class, cols, rows));
 
-                        for (int time = 0; time < times; time++) {
-                            for (int iRow = 0; iRow < rows; iRow++) {
-                                if (nd > 2) {
-                                    readOrigin[0] = time;
-                                    readShape[0] = 1;
-                                }
+						} else if (rows != v.getShape()[1] || cols != v.getShape()[2]) {
+							throw new KlabIllegalArgumentException(
+									"NetCDF files to aggregate have different shapes: " + infile);
+						}
 
-                                // set up to read the entire row, but just one row.
-                                readOrigin[nd > 2 ? 1 : 0] = iRow; // rows are numbered from
-                                                                    // zero
-                                readOrigin[nd > 2 ? 2 : 1] = 0; // columns are numbered from
-                                                                // zero
+						/*
+						 * Read the variable
+						 */
+						if (!storage.containsKey(v.getFullName())) {
+							throw new KlabIllegalArgumentException(
+									"NetCDF files to aggregate have different variables: " + v.getFullName());
+						}
 
-                                readShape[nd > 2 ? 1 : 0] = 1; // read one row
-                                readShape[nd > 2 ? 2 : 1] = cols; // read the entire set of
-                                                                    // columns for that
-                                // row
+						/*
+						 * Read up one chunk at a time
+						 */
+						int[] readOrigin = new int[nd];
+						int[] readShape = new int[nd];
+						BasicFileMappedStorage<Double> store = storage.get(v.getFullName());
 
-                                Array array = v.read(readOrigin, readShape);
-                                for (int iCol = 0; iCol < cols; iCol++) {
+						if (chunkSizes.length == 3 && chunkSizes[0] != 1) {
+							Logging.INSTANCE.warn("NetCDF reader: time chunk size != 1: proceed at your own risk");
+						}
 
-                                    Double sample = array.getDouble(iCol);
+						/*
+						 * assumes we're facing a 1 for time chunksize, or no time; we have sent a
+						 * fucking warning if not
+						 */
+						for (int startRow = 0; startRow < rows; startRow += chunkSizes[rowDim]) {
+							for (int startCol = 0; startCol < cols; startCol += chunkSizes[colDim]) {
 
-                                    if (first) {
-                                        store.set(sample, iCol, iRow);
-                                    } else {
-                                        Double d = store.get(iCol, iRow);
-                                        if (!NumberUtils.equal(d, noDataValue)) {
-                                            d = d + sample;
-                                        } else {
-                                            d = sample;
-                                        }
-                                        store.set(d, iCol, iRow);
-                                    }
-                                }
+								if (nd > 2) {
+									readOrigin[0] = 0;
+									readShape[0] = 1;
+								}
 
-                            }
-                        }
-                    }
+								readOrigin[rowDim] = startRow;
+								readOrigin[colDim] = startCol;
+								readShape[rowDim] = chunkSizes[rowDim];
+								readShape[colDim] = chunkSizes[colDim];
 
-                } catch (Throwable e) {
-                    Logging.INSTANCE.error(e);
-                }
+								/*
+								 * they apparently like to have chunks[dim] starting at last chunk[dim] + 1,
+								 * just to complicate things.
+								 */
+								while (readOrigin[rowDim] + readShape[rowDim] > rows) {
+									readShape[rowDim]--;
+								}
+								while (readOrigin[colDim] + readShape[colDim] > cols) {
+									readShape[colDim]--;
+								}
 
-                first = false;
+								// this is the fucking chunk and its fucking index
+								Array array = v.read(readOrigin, readShape);
+								Index index = array.getIndex();
 
-                System.out.println("Done " + (nfile++) + "/" + toAggregate.size() + ": " + infile);
+								for (int col = 0; col < readShape[colDim]; col++) {
+									for (int row = 0; row < readShape[rowDim]; row++) {
 
-            }
+										if (nd > 2) {
+											index.set(0, row, col);
+										} else {
+											index.set(row, col);
+										}
 
-            /**
-             * Create the output coverage (one band per variable).
-             */
-            WritableRaster raster = RasterFactory.createBandedRaster(DataBuffer.TYPE_FLOAT, cols, rows, storage.size(),
-                    null);
+										Double sample = array.getDouble(index);
 
-            int band = 0;
-            for (String var : storage.keySet()) {
-                BasicFileMappedStorage<Double> data = storage.get(var);
-                for (int x = 0; x < cols; x++) {
-                    for (int y = 0; y < rows; y++) {
-                        Double value = data.get(x, y);
-                        if (NumberUtils.equal(value, noDataValue)) {
-                            value = Double.NaN;
-                        }
-                        raster.setSample(x, y, band, value);
-                    }
-                }
-                band++;
-            }
+										if (first) {
+											store.set(sample, col + startCol, row + startRow);
+										} else {
+											Double d = store.get(col + startCol, row + startRow);
+											if (!NumberUtils.equal(d, noDataValue)) {
+												d = d + sample;
+											} else {
+												d = sample;
+											}
+											store.set(d, col + startCol, row + startRow);
+										}
+									}
+								}
+							}
 
-            GridCoverage2D coverage = rasterFactory.create(nativeName, raster, envelope);
+						}
+					}
 
-            GeoTiffWriteParams wp = new GeoTiffWriteParams();
-            wp.setCompressionMode(GeoTiffWriteParams.MODE_EXPLICIT);
-            wp.setCompressionType("LZW");
-            ParameterValueGroup params = new GeoTiffFormat().getWriteParameters();
-            params.parameter(AbstractGridFormat.GEOTOOLS_WRITE_PARAMS.getName().toString()).setValue(wp);
-            new GeoTiffWriter(destinationFile).write(coverage,
-                    (GeneralParameterValue[]) params.values().toArray(new GeneralParameterValue[1]));
+//						for (int time = 0; time < times; time++) {
+//							for (int iRow = 0; iRow < rows; iRow++) {
+//								if (nd > 2) {
+//									readOrigin[0] = time;
+//									readShape[0] = 1;
+//								}
+//
+//								readOrigin[rowDim] = iRow;
+//								readOrigin[colDim] = 0;
+//								readShape[rowDim] = 1; 
+//								readShape[colDim] = cols;
+//
+//								Array array = v.read(readOrigin, readShape);
+//								for (int iCol = 0; iCol < cols; iCol++) {
+//
+//									Double sample = array.getDouble(iCol);
+//
+//									if (first) {
+//										store.set(sample, iCol, iRow);
+//									} else {
+//										Double d = store.get(iCol, iRow);
+//										if (!NumberUtils.equal(d, noDataValue)) {
+//											d = d + sample;
+//										} else {
+//											d = sample;
+//										}
+//										store.set(d, iCol, iRow);
+//									}
+//								}
+//
+//							}
+//						}
+//					}
 
-        } catch (Throwable e1) {
+				} catch (Throwable e) {
+					Logging.INSTANCE.error(e);
+				}
 
-            Logging.INSTANCE.error(e1);
-            return false;
+				first = false;
 
-        } finally {
+				System.out.println("Done " + (nfile++) + "/" + toAggregate.size() + ": " + infile);
 
-            /*
-             * close the storage
-             */
-            for (BasicFileMappedStorage<?> store : storage.values()) {
-                try {
-                    store.close();
-                } catch (Exception e) {
-                    Logging.INSTANCE.error(e);
-                }
-            }
-        }
+			}
 
-        return true;
-    }
-	
+			/**
+			 * Create the output coverage (one band per variable).
+			 */
+			WritableRaster raster = RasterFactory.createBandedRaster(DataBuffer.TYPE_FLOAT, cols, rows, storage.size(),
+					null);
+
+			int band = 0;
+			for (String var : storage.keySet()) {
+				BasicFileMappedStorage<Double> data = storage.get(var);
+				for (int x = 0; x < cols; x++) {
+					for (int y = 0; y < rows; y++) {
+						Double value = data.get(x, y);
+						if (NumberUtils.equal(value, noDataValue)) {
+							value = Double.NaN;
+						}
+						raster.setSample(x, y, band, value);
+					}
+				}
+				band++;
+			}
+
+			GridCoverage2D coverage = rasterFactory.create(nativeName, raster, envelope);
+
+			GeoTiffWriteParams wp = new GeoTiffWriteParams();
+//            wp.setCompressionMode(GeoTiffWriteParams.MODE_EXPLICIT);
+//            wp.setCompressionType("LZW");
+			ParameterValueGroup params = new GeoTiffFormat().getWriteParameters();
+			params.parameter(AbstractGridFormat.GEOTOOLS_WRITE_PARAMS.getName().toString()).setValue(wp);
+			new GeoTiffWriter(destinationFile).write(coverage,
+					(GeneralParameterValue[]) params.values().toArray(new GeneralParameterValue[1]));
+
+			System.out.println("Wrote output file " + destinationFile);
+
+		} catch (
+
+		Throwable e1) {
+
+			Logging.INSTANCE.error(e1);
+			return false;
+
+		} finally {
+
+			/*
+			 * close the storage
+			 */
+			for (BasicFileMappedStorage<?> store : storage.values()) {
+				try {
+					store.close();
+				} catch (Exception e) {
+					Logging.INSTANCE.error(e);
+				}
+			}
+		}
+
+		return true;
+	}
+
 }

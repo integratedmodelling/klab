@@ -853,7 +853,7 @@ public class Scheduler implements IScheduler {
 
 		while (this.activeRegistrations > 0) {
 
-			if (monitor.isInterrupted()) {
+			if (monitor.isInterrupted() || monitor.getWaitTime() > Configuration.INSTANCE.getMaxWaitTime()) {
 				this.registrations.clear();
 				this.dataflows.clear();
 				this.finished = true;
