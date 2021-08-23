@@ -36,6 +36,7 @@ import org.integratedmodelling.klab.rest.AttributeReference;
 import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.utils.MiscUtilities;
+import org.integratedmodelling.klab.utils.StringUtil;
 
 /**
  * AgERA4 Meteo data. The humidity data are 3-hourly and can only be downloaded daily in this
@@ -101,7 +102,8 @@ public class AgERA5Repository extends CopernicusCDSDatacube {
                                         + " amount of water vapour present in air expressed as a percentage of the amount\r\n"
                                         + " needed for saturation at the same temperature.",
                                 EnumSet.noneOf(Statistic.class), "relative_humidity", EnumSet.allOf(Timepoint.class),
-                                ""), AIR_TEMPERATURE("K", "temp", "Air temperature at a height of 2 metres above the surface",
+                                ""), AIR_TEMPERATURE("K", "temperature",
+                                        "Air temperature at a height of 2 metres above the surface",
                                         EnumSet.allOf(Statistic.class), "temperature", EnumSet.noneOf(Timepoint.class),
                                         "2m_temperature"), CLOUD_COVER(
                                                 null /* percent hours covered/24 */, "clouds",
@@ -118,7 +120,7 @@ public class AgERA5Repository extends CopernicusCDSDatacube {
                                                         EnumSet.noneOf(Statistic.class), "liquid_precipitation_duration_fraction",
                                                         EnumSet.noneOf(Timepoint.class),
                                                         "liquid_precipitation_duration_fraction"), LIQUID_PRECIPITATION_VOLUME(
-                                                                "mm/day", "prec",
+                                                                "mm/day", "precipitation",
                                                                 "Total volume of liquid water (mm3) precipitated over the period 00h-24h local time per unit of area (mm2), per day.",
                                                                 EnumSet.noneOf(Statistic.class), "liquid_precipitation_volume",
                                                                 EnumSet.noneOf(Timepoint.class),
@@ -180,17 +182,82 @@ public class AgERA5Repository extends CopernicusCDSDatacube {
     public class VariableConfiguration {
 
         public VariableConfiguration(String string) {
+
             String[] fields = string.split("\\.");
             this.id = string;
             this.variable = variables.get(fields[0]);
             if (this.variable == null) {
                 this.variable = svariables.get(fields[0]);
             }
+
+            // jeez
+            if (this.variable == null) {
+                /*
+                 * check if this is one of the modified names. Get the first and the last
+                 * underscore.
+                 */
+                if (StringUtil.countMatches(string, "_") > 0) {
+                    String var = string;
+                    for (Statistic tp : Statistic.values()) {
+                        if (var.startsWith(tp.codename + "_")) {
+                            this.statistic = tp;
+                            var = var.substring(tp.codename.length() + 1);
+                            break;
+                        }
+                    }
+                    this.variable = variables.get(var);
+                    if (this.variable == null) {
+                        this.variable = svariables.get(var);
+                    }
+                    if (this.variable /* still */ == null && StringUtil.countMatches(var, "_") > 0) {
+                        for (Timepoint tp : Timepoint.values()) {
+                            if (var.endsWith("_" + tp.cdsname)) {
+                                this.timepoint = tp;
+                                var = var.substring(0, var.length() - tp.cdsname.length() + 1);
+                                break;
+                            }
+                        }
+                        this.variable = variables.get(var);
+                        if (this.variable == null) {
+                            this.variable = svariables.get(var);
+                        }
+                    }
+                }
+            }
+
+            for (int i = 1; i < fields.length; i++) {
+                for (Timepoint tp : Timepoint.values()) {
+                    if (fields[i].equals(tp.cdsname)) {
+                        this.timepoint = tp;
+                        break;
+                    }
+                }
+                for (Statistic tp : Statistic.values()) {
+                    if (fields[i].equals(tp.codename)) {
+                        this.statistic = tp;
+                        break;
+                    }
+                }
+            }
+
             /*
              * TODO! fill in statistics and defaults, including the forced time for humidity data if
              * requested.
              */
-
+            if (this.variable != null) {
+                if (this.timepoint == null && this.variable.timepoints.size() == 1) {
+                    this.timepoint = this.variable.timepoints.iterator().next();
+                } else if (this.timepoint == null && !this.variable.timepoints.isEmpty()) {
+                    throw new KlabValidationException(
+                            "variable " + variable.codename + " requires the specification of a timepoint");
+                }
+                if (this.statistic == null && this.variable.statistics.size() == 1) {
+                    this.statistic = this.variable.statistics.iterator().next();
+                } else if (this.statistic == null && !this.variable.statistics.isEmpty()) {
+                    throw new KlabValidationException(
+                            "variable " + variable.codename + " requires the specification of a statistic");
+                }
+            }
         }
 
         private String id;
@@ -205,6 +272,11 @@ public class AgERA5Repository extends CopernicusCDSDatacube {
 
         public boolean isOK() {
             return variable != null;
+        }
+
+        public String getVariableName() {
+            return (statistic == null ? "" : (statistic.codename + "_")) + variable.codename
+                    + (timepoint == null ? "" : ("_" + timepoint.cdsname));
         }
     }
 
@@ -323,7 +395,7 @@ public class AgERA5Repository extends CopernicusCDSDatacube {
              * ingest in GS
              */
             return getGeoserver().createCoverageLayer(this.getName(),
-                    getAggregatedLayer(var.variable.codename, startTick, endTick), destinationFile, null);
+                    getAggregatedLayer(var.getVariableName(), startTick, endTick), destinationFile, null);
         }
 
         return false;
@@ -380,7 +452,8 @@ public class AgERA5Repository extends CopernicusCDSDatacube {
                 ref.getOutputs().add(attr);
             } catch (Throwable t) {
                 ref.getNotifications()
-                        .add(new Notification("Copernicus adapter for " + kurn.getCatalog() + " does not recognize variable '" + v + "'",
+                        .add(new Notification(
+                                "Copernicus adapter for " + kurn.getCatalog() + " does not recognize variable '" + v + "'",
                                 Level.SEVERE.getName()));
             }
         }
@@ -401,7 +474,7 @@ public class AgERA5Repository extends CopernicusCDSDatacube {
         for (String var : vars) {
             VariableConfiguration vc = new VariableConfiguration(var);
             if (vc.variable != null) {
-                ret.add(vc.variable.codename);
+                ret.add(vc.getVariableName());
             }
         }
         return ret;

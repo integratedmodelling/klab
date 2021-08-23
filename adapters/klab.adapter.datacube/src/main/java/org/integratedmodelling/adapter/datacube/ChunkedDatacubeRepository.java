@@ -341,8 +341,6 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 								d *= g.multiplier;
 							}
 
-							// FIXME parameterize nodata
-							// FIXME use weighted means
 							if (!NumberUtils.equal(d, noDataValue)) {
 								d = d + value;
 							} else {
