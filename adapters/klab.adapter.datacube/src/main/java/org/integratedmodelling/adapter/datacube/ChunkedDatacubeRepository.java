@@ -306,7 +306,7 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 					} else {
 						scope.getMonitor().info("repository " + getName() + ": creating missing aggregated datafile "
 								+ MiscUtilities.getFileName(g.dataFile));
-						createAggregatedLayer(variable, g.startTick, g.endTick, null, aggregationDirectory);
+						createAggregatedLayer(variable, g.startTick, g.endTick, null, g.dataFile);
 					}
 				}
 

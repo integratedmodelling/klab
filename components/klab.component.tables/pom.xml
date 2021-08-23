@@ -33,25 +33,6 @@
 			<version>1.6</version>
 		</dependency>
 
-		<!-- NetCDF -->
-		<dependency>
-			<groupId>edu.ucar</groupId>
-			<artifactId>netcdf4</artifactId>
-			<version>5.0.0</version>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/org.opendap/opendap -->
-		<dependency>
-			<groupId>edu.ucar</groupId>
-			<artifactId>opendap</artifactId>
-			<version>5.0.0</version>
-		</dependency>
-		<dependency>
-			<groupId>edu.ucar</groupId>
-			<artifactId>grib</artifactId>
-			<version>5.0.0</version>
-		</dependency>
-		
 		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
@@ -59,7 +40,12 @@
 			<version>4.5.2</version>
 		</dependency>
 
-
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>klab.components.cdm</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
+		
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.modeler</artifactId>

@@ -3,8 +3,10 @@ package org.integratedmodelling.cdm.utils;
 import java.awt.image.DataBuffer;
 import java.awt.image.WritableRaster;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.URL;
 import java.text.DateFormat;
@@ -55,8 +57,6 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import akka.util.PrettyByteString.asPretty;
 
 /*
  * GeoTools - The Open Source Java GIS Toolkit http://geotools.org
@@ -2147,10 +2147,14 @@ public class NetCDFUtils {
 //            wp.setCompressionType("LZW");
 			ParameterValueGroup params = new GeoTiffFormat().getWriteParameters();
 			params.parameter(AbstractGridFormat.GEOTOOLS_WRITE_PARAMS.getName().toString()).setValue(wp);
-			new GeoTiffWriter(destinationFile).write(coverage,
-					(GeneralParameterValue[]) params.values().toArray(new GeneralParameterValue[1]));
-
-			System.out.println("Wrote output file " + destinationFile);
+			try (OutputStream out = new FileOutputStream(destinationFile)) {
+				new GeoTiffWriter(out).write(coverage,
+						(GeneralParameterValue[]) params.values().toArray(new GeneralParameterValue[1]));
+				System.out.println("Wrote output file " + destinationFile);
+			} catch (Throwable diocan) {
+				Logging.INSTANCE.error(diocan);
+				return false;
+			}
 
 		} catch (
 
