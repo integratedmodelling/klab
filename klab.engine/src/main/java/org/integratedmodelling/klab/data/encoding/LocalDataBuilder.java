@@ -19,6 +19,8 @@ import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
+import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.provenance.Artifact;
@@ -78,7 +80,7 @@ public class LocalDataBuilder implements IKlabData.Builder {
         if (context.getArtifact(name) instanceof IState) {
             s = (IState) context.getArtifact(name);
         } else {
-            throw new IllegalArgumentException("cannot set the builder context to " + name + ": state does not exist");
+            throw new KlabIllegalArgumentException("cannot set the builder context to " + name + ": state does not exist");
         }
         return new LocalDataBuilder(s, this);
     }
@@ -88,7 +90,7 @@ public class LocalDataBuilder implements IKlabData.Builder {
         if (state != null) {
             state.set(context.getScale().at(offset++), value);
         } else {
-            throw new IllegalStateException("data builder: cannot add items: no state set");
+            throw new KlabIllegalStateException("data builder: cannot add items: no state set");
         }
     }
 
@@ -97,7 +99,7 @@ public class LocalDataBuilder implements IKlabData.Builder {
         if (state != null) {
             state.set(locator, value);
         } else {
-            throw new IllegalStateException("data builder: cannot add items: no state set");
+            throw new KlabIllegalStateException("data builder: cannot add items: no state set");
         }
     }
 
@@ -110,9 +112,9 @@ public class LocalDataBuilder implements IKlabData.Builder {
         for (String key : metadata.keySet()) {
             this.state.getMetadata().put(key, metadata.get(key));
         }
-        if (parent.state == null) {
-            parent.state = this.state;
-        } else if (!parent.state.equals(this.state)) {
+        /*
+         * if (parent.state == null) { parent.state = this.state; } else
+         */if (parent.state != null && !parent.state.equals(this.state)) {
             // FIXME this will currently complain
             ((Artifact) parent.state).chain(this.state);
         }

@@ -2,7 +2,6 @@ package org.integratedmodelling.klab.ogc.integration;
 
 import java.awt.image.RenderedImage;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -23,15 +22,12 @@ import org.geotools.gce.geotiff.GeoTiffReader;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Urn;
-import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
-import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.ogc.WcsAdapter;
@@ -610,7 +606,16 @@ public class Geoserver {
 
 	}
 
-	public void encode(GridCoverage coverage, IGrid grid, IKlabData.Builder builder, String stateName, int band,
+	/**
+	 * Encode data into a pre-configured state builder.
+	 * 
+	 * @param coverage
+	 * @param grid
+	 * @param builder
+	 * @param band
+	 * @param noDataValue
+	 */
+	public void encode(GridCoverage coverage, IGrid grid, IKlabData.Builder builder, int band,
 			double noDataValue) {
 
 		/*
@@ -620,7 +625,6 @@ public class Geoserver {
 		RandomIter iterator = RandomIterFactory.create(image, null);
 		Set<Double> nodata = new HashSet<>();
 		nodata.add(noDataValue);
-		builder = builder.startState(stateName);
 
 		for (long ofs = 0; ofs < grid.getCellCount(); ofs++) {
 
@@ -640,10 +644,8 @@ public class Geoserver {
 					break;
 				}
 			}
-
 			builder.add(value);
 		}
-		builder = builder.finishState();
 	}
 
 }

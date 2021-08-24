@@ -1,5 +1,6 @@
 package org.integratedmodelling.adapter.datacube.api;
 
+import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
@@ -25,7 +26,7 @@ public interface IDatacube {
 		 * @param scope
 		 * @return true if successful
 		 */
-		boolean execute(IGeometry geometry, IKlabData.Builder builder, IContextualizationScope scope);
+		boolean execute(Urn urn, IGeometry geometry, IKlabData.Builder builder, IContextualizationScope scope);
 
 		/**
 		 * Execute the synchronization strategy, with an expected wait time of

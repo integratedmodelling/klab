@@ -8,6 +8,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
@@ -26,6 +27,7 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.time.extents.Time;
@@ -37,6 +39,8 @@ import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.StringUtil;
+
+import springfox.documentation.spring.web.SpringfoxWebMvcConfiguration;
 
 /**
  * AgERA4 Meteo data. The humidity data are 3-hourly and can only be downloaded daily in this
@@ -278,6 +282,26 @@ public class AgERA5Repository extends CopernicusCDSDatacube {
             return (statistic == null ? "" : (statistic.codename + "_")) + variable.codename
                     + (timepoint == null ? "" : ("_" + timepoint.cdsname));
         }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + Objects.hash(statistic, timepoint, variable);
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            VariableConfiguration other = (VariableConfiguration) obj;
+            return statistic == other.statistic && timepoint == other.timepoint && variable == other.variable;
+        }
     }
 
     public AgERA5Repository() {
@@ -306,6 +330,42 @@ public class AgERA5Repository extends CopernicusCDSDatacube {
             ret.add(new VariableConfiguration(var));
         }
         return ret;
+    }
+
+    @Override
+    protected String getStateName(Urn urn, String variable, IContextualizationScope scope) {
+        VariableConfiguration vc = new VariableConfiguration(variable);
+        if (scope.getArtifact(variable) != null) {
+            return variable;
+        } else if (scope.getArtifact(vc.variable.shortname) != null) {
+            return vc.variable.shortname;
+        } else if (scope.getArtifact(vc.getVariableName()) != null) {
+            return vc.getVariableName();
+        } else if (scope.getArtifact(vc.variable.codename) != null) {
+            return vc.variable.codename;
+        } else if (scope.getArtifact(vc.variable.cdsname) != null) {
+            return vc.variable.cdsname;
+        } else {
+            String mangled = vc.id.replaceAll("\\.", "_");
+            if (scope.getArtifact(mangled) != null) {
+                return mangled;
+            } else {
+                /*
+                 * go back to the URN, find out the name for the variable in the original URN, and
+                 * try the ID coming from it.
+                 */
+                for (VariableConfiguration vvc : getVariable(urn)) {
+                    if (vvc.equals(vc)) {
+                        mangled = vvc.id.replaceAll("\\.", "_");
+                        if (scope.getArtifact(mangled) != null) {
+                            return mangled;
+                        }
+                    }
+                }
+
+            }
+        }
+        return super.getStateName(urn, variable, scope);
     }
 
     @Override
@@ -341,7 +401,7 @@ public class AgERA5Repository extends CopernicusCDSDatacube {
         }
 
         ITimeInstant start = getTickStart(tick);
-        String template = fileTemplates.get(var.variable.codename);
+        String template = fileTemplates.get(var.getVariableName());
         if (template == null) {
 
             Pattern pattern = Pattern.compile(".*(_[0-9]{8}_).*");
@@ -361,7 +421,7 @@ public class AgERA5Repository extends CopernicusCDSDatacube {
                     continue;
                 }
                 template = filename.replace(matcher.group(1), "XXXXXXXX");
-                fileTemplates.put(var.variable.codename, template);
+                fileTemplates.put(var.getVariableName(), template);
                 break;
             }
         }

@@ -130,6 +130,8 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
 
 		String jsonBody = JsonUtils.printAsJson(body);
 
+		Logging.INSTANCE.info("requesting chunk " + chunk + " of " + variable + " to CDS API");
+		
 		HttpResponse<JsonNode> response = Unirest.post(getEndpointUrl("resources/datasets/" + this.dataset))
 				.basicAuth(user, apiKey).header("Accept", "application/json").body(jsonBody).asJson();
 
@@ -183,7 +185,9 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
 					url = response.getBody().getObject().getString("location");
 					if (url.endsWith(".zip")) {
 
-						/*
+				        Logging.INSTANCE.info("chunk " + chunk + " data for " + variable + " ready: downloading....");
+
+				        /*
 						 * Download the zip and unzip in chunk directory
 						 */
 						try {
@@ -193,6 +197,7 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
 							ZipUtils.unzip(zipFile, destinationDirectory);
 							FileUtils.deleteQuietly(zipFile);
 							ret = true;
+	                        Logging.INSTANCE.info("download of chunk " + chunk + " data for " + variable + " successful");
 						} catch (Throwable e) {
 							Logging.INSTANCE.warn("Download of CDS chunk " + variable + "/" + chunk
 									+ " threw exception: " + e.getMessage());
@@ -219,6 +224,8 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
 		String[] fields = variable.split("\\.");
 		String cdsname = fields[0];
 		String nativeName = null;
+		
+        Logging.INSTANCE.info("chunk " + chunk + " data for " + variable + " being ingested in local Geoserver");
 
 		for (File f : destinationDirectory.listFiles(new FilenameFilter() {
 
@@ -255,6 +262,9 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
 				return false;
 			}
 		}
+
+        Logging.INSTANCE.info("Geoserver ingestion of chunk " + chunk + " data for " + variable + " terminated successfully");
+
 		return true;
 	}
 

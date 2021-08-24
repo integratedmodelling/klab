@@ -61,7 +61,7 @@ public abstract class GenericDatacubeAdapter implements IUrnAdapter {
                     scope.getMonitor().error(name + " adapter cannot fulfill request for " + urn + ": resource unavailable");
                 }
             } else {
-                strategy.execute(geometry, builder, scope);
+                strategy.execute(urn, geometry, builder, scope);
             }
         }
     }
