@@ -12,6 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 import javax.annotation.Nullable;
 import javax.media.jai.iterator.RandomIter;
@@ -21,6 +22,7 @@ import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.gce.geotiff.GeoTiffReader;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
@@ -616,7 +618,7 @@ public class Geoserver {
 	 * @param noDataValue
 	 */
 	public void encode(GridCoverage coverage, IGrid grid, IKlabData.Builder builder, int band,
-			double noDataValue) {
+			double noDataValue, Function<Number, Number> converter) {
 
 		/*
 		 * Set the data from the transformed coverage
@@ -644,6 +646,11 @@ public class Geoserver {
 					break;
 				}
 			}
+			
+			if (converter != null && Observations.INSTANCE.isData(value)) {
+			    value = converter.apply(value).doubleValue();
+			}
+			
 			builder.add(value);
 		}
 	}

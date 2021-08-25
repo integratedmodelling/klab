@@ -20,6 +20,8 @@ import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.api.data.mediation.ICurrency;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.utils.Range;
 import org.joda.time.DateTime;
 
@@ -219,6 +221,18 @@ public class Currency implements ICurrency {
     @Override
     public IUnit getUnit() {
         return unit;
+    }
+
+    @Override
+    public Number convert(Number d, IObservable observable, IValueMediator from, IScale scale) {
+        // TODO Auto-generated method stub
+        return convert(d, from);
+    }
+
+    @Override
+    public double getContextualizationFactor(IObservable observable, IValueMediator from, IScale scale) {
+        // TODO Auto-generated method stub
+        return 1.0;
     }
 
 }

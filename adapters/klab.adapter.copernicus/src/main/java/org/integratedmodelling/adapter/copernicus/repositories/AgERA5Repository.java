@@ -481,7 +481,10 @@ public class AgERA5Repository extends CopernicusCDSDatacube {
     }
 
     private Aggregation getAggregation(Variable variable) {
-        return variable == Variable.LIQUID_PRECIPITATION_VOLUME ? Aggregation.SUM : Aggregation.MEAN;
+        /*
+         * leave everything as is and take means, so that the mm/day annotation is honored.
+         */
+        return /* variable == Variable.LIQUID_PRECIPITATION_VOLUME ? Aggregation.SUM : */ Aggregation.MEAN;
     }
 
     @Override
@@ -538,6 +541,15 @@ public class AgERA5Repository extends CopernicusCDSDatacube {
             }
         }
         return ret;
+    }
+
+    @Override
+    protected IUnit getOriginalUnit(String variable) {
+        VariableConfiguration vc = new VariableConfiguration(variable);
+        if (vc.variable != null && vc.variable.unit != null) {
+            return Unit.create(vc.variable.unit);
+        }
+        return null;
     }
 
 }

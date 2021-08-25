@@ -948,6 +948,12 @@ public class Grid extends Area implements IGrid {
 			// TODO Auto-generated method stub
 			return this;
 		}
+
+        @Override
+        public double getDimensionSize(IUnit unit) {
+            // TODO Auto-generated method stub
+            return 0;
+        }
 	}
 
 	Shape shape;

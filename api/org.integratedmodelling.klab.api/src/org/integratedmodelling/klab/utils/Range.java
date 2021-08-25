@@ -4,7 +4,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IValueMediator;
-import org.integratedmodelling.klab.api.observations.scale.space.Direction;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 
 public class Range implements IValueMediator {
@@ -670,5 +671,16 @@ public class Range implements IValueMediator {
 		}
 		return lowerBound + " - " + upperBound;
 	}
+
+    @Override
+    public Number convert(Number d, IObservable observable, IValueMediator from, IScale scale) {
+        // TODO Auto-generated method stub
+        return convert(d, from);
+    }
+
+    @Override
+    public double getContextualizationFactor(IObservable observable, IValueMediator from, IScale scale) {
+        return 1.0;
+    }
 
 }

@@ -61,4 +61,15 @@ public class RecontextualizingUnit implements IValueMediator {
 		return variesByLocation;
 	}
 
+    @Override
+    public Number convert(Number d, IObservable observable, IValueMediator from, IScale scale) {
+        // TODO Auto-generated method stub
+        return convert(d, from);
+    }
+
+    @Override
+    public double getContextualizationFactor(IObservable observable, IValueMediator from, IScale scale) {
+        return this.unitTo.getContextualizationFactor(observable, from, scale);
+    }
+
 }

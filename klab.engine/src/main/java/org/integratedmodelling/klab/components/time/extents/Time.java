@@ -1492,4 +1492,10 @@ public class Time extends Extent implements ITime {
         return size() > 1 ? (ITime) getExtent(size() - 1) : null;
     }
 
+    @Override
+    public double getDimensionSize(IUnit unit) {
+        // HOSTIA
+        return 0;
+    }
+
 }

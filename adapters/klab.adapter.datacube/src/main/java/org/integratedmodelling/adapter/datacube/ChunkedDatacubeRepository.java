@@ -20,6 +20,7 @@ import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.function.Function;
 
 import javax.annotation.Nullable;
 import javax.media.jai.iterator.RandomIter;
@@ -28,6 +29,7 @@ import javax.media.jai.iterator.RandomIterFactory;
 import org.apache.commons.io.FileUtils;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.integratedmodelling.adapter.datacube.api.IDatacube;
+import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Observations;
@@ -37,6 +39,9 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Availability;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
+import org.integratedmodelling.klab.api.data.mediation.IUnit;
+import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
@@ -309,7 +314,31 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
                 return false;
             }
 
+            IState state = scope.getArtifact(stateName, IState.class);
+            if (state == null) {
+                // this would be crazy
+                return false;
+            }
+
             Builder stateBuilder = builder.startState(stateName);
+
+            Function<Number, Number> converter = null;
+            if (state.getObservable().getUnit() != null) {
+ 
+                IUnit originalUnit = getOriginalUnit(variable);
+                /*
+                 * these are grids, so one cell is like any other w.r.t. spatial mediation; compute the factor for the
+                 * first cell and reuse it for speed.
+                 */
+                IScale conversionScale = Scale.create((IExtent) scope.getScale().getTime(),
+                        (IExtent) scope.getScale().getSpace().iterator().next());
+                final double conversionFactor = state.getObservable().getUnit().getContextualizationFactor(state.getObservable(), originalUnit,
+                        conversionScale);
+                
+                converter = (num) -> {
+                    return num.doubleValue() * conversionFactor;
+                };
+            }
 
             double wsum = 0.0;
             Aggregation aggregation = getAggregation(variable);
@@ -330,7 +359,7 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
                 GridCoverage2D coverage = getCoverage(g.layerName, scope.getScale().getSpace());
                 if (granules.size() == 1) {
 
-                    geoserver.encode(coverage, grid, stateBuilder, 0, noDataValue);
+                    geoserver.encode(coverage, grid, stateBuilder, 0, noDataValue, converter);
                     stateBuilder.finishState();
                     return true;
 
@@ -362,7 +391,7 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
                             }
 
                             if (!NumberUtils.equal(d, noDataValue)) {
-                                d = d + value;
+                                d = d + (converter == null ? value : converter.apply(value).doubleValue());
                             } else {
                                 d = value;
                             }
@@ -378,12 +407,13 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
                 for (long ofs = 0; ofs < grid.getCellCount(); ofs++) {
                     long[] xy = Grid.getXYCoordinates(ofs, grid.getXCells(), grid.getYCells());
                     double value = data.get(xy);
-                    // FIXME parameterize nodata
+
                     if (NumberUtils.equal(value, noDataValue)) {
                         value = Double.NaN;
                     } else if (aggregation == Aggregation.MEAN && wsum > 1 && Observations.INSTANCE.isData(value)) {
                         value /= wsum;
                     }
+
                     stateBuilder.add(value);
                 }
 
@@ -555,6 +585,14 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
         return pfile.exists() ? 0 : (checkRemoteAvailability(chunk, variable) ? estimatedChunkDownloadTimeSeconds : -1);
 
     }
+
+    /**
+     * Get the unit for the passed variable, or null.
+     * 
+     * @param variable
+     * @return
+     */
+    protected abstract IUnit getOriginalUnit(String variable);
 
     /**
      * Redefine to customize the way states must be named w.r.t. the variables mentioned in the URN.

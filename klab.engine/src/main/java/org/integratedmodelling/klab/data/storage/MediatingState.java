@@ -29,173 +29,170 @@ import org.integratedmodelling.klab.scale.Scale;
  */
 public class MediatingState extends Observation implements IState {
 
-	IState delegate;
-	IValueMediator from;
-	IValueMediator to;
-	IValueMediator rescalingTo = null;
-	boolean convertScale = false;
+    IState delegate;
+    IValueMediator from;
+    IValueMediator to;
+    IValueMediator rescalingTo = null;
+    boolean convertScale = false;
 
-	public MediatingState(IState state, RuntimeScope context, IValueMediator from, IValueMediator to) {
-		super(new Observable((Observable) state.getObservable()), (Scale) state.getScale(), context);
-		this.delegate = state;
-		this.from = from;
-		this.to = to;
-		if (!this.to.isCompatible(this.from)) {
-			convertScale = true;
-		}
-	}
+    public MediatingState(IState state, RuntimeScope context, IValueMediator from, IValueMediator to) {
+        super(new Observable((Observable) state.getObservable()), (Scale) state.getScale(), context);
+        this.delegate = state;
+        this.from = from;
+        this.to = to;
+        if (!this.to.isCompatible(this.from)) {
+            convertScale = true;
+        }
+    }
 
-	public Object get(ILocator index) {
-		Object val = delegate.get(index);
-		IValueMediator mediatorTo = rescalingTo == null ? to : rescalingTo;
-		if (convertScale && rescalingTo == null) {
-			mediatorTo = getScaleConverter(index);
-		}
-		if (val instanceof Number) {
-			val = mediatorTo.convert((Number) val, from).doubleValue();
-		}
-		return val;
-	}
+    public Object get(ILocator index) {
+        Object val = delegate.get(index);
+        IValueMediator mediatorTo = rescalingTo == null ? to : rescalingTo;
+        if (convertScale && rescalingTo == null) {
+            mediatorTo = getScaleConverter(index);
+        }
+        if (val instanceof Number) {
+            val = mediatorTo.convert((Number) val, from).doubleValue();
+        }
+        return val;
+    }
 
-	@SuppressWarnings("unchecked")
-	public <T> T get(ILocator index, Class<T> cls) {
-		Object val = delegate.get(index, cls);
-		IValueMediator mediatorTo = rescalingTo == null ? to : rescalingTo;
-		if (convertScale && rescalingTo == null) {
-			mediatorTo = getScaleConverter(index);
-		} 
-		if (val instanceof Number && (Number.class.isAssignableFrom(cls))) {
-			val = mediatorTo.convert((Number) val, from).doubleValue();
-		}
-		return (T) val;
-	}
+    @SuppressWarnings("unchecked")
+    public <T> T get(ILocator index, Class<T> cls) {
+        Object val = delegate.get(index, cls);
+        IValueMediator mediatorTo = rescalingTo == null ? to : rescalingTo;
+        if (convertScale && rescalingTo == null) {
+            mediatorTo = getScaleConverter(index);
+        }
+        if (val instanceof Number && (Number.class.isAssignableFrom(cls))) {
+            val = mediatorTo.convert((Number) val, from).doubleValue();
+        }
+        return (T) val;
+    }
 
-	private IValueMediator getScaleConverter(ILocator index) {
-		IUnit unit = from instanceof IUnit ? (IUnit) from : ((ICurrency) from).getUnit();
-		IValueMediator ret = unit.getContextualizingUnit(this.getObservable(), this.getScale(),
-				index);
-		if (ret instanceof RecontextualizingUnit && !((RecontextualizingUnit)ret).variesByLocation()) {
-			rescalingTo = ret;
-		}
-		return ret;
-	}
+    private IValueMediator getScaleConverter(ILocator index) {
+        IUnit unit = from instanceof IUnit ? (IUnit) from : ((ICurrency) from).getUnit();
+        IValueMediator ret = unit.getContextualizingUnit(this.getObservable(), this.getScale(),
+                index);
+        if (ret instanceof RecontextualizingUnit && !((RecontextualizingUnit) ret).variesByLocation()) {
+            rescalingTo = ret;
+        }
+        return ret;
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> T aggregate(ILocator geometry, Class<? extends T> cls) {
-		Object val = delegate.aggregate(geometry, cls);
-		return (T) (val instanceof Number ? to.convert(((Number) val).doubleValue(), from) : val);
-	}
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T aggregate(ILocator geometry, Class<? extends T> cls) {
+        Object val = delegate.aggregate(geometry, cls);
+        return (T) (val instanceof Number ? to.convert(((Number) val).doubleValue(), from) : val);
+    }
 
-	@Override
-	public Object aggregate(ILocator... locators) {
-		Object val = delegate.aggregate(locators);
-		return val instanceof Number ? to.convert(((Number) val).doubleValue(), from) : val;
-	}
+    @Override
+    public Object aggregate(ILocator... locators) {
+        Object val = delegate.aggregate(locators);
+        return val instanceof Number ? to.convert(((Number) val).doubleValue(), from) : val;
+    }
 
-	public long set(ILocator index, Object value) {
-		Object val = value instanceof Number ? from.convert(((Number) value).doubleValue(), to) : value;
-		return delegate.set(index, val);
-	}
+    public long set(ILocator index, Object value) {
+        Object val = value instanceof Number ? from.convert(((Number) value).doubleValue(), to) : value;
+        return delegate.set(index, val);
+    }
 
-	/**
-	 * Must return the delegate's ID so that any request by ID will fetch the
-	 * original content.
-	 */
-	@Override
-	public String getId() {
-		return delegate.getId();
-	}
+    /**
+     * Must return the delegate's ID so that any request by ID will fetch the original content.
+     */
+    @Override
+    public String getId() {
+        return delegate.getId();
+    }
 
-	@Override
-	public long size() {
-		return delegate.size();
-	}
+    @Override
+    public long size() {
+        return delegate.size();
+    }
 
-	@Override
-	public IArtifact.Type getType() {
-		return delegate.getType();
-	}
+    @Override
+    public IArtifact.Type getType() {
+        return delegate.getType();
+    }
 
-	@Override
-	public IState as(IArtifact.Type type) {
-		if (delegate.getType() == type) {
-			return this;
-		}
-		return new MediatingState(delegate.as(type), (RuntimeScope) getScope(), from, to);
-	}
+    @Override
+    public IState as(IArtifact.Type type) {
+        if (delegate.getType() == type) {
+            return this;
+        }
+        return new MediatingState(delegate.as(type), (RuntimeScope) getScope(), from, to);
+    }
 
-	@Override
-	public <T> Iterator<T> iterator(ILocator index, Class<? extends T> cls) {
-		return DataIterator.create(this, getScale().at(index), cls);
-	}
+    @Override
+    public <T> Iterator<T> iterator(ILocator index, Class<? extends T> cls) {
+        return DataIterator.create(this, getScale().at(index), cls);
+    }
 
-	@Override
-	public IDataKey getDataKey() {
-		return delegate.getDataKey();
-	}
+    @Override
+    public IDataKey getDataKey() {
+        return delegate.getDataKey();
+    }
 
-	@Override
-	public IState at(ILocator locator) {
-		return new MediatingState((IState) delegate.at(locator), (RuntimeScope) getScope(), from, to);
-	}
+    @Override
+    public IState at(ILocator locator) {
+        return new MediatingState((IState) delegate.at(locator), (RuntimeScope) getScope(), from, to);
+    }
 
-	@Override
-	public IState in(IValueMediator mediator) {
-		if (mediator.equals(from)) {
-			return delegate;
-		}
-		return getMediator(this, mediator);
-	}
+    @Override
+    public IState in(IValueMediator mediator) {
+        if (mediator.equals(from)) {
+            return delegate;
+        }
+        return getMediator(this, mediator);
+    }
 
-	public static IState getMediator(IState state, IValueMediator to) {
+    public static IState getMediator(IState state, IValueMediator to) {
 
-		IValueMediator from = state.getObservable().getUnit();
-		if (from == null) {
-			from = state.getObservable().getCurrency();
-		}
-		if (from == null) {
-			from = state.getObservable().getCurrency();
-		}
-		if (from == null || !from.isCompatible(to)) {
-			throw new IllegalArgumentException("cannot create a mediating state between "
-					+ (from == null ? "nothing" : from.toString()) + " and " + to.toString());
-		}
+        IValueMediator from = state.getObservable().getUnit();
+        if (from == null) {
+            from = state.getObservable().getCurrency();
+        }
+        if (from == null) {
+            from = state.getObservable().getCurrency();
+        }
+        if (from == null || !from.isCompatible(to)) {
+            throw new IllegalArgumentException("cannot create a mediating state between "
+                    + (from == null ? "nothing" : from.toString()) + " and " + to.toString());
+        }
 
-		return from.equals(to) ? state
-				: new MediatingState(state, (RuntimeScope) ((Observation) state).getScope(), from, to);
-	}
+        return from.equals(to) ? state : new MediatingState(state, (RuntimeScope) ((Observation) state).getScope(), from, to);
+    }
 
-	@Override
-	public IStructuredTable<Number> getTable() {
-		// FIXME SHOULD MEDIATE THE DELEGATE NUMBERS
-		return delegate.getTable();
-	}
+    @Override
+    public IStructuredTable<Number> getTable() {
+        // FIXME SHOULD MEDIATE THE DELEGATE NUMBERS
+        return delegate.getTable();
+    }
 
-	public ISubjectiveState reinterpret(IDirectObservation observers) {
-		return null;
-	}
+    public ISubjectiveState reinterpret(IDirectObservation observers) {
+        return null;
+    }
 
-	@Override
-	public void fill(Object value) {
-		for (ILocator locator : getScale()) {
-			set(locator, value);
-		}
-	}
-	
-	@Override
-	public void finalizeTransition(IScale scale) {
-		setContextualized(true);
-		if (scale.getTime() != null && scale.getTime().getTimeType() != ITime.Type.INITIALIZATION) {
-			setDynamic(true);
-		}
-	}
+    @Override
+    public void fill(Object value) {
+        for (ILocator locator : getScale()) {
+            set(locator, value);
+        }
+    }
 
-	@Override
-	public String dump() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public void finalizeTransition(IScale scale) {
+        setContextualized(true);
+        if (scale.getTime() != null && scale.getTime().getTimeType() != ITime.Type.INITIALIZATION) {
+            setDynamic(true);
+        }
+    }
 
+    @Override
+    public String dump() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

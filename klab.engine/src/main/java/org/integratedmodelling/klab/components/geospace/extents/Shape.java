@@ -951,4 +951,10 @@ public class Shape extends AbstractExtent implements IShape {
         }
         return this.metadata;
     }
+
+    @Override
+    public double getDimensionSize(IUnit unit) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
 }
