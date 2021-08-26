@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.data.storage;
 import java.util.Iterator;
 
 import org.integratedmodelling.kim.api.IValueMediator;
-import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.data.general.IStructuredTable;

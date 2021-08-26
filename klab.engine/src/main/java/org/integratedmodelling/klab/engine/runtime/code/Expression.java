@@ -279,6 +279,12 @@ public abstract class Expression implements IExpression {
 			// TODO Auto-generated method stub
 			return predicate;
 		}
+
+        @Override
+        public <T extends IArtifact> Collection<T> getAnyArtifact(IConcept concept, Class<T> cls) {
+            // TODO Auto-generated method stub
+            return null;
+        }
 	}
 
 	public static IContextualizationScope emptyContext(IMonitor monitor) {
