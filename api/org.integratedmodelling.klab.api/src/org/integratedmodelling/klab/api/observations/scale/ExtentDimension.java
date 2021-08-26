@@ -37,6 +37,7 @@ public enum ExtentDimension {
         this.dimensionality = dimensionality;
         this.spatial = spatial;
         this.temporal = temporal;
+        this.type = type;
     }
 
     public static ExtentDimension spatial(int spaceDimensionality) {

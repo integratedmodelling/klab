@@ -15,7 +15,6 @@ package org.integratedmodelling.klab.api.data.mediation;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 
 import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -24,22 +23,40 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDistribution;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.services.IObservableService;
 import org.integratedmodelling.klab.utils.Pair;
 
 /**
  * Units of measurement. Creation and inquiry methods are provided by
  * {@link org.integratedmodelling.klab.api.services.IUnitService}.
+ * <p>
+ * Much more complex than (not-really-)standard JRS-375 units due to the need of scale awareness and
+ * semantic-driven value aggregation and propagation. When a quality is extensive (i.e.,
+ * {@link IObservableService#isExtensive(IObservable)} returns true), its value can be translated to
+ * units that are incompatible because they either add or remove one or more contextual dimensions
+ * (space and/or time). Also, the unit may already contain an implicit contextualization and be
+ * valid for the semantics of the observable once the contextualization is factored in: for example,
+ * volume of rain can be measured in mm as long as the context is 2D space, in which case mm means
+ * the density of the volume (mm^3/mm^2) and is valid for the semantics of a volume.
+ * <p>
+ * k.LAB validates unit appropriateness <em>in context</em> and requires declaration of any
+ * discrepancy between intensive/extensive character using annotations. If those are provided
+ * correctly, context translations are possible even within the same model: for example, a weather
+ * process model may produce extensive rainfall in both space and time (e.g. in m^2, applied to each
+ * timestep and area subdivision) and area/time intensive snow (e.g. in mm/day) at the same time.
+ * <p>
+ * The unit API enables contextual conversion by using a specialized {@link IUnit} implementation.
+ * When the context is factored in, the scale of computation for the unit is incorporated in the
+ * declared unit by obtaining a contextualized unit from
  * 
- * Much more complex than (not-really-)standard JRS-275 units due to the need of scale awareness and
- * semantic-driven value aggregation and propagation.
- *
  * @author Ferd
  * @version $Id: $Id
  */
 public interface IUnit extends IValueMediator {
 
     /**
-     * The result of a {@link IUnit#contextualize(IGeometry, Map)} operation.
+     * The result of a {@link IUnit#contextualize(IGeometry, Map)} operation. TODO probably hide
+     * behind the API and normalize the contextualization interface as in IValueMediator.
      * 
      * @author Ferd
      *
@@ -92,6 +109,8 @@ public interface IUnit extends IValueMediator {
      * Return the set of aggregated dimensions in case this one results from re-contextualizing a
      * stated unit to a geometry, so that we can reconstruct the original values.
      * 
+     * TODO hide from API
+     * 
      * @return
      */
     Map<ExtentDimension, ExtentDistribution> getAggregatedDimensions();
@@ -104,6 +123,8 @@ public interface IUnit extends IValueMediator {
      * The specialized mediator returned should have additional API to check if it is stable over
      * the scale or needs to be redefined at each locator (i.e., the scale is regular or not over
      * the aggregated extent(s)).
+     * 
+     * TODO hide from API
      * 
      * @param observable
      * @param scale
@@ -120,6 +141,24 @@ public interface IUnit extends IValueMediator {
      * @return
      */
     Pair<IUnit, IUnit> splitExtent(ExtentDimension dimension);
+
+    /**
+     * Obtain a target unit representing this one, pre-contextualized to the passed scale, so that
+     * it can accept contextually compatible mediators at {@link #convert(Number, IValueMediator)}
+     * and handle them appropriately. The mediator passed to convert called on the result must be
+     * compatible once the context is factored in; the scale is cached in the unit and, for
+     * extensive values, used to transform the result as needed, so the result can only be reused
+     * across scale swaps on <em>regular</em> extents. On irregular extents, the original,
+     * uncontextualized mediator <em>must</em> be contextualized at every step.
+     * <p>
+     * Overrides the return type from the original in {@link IValueMediator} for fluency.
+     * 
+     * @param observable
+     * @param scale
+     * @return
+     */
+    @Override
+    IUnit contextualize(IObservable observable, IScale scale);
 
     /**
      * True if unitless.

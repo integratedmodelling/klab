@@ -1494,8 +1494,17 @@ public class Time extends Extent implements ITime {
 
     @Override
     public double getDimensionSize(IUnit unit) {
-        // HOSTIA
-        return 0;
+        /*
+         * must be a time unit
+         */
+        Resolution resolution = Units.INSTANCE.asTemporalResolution(unit);
+        if (resolution == null) {
+            return Double.NaN;
+        }
+        long periods = this.start.getPeriods(this.end, resolution);
+        ITimeInstant intend = this.start.plus((int)periods, resolution);
+        long leftover = this.end.getMilliseconds() - intend.getMilliseconds();
+        return (double)periods + ((double)leftover/(double)resolution.getSpan());
     }
 
 }

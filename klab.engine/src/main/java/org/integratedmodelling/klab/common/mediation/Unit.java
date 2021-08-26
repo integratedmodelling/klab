@@ -25,6 +25,7 @@ import javax.measure.Dimension;
 import javax.measure.UnitConverter;
 
 import org.integratedmodelling.kim.api.IValueMediator;
+import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.ILocator;
@@ -34,6 +35,7 @@ import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDistribution;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.Scale;
@@ -59,10 +61,19 @@ public class Unit implements IUnit {
     int _startLine;
     int _endLine;
     String statement;
-    // this is the adopted contextualization, if any (results only from a
-    // contextualize op)
     Map<ExtentDimension, ExtentDistribution> aggregatedDimensions = new HashMap<>();
+    double contextualizationFactor = 1.0;
     boolean wasContextualized = false;
+
+    /**
+     * if the next three are not null, the unit must apply contextualization logic
+     */
+    private IObservable observable;
+    private IScale scale;
+    // each different source unit implies a different triple containing the decontextualized target
+    // unit (which we represent), the decontextualized source unit for conversion, and the scale
+    // factor.
+    private Map<Unit, Triple<Unit, Unit, Double>> contextualization;
 
     /**
      * Non-SI units we can't handle directly if we need to preserve comparability with same
@@ -106,6 +117,9 @@ public class Unit implements IUnit {
         try {
             SimpleUnitFormat formatter = SimpleUnitFormat.getInstance(SimpleUnitFormat.Flavor.ASCII);
             formatter.label(tech.units.indriya.unit.Units.LITRE, "L");
+            formatter.label(tech.units.indriya.unit.Units.WEEK, "wk");
+            // TODO enable when the lib is updated
+            // formatter.label(tech.units.indriya.unit.Units.MONTH, "mo");
             formatter.label(NonSI.DEGREE_ANGLE, "degree_angle");
             unit = (javax.measure.Unit<?>) SimpleUnitFormat.getInstance(SimpleUnitFormat.Flavor.ASCII).parse(string);
         } catch (Throwable e) {
@@ -198,9 +212,25 @@ public class Unit implements IUnit {
     public Number convert(Number value, IValueMediator unit) {
 
         if (!(unit instanceof Unit)) {
-            throw new IllegalArgumentException("illegal conversion " + this + " to " + unit);
+            throw new KlabIllegalArgumentException("can't convert in to a unit from " + unit);
         }
-
+        
+        if (this.scale != null) {
+            if (this.contextualization == null) {
+                this.contextualization = new HashMap<>();
+            }
+            if (!this.contextualization.containsKey(unit)) {
+                Unit self = this.decontextualize(this.scale);
+                Pair<Unit, Double> ctx = this.getContextualizationFactor(this.observable, unit, this.scale);
+                this.contextualization.put((Unit)unit, new Triple<>(self, ctx.getFirst(), ctx.getSecond()));
+            }
+            
+            Triple<Unit, Unit, Double> data = this.contextualization.get(unit);
+            UnitConverter converter = data.getSecond()._unit.getConverterTo(data.getFirst()._unit);
+            return converter.convert(value.doubleValue()) * data.getThird();
+            
+        }
+        
         UnitConverter converter = ((Unit) unit).getUnit().getConverterTo(_unit);
         return converter.convert(value.doubleValue());
     }
@@ -448,36 +478,6 @@ public class Unit implements IUnit {
         return this;
     }
 
-    // /**
-    // * Perform a context analysis w.r.t. the passed scale and populate the aggregatedDimension map
-    // * in the result to reflect how the scale's dimensions are considered when the unit is used in
-    // * that scale. Will only properly work with conformant scales in the geometry, i.e. won't
-    // allow
-    // * areal to mix with volumetric; any hybrid dimensionality will return a null unit.
-    // *
-    // * @param scale
-    // * @return
-    // */
-    // public Unit contextualize(IObservable observable, IScale scale) {
-    //
-    // Unit ret = getContextualizedUnit(observable, scale);
-    //
-    // for (IGeometry.Dimension dimension : scale.getDimensions()) {
-    // int dsize = dimension.getType() == Type.SPACE
-    // ? Units.INSTANCE.getSpatialDimensionality(this)
-    // : Units.INSTANCE.getTemporalDimensionality(this);
-    // if (dsize == 0) {
-    // ret.aggregatedDimensions.put(dimension.getExtentDimension(), ExtentDistribution.EXTENSIVE);
-    // } else if (dimension.getDimensionality() == dsize) {
-    // ret.aggregatedDimensions.put(dimension.getExtentDimension(), ExtentDistribution.INTENSIVE);
-    // } else {
-    // return null;
-    // }
-    // }
-    //
-    // return ret;
-    // }
-
     /**
      * Perform a context analysis w.r.t. the passed scale and observable and populate the
      * aggregatedDimension map in the result to reflect how the scale's dimensions are considered
@@ -488,7 +488,7 @@ public class Unit implements IUnit {
      * @param scale
      * @return
      */
-    public Unit contextualize(IObservable observable, IScale scale) {
+    private Unit contextualizeExtents(IObservable observable, IScale scale) {
 
         UnitContextualization contextualization = Units.INSTANCE.getContextualization(observable, scale, null);
         Unit ret = new Unit(_unit);
@@ -526,28 +526,44 @@ public class Unit implements IUnit {
         return (Unit) Units.INSTANCE.removeExtents(this, getDimensions());
     }
 
-    @Override
-    public Number convert(Number d, IObservable observable, IValueMediator from, IScale scale) {
-        return d.doubleValue() * getContextualizationFactor(observable, from, scale);
+    public Unit decontextualize(IScale scale) {
+        return (Unit) Units.INSTANCE.removeExtents(this,
+                scale.getDimensions().stream().map(dim -> dim.getExtentDimension()).toList());
     }
 
-    @Override
-    public double getContextualizationFactor(IObservable observable, IValueMediator from, IScale scale) {
+//    @Override
+//    public Number convert(Number d, IObservable observable, IValueMediator from, IScale scale) {
+//        return d.doubleValue() * getContextualizationFactor(observable, from, scale);
+//    }
+
+    /**
+     * Return a multiplicative factor to adapt a value in the "from" unit to the passed scale,
+     * considering the extension or intension over the context embodied in the units. If there is no
+     * conformant match between either units or geometries, the return value should be Double.NaN.
+     * 
+     * @param from
+     * @param scale
+     * @return
+     */
+    private Pair<Unit, Double> getContextualizationFactor(IObservable observable, IValueMediator from, IScale scale) {
 
         // for mm in <S,T> this must say: intensive in area, extensive in time
-        Unit contextualizedTarget = contextualize(observable, scale);
+        Unit contextualizedTarget = contextualizeExtents(observable, scale);
         // for mm/day in <S,T> this must say: intensive in area, intensive in time
-        Unit contextualizedSource = ((Unit) from).contextualize(observable, scale);
+        Unit contextualizedSource = ((Unit) from).contextualizeExtents(observable, scale);
 
         // must have same dimensions as keys or result is NaN
         if (contextualizedSource == null || contextualizedTarget == null || !contextualizedTarget.getAggregatedDimensions()
                 .keySet().equals(contextualizedSource.getAggregatedDimensions().keySet())) {
-            return Double.NaN;
+            return null;
         }
 
         // initialize to the conversion factor between the units after factoring out either
         // dimension
-        double ret = contextualizedTarget.decontextualize().convert(1.0, contextualizedSource.decontextualize()).doubleValue();
+        double ret = 1.0;
+        if (!Observables.INSTANCE.isExtensive(observable)) {
+            return new Pair<>((Unit)from, 1.0);
+        }
 
         // factor must disaggregate if extensive -> intensive, aggregate if intensive->extensive
         for (ExtentDimension dim : contextualizedTarget.getAggregatedDimensions().keySet()) {
@@ -556,22 +572,30 @@ public class Unit implements IUnit {
             if (agrTrg == ExtentDistribution.EXTENSIVE && agrSrc == ExtentDistribution.INTENSIVE) {
                 /*
                  * intensive -> extensive: take the scale factor from the scale and multiply the
-                 * value to remove it. Scale factor units of the source dimension are
-                 * represented in the scale extent.
+                 * value to remove it. Scale factor units of the source dimension are represented in
+                 * the scale extent.
                  */
-                IExtent extent = (IExtent)scale.getDimension(dim.type);
-                IUnit dimUnit = Units.INSTANCE.getDimensionUnit((IUnit)from, dim.type);
+                IExtent extent = (IExtent) scale.getDimension(dim.type);
+                IUnit dimUnit = Units.INSTANCE.getDimensionUnit((IUnit) from, dim.type);
                 ret *= extent.getDimensionSize(dimUnit);
-                
+
             } else if (agrTrg == ExtentDistribution.INTENSIVE && agrSrc == ExtentDistribution.EXTENSIVE) {
 
-                IExtent extent = (IExtent)scale.getDimension(dim.type);
+                IExtent extent = (IExtent) scale.getDimension(dim.type);
                 IUnit dimUnit = Units.INSTANCE.getDimensionUnit(this, dim.type);
                 ret /= extent.getDimensionSize(dimUnit);
-                
+
             }
         }
 
+        return new Pair<>(((Unit) from).decontextualize(scale), ret);
+    }
+
+    @Override
+    public IUnit contextualize(IObservable observable, IScale scale) {
+        Unit ret = new Unit(_unit);
+        ret.scale = scale;
+        ret.observable = observable;
         return ret;
     }
 }

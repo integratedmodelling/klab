@@ -222,17 +222,22 @@ public class Currency implements ICurrency {
     public IUnit getUnit() {
         return unit;
     }
+//
+//    @Override
+//    public Number convert(Number d, IObservable observable, IValueMediator from, IScale scale) {
+//        // TODO Auto-generated method stub
+//        return convert(d, from);
+//    }
+//
+//    @Override
+//    public double getContextualizationFactor(IObservable observable, IValueMediator from, IScale scale) {
+//        // TODO Auto-generated method stub
+//        return 1.0;
+//    }
 
     @Override
-    public Number convert(Number d, IObservable observable, IValueMediator from, IScale scale) {
-        // TODO Auto-generated method stub
-        return convert(d, from);
-    }
-
-    @Override
-    public double getContextualizationFactor(IObservable observable, IValueMediator from, IScale scale) {
-        // TODO Auto-generated method stub
-        return 1.0;
+    public IValueMediator contextualize(IObservable observable, IScale scale) {
+        return null;
     }
 
 }

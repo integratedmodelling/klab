@@ -50,27 +50,18 @@ public interface IValueMediator {
     Number convert(Number d, IValueMediator scale);
 
     /**
-     * Convert from the passed unit to the one we represent, allowing mediation of extent based on
-     * the passed scope. So for example "mm" can be converted to m^3 as long as the scope implies an
-     * areal distribution. There is no check that this is semantically legitimate for the specific
-     * quantity represented, so any validation of that kind must be done upstream.
+     * Obtain a target unit representing this one, pre-contextualized to the passed scale, so that
+     * it can accept contextually compatible mediators at {@link #convert(Number, IValueMediator)}
+     * and handle them appropriately. The mediator passed to convert called on the result must be
+     * compatible once the context is factored in; the scale is cached in the unit and, for
+     * extensive values, used to transform the result as needed, so the result can only be reused
+     * across scale swaps on <em>regular</em> extents. On irregular extents, the original,
+     * uncontextualized mediator <em>must</em> be contextualized at every step.
      * 
-     * @param d
-     * @param from
-     * @param scope
-     * @return
-     */
-    Number convert(Number d, IObservable observable, IValueMediator from, IScale scale);
-
-    /**
-     * Return a multiplicative factor to adapt a value in the "from" unit to the passed scale,
-     * considering the extension or intension over the context embodied in the units. If there is 
-     * no conformant match between either units or geometries, the return value should be Double.NaN.
-     * 
-     * @param from
+     * @param observable
      * @param scale
      * @return
      */
-    double getContextualizationFactor(IObservable observable, IValueMediator from, IScale scale);
+    IValueMediator contextualize(IObservable observable, IScale scale);
 
 }

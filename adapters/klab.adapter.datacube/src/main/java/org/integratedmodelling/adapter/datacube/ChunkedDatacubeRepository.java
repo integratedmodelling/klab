@@ -325,18 +325,16 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
             Function<Number, Number> converter = null;
             if (state.getObservable().getUnit() != null) {
  
-                IUnit originalUnit = getOriginalUnit(variable);
                 /*
                  * these are grids, so one cell is like any other w.r.t. spatial mediation; compute the factor for the
                  * first cell and reuse it for speed.
                  */
                 IScale conversionScale = Scale.create((IExtent) scope.getScale().getTime(),
                         (IExtent) scope.getScale().getSpace().iterator().next());
-                final double conversionFactor = state.getObservable().getUnit().getContextualizationFactor(state.getObservable(), originalUnit,
-                        conversionScale);
-                
+                IUnit originalUnit = getOriginalUnit(variable);
+                IUnit targetUnit = state.getObservable().getUnit().contextualize(state.getObservable(), conversionScale);
                 converter = (num) -> {
-                    return num.doubleValue() * conversionFactor;
+                    return targetUnit.convert(num, originalUnit);
                 };
             }
 

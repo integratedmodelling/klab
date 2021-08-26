@@ -24,9 +24,11 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.api.services.IUnitService;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.scale.Scale;
@@ -57,7 +59,12 @@ public enum Units implements IUnitService {
     public IUnit SQUARE_KILOMETERS = getUnit("km^2");
     public IUnit CUBIC_METERS = getUnit("m^3");
     public IUnit SECONDS = getUnit("s");
+    public IUnit DAYS = getUnit("d");
+    public IUnit WEEKS = getUnit("wk");
     public IUnit YEARS = getUnit("year");
+    // TODO enable when indriya is updated
+    //    public IUnit MONTHS = getUnit("mo");
+    public IUnit MINUTES = getUnit("min");
     public IUnit HOURS = getUnit("h");
     public IUnit MILLISECONDS = getUnit("ms");
 
@@ -65,7 +72,12 @@ public enum Units implements IUnitService {
 
     @Override
     public Unit getUnit(String string) {
-        return Unit.create(string);
+        try {
+            return Unit.create(string);
+        } catch (Throwable t) {
+            Logging.INSTANCE.error("Can't predefine unit '" + string + "': set as null, expect problems");
+        }
+        return null;
     }
 
     private Units() {
@@ -970,7 +982,7 @@ public enum Units implements IUnitService {
     public IUnit getDimensionUnit(IUnit unit, IGeometry.Dimension.Type type) {
 
         if (type == IGeometry.Dimension.Type.SPACE) {
-            switch (getSpatialDimensionality(unit)) {
+            switch(getSpatialDimensionality(unit)) {
             case 1:
                 return getLinealExtentUnit(unit);
             case 2:
@@ -981,7 +993,35 @@ public enum Units implements IUnitService {
         } else if (type == IGeometry.Dimension.Type.TIME) {
             return getTimeExtentUnit(unit);
         }
-        
+
+        return null;
+    }
+
+    /**
+     * Return the temporal resolution correspondent to the temporal unit passed (can be s, m, hr,
+     * day, wk, yr) or null if the unit isn't temporal.
+     * 
+     * @param unit
+     * @return
+     */
+    public ITime.Resolution asTemporalResolution(IUnit unit) {
+        if (DAYS.equals(unit)) {
+            return Time.resolution(1, Resolution.Type.DAY);
+        } else if (YEARS.equals(unit)) {
+            return Time.resolution(1, Resolution.Type.YEAR);
+        } /* TODO enable when possible (needs latest indriya)
+           * else if (MONTHS.equals(unit)) { return Time.resolution(1, Resolution.Type.MONTH); }
+           */else if (WEEKS.equals(unit)) {
+            return Time.resolution(1, Resolution.Type.WEEK);
+        } else if (SECONDS.equals(unit)) {
+            return Time.resolution(1, Resolution.Type.SECOND);
+        } else if (HOURS.equals(unit)) {
+            return Time.resolution(1, Resolution.Type.HOUR);
+        } else if (MINUTES.equals(unit)) {
+            return Time.resolution(1, Resolution.Type.MINUTE);
+        } else if (MILLISECONDS.equals(unit)) {
+            return Time.resolution(1, Resolution.Type.MILLISECOND);
+        }
         return null;
     }
 
