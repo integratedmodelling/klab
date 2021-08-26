@@ -23,7 +23,7 @@
 						</auth>
 					</from>
 					<to>
-						<image>${env.REGISTRY}/${env.NODE_TAG}</image>
+						<image>${env.REGISTRY}/${env.NODE_CONTAINER}</image>
 						<tags>
 							<tag>${env.NODE_TAG}</tag>
 							<tag>latest</tag>
