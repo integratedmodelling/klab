@@ -30,7 +30,7 @@
             			</auth>
       				</from>
                     <to>
-                        <image>${env.REGISTRY}/${env.STAT_TAG}</image>
+                        <image>${env.REGISTRY}/${env.STAT_CONTAINER}</image>
                         <tags>
                         	<tag>${env.STAT_TAG}</tag>
 				      		<tag>latest</tag>

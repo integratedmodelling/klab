@@ -25,7 +25,7 @@
             			</auth>
 					</from>
 					<to>
-						<image>${env.REGISTRY}/${env.HUB_TAG}</image>
+						<image>${env.REGISTRY}/${env.HUB_CONTAINER}</image>
 						<tags>
 							<tag>${env.HUB_TAG}</tag>
 							<tag>latest</tag>

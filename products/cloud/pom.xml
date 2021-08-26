@@ -41,7 +41,7 @@
             			</auth>
       				</from>
                     <to>
-                        <image>${env.REGISTRY}/${env.ENGINE_TAG}</image>
+                        <image>${env.REGISTRY}/${env.ENGINE_CONTAINER}</image>
                         <tags>
                         	<tag>${env.ENGINE_TAG}</tag>
 				      		<tag>latest</tag>
