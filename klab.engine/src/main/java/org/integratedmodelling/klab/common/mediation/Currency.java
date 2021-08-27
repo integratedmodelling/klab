@@ -17,6 +17,7 @@
 package org.integratedmodelling.klab.common.mediation;
 
 import org.integratedmodelling.kim.api.IValueMediator;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.mediation.ICurrency;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -135,6 +136,11 @@ public class Currency implements ICurrency {
     /** {@inheritDoc} */
     @Override
     public Number convert(Number d, IValueMediator scale) {
+        
+        if (Observations.INSTANCE.isNodata(d)) {
+            return d;
+        }
+        
         if (!(scale instanceof ICurrency)) {
             throw new IllegalArgumentException("invalid conversion: " + scale + " to " + this);
         }

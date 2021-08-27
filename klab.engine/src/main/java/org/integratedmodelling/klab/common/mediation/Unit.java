@@ -26,6 +26,7 @@ import javax.measure.UnitConverter;
 
 import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.Observables;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.ILocator;
@@ -211,6 +212,10 @@ public class Unit implements IUnit {
     @Override
     public Number convert(Number value, IValueMediator unit) {
 
+        if (Observations.INSTANCE.isNodata(value)) {
+            return value;
+        }
+        
         if (!(unit instanceof Unit)) {
             throw new KlabIllegalArgumentException("can't convert in to a unit from " + unit);
         }
@@ -565,6 +570,8 @@ public class Unit implements IUnit {
             return new Pair<>((Unit)from, 1.0);
         }
 
+        Unit retUnit = (Unit)from;
+        
         // factor must disaggregate if extensive -> intensive, aggregate if intensive->extensive
         for (ExtentDimension dim : contextualizedTarget.getAggregatedDimensions().keySet()) {
             ExtentDistribution agrTrg = contextualizedTarget.getAggregatedDimensions().get(dim);
@@ -576,19 +583,21 @@ public class Unit implements IUnit {
                  * the scale extent.
                  */
                 IExtent extent = (IExtent) scale.getDimension(dim.type);
-                IUnit dimUnit = Units.INSTANCE.getDimensionUnit((IUnit) from, dim.type);
+                IUnit dimUnit = Units.INSTANCE.getDimensionUnit((IUnit) from, dim);
+                retUnit = (Unit)retUnit.multiply(dimUnit);
                 ret *= extent.getDimensionSize(dimUnit);
 
             } else if (agrTrg == ExtentDistribution.INTENSIVE && agrSrc == ExtentDistribution.EXTENSIVE) {
 
                 IExtent extent = (IExtent) scale.getDimension(dim.type);
-                IUnit dimUnit = Units.INSTANCE.getDimensionUnit(this, dim.type);
+                IUnit dimUnit = Units.INSTANCE.getDimensionUnit(this, dim);
                 ret /= extent.getDimensionSize(dimUnit);
+                retUnit = (Unit)retUnit.divide(dimUnit);
 
             }
         }
 
-        return new Pair<>(((Unit) from).decontextualize(scale), ret);
+        return new Pair<>(retUnit, ret);
     }
 
     @Override

@@ -9,6 +9,8 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.measure.Dimension;
+
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -30,6 +32,7 @@ import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.scale.Scale;
 
@@ -63,7 +66,7 @@ public enum Units implements IUnitService {
     public IUnit WEEKS = getUnit("wk");
     public IUnit YEARS = getUnit("year");
     // TODO enable when indriya is updated
-    //    public IUnit MONTHS = getUnit("mo");
+    // public IUnit MONTHS = getUnit("mo");
     public IUnit MINUTES = getUnit("min");
     public IUnit HOURS = getUnit("h");
     public IUnit MILLISECONDS = getUnit("ms");
@@ -974,6 +977,59 @@ public enum Units implements IUnitService {
     }
 
     /**
+     * Return the unit that describes the passed dimension. Handles implicit contextualization
+     * resulting from simplification (e.g. mm == mm^3/mm^2), assuming the passed dimension comes
+     * from a correct analysis (as there is no way to validate that here).
+     * 
+     * @param type
+     * @return
+     */
+    public IUnit getDimensionUnit(IUnit unit, ExtentDimension dimension) {
+
+        if (dimension.type == IGeometry.Dimension.Type.SPACE) {
+            switch(getSpatialDimensionality(unit)) {
+            case 1:
+                return getLinealExtentUnit(unit);
+            case 2:
+                return getArealExtentUnit(unit);
+            case 3:
+                return getVolumeExtentUnit(unit);
+            default:
+                /*
+                 * TODO this is the case when the dimension has been simplified. Check that the
+                 * original unit is a length, then multiply by the needed power to match the
+                 * dimensionality.
+                 */
+                javax.measure.Unit<?> length = findUnitFor(((Unit) unit).getUnit(), UnitDimension.LENGTH);
+                if (length == null) {
+                    throw new KlabIllegalArgumentException("cannot find length dimension in unit " + unit + " being scanned for "
+                            + dimension + " dimensionality");
+                }
+                return new Unit(length.pow(1).pow(dimension.dimensionality));
+            }
+        } else if (dimension.type == IGeometry.Dimension.Type.TIME) {
+            return getTimeExtentUnit(unit);
+        }
+
+        return null;
+    }
+
+    javax.measure.Unit<?> findUnitFor(javax.measure.Unit<?> unit, Dimension dim) {
+        if (unit instanceof ProductUnit<?>) {
+            ProductUnit<?> pu = (ProductUnit<?>) unit;
+            for (int i = 0; i < pu.getUnitCount(); i++) {
+                javax.measure.Unit<?> su = pu.getUnit(i);
+                if (su.getDimension().equals(dim)) {
+                    return su;
+                }
+            }
+        } else if (unit.getDimension().equals(dim)) {
+            return unit;
+        }
+        return null;
+    }
+
+    /**
      * Return the unit that describes the passed dimension.
      * 
      * @param type
@@ -1009,8 +1065,9 @@ public enum Units implements IUnitService {
             return Time.resolution(1, Resolution.Type.DAY);
         } else if (YEARS.equals(unit)) {
             return Time.resolution(1, Resolution.Type.YEAR);
-        } /* TODO enable when possible (needs latest indriya)
-           * else if (MONTHS.equals(unit)) { return Time.resolution(1, Resolution.Type.MONTH); }
+        } /*
+           * TODO enable when possible (needs latest indriya) else if (MONTHS.equals(unit)) { return
+           * Time.resolution(1, Resolution.Type.MONTH); }
            */else if (WEEKS.equals(unit)) {
             return Time.resolution(1, Resolution.Type.WEEK);
         } else if (SECONDS.equals(unit)) {

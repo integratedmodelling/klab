@@ -951,8 +951,7 @@ public class Grid extends Area implements IGrid {
 
         @Override
         public double getDimensionSize(IUnit unit) {
-            // TODO Auto-generated method stub
-            return 0;
+            return unit.convert(getStandardizedArea(), Units.INSTANCE.SQUARE_METERS).doubleValue();
         }
 	}
 

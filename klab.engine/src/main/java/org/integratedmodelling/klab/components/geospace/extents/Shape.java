@@ -954,7 +954,6 @@ public class Shape extends AbstractExtent implements IShape {
 
     @Override
     public double getDimensionSize(IUnit unit) {
-        // TODO Auto-generated method stub
-        return 0;
+        return unit.convert(getStandardizedArea(), Units.INSTANCE.SQUARE_METERS).doubleValue();
     }
 }
