@@ -381,21 +381,24 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
                         long[] xy = Grid.getXYCoordinates(ofs, grid.getXCells(), grid.getYCells());
                         double value = iterator.getSampleDouble((int) xy[0], (int) xy[1], 0);
                         if (first) {
-                            data.set(value, xy);
+                            double d = value;
+                            if (!NumberUtils.equal(d, noDataValue)) {
+                                d = (converter == null ? value : converter.apply(d).doubleValue())
+                                        * (aggregation == Aggregation.MEAN ? g.multiplier : 1.0);
+                            }
+                            data.set(d, xy);
                         } else {
 
                             Double d = data.get(xy);
 
-                            if (aggregation == Aggregation.MEAN) {
-                                // weighted average
-                                d *= g.multiplier;
-                            }
-
                             if (!NumberUtils.equal(d, noDataValue)) {
-                                d = d + (converter == null ? value : converter.apply(value).doubleValue());
+                                d += (converter == null ? value : converter.apply(value).doubleValue())
+                                        * (aggregation == Aggregation.MEAN ? g.multiplier : 1.0);
+                              
                             } else {
                                 d = value;
                             }
+
                             data.set(d, xy);
                         }
                     }
