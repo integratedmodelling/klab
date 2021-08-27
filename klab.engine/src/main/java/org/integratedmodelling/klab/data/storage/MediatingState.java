@@ -23,6 +23,8 @@ import org.integratedmodelling.klab.scale.Scale;
 /**
  * The state we wrap has the desired semantics but its values must be converted.
  * 
+ * FIXME rewrite using the new unit contextualization mechanism.
+ * 
  * @author Ferd
  *
  */

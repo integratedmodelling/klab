@@ -536,11 +536,6 @@ public class Unit implements IUnit {
                 scale.getDimensions().stream().map(dim -> dim.getExtentDimension()).toList());
     }
 
-//    @Override
-//    public Number convert(Number d, IObservable observable, IValueMediator from, IScale scale) {
-//        return d.doubleValue() * getContextualizationFactor(observable, from, scale);
-//    }
-
     /**
      * Return a multiplicative factor to adapt a value in the "from" unit to the passed scale,
      * considering the extension or intension over the context embodied in the units. If there is no
@@ -552,9 +547,9 @@ public class Unit implements IUnit {
      */
     private Pair<Unit, Double> getContextualizationFactor(IObservable observable, IValueMediator from, IScale scale) {
 
-        // for mm in <S,T> this must say: intensive in area, extensive in time
+        // e.g. for mm in <S,T> this must say: intensive in area, extensive in time
         Unit contextualizedTarget = contextualizeExtents(observable, scale);
-        // for mm/day in <S,T> this must say: intensive in area, intensive in time
+        // e.g. for mm/day in <S,T> this must say: intensive in area, intensive in time
         Unit contextualizedSource = ((Unit) from).contextualizeExtents(observable, scale);
 
         // must have same dimensions as keys or result is NaN

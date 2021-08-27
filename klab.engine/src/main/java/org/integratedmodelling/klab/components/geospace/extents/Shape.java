@@ -548,6 +548,9 @@ public class Shape extends AbstractExtent implements IShape {
         if (shape == null && other instanceof ISpace) {
             shape = (Shape) ((ISpace) other).getShape();
         }
+        if (shape == null) {
+            return copy();
+        }
         if (how == LogicalConnector.UNION) {
             return create(shapeGeometry.union(shape.transform(this.projection).getJTSGeometry()), this.projection);
         } else if (how == LogicalConnector.INTERSECTION) {
