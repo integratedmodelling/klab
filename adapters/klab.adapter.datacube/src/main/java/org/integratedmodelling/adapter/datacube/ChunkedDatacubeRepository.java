@@ -29,7 +29,6 @@ import javax.media.jai.iterator.RandomIterFactory;
 import org.apache.commons.io.FileUtils;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.integratedmodelling.adapter.datacube.api.IDatacube;
-import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Observations;
@@ -72,6 +71,10 @@ import org.joda.time.Period;
  * download, the file a unit of ingestion. It's able to collect all the data for a period with the
  * necessary aggregation, using caching based on a specified set of temporal intervals to minimize
  * access.
+ * <p>
+ * The repository can be used in both a static and dynamic configuration, producing either processes
+ * or qualities, so the functions that return types and resource data take a "dynamic" flag to
+ * distinguish.
  * <p>
  * ACHTUNG: assumes the various resolutions are chosen to match perfectly. Fractional resolutions
  * won't work correctly. Uses real time units and handles months and years appropriately.
@@ -324,10 +327,10 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 
             Function<Number, Number> converter = null;
             if (state.getObservable().getUnit() != null) {
- 
+
                 /*
-                 * these are grids, so one cell is like any other w.r.t. spatial mediation; compute the factor for the
-                 * first cell and reuse it for speed.
+                 * these are grids, so one cell is like any other w.r.t. spatial mediation; compute
+                 * the factor for the first cell and reuse it for speed.
                  */
                 IScale conversionScale = Scale.create((IExtent) scope.getScale().getTime(),
                         (IExtent) scope.getScale().getSpace().iterator().next());
@@ -456,6 +459,7 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
         this.aggregationDirectory = new File(this.mainDirectory + File.separator + "aggregated");
         this.aggregationDirectory.mkdirs();
         this.noDataValue = noDataValue;
+
         recomputeProcessingTime();
 
         int maxConcurrentThreads = Integer.parseInt(Configuration.INSTANCE.getProperty(DATACUBE_DOWNLOAD_THREADS_PROPERTY, "1"));
@@ -858,7 +862,7 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 
     protected abstract Geoserver initializeGeoserver();
 
-    protected abstract IArtifact.Type getResourceType(Urn urn);
+    protected abstract IArtifact.Type getResourceType(Urn urn, boolean dynamic);
 
     protected abstract IGeometry getResourceGeometry(Urn urn);
 
@@ -866,7 +870,7 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 
     protected abstract String getDataLayer(String variable, int tick);
 
-    public abstract IResource getResource(String urn);
+    public abstract IResource getResource(String urn, boolean dynamic);
 
     /**
      * Return a stable variable name for a given URN

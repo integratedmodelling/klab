@@ -21,11 +21,13 @@ import org.integratedmodelling.klab.rest.ResourceReference.AvailabilityReference
 public abstract class GenericDatacubeAdapter implements IUrnAdapter {
 
     private String name;
-
+    private boolean dynamic;
+    
     public abstract ChunkedDatacubeRepository getDatacube(Urn urn);
 
-    public GenericDatacubeAdapter(String name) {
+    public GenericDatacubeAdapter(String name, boolean dynamic) {
         this.name = name;
+        this.dynamic = dynamic;
     }
 
     @Override
@@ -36,7 +38,7 @@ public abstract class GenericDatacubeAdapter implements IUrnAdapter {
     @Override
     public IResource getResource(String urn) {
         Urn kurn = new Urn(urn);
-        return getDatacube(kurn).getResource(urn);
+        return getDatacube(kurn).getResource(urn, this.dynamic);
     }
 
     @Override
@@ -68,7 +70,7 @@ public abstract class GenericDatacubeAdapter implements IUrnAdapter {
 
     @Override
     public Type getType(Urn urn) {
-        return getDatacube(urn).getResourceType(urn);
+        return getDatacube(urn).getResourceType(urn, this.dynamic);
     }
 
     @Override

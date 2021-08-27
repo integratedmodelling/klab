@@ -15,6 +15,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.integratedmodelling.adapter.copernicus.CopernicusAdapter;
+import org.integratedmodelling.adapter.copernicus.CopernicusStaticAdapter;
 import org.integratedmodelling.adapter.copernicus.datacubes.CopernicusCDSDatacube;
 import org.integratedmodelling.cdm.utils.NetCDFUtils;
 import org.integratedmodelling.klab.Urn;
@@ -40,8 +41,6 @@ import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.StringUtil;
 
-import springfox.documentation.spring.web.SpringfoxWebMvcConfiguration;
-
 /**
  * AgERA4 Meteo data. The humidity data are 3-hourly and can only be downloaded daily in this
  * implementation. A time among the available will be forced and can be selected through
@@ -52,6 +51,8 @@ import springfox.documentation.spring.web.SpringfoxWebMvcConfiguration;
  */
 public class AgERA5Repository extends CopernicusCDSDatacube {
 
+    public static final String ID = "sis-agrometeorological-indicators";
+    
     private Map<String, Variable> variables = new HashMap<>();
     private Map<String, Variable> svariables = new HashMap<>();
     private Map<String, String> fileTemplates = new HashMap<>();
@@ -305,7 +306,7 @@ public class AgERA5Repository extends CopernicusCDSDatacube {
     }
 
     public AgERA5Repository() {
-        super("sis-agrometeorological-indicators", TimeInstant.create(1979, 1, 1), -9999.0);
+        super(ID, TimeInstant.create(1979, 1, 1), -9999.0);
         this.setAggregationPoints(Time.resolution(1, Resolution.Type.WEEK), Time.resolution(1,
                 Resolution.Type.MONTH)/*
                                        * , Time.resolution(1, Resolution.Type.YEAR)
@@ -488,21 +489,22 @@ public class AgERA5Repository extends CopernicusCDSDatacube {
     }
 
     @Override
-    protected Type getResourceType(Urn urn) {
-        return Type.PROCESS;
+    protected Type getResourceType(Urn urn, boolean dynamic) {
+        return dynamic ? Type.PROCESS : Type.NUMBER;
     }
 
     @Override
-    public IResource getResource(String urn) {
+    public IResource getResource(String urn, boolean dynamic) {
 
         Urn kurn = new Urn(urn);
         ResourceReference ref = new ResourceReference();
         ref.setUrn(kurn.getUrn());
-        ref.setAdapterType(CopernicusAdapter.ID);
+        ref.setAdapterType(dynamic ? CopernicusAdapter.ID : CopernicusStaticAdapter.ID);
         ref.setLocalName(kurn.getResourceId());
+        // TODO this really needs the bbox and resolution when used statically
         ref.setGeometry(getResourceGeometry(kurn).encode());
         ref.setVersion(Version.CURRENT);
-        ref.setType(getResourceType(kurn));
+        ref.setType(getResourceType(kurn, dynamic));
 
         int i = 0;
         ref.setOutputs(new ArrayList<>());
