@@ -148,11 +148,11 @@ public class LocatedState extends Observation implements IState {
 		return MediatingState.getMediator(this, mediator);
 	}
 
-	@Override
-	public IStructuredTable<Number> getTable() {
-		// FIXME this should be recomputed from the values
-		return null;
-	}
+//	@Override
+//	public IStructuredTable<Number> getTable() {
+//		// FIXME this should be recomputed from the values
+//		return null;
+//	}
 
 	public ISubjectiveState reinterpret(IDirectObservation observers) {
 		return null;

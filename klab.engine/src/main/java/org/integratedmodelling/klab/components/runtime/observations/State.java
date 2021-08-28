@@ -272,14 +272,14 @@ public class State extends Observation implements IState, IKeyHolder {
         return MediatingState.getMediator(this, mediator);
     }
 
-    @Override
-    public IStructuredTable<Number> getTable() {
-        return table;
-    }
-
-    public void setTable(IStructuredTable<Number> table) {
-        this.table = table;
-    }
+//    @Override
+//    public IStructuredTable<Number> getTable() {
+//        return table;
+//    }
+//
+//    public void setTable(IStructuredTable<Number> table) {
+//        this.table = table;
+//    }
 
     public ISubjectiveState reinterpret(IDirectObservation observer) {
         return new SubjectiveState(this, observer);

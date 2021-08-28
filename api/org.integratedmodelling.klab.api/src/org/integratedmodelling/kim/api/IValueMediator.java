@@ -50,13 +50,28 @@ public interface IValueMediator {
     Number convert(Number d, IValueMediator scale);
 
     /**
-     * Obtain a target unit representing this one, pre-contextualized to the passed scale, so that
-     * it can accept contextually compatible mediators at {@link #convert(Number, IValueMediator)}
-     * and handle them appropriately. The mediator passed to convert called on the result must be
-     * compatible once the context is factored in; the scale is cached in the unit and, for
-     * extensive values, used to transform the result as needed, so the result can only be reused
-     * across scale swaps on <em>regular</em> extents. On irregular extents, the original,
-     * uncontextualized mediator <em>must</em> be contextualized at every step.
+     * Convert from this unit to the passed one. This is trivial unless the unit is contextualized,
+     * which makes it entirely non-trivial.
+     * 
+     * @param d
+     * @param scale
+     * @return
+     */
+    Number backConvert(Number d, IValueMediator scale);
+
+    /**
+     * Obtain a target mediator representing this one, pre-contextualized to the passed scale, so
+     * that it can accept contextually compatible mediators at
+     * {@link #convert(Number, IValueMediator)} and handle them appropriately. The mediator passed
+     * to convert called on the result must be compatible <em>once the context is factored in</em>;
+     * this means that, for example, mm will be compatible with m^3 if the scale is distributed in
+     * space, making "mm" nothing more than mm^3/mm^2 and generating the appropriate conversion
+     * factors automatically.
+     * <p>
+     * The scale is cached in the mediator and, for extensive values, used to transform the result
+     * as needed, so the result can only be reused across scale swaps on <em>regular</em> extents.
+     * On irregular extents, the original, uncontextualized mediator <em>must</em> be saved and
+     * contextualized at every step.
      * 
      * @param observable
      * @param scale

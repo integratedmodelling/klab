@@ -511,9 +511,9 @@ public enum Observations implements IObservationService {
 
         if (observation instanceof IState) {
 
-            if (((IState) observation).getTable() != null) {
-                ret.getGeometryTypes().add(GeometryType.TABLE);
-            }
+//            if (((IState) observation).getTable() != null) {
+//                ret.getGeometryTypes().add(GeometryType.TABLE);
+//            }
 
             StateSummary summary = getStateSummary((IState) observation, locator);
 
