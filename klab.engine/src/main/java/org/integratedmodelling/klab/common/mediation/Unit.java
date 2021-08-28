@@ -215,27 +215,27 @@ public class Unit implements IUnit {
         if (Observations.INSTANCE.isNodata(value)) {
             return value;
         }
-        
+
         if (!(unit instanceof Unit)) {
-            throw new KlabIllegalArgumentException("can't convert in to a unit from " + unit);
+            throw new KlabIllegalArgumentException("can't convert into a unit from " + unit);
         }
-        
+
         if (this.scale != null) {
             if (this.contextualization == null) {
                 this.contextualization = new HashMap<>();
             }
             if (!this.contextualization.containsKey(unit)) {
-                Unit self = this.decontextualize(this.scale);
                 Pair<Unit, Double> ctx = this.getContextualizationFactor(this.observable, unit, this.scale);
-                this.contextualization.put((Unit)unit, new Triple<>(self, ctx.getFirst(), ctx.getSecond()));
+                this.contextualization.put((Unit) unit, new Triple<>(this, ctx.getFirst(), ctx.getSecond()));
             }
-            
+
             Triple<Unit, Unit, Double> data = this.contextualization.get(unit);
+            @SuppressWarnings("unchecked")
             UnitConverter converter = data.getSecond()._unit.getConverterTo(data.getFirst()._unit);
             return converter.convert(value.doubleValue()) * data.getThird();
-            
+
         }
-        
+
         UnitConverter converter = ((Unit) unit).getUnit().getConverterTo(_unit);
         return converter.convert(value.doubleValue());
     }
@@ -543,7 +543,9 @@ public class Unit implements IUnit {
      * 
      * @param from
      * @param scale
-     * @return
+     * @return the decontextualized target unit (this unit w/o the contexts outside of the
+     *         multiplicative factor), the decontextualized source unit (compatible with this unit)
+     *         and the multiplicative factor that will mediate the different contexts.
      */
     private Pair<Unit, Double> getContextualizationFactor(IObservable observable, IValueMediator from, IScale scale) {
 
@@ -562,11 +564,11 @@ public class Unit implements IUnit {
         // dimension
         double ret = 1.0;
         if (!Observables.INSTANCE.isExtensive(observable)) {
-            return new Pair<>((Unit)from, 1.0);
+            return new Pair<>((Unit) from, 1.0);
         }
 
-        Unit retUnit = (Unit)from;
-        
+        Unit sourceUnitDecontextualized = (Unit) from;
+
         // factor must disaggregate if extensive -> intensive, aggregate if intensive->extensive
         for (ExtentDimension dim : contextualizedTarget.getAggregatedDimensions().keySet()) {
             ExtentDistribution agrTrg = contextualizedTarget.getAggregatedDimensions().get(dim);
@@ -579,7 +581,7 @@ public class Unit implements IUnit {
                  */
                 IExtent extent = (IExtent) scale.getDimension(dim.type);
                 IUnit dimUnit = Units.INSTANCE.getDimensionUnit((IUnit) from, dim);
-                retUnit = (Unit)retUnit.multiply(dimUnit);
+                sourceUnitDecontextualized = (Unit) sourceUnitDecontextualized.multiply(dimUnit);
                 ret *= extent.getDimensionSize(dimUnit);
 
             } else if (agrTrg == ExtentDistribution.INTENSIVE && agrSrc == ExtentDistribution.EXTENSIVE) {
@@ -587,12 +589,11 @@ public class Unit implements IUnit {
                 IExtent extent = (IExtent) scale.getDimension(dim.type);
                 IUnit dimUnit = Units.INSTANCE.getDimensionUnit(this, dim);
                 ret /= extent.getDimensionSize(dimUnit);
-                retUnit = (Unit)retUnit.divide(dimUnit);
-
+                sourceUnitDecontextualized = (Unit) sourceUnitDecontextualized.divide(dimUnit);
             }
         }
 
-        return new Pair<>(retUnit, ret);
+        return new Pair<>(sourceUnitDecontextualized, ret);
     }
 
     @Override
