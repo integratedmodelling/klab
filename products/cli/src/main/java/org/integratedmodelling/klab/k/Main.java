@@ -16,31 +16,31 @@ import org.integratedmodelling.klab.engine.EngineStartupOptions;
  */
 public class Main {
 
-	public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
 
-		CliStartupOptions options = new CliStartupOptions();
-		// default
-		options.setNetwork(true);
-		options.initialize(args);
+        CliStartupOptions options = new CliStartupOptions();
+        options.initialize(args);
 
-		if (options.isHelp()) {
-			System.out.println(new EngineStartupOptions().usage());
-			System.exit(0);
-		}
+        if (options.isHelp()) {
+            System.out.println(new EngineStartupOptions().usage());
+            System.exit(0);
+        }
 
-		if (options.getArguments().length == 0) {
-			TermConsole console = new TermConsole();
-			console.start(options);
-		} else {
-			SysConsole console = new SysConsole();
-			ISession session = CliRuntime.INSTANCE.initialize(console, options);
-			for (String argument : options.getArguments()) {
-			    if (argument.endsWith(".kactors")) {
-			        Actors.INSTANCE.run(argument, session);
-			    }
-			}
-			CliRuntime.INSTANCE.shutdown();
-			System.exit(0);
-		}
-	}
+        if (options.getArguments().length == 0) {
+            // default
+            options.setNetwork(true);
+            TermConsole console = new TermConsole();
+            console.start(options);
+        } else {
+            SysConsole console = new SysConsole();
+            ISession session = CliRuntime.INSTANCE.initialize(console, options);
+            for (String argument : options.getArguments()) {
+                if (argument.endsWith(".kactors")) {
+                    Actors.INSTANCE.run(argument, session);
+                }
+            }
+            CliRuntime.INSTANCE.shutdown();
+            System.exit(0);
+        }
+    }
 }

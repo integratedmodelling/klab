@@ -13,80 +13,84 @@ import org.integratedmodelling.klab.engines.modeler.base.Modeler;
 
 public enum CliRuntime {
 
-	INSTANCE;
+    INSTANCE;
 
-	Engine engine;
-	Session session;
-	CommandProcessor commandProcessor;
-	IConsole console;
-	Modeler modeler;
+    Engine engine;
+    Session session;
+    CommandProcessor commandProcessor;
+    IConsole console;
+    Modeler modeler;
 
-	public ISession getSession() {
-		return session;
-	}
+    public ISession getSession() {
+        return session;
+    }
 
-	public CommandProcessor getCommandProcessor() {
-		return commandProcessor;
-	}
+    public CommandProcessor getCommandProcessor() {
+        return commandProcessor;
+    }
 
-	public IConsole getConsole() {
-		return console;
-	}
+    public IConsole getConsole() {
+        return console;
+    }
 
-	public Engine getEngine() {
-		return engine;
-	}
+    public Engine getEngine() {
+        return engine;
+    }
 
-	public ISession initialize(IConsole console, CliStartupOptions options) {
-		console.disableInput();
-		this.engine = Engine.start(options);
-		this.session = engine.createSession().setDefault();
-		this.console = console;
-		this.commandProcessor = new CommandProcessor(console, session.getMonitor());
+    public ISession initialize(IConsole console, CliStartupOptions options) {
+        console.disableInput();
+        this.engine = Engine.start(options);
+        this.session = engine.createSession().setDefault();
+        this.console = console;
+        this.commandProcessor = new CommandProcessor(console, session.getMonitor());
 
-		console.scream("\n");
-		console.scream(Logo.ENGINE_BANNER);
-		console.scream("\nSession established: ID is " + this.session.getId() + "\n");
-		
-		if (options.isNetwork()) {
-		    console.echo("Starting network services....\n");
-		    startNetwork(() -> console.scream("Network services started."));
-		}
-		
-		return this.session;
+        console.scream("\n");
+        console.scream(Logo.ENGINE_BANNER);
+        console.scream("\nSession established: ID is " + this.session.getId() + "\n");
 
-	}
+        if (options.isNetwork()) {
+            console.echo("Starting network services....\n");
+            startNetwork(() -> console.scream("Network services started."));
+        }
 
-	public boolean startNetwork(Runnable callback) {
-		if (modeler == null) {
-			modeler = new Modeler(engine);
-		}
-		return modeler.startNetworkServices(callback);
-	}
+        return this.session;
 
-	public void startNetwork() {
-		if (modeler == null) {
-			modeler = new Modeler(engine);
-		}
-		modeler.startNetworkServices();
-	}
+    }
 
-	public void stopNetwork() {
-		if (modeler != null) {
-			modeler.stopNetworkServices();
-		}
-	}
+    public boolean startNetwork(Runnable callback) {
+        if (modeler == null) {
+            modeler = new Modeler(engine);
+        }
+        return modeler.startNetworkServices(callback);
+    }
 
-	public void shutdown() {
-		if (this.session != null) {
-			try {
-				this.session.close();
-			} catch (IOException e) {
-				Logging.INSTANCE.error(e);
-			}
-//			this.engine.stop();
-			this.modeler.shutdown();
-		}
-	}
+    public void startNetwork() {
+        if (modeler == null) {
+            modeler = new Modeler(engine);
+        }
+        modeler.startNetworkServices();
+    }
+
+    public void stopNetwork() {
+        if (modeler != null) {
+            modeler.stopNetworkServices();
+        }
+    }
+
+    public void shutdown() {
+        if (this.session != null) {
+            try {
+                this.session.close();
+            } catch (IOException e) {
+                Logging.INSTANCE.error(e);
+            }
+            if (this.engine != null) {
+                this.engine.stop();
+            }
+            if (this.modeler != null) {
+                this.modeler.shutdown();
+            }
+        }
+    }
 
 }
