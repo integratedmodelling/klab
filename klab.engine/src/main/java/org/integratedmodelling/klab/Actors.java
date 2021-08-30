@@ -62,6 +62,7 @@ import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.data.encoding.VisitingDataBuilder;
 import org.integratedmodelling.klab.engine.runtime.SimpleRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.exceptions.KlabActorException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
@@ -1141,7 +1142,24 @@ public enum Actors implements IActorsService {
             Logging.INSTANCE.info("Running " + (behavior.getType() == Type.SCRIPT ? "k.Actors script" : "unit test")
                     + behavior.getName() + " [ID=" + scriptId + "]");
         } else {
-            Logging.INSTANCE.error("cannot run " + argument + ": resource not found");
+            URL resource = this.getClass().getClassLoader().getResource(argument);
+            if (resource != null) {
+                try (InputStream input = resource.openStream()) {
+                    IKActorsBehavior behavior = declare(input);
+                    if (!(behavior.getType() == Type.SCRIPT || behavior.getType() == Type.UNITTEST)) {
+                        Logging.INSTANCE.error("cannot run " + behavior.getName() + ": not a script or a unit test");
+                    }
+                    String scriptId = session.load(
+                            new org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior(behavior),
+                            new SimpleRuntimeScope(session));
+                    Logging.INSTANCE.info("Running " + (behavior.getType() == Type.SCRIPT ? "k.Actors script" : "unit test")
+                            + behavior.getName() + " [ID=" + scriptId + "]");
+                } catch (Throwable t) {
+                    throw new KlabActorException(t);
+                }
+            } else {
+                Logging.INSTANCE.error("cannot run " + argument + ": resource not found");
+            }
         }
 
     }

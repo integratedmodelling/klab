@@ -41,7 +41,7 @@ public interface IValueMediator {
     boolean isCompatible(IValueMediator other);
 
     /**
-     * Convert from the passed unit TO the unit we represent.
+     * Convert from the passed mediator to the one this represents.
      * 
      * @param d
      * @param scale
@@ -50,8 +50,10 @@ public interface IValueMediator {
     Number convert(Number d, IValueMediator scale);
 
     /**
-     * Convert from this unit to the passed one. This is trivial unless the unit is contextualized,
-     * which makes it entirely non-trivial.
+     * Convert from this unit to the passed one. This would be trivially accomplished by inverting
+     * the receiver and the argument, unless the mediator is contextualized (coming from
+     * {@link #contextualize(IObservable, IScale)}, which makes it entirely non-trivial, hence the
+     * existence of a backConvert() function.
      * 
      * @param d
      * @param scale

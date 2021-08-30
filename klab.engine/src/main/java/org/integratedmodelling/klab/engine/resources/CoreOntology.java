@@ -21,6 +21,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.OWL;
 
@@ -612,5 +613,10 @@ public class CoreOntology extends AbstractWorkspace {
 		}
 		return null;
 	}
+
+    @Override
+    public IProject loadProject(String projectId, IMonitor monitor) {
+        throw new KlabIllegalStateException("the worldview cannot load projects on demand");
+    }
 
 }

@@ -70,8 +70,12 @@ public abstract class AbstractWorkspace implements IWorkspace {
      * @param root
      * @return
      */
-    public IProject addProject(File root) {
-        IKimProject ret = delegate.loadProject(root);
+    public IProject loadProject(String project, IMonitor monitor) {
+        File projectFile = new File(getRoot() + File.separator + project);
+        if (!projectFile.isDirectory()) {
+            return null;
+        }
+        IKimProject ret = delegate.loadProject(projectFile);
         return ret == null ? null : Resources.INSTANCE.retrieveOrCreate(ret);
     }
 

@@ -81,6 +81,7 @@ import org.integratedmodelling.klab.engine.resources.MonitorableFileWorkspace;
 import org.integratedmodelling.klab.engine.resources.Project;
 import org.integratedmodelling.klab.engine.resources.PublicResourceCatalog;
 import org.integratedmodelling.klab.engine.resources.ServiceWorkspace;
+import org.integratedmodelling.klab.engine.resources.Workspace;
 import org.integratedmodelling.klab.engine.resources.Worldview;
 import org.integratedmodelling.klab.engine.runtime.AbstractTask;
 import org.integratedmodelling.klab.engine.runtime.SimpleRuntimeScope;
@@ -125,7 +126,6 @@ import org.integratedmodelling.klab.utils.ZipUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.web.servlet.view.ResourceBundleViewResolver;
 
 /**
  * Management and resolution of URNs. Also holds the URN metadata database for local and public
@@ -183,6 +183,9 @@ public enum Resources implements IResourceService {
     Map<String, Map<String, Project>> projectCatalog = new HashMap<>();
 
     Map<String, IWorkspace> workspaces = new HashMap<>();
+
+    // this is only for load-on-demand workspaces, engendered by loading "singleton" projects on demand
+    Map<File, IWorkspace> workspacesByRoot = new HashMap<>();
 
     /**
      * The core workspace, only containing the OWL knowledge distributed with the software, and no
@@ -403,8 +406,12 @@ public enum Resources implements IResourceService {
     }
 
     public IProject loadSingleton(String projectId, File dataPath) {
-        // TODO Auto-generated method stub
-        return null;
+        IWorkspace workspace = workspacesByRoot.get(dataPath);
+        if (workspace == null) {
+            workspace = new Workspace(dataPath);
+            workspacesByRoot.put(dataPath, workspace);
+        }
+        return workspace.loadProject(projectId, Klab.INSTANCE.getRootMonitor());
     }
 
     /**

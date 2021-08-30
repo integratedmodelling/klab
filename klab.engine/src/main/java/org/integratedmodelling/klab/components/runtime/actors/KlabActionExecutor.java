@@ -136,6 +136,13 @@ public abstract class KlabActionExecutor {
         fire(args != null && args.length > 0 ? args[0] : false, scope);
     }
 
+    protected Object evaluate(Object argument, Scope scope) {
+        if (argument instanceof KActorsValue) {
+            argument = ((KActorsValue) argument).evaluate(scope, identity, false);
+        }
+        return argument;
+    }
+    
     protected Object evaluateArgument(String argument, Scope scope) {
         Object arg = arguments.get(argument);
         if (arg instanceof KActorsValue) {
