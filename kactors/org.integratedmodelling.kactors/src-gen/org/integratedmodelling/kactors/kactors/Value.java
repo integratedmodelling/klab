@@ -3,6 +3,8 @@
  */
 package org.integratedmodelling.kactors.kactors;
 
+import org.eclipse.emf.common.util.EList;
+
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -16,6 +18,7 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#isDeferred <em>Deferred</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getTree <em>Tree</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getMethodCalls <em>Method Calls</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#isEmpty <em>Empty</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getArgvalue <em>Argvalue</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getUrn <em>Urn</em>}</li>
@@ -86,6 +89,18 @@ public interface Value extends EObject
    * @generated
    */
   void setTree(Tree value);
+
+  /**
+   * Returns the value of the '<em><b>Method Calls</b></em>' containment reference list.
+   * The list contents are of type {@link org.integratedmodelling.kactors.kactors.MessageCall}.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Method Calls</em>' containment reference list.
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getValue_MethodCalls()
+   * @model containment="true"
+   * @generated
+   */
+  EList<MessageCall> getMethodCalls();
 
   /**
    * Returns the value of the '<em><b>Empty</b></em>' attribute.

@@ -16,6 +16,7 @@ public class KActorsAssert extends KActorsStatement implements Assert {
 		
 		List<Call> calls = new ArrayList<>();
 		KActorsValue expression = null;
+		KActorsValue value = null;
 
 		@Override
 		public List<Call> getCalls() {
@@ -27,11 +28,18 @@ public class KActorsAssert extends KActorsStatement implements Assert {
 			return expression;
 		}
 
+        @Override
+        public IKActorsValue getValue() {
+            return value;
+        }
+
 		
 	}
 	
 	public KActorsAssert(AssertStatement statement, KActorCodeStatement parent) {
-		super(statement, parent, Type.ASSERT_STATEMENT);
+		
+	    super(statement, parent, Type.ASSERT_STATEMENT);
+		
 		for (org.integratedmodelling.kactors.kactors.Assertion ass : statement.getAssertions()) {
 			AssertionImpl nass = new AssertionImpl();
 			
@@ -41,6 +49,10 @@ public class KActorsAssert extends KActorsStatement implements Assert {
 				for (MessageCall call : ass.getMethodCalls()) {
 					nass.calls.add(new KActorsActionCall(call, this));
 				}
+			}
+			
+			if (ass.getValue() != null) {
+			    nass.value = new KActorsValue(ass.getValue(), this);
 			}
 			
 			assertions.add(nass);

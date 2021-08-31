@@ -3111,8 +3111,8 @@ public class InternalKactorsLexer extends Lexer {
         try {
             int _type = RULE_KEY;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKactors.g:28545:10: ( ( ':' | '!' ) 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '_' )* )
-            // InternalKactors.g:28545:12: ( ':' | '!' ) 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '_' )*
+            // InternalKactors.g:28852:10: ( ( ':' | '!' ) 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '_' )* )
+            // InternalKactors.g:28852:12: ( ':' | '!' ) 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '_' )*
             {
             if ( input.LA(1)=='!'||input.LA(1)==':' ) {
                 input.consume();
@@ -3124,7 +3124,7 @@ public class InternalKactorsLexer extends Lexer {
                 throw mse;}
 
             matchRange('a','z'); 
-            // InternalKactors.g:28545:31: ( 'a' .. 'z' | '0' .. '9' | '_' )*
+            // InternalKactors.g:28852:31: ( 'a' .. 'z' | '0' .. '9' | '_' )*
             loop1:
             do {
                 int alt1=2;
@@ -3173,12 +3173,12 @@ public class InternalKactorsLexer extends Lexer {
         try {
             int _type = RULE_TAG;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKactors.g:28547:10: ( '#' 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '_' )* )
-            // InternalKactors.g:28547:12: '#' 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '_' )*
+            // InternalKactors.g:28854:10: ( '#' 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '_' )* )
+            // InternalKactors.g:28854:12: '#' 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '_' )*
             {
             match('#'); 
             matchRange('a','z'); 
-            // InternalKactors.g:28547:25: ( 'a' .. 'z' | '0' .. '9' | '_' )*
+            // InternalKactors.g:28854:25: ( 'a' .. 'z' | '0' .. '9' | '_' )*
             loop2:
             do {
                 int alt2=2;
@@ -3227,12 +3227,12 @@ public class InternalKactorsLexer extends Lexer {
         try {
             int _type = RULE_LOCALIZED_STRING_REFERENCE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKactors.g:28549:33: ( '#' 'A' .. 'Z' ( 'A' .. 'Z' | '0' .. '9' | '_' )* )
-            // InternalKactors.g:28549:35: '#' 'A' .. 'Z' ( 'A' .. 'Z' | '0' .. '9' | '_' )*
+            // InternalKactors.g:28856:33: ( '#' 'A' .. 'Z' ( 'A' .. 'Z' | '0' .. '9' | '_' )* )
+            // InternalKactors.g:28856:35: '#' 'A' .. 'Z' ( 'A' .. 'Z' | '0' .. '9' | '_' )*
             {
             match('#'); 
             matchRange('A','Z'); 
-            // InternalKactors.g:28549:48: ( 'A' .. 'Z' | '0' .. '9' | '_' )*
+            // InternalKactors.g:28856:48: ( 'A' .. 'Z' | '0' .. '9' | '_' )*
             loop3:
             do {
                 int alt3=2;
@@ -3281,11 +3281,11 @@ public class InternalKactorsLexer extends Lexer {
         try {
             int _type = RULE_UPPERCASE_ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKactors.g:28551:19: ( 'A' .. 'Z' ( 'A' .. 'Z' | '_' )* )
-            // InternalKactors.g:28551:21: 'A' .. 'Z' ( 'A' .. 'Z' | '_' )*
+            // InternalKactors.g:28858:19: ( 'A' .. 'Z' ( 'A' .. 'Z' | '_' )* )
+            // InternalKactors.g:28858:21: 'A' .. 'Z' ( 'A' .. 'Z' | '_' )*
             {
             matchRange('A','Z'); 
-            // InternalKactors.g:28551:30: ( 'A' .. 'Z' | '_' )*
+            // InternalKactors.g:28858:30: ( 'A' .. 'Z' | '_' )*
             loop4:
             do {
                 int alt4=2;
@@ -3334,11 +3334,11 @@ public class InternalKactorsLexer extends Lexer {
         try {
             int _type = RULE_UPPERCASE_PATH;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKactors.g:28553:21: ( RULE_UPPERCASE_ID ( '.' RULE_UPPERCASE_ID )* )
-            // InternalKactors.g:28553:23: RULE_UPPERCASE_ID ( '.' RULE_UPPERCASE_ID )*
+            // InternalKactors.g:28860:21: ( RULE_UPPERCASE_ID ( '.' RULE_UPPERCASE_ID )* )
+            // InternalKactors.g:28860:23: RULE_UPPERCASE_ID ( '.' RULE_UPPERCASE_ID )*
             {
             mRULE_UPPERCASE_ID(); 
-            // InternalKactors.g:28553:41: ( '.' RULE_UPPERCASE_ID )*
+            // InternalKactors.g:28860:41: ( '.' RULE_UPPERCASE_ID )*
             loop5:
             do {
                 int alt5=2;
@@ -3351,7 +3351,7 @@ public class InternalKactorsLexer extends Lexer {
 
                 switch (alt5) {
             	case 1 :
-            	    // InternalKactors.g:28553:42: '.' RULE_UPPERCASE_ID
+            	    // InternalKactors.g:28860:42: '.' RULE_UPPERCASE_ID
             	    {
             	    match('.'); 
             	    mRULE_UPPERCASE_ID(); 
@@ -3380,11 +3380,11 @@ public class InternalKactorsLexer extends Lexer {
         try {
             int _type = RULE_CAMELCASE_ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKactors.g:28555:19: ( 'A' .. 'Z' ( 'A' .. 'z' | '0' .. '9' )* )
-            // InternalKactors.g:28555:21: 'A' .. 'Z' ( 'A' .. 'z' | '0' .. '9' )*
+            // InternalKactors.g:28862:19: ( 'A' .. 'Z' ( 'A' .. 'z' | '0' .. '9' )* )
+            // InternalKactors.g:28862:21: 'A' .. 'Z' ( 'A' .. 'z' | '0' .. '9' )*
             {
             matchRange('A','Z'); 
-            // InternalKactors.g:28555:30: ( 'A' .. 'z' | '0' .. '9' )*
+            // InternalKactors.g:28862:30: ( 'A' .. 'z' | '0' .. '9' )*
             loop6:
             do {
                 int alt6=2;
@@ -3433,11 +3433,11 @@ public class InternalKactorsLexer extends Lexer {
         try {
             int _type = RULE_LOWERCASE_ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKactors.g:28557:19: ( 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '_' )* )
-            // InternalKactors.g:28557:21: 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '_' )*
+            // InternalKactors.g:28864:19: ( 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '_' )* )
+            // InternalKactors.g:28864:21: 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '_' )*
             {
             matchRange('a','z'); 
-            // InternalKactors.g:28557:30: ( 'a' .. 'z' | '0' .. '9' | '_' )*
+            // InternalKactors.g:28864:30: ( 'a' .. 'z' | '0' .. '9' | '_' )*
             loop7:
             do {
                 int alt7=2;
@@ -3486,12 +3486,12 @@ public class InternalKactorsLexer extends Lexer {
         try {
             int _type = RULE_LOCALE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKactors.g:28559:13: ( 'a' .. 'z' 'a' .. 'z' ( '-' 'A' .. 'Z' 'A' .. 'Z' )* )
-            // InternalKactors.g:28559:15: 'a' .. 'z' 'a' .. 'z' ( '-' 'A' .. 'Z' 'A' .. 'Z' )*
+            // InternalKactors.g:28866:13: ( 'a' .. 'z' 'a' .. 'z' ( '-' 'A' .. 'Z' 'A' .. 'Z' )* )
+            // InternalKactors.g:28866:15: 'a' .. 'z' 'a' .. 'z' ( '-' 'A' .. 'Z' 'A' .. 'Z' )*
             {
             matchRange('a','z'); 
             matchRange('a','z'); 
-            // InternalKactors.g:28559:33: ( '-' 'A' .. 'Z' 'A' .. 'Z' )*
+            // InternalKactors.g:28866:33: ( '-' 'A' .. 'Z' 'A' .. 'Z' )*
             loop8:
             do {
                 int alt8=2;
@@ -3504,7 +3504,7 @@ public class InternalKactorsLexer extends Lexer {
 
                 switch (alt8) {
             	case 1 :
-            	    // InternalKactors.g:28559:34: '-' 'A' .. 'Z' 'A' .. 'Z'
+            	    // InternalKactors.g:28866:34: '-' 'A' .. 'Z' 'A' .. 'Z'
             	    {
             	    match('-'); 
             	    matchRange('A','Z'); 
@@ -3534,12 +3534,12 @@ public class InternalKactorsLexer extends Lexer {
         try {
             int _type = RULE_QUOTED_LOWERCASE_ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKactors.g:28561:26: ( '`' 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '_' )* )
-            // InternalKactors.g:28561:28: '`' 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '_' )*
+            // InternalKactors.g:28868:26: ( '`' 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '_' )* )
+            // InternalKactors.g:28868:28: '`' 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '_' )*
             {
             match('`'); 
             matchRange('a','z'); 
-            // InternalKactors.g:28561:41: ( 'a' .. 'z' | '0' .. '9' | '_' )*
+            // InternalKactors.g:28868:41: ( 'a' .. 'z' | '0' .. '9' | '_' )*
             loop9:
             do {
                 int alt9=2;
@@ -3588,11 +3588,11 @@ public class InternalKactorsLexer extends Lexer {
         try {
             int _type = RULE_LOWERCASE_ID_DASH;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKactors.g:28563:24: ( 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '_' | '-' )* )
-            // InternalKactors.g:28563:26: 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '_' | '-' )*
+            // InternalKactors.g:28870:24: ( 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '_' | '-' )* )
+            // InternalKactors.g:28870:26: 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '_' | '-' )*
             {
             matchRange('a','z'); 
-            // InternalKactors.g:28563:35: ( 'a' .. 'z' | '0' .. '9' | '_' | '-' )*
+            // InternalKactors.g:28870:35: ( 'a' .. 'z' | '0' .. '9' | '_' | '-' )*
             loop10:
             do {
                 int alt10=2;
@@ -3641,11 +3641,11 @@ public class InternalKactorsLexer extends Lexer {
         try {
             int _type = RULE_ARGVALUE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKactors.g:28565:15: ( '$' ( '$' | ( '0' .. '9' )* ) )
-            // InternalKactors.g:28565:17: '$' ( '$' | ( '0' .. '9' )* )
+            // InternalKactors.g:28872:15: ( '$' ( '$' | ( '0' .. '9' )* ) )
+            // InternalKactors.g:28872:17: '$' ( '$' | ( '0' .. '9' )* )
             {
             match('$'); 
-            // InternalKactors.g:28565:21: ( '$' | ( '0' .. '9' )* )
+            // InternalKactors.g:28872:21: ( '$' | ( '0' .. '9' )* )
             int alt12=2;
             int LA12_0 = input.LA(1);
 
@@ -3656,16 +3656,16 @@ public class InternalKactorsLexer extends Lexer {
                 alt12=2;}
             switch (alt12) {
                 case 1 :
-                    // InternalKactors.g:28565:22: '$'
+                    // InternalKactors.g:28872:22: '$'
                     {
                     match('$'); 
 
                     }
                     break;
                 case 2 :
-                    // InternalKactors.g:28565:26: ( '0' .. '9' )*
+                    // InternalKactors.g:28872:26: ( '0' .. '9' )*
                     {
-                    // InternalKactors.g:28565:26: ( '0' .. '9' )*
+                    // InternalKactors.g:28872:26: ( '0' .. '9' )*
                     loop11:
                     do {
                         int alt11=2;
@@ -3678,7 +3678,7 @@ public class InternalKactorsLexer extends Lexer {
 
                         switch (alt11) {
                     	case 1 :
-                    	    // InternalKactors.g:28565:27: '0' .. '9'
+                    	    // InternalKactors.g:28872:27: '0' .. '9'
                     	    {
                     	    matchRange('0','9'); 
 
@@ -3712,11 +3712,11 @@ public class InternalKactorsLexer extends Lexer {
         try {
             int _type = RULE_EXPR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKactors.g:28567:11: ( '[' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | ']' | '\\\\' ) | ~ ( ( '\\\\' | ']' ) ) )* ']' )
-            // InternalKactors.g:28567:13: '[' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | ']' | '\\\\' ) | ~ ( ( '\\\\' | ']' ) ) )* ']'
+            // InternalKactors.g:28874:11: ( '[' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | ']' | '\\\\' ) | ~ ( ( '\\\\' | ']' ) ) )* ']' )
+            // InternalKactors.g:28874:13: '[' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | ']' | '\\\\' ) | ~ ( ( '\\\\' | ']' ) ) )* ']'
             {
             match('['); 
-            // InternalKactors.g:28567:17: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | ']' | '\\\\' ) | ~ ( ( '\\\\' | ']' ) ) )*
+            // InternalKactors.g:28874:17: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | ']' | '\\\\' ) | ~ ( ( '\\\\' | ']' ) ) )*
             loop13:
             do {
                 int alt13=3;
@@ -3732,7 +3732,7 @@ public class InternalKactorsLexer extends Lexer {
 
                 switch (alt13) {
             	case 1 :
-            	    // InternalKactors.g:28567:18: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | ']' | '\\\\' )
+            	    // InternalKactors.g:28874:18: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | ']' | '\\\\' )
             	    {
             	    match('\\'); 
             	    if ( (input.LA(1)>='\\' && input.LA(1)<=']')||input.LA(1)=='b'||input.LA(1)=='f'||input.LA(1)=='n'||input.LA(1)=='r'||(input.LA(1)>='t' && input.LA(1)<='u') ) {
@@ -3748,7 +3748,7 @@ public class InternalKactorsLexer extends Lexer {
             	    }
             	    break;
             	case 2 :
-            	    // InternalKactors.g:28567:58: ~ ( ( '\\\\' | ']' ) )
+            	    // InternalKactors.g:28874:58: ~ ( ( '\\\\' | ']' ) )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='[')||(input.LA(1)>='^' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -3785,12 +3785,12 @@ public class InternalKactorsLexer extends Lexer {
         try {
             int _type = RULE_EMBEDDEDTEXT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKactors.g:28569:19: ( '%%%' ( ' ' )? ( '-' )* ( '\\r' | '\\n' ) ( options {greedy=false; } : . )* '%%%' ( ' ' )? ( '-' )* )
-            // InternalKactors.g:28569:21: '%%%' ( ' ' )? ( '-' )* ( '\\r' | '\\n' ) ( options {greedy=false; } : . )* '%%%' ( ' ' )? ( '-' )*
+            // InternalKactors.g:28876:19: ( '%%%' ( ' ' )? ( '-' )* ( '\\r' | '\\n' ) ( options {greedy=false; } : . )* '%%%' ( ' ' )? ( '-' )* )
+            // InternalKactors.g:28876:21: '%%%' ( ' ' )? ( '-' )* ( '\\r' | '\\n' ) ( options {greedy=false; } : . )* '%%%' ( ' ' )? ( '-' )*
             {
             match("%%%"); 
 
-            // InternalKactors.g:28569:27: ( ' ' )?
+            // InternalKactors.g:28876:27: ( ' ' )?
             int alt14=2;
             int LA14_0 = input.LA(1);
 
@@ -3799,7 +3799,7 @@ public class InternalKactorsLexer extends Lexer {
             }
             switch (alt14) {
                 case 1 :
-                    // InternalKactors.g:28569:27: ' '
+                    // InternalKactors.g:28876:27: ' '
                     {
                     match(' '); 
 
@@ -3808,7 +3808,7 @@ public class InternalKactorsLexer extends Lexer {
 
             }
 
-            // InternalKactors.g:28569:32: ( '-' )*
+            // InternalKactors.g:28876:32: ( '-' )*
             loop15:
             do {
                 int alt15=2;
@@ -3821,7 +3821,7 @@ public class InternalKactorsLexer extends Lexer {
 
                 switch (alt15) {
             	case 1 :
-            	    // InternalKactors.g:28569:32: '-'
+            	    // InternalKactors.g:28876:32: '-'
             	    {
             	    match('-'); 
 
@@ -3842,7 +3842,7 @@ public class InternalKactorsLexer extends Lexer {
                 recover(mse);
                 throw mse;}
 
-            // InternalKactors.g:28569:49: ( options {greedy=false; } : . )*
+            // InternalKactors.g:28876:49: ( options {greedy=false; } : . )*
             loop16:
             do {
                 int alt16=2;
@@ -3876,7 +3876,7 @@ public class InternalKactorsLexer extends Lexer {
 
                 switch (alt16) {
             	case 1 :
-            	    // InternalKactors.g:28569:77: .
+            	    // InternalKactors.g:28876:77: .
             	    {
             	    matchAny(); 
 
@@ -3890,7 +3890,7 @@ public class InternalKactorsLexer extends Lexer {
 
             match("%%%"); 
 
-            // InternalKactors.g:28569:87: ( ' ' )?
+            // InternalKactors.g:28876:87: ( ' ' )?
             int alt17=2;
             int LA17_0 = input.LA(1);
 
@@ -3899,7 +3899,7 @@ public class InternalKactorsLexer extends Lexer {
             }
             switch (alt17) {
                 case 1 :
-                    // InternalKactors.g:28569:87: ' '
+                    // InternalKactors.g:28876:87: ' '
                     {
                     match(' '); 
 
@@ -3908,7 +3908,7 @@ public class InternalKactorsLexer extends Lexer {
 
             }
 
-            // InternalKactors.g:28569:92: ( '-' )*
+            // InternalKactors.g:28876:92: ( '-' )*
             loop18:
             do {
                 int alt18=2;
@@ -3921,7 +3921,7 @@ public class InternalKactorsLexer extends Lexer {
 
                 switch (alt18) {
             	case 1 :
-            	    // InternalKactors.g:28569:92: '-'
+            	    // InternalKactors.g:28876:92: '-'
             	    {
             	    match('-'); 
 
@@ -3949,11 +3949,11 @@ public class InternalKactorsLexer extends Lexer {
         try {
             int _type = RULE_REGEXP;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKactors.g:28571:13: ( '%' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '%' | '\\\\' ) | ~ ( ( '\\\\' | '%' ) ) )* '%' )
-            // InternalKactors.g:28571:15: '%' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '%' | '\\\\' ) | ~ ( ( '\\\\' | '%' ) ) )* '%'
+            // InternalKactors.g:28878:13: ( '%' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '%' | '\\\\' ) | ~ ( ( '\\\\' | '%' ) ) )* '%' )
+            // InternalKactors.g:28878:15: '%' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '%' | '\\\\' ) | ~ ( ( '\\\\' | '%' ) ) )* '%'
             {
             match('%'); 
-            // InternalKactors.g:28571:19: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '%' | '\\\\' ) | ~ ( ( '\\\\' | '%' ) ) )*
+            // InternalKactors.g:28878:19: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '%' | '\\\\' ) | ~ ( ( '\\\\' | '%' ) ) )*
             loop19:
             do {
                 int alt19=3;
@@ -3969,7 +3969,7 @@ public class InternalKactorsLexer extends Lexer {
 
                 switch (alt19) {
             	case 1 :
-            	    // InternalKactors.g:28571:20: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '%' | '\\\\' )
+            	    // InternalKactors.g:28878:20: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '%' | '\\\\' )
             	    {
             	    match('\\'); 
             	    if ( input.LA(1)=='%'||input.LA(1)=='\\'||input.LA(1)=='b'||input.LA(1)=='f'||input.LA(1)=='n'||input.LA(1)=='r'||(input.LA(1)>='t' && input.LA(1)<='u') ) {
@@ -3985,7 +3985,7 @@ public class InternalKactorsLexer extends Lexer {
             	    }
             	    break;
             	case 2 :
-            	    // InternalKactors.g:28571:60: ~ ( ( '\\\\' | '%' ) )
+            	    // InternalKactors.g:28878:60: ~ ( ( '\\\\' | '%' ) )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='$')||(input.LA(1)>='&' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -4022,12 +4022,12 @@ public class InternalKactorsLexer extends Lexer {
         try {
             int _type = RULE_SEPARATOR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKactors.g:28573:16: ( '---' ( '-' )* )
-            // InternalKactors.g:28573:18: '---' ( '-' )*
+            // InternalKactors.g:28880:16: ( '---' ( '-' )* )
+            // InternalKactors.g:28880:18: '---' ( '-' )*
             {
             match("---"); 
 
-            // InternalKactors.g:28573:24: ( '-' )*
+            // InternalKactors.g:28880:24: ( '-' )*
             loop20:
             do {
                 int alt20=2;
@@ -4040,7 +4040,7 @@ public class InternalKactorsLexer extends Lexer {
 
                 switch (alt20) {
             	case 1 :
-            	    // InternalKactors.g:28573:24: '-'
+            	    // InternalKactors.g:28880:24: '-'
             	    {
             	    match('-'); 
 
@@ -4068,8 +4068,8 @@ public class InternalKactorsLexer extends Lexer {
         try {
             int _type = RULE_ANNOTATION_ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKactors.g:28575:20: ( '@' RULE_LOWERCASE_ID )
-            // InternalKactors.g:28575:22: '@' RULE_LOWERCASE_ID
+            // InternalKactors.g:28882:20: ( '@' RULE_LOWERCASE_ID )
+            // InternalKactors.g:28882:22: '@' RULE_LOWERCASE_ID
             {
             match('@'); 
             mRULE_LOWERCASE_ID(); 
@@ -4089,10 +4089,10 @@ public class InternalKactorsLexer extends Lexer {
         try {
             int _type = RULE_ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKactors.g:28577:9: ( ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
-            // InternalKactors.g:28577:11: ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // InternalKactors.g:28884:9: ( ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
+            // InternalKactors.g:28884:11: ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             {
-            // InternalKactors.g:28577:11: ( '^' )?
+            // InternalKactors.g:28884:11: ( '^' )?
             int alt21=2;
             int LA21_0 = input.LA(1);
 
@@ -4101,7 +4101,7 @@ public class InternalKactorsLexer extends Lexer {
             }
             switch (alt21) {
                 case 1 :
-                    // InternalKactors.g:28577:11: '^'
+                    // InternalKactors.g:28884:11: '^'
                     {
                     match('^'); 
 
@@ -4119,7 +4119,7 @@ public class InternalKactorsLexer extends Lexer {
                 recover(mse);
                 throw mse;}
 
-            // InternalKactors.g:28577:40: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // InternalKactors.g:28884:40: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             loop22:
             do {
                 int alt22=2;
@@ -4168,10 +4168,10 @@ public class InternalKactorsLexer extends Lexer {
         try {
             int _type = RULE_INT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKactors.g:28579:10: ( ( '0' .. '9' )+ )
-            // InternalKactors.g:28579:12: ( '0' .. '9' )+
+            // InternalKactors.g:28886:10: ( ( '0' .. '9' )+ )
+            // InternalKactors.g:28886:12: ( '0' .. '9' )+
             {
-            // InternalKactors.g:28579:12: ( '0' .. '9' )+
+            // InternalKactors.g:28886:12: ( '0' .. '9' )+
             int cnt23=0;
             loop23:
             do {
@@ -4185,7 +4185,7 @@ public class InternalKactorsLexer extends Lexer {
 
                 switch (alt23) {
             	case 1 :
-            	    // InternalKactors.g:28579:13: '0' .. '9'
+            	    // InternalKactors.g:28886:13: '0' .. '9'
             	    {
             	    matchRange('0','9'); 
 
@@ -4217,10 +4217,10 @@ public class InternalKactorsLexer extends Lexer {
         try {
             int _type = RULE_STRING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKactors.g:28581:13: ( ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' ) )
-            // InternalKactors.g:28581:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
+            // InternalKactors.g:28888:13: ( ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' ) )
+            // InternalKactors.g:28888:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
             {
-            // InternalKactors.g:28581:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
+            // InternalKactors.g:28888:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
             int alt26=2;
             int LA26_0 = input.LA(1);
 
@@ -4238,10 +4238,10 @@ public class InternalKactorsLexer extends Lexer {
             }
             switch (alt26) {
                 case 1 :
-                    // InternalKactors.g:28581:16: '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"'
+                    // InternalKactors.g:28888:16: '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"'
                     {
                     match('\"'); 
-                    // InternalKactors.g:28581:20: ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )*
+                    // InternalKactors.g:28888:20: ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )*
                     loop24:
                     do {
                         int alt24=3;
@@ -4257,7 +4257,7 @@ public class InternalKactorsLexer extends Lexer {
 
                         switch (alt24) {
                     	case 1 :
-                    	    // InternalKactors.g:28581:21: '\\\\' .
+                    	    // InternalKactors.g:28888:21: '\\\\' .
                     	    {
                     	    match('\\'); 
                     	    matchAny(); 
@@ -4265,7 +4265,7 @@ public class InternalKactorsLexer extends Lexer {
                     	    }
                     	    break;
                     	case 2 :
-                    	    // InternalKactors.g:28581:28: ~ ( ( '\\\\' | '\"' ) )
+                    	    // InternalKactors.g:28888:28: ~ ( ( '\\\\' | '\"' ) )
                     	    {
                     	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='!')||(input.LA(1)>='#' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
                     	        input.consume();
@@ -4290,10 +4290,10 @@ public class InternalKactorsLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // InternalKactors.g:28581:48: '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\''
+                    // InternalKactors.g:28888:48: '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\''
                     {
                     match('\''); 
-                    // InternalKactors.g:28581:53: ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )*
+                    // InternalKactors.g:28888:53: ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )*
                     loop25:
                     do {
                         int alt25=3;
@@ -4309,7 +4309,7 @@ public class InternalKactorsLexer extends Lexer {
 
                         switch (alt25) {
                     	case 1 :
-                    	    // InternalKactors.g:28581:54: '\\\\' .
+                    	    // InternalKactors.g:28888:54: '\\\\' .
                     	    {
                     	    match('\\'); 
                     	    matchAny(); 
@@ -4317,7 +4317,7 @@ public class InternalKactorsLexer extends Lexer {
                     	    }
                     	    break;
                     	case 2 :
-                    	    // InternalKactors.g:28581:61: ~ ( ( '\\\\' | '\\'' ) )
+                    	    // InternalKactors.g:28888:61: ~ ( ( '\\\\' | '\\'' ) )
                     	    {
                     	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='&')||(input.LA(1)>='(' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
                     	        input.consume();
@@ -4360,12 +4360,12 @@ public class InternalKactorsLexer extends Lexer {
         try {
             int _type = RULE_ML_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKactors.g:28583:17: ( '/*' ( options {greedy=false; } : . )* '*/' )
-            // InternalKactors.g:28583:19: '/*' ( options {greedy=false; } : . )* '*/'
+            // InternalKactors.g:28890:17: ( '/*' ( options {greedy=false; } : . )* '*/' )
+            // InternalKactors.g:28890:19: '/*' ( options {greedy=false; } : . )* '*/'
             {
             match("/*"); 
 
-            // InternalKactors.g:28583:24: ( options {greedy=false; } : . )*
+            // InternalKactors.g:28890:24: ( options {greedy=false; } : . )*
             loop27:
             do {
                 int alt27=2;
@@ -4390,7 +4390,7 @@ public class InternalKactorsLexer extends Lexer {
 
                 switch (alt27) {
             	case 1 :
-            	    // InternalKactors.g:28583:52: .
+            	    // InternalKactors.g:28890:52: .
             	    {
             	    matchAny(); 
 
@@ -4420,12 +4420,12 @@ public class InternalKactorsLexer extends Lexer {
         try {
             int _type = RULE_SL_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKactors.g:28585:17: ( '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
-            // InternalKactors.g:28585:19: '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
+            // InternalKactors.g:28892:17: ( '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
+            // InternalKactors.g:28892:19: '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
             {
             match("//"); 
 
-            // InternalKactors.g:28585:24: (~ ( ( '\\n' | '\\r' ) ) )*
+            // InternalKactors.g:28892:24: (~ ( ( '\\n' | '\\r' ) ) )*
             loop28:
             do {
                 int alt28=2;
@@ -4438,7 +4438,7 @@ public class InternalKactorsLexer extends Lexer {
 
                 switch (alt28) {
             	case 1 :
-            	    // InternalKactors.g:28585:24: ~ ( ( '\\n' | '\\r' ) )
+            	    // InternalKactors.g:28892:24: ~ ( ( '\\n' | '\\r' ) )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -4458,7 +4458,7 @@ public class InternalKactorsLexer extends Lexer {
                 }
             } while (true);
 
-            // InternalKactors.g:28585:40: ( ( '\\r' )? '\\n' )?
+            // InternalKactors.g:28892:40: ( ( '\\r' )? '\\n' )?
             int alt30=2;
             int LA30_0 = input.LA(1);
 
@@ -4467,9 +4467,9 @@ public class InternalKactorsLexer extends Lexer {
             }
             switch (alt30) {
                 case 1 :
-                    // InternalKactors.g:28585:41: ( '\\r' )? '\\n'
+                    // InternalKactors.g:28892:41: ( '\\r' )? '\\n'
                     {
-                    // InternalKactors.g:28585:41: ( '\\r' )?
+                    // InternalKactors.g:28892:41: ( '\\r' )?
                     int alt29=2;
                     int LA29_0 = input.LA(1);
 
@@ -4478,7 +4478,7 @@ public class InternalKactorsLexer extends Lexer {
                     }
                     switch (alt29) {
                         case 1 :
-                            // InternalKactors.g:28585:41: '\\r'
+                            // InternalKactors.g:28892:41: '\\r'
                             {
                             match('\r'); 
 
@@ -4510,10 +4510,10 @@ public class InternalKactorsLexer extends Lexer {
         try {
             int _type = RULE_WS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKactors.g:28587:9: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
-            // InternalKactors.g:28587:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            // InternalKactors.g:28894:9: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
+            // InternalKactors.g:28894:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
             {
-            // InternalKactors.g:28587:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            // InternalKactors.g:28894:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
             int cnt31=0;
             loop31:
             do {
@@ -4567,8 +4567,8 @@ public class InternalKactorsLexer extends Lexer {
         try {
             int _type = RULE_ANY_OTHER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKactors.g:28589:16: ( . )
-            // InternalKactors.g:28589:18: .
+            // InternalKactors.g:28896:16: ( . )
+            // InternalKactors.g:28896:18: .
             {
             matchAny(); 
 

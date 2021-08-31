@@ -40,10 +40,8 @@ public class TestBehavior {
         IProject project = getProject(arg);
         if (project != null) {
             if (project != null) {
-                for (IBehavior testcase : project.getBehaviors()) {
-                    if (testcase.getDestination() == Type.UNITTEST) {
-                        scope.identity.load(testcase, scope.runtimeScope);
-                    }
+                for (IBehavior testcase : project.getUnitTests()) {
+                    scope.identity.load(testcase, scope.runtimeScope);
                 }
             }
         } else {
@@ -60,7 +58,7 @@ public class TestBehavior {
                 ret = Resources.INSTANCE.getProject(arg.toString());
             }
         } else if (arg instanceof IProject) {
-            ret = (IProject)arg;
+            ret = (IProject) arg;
         }
         return ret;
     }

@@ -2,4 +2,4 @@ testcase im.alltests
 	" Mother of all test suites. Synchronizes all test repositories and executes all the tests in them."
 	
 action main:
-	test "https://bitbucket.org/integratedmodelling/im.testsuite.testing.git"
+	test("https://bitbucket.org/integratedmodelling/im.testsuite.testing.git")

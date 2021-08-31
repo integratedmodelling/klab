@@ -45,7 +45,7 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 	public KActorsBehavior(Model model, BehaviorDescriptor descriptor) {
 
 		super(model, null);
-		this.projectId = descriptor.projectName;
+		this.projectId = descriptor == null ? null : descriptor.projectName;
 		if (model.getPreamble() != null) {
 			loadPreamble(model.getPreamble());
 		}

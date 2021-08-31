@@ -3,8 +3,12 @@
  */
 package org.integratedmodelling.kactors.kactors.impl;
 
+import java.util.Collection;
+
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
+
+import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
@@ -12,12 +16,16 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.InternalEList;
+
 import org.integratedmodelling.kactors.kactors.Constructor;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
 import org.integratedmodelling.kactors.kactors.List;
 import org.integratedmodelling.kactors.kactors.Literal;
 import org.integratedmodelling.kactors.kactors.LookupTable;
 import org.integratedmodelling.kactors.kactors.Map;
+import org.integratedmodelling.kactors.kactors.MessageCall;
 import org.integratedmodelling.kactors.kactors.Metadata;
 import org.integratedmodelling.kactors.kactors.Observable;
 import org.integratedmodelling.kactors.kactors.ParameterList;
@@ -35,6 +43,7 @@ import org.integratedmodelling.kactors.kactors.Value;
  * <ul>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#isDeferred <em>Deferred</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getTree <em>Tree</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getMethodCalls <em>Method Calls</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#isEmpty <em>Empty</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getArgvalue <em>Argvalue</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getUrn <em>Urn</em>}</li>
@@ -89,6 +98,16 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * @ordered
    */
   protected Tree tree;
+
+  /**
+   * The cached value of the '{@link #getMethodCalls() <em>Method Calls</em>}' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getMethodCalls()
+   * @generated
+   * @ordered
+   */
+  protected EList<MessageCall> methodCalls;
 
   /**
    * The default value of the '{@link #isEmpty() <em>Empty</em>}' attribute.
@@ -454,6 +473,21 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
     }
     else if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__TREE, newTree, newTree));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EList<MessageCall> getMethodCalls()
+  {
+    if (methodCalls == null)
+    {
+      methodCalls = new EObjectContainmentEList<MessageCall>(MessageCall.class, this, KactorsPackage.VALUE__METHOD_CALLS);
+    }
+    return methodCalls;
   }
 
   /**
@@ -1218,6 +1252,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
     {
       case KactorsPackage.VALUE__TREE:
         return basicSetTree(null, msgs);
+      case KactorsPackage.VALUE__METHOD_CALLS:
+        return ((InternalEList<?>)getMethodCalls()).basicRemove(otherEnd, msgs);
       case KactorsPackage.VALUE__LITERAL:
         return basicSetLiteral(null, msgs);
       case KactorsPackage.VALUE__LIST:
@@ -1258,6 +1294,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return isDeferred();
       case KactorsPackage.VALUE__TREE:
         return getTree();
+      case KactorsPackage.VALUE__METHOD_CALLS:
+        return getMethodCalls();
       case KactorsPackage.VALUE__EMPTY:
         return isEmpty();
       case KactorsPackage.VALUE__ARGVALUE:
@@ -1305,6 +1343,7 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * <!-- end-user-doc -->
    * @generated
    */
+  @SuppressWarnings("unchecked")
   @Override
   public void eSet(int featureID, Object newValue)
   {
@@ -1315,6 +1354,10 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return;
       case KactorsPackage.VALUE__TREE:
         setTree((Tree)newValue);
+        return;
+      case KactorsPackage.VALUE__METHOD_CALLS:
+        getMethodCalls().clear();
+        getMethodCalls().addAll((Collection<? extends MessageCall>)newValue);
         return;
       case KactorsPackage.VALUE__EMPTY:
         setEmpty((Boolean)newValue);
@@ -1393,6 +1436,9 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
       case KactorsPackage.VALUE__TREE:
         setTree((Tree)null);
         return;
+      case KactorsPackage.VALUE__METHOD_CALLS:
+        getMethodCalls().clear();
+        return;
       case KactorsPackage.VALUE__EMPTY:
         setEmpty(EMPTY_EDEFAULT);
         return;
@@ -1468,6 +1514,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return deferred != DEFERRED_EDEFAULT;
       case KactorsPackage.VALUE__TREE:
         return tree != null;
+      case KactorsPackage.VALUE__METHOD_CALLS:
+        return methodCalls != null && !methodCalls.isEmpty();
       case KactorsPackage.VALUE__EMPTY:
         return empty != EMPTY_EDEFAULT;
       case KactorsPackage.VALUE__ARGVALUE:

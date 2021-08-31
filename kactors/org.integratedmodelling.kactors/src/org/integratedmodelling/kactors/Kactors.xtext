@@ -111,6 +111,10 @@ MethodCall returns MessageCall:
 	name=ArgPathName ('(' (parameters=ParameterList)? ')')?
 ;
 
+ParenthesizedMethodCall returns MessageCall:
+	name=ArgPathName => '(' (parameters=ParameterList)? ')'
+;
+
 MethodCallWithActions returns MessageCall:
 	name=ArgPathName ('(' (parameters=ParameterList)? ')')? (':' actions=Actions)?
 ;
@@ -187,6 +191,7 @@ Actions:
 
 Value:
 	(deferred?='`')? (tree=Tree |
+	(methodCalls+=ParenthesizedMethodCall '.')* methodCalls+=ParenthesizedMethodCall |
 	empty?='empty' |
 	argvalue=ARGVALUE |
 	urn=UrnId | 

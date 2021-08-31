@@ -1137,10 +1137,12 @@ public enum Actors implements IActorsService {
             if (!(behavior.getType() == Type.SCRIPT || behavior.getType() == Type.UNITTEST)) {
                 Logging.INSTANCE.error("cannot run " + behavior.getName() + ": not a script or a unit test");
             }
-            String scriptId = session.load(new org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior(behavior),
-                    new SimpleRuntimeScope(session));
+            org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior b = new org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior(
+                    behavior);
+            behaviors.put(behavior.getName(), b);
             Logging.INSTANCE.info("Running " + (behavior.getType() == Type.SCRIPT ? "k.Actors script" : "unit test")
-                    + behavior.getName() + " [ID=" + scriptId + "]");
+                    + behavior.getName() + " [ID=" + behavior.getName() + "]");
+            session.load(b, new SimpleRuntimeScope(session));
         } else {
             URL resource = this.getClass().getClassLoader().getResource(argument);
             if (resource != null) {
@@ -1149,11 +1151,12 @@ public enum Actors implements IActorsService {
                     if (!(behavior.getType() == Type.SCRIPT || behavior.getType() == Type.UNITTEST)) {
                         Logging.INSTANCE.error("cannot run " + behavior.getName() + ": not a script or a unit test");
                     }
-                    String scriptId = session.load(
-                            new org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior(behavior),
-                            new SimpleRuntimeScope(session));
+                    org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior b = new org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior(
+                            behavior);
+                    behaviors.put(behavior.getName(), b);
                     Logging.INSTANCE.info("Running " + (behavior.getType() == Type.SCRIPT ? "k.Actors script" : "unit test")
-                            + behavior.getName() + " [ID=" + scriptId + "]");
+                            + behavior.getName() + " [ID=" + behavior.getName() + "]");
+                    session.load(b, new SimpleRuntimeScope(session));
                 } catch (Throwable t) {
                     throw new KlabActorException(t);
                 }

@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -482,14 +483,20 @@ public class Component implements IComponent {
 	@Override
 	public List<IBehavior> getBehaviors() {
 		// TODO Auto-generated method stub
-		return null;
+        return Collections.emptyList();
 	}
 
 	@Override
 	public List<IBehavior> getApps() {
 		// TODO Auto-generated method stub
-		return null;
+        return Collections.emptyList();
 	}
+
+    @Override
+    public List<IBehavior> getUnitTests() {
+        // TODO Auto-generated method stub
+        return Collections.emptyList();
+    }
 
 	@Override
 	public IMetadata getStatus() {
