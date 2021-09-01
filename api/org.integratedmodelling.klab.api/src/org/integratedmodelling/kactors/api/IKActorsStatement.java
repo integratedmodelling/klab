@@ -101,7 +101,9 @@ public interface IKActorsStatement extends IKActorsCodeStatement {
             IKActorsValue getExpression();
 
             /**
-             * Value to compare with. If null, assertion must not generate errors, null or false.
+             * Value to compare with (null == 'empty' is a legitimate value producing a non-null
+             * IKActorsValue). If null, we are just asserting the absence of errors and that
+             * something non-null and non-false was returned in case there is a return value.
              * 
              * @return
              */

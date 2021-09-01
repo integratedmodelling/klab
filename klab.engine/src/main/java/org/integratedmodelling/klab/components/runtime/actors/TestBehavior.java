@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
-import org.integratedmodelling.kactors.api.IKActorsBehavior.Type;
+import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Version;
@@ -10,6 +10,7 @@ import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
 import org.integratedmodelling.klab.api.knowledge.IProject;
+import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
 
 import akka.actor.typed.ActorRef;
 
@@ -61,6 +62,18 @@ public class TestBehavior {
             ret = (IProject) arg;
         }
         return ret;
+    }
+
+    /**
+     * Used within KlabActor to compare a returned value with an expected one in a test scope. If
+     * we're not in test scope, send an exception to the monitor on lack of match.
+     * 
+     * @param scope
+     * @param comparison
+     */
+    public static void compareExpectedValue(Object returned, IKActorsValue comparison, Scope scope) {
+        // TODO Auto-generated method stub
+        System.out.println("ZIP ROR");
     }
 
 }

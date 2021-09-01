@@ -11,6 +11,7 @@ import org.integratedmodelling.klab.api.extensions.Component;
 import org.integratedmodelling.klab.api.extensions.ResourceAdapter;
 import org.integratedmodelling.klab.api.extensions.UrnAdapter;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
+import org.integratedmodelling.klab.api.extensions.actors.Library;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 public abstract class Server implements IServerIdentity {
@@ -42,6 +43,13 @@ public abstract class Server implements IServerIdentity {
             @Override
             public void processAnnotatedClass(Annotation annotation, Class<?> cls) throws KlabException {
                 Actors.INSTANCE.registerBehavior((Behavior) annotation, cls);
+            }
+        });
+        
+        Klab.INSTANCE.registerAnnotationHandler(Library.class, new AnnotationHandler() {
+            @Override
+            public void processAnnotatedClass(Annotation annotation, Class<?> cls) throws KlabException {
+                Actors.INSTANCE.registerLibrary((Library) annotation, cls);
             }
         });
     }

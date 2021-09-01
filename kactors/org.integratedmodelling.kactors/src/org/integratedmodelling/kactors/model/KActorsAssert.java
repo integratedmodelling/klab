@@ -32,7 +32,6 @@ public class KActorsAssert extends KActorsStatement implements Assert {
         public IKActorsValue getValue() {
             return value;
         }
-
 		
 	}
 	

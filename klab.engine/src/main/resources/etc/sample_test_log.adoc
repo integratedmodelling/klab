@@ -1,0 +1,23 @@
+= Test run 10-20-202020
+
+----
+Started: 0000xxx
+Script: `im.alltests`
+----
+
+== 1. Test namespace `im.diocan.testing`
+
+=== 1.1. Test case `putozio`
+----
+Status: SUCCESS
+Result: NullPointerException Expected: NullPointerException
+Started: xxxx Ended: uuu (1min 23 sec)
+----
+
+
+END OF TEST RUN
+
+```
+Test run ended 1222
+Failed: 123/4040
+``` 

@@ -122,6 +122,15 @@ public enum Actors implements IActorsService {
     Map<Semaphore.Type, Set<Long>> semaphores = Collections.synchronizedMap(new HashMap<>());
     static Set<String> layoutMetadata = null;
 
+    private class Library {
+        
+        public String name;
+        public Object instance;
+        public Map<String, Method> methods = Collections.synchronizedMap(new HashMap<>());
+        public Map<String, Action> actions = Collections.synchronizedMap(new HashMap<>());
+        Set<IKActorsBehavior.Type> defaulted = new HashSet<>();
+    }
+    
     /**
      * Metadata for layout control
      * <p>
@@ -1165,6 +1174,14 @@ public enum Actors implements IActorsService {
             }
         }
 
+    }
+
+    
+    public void registerLibrary(org.integratedmodelling.klab.api.extensions.actors.Library annotation, Class<?> cls) {
+
+        /**
+         * Parse methods, create indices, set defaults
+         */
     }
 
 }

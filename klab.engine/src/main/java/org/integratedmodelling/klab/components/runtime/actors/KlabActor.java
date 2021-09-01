@@ -440,7 +440,6 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
             return ret;
         }
 
-        
         public void waitForGreen(final int linenumber) {
 
             if (semaphore != null) {
@@ -483,6 +482,13 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
         public Scope functional() {
             Scope ret = new Scope(this);
             ret.functional = true;
+            return ret;
+        }
+        
+        public Scope functional(Object valueScope) {
+            Scope ret = new Scope(this);
+            ret.functional = true;
+            ret.valueScope = valueScope;
             return ret;
         }
 
@@ -1084,9 +1090,27 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
 
     private void executeAssert(Assert code, Scope scope) {
         for (Assertion assertion : code.getAssertions()) {
-            
+            executeCallChain(assertion.getCalls(), scope);
+            if (assertion.getValue() != null) {
+                TestBehavior.compareExpectedValue(scope.valueScope, assertion.getValue(), scope);
+            }
         }
-        System.out.println("ASSERT!");
+    }
+
+    /**
+     * A call sequence is a one or more calls to be executed in sequence. The last call is a
+     * standard message call which will either fire or return according to the scope; the ones
+     * preceding it, if any, are necessarily functional and the return value of the first provides
+     * the execution context for the next.
+     * 
+     * @param calls
+     * @param scope
+     */
+    private void executeCallChain(List<Call> calls, Scope scope) {
+        for (int i = 0; i < calls.size(); i++) {
+            boolean last = (i == calls.size() - 1);
+            executeCall(calls.get(i), last ? scope : scope.functional());
+        }
     }
 
     /**
@@ -1293,6 +1317,16 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
 
         Long notifyId = scope.listenerId;
 
+        /**
+         * Exec any calls that precede this one, so that the receiver is set
+         */
+        Object contextReceiver = null;
+        for (Call chained : code.getChainedCalls()) {
+            Scope fscope = scope.functional(contextReceiver);
+            executeCall(code, fscope);
+            contextReceiver = fscope.valueScope;
+        }
+        
         boolean synchronize = false;
 
         if (code.getActions().size() > 0) {
@@ -1719,6 +1753,14 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
                 KlabActor.this.actionBindings.clear();
                 KlabActor.this.actionCache.clear();
                 KlabActor.this.childActorPath = message.childActorPath;
+                
+                for (IKActorsBehavior imported : KlabActor.this.behavior.getStatement().getImports()) {
+                    /*
+                     * TODO preload all imports from both system libraries and k.Actors behaviors
+                     * Test cases and scripts may have default imports
+                     */
+                    
+                }
 
                 if (message.applicationId != null) {
                     // this only happens when we're spawning a component from a top application
