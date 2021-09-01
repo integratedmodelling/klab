@@ -17,6 +17,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 import java.util.logging.Level;
@@ -188,6 +189,9 @@ public class Session extends GroovyObjectSupport
 
     // tracks the setting of the actor so we can avoid the ask pattern
     private AtomicBoolean actorSet = new AtomicBoolean(Boolean.FALSE);
+    // this is so that sessions can wait for all script to finish executing 
+    private AtomicInteger scriptsRunning = new AtomicInteger(0);
+    
     /**
      * A scheduler to periodically collect observation and task garbage
      */
@@ -1660,4 +1664,16 @@ public class Session extends GroovyObjectSupport
         return this.completedTasks;
     }
 
+    public int incrementScriptsRunning() {
+        return scriptsRunning.incrementAndGet();
+    }
+
+    public int decrementScriptsRunning() {
+        return scriptsRunning.decrementAndGet();
+    }
+
+    public int getRunningScriptCount() {
+        return scriptsRunning.get();
+    }
+    
 }

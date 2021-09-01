@@ -1135,7 +1135,7 @@ public enum Actors implements IActorsService {
      * Takes the argument as a script or test filename (either absolute or relative) and if found,
      * parses and executes it.
      * 
-     * TODO should also work within the classpath.
+     * TODO wait for the script to finish before exiting!
      * 
      * @param argument
      */
