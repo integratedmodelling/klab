@@ -43,7 +43,6 @@ import org.integratedmodelling.kactors.kactors.Value;
  * <ul>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#isDeferred <em>Deferred</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getTree <em>Tree</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getMethodCalls <em>Method Calls</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#isEmpty <em>Empty</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getArgvalue <em>Argvalue</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getUrn <em>Urn</em>}</li>
@@ -59,6 +58,7 @@ import org.integratedmodelling.kactors.kactors.Value;
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getThen <em>Then</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getElse <em>Else</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getConstructor <em>Constructor</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getMethodCalls <em>Method Calls</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#isComponent <em>Component</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getBehavior <em>Behavior</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getParameters <em>Parameters</em>}</li>
@@ -98,16 +98,6 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * @ordered
    */
   protected Tree tree;
-
-  /**
-   * The cached value of the '{@link #getMethodCalls() <em>Method Calls</em>}' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getMethodCalls()
-   * @generated
-   * @ordered
-   */
-  protected EList<MessageCall> methodCalls;
 
   /**
    * The default value of the '{@link #isEmpty() <em>Empty</em>}' attribute.
@@ -320,6 +310,16 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
   protected Constructor constructor;
 
   /**
+   * The cached value of the '{@link #getMethodCalls() <em>Method Calls</em>}' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getMethodCalls()
+   * @generated
+   * @ordered
+   */
+  protected EList<MessageCall> methodCalls;
+
+  /**
    * The default value of the '{@link #isComponent() <em>Component</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -473,21 +473,6 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
     }
     else if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__TREE, newTree, newTree));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EList<MessageCall> getMethodCalls()
-  {
-    if (methodCalls == null)
-    {
-      methodCalls = new EObjectContainmentEList<MessageCall>(MessageCall.class, this, KactorsPackage.VALUE__METHOD_CALLS);
-    }
-    return methodCalls;
   }
 
   /**
@@ -1096,6 +1081,21 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * @generated
    */
   @Override
+  public EList<MessageCall> getMethodCalls()
+  {
+    if (methodCalls == null)
+    {
+      methodCalls = new EObjectContainmentEList<MessageCall>(MessageCall.class, this, KactorsPackage.VALUE__METHOD_CALLS);
+    }
+    return methodCalls;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public boolean isComponent()
   {
     return component;
@@ -1252,8 +1252,6 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
     {
       case KactorsPackage.VALUE__TREE:
         return basicSetTree(null, msgs);
-      case KactorsPackage.VALUE__METHOD_CALLS:
-        return ((InternalEList<?>)getMethodCalls()).basicRemove(otherEnd, msgs);
       case KactorsPackage.VALUE__LITERAL:
         return basicSetLiteral(null, msgs);
       case KactorsPackage.VALUE__LIST:
@@ -1272,6 +1270,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return basicSetElse(null, msgs);
       case KactorsPackage.VALUE__CONSTRUCTOR:
         return basicSetConstructor(null, msgs);
+      case KactorsPackage.VALUE__METHOD_CALLS:
+        return ((InternalEList<?>)getMethodCalls()).basicRemove(otherEnd, msgs);
       case KactorsPackage.VALUE__PARAMETERS:
         return basicSetParameters(null, msgs);
       case KactorsPackage.VALUE__METADATA:
@@ -1294,8 +1294,6 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return isDeferred();
       case KactorsPackage.VALUE__TREE:
         return getTree();
-      case KactorsPackage.VALUE__METHOD_CALLS:
-        return getMethodCalls();
       case KactorsPackage.VALUE__EMPTY:
         return isEmpty();
       case KactorsPackage.VALUE__ARGVALUE:
@@ -1326,6 +1324,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return getElse();
       case KactorsPackage.VALUE__CONSTRUCTOR:
         return getConstructor();
+      case KactorsPackage.VALUE__METHOD_CALLS:
+        return getMethodCalls();
       case KactorsPackage.VALUE__COMPONENT:
         return isComponent();
       case KactorsPackage.VALUE__BEHAVIOR:
@@ -1354,10 +1354,6 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return;
       case KactorsPackage.VALUE__TREE:
         setTree((Tree)newValue);
-        return;
-      case KactorsPackage.VALUE__METHOD_CALLS:
-        getMethodCalls().clear();
-        getMethodCalls().addAll((Collection<? extends MessageCall>)newValue);
         return;
       case KactorsPackage.VALUE__EMPTY:
         setEmpty((Boolean)newValue);
@@ -1404,6 +1400,10 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
       case KactorsPackage.VALUE__CONSTRUCTOR:
         setConstructor((Constructor)newValue);
         return;
+      case KactorsPackage.VALUE__METHOD_CALLS:
+        getMethodCalls().clear();
+        getMethodCalls().addAll((Collection<? extends MessageCall>)newValue);
+        return;
       case KactorsPackage.VALUE__COMPONENT:
         setComponent((Boolean)newValue);
         return;
@@ -1435,9 +1435,6 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return;
       case KactorsPackage.VALUE__TREE:
         setTree((Tree)null);
-        return;
-      case KactorsPackage.VALUE__METHOD_CALLS:
-        getMethodCalls().clear();
         return;
       case KactorsPackage.VALUE__EMPTY:
         setEmpty(EMPTY_EDEFAULT);
@@ -1484,6 +1481,9 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
       case KactorsPackage.VALUE__CONSTRUCTOR:
         setConstructor((Constructor)null);
         return;
+      case KactorsPackage.VALUE__METHOD_CALLS:
+        getMethodCalls().clear();
+        return;
       case KactorsPackage.VALUE__COMPONENT:
         setComponent(COMPONENT_EDEFAULT);
         return;
@@ -1514,8 +1514,6 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return deferred != DEFERRED_EDEFAULT;
       case KactorsPackage.VALUE__TREE:
         return tree != null;
-      case KactorsPackage.VALUE__METHOD_CALLS:
-        return methodCalls != null && !methodCalls.isEmpty();
       case KactorsPackage.VALUE__EMPTY:
         return empty != EMPTY_EDEFAULT;
       case KactorsPackage.VALUE__ARGVALUE:
@@ -1546,6 +1544,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return else_ != null;
       case KactorsPackage.VALUE__CONSTRUCTOR:
         return constructor != null;
+      case KactorsPackage.VALUE__METHOD_CALLS:
+        return methodCalls != null && !methodCalls.isEmpty();
       case KactorsPackage.VALUE__COMPONENT:
         return component != COMPONENT_EDEFAULT;
       case KactorsPackage.VALUE__BEHAVIOR:

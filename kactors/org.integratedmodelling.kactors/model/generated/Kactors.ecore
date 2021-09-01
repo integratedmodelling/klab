@@ -210,8 +210,6 @@
   <eClassifiers xsi:type="ecore:EClass" name="Value">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="deferred" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="tree" eType="#//Tree" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="methodCalls" upperBound="-1"
-        eType="#//MessageCall" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="empty" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="argvalue" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="urn" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -234,6 +232,8 @@
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="constructor" eType="#//Constructor"
         containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="methodCalls" upperBound="-1"
+        eType="#//MessageCall" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="component" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="behavior" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" eType="#//ParameterList"

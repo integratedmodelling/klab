@@ -2092,37 +2092,30 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		private final Alternatives cAlternatives_1 = (Alternatives)cGroup.eContents().get(1);
 		private final Assignment cTreeAssignment_1_0 = (Assignment)cAlternatives_1.eContents().get(0);
 		private final RuleCall cTreeTreeParserRuleCall_1_0_0 = (RuleCall)cTreeAssignment_1_0.eContents().get(0);
-		private final Group cGroup_1_1 = (Group)cAlternatives_1.eContents().get(1);
-		private final Group cGroup_1_1_0 = (Group)cGroup_1_1.eContents().get(0);
-		private final Assignment cMethodCallsAssignment_1_1_0_0 = (Assignment)cGroup_1_1_0.eContents().get(0);
-		private final RuleCall cMethodCallsParenthesizedMethodCallParserRuleCall_1_1_0_0_0 = (RuleCall)cMethodCallsAssignment_1_1_0_0.eContents().get(0);
-		private final Keyword cFullStopKeyword_1_1_0_1 = (Keyword)cGroup_1_1_0.eContents().get(1);
-		private final Assignment cMethodCallsAssignment_1_1_1 = (Assignment)cGroup_1_1.eContents().get(1);
-		private final RuleCall cMethodCallsParenthesizedMethodCallParserRuleCall_1_1_1_0 = (RuleCall)cMethodCallsAssignment_1_1_1.eContents().get(0);
-		private final Assignment cEmptyAssignment_1_2 = (Assignment)cAlternatives_1.eContents().get(2);
-		private final Keyword cEmptyEmptyKeyword_1_2_0 = (Keyword)cEmptyAssignment_1_2.eContents().get(0);
-		private final Assignment cArgvalueAssignment_1_3 = (Assignment)cAlternatives_1.eContents().get(3);
-		private final RuleCall cArgvalueARGVALUETerminalRuleCall_1_3_0 = (RuleCall)cArgvalueAssignment_1_3.eContents().get(0);
-		private final Assignment cUrnAssignment_1_4 = (Assignment)cAlternatives_1.eContents().get(4);
-		private final RuleCall cUrnUrnIdParserRuleCall_1_4_0 = (RuleCall)cUrnAssignment_1_4.eContents().get(0);
-		private final Assignment cLiteralAssignment_1_5 = (Assignment)cAlternatives_1.eContents().get(5);
-		private final RuleCall cLiteralLiteralParserRuleCall_1_5_0 = (RuleCall)cLiteralAssignment_1_5.eContents().get(0);
-		private final Assignment cIdAssignment_1_6 = (Assignment)cAlternatives_1.eContents().get(6);
-		private final RuleCall cIdPathNameParserRuleCall_1_6_0 = (RuleCall)cIdAssignment_1_6.eContents().get(0);
-		private final Assignment cListAssignment_1_7 = (Assignment)cAlternatives_1.eContents().get(7);
-		private final RuleCall cListListParserRuleCall_1_7_0 = (RuleCall)cListAssignment_1_7.eContents().get(0);
-		private final Assignment cMapAssignment_1_8 = (Assignment)cAlternatives_1.eContents().get(8);
-		private final RuleCall cMapMapParserRuleCall_1_8_0 = (RuleCall)cMapAssignment_1_8.eContents().get(0);
-		private final Assignment cConstantAssignment_1_9 = (Assignment)cAlternatives_1.eContents().get(9);
-		private final RuleCall cConstantUPPERCASE_IDTerminalRuleCall_1_9_0 = (RuleCall)cConstantAssignment_1_9.eContents().get(0);
-		private final Assignment cObservableAssignment_1_10 = (Assignment)cAlternatives_1.eContents().get(10);
-		private final RuleCall cObservableObservableParserRuleCall_1_10_0 = (RuleCall)cObservableAssignment_1_10.eContents().get(0);
-		private final Assignment cExpressionAssignment_1_11 = (Assignment)cAlternatives_1.eContents().get(11);
-		private final RuleCall cExpressionEXPRTerminalRuleCall_1_11_0 = (RuleCall)cExpressionAssignment_1_11.eContents().get(0);
-		private final Assignment cTableAssignment_1_12 = (Assignment)cAlternatives_1.eContents().get(12);
-		private final RuleCall cTableLookupTableParserRuleCall_1_12_0 = (RuleCall)cTableAssignment_1_12.eContents().get(0);
-		private final Assignment cQuantityAssignment_1_13 = (Assignment)cAlternatives_1.eContents().get(13);
-		private final RuleCall cQuantityQuantityParserRuleCall_1_13_0 = (RuleCall)cQuantityAssignment_1_13.eContents().get(0);
+		private final Assignment cEmptyAssignment_1_1 = (Assignment)cAlternatives_1.eContents().get(1);
+		private final Keyword cEmptyEmptyKeyword_1_1_0 = (Keyword)cEmptyAssignment_1_1.eContents().get(0);
+		private final Assignment cArgvalueAssignment_1_2 = (Assignment)cAlternatives_1.eContents().get(2);
+		private final RuleCall cArgvalueARGVALUETerminalRuleCall_1_2_0 = (RuleCall)cArgvalueAssignment_1_2.eContents().get(0);
+		private final Assignment cUrnAssignment_1_3 = (Assignment)cAlternatives_1.eContents().get(3);
+		private final RuleCall cUrnUrnIdParserRuleCall_1_3_0 = (RuleCall)cUrnAssignment_1_3.eContents().get(0);
+		private final Assignment cLiteralAssignment_1_4 = (Assignment)cAlternatives_1.eContents().get(4);
+		private final RuleCall cLiteralLiteralParserRuleCall_1_4_0 = (RuleCall)cLiteralAssignment_1_4.eContents().get(0);
+		private final Assignment cIdAssignment_1_5 = (Assignment)cAlternatives_1.eContents().get(5);
+		private final RuleCall cIdPathNameParserRuleCall_1_5_0 = (RuleCall)cIdAssignment_1_5.eContents().get(0);
+		private final Assignment cListAssignment_1_6 = (Assignment)cAlternatives_1.eContents().get(6);
+		private final RuleCall cListListParserRuleCall_1_6_0 = (RuleCall)cListAssignment_1_6.eContents().get(0);
+		private final Assignment cMapAssignment_1_7 = (Assignment)cAlternatives_1.eContents().get(7);
+		private final RuleCall cMapMapParserRuleCall_1_7_0 = (RuleCall)cMapAssignment_1_7.eContents().get(0);
+		private final Assignment cConstantAssignment_1_8 = (Assignment)cAlternatives_1.eContents().get(8);
+		private final RuleCall cConstantUPPERCASE_IDTerminalRuleCall_1_8_0 = (RuleCall)cConstantAssignment_1_8.eContents().get(0);
+		private final Assignment cObservableAssignment_1_9 = (Assignment)cAlternatives_1.eContents().get(9);
+		private final RuleCall cObservableObservableParserRuleCall_1_9_0 = (RuleCall)cObservableAssignment_1_9.eContents().get(0);
+		private final Assignment cExpressionAssignment_1_10 = (Assignment)cAlternatives_1.eContents().get(10);
+		private final RuleCall cExpressionEXPRTerminalRuleCall_1_10_0 = (RuleCall)cExpressionAssignment_1_10.eContents().get(0);
+		private final Assignment cTableAssignment_1_11 = (Assignment)cAlternatives_1.eContents().get(11);
+		private final RuleCall cTableLookupTableParserRuleCall_1_11_0 = (RuleCall)cTableAssignment_1_11.eContents().get(0);
+		private final Assignment cQuantityAssignment_1_12 = (Assignment)cAlternatives_1.eContents().get(12);
+		private final RuleCall cQuantityQuantityParserRuleCall_1_12_0 = (RuleCall)cQuantityAssignment_1_12.eContents().get(0);
 		private final Group cGroup_2 = (Group)cGroup.eContents().get(2);
 		private final Keyword cQuestionMarkKeyword_2_0 = (Keyword)cGroup_2.eContents().get(0);
 		private final Assignment cThenAssignment_2_1 = (Assignment)cGroup_2.eContents().get(1);
@@ -2133,7 +2126,6 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		
 		//Value:
 		//    (deferred?='`')? (tree=Tree |
-		//    (methodCalls+=ParenthesizedMethodCall '.')* methodCalls+=ParenthesizedMethodCall |
 		//    empty?='empty' |
 		//    argvalue=ARGVALUE |
 		//    urn=UrnId |
@@ -2150,7 +2142,6 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		@Override public ParserRule getRule() { return rule; }
 		
 		//(deferred?='`')? (tree=Tree |
-		//(methodCalls+=ParenthesizedMethodCall '.')* methodCalls+=ParenthesizedMethodCall |
 		//empty?='empty' |
 		//argvalue=ARGVALUE |
 		//urn=UrnId |
@@ -2172,7 +2163,6 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		public Keyword getDeferredGraveAccentKeyword_0_0() { return cDeferredGraveAccentKeyword_0_0; }
 		
 		//(tree=Tree |
-		//   (methodCalls+=ParenthesizedMethodCall '.')* methodCalls+=ParenthesizedMethodCall |
 		//   empty?='empty' |
 		//   argvalue=ARGVALUE |
 		//   urn=UrnId |
@@ -2193,98 +2183,77 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//Tree
 		public RuleCall getTreeTreeParserRuleCall_1_0_0() { return cTreeTreeParserRuleCall_1_0_0; }
 		
-		//(methodCalls+=ParenthesizedMethodCall '.')* methodCalls+=ParenthesizedMethodCall
-		public Group getGroup_1_1() { return cGroup_1_1; }
-		
-		//(methodCalls+=ParenthesizedMethodCall '.')*
-		public Group getGroup_1_1_0() { return cGroup_1_1_0; }
-		
-		//methodCalls+=ParenthesizedMethodCall
-		public Assignment getMethodCallsAssignment_1_1_0_0() { return cMethodCallsAssignment_1_1_0_0; }
-		
-		//ParenthesizedMethodCall
-		public RuleCall getMethodCallsParenthesizedMethodCallParserRuleCall_1_1_0_0_0() { return cMethodCallsParenthesizedMethodCallParserRuleCall_1_1_0_0_0; }
-		
-		//'.'
-		public Keyword getFullStopKeyword_1_1_0_1() { return cFullStopKeyword_1_1_0_1; }
-		
-		//methodCalls+=ParenthesizedMethodCall
-		public Assignment getMethodCallsAssignment_1_1_1() { return cMethodCallsAssignment_1_1_1; }
-		
-		//ParenthesizedMethodCall
-		public RuleCall getMethodCallsParenthesizedMethodCallParserRuleCall_1_1_1_0() { return cMethodCallsParenthesizedMethodCallParserRuleCall_1_1_1_0; }
-		
 		//empty?='empty'
-		public Assignment getEmptyAssignment_1_2() { return cEmptyAssignment_1_2; }
+		public Assignment getEmptyAssignment_1_1() { return cEmptyAssignment_1_1; }
 		
 		//'empty'
-		public Keyword getEmptyEmptyKeyword_1_2_0() { return cEmptyEmptyKeyword_1_2_0; }
+		public Keyword getEmptyEmptyKeyword_1_1_0() { return cEmptyEmptyKeyword_1_1_0; }
 		
 		//argvalue=ARGVALUE
-		public Assignment getArgvalueAssignment_1_3() { return cArgvalueAssignment_1_3; }
+		public Assignment getArgvalueAssignment_1_2() { return cArgvalueAssignment_1_2; }
 		
 		//ARGVALUE
-		public RuleCall getArgvalueARGVALUETerminalRuleCall_1_3_0() { return cArgvalueARGVALUETerminalRuleCall_1_3_0; }
+		public RuleCall getArgvalueARGVALUETerminalRuleCall_1_2_0() { return cArgvalueARGVALUETerminalRuleCall_1_2_0; }
 		
 		//urn=UrnId
-		public Assignment getUrnAssignment_1_4() { return cUrnAssignment_1_4; }
+		public Assignment getUrnAssignment_1_3() { return cUrnAssignment_1_3; }
 		
 		//UrnId
-		public RuleCall getUrnUrnIdParserRuleCall_1_4_0() { return cUrnUrnIdParserRuleCall_1_4_0; }
+		public RuleCall getUrnUrnIdParserRuleCall_1_3_0() { return cUrnUrnIdParserRuleCall_1_3_0; }
 		
 		//literal=Literal
-		public Assignment getLiteralAssignment_1_5() { return cLiteralAssignment_1_5; }
+		public Assignment getLiteralAssignment_1_4() { return cLiteralAssignment_1_4; }
 		
 		//Literal
-		public RuleCall getLiteralLiteralParserRuleCall_1_5_0() { return cLiteralLiteralParserRuleCall_1_5_0; }
+		public RuleCall getLiteralLiteralParserRuleCall_1_4_0() { return cLiteralLiteralParserRuleCall_1_4_0; }
 		
 		//id=PathName
-		public Assignment getIdAssignment_1_6() { return cIdAssignment_1_6; }
+		public Assignment getIdAssignment_1_5() { return cIdAssignment_1_5; }
 		
 		//PathName
-		public RuleCall getIdPathNameParserRuleCall_1_6_0() { return cIdPathNameParserRuleCall_1_6_0; }
+		public RuleCall getIdPathNameParserRuleCall_1_5_0() { return cIdPathNameParserRuleCall_1_5_0; }
 		
 		//list=List
-		public Assignment getListAssignment_1_7() { return cListAssignment_1_7; }
+		public Assignment getListAssignment_1_6() { return cListAssignment_1_6; }
 		
 		//List
-		public RuleCall getListListParserRuleCall_1_7_0() { return cListListParserRuleCall_1_7_0; }
+		public RuleCall getListListParserRuleCall_1_6_0() { return cListListParserRuleCall_1_6_0; }
 		
 		//map=Map
-		public Assignment getMapAssignment_1_8() { return cMapAssignment_1_8; }
+		public Assignment getMapAssignment_1_7() { return cMapAssignment_1_7; }
 		
 		//Map
-		public RuleCall getMapMapParserRuleCall_1_8_0() { return cMapMapParserRuleCall_1_8_0; }
+		public RuleCall getMapMapParserRuleCall_1_7_0() { return cMapMapParserRuleCall_1_7_0; }
 		
 		//constant=UPPERCASE_ID
-		public Assignment getConstantAssignment_1_9() { return cConstantAssignment_1_9; }
+		public Assignment getConstantAssignment_1_8() { return cConstantAssignment_1_8; }
 		
 		//UPPERCASE_ID
-		public RuleCall getConstantUPPERCASE_IDTerminalRuleCall_1_9_0() { return cConstantUPPERCASE_IDTerminalRuleCall_1_9_0; }
+		public RuleCall getConstantUPPERCASE_IDTerminalRuleCall_1_8_0() { return cConstantUPPERCASE_IDTerminalRuleCall_1_8_0; }
 		
 		//observable=Observable
-		public Assignment getObservableAssignment_1_10() { return cObservableAssignment_1_10; }
+		public Assignment getObservableAssignment_1_9() { return cObservableAssignment_1_9; }
 		
 		//Observable
-		public RuleCall getObservableObservableParserRuleCall_1_10_0() { return cObservableObservableParserRuleCall_1_10_0; }
+		public RuleCall getObservableObservableParserRuleCall_1_9_0() { return cObservableObservableParserRuleCall_1_9_0; }
 		
 		//expression=EXPR
-		public Assignment getExpressionAssignment_1_11() { return cExpressionAssignment_1_11; }
+		public Assignment getExpressionAssignment_1_10() { return cExpressionAssignment_1_10; }
 		
 		//EXPR
-		public RuleCall getExpressionEXPRTerminalRuleCall_1_11_0() { return cExpressionEXPRTerminalRuleCall_1_11_0; }
+		public RuleCall getExpressionEXPRTerminalRuleCall_1_10_0() { return cExpressionEXPRTerminalRuleCall_1_10_0; }
 		
 		//table=LookupTable
-		public Assignment getTableAssignment_1_12() { return cTableAssignment_1_12; }
+		public Assignment getTableAssignment_1_11() { return cTableAssignment_1_11; }
 		
 		//LookupTable
-		public RuleCall getTableLookupTableParserRuleCall_1_12_0() { return cTableLookupTableParserRuleCall_1_12_0; }
+		public RuleCall getTableLookupTableParserRuleCall_1_11_0() { return cTableLookupTableParserRuleCall_1_11_0; }
 		
 		//quantity=Quantity
-		public Assignment getQuantityAssignment_1_13() { return cQuantityAssignment_1_13; }
+		public Assignment getQuantityAssignment_1_12() { return cQuantityAssignment_1_12; }
 		
 		//Quantity
-		public RuleCall getQuantityQuantityParserRuleCall_1_13_0() { return cQuantityQuantityParserRuleCall_1_13_0; }
+		public RuleCall getQuantityQuantityParserRuleCall_1_12_0() { return cQuantityQuantityParserRuleCall_1_12_0; }
 		
 		//('?' then=Value ':' else=Value)?
 		public Group getGroup_2() { return cGroup_2; }
@@ -2315,42 +2284,49 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		private final Alternatives cAlternatives_1 = (Alternatives)cGroup.eContents().get(1);
 		private final Assignment cConstructorAssignment_1_0 = (Assignment)cAlternatives_1.eContents().get(0);
 		private final RuleCall cConstructorConstructorParserRuleCall_1_0_0 = (RuleCall)cConstructorAssignment_1_0.eContents().get(0);
-		private final Assignment cTreeAssignment_1_1 = (Assignment)cAlternatives_1.eContents().get(1);
-		private final RuleCall cTreeTreeParserRuleCall_1_1_0 = (RuleCall)cTreeAssignment_1_1.eContents().get(0);
-		private final Assignment cEmptyAssignment_1_2 = (Assignment)cAlternatives_1.eContents().get(2);
-		private final Keyword cEmptyEmptyKeyword_1_2_0 = (Keyword)cEmptyAssignment_1_2.eContents().get(0);
-		private final Assignment cArgvalueAssignment_1_3 = (Assignment)cAlternatives_1.eContents().get(3);
-		private final RuleCall cArgvalueARGVALUETerminalRuleCall_1_3_0 = (RuleCall)cArgvalueAssignment_1_3.eContents().get(0);
-		private final Assignment cLiteralAssignment_1_4 = (Assignment)cAlternatives_1.eContents().get(4);
-		private final RuleCall cLiteralLiteralParserRuleCall_1_4_0 = (RuleCall)cLiteralAssignment_1_4.eContents().get(0);
-		private final Assignment cUrnAssignment_1_5 = (Assignment)cAlternatives_1.eContents().get(5);
-		private final RuleCall cUrnUrnIdParserRuleCall_1_5_0 = (RuleCall)cUrnAssignment_1_5.eContents().get(0);
-		private final Assignment cIdAssignment_1_6 = (Assignment)cAlternatives_1.eContents().get(6);
-		private final RuleCall cIdPathNameParserRuleCall_1_6_0 = (RuleCall)cIdAssignment_1_6.eContents().get(0);
-		private final Assignment cListAssignment_1_7 = (Assignment)cAlternatives_1.eContents().get(7);
-		private final RuleCall cListListParserRuleCall_1_7_0 = (RuleCall)cListAssignment_1_7.eContents().get(0);
-		private final Assignment cMapAssignment_1_8 = (Assignment)cAlternatives_1.eContents().get(8);
-		private final RuleCall cMapMapParserRuleCall_1_8_0 = (RuleCall)cMapAssignment_1_8.eContents().get(0);
-		private final Assignment cConstantAssignment_1_9 = (Assignment)cAlternatives_1.eContents().get(9);
-		private final RuleCall cConstantUPPERCASE_IDTerminalRuleCall_1_9_0 = (RuleCall)cConstantAssignment_1_9.eContents().get(0);
-		private final Assignment cObservableAssignment_1_10 = (Assignment)cAlternatives_1.eContents().get(10);
-		private final RuleCall cObservableObservableParserRuleCall_1_10_0 = (RuleCall)cObservableAssignment_1_10.eContents().get(0);
-		private final Assignment cExpressionAssignment_1_11 = (Assignment)cAlternatives_1.eContents().get(11);
-		private final RuleCall cExpressionEXPRTerminalRuleCall_1_11_0 = (RuleCall)cExpressionAssignment_1_11.eContents().get(0);
-		private final Assignment cTableAssignment_1_12 = (Assignment)cAlternatives_1.eContents().get(12);
-		private final RuleCall cTableLookupTableParserRuleCall_1_12_0 = (RuleCall)cTableAssignment_1_12.eContents().get(0);
-		private final Assignment cQuantityAssignment_1_13 = (Assignment)cAlternatives_1.eContents().get(13);
-		private final RuleCall cQuantityQuantityParserRuleCall_1_13_0 = (RuleCall)cQuantityAssignment_1_13.eContents().get(0);
-		private final Group cGroup_1_14 = (Group)cAlternatives_1.eContents().get(14);
-		private final Assignment cComponentAssignment_1_14_0 = (Assignment)cGroup_1_14.eContents().get(0);
-		private final Keyword cComponentNewKeyword_1_14_0_0 = (Keyword)cComponentAssignment_1_14_0.eContents().get(0);
-		private final Assignment cBehaviorAssignment_1_14_1 = (Assignment)cGroup_1_14.eContents().get(1);
-		private final RuleCall cBehaviorPathNameParserRuleCall_1_14_1_0 = (RuleCall)cBehaviorAssignment_1_14_1.eContents().get(0);
-		private final Group cGroup_1_14_2 = (Group)cGroup_1_14.eContents().get(2);
-		private final Keyword cLeftParenthesisKeyword_1_14_2_0 = (Keyword)cGroup_1_14_2.eContents().get(0);
-		private final Assignment cParametersAssignment_1_14_2_1 = (Assignment)cGroup_1_14_2.eContents().get(1);
-		private final RuleCall cParametersParameterListParserRuleCall_1_14_2_1_0 = (RuleCall)cParametersAssignment_1_14_2_1.eContents().get(0);
-		private final Keyword cRightParenthesisKeyword_1_14_2_2 = (Keyword)cGroup_1_14_2.eContents().get(2);
+		private final Group cGroup_1_1 = (Group)cAlternatives_1.eContents().get(1);
+		private final Group cGroup_1_1_0 = (Group)cGroup_1_1.eContents().get(0);
+		private final Assignment cMethodCallsAssignment_1_1_0_0 = (Assignment)cGroup_1_1_0.eContents().get(0);
+		private final RuleCall cMethodCallsParenthesizedMethodCallParserRuleCall_1_1_0_0_0 = (RuleCall)cMethodCallsAssignment_1_1_0_0.eContents().get(0);
+		private final Keyword cFullStopKeyword_1_1_0_1 = (Keyword)cGroup_1_1_0.eContents().get(1);
+		private final Assignment cMethodCallsAssignment_1_1_1 = (Assignment)cGroup_1_1.eContents().get(1);
+		private final RuleCall cMethodCallsParenthesizedMethodCallParserRuleCall_1_1_1_0 = (RuleCall)cMethodCallsAssignment_1_1_1.eContents().get(0);
+		private final Assignment cTreeAssignment_1_2 = (Assignment)cAlternatives_1.eContents().get(2);
+		private final RuleCall cTreeTreeParserRuleCall_1_2_0 = (RuleCall)cTreeAssignment_1_2.eContents().get(0);
+		private final Assignment cEmptyAssignment_1_3 = (Assignment)cAlternatives_1.eContents().get(3);
+		private final Keyword cEmptyEmptyKeyword_1_3_0 = (Keyword)cEmptyAssignment_1_3.eContents().get(0);
+		private final Assignment cArgvalueAssignment_1_4 = (Assignment)cAlternatives_1.eContents().get(4);
+		private final RuleCall cArgvalueARGVALUETerminalRuleCall_1_4_0 = (RuleCall)cArgvalueAssignment_1_4.eContents().get(0);
+		private final Assignment cLiteralAssignment_1_5 = (Assignment)cAlternatives_1.eContents().get(5);
+		private final RuleCall cLiteralLiteralParserRuleCall_1_5_0 = (RuleCall)cLiteralAssignment_1_5.eContents().get(0);
+		private final Assignment cUrnAssignment_1_6 = (Assignment)cAlternatives_1.eContents().get(6);
+		private final RuleCall cUrnUrnIdParserRuleCall_1_6_0 = (RuleCall)cUrnAssignment_1_6.eContents().get(0);
+		private final Assignment cIdAssignment_1_7 = (Assignment)cAlternatives_1.eContents().get(7);
+		private final RuleCall cIdPathNameParserRuleCall_1_7_0 = (RuleCall)cIdAssignment_1_7.eContents().get(0);
+		private final Assignment cListAssignment_1_8 = (Assignment)cAlternatives_1.eContents().get(8);
+		private final RuleCall cListListParserRuleCall_1_8_0 = (RuleCall)cListAssignment_1_8.eContents().get(0);
+		private final Assignment cMapAssignment_1_9 = (Assignment)cAlternatives_1.eContents().get(9);
+		private final RuleCall cMapMapParserRuleCall_1_9_0 = (RuleCall)cMapAssignment_1_9.eContents().get(0);
+		private final Assignment cConstantAssignment_1_10 = (Assignment)cAlternatives_1.eContents().get(10);
+		private final RuleCall cConstantUPPERCASE_IDTerminalRuleCall_1_10_0 = (RuleCall)cConstantAssignment_1_10.eContents().get(0);
+		private final Assignment cObservableAssignment_1_11 = (Assignment)cAlternatives_1.eContents().get(11);
+		private final RuleCall cObservableObservableParserRuleCall_1_11_0 = (RuleCall)cObservableAssignment_1_11.eContents().get(0);
+		private final Assignment cExpressionAssignment_1_12 = (Assignment)cAlternatives_1.eContents().get(12);
+		private final RuleCall cExpressionEXPRTerminalRuleCall_1_12_0 = (RuleCall)cExpressionAssignment_1_12.eContents().get(0);
+		private final Assignment cTableAssignment_1_13 = (Assignment)cAlternatives_1.eContents().get(13);
+		private final RuleCall cTableLookupTableParserRuleCall_1_13_0 = (RuleCall)cTableAssignment_1_13.eContents().get(0);
+		private final Assignment cQuantityAssignment_1_14 = (Assignment)cAlternatives_1.eContents().get(14);
+		private final RuleCall cQuantityQuantityParserRuleCall_1_14_0 = (RuleCall)cQuantityAssignment_1_14.eContents().get(0);
+		private final Group cGroup_1_15 = (Group)cAlternatives_1.eContents().get(15);
+		private final Assignment cComponentAssignment_1_15_0 = (Assignment)cGroup_1_15.eContents().get(0);
+		private final Keyword cComponentNewKeyword_1_15_0_0 = (Keyword)cComponentAssignment_1_15_0.eContents().get(0);
+		private final Assignment cBehaviorAssignment_1_15_1 = (Assignment)cGroup_1_15.eContents().get(1);
+		private final RuleCall cBehaviorPathNameParserRuleCall_1_15_1_0 = (RuleCall)cBehaviorAssignment_1_15_1.eContents().get(0);
+		private final Group cGroup_1_15_2 = (Group)cGroup_1_15.eContents().get(2);
+		private final Keyword cLeftParenthesisKeyword_1_15_2_0 = (Keyword)cGroup_1_15_2.eContents().get(0);
+		private final Assignment cParametersAssignment_1_15_2_1 = (Assignment)cGroup_1_15_2.eContents().get(1);
+		private final RuleCall cParametersParameterListParserRuleCall_1_15_2_1_0 = (RuleCall)cParametersAssignment_1_15_2_1.eContents().get(0);
+		private final Keyword cRightParenthesisKeyword_1_15_2_2 = (Keyword)cGroup_1_15_2.eContents().get(2);
 		private final Group cGroup_2 = (Group)cGroup.eContents().get(2);
 		private final Keyword cQuestionMarkKeyword_2_0 = (Keyword)cGroup_2.eContents().get(0);
 		private final Assignment cThenAssignment_2_1 = (Assignment)cGroup_2.eContents().get(1);
@@ -2361,6 +2337,7 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		
 		//ValueWithConstructor returns Value:
 		//    (deferred?='`')? (constructor=Constructor |
+		//    (methodCalls+=ParenthesizedMethodCall '.')* methodCalls+=ParenthesizedMethodCall |
 		//    tree=Tree |
 		//    empty?='empty' |
 		//    argvalue=ARGVALUE |
@@ -2380,6 +2357,7 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		@Override public ParserRule getRule() { return rule; }
 		
 		//(deferred?='`')? (constructor=Constructor |
+		//(methodCalls+=ParenthesizedMethodCall '.')* methodCalls+=ParenthesizedMethodCall |
 		//tree=Tree |
 		//empty?='empty' |
 		//argvalue=ARGVALUE |
@@ -2404,6 +2382,7 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		public Keyword getDeferredGraveAccentKeyword_0_0() { return cDeferredGraveAccentKeyword_0_0; }
 		
 		//(constructor=Constructor |
+		//   (methodCalls+=ParenthesizedMethodCall '.')* methodCalls+=ParenthesizedMethodCall |
 		//   tree=Tree |
 		//   empty?='empty' |
 		//   argvalue=ARGVALUE |
@@ -2426,113 +2405,134 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//Constructor
 		public RuleCall getConstructorConstructorParserRuleCall_1_0_0() { return cConstructorConstructorParserRuleCall_1_0_0; }
 		
+		//(methodCalls+=ParenthesizedMethodCall '.')* methodCalls+=ParenthesizedMethodCall
+		public Group getGroup_1_1() { return cGroup_1_1; }
+		
+		//(methodCalls+=ParenthesizedMethodCall '.')*
+		public Group getGroup_1_1_0() { return cGroup_1_1_0; }
+		
+		//methodCalls+=ParenthesizedMethodCall
+		public Assignment getMethodCallsAssignment_1_1_0_0() { return cMethodCallsAssignment_1_1_0_0; }
+		
+		//ParenthesizedMethodCall
+		public RuleCall getMethodCallsParenthesizedMethodCallParserRuleCall_1_1_0_0_0() { return cMethodCallsParenthesizedMethodCallParserRuleCall_1_1_0_0_0; }
+		
+		//'.'
+		public Keyword getFullStopKeyword_1_1_0_1() { return cFullStopKeyword_1_1_0_1; }
+		
+		//methodCalls+=ParenthesizedMethodCall
+		public Assignment getMethodCallsAssignment_1_1_1() { return cMethodCallsAssignment_1_1_1; }
+		
+		//ParenthesizedMethodCall
+		public RuleCall getMethodCallsParenthesizedMethodCallParserRuleCall_1_1_1_0() { return cMethodCallsParenthesizedMethodCallParserRuleCall_1_1_1_0; }
+		
 		//tree=Tree
-		public Assignment getTreeAssignment_1_1() { return cTreeAssignment_1_1; }
+		public Assignment getTreeAssignment_1_2() { return cTreeAssignment_1_2; }
 		
 		//Tree
-		public RuleCall getTreeTreeParserRuleCall_1_1_0() { return cTreeTreeParserRuleCall_1_1_0; }
+		public RuleCall getTreeTreeParserRuleCall_1_2_0() { return cTreeTreeParserRuleCall_1_2_0; }
 		
 		//empty?='empty'
-		public Assignment getEmptyAssignment_1_2() { return cEmptyAssignment_1_2; }
+		public Assignment getEmptyAssignment_1_3() { return cEmptyAssignment_1_3; }
 		
 		//'empty'
-		public Keyword getEmptyEmptyKeyword_1_2_0() { return cEmptyEmptyKeyword_1_2_0; }
+		public Keyword getEmptyEmptyKeyword_1_3_0() { return cEmptyEmptyKeyword_1_3_0; }
 		
 		//argvalue=ARGVALUE
-		public Assignment getArgvalueAssignment_1_3() { return cArgvalueAssignment_1_3; }
+		public Assignment getArgvalueAssignment_1_4() { return cArgvalueAssignment_1_4; }
 		
 		//ARGVALUE
-		public RuleCall getArgvalueARGVALUETerminalRuleCall_1_3_0() { return cArgvalueARGVALUETerminalRuleCall_1_3_0; }
+		public RuleCall getArgvalueARGVALUETerminalRuleCall_1_4_0() { return cArgvalueARGVALUETerminalRuleCall_1_4_0; }
 		
 		//literal=Literal
-		public Assignment getLiteralAssignment_1_4() { return cLiteralAssignment_1_4; }
+		public Assignment getLiteralAssignment_1_5() { return cLiteralAssignment_1_5; }
 		
 		//Literal
-		public RuleCall getLiteralLiteralParserRuleCall_1_4_0() { return cLiteralLiteralParserRuleCall_1_4_0; }
+		public RuleCall getLiteralLiteralParserRuleCall_1_5_0() { return cLiteralLiteralParserRuleCall_1_5_0; }
 		
 		//urn=UrnId
-		public Assignment getUrnAssignment_1_5() { return cUrnAssignment_1_5; }
+		public Assignment getUrnAssignment_1_6() { return cUrnAssignment_1_6; }
 		
 		//UrnId
-		public RuleCall getUrnUrnIdParserRuleCall_1_5_0() { return cUrnUrnIdParserRuleCall_1_5_0; }
+		public RuleCall getUrnUrnIdParserRuleCall_1_6_0() { return cUrnUrnIdParserRuleCall_1_6_0; }
 		
 		//id=PathName
-		public Assignment getIdAssignment_1_6() { return cIdAssignment_1_6; }
+		public Assignment getIdAssignment_1_7() { return cIdAssignment_1_7; }
 		
 		//PathName
-		public RuleCall getIdPathNameParserRuleCall_1_6_0() { return cIdPathNameParserRuleCall_1_6_0; }
+		public RuleCall getIdPathNameParserRuleCall_1_7_0() { return cIdPathNameParserRuleCall_1_7_0; }
 		
 		//list=List
-		public Assignment getListAssignment_1_7() { return cListAssignment_1_7; }
+		public Assignment getListAssignment_1_8() { return cListAssignment_1_8; }
 		
 		//List
-		public RuleCall getListListParserRuleCall_1_7_0() { return cListListParserRuleCall_1_7_0; }
+		public RuleCall getListListParserRuleCall_1_8_0() { return cListListParserRuleCall_1_8_0; }
 		
 		//map=Map
-		public Assignment getMapAssignment_1_8() { return cMapAssignment_1_8; }
+		public Assignment getMapAssignment_1_9() { return cMapAssignment_1_9; }
 		
 		//Map
-		public RuleCall getMapMapParserRuleCall_1_8_0() { return cMapMapParserRuleCall_1_8_0; }
+		public RuleCall getMapMapParserRuleCall_1_9_0() { return cMapMapParserRuleCall_1_9_0; }
 		
 		//constant=UPPERCASE_ID
-		public Assignment getConstantAssignment_1_9() { return cConstantAssignment_1_9; }
+		public Assignment getConstantAssignment_1_10() { return cConstantAssignment_1_10; }
 		
 		//UPPERCASE_ID
-		public RuleCall getConstantUPPERCASE_IDTerminalRuleCall_1_9_0() { return cConstantUPPERCASE_IDTerminalRuleCall_1_9_0; }
+		public RuleCall getConstantUPPERCASE_IDTerminalRuleCall_1_10_0() { return cConstantUPPERCASE_IDTerminalRuleCall_1_10_0; }
 		
 		//observable=Observable
-		public Assignment getObservableAssignment_1_10() { return cObservableAssignment_1_10; }
+		public Assignment getObservableAssignment_1_11() { return cObservableAssignment_1_11; }
 		
 		//Observable
-		public RuleCall getObservableObservableParserRuleCall_1_10_0() { return cObservableObservableParserRuleCall_1_10_0; }
+		public RuleCall getObservableObservableParserRuleCall_1_11_0() { return cObservableObservableParserRuleCall_1_11_0; }
 		
 		//expression=EXPR
-		public Assignment getExpressionAssignment_1_11() { return cExpressionAssignment_1_11; }
+		public Assignment getExpressionAssignment_1_12() { return cExpressionAssignment_1_12; }
 		
 		//EXPR
-		public RuleCall getExpressionEXPRTerminalRuleCall_1_11_0() { return cExpressionEXPRTerminalRuleCall_1_11_0; }
+		public RuleCall getExpressionEXPRTerminalRuleCall_1_12_0() { return cExpressionEXPRTerminalRuleCall_1_12_0; }
 		
 		//table=LookupTable
-		public Assignment getTableAssignment_1_12() { return cTableAssignment_1_12; }
+		public Assignment getTableAssignment_1_13() { return cTableAssignment_1_13; }
 		
 		//LookupTable
-		public RuleCall getTableLookupTableParserRuleCall_1_12_0() { return cTableLookupTableParserRuleCall_1_12_0; }
+		public RuleCall getTableLookupTableParserRuleCall_1_13_0() { return cTableLookupTableParserRuleCall_1_13_0; }
 		
 		//quantity=Quantity
-		public Assignment getQuantityAssignment_1_13() { return cQuantityAssignment_1_13; }
+		public Assignment getQuantityAssignment_1_14() { return cQuantityAssignment_1_14; }
 		
 		//Quantity
-		public RuleCall getQuantityQuantityParserRuleCall_1_13_0() { return cQuantityQuantityParserRuleCall_1_13_0; }
+		public RuleCall getQuantityQuantityParserRuleCall_1_14_0() { return cQuantityQuantityParserRuleCall_1_14_0; }
 		
 		//component?='new' behavior=PathName ('(' (parameters=ParameterList)? ')')?
-		public Group getGroup_1_14() { return cGroup_1_14; }
+		public Group getGroup_1_15() { return cGroup_1_15; }
 		
 		//component?='new'
-		public Assignment getComponentAssignment_1_14_0() { return cComponentAssignment_1_14_0; }
+		public Assignment getComponentAssignment_1_15_0() { return cComponentAssignment_1_15_0; }
 		
 		//'new'
-		public Keyword getComponentNewKeyword_1_14_0_0() { return cComponentNewKeyword_1_14_0_0; }
+		public Keyword getComponentNewKeyword_1_15_0_0() { return cComponentNewKeyword_1_15_0_0; }
 		
 		//behavior=PathName
-		public Assignment getBehaviorAssignment_1_14_1() { return cBehaviorAssignment_1_14_1; }
+		public Assignment getBehaviorAssignment_1_15_1() { return cBehaviorAssignment_1_15_1; }
 		
 		//PathName
-		public RuleCall getBehaviorPathNameParserRuleCall_1_14_1_0() { return cBehaviorPathNameParserRuleCall_1_14_1_0; }
+		public RuleCall getBehaviorPathNameParserRuleCall_1_15_1_0() { return cBehaviorPathNameParserRuleCall_1_15_1_0; }
 		
 		//('(' (parameters=ParameterList)? ')')?
-		public Group getGroup_1_14_2() { return cGroup_1_14_2; }
+		public Group getGroup_1_15_2() { return cGroup_1_15_2; }
 		
 		//'('
-		public Keyword getLeftParenthesisKeyword_1_14_2_0() { return cLeftParenthesisKeyword_1_14_2_0; }
+		public Keyword getLeftParenthesisKeyword_1_15_2_0() { return cLeftParenthesisKeyword_1_15_2_0; }
 		
 		//(parameters=ParameterList)?
-		public Assignment getParametersAssignment_1_14_2_1() { return cParametersAssignment_1_14_2_1; }
+		public Assignment getParametersAssignment_1_15_2_1() { return cParametersAssignment_1_15_2_1; }
 		
 		//ParameterList
-		public RuleCall getParametersParameterListParserRuleCall_1_14_2_1_0() { return cParametersParameterListParserRuleCall_1_14_2_1_0; }
+		public RuleCall getParametersParameterListParserRuleCall_1_15_2_1_0() { return cParametersParameterListParserRuleCall_1_15_2_1_0; }
 		
 		//')'
-		public Keyword getRightParenthesisKeyword_1_14_2_2() { return cRightParenthesisKeyword_1_14_2_2; }
+		public Keyword getRightParenthesisKeyword_1_15_2_2() { return cRightParenthesisKeyword_1_15_2_2; }
 		
 		//('?' then=ValueWithConstructor ':' else=ValueWithConstructor)?
 		public Group getGroup_2() { return cGroup_2; }
@@ -7799,7 +7799,6 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	
 	//Value:
 	//    (deferred?='`')? (tree=Tree |
-	//    (methodCalls+=ParenthesizedMethodCall '.')* methodCalls+=ParenthesizedMethodCall |
 	//    empty?='empty' |
 	//    argvalue=ARGVALUE |
 	//    urn=UrnId |
@@ -7823,6 +7822,7 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	
 	//ValueWithConstructor returns Value:
 	//    (deferred?='`')? (constructor=Constructor |
+	//    (methodCalls+=ParenthesizedMethodCall '.')* methodCalls+=ParenthesizedMethodCall |
 	//    tree=Tree |
 	//    empty?='empty' |
 	//    argvalue=ARGVALUE |

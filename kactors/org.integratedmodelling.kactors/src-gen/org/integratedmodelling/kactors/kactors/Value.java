@@ -18,7 +18,6 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#isDeferred <em>Deferred</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getTree <em>Tree</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getMethodCalls <em>Method Calls</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#isEmpty <em>Empty</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getArgvalue <em>Argvalue</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getUrn <em>Urn</em>}</li>
@@ -34,6 +33,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getThen <em>Then</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getElse <em>Else</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getConstructor <em>Constructor</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getMethodCalls <em>Method Calls</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#isComponent <em>Component</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getBehavior <em>Behavior</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getParameters <em>Parameters</em>}</li>
@@ -89,18 +89,6 @@ public interface Value extends EObject
    * @generated
    */
   void setTree(Tree value);
-
-  /**
-   * Returns the value of the '<em><b>Method Calls</b></em>' containment reference list.
-   * The list contents are of type {@link org.integratedmodelling.kactors.kactors.MessageCall}.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Method Calls</em>' containment reference list.
-   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getValue_MethodCalls()
-   * @model containment="true"
-   * @generated
-   */
-  EList<MessageCall> getMethodCalls();
 
   /**
    * Returns the value of the '<em><b>Empty</b></em>' attribute.
@@ -431,6 +419,18 @@ public interface Value extends EObject
    * @generated
    */
   void setConstructor(Constructor value);
+
+  /**
+   * Returns the value of the '<em><b>Method Calls</b></em>' containment reference list.
+   * The list contents are of type {@link org.integratedmodelling.kactors.kactors.MessageCall}.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Method Calls</em>' containment reference list.
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getValue_MethodCalls()
+   * @model containment="true"
+   * @generated
+   */
+  EList<MessageCall> getMethodCalls();
 
   /**
    * Returns the value of the '<em><b>Component</b></em>' attribute.

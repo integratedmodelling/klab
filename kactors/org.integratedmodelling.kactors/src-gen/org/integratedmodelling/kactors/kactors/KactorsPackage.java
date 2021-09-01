@@ -1414,22 +1414,13 @@ public interface KactorsPackage extends EPackage
   int VALUE__TREE = 1;
 
   /**
-   * The feature id for the '<em><b>Method Calls</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int VALUE__METHOD_CALLS = 2;
-
-  /**
    * The feature id for the '<em><b>Empty</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int VALUE__EMPTY = 3;
+  int VALUE__EMPTY = 2;
 
   /**
    * The feature id for the '<em><b>Argvalue</b></em>' attribute.
@@ -1438,7 +1429,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__ARGVALUE = 4;
+  int VALUE__ARGVALUE = 3;
 
   /**
    * The feature id for the '<em><b>Urn</b></em>' attribute.
@@ -1447,7 +1438,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__URN = 5;
+  int VALUE__URN = 4;
 
   /**
    * The feature id for the '<em><b>Literal</b></em>' containment reference.
@@ -1456,7 +1447,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__LITERAL = 6;
+  int VALUE__LITERAL = 5;
 
   /**
    * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -1465,7 +1456,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__ID = 7;
+  int VALUE__ID = 6;
 
   /**
    * The feature id for the '<em><b>List</b></em>' containment reference.
@@ -1474,7 +1465,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__LIST = 8;
+  int VALUE__LIST = 7;
 
   /**
    * The feature id for the '<em><b>Map</b></em>' containment reference.
@@ -1483,7 +1474,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__MAP = 9;
+  int VALUE__MAP = 8;
 
   /**
    * The feature id for the '<em><b>Constant</b></em>' attribute.
@@ -1492,7 +1483,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__CONSTANT = 10;
+  int VALUE__CONSTANT = 9;
 
   /**
    * The feature id for the '<em><b>Observable</b></em>' containment reference.
@@ -1501,7 +1492,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__OBSERVABLE = 11;
+  int VALUE__OBSERVABLE = 10;
 
   /**
    * The feature id for the '<em><b>Expression</b></em>' attribute.
@@ -1510,7 +1501,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__EXPRESSION = 12;
+  int VALUE__EXPRESSION = 11;
 
   /**
    * The feature id for the '<em><b>Table</b></em>' containment reference.
@@ -1519,7 +1510,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__TABLE = 13;
+  int VALUE__TABLE = 12;
 
   /**
    * The feature id for the '<em><b>Quantity</b></em>' containment reference.
@@ -1528,7 +1519,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__QUANTITY = 14;
+  int VALUE__QUANTITY = 13;
 
   /**
    * The feature id for the '<em><b>Then</b></em>' containment reference.
@@ -1537,7 +1528,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__THEN = 15;
+  int VALUE__THEN = 14;
 
   /**
    * The feature id for the '<em><b>Else</b></em>' containment reference.
@@ -1546,7 +1537,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__ELSE = 16;
+  int VALUE__ELSE = 15;
 
   /**
    * The feature id for the '<em><b>Constructor</b></em>' containment reference.
@@ -1555,7 +1546,16 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__CONSTRUCTOR = 17;
+  int VALUE__CONSTRUCTOR = 16;
+
+  /**
+   * The feature id for the '<em><b>Method Calls</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE__METHOD_CALLS = 17;
 
   /**
    * The feature id for the '<em><b>Component</b></em>' attribute.
@@ -5148,17 +5148,6 @@ public interface KactorsPackage extends EPackage
   EReference getValue_Tree();
 
   /**
-   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kactors.kactors.Value#getMethodCalls <em>Method Calls</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference list '<em>Method Calls</em>'.
-   * @see org.integratedmodelling.kactors.kactors.Value#getMethodCalls()
-   * @see #getValue()
-   * @generated
-   */
-  EReference getValue_MethodCalls();
-
-  /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Value#isEmpty <em>Empty</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -5322,6 +5311,17 @@ public interface KactorsPackage extends EPackage
    * @generated
    */
   EReference getValue_Constructor();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kactors.kactors.Value#getMethodCalls <em>Method Calls</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Method Calls</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Value#getMethodCalls()
+   * @see #getValue()
+   * @generated
+   */
+  EReference getValue_MethodCalls();
 
   /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Value#isComponent <em>Component</em>}'.
@@ -8725,14 +8725,6 @@ public interface KactorsPackage extends EPackage
     EReference VALUE__TREE = eINSTANCE.getValue_Tree();
 
     /**
-     * The meta object literal for the '<em><b>Method Calls</b></em>' containment reference list feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference VALUE__METHOD_CALLS = eINSTANCE.getValue_MethodCalls();
-
-    /**
      * The meta object literal for the '<em><b>Empty</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -8851,6 +8843,14 @@ public interface KactorsPackage extends EPackage
      * @generated
      */
     EReference VALUE__CONSTRUCTOR = eINSTANCE.getValue_Constructor();
+
+    /**
+     * The meta object literal for the '<em><b>Method Calls</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference VALUE__METHOD_CALLS = eINSTANCE.getValue_MethodCalls();
 
     /**
      * The meta object literal for the '<em><b>Component</b></em>' attribute feature.

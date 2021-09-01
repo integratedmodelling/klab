@@ -159,7 +159,6 @@
     <genClasses ecoreClass="Kactors.ecore#//Value">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Value/deferred"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Value/tree"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Value/methodCalls"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Value/empty"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Value/argvalue"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Value/urn"/>
@@ -175,6 +174,7 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Value/then"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Value/else"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Value/constructor"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Value/methodCalls"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Value/component"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Value/behavior"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Value/parameters"/>

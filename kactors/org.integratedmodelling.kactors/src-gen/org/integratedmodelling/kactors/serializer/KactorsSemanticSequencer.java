@@ -451,11 +451,11 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *                 contained=SimpleConceptDeclaration | 
 	 *                 caused=SimpleConceptDeclaration
 	 *             )? 
-	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
-	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
 	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
+	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
 	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
-	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)?
+	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
+	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)?
 	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)*
 	 *     )
@@ -482,11 +482,11 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *                 contained=SimpleConceptDeclaration | 
 	 *                 caused=SimpleConceptDeclaration
 	 *             )? 
-	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
-	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
 	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
+	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
 	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
-	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)?
+	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
+	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)?
 	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)* 
 	 *         (operators+='or' operands+=Factor)*
@@ -1263,6 +1263,7 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *         deferred?='`'? 
 	 *         (
 	 *             constructor=Constructor | 
+	 *             (methodCalls+=ParenthesizedMethodCall* methodCalls+=ParenthesizedMethodCall) | 
 	 *             tree=Tree | 
 	 *             empty?='empty' | 
 	 *             argvalue=ARGVALUE | 
@@ -1352,7 +1353,6 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *         deferred?='`'? 
 	 *         (
 	 *             tree=Tree | 
-	 *             (methodCalls+=ParenthesizedMethodCall* methodCalls+=ParenthesizedMethodCall) | 
 	 *             empty?='empty' | 
 	 *             argvalue=ARGVALUE | 
 	 *             urn=UrnId | 

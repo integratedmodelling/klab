@@ -9223,14 +9223,14 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Value__Alternatives_1"
-    // InternalKactors.g:2485:1: rule__Value__Alternatives_1 : ( ( ( rule__Value__TreeAssignment_1_0 ) ) | ( ( rule__Value__Group_1_1__0 ) ) | ( ( rule__Value__EmptyAssignment_1_2 ) ) | ( ( rule__Value__ArgvalueAssignment_1_3 ) ) | ( ( rule__Value__UrnAssignment_1_4 ) ) | ( ( rule__Value__LiteralAssignment_1_5 ) ) | ( ( rule__Value__IdAssignment_1_6 ) ) | ( ( rule__Value__ListAssignment_1_7 ) ) | ( ( rule__Value__MapAssignment_1_8 ) ) | ( ( rule__Value__ConstantAssignment_1_9 ) ) | ( ( rule__Value__ObservableAssignment_1_10 ) ) | ( ( rule__Value__ExpressionAssignment_1_11 ) ) | ( ( rule__Value__TableAssignment_1_12 ) ) | ( ( rule__Value__QuantityAssignment_1_13 ) ) );
+    // InternalKactors.g:2485:1: rule__Value__Alternatives_1 : ( ( ( rule__Value__TreeAssignment_1_0 ) ) | ( ( rule__Value__EmptyAssignment_1_1 ) ) | ( ( rule__Value__ArgvalueAssignment_1_2 ) ) | ( ( rule__Value__UrnAssignment_1_3 ) ) | ( ( rule__Value__LiteralAssignment_1_4 ) ) | ( ( rule__Value__IdAssignment_1_5 ) ) | ( ( rule__Value__ListAssignment_1_6 ) ) | ( ( rule__Value__MapAssignment_1_7 ) ) | ( ( rule__Value__ConstantAssignment_1_8 ) ) | ( ( rule__Value__ObservableAssignment_1_9 ) ) | ( ( rule__Value__ExpressionAssignment_1_10 ) ) | ( ( rule__Value__TableAssignment_1_11 ) ) | ( ( rule__Value__QuantityAssignment_1_12 ) ) );
     public final void rule__Value__Alternatives_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:2489:1: ( ( ( rule__Value__TreeAssignment_1_0 ) ) | ( ( rule__Value__Group_1_1__0 ) ) | ( ( rule__Value__EmptyAssignment_1_2 ) ) | ( ( rule__Value__ArgvalueAssignment_1_3 ) ) | ( ( rule__Value__UrnAssignment_1_4 ) ) | ( ( rule__Value__LiteralAssignment_1_5 ) ) | ( ( rule__Value__IdAssignment_1_6 ) ) | ( ( rule__Value__ListAssignment_1_7 ) ) | ( ( rule__Value__MapAssignment_1_8 ) ) | ( ( rule__Value__ConstantAssignment_1_9 ) ) | ( ( rule__Value__ObservableAssignment_1_10 ) ) | ( ( rule__Value__ExpressionAssignment_1_11 ) ) | ( ( rule__Value__TableAssignment_1_12 ) ) | ( ( rule__Value__QuantityAssignment_1_13 ) ) )
-            int alt23=14;
+            // InternalKactors.g:2489:1: ( ( ( rule__Value__TreeAssignment_1_0 ) ) | ( ( rule__Value__EmptyAssignment_1_1 ) ) | ( ( rule__Value__ArgvalueAssignment_1_2 ) ) | ( ( rule__Value__UrnAssignment_1_3 ) ) | ( ( rule__Value__LiteralAssignment_1_4 ) ) | ( ( rule__Value__IdAssignment_1_5 ) ) | ( ( rule__Value__ListAssignment_1_6 ) ) | ( ( rule__Value__MapAssignment_1_7 ) ) | ( ( rule__Value__ConstantAssignment_1_8 ) ) | ( ( rule__Value__ObservableAssignment_1_9 ) ) | ( ( rule__Value__ExpressionAssignment_1_10 ) ) | ( ( rule__Value__TableAssignment_1_11 ) ) | ( ( rule__Value__QuantityAssignment_1_12 ) ) )
+            int alt23=13;
             alt23 = dfa23.predict(input);
             switch (alt23) {
                 case 1 :
@@ -9263,19 +9263,19 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
                     break;
                 case 2 :
-                    // InternalKactors.g:2496:2: ( ( rule__Value__Group_1_1__0 ) )
+                    // InternalKactors.g:2496:2: ( ( rule__Value__EmptyAssignment_1_1 ) )
                     {
-                    // InternalKactors.g:2496:2: ( ( rule__Value__Group_1_1__0 ) )
-                    // InternalKactors.g:2497:3: ( rule__Value__Group_1_1__0 )
+                    // InternalKactors.g:2496:2: ( ( rule__Value__EmptyAssignment_1_1 ) )
+                    // InternalKactors.g:2497:3: ( rule__Value__EmptyAssignment_1_1 )
                     {
                     if ( state.backtracking==0 ) {
-                       before(grammarAccess.getValueAccess().getGroup_1_1()); 
+                       before(grammarAccess.getValueAccess().getEmptyAssignment_1_1()); 
                     }
-                    // InternalKactors.g:2498:3: ( rule__Value__Group_1_1__0 )
-                    // InternalKactors.g:2498:4: rule__Value__Group_1_1__0
+                    // InternalKactors.g:2498:3: ( rule__Value__EmptyAssignment_1_1 )
+                    // InternalKactors.g:2498:4: rule__Value__EmptyAssignment_1_1
                     {
                     pushFollow(FOLLOW_2);
-                    rule__Value__Group_1_1__0();
+                    rule__Value__EmptyAssignment_1_1();
 
                     state._fsp--;
                     if (state.failed) return ;
@@ -9283,7 +9283,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
 
                     if ( state.backtracking==0 ) {
-                       after(grammarAccess.getValueAccess().getGroup_1_1()); 
+                       after(grammarAccess.getValueAccess().getEmptyAssignment_1_1()); 
                     }
 
                     }
@@ -9292,19 +9292,19 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
                     break;
                 case 3 :
-                    // InternalKactors.g:2502:2: ( ( rule__Value__EmptyAssignment_1_2 ) )
+                    // InternalKactors.g:2502:2: ( ( rule__Value__ArgvalueAssignment_1_2 ) )
                     {
-                    // InternalKactors.g:2502:2: ( ( rule__Value__EmptyAssignment_1_2 ) )
-                    // InternalKactors.g:2503:3: ( rule__Value__EmptyAssignment_1_2 )
+                    // InternalKactors.g:2502:2: ( ( rule__Value__ArgvalueAssignment_1_2 ) )
+                    // InternalKactors.g:2503:3: ( rule__Value__ArgvalueAssignment_1_2 )
                     {
                     if ( state.backtracking==0 ) {
-                       before(grammarAccess.getValueAccess().getEmptyAssignment_1_2()); 
+                       before(grammarAccess.getValueAccess().getArgvalueAssignment_1_2()); 
                     }
-                    // InternalKactors.g:2504:3: ( rule__Value__EmptyAssignment_1_2 )
-                    // InternalKactors.g:2504:4: rule__Value__EmptyAssignment_1_2
+                    // InternalKactors.g:2504:3: ( rule__Value__ArgvalueAssignment_1_2 )
+                    // InternalKactors.g:2504:4: rule__Value__ArgvalueAssignment_1_2
                     {
                     pushFollow(FOLLOW_2);
-                    rule__Value__EmptyAssignment_1_2();
+                    rule__Value__ArgvalueAssignment_1_2();
 
                     state._fsp--;
                     if (state.failed) return ;
@@ -9312,7 +9312,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
 
                     if ( state.backtracking==0 ) {
-                       after(grammarAccess.getValueAccess().getEmptyAssignment_1_2()); 
+                       after(grammarAccess.getValueAccess().getArgvalueAssignment_1_2()); 
                     }
 
                     }
@@ -9321,19 +9321,19 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
                     break;
                 case 4 :
-                    // InternalKactors.g:2508:2: ( ( rule__Value__ArgvalueAssignment_1_3 ) )
+                    // InternalKactors.g:2508:2: ( ( rule__Value__UrnAssignment_1_3 ) )
                     {
-                    // InternalKactors.g:2508:2: ( ( rule__Value__ArgvalueAssignment_1_3 ) )
-                    // InternalKactors.g:2509:3: ( rule__Value__ArgvalueAssignment_1_3 )
+                    // InternalKactors.g:2508:2: ( ( rule__Value__UrnAssignment_1_3 ) )
+                    // InternalKactors.g:2509:3: ( rule__Value__UrnAssignment_1_3 )
                     {
                     if ( state.backtracking==0 ) {
-                       before(grammarAccess.getValueAccess().getArgvalueAssignment_1_3()); 
+                       before(grammarAccess.getValueAccess().getUrnAssignment_1_3()); 
                     }
-                    // InternalKactors.g:2510:3: ( rule__Value__ArgvalueAssignment_1_3 )
-                    // InternalKactors.g:2510:4: rule__Value__ArgvalueAssignment_1_3
+                    // InternalKactors.g:2510:3: ( rule__Value__UrnAssignment_1_3 )
+                    // InternalKactors.g:2510:4: rule__Value__UrnAssignment_1_3
                     {
                     pushFollow(FOLLOW_2);
-                    rule__Value__ArgvalueAssignment_1_3();
+                    rule__Value__UrnAssignment_1_3();
 
                     state._fsp--;
                     if (state.failed) return ;
@@ -9341,7 +9341,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
 
                     if ( state.backtracking==0 ) {
-                       after(grammarAccess.getValueAccess().getArgvalueAssignment_1_3()); 
+                       after(grammarAccess.getValueAccess().getUrnAssignment_1_3()); 
                     }
 
                     }
@@ -9350,19 +9350,19 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
                     break;
                 case 5 :
-                    // InternalKactors.g:2514:2: ( ( rule__Value__UrnAssignment_1_4 ) )
+                    // InternalKactors.g:2514:2: ( ( rule__Value__LiteralAssignment_1_4 ) )
                     {
-                    // InternalKactors.g:2514:2: ( ( rule__Value__UrnAssignment_1_4 ) )
-                    // InternalKactors.g:2515:3: ( rule__Value__UrnAssignment_1_4 )
+                    // InternalKactors.g:2514:2: ( ( rule__Value__LiteralAssignment_1_4 ) )
+                    // InternalKactors.g:2515:3: ( rule__Value__LiteralAssignment_1_4 )
                     {
                     if ( state.backtracking==0 ) {
-                       before(grammarAccess.getValueAccess().getUrnAssignment_1_4()); 
+                       before(grammarAccess.getValueAccess().getLiteralAssignment_1_4()); 
                     }
-                    // InternalKactors.g:2516:3: ( rule__Value__UrnAssignment_1_4 )
-                    // InternalKactors.g:2516:4: rule__Value__UrnAssignment_1_4
+                    // InternalKactors.g:2516:3: ( rule__Value__LiteralAssignment_1_4 )
+                    // InternalKactors.g:2516:4: rule__Value__LiteralAssignment_1_4
                     {
                     pushFollow(FOLLOW_2);
-                    rule__Value__UrnAssignment_1_4();
+                    rule__Value__LiteralAssignment_1_4();
 
                     state._fsp--;
                     if (state.failed) return ;
@@ -9370,7 +9370,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
 
                     if ( state.backtracking==0 ) {
-                       after(grammarAccess.getValueAccess().getUrnAssignment_1_4()); 
+                       after(grammarAccess.getValueAccess().getLiteralAssignment_1_4()); 
                     }
 
                     }
@@ -9379,19 +9379,19 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
                     break;
                 case 6 :
-                    // InternalKactors.g:2520:2: ( ( rule__Value__LiteralAssignment_1_5 ) )
+                    // InternalKactors.g:2520:2: ( ( rule__Value__IdAssignment_1_5 ) )
                     {
-                    // InternalKactors.g:2520:2: ( ( rule__Value__LiteralAssignment_1_5 ) )
-                    // InternalKactors.g:2521:3: ( rule__Value__LiteralAssignment_1_5 )
+                    // InternalKactors.g:2520:2: ( ( rule__Value__IdAssignment_1_5 ) )
+                    // InternalKactors.g:2521:3: ( rule__Value__IdAssignment_1_5 )
                     {
                     if ( state.backtracking==0 ) {
-                       before(grammarAccess.getValueAccess().getLiteralAssignment_1_5()); 
+                       before(grammarAccess.getValueAccess().getIdAssignment_1_5()); 
                     }
-                    // InternalKactors.g:2522:3: ( rule__Value__LiteralAssignment_1_5 )
-                    // InternalKactors.g:2522:4: rule__Value__LiteralAssignment_1_5
+                    // InternalKactors.g:2522:3: ( rule__Value__IdAssignment_1_5 )
+                    // InternalKactors.g:2522:4: rule__Value__IdAssignment_1_5
                     {
                     pushFollow(FOLLOW_2);
-                    rule__Value__LiteralAssignment_1_5();
+                    rule__Value__IdAssignment_1_5();
 
                     state._fsp--;
                     if (state.failed) return ;
@@ -9399,7 +9399,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
 
                     if ( state.backtracking==0 ) {
-                       after(grammarAccess.getValueAccess().getLiteralAssignment_1_5()); 
+                       after(grammarAccess.getValueAccess().getIdAssignment_1_5()); 
                     }
 
                     }
@@ -9408,19 +9408,19 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
                     break;
                 case 7 :
-                    // InternalKactors.g:2526:2: ( ( rule__Value__IdAssignment_1_6 ) )
+                    // InternalKactors.g:2526:2: ( ( rule__Value__ListAssignment_1_6 ) )
                     {
-                    // InternalKactors.g:2526:2: ( ( rule__Value__IdAssignment_1_6 ) )
-                    // InternalKactors.g:2527:3: ( rule__Value__IdAssignment_1_6 )
+                    // InternalKactors.g:2526:2: ( ( rule__Value__ListAssignment_1_6 ) )
+                    // InternalKactors.g:2527:3: ( rule__Value__ListAssignment_1_6 )
                     {
                     if ( state.backtracking==0 ) {
-                       before(grammarAccess.getValueAccess().getIdAssignment_1_6()); 
+                       before(grammarAccess.getValueAccess().getListAssignment_1_6()); 
                     }
-                    // InternalKactors.g:2528:3: ( rule__Value__IdAssignment_1_6 )
-                    // InternalKactors.g:2528:4: rule__Value__IdAssignment_1_6
+                    // InternalKactors.g:2528:3: ( rule__Value__ListAssignment_1_6 )
+                    // InternalKactors.g:2528:4: rule__Value__ListAssignment_1_6
                     {
                     pushFollow(FOLLOW_2);
-                    rule__Value__IdAssignment_1_6();
+                    rule__Value__ListAssignment_1_6();
 
                     state._fsp--;
                     if (state.failed) return ;
@@ -9428,7 +9428,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
 
                     if ( state.backtracking==0 ) {
-                       after(grammarAccess.getValueAccess().getIdAssignment_1_6()); 
+                       after(grammarAccess.getValueAccess().getListAssignment_1_6()); 
                     }
 
                     }
@@ -9437,19 +9437,19 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
                     break;
                 case 8 :
-                    // InternalKactors.g:2532:2: ( ( rule__Value__ListAssignment_1_7 ) )
+                    // InternalKactors.g:2532:2: ( ( rule__Value__MapAssignment_1_7 ) )
                     {
-                    // InternalKactors.g:2532:2: ( ( rule__Value__ListAssignment_1_7 ) )
-                    // InternalKactors.g:2533:3: ( rule__Value__ListAssignment_1_7 )
+                    // InternalKactors.g:2532:2: ( ( rule__Value__MapAssignment_1_7 ) )
+                    // InternalKactors.g:2533:3: ( rule__Value__MapAssignment_1_7 )
                     {
                     if ( state.backtracking==0 ) {
-                       before(grammarAccess.getValueAccess().getListAssignment_1_7()); 
+                       before(grammarAccess.getValueAccess().getMapAssignment_1_7()); 
                     }
-                    // InternalKactors.g:2534:3: ( rule__Value__ListAssignment_1_7 )
-                    // InternalKactors.g:2534:4: rule__Value__ListAssignment_1_7
+                    // InternalKactors.g:2534:3: ( rule__Value__MapAssignment_1_7 )
+                    // InternalKactors.g:2534:4: rule__Value__MapAssignment_1_7
                     {
                     pushFollow(FOLLOW_2);
-                    rule__Value__ListAssignment_1_7();
+                    rule__Value__MapAssignment_1_7();
 
                     state._fsp--;
                     if (state.failed) return ;
@@ -9457,7 +9457,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
 
                     if ( state.backtracking==0 ) {
-                       after(grammarAccess.getValueAccess().getListAssignment_1_7()); 
+                       after(grammarAccess.getValueAccess().getMapAssignment_1_7()); 
                     }
 
                     }
@@ -9466,19 +9466,19 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
                     break;
                 case 9 :
-                    // InternalKactors.g:2538:2: ( ( rule__Value__MapAssignment_1_8 ) )
+                    // InternalKactors.g:2538:2: ( ( rule__Value__ConstantAssignment_1_8 ) )
                     {
-                    // InternalKactors.g:2538:2: ( ( rule__Value__MapAssignment_1_8 ) )
-                    // InternalKactors.g:2539:3: ( rule__Value__MapAssignment_1_8 )
+                    // InternalKactors.g:2538:2: ( ( rule__Value__ConstantAssignment_1_8 ) )
+                    // InternalKactors.g:2539:3: ( rule__Value__ConstantAssignment_1_8 )
                     {
                     if ( state.backtracking==0 ) {
-                       before(grammarAccess.getValueAccess().getMapAssignment_1_8()); 
+                       before(grammarAccess.getValueAccess().getConstantAssignment_1_8()); 
                     }
-                    // InternalKactors.g:2540:3: ( rule__Value__MapAssignment_1_8 )
-                    // InternalKactors.g:2540:4: rule__Value__MapAssignment_1_8
+                    // InternalKactors.g:2540:3: ( rule__Value__ConstantAssignment_1_8 )
+                    // InternalKactors.g:2540:4: rule__Value__ConstantAssignment_1_8
                     {
                     pushFollow(FOLLOW_2);
-                    rule__Value__MapAssignment_1_8();
+                    rule__Value__ConstantAssignment_1_8();
 
                     state._fsp--;
                     if (state.failed) return ;
@@ -9486,7 +9486,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
 
                     if ( state.backtracking==0 ) {
-                       after(grammarAccess.getValueAccess().getMapAssignment_1_8()); 
+                       after(grammarAccess.getValueAccess().getConstantAssignment_1_8()); 
                     }
 
                     }
@@ -9495,19 +9495,19 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
                     break;
                 case 10 :
-                    // InternalKactors.g:2544:2: ( ( rule__Value__ConstantAssignment_1_9 ) )
+                    // InternalKactors.g:2544:2: ( ( rule__Value__ObservableAssignment_1_9 ) )
                     {
-                    // InternalKactors.g:2544:2: ( ( rule__Value__ConstantAssignment_1_9 ) )
-                    // InternalKactors.g:2545:3: ( rule__Value__ConstantAssignment_1_9 )
+                    // InternalKactors.g:2544:2: ( ( rule__Value__ObservableAssignment_1_9 ) )
+                    // InternalKactors.g:2545:3: ( rule__Value__ObservableAssignment_1_9 )
                     {
                     if ( state.backtracking==0 ) {
-                       before(grammarAccess.getValueAccess().getConstantAssignment_1_9()); 
+                       before(grammarAccess.getValueAccess().getObservableAssignment_1_9()); 
                     }
-                    // InternalKactors.g:2546:3: ( rule__Value__ConstantAssignment_1_9 )
-                    // InternalKactors.g:2546:4: rule__Value__ConstantAssignment_1_9
+                    // InternalKactors.g:2546:3: ( rule__Value__ObservableAssignment_1_9 )
+                    // InternalKactors.g:2546:4: rule__Value__ObservableAssignment_1_9
                     {
                     pushFollow(FOLLOW_2);
-                    rule__Value__ConstantAssignment_1_9();
+                    rule__Value__ObservableAssignment_1_9();
 
                     state._fsp--;
                     if (state.failed) return ;
@@ -9515,7 +9515,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
 
                     if ( state.backtracking==0 ) {
-                       after(grammarAccess.getValueAccess().getConstantAssignment_1_9()); 
+                       after(grammarAccess.getValueAccess().getObservableAssignment_1_9()); 
                     }
 
                     }
@@ -9524,19 +9524,19 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
                     break;
                 case 11 :
-                    // InternalKactors.g:2550:2: ( ( rule__Value__ObservableAssignment_1_10 ) )
+                    // InternalKactors.g:2550:2: ( ( rule__Value__ExpressionAssignment_1_10 ) )
                     {
-                    // InternalKactors.g:2550:2: ( ( rule__Value__ObservableAssignment_1_10 ) )
-                    // InternalKactors.g:2551:3: ( rule__Value__ObservableAssignment_1_10 )
+                    // InternalKactors.g:2550:2: ( ( rule__Value__ExpressionAssignment_1_10 ) )
+                    // InternalKactors.g:2551:3: ( rule__Value__ExpressionAssignment_1_10 )
                     {
                     if ( state.backtracking==0 ) {
-                       before(grammarAccess.getValueAccess().getObservableAssignment_1_10()); 
+                       before(grammarAccess.getValueAccess().getExpressionAssignment_1_10()); 
                     }
-                    // InternalKactors.g:2552:3: ( rule__Value__ObservableAssignment_1_10 )
-                    // InternalKactors.g:2552:4: rule__Value__ObservableAssignment_1_10
+                    // InternalKactors.g:2552:3: ( rule__Value__ExpressionAssignment_1_10 )
+                    // InternalKactors.g:2552:4: rule__Value__ExpressionAssignment_1_10
                     {
                     pushFollow(FOLLOW_2);
-                    rule__Value__ObservableAssignment_1_10();
+                    rule__Value__ExpressionAssignment_1_10();
 
                     state._fsp--;
                     if (state.failed) return ;
@@ -9544,7 +9544,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
 
                     if ( state.backtracking==0 ) {
-                       after(grammarAccess.getValueAccess().getObservableAssignment_1_10()); 
+                       after(grammarAccess.getValueAccess().getExpressionAssignment_1_10()); 
                     }
 
                     }
@@ -9553,19 +9553,19 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
                     break;
                 case 12 :
-                    // InternalKactors.g:2556:2: ( ( rule__Value__ExpressionAssignment_1_11 ) )
+                    // InternalKactors.g:2556:2: ( ( rule__Value__TableAssignment_1_11 ) )
                     {
-                    // InternalKactors.g:2556:2: ( ( rule__Value__ExpressionAssignment_1_11 ) )
-                    // InternalKactors.g:2557:3: ( rule__Value__ExpressionAssignment_1_11 )
+                    // InternalKactors.g:2556:2: ( ( rule__Value__TableAssignment_1_11 ) )
+                    // InternalKactors.g:2557:3: ( rule__Value__TableAssignment_1_11 )
                     {
                     if ( state.backtracking==0 ) {
-                       before(grammarAccess.getValueAccess().getExpressionAssignment_1_11()); 
+                       before(grammarAccess.getValueAccess().getTableAssignment_1_11()); 
                     }
-                    // InternalKactors.g:2558:3: ( rule__Value__ExpressionAssignment_1_11 )
-                    // InternalKactors.g:2558:4: rule__Value__ExpressionAssignment_1_11
+                    // InternalKactors.g:2558:3: ( rule__Value__TableAssignment_1_11 )
+                    // InternalKactors.g:2558:4: rule__Value__TableAssignment_1_11
                     {
                     pushFollow(FOLLOW_2);
-                    rule__Value__ExpressionAssignment_1_11();
+                    rule__Value__TableAssignment_1_11();
 
                     state._fsp--;
                     if (state.failed) return ;
@@ -9573,7 +9573,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
 
                     if ( state.backtracking==0 ) {
-                       after(grammarAccess.getValueAccess().getExpressionAssignment_1_11()); 
+                       after(grammarAccess.getValueAccess().getTableAssignment_1_11()); 
                     }
 
                     }
@@ -9582,19 +9582,19 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
                     break;
                 case 13 :
-                    // InternalKactors.g:2562:2: ( ( rule__Value__TableAssignment_1_12 ) )
+                    // InternalKactors.g:2562:2: ( ( rule__Value__QuantityAssignment_1_12 ) )
                     {
-                    // InternalKactors.g:2562:2: ( ( rule__Value__TableAssignment_1_12 ) )
-                    // InternalKactors.g:2563:3: ( rule__Value__TableAssignment_1_12 )
+                    // InternalKactors.g:2562:2: ( ( rule__Value__QuantityAssignment_1_12 ) )
+                    // InternalKactors.g:2563:3: ( rule__Value__QuantityAssignment_1_12 )
                     {
                     if ( state.backtracking==0 ) {
-                       before(grammarAccess.getValueAccess().getTableAssignment_1_12()); 
+                       before(grammarAccess.getValueAccess().getQuantityAssignment_1_12()); 
                     }
-                    // InternalKactors.g:2564:3: ( rule__Value__TableAssignment_1_12 )
-                    // InternalKactors.g:2564:4: rule__Value__TableAssignment_1_12
+                    // InternalKactors.g:2564:3: ( rule__Value__QuantityAssignment_1_12 )
+                    // InternalKactors.g:2564:4: rule__Value__QuantityAssignment_1_12
                     {
                     pushFollow(FOLLOW_2);
-                    rule__Value__TableAssignment_1_12();
+                    rule__Value__QuantityAssignment_1_12();
 
                     state._fsp--;
                     if (state.failed) return ;
@@ -9602,36 +9602,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
 
                     if ( state.backtracking==0 ) {
-                       after(grammarAccess.getValueAccess().getTableAssignment_1_12()); 
-                    }
-
-                    }
-
-
-                    }
-                    break;
-                case 14 :
-                    // InternalKactors.g:2568:2: ( ( rule__Value__QuantityAssignment_1_13 ) )
-                    {
-                    // InternalKactors.g:2568:2: ( ( rule__Value__QuantityAssignment_1_13 ) )
-                    // InternalKactors.g:2569:3: ( rule__Value__QuantityAssignment_1_13 )
-                    {
-                    if ( state.backtracking==0 ) {
-                       before(grammarAccess.getValueAccess().getQuantityAssignment_1_13()); 
-                    }
-                    // InternalKactors.g:2570:3: ( rule__Value__QuantityAssignment_1_13 )
-                    // InternalKactors.g:2570:4: rule__Value__QuantityAssignment_1_13
-                    {
-                    pushFollow(FOLLOW_2);
-                    rule__Value__QuantityAssignment_1_13();
-
-                    state._fsp--;
-                    if (state.failed) return ;
-
-                    }
-
-                    if ( state.backtracking==0 ) {
-                       after(grammarAccess.getValueAccess().getQuantityAssignment_1_13()); 
+                       after(grammarAccess.getValueAccess().getQuantityAssignment_1_12()); 
                     }
 
                     }
@@ -9657,27 +9628,27 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ValueWithConstructor__Alternatives_1"
-    // InternalKactors.g:2578:1: rule__ValueWithConstructor__Alternatives_1 : ( ( ( rule__ValueWithConstructor__ConstructorAssignment_1_0 ) ) | ( ( rule__ValueWithConstructor__TreeAssignment_1_1 ) ) | ( ( rule__ValueWithConstructor__EmptyAssignment_1_2 ) ) | ( ( rule__ValueWithConstructor__ArgvalueAssignment_1_3 ) ) | ( ( rule__ValueWithConstructor__LiteralAssignment_1_4 ) ) | ( ( rule__ValueWithConstructor__UrnAssignment_1_5 ) ) | ( ( rule__ValueWithConstructor__IdAssignment_1_6 ) ) | ( ( rule__ValueWithConstructor__ListAssignment_1_7 ) ) | ( ( rule__ValueWithConstructor__MapAssignment_1_8 ) ) | ( ( rule__ValueWithConstructor__ConstantAssignment_1_9 ) ) | ( ( rule__ValueWithConstructor__ObservableAssignment_1_10 ) ) | ( ( rule__ValueWithConstructor__ExpressionAssignment_1_11 ) ) | ( ( rule__ValueWithConstructor__TableAssignment_1_12 ) ) | ( ( rule__ValueWithConstructor__QuantityAssignment_1_13 ) ) | ( ( rule__ValueWithConstructor__Group_1_14__0 ) ) );
+    // InternalKactors.g:2572:1: rule__ValueWithConstructor__Alternatives_1 : ( ( ( rule__ValueWithConstructor__ConstructorAssignment_1_0 ) ) | ( ( rule__ValueWithConstructor__Group_1_1__0 ) ) | ( ( rule__ValueWithConstructor__TreeAssignment_1_2 ) ) | ( ( rule__ValueWithConstructor__EmptyAssignment_1_3 ) ) | ( ( rule__ValueWithConstructor__ArgvalueAssignment_1_4 ) ) | ( ( rule__ValueWithConstructor__LiteralAssignment_1_5 ) ) | ( ( rule__ValueWithConstructor__UrnAssignment_1_6 ) ) | ( ( rule__ValueWithConstructor__IdAssignment_1_7 ) ) | ( ( rule__ValueWithConstructor__ListAssignment_1_8 ) ) | ( ( rule__ValueWithConstructor__MapAssignment_1_9 ) ) | ( ( rule__ValueWithConstructor__ConstantAssignment_1_10 ) ) | ( ( rule__ValueWithConstructor__ObservableAssignment_1_11 ) ) | ( ( rule__ValueWithConstructor__ExpressionAssignment_1_12 ) ) | ( ( rule__ValueWithConstructor__TableAssignment_1_13 ) ) | ( ( rule__ValueWithConstructor__QuantityAssignment_1_14 ) ) | ( ( rule__ValueWithConstructor__Group_1_15__0 ) ) );
     public final void rule__ValueWithConstructor__Alternatives_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:2582:1: ( ( ( rule__ValueWithConstructor__ConstructorAssignment_1_0 ) ) | ( ( rule__ValueWithConstructor__TreeAssignment_1_1 ) ) | ( ( rule__ValueWithConstructor__EmptyAssignment_1_2 ) ) | ( ( rule__ValueWithConstructor__ArgvalueAssignment_1_3 ) ) | ( ( rule__ValueWithConstructor__LiteralAssignment_1_4 ) ) | ( ( rule__ValueWithConstructor__UrnAssignment_1_5 ) ) | ( ( rule__ValueWithConstructor__IdAssignment_1_6 ) ) | ( ( rule__ValueWithConstructor__ListAssignment_1_7 ) ) | ( ( rule__ValueWithConstructor__MapAssignment_1_8 ) ) | ( ( rule__ValueWithConstructor__ConstantAssignment_1_9 ) ) | ( ( rule__ValueWithConstructor__ObservableAssignment_1_10 ) ) | ( ( rule__ValueWithConstructor__ExpressionAssignment_1_11 ) ) | ( ( rule__ValueWithConstructor__TableAssignment_1_12 ) ) | ( ( rule__ValueWithConstructor__QuantityAssignment_1_13 ) ) | ( ( rule__ValueWithConstructor__Group_1_14__0 ) ) )
-            int alt24=15;
+            // InternalKactors.g:2576:1: ( ( ( rule__ValueWithConstructor__ConstructorAssignment_1_0 ) ) | ( ( rule__ValueWithConstructor__Group_1_1__0 ) ) | ( ( rule__ValueWithConstructor__TreeAssignment_1_2 ) ) | ( ( rule__ValueWithConstructor__EmptyAssignment_1_3 ) ) | ( ( rule__ValueWithConstructor__ArgvalueAssignment_1_4 ) ) | ( ( rule__ValueWithConstructor__LiteralAssignment_1_5 ) ) | ( ( rule__ValueWithConstructor__UrnAssignment_1_6 ) ) | ( ( rule__ValueWithConstructor__IdAssignment_1_7 ) ) | ( ( rule__ValueWithConstructor__ListAssignment_1_8 ) ) | ( ( rule__ValueWithConstructor__MapAssignment_1_9 ) ) | ( ( rule__ValueWithConstructor__ConstantAssignment_1_10 ) ) | ( ( rule__ValueWithConstructor__ObservableAssignment_1_11 ) ) | ( ( rule__ValueWithConstructor__ExpressionAssignment_1_12 ) ) | ( ( rule__ValueWithConstructor__TableAssignment_1_13 ) ) | ( ( rule__ValueWithConstructor__QuantityAssignment_1_14 ) ) | ( ( rule__ValueWithConstructor__Group_1_15__0 ) ) )
+            int alt24=16;
             alt24 = dfa24.predict(input);
             switch (alt24) {
                 case 1 :
-                    // InternalKactors.g:2583:2: ( ( rule__ValueWithConstructor__ConstructorAssignment_1_0 ) )
+                    // InternalKactors.g:2577:2: ( ( rule__ValueWithConstructor__ConstructorAssignment_1_0 ) )
                     {
-                    // InternalKactors.g:2583:2: ( ( rule__ValueWithConstructor__ConstructorAssignment_1_0 ) )
-                    // InternalKactors.g:2584:3: ( rule__ValueWithConstructor__ConstructorAssignment_1_0 )
+                    // InternalKactors.g:2577:2: ( ( rule__ValueWithConstructor__ConstructorAssignment_1_0 ) )
+                    // InternalKactors.g:2578:3: ( rule__ValueWithConstructor__ConstructorAssignment_1_0 )
                     {
                     if ( state.backtracking==0 ) {
                        before(grammarAccess.getValueWithConstructorAccess().getConstructorAssignment_1_0()); 
                     }
-                    // InternalKactors.g:2585:3: ( rule__ValueWithConstructor__ConstructorAssignment_1_0 )
-                    // InternalKactors.g:2585:4: rule__ValueWithConstructor__ConstructorAssignment_1_0
+                    // InternalKactors.g:2579:3: ( rule__ValueWithConstructor__ConstructorAssignment_1_0 )
+                    // InternalKactors.g:2579:4: rule__ValueWithConstructor__ConstructorAssignment_1_0
                     {
                     pushFollow(FOLLOW_2);
                     rule__ValueWithConstructor__ConstructorAssignment_1_0();
@@ -9697,19 +9668,19 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
                     break;
                 case 2 :
-                    // InternalKactors.g:2589:2: ( ( rule__ValueWithConstructor__TreeAssignment_1_1 ) )
+                    // InternalKactors.g:2583:2: ( ( rule__ValueWithConstructor__Group_1_1__0 ) )
                     {
-                    // InternalKactors.g:2589:2: ( ( rule__ValueWithConstructor__TreeAssignment_1_1 ) )
-                    // InternalKactors.g:2590:3: ( rule__ValueWithConstructor__TreeAssignment_1_1 )
+                    // InternalKactors.g:2583:2: ( ( rule__ValueWithConstructor__Group_1_1__0 ) )
+                    // InternalKactors.g:2584:3: ( rule__ValueWithConstructor__Group_1_1__0 )
                     {
                     if ( state.backtracking==0 ) {
-                       before(grammarAccess.getValueWithConstructorAccess().getTreeAssignment_1_1()); 
+                       before(grammarAccess.getValueWithConstructorAccess().getGroup_1_1()); 
                     }
-                    // InternalKactors.g:2591:3: ( rule__ValueWithConstructor__TreeAssignment_1_1 )
-                    // InternalKactors.g:2591:4: rule__ValueWithConstructor__TreeAssignment_1_1
+                    // InternalKactors.g:2585:3: ( rule__ValueWithConstructor__Group_1_1__0 )
+                    // InternalKactors.g:2585:4: rule__ValueWithConstructor__Group_1_1__0
                     {
                     pushFollow(FOLLOW_2);
-                    rule__ValueWithConstructor__TreeAssignment_1_1();
+                    rule__ValueWithConstructor__Group_1_1__0();
 
                     state._fsp--;
                     if (state.failed) return ;
@@ -9717,7 +9688,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
 
                     if ( state.backtracking==0 ) {
-                       after(grammarAccess.getValueWithConstructorAccess().getTreeAssignment_1_1()); 
+                       after(grammarAccess.getValueWithConstructorAccess().getGroup_1_1()); 
                     }
 
                     }
@@ -9726,19 +9697,19 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
                     break;
                 case 3 :
-                    // InternalKactors.g:2595:2: ( ( rule__ValueWithConstructor__EmptyAssignment_1_2 ) )
+                    // InternalKactors.g:2589:2: ( ( rule__ValueWithConstructor__TreeAssignment_1_2 ) )
                     {
-                    // InternalKactors.g:2595:2: ( ( rule__ValueWithConstructor__EmptyAssignment_1_2 ) )
-                    // InternalKactors.g:2596:3: ( rule__ValueWithConstructor__EmptyAssignment_1_2 )
+                    // InternalKactors.g:2589:2: ( ( rule__ValueWithConstructor__TreeAssignment_1_2 ) )
+                    // InternalKactors.g:2590:3: ( rule__ValueWithConstructor__TreeAssignment_1_2 )
                     {
                     if ( state.backtracking==0 ) {
-                       before(grammarAccess.getValueWithConstructorAccess().getEmptyAssignment_1_2()); 
+                       before(grammarAccess.getValueWithConstructorAccess().getTreeAssignment_1_2()); 
                     }
-                    // InternalKactors.g:2597:3: ( rule__ValueWithConstructor__EmptyAssignment_1_2 )
-                    // InternalKactors.g:2597:4: rule__ValueWithConstructor__EmptyAssignment_1_2
+                    // InternalKactors.g:2591:3: ( rule__ValueWithConstructor__TreeAssignment_1_2 )
+                    // InternalKactors.g:2591:4: rule__ValueWithConstructor__TreeAssignment_1_2
                     {
                     pushFollow(FOLLOW_2);
-                    rule__ValueWithConstructor__EmptyAssignment_1_2();
+                    rule__ValueWithConstructor__TreeAssignment_1_2();
 
                     state._fsp--;
                     if (state.failed) return ;
@@ -9746,7 +9717,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
 
                     if ( state.backtracking==0 ) {
-                       after(grammarAccess.getValueWithConstructorAccess().getEmptyAssignment_1_2()); 
+                       after(grammarAccess.getValueWithConstructorAccess().getTreeAssignment_1_2()); 
                     }
 
                     }
@@ -9755,19 +9726,19 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
                     break;
                 case 4 :
-                    // InternalKactors.g:2601:2: ( ( rule__ValueWithConstructor__ArgvalueAssignment_1_3 ) )
+                    // InternalKactors.g:2595:2: ( ( rule__ValueWithConstructor__EmptyAssignment_1_3 ) )
                     {
-                    // InternalKactors.g:2601:2: ( ( rule__ValueWithConstructor__ArgvalueAssignment_1_3 ) )
-                    // InternalKactors.g:2602:3: ( rule__ValueWithConstructor__ArgvalueAssignment_1_3 )
+                    // InternalKactors.g:2595:2: ( ( rule__ValueWithConstructor__EmptyAssignment_1_3 ) )
+                    // InternalKactors.g:2596:3: ( rule__ValueWithConstructor__EmptyAssignment_1_3 )
                     {
                     if ( state.backtracking==0 ) {
-                       before(grammarAccess.getValueWithConstructorAccess().getArgvalueAssignment_1_3()); 
+                       before(grammarAccess.getValueWithConstructorAccess().getEmptyAssignment_1_3()); 
                     }
-                    // InternalKactors.g:2603:3: ( rule__ValueWithConstructor__ArgvalueAssignment_1_3 )
-                    // InternalKactors.g:2603:4: rule__ValueWithConstructor__ArgvalueAssignment_1_3
+                    // InternalKactors.g:2597:3: ( rule__ValueWithConstructor__EmptyAssignment_1_3 )
+                    // InternalKactors.g:2597:4: rule__ValueWithConstructor__EmptyAssignment_1_3
                     {
                     pushFollow(FOLLOW_2);
-                    rule__ValueWithConstructor__ArgvalueAssignment_1_3();
+                    rule__ValueWithConstructor__EmptyAssignment_1_3();
 
                     state._fsp--;
                     if (state.failed) return ;
@@ -9775,7 +9746,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
 
                     if ( state.backtracking==0 ) {
-                       after(grammarAccess.getValueWithConstructorAccess().getArgvalueAssignment_1_3()); 
+                       after(grammarAccess.getValueWithConstructorAccess().getEmptyAssignment_1_3()); 
                     }
 
                     }
@@ -9784,19 +9755,19 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
                     break;
                 case 5 :
-                    // InternalKactors.g:2607:2: ( ( rule__ValueWithConstructor__LiteralAssignment_1_4 ) )
+                    // InternalKactors.g:2601:2: ( ( rule__ValueWithConstructor__ArgvalueAssignment_1_4 ) )
                     {
-                    // InternalKactors.g:2607:2: ( ( rule__ValueWithConstructor__LiteralAssignment_1_4 ) )
-                    // InternalKactors.g:2608:3: ( rule__ValueWithConstructor__LiteralAssignment_1_4 )
+                    // InternalKactors.g:2601:2: ( ( rule__ValueWithConstructor__ArgvalueAssignment_1_4 ) )
+                    // InternalKactors.g:2602:3: ( rule__ValueWithConstructor__ArgvalueAssignment_1_4 )
                     {
                     if ( state.backtracking==0 ) {
-                       before(grammarAccess.getValueWithConstructorAccess().getLiteralAssignment_1_4()); 
+                       before(grammarAccess.getValueWithConstructorAccess().getArgvalueAssignment_1_4()); 
                     }
-                    // InternalKactors.g:2609:3: ( rule__ValueWithConstructor__LiteralAssignment_1_4 )
-                    // InternalKactors.g:2609:4: rule__ValueWithConstructor__LiteralAssignment_1_4
+                    // InternalKactors.g:2603:3: ( rule__ValueWithConstructor__ArgvalueAssignment_1_4 )
+                    // InternalKactors.g:2603:4: rule__ValueWithConstructor__ArgvalueAssignment_1_4
                     {
                     pushFollow(FOLLOW_2);
-                    rule__ValueWithConstructor__LiteralAssignment_1_4();
+                    rule__ValueWithConstructor__ArgvalueAssignment_1_4();
 
                     state._fsp--;
                     if (state.failed) return ;
@@ -9804,7 +9775,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
 
                     if ( state.backtracking==0 ) {
-                       after(grammarAccess.getValueWithConstructorAccess().getLiteralAssignment_1_4()); 
+                       after(grammarAccess.getValueWithConstructorAccess().getArgvalueAssignment_1_4()); 
                     }
 
                     }
@@ -9813,19 +9784,19 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
                     break;
                 case 6 :
-                    // InternalKactors.g:2613:2: ( ( rule__ValueWithConstructor__UrnAssignment_1_5 ) )
+                    // InternalKactors.g:2607:2: ( ( rule__ValueWithConstructor__LiteralAssignment_1_5 ) )
                     {
-                    // InternalKactors.g:2613:2: ( ( rule__ValueWithConstructor__UrnAssignment_1_5 ) )
-                    // InternalKactors.g:2614:3: ( rule__ValueWithConstructor__UrnAssignment_1_5 )
+                    // InternalKactors.g:2607:2: ( ( rule__ValueWithConstructor__LiteralAssignment_1_5 ) )
+                    // InternalKactors.g:2608:3: ( rule__ValueWithConstructor__LiteralAssignment_1_5 )
                     {
                     if ( state.backtracking==0 ) {
-                       before(grammarAccess.getValueWithConstructorAccess().getUrnAssignment_1_5()); 
+                       before(grammarAccess.getValueWithConstructorAccess().getLiteralAssignment_1_5()); 
                     }
-                    // InternalKactors.g:2615:3: ( rule__ValueWithConstructor__UrnAssignment_1_5 )
-                    // InternalKactors.g:2615:4: rule__ValueWithConstructor__UrnAssignment_1_5
+                    // InternalKactors.g:2609:3: ( rule__ValueWithConstructor__LiteralAssignment_1_5 )
+                    // InternalKactors.g:2609:4: rule__ValueWithConstructor__LiteralAssignment_1_5
                     {
                     pushFollow(FOLLOW_2);
-                    rule__ValueWithConstructor__UrnAssignment_1_5();
+                    rule__ValueWithConstructor__LiteralAssignment_1_5();
 
                     state._fsp--;
                     if (state.failed) return ;
@@ -9833,7 +9804,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
 
                     if ( state.backtracking==0 ) {
-                       after(grammarAccess.getValueWithConstructorAccess().getUrnAssignment_1_5()); 
+                       after(grammarAccess.getValueWithConstructorAccess().getLiteralAssignment_1_5()); 
                     }
 
                     }
@@ -9842,19 +9813,19 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
                     break;
                 case 7 :
-                    // InternalKactors.g:2619:2: ( ( rule__ValueWithConstructor__IdAssignment_1_6 ) )
+                    // InternalKactors.g:2613:2: ( ( rule__ValueWithConstructor__UrnAssignment_1_6 ) )
                     {
-                    // InternalKactors.g:2619:2: ( ( rule__ValueWithConstructor__IdAssignment_1_6 ) )
-                    // InternalKactors.g:2620:3: ( rule__ValueWithConstructor__IdAssignment_1_6 )
+                    // InternalKactors.g:2613:2: ( ( rule__ValueWithConstructor__UrnAssignment_1_6 ) )
+                    // InternalKactors.g:2614:3: ( rule__ValueWithConstructor__UrnAssignment_1_6 )
                     {
                     if ( state.backtracking==0 ) {
-                       before(grammarAccess.getValueWithConstructorAccess().getIdAssignment_1_6()); 
+                       before(grammarAccess.getValueWithConstructorAccess().getUrnAssignment_1_6()); 
                     }
-                    // InternalKactors.g:2621:3: ( rule__ValueWithConstructor__IdAssignment_1_6 )
-                    // InternalKactors.g:2621:4: rule__ValueWithConstructor__IdAssignment_1_6
+                    // InternalKactors.g:2615:3: ( rule__ValueWithConstructor__UrnAssignment_1_6 )
+                    // InternalKactors.g:2615:4: rule__ValueWithConstructor__UrnAssignment_1_6
                     {
                     pushFollow(FOLLOW_2);
-                    rule__ValueWithConstructor__IdAssignment_1_6();
+                    rule__ValueWithConstructor__UrnAssignment_1_6();
 
                     state._fsp--;
                     if (state.failed) return ;
@@ -9862,7 +9833,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
 
                     if ( state.backtracking==0 ) {
-                       after(grammarAccess.getValueWithConstructorAccess().getIdAssignment_1_6()); 
+                       after(grammarAccess.getValueWithConstructorAccess().getUrnAssignment_1_6()); 
                     }
 
                     }
@@ -9871,19 +9842,19 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
                     break;
                 case 8 :
-                    // InternalKactors.g:2625:2: ( ( rule__ValueWithConstructor__ListAssignment_1_7 ) )
+                    // InternalKactors.g:2619:2: ( ( rule__ValueWithConstructor__IdAssignment_1_7 ) )
                     {
-                    // InternalKactors.g:2625:2: ( ( rule__ValueWithConstructor__ListAssignment_1_7 ) )
-                    // InternalKactors.g:2626:3: ( rule__ValueWithConstructor__ListAssignment_1_7 )
+                    // InternalKactors.g:2619:2: ( ( rule__ValueWithConstructor__IdAssignment_1_7 ) )
+                    // InternalKactors.g:2620:3: ( rule__ValueWithConstructor__IdAssignment_1_7 )
                     {
                     if ( state.backtracking==0 ) {
-                       before(grammarAccess.getValueWithConstructorAccess().getListAssignment_1_7()); 
+                       before(grammarAccess.getValueWithConstructorAccess().getIdAssignment_1_7()); 
                     }
-                    // InternalKactors.g:2627:3: ( rule__ValueWithConstructor__ListAssignment_1_7 )
-                    // InternalKactors.g:2627:4: rule__ValueWithConstructor__ListAssignment_1_7
+                    // InternalKactors.g:2621:3: ( rule__ValueWithConstructor__IdAssignment_1_7 )
+                    // InternalKactors.g:2621:4: rule__ValueWithConstructor__IdAssignment_1_7
                     {
                     pushFollow(FOLLOW_2);
-                    rule__ValueWithConstructor__ListAssignment_1_7();
+                    rule__ValueWithConstructor__IdAssignment_1_7();
 
                     state._fsp--;
                     if (state.failed) return ;
@@ -9891,7 +9862,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
 
                     if ( state.backtracking==0 ) {
-                       after(grammarAccess.getValueWithConstructorAccess().getListAssignment_1_7()); 
+                       after(grammarAccess.getValueWithConstructorAccess().getIdAssignment_1_7()); 
                     }
 
                     }
@@ -9900,19 +9871,19 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
                     break;
                 case 9 :
-                    // InternalKactors.g:2631:2: ( ( rule__ValueWithConstructor__MapAssignment_1_8 ) )
+                    // InternalKactors.g:2625:2: ( ( rule__ValueWithConstructor__ListAssignment_1_8 ) )
                     {
-                    // InternalKactors.g:2631:2: ( ( rule__ValueWithConstructor__MapAssignment_1_8 ) )
-                    // InternalKactors.g:2632:3: ( rule__ValueWithConstructor__MapAssignment_1_8 )
+                    // InternalKactors.g:2625:2: ( ( rule__ValueWithConstructor__ListAssignment_1_8 ) )
+                    // InternalKactors.g:2626:3: ( rule__ValueWithConstructor__ListAssignment_1_8 )
                     {
                     if ( state.backtracking==0 ) {
-                       before(grammarAccess.getValueWithConstructorAccess().getMapAssignment_1_8()); 
+                       before(grammarAccess.getValueWithConstructorAccess().getListAssignment_1_8()); 
                     }
-                    // InternalKactors.g:2633:3: ( rule__ValueWithConstructor__MapAssignment_1_8 )
-                    // InternalKactors.g:2633:4: rule__ValueWithConstructor__MapAssignment_1_8
+                    // InternalKactors.g:2627:3: ( rule__ValueWithConstructor__ListAssignment_1_8 )
+                    // InternalKactors.g:2627:4: rule__ValueWithConstructor__ListAssignment_1_8
                     {
                     pushFollow(FOLLOW_2);
-                    rule__ValueWithConstructor__MapAssignment_1_8();
+                    rule__ValueWithConstructor__ListAssignment_1_8();
 
                     state._fsp--;
                     if (state.failed) return ;
@@ -9920,7 +9891,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
 
                     if ( state.backtracking==0 ) {
-                       after(grammarAccess.getValueWithConstructorAccess().getMapAssignment_1_8()); 
+                       after(grammarAccess.getValueWithConstructorAccess().getListAssignment_1_8()); 
                     }
 
                     }
@@ -9929,19 +9900,19 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
                     break;
                 case 10 :
-                    // InternalKactors.g:2637:2: ( ( rule__ValueWithConstructor__ConstantAssignment_1_9 ) )
+                    // InternalKactors.g:2631:2: ( ( rule__ValueWithConstructor__MapAssignment_1_9 ) )
                     {
-                    // InternalKactors.g:2637:2: ( ( rule__ValueWithConstructor__ConstantAssignment_1_9 ) )
-                    // InternalKactors.g:2638:3: ( rule__ValueWithConstructor__ConstantAssignment_1_9 )
+                    // InternalKactors.g:2631:2: ( ( rule__ValueWithConstructor__MapAssignment_1_9 ) )
+                    // InternalKactors.g:2632:3: ( rule__ValueWithConstructor__MapAssignment_1_9 )
                     {
                     if ( state.backtracking==0 ) {
-                       before(grammarAccess.getValueWithConstructorAccess().getConstantAssignment_1_9()); 
+                       before(grammarAccess.getValueWithConstructorAccess().getMapAssignment_1_9()); 
                     }
-                    // InternalKactors.g:2639:3: ( rule__ValueWithConstructor__ConstantAssignment_1_9 )
-                    // InternalKactors.g:2639:4: rule__ValueWithConstructor__ConstantAssignment_1_9
+                    // InternalKactors.g:2633:3: ( rule__ValueWithConstructor__MapAssignment_1_9 )
+                    // InternalKactors.g:2633:4: rule__ValueWithConstructor__MapAssignment_1_9
                     {
                     pushFollow(FOLLOW_2);
-                    rule__ValueWithConstructor__ConstantAssignment_1_9();
+                    rule__ValueWithConstructor__MapAssignment_1_9();
 
                     state._fsp--;
                     if (state.failed) return ;
@@ -9949,7 +9920,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
 
                     if ( state.backtracking==0 ) {
-                       after(grammarAccess.getValueWithConstructorAccess().getConstantAssignment_1_9()); 
+                       after(grammarAccess.getValueWithConstructorAccess().getMapAssignment_1_9()); 
                     }
 
                     }
@@ -9958,19 +9929,19 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
                     break;
                 case 11 :
-                    // InternalKactors.g:2643:2: ( ( rule__ValueWithConstructor__ObservableAssignment_1_10 ) )
+                    // InternalKactors.g:2637:2: ( ( rule__ValueWithConstructor__ConstantAssignment_1_10 ) )
                     {
-                    // InternalKactors.g:2643:2: ( ( rule__ValueWithConstructor__ObservableAssignment_1_10 ) )
-                    // InternalKactors.g:2644:3: ( rule__ValueWithConstructor__ObservableAssignment_1_10 )
+                    // InternalKactors.g:2637:2: ( ( rule__ValueWithConstructor__ConstantAssignment_1_10 ) )
+                    // InternalKactors.g:2638:3: ( rule__ValueWithConstructor__ConstantAssignment_1_10 )
                     {
                     if ( state.backtracking==0 ) {
-                       before(grammarAccess.getValueWithConstructorAccess().getObservableAssignment_1_10()); 
+                       before(grammarAccess.getValueWithConstructorAccess().getConstantAssignment_1_10()); 
                     }
-                    // InternalKactors.g:2645:3: ( rule__ValueWithConstructor__ObservableAssignment_1_10 )
-                    // InternalKactors.g:2645:4: rule__ValueWithConstructor__ObservableAssignment_1_10
+                    // InternalKactors.g:2639:3: ( rule__ValueWithConstructor__ConstantAssignment_1_10 )
+                    // InternalKactors.g:2639:4: rule__ValueWithConstructor__ConstantAssignment_1_10
                     {
                     pushFollow(FOLLOW_2);
-                    rule__ValueWithConstructor__ObservableAssignment_1_10();
+                    rule__ValueWithConstructor__ConstantAssignment_1_10();
 
                     state._fsp--;
                     if (state.failed) return ;
@@ -9978,7 +9949,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
 
                     if ( state.backtracking==0 ) {
-                       after(grammarAccess.getValueWithConstructorAccess().getObservableAssignment_1_10()); 
+                       after(grammarAccess.getValueWithConstructorAccess().getConstantAssignment_1_10()); 
                     }
 
                     }
@@ -9987,19 +9958,19 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
                     break;
                 case 12 :
-                    // InternalKactors.g:2649:2: ( ( rule__ValueWithConstructor__ExpressionAssignment_1_11 ) )
+                    // InternalKactors.g:2643:2: ( ( rule__ValueWithConstructor__ObservableAssignment_1_11 ) )
                     {
-                    // InternalKactors.g:2649:2: ( ( rule__ValueWithConstructor__ExpressionAssignment_1_11 ) )
-                    // InternalKactors.g:2650:3: ( rule__ValueWithConstructor__ExpressionAssignment_1_11 )
+                    // InternalKactors.g:2643:2: ( ( rule__ValueWithConstructor__ObservableAssignment_1_11 ) )
+                    // InternalKactors.g:2644:3: ( rule__ValueWithConstructor__ObservableAssignment_1_11 )
                     {
                     if ( state.backtracking==0 ) {
-                       before(grammarAccess.getValueWithConstructorAccess().getExpressionAssignment_1_11()); 
+                       before(grammarAccess.getValueWithConstructorAccess().getObservableAssignment_1_11()); 
                     }
-                    // InternalKactors.g:2651:3: ( rule__ValueWithConstructor__ExpressionAssignment_1_11 )
-                    // InternalKactors.g:2651:4: rule__ValueWithConstructor__ExpressionAssignment_1_11
+                    // InternalKactors.g:2645:3: ( rule__ValueWithConstructor__ObservableAssignment_1_11 )
+                    // InternalKactors.g:2645:4: rule__ValueWithConstructor__ObservableAssignment_1_11
                     {
                     pushFollow(FOLLOW_2);
-                    rule__ValueWithConstructor__ExpressionAssignment_1_11();
+                    rule__ValueWithConstructor__ObservableAssignment_1_11();
 
                     state._fsp--;
                     if (state.failed) return ;
@@ -10007,7 +9978,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
 
                     if ( state.backtracking==0 ) {
-                       after(grammarAccess.getValueWithConstructorAccess().getExpressionAssignment_1_11()); 
+                       after(grammarAccess.getValueWithConstructorAccess().getObservableAssignment_1_11()); 
                     }
 
                     }
@@ -10016,19 +9987,19 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
                     break;
                 case 13 :
-                    // InternalKactors.g:2655:2: ( ( rule__ValueWithConstructor__TableAssignment_1_12 ) )
+                    // InternalKactors.g:2649:2: ( ( rule__ValueWithConstructor__ExpressionAssignment_1_12 ) )
                     {
-                    // InternalKactors.g:2655:2: ( ( rule__ValueWithConstructor__TableAssignment_1_12 ) )
-                    // InternalKactors.g:2656:3: ( rule__ValueWithConstructor__TableAssignment_1_12 )
+                    // InternalKactors.g:2649:2: ( ( rule__ValueWithConstructor__ExpressionAssignment_1_12 ) )
+                    // InternalKactors.g:2650:3: ( rule__ValueWithConstructor__ExpressionAssignment_1_12 )
                     {
                     if ( state.backtracking==0 ) {
-                       before(grammarAccess.getValueWithConstructorAccess().getTableAssignment_1_12()); 
+                       before(grammarAccess.getValueWithConstructorAccess().getExpressionAssignment_1_12()); 
                     }
-                    // InternalKactors.g:2657:3: ( rule__ValueWithConstructor__TableAssignment_1_12 )
-                    // InternalKactors.g:2657:4: rule__ValueWithConstructor__TableAssignment_1_12
+                    // InternalKactors.g:2651:3: ( rule__ValueWithConstructor__ExpressionAssignment_1_12 )
+                    // InternalKactors.g:2651:4: rule__ValueWithConstructor__ExpressionAssignment_1_12
                     {
                     pushFollow(FOLLOW_2);
-                    rule__ValueWithConstructor__TableAssignment_1_12();
+                    rule__ValueWithConstructor__ExpressionAssignment_1_12();
 
                     state._fsp--;
                     if (state.failed) return ;
@@ -10036,7 +10007,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
 
                     if ( state.backtracking==0 ) {
-                       after(grammarAccess.getValueWithConstructorAccess().getTableAssignment_1_12()); 
+                       after(grammarAccess.getValueWithConstructorAccess().getExpressionAssignment_1_12()); 
                     }
 
                     }
@@ -10045,19 +10016,19 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
                     break;
                 case 14 :
-                    // InternalKactors.g:2661:2: ( ( rule__ValueWithConstructor__QuantityAssignment_1_13 ) )
+                    // InternalKactors.g:2655:2: ( ( rule__ValueWithConstructor__TableAssignment_1_13 ) )
                     {
-                    // InternalKactors.g:2661:2: ( ( rule__ValueWithConstructor__QuantityAssignment_1_13 ) )
-                    // InternalKactors.g:2662:3: ( rule__ValueWithConstructor__QuantityAssignment_1_13 )
+                    // InternalKactors.g:2655:2: ( ( rule__ValueWithConstructor__TableAssignment_1_13 ) )
+                    // InternalKactors.g:2656:3: ( rule__ValueWithConstructor__TableAssignment_1_13 )
                     {
                     if ( state.backtracking==0 ) {
-                       before(grammarAccess.getValueWithConstructorAccess().getQuantityAssignment_1_13()); 
+                       before(grammarAccess.getValueWithConstructorAccess().getTableAssignment_1_13()); 
                     }
-                    // InternalKactors.g:2663:3: ( rule__ValueWithConstructor__QuantityAssignment_1_13 )
-                    // InternalKactors.g:2663:4: rule__ValueWithConstructor__QuantityAssignment_1_13
+                    // InternalKactors.g:2657:3: ( rule__ValueWithConstructor__TableAssignment_1_13 )
+                    // InternalKactors.g:2657:4: rule__ValueWithConstructor__TableAssignment_1_13
                     {
                     pushFollow(FOLLOW_2);
-                    rule__ValueWithConstructor__QuantityAssignment_1_13();
+                    rule__ValueWithConstructor__TableAssignment_1_13();
 
                     state._fsp--;
                     if (state.failed) return ;
@@ -10065,7 +10036,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
 
                     if ( state.backtracking==0 ) {
-                       after(grammarAccess.getValueWithConstructorAccess().getQuantityAssignment_1_13()); 
+                       after(grammarAccess.getValueWithConstructorAccess().getTableAssignment_1_13()); 
                     }
 
                     }
@@ -10074,19 +10045,19 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
                     break;
                 case 15 :
-                    // InternalKactors.g:2667:2: ( ( rule__ValueWithConstructor__Group_1_14__0 ) )
+                    // InternalKactors.g:2661:2: ( ( rule__ValueWithConstructor__QuantityAssignment_1_14 ) )
                     {
-                    // InternalKactors.g:2667:2: ( ( rule__ValueWithConstructor__Group_1_14__0 ) )
-                    // InternalKactors.g:2668:3: ( rule__ValueWithConstructor__Group_1_14__0 )
+                    // InternalKactors.g:2661:2: ( ( rule__ValueWithConstructor__QuantityAssignment_1_14 ) )
+                    // InternalKactors.g:2662:3: ( rule__ValueWithConstructor__QuantityAssignment_1_14 )
                     {
                     if ( state.backtracking==0 ) {
-                       before(grammarAccess.getValueWithConstructorAccess().getGroup_1_14()); 
+                       before(grammarAccess.getValueWithConstructorAccess().getQuantityAssignment_1_14()); 
                     }
-                    // InternalKactors.g:2669:3: ( rule__ValueWithConstructor__Group_1_14__0 )
-                    // InternalKactors.g:2669:4: rule__ValueWithConstructor__Group_1_14__0
+                    // InternalKactors.g:2663:3: ( rule__ValueWithConstructor__QuantityAssignment_1_14 )
+                    // InternalKactors.g:2663:4: rule__ValueWithConstructor__QuantityAssignment_1_14
                     {
                     pushFollow(FOLLOW_2);
-                    rule__ValueWithConstructor__Group_1_14__0();
+                    rule__ValueWithConstructor__QuantityAssignment_1_14();
 
                     state._fsp--;
                     if (state.failed) return ;
@@ -10094,7 +10065,36 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                     }
 
                     if ( state.backtracking==0 ) {
-                       after(grammarAccess.getValueWithConstructorAccess().getGroup_1_14()); 
+                       after(grammarAccess.getValueWithConstructorAccess().getQuantityAssignment_1_14()); 
+                    }
+
+                    }
+
+
+                    }
+                    break;
+                case 16 :
+                    // InternalKactors.g:2667:2: ( ( rule__ValueWithConstructor__Group_1_15__0 ) )
+                    {
+                    // InternalKactors.g:2667:2: ( ( rule__ValueWithConstructor__Group_1_15__0 ) )
+                    // InternalKactors.g:2668:3: ( rule__ValueWithConstructor__Group_1_15__0 )
+                    {
+                    if ( state.backtracking==0 ) {
+                       before(grammarAccess.getValueWithConstructorAccess().getGroup_1_15()); 
+                    }
+                    // InternalKactors.g:2669:3: ( rule__ValueWithConstructor__Group_1_15__0 )
+                    // InternalKactors.g:2669:4: rule__ValueWithConstructor__Group_1_15__0
+                    {
+                    pushFollow(FOLLOW_2);
+                    rule__ValueWithConstructor__Group_1_15__0();
+
+                    state._fsp--;
+                    if (state.failed) return ;
+
+                    }
+
+                    if ( state.backtracking==0 ) {
+                       after(grammarAccess.getValueWithConstructorAccess().getGroup_1_15()); 
                     }
 
                     }
@@ -34265,384 +34265,15 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
     // $ANTLR end "rule__Value__Group__2__Impl"
 
 
-    // $ANTLR start "rule__Value__Group_1_1__0"
-    // InternalKactors.g:9373:1: rule__Value__Group_1_1__0 : rule__Value__Group_1_1__0__Impl rule__Value__Group_1_1__1 ;
-    public final void rule__Value__Group_1_1__0() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalKactors.g:9377:1: ( rule__Value__Group_1_1__0__Impl rule__Value__Group_1_1__1 )
-            // InternalKactors.g:9378:2: rule__Value__Group_1_1__0__Impl rule__Value__Group_1_1__1
-            {
-            pushFollow(FOLLOW_54);
-            rule__Value__Group_1_1__0__Impl();
-
-            state._fsp--;
-            if (state.failed) return ;
-            pushFollow(FOLLOW_2);
-            rule__Value__Group_1_1__1();
-
-            state._fsp--;
-            if (state.failed) return ;
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__Value__Group_1_1__0"
-
-
-    // $ANTLR start "rule__Value__Group_1_1__0__Impl"
-    // InternalKactors.g:9385:1: rule__Value__Group_1_1__0__Impl : ( ( rule__Value__Group_1_1_0__0 )* ) ;
-    public final void rule__Value__Group_1_1__0__Impl() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalKactors.g:9389:1: ( ( ( rule__Value__Group_1_1_0__0 )* ) )
-            // InternalKactors.g:9390:1: ( ( rule__Value__Group_1_1_0__0 )* )
-            {
-            // InternalKactors.g:9390:1: ( ( rule__Value__Group_1_1_0__0 )* )
-            // InternalKactors.g:9391:2: ( rule__Value__Group_1_1_0__0 )*
-            {
-            if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueAccess().getGroup_1_1_0()); 
-            }
-            // InternalKactors.g:9392:2: ( rule__Value__Group_1_1_0__0 )*
-            loop138:
-            do {
-                int alt138=2;
-                int LA138_0 = input.LA(1);
-
-                if ( (LA138_0==RULE_ARGVALUE) ) {
-                    int LA138_1 = input.LA(2);
-
-                    if ( (synpred292_InternalKactors()) ) {
-                        alt138=1;
-                    }
-
-
-                }
-                else if ( (LA138_0==RULE_LOWERCASE_ID) ) {
-                    int LA138_2 = input.LA(2);
-
-                    if ( (synpred292_InternalKactors()) ) {
-                        alt138=1;
-                    }
-
-
-                }
-
-
-                switch (alt138) {
-            	case 1 :
-            	    // InternalKactors.g:9392:3: rule__Value__Group_1_1_0__0
-            	    {
-            	    pushFollow(FOLLOW_30);
-            	    rule__Value__Group_1_1_0__0();
-
-            	    state._fsp--;
-            	    if (state.failed) return ;
-
-            	    }
-            	    break;
-
-            	default :
-            	    break loop138;
-                }
-            } while (true);
-
-            if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueAccess().getGroup_1_1_0()); 
-            }
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__Value__Group_1_1__0__Impl"
-
-
-    // $ANTLR start "rule__Value__Group_1_1__1"
-    // InternalKactors.g:9400:1: rule__Value__Group_1_1__1 : rule__Value__Group_1_1__1__Impl ;
-    public final void rule__Value__Group_1_1__1() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalKactors.g:9404:1: ( rule__Value__Group_1_1__1__Impl )
-            // InternalKactors.g:9405:2: rule__Value__Group_1_1__1__Impl
-            {
-            pushFollow(FOLLOW_2);
-            rule__Value__Group_1_1__1__Impl();
-
-            state._fsp--;
-            if (state.failed) return ;
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__Value__Group_1_1__1"
-
-
-    // $ANTLR start "rule__Value__Group_1_1__1__Impl"
-    // InternalKactors.g:9411:1: rule__Value__Group_1_1__1__Impl : ( ( rule__Value__MethodCallsAssignment_1_1_1 ) ) ;
-    public final void rule__Value__Group_1_1__1__Impl() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalKactors.g:9415:1: ( ( ( rule__Value__MethodCallsAssignment_1_1_1 ) ) )
-            // InternalKactors.g:9416:1: ( ( rule__Value__MethodCallsAssignment_1_1_1 ) )
-            {
-            // InternalKactors.g:9416:1: ( ( rule__Value__MethodCallsAssignment_1_1_1 ) )
-            // InternalKactors.g:9417:2: ( rule__Value__MethodCallsAssignment_1_1_1 )
-            {
-            if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueAccess().getMethodCallsAssignment_1_1_1()); 
-            }
-            // InternalKactors.g:9418:2: ( rule__Value__MethodCallsAssignment_1_1_1 )
-            // InternalKactors.g:9418:3: rule__Value__MethodCallsAssignment_1_1_1
-            {
-            pushFollow(FOLLOW_2);
-            rule__Value__MethodCallsAssignment_1_1_1();
-
-            state._fsp--;
-            if (state.failed) return ;
-
-            }
-
-            if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueAccess().getMethodCallsAssignment_1_1_1()); 
-            }
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__Value__Group_1_1__1__Impl"
-
-
-    // $ANTLR start "rule__Value__Group_1_1_0__0"
-    // InternalKactors.g:9427:1: rule__Value__Group_1_1_0__0 : rule__Value__Group_1_1_0__0__Impl rule__Value__Group_1_1_0__1 ;
-    public final void rule__Value__Group_1_1_0__0() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalKactors.g:9431:1: ( rule__Value__Group_1_1_0__0__Impl rule__Value__Group_1_1_0__1 )
-            // InternalKactors.g:9432:2: rule__Value__Group_1_1_0__0__Impl rule__Value__Group_1_1_0__1
-            {
-            pushFollow(FOLLOW_32);
-            rule__Value__Group_1_1_0__0__Impl();
-
-            state._fsp--;
-            if (state.failed) return ;
-            pushFollow(FOLLOW_2);
-            rule__Value__Group_1_1_0__1();
-
-            state._fsp--;
-            if (state.failed) return ;
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__Value__Group_1_1_0__0"
-
-
-    // $ANTLR start "rule__Value__Group_1_1_0__0__Impl"
-    // InternalKactors.g:9439:1: rule__Value__Group_1_1_0__0__Impl : ( ( rule__Value__MethodCallsAssignment_1_1_0_0 ) ) ;
-    public final void rule__Value__Group_1_1_0__0__Impl() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalKactors.g:9443:1: ( ( ( rule__Value__MethodCallsAssignment_1_1_0_0 ) ) )
-            // InternalKactors.g:9444:1: ( ( rule__Value__MethodCallsAssignment_1_1_0_0 ) )
-            {
-            // InternalKactors.g:9444:1: ( ( rule__Value__MethodCallsAssignment_1_1_0_0 ) )
-            // InternalKactors.g:9445:2: ( rule__Value__MethodCallsAssignment_1_1_0_0 )
-            {
-            if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueAccess().getMethodCallsAssignment_1_1_0_0()); 
-            }
-            // InternalKactors.g:9446:2: ( rule__Value__MethodCallsAssignment_1_1_0_0 )
-            // InternalKactors.g:9446:3: rule__Value__MethodCallsAssignment_1_1_0_0
-            {
-            pushFollow(FOLLOW_2);
-            rule__Value__MethodCallsAssignment_1_1_0_0();
-
-            state._fsp--;
-            if (state.failed) return ;
-
-            }
-
-            if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueAccess().getMethodCallsAssignment_1_1_0_0()); 
-            }
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__Value__Group_1_1_0__0__Impl"
-
-
-    // $ANTLR start "rule__Value__Group_1_1_0__1"
-    // InternalKactors.g:9454:1: rule__Value__Group_1_1_0__1 : rule__Value__Group_1_1_0__1__Impl ;
-    public final void rule__Value__Group_1_1_0__1() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalKactors.g:9458:1: ( rule__Value__Group_1_1_0__1__Impl )
-            // InternalKactors.g:9459:2: rule__Value__Group_1_1_0__1__Impl
-            {
-            pushFollow(FOLLOW_2);
-            rule__Value__Group_1_1_0__1__Impl();
-
-            state._fsp--;
-            if (state.failed) return ;
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__Value__Group_1_1_0__1"
-
-
-    // $ANTLR start "rule__Value__Group_1_1_0__1__Impl"
-    // InternalKactors.g:9465:1: rule__Value__Group_1_1_0__1__Impl : ( '.' ) ;
-    public final void rule__Value__Group_1_1_0__1__Impl() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalKactors.g:9469:1: ( ( '.' ) )
-            // InternalKactors.g:9470:1: ( '.' )
-            {
-            // InternalKactors.g:9470:1: ( '.' )
-            // InternalKactors.g:9471:2: '.'
-            {
-            if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueAccess().getFullStopKeyword_1_1_0_1()); 
-            }
-            match(input,35,FOLLOW_2); if (state.failed) return ;
-            if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueAccess().getFullStopKeyword_1_1_0_1()); 
-            }
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__Value__Group_1_1_0__1__Impl"
-
-
     // $ANTLR start "rule__Value__Group_2__0"
-    // InternalKactors.g:9481:1: rule__Value__Group_2__0 : rule__Value__Group_2__0__Impl rule__Value__Group_2__1 ;
+    // InternalKactors.g:9373:1: rule__Value__Group_2__0 : rule__Value__Group_2__0__Impl rule__Value__Group_2__1 ;
     public final void rule__Value__Group_2__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:9485:1: ( rule__Value__Group_2__0__Impl rule__Value__Group_2__1 )
-            // InternalKactors.g:9486:2: rule__Value__Group_2__0__Impl rule__Value__Group_2__1
+            // InternalKactors.g:9377:1: ( rule__Value__Group_2__0__Impl rule__Value__Group_2__1 )
+            // InternalKactors.g:9378:2: rule__Value__Group_2__0__Impl rule__Value__Group_2__1
             {
             pushFollow(FOLLOW_40);
             rule__Value__Group_2__0__Impl();
@@ -34673,17 +34304,17 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Value__Group_2__0__Impl"
-    // InternalKactors.g:9493:1: rule__Value__Group_2__0__Impl : ( '?' ) ;
+    // InternalKactors.g:9385:1: rule__Value__Group_2__0__Impl : ( '?' ) ;
     public final void rule__Value__Group_2__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:9497:1: ( ( '?' ) )
-            // InternalKactors.g:9498:1: ( '?' )
+            // InternalKactors.g:9389:1: ( ( '?' ) )
+            // InternalKactors.g:9390:1: ( '?' )
             {
-            // InternalKactors.g:9498:1: ( '?' )
-            // InternalKactors.g:9499:2: '?'
+            // InternalKactors.g:9390:1: ( '?' )
+            // InternalKactors.g:9391:2: '?'
             {
             if ( state.backtracking==0 ) {
                before(grammarAccess.getValueAccess().getQuestionMarkKeyword_2_0()); 
@@ -34714,14 +34345,14 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Value__Group_2__1"
-    // InternalKactors.g:9508:1: rule__Value__Group_2__1 : rule__Value__Group_2__1__Impl rule__Value__Group_2__2 ;
+    // InternalKactors.g:9400:1: rule__Value__Group_2__1 : rule__Value__Group_2__1__Impl rule__Value__Group_2__2 ;
     public final void rule__Value__Group_2__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:9512:1: ( rule__Value__Group_2__1__Impl rule__Value__Group_2__2 )
-            // InternalKactors.g:9513:2: rule__Value__Group_2__1__Impl rule__Value__Group_2__2
+            // InternalKactors.g:9404:1: ( rule__Value__Group_2__1__Impl rule__Value__Group_2__2 )
+            // InternalKactors.g:9405:2: rule__Value__Group_2__1__Impl rule__Value__Group_2__2
             {
             pushFollow(FOLLOW_31);
             rule__Value__Group_2__1__Impl();
@@ -34752,23 +34383,23 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Value__Group_2__1__Impl"
-    // InternalKactors.g:9520:1: rule__Value__Group_2__1__Impl : ( ( rule__Value__ThenAssignment_2_1 ) ) ;
+    // InternalKactors.g:9412:1: rule__Value__Group_2__1__Impl : ( ( rule__Value__ThenAssignment_2_1 ) ) ;
     public final void rule__Value__Group_2__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:9524:1: ( ( ( rule__Value__ThenAssignment_2_1 ) ) )
-            // InternalKactors.g:9525:1: ( ( rule__Value__ThenAssignment_2_1 ) )
+            // InternalKactors.g:9416:1: ( ( ( rule__Value__ThenAssignment_2_1 ) ) )
+            // InternalKactors.g:9417:1: ( ( rule__Value__ThenAssignment_2_1 ) )
             {
-            // InternalKactors.g:9525:1: ( ( rule__Value__ThenAssignment_2_1 ) )
-            // InternalKactors.g:9526:2: ( rule__Value__ThenAssignment_2_1 )
+            // InternalKactors.g:9417:1: ( ( rule__Value__ThenAssignment_2_1 ) )
+            // InternalKactors.g:9418:2: ( rule__Value__ThenAssignment_2_1 )
             {
             if ( state.backtracking==0 ) {
                before(grammarAccess.getValueAccess().getThenAssignment_2_1()); 
             }
-            // InternalKactors.g:9527:2: ( rule__Value__ThenAssignment_2_1 )
-            // InternalKactors.g:9527:3: rule__Value__ThenAssignment_2_1
+            // InternalKactors.g:9419:2: ( rule__Value__ThenAssignment_2_1 )
+            // InternalKactors.g:9419:3: rule__Value__ThenAssignment_2_1
             {
             pushFollow(FOLLOW_2);
             rule__Value__ThenAssignment_2_1();
@@ -34803,14 +34434,14 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Value__Group_2__2"
-    // InternalKactors.g:9535:1: rule__Value__Group_2__2 : rule__Value__Group_2__2__Impl rule__Value__Group_2__3 ;
+    // InternalKactors.g:9427:1: rule__Value__Group_2__2 : rule__Value__Group_2__2__Impl rule__Value__Group_2__3 ;
     public final void rule__Value__Group_2__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:9539:1: ( rule__Value__Group_2__2__Impl rule__Value__Group_2__3 )
-            // InternalKactors.g:9540:2: rule__Value__Group_2__2__Impl rule__Value__Group_2__3
+            // InternalKactors.g:9431:1: ( rule__Value__Group_2__2__Impl rule__Value__Group_2__3 )
+            // InternalKactors.g:9432:2: rule__Value__Group_2__2__Impl rule__Value__Group_2__3
             {
             pushFollow(FOLLOW_40);
             rule__Value__Group_2__2__Impl();
@@ -34841,17 +34472,17 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Value__Group_2__2__Impl"
-    // InternalKactors.g:9547:1: rule__Value__Group_2__2__Impl : ( ':' ) ;
+    // InternalKactors.g:9439:1: rule__Value__Group_2__2__Impl : ( ':' ) ;
     public final void rule__Value__Group_2__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:9551:1: ( ( ':' ) )
-            // InternalKactors.g:9552:1: ( ':' )
+            // InternalKactors.g:9443:1: ( ( ':' ) )
+            // InternalKactors.g:9444:1: ( ':' )
             {
-            // InternalKactors.g:9552:1: ( ':' )
-            // InternalKactors.g:9553:2: ':'
+            // InternalKactors.g:9444:1: ( ':' )
+            // InternalKactors.g:9445:2: ':'
             {
             if ( state.backtracking==0 ) {
                before(grammarAccess.getValueAccess().getColonKeyword_2_2()); 
@@ -34882,14 +34513,14 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Value__Group_2__3"
-    // InternalKactors.g:9562:1: rule__Value__Group_2__3 : rule__Value__Group_2__3__Impl ;
+    // InternalKactors.g:9454:1: rule__Value__Group_2__3 : rule__Value__Group_2__3__Impl ;
     public final void rule__Value__Group_2__3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:9566:1: ( rule__Value__Group_2__3__Impl )
-            // InternalKactors.g:9567:2: rule__Value__Group_2__3__Impl
+            // InternalKactors.g:9458:1: ( rule__Value__Group_2__3__Impl )
+            // InternalKactors.g:9459:2: rule__Value__Group_2__3__Impl
             {
             pushFollow(FOLLOW_2);
             rule__Value__Group_2__3__Impl();
@@ -34915,23 +34546,23 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Value__Group_2__3__Impl"
-    // InternalKactors.g:9573:1: rule__Value__Group_2__3__Impl : ( ( rule__Value__ElseAssignment_2_3 ) ) ;
+    // InternalKactors.g:9465:1: rule__Value__Group_2__3__Impl : ( ( rule__Value__ElseAssignment_2_3 ) ) ;
     public final void rule__Value__Group_2__3__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:9577:1: ( ( ( rule__Value__ElseAssignment_2_3 ) ) )
-            // InternalKactors.g:9578:1: ( ( rule__Value__ElseAssignment_2_3 ) )
+            // InternalKactors.g:9469:1: ( ( ( rule__Value__ElseAssignment_2_3 ) ) )
+            // InternalKactors.g:9470:1: ( ( rule__Value__ElseAssignment_2_3 ) )
             {
-            // InternalKactors.g:9578:1: ( ( rule__Value__ElseAssignment_2_3 ) )
-            // InternalKactors.g:9579:2: ( rule__Value__ElseAssignment_2_3 )
+            // InternalKactors.g:9470:1: ( ( rule__Value__ElseAssignment_2_3 ) )
+            // InternalKactors.g:9471:2: ( rule__Value__ElseAssignment_2_3 )
             {
             if ( state.backtracking==0 ) {
                before(grammarAccess.getValueAccess().getElseAssignment_2_3()); 
             }
-            // InternalKactors.g:9580:2: ( rule__Value__ElseAssignment_2_3 )
-            // InternalKactors.g:9580:3: rule__Value__ElseAssignment_2_3
+            // InternalKactors.g:9472:2: ( rule__Value__ElseAssignment_2_3 )
+            // InternalKactors.g:9472:3: rule__Value__ElseAssignment_2_3
             {
             pushFollow(FOLLOW_2);
             rule__Value__ElseAssignment_2_3();
@@ -34966,14 +34597,14 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ValueWithConstructor__Group__0"
-    // InternalKactors.g:9589:1: rule__ValueWithConstructor__Group__0 : rule__ValueWithConstructor__Group__0__Impl rule__ValueWithConstructor__Group__1 ;
+    // InternalKactors.g:9481:1: rule__ValueWithConstructor__Group__0 : rule__ValueWithConstructor__Group__0__Impl rule__ValueWithConstructor__Group__1 ;
     public final void rule__ValueWithConstructor__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:9593:1: ( rule__ValueWithConstructor__Group__0__Impl rule__ValueWithConstructor__Group__1 )
-            // InternalKactors.g:9594:2: rule__ValueWithConstructor__Group__0__Impl rule__ValueWithConstructor__Group__1
+            // InternalKactors.g:9485:1: ( rule__ValueWithConstructor__Group__0__Impl rule__ValueWithConstructor__Group__1 )
+            // InternalKactors.g:9486:2: rule__ValueWithConstructor__Group__0__Impl rule__ValueWithConstructor__Group__1
             {
             pushFollow(FOLLOW_41);
             rule__ValueWithConstructor__Group__0__Impl();
@@ -35004,35 +34635,35 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ValueWithConstructor__Group__0__Impl"
-    // InternalKactors.g:9601:1: rule__ValueWithConstructor__Group__0__Impl : ( ( rule__ValueWithConstructor__DeferredAssignment_0 )? ) ;
+    // InternalKactors.g:9493:1: rule__ValueWithConstructor__Group__0__Impl : ( ( rule__ValueWithConstructor__DeferredAssignment_0 )? ) ;
     public final void rule__ValueWithConstructor__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:9605:1: ( ( ( rule__ValueWithConstructor__DeferredAssignment_0 )? ) )
-            // InternalKactors.g:9606:1: ( ( rule__ValueWithConstructor__DeferredAssignment_0 )? )
+            // InternalKactors.g:9497:1: ( ( ( rule__ValueWithConstructor__DeferredAssignment_0 )? ) )
+            // InternalKactors.g:9498:1: ( ( rule__ValueWithConstructor__DeferredAssignment_0 )? )
             {
-            // InternalKactors.g:9606:1: ( ( rule__ValueWithConstructor__DeferredAssignment_0 )? )
-            // InternalKactors.g:9607:2: ( rule__ValueWithConstructor__DeferredAssignment_0 )?
+            // InternalKactors.g:9498:1: ( ( rule__ValueWithConstructor__DeferredAssignment_0 )? )
+            // InternalKactors.g:9499:2: ( rule__ValueWithConstructor__DeferredAssignment_0 )?
             {
             if ( state.backtracking==0 ) {
                before(grammarAccess.getValueWithConstructorAccess().getDeferredAssignment_0()); 
             }
-            // InternalKactors.g:9608:2: ( rule__ValueWithConstructor__DeferredAssignment_0 )?
-            int alt139=2;
-            int LA139_0 = input.LA(1);
+            // InternalKactors.g:9500:2: ( rule__ValueWithConstructor__DeferredAssignment_0 )?
+            int alt138=2;
+            int LA138_0 = input.LA(1);
 
-            if ( (LA139_0==131) ) {
-                int LA139_1 = input.LA(2);
+            if ( (LA138_0==131) ) {
+                int LA138_1 = input.LA(2);
 
-                if ( (synpred293_InternalKactors()) ) {
-                    alt139=1;
+                if ( (synpred292_InternalKactors()) ) {
+                    alt138=1;
                 }
             }
-            switch (alt139) {
+            switch (alt138) {
                 case 1 :
-                    // InternalKactors.g:9608:3: rule__ValueWithConstructor__DeferredAssignment_0
+                    // InternalKactors.g:9500:3: rule__ValueWithConstructor__DeferredAssignment_0
                     {
                     pushFollow(FOLLOW_2);
                     rule__ValueWithConstructor__DeferredAssignment_0();
@@ -35070,14 +34701,14 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ValueWithConstructor__Group__1"
-    // InternalKactors.g:9616:1: rule__ValueWithConstructor__Group__1 : rule__ValueWithConstructor__Group__1__Impl rule__ValueWithConstructor__Group__2 ;
+    // InternalKactors.g:9508:1: rule__ValueWithConstructor__Group__1 : rule__ValueWithConstructor__Group__1__Impl rule__ValueWithConstructor__Group__2 ;
     public final void rule__ValueWithConstructor__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:9620:1: ( rule__ValueWithConstructor__Group__1__Impl rule__ValueWithConstructor__Group__2 )
-            // InternalKactors.g:9621:2: rule__ValueWithConstructor__Group__1__Impl rule__ValueWithConstructor__Group__2
+            // InternalKactors.g:9512:1: ( rule__ValueWithConstructor__Group__1__Impl rule__ValueWithConstructor__Group__2 )
+            // InternalKactors.g:9513:2: rule__ValueWithConstructor__Group__1__Impl rule__ValueWithConstructor__Group__2
             {
             pushFollow(FOLLOW_53);
             rule__ValueWithConstructor__Group__1__Impl();
@@ -35108,23 +34739,23 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ValueWithConstructor__Group__1__Impl"
-    // InternalKactors.g:9628:1: rule__ValueWithConstructor__Group__1__Impl : ( ( rule__ValueWithConstructor__Alternatives_1 ) ) ;
+    // InternalKactors.g:9520:1: rule__ValueWithConstructor__Group__1__Impl : ( ( rule__ValueWithConstructor__Alternatives_1 ) ) ;
     public final void rule__ValueWithConstructor__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:9632:1: ( ( ( rule__ValueWithConstructor__Alternatives_1 ) ) )
-            // InternalKactors.g:9633:1: ( ( rule__ValueWithConstructor__Alternatives_1 ) )
+            // InternalKactors.g:9524:1: ( ( ( rule__ValueWithConstructor__Alternatives_1 ) ) )
+            // InternalKactors.g:9525:1: ( ( rule__ValueWithConstructor__Alternatives_1 ) )
             {
-            // InternalKactors.g:9633:1: ( ( rule__ValueWithConstructor__Alternatives_1 ) )
-            // InternalKactors.g:9634:2: ( rule__ValueWithConstructor__Alternatives_1 )
+            // InternalKactors.g:9525:1: ( ( rule__ValueWithConstructor__Alternatives_1 ) )
+            // InternalKactors.g:9526:2: ( rule__ValueWithConstructor__Alternatives_1 )
             {
             if ( state.backtracking==0 ) {
                before(grammarAccess.getValueWithConstructorAccess().getAlternatives_1()); 
             }
-            // InternalKactors.g:9635:2: ( rule__ValueWithConstructor__Alternatives_1 )
-            // InternalKactors.g:9635:3: rule__ValueWithConstructor__Alternatives_1
+            // InternalKactors.g:9527:2: ( rule__ValueWithConstructor__Alternatives_1 )
+            // InternalKactors.g:9527:3: rule__ValueWithConstructor__Alternatives_1
             {
             pushFollow(FOLLOW_2);
             rule__ValueWithConstructor__Alternatives_1();
@@ -35159,14 +34790,14 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ValueWithConstructor__Group__2"
-    // InternalKactors.g:9643:1: rule__ValueWithConstructor__Group__2 : rule__ValueWithConstructor__Group__2__Impl ;
+    // InternalKactors.g:9535:1: rule__ValueWithConstructor__Group__2 : rule__ValueWithConstructor__Group__2__Impl ;
     public final void rule__ValueWithConstructor__Group__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:9647:1: ( rule__ValueWithConstructor__Group__2__Impl )
-            // InternalKactors.g:9648:2: rule__ValueWithConstructor__Group__2__Impl
+            // InternalKactors.g:9539:1: ( rule__ValueWithConstructor__Group__2__Impl )
+            // InternalKactors.g:9540:2: rule__ValueWithConstructor__Group__2__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ValueWithConstructor__Group__2__Impl();
@@ -35192,31 +34823,31 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ValueWithConstructor__Group__2__Impl"
-    // InternalKactors.g:9654:1: rule__ValueWithConstructor__Group__2__Impl : ( ( rule__ValueWithConstructor__Group_2__0 )? ) ;
+    // InternalKactors.g:9546:1: rule__ValueWithConstructor__Group__2__Impl : ( ( rule__ValueWithConstructor__Group_2__0 )? ) ;
     public final void rule__ValueWithConstructor__Group__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:9658:1: ( ( ( rule__ValueWithConstructor__Group_2__0 )? ) )
-            // InternalKactors.g:9659:1: ( ( rule__ValueWithConstructor__Group_2__0 )? )
+            // InternalKactors.g:9550:1: ( ( ( rule__ValueWithConstructor__Group_2__0 )? ) )
+            // InternalKactors.g:9551:1: ( ( rule__ValueWithConstructor__Group_2__0 )? )
             {
-            // InternalKactors.g:9659:1: ( ( rule__ValueWithConstructor__Group_2__0 )? )
-            // InternalKactors.g:9660:2: ( rule__ValueWithConstructor__Group_2__0 )?
+            // InternalKactors.g:9551:1: ( ( rule__ValueWithConstructor__Group_2__0 )? )
+            // InternalKactors.g:9552:2: ( rule__ValueWithConstructor__Group_2__0 )?
             {
             if ( state.backtracking==0 ) {
                before(grammarAccess.getValueWithConstructorAccess().getGroup_2()); 
             }
-            // InternalKactors.g:9661:2: ( rule__ValueWithConstructor__Group_2__0 )?
-            int alt140=2;
-            int LA140_0 = input.LA(1);
+            // InternalKactors.g:9553:2: ( rule__ValueWithConstructor__Group_2__0 )?
+            int alt139=2;
+            int LA139_0 = input.LA(1);
 
-            if ( (LA140_0==93) ) {
-                alt140=1;
+            if ( (LA139_0==93) ) {
+                alt139=1;
             }
-            switch (alt140) {
+            switch (alt139) {
                 case 1 :
-                    // InternalKactors.g:9661:3: rule__ValueWithConstructor__Group_2__0
+                    // InternalKactors.g:9553:3: rule__ValueWithConstructor__Group_2__0
                     {
                     pushFollow(FOLLOW_2);
                     rule__ValueWithConstructor__Group_2__0();
@@ -35253,23 +34884,392 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
     // $ANTLR end "rule__ValueWithConstructor__Group__2__Impl"
 
 
-    // $ANTLR start "rule__ValueWithConstructor__Group_1_14__0"
-    // InternalKactors.g:9670:1: rule__ValueWithConstructor__Group_1_14__0 : rule__ValueWithConstructor__Group_1_14__0__Impl rule__ValueWithConstructor__Group_1_14__1 ;
-    public final void rule__ValueWithConstructor__Group_1_14__0() throws RecognitionException {
+    // $ANTLR start "rule__ValueWithConstructor__Group_1_1__0"
+    // InternalKactors.g:9562:1: rule__ValueWithConstructor__Group_1_1__0 : rule__ValueWithConstructor__Group_1_1__0__Impl rule__ValueWithConstructor__Group_1_1__1 ;
+    public final void rule__ValueWithConstructor__Group_1_1__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:9674:1: ( rule__ValueWithConstructor__Group_1_14__0__Impl rule__ValueWithConstructor__Group_1_14__1 )
-            // InternalKactors.g:9675:2: rule__ValueWithConstructor__Group_1_14__0__Impl rule__ValueWithConstructor__Group_1_14__1
+            // InternalKactors.g:9566:1: ( rule__ValueWithConstructor__Group_1_1__0__Impl rule__ValueWithConstructor__Group_1_1__1 )
+            // InternalKactors.g:9567:2: rule__ValueWithConstructor__Group_1_1__0__Impl rule__ValueWithConstructor__Group_1_1__1
+            {
+            pushFollow(FOLLOW_54);
+            rule__ValueWithConstructor__Group_1_1__0__Impl();
+
+            state._fsp--;
+            if (state.failed) return ;
+            pushFollow(FOLLOW_2);
+            rule__ValueWithConstructor__Group_1_1__1();
+
+            state._fsp--;
+            if (state.failed) return ;
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ValueWithConstructor__Group_1_1__0"
+
+
+    // $ANTLR start "rule__ValueWithConstructor__Group_1_1__0__Impl"
+    // InternalKactors.g:9574:1: rule__ValueWithConstructor__Group_1_1__0__Impl : ( ( rule__ValueWithConstructor__Group_1_1_0__0 )* ) ;
+    public final void rule__ValueWithConstructor__Group_1_1__0__Impl() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalKactors.g:9578:1: ( ( ( rule__ValueWithConstructor__Group_1_1_0__0 )* ) )
+            // InternalKactors.g:9579:1: ( ( rule__ValueWithConstructor__Group_1_1_0__0 )* )
+            {
+            // InternalKactors.g:9579:1: ( ( rule__ValueWithConstructor__Group_1_1_0__0 )* )
+            // InternalKactors.g:9580:2: ( rule__ValueWithConstructor__Group_1_1_0__0 )*
+            {
+            if ( state.backtracking==0 ) {
+               before(grammarAccess.getValueWithConstructorAccess().getGroup_1_1_0()); 
+            }
+            // InternalKactors.g:9581:2: ( rule__ValueWithConstructor__Group_1_1_0__0 )*
+            loop140:
+            do {
+                int alt140=2;
+                int LA140_0 = input.LA(1);
+
+                if ( (LA140_0==RULE_ARGVALUE) ) {
+                    int LA140_1 = input.LA(2);
+
+                    if ( (synpred294_InternalKactors()) ) {
+                        alt140=1;
+                    }
+
+
+                }
+                else if ( (LA140_0==RULE_LOWERCASE_ID) ) {
+                    int LA140_2 = input.LA(2);
+
+                    if ( (synpred294_InternalKactors()) ) {
+                        alt140=1;
+                    }
+
+
+                }
+
+
+                switch (alt140) {
+            	case 1 :
+            	    // InternalKactors.g:9581:3: rule__ValueWithConstructor__Group_1_1_0__0
+            	    {
+            	    pushFollow(FOLLOW_30);
+            	    rule__ValueWithConstructor__Group_1_1_0__0();
+
+            	    state._fsp--;
+            	    if (state.failed) return ;
+
+            	    }
+            	    break;
+
+            	default :
+            	    break loop140;
+                }
+            } while (true);
+
+            if ( state.backtracking==0 ) {
+               after(grammarAccess.getValueWithConstructorAccess().getGroup_1_1_0()); 
+            }
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ValueWithConstructor__Group_1_1__0__Impl"
+
+
+    // $ANTLR start "rule__ValueWithConstructor__Group_1_1__1"
+    // InternalKactors.g:9589:1: rule__ValueWithConstructor__Group_1_1__1 : rule__ValueWithConstructor__Group_1_1__1__Impl ;
+    public final void rule__ValueWithConstructor__Group_1_1__1() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalKactors.g:9593:1: ( rule__ValueWithConstructor__Group_1_1__1__Impl )
+            // InternalKactors.g:9594:2: rule__ValueWithConstructor__Group_1_1__1__Impl
+            {
+            pushFollow(FOLLOW_2);
+            rule__ValueWithConstructor__Group_1_1__1__Impl();
+
+            state._fsp--;
+            if (state.failed) return ;
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ValueWithConstructor__Group_1_1__1"
+
+
+    // $ANTLR start "rule__ValueWithConstructor__Group_1_1__1__Impl"
+    // InternalKactors.g:9600:1: rule__ValueWithConstructor__Group_1_1__1__Impl : ( ( rule__ValueWithConstructor__MethodCallsAssignment_1_1_1 ) ) ;
+    public final void rule__ValueWithConstructor__Group_1_1__1__Impl() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalKactors.g:9604:1: ( ( ( rule__ValueWithConstructor__MethodCallsAssignment_1_1_1 ) ) )
+            // InternalKactors.g:9605:1: ( ( rule__ValueWithConstructor__MethodCallsAssignment_1_1_1 ) )
+            {
+            // InternalKactors.g:9605:1: ( ( rule__ValueWithConstructor__MethodCallsAssignment_1_1_1 ) )
+            // InternalKactors.g:9606:2: ( rule__ValueWithConstructor__MethodCallsAssignment_1_1_1 )
+            {
+            if ( state.backtracking==0 ) {
+               before(grammarAccess.getValueWithConstructorAccess().getMethodCallsAssignment_1_1_1()); 
+            }
+            // InternalKactors.g:9607:2: ( rule__ValueWithConstructor__MethodCallsAssignment_1_1_1 )
+            // InternalKactors.g:9607:3: rule__ValueWithConstructor__MethodCallsAssignment_1_1_1
+            {
+            pushFollow(FOLLOW_2);
+            rule__ValueWithConstructor__MethodCallsAssignment_1_1_1();
+
+            state._fsp--;
+            if (state.failed) return ;
+
+            }
+
+            if ( state.backtracking==0 ) {
+               after(grammarAccess.getValueWithConstructorAccess().getMethodCallsAssignment_1_1_1()); 
+            }
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ValueWithConstructor__Group_1_1__1__Impl"
+
+
+    // $ANTLR start "rule__ValueWithConstructor__Group_1_1_0__0"
+    // InternalKactors.g:9616:1: rule__ValueWithConstructor__Group_1_1_0__0 : rule__ValueWithConstructor__Group_1_1_0__0__Impl rule__ValueWithConstructor__Group_1_1_0__1 ;
+    public final void rule__ValueWithConstructor__Group_1_1_0__0() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalKactors.g:9620:1: ( rule__ValueWithConstructor__Group_1_1_0__0__Impl rule__ValueWithConstructor__Group_1_1_0__1 )
+            // InternalKactors.g:9621:2: rule__ValueWithConstructor__Group_1_1_0__0__Impl rule__ValueWithConstructor__Group_1_1_0__1
+            {
+            pushFollow(FOLLOW_32);
+            rule__ValueWithConstructor__Group_1_1_0__0__Impl();
+
+            state._fsp--;
+            if (state.failed) return ;
+            pushFollow(FOLLOW_2);
+            rule__ValueWithConstructor__Group_1_1_0__1();
+
+            state._fsp--;
+            if (state.failed) return ;
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ValueWithConstructor__Group_1_1_0__0"
+
+
+    // $ANTLR start "rule__ValueWithConstructor__Group_1_1_0__0__Impl"
+    // InternalKactors.g:9628:1: rule__ValueWithConstructor__Group_1_1_0__0__Impl : ( ( rule__ValueWithConstructor__MethodCallsAssignment_1_1_0_0 ) ) ;
+    public final void rule__ValueWithConstructor__Group_1_1_0__0__Impl() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalKactors.g:9632:1: ( ( ( rule__ValueWithConstructor__MethodCallsAssignment_1_1_0_0 ) ) )
+            // InternalKactors.g:9633:1: ( ( rule__ValueWithConstructor__MethodCallsAssignment_1_1_0_0 ) )
+            {
+            // InternalKactors.g:9633:1: ( ( rule__ValueWithConstructor__MethodCallsAssignment_1_1_0_0 ) )
+            // InternalKactors.g:9634:2: ( rule__ValueWithConstructor__MethodCallsAssignment_1_1_0_0 )
+            {
+            if ( state.backtracking==0 ) {
+               before(grammarAccess.getValueWithConstructorAccess().getMethodCallsAssignment_1_1_0_0()); 
+            }
+            // InternalKactors.g:9635:2: ( rule__ValueWithConstructor__MethodCallsAssignment_1_1_0_0 )
+            // InternalKactors.g:9635:3: rule__ValueWithConstructor__MethodCallsAssignment_1_1_0_0
+            {
+            pushFollow(FOLLOW_2);
+            rule__ValueWithConstructor__MethodCallsAssignment_1_1_0_0();
+
+            state._fsp--;
+            if (state.failed) return ;
+
+            }
+
+            if ( state.backtracking==0 ) {
+               after(grammarAccess.getValueWithConstructorAccess().getMethodCallsAssignment_1_1_0_0()); 
+            }
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ValueWithConstructor__Group_1_1_0__0__Impl"
+
+
+    // $ANTLR start "rule__ValueWithConstructor__Group_1_1_0__1"
+    // InternalKactors.g:9643:1: rule__ValueWithConstructor__Group_1_1_0__1 : rule__ValueWithConstructor__Group_1_1_0__1__Impl ;
+    public final void rule__ValueWithConstructor__Group_1_1_0__1() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalKactors.g:9647:1: ( rule__ValueWithConstructor__Group_1_1_0__1__Impl )
+            // InternalKactors.g:9648:2: rule__ValueWithConstructor__Group_1_1_0__1__Impl
+            {
+            pushFollow(FOLLOW_2);
+            rule__ValueWithConstructor__Group_1_1_0__1__Impl();
+
+            state._fsp--;
+            if (state.failed) return ;
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ValueWithConstructor__Group_1_1_0__1"
+
+
+    // $ANTLR start "rule__ValueWithConstructor__Group_1_1_0__1__Impl"
+    // InternalKactors.g:9654:1: rule__ValueWithConstructor__Group_1_1_0__1__Impl : ( '.' ) ;
+    public final void rule__ValueWithConstructor__Group_1_1_0__1__Impl() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalKactors.g:9658:1: ( ( '.' ) )
+            // InternalKactors.g:9659:1: ( '.' )
+            {
+            // InternalKactors.g:9659:1: ( '.' )
+            // InternalKactors.g:9660:2: '.'
+            {
+            if ( state.backtracking==0 ) {
+               before(grammarAccess.getValueWithConstructorAccess().getFullStopKeyword_1_1_0_1()); 
+            }
+            match(input,35,FOLLOW_2); if (state.failed) return ;
+            if ( state.backtracking==0 ) {
+               after(grammarAccess.getValueWithConstructorAccess().getFullStopKeyword_1_1_0_1()); 
+            }
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ValueWithConstructor__Group_1_1_0__1__Impl"
+
+
+    // $ANTLR start "rule__ValueWithConstructor__Group_1_15__0"
+    // InternalKactors.g:9670:1: rule__ValueWithConstructor__Group_1_15__0 : rule__ValueWithConstructor__Group_1_15__0__Impl rule__ValueWithConstructor__Group_1_15__1 ;
+    public final void rule__ValueWithConstructor__Group_1_15__0() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalKactors.g:9674:1: ( rule__ValueWithConstructor__Group_1_15__0__Impl rule__ValueWithConstructor__Group_1_15__1 )
+            // InternalKactors.g:9675:2: rule__ValueWithConstructor__Group_1_15__0__Impl rule__ValueWithConstructor__Group_1_15__1
             {
             pushFollow(FOLLOW_7);
-            rule__ValueWithConstructor__Group_1_14__0__Impl();
+            rule__ValueWithConstructor__Group_1_15__0__Impl();
 
             state._fsp--;
             if (state.failed) return ;
             pushFollow(FOLLOW_2);
-            rule__ValueWithConstructor__Group_1_14__1();
+            rule__ValueWithConstructor__Group_1_15__1();
 
             state._fsp--;
             if (state.failed) return ;
@@ -35288,30 +35288,30 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__ValueWithConstructor__Group_1_14__0"
+    // $ANTLR end "rule__ValueWithConstructor__Group_1_15__0"
 
 
-    // $ANTLR start "rule__ValueWithConstructor__Group_1_14__0__Impl"
-    // InternalKactors.g:9682:1: rule__ValueWithConstructor__Group_1_14__0__Impl : ( ( rule__ValueWithConstructor__ComponentAssignment_1_14_0 ) ) ;
-    public final void rule__ValueWithConstructor__Group_1_14__0__Impl() throws RecognitionException {
+    // $ANTLR start "rule__ValueWithConstructor__Group_1_15__0__Impl"
+    // InternalKactors.g:9682:1: rule__ValueWithConstructor__Group_1_15__0__Impl : ( ( rule__ValueWithConstructor__ComponentAssignment_1_15_0 ) ) ;
+    public final void rule__ValueWithConstructor__Group_1_15__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:9686:1: ( ( ( rule__ValueWithConstructor__ComponentAssignment_1_14_0 ) ) )
-            // InternalKactors.g:9687:1: ( ( rule__ValueWithConstructor__ComponentAssignment_1_14_0 ) )
+            // InternalKactors.g:9686:1: ( ( ( rule__ValueWithConstructor__ComponentAssignment_1_15_0 ) ) )
+            // InternalKactors.g:9687:1: ( ( rule__ValueWithConstructor__ComponentAssignment_1_15_0 ) )
             {
-            // InternalKactors.g:9687:1: ( ( rule__ValueWithConstructor__ComponentAssignment_1_14_0 ) )
-            // InternalKactors.g:9688:2: ( rule__ValueWithConstructor__ComponentAssignment_1_14_0 )
+            // InternalKactors.g:9687:1: ( ( rule__ValueWithConstructor__ComponentAssignment_1_15_0 ) )
+            // InternalKactors.g:9688:2: ( rule__ValueWithConstructor__ComponentAssignment_1_15_0 )
             {
             if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueWithConstructorAccess().getComponentAssignment_1_14_0()); 
+               before(grammarAccess.getValueWithConstructorAccess().getComponentAssignment_1_15_0()); 
             }
-            // InternalKactors.g:9689:2: ( rule__ValueWithConstructor__ComponentAssignment_1_14_0 )
-            // InternalKactors.g:9689:3: rule__ValueWithConstructor__ComponentAssignment_1_14_0
+            // InternalKactors.g:9689:2: ( rule__ValueWithConstructor__ComponentAssignment_1_15_0 )
+            // InternalKactors.g:9689:3: rule__ValueWithConstructor__ComponentAssignment_1_15_0
             {
             pushFollow(FOLLOW_2);
-            rule__ValueWithConstructor__ComponentAssignment_1_14_0();
+            rule__ValueWithConstructor__ComponentAssignment_1_15_0();
 
             state._fsp--;
             if (state.failed) return ;
@@ -35319,7 +35319,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             }
 
             if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueWithConstructorAccess().getComponentAssignment_1_14_0()); 
+               after(grammarAccess.getValueWithConstructorAccess().getComponentAssignment_1_15_0()); 
             }
 
             }
@@ -35339,26 +35339,26 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__ValueWithConstructor__Group_1_14__0__Impl"
+    // $ANTLR end "rule__ValueWithConstructor__Group_1_15__0__Impl"
 
 
-    // $ANTLR start "rule__ValueWithConstructor__Group_1_14__1"
-    // InternalKactors.g:9697:1: rule__ValueWithConstructor__Group_1_14__1 : rule__ValueWithConstructor__Group_1_14__1__Impl rule__ValueWithConstructor__Group_1_14__2 ;
-    public final void rule__ValueWithConstructor__Group_1_14__1() throws RecognitionException {
+    // $ANTLR start "rule__ValueWithConstructor__Group_1_15__1"
+    // InternalKactors.g:9697:1: rule__ValueWithConstructor__Group_1_15__1 : rule__ValueWithConstructor__Group_1_15__1__Impl rule__ValueWithConstructor__Group_1_15__2 ;
+    public final void rule__ValueWithConstructor__Group_1_15__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:9701:1: ( rule__ValueWithConstructor__Group_1_14__1__Impl rule__ValueWithConstructor__Group_1_14__2 )
-            // InternalKactors.g:9702:2: rule__ValueWithConstructor__Group_1_14__1__Impl rule__ValueWithConstructor__Group_1_14__2
+            // InternalKactors.g:9701:1: ( rule__ValueWithConstructor__Group_1_15__1__Impl rule__ValueWithConstructor__Group_1_15__2 )
+            // InternalKactors.g:9702:2: rule__ValueWithConstructor__Group_1_15__1__Impl rule__ValueWithConstructor__Group_1_15__2
             {
             pushFollow(FOLLOW_23);
-            rule__ValueWithConstructor__Group_1_14__1__Impl();
+            rule__ValueWithConstructor__Group_1_15__1__Impl();
 
             state._fsp--;
             if (state.failed) return ;
             pushFollow(FOLLOW_2);
-            rule__ValueWithConstructor__Group_1_14__2();
+            rule__ValueWithConstructor__Group_1_15__2();
 
             state._fsp--;
             if (state.failed) return ;
@@ -35377,30 +35377,30 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__ValueWithConstructor__Group_1_14__1"
+    // $ANTLR end "rule__ValueWithConstructor__Group_1_15__1"
 
 
-    // $ANTLR start "rule__ValueWithConstructor__Group_1_14__1__Impl"
-    // InternalKactors.g:9709:1: rule__ValueWithConstructor__Group_1_14__1__Impl : ( ( rule__ValueWithConstructor__BehaviorAssignment_1_14_1 ) ) ;
-    public final void rule__ValueWithConstructor__Group_1_14__1__Impl() throws RecognitionException {
+    // $ANTLR start "rule__ValueWithConstructor__Group_1_15__1__Impl"
+    // InternalKactors.g:9709:1: rule__ValueWithConstructor__Group_1_15__1__Impl : ( ( rule__ValueWithConstructor__BehaviorAssignment_1_15_1 ) ) ;
+    public final void rule__ValueWithConstructor__Group_1_15__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:9713:1: ( ( ( rule__ValueWithConstructor__BehaviorAssignment_1_14_1 ) ) )
-            // InternalKactors.g:9714:1: ( ( rule__ValueWithConstructor__BehaviorAssignment_1_14_1 ) )
+            // InternalKactors.g:9713:1: ( ( ( rule__ValueWithConstructor__BehaviorAssignment_1_15_1 ) ) )
+            // InternalKactors.g:9714:1: ( ( rule__ValueWithConstructor__BehaviorAssignment_1_15_1 ) )
             {
-            // InternalKactors.g:9714:1: ( ( rule__ValueWithConstructor__BehaviorAssignment_1_14_1 ) )
-            // InternalKactors.g:9715:2: ( rule__ValueWithConstructor__BehaviorAssignment_1_14_1 )
+            // InternalKactors.g:9714:1: ( ( rule__ValueWithConstructor__BehaviorAssignment_1_15_1 ) )
+            // InternalKactors.g:9715:2: ( rule__ValueWithConstructor__BehaviorAssignment_1_15_1 )
             {
             if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueWithConstructorAccess().getBehaviorAssignment_1_14_1()); 
+               before(grammarAccess.getValueWithConstructorAccess().getBehaviorAssignment_1_15_1()); 
             }
-            // InternalKactors.g:9716:2: ( rule__ValueWithConstructor__BehaviorAssignment_1_14_1 )
-            // InternalKactors.g:9716:3: rule__ValueWithConstructor__BehaviorAssignment_1_14_1
+            // InternalKactors.g:9716:2: ( rule__ValueWithConstructor__BehaviorAssignment_1_15_1 )
+            // InternalKactors.g:9716:3: rule__ValueWithConstructor__BehaviorAssignment_1_15_1
             {
             pushFollow(FOLLOW_2);
-            rule__ValueWithConstructor__BehaviorAssignment_1_14_1();
+            rule__ValueWithConstructor__BehaviorAssignment_1_15_1();
 
             state._fsp--;
             if (state.failed) return ;
@@ -35408,7 +35408,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             }
 
             if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueWithConstructorAccess().getBehaviorAssignment_1_14_1()); 
+               after(grammarAccess.getValueWithConstructorAccess().getBehaviorAssignment_1_15_1()); 
             }
 
             }
@@ -35428,21 +35428,21 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__ValueWithConstructor__Group_1_14__1__Impl"
+    // $ANTLR end "rule__ValueWithConstructor__Group_1_15__1__Impl"
 
 
-    // $ANTLR start "rule__ValueWithConstructor__Group_1_14__2"
-    // InternalKactors.g:9724:1: rule__ValueWithConstructor__Group_1_14__2 : rule__ValueWithConstructor__Group_1_14__2__Impl ;
-    public final void rule__ValueWithConstructor__Group_1_14__2() throws RecognitionException {
+    // $ANTLR start "rule__ValueWithConstructor__Group_1_15__2"
+    // InternalKactors.g:9724:1: rule__ValueWithConstructor__Group_1_15__2 : rule__ValueWithConstructor__Group_1_15__2__Impl ;
+    public final void rule__ValueWithConstructor__Group_1_15__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:9728:1: ( rule__ValueWithConstructor__Group_1_14__2__Impl )
-            // InternalKactors.g:9729:2: rule__ValueWithConstructor__Group_1_14__2__Impl
+            // InternalKactors.g:9728:1: ( rule__ValueWithConstructor__Group_1_15__2__Impl )
+            // InternalKactors.g:9729:2: rule__ValueWithConstructor__Group_1_15__2__Impl
             {
             pushFollow(FOLLOW_2);
-            rule__ValueWithConstructor__Group_1_14__2__Impl();
+            rule__ValueWithConstructor__Group_1_15__2__Impl();
 
             state._fsp--;
             if (state.failed) return ;
@@ -35461,34 +35461,34 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__ValueWithConstructor__Group_1_14__2"
+    // $ANTLR end "rule__ValueWithConstructor__Group_1_15__2"
 
 
-    // $ANTLR start "rule__ValueWithConstructor__Group_1_14__2__Impl"
-    // InternalKactors.g:9735:1: rule__ValueWithConstructor__Group_1_14__2__Impl : ( ( rule__ValueWithConstructor__Group_1_14_2__0 )? ) ;
-    public final void rule__ValueWithConstructor__Group_1_14__2__Impl() throws RecognitionException {
+    // $ANTLR start "rule__ValueWithConstructor__Group_1_15__2__Impl"
+    // InternalKactors.g:9735:1: rule__ValueWithConstructor__Group_1_15__2__Impl : ( ( rule__ValueWithConstructor__Group_1_15_2__0 )? ) ;
+    public final void rule__ValueWithConstructor__Group_1_15__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:9739:1: ( ( ( rule__ValueWithConstructor__Group_1_14_2__0 )? ) )
-            // InternalKactors.g:9740:1: ( ( rule__ValueWithConstructor__Group_1_14_2__0 )? )
+            // InternalKactors.g:9739:1: ( ( ( rule__ValueWithConstructor__Group_1_15_2__0 )? ) )
+            // InternalKactors.g:9740:1: ( ( rule__ValueWithConstructor__Group_1_15_2__0 )? )
             {
-            // InternalKactors.g:9740:1: ( ( rule__ValueWithConstructor__Group_1_14_2__0 )? )
-            // InternalKactors.g:9741:2: ( rule__ValueWithConstructor__Group_1_14_2__0 )?
+            // InternalKactors.g:9740:1: ( ( rule__ValueWithConstructor__Group_1_15_2__0 )? )
+            // InternalKactors.g:9741:2: ( rule__ValueWithConstructor__Group_1_15_2__0 )?
             {
             if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueWithConstructorAccess().getGroup_1_14_2()); 
+               before(grammarAccess.getValueWithConstructorAccess().getGroup_1_15_2()); 
             }
-            // InternalKactors.g:9742:2: ( rule__ValueWithConstructor__Group_1_14_2__0 )?
+            // InternalKactors.g:9742:2: ( rule__ValueWithConstructor__Group_1_15_2__0 )?
             int alt141=2;
             alt141 = dfa141.predict(input);
             switch (alt141) {
                 case 1 :
-                    // InternalKactors.g:9742:3: rule__ValueWithConstructor__Group_1_14_2__0
+                    // InternalKactors.g:9742:3: rule__ValueWithConstructor__Group_1_15_2__0
                     {
                     pushFollow(FOLLOW_2);
-                    rule__ValueWithConstructor__Group_1_14_2__0();
+                    rule__ValueWithConstructor__Group_1_15_2__0();
 
                     state._fsp--;
                     if (state.failed) return ;
@@ -35499,7 +35499,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             }
 
             if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueWithConstructorAccess().getGroup_1_14_2()); 
+               after(grammarAccess.getValueWithConstructorAccess().getGroup_1_15_2()); 
             }
 
             }
@@ -35519,26 +35519,26 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__ValueWithConstructor__Group_1_14__2__Impl"
+    // $ANTLR end "rule__ValueWithConstructor__Group_1_15__2__Impl"
 
 
-    // $ANTLR start "rule__ValueWithConstructor__Group_1_14_2__0"
-    // InternalKactors.g:9751:1: rule__ValueWithConstructor__Group_1_14_2__0 : rule__ValueWithConstructor__Group_1_14_2__0__Impl rule__ValueWithConstructor__Group_1_14_2__1 ;
-    public final void rule__ValueWithConstructor__Group_1_14_2__0() throws RecognitionException {
+    // $ANTLR start "rule__ValueWithConstructor__Group_1_15_2__0"
+    // InternalKactors.g:9751:1: rule__ValueWithConstructor__Group_1_15_2__0 : rule__ValueWithConstructor__Group_1_15_2__0__Impl rule__ValueWithConstructor__Group_1_15_2__1 ;
+    public final void rule__ValueWithConstructor__Group_1_15_2__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:9755:1: ( rule__ValueWithConstructor__Group_1_14_2__0__Impl rule__ValueWithConstructor__Group_1_14_2__1 )
-            // InternalKactors.g:9756:2: rule__ValueWithConstructor__Group_1_14_2__0__Impl rule__ValueWithConstructor__Group_1_14_2__1
+            // InternalKactors.g:9755:1: ( rule__ValueWithConstructor__Group_1_15_2__0__Impl rule__ValueWithConstructor__Group_1_15_2__1 )
+            // InternalKactors.g:9756:2: rule__ValueWithConstructor__Group_1_15_2__0__Impl rule__ValueWithConstructor__Group_1_15_2__1
             {
             pushFollow(FOLLOW_27);
-            rule__ValueWithConstructor__Group_1_14_2__0__Impl();
+            rule__ValueWithConstructor__Group_1_15_2__0__Impl();
 
             state._fsp--;
             if (state.failed) return ;
             pushFollow(FOLLOW_2);
-            rule__ValueWithConstructor__Group_1_14_2__1();
+            rule__ValueWithConstructor__Group_1_15_2__1();
 
             state._fsp--;
             if (state.failed) return ;
@@ -35557,12 +35557,12 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__ValueWithConstructor__Group_1_14_2__0"
+    // $ANTLR end "rule__ValueWithConstructor__Group_1_15_2__0"
 
 
-    // $ANTLR start "rule__ValueWithConstructor__Group_1_14_2__0__Impl"
-    // InternalKactors.g:9763:1: rule__ValueWithConstructor__Group_1_14_2__0__Impl : ( '(' ) ;
-    public final void rule__ValueWithConstructor__Group_1_14_2__0__Impl() throws RecognitionException {
+    // $ANTLR start "rule__ValueWithConstructor__Group_1_15_2__0__Impl"
+    // InternalKactors.g:9763:1: rule__ValueWithConstructor__Group_1_15_2__0__Impl : ( '(' ) ;
+    public final void rule__ValueWithConstructor__Group_1_15_2__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
@@ -35574,11 +35574,11 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             // InternalKactors.g:9769:2: '('
             {
             if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueWithConstructorAccess().getLeftParenthesisKeyword_1_14_2_0()); 
+               before(grammarAccess.getValueWithConstructorAccess().getLeftParenthesisKeyword_1_15_2_0()); 
             }
             match(input,81,FOLLOW_2); if (state.failed) return ;
             if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueWithConstructorAccess().getLeftParenthesisKeyword_1_14_2_0()); 
+               after(grammarAccess.getValueWithConstructorAccess().getLeftParenthesisKeyword_1_15_2_0()); 
             }
 
             }
@@ -35598,26 +35598,26 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__ValueWithConstructor__Group_1_14_2__0__Impl"
+    // $ANTLR end "rule__ValueWithConstructor__Group_1_15_2__0__Impl"
 
 
-    // $ANTLR start "rule__ValueWithConstructor__Group_1_14_2__1"
-    // InternalKactors.g:9778:1: rule__ValueWithConstructor__Group_1_14_2__1 : rule__ValueWithConstructor__Group_1_14_2__1__Impl rule__ValueWithConstructor__Group_1_14_2__2 ;
-    public final void rule__ValueWithConstructor__Group_1_14_2__1() throws RecognitionException {
+    // $ANTLR start "rule__ValueWithConstructor__Group_1_15_2__1"
+    // InternalKactors.g:9778:1: rule__ValueWithConstructor__Group_1_15_2__1 : rule__ValueWithConstructor__Group_1_15_2__1__Impl rule__ValueWithConstructor__Group_1_15_2__2 ;
+    public final void rule__ValueWithConstructor__Group_1_15_2__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:9782:1: ( rule__ValueWithConstructor__Group_1_14_2__1__Impl rule__ValueWithConstructor__Group_1_14_2__2 )
-            // InternalKactors.g:9783:2: rule__ValueWithConstructor__Group_1_14_2__1__Impl rule__ValueWithConstructor__Group_1_14_2__2
+            // InternalKactors.g:9782:1: ( rule__ValueWithConstructor__Group_1_15_2__1__Impl rule__ValueWithConstructor__Group_1_15_2__2 )
+            // InternalKactors.g:9783:2: rule__ValueWithConstructor__Group_1_15_2__1__Impl rule__ValueWithConstructor__Group_1_15_2__2
             {
             pushFollow(FOLLOW_27);
-            rule__ValueWithConstructor__Group_1_14_2__1__Impl();
+            rule__ValueWithConstructor__Group_1_15_2__1__Impl();
 
             state._fsp--;
             if (state.failed) return ;
             pushFollow(FOLLOW_2);
-            rule__ValueWithConstructor__Group_1_14_2__2();
+            rule__ValueWithConstructor__Group_1_15_2__2();
 
             state._fsp--;
             if (state.failed) return ;
@@ -35636,26 +35636,26 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__ValueWithConstructor__Group_1_14_2__1"
+    // $ANTLR end "rule__ValueWithConstructor__Group_1_15_2__1"
 
 
-    // $ANTLR start "rule__ValueWithConstructor__Group_1_14_2__1__Impl"
-    // InternalKactors.g:9790:1: rule__ValueWithConstructor__Group_1_14_2__1__Impl : ( ( rule__ValueWithConstructor__ParametersAssignment_1_14_2_1 )? ) ;
-    public final void rule__ValueWithConstructor__Group_1_14_2__1__Impl() throws RecognitionException {
+    // $ANTLR start "rule__ValueWithConstructor__Group_1_15_2__1__Impl"
+    // InternalKactors.g:9790:1: rule__ValueWithConstructor__Group_1_15_2__1__Impl : ( ( rule__ValueWithConstructor__ParametersAssignment_1_15_2_1 )? ) ;
+    public final void rule__ValueWithConstructor__Group_1_15_2__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:9794:1: ( ( ( rule__ValueWithConstructor__ParametersAssignment_1_14_2_1 )? ) )
-            // InternalKactors.g:9795:1: ( ( rule__ValueWithConstructor__ParametersAssignment_1_14_2_1 )? )
+            // InternalKactors.g:9794:1: ( ( ( rule__ValueWithConstructor__ParametersAssignment_1_15_2_1 )? ) )
+            // InternalKactors.g:9795:1: ( ( rule__ValueWithConstructor__ParametersAssignment_1_15_2_1 )? )
             {
-            // InternalKactors.g:9795:1: ( ( rule__ValueWithConstructor__ParametersAssignment_1_14_2_1 )? )
-            // InternalKactors.g:9796:2: ( rule__ValueWithConstructor__ParametersAssignment_1_14_2_1 )?
+            // InternalKactors.g:9795:1: ( ( rule__ValueWithConstructor__ParametersAssignment_1_15_2_1 )? )
+            // InternalKactors.g:9796:2: ( rule__ValueWithConstructor__ParametersAssignment_1_15_2_1 )?
             {
             if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueWithConstructorAccess().getParametersAssignment_1_14_2_1()); 
+               before(grammarAccess.getValueWithConstructorAccess().getParametersAssignment_1_15_2_1()); 
             }
-            // InternalKactors.g:9797:2: ( rule__ValueWithConstructor__ParametersAssignment_1_14_2_1 )?
+            // InternalKactors.g:9797:2: ( rule__ValueWithConstructor__ParametersAssignment_1_15_2_1 )?
             int alt142=2;
             int LA142_0 = input.LA(1);
 
@@ -35664,10 +35664,10 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             }
             switch (alt142) {
                 case 1 :
-                    // InternalKactors.g:9797:3: rule__ValueWithConstructor__ParametersAssignment_1_14_2_1
+                    // InternalKactors.g:9797:3: rule__ValueWithConstructor__ParametersAssignment_1_15_2_1
                     {
                     pushFollow(FOLLOW_2);
-                    rule__ValueWithConstructor__ParametersAssignment_1_14_2_1();
+                    rule__ValueWithConstructor__ParametersAssignment_1_15_2_1();
 
                     state._fsp--;
                     if (state.failed) return ;
@@ -35678,7 +35678,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             }
 
             if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueWithConstructorAccess().getParametersAssignment_1_14_2_1()); 
+               after(grammarAccess.getValueWithConstructorAccess().getParametersAssignment_1_15_2_1()); 
             }
 
             }
@@ -35698,21 +35698,21 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__ValueWithConstructor__Group_1_14_2__1__Impl"
+    // $ANTLR end "rule__ValueWithConstructor__Group_1_15_2__1__Impl"
 
 
-    // $ANTLR start "rule__ValueWithConstructor__Group_1_14_2__2"
-    // InternalKactors.g:9805:1: rule__ValueWithConstructor__Group_1_14_2__2 : rule__ValueWithConstructor__Group_1_14_2__2__Impl ;
-    public final void rule__ValueWithConstructor__Group_1_14_2__2() throws RecognitionException {
+    // $ANTLR start "rule__ValueWithConstructor__Group_1_15_2__2"
+    // InternalKactors.g:9805:1: rule__ValueWithConstructor__Group_1_15_2__2 : rule__ValueWithConstructor__Group_1_15_2__2__Impl ;
+    public final void rule__ValueWithConstructor__Group_1_15_2__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:9809:1: ( rule__ValueWithConstructor__Group_1_14_2__2__Impl )
-            // InternalKactors.g:9810:2: rule__ValueWithConstructor__Group_1_14_2__2__Impl
+            // InternalKactors.g:9809:1: ( rule__ValueWithConstructor__Group_1_15_2__2__Impl )
+            // InternalKactors.g:9810:2: rule__ValueWithConstructor__Group_1_15_2__2__Impl
             {
             pushFollow(FOLLOW_2);
-            rule__ValueWithConstructor__Group_1_14_2__2__Impl();
+            rule__ValueWithConstructor__Group_1_15_2__2__Impl();
 
             state._fsp--;
             if (state.failed) return ;
@@ -35731,12 +35731,12 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__ValueWithConstructor__Group_1_14_2__2"
+    // $ANTLR end "rule__ValueWithConstructor__Group_1_15_2__2"
 
 
-    // $ANTLR start "rule__ValueWithConstructor__Group_1_14_2__2__Impl"
-    // InternalKactors.g:9816:1: rule__ValueWithConstructor__Group_1_14_2__2__Impl : ( ')' ) ;
-    public final void rule__ValueWithConstructor__Group_1_14_2__2__Impl() throws RecognitionException {
+    // $ANTLR start "rule__ValueWithConstructor__Group_1_15_2__2__Impl"
+    // InternalKactors.g:9816:1: rule__ValueWithConstructor__Group_1_15_2__2__Impl : ( ')' ) ;
+    public final void rule__ValueWithConstructor__Group_1_15_2__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
@@ -35748,11 +35748,11 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             // InternalKactors.g:9822:2: ')'
             {
             if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueWithConstructorAccess().getRightParenthesisKeyword_1_14_2_2()); 
+               before(grammarAccess.getValueWithConstructorAccess().getRightParenthesisKeyword_1_15_2_2()); 
             }
             match(input,82,FOLLOW_2); if (state.failed) return ;
             if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueWithConstructorAccess().getRightParenthesisKeyword_1_14_2_2()); 
+               after(grammarAccess.getValueWithConstructorAccess().getRightParenthesisKeyword_1_15_2_2()); 
             }
 
             }
@@ -35772,7 +35772,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__ValueWithConstructor__Group_1_14_2__2__Impl"
+    // $ANTLR end "rule__ValueWithConstructor__Group_1_15_2__2__Impl"
 
 
     // $ANTLR start "rule__ValueWithConstructor__Group_2__0"
@@ -81061,127 +81061,37 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
     // $ANTLR end "rule__Value__TreeAssignment_1_0"
 
 
-    // $ANTLR start "rule__Value__MethodCallsAssignment_1_1_0_0"
-    // InternalKactors.g:24035:1: rule__Value__MethodCallsAssignment_1_1_0_0 : ( ruleParenthesizedMethodCall ) ;
-    public final void rule__Value__MethodCallsAssignment_1_1_0_0() throws RecognitionException {
+    // $ANTLR start "rule__Value__EmptyAssignment_1_1"
+    // InternalKactors.g:24035:1: rule__Value__EmptyAssignment_1_1 : ( ( 'empty' ) ) ;
+    public final void rule__Value__EmptyAssignment_1_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:24039:1: ( ( ruleParenthesizedMethodCall ) )
-            // InternalKactors.g:24040:2: ( ruleParenthesizedMethodCall )
+            // InternalKactors.g:24039:1: ( ( ( 'empty' ) ) )
+            // InternalKactors.g:24040:2: ( ( 'empty' ) )
             {
-            // InternalKactors.g:24040:2: ( ruleParenthesizedMethodCall )
-            // InternalKactors.g:24041:3: ruleParenthesizedMethodCall
-            {
-            if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueAccess().getMethodCallsParenthesizedMethodCallParserRuleCall_1_1_0_0_0()); 
-            }
-            pushFollow(FOLLOW_2);
-            ruleParenthesizedMethodCall();
-
-            state._fsp--;
-            if (state.failed) return ;
-            if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueAccess().getMethodCallsParenthesizedMethodCallParserRuleCall_1_1_0_0_0()); 
-            }
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__Value__MethodCallsAssignment_1_1_0_0"
-
-
-    // $ANTLR start "rule__Value__MethodCallsAssignment_1_1_1"
-    // InternalKactors.g:24050:1: rule__Value__MethodCallsAssignment_1_1_1 : ( ruleParenthesizedMethodCall ) ;
-    public final void rule__Value__MethodCallsAssignment_1_1_1() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalKactors.g:24054:1: ( ( ruleParenthesizedMethodCall ) )
-            // InternalKactors.g:24055:2: ( ruleParenthesizedMethodCall )
-            {
-            // InternalKactors.g:24055:2: ( ruleParenthesizedMethodCall )
-            // InternalKactors.g:24056:3: ruleParenthesizedMethodCall
+            // InternalKactors.g:24040:2: ( ( 'empty' ) )
+            // InternalKactors.g:24041:3: ( 'empty' )
             {
             if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueAccess().getMethodCallsParenthesizedMethodCallParserRuleCall_1_1_1_0()); 
+               before(grammarAccess.getValueAccess().getEmptyEmptyKeyword_1_1_0()); 
             }
-            pushFollow(FOLLOW_2);
-            ruleParenthesizedMethodCall();
-
-            state._fsp--;
-            if (state.failed) return ;
-            if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueAccess().getMethodCallsParenthesizedMethodCallParserRuleCall_1_1_1_0()); 
-            }
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__Value__MethodCallsAssignment_1_1_1"
-
-
-    // $ANTLR start "rule__Value__EmptyAssignment_1_2"
-    // InternalKactors.g:24065:1: rule__Value__EmptyAssignment_1_2 : ( ( 'empty' ) ) ;
-    public final void rule__Value__EmptyAssignment_1_2() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-        	
-        try {
-            // InternalKactors.g:24069:1: ( ( ( 'empty' ) ) )
-            // InternalKactors.g:24070:2: ( ( 'empty' ) )
-            {
-            // InternalKactors.g:24070:2: ( ( 'empty' ) )
-            // InternalKactors.g:24071:3: ( 'empty' )
+            // InternalKactors.g:24042:3: ( 'empty' )
+            // InternalKactors.g:24043:4: 'empty'
             {
             if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueAccess().getEmptyEmptyKeyword_1_2_0()); 
-            }
-            // InternalKactors.g:24072:3: ( 'empty' )
-            // InternalKactors.g:24073:4: 'empty'
-            {
-            if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueAccess().getEmptyEmptyKeyword_1_2_0()); 
+               before(grammarAccess.getValueAccess().getEmptyEmptyKeyword_1_1_0()); 
             }
             match(input,132,FOLLOW_2); if (state.failed) return ;
             if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueAccess().getEmptyEmptyKeyword_1_2_0()); 
+               after(grammarAccess.getValueAccess().getEmptyEmptyKeyword_1_1_0()); 
             }
 
             }
 
             if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueAccess().getEmptyEmptyKeyword_1_2_0()); 
+               after(grammarAccess.getValueAccess().getEmptyEmptyKeyword_1_1_0()); 
             }
 
             }
@@ -81201,28 +81111,28 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__Value__EmptyAssignment_1_2"
+    // $ANTLR end "rule__Value__EmptyAssignment_1_1"
 
 
-    // $ANTLR start "rule__Value__ArgvalueAssignment_1_3"
-    // InternalKactors.g:24084:1: rule__Value__ArgvalueAssignment_1_3 : ( RULE_ARGVALUE ) ;
-    public final void rule__Value__ArgvalueAssignment_1_3() throws RecognitionException {
+    // $ANTLR start "rule__Value__ArgvalueAssignment_1_2"
+    // InternalKactors.g:24054:1: rule__Value__ArgvalueAssignment_1_2 : ( RULE_ARGVALUE ) ;
+    public final void rule__Value__ArgvalueAssignment_1_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:24088:1: ( ( RULE_ARGVALUE ) )
-            // InternalKactors.g:24089:2: ( RULE_ARGVALUE )
+            // InternalKactors.g:24058:1: ( ( RULE_ARGVALUE ) )
+            // InternalKactors.g:24059:2: ( RULE_ARGVALUE )
             {
-            // InternalKactors.g:24089:2: ( RULE_ARGVALUE )
-            // InternalKactors.g:24090:3: RULE_ARGVALUE
+            // InternalKactors.g:24059:2: ( RULE_ARGVALUE )
+            // InternalKactors.g:24060:3: RULE_ARGVALUE
             {
             if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueAccess().getArgvalueARGVALUETerminalRuleCall_1_3_0()); 
+               before(grammarAccess.getValueAccess().getArgvalueARGVALUETerminalRuleCall_1_2_0()); 
             }
             match(input,RULE_ARGVALUE,FOLLOW_2); if (state.failed) return ;
             if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueAccess().getArgvalueARGVALUETerminalRuleCall_1_3_0()); 
+               after(grammarAccess.getValueAccess().getArgvalueARGVALUETerminalRuleCall_1_2_0()); 
             }
 
             }
@@ -81242,24 +81152,24 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__Value__ArgvalueAssignment_1_3"
+    // $ANTLR end "rule__Value__ArgvalueAssignment_1_2"
 
 
-    // $ANTLR start "rule__Value__UrnAssignment_1_4"
-    // InternalKactors.g:24099:1: rule__Value__UrnAssignment_1_4 : ( ruleUrnId ) ;
-    public final void rule__Value__UrnAssignment_1_4() throws RecognitionException {
+    // $ANTLR start "rule__Value__UrnAssignment_1_3"
+    // InternalKactors.g:24069:1: rule__Value__UrnAssignment_1_3 : ( ruleUrnId ) ;
+    public final void rule__Value__UrnAssignment_1_3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:24103:1: ( ( ruleUrnId ) )
-            // InternalKactors.g:24104:2: ( ruleUrnId )
+            // InternalKactors.g:24073:1: ( ( ruleUrnId ) )
+            // InternalKactors.g:24074:2: ( ruleUrnId )
             {
-            // InternalKactors.g:24104:2: ( ruleUrnId )
-            // InternalKactors.g:24105:3: ruleUrnId
+            // InternalKactors.g:24074:2: ( ruleUrnId )
+            // InternalKactors.g:24075:3: ruleUrnId
             {
             if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueAccess().getUrnUrnIdParserRuleCall_1_4_0()); 
+               before(grammarAccess.getValueAccess().getUrnUrnIdParserRuleCall_1_3_0()); 
             }
             pushFollow(FOLLOW_2);
             ruleUrnId();
@@ -81267,7 +81177,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             state._fsp--;
             if (state.failed) return ;
             if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueAccess().getUrnUrnIdParserRuleCall_1_4_0()); 
+               after(grammarAccess.getValueAccess().getUrnUrnIdParserRuleCall_1_3_0()); 
             }
 
             }
@@ -81287,24 +81197,24 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__Value__UrnAssignment_1_4"
+    // $ANTLR end "rule__Value__UrnAssignment_1_3"
 
 
-    // $ANTLR start "rule__Value__LiteralAssignment_1_5"
-    // InternalKactors.g:24114:1: rule__Value__LiteralAssignment_1_5 : ( ruleLiteral ) ;
-    public final void rule__Value__LiteralAssignment_1_5() throws RecognitionException {
+    // $ANTLR start "rule__Value__LiteralAssignment_1_4"
+    // InternalKactors.g:24084:1: rule__Value__LiteralAssignment_1_4 : ( ruleLiteral ) ;
+    public final void rule__Value__LiteralAssignment_1_4() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:24118:1: ( ( ruleLiteral ) )
-            // InternalKactors.g:24119:2: ( ruleLiteral )
+            // InternalKactors.g:24088:1: ( ( ruleLiteral ) )
+            // InternalKactors.g:24089:2: ( ruleLiteral )
             {
-            // InternalKactors.g:24119:2: ( ruleLiteral )
-            // InternalKactors.g:24120:3: ruleLiteral
+            // InternalKactors.g:24089:2: ( ruleLiteral )
+            // InternalKactors.g:24090:3: ruleLiteral
             {
             if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueAccess().getLiteralLiteralParserRuleCall_1_5_0()); 
+               before(grammarAccess.getValueAccess().getLiteralLiteralParserRuleCall_1_4_0()); 
             }
             pushFollow(FOLLOW_2);
             ruleLiteral();
@@ -81312,7 +81222,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             state._fsp--;
             if (state.failed) return ;
             if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueAccess().getLiteralLiteralParserRuleCall_1_5_0()); 
+               after(grammarAccess.getValueAccess().getLiteralLiteralParserRuleCall_1_4_0()); 
             }
 
             }
@@ -81332,24 +81242,24 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__Value__LiteralAssignment_1_5"
+    // $ANTLR end "rule__Value__LiteralAssignment_1_4"
 
 
-    // $ANTLR start "rule__Value__IdAssignment_1_6"
-    // InternalKactors.g:24129:1: rule__Value__IdAssignment_1_6 : ( rulePathName ) ;
-    public final void rule__Value__IdAssignment_1_6() throws RecognitionException {
+    // $ANTLR start "rule__Value__IdAssignment_1_5"
+    // InternalKactors.g:24099:1: rule__Value__IdAssignment_1_5 : ( rulePathName ) ;
+    public final void rule__Value__IdAssignment_1_5() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:24133:1: ( ( rulePathName ) )
-            // InternalKactors.g:24134:2: ( rulePathName )
+            // InternalKactors.g:24103:1: ( ( rulePathName ) )
+            // InternalKactors.g:24104:2: ( rulePathName )
             {
-            // InternalKactors.g:24134:2: ( rulePathName )
-            // InternalKactors.g:24135:3: rulePathName
+            // InternalKactors.g:24104:2: ( rulePathName )
+            // InternalKactors.g:24105:3: rulePathName
             {
             if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueAccess().getIdPathNameParserRuleCall_1_6_0()); 
+               before(grammarAccess.getValueAccess().getIdPathNameParserRuleCall_1_5_0()); 
             }
             pushFollow(FOLLOW_2);
             rulePathName();
@@ -81357,7 +81267,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             state._fsp--;
             if (state.failed) return ;
             if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueAccess().getIdPathNameParserRuleCall_1_6_0()); 
+               after(grammarAccess.getValueAccess().getIdPathNameParserRuleCall_1_5_0()); 
             }
 
             }
@@ -81377,24 +81287,24 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__Value__IdAssignment_1_6"
+    // $ANTLR end "rule__Value__IdAssignment_1_5"
 
 
-    // $ANTLR start "rule__Value__ListAssignment_1_7"
-    // InternalKactors.g:24144:1: rule__Value__ListAssignment_1_7 : ( ruleList ) ;
-    public final void rule__Value__ListAssignment_1_7() throws RecognitionException {
+    // $ANTLR start "rule__Value__ListAssignment_1_6"
+    // InternalKactors.g:24114:1: rule__Value__ListAssignment_1_6 : ( ruleList ) ;
+    public final void rule__Value__ListAssignment_1_6() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:24148:1: ( ( ruleList ) )
-            // InternalKactors.g:24149:2: ( ruleList )
+            // InternalKactors.g:24118:1: ( ( ruleList ) )
+            // InternalKactors.g:24119:2: ( ruleList )
             {
-            // InternalKactors.g:24149:2: ( ruleList )
-            // InternalKactors.g:24150:3: ruleList
+            // InternalKactors.g:24119:2: ( ruleList )
+            // InternalKactors.g:24120:3: ruleList
             {
             if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueAccess().getListListParserRuleCall_1_7_0()); 
+               before(grammarAccess.getValueAccess().getListListParserRuleCall_1_6_0()); 
             }
             pushFollow(FOLLOW_2);
             ruleList();
@@ -81402,7 +81312,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             state._fsp--;
             if (state.failed) return ;
             if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueAccess().getListListParserRuleCall_1_7_0()); 
+               after(grammarAccess.getValueAccess().getListListParserRuleCall_1_6_0()); 
             }
 
             }
@@ -81422,24 +81332,24 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__Value__ListAssignment_1_7"
+    // $ANTLR end "rule__Value__ListAssignment_1_6"
 
 
-    // $ANTLR start "rule__Value__MapAssignment_1_8"
-    // InternalKactors.g:24159:1: rule__Value__MapAssignment_1_8 : ( ruleMap ) ;
-    public final void rule__Value__MapAssignment_1_8() throws RecognitionException {
+    // $ANTLR start "rule__Value__MapAssignment_1_7"
+    // InternalKactors.g:24129:1: rule__Value__MapAssignment_1_7 : ( ruleMap ) ;
+    public final void rule__Value__MapAssignment_1_7() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:24163:1: ( ( ruleMap ) )
-            // InternalKactors.g:24164:2: ( ruleMap )
+            // InternalKactors.g:24133:1: ( ( ruleMap ) )
+            // InternalKactors.g:24134:2: ( ruleMap )
             {
-            // InternalKactors.g:24164:2: ( ruleMap )
-            // InternalKactors.g:24165:3: ruleMap
+            // InternalKactors.g:24134:2: ( ruleMap )
+            // InternalKactors.g:24135:3: ruleMap
             {
             if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueAccess().getMapMapParserRuleCall_1_8_0()); 
+               before(grammarAccess.getValueAccess().getMapMapParserRuleCall_1_7_0()); 
             }
             pushFollow(FOLLOW_2);
             ruleMap();
@@ -81447,7 +81357,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             state._fsp--;
             if (state.failed) return ;
             if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueAccess().getMapMapParserRuleCall_1_8_0()); 
+               after(grammarAccess.getValueAccess().getMapMapParserRuleCall_1_7_0()); 
             }
 
             }
@@ -81467,28 +81377,28 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__Value__MapAssignment_1_8"
+    // $ANTLR end "rule__Value__MapAssignment_1_7"
 
 
-    // $ANTLR start "rule__Value__ConstantAssignment_1_9"
-    // InternalKactors.g:24174:1: rule__Value__ConstantAssignment_1_9 : ( RULE_UPPERCASE_ID ) ;
-    public final void rule__Value__ConstantAssignment_1_9() throws RecognitionException {
+    // $ANTLR start "rule__Value__ConstantAssignment_1_8"
+    // InternalKactors.g:24144:1: rule__Value__ConstantAssignment_1_8 : ( RULE_UPPERCASE_ID ) ;
+    public final void rule__Value__ConstantAssignment_1_8() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:24178:1: ( ( RULE_UPPERCASE_ID ) )
-            // InternalKactors.g:24179:2: ( RULE_UPPERCASE_ID )
+            // InternalKactors.g:24148:1: ( ( RULE_UPPERCASE_ID ) )
+            // InternalKactors.g:24149:2: ( RULE_UPPERCASE_ID )
             {
-            // InternalKactors.g:24179:2: ( RULE_UPPERCASE_ID )
-            // InternalKactors.g:24180:3: RULE_UPPERCASE_ID
+            // InternalKactors.g:24149:2: ( RULE_UPPERCASE_ID )
+            // InternalKactors.g:24150:3: RULE_UPPERCASE_ID
             {
             if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueAccess().getConstantUPPERCASE_IDTerminalRuleCall_1_9_0()); 
+               before(grammarAccess.getValueAccess().getConstantUPPERCASE_IDTerminalRuleCall_1_8_0()); 
             }
             match(input,RULE_UPPERCASE_ID,FOLLOW_2); if (state.failed) return ;
             if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueAccess().getConstantUPPERCASE_IDTerminalRuleCall_1_9_0()); 
+               after(grammarAccess.getValueAccess().getConstantUPPERCASE_IDTerminalRuleCall_1_8_0()); 
             }
 
             }
@@ -81508,24 +81418,24 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__Value__ConstantAssignment_1_9"
+    // $ANTLR end "rule__Value__ConstantAssignment_1_8"
 
 
-    // $ANTLR start "rule__Value__ObservableAssignment_1_10"
-    // InternalKactors.g:24189:1: rule__Value__ObservableAssignment_1_10 : ( ruleObservable ) ;
-    public final void rule__Value__ObservableAssignment_1_10() throws RecognitionException {
+    // $ANTLR start "rule__Value__ObservableAssignment_1_9"
+    // InternalKactors.g:24159:1: rule__Value__ObservableAssignment_1_9 : ( ruleObservable ) ;
+    public final void rule__Value__ObservableAssignment_1_9() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:24193:1: ( ( ruleObservable ) )
-            // InternalKactors.g:24194:2: ( ruleObservable )
+            // InternalKactors.g:24163:1: ( ( ruleObservable ) )
+            // InternalKactors.g:24164:2: ( ruleObservable )
             {
-            // InternalKactors.g:24194:2: ( ruleObservable )
-            // InternalKactors.g:24195:3: ruleObservable
+            // InternalKactors.g:24164:2: ( ruleObservable )
+            // InternalKactors.g:24165:3: ruleObservable
             {
             if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueAccess().getObservableObservableParserRuleCall_1_10_0()); 
+               before(grammarAccess.getValueAccess().getObservableObservableParserRuleCall_1_9_0()); 
             }
             pushFollow(FOLLOW_2);
             ruleObservable();
@@ -81533,7 +81443,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             state._fsp--;
             if (state.failed) return ;
             if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueAccess().getObservableObservableParserRuleCall_1_10_0()); 
+               after(grammarAccess.getValueAccess().getObservableObservableParserRuleCall_1_9_0()); 
             }
 
             }
@@ -81553,28 +81463,28 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__Value__ObservableAssignment_1_10"
+    // $ANTLR end "rule__Value__ObservableAssignment_1_9"
 
 
-    // $ANTLR start "rule__Value__ExpressionAssignment_1_11"
-    // InternalKactors.g:24204:1: rule__Value__ExpressionAssignment_1_11 : ( RULE_EXPR ) ;
-    public final void rule__Value__ExpressionAssignment_1_11() throws RecognitionException {
+    // $ANTLR start "rule__Value__ExpressionAssignment_1_10"
+    // InternalKactors.g:24174:1: rule__Value__ExpressionAssignment_1_10 : ( RULE_EXPR ) ;
+    public final void rule__Value__ExpressionAssignment_1_10() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:24208:1: ( ( RULE_EXPR ) )
-            // InternalKactors.g:24209:2: ( RULE_EXPR )
+            // InternalKactors.g:24178:1: ( ( RULE_EXPR ) )
+            // InternalKactors.g:24179:2: ( RULE_EXPR )
             {
-            // InternalKactors.g:24209:2: ( RULE_EXPR )
-            // InternalKactors.g:24210:3: RULE_EXPR
+            // InternalKactors.g:24179:2: ( RULE_EXPR )
+            // InternalKactors.g:24180:3: RULE_EXPR
             {
             if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueAccess().getExpressionEXPRTerminalRuleCall_1_11_0()); 
+               before(grammarAccess.getValueAccess().getExpressionEXPRTerminalRuleCall_1_10_0()); 
             }
             match(input,RULE_EXPR,FOLLOW_2); if (state.failed) return ;
             if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueAccess().getExpressionEXPRTerminalRuleCall_1_11_0()); 
+               after(grammarAccess.getValueAccess().getExpressionEXPRTerminalRuleCall_1_10_0()); 
             }
 
             }
@@ -81594,24 +81504,24 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__Value__ExpressionAssignment_1_11"
+    // $ANTLR end "rule__Value__ExpressionAssignment_1_10"
 
 
-    // $ANTLR start "rule__Value__TableAssignment_1_12"
-    // InternalKactors.g:24219:1: rule__Value__TableAssignment_1_12 : ( ruleLookupTable ) ;
-    public final void rule__Value__TableAssignment_1_12() throws RecognitionException {
+    // $ANTLR start "rule__Value__TableAssignment_1_11"
+    // InternalKactors.g:24189:1: rule__Value__TableAssignment_1_11 : ( ruleLookupTable ) ;
+    public final void rule__Value__TableAssignment_1_11() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:24223:1: ( ( ruleLookupTable ) )
-            // InternalKactors.g:24224:2: ( ruleLookupTable )
+            // InternalKactors.g:24193:1: ( ( ruleLookupTable ) )
+            // InternalKactors.g:24194:2: ( ruleLookupTable )
             {
-            // InternalKactors.g:24224:2: ( ruleLookupTable )
-            // InternalKactors.g:24225:3: ruleLookupTable
+            // InternalKactors.g:24194:2: ( ruleLookupTable )
+            // InternalKactors.g:24195:3: ruleLookupTable
             {
             if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueAccess().getTableLookupTableParserRuleCall_1_12_0()); 
+               before(grammarAccess.getValueAccess().getTableLookupTableParserRuleCall_1_11_0()); 
             }
             pushFollow(FOLLOW_2);
             ruleLookupTable();
@@ -81619,7 +81529,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             state._fsp--;
             if (state.failed) return ;
             if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueAccess().getTableLookupTableParserRuleCall_1_12_0()); 
+               after(grammarAccess.getValueAccess().getTableLookupTableParserRuleCall_1_11_0()); 
             }
 
             }
@@ -81639,24 +81549,24 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__Value__TableAssignment_1_12"
+    // $ANTLR end "rule__Value__TableAssignment_1_11"
 
 
-    // $ANTLR start "rule__Value__QuantityAssignment_1_13"
-    // InternalKactors.g:24234:1: rule__Value__QuantityAssignment_1_13 : ( ruleQuantity ) ;
-    public final void rule__Value__QuantityAssignment_1_13() throws RecognitionException {
+    // $ANTLR start "rule__Value__QuantityAssignment_1_12"
+    // InternalKactors.g:24204:1: rule__Value__QuantityAssignment_1_12 : ( ruleQuantity ) ;
+    public final void rule__Value__QuantityAssignment_1_12() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:24238:1: ( ( ruleQuantity ) )
-            // InternalKactors.g:24239:2: ( ruleQuantity )
+            // InternalKactors.g:24208:1: ( ( ruleQuantity ) )
+            // InternalKactors.g:24209:2: ( ruleQuantity )
             {
-            // InternalKactors.g:24239:2: ( ruleQuantity )
-            // InternalKactors.g:24240:3: ruleQuantity
+            // InternalKactors.g:24209:2: ( ruleQuantity )
+            // InternalKactors.g:24210:3: ruleQuantity
             {
             if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueAccess().getQuantityQuantityParserRuleCall_1_13_0()); 
+               before(grammarAccess.getValueAccess().getQuantityQuantityParserRuleCall_1_12_0()); 
             }
             pushFollow(FOLLOW_2);
             ruleQuantity();
@@ -81664,7 +81574,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             state._fsp--;
             if (state.failed) return ;
             if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueAccess().getQuantityQuantityParserRuleCall_1_13_0()); 
+               after(grammarAccess.getValueAccess().getQuantityQuantityParserRuleCall_1_12_0()); 
             }
 
             }
@@ -81684,21 +81594,21 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__Value__QuantityAssignment_1_13"
+    // $ANTLR end "rule__Value__QuantityAssignment_1_12"
 
 
     // $ANTLR start "rule__Value__ThenAssignment_2_1"
-    // InternalKactors.g:24249:1: rule__Value__ThenAssignment_2_1 : ( ruleValue ) ;
+    // InternalKactors.g:24219:1: rule__Value__ThenAssignment_2_1 : ( ruleValue ) ;
     public final void rule__Value__ThenAssignment_2_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:24253:1: ( ( ruleValue ) )
-            // InternalKactors.g:24254:2: ( ruleValue )
+            // InternalKactors.g:24223:1: ( ( ruleValue ) )
+            // InternalKactors.g:24224:2: ( ruleValue )
             {
-            // InternalKactors.g:24254:2: ( ruleValue )
-            // InternalKactors.g:24255:3: ruleValue
+            // InternalKactors.g:24224:2: ( ruleValue )
+            // InternalKactors.g:24225:3: ruleValue
             {
             if ( state.backtracking==0 ) {
                before(grammarAccess.getValueAccess().getThenValueParserRuleCall_2_1_0()); 
@@ -81733,17 +81643,17 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Value__ElseAssignment_2_3"
-    // InternalKactors.g:24264:1: rule__Value__ElseAssignment_2_3 : ( ruleValue ) ;
+    // InternalKactors.g:24234:1: rule__Value__ElseAssignment_2_3 : ( ruleValue ) ;
     public final void rule__Value__ElseAssignment_2_3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:24268:1: ( ( ruleValue ) )
-            // InternalKactors.g:24269:2: ( ruleValue )
+            // InternalKactors.g:24238:1: ( ( ruleValue ) )
+            // InternalKactors.g:24239:2: ( ruleValue )
             {
-            // InternalKactors.g:24269:2: ( ruleValue )
-            // InternalKactors.g:24270:3: ruleValue
+            // InternalKactors.g:24239:2: ( ruleValue )
+            // InternalKactors.g:24240:3: ruleValue
             {
             if ( state.backtracking==0 ) {
                before(grammarAccess.getValueAccess().getElseValueParserRuleCall_2_3_0()); 
@@ -81778,23 +81688,23 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ValueWithConstructor__DeferredAssignment_0"
-    // InternalKactors.g:24279:1: rule__ValueWithConstructor__DeferredAssignment_0 : ( ( '`' ) ) ;
+    // InternalKactors.g:24249:1: rule__ValueWithConstructor__DeferredAssignment_0 : ( ( '`' ) ) ;
     public final void rule__ValueWithConstructor__DeferredAssignment_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:24283:1: ( ( ( '`' ) ) )
-            // InternalKactors.g:24284:2: ( ( '`' ) )
+            // InternalKactors.g:24253:1: ( ( ( '`' ) ) )
+            // InternalKactors.g:24254:2: ( ( '`' ) )
             {
-            // InternalKactors.g:24284:2: ( ( '`' ) )
-            // InternalKactors.g:24285:3: ( '`' )
+            // InternalKactors.g:24254:2: ( ( '`' ) )
+            // InternalKactors.g:24255:3: ( '`' )
             {
             if ( state.backtracking==0 ) {
                before(grammarAccess.getValueWithConstructorAccess().getDeferredGraveAccentKeyword_0_0()); 
             }
-            // InternalKactors.g:24286:3: ( '`' )
-            // InternalKactors.g:24287:4: '`'
+            // InternalKactors.g:24256:3: ( '`' )
+            // InternalKactors.g:24257:4: '`'
             {
             if ( state.backtracking==0 ) {
                before(grammarAccess.getValueWithConstructorAccess().getDeferredGraveAccentKeyword_0_0()); 
@@ -81831,17 +81741,17 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ValueWithConstructor__ConstructorAssignment_1_0"
-    // InternalKactors.g:24298:1: rule__ValueWithConstructor__ConstructorAssignment_1_0 : ( ruleConstructor ) ;
+    // InternalKactors.g:24268:1: rule__ValueWithConstructor__ConstructorAssignment_1_0 : ( ruleConstructor ) ;
     public final void rule__ValueWithConstructor__ConstructorAssignment_1_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
         try {
-            // InternalKactors.g:24302:1: ( ( ruleConstructor ) )
-            // InternalKactors.g:24303:2: ( ruleConstructor )
+            // InternalKactors.g:24272:1: ( ( ruleConstructor ) )
+            // InternalKactors.g:24273:2: ( ruleConstructor )
             {
-            // InternalKactors.g:24303:2: ( ruleConstructor )
-            // InternalKactors.g:24304:3: ruleConstructor
+            // InternalKactors.g:24273:2: ( ruleConstructor )
+            // InternalKactors.g:24274:3: ruleConstructor
             {
             if ( state.backtracking==0 ) {
                before(grammarAccess.getValueWithConstructorAccess().getConstructorConstructorParserRuleCall_1_0_0()); 
@@ -81875,9 +81785,99 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
     // $ANTLR end "rule__ValueWithConstructor__ConstructorAssignment_1_0"
 
 
-    // $ANTLR start "rule__ValueWithConstructor__TreeAssignment_1_1"
-    // InternalKactors.g:24313:1: rule__ValueWithConstructor__TreeAssignment_1_1 : ( ruleTree ) ;
-    public final void rule__ValueWithConstructor__TreeAssignment_1_1() throws RecognitionException {
+    // $ANTLR start "rule__ValueWithConstructor__MethodCallsAssignment_1_1_0_0"
+    // InternalKactors.g:24283:1: rule__ValueWithConstructor__MethodCallsAssignment_1_1_0_0 : ( ruleParenthesizedMethodCall ) ;
+    public final void rule__ValueWithConstructor__MethodCallsAssignment_1_1_0_0() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalKactors.g:24287:1: ( ( ruleParenthesizedMethodCall ) )
+            // InternalKactors.g:24288:2: ( ruleParenthesizedMethodCall )
+            {
+            // InternalKactors.g:24288:2: ( ruleParenthesizedMethodCall )
+            // InternalKactors.g:24289:3: ruleParenthesizedMethodCall
+            {
+            if ( state.backtracking==0 ) {
+               before(grammarAccess.getValueWithConstructorAccess().getMethodCallsParenthesizedMethodCallParserRuleCall_1_1_0_0_0()); 
+            }
+            pushFollow(FOLLOW_2);
+            ruleParenthesizedMethodCall();
+
+            state._fsp--;
+            if (state.failed) return ;
+            if ( state.backtracking==0 ) {
+               after(grammarAccess.getValueWithConstructorAccess().getMethodCallsParenthesizedMethodCallParserRuleCall_1_1_0_0_0()); 
+            }
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ValueWithConstructor__MethodCallsAssignment_1_1_0_0"
+
+
+    // $ANTLR start "rule__ValueWithConstructor__MethodCallsAssignment_1_1_1"
+    // InternalKactors.g:24298:1: rule__ValueWithConstructor__MethodCallsAssignment_1_1_1 : ( ruleParenthesizedMethodCall ) ;
+    public final void rule__ValueWithConstructor__MethodCallsAssignment_1_1_1() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+        	
+        try {
+            // InternalKactors.g:24302:1: ( ( ruleParenthesizedMethodCall ) )
+            // InternalKactors.g:24303:2: ( ruleParenthesizedMethodCall )
+            {
+            // InternalKactors.g:24303:2: ( ruleParenthesizedMethodCall )
+            // InternalKactors.g:24304:3: ruleParenthesizedMethodCall
+            {
+            if ( state.backtracking==0 ) {
+               before(grammarAccess.getValueWithConstructorAccess().getMethodCallsParenthesizedMethodCallParserRuleCall_1_1_1_0()); 
+            }
+            pushFollow(FOLLOW_2);
+            ruleParenthesizedMethodCall();
+
+            state._fsp--;
+            if (state.failed) return ;
+            if ( state.backtracking==0 ) {
+               after(grammarAccess.getValueWithConstructorAccess().getMethodCallsParenthesizedMethodCallParserRuleCall_1_1_1_0()); 
+            }
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__ValueWithConstructor__MethodCallsAssignment_1_1_1"
+
+
+    // $ANTLR start "rule__ValueWithConstructor__TreeAssignment_1_2"
+    // InternalKactors.g:24313:1: rule__ValueWithConstructor__TreeAssignment_1_2 : ( ruleTree ) ;
+    public final void rule__ValueWithConstructor__TreeAssignment_1_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
@@ -81889,7 +81889,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             // InternalKactors.g:24319:3: ruleTree
             {
             if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueWithConstructorAccess().getTreeTreeParserRuleCall_1_1_0()); 
+               before(grammarAccess.getValueWithConstructorAccess().getTreeTreeParserRuleCall_1_2_0()); 
             }
             pushFollow(FOLLOW_2);
             ruleTree();
@@ -81897,7 +81897,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             state._fsp--;
             if (state.failed) return ;
             if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueWithConstructorAccess().getTreeTreeParserRuleCall_1_1_0()); 
+               after(grammarAccess.getValueWithConstructorAccess().getTreeTreeParserRuleCall_1_2_0()); 
             }
 
             }
@@ -81917,12 +81917,12 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__ValueWithConstructor__TreeAssignment_1_1"
+    // $ANTLR end "rule__ValueWithConstructor__TreeAssignment_1_2"
 
 
-    // $ANTLR start "rule__ValueWithConstructor__EmptyAssignment_1_2"
-    // InternalKactors.g:24328:1: rule__ValueWithConstructor__EmptyAssignment_1_2 : ( ( 'empty' ) ) ;
-    public final void rule__ValueWithConstructor__EmptyAssignment_1_2() throws RecognitionException {
+    // $ANTLR start "rule__ValueWithConstructor__EmptyAssignment_1_3"
+    // InternalKactors.g:24328:1: rule__ValueWithConstructor__EmptyAssignment_1_3 : ( ( 'empty' ) ) ;
+    public final void rule__ValueWithConstructor__EmptyAssignment_1_3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
@@ -81934,23 +81934,23 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             // InternalKactors.g:24334:3: ( 'empty' )
             {
             if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueWithConstructorAccess().getEmptyEmptyKeyword_1_2_0()); 
+               before(grammarAccess.getValueWithConstructorAccess().getEmptyEmptyKeyword_1_3_0()); 
             }
             // InternalKactors.g:24335:3: ( 'empty' )
             // InternalKactors.g:24336:4: 'empty'
             {
             if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueWithConstructorAccess().getEmptyEmptyKeyword_1_2_0()); 
+               before(grammarAccess.getValueWithConstructorAccess().getEmptyEmptyKeyword_1_3_0()); 
             }
             match(input,132,FOLLOW_2); if (state.failed) return ;
             if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueWithConstructorAccess().getEmptyEmptyKeyword_1_2_0()); 
+               after(grammarAccess.getValueWithConstructorAccess().getEmptyEmptyKeyword_1_3_0()); 
             }
 
             }
 
             if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueWithConstructorAccess().getEmptyEmptyKeyword_1_2_0()); 
+               after(grammarAccess.getValueWithConstructorAccess().getEmptyEmptyKeyword_1_3_0()); 
             }
 
             }
@@ -81970,12 +81970,12 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__ValueWithConstructor__EmptyAssignment_1_2"
+    // $ANTLR end "rule__ValueWithConstructor__EmptyAssignment_1_3"
 
 
-    // $ANTLR start "rule__ValueWithConstructor__ArgvalueAssignment_1_3"
-    // InternalKactors.g:24347:1: rule__ValueWithConstructor__ArgvalueAssignment_1_3 : ( RULE_ARGVALUE ) ;
-    public final void rule__ValueWithConstructor__ArgvalueAssignment_1_3() throws RecognitionException {
+    // $ANTLR start "rule__ValueWithConstructor__ArgvalueAssignment_1_4"
+    // InternalKactors.g:24347:1: rule__ValueWithConstructor__ArgvalueAssignment_1_4 : ( RULE_ARGVALUE ) ;
+    public final void rule__ValueWithConstructor__ArgvalueAssignment_1_4() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
@@ -81987,11 +81987,11 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             // InternalKactors.g:24353:3: RULE_ARGVALUE
             {
             if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueWithConstructorAccess().getArgvalueARGVALUETerminalRuleCall_1_3_0()); 
+               before(grammarAccess.getValueWithConstructorAccess().getArgvalueARGVALUETerminalRuleCall_1_4_0()); 
             }
             match(input,RULE_ARGVALUE,FOLLOW_2); if (state.failed) return ;
             if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueWithConstructorAccess().getArgvalueARGVALUETerminalRuleCall_1_3_0()); 
+               after(grammarAccess.getValueWithConstructorAccess().getArgvalueARGVALUETerminalRuleCall_1_4_0()); 
             }
 
             }
@@ -82011,12 +82011,12 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__ValueWithConstructor__ArgvalueAssignment_1_3"
+    // $ANTLR end "rule__ValueWithConstructor__ArgvalueAssignment_1_4"
 
 
-    // $ANTLR start "rule__ValueWithConstructor__LiteralAssignment_1_4"
-    // InternalKactors.g:24362:1: rule__ValueWithConstructor__LiteralAssignment_1_4 : ( ruleLiteral ) ;
-    public final void rule__ValueWithConstructor__LiteralAssignment_1_4() throws RecognitionException {
+    // $ANTLR start "rule__ValueWithConstructor__LiteralAssignment_1_5"
+    // InternalKactors.g:24362:1: rule__ValueWithConstructor__LiteralAssignment_1_5 : ( ruleLiteral ) ;
+    public final void rule__ValueWithConstructor__LiteralAssignment_1_5() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
@@ -82028,7 +82028,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             // InternalKactors.g:24368:3: ruleLiteral
             {
             if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueWithConstructorAccess().getLiteralLiteralParserRuleCall_1_4_0()); 
+               before(grammarAccess.getValueWithConstructorAccess().getLiteralLiteralParserRuleCall_1_5_0()); 
             }
             pushFollow(FOLLOW_2);
             ruleLiteral();
@@ -82036,7 +82036,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             state._fsp--;
             if (state.failed) return ;
             if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueWithConstructorAccess().getLiteralLiteralParserRuleCall_1_4_0()); 
+               after(grammarAccess.getValueWithConstructorAccess().getLiteralLiteralParserRuleCall_1_5_0()); 
             }
 
             }
@@ -82056,12 +82056,12 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__ValueWithConstructor__LiteralAssignment_1_4"
+    // $ANTLR end "rule__ValueWithConstructor__LiteralAssignment_1_5"
 
 
-    // $ANTLR start "rule__ValueWithConstructor__UrnAssignment_1_5"
-    // InternalKactors.g:24377:1: rule__ValueWithConstructor__UrnAssignment_1_5 : ( ruleUrnId ) ;
-    public final void rule__ValueWithConstructor__UrnAssignment_1_5() throws RecognitionException {
+    // $ANTLR start "rule__ValueWithConstructor__UrnAssignment_1_6"
+    // InternalKactors.g:24377:1: rule__ValueWithConstructor__UrnAssignment_1_6 : ( ruleUrnId ) ;
+    public final void rule__ValueWithConstructor__UrnAssignment_1_6() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
@@ -82073,7 +82073,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             // InternalKactors.g:24383:3: ruleUrnId
             {
             if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueWithConstructorAccess().getUrnUrnIdParserRuleCall_1_5_0()); 
+               before(grammarAccess.getValueWithConstructorAccess().getUrnUrnIdParserRuleCall_1_6_0()); 
             }
             pushFollow(FOLLOW_2);
             ruleUrnId();
@@ -82081,7 +82081,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             state._fsp--;
             if (state.failed) return ;
             if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueWithConstructorAccess().getUrnUrnIdParserRuleCall_1_5_0()); 
+               after(grammarAccess.getValueWithConstructorAccess().getUrnUrnIdParserRuleCall_1_6_0()); 
             }
 
             }
@@ -82101,12 +82101,12 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__ValueWithConstructor__UrnAssignment_1_5"
+    // $ANTLR end "rule__ValueWithConstructor__UrnAssignment_1_6"
 
 
-    // $ANTLR start "rule__ValueWithConstructor__IdAssignment_1_6"
-    // InternalKactors.g:24392:1: rule__ValueWithConstructor__IdAssignment_1_6 : ( rulePathName ) ;
-    public final void rule__ValueWithConstructor__IdAssignment_1_6() throws RecognitionException {
+    // $ANTLR start "rule__ValueWithConstructor__IdAssignment_1_7"
+    // InternalKactors.g:24392:1: rule__ValueWithConstructor__IdAssignment_1_7 : ( rulePathName ) ;
+    public final void rule__ValueWithConstructor__IdAssignment_1_7() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
@@ -82118,7 +82118,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             // InternalKactors.g:24398:3: rulePathName
             {
             if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueWithConstructorAccess().getIdPathNameParserRuleCall_1_6_0()); 
+               before(grammarAccess.getValueWithConstructorAccess().getIdPathNameParserRuleCall_1_7_0()); 
             }
             pushFollow(FOLLOW_2);
             rulePathName();
@@ -82126,7 +82126,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             state._fsp--;
             if (state.failed) return ;
             if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueWithConstructorAccess().getIdPathNameParserRuleCall_1_6_0()); 
+               after(grammarAccess.getValueWithConstructorAccess().getIdPathNameParserRuleCall_1_7_0()); 
             }
 
             }
@@ -82146,12 +82146,12 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__ValueWithConstructor__IdAssignment_1_6"
+    // $ANTLR end "rule__ValueWithConstructor__IdAssignment_1_7"
 
 
-    // $ANTLR start "rule__ValueWithConstructor__ListAssignment_1_7"
-    // InternalKactors.g:24407:1: rule__ValueWithConstructor__ListAssignment_1_7 : ( ruleList ) ;
-    public final void rule__ValueWithConstructor__ListAssignment_1_7() throws RecognitionException {
+    // $ANTLR start "rule__ValueWithConstructor__ListAssignment_1_8"
+    // InternalKactors.g:24407:1: rule__ValueWithConstructor__ListAssignment_1_8 : ( ruleList ) ;
+    public final void rule__ValueWithConstructor__ListAssignment_1_8() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
@@ -82163,7 +82163,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             // InternalKactors.g:24413:3: ruleList
             {
             if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueWithConstructorAccess().getListListParserRuleCall_1_7_0()); 
+               before(grammarAccess.getValueWithConstructorAccess().getListListParserRuleCall_1_8_0()); 
             }
             pushFollow(FOLLOW_2);
             ruleList();
@@ -82171,7 +82171,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             state._fsp--;
             if (state.failed) return ;
             if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueWithConstructorAccess().getListListParserRuleCall_1_7_0()); 
+               after(grammarAccess.getValueWithConstructorAccess().getListListParserRuleCall_1_8_0()); 
             }
 
             }
@@ -82191,12 +82191,12 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__ValueWithConstructor__ListAssignment_1_7"
+    // $ANTLR end "rule__ValueWithConstructor__ListAssignment_1_8"
 
 
-    // $ANTLR start "rule__ValueWithConstructor__MapAssignment_1_8"
-    // InternalKactors.g:24422:1: rule__ValueWithConstructor__MapAssignment_1_8 : ( ruleMap ) ;
-    public final void rule__ValueWithConstructor__MapAssignment_1_8() throws RecognitionException {
+    // $ANTLR start "rule__ValueWithConstructor__MapAssignment_1_9"
+    // InternalKactors.g:24422:1: rule__ValueWithConstructor__MapAssignment_1_9 : ( ruleMap ) ;
+    public final void rule__ValueWithConstructor__MapAssignment_1_9() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
@@ -82208,7 +82208,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             // InternalKactors.g:24428:3: ruleMap
             {
             if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueWithConstructorAccess().getMapMapParserRuleCall_1_8_0()); 
+               before(grammarAccess.getValueWithConstructorAccess().getMapMapParserRuleCall_1_9_0()); 
             }
             pushFollow(FOLLOW_2);
             ruleMap();
@@ -82216,7 +82216,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             state._fsp--;
             if (state.failed) return ;
             if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueWithConstructorAccess().getMapMapParserRuleCall_1_8_0()); 
+               after(grammarAccess.getValueWithConstructorAccess().getMapMapParserRuleCall_1_9_0()); 
             }
 
             }
@@ -82236,12 +82236,12 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__ValueWithConstructor__MapAssignment_1_8"
+    // $ANTLR end "rule__ValueWithConstructor__MapAssignment_1_9"
 
 
-    // $ANTLR start "rule__ValueWithConstructor__ConstantAssignment_1_9"
-    // InternalKactors.g:24437:1: rule__ValueWithConstructor__ConstantAssignment_1_9 : ( RULE_UPPERCASE_ID ) ;
-    public final void rule__ValueWithConstructor__ConstantAssignment_1_9() throws RecognitionException {
+    // $ANTLR start "rule__ValueWithConstructor__ConstantAssignment_1_10"
+    // InternalKactors.g:24437:1: rule__ValueWithConstructor__ConstantAssignment_1_10 : ( RULE_UPPERCASE_ID ) ;
+    public final void rule__ValueWithConstructor__ConstantAssignment_1_10() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
@@ -82253,11 +82253,11 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             // InternalKactors.g:24443:3: RULE_UPPERCASE_ID
             {
             if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueWithConstructorAccess().getConstantUPPERCASE_IDTerminalRuleCall_1_9_0()); 
+               before(grammarAccess.getValueWithConstructorAccess().getConstantUPPERCASE_IDTerminalRuleCall_1_10_0()); 
             }
             match(input,RULE_UPPERCASE_ID,FOLLOW_2); if (state.failed) return ;
             if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueWithConstructorAccess().getConstantUPPERCASE_IDTerminalRuleCall_1_9_0()); 
+               after(grammarAccess.getValueWithConstructorAccess().getConstantUPPERCASE_IDTerminalRuleCall_1_10_0()); 
             }
 
             }
@@ -82277,12 +82277,12 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__ValueWithConstructor__ConstantAssignment_1_9"
+    // $ANTLR end "rule__ValueWithConstructor__ConstantAssignment_1_10"
 
 
-    // $ANTLR start "rule__ValueWithConstructor__ObservableAssignment_1_10"
-    // InternalKactors.g:24452:1: rule__ValueWithConstructor__ObservableAssignment_1_10 : ( ruleObservable ) ;
-    public final void rule__ValueWithConstructor__ObservableAssignment_1_10() throws RecognitionException {
+    // $ANTLR start "rule__ValueWithConstructor__ObservableAssignment_1_11"
+    // InternalKactors.g:24452:1: rule__ValueWithConstructor__ObservableAssignment_1_11 : ( ruleObservable ) ;
+    public final void rule__ValueWithConstructor__ObservableAssignment_1_11() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
@@ -82294,7 +82294,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             // InternalKactors.g:24458:3: ruleObservable
             {
             if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueWithConstructorAccess().getObservableObservableParserRuleCall_1_10_0()); 
+               before(grammarAccess.getValueWithConstructorAccess().getObservableObservableParserRuleCall_1_11_0()); 
             }
             pushFollow(FOLLOW_2);
             ruleObservable();
@@ -82302,7 +82302,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             state._fsp--;
             if (state.failed) return ;
             if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueWithConstructorAccess().getObservableObservableParserRuleCall_1_10_0()); 
+               after(grammarAccess.getValueWithConstructorAccess().getObservableObservableParserRuleCall_1_11_0()); 
             }
 
             }
@@ -82322,12 +82322,12 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__ValueWithConstructor__ObservableAssignment_1_10"
+    // $ANTLR end "rule__ValueWithConstructor__ObservableAssignment_1_11"
 
 
-    // $ANTLR start "rule__ValueWithConstructor__ExpressionAssignment_1_11"
-    // InternalKactors.g:24467:1: rule__ValueWithConstructor__ExpressionAssignment_1_11 : ( RULE_EXPR ) ;
-    public final void rule__ValueWithConstructor__ExpressionAssignment_1_11() throws RecognitionException {
+    // $ANTLR start "rule__ValueWithConstructor__ExpressionAssignment_1_12"
+    // InternalKactors.g:24467:1: rule__ValueWithConstructor__ExpressionAssignment_1_12 : ( RULE_EXPR ) ;
+    public final void rule__ValueWithConstructor__ExpressionAssignment_1_12() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
@@ -82339,11 +82339,11 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             // InternalKactors.g:24473:3: RULE_EXPR
             {
             if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueWithConstructorAccess().getExpressionEXPRTerminalRuleCall_1_11_0()); 
+               before(grammarAccess.getValueWithConstructorAccess().getExpressionEXPRTerminalRuleCall_1_12_0()); 
             }
             match(input,RULE_EXPR,FOLLOW_2); if (state.failed) return ;
             if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueWithConstructorAccess().getExpressionEXPRTerminalRuleCall_1_11_0()); 
+               after(grammarAccess.getValueWithConstructorAccess().getExpressionEXPRTerminalRuleCall_1_12_0()); 
             }
 
             }
@@ -82363,12 +82363,12 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__ValueWithConstructor__ExpressionAssignment_1_11"
+    // $ANTLR end "rule__ValueWithConstructor__ExpressionAssignment_1_12"
 
 
-    // $ANTLR start "rule__ValueWithConstructor__TableAssignment_1_12"
-    // InternalKactors.g:24482:1: rule__ValueWithConstructor__TableAssignment_1_12 : ( ruleLookupTable ) ;
-    public final void rule__ValueWithConstructor__TableAssignment_1_12() throws RecognitionException {
+    // $ANTLR start "rule__ValueWithConstructor__TableAssignment_1_13"
+    // InternalKactors.g:24482:1: rule__ValueWithConstructor__TableAssignment_1_13 : ( ruleLookupTable ) ;
+    public final void rule__ValueWithConstructor__TableAssignment_1_13() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
@@ -82380,7 +82380,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             // InternalKactors.g:24488:3: ruleLookupTable
             {
             if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueWithConstructorAccess().getTableLookupTableParserRuleCall_1_12_0()); 
+               before(grammarAccess.getValueWithConstructorAccess().getTableLookupTableParserRuleCall_1_13_0()); 
             }
             pushFollow(FOLLOW_2);
             ruleLookupTable();
@@ -82388,7 +82388,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             state._fsp--;
             if (state.failed) return ;
             if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueWithConstructorAccess().getTableLookupTableParserRuleCall_1_12_0()); 
+               after(grammarAccess.getValueWithConstructorAccess().getTableLookupTableParserRuleCall_1_13_0()); 
             }
 
             }
@@ -82408,12 +82408,12 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__ValueWithConstructor__TableAssignment_1_12"
+    // $ANTLR end "rule__ValueWithConstructor__TableAssignment_1_13"
 
 
-    // $ANTLR start "rule__ValueWithConstructor__QuantityAssignment_1_13"
-    // InternalKactors.g:24497:1: rule__ValueWithConstructor__QuantityAssignment_1_13 : ( ruleQuantity ) ;
-    public final void rule__ValueWithConstructor__QuantityAssignment_1_13() throws RecognitionException {
+    // $ANTLR start "rule__ValueWithConstructor__QuantityAssignment_1_14"
+    // InternalKactors.g:24497:1: rule__ValueWithConstructor__QuantityAssignment_1_14 : ( ruleQuantity ) ;
+    public final void rule__ValueWithConstructor__QuantityAssignment_1_14() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
@@ -82425,7 +82425,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             // InternalKactors.g:24503:3: ruleQuantity
             {
             if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueWithConstructorAccess().getQuantityQuantityParserRuleCall_1_13_0()); 
+               before(grammarAccess.getValueWithConstructorAccess().getQuantityQuantityParserRuleCall_1_14_0()); 
             }
             pushFollow(FOLLOW_2);
             ruleQuantity();
@@ -82433,7 +82433,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             state._fsp--;
             if (state.failed) return ;
             if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueWithConstructorAccess().getQuantityQuantityParserRuleCall_1_13_0()); 
+               after(grammarAccess.getValueWithConstructorAccess().getQuantityQuantityParserRuleCall_1_14_0()); 
             }
 
             }
@@ -82453,12 +82453,12 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__ValueWithConstructor__QuantityAssignment_1_13"
+    // $ANTLR end "rule__ValueWithConstructor__QuantityAssignment_1_14"
 
 
-    // $ANTLR start "rule__ValueWithConstructor__ComponentAssignment_1_14_0"
-    // InternalKactors.g:24512:1: rule__ValueWithConstructor__ComponentAssignment_1_14_0 : ( ( 'new' ) ) ;
-    public final void rule__ValueWithConstructor__ComponentAssignment_1_14_0() throws RecognitionException {
+    // $ANTLR start "rule__ValueWithConstructor__ComponentAssignment_1_15_0"
+    // InternalKactors.g:24512:1: rule__ValueWithConstructor__ComponentAssignment_1_15_0 : ( ( 'new' ) ) ;
+    public final void rule__ValueWithConstructor__ComponentAssignment_1_15_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
@@ -82470,23 +82470,23 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             // InternalKactors.g:24518:3: ( 'new' )
             {
             if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueWithConstructorAccess().getComponentNewKeyword_1_14_0_0()); 
+               before(grammarAccess.getValueWithConstructorAccess().getComponentNewKeyword_1_15_0_0()); 
             }
             // InternalKactors.g:24519:3: ( 'new' )
             // InternalKactors.g:24520:4: 'new'
             {
             if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueWithConstructorAccess().getComponentNewKeyword_1_14_0_0()); 
+               before(grammarAccess.getValueWithConstructorAccess().getComponentNewKeyword_1_15_0_0()); 
             }
             match(input,133,FOLLOW_2); if (state.failed) return ;
             if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueWithConstructorAccess().getComponentNewKeyword_1_14_0_0()); 
+               after(grammarAccess.getValueWithConstructorAccess().getComponentNewKeyword_1_15_0_0()); 
             }
 
             }
 
             if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueWithConstructorAccess().getComponentNewKeyword_1_14_0_0()); 
+               after(grammarAccess.getValueWithConstructorAccess().getComponentNewKeyword_1_15_0_0()); 
             }
 
             }
@@ -82506,12 +82506,12 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__ValueWithConstructor__ComponentAssignment_1_14_0"
+    // $ANTLR end "rule__ValueWithConstructor__ComponentAssignment_1_15_0"
 
 
-    // $ANTLR start "rule__ValueWithConstructor__BehaviorAssignment_1_14_1"
-    // InternalKactors.g:24531:1: rule__ValueWithConstructor__BehaviorAssignment_1_14_1 : ( rulePathName ) ;
-    public final void rule__ValueWithConstructor__BehaviorAssignment_1_14_1() throws RecognitionException {
+    // $ANTLR start "rule__ValueWithConstructor__BehaviorAssignment_1_15_1"
+    // InternalKactors.g:24531:1: rule__ValueWithConstructor__BehaviorAssignment_1_15_1 : ( rulePathName ) ;
+    public final void rule__ValueWithConstructor__BehaviorAssignment_1_15_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
@@ -82523,7 +82523,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             // InternalKactors.g:24537:3: rulePathName
             {
             if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueWithConstructorAccess().getBehaviorPathNameParserRuleCall_1_14_1_0()); 
+               before(grammarAccess.getValueWithConstructorAccess().getBehaviorPathNameParserRuleCall_1_15_1_0()); 
             }
             pushFollow(FOLLOW_2);
             rulePathName();
@@ -82531,7 +82531,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             state._fsp--;
             if (state.failed) return ;
             if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueWithConstructorAccess().getBehaviorPathNameParserRuleCall_1_14_1_0()); 
+               after(grammarAccess.getValueWithConstructorAccess().getBehaviorPathNameParserRuleCall_1_15_1_0()); 
             }
 
             }
@@ -82551,12 +82551,12 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__ValueWithConstructor__BehaviorAssignment_1_14_1"
+    // $ANTLR end "rule__ValueWithConstructor__BehaviorAssignment_1_15_1"
 
 
-    // $ANTLR start "rule__ValueWithConstructor__ParametersAssignment_1_14_2_1"
-    // InternalKactors.g:24546:1: rule__ValueWithConstructor__ParametersAssignment_1_14_2_1 : ( ruleParameterList ) ;
-    public final void rule__ValueWithConstructor__ParametersAssignment_1_14_2_1() throws RecognitionException {
+    // $ANTLR start "rule__ValueWithConstructor__ParametersAssignment_1_15_2_1"
+    // InternalKactors.g:24546:1: rule__ValueWithConstructor__ParametersAssignment_1_15_2_1 : ( ruleParameterList ) ;
+    public final void rule__ValueWithConstructor__ParametersAssignment_1_15_2_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         	
@@ -82568,7 +82568,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             // InternalKactors.g:24552:3: ruleParameterList
             {
             if ( state.backtracking==0 ) {
-               before(grammarAccess.getValueWithConstructorAccess().getParametersParameterListParserRuleCall_1_14_2_1_0()); 
+               before(grammarAccess.getValueWithConstructorAccess().getParametersParameterListParserRuleCall_1_15_2_1_0()); 
             }
             pushFollow(FOLLOW_2);
             ruleParameterList();
@@ -82576,7 +82576,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             state._fsp--;
             if (state.failed) return ;
             if ( state.backtracking==0 ) {
-               after(grammarAccess.getValueWithConstructorAccess().getParametersParameterListParserRuleCall_1_14_2_1_0()); 
+               after(grammarAccess.getValueWithConstructorAccess().getParametersParameterListParserRuleCall_1_15_2_1_0()); 
             }
 
             }
@@ -82596,7 +82596,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         }
         return ;
     }
-    // $ANTLR end "rule__ValueWithConstructor__ParametersAssignment_1_14_2_1"
+    // $ANTLR end "rule__ValueWithConstructor__ParametersAssignment_1_15_2_1"
 
 
     // $ANTLR start "rule__ValueWithConstructor__ThenAssignment_2_1"
@@ -95452,22 +95452,22 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
     }
     // $ANTLR end synpred51_InternalKactors
 
-    // $ANTLR start synpred52_InternalKactors
-    public final void synpred52_InternalKactors_fragment() throws RecognitionException {   
-        // InternalKactors.g:2496:2: ( ( ( rule__Value__Group_1_1__0 ) ) )
-        // InternalKactors.g:2496:2: ( ( rule__Value__Group_1_1__0 ) )
+    // $ANTLR start synpred53_InternalKactors
+    public final void synpred53_InternalKactors_fragment() throws RecognitionException {   
+        // InternalKactors.g:2502:2: ( ( ( rule__Value__ArgvalueAssignment_1_2 ) ) )
+        // InternalKactors.g:2502:2: ( ( rule__Value__ArgvalueAssignment_1_2 ) )
         {
-        // InternalKactors.g:2496:2: ( ( rule__Value__Group_1_1__0 ) )
-        // InternalKactors.g:2497:3: ( rule__Value__Group_1_1__0 )
+        // InternalKactors.g:2502:2: ( ( rule__Value__ArgvalueAssignment_1_2 ) )
+        // InternalKactors.g:2503:3: ( rule__Value__ArgvalueAssignment_1_2 )
         {
         if ( state.backtracking==0 ) {
-           before(grammarAccess.getValueAccess().getGroup_1_1()); 
+           before(grammarAccess.getValueAccess().getArgvalueAssignment_1_2()); 
         }
-        // InternalKactors.g:2498:3: ( rule__Value__Group_1_1__0 )
-        // InternalKactors.g:2498:4: rule__Value__Group_1_1__0
+        // InternalKactors.g:2504:3: ( rule__Value__ArgvalueAssignment_1_2 )
+        // InternalKactors.g:2504:4: rule__Value__ArgvalueAssignment_1_2
         {
         pushFollow(FOLLOW_2);
-        rule__Value__Group_1_1__0();
+        rule__Value__ArgvalueAssignment_1_2();
 
         state._fsp--;
         if (state.failed) return ;
@@ -95480,24 +95480,24 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
         }
     }
-    // $ANTLR end synpred52_InternalKactors
+    // $ANTLR end synpred53_InternalKactors
 
     // $ANTLR start synpred54_InternalKactors
     public final void synpred54_InternalKactors_fragment() throws RecognitionException {   
-        // InternalKactors.g:2508:2: ( ( ( rule__Value__ArgvalueAssignment_1_3 ) ) )
-        // InternalKactors.g:2508:2: ( ( rule__Value__ArgvalueAssignment_1_3 ) )
+        // InternalKactors.g:2508:2: ( ( ( rule__Value__UrnAssignment_1_3 ) ) )
+        // InternalKactors.g:2508:2: ( ( rule__Value__UrnAssignment_1_3 ) )
         {
-        // InternalKactors.g:2508:2: ( ( rule__Value__ArgvalueAssignment_1_3 ) )
-        // InternalKactors.g:2509:3: ( rule__Value__ArgvalueAssignment_1_3 )
+        // InternalKactors.g:2508:2: ( ( rule__Value__UrnAssignment_1_3 ) )
+        // InternalKactors.g:2509:3: ( rule__Value__UrnAssignment_1_3 )
         {
         if ( state.backtracking==0 ) {
-           before(grammarAccess.getValueAccess().getArgvalueAssignment_1_3()); 
+           before(grammarAccess.getValueAccess().getUrnAssignment_1_3()); 
         }
-        // InternalKactors.g:2510:3: ( rule__Value__ArgvalueAssignment_1_3 )
-        // InternalKactors.g:2510:4: rule__Value__ArgvalueAssignment_1_3
+        // InternalKactors.g:2510:3: ( rule__Value__UrnAssignment_1_3 )
+        // InternalKactors.g:2510:4: rule__Value__UrnAssignment_1_3
         {
         pushFollow(FOLLOW_2);
-        rule__Value__ArgvalueAssignment_1_3();
+        rule__Value__UrnAssignment_1_3();
 
         state._fsp--;
         if (state.failed) return ;
@@ -95514,20 +95514,20 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
     // $ANTLR start synpred55_InternalKactors
     public final void synpred55_InternalKactors_fragment() throws RecognitionException {   
-        // InternalKactors.g:2514:2: ( ( ( rule__Value__UrnAssignment_1_4 ) ) )
-        // InternalKactors.g:2514:2: ( ( rule__Value__UrnAssignment_1_4 ) )
+        // InternalKactors.g:2514:2: ( ( ( rule__Value__LiteralAssignment_1_4 ) ) )
+        // InternalKactors.g:2514:2: ( ( rule__Value__LiteralAssignment_1_4 ) )
         {
-        // InternalKactors.g:2514:2: ( ( rule__Value__UrnAssignment_1_4 ) )
-        // InternalKactors.g:2515:3: ( rule__Value__UrnAssignment_1_4 )
+        // InternalKactors.g:2514:2: ( ( rule__Value__LiteralAssignment_1_4 ) )
+        // InternalKactors.g:2515:3: ( rule__Value__LiteralAssignment_1_4 )
         {
         if ( state.backtracking==0 ) {
-           before(grammarAccess.getValueAccess().getUrnAssignment_1_4()); 
+           before(grammarAccess.getValueAccess().getLiteralAssignment_1_4()); 
         }
-        // InternalKactors.g:2516:3: ( rule__Value__UrnAssignment_1_4 )
-        // InternalKactors.g:2516:4: rule__Value__UrnAssignment_1_4
+        // InternalKactors.g:2516:3: ( rule__Value__LiteralAssignment_1_4 )
+        // InternalKactors.g:2516:4: rule__Value__LiteralAssignment_1_4
         {
         pushFollow(FOLLOW_2);
-        rule__Value__UrnAssignment_1_4();
+        rule__Value__LiteralAssignment_1_4();
 
         state._fsp--;
         if (state.failed) return ;
@@ -95544,20 +95544,20 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
     // $ANTLR start synpred56_InternalKactors
     public final void synpred56_InternalKactors_fragment() throws RecognitionException {   
-        // InternalKactors.g:2520:2: ( ( ( rule__Value__LiteralAssignment_1_5 ) ) )
-        // InternalKactors.g:2520:2: ( ( rule__Value__LiteralAssignment_1_5 ) )
+        // InternalKactors.g:2520:2: ( ( ( rule__Value__IdAssignment_1_5 ) ) )
+        // InternalKactors.g:2520:2: ( ( rule__Value__IdAssignment_1_5 ) )
         {
-        // InternalKactors.g:2520:2: ( ( rule__Value__LiteralAssignment_1_5 ) )
-        // InternalKactors.g:2521:3: ( rule__Value__LiteralAssignment_1_5 )
+        // InternalKactors.g:2520:2: ( ( rule__Value__IdAssignment_1_5 ) )
+        // InternalKactors.g:2521:3: ( rule__Value__IdAssignment_1_5 )
         {
         if ( state.backtracking==0 ) {
-           before(grammarAccess.getValueAccess().getLiteralAssignment_1_5()); 
+           before(grammarAccess.getValueAccess().getIdAssignment_1_5()); 
         }
-        // InternalKactors.g:2522:3: ( rule__Value__LiteralAssignment_1_5 )
-        // InternalKactors.g:2522:4: rule__Value__LiteralAssignment_1_5
+        // InternalKactors.g:2522:3: ( rule__Value__IdAssignment_1_5 )
+        // InternalKactors.g:2522:4: rule__Value__IdAssignment_1_5
         {
         pushFollow(FOLLOW_2);
-        rule__Value__LiteralAssignment_1_5();
+        rule__Value__IdAssignment_1_5();
 
         state._fsp--;
         if (state.failed) return ;
@@ -95574,20 +95574,20 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
     // $ANTLR start synpred57_InternalKactors
     public final void synpred57_InternalKactors_fragment() throws RecognitionException {   
-        // InternalKactors.g:2526:2: ( ( ( rule__Value__IdAssignment_1_6 ) ) )
-        // InternalKactors.g:2526:2: ( ( rule__Value__IdAssignment_1_6 ) )
+        // InternalKactors.g:2526:2: ( ( ( rule__Value__ListAssignment_1_6 ) ) )
+        // InternalKactors.g:2526:2: ( ( rule__Value__ListAssignment_1_6 ) )
         {
-        // InternalKactors.g:2526:2: ( ( rule__Value__IdAssignment_1_6 ) )
-        // InternalKactors.g:2527:3: ( rule__Value__IdAssignment_1_6 )
+        // InternalKactors.g:2526:2: ( ( rule__Value__ListAssignment_1_6 ) )
+        // InternalKactors.g:2527:3: ( rule__Value__ListAssignment_1_6 )
         {
         if ( state.backtracking==0 ) {
-           before(grammarAccess.getValueAccess().getIdAssignment_1_6()); 
+           before(grammarAccess.getValueAccess().getListAssignment_1_6()); 
         }
-        // InternalKactors.g:2528:3: ( rule__Value__IdAssignment_1_6 )
-        // InternalKactors.g:2528:4: rule__Value__IdAssignment_1_6
+        // InternalKactors.g:2528:3: ( rule__Value__ListAssignment_1_6 )
+        // InternalKactors.g:2528:4: rule__Value__ListAssignment_1_6
         {
         pushFollow(FOLLOW_2);
-        rule__Value__IdAssignment_1_6();
+        rule__Value__ListAssignment_1_6();
 
         state._fsp--;
         if (state.failed) return ;
@@ -95604,20 +95604,20 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
     // $ANTLR start synpred58_InternalKactors
     public final void synpred58_InternalKactors_fragment() throws RecognitionException {   
-        // InternalKactors.g:2532:2: ( ( ( rule__Value__ListAssignment_1_7 ) ) )
-        // InternalKactors.g:2532:2: ( ( rule__Value__ListAssignment_1_7 ) )
+        // InternalKactors.g:2532:2: ( ( ( rule__Value__MapAssignment_1_7 ) ) )
+        // InternalKactors.g:2532:2: ( ( rule__Value__MapAssignment_1_7 ) )
         {
-        // InternalKactors.g:2532:2: ( ( rule__Value__ListAssignment_1_7 ) )
-        // InternalKactors.g:2533:3: ( rule__Value__ListAssignment_1_7 )
+        // InternalKactors.g:2532:2: ( ( rule__Value__MapAssignment_1_7 ) )
+        // InternalKactors.g:2533:3: ( rule__Value__MapAssignment_1_7 )
         {
         if ( state.backtracking==0 ) {
-           before(grammarAccess.getValueAccess().getListAssignment_1_7()); 
+           before(grammarAccess.getValueAccess().getMapAssignment_1_7()); 
         }
-        // InternalKactors.g:2534:3: ( rule__Value__ListAssignment_1_7 )
-        // InternalKactors.g:2534:4: rule__Value__ListAssignment_1_7
+        // InternalKactors.g:2534:3: ( rule__Value__MapAssignment_1_7 )
+        // InternalKactors.g:2534:4: rule__Value__MapAssignment_1_7
         {
         pushFollow(FOLLOW_2);
-        rule__Value__ListAssignment_1_7();
+        rule__Value__MapAssignment_1_7();
 
         state._fsp--;
         if (state.failed) return ;
@@ -95632,22 +95632,22 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
     }
     // $ANTLR end synpred58_InternalKactors
 
-    // $ANTLR start synpred59_InternalKactors
-    public final void synpred59_InternalKactors_fragment() throws RecognitionException {   
-        // InternalKactors.g:2538:2: ( ( ( rule__Value__MapAssignment_1_8 ) ) )
-        // InternalKactors.g:2538:2: ( ( rule__Value__MapAssignment_1_8 ) )
+    // $ANTLR start synpred60_InternalKactors
+    public final void synpred60_InternalKactors_fragment() throws RecognitionException {   
+        // InternalKactors.g:2544:2: ( ( ( rule__Value__ObservableAssignment_1_9 ) ) )
+        // InternalKactors.g:2544:2: ( ( rule__Value__ObservableAssignment_1_9 ) )
         {
-        // InternalKactors.g:2538:2: ( ( rule__Value__MapAssignment_1_8 ) )
-        // InternalKactors.g:2539:3: ( rule__Value__MapAssignment_1_8 )
+        // InternalKactors.g:2544:2: ( ( rule__Value__ObservableAssignment_1_9 ) )
+        // InternalKactors.g:2545:3: ( rule__Value__ObservableAssignment_1_9 )
         {
         if ( state.backtracking==0 ) {
-           before(grammarAccess.getValueAccess().getMapAssignment_1_8()); 
+           before(grammarAccess.getValueAccess().getObservableAssignment_1_9()); 
         }
-        // InternalKactors.g:2540:3: ( rule__Value__MapAssignment_1_8 )
-        // InternalKactors.g:2540:4: rule__Value__MapAssignment_1_8
+        // InternalKactors.g:2546:3: ( rule__Value__ObservableAssignment_1_9 )
+        // InternalKactors.g:2546:4: rule__Value__ObservableAssignment_1_9
         {
         pushFollow(FOLLOW_2);
-        rule__Value__MapAssignment_1_8();
+        rule__Value__ObservableAssignment_1_9();
 
         state._fsp--;
         if (state.failed) return ;
@@ -95660,24 +95660,24 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
         }
     }
-    // $ANTLR end synpred59_InternalKactors
+    // $ANTLR end synpred60_InternalKactors
 
     // $ANTLR start synpred61_InternalKactors
     public final void synpred61_InternalKactors_fragment() throws RecognitionException {   
-        // InternalKactors.g:2550:2: ( ( ( rule__Value__ObservableAssignment_1_10 ) ) )
-        // InternalKactors.g:2550:2: ( ( rule__Value__ObservableAssignment_1_10 ) )
+        // InternalKactors.g:2550:2: ( ( ( rule__Value__ExpressionAssignment_1_10 ) ) )
+        // InternalKactors.g:2550:2: ( ( rule__Value__ExpressionAssignment_1_10 ) )
         {
-        // InternalKactors.g:2550:2: ( ( rule__Value__ObservableAssignment_1_10 ) )
-        // InternalKactors.g:2551:3: ( rule__Value__ObservableAssignment_1_10 )
+        // InternalKactors.g:2550:2: ( ( rule__Value__ExpressionAssignment_1_10 ) )
+        // InternalKactors.g:2551:3: ( rule__Value__ExpressionAssignment_1_10 )
         {
         if ( state.backtracking==0 ) {
-           before(grammarAccess.getValueAccess().getObservableAssignment_1_10()); 
+           before(grammarAccess.getValueAccess().getExpressionAssignment_1_10()); 
         }
-        // InternalKactors.g:2552:3: ( rule__Value__ObservableAssignment_1_10 )
-        // InternalKactors.g:2552:4: rule__Value__ObservableAssignment_1_10
+        // InternalKactors.g:2552:3: ( rule__Value__ExpressionAssignment_1_10 )
+        // InternalKactors.g:2552:4: rule__Value__ExpressionAssignment_1_10
         {
         pushFollow(FOLLOW_2);
-        rule__Value__ObservableAssignment_1_10();
+        rule__Value__ExpressionAssignment_1_10();
 
         state._fsp--;
         if (state.failed) return ;
@@ -95694,20 +95694,20 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
     // $ANTLR start synpred62_InternalKactors
     public final void synpred62_InternalKactors_fragment() throws RecognitionException {   
-        // InternalKactors.g:2556:2: ( ( ( rule__Value__ExpressionAssignment_1_11 ) ) )
-        // InternalKactors.g:2556:2: ( ( rule__Value__ExpressionAssignment_1_11 ) )
+        // InternalKactors.g:2556:2: ( ( ( rule__Value__TableAssignment_1_11 ) ) )
+        // InternalKactors.g:2556:2: ( ( rule__Value__TableAssignment_1_11 ) )
         {
-        // InternalKactors.g:2556:2: ( ( rule__Value__ExpressionAssignment_1_11 ) )
-        // InternalKactors.g:2557:3: ( rule__Value__ExpressionAssignment_1_11 )
+        // InternalKactors.g:2556:2: ( ( rule__Value__TableAssignment_1_11 ) )
+        // InternalKactors.g:2557:3: ( rule__Value__TableAssignment_1_11 )
         {
         if ( state.backtracking==0 ) {
-           before(grammarAccess.getValueAccess().getExpressionAssignment_1_11()); 
+           before(grammarAccess.getValueAccess().getTableAssignment_1_11()); 
         }
-        // InternalKactors.g:2558:3: ( rule__Value__ExpressionAssignment_1_11 )
-        // InternalKactors.g:2558:4: rule__Value__ExpressionAssignment_1_11
+        // InternalKactors.g:2558:3: ( rule__Value__TableAssignment_1_11 )
+        // InternalKactors.g:2558:4: rule__Value__TableAssignment_1_11
         {
         pushFollow(FOLLOW_2);
-        rule__Value__ExpressionAssignment_1_11();
+        rule__Value__TableAssignment_1_11();
 
         state._fsp--;
         if (state.failed) return ;
@@ -95724,20 +95724,20 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
     // $ANTLR start synpred63_InternalKactors
     public final void synpred63_InternalKactors_fragment() throws RecognitionException {   
-        // InternalKactors.g:2562:2: ( ( ( rule__Value__TableAssignment_1_12 ) ) )
-        // InternalKactors.g:2562:2: ( ( rule__Value__TableAssignment_1_12 ) )
+        // InternalKactors.g:2577:2: ( ( ( rule__ValueWithConstructor__ConstructorAssignment_1_0 ) ) )
+        // InternalKactors.g:2577:2: ( ( rule__ValueWithConstructor__ConstructorAssignment_1_0 ) )
         {
-        // InternalKactors.g:2562:2: ( ( rule__Value__TableAssignment_1_12 ) )
-        // InternalKactors.g:2563:3: ( rule__Value__TableAssignment_1_12 )
+        // InternalKactors.g:2577:2: ( ( rule__ValueWithConstructor__ConstructorAssignment_1_0 ) )
+        // InternalKactors.g:2578:3: ( rule__ValueWithConstructor__ConstructorAssignment_1_0 )
         {
         if ( state.backtracking==0 ) {
-           before(grammarAccess.getValueAccess().getTableAssignment_1_12()); 
+           before(grammarAccess.getValueWithConstructorAccess().getConstructorAssignment_1_0()); 
         }
-        // InternalKactors.g:2564:3: ( rule__Value__TableAssignment_1_12 )
-        // InternalKactors.g:2564:4: rule__Value__TableAssignment_1_12
+        // InternalKactors.g:2579:3: ( rule__ValueWithConstructor__ConstructorAssignment_1_0 )
+        // InternalKactors.g:2579:4: rule__ValueWithConstructor__ConstructorAssignment_1_0
         {
         pushFollow(FOLLOW_2);
-        rule__Value__TableAssignment_1_12();
+        rule__ValueWithConstructor__ConstructorAssignment_1_0();
 
         state._fsp--;
         if (state.failed) return ;
@@ -95754,20 +95754,20 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
     // $ANTLR start synpred64_InternalKactors
     public final void synpred64_InternalKactors_fragment() throws RecognitionException {   
-        // InternalKactors.g:2583:2: ( ( ( rule__ValueWithConstructor__ConstructorAssignment_1_0 ) ) )
-        // InternalKactors.g:2583:2: ( ( rule__ValueWithConstructor__ConstructorAssignment_1_0 ) )
+        // InternalKactors.g:2583:2: ( ( ( rule__ValueWithConstructor__Group_1_1__0 ) ) )
+        // InternalKactors.g:2583:2: ( ( rule__ValueWithConstructor__Group_1_1__0 ) )
         {
-        // InternalKactors.g:2583:2: ( ( rule__ValueWithConstructor__ConstructorAssignment_1_0 ) )
-        // InternalKactors.g:2584:3: ( rule__ValueWithConstructor__ConstructorAssignment_1_0 )
+        // InternalKactors.g:2583:2: ( ( rule__ValueWithConstructor__Group_1_1__0 ) )
+        // InternalKactors.g:2584:3: ( rule__ValueWithConstructor__Group_1_1__0 )
         {
         if ( state.backtracking==0 ) {
-           before(grammarAccess.getValueWithConstructorAccess().getConstructorAssignment_1_0()); 
+           before(grammarAccess.getValueWithConstructorAccess().getGroup_1_1()); 
         }
-        // InternalKactors.g:2585:3: ( rule__ValueWithConstructor__ConstructorAssignment_1_0 )
-        // InternalKactors.g:2585:4: rule__ValueWithConstructor__ConstructorAssignment_1_0
+        // InternalKactors.g:2585:3: ( rule__ValueWithConstructor__Group_1_1__0 )
+        // InternalKactors.g:2585:4: rule__ValueWithConstructor__Group_1_1__0
         {
         pushFollow(FOLLOW_2);
-        rule__ValueWithConstructor__ConstructorAssignment_1_0();
+        rule__ValueWithConstructor__Group_1_1__0();
 
         state._fsp--;
         if (state.failed) return ;
@@ -95784,20 +95784,20 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
     // $ANTLR start synpred65_InternalKactors
     public final void synpred65_InternalKactors_fragment() throws RecognitionException {   
-        // InternalKactors.g:2589:2: ( ( ( rule__ValueWithConstructor__TreeAssignment_1_1 ) ) )
-        // InternalKactors.g:2589:2: ( ( rule__ValueWithConstructor__TreeAssignment_1_1 ) )
+        // InternalKactors.g:2589:2: ( ( ( rule__ValueWithConstructor__TreeAssignment_1_2 ) ) )
+        // InternalKactors.g:2589:2: ( ( rule__ValueWithConstructor__TreeAssignment_1_2 ) )
         {
-        // InternalKactors.g:2589:2: ( ( rule__ValueWithConstructor__TreeAssignment_1_1 ) )
-        // InternalKactors.g:2590:3: ( rule__ValueWithConstructor__TreeAssignment_1_1 )
+        // InternalKactors.g:2589:2: ( ( rule__ValueWithConstructor__TreeAssignment_1_2 ) )
+        // InternalKactors.g:2590:3: ( rule__ValueWithConstructor__TreeAssignment_1_2 )
         {
         if ( state.backtracking==0 ) {
-           before(grammarAccess.getValueWithConstructorAccess().getTreeAssignment_1_1()); 
+           before(grammarAccess.getValueWithConstructorAccess().getTreeAssignment_1_2()); 
         }
-        // InternalKactors.g:2591:3: ( rule__ValueWithConstructor__TreeAssignment_1_1 )
-        // InternalKactors.g:2591:4: rule__ValueWithConstructor__TreeAssignment_1_1
+        // InternalKactors.g:2591:3: ( rule__ValueWithConstructor__TreeAssignment_1_2 )
+        // InternalKactors.g:2591:4: rule__ValueWithConstructor__TreeAssignment_1_2
         {
         pushFollow(FOLLOW_2);
-        rule__ValueWithConstructor__TreeAssignment_1_1();
+        rule__ValueWithConstructor__TreeAssignment_1_2();
 
         state._fsp--;
         if (state.failed) return ;
@@ -95814,20 +95814,20 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
     // $ANTLR start synpred67_InternalKactors
     public final void synpred67_InternalKactors_fragment() throws RecognitionException {   
-        // InternalKactors.g:2601:2: ( ( ( rule__ValueWithConstructor__ArgvalueAssignment_1_3 ) ) )
-        // InternalKactors.g:2601:2: ( ( rule__ValueWithConstructor__ArgvalueAssignment_1_3 ) )
+        // InternalKactors.g:2601:2: ( ( ( rule__ValueWithConstructor__ArgvalueAssignment_1_4 ) ) )
+        // InternalKactors.g:2601:2: ( ( rule__ValueWithConstructor__ArgvalueAssignment_1_4 ) )
         {
-        // InternalKactors.g:2601:2: ( ( rule__ValueWithConstructor__ArgvalueAssignment_1_3 ) )
-        // InternalKactors.g:2602:3: ( rule__ValueWithConstructor__ArgvalueAssignment_1_3 )
+        // InternalKactors.g:2601:2: ( ( rule__ValueWithConstructor__ArgvalueAssignment_1_4 ) )
+        // InternalKactors.g:2602:3: ( rule__ValueWithConstructor__ArgvalueAssignment_1_4 )
         {
         if ( state.backtracking==0 ) {
-           before(grammarAccess.getValueWithConstructorAccess().getArgvalueAssignment_1_3()); 
+           before(grammarAccess.getValueWithConstructorAccess().getArgvalueAssignment_1_4()); 
         }
-        // InternalKactors.g:2603:3: ( rule__ValueWithConstructor__ArgvalueAssignment_1_3 )
-        // InternalKactors.g:2603:4: rule__ValueWithConstructor__ArgvalueAssignment_1_3
+        // InternalKactors.g:2603:3: ( rule__ValueWithConstructor__ArgvalueAssignment_1_4 )
+        // InternalKactors.g:2603:4: rule__ValueWithConstructor__ArgvalueAssignment_1_4
         {
         pushFollow(FOLLOW_2);
-        rule__ValueWithConstructor__ArgvalueAssignment_1_3();
+        rule__ValueWithConstructor__ArgvalueAssignment_1_4();
 
         state._fsp--;
         if (state.failed) return ;
@@ -95844,20 +95844,20 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
     // $ANTLR start synpred68_InternalKactors
     public final void synpred68_InternalKactors_fragment() throws RecognitionException {   
-        // InternalKactors.g:2607:2: ( ( ( rule__ValueWithConstructor__LiteralAssignment_1_4 ) ) )
-        // InternalKactors.g:2607:2: ( ( rule__ValueWithConstructor__LiteralAssignment_1_4 ) )
+        // InternalKactors.g:2607:2: ( ( ( rule__ValueWithConstructor__LiteralAssignment_1_5 ) ) )
+        // InternalKactors.g:2607:2: ( ( rule__ValueWithConstructor__LiteralAssignment_1_5 ) )
         {
-        // InternalKactors.g:2607:2: ( ( rule__ValueWithConstructor__LiteralAssignment_1_4 ) )
-        // InternalKactors.g:2608:3: ( rule__ValueWithConstructor__LiteralAssignment_1_4 )
+        // InternalKactors.g:2607:2: ( ( rule__ValueWithConstructor__LiteralAssignment_1_5 ) )
+        // InternalKactors.g:2608:3: ( rule__ValueWithConstructor__LiteralAssignment_1_5 )
         {
         if ( state.backtracking==0 ) {
-           before(grammarAccess.getValueWithConstructorAccess().getLiteralAssignment_1_4()); 
+           before(grammarAccess.getValueWithConstructorAccess().getLiteralAssignment_1_5()); 
         }
-        // InternalKactors.g:2609:3: ( rule__ValueWithConstructor__LiteralAssignment_1_4 )
-        // InternalKactors.g:2609:4: rule__ValueWithConstructor__LiteralAssignment_1_4
+        // InternalKactors.g:2609:3: ( rule__ValueWithConstructor__LiteralAssignment_1_5 )
+        // InternalKactors.g:2609:4: rule__ValueWithConstructor__LiteralAssignment_1_5
         {
         pushFollow(FOLLOW_2);
-        rule__ValueWithConstructor__LiteralAssignment_1_4();
+        rule__ValueWithConstructor__LiteralAssignment_1_5();
 
         state._fsp--;
         if (state.failed) return ;
@@ -95874,20 +95874,20 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
     // $ANTLR start synpred69_InternalKactors
     public final void synpred69_InternalKactors_fragment() throws RecognitionException {   
-        // InternalKactors.g:2613:2: ( ( ( rule__ValueWithConstructor__UrnAssignment_1_5 ) ) )
-        // InternalKactors.g:2613:2: ( ( rule__ValueWithConstructor__UrnAssignment_1_5 ) )
+        // InternalKactors.g:2613:2: ( ( ( rule__ValueWithConstructor__UrnAssignment_1_6 ) ) )
+        // InternalKactors.g:2613:2: ( ( rule__ValueWithConstructor__UrnAssignment_1_6 ) )
         {
-        // InternalKactors.g:2613:2: ( ( rule__ValueWithConstructor__UrnAssignment_1_5 ) )
-        // InternalKactors.g:2614:3: ( rule__ValueWithConstructor__UrnAssignment_1_5 )
+        // InternalKactors.g:2613:2: ( ( rule__ValueWithConstructor__UrnAssignment_1_6 ) )
+        // InternalKactors.g:2614:3: ( rule__ValueWithConstructor__UrnAssignment_1_6 )
         {
         if ( state.backtracking==0 ) {
-           before(grammarAccess.getValueWithConstructorAccess().getUrnAssignment_1_5()); 
+           before(grammarAccess.getValueWithConstructorAccess().getUrnAssignment_1_6()); 
         }
-        // InternalKactors.g:2615:3: ( rule__ValueWithConstructor__UrnAssignment_1_5 )
-        // InternalKactors.g:2615:4: rule__ValueWithConstructor__UrnAssignment_1_5
+        // InternalKactors.g:2615:3: ( rule__ValueWithConstructor__UrnAssignment_1_6 )
+        // InternalKactors.g:2615:4: rule__ValueWithConstructor__UrnAssignment_1_6
         {
         pushFollow(FOLLOW_2);
-        rule__ValueWithConstructor__UrnAssignment_1_5();
+        rule__ValueWithConstructor__UrnAssignment_1_6();
 
         state._fsp--;
         if (state.failed) return ;
@@ -95904,20 +95904,20 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
     // $ANTLR start synpred70_InternalKactors
     public final void synpred70_InternalKactors_fragment() throws RecognitionException {   
-        // InternalKactors.g:2619:2: ( ( ( rule__ValueWithConstructor__IdAssignment_1_6 ) ) )
-        // InternalKactors.g:2619:2: ( ( rule__ValueWithConstructor__IdAssignment_1_6 ) )
+        // InternalKactors.g:2619:2: ( ( ( rule__ValueWithConstructor__IdAssignment_1_7 ) ) )
+        // InternalKactors.g:2619:2: ( ( rule__ValueWithConstructor__IdAssignment_1_7 ) )
         {
-        // InternalKactors.g:2619:2: ( ( rule__ValueWithConstructor__IdAssignment_1_6 ) )
-        // InternalKactors.g:2620:3: ( rule__ValueWithConstructor__IdAssignment_1_6 )
+        // InternalKactors.g:2619:2: ( ( rule__ValueWithConstructor__IdAssignment_1_7 ) )
+        // InternalKactors.g:2620:3: ( rule__ValueWithConstructor__IdAssignment_1_7 )
         {
         if ( state.backtracking==0 ) {
-           before(grammarAccess.getValueWithConstructorAccess().getIdAssignment_1_6()); 
+           before(grammarAccess.getValueWithConstructorAccess().getIdAssignment_1_7()); 
         }
-        // InternalKactors.g:2621:3: ( rule__ValueWithConstructor__IdAssignment_1_6 )
-        // InternalKactors.g:2621:4: rule__ValueWithConstructor__IdAssignment_1_6
+        // InternalKactors.g:2621:3: ( rule__ValueWithConstructor__IdAssignment_1_7 )
+        // InternalKactors.g:2621:4: rule__ValueWithConstructor__IdAssignment_1_7
         {
         pushFollow(FOLLOW_2);
-        rule__ValueWithConstructor__IdAssignment_1_6();
+        rule__ValueWithConstructor__IdAssignment_1_7();
 
         state._fsp--;
         if (state.failed) return ;
@@ -95934,20 +95934,20 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
     // $ANTLR start synpred71_InternalKactors
     public final void synpred71_InternalKactors_fragment() throws RecognitionException {   
-        // InternalKactors.g:2625:2: ( ( ( rule__ValueWithConstructor__ListAssignment_1_7 ) ) )
-        // InternalKactors.g:2625:2: ( ( rule__ValueWithConstructor__ListAssignment_1_7 ) )
+        // InternalKactors.g:2625:2: ( ( ( rule__ValueWithConstructor__ListAssignment_1_8 ) ) )
+        // InternalKactors.g:2625:2: ( ( rule__ValueWithConstructor__ListAssignment_1_8 ) )
         {
-        // InternalKactors.g:2625:2: ( ( rule__ValueWithConstructor__ListAssignment_1_7 ) )
-        // InternalKactors.g:2626:3: ( rule__ValueWithConstructor__ListAssignment_1_7 )
+        // InternalKactors.g:2625:2: ( ( rule__ValueWithConstructor__ListAssignment_1_8 ) )
+        // InternalKactors.g:2626:3: ( rule__ValueWithConstructor__ListAssignment_1_8 )
         {
         if ( state.backtracking==0 ) {
-           before(grammarAccess.getValueWithConstructorAccess().getListAssignment_1_7()); 
+           before(grammarAccess.getValueWithConstructorAccess().getListAssignment_1_8()); 
         }
-        // InternalKactors.g:2627:3: ( rule__ValueWithConstructor__ListAssignment_1_7 )
-        // InternalKactors.g:2627:4: rule__ValueWithConstructor__ListAssignment_1_7
+        // InternalKactors.g:2627:3: ( rule__ValueWithConstructor__ListAssignment_1_8 )
+        // InternalKactors.g:2627:4: rule__ValueWithConstructor__ListAssignment_1_8
         {
         pushFollow(FOLLOW_2);
-        rule__ValueWithConstructor__ListAssignment_1_7();
+        rule__ValueWithConstructor__ListAssignment_1_8();
 
         state._fsp--;
         if (state.failed) return ;
@@ -95964,20 +95964,20 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
     // $ANTLR start synpred72_InternalKactors
     public final void synpred72_InternalKactors_fragment() throws RecognitionException {   
-        // InternalKactors.g:2631:2: ( ( ( rule__ValueWithConstructor__MapAssignment_1_8 ) ) )
-        // InternalKactors.g:2631:2: ( ( rule__ValueWithConstructor__MapAssignment_1_8 ) )
+        // InternalKactors.g:2631:2: ( ( ( rule__ValueWithConstructor__MapAssignment_1_9 ) ) )
+        // InternalKactors.g:2631:2: ( ( rule__ValueWithConstructor__MapAssignment_1_9 ) )
         {
-        // InternalKactors.g:2631:2: ( ( rule__ValueWithConstructor__MapAssignment_1_8 ) )
-        // InternalKactors.g:2632:3: ( rule__ValueWithConstructor__MapAssignment_1_8 )
+        // InternalKactors.g:2631:2: ( ( rule__ValueWithConstructor__MapAssignment_1_9 ) )
+        // InternalKactors.g:2632:3: ( rule__ValueWithConstructor__MapAssignment_1_9 )
         {
         if ( state.backtracking==0 ) {
-           before(grammarAccess.getValueWithConstructorAccess().getMapAssignment_1_8()); 
+           before(grammarAccess.getValueWithConstructorAccess().getMapAssignment_1_9()); 
         }
-        // InternalKactors.g:2633:3: ( rule__ValueWithConstructor__MapAssignment_1_8 )
-        // InternalKactors.g:2633:4: rule__ValueWithConstructor__MapAssignment_1_8
+        // InternalKactors.g:2633:3: ( rule__ValueWithConstructor__MapAssignment_1_9 )
+        // InternalKactors.g:2633:4: rule__ValueWithConstructor__MapAssignment_1_9
         {
         pushFollow(FOLLOW_2);
-        rule__ValueWithConstructor__MapAssignment_1_8();
+        rule__ValueWithConstructor__MapAssignment_1_9();
 
         state._fsp--;
         if (state.failed) return ;
@@ -95994,20 +95994,20 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
     // $ANTLR start synpred74_InternalKactors
     public final void synpred74_InternalKactors_fragment() throws RecognitionException {   
-        // InternalKactors.g:2643:2: ( ( ( rule__ValueWithConstructor__ObservableAssignment_1_10 ) ) )
-        // InternalKactors.g:2643:2: ( ( rule__ValueWithConstructor__ObservableAssignment_1_10 ) )
+        // InternalKactors.g:2643:2: ( ( ( rule__ValueWithConstructor__ObservableAssignment_1_11 ) ) )
+        // InternalKactors.g:2643:2: ( ( rule__ValueWithConstructor__ObservableAssignment_1_11 ) )
         {
-        // InternalKactors.g:2643:2: ( ( rule__ValueWithConstructor__ObservableAssignment_1_10 ) )
-        // InternalKactors.g:2644:3: ( rule__ValueWithConstructor__ObservableAssignment_1_10 )
+        // InternalKactors.g:2643:2: ( ( rule__ValueWithConstructor__ObservableAssignment_1_11 ) )
+        // InternalKactors.g:2644:3: ( rule__ValueWithConstructor__ObservableAssignment_1_11 )
         {
         if ( state.backtracking==0 ) {
-           before(grammarAccess.getValueWithConstructorAccess().getObservableAssignment_1_10()); 
+           before(grammarAccess.getValueWithConstructorAccess().getObservableAssignment_1_11()); 
         }
-        // InternalKactors.g:2645:3: ( rule__ValueWithConstructor__ObservableAssignment_1_10 )
-        // InternalKactors.g:2645:4: rule__ValueWithConstructor__ObservableAssignment_1_10
+        // InternalKactors.g:2645:3: ( rule__ValueWithConstructor__ObservableAssignment_1_11 )
+        // InternalKactors.g:2645:4: rule__ValueWithConstructor__ObservableAssignment_1_11
         {
         pushFollow(FOLLOW_2);
-        rule__ValueWithConstructor__ObservableAssignment_1_10();
+        rule__ValueWithConstructor__ObservableAssignment_1_11();
 
         state._fsp--;
         if (state.failed) return ;
@@ -96024,20 +96024,20 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
     // $ANTLR start synpred75_InternalKactors
     public final void synpred75_InternalKactors_fragment() throws RecognitionException {   
-        // InternalKactors.g:2649:2: ( ( ( rule__ValueWithConstructor__ExpressionAssignment_1_11 ) ) )
-        // InternalKactors.g:2649:2: ( ( rule__ValueWithConstructor__ExpressionAssignment_1_11 ) )
+        // InternalKactors.g:2649:2: ( ( ( rule__ValueWithConstructor__ExpressionAssignment_1_12 ) ) )
+        // InternalKactors.g:2649:2: ( ( rule__ValueWithConstructor__ExpressionAssignment_1_12 ) )
         {
-        // InternalKactors.g:2649:2: ( ( rule__ValueWithConstructor__ExpressionAssignment_1_11 ) )
-        // InternalKactors.g:2650:3: ( rule__ValueWithConstructor__ExpressionAssignment_1_11 )
+        // InternalKactors.g:2649:2: ( ( rule__ValueWithConstructor__ExpressionAssignment_1_12 ) )
+        // InternalKactors.g:2650:3: ( rule__ValueWithConstructor__ExpressionAssignment_1_12 )
         {
         if ( state.backtracking==0 ) {
-           before(grammarAccess.getValueWithConstructorAccess().getExpressionAssignment_1_11()); 
+           before(grammarAccess.getValueWithConstructorAccess().getExpressionAssignment_1_12()); 
         }
-        // InternalKactors.g:2651:3: ( rule__ValueWithConstructor__ExpressionAssignment_1_11 )
-        // InternalKactors.g:2651:4: rule__ValueWithConstructor__ExpressionAssignment_1_11
+        // InternalKactors.g:2651:3: ( rule__ValueWithConstructor__ExpressionAssignment_1_12 )
+        // InternalKactors.g:2651:4: rule__ValueWithConstructor__ExpressionAssignment_1_12
         {
         pushFollow(FOLLOW_2);
-        rule__ValueWithConstructor__ExpressionAssignment_1_11();
+        rule__ValueWithConstructor__ExpressionAssignment_1_12();
 
         state._fsp--;
         if (state.failed) return ;
@@ -96054,20 +96054,20 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
     // $ANTLR start synpred76_InternalKactors
     public final void synpred76_InternalKactors_fragment() throws RecognitionException {   
-        // InternalKactors.g:2655:2: ( ( ( rule__ValueWithConstructor__TableAssignment_1_12 ) ) )
-        // InternalKactors.g:2655:2: ( ( rule__ValueWithConstructor__TableAssignment_1_12 ) )
+        // InternalKactors.g:2655:2: ( ( ( rule__ValueWithConstructor__TableAssignment_1_13 ) ) )
+        // InternalKactors.g:2655:2: ( ( rule__ValueWithConstructor__TableAssignment_1_13 ) )
         {
-        // InternalKactors.g:2655:2: ( ( rule__ValueWithConstructor__TableAssignment_1_12 ) )
-        // InternalKactors.g:2656:3: ( rule__ValueWithConstructor__TableAssignment_1_12 )
+        // InternalKactors.g:2655:2: ( ( rule__ValueWithConstructor__TableAssignment_1_13 ) )
+        // InternalKactors.g:2656:3: ( rule__ValueWithConstructor__TableAssignment_1_13 )
         {
         if ( state.backtracking==0 ) {
-           before(grammarAccess.getValueWithConstructorAccess().getTableAssignment_1_12()); 
+           before(grammarAccess.getValueWithConstructorAccess().getTableAssignment_1_13()); 
         }
-        // InternalKactors.g:2657:3: ( rule__ValueWithConstructor__TableAssignment_1_12 )
-        // InternalKactors.g:2657:4: rule__ValueWithConstructor__TableAssignment_1_12
+        // InternalKactors.g:2657:3: ( rule__ValueWithConstructor__TableAssignment_1_13 )
+        // InternalKactors.g:2657:4: rule__ValueWithConstructor__TableAssignment_1_13
         {
         pushFollow(FOLLOW_2);
-        rule__ValueWithConstructor__TableAssignment_1_12();
+        rule__ValueWithConstructor__TableAssignment_1_13();
 
         state._fsp--;
         if (state.failed) return ;
@@ -96084,20 +96084,20 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
     // $ANTLR start synpred77_InternalKactors
     public final void synpred77_InternalKactors_fragment() throws RecognitionException {   
-        // InternalKactors.g:2661:2: ( ( ( rule__ValueWithConstructor__QuantityAssignment_1_13 ) ) )
-        // InternalKactors.g:2661:2: ( ( rule__ValueWithConstructor__QuantityAssignment_1_13 ) )
+        // InternalKactors.g:2661:2: ( ( ( rule__ValueWithConstructor__QuantityAssignment_1_14 ) ) )
+        // InternalKactors.g:2661:2: ( ( rule__ValueWithConstructor__QuantityAssignment_1_14 ) )
         {
-        // InternalKactors.g:2661:2: ( ( rule__ValueWithConstructor__QuantityAssignment_1_13 ) )
-        // InternalKactors.g:2662:3: ( rule__ValueWithConstructor__QuantityAssignment_1_13 )
+        // InternalKactors.g:2661:2: ( ( rule__ValueWithConstructor__QuantityAssignment_1_14 ) )
+        // InternalKactors.g:2662:3: ( rule__ValueWithConstructor__QuantityAssignment_1_14 )
         {
         if ( state.backtracking==0 ) {
-           before(grammarAccess.getValueWithConstructorAccess().getQuantityAssignment_1_13()); 
+           before(grammarAccess.getValueWithConstructorAccess().getQuantityAssignment_1_14()); 
         }
-        // InternalKactors.g:2663:3: ( rule__ValueWithConstructor__QuantityAssignment_1_13 )
-        // InternalKactors.g:2663:4: rule__ValueWithConstructor__QuantityAssignment_1_13
+        // InternalKactors.g:2663:3: ( rule__ValueWithConstructor__QuantityAssignment_1_14 )
+        // InternalKactors.g:2663:4: rule__ValueWithConstructor__QuantityAssignment_1_14
         {
         pushFollow(FOLLOW_2);
-        rule__ValueWithConstructor__QuantityAssignment_1_13();
+        rule__ValueWithConstructor__QuantityAssignment_1_14();
 
         state._fsp--;
         if (state.failed) return ;
@@ -97134,23 +97134,8 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
     // $ANTLR start synpred292_InternalKactors
     public final void synpred292_InternalKactors_fragment() throws RecognitionException {   
-        // InternalKactors.g:9392:3: ( rule__Value__Group_1_1_0__0 )
-        // InternalKactors.g:9392:3: rule__Value__Group_1_1_0__0
-        {
-        pushFollow(FOLLOW_2);
-        rule__Value__Group_1_1_0__0();
-
-        state._fsp--;
-        if (state.failed) return ;
-
-        }
-    }
-    // $ANTLR end synpred292_InternalKactors
-
-    // $ANTLR start synpred293_InternalKactors
-    public final void synpred293_InternalKactors_fragment() throws RecognitionException {   
-        // InternalKactors.g:9608:3: ( rule__ValueWithConstructor__DeferredAssignment_0 )
-        // InternalKactors.g:9608:3: rule__ValueWithConstructor__DeferredAssignment_0
+        // InternalKactors.g:9500:3: ( rule__ValueWithConstructor__DeferredAssignment_0 )
+        // InternalKactors.g:9500:3: rule__ValueWithConstructor__DeferredAssignment_0
         {
         pushFollow(FOLLOW_2);
         rule__ValueWithConstructor__DeferredAssignment_0();
@@ -97160,15 +97145,30 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
         }
     }
-    // $ANTLR end synpred293_InternalKactors
+    // $ANTLR end synpred292_InternalKactors
+
+    // $ANTLR start synpred294_InternalKactors
+    public final void synpred294_InternalKactors_fragment() throws RecognitionException {   
+        // InternalKactors.g:9581:3: ( rule__ValueWithConstructor__Group_1_1_0__0 )
+        // InternalKactors.g:9581:3: rule__ValueWithConstructor__Group_1_1_0__0
+        {
+        pushFollow(FOLLOW_2);
+        rule__ValueWithConstructor__Group_1_1_0__0();
+
+        state._fsp--;
+        if (state.failed) return ;
+
+        }
+    }
+    // $ANTLR end synpred294_InternalKactors
 
     // $ANTLR start synpred295_InternalKactors
     public final void synpred295_InternalKactors_fragment() throws RecognitionException {   
-        // InternalKactors.g:9742:3: ( rule__ValueWithConstructor__Group_1_14_2__0 )
-        // InternalKactors.g:9742:3: rule__ValueWithConstructor__Group_1_14_2__0
+        // InternalKactors.g:9742:3: ( rule__ValueWithConstructor__Group_1_15_2__0 )
+        // InternalKactors.g:9742:3: rule__ValueWithConstructor__Group_1_15_2__0
         {
         pushFollow(FOLLOW_2);
-        rule__ValueWithConstructor__Group_1_14_2__0();
+        rule__ValueWithConstructor__Group_1_15_2__0();
 
         state._fsp--;
         if (state.failed) return ;
@@ -99473,11 +99473,11 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         state.failed=false;
         return success;
     }
-    public final boolean synpred52_InternalKactors() {
+    public final boolean synpred60_InternalKactors() {
         state.backtracking++;
         int start = input.mark();
         try {
-            synpred52_InternalKactors_fragment(); // can never throw exception
+            synpred60_InternalKactors_fragment(); // can never throw exception
         } catch (RecognitionException re) {
             System.err.println("impossible: "+re);
         }
@@ -99548,6 +99548,20 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         int start = input.mark();
         try {
             synpred365_InternalKactors_fragment(); // can never throw exception
+        } catch (RecognitionException re) {
+            System.err.println("impossible: "+re);
+        }
+        boolean success = !state.failed;
+        input.rewind(start);
+        state.backtracking--;
+        state.failed=false;
+        return success;
+    }
+    public final boolean synpred294_InternalKactors() {
+        state.backtracking++;
+        int start = input.mark();
+        try {
+            synpred294_InternalKactors_fragment(); // can never throw exception
         } catch (RecognitionException re) {
             System.err.println("impossible: "+re);
         }
@@ -99744,20 +99758,6 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         int start = input.mark();
         try {
             synpred72_InternalKactors_fragment(); // can never throw exception
-        } catch (RecognitionException re) {
-            System.err.println("impossible: "+re);
-        }
-        boolean success = !state.failed;
-        input.rewind(start);
-        state.backtracking--;
-        state.failed=false;
-        return success;
-    }
-    public final boolean synpred293_InternalKactors() {
-        state.backtracking++;
-        int start = input.mark();
-        try {
-            synpred293_InternalKactors_fragment(); // can never throw exception
         } catch (RecognitionException re) {
             System.err.println("impossible: "+re);
         }
@@ -100481,20 +100481,6 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         state.failed=false;
         return success;
     }
-    public final boolean synpred59_InternalKactors() {
-        state.backtracking++;
-        int start = input.mark();
-        try {
-            synpred59_InternalKactors_fragment(); // can never throw exception
-        } catch (RecognitionException re) {
-            System.err.println("impossible: "+re);
-        }
-        boolean success = !state.failed;
-        input.rewind(start);
-        state.backtracking--;
-        state.failed=false;
-        return success;
-    }
     public final boolean synpred87_InternalKactors() {
         state.backtracking++;
         int start = input.mark();
@@ -100514,6 +100500,20 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         int start = input.mark();
         try {
             synpred70_InternalKactors_fragment(); // can never throw exception
+        } catch (RecognitionException re) {
+            System.err.println("impossible: "+re);
+        }
+        boolean success = !state.failed;
+        input.rewind(start);
+        state.backtracking--;
+        state.failed=false;
+        return success;
+    }
+    public final boolean synpred53_InternalKactors() {
+        state.backtracking++;
+        int start = input.mark();
+        try {
+            synpred53_InternalKactors_fragment(); // can never throw exception
         } catch (RecognitionException re) {
             System.err.println("impossible: "+re);
         }
@@ -102135,11 +102135,11 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             throw nvae;
         }
     }
-    static final String dfa_25s = "\36\uffff";
-    static final String dfa_26s = "\1\4\1\uffff\17\0\15\uffff";
-    static final String dfa_27s = "\1\u0084\1\uffff\17\0\15\uffff";
-    static final String dfa_28s = "\1\uffff\1\1\17\uffff\1\3\1\12\1\2\1\4\1\6\1\16\1\5\1\7\1\10\1\11\1\13\1\14\1\15";
-    static final String dfa_29s = "\2\uffff\1\0\1\1\1\2\1\3\1\4\1\5\1\6\1\7\1\10\1\11\1\12\1\13\1\14\1\15\1\16\15\uffff}>";
+    static final String dfa_25s = "\35\uffff";
+    static final String dfa_26s = "\1\4\1\uffff\17\0\14\uffff";
+    static final String dfa_27s = "\1\u0084\1\uffff\17\0\14\uffff";
+    static final String dfa_28s = "\1\uffff\1\1\17\uffff\1\2\1\11\1\3\1\5\1\15\1\4\1\6\1\7\1\10\1\12\1\13\1\14";
+    static final String dfa_29s = "\2\uffff\1\0\1\1\1\2\1\3\1\4\1\5\1\6\1\7\1\10\1\11\1\12\1\13\1\14\1\15\1\16\14\uffff}>";
     static final String[] dfa_30s = {
             "\1\6\1\7\1\5\1\12\2\uffff\1\22\1\uffff\1\2\7\uffff\1\17\13\uffff\1\10\1\11\3\uffff\1\3\53\uffff\1\14\16\uffff\1\13\2\uffff\1\15\2\uffff\1\16\1\20\3\uffff\1\4\27\uffff\1\1\1\21",
             "",
@@ -102158,7 +102158,6 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             "\1\uffff",
             "\1\uffff",
             "\1\uffff",
-            "",
             "",
             "",
             "",
@@ -102194,7 +102193,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             this.transition = dfa_30;
         }
         public String getDescription() {
-            return "2485:1: rule__Value__Alternatives_1 : ( ( ( rule__Value__TreeAssignment_1_0 ) ) | ( ( rule__Value__Group_1_1__0 ) ) | ( ( rule__Value__EmptyAssignment_1_2 ) ) | ( ( rule__Value__ArgvalueAssignment_1_3 ) ) | ( ( rule__Value__UrnAssignment_1_4 ) ) | ( ( rule__Value__LiteralAssignment_1_5 ) ) | ( ( rule__Value__IdAssignment_1_6 ) ) | ( ( rule__Value__ListAssignment_1_7 ) ) | ( ( rule__Value__MapAssignment_1_8 ) ) | ( ( rule__Value__ConstantAssignment_1_9 ) ) | ( ( rule__Value__ObservableAssignment_1_10 ) ) | ( ( rule__Value__ExpressionAssignment_1_11 ) ) | ( ( rule__Value__TableAssignment_1_12 ) ) | ( ( rule__Value__QuantityAssignment_1_13 ) ) );";
+            return "2485:1: rule__Value__Alternatives_1 : ( ( ( rule__Value__TreeAssignment_1_0 ) ) | ( ( rule__Value__EmptyAssignment_1_1 ) ) | ( ( rule__Value__ArgvalueAssignment_1_2 ) ) | ( ( rule__Value__UrnAssignment_1_3 ) ) | ( ( rule__Value__LiteralAssignment_1_4 ) ) | ( ( rule__Value__IdAssignment_1_5 ) ) | ( ( rule__Value__ListAssignment_1_6 ) ) | ( ( rule__Value__MapAssignment_1_7 ) ) | ( ( rule__Value__ConstantAssignment_1_8 ) ) | ( ( rule__Value__ObservableAssignment_1_9 ) ) | ( ( rule__Value__ExpressionAssignment_1_10 ) ) | ( ( rule__Value__TableAssignment_1_11 ) ) | ( ( rule__Value__QuantityAssignment_1_12 ) ) );";
         }
         public int specialStateTransition(int s, IntStream _input) throws NoViableAltException {
             TokenStream input = (TokenStream)_input;
@@ -102209,9 +102208,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                         s = -1;
                         if ( (synpred51_InternalKactors()) ) {s = 1;}
 
-                        else if ( (synpred52_InternalKactors()) ) {s = 19;}
-
-                        else if ( (synpred54_InternalKactors()) ) {s = 20;}
+                        else if ( (synpred53_InternalKactors()) ) {s = 19;}
 
                          
                         input.seek(index23_2);
@@ -102226,9 +102223,9 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                         s = -1;
                         if ( (synpred51_InternalKactors()) ) {s = 1;}
 
-                        else if ( (synpred56_InternalKactors()) ) {s = 21;}
+                        else if ( (synpred55_InternalKactors()) ) {s = 20;}
 
-                        else if ( (true) ) {s = 22;}
+                        else if ( (true) ) {s = 21;}
 
                          
                         input.seek(index23_3);
@@ -102243,9 +102240,9 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                         s = -1;
                         if ( (synpred51_InternalKactors()) ) {s = 1;}
 
-                        else if ( (synpred56_InternalKactors()) ) {s = 21;}
+                        else if ( (synpred55_InternalKactors()) ) {s = 20;}
 
-                        else if ( (true) ) {s = 22;}
+                        else if ( (true) ) {s = 21;}
 
                          
                         input.seek(index23_4);
@@ -102260,9 +102257,9 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                         s = -1;
                         if ( (synpred51_InternalKactors()) ) {s = 1;}
 
-                        else if ( (synpred56_InternalKactors()) ) {s = 21;}
+                        else if ( (synpred55_InternalKactors()) ) {s = 20;}
 
-                        else if ( (true) ) {s = 22;}
+                        else if ( (true) ) {s = 21;}
 
                          
                         input.seek(index23_5);
@@ -102277,7 +102274,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                         s = -1;
                         if ( (synpred51_InternalKactors()) ) {s = 1;}
 
-                        else if ( (synpred56_InternalKactors()) ) {s = 21;}
+                        else if ( (synpred55_InternalKactors()) ) {s = 20;}
 
                          
                         input.seek(index23_6);
@@ -102292,7 +102289,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                         s = -1;
                         if ( (synpred51_InternalKactors()) ) {s = 1;}
 
-                        else if ( (synpred56_InternalKactors()) ) {s = 21;}
+                        else if ( (synpred55_InternalKactors()) ) {s = 20;}
 
                          
                         input.seek(index23_7);
@@ -102307,7 +102304,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                         s = -1;
                         if ( (synpred51_InternalKactors()) ) {s = 1;}
 
-                        else if ( (synpred56_InternalKactors()) ) {s = 21;}
+                        else if ( (synpred55_InternalKactors()) ) {s = 20;}
 
                          
                         input.seek(index23_8);
@@ -102322,7 +102319,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                         s = -1;
                         if ( (synpred51_InternalKactors()) ) {s = 1;}
 
-                        else if ( (synpred56_InternalKactors()) ) {s = 21;}
+                        else if ( (synpred55_InternalKactors()) ) {s = 20;}
 
                          
                         input.seek(index23_9);
@@ -102337,11 +102334,9 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                         s = -1;
                         if ( (synpred51_InternalKactors()) ) {s = 1;}
 
-                        else if ( (synpred52_InternalKactors()) ) {s = 19;}
+                        else if ( (synpred54_InternalKactors()) ) {s = 22;}
 
-                        else if ( (synpred55_InternalKactors()) ) {s = 23;}
-
-                        else if ( (synpred57_InternalKactors()) ) {s = 24;}
+                        else if ( (synpred56_InternalKactors()) ) {s = 23;}
 
                          
                         input.seek(index23_10);
@@ -102356,7 +102351,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                         s = -1;
                         if ( (synpred51_InternalKactors()) ) {s = 1;}
 
-                        else if ( (synpred55_InternalKactors()) ) {s = 23;}
+                        else if ( (synpred54_InternalKactors()) ) {s = 22;}
 
                          
                         input.seek(index23_11);
@@ -102371,7 +102366,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                         s = -1;
                         if ( (synpred51_InternalKactors()) ) {s = 1;}
 
-                        else if ( (synpred58_InternalKactors()) ) {s = 25;}
+                        else if ( (synpred57_InternalKactors()) ) {s = 24;}
 
                          
                         input.seek(index23_12);
@@ -102386,7 +102381,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                         s = -1;
                         if ( (synpred51_InternalKactors()) ) {s = 1;}
 
-                        else if ( (synpred59_InternalKactors()) ) {s = 26;}
+                        else if ( (synpred58_InternalKactors()) ) {s = 25;}
 
                          
                         input.seek(index23_13);
@@ -102401,7 +102396,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                         s = -1;
                         if ( (synpred51_InternalKactors()) ) {s = 1;}
 
-                        else if ( (synpred61_InternalKactors()) ) {s = 27;}
+                        else if ( (synpred60_InternalKactors()) ) {s = 26;}
 
                          
                         input.seek(index23_14);
@@ -102416,7 +102411,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                         s = -1;
                         if ( (synpred51_InternalKactors()) ) {s = 1;}
 
-                        else if ( (synpred62_InternalKactors()) ) {s = 28;}
+                        else if ( (synpred61_InternalKactors()) ) {s = 27;}
 
                          
                         input.seek(index23_15);
@@ -102431,7 +102426,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                         s = -1;
                         if ( (synpred51_InternalKactors()) ) {s = 1;}
 
-                        else if ( (synpred63_InternalKactors()) ) {s = 29;}
+                        else if ( (synpred62_InternalKactors()) ) {s = 28;}
 
                          
                         input.seek(index23_16);
@@ -102445,16 +102440,17 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             throw nvae;
         }
     }
-    static final String dfa_31s = "\40\uffff";
-    static final String dfa_32s = "\1\4\1\0\3\uffff\16\0\15\uffff";
-    static final String dfa_33s = "\1\u0085\1\0\3\uffff\16\0\15\uffff";
-    static final String dfa_34s = "\2\uffff\1\1\1\uffff\1\2\16\uffff\1\3\1\12\1\17\1\6\1\7\1\4\1\5\1\16\1\10\1\11\1\13\1\14\1\15";
-    static final String dfa_35s = "\1\uffff\1\0\3\uffff\1\1\1\2\1\3\1\4\1\5\1\6\1\7\1\10\1\11\1\12\1\13\1\14\1\15\1\16\15\uffff}>";
+    static final String dfa_31s = "\41\uffff";
+    static final String dfa_32s = "\1\4\1\0\2\uffff\1\0\1\uffff\15\0\16\uffff";
+    static final String dfa_33s = "\1\u0085\1\0\2\uffff\1\0\1\uffff\15\0\16\uffff";
+    static final String dfa_34s = "\2\uffff\1\1\2\uffff\1\3\15\uffff\1\4\1\13\1\20\1\2\1\7\1\10\1\5\1\6\1\17\1\11\1\12\1\14\1\15\1\16";
+    static final String dfa_35s = "\1\uffff\1\0\2\uffff\1\1\1\uffff\1\2\1\3\1\4\1\5\1\6\1\7\1\10\1\11\1\12\1\13\1\14\1\15\1\16\16\uffff}>";
     static final String[] dfa_36s = {
-            "\1\11\1\12\1\10\1\1\1\uffff\1\2\1\24\1\2\1\5\7\uffff\1\21\13\uffff\1\13\1\14\3\uffff\1\6\53\uffff\1\16\16\uffff\1\15\2\uffff\1\17\2\uffff\1\20\1\22\3\uffff\1\7\27\uffff\1\4\1\23\1\25",
+            "\1\11\1\12\1\10\1\1\1\uffff\1\2\1\24\1\2\1\4\7\uffff\1\21\13\uffff\1\13\1\14\3\uffff\1\6\53\uffff\1\16\16\uffff\1\15\2\uffff\1\17\2\uffff\1\20\1\22\3\uffff\1\7\27\uffff\1\5\1\23\1\25",
             "\1\uffff",
             "",
             "",
+            "\1\uffff",
             "",
             "\1\uffff",
             "\1\uffff",
@@ -102469,7 +102465,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             "\1\uffff",
             "\1\uffff",
             "\1\uffff",
-            "\1\uffff",
+            "",
             "",
             "",
             "",
@@ -102506,7 +102502,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             this.transition = dfa_36;
         }
         public String getDescription() {
-            return "2578:1: rule__ValueWithConstructor__Alternatives_1 : ( ( ( rule__ValueWithConstructor__ConstructorAssignment_1_0 ) ) | ( ( rule__ValueWithConstructor__TreeAssignment_1_1 ) ) | ( ( rule__ValueWithConstructor__EmptyAssignment_1_2 ) ) | ( ( rule__ValueWithConstructor__ArgvalueAssignment_1_3 ) ) | ( ( rule__ValueWithConstructor__LiteralAssignment_1_4 ) ) | ( ( rule__ValueWithConstructor__UrnAssignment_1_5 ) ) | ( ( rule__ValueWithConstructor__IdAssignment_1_6 ) ) | ( ( rule__ValueWithConstructor__ListAssignment_1_7 ) ) | ( ( rule__ValueWithConstructor__MapAssignment_1_8 ) ) | ( ( rule__ValueWithConstructor__ConstantAssignment_1_9 ) ) | ( ( rule__ValueWithConstructor__ObservableAssignment_1_10 ) ) | ( ( rule__ValueWithConstructor__ExpressionAssignment_1_11 ) ) | ( ( rule__ValueWithConstructor__TableAssignment_1_12 ) ) | ( ( rule__ValueWithConstructor__QuantityAssignment_1_13 ) ) | ( ( rule__ValueWithConstructor__Group_1_14__0 ) ) );";
+            return "2572:1: rule__ValueWithConstructor__Alternatives_1 : ( ( ( rule__ValueWithConstructor__ConstructorAssignment_1_0 ) ) | ( ( rule__ValueWithConstructor__Group_1_1__0 ) ) | ( ( rule__ValueWithConstructor__TreeAssignment_1_2 ) ) | ( ( rule__ValueWithConstructor__EmptyAssignment_1_3 ) ) | ( ( rule__ValueWithConstructor__ArgvalueAssignment_1_4 ) ) | ( ( rule__ValueWithConstructor__LiteralAssignment_1_5 ) ) | ( ( rule__ValueWithConstructor__UrnAssignment_1_6 ) ) | ( ( rule__ValueWithConstructor__IdAssignment_1_7 ) ) | ( ( rule__ValueWithConstructor__ListAssignment_1_8 ) ) | ( ( rule__ValueWithConstructor__MapAssignment_1_9 ) ) | ( ( rule__ValueWithConstructor__ConstantAssignment_1_10 ) ) | ( ( rule__ValueWithConstructor__ObservableAssignment_1_11 ) ) | ( ( rule__ValueWithConstructor__ExpressionAssignment_1_12 ) ) | ( ( rule__ValueWithConstructor__TableAssignment_1_13 ) ) | ( ( rule__ValueWithConstructor__QuantityAssignment_1_14 ) ) | ( ( rule__ValueWithConstructor__Group_1_15__0 ) ) );";
         }
         public int specialStateTransition(int s, IntStream _input) throws NoViableAltException {
             TokenStream input = (TokenStream)_input;
@@ -102519,31 +102515,35 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                         int index24_1 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred64_InternalKactors()) ) {s = 2;}
+                        if ( (synpred63_InternalKactors()) ) {s = 2;}
 
-                        else if ( (synpred65_InternalKactors()) ) {s = 4;}
+                        else if ( (synpred64_InternalKactors()) ) {s = 22;}
 
-                        else if ( (synpred69_InternalKactors()) ) {s = 22;}
+                        else if ( (synpred65_InternalKactors()) ) {s = 5;}
 
-                        else if ( (synpred70_InternalKactors()) ) {s = 23;}
+                        else if ( (synpred69_InternalKactors()) ) {s = 23;}
+
+                        else if ( (synpred70_InternalKactors()) ) {s = 24;}
 
                          
                         input.seek(index24_1);
                         if ( s>=0 ) return s;
                         break;
                     case 1 : 
-                        int LA24_5 = input.LA(1);
+                        int LA24_4 = input.LA(1);
 
                          
-                        int index24_5 = input.index();
+                        int index24_4 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred65_InternalKactors()) ) {s = 4;}
+                        if ( (synpred64_InternalKactors()) ) {s = 22;}
 
-                        else if ( (synpred67_InternalKactors()) ) {s = 24;}
+                        else if ( (synpred65_InternalKactors()) ) {s = 5;}
+
+                        else if ( (synpred67_InternalKactors()) ) {s = 25;}
 
                          
-                        input.seek(index24_5);
+                        input.seek(index24_4);
                         if ( s>=0 ) return s;
                         break;
                     case 2 : 
@@ -102553,11 +102553,11 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                         int index24_6 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred65_InternalKactors()) ) {s = 4;}
+                        if ( (synpred65_InternalKactors()) ) {s = 5;}
 
-                        else if ( (synpred68_InternalKactors()) ) {s = 25;}
+                        else if ( (synpred68_InternalKactors()) ) {s = 26;}
 
-                        else if ( (synpred77_InternalKactors()) ) {s = 26;}
+                        else if ( (synpred77_InternalKactors()) ) {s = 27;}
 
                          
                         input.seek(index24_6);
@@ -102570,11 +102570,11 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                         int index24_7 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred65_InternalKactors()) ) {s = 4;}
+                        if ( (synpred65_InternalKactors()) ) {s = 5;}
 
-                        else if ( (synpred68_InternalKactors()) ) {s = 25;}
+                        else if ( (synpred68_InternalKactors()) ) {s = 26;}
 
-                        else if ( (synpred77_InternalKactors()) ) {s = 26;}
+                        else if ( (synpred77_InternalKactors()) ) {s = 27;}
 
                          
                         input.seek(index24_7);
@@ -102587,11 +102587,11 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                         int index24_8 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred65_InternalKactors()) ) {s = 4;}
+                        if ( (synpred65_InternalKactors()) ) {s = 5;}
 
-                        else if ( (synpred68_InternalKactors()) ) {s = 25;}
+                        else if ( (synpred68_InternalKactors()) ) {s = 26;}
 
-                        else if ( (synpred77_InternalKactors()) ) {s = 26;}
+                        else if ( (synpred77_InternalKactors()) ) {s = 27;}
 
                          
                         input.seek(index24_8);
@@ -102604,9 +102604,9 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                         int index24_9 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred65_InternalKactors()) ) {s = 4;}
+                        if ( (synpred65_InternalKactors()) ) {s = 5;}
 
-                        else if ( (synpred68_InternalKactors()) ) {s = 25;}
+                        else if ( (synpred68_InternalKactors()) ) {s = 26;}
 
                          
                         input.seek(index24_9);
@@ -102619,9 +102619,9 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                         int index24_10 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred65_InternalKactors()) ) {s = 4;}
+                        if ( (synpred65_InternalKactors()) ) {s = 5;}
 
-                        else if ( (synpred68_InternalKactors()) ) {s = 25;}
+                        else if ( (synpred68_InternalKactors()) ) {s = 26;}
 
                          
                         input.seek(index24_10);
@@ -102634,9 +102634,9 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                         int index24_11 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred65_InternalKactors()) ) {s = 4;}
+                        if ( (synpred65_InternalKactors()) ) {s = 5;}
 
-                        else if ( (synpred68_InternalKactors()) ) {s = 25;}
+                        else if ( (synpred68_InternalKactors()) ) {s = 26;}
 
                          
                         input.seek(index24_11);
@@ -102649,9 +102649,9 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                         int index24_12 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred65_InternalKactors()) ) {s = 4;}
+                        if ( (synpred65_InternalKactors()) ) {s = 5;}
 
-                        else if ( (synpred68_InternalKactors()) ) {s = 25;}
+                        else if ( (synpred68_InternalKactors()) ) {s = 26;}
 
                          
                         input.seek(index24_12);
@@ -102664,9 +102664,9 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                         int index24_13 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred65_InternalKactors()) ) {s = 4;}
+                        if ( (synpred65_InternalKactors()) ) {s = 5;}
 
-                        else if ( (synpred69_InternalKactors()) ) {s = 22;}
+                        else if ( (synpred69_InternalKactors()) ) {s = 23;}
 
                          
                         input.seek(index24_13);
@@ -102679,9 +102679,9 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                         int index24_14 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred65_InternalKactors()) ) {s = 4;}
+                        if ( (synpred65_InternalKactors()) ) {s = 5;}
 
-                        else if ( (synpred71_InternalKactors()) ) {s = 27;}
+                        else if ( (synpred71_InternalKactors()) ) {s = 28;}
 
                          
                         input.seek(index24_14);
@@ -102694,9 +102694,9 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                         int index24_15 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred65_InternalKactors()) ) {s = 4;}
+                        if ( (synpred65_InternalKactors()) ) {s = 5;}
 
-                        else if ( (synpred72_InternalKactors()) ) {s = 28;}
+                        else if ( (synpred72_InternalKactors()) ) {s = 29;}
 
                          
                         input.seek(index24_15);
@@ -102709,9 +102709,9 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                         int index24_16 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred65_InternalKactors()) ) {s = 4;}
+                        if ( (synpred65_InternalKactors()) ) {s = 5;}
 
-                        else if ( (synpred74_InternalKactors()) ) {s = 29;}
+                        else if ( (synpred74_InternalKactors()) ) {s = 30;}
 
                          
                         input.seek(index24_16);
@@ -102724,9 +102724,9 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                         int index24_17 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred65_InternalKactors()) ) {s = 4;}
+                        if ( (synpred65_InternalKactors()) ) {s = 5;}
 
-                        else if ( (synpred75_InternalKactors()) ) {s = 30;}
+                        else if ( (synpred75_InternalKactors()) ) {s = 31;}
 
                          
                         input.seek(index24_17);
@@ -102739,9 +102739,9 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                         int index24_18 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred65_InternalKactors()) ) {s = 4;}
+                        if ( (synpred65_InternalKactors()) ) {s = 5;}
 
-                        else if ( (synpred76_InternalKactors()) ) {s = 31;}
+                        else if ( (synpred76_InternalKactors()) ) {s = 32;}
 
                          
                         input.seek(index24_18);
@@ -103061,7 +103061,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
     static final String dfa_44s = "\1\4\1\uffff\2\6\1\4\1\uffff\1\4\6\uffff\3\4\2\6\1\uffff\1\7\1\4\1\uffff\1\0\2\6\3\4\1\7\3\4\2\7\3\4\3\0\1\7\1\4";
     static final String dfa_45s = "\1\153\1\uffff\2\6\1\u008b\1\uffff\1\u0087\6\uffff\1\u008a\2\u0087\2\153\1\uffff\1\7\1\u0087\1\uffff\1\0\2\6\3\u0087\1\121\3\u0087\2\121\3\u0087\3\0\1\121\1\u0087";
     static final String dfa_46s = "\1\uffff\1\1\3\uffff\1\2\1\uffff\1\4\1\5\1\6\1\7\1\10\1\11\5\uffff\1\12\2\uffff\1\3\24\uffff";
-    static final String dfa_47s = "\26\uffff\1\2\16\uffff\1\0\1\1\1\3\2\uffff}>";
+    static final String dfa_47s = "\26\uffff\1\1\16\uffff\1\0\1\2\1\3\2\uffff}>";
     static final String[] dfa_48s = {
             "\2\5\1\4\1\6\4\uffff\1\1\7\uffff\1\13\13\uffff\2\5\3\uffff\1\2\53\uffff\1\10\16\uffff\1\7\2\uffff\1\11\2\uffff\1\12\1\14\3\uffff\1\3",
             "",
@@ -103151,21 +103151,6 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                         if ( s>=0 ) return s;
                         break;
                     case 1 : 
-                        int LA26_38 = input.LA(1);
-
-                         
-                        int index26_38 = input.index();
-                        input.rewind();
-                        s = -1;
-                        if ( (synpred91_InternalKactors()) ) {s = 21;}
-
-                        else if ( (synpred92_InternalKactors()) ) {s = 7;}
-
-                         
-                        input.seek(index26_38);
-                        if ( s>=0 ) return s;
-                        break;
-                    case 2 : 
                         int LA26_22 = input.LA(1);
 
                          
@@ -103178,6 +103163,21 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
                          
                         input.seek(index26_22);
+                        if ( s>=0 ) return s;
+                        break;
+                    case 2 : 
+                        int LA26_38 = input.LA(1);
+
+                         
+                        int index26_38 = input.index();
+                        input.rewind();
+                        s = -1;
+                        if ( (synpred91_InternalKactors()) ) {s = 21;}
+
+                        else if ( (synpred92_InternalKactors()) ) {s = 7;}
+
+                         
+                        input.seek(index26_38);
                         if ( s>=0 ) return s;
                         break;
                     case 3 : 
@@ -104101,7 +104101,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
     static final String dfa_104s = "\1\4\2\6\5\0\1\uffff\1\0\1\uffff";
     static final String dfa_105s = "\1\u0087\2\6\5\0\1\uffff\1\0\1\uffff";
     static final String dfa_106s = "\10\uffff\1\2\1\uffff\1\1";
-    static final String dfa_107s = "\3\uffff\1\0\1\5\1\2\1\1\1\3\1\uffff\1\4\1\uffff}>";
+    static final String dfa_107s = "\3\uffff\1\1\1\2\1\0\1\3\1\4\1\uffff\1\5\1\uffff}>";
     static final String[] dfa_108s = {
             "\1\4\1\5\1\3\1\10\1\uffff\4\10\4\uffff\6\10\10\uffff\1\10\1\6\1\7\3\uffff\1\1\32\uffff\1\10\1\uffff\1\10\15\uffff\16\10\2\uffff\2\10\1\uffff\5\10\3\uffff\1\2\26\uffff\6\10",
             "\1\11",
@@ -104145,36 +104145,6 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
         	int _s = s;
             switch ( s ) {
                     case 0 : 
-                        int LA117_3 = input.LA(1);
-
-                         
-                        int index117_3 = input.index();
-                        input.rewind();
-                        s = -1;
-                        if ( (synpred271_InternalKactors()) ) {s = 10;}
-
-                        else if ( (true) ) {s = 8;}
-
-                         
-                        input.seek(index117_3);
-                        if ( s>=0 ) return s;
-                        break;
-                    case 1 : 
-                        int LA117_6 = input.LA(1);
-
-                         
-                        int index117_6 = input.index();
-                        input.rewind();
-                        s = -1;
-                        if ( (synpred271_InternalKactors()) ) {s = 10;}
-
-                        else if ( (true) ) {s = 8;}
-
-                         
-                        input.seek(index117_6);
-                        if ( s>=0 ) return s;
-                        break;
-                    case 2 : 
                         int LA117_5 = input.LA(1);
 
                          
@@ -104189,7 +104159,52 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                         input.seek(index117_5);
                         if ( s>=0 ) return s;
                         break;
+                    case 1 : 
+                        int LA117_3 = input.LA(1);
+
+                         
+                        int index117_3 = input.index();
+                        input.rewind();
+                        s = -1;
+                        if ( (synpred271_InternalKactors()) ) {s = 10;}
+
+                        else if ( (true) ) {s = 8;}
+
+                         
+                        input.seek(index117_3);
+                        if ( s>=0 ) return s;
+                        break;
+                    case 2 : 
+                        int LA117_4 = input.LA(1);
+
+                         
+                        int index117_4 = input.index();
+                        input.rewind();
+                        s = -1;
+                        if ( (synpred271_InternalKactors()) ) {s = 10;}
+
+                        else if ( (true) ) {s = 8;}
+
+                         
+                        input.seek(index117_4);
+                        if ( s>=0 ) return s;
+                        break;
                     case 3 : 
+                        int LA117_6 = input.LA(1);
+
+                         
+                        int index117_6 = input.index();
+                        input.rewind();
+                        s = -1;
+                        if ( (synpred271_InternalKactors()) ) {s = 10;}
+
+                        else if ( (true) ) {s = 8;}
+
+                         
+                        input.seek(index117_6);
+                        if ( s>=0 ) return s;
+                        break;
+                    case 4 : 
                         int LA117_7 = input.LA(1);
 
                          
@@ -104204,7 +104219,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                         input.seek(index117_7);
                         if ( s>=0 ) return s;
                         break;
-                    case 4 : 
+                    case 5 : 
                         int LA117_9 = input.LA(1);
 
                          
@@ -104217,21 +104232,6 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
                          
                         input.seek(index117_9);
-                        if ( s>=0 ) return s;
-                        break;
-                    case 5 : 
-                        int LA117_4 = input.LA(1);
-
-                         
-                        int index117_4 = input.index();
-                        input.rewind();
-                        s = -1;
-                        if ( (synpred271_InternalKactors()) ) {s = 10;}
-
-                        else if ( (true) ) {s = 8;}
-
-                         
-                        input.seek(index117_4);
                         if ( s>=0 ) return s;
                         break;
             }
@@ -104410,7 +104410,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
             this.transition = dfa_115;
         }
         public String getDescription() {
-            return "9742:2: ( rule__ValueWithConstructor__Group_1_14_2__0 )?";
+            return "9742:2: ( rule__ValueWithConstructor__Group_1_15_2__0 )?";
         }
         public int specialStateTransition(int s, IntStream _input) throws NoViableAltException {
             TokenStream input = (TokenStream)_input;
@@ -105159,7 +105159,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
     static final String dfa_142s = "\1\6\13\uffff\41\0\1\uffff";
     static final String dfa_143s = "\1\u00a6\13\uffff\41\0\1\uffff";
     static final String dfa_144s = "\1\uffff\13\1\41\uffff\1\2";
-    static final String dfa_145s = "\1\2\13\uffff\1\26\1\17\1\10\1\31\1\12\1\6\1\14\1\11\1\15\1\4\1\5\1\0\1\3\1\36\1\41\1\32\1\34\1\25\1\27\1\23\1\30\1\24\1\16\1\40\1\20\1\35\1\7\1\33\1\22\1\37\1\1\1\21\1\13\1\uffff}>";
+    static final String dfa_145s = "\1\2\13\uffff\1\26\1\17\1\10\1\31\1\12\1\6\1\14\1\11\1\15\1\4\1\5\1\0\1\3\1\36\1\41\1\32\1\34\1\25\1\27\1\22\1\30\1\24\1\16\1\40\1\20\1\35\1\7\1\33\1\21\1\37\1\1\1\23\1\13\1\uffff}>";
     static final String[] dfa_146s = {
             "\1\51\35\uffff\1\31\1\47\5\uffff\1\46\1\23\1\24\1\25\1\26\1\27\1\30\1\32\1\33\1\34\1\35\1\36\1\37\1\40\4\uffff\1\15\1\16\3\uffff\1\54\6\uffff\1\3\10\uffff\1\20\10\uffff\1\2\1\21\7\uffff\1\53\6\uffff\1\50\1\22\1\52\1\1\1\4\1\5\1\6\1\7\1\10\1\11\1\12\1\13\25\uffff\1\45\1\41\1\42\1\43\1\44\25\uffff\1\17",
             "",
@@ -105575,21 +105575,6 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                         if ( s>=0 ) return s;
                         break;
                     case 17 : 
-                        int LA199_43 = input.LA(1);
-
-                         
-                        int index199_43 = input.index();
-                        input.rewind();
-                        s = -1;
-                        if ( (synpred353_InternalKactors()) ) {s = 11;}
-
-                        else if ( (true) ) {s = 45;}
-
-                         
-                        input.seek(index199_43);
-                        if ( s>=0 ) return s;
-                        break;
-                    case 18 : 
                         int LA199_40 = input.LA(1);
 
                          
@@ -105604,7 +105589,7 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
                         input.seek(index199_40);
                         if ( s>=0 ) return s;
                         break;
-                    case 19 : 
+                    case 18 : 
                         int LA199_31 = input.LA(1);
 
                          
@@ -105617,6 +105602,21 @@ public class InternalKactorsParser extends AbstractInternalContentAssistParser {
 
                          
                         input.seek(index199_31);
+                        if ( s>=0 ) return s;
+                        break;
+                    case 19 : 
+                        int LA199_43 = input.LA(1);
+
+                         
+                        int index199_43 = input.index();
+                        input.rewind();
+                        s = -1;
+                        if ( (synpred353_InternalKactors()) ) {s = 11;}
+
+                        else if ( (true) ) {s = 45;}
+
+                         
+                        input.seek(index199_43);
                         if ( s>=0 ) return s;
                         break;
                     case 20 : 

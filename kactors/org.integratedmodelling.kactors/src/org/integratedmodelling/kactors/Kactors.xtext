@@ -191,7 +191,6 @@ Actions:
 
 Value:
 	(deferred?='`')? (tree=Tree |
-	(methodCalls+=ParenthesizedMethodCall '.')* methodCalls+=ParenthesizedMethodCall |
 	empty?='empty' |
 	argvalue=ARGVALUE |
 	urn=UrnId | 
@@ -208,6 +207,7 @@ Value:
 
 ValueWithConstructor returns Value:
 	(deferred?='`')? (constructor=Constructor |
+	(methodCalls+=ParenthesizedMethodCall '.')* methodCalls+=ParenthesizedMethodCall |
 	tree=Tree |
 	empty?='empty' |
 	argvalue=ARGVALUE |
