@@ -1,9 +1,6 @@
 = Test run 10-20-202020
-
-----
-Started: 0000xxx
-Script: `im.alltests`
-----
+Produced on ;;;; by k.LAB with script dio.can
+:toc:
 
 == 1. Test namespace `im.diocan.testing`
 

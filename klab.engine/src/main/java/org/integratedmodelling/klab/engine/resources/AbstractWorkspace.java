@@ -4,10 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IKimLoader;
 import org.integratedmodelling.kim.api.IKimProject;
+import org.integratedmodelling.kim.model.KimLoader;
 import org.integratedmodelling.kim.model.KimWorkspace;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Resources;
@@ -76,6 +78,10 @@ public abstract class AbstractWorkspace implements IWorkspace {
             return null;
         }
         IKimProject ret = delegate.loadProject(projectFile);
+        if (ret != null) {
+            IKimLoader loader = new KimLoader();
+            loader.load(Collections.singleton(ret));
+        }
         return ret == null ? null : Resources.INSTANCE.retrieveOrCreate(ret);
     }
 

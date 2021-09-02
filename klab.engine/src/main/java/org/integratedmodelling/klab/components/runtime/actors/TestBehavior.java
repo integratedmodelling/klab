@@ -10,7 +10,9 @@ import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
 import org.integratedmodelling.klab.api.knowledge.IProject;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
+import org.integratedmodelling.klab.utils.MiscUtilities;
 
 import akka.actor.typed.ActorRef;
 
@@ -38,9 +40,10 @@ public class TestBehavior {
         /*
          * Object may be a project, a project name from the workspace, or a Git URL
          */
-        IProject project = getProject(arg);
+        IProject project = getProject(arg, scope.runtimeScope.getMonitor());
         if (project != null) {
             if (project != null) {
+                scope.getMonitor().info("Test engine: running test cases from " + project.getName());
                 for (IBehavior testcase : project.getUnitTests()) {
                     scope.identity.load(testcase, scope.runtimeScope);
                 }
@@ -50,10 +53,15 @@ public class TestBehavior {
         }
     }
 
-    private static IProject getProject(Object arg) {
+    private static IProject getProject(Object arg, IMonitor monitor) {
         IProject ret = null;
         if (arg instanceof String) {
             if (arg.toString().startsWith("http") || arg.toString().startsWith("git:")) {
+                IProject existing = Resources.INSTANCE.getLocalWorkspace().getProject(MiscUtilities.getURLBaseName(arg.toString()));
+                if (existing != null) {
+                    monitor.warn("Project " + existing.getName() + " is present in the local workspace: using local version");
+                    return existing;
+                }
                 ret = Resources.INSTANCE.retrieveAndLoadProject(arg.toString());
             } else if (Resources.INSTANCE.getProject(arg.toString()) != null) {
                 ret = Resources.INSTANCE.getProject(arg.toString());

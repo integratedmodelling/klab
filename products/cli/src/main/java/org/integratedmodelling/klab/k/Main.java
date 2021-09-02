@@ -7,6 +7,7 @@ import org.integratedmodelling.klab.clitool.CliStartupOptions;
 import org.integratedmodelling.klab.clitool.console.SysConsole;
 import org.integratedmodelling.klab.clitool.console.TermConsole;
 import org.integratedmodelling.klab.engine.EngineStartupOptions;
+import org.integratedmodelling.klab.engine.runtime.Session;
 
 /**
  * A CLI-driven k.LAB modeler.
@@ -39,6 +40,15 @@ public class Main {
                     Actors.INSTANCE.run(argument, session);
                 }
             }
+            
+            /*
+             * wait for all scripts to finish
+             */
+            do {
+                Thread.sleep(1000);
+            } while (((Session)session).getRunningScriptCount() > 0);
+
+            
             CliRuntime.INSTANCE.shutdown();
             System.exit(0);
         }

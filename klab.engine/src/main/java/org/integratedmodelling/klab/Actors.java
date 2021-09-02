@@ -1149,7 +1149,7 @@ public enum Actors implements IActorsService {
             org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior b = new org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior(
                     behavior);
             behaviors.put(behavior.getName(), b);
-            Logging.INSTANCE.info("Running " + (behavior.getType() == Type.SCRIPT ? "k.Actors script" : "unit test")
+            Logging.INSTANCE.info("Running " + (behavior.getType() == Type.SCRIPT ? "k.Actors script " : "unit test ")
                     + behavior.getName() + " [ID=" + behavior.getName() + "]");
             session.load(b, new SimpleRuntimeScope(session));
         } else {
@@ -1163,7 +1163,7 @@ public enum Actors implements IActorsService {
                     org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior b = new org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior(
                             behavior);
                     behaviors.put(behavior.getName(), b);
-                    Logging.INSTANCE.info("Running " + (behavior.getType() == Type.SCRIPT ? "k.Actors script" : "unit test")
+                    Logging.INSTANCE.info("Running " + (behavior.getType() == Type.SCRIPT ? "k.Actors script " : "unit test ")
                             + behavior.getName() + " [ID=" + behavior.getName() + "]");
                     session.load(b, new SimpleRuntimeScope(session));
                 } catch (Throwable t) {

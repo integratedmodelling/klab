@@ -301,7 +301,7 @@ public class Project implements IProject {
         List<IBehavior> ret = new ArrayList<>();
         for (String behaviorId : Actors.INSTANCE.getBehaviorIds()) {
             IBehavior behavior = Actors.INSTANCE.getBehavior(behaviorId);
-            if (behavior.getProject().equals(this.getName()) && behavior.getDestination() == Type.UNITTEST) {
+            if (behavior.getProject() != null && behavior.getProject().equals(this.getName()) && behavior.getDestination() == Type.UNITTEST) {
                 ret.add(behavior);
             }
         }
