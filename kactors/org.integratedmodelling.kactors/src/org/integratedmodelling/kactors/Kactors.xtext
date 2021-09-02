@@ -40,6 +40,7 @@ Preamble: {Preamble}
 		('version' version=VersionNumber)? & 
 		('versionstring' versionString=STRING)? & 
 		('locale' locale=LOCALE)? & 
+		('output' output=STRING)? & 
 		('created' created=Date (createcomment=STRING)?)? &
 		('modified' modified=Date (modcomment=STRING)?)? 
 	)
@@ -126,7 +127,7 @@ AssertStatement:
 Assertion:
 		(expression=EXPR | 
 		(methodCalls+=MethodCall '.')* methodCalls+=MethodCallWithActions) 
-		('is' value=Value)?
+		('is' (ok='ok' | value=Value))?
 ;
 
 NextStatement returns Statement:

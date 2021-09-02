@@ -173,17 +173,21 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		private final Assignment cLocaleAssignment_3_10_1 = (Assignment)cGroup_3_10.eContents().get(1);
 		private final RuleCall cLocaleLOCALETerminalRuleCall_3_10_1_0 = (RuleCall)cLocaleAssignment_3_10_1.eContents().get(0);
 		private final Group cGroup_3_11 = (Group)cUnorderedGroup_3.eContents().get(11);
-		private final Keyword cCreatedKeyword_3_11_0 = (Keyword)cGroup_3_11.eContents().get(0);
-		private final Assignment cCreatedAssignment_3_11_1 = (Assignment)cGroup_3_11.eContents().get(1);
-		private final RuleCall cCreatedDateParserRuleCall_3_11_1_0 = (RuleCall)cCreatedAssignment_3_11_1.eContents().get(0);
-		private final Assignment cCreatecommentAssignment_3_11_2 = (Assignment)cGroup_3_11.eContents().get(2);
-		private final RuleCall cCreatecommentSTRINGTerminalRuleCall_3_11_2_0 = (RuleCall)cCreatecommentAssignment_3_11_2.eContents().get(0);
+		private final Keyword cOutputKeyword_3_11_0 = (Keyword)cGroup_3_11.eContents().get(0);
+		private final Assignment cOutputAssignment_3_11_1 = (Assignment)cGroup_3_11.eContents().get(1);
+		private final RuleCall cOutputSTRINGTerminalRuleCall_3_11_1_0 = (RuleCall)cOutputAssignment_3_11_1.eContents().get(0);
 		private final Group cGroup_3_12 = (Group)cUnorderedGroup_3.eContents().get(12);
-		private final Keyword cModifiedKeyword_3_12_0 = (Keyword)cGroup_3_12.eContents().get(0);
-		private final Assignment cModifiedAssignment_3_12_1 = (Assignment)cGroup_3_12.eContents().get(1);
-		private final RuleCall cModifiedDateParserRuleCall_3_12_1_0 = (RuleCall)cModifiedAssignment_3_12_1.eContents().get(0);
-		private final Assignment cModcommentAssignment_3_12_2 = (Assignment)cGroup_3_12.eContents().get(2);
-		private final RuleCall cModcommentSTRINGTerminalRuleCall_3_12_2_0 = (RuleCall)cModcommentAssignment_3_12_2.eContents().get(0);
+		private final Keyword cCreatedKeyword_3_12_0 = (Keyword)cGroup_3_12.eContents().get(0);
+		private final Assignment cCreatedAssignment_3_12_1 = (Assignment)cGroup_3_12.eContents().get(1);
+		private final RuleCall cCreatedDateParserRuleCall_3_12_1_0 = (RuleCall)cCreatedAssignment_3_12_1.eContents().get(0);
+		private final Assignment cCreatecommentAssignment_3_12_2 = (Assignment)cGroup_3_12.eContents().get(2);
+		private final RuleCall cCreatecommentSTRINGTerminalRuleCall_3_12_2_0 = (RuleCall)cCreatecommentAssignment_3_12_2.eContents().get(0);
+		private final Group cGroup_3_13 = (Group)cUnorderedGroup_3.eContents().get(13);
+		private final Keyword cModifiedKeyword_3_13_0 = (Keyword)cGroup_3_13.eContents().get(0);
+		private final Assignment cModifiedAssignment_3_13_1 = (Assignment)cGroup_3_13.eContents().get(1);
+		private final RuleCall cModifiedDateParserRuleCall_3_13_1_0 = (RuleCall)cModifiedAssignment_3_13_1.eContents().get(0);
+		private final Assignment cModcommentAssignment_3_13_2 = (Assignment)cGroup_3_13.eContents().get(2);
+		private final RuleCall cModcommentSTRINGTerminalRuleCall_3_13_2_0 = (RuleCall)cModcommentAssignment_3_13_2.eContents().get(0);
 		
 		//Preamble: {Preamble}
 		//    // name, if there, must be first. Can be an actor (which may select an observable),
@@ -219,6 +223,7 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//        ('version' version=VersionNumber)? &
 		//        ('versionstring' versionString=STRING)? &
 		//        ('locale' locale=LOCALE)? &
+		//        ('output' output=STRING)? &
 		//        ('created' created=Date (createcomment=STRING)?)? &
 		//        ('modified' modified=Date (modcomment=STRING)?)?
 		//    )
@@ -259,6 +264,7 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//       ('version' version=VersionNumber)? &
 		//       ('versionstring' versionString=STRING)? &
 		//       ('locale' locale=LOCALE)? &
+		//       ('output' output=STRING)? &
 		//       ('created' created=Date (createcomment=STRING)?)? &
 		//       ('modified' modified=Date (modcomment=STRING)?)?
 		//   )
@@ -425,6 +431,7 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//    ('version' version=VersionNumber)? &
 		//    ('versionstring' versionString=STRING)? &
 		//    ('locale' locale=LOCALE)? &
+		//    ('output' output=STRING)? &
 		//    ('created' created=Date (createcomment=STRING)?)? &
 		//    ('modified' modified=Date (modcomment=STRING)?)?
 		//)
@@ -637,41 +644,53 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//LOCALE
 		public RuleCall getLocaleLOCALETerminalRuleCall_3_10_1_0() { return cLocaleLOCALETerminalRuleCall_3_10_1_0; }
 		
-		//('created' created=Date (createcomment=STRING)?)?
+		//('output' output=STRING)?
 		public Group getGroup_3_11() { return cGroup_3_11; }
 		
-		//'created'
-		public Keyword getCreatedKeyword_3_11_0() { return cCreatedKeyword_3_11_0; }
+		//'output'
+		public Keyword getOutputKeyword_3_11_0() { return cOutputKeyword_3_11_0; }
 		
-		//created=Date
-		public Assignment getCreatedAssignment_3_11_1() { return cCreatedAssignment_3_11_1; }
-		
-		//Date
-		public RuleCall getCreatedDateParserRuleCall_3_11_1_0() { return cCreatedDateParserRuleCall_3_11_1_0; }
-		
-		//(createcomment=STRING)?
-		public Assignment getCreatecommentAssignment_3_11_2() { return cCreatecommentAssignment_3_11_2; }
+		//output=STRING
+		public Assignment getOutputAssignment_3_11_1() { return cOutputAssignment_3_11_1; }
 		
 		//STRING
-		public RuleCall getCreatecommentSTRINGTerminalRuleCall_3_11_2_0() { return cCreatecommentSTRINGTerminalRuleCall_3_11_2_0; }
+		public RuleCall getOutputSTRINGTerminalRuleCall_3_11_1_0() { return cOutputSTRINGTerminalRuleCall_3_11_1_0; }
 		
-		//('modified' modified=Date (modcomment=STRING)?)?
+		//('created' created=Date (createcomment=STRING)?)?
 		public Group getGroup_3_12() { return cGroup_3_12; }
 		
-		//'modified'
-		public Keyword getModifiedKeyword_3_12_0() { return cModifiedKeyword_3_12_0; }
+		//'created'
+		public Keyword getCreatedKeyword_3_12_0() { return cCreatedKeyword_3_12_0; }
 		
-		//modified=Date
-		public Assignment getModifiedAssignment_3_12_1() { return cModifiedAssignment_3_12_1; }
+		//created=Date
+		public Assignment getCreatedAssignment_3_12_1() { return cCreatedAssignment_3_12_1; }
 		
 		//Date
-		public RuleCall getModifiedDateParserRuleCall_3_12_1_0() { return cModifiedDateParserRuleCall_3_12_1_0; }
+		public RuleCall getCreatedDateParserRuleCall_3_12_1_0() { return cCreatedDateParserRuleCall_3_12_1_0; }
 		
-		//(modcomment=STRING)?
-		public Assignment getModcommentAssignment_3_12_2() { return cModcommentAssignment_3_12_2; }
+		//(createcomment=STRING)?
+		public Assignment getCreatecommentAssignment_3_12_2() { return cCreatecommentAssignment_3_12_2; }
 		
 		//STRING
-		public RuleCall getModcommentSTRINGTerminalRuleCall_3_12_2_0() { return cModcommentSTRINGTerminalRuleCall_3_12_2_0; }
+		public RuleCall getCreatecommentSTRINGTerminalRuleCall_3_12_2_0() { return cCreatecommentSTRINGTerminalRuleCall_3_12_2_0; }
+		
+		//('modified' modified=Date (modcomment=STRING)?)?
+		public Group getGroup_3_13() { return cGroup_3_13; }
+		
+		//'modified'
+		public Keyword getModifiedKeyword_3_13_0() { return cModifiedKeyword_3_13_0; }
+		
+		//modified=Date
+		public Assignment getModifiedAssignment_3_13_1() { return cModifiedAssignment_3_13_1; }
+		
+		//Date
+		public RuleCall getModifiedDateParserRuleCall_3_13_1_0() { return cModifiedDateParserRuleCall_3_13_1_0; }
+		
+		//(modcomment=STRING)?
+		public Assignment getModcommentAssignment_3_13_2() { return cModcommentAssignment_3_13_2; }
+		
+		//STRING
+		public RuleCall getModcommentSTRINGTerminalRuleCall_3_13_2_0() { return cModcommentSTRINGTerminalRuleCall_3_13_2_0; }
 	}
 	public class DefinitionElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.Definition");
@@ -1459,19 +1478,22 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		private final RuleCall cMethodCallsMethodCallWithActionsParserRuleCall_0_1_1_0 = (RuleCall)cMethodCallsAssignment_0_1_1.eContents().get(0);
 		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
 		private final Keyword cIsKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
-		private final Assignment cValueAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
-		private final RuleCall cValueValueParserRuleCall_1_1_0 = (RuleCall)cValueAssignment_1_1.eContents().get(0);
+		private final Alternatives cAlternatives_1_1 = (Alternatives)cGroup_1.eContents().get(1);
+		private final Assignment cOkAssignment_1_1_0 = (Assignment)cAlternatives_1_1.eContents().get(0);
+		private final Keyword cOkOkKeyword_1_1_0_0 = (Keyword)cOkAssignment_1_1_0.eContents().get(0);
+		private final Assignment cValueAssignment_1_1_1 = (Assignment)cAlternatives_1_1.eContents().get(1);
+		private final RuleCall cValueValueParserRuleCall_1_1_1_0 = (RuleCall)cValueAssignment_1_1_1.eContents().get(0);
 		
 		//Assertion:
 		//        (expression=EXPR |
 		//        (methodCalls+=MethodCall '.')* methodCalls+=MethodCallWithActions)
-		//        ('is' value=Value)?
+		//        ('is' (ok='ok' | value=Value))?
 		//;
 		@Override public ParserRule getRule() { return rule; }
 		
 		//(expression=EXPR |
 		//(methodCalls+=MethodCall '.')* methodCalls+=MethodCallWithActions)
-		//('is' value=Value)?
+		//('is' (ok='ok' | value=Value))?
 		public Group getGroup() { return cGroup; }
 		
 		//(expression=EXPR |
@@ -1505,17 +1527,26 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//MethodCallWithActions
 		public RuleCall getMethodCallsMethodCallWithActionsParserRuleCall_0_1_1_0() { return cMethodCallsMethodCallWithActionsParserRuleCall_0_1_1_0; }
 		
-		//('is' value=Value)?
+		//('is' (ok='ok' | value=Value))?
 		public Group getGroup_1() { return cGroup_1; }
 		
 		//'is'
 		public Keyword getIsKeyword_1_0() { return cIsKeyword_1_0; }
 		
+		//(ok='ok' | value=Value)
+		public Alternatives getAlternatives_1_1() { return cAlternatives_1_1; }
+		
+		//ok='ok'
+		public Assignment getOkAssignment_1_1_0() { return cOkAssignment_1_1_0; }
+		
+		//'ok'
+		public Keyword getOkOkKeyword_1_1_0_0() { return cOkOkKeyword_1_1_0_0; }
+		
 		//value=Value
-		public Assignment getValueAssignment_1_1() { return cValueAssignment_1_1; }
+		public Assignment getValueAssignment_1_1_1() { return cValueAssignment_1_1_1; }
 		
 		//Value
-		public RuleCall getValueValueParserRuleCall_1_1_0() { return cValueValueParserRuleCall_1_1_0; }
+		public RuleCall getValueValueParserRuleCall_1_1_1_0() { return cValueValueParserRuleCall_1_1_1_0; }
 	}
 	public class NextStatementElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.NextStatement");
@@ -7474,6 +7505,7 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	//        ('version' version=VersionNumber)? &
 	//        ('versionstring' versionString=STRING)? &
 	//        ('locale' locale=LOCALE)? &
+	//        ('output' output=STRING)? &
 	//        ('created' created=Date (createcomment=STRING)?)? &
 	//        ('modified' modified=Date (modcomment=STRING)?)?
 	//    )
@@ -7665,7 +7697,7 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	//Assertion:
 	//        (expression=EXPR |
 	//        (methodCalls+=MethodCall '.')* methodCalls+=MethodCallWithActions)
-	//        ('is' value=Value)?
+	//        ('is' (ok='ok' | value=Value))?
 	//;
 	public AssertionElements getAssertionAccess() {
 		return pAssertion;

@@ -34,6 +34,7 @@ import org.integratedmodelling.kactors.kactors.Value;
  * <ul>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.AssertionImpl#getExpression <em>Expression</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.AssertionImpl#getMethodCalls <em>Method Calls</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.AssertionImpl#getOk <em>Ok</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.AssertionImpl#getValue <em>Value</em>}</li>
  * </ul>
  *
@@ -70,6 +71,26 @@ public class AssertionImpl extends MinimalEObjectImpl.Container implements Asser
    * @ordered
    */
   protected EList<MessageCall> methodCalls;
+
+  /**
+   * The default value of the '{@link #getOk() <em>Ok</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getOk()
+   * @generated
+   * @ordered
+   */
+  protected static final String OK_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getOk() <em>Ok</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getOk()
+   * @generated
+   * @ordered
+   */
+  protected String ok = OK_EDEFAULT;
 
   /**
    * The cached value of the '{@link #getValue() <em>Value</em>}' containment reference.
@@ -140,6 +161,31 @@ public class AssertionImpl extends MinimalEObjectImpl.Container implements Asser
       methodCalls = new EObjectContainmentEList<MessageCall>(MessageCall.class, this, KactorsPackage.ASSERTION__METHOD_CALLS);
     }
     return methodCalls;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public String getOk()
+  {
+    return ok;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setOk(String newOk)
+  {
+    String oldOk = ok;
+    ok = newOk;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.ASSERTION__OK, oldOk, ok));
   }
 
   /**
@@ -224,6 +270,8 @@ public class AssertionImpl extends MinimalEObjectImpl.Container implements Asser
         return getExpression();
       case KactorsPackage.ASSERTION__METHOD_CALLS:
         return getMethodCalls();
+      case KactorsPackage.ASSERTION__OK:
+        return getOk();
       case KactorsPackage.ASSERTION__VALUE:
         return getValue();
     }
@@ -248,6 +296,9 @@ public class AssertionImpl extends MinimalEObjectImpl.Container implements Asser
         getMethodCalls().clear();
         getMethodCalls().addAll((Collection<? extends MessageCall>)newValue);
         return;
+      case KactorsPackage.ASSERTION__OK:
+        setOk((String)newValue);
+        return;
       case KactorsPackage.ASSERTION__VALUE:
         setValue((Value)newValue);
         return;
@@ -271,6 +322,9 @@ public class AssertionImpl extends MinimalEObjectImpl.Container implements Asser
       case KactorsPackage.ASSERTION__METHOD_CALLS:
         getMethodCalls().clear();
         return;
+      case KactorsPackage.ASSERTION__OK:
+        setOk(OK_EDEFAULT);
+        return;
       case KactorsPackage.ASSERTION__VALUE:
         setValue((Value)null);
         return;
@@ -292,6 +346,8 @@ public class AssertionImpl extends MinimalEObjectImpl.Container implements Asser
         return EXPRESSION_EDEFAULT == null ? expression != null : !EXPRESSION_EDEFAULT.equals(expression);
       case KactorsPackage.ASSERTION__METHOD_CALLS:
         return methodCalls != null && !methodCalls.isEmpty();
+      case KactorsPackage.ASSERTION__OK:
+        return OK_EDEFAULT == null ? ok != null : !OK_EDEFAULT.equals(ok);
       case KactorsPackage.ASSERTION__VALUE:
         return value != null;
     }
@@ -311,6 +367,8 @@ public class AssertionImpl extends MinimalEObjectImpl.Container implements Asser
     StringBuilder result = new StringBuilder(super.toString());
     result.append(" (expression: ");
     result.append(expression);
+    result.append(", ok: ");
+    result.append(ok);
     result.append(')');
     return result.toString();
   }

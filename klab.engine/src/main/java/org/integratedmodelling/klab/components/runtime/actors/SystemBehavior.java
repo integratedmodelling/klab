@@ -69,7 +69,7 @@ public class SystemBehavior {
             this.identity = identity;
             this.scope = new Scope(identity, appId, scope, Actors.INSTANCE.getBehavior(behavior));
         }
-
+        
         /**
          * Called from instantiator in actors, uses the scope it's run into.
          * 

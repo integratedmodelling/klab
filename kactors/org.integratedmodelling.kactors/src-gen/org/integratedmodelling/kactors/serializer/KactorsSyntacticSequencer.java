@@ -379,6 +379,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     (rule start) (ambiguity) 'modified' modified=Date
 	 *     (rule start) (ambiguity) 'observable' observable=Observable
 	 *     (rule start) (ambiguity) 'observable' observables=List
+	 *     (rule start) (ambiguity) 'output' output=STRING
 	 *     (rule start) (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     (rule start) (ambiguity) 'permissions' permissions=STRING
 	 *     (rule start) (ambiguity) 'version' version=VersionNumber
@@ -398,6 +399,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     authors+=LOCALIZED_STRING_REFERENCE (ambiguity) 'modified' modified=Date
 	 *     authors+=LOCALIZED_STRING_REFERENCE (ambiguity) 'observable' observable=Observable
 	 *     authors+=LOCALIZED_STRING_REFERENCE (ambiguity) 'observable' observables=List
+	 *     authors+=LOCALIZED_STRING_REFERENCE (ambiguity) 'output' output=STRING
 	 *     authors+=LOCALIZED_STRING_REFERENCE (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     authors+=LOCALIZED_STRING_REFERENCE (ambiguity) 'permissions' permissions=STRING
 	 *     authors+=LOCALIZED_STRING_REFERENCE (ambiguity) 'version' version=VersionNumber
@@ -417,6 +419,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     authors+=STRING (ambiguity) 'modified' modified=Date
 	 *     authors+=STRING (ambiguity) 'observable' observable=Observable
 	 *     authors+=STRING (ambiguity) 'observable' observables=List
+	 *     authors+=STRING (ambiguity) 'output' output=STRING
 	 *     authors+=STRING (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     authors+=STRING (ambiguity) 'permissions' permissions=STRING
 	 *     authors+=STRING (ambiguity) 'version' version=VersionNumber
@@ -436,6 +439,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     createcomment=STRING (ambiguity) 'modified' modified=Date
 	 *     createcomment=STRING (ambiguity) 'observable' observable=Observable
 	 *     createcomment=STRING (ambiguity) 'observable' observables=List
+	 *     createcomment=STRING (ambiguity) 'output' output=STRING
 	 *     createcomment=STRING (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     createcomment=STRING (ambiguity) 'permissions' permissions=STRING
 	 *     createcomment=STRING (ambiguity) 'version' version=VersionNumber
@@ -455,6 +459,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     created=Date (ambiguity) 'modified' modified=Date
 	 *     created=Date (ambiguity) 'observable' observable=Observable
 	 *     created=Date (ambiguity) 'observable' observables=List
+	 *     created=Date (ambiguity) 'output' output=STRING
 	 *     created=Date (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     created=Date (ambiguity) 'permissions' permissions=STRING
 	 *     created=Date (ambiguity) 'version' version=VersionNumber
@@ -474,6 +479,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     description=LOCALIZED_STRING_REFERENCE (ambiguity) 'modified' modified=Date
 	 *     description=LOCALIZED_STRING_REFERENCE (ambiguity) 'observable' observable=Observable
 	 *     description=LOCALIZED_STRING_REFERENCE (ambiguity) 'observable' observables=List
+	 *     description=LOCALIZED_STRING_REFERENCE (ambiguity) 'output' output=STRING
 	 *     description=LOCALIZED_STRING_REFERENCE (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     description=LOCALIZED_STRING_REFERENCE (ambiguity) 'permissions' permissions=STRING
 	 *     description=LOCALIZED_STRING_REFERENCE (ambiguity) 'version' version=VersionNumber
@@ -493,6 +499,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     description=STRING (ambiguity) 'modified' modified=Date
 	 *     description=STRING (ambiguity) 'observable' observable=Observable
 	 *     description=STRING (ambiguity) 'observable' observables=List
+	 *     description=STRING (ambiguity) 'output' output=STRING
 	 *     description=STRING (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     description=STRING (ambiguity) 'permissions' permissions=STRING
 	 *     description=STRING (ambiguity) 'version' version=VersionNumber
@@ -512,6 +519,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     imports+=PathName (ambiguity) 'modified' modified=Date
 	 *     imports+=PathName (ambiguity) 'observable' observable=Observable
 	 *     imports+=PathName (ambiguity) 'observable' observables=List
+	 *     imports+=PathName (ambiguity) 'output' output=STRING
 	 *     imports+=PathName (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     imports+=PathName (ambiguity) 'permissions' permissions=STRING
 	 *     imports+=PathName (ambiguity) 'version' version=VersionNumber
@@ -531,6 +539,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     inlineStyle=Map (ambiguity) 'modified' modified=Date
 	 *     inlineStyle=Map (ambiguity) 'observable' observable=Observable
 	 *     inlineStyle=Map (ambiguity) 'observable' observables=List
+	 *     inlineStyle=Map (ambiguity) 'output' output=STRING
 	 *     inlineStyle=Map (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     inlineStyle=Map (ambiguity) 'permissions' permissions=STRING
 	 *     inlineStyle=Map (ambiguity) 'version' version=VersionNumber
@@ -550,6 +559,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     label=LOCALIZED_STRING_REFERENCE (ambiguity) 'modified' modified=Date
 	 *     label=LOCALIZED_STRING_REFERENCE (ambiguity) 'observable' observable=Observable
 	 *     label=LOCALIZED_STRING_REFERENCE (ambiguity) 'observable' observables=List
+	 *     label=LOCALIZED_STRING_REFERENCE (ambiguity) 'output' output=STRING
 	 *     label=LOCALIZED_STRING_REFERENCE (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     label=LOCALIZED_STRING_REFERENCE (ambiguity) 'permissions' permissions=STRING
 	 *     label=LOCALIZED_STRING_REFERENCE (ambiguity) 'version' version=VersionNumber
@@ -569,6 +579,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     label=STRING (ambiguity) 'modified' modified=Date
 	 *     label=STRING (ambiguity) 'observable' observable=Observable
 	 *     label=STRING (ambiguity) 'observable' observables=List
+	 *     label=STRING (ambiguity) 'output' output=STRING
 	 *     label=STRING (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     label=STRING (ambiguity) 'permissions' permissions=STRING
 	 *     label=STRING (ambiguity) 'version' version=VersionNumber
@@ -588,6 +599,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     locale=LOCALE (ambiguity) 'modified' modified=Date
 	 *     locale=LOCALE (ambiguity) 'observable' observable=Observable
 	 *     locale=LOCALE (ambiguity) 'observable' observables=List
+	 *     locale=LOCALE (ambiguity) 'output' output=STRING
 	 *     locale=LOCALE (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     locale=LOCALE (ambiguity) 'permissions' permissions=STRING
 	 *     locale=LOCALE (ambiguity) 'version' version=VersionNumber
@@ -607,6 +619,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) 'modified' modified=Date
 	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) 'observable' observable=Observable
 	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) 'observable' observables=List
+	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) 'output' output=STRING
 	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) 'permissions' permissions=STRING
 	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) 'version' version=VersionNumber
@@ -626,6 +639,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     logo=Path (ambiguity) 'modified' modified=Date
 	 *     logo=Path (ambiguity) 'observable' observable=Observable
 	 *     logo=Path (ambiguity) 'observable' observables=List
+	 *     logo=Path (ambiguity) 'output' output=STRING
 	 *     logo=Path (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     logo=Path (ambiguity) 'permissions' permissions=STRING
 	 *     logo=Path (ambiguity) 'version' version=VersionNumber
@@ -645,6 +659,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     logo=STRING (ambiguity) 'modified' modified=Date
 	 *     logo=STRING (ambiguity) 'observable' observable=Observable
 	 *     logo=STRING (ambiguity) 'observable' observables=List
+	 *     logo=STRING (ambiguity) 'output' output=STRING
 	 *     logo=STRING (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     logo=STRING (ambiguity) 'permissions' permissions=STRING
 	 *     logo=STRING (ambiguity) 'version' version=VersionNumber
@@ -664,6 +679,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     modcomment=STRING (ambiguity) 'modified' modified=Date
 	 *     modcomment=STRING (ambiguity) 'observable' observable=Observable
 	 *     modcomment=STRING (ambiguity) 'observable' observables=List
+	 *     modcomment=STRING (ambiguity) 'output' output=STRING
 	 *     modcomment=STRING (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     modcomment=STRING (ambiguity) 'permissions' permissions=STRING
 	 *     modcomment=STRING (ambiguity) 'version' version=VersionNumber
@@ -683,6 +699,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     modified=Date (ambiguity) 'modified' modified=Date
 	 *     modified=Date (ambiguity) 'observable' observable=Observable
 	 *     modified=Date (ambiguity) 'observable' observables=List
+	 *     modified=Date (ambiguity) 'output' output=STRING
 	 *     modified=Date (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     modified=Date (ambiguity) 'permissions' permissions=STRING
 	 *     modified=Date (ambiguity) 'version' version=VersionNumber
@@ -702,6 +719,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     name=PathName (ambiguity) 'modified' modified=Date
 	 *     name=PathName (ambiguity) 'observable' observable=Observable
 	 *     name=PathName (ambiguity) 'observable' observables=List
+	 *     name=PathName (ambiguity) 'output' output=STRING
 	 *     name=PathName (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     name=PathName (ambiguity) 'permissions' permissions=STRING
 	 *     name=PathName (ambiguity) 'version' version=VersionNumber
@@ -721,6 +739,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     observable=Observable (ambiguity) 'modified' modified=Date
 	 *     observable=Observable (ambiguity) 'observable' observable=Observable
 	 *     observable=Observable (ambiguity) 'observable' observables=List
+	 *     observable=Observable (ambiguity) 'output' output=STRING
 	 *     observable=Observable (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     observable=Observable (ambiguity) 'permissions' permissions=STRING
 	 *     observable=Observable (ambiguity) 'version' version=VersionNumber
@@ -740,12 +759,33 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     observables=List (ambiguity) 'modified' modified=Date
 	 *     observables=List (ambiguity) 'observable' observable=Observable
 	 *     observables=List (ambiguity) 'observable' observables=List
+	 *     observables=List (ambiguity) 'output' output=STRING
 	 *     observables=List (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     observables=List (ambiguity) 'permissions' permissions=STRING
 	 *     observables=List (ambiguity) 'version' version=VersionNumber
 	 *     observables=List (ambiguity) 'versionstring' versionString=STRING
 	 *     observables=List (ambiguity) 'worldview' worldview=PathName
 	 *     observables=List (ambiguity) (rule end)
+	 *     output=STRING (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
+	 *     output=STRING (ambiguity) 'author' authors+=STRING
+	 *     output=STRING (ambiguity) 'created' created=Date
+	 *     output=STRING (ambiguity) 'description' description=LOCALIZED_STRING_REFERENCE
+	 *     output=STRING (ambiguity) 'description' description=STRING
+	 *     output=STRING (ambiguity) 'import' imports+=PathName
+	 *     output=STRING (ambiguity) 'locale' locale=LOCALE
+	 *     output=STRING (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
+	 *     output=STRING (ambiguity) 'logo' logo=Path
+	 *     output=STRING (ambiguity) 'logo' logo=STRING
+	 *     output=STRING (ambiguity) 'modified' modified=Date
+	 *     output=STRING (ambiguity) 'observable' observable=Observable
+	 *     output=STRING (ambiguity) 'observable' observables=List
+	 *     output=STRING (ambiguity) 'output' output=STRING
+	 *     output=STRING (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
+	 *     output=STRING (ambiguity) 'permissions' permissions=STRING
+	 *     output=STRING (ambiguity) 'version' version=VersionNumber
+	 *     output=STRING (ambiguity) 'versionstring' versionString=STRING
+	 *     output=STRING (ambiguity) 'worldview' worldview=PathName
+	 *     output=STRING (ambiguity) (rule end)
 	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
 	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) 'author' authors+=STRING
 	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) 'created' created=Date
@@ -759,6 +799,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) 'modified' modified=Date
 	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) 'observable' observable=Observable
 	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) 'observable' observables=List
+	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) 'output' output=STRING
 	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) 'permissions' permissions=STRING
 	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) 'version' version=VersionNumber
@@ -778,6 +819,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     permissions=STRING (ambiguity) 'modified' modified=Date
 	 *     permissions=STRING (ambiguity) 'observable' observable=Observable
 	 *     permissions=STRING (ambiguity) 'observable' observables=List
+	 *     permissions=STRING (ambiguity) 'output' output=STRING
 	 *     permissions=STRING (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     permissions=STRING (ambiguity) 'permissions' permissions=STRING
 	 *     permissions=STRING (ambiguity) 'version' version=VersionNumber
@@ -797,6 +839,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     style=PathName (ambiguity) 'modified' modified=Date
 	 *     style=PathName (ambiguity) 'observable' observable=Observable
 	 *     style=PathName (ambiguity) 'observable' observables=List
+	 *     style=PathName (ambiguity) 'output' output=STRING
 	 *     style=PathName (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     style=PathName (ambiguity) 'permissions' permissions=STRING
 	 *     style=PathName (ambiguity) 'version' version=VersionNumber
@@ -816,6 +859,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     version=VersionNumber (ambiguity) 'modified' modified=Date
 	 *     version=VersionNumber (ambiguity) 'observable' observable=Observable
 	 *     version=VersionNumber (ambiguity) 'observable' observables=List
+	 *     version=VersionNumber (ambiguity) 'output' output=STRING
 	 *     version=VersionNumber (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     version=VersionNumber (ambiguity) 'permissions' permissions=STRING
 	 *     version=VersionNumber (ambiguity) 'version' version=VersionNumber
@@ -835,6 +879,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     versionString=STRING (ambiguity) 'modified' modified=Date
 	 *     versionString=STRING (ambiguity) 'observable' observable=Observable
 	 *     versionString=STRING (ambiguity) 'observable' observables=List
+	 *     versionString=STRING (ambiguity) 'output' output=STRING
 	 *     versionString=STRING (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     versionString=STRING (ambiguity) 'permissions' permissions=STRING
 	 *     versionString=STRING (ambiguity) 'version' version=VersionNumber
@@ -854,6 +899,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     worldview=PathName (ambiguity) 'modified' modified=Date
 	 *     worldview=PathName (ambiguity) 'observable' observable=Observable
 	 *     worldview=PathName (ambiguity) 'observable' observables=List
+	 *     worldview=PathName (ambiguity) 'output' output=STRING
 	 *     worldview=PathName (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     worldview=PathName (ambiguity) 'permissions' permissions=STRING
 	 *     worldview=PathName (ambiguity) 'version' version=VersionNumber
@@ -910,6 +956,8 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     observable=Observable (ambiguity) style=PathName
 	 *     observables=List (ambiguity) inlineStyle=Map
 	 *     observables=List (ambiguity) style=PathName
+	 *     output=STRING (ambiguity) inlineStyle=Map
+	 *     output=STRING (ambiguity) style=PathName
 	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) inlineStyle=Map
 	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) style=PathName
 	 *     permissions=STRING (ambiguity) inlineStyle=Map

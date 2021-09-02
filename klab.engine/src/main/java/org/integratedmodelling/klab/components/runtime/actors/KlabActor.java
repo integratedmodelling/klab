@@ -49,6 +49,7 @@ import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActionExecutor.Actor;
@@ -429,14 +430,10 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
         }
 
         public Scope forTest(Action action) {
-            if (this.testScope == null) {
-                // FIXME remove - should not be needed
-                this.testScope = new TestScope(action.getBehavior());
-            }
             Scope ret = new Scope(this);
             ret.initializing = true;
             ret.synchronous = true;
-            // TODO setup the test scope from the action
+            ret.testScope = ret.testScope.getChild(action);
             return ret;
         }
 
@@ -534,6 +531,15 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
                 testScope.onException(e);
             }
 
+        }
+
+        public Scope getChild(IBehavior behavior) {
+            Scope ret = new Scope(this);
+            ret.behavior = behavior;
+            if (this.testScope != null) {
+                ret.testScope = ret.testScope.getChild(behavior);
+            }
+            return ret;
         }
 
     }
@@ -1767,9 +1773,11 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
                     KlabActor.this.childActorPath = message.childActorPath;
 
                     for (IKActorsBehavior imported : KlabActor.this.behavior.getStatement().getImports()) {
+                        
                         /*
                          * TODO preload all imports from both system libraries and k.Actors
-                         * behaviors Test cases and scripts may have default imports
+                         * behaviors Test cases and scripts may have default imports. Make a 
+                         * new library instance per behavior. 
                          */
 
                     }
@@ -1817,7 +1825,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
                             testScope.metadata = new Parameters<>(message.metadata);
                             testScope.runtimeScope.getMonitor().info(KlabActor.this.behavior.getName() + ": running test " + action.getName());
                             KlabActor.this.run(action, testScope);
-                            testScope.testScope.finalizeTest(action);
+                            testScope.testScope.finalizeTest(action, testScope.valueScope);
                         }
                         message.scope.runtimeScope.getMonitor().info(KlabActor.this.behavior.getName() + ": done running tests");
                     }

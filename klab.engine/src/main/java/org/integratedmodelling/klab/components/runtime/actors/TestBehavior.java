@@ -12,6 +12,7 @@ import org.integratedmodelling.klab.api.extensions.actors.Behavior;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
+import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 
 import akka.actor.typed.ActorRef;
@@ -45,7 +46,11 @@ public class TestBehavior {
             if (project != null) {
                 scope.getMonitor().info("Test engine: running test cases from " + project.getName());
                 for (IBehavior testcase : project.getUnitTests()) {
-                    scope.identity.load(testcase, scope.runtimeScope);
+                    if (scope.identity instanceof Session) {
+                        ((Session)scope.identity).load(testcase, scope.getChild(testcase));
+                    } else {
+                        scope.identity.load(testcase, scope.runtimeScope);
+                    }
                 }
             }
         } else {

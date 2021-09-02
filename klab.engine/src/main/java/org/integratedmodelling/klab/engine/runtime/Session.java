@@ -84,6 +84,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.geocoding.Geocoder;
 import org.integratedmodelling.klab.components.geospace.geocoding.Geocoder.Location;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.ActorReference;
+import org.integratedmodelling.klab.components.runtime.actors.KlabActor;
 import org.integratedmodelling.klab.components.runtime.actors.SessionActor;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Spawn;
@@ -1599,6 +1600,21 @@ public class Session extends GroovyObjectSupport
         return ret;
     }
 
+    /**
+     * This is for behaviors loaded from another behavior
+     * 
+     * @param behavior
+     * @param scope
+     * @return
+     */
+    public String load(IBehavior behavior, KlabActor.Scope scope) {
+        String ret = "app" + NameGenerator.shortUUID();
+        getActor().tell(new SystemBehavior.Load(this, behavior.getId(), ret, scope));
+        globalState.setApplicationId(ret);
+        return ret;
+    }
+
+    
     @Override
     public boolean stop(String applicationId) {
         getActor().tell(new SystemBehavior.Stop(applicationId));

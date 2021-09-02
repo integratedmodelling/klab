@@ -43,6 +43,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getVersion <em>Version</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getVersionString <em>Version String</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getLocale <em>Locale</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getOutput <em>Output</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getCreated <em>Created</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getCreatecomment <em>Createcomment</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getModified <em>Modified</em>}</li>
@@ -628,6 +629,28 @@ public interface Preamble extends EObject
    * @generated
    */
   void setLocale(String value);
+
+  /**
+   * Returns the value of the '<em><b>Output</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Output</em>' attribute.
+   * @see #setOutput(String)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getPreamble_Output()
+   * @model
+   * @generated
+   */
+  String getOutput();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#getOutput <em>Output</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Output</em>' attribute.
+   * @see #getOutput()
+   * @generated
+   */
+  void setOutput(String value);
 
   /**
    * Returns the value of the '<em><b>Created</b></em>' containment reference.

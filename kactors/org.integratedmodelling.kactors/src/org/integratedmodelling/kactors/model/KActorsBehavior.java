@@ -40,6 +40,7 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 	private String description;
 	private String logo;
 	private String projectId;
+	private String output;
 	private boolean isPublic;
 
 	public KActorsBehavior(Model model, BehaviorDescriptor descriptor) {
@@ -79,6 +80,7 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 		this.logo = preamble.getLogo();
 		this.isPublic = preamble.isPublic();
 		this.versionString = preamble.getVersionString();
+		this.output = preamble.getOutput();
 
 		if (preamble.getInlineStyle() != null) {
 			this.styleSpecs = new LinkedHashMap<>();
@@ -241,6 +243,11 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
             ((KActorsStatement)action.getCode()).visit(action, visitor); 
         }
         
+    }
+
+    @Override
+    public String getOutput() {
+        return output;
     }
 
 }

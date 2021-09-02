@@ -349,13 +349,22 @@ public interface KactorsPackage extends EPackage
   int PREAMBLE__LOCALE = 26;
 
   /**
+   * The feature id for the '<em><b>Output</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PREAMBLE__OUTPUT = 27;
+
+  /**
    * The feature id for the '<em><b>Created</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int PREAMBLE__CREATED = 27;
+  int PREAMBLE__CREATED = 28;
 
   /**
    * The feature id for the '<em><b>Createcomment</b></em>' attribute.
@@ -364,7 +373,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__CREATECOMMENT = 28;
+  int PREAMBLE__CREATECOMMENT = 29;
 
   /**
    * The feature id for the '<em><b>Modified</b></em>' containment reference.
@@ -373,7 +382,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__MODIFIED = 29;
+  int PREAMBLE__MODIFIED = 30;
 
   /**
    * The feature id for the '<em><b>Modcomment</b></em>' attribute.
@@ -382,7 +391,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__MODCOMMENT = 30;
+  int PREAMBLE__MODCOMMENT = 31;
 
   /**
    * The number of structural features of the '<em>Preamble</em>' class.
@@ -391,7 +400,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE_FEATURE_COUNT = 31;
+  int PREAMBLE_FEATURE_COUNT = 32;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.DefinitionImpl <em>Definition</em>}' class.
@@ -973,13 +982,22 @@ public interface KactorsPackage extends EPackage
   int ASSERTION__METHOD_CALLS = 1;
 
   /**
+   * The feature id for the '<em><b>Ok</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ASSERTION__OK = 2;
+
+  /**
    * The feature id for the '<em><b>Value</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ASSERTION__VALUE = 2;
+  int ASSERTION__VALUE = 3;
 
   /**
    * The number of structural features of the '<em>Assertion</em>' class.
@@ -988,7 +1006,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ASSERTION_FEATURE_COUNT = 3;
+  int ASSERTION_FEATURE_COUNT = 4;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.AssignmentImpl <em>Assignment</em>}' class.
@@ -4124,6 +4142,17 @@ public interface KactorsPackage extends EPackage
   EAttribute getPreamble_Locale();
 
   /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Preamble#getOutput <em>Output</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Output</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Preamble#getOutput()
+   * @see #getPreamble()
+   * @generated
+   */
+  EAttribute getPreamble_Output();
+
+  /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Preamble#getCreated <em>Created</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -4726,6 +4755,17 @@ public interface KactorsPackage extends EPackage
    * @generated
    */
   EReference getAssertion_MethodCalls();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Assertion#getOk <em>Ok</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Ok</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Assertion#getOk()
+   * @see #getAssertion()
+   * @generated
+   */
+  EAttribute getAssertion_Ok();
 
   /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Assertion#getValue <em>Value</em>}'.
@@ -7923,6 +7963,14 @@ public interface KactorsPackage extends EPackage
     EAttribute PREAMBLE__LOCALE = eINSTANCE.getPreamble_Locale();
 
     /**
+     * The meta object literal for the '<em><b>Output</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute PREAMBLE__OUTPUT = eINSTANCE.getPreamble_Output();
+
+    /**
      * The meta object literal for the '<em><b>Created</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -8393,6 +8441,14 @@ public interface KactorsPackage extends EPackage
      * @generated
      */
     EReference ASSERTION__METHOD_CALLS = eINSTANCE.getAssertion_MethodCalls();
+
+    /**
+     * The meta object literal for the '<em><b>Ok</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute ASSERTION__OK = eINSTANCE.getAssertion_Ok();
 
     /**
      * The meta object literal for the '<em><b>Value</b></em>' containment reference feature.

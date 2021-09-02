@@ -143,6 +143,14 @@ public interface IKActorsBehavior extends IKActorsCodeStatement {
     File getFile();
 
     /**
+     * A string linked to the 'output' preamble statement. Used in test cases to identify the log
+     * file or available for other purposes in scripts.
+     * 
+     * @return
+     */
+    String getOutput();
+
+    /**
      * All behaviors imported, resolved and parsed.
      * 
      * @return

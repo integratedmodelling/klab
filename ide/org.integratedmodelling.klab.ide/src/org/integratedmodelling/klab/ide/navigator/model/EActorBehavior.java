@@ -148,4 +148,9 @@ public class EActorBehavior extends EKimObject implements IKActorsBehavior {
         behavior.visit(visitor);
     }
 
+    @Override
+    public String getOutput() {
+        return behavior.getOutput();
+    }
+
 }

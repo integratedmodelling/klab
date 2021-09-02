@@ -47,6 +47,7 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getMessageCallAccess().getAlternatives_1(), "rule__MessageCall__Alternatives_1");
 			builder.put(grammarAccess.getStatementAccess().getAlternatives_0(), "rule__Statement__Alternatives_0");
 			builder.put(grammarAccess.getAssertionAccess().getAlternatives_0(), "rule__Assertion__Alternatives_0");
+			builder.put(grammarAccess.getAssertionAccess().getAlternatives_1_1(), "rule__Assertion__Alternatives_1_1");
 			builder.put(grammarAccess.getNextStatementAccess().getAlternatives_1(), "rule__NextStatement__Alternatives_1");
 			builder.put(grammarAccess.getIfStatementAccess().getAlternatives_1(), "rule__IfStatement__Alternatives_1");
 			builder.put(grammarAccess.getElseIfStatementBodyAccess().getAlternatives_0(), "rule__ElseIfStatementBody__Alternatives_0");
@@ -139,6 +140,7 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getPreambleAccess().getGroup_3_10(), "rule__Preamble__Group_3_10__0");
 			builder.put(grammarAccess.getPreambleAccess().getGroup_3_11(), "rule__Preamble__Group_3_11__0");
 			builder.put(grammarAccess.getPreambleAccess().getGroup_3_12(), "rule__Preamble__Group_3_12__0");
+			builder.put(grammarAccess.getPreambleAccess().getGroup_3_13(), "rule__Preamble__Group_3_13__0");
 			builder.put(grammarAccess.getDefinitionAccess().getGroup(), "rule__Definition__Group__0");
 			builder.put(grammarAccess.getArgumentDeclarationAccess().getGroup(), "rule__ArgumentDeclaration__Group__0");
 			builder.put(grammarAccess.getArgumentDeclarationAccess().getGroup_2(), "rule__ArgumentDeclaration__Group_2__0");
@@ -376,10 +378,11 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getPreambleAccess().getVersionAssignment_3_8_1(), "rule__Preamble__VersionAssignment_3_8_1");
 			builder.put(grammarAccess.getPreambleAccess().getVersionStringAssignment_3_9_1(), "rule__Preamble__VersionStringAssignment_3_9_1");
 			builder.put(grammarAccess.getPreambleAccess().getLocaleAssignment_3_10_1(), "rule__Preamble__LocaleAssignment_3_10_1");
-			builder.put(grammarAccess.getPreambleAccess().getCreatedAssignment_3_11_1(), "rule__Preamble__CreatedAssignment_3_11_1");
-			builder.put(grammarAccess.getPreambleAccess().getCreatecommentAssignment_3_11_2(), "rule__Preamble__CreatecommentAssignment_3_11_2");
-			builder.put(grammarAccess.getPreambleAccess().getModifiedAssignment_3_12_1(), "rule__Preamble__ModifiedAssignment_3_12_1");
-			builder.put(grammarAccess.getPreambleAccess().getModcommentAssignment_3_12_2(), "rule__Preamble__ModcommentAssignment_3_12_2");
+			builder.put(grammarAccess.getPreambleAccess().getOutputAssignment_3_11_1(), "rule__Preamble__OutputAssignment_3_11_1");
+			builder.put(grammarAccess.getPreambleAccess().getCreatedAssignment_3_12_1(), "rule__Preamble__CreatedAssignment_3_12_1");
+			builder.put(grammarAccess.getPreambleAccess().getCreatecommentAssignment_3_12_2(), "rule__Preamble__CreatecommentAssignment_3_12_2");
+			builder.put(grammarAccess.getPreambleAccess().getModifiedAssignment_3_13_1(), "rule__Preamble__ModifiedAssignment_3_13_1");
+			builder.put(grammarAccess.getPreambleAccess().getModcommentAssignment_3_13_2(), "rule__Preamble__ModcommentAssignment_3_13_2");
 			builder.put(grammarAccess.getDefinitionAccess().getAnnotationsAssignment_0(), "rule__Definition__AnnotationsAssignment_0");
 			builder.put(grammarAccess.getDefinitionAccess().getFunctionAssignment_1_1(), "rule__Definition__FunctionAssignment_1_1");
 			builder.put(grammarAccess.getDefinitionAccess().getNameAssignment_2(), "rule__Definition__NameAssignment_2");
@@ -430,7 +433,8 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getAssertionAccess().getExpressionAssignment_0_0(), "rule__Assertion__ExpressionAssignment_0_0");
 			builder.put(grammarAccess.getAssertionAccess().getMethodCallsAssignment_0_1_0_0(), "rule__Assertion__MethodCallsAssignment_0_1_0_0");
 			builder.put(grammarAccess.getAssertionAccess().getMethodCallsAssignment_0_1_1(), "rule__Assertion__MethodCallsAssignment_0_1_1");
-			builder.put(grammarAccess.getAssertionAccess().getValueAssignment_1_1(), "rule__Assertion__ValueAssignment_1_1");
+			builder.put(grammarAccess.getAssertionAccess().getOkAssignment_1_1_0(), "rule__Assertion__OkAssignment_1_1_0");
+			builder.put(grammarAccess.getAssertionAccess().getValueAssignment_1_1_1(), "rule__Assertion__ValueAssignment_1_1_1");
 			builder.put(grammarAccess.getNextStatementAccess().getAssignmentAssignment_1_0(), "rule__NextStatement__AssignmentAssignment_1_0");
 			builder.put(grammarAccess.getNextStatementAccess().getVerbAssignment_1_1(), "rule__NextStatement__VerbAssignment_1_1");
 			builder.put(grammarAccess.getNextStatementAccess().getGroupAssignment_1_2(), "rule__NextStatement__GroupAssignment_1_2");
