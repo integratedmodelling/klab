@@ -47,6 +47,14 @@
 				<enabled>false</enabled>
 			</releases>
 		</repository>
+		<repository>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>central</id>
+			<name>bintray</name>
+			<url>http://jcenter.bintray.com</url>
+		</repository>
 	</repositories>
 
 	<build>
@@ -92,6 +100,12 @@
 		</pluginManagement>
 	</build>
 	<dependencies>
+
+		<dependency>
+			<groupId>io.github.swagger2markup</groupId>
+			<artifactId>markup-document-builder</artifactId>
+			<version>1.1.1</version>
+		</dependency>
 
 		<!-- <dependency> <groupId>org.beryx</groupId> <artifactId>text-io</artifactId> 
 			<version>3.4.1</version> </dependency> -->
@@ -648,12 +662,8 @@
 			<artifactId>gt-process-raster</artifactId>
 			<version>${geotools.version}</version>
 		</dependency>
-<!-- 		<dependency>
-			<groupId>org.geotools</groupId>
-			<artifactId>gt-netcdf</artifactId>
-			<version>${geotools.version}</version>
-		</dependency>
- -->
+		<!-- <dependency> <groupId>org.geotools</groupId> <artifactId>gt-netcdf</artifactId> 
+			<version>${geotools.version}</version> </dependency> -->
 		<!-- GEOTOOLS mess ends -->
 
 		<!-- Actor system (for the default runtime provider). Use 2_12 or the Json 
