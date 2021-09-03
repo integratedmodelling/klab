@@ -151,11 +151,12 @@ public interface IKActorsBehavior extends IKActorsCodeStatement {
     String getOutput();
 
     /**
-     * All behaviors imported, resolved and parsed.
+     * All behaviors imported, resolved and parsed. May refer to imported behaviors or to libraries,
+     * both native and k.Actors.
      * 
      * @return
      */
-    List<IKActorsBehavior> getImports();
+    List<String> getImports();
 
     /**
      * All the actions declared in this behavior (not in the imported ones)

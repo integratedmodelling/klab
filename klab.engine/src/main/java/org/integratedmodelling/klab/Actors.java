@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab;
 
+import java.beans.IntrospectionException;
+import java.beans.PropertyDescriptor;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -44,6 +46,7 @@ import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
+import org.integratedmodelling.klab.api.extensions.actors.Call;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -91,6 +94,7 @@ import akka.actor.typed.javadsl.AbstractBehavior;
 import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
 import akka.actor.typed.javadsl.Receive;
+import javassist.Modifier;
 
 public enum Actors implements IActorsService {
 
@@ -121,16 +125,38 @@ public enum Actors implements IActorsService {
     AtomicLong semaphoreId = new AtomicLong(1L);
     Map<Semaphore.Type, Set<Long>> semaphores = Collections.synchronizedMap(new HashMap<>());
     static Set<String> layoutMetadata = null;
+    private Map<String, Library> libraries = Collections.synchronizedMap(new HashMap<>());
 
-    private class Library {
-        
-        public String name;
-        public Object instance;
-        public Map<String, Method> methods = Collections.synchronizedMap(new HashMap<>());
-        public Map<String, Action> actions = Collections.synchronizedMap(new HashMap<>());
-        Set<IKActorsBehavior.Type> defaulted = new HashSet<>();
+    public class CallDescriptor {
+
+        public CallDescriptor(Call cid, Method method) {
+            this.method = method;
+            this.descriptor = cid;
+        }
+
+        public CallDescriptor(Action action) {
+            this.action = action;
+        }
+
+        public Method method;
+        public Call descriptor;
+        public Action action;
     }
-    
+
+    public class Library {
+
+        public Library(String name, Class<?> cls) {
+            this.name = name;
+            this.cls = cls;
+        }
+
+        public String name;
+        public Class<?> cls;
+        public Map<String, CallDescriptor> methods = Collections.synchronizedMap(new HashMap<>());
+        Set<IKActorsBehavior.Type> defaulted = new HashSet<>();
+        
+    }
+
     /**
      * Metadata for layout control
      * <p>
@@ -1057,9 +1083,10 @@ public enum Actors implements IActorsService {
      * @param arguments
      * @param scope
      */
-    public void invokeReactorMethod(Object reactor, String methodName, IParameters<String> arguments, Scope scope,
+    public Object invokeReactorMethod(Object reactor, String methodName, IParameters<String> arguments, Scope scope,
             IActorIdentity<?> identity) {
 
+        Object ret = null;
         List<Object> jargs = new ArrayList<>();
         Map<String, Object> kargs = null;
         for (Object v : arguments.getUnnamedArguments()) {
@@ -1093,7 +1120,7 @@ public enum Actors implements IActorsService {
 
         if (method != null) {
             try {
-                method.invoke(reactor, jargs.toArray());
+                ret = method.invoke(reactor, jargs.toArray());
             } catch (Throwable e) {
                 if (scope != null) {
                     scope.getMonitor().error(e);
@@ -1102,13 +1129,38 @@ public enum Actors implements IActorsService {
                 }
             }
         } else {
+            
+            /*
+             * check for no-arg "get" or single arg "set" method.
+             */
+            if (jargs.size() == 0) {
+                try {
+                    Method getter = new PropertyDescriptor(methodName, reactor.getClass()).getReadMethod();
+                    if (getter != null) {
+                        ret = getter.invoke(reactor, jargs.toArray());
+                    }
+                } catch (Throwable e) {
+                    // move on
+                }
+            } else if (jargs.size() == 1) {
+                try {
+                    Method setter = new PropertyDescriptor(methodName, reactor.getClass()).getWriteMethod();
+                    if (setter != null) {
+                        ret = setter.invoke(reactor, jargs.toArray());
+                    }
+                } catch (Throwable e) {
+                    // move on
+                }
+            }
+            
             if (scope != null) {
-                scope.getMonitor().warn("k.Actors: cannot find a '" + methodName + "' method to invoke on object");
+                scope.getMonitor().warn("k.Actors: cannot find a '" + methodName + "' method to invoke on object of class " + reactor.getClass().getCanonicalName());
             } else {
-                Logging.INSTANCE.warn("k.Actors: cannot find a '" + methodName + "' method to invoke on object");
+                Logging.INSTANCE.warn("k.Actors: cannot find a '" + methodName + "' method to invoke on object of class " + reactor.getClass().getCanonicalName());
             }
         }
 
+        return ret;
     }
 
     /**
@@ -1173,15 +1225,51 @@ public enum Actors implements IActorsService {
                 Logging.INSTANCE.error("cannot run " + argument + ": resource not found");
             }
         }
-
     }
 
-    
     public void registerLibrary(org.integratedmodelling.klab.api.extensions.actors.Library annotation, Class<?> cls) {
 
         /**
          * Parse methods, create indices, set defaults
          */
+        Library library = new Library(annotation.name(), cls);
+        for (IKActorsBehavior.Type def : annotation.defaultFor()) {
+            library.defaulted.add(def);
+        }
+        for (Method method : cls.getDeclaredMethods()) {
+            if (Modifier.isPublic(method.getModifiers()) && method.isAnnotationPresent(Call.class)) {
+                Call cid = method.getAnnotation(Call.class);
+                String name = cid.name().isEmpty() ? method.getName() : cid.name();
+                library.methods.put(name, new CallDescriptor(cid, method));
+            }
+        }
+        
+        libraries.put(library.name, library);
+    }
+
+    /**
+     * Return the complete library instrumentation for the passed actor definition.
+     * 
+     * @param statement
+     * @return
+     */
+    public Map<String, Library> getLibraries(IKActorsBehavior statement, IMonitor monitor) {
+        Map<String, Library> ret = new HashMap<>();
+        for (Library library : libraries.values()) {
+            if (library.defaulted.contains(statement.getType())) {
+                ret.put(library.name, library);
+            }
+        }
+        
+        for (String imported : statement.getImports()) {
+            Library lib = libraries.get(imported);
+            if (lib != null) {
+                ret.put(lib.name, lib);
+            } else {
+                monitor.error("imported library " + imported + " does not exist");
+            }
+        }
+        return ret;
     }
 
 }

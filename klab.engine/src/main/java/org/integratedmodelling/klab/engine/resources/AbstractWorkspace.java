@@ -79,8 +79,7 @@ public abstract class AbstractWorkspace implements IWorkspace {
         }
         IKimProject ret = delegate.loadProject(projectFile);
         if (ret != null) {
-            IKimLoader loader = new KimLoader();
-            loader.load(Collections.singleton(ret));
+            Resources.INSTANCE.getLoader().load(Collections.singleton(ret));
         }
         return ret == null ? null : Resources.INSTANCE.retrieveOrCreate(ret);
     }

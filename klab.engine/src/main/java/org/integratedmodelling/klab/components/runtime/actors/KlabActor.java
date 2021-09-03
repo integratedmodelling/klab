@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.ehcache.impl.internal.events.ScopedStoreEventDispatcher;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.api.IKActorsBehavior.Type;
 import org.integratedmodelling.kactors.api.IKActorsStatement;
@@ -32,6 +33,8 @@ import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.klab.Actors;
+import org.integratedmodelling.klab.Actors.CallDescriptor;
+import org.integratedmodelling.klab.Actors.Library;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Extensions;
@@ -49,7 +52,6 @@ import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
-import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActionExecutor.Actor;
@@ -74,6 +76,7 @@ import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.ViewImpl;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.code.ObjectExpression;
+import org.integratedmodelling.klab.exceptions.KlabActorException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.rest.Layout;
@@ -139,6 +142,8 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
     private Map<String, Object> javaReactors = Collections.synchronizedMap(new HashMap<>());
     private List<ActorRef<KlabMessage>> componentActors = Collections.synchronizedList(new ArrayList<>());
     private Layout layout;
+    private Map<String, Library> libraries = new HashMap<>();
+    private Map<String, Object> nativeLibraryInstances = new HashMap<>();
 
     /*
      * This is the parent that generated us through a 'new' instruction, if any.
@@ -489,6 +494,12 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
             return ret;
         }
 
+        public Scope withReceiver(Object valueScope) {
+            Scope ret = new Scope(this);
+            ret.valueScope = valueScope;
+            return ret;
+        }
+
         public IBehavior getBehavior() {
             return this.behavior;
         }
@@ -815,6 +826,10 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
             scope = scope.forWindow(wspecs, action.getName());
         }
 
+        if (action.isFunction()) {
+            scope = scope.functional();
+        }
+
         try {
 
             execute(action.getStatement().getCode(), scope.forAction(action));
@@ -1118,9 +1133,13 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
      * @param scope
      */
     private void executeCallChain(List<Call> calls, Scope scope) {
+
+        Object contextReceiver = null;
         for (int i = 0; i < calls.size(); i++) {
             boolean last = (i == calls.size() - 1);
-            executeCall(calls.get(i), last ? scope : scope.functional());
+            Scope fscope = last ? scope.withReceiver(contextReceiver) : scope.functional(contextReceiver);
+            executeCall(calls.get(i), fscope);
+            contextReceiver = fscope.valueScope;
         }
     }
 
@@ -1420,7 +1439,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
                     }
                     return;
                 }
-            } else {
+            } /* TODO check if it's a library! */ else {
                 /*
                  * Only remaining choice for an explicit actor name must be in the recipient table.
                  */
@@ -1449,6 +1468,66 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
 
         }
 
+        Action libraryActionCode = null;
+
+        /*
+         * HERE check if the call is a method from the library and if it applies to the context
+         * receiver in case we have one.
+         */
+        for (Library library : libraries.values()) {
+            if (library.methods.containsKey(messageName)) {
+
+                CallDescriptor method = library.methods.get(messageName);
+                if (method.method != null) {
+
+                    if (scope.valueScope != null) {
+
+                        /*
+                         * must be compatible with the same argument of the method; otherwise we
+                         * continue on to receiver call.
+                         */
+                        boolean ok = method.method.getParameterCount() > 0
+                                && scope.valueScope.getClass().isAssignableFrom(method.method.getParameters()[0].getType());
+
+                        if (!ok) {
+                            continue;
+                        }
+
+                    }
+
+                    /*
+                     * run through reflection and set the value scope to the result
+                     */
+                    List<Object> args = new ArrayList<>();
+                    for (Object arg : code.getArguments().getUnnamedArguments()) {
+                        args.add(arg instanceof KActorsValue ? evaluateInScope((KActorsValue) arg, scope, identity) : arg);
+                    }
+                    try {
+                        scope.valueScope = method.method.invoke(nativeLibraryInstances.get(library.name), args.toArray());
+                        return;
+                    } catch (Throwable e) {
+                        throw new KlabActorException(e);
+                    }
+
+                } else {
+
+                    /*
+                     * TODO it's an action from a k.Actors-specified library - just set it as the
+                     * value of actionCode. It may be functional or not.
+                     */
+                }
+            }
+        }
+
+        /*
+         * at this point if we have a valueScope, we are calling a method on it.
+         */
+        if (scope.valueScope != null) {
+            scope.valueScope = Actors.INSTANCE.invokeReactorMethod(scope.valueScope, messageName, code.getArguments(), scope,
+                    identity);
+            return;
+        }
+
         /*
          * If we get here, the message is directed to self and it may specify an executor or a
          * k.Actors behavior action. A coded action takes preference over a system behavior
@@ -1459,9 +1538,16 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
          */
         scope = scope.fence(synchronize);
 
+        // TODO if libraryActionCode is not null, we should override only if the library wasn't
+        // explicitly
+        // stated.
         Action actionCode = behavior.getAction(messageName);
-        if (actionCode != null) {
-            run(actionCode, scope.matchFormalArguments(code, actionCode).withNotifyId(notifyId));
+        if (actionCode != null || libraryActionCode != null) {
+            /*
+             * local action overrides a library action
+             */
+            run(actionCode, scope.matchFormalArguments(code, (actionCode == null ? libraryActionCode : actionCode))
+                    .withNotifyId(notifyId));
             return;
         }
 
@@ -1772,14 +1858,17 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
                     KlabActor.this.actionCache.clear();
                     KlabActor.this.childActorPath = message.childActorPath;
 
-                    for (IKActorsBehavior imported : KlabActor.this.behavior.getStatement().getImports()) {
-                        
-                        /*
-                         * TODO preload all imports from both system libraries and k.Actors
-                         * behaviors Test cases and scripts may have default imports. Make a 
-                         * new library instance per behavior. 
-                         */
+                    /*
+                     * load all imported and default libraries
+                     */
+                    KlabActor.this.libraries.putAll(Actors.INSTANCE.getLibraries(KlabActor.this.behavior.getStatement(),
+                            message.scope.runtimeScope.getMonitor()));
 
+                    for (Library library : KlabActor.this.libraries.values()) {
+                        if (library.cls != null) {
+                            KlabActor.this.nativeLibraryInstances.put(library.name,
+                                    library.cls.getDeclaredConstructor().newInstance());
+                        }
                     }
 
                     if (message.applicationId != null) {
@@ -1823,7 +1912,8 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
                         for (IBehavior.Action action : KlabActor.this.behavior.getActions("@test")) {
                             Scope testScope = message.scope.forTest(action);
                             testScope.metadata = new Parameters<>(message.metadata);
-                            testScope.runtimeScope.getMonitor().info(KlabActor.this.behavior.getName() + ": running test " + action.getName());
+                            testScope.runtimeScope.getMonitor()
+                                    .info(KlabActor.this.behavior.getName() + ": running test " + action.getName());
                             KlabActor.this.run(action, testScope);
                             testScope.testScope.finalizeTest(action, testScope.valueScope);
                         }

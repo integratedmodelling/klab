@@ -20,8 +20,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Tags a class that can be imported with an "import" instruction from k.Actors. Some libraries are
- * pre-loaded in test cases and scripts.
+ * Tags a method that can be used as a functional verb in k.Actors. Must be defined for public
+ * methods of classes tagged with {@link Library}. In a call chain, the first argument is the
+ * "receiver" from the previous call.
  *
  * @author ferdinando.villa
  * @version $Id: $Id
@@ -37,7 +38,7 @@ public @interface Call {
      * 
      * @return component id
      */
-    String name();
+    String name() default "";
 
     /**
      * List of other project or component IDs that this one depends on.
@@ -59,5 +60,5 @@ public @interface Call {
      * @return
      */
     Class<?> returns() default Object.class;
-    
+
 }
