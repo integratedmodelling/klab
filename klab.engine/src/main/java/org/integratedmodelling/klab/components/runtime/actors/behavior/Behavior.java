@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.components.runtime.actors.behavior;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -15,22 +14,14 @@ import org.integratedmodelling.kactors.api.IKActorsBehavior.Type;
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.model.KActorsBehavior;
 import org.integratedmodelling.kactors.model.KActorsValue;
-import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.api.actors.IBehavior;
-import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
-import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IKimObject;
-import org.integratedmodelling.klab.api.observations.IObservation;
-import org.integratedmodelling.klab.api.observations.IObservationGroup;
-import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
-import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.data.Metadata;
-import org.integratedmodelling.klab.utils.Path;
-import org.integratedmodelling.klab.utils.Range;
 
 public class Behavior implements IBehavior {
 
@@ -62,10 +53,6 @@ public class Behavior implements IBehavior {
 
         public IKActorsValue getValue() {
             return value;
-        }
-
-        private boolean notMatch(Object value) {
-            return value == null || value instanceof Throwable || (value instanceof Boolean && !((Boolean) value));
         }
         
         public String getMatchName() {
@@ -102,112 +89,7 @@ public class Behavior implements IBehavior {
         }
 
         public boolean matches(Object value, Scope scope) {
-            switch(this.value.getType()) {
-            case ANNOTATION:
-                for (IAnnotation annotation : Annotations.INSTANCE.collectAnnotations(value)) {
-                    if (annotation.getName().equals(this.value.getStatedValue())) {
-                        scope.symbolTable.put(annotation.getName(), annotation);
-                        return true;
-                    }
-                }
-                break;
-            case ANYTHING:
-                return true;
-            case ANYVALUE:
-                return value != null && !(value instanceof Throwable);
-            case ANYTRUE:
-                boolean ret = value != null && !(value instanceof Throwable) && !(value instanceof Boolean && !((Boolean) value));
-                // if (ret) {
-                // scope.symbolTable.put("$", value);
-                // if (value instanceof Collection) {
-                // int n = 1;
-                // for (Object v : ((Collection<?>)value)) {
-                // scope.symbolTable.put("$" + (n++), v);
-                // }
-                // }
-                // }
-                return ret;
-            case BOOLEAN:
-                return value instanceof Boolean && value.equals(this.value.getStatedValue());
-            case CLASS:
-                break;
-            case DATE:
-                break;
-            case EXPRESSION:
-                System.out.println("ACH AN EXPRESSION");
-                break;
-            case IDENTIFIER:
-                if (scope.symbolTable.containsKey(this.value.getStatedValue())) {
-                    return this.value.getStatedValue().equals(scope.symbolTable.get(value));
-                }
-                if (!notMatch(value)) {
-                    // NO - if defined in scope, match to its value, else just return true.
-                    // scope.symbolTable.put(this.value.getValue().toString(), value);
-                    return true;
-                }
-                break;
-            case SET:
-                // TODO OR match for values in list
-                break;
-            case LIST:
-                // TODO multi-identifier match
-                break;
-            case MAP:
-                break;
-            case NODATA:
-                return value == null || value instanceof Number && Double.isNaN(((Number) value).doubleValue());
-            case NUMBER:
-                return value instanceof Number && value.equals(this.value.getStatedValue());
-            case NUMBERED_PATTERN:
-                break;
-            case OBSERVABLE:
-                Object obj = this.value.evaluate(scope, scope.getIdentity(), true);
-                if (obj instanceof IObservable) {
-                    if (value instanceof IObservation) {
-                        return ((IObservation) value).getObservable().resolves((IObservable) obj, null);
-                    }
-                }
-                break;
-            case QUANTITY:
-                break;
-            case RANGE:
-                return value instanceof Number
-                        && ((Range) (this.value.getStatedValue())).contains(((Number) value).doubleValue());
-            case REGEXP:
-                break;
-            case STRING:
-                return value instanceof String && value.equals(this.value.getStatedValue());
-            case TABLE:
-                break;
-            case TYPE:
-                return value != null && (this.value.getStatedValue().equals(value.getClass().getCanonicalName())
-                        || this.value.getStatedValue().equals(Path.getLast(value.getClass().getCanonicalName(), '.')));
-            case URN:
-                break;
-            case ERROR:
-                // match any error? any literal for that?
-                return value instanceof Throwable;
-            case OBSERVATION:
-                // might
-                break;
-            case TREE:
-                break;
-            case CONSTANT:
-                return (value instanceof Enum && ((Enum<?>) value).name().toUpperCase().equals(this.value.getStatedValue()))
-                        || (value instanceof String && ((String) value).equals(this.value.getStatedValue()));
-            case EMPTY:
-                return value == null || (value instanceof Collection && ((Collection<?>) value).isEmpty())
-                        || (value instanceof String && ((String) value).isEmpty())
-                        || (value instanceof IConcept && ((IConcept) value).is(IKimConcept.Type.NOTHING))
-                        || (value instanceof IObservable && ((IObservable) value).is(IKimConcept.Type.NOTHING))
-                        || (value instanceof IArtifact && !(value instanceof IObservationGroup) && ((IArtifact) value).isEmpty())
-                        || (value instanceof IObservation && ((Observation) value).getObservable().is(IKimConcept.Type.NOTHING));
-            case OBJECT:
-                break;
-            default:
-                break;
-            }
-            return false;
+            return Actors.INSTANCE.matches(this.value, value, scope);
         }
     }
 

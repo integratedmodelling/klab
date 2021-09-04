@@ -1118,7 +1118,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
         for (Assertion assertion : code.getAssertions()) {
             executeCallChain(assertion.getCalls(), scope);
             if (assertion.getValue() != null) {
-                TestBehavior.compareExpectedValue(scope.valueScope, assertion.getValue(), scope);
+                TestBehavior.assertEquals(scope.valueScope, assertion.getValue(), scope);
             }
         }
     }
@@ -1141,6 +1141,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
             executeCall(calls.get(i), fscope);
             contextReceiver = fscope.valueScope;
         }
+        scope.valueScope = contextReceiver;
     }
 
     /**
@@ -1793,6 +1794,11 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
 
         this.parentActor = message.parent;
         message.scope.globalSymbols = this.symbolTable;
+        IBehavior behavior = Actors.INSTANCE.getBehavior(message.behavior);
+        if (behavior == null) {
+            message.scope.runtimeScope.getMonitor().error("can't load unknown behavior " + message.behavior);
+            return Behaviors.ignore();
+        }
 
         if (message.forwardApplicationId != null) {
 
@@ -1824,11 +1830,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
 
                 try {
 
-                    boolean rootView = message.scope.viewScope.layout == null;
-
-                    if (message.scope.identity instanceof Session) {
-                        ((Session) message.scope.identity).incrementScriptsRunning();
-                    }
+                    boolean rootView = message.scope.viewScope == null ? false : (message.scope.viewScope.layout == null);
 
                     /*
                      * preload system actors. We don't add "self" which should be factored out by
@@ -1879,6 +1881,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
                         // ensures that all component actors have the same appId.
                         KlabActor.this.appId = message.applicationId;
                     }
+
                     /*
                      * Init action called no matter what and before the behavior is set; the onLoad
                      * callback intervenes afterwards. Do not create UI (use raw scope).
@@ -1948,8 +1951,18 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
 
                 } finally {
 
+                    if (message.scope.testScope != null) {
+                        message.scope.testScope.finalizeTestRun();
+                    }
+
                     if (message.scope.identity instanceof Session) {
-                        ((Session) message.scope.identity).decrementScriptsRunning();
+                        if (KlabActor.this.appId != null && (KlabActor.this.behavior.getDestination() == Type.SCRIPT
+                                || KlabActor.this.behavior.getDestination() == Type.UNITTEST)) {
+                            /*
+                             * communicate end of script to session
+                             */
+                            ((Session) message.scope.identity).notifyScriptEnd(KlabActor.this.appId);
+                        }
                     }
                 }
 

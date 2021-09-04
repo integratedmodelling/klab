@@ -28,6 +28,7 @@ import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Units;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
@@ -90,6 +91,14 @@ public class Unit implements IUnit {
 
     public static Unit create(IUnit unit) {
         return new Unit(((Unit) unit)._unit);
+    }
+
+    public IUnit getSpace() {
+        return Units.INSTANCE.getDimensionUnit(this, Type.SPACE);
+    }
+
+    public IUnit getTime() {
+        return Units.INSTANCE.getDimensionUnit(this, Type.SPACE);
     }
 
     /**

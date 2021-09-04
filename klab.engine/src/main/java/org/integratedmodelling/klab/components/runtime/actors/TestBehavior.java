@@ -1,7 +1,11 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.integratedmodelling.kactors.api.IKActorsValue;
+import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.actors.IBehavior;
@@ -13,6 +17,7 @@ import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
 import org.integratedmodelling.klab.engine.runtime.Session;
+import org.integratedmodelling.klab.exceptions.KlabActorException;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 
 import akka.actor.typed.ActorRef;
@@ -45,12 +50,25 @@ public class TestBehavior {
         if (project != null) {
             if (project != null) {
                 scope.getMonitor().info("Test engine: running test cases from " + project.getName());
+                final  AtomicBoolean done = new AtomicBoolean(false);
                 for (IBehavior testcase : project.getUnitTests()) {
                     if (scope.identity instanceof Session) {
-                        ((Session)scope.identity).load(testcase, scope.getChild(testcase));
+                        ((Session)scope.identity).loadScript(testcase, scope.getChild(testcase), () -> done.set(true));
                     } else {
                         scope.identity.load(testcase, scope.runtimeScope);
                     }
+                    
+                    /*
+                     * wait until test is done
+                     */
+                    while (!done.get()) {
+                        try {
+                            Thread.sleep(200);
+                        } catch (InterruptedException e) {
+                            break;
+                        }
+                    }
+                    
                 }
             }
         } else {
@@ -62,7 +80,8 @@ public class TestBehavior {
         IProject ret = null;
         if (arg instanceof String) {
             if (arg.toString().startsWith("http") || arg.toString().startsWith("git:")) {
-                IProject existing = Resources.INSTANCE.getLocalWorkspace().getProject(MiscUtilities.getURLBaseName(arg.toString()));
+                IProject existing = Resources.INSTANCE.getLocalWorkspace()
+                        .getProject(MiscUtilities.getURLBaseName(arg.toString()));
                 if (existing != null) {
                     monitor.warn("Project " + existing.getName() + " is present in the local workspace: using local version");
                     return existing;
@@ -84,9 +103,24 @@ public class TestBehavior {
      * @param scope
      * @param comparison
      */
-    public static void compareExpectedValue(Object returned, IKActorsValue comparison, Scope scope) {
-        // TODO Auto-generated method stub
-        System.out.println("ZIP ROR");
+    public static void assertEquals(Object returned, IKActorsValue comparison, Scope scope) {
+
+        boolean ok = false;
+        if (returned instanceof IKActorsValue) {
+            returned = KlabActor.evaluateInScope((KActorsValue) returned, scope, scope.identity);
+        }
+        if (comparison == null) {
+            ok = returned == null;
+        } else {
+            ok = Actors.INSTANCE.matches(comparison, returned, scope);
+        }
+
+        if (scope.testScope == null) {
+            throw new KlabActorException("assert failed: '" + comparison + "' and '" + returned + "' differ");
+        }
+
+        scope.testScope.notifyAssertion(returned, comparison, ok);
+
     }
 
 }

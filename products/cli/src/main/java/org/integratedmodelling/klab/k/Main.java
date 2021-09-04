@@ -39,16 +39,7 @@ public class Main {
                 if (argument.endsWith(".kactors")) {
                     Actors.INSTANCE.run(argument, session);
                 }
-            }
-            
-            /*
-             * wait for all scripts to finish
-             */
-            do {
-                Thread.sleep(1000);
-            } while (((Session)session).getRunningScriptCount() > 0);
-
-            
+            }            
             CliRuntime.INSTANCE.shutdown();
             System.exit(0);
         }

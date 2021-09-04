@@ -85,6 +85,13 @@ public class SystemBehavior {
             this.scope = scope;
         }
 
+        public Load(Load load) {
+            this.behavior = load.behavior;
+            this.forwardApplicationId = load.forwardApplicationId;
+            this.identity = load.identity;
+            this.scope = load.scope;
+        }
+
         /**
          * Pass when the main() function may have arguments, typically in components instantiated
          * through 'new'.
@@ -109,7 +116,9 @@ public class SystemBehavior {
 
         @Override
         public Load direct() {
-            return new Load(identity, behavior, null, scope.runtimeScope);
+            Load ret = new Load(this);
+            ret.forwardApplicationId = null;
+            return ret;
         }
 
         public Load withActorBaseName(String actorBaseName) {

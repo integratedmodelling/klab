@@ -1,6 +1,5 @@
 package org.integratedmodelling.klab;
 
-import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,6 +33,7 @@ import org.integratedmodelling.kactors.model.KActors.CodeAssistant.BehaviorId;
 import org.integratedmodelling.kactors.model.KActors.Notifier;
 import org.integratedmodelling.kactors.model.KActors.ValueTranslator;
 import org.integratedmodelling.kactors.model.KActorsValue;
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
@@ -47,7 +47,12 @@ import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Call;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
+import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IObservationGroup;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IActorsService;
@@ -63,6 +68,7 @@ import org.integratedmodelling.klab.components.runtime.actors.extensions.Artifac
 import org.integratedmodelling.klab.components.runtime.artifacts.ObjectArtifact;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.data.encoding.VisitingDataBuilder;
+import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.SimpleRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabActorException;
@@ -75,6 +81,8 @@ import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.rest.ViewPanel;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Path;
+import org.integratedmodelling.klab.utils.Range;
 import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.klab.utils.xtext.KactorsInjectorProvider;
 
@@ -154,7 +162,7 @@ public enum Actors implements IActorsService {
         public Class<?> cls;
         public Map<String, CallDescriptor> methods = Collections.synchronizedMap(new HashMap<>());
         Set<IKActorsBehavior.Type> defaulted = new HashSet<>();
-        
+
     }
 
     /**
@@ -1129,13 +1137,15 @@ public enum Actors implements IActorsService {
                 }
             }
         } else {
-            
+
             /*
              * check for no-arg "get" or single arg "set" method.
              */
             if (jargs.size() == 0) {
                 try {
-                    Method getter = new PropertyDescriptor(methodName, reactor.getClass()).getReadMethod();
+                    Method getter = reactor.getClass().getDeclaredMethod("get" + StringUtil.capitalize(methodName)); // new
+                                                                                                                     // PropertyDescriptor(methodName,
+                                                                                                                     // reactor.getClass()).getReadMethod();
                     if (getter != null) {
                         ret = getter.invoke(reactor, jargs.toArray());
                     }
@@ -1152,11 +1162,17 @@ public enum Actors implements IActorsService {
                     // move on
                 }
             }
-            
+
+            if (ret != null) {
+                return ret;
+            }
+
             if (scope != null) {
-                scope.getMonitor().warn("k.Actors: cannot find a '" + methodName + "' method to invoke on object of class " + reactor.getClass().getCanonicalName());
+                scope.getMonitor().warn("k.Actors: cannot find a '" + methodName + "' method to invoke on object of class "
+                        + reactor.getClass().getCanonicalName());
             } else {
-                Logging.INSTANCE.warn("k.Actors: cannot find a '" + methodName + "' method to invoke on object of class " + reactor.getClass().getCanonicalName());
+                Logging.INSTANCE.warn("k.Actors: cannot find a '" + methodName + "' method to invoke on object of class "
+                        + reactor.getClass().getCanonicalName());
             }
         }
 
@@ -1193,6 +1209,7 @@ public enum Actors implements IActorsService {
      */
     public void run(String argument, ISession session) {
         File file = Configuration.INSTANCE.findFile(argument);
+        String app = null;
         if (file != null) {
             IKActorsBehavior behavior = declare(file);
             if (!(behavior.getType() == Type.SCRIPT || behavior.getType() == Type.UNITTEST)) {
@@ -1203,7 +1220,7 @@ public enum Actors implements IActorsService {
             behaviors.put(behavior.getName(), b);
             Logging.INSTANCE.info("Running " + (behavior.getType() == Type.SCRIPT ? "k.Actors script " : "unit test ")
                     + behavior.getName() + " [ID=" + behavior.getName() + "]");
-            session.load(b, new SimpleRuntimeScope(session));
+            app = session.load(b, new SimpleRuntimeScope(session));
         } else {
             URL resource = this.getClass().getClassLoader().getResource(argument);
             if (resource != null) {
@@ -1217,7 +1234,7 @@ public enum Actors implements IActorsService {
                     behaviors.put(behavior.getName(), b);
                     Logging.INSTANCE.info("Running " + (behavior.getType() == Type.SCRIPT ? "k.Actors script " : "unit test ")
                             + behavior.getName() + " [ID=" + behavior.getName() + "]");
-                    session.load(b, new SimpleRuntimeScope(session));
+                    app = session.load(b, new SimpleRuntimeScope(session));
                 } catch (Throwable t) {
                     throw new KlabActorException(t);
                 }
@@ -1225,6 +1242,17 @@ public enum Actors implements IActorsService {
                 Logging.INSTANCE.error("cannot run " + argument + ": resource not found");
             }
         }
+        
+        if (app != null) {
+            while (((Session)session).isRunning(app)) {
+                try {
+                    Thread.sleep(300);
+                } catch (InterruptedException e) {
+                    Logging.INSTANCE.error(e);
+                }
+            }
+        }
+        
     }
 
     public void registerLibrary(org.integratedmodelling.klab.api.extensions.actors.Library annotation, Class<?> cls) {
@@ -1243,7 +1271,7 @@ public enum Actors implements IActorsService {
                 library.methods.put(name, new CallDescriptor(cid, method));
             }
         }
-        
+
         libraries.put(library.name, library);
     }
 
@@ -1260,7 +1288,7 @@ public enum Actors implements IActorsService {
                 ret.put(library.name, library);
             }
         }
-        
+
         for (String imported : statement.getImports()) {
             Library lib = libraries.get(imported);
             if (lib != null) {
@@ -1272,4 +1300,115 @@ public enum Actors implements IActorsService {
         return ret;
     }
 
+    public boolean matches(IKActorsValue kvalue, Object value, KlabActor.Scope scope) {
+        switch(kvalue.getType()) {
+        case ANNOTATION:
+            for (IAnnotation annotation : Annotations.INSTANCE.collectAnnotations(value)) {
+                if (annotation.getName().equals(kvalue.getStatedValue())) {
+                    scope.symbolTable.put(annotation.getName(), annotation);
+                    return true;
+                }
+            }
+            break;
+        case ANYTHING:
+            return true;
+        case ANYVALUE:
+            return value != null && !(value instanceof Throwable);
+        case ANYTRUE:
+            boolean ret = value != null && !(value instanceof Throwable) && !(value instanceof Boolean && !((Boolean) value));
+            // if (ret) {
+            // scope.symbolTable.put("$", value);
+            // if (value instanceof Collection) {
+            // int n = 1;
+            // for (Object v : ((Collection<?>)value)) {
+            // scope.symbolTable.put("$" + (n++), v);
+            // }
+            // }
+            // }
+            return ret;
+        case BOOLEAN:
+            return value instanceof Boolean && value.equals(kvalue.getStatedValue());
+        case CLASS:
+            break;
+        case DATE:
+            break;
+        case EXPRESSION:
+            System.out.println("ACH AN EXPRESSION");
+            break;
+        case IDENTIFIER:
+            if (scope.symbolTable.containsKey(kvalue.getStatedValue())) {
+                return kvalue.getStatedValue().equals(scope.symbolTable.get(value));
+            }
+            if (!notMatch(value)) {
+                // NO - if defined in scope, match to its value, else just return true.
+                // scope.symbolTable.put(kvalue.getValue().toString(), value);
+                return true;
+            }
+            break;
+        case SET:
+            // TODO OR match for values in list
+            break;
+        case LIST:
+            // TODO multi-identifier match
+            break;
+        case MAP:
+            break;
+        case NODATA:
+            return value == null || value instanceof Number && Double.isNaN(((Number) value).doubleValue());
+        case NUMBER:
+            return value instanceof Number && value.equals(kvalue.getStatedValue());
+        case NUMBERED_PATTERN:
+            break;
+        case OBSERVABLE:
+            Object obj = kvalue.evaluate(scope, scope.getIdentity(), true);
+            if (obj instanceof IObservable) {
+                if (value instanceof IObservation) {
+                    return ((IObservation) value).getObservable().resolves((IObservable) obj, null);
+                }
+            }
+            break;
+        case QUANTITY:
+            break;
+        case RANGE:
+            return value instanceof Number && ((Range) (kvalue.getStatedValue())).contains(((Number) value).doubleValue());
+        case REGEXP:
+            break;
+        case STRING:
+            return value instanceof String && value.equals(kvalue.getStatedValue());
+        case TABLE:
+            break;
+        case TYPE:
+            return value != null && (kvalue.getStatedValue().equals(value.getClass().getCanonicalName())
+                    || kvalue.getStatedValue().equals(Path.getLast(value.getClass().getCanonicalName(), '.')));
+        case URN:
+            break;
+        case ERROR:
+            // match any error? any literal for that?
+            return value instanceof Throwable;
+        case OBSERVATION:
+            // might
+            break;
+        case TREE:
+            break;
+        case CONSTANT:
+            return (value instanceof Enum && ((Enum<?>) value).name().toUpperCase().equals(kvalue.getStatedValue()))
+                    || (value instanceof String && ((String) value).equals(kvalue.getStatedValue()));
+        case EMPTY:
+            return value == null || (value instanceof Collection && ((Collection<?>) value).isEmpty())
+                    || (value instanceof String && ((String) value).isEmpty())
+                    || (value instanceof IConcept && ((IConcept) value).is(IKimConcept.Type.NOTHING))
+                    || (value instanceof IObservable && ((IObservable) value).is(IKimConcept.Type.NOTHING))
+                    || (value instanceof IArtifact && !(value instanceof IObservationGroup) && ((IArtifact) value).isEmpty())
+                    || (value instanceof IObservation && ((Observation) value).getObservable().is(IKimConcept.Type.NOTHING));
+        case OBJECT:
+            break;
+        default:
+            break;
+        }
+        return false;
+    }
+
+    private boolean notMatch(Object value) {
+        return value == null || value instanceof Throwable || (value instanceof Boolean && !((Boolean) value));
+    }
 }

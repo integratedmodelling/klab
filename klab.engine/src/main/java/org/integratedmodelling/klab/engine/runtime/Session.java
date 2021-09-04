@@ -83,8 +83,8 @@ import org.integratedmodelling.klab.common.monitoring.TicketManager;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.geocoding.Geocoder;
 import org.integratedmodelling.klab.components.geospace.geocoding.Geocoder.Location;
-import org.integratedmodelling.klab.components.runtime.actors.KlabActor.ActorReference;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor;
+import org.integratedmodelling.klab.components.runtime.actors.KlabActor.ActorReference;
 import org.integratedmodelling.klab.components.runtime.actors.SessionActor;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Spawn;
@@ -98,6 +98,7 @@ import org.integratedmodelling.klab.engine.debugger.Debug;
 import org.integratedmodelling.klab.engine.resources.Project;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
+import org.integratedmodelling.klab.exceptions.KlabActorException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.rest.AuthorityIdentity;
@@ -190,9 +191,7 @@ public class Session extends GroovyObjectSupport
 
     // tracks the setting of the actor so we can avoid the ask pattern
     private AtomicBoolean actorSet = new AtomicBoolean(Boolean.FALSE);
-    // this is so that sessions can wait for all script to finish executing 
-    private AtomicInteger scriptsRunning = new AtomicInteger(0);
-    
+
     /**
      * A scheduler to periodically collect observation and task garbage
      */
@@ -203,11 +202,11 @@ public class Session extends GroovyObjectSupport
      * or a ITask.
      */
     Map<String, Future<?>> tasks = Collections.synchronizedMap(new HashMap<>());
-    
+
     /*
      * Tasks completed in this session. Allows for tracking completed tasks on the remote engine.
      * Content may be a IScript or a ITask.
-     */    
+     */
     Map<String, Future<?>> completedTasks = new HashMap<>();
 
     /*
@@ -226,6 +225,9 @@ public class Session extends GroovyObjectSupport
 
     private AtomicBoolean interactive = new AtomicBoolean(false);
     private AtomicLong lastNetworkCheck = new AtomicLong(0);
+
+    // listeners for script/testcase end
+    private Map<String, Runnable> exitListeners = Collections.synchronizedMap(new HashMap<>());
 
     // a simple monitor that will only compile all notifications into a list to be
     // sent back to clients
@@ -287,20 +289,19 @@ public class Session extends GroovyObjectSupport
             return errors > 0;
         }
 
-		@Override
-		public void addWait(int seconds) {
-			// TODO Auto-generated method stub
-			
-		}
+        @Override
+        public void addWait(int seconds) {
+            // TODO Auto-generated method stub
 
-		@Override
-		public int getWaitTime() {
-			// TODO Auto-generated method stub
-			return 0;
-		}
+        }
+
+        @Override
+        public int getWaitTime() {
+            // TODO Auto-generated method stub
+            return 0;
+        }
 
     }
-
 
     public Session(Engine engine, IEngineUserIdentity user) {
         this.user = user;
@@ -473,10 +474,10 @@ public class Session extends GroovyObjectSupport
         this.tasks.remove(task instanceof ITask ? ((ITask<?>) task).getId() : ((IScript) task).getId());
         storeCompletedTask(task);
     }
-    
+
     /**
-     * Store a completed task. It may be a ITask or a IScript, which only have the Future identity in
-     * common.
+     * Store a completed task. It may be a ITask or a IScript, which only have the Future identity
+     * in common.
      * 
      * @param task
      */
@@ -484,7 +485,7 @@ public class Session extends GroovyObjectSupport
         String id = task instanceof ITask ? ((ITask<?>) task).getId() : ((IScript) task).getId();
         this.completedTasks.putIfAbsent(id, task);
     }
-    
+
     /**
      * Register the runtime context of a new observation. If needed, dispose of the oldest
      * observation made.
@@ -1411,7 +1412,7 @@ public class Session extends GroovyObjectSupport
 
     @MessageHandler
     private void handleRecontextualizationRequest(ContextualizationRequest request) {
-       this.globalState.recontextualize(request);
+        this.globalState.recontextualize(request);
     }
 
     @MessageHandler
@@ -1531,7 +1532,7 @@ public class Session extends GroovyObjectSupport
         relayIdentities.add(relayId);
     }
 
-	@Override
+    @Override
     public boolean isDefault() {
         return isDefault;
     }
@@ -1566,7 +1567,7 @@ public class Session extends GroovyObjectSupport
             EngineUser engine = getParentIdentity(EngineUser.class);
             if (engine != null) {
 
-                ActorRef<KlabMessage> parentActor = ((ActorReference)engine.getActor()).actor;
+                ActorRef<KlabMessage> parentActor = ((ActorReference) engine.getActor()).actor;
                 parentActor.tell(new Spawn(this, null));
 
                 /*
@@ -1595,26 +1596,30 @@ public class Session extends GroovyObjectSupport
     @Override
     public String load(IBehavior behavior, IContextualizationScope scope) {
         String ret = "app" + NameGenerator.shortUUID();
+        if (behavior.getDestination() == IKActorsBehavior.Type.APP) {
+            globalState.setApplicationId(ret);
+        } else if (behavior.getDestination() != IKActorsBehavior.Type.SCRIPT
+                && behavior.getDestination() != IKActorsBehavior.Type.UNITTEST) {
+            throw new KlabActorException("internal: sessions can only load apps, scripts and unit tests");
+        }
+        if (behavior.getDestination() != IKActorsBehavior.Type.APP) {
+            exitListeners.put(ret, null);
+        }
         getActor().tell(new SystemBehavior.Load(this, behavior.getId(), ret, (IRuntimeScope) scope));
-        globalState.setApplicationId(ret);
         return ret;
     }
 
-    /**
-     * This is for behaviors loaded from another behavior
-     * 
-     * @param behavior
-     * @param scope
-     * @return
-     */
-    public String load(IBehavior behavior, KlabActor.Scope scope) {
-        String ret = "app" + NameGenerator.shortUUID();
+    public String loadScript(IBehavior behavior, KlabActor.Scope scope, Runnable onExit) {
+        String ret = "script" + NameGenerator.shortUUID();
+        if (behavior.getDestination() != IKActorsBehavior.Type.SCRIPT
+                && behavior.getDestination() != IKActorsBehavior.Type.UNITTEST) {
+            throw new KlabActorException("internal: loadScript() can only be used with scripts and unit tests");
+        }
+        this.exitListeners.put(ret, onExit);
         getActor().tell(new SystemBehavior.Load(this, behavior.getId(), ret, scope));
-        globalState.setApplicationId(ret);
         return ret;
     }
 
-    
     @Override
     public boolean stop(String applicationId) {
         getActor().tell(new SystemBehavior.Stop(applicationId));
@@ -1628,7 +1633,7 @@ public class Session extends GroovyObjectSupport
     }
 
     public void instrument(Reference actor) {
-        this.actor = ((ActorReference)actor).actor;
+        this.actor = ((ActorReference) actor).actor;
         this.actorSet.set(true);
     }
 
@@ -1675,21 +1680,22 @@ public class Session extends GroovyObjectSupport
             }
         }
     }
-    
-    public Map<String, Future< ? >> getCompletedTasks() {
+
+    public Map<String, Future<?>> getCompletedTasks() {
         return this.completedTasks;
     }
 
-    public int incrementScriptsRunning() {
-        return scriptsRunning.incrementAndGet();
+    public boolean isRunning(String appId) {
+        return this.exitListeners.containsKey(appId);
     }
 
-    public int decrementScriptsRunning() {
-        return scriptsRunning.decrementAndGet();
+    public void notifyScriptEnd(String appId) {
+        if (this.exitListeners.containsKey(appId)) {
+            Runnable r = this.exitListeners.remove(appId);
+            if (r != null) {
+                r.run();
+            }
+        }
     }
 
-    public int getRunningScriptCount() {
-        return scriptsRunning.get();
-    }
-    
 }
