@@ -227,6 +227,7 @@ public enum Traits implements ITraitService {
             ax.add(Axiom.ClassAssertion(conceptId, newType));
             ax.add(Axiom.SubClass(parent.toString(), conceptId));
             ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
+            ax.add(Axiom.AnnotationAssertion(conceptId, NS.REFERENCE_NAME_PROPERTY, "not_" + attribute.getReferenceName()));
             ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", "Not"
                     + ObservableBuilder.getCleanId(attribute)));
             ax.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, "not  "

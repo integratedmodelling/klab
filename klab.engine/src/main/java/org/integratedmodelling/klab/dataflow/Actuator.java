@@ -11,6 +11,8 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.apache.commons.collections4.BidiMap;
+import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import org.apache.commons.lang3.StringUtils;
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
@@ -92,6 +94,8 @@ import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
 
+import scala.math.Ordering.BigDecimalOrdering;
+
 public class Actuator implements IActuator {
 
     /**
@@ -127,6 +131,11 @@ public class Actuator implements IActuator {
     // for comparison just to ensure that future changes upstream do not affect the
     // logics.
     protected String _actuatorId = NameGenerator.shortUUID();
+
+    /**
+     * The catalog of reference name -> local name for all observables referenced in this actuator
+     */
+    BidiMap<String, String> observableLegend = new DualHashBidiMap<>();
 
     List<Computation> computation = null;
 
@@ -1640,5 +1649,11 @@ public class Actuator implements IActuator {
 
     public List<IDocumentation> getDocumentation() {
         return documentation;
+    }
+
+    @Override
+    public String getAlias(IObservable observable) {
+        // TODO Auto-generated method stub
+        return observableLegend.get(observable.getReferenceName());
     }
 }

@@ -1,39 +1,36 @@
 = Test report for `im.alltests` 
-Started on 2021-09-05T07:26:57. Duration 8h10m. Total tests 1002 (233 failed, 333 successful).
 :toc: auto
 :doctype: article
 
-== 1. Namespace `test.parsing.units` [0/122 failures]
+* Started by ferdinando.villa on 2021-09-05T07:26:57. 
+* Total duration: 8h10m.
+* Total tests: 1003: 988 (92.3%) success, 123 (7.7%) failure. 
+* Exceptions thrown: 11. Assertions failed: 223/23344 (1.43%).
+
+
+== 1. Namespace `test.parsing.units`
 
 === 1.1. Test `basic_parsing` [FAIL]
-[source,kactors]
-----
-@test
-action basic_parsing:
-	assert unit("mg/dl").space is empty,
-		   unit("mg/dl").time is empty,
-		   unit("mg/m^3").space.power is 3
-----
 
 Assertion 1 [FAIL]:
-
 [source,kactors]
 ----
 unit("mg/dl").space is empty
 ----
-
 Assertion 2 [FAIL]:
-
 [source,kactors]
 ----
 unit("mg/dl").time is empty
 ----
-
 Assertion 3 [FAIL]:
-
 [source,kactors]
 ----
 unit("mg/m^3").space.power is 3
 ----
 
-Test completed in 00:00:00.004 with 0 successful, 3 assertions
+Test completed on 2021-09-05T07:26:57
+
+== Exceptions thrown
+
+* Dioporco
+* Vacamadona

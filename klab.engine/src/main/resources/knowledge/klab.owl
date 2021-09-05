@@ -76,6 +76,12 @@
     
 
 
+    <!-- http://integratedmodelling.org/ks/klab.owl#referenceName -->
+
+    <owl:AnnotationProperty rdf:about="http://integratedmodelling.org/ks/klab.owl#referenceName"/>
+    
+
+
     <!-- http://integratedmodelling.org/ks/klab.owl#restrictingProperty -->
 
     <owl:AnnotationProperty rdf:about="http://integratedmodelling.org/ks/klab.owl#restrictingProperty">

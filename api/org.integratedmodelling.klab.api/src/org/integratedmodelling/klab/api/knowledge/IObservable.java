@@ -345,6 +345,78 @@ public interface IObservable extends ISemantic, IResolvable {
          */
         Builder named(String name, String referenceName);
 
+        /**
+         * Pass the unit as a string (also checks for correctness at build)
+         * 
+         * @param unit
+         * @return
+         */
+        Builder withUnit(String unit);
+
+        /**
+         * | Pass a currency as a string (also check for monetary value at build)
+         * 
+         * @param currency
+         * @return
+         */
+        Builder withCurrency(String currency);
+
+        /**
+         * Add an inline value to the observable (will check with the IArtifact.Type of the
+         * observable at build).
+         * 
+         * @param value
+         * @return
+         */
+        Builder withInlineValue(Object value);
+
+        /**
+         * Add a numeric range (check that the artifact type is numeric at build)
+         * 
+         * @param range
+         * @return
+         */
+        Builder withRange(Range range);
+
+        /**
+         * Make this observable generic or not
+         * 
+         * @param generic
+         * @return
+         */
+        Builder generic(boolean generic);
+
+        /**
+         * Define the resolution type for the observable.
+         * 
+         * @param only
+         * @return
+         */
+        Builder withResolution(Resolution only);
+
+        /**
+         * Give or remove the fluid units trait 
+         * 
+         * @param b
+         * @return
+         */
+        Builder fluidUnits(boolean b);
+
+        /**
+         * Add an annotation to the result observable.
+         * 
+         * @param annotation
+         * @return
+         */
+        Builder withAnnotation(IAnnotation annotation);
+
+        /**
+         * TODO check if still used
+         * @param global
+         * @return
+         */
+        Builder global(boolean global);
+
     }
 
     /**

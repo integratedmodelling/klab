@@ -13,24 +13,27 @@ import javax.annotation.Nullable;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.KimConcept;
 import org.integratedmodelling.klab.Concepts;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Ontologies;
 import org.integratedmodelling.klab.Reasoner;
-import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Roles;
 import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.api.data.mediation.ICurrency;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IAxiom;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IKnowledge;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IObservable.Builder;
+import org.integratedmodelling.klab.api.knowledge.IObservable.Resolution;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.LogicalConnector;
@@ -41,6 +44,8 @@ import org.integratedmodelling.klab.engine.resources.CoreOntology;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Range;
+import org.integratedmodelling.klab.utils.StringUtil;
 
 public class ObservableBuilder implements IObservable.Builder {
 
@@ -83,14 +88,23 @@ public class ObservableBuilder implements IObservable.Builder {
     private KimConcept declaration;
     private boolean axiomsAdded = false;
     private String referenceName = null;
+    String unitStatement;
+    String currencyStatement;
+    Object inlineValue;
+    Range range;
+    boolean generic;
+    Resolution resolution;
+    boolean fluidUnits;
 
     // this gets set to true if a finished declaration is set using
     // withDeclaration() and the
     // builder is merely building it.
     private boolean declarationIsComplete = false;
-    
+
     // marks the observable to build as dereifying for a resolution of inherents
-    private boolean dereified = false; 
+    private boolean dereified = false;
+
+    private boolean global;
 
     public static ObservableBuilder getBuilder(IObservable observable, IMonitor monitor) {
         return new ObservableBuilder((Observable) observable, monitor);
@@ -744,11 +758,14 @@ public class ObservableBuilder implements IObservable.Builder {
 
             conceptId = ontology.createIdForDefinition(definition);
 
-            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.CHANGE.name(), ((Concept)concept).getTypeSet());
+            String reference = UnarySemanticOperator.CHANGE.getReferenceName(concept.getReferenceName(), null);
+
+            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.CHANGE.name(), ((Concept) concept).getTypeSet());
 
             ArrayList<IAxiom> ax = new ArrayList<>();
             ax.add(Axiom.ClassAssertion(conceptId, newType));
             ax.add(Axiom.SubClass(NS.CORE_CHANGE, conceptId));
+            ax.add(Axiom.AnnotationAssertion(conceptId, NS.REFERENCE_NAME_PROPERTY, reference));
             ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
             ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
             ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
@@ -794,6 +811,7 @@ public class ObservableBuilder implements IObservable.Builder {
         }
 
         String definition = UnarySemanticOperator.ASSESSMENT.declaration[0] + " " + concept.getDefinition();
+        String reference = UnarySemanticOperator.ASSESSMENT.getReferenceName(concept.getReferenceName(), null);
         Ontology ontology = (Ontology) concept.getOntology();
         String conceptId = ontology.getIdForDefinition(definition);
 
@@ -801,11 +819,13 @@ public class ObservableBuilder implements IObservable.Builder {
 
             conceptId = ontology.createIdForDefinition(definition);
 
-            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.ASSESSMENT.name(), ((Concept)concept).getTypeSet());
+            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.ASSESSMENT.name(),
+                    ((Concept) concept).getTypeSet());
 
             ArrayList<IAxiom> ax = new ArrayList<>();
             ax.add(Axiom.ClassAssertion(conceptId, newType));
             ax.add(Axiom.SubClass(NS.CORE_ASSESSMENT, conceptId));
+            ax.add(Axiom.AnnotationAssertion(conceptId, NS.REFERENCE_NAME_PROPERTY, reference));
             ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
             ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
 
@@ -845,6 +865,7 @@ public class ObservableBuilder implements IObservable.Builder {
          * Must be in same ontology as the original concept.
          */
         String definition = UnarySemanticOperator.COUNT.declaration[0] + " " + concept.getDefinition();
+        String reference = UnarySemanticOperator.COUNT.getReferenceName(concept.getReferenceName(), null);
         Ontology ontology = (Ontology) concept.getOntology();
         String conceptId = ontology.getIdForDefinition(definition);
 
@@ -852,10 +873,11 @@ public class ObservableBuilder implements IObservable.Builder {
 
             conceptId = ontology.createIdForDefinition(definition);
 
-            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.COUNT.name(), ((Concept)concept).getTypeSet());
+            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.COUNT.name(), ((Concept) concept).getTypeSet());
             ArrayList<IAxiom> ax = new ArrayList<>();
             ax.add(Axiom.ClassAssertion(conceptId, newType));
             ax.add(Axiom.SubClass(NS.CORE_COUNT, conceptId));
+            ax.add(Axiom.AnnotationAssertion(conceptId, NS.REFERENCE_NAME_PROPERTY, reference));
             ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
             ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
             if (addDefinition) {
@@ -897,12 +919,14 @@ public class ObservableBuilder implements IObservable.Builder {
         if (conceptId == null) {
 
             conceptId = ontology.createIdForDefinition(definition);
+            String reference = UnarySemanticOperator.DISTANCE.getReferenceName(concept.getReferenceName(), null);
 
-            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.DISTANCE.name(), ((Concept)concept).getTypeSet());
+            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.DISTANCE.name(), ((Concept) concept).getTypeSet());
 
             ArrayList<IAxiom> ax = new ArrayList<>();
             ax.add(Axiom.ClassAssertion(conceptId, newType));
             ax.add(Axiom.SubClass(NS.CORE_DISTANCE, conceptId));
+            ax.add(Axiom.AnnotationAssertion(conceptId, NS.REFERENCE_NAME_PROPERTY, reference));
             ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
             ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
             if (addDefinition) {
@@ -944,11 +968,14 @@ public class ObservableBuilder implements IObservable.Builder {
 
             conceptId = ontology.createIdForDefinition(definition);
 
-            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.PRESENCE.name(), ((Concept)concept).getTypeSet());
+            String reference = UnarySemanticOperator.PRESENCE.getReferenceName(concept.getReferenceName(), null);
+
+            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.PRESENCE.name(), ((Concept) concept).getTypeSet());
             ArrayList<IAxiom> ax = new ArrayList<>();
             ax.add(Axiom.ClassAssertion(conceptId, newType));
             ax.add(Axiom.SubClass(NS.CORE_PRESENCE, conceptId));
             ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
+            ax.add(Axiom.AnnotationAssertion(conceptId, NS.REFERENCE_NAME_PROPERTY, reference));
             ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
             if (addDefinition) {
                 ax.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
@@ -990,12 +1017,16 @@ public class ObservableBuilder implements IObservable.Builder {
 
         if (conceptId == null) {
 
+            String reference = UnarySemanticOperator.OCCURRENCE.getReferenceName(concept.getReferenceName(), null);
+
             conceptId = ontology.createIdForDefinition(definition);
-            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.OCCURRENCE.name(), ((Concept)concept).getTypeSet());
+            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.OCCURRENCE.name(),
+                    ((Concept) concept).getTypeSet());
 
             ArrayList<IAxiom> ax = new ArrayList<>();
             ax.add(Axiom.ClassAssertion(conceptId, newType));
             ax.add(Axiom.SubClass(NS.CORE_OCCURRENCE, conceptId));
+            ax.add(Axiom.AnnotationAssertion(conceptId, NS.REFERENCE_NAME_PROPERTY, reference));
             ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
             ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
 
@@ -1039,11 +1070,15 @@ public class ObservableBuilder implements IObservable.Builder {
 
             conceptId = ontology.createIdForDefinition(definition);
 
-            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.OBSERVABILITY.name(), ((Concept)concept).getTypeSet());
+            String reference = UnarySemanticOperator.OBSERVABILITY.getReferenceName(concept.getReferenceName(), null);
+
+            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.OBSERVABILITY.name(),
+                    ((Concept) concept).getTypeSet());
 
             ArrayList<IAxiom> ax = new ArrayList<>();
             ax.add(Axiom.ClassAssertion(conceptId, newType));
             ax.add(Axiom.SubClass(NS.CORE_OBSERVABILITY_TRAIT, conceptId));
+            ax.add(Axiom.AnnotationAssertion(conceptId, NS.REFERENCE_NAME_PROPERTY, reference));
             ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
             ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
             if (addDefinition) {
@@ -1085,11 +1120,15 @@ public class ObservableBuilder implements IObservable.Builder {
 
             conceptId = ontology.createIdForDefinition(definition);
 
-            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.MAGNITUDE.name(), ((Concept)concept).getTypeSet());
+            String reference = UnarySemanticOperator.MAGNITUDE.getReferenceName(concept.getReferenceName(), null);
+
+            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.MAGNITUDE.name(),
+                    ((Concept) concept).getTypeSet());
 
             ArrayList<IAxiom> ax = new ArrayList<>();
             ax.add(Axiom.ClassAssertion(conceptId, newType));
             ax.add(Axiom.SubClass(NS.CORE_MAGNITUDE, conceptId));
+            ax.add(Axiom.AnnotationAssertion(conceptId, NS.REFERENCE_NAME_PROPERTY, reference));
             ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
             ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
             if (addDefinition) {
@@ -1131,11 +1170,14 @@ public class ObservableBuilder implements IObservable.Builder {
 
             conceptId = ontology.createIdForDefinition(definition);
 
-            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.LEVEL.name(), ((Concept)concept).getTypeSet());
+            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.LEVEL.name(), ((Concept) concept).getTypeSet());
+
+            String reference = UnarySemanticOperator.LEVEL.getReferenceName(concept.getReferenceName(), null);
 
             ArrayList<IAxiom> ax = new ArrayList<>();
             ax.add(Axiom.ClassAssertion(conceptId, newType));
             ax.add(Axiom.SubClass(NS.CORE_LEVEL, conceptId));
+            ax.add(Axiom.AnnotationAssertion(conceptId, NS.REFERENCE_NAME_PROPERTY, reference));
             ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
             ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
             if (addDefinition) {
@@ -1177,11 +1219,15 @@ public class ObservableBuilder implements IObservable.Builder {
 
             conceptId = ontology.createIdForDefinition(definition);
 
-            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.PROBABILITY.name(), ((Concept)concept).getTypeSet());
+            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.PROBABILITY.name(),
+                    ((Concept) concept).getTypeSet());
+
+            String reference = UnarySemanticOperator.PROBABILITY.getReferenceName(concept.getReferenceName(), null);
 
             ArrayList<IAxiom> ax = new ArrayList<>();
             ax.add(Axiom.ClassAssertion(conceptId, newType));
             ax.add(Axiom.SubClass(NS.CORE_PROBABILITY, conceptId));
+            ax.add(Axiom.AnnotationAssertion(conceptId, NS.REFERENCE_NAME_PROPERTY, reference));
             ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
             ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
             if (addDefinition) {
@@ -1217,12 +1263,16 @@ public class ObservableBuilder implements IObservable.Builder {
 
         if (conceptId == null) {
 
+            String reference = UnarySemanticOperator.UNCERTAINTY.getReferenceName(concept.getReferenceName(), null);
+
             conceptId = ontology.createIdForDefinition(definition);
-            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.UNCERTAINTY.name(), ((Concept)concept).getTypeSet());
+            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.UNCERTAINTY.name(),
+                    ((Concept) concept).getTypeSet());
 
             ArrayList<IAxiom> ax = new ArrayList<>();
             ax.add(Axiom.ClassAssertion(conceptId, newType));
             ax.add(Axiom.SubClass(NS.CORE_UNCERTAINTY, conceptId));
+            ax.add(Axiom.AnnotationAssertion(conceptId, NS.REFERENCE_NAME_PROPERTY, reference));
             ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
             ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
             if (addDefinition) {
@@ -1265,12 +1315,20 @@ public class ObservableBuilder implements IObservable.Builder {
 
             conceptId = ontology.createIdForDefinition(definition);
 
-            EnumSet<Type> newType = Kim.INSTANCE
-                    .getType(isPercentage ? UnarySemanticOperator.PERCENTAGE.name() : UnarySemanticOperator.PROPORTION.name(), ((Concept)concept).getTypeSet());
+            String reference = isPercentage
+                    ? UnarySemanticOperator.PERCENTAGE.getReferenceName(concept.getReferenceName(),
+                            comparison == null ? null : comparison.getReferenceName())
+                    : UnarySemanticOperator.PROPORTION.getReferenceName(concept.getReferenceName(),
+                            comparison == null ? null : comparison.getReferenceName());
+
+            EnumSet<Type> newType = Kim.INSTANCE.getType(
+                    isPercentage ? UnarySemanticOperator.PERCENTAGE.name() : UnarySemanticOperator.PROPORTION.name(),
+                    ((Concept) concept).getTypeSet());
 
             ArrayList<IAxiom> ax = new ArrayList<>();
             ax.add(Axiom.ClassAssertion(conceptId, newType));
             ax.add(Axiom.SubClass(NS.CORE_PROPORTION, conceptId));
+            ax.add(Axiom.AnnotationAssertion(conceptId, NS.REFERENCE_NAME_PROPERTY, reference));
             ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
             ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
             if (addDefinition) {
@@ -1314,11 +1372,15 @@ public class ObservableBuilder implements IObservable.Builder {
 
             conceptId = ontology.createIdForDefinition(definition);
 
-            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.RATIO.name(), ((Concept)concept).getTypeSet());
+            String reference = UnarySemanticOperator.RATIO.getReferenceName(concept.getReferenceName(),
+                    comparison == null ? null : comparison.getReferenceName());
+
+            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.RATIO.name(), ((Concept) concept).getTypeSet());
 
             ArrayList<IAxiom> ax = new ArrayList<>();
             ax.add(Axiom.ClassAssertion(conceptId, newType));
             ax.add(Axiom.SubClass(NS.CORE_RATIO, conceptId));
+            ax.add(Axiom.AnnotationAssertion(conceptId, NS.REFERENCE_NAME_PROPERTY, reference));
             ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
             ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
             if (addDefinition) {
@@ -1371,12 +1433,20 @@ public class ObservableBuilder implements IObservable.Builder {
 
             conceptId = ontology.createIdForDefinition(definition);
 
-            EnumSet<Type> newType = Kim.INSTANCE
-                    .getType(monetary ? UnarySemanticOperator.MONETARY_VALUE.name() : UnarySemanticOperator.VALUE.name(), ((Concept)concept).getTypeSet());
+            String reference = monetary
+                    ? UnarySemanticOperator.MONETARY_VALUE.getReferenceName(concept.getReferenceName(),
+                            comparison == null ? null : comparison.getReferenceName())
+                    : UnarySemanticOperator.VALUE.getReferenceName(concept.getReferenceName(),
+                            comparison == null ? null : comparison.getReferenceName());
+
+            EnumSet<Type> newType = Kim.INSTANCE.getType(
+                    monetary ? UnarySemanticOperator.MONETARY_VALUE.name() : UnarySemanticOperator.VALUE.name(),
+                    ((Concept) concept).getTypeSet());
 
             ArrayList<IAxiom> ax = new ArrayList<>();
             ax.add(Axiom.ClassAssertion(conceptId, newType));
             ax.add(Axiom.SubClass(monetary ? NS.CORE_MONETARY_VALUE : NS.CORE_VALUE, conceptId));
+            ax.add(Axiom.AnnotationAssertion(conceptId, NS.REFERENCE_NAME_PROPERTY, reference));
             ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
             ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
             if (addDefinition) {
@@ -1417,12 +1487,15 @@ public class ObservableBuilder implements IObservable.Builder {
 
             conceptId = ontology.createIdForDefinition(definition);
 
-            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.TYPE.name(), ((Concept)classified).getTypeSet());
+            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.TYPE.name(), ((Concept) classified).getTypeSet());
+
+            String reference = UnarySemanticOperator.TYPE.getReferenceName(classified.getReferenceName(), null);
 
             List<IAxiom> axioms = new ArrayList<>();
             axioms.add(Axiom.ClassAssertion(conceptId, newType));
             axioms.add(Axiom.SubClass(NS.CORE_TYPE, conceptId));
             axioms.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
+            axioms.add(Axiom.AnnotationAssertion(conceptId, NS.REFERENCE_NAME_PROPERTY, reference));
             axioms.add(Axiom.AnnotationAssertion(conceptId, NS.IS_TYPE_DELEGATE, "true"));
             axioms.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", traitID));
             if (addDefinition) {
@@ -1527,7 +1600,10 @@ public class ObservableBuilder implements IObservable.Builder {
         Set<IConcept> abstractTraitBases = new HashSet<>();
 
         Concept ret = main;
+        // display IDs without namespaces
         ArrayList<String> tids = new ArrayList<>();
+        // reference IDs with namespaces
+        ArrayList<String> refIds = new ArrayList<>();
 
         /*
          * preload any base traits we already have. If any of them is abstract, take notice so we
@@ -1547,6 +1623,11 @@ public class ObservableBuilder implements IObservable.Builder {
          */
         String cId = "";
         String cDs = "";
+        /*
+         * reference ID is guaranteed unique since 0.11 and used in all catalogs as the reference
+         * name of the observable
+         */
+        String rId = "";
 
         if (traits != null && traits.size() > 0) {
 
@@ -1591,7 +1672,10 @@ public class ObservableBuilder implements IObservable.Builder {
                 }
 
                 tids.add(getCleanId(t));
-
+                if (t.getReferenceName() == null) {
+                    System.out.println("PORCODDIO");
+                }
+                refIds.add(t.getReferenceName());
             }
         }
 
@@ -1608,13 +1692,15 @@ public class ObservableBuilder implements IObservable.Builder {
             }
         }
 
+        rId += dumpIds(refIds);
+
         /*
          * add the main identity to the ID after all traits and before any context
          */
         String cleanId = getCleanId(main);
         cId += cleanId;
         cDs += cleanId;
-        // uId += cleanId;
+        rId += (rId.isEmpty() ? "" : "_") + main.getReferenceName();
 
         /*
          * handle context, inherency etc.
@@ -1629,6 +1715,7 @@ public class ObservableBuilder implements IObservable.Builder {
             cleanId = getCleanId(inherent);
             cId += (distributedInherency ? "OfEach" : "Of") + cleanId;
             cDs += (distributedInherency ? "OfEach" : "Of") + cleanId;
+            rId += (distributedInherency ? "_of_each_" : "_of_") + inherent.getReferenceName();
         }
 
         if (context != null) {
@@ -1645,6 +1732,7 @@ public class ObservableBuilder implements IObservable.Builder {
             cleanId = getCleanId(context);
             cId += "In" + cleanId;
             cDs += "In" + cleanId;
+            rId += "_within_" + context.getReferenceName();
             // uId += "In" + cleanId;
         }
 
@@ -1658,6 +1746,7 @@ public class ObservableBuilder implements IObservable.Builder {
             cleanId = getCleanId(compresent);
             cId += "With" + cleanId;
             cDs += "With" + cleanId;
+            rId += "_with_" + compresent.getReferenceName();
         }
 
         if (goal != null) {
@@ -1671,6 +1760,7 @@ public class ObservableBuilder implements IObservable.Builder {
             cleanId = getCleanId(goal);
             cId += "For" + cleanId;
             cDs += "For" + cleanId;
+            rId += "_for_" + goal.getReferenceName();
         }
 
         if (caused != null) {
@@ -1683,6 +1773,7 @@ public class ObservableBuilder implements IObservable.Builder {
             cleanId = getCleanId(caused);
             cId += "To" + cleanId;
             cDs += "To" + cleanId;
+            rId += "_to_" + caused.getReferenceName();
         }
 
         if (causant != null) {
@@ -1695,6 +1786,7 @@ public class ObservableBuilder implements IObservable.Builder {
             cleanId = getCleanId(causant);
             cId += "From" + cleanId;
             cDs += "From" + cleanId;
+            rId += "_from_" + causant.getReferenceName();
         }
 
         if (adjacent != null) {
@@ -1709,6 +1801,7 @@ public class ObservableBuilder implements IObservable.Builder {
             cleanId = getCleanId(adjacent);
             cId += "AdjacentTo" + cleanId;
             cDs += "AdjacentTo" + cleanId;
+            rId += "_adjacent_" + adjacent.getReferenceName();
         }
 
         if (cooccurrent != null) {
@@ -1721,6 +1814,7 @@ public class ObservableBuilder implements IObservable.Builder {
             cleanId = getCleanId(cooccurrent);
             cId += "During" + cleanId;
             cDs += "During" + cleanId;
+            rId += "_during_" + cooccurrent.getReferenceName();
         }
 
         if (relationshipSource != null) {
@@ -1743,9 +1837,11 @@ public class ObservableBuilder implements IObservable.Builder {
             cleanId = getCleanId(relationshipSource);
             cId += "Linking" + cleanId;
             cDs += "Linking" + cleanId;
+            rId += "_linking_" + relationshipSource.getReferenceName();
             String cid2 = getCleanId(relationshipTarget);
             cId += "To" + cid2;
             cDs += "To" + cid2;
+            rId += "_to_" + relationshipTarget.getReferenceName();
         }
 
         String roleIds = "";
@@ -1759,6 +1855,7 @@ public class ObservableBuilder implements IObservable.Builder {
                             + Concepts.INSTANCE.getDisplayName(role), declaration);
                 }
                 rids.add(Concepts.INSTANCE.getDisplayName(role));
+                refIds.add("_as_" + role.getReferenceName());
                 acceptedRoles.add(role);
             }
         }
@@ -1768,6 +1865,11 @@ public class ObservableBuilder implements IObservable.Builder {
             for (String s : rids) {
                 roleIds += s;
             }
+        }
+
+        String rolRefIds = dumpIds(refIds);
+        if (!rolRefIds.isEmpty()) {
+            rId += "_" + rolRefIds;
         }
 
         /*
@@ -1802,6 +1904,7 @@ public class ObservableBuilder implements IObservable.Builder {
          * add the core observable concept ID using NS.CORE_OBSERVABLE_PROPERTY
          */
         axioms.add(Axiom.AnnotationAssertion(conceptId, NS.CORE_OBSERVABLE_PROPERTY, main.toString()));
+        axioms.add(Axiom.AnnotationAssertion(conceptId, NS.REFERENCE_NAME_PROPERTY, rId));
         axioms.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, declaration.getDefinition()));
 
         if (type.contains(Type.ABSTRACT)) {
@@ -1865,6 +1968,16 @@ public class ObservableBuilder implements IObservable.Builder {
         return ret;
     }
 
+    private String dumpIds(ArrayList<String> refIds) {
+        if (refIds.isEmpty()) {
+            return "";
+        }
+        Collections.sort(refIds);
+        String ret = StringUtil.join(refIds, "_");
+        refIds.clear();
+        return ret;
+    }
+
     private Ontology getTargetOntology() {
         return Ontologies.INSTANCE.getTargetOntology(ontology, main, traits, roles, inherent, context, caused, causant,
                 compresent, goal, cooccurrent, adjacent);
@@ -1920,36 +2033,48 @@ public class ObservableBuilder implements IObservable.Builder {
             ret.setDeclaration(ret.getDeclaration() + " in " + ret.getUnit());
         }
 
+        String opId = "";
+        String cdId = "";
+
         for (Pair<ValueOperator, Object> op : valueOperators) {
 
             ValueOperator valueOperator = op.getFirst();
             Object valueOperand = op.getSecond();
 
             ret.setDeclaration(ret.getDeclaration() + " " + valueOperator.declaration);
-            if (name == null) {
-                ret.setName(ret.getName() + "_" + valueOperator.textForm);
-            }
 
+            opId += (opId.isEmpty() ? "" : "_") + valueOperator.textForm;
+            cdId += (cdId.isEmpty() ? "" : "_") + valueOperator.textForm;
+            
             if (valueOperand instanceof IConcept) {
 
                 ret.setDeclaration(ret.getDeclaration() + " " + ((IConcept) valueOperand).getDefinition());
+
+                opId += (opId.isEmpty() ? "" : "_") + ((Concept) valueOperand).getReferenceName();
+                cdId += (cdId.isEmpty() ? "" : "_")
+                        + Concepts.INSTANCE.getDisplayName((Concept) valueOperand).replaceAll("\\-", "_").replaceAll(" ", "_");
+
                 if (name == null) {
                     ret.setName(ret.getName() + "_" + Concepts.INSTANCE.getDisplayName((Concept) valueOperand)
                             .replaceAll("\\-", "_").replaceAll(" ", "_"));
                 }
+
             } else if (valueOperand instanceof IObservable) {
 
                 ret.setDeclaration(ret.getDeclaration() + " (" + ((Observable) valueOperand).getDeclaration() + ")");
-                if (name == null) {
-                    ret.setName(ret.getName() + "_" + Observables.INSTANCE.getDisplayName((Observable) valueOperand));
-                }
+
+                // FIXME substitute with getReferenceName()
+                opId += (opId.isEmpty() ? "" : "_") + ((Observable) valueOperand).getReferenceName();
+                cdId += (cdId.isEmpty() ? "" : "_") + Observables.INSTANCE.getDisplayName((Observable) valueOperand);
+
             } else {
 
                 if (valueOperand != null) {
+
                     ret.setDeclaration(ret.getDeclaration() + " " + valueOperand);
-                    if (name == null) {
-                        ret.setName(ret.getName() + "_" + valueOperand);
-                    }
+
+                    opId += (opId.isEmpty() ? "" : "_") + getCodeForm(valueOperand, true);
+                    cdId += (cdId.isEmpty() ? "" : "_") + getCodeForm(valueOperand, false);
                 }
             }
 
@@ -1957,12 +2082,20 @@ public class ObservableBuilder implements IObservable.Builder {
 
         }
 
-        if (name != null) {
-            ret.setName(name);
+        if (!opId.isEmpty()) {
+            ret.setReferenceName(ret.getReferenceName() + "_" + opId);
         }
+        
+        if (!cdId.isEmpty()) {
+            ret.setName(ret.getName() + "_" + cdId);
+        }
+
+        // Override for special purposes.
         if (referenceName != null) {
-        	ret.setReferenceName(referenceName);
+            ret.setReferenceName(referenceName);
         }
+
+//        System.out.println("UGLY NAME IS " + ret.uglyName);
 
         ret.setStatedName(this.statedName);
         ret.setTargetPredicate(targetPredicate);
@@ -1973,8 +2106,52 @@ public class ObservableBuilder implements IObservable.Builder {
         ret.setTemporalInherent(temporalInherent);
         ret.setDereifiedAttribute(this.dereifiedAttribute);
         ret.setDereified(this.dereified);
+        ret.setGeneric(this.generic);
+        ret.setResolution(this.resolution);
+        ret.setFluidUnits(this.fluidUnits);
+        ret.setGlobal(this.global);
+
+        if (unitStatement != null) {
+            /* TODO CHECK */
+            Unit unit = Unit.create(this.unitStatement);
+            ret.setUnit(unit);
+        }
+        if (currencyStatement != null) {
+            /* TODO CHECK */
+            Currency currency = Currency.create(currencyStatement);
+            ret.setCurrency(currency);
+        }
+
+        if (this.inlineValue != null) {
+            /* TODO CHECK */
+            ret.setValue(this.inlineValue);
+        }
+
+        if (this.range != null) {
+            /* TODO CHECK */
+            ret.setRange(this.range);
+        }
 
         return ret;
+    }
+
+    private String getCodeForm(Object o, boolean reference) {
+        if (o == null) {
+            return "empty";
+        } else if (o instanceof IKnowledge) {
+            return reference ? (((IConcept) o).getReferenceName()) : Concepts.INSTANCE.getCodeName((IConcept) o);
+        } else if (o instanceof Integer || o instanceof Long) {
+            return ("i" + o).replaceAll("-", "_");
+        } else if (o instanceof IKimConcept) {
+            return reference
+                    ? Concepts.INSTANCE.declare((IKimConcept) o).getReferenceName()
+                    : Concepts.INSTANCE.getCodeName(Concepts.INSTANCE.declare((IKimConcept) o));
+        } else if (o instanceof IKimObservable) {
+            return reference
+                    ? Observables.INSTANCE.declare((IKimObservable) o, Klab.INSTANCE.getRootMonitor()).getReferenceName()
+                    : Observables.INSTANCE.declare((IKimObservable) o, Klab.INSTANCE.getRootMonitor()).getName();
+        }
+        return ("h" + o.hashCode()).replaceAll("-", "_");
     }
 
     @Override
@@ -1991,7 +2168,7 @@ public class ObservableBuilder implements IObservable.Builder {
 
     @Override
     public Builder named(String name) {
-        this.name = name;
+        this.statedName = name;
         return this;
     }
 
@@ -2036,10 +2213,64 @@ public class ObservableBuilder implements IObservable.Builder {
         return this;
     }
 
-	@Override
-	public Builder named(String name, String referenceName) {
-		this.referenceName = referenceName;
-		return named(name);
-	}
+    @Override
+    public Builder named(String name, String referenceName) {
+        this.referenceName = referenceName;
+        return named(name);
+    }
+
+    @Override
+    public Builder withUnit(String unit) {
+        this.unitStatement = unit;
+        return this;
+    }
+
+    @Override
+    public Builder withCurrency(String currency) {
+        this.currencyStatement = currency;
+        return this;
+    }
+
+    @Override
+    public Builder withInlineValue(Object value) {
+        this.inlineValue = value;
+        return this;
+    }
+
+    @Override
+    public Builder withRange(Range range) {
+        this.range = range;
+        return this;
+    }
+
+    @Override
+    public Builder generic(boolean generic) {
+        this.generic = generic;
+        return this;
+    }
+
+    @Override
+    public Builder withResolution(Resolution resolution) {
+        this.resolution = resolution;
+        return this;
+    }
+
+    @Override
+    public Builder fluidUnits(boolean b) {
+        this.fluidUnits = b;
+        return this;
+    }
+
+    @Override
+    public Builder withAnnotation(IAnnotation annotation) {
+        this.annotations.add(annotation);
+        return this;
+    }
+
+    @Override
+    public Builder global(boolean global) {
+        this.global = global;
+        return this;
+    }
 
 }

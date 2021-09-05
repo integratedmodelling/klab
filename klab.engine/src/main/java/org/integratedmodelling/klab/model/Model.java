@@ -105,6 +105,7 @@ public class Model extends KimObject implements IModel {
     private IObservable archetype;
     private Set<IConcept> requiredTraits = null;
     private Set<IConcept> abstractTraits_ = null;
+    private Map<String, String> localNames = new HashMap<>();
 
     /*
      * the geometry implicitly declared for the project, gathered from the resources and the

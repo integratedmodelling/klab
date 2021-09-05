@@ -62,7 +62,6 @@ import groovy.lang.GroovyObjectSupport;
 public class Observable extends GroovyObjectSupport implements IObservable {
 
     protected Concept observable;
-    private String name;
     private String declaration;
     private boolean isAbstract;
     private Range range;
@@ -83,13 +82,19 @@ public class Observable extends GroovyObjectSupport implements IObservable {
     private Set<IConcept> contextualRoles = new HashSet<>();
 
     /**
-     * FIXME there are now three names (name, reference name and stated name) which is clearly too
-     * many. The reference name is supposed to be the stated name ('named') but is created from the
-     * observable if not existing and possibly modified during resolution for disambiguation, so
-     * there is currently no way to keep the 'named' unaltered if it needs to be inspected later.
-     * This is guaranteed unmodifiable and null if no 'named' clause was there.
+     * The "kosher" name of the observable, possibly ambiguous w.r.t. the semantics and possibly
+     * overridden by the stated name ('named').
+     */
+    private String name;
+    /**
+     * The stated name in the 'named' clause, or null if no name was supplied.
      */
     private String statedName;
+    /**
+     * The reference name, unambiguous w.r.t. the semantics and not for human consumption, suitable
+     * as an identifier when an absolute reference to the observable is needed.
+     */
+    private String referenceName;
 
     /*
      * Target predicate is a concrete predicate that may be added to the observable that classifies
@@ -110,7 +115,6 @@ public class Observable extends GroovyObjectSupport implements IObservable {
     // network boundaries
     transient String sessionId;
     private List<IAnnotation> annotations = new ArrayList<>();
-    private String referenceName;
     private String url;
 
     // added to carry the attribute if the resolution of the observable comes from
@@ -141,6 +145,7 @@ public class Observable extends GroovyObjectSupport implements IObservable {
 
     Observable(Concept concept) {
         this.observable = concept;
+        this.name = Concepts.INSTANCE.getCodeName(concept);
     }
 
     public static Observable promote(IConceptDefinition concept) {
@@ -177,11 +182,12 @@ public class Observable extends GroovyObjectSupport implements IObservable {
         ret.declaration = concept.getDefinition().trim();
         ret.isAbstract = concept.isAbstract();
         ret.generic = concept.is(Type.ROLE);
-        ret.referenceName = ret.name = Concepts.INSTANCE.getCodeName(ret.observable);
-        if (ret.referenceName == null) {
-            // happens with non-standard observables like observation:Void.
-            ret.referenceName = ret.name = concept.getName().toLowerCase();
-        }
+        ret.referenceName = concept.getMetadata().get(NS.REFERENCE_NAME_PROPERTY, String.class);
+        // ret.referenceName = ret.name = Concepts.INSTANCE.getCodeName(ret.observable);
+        // if (ret.referenceName == null) {
+        // // happens with non-standard observables like observation:Void.
+        // ret.referenceName = ret.name = concept.getName().toLowerCase();
+        // }
 
         return ret;
     }
@@ -285,10 +291,7 @@ public class Observable extends GroovyObjectSupport implements IObservable {
 
     @Override
     public String getName() {
-        if (name == null) {
-            name = CamelCase.toLowerCase(Concepts.INSTANCE.getDisplayName(observable/* .getName() */), '_');
-        }
-        return name;
+        return statedName == null ? name : statedName;
     }
 
     @Override
@@ -317,6 +320,7 @@ public class Observable extends GroovyObjectSupport implements IObservable {
 
     /**
      * "Fluent" setName for special circumstances. Use with caution and only OUTSIDE of resolution.
+     * Does not substitute the "named" clause in k.IM - that is {@link #setStatedName(String)}.
      * 
      * @param name
      * @return
@@ -777,10 +781,10 @@ public class Observable extends GroovyObjectSupport implements IObservable {
                 : new Pair<>(resolvable, (Observable) getBuilder(monitor).without(resolvable).buildObservable());
     }
 
-    public void setReferenceName(String name) {
-    	if (name.contains("in_watershed")) {
-    		System.out.println("SOSOSO");
-    	}
+    /*
+     * package private after removing the disambiguator in ResolutionScope
+     */
+    void setReferenceName(String name) {
         this.referenceName = name;
     }
 
@@ -993,7 +997,7 @@ public class Observable extends GroovyObjectSupport implements IObservable {
     public void setDereified(boolean dereified) {
         this.dereified = dereified;
     }
-    
+
     @Override
     public boolean isDereified() {
         return this.dereified;

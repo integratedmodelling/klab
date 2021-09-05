@@ -973,6 +973,11 @@ public class Concept extends Knowledge implements IConcept {
         return super.getProperty(property);
     }
 
+    @Override
+    public String getReferenceName() {
+        return getMetadata().get(NS.REFERENCE_NAME_PROPERTY, String.class);
+    }
+
     /*
      * @Override public boolean equals(Object obj) { return obj instanceof Concept ?
      * toString().equals(obj.toString()) || getDefinition().equals(((Concept) obj).getDefinition())

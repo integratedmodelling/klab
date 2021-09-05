@@ -183,6 +183,10 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
                     if (firstActuator == null) {
                         firstActuator = actuator;
                     }
+                    
+                    /*
+                     * TODO build and examine the list of observables with their uglynames
+                     */
 
                     List<Actuator> order = ((Actuator) actuator).dependencyOrder();
 

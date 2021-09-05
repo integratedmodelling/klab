@@ -556,11 +556,11 @@ public class Resolver {
 		 */
 		ResolutionScope ret = parentScope.getChildScope(observable, mode);
 
-		/*
-		 * ensure the reference name represents unique semantics across the resolution
-		 * tree
-		 */
-		observable = parentScope.disambiguateObservable(observable);
+//		/*
+//		 * ensure the reference name represents unique semantics across the resolution
+//		 * tree FIXME remove and just use a non-ambiguous reference name
+//		 */
+//		observable = parentScope.disambiguateObservable(observable);
 
 		/*
 		 * pre-resolved artifacts contain a number, concept, boolean, expression or
