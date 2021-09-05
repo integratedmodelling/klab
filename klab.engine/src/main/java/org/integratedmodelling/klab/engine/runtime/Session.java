@@ -1698,4 +1698,9 @@ public class Session extends GroovyObjectSupport
         }
     }
 
+    public int getScriptReturnValue(String app) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
 }

@@ -35,13 +35,14 @@ public class Main {
         } else {
             SysConsole console = new SysConsole();
             ISession session = CliRuntime.INSTANCE.initialize(console, options);
+            int exitCode = 0;
             for (String argument : options.getArguments()) {
                 if (argument.endsWith(".kactors")) {
-                    Actors.INSTANCE.run(argument, session);
+                    exitCode += Actors.INSTANCE.run(argument, session);
                 }
             }            
             CliRuntime.INSTANCE.shutdown();
-            System.exit(0);
+            System.exit(exitCode);
         }
     }
 }

@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.components.runtime.actors;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.integratedmodelling.kactors.api.IKActorsStatement.Assert.Assertion;
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IParameters;
@@ -19,11 +20,21 @@ import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.exceptions.KlabActorException;
 import org.integratedmodelling.klab.utils.MiscUtilities;
+import org.joda.time.Period;
+import org.joda.time.format.PeriodFormatter;
+import org.joda.time.format.PeriodFormatterBuilder;
 
 import akka.actor.typed.ActorRef;
 
 @Behavior(id = "test", version = Version.CURRENT)
 public class TestBehavior {
+    
+    private static final PeriodFormatter periodFormat = new PeriodFormatterBuilder().appendDays()
+            .appendSuffix(" day", " days").appendSeparator(" ").printZeroIfSupported().minimumPrintedDigits(2)
+            .appendHours().appendSeparator(":").appendMinutes().printZeroIfSupported().minimumPrintedDigits(2)
+            .appendSeparator(":").appendSeconds().minimumPrintedDigits(2).appendSeparator(".").appendMillis3Digit().
+            toFormatter();
+
 
     @Action(id = "test", fires = {}, description = "Run all the test included in one or more projects, naming the project ID, "
             + "a URL or a Git URL (git:// or http....*.git")
@@ -103,8 +114,9 @@ public class TestBehavior {
      * @param scope
      * @param comparison
      */
-    public static void assertEquals(Object returned, IKActorsValue comparison, Scope scope) {
+    public static void evaluateAssertion(Object returned, Assertion assertion, Scope scope) {
 
+        IKActorsValue comparison = assertion.getValue();
         boolean ok = false;
         if (returned instanceof IKActorsValue) {
             returned = KlabActor.evaluateInScope((KActorsValue) returned, scope, scope.identity);
@@ -119,8 +131,13 @@ public class TestBehavior {
             throw new KlabActorException("assert failed: '" + comparison + "' and '" + returned + "' differ");
         }
 
-        scope.testScope.notifyAssertion(returned, comparison, ok);
+        scope.testScope.notifyAssertion(returned, comparison, ok, assertion);
 
+    }
+    
+    public static String printPeriod(long ms) {
+        Period period = new Period(ms);
+        return periodFormat.print(period);
     }
 
 }

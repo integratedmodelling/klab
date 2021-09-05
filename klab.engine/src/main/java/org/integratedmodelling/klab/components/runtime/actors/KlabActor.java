@@ -1118,7 +1118,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
         for (Assertion assertion : code.getAssertions()) {
             executeCallChain(assertion.getCalls(), scope);
             if (assertion.getValue() != null) {
-                TestBehavior.assertEquals(scope.valueScope, assertion.getValue(), scope);
+                TestBehavior.evaluateAssertion(scope.valueScope, assertion, scope);
             }
         }
     }

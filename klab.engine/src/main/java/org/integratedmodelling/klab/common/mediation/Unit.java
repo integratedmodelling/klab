@@ -245,7 +245,7 @@ public class Unit implements IUnit {
         UnitConverter converter = ((Unit) unit).getUnit().getConverterTo(_unit);
         return converter.convert(value.doubleValue());
     }
-    
+
     @Override
     public Number backConvert(Number value, IValueMediator unit) {
 
@@ -311,6 +311,17 @@ public class Unit implements IUnit {
     @Override
     public IUnit scale(double scale) {
         return new Unit(_unit.multiply(scale));
+    }
+
+    /**
+     * Assuming this is a simple, monodimensional unit, return the power its dimension is at.
+     * Otherwise return -1.
+     * 
+     * @return
+     */
+    public int getPower() {
+        Map<javax.measure.Unit, Integer> bunits = _unit.getBaseUnits();
+        return bunits.size() == 1 ? bunits.get(bunits.keySet().iterator().next()) : -1;
     }
 
     @Override
@@ -457,61 +468,65 @@ public class Unit implements IUnit {
         return new Pair<>(new Unit(decontextualized), new Unit(raiseExtentual ? extentual.pow(dimensionality) : extentual));
     }
 
-//    @Override
-//    public IValueMediator getContextualizingUnit(IObservable observable, IScale scale, ILocator locator) {
-//
-//        if (observable.getUnit() == null || !Units.INSTANCE.needsUnitScaling(observable)
-//                || this.isCompatible(observable.getUnit())) {
-//            return this;
-//        }
-//
-//        /*
-//         * Contextualize the passed unit and find the base unit that matches it
-//         */
-//        UnitContextualization contextualization = Units.INSTANCE.getContextualization(observable, scale, null);
-//
-//        IUnit matching = null;
-//        for (IUnit unit : contextualization.getCandidateUnits()) {
-//            if (unit.isCompatible(observable.getUnit())) {
-//                matching = unit;
-//                break;
-//            }
-//        }
-//
-//        if (matching == null) {
-//            // shouldn't happen
-//            throw new IllegalStateException("trying to recontextualize a unit in an incompatible scale");
-//        }
-//
-//        boolean regular = true;
-//        Unit recontextualizer = this;
-//        double contextualConversion = 1.0;
-//
-//        /**
-//         * FIXME revise!
-//         */
-//        for (ExtentDimension ed : matching.getAggregatedDimensions().keySet()) {
-//
-//            IExtent dim = ((Scale) scale).getDimension(ed.spatial ? Type.SPACE : Type.TIME);
-//            Pair<IUnit, IUnit> split = recontextualizer.splitExtent(ed);
-//            if (split != null && split.getSecond() != null) {
-//
-//                recontextualizer = (Unit) split.getFirst();
-//                Pair<Double, IUnit> dimsize = dim.getStandardizedDimension(locator);
-//                contextualConversion *= split.getSecond().convert(dimsize.getFirst(), dimsize.getSecond()).doubleValue();
-//
-//                if (dim.size() > 0 || dim.isRegular()) {
-//                    if (!dim.isRegular()) {
-//                        regular = false;
-//                        break;
-//                    }
-//                }
-//
-//            }
-//        }
-//
-//        return new RecontextualizingUnit((Unit) observable.getUnit(), recontextualizer, contextualConversion, !regular);
-//    }
+    // @Override
+    // public IValueMediator getContextualizingUnit(IObservable observable, IScale scale, ILocator
+    // locator) {
+    //
+    // if (observable.getUnit() == null || !Units.INSTANCE.needsUnitScaling(observable)
+    // || this.isCompatible(observable.getUnit())) {
+    // return this;
+    // }
+    //
+    // /*
+    // * Contextualize the passed unit and find the base unit that matches it
+    // */
+    // UnitContextualization contextualization = Units.INSTANCE.getContextualization(observable,
+    // scale, null);
+    //
+    // IUnit matching = null;
+    // for (IUnit unit : contextualization.getCandidateUnits()) {
+    // if (unit.isCompatible(observable.getUnit())) {
+    // matching = unit;
+    // break;
+    // }
+    // }
+    //
+    // if (matching == null) {
+    // // shouldn't happen
+    // throw new IllegalStateException("trying to recontextualize a unit in an incompatible scale");
+    // }
+    //
+    // boolean regular = true;
+    // Unit recontextualizer = this;
+    // double contextualConversion = 1.0;
+    //
+    // /**
+    // * FIXME revise!
+    // */
+    // for (ExtentDimension ed : matching.getAggregatedDimensions().keySet()) {
+    //
+    // IExtent dim = ((Scale) scale).getDimension(ed.spatial ? Type.SPACE : Type.TIME);
+    // Pair<IUnit, IUnit> split = recontextualizer.splitExtent(ed);
+    // if (split != null && split.getSecond() != null) {
+    //
+    // recontextualizer = (Unit) split.getFirst();
+    // Pair<Double, IUnit> dimsize = dim.getStandardizedDimension(locator);
+    // contextualConversion *= split.getSecond().convert(dimsize.getFirst(),
+    // dimsize.getSecond()).doubleValue();
+    //
+    // if (dim.size() > 0 || dim.isRegular()) {
+    // if (!dim.isRegular()) {
+    // regular = false;
+    // break;
+    // }
+    // }
+    //
+    // }
+    // }
+    //
+    // return new RecontextualizingUnit((Unit) observable.getUnit(), recontextualizer,
+    // contextualConversion, !regular);
+    // }
 
     public Unit withAggregatedDimensions(Map<ExtentDimension, ExtentDistribution> set) {
         this.aggregatedDimensions.putAll(set);

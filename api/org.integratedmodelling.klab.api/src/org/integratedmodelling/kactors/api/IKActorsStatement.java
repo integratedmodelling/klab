@@ -16,7 +16,7 @@ import org.integratedmodelling.klab.utils.Triple;
 public interface IKActorsStatement extends IKActorsCodeStatement {
 
     public enum Type {
-        ACTION_CALL, IF_STATEMENT, FOR_STATEMENT, DO_STATEMENT, WHILE_STATEMENT, TEXT_BLOCK, FIRE_VALUE, ASSIGNMENT, CONCURRENT_GROUP, SEQUENCE, INSTANTIATION, ASSERT_STATEMENT
+        ACTION_CALL, IF_STATEMENT, FOR_STATEMENT, DO_STATEMENT, WHILE_STATEMENT, TEXT_BLOCK, FIRE_VALUE, ASSIGNMENT, CONCURRENT_GROUP, SEQUENCE, INSTANTIATION, ASSERT_STATEMENT, ASSERTION
     }
 
     public interface If extends IKActorsStatement {
@@ -84,7 +84,7 @@ public interface IKActorsStatement extends IKActorsCodeStatement {
          * @author Ferd
          *
          */
-        public interface Assertion {
+        public interface Assertion extends IKActorsStatement {
 
             /**
              * Call chain whose final result will be compared with the value.

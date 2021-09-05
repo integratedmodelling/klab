@@ -209,6 +209,8 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
 				Logging.INSTANCE.warn("Retrieval of CDS chunk " + variable + "/" + chunk + " threw exception: "
 						+ response.getBody().getObject().get("message"));
 			}
+		} else {
+		    Logging.INSTANCE.error("API request to CDS service returned error " + response.getStatusText());
 		}
 
 		return ret;

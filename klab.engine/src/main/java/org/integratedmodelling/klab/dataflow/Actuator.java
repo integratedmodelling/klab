@@ -982,12 +982,12 @@ public class Actuator implements IActuator {
      * Done above for the initialization run; this is called in the scheduler to ensure names are
      * appropriate for the actuator being run.
      * 
-     * @param context
+     * @param scope
      * @return
      */
-    public IRuntimeScope localizeNames(IRuntimeScope context) {
+    public IRuntimeScope localizeNames(IRuntimeScope scope) {
 
-        IRuntimeScope ret = context.copy();
+        IRuntimeScope ret = scope.copy();
         for (IActuator input : getActuators()) {
             if (ret.getArtifact(input.getName()) != null) {
                 // no effect if not aliased

@@ -1200,14 +1200,16 @@ public enum Actors implements IActorsService {
     }
 
     /**
-     * Takes the argument as a script or test filename (either absolute or relative) and if found,
-     * parses and executes it.
-     * 
-     * TODO wait for the script to finish before exiting!
+     * Run a script from a file, URL or local resource. Blocks until the script has finished and
+     * returns the exit code.
      * 
      * @param argument
+     * @param session
+     * @return an exit code, normally 0 if all OK, 1 if any error, or number of failed tests if the
+     *         input was a test case.
      */
-    public void run(String argument, ISession session) {
+    public int run(String argument, ISession session) {
+
         File file = Configuration.INSTANCE.findFile(argument);
         String app = null;
         if (file != null) {
@@ -1242,9 +1244,9 @@ public enum Actors implements IActorsService {
                 Logging.INSTANCE.error("cannot run " + argument + ": resource not found");
             }
         }
-        
+
         if (app != null) {
-            while (((Session)session).isRunning(app)) {
+            while(((Session) session).isRunning(app)) {
                 try {
                     Thread.sleep(300);
                 } catch (InterruptedException e) {
@@ -1252,7 +1254,9 @@ public enum Actors implements IActorsService {
                 }
             }
         }
-        
+
+        return ((Session) session).getScriptReturnValue(app);
+
     }
 
     public void registerLibrary(org.integratedmodelling.klab.api.extensions.actors.Library annotation, Class<?> cls) {
