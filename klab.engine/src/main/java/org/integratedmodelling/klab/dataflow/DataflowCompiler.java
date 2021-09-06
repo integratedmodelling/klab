@@ -519,9 +519,6 @@ public class DataflowCompiler {
                         && !theModel.model.getObservables().get(0).getType().equals(observable.getType())) {
                     referenceName = observable.getReferenceName();
                 }
-                if (referenceName == null) {
-                    referenceName = theModel.model.getId();
-                }
                 ret.setName(referenceName);
                 defineActuator(ret, theModel, generated);
 

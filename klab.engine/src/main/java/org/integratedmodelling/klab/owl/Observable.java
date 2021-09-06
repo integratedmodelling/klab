@@ -182,13 +182,12 @@ public class Observable extends GroovyObjectSupport implements IObservable {
         ret.declaration = concept.getDefinition().trim();
         ret.isAbstract = concept.isAbstract();
         ret.generic = concept.is(Type.ROLE);
-        ret.referenceName = concept.getMetadata().get(NS.REFERENCE_NAME_PROPERTY, String.class);
-        // ret.referenceName = ret.name = Concepts.INSTANCE.getCodeName(ret.observable);
-        // if (ret.referenceName == null) {
-        // // happens with non-standard observables like observation:Void.
-        // ret.referenceName = ret.name = concept.getName().toLowerCase();
-        // }
-
+        ret.referenceName = concept.getReferenceName();
+        if (ret.referenceName == null) {
+            // only happens with non-standard observables from system ontologies
+            ret.referenceName = KimKnowledgeProcessor.getCleanFullId(concept.getNamespace(), concept.getName());
+        }
+ 
         return ret;
     }
 
