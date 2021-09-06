@@ -271,10 +271,10 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
 	 * itself. This is to avoid creating wrappers from inside Groovy at every eval,
 	 * which has proved extremely slow.
 	 * 
-	 * @param context
+	 * @param scope
 	 * @param parameters
 	 */
-	private void setupBindings(IContextualizationScope context, IParameters<String> parameters) {
+	private void setupBindings(IContextualizationScope scope, IParameters<String> parameters) {
 
 		Binding bindings = new Binding();
 
@@ -290,23 +290,23 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
 			throw new KlabInternalErrorException(e);
 		}
 
-		if (context.getScale() != null) {
-			bindings.setVariable(eid2j("scale"), context.getScale());
+		if (scope.getScale() != null) {
+			bindings.setVariable(eid2j("scale"), scope.getScale());
 			overridingIds.add("scale");
 		}
 		
-		if (context.getScale() != null && context.getScale().getSpace() != null) {
-			Wrapper.wrap(context.getScale().getSpace(), "space", bindings);
+		if (scope.getScale() != null && scope.getScale().getSpace() != null) {
+			Wrapper.wrap(scope.getScale().getSpace(), "space", bindings);
 			overridingIds.add("space");
 		}
-		if (context.getScale() != null && context.getScale().getTime() != null) {
-			Wrapper.wrap(context.getScale().getTime(), "time", bindings);
+		if (scope.getScale() != null && scope.getScale().getTime() != null) {
+			Wrapper.wrap(scope.getScale().getTime(), "time", bindings);
 			overridingIds.add("time");
 		}
 
-		if (context.getContextObservation() != null) {
+		if (scope.getContextObservation() != null) {
 			// context is not overriddable
-			Wrapper.wrap(context.getContextObservation(), "context", bindings);
+			Wrapper.wrap(scope.getContextObservation(), "context", bindings);
 		}
 
 		/*
@@ -316,7 +316,7 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
 		Map<String, Object> artifactTable = new HashMap<>();
 		for (String identifier : this.descriptor.getIdentifiers()) {
 			if (this.descriptor.isNonscalar(identifier)) {
-				IArtifact artifact = context.getArtifact(identifier);
+				IArtifact artifact = scope.getArtifact(identifier);
 				if (artifact != null) {
 					artifactTable.put(identifier, Wrapper.wrap(artifact, identifier, bindings));
 				}
@@ -330,9 +330,9 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
 
 		bindings.setVariable("_p", artifactTable);
 		bindings.setVariable("_exp", this);
-		bindings.setVariable("_ns", context.getNamespace());
-		bindings.setVariable("_c", context);
-		bindings.setVariable("_monitor", context.getMonitor());
+		bindings.setVariable("_ns", scope.getNamespace());
+		bindings.setVariable("_c", scope);
+		bindings.setVariable("_monitor", scope.getMonitor());
 	}
 
 	private String preprocess(String code, Map<String, IObservable> inputs, Map<String, IObservable> outputs) {
@@ -370,8 +370,8 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
 	}
 
 	@Override
-	public Object eval(IContextualizationScope context, Object... parameters) {
-		return eval(Parameters.create(parameters), context);
+	public Object eval(IContextualizationScope scope, Object... parameters) {
+		return eval(Parameters.create(parameters), scope);
 	}
 
 	@Override

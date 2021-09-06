@@ -130,13 +130,13 @@ public interface IExpression {
      * Execute the expression
      *
      * @param parameters from context or defined in a language call
-     * @param context possibly empty, may be added to determine the result of the evaluation
+     * @param scope possibly empty, may be added to determine the result of the evaluation
      *        according to the calling context. The {@link IContextualizationScope#getMonitor()
      *        monitor in the context} will never be null and can be used to send messages or
      *        interrupt the computation.
      * @return the result of evaluating the expression
      * @throws org.integratedmodelling.klab.exceptions.KlabException TODO
      */
-    Object eval(IParameters<String> parameters, IContextualizationScope context);
+    Object eval(IParameters<String> parameters, IContextualizationScope scope);
 
 }

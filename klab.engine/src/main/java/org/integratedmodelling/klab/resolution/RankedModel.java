@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
@@ -38,8 +39,9 @@ import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.klab.utils.StringUtils;
 
 /**
- * TODO consider removing and letting a copy of Model be ranked - using the delegate has side
- * effects and requires ugly code when derived models are created.
+ * FIXME consider removing and letting a copy of Model be ranked - using the delegate has side
+ * effects and requires ugly code when derived models are created. Also any new method that is not
+ * explicitly overridden will operate from the wrong object.
  * 
  * @author Ferd
  */
@@ -51,6 +53,10 @@ public class RankedModel extends Model implements IRankedModel {
     int priority = 0;
 
     private transient ModelReference modelData;
+
+    public static RankedModel create(IRankedModel model, IModel delegate) {
+        return new RankedModel((Model) delegate, model.getRanks(), model.getPriority());
+    }
 
     public RankedModel(Model model) {
         this.delegate = model;
@@ -139,8 +145,8 @@ public class RankedModel extends Model implements IRankedModel {
         return getDelegate().getAttributeObservables();
     }
 
-    public String getLocalNameFor(IObservable observable, IConcept context, IMonitor monitor) {
-        return getDelegate().getLocalNameFor(observable, context, monitor);
+    public String getLocalNameFor(IObservable observable) {
+        return getDelegate().getLocalNameFor(observable);
     }
 
     public boolean isResolved() {
@@ -380,8 +386,35 @@ public class RankedModel extends Model implements IRankedModel {
         return delegate.getMergedResource();
     }
 
-    public static RankedModel create(IRankedModel model, IModel delegate) {
-        return new RankedModel((Model)delegate, model.getRanks(), model.getPriority());
+    @Override
+    public IViewModel getViewModel() {
+        // TODO Auto-generated method stub
+        return delegate.getViewModel();
+    }
+
+    @Override
+    public Collection<IConcept> getRequiredTraits() {
+        return delegate.getRequiredTraits();
+    }
+
+    @Override
+    public boolean isAbstract() {
+        return delegate.isAbstract();
+    }
+
+    @Override
+    public Collection<IConcept> getAbstractTraits() {
+        return delegate.getAbstractTraits();
+    }
+
+    @Override
+    public org.integratedmodelling.klab.rest.DocumentationNode.Model getBean() {
+        return delegate.getBean();
+    }
+
+    @Override
+    public IObservable getObservableFor(String localName) {
+        return delegate.getObservableFor(localName);
     }
 
 }

@@ -117,21 +117,20 @@ public interface IRuntimeScope extends IContextualizationScope {
     IConfigurationDetector getConfigurationDetector();
 
     /**
-     * Produce a deep copy of this context, with a new resource catalog, leaving only the original
-     * instances of the context-wide members such as provenance, configuration detector, event bus
-     * and structures. This is meant to be able to rename elements without harm.
+     * Produce a deep copy of this context so it can be used for parameters without affecting the
+     * original. The catalog remains unchanged.
      * 
      * @return an identical context with a rewriteable object catalog and parameters.
      */
     IRuntimeScope copy();
-
-    /**
-     * Rename the passed observation data as the passed alias.
-     * 
-     * @param name
-     * @param alias
-     */
-    void rename(String name, String alias);
+    //
+    // /**
+    // * Rename the passed observation data as the passed alias.
+    // *
+    // * @param name
+    // * @param alias
+    // */
+    // void rename(String name, String alias);
 
     /**
      * Set the main target of the computation being carried on by the actuator. Used by
@@ -170,16 +169,6 @@ public interface IRuntimeScope extends IContextualizationScope {
      * @return the set of all children of class cls
      */
     <T extends IArtifact> Collection<T> getChildren(IArtifact artifact, Class<T> cls);
-
-    /**
-     * Set the passed artifact as the current target, ensuring it is properly pointed to by the
-     * target name. Only called on copies to ensure the proper layer for a state is pointed to, so
-     * it's authorized to make a copy of the catalog to avoid affecting all other contexts in the
-     * chain.
-     * 
-     * @param self
-     */
-    void replaceTarget(IArtifact self);
 
     /**
      * If our catalog contains the artifact we're trying to resolve, return it along with the name

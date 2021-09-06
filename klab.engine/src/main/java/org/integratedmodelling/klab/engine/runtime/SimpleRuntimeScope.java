@@ -374,11 +374,11 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
         return null;
     }
 
-    @Override
-    public void rename(String name, String alias) {
-        // TODO Auto-generated method stub
-
-    }
+//    @Override
+//    public void rename(String name, String alias) {
+//        // TODO Auto-generated method stub
+//
+//    }
 
     @Override
     public void setTarget(IArtifact target) {
@@ -471,12 +471,12 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
         return observations.get(observationId);
     }
 
-    @Override
-    public void replaceTarget(IArtifact self) {
-        // should never be called
-        throw new IllegalStateException(
-                "replaceTarget called on a simple context: this context should never be used in computations");
-    }
+//    @Override
+//    public void replaceTarget(IArtifact self) {
+//        // should never be called
+//        throw new IllegalStateException(
+//                "replaceTarget called on a simple context: this context should never be used in computations");
+//    }
 
     /**
      * This must be called explicitly before the builder is called upon.

@@ -47,7 +47,7 @@ public class WcsEncoder implements IResourceEncoder {
 
     @Override
     public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry, Builder builder,
-            IContextualizationScope context) {
+            IContextualizationScope scope) {
     	
     	String interpolation = urnParameters.get("interpolation");
     	
@@ -56,9 +56,9 @@ public class WcsEncoder implements IResourceEncoder {
         WCSLayer layer = service.getLayer(resource.getParameters().get("wcsIdentifier", String.class));
         if (layer != null) {
             encoder.encodeFromCoverage(resource, urnParameters, getCoverage(layer, resource, geometry, interpolation), geometry, builder,
-                    context);
+                    scope);
         } else {
-            context.getMonitor()
+            scope.getMonitor()
                     .warn("Problems accessing WCS layer " + resource.getParameters().get("wcsIdentifier", String.class));
         }
     }

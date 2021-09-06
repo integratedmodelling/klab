@@ -114,10 +114,10 @@ public interface IObservationService {
      * 
      * @param state
      * @param scale
-     * @param context
+     * @param scope
      * @return the state view
      */
-    IState getStateView(IState state, IScale scale, IContextualizationScope context);
+    IState getStateView(IState state, IScale scale, IContextualizationScope scope);
 
     /**
      * Get a state that represents a specified observable through the values of another state with a
@@ -129,10 +129,10 @@ public interface IObservationService {
      * @param observable
      * @param state
      * @param scale
-     * @param context
+     * @param scope
      * @return the state view
      */
-    IState getStateViewAs(IObservable observable, IState state, IScale scale, IContextualizationScope context);
+    IState getStateViewAs(IObservable observable, IState state, IScale scale, IContextualizationScope scope);
 
     /**
      * Export an observation to a file using adapter export capabilities.

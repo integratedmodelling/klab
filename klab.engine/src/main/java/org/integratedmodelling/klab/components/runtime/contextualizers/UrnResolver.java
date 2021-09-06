@@ -109,7 +109,7 @@ public class UrnResolver implements IExpression, IResolver<IArtifact> {
         if (Configuration.INSTANCE.isEchoEnabled()) {
             System.err.println("GETTING DATA FROM " + res.getUrn());
         }
-        IKlabData data = Resources.INSTANCE.getResourceData(res, parameters, context.getScale(), context);
+        IKlabData data = Resources.INSTANCE.getResourceData(res, parameters, context.getScale(), context, observation);
         if (Configuration.INSTANCE.isEchoEnabled()) {
             System.err.println("DONE " + res.getUrn());
         }

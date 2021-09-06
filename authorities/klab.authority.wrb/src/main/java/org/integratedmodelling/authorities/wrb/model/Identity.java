@@ -244,6 +244,8 @@ public class Identity {
 		ret.setLabel(toString());
 		ret.setConceptName(getNormalizedId());
 		ret.setDescription(getDocumentation());
+		ret.setLocator(WRBAuthority.ID + ":\"" + getNormalizedId() + "\"");
+		
 		boolean ws = StringUtils.containsWhitespace(ret.getId());
 		ret.setLocator(WRBAuthority.ID + (ws ? ":'" : ":") + ret.getId() + (ws ? "':" : ":"));
 

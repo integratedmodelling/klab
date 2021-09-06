@@ -1304,7 +1304,7 @@ public class ObservableBuilder implements IObservable.Builder {
                 + " (" + concept.getDefinition() + ")"
                 + (comparison == null
                         ? ""
-                        : ((isPercentage
+                        : (" " + (isPercentage
                                 ? UnarySemanticOperator.PERCENTAGE.declaration[1]
                                 : UnarySemanticOperator.PROPORTION.declaration[1]) + " (" + comparison.getDefinition() + ")"));
 
@@ -1363,7 +1363,7 @@ public class ObservableBuilder implements IObservable.Builder {
         String definition = UnarySemanticOperator.RATIO.declaration[0] + " (" + concept.getDefinition() + ")"
                 + (comparison == null
                         ? ""
-                        : (UnarySemanticOperator.RATIO.declaration[1] + " (" + comparison.getDefinition() + ")"));
+                        : " " + (UnarySemanticOperator.RATIO.declaration[1] + " (" + comparison.getDefinition() + ")"));
 
         Ontology ontology = (Ontology) concept.getOntology();
         String conceptId = ontology.getIdForDefinition(definition);
@@ -1424,7 +1424,7 @@ public class ObservableBuilder implements IObservable.Builder {
                 + " (" + concept.getDefinition() + ")"
                 + (comparison == null
                         ? ""
-                        : (UnarySemanticOperator.VALUE.declaration[1] + " (" + comparison.getDefinition() + ")"));
+                        : " " + (UnarySemanticOperator.VALUE.declaration[1] + " (" + comparison.getDefinition() + ")"));
 
         Ontology ontology = (Ontology) concept.getOntology();
         String conceptId = ontology.getIdForDefinition(definition);
@@ -1672,9 +1672,6 @@ public class ObservableBuilder implements IObservable.Builder {
                 }
 
                 tids.add(getCleanId(t));
-                if (t.getReferenceName() == null) {
-                    System.out.println("PORCODDIO");
-                }
                 refIds.add(t.getReferenceName());
             }
         }
@@ -2094,8 +2091,6 @@ public class ObservableBuilder implements IObservable.Builder {
         if (referenceName != null) {
             ret.setReferenceName(referenceName);
         }
-
-//        System.out.println("UGLY NAME IS " + ret.uglyName);
 
         ret.setStatedName(this.statedName);
         ret.setTargetPredicate(targetPredicate);

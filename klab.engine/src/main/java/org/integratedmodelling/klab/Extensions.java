@@ -166,7 +166,7 @@ public enum Extensions implements IExtensionService {
 		return callFunction(functionCall, Expression.emptyContext(monitor));
 	}
 
-	public Object callFunction(IServiceCall functionCall, IContextualizationScope context) throws KlabException {
+	public Object callFunction(IServiceCall functionCall, IContextualizationScope scope) throws KlabException {
 
 		Object ret = null;
 
@@ -184,10 +184,10 @@ public enum Extensions implements IExtensionService {
 					IExpression expr = (IExpression) cls.getDeclaredConstructor().newInstance();
 					Parameters<String> parameters = new Parameters<String>(functionCall.getParameters());
 					parameters.put(PROTOTYPE_PARAMETER, prototype);
-					ret = expr.eval(parameters, context);
+					ret = expr.eval(parameters, scope);
 				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 						| InvocationTargetException | NoSuchMethodException | SecurityException e) {
-				    context.getMonitor().error(e);
+				    scope.getMonitor().error(e);
 					throw new KlabInternalErrorException(e);
 				}
 			} else if (IContextualizer.class.isAssignableFrom(cls)) {
@@ -196,7 +196,7 @@ public enum Extensions implements IExtensionService {
 					// TODO initialize with the parameters and monitor
 				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 						| InvocationTargetException | NoSuchMethodException | SecurityException e) {
-                    context.getMonitor().error(e);
+                    scope.getMonitor().error(e);
 					throw new KlabInternalErrorException(e);
 				}
 			}
@@ -341,33 +341,33 @@ public enum Extensions implements IExtensionService {
 	 * false if no such conversion is possible
 	 * 
 	 * @param condition
-	 * @param context
+	 * @param scope
 	 * @return
 	 */
-	public boolean callAsCondition(IContextualizable condition, IContextualizationScope context) {
+	public boolean callAsCondition(IContextualizable condition, IContextualizationScope scope) {
 		if (condition.getLiteral() != null) {
 			if (condition.getLiteral() instanceof Boolean) {
 				return (Boolean) condition.getLiteral();
 			} else {
-				context.getMonitor().error("cannot use value " + condition.getLiteral() + " as a logical value");
+				scope.getMonitor().error("cannot use value " + condition.getLiteral() + " as a logical value");
 			}
 		} else if (condition.getExpression() != null) {
 			IExpression expression = getLanguageProcessor(DEFAULT_EXPRESSION_LANGUAGE).compile(
-					condition.getExpression().getCode(), context.getExpressionContext(),
+					condition.getExpression().getCode(), scope.getExpressionContext(),
 					options(condition.getExpression().isForcedScalar(), false));
-			Object o = expression.eval(context, context);
+			Object o = expression.eval(scope, scope);
 			if (o instanceof Boolean) {
 				return (Boolean) o;
 			} else {
-				context.getMonitor().error("cannot use expression result " + o + " from [" + condition.getExpression()
+				scope.getMonitor().error("cannot use expression result " + o + " from [" + condition.getExpression()
 						+ "] as a logical value");
 			}
 		} else if (condition.getServiceCall() != null) {
-			Object o = callFunction(condition.getServiceCall(), context);
+			Object o = callFunction(condition.getServiceCall(), scope);
 			if (o instanceof Boolean) {
 				return (Boolean) o;
 			} else {
-				context.getMonitor().error("cannot use result " + o + " from function call "
+				scope.getMonitor().error("cannot use result " + o + " from function call "
 						+ condition.getServiceCall().getName() + " as a logical value");
 			}
 		}

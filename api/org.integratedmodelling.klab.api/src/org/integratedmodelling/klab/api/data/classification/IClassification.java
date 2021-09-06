@@ -58,11 +58,11 @@ public interface IClassification extends IDataKey, Iterable<Pair<IConcept, IClas
 	 *
 	 * @param object
 	 *            a {@link java.lang.Object} object.
-	 * @param context
+	 * @param scope
 	 *            context of computation
 	 * @return a {@link org.integratedmodelling.klab.api.knowledge.IConcept} object.
 	 */
-	IConcept classify(Object object, IContextualizationScope context);
+	IConcept classify(Object object, IContextualizationScope scope);
 
 	/**
 	 * Get the undiscretized value for the passed concept. If the concept is not in
@@ -93,10 +93,10 @@ public interface IClassification extends IDataKey, Iterable<Pair<IConcept, IClas
 	 *
 	 * @param o
 	 *            the object to classify
-	 * @param context
+	 * @param scope
 	 *            a context
 	 * @return a numeric ranking - equivalent to calling getNumericCode(classify(o))
 	 */
-	int classifyToIndex(Object o, IContextualizationScope context);
+	int classifyToIndex(Object o, IContextualizationScope scope);
 
 }

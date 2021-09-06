@@ -47,8 +47,8 @@ public class ValueOperatorResolver implements IResolver<IState>, IProcessor, IEx
 
     public static IServiceCall getServiceCall(IObservable classified, ValueOperator operator, Object operand)
             throws KlabValidationException {
-        return KimServiceCall.create(FUNCTION_ID, "artifact", classified.getName(), "operator", operator.name(), "value",
-                operand instanceof IObservable ? ((IObservable) operand).getName() : operand);
+        return KimServiceCall.create(FUNCTION_ID, "artifact", classified.getReferenceName(), "operator", operator.name(), "value",
+                operand instanceof IObservable ? ((IObservable) operand).getReferenceName() : operand);
     }
 
     @Override

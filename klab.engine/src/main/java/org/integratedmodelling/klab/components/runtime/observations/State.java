@@ -127,6 +127,8 @@ public class State extends Observation implements IState, IKeyHolder {
         if (layer instanceof AbstractAdaptiveStorage) {
             ((AbstractAdaptiveStorage<?>) layer).setState(ret);
         }
+        // only for debugging
+        ((StateLayer)ret).setLayerType(type);
 
         return ret;
     }

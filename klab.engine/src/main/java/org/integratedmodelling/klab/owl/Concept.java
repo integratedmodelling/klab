@@ -46,6 +46,7 @@ import org.integratedmodelling.klab.api.knowledge.IProperty;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
 import org.integratedmodelling.klab.api.model.IConceptDefinition;
 import org.integratedmodelling.klab.api.model.IKimObject;
+import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.owl.OntologyUtilities.RestrictionVisitor;
@@ -94,7 +95,7 @@ public class Concept extends Knowledge implements IConcept {
         this.type.addAll(type);
     }
 
-    protected Concept(Concept concept) {
+    Concept(Concept concept) {
         _owl = concept._owl;
         _id = concept._owl.getIRI().getFragment();
         _cs = concept._cs;
@@ -976,6 +977,10 @@ public class Concept extends Knowledge implements IConcept {
     @Override
     public String getReferenceName() {
         return getMetadata().get(NS.REFERENCE_NAME_PROPERTY, String.class);
+    }
+
+    void setMetadata(Metadata metadata) {
+        this.metadata = metadata;
     }
 
     /*

@@ -153,6 +153,7 @@ public class GBIFAuthority implements IAuthority {
 				+ ((authorship == null || authorship.isEmpty()) ? "" : (" (" + authorship + ")"))
 				+ (parents == null ? "" : (". " + parents + ".")));
 		result.setConceptName("gbif" + key);
+		result.setLocator(ID + ":" + key);
 		if (parentKey != null) {
 			result.setParentIds(Collections.singletonList(parentKey));
 		}

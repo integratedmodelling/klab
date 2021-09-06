@@ -275,12 +275,6 @@ public class Actuator implements IActuator {
      */
     private IScale runtimeScale = null;
 
-    /*
-     * Name of the corresponding observable in the generating model, if that's unambiguous;
-     * otherwise name of the observable. Users should be able to choose whether to generate their
-     * artifacts using this or (as a default) the observable's name, e.g. the dependency name.
-     */
-    private String referenceName;
 
     @Override
     public String getName() {
@@ -909,7 +903,7 @@ public class Actuator implements IActuator {
             self = ctx.getArtifact(resource.getTargetId());
         }
         if (self != null) {
-            ret.replaceTarget(self);
+//            ret.replaceTarget(self);
             ret.set("self", self);
         }
         ret.setModel(model);
@@ -946,8 +940,8 @@ public class Actuator implements IActuator {
              * TODO check: is this ever right?
              */
             if (ret.getArtifact(input.getName()) != null) {
-                // no effect if not aliased
-                ret.rename(input.getName(), input.getAlias());
+//                // no effect if not aliased
+//                ret.rename(input.getName(), input.getAlias());
                 /*
                  * scan mediations and apply them as needed
                  */
@@ -974,11 +968,11 @@ public class Actuator implements IActuator {
         /**
          * Rename in scope
          */
-        for (String key : localNames.keySet()) {
-            if (ret.getArtifact(key) != null) {
-                ret.rename(key, localNames.get(key));
-            }
-        }
+//        for (String key : localNames.keySet()) {
+//            if (ret.getArtifact(key) != null) {
+//                ret.rename(key, localNames.get(key));
+//            }
+//        }
 
         if (this.getType() == IArtifact.Type.PROCESS) {
             ret = ret.targetForChange();
@@ -987,24 +981,24 @@ public class Actuator implements IActuator {
         return ret;
     }
 
-    /**
-     * Done above for the initialization run; this is called in the scheduler to ensure names are
-     * appropriate for the actuator being run.
-     * 
-     * @param scope
-     * @return
-     */
-    public IRuntimeScope localizeNames(IRuntimeScope scope) {
-
-        IRuntimeScope ret = scope.copy();
-        for (IActuator input : getActuators()) {
-            if (ret.getArtifact(input.getName()) != null) {
-                // no effect if not aliased
-                ret.rename(input.getName(), input.getAlias());
-            }
-        }
-        return ret;
-    }
+//    /**
+//     * Done above for the initialization run; this is called in the scheduler to ensure names are
+//     * appropriate for the actuator being run.
+//     * 
+//     * @param scope
+//     * @return
+//     */
+//    public IRuntimeScope localizeNames(IRuntimeScope scope) {
+//
+//        IRuntimeScope ret = scope.copy();
+//        for (IActuator input : getActuators()) {
+//            if (ret.getArtifact(input.getName()) != null) {
+//                // no effect if not aliased
+//                ret.rename(input.getName(), input.getAlias());
+//            }
+//        }
+//        return ret;
+//    }
 
     public String toString() {
         return "<" + getName() + ((getAlias() != null && !getAlias().equals(getName())) ? " as " + getAlias() : "") + " ["
@@ -1567,7 +1561,6 @@ public class Actuator implements IActuator {
         Actuator ret = new Actuator();
         ret.name = this.name;
         ret.alias = this.alias;
-        ret.referenceName = this.referenceName;
         ret.reference = true;
         ret.type = this.type;
         ret.observable = this.observable;
@@ -1582,20 +1575,6 @@ public class Actuator implements IActuator {
         for (IActuator actuator : actuators) {
             ((Actuator) actuator).resetScales();
         }
-    }
-
-    /**
-     * The name of the observable of the model that generated this. If it's a multi-model
-     * partitioning actuator, keep the name of the observable.
-     * 
-     * @return
-     */
-    public String getReferenceName() {
-        return this.referenceName;
-    }
-
-    public void setReferenceName(String name) {
-        this.referenceName = name;
     }
 
     public Actuator withAlias(String alias) {

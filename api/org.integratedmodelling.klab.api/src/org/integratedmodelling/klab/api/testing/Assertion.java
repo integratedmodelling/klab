@@ -22,13 +22,13 @@ public interface Assertion {
 	 * 
 	 * @param targets
 	 * @param parameters
-	 * @param context
+	 * @param scope
 	 * @return true if OK, false if fail
 	 * @throws KlabValidationException
 	 *             for any error that can be described better than with just a fail
 	 *             message.
 	 */
-	boolean evaluate(List<String> targets, Parameters<String> parameters, IContextualizationScope context)
+	boolean evaluate(List<String> targets, Parameters<String> parameters, IContextualizationScope scope)
 			throws KlabValidationException;
 	
 	/**

@@ -639,7 +639,7 @@ public enum Concepts implements IConceptService {
 
             axioms.add(Axiom.ClassAssertion(identity.getConceptName(), type));
             axioms.add(Axiom.SubClass(baseIdentity, identity.getConceptName()));
-            axioms.add(Axiom.AnnotationAssertion(baseIdentity, NS.REFERENCE_NAME_PROPERTY,
+            axioms.add(Axiom.AnnotationAssertion(identity.getConceptName(), NS.REFERENCE_NAME_PROPERTY,
                     "auth_" + identity.getAuthorityName().toLowerCase() + "_" + identity.getConceptName().toLowerCase()));
             axioms.add(Axiom.AnnotationAssertion(identity.getConceptName(), IMetadata.DC_LABEL, identity.getLabel()));
             axioms.add(Axiom.AnnotationAssertion(identity.getConceptName(), IMetadata.DC_COMMENT, identity.getDescription()));

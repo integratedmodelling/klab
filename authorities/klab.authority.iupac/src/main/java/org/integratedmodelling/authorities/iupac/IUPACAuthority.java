@@ -91,6 +91,7 @@ public class IUPACAuthority implements IAuthority {
         }
 
         ret.setAuthorityName(ID);
+        ret.setLocator(ID + ":" + standardKey);
 
         if (standardKey != null && standardName != null) {
             ret.setConceptName(standardKey.toLowerCase().replace('-', '_'));

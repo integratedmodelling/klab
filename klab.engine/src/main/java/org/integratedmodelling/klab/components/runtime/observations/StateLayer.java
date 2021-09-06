@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.components.runtime.observations;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 
@@ -18,6 +19,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 public class StateLayer extends State implements IState {
 
 	State delegate;
+	IArtifact.Type layerType;
 
 	/**
 	 * Same ID as the original, just in case this is used as a proxy to retrieve
@@ -55,5 +57,9 @@ public class StateLayer extends State implements IState {
 			setDynamic(true);
 		}
 	}
+
+    public void setLayerType(IArtifact.Type type) {
+        this.layerType = type;
+    }
 
 }
