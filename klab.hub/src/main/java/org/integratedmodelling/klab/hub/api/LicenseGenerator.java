@@ -2,10 +2,11 @@ package org.integratedmodelling.klab.hub.api;
 
 import java.util.Properties;
 
-import javax.ws.rs.BadRequestException;
+import org.integratedmodelling.klab.hub.exception.BadRequestException;
+
+//import javax.ws.rs.BadRequestException;
 
 import org.integratedmodelling.klab.hub.licenses.services.LicenseConfigService;
-import org.integratedmodelling.klab.hub.api.PropertiesFactory;
 
 public class LicenseGenerator {
     
@@ -35,7 +36,7 @@ public class LicenseGenerator {
 		if(config.getClass().getName().equals(LegacyConfiguration.class.getName())) {
 			return new LegacyLicense().generate(props, config);
 		} else {
-			throw new BadRequestException();
+			throw new BadRequestException("Bad request");
 		}
 	}
 	
@@ -58,7 +59,7 @@ public class LicenseGenerator {
         if(config.getClass().getName().equals(LegacyConfiguration.class.getName())) {
             return new LegacyLicense().generate(props, config);
         } else {
-            throw new BadRequestException();
+            throw new BadRequestException("Bad request");
         }
     }
    

@@ -40,7 +40,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import javax.sql.PooledConnection;
 
 import org.h2.jdbcx.JdbcDataSource;
-import org.h2gis.h2spatial.CreateSpatialExtension;
+import org.h2gis.functions.factory.H2GISFunctions;
 import org.h2gis.utilities.SFSUtilities;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
@@ -208,7 +208,7 @@ public class H2Database {
 
         if (isNew) {
             try {
-                CreateSpatialExtension.initSpatialExtension(this.ds.getConnection());
+                H2GISFunctions.load(this.ds.getConnection());
                 execute("CREATE TABLE hids (id LONG)");
                 execute("INSERT INTO hids VALUES (1)");
                 execute("CREATE TABLE knowledge_structure (knowledge VARCHAR(256) PRIMARY KEY, structure VARCHAR(4096))");

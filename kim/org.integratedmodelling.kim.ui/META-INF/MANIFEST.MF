@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: org.integratedmodelling.kim.ui
 Bundle-Vendor: org.integratedmodelling
-Bundle-Version: 0.10.0.qualifier
+Bundle-Version: 0.11.0.qualifier
 Bundle-SymbolicName: org.integratedmodelling.kim.ui; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.integratedmodelling.kim,
@@ -24,7 +24,7 @@ Require-Bundle: org.integratedmodelling.kim,
  org.eclipse.ui.navigator;bundle-version="3.7.0",
  org.eclipse.ui.navigator.resources;bundle-version="3.6.1"
 Import-Package: org.apache.log4j
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: org.integratedmodelling.kim.ui,
  org.integratedmodelling.kim.ui.contentassist;uses:="org.eclipse.emf.ecore,org.eclipse.xtext.ui.editor.contentassist,org.eclipse.xtext",
  org.integratedmodelling.kim.ui.elink,

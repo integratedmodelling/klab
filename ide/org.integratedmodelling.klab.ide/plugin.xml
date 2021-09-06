@@ -401,6 +401,14 @@
                name="startupMessageRect"
                value="24,234,496,20">
          </property>
+         <property
+               name="appName"
+               value="k.Modeler">
+         </property>
+         <property
+               name="preferenceCustomization"
+               value="plugin_customization.ini">
+         </property>
       </product>
    </extension>
    <extension

@@ -13,7 +13,6 @@ import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.api.TokenVerifyAccountClickback;
 import org.integratedmodelling.klab.hub.emails.services.EmailManager;
 import org.integratedmodelling.klab.hub.exception.ActivationTokenFailedException;
-import org.integratedmodelling.klab.hub.exception.GroupDoesNotExistException;
 import org.integratedmodelling.klab.hub.exception.ResponseEntityAdapter;
 import org.integratedmodelling.klab.hub.exception.UserByEmailDoesNotExistException;
 import org.integratedmodelling.klab.hub.exception.UserDoesNotExistException;

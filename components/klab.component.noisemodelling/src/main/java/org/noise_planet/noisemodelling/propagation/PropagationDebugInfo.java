@@ -2,7 +2,7 @@ package org.noise_planet.noisemodelling.propagation;
 
 import java.util.List;
 
-import com.vividsolutions.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Coordinate;
 
 /**
  * Store propagation path and related noise contribution.

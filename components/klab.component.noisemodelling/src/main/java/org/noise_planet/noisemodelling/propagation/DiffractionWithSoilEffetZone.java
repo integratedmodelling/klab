@@ -35,8 +35,8 @@ package org.noise_planet.noisemodelling.propagation;
 
 import java.util.List;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.LineSegment;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.LineSegment;
 
 /**
  * DiffractionWithGroundEffectZone work for FastObstructionTest,

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: org.integratedmodelling.kdl.ui
 Bundle-Vendor: My Company
-Bundle-Version: 0.10.0.qualifier
+Bundle-Version: 0.11.0.qualifier
 Bundle-SymbolicName: org.integratedmodelling.kdl.ui; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.integratedmodelling.kdl,
@@ -18,7 +18,7 @@ Require-Bundle: org.integratedmodelling.kdl,
  org.eclipse.xtend.lib;bundle-version="2.14.0";resolution:=optional,
  org.eclipse.xtext.xbase.lib;bundle-version="2.12.0"
 Import-Package: org.apache.log4j
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: org.integratedmodelling.kdl.ui.contentassist,
  org.integratedmodelling.kdl.ui.internal,
  org.integratedmodelling.kdl.ui.quickfix

@@ -2,7 +2,6 @@ package org.integratedmodelling.klab.engine;
 
 import org.springframework.stereotype.Service;
 
-@Service
 public class RemoteEngineService {
 	
 //	@Autowired

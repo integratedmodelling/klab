@@ -14,8 +14,8 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.utils.MiscUtilities;
-import org.reflections.Reflections;
-import org.reflections.scanners.ResourcesScanner;
+import org.reflections8.Reflections;
+import org.reflections8.scanners.ResourcesScanner;
 
 public class Run implements ICommand {
 

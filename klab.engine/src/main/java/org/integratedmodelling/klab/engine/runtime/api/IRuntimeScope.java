@@ -448,13 +448,6 @@ public interface IRuntimeScope extends IContextualizationScope {
      */
     void setConcreteIdentities(IConcept abstractIdentity, List<IConcept> concreteIdentities);
 
-    // /**
-    // * Get the concrete identities already known to the scope.
-    // *
-    // * @return
-    // */
-    // Map<IConcept, Collection<IConcept>> getConcreteIdentities();
-
     /**
      * Get the concretized identities for the passed predicates. This should be lenient to a
      * difference in inherency between the passed predicate and the resolved ones.

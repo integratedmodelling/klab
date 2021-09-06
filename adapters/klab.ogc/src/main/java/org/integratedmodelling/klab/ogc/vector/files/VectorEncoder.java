@@ -24,12 +24,13 @@ import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
+import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.factory.CommonFactoryFinder;
-import org.geotools.factory.GeoTools;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.filter.text.cql2.CQLException;
 import org.geotools.filter.text.ecql.ECQL;
+import org.geotools.util.factory.GeoTools;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Urn;
@@ -50,8 +51,8 @@ import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
-import org.integratedmodelling.klab.components.geospace.processing.GeometrySanitizer;
 import org.integratedmodelling.klab.components.geospace.processing.Rasterizer;
+import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -64,6 +65,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * The Class RasterEncoder.
@@ -95,14 +97,15 @@ public class VectorEncoder implements IResourceEncoder {
 			throw new KlabResourceNotFoundException("vector resource " + resource.getUrn() + " cannot be accessed");
 		}
 
-		Map<Object, Object> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		try {
-			map.put("url", mainFile.toURI().toURL().toString());
+			map.put("url", mainFile.toURI().toURL());
             // TODO check and honor any charset in the resource. This could be the default.
-			map.put(ShapefileDataStoreFactory.DBFCHARSET, "UTF-8");
+			map.put(ShapefileDataStoreFactory.DBFCHARSET.key, "UTF-8");
 			DataStore dataStore = DataStoreFinder.getDataStore(map);
 			String typeName = dataStore.getTypeNames()[0];
-			return dataStore.getFeatureSource(typeName);
+			SimpleFeatureSource featureSource = dataStore.getFeatureSource(typeName);
+            return featureSource;
 
 		} catch (Exception e) {
 			throw new KlabIOException(e);
@@ -184,7 +187,9 @@ public class VectorEncoder implements IResourceEncoder {
 			throw new KlabIOException(e);
 		}
 
-		Projection originalProjection = Projection.create(fc.getSchema().getCoordinateReferenceSystem());
+		CoordinateReferenceSystem crs = fc.getSchema().getCoordinateReferenceSystem();
+        crs = GeotoolsUtils.INSTANCE.checkCrs(crs);
+        Projection originalProjection = Projection.create(crs);
 		IEnvelope envelopeInOriginalProjection = requestScale.getSpace().getEnvelope().transform(originalProjection,
 				true);
 
@@ -210,20 +215,20 @@ public class VectorEncoder implements IResourceEncoder {
 
 			SimpleFeature feature = it.next();
 			Object shape = feature.getDefaultGeometryProperty().getValue();
-			if (shape instanceof com.vividsolutions.jts.geom.Geometry) {
+			if (shape instanceof org.locationtech.jts.geom.Geometry) {
 
-				if (((com.vividsolutions.jts.geom.Geometry) shape).isEmpty()) {
+				if (((org.locationtech.jts.geom.Geometry) shape).isEmpty()) {
 					continue;
 				}
 				
                 if ("true".equals(resource.getParameters().get("sanitize", "false").toString())) {
-//					shape = GeometrySanitizer.sanitize((com.vividsolutions.jts.geom.Geometry) shape);
-	                if (!((com.vividsolutions.jts.geom.Geometry) shape).isValid()) {
-	                    shape = ((com.vividsolutions.jts.geom.Geometry) shape).buffer(0);
+//					shape = GeometrySanitizer.sanitize((org.org.locationtecheom.Geometry) shape);
+	                if (!((org.locationtech.jts.geom.Geometry) shape).isValid()) {
+	                    shape = ((org.locationtech.jts.geom.Geometry) shape).buffer(0);
 	                }
 				}
 
-				IShape objectShape = Shape.create((com.vividsolutions.jts.geom.Geometry) shape, originalProjection)
+				IShape objectShape = Shape.create((org.locationtech.jts.geom.Geometry) shape, originalProjection)
 						.transform(requestScale.getSpace().getProjection());
 
 				if (intersect) {
@@ -295,7 +300,7 @@ public class VectorEncoder implements IResourceEncoder {
 		if (rasterize) {
 			final Builder stateBuilder = builder;
 			rasterizer.finish((b, xy) -> {
-				stateBuilder.add(b, requestScale.at(ISpace.class, xy));
+				stateBuilder.set(b, requestScale.at(ISpace.class, xy));
 			});
 			builder = builder.finishState();
 		}

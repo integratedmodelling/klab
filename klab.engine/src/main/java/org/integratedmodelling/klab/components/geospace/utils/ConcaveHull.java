@@ -3,15 +3,15 @@ package org.integratedmodelling.klab.components.geospace.utils;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-//import com.vividsolutions.jts.operation.linemerge.LineMergeEdge;
-import com.vividsolutions.jts.planargraph.DirectedEdge;
-import com.vividsolutions.jts.planargraph.DirectedEdgeStar;
-import com.vividsolutions.jts.planargraph.Edge;
-import com.vividsolutions.jts.planargraph.Node;
-import com.vividsolutions.jts.planargraph.PlanarGraph;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+//import org.locationtech.jts.operation.linemerge.LineMergeEdge;
+import org.locationtech.jts.planargraph.DirectedEdge;
+import org.locationtech.jts.planargraph.DirectedEdgeStar;
+import org.locationtech.jts.planargraph.Edge;
+import org.locationtech.jts.planargraph.Node;
+import org.locationtech.jts.planargraph.PlanarGraph;
 
 /**
  * Concave hull algorithm by Pimin Konstantin Kefaloukos and 

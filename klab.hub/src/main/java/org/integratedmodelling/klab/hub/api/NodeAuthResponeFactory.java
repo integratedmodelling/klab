@@ -31,7 +31,7 @@ import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.rest.NodeAuthenticationRequest;
 import org.integratedmodelling.klab.rest.NodeAuthenticationResponse;
-import org.integratedmodelling.klab.utils.IPUtils;
+import org.integratedmodelling.klab.hub.utils.IPUtils;
 import org.joda.time.DateTime;
 
 public class NodeAuthResponeFactory {

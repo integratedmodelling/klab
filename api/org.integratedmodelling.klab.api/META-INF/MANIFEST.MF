@@ -3,9 +3,9 @@ Bundle-ManifestVersion: 2
 Bundle-Name: k.LAB API
 Bundle-Vendor: org.integratedmodelling
 Bundle-SymbolicName: org.integratedmodelling.klab.api
-Bundle-Version: 0.10.0.qualifier
+Bundle-Version: 0.11.0.qualifier
 Automatic-Module-Name: org.integratedmodelling.klab.api
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: org.integratedmodelling.contrib,
  org.integratedmodelling.contrib.jgrapht,
  org.integratedmodelling.contrib.jgrapht.alg,

@@ -3,25 +3,15 @@ package org.integratedmodelling.klab.engine.services;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.klab.engine.api.ComputeWeightFactor;
-import org.integratedmodelling.klab.engine.configs.ConsulConfig;
 import org.integratedmodelling.klab.engine.events.GenericUserEvent;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 

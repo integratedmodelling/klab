@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.integratedmodelling</groupId>
 		<artifactId>klab</artifactId>
-		<version>0.10.0-SNAPSHOT</version>
+		<version>0.11.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>klab.node</artifactId>
 	<name>k.LAB node server</name>
@@ -23,7 +23,7 @@
 						</auth>
 					</from>
 					<to>
-						<image>${env.REGISTRY}/node-server</image>
+						<image>${env.REGISTRY}/${env.NODE_CONTAINER}</image>
 						<tags>
 							<tag>${env.NODE_TAG}</tag>
 							<tag>latest</tag>
@@ -51,7 +51,7 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>${spring-boot-version}</version>
+				<version>${spring-boot.version}</version>
 				<configuration>
 					<fork>true</fork>
 					<mainClass>org.integratedmodelling.klab.node.NodeApplication</mainClass>
@@ -71,36 +71,24 @@
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-dependencies</artifactId>
-				<version>Finchley.SR4</version>
+				<version>${spring-cloud.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
-		<dependency>
-			<groupId>org.yaml</groupId>
-			<artifactId>snakeyaml</artifactId>
-			<version>1.23</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-consul-discovery</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-consul-config</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-kubernetes-all</artifactId>
-			<version>0.2.1.RELEASE</version>
-		</dependency>
-
+	
 		<dependency>
 			<groupId>io.dekorate</groupId>
 			<artifactId>kubernetes-annotations</artifactId>
 			<version>1.0.1</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-joda</artifactId>
+			<version>${jackson-version}</version>
 		</dependency>
 
 		<!-- for the embedded Git server <dependency> <groupId>org.eclipse.jetty</groupId> 
@@ -217,5 +205,33 @@
 			<artifactId>org.integratedmodelling.klab.api</artifactId>
 			<version>${klab.version}</version>
 		</dependency>
+ 		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+			<version>${spring-boot.version}</version>
+			<exclusions>
+		        <exclusion>
+		            <groupId>ch.qos.logback</groupId>
+		            <artifactId>logback-classic</artifactId>
+		        </exclusion>
+		    </exclusions>
+		</dependency>
+ 		<dependency>
+		    <groupId>org.springframework.cloud</groupId>
+		    <artifactId>spring-cloud-starter-bootstrap</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-consul-discovery</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-consul-config</artifactId>
+		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.springframework.cloud</groupId> -->
+<!-- 			<artifactId>spring-cloud-starter-kubernetes-all</artifactId> -->
+<!-- 			<version>1.1.10.RELEASE</version> -->
+<!-- 		</dependency> -->
 	</dependencies>
 </project>

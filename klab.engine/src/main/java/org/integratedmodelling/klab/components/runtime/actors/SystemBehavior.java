@@ -6,9 +6,9 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Actors;
-import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
+import org.integratedmodelling.klab.api.auth.IActorIdentity;
+import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
-import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.rest.MenuAction;
@@ -69,7 +69,7 @@ public class SystemBehavior {
             this.identity = identity;
             this.scope = new Scope(identity, appId, scope, Actors.INSTANCE.getBehavior(behavior));
         }
-
+        
         /**
          * Called from instantiator in actors, uses the scope it's run into.
          * 
@@ -83,6 +83,13 @@ public class SystemBehavior {
             this.forwardApplicationId = appId;
             this.identity = identity;
             this.scope = scope;
+        }
+
+        public Load(Load load) {
+            this.behavior = load.behavior;
+            this.forwardApplicationId = load.forwardApplicationId;
+            this.identity = load.identity;
+            this.scope = load.scope;
         }
 
         /**
@@ -109,7 +116,9 @@ public class SystemBehavior {
 
         @Override
         public Load direct() {
-            return new Load(identity, behavior, null, scope.runtimeScope);
+            Load ret = new Load(this);
+            ret.forwardApplicationId = null;
+            return ret;
         }
 
         public Load withActorBaseName(String actorBaseName) {

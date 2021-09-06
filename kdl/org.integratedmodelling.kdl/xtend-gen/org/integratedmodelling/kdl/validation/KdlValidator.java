@@ -12,7 +12,6 @@ import org.integratedmodelling.kdl.kdl.ActorDefinition;
 import org.integratedmodelling.kdl.kdl.DataflowBody;
 import org.integratedmodelling.kdl.kdl.KdlPackage;
 import org.integratedmodelling.kdl.kdl.Model;
-import org.integratedmodelling.kdl.validation.AbstractKdlValidator;
 
 /**
  * Only basic validation for now.

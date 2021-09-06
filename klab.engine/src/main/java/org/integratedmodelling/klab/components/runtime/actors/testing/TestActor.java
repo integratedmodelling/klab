@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.components.runtime.actors.testing;
 
+import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
 import org.integratedmodelling.klab.components.runtime.actors.SessionActor;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Load;
 import org.integratedmodelling.klab.engine.runtime.Session;

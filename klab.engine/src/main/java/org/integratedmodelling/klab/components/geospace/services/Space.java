@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Pair;
@@ -76,7 +77,7 @@ public class Space implements IExpression {
 						context.getMonitor());
 				if (artifact == null || artifact.getSecond().groupSize() < 1
 						|| artifact.getSecond().getGeometry().getDimension(Type.SPACE) == null) {
-					throw new IllegalArgumentException("urn " + urn + " does not resolve to a spatial object");
+					throw new KlabIllegalArgumentException("urn " + urn + " does not resolve to a spatial object");
 				}
 				space = ((IScale) artifact.getSecond().iterator().next().getGeometry()).getSpace();
 				shapeCache.put(urn, space);

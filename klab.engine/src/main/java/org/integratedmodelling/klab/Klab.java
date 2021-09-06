@@ -117,6 +117,7 @@ public enum Klab implements IRuntimeService {
 	private Timer timer = new Timer("Ticket checking");
 
 	private Klab() {
+
 		rootMonitor = new RootMonitor();
 		setupExtensions();
 		this.ticketManager = new TicketManager(
@@ -140,6 +141,7 @@ public enum Klab implements IRuntimeService {
 				checkPendingEventNotifications();
 			}
 		}, 1000, TICKET_CHECK_NOTIFICATIONS_SECONDS * 1000);
+		
 	}
 
 	public void setNetworkServiceApplication(Runnable runnable) {
@@ -319,6 +321,7 @@ public enum Klab implements IRuntimeService {
 	class RootMonitor implements IMonitor {
 
 		int errors = 0;
+        private int waitTime;
 
 		@Override
 		public void info(Object... info) {
@@ -418,6 +421,19 @@ public enum Klab implements IRuntimeService {
 		@Override
 		public boolean isInterrupted() {
 			return false;
+		}
+
+		@Override
+		public void addWait(int seconds) {
+		    // TODO improve with specific messages
+		    this.waitTime = seconds;
+		    warn("Please try this operation again in " + seconds + " seconds");
+		}
+
+		@Override
+		public int getWaitTime() {
+			// TODO Auto-generated method stub
+			return this.waitTime;
 		}
 	}
 

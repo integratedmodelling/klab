@@ -40,7 +40,9 @@ public class EncodingDataBuilder implements IKlabData.Builder {
 
 	class Monitor implements IMonitor {
 
-		@Override
+		private int waitTime;
+
+        @Override
 		public void info(Object... info) {
 			Notification.Builder nb = Notification.newBuilder();
 			nb.setSeverity(Severity.INFO);
@@ -104,6 +106,19 @@ public class EncodingDataBuilder implements IKlabData.Builder {
 			// TODO Auto-generated method stub
 			
 		}
+
+        @Override
+        public void addWait(int seconds) {
+            // TODO improve with specific messages
+            this.waitTime = seconds;
+            warn("Please try this operation again in " + seconds + " seconds");
+        }
+
+        @Override
+        public int getWaitTime() {
+            // TODO Auto-generated method stub
+            return this.waitTime;
+        }
 
 	}
 	
@@ -201,7 +216,7 @@ public class EncodingDataBuilder implements IKlabData.Builder {
 	}
 
 	@Override
-	public void add(Object value, ILocator offset) {
+	public void set(Object value, ILocator offset) {
 		if (this.stateBuilder != null) {
 			long index = -1;
 			// TODO there should be a simpler way to turn a locator into an index, given

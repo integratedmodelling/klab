@@ -27,6 +27,7 @@ import org.integratedmodelling.kim.kim.Model;
 import org.integratedmodelling.kim.kim.ObservableSemantics;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.KimObservable;
+import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -648,31 +649,39 @@ public enum Observables implements IObservableService {
     // IConcept described = getDescribedType(type);
     //
     // if (inherent != null) {
-    // OWL.INSTANCE.restrictSome(target, Concepts.p(NS.IS_INHERENT_TO_PROPERTY), inherent,
+    // OWL.INSTANCE.restrictSome(target, Concepts.p(NS.IS_INHERENT_TO_PROPERTY),
+    // inherent,
     // ontology);
     // }
     // if (context != null) {
-    // OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_CONTEXT_PROPERTY), context, ontology);
+    // OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_CONTEXT_PROPERTY),
+    // context, ontology);
     // }
     // if (caused != null) {
-    // OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_CAUSED_PROPERTY), caused, ontology);
+    // OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_CAUSED_PROPERTY), caused,
+    // ontology);
     // }
     // if (causant != null) {
-    // OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_CAUSANT_PROPERTY), causant, ontology);
+    // OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_CAUSANT_PROPERTY),
+    // causant, ontology);
     // }
     // if (compresent != null) {
-    // OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_COMPRESENT_PROPERTY), compresent,
+    // OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_COMPRESENT_PROPERTY),
+    // compresent,
     // ontology);
     // }
     // if (goal != null) {
-    // OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_PURPOSE_PROPERTY), goal, ontology);
+    // OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_PURPOSE_PROPERTY), goal,
+    // ontology);
     // }
     // if (adjacent != null) {
-    // OWL.INSTANCE.restrictSome(target, Concepts.p(NS.IS_ADJACENT_TO_PROPERTY), adjacent,
+    // OWL.INSTANCE.restrictSome(target, Concepts.p(NS.IS_ADJACENT_TO_PROPERTY),
+    // adjacent,
     // ontology);
     // }
     // if (described != null) {
-    // OWL.INSTANCE.restrictSome(target, Concepts.p(NS.DESCRIBES_OBSERVABLE_PROPERTY), described,
+    // OWL.INSTANCE.restrictSome(target,
+    // Concepts.p(NS.DESCRIBES_OBSERVABLE_PROPERTY), described,
     // ontology);
     // }
     //
@@ -687,7 +696,8 @@ public enum Observables implements IObservableService {
     // ontology);
     // }
     // if (realms.size() > 0) {
-    // Traits.INSTANCE.restrict(target, Concepts.p(NS.HAS_REALM_PROPERTY), LogicalConnector.UNION,
+    // Traits.INSTANCE.restrict(target, Concepts.p(NS.HAS_REALM_PROPERTY),
+    // LogicalConnector.UNION,
     // realms,
     // ontology);
     // }
@@ -697,7 +707,8 @@ public enum Observables implements IObservableService {
     // ontology);
     // }
     // if (acceptedRoles.size() > 0) {
-    // OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_ROLE_PROPERTY), LogicalConnector.UNION,
+    // OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_ROLE_PROPERTY),
+    // LogicalConnector.UNION,
     // acceptedRoles,
     // ontology);
     // }
@@ -828,10 +839,10 @@ public enum Observables implements IObservableService {
     @Override
     public Observable contextualizeTo(IObservable observable, IConcept newContext, boolean isExplicit, IMonitor monitor) {
 
-    	if (!OWL.INSTANCE.isSemantic(observable)) {
-    		return (Observable)observable;
-    	}
-    	
+        if (!OWL.INSTANCE.isSemantic(observable)) {
+            return (Observable) observable;
+        }
+
         IConcept originalContext = getContextType(observable.getType());
         if (originalContext != null && originalContext.equals(newContext)) {
             return (Observable) observable;
@@ -853,8 +864,8 @@ public enum Observables implements IObservableService {
             return (Observable) observable;
         }
 
-        return (Observable) new ObservableBuilder((Observable) observable, monitor).within(newContext).named(originalName, originalReferenceName)
-                .buildObservable();
+        return (Observable) new ObservableBuilder((Observable) observable, monitor).within(newContext)
+                .named(originalName, originalReferenceName).buildObservable();
     }
 
     public String getDisplayName(IObservable observable) {
@@ -1175,9 +1186,11 @@ public enum Observables implements IObservableService {
 
     // /**
     // * If the passed observable references one or more abstract role, find the
-    // * correspondent concepts in the resolution scope and return the expanded set of
+    // * correspondent concepts in the resolution scope and return the expanded set
+    // of
     // * observables with the role substituted by the concepts that incarnate it,
-    // * keeping the original roles as contextual roles in the resulting observables.
+    // * keeping the original roles as contextual roles in the resulting
+    // observables.
     // *
     // * TODO this must also use role models (contextualized on demand) and use the
     // * same mechanism to expand abstract identities.
@@ -1187,7 +1200,8 @@ public enum Observables implements IObservableService {
     // * @deprecated bring into resolver
     // * @return
     // */
-    // public Collection<IObservable> expandRoles(IObservable observable, IResolutionScope scope) {
+    // public Collection<IObservable> expandRoles(IObservable observable,
+    // IResolutionScope scope) {
     //
     // List<IObservable> ret = new ArrayList<>();
     // Set<IConcept> expand = new HashSet<>();
@@ -1196,7 +1210,8 @@ public enum Observables implements IObservableService {
     // expand.add(role);
     // }
     // }
-    // for (IConcept identity : Traits.INSTANCE.getDirectTraits(observable.getType())) {
+    // for (IConcept identity :
+    // Traits.INSTANCE.getDirectTraits(observable.getType())) {
     // if (identity.isAbstract() && identity.is(Type.IDENTITY)) {
     // expand.add(identity);
     // }
@@ -1308,5 +1323,37 @@ public enum Observables implements IObservableService {
             return observable;
         }
         return observable.getBuilder(monitor).withoutValueOperators().buildObservable();
+    }
+
+    /**
+     * Make an observable from either a string, a IKimConcept or a IKimObservable. Use to easily
+     * obtain an observable from a k.IM code parameter value.
+     * 
+     * @param g
+     * @param monitor
+     * @return
+     */
+    public IObservable parseObservable(Object g, IMonitor monitor) {
+        IObservable ret = null;
+        if (g instanceof String) {
+            ret = declare(parseDeclaration((String) g), monitor);
+        } else if (g instanceof IKimConcept) {
+            IConcept c = Concepts.INSTANCE.declare((IKimConcept) g);
+            ret = Observable.promote(c);
+        } else if (g instanceof IKimObservable) {
+            ret = declare((IKimObservable) g, monitor);
+        }
+        return ret;
+    }
+
+    @Override
+    public boolean isExtensive(IObservable observable) {
+        boolean ret = observable.getType().is(Type.EXTENSIVE_PROPERTY) || observable.getType().is(Type.MONEY)
+                || observable.getType().is(Type.MONETARY_VALUE);
+        if (ret && Observables.INSTANCE.getDirectInherentType(observable.getType()) != null) {
+            ret = false;
+        }
+        return ret;
+
     }
 }

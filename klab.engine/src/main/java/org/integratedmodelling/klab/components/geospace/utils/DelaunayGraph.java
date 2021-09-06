@@ -1,11 +1,11 @@
 package org.integratedmodelling.klab.components.geospace.utils;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.operation.linemerge.LineMergeGraph;
-import com.vividsolutions.jts.planargraph.PlanarGraph;
-import com.vividsolutions.jts.triangulate.DelaunayTriangulationBuilder;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.operation.linemerge.LineMergeGraph;
+import org.locationtech.jts.planargraph.PlanarGraph;
+import org.locationtech.jts.triangulate.DelaunayTriangulationBuilder;
 
 public class DelaunayGraph implements Transform<Geometry, PlanarGraph> {
 	

@@ -8,12 +8,9 @@ import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.event.ApplicationPreparedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.Environment;
@@ -23,12 +20,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 
-@ComponentScan(basePackages = { "org.integratedmodelling.klab.engine"})
+//@ComponentScan(basePackages = { "org.integratedmodelling.klab.engine"})
 @Component
-//@ConditionalOnProperty(
-//        value="spring.cloud.consul.enabled", 
-//        havingValue = "true", 
-//        matchIfMissing = false)
 public class EngineRunner implements ApplicationListener<ApplicationPreparedEvent>{
 
 
@@ -38,10 +31,10 @@ public class EngineRunner implements ApplicationListener<ApplicationPreparedEven
 	}
 
 	
-	@Bean
-	public RestTemplate restTemplate(ProtobufHttpMessageConverter hmc) {
-		return new RestTemplate(Arrays.asList(hmc));
-	}
+	/*
+	 * @Bean public RestTemplate restTemplate(ProtobufHttpMessageConverter hmc) {
+	 * return new RestTemplate(Arrays.asList(hmc)); }
+	 */
 	
 	@Bean
 	public RemoteEngineService remoteEngineService() {

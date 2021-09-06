@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.hub.listeners;
 
 import org.springframework.context.ApplicationEvent;
-import org.springframework.stereotype.Component;
 
 public class RemoveGroup extends ApplicationEvent{
 

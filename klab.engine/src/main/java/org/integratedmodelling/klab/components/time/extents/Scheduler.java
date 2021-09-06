@@ -21,6 +21,7 @@ import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.actors.IBehavior.Action;
+import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -44,7 +45,7 @@ import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor;
-import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
+import org.integratedmodelling.klab.components.runtime.actors.KlabActor.ActorReference;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.KActorsMessage;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
@@ -59,7 +60,6 @@ import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.rest.SchedulerNotification;
-import org.integratedmodelling.klab.scale.AbstractExtent;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Pair;
@@ -182,7 +182,8 @@ public class Scheduler implements IScheduler {
                     ILocator transitionScale = scale.at(time);
                     IRuntimeScope transitionContext = scope.locate(transitionScale, monitor);
                     Set<IObservation> changed = new HashSet<>();
-                    ActorRef<KlabMessage> sender = ((Observation) observation.getScope().getRootSubject()).getActor();
+                    ActorRef<KlabMessage> sender = ((ActorReference) ((Observation) observation.getScope().getRootSubject())
+                            .getActor()).actor;
 
                     /*
                      * RUN THE ACTION
@@ -341,11 +342,12 @@ public class Scheduler implements IScheduler {
                             // report all changed states that were affected or created.
                             for (IConcept affected : Observables.INSTANCE
                                     .getAffected(((IProcess) computation.target).getObservable().getType())) {
-                                IState state = scope.getArtifact(affected, IState.class);
-                                if (state != null && state.getLastUpdate() > transitionContext.getScale().getTime().getStart()
-                                        .getMilliseconds()) {
-                                    changed.add(state);
-                                    ret.add(new ObservedConcept(state.getObservable(), Mode.RESOLUTION));
+                                for (IState state : scope.getAnyArtifact(affected, IState.class)) {
+                                    if (state.getLastUpdate() > transitionContext.getScale().getTime().getStart()
+                                            .getMilliseconds()) {
+                                        changed.add(state);
+                                        ret.add(new ObservedConcept(state.getObservable(), Mode.RESOLUTION));
+                                    }
                                 }
                             }
                         } else if (computation.target instanceof IState && actuator.getObservable().is(IKimConcept.Type.CHANGE)) {
@@ -845,7 +847,7 @@ public class Scheduler implements IScheduler {
 
         while(this.activeRegistrations > 0) {
 
-            if (monitor.isInterrupted()) {
+            if (monitor.isInterrupted() || monitor.getWaitTime() > Configuration.INSTANCE.getMaxWaitTime()) {
                 this.registrations.clear();
                 this.dataflows.clear();
                 this.finished = true;

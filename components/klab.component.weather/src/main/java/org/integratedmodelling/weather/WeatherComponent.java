@@ -25,19 +25,19 @@ public class WeatherComponent {
 	@Initialize
 	public boolean initialize() {
 		Logging.INSTANCE.info("Initializing storage for weather caches");
-		WeatherFactory.checkStorage();
+//		WeatherFactory.checkStorage();
 		return true;
 	}
 
 	@Setup(asynchronous = true)
 	public boolean setupEvents() {
-		WeatherEvents.INSTANCE.setup();
+//		WeatherEvents.INSTANCE.setup();
 		return true;
 	}
 
 	@Setup(asynchronous = true)
 	public boolean setupStations() {
-		WeatherFactory.INSTANCE.setup();
+//		WeatherFactory.INSTANCE.setup();
 		return true;
 	}
 	

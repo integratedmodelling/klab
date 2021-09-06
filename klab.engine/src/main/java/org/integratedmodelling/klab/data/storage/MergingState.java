@@ -27,7 +27,7 @@ import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.scale.Scale;
 
-import com.vividsolutions.jts.index.strtree.STRtree;
+import org.locationtech.jts.index.strtree.STRtree;
 
 /**
  * A state that merges others and remaps space and time locators to retrieve data from them,

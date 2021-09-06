@@ -551,13 +551,13 @@ public class Scale implements IScale {
             idx++;
         }
 
+        extents = order;
+
         // better safe than sorry. Only time can be infinite so this should be pretty
         // safe and not at all sorry, as long as the comparator above works.
         if (isInfiniteTime && extents.get(0).size() != Geometry.INFINITE_SIZE) {
             throw new KlabInternalErrorException("internal error: infinite dimension is not the first in scale");
         }
-
-        extents = order;
 
         // recompute strided offsets for quick extent access
         cursor = new MultidimensionalCursor();
@@ -993,7 +993,7 @@ public class Scale implements IScale {
         }
 
         if (overall != null) {
-            return new Scale(scale, new Offset(scale, overall.offsets));
+            return new Scale(scale, new Offset(scale.asGeometry(), overall.offsets));
         }
 
         Map<Dimension.Type, Object[]> extdef = new HashMap<>();
@@ -1695,5 +1695,10 @@ public class Scale implements IScale {
         }
         return this.coverage;
     }
+
+	@Override
+	public MultidimensionalCursor getCursor() {
+		return this.cursor;
+	}
 
 }

@@ -40,6 +40,7 @@ Preamble: {Preamble}
 		('version' version=VersionNumber)? & 
 		('versionstring' versionString=STRING)? & 
 		('locale' locale=LOCALE)? & 
+		('output' output=STRING)? & 
 		('created' created=Date (createcomment=STRING)?)? &
 		('modified' modified=Date (modcomment=STRING)?)? 
 	)
@@ -56,7 +57,7 @@ Preamble: {Preamble}
  */
 Definition:
 	annotations+=Annotation*
-	 'action' name=LOWERCASE_ID (arguments=ArgumentDeclaration)? ':' body=MessageBody;
+	 ('action' | function?='function') name=LOWERCASE_ID (arguments=ArgumentDeclaration)? ':' body=MessageBody;
 
 ArgumentDeclaration: {ArgumentDeclaration}
 	'(' (ids+=LOWERCASE_ID (',' ids+=LOWERCASE_ID)*)? ')'
@@ -72,7 +73,7 @@ ActorInstantiation:
 ;
 
 MessageCall:
-	(name=ArgPathName ('(' (parameters=ParameterList)? ')')? |  group=StatementGroup) (':' actions=Actions)?
+	(methodCalls+=MethodCall '.')* (name=ArgPathName ('(' (parameters=ParameterList)? ')')? |  group=StatementGroup) (':' actions=Actions)?
 ;
 
 StatementGroup: {StatementGroup} '(' body=MessageBody? ')' metadata=Metadata? (':' actions=Actions)?
@@ -101,7 +102,7 @@ Statement:
 	 assert=AssertStatement |
 	 do=DoStatement |
 	 for=ForStatement |
-	 // this means "fire this" 
+	 // this means "fire this" or "return this"
 	 value=ValueWithMetadata) 
 	 // all statement may be tagged for reference
 	 (tag=TAG)?
@@ -109,6 +110,10 @@ Statement:
 
 MethodCall returns MessageCall:
 	name=ArgPathName ('(' (parameters=ParameterList)? ')')?
+;
+
+ParenthesizedMethodCall returns MessageCall:
+	name=ArgPathName => '(' (parameters=ParameterList)? ')'
 ;
 
 MethodCallWithActions returns MessageCall:
@@ -121,7 +126,8 @@ AssertStatement:
 
 Assertion:
 		(expression=EXPR | 
-		(methodCalls+=MethodCall '.')* methodCalls+=MethodCallWithActions)
+		(methodCalls+=MethodCall '.')* methodCalls+=MethodCallWithActions) 
+		('is' (ok='ok' | value=Value))?
 ;
 
 NextStatement returns Statement:
@@ -202,6 +208,7 @@ Value:
 
 ValueWithConstructor returns Value:
 	(deferred?='`')? (constructor=Constructor |
+	(methodCalls+=ParenthesizedMethodCall '.')* methodCalls+=ParenthesizedMethodCall |
 	tree=Tree |
 	empty?='empty' |
 	argvalue=ARGVALUE |

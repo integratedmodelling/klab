@@ -60,7 +60,7 @@ import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.URLUtils;
 import org.joda.time.DateTime;
 
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Point;
 
 /**
  * A weather station with all the data known for it. The closest station to any

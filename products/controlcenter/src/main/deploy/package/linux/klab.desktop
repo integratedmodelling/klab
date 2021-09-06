@@ -1,9 +1,0 @@
-[Desktop Entry]
-Name=k.LAB
-Comment=k.LAB launcher application
-Exec=/opt/klab/klab
-Icon=/opt/klab/klab.png
-Terminal=false
-Type=Application
-Categories=Education
-

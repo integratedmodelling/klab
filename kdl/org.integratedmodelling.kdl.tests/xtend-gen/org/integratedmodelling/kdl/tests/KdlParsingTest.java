@@ -8,7 +8,6 @@ import org.eclipse.xtext.testing.InjectWith;
 import org.eclipse.xtext.testing.XtextRunner;
 import org.eclipse.xtext.testing.util.ParseHelper;
 import org.integratedmodelling.kdl.kdl.Model;
-import org.integratedmodelling.kdl.tests.KdlInjectorProvider;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

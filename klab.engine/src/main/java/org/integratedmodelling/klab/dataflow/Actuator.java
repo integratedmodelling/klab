@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IPrototype;
@@ -689,7 +689,7 @@ public class Actuator implements IActuator {
 
             IArtifact result = ((IResolver<IArtifact>) contextualizer).resolve(ret, addParameters(ctx, ret, resource));
 
-            if (result != ret && ret instanceof IObservation) {
+            if (result != ret && result != null && ret instanceof IObservation) {
                 ctx.swapArtifact(ret, result);
             }
             ret = result;
@@ -982,12 +982,12 @@ public class Actuator implements IActuator {
      * Done above for the initialization run; this is called in the scheduler to ensure names are
      * appropriate for the actuator being run.
      * 
-     * @param context
+     * @param scope
      * @return
      */
-    public IRuntimeScope localizeNames(IRuntimeScope context) {
+    public IRuntimeScope localizeNames(IRuntimeScope scope) {
 
-        IRuntimeScope ret = context.copy();
+        IRuntimeScope ret = scope.copy();
         for (IActuator input : getActuators()) {
             if (ret.getArtifact(input.getName()) != null) {
                 // no effect if not aliased

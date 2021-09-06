@@ -4,32 +4,20 @@ import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
-import org.reflections.Reflections;
-import org.reflections.scanners.ResourcesScanner;
-import org.reflections.scanners.SubTypesScanner;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
-import org.reflections.util.FilterBuilder;
+import org.reflections8.Reflections;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
 
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
-
-import de.bwaldvogel.mongo.MongoServer;
-import de.bwaldvogel.mongo.ServerVersion;
-import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
 
 import org.bson.codecs.pojo.ClassModel;
 import org.bson.codecs.pojo.ClassModelBuilder;
@@ -69,15 +57,17 @@ public class MongoSyncConfig {
     public ClassModel< ? >[] getClassModels() {
         // https://stackoverflow.com/questions/520328/can-you-find-all-classes-in-a-package-using-reflection
         // magic?
-        List<ClassLoader> classLoadersList = new LinkedList<ClassLoader>();
-        classLoadersList.add(ClasspathHelper.contextClassLoader());
-        classLoadersList.add(ClasspathHelper.staticClassLoader());
+//        List<ClassLoader> classLoadersList = new LinkedList<ClassLoader>();
+//        classLoadersList.add(ClasspathHelper.contextClassLoader());
+//        classLoadersList.add(ClasspathHelper.staticClassLoader());
+//
+//        Reflections reflections = new Reflections(new ConfigurationBuilder()
+//                .setScanners(new SubTypesScanner(false /* don't exclude Object.class */), new ResourcesScanner())
+//                .setUrls(ClasspathHelper.forClassLoader(classLoadersList.toArray(new ClassLoader[0])))
+//                .filterInputsBy(new FilterBuilder().include(FilterBuilder.prefix("org.integratedmodelling.klab.rest"))));
 
-        Reflections reflections = new Reflections(new ConfigurationBuilder()
-                .setScanners(new SubTypesScanner(false /* don't exclude Object.class */), new ResourcesScanner())
-                .setUrls(ClasspathHelper.forClassLoader(classLoadersList.toArray(new ClassLoader[0])))
-                .filterInputsBy(new FilterBuilder().include(FilterBuilder.prefix("org.integratedmodelling.klab.rest"))));
-
+        Reflections reflections = new Reflections("org.integratedmodelling.klab.rest");
+        reflections.getAllTypes();
         reflections.getAllTypes();
 
         List<ClassModel< ? >> cm = new ArrayList<ClassModel< ? >>();

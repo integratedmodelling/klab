@@ -5,11 +5,16 @@
 	<parent>
 		<groupId>org.integratedmodelling</groupId>
 		<artifactId>components</artifactId>
-		<version>0.10.0-SNAPSHOT</version>
+		<version>0.11.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>klab.component.weather</artifactId>
 
 	<dependencies>
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>klab.adapter.datacube</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.components.cdm</artifactId>

@@ -112,14 +112,15 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
 						if (scope.getCoverage().isRelevant()) {
 
 							Dataflow dataflow = Dataflows.INSTANCE
-									.compile("local:task:" + session.getId() + ":" + token, scope, null).setPrimary(true);
+									.compile("local:task:" + session.getId() + ":" + token, scope, null)
+									.setPrimary(true);
 
 							dataflow.setDescription(taskDescription);
 
 							if (activity.getActivityDescriptor() != null) {
 								activity.getActivityDescriptor().setDataflowCode(dataflow.getKdlCode());
 							}
-							
+
 							/*
 							 * Instantiate a preliminary contextualization strategy as there is no context
 							 * yet.
@@ -144,25 +145,25 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
 							if (ret != null) {
 								setContext((Subject) ret);
 								getDescriptor().setContextId(ret.getId());
+								/*
+								 * load any behaviors and schedule repeating actions
+								 */
+								Actors.INSTANCE.instrument(observer.getAnnotations(), (Observation) ret);
+
+								/*
+								 * Register the observation context with the session. It will be disposed of
+								 * and/or persisted by the session itself.
+								 */
+								session.registerObservationContext(((Observation) ret).getScope());
+
+								/*
+								 * tell the scope to notify internal listeners (for actors and the like)
+								 */
+								((Observation) ret).getScope().notifyListeners((IObservation) ret);
+
 							}
 
-							/*
-							 * load any behaviors and schedule repeating actions
-							 */
-							Actors.INSTANCE.instrument(observer.getAnnotations(), (Observation) ret);
-
 							getActivity().finished();
-
-							/*
-							 * Register the observation context with the session. It will be disposed of
-							 * and/or persisted by the session itself.
-							 */
-							session.registerObservationContext(((Observation) ret).getScope());
-
-							/*
-							 * tell the scope to notify internal listeners (for actors and the like)
-							 */
-							((Observation) ret).getScope().notifyListeners((IObservation) ret);
 
 						}
 

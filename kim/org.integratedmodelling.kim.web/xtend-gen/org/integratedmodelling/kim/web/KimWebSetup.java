@@ -9,7 +9,6 @@ import org.eclipse.xtext.util.Modules2;
 import org.integratedmodelling.kim.KimRuntimeModule;
 import org.integratedmodelling.kim.KimStandaloneSetup;
 import org.integratedmodelling.kim.ide.KimIdeModule;
-import org.integratedmodelling.kim.web.KimWebModule;
 
 /**
  * Initialization support for running Xtext languages in web applications.

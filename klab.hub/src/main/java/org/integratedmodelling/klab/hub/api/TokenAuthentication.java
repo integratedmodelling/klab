@@ -15,9 +15,7 @@ import org.springframework.security.core.GrantedAuthority;
 
 @Document(collection = "Tokens")
 @TypeAlias("Authentication")
-public class TokenAuthentication extends AbstractAuthenticationToken {
-
-    private static final long serialVersionUID = -639057954057823267L;
+public class TokenAuthentication {
 
     private static final int TOKEN_TTL_SECONDS = 60 * 60 * 24 * 7 * 4; // 4 weeks
     
@@ -33,11 +31,13 @@ public class TokenAuthentication extends AbstractAuthenticationToken {
     private String paretToken;
 
 	protected DateTime expiration;
+	
+	boolean authenticated;
 
-    // this essentially overrides this.authorities in the parent class,
+	// this essentially overrides this.authorities in the parent class,
     // so that we can have a mongo-friendly no-arg constructor (i.e. mutable state)
     // NOTE: the parent class recommends against mutable state.
-    private final Collection<Role> roles = new HashSet<>();
+    private Collection<Role> roles = new HashSet<>();
 
     // this needs to be here for Mongo (username=null to start)
     public TokenAuthentication() {
@@ -45,7 +45,6 @@ public class TokenAuthentication extends AbstractAuthenticationToken {
     }
 
     public TokenAuthentication(String username) {
-        super(null); // no authorities by default
         this.username = username;
         this.tokenString = UUID.randomUUID().toString();
         this.expiration = DateTime.now().plusSeconds(TOKEN_TTL_SECONDS);
@@ -54,21 +53,26 @@ public class TokenAuthentication extends AbstractAuthenticationToken {
 	/**
      * add an expiration check to the default isAuthenticated() implementation
      */
-    @Override
     public boolean isAuthenticated() {
-        return super.isAuthenticated() && !isExpired();
+    	if (authenticated) {
+    		if(!isExpired()) {
+    			return true;
+    		} else {
+    			return false;
+    		}
+    	} else {
+    		return false;
+    	}
     }
 
     public String getTokenString() {
         return tokenString;
     }
 
-    @Override
     public String getCredentials() {
         return tokenString;
     }
 
-    @Override
     public String getPrincipal() {
         return username;
     }
@@ -87,7 +91,6 @@ public class TokenAuthentication extends AbstractAuthenticationToken {
         return now.isAfter(expiration);
     }
 
-    @Override
     public Collection<GrantedAuthority> getAuthorities() {
         return new ArrayList<GrantedAuthority>(roles);
     }
@@ -120,6 +123,9 @@ public class TokenAuthentication extends AbstractAuthenticationToken {
 	public void setParetToken(String paretToken) {
 		this.paretToken = paretToken;
 	}
-
+	
+    public void setAuthenticated(boolean authenticated) {
+		this.authenticated = authenticated;
+	}
 }
 

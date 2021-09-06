@@ -2,7 +2,7 @@
 <feature
       id="org.integratedmodelling.kactors.feature"
       label="Kactors Feature "
-      version="0.10.0.qualifier"
+      version="0.11.0.qualifier"
       provider-name="Integrated Modelling Partnership">
 
    <plugin

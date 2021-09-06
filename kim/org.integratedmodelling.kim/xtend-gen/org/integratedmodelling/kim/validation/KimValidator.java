@@ -89,8 +89,6 @@ import org.integratedmodelling.kim.model.KimSymbolDefinition;
 import org.integratedmodelling.kim.model.KimTable;
 import org.integratedmodelling.kim.model.KimWorkspace;
 import org.integratedmodelling.kim.utils.DependencyGraph;
-import org.integratedmodelling.kim.validation.AbstractKimValidator;
-import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.rest.CompileNotificationReference;
 import org.integratedmodelling.klab.utils.Pair;

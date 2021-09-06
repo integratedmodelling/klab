@@ -13,6 +13,7 @@ import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
 import org.integratedmodelling.klab.api.extensions.UrnAdapter;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Geometry;
@@ -32,6 +33,7 @@ import org.integratedmodelling.weather.data.WeatherFactory;
  * Handles URNs:
  * 
  * <ul>
+ * <li>klab:weather:agera5:{variable} uses the AgERA5 dataset (credentials needed in configuration)
  * <li>klab:weather:data:{all|catalog} (handles primary output as parameter, e.g. #precipitation,
  * and others as additional attributes)</li>
  * <li>klab:weather:stations:{all|catalog}</li>
@@ -46,6 +48,8 @@ import org.integratedmodelling.weather.data.WeatherFactory;
 @UrnAdapter(type = "weather", version = Version.CURRENT)
 public class WeatherAdapter implements IUrnAdapter {
 
+//    AgERAWeatherAdapter agera = new AgERAWeatherAdapter();
+    
     public enum Services {
         /**
          * Return weather stations with their data for the requested spatio/temporal ctx
@@ -65,10 +69,13 @@ public class WeatherAdapter implements IUrnAdapter {
     public String getName() {
         return "weather";
     }
+    
 
     @Override
     public boolean isOnline(Urn urn) {
         switch(Services.valueOf(urn.getNamespace())) {
+//        case agera5:
+//            return agera.isOnline(urn);
         case data:
         case stations:
             // TODO check catalog and args before saying OK!
@@ -84,6 +91,9 @@ public class WeatherAdapter implements IUrnAdapter {
     public void encodeData(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope scope) {
 
         switch(Services.valueOf(urn.getNamespace())) {
+//        case agera5:
+//            agera.encodeData(urn, builder, geometry, scope);
+//            return;
         case data:
             getInterpolatedData(urn, builder, geometry, scope);
             return;
@@ -161,7 +171,7 @@ public class WeatherAdapter implements IUrnAdapter {
             Scale eventScale = Scale.create(
                     Time.create((long) event.asData().get(WeatherEvent.START_LONG),
                             (long) event.asData().get(WeatherEvent.START_LONG)),
-                    Shape.create((com.vividsolutions.jts.geom.Geometry) event.asData().get(WeatherEvent.BOUNDING_BOX),
+                    Shape.create((org.locationtech.jts.geom.Geometry) event.asData().get(WeatherEvent.BOUNDING_BOX),
                             Projection.getLatLon()));
 
             Builder ob = builder.startObject("result", "storm_" + event.asData().get(WeatherEvent.ID), eventScale.asGeometry());
@@ -218,6 +228,8 @@ public class WeatherAdapter implements IUrnAdapter {
     public IGeometry getGeometry(Urn urn) {
 
         switch(Services.valueOf(urn.getNamespace())) {
+//        case agera5:
+//            return agera.getGeometry(urn);
         case data:
             return Geometry.create("\u03c41\u03c32");
         case stations:
@@ -238,6 +250,11 @@ public class WeatherAdapter implements IUrnAdapter {
     public IResource getResource(String urn) {
 
         Urn kurn = new Urn(urn);
+
+//        if ("agera5".equals(kurn.getNamespace())) {
+//            return agera.getResource(urn);
+//        }
+        
         ResourceReference ref = new ResourceReference();
         ref.setUrn(kurn.getUrn());
         ref.setAdapterType(getName());
@@ -247,6 +264,19 @@ public class WeatherAdapter implements IUrnAdapter {
         ref.setType(getType(kurn));
 
         return new Resource(ref);
+    }
+
+
+    @Override
+    public IResource contextualize(IResource resource, IGeometry scale, IGeometry overallScale, IObservable semantics) {
+        Urn kurn = new Urn(resource.getUrn());
+
+//        if ("agera5".equals(kurn.getNamespace())) {
+//            return agera.contextualize(resource, scale, overallScale, semantics);
+//        }
+        
+        // TODO
+        return resource;
     }
 
 }

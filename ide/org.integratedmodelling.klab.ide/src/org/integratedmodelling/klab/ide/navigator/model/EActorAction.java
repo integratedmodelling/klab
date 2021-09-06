@@ -59,5 +59,10 @@ public class EActorAction extends EKimObject implements IKActorsAction {
 		return action.getArgumentNames();
 	}
 
+	@Override
+	public boolean isFunction() {
+		return action.isFunction();
+	}
+
 
 }

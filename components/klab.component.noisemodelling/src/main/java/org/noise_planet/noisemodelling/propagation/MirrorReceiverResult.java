@@ -33,7 +33,7 @@
  */
 package org.noise_planet.noisemodelling.propagation;
 
-import com.vividsolutions.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Coordinate;
 
 /**
  *  Information for Receiver image.

@@ -20,7 +20,8 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.JavaVersion;
+import org.apache.commons.lang3.SystemUtils;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
@@ -139,7 +140,7 @@ public class JavaUtils {
         if (isServer) {
             ret.add("-server");
         }
-        if (permSize > 0 && !SystemUtils.isJavaVersionAtLeast(1.8f)) {
+        if (permSize > 0 && !SystemUtils.isJavaVersionAtLeast(JavaVersion.JAVA_11)) {
             ret.add("-XX:MaxPermSize=" + permSize + "m");
         }
         return ret.toArray(new String[ret.size()]);

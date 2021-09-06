@@ -1,4 +1,5 @@
 package org.integratedmodelling.klab.utils;
+
 /*******************************************************************************
  * Copyright (C) 2007, 2015:
  * 
@@ -36,123 +37,146 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 
 public class MapUtils extends org.apache.commons.collections.MapUtils {
 
-    /**
-     * Creates a regular hashmap with the objects passed taken in pairs, but does not add a
-     * pair where the value object is null. Does not check that objects come in even
-     * number, so use carefully. Also encodes booleans as "true" or "false" when the key
-     * ends with ?.
-     * 
-     * @param o
-     * @return the map
-     */
-    public static Map<String, Object> of(Object... o) {
-        Map<String, Object> ret = new HashMap<>();
-        for (int i = 0; i < o.length; i += 2) {
-            Object value = o[i + 1];
-            if (o[i].toString().endsWith("?") && value instanceof Boolean) {
-                value = (Boolean) value ? "true" : "false";
-            }
-            if (value != null) {
-                ret.put(o[i].toString(), value);
-            }
-        }
-        return ret;
-    }
-    
-    /**
-     * Create and save a properties file with the passed contents, using same conventions as {@link #of(Object...) }
-     * Will only throw a runtime exception if save fails, assuming it's unlikely.
-     * 
-     * @param file
-     * @param o
-     */
-    public static void saveProperties(File file, Object... o) {
-        
-        Properties prop = new Properties();
-        for (int i = 0; i < o.length; i += 2) {
-            Object value = o[i + 1];
-            if (o[i].toString().endsWith("?") && value instanceof Boolean) {
-                value = (Boolean) value ? "true" : "false";
-            }
-            if (value != null) {
-                prop.setProperty(o[i].toString(), value.toString());
-            }
-        }
-        try (FileOutputStream out = new FileOutputStream(file)) {
-            prop.store(out, null);
-        } catch (Exception e) {
-            throw new KlabException(e);
-        }
-    }
+	/**
+	 * Creates a regular hashmap with the objects passed taken in pairs, but does
+	 * not add a pair where the value object is null. Does not check that objects
+	 * come in even number, so use carefully. Also encodes booleans as "true" or
+	 * "false" when the key ends with ?.
+	 * 
+	 * @param o
+	 * @return the map
+	 */
+	public static Map<String, Object> of(Object... o) {
+		Map<String, Object> ret = new HashMap<>();
+		for (int i = 0; i < o.length; i += 2) {
+			Object value = o[i + 1];
+			if (o[i].toString().endsWith("?") && value instanceof Boolean) {
+				value = (Boolean) value ? "true" : "false";
+			}
+			if (value != null) {
+				ret.put(o[i].toString(), value);
+			}
+		}
+		return ret;
+	}
 
-    /**
-     * Creates a regular hashmap with the objects passed taken in pairs; let the null value
-     * in and make no changes to values. Does not check that objects come in even number,
-     * so use carefully.
-     * 
-     * @param o
-     * @return the map
-     */
-    public static Map<String, Object> ofWithNull(Object... o) {
-        Map<String, Object> ret = new HashMap<>();
-        for (int i = 0; i < o.length; i += 2) {
-            Object value = o[i + 1];
-            ret.put(o[i].toString(), value);
-        }
-        return ret;
-    }
+	/**
+	 * Create and save a properties file with the passed contents, using same
+	 * conventions as {@link #of(Object...) } Will only throw a runtime exception if
+	 * save fails, assuming it's unlikely.
+	 * 
+	 * @param file
+	 * @param o
+	 */
+	public static void saveProperties(File file, Object... o) {
 
-    /**
-     * Print a map on a string in a legible format.
-     * 
-     * @param map
-     * @return
-     */
-    public static String dump(Map<?, ?> map) {
+		Properties prop = new Properties();
+		for (int i = 0; i < o.length; i += 2) {
+			Object value = o[i + 1];
+			if (o[i].toString().endsWith("?") && value instanceof Boolean) {
+				value = (Boolean) value ? "true" : "false";
+			}
+			if (value != null) {
+				prop.setProperty(o[i].toString(), value.toString());
+			}
+		}
+		try (FileOutputStream out = new FileOutputStream(file)) {
+			prop.store(out, null);
+		} catch (Exception e) {
+			throw new KlabException(e);
+		}
+	}
 
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        final PrintStream outPrint = new PrintStream(out);
+	/**
+	 * Creates a regular hashmap with the objects passed taken in pairs; let the
+	 * null value in and make no changes to values. Does not check that objects come
+	 * in even number, so use carefully.
+	 * 
+	 * @param o
+	 * @return the map
+	 */
+	public static Map<String, Object> ofWithNull(Object... o) {
+		Map<String, Object> ret = new HashMap<>();
+		for (int i = 0; i < o.length; i += 2) {
+			Object value = o[i + 1];
+			ret.put(o[i].toString(), value);
+		}
+		return ret;
+	}
 
-        MapUtils.debugPrint(outPrint, "Print Map", map);
+	/**
+	 * Print a map on a string in a legible format.
+	 * 
+	 * @param map
+	 * @return
+	 */
+	public static String dump(Map<?, ?> map) {
 
-        try {
-            return out.toString("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            return "MAP PRINT ERROR: " + e.getMessage();
-        }
-    }
-    
-    public static String toString(Map<?, ?> map) {
+		final ByteArrayOutputStream out = new ByteArrayOutputStream();
+		final PrintStream outPrint = new PrintStream(out);
 
-        final StringBuffer ret = new StringBuffer(256);
-        
-        ret.append("{");
-        int i = 0;
-        for (Entry<?, ?> entry : map.entrySet()) {
-            ret.append((i == 0 ? "" : ", ") + entry.getKey() + ":" + entry.getValue());
-            i++;
-        }
-        ret.append("}");
-        
-        return ret.toString();
-        
-    }
+		MapUtils.debugPrint(outPrint, "Print Map", map);
 
-    /**
-     * Unfold a map into an array with each key followed by the corresponding value.
-     * 
-     * @param vars
-     * @return
-     */
-    public static Object[] unfold(Map<String, ?> vars) {
+		try {
+			return out.toString("UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			return "MAP PRINT ERROR: " + e.getMessage();
+		}
+	}
 
-        Object[] ret = new Object[vars.size() * 2];
-        int i = 0;
-        for (String key : vars.keySet()) {
-            ret[i] = key;
-            ret[++i] = vars.get(key);
-        }
-        return ret;
-    }
+	public static String toString(Map<?, ?> map) {
+
+		final StringBuffer ret = new StringBuffer(256);
+
+		ret.append("{");
+		int i = 0;
+		for (Entry<?, ?> entry : map.entrySet()) {
+			ret.append((i == 0 ? "" : ", ") + entry.getKey() + ":" + entry.getValue());
+			i++;
+		}
+		ret.append("}");
+
+		return ret.toString();
+
+	}
+
+	/**
+	 * Return the object at the given path as the passed class. Each slash-separated
+	 * path component, except the last, must point to another map.
+	 * 
+	 * @param <T>
+	 * @param path
+	 * @param cls
+	 * @return
+	 */
+	public static <T> T get(Map<?,?> map, String path, Class<T> cls) {
+		String[] paths = path.split("/");
+		Map<?,?> o = map;
+		for (int i = 0; i < paths.length - 1; i++) {
+			Object to = o.get(paths[i]);
+			if (!(to instanceof Map)) {
+				return null;
+			}
+			o = (Map<?,?>)to;
+		}
+		return o == null ? null : Utils.asType(o.get(paths[paths.length - 1]), cls);
+	}
+
+	/**
+	 * Unfold a map into an array with each key followed by the corresponding value.
+	 * 
+	 * @param vars
+	 * @return
+	 */
+	public static Object[] unfold(Map<String, ?> vars) {
+
+		Object[] ret = new Object[vars.size() * 2];
+		int i = 0;
+		for (String key : vars.keySet()) {
+			ret[i] = key;
+			ret[++i] = vars.get(key);
+		}
+		return ret;
+	}
 
 }

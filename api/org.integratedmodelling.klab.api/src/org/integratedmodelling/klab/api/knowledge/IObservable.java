@@ -343,7 +343,7 @@ public interface IObservable extends ISemantic, IResolvable {
          * @param referenceName
          * @return
          */
-		Builder named(String name, String referenceName);
+        Builder named(String name, String referenceName);
 
     }
 
@@ -373,23 +373,24 @@ public interface IObservable extends ISemantic, IResolvable {
     IArtifact.Type getArtifactType();
 
     /**
-     * Observables always have a name, which is unique in the context of a model where they are
-     * used, and can be used within a model to refer to the observation made of it. The name can be
-     * explicitly set using the 'named' k.IM clause, and is always a simple lowercase identifier. If
-     * no 'named' clause is present, it returns the same value as {@link #getReferenceName()}. Even
-     * if 'named' is given, the name may be different from the stated because of disambiguation when
-     * the observable is used in a dataflow.
+     * The name is never null and is meant for human and code consumption. It can be explicitly set
+     * using the 'named' k.IM clause, and is always a simple lowercase identifier. If no 'named'
+     * clause is present, a name is computed similarly to {@link #getReferenceName()} but without
+     * using disambiguating namespaces, therefore not guaranteeing a 1:1 correspondence to the
+     * semantics but with enough predictability to not have to use 'named' in simple situations to
+     * refer to the observable. It's always a lowercase identifier usable for coding in k.IM, k.DL,
+     * and most languages. Even if 'named' is given, the name may be different from the stated
+     * because of disambiguation when the observable is used in a dataflow.
      *
-     * @return the formal name of this observable
+     * @return the name of this observable
      */
     String getName();
 
     /**
-     * The reference name is the default name unless a 'named' clause was given, and only depends on
-     * the contents of the observable. It is not unique because it does not include namespaces for
-     * the composing concepts. It's a simple lowercase identifier usable for coding in k.IM, k.DL,
-     * and most languages. It may be modified for disambiguation in the observables used when
-     * creating dataflows.
+     * The reference name is the default name and only depends on the contents of the observable. It
+     * is uniquely related to the semantics. It may be modified for disambiguation in the
+     * observables used when creating dataflows. It does not correspond to {@link #getName()}, which
+     * is meant for human consumption.
      * 
      * @return the reference name of this observable
      */

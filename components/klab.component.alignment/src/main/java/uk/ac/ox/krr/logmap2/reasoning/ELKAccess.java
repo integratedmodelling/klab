@@ -18,13 +18,10 @@
  ******************************************************************************/
 package uk.ac.ox.krr.logmap2.reasoning;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.semanticweb.owlapi.model.OWLOntology;
-import org.semanticweb.owlapi.model.OWLOntologyManager;
-
 import org.semanticweb.elk.owlapi.ElkReasonerAdapted;
 import org.semanticweb.elk.owlapi.ElkReasonerFactory;
+import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyManager;
 
 
 /**
@@ -43,7 +40,7 @@ public class ELKAccess extends ReasonerAccessImpl {
 	
 	protected void setUpReasoner(boolean useFactory) throws Exception{
 		
-		Logger.getLogger("org.semanticweb.elk").setLevel(Level.OFF);
+//		Logger.getLogger("org.semanticweb.elk").setLevel(Level.OFF);
 		
 		reasonerFactory = new ElkReasonerFactory();
 		

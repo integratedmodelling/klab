@@ -23,7 +23,7 @@ package org.integratedmodelling.klab.components.geospace.extents;
 
 
 import org.integratedmodelling.klab.exceptions.KlabException;
-import com.vividsolutions.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Coordinate;
 
 public abstract class Area {
 

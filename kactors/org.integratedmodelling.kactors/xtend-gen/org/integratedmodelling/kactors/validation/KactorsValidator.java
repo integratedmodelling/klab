@@ -3,8 +3,6 @@
  */
 package org.integratedmodelling.kactors.validation;
 
-import org.integratedmodelling.kactors.validation.AbstractKactorsValidator;
-
 /**
  * This class contains custom validation rules.
  * 

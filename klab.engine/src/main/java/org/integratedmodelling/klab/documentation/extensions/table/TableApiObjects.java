@@ -96,7 +96,6 @@ public class TableApiObjects {
          * @return
          */
         public boolean changed(Object from, Object to, Object locateFrom) {
-
             IConcept cTo = ((TableDimension) to).getConcept();
             IConcept cFrom = ((TableDimension) from).getConcept();
 

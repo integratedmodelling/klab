@@ -69,6 +69,8 @@ public interface IConfigurationService {
 
 	public static final String KLAB_DISABLE_CONSOLE_ECHO = "klab.disable.console.echo";
 	
+	public static final String KLAB_ACCEPTED_WAIT_TIME_SECONDS = "klab.accepted.wait.time";
+
 	/**
 	 * Name of work directory relative to ${user.home}. Ignored if
 	 * THINKLAB_DATA_DIRECTORY_PROPERTY is specified.

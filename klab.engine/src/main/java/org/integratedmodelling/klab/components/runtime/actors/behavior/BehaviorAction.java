@@ -21,10 +21,13 @@ public class BehaviorAction implements IBehavior.Action {
 	private Behavior behavior;
 	private List<IAnnotation> annotations = new ArrayList<>();
 	private String viewId;
-
+	private boolean function;
+	
 	public BehaviorAction(IKActorsAction action, Behavior behavior) {
 		this.statement = action;
 		this.behavior = behavior;
+		this.function = action.isFunction();
+		
 		for (IKimAnnotation annotation : action.getAnnotations()) {
 			Annotation a = new Annotation(annotation);
 			// translate KActorsValue into actual values
@@ -101,5 +104,10 @@ public class BehaviorAction implements IBehavior.Action {
 	public IBehavior getBehavior() {
 		return behavior;
 	}
+
+    @Override
+    public boolean isFunction() {
+        return function;
+    }
 
 }

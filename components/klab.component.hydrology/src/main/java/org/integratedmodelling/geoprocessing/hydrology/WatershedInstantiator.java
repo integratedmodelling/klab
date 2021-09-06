@@ -30,7 +30,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.Scale;
 
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Point;
 
 public class WatershedInstantiator implements IInstantiator, IExpression {
 
@@ -138,7 +138,7 @@ public class WatershedInstantiator implements IInstantiator, IExpression {
 
 			if (ebasin.outVectorBasin != null && ebasin.outVectorBasin.size() > 0) {
 
-				List<com.vividsolutions.jts.geom.Geometry> geoms = FeatureUtilities
+				List<org.locationtech.jts.geom.Geometry> geoms = FeatureUtilities
 						.featureCollectionToGeometriesList(ebasin.outVectorBasin, false, null);
 				Shape shape = Shape.create(geoms, context.getScale().getSpace().getProjection());
 				ret.add(context.newObservation(semantics, "watershed_of_" + ((IDirectObservation) artifact).getName(),

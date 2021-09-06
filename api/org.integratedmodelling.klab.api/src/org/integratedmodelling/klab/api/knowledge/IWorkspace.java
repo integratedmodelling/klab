@@ -83,6 +83,15 @@ public interface IWorkspace {
 	IProject createProject(String projectId, IMonitor monitor);
 
 	/**
+	 * Load a project on demand. Return null without error if the project is not present.
+	 * 
+	 * @param projectId
+	 * @param monitor
+	 * @return
+	 */
+	IProject loadProject(String projectId, IMonitor monitor);
+	
+	/**
 	 * Retrieve the named project.
 	 * 
 	 * @param projectId

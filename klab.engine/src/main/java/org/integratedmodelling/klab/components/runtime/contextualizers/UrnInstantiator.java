@@ -54,7 +54,23 @@ public class UrnInstantiator implements IExpression, IInstantiator {
         List<IObjectArtifact> ret = new ArrayList<>();
         IResource res = this.resource.contextualize(context.getScale(), context.getTargetArtifact(), urnParameters, context);
         Map<String, String> parameters = urnParameters;
-
+        
+        if (res.getAvailability() != null) {
+            switch(res.getAvailability().getAvailability()) {
+            case DELAYED:
+                context.getMonitor().addWait(res.getAvailability().getRetryTimeSeconds());
+                return ret;
+            case NONE:
+                context.getMonitor().error("resource " + resource.getUrn() + " has no data available in this context");
+                return ret;
+            case PARTIAL:
+                context.getMonitor().warn("resource " + resource.getUrn() + " reports partial availability in this context");
+                break;
+            case COMPLETE:
+                break;
+            }
+        }
+        
         if (this.resource instanceof MergedResource) {
 
             List<Pair<IResource, Map<String, String>>> resources = ((MergedResource) this.resource)

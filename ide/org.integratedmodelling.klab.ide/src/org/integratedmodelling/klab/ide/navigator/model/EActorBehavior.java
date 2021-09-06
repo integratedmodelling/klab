@@ -83,7 +83,7 @@ public class EActorBehavior extends EKimObject implements IKActorsBehavior {
     }
 
     @Override
-    public List<IKActorsBehavior> getImports() {
+    public List<String> getImports() {
         return behavior.getImports();
     }
 
@@ -146,6 +146,11 @@ public class EActorBehavior extends EKimObject implements IKActorsBehavior {
     @Override
     public void visit(IKActorsBehavior.Visitor visitor) {
         behavior.visit(visitor);
+    }
+
+    @Override
+    public String getOutput() {
+        return behavior.getOutput();
     }
 
 }

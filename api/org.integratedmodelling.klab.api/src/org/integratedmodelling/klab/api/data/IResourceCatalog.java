@@ -15,8 +15,10 @@
  */
 package org.integratedmodelling.klab.api.data;
 
+import java.util.Collection;
 import java.util.Map;
 
+import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 

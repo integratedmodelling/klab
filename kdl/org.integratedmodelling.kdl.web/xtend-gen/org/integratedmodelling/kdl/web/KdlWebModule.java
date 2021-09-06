@@ -3,8 +3,6 @@
  */
 package org.integratedmodelling.kdl.web;
 
-import org.integratedmodelling.kdl.web.AbstractKdlWebModule;
-
 /**
  * Use this class to register additional components to be used within the web application.
  */

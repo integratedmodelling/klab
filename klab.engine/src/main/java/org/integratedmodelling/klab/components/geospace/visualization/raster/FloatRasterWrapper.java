@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.components.geospace.visualization.raster;
 import java.awt.Rectangle;
 import java.awt.image.Raster;
 
-import org.geotools.coverage.grid.GridCoverage2D;
 
 import com.sun.media.jai.iterator.WrapperRI;
 

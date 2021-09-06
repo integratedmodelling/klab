@@ -4,8 +4,6 @@
  */
 package org.integratedmodelling.kim.ide;
 
-import org.integratedmodelling.kim.ide.AbstractKimIdeModule;
-
 /**
  * Use this class to register ide components.
  */

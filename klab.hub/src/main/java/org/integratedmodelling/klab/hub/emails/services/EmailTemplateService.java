@@ -1,8 +1,6 @@
 package org.integratedmodelling.klab.hub.emails.services;
 
 import java.util.Collection;
-import java.util.Optional;
-
 import org.integratedmodelling.klab.hub.api.EmailTemplate;
 import org.integratedmodelling.klab.hub.service.GenericHubService;
 

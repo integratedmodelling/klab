@@ -120,6 +120,14 @@ public interface IExtent extends ILocator, ITopology<IExtent>, IGeometry.Dimensi
 	IExtent getBoundingExtent();
 
 	/**
+	 * Return the dimensional coverage in the passed unit.
+	 * 
+	 * @param unit
+	 * @return
+	 */
+	double getDimensionSize(IUnit unit);
+	
+	/**
 	 * Return the standardized (SI) dimension of the extent at the passed locator,
 	 * 
 	 * @return

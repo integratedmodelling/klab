@@ -10,10 +10,10 @@ import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.IResource.Availability;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
@@ -58,6 +58,23 @@ public class UrnResolver implements IExpression, IResolver<IArtifact> {
          * Contextualize the resource to the passed context and parameters.
          */
         IResource res = this.resource.contextualize(context.getScale(), observation, urnParameters, context);
+
+        if (res.getAvailability() != null) {
+            switch(res.getAvailability().getAvailability()) {
+            case DELAYED:
+                context.getMonitor().addWait(res.getAvailability().getRetryTimeSeconds());
+                return observation;
+            case NONE:
+                context.getMonitor().error("resource " + resource.getUrn() + " has no data available in this context");
+                return observation;
+            case PARTIAL:
+                context.getMonitor().warn("resource " + resource.getUrn() + " reports partial availability in this context");
+                break;
+            case COMPLETE:
+                break;
+            }
+        }
+
         Map<String, String> parameters = urnParameters;
         // this.localized = true;
 

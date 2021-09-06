@@ -157,4 +157,11 @@ public interface IProject {
 	 * @return the originating k.IM project
 	 */
 	IKimProject getStatement();
+
+	/**
+	 * Get all the unit tests in k.Actors declared in the project
+	 * 
+	 * @return
+	 */
+	List<IBehavior> getUnitTests();
 }

@@ -6,6 +6,7 @@ import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 
@@ -32,6 +33,18 @@ public interface IUrnAdapter {
      * @return
      */
     IResource getResource(String urn);
+
+    /**
+     * Contextualize the resource to the passed scale and semantics. If there is any issue with
+     * availability, set the correspondent fields in the result.
+     * 
+     * @param resource
+     * @param scale the scale for this specific contextualization
+     * @param overallScale the scale of the entire context
+     * @param semantics
+     * @return
+     */
+    IResource contextualize(IResource resource, IGeometry scale, IGeometry overallScale, IObservable semantics);
 
     /**
      * Check if the resource can be accessed. This should ensure the ability of calling

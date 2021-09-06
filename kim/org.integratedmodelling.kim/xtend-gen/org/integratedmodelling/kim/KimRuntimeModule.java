@@ -11,7 +11,6 @@ import org.eclipse.xtext.scoping.IGlobalScopeProvider;
 import org.eclipse.xtext.scoping.IScopeProvider;
 import org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider;
 import org.eclipse.xtext.scoping.impl.SimpleLocalScopeProvider;
-import org.integratedmodelling.kim.AbstractKimRuntimeModule;
 import org.integratedmodelling.kim.scoping.KimGlobalScopeProvider;
 import org.integratedmodelling.kim.scoping.KimScopeProvider;
 

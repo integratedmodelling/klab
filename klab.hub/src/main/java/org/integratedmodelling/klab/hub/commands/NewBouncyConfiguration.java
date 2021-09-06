@@ -13,8 +13,6 @@ import org.integratedmodelling.klab.auth.Hub;
 import org.integratedmodelling.klab.hub.api.ArmoredKeyPair;
 import org.integratedmodelling.klab.hub.api.BouncyConfiguration;
 import org.integratedmodelling.klab.hub.api.BouncyGpgKeyRing;
-import org.integratedmodelling.klab.hub.api.LicenseConfiguration;
-
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.keys.keyrings.KeyringConfig;
 
 public class NewBouncyConfiguration {

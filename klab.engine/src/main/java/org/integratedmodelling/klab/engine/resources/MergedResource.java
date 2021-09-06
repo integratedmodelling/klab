@@ -36,6 +36,7 @@ import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.data.storage.ResourceCatalog;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.rest.ResourceReference.AvailabilityReference;
 import org.integratedmodelling.klab.scale.Coverage;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
@@ -629,6 +630,12 @@ public class MergedResource implements IResource {
             }
         }
         return ret;
+    }
+
+    @Override
+    public AvailabilityReference getAvailability() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

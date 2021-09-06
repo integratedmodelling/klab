@@ -1,7 +1,10 @@
 package org.integratedmodelling.klab.ogc.integration;
 
+import java.awt.image.RenderedImage;
 import java.io.File;
+import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,11 +12,33 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
+import javax.annotation.Nullable;
+import javax.media.jai.iterator.RandomIter;
+import javax.media.jai.iterator.RandomIterFactory;
+
+import org.geotools.coverage.grid.GridCoverage2D;
+import org.geotools.gce.geotiff.GeoTiffReader;
 import org.integratedmodelling.klab.Configuration;
+import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Urn;
+import org.integratedmodelling.klab.api.data.adapters.IKlabData;
+import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
+import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
+import org.integratedmodelling.klab.components.geospace.extents.Grid;
+import org.integratedmodelling.klab.components.geospace.extents.Projection;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.ogc.WcsAdapter;
 import org.integratedmodelling.klab.ogc.integration.Postgis.PublishedResource;
 import org.integratedmodelling.klab.ogc.integration.Postgis.PublishedResource.Attribute;
+import org.integratedmodelling.klab.utils.FileUtils;
+import org.integratedmodelling.klab.utils.MiscUtilities;
+import org.integratedmodelling.klab.utils.NumberUtils;
+import org.opengis.coverage.grid.GridCoverage;
 
 import kong.unirest.GetRequest;
 import kong.unirest.HttpRequestWithBody;
@@ -128,6 +153,7 @@ public class Geoserver {
 	 */
 	public boolean requireDatastore(Postgis postgis, String namespace) {
 
+		requireNamespace(namespace);
 		if (getDatastores(namespace).contains(postgis.getDatabase())) {
 			return true;
 		}
@@ -135,7 +161,16 @@ public class Geoserver {
 		return createDatastore(postgis, namespace);
 	}
 
+	private Map<String, Object> getWorkspaceRecord(String namespace) {
+		Map<String, Object> ret = new HashMap<>();
+		ret.put("name", namespace);
+		ret.put("link", KLAB_NAMESPACE_URI_PREFIX + namespace);
+		return ret;
+	}
+
 	public boolean createCoverageStore(String namespace, String name, File file) {
+
+		requireNamespace(namespace);
 
 		if (getCoveragestores(namespace).contains(name)) {
 			deleteCoverageStore(namespace, name);
@@ -147,6 +182,10 @@ public class Geoserver {
 		try {
 			data.put("name", name);
 			data.put("url", file.toURI().toURL().toString());
+			data.put("enabled", true);
+			data.put("workspace", getWorkspaceRecord(namespace));
+			data.put("type", getFileExtension(file));
+
 			payload.put("coverageStore", data);
 
 			HttpRequestWithBody request = Unirest.post(this.url + "/rest/workspaces/" + namespace + "/coveragestores")
@@ -163,6 +202,43 @@ public class Geoserver {
 		}
 
 		return false;
+	}
+
+	public boolean createCoverageLayer(String namespace, String name, File file, @Nullable String nativeName) {
+
+		if (createCoverageStore(namespace, name, file)) {
+
+			Map<String, Object> payload = new HashMap<>();
+			Map<String, Object> data = new HashMap<>();
+
+			data.put("name", name);
+			data.put("title", name);
+			data.put("nativeCoverageName", nativeName == null ? name : nativeName);
+			data.put("recalculate", "nativebbox,latlonbbox");
+
+			payload.put("coverage", data);
+
+			HttpRequestWithBody request = Unirest
+					.post(this.url + "/rest/workspaces/" + namespace + "/coveragestores/" + name + "/coverages")
+					.header("Content-Type", "application/json").connectTimeout(timeout);
+
+			if (this.username != null) {
+				request = request.basicAuth(username, password);
+			}
+
+			return request.body(payload).asEmpty().isSuccess();
+
+		}
+		return false;
+	}
+
+	private String getFileExtension(File file) {
+		if (file.toString().endsWith(".tiff") || file.toString().endsWith(".tif")) {
+			return "GeoTIFF";
+		} else if (file.toString().endsWith(".nc")) {
+			return "NetCDF";
+		}
+		throw new KlabValidationException("Cannot establish Geoserver file type for " + file);
 	}
 
 	/**
@@ -227,7 +303,7 @@ public class Geoserver {
 		Set<String> ret = new HashSet<>();
 		GetRequest request = Unirest.get(this.url + "/rest/workspaces/" + namespace + "/coveragestores")
 				.header("Accept", "application/json").connectTimeout(timeout);
-		;
+
 		if (this.username != null) {
 			request = request.basicAuth(username, password);
 		}
@@ -285,20 +361,20 @@ public class Geoserver {
 
 			Map<String, Object> payload = new HashMap<>();
 			Map<String, Object> data = new HashMap<>();
-			List<Map<?,?>> attributes = new ArrayList<>();
+			List<Map<?, ?>> attributes = new ArrayList<>();
 
 			for (Attribute attribute : resource.attributes) {
 				Map<String, Object> attr = new HashMap<>();
 				attr.put("name", attribute.name);
 				attr.put("binding", attribute.binding.getCanonicalName());
 			}
-			
+
 			data.put("name", resource.name);
 			data.put("nativeName", resource.name);
 			data.put("srs", resource.srs);
 			data.put("attributes", attributes);
 			payload.put("featureType", data);
-			
+
 			HttpRequestWithBody request = Unirest
 					.post(this.url + "/rest/workspaces/" + namespace + "/datastores/" + datastore + "/featuretypes")
 					.connectTimeout(timeout).header("Content-Type", "application/json");
@@ -335,7 +411,7 @@ public class Geoserver {
 	}
 
 	/**
-	 * Delete EVERYTHING. Use with appropriate caution. 
+	 * Delete EVERYTHING. Use with appropriate caution.
 	 */
 	public void clear() {
 		for (String namespace : getNamespaces()) {
@@ -448,6 +524,135 @@ public class Geoserver {
 
 	public String getServiceUrl() {
 		return url.endsWith("ows") ? url : (url + "/ows");
+	}
+
+	/**
+	 * Read a coverage for the passed space into an image that is returned.
+	 * 
+	 * @param space
+	 * @param namespace
+	 * @param layerId
+	 * @return
+	 */
+	public GridCoverage2D getWCSCoverage(ISpace space, String namespace, String layerId) {
+		try {
+
+			File coverageFile = WcsAdapter.getCachedFile(layerId, space.encode());
+			if (coverageFile == null) {
+
+				URL getCov = new URL(getWCSGetCoverageUrl(space, namespace, layerId));
+				try (InputStream input = getCov.openStream()) {
+					coverageFile = File.createTempFile("geo", ".tiff");
+					FileUtils.copyInputStreamToFile(input, coverageFile);
+					FileUtils.forceDeleteOnExit(coverageFile);
+					if (Configuration.INSTANCE.isEchoEnabled()) {
+						System.out.println("Data have arrived in " + coverageFile);
+					}
+					WcsAdapter.setCachedFile(coverageFile, layerId, space.encode());
+				} catch (Throwable e) {
+					throw new KlabIOException(e);
+				}
+			}
+
+			GeoTiffReader reader = new GeoTiffReader(coverageFile);
+			return reader.read(MiscUtilities.getFileBaseName(coverageFile), null);
+
+		} catch (Throwable e) {
+			Logging.INSTANCE.error(e);
+		}
+		return null;
+	}
+
+	public String getWCSGetCoverageUrl(ISpace space, String namespace, String layerId) {
+
+		if (space.shape().length != 2 || !space.isRegular()) {
+			throw new IllegalArgumentException("cannot retrieve  a grid dataset from WCS in a non-grid context");
+		}
+
+		Projection crs = (Projection) space.getProjection();
+		IEnvelope env = space.getEnvelope();
+
+		int xc = (int) space.shape()[0];
+		int yc = (int) space.shape()[1];
+
+		double west = env.getMinX();
+		double east = env.getMaxX();
+		double south = env.getMinY();
+		double north = env.getMaxY();
+
+		/*
+		 * jiggle by the projection's equivalent of a few meters if we're asking for a
+		 * single point, so WCS does not go crazy.
+		 */
+		if (NumberUtils.equal(west, east)) {
+			double delta = (crs.getCoordinateReferenceSystem().getCoordinateSystem().getAxis(0).getMaximumValue()
+					- crs.getCoordinateReferenceSystem().getCoordinateSystem().getAxis(0).getMinimumValue())
+					/ 3900000.0;
+			west -= delta;
+			east += delta;
+		}
+
+		if (NumberUtils.equal(north, south)) {
+			double delta = (crs.getCoordinateReferenceSystem().getCoordinateSystem().getAxis(1).getMaximumValue()
+					- crs.getCoordinateReferenceSystem().getCoordinateSystem().getAxis(1).getMinimumValue())
+					/ 3900000.0;
+			south -= delta;
+			north += delta;
+		}
+
+		final String version = "1.0.0";
+		return this.getServiceUrl() + "?service=WCS&version=" + version + "&request=GetCoverage&coverage=" + namespace
+				+ ":" + layerId + "&bbox=" + west + "," + south + "," + east + "," + north + "&crs="
+				+ crs.getSimpleSRS() + "&responseCRS=" + crs.getSimpleSRS() + "&width=" + xc + "&height=" + yc
+				+ "&format=" + "GeoTIFF";
+
+	}
+
+	/**
+	 * Encode data into a pre-configured state builder.
+	 * 
+	 * @param coverage
+	 * @param grid
+	 * @param builder
+	 * @param band
+	 * @param noDataValue
+	 */
+	public void encode(GridCoverage coverage, IGrid grid, IKlabData.Builder builder, int band,
+			double noDataValue, Function<Number, Number> converter) {
+
+		/*
+		 * Set the data from the transformed coverage
+		 */
+		RenderedImage image = coverage.getRenderedImage();
+		RandomIter iterator = RandomIterFactory.create(image, null);
+		Set<Double> nodata = new HashSet<>();
+		nodata.add(noDataValue);
+
+		for (long ofs = 0; ofs < grid.getCellCount(); ofs++) {
+
+			long[] xy = Grid.getXYCoordinates(ofs, grid.getXCells(), grid.getYCells());
+			double value = iterator.getSampleDouble((int) xy[0], (int) xy[1], band);
+
+			// this is cheeky but will catch most of the nodata and
+			// none of the good data
+			// FIXME see if this is really necessary
+			if (value < -1.0E35 || value > 1.0E35) {
+				value = Double.NaN;
+			}
+
+			for (double nd : nodata) {
+				if (NumberUtils.equal(value, nd)) {
+					value = Double.NaN;
+					break;
+				}
+			}
+			
+			if (converter != null && Observations.INSTANCE.isData(value)) {
+			    value = converter.apply(value).doubleValue();
+			}
+			
+			builder.add(value);
+		}
 	}
 
 }

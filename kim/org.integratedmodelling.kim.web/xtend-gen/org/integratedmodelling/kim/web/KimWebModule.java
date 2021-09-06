@@ -3,8 +3,6 @@
  */
 package org.integratedmodelling.kim.web;
 
-import org.integratedmodelling.kim.web.AbstractKimWebModule;
-
 /**
  * Use this class to register additional components to be used within the web application.
  */

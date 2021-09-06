@@ -7,7 +7,6 @@ import org.integratedmodelling.klab.hub.HubApplication;
 import org.integratedmodelling.klab.hub.HubStartupOptions;
 import org.integratedmodelling.klab.hub.authentication.HubAuthenticationManager;
 import org.junit.BeforeClass;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;

@@ -4,8 +4,6 @@
  */
 package org.integratedmodelling.kim.ui.quickfix;
 
-import org.integratedmodelling.kim.ui.quickfix.KnowledgeDeclarationQuickfixProvider;
-
 /**
  * Custom quickfixes.
  * 
