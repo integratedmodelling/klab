@@ -472,7 +472,7 @@ public class WCSService {
 
 		if (db == null) {
 
-			File dpath = Configuration.INSTANCE.getDataPath("wcs");
+			File dpath = Configuration.INSTANCE.getDataPath("ogc/wcs");
 			dpath.mkdirs();
 
 			db = DBMaker.fileDB(new File(dpath + File.separator + "wcscache.dat")).closeOnJvmShutdown()
