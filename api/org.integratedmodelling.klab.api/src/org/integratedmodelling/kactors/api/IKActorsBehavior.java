@@ -143,11 +143,20 @@ public interface IKActorsBehavior extends IKActorsCodeStatement {
     File getFile();
 
     /**
-     * All behaviors imported, resolved and parsed.
+     * A string linked to the 'output' preamble statement. Used in test cases to identify the log
+     * file or available for other purposes in scripts.
      * 
      * @return
      */
-    List<IKActorsBehavior> getImports();
+    String getOutput();
+
+    /**
+     * All behaviors imported, resolved and parsed. May refer to imported behaviors or to libraries,
+     * both native and k.Actors.
+     * 
+     * @return
+     */
+    List<String> getImports();
 
     /**
      * All the actions declared in this behavior (not in the imported ones)

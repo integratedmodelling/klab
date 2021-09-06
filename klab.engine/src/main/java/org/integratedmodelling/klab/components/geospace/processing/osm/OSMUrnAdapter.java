@@ -12,6 +12,7 @@ import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
 import org.integratedmodelling.klab.api.extensions.UrnAdapter;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
@@ -48,7 +49,7 @@ public class OSMUrnAdapter implements IUrnAdapter {
 
 			if (data.containsKey(Geocoder.GEOMETRY_FIELD)) {
 				Shape shape = Shape.create(
-						data.get(Geocoder.GEOMETRY_FIELD, com.vividsolutions.jts.geom.Geometry.class),
+						data.get(Geocoder.GEOMETRY_FIELD, org.locationtech.jts.geom.Geometry.class),
 						Projection.getLatLon());
 				// TODO adjust, parameterize for power users
 				shape.simplifyIfNecessary(1000, 2000);
@@ -125,5 +126,11 @@ public class OSMUrnAdapter implements IUrnAdapter {
 		ref.setType(Type.VALUE); // for now
 		return new Resource(ref);
 	}
+
+    @Override
+    public IResource contextualize(IResource resource, IGeometry scale, IGeometry overallScale, IObservable semantics) {
+        /* TODO should check that OSM is online */
+        return resource;
+    }
 
 }

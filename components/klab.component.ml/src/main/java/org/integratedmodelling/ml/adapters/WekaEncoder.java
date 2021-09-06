@@ -324,7 +324,7 @@ public class WekaEncoder implements IResourceEncoder {
 			if (resource.getType() == IArtifact.Type.NUMBER) {
 				EnumeratedRealDistribution distribution = new EnumeratedRealDistribution(
 						instances.getPredictedDiscretization().getMidpoints(), (double[]) prediction);
-				target.add(distribution.getNumericalMean(), locator);
+				target.set(distribution.getNumericalMean(), locator);
 
 				if (this.uncertaintyState != null) {
 					/*
@@ -346,19 +346,19 @@ public class WekaEncoder implements IResourceEncoder {
 //						makeProbabilities(dataKey, (double[]) prediction));
 				int val = NumberUtils.indexOfLargest((double[]) prediction);
 				if (resource.getType() == IArtifact.Type.BOOLEAN) {
-					target.add(val == 0 ? Boolean.FALSE : Boolean.TRUE, locator);
+					target.set(val == 0 ? Boolean.FALSE : Boolean.TRUE, locator);
 				} else if (resource.getType() == IArtifact.Type.CONCEPT) {
-					target.add(dataKey.lookup(val), locator);
+					target.set(dataKey.lookup(val), locator);
 				}
 			}
 
 		} else {
 			if (resource.getType() == IArtifact.Type.NUMBER) {
-				target.add(prediction, locator);
+				target.set(prediction, locator);
 			} else if (resource.getType() == IArtifact.Type.BOOLEAN) {
-				target.add(((Number) prediction).intValue() == 0 ? Boolean.FALSE : Boolean.TRUE, locator);
+				target.set(((Number) prediction).intValue() == 0 ? Boolean.FALSE : Boolean.TRUE, locator);
 			} else if (resource.getType() == IArtifact.Type.CONCEPT) {
-				target.add(dataKey.lookup(((Number) prediction).intValue()), locator);
+				target.set(dataKey.lookup(((Number) prediction).intValue()), locator);
 			}
 
 		}

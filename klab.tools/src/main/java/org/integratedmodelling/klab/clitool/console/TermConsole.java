@@ -59,7 +59,9 @@ public class TermConsole implements IConsole {
 
 	public class Monitor implements IMonitor {
 
-		@Override
+		private int waitTime;
+
+        @Override
 		public void send(Object... o) {
 			if (o != null && o.length > 0) {
 				IMessageBus bus = Klab.INSTANCE.getMessageBus();
@@ -141,6 +143,19 @@ public class TermConsole implements IConsole {
 		public boolean isInterrupted() {
 			return false;
 		}
+
+        @Override
+        public void addWait(int seconds) {
+            // TODO improve with specific messages
+            this.waitTime = seconds;
+            warn("Please try this operation again in " + seconds + " seconds");
+        }
+
+        @Override
+        public int getWaitTime() {
+            // TODO Auto-generated method stub
+            return this.waitTime;
+        }
 
 	}
 

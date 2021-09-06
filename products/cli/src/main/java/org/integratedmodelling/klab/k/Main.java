@@ -1,11 +1,13 @@
 package org.integratedmodelling.klab.k;
 
-import org.apache.commons.lang.StringUtils;
+import org.integratedmodelling.klab.Actors;
+import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.clitool.CliRuntime;
 import org.integratedmodelling.klab.clitool.CliStartupOptions;
 import org.integratedmodelling.klab.clitool.console.SysConsole;
 import org.integratedmodelling.klab.clitool.console.TermConsole;
 import org.integratedmodelling.klab.engine.EngineStartupOptions;
+import org.integratedmodelling.klab.engine.runtime.Session;
 
 /**
  * A CLI-driven k.LAB modeler.
@@ -15,29 +17,32 @@ import org.integratedmodelling.klab.engine.EngineStartupOptions;
  */
 public class Main {
 
-	public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
 
-		CliStartupOptions options = new CliStartupOptions();
-		// default
-		options.setNetwork(true);
-		options.initialize(args);
+        CliStartupOptions options = new CliStartupOptions();
+        options.initialize(args);
 
-		if (options.isHelp()) {
-			System.out.println(new EngineStartupOptions().usage());
-			System.exit(0);
-		}
+        if (options.isHelp()) {
+            System.out.println(new EngineStartupOptions().usage());
+            System.exit(0);
+        }
 
-		if (options.getArguments().length == 0) {
-			TermConsole console = new TermConsole();
-			console.start(options);
-		} else {
-			SysConsole console = new SysConsole();
-			CliRuntime.INSTANCE.initialize(console, options);
-			String command = StringUtils.join(options.getArguments(), ' ');
-			if (!command.trim().isEmpty()) {
-				CliRuntime.INSTANCE.getCommandProcessor().processCommand(command);
-			}
-			CliRuntime.INSTANCE.shutdown();
-		}
-	}
+        if (options.getArguments().length == 0) {
+            // default
+            options.setNetwork(true);
+            TermConsole console = new TermConsole();
+            console.start(options);
+        } else {
+            SysConsole console = new SysConsole();
+            ISession session = CliRuntime.INSTANCE.initialize(console, options);
+            int exitCode = 0;
+            for (String argument : options.getArguments()) {
+                if (argument.endsWith(".kactors")) {
+                    exitCode += Actors.INSTANCE.run(argument, session);
+                }
+            }            
+            CliRuntime.INSTANCE.shutdown();
+            System.exit(exitCode);
+        }
+    }
 }

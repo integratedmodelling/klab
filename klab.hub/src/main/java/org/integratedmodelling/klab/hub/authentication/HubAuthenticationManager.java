@@ -19,6 +19,9 @@ import org.integratedmodelling.klab.rest.IdentityReference;
 import org.joda.time.DateTime;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
+import org.reflections.util.ConfigurationBuilder;
+import org.reflections.util.FilterBuilder;
+import org.reflections.util.ClasspathHelper;
 
 public enum HubAuthenticationManager {
 	
@@ -46,8 +49,12 @@ public enum HubAuthenticationManager {
 	LegacyLicenseConfig licenseConfig;
 
 	private HubAuthenticationManager() {
-
-		for (String test : new Reflections(new ResourcesScanner()).getResources(Pattern.compile(".*\\.cert"))) {
+		ConfigurationBuilder config = new ConfigurationBuilder()
+	     .setUrls(ClasspathHelper.forPackage("org.integratedmodelling.klab.hub"))
+	     .setScanners(new ResourcesScanner())
+	     .filterInputsBy(new FilterBuilder().include((".*\\.cert")));
+	     
+		for (String test : new Reflections(config).getResources(Pattern.compile(".*\\.cert"))) {
 			KlabCertificate certificate = KlabCertificate.createFromClasspath(test);
 			if (certificate.isValid()) {
 				if (certificate.getType() == ICertificate.Type.NODE) {

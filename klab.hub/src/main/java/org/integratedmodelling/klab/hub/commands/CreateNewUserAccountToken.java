@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.hub.commands;
 
 import org.integratedmodelling.klab.hub.api.TokenNewUserClickback;
-import org.integratedmodelling.klab.hub.api.TokenVerifyAccountClickback;
 import org.integratedmodelling.klab.hub.config.LinkConfig;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.repository.TokenRepository;

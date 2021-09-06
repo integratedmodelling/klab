@@ -11,6 +11,7 @@ import org.integratedmodelling.klab.hub.commands.GetMongoGroupByName;
 import org.integratedmodelling.klab.hub.commands.MongoGroupExists;
 import org.integratedmodelling.klab.hub.commands.UpdateMongoGroup;
 import org.integratedmodelling.klab.hub.exception.GroupDoesNotExistException;
+import org.integratedmodelling.klab.hub.exception.GroupExistException;
 import org.integratedmodelling.klab.hub.listeners.HubEventPublisher;
 import org.integratedmodelling.klab.hub.listeners.RemoveGroup;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
@@ -49,6 +50,9 @@ public class GroupServiceImpl implements GroupService {
 
 	@Override
 	public MongoGroup create(MongoGroup group) {
+		if(repository.findByNameIgnoreCase(group.getName()).isPresent()) {
+			throw new GroupExistException("Group by the name: " + group.getName() + " already exists");
+		}
 		 return new CreateMongoGroup(group, repository).execute();
 	}
 

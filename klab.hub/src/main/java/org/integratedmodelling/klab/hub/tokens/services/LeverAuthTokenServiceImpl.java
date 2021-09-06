@@ -9,7 +9,6 @@ import org.integratedmodelling.klab.hub.commands.CreateLeverAuthenticationToken;
 import org.integratedmodelling.klab.hub.exception.AuthenticationFailedException;
 import org.integratedmodelling.klab.hub.repository.MongoLeverRepository;
 import org.integratedmodelling.klab.hub.repository.TokenRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service

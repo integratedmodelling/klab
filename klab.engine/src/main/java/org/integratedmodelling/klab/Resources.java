@@ -37,6 +37,7 @@ import org.integratedmodelling.klab.api.data.IResourceCalculator;
 import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
+import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator.Operation;
@@ -49,6 +50,7 @@ import org.integratedmodelling.klab.api.knowledge.IWorldview;
 import org.integratedmodelling.klab.api.model.IConceptDefinition;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -79,6 +81,8 @@ import org.integratedmodelling.klab.engine.resources.MonitorableFileWorkspace;
 import org.integratedmodelling.klab.engine.resources.Project;
 import org.integratedmodelling.klab.engine.resources.PublicResourceCatalog;
 import org.integratedmodelling.klab.engine.resources.ServiceWorkspace;
+import org.integratedmodelling.klab.engine.resources.Workspace;
+import org.integratedmodelling.klab.engine.resources.Worldview;
 import org.integratedmodelling.klab.engine.runtime.AbstractTask;
 import org.integratedmodelling.klab.engine.runtime.SimpleRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
@@ -101,6 +105,7 @@ import org.integratedmodelling.klab.rest.ProjectReference;
 import org.integratedmodelling.klab.rest.ResourceAdapterReference;
 import org.integratedmodelling.klab.rest.ResourceAdapterReference.OperationReference;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
+import org.integratedmodelling.klab.rest.ResourceContextualizationRequest;
 import org.integratedmodelling.klab.rest.ResourceDataRequest;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.rest.SessionActivity;
@@ -109,6 +114,7 @@ import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.rest.TicketResponse;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.FileUtils;
+import org.integratedmodelling.klab.utils.GitUtils;
 import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Pair;
@@ -120,8 +126,6 @@ import org.integratedmodelling.klab.utils.ZipUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-
-import com.openhtmltopdf.css.parser.property.PrimitivePropertyBuilders.Display;
 
 /**
  * Management and resolution of URNs. Also holds the URN metadata database for local and public
@@ -179,6 +183,9 @@ public enum Resources implements IResourceService {
     Map<String, Map<String, Project>> projectCatalog = new HashMap<>();
 
     Map<String, IWorkspace> workspaces = new HashMap<>();
+
+    // this is only for load-on-demand workspaces, engendered by loading "singleton" projects on demand
+    Map<File, IWorkspace> workspacesByRoot = new HashMap<>();
 
     /**
      * The core workspace, only containing the OWL knowledge distributed with the software, and no
@@ -302,7 +309,8 @@ public enum Resources implements IResourceService {
      */
     public boolean loadWorldview(ICertificate certificate, IMonitor monitor) {
         try {
-            worldview = certificate.getWorldview();
+            worldview = new Worldview(certificate.getWorldview(), Configuration.INSTANCE.getDataPath("worldview"),
+                    certificate.getWorldviewRepositories());
             this.loader = worldview.load(this.loader, monitor);
             workspaces.put(worldview.getName(), worldview);
             return true;
@@ -385,6 +393,25 @@ public enum Resources implements IResourceService {
             ret.add(retrieveOrCreate(project));
         }
         return ret;
+    }
+
+    /**
+     * 
+     * @param gitUrl
+     * @return
+     */
+    public IProject retrieveAndLoadProject(String gitUrl) {
+        String projectId = GitUtils.requireUpdatedRepository(gitUrl, Configuration.INSTANCE.getDataPath("temp/projects"));
+        return projectId == null ? null : loadSingleton(projectId, Configuration.INSTANCE.getDataPath("temp/projects"));
+    }
+
+    public IProject loadSingleton(String projectId, File dataPath) {
+        IWorkspace workspace = workspacesByRoot.get(dataPath);
+        if (workspace == null) {
+            workspace = new Workspace(dataPath);
+            workspacesByRoot.put(dataPath, workspace);
+        }
+        return workspace.loadProject(projectId, Klab.INSTANCE.getRootMonitor());
     }
 
     /**
@@ -1067,7 +1094,7 @@ public enum Resources implements IResourceService {
                 ResourceDataRequest request = new ResourceDataRequest();
                 request.setUrn(urn.toString());
                 request.setGeometry(geometry.encode());
-                builder = new DecodingDataBuilder(node.getClient().post(API.NODE.RESOURCE.CONTEXTUALIZE, request, Map.class),
+                builder = new DecodingDataBuilder(node.getClient().post(API.NODE.RESOURCE.GET_DATA, request, Map.class),
                         Expression.emptyContext(geometry, monitor));
             }
         }
@@ -1215,7 +1242,7 @@ public enum Resources implements IResourceService {
                 request.setUrn(urn.toString());
                 request.setGeometry(geometry.encode());
                 DecodingDataBuilder builder = new DecodingDataBuilder(
-                        node.getClient().post(API.NODE.RESOURCE.CONTEXTUALIZE, request, Map.class), context);
+                        node.getClient().post(API.NODE.RESOURCE.GET_DATA, request, Map.class), context);
                 IKlabData ret = builder.build();
 
                 if (descriptor != null) {
@@ -1373,6 +1400,7 @@ public enum Resources implements IResourceService {
         return localResourceCatalog;
     }
 
+    @Override
     public PublicResourceCatalog getPublicResourceCatalog() {
         return publicResourceCatalog;
     }
@@ -1955,6 +1983,46 @@ public enum Resources implements IResourceService {
             }
         }
         return null;
+    }
+
+    public IResource contextualizeResource(Resource resource, Map<String, String> urnParameters, IScale scale,
+            IArtifact observation, IContextualizationScope scope) {
+
+        Urn urn = new Urn(resource.getUrn());
+
+        if (Urns.INSTANCE.isLocal(resource.getUrn())) {
+            IResourceAdapter adapter = Resources.INSTANCE.getResourceAdapter(resource.getAdapterType());
+            if (adapter != null) {
+                IResourceEncoder encoder = adapter.getEncoder();
+                if (encoder != null) {
+                    return encoder.contextualize(resource, scale, observation, urnParameters, scope);
+                }
+            }
+        } else {
+
+            /*
+             * if it's universal and we have the adapter, handle locally
+             */
+            if (Urns.INSTANCE.isUniversal(resource.getUrn())) {
+                IUrnAdapter adapter = getUrnAdapter(urn.getCatalog());
+                if (adapter != null) {
+                    return adapter.contextualize(resource, scale, ((IObservation) observation).getScale(),
+                            ((IObservation) observation).getObservable());
+                }
+            }
+
+            INodeIdentity node = Network.INSTANCE.getNodeForResource(urn);
+            if (node != null) {
+                ResourceContextualizationRequest request = new ResourceContextualizationRequest();
+                request.setResource(resource.getReference());
+                request.setGeometry(((Scale) scale).asGeometry().encode());
+                request.setOverallGeometry(((Scale) ((IObservation) observation).getScale()).asGeometry().encode());
+                ResourceReference reference = node.getClient().post(API.NODE.RESOURCE.CONTEXTUALIZE, request,
+                        ResourceReference.class);
+                return new Resource(reference);
+            }
+        }
+        return resource;
     }
 
 }

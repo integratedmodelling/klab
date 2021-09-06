@@ -825,4 +825,27 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
         return null;
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T extends IArtifact> Collection<T> getAnyArtifact(IConcept concept, Class<T> cls) {
+        
+        Set<T> ret = new HashSet<>();
+        for (IArtifact artifact : artifacts.values()) {
+            if (artifact instanceof IObservation && ((IObservation) artifact).getObservable().getType().is(concept)) {
+                ret.add((T)artifact);
+            }
+        }
+
+        Set<T> chosen = new HashSet<>();
+        if (ret.size() > 1) {
+            for (IArtifact artifact : ret) {
+                if (cls.isAssignableFrom(artifact.getClass())) {
+                    chosen.add((T)artifact);
+                }
+            }
+        }
+
+        return chosen;
+    }
+
 }

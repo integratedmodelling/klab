@@ -3,6 +3,7 @@ package org.integratedmodelling.kactors.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.emf.ecore.EObject;
 import org.integratedmodelling.kactors.api.IKActorsStatement.Assert;
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.kactors.AssertStatement;
@@ -12,10 +13,15 @@ public class KActorsAssert extends KActorsStatement implements Assert {
 	
 	List<Assertion> assertions = new ArrayList<>();
 
-	class AssertionImpl  implements Assertion {
+	class AssertionImpl extends KActorsStatement implements Assertion {
 		
-		List<Call> calls = new ArrayList<>();
+		public AssertionImpl(EObject statement, KActorCodeStatement parent) {
+            super(statement, parent, Type.ASSERTION);
+        }
+
+        List<Call> calls = new ArrayList<>();
 		KActorsValue expression = null;
+		KActorsValue value = null;
 
 		@Override
 		public List<Call> getCalls() {
@@ -27,13 +33,19 @@ public class KActorsAssert extends KActorsStatement implements Assert {
 			return expression;
 		}
 
+        @Override
+        public IKActorsValue getValue() {
+            return value;
+        }
 		
 	}
 	
 	public KActorsAssert(AssertStatement statement, KActorCodeStatement parent) {
-		super(statement, parent, Type.ASSERT_STATEMENT);
+		
+	    super(statement, parent, Type.ASSERT_STATEMENT);
+		
 		for (org.integratedmodelling.kactors.kactors.Assertion ass : statement.getAssertions()) {
-			AssertionImpl nass = new AssertionImpl();
+			AssertionImpl nass = new AssertionImpl(ass, this);
 			
 			if (ass.getExpression() != null) {
 				nass.expression = new KActorsValue(ass.getExpression(), this);
@@ -41,6 +53,10 @@ public class KActorsAssert extends KActorsStatement implements Assert {
 				for (MessageCall call : ass.getMethodCalls()) {
 					nass.calls.add(new KActorsActionCall(call, this));
 				}
+			}
+			
+			if (ass.getValue() != null) {
+			    nass.value = new KActorsValue(ass.getValue(), this);
 			}
 			
 			assertions.add(nass);

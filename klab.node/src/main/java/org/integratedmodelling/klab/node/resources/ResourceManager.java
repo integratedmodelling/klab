@@ -25,6 +25,7 @@ import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IIndexingService.Match;
@@ -353,6 +354,13 @@ public class ResourceManager {
         ret.put("adapter", adapter == null ? "UNKNOWN" : adapter.getName());
         ret.putAll(adapter.getValidator().describeResource(resource));
         return ret;
+    }
+
+    public ResourceReference contextualizeResource(ResourceReference resource, IGeometry geometry, IObservable semantics) {
+        /*
+         * TODO check availability with adapter and if needed, insert availability record in metadata
+         */
+        return resource;
     }
 
 }

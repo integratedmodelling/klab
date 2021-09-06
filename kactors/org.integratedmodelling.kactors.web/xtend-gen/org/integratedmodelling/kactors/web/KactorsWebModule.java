@@ -3,8 +3,6 @@
  */
 package org.integratedmodelling.kactors.web;
 
-import org.integratedmodelling.kactors.web.AbstractKactorsWebModule;
-
 /**
  * Use this class to register additional components to be used within the web application.
  */

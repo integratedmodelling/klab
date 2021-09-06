@@ -63,7 +63,22 @@ public class UrnCharacterizer implements IResolver<IArtifact>, IProcessor, IExpr
     public IArtifact resolve(IArtifact ret, IContextualizationScope context) throws KlabException {
 
         IResource res = this.resource.contextualize(context.getScale(), context.getTargetArtifact(), urnParameters, context);
-
+        
+        if (res.getAvailability() != null) {
+            switch(res.getAvailability().getAvailability()) {
+            case DELAYED:
+                context.getMonitor().addWait(res.getAvailability().getRetryTimeSeconds());
+                return ret;
+            case NONE:
+                context.getMonitor().error("resource " + resource.getUrn() + " has no data available in this context");
+                return ret;
+            case PARTIAL:
+                context.getMonitor().warn("resource " + resource.getUrn() + " reports partial availability in this context");
+                break;
+            case COMPLETE:
+                break;
+            }
+        }
         IKlabData data = Resources.INSTANCE.getResourceData(res, urnParameters, context.getScale(), context);
         if (data != null) {
             IConcept concept = data.getSemantics();

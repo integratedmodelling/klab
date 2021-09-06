@@ -1,22 +1,26 @@
 package org.integratedmodelling.klab.engine.extensions;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.integratedmodelling.kdl.api.IKdlActuator;
 import org.integratedmodelling.kdl.api.IKdlDataflow;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.Annotations;
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
@@ -71,6 +75,16 @@ public class Component implements IComponent {
 		this.name = annotation.id();
 		this.version = Version.create(annotation.version());
 		this.implementingClass = implementation;
+		this.properties = new Properties();
+
+		File propertyFile = new File(Configuration.INSTANCE.getDataPath() + File.separator + name + ".properties");
+		if (propertyFile.exists()) {
+			try (InputStream input = new FileInputStream(propertyFile)) {
+				properties.load(input);
+			} catch (IOException e) {
+				Logging.INSTANCE.error(e);
+			}
+		}
 
 		try {
 			// TODO scan methods and exec/store setup and initialization
@@ -469,14 +483,20 @@ public class Component implements IComponent {
 	@Override
 	public List<IBehavior> getBehaviors() {
 		// TODO Auto-generated method stub
-		return null;
+        return Collections.emptyList();
 	}
 
 	@Override
 	public List<IBehavior> getApps() {
 		// TODO Auto-generated method stub
-		return null;
+        return Collections.emptyList();
 	}
+
+    @Override
+    public List<IBehavior> getUnitTests() {
+        // TODO Auto-generated method stub
+        return Collections.emptyList();
+    }
 
 	@Override
 	public IMetadata getStatus() {
@@ -492,6 +512,11 @@ public class Component implements IComponent {
 			}
 		}
 		return ret;
+	}
+
+	@Override
+	public Properties getProperties() {
+		return properties;
 	}
 
 }

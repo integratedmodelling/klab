@@ -25,7 +25,7 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 	private Class<?> valueClass;
 	boolean open = false;
 	private long highestSliceIndex = -1;
-	private DataType type;
+	private DataType type_;
 	private MappedByteBuffer page0;
 	private MappedByteBuffer page1;
 	private long pageIndex0 = -1;
@@ -53,33 +53,33 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 
 	private DataType getDatatype() {
 
-		if (type == null) {
+		if (type_ == null) {
 
 			if (valueClass == Double.class) {
 				// Double.NaN for nodata
-				type = DataType.DOUBLE;
+				type_ = DataType.DOUBLE;
 			} else if (valueClass == Short.class) {
 				// Short.MIN_VALUE for nodata
-				type = DataType.SHORT;
+				type_ = DataType.SHORT;
 			} else if (valueClass == Integer.class) {
 				// Integer.MIN_VALUE for nodata
-				type = DataType.INT;
+				type_ = DataType.INT;
 			} else if (valueClass == Long.class) {
 				// Long.MIN_VALUE for nodata
-				type = DataType.LONG;
+				type_ = DataType.LONG;
 			} else if (valueClass == Float.class) {
 				// Float.NaN for nodata
-				type = DataType.FLOAT;
+				type_ = DataType.FLOAT;
 			} else if (valueClass == Boolean.class) {
 				// 0 for false, 1 for true, Byte.MIN_VALUE for nodata
-				type = DataType.BYTE;
+				type_ = DataType.BYTE;
 			} else {
 				throw new IllegalStateException(
 						"file-backed storage cannot use type " + valueClass.getCanonicalName());
 			}
 		}
 
-		return type;
+		return type_;
 	}
 
 	private Object getNodataValue() {
@@ -103,7 +103,7 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 	}
 
 	private boolean isNodata(Object value) {
-		switch (type) {
+		switch (type_) {
 		case BYTE:
 			return value instanceof Number && ((Number) value).byteValue() == Byte.MIN_VALUE;
 		case DOUBLE:
@@ -165,14 +165,14 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 		}
 		
 		if (offset >= 0) {
-			page.position((int) offset * type.size);
+			page.position((int) offset * type_.size);
 		}
 
 		if (val instanceof Boolean) {
 			val = Byte.valueOf((byte) (((Boolean) val) ? 1 : 0));
 		}
 
-		switch (type) {
+		switch (type_) {
 		case BYTE:
 			page.put(((Byte) val).byteValue());
 			break;
@@ -206,10 +206,10 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 	private Object get(MappedByteBuffer page, long offset) {
 
 		if (offset >= 0) {
-			page.position((int) offset * type.size);
+			page.position((int) offset * type_.size);
 		}
 
-		switch (type) {
+		switch (type_) {
 		case BYTE:
 			byte b = page.get();
 			return b == Byte.MIN_VALUE ? null : (b == 1);
@@ -258,8 +258,8 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 
 	private Object getDirect(long offsetInSlice, long backendTimeSlice) {
 		try {
-			storage.seek((backendTimeSlice * getSliceSize() * type.size) + (offsetInSlice * type.size));
-			switch (type) {
+			storage.seek((backendTimeSlice * getSliceSize() * type_.size) + (offsetInSlice * type_.size));
+			switch (type_) {
 			case BYTE:
 				return storage.readByte();
 			case DOUBLE:
@@ -288,8 +288,8 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 		}
 		
 		try {
-			storage.seek((backendTimeSlice * getSliceSize() * type.size) + (offsetInSlice * type.size));
-			switch (type) {
+			storage.seek((backendTimeSlice * getSliceSize() * type_.size) + (offsetInSlice * type_.size));
+			switch (type_) {
 			case BYTE:
 				storage.writeByte(((Byte) value).byteValue());
 				break;

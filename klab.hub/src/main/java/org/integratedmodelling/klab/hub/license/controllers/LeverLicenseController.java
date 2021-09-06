@@ -9,7 +9,6 @@ import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.hub.api.LeverAuthResponseFactory;
 import org.integratedmodelling.klab.hub.api.LicenseConfiguration;
 import org.integratedmodelling.klab.hub.licenses.services.LicenseConfigService;
-import org.integratedmodelling.klab.hub.repository.LicenseConfigRepository;
 import org.integratedmodelling.klab.hub.tokens.services.LeverAuthTokenService;
 import org.integratedmodelling.klab.rest.LeverAuthenticationRequest;
 import org.integratedmodelling.klab.rest.LeverAuthenticationResponse;

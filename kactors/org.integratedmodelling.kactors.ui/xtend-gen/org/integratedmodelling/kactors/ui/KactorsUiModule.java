@@ -8,7 +8,6 @@ import org.eclipse.xtend.lib.annotations.FinalFieldsConstructor;
 import org.eclipse.xtext.ide.editor.syntaxcoloring.ISemanticHighlightingCalculator;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.AbstractAntlrTokenToAttributeIdMapper;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
-import org.integratedmodelling.kactors.ui.AbstractKactorsUiModule;
 import org.integratedmodelling.kactors.ui.contentassist.KactorsHighlightingCalculator;
 import org.integratedmodelling.kactors.ui.contentassist.KactorsHighlightingConfiguration;
 import org.integratedmodelling.kactors.ui.contentassist.KactorsSyntaxHighlighter;

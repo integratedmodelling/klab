@@ -9,8 +9,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.measure.unit.Dimension;
-import javax.measure.unit.ProductUnit;
+import javax.measure.Dimension;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.data.Aggregation;
@@ -27,15 +26,20 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.api.services.IUnitService;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
-import org.integratedmodelling.klab.scale.AbstractExtent;
 import org.integratedmodelling.klab.scale.Scale;
 
 import com.google.common.collect.Sets;
+
+import tech.units.indriya.unit.ProductUnit;
+import tech.units.indriya.unit.UnitDimension;
 
 public enum Units implements IUnitService {
 
@@ -58,7 +62,12 @@ public enum Units implements IUnitService {
     public IUnit SQUARE_KILOMETERS = getUnit("km^2");
     public IUnit CUBIC_METERS = getUnit("m^3");
     public IUnit SECONDS = getUnit("s");
+    public IUnit DAYS = getUnit("d");
+    public IUnit WEEKS = getUnit("wk");
     public IUnit YEARS = getUnit("year");
+    // TODO enable when indriya is updated
+    // public IUnit MONTHS = getUnit("mo");
+    public IUnit MINUTES = getUnit("min");
     public IUnit HOURS = getUnit("h");
     public IUnit MILLISECONDS = getUnit("ms");
 
@@ -66,10 +75,19 @@ public enum Units implements IUnitService {
 
     @Override
     public Unit getUnit(String string) {
-        return Unit.create(string);
+        try {
+            return Unit.create(string);
+        } catch (Throwable t) {
+            Logging.INSTANCE.error("Can't predefine unit '" + string + "': set as null, expect problems");
+        }
+        return null;
     }
 
     private Units() {
+
+        // this is some steve bullshit to make the formatter happy, again no idea what
+        // he is doing
+
         Services.INSTANCE.registerService(this, IUnitService.class);
     }
 
@@ -85,9 +103,9 @@ public enum Units implements IUnitService {
         if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
             ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
             for (int i = 0; i < pu.getUnitCount(); i++) {
-                javax.measure.unit.Unit<?> su = pu.getUnit(i);
+                javax.measure.Unit<?> su = pu.getUnit(i);
                 int power = pu.getUnitPow(i);
-                if (su.getDimension().equals(Dimension.TIME) && power == -1) {
+                if (su.getDimension().equals(UnitDimension.TIME) && power == -1) {
                     ret = true;
                     break;
                 }
@@ -107,9 +125,9 @@ public enum Units implements IUnitService {
         if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
             ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
             for (int i = 0; i < pu.getUnitCount(); i++) {
-                javax.measure.unit.Unit<?> su = pu.getUnit(i);
+                javax.measure.Unit<?> su = pu.getUnit(i);
                 int power = pu.getUnitPow(i);
-                if (su.getDimension().equals(Dimension.TIME) && power == -1) {
+                if (su.getDimension().equals(UnitDimension.TIME) && power == -1) {
                     return new Unit(su);
                 }
             }
@@ -128,9 +146,9 @@ public enum Units implements IUnitService {
         if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
             ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
             for (int i = 0; i < pu.getUnitCount(); i++) {
-                javax.measure.unit.Unit<?> su = pu.getUnit(i);
+                javax.measure.Unit<?> su = pu.getUnit(i);
                 int power = pu.getUnitPow(i);
-                if (su.getDimension().equals(Dimension.LENGTH) && power == -1) {
+                if (su.getDimension().equals(UnitDimension.LENGTH) && power == -1) {
                     ret = true;
                     break;
                 }
@@ -150,9 +168,9 @@ public enum Units implements IUnitService {
         if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
             ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
             for (int i = 0; i < pu.getUnitCount(); i++) {
-                javax.measure.unit.Unit<?> su = pu.getUnit(i);
+                javax.measure.Unit<?> su = pu.getUnit(i);
                 int power = pu.getUnitPow(i);
-                if (su.getDimension().equals(Dimension.LENGTH) && power == -1) {
+                if (su.getDimension().equals(UnitDimension.LENGTH) && power == -1) {
                     return new Unit(su);
                 }
             }
@@ -160,7 +178,7 @@ public enum Units implements IUnitService {
         return null;
     }
 
-    private javax.measure.unit.Unit<?> getPrimaryUnit(javax.measure.unit.Unit<?> uu) {
+    private javax.measure.Unit<?> getPrimaryUnit(javax.measure.Unit<?> uu) {
 
         if (uu instanceof ProductUnit<?>) {
             ProductUnit<?> pu = (ProductUnit<?>) uu;
@@ -169,7 +187,7 @@ public enum Units implements IUnitService {
         return uu;
     }
 
-    public javax.measure.unit.Unit<?> getPrimaryUnit(IUnit unit) {
+    public javax.measure.Unit<?> getPrimaryUnit(IUnit unit) {
         return getPrimaryUnit(((Unit) unit).getUnit());
     }
 
@@ -178,9 +196,9 @@ public enum Units implements IUnitService {
         if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
             ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
             for (int i = 0; i < pu.getUnitCount(); i++) {
-                javax.measure.unit.Unit<?> su = pu.getUnit(i);
+                javax.measure.Unit<?> su = pu.getUnit(i);
                 int power = pu.getUnitPow(i);
-                if ((su.getDimension().equals(Dimension.LENGTH) && power == 2)) {
+                if ((su.getDimension().equals(UnitDimension.LENGTH) && power == 2)) {
                     ret = true;
                     break;
                 }
@@ -200,10 +218,10 @@ public enum Units implements IUnitService {
         if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
             ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
             for (int i = 0; i < pu.getUnitCount(); i++) {
-                javax.measure.unit.Unit<?> su = pu.getUnit(i);
+                javax.measure.Unit<?> su = pu.getUnit(i);
                 int power = pu.getUnitPow(i);
-                if ((su.getDimension().equals(Dimension.LENGTH.pow(2)) && power == -1)
-                        || (su.getDimension().equals(Dimension.LENGTH) && power == -2)) {
+                if ((su.getDimension().equals(UnitDimension.LENGTH.pow(2)) && power == -1)
+                        || (su.getDimension().equals(UnitDimension.LENGTH) && power == -2)) {
                     ret = true;
                     break;
                 }
@@ -223,11 +241,11 @@ public enum Units implements IUnitService {
         if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
             ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
             for (int i = 0; i < pu.getUnitCount(); i++) {
-                javax.measure.unit.Unit<?> su = pu.getUnit(i);
+                javax.measure.Unit<?> su = pu.getUnit(i);
                 int power = pu.getUnitPow(i);
-                if (su.getDimension().equals(Dimension.LENGTH.pow(2)) && power == -1) {
+                if (su.getDimension().equals(UnitDimension.LENGTH.pow(2)) && power == -1) {
                     return new Unit(su);
-                } else if (su.getDimension().equals(Dimension.LENGTH) && power == -2) {
+                } else if (su.getDimension().equals(UnitDimension.LENGTH) && power == -2) {
                     return new Unit(su.pow(2));
                 }
             }
@@ -241,11 +259,11 @@ public enum Units implements IUnitService {
         if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
             ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
             for (int i = 0; i < pu.getUnitCount(); i++) {
-                javax.measure.unit.Unit<?> su = pu.getUnit(i);
+                javax.measure.Unit<?> su = pu.getUnit(i);
                 int power = pu.getUnitPow(i);
-                if (su.getDimension().equals(Dimension.LENGTH.pow(1)) && power == -1) {
+                if (su.getDimension().equals(UnitDimension.LENGTH.pow(1)) && power == -1) {
                     return new Unit(su);
-                } else if (su.getDimension().equals(Dimension.LENGTH) && power == -1) {
+                } else if (su.getDimension().equals(UnitDimension.LENGTH) && power == -1) {
                     return new Unit(su.pow(1));
                 }
             }
@@ -264,10 +282,10 @@ public enum Units implements IUnitService {
         if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
             ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
             for (int i = 0; i < pu.getUnitCount(); i++) {
-                javax.measure.unit.Unit<?> su = pu.getUnit(i);
+                javax.measure.Unit<?> su = pu.getUnit(i);
                 int power = pu.getUnitPow(i);
-                if (su.getDimension().equals(Dimension.LENGTH.pow(3)) && power == -1
-                        || (su.getDimension().equals(Dimension.LENGTH) && power == -3)) {
+                if (su.getDimension().equals(UnitDimension.LENGTH.pow(3)) && power == -1
+                        || (su.getDimension().equals(UnitDimension.LENGTH) && power == -3)) {
                     ret = true;
                     break;
                 }
@@ -287,10 +305,10 @@ public enum Units implements IUnitService {
         if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
             ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
             for (int i = 0; i < pu.getUnitCount(); i++) {
-                javax.measure.unit.Unit<?> su = pu.getUnit(i);
+                javax.measure.Unit<?> su = pu.getUnit(i);
                 int power = pu.getUnitPow(i);
-                if (su.getDimension().equals(Dimension.LENGTH.pow(3)) && power == -1
-                        || (su.getDimension().equals(Dimension.LENGTH) && power == -3)) {
+                if (su.getDimension().equals(UnitDimension.LENGTH.pow(3)) && power == -1
+                        || (su.getDimension().equals(UnitDimension.LENGTH) && power == -3)) {
                     return new Unit(su);
                 }
             }
@@ -432,26 +450,26 @@ public enum Units implements IUnitService {
             switch(dim) {
             case AREAL:
                 if (spatial >= 2) {
-                    unit = new Unit(((Unit) unit).getUnit().times(((Unit) getArealExtentUnit(unit)).getUnit()));
+                    unit = new Unit(((Unit) unit).getUnit().multiply(((Unit) getArealExtentUnit(unit)).getUnit()));
                 }
                 break;
             case CONCEPTUAL:
                 break;
             case LINEAL:
                 if (spatial >= 1) {
-                    unit = new Unit(((Unit) unit).getUnit().times(((Unit) getLinealExtentUnit(unit)).getUnit()));
+                    unit = new Unit(((Unit) unit).getUnit().multiply(((Unit) getLinealExtentUnit(unit)).getUnit()));
                 }
                 break;
             case PUNTAL:
                 break;
             case TEMPORAL:
                 if (temporal >= 1) {
-                    unit = new Unit(((Unit) unit).getUnit().times(((Unit) getTimeExtentUnit(unit)).getUnit()));
+                    unit = new Unit(((Unit) unit).getUnit().multiply(((Unit) getTimeExtentUnit(unit)).getUnit()));
                 }
                 break;
             case VOLUMETRIC:
                 if (spatial >= 3) {
-                    unit = new Unit(((Unit) unit).getUnit().times(((Unit) getVolumeExtentUnit(unit)).getUnit()));
+                    unit = new Unit(((Unit) unit).getUnit().multiply(((Unit) getVolumeExtentUnit(unit)).getUnit()));
                 }
                 break;
             default:
@@ -525,7 +543,7 @@ public enum Units implements IUnitService {
 
     public void dump(IUnit unit, PrintStream out) {
 
-        javax.measure.unit.Unit<?> iunit = ((Unit) unit).getUnit();
+        javax.measure.Unit<?> iunit = ((Unit) unit).getUnit();
 
         out.println("unit " + ((Unit) unit).getUnit());
 
@@ -542,7 +560,7 @@ public enum Units implements IUnitService {
             out.println("Product of:");
             ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
             for (int i = 0; i < pu.getUnitCount(); i++) {
-                javax.measure.unit.Unit<?> su = pu.getUnit(i);
+                javax.measure.Unit<?> su = pu.getUnit(i);
                 int power = pu.getUnitPow(i);
                 out.println("   " + su + " [" + su.getDimension() + "^" + power + "]");
             }
@@ -722,7 +740,7 @@ public enum Units implements IUnitService {
                 }
                 if (time != null && tdim > 0) {
                     if (time.getDimensionality() == tdim) {
-//                        System.out.println("IMPLEMENTAMI, DIO ZOPPO");
+                        // System.out.println("IMPLEMENTAMI, DIO ZOPPO");
                     }
                 }
             } else {
@@ -874,7 +892,7 @@ public enum Units implements IUnitService {
         // all intensive
         Unit fullyContextualized = (Unit) contextualize(baseUnit, aggregatable);
         Set<IUnit> potentialUnits = new LinkedHashSet<>();
-        if (!chosen.equals(fullyContextualized)) {
+        if (fullyContextualized != null && !chosen.equals(fullyContextualized)) {
             for (ExtentDimension ed : aggregatable) {
                 context.put(ed, ExtentDistribution.INTENSIVE);
             }
@@ -883,7 +901,7 @@ public enum Units implements IUnitService {
         // all extensive
         Unit fullyExtensive = Unit.create(baseUnit); // (Unit)Units.INSTANCE.removeExtents(fullyContextualized,
                                                      // aggregatable);
-        if (!chosen.equals(fullyExtensive)) {
+        if (chosen != null && !chosen.equals(fullyExtensive)) {
             for (ExtentDimension ed : aggregatable) {
                 context.put(ed, ExtentDistribution.EXTENSIVE);
             }
@@ -900,7 +918,7 @@ public enum Units implements IUnitService {
                 context.put(ed, ExtentDistribution.EXTENSIVE);
             }
             Unit aggregated = (Unit) Units.INSTANCE.contextualize(baseUnit, set);
-            if (!aggregated.equals(chosen)) {
+            if (aggregated != null && !aggregated.equals(chosen)) {
                 for (ExtentDimension ed : set) {
                     context.put(ed, ExtentDistribution.INTENSIVE);
                 }
@@ -956,6 +974,112 @@ public enum Units implements IUnitService {
                 return potentialUnits;
             }
         };
+    }
+
+    /**
+     * Return the unit that describes the passed dimension. Handles implicit contextualization
+     * resulting from simplification (e.g. mm == mm^3/mm^2), assuming the passed dimension comes
+     * from a correct analysis (as there is no way to validate that here).
+     * 
+     * @param type
+     * @return
+     */
+    public IUnit getDimensionUnit(IUnit unit, ExtentDimension dimension) {
+
+        if (dimension.type == IGeometry.Dimension.Type.SPACE) {
+            switch(getSpatialDimensionality(unit)) {
+            case 1:
+                return getLinealExtentUnit(unit);
+            case 2:
+                return getArealExtentUnit(unit);
+            case 3:
+                return getVolumeExtentUnit(unit);
+            default:
+                /*
+                 * TODO this is the case when the dimension has been simplified. Check that the
+                 * original unit is a length, then multiply by the needed power to match the
+                 * dimensionality.
+                 */
+                javax.measure.Unit<?> length = findUnitFor(((Unit) unit).getUnit(), UnitDimension.LENGTH);
+                if (length == null) {
+                    throw new KlabIllegalArgumentException("cannot find length dimension in unit " + unit + " being scanned for "
+                            + dimension + " dimensionality");
+                }
+                return new Unit(length.pow(1).pow(dimension.dimensionality));
+            }
+        } else if (dimension.type == IGeometry.Dimension.Type.TIME) {
+            return getTimeExtentUnit(unit);
+        }
+
+        return null;
+    }
+
+    javax.measure.Unit<?> findUnitFor(javax.measure.Unit<?> unit, Dimension dim) {
+        if (unit instanceof ProductUnit<?>) {
+            ProductUnit<?> pu = (ProductUnit<?>) unit;
+            for (int i = 0; i < pu.getUnitCount(); i++) {
+                javax.measure.Unit<?> su = pu.getUnit(i);
+                if (su.getDimension().equals(dim)) {
+                    return su;
+                }
+            }
+        } else if (unit.getDimension().equals(dim)) {
+            return unit;
+        }
+        return null;
+    }
+
+    /**
+     * Return the unit that describes the passed dimension.
+     * 
+     * @param type
+     * @return
+     */
+    public IUnit getDimensionUnit(IUnit unit, IGeometry.Dimension.Type type) {
+
+        if (type == IGeometry.Dimension.Type.SPACE) {
+            switch(getSpatialDimensionality(unit)) {
+            case 1:
+                return getLinealExtentUnit(unit);
+            case 2:
+                return getArealExtentUnit(unit);
+            case 3:
+                return getVolumeExtentUnit(unit);
+            }
+        } else if (type == IGeometry.Dimension.Type.TIME) {
+            return getTimeExtentUnit(unit);
+        }
+
+        return null;
+    }
+
+    /**
+     * Return the temporal resolution correspondent to the temporal unit passed (can be s, m, hr,
+     * day, wk, yr) or null if the unit isn't temporal.
+     * 
+     * @param unit
+     * @return
+     */
+    public ITime.Resolution asTemporalResolution(IUnit unit) {
+        if (DAYS.equals(unit)) {
+            return Time.resolution(1, Resolution.Type.DAY);
+        } else if (YEARS.equals(unit)) {
+            return Time.resolution(1, Resolution.Type.YEAR);
+        } /*
+           * TODO enable when possible (needs latest indriya) else if (MONTHS.equals(unit)) { return
+           * Time.resolution(1, Resolution.Type.MONTH); }
+           */else if (WEEKS.equals(unit)) {
+            return Time.resolution(1, Resolution.Type.WEEK);
+        } else if (SECONDS.equals(unit)) {
+            return Time.resolution(1, Resolution.Type.SECOND);
+        } else if (HOURS.equals(unit)) {
+            return Time.resolution(1, Resolution.Type.HOUR);
+        } else if (MINUTES.equals(unit)) {
+            return Time.resolution(1, Resolution.Type.MINUTE);
+        } else if (MILLISECONDS.equals(unit)) {
+            return Time.resolution(1, Resolution.Type.MILLISECOND);
+        }
+        return null;
     }
 
 }

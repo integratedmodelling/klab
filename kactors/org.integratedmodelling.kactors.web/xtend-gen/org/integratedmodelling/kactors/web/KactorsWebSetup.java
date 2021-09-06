@@ -9,7 +9,6 @@ import org.eclipse.xtext.util.Modules2;
 import org.integratedmodelling.kactors.KactorsRuntimeModule;
 import org.integratedmodelling.kactors.KactorsStandaloneSetup;
 import org.integratedmodelling.kactors.ide.KactorsIdeModule;
-import org.integratedmodelling.kactors.web.KactorsWebModule;
 
 /**
  * Initialization support for running Xtext languages in web applications.

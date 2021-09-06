@@ -3,8 +3,6 @@
  */
 package org.integratedmodelling.kdl.ide;
 
-import org.integratedmodelling.kdl.ide.AbstractKdlIdeModule;
-
 /**
  * Use this class to register ide components.
  */

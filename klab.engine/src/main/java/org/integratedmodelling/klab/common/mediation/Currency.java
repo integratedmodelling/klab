@@ -1,25 +1,26 @@
 /*
  * This file is part of k.LAB.
  * 
- * k.LAB is free software: you can redistribute it and/or modify
- * it under the terms of the Affero GNU General Public License as published
- * by the Free Software Foundation, either version 3 of the License,
- * or (at your option) any later version.
+ * k.LAB is free software: you can redistribute it and/or modify it under the terms of the Affero
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  *
- * A copy of the GNU Affero General Public License is distributed in the root
- * directory of the k.LAB distribution (LICENSE.txt). If this cannot be found 
- * see <http://www.gnu.org/licenses/>.
+ * A copy of the GNU Affero General Public License is distributed in the root directory of the k.LAB
+ * distribution (LICENSE.txt). If this cannot be found see <http://www.gnu.org/licenses/>.
  * 
- * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned
- * in author tags. All rights reserved.
+ * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned in author tags. All
+ * rights reserved.
  */
 
 package org.integratedmodelling.klab.common.mediation;
 
 import org.integratedmodelling.kim.api.IValueMediator;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.mediation.ICurrency;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.utils.Range;
 import org.joda.time.DateTime;
 
@@ -95,7 +96,7 @@ public class Currency implements ICurrency {
         this.unit = Unit.unitless();
         if (code.contains("/")) {
             int sp = code.indexOf('/');
-            String dist = code.substring(sp+1);
+            String dist = code.substring(sp + 1);
             code = code.substring(0, sp);
             this.unit = this.unit.divide(Unit.create(dist));
         }
@@ -133,13 +134,36 @@ public class Currency implements ICurrency {
     /** {@inheritDoc} */
     @Override
     public Number convert(Number d, IValueMediator scale) {
+
+        if (Observations.INSTANCE.isNodata(d)) {
+            return d;
+        }
+
         if (!(scale instanceof ICurrency)) {
             throw new IllegalArgumentException("invalid conversion: " + scale + " to " + this);
         }
         if (((Currency) scale).scale != null && scale != null) {
             return this.scale.convert(d, ((Currency) scale).scale);
         }
-        // TODO        
+        // TODO
+        return d;
+    }
+
+    @Override
+    public Number backConvert(Number d, IValueMediator scale) {
+
+        if (Observations.INSTANCE.isNodata(d)) {
+            return d;
+        }
+
+        if (!(scale instanceof ICurrency)) {
+            throw new IllegalArgumentException("invalid conversion: " + scale + " to " + this);
+        }
+
+        if (((Currency) scale).scale != null && scale != null) {
+            return this.scale.backConvert(d, ((Currency) scale).scale);
+        }
+        // TODO
         return d;
     }
 
@@ -219,6 +243,24 @@ public class Currency implements ICurrency {
     @Override
     public IUnit getUnit() {
         return unit;
+    }
+    //
+    // @Override
+    // public Number convert(Number d, IObservable observable, IValueMediator from, IScale scale) {
+    // // TODO Auto-generated method stub
+    // return convert(d, from);
+    // }
+    //
+    // @Override
+    // public double getContextualizationFactor(IObservable observable, IValueMediator from, IScale
+    // scale) {
+    // // TODO Auto-generated method stub
+    // return 1.0;
+    // }
+
+    @Override
+    public IValueMediator contextualize(IObservable observable, IScale scale) {
+        return null;
     }
 
 }

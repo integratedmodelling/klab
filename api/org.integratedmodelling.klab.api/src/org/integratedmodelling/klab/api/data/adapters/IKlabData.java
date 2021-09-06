@@ -85,7 +85,7 @@ public interface IKlabData {
 		 * @throws IllegalStateException if {@link #startState(String)} has not been
 		 *                               called.
 		 */
-		void add(Object value, ILocator locator);
+		void set(Object value, ILocator locator);
 
 		/**
 		 * Finish building a state artifact and return the original builder on which

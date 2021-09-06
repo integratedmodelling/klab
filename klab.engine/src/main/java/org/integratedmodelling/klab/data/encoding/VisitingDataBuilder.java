@@ -132,7 +132,7 @@ public class VisitingDataBuilder implements IKlabData.Builder {
 	}
 
 	@Override
-	public void add(Object value, ILocator offset) {
+	public void set(Object value, ILocator offset) {
 		if (keepStates && current != null) {
 			if (current.storage == null && value != null) {
 				current.storage = (IDataStorage<?>) Klab.INSTANCE.getStorageProvider().createStorage(

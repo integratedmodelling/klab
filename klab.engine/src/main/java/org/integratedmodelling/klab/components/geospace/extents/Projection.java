@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.components.geospace.extents;
 
-import javax.measure.unit.Unit;
+
+import javax.measure.Unit;
 
 import org.geotools.geometry.DirectPosition2D;
 import org.geotools.referencing.CRS;
@@ -243,6 +244,10 @@ public class Projection implements IProjection {
 		return ret;
 	}
 
+	public CoordinateReferenceSystem getCRS() {
+		return crs;
+	}
+	
 	public int getSRID() {
 		return Integer.parseInt(code.split(":")[1]);
 	}

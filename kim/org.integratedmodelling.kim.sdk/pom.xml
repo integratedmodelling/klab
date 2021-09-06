@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.integratedmodelling</groupId>
     <artifactId>kim</artifactId>
-    <version>0.10.0-SNAPSHOT</version>
+    <version>0.11.0-SNAPSHOT</version>
   </parent>
   <artifactId>org.integratedmodelling.kim.sdk</artifactId>
   <packaging>eclipse-feature</packaging>

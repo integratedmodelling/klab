@@ -93,6 +93,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.engine.runtime.code.ExpressionContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.extensions.groovy.model.Concept;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.monitoring.Message;
@@ -534,7 +535,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
                     this.resolutionScope.getDeferredChildScope(observation, mode), mode, scale, model);
 
             if (scope.getCoverage().isRelevant()) {
-                dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + task.getId(), scope, (Dataflow)parentDataflow);
+                dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + task.getId(), scope,
+                        (Dataflow) parentDataflow);
                 pairs.add(new Pair<>(dataflow.getCoverage(), dataflow));
             }
         }
@@ -1045,7 +1047,19 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
     @Override
     public IState addState(IDirectObservation target, IObservable observable, Object data) {
-        return null;
+
+        if (!observable.is(Type.QUALITY)) {
+            throw new KlabValidationException("klab: API usage: adding a state with a non-quality observable");
+        }
+        IObservation ret = DefaultRuntimeProvider.createObservation(observable, target.getScale(), this, false);
+        if (data != null) {
+            ((IState) ret).fill(data);
+        }
+
+        this.structure.link(ret, target);
+        notifyListeners(ret);
+
+        return (IState) ret;
     }
 
     /**
@@ -1766,6 +1780,52 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
         }
 
         return (T) (chosen.isEmpty() ? null : chosen.iterator().next());
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T extends IArtifact> Collection<T> getAnyArtifact(IConcept concept, Class<T> cls) {
+
+        Set<T> chosen = new HashSet<>();
+
+        if (IObservationGroup.class.isAssignableFrom(cls)) {
+
+            /*
+             * must search base subject class and filter by predicates if any.
+             */
+            Builder builder = Observable.promote(concept).getBuilder(monitor).without(ObservableRole.TRAIT, ObservableRole.ROLE);
+            Pair<IConcept, Collection<IConcept>> query = new Pair<>(builder.buildConcept(), builder.getRemoved());
+
+            for (IArtifact artifact : catalog.values()) {
+                if (artifact instanceof ObservationGroup
+                        && (cached_is(((ObservationGroup) artifact).getObservable().getType(), query.getFirst()))) {
+                    chosen.add((T) ((ObservationGroup) artifact).queryPredicates(query.getSecond()));
+                }
+            }
+        }
+
+        Set<IArtifact> ret = new HashSet<>();
+        for (IArtifact artifact : catalog.values()) {
+            if (artifact instanceof IObservation && (cached_is(((IObservation) artifact).getObservable().getType(), concept))) {
+                ret.add(artifact);
+            }
+        }
+
+        for (IArtifact artifact : ret) {
+            if (cls.isAssignableFrom(artifact.getClass())) {
+                if (model != null && artifact instanceof IObservation) {
+                    for (IObservable obs : model.getDependencies()) {
+                        if (obs.is(concept)) {
+                            chosen.add((T) artifact);
+                        }
+                    }
+                } else {
+                    chosen.add((T) artifact);
+                }
+            }
+        }
+
+        return chosen;
     }
 
     @Override

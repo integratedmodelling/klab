@@ -4,7 +4,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.integratedmodelling.authorities.wrb.WRBIdentity.WRBConcept;
 import org.integratedmodelling.contrib.jtopas.ReaderSource;
 import org.integratedmodelling.contrib.jtopas.StandardTokenizer;

@@ -2,7 +2,7 @@ package org.integratedmodelling.klab.cli.commands.message;
 
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.cli.ICommand;
 import org.integratedmodelling.klab.api.runtime.ISession;

@@ -187,6 +187,7 @@ public enum Extensions implements IExtensionService {
 					ret = expr.eval(parameters, context);
 				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 						| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+				    context.getMonitor().error(e);
 					throw new KlabInternalErrorException(e);
 				}
 			} else if (IContextualizer.class.isAssignableFrom(cls)) {
@@ -195,6 +196,7 @@ public enum Extensions implements IExtensionService {
 					// TODO initialize with the parameters and monitor
 				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 						| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+                    context.getMonitor().error(e);
 					throw new KlabInternalErrorException(e);
 				}
 			}

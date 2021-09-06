@@ -14,11 +14,10 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 /**
- * Check https://www.baeldung.com/swagger-2-documentation-for-spring-rest-api
- * for additional config
+ * Check https://www.baeldung.com/swagger-2-documentation-for-spring-rest-api for additional config
  * 
- * TODO customize - commented out below is another with exclusions, proxies,
- * fixes and solving the JSON issue due to XML dependencies in Spring
+ * TODO customize - commented out below is another with exclusions, proxies, fixes and solving the
+ * JSON issue due to XML dependencies in Spring
  * 
  * @author ferdinando.villa
  *
@@ -27,24 +26,23 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class SwaggerConfig {
 
-	@Bean
-	public Docket api() {
-		return new Docket(DocumentationType.SWAGGER_2).select().apis(RequestHandlerSelectors.any())
-				.paths(PathSelectors.any()).build().apiInfo(apiInfo());
-	}
+    @Bean
+    public Docket api() {
+        return new Docket(DocumentationType.SWAGGER_2).select().apis(RequestHandlerSelectors.any()).paths(PathSelectors.any())
+                .build().apiInfo(apiInfo());
+    }
 
-	private ApiInfo apiInfo() {
+    private ApiInfo apiInfo() {
 
-		/*
-		 * TODO ADD vendor extensions for all components and TOS
-		 */
+        /*
+         * TODO ADD vendor extensions for all components and TOS
+         */
 
-		return new ApiInfo("k.LAB REST API", "This page documents the k.LAB API known to this server.", "API TOS",
-				"Terms of service",
-				new Contact("Integrated Modelling Partnership", "www.integratedmodelling.org",
-						"info@integratemodelling.org"),
-				"AGPL v3.0", "https://www.gnu.org/licenses/agpl-3.0.en.html", Collections.emptyList());
-	}
+        return new ApiInfo("k.LAB REST API", "This page documents the k.LAB API known to this server.", "API TOS",
+                "Terms of service",
+                new Contact("Integrated Modelling Partnership", "www.integratedmodelling.org", "info@integratemodelling.org"),
+                "AGPL v3.0", "https://www.gnu.org/licenses/agpl-3.0.en.html", Collections.emptyList());
+    }
 }
 
 // package com.github.huksley.app.system;

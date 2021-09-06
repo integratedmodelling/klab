@@ -24,7 +24,8 @@ import java.security.cert.CertificateException;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.xml.bind.DatatypeConverter;
+import java.util.Base64;
+import java.util.Base64.Encoder;
 
 import org.apache.commons.io.FileUtils;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -48,6 +49,8 @@ public enum NetworkKeyManager {
 	private KeyPair keyPair;
 	private String publicKeyBase64;
 	private String subjectDN;
+	
+	private static final Encoder BASE_ENCODER = Base64.getEncoder();
 
 	public PublicKey getPublicKey() {
 		return keyPair.getPublic();
@@ -98,7 +101,7 @@ public enum NetworkKeyManager {
 			ret = true;
 		}
 
-		this.publicKeyBase64 = DatatypeConverter.printBase64Binary(keyPair.getPublic().getEncoded());
+		this.publicKeyBase64 = BASE_ENCODER.encodeToString(keyPair.getPublic().getEncoded());
 		
 		return ret;
 	}

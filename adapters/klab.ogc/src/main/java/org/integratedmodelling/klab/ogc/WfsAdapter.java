@@ -24,8 +24,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.geotools.data.wfs.WFSDataStore;
 import org.geotools.data.wfs.WFSDataStoreFactory;
-import org.geotools.factory.Hints;
 import org.geotools.referencing.ReferencingFactoryFinder;
+import org.geotools.util.factory.Hints;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Version;

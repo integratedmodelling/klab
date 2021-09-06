@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="k.Modeler" uid="org.integratedmodelling.klab.modeler.product" id="org.integratedmodelling.klab.ide.kModeler" application="org.eclipse.ui.ide.workbench" version="0.10.0.qualifier" useFeatures="true" includeLaunchers="true">
+<product name="k.Modeler" uid="org.integratedmodelling.klab.modeler.product" id="org.integratedmodelling.klab.ide.kModeler" application="org.eclipse.ui.ide.workbench" version="0.11.0.qualifier" useFeatures="true" includeLaunchers="true">
 
    <aboutInfo>
       <image path="branding/k-lab-icon-128.gif"/>
@@ -47,8 +47,8 @@
    <vm>
       <linux include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JRE-1.1</linux>
       <macos include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JRE-1.1</macos>
-      <solaris include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8</solaris>
-      <windows include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JRE-1.1</windows>
+      <solaris include="true">org.eclipse.jdt.launching.JRE_CONTAINER</solaris>
+      <windows include="true">org.eclipse.jdt.launching.JRE_CONTAINER</windows>
    </vm>
 
    <license>
@@ -333,6 +333,7 @@ You should also get your employer (if you work as a programmer) or school, if an
       <plugin id="org.eclipse.debug.ui"/>
       <plugin id="org.eclipse.draw2d"/>
       <plugin id="org.eclipse.e4.core.commands"/>
+      <plugin id="org.eclipse.e4.core.commands.internal"/>
       <plugin id="org.eclipse.e4.core.contexts"/>
       <plugin id="org.eclipse.e4.core.di"/>
       <plugin id="org.eclipse.e4.core.di.extensions"/>
@@ -589,9 +590,7 @@ You should also get your employer (if you work as a programmer) or school, if an
    </plugins>
 
    <features>
-      <feature id="org.eclipse.e4.rcp"/>
-      <feature id="org.eclipse.equinox.p2.extras.feature"/>
-      <feature id="org.integratedmodelling.klab.ide.feature" version="0.10.0.qualifier"/>
+      <feature id="org.integratedmodelling.klab.ide.feature" version="0.11.0.qualifier"/>
       <feature id="org.eclipse.emf.ecore"/>
       <feature id="org.integratedmodelling.kdl.feature"/>
       <feature id="org.integratedmodelling.klab.feature"/>
@@ -609,6 +608,9 @@ You should also get your employer (if you work as a programmer) or school, if an
       <feature id="org.eclipse.jgit.http.apache" installMode="root"/>
       <feature id="org.eclipse.jgit.ssh.apache" installMode="root"/>
       <feature id="org.eclipse.ecf.filetransfer.httpclient45.feature" installMode="root"/>
+      <feature id="org.eclipse.jgit.gpg.bc" installMode="root"/>
+      <feature id="org.eclipse.e4.rcp" installMode="root"/>
+      <feature id="org.eclipse.equinox.p2.rcp.feature" installMode="root"/>
    </features>
 
    <configurations>
@@ -620,6 +622,9 @@ You should also get your employer (if you work as a programmer) or school, if an
    </configurations>
 
    <repositories>
+      <repository location="http://www.integratedmodelling.org/updates/klab/0.10.0" enabled="true" />
+      <repository location="http://www.integratedmodelling.org/updates/klab/0.10.0" enabled="true" />
+      <repository location="http://www.integratedmodelling.org/updates/klab/0.10.0" enabled="true" />
       <repository location="http://www.integratedmodelling.org/updates/klab/0.10.0" enabled="true" />
    </repositories>
 

@@ -13,7 +13,6 @@ import org.integratedmodelling.kactors.kactors.Match;
 import org.integratedmodelling.kactors.kactors.MessageCall;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.utils.NameGenerator;
-import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Triple;
 
 public class KActorsActionCall extends KActorsStatement implements Call {
@@ -38,7 +37,8 @@ public class KActorsActionCall extends KActorsStatement implements Call {
 	private KActorsArguments arguments;
 	private KActorsConcurrentGroup group;
 	private String internalId = "kac" + NameGenerator.shortUUID();
-
+	private List<Call> chainedCalls = new ArrayList<>();
+	
 	public KActorsActionCall(MessageCall messageCall, KActorCodeStatement parent) {
 
 		super(messageCall, parent, Type.ACTION_CALL);
@@ -50,6 +50,10 @@ public class KActorsActionCall extends KActorsStatement implements Call {
 
 		this.message = messageCall.getName();
 
+		for (MessageCall call : messageCall.getMethodCalls()) {
+			chainedCalls.add(new KActorsActionCall(call, this));
+		}
+		
 		if (messageCall.getParameters() != null) {
 			this.arguments = new KActorsArguments(messageCall.getParameters());
 		} else { 
@@ -123,6 +127,11 @@ public class KActorsActionCall extends KActorsStatement implements Call {
 		return group;
 	}
 
+	@Override
+	public List<Call> getChainedCalls() {
+		return chainedCalls;
+	}
+	
 	@Override
 	public String getCallId() {
 		return this.internalId;

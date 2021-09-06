@@ -35,7 +35,7 @@ public class Version implements Comparable<Version>, Serializable {
 	 * have synchronized release numbers. Change this whenever a new version is
 	 * released.
 	 */
-	public static final String CURRENT = "0.10.0";
+	public static final String CURRENT = "0.11.0";
 
 	/**
 	 * Modifier for release (e.g. alpha, beta, RC1 etc). Should be synchronized by

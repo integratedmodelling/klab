@@ -24,7 +24,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import com.infomatiq.jsi.Rectangle;
 import com.infomatiq.jsi.rtree.RTree;
 import com.slimjars.dist.gnu.trove.procedure.TIntProcedure;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 public class SpatialIndex implements ISpatialIndex {
 

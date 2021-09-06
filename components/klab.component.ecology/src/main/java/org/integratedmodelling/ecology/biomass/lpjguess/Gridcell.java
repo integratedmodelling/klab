@@ -15,7 +15,7 @@ import org.integratedmodelling.procsim.api.IConfiguration;
 import org.integratedmodelling.procsim.api.IConfiguration.Insolation;
 import org.integratedmodelling.procsim.api.IConfiguration.Phenology;
 
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Point;
 
 /**
  * Status as of 3/2016:

@@ -3,8 +3,6 @@
  */
 package org.integratedmodelling.kdl.scoping;
 
-import org.integratedmodelling.kdl.scoping.AbstractKdlScopeProvider;
-
 /**
  * This class contains custom scoping description.
  * 

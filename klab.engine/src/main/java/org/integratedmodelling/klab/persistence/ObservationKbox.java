@@ -15,7 +15,7 @@
 //import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 //import org.integratedmodelling.klab.exceptions.KlabException;
 //
-//import com.vividsolutions.jts.geom.Geometry;
+//import org.locationtech.jts.geom.Geometry;
 //
 //public class ObservationKbox extends ObservableKbox {
 //

@@ -1079,4 +1079,9 @@ public class Space extends Extent implements ISpace {
         return create(shape.copy(), grid.linearResolutionMeters);
     }
 
+    @Override
+    public double getDimensionSize(IUnit unit) {
+        return getShape().getDimensionSize(unit);
+    }
+
 }

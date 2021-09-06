@@ -32,6 +32,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.services.IResourceService;
+import org.integratedmodelling.klab.rest.ResourceReference.AvailabilityReference;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 
 /**
@@ -67,6 +68,9 @@ import org.integratedmodelling.klab.rest.SpatialExtent;
  */
 public interface IResource extends IProvenance.Node, Serializable {
 
+    public enum Availability {
+        COMPLETE, PARTIAL, DELAYED, NONE
+    }
     /**
      * The URN that identifies this resource.
      *
@@ -186,6 +190,14 @@ public interface IResource extends IProvenance.Node, Serializable {
      * @return
      */
     Map<String, String> getExports();
+
+    /**
+     * This should be called after contextualizing and before requesting data to ensure the resource
+     * is available and to check on possible wait times before it is.
+     * 
+     * @return
+     */
+    AvailabilityReference getAvailability();
 
     /**
      * The descriptor for each attribute. Not much at the moment.
@@ -563,7 +575,9 @@ public interface IResource extends IProvenance.Node, Serializable {
      * of aggregating appropriately should be returned; otherwise, the most suitable sub-resource or
      * self should be returned. The function is called on all resources before use in each uniform
      * time period, handling both state and change in state when the resource is dynamic over the
-     * contextualized time.
+     * contextualized time. The resource adapter may also need to be informed of an incoming set of
+     * requests and prepare for it, returning an identifier that will need to be in the metadata of
+     * the contextualized resource.
      * <p>
      * Resources that have flexible typing (getType() returns null) should at this point have enough
      * information to return the appropriate type, adapting to the passed observation.

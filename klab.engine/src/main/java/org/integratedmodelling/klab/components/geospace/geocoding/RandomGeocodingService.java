@@ -8,12 +8,11 @@ import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.random.RandomShapes;
-
-import jfortune.Fortune;
+import org.integratedmodelling.klab.utils.NameGenerator;
 
 public class RandomGeocodingService extends GeocodingService {
 
-	Fortune fortune = new Fortune(new String[] {});
+//	Fortune fortune = new Fortune(new String[] {});
 	Random random = new Random();
 
 	private static double GROW_FACTOR = 2.0;
@@ -24,7 +23,7 @@ public class RandomGeocodingService extends GeocodingService {
 
 	@Override
 	public IShape getAnnotatedRegion(IEnvelope envelope, IMonitor monitor) {
-		String nam = fortune.getCookie().toString();
+		String nam = NameGenerator.shortUUID(); // .getCookie().toString();
 		Collection<IShape> results = RandomShapes.INSTANCE.create(envelope.grow(GROW_FACTOR), 1, 1, 1,
 				32 + (int) (random.nextDouble() * 200));
 		IShape ret = results.size() == 0 ? null : results.iterator().next();

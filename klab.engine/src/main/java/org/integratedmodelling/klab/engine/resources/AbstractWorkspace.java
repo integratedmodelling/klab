@@ -4,11 +4,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IKimLoader;
 import org.integratedmodelling.kim.api.IKimProject;
+import org.integratedmodelling.kim.model.KimLoader;
 import org.integratedmodelling.kim.model.KimWorkspace;
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.knowledge.IWorkspace;
@@ -50,8 +53,9 @@ public abstract class AbstractWorkspace implements IWorkspace {
             if (resourceDir.exists() && resourceDir.isDirectory()) {
                 for (File rdir : resourceDir.listFiles()) {
                     if (rdir.isDirectory()) {
+//                    	Logging.INSTANCE.info("read resource " + rdir);
                         /* ResourceReference resource = */Resources.INSTANCE.synchronize(rdir);
-//                        Logging.INSTANCE.info("read resource " + resource.getUrn());
+                        
                     }
                 }
             }
@@ -68,8 +72,15 @@ public abstract class AbstractWorkspace implements IWorkspace {
      * @param root
      * @return
      */
-    public IProject addProject(File root) {
-        IKimProject ret = delegate.loadProject(root);
+    public IProject loadProject(String project, IMonitor monitor) {
+        File projectFile = new File(getRoot() + File.separator + project);
+        if (!projectFile.isDirectory()) {
+            return null;
+        }
+        IKimProject ret = delegate.loadProject(projectFile);
+        if (ret != null) {
+            Resources.INSTANCE.getLoader().load(Collections.singleton(ret));
+        }
         return ret == null ? null : Resources.INSTANCE.retrieveOrCreate(ret);
     }
 

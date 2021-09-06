@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.hub.api.TokenAuthentication;
 import org.integratedmodelling.klab.hub.repository.TokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 
 
 public class TokenAuthenticationFilter implements Filter {
@@ -36,8 +37,10 @@ public class TokenAuthenticationFilter implements Filter {
             	if(token.isPresent()) {
             		TokenAuthentication storedToken = token.get();
                     if (storedToken.isAuthenticated()) {
+                    	PreAuthenticatedAuthenticationToken authToken = new PreAuthenticatedAuthenticationToken(storedToken.getPrincipal()
+                    			,storedToken.getCredentials(),storedToken.getAuthorities());
                         // successful match. token should contain everything the security context needs.
-                        SecurityContextHolder.getContext().setAuthentication(storedToken);
+                        SecurityContextHolder.getContext().setAuthentication(authToken);
                     }
             	}
             }

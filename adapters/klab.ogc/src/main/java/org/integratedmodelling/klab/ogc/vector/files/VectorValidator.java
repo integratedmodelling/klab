@@ -65,11 +65,11 @@ import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import com.vividsolutions.jts.geom.Lineal;
-import com.vividsolutions.jts.geom.Polygonal;
-import com.vividsolutions.jts.geom.Puntal;
-import com.vividsolutions.jts.io.WKBWriter;
-import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier;
+import org.locationtech.jts.geom.Lineal;
+import org.locationtech.jts.geom.Polygonal;
+import org.locationtech.jts.geom.Puntal;
+import org.locationtech.jts.io.WKBWriter;
+import org.locationtech.jts.simplify.TopologyPreservingSimplifier;
 
 /**
  * The Class RasterValidator.
@@ -84,7 +84,7 @@ public class VectorValidator implements IResourceValidator {
 		try {
 
 			ret.withParameter("fileUrl", url).withLocalName(MiscUtilities.getFileName(url.getFile()));
-			Map<Object, Object> map = new HashMap<>();
+			Map<String, Object> map = new HashMap<>();
 			map.put("url", url);
 
 			if (userData.contains("filter")) {
@@ -97,7 +97,7 @@ public class VectorValidator implements IResourceValidator {
 			}
 
 			// TODO check and honor any charset in the resource. This could be the default.
-			map.put(ShapefileDataStoreFactory.DBFCHARSET, "UTF-8");
+			map.put(ShapefileDataStoreFactory.DBFCHARSET.key, "UTF-8");
 			
 			DataStore dataStore = DataStoreFinder.getDataStore(map);
 			String typeName = dataStore.getTypeNames()[0];
@@ -157,7 +157,7 @@ public class VectorValidator implements IResourceValidator {
 
 			if (ad.getLocalName().equals(geomName)) {
 				// set shape dimensionality from geometry type: 0 = point, 1 = line, 2 = polygon
-				if (com.vividsolutions.jts.geom.Geometry.class.isAssignableFrom(ad.getType().getBinding())) {
+				if (org.locationtech.jts.geom.Geometry.class.isAssignableFrom(ad.getType().getBinding())) {
 					if (Arrays.contains(ad.getType().getBinding().getInterfaces(), Lineal.class)) {
 						shapeDimension = 1;
 					} else if (Arrays.contains(ad.getType().getBinding().getInterfaces(), Polygonal.class)) {
@@ -186,14 +186,14 @@ public class VectorValidator implements IResourceValidator {
 		// Compute union or convex hull if requested
 		if (userData.get("computeUnion", false) || userData.get("computeHull", false)) {
 			if (!swapLatlonAxes) {
-				com.vividsolutions.jts.geom.Geometry geometry = null;
+				org.locationtech.jts.geom.Geometry geometry = null;
 				try (FeatureIterator<SimpleFeature> features = collection.features()) {
 					while (features.hasNext()) {
 						SimpleFeature feature = features.next();
 						Object shape = feature.getDefaultGeometryProperty().getValue();
-						if (shape instanceof com.vividsolutions.jts.geom.Geometry) {
-							geometry = geometry == null ? (com.vividsolutions.jts.geom.Geometry) shape
-									: geometry.union((com.vividsolutions.jts.geom.Geometry) shape);
+						if (shape instanceof org.locationtech.jts.geom.Geometry) {
+							geometry = geometry == null ? (org.locationtech.jts.geom.Geometry) shape
+									: geometry.union(( org.locationtech.jts.geom.Geometry) shape);
 						}
 					}
 				}

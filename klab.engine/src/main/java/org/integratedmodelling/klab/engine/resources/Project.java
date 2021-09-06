@@ -9,9 +9,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
+import org.integratedmodelling.kactors.api.IKActorsBehavior.Type;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.templates.KimTemplates;
+import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Namespaces;
 import org.integratedmodelling.klab.Resources;
@@ -272,13 +274,37 @@ public class Project implements IProject {
 
     @Override
     public List<IBehavior> getBehaviors() {
-        // TODO Auto-generated method stub
-        return null;
+        List<IBehavior> ret = new ArrayList<>();
+        for (String behaviorId : Actors.INSTANCE.getBehaviorIds()) {
+            IBehavior behavior = Actors.INSTANCE.getBehavior(behaviorId);
+            if (behavior.getProject().equals(this.getName()) && behavior.getDestination() == Type.BEHAVIOR) {
+                ret.add(behavior);
+            }
+        }
+        return ret;
     }
 
     @Override
     public List<IBehavior> getApps() {
-        // TODO Auto-generated method stub
-        return null;
+        List<IBehavior> ret = new ArrayList<>();
+        for (String behaviorId : Actors.INSTANCE.getBehaviorIds()) {
+            IBehavior behavior = Actors.INSTANCE.getBehavior(behaviorId);
+            if (behavior.getProject().equals(this.getName()) && behavior.getDestination() == Type.APP) {
+                ret.add(behavior);
+            }
+        }
+        return ret;
+    }
+    
+    @Override
+    public List<IBehavior> getUnitTests() {
+        List<IBehavior> ret = new ArrayList<>();
+        for (String behaviorId : Actors.INSTANCE.getBehaviorIds()) {
+            IBehavior behavior = Actors.INSTANCE.getBehavior(behaviorId);
+            if (behavior.getProject() != null && behavior.getProject().equals(this.getName()) && behavior.getDestination() == Type.UNITTEST) {
+                ret.add(behavior);
+            }
+        }
+        return ret;
     }
 }

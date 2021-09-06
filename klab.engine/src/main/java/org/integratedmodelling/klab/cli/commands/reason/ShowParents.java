@@ -2,7 +2,7 @@ package org.integratedmodelling.klab.cli.commands.reason;
 
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Reasoner;

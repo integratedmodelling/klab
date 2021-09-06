@@ -15,9 +15,9 @@ import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.utils.SpatialDisplay;
 import org.integratedmodelling.klab.scale.Scale;
 
-import com.vividsolutions.jts.algorithm.ConvexHull;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.algorithm.ConvexHull;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
 
 /**
  * Generator of

@@ -3,7 +3,7 @@ package org.noise_planet.noisemodelling.propagation;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
-import org.h2gis.h2spatialapi.ProgressVisitor;
+import org.h2gis.api.ProgressVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

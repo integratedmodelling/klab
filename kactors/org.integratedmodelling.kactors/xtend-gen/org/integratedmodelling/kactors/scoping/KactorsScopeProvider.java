@@ -3,8 +3,6 @@
  */
 package org.integratedmodelling.kactors.scoping;
 
-import org.integratedmodelling.kactors.scoping.AbstractKactorsScopeProvider;
-
 /**
  * This class contains custom scoping description.
  * 

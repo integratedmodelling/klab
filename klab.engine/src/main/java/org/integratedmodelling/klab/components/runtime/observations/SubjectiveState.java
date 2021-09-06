@@ -114,9 +114,9 @@ public class SubjectiveState extends Observation implements ISubjectiveState {
         return current.at(locator);
     }
 
-    public IStructuredTable<Number> getTable() {
-        return current.getTable();
-    }
+//    public IStructuredTable<Number> getTable() {
+//        return current.getTable();
+//    }
 
     public DirectObservation getContext() {
         return (DirectObservation) current.getContext();

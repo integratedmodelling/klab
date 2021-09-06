@@ -3,30 +3,21 @@ package org.integratedmodelling.klab.stats.config;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
-import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
-import org.bson.codecs.pojo.PropertyCodecProvider;
-import org.bson.codecs.pojo.PropertyModelBuilder;
-import org.integratedmodelling.klab.rest.ObservationReference;
-import org.reflections.Reflections;
-import org.reflections.scanners.ResourcesScanner;
-import org.reflections.scanners.SubTypesScanner;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
-import org.reflections.util.FilterBuilder;
+import org.reflections8.Reflections;
+import org.reflections8.scanners.ResourcesScanner;
+import org.reflections8.scanners.SubTypesScanner;
+import org.reflections8.util.ClasspathHelper;
+import org.reflections8.util.ConfigurationBuilder;
+import org.reflections8.util.FilterBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
-import org.springframework.core.annotation.Order;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
@@ -81,13 +72,12 @@ public class MongoSyncConfigDev {
         List<ClassLoader> classLoadersList = new LinkedList<ClassLoader>();
         classLoadersList.add(ClasspathHelper.contextClassLoader());
         classLoadersList.add(ClasspathHelper.staticClassLoader());
-
-        Reflections reflections = new Reflections(new ConfigurationBuilder()
-                .setScanners(new SubTypesScanner(false /* don't exclude Object.class */), new ResourcesScanner())
-                .setUrls(ClasspathHelper.forClassLoader(classLoadersList.toArray(new ClassLoader[0])))
-                .filterInputsBy(new FilterBuilder().include(FilterBuilder.prefix("org.integratedmodelling.klab.rest"))));
-
-        reflections.getAllTypes();
+        ConfigurationBuilder config = new ConfigurationBuilder()
+        		.setScanners(new SubTypesScanner(false /* don't exclude Object.class */), new ResourcesScanner())
+        		.setUrls(ClasspathHelper.forClassLoader(classLoadersList.toArray(new ClassLoader[0])))
+        		.filterInputsBy(new FilterBuilder().include(FilterBuilder.prefix("org.integratedmodelling.klab.rest")));
+        
+        Reflections reflections = new Reflections(config);
 
         List<ClassModel< ? >> cm = new ArrayList<ClassModel< ? >>();
 

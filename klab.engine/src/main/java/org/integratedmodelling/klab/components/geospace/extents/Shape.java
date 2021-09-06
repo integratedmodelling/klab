@@ -52,26 +52,26 @@ import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.scale.AbstractExtent;
 import org.integratedmodelling.klab.utils.Pair;
 
-import com.vividsolutions.jts.algorithm.ConvexHull;
-import com.vividsolutions.jts.awt.ShapeWriter;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryCollection;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.Lineal;
-import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.geom.MultiPoint;
-import com.vividsolutions.jts.geom.MultiPolygon;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.geom.Polygonal;
-import com.vividsolutions.jts.geom.prep.PreparedGeometry;
-import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
-import com.vividsolutions.jts.io.ParseException;
-import com.vividsolutions.jts.io.WKBReader;
-import com.vividsolutions.jts.io.WKBWriter;
-import com.vividsolutions.jts.io.WKTReader;
-import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier;
+import org.locationtech.jts.algorithm.ConvexHull;
+import org.locationtech.jts.awt.ShapeWriter;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryCollection;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.Lineal;
+import org.locationtech.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.MultiPoint;
+import org.locationtech.jts.geom.MultiPolygon;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.geom.Polygonal;
+import org.locationtech.jts.geom.prep.PreparedGeometry;
+import org.locationtech.jts.geom.prep.PreparedGeometryFactory;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKBReader;
+import org.locationtech.jts.io.WKBWriter;
+import org.locationtech.jts.io.WKTReader;
+import org.locationtech.jts.simplify.TopologyPreservingSimplifier;
 
 /**
  * TODO setup for using as locator.
@@ -548,6 +548,9 @@ public class Shape extends AbstractExtent implements IShape {
         if (shape == null && other instanceof ISpace) {
             shape = (Shape) ((ISpace) other).getShape();
         }
+        if (shape == null) {
+            return copy();
+        }
         if (how == LogicalConnector.UNION) {
             return create(shapeGeometry.union(shape.transform(this.projection).getJTSGeometry()), this.projection);
         } else if (how == LogicalConnector.INTERSECTION) {
@@ -950,5 +953,10 @@ public class Shape extends AbstractExtent implements IShape {
             this.metadata = new Metadata();
         }
         return this.metadata;
+    }
+
+    @Override
+    public double getDimensionSize(IUnit unit) {
+        return unit.convert(getStandardizedArea(), Units.INSTANCE.SQUARE_METERS).doubleValue();
     }
 }

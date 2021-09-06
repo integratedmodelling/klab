@@ -33,6 +33,7 @@ import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.common.CompileNotification;
 import org.integratedmodelling.klab.data.table.Table;
 import org.integratedmodelling.klab.engine.Engine;
@@ -100,7 +101,10 @@ public class KimNotifier implements Kim.Notifier {
 					savedArgs.add(o);
 				} else if (o instanceof Observable) {
 					observableUrn = ((Observable) o).getUrl();
-				} else {
+				} else if (o instanceof INotification) {
+	                level = Level.parse(((INotification)o).getLevel());
+	                message = ((INotification)o).getMessage();
+	            }else {
 					savedArgs.add(o);
 				}
 			}

@@ -4,3 +4,5 @@ target
 /im.cert
 /workspace/
 **/*.xtendbin
+**/.temp-*
+**/*._trace

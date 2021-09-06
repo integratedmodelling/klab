@@ -2,7 +2,7 @@ package org.noise_planet.noisemodelling.propagation;
 
 import java.beans.PropertyChangeListener;
 
-import org.h2gis.h2spatialapi.ProgressVisitor;
+import org.h2gis.api.ProgressVisitor;
 
 public class DefaultProgressVisitor implements ProgressVisitor {
     protected long subprocessSize;

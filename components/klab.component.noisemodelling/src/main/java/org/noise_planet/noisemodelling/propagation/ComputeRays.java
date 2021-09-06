@@ -45,31 +45,31 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.math3.geometry.euclidean.threed.Line;
 import org.apache.commons.math3.geometry.euclidean.threed.Plane;
-import org.h2gis.h2spatialapi.ProgressVisitor;
+import org.h2gis.api.ProgressVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vividsolutions.jts.algorithm.CGAlgorithms3D;
-import com.vividsolutions.jts.algorithm.ConvexHull;
-import com.vividsolutions.jts.algorithm.LineIntersector;
-import com.vividsolutions.jts.algorithm.RectangleLineIntersector;
-import com.vividsolutions.jts.algorithm.RobustLineIntersector;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.CoordinateSequence;
-import com.vividsolutions.jts.geom.CoordinateSequenceFilter;
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineSegment;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.TopologyException;
-import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
-import com.vividsolutions.jts.index.strtree.STRtree;
-import com.vividsolutions.jts.math.Vector2D;
-import com.vividsolutions.jts.math.Vector3D;
-import com.vividsolutions.jts.triangulate.quadedge.Vertex;
+import org.locationtech.jts.algorithm.CGAlgorithms3D;
+import org.locationtech.jts.algorithm.ConvexHull;
+import org.locationtech.jts.algorithm.LineIntersector;
+import org.locationtech.jts.algorithm.RectangleLineIntersector;
+import org.locationtech.jts.algorithm.RobustLineIntersector;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.CoordinateSequence;
+import org.locationtech.jts.geom.CoordinateSequenceFilter;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.LineSegment;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.MultiLineString;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.TopologyException;
+import org.locationtech.jts.geom.impl.CoordinateArraySequence;
+import org.locationtech.jts.index.strtree.STRtree;
+import org.locationtech.jts.math.Vector2D;
+import org.locationtech.jts.math.Vector3D;
+import org.locationtech.jts.triangulate.quadedge.Vertex;
 
 /**
  * @author Nicolas Fortin

@@ -35,8 +35,8 @@ package org.noise_planet.noisemodelling.propagation;
 
 import java.util.Iterator;
 
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
 
 /**
  * QueryGeometryStructure aims to speed up the query of a geometry collection

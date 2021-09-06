@@ -10,16 +10,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import javax.annotation.security.RolesAllowed;
-import org.apache.commons.collections.buffer.CircularFifoBuffer;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.hub.config.LoggingConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.google.common.collect.EvictingQueue;
 
 import net.minidev.json.JSONObject;
 
@@ -37,12 +37,12 @@ public class SystemController {
 		File file = path.toFile();
 		FileInputStream input = new FileInputStream(file);
 		BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-		CircularFifoBuffer fifoLog = new CircularFifoBuffer();
+		EvictingQueue<Object> fifoLog;
 		if (lines == -1) {
 			int lineCount = (int) Files.lines(path).count();
-			fifoLog = new CircularFifoBuffer(lineCount);
+			fifoLog = EvictingQueue.create(lineCount);
 		} else {
-			fifoLog = new CircularFifoBuffer(lines);
+			fifoLog = EvictingQueue.create(lines);
 		}
 		
 		for(String tmp; (tmp = reader.readLine()) != null;)

@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.integratedmodelling.klab.utils.Parameters;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 public class WeatherEvent {
 

@@ -8,7 +8,6 @@ import javax.servlet.annotation.WebServlet;
 import org.eclipse.xtext.util.DisposableRegistry;
 import org.eclipse.xtext.web.servlet.XtextServlet;
 import org.eclipse.xtext.xbase.lib.Exceptions;
-import org.integratedmodelling.kactors.web.KactorsWebSetup;
 
 /**
  * Deploy this class into a servlet container to enable DSL-specific services.

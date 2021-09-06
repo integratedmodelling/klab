@@ -1,14 +1,14 @@
 package org.integratedmodelling.klab.hub.api;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
+
 import javax.validation.constraints.NotBlank;
 
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.klab.rest.ObservableReference;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.TypeAlias;
+
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 
 @TypeAlias("Observable")
 public class Observable {

@@ -833,8 +833,8 @@ public class DataflowCompiler {
                         } else {
                             if (!chosenUnits.containsKey(baseUnit.toString())) {
                                 if (Units.INSTANCE.needsUnitScaling(observable)) {
-                                    UnitContextualization contextualization = Units.INSTANCE.getContextualization(modelObservable,
-                                            scale, null);
+                                    UnitContextualization contextualization = Units.INSTANCE
+                                            .getContextualization(modelObservable, scale, null);
                                     observable.withUnit(contextualization.getChosenUnit());
                                 } else {
                                     observable.withUnit(baseUnit);

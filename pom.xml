@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.integratedmodelling</groupId>
 	<artifactId>klab</artifactId>
-	<version>0.10.0-SNAPSHOT</version>
+	<version>0.11.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<licenses>
@@ -24,11 +24,20 @@
 		<developer>
 			<name>Enrico Girotto</name>
 			<email>enrico.girotto@gmail.com</email>
+			<organization>Basque Centre for Climate Change (BC3)</organization>
+			<organizationUrl>http://www.bc3research.org</organizationUrl>
 		</developer>
 		<developer>
 			<name>Steven Wohl</name>
 			<email>steven.wohl@bc3research.org</email>
 			<organization>Basque Centre for Climate Change (BC3)</organization>
+			<organizationUrl>http://www.bc3research.org</organizationUrl>
+		</developer>
+		<developer>
+			<name>Andrea Antonello</name>
+			<email>andrea.antonello@gmail.com</email>
+			<organization>HydroloGIS Environmental Engineering</organization>
+			<organizationUrl>https://www.hydrologis.com/</organizationUrl>
 		</developer>
 		<developer>
 			<name>J.Luke Scott</name>
@@ -77,49 +86,48 @@
 		<module>products</module>
 		<module>components</module>
 		<!-- later (requires mvn 3.0.5 which can't be installed on sua) -->
-		<!--  <module>docs</module> -->
+		<!-- <module>docs</module> -->
 		<module>authorities</module>
+		<module>klab.authentication</module>
 	</modules>
 
 	<properties>
 
-		<klab.version>0.10.0-SNAPSHOT</klab.version>
+		<klab.version>0.11.0-SNAPSHOT</klab.version>
 
 		<project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>utf-8</project.reporting.outputEncoding>
-		<java.version>1.8</java.version>
+		<java.version>11</java.version>
 		<!-- Careful here: geotools must be right for hortonmachine to work; JTS 
-			should be the same one that geotools needs.
-			
-			Next step: gt 20.0, horton 0.9.6, jts 1.16 (with different namespaces) - that should
-			allow Java upgrade to 1.13
-			 -->
-		<geotools.version>18.0</geotools.version>
-		<hortonmachine.version>0.9.1</hortonmachine.version>
-		<jts.version>1.13</jts.version>
+			should be the same one that geotools and HM needs. -->
+		<geotools.version>25.0</geotools.version>
+		<hortonmachine.version>0.10.4-SNAPSHOT</hortonmachine.version>
+		<jts.version>1.18.1</jts.version>
 		<h2gis.version>1.5.0</h2gis.version>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<tycho-version>1.0.0</tycho-version>
-		<xtextVersion>2.18.0</xtextVersion>
-		<mweVersion>2.10.0</mweVersion>
-		<googleJibVersion>2.7.1</googleJibVersion>
+		<tycho-version>2.3.0</tycho-version>
+		<xtextVersion>2.25.0</xtextVersion>
+		<mweVersion>2.12.1</mweVersion>
+		<googleJibVersion>3.1.4</googleJibVersion>
 
 		<!-- the five below go together. Never change one without checking the 
 			others. Spring security latest is currently requiring 5.0.4, implying boot 
 			2.0.0 -->
-		<spring-boot-version>2.0.1.RELEASE</spring-boot-version>
-		<spring-version>5.0.5.RELEASE</spring-version>
-		<junit-version>4.12</junit-version>
-		<jackson-version>2.9.5</jackson-version>
+		<spring-boot.version>2.5.3</spring-boot.version>
+		<spring.version>5.3.9</spring.version>
+		<spring-security.version>5.5.1</spring-security.version>
+		<spring-cloud.version>2020.0.3</spring-cloud.version>
+		<junit-version>5.6.3</junit-version>
+		<jackson-version>2.12.4</jackson-version>
 		<!-- end versions that need to be in lock-step to avoid multiple Spring 
 			issues -->
-	
-<!--     	<scala.version>2.13.1</scala.version>
- -->		<joda-time-version>2.3</joda-time-version>
+
+		<!-- <scala.version>2.13.1</scala.version> -->
+		<joda-time-version>2.3</joda-time-version>
 		<javax.mail-api.version>1.5.2</javax.mail-api.version>
 		<jung.version>2.1.1</jung.version>
-		
+
 	</properties>
 
 	<build>
@@ -134,11 +142,11 @@
 						<target>${maven.compiler.target}</target>
 					</configuration>
 				</plugin>
-		        <plugin>
-		        	<groupId>com.google.cloud.tools</groupId>
-		        	<artifactId>jib-maven-plugin</artifactId>
-		        	<version>${googleJibVersion}</version>
-		        </plugin>
+				<plugin>
+					<groupId>com.google.cloud.tools</groupId>
+					<artifactId>jib-maven-plugin</artifactId>
+					<version>${googleJibVersion}</version>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
@@ -240,32 +248,20 @@
 								</goals>
 							</execution>
 						</executions>
-					</plugin> 
+					</plugin>
 				</plugins>
 			</build>
 		</profile>
 	</profiles>
-
+	
 	<repositories>
 		<repository>
-	      	<id>osgeo</id>
-	     	<name>OSGeo Release Repository</name>
-	     	<url>https://repo.osgeo.org/repository/release/</url>
-	     	<snapshots><enabled>false</enabled></snapshots>
-	    	<releases><enabled>true</enabled></releases>
-	  	</repository>
-		<repository>
-			<id>im</id>
-			<name>Integrated Modelling Partnership Repository</name>
-			<url>https://integratedmodelling.org/nexus/repository/releases/</url>
-		</repository>
-		<repository>
-		  	<id>osgeo-snapshot</id>
-		  	<name>OSGeo Snapshot Repository</name>
-		  	<url>https://repo.osgeo.org/repository/snapshot/</url>
-		 	 <snapshots><enabled>true</enabled></snapshots>
-		  	<releases><enabled>false</enabled></releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<id>sonatype-nexus-snapshots</id>
+			<name>Maven Central snapshots</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
 		</repository>
 	</repositories>
-
 </project>

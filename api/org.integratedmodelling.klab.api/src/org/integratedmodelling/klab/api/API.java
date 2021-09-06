@@ -126,12 +126,12 @@ public interface API {
         public static final String TEMPLATE = "/kim/template";
 
     }
-    
+
     public static interface KACTORS {
 
         /**
-         * k.Actors descriptor endppoint. Returns info on the language supported, including the version,
-         * build, list of keywords and other useful statistics.
+         * k.Actors descriptor endppoint. Returns info on the language supported, including the
+         * version, build, list of keywords and other useful statistics.
          * 
          * <p>
          * <b>Protocol:</b> GET <br/>
@@ -499,9 +499,22 @@ public interface API {
             /**
              * Retrieve raw observation data for passed URN in passed geometry.
              * 
+             * TODO rename to something different than contextualize when the whole stack is
+             * updated.
+             * 
              * POST
              */
-            public static final String CONTEXTUALIZE = "/resource/contextualize";
+            public static final String GET_DATA = "/resource/contextualize";
+
+            /**
+             * Return a contextualized version of the passed resource as ResourceReference data,
+             * after ensuring that the context is appropriate and setting any needed adapter
+             * processing in motion for the getdata request that will follow. Optionally insert
+             * metadata about expected failure or wait time for the client to use.
+             * 
+             * TODO rename to contextualize when the previous one is renamed.
+             */
+            public static final String CONTEXTUALIZE = "/resource/getcontextualized";
 
             /**
              * Upload a resource.
@@ -816,7 +829,8 @@ public interface API {
             public static final String GET_PROJECT_RESOURCE = "/engine/project/resource/get/" + P_PROJECT + "/**";
 
             /**
-             * For visualization, create an image of the spatial coverage of the resource and return it.
+             * For visualization, create an image of the spatial coverage of the resource and return
+             * it.
              */
             public static final String GET_RESOURCE_SPATIAL_IMAGE = "/engine/project/resource/spaceimg/" + P_URN;
 

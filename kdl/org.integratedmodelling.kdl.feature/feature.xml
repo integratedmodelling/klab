@@ -2,7 +2,7 @@
 <feature
       id="org.integratedmodelling.kdl.feature"
       label="Kdl Feature "
-      version="0.10.0.qualifier">
+      version="0.11.0.qualifier">
 
    <url>
       <update label="k.DL update site" url="http://www.integratedmodelling.org/updates/kdl/0.10.0"/>

@@ -23,6 +23,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -90,7 +91,8 @@ public class UserAuthTokenServiceImpl implements UserAuthTokenService{
 		} else {
 			deleteExpiredTokens(username);
 			TokenAuthentication result = createToken(username, TokenType.auth);
-			SecurityContextHolder.getContext().setAuthentication(result);
+			PreAuthenticatedAuthenticationToken secureToken = new PreAuthenticatedAuthenticationToken(result.getPrincipal(),result.getCredentials(),result.getAuthorities());
+			SecurityContextHolder.getContext().setAuthentication(secureToken);
 			return result;
 		}
 	}

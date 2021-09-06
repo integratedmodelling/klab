@@ -31,9 +31,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -41,11 +39,10 @@ import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.MiscUtilities;
+import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.klab.utils.StringUtils;
 import org.integratedmodelling.weather.api.API;
-import org.integratedmodelling.weather.data.Weather;
 import org.integratedmodelling.weather.data.WeatherFactory;
 import org.integratedmodelling.weather.data.WeatherStation;
 import org.integratedmodelling.weather.rest.Capabilities;
@@ -168,18 +165,18 @@ public class WMController {
 
 		String[] vars = null;
 		if (!variables.isEmpty()) {
-			List<String> vv = StringUtils.splitOnCommas(variables);
+			List<String> vv = StringUtil.splitOnCommas(variables);
 			vars = vv.toArray(new String[vv.size()]);
 		}
 
 		int[] years = null;
 		if (!timeRange.isEmpty()) {
-			years = StringUtils.splitToIntegers(timeRange);
+			years = StringUtil.splitToIntegers(timeRange);
 		}
 
 		if (!bbox.isEmpty()) {
 
-			double[] coords = StringUtils.splitToDoubles(bbox);
+			double[] coords = StringUtil.splitToDoubles(bbox);
 			if (coords.length != 4) {
 				throw new KlabException("wrong bbox specification: " + bbox);
 			}
@@ -213,13 +210,13 @@ public class WMController {
 
 		String[] vars = null;
 		if (!variables.isEmpty()) {
-			List<String> vv = StringUtils.splitOnCommas(variables);
+			List<String> vv = StringUtil.splitOnCommas(variables);
 			vars = vv.toArray(new String[vv.size()]);
 		}
 
 		int[] years = null;
 		if (!timeRange.isEmpty()) {
-			years = StringUtils.splitToIntegers(timeRange);
+			years = StringUtil.splitToIntegers(timeRange);
 		}
 
 		WeatherStation ws = WeatherFactory.INSTANCE.getDatabase().retrieve(id);

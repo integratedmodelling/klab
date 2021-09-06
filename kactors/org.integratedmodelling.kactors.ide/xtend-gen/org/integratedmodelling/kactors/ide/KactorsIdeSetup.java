@@ -8,7 +8,6 @@ import com.google.inject.Injector;
 import org.eclipse.xtext.util.Modules2;
 import org.integratedmodelling.kactors.KactorsRuntimeModule;
 import org.integratedmodelling.kactors.KactorsStandaloneSetup;
-import org.integratedmodelling.kactors.ide.KactorsIdeModule;
 
 /**
  * Initialization support for running Xtext languages as language servers.
