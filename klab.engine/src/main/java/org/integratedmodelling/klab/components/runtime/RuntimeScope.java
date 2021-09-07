@@ -477,6 +477,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
     @Override
     public void setData(String name, IArtifact data) {
+
         if (catalog.get(name) != null) {
             structure.replace(catalog.get(name), data);
         }
@@ -1018,7 +1019,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
             if (type.isAssignableFrom(catalog.get(s).getClass())) {
                 IArtifact artifact = catalog.get(s);
                 if (artifact instanceof IObservation && this.model != null) {
-                    String localName = model.getLocalNameFor(((IObservation)artifact).getObservable());
+                    String localName = model.getLocalNameFor(((IObservation) artifact).getObservable());
                     if (localName != null) {
                         s = localName;
                     }
@@ -1125,20 +1126,23 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
          */
         for (IContextualizable computation : actuator.getComputation()) {
             if (computation.getTarget() != null && this.catalog.get(computation.getTarget().getName()) == null) {
-                targetObservables.put(computation.getTarget().getName(),
+                targetObservables.put(computation.getTarget().getReferenceName(),
                         new Triple<>((Observable) computation.getTarget(), computation.getComputationMode(), false));
             }
         }
 
         /*
-         * add additional observables that are created by a process
+         * add additional observables that are created by a process FIXME this is actually not right
+         * - will create all outputs for directly observed models, but add unneeded outputs when the
+         * additionals are not dependencies. What should be done is that a model "dropped" directly
+         * would set in all its own dependencies so we keep both behaviors.
          */
         if (actuator.getObservable().is(Type.PROCESS) && actuator.getModel() != null) {
             for (int i = 1; i < actuator.getModel().getObservables().size(); i++) {
                 IObservable output = actuator.getModel().getObservables().get(i);
                 if (Observables.INSTANCE.isCreatedBy(output, actuator.getObservable())
-                        && !this.catalog.containsKey(output.getName())) {
-                    targetObservables.put(output.getName(), new Triple<>((Observable) output,
+                        && !this.catalog.containsKey(output.getReferenceName())) {
+                    targetObservables.put(output.getReferenceName(), new Triple<>((Observable) output,
                             output.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION, false));
                 }
             }
@@ -1290,7 +1294,6 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
                  */
                 for (IState state : predefinedStates) {
                     link(state, observation);
-
                     catalog.put(state.getObservable().getName(), state);
                 }
 
@@ -1479,7 +1482,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
         if (this.rootSubject == null && observation instanceof ISubject) {
             this.rootSubject = (ISubject) observation;
         }
-        this.catalog.put(observable.getName(), observation);
+        this.catalog.put(observable.getReferenceName(), observation);
         this.structure.add(observation);
         if (contextSubject != null) {
             link(observation, dataflow.getObservationGroup() == null ? contextSubject : dataflow.getObservationGroup());

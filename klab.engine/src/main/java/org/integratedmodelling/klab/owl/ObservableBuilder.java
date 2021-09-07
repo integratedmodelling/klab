@@ -160,7 +160,7 @@ public class ObservableBuilder implements IObservable.Builder {
         this.declaration = Concepts.INSTANCE.getDeclaration(observable.getType());
         this.mustContextualize = observable.mustContextualizeAtResolution();
         this.temporalInherent = observable.getTemporalInherent();
-        this.statedName = observable.getStatedName();
+//        this.statedName = observable.getStatedName();
         this.annotations.addAll(observable.getAnnotations());
 
         for (IConcept role : Roles.INSTANCE.getDirectRoles(observable.getType())) {
@@ -357,53 +357,53 @@ public class ObservableBuilder implements IObservable.Builder {
 
             switch(type) {
             case ASSESSMENT:
-                reset(makeAssessment(argument, true));
+                reset(makeAssessment(argument, true), type);
                 break;
             case CHANGE:
-                reset(makeChange(argument, true));
+                reset(makeChange(argument, true), type);
                 break;
             case COUNT:
-                reset(makeCount(argument, true));
+                reset(makeCount(argument, true), type);
                 break;
             case DISTANCE:
-                reset(makeDistance(argument, true));
+                reset(makeDistance(argument, true), type);
                 break;
             case OCCURRENCE:
-                reset(makeOccurrence(argument, true));
+                reset(makeOccurrence(argument, true), type);
                 break;
             case PRESENCE:
-                reset(makePresence(argument, true));
+                reset(makePresence(argument, true), type);
                 break;
             case PROBABILITY:
-                reset(makeProbability(argument, true));
+                reset(makeProbability(argument, true), type);
                 break;
             case PROPORTION:
-                reset(makeProportion(argument, this.comparison, true, false));
+                reset(makeProportion(argument, this.comparison, true, false), type);
                 break;
             case PERCENTAGE:
-                reset(makeProportion(argument, this.comparison, true, true));
+                reset(makeProportion(argument, this.comparison, true, true), type);
                 break;
             case RATIO:
-                reset(makeRatio(argument, this.comparison, true));
+                reset(makeRatio(argument, this.comparison, true), type);
                 break;
             case UNCERTAINTY:
-                reset(makeUncertainty(argument, true));
+                reset(makeUncertainty(argument, true), type);
                 break;
             case VALUE:
             case MONETARY_VALUE:
-                reset(makeValue(argument, this.comparison, true, type == UnarySemanticOperator.MONETARY_VALUE));
+                reset(makeValue(argument, this.comparison, true, type == UnarySemanticOperator.MONETARY_VALUE), type);
                 break;
             case OBSERVABILITY:
-                reset(makeObservability(argument, true));
+                reset(makeObservability(argument, true), type);
                 break;
             case MAGNITUDE:
-                reset(makeMagnitude(argument, true));
+                reset(makeMagnitude(argument, true), type);
                 break;
             case LEVEL:
-                reset(makeLevel(argument, true));
+                reset(makeLevel(argument, true), type);
                 break;
             case TYPE:
-                reset(makeType(argument, true));
+                reset(makeType(argument, true), type);
                 break;
             default:
                 break;
@@ -425,7 +425,7 @@ public class ObservableBuilder implements IObservable.Builder {
         return ret;
     }
 
-    private void reset(Concept main) {
+    private void reset(Concept main, UnarySemanticOperator op) {
         this.main = main;
         this.type = main.type;
         traits.clear();
@@ -433,8 +433,8 @@ public class ObservableBuilder implements IObservable.Builder {
         unit = null;
         currency = null;
         comparison = context = inherent = /* classifier = downTo = */ caused = compresent = inherent = null;
+//        this.name = op.getReferenceName(this.name, comparison == null ? null : comparison.getReferenceName());
         isTrivial = true;
-        // declaration remains the same
     }
 
     @Override
@@ -2159,7 +2159,7 @@ public class ObservableBuilder implements IObservable.Builder {
         if (referenceName != null) {
             ret.setReferenceName(referenceName);
         }
-
+        
         ret.setStatedName(this.statedName);
         ret.setTargetPredicate(targetPredicate);
         ret.setOptional(this.optional);
