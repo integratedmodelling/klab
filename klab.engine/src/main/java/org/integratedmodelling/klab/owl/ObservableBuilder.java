@@ -106,6 +106,8 @@ public class ObservableBuilder implements IObservable.Builder {
 
     private boolean global;
 
+    private boolean hasUnaryOp;
+
     public static ObservableBuilder getBuilder(IObservable observable, IMonitor monitor) {
         return new ObservableBuilder((Observable) observable, monitor);
     }
@@ -749,6 +751,8 @@ public class ObservableBuilder implements IObservable.Builder {
             return null;
         }
 
+        this.hasUnaryOp = true;
+
         String definition = UnarySemanticOperator.CHANGE.declaration[0] + " " + concept.getDefinition();
         Ontology ontology = (Ontology) concept.getOntology();
         String conceptId = ontology.getIdForDefinition(definition);
@@ -806,6 +810,8 @@ public class ObservableBuilder implements IObservable.Builder {
 
         String cName = getCleanId(concept) + "Assessment";
 
+        this.hasUnaryOp = true;
+
         if (!concept.is(Type.QUALITY)) {
             return null;
         }
@@ -857,6 +863,8 @@ public class ObservableBuilder implements IObservable.Builder {
         if (!concept.is(Type.COUNTABLE)) {
             monitor.error("cannot count a non-countable observable", declaration);
         }
+
+        this.hasUnaryOp = true;
 
         String cName = getCleanId(concept) + "Count";
 
@@ -911,6 +919,8 @@ public class ObservableBuilder implements IObservable.Builder {
             monitor.error("cannot compute the distance to a non-countable observable", declaration);
         }
 
+        this.hasUnaryOp = true;
+
         String cName = "DistanceTo" + getCleanId(concept);
         String definition = UnarySemanticOperator.DISTANCE.declaration[0] + " " + concept.getDefinition();
         Ontology ontology = (Ontology) concept.getOntology();
@@ -958,6 +968,8 @@ public class ObservableBuilder implements IObservable.Builder {
         if (concept.is(Type.QUALITY) || concept.is(Type.CONFIGURATION) || concept.is(Type.TRAIT) || concept.is(Type.ROLE)) {
             monitor.error("presence can be observed only for subjects, events, processes and relationships", declaration);
         }
+
+        this.hasUnaryOp = true;
 
         String cName = getCleanId(concept) + "Presence";
         String definition = UnarySemanticOperator.PRESENCE.declaration[0] + " " + concept.getDefinition();
@@ -1010,6 +1022,8 @@ public class ObservableBuilder implements IObservable.Builder {
                     declaration);
         }
 
+        this.hasUnaryOp = true;
+
         String cName = getCleanId(concept) + "Occurrence";
         String definition = UnarySemanticOperator.OCCURRENCE.declaration[0] + " " + concept.getDefinition();
         Ontology ontology = (Ontology) concept.getOntology();
@@ -1061,6 +1075,8 @@ public class ObservableBuilder implements IObservable.Builder {
             monitor.error("observabilities can only be defined for observables", declaration);
         }
 
+        this.hasUnaryOp = true;
+
         String cName = getCleanId(concept) + "Observability";
         String definition = UnarySemanticOperator.OBSERVABILITY.declaration[0] + " " + concept.getDefinition();
         Ontology ontology = (Ontology) concept.getOntology();
@@ -1110,6 +1126,8 @@ public class ObservableBuilder implements IObservable.Builder {
         if (Kim.intersection(((Concept) concept).getTypeSet(), IKimConcept.CONTINUOUS_QUALITY_TYPES).size() == 0) {
             monitor.error("magnitudes can only be observed only for quantifiable qualities", declaration);
         }
+
+        this.hasUnaryOp = true;
 
         String cName = getCleanId(concept) + "Magnitude";
         String definition = UnarySemanticOperator.MAGNITUDE.declaration[0] + " " + concept.getDefinition();
@@ -1161,6 +1179,8 @@ public class ObservableBuilder implements IObservable.Builder {
             monitor.error("magnitudes can only be observed only for quantifiable qualities", declaration);
         }
 
+        this.hasUnaryOp = true;
+
         String cName = getCleanId(concept) + "Level";
         String definition = UnarySemanticOperator.LEVEL.declaration[0] + " " + concept.getDefinition();
         Ontology ontology = (Ontology) concept.getOntology();
@@ -1209,6 +1229,8 @@ public class ObservableBuilder implements IObservable.Builder {
         if (!concept.is(Type.EVENT)) {
             monitor.error("probabilities can only be observed only for events", declaration);
         }
+
+        this.hasUnaryOp = true;
 
         String cName = getCleanId(concept) + "Probability";
         String definition = UnarySemanticOperator.PROBABILITY.declaration[0] + " " + concept.getDefinition();
@@ -1261,6 +1283,8 @@ public class ObservableBuilder implements IObservable.Builder {
         Ontology ontology = (Ontology) concept.getOntology();
         String conceptId = ontology.getIdForDefinition(definition);
 
+        this.hasUnaryOp = true;
+
         if (conceptId == null) {
 
             String reference = UnarySemanticOperator.UNCERTAINTY.getReferenceName(concept.getReferenceName(), null);
@@ -1297,6 +1321,8 @@ public class ObservableBuilder implements IObservable.Builder {
 
         String cName = getCleanId(concept) + (isPercentage ? "Percentage" : "Proportion")
                 + (comparison == null ? "" : getCleanId(comparison));
+
+        this.hasUnaryOp = true;
 
         String definition = (isPercentage
                 ? UnarySemanticOperator.PERCENTAGE.declaration[0]
@@ -1357,6 +1383,8 @@ public class ObservableBuilder implements IObservable.Builder {
         if (!(concept.is(Type.QUALITY) || concept.is(Type.TRAIT)) || !comparison.is(Type.QUALITY)) {
             monitor.error("ratios must be between qualities of the same nature or traits to qualities", declaration);
         }
+
+        this.hasUnaryOp = true;
 
         String cName = getCleanId(concept) + "To" + getCleanId(comparison) + "Ratio";
 
@@ -1429,6 +1457,8 @@ public class ObservableBuilder implements IObservable.Builder {
         Ontology ontology = (Ontology) concept.getOntology();
         String conceptId = ontology.getIdForDefinition(definition);
 
+        this.hasUnaryOp = true;
+
         if (conceptId == null) {
 
             conceptId = ontology.createIdForDefinition(definition);
@@ -1482,6 +1512,8 @@ public class ObservableBuilder implements IObservable.Builder {
         String definition = UnarySemanticOperator.TYPE.declaration[0] + " " + classified.getDefinition();
         Ontology ontology = (Ontology) classified.getOntology();
         String conceptId = ontology.getIdForDefinition(definition);
+
+        this.hasUnaryOp = true;
 
         if (conceptId == null) {
 
@@ -1888,6 +1920,13 @@ public class ObservableBuilder implements IObservable.Builder {
         // cId += "Classifier";
         // }
 
+        /*
+         * now that we use the builder to create even a simple concept, the abstract status must be
+         * re-evaluated according to the engine's rules. TODO integrate this with the one in
+         * KimConcept, which behaves slightly differently.
+         */
+        evaluateAbstractStatus();
+
         List<IAxiom> axioms = new ArrayList<>();
         axioms.add(Axiom.ClassAssertion(conceptId, type));
         axioms.add(Axiom.AnnotationAssertion(conceptId, NS.DISPLAY_LABEL_PROPERTY, cDs));
@@ -1963,6 +2002,35 @@ public class ObservableBuilder implements IObservable.Builder {
         }
 
         return ret;
+    }
+
+    private void evaluateAbstractStatus() {
+        if (this.type.contains(Type.ABSTRACT)) {
+            // see if we need to remove it
+            boolean remove = hasUnaryOp;
+            if (!remove) {
+                for (IConcept t : traits) {
+                    if (t.is(Type.IDENTITY) && !t.isAbstract()) {
+                        remove = true;
+                        break;
+                    }
+                }
+            }
+            if (!remove && inherent != null) {
+                remove = !inherent.isAbstract();
+            }
+            if (this.type.contains(Type.RELATIONSHIP)) {
+                remove = relationshipSource != null && !relationshipSource.isAbstract() && relationshipTarget != null
+                        && !relationshipTarget.isAbstract();
+            }
+
+            if (remove) {
+                this.type.remove(Type.ABSTRACT);
+            }
+
+        } else {
+            // TODO see if we need to add it
+        }
     }
 
     private String dumpIds(ArrayList<String> refIds) {
@@ -2042,7 +2110,7 @@ public class ObservableBuilder implements IObservable.Builder {
 
             opId += (opId.isEmpty() ? "" : "_") + valueOperator.textForm;
             cdId += (cdId.isEmpty() ? "" : "_") + valueOperator.textForm;
-            
+
             if (valueOperand instanceof IConcept) {
 
                 ret.setDeclaration(ret.getDeclaration() + " " + ((IConcept) valueOperand).getDefinition());
@@ -2082,7 +2150,7 @@ public class ObservableBuilder implements IObservable.Builder {
         if (!opId.isEmpty()) {
             ret.setReferenceName(ret.getReferenceName() + "_" + opId);
         }
-        
+
         if (!cdId.isEmpty()) {
             ret.setName(ret.getName() + "_" + cdId);
         }

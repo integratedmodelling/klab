@@ -160,7 +160,8 @@ public class Observable extends GroovyObjectSupport implements IObservable {
 
     /**
      * The observable for a view is for now the only instance of a void observable as the view is a
-     * non-semantic artifact.
+     * non-semantic artifact. The observable's reference name is derived from the fully qualified
+     * view name.
      * 
      * @param view
      * @return
@@ -169,7 +170,7 @@ public class Observable extends GroovyObjectSupport implements IObservable {
         Observable ret = new Observable(Concepts.c(NS.CORE_VOID));
         ret.generic = false;
         ret.declaration = NS.CORE_VOID;
-        ret.referenceName = ret.name = "void";
+        ret.referenceName = ret.name = view.getName().replaceAll("\\.", "_");
         ret.resolvedModel = new Model(view);
         return ret;
     }
@@ -187,7 +188,7 @@ public class Observable extends GroovyObjectSupport implements IObservable {
             // only happens with non-standard observables from system ontologies
             ret.referenceName = KimKnowledgeProcessor.getCleanFullId(concept.getNamespace(), concept.getName());
         }
- 
+
         return ret;
     }
 

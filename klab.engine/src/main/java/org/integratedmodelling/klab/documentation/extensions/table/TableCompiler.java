@@ -1524,7 +1524,7 @@ public class TableCompiler {
 
                 List<IObservable> targets = new ArrayList<>();
 
-                if (trg.isAbstract()) {
+                if (trg.isAbstract() && !isExtent(trg)) {
 
                     if (scope != null) {
 
@@ -1588,6 +1588,19 @@ public class TableCompiler {
         }
 
         return ret;
+
+    }
+
+    private boolean isExtent(IObservable trg) {
+    
+        if (trg.getType().equals(Concepts.c(NS.CORE_AREA))) {
+            return true;
+        } else if (trg.getType().equals(Concepts.c(NS.CORE_DURATION))) {
+            return true;
+        } else if (trg.getType().equals(Concepts.c(NS.CORE_COUNT))) {
+            return true;
+        } 
+        return false;
 
     }
 
