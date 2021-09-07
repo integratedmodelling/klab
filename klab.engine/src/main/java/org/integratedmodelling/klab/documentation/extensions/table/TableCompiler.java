@@ -1884,9 +1884,12 @@ public class TableCompiler {
                 }
 
                 if (observable.is(IKimConcept.Type.COUNTABLE)) {
+                    
                     categorize(OBJECT, new ObservedConcept(observable, Mode.INSTANTIATION), sorted, null);
+                    
                 } else if (observable.is(IKimConcept.Type.CLASS)) {
 
+                    observables.add(new ObservedConcept(observable));
                     List<IObservable> keep = null;
                     if (dimensionDeclaration.containsKey("keep")) {
                         keep = new ArrayList<>();
@@ -1907,10 +1910,13 @@ public class TableCompiler {
                     for (ObservedConcept category : expandCategory(observable, keep)) {
                         categorize(CATEGORY, category, sorted, observable);
                     }
+                    
                 } else if (observable.is(IKimConcept.Type.PRESENCE)) {
+                    
                     observables.add(new ObservedConcept(observable));
                     categorize(BOOLEAN, true, sorted, observable);
                     categorize(BOOLEAN, false, sorted, observable);
+                
                 } else if (observable.is(IKimConcept.Type.PREDICATE)) {
                     /*
                      * FIXME if the observable is an abstract identity or any other that is

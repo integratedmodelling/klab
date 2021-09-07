@@ -2,10 +2,14 @@ package org.integratedmodelling.klab.components.runtime.contextualizers;
 
 import java.util.Map;
 
+import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.kim.model.KimServiceCall;
+import org.integratedmodelling.klab.Concepts;
+import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
@@ -73,6 +77,11 @@ public class ValueOperatorResolver implements IResolver<IState>, IProcessor, IEx
         }
 
         Object valueOperand = parameters.get("value");
+        if (valueOperand instanceof IKimConcept) {
+            valueOperand = Concepts.INSTANCE.declare((IKimConcept)valueOperand);
+        } else if (valueOperand instanceof IKimObservable) {
+            valueOperand = Observables.INSTANCE.declare((IKimObservable)valueOperand, context.getMonitor());
+        }
 
         return new ValueOperatorResolver(classified, operator, valueOperand, stateOperand);
     }

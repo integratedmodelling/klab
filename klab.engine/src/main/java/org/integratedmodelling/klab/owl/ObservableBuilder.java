@@ -160,7 +160,7 @@ public class ObservableBuilder implements IObservable.Builder {
         this.declaration = Concepts.INSTANCE.getDeclaration(observable.getType());
         this.mustContextualize = observable.mustContextualizeAtResolution();
         this.temporalInherent = observable.getTemporalInherent();
-//        this.statedName = observable.getStatedName();
+//       NO! don't carry this around. Needs an explicit .named() call. this.statedName = observable.getStatedName();
         this.annotations.addAll(observable.getAnnotations());
 
         for (IConcept role : Roles.INSTANCE.getDirectRoles(observable.getType())) {
@@ -433,7 +433,6 @@ public class ObservableBuilder implements IObservable.Builder {
         unit = null;
         currency = null;
         comparison = context = inherent = /* classifier = downTo = */ caused = compresent = inherent = null;
-//        this.name = op.getReferenceName(this.name, comparison == null ? null : comparison.getReferenceName());
         isTrivial = true;
     }
 
@@ -2055,16 +2054,6 @@ public class ObservableBuilder implements IObservable.Builder {
         }
         return id;
     }
-
-    // private static boolean rolesAreFundamental(Collection<IConcept> roles) {
-    // for (IConcept c : roles) {
-    // if (Resources.INSTANCE.getWorldview() != null
-    // && !c.getNamespace().equals(Resources.INSTANCE.getWorldview().getName())) {
-    // return false;
-    // }
-    // }
-    // return true;
-    // }
 
     private boolean isTrivial() {
         return isTrivial;

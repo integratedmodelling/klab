@@ -64,11 +64,6 @@ public enum KimKnowledgeProcessor {
         coreConceptPeers.put(worldviewConcept, coreConcept);
     }
 
-    // public @Nullable Concept build(final IKimConceptStatement concept, final INamespace
-    // namespace, final IMonitor monitor) {
-    // return build(concept, namespace, null, monitor);
-    // }
-
     public @Nullable Concept build(final IKimConceptStatement concept, final INamespace namespace, ConceptStatement kimObject,
             final IMonitor monitor) {
 
@@ -340,27 +335,13 @@ public enum KimKnowledgeProcessor {
         
         boolean unitsSet = false;
         
-//        String declaration = concept.getDefinition();
-
         if (concept.getUnit() != null) {
             unitsSet = true;
             builder = builder.withUnit(concept.getUnit());
-            // try {
-            // ret.setUnit(Units.INSTANCE.getUnit(unit));
-            // declaration += " in " + unit;
-            // } catch (Exception e) {
-            // monitor.error(e, concept);
-            // }
         }
 
         if (concept.getCurrency() != null) {
             builder = builder.withCurrency(concept.getCurrency());
-            // try {
-            // ret.setCurrency(Currencies.INSTANCE.getCurrency(currency));
-            // declaration += " in " + currency;
-            // } catch (Exception e) {
-            // monitor.error(e, concept);
-            // }
         }
 
         if (concept.getValue() != null) {
@@ -380,12 +361,6 @@ public enum KimKnowledgeProcessor {
         builder = builder.optional(concept.isOptional()).generic(concept.isGeneric()).global(concept.isGlobal())
                 .named(concept.getFormalName());
 
-        // ret.setOptional(concept.isOptional());
-        // ret.setGeneric(concept.isGeneric());
-        // ret.setGlobal(concept.isGlobal());
-        // ret.setReferenceName(concept.getMain().getCodeName().replace("-", "_"));
-        // ret.setStatedName(concept.getFormalName());
-
         if (concept.isExclusive()) {
             builder = builder.withResolution(Resolution.Only);
         } else if (concept.isGlobal()) {
@@ -395,47 +370,8 @@ public enum KimKnowledgeProcessor {
         }
 
         for (Pair<ValueOperator, Object> operator : concept.getValueOperators()) {
-
             builder = builder.withValueOperator(operator.getFirst(), operator.getSecond());
-            //
-            // Object operand = null;
-            //
-            // declaration += " " + operator.getFirst().declaration;
-            // ret.setReferenceName(ret.getReferenceName() + "_" + operator.getFirst().textForm);
-            //
-            // if (operator.getSecond() instanceof IKimConcept) {
-            //
-            // operand = declareInternal((IKimConcept) operator.getSecond(), (Ontology)
-            // declarationOntology, monitor);
-            // declaration += " " + operator.getSecond();
-            // ret.setReferenceName(
-            // ret.getReferenceName() + "_" + ((IKimConcept)
-            // operator.getSecond()).getCodeName().replaceAll("\\-", "_"));
-            //
-            // } else if (operator.getSecond() instanceof IKimObservable) {
-            //
-            // operand = declare((IKimObservable) operator.getSecond(), (Ontology)
-            // declarationOntology, monitor);
-            // declaration += " (" + operator.getSecond() + ")";
-            // ret.setReferenceName(ret.getReferenceName() + "_"
-            // + ((IKimObservable) operator.getSecond()).getCodeName().replaceAll("\\-", "_"));
-            // } else {
-            //
-            // operand = operator.getSecond();
-            // if (operator.getSecond() != null) {
-            // declaration += " " + operator.getSecond();
-            // ret.setReferenceName(ret.getReferenceName() + "_" + operator.getSecond());
-            // }
-            // }
-            //
-            // ret.getValueOperators().add(new Pair<>(operator.getFirst(), operand));
-
         }
-
-        // ret.setDeclaration(declaration);
-
-        // ret.setName(concept.getFormalName() == null ? ret.getReferenceName() :
-        // concept.getFormalName());
 
         if (Units.INSTANCE.needsUnits(ret) && !unitsSet) {
             builder = builder.fluidUnits(true);
@@ -562,9 +498,7 @@ public enum KimKnowledgeProcessor {
                 builder.withRole(role);
             }
         }
-
-        // semantic operator goes last as it builds the operand and resets all
-        // predicates
+ 
         if (concept.getSemanticModifier() != null) {
             IConcept other = null;
             if (concept.getComparisonConcept() != null) {
