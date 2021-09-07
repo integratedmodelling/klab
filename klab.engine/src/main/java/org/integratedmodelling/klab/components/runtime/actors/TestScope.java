@@ -12,13 +12,8 @@ import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.actors.IBehavior.Action;
+import org.integratedmodelling.klab.documentation.AsciiDocBuilder;
 import org.integratedmodelling.klab.utils.LogFile;
-import org.integratedmodelling.klab.utils.MiscUtilities;
-import org.joda.time.DateTime;
-
-import io.github.swagger2markup.markup.builder.MarkupDocBuilder;
-import io.github.swagger2markup.markup.builder.MarkupDocBuilders;
-import io.github.swagger2markup.markup.builder.MarkupLanguage;
 
 /**
  * Additional scope for actions in test scripts.
@@ -57,7 +52,7 @@ public class TestScope {
      * The root scope will build and pass around a document builder based on the extension of the
      * doc file. Lower-level doc file specs will be ignored.
      */
-    MarkupDocBuilder docBuilder;
+    AsciiDocBuilder docBuilder;
     private long timestamp;
     private Action action;
 
@@ -74,21 +69,10 @@ public class TestScope {
     private LogFile getLog() {
         if (this.log == null) {
             this.log = new LogFile(logFile);
-            this.docBuilder = MarkupDocBuilders.documentBuilder(getMarkupLanguage(logFile));
+            this.docBuilder = new AsciiDocBuilder();
             this.docBuilder.documentTitle("Test report `" + behavior.getName() + "`");
         }
         return this.log;
-    }
-
-    private MarkupLanguage getMarkupLanguage(File outfile) {
-        MarkupLanguage ret = MarkupLanguage.ASCIIDOC;
-        switch(MiscUtilities.getFileExtension(outfile)) {
-        case "md":
-            ret = MarkupLanguage.MARKDOWN;
-        case "confluence":
-            ret = MarkupLanguage.CONFLUENCE_MARKUP;
-        }
-        return ret;
     }
 
     /**
@@ -106,7 +90,7 @@ public class TestScope {
         this.globalStatistics = new Statistics();
         this.logFile = new File(absolute ? pathName : (Configuration.INSTANCE.getDataPath("test") + File.separator + pathName));
         this.log = new LogFile(logFile);
-        this.docBuilder = MarkupDocBuilders.documentBuilder(getMarkupLanguage(logFile));
+        this.docBuilder = new AsciiDocBuilder();
         // NO - add this later with the header and statistics, then append the rest of the doc
 //        this.docBuilder.documentTitle("Test report for `" + behavior.getName() + "` started on " + DateTime.now());
     }
