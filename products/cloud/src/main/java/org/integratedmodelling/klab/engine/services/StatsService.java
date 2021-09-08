@@ -1,6 +1,9 @@
 package org.integratedmodelling.klab.engine.services;
 
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
@@ -45,10 +48,16 @@ public class StatsService {
     @Autowired
     RestTemplate template;
 
+    HashMap<String, Collection<IObservation>> statsCache = new HashMap<>();
+    
     @Async
     @EventListener(condition = "#event.type == T(org.integratedmodelling.klab.engine.events.UserEventType).HISTORY")
     public void handleHistory(GenericUserEvent<HubUserProfile, Session> event) {
         UserEventHistory historyEvent = (UserEventHistory) event;
+        
+        String cacheId = historyEvent.getActivity().getActivityId();
+        statsCache.putIfAbsent(cacheId, new ArrayList<IObservation>());
+        
         SessionActivity activity = historyEvent.getActivity();
 
         if (activity.getEnd() > activity.getStart()) {
@@ -60,7 +69,28 @@ public class StatsService {
                     .filter(s -> s.startsWith(activity.getActivityId()))
                     .collect(Collectors.toSet());
             
-           
+            statsCache.computeIfPresent(activity.getActivityId(), (k, v) -> {
+            	
+            	//for (IObservation obs : v)
+            	v.forEach(obs -> {       		
+                    ObservationReference descriptor = Observations.INSTANCE.createArtifactDescriptor(
+                    		obs, obs.getScale().initialization(), 0);
+                    
+                    ObserveInContextTask task = event.getSession().getTask(descriptor.getTaskId(),  ObserveInContextTask.class);
+                    if (task != null && !task.isChildTask()) {
+                    	Logging.INSTANCE.info(obs.getId());
+                        String url = getUrl(descriptor.getClass().getCanonicalName());
+                        if (url != null) {
+                            postToServer(url, descriptor);
+                        }
+                    }
+            	});
+            	
+            	return v;
+            });
+            
+            statsCache.remove(activity.getActivityId());
+            
             matches.forEach(key -> {
                 Future< ? > task = event.getSession().getCompletedTasks().remove(key);
                 if (task instanceof ObserveInContextTask) {
@@ -119,17 +149,23 @@ public class StatsService {
     public void handleObservation(GenericUserEvent<HubUserProfile, Session> event) {
         UserEventObservation observationEvent = (UserEventObservation) event;
         IObservation observation = observationEvent.getObservation();
-
+        
         ObservationReference descriptor = Observations.INSTANCE.createArtifactDescriptor(
-                observation/* , getParentArtifactOf(observation) */, observation.getScale().initialization(), 0);
+        		observation, observation.getScale().initialization(), 0);
         
         ObserveInContextTask task = event.getSession().getTask(descriptor.getTaskId(),  ObserveInContextTask.class);
         if (task != null && !task.isChildTask()) {
+        	Logging.INSTANCE.info(observation.getId());
             String url = getUrl(descriptor.getClass().getCanonicalName());
             if (url != null) {
                 postToServer(url, descriptor);
             }
         }
+        
+        statsCache.computeIfPresent(observation.getGenerator().getId(), (k,v) -> {
+        	v.add(observation);
+        	return v;        	
+        });
     }
 
     private String getUrl(String canonicalName) {
