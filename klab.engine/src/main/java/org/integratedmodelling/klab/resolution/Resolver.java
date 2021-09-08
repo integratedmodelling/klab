@@ -496,7 +496,7 @@ public class Resolver {
 	private ResolutionScope resolveConcrete(Observable observable, ResolutionScope parentScope,
 			Map<IConcept, IConcept> resolvedPredicates, Map<IConcept, Set<IConcept>> resolvedPredicatesContext,
 			Mode mode) {
-
+	    
 		/*
 		 * Check first if we need to redistribute the observable, in which case we only
 		 * resolve the distribution context and we leave it to the runtime context to
@@ -752,8 +752,7 @@ public class Resolver {
 			 * from an instantiator, so a dataflow that creates them is generated.
 			 */
 			ret.acceptEmpty();
-		}
-
+		} 
 		return ret;
 	}
 

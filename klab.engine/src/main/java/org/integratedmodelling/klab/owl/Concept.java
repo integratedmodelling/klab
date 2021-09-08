@@ -400,9 +400,9 @@ public class Concept extends Knowledge implements IConcept {
 
     @Override
     public boolean isAbstract() {
-        return type.contains(Type.ABSTRACT);
-        // Object p = getMetadata().get(NS.IS_ABSTRACT);
-        // return p != null && p.toString().equals("true");
+        // FIXME HACK ALERT - the metadata should not know more than the type, but for now types
+        // declared as abstract may lose the flag from the type and I don't know where it happens.
+        return type.contains(Type.ABSTRACT) || "true".equals(getMetadata().get(NS.IS_ABSTRACT, String.class));
     }
 
     @Override

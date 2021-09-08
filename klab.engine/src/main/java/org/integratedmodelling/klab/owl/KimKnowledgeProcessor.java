@@ -170,7 +170,7 @@ public enum KimKnowledgeProcessor {
 
         Concept main = null;
         String mainId = concept.getName();
-
+        
         namespace.addAxiom(Axiom.ClassAssertion(mainId, concept.getType()));
 
         // set the k.IM definition

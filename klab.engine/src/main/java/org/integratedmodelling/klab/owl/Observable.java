@@ -48,7 +48,6 @@ import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.model.Annotation;
 import org.integratedmodelling.klab.model.Model;
-import org.integratedmodelling.klab.utils.CamelCase;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
 
@@ -225,6 +224,11 @@ public class Observable extends GroovyObjectSupport implements IObservable {
                 ret.getContextualRoles().add(key);
             }
         }
+
+        /**
+         * Concretized observables must keep the stated name if any, so that no models are broken.
+         */
+        ((Observable) ret).setStatedName(observable.getStatedName());
 
         return ret;
     }

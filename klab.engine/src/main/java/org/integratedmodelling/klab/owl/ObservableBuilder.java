@@ -2004,6 +2004,7 @@ public class ObservableBuilder implements IObservable.Builder {
     }
 
     private void evaluateAbstractStatus() {
+
         if (this.type.contains(Type.ABSTRACT)) {
             // see if we need to remove it
             boolean remove = hasUnaryOp;
