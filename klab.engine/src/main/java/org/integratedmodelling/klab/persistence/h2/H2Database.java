@@ -145,6 +145,8 @@ public class H2Database {
 
         } else {
 
+            checkVersions(kboxName);
+
             File directory = Configuration.INSTANCE.getDataPath("kbox/" + kboxName);
             directory.mkdirs();
             File f1 = new File(directory + File.separator + kboxName + ".mv.db");
@@ -441,9 +443,6 @@ public class H2Database {
     }
 
     public static H2Database createPersistent(String kboxName) {
-
-        checkVersions(kboxName);
-
         if (datastores.get(kboxName) != null) {
             return datastores.get(kboxName);
         }
@@ -469,19 +468,18 @@ public class H2Database {
                 } catch (IOException e) {
                     throw new KlabIOException(e);
                 }
+            }
+            refresh = knownVersion == null;
+            if (!refresh) {
+                refresh = !knownVersion.equals(Constants.getFullVersion());
+            }
 
-                refresh = knownVersion == null;
-                if (!refresh) {
-                    refresh = knownVersion.equals(Constants.getFullVersion());
-                }
-
-                if (refresh) {
-                    properties.setProperty(kboxName + ".h2.version", Constants.getFullVersion());
-                    try (OutputStream output = new FileOutputStream(propfile)) {
-                        properties.store(output, null);
-                    } catch (IOException e) {
-                        throw new KlabIOException(e);
-                    }
+            if (refresh) {
+                properties.setProperty(kboxName + ".h2.version", Constants.getFullVersion());
+                try (OutputStream output = new FileOutputStream(propfile)) {
+                    properties.store(output, null);
+                } catch (IOException e) {
+                    throw new KlabIOException(e);
                 }
             }
         }
