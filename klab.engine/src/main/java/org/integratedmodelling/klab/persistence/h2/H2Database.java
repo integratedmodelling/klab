@@ -23,6 +23,11 @@ package org.integratedmodelling.klab.persistence.h2;
 
 import java.io.Closeable;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -34,11 +39,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 import javax.sql.PooledConnection;
 
+import org.h2.engine.Constants;
 import org.h2.jdbcx.JdbcDataSource;
 import org.h2gis.functions.factory.H2GISFunctions;
 import org.h2gis.utilities.SFSUtilities;
@@ -47,10 +54,12 @@ import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.data.general.IStructuredTable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabStorageException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.persistence.h2.H2Kbox.Schema;
 import org.integratedmodelling.klab.persistence.h2.H2Kbox.Serializer;
+import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.Pair;
 
 /**
@@ -85,49 +94,6 @@ public class H2Database {
     Set<String> tables = null;
     private Map<Class<?>, Schema> schemata = new HashMap<>();
     private Set<Class<?>> initializedSchemata = new HashSet<>();
-
-    // these support the more modern table functions
-    // private List<Pair<Class<?>, Function<?, String>>> serializers = new ArrayList<>();
-    // private List<Pair<Class<?>, Function<Map<String, Object>, ?>>> deserializers = new
-    // ArrayList<>();
-
-    // public static class Builder {
-    //
-    // private List<Structure> tables = new ArrayList<>();
-    //// private String name;
-    //// private boolean persistent;
-    //// private List<Pair<Class<?>, Function<?, String>>> serializers = new ArrayList<>();
-    //// private List<Pair<Class<?>, Function<Map<String, Object>, ?>>> deserializers = new
-    // ArrayList<>();
-    //
-    // public Builder(String databaseName, boolean persistent) {
-    //// this.name = databaseName;
-    //// this.persistent = persistent;
-    // }
-    //
-    // public Builder table(Structure structure) {
-    // tables.add(structure);
-    // return this;
-    // }
-    //
-    // public <T> Builder serialize(Function<T, String> serializer, Class<? extends T> cls) {
-    // return this;
-    // }
-    //
-    // public <T> Builder deserialize(Function<Map<String, Object>, T> deserializer, Class<? extends
-    // T> cls) {
-    // return this;
-    // }
-    //
-    // public H2Database build() {
-    // return null;
-    // }
-    //
-    // }
-
-    // public static Builder builder(String databaseName, boolean persistent) {
-    // return new Builder(databaseName, persistent);
-    // }
 
     public List<Map<String, String>> dump(String table) throws KlabStorageException {
         List<Map<String, String>> ret = new ArrayList<>();
@@ -268,14 +234,6 @@ public class H2Database {
          */
     }
 
-    // protected void recover() throws KlabException {
-    // try {
-    // Recover.execute(directory.toString(), name);
-    // } catch (SQLException e) {
-    // throw new KlabStorageException(e);
-    // }
-    // }
-
     public synchronized long getNextId() {
         long ret = oid.getAndIncrement();
         try {
@@ -293,37 +251,38 @@ public class H2Database {
         } catch (Throwable t) {
             return false;
         }
-        
+
         return true;
-//        /*
-//         * TODO doesn't work, for mysterious reasons, all tables are there except the one we need, which
-//         * exists.
-//         */
-//        if (tables == null) {
-//
-//            tables = new HashSet<>();
-//
-//            class RH implements SQL.ResultHandler {
-//
-//                @Override
-//                public void onRow(ResultSet rs) {
-//                    try {
-//                        tables.add(rs.getString(1));
-//                    } catch (SQLException e) {
-//                        throw new KlabStorageException(e);
-//                    }
-//                }
-//
-//                @Override
-//                public void nResults(int nres) {
-//                }
-//            }
-//
-//            RH rh = new RH();
-//            this.query("select table_name from information_schema.tables;", rh);
-//
-//        }
-//        return tables.contains(tableName) || tables.contains(tableName.toUpperCase());
+        // /*
+        // * TODO doesn't work, for mysterious reasons, all tables are there except the one we need,
+        // which
+        // * exists.
+        // */
+        // if (tables == null) {
+        //
+        // tables = new HashSet<>();
+        //
+        // class RH implements SQL.ResultHandler {
+        //
+        // @Override
+        // public void onRow(ResultSet rs) {
+        // try {
+        // tables.add(rs.getString(1));
+        // } catch (SQLException e) {
+        // throw new KlabStorageException(e);
+        // }
+        // }
+        //
+        // @Override
+        // public void nResults(int nres) {
+        // }
+        // }
+        //
+        // RH rh = new RH();
+        // this.query("select table_name from information_schema.tables;", rh);
+        //
+        // }
+        // return tables.contains(tableName) || tables.contains(tableName.toUpperCase());
     }
 
     /**
@@ -482,10 +441,67 @@ public class H2Database {
     }
 
     public static H2Database createPersistent(String kboxName) {
+
+        checkVersions(kboxName);
+
         if (datastores.get(kboxName) != null) {
             return datastores.get(kboxName);
         }
         return new H2Database(kboxName, false);
+    }
+
+    /**
+     * Check which version of H2 the specified kbox was made with. If unknown, or not the same, move
+     * the previous kbox to a different directory and create a new one.
+     */
+    private static void checkVersions(String kboxName) {
+
+        boolean refresh = false;
+        File directory = Configuration.INSTANCE.getDataPath("kbox/" + kboxName);
+        if (directory.isDirectory()) {
+            File propfile = new File(Configuration.INSTANCE.getDataPath("kbox") + File.separator + "kbox.properties");
+            String knownVersion = null;
+            Properties properties = new Properties();
+            if (propfile.exists()) {
+                try (InputStream input = new FileInputStream(propfile)) {
+                    properties.load(input);
+                    knownVersion = properties.getProperty(kboxName + ".h2.version");
+                } catch (IOException e) {
+                    throw new KlabIOException(e);
+                }
+
+                refresh = knownVersion == null;
+                if (!refresh) {
+                    refresh = knownVersion.equals(Constants.getFullVersion());
+                }
+
+                if (refresh) {
+                    properties.setProperty(kboxName + ".h2.version", Constants.getFullVersion());
+                    try (OutputStream output = new FileOutputStream(propfile)) {
+                        properties.store(output, null);
+                    } catch (IOException e) {
+                        throw new KlabIOException(e);
+                    }
+                }
+            }
+        }
+
+        if (refresh) {
+            int i = 1;
+            File backupDir = null;
+            do {
+                backupDir = new File(directory + ".backup." + (i++));
+            } while(backupDir.exists());
+            try {
+                Logging.INSTANCE.warn("Database for kbox " + kboxName
+                        + " was written with a different version: moving to backup directory " + backupDir);
+                FileUtils.copyDirectory(directory, backupDir);
+                FileUtils.deleteDirectory(directory);
+            } catch (IOException e) {
+                throw new KlabIOException(e);
+            }
+        }
+
     }
 
     public <T> long storeObject(T o, long foreignKey, Serializer<T> serializer, IMonitor monitor) throws KlabException {
