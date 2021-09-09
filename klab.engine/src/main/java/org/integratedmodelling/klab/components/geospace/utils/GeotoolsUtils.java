@@ -10,6 +10,8 @@ import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -26,6 +28,7 @@ import javax.media.jai.iterator.RandomIterFactory;
 import javax.media.jai.iterator.RectIterFactory;
 import javax.media.jai.iterator.WritableRectIter;
 
+import org.eclipse.lsp4j.AbstractTextDocumentRegistrationAndWorkDoneProgressOptions;
 import org.geotools.coverage.Category;
 import org.geotools.coverage.CoverageFactoryFinder;
 import org.geotools.coverage.GridSampleDimension;
@@ -44,6 +47,8 @@ import org.geotools.referencing.CRS;
 import org.geotools.styling.ColorMapEntry;
 import org.geotools.styling.RasterSymbolizer;
 import org.geotools.swing.data.JFileDataStoreChooser;
+import org.geotools.util.factory.Hints;
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -51,6 +56,8 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
@@ -67,6 +74,7 @@ import org.jaitools.tiledimage.DiskMemImage;
 import org.opengis.filter.expression.Literal;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
+import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -745,6 +753,78 @@ public enum GeotoolsUtils {
             e.printStackTrace();
         }
 
+    }
+
+    /**
+     * Dump a state to a raster in the klab configuration folder.
+     * 
+     * <p>This is executed only if the {@link IConfigurationService#KLAB_MODEL_DUMP_INTERMEDIATE} is set to true.
+     * So no need to create a check in the model.
+     * 
+     * <p>The folder used is currently hardcoded to "intermediate_data_dump_folder". Subfolders 
+     * based on the timestamp of the context time step are generated.  
+     * 
+     * @param scope the context to use.
+     * @param producingModel the model that produces the raster
+     * @param states a list of states that are to be dumped to raster. 
+     */
+    public void dumpToRaster(IContextualizationScope scope, String producingModel, IState... states) {
+        String dumpIntermediate = Configuration.INSTANCE.getProperty(IConfigurationService.KLAB_MODEL_DUMP_INTERMEDIATE, "false");
+        boolean doDump = Boolean.parseBoolean(dumpIntermediate);
+        if (!doDump) {
+            return;
+        }
+
+        File klabFolder = Configuration.INSTANCE.getDataPath();
+
+        File dumpFolder = new File(klabFolder, "intermediate_data_dump_folder");
+        if (!dumpFolder.exists()) {
+            dumpFolder.mkdirs();
+        }
+
+        long ts = scope.getScale().getTime().getStart().getMilliseconds();
+        SimpleDateFormat f = new SimpleDateFormat("yyyyMMdd_HHmmss");
+
+        // TODO check if it makes sense to also add context subject, it seems to make it less
+        // readable.
+        // String contextName = "";
+        // if (!scope.getRootSubject().equals(scope.getContextSubject())) {
+        // contextName = scope.getContextSubject().getName() + "_";
+        // }
+
+        for(IState state : states) {
+            if (state != null) {
+                GridCoverage2D coverage = GeotoolsUtils.INSTANCE.stateToCoverage(state, scope.getScale(), false);
+                // String name = contextName + state.getObservable().getName();
+                String name = state.getObservable().getName();
+
+                String dateStr = f.format(new Date(ts));
+                String fileName = producingModel + "-model__" + name + "-obs.tiff";
+
+                File outFolder = new File(dumpFolder, dateStr);
+                if (!outFolder.exists()) {
+                    outFolder.mkdir();
+                }
+                File outfile = new File(outFolder, fileName);
+
+                scope.getMonitor().debug("Dumping state of ts " + dateStr + " to file " + fileName);
+
+                try {
+                    final GeoTiffFormat format = new GeoTiffFormat();
+                    final GeoTiffWriteParams wp = new GeoTiffWriteParams();
+                    wp.setCompressionMode(GeoTiffWriteParams.MODE_DEFAULT);
+                    wp.setTilingMode(GeoToolsWriteParams.MODE_DEFAULT);
+                    final ParameterValueGroup paramWrite = format.getWriteParameters();
+                    paramWrite.parameter(AbstractGridFormat.GEOTOOLS_WRITE_PARAMS.getName().toString()).setValue(wp);
+                    GeoTiffWriter gtw = new GeoTiffWriter(outfile,
+                            new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE));
+                    gtw.write(coverage, (GeneralParameterValue[]) paramWrite.values().toArray(new GeneralParameterValue[1]));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    scope.getMonitor().error(e.getMessage());
+                }
+            }
+        }
     }
 
 }

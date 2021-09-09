@@ -104,7 +104,12 @@ public interface IConfigurationService {
 	 * square grid cells.
 	 */
 	public static final String KLAB_GRID_CONSTRAINT = "klab.grid.forceSquarecells";
-	
+
+	/**
+	 * If defined and set to <code>true</code>, then intermediate data processed by the models
+	 * are to be dumped to disk.
+	 */
+	public static final String KLAB_MODEL_DUMP_INTERMEDIATE = "klab.model.dumpIntermediateData";
 
 	/**
 	 * The main properties, read and written by default to
