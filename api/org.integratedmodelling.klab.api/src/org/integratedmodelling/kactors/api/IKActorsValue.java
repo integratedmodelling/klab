@@ -1,6 +1,9 @@
 package org.integratedmodelling.kactors.api;
 
+import java.util.List;
+
 import org.integratedmodelling.kactors.api.IKActorsBehavior.Scope;
+import org.integratedmodelling.kactors.api.IKActorsStatement.Call;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 
 /**
@@ -63,7 +66,12 @@ public interface IKActorsValue extends IKActorsCodeStatement {
         /**
          * A component path and possibly arguments passed after 'new'
          */
-        COMPONENT
+        COMPONENT, 
+        
+        /**
+         * A (chain of) function calls
+         */
+        CALLCHAIN
 
     }
 
@@ -156,6 +164,13 @@ public interface IKActorsValue extends IKActorsCodeStatement {
     boolean isDeferred();
 
     /**
+     * The value may consist of a chain of calls to be evaluated as functions.
+     * 
+     * @return
+     */
+    List<Call> getCallChain();
+
+    /**
      * Evaluate the statement in scope. The scope can be null and this will use any evaluation
      * helpers set in the runtime, if any, to produce the final "meaning" stated in the code. Only
      * in some situations the result may remain a IKActorsValue.
@@ -170,5 +185,6 @@ public interface IKActorsValue extends IKActorsCodeStatement {
      * @return
      */
     Object evaluate(Scope scope, IIdentity identity, boolean forceEvaluationIfDeferred);
+
 
 }

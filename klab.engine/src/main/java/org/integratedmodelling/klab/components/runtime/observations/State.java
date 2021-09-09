@@ -26,7 +26,6 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.components.localstorage.impl.AbstractAdaptiveStorage;
 import org.integratedmodelling.klab.components.localstorage.impl.KeyedStorage;
-import org.integratedmodelling.klab.components.localstorage.impl.TimesliceLocator;
 import org.integratedmodelling.klab.data.storage.DataIterator;
 import org.integratedmodelling.klab.data.storage.LocatedState;
 import org.integratedmodelling.klab.data.storage.MediatingState;

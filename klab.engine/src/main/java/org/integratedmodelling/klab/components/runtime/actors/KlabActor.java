@@ -1123,6 +1123,29 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
         }
     }
 
+    private static Object executeFunctionChain(List<Call> functions, Scope scope) {
+        Object contextReceiver = null;
+        for (int i = 0; i < functions.size(); i++) {
+            boolean last = (i == functions.size() - 1);
+            Scope fscope = last ? scope.withReceiver(contextReceiver) : scope.functional(contextReceiver);
+            callFunctionOrMethod(functions.get(i), fscope);
+            contextReceiver = fscope.valueScope;
+        }
+        return contextReceiver;
+    }
+
+    /**
+     * If the call is a known function, call it and leave the value in the scope. Otherwise check if
+     * it's a method of the valueScope receiver if we have it.
+     * 
+     * @param call
+     * @param fscope
+     */
+    private static void callFunctionOrMethod(Call call, Scope fscope) {
+        // TODO Auto-generated method stub
+
+    }
+
     /**
      * A call sequence is a one or more calls to be executed in sequence. The last call is a
      * standard message call which will either fire or return according to the scope; the ones
@@ -1328,6 +1351,9 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
         case URN:
             ret = new Urn(arg.getStatedValue().toString());
             break;
+        case CALLCHAIN:
+            ret = executeFunctionChain(arg.getCallChain(), scope);
+            break;
         default:
             ret = arg.getStatedValue();
         }
@@ -1472,8 +1498,8 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
         Action libraryActionCode = null;
 
         /*
-         * HERE check if the call is a method from the library and if it applies to the context
-         * receiver in case we have one.
+         * check if the call is a method from the library and if it applies to the context receiver
+         * in case we have one.
          */
         for (Library library : libraries.values()) {
             if (library.methods.containsKey(messageName)) {

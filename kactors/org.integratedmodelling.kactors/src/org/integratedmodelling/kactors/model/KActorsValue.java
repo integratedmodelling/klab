@@ -15,12 +15,14 @@ import org.integratedmodelling.contrib.jgrapht.Graph;
 import org.integratedmodelling.contrib.jgrapht.graph.DefaultDirectedGraph;
 import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
 import org.integratedmodelling.kactors.api.IKActorsBehavior.Scope;
+import org.integratedmodelling.kactors.api.IKActorsStatement.Call;
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.kactors.Classifier;
 import org.integratedmodelling.kactors.kactors.ListElement;
 import org.integratedmodelling.kactors.kactors.Literal;
 import org.integratedmodelling.kactors.kactors.MapEntry;
 import org.integratedmodelling.kactors.kactors.Match;
+import org.integratedmodelling.kactors.kactors.MessageCall;
 import org.integratedmodelling.kactors.kactors.MetadataPair;
 import org.integratedmodelling.kactors.kactors.Observable;
 import org.integratedmodelling.kactors.kactors.Quantity;
@@ -64,7 +66,8 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
     private ExpressionType expressionType = ExpressionType.VALUE;
     private KActorsValue trueCase;
     private KActorsValue falseCase;
-
+    private List<Call> callChain;
+    
     /**
      * Constructors can be either for Java objects (with classname and possibly classpath not null)
      * or for components (with component != null). The value type is either OBJECT or COMPONENT and
@@ -313,6 +316,12 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
             this.constructor.setArguments(
                     value.getParameters() == null ? new KActorsArguments() : new KActorsArguments(value.getParameters()));
             this.constructor.setComponent(value.getBehavior());
+        } else if (value.getMethodCalls() != null && value.getMethodCalls().size() > 0) {
+            this.type = Type.CALLCHAIN;
+            callChain = new ArrayList<>();
+            for (MessageCall call : value.getMethodCalls()) {
+                callChain.add(new KActorsActionCall(call, this));
+            }
         }
 
         if (value.getThen() != null) {
@@ -338,6 +347,11 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
             }
         }
 
+    }
+    
+    @Override
+    public List<Call> getCallChain() {
+        return this.callChain;
     }
 
     private Object parseExpression(String string) {
