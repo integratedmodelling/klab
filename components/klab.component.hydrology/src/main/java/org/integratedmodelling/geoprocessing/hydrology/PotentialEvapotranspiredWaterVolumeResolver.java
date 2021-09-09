@@ -57,6 +57,9 @@ public class PotentialEvapotranspiredWaterVolumeResolver implements IResolver<IP
             GeotoolsUtils.INSTANCE.coverageToState(pet.outputPet, petState, context.getScale(), null);
         }
 
+        GeotoolsUtils.INSTANCE.dumpToRaster(context, "PET", cropCoefficientState, rainfallState, tempState, maxTempState,
+                minTempState, solarRadiationState, petState);
+
         return evapotranspirationProcess;
     }
 

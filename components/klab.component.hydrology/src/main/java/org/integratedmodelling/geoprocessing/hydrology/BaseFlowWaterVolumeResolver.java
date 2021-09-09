@@ -5,21 +5,17 @@ import static org.hortonmachine.gears.libs.modules.HMConstants.floatNovalue;
 import java.awt.image.DataBuffer;
 
 import org.geotools.coverage.grid.GridCoverage2D;
-import org.hortonmachine.gears.utils.time.UtcTimeUtilities;
 import org.hortonmachine.hmachine.modules.hydrogeomorphology.baseflow.OmsBaseflowWaterVolume;
 import org.integratedmodelling.geoprocessing.TaskMonitor;
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.IState;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.joda.time.DateTime;
 
 public class BaseFlowWaterVolumeResolver implements IResolver<IProcess>, IExpression {
 
@@ -56,6 +52,9 @@ public class BaseFlowWaterVolumeResolver implements IResolver<IProcess>, IExpres
 
             GeotoolsUtils.INSTANCE.coverageToState(b.outBaseflow, baseflowWaterVolumeState, context.getScale(), null);
         }
+
+        GeotoolsUtils.INSTANCE.dumpToRaster(context, "Baseflow", netInfiltratedWaterVolumeState, infiltratedWaterVolumeState,
+                streamPresenceState, flowdirectionState, baseflowWaterVolumeState);
 
         return baseflowProcess;
     }

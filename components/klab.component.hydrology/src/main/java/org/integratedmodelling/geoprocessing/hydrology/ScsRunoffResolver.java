@@ -52,9 +52,10 @@ public class ScsRunoffResolver implements IResolver<IProcess>, IExpression {
         }
         if (!context.getMonitor().isInterrupted()) {
             GeotoolsUtils.INSTANCE.coverageToState(scsRunoff.outputDischarge, runoffState, context.getScale(), null);
-            // long ts = context.getScale().getTime().getStart().getMilliseconds();
-            // SwyDebugUtils.dumpToRaster(ts, context, "ScsRunoff", runoffState);
         }
+
+        GeotoolsUtils.INSTANCE.dumpToRaster(context, "ScsRunoff", rainfallVolumeState, streamPresenceState, curveNumberState,
+                runoffState);
         return runoffProcess;
     }
 
