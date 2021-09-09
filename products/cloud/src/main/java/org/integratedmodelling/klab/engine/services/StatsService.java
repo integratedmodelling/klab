@@ -4,6 +4,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
@@ -12,8 +13,11 @@ import org.apache.http.client.utils.URIBuilder;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.API;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.components.localstorage.impl.TimesliceLocator;
+import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.engine.events.GenericUserEvent;
 import org.integratedmodelling.klab.engine.events.UserEventContext;
 import org.integratedmodelling.klab.engine.events.UserEventHistory;
@@ -36,6 +40,8 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+
+import groovyjarjarantlr4.v4.parse.GrammarTreeVisitor.locals_return;
 
 @Component
 @ConditionalOnProperty(value = "stats.server.url", havingValue = "", matchIfMissing = false)
@@ -60,36 +66,33 @@ public class StatsService {
         
         SessionActivity activity = historyEvent.getActivity();
 
-        if (activity.getEnd() > activity.getStart()) {
-            Logging.INSTANCE.info("activity ended");
+        if (activity.getEnd() > activity.getStart()) {         
+            statsCache.computeIfPresent(activity.getActivityId(), (k, v) -> {
+            	v.forEach(obs -> {
+            		if(obs instanceof State) {
+            			List<ILocator> locators = ((State) obs).getSliceLocators();
+            			locators.forEach(loc -> {
+            				ObservationReference descriptor = Observations.INSTANCE.createArtifactDescriptor(obs,loc,0);
+            				String url = getUrl(descriptor.getClass().getCanonicalName());
+            				if (loc instanceof TimesliceLocator) {
+            					descriptor.getMetadata().put("Temporal transition", ((TimesliceLocator) loc).getLabel());
+            				}
+                            if (url != null) {
+                            	postToServer(url, descriptor);
+                            }
+            			});
+            		}
+            	});
+            	return v;
+            });
+            statsCache.remove(activity.getActivityId());
+            
             Set<String> matches = event
                     .getSession()
                     .getCompletedTasks()
                     .keySet().stream()
                     .filter(s -> s.startsWith(activity.getActivityId()))
                     .collect(Collectors.toSet());
-            
-            statsCache.computeIfPresent(activity.getActivityId(), (k, v) -> {
-            	
-            	//for (IObservation obs : v)
-            	v.forEach(obs -> {       		
-                    ObservationReference descriptor = Observations.INSTANCE.createArtifactDescriptor(
-                    		obs, obs.getScale().initialization(), 0);
-                    
-                    ObserveInContextTask task = event.getSession().getTask(descriptor.getTaskId(),  ObserveInContextTask.class);
-                    if (task != null && !task.isChildTask()) {
-                    	Logging.INSTANCE.info(obs.getId());
-                        String url = getUrl(descriptor.getClass().getCanonicalName());
-                        if (url != null) {
-                            postToServer(url, descriptor);
-                        }
-                    }
-            	});
-            	
-            	return v;
-            });
-            
-            statsCache.remove(activity.getActivityId());
             
             matches.forEach(key -> {
                 Future< ? > task = event.getSession().getCompletedTasks().remove(key);
@@ -149,23 +152,13 @@ public class StatsService {
     public void handleObservation(GenericUserEvent<HubUserProfile, Session> event) {
         UserEventObservation observationEvent = (UserEventObservation) event;
         IObservation observation = observationEvent.getObservation();
-        
-        ObservationReference descriptor = Observations.INSTANCE.createArtifactDescriptor(
-        		observation, observation.getScale().initialization(), 0);
-        
-        ObserveInContextTask task = event.getSession().getTask(descriptor.getTaskId(),  ObserveInContextTask.class);
+        ObserveInContextTask task = event.getSession().getTask(observation.getMonitor().getIdentity().getId(), ObserveInContextTask.class);
         if (task != null && !task.isChildTask()) {
-        	Logging.INSTANCE.info(observation.getId());
-            String url = getUrl(descriptor.getClass().getCanonicalName());
-            if (url != null) {
-                postToServer(url, descriptor);
-            }
+            statsCache.computeIfPresent(observation.getGenerator().getId(), (k,v) -> {
+            	v.add(observation);
+            	return v;        	
+            });
         }
-        
-        statsCache.computeIfPresent(observation.getGenerator().getId(), (k,v) -> {
-        	v.add(observation);
-        	return v;        	
-        });
     }
 
     private String getUrl(String canonicalName) {
