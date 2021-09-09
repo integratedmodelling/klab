@@ -150,14 +150,18 @@ public class StatsService {
     @Async
     @EventListener(condition = "#event.type == T(org.integratedmodelling.klab.engine.events.UserEventType).OBSERVATION")
     public void handleObservation(GenericUserEvent<HubUserProfile, Session> event) {
-        UserEventObservation observationEvent = (UserEventObservation) event;
+    	UserEventObservation observationEvent = (UserEventObservation) event;
         IObservation observation = observationEvent.getObservation();
-        ObserveInContextTask task = event.getSession().getTask(observation.getMonitor().getIdentity().getId(), ObserveInContextTask.class);
-        if (task != null && !task.isChildTask()) {
-            statsCache.computeIfPresent(observation.getGenerator().getId(), (k,v) -> {
+        String id = observation.getGenerator().getId();
+        if (statsCache.containsKey(id)) {
+            statsCache.computeIfPresent(id, (k,v) -> {
             	v.add(observation);
             	return v;        	
             });
+        } else {
+        	Collection<IObservation> obs = new ArrayList<>();
+        	obs.add(observation);
+        	statsCache.putIfAbsent(id, obs);
         }
     }
 
