@@ -25,10 +25,7 @@
    <windowImages i16="branding/k-lab-icon-16.gif" i32="branding/k-lab-icon-32.gif" i48="branding/k-lab-icon-48.gif" i64="branding/k-lab-icon-64.gif" i128="branding/k-lab-icon-128.gif" i256="branding/k-lab-icon-256.gif"/>
 
    <splash
-      location="org.integratedmodelling.klab.ide"
-      startupProgressRect="24,246,494,14"
-      startupMessageRect="24,234,496,20"
-      startupForegroundColor="808080" />
+      location="org.integratedmodelling.klab.ide" />
    <launcher name="kModeler">
       <linux icon="branding/icon.xpm"/>
       <macosx icon="branding/k-lab.icns"/>
