@@ -9,7 +9,7 @@ import org.integratedmodelling.klab.utils.Pair;
 
 public class ShapeToGrid implements IScaleMediator {
 
-    public ShapeToGrid(Shape shape, Grid grid) {
+    public ShapeToGrid(Grid grid, Shape shape) {
 		// TODO Auto-generated constructor stub
 	}
 

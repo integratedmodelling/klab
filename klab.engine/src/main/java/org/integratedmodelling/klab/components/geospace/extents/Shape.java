@@ -16,7 +16,6 @@ import org.eclipse.xtext.util.Arrays;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
-import org.geotools.referencing.GeodeticCalculator;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
@@ -41,8 +40,8 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.geospace.Geospace;
-import org.integratedmodelling.klab.components.geospace.extents.mediators.ShapeToFeatures;
-import org.integratedmodelling.klab.components.geospace.extents.mediators.ShapeToGrid;
+import org.integratedmodelling.klab.components.geospace.extents.mediators.FeaturesToShape;
+import org.integratedmodelling.klab.components.geospace.extents.mediators.GridToShape;
 import org.integratedmodelling.klab.components.geospace.extents.mediators.ShapeToShape;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -51,7 +50,6 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.scale.AbstractExtent;
 import org.integratedmodelling.klab.utils.Pair;
-
 import org.locationtech.jts.algorithm.ConvexHull;
 import org.locationtech.jts.awt.ShapeWriter;
 import org.locationtech.jts.geom.Coordinate;
@@ -585,11 +583,11 @@ public class Shape extends AbstractExtent implements IShape {
     public IScaleMediator getMediator(IExtent extent) {
         ISpace other = (ISpace) extent;
         if (other instanceof Space && ((Space) other).getGrid() != null) {
-            return new ShapeToGrid(this, (Grid) ((Space) other).getGrid());
+            return new GridToShape(this, (Grid) ((Space) other).getGrid());
         } else if (other instanceof Space && ((Space) other).getTessellation() != null) {
-            return new ShapeToFeatures(this, ((Space) other).getTessellation());
+            return new FeaturesToShape(this, ((Space) other).getTessellation());
         } else {
-            return new ShapeToShape(this, (Shape) other.getShape());
+            return new ShapeToShape((Shape) other.getShape(), this);
         }
     }
 

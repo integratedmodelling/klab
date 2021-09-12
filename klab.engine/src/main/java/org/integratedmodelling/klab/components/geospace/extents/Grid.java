@@ -346,10 +346,11 @@ public class Grid extends Area implements IGrid {
         Projection prj = shape.getProjection();
         CoordinateReferenceSystem crs = prj.crs;
 
-        double minX = env.getMinX();
-        double maxX = env.getMaxX();
-        double minY = env.getMinY();
-        double maxY = env.getMaxY();
+        double minX = clamp(env.getMinX(), -180, 180);
+        double maxX = clamp(env.getMaxX(), -180, 180);
+        double minY = clamp(env.getMinY(), -90, 90);
+        double maxY = clamp(env.getMaxY(), -90, 90);
+        
         if (doForceSquareCells()) {
             if (prj.isMeters()) {
                 double newMaxX = minX + (Math.ceil((maxX - minX) / squareRes) * squareRes);
@@ -418,6 +419,16 @@ public class Grid extends Area implements IGrid {
             }
             this.setResolution(x, y);
         }
+    }
+    
+    private static double clamp(double x, double min, double max) {
+        if (x < min) {
+            x = min;
+        }
+        if (x > max) {
+            x = max;
+        }
+        return x;
     }
 
     private static boolean doForceSquareCells() {

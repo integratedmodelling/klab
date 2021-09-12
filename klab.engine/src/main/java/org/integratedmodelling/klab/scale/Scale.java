@@ -391,6 +391,14 @@ public class Scale implements IScale {
         return ret;
     }
 
+    protected void setExtents(List<IExtent> adopted) {
+        extents.clear();
+        for (IExtent extent : adopted) {
+            mergeExtent(extent);
+        }
+    }
+
+    
     /**
      * Create from either another scale or a simpler geometry.
      * 

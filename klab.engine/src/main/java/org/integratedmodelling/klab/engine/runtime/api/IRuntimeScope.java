@@ -33,6 +33,7 @@ import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.provenance.Provenance;
+import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
 
 /**
@@ -452,5 +453,13 @@ public interface IRuntimeScope extends IContextualizationScope {
      * @return
      */
     Collection<IKnowledgeView> getViews();
+
+    /**
+     * Set a local scale in the context, for merged actuators.
+     * 
+     * @param scale
+     * @return
+     */
+    IRuntimeScope withScale(Scale scale);
 
 }

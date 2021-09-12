@@ -17,9 +17,8 @@ import java.util.List;
 
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.api.resolution.ICoverage;
 
 /**
  * Each node in a dataflow is an actuator. Compared to other workflow systems (e.g. Ptolemy), an
@@ -54,7 +53,7 @@ public interface IActuator extends IDataflowNode {
 
     /**
      * Return the name with which the passed observable is known within this actuator, or null if
-     * the observable is not referenced in either inputs or outputs.
+     * the observable is not referenced in it.
      * 
      * @param observable
      * @return
@@ -62,15 +61,19 @@ public interface IActuator extends IDataflowNode {
     String getAlias(IObservable observable);
 
     /**
-     * Each actuator has a type, for the kind of observation it produces. Pure resolvers are void.
-     * Actuators whose type defines an occurrent are not run at initialization.
+     * Each actuator reports the artifact type of the observation it produces. Pure resolvers (e.g.
+     * the resolver for an object) report a void type. Actuators whose type defines an occurrent are
+     * not run at initialization.
      * 
      * @return
      */
     IArtifact.Type getType();
 
     /**
-     * Return all child actuators in order of declaration.
+     * Return all child actuators in order of declaration in the dataflow. This may not correspond
+     * to the order of contextualization, which is computed by the runtime, although it is expected
+     * that child actuators at the same level without mutual dependencies have a non-random order
+     * which should be honored.
      *
      * @return all the internal actuators in order of declaration.
      */
@@ -78,7 +81,7 @@ public interface IActuator extends IDataflowNode {
 
     /**
      * Return the subset of actuators that are not resolved and must reference others in the same
-     * dataflow.
+     * dataflow. These serialize with the modifier <code>import</code> in k.DL.
      *
      * @return all imported actuators
      */
@@ -86,7 +89,7 @@ public interface IActuator extends IDataflowNode {
 
     /**
      * Return all actuators that have been declared as exported, i.e. represent outputs of this
-     * actuator.
+     * actuator. These serialize with the modifier <code>export</code> in k.DL.
      *
      * @return all exported actuators
      */
@@ -112,7 +115,7 @@ public interface IActuator extends IDataflowNode {
     /**
      * If true, this actuator is a filter for an artifact, modifying the same artifact (and
      * potentially returning a new one, or the same). It must have a first 'import' parameter and
-     * its return type will match that of the filtered input.
+     * its type will match that of the filtered input.
      * 
      * @return
      */
@@ -127,16 +130,25 @@ public interface IActuator extends IDataflowNode {
     boolean isComputed();
 
     /**
-     * Take an overall scale and intersect it with the coverage of this actuator's computations
-     * requires, based on adopting any constraint from the model, which include those of any
-     * resource.
+     * If true, this actuator is a reference to another which has been encountered before it and has
+     * produced its observation by the time this actuator is called into a contextualization. It
+     * only serves as a placeholder with a possibly different alias to define the local identifier
+     * of the original observation. Reference actuators are otherwise empty, with no children and no
+     * computation.
      * 
-     * FIXME this shouldn't be in the API and the overall coverage is only of interest in the
-     * dataflow.
-     * 
-     * @param scale
      * @return
      */
-    IScale mergeScale(IScale scale, IMonitor monitor);
+    boolean isReference();
+
+    /**
+     * The actuator reports the coverage of its <em>entire</em> computable scale, i.e. the native
+     * coverage of its model (or the merged coverage if >1 models are used). Dealing with different
+     * coverages within a model is the responsibility of the runtime. A null or empty coverage
+     * returned here means universal coverage, as no actuators are output by a resolution that does
+     * not succeed.
+     * 
+     * @return the merged coverage of all models in or below this actuator.
+     */
+    ICoverage getCoverage();
 
 }

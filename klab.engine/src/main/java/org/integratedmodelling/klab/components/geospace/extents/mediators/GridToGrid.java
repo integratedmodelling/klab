@@ -16,44 +16,48 @@ public class GridToGrid implements IScaleMediator {
     Grid to;
 
     public GridToGrid(Grid from, Grid to) {
-    	
-    	this.from = from;
-    	this.to = to;
-    	
-    	if (from.equals(to)) {
-    		identity = true;
-    		conformant = true; 
-    	} else if (from instanceof Subgrid && ((Subgrid)from).ogrid.equals(to)) {
-    		conformant = true;
-    		// TODO
-    	} else if (to instanceof Subgrid && ((Subgrid)to).ogrid.equals(from)) {
+
+        this.from = from;
+        this.to = to;
+
+        if (from.equals(to)) {
+            identity = true;
+            conformant = true;
+        } else if (from instanceof Subgrid && ((Subgrid) from).ogrid.equals(to)) {
+            conformant = true;
+            // TODO
+        } else if (to instanceof Subgrid && ((Subgrid) to).ogrid.equals(from)) {
             conformant = true;
             // TODO
         }
-    	// TODO
-	}
+        // TODO
+    }
 
-	@Override
+    @Override
     public boolean isConformant() {
-        return conformant;
+        // the way the sampling is done, conformance is guaranteed as long as the resolutions are
+        // close
+        return true; // conformant;
     }
 
     @Override
     public long mapConformant(long offset) {
-    	
+
         if (identity) {
-        	return offset;
+            return offset;
         }
-        if (conformant) {
-        	if (this.from instanceof Subgrid) {
-        		return ((Subgrid)this.from).getOriginalOffset(offset);
-        	}
-            if (this.to instanceof Subgrid) {
-                return ((Subgrid)this.to).getOriginalOffset(offset);
-            }
-            throw new KlabInternalErrorException("grid2grid mediator: non-subgrid conformant grid: check usage");
-        }
-        throw new IllegalAccessError("cannot ask for a conformant offset in a non-conformant mediator");
+        return to.getCellAt(from.getCell(offset).getCenter(), false).getOffsetInGrid();
+        
+//        if (conformant) {
+//            if (this.from instanceof Subgrid) {
+//                return ((Subgrid) this.from).getOriginalOffset(offset);
+//            }
+//            if (this.to instanceof Subgrid) {
+//                return ((Subgrid) this.to).getOriginalOffset(offset);
+//            }
+//            throw new KlabInternalErrorException("grid2grid mediator: non-subgrid conformant grid: check usage");
+//        }
+//        throw new IllegalAccessError("cannot ask for a conformant offset in a non-conformant mediator");
     }
 
     @Override

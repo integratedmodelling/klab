@@ -2279,11 +2279,6 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
         return null;
     }
 
-    // @Override
-    // public Map<IConcept, Collection<IConcept>> getConcreteIdentities() {
-    // return this.concreteIdentities;
-    // }
-
     @Override
     public IConcept localizePredicate(IConcept predicate) {
         IConcept ret = resolvedPredicates.get(predicate);
@@ -2297,5 +2292,12 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
         }
         return this.views.values();
     }
+
+    @Override
+    public IRuntimeScope withScale(Scale scale) {
+        this.scale = scale;
+        return this;
+    }
+
 
 }

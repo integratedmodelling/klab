@@ -41,6 +41,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
 import org.integratedmodelling.klab.api.services.IObservationService;
 import org.integratedmodelling.klab.common.LogicalConnector;
+import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Dataflow;
@@ -672,11 +673,13 @@ public class Resolver {
 
 							if (mscope.getCoverage().isRelevant()) {
 
-								Coverage newCoverage = coverage.merge(mscope.getCoverage(), LogicalConnector.UNION);
+								Coverage newCoverage = coverage.mergeExtents(mscope.getCoverage(), LogicalConnector.UNION);
 								if (!newCoverage.isRelevant()) {
 									continue;
 								}
 
+								System.out.println("COVERAGE FOR " + model.getName() + " IS " + ((Space)newCoverage.getSpace()).getGrid());
+								
 								// for reporting
 								boolean wasZero = percentCovered == 0;
 								// percent covered by new model
@@ -813,7 +816,7 @@ public class Resolver {
 			// ACHTUNG TODO OBSERVABLE CAN BE MULTIPLE (probably not here though) - still,
 			// should be resolving a CandidateObservable
 			ResolutionScope mscope = resolve(strategy.getObservables().get(0), ret, strategy.getMode());
-			coverage = coverage.merge(mscope.getCoverage(), LogicalConnector.INTERSECTION);
+			coverage = coverage.mergeExtents(mscope.getCoverage(), LogicalConnector.INTERSECTION);
 			if (coverage.isEmpty()) {
 				parentScope.getMonitor().info("discarding first choice " + model.getId() + " due to missing dependency "
 						+ strategy.getObservables().get(0).getName());

@@ -35,8 +35,8 @@ import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.geospace.api.ISpatialIndex;
 import org.integratedmodelling.klab.components.geospace.api.ITessellation;
 import org.integratedmodelling.klab.components.geospace.extents.Grid.CellImpl;
+import org.integratedmodelling.klab.components.geospace.extents.mediators.FeaturesToGrid;
 import org.integratedmodelling.klab.components.geospace.extents.mediators.FeaturesToShape;
-import org.integratedmodelling.klab.components.geospace.extents.mediators.GridToFeatures;
 import org.integratedmodelling.klab.components.geospace.extents.mediators.GridToGrid;
 import org.integratedmodelling.klab.components.geospace.extents.mediators.GridToShape;
 import org.integratedmodelling.klab.components.geospace.extents.mediators.ShapeToFeatures;
@@ -97,7 +97,7 @@ public class Space extends Extent implements ISpace {
         long[] dims = dimension.shape();
         boolean generic = false;
         boolean simplified = Boolean.parseBoolean(dimension.getParameters().get("simplified", "false"));
-        
+
         Projection projection = null;
         Shape shape = null;
 
@@ -122,7 +122,7 @@ public class Space extends Extent implements ISpace {
         if (shape != null) {
 
             shape.setSimplified(simplified);
-            
+
             if (resolution != null && !simplified) {
                 shape = shape.getSimplified(resolution);
             }
@@ -582,7 +582,7 @@ public class Space extends Extent implements ISpace {
 
     @Override
     public ISpace getExtent() {
-        return create(getShape());
+        return grid == null ? create(getShape()) : create(getShape(), grid.linearResolutionMeters);
     }
 
     @Override
@@ -735,11 +735,11 @@ public class Space extends Extent implements ISpace {
 
         if (grid != null) {
             if (other instanceof Space && ((Space) other).grid != null) {
-                return new GridToGrid(grid, ((Space) other).grid);
+                return new GridToGrid(((Space) other).grid, grid);
             } else if (other instanceof Space && ((Space) other).features != null) {
-                return new GridToFeatures(grid, ((Space) other).features);
+                return new FeaturesToGrid(grid, ((Space) other).features);
             } else {
-                return new GridToShape(grid, (Shape) other.getShape());
+                return new ShapeToGrid(grid, (Shape) other.getShape());
             }
 
         } else if (features != null) {
@@ -748,15 +748,15 @@ public class Space extends Extent implements ISpace {
             } else if (features != null && other instanceof Shape) {
 
             } else {
-                return new FeaturesToShape(features, (Shape) other.getShape());
+                return new ShapeToFeatures((Shape) other.getShape(), features);
             }
         } else {
             if (other instanceof Space && ((Space) other).grid != null) {
-                return new ShapeToGrid(getShape(), ((Space) other).grid);
+                return new GridToShape(getShape(), ((Space) other).grid);
             } else if (other instanceof Space && ((Space) other).features != null) {
-                return new ShapeToFeatures(getShape(), ((Space) other).features);
+                return new FeaturesToShape(getShape(), ((Space) other).features);
             } else {
-                return new ShapeToShape(getShape(), (Shape) other.getShape());
+                return new ShapeToShape((Shape) other.getShape(), getShape());
             }
         }
 
@@ -792,7 +792,15 @@ public class Space extends Extent implements ISpace {
 
         Shape common = connector.equals(LogicalConnector.INTERSECTION) ? this.shape.intersection(other) : this.shape.union(other);
 
-        return new Space(common);
+        // inherit the grid we're most aligned with
+        Double linearResolution = null;
+        if (this.grid != null) {
+            linearResolution = this.grid.linearResolutionMeters;
+        } else if (obj instanceof Space && ((Space) obj).grid != null) {
+            linearResolution = ((Space) obj).grid.linearResolutionMeters;
+        }
+
+        return linearResolution == null ? new Space(common) : create(common, linearResolution);
     }
 
     @Override
@@ -800,7 +808,6 @@ public class Space extends Extent implements ISpace {
         return getShape().getExtentDescriptor();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public <T extends ILocator> T as(Class<T> cls) {
         // if (ISpaceLocator.class.isAssignableFrom(cls)) {
@@ -1056,8 +1063,8 @@ public class Space extends Extent implements ISpace {
     protected IExtent contextualizeTo(IExtent other, IAnnotation constraint) {
         if (other instanceof Space) {
             // check for trivial 1x1 grid, which may come from networked objects
-            if (((Space)other).getGrid() != null && (this.grid == null || (this.grid.getCellCount() == 1))) {
-                return create(this.shape, ((Space)other).grid, true);
+            if (((Space) other).getGrid() != null && (this.grid == null || (this.grid.getCellCount() == 1))) {
+                return create(this.shape, ((Space) other).grid, true);
             }
         }
         return this;

@@ -772,4 +772,10 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
         return null;
     }
 
+    @Override
+    public IRuntimeScope withScale(Scale scale) {
+        this.scale = scale;
+        return this;
+    }
+
 }

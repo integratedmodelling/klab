@@ -252,7 +252,9 @@ public interface IObservable extends ISemantic, IResolvable {
         Builder linking(IConcept source, IConcept target);
 
         /**
-         * Set the name for the observable resulting from buildObservable().
+         * Set the stated name for the observable, which will shadow the read-only "given" name
+         * based on the semantics (and make it inaccessible). The read-only reference name (uniquely
+         * linked to the semantics) remains unaltered.
          * 
          * @param name
          * @return
@@ -395,7 +397,7 @@ public interface IObservable extends ISemantic, IResolvable {
         Builder withResolution(Resolution only);
 
         /**
-         * Give or remove the fluid units trait 
+         * Give or remove the fluid units trait
          * 
          * @param b
          * @return
@@ -412,6 +414,7 @@ public interface IObservable extends ISemantic, IResolvable {
 
         /**
          * TODO check if still used
+         * 
          * @param global
          * @return
          */

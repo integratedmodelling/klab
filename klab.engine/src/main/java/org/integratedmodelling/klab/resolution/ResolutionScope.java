@@ -360,11 +360,11 @@ public class ResolutionScope implements IResolutionScope {
             throws KlabException {
         return new ResolutionScope(contextSubject, monitor, scenarios);
     }
-    
-    public static ResolutionScope create(Subject contextSubject, IMonitor monitor, INamespace namespace, Collection<String> scenarios)
-            throws KlabException {
+
+    public static ResolutionScope create(Subject contextSubject, IMonitor monitor, INamespace namespace,
+            Collection<String> scenarios) throws KlabException {
         ResolutionScope ret = new ResolutionScope(contextSubject, monitor, scenarios);
-        ret.resolutionNamespace = (Namespace)namespace;
+        ret.resolutionNamespace = (Namespace) namespace;
         return ret;
     }
 
@@ -486,8 +486,8 @@ public class ResolutionScope implements IResolutionScope {
         // ret.resolve(observable.getResolvedPredicates());
         ret.resolvedPredicates.putAll(observable.getResolvedPredicates());
         ret.resolvedPredicatesContext.putAll(observable.getResolvedPredicatesContext());
-        ret.resolving .add(new ObservedConcept(observable, mode));
-        
+        ret.resolving.add(new ObservedConcept(observable, mode));
+
         /*
          * check if we already can resolve this (directly or indirectly), and if so, set coverage so
          * that it can be accepted as is. This should be a model; we should make the link, increment
@@ -600,7 +600,8 @@ public class ResolutionScope implements IResolutionScope {
             /*
              * ...and redefine it based on their own coverage if they have any.
              */
-            ret.coverage = ret.coverage.merge(Scale.createLike(ret.coverage, model.getCoverage(this.monitor).getExtents()),
+            ret.coverage = ret.coverage.mergeExtents(
+                    Coverage.full(Scale.createLike(ret.coverage, model.getCoverage(this.monitor).getExtents())),
                     LogicalConnector.INTERSECTION);
         }
 
@@ -882,7 +883,7 @@ public class ResolutionScope implements IResolutionScope {
      * @return true if gain > 0, meaning the child coverage was merged into us.
      */
     public boolean or(ResolutionScope child) {
-        this.coverage = (Coverage) this.coverage.merge(child.coverage, LogicalConnector.UNION);
+        this.coverage = (Coverage) this.coverage.mergeExtents(child.coverage, LogicalConnector.UNION);
         return this.coverage.getGain() > 0;
     }
 
@@ -1218,86 +1219,89 @@ public class ResolutionScope implements IResolutionScope {
         this.originalScope = originalScope;
     }
 
-//    /**
-//     * Check the passed observable against all the ones we already know and those in the context. If
-//     * we have an observable with the same reference name but with a different semantics, return a
-//     * new observable with an unambiguous name.
-//     * 
-//     * @deprecated the reference name should always be unambiguous
-//     * @param resolvable
-//     * @return
-//     */
-//    public Observable disambiguateObservable(Observable resolvable) {
-//
-//        Observable ret = resolvable;
-//        Map<String, IObservable> knownObservables = new HashMap<>();
-//        if (context != null) {
-//            IRuntimeScope ctx = context.getScope();
-//            if (ctx != null) {
-//                for (Pair<String, IObservation> obs : ctx.getArtifacts(IObservation.class)) {
-//                    knownObservables.put(obs.getSecond().getObservable().getReferenceName(), obs.getSecond().getObservable());
-//                }
-//            }
-//        }
-//        for (ObservedConcept o : resolvedObservables.keySet()) {
-//            ResolutionScope scope = (ResolutionScope) o.getData().get("resolved.observable.scope");
-//            knownObservables.put(scope.observable.getReferenceName(), scope.observable);
-//        }
-//
-//        if (knownObservables.containsKey(resolvable.getReferenceName())
-//                && !((Observable) knownObservables.get(resolvable.getReferenceName())).resolvesStrictly(resolvable)) {
-//
-//            boolean domainsTested = false;
-//            boolean namespacesTested = false;
-//
-//            String newName = resolvable.getReferenceName();
-//            int i = 1;
-//            do {
-//
-//                if (!domainsTested) {
-//                    /*
-//                     * try domains first
-//                     */
-//                    IConcept baseOb = Observables.INSTANCE.getBaseObservable(resolvable.getType());
-//                    if (baseOb != null) {
-//                        IConcept domain = baseOb.getDomain();
-//                        if (domain != null) {
-//                            newName = resolvable.getReferenceName() + "__" + Concepts.INSTANCE.getCodeName(domain);
-//                        }
-//                    }
-//                    domainsTested = true;
-//                }
-//
-//                else if (!namespacesTested) {
-//
-//                    /*
-//                     * then namespaces
-//                     */
-//                    IConcept baseOb = Observables.INSTANCE.getBaseObservable(resolvable.getType());
-//                    if (baseOb != null) {
-//                        String namespace = baseOb.getNamespace();
-//                        if (namespace != null) {
-//                            newName = resolvable.getReferenceName() + "__" + namespace.replaceAll("\\.", "_");
-//                        }
-//                    }
-//                    namespacesTested = true;
-//
-//                } else {
-//
-//                    /*
-//                     * worst case, resort to numbers - should be very unlikely
-//                     */
-//                    newName = resolvable.getReferenceName() + "__" + (i++);
-//                }
-//            } while(knownObservables.containsKey(newName));
-//
-//            ret = new Observable(resolvable);
-//            ret.setReferenceName(newName);
-//
-//        }
-//
-//        return ret;
-//    }
+    // /**
+    // * Check the passed observable against all the ones we already know and those in the context.
+    // If
+    // * we have an observable with the same reference name but with a different semantics, return a
+    // * new observable with an unambiguous name.
+    // *
+    // * @deprecated the reference name should always be unambiguous
+    // * @param resolvable
+    // * @return
+    // */
+    // public Observable disambiguateObservable(Observable resolvable) {
+    //
+    // Observable ret = resolvable;
+    // Map<String, IObservable> knownObservables = new HashMap<>();
+    // if (context != null) {
+    // IRuntimeScope ctx = context.getScope();
+    // if (ctx != null) {
+    // for (Pair<String, IObservation> obs : ctx.getArtifacts(IObservation.class)) {
+    // knownObservables.put(obs.getSecond().getObservable().getReferenceName(),
+    // obs.getSecond().getObservable());
+    // }
+    // }
+    // }
+    // for (ObservedConcept o : resolvedObservables.keySet()) {
+    // ResolutionScope scope = (ResolutionScope) o.getData().get("resolved.observable.scope");
+    // knownObservables.put(scope.observable.getReferenceName(), scope.observable);
+    // }
+    //
+    // if (knownObservables.containsKey(resolvable.getReferenceName())
+    // && !((Observable)
+    // knownObservables.get(resolvable.getReferenceName())).resolvesStrictly(resolvable)) {
+    //
+    // boolean domainsTested = false;
+    // boolean namespacesTested = false;
+    //
+    // String newName = resolvable.getReferenceName();
+    // int i = 1;
+    // do {
+    //
+    // if (!domainsTested) {
+    // /*
+    // * try domains first
+    // */
+    // IConcept baseOb = Observables.INSTANCE.getBaseObservable(resolvable.getType());
+    // if (baseOb != null) {
+    // IConcept domain = baseOb.getDomain();
+    // if (domain != null) {
+    // newName = resolvable.getReferenceName() + "__" + Concepts.INSTANCE.getCodeName(domain);
+    // }
+    // }
+    // domainsTested = true;
+    // }
+    //
+    // else if (!namespacesTested) {
+    //
+    // /*
+    // * then namespaces
+    // */
+    // IConcept baseOb = Observables.INSTANCE.getBaseObservable(resolvable.getType());
+    // if (baseOb != null) {
+    // String namespace = baseOb.getNamespace();
+    // if (namespace != null) {
+    // newName = resolvable.getReferenceName() + "__" + namespace.replaceAll("\\.", "_");
+    // }
+    // }
+    // namespacesTested = true;
+    //
+    // } else {
+    //
+    // /*
+    // * worst case, resort to numbers - should be very unlikely
+    // */
+    // newName = resolvable.getReferenceName() + "__" + (i++);
+    // }
+    // } while(knownObservables.containsKey(newName));
+    //
+    // ret = new Observable(resolvable);
+    // ret.setReferenceName(newName);
+    //
+    // }
+    //
+    // return ret;
+    // }
 
     @Override
     public Scale getScale() {
@@ -1515,7 +1519,7 @@ public class ResolutionScope implements IResolutionScope {
     public void notifyResolution(IObservable observable, List<IRankedModel> result, Mode mode) {
         this.resolutions.put(new ObservedConcept(observable, mode), result);
     }
-    
+
     public Map<ObservedConcept, List<IRankedModel>> getResolutions() {
         return this.resolutions;
     }
@@ -1523,26 +1527,26 @@ public class ResolutionScope implements IResolutionScope {
     public boolean isResolving(IObservable observable, Mode mode) {
         return this.resolving.contains(new ObservedConcept(observable, mode));
     }
-    
-//    public ResolutionScope resolving(IObservable observable) {
-//    	this.resolving.add(new ObservedConcept(observable));
-//    	return this;
-//    }
+
+    // public ResolutionScope resolving(IObservable observable) {
+    // this.resolving.add(new ObservedConcept(observable));
+    // return this;
+    // }
 
     public Map<IConcept, Set<IConcept>> getResolvedPredicatesContext() {
         return this.resolvedPredicatesContext;
     }
 
-	public boolean hasResolved(IObservable toResolve) {
-		return resolutions.containsKey(new ObservedConcept(toResolve));
-	}
+    public boolean hasResolved(IObservable toResolve) {
+        return resolutions.containsKey(new ObservedConcept(toResolve));
+    }
 
-	public boolean hasResolvedSuccessfully(IObservable toResolve) {
-		ObservedConcept obs = new ObservedConcept(toResolve);
-		if (resolutions.containsKey(obs)) {
-			return !resolutions.get(obs).isEmpty();
-		}
-		return false;
-	}
+    public boolean hasResolvedSuccessfully(IObservable toResolve) {
+        ObservedConcept obs = new ObservedConcept(toResolve);
+        if (resolutions.containsKey(obs)) {
+            return !resolutions.get(obs).isEmpty();
+        }
+        return false;
+    }
 
 }
