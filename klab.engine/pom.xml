@@ -559,7 +559,7 @@
 		<dependency>
 			<groupId>org.orbisgis</groupId>
 			<artifactId>h2gis</artifactId>
-			<version>1.5.1-20210726.033654-392</version>
+			<version>1.5.1-20210913.033919-539</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.locationtech.jts</groupId>

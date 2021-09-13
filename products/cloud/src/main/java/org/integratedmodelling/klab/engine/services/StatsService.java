@@ -1,6 +1,10 @@
 package org.integratedmodelling.klab.engine.services;
 
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
@@ -9,8 +13,11 @@ import org.apache.http.client.utils.URIBuilder;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.API;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.components.localstorage.impl.TimesliceLocator;
+import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.engine.events.GenericUserEvent;
 import org.integratedmodelling.klab.engine.events.UserEventContext;
 import org.integratedmodelling.klab.engine.events.UserEventHistory;
@@ -34,6 +41,8 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import groovyjarjarantlr4.v4.parse.GrammarTreeVisitor.locals_return;
+
 @Component
 @ConditionalOnProperty(value = "stats.server.url", havingValue = "", matchIfMissing = false)
 public class StatsService {
@@ -45,14 +54,39 @@ public class StatsService {
     @Autowired
     RestTemplate template;
 
+    HashMap<String, Collection<IObservation>> statsCache = new HashMap<>();
+    
     @Async
     @EventListener(condition = "#event.type == T(org.integratedmodelling.klab.engine.events.UserEventType).HISTORY")
     public void handleHistory(GenericUserEvent<HubUserProfile, Session> event) {
         UserEventHistory historyEvent = (UserEventHistory) event;
+        
+        String cacheId = historyEvent.getActivity().getActivityId();
+        statsCache.putIfAbsent(cacheId, new ArrayList<IObservation>());
+        
         SessionActivity activity = historyEvent.getActivity();
 
-        if (activity.getEnd() > activity.getStart()) {
-            Logging.INSTANCE.info("activity ended");
+        if (activity.getEnd() > activity.getStart()) {         
+            statsCache.computeIfPresent(activity.getActivityId(), (k, v) -> {
+            	v.forEach(obs -> {
+            		if(obs instanceof State) {
+            			List<ILocator> locators = ((State) obs).getSliceLocators();
+            			locators.forEach(loc -> {
+            				ObservationReference descriptor = Observations.INSTANCE.createArtifactDescriptor(obs,loc,0);
+            				String url = getUrl(descriptor.getClass().getCanonicalName());
+            				if (loc instanceof TimesliceLocator) {
+            					descriptor.getMetadata().put("Temporal transition", ((TimesliceLocator) loc).getLabel());
+            				}
+                            if (url != null) {
+                            	postToServer(url, descriptor);
+                            }
+            			});
+            		}
+            	});
+            	return v;
+            });
+            statsCache.remove(activity.getActivityId());
+            
             Set<String> matches = event
                     .getSession()
                     .getCompletedTasks()
@@ -60,7 +94,6 @@ public class StatsService {
                     .filter(s -> s.startsWith(activity.getActivityId()))
                     .collect(Collectors.toSet());
             
-           
             matches.forEach(key -> {
                 Future< ? > task = event.getSession().getCompletedTasks().remove(key);
                 if (task instanceof ObserveInContextTask) {
@@ -117,18 +150,18 @@ public class StatsService {
     @Async
     @EventListener(condition = "#event.type == T(org.integratedmodelling.klab.engine.events.UserEventType).OBSERVATION")
     public void handleObservation(GenericUserEvent<HubUserProfile, Session> event) {
-        UserEventObservation observationEvent = (UserEventObservation) event;
+    	UserEventObservation observationEvent = (UserEventObservation) event;
         IObservation observation = observationEvent.getObservation();
-
-        ObservationReference descriptor = Observations.INSTANCE.createArtifactDescriptor(
-                observation/* , getParentArtifactOf(observation) */, observation.getScale().initialization(), 0);
-        
-        ObserveInContextTask task = event.getSession().getTask(descriptor.getTaskId(),  ObserveInContextTask.class);
-        if (task != null && !task.isChildTask()) {
-            String url = getUrl(descriptor.getClass().getCanonicalName());
-            if (url != null) {
-                postToServer(url, descriptor);
-            }
+        String id = observation.getGenerator().getId();
+        if (statsCache.containsKey(id)) {
+            statsCache.computeIfPresent(id, (k,v) -> {
+            	v.add(observation);
+            	return v;        	
+            });
+        } else {
+        	Collection<IObservation> obs = new ArrayList<>();
+        	obs.add(observation);
+        	statsCache.putIfAbsent(id, obs);
         }
     }
 
