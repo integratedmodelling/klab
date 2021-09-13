@@ -2,15 +2,12 @@ package org.integratedmodelling.klab.engine.services;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.http.client.utils.URIBuilder;
 import org.integratedmodelling.klab.Authentication;
-import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Network;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.Roles;
@@ -23,6 +20,7 @@ import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.api.HubLoginResponse;
 import org.integratedmodelling.klab.engine.api.RemoteUserLoginResponse;
 import org.integratedmodelling.klab.engine.events.UserEventPublisher;
+import org.integratedmodelling.klab.engine.runtime.ObserveInContextTask;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -231,7 +229,10 @@ public class HubUserService implements RemoteUserService {
             @Override
             public void newObservation(IObservation observation, ISubject context) {
                 session.touch();
-                publisher.observation(profile, session, observation, context);
+                 ObserveInContextTask task = session.getTask(observation.getMonitor().getIdentity().getId(), ObserveInContextTask.class);
+                if (task != null && !task.isChildTask()) {
+                	publisher.observation(profile, session, observation, context);                	
+                }
             }
             
         });
