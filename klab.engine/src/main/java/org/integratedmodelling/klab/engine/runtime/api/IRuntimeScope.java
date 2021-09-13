@@ -455,11 +455,13 @@ public interface IRuntimeScope extends IContextualizationScope {
     Collection<IKnowledgeView> getViews();
 
     /**
-     * Set a local scale in the context, for merged actuators.
+     * Set a local scale in the scope, for actuators that have merged partial coverages. The
+     * coverage may only contain some of the extents - any missing should be copied from the current
+     * scope scale.
      * 
      * @param scale
      * @return
      */
-    IRuntimeScope withScale(Scale scale);
+    IRuntimeScope withCoverage(IScale scale);
 
 }

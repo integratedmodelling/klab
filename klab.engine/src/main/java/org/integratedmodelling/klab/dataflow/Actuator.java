@@ -269,7 +269,7 @@ public class Actuator implements IActuator {
      * known. FIXME this is kind of dirty: the dataflow will set it into the actuator, so each
      * actuator tree should be used only once.
      */
-    private Scale mergedScale;
+    private Scale mergedCoverage;
 
     /*
      * The scale at runtime, computed by merging the overall scale with any specific model coverage.
@@ -919,8 +919,8 @@ public class Actuator implements IActuator {
 
         IRuntimeScope ret = scope.copy();
 
-        if (this.mergedScale != null) {
-            ret = ret.withScale(this.getScale());
+        if (this.mergedCoverage != null) {
+            ret = ret.withCoverage(this.getMergedCoverage());
         }
         
         /*
@@ -1330,11 +1330,11 @@ public class Actuator implements IActuator {
     }
 
     public void setMergedScale(Scale scale) {
-        this.mergedScale = scale;
+        this.mergedCoverage = scale;
     }
 
-    public Scale getScale() {
-        return mergedScale;
+    public Scale getMergedCoverage() {
+        return mergedCoverage;
     }
 
     /**

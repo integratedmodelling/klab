@@ -100,7 +100,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 
     public SimpleRuntimeScope(Actuator actuator) {
         this.observable = actuator.getObservable();
-        this.scale = actuator.getDataflow().getScale();
+        this.scale = actuator.getDataflow().getMergedCoverage();
         this.structure = new Structure();
         this.network = new DefaultDirectedGraph<>(Relationship.class);
         this.artifacts = new HashMap<>();
@@ -850,8 +850,8 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
     }
 
     @Override
-    public IRuntimeScope withScale(Scale scale) {
-        this.scale = scale;
+    public IRuntimeScope withCoverage(IScale scale) {
+        this.scale = ((Scale)this.scale).substituteExtents(scale);
         return this;
     }
 

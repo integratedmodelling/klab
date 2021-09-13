@@ -867,13 +867,13 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
          * if we're subsetting the scale, finish up the partial scale we're using and set the
          * computation to use it.
          */
-        if (actuator.getScale() != null) {
+        if (actuator.getMergedCoverage() != null) {
 
             /*
              * the child will contribute to our own target, so just give it a view and let the
              * computation happen in the subscale of interest.
              */
-            ret.scale = actuator.getScale();
+            ret.scale = actuator.getMergedCoverage();
             if (actuator.isPartition()) {
 
                 /*
@@ -896,7 +896,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
                  */
                 if (merging instanceof IState) {
                     // complete the partial scale with the overall view of the context
-                    ret.target = Observations.INSTANCE.getStateView((IState) merging, actuator.getScale(), ret);
+                    ret.target = Observations.INSTANCE.getStateView((IState) merging, actuator.getMergedCoverage(), ret);
                     if (ret.target instanceof RescalingState) {
                         // for debugging
                         ((RescalingState) ret.target).setLocalId(actuator.getName());
@@ -2294,8 +2294,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
     }
 
     @Override
-    public IRuntimeScope withScale(Scale scale) {
-        this.scale = scale;
+    public IRuntimeScope withCoverage(IScale scale) {
+        this.scale = ((Scale)this.scale).substituteExtents(scale);
         return this;
     }
 
