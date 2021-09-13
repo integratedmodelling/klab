@@ -677,8 +677,6 @@ public class Resolver {
 								if (!newCoverage.isRelevant()) {
 									continue;
 								}
-
-								System.out.println("COVERAGE FOR " + model.getName() + " IS " + ((Space)newCoverage.getSpace()).getGrid());
 								
 								// for reporting
 								boolean wasZero = percentCovered == 0;
