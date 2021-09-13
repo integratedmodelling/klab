@@ -1,0 +1,4 @@
+
+// Query build with browser mimicking the energy-supply table
+
+https://data.un.org/ws/rest/data/UNSD,DF_UNDATA_SEEA_SUPPLY,1.0/.AT..C+EN.W0+W1+W2.ATU+A+B+C+D+E+F+G+H+I+J+K+L+M+N+O+P+Q+R+S+T+U+ATU_HH+HH..N00_P00_R00+N00+N01+N02+N03+N04+N05+N06+N07+P00+P08+P09+P10+P11+P12+P13+P14+P15+P16+P17+P18+P19+P20+P21+P22+P23+P24+P25+P26+P27+R00+R28+R29+R30+R31.P52+P7+TS.../ALL/?detail=full&startPeriod=2014-01-01&endPeriod=2016-12-01&dimensionAtObservation=TIME_PERIOD

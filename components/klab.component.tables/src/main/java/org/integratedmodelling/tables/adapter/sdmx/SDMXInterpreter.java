@@ -1,6 +1,9 @@
 package org.integratedmodelling.tables.adapter.sdmx;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +21,8 @@ import org.integratedmodelling.tables.TableInterpreter;
 import org.integratedmodelling.tables.TablesComponent;
 import org.integratedmodelling.tables.TablesComponent.Encoding;
 
+import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
+import it.bancaditalia.oss.sdmx.api.Dataflow;
 import it.bancaditalia.oss.sdmx.api.Dimension;
 import it.bancaditalia.oss.sdmx.api.PortableTimeSeries;
 import it.bancaditalia.oss.sdmx.client.SdmxClientHandler;
@@ -25,164 +30,194 @@ import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
 
 /**
  * Attributes: sdmx.dataflow, sdmx.provider, sdmx.query (optional: just fix
- * sdmx.dimension.XXXXX=value,value) If provider.needsCredentials(): sdmx.user,
- * sdmx.password
+ * sdmx.dimension.XXXXX=value,value) If provider.needsCredentials(): sdmx.user, sdmx.password
  * 
- * Temporal aspect and numeric character seem to be hard-coded in the standard
- * (time is not a dimension). Not sure if the codelist conventions for country
- * codes, frequencies etc can change across providers (or within) and by how
- * much. In SDMX dthese are called "Cross-domain codelists"
- * (https://sdmx.org/?page_id=3215). They come from more SDMX queries so they
- * can be cached and turned into semantics or context info once and recovered.
- * They seem to be internal to the provider.
+ * Temporal aspect and numeric character seem to be hard-coded in the standard (time is not a
+ * dimension). Not sure if the codelist conventions for country codes, frequencies etc can change
+ * across providers (or within) and by how much. In SDMX dthese are called "Cross-domain codelists"
+ * (https://sdmx.org/?page_id=3215). They come from more SDMX queries so they can be cached and
+ * turned into semantics or context info once and recovered. They seem to be internal to the
+ * provider.
  * 
- * So because time is implicit, there's no need for temporal mapping in
- * configuration and the geometry is always T1. Spatial mapping can be
- * configured like in any other table adapter.
+ * So because time is implicit, there's no need for temporal mapping in configuration and the
+ * geometry is always T1. Spatial mapping can be configured like in any other table adapter.
  * 
  * Operations could include calling analyze() again to update time coverage.
  * 
- * Codelists will be key to join spatialization sources; may need translation to
- * ISO or others if the codes are non-conformant. For conventional codes we
- * could provide functions to call, e.g.
+ * Codelists will be key to join spatialization sources; may need translation to ISO or others if
+ * the codes are non-conformant. For conventional codes we could provide functions to call, e.g.
  * space.join=im.geo:admin:boundaries.global:country#iso2&map=iso2(GEO)
  */
 public class SDMXInterpreter extends TableInterpreter {
 
-	@Override
-	public Type getType(IResource resource, IGeometry geometry) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Type getType(IResource resource, IGeometry geometry) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public void encode(IResource resource, Map<String, String> urnParameters, IGeometry geometry, Builder builder,
-			IContextualizationScope context) {
-		// TODO Auto-generated method stub
+    @Override
+    public void encode(IResource resource, Map<String, String> urnParameters, IGeometry geometry, Builder builder,
+            IContextualizationScope context) {
+        // TODO Auto-generated method stub
 
-	}
+    }
 
-	/*
-	 * testing
-	 */
-	public static void main(String[] args) throws Exception {
+    /*
+     * testing
+     */
+    public static void main(String[] args) throws Exception {
 
-		String provider = "EUROSTAT";
-//		// this returns about 7000 dataflow descriptors
-//		final Map<String, Dataflow> flows = SdmxClientHandler.getFlowObjects(provider, null);
-//		// choose a flow ID among the results. Check out GGH emissions at sdg_13_10
-//		String dataflowID = "sdg_15_50";
-//		// each dimension has name, offset and codelist
-//		List<Dimension> dimensions = SdmxClientHandler.getDimensions(provider, dataflowID);
-//		// Build timeseries query key using the dimensions and the codelists
-//		String tsQuery = "sdg_15_50/A.SEV.CLC2_3X331_332_335.KM2+PC.BE+BG+CH+AT+CY";
-//		List<PortableTimeSeries<Double>> result = SdmxClientHandler.getTimeSeriesNames(provider, tsQuery);
+        String provider = "EUROSTAT";
+        // // this returns about 7000 dataflow descriptors
+        // final Map<String, Dataflow> flows = SdmxClientHandler.getFlowObjects(provider, null);
+        // // choose a flow ID among the results. Check out GGH emissions at sdg_13_10
+        // String dataflowID = "sdg_15_50";
+        // // each dimension has name, offset and codelist
+        // List<Dimension> dimensions = SdmxClientHandler.getDimensions(provider, dataflowID);
+        // // Build timeseries query key using the dimensions and the codelists
+        // String tsQuery = "sdg_15_50/A.SEV.CLC2_3X331_332_335.KM2+PC.BE+BG+CH+AT+CY";
+        // List<PortableTimeSeries<Double>> result = SdmxClientHandler.getTimeSeriesNames(provider,
+        // tsQuery);
 
-		int n = 0;
-		for (Dimension dimension : SdmxClientHandler.getDimensions(provider, "sdg_13_10")) {
-			System.out.print((++n) + ". " + dimension);
-		}
+        int n = 0;
+//        for (Dimension dimension : SdmxClientHandler.getDimensions(provider, "sdg_13_10")) {
+//            System.out.print((++n) + ". " + dimension);
+//        }
 
-		n = 0;
-		for (PortableTimeSeries<Double> timeseries : SdmxClientHandler.getTimeSeries(provider,
-				"sdg_13_10/A.GHG_T_HAB.UK", "1990", "2020")) {
-			// each timeseries has a TIMES attribute that details the temporal coverage.
-			// Time is NOT a dimension!
-			System.out.println((++n) + ". " + timeseries);
-		}
+        String SEEA_CF_SUPPLY_QUERY_F = "DF_UNDATA_SEEA_SUPPLY/.AT..C+EN.W0+W1+W2.ATU+A+B+C+D+E+F+G+H+I+J+K+L+M+N+O+P+Q+R+S+T+U+ATU_HH+HH..N00_P00_R00+N00+N01+N02+N03+N04+N05+N06+N07+P00+P08+P09+P10+P11+P12+P13+P14+P15+P16+P17+P18+P19+P20+P21+P22+P23+P24+P25+P26+P27+R00+R28+R29+R30+R31.P52+P7+TS.../ALL/";
+        String SEEA_CF_SUPPLY_DATASET = "DF_UNDATA_SEEA_SUPPLY";
+        String ALL_QUERY = "";
+        
+        DataFlowStructure structure = SdmxClientHandler.getDataFlowStructure("UNDATA", SEEA_CF_SUPPLY_DATASET);
+        Dataflow dataflow = SdmxClientHandler.getFlow("UNDATA", SEEA_CF_SUPPLY_DATASET);
 
-		// key method seems to be getTimeseries(provider, query, String startTime,
-		// String endTime, boolean serieskeysonly, String updatedAfter, boolean
-		// includeHistory) - previous calls it
-		// with default parameters, i.e. no data, just names
-		// Check interface docs in GenericSDMXClient
-	}
+        List<Dimension> sortedDimensions = new ArrayList<>(SdmxClientHandler.getDimensions("UNDATA", SEEA_CF_SUPPLY_DATASET));
+        
+        Collections.sort(sortedDimensions, new Comparator<Dimension>(){
+            @Override
+            public int compare(Dimension o1, Dimension o2) {
+                return Integer.compare(o1.getPosition(), o2.getPosition());
+            }
+        });
 
-	@Override
-	public void buildResource(IParameters<String> userData, IResource.Builder builder, IMonitor monitor) {
+        for (Dimension dimension : sortedDimensions) {
+            System.out.println((++n) + ". " + dimension.getName());
+            ALL_QUERY += ".";
+        }
 
-		try {
+        List<PortableTimeSeries<Double>> ts = SdmxClientHandler.getTimeSeries("UNDATA", SEEA_CF_SUPPLY_DATASET + "/" + ALL_QUERY, "2006", "2010");
+        
+        System.out.println("ZOPOE");
+        
+        
+//        for (PortableTimeSeries<Double> timeseries : SdmxClientHandler.getTimeSeries(provider, "sdg_13_10/A.GHG_T_HAB.UK", "1990",
+//                "2020")) {
+//            // each timeseries has a TIMES attribute that details the temporal coverage.
+//            // Time is NOT a dimension!
+//            System.out.println((++n) + ". " + timeseries);
+//        }        
 
-			String provider = userData.get("provider", String.class);
-			String dataflow = userData.get("dataflow", String.class);
+//        n = 0;
+//        for (PortableTimeSeries<Double> timeseries : SdmxClientHandler.getTimeSeries(provider, "sdg_13_10/A.GHG_T_HAB.UK", "1990",
+//                "2020")) {
+//            // each timeseries has a TIMES attribute that details the temporal coverage.
+//            // Time is NOT a dimension!
+//            System.out.println((++n) + ". " + timeseries);
+//        }
 
-			List<Dimension> dimensions = SdmxClientHandler.getDimensions(provider, dataflow);
+        // key method seems to be getTimeseries(provider, query, String startTime,
+        // String endTime, boolean serieskeysonly, String updatedAfter, boolean
+        // includeHistory) - previous calls it
+        // with default parameters, i.e. no data, just names
+        // Check interface docs in GenericSDMXClient
+    }
 
-			GeometryBuilder geometryBuilder = Geometry.builder();
+    @Override
+    public void buildResource(IParameters<String> userData, IResource.Builder builder, IMonitor monitor) {
 
-			if (dimensions != null && !dimensions.isEmpty()) {
+        try {
 
-				SDMXQuery query = null;
-				if (userData.containsKey("query")) {
-					query = new SDMXQuery(userData.get("query", String.class), dimensions);
-				}
+            String provider = userData.get("provider", String.class);
+            String dataflow = userData.get("dataflow", String.class);
 
-				builder.withParameter("provider", userData.get("provider", String.class)).withParameter("dataflow",
-						userData.get("dataflow", String.class));
+            List<Dimension> dimensions = SdmxClientHandler.getDimensions(provider, dataflow);
 
-				int dataDims = 0;
+            GeometryBuilder geometryBuilder = Geometry.builder();
 
-				for (Dimension dimension : dimensions) {
-					Encoding descriptor = TablesComponent.getEncoding(dimension.getCodeList().getFullIdentifier());
-					if (descriptor == null || !descriptor.isDimension()) {
-						// attribute dimension; can't have more than 2
-						dataDims++;
-						if (dataDims > 2) {
-							boolean locked = dimension.getCodeList().size() == 1;
-							if (!locked && query != null && query.containsKey(dimension.getName())) {
-								locked = query.getDimensionSize(dimension.getName()) == 1;
-							}
-							if (!locked) {
-								builder.addError(
-										"More than 2 non-contextual dimensions with multiple values: please restrict dimensionality using a query");
-								break;
-							}
+            if (dimensions != null && !dimensions.isEmpty()) {
 
-						}
-					} else {
-						// rebuild the codelist descriptor INSIDE the resource so it can be seen and
-						// edited if needed (will need actions on update)
-						String queryValue = query == null ? null : query.get(dimension.getName());
-						// may be contextual or categorical
-						descriptor.setGeometry(geometryBuilder, queryValue);
-						// TODO recover queried value for dimension, if any is passed in "query"
-						// parameter
-						Map<String, String> localizedCodes = descriptor.localizeEncoding(dimension.getName());
-						for (String key : localizedCodes.keySet()) {
-							builder.withParameter(key, localizedCodes.get(key));
-						}
-					}
-				}
+                SDMXQuery query = null;
+                if (userData.containsKey("query")) {
+                    query = new SDMXQuery(userData.get("query", String.class), dimensions);
+                }
 
-				builder.withGeometry(geometryBuilder.build());
+                builder.withParameter("provider", userData.get("provider", String.class)).withParameter("dataflow",
+                        userData.get("dataflow", String.class));
 
-			} else {
-				builder.addError("Dataflow is unknown or has no recognizable dimensions");
-			}
+                int dataDims = 0;
 
-		} catch (SdmxException e) {
-			builder.addError(e);
-		}
+                for (Dimension dimension : dimensions) {
+                    Encoding descriptor = TablesComponent.getEncoding(dimension.getCodeList().getFullIdentifier());
+                    if (descriptor == null || !descriptor.isDimension()) {
+                        // attribute dimension; can't have more than 2
+                        dataDims++;
+                        if (dataDims > 2) {
+                            boolean locked = dimension.getCodeList().size() == 1;
+                            if (!locked && query != null && query.containsKey(dimension.getName())) {
+                                locked = query.getDimensionSize(dimension.getName()) == 1;
+                            }
+                            if (!locked) {
+                                builder.addError(
+                                        "More than 2 non-contextual dimensions with multiple values: please restrict dimensionality using a query");
+                                break;
+                            }
 
-	}
+                        }
+                    } else {
+                        // rebuild the codelist descriptor INSIDE the resource so it can be seen and
+                        // edited if needed (will need actions on update)
+                        String queryValue = query == null ? null : query.get(dimension.getName());
+                        // may be contextual or categorical
+                        descriptor.setGeometry(geometryBuilder, queryValue);
+                        // TODO recover queried value for dimension, if any is passed in "query"
+                        // parameter
+                        Map<String, String> localizedCodes = descriptor.localizeEncoding(dimension.getName());
+                        for (String key : localizedCodes.keySet()) {
+                            builder.withParameter(key, localizedCodes.get(key));
+                        }
+                    }
+                }
 
-	@Override
-	public boolean canHandle(URL resource, IParameters<String> parameters) {
-		// TODO Auto-generated method stub
-		return parameters.contains("dataflow") && parameters.contains("provider");
-	}
+                builder.withGeometry(geometryBuilder.build());
 
-	@Override
-	public ITable<?> getTable(IResource resource, IGeometry geometry, IMonitor monitor) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+            } else {
+                builder.addError("Dataflow is unknown or has no recognizable dimensions");
+            }
 
-	@Override
-	public IGeometry recomputeGeometry(IResource resource, Map<String, String> parameters, IMonitor monitor) {
+        } catch (SdmxException e) {
+            builder.addError(e);
+        }
 
-		IGeometry ret = resource.getGeometry();
+    }
 
-		return ret;
-	}
+    @Override
+    public boolean canHandle(URL resource, IParameters<String> parameters) {
+        // TODO Auto-generated method stub
+        return parameters.contains("dataflow") && parameters.contains("provider");
+    }
+
+    @Override
+    public ITable<?> getTable(IResource resource, IGeometry geometry, IMonitor monitor) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public IGeometry recomputeGeometry(IResource resource, Map<String, String> parameters, IMonitor monitor) {
+
+        IGeometry ret = resource.getGeometry();
+
+        return ret;
+    }
 }
