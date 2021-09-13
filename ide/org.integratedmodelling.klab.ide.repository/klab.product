@@ -16,6 +16,8 @@
    <launcherArgs>
       <programArgs>-perspective org.integratedmodelling.klab.ide.perspective.KlabPerspective
       </programArgs>
+      <vmArgs>-Xms512m -Xmx2048m
+      </vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
       </vmArgsMac>
    </launcherArgs>
@@ -23,11 +25,8 @@
    <windowImages i16="branding/k-lab-icon-16.gif" i32="branding/k-lab-icon-32.gif" i48="branding/k-lab-icon-48.gif" i64="branding/k-lab-icon-64.gif" i128="branding/k-lab-icon-128.gif" i256="branding/k-lab-icon-256.gif"/>
 
    <splash
-      location="org.integratedmodelling.klab.ide"
-      startupProgressRect="24,246,494,14"
-      startupMessageRect="24,234,496,20"
-      startupForegroundColor="808080" />
-   <launcher name="k.Modeler">
+      location="org.integratedmodelling.klab.ide" />
+   <launcher name="kModeler">
       <linux icon="branding/icon.xpm"/>
       <macosx icon="branding/k-lab.icns"/>
       <win useIco="true">
@@ -43,9 +42,8 @@
       </win>
    </launcher>
 
-
    <vm>
-      <linux include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JRE-1.1</linux>
+      <linux include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JRE-1.1</linux>
       <macos include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JRE-1.1</macos>
       <solaris include="true">org.eclipse.jdt.launching.JRE_CONTAINER</solaris>
       <windows include="true">org.eclipse.jdt.launching.JRE_CONTAINER</windows>
@@ -620,13 +618,6 @@ You should also get your employer (if you work as a programmer) or school, if an
       <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
    </configurations>
-
-   <repositories>
-      <repository location="http://www.integratedmodelling.org/updates/klab/0.10.0" enabled="true" />
-      <repository location="http://www.integratedmodelling.org/updates/klab/0.10.0" enabled="true" />
-      <repository location="http://www.integratedmodelling.org/updates/klab/0.10.0" enabled="true" />
-      <repository location="http://www.integratedmodelling.org/updates/klab/0.10.0" enabled="true" />
-   </repositories>
 
    <preferencesInfo>
       <targetfile overwrite="false"/>
