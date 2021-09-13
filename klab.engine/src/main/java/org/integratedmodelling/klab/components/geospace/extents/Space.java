@@ -793,14 +793,14 @@ public class Space extends Extent implements ISpace {
         Shape common = connector.equals(LogicalConnector.INTERSECTION) ? this.shape.intersection(other) : this.shape.union(other);
 
         // inherit the grid we're most aligned with
-        Double linearResolution = null;
+        Grid refgrid = null;
         if (this.grid != null) {
-            linearResolution = this.grid.linearResolutionMeters;
+            refgrid = this.grid;
         } else if (obj instanceof Space && ((Space) obj).grid != null) {
-            linearResolution = ((Space) obj).grid.linearResolutionMeters;
+            refgrid = ((Space) obj).grid;
         }
 
-        return linearResolution == null ? new Space(common) : create(common, linearResolution);
+        return refgrid == null ? new Space(common) : create(common, refgrid, true);
     }
 
     @Override
@@ -932,7 +932,7 @@ public class Space extends Extent implements ISpace {
                             return destination;
                         }
 
-                        return create((Shape) resultShape, resolution);
+                        return create((Shape) resultShape, (Grid)resultGrid, true);
                     }
                 }
 
@@ -1082,8 +1082,13 @@ public class Space extends Extent implements ISpace {
      * @return a new spatial extent
      */
     public static Space create(Shape shape, Grid grid, boolean align) {
-        // TODO this ignores everything
-        return create(shape.copy(), grid.linearResolutionMeters);
+        if (!align) {
+            return create(shape.copy(), grid.linearResolutionMeters);
+        }
+        Grid newGrid = grid.snapWithinShape(shape);
+        Space ret = new Space(shape.copy(), newGrid);
+        ret.gridSpecs = grid.linearResolutionMeters + ".m";
+        return ret;
     }
 
     @Override
