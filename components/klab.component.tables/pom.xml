@@ -19,6 +19,18 @@
 			<version>3.5.0</version>
 		</dependency>
 
+		<dependency>
+			<groupId>tech.tablesaw</groupId>
+			<artifactId>tablesaw-core</artifactId>
+			<version>0.38.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>tech.tablesaw</groupId>
+			<artifactId>tablesaw-excel</artifactId>
+			<version>0.38.5</version>
+		</dependency>
+
 		<!-- SDMX -->
 		<dependency>
 			<groupId>it.bancaditalia.oss</groupId>
@@ -45,7 +57,7 @@
 			<artifactId>klab.components.cdm</artifactId>
 			<version>${klab.version}</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.modeler</artifactId>

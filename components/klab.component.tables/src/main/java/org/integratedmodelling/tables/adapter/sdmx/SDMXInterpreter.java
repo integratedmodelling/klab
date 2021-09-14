@@ -81,19 +81,19 @@ public class SDMXInterpreter extends TableInterpreter {
         // tsQuery);
 
         int n = 0;
-//        for (Dimension dimension : SdmxClientHandler.getDimensions(provider, "sdg_13_10")) {
-//            System.out.print((++n) + ". " + dimension);
-//        }
+        // for (Dimension dimension : SdmxClientHandler.getDimensions(provider, "sdg_13_10")) {
+        // System.out.print((++n) + ". " + dimension);
+        // }
 
         String SEEA_CF_SUPPLY_QUERY_F = "DF_UNDATA_SEEA_SUPPLY/.AT..C+EN.W0+W1+W2.ATU+A+B+C+D+E+F+G+H+I+J+K+L+M+N+O+P+Q+R+S+T+U+ATU_HH+HH..N00_P00_R00+N00+N01+N02+N03+N04+N05+N06+N07+P00+P08+P09+P10+P11+P12+P13+P14+P15+P16+P17+P18+P19+P20+P21+P22+P23+P24+P25+P26+P27+R00+R28+R29+R30+R31.P52+P7+TS.../ALL/";
         String SEEA_CF_SUPPLY_DATASET = "DF_UNDATA_SEEA_SUPPLY";
         String ALL_QUERY = "";
-        
+
         DataFlowStructure structure = SdmxClientHandler.getDataFlowStructure("UNDATA", SEEA_CF_SUPPLY_DATASET);
         Dataflow dataflow = SdmxClientHandler.getFlow("UNDATA", SEEA_CF_SUPPLY_DATASET);
 
         List<Dimension> sortedDimensions = new ArrayList<>(SdmxClientHandler.getDimensions("UNDATA", SEEA_CF_SUPPLY_DATASET));
-        
+
         Collections.sort(sortedDimensions, new Comparator<Dimension>(){
             @Override
             public int compare(Dimension o1, Dimension o2) {
@@ -106,25 +106,27 @@ public class SDMXInterpreter extends TableInterpreter {
             ALL_QUERY += ".";
         }
 
-        List<PortableTimeSeries<Double>> ts = SdmxClientHandler.getTimeSeries("UNDATA", SEEA_CF_SUPPLY_DATASET + "/" + ALL_QUERY, "2006", "2010");
-        
-        System.out.println("ZOPOE");
-        
-        
-//        for (PortableTimeSeries<Double> timeseries : SdmxClientHandler.getTimeSeries(provider, "sdg_13_10/A.GHG_T_HAB.UK", "1990",
-//                "2020")) {
-//            // each timeseries has a TIMES attribute that details the temporal coverage.
-//            // Time is NOT a dimension!
-//            System.out.println((++n) + ". " + timeseries);
-//        }        
+        List<PortableTimeSeries<Double>> ts = SdmxClientHandler.getTimeSeries("UNDATA", SEEA_CF_SUPPLY_DATASET + "/" + ALL_QUERY,
+                null, null);
 
-//        n = 0;
-//        for (PortableTimeSeries<Double> timeseries : SdmxClientHandler.getTimeSeries(provider, "sdg_13_10/A.GHG_T_HAB.UK", "1990",
-//                "2020")) {
-//            // each timeseries has a TIMES attribute that details the temporal coverage.
-//            // Time is NOT a dimension!
-//            System.out.println((++n) + ". " + timeseries);
-//        }
+        System.out.println("ZOPOE");
+
+        // for (PortableTimeSeries<Double> timeseries : SdmxClientHandler.getTimeSeries(provider,
+        // "sdg_13_10/A.GHG_T_HAB.UK", "1990",
+        // "2020")) {
+        // // each timeseries has a TIMES attribute that details the temporal coverage.
+        // // Time is NOT a dimension!
+        // System.out.println((++n) + ". " + timeseries);
+        // }
+
+        // n = 0;
+        // for (PortableTimeSeries<Double> timeseries : SdmxClientHandler.getTimeSeries(provider,
+        // "sdg_13_10/A.GHG_T_HAB.UK", "1990",
+        // "2020")) {
+        // // each timeseries has a TIMES attribute that details the temporal coverage.
+        // // Time is NOT a dimension!
+        // System.out.println((++n) + ". " + timeseries);
+        // }
 
         // key method seems to be getTimeseries(provider, query, String startTime,
         // String endTime, boolean serieskeysonly, String updatedAfter, boolean
@@ -210,7 +212,7 @@ public class SDMXInterpreter extends TableInterpreter {
     @Override
     public ITable<?> getTable(IResource resource, IGeometry geometry, IMonitor monitor) {
         // TODO Auto-generated method stub
-        return null;
+        return new SDMXTable(resource, monitor);
     }
 
     @Override
