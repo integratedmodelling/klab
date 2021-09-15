@@ -4,29 +4,44 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.Configuration;
+import org.integratedmodelling.klab.Time;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.data.general.ITable;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
+import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.GeometryBuilder;
+import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
+import org.integratedmodelling.klab.utils.Triple;
 import org.integratedmodelling.tables.TableInterpreter;
 import org.integratedmodelling.tables.TablesComponent;
 import org.integratedmodelling.tables.TablesComponent.Encoding;
 
+import it.bancaditalia.oss.sdmx.api.BaseObservation;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
 import it.bancaditalia.oss.sdmx.api.Dataflow;
 import it.bancaditalia.oss.sdmx.api.Dimension;
 import it.bancaditalia.oss.sdmx.api.PortableTimeSeries;
 import it.bancaditalia.oss.sdmx.client.SdmxClientHandler;
 import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
+import tech.tablesaw.api.DoubleColumn;
+import tech.tablesaw.api.LongColumn;
+import tech.tablesaw.api.Row;
+import tech.tablesaw.api.StringColumn;
+import tech.tablesaw.api.Table;
+import tech.tablesaw.columns.Column;
 
 /**
  * Attributes: sdmx.dataflow, sdmx.provider, sdmx.query (optional: just fix
@@ -85,7 +100,6 @@ public class SDMXInterpreter extends TableInterpreter {
         // System.out.print((++n) + ". " + dimension);
         // }
 
-        String SEEA_CF_SUPPLY_QUERY_F = "DF_UNDATA_SEEA_SUPPLY/.AT..C+EN.W0+W1+W2.ATU+A+B+C+D+E+F+G+H+I+J+K+L+M+N+O+P+Q+R+S+T+U+ATU_HH+HH..N00_P00_R00+N00+N01+N02+N03+N04+N05+N06+N07+P00+P08+P09+P10+P11+P12+P13+P14+P15+P16+P17+P18+P19+P20+P21+P22+P23+P24+P25+P26+P27+R00+R28+R29+R30+R31.P52+P7+TS.../ALL/";
         String SEEA_CF_SUPPLY_DATASET = "DF_UNDATA_SEEA_SUPPLY";
         String ALL_QUERY = "";
 
@@ -109,30 +123,79 @@ public class SDMXInterpreter extends TableInterpreter {
         List<PortableTimeSeries<Double>> ts = SdmxClientHandler.getTimeSeries("UNDATA", SEEA_CF_SUPPLY_DATASET + "/" + ALL_QUERY,
                 null, null);
 
-        System.out.println("ZOPOE");
+        Map<String, Dimension> dims = new HashMap<>();
 
-        // for (PortableTimeSeries<Double> timeseries : SdmxClientHandler.getTimeSeries(provider,
-        // "sdg_13_10/A.GHG_T_HAB.UK", "1990",
-        // "2020")) {
-        // // each timeseries has a TIMES attribute that details the temporal coverage.
-        // // Time is NOT a dimension!
-        // System.out.println((++n) + ". " + timeseries);
-        // }
+        List<Column<?>> columns = new ArrayList<>();
 
-        // n = 0;
-        // for (PortableTimeSeries<Double> timeseries : SdmxClientHandler.getTimeSeries(provider,
-        // "sdg_13_10/A.GHG_T_HAB.UK", "1990",
-        // "2020")) {
-        // // each timeseries has a TIMES attribute that details the temporal coverage.
-        // // Time is NOT a dimension!
-        // System.out.println((++n) + ". " + timeseries);
-        // }
+        for (Dimension dim : sortedDimensions) {
+            dims.put(dim.getId(), dim);
+            columns.add(dim.getCodeList() == null ? DoubleColumn.create(dim.getId()) : StringColumn.create(dim.getId()));
 
-        // key method seems to be getTimeseries(provider, query, String startTime,
-        // String endTime, boolean serieskeysonly, String updatedAfter, boolean
-        // includeHistory) - previous calls it
-        // with default parameters, i.e. no data, just names
-        // Check interface docs in GenericSDMXClient
+            /*
+             * TODO make dimension attributes and metadata, including fixedValue=XXX if there is a
+             * codelist with only one value
+             */
+
+        }
+
+        columns.add(LongColumn.create("start_time"));
+        columns.add(LongColumn.create("end_time"));
+        columns.add(StringColumn.create("literal_time"));
+        columns.add(DoubleColumn.create("value"));
+
+        Table table = Table.create(columns.toArray(new Column[columns.size()]));
+
+        // TODO resolution should go in the resource metadata
+        ITime.Resolution resolution = null;
+        ITimeInstant allStart = null;
+        ITimeInstant allEnd = null;
+
+        for (PortableTimeSeries<Double> t : ts) {
+
+            for (BaseObservation<? extends Double> observation : t) {
+
+                Triple<ITimeInstant, ITimeInstant, Resolution> time = Time.INSTANCE.analyzeTimepoint(observation.getTimeslot());
+
+                if (time == null) {
+                    throw new KlabUnimplementedException("cannot understand time slot " + observation.getTimeslot());
+                }
+
+                if (resolution == null) {
+                    resolution = time.getThird();
+                } else if (!resolution.equals(time.getThird())) {
+                    throw new KlabUnimplementedException(
+                            "inconsistent time slot " + observation.getTimeslot() + "  for inferred resolution " + resolution);
+                }
+
+                if (allStart == null) {
+                    allStart = time.getFirst();
+                } else if (allStart.isAfter(time.getFirst())) {
+                    allStart = time.getFirst();
+                }
+                if (allEnd == null) {
+                    allEnd = time.getSecond();
+                } else if (allEnd.isBefore(time.getSecond())) {
+                    allEnd = time.getSecond();
+                }
+
+                Row row = table.appendRow();
+                for (String attribute : t.getDimensionsMap().keySet()) {
+                    String value = t.getDimension(attribute);
+                    row.setString(attribute, value);
+                }
+                row.setLong("start_time", time.getFirst().getMilliseconds());
+                row.setLong("end_time", time.getSecond().getMilliseconds());
+                row.setString("literal_time", observation.getTimeslot());
+                row.setDouble("value", observation.getValueAsDouble());
+            }
+
+        }
+
+        table.write().csv(Configuration.INSTANCE.getExportFile("myass.csv"));
+
+        // TODO this goes in the geometry with the resolution
+        System.out.println("Temporal coverage: " + allStart + " to " + allEnd);
+
     }
 
     @Override

@@ -10,6 +10,8 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.api.services.ITimeService;
 import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
+import org.integratedmodelling.klab.utils.NumberUtils;
+import org.integratedmodelling.klab.utils.Triple;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Days;
@@ -20,89 +22,84 @@ import org.joda.time.Months;
 import org.joda.time.Seconds;
 import org.joda.time.Years;
 import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 public enum Time implements ITimeService {
 
-	INSTANCE;
+    INSTANCE;
 
-	private Time() {
-		// all dates in UTC
-		DateTimeZone.setDefault(DateTimeZone.UTC);
-	}
+    private Time() {
+        // all dates in UTC
+        DateTimeZone.setDefault(DateTimeZone.UTC);
+    }
 
-	@Override
-	public ITime getGenericCurrentExtent(Resolution.Type resolution) {
-		DateTime now = new DateTime();
-		DateTime begin = null;
-		DateTime end = null;
-		switch (resolution) {
-		case CENTURY:
-			begin = new DateTime(now.getYear() - (now.getYear() % 100), 1, 1, 0, 0, 0, 0, DateTimeZone.UTC);
-			end = begin.plus(Years.years(100));
-			break;
-		case DAY:
-			begin = new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), 0, 0, 0, 0, DateTimeZone.UTC);
-			end = begin.plus(Days.ONE);
-			break;
-		case DECADE:
-			begin = new DateTime(now.getYear() - (now.getYear() % 10), 1, 1, 0, 0, 0, 0);
-			end = begin.plus(Years.years(10));
-			break;
-		case HOUR:
-			begin = new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), now.getHourOfDay(), 0, 0, 0, DateTimeZone.UTC);
-			end = begin.plus(Hours.ONE);
-			break;
-		case MILLENNIUM:
-			begin = new DateTime(now.getYear() - (now.getYear() % 1000), 1, 1, 0, 0, 0, 0, DateTimeZone.UTC);
-			end = begin.plus(Years.years(1000));
-			break;
-		case MILLISECOND:
-			begin = new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), now.getHourOfDay(),
-					now.getMinuteOfHour(), now.getSecondOfMinute(), 0, DateTimeZone.UTC);
-			end = begin.plus(1);
-			break;
-		case MINUTE:
-			begin = new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), now.getHourOfDay(),
-					now.getMinuteOfHour(), 0, 0, DateTimeZone.UTC);
-			end = begin.plus(Minutes.ONE);
-			break;
-		case MONTH:
-			begin = new DateTime(now.getYear(), now.getMonthOfYear(), 1, 0, 0, 0, 0, DateTimeZone.UTC);
-			end = begin.plus(Months.ONE);
-			break;
-		case SECOND:
-			begin = new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), now.getHourOfDay(),
-					now.getMinuteOfHour(), now.getSecondOfMinute(), 0, DateTimeZone.UTC);
-			end = begin.plus(Seconds.ONE);
-			break;
-		case WEEK:
-			// TODO if we really want it.
-			break;
-		case YEAR:
-			begin = new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), 0, 0, 0, 0, DateTimeZone.UTC);
-			end = begin.plus(Years.ONE);
-			break;
-		default:
-			break;
+    @Override
+    public ITime getGenericCurrentExtent(Resolution.Type resolution) {
+        DateTime now = new DateTime();
+        DateTime begin = null;
+        DateTime end = null;
+        switch(resolution) {
+        case CENTURY:
+            begin = new DateTime(now.getYear() - (now.getYear() % 100), 1, 1, 0, 0, 0, 0, DateTimeZone.UTC);
+            end = begin.plus(Years.years(100));
+            break;
+        case DAY:
+            begin = new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), 0, 0, 0, 0, DateTimeZone.UTC);
+            end = begin.plus(Days.ONE);
+            break;
+        case DECADE:
+            begin = new DateTime(now.getYear() - (now.getYear() % 10), 1, 1, 0, 0, 0, 0);
+            end = begin.plus(Years.years(10));
+            break;
+        case HOUR:
+            begin = new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), now.getHourOfDay(), 0, 0, 0,
+                    DateTimeZone.UTC);
+            end = begin.plus(Hours.ONE);
+            break;
+        case MILLENNIUM:
+            begin = new DateTime(now.getYear() - (now.getYear() % 1000), 1, 1, 0, 0, 0, 0, DateTimeZone.UTC);
+            end = begin.plus(Years.years(1000));
+            break;
+        case MILLISECOND:
+            begin = new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), now.getHourOfDay(),
+                    now.getMinuteOfHour(), now.getSecondOfMinute(), 0, DateTimeZone.UTC);
+            end = begin.plus(1);
+            break;
+        case MINUTE:
+            begin = new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), now.getHourOfDay(),
+                    now.getMinuteOfHour(), 0, 0, DateTimeZone.UTC);
+            end = begin.plus(Minutes.ONE);
+            break;
+        case MONTH:
+            begin = new DateTime(now.getYear(), now.getMonthOfYear(), 1, 0, 0, 0, 0, DateTimeZone.UTC);
+            end = begin.plus(Months.ONE);
+            break;
+        case SECOND:
+            begin = new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), now.getHourOfDay(),
+                    now.getMinuteOfHour(), now.getSecondOfMinute(), 0, DateTimeZone.UTC);
+            end = begin.plus(Seconds.ONE);
+            break;
+        case WEEK:
+            // TODO if we really want it.
+            break;
+        case YEAR:
+            begin = new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), 0, 0, 0, 0, DateTimeZone.UTC);
+            end = begin.plus(Years.ONE);
+            break;
+        default:
+            break;
 
-		}
+        }
 
-		if (begin == null) {
-			throw new KlabUnimplementedException(
-					"generic extent of type " + resolution + " are not supported at the moment");
-		}
+        if (begin == null) {
+            throw new KlabUnimplementedException("generic extent of type " + resolution + " are not supported at the moment");
+        }
 
-		return org.integratedmodelling.klab.components.time.extents.Time.create(Type.LOGICAL, resolution, 1,
-				new TimeInstant(begin), new TimeInstant(end), null);
-	}
+        return org.integratedmodelling.klab.components.time.extents.Time.create(Type.LOGICAL, resolution, 1,
+                new TimeInstant(begin), new TimeInstant(end), null);
+    }
 
     public static enum Frequency {
-        HOURLY,
-        DAILY,
-        WEEKLY,
-        MONTHLY,
-        YEARLY
+        HOURLY, DAILY, WEEKLY, MONTHLY, YEARLY
     }
 
     public boolean isTimePattern(String string) {
@@ -112,10 +109,12 @@ public enum Time implements ITimeService {
             return false;
         }
         return true;
-    }    
+    }
+
     /**
-     * Return true if the passed day/year is a time point at the specified frequency. Use
-     * the end of the month and Sunday for week.
+     * Return true if the passed day/year is a time point at the specified frequency. Use the end of
+     * the month and Sunday for week.
+     * 
      * @param day
      * @param year
      * @param frequency
@@ -123,7 +122,7 @@ public enum Time implements ITimeService {
      */
     public static boolean isTimePoint(int day, int year, Frequency frequency) {
         // TODO finish
-        switch (frequency) {
+        switch(frequency) {
         case DAILY:
         case HOURLY:
             return true;
@@ -141,6 +140,7 @@ public enum Time implements ITimeService {
 
     /**
      * Return all the years overlapping the period between the two times passed.
+     * 
      * @param start
      * @param end
      * @return all years between the two dates
@@ -167,7 +167,7 @@ public enum Time implements ITimeService {
 
     /**
      * Return an iterable of the days (indexed within the year starting a 0) that overlap the passed
-     * interval in the given year. 
+     * interval in the given year.
      * 
      * @param start
      * @param end
@@ -198,13 +198,13 @@ public enum Time implements ITimeService {
         LocalDate ld = new LocalDate(year, 1, 1);
         return Days.daysBetween(ld, ld.plusYears(1)).getDays();
     }
-    	
+
     static final int FEB29 = 60;
     static final public long MS_IN_A_DAY = 86400000l;
 
     /**
-     * Adjust the passed array describing a daily value for olderYear to describe a value for oldYear, duplicating
-     * or removing values as required.
+     * Adjust the passed array describing a daily value for olderYear to describe a value for
+     * oldYear, duplicating or removing values as required.
      * 
      * @param data
      * @param year the year we adapt to
@@ -237,11 +237,46 @@ public enum Time implements ITimeService {
         return ret;
     }
 
+    /**
+     * Given the string specification of something that encodes time, return the inferred begin, end
+     * and resolution of the period it stands for, or null if not parseable.
+     * 
+     * @param specification
+     * @return
+     */
+    public Triple<ITimeInstant, ITimeInstant, ITime.Resolution> analyzeTimepoint(String specification) {
+
+        ITimeInstant start = null;
+        ITimeInstant end = null;
+        ITime.Resolution resolution = null;
+
+        // assume milliseconds if > 10000
+        if (NumberUtils.encodesLong(specification) && Long.parseLong(specification) > 10000) {
+            start = TimeInstant.create(Long.parseLong(specification));
+            end = TimeInstant.create(start.getMilliseconds() + 1);
+            resolution = org.integratedmodelling.klab.components.time.extents.Time.resolution(1,
+                    ITime.Resolution.Type.MILLISECOND);
+        } else if (NumberUtils.encodesInteger(specification)) {
+            start = TimeInstant.create(Integer.parseInt(specification));
+            resolution = org.integratedmodelling.klab.components.time.extents.Time.resolution(1,
+                    ITime.Resolution.Type.YEAR);
+            end = start.plus(1, resolution);
+        } else {
+            // nah for now
+        }
+
+        if (start != null && end != null && resolution != null) {
+            return new Triple<>(start, end, resolution);
+        }
+
+        return null;
+    }
+
     public static int getYear(ITimeInstant time) {
         DateTime ds = new DateTime(time.getMilliseconds(), DateTimeZone.UTC);
         return ds.getYear();
     }
-    
+
     public static int getYear(long start) {
         DateTime ds = new DateTime(start, DateTimeZone.UTC);
         return ds.getYear();
