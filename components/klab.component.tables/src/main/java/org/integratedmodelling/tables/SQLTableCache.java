@@ -18,13 +18,20 @@ import org.integratedmodelling.klab.api.data.general.ITable.Filter;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.persistence.h2.H2Database;
 import org.integratedmodelling.klab.persistence.h2.H2Database.DBIterator;
 import org.integratedmodelling.klab.persistence.h2.SQL;
+import org.integratedmodelling.klab.rest.AttributeReference;
 import org.integratedmodelling.klab.utils.Utils;
 
+import tech.tablesaw.api.StringColumn;
+import tech.tablesaw.api.Table;
+import tech.tablesaw.columns.Column;
+
 /**
- * H2-based cache - hopefully faster than the other based on DB
+ * H2-based cache - hopefully faster than the other based on DB. Can be created from a resource
+ * after partial ingestion or pre-built by passing a table and a URN.
  * 
  * @author Ferd
  *
@@ -37,6 +44,24 @@ public class SQLTableCache {
     IResource resource;
     int[] dimensions;
     Map<String, String> sanitizedNames = new HashMap<>();
+
+    public static void createCache(String id, Table table, IMonitor monitor) {
+        
+        SQLTableCache cache = new SQLTableCache();
+        List<Attribute> sortedAttributes = TablesawTable.getAttributes(table);
+        for (Attribute attribute : sortedAttributes) {
+            cache.sanitizedNames.put(cache.sanitize(attribute.getName()), attribute.getName());
+        }
+        
+        cache.dbname = cache.sanitize(id);
+        cache.sortedAttributes_ = sortedAttributes;
+        cache.database = H2Database.createPersistent(cache.dbname);
+        cache.createStructure();
+        cache.loadData(new TablesawTable(table, monitor));
+    }
+
+    private SQLTableCache() {
+    }
 
     public SQLTableCache(IResource resource) {
 
@@ -95,6 +120,9 @@ public class SQLTableCache {
      * @return
      */
     public boolean isIndexed(Attribute attribute) {
+        if (resource == null) {
+            return attribute.getType() == Type.TEXT;
+        }
         return "true".equalsIgnoreCase(resource.getParameters().get("column." + attribute.getName() + ".searchable", "false"));
     }
 
@@ -107,7 +135,9 @@ public class SQLTableCache {
      * @return
      */
     public int getWidth(Attribute attribute) {
-        Integer ret = Integer.parseInt(resource.getParameters().get("column." + attribute.getName() + ".size", "-1"));
+        Integer ret = resource == null
+                ? -1
+                : Integer.parseInt(resource.getParameters().get("column." + attribute.getName() + ".size", "-1"));
         if (ret < 0 && attribute.getType() == Type.TEXT) {
             return 1024;
         }
@@ -247,7 +277,7 @@ public class SQLTableCache {
 
         String query = "SELECT " + fields + " FROM data" + (where.isEmpty() ? "" : (" WHERE " + where)) + ";";
 
-//        System.out.println(query);
+        // System.out.println(query);
 
         try (DBIterator result = database.query(query)) {
             while(result.hasNext()) {

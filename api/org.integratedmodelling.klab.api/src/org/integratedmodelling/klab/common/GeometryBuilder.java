@@ -1,6 +1,8 @@
 package org.integratedmodelling.klab.common;
 
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
+import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.common.Geometry.DimensionImpl;
 
 /**
@@ -34,6 +36,23 @@ public class GeometryBuilder {
 			return this;
 		}
 
+		public TimeBuilder start(ITimeInstant start) {
+		    time.getParameters().put(Geometry.PARAMETER_TIME_COVERAGE_START, start.getMilliseconds());
+		    return this;
+		}
+		
+        public TimeBuilder end(ITimeInstant start) {
+            time.getParameters().put(Geometry.PARAMETER_TIME_COVERAGE_END, start.getMilliseconds());
+            return this;
+        }
+
+        public TimeBuilder resolution(ITime.Resolution resolution) {
+            time.getParameters().put(Geometry.PARAMETER_TIME_SCOPE, resolution.getMultiplier());
+            time.getParameters().put(Geometry.PARAMETER_TIME_SCOPE_UNIT, resolution.getType().name().toLowerCase());
+            return this;
+        }
+
+		
 		public TimeBuilder size(long n) {
 			time.setShape(new long[] { n });
 			time.setRegular(true);

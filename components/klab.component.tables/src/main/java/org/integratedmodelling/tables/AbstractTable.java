@@ -34,6 +34,8 @@ import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Utils;
 import org.integratedmodelling.tables.adapter.TableAdapter;
 
+import net.bytebuddy.asm.Advice.This;
+
 public abstract class AbstractTable<T> implements ITable<T> {
 
     class FilterDescriptor implements Filter {
@@ -147,8 +149,9 @@ public abstract class AbstractTable<T> implements ITable<T> {
                             if (matcher.groupCount() > 0) {
                                 this.matched = matcher.group(1);
                             }
-//                            System.out.println(
-//                                    "MATCHED " + cname + " with value " + this.matched + " and INDEX = " + attr.getIndex());
+                            // System.out.println(
+                            // "MATCHED " + cname + " with value " + this.matched + " and INDEX = "
+                            // + attr.getIndex());
                             return true;
                         }
                     }
@@ -282,12 +285,22 @@ public abstract class AbstractTable<T> implements ITable<T> {
     private SQLTableCache cache_ = null;
     IMonitor monitor;
     private Map<String, CodeList> mappingCatalog = Collections.synchronizedMap(new HashMap<>());
+    Collection<Attribute> attributes;
 
     public AbstractTable(IResource resource, Class<? extends T> cls, IMonitor monitor) {
         this.resource = resource;
+        this.attributes = resource.getAttributes();
         this.valueClass = cls;
         buildAttributeIndex();
         this.cache_ = new SQLTableCache(resource);
+        this.monitor = monitor;
+    }
+
+    AbstractTable(Collection<Attribute> attributes, Class<? extends T> cls, IMonitor monitor) {
+        this.valueClass = cls;
+        this.attributes = attributes;
+        buildAttributeIndex();
+        // no cache, this is used as support to build one
         this.monitor = monitor;
     }
 
@@ -361,12 +374,14 @@ public abstract class AbstractTable<T> implements ITable<T> {
     private void buildAttributeIndex() {
         attributes_ = new HashMap<>();
         attributesByIndex_ = new HashMap<>();
-        for (Attribute a : resource.getAttributes()) {
+        for (Attribute a : this.attributes) {
             this.attributes_.put(a.getName(), a);
-            int index = Integer.parseInt(resource.getParameters().get("column." + a.getName() + ".index").toString());
+            int index = resource == null
+                    ? a.getIndex()
+                    : Integer.parseInt(resource.getParameters().get("column." + a.getName() + ".index").toString());
             ((AttributeReference) a).setIndex(index);
             attributesByIndex_.put(index, a);
-            Object mapping = resource.getParameters().get("column." + a.getName() + ".mapping");
+            Object mapping = resource == null ? null : resource.getParameters().get("column." + a.getName() + ".mapping");
             // TODO allow for a chain of mappings separated by ->
             if (mapping != null && !mapping.toString().trim().isEmpty()) {
 
@@ -547,7 +562,7 @@ public abstract class AbstractTable<T> implements ITable<T> {
                 throw new KlabIllegalStateException("filtered table produces multiple values but no aggregator is specified");
             }
 
-//            System.out.println("GOT " + ret);
+            // System.out.println("GOT " + ret);
 
             return ret.isEmpty() ? null : (ret.size() == 1 ? ret.get(0) : (aggregator.aggregate(ret)));
         }

@@ -420,7 +420,7 @@ public class ResourceEditor extends ViewPart {
     public void loadResource(ResourceReference resource) {
 
         this.isLocal = Urns.INSTANCE.isLocal(resource.getUrn());
-        
+
         this.resource = resource;
         this.adapter = Activator.klab().getResourceAdapter(resource.getAdapterType());
         this.values.clear();
@@ -456,8 +456,10 @@ public class ResourceEditor extends ViewPart {
         this.outputViewer.setInput(resource.getOutputs() == null ? new ArrayList<Attribute>() : resource.getOutputs());
 
         this.actionChooser.removeAll();
-        for (OperationReference operation : this.adapter.getOperations()) {
-            this.actionChooser.add(operation.getDescription());
+        if (this.adapter != null /* happens at init with engine off */) {
+            for (OperationReference operation : this.adapter.getOperations()) {
+                this.actionChooser.add(operation.getDescription());
+            }
         }
 
         this.title.setText(this.metadata.containsKey(IMetadata.DC_TITLE) ? this.metadata.get(IMetadata.DC_TITLE) : "");
@@ -503,7 +505,7 @@ public class ResourceEditor extends ViewPart {
         /*
          * TODO with remote resources, save button should only be enabled for owner or admin
          */
-        
+
         setDirty(false);
 
     }
