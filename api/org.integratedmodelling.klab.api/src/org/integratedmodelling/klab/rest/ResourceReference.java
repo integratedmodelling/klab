@@ -119,7 +119,8 @@ public class ResourceReference {
     private List<AttributeReference> dependencies = null;
     private List<AttributeReference> outputs = null;
     private List<String> categorizables = new ArrayList<>();
-
+    private List<CodelistReference> codelists = new ArrayList<>();
+    
     /**
      * This will never be stored in a catalog: it's only for real-time operations such as
      * contextualization of the resource before data are extracted.
@@ -320,6 +321,14 @@ public class ResourceReference {
 
     public void setAvailability(AvailabilityReference availability) {
         this.availability = availability;
+    }
+
+    public List<CodelistReference> getCodelists() {
+        return codelists;
+    }
+
+    public void setCodelists(List<CodelistReference> codelists) {
+        this.codelists = codelists;
     }
 
 }

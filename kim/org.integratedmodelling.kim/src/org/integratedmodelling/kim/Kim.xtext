@@ -302,6 +302,12 @@ Import:
 UrnId:
 	('urn:klab:')? PathName ':'  PathName ':' PathName ':' (Path|INT) (':' VersionNumber)? ('#' (Path|UrnKvp) ('&' (Path|UrnKvp))*)?;
 	
+WellFormedUrnId:
+	PathName ':'  PathName ':' PathName ':' (PathName) (':' VersionNumber)? ('#' (Path|UrnKvp))?;	
+
+WellFormedUrnIdWithFragment:
+	PathName ':'  PathName ':' PathName ':' (PathName) (':' VersionNumber)? '#' (LOWERCASE_ID|UPPERCASE_ID|INT|STRING);	
+	
 UrnKvp:
 	PathName '=' (Path|INT)
 ;	
@@ -1072,7 +1078,8 @@ NamespaceId:
 	PathName ':' CAMELCASE_ID;
 	
 AuthorityId:
-	(UPPERCASE_PATH|UPPERCASE_ID) ':' (LOWERCASE_ID|UPPERCASE_ID|INT|STRING)
+	(UPPERCASE_PATH|UPPERCASE_ID) ':' (LOWERCASE_ID|UPPERCASE_ID|INT|STRING) |
+	WellFormedUrnIdWithFragment
 ;
 
 PropertyId:

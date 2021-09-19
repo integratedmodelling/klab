@@ -1,7 +1,5 @@
 package org.integratedmodelling.klab.ide.views;
 
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -49,14 +47,14 @@ public class AuthorityView extends ViewPart {
 	 * Initialize the toolbar.
 	 */
 	private void initializeToolBar() {
-		IToolBarManager tbm = getViewSite().getActionBars().getToolBarManager();
+//		IToolBarManager tbm = getViewSite().getActionBars().getToolBarManager();
 	}
 
 	/**
 	 * Initialize the menu.
 	 */
 	private void initializeMenu() {
-		IMenuManager manager = getViewSite().getActionBars().getMenuManager();
+//		IMenuManager manager = getViewSite().getActionBars().getMenuManager();
 	}
 
 	@Override

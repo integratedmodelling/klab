@@ -203,6 +203,7 @@
             name="k.LAB Apps">
       </view>
       <view
+            category="org.integratedmodelling.klab.ide.category"
             class="org.integratedmodelling.klab.ide.views.AuthorityView"
             id="org.integratedmodelling.klab.ide.views.AuthorityView"
             name="Authorities">

@@ -188,6 +188,7 @@ public class SDMXInterpreter extends TableInterpreter {
         ret.table = table;
         ret.start = allStart;
         ret.end = allEnd;
+        ret.rows = table.rowCount();
         ret.resolution = resolution;
 
         return ret;
@@ -272,6 +273,8 @@ public class SDMXInterpreter extends TableInterpreter {
                     return;
                 }
 
+                monitor.info("SDMX dataflow has " + data.rows + " total rows of data");
+                
                 geometryBuilder.time().regular().start(data.start).end(data.end).resolution(data.resolution);
                 
                 /*
@@ -283,7 +286,7 @@ public class SDMXInterpreter extends TableInterpreter {
 
                     String codeList = defineCodelist(dimension);
                     
-                    builder.withAttribute(dimension.getId(), type, true, false);
+                    builder.withAttribute(dimension.getId().toLowerCase(), type, true, false);
                     builder.withParameter("column." + dimension.getId().toLowerCase() + ".index", dimension.getPosition() - 1);
                     builder.withParameter("column." + dimension.getId().toLowerCase() + ".mapping", codeList);
                     builder.withParameter("column." + dimension.getId().toLowerCase() + ".originalId", dimension.getId());
@@ -294,20 +297,20 @@ public class SDMXInterpreter extends TableInterpreter {
                     n++;
                 }
 
-                builder.withAttribute("column.timestart.index", Type.NUMBER, false, true);
+                builder.withAttribute("timestart", Type.NUMBER, false, true);
                 builder.withParameter("column.timestart.index", sortedDimensions.size())
                         .withParameter("column.timestart.mapping", "").withParameter("column.timestart.size", "-1")
                         .withParameter("column.timestart.searchable", "false");
-                builder.withAttribute("column.timeend.index", Type.NUMBER, false, true);
+                builder.withAttribute("timeend", Type.NUMBER, false, true);
                 builder.withParameter("column.timeend.index", sortedDimensions.size() + 1)
                         .withParameter("column.timeend.mapping", "").withParameter("column.timeend.size", "-1")
                         .withParameter("column.timeend.searchable", "false");
-                builder.withAttribute("column.literaltime.index", Type.TEXT, false, true);
+                builder.withAttribute("literaltime", Type.TEXT, false, true);
                 builder.withParameter("column.literaltime.index", sortedDimensions.size() + 2)
                         .withParameter("column.literaltime.mapping", "").withParameter("column.literaltime.size", "-1")
                         .withParameter("column.literaltime.searchable", "false");
                 
-                builder.withAttribute("column.value.index", Type.NUMBER, false, true);
+                builder.withAttribute("value", Type.NUMBER, false, true);
                 builder.withParameter("column.value.index", sortedDimensions.size() + 3)
                         .withParameter("column.value.mapping", "").withParameter("column.value.size", "-1")
                         .withParameter("column.value.searchable", "false");
@@ -326,7 +329,9 @@ public class SDMXInterpreter extends TableInterpreter {
                 /*
                  * build the database by forcing the table into a SQL cache so we don't have to read this again. 
                  */
-                SQLTableCache.createCache(dataflowId, data.table, monitor);
+                monitor.info("Creating SQLDB cache...");
+                int rows = SQLTableCache.createCache(dataflowId, data.table, monitor);
+                monitor.info("SQLDB cache created with " + rows + " rows of data");
                 
                 
                 //
@@ -376,7 +381,7 @@ public class SDMXInterpreter extends TableInterpreter {
                 // }
                 // }
 
-                monitor.info("SDMX dataflow " + providerId + "/" + dataflowId + "is available in local cache");
+                monitor.info("SDMX dataflow " + providerId + "/" + dataflowId + " is available in local cache");
 
                 builder.withGeometry(geometryBuilder.build());
 

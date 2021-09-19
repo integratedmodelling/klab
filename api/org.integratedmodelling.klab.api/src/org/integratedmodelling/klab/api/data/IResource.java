@@ -593,5 +593,5 @@ public interface IResource extends IProvenance.Node, Serializable {
      * @return this or another resource that can deal with the passed overall context.
      */
     IResource contextualize(IScale scale, IArtifact artifact, Map<String, String> urnParameters, IContextualizationScope scope);
-
+    
 }

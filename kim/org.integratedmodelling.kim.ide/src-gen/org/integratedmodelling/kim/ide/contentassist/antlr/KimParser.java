@@ -100,6 +100,8 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getUrnIdAccess().getAlternatives_7(), "rule__UrnId__Alternatives_7");
 			builder.put(grammarAccess.getUrnIdAccess().getAlternatives_9_1(), "rule__UrnId__Alternatives_9_1");
 			builder.put(grammarAccess.getUrnIdAccess().getAlternatives_9_2_1(), "rule__UrnId__Alternatives_9_2_1");
+			builder.put(grammarAccess.getWellFormedUrnIdAccess().getAlternatives_8_1(), "rule__WellFormedUrnId__Alternatives_8_1");
+			builder.put(grammarAccess.getWellFormedUrnIdWithFragmentAccess().getAlternatives_9(), "rule__WellFormedUrnIdWithFragment__Alternatives_9");
 			builder.put(grammarAccess.getUrnKvpAccess().getAlternatives_2(), "rule__UrnKvp__Alternatives_2");
 			builder.put(grammarAccess.getLocalFilePathAccess().getAlternatives_0(), "rule__LocalFilePath__Alternatives_0");
 			builder.put(grammarAccess.getLocalFilePathAccess().getAlternatives_1_1(), "rule__LocalFilePath__Alternatives_1_1");
@@ -225,8 +227,9 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getPathAccess().getAlternatives_0(), "rule__Path__Alternatives_0");
 			builder.put(grammarAccess.getPathAccess().getAlternatives_1_0(), "rule__Path__Alternatives_1_0");
 			builder.put(grammarAccess.getPathAccess().getAlternatives_1_1(), "rule__Path__Alternatives_1_1");
-			builder.put(grammarAccess.getAuthorityIdAccess().getAlternatives_0(), "rule__AuthorityId__Alternatives_0");
-			builder.put(grammarAccess.getAuthorityIdAccess().getAlternatives_2(), "rule__AuthorityId__Alternatives_2");
+			builder.put(grammarAccess.getAuthorityIdAccess().getAlternatives(), "rule__AuthorityId__Alternatives");
+			builder.put(grammarAccess.getAuthorityIdAccess().getAlternatives_0_0(), "rule__AuthorityId__Alternatives_0_0");
+			builder.put(grammarAccess.getAuthorityIdAccess().getAlternatives_0_2(), "rule__AuthorityId__Alternatives_0_2");
 			builder.put(grammarAccess.getPropertyIdAccess().getAlternatives_0(), "rule__PropertyId__Alternatives_0");
 			builder.put(grammarAccess.getPropertyIdAccess().getAlternatives_2(), "rule__PropertyId__Alternatives_2");
 			builder.put(grammarAccess.getVersionNumberAccess().getAlternatives_3(), "rule__VersionNumber__Alternatives_3");
@@ -356,6 +359,11 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getUrnIdAccess().getGroup_8(), "rule__UrnId__Group_8__0");
 			builder.put(grammarAccess.getUrnIdAccess().getGroup_9(), "rule__UrnId__Group_9__0");
 			builder.put(grammarAccess.getUrnIdAccess().getGroup_9_2(), "rule__UrnId__Group_9_2__0");
+			builder.put(grammarAccess.getWellFormedUrnIdAccess().getGroup(), "rule__WellFormedUrnId__Group__0");
+			builder.put(grammarAccess.getWellFormedUrnIdAccess().getGroup_7(), "rule__WellFormedUrnId__Group_7__0");
+			builder.put(grammarAccess.getWellFormedUrnIdAccess().getGroup_8(), "rule__WellFormedUrnId__Group_8__0");
+			builder.put(grammarAccess.getWellFormedUrnIdWithFragmentAccess().getGroup(), "rule__WellFormedUrnIdWithFragment__Group__0");
+			builder.put(grammarAccess.getWellFormedUrnIdWithFragmentAccess().getGroup_7(), "rule__WellFormedUrnIdWithFragment__Group_7__0");
 			builder.put(grammarAccess.getUrnKvpAccess().getGroup(), "rule__UrnKvp__Group__0");
 			builder.put(grammarAccess.getLocalFilePathAccess().getGroup(), "rule__LocalFilePath__Group__0");
 			builder.put(grammarAccess.getLocalFilePathAccess().getGroup_1(), "rule__LocalFilePath__Group_1__0");
@@ -606,7 +614,7 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getPathAccess().getGroup(), "rule__Path__Group__0");
 			builder.put(grammarAccess.getPathAccess().getGroup_1(), "rule__Path__Group_1__0");
 			builder.put(grammarAccess.getNamespaceIdAccess().getGroup(), "rule__NamespaceId__Group__0");
-			builder.put(grammarAccess.getAuthorityIdAccess().getGroup(), "rule__AuthorityId__Group__0");
+			builder.put(grammarAccess.getAuthorityIdAccess().getGroup_0(), "rule__AuthorityId__Group_0__0");
 			builder.put(grammarAccess.getPropertyIdAccess().getGroup(), "rule__PropertyId__Group__0");
 			builder.put(grammarAccess.getVersionNumberAccess().getGroup(), "rule__VersionNumber__Group__0");
 			builder.put(grammarAccess.getVersionNumberAccess().getGroup_1(), "rule__VersionNumber__Group_1__0");

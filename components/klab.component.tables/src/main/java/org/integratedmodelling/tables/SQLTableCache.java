@@ -45,7 +45,7 @@ public class SQLTableCache {
     int[] dimensions;
     Map<String, String> sanitizedNames = new HashMap<>();
 
-    public static void createCache(String id, Table table, IMonitor monitor) {
+    public static int createCache(String id, Table table, IMonitor monitor) {
         
         SQLTableCache cache = new SQLTableCache();
         List<Attribute> sortedAttributes = TablesawTable.getAttributes(table);
@@ -57,7 +57,7 @@ public class SQLTableCache {
         cache.sortedAttributes_ = sortedAttributes;
         cache.database = H2Database.createPersistent(cache.dbname);
         cache.createStructure();
-        cache.loadData(new TablesawTable(table, monitor));
+        return cache.loadData(new TablesawTable(table, monitor));
     }
 
     private SQLTableCache() {
@@ -164,7 +164,7 @@ public class SQLTableCache {
         return null; // dataCache.get(locators);
     }
 
-    public void loadData(ITable<?> table) {
+    public int loadData(ITable<?> table) {
 
         // this.properties.put("dimensions", NumberUtils.toString(table.getDimensions()));
         int row = 0;
@@ -179,6 +179,8 @@ public class SQLTableCache {
             database.execute(sql);
             row++;
         }
+        
+        return row;
     }
 
     /**

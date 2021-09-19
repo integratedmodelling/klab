@@ -1,8 +1,10 @@
 package org.integratedmodelling.klab;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -12,6 +14,7 @@ import org.integratedmodelling.klab.api.extensions.Authority;
 import org.integratedmodelling.klab.api.knowledge.IAuthority;
 import org.integratedmodelling.klab.api.services.IAuthorityService;
 import org.integratedmodelling.klab.rest.AuthorityIdentity;
+import org.integratedmodelling.klab.rest.AuthorityReference;
 import org.integratedmodelling.klab.utils.Path;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
@@ -111,6 +114,18 @@ public enum Authorities implements IAuthorityService {
 		if (auth != null) {
 			inactive.put(authority, auth);
 		}
+	}
+	
+	public List<AuthorityReference> getAuthorityDescriptors() {
+	    List<AuthorityReference> ret = new ArrayList<>();
+	    for (String authorityId : this.authorities.keySet()) {
+	        IAuthority authority = this.authorities.get(authorityId);
+	        IAuthority.Capabilities capabilities = authority.getCapabilities();
+	        if (capabilities instanceof AuthorityReference) {
+	            ret.add((AuthorityReference)capabilities);
+	        }
+	    }
+	    return ret;
 	}
 
 }
