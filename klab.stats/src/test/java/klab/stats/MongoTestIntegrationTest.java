@@ -7,6 +7,7 @@ import java.net.URISyntaxException;
 
 import org.apache.http.client.utils.URIBuilder;
 import org.integratedmodelling.klab.api.API;
+import org.integratedmodelling.klab.rest.SessionActivity;
 import org.integratedmodelling.klab.rest.SessionReference;
 import org.integratedmodelling.klab.rest.StatsInstertResponse;
 import org.integratedmodelling.klab.stats.Application;
@@ -112,7 +113,7 @@ public class MongoTestIntegrationTest {
     @Test
     public void test_4() {
         ResponseEntity<String> response = restTemplate
-                .getForEntity("http://localhost:" + port + API.STATS.STATS_BASE + "?type=" + SessionReference.class.getCanonicalName(), String.class);
+                .getForEntity("http://localhost:" + port + API.STATS.STATS_BASE + "?type=" + SessionActivity.class.getCanonicalName(), String.class);
         response.getBody().toString();
         System.out.println(response.getBody().toString());
     }    
