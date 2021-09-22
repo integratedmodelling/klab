@@ -180,6 +180,14 @@ public class Grid extends Area implements IGrid {
         return new Grid(gxmin, gymin, gxmax, gymax, nx, ny, projection);
     }
 
+    public double getLinearResolutionMeters() {
+        if (this.linearResolutionMeters_ == 0) {
+            this.linearResolutionMeters_ = (getFirstCell().getStandardizedLength() + getFirstCell().getStandardizedLength())
+                    / 2.0;
+        }
+        return this.linearResolutionMeters_;
+    }
+
     /**
      * Create a grid from a shape in the CRS of the shape and using the given resolution for the
      * larger extent.
@@ -190,7 +198,7 @@ public class Grid extends Area implements IGrid {
      */
     private Grid(Shape shape, double resolutionInMeters) throws KlabException {
         super(shape);
-        this.linearResolutionMeters = resolutionInMeters;
+        this.linearResolutionMeters_ = resolutionInMeters;
         adjustEnvelope(shape, resolutionInMeters);
         // setAdjustedEnvelope(shape, resolutionInMeters);
         mask = createMask(shape);
@@ -988,7 +996,7 @@ public class Grid extends Area implements IGrid {
      * this is the original specification as it comes from the API, or computed if x/y grid size is
      * requested.
      */
-    double linearResolutionMeters;
+    private double linearResolutionMeters_;
 
     /*
      * only set in a subgrid of the grid having the parent ID.

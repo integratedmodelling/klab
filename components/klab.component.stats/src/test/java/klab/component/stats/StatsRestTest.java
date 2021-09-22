@@ -2,12 +2,14 @@ package klab.component.stats;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.http.client.utils.URIBuilder;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.rest.SessionActivity;
 import org.integratedmodelling.klab.rest.SessionReference;
+import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.stats.api.StatsFindPageResponse;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +42,13 @@ public class StatsRestTest {
 	    		   
         ResponseEntity<StatsFindPageResponse<SessionActivity>> response = restTemplate
                 .exchange(url,HttpMethod.GET, null, sessions);
+        
+        Set<String> users = new HashSet<>();
+        for (SessionActivity activity : response.getBody().getResults()) {
+            users.add(activity.getUser());
+        }
+        
+        JsonUtils.printAsJson(response.getBody());
 	}
 
 }

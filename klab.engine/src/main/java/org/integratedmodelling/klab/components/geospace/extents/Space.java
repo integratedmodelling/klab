@@ -582,7 +582,7 @@ public class Space extends Extent implements ISpace {
 
     @Override
     public ISpace getExtent() {
-        return grid == null ? create(getShape()) : create(getShape(), grid.linearResolutionMeters);
+        return grid == null ? create(getShape()) : create(getShape(), grid.getLinearResolutionMeters());
     }
 
     @Override
@@ -928,7 +928,7 @@ public class Space extends Extent implements ISpace {
                          */
                         double resolution = org.integratedmodelling.klab.components.geospace.services.Space
                                 .parseResolution(((Space) destination).gridSpecs);
-                        if (NumberUtils.equal(((Grid) resultGrid).linearResolutionMeters, resolution)) {
+                        if (NumberUtils.equal(((Grid) resultGrid).getLinearResolutionMeters(), resolution)) {
                             return destination;
                         }
 
@@ -1083,11 +1083,11 @@ public class Space extends Extent implements ISpace {
      */
     public static Space create(Shape shape, Grid grid, boolean align) {
         if (!align) {
-            return create(shape.copy(), grid.linearResolutionMeters);
+            return create(shape.copy(), grid.getLinearResolutionMeters());
         }
         Grid newGrid = grid.snapWithinShape(shape);
         Space ret = new Space(shape.copy(), newGrid);
-        ret.gridSpecs = grid.linearResolutionMeters + ".m";
+        ret.gridSpecs = grid.getLinearResolutionMeters() + ".m";
         return ret;
     }
 
