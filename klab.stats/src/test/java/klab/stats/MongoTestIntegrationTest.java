@@ -4,6 +4,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 import java.net.URISyntaxException;
+import java.util.Arrays;
 
 import org.apache.http.client.utils.URIBuilder;
 import org.integratedmodelling.klab.api.API;
@@ -24,6 +25,8 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Accumulators;
+import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.result.InsertOneResult;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,8 +119,16 @@ public class MongoTestIntegrationTest {
                 .getForEntity("http://localhost:" + port + API.STATS.STATS_BASE + "?type=" + SessionActivity.class.getCanonicalName(), String.class);
         response.getBody().toString();
         System.out.println(response.getBody().toString());
-    }    
-    
+    }
+
+    @DisplayName("Test to get types with count")
+    @Test
+    public void test_5() {
+        ResponseEntity<String> response = restTemplate
+                .getForEntity("http://localhost:" + port + API.STATS.STATS_CLASSES, String.class);
+        response.getBody().toString();
+        System.out.println(response.getBody().toString());
+    }
     
 
 }

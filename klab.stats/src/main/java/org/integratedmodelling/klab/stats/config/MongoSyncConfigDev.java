@@ -48,7 +48,7 @@ public class MongoSyncConfigDev {
 
     @Bean(destroyMethod = "close")
     public MongoClient mongoClient(MongoServer mongoServer) {
-        ConnectionString connectionString = new ConnectionString("mongodb://localhost:27017");
+        ConnectionString connectionString = new ConnectionString("mongodb://192.168.250.210:27017");
         CodecRegistry pojoCodecRegistry = fromProviders(PojoCodecProvider.builder().register(getClassModels()).automatic(true).build());
         // CodecRegistry pojoCodecRegistry =
         // fromProviders(PojoCodecProvider.builder().conventions(asList(Conventions.ANNOTATION_CONVENTION)).register("org.integratedmodelling.klab.rest").automatic(true).build());
