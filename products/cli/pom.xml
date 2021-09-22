@@ -57,6 +57,11 @@
 
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
+			<artifactId>klab.authority.caliper</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.authority.gbif</artifactId>
 			<version>${klab.version}</version>
 		</dependency>

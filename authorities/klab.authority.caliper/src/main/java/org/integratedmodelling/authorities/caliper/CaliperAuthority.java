@@ -8,6 +8,7 @@ import java.util.Map;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.extensions.Authority;
 import org.integratedmodelling.klab.api.knowledge.IAuthority;
+import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.rest.AuthorityReference;
 
 import kong.unirest.HttpResponse;
@@ -77,15 +78,32 @@ public class CaliperAuthority implements IAuthority {
 
     @Override
     public List<Identity> search(String query, String catalog) {
-        
+
         String q = DESCRIPTION_QUERY.replace(SCHEME, CALIPER_SCHEMES.get(catalog)).replace(QUERY_STRING, query);
         HttpResponse<JsonNode> response = Unirest.post(SPARQL_ENDPOINT).accept("application/sparql-results+json")
                 .contentType("application/sparql-query").body(q).asJson();
 
-        JSONObject result = response.getBody().getObject();
-        
-        
-        
+        if (response.isSuccess()) {
+            try {
+                JSONObject result = response.getBody().getObject();
+                for (Object zoz : result.getJSONObject("results").getJSONArray("bindings")) {
+
+                    // TODO make an identity
+                    
+                    JSONObject res = (JSONObject) zoz;
+                    String code = res.getJSONObject("code").getString("value");
+                    String name = res.getJSONObject("label_en").getString("value");
+                    String uri = res.getJSONObject("concept").getString("value");
+
+                    // TODO internal try/catch, add error message to identity
+                    
+                }
+            } catch (Throwable t) {
+                // TODO monitor the error, return nothing
+                throw new KlabInternalErrorException(t);
+            }
+        }
+
         return null;
     }
 
@@ -101,7 +119,21 @@ public class CaliperAuthority implements IAuthority {
         HttpResponse<JsonNode> response = Unirest.post(SPARQL_ENDPOINT).accept("application/sparql-results+json")
                 .contentType("application/sparql-query").body(query).asJson();
 
-        System.out.println(response.getBody().getObject());
+        if (response.isSuccess()) {
+            try {
+                JSONObject result = response.getBody().getObject();
+                for (Object zoz : result.getJSONObject("results").getJSONArray("bindings")) {
+                    JSONObject res = (JSONObject) zoz;
+                    String code = res.getJSONObject("code").getString("value");
+                    String name = res.getJSONObject("label_en").getString("value");
+                    String uri = res.getJSONObject("concept").getString("value");
+
+                    System.out.println("Got " + code + ", " + name + ", " + uri);
+                }
+            } catch (Throwable t) {
+                throw new KlabInternalErrorException(t);
+            }
+        }
 
     }
 

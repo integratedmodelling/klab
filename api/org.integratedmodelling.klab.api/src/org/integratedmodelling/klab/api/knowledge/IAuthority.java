@@ -108,7 +108,9 @@ public interface IAuthority {
         /**
          * If true, the authority is capable of accepting unambiguous but different identifiers for
          * the same concept, such as water and h2o, which are resolved through a search. If false,
-         * the authority can only deal with correct identifiers or formulas.
+         * the authority can only deal with correct identifiers or formulas. The main consequence is
+         * that if this is true, each search can have multiple results, otherwise it's either 0 or
+         * 1.
          * 
          * @return
          */
