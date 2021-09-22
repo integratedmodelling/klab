@@ -34,7 +34,7 @@ public class GBIFAuthority implements IAuthority {
 
 	static final int pageSize = 100;
 	static final public String ID = "GBIF";
-	static final public String DESCRIPTION = "<b>Global Biodiversity Information Facility (GBIF)</b>\n\n"
+	static final public String DESCRIPTION = "Global Biodiversity Information Facility (GBIF)\n\n"
             + "GBIF provides stable identities for taxonomic entities. The available catalogs "
             + " authority provides k.LAB identities at different taxonomic ranks.\n\n"
             + "For more details, see the GBIF project at http://gbif.org";

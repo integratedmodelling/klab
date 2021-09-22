@@ -1,11 +1,13 @@
 package org.integratedmodelling.klab.stats.services;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 
-import org.integratedmodelling.klab.rest.SessionReference;
+import org.bson.Document;
 import org.integratedmodelling.klab.rest.StatsInstertResponse;
+import org.integratedmodelling.klab.stats.api.StatsClassResponse;
 import org.integratedmodelling.klab.stats.api.models.StatsFindPageRequest;
 import org.integratedmodelling.klab.stats.api.models.StatsFindPageResponse;
 import org.integratedmodelling.klab.stats.api.models.StatsInsertRequest;
@@ -13,16 +15,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.mongodb.client.FindIterable;
+import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.result.InsertOneResult;
+import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Projections;
+import com.mongodb.client.model.Accumulators;
 
 
 @Service
@@ -78,7 +80,20 @@ public class MongoStatServiceImpl implements StatsService {
         return resp;
     }
 
-
-		
-
+	@Override
+	public StatsClassResponse findClasses() {
+		MongoCollection<Document> db = mongo.getDatabase("stats").getCollection(dbName);
+		AggregateIterable<Document> docs = db.aggregate(
+			Arrays.asList(
+				Aggregates.group("$_t", Accumulators.sum("count", 1))
+			)
+		);
+		HashMap<String, Integer> classCounts = new HashMap<>();
+		docs.forEach(doc -> {
+			classCounts.put(doc.get("_id").toString(), Integer.parseInt(doc.get("count").toString()));
+		});
+		StatsClassResponse resp = new StatsClassResponse();
+		resp.setClassCounts(classCounts);
+		return resp;
+	}		
 }

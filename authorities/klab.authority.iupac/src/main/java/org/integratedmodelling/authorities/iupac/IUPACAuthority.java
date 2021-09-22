@@ -40,7 +40,7 @@ import kong.unirest.Unirest;
 public class IUPACAuthority implements IAuthority {
 
     public static final String ID = "IUPAC";
-    public static final String DESCRIPTION = "The IUPAC authority resolves chemical species names along with InChl strings and hashes. The only requirement for the"
+    public static final String DESCRIPTION = "The IUPAC authority resolves chemical species names, InChl strings and identifiers.\n\n The only requirement for the"
             + " identifier is to be unambiguous. The NIH resolution service supports several languages, so IUPAC:H2O or IUPAC:agua will be equivalent.";
     private static final String KEY_PATTERN = "[A-Z]{14}-[A-Z]{10}-[A-Z]";
     private static final String RESOLVER_URL = "https://cactus.nci.nih.gov/chemical/structure";

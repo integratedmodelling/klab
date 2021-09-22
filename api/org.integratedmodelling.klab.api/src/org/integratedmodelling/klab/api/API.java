@@ -956,6 +956,8 @@ public interface API {
         public static final String API_BASE = "/api/v2";
 
         public static final String STATS_BASE = API_BASE + "/stats";
+        
+        public static final String STATS_CLASSES = STATS_BASE + "/classes";
 
         public interface PARAMETERS {
             public static final String TYPE = "type";
@@ -963,7 +965,7 @@ public interface API {
             public static final String PAGE = "page";
 
             public static final String LIMIT = "limit";
-
+           
         }
 
     }
