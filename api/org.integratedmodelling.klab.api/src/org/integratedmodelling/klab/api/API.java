@@ -424,7 +424,7 @@ public interface API {
         public static interface ADMIN {
 
             public static final String P_COMPONENT = "{component}";
-            public static final String P_PROPERTY = "{component}";
+            public static final String P_PROPERTY = "{property}";
             public static final String P_LINES = "{lines}";
 
             /**
@@ -437,6 +437,17 @@ public interface API {
              */
             public static final String COMPONENT_GET_STATUS = "/component/getstatus/" + P_COMPONENT;
 
+            /**
+             * 
+             */
+            public static final String SET_COMPONENT_PROPERTY = "/component/properties/set/" + P_COMPONENT + "/" + P_PROPERTY;
+
+            /**
+             * 
+             */
+            public static final String GET_COMPONENT_PROPERTY = "/component/properties/get/" + P_COMPONENT + "/" + P_PROPERTY;
+
+            
             /**
              * 
              */

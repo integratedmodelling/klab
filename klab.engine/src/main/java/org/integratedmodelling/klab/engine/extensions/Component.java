@@ -2,8 +2,10 @@ package org.integratedmodelling.klab.engine.extensions;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,10 +43,13 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.documentation.DataflowDocumentation;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.kim.Prototype;
 import org.integratedmodelling.klab.utils.Pair;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
@@ -517,6 +522,14 @@ public class Component implements IComponent {
 	@Override
 	public Properties getProperties() {
 		return properties;
+	}
+	
+	public void persistProperties() {
+	    try (OutputStream out = new FileOutputStream(new File(Configuration.INSTANCE.getDataPath() + File.separator + name + ".properties"))) {
+	        this.properties.store(out, "Saved by API on " + DateTime.now(DateTimeZone.UTC));
+	    } catch (Exception e) {
+	        throw new KlabIOException(e);
+        }
 	}
 
 }
