@@ -32,30 +32,33 @@ public class ScsRunoffResolver implements IResolver<IProcess>, IExpression {
         IState rainfallVolumeState = context.getArtifact("rainfall_volume", IState.class);
         IState streamPresenceState = context.getArtifact("presence_of_stream", IState.class);
         IState curveNumberState = context.getArtifact("curve_number", IState.class);
-        IState numberOfEventsState = context.getArtifact("number_of_events", IState.class);
-        if (numberOfEventsState == null) {
-            context.getMonitor().warn("No number of events available, default to 1.");
-        }
 
-        IState runoffState = context.getArtifact("runoff_water_volume", IState.class);
+        if (rainfallVolumeState != null && streamPresenceState != null && curveNumberState != null) {
+            IState numberOfEventsState = context.getArtifact("number_of_events", IState.class);
+            if (numberOfEventsState == null) {
+                context.getMonitor().warn("No number of events available, default to 1.");
+            }
 
-        OmsScsRunoff scsRunoff = new OmsScsRunoff();
-        scsRunoff.pm = taskMonitor;
-        scsRunoff.inRainfall = getGridCoverage(context, rainfallVolumeState);
-        scsRunoff.inNet = getGridCoverage(context, streamPresenceState);
-        scsRunoff.inCurveNumber = getGridCoverage(context, curveNumberState);
-        scsRunoff.inNumberOfEvents = getGridCoverage(context, numberOfEventsState);
-        try {
-            scsRunoff.process();
-        } catch (Exception e) {
-            throw new KlabException(e);
-        }
-        if (!context.getMonitor().isInterrupted()) {
-            GeotoolsUtils.INSTANCE.coverageToState(scsRunoff.outputDischarge, runoffState, context.getScale(), null);
-        }
+            IState runoffState = context.getArtifact("runoff_water_volume", IState.class);
 
-        GeotoolsUtils.INSTANCE.dumpToRaster(context, "ScsRunoff", rainfallVolumeState, streamPresenceState, curveNumberState,
-                runoffState);
+            OmsScsRunoff scsRunoff = new OmsScsRunoff();
+            scsRunoff.pm = taskMonitor;
+            scsRunoff.inRainfall = getGridCoverage(context, rainfallVolumeState);
+            scsRunoff.inNet = getGridCoverage(context, streamPresenceState);
+            scsRunoff.inCurveNumber = getGridCoverage(context, curveNumberState);
+            scsRunoff.inNumberOfEvents = getGridCoverage(context, numberOfEventsState);
+            try {
+                scsRunoff.process();
+            } catch (Exception e) {
+                throw new KlabException(e);
+            }
+            if (!context.getMonitor().isInterrupted()) {
+                GeotoolsUtils.INSTANCE.coverageToState(scsRunoff.outputDischarge, runoffState, context.getScale(), null);
+            }
+
+            GeotoolsUtils.INSTANCE.dumpToRaster(context, "ScsRunoff", rainfallVolumeState, streamPresenceState, curveNumberState,
+                    runoffState);
+        }
         return runoffProcess;
     }
 

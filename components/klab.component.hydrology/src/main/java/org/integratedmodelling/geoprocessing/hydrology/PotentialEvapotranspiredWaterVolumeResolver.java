@@ -3,6 +3,7 @@ package org.integratedmodelling.geoprocessing.hydrology;
 import static org.hortonmachine.gears.libs.modules.HMConstants.floatNovalue;
 
 import java.awt.image.DataBuffer;
+import java.util.function.Function;
 
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.hortonmachine.hmachine.modules.hydrogeomorphology.etp.OmsPotentialEvapotranspiredWaterVolume;
@@ -38,28 +39,42 @@ public class PotentialEvapotranspiredWaterVolumeResolver implements IResolver<IP
         TaskMonitor taskMonitor = new TaskMonitor(context.getMonitor());
         taskMonitor.setTaskName("Potential Evapotranspiration");
 
-        OmsPotentialEvapotranspiredWaterVolume pet = new OmsPotentialEvapotranspiredWaterVolume();
-        pet.pm = taskMonitor;
-        pet.inCropCoefficient = getGridCoverage(context, cropCoefficientState);
-        pet.inMaxTemp = getGridCoverage(context, maxTempState);
-        pet.inMinTemp = getGridCoverage(context, minTempState);
-        pet.inAtmosphericTemp = getGridCoverage(context, tempState);
-        pet.inSolarRadiation = getGridCoverage(context, solarRadiationState);
-        pet.inRainfall = getGridCoverage(context, rainfallState);
-        pet.inReferenceEtp = null; // TODO consider a case in which reference etp is passed?
+        if (cropCoefficientState != null) {
 
-        try {
-            pet.process();
-        } catch (Exception e) {
-            throw new KlabException(e);
+            OmsPotentialEvapotranspiredWaterVolume pet = new OmsPotentialEvapotranspiredWaterVolume();
+            pet.pm = taskMonitor;
+            pet.inCropCoefficient = getGridCoverage(context, cropCoefficientState);
+            pet.inMaxTemp = getGridCoverage(context, maxTempState);
+            pet.inMinTemp = getGridCoverage(context, minTempState);
+            pet.inAtmosphericTemp = getGridCoverage(context, tempState);
+
+            // FIXME for now divide by 1000, since the solarradiation enters as J and not MJ as
+            // requested
+            Function<Object, Object> transform = (value) -> {
+                if (value instanceof Number && !Double.isNaN(((Number) value).doubleValue())) {
+                    return ((Number) value).doubleValue() / 1000.0;
+                }
+                return value;
+            };
+            GridCoverage2D solarRadiationGc = GeotoolsUtils.INSTANCE.stateToCoverage(solarRadiationState, context.getScale(),
+                    DataBuffer.TYPE_FLOAT, floatNovalue, false, transform);
+            pet.inSolarRadiation = solarRadiationGc;// getGridCoverage(context,
+                                                    // solarRadiationState);
+            pet.inRainfall = getGridCoverage(context, rainfallState);
+            pet.inReferenceEtp = null; // TODO consider a case in which reference etp is passed?
+
+            try {
+                pet.process();
+            } catch (Exception e) {
+                throw new KlabException(e);
+            }
+            if (!context.getMonitor().isInterrupted()) {
+                GeotoolsUtils.INSTANCE.coverageToState(pet.outputPet, petState, context.getScale(), null);
+            }
+
+            GeotoolsUtils.INSTANCE.dumpToRaster(context, "PET", cropCoefficientState, rainfallState, tempState, maxTempState,
+                    minTempState, solarRadiationState, petState);
         }
-        if (!context.getMonitor().isInterrupted()) {
-            GeotoolsUtils.INSTANCE.coverageToState(pet.outputPet, petState, context.getScale(), null);
-        }
-
-        GeotoolsUtils.INSTANCE.dumpToRaster(context, "PET", cropCoefficientState, rainfallState, tempState, maxTempState,
-                minTempState, solarRadiationState, petState);
-
         return evapotranspirationProcess;
     }
 
