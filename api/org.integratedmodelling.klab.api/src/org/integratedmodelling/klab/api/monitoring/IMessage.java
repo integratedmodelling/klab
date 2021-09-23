@@ -273,6 +273,11 @@ public interface IMessage {
          * from a search, send the ID of the search so it can be disposed of.
          */
         RequestObservation,
+        
+        /**
+         * Authority-related inquiries
+         */
+        AuthorityQuery, AuthoritySearchResults,
 
         /**
          * F->B: Start or stop watching an observation, i.e. receive messages about anything that

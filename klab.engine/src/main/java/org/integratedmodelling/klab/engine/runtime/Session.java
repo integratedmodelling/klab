@@ -56,6 +56,7 @@ import org.integratedmodelling.klab.api.data.CRUDOperation;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
+import org.integratedmodelling.klab.api.knowledge.IAuthority;
 import org.integratedmodelling.klab.api.knowledge.IAuthority.Identity;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IProject;
@@ -101,6 +102,9 @@ import org.integratedmodelling.klab.exceptions.KlabActorException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.rest.AuthorityIdentity;
+import org.integratedmodelling.klab.rest.AuthorityQueryRequest;
+import org.integratedmodelling.klab.rest.AuthorityQueryResponse;
+import org.integratedmodelling.klab.rest.AuthorityReference;
 import org.integratedmodelling.klab.rest.AuthorityResolutionRequest;
 import org.integratedmodelling.klab.rest.ConsoleNotification;
 import org.integratedmodelling.klab.rest.ContextualizationRequest;
@@ -790,6 +794,26 @@ public class Session extends GroovyObjectSupport
             ((AuthorityIdentity) ret).setDescription(MarkdownUtils.INSTANCE.format(ret.getDescription()));
         }
         monitor.send(Message.create(this.token, IMessage.MessageClass.KimLifecycle, IMessage.Type.AuthorityDocumentation, ret)
+                .inResponseTo(message));
+    }
+
+    @MessageHandler
+    private void handleAuthorityQueryRequest(AuthorityQueryRequest request, IMessage message) {
+
+        AuthorityQueryResponse ret = new AuthorityQueryResponse();
+
+        IAuthority authority = Authorities.INSTANCE.getAuthority(request.getAuthorityId());
+        if (authority == null) {
+            ret.setError("Authority " + request.getAuthorityId() + " is inaccessible or non-existent"); 
+        } else {
+            for (IAuthority.Identity identity : authority.search(request.getQueryString(), request.getAuthorityCatalog())) {
+                if (identity instanceof AuthorityIdentity) {
+                    ret.getMatches().add((AuthorityIdentity)identity);
+                }
+            }
+        }
+
+        monitor.send(Message.create(this.token, IMessage.MessageClass.UserInterface, IMessage.Type.AuthoritySearchResults, ret)
                 .inResponseTo(message));
     }
 

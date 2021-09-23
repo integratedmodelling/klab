@@ -4,7 +4,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.part.ViewPart;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessage.Type;
@@ -12,7 +11,7 @@ import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.model.KlabPeer;
 import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
 import org.integratedmodelling.klab.ide.ui.AuthorityEditor;
-import org.integratedmodelling.klab.rest.AuthorityReference;
+import org.integratedmodelling.klab.rest.AuthorityQueryResponse;
 
 public class AuthorityView extends ViewPart {
 
@@ -55,6 +54,9 @@ public class AuthorityView extends ViewPart {
         case EngineDown:
         case EngineUp:
             refresh(message.getType() == Type.EngineUp);
+            break;
+        case AuthoritySearchResults:
+            this.editor.displayMatches(message.getPayload(AuthorityQueryResponse.class));
             break;
         default:
             break;

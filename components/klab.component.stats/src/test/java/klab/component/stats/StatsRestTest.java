@@ -72,6 +72,9 @@ public class StatsRestTest {
 	    		   
         ResponseEntity<StatsFindPageResponse<TaskReference>> response = restTemplate
                 .exchange(url,HttpMethod.GET, null, sessions);
+
+        JsonUtils.printAsJson(response.getBody());
+
 	}
 	
 	@Test
@@ -93,6 +96,9 @@ public class StatsRestTest {
 	    		   
         ResponseEntity<StatsFindPageResponse<ObservationReference>> response = restTemplate
                 .exchange(url,HttpMethod.GET, null, obsRefs);
+        
+        JsonUtils.printAsJson(response.getBody());
+
 	}
 
 }

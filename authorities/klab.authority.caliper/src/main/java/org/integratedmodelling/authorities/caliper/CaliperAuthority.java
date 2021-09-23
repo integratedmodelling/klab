@@ -1,6 +1,7 @@
 package org.integratedmodelling.authorities.caliper;
 
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,13 +10,13 @@ import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.extensions.Authority;
 import org.integratedmodelling.klab.api.knowledge.IAuthority;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
+import org.integratedmodelling.klab.rest.AuthorityIdentity;
 import org.integratedmodelling.klab.rest.AuthorityReference;
 
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
 import kong.unirest.json.JSONObject;
-import unirest.shaded.com.google.gson.JsonObject;
 
 @Authority(id = CaliperAuthority.ID, description = CaliperAuthority.DESCRIPTION, catalogs = {"ISIC", "ICC10",
         "ICC"/*
@@ -27,16 +28,18 @@ import unirest.shaded.com.google.gson.JsonObject;
 public class CaliperAuthority implements IAuthority {
 
     public static final String ID = "CALIPER";
-    public static final String DESCRIPTION = "";
+    public static final String DESCRIPTION = "The FAO Caliper classification portal for statistical classifications";
     private static final String SCHEME = "{SCHEME}";
     private static final String QUERY_STRING = "{QUERY_STRING}";
 
     private static final String DESCRIPTION_QUERY = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\r\n"
             + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\r\n"
-            + "PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\r\n" + "SELECT ?code ?label_en ?concept WHERE {\r\n"
+            + "PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\r\n" + "SELECT ?code ?label_en ?concept ?broader WHERE {\r\n"
             + "  ?concept rdf:type skos:Concept . \r\n" + "  ?concept skos:inScheme <{SCHEME}> .\r\n"
             + "  ?concept skos:prefLabel ?label_en . FILTER(contains(lcase(str(?label_en)), '{QUERY_STRING}')) .\r\n"
-            + "  ?concept skos:notation ?code .\r\n" + "} order by ?code";
+            + "  ?concept skos:notation ?code .\r\n" 
+            + "  ?concept skos:broader ?broader .\r\n" 
+            + "} order by ?code";
 
     private static final String SPARQL_ENDPOINT = "https://stats-class.fao.uniroma2.it/AllVoc_Sparql/";
     private static final Map<String, String> CALIPER_SCHEMES = new HashMap<>();
@@ -64,11 +67,16 @@ public class CaliperAuthority implements IAuthority {
         // TODO Auto-generated method stub
         return null;
     }
+    
     @Override
     public Capabilities getCapabilities() {
+        
         AuthorityReference ret = new AuthorityReference();
         ret.setSearchable(true);
         ret.setFuzzy(true);
+        ret.setName(ID);
+        ret.setDescription(DESCRIPTION);
+        
         return ret;
     }
     @Override
@@ -83,6 +91,8 @@ public class CaliperAuthority implements IAuthority {
         HttpResponse<JsonNode> response = Unirest.post(SPARQL_ENDPOINT).accept("application/sparql-results+json")
                 .contentType("application/sparql-query").body(q).asJson();
 
+        List<Identity> ret = new ArrayList<>();
+        
         if (response.isSuccess()) {
             try {
                 JSONObject result = response.getBody().getObject();
@@ -95,6 +105,15 @@ public class CaliperAuthority implements IAuthority {
                     String name = res.getJSONObject("label_en").getString("value");
                     String uri = res.getJSONObject("concept").getString("value");
 
+                    AuthorityIdentity identity = new AuthorityIdentity();
+                    
+                    identity.setAuthorityName(ID + (catalog == null ? "": ("/" + catalog)));
+                    identity.setBaseIdentity(ID);
+                    identity.setConceptName(identity.getAuthorityName().toLowerCase().replace("/", "_") + code);
+                    identity.setId(code);
+                    identity.setLabel(name);
+                    
+                    ret.add(identity);
                     // TODO internal try/catch, add error message to identity
                     
                 }
@@ -104,7 +123,7 @@ public class CaliperAuthority implements IAuthority {
             }
         }
 
-        return null;
+        return ret;
     }
 
     @Override

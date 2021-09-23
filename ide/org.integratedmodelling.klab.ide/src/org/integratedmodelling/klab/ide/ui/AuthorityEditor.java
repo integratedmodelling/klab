@@ -4,10 +4,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.nebula.widgets.richtext.RichTextViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -15,10 +18,15 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.ResourceManager;
+import org.integratedmodelling.klab.ide.Activator;
+import org.integratedmodelling.klab.rest.AuthorityQueryResponse;
 import org.integratedmodelling.klab.rest.AuthorityReference;
 import org.integratedmodelling.klab.utils.Pair;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.custom.SashForm;
 
 public class AuthorityEditor extends Composite {
 
@@ -28,6 +36,12 @@ public class AuthorityEditor extends Composite {
     private Label authDescription;
     private Map<String, AuthorityReference> authorities = new HashMap<>();
     protected AuthorityReference currentAuthority;
+    private Table resultList;
+    private RichTextViewer description;
+    private String currentCatalog;
+    private TableColumn tblclmnCode;
+    private TableColumn tblclmnLabel;
+    private SashForm sashForm;
 
     public AuthorityEditor(Composite parent, int style) {
         super(parent, style);
@@ -48,15 +62,19 @@ public class AuthorityEditor extends Composite {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 currentAuthority = authorities.get(mainAuthority.getItem(mainAuthority.getSelectionIndex()));
-                authDescription.setText(currentAuthority == null ? "Choose an authority from the list" : currentAuthority.getDescription());
+                authDescription.setText(
+                        currentAuthority == null ? "Choose an authority from the list" : currentAuthority.getDescription());
                 subAuthority.removeAll();
                 if (currentAuthority != null && !currentAuthority.getSubAuthorities().isEmpty()) {
                     subAuthority.setEnabled(true);
                     for (Pair<String, String> sub : currentAuthority.getSubAuthorities()) {
                         subAuthority.add(sub.getFirst());
                     }
+                    subAuthority.select(0);
+                    currentCatalog = subAuthority.getItem(0);
                 } else {
                     subAuthority.setEnabled(false);
+                    currentCatalog = null;
                 }
                 text.setText("");
             }
@@ -67,12 +85,22 @@ public class AuthorityEditor extends Composite {
         subAuthority.addSelectionListener(new SelectionAdapter(){
             @Override
             public void widgetSelected(SelectionEvent e) {
+                currentCatalog = subAuthority.getText();
             }
         });
         subAuthority.setEnabled(false);
         subAuthority.setBounds(0, 0, 57, 20);
 
         text = new Text(composite, SWT.BORDER);
+        text.addKeyListener(new KeyAdapter(){
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.keyCode == 13) {
+                    search(text.getText());
+                }
+            }
+
+        });
         text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         text.setBounds(0, 0, 41, 19);
 
@@ -81,11 +109,28 @@ public class AuthorityEditor extends Composite {
         btnNewButton.setImage(ResourceManager.getPluginImage("org.eclipse.ui", "/icons/full/etool16/copy_edit.png"));
         btnNewButton.setBounds(0, 0, 70, 21);
 
-        ScrolledComposite composite_1 = new ScrolledComposite(this, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-        composite_1.setExpandVertical(true);
-        composite_1.setExpandHorizontal(true);
+        Composite composite_1 = new Composite(this, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+        composite_1.setLayout(new FillLayout(SWT.HORIZONTAL));
         composite_1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
         composite_1.setBounds(0, 0, 32, 32);
+        
+        sashForm = new SashForm(composite_1, SWT.NONE);
+        sashForm.setSashWidth(0);
+        
+                description = new RichTextViewer(sashForm, SWT.BORDER);
+        sashForm.setWeights(new int[] {1});
+
+        resultList = new Table(composite_1, SWT.BORDER | SWT.FULL_SELECTION);
+        resultList.setLinesVisible(true);
+        resultList.setHeaderVisible(true);
+        
+        tblclmnCode = new TableColumn(resultList, SWT.NONE);
+        tblclmnCode.setWidth(100);
+        tblclmnCode.setText("Code");
+        
+        tblclmnLabel = new TableColumn(resultList, SWT.NONE);
+        tblclmnLabel.setWidth(400);
+        tblclmnLabel.setText("Label");
 
         authDescription = new Label(this, SWT.NONE);
         authDescription.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -93,10 +138,21 @@ public class AuthorityEditor extends Composite {
         authDescription.setText("Choose an authority from the list");
     }
 
+    private void search(String text) {
+
+        if (this.currentAuthority != null) {
+            Activator.session().searchAuthority(this.currentAuthority.getName(), this.currentCatalog, text);
+        }
+    }
+    
+    public void displayMatches(AuthorityQueryResponse matches) {
+        System.out.println("ZIO PAPA MATCHES");
+    }
+
     public void setAuthorities(List<AuthorityReference> authorities) {
 
         this.authorities.clear();
-        
+
         Display.getDefault().asyncExec(() -> {
 
             mainAuthority.removeAll();

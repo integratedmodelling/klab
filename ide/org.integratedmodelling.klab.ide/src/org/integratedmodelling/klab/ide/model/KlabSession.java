@@ -41,6 +41,8 @@ import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.ide.views.ApplicationView;
 import org.integratedmodelling.klab.ide.views.ResourcesView;
 import org.integratedmodelling.klab.ide.views.SearchView;
+import org.integratedmodelling.klab.rest.AuthorityQueryRequest;
+import org.integratedmodelling.klab.rest.AuthorityQueryResponse;
 import org.integratedmodelling.klab.rest.DataflowReference;
 import org.integratedmodelling.klab.rest.EngineEvent;
 import org.integratedmodelling.klab.rest.Layout;
@@ -337,6 +339,10 @@ public class KlabSession extends KlabPeer {
 	public void launchTest(URL url) {
 		Activator.post(IMessage.MessageClass.Run, IMessage.Type.RunTest, new LoadApplicationRequest(url, true));
 	}
+	
+	public void searchAuthority(String authorityId, String authorityCatalog, String queryString) {
+        Activator.post(IMessage.MessageClass.UserInterface, IMessage.Type.AuthorityQuery, new AuthorityQueryRequest(authorityId, authorityCatalog, queryString));
+	}
 
 	public void launchApp(String behavior) {
 		Activator.post(IMessage.MessageClass.Run, IMessage.Type.RunApp,
@@ -410,6 +416,11 @@ public class KlabSession extends KlabPeer {
 		default:
 			break;
 		}
+	}
+	
+	@MessageHandler(type = IMessage.Type.AuthoritySearchResults)
+	public void handleAuthoritySearchResults(IMessage message, AuthorityQueryResponse response) {
+	    send(message);
 	}
 
 	@MessageHandler(messageClass = IMessage.MessageClass.Authorization, type = IMessage.Type.NetworkStatus)
