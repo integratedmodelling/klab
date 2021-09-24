@@ -12214,19 +12214,26 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		private final RuleCall cUPPERCASE_IDTerminalRuleCall_0_2_1 = (RuleCall)cAlternatives_0_2.eContents().get(1);
 		private final RuleCall cINTTerminalRuleCall_0_2_2 = (RuleCall)cAlternatives_0_2.eContents().get(2);
 		private final RuleCall cSTRINGTerminalRuleCall_0_2_3 = (RuleCall)cAlternatives_0_2.eContents().get(3);
+		private final Group cGroup_0_3 = (Group)cGroup_0.eContents().get(3);
+		private final Keyword cFullStopKeyword_0_3_0 = (Keyword)cGroup_0_3.eContents().get(0);
+		private final Alternatives cAlternatives_0_3_1 = (Alternatives)cGroup_0_3.eContents().get(1);
+		private final RuleCall cLOWERCASE_IDTerminalRuleCall_0_3_1_0 = (RuleCall)cAlternatives_0_3_1.eContents().get(0);
+		private final RuleCall cUPPERCASE_IDTerminalRuleCall_0_3_1_1 = (RuleCall)cAlternatives_0_3_1.eContents().get(1);
+		private final RuleCall cINTTerminalRuleCall_0_3_1_2 = (RuleCall)cAlternatives_0_3_1.eContents().get(2);
+		private final RuleCall cSTRINGTerminalRuleCall_0_3_1_3 = (RuleCall)cAlternatives_0_3_1.eContents().get(3);
 		private final RuleCall cWellFormedUrnIdWithFragmentParserRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
 		
 		//AuthorityId:
-		//    (UPPERCASE_PATH|UPPERCASE_ID) ':' (LOWERCASE_ID|UPPERCASE_ID|INT|STRING) |
+		//    (UPPERCASE_PATH|UPPERCASE_ID) ':' (LOWERCASE_ID|UPPERCASE_ID|INT|STRING) ('.' (LOWERCASE_ID|UPPERCASE_ID|INT|STRING))* |
 		//    WellFormedUrnIdWithFragment
 		//;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//(UPPERCASE_PATH|UPPERCASE_ID) ':' (LOWERCASE_ID|UPPERCASE_ID|INT|STRING) |
+		//(UPPERCASE_PATH|UPPERCASE_ID) ':' (LOWERCASE_ID|UPPERCASE_ID|INT|STRING) ('.' (LOWERCASE_ID|UPPERCASE_ID|INT|STRING))* |
 		//WellFormedUrnIdWithFragment
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
-		//(UPPERCASE_PATH|UPPERCASE_ID) ':' (LOWERCASE_ID|UPPERCASE_ID|INT|STRING)
+		//(UPPERCASE_PATH|UPPERCASE_ID) ':' (LOWERCASE_ID|UPPERCASE_ID|INT|STRING) ('.' (LOWERCASE_ID|UPPERCASE_ID|INT|STRING))*
 		public Group getGroup_0() { return cGroup_0; }
 		
 		//(UPPERCASE_PATH|UPPERCASE_ID)
@@ -12255,6 +12262,27 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		
 		//STRING
 		public RuleCall getSTRINGTerminalRuleCall_0_2_3() { return cSTRINGTerminalRuleCall_0_2_3; }
+		
+		//('.' (LOWERCASE_ID|UPPERCASE_ID|INT|STRING))*
+		public Group getGroup_0_3() { return cGroup_0_3; }
+		
+		//'.'
+		public Keyword getFullStopKeyword_0_3_0() { return cFullStopKeyword_0_3_0; }
+		
+		//(LOWERCASE_ID|UPPERCASE_ID|INT|STRING)
+		public Alternatives getAlternatives_0_3_1() { return cAlternatives_0_3_1; }
+		
+		//LOWERCASE_ID
+		public RuleCall getLOWERCASE_IDTerminalRuleCall_0_3_1_0() { return cLOWERCASE_IDTerminalRuleCall_0_3_1_0; }
+		
+		//UPPERCASE_ID
+		public RuleCall getUPPERCASE_IDTerminalRuleCall_0_3_1_1() { return cUPPERCASE_IDTerminalRuleCall_0_3_1_1; }
+		
+		//INT
+		public RuleCall getINTTerminalRuleCall_0_3_1_2() { return cINTTerminalRuleCall_0_3_1_2; }
+		
+		//STRING
+		public RuleCall getSTRINGTerminalRuleCall_0_3_1_3() { return cSTRINGTerminalRuleCall_0_3_1_3; }
 		
 		//WellFormedUrnIdWithFragment
 		public RuleCall getWellFormedUrnIdWithFragmentParserRuleCall_1() { return cWellFormedUrnIdWithFragmentParserRuleCall_1; }
@@ -14476,7 +14504,7 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 	}
 	
 	//AuthorityId:
-	//    (UPPERCASE_PATH|UPPERCASE_ID) ':' (LOWERCASE_ID|UPPERCASE_ID|INT|STRING) |
+	//    (UPPERCASE_PATH|UPPERCASE_ID) ':' (LOWERCASE_ID|UPPERCASE_ID|INT|STRING) ('.' (LOWERCASE_ID|UPPERCASE_ID|INT|STRING))* |
 	//    WellFormedUrnIdWithFragment
 	//;
 	public AuthorityIdElements getAuthorityIdAccess() {

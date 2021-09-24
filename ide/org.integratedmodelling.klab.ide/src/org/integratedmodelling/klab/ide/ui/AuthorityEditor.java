@@ -3,6 +3,8 @@ package org.integratedmodelling.klab.ide.ui;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -13,6 +15,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -24,15 +28,18 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.ResourceManager;
 import org.integratedmodelling.klab.ide.Activator;
+import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.rest.AuthorityIdentity;
 import org.integratedmodelling.klab.rest.AuthorityQueryResponse;
 import org.integratedmodelling.klab.rest.AuthorityReference;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.StringUtil;
+import org.eclipse.swt.events.MouseAdapter;
 
 public class AuthorityEditor extends Composite {
 
@@ -48,6 +55,8 @@ public class AuthorityEditor extends Composite {
     private TableColumn tblclmnCode;
     private TableColumn tblclmnLabel;
     private SashForm sashForm;
+    protected AuthorityIdentity selectedIdentity;
+    BiConsumer<AuthorityIdentity, Boolean> listener;
 
     class IdentityLabelProvider extends LabelProvider implements ITableLabelProvider {
 
@@ -64,7 +73,7 @@ public class AuthorityEditor extends Composite {
                 case 0: 
                     return ((AuthorityIdentity)element).getId();
                 case 1: 
-                    return ((AuthorityIdentity)element).getDescription();
+                    return ((AuthorityIdentity)element).getLabel();
                 }
             }
             return null;
@@ -72,10 +81,13 @@ public class AuthorityEditor extends Composite {
         
     }
     
-    public AuthorityEditor(Composite parent, int style) {
+    public AuthorityEditor(BiConsumer<AuthorityIdentity, Boolean> selectionListener, Composite parent, int style) {
+
         super(parent, style);
         setLayout(new GridLayout(1, false));
 
+        this.listener = selectionListener;
+        
         Composite composite = new Composite(this, SWT.NONE);
         GridLayout gl_composite = new GridLayout(4, false);
         gl_composite.verticalSpacing = 1;
@@ -91,6 +103,7 @@ public class AuthorityEditor extends Composite {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 resultList.setInput(null);
+                selectedIdentity = null;
                 currentAuthority = authorities.get(mainAuthority.getItem(mainAuthority.getSelectionIndex()));
                 subAuthority.removeAll();
                 if (currentAuthority != null && !currentAuthority.getSubAuthorities().isEmpty()) {
@@ -115,6 +128,7 @@ public class AuthorityEditor extends Composite {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 resultList.setInput(null);
+                selectedIdentity = null;
                 currentCatalog = subAuthority.getText();
                 setDocumentation();
             }
@@ -136,6 +150,14 @@ public class AuthorityEditor extends Composite {
         text.setBounds(0, 0, 41, 19);
 
         Button btnNewButton = new Button(composite, SWT.NONE);
+        btnNewButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseUp(MouseEvent e) {
+                if (selectedIdentity != null) {
+                    Eclipse.INSTANCE.copyToClipboard(selectedIdentity.getLocator());
+                }
+            }
+        });
         btnNewButton.setToolTipText("Copy the currently selected identity code to the clipboard");
         btnNewButton.setImage(ResourceManager.getPluginImage("org.eclipse.ui", "/icons/full/etool16/copy_edit.png"));
         btnNewButton.setBounds(0, 0, 70, 21);
@@ -154,6 +176,35 @@ public class AuthorityEditor extends Composite {
         sashForm.setWeights(new int[] {1});
 
         resultList = new TableViewer(composite_1, SWT.BORDER | SWT.FULL_SELECTION);
+        Table table = resultList.getTable();
+        table.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                selectedIdentity = (AuthorityIdentity)e.item.getData();
+                handleSelection(false);
+            }
+        });
+        table.addMouseListener(new MouseListener(){
+            
+            @Override
+            public void mouseUp(MouseEvent e) {
+                
+            }
+            
+            @Override
+            public void mouseDown(MouseEvent e) {
+                // TODO Auto-generated method stub
+                
+            }
+            
+            @Override
+            public void mouseDoubleClick(MouseEvent e) {
+                if (selectedIdentity != null) {
+                    handleSelection(true);
+                }
+            }
+        });
+        
         resultList.getTable().setLinesVisible(true);
         resultList.getTable().setHeaderVisible(true);
         
@@ -184,8 +235,18 @@ public class AuthorityEditor extends Composite {
     }
 
 
+    protected void handleSelection(boolean b) {
+
+        if (listener != null) {
+            listener.accept(selectedIdentity, b);
+        }
+        
+    }
+
+
     // run in UI thread
     protected void setDocumentation() {
+
         authDescription.setText(
                 currentAuthority == null ? "Choose an authority from the list" : currentAuthority.getDescription());
         
@@ -216,7 +277,6 @@ public class AuthorityEditor extends Composite {
     }
 
     private void search(String text) {
-
         if (this.currentAuthority != null) {
             Activator.session().searchAuthority(this.currentAuthority.getName(), this.currentCatalog, text);
         }

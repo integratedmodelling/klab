@@ -230,6 +230,7 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getAuthorityIdAccess().getAlternatives(), "rule__AuthorityId__Alternatives");
 			builder.put(grammarAccess.getAuthorityIdAccess().getAlternatives_0_0(), "rule__AuthorityId__Alternatives_0_0");
 			builder.put(grammarAccess.getAuthorityIdAccess().getAlternatives_0_2(), "rule__AuthorityId__Alternatives_0_2");
+			builder.put(grammarAccess.getAuthorityIdAccess().getAlternatives_0_3_1(), "rule__AuthorityId__Alternatives_0_3_1");
 			builder.put(grammarAccess.getPropertyIdAccess().getAlternatives_0(), "rule__PropertyId__Alternatives_0");
 			builder.put(grammarAccess.getPropertyIdAccess().getAlternatives_2(), "rule__PropertyId__Alternatives_2");
 			builder.put(grammarAccess.getVersionNumberAccess().getAlternatives_3(), "rule__VersionNumber__Alternatives_3");
@@ -615,6 +616,7 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getPathAccess().getGroup_1(), "rule__Path__Group_1__0");
 			builder.put(grammarAccess.getNamespaceIdAccess().getGroup(), "rule__NamespaceId__Group__0");
 			builder.put(grammarAccess.getAuthorityIdAccess().getGroup_0(), "rule__AuthorityId__Group_0__0");
+			builder.put(grammarAccess.getAuthorityIdAccess().getGroup_0_3(), "rule__AuthorityId__Group_0_3__0");
 			builder.put(grammarAccess.getPropertyIdAccess().getGroup(), "rule__PropertyId__Group__0");
 			builder.put(grammarAccess.getVersionNumberAccess().getGroup(), "rule__VersionNumber__Group__0");
 			builder.put(grammarAccess.getVersionNumberAccess().getGroup_1(), "rule__VersionNumber__Group_1__0");

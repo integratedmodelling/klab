@@ -11,6 +11,7 @@ import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.model.KlabPeer;
 import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
 import org.integratedmodelling.klab.ide.ui.AuthorityEditor;
+import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.rest.AuthorityQueryResponse;
 
 public class AuthorityView extends ViewPart {
@@ -34,7 +35,9 @@ public class AuthorityView extends ViewPart {
         Composite container = new Composite(parent, SWT.NONE);
         container.setLayout(new GridLayout(1, false));
         {
-            this.editor = new AuthorityEditor(container, SWT.NONE);
+            this.editor = new AuthorityEditor((identity, dclick) -> {
+                Eclipse.INSTANCE.copyToClipboard(identity.getLocator());
+            }, container, SWT.NONE);
             this.editor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
         }
 

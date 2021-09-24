@@ -12,6 +12,11 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
+			<artifactId>klab.component.tables</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.modeler</artifactId>
 			<version>${klab.version}</version>
 		</dependency>
