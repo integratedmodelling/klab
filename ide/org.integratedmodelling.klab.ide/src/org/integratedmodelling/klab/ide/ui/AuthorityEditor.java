@@ -4,12 +4,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.nebula.widgets.richtext.RichTextViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -18,15 +24,15 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.ResourceManager;
 import org.integratedmodelling.klab.ide.Activator;
+import org.integratedmodelling.klab.rest.AuthorityIdentity;
 import org.integratedmodelling.klab.rest.AuthorityQueryResponse;
 import org.integratedmodelling.klab.rest.AuthorityReference;
 import org.integratedmodelling.klab.utils.Pair;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.custom.SashForm;
+import org.integratedmodelling.klab.utils.StringUtil;
 
 public class AuthorityEditor extends Composite {
 
@@ -36,13 +42,36 @@ public class AuthorityEditor extends Composite {
     private Label authDescription;
     private Map<String, AuthorityReference> authorities = new HashMap<>();
     protected AuthorityReference currentAuthority;
-    private Table resultList;
+    private TableViewer resultList;
     private RichTextViewer description;
     private String currentCatalog;
     private TableColumn tblclmnCode;
     private TableColumn tblclmnLabel;
     private SashForm sashForm;
 
+    class IdentityLabelProvider extends LabelProvider implements ITableLabelProvider {
+
+        @Override
+        public Image getColumnImage(Object element, int columnIndex) {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public String getColumnText(Object element, int columnIndex) {
+            if (element instanceof AuthorityIdentity) {
+                switch (columnIndex) {
+                case 0: 
+                    return ((AuthorityIdentity)element).getId();
+                case 1: 
+                    return ((AuthorityIdentity)element).getDescription();
+                }
+            }
+            return null;
+        }
+        
+    }
+    
     public AuthorityEditor(Composite parent, int style) {
         super(parent, style);
         setLayout(new GridLayout(1, false));
@@ -61,9 +90,8 @@ public class AuthorityEditor extends Composite {
         mainAuthority.addSelectionListener(new SelectionAdapter(){
             @Override
             public void widgetSelected(SelectionEvent e) {
+                resultList.setInput(null);
                 currentAuthority = authorities.get(mainAuthority.getItem(mainAuthority.getSelectionIndex()));
-                authDescription.setText(
-                        currentAuthority == null ? "Choose an authority from the list" : currentAuthority.getDescription());
                 subAuthority.removeAll();
                 if (currentAuthority != null && !currentAuthority.getSubAuthorities().isEmpty()) {
                     subAuthority.setEnabled(true);
@@ -77,6 +105,7 @@ public class AuthorityEditor extends Composite {
                     currentCatalog = null;
                 }
                 text.setText("");
+                setDocumentation();
             }
         });
         mainAuthority.setBounds(0, 0, 57, 20);
@@ -85,7 +114,9 @@ public class AuthorityEditor extends Composite {
         subAuthority.addSelectionListener(new SelectionAdapter(){
             @Override
             public void widgetSelected(SelectionEvent e) {
+                resultList.setInput(null);
                 currentCatalog = subAuthority.getText();
+                setDocumentation();
             }
         });
         subAuthority.setEnabled(false);
@@ -117,18 +148,32 @@ public class AuthorityEditor extends Composite {
         sashForm = new SashForm(composite_1, SWT.NONE);
         sashForm.setSashWidth(0);
         
-                description = new RichTextViewer(sashForm, SWT.BORDER);
+        description = new RichTextViewer(sashForm, SWT.BORDER);
+        description.setWordSplitRegex("\\s|\\-");
+        
         sashForm.setWeights(new int[] {1});
 
-        resultList = new Table(composite_1, SWT.BORDER | SWT.FULL_SELECTION);
-        resultList.setLinesVisible(true);
-        resultList.setHeaderVisible(true);
+        resultList = new TableViewer(composite_1, SWT.BORDER | SWT.FULL_SELECTION);
+        resultList.getTable().setLinesVisible(true);
+        resultList.getTable().setHeaderVisible(true);
         
-        tblclmnCode = new TableColumn(resultList, SWT.NONE);
+        resultList.setLabelProvider(new IdentityLabelProvider());
+        resultList.setContentProvider(new IStructuredContentProvider(){
+            
+            @Override
+            public Object[] getElements(Object inputElement) {
+                if (inputElement instanceof AuthorityQueryResponse) {
+                    return ((AuthorityQueryResponse)inputElement).getMatches().toArray();
+                }
+                return null;
+            }
+        });
+        
+        tblclmnCode = new TableColumn(resultList.getTable(), SWT.NONE);
         tblclmnCode.setWidth(100);
         tblclmnCode.setText("Code");
         
-        tblclmnLabel = new TableColumn(resultList, SWT.NONE);
+        tblclmnLabel = new TableColumn(resultList.getTable(), SWT.NONE);
         tblclmnLabel.setWidth(400);
         tblclmnLabel.setText("Label");
 
@@ -136,6 +181,38 @@ public class AuthorityEditor extends Composite {
         authDescription.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         authDescription.setBounds(0, 238, 56, 16);
         authDescription.setText("Choose an authority from the list");
+    }
+
+
+    // run in UI thread
+    protected void setDocumentation() {
+        authDescription.setText(
+                currentAuthority == null ? "Choose an authority from the list" : currentAuthority.getDescription());
+        
+        StringBuffer desc = new StringBuffer(512);
+        boolean first = true;
+        for (String line : StringUtil.lines(currentAuthority == null ? "Choose an authority from the list" : currentAuthority.getDescription())) {
+            if (first) {
+                desc.append("<b>" + line + "</b><br/><br/>");
+            } else {
+                desc.append(line);
+            }
+            first = false;
+        }
+        
+        if (currentCatalog != null) {
+
+            desc.append("<br/><b>Classification " + currentCatalog + "</b><br/><br/>");
+            
+            for (Pair<String, String> sc : currentAuthority.getSubAuthorities()) {
+                if (currentCatalog.equals(sc.getFirst())) {
+                    desc.append(StringUtil.justifyLeft(sc.getSecond(), 80).replaceAll("\\r?\\n", "<br/>"));
+                    break;
+                }
+            }
+        }
+        
+        description.setText(desc.toString());
     }
 
     private void search(String text) {
@@ -146,7 +223,9 @@ public class AuthorityEditor extends Composite {
     }
     
     public void displayMatches(AuthorityQueryResponse matches) {
-        System.out.println("ZIO PAPA MATCHES");
+        Display.getDefault().asyncExec(() -> {
+            resultList.setInput(matches);
+        });
     }
 
     public void setAuthorities(List<AuthorityReference> authorities) {

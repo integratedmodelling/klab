@@ -14,6 +14,13 @@ public class StringUtil {
     public static String percent(double d) {
         return (int) (Math.round(d * 100.0)) + "%";
     }
+    
+    /*
+     * TODO add options for empty lines handling etc
+     */
+    public static String[] lines(String text) {
+        return text.split("\\r?\\n");
+    }
 
     public static boolean containsAny(String nspc, int flags) {
 

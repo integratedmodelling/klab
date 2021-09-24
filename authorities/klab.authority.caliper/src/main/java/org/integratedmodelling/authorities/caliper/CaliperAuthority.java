@@ -12,6 +12,7 @@ import org.integratedmodelling.klab.api.knowledge.IAuthority;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.rest.AuthorityIdentity;
 import org.integratedmodelling.klab.rest.AuthorityReference;
+import org.integratedmodelling.klab.utils.Pair;
 
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
@@ -28,7 +29,7 @@ import kong.unirest.json.JSONObject;
 public class CaliperAuthority implements IAuthority {
 
     public static final String ID = "CALIPER";
-    public static final String DESCRIPTION = "The FAO Caliper classification portal for statistical classifications";
+    public static final String DESCRIPTION = "The FAO Caliper portal for statistical classifications";
     private static final String SCHEME = "{SCHEME}";
     private static final String QUERY_STRING = "{QUERY_STRING}";
 
@@ -37,28 +38,47 @@ public class CaliperAuthority implements IAuthority {
             + "PREFIX skos: <http://www.w3.org/2004/02/skos/core#>\r\n" + "SELECT ?code ?label_en ?concept ?broader WHERE {\r\n"
             + "  ?concept rdf:type skos:Concept . \r\n" + "  ?concept skos:inScheme <{SCHEME}> .\r\n"
             + "  ?concept skos:prefLabel ?label_en . FILTER(contains(lcase(str(?label_en)), '{QUERY_STRING}')) .\r\n"
-            + "  ?concept skos:notation ?code .\r\n" 
-            + "  ?concept skos:broader ?broader .\r\n" 
-            + "} order by ?code";
+            + "  ?concept skos:notation ?code .\r\n" + "  ?concept skos:broader ?broader .\r\n" + "} order by ?code";
 
     private static final String SPARQL_ENDPOINT = "https://stats-class.fao.uniroma2.it/AllVoc_Sparql/";
     private static final Map<String, String> CALIPER_SCHEMES = new HashMap<>();
+    private static final Map<String, String> CALIPER_DESCRIPTIONS = new HashMap<>();
 
     static {
+
         CALIPER_SCHEMES.put("ISIC", "http://stats-class.fao.uniroma2.it/ISIC/rev4/scheme");
         CALIPER_SCHEMES.put("ICC10", "http://stats-class.fao.uniroma2.it/ICC/v1.0/scheme");
         CALIPER_SCHEMES.put("ICC", "http://stats-class.fao.uniroma2.it/ICC/v1.1/scheme");
-        // CALIPER_SCHEMES.put("WCACROPS", "http://stats-class.fao.uniroma2.it/ICC/v1.0/scheme");
         CALIPER_SCHEMES.put("M49", "http://stats-class.fao.uniroma2.it/geo/M49");
-        // CALIPER_SCHEMES.put("FPCD", "http://stats-class.fao.uniroma2.it/ICC/v1.0/scheme");
         CALIPER_SCHEMES.put("SDGEO", "http://stats-class.fao.uniroma2.it/geo/M49/SDG-groups");
         CALIPER_SCHEMES.put("FOODEX2", "http://stats-class.fao.uniroma2.it/foodex2/all");
         CALIPER_SCHEMES.put("CPC20", "http://stats-class.fao.uniroma2.it/CPC/v2.0/scheme");
         CALIPER_SCHEMES.put("CPC21", "http://stats-class.fao.uniroma2.it/CPC/v2.1/core");
-        // CALIPER_SCHEMES.put("CPC21AG", "http://stats-class.fao.uniroma2.it/ICC/v1.0/scheme");
         CALIPER_SCHEMES.put("CPC21FERT", "http://stats-class.fao.uniroma2.it/CPC/v2.1/fert");
         CALIPER_SCHEMES.put("FCL", "http://stats-class.fao.uniroma2.it/FCL/v2019/scheme");
         CALIPER_SCHEMES.put("HS", "http://stats-class.fao.uniroma2.it/HS/fao_mapping_targets/scheme");
+
+        CALIPER_DESCRIPTIONS.put("ISIC", "\r\n"
+                + "ISIC Rev. 4 is a standard classification of economic activities "
+                + "arranged so that entities can be classified according to the activity they carry out. "
+                + "The categories of ISIC at the most detailed level (classes) are delineated according "
+                + "to what is, in most countries, the customary combination of activities described "
+                + "in statistical units and considers the relative importance of the activities "
+                + "included in these classes.");
+        CALIPER_DESCRIPTIONS.put("ICC10", "http://stats-class.fao.uniroma2.it/ICC/v1.0/scheme");
+        CALIPER_DESCRIPTIONS.put("ICC", "http://stats-class.fao.uniroma2.it/ICC/v1.1/scheme");
+        CALIPER_DESCRIPTIONS.put("M49", "http://stats-class.fao.uniroma2.it/geo/M49");
+        CALIPER_DESCRIPTIONS.put("SDGEO", "http://stats-class.fao.uniroma2.it/geo/M49/SDG-groups");
+        CALIPER_DESCRIPTIONS.put("FOODEX2", "http://stats-class.fao.uniroma2.it/foodex2/all");
+        CALIPER_DESCRIPTIONS.put("CPC20", "http://stats-class.fao.uniroma2.it/CPC/v2.0/scheme");
+        CALIPER_DESCRIPTIONS.put("CPC21", "http://stats-class.fao.uniroma2.it/CPC/v2.1/core");
+        CALIPER_DESCRIPTIONS.put("CPC21FERT", "http://stats-class.fao.uniroma2.it/CPC/v2.1/fert");
+        CALIPER_DESCRIPTIONS.put("FCL", "http://stats-class.fao.uniroma2.it/FCL/v2019/scheme");
+        CALIPER_DESCRIPTIONS.put("HS", "http://stats-class.fao.uniroma2.it/HS/fao_mapping_targets/scheme");
+
+        // CALIPER_SCHEMES.put("WCACROPS", "http://stats-class.fao.uniroma2.it/ICC/v1.0/scheme");
+        // CALIPER_SCHEMES.put("FPCD", "http://stats-class.fao.uniroma2.it/ICC/v1.0/scheme");
+        // CALIPER_SCHEMES.put("CPC21AG", "http://stats-class.fao.uniroma2.it/ICC/v1.0/scheme");
 
     }
 
@@ -67,16 +87,19 @@ public class CaliperAuthority implements IAuthority {
         // TODO Auto-generated method stub
         return null;
     }
-    
+
     @Override
     public Capabilities getCapabilities() {
-        
+
         AuthorityReference ret = new AuthorityReference();
         ret.setSearchable(true);
         ret.setFuzzy(true);
         ret.setName(ID);
         ret.setDescription(DESCRIPTION);
-        
+        for (String s : CALIPER_DESCRIPTIONS.keySet()) {
+            ret.getSubAuthorities().add(new Pair<>(s, CALIPER_DESCRIPTIONS.get(s)));
+        }
+
         return ret;
     }
     @Override
@@ -92,30 +115,31 @@ public class CaliperAuthority implements IAuthority {
                 .contentType("application/sparql-query").body(q).asJson();
 
         List<Identity> ret = new ArrayList<>();
-        
+
         if (response.isSuccess()) {
             try {
                 JSONObject result = response.getBody().getObject();
                 for (Object zoz : result.getJSONObject("results").getJSONArray("bindings")) {
 
                     // TODO make an identity
-                    
+
                     JSONObject res = (JSONObject) zoz;
                     String code = res.getJSONObject("code").getString("value");
                     String name = res.getJSONObject("label_en").getString("value");
                     String uri = res.getJSONObject("concept").getString("value");
 
                     AuthorityIdentity identity = new AuthorityIdentity();
-                    
-                    identity.setAuthorityName(ID + (catalog == null ? "": ("/" + catalog)));
+
+                    identity.setAuthorityName(ID + (catalog == null ? "" : ("/" + catalog)));
                     identity.setBaseIdentity(ID);
                     identity.setConceptName(identity.getAuthorityName().toLowerCase().replace("/", "_") + code);
                     identity.setId(code);
                     identity.setLabel(name);
-                    
+                    identity.setDescription(name);
+
                     ret.add(identity);
                     // TODO internal try/catch, add error message to identity
-                    
+
                 }
             } catch (Throwable t) {
                 // TODO monitor the error, return nothing
@@ -146,8 +170,6 @@ public class CaliperAuthority implements IAuthority {
                     String code = res.getJSONObject("code").getString("value");
                     String name = res.getJSONObject("label_en").getString("value");
                     String uri = res.getJSONObject("concept").getString("value");
-
-                    System.out.println("Got " + code + ", " + name + ", " + uri);
                 }
             } catch (Throwable t) {
                 throw new KlabInternalErrorException(t);
