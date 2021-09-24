@@ -73,6 +73,14 @@ public interface IObservable extends ISemantic, IResolvable {
      * The observable builder provides a uniform interface to create and declare concepts that
      * incarnate all the possible features for an observable. The builder is smart and fast when
      * concepts that already exist due to previous declarations are requested.
+     * <p>
+     * NOTE: the builder's method <em>all</em> return the same builder, not a child builder. This
+     * means that, for example, of(concept).withTrait(trait) will apply the trait to the
+     * <em>main</em> concept, not the inherent one. In most programmatical applications, this is the
+     * desired behavior for fluent observable specification and modification. We provide an
+     * ObservableComposer which acts as a stateful builder and implements the alternative behavior
+     * and validates each new specification against semantic constraints, meant to be used with
+     * interactive applications that build concepts incrementally.
      * 
      * @author ferdinando.villa
      */
