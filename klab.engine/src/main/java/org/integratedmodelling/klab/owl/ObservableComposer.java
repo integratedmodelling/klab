@@ -2,7 +2,9 @@ package org.integratedmodelling.klab.owl;
 
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
+import java.util.Stack;
 import java.util.function.Consumer;
 
 import org.integratedmodelling.kim.api.IKimConcept;
@@ -16,6 +18,7 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
 
 /**
@@ -35,27 +38,13 @@ import org.integratedmodelling.klab.utils.Range;
  */
 public class ObservableComposer {
 
-    private ObservableComposer() {
-    }
-
     ObservableComposer parent;
 
-    /*
-     * the scope of this composer (role that it has been created to fill). Only null in the root
-     * scope.
-     */
-    ObservableRole lexicalScope;
-
     /**
-     * Admitted concept types that can be added in this scope
+     * The current state is the one at the top of the stack. Undo will pop it and revert to the
+     * previous. All operations that modify the stack push a new one.
      */
-    Set<IKimConcept.Type> logicalRealm = EnumSet.noneOf(IKimConcept.Type.class);
-
-    /**
-     * Admitted lexical realm for this scope. Calls that fulfill a role which isn't here are
-     * illegal.
-     */
-    Set<ObservableRole> lexicalRealm = EnumSet.noneOf(ObservableRole.class);
+    Stack<State> state = new Stack<>();
 
     /**
      * Can be set to report errors during interactive building. If the UI is right, there should not
@@ -68,6 +57,51 @@ public class ObservableComposer {
      * construction of the observable and validation. This is potentially expensive.
      */
     Consumer<IObservable> validator;
+
+    private ObservableComposer() {
+    }
+
+    class State {
+
+        /*
+         * the scope of this composer (role that it has been created to fill). Only null in the root
+         * scope.
+         */
+        ObservableRole lexicalScope;
+
+        /**
+         * Admitted concept types that can be added in this scope. Empty means everything's allowed,
+         * filled means any of those but nothing else.
+         */
+        Set<IKimConcept.Type> logicalRealm = EnumSet.noneOf(IKimConcept.Type.class);
+
+        /**
+         * Admitted lexical realm for this scope. Calls that fulfill a role which isn't here are
+         * illegal. Empty means everything's allowed, filled means any of those but nothing else.
+         */
+        Set<ObservableRole> lexicalRealm = EnumSet.noneOf(ObservableRole.class);
+
+        /*
+         * a composer for each of the possible components.
+         */
+        ObservableComposer inherent = null;
+        ObservableComposer cooccurrent = null;
+        ObservableComposer context = null;
+        ObservableComposer adjacent = null;
+        ObservableComposer caused = null;
+        ObservableComposer causant = null;
+        ObservableComposer compresent = null;
+        ObservableComposer goal = null;
+        ObservableComposer relationshipSource = null;
+        ObservableComposer relationshipTarget = null;
+        List<Pair<ValueOperator, Object>> valueOperators;
+
+        String name;
+        String unit;
+        String currency;
+        Range range;
+
+    }
 
     /**
      * Initialization parameters can be a concept or observable (to initialize with), an
@@ -105,11 +139,11 @@ public class ObservableComposer {
     }
 
     public Set<ObservableRole> admits() {
-        return lexicalRealm;
+        return state.peek().lexicalRealm;
     }
 
     public Set<IKimConcept.Type> admitsComponent() {
-        return logicalRealm;
+        return state.peek().logicalRealm;
     }
 
     /**
@@ -304,17 +338,6 @@ public class ObservableComposer {
     }
 
     /**
-     * Set both the name and the reference name, to preserve a previous setting
-     * 
-     * @param name
-     * @param referenceName
-     * @return
-     */
-    ObservableComposer named(String name, String referenceName) {
-        return null;
-    }
-
-    /**
      * Pass the unit as a string (also checks for correctness at build). Can only call on the root
      * composer.
      * 
@@ -337,33 +360,12 @@ public class ObservableComposer {
     }
 
     /**
-     * Add an inline value to the observable (will check with the IArtifact.Type of the observable
-     * at build).
-     * 
-     * @param value
-     * @return
-     */
-    ObservableComposer withInlineValue(Object value) {
-        return null;
-    }
-
-    /**
      * Add a numeric range (check that the artifact type is numeric at build)
      * 
      * @param range
      * @return
      */
     ObservableComposer withRange(Range range) {
-        return null;
-    }
-
-    /**
-     * Make this observable generic or not
-     * 
-     * @param generic
-     * @return
-     */
-    ObservableComposer generic(boolean generic) {
         return null;
     }
 
