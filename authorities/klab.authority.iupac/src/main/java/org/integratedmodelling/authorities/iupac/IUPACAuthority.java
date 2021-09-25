@@ -101,7 +101,7 @@ public class IUPACAuthority implements IAuthority {
             ret.setId(identityId);
         }
         boolean ws = StringUtils.containsWhitespace(original);
-        ret.setLocator(ID + (ws ? ":'" : ":") + original + (ws ? "':" : ":"));
+        ret.setLocator(ID + (ws ? ":'" : ":") + original + (ws ? "'" : ""));
 
         /*
          * cache also the errors

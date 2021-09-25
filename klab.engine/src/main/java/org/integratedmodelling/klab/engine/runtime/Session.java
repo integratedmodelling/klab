@@ -805,11 +805,18 @@ public class Session extends GroovyObjectSupport
         IAuthority authority = Authorities.INSTANCE.getAuthority(request.getAuthorityId());
         if (authority == null) {
             ret.setError("Authority " + request.getAuthorityId() + " is inaccessible or non-existent"); 
-        } else {
+        } else if (authority.getCapabilities().isSearchable()) {
             for (IAuthority.Identity identity : authority.search(request.getQueryString(), request.getAuthorityCatalog())) {
                 if (identity instanceof AuthorityIdentity) {
                     ret.getMatches().add((AuthorityIdentity)identity);
                 }
+            }
+        } else {
+            Identity identity = authority.getIdentity(request.getQueryString(), request.getAuthorityCatalog());
+            if (identity instanceof AuthorityIdentity) {
+                ret.getMatches().add((AuthorityIdentity)identity);
+            } else {
+                ret.setError("Identity " + request.getAuthorityId() + " produced an invalid or null result");
             }
         }
 

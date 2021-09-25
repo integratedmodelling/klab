@@ -206,7 +206,7 @@
             category="org.integratedmodelling.klab.ide.category"
             class="org.integratedmodelling.klab.ide.views.AuthorityView"
             id="org.integratedmodelling.klab.ide.views.AuthorityView"
-            name="Authorities">
+            name="Authorities and Vocabularies">
       </view>
    </extension>
    <extension

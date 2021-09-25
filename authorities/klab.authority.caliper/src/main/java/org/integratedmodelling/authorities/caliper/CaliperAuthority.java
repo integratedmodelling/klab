@@ -6,21 +6,23 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.eclipse.rdf4j.model.IRI;
 import org.eclipse.rdf4j.model.Model;
 import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.Value;
 import org.eclipse.rdf4j.rio.RDFFormat;
 import org.eclipse.rdf4j.rio.Rio;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.extensions.Authority;
 import org.integratedmodelling.klab.api.knowledge.IAuthority;
-import org.integratedmodelling.klab.api.knowledge.IAuthority.Identity;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
-import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.rest.AuthorityIdentity;
 import org.integratedmodelling.klab.rest.AuthorityReference;
 import org.integratedmodelling.klab.utils.JsonUtils;
@@ -154,75 +156,54 @@ public class CaliperAuthority implements IAuthority {
             source = JsonUtils.parseObject(cached, AuthorityIdentity.class);
         } else {
 
-            String url = CALIPER_URLS.get(catalog) + "/" + identityId + ".ttl";
+            String url = CALIPER_URLS.get(catalog) + "/" + identityId.replace('.', '-') + ".ttl";
             try (InputStream input = new URL(url).openStream()) {
                 Model model = Rio.parse(input, RDFFormat.TURTLE);
+                Set<String> parents = new HashSet<>();
+                source = new AuthorityIdentity();
+
                 for (Statement statement : model) {
+                    
                     System.out.println("CIAPA EL STATEMENT: " + statement);
 
-                    // CIAPA EL STATEMENT: (http://stats-class.fao.uniroma2.it/CPC/v2.1/34654,
-                    // http://www.w3.org/1999/02/22-rdf-syntax-ns#type,
-                    // http://www.w3.org/2004/02/skos/core#Concept)
-                    // CIAPA EL STATEMENT: (http://stats-class.fao.uniroma2.it/CPC/v2.1/34654,
-                    // http://www.w3.org/2004/02/skos/core#broader,
-                    // http://stats-class.fao.uniroma2.it/CPC/v2.1/3465)
-                    // CIAPA EL STATEMENT: (http://stats-class.fao.uniroma2.it/CPC/v2.1/34654,
-                    // http://www.w3.org/2004/02/skos/core#closeMatch,
-                    // http://stats-class.fao.uniroma2.it/ISIC/rev4/0145)
-                    // CIAPA EL STATEMENT: (http://stats-class.fao.uniroma2.it/CPC/v2.1/34654,
-                    // http://www.w3.org/2004/02/skos/core#closeMatch,
-                    // http://stats-class.fao.uniroma2.it/ISIC/rev4/0144)
-                    // CIAPA EL STATEMENT: (http://stats-class.fao.uniroma2.it/CPC/v2.1/34654,
-                    // http://www.w3.org/2004/02/skos/core#closeMatch,
-                    // http://stats-class.fao.uniroma2.it/ISIC/rev4/0143)
-                    // CIAPA EL STATEMENT: (http://stats-class.fao.uniroma2.it/CPC/v2.1/34654,
-                    // http://www.w3.org/2004/02/skos/core#closeMatch,
-                    // http://stats-class.fao.uniroma2.it/ISIC/rev4/0142)
-                    // CIAPA EL STATEMENT: (http://stats-class.fao.uniroma2.it/CPC/v2.1/34654,
-                    // http://www.w3.org/2004/02/skos/core#closeMatch,
-                    // http://stats-class.fao.uniroma2.it/ISIC/rev4/0149)
-                    // CIAPA EL STATEMENT: (http://stats-class.fao.uniroma2.it/CPC/v2.1/34654,
-                    // http://www.w3.org/2004/02/skos/core#closeMatch,
-                    // http://stats-class.fao.uniroma2.it/ISIC/rev4/0891)
-                    // CIAPA EL STATEMENT: (http://stats-class.fao.uniroma2.it/CPC/v2.1/34654,
-                    // http://www.w3.org/2004/02/skos/core#closeMatch,
-                    // http://stats-class.fao.uniroma2.it/ISIC/rev4/0141)
-                    // CIAPA EL STATEMENT: (http://stats-class.fao.uniroma2.it/CPC/v2.1/34654,
-                    // http://www.w3.org/2004/02/skos/core#closeMatch,
-                    // http://stats-class.fao.uniroma2.it/ISIC/rev4/0146)
-                    // CIAPA EL STATEMENT: (http://stats-class.fao.uniroma2.it/CPC/v2.1/34654,
-                    // http://www.w3.org/2004/02/skos/core#exactMatch,
-                    // http://stats-class.fao.uniroma2.it/HS/fao_mapping_targets/310100)
-                    // CIAPA EL STATEMENT: (http://stats-class.fao.uniroma2.it/CPC/v2.1/34654,
-                    // http://www.w3.org/2004/02/skos/core#exactMatch,
-                    // http://publications.europa.eu/resource/authority/cpa21/20.15.80)
-                    // CIAPA EL STATEMENT: (http://stats-class.fao.uniroma2.it/CPC/v2.1/34654,
-                    // http://www.w3.org/2004/02/skos/core#exactMatch,
-                    // http://stats-class.fao.uniroma2.it/CPC/v2.0/34654)
-                    // CIAPA EL STATEMENT: (http://stats-class.fao.uniroma2.it/CPC/v2.1/34654,
-                    // http://www.w3.org/2004/02/skos/core#inScheme,
-                    // http://stats-class.fao.uniroma2.it/CPC/v2.1/fert)
-                    // CIAPA EL STATEMENT: (http://stats-class.fao.uniroma2.it/CPC/v2.1/34654,
-                    // http://www.w3.org/2004/02/skos/core#inScheme,
-                    // http://stats-class.fao.uniroma2.it/CPC/v2.1/core)
-                    // CIAPA EL STATEMENT: (http://stats-class.fao.uniroma2.it/CPC/v2.1/34654,
-                    // http://www.w3.org/2004/02/skos/core#narrower,
-                    // http://stats-class.fao.uniroma2.it/CPC/v2.1/fert/34654-03)
-                    // CIAPA EL STATEMENT: (http://stats-class.fao.uniroma2.it/CPC/v2.1/34654,
-                    // http://www.w3.org/2004/02/skos/core#narrower,
-                    // http://stats-class.fao.uniroma2.it/CPC/v2.1/fert/34654-90)
-                    // CIAPA EL STATEMENT: (http://stats-class.fao.uniroma2.it/CPC/v2.1/34654,
-                    // http://www.w3.org/2004/02/skos/core#narrower,
-                    // http://stats-class.fao.uniroma2.it/CPC/v2.1/fert/34654-01)
-                    // CIAPA EL STATEMENT: (http://stats-class.fao.uniroma2.it/CPC/v2.1/34654,
-                    // http://www.w3.org/2004/02/skos/core#narrower,
-                    // http://stats-class.fao.uniroma2.it/CPC/v2.1/fert/34654-02)
-                    // CIAPA EL STATEMENT: (http://stats-class.fao.uniroma2.it/CPC/v2.1/34654,
-                    // http://www.w3.org/2004/02/skos/core#notation, "34654")
-                    // CIAPA EL STATEMENT: (http://stats-class.fao.uniroma2.it/CPC/v2.1/34654,
-                    // http://www.w3.org/2004/02/skos/core#prefLabel, "Excreta of animals useful for
-                    // manure/fertilizer and fuel preparation"@en)
+                    ((AuthorityIdentity)source).setAuthorityName(ID);
+                    switch (statement.getPredicate().getLocalName()) {
+                    case "notation":
+                        ((AuthorityIdentity)source).setId(stringValue(statement.getObject()));
+                        break;
+                    case "broader":
+                        parents.add(stringValue(statement.getObject()));
+                        break;
+                    case "narrower":
+                        // TODO use to build a graph
+                        break;
+                    case "closeMatch":
+                        // TODO add for metadata
+                        break;
+                    case "exactMatch":
+                        // TODO check if it's in a supported authority, incorporate equivalence if so
+                        break;
+                    case "inScheme":
+                        // TODO should be redundant, but nothing wrong with saving in metadata
+                        break;
+                    case "prefLabel":
+                        // TODO check if we ever get a separate description
+                        // TODO check what happens with multilingual descriptions
+                        ((AuthorityIdentity)source).setDescription(stringValue(statement.getObject()));
+                        ((AuthorityIdentity)source).setLabel(stringValue(statement.getObject()));
+                        break;
+                    }
                 }
+
+                ((AuthorityIdentity)source).setConceptName(sanitize(((AuthorityIdentity)source).getId()));
+                ((AuthorityIdentity)source).setLocator(ID + "." + catalog + ":" + ((AuthorityIdentity)source).getId());
+                for (String parent : parents) {
+                    if (((AuthorityIdentity)source).getParentIds() == null) {
+                        ((AuthorityIdentity)source).setParentIds(new ArrayList<>());
+                    }
+                    ((AuthorityIdentity)source).getParentIds().add(parent);
+                }
+
             } catch (Exception e) {
                 throw new KlabIOException(e);
             }
@@ -232,6 +213,17 @@ public class CaliperAuthority implements IAuthority {
         }
 
         return source;
+    }
+
+    private String stringValue(Value object) {
+        if (object instanceof IRI) {
+            return ((IRI)object).getLocalName();
+        }
+        return object.stringValue();
+    }
+    
+    private String sanitize(String id2) {
+        return id2.replace('.', '_').replace('-', '_');
     }
 
     @Override

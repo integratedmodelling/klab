@@ -1,10 +1,11 @@
 package org.integratedmodelling.klab.ide.ui;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -15,6 +16,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -39,7 +41,6 @@ import org.integratedmodelling.klab.rest.AuthorityQueryResponse;
 import org.integratedmodelling.klab.rest.AuthorityReference;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.StringUtil;
-import org.eclipse.swt.events.MouseAdapter;
 
 public class AuthorityEditor extends Composite {
 
@@ -69,25 +70,25 @@ public class AuthorityEditor extends Composite {
         @Override
         public String getColumnText(Object element, int columnIndex) {
             if (element instanceof AuthorityIdentity) {
-                switch (columnIndex) {
-                case 0: 
-                    return ((AuthorityIdentity)element).getId();
-                case 1: 
-                    return ((AuthorityIdentity)element).getLabel();
+                switch(columnIndex) {
+                case 0:
+                    return ((AuthorityIdentity) element).getId();
+                case 1:
+                    return ((AuthorityIdentity) element).getDescription();
                 }
             }
             return null;
         }
-        
+
     }
-    
+
     public AuthorityEditor(BiConsumer<AuthorityIdentity, Boolean> selectionListener, Composite parent, int style) {
 
         super(parent, style);
         setLayout(new GridLayout(1, false));
 
         this.listener = selectionListener;
-        
+
         Composite composite = new Composite(this, SWT.NONE);
         GridLayout gl_composite = new GridLayout(4, false);
         gl_composite.verticalSpacing = 1;
@@ -150,7 +151,7 @@ public class AuthorityEditor extends Composite {
         text.setBounds(0, 0, 41, 19);
 
         Button btnNewButton = new Button(composite, SWT.NONE);
-        btnNewButton.addMouseListener(new MouseAdapter() {
+        btnNewButton.addMouseListener(new MouseAdapter(){
             @Override
             public void mouseUp(MouseEvent e) {
                 if (selectedIdentity != null) {
@@ -166,37 +167,37 @@ public class AuthorityEditor extends Composite {
         composite_1.setLayout(new FillLayout(SWT.HORIZONTAL));
         composite_1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
         composite_1.setBounds(0, 0, 32, 32);
-        
+
         sashForm = new SashForm(composite_1, SWT.NONE);
         sashForm.setSashWidth(0);
-        
-        description = new RichTextViewer(sashForm, SWT.BORDER);
+
+        description = new RichTextViewer(sashForm, SWT.BORDER | SWT.WRAP);
         description.setWordSplitRegex("\\s|\\-");
-        
-        sashForm.setWeights(new int[] {1});
+
+        sashForm.setWeights(new int[]{1});
 
         resultList = new TableViewer(composite_1, SWT.BORDER | SWT.FULL_SELECTION);
         Table table = resultList.getTable();
-        table.addSelectionListener(new SelectionAdapter() {
+        table.addSelectionListener(new SelectionAdapter(){
             @Override
             public void widgetSelected(SelectionEvent e) {
-                selectedIdentity = (AuthorityIdentity)e.item.getData();
+                selectedIdentity = (AuthorityIdentity) e.item.getData();
                 handleSelection(false);
             }
         });
         table.addMouseListener(new MouseListener(){
-            
+
             @Override
             public void mouseUp(MouseEvent e) {
-                
+
             }
-            
+
             @Override
             public void mouseDown(MouseEvent e) {
                 // TODO Auto-generated method stub
-                
+
             }
-            
+
             @Override
             public void mouseDoubleClick(MouseEvent e) {
                 if (selectedIdentity != null) {
@@ -204,26 +205,26 @@ public class AuthorityEditor extends Composite {
                 }
             }
         });
-        
+
         resultList.getTable().setLinesVisible(true);
         resultList.getTable().setHeaderVisible(true);
-        
+
         resultList.setLabelProvider(new IdentityLabelProvider());
         resultList.setContentProvider(new IStructuredContentProvider(){
-            
+
             @Override
             public Object[] getElements(Object inputElement) {
                 if (inputElement instanceof AuthorityQueryResponse) {
-                    return ((AuthorityQueryResponse)inputElement).getMatches().toArray();
+                    return ((AuthorityQueryResponse) inputElement).getMatches().toArray();
                 }
                 return null;
             }
         });
-        
+
         tblclmnCode = new TableColumn(resultList.getTable(), SWT.NONE);
         tblclmnCode.setWidth(100);
         tblclmnCode.setText("Code");
-        
+
         tblclmnLabel = new TableColumn(resultList.getTable(), SWT.NONE);
         tblclmnLabel.setWidth(400);
         tblclmnLabel.setText("Label");
@@ -234,45 +235,44 @@ public class AuthorityEditor extends Composite {
         authDescription.setText("Choose an authority from the list");
     }
 
-
     protected void handleSelection(boolean b) {
 
         if (listener != null) {
             listener.accept(selectedIdentity, b);
         }
-        
-    }
 
+    }
 
     // run in UI thread
     protected void setDocumentation() {
 
-        authDescription.setText(
-                currentAuthority == null ? "Choose an authority from the list" : currentAuthority.getDescription());
-        
+        authDescription
+                .setText(currentAuthority == null ? "Choose an authority from the list" : currentAuthority.getDescription());
+
         StringBuffer desc = new StringBuffer(512);
         boolean first = true;
-        for (String line : StringUtil.lines(currentAuthority == null ? "Choose an authority from the list" : currentAuthority.getDescription())) {
+        for (String line : StringUtil
+                .lines(currentAuthority == null ? "Choose an authority from the list" : currentAuthority.getDescription())) {
             if (first) {
-                desc.append("<b>" + line + "</b><br/><br/>");
+                desc.append("<strong>" + line + "</strong><br/><br/>");
             } else {
                 desc.append(line);
             }
             first = false;
         }
-        
+
         if (currentCatalog != null) {
 
-            desc.append("<br/><b>Classification " + currentCatalog + "</b><br/><br/>");
-            
+            desc.append("<br/><strong>Classification " + currentCatalog + "</strong><br/><br/>");
+
             for (Pair<String, String> sc : currentAuthority.getSubAuthorities()) {
                 if (currentCatalog.equals(sc.getFirst())) {
-                    desc.append(StringUtil.justifyLeft(sc.getSecond(), 80).replaceAll("\\r?\\n", "<br/>"));
+                    desc.append(sc.getSecond().replaceAll("\\r?\\n", "<br/>"));
                     break;
                 }
             }
         }
-        
+
         description.setText(desc.toString());
     }
 
@@ -281,7 +281,7 @@ public class AuthorityEditor extends Composite {
             Activator.session().searchAuthority(this.currentAuthority.getName(), this.currentCatalog, text);
         }
     }
-    
+
     public void displayMatches(AuthorityQueryResponse matches) {
         Display.getDefault().asyncExec(() -> {
             resultList.setInput(matches);
@@ -291,6 +291,15 @@ public class AuthorityEditor extends Composite {
     public void setAuthorities(List<AuthorityReference> authorities) {
 
         this.authorities.clear();
+
+        if (authorities != null) {
+            Collections.sort(authorities, new Comparator<AuthorityReference>(){
+                @Override
+                public int compare(AuthorityReference o1, AuthorityReference o2) {
+                    return o1.getName().compareTo(o2.getName());
+                }
+            });
+        }
 
         Display.getDefault().asyncExec(() -> {
 
@@ -305,6 +314,8 @@ public class AuthorityEditor extends Composite {
                     this.authorities.put(authority.getName(), authority);
                 }
             }
+
+            // mainAuthority.select(0);
         });
     }
 }
