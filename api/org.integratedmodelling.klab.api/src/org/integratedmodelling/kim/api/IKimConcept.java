@@ -364,8 +364,8 @@ public interface IKimConcept extends IKimStatement {
         // conceptual components
         TRAIT, ROLE, CONTEXT, INHERENT, ADJACENT, CAUSED, CAUSANT, COMPRESENT, GOAL, COOCCURRENT, TEMPORAL_INHERENT, RELATIONSHIP_SOURCE, RELATIONSHIP_TARGET,
 
-        // structural components
-        VALUE_OPERATOR, UNIT, CURRENCY, LOGICAL_OPERATOR, INLINE_VALUE,
+        // structural components and modifiers
+        VALUE_OPERATOR, UNIT, CURRENCY, LOGICAL_OPERATOR, INLINE_VALUE, UNARY_OPERATOR,
         /** grouping scope for parenthesized logical expression */
         GROUP_OPEN, GROUP_CLOSE
     }

@@ -90,6 +90,12 @@ void set
 	class org.integratedmodelling.klab.cli.commands.SetProperty
 }
 
+void "."
+	"Call a test class, meant for debugging only."
+{
+	class org.integratedmodelling.klab.cli.commands.Test
+}
+
 void network
 	"Turn REST network services on and off"
 {

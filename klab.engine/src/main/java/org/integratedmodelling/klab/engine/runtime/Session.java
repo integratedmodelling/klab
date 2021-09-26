@@ -898,7 +898,7 @@ public class Session extends GroovyObjectSupport
             throw new IllegalStateException("match action has invalid context ID");
         }
 
-        if (action.getMatchId().startsWith("klab:")) {
+        if (action.getMatchId() != null && action.getMatchId().startsWith("klab:")) {
             // TODO/FIXME: use a more robust test
             getState().submitGeolocation(action.getMatchId());
             return;

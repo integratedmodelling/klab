@@ -1,7 +1,9 @@
 package org.integratedmodelling.klab.owl;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
@@ -9,17 +11,29 @@ import java.util.function.Consumer;
 
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
+import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.kim.api.ValueOperator;
+import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.Concepts;
+import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.Observables;
+import org.integratedmodelling.klab.Units;
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.mediation.ICurrency;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
+import org.integratedmodelling.klab.api.data.mediation.IUnit.UnitContextualization;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.common.mediation.Currency;
+import org.integratedmodelling.klab.common.mediation.Unit;
+import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
+import org.integratedmodelling.klab.utils.StringUtil;
 
 /**
  * A state machine similar to ObservableBuilder but starting empty and including constraints on what
@@ -41,6 +55,12 @@ public class ObservableComposer {
     ObservableComposer parent;
 
     /**
+     * If a context subject type is passed, the concept built will be checked for context
+     * compatibility. This is only applicable at root level.
+     */
+    IConcept contextSubject;
+
+    /**
      * The current state is the one at the top of the stack. Undo will pop it and revert to the
      * previous. All operations that modify the stack push a new one.
      */
@@ -54,14 +74,69 @@ public class ObservableComposer {
 
     /**
      * If set, all calls in a scope that allows the building of a valid observable are followed by a
-     * construction of the observable and validation. This is potentially expensive.
+     * construction of the observable and whatever validation this does. This is potentially
+     * expensive.
      */
     Consumer<IObservable> validator;
 
+    /**
+     * This is set in case of error, before calling the error handler. Singleton across the
+     * hierarchy, never null.
+     */
+    List<String> errors;
+
+    IMonitor monitor;
+
+    /**
+     * If set, will be used to validate the units for extensive properties.
+     */
+    IGeometry geometry;
+
     private ObservableComposer() {
+        this.state.push(new State());
+    }
+
+    private ObservableComposer(ObservableComposer parent, ObservableRole role) {
+        this.errorHandler = parent.errorHandler;
+        this.validator = parent.validator;
+        this.geometry = parent.geometry;
+        this.state.push(new State());
+        this.parent = parent;
+        this.state.peek().lexicalScope = role;
+        this.monitor = parent.monitor;
+        this.errors = parent.errors;
     }
 
     class State {
+
+        public State() {
+
+        }
+
+        public State(State other) {
+
+            this.lexicalScope = other.lexicalScope;
+            this.lexicalRealm = EnumSet.copyOf(other.lexicalRealm);
+            this.logicalRealm = EnumSet.copyOf(other.logicalRealm);
+            this.inherent = other.inherent;
+            this.cooccurrent = other.cooccurrent;
+            this.context = other.context;
+            this.adjacent = other.adjacent;
+            this.caused = other.caused;
+            this.causant = other.causant;
+            this.goal = other.goal;
+            this.relationshipSource = other.relationshipSource;
+            this.relationshipTarget = other.relationshipTarget;
+            this.comparisonTarget = other.comparisonTarget;
+            this.valueOperators = other.valueOperators;
+            this.concepts.addAll(other.concepts);
+            this.groups.addAll(other.groups);
+            this.unaryOperator = other.unaryOperator;
+            this.name = other.name;
+            this.unit = other.unit;
+            this.currency = other.currency;
+            this.range = other.range;
+        }
 
         /*
          * the scope of this composer (role that it has been created to fill). Only null in the root
@@ -94,13 +169,22 @@ public class ObservableComposer {
         ObservableComposer goal = null;
         ObservableComposer relationshipSource = null;
         ObservableComposer relationshipTarget = null;
+        ObservableComposer comparisonTarget = null;
         List<Pair<ValueOperator, Object>> valueOperators;
-
+        List<IConcept> concepts = new ArrayList<>();
+        List<ObservableComposer> groups = new ArrayList<>();
+        UnarySemanticOperator unaryOperator = null;
         String name;
         String unit;
         String currency;
         Range range;
 
+    }
+
+    private State pushState() {
+        State ret = new State(this.state.peek());
+        this.state.push(ret);
+        return ret;
     }
 
     /**
@@ -114,8 +198,62 @@ public class ObservableComposer {
      */
     public static ObservableComposer create(Object... init) {
         ObservableComposer ret = new ObservableComposer();
-        // TODO
+        // admits unary ops, predicates and observables. No groups at root level.
+        ret.state.peek().lexicalRealm.add(ObservableRole.UNARY_OPERATOR);
+        ret.state.peek().logicalRealm.add(IKimConcept.Type.OBSERVABLE);
+        ret.state.peek().logicalRealm.add(IKimConcept.Type.PREDICATE);
+        ret.errors = new ArrayList<>();
+        for (Object o : init) {
+            if (o instanceof IMonitor) {
+                ret.monitor = (IMonitor) o;
+            } else if (o instanceof ObservableRole) {
+                ret.state.peek().lexicalRealm.add((ObservableRole) o);
+            } else if (o instanceof Type) {
+                ret.state.peek().logicalRealm.add((Type) o);
+            } else {
+                throw new KlabIllegalStateException("ObservableComposer: can't use initialization parameter " + o);
+            }
+            // TODO more constraints
+        }
+        if (ret.monitor == null) {
+            ret.monitor = Klab.INSTANCE.getRootMonitor();
+        }
+
         return ret;
+    }
+
+    /**
+     * Should be checked after each operation
+     * 
+     * @return
+     */
+    public boolean isError() {
+        return !this.errors.isEmpty();
+    }
+
+    /**
+     * Latest error recorded. Each new error overwrites it.
+     * 
+     * @return
+     */
+    public Collection<String> getErrors() {
+        return this.errors;
+    }
+
+    /**
+     * If this composer is used to elicit observables in a known context, set the context type in
+     * here for further validation of the root-level observable.
+     * 
+     * @param context
+     * @return
+     */
+    public ObservableComposer setContext(IConcept context, IGeometry geometry) {
+        if (parent != null) {
+            throw new KlabIllegalStateException("ObservableComposer: cannot set the observation context at non-root level");
+        }
+        this.contextSubject = context;
+        this.geometry = geometry;
+        return this;
     }
 
     /**
@@ -126,6 +264,7 @@ public class ObservableComposer {
      * @return
      */
     public ObservableComposer withErrorHandler(Consumer<String> handler) {
+        this.errorHandler = handler;
         return this;
     }
 
@@ -135,7 +274,8 @@ public class ObservableComposer {
      * @return
      */
     public ObservableComposer undo() {
-        return null;
+        this.state.pop();
+        return this;
     }
 
     public Set<ObservableRole> admits() {
@@ -147,63 +287,78 @@ public class ObservableComposer {
     }
 
     /**
-     * Set the observable. Error if already set in same scope. No scoping at this level.
-     * 
-     * @return
-     */
-    ObservableComposer withObservable(IConcept concept) {
-        return null;
-    }
-
-    /**
      * Get the scope for an inherent type to the concept built so far
      * 
      * @param inherent
      * @return the same builder this was called on, for chaining calls
      */
-    ObservableComposer of() {
-        return null;
+    public ObservableComposer of() {
+
+        if (!state.peek().lexicalRealm.contains(ObservableRole.INHERENT)) {
+            error("Current logics does not admit inherency");
+        }
+
+        State s = pushState();
+        s.inherent = new ObservableComposer(this, ObservableRole.INHERENT);
+        s.inherent.state.peek().lexicalRealm.clear();
+        s.inherent.state.peek().logicalRealm.clear();
+        s.inherent.state.peek().lexicalRealm.add(ObservableRole.GROUP_OPEN);
+        s.inherent.state.peek().logicalRealm.add(Type.SUBJECT);
+        s.inherent.state.peek().logicalRealm.add(Type.AGENT);
+        s.inherent.state.peek().logicalRealm.add(Type.EVENT);
+        s.inherent.state.peek().logicalRealm.add(Type.PREDICATE);
+        return s.inherent;
     }
 
     /**
      * @param compresent
      * @return the same builder this was called on, for chaining calls
      */
-    ObservableComposer with() {
-        return null;
+    public ObservableComposer with() {
+        State s = pushState();
+        s.compresent = new ObservableComposer(this, ObservableRole.COMPRESENT);
+        return s.compresent;
     }
     /**
      * @param context
      * @return the same builder this was called on, for chaining calls
      */
-    ObservableComposer within() {
-        return null;
+    public ObservableComposer within() {
+        State s = pushState();
+        s.context = new ObservableComposer(this, ObservableRole.CONTEXT);
+        return s.context;
     }
 
     /**
      * @param goal
      * @return the same builder this was called on, for chaining calls
      */
-    ObservableComposer goal() {
-        return null;
+    public ObservableComposer goal() {
+        State s = pushState();
+        s.goal = new ObservableComposer(this, ObservableRole.GOAL);
+        return s.goal;
     }
 
     /**
      * @param causant
      * @return the same builder this was called on, for chaining calls
      */
-    ObservableComposer from() {
-        return null;
+    public ObservableComposer from() {
+        State s = pushState();
+        s.causant = new ObservableComposer(this, ObservableRole.CAUSANT);
+        return s.causant;
     }
     /**
      * @param caused
      * @return the same builder this was called on, for chaining calls
      */
-    ObservableComposer to() {
-        return null;
+    public ObservableComposer to() {
+        State s = pushState();
+        s.caused = new ObservableComposer(this, ObservableRole.CAUSED);
+        return s.caused;
     }
 
-    ObservableComposer operator(UnarySemanticOperator type) {
+    public ObservableComposer operator(UnarySemanticOperator type) {
         return null;
     }
 
@@ -213,7 +368,7 @@ public class ObservableComposer {
      * @param type
      * @return
      */
-    ObservableComposer comparedTo() {
+    public ObservableComposer comparedTo() {
         return null;
     }
 
@@ -224,19 +379,288 @@ public class ObservableComposer {
      * @param concepts
      * @return the same builder this was called on, for chaining calls
      */
-    ObservableComposer predicate(IConcept trait) {
-        return null;
+    public ObservableComposer concept(IConcept trait) {
+
+        /*
+         * check if concept is acceptable
+         */
+        if (!state.peek().lexicalRealm.isEmpty()) {
+            if (!Kim.hasCompatibleTypes(((Concept) trait).getTypeSet(), state.peek().logicalRealm)) {
+                error("concept " + trait + " is not compatible with the current definition: expecting one of "
+                        + state.peek().logicalRealm);
+                return this;
+            }
+        }
+
+        if (!validateConcept(trait)) {
+            return this;
+        }
+
+//        boolean inGroup = state.peek().lexicalRealm.contains(ObservableRole.GROUP_CLOSE);
+
+        State s = pushState();
+        s.concepts.add(trait);
+        reviseRealms(trait);
+
+//        if (!isError() && inGroup) {
+//            s.lexicalRealm.add(ObservableRole.GROUP_CLOSE);
+//        }
+
+        return this;
     }
 
     /**
-     * Build the concept (if necessary) as specified in the configured ontology. If the concept as
-     * specified already exists, just return it.
+     * Check the logical consistency of a proposed added concept added besides the logical types
+     * admitted. If any inconsistency is detected, set the error and return.
      * 
-     * @return the built concept
-     * @throws KlabValidationException
+     * This check involves:
+     * 
+     * observable vs. trait compatibility (enforce "applies to" if present)
+     * 
+     * context compatibility if a context is set for the composer
+     * 
+     * @param concept
      */
-    IConcept buildConcept() throws KlabValidationException {
+    private boolean validateConcept(IConcept concept) {
+
+        if (concept.is(Type.OBSERVABLE) && contextSubject != null) {
+            IConcept ctx = Observables.INSTANCE.getContext(concept);
+            if (!Observables.INSTANCE.isCompatible(ctx, contextSubject)) {
+                error("Observable " + concept + " cannot be observed in context " + contextSubject);
+                return false;
+            }
+        }
+        if (concept.is(Type.PREDICATE) && defines(Type.OBSERVABLE)) {
+            IConcept observable = getConcept(Type.OBSERVABLE);
+            Collection<IConcept> applicables = Observables.INSTANCE.getApplicableObservables(concept);
+            if (applicables.size() > 0) {
+                boolean ret = false;
+                for (IConcept applicable : applicables) {
+                    if (Observables.INSTANCE.isCompatible(observable, applicable)) {
+                        ret = true;
+                        break;
+                    }
+                }
+                if (!ret) {
+                    error("Predicate " + concept + " is not applicable for observable " + observable);
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private IConcept getConcept(Type type) {
+
+        if (this.state.peek().concepts != null) {
+            for (IConcept c : this.state.peek().concepts) {
+                if (c.is(type)) {
+                    return c;
+                }
+            }
+        }
+        if (this.state.peek().groups != null) {
+            for (ObservableComposer c : this.state.peek().groups) {
+                if (c.defines(type)) {
+                    return c.buildConcept();
+                }
+            }
+        }
+
         return null;
+    }
+
+    private Collection<IConcept> getConcepts(Type type) {
+
+        Set<IConcept> ret = new HashSet<>();
+
+        if (this.state.peek().concepts != null) {
+            for (IConcept c : this.state.peek().concepts) {
+                if (type == null || c.is(type)) {
+                    ret.add(c);
+                }
+            }
+        }
+        if (this.state.peek().groups != null) {
+            for (ObservableComposer c : this.state.peek().groups) {
+                if (type == null || c.defines(type)) {
+                    ret.add(c.buildConcept());
+                }
+            }
+        }
+
+        return ret;
+    }
+
+    private Collection<IConcept> getConcepts() {
+        return getConcepts(null);
+    }
+
+    /**
+     * Revise the realms in the current state to match the added element contextually to the
+     * existing state.
+     * 
+     * @param added
+     */
+    private void reviseRealms(Object added) {
+
+        if (added instanceof IConcept) {
+
+            /*
+             * redefine all realms from scratch
+             */
+            this.state.peek().logicalRealm.clear();
+            this.state.peek().lexicalRealm.clear();
+
+            boolean canHazObservable = !((Concept) added).is(Type.OBSERVABLE) && !defines(Type.OBSERVABLE);
+
+            /*
+             * admitted concepts
+             */
+            this.state.peek().logicalRealm.add(Type.PREDICATE);
+            if (canHazObservable) {
+                this.state.peek().logicalRealm.add(Type.OBSERVABLE);
+                if (this.state.peek().unaryOperator == null) {
+                    this.state.peek().lexicalRealm.add(ObservableRole.UNARY_OPERATOR);
+                }
+            }
+
+            /*
+             * admitted roles
+             */
+            if (((Concept) added).is(Type.QUALITY)) {
+                this.state.peek().lexicalRealm.add(ObservableRole.VALUE_OPERATOR);
+                if (parent == null) {
+                    if (((Concept) added).is(Type.EXTENSIVE_PROPERTY) || ((Concept) added).is(Type.INTENSIVE_PROPERTY)
+                            || ((Concept) added).is(Type.NUMEROSITY)) {
+                        this.state.peek().lexicalRealm.add(ObservableRole.UNIT);
+                    } else if (((Concept) added).is(Type.MONETARY_VALUE)) {
+                        this.state.peek().lexicalRealm.add(ObservableRole.CURRENCY);
+                    }
+                }
+            }
+
+            if (!isError() && ((Concept) added).is(Type.OBSERVABLE)) {
+                // TODO all the applicable modifiers
+                if (((Concept) added).is(Type.QUALITY)) {
+                    this.state.peek().lexicalRealm.add(ObservableRole.INHERENT);
+                }
+            }
+        }
+
+    }
+
+    private boolean defines(Type type) {
+        if (this.state.peek().concepts != null) {
+            for (IConcept c : this.state.peek().concepts) {
+                if (c.is(type)) {
+                    return true;
+                }
+            }
+        }
+        if (this.state.peek().groups != null) {
+            for (ObservableComposer c : this.state.peek().groups) {
+                if (c.defines(type)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return "Scope: " + state.peek().lexicalScope + "\n" + "Log: " + state.peek().logicalRealm + "\n" + "Lex: "
+                + state.peek().lexicalRealm + "\n";
+    }
+
+    public ObservableComposer concept(String trait) {
+        IConcept c = Concepts.INSTANCE.getConcept(trait);
+        if (c == null) {
+            return error("Concept " + trait + " is unknown");
+        }
+        return concept(c);
+    }
+
+    private ObservableComposer error(String string) {
+        if (errorHandler != null) {
+            errorHandler.accept(string);
+        }
+        this.errors.add(string);
+        return this;
+    }
+
+    public IConcept buildConcept() {
+
+        if (isError()) {
+            throw new KlabValidationException("Errors in definition: " + StringUtil.join(errors, "; "));
+        }
+
+        IConcept main = null;
+        List<IConcept> others = new ArrayList<>();
+
+        for (IConcept concept : getConcepts()) {
+            boolean mainSet = false;
+            if (main == null) {
+                main = concept;
+                mainSet = true;
+            }
+            if (concept.is(Type.OBSERVABLE)) {
+                main = concept;
+                mainSet = true;
+            }
+
+            if (!mainSet) {
+                others.add(concept);
+            }
+        }
+
+        ObservableBuilder builder = new ObservableBuilder(main, monitor);
+
+        for (IConcept c : others) {
+            if (c.is(Type.ROLE)) {
+                builder.withRole(c);
+            } else if (c.is(Type.PREDICATE)) {
+                builder.withTrait(c);
+            }
+        }
+
+        if (this.state.peek().unaryOperator != null) {
+            builder = (ObservableBuilder) builder.as(this.state.peek().unaryOperator,
+                    this.state.peek().comparisonTarget == null ? null : this.state.peek().comparisonTarget.buildConcept());
+        }
+
+        if (this.state.peek().adjacent != null) {
+            builder.withAdjacent(this.state.peek().adjacent.buildConcept());
+        }
+        if (this.state.peek().causant != null) {
+            builder.from(this.state.peek().causant.buildConcept());
+        }
+        if (this.state.peek().caused != null) {
+            builder.to(this.state.peek().caused.buildConcept());
+        }
+        if (this.state.peek().compresent != null) {
+            builder.with(this.state.peek().compresent.buildConcept());
+        }
+        if (this.state.peek().context != null) {
+            builder.within(this.state.peek().context.buildConcept());
+        }
+        if (this.state.peek().cooccurrent != null) {
+            builder.withCooccurrent(this.state.peek().cooccurrent.buildConcept());
+        }
+        if (this.state.peek().goal != null) {
+            builder.withGoal(this.state.peek().goal.buildConcept());
+        }
+        if (this.state.peek().inherent != null) {
+            builder.of(this.state.peek().inherent.buildConcept());
+        }
+        if (this.state.peek().relationshipSource != null) {
+            IConcept source = this.state.peek().relationshipSource.buildConcept();
+            builder.linking(source,
+                    this.state.peek().relationshipTarget == null ? source : this.state.peek().relationshipTarget.buildConcept());
+        }
+
+        return builder.buildConcept();
     }
 
     /**
@@ -247,27 +671,40 @@ public class ObservableComposer {
      * @return the built concept
      * @throws KlabValidationException
      */
-    IObservable buildObservable() throws KlabValidationException {
-        return null;
+    public IObservable buildObservable() {
+        if (parent != null) {
+            throw new KlabIllegalStateException("ObservableComposer: can only call buildObservable on the root composer");
+        }
+
+        ObservableBuilder builder = new ObservableBuilder(buildConcept(), monitor);
+
+        // TODO the rest
+
+        if (this.state.peek().unit != null) {
+            builder.withUnit(this.state.peek().unit);
+        }
+
+        if (this.state.peek().currency != null) {
+            builder.withCurrency(this.state.peek().currency);
+        }
+
+        if (this.state.peek().name != null) {
+            builder.named(this.state.peek().name);
+        }
+
+        return builder.buildObservable();
     }
 
-    /**
-     * Return any exceptions accumulated through the building process before build() is called. If
-     * build() is called when getErrors() returns a non-empty collection, it will throw an exception
-     * collecting the messages from all exception in the list.
-     * 
-     * @return any errors accumulated
-     */
-    Collection<KlabValidationException> getErrors() {
-        return null;
+    public ObservableComposer cooccurrent() {
+        State s = pushState();
+        s.cooccurrent = new ObservableComposer(this, ObservableRole.COOCCURRENT);
+        return s.cooccurrent;
     }
 
-    ObservableComposer cooccurrent() {
-        return null;
-    }
-
-    ObservableComposer adjacent() {
-        return null;
+    public ObservableComposer adjacent() {
+        State s = pushState();
+        s.adjacent = new ObservableComposer(this, ObservableRole.ADJACENT);
+        return s.adjacent;
     }
 
     /**
@@ -276,8 +713,50 @@ public class ObservableComposer {
      * @param unit
      * @return
      */
-    ObservableComposer withUnit(IUnit unit) {
-        return null;
+    public ObservableComposer withUnit(IUnit unit) {
+
+        if (parent != null) {
+            error("cannot set units on an inner observation");
+        }
+
+        IConcept observable = getConcept(Type.OBSERVABLE);
+        for (IConcept trait : getConcepts(Type.PREDICATE)) {
+            if (trait.is(Type.RESCALING)) {
+                error("cannot use unit " + unit + " on observable " + observable + " because the predicate " + trait
+                        + " removes it");
+                return this;
+            }
+        }
+
+        if (this.geometry != null) {
+            /*
+             * check the contextualization (no added constraints: if this is used for a semantic
+             * assistant in editor, may have to read annotations in context).
+             */
+            UnitContextualization ctx = Units.INSTANCE.getContextualization(Observable.promote(observable), geometry, null);
+
+            boolean ok = unit.isCompatible(ctx.getChosenUnit());
+            if (!ok) {
+                for (IUnit cun : ctx.getCandidateUnits()) {
+                    if (unit.isCompatible(cun)) {
+                        ok = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!ok) {
+                error("unit " + unit + " is not compatible with observable " + observable + " in this geometry");
+            }
+
+        } else {
+            IUnit def = Units.INSTANCE.getDefaultUnitFor(observable);
+            if (!unit.isCompatible(def)) {
+                error("unit " + unit + " is not compatible with observable " + observable);
+            }
+        }
+
+        return this;
     }
 
     /**
@@ -286,8 +765,11 @@ public class ObservableComposer {
      * @param unit
      * @return
      */
-    ObservableComposer withCurrency(ICurrency currency) {
-        return null;
+    public ObservableComposer withCurrency(ICurrency currency) {
+        if (parent != null) {
+            error("cannot set currency on an inner observation");
+        }
+        return this;
     }
 
     /**
@@ -298,20 +780,24 @@ public class ObservableComposer {
      * @param valueOperand
      * @return
      */
-    ObservableComposer withValueOperator(ValueOperator operator) {
+    public ObservableComposer withValueOperator(ValueOperator operator) {
         return null;
     }
 
-    ObservableComposer withOperand(Object operand) {
+    public ObservableComposer withOperand(Object operand) {
         return null;
     }
 
-    ObservableComposer linkSource() {
-        return null;
+    public ObservableComposer linkSource() {
+        State s = pushState();
+        s.relationshipSource = new ObservableComposer(this, ObservableRole.RELATIONSHIP_SOURCE);
+        return s.relationshipSource;
     }
 
-    ObservableComposer linkTarget() {
-        return null;
+    public ObservableComposer linkTarget() {
+        State s = pushState();
+        s.relationshipTarget = new ObservableComposer(this, ObservableRole.RELATIONSHIP_TARGET);
+        return s.relationshipTarget;
     }
 
     /**
@@ -322,19 +808,12 @@ public class ObservableComposer {
      * @param name
      * @return
      */
-    ObservableComposer named(String name) {
-        return null;
-    }
-
-    /**
-     * Set the temporal inherency for the occurrent observable we specify. Does not change the
-     * semantics.
-     * 
-     * @param concept
-     * @return
-     */
-    ObservableComposer during() {
-        return null;
+    public ObservableComposer named(String name) {
+        if (parent != null) {
+            error("cannot set currency on an inner observable");
+        }
+        this.state.peek().name = name;
+        return this;
     }
 
     /**
@@ -344,8 +823,12 @@ public class ObservableComposer {
      * @param unit
      * @return
      */
-    ObservableComposer withUnit(String unit) {
-        return null;
+    public ObservableComposer withUnit(String unit) {
+        IUnit u = Unit.create(unit);
+        if (u == null) {
+            error("unparseable unit: " + unit);
+        }
+        return withUnit(u);
     }
 
     /**
@@ -355,8 +838,12 @@ public class ObservableComposer {
      * @param currency
      * @return
      */
-    ObservableComposer withCurrency(String currency) {
-        return null;
+    public ObservableComposer withCurrency(String currency) {
+        ICurrency u = Currency.create(currency);
+        if (u == null) {
+            error("unparseable unit: " + currency);
+        }
+        return withCurrency(u);
     }
 
     /**
@@ -365,7 +852,7 @@ public class ObservableComposer {
      * @param range
      * @return
      */
-    ObservableComposer withRange(Range range) {
+    public ObservableComposer withRange(Range range) {
         return null;
     }
 
@@ -375,18 +862,8 @@ public class ObservableComposer {
      * @param annotation
      * @return
      */
-    ObservableComposer withAnnotation(IAnnotation annotation) {
+    public ObservableComposer withAnnotation(IAnnotation annotation) {
         return null;
-    }
-
-    public static void main(String[] args) {
-
-        // simplest
-        ObservableComposer composer = create();
-        composer.withObservable(Concepts.c("im:Height"));
-        composer.of().withObservable(Concepts.c("biology:Tree")).predicate(Concepts.c("im:High"));
-        composer.withUnit("m");
-        System.out.println(composer.buildObservable().getDefinition());
     }
 
 }
