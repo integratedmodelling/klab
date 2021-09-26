@@ -303,9 +303,11 @@ public class ObservableComposer {
         s.inherent.state.peek().lexicalRealm.clear();
         s.inherent.state.peek().logicalRealm.clear();
         s.inherent.state.peek().lexicalRealm.add(ObservableRole.GROUP_OPEN);
+        // TODO add all the roles compatible with a subject/agent/relationship
         s.inherent.state.peek().logicalRealm.add(Type.SUBJECT);
         s.inherent.state.peek().logicalRealm.add(Type.AGENT);
         s.inherent.state.peek().logicalRealm.add(Type.EVENT);
+        s.inherent.state.peek().logicalRealm.add(Type.RELATIONSHIP);
         s.inherent.state.peek().logicalRealm.add(Type.PREDICATE);
         return s.inherent;
     }
