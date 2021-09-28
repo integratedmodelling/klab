@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.components.geospace.extents.mediators;
 import java.util.Collection;
 
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
+import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.utils.Pair;
@@ -26,7 +27,11 @@ public class GridToGrid implements IScaleMediator {
 
     @Override
     public long mapConformant(long offset) {
-        return identity ? offset : to.getCellAt(from.getCell(offset).getCenter(), false).getOffsetInGrid();
+        if (identity) {
+            return offset;
+        }
+        Cell target = to.getCellAt(from.getCell(offset).getCenter(), false);
+        return target == null ? -1 : target.getOffsetInGrid();
     }
 
     @Override

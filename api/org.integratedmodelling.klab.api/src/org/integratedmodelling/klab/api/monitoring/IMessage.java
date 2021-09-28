@@ -273,7 +273,7 @@ public interface IMessage {
          * from a search, send the ID of the search so it can be disposed of.
          */
         RequestObservation,
-        
+
         /**
          * Authority-related inquiries
          */
@@ -328,9 +328,11 @@ public interface IMessage {
         SchedulingStarted, SchedulingFinished, ScheduleAdvanced, SchedulerReset,
 
         /*
-         * --- Search-class types ---
+         * --- Search-class types --- FIXME SemanticSearch is a synonym of SubmitSearch, used in IDE
+         * queries to trigger experimental behavior, to be merged with SubmitSearch and removed when
+         * done.
          */
-        SubmitSearch, MatchAction,
+        SemanticSearch, SubmitSearch, MatchAction,
 
         /*
          * --- Query-class types ---

@@ -1130,7 +1130,7 @@ public class ResourceEditor extends ViewPart {
         composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
         Composite composite_4 = new Composite(composite, SWT.NONE);
-        composite_4.setLayout(new GridLayout(4, false));
+        composite_4.setLayout(new GridLayout(5, false));
 
         Label lblNewLabel_6 = new Label(composite_4, SWT.NONE);
         lblNewLabel_6.setBounds(0, 0, 55, 15);
@@ -1148,6 +1148,11 @@ public class ResourceEditor extends ViewPart {
         categorizationsCombo.setEnabled(false);
 
         this.btnEdit = new Button(composite_4, SWT.NONE);
+        btnEdit.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+            }
+        });
         btnEdit.setText("Edit...");
         btnEdit.setEnabled(false);
         btnEdit.addMouseListener(new MouseAdapter(){
@@ -1156,6 +1161,18 @@ public class ResourceEditor extends ViewPart {
                 editCategorization(categorizationsCombo.getText());
             }
         });
+        
+        Button btnPublish = new Button(composite_4, SWT.NONE);
+        btnPublish.setToolTipText("Expose as an authority");
+        btnPublish.setText("Authority...");
+        btnPublish.setEnabled(false);       
+        btnEdit.addMouseListener(new MouseAdapter(){
+            @Override
+            public void mouseDown(MouseEvent e) {
+                publishCodelist(categorizationsCombo.getText());
+            }
+        });
+        
         new Label(composite_4, SWT.NONE);
 
         messageLabel = new Label(composite, SWT.NONE);
@@ -1207,6 +1224,11 @@ public class ResourceEditor extends ViewPart {
         initializeMenu();
 
         setDirty(false);
+    }
+
+    protected void publishCodelist(String text) {
+        // TODO Auto-generated method stub
+        
     }
 
     protected void editCategorization(String text) {

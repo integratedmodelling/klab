@@ -163,13 +163,13 @@ public class CaliperAuthority implements IAuthority {
                 source = new AuthorityIdentity();
 
                 for (Statement statement : model) {
-                    
-                    System.out.println("CIAPA EL STATEMENT: " + statement);
 
-                    ((AuthorityIdentity)source).setAuthorityName(ID);
-                    switch (statement.getPredicate().getLocalName()) {
+//                    System.out.println("CIAPA EL STATEMENT: " + statement);
+
+                    ((AuthorityIdentity) source).setAuthorityName(ID);
+                    switch(statement.getPredicate().getLocalName()) {
                     case "notation":
-                        ((AuthorityIdentity)source).setId(stringValue(statement.getObject()));
+                        ((AuthorityIdentity) source).setId(stringValue(statement.getObject()));
                         break;
                     case "broader":
                         parents.add(stringValue(statement.getObject()));
@@ -181,7 +181,8 @@ public class CaliperAuthority implements IAuthority {
                         // TODO add for metadata
                         break;
                     case "exactMatch":
-                        // TODO check if it's in a supported authority, incorporate equivalence if so
+                        // TODO check if it's in a supported authority, incorporate equivalence if
+                        // so
                         break;
                     case "inScheme":
                         // TODO should be redundant, but nothing wrong with saving in metadata
@@ -189,19 +190,19 @@ public class CaliperAuthority implements IAuthority {
                     case "prefLabel":
                         // TODO check if we ever get a separate description
                         // TODO check what happens with multilingual descriptions
-                        ((AuthorityIdentity)source).setDescription(stringValue(statement.getObject()));
-                        ((AuthorityIdentity)source).setLabel(stringValue(statement.getObject()));
+                        ((AuthorityIdentity) source).setDescription(stringValue(statement.getObject()));
+                        ((AuthorityIdentity) source).setLabel(stringValue(statement.getObject()));
                         break;
                     }
                 }
 
-                ((AuthorityIdentity)source).setConceptName(sanitize(((AuthorityIdentity)source).getId()));
-                ((AuthorityIdentity)source).setLocator(ID + "." + catalog + ":" + ((AuthorityIdentity)source).getId());
+                ((AuthorityIdentity) source).setConceptName(sanitize(catalog, ((AuthorityIdentity) source).getId()));
+                ((AuthorityIdentity) source).setLocator(ID + "." + catalog + ":" + ((AuthorityIdentity) source).getId());
                 for (String parent : parents) {
-                    if (((AuthorityIdentity)source).getParentIds() == null) {
-                        ((AuthorityIdentity)source).setParentIds(new ArrayList<>());
+                    if (((AuthorityIdentity) source).getParentIds() == null) {
+                        ((AuthorityIdentity) source).setParentIds(new ArrayList<>());
                     }
-                    ((AuthorityIdentity)source).getParentIds().add(parent);
+                    ((AuthorityIdentity) source).getParentIds().add(parent);
                 }
 
             } catch (Exception e) {
@@ -217,13 +218,13 @@ public class CaliperAuthority implements IAuthority {
 
     private String stringValue(Value object) {
         if (object instanceof IRI) {
-            return ((IRI)object).getLocalName();
+            return ((IRI) object).getLocalName();
         }
         return object.stringValue();
     }
-    
-    private String sanitize(String id2) {
-        return id2.replace('.', '_').replace('-', '_');
+
+    private String sanitize(String catalog, String id2) {
+        return (catalog == null ? ID : catalog.toUpperCase()) + "_" + id2.replace('.', '_').replace('-', '_');
     }
 
     @Override

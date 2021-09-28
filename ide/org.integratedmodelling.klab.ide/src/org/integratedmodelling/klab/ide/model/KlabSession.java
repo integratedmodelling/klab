@@ -374,16 +374,16 @@ public class KlabSession extends KlabPeer {
 				new ObservationRequest(resource.getUrn(), currentRootContextId, null));
 	}
 
-	public long startQuery(String query) {
-
-		long queryIndex = queryCounter.getAndIncrement();
-
-		SearchRequest request = new SearchRequest();
-		request.setRequestId(queryIndex);
-		request.setQueryString(query);
-
-		return queryIndex;
-	}
+//	public long startQuery(String query) {
+//
+//		long queryIndex = queryCounter.getAndIncrement();
+//
+//		SearchRequest request = new SearchRequest();
+//		request.setRequestId(queryIndex);
+//		request.setQueryString(query);
+//
+//		return queryIndex;
+//	}
 
 	// nah, use the response feature in the message bus and make it right
 	public void continueQuery(String query, long previous) {

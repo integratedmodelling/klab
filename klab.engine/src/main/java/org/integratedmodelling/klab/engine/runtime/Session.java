@@ -101,10 +101,10 @@ import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.exceptions.KlabActorException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.monitoring.Message;
+import org.integratedmodelling.klab.owl.ObservableComposer;
 import org.integratedmodelling.klab.rest.AuthorityIdentity;
 import org.integratedmodelling.klab.rest.AuthorityQueryRequest;
 import org.integratedmodelling.klab.rest.AuthorityQueryResponse;
-import org.integratedmodelling.klab.rest.AuthorityReference;
 import org.integratedmodelling.klab.rest.AuthorityResolutionRequest;
 import org.integratedmodelling.klab.rest.ConsoleNotification;
 import org.integratedmodelling.klab.rest.ContextualizationRequest;
@@ -139,6 +139,7 @@ import org.integratedmodelling.klab.rest.SearchMatch;
 import org.integratedmodelling.klab.rest.SearchMatch.TokenClass;
 import org.integratedmodelling.klab.rest.SearchMatchAction;
 import org.integratedmodelling.klab.rest.SearchRequest;
+import org.integratedmodelling.klab.rest.SearchRequest.Mode;
 import org.integratedmodelling.klab.rest.SearchResponse;
 import org.integratedmodelling.klab.rest.SessionReference;
 import org.integratedmodelling.klab.rest.SettingChangeRequest;
@@ -804,17 +805,17 @@ public class Session extends GroovyObjectSupport
 
         IAuthority authority = Authorities.INSTANCE.getAuthority(request.getAuthorityId());
         if (authority == null) {
-            ret.setError("Authority " + request.getAuthorityId() + " is inaccessible or non-existent"); 
+            ret.setError("Authority " + request.getAuthorityId() + " is inaccessible or non-existent");
         } else if (authority.getCapabilities().isSearchable()) {
             for (IAuthority.Identity identity : authority.search(request.getQueryString(), request.getAuthorityCatalog())) {
                 if (identity instanceof AuthorityIdentity) {
-                    ret.getMatches().add((AuthorityIdentity)identity);
+                    ret.getMatches().add((AuthorityIdentity) identity);
                 }
             }
         } else {
             Identity identity = authority.getIdentity(request.getQueryString(), request.getAuthorityCatalog());
             if (identity instanceof AuthorityIdentity) {
-                ret.getMatches().add((AuthorityIdentity)identity);
+                ret.getMatches().add((AuthorityIdentity) identity);
             } else {
                 ret.setError("Identity " + request.getAuthorityId() + " produced an invalid or null result");
             }
@@ -987,8 +988,147 @@ public class Session extends GroovyObjectSupport
         return null;
     }
 
+    /**
+     * Move up and substitute searchContexts when done.
+     */
+    private Map<String, ObservableComposer> composers = new HashMap<>();
+
+    /**
+     * The next-generation semantic search using ObservableComposer
+     * 
+     * @param request
+     * @param message
+     */
+    private void semanticSearch(SearchRequest request, IMessage message) {
+
+        if (request.isCancelSearch()) {
+            composers.remove(request.getContextId());
+            searchContexts.remove(request.getContextId());
+        } else {
+            /*
+             * spawn search thread, which will respond when done.
+             */
+            new Thread(){
+
+                @Override
+                public void run() {
+                    SearchResponse response = setupResponse(request);
+                    switch(request.getSearchMode()) {
+                    case FREETEXT:
+                        searchFreetext(request, response);
+                        break;
+                    case SEMANTIC:
+                        if (request.isDefaultResults()) {
+                            setDefaultSearchResults(response.getContextId(), request, response);
+                        } else {
+                            ObservableComposer composer = composers.get(response.getContextId());
+                            if (composer == null) {
+                                composer = ObservableComposer.create();
+                                composers.put(response.getContextId(), composer);
+                            }
+                            runSemanticSearch(composer, request, response);
+                        }
+                        break;
+                    }
+                }
+            }.run();
+        }
+
+    }
+
+    protected SearchResponse setupResponse(SearchRequest request) {
+
+        final String contextId = request.getContextId() == null ? NameGenerator.shortUUID() : request.getContextId();
+
+        if ((request.getSearchMode() == Mode.FREETEXT || request.isDefaultResults())) {
+            if ((request.getContextId() == null)
+                    || searchContexts.get(contextId) == null && searchContexts.get(contextId).getFirst() == null) {
+                searchContexts.put(contextId, new Pair<>(
+                        Indexing.INSTANCE.createContext(request.getMatchTypes(), request.getSemanticTypes()), new ArrayList<>()));
+            }
+        }
+
+        SearchResponse response = new SearchResponse();
+        response.setContextId(request.getContextId());
+        response.setRequestId(request.getRequestId());
+
+        return response;
+    }
+
+    /**
+     * TODO move into semantics package
+     * 
+     * @param composer
+     * @param request
+     * @param response
+     */
+    protected void runSemanticSearch(ObservableComposer composer, SearchRequest request, SearchResponse response) {
+
+        if (request.getQueryString().equals("(")) {
+            // TODO must set a "explicit group" flag in the current context to say it shouldn't be closed until a closing parenthesis is sent
+        } else if (request.getQueryString().equals("(")) {
+            // TODO current context must have flag and this triggers going back to the parent
+        } else {
+            
+        }
+        
+        System.out.println("BUSDELCUL");
+    }
+
+    /**
+     * TODO move into authentication package or semantics
+     * 
+     * @param response
+     */
+    protected void setDefaultSearchResults(String contextId, SearchRequest request, SearchResponse response) {
+        /*
+         * These come from the user's groups. They should eventually be linked to session history
+         * and preferences.
+         */
+        List<Match> matches = new ArrayList<>();
+        int i = 0;
+        for (ObservableReference observable : Authentication.INSTANCE.getDefaultObservables(Session.this)) {
+            SearchMatch match = new SearchMatch(observable.getObservable(), observable.getLabel(), observable.getDescription(),
+                    observable.getSemantics(), observable.getState(), observable.getExtendedDescription());
+            match.setIndex(i++);
+            response.getMatches().add(match);
+            matches.add(new org.integratedmodelling.klab.engine.indexing.SearchMatch(match));
+        }
+        searchContexts.put(contextId, new Pair<Context, List<Match>>(
+                Indexing.INSTANCE.createContext(request.getMatchTypes(), request.getSemanticTypes()), matches));
+    }
+
+    /**
+     * TODO move into semantic package or concepts
+     * 
+     * @param request
+     * @param response
+     */
+    protected void searchFreetext(SearchRequest request, SearchResponse response) {
+        // TODO also lookup local matches and spawn search for remote ones to answer
+        // afterwards.
+        List<Match> matches = new ArrayList<>();
+        int i = 0;
+        for (Location location : Geocoder.INSTANCE.lookup(request.getQueryString())) {
+            if ("relation".equals(location.getOsm_type())) {
+
+                SearchMatch match = new SearchMatch(location.getURN(), location.getName(), location.getDescription(),
+                        IKimConcept.Type.SUBJECT);
+                match.setIndex(i++);
+                response.getMatches().add(match);
+                matches.add(new org.integratedmodelling.klab.engine.indexing.SearchMatch(match));
+            }
+        }
+    }
+
+    @Deprecated
     @MessageHandler
     private void handleSearchRequest(SearchRequest request, IMessage message) {
+
+        if (message.getType() == IMessage.Type.SemanticSearch) {
+            semanticSearch(request, message);
+            return;
+        }
 
         final String contextId = request.getContextId() == null ? NameGenerator.shortUUID() : request.getContextId();
         if (request.getContextId() == null

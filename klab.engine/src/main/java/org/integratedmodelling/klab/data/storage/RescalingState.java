@@ -146,6 +146,9 @@ public class RescalingState extends Observation implements IState {
 			long[] offsets = this.newScale.getExtentIndex(offset);
 			for (int i = 0; i < mediators.size(); i++) {
 				offsets[i] = mediators.get(i).mapConformant(offsets[i]);
+				if (offsets[i] < 0) {
+				    return -1;
+				}
 			}
 
 			delegate.set(originalGeometry.at(offsets), value);

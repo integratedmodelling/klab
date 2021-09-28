@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.utils;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -64,5 +65,27 @@ public class CollectionUtils {
 		}
 		return ret;
 	}
+
+    public static Collection<Object> flatCollection(Object... objects) {
+        List<Object> ret = new ArrayList<>();
+        addToCollection(ret, objects);
+        return ret;
+    }
+    
+    private static void addToCollection(List<Object> ret, Object... objects) {
+        for (Object o : objects) {
+            if (o instanceof Collection) {
+                for (Object oo : ((Collection<?>)o)) {
+                    addToCollection(ret, oo);
+                }
+            } else if (o != null && o.getClass().isArray()) {
+                for (int i = 0; i < Array.getLength(o); i++) {
+                    addToCollection(ret, Array.get(o, i));
+                }
+            } else {
+                ret.add(o);
+            }
+        }
+    }
 
 }

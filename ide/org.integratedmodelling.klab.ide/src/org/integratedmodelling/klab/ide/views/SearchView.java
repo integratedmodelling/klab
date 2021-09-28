@@ -53,6 +53,7 @@ import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.rest.SearchMatch;
 import org.integratedmodelling.klab.rest.SearchMatchAction;
 import org.integratedmodelling.klab.rest.SearchRequest;
+import org.integratedmodelling.klab.rest.SearchRequest.Mode;
 import org.integratedmodelling.klab.rest.SearchResponse;
 import org.integratedmodelling.klab.rest.ViewComponent;
 
@@ -502,6 +503,7 @@ public class SearchView extends ViewPart {
 
 		request.setMaxResults(50);
 		request.setQueryString(text);
+		request.setSearchMode(Mode.SEMANTIC);
 		request.setContextId(this.contextId);
 		request.setRequestId(this.requestId++);
 
@@ -512,7 +514,7 @@ public class SearchView extends ViewPart {
 			Display.getDefault().asyncExec(() -> {
 				treeViewer.setInput(matches);
 			});
-		}, IMessage.MessageClass.Search, IMessage.Type.SubmitSearch, request);
+		}, IMessage.MessageClass.Search, IMessage.Type.SemanticSearch, request);
 
 	}
 
@@ -584,17 +586,17 @@ public class SearchView extends ViewPart {
 	 * Initialize the toolbar.
 	 */
 	private void initializeToolBar() {
-		IToolBarManager tbm = getViewSite().getActionBars().getToolBarManager();
+//		IToolBarManager tbm = getViewSite().getActionBars().getToolBarManager();
 	}
 
 	/**
 	 * Initialize the menu.
 	 */
 	private void initializeMenu() {
-		IMenuManager manager = getViewSite().getActionBars().getMenuManager();
-		manager.add(action_1);
-		manager.add(action_2);
-		manager.add(action_3);
+//		IMenuManager manager = getViewSite().getActionBars().getMenuManager();
+//		manager.add(action_1);
+//		manager.add(action_2);
+//		manager.add(action_3);
 	}
 
 	@Override

@@ -163,15 +163,15 @@ public class AuthorityEditor extends Composite {
         btnNewButton.setImage(ResourceManager.getPluginImage("org.eclipse.ui", "/icons/full/etool16/copy_edit.png"));
         btnNewButton.setBounds(0, 0, 70, 21);
 
-        Composite composite_1 = new Composite(this, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+        SashForm composite_1 = new SashForm(this, SWT.BORDER);
         composite_1.setLayout(new FillLayout(SWT.HORIZONTAL));
         composite_1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
         composite_1.setBounds(0, 0, 32, 32);
-
+        
         sashForm = new SashForm(composite_1, SWT.NONE);
         sashForm.setSashWidth(0);
 
-        description = new RichTextViewer(sashForm, SWT.BORDER | SWT.WRAP);
+        description = new RichTextViewer(sashForm, SWT.BORDER);
         description.setWordSplitRegex("\\s|\\-");
 
         sashForm.setWeights(new int[]{1});
@@ -228,6 +228,9 @@ public class AuthorityEditor extends Composite {
         tblclmnLabel = new TableColumn(resultList.getTable(), SWT.NONE);
         tblclmnLabel.setWidth(400);
         tblclmnLabel.setText("Label");
+
+        composite_1.setSashWidth(0);
+        composite_1.setWeights(new int[] {10,10});
 
         authDescription = new Label(this, SWT.NONE);
         authDescription.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
