@@ -95,6 +95,7 @@ import org.integratedmodelling.klab.documentation.DataflowDocumentation;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.debugger.Debug;
+import org.integratedmodelling.klab.engine.indexing.Indexer;
 import org.integratedmodelling.klab.engine.resources.Project;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
@@ -1065,13 +1066,16 @@ public class Session extends GroovyObjectSupport
     protected void runSemanticSearch(ObservableComposer composer, SearchRequest request, SearchResponse response) {
 
         if (request.getQueryString().equals("(")) {
-            // TODO must set a "explicit group" flag in the current context to say it shouldn't be closed until a closing parenthesis is sent
+            // TODO must set a "explicit group" flag in the current context to say it shouldn't be
+            // closed until a closing parenthesis is sent
         } else if (request.getQueryString().equals("(")) {
             // TODO current context must have flag and this triggers going back to the parent
         } else {
-            
+            for (Match match : Indexer.INSTANCE.query(request.getQueryString(), composer)) {
+                response.getMatches().add((SearchMatch) match);
+            }
         }
-        
+
         System.out.println("BUSDELCUL");
     }
 

@@ -13,6 +13,8 @@ public enum Modifier {
 	CONTAINING("containing"),
 	CAUSING("causing"),
 	DURING("during"),
+    LINKING("linking"),
+    TO("to"),
 //	AS("as"),
 	IN("in"),
 	PER("per"),

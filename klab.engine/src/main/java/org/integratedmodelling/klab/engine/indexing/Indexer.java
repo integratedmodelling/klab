@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.engine.indexing;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
@@ -35,6 +36,9 @@ import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
+import org.integratedmodelling.kim.api.Modifier;
+import org.integratedmodelling.kim.api.UnarySemanticOperator;
+import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Urn;
@@ -46,7 +50,7 @@ import org.integratedmodelling.klab.api.services.IIndexingService.Match;
 import org.integratedmodelling.klab.engine.indexing.SearchContext.Constraint;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
-import org.integratedmodelling.klab.utils.CollectionUtils;
+import org.integratedmodelling.klab.owl.ObservableComposer;
 import org.integratedmodelling.klab.utils.NumberUtils;
 
 public enum Indexer {
@@ -272,66 +276,164 @@ public enum Indexer {
      * @param where
      * @return
      */
-    public List<Match> query(String term, Object... where) {
+    public List<Match> query(String term, ObservableComposer composer) {
 
         List<Match> ret = new ArrayList<>();
 
-        for (Object o : CollectionUtils.flatCollection(where)) {
-            if (o instanceof ObservableRole) {
-                switch ((ObservableRole)o) {
-                case ADJACENT:
-                    break;
-                case CAUSANT:
-                    break;
-                case CAUSED:
-                    break;
-                case COMPRESENT:
-                    break;
-                case CONTEXT:
-                    break;
-                case COOCCURRENT:
-                    break;
-                case CURRENCY:
-                    break;
-                case GOAL:
-                    break;
-                case INHERENT:
-                    break;
-                case GROUP_CLOSE:
-                    break;
-                case GROUP_OPEN:
-                    break;
-                case INLINE_VALUE:
-                    break;
-                case LOGICAL_OPERATOR:
-                    break;
-                case RELATIONSHIP_SOURCE:
-                    break;
-                case RELATIONSHIP_TARGET:
-                    break;
-                case ROLE:
-                    break;
-                case TEMPORAL_INHERENT:
-                    break;
-                case TRAIT:
-                    break;
-                case UNARY_OPERATOR:
-                    
-                    break;
-                case UNIT:
-                    break;
-                case VALUE_OPERATOR:
-                    
-                    break;
-                default:
-                    break;
-                }
-            } else if (o instanceof IKimConcept.Type) {
+        for (ObservableRole role : composer.getAdmittedLexicalInput()) {
+            switch(role) {
+            case ADJACENT:
+                ret.add(new SearchMatch(Modifier.ADJACENT_TO));
+                break;
+            case CAUSANT:
+                ret.add(new SearchMatch(Modifier.CAUSING));
+                break;
+            case CAUSED:
+                ret.add(new SearchMatch(Modifier.CAUSED_BY));
+                break;
+            case COMPRESENT:
+                ret.add(new SearchMatch(Modifier.WITH));
+                break;
+            case CONTEXT:
+                ret.add(new SearchMatch(Modifier.WITHIN));
+                break;
+            case COOCCURRENT:
+                ret.add(new SearchMatch(Modifier.DURING));
+                break;
+            case INHERENT:
+                ret.add(new SearchMatch(Modifier.OF));
+                break;
+            case RELATIONSHIP_SOURCE:
+                ret.add(new SearchMatch(Modifier.LINKING));
+                break;
+            case RELATIONSHIP_TARGET:
+                ret.add(new SearchMatch(Modifier.TO));
+                break;
+            case GOAL:
+                ret.add(new SearchMatch(Modifier.FOR));
+                break;
+            case CURRENCY:
+                break;
+            case GROUP_CLOSE:
+                break;
+            case GROUP_OPEN:
+                break;
+            case INLINE_VALUE:
+                break;
+            case LOGICAL_OPERATOR:
+                break;
+            case ROLE:
+                break;
+            case TRAIT:
+                break;
+            case UNARY_OPERATOR:
+                ret.addAll(matchUnaryOperators(term));
+                break;
+            case UNIT:
+                break;
+            case VALUE_OPERATOR:
+                ret.addAll(matchValueOperators(term));
+                break;
+            default:
+                break;
 
-                
             }
         }
-        
+
+        if (composer.getAdmittedLogicalInput().size() > 0) {
+
+            IndexSearcher searcher;
+            try {
+                searcher = searcherManager.acquire();
+            } catch (IOException e) {
+                // adorable exception management
+                throw new KlabIOException(e);
+            }
+
+            // try {
+            // TopDocs docs = searcher.search(constraint.buildQuery(currentTerm, this.analyzer),
+            // maxResults);
+            // ScoreDoc[] hits = docs.scoreDocs;
+            //
+            // for (ScoreDoc hit : hits) {
+            //
+            // Document document = searcher.doc(hit.doc);
+            //
+            // Match.Type matchType = Match.Type.values()[Integer.parseInt(document.get("vmtype"))];
+            //
+            // if (constraint.getType() == matchType && !ids.contains(document.get("id"))) {
+            //
+            // SearchMatch match = new SearchMatch();
+            // match.setId(document.get("id"));
+            // match.setName(document.get("name"));
+            // match.setDescription(document.get("description"));
+            // match.setScore(hit.score);
+            // match.setSemantics(decodeType(document.get("smtype")));
+            // match.setMatchType(matchType);
+            // match.getConceptType().add(IKimConcept.Type.values()[Integer.parseInt(document.get("vctype"))]);
+            //
+            // cret.add(match);
+            // ids.add(document.get("id"));
+            // }
+            // }
+            //
+            // } catch (Exception e) {
+            // throw new KlabIOException(e);
+            // } finally {
+            // try {
+            // searcherManager.release(searcher);
+            // } catch (IOException e) {
+            // // fucking unbelievable, they want it in finally and make it throw a checked
+            // // exception
+            // throw new KlabIOException(e);
+            // }
+            // }
+            // }
+            //
+            // /*
+            // * filter matches if the constraint requires it.
+            // */
+            // if (constraint.isFilter()) {
+            // List<Match> fret = new ArrayList<>();
+            // for (Match match : cret) {
+            // if (constraint.filter(match)) {
+            // fret.add(match);
+            // }
+            // }
+            // cret = fret;
+            // }
+            // ret.addAll(cret);
+
+            for (ObservableComposer.Constraint constraint : composer.getAdmittedLogicalInput()) {
+                System.out.println("CAN " + constraint);
+            }
+        }
+
+        return ret;
+    }
+
+    Collection<Match> matchObservableModifier(String term, ObservableRole role) {
+        List<Match> ret = new ArrayList<>();
+        return ret;
+    }
+
+    Collection<Match> matchValueOperators(String term) {
+        List<Match> ret = new ArrayList<>();
+        for (ValueOperator op : ValueOperator.values()) {
+            if (op.name().toLowerCase().startsWith(term)) {
+                ret.add(new SearchMatch(op));
+            }
+        }
+        return ret;
+    }
+
+    Collection<Match> matchUnaryOperators(String term) {
+        List<Match> ret = new ArrayList<>();
+        for (UnarySemanticOperator op : UnarySemanticOperator.values()) {
+            if (op.declaration[0].startsWith(term)) {
+                ret.add(new SearchMatch(op));
+            }
+        }
         return ret;
     }
 

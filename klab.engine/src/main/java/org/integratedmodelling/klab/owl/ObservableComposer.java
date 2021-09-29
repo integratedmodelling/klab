@@ -16,7 +16,6 @@ import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.kim.api.ValueOperator;
-import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observables;
@@ -113,6 +112,38 @@ public class ObservableComposer {
         this.errors = parent.errors;
     }
 
+    /**
+     * A logical constraint. If not negated, the arguments are required, otherwise they are
+     * prohibited. The argument list may contain IKimConcept.Type, IConcept, or other constraints.
+     * Multiple constraints in the logicalScope field are in OR; individual arguments in the
+     * constraint are in AND.
+     * 
+     * @author Ferd
+     *
+     */
+    public static class Constraint {
+        public boolean negated = false;
+        public Collection<Object> arguments = new HashSet<>();
+        
+        private Constraint() {}
+        
+        public static Constraint not(IConcept arg) {
+            Constraint ret = new Constraint();
+            ret.arguments.add(arg);
+            ret.negated = true;
+            return ret;
+        }
+        
+        public static Constraint of(Object...objects) {
+            Constraint ret = new Constraint();
+            for (Object o : objects) {
+                ret.arguments.add(o);
+            }
+            return ret;
+        }
+        
+    }
+
     class State {
 
         public State() {
@@ -123,7 +154,7 @@ public class ObservableComposer {
 
             this.lexicalScope = other.lexicalScope;
             this.lexicalRealm = EnumSet.copyOf(other.lexicalRealm);
-            this.logicalRealm = EnumSet.copyOf(other.logicalRealm);
+            this.logicalRealm = new HashSet<>(other.logicalRealm);
             this.inherent = other.inherent;
             this.cooccurrent = other.cooccurrent;
             this.context = other.context;
@@ -154,7 +185,7 @@ public class ObservableComposer {
          * Admitted concept types that can be added in this scope. Empty means everything's allowed,
          * filled means any of those but nothing else.
          */
-        Set<IKimConcept.Type> logicalRealm = EnumSet.noneOf(IKimConcept.Type.class);
+        Set<Constraint> logicalRealm = new HashSet<>();
 
         /**
          * Admitted lexical realm for this scope. Calls that fulfill a role which isn't here are
@@ -206,8 +237,8 @@ public class ObservableComposer {
         ObservableComposer ret = new ObservableComposer();
         // admits unary ops, predicates and observables. No groups at root level.
         ret.state.peek().lexicalRealm.add(ObservableRole.UNARY_OPERATOR);
-        ret.state.peek().logicalRealm.add(IKimConcept.Type.OBSERVABLE);
-        ret.state.peek().logicalRealm.add(IKimConcept.Type.PREDICATE);
+        ret.state.peek().logicalRealm.add(Constraint.of(IKimConcept.Type.OBSERVABLE));
+        ret.state.peek().logicalRealm.add(Constraint.of(IKimConcept.Type.PREDICATE));
         ret.errors = new ArrayList<>();
         for (Object o : init) {
             if (o instanceof IMonitor) {
@@ -215,7 +246,7 @@ public class ObservableComposer {
             } else if (o instanceof ObservableRole) {
                 ret.state.peek().lexicalRealm.add((ObservableRole) o);
             } else if (o instanceof Type) {
-                ret.state.peek().logicalRealm.add((Type) o);
+                ret.state.peek().logicalRealm.add(Constraint.of(o));
             } else {
                 throw new KlabIllegalStateException("ObservableComposer: can't use initialization parameter " + o);
             }
@@ -236,7 +267,7 @@ public class ObservableComposer {
             if (o instanceof ObservableRole) {
                 ret.state.peek().lexicalRealm.add((ObservableRole) o);
             } else if (o instanceof Type) {
-                ret.state.peek().logicalRealm.add((Type) o);
+                ret.state.peek().logicalRealm.add(Constraint.of(o));
             } else {
                 throw new KlabIllegalStateException("ObservableComposer: can't use initialization parameter " + o);
             }
@@ -300,11 +331,29 @@ public class ObservableComposer {
         return this;
     }
 
-    public Set<ObservableRole> admits() {
+    /**
+     * Return the allowed inputs categories from a logical perspective, including operators, values,
+     * units and specific observable roles within the observable (e.g. inherent, cooccurrent etc.).
+     * Meant to select the possible non-concept tokens that can be used in the current state.
+     * 
+     * @return
+     */
+    public Set<ObservableRole> getAdmittedLexicalInput() {
         return state.peek().lexicalRealm;
     }
 
-    public Set<IKimConcept.Type> admitsComponent() {
+    /**
+     * Return the concept constraints admitted for the conceptual input at this stage. If empty, no
+     * concepts can be input at this time. If both the lexical and the logical inputs are empty, the
+     * only possible input is undo.
+     * <p>
+     * FIXME this will need to admit AND-like collections to contrast in OR with their siblings.
+     * E.g. (ABSTRACT CLASS) or (SUBJECT). It will also need to admit (NOT <concept>) or (NOT
+     * <role>).
+     * 
+     * @return
+     */
+    public Set<Constraint> getAdmittedLogicalInput() {
         return state.peek().logicalRealm;
     }
 
@@ -326,11 +375,11 @@ public class ObservableComposer {
         s.inherent.state.peek().logicalRealm.clear();
         s.inherent.state.peek().lexicalRealm.add(ObservableRole.GROUP_OPEN);
         // TODO add all the roles compatible with a subject/agent/relationship
-        s.inherent.state.peek().logicalRealm.add(Type.SUBJECT);
-        s.inherent.state.peek().logicalRealm.add(Type.AGENT);
-        s.inherent.state.peek().logicalRealm.add(Type.EVENT);
-        s.inherent.state.peek().logicalRealm.add(Type.RELATIONSHIP);
-        s.inherent.state.peek().logicalRealm.add(Type.PREDICATE);
+        s.inherent.state.peek().logicalRealm.add(Constraint.of(Type.SUBJECT));
+        s.inherent.state.peek().logicalRealm.add(Constraint.of(Type.AGENT));
+        s.inherent.state.peek().logicalRealm.add(Constraint.of(Type.EVENT));
+        s.inherent.state.peek().logicalRealm.add(Constraint.of(Type.RELATIONSHIP));
+        s.inherent.state.peek().logicalRealm.add(Constraint.of(Type.PREDICATE));
         return s.inherent;
     }
 
@@ -411,7 +460,7 @@ public class ObservableComposer {
          * check if concept is acceptable
          */
         if (!state.peek().lexicalRealm.isEmpty()) {
-            if (!Kim.hasCompatibleTypes(((Concept) trait).getTypeSet(), state.peek().logicalRealm)) {
+            if (!checkLogicalConstraints(trait)) {
                 error("concept " + trait + " is not compatible with the current definition: expecting one of "
                         + state.peek().logicalRealm);
                 return this;
@@ -433,6 +482,11 @@ public class ObservableComposer {
         // }
 
         return this;
+    }
+
+    private boolean checkLogicalConstraints(IConcept concept) {
+        // TODO Auto-generated method stub
+        return false;
     }
 
     /**
@@ -543,9 +597,9 @@ public class ObservableComposer {
             /*
              * admitted concepts
              */
-            this.state.peek().logicalRealm.add(Type.PREDICATE);
+            this.state.peek().logicalRealm.add(Constraint.of(Type.PREDICATE));
             if (canHazObservable) {
-                this.state.peek().logicalRealm.add(Type.OBSERVABLE);
+                this.state.peek().logicalRealm.add(Constraint.of(Type.OBSERVABLE));
                 if (this.state.peek().unaryOperator == null) {
                     this.state.peek().lexicalRealm.add(ObservableRole.UNARY_OPERATOR);
                 }
