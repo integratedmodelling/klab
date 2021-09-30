@@ -5,8 +5,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.layout.TreeColumnLayout;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.ColumnPixelData;
@@ -214,7 +212,10 @@ public class SearchView extends ViewPart {
 					treeViewer.getTree().forceFocus();
 				} else if (e.keyCode == SWT.ESC) {
 					reset();
-				} else if (text.getText().trim().isEmpty()) {
+				} else if (e.keyCode == '(' || e.keyCode == ')') {
+                    e.doit = false;
+                    text.setText("");
+                }else if (text.getText().trim().isEmpty()) {
 					clearMatches();
 				} else {
 					search(text.getText());
@@ -225,9 +226,9 @@ public class SearchView extends ViewPart {
 			public void keyPressed(KeyEvent e) {
 				if (text.getText().isEmpty() && e.keyCode == SWT.BS) {
 					removeLastMatch();
-				} else if (e.keyCode == '(') {
+				} else if (text.getText().isEmpty() && e.keyCode == '(') {
 					openParenthesis();
-				} else if (e.keyCode == ')') {
+				} else if (text.getText().isEmpty() && e.keyCode == ')') {
 					closeParenthesis();
 				}
 			}
@@ -371,6 +372,20 @@ public class SearchView extends ViewPart {
 	}
 
 	protected void closeParenthesis() {
+	    
+        SearchRequest request = new SearchRequest();
+        request.setSearchMode(Mode.CLOSE_SCOPE);
+        request.setContextId(this.contextId);
+        
+        Activator.post((message) -> {
+            SearchResponse response = message.getPayload(SearchResponse.class);
+            this.matches.addAll(response.getMatches());
+            this.contextId = response.getContextId();
+            Display.getDefault().asyncExec(() -> {
+                treeViewer.setInput(matches);
+            });
+        }, IMessage.MessageClass.Search, IMessage.Type.SemanticSearch, request);
+	    
 		SearchMatch closed = new SearchMatch();
 		closed.setId(")");
 		closed.setName(")");
@@ -381,7 +396,21 @@ public class SearchView extends ViewPart {
 	}
 
 	protected void openParenthesis() {
-		SearchMatch open = new SearchMatch();
+
+        SearchRequest request = new SearchRequest();
+        request.setSearchMode(Mode.OPEN_SCOPE);
+        request.setContextId(this.contextId);
+        
+        Activator.post((message) -> {
+            SearchResponse response = message.getPayload(SearchResponse.class);
+            this.matches.addAll(response.getMatches());
+            this.contextId = response.getContextId();
+            Display.getDefault().asyncExec(() -> {
+                treeViewer.setInput(matches);
+            });
+        }, IMessage.MessageClass.Search, IMessage.Type.SemanticSearch, request);
+	    
+	    SearchMatch open = new SearchMatch();
 		open.setId("(");
 		open.setName("(");
 		open.setOpenGroup(true);
@@ -481,7 +510,7 @@ public class SearchView extends ViewPart {
 		SearchMatchAction action = new SearchMatchAction();
 		action.setContextId(contextId);
 		action.setMatchIndex(matchIndex);
-		Activator.post(IMessage.MessageClass.Search, IMessage.Type.MatchAction, action);
+		Activator.post(IMessage.MessageClass.Search, IMessage.Type.SemanticMatch, action);
 	}
 
 	private void clearMatches() {
@@ -519,7 +548,21 @@ public class SearchView extends ViewPart {
 	}
 
 	private void removeLastMatch() {
-		if (accepted.size() == 1) {
+
+        SearchRequest request = new SearchRequest();
+        request.setSearchMode(Mode.UNDO);
+        request.setContextId(this.contextId);
+        
+	    Activator.post((message) -> {
+            SearchResponse response = message.getPayload(SearchResponse.class);
+            this.matches.addAll(response.getMatches());
+            this.contextId = response.getContextId();
+            Display.getDefault().asyncExec(() -> {
+                treeViewer.setInput(matches);
+            });
+        }, IMessage.MessageClass.Search, IMessage.Type.SemanticSearch, request);
+	    
+	    if (accepted.size() == 1) {
 			reset();
 		} else if (accepted.size() > 0) {
 			accepted.remove(accepted.size() - 1);

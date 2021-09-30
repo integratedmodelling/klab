@@ -30,6 +30,15 @@ public class SearchMatch implements IIndexingService.Match {
 
     boolean isAbstract = false;
 
+    public org.integratedmodelling.klab.rest.SearchMatch getReference() {
+        org.integratedmodelling.klab.rest.SearchMatch ret = new org.integratedmodelling.klab.rest.SearchMatch();
+        ret.setId(this.id);
+        ret.setDescription(this.description);
+        ret.getSemanticType().addAll(this.semantics);
+        ret.setMatchType(this.matchType);
+        return ret;
+    }
+    
     public SearchMatch() {
     }
 
@@ -149,7 +158,7 @@ public class SearchMatch implements IIndexingService.Match {
     }
 
     @Override
-    public Set<org.integratedmodelling.kim.api.IKimConcept.Type> getConceptType() {
+    public Set<IKimConcept.Type> getConceptType() {
         return conceptType;
     }
 

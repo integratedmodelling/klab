@@ -31,6 +31,7 @@ import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Authorities;
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Currencies;
 import org.integratedmodelling.klab.Documentation;
@@ -892,7 +893,20 @@ public class Session extends GroovyObjectSupport
     }
 
     @MessageHandler
-    private void handleMatchAction(SearchMatchAction action) {
+    private void handleMatchAction(SearchMatchAction action, IMessage message) {
+
+        if (message.getType() == IMessage.Type.SemanticMatch) {
+            ObservableComposer composer = composers.get(action.getContextId());
+            /*
+             * Insert choice into composer and setup for next search.
+             */
+            SearchResponse matches = composer.getData("matches", SearchResponse.class);
+            if (matches != null && matches.getMatches().size() > action
+                    .getMatchIndex()/* which would be weird */) {
+                composers.put(action.getContextId(), acceptChoice(composer, matches.getMatches().get(action.getMatchIndex())));
+            }
+            return;
+        }
 
         final String contextId = action.getContextId();
         Pair<Context, List<Match>> ctx = searchContexts.get(contextId);
@@ -911,6 +925,20 @@ public class Session extends GroovyObjectSupport
                 : ctx.getFirst().previous();
 
         searchContexts.put(contextId, new Pair<>(newContext, new ArrayList<>()));
+    }
+
+    private ObservableComposer acceptChoice(ObservableComposer composer, SearchMatch searchMatch) {
+
+        // TODO set the composer and substitute the current in the map @ contextID
+        if (searchMatch.getMatchType() == Match.Type.CONCEPT) {
+            composer = composer.submit(Concepts.c(searchMatch.getId()));
+        }
+
+        for (String error : composer.getErrors()) {
+            monitor.error(error);
+        }
+
+        return composer;
     }
 
     @MessageHandler(type = IMessage.Type.DataflowNodeDetail)
@@ -1018,6 +1046,18 @@ public class Session extends GroovyObjectSupport
                     case FREETEXT:
                         searchFreetext(request, response);
                         break;
+                    case UNDO:
+                        composers.put(request.getContextId(), composers.get(request.getContextId()).undo());
+                        // TODO setup response for undo. RESPONSE SHOULD CONTAIN THE FULL CONCEPT
+                        // SYNTAX WITH TYPES FOR COLORING.
+                        break;
+                    case OPEN_SCOPE:
+                    case CLOSE_SCOPE:
+                        // the parentheses mean: if we're in a scope, everything applies to the
+                        // current composer until we close it; otherwise we
+                        // close it immediately after the first input in it.
+                        request.setQueryString(request.getSearchMode() == Mode.OPEN_SCOPE ? "(" : ")");
+                        // fall through
                     case SEMANTIC:
                         if (request.isDefaultResults()) {
                             setDefaultSearchResults(response.getContextId(), request, response);
@@ -1031,6 +1071,10 @@ public class Session extends GroovyObjectSupport
                         }
                         break;
                     }
+
+                    monitor.send(Message
+                            .create(token, IMessage.MessageClass.Query, IMessage.Type.QueryResult, response.signalEndTime())
+                            .inResponseTo(message));
                 }
             }.run();
         }
@@ -1071,12 +1115,12 @@ public class Session extends GroovyObjectSupport
         } else if (request.getQueryString().equals("(")) {
             // TODO current context must have flag and this triggers going back to the parent
         } else {
-            for (Match match : Indexer.INSTANCE.query(request.getQueryString(), composer)) {
-                response.getMatches().add((SearchMatch) match);
+            for (Match match : Indexer.INSTANCE.query(request.getQueryString(), composer, request.getMaxResults())) {
+                response.getMatches().add(((org.integratedmodelling.klab.engine.indexing.SearchMatch) match).getReference());
             }
+            // save the matches so that we recognize a choice
+            composer.setData("matches", response);
         }
-
-        System.out.println("BUSDELCUL");
     }
 
     /**

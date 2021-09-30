@@ -30,7 +30,10 @@ public class SearchRequest {
 
 	public enum Mode {
 		SEMANTIC,
-		FREETEXT
+		FREETEXT,
+		UNDO,
+		OPEN_SCOPE,
+		CLOSE_SCOPE
 	}
 	
 	private String queryString;

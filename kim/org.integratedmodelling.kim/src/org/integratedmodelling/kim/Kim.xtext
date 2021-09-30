@@ -435,27 +435,28 @@ ConceptDeclaration:
 	main+=Concept+ 
 		// binary semantic operators; also 'as', 'by' and 'follows' handled in other rules
 		(=>
-			// primary inherency (when secondary is given using 'within')
+			// primary physical inherency (observational inherency is given using 'within'). Any observable can be inherent to any countable.
 			('of' ((distributedOfInherency?='each')? inherency=SimpleConceptDeclaration))? &
-			// purpose (achievement event created from target)
+			// purpose (achievement event created from target). Partitions qualities and applies to anything that can be created.
 			('for' ((distributedForInherency?='each')? motivation=SimpleConceptDeclaration))? &
 			// compresence (subject, process, event, presence or partitioned quality)
 			('with' compresent=SimpleConceptDeclaration)? &
 			// cause towards self - causant can be anything (?)
 			('caused' 'by' causant=SimpleConceptDeclaration)? &
-			// spatial adjacency (see 'follows' operator for temporal adjacency in events) - subject, event or relationship
+			// spatial adjacency (see 'follows' operator for temporal adjacency in events) - Only for countables
 			('adjacent' 'to' adjacent=SimpleConceptDeclaration)? &
-			// being contained - subject
+			// being contained - Countables only
 			('contained' 'in' container=SimpleConceptDeclaration)? &
-			// containing - subject
+			// containing - Countables only
 			('containing' contained=SimpleConceptDeclaration)? &
-			// cause towards event (?)
+			// cause towards events, processes, quality partitions
 			('causing'   caused=SimpleConceptDeclaration)? &
-			// concomitant with event (?)
+			// concomitant with any occurrent
 			('during'   ((distributedTemporalInherency?='each')? during=SimpleConceptDeclaration))? &
-			// context or secondary inherency
+			// observational inherency: specifies context for observations, either as part of semantics or to 
+			// subclass the use of a model to a specified context. Applies to any observable, only countables as argument
 			('within' ((distributedWithinInherency?='each')? context=SimpleConceptDeclaration))? &
-			// for relationships: specialize source and target types
+			// for relationships: specialize source and target types, both subjects
 			('linking' relationshipSource=SimpleConceptDeclaration 'to' relationshipTarget=SimpleConceptDeclaration)?
 		)?
 ;

@@ -32,9 +32,11 @@ import org.integratedmodelling.klab.common.mediation.Currency;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.rest.SearchResponse;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
 import org.integratedmodelling.klab.utils.StringUtil;
+import org.integratedmodelling.klab.utils.Utils;
 
 /**
  * A state machine similar to ObservableBuilder but starting empty and including constraints on what
@@ -124,24 +126,34 @@ public class ObservableComposer {
     public static class Constraint {
         public boolean negated = false;
         public Collection<Object> arguments = new HashSet<>();
-        
-        private Constraint() {}
-        
+
+        private Constraint() {
+        }
+
         public static Constraint not(IConcept arg) {
             Constraint ret = new Constraint();
             ret.arguments.add(arg);
             ret.negated = true;
             return ret;
         }
-        
-        public static Constraint of(Object...objects) {
+
+        public static Constraint of(Object... objects) {
             Constraint ret = new Constraint();
             for (Object o : objects) {
                 ret.arguments.add(o);
             }
             return ret;
         }
-        
+
+        public boolean matches(IConcept concept) {
+            for (Object o : arguments) {
+                if (o instanceof IKimConcept.Type && !concept.is((Type) o)) {
+                    return false;
+                } // TODO the rest
+            }
+            return negated ? false : true;
+        }
+
     }
 
     class State {
@@ -327,7 +339,9 @@ public class ObservableComposer {
      * @return
      */
     public ObservableComposer undo() {
-        this.state.pop();
+        if (this.state.size() > 1) {
+            this.state.pop();
+        } // else beep loudly and raise a shitstorm
         return this;
     }
 
@@ -454,12 +468,12 @@ public class ObservableComposer {
      * @param concepts
      * @return the same builder this was called on, for chaining calls
      */
-    public ObservableComposer concept(IConcept trait) {
+    public ObservableComposer submit(IConcept trait) {
 
         /*
          * check if concept is acceptable
          */
-        if (!state.peek().lexicalRealm.isEmpty()) {
+        if (!state.peek().logicalRealm.isEmpty()) {
             if (!checkLogicalConstraints(trait)) {
                 error("concept " + trait + " is not compatible with the current definition: expecting one of "
                         + state.peek().logicalRealm);
@@ -485,7 +499,11 @@ public class ObservableComposer {
     }
 
     private boolean checkLogicalConstraints(IConcept concept) {
-        // TODO Auto-generated method stub
+        for (Constraint constraint : state.peek().logicalRealm) {
+            if (constraint.matches(concept)) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -597,12 +615,15 @@ public class ObservableComposer {
             /*
              * admitted concepts
              */
-            this.state.peek().logicalRealm.add(Constraint.of(Type.PREDICATE));
             if (canHazObservable) {
                 this.state.peek().logicalRealm.add(Constraint.of(Type.OBSERVABLE));
                 if (this.state.peek().unaryOperator == null) {
                     this.state.peek().lexicalRealm.add(ObservableRole.UNARY_OPERATOR);
                 }
+            } else {
+                // we enforce that predicates are specified before the observable to reduce the
+                // possible states and enable "applies to" validation.
+                this.state.peek().logicalRealm.add(Constraint.of(Type.PREDICATE));
             }
 
             /*
@@ -622,12 +643,63 @@ public class ObservableComposer {
 
             if (!isError() && ((Concept) added).is(Type.OBSERVABLE)) {
                 // TODO all the applicable modifiers
-                if (((Concept) added).is(Type.QUALITY)) {
+                if (!defines(ObservableRole.INHERENT)) {
                     this.state.peek().lexicalRealm.add(ObservableRole.INHERENT);
                 }
             }
         }
 
+    }
+
+    private boolean defines(ObservableRole inherent) {
+        switch(inherent) {
+        case ADJACENT:
+            return this.state.peek().adjacent != null;
+        case CAUSANT:
+            return this.state.peek().causant != null;
+        case CAUSED:
+            return this.state.peek().caused != null;
+        case COMPRESENT:
+            return this.state.peek().compresent != null;
+        case CONTEXT:
+            return this.state.peek().context != null;
+        case COOCCURRENT:
+            return this.state.peek().cooccurrent != null;
+        case CURRENCY:
+            return this.state.peek().currency != null;
+        case GOAL:
+            return this.state.peek().goal != null;
+        case INHERENT:
+            return this.state.peek().inherent != null;
+        case RELATIONSHIP_SOURCE:
+            return this.state.peek().relationshipSource != null;
+        case RELATIONSHIP_TARGET:
+            return this.state.peek().relationshipTarget != null;
+        case INLINE_VALUE:
+            break;
+        case LOGICAL_OPERATOR:
+            break;
+        case ROLE:
+            break;
+        case TEMPORAL_INHERENT:
+            break;
+        case TRAIT:
+            break;
+        case UNARY_OPERATOR:
+            return this.state.peek().unaryOperator != null;
+        case UNIT:
+            return this.state.peek().unit != null;
+        case VALUE_OPERATOR:
+            break;
+        default:
+            break;
+
+        }
+        return false;
+    }
+
+    private Object isCompleting() {
+        return null;
     }
 
     private boolean defines(Type type) {
@@ -654,12 +726,12 @@ public class ObservableComposer {
                 + state.peek().lexicalRealm + "\n";
     }
 
-    public ObservableComposer concept(String trait) {
+    public ObservableComposer submit(String trait) {
         IConcept c = Concepts.INSTANCE.getConcept(trait);
         if (c == null) {
             return error("Concept " + trait + " is unknown");
         }
-        return concept(c);
+        return submit(c);
     }
 
     private ObservableComposer error(String string) {
@@ -988,12 +1060,16 @@ public class ObservableComposer {
     }
 
     /**
-     * User data for interactive tracking of contexts.
+     * User data for interactive tracking of contexts, match proposals etc.
      * 
      * @return
      */
-    public Map<String, Object> getData() {
-        return data;
+    public <T> T getData(String key, Class<T> cls) {
+        return Utils.asType(data.get(key), cls);
+    }
+
+    public void setData(String key, Object value) {
+        this.data.put(key, value);
     }
 
 }

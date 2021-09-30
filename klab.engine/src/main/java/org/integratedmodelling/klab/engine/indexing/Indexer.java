@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field.Store;
@@ -18,8 +19,11 @@ import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.ControlledRealTimeReopenThread;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ReferenceManager;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.SearcherManager;
@@ -40,16 +44,19 @@ import org.integratedmodelling.kim.api.Modifier;
 import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.kim.model.Kim;
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.IStatement;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.services.IIndexingService.Context;
 import org.integratedmodelling.klab.api.services.IIndexingService.Match;
 import org.integratedmodelling.klab.engine.indexing.SearchContext.Constraint;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.ObservableComposer;
 import org.integratedmodelling.klab.utils.NumberUtils;
 
@@ -263,6 +270,17 @@ public enum Indexer {
         return query(currentTerm, searchContext, MAX_RESULT_COUNT);
     }
 
+    public Query buildQuery(String currentTerm, Analyzer analyzer) {
+        QueryParser parser = new QueryParser("name", analyzer);
+        // parser.setAllowLeadingWildcard(true);
+        try {
+            // hai voglia
+            return parser.parse("name:" + currentTerm + "*");
+        } catch (ParseException e) {
+            throw new KlabValidationException(e);
+        }
+    }
+
     /**
      * Updated query function: arguments beyond the search term defines the type of result we may be
      * interested in. We will return matches in order of request, incrementally filtering any
@@ -276,10 +294,14 @@ public enum Indexer {
      * @param where
      * @return
      */
-    public List<Match> query(String term, ObservableComposer composer) {
+    public List<Match> query(String term, ObservableComposer composer, int maxResults) {
 
         List<Match> ret = new ArrayList<>();
 
+        if (maxResults <= 0) {
+            maxResults = MAX_RESULT_COUNT;
+        }
+        
         for (ObservableRole role : composer.getAdmittedLexicalInput()) {
             switch(role) {
             case ADJACENT:
@@ -350,62 +372,53 @@ public enum Indexer {
                 throw new KlabIOException(e);
             }
 
-            // try {
-            // TopDocs docs = searcher.search(constraint.buildQuery(currentTerm, this.analyzer),
-            // maxResults);
-            // ScoreDoc[] hits = docs.scoreDocs;
-            //
-            // for (ScoreDoc hit : hits) {
-            //
-            // Document document = searcher.doc(hit.doc);
-            //
-            // Match.Type matchType = Match.Type.values()[Integer.parseInt(document.get("vmtype"))];
-            //
-            // if (constraint.getType() == matchType && !ids.contains(document.get("id"))) {
-            //
-            // SearchMatch match = new SearchMatch();
-            // match.setId(document.get("id"));
-            // match.setName(document.get("name"));
-            // match.setDescription(document.get("description"));
-            // match.setScore(hit.score);
-            // match.setSemantics(decodeType(document.get("smtype")));
-            // match.setMatchType(matchType);
-            // match.getConceptType().add(IKimConcept.Type.values()[Integer.parseInt(document.get("vctype"))]);
-            //
-            // cret.add(match);
-            // ids.add(document.get("id"));
-            // }
-            // }
-            //
-            // } catch (Exception e) {
-            // throw new KlabIOException(e);
-            // } finally {
-            // try {
-            // searcherManager.release(searcher);
-            // } catch (IOException e) {
-            // // fucking unbelievable, they want it in finally and make it throw a checked
-            // // exception
-            // throw new KlabIOException(e);
-            // }
-            // }
-            // }
-            //
-            // /*
-            // * filter matches if the constraint requires it.
-            // */
-            // if (constraint.isFilter()) {
-            // List<Match> fret = new ArrayList<>();
-            // for (Match match : cret) {
-            // if (constraint.filter(match)) {
-            // fret.add(match);
-            // }
-            // }
-            // cret = fret;
-            // }
-            // ret.addAll(cret);
+            Set<String> ids = new HashSet<>();
+            try {
 
-            for (ObservableComposer.Constraint constraint : composer.getAdmittedLogicalInput()) {
-                System.out.println("CAN " + constraint);
+                TopDocs docs = searcher.search(buildQuery(term, this.analyzer), maxResults);
+                ScoreDoc[] hits = docs.scoreDocs;
+
+                for (ScoreDoc hit : hits) {
+
+                    Document document = searcher.doc(hit.doc);
+                    IConcept concept = Concepts.INSTANCE.getConcept(document.get("id"));
+                    Match.Type matchType = Match.Type.values()[Integer.parseInt(document.get("vmtype"))];
+
+                    if (concept == null || ids.contains(document.get("id"))) {
+                        continue;
+                    }
+
+                    for (ObservableComposer.Constraint constraint : composer.getAdmittedLogicalInput()) {
+
+                        if (constraint.matches(concept)) {
+
+                            SearchMatch match = new SearchMatch();
+                            match.setId(document.get("id"));
+                            match.setName(document.get("name"));
+                            match.setDescription(document.get("description"));
+                            match.setScore(hit.score);
+                            match.setSemantics(decodeType(document.get("smtype")));
+                            match.setMatchType(matchType);
+                            match.getConceptType().add(IKimConcept.Type.values()[Integer.parseInt(document.get("vctype"))]);
+
+                            ret.add(match);
+                            ids.add(document.get("id"));
+
+                            break;
+                        }
+                    }
+                }
+
+            } catch (Exception e) {
+                throw new KlabIOException(e);
+            } finally {
+                try {
+                    searcherManager.release(searcher);
+                } catch (IOException e) {
+                    // fucking unbelievable, they want it in finally and make it throw a checked
+                    // exception
+                    throw new KlabIOException(e);
+                }
             }
         }
 

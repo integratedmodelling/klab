@@ -330,9 +330,9 @@ public interface IMessage {
         /*
          * --- Search-class types --- FIXME SemanticSearch is a synonym of SubmitSearch, used in IDE
          * queries to trigger experimental behavior, to be merged with SubmitSearch and removed when
-         * done.
+         * done. Same with SemanticMatch vs. MatchAction.
          */
-        SemanticSearch, SubmitSearch, MatchAction,
+        SemanticSearch, SubmitSearch, MatchAction, SemanticMatch,
 
         /*
          * --- Query-class types ---
