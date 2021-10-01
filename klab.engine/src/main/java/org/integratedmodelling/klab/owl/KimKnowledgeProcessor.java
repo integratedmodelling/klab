@@ -20,16 +20,14 @@ import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.kim.model.KimConceptStatement;
 import org.integratedmodelling.kim.model.KimConceptStatement.ParentConcept;
-import org.integratedmodelling.klab.Authorities;
 import org.integratedmodelling.klab.Concepts;
-import org.integratedmodelling.klab.Currencies;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Reasoner;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.knowledge.IMetadata;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IObservable.Builder;
 import org.integratedmodelling.klab.api.knowledge.IObservable.Resolution;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
@@ -42,8 +40,8 @@ import org.integratedmodelling.klab.kim.KimNotifier.ErrorNotifyingMonitor;
 import org.integratedmodelling.klab.model.Annotation;
 import org.integratedmodelling.klab.model.ConceptStatement;
 import org.integratedmodelling.klab.model.Namespace;
+import org.integratedmodelling.klab.utils.CamelCase;
 import org.integratedmodelling.klab.utils.Pair;
-import org.integratedmodelling.klab.utils.Path;
 
 /**
  * A singleton that handles translation of k.IM knowledge statements to internal OWL-based
@@ -65,11 +63,6 @@ public enum KimKnowledgeProcessor {
     public void setWorldviewPeer(String coreConcept, String worldviewConcept) {
         coreConceptPeers.put(worldviewConcept, coreConcept);
     }
-
-    // public @Nullable Concept build(final IKimConceptStatement concept, final INamespace
-    // namespace, final IMonitor monitor) {
-    // return build(concept, namespace, null, monitor);
-    // }
 
     public @Nullable Concept build(final IKimConceptStatement concept, final INamespace namespace, ConceptStatement kimObject,
             final IMonitor monitor) {
@@ -177,12 +170,16 @@ public enum KimKnowledgeProcessor {
 
         Concept main = null;
         String mainId = concept.getName();
-
+        
         namespace.addAxiom(Axiom.ClassAssertion(mainId, concept.getType()));
 
         // set the k.IM definition
         namespace.addAxiom(
                 Axiom.AnnotationAssertion(mainId, NS.CONCEPT_DEFINITION_PROPERTY, namespace.getName() + ":" + concept.getName()));
+
+        // and the reference name
+        namespace.addAxiom(Axiom.AnnotationAssertion(mainId, NS.REFERENCE_NAME_PROPERTY,
+                getCleanFullId(namespace.getName(), concept.getName())));
 
         /*
          * basic attributes subjective deniable internal uni/bidirectional (relationship)
@@ -332,29 +329,19 @@ public enum KimKnowledgeProcessor {
 
         Observable ret = new Observable(observable);
 
+        IObservable.Builder builder = ObservableBuilder.getBuilder(main, monitor);
+
         ret.setUrl(concept.getURI());
-
-        String declaration = concept.getDefinition();
-
-        String unit = concept.getUnit();
-        String currency = concept.getCurrency();
-
-        if (unit != null) {
-            try {
-                ret.setUnit(Units.INSTANCE.getUnit(unit));
-                declaration += " in " + unit;
-            } catch (Exception e) {
-                monitor.error(e, concept);
-            }
+        
+        boolean unitsSet = false;
+        
+        if (concept.getUnit() != null) {
+            unitsSet = true;
+            builder = builder.withUnit(concept.getUnit());
         }
 
-        if (currency != null) {
-            try {
-                ret.setCurrency(Currencies.INSTANCE.getCurrency(currency));
-                declaration += " in " + currency;
-            } catch (Exception e) {
-                monitor.error(e, concept);
-            }
+        if (concept.getCurrency() != null) {
+            builder = builder.withCurrency(concept.getCurrency());
         }
 
         if (concept.getValue() != null) {
@@ -362,73 +349,39 @@ public enum KimKnowledgeProcessor {
             if (value instanceof IKimConcept) {
                 value = Concepts.INSTANCE.declare((IKimConcept) value);
             }
+            builder = builder.withInlineValue(value);
             ret.setValue(concept.getValue());
         }
 
         if (concept.getRange() != null) {
+            builder = builder.withRange(concept.getRange());
             ret.setRange(concept.getRange());
         }
 
-        ret.setOptional(concept.isOptional());
-        ret.setGeneric(concept.isGeneric());
-        ret.setGlobal(concept.isGlobal());
-        ret.setReferenceName(concept.getMain().getCodeName().replace("-", "_"));
-        ret.setStatedName(concept.getFormalName());
+        builder = builder.optional(concept.isOptional()).generic(concept.isGeneric()).global(concept.isGlobal())
+                .named(concept.getFormalName());
 
         if (concept.isExclusive()) {
-            ret.setResolution(Resolution.Only);
+            builder = builder.withResolution(Resolution.Only);
         } else if (concept.isGlobal()) {
-            ret.setResolution(Resolution.All);
+            builder = builder.withResolution(Resolution.All);
         } else if (concept.isGeneric()) {
-            ret.setResolution(Resolution.Any);
+            builder = builder.withResolution(Resolution.Any);
         }
 
         for (Pair<ValueOperator, Object> operator : concept.getValueOperators()) {
-
-            Object operand = null;
-
-            declaration += " " + operator.getFirst().declaration;
-            ret.setReferenceName(ret.getReferenceName() + "_" + operator.getFirst().textForm);
-
-            if (operator.getSecond() instanceof IKimConcept) {
-
-                operand = declareInternal((IKimConcept) operator.getSecond(), (Ontology) declarationOntology, monitor);
-                declaration += " " + operator.getSecond();
-                ret.setReferenceName(
-                        ret.getReferenceName() + "_" + ((IKimConcept) operator.getSecond()).getCodeName().replaceAll("\\-", "_"));
-
-            } else if (operator.getSecond() instanceof IKimObservable) {
-
-                operand = declare((IKimObservable) operator.getSecond(), (Ontology) declarationOntology, monitor);
-                declaration += " (" + operator.getSecond() + ")";
-                ret.setReferenceName(ret.getReferenceName() + "_"
-                        + ((IKimObservable) operator.getSecond()).getCodeName().replaceAll("\\-", "_"));
-            } else {
-
-                operand = operator.getSecond();
-                if (operator.getSecond() != null) {
-                    declaration += " " + operator.getSecond();
-                    ret.setReferenceName(ret.getReferenceName() + "_" + operator.getSecond());
-                }
-            }
-
-            ret.getValueOperators().add(new Pair<>(operator.getFirst(), operand));
-
+            builder = builder.withValueOperator(operator.getFirst(), operator.getSecond());
         }
 
-        ret.setDeclaration(declaration);
-
-        ret.setName(concept.getFormalName() == null ? ret.getReferenceName() : concept.getFormalName());
-
-        if (Units.INSTANCE.needsUnits(ret) && ret.getUnit() == null) {
-            ret.setFluidUnits(true);
+        if (Units.INSTANCE.needsUnits(ret) && !unitsSet) {
+            builder = builder.fluidUnits(true);
         }
 
         for (IKimAnnotation annotation : concept.getAnnotations()) {
-            ret.addAnnotation(new Annotation(annotation));
+            builder = builder.withAnnotation(new Annotation(annotation));
         }
 
-        return ret;
+        return (Observable) builder.buildObservable();
     }
 
     /**
@@ -545,9 +498,7 @@ public enum KimKnowledgeProcessor {
                 builder.withRole(role);
             }
         }
-
-        // semantic operator goes last as it builds the operand and resets all
-        // predicates
+ 
         if (concept.getSemanticModifier() != null) {
             IConcept other = null;
             if (concept.getComparisonConcept() != null) {
@@ -602,6 +553,16 @@ public enum KimKnowledgeProcessor {
         }
 
         return ret;
+    }
+
+    /**
+     * Source of truth for identifier-friendly reference names
+     * 
+     * @param main
+     * @return
+     */
+    public static String getCleanFullId(String namespace, String name) {
+        return namespace.replaceAll("\\.", "_") + "__" + CamelCase.toLowerCase(name, '_');
     }
 
     private void createProperties(IConcept ret, Namespace ns) {

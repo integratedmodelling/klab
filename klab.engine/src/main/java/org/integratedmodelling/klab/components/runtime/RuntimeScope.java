@@ -270,6 +270,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
     RuntimeScope(RuntimeScope scope, Map<String, IVariable> variables) {
         this(scope);
+        this.model = scope.model;
         this.getVariables().putAll(variables);
     }
 
@@ -398,27 +399,52 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
         return target == null ? this.catalog.get(this.targetName) : target;
     }
 
+    private IArtifact findInCatalog(String name) {
+
+        IArtifact ret = null;
+        String referenceName = name;
+        if (model != null) {
+            IObservable observable = model.getObservableFor(name);
+            if (observable != null) {
+                referenceName = observable.getReferenceName();
+            }
+        }
+
+        ret = catalog.get(referenceName);
+        if (ret == null) {
+            /*
+             * lenient, allows us to also use the reference name when renamed. This is crucial for
+             * those contextualizers that work with the reference name passed as a parameter. It is
+             * important that this is the second choice in case of extremely unlikely conflicts.
+             */
+            ret = catalog.get(name);
+        }
+
+        return ret;
+    }
+
     @Override
     public IArtifact getArtifact(String localName) {
-        IArtifact ret = catalog.get(localName);
+        IArtifact ret = findInCatalog(localName);
         if (ret == null) {
             ret = this.views.get(localName);
         }
         if (ret == null) {
             ret = this.viewsByUrn.get(localName);
         }
-        if (ret == null) {
-            /*
-             * Leniently lookup each observation based on observable name. This solves a couple NPEs
-             * with nested value operators, but shouldn't really be needed as those are the bugs,
-             * not this.
-             */
-            for (IArtifact o : catalog.values()) {
-                if (o instanceof IObservation && ((IObservation) o).getObservable().getName().equals(localName)) {
-                    return o;
-                }
-            }
-        }
+        // if (ret == null) {
+        // /*
+        // * Leniently lookup each observation based on observable name. This solves a couple NPEs
+        // * with nested value operators, but shouldn't really be needed as those are the bugs,
+        // * not this.
+        // */
+        // for (IArtifact o : catalog.values()) {
+        // if (o instanceof IObservation && ((IObservation)
+        // o).getObservable().getName().equals(localName)) {
+        // return o;
+        // }
+        // }
+        // }
         return ret;
     }
 
@@ -430,27 +456,28 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
     @Override
     public IRuntimeScope copy() {
         RuntimeScope ret = new RuntimeScope(this);
-        // make a deep copy of all localizable info so we can rename elements
-        ret.catalog = new HashMap<>(this.catalog);
-        ret.semantics = new HashMap<>(this.semantics);
+        // // make a deep copy of all localizable info so we can rename elements
+        // ret.catalog = new HashMap<>(this.catalog);
+        // ret.semantics = new HashMap<>(this.semantics);
         return ret;
     }
-
-    @Override
-    public void rename(String name, String alias) {
-        IArtifact obj = catalog.get(name);
-        if (obj != null) {
-            catalog.remove(name);
-            catalog.put(alias, obj);
-            IObservable obs = semantics.remove(name);
-            if (obs != null) {
-                semantics.put(alias, obs);
-            }
-        }
-    }
+    //
+    // @Override
+    // public void rename(String name, String alias) {
+    // IArtifact obj = catalog.get(name);
+    // if (obj != null) {
+    // catalog.remove(name);
+    // catalog.put(alias, obj);
+    // IObservable obs = semantics.remove(name);
+    // if (obs != null) {
+    // semantics.put(alias, obs);
+    // }
+    // }
+    // }
 
     @Override
     public void setData(String name, IArtifact data) {
+
         if (catalog.get(name) != null) {
             structure.replace(catalog.get(name), data);
         }
@@ -840,13 +867,13 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
          * if we're subsetting the scale, finish up the partial scale we're using and set the
          * computation to use it.
          */
-        if (actuator.getScale() != null) {
+        if (actuator.getMergedCoverage() != null) {
 
             /*
              * the child will contribute to our own target, so just give it a view and let the
              * computation happen in the subscale of interest.
              */
-            ret.scale = actuator.getScale();
+            ret.scale = actuator.getMergedCoverage();
             if (actuator.isPartition()) {
 
                 /*
@@ -869,7 +896,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
                  */
                 if (merging instanceof IState) {
                     // complete the partial scale with the overall view of the context
-                    ret.target = Observations.INSTANCE.getStateView((IState) merging, actuator.getScale(), ret);
+                    ret.target = Observations.INSTANCE.getStateView((IState) merging, actuator.getMergedCoverage(), ret);
                     if (ret.target instanceof RescalingState) {
                         // for debugging
                         ((RescalingState) ret.target).setLocalId(actuator.getName());
@@ -990,7 +1017,14 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
         List<Pair<String, T>> ret = new ArrayList<>();
         for (String s : catalog.keySet()) {
             if (type.isAssignableFrom(catalog.get(s).getClass())) {
-                ret.add(new Pair<>(s, (T) catalog.get(s)));
+                IArtifact artifact = catalog.get(s);
+                if (artifact instanceof IObservation && this.model != null) {
+                    String localName = model.getLocalNameFor(((IObservation) artifact).getObservable());
+                    if (localName != null) {
+                        s = localName;
+                    }
+                }
+                ret.add(new Pair<>(s, (T) artifact));
             }
         }
         return ret;
@@ -1092,20 +1126,23 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
          */
         for (IContextualizable computation : actuator.getComputation()) {
             if (computation.getTarget() != null && this.catalog.get(computation.getTarget().getName()) == null) {
-                targetObservables.put(computation.getTarget().getName(),
+                targetObservables.put(computation.getTarget().getReferenceName(),
                         new Triple<>((Observable) computation.getTarget(), computation.getComputationMode(), false));
             }
         }
 
         /*
-         * add additional observables that are created by a process
+         * add additional observables that are created by a process FIXME this is actually not right
+         * - will create all outputs for directly observed models, but add unneeded outputs when the
+         * additionals are not dependencies. What should be done is that a model "dropped" directly
+         * would set in all its own dependencies so we keep both behaviors.
          */
         if (actuator.getObservable().is(Type.PROCESS) && actuator.getModel() != null) {
             for (int i = 1; i < actuator.getModel().getObservables().size(); i++) {
                 IObservable output = actuator.getModel().getObservables().get(i);
                 if (Observables.INSTANCE.isCreatedBy(output, actuator.getObservable())
-                        && !this.catalog.containsKey(output.getName())) {
-                    targetObservables.put(output.getName(), new Triple<>((Observable) output,
+                        && !this.catalog.containsKey(output.getReferenceName())) {
+                    targetObservables.put(output.getReferenceName(), new Triple<>((Observable) output,
                             output.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION, false));
                 }
             }
@@ -1257,7 +1294,6 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
                  */
                 for (IState state : predefinedStates) {
                     link(state, observation);
-
                     catalog.put(state.getObservable().getName(), state);
                 }
 
@@ -1446,7 +1482,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
         if (this.rootSubject == null && observation instanceof ISubject) {
             this.rootSubject = (ISubject) observation;
         }
-        this.catalog.put(observable.getName(), observation);
+        this.catalog.put(observable.getReferenceName(), observation);
         this.structure.add(observation);
         if (contextSubject != null) {
             link(observation, dataflow.getObservationGroup() == null ? contextSubject : dataflow.getObservationGroup());
@@ -1505,25 +1541,25 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
         return getRootScope().scheduler;
     }
 
-    @Override
-    public void replaceTarget(IArtifact target) {
-        this.target = target;
-        if (target != null) {
-            IArtifact current = this.catalog.get(targetName);
-            /*
-             * FIXME this avoid some error conditions when targets are processes and they substitute
-             * their changing states, but it's definitely not thought through properly yet. This
-             * kind of switch must happen to enable layering in states that start numeric and become
-             * categorical or the like.
-             */
-            if (differentAndCompatible(current, target)) {
-                Map<String, IArtifact> newCatalog = new HashMap<>();
-                newCatalog.putAll(this.catalog);
-                newCatalog.put(targetName, target);
-                this.catalog = newCatalog;
-            }
-        }
-    }
+    // @Override
+    // public void replaceTarget(IArtifact target) {
+    // this.target = target;
+    // if (target != null) {
+    // IArtifact current = this.catalog.get(targetName);
+    // /*
+    // * FIXME this avoid some error conditions when targets are processes and they substitute
+    // * their changing states, but it's definitely not thought through properly yet. This
+    // * kind of switch must happen to enable layering in states that start numeric and become
+    // * categorical or the like.
+    // */
+    // if (differentAndCompatible(current, target)) {
+    // Map<String, IArtifact> newCatalog = new HashMap<>();
+    // newCatalog.putAll(this.catalog);
+    // newCatalog.put(targetName, target);
+    // this.catalog = newCatalog;
+    // }
+    // }
+    // }
 
     private boolean differentAndCompatible(IArtifact current, IArtifact target) {
         if (current == null) {
@@ -2243,11 +2279,6 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
         return null;
     }
 
-    // @Override
-    // public Map<IConcept, Collection<IConcept>> getConcreteIdentities() {
-    // return this.concreteIdentities;
-    // }
-
     @Override
     public IConcept localizePredicate(IConcept predicate) {
         IConcept ret = resolvedPredicates.get(predicate);
@@ -2261,5 +2292,12 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
         }
         return this.views.values();
     }
+
+    @Override
+    public IRuntimeScope withCoverage(IScale scale) {
+        this.scale = ((Scale)this.scale).substituteExtents(scale);
+        return this;
+    }
+
 
 }

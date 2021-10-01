@@ -13,6 +13,7 @@
   	<module>klab.authority.gbif</module>
   	<module>klab.authority.iupac</module>
   	<module>klab.authority.wrb</module>
+  	<module>klab.authority.caliper</module>
   </modules>
   <build>
   	<plugins>

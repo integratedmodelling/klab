@@ -30,17 +30,18 @@ import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 
 /**
- * TODO use online service from https://cactus.nci.nih.gov/chemical/structure (see
- * https://cactus.nci.nih.gov/chemical/structure_documentation) and implement caching.
+ * Uses the NIH online service from https://cactus.nci.nih.gov/chemical/structure (see
+ * https://cactus.nci.nih.gov/chemical/structure_documentation) with caching.
  * 
  * @author Ferd
  *
  */
-@Authority(id = IUPACAuthority.ID, description = "", version = Version.CURRENT)
+@Authority(id = IUPACAuthority.ID, description = IUPACAuthority.DESCRIPTION, version = Version.CURRENT)
 public class IUPACAuthority implements IAuthority {
 
     public static final String ID = "IUPAC";
-
+    public static final String DESCRIPTION = "The IUPAC authority resolves chemical species names, InChl strings and identifiers.\n\n The only requirement for the"
+            + " identifier is to be unambiguous. The NIH resolution service supports several languages, so IUPAC:H2O or IUPAC:agua will be equivalent.";
     private static final String KEY_PATTERN = "[A-Z]{14}-[A-Z]{10}-[A-Z]";
     private static final String RESOLVER_URL = "https://cactus.nci.nih.gov/chemical/structure";
 
@@ -91,6 +92,7 @@ public class IUPACAuthority implements IAuthority {
         }
 
         ret.setAuthorityName(ID);
+        ret.setLocator(ID + ":" + standardKey);
 
         if (standardKey != null && standardName != null) {
             ret.setConceptName(standardKey.toLowerCase().replace('-', '_'));
@@ -145,6 +147,7 @@ public class IUPACAuthority implements IAuthority {
         AuthorityReference ref = new AuthorityReference();
         ref.setSearchable(true);
         ref.setFuzzy(true);
+        ref.setDescription(DESCRIPTION);
         ref.getDocumentationFormats().add("text/plain");
         ref.getDocumentationFormats().add("image/png");
         ref.setName(ID);
@@ -253,5 +256,4 @@ public class IUPACAuthority implements IAuthority {
         }
         return true;
     }
-
 }

@@ -74,9 +74,9 @@ public class VectorEncoder implements IResourceEncoder {
 
 	@Override
 	public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
-			Builder builder, IContextualizationScope context) {
+			Builder builder, IContextualizationScope scope) {
 		FeatureSource<SimpleFeatureType, SimpleFeature> features = getFeatureSource(resource, geometry);
-		encodeFromFeatures(features, resource, urnParameters, geometry, builder, context);
+		encodeFromFeatures(features, resource, urnParameters, geometry, builder, scope);
 	}
 
 	protected FeatureSource<SimpleFeatureType, SimpleFeature> getFeatureSource(IResource resource, IGeometry geometry) {
@@ -115,7 +115,7 @@ public class VectorEncoder implements IResourceEncoder {
 
 	// TODO use URN parameters
 	private void encodeFromFeatures(FeatureSource<SimpleFeatureType, SimpleFeature> source, IResource resource,
-			Map<String, String> urnParameters, IGeometry geometry, Builder builder, IContextualizationScope context) {
+			Map<String, String> urnParameters, IGeometry geometry, Builder builder, IContextualizationScope scope) {
 
 		Filter filter = null;
 		FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2(GeoTools.getDefaultHints());
@@ -166,8 +166,8 @@ public class VectorEncoder implements IResourceEncoder {
 		 * moment - the scale will be that of contextualization, not the geometry for
 		 * the actuator, which may depend on context.
 		 */
-		boolean rasterize = (idRequested != null || (context.getTargetSemantics() != null
-				&& (context.getTargetSemantics().is(Type.QUALITY) || context.getTargetSemantics().is(Type.TRAIT))))
+		boolean rasterize = (idRequested != null || (scope.getTargetSemantics() != null
+				&& (scope.getTargetSemantics().is(Type.QUALITY) || scope.getTargetSemantics().is(Type.TRAIT))))
 				&& requestScale.getSpace() instanceof Space && ((Space) requestScale.getSpace()).getGrid() != null;
 
 		if (resource.getParameters().contains("filter") && !resource.getParameters().get("filter").toString().trim().isEmpty()) {
@@ -200,7 +200,7 @@ public class VectorEncoder implements IResourceEncoder {
 
 		Rasterizer<Object> rasterizer = null;
 		if (rasterize) {
-			builder = builder.startState(context.getTargetName());
+//			builder = builder.startState(scope.getTargetName());
 			rasterizer = new Rasterizer<Object>(((Space) requestScale.getSpace()).getGrid());
 		}
 
@@ -257,7 +257,7 @@ public class VectorEncoder implements IResourceEncoder {
 
 				} else {
 
-					IScale objectScale = Scale.createLike(context.getScale(), objectShape);
+					IScale objectScale = Scale.createLike(scope.getScale(), objectShape);
 					String objectName = null;
 					if (nameAttribute != null) {
 						Object nattr = feature.getAttribute(nameAttribute);
@@ -275,7 +275,7 @@ public class VectorEncoder implements IResourceEncoder {
 						objectName = fc.getSchema().getTypeName() + "_" + (n++);
 					}
 
-					builder = builder.startObject(context.getTargetName(), objectName, objectScale);
+					builder = builder.startObject(scope.getTargetName(), objectName, objectScale);
 					for (String key : attributes.keySet()) {
 						Object nattr = feature.getAttribute(key);
 						if (nattr == null) {
@@ -302,7 +302,7 @@ public class VectorEncoder implements IResourceEncoder {
 			rasterizer.finish((b, xy) -> {
 				stateBuilder.set(b, requestScale.at(ISpace.class, xy));
 			});
-			builder = builder.finishState();
+//			builder = builder.finishState();
 		}
 
 	}

@@ -217,6 +217,7 @@ public class CoreOntology extends AbstractWorkspace {
 		public static final String CONCEPT_DEFINITION_PROPERTY = "klab:conceptDefinition";
 		public static final String LOCAL_ALIAS_PROPERTY = "klab:localAlias";
 		public static final String DISPLAY_LABEL_PROPERTY = "klab:displayLabel";
+        public static final String REFERENCE_NAME_PROPERTY = "klab:referenceName";
 		public static final String AUTHORITY_ID_PROPERTY = "klab:authorityId";
 		public static final String UNTRANSFORMED_CONCEPT_PROPERTY = "klab:untransformedConceptId";
 		public static final String ORIGINAL_TRAIT = "klab:originalTrait";

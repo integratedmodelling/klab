@@ -80,6 +80,9 @@ public class InfiltratedWaterVolumeResolver implements IResolver<IProcess>, IExp
                     null);
         }
 
+        GeotoolsUtils.INSTANCE.dumpToRaster(context, "Infiltration", petState, rainfallVolumeState, runoffVolumeState,
+                streamPresenceState, flowdirectionState, netInfiltratedWaterVolumeState, infiltratedWaterVolumeState);
+
         return infiltratedProcess;
     }
 

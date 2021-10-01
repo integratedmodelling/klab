@@ -281,7 +281,8 @@ public class Subgrid extends Grid {
 	}
 
 	public Cell getOriginalCell(Cell cell) {
-		return ogrid.getCell(cell.getX() + xofs, ogrid.getYCells() - yofs - (getYCells() - cell.getY() - 1) - 1);
+	    return ogrid.getCellAt(cell.getCenter(), false);
+//		return ogrid.getCell(cell.getX() + xofs, ogrid.getYCells() - yofs - (getYCells() - cell.getY() - 1) - 1);
 	}
 
 	public long getOriginalOffset(long offset) {

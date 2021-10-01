@@ -997,7 +997,7 @@ public enum Kim {
 		ret.add(Type.QUALITY);
 		ret.add(Type.OBSERVABLE);
 		ret.add(Type.QUANTIFIABLE);
-		
+				
 		return ret;
 	}
 

@@ -11,6 +11,8 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.apache.commons.collections4.BidiMap;
+import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import org.apache.commons.lang3.StringUtils;
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
@@ -54,6 +56,7 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
@@ -92,6 +95,8 @@ import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
 
+import scala.math.Ordering.BigDecimalOrdering;
+
 public class Actuator implements IActuator {
 
     /**
@@ -127,6 +132,11 @@ public class Actuator implements IActuator {
     // for comparison just to ensure that future changes upstream do not affect the
     // logics.
     protected String _actuatorId = NameGenerator.shortUUID();
+
+    /**
+     * The catalog of reference name -> local name for all observables referenced in this actuator
+     */
+    BidiMap<String, String> observableLegend = new DualHashBidiMap<>();
 
     List<Computation> computation = null;
 
@@ -259,19 +269,13 @@ public class Actuator implements IActuator {
      * known. FIXME this is kind of dirty: the dataflow will set it into the actuator, so each
      * actuator tree should be used only once.
      */
-    private Scale mergedScale;
+    private Scale mergedCoverage;
 
     /*
      * The scale at runtime, computed by merging the overall scale with any specific model coverage.
      */
     private IScale runtimeScale = null;
 
-    /*
-     * Name of the corresponding observable in the generating model, if that's unambiguous;
-     * otherwise name of the observable. Users should be able to choose whether to generate their
-     * artifacts using this or (as a default) the observable's name, e.g. the dependency name.
-     */
-    private String referenceName;
 
     @Override
     public String getName() {
@@ -313,14 +317,14 @@ public class Actuator implements IActuator {
      *        the passed target is null and will be set to the first object in the result chain, or
      *        to the empty artifact if no instances are created. In the end the method will always
      *        return a non-null artifact.
-     * @param runtimeContext the runtime context
+     * @param scope the runtime context
      * @return the finalized observation data. TODO when an instantiator returns no instances,
      *         should return an empty observation. Currently it returns null.
      * @throws KlabException
      */
-    public IArtifact compute(IArtifact target, IRuntimeScope runtimeContext) throws KlabException {
+    public IArtifact compute(IArtifact target, IRuntimeScope scope) throws KlabException {
 
-        this.currentContext = runtimeContext;
+        this.currentContext = scope;
         this.status.set(1);
         this.startComputation.set(System.currentTimeMillis());
 
@@ -345,7 +349,7 @@ public class Actuator implements IActuator {
          * this localizes the names in the context to those understood by this actuator and applies
          * any requested mediation to the inputs. Target may be swapped for a mediator.
          */
-        IRuntimeScope ctx = setupContext(target, runtimeContext);
+        IRuntimeScope ctx = setupScope(target, scope);
 
         if (target == null && ctx.getTargetArtifact() != null) {
             // contextualization redefined the target, which happens in change processes
@@ -354,8 +358,8 @@ public class Actuator implements IActuator {
 
         for (Pair<IServiceCall, IContextualizable> service : computationStrategy) {
 
-            if (runtimeContext.getMonitor().isInterrupted()) {
-                return Observation.empty(getObservable(), runtimeContext);
+            if (scope.getMonitor().isInterrupted()) {
+                return Observation.empty(getObservable(), scope);
             }
 
             IServiceCall function = service.getFirst();
@@ -472,7 +476,7 @@ public class Actuator implements IActuator {
              */
             if (indirectTarget == null) {
                 ret = artifactTable.get(targetId);
-            } else if (!runtimeContext.getMonitor().isInterrupted()) {
+            } else if (!scope.getMonitor().isInterrupted()) {
                 context.setData(indirectTarget.getName(), artifactTable.get(targetId));
             }
 
@@ -505,7 +509,7 @@ public class Actuator implements IActuator {
             ((Report) context.getReport()).include(contextualizer.getSecond(), this);
         }
 
-        if (runtimeContext.getMonitor().isInterrupted()) {
+        if (scope.getMonitor().isInterrupted()) {
             this.status.set(3);
             this.currentContext = null;
             this.endComputation.set(System.currentTimeMillis());
@@ -520,13 +524,13 @@ public class Actuator implements IActuator {
                  * artifact.
                  */
                 if (!isProxy(target)) {
-                    runtimeContext.setData(((IObservation) target).getObservable().getName(), ret);
+                    scope.setData(((IObservation) target).getObservable().getName(), ret);
                 }
             }
 
             // FIXME the original context does not get the indirect artifacts
-            if (runtimeContext.getTargetArtifact() == null || !runtimeContext.getTargetArtifact().equals(ret)) {
-                ((IRuntimeScope) runtimeContext).setTarget(ret);
+            if (scope.getTargetArtifact() == null || !scope.getTargetArtifact().equals(ret)) {
+                ((IRuntimeScope) scope).setTarget(ret);
             }
 
             // add any artifact, including the empty artifact, to the provenance. FIXME the
@@ -540,10 +544,10 @@ public class Actuator implements IActuator {
              * notify to the report all model annotations that will create documentation items.
              */
             for (IAnnotation annotation : model.getAnnotations()) {
-                Annotation ctype = DocumentationExtensions.INSTANCE.validate(annotation, runtimeContext);
+                Annotation ctype = DocumentationExtensions.INSTANCE.validate(annotation, scope);
                 if (ctype != null) {
-                    ((Report) runtimeContext.getReport())
-                            .addTaggedText(new DocumentationItem(ctype, annotation, runtimeContext, this.observable));
+                    ((Report) scope.getReport())
+                            .addTaggedText(new DocumentationItem(ctype, annotation, scope, this.observable));
                 }
             }
         }
@@ -617,16 +621,16 @@ public class Actuator implements IActuator {
      * @param observable
      * @param resource
      * @param ret
-     * @param ctx
+     * @param scope
      * @param scale
      * @return
      */
     @SuppressWarnings("unchecked")
     public IArtifact runContextualizer(IContextualizer contextualizer, IObservable observable, IContextualizable resource,
-            IArtifact ret, IRuntimeScope ctx, IScale scale) {
+            IArtifact ret, IRuntimeScope scope, IScale scale) {
 
-        if (ctx.getMonitor().isInterrupted()) {
-            return Observation.empty(getObservable(), ctx);
+        if (scope.getMonitor().isInterrupted()) {
+            return Observation.empty(getObservable(), scope);
         }
 
         long timer = 0;
@@ -634,9 +638,9 @@ public class Actuator implements IActuator {
             Debug.INSTANCE.startTimer("Contextualizing " + getObservable(), null);
         }
 
-        ISession session = ctx.getMonitor().getIdentity().getParentIdentity(ISession.class);
+        ISession session = scope.getMonitor().getIdentity().getParentIdentity(ISession.class);
         DataflowState state = new DataflowState();
-        state.setNodeId(ctx.getContextualizationStrategy().getComputationToNodeIdTable().get(resource.getDataflowId()));
+        state.setNodeId(scope.getContextualizationStrategy().getComputationToNodeIdTable().get(resource.getDataflowId()));
         state.setStatus(Status.STARTED);
         state.setMonitorable(false); // for now
         session.getMonitor().send(
@@ -668,41 +672,41 @@ public class Actuator implements IActuator {
              * instead of hard-coding a loop here.
              */
             IArtifact result = Klab.INSTANCE.getRuntimeProvider().distributeComputation((IStateResolver) contextualizer,
-                    (IObservation) ret, resource, addParameters(ctx, self, resource), scale);
+                    (IObservation) ret, resource, addParameters(scope, self, resource), scale);
 
             if (result != ret) {
-                ctx.swapArtifact(ret, result);
+                scope.swapArtifact(ret, result);
             }
             ret = result;
 
             if (this.model != null && ret instanceof Observation) {
                 if (scale.getTime() != null && scale.getTime().is(ITime.Type.INITIALIZATION)) {
-                    Actors.INSTANCE.instrument(this.model.getAnnotations(), (Observation) ret, ctx);
+                    Actors.INSTANCE.instrument(this.model.getAnnotations(), (Observation) ret, scope);
                 }
                 /*
                  * tell the scope to notify internal listeners (for actors and the like)
                  */
-                ctx.notifyListeners((IObservation) ret);
+                scope.notifyListeners((IObservation) ret);
             }
 
         } else if (contextualizer instanceof IResolver) {
 
-            IArtifact result = ((IResolver<IArtifact>) contextualizer).resolve(ret, addParameters(ctx, ret, resource));
+            IArtifact result = ((IResolver<IArtifact>) contextualizer).resolve(ret, addParameters(scope, ret, resource));
 
             if (result != ret && result != null && ret instanceof IObservation) {
-                ctx.swapArtifact(ret, result);
+                scope.swapArtifact(ret, result);
             }
             ret = result;
 
             if (this.model != null && ret instanceof Observation && scale.getTime() != null
                     && scale.getTime().is(ITime.Type.INITIALIZATION)) {
-                Actors.INSTANCE.instrument(this.model.getAnnotations(), (Observation) ret, ctx);
+                Actors.INSTANCE.instrument(this.model.getAnnotations(), (Observation) ret, scope);
             }
 
         } else if (contextualizer instanceof IInstantiator) {
 
             List<IObjectArtifact> objects = ((IInstantiator) contextualizer).instantiate(observable,
-                    addParameters(ctx, self, resource));
+                    addParameters(scope, self, resource));
 
             /*
              * Instantiators that act as sorters or filters will return a legitimate null, meaning
@@ -727,7 +731,7 @@ public class Actuator implements IActuator {
                      * continue
                      */
                     if (object instanceof ObservedArtifact && ((ObservedArtifact) object).isMarkedForDeletion()) {
-                        ctx.removeArtifact(object);
+                        scope.removeArtifact(object);
                         continue;
                     }
 
@@ -738,29 +742,29 @@ public class Actuator implements IActuator {
                     for (Observable deferred : deferredObservables) {
 
                         if (task == null) {
-                            task = ((ITaskTree<?>) ctx.getMonitor().getIdentity()).createChild("Resolution of "
+                            task = ((ITaskTree<?>) scope.getMonitor().getIdentity()).createChild("Resolution of "
                                     + Observables.INSTANCE.getDisplayName(deferred) + " within " + object.getName());
                         }
-                        ctx.resolve(deferred, (IDirectObservation) object, task,
+                        scope.resolve(deferred, (IDirectObservation) object, task,
                                 deferred.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION, dataflow);
                     }
 
                     if (notificationMode == INotification.Mode.Verbose) {
                         // just notify once to allow subscription
                         if (first) {
-                            ctx.updateNotifications((IObservation) ret);
+                            scope.updateNotifications((IObservation) ret);
                             first = false;
                         }
 
                         // if it was expanded its children were asked for, presumably equivalent to
                         // notification
-                        if (ctx.getNotifiedObservations().contains(object.getId())
-                                && !ctx.getWatchedObservationIds().contains(object.getId())) {
+                        if (scope.getNotifiedObservations().contains(object.getId())
+                                && !scope.getWatchedObservationIds().contains(object.getId())) {
 
                             ObservationChange change = ((Observation) object)
                                     .createChangeEvent(ObservationChange.Type.StructureChange);
                             change.setExportFormats(Observations.INSTANCE.getExportFormats((IObservation) object));
-                            change.setNewSize(ctx.getChildArtifactsOf(object).size());
+                            change.setNewSize(scope.getChildArtifactsOf(object).size());
                             session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
                                     IMessage.Type.ModifiedObservation, change));
                         }
@@ -773,18 +777,18 @@ public class Actuator implements IActuator {
                      */
                     if (object != null) {
 
-                        ctx.notifyListeners((IObservation) object);
+                        scope.notifyListeners((IObservation) object);
 
                         /*
                          * notify end of contextualization if we're subscribed to the parent
                          */
-                        if (ctx.getWatchedObservationIds().contains(ret.getId())) {
+                        if (scope.getWatchedObservationIds().contains(ret.getId())) {
 
                             ((Observation) object).setContextualized(true);
 
                             ObservationChange change = ((Observation) object)
                                     .createChangeEvent(ObservationChange.Type.ContextualizationCompleted);
-                            change.setNewSize(ctx.getChildArtifactsOf(object).size());
+                            change.setNewSize(scope.getChildArtifactsOf(object).size());
                             change.setExportFormats(Observations.INSTANCE.getExportFormats((IObservation) object));
                             session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
                                     IMessage.Type.ModifiedObservation, change));
@@ -795,7 +799,7 @@ public class Actuator implements IActuator {
                      * everything is resolved, now add any behaviors specified in annotations
                      */
                     if (object instanceof Observation) {
-                        Actors.INSTANCE.instrument(getAnnotations(), (Observation) object, ctx);
+                        Actors.INSTANCE.instrument(getAnnotations(), (Observation) object, scope);
                     }
                 }
             }
@@ -810,7 +814,7 @@ public class Actuator implements IActuator {
                     .getTargetPredicate();
 
             boolean ok = ((IPredicateClassifier<?>) contextualizer).initialize((IObjectArtifact) ret, abstractPredicate,
-                    targetPredicate, ctx);
+                    targetPredicate, scope);
 
             if (ok) {
 
@@ -818,10 +822,10 @@ public class Actuator implements IActuator {
 
                     @SuppressWarnings("rawtypes")
                     IConcept c = ((IPredicateClassifier) contextualizer).classify(abstractPredicate, (IDirectObservation) target,
-                            ctx);
+                            scope);
                     if (c != null) {
                         // attribute and resolve
-                        ctx.newPredicate((IDirectObservation) target, c);
+                        scope.newPredicate((IDirectObservation) target, c);
                     }
                 }
             }
@@ -835,7 +839,7 @@ public class Actuator implements IActuator {
             /*
              * ensure we return a view if that's necessary
              */
-            ret = ctx.getObservationGroupView((Observable) observable, (IObservation) ret);
+            ret = scope.getObservationGroupView((Observable) observable, (IObservation) ret);
 
         } else if (contextualizer instanceof IPredicateResolver) {
 
@@ -845,7 +849,7 @@ public class Actuator implements IActuator {
              * added it.
              */
             IConcept predicate = Observables.INSTANCE.getBaseObservable(observable.getType());
-            if (!((IPredicateResolver<IDirectObservation>) contextualizer).resolve(predicate, (IDirectObservation) ret, ctx)) {
+            if (!((IPredicateResolver<IDirectObservation>) contextualizer).resolve(predicate, (IDirectObservation) ret, scope)) {
                 // strip the attribute that the classifier added
                 ((DirectObservation) ret).removePredicate(predicate);
             }
@@ -857,7 +861,7 @@ public class Actuator implements IActuator {
          */
         if (contextualizer instanceof IDocumentationProvider) {
             for (IDocumentationProvider.Item item : ((IDocumentationProvider) contextualizer).getDocumentation()) {
-                ((Report) ctx.getReport()).addTaggedText(item);
+                ((Report) scope.getReport()).addTaggedText(item);
             }
         }
 
@@ -868,7 +872,7 @@ public class Actuator implements IActuator {
             /*
              * May be null for void contextualizers
              */
-            ((Observation) ret).finalizeTransition(ctx.getScale().initialization());
+            ((Observation) ret).finalizeTransition(scope.getScale().initialization());
             ((Observation) ret).setContextualized(true);
         }
 
@@ -900,7 +904,7 @@ public class Actuator implements IActuator {
             self = ctx.getArtifact(resource.getTargetId());
         }
         if (self != null) {
-            ret.replaceTarget(self);
+//            ret.replaceTarget(self);
             ret.set("self", self);
         }
         ret.setModel(model);
@@ -911,10 +915,14 @@ public class Actuator implements IActuator {
         return ret;
     }
 
-    private IRuntimeScope setupContext(IArtifact target, final IRuntimeScope runtimeContext) throws KlabException {
+    private IRuntimeScope setupScope(IArtifact target, final IRuntimeScope scope) throws KlabException {
 
-        IRuntimeScope ret = runtimeContext.copy();
+        IRuntimeScope ret = scope.copy();
 
+        if (this.mergedCoverage != null) {
+            ret = ret.withCoverage(this.getMergedCoverage());
+        }
+        
         /*
          * Needed to infer formal parameters and the like when expressions are used
          */
@@ -923,7 +931,7 @@ public class Actuator implements IActuator {
         // compile mediators
         List<Pair<IContextualizer, IContextualizable>> mediation = new ArrayList<>();
         for (Pair<IServiceCall, IContextualizable> service : mediationStrategy) {
-            Object contextualizer = Extensions.INSTANCE.callFunction(service.getFirst(), runtimeContext);
+            Object contextualizer = Extensions.INSTANCE.callFunction(service.getFirst(), scope);
             if (!(contextualizer instanceof IContextualizer)) {
                 throw new KlabValidationException(
                         "function " + service.getFirst().getName() + " does not produce a contextualizer");
@@ -937,8 +945,8 @@ public class Actuator implements IActuator {
              * TODO check: is this ever right?
              */
             if (ret.getArtifact(input.getName()) != null) {
-                // no effect if not aliased
-                ret.rename(input.getName(), input.getAlias());
+//                // no effect if not aliased
+//                ret.rename(input.getName(), input.getAlias());
                 /*
                  * scan mediations and apply them as needed
                  */
@@ -965,11 +973,11 @@ public class Actuator implements IActuator {
         /**
          * Rename in scope
          */
-        for (String key : localNames.keySet()) {
-            if (ret.getArtifact(key) != null) {
-                ret.rename(key, localNames.get(key));
-            }
-        }
+//        for (String key : localNames.keySet()) {
+//            if (ret.getArtifact(key) != null) {
+//                ret.rename(key, localNames.get(key));
+//            }
+//        }
 
         if (this.getType() == IArtifact.Type.PROCESS) {
             ret = ret.targetForChange();
@@ -978,24 +986,24 @@ public class Actuator implements IActuator {
         return ret;
     }
 
-    /**
-     * Done above for the initialization run; this is called in the scheduler to ensure names are
-     * appropriate for the actuator being run.
-     * 
-     * @param scope
-     * @return
-     */
-    public IRuntimeScope localizeNames(IRuntimeScope scope) {
-
-        IRuntimeScope ret = scope.copy();
-        for (IActuator input : getActuators()) {
-            if (ret.getArtifact(input.getName()) != null) {
-                // no effect if not aliased
-                ret.rename(input.getName(), input.getAlias());
-            }
-        }
-        return ret;
-    }
+//    /**
+//     * Done above for the initialization run; this is called in the scheduler to ensure names are
+//     * appropriate for the actuator being run.
+//     * 
+//     * @param scope
+//     * @return
+//     */
+//    public IRuntimeScope localizeNames(IRuntimeScope scope) {
+//
+//        IRuntimeScope ret = scope.copy();
+//        for (IActuator input : getActuators()) {
+//            if (ret.getArtifact(input.getName()) != null) {
+//                // no effect if not aliased
+//                ret.rename(input.getName(), input.getAlias());
+//            }
+//        }
+//        return ret;
+//    }
 
     public String toString() {
         return "<" + getName() + ((getAlias() != null && !getAlias().equals(getName())) ? " as " + getAlias() : "") + " ["
@@ -1103,7 +1111,8 @@ public class Actuator implements IActuator {
         if (coverage != null && !coverage.isEmpty()) {
             List<IServiceCall> scaleSpecs = ((Scale) coverage).getKimSpecification();
             if (!scaleSpecs.isEmpty()) {
-                ret += " over scale_specifications_to_be_externalized()";
+                // TODO just for debugging
+                ret += " " + ((Scale)coverage).getSpace().getEnvelope(); // " over scale_specifications_to_be_externalized()";
                 // for (int i = 0; i < scaleSpecs.size(); i++) {
                 // ret += " " + scaleSpecs.get(i).getSourceCode()
                 // + ((i < scaleSpecs.size() - 1) ? (",\n" + ofs + " ") : "");
@@ -1321,11 +1330,11 @@ public class Actuator implements IActuator {
     }
 
     public void setMergedScale(Scale scale) {
-        this.mergedScale = scale;
+        this.mergedCoverage = scale;
     }
 
-    public Scale getScale() {
-        return mergedScale;
+    public Scale getMergedCoverage() {
+        return mergedCoverage;
     }
 
     /**
@@ -1558,7 +1567,6 @@ public class Actuator implements IActuator {
         Actuator ret = new Actuator();
         ret.name = this.name;
         ret.alias = this.alias;
-        ret.referenceName = this.referenceName;
         ret.reference = true;
         ret.type = this.type;
         ret.observable = this.observable;
@@ -1575,20 +1583,6 @@ public class Actuator implements IActuator {
         }
     }
 
-    /**
-     * The name of the observable of the model that generated this. If it's a multi-model
-     * partitioning actuator, keep the name of the observable.
-     * 
-     * @return
-     */
-    public String getReferenceName() {
-        return this.referenceName;
-    }
-
-    public void setReferenceName(String name) {
-        this.referenceName = name;
-    }
-
     public Actuator withAlias(String alias) {
         this.alias = alias;
         return this;
@@ -1598,7 +1592,6 @@ public class Actuator implements IActuator {
         return new ObservedConcept(this.observable, this.mode);
     }
 
-    @Override
     public IScale mergeScale(IScale scale, IMonitor monitor) {
 
         if (this.runtimeScale == null) {
@@ -1640,5 +1633,15 @@ public class Actuator implements IActuator {
 
     public List<IDocumentation> getDocumentation() {
         return documentation;
+    }
+
+    @Override
+    public String getAlias(IObservable observable) {
+        return observableLegend.get(observable.getReferenceName());
+    }
+
+    @Override
+    public ICoverage getCoverage() {
+        return coverage;
     }
 }

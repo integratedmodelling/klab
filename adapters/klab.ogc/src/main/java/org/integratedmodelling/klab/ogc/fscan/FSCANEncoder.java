@@ -48,7 +48,7 @@ public class FSCANEncoder implements IResourceEncoder {
 
     @Override
     public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry, Builder builder,
-            IContextualizationScope context) {
+            IContextualizationScope scope) {
 
         if (!FSCANAdapter.isOnline()) {
             return;
@@ -103,7 +103,7 @@ public class FSCANEncoder implements IResourceEncoder {
                     shape = ((Shape) shape).getSimplified(grid.getCellWidth());
                 }
 
-                Builder bb = builder.startObject(context.getTargetName() == null ? "result" : context.getTargetName(),
+                Builder bb = builder.startObject(scope.getTargetName() == null ? "result" : scope.getTargetName(),
                         metadata.get(IMetadata.DC_NAME, String.class), Scale.create(shape));
                 for (String key : metadata.keySet()) {
                     bb.withMetadata(key, metadata.get(key));
@@ -140,7 +140,7 @@ public class FSCANEncoder implements IResourceEncoder {
                     shape = ((Shape) shape).getSimplified(grid.getCellWidth());
                 }
 
-                Builder bb = builder.startObject(context.getTargetName() == null ? "result" : context.getTargetName(),
+                Builder bb = builder.startObject(scope.getTargetName() == null ? "result" : scope.getTargetName(),
                         metadata.get(IMetadata.DC_NAME, String.class), Scale.create(shape));
                 for (String key : metadata.keySet()) {
                     bb.withMetadata(key, metadata.get(key));
@@ -156,7 +156,7 @@ public class FSCANEncoder implements IResourceEncoder {
             // Logging.INSTANCE.info("Query in " + envelope + " returned " + shape);
             // Logging.INSTANCE.info("Builder class is " + builder.getClass());
             if (shape != null) {
-                Builder bb = builder.startObject(context.getTargetName() == null ? "result" : context.getTargetName(),
+                Builder bb = builder.startObject(scope.getTargetName() == null ? "result" : scope.getTargetName(),
                         shape.getMetadata().get(IMetadata.DC_NAME, String.class), Scale.create(shape));
                 for (String key : shape.getMetadata().keySet()) {
                     bb.withMetadata(key, shape.getMetadata().get(key));

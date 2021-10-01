@@ -383,7 +383,7 @@ public enum Concepts implements IConceptService {
     public Set<IConcept> collectComponents(IConcept observable, Set<Type> types) {
         Set<IConcept> ret = new HashSet<>();
         if (!OWL.INSTANCE.isSemantic(observable)) {
-        	return ret;
+            return ret;
         }
         IKimConcept peer = declare(observable.getDefinition());
         peer.visit(new DefaultVisitor(){
@@ -626,6 +626,8 @@ public enum Concepts implements IConceptService {
                 axioms.add(Axiom.ClassAssertion(baseIdentity, type));
                 // TODO check - there should be a base identity per leaf vocabulary
                 axioms.add(Axiom.AnnotationAssertion(baseIdentity, NS.BASE_DECLARATION, "true"));
+                axioms.add(Axiom.AnnotationAssertion(baseIdentity, NS.REFERENCE_NAME_PROPERTY,
+                        "auth_" + identity.getAuthorityName().toLowerCase() + "_" + baseIdentity.toLowerCase()));
                 axioms.add(Axiom.ObjectPropertyAssertion(pName));
                 axioms.add(Axiom.ObjectPropertyRange(pName, baseIdentity));
                 axioms.add(Axiom.SubObjectProperty(NS.HAS_IDENTITY_PROPERTY, pName));
@@ -637,6 +639,8 @@ public enum Concepts implements IConceptService {
 
             axioms.add(Axiom.ClassAssertion(identity.getConceptName(), type));
             axioms.add(Axiom.SubClass(baseIdentity, identity.getConceptName()));
+            axioms.add(Axiom.AnnotationAssertion(identity.getConceptName(), NS.REFERENCE_NAME_PROPERTY,
+                    "auth_" + identity.getAuthorityName().toLowerCase() + "_" + identity.getConceptName().toLowerCase()));
             axioms.add(Axiom.AnnotationAssertion(identity.getConceptName(), IMetadata.DC_LABEL, identity.getLabel()));
             axioms.add(Axiom.AnnotationAssertion(identity.getConceptName(), IMetadata.DC_COMMENT, identity.getDescription()));
             axioms.add(
@@ -702,15 +706,15 @@ public enum Concepts implements IConceptService {
      * @return
      */
     public IConcept asConcept(Object predicate) {
-        
+
         if (predicate instanceof IConcept) {
             return (IConcept) predicate;
         } else if (predicate instanceof org.integratedmodelling.klab.extensions.groovy.model.Concept) {
-            return (IConcept)((org.integratedmodelling.klab.extensions.groovy.model.Concept)predicate).getConcept();
+            return (IConcept) ((org.integratedmodelling.klab.extensions.groovy.model.Concept) predicate).getConcept();
         } else if (predicate instanceof String) {
             return declare(declare(predicate.toString()));
         }
-        
+
         return null;
     }
 

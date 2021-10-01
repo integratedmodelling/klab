@@ -9,7 +9,7 @@ import org.integratedmodelling.klab.utils.Pair;
 
 public class FeaturesToShape implements IScaleMediator {
 
-    public FeaturesToShape(ITessellation features, Shape shape) {
+    public FeaturesToShape(Shape shape, ITessellation features) {
 		// TODO Auto-generated constructor stub
 	}
 

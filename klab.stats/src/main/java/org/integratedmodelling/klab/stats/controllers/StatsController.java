@@ -16,13 +16,16 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.rest.StatsInstertResponse;
+import org.integratedmodelling.klab.stats.api.StatsClassResponse;
 import org.integratedmodelling.klab.stats.api.models.StatsFindPageRequest;
 import org.integratedmodelling.klab.stats.api.models.StatsFindPageResponse;
 import org.integratedmodelling.klab.stats.api.models.StatsInsertRequest;
 import org.integratedmodelling.klab.stats.services.StatsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.JavaType;
@@ -90,6 +93,12 @@ public class StatsController {
 	    return service.findRequest(mapper.readValue(mapper.writeValueAsString(map) , typeC));
 	    
 	}
+	
+	@GetMapping(API.STATS.STATS_CLASSES)
+	StatsClassResponse handleClassRequest() {
+		return service.findClasses();
+	}
+
 	
 	private Map<String, Object> replaceKeysWithDot(Map<String, Object> model) {
 	    HashMap<String, Object> ret = new HashMap<>();

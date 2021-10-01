@@ -46,6 +46,7 @@ import org.integratedmodelling.klab.api.knowledge.IProperty;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
 import org.integratedmodelling.klab.api.model.IConceptDefinition;
 import org.integratedmodelling.klab.api.model.IKimObject;
+import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.owl.OntologyUtilities.RestrictionVisitor;
@@ -94,7 +95,7 @@ public class Concept extends Knowledge implements IConcept {
         this.type.addAll(type);
     }
 
-    protected Concept(Concept concept) {
+    Concept(Concept concept) {
         _owl = concept._owl;
         _id = concept._owl.getIRI().getFragment();
         _cs = concept._cs;
@@ -399,9 +400,9 @@ public class Concept extends Knowledge implements IConcept {
 
     @Override
     public boolean isAbstract() {
-        return type.contains(Type.ABSTRACT);
-        // Object p = getMetadata().get(NS.IS_ABSTRACT);
-        // return p != null && p.toString().equals("true");
+        // FIXME HACK ALERT - the metadata should not know more than the type, but for now types
+        // declared as abstract may lose the flag from the type and I don't know where it happens.
+        return type.contains(Type.ABSTRACT) || "true".equals(getMetadata().get(NS.IS_ABSTRACT, String.class));
     }
 
     @Override
@@ -971,6 +972,15 @@ public class Concept extends Knowledge implements IConcept {
             return Concepts.INSTANCE.getCodeName(this);
         }
         return super.getProperty(property);
+    }
+
+    @Override
+    public String getReferenceName() {
+        return getMetadata().get(NS.REFERENCE_NAME_PROPERTY, String.class);
+    }
+
+    void setMetadata(Metadata metadata) {
+        this.metadata = metadata;
     }
 
     /*

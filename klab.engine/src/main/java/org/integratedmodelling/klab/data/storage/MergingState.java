@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Observations;
-import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
@@ -26,7 +25,6 @@ import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.scale.Scale;
-
 import org.locationtech.jts.index.strtree.STRtree;
 
 /**

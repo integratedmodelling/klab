@@ -30,10 +30,10 @@ public interface IClassifier {
      * True if passed object matches the conditions of the classifier.
      *
      * @param o the o
-     * @param context the context
+     * @param scope the context
      * @return True if passed object matches the conditions of the classifier
      */
-    public boolean classify(Object o, IContextualizationScope context);
+    public boolean classify(Object o, IContextualizationScope scope);
 
     /**
      * True if this classifier matches everything.
@@ -76,11 +76,11 @@ public interface IClassifier {
      * translation of the classifier, i.e. the matched object if it's matching a single one, or
      * possibly a random object among the choices if it's in OR.
      *
-     * @param context pass a context for complex evaluations, like expressions
+     * @param scope pass a context for complex evaluations, like expressions
      * 
      * @return the value this classifier resolves to.
      */
-    Object asValue(IContextualizationScope context);
+    Object asValue(IContextualizationScope scope);
 
     /**
      * Return the type of the classifier when used as a value.

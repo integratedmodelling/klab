@@ -41,6 +41,8 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.LogicalConnector;
+import org.integratedmodelling.klab.components.geospace.extents.Envelope;
+import org.integratedmodelling.klab.components.geospace.utils.SpatialDisplay;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
@@ -133,7 +135,6 @@ public class DataflowCompiler {
         Dataflow ret = new Dataflow(monitor.getIdentity().getParentIdentity(ISession.class), parentDataflow);
 
         ret.setName(this.name);
-        ret.setReferenceName(this.name);
         ret.setContext(this.context);
         ret.setResolutionScope((ResolutionScope) scope);
 
@@ -187,7 +188,7 @@ public class DataflowCompiler {
             actuator.setObservable(((ResolutionScope) scope).getObservable());
             actuator.setType(Type.OBJECT);
             actuator.setNamespace(((ResolutionScope) scope).getResolutionNamespace());
-            actuator.setName(((ResolutionScope) scope).getObservable().getName());
+            actuator.setName(((ResolutionScope) scope).getObservable().getReferenceName());
             setModelContext(((ResolutionScope) scope).getContextModel(), actuator, ret);
             ret.getActuators().add(actuator);
             ret.setNamespace(actuator.getNamespace());
@@ -216,8 +217,8 @@ public class DataflowCompiler {
                 if (((Observable) contextModel.getObservables().get(i)).isResolved()) {
                     Actuator child = Actuator.create(dataflow, Mode.RESOLUTION);
                     child.setObservable(new Observable((Observable) contextModel.getObservables().get(i)));
-                    child.setName(contextModel.getObservables().get(i).getName());
-                    child.setReferenceName(contextModel.getObservables().get(i).getName());
+                    child.setName(contextModel.getObservables().get(i).getReferenceName());
+                    child.setAlias(contextModel.getObservables().get(i).getName());
                     child.setType(contextModel.getObservables().get(i).getArtifactType());
                     child.addComputation(ComputableResource.create(contextModel.getObservables().get(i).getValue()));
                     actuator.getActuators().add(child);
@@ -484,7 +485,7 @@ public class DataflowCompiler {
             if (observer != null) {
 
                 ret.setNamespace(observer.getNamespace());
-                ret.setReferenceName(observer.getId());
+                ret.setName(observer.getId());
 
             } else if (resolvedArtifact != null) {
                 /*
@@ -493,10 +494,10 @@ public class DataflowCompiler {
                  * observable, done below.
                  */
                 ret.setInput(true);
-                ret.setReferenceName(resolvedArtifact.getObservable().getName());
+                ret.setName(resolvedArtifact.getObservable().getReferenceName());
 
             } else {
-                ret.setReferenceName(observable.getName());
+                ret.setName(observable.getReferenceName());
             }
 
             /*
@@ -510,7 +511,7 @@ public class DataflowCompiler {
             if (models.size() == 1 && !this.hasPartitions) {
 
                 ModelD theModel = models.iterator().next();
-                String referenceName = theModel.model.getObservables().get(0).getName();
+                String referenceName = theModel.model.getObservables().get(0).getReferenceName();
                 /*
                  * if we're incarnating traits, we may have a different observable altogether. Must
                  * switch to the observable name to avoid this actuator being interpreted as a
@@ -518,9 +519,9 @@ public class DataflowCompiler {
                  */
                 if (!observable.getResolvedPredicates().isEmpty()
                         && !theModel.model.getObservables().get(0).getType().equals(observable.getType())) {
-                    referenceName = observable.getName();
+                    referenceName = observable.getReferenceName();
                 }
-                ret.setReferenceName(referenceName);
+                ret.setName(referenceName);
                 defineActuator(ret, theModel, generated);
 
             } else if (this.hasPartitions) {
@@ -544,7 +545,7 @@ public class DataflowCompiler {
 
                     // rename and set the target name as partitioned. Number is the priority if
                     // known.
-                    String name = modelDesc.model.getLocalNameFor(observable, getDataflowContext(), monitor) + "_" + index;
+                    String name = observable.getReferenceName() + "_" + index;
                     partial.setPartitionedTarget(ret.getName());
                     partial.setName(name);
                     partial.setObservable(observable);
@@ -597,7 +598,7 @@ public class DataflowCompiler {
                 Actuator outer = Actuator.create(dataflow,
                         dereified.is(IKimConcept.Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
                 outer.setObservable(dereified);
-                outer.setName(dereified.getName());
+                outer.setName(dereified.getReferenceName());
                 outer.setAlias(dereified.getName());
                 assignType(outer, dereified);
 
@@ -663,7 +664,7 @@ public class DataflowCompiler {
 
                 setModelContext(((ResolutionScope) scope).getContextModel(), ret, ret.getDataflow());
 
-                actuatorCatalog.put(ret.getReferenceName(), ret);
+                actuatorCatalog.put(ret.getName(), ret);
 
             } else {
                 ret.setReference(true);
@@ -745,7 +746,9 @@ public class DataflowCompiler {
                         /*
                          * compile in all filter computations, making a copy and ensuring the target
                          * is our filtered observable. These can only be filters by virtue of
-                         * validation.
+                         * validation. Uses the reference name (name of the actuator), not the
+                         * localized, because the original filter model does not have the
+                         * dependency.
                          */
                         for (Pair<IServiceCall, IContextualizable> computation : filter.computationStrategy) {
                             ret.computationStrategy
@@ -833,8 +836,8 @@ public class DataflowCompiler {
                         } else {
                             if (!chosenUnits.containsKey(baseUnit.toString())) {
                                 if (Units.INSTANCE.needsUnitScaling(observable)) {
-                                    UnitContextualization contextualization = Units.INSTANCE
-                                            .getContextualization(modelObservable, scale, null);
+                                    UnitContextualization contextualization = Units.INSTANCE.getContextualization(modelObservable,
+                                            scale, null);
                                     observable.withUnit(contextualization.getChosenUnit());
                                 } else {
                                     observable.withUnit(baseUnit);

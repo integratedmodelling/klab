@@ -13,7 +13,6 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Future;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 import java.util.logging.Level;
@@ -579,8 +578,6 @@ public enum Klab implements IRuntimeService {
 		ret.setBuild(Version.VERSION_BUILD);
 		ret.setOnline(Authentication.INSTANCE.getAuthenticatedIdentity(INetworkSessionIdentity.class) != null);
 		// TODO
-		// List<KimServiceCall> services = new ArrayList<>();
-		// List<AuthorityReference> authorities = new ArrayList<>();
 		// List<ComponentReference> staticComponents = new ArrayList<>();
 		// List<ComponentReference> dynamicComponents = new ArrayList<>();
 		// long refreshFrequencyMillis = 0;
@@ -590,8 +587,8 @@ public enum Klab implements IRuntimeService {
 			ret.setOwner(
 					new IdentityReference(uid.getUsername(), uid.getEmailAddress(), uid.getLastLogin().toString()));
 		}
+        ret.getAuthorities().addAll(Authorities.INSTANCE.getAuthorityDescriptors());
 		ret.getResourceAdapters().addAll(Resources.INSTANCE.describeResourceAdapters());
-
 		// IUserIdentity parent = rootIdentity.getParentIdentity(IUserIdentity.class);
 
 		return ret;

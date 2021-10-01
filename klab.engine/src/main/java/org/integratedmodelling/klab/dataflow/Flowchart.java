@@ -672,7 +672,7 @@ public class Flowchart {
 
             @Override
             public IScale getScale() {
-                return ((Actuator) context).getDataflow().getScale();
+                return ((Actuator) context).getDataflow().getMergedCoverage();
             }
 
             @Override

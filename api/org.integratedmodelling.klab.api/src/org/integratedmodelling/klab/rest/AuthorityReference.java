@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.integratedmodelling.klab.api.knowledge.IAuthority;
+import org.integratedmodelling.klab.utils.Pair;
 
 public class AuthorityReference implements IAuthority.Capabilities {
 
@@ -13,6 +14,7 @@ public class AuthorityReference implements IAuthority.Capabilities {
 	private boolean fuzzy;
 	private List<String> documentationFormats = new ArrayList<>();
 	private String description;
+	private List<Pair<String, String>> subAuthorities = new ArrayList<>();
 
 	public String getName() {
 		return name;
@@ -101,5 +103,10 @@ public class AuthorityReference implements IAuthority.Capabilities {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
+    @Override
+    public List<Pair<String, String>> getSubAuthorities() {
+        return subAuthorities;
+    }
 	
 }

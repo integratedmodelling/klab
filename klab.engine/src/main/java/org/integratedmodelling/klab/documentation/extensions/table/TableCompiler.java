@@ -1524,7 +1524,7 @@ public class TableCompiler {
 
                 List<IObservable> targets = new ArrayList<>();
 
-                if (trg.isAbstract()) {
+                if (trg.isAbstract() && !isExtent(trg)) {
 
                     if (scope != null) {
 
@@ -1588,6 +1588,19 @@ public class TableCompiler {
         }
 
         return ret;
+
+    }
+
+    private boolean isExtent(IObservable trg) {
+    
+        if (trg.getType().equals(Concepts.c(NS.CORE_AREA))) {
+            return true;
+        } else if (trg.getType().equals(Concepts.c(NS.CORE_DURATION))) {
+            return true;
+        } else if (trg.getType().equals(Concepts.c(NS.CORE_COUNT))) {
+            return true;
+        } 
+        return false;
 
     }
 
@@ -1871,9 +1884,12 @@ public class TableCompiler {
                 }
 
                 if (observable.is(IKimConcept.Type.COUNTABLE)) {
+                    
                     categorize(OBJECT, new ObservedConcept(observable, Mode.INSTANTIATION), sorted, null);
+                    
                 } else if (observable.is(IKimConcept.Type.CLASS)) {
 
+                    observables.add(new ObservedConcept(observable));
                     List<IObservable> keep = null;
                     if (dimensionDeclaration.containsKey("keep")) {
                         keep = new ArrayList<>();
@@ -1894,10 +1910,13 @@ public class TableCompiler {
                     for (ObservedConcept category : expandCategory(observable, keep)) {
                         categorize(CATEGORY, category, sorted, observable);
                     }
+                    
                 } else if (observable.is(IKimConcept.Type.PRESENCE)) {
+                    
                     observables.add(new ObservedConcept(observable));
                     categorize(BOOLEAN, true, sorted, observable);
                     categorize(BOOLEAN, false, sorted, observable);
+                
                 } else if (observable.is(IKimConcept.Type.PREDICATE)) {
                     /*
                      * FIXME if the observable is an abstract identity or any other that is

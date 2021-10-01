@@ -34,10 +34,6 @@ public class ConversionResolver implements IResolver<IState>, IProcessor, IExpre
 
 	public static IServiceCall getServiceCall(Pair<IValueMediator, IValueMediator> literal)
 			throws KlabValidationException {
-//		if (!literal.getSecond().isCompatible(literal.getFirst())) {
-//			throw new KlabValidationException(
-//					"mediator '" + literal.getFirst() + "' cannot be converted to '" + literal.getSecond() + "'");
-//		}
 		return KimServiceCall.create(FUNCTION_ID, "original", literal.getFirst(), "target", literal.getSecond());
 	}
 

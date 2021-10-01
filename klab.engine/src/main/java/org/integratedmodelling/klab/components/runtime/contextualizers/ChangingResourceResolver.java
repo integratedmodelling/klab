@@ -84,7 +84,7 @@ public class ChangingResourceResolver implements IResolver<IArtifact>, IExpressi
         if (Configuration.INSTANCE.isEchoEnabled()) {
             System.err.println("GETTING DATA FROM " + res.getUrn());
         }
-        IKlabData data = Resources.INSTANCE.getResourceData(res, resources.get(0).getSecond(), context.getScale(), context);
+        IKlabData data = Resources.INSTANCE.getResourceData(res, resources.get(0).getSecond(), context.getScale(), context, ret);
         if (Configuration.INSTANCE.isEchoEnabled()) {
             System.err.println("DONE " + res.getUrn());
         }

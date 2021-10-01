@@ -36,8 +36,6 @@ import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.klab.Authorities;
 import org.integratedmodelling.klab.Namespaces;
-import org.integratedmodelling.klab.Network;
-import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.knowledge.IAuthority;
 import org.integratedmodelling.klab.api.knowledge.IAxiom;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -46,6 +44,7 @@ import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.common.SemanticType;
+import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
@@ -161,9 +160,17 @@ public class Ontology implements IOntology {
     }
 
     public void addDelegateConcept(String id, IKimNamespace namespace, Concept concept) {
-        this.delegates.put(id, concept);
+        this.delegates.put(id, wrapDelegate(concept, id));
         concept.getOntology().define(Collections.singleton(Axiom.AnnotationAssertion(concept
                 .getName(), NS.LOCAL_ALIAS_PROPERTY, namespace.getName() + ":" + id)));
+    }
+
+    private Concept wrapDelegate(Concept concept, String id) {
+        Concept ret = new Concept(concept);
+        ret.setMetadata(new Metadata());
+        ret.getMetadata().putAll(concept.getMetadata());
+        ret.getMetadata().put(NS.REFERENCE_NAME_PROPERTY, KimKnowledgeProcessor.getCleanFullId(this.id, id));
+        return ret;
     }
 
     @Override

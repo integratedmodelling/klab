@@ -79,7 +79,7 @@ public class UrnCharacterizer implements IResolver<IArtifact>, IProcessor, IExpr
                 break;
             }
         }
-        IKlabData data = Resources.INSTANCE.getResourceData(res, urnParameters, context.getScale(), context);
+        IKlabData data = Resources.INSTANCE.getResourceData(res, urnParameters, context.getScale(), context, ret);
         if (data != null) {
             IConcept concept = data.getSemantics();
             if (concept != null) {

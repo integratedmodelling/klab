@@ -385,4 +385,9 @@ public class Property extends Knowledge implements IProperty {
         return getNamespace() + ":" + _id;
     }
 
+    @Override
+    public String getReferenceName() {
+        return getName();
+    }
+
 }

@@ -41,6 +41,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
 import org.integratedmodelling.klab.api.services.IObservationService;
 import org.integratedmodelling.klab.common.LogicalConnector;
+import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Dataflow;
@@ -496,7 +497,7 @@ public class Resolver {
 	private ResolutionScope resolveConcrete(Observable observable, ResolutionScope parentScope,
 			Map<IConcept, IConcept> resolvedPredicates, Map<IConcept, Set<IConcept>> resolvedPredicatesContext,
 			Mode mode) {
-
+	    
 		/*
 		 * Check first if we need to redistribute the observable, in which case we only
 		 * resolve the distribution context and we leave it to the runtime context to
@@ -556,11 +557,11 @@ public class Resolver {
 		 */
 		ResolutionScope ret = parentScope.getChildScope(observable, mode);
 
-		/*
-		 * ensure the reference name represents unique semantics across the resolution
-		 * tree
-		 */
-		observable = parentScope.disambiguateObservable(observable);
+//		/*
+//		 * ensure the reference name represents unique semantics across the resolution
+//		 * tree FIXME remove and just use a non-ambiguous reference name
+//		 */
+//		observable = parentScope.disambiguateObservable(observable);
 
 		/*
 		 * pre-resolved artifacts contain a number, concept, boolean, expression or
@@ -672,11 +673,11 @@ public class Resolver {
 
 							if (mscope.getCoverage().isRelevant()) {
 
-								Coverage newCoverage = coverage.merge(mscope.getCoverage(), LogicalConnector.UNION);
+								Coverage newCoverage = coverage.mergeExtents(mscope.getCoverage(), LogicalConnector.UNION);
 								if (!newCoverage.isRelevant()) {
 									continue;
 								}
-
+								
 								// for reporting
 								boolean wasZero = percentCovered == 0;
 								// percent covered by new model
@@ -752,8 +753,7 @@ public class Resolver {
 			 * from an instantiator, so a dataflow that creates them is generated.
 			 */
 			ret.acceptEmpty();
-		}
-
+		} 
 		return ret;
 	}
 
@@ -814,7 +814,7 @@ public class Resolver {
 			// ACHTUNG TODO OBSERVABLE CAN BE MULTIPLE (probably not here though) - still,
 			// should be resolving a CandidateObservable
 			ResolutionScope mscope = resolve(strategy.getObservables().get(0), ret, strategy.getMode());
-			coverage = coverage.merge(mscope.getCoverage(), LogicalConnector.INTERSECTION);
+			coverage = coverage.mergeExtents(mscope.getCoverage(), LogicalConnector.INTERSECTION);
 			if (coverage.isEmpty()) {
 				parentScope.getMonitor().info("discarding first choice " + model.getId() + " due to missing dependency "
 						+ strategy.getObservables().get(0).getName());

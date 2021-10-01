@@ -420,7 +420,7 @@ public class ResourceEditor extends ViewPart {
     public void loadResource(ResourceReference resource) {
 
         this.isLocal = Urns.INSTANCE.isLocal(resource.getUrn());
-        
+
         this.resource = resource;
         this.adapter = Activator.klab().getResourceAdapter(resource.getAdapterType());
         this.values.clear();
@@ -456,8 +456,10 @@ public class ResourceEditor extends ViewPart {
         this.outputViewer.setInput(resource.getOutputs() == null ? new ArrayList<Attribute>() : resource.getOutputs());
 
         this.actionChooser.removeAll();
-        for (OperationReference operation : this.adapter.getOperations()) {
-            this.actionChooser.add(operation.getDescription());
+        if (this.adapter != null /* happens at init with engine off */) {
+            for (OperationReference operation : this.adapter.getOperations()) {
+                this.actionChooser.add(operation.getDescription());
+            }
         }
 
         this.title.setText(this.metadata.containsKey(IMetadata.DC_TITLE) ? this.metadata.get(IMetadata.DC_TITLE) : "");
@@ -503,7 +505,7 @@ public class ResourceEditor extends ViewPart {
         /*
          * TODO with remote resources, save button should only be enabled for owner or admin
          */
-        
+
         setDirty(false);
 
     }
@@ -614,12 +616,10 @@ public class ResourceEditor extends ViewPart {
 
             mapHolder = new Composite(grpGeometry, SWT.NONE);
             mapHolder.setLayout(new GridLayout(1, false));
-            GridData gd_mapHolder = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
-            mapHolder.setLayoutData(gd_mapHolder);
+            mapHolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
 
             TabFolder geometryTabFolder = new TabFolder(mapHolder, SWT.NONE);
-            GridData gd_geometryTabFolder = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
-            geometryTabFolder.setLayoutData(gd_geometryTabFolder);
+            geometryTabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
             TabItem spaceTabItem = new TabItem(geometryTabFolder, SWT.NONE);
             spaceTabItem.setText("Space");
@@ -631,8 +631,7 @@ public class ResourceEditor extends ViewPart {
             grpSpaceclickTo.setLayout(new GridLayout(1, false));
             this.worldWidget = new WorldWidget(grpSpaceclickTo, SWT.NONE);
             worldWidget.setToolTipText("click to edit");
-            GridData gd_worldWidget = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
-            worldWidget.setLayoutData(gd_worldWidget);
+            worldWidget.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
             TabItem timeTabItem = new TabItem(geometryTabFolder, SWT.NONE);
             timeTabItem.setText("Time");
@@ -1380,14 +1379,14 @@ public class ResourceEditor extends ViewPart {
      * Initialize the toolbar.
      */
     private void initializeToolBar() {
-        IToolBarManager tbm = getViewSite().getActionBars().getToolBarManager();
+//        IToolBarManager tbm = getViewSite().getActionBars().getToolBarManager();
     }
 
     /**
      * Initialize the menu.
      */
     private void initializeMenu() {
-        IMenuManager manager = getViewSite().getActionBars().getMenuManager();
+//        IMenuManager manager = getViewSite().getActionBars().getMenuManager();
     }
 
     @Override

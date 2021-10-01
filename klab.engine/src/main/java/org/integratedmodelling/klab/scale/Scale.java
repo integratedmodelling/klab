@@ -391,6 +391,13 @@ public class Scale implements IScale {
         return ret;
     }
 
+    protected void setExtents(List<IExtent> adopted) {
+        extents.clear();
+        for (IExtent extent : adopted) {
+            mergeExtent(extent);
+        }
+    }
+
     /**
      * Create from either another scale or a simpler geometry.
      * 
@@ -1645,19 +1652,19 @@ public class Scale implements IScale {
 
             Scale other = (Scale) contextScale;
             Scale ret = new Scale();
-//            ArrayList<IExtent> common = new ArrayList<>();
+            // ArrayList<IExtent> common = new ArrayList<>();
             HashSet<Dimension.Type> commonConcepts = new HashSet<>();
 
             for (IExtent e : ((Scale) scale).extents) {
                 if (other.getDimension(e.getType()) != null) {
-//                    common.add(e);
+                    // common.add(e);
                     commonConcepts.add(e.getType());
                 }
             }
 
             for (IExtent e : other.getExtents()) {
                 if (commonConcepts.contains(e.getType())) {
-//                    IExtent oext = other.getDimension(e.getType());
+                    // IExtent oext = other.getDimension(e.getType());
                     IExtent merged = ((AbstractExtent) ((Scale) scale).getExtent(e.getType())).contextualizeTo(e,
                             getConstraint(annotations, e.getType()));
                     ret.mergeExtent(merged);
@@ -1696,9 +1703,25 @@ public class Scale implements IScale {
         return this.coverage;
     }
 
-	@Override
-	public MultidimensionalCursor getCursor() {
-		return this.cursor;
-	}
+    @Override
+    public MultidimensionalCursor getCursor() {
+        return this.cursor;
+    }
+
+    /**
+     * Substitute our extents with all the correspondent ones in the passed scale; keep those we
+     * have and the other does not; do not add other extents the other has.
+     * 
+     * @param scale
+     * @return
+     */
+    public IScale substituteExtents(IScale scale) {
+        List<IExtent> exts = new ArrayList<>();
+        for (IExtent e : getExtents()) {
+            IExtent other = ((Scale) scale).getExtent(e.getType());
+            exts.add(other == null ? e : other);
+        }
+        return create(exts.toArray(new IExtent[exts.size()]));
+    }
 
 }

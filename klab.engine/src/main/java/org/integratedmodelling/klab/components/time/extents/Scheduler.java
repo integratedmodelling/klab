@@ -294,8 +294,8 @@ public class Scheduler implements IScheduler {
                         // TODO
                     }
 
-                    // ensure we have the names we expect
-                    transitionContext = actuator.localizeNames(transitionContext);
+//                    // ensure we have the names we expect
+//                    transitionContext = actuator.localizeNames(transitionContext);
 
                     monitor.debug("running " + actuator
                             + (time == null
@@ -1056,7 +1056,7 @@ public class Scheduler implements IScheduler {
                 // TODO
             }
 
-            transitionContext = actuator.localizeNames(transitionContext);
+//            transitionContext = actuator.localizeNames(transitionContext);
             IArtifact artifact = null;
 
             // we re-run the entire initialization sequence.

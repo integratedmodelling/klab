@@ -22,7 +22,8 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
- * The k.LAB runtime.
+ * The k.LAB runtime. It's a singleton within each engine and starts its job where the resolver's
+ * ends.
  *
  * @author ferdinando.villa
  * @version $Id: $Id
@@ -34,8 +35,8 @@ public interface IRuntimeService {
      * components are available, configuration must have been defined to choose it. This allows
      *
      * @return the storage provider.
-     * @throws KlabException if no storage provider is installed or there is more than one
-     *         without appropriate configuration.
+     * @throws KlabException if no storage provider is installed or there is more than one without
+     *         appropriate configuration.
      */
     IStorageProvider getStorageProvider();
 
@@ -43,17 +44,21 @@ public interface IRuntimeService {
      * Get the configured runtime provider, in charge of running dataflows resulting from resolution
      * of semantic assets. If no configuration is given, get the default provider.
      * <p>
+     * 
+     * FIXME this same service should specify the provider, and manage sessions that are independent
+     * Akka actors.
      *
      * @return the storage provider. Never null.
-     * @throws KlabException if no storage provider is installed or there is more than one
-     *         without appropriate configuration.
+     * @throws KlabException if no storage provider is installed or there is more than one without
+     *         appropriate configuration.
      */
     IRuntimeProvider getRuntimeProvider();
 
     /**
      * Return the JSON source code of a map containing all the JSON level 3 schemata for REST beans
-     * indexed by Java class name (simple name, not path). These should be harvested and built at runtime from the package
-     * containing all resource beans. Called by JS code to validate resources before use.
+     * indexed by Java class name (simple name, not path). These should be harvested and built at
+     * runtime from the package containing all resource beans. Called by JS code to validate
+     * resources before use.
      * <p>
      * 
      * @return the JSON schema source code
@@ -71,26 +76,27 @@ public interface IRuntimeService {
 
     /**
      * Get the root monitor that owns every computation in this runtime. This may be a node monitor
-     * in nodes, an engine monitor in engines, a user monitor in an instance without a running engine.
-     * The user may be anonymous. See {@link IIdentity} for details on the identity.
+     * in nodes, an engine monitor in engines, a user monitor in an instance without a running
+     * engine. The user may be anonymous. See {@link IIdentity} for details on the identity.
      * 
      * @return the root monitor. Never null.
      */
     IMonitor getRootMonitor();
 
     /**
-     * Get the global message bus. Implementation may set this to be a true client/server communication
-     * hub for RPC, or to a simpler message queue to use within an application. Using the {@link IMonitor}
-     * and the message bus for all communication is a guarantee that an engine will be compatible with
-     * remote usage.
+     * Get the global message bus. Implementation may set this to be a true client/server
+     * communication hub for RPC, or to a simpler message queue to use within an application. Using
+     * the {@link IMonitor} and the message bus for all communication is a guarantee that an engine
+     * will be compatible with remote usage.
      * <p>
-     * Notifications from {@link ILoggingService} may also appear on the bus according to the configured
-     * logging level.
+     * Notifications from {@link ILoggingService} may also appear on the bus according to the
+     * configured logging level.
      * <p>
+     * 
      * @return the message bus. Should not return null.
      */
     IMessageBus getMessageBus();
-    
+
     /**
      * Return the ticket manager for the engine.
      * 

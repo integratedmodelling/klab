@@ -84,7 +84,7 @@ public abstract class TemporalCoverage {
 	 * Return a coverage for the passed locator. A scale must have been set
 	 * beforehand.
 	 * 
-	 * @param scale
+	 * @param mergedCoverage
 	 * @param locator
 	 * @return
 	 */

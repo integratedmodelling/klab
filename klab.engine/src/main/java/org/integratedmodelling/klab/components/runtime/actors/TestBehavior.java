@@ -63,6 +63,7 @@ public class TestBehavior {
                 scope.getMonitor().info("Test engine: running test cases from " + project.getName());
                 final  AtomicBoolean done = new AtomicBoolean(false);
                 for (IBehavior testcase : project.getUnitTests()) {
+                    
                     if (scope.identity instanceof Session) {
                         ((Session)scope.identity).loadScript(testcase, scope.getChild(testcase), () -> done.set(true));
                     } else {

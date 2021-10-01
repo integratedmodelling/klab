@@ -5,7 +5,6 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.function.Consumer;
 
-import org.eclipse.swt.events.SelectionEvent;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.utils.Eclipse;

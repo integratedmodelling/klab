@@ -18,7 +18,7 @@ public class GridToShape implements IScaleMediator {
 	private Subgrid subgrid;
 	private long pointOffset = -1;
 
-	public GridToShape(Grid grid, Shape shape) {
+	public GridToShape(Shape shape, Grid grid) {
 		if (shape.getGeometryType() == Type.POINT) {
 			this.pointOffset = grid.getOffsetFromWorldCoordinates(((Point) shape.getJTSGeometry()).getX(),
 					((Point) shape.getJTSGeometry()).getY());

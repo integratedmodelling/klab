@@ -27,11 +27,11 @@ public interface ILanguageExpression extends IExpression {
 	 * IParameters object, use it as is, otherwise pair with the next and use as
 	 * key/value pair.
 	 * 
-	 * @param context
+	 * @param scope
 	 * @param parameters
 	 * @return the value after evaluation with passed parameters.
 	 */
-	Object eval(IContextualizationScope context, Object... parameters);
+	Object eval(IContextualizationScope scope, Object... parameters);
 
 	/**
 	 * Return all the identifiers referenced in the expression. This may be limited

@@ -3,7 +3,6 @@ package org.integratedmodelling.tables;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -14,6 +13,7 @@ import org.apache.commons.collections4.bidimap.DualTreeBidiMap;
 import org.integratedmodelling.klab.Authorities;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.knowledge.IAuthority;
+import org.integratedmodelling.klab.api.knowledge.ICodelist;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -41,7 +41,7 @@ import org.integratedmodelling.klab.utils.Utils;
  * @author Ferd
  *
  */
-public class CodeList {
+public class CodeList implements ICodelist<Object, Object> {
 
     public enum Mapping {
         CODELIST, YEAR, DATE_PATTERN
@@ -167,6 +167,24 @@ public class CodeList {
 
     public String getDescription() {
         return this.name;
+    }
+
+    @Override
+    public String getName() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String getAuthorityId() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean isAuthority() {
+        // TODO Auto-generated method stub
+        return false;
     }
 
 }

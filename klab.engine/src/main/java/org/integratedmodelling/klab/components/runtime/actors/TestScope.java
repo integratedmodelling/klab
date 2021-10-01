@@ -101,7 +101,7 @@ public class TestScope {
 
     public void onException(Throwable t) {
         // TODO Auto-generated method stub
-        System.out.println("HAHAHA");
+        System.out.println("HAHAHA DIOCAN");
     }
 
     /**
@@ -139,7 +139,6 @@ public class TestScope {
             // the first.
             docBuilder.writeToFile(new File(FileUtils.removeExtension(logFile.toString())).toPath(), Charset.forName("UTF-8"));
         }
-        System.out.println(this.behavior.getName() + " DONE");
     }
 
     public TestScope getChild(Action action) {

@@ -7,7 +7,6 @@ import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IProcessor;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
-import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -15,18 +14,10 @@ import org.integratedmodelling.klab.rest.StateSummary;
 
 public class SpatialRescalingResolver implements IResolver<IState>, IExpression, IProcessor {
 
-	IState state;
-
 	public SpatialRescalingResolver() {
 	}
 
 	public SpatialRescalingResolver(IParameters<String> parameters, IContextualizationScope context) {
-
-		IArtifact artifact = context.getArtifact(parameters.get("artifact", String.class));
-		if (artifact instanceof IState && (artifact.getType() != Type.NUMBER && artifact.getType() != Type.VALUE)) {
-			throw new IllegalArgumentException("normalization operations can only be performed on numeric states");
-		}
-		this.state = (IState) artifact;
 	}
 
 	@Override
@@ -40,18 +31,23 @@ public class SpatialRescalingResolver implements IResolver<IState>, IExpression,
 	}
 
 	@Override
-	public IState resolve(IState ret, IContextualizationScope context) throws KlabException {
+	public IState resolve(IState ret, IContextualizationScope scope) throws KlabException {
 		/*
 		 * this is for when the contextualizer is used directly without arguments in a
 		 * 'using' clause. In that circumstance, it means 'contextualize myself'.
 		 */
-		if (state == null) {
-			state = context.get("self", IState.class);
-		}
-		StateSummary summary = Observations.INSTANCE.getStateSummary(state, context.getScale());
+        IState target = scope.get("self", IState.class);
+        if (scope.get("artifact") != null) {
+            target = scope.getArtifact(scope.get("artifact", String.class), IState.class);
+            if (target instanceof IState && (target.getType() != Type.NUMBER && target.getType() != Type.VALUE)) {
+                throw new IllegalArgumentException("temporal rescaling operations can only be performed on numeric states");
+            }
+        }
+        
+		StateSummary summary = Observations.INSTANCE.getStateSummary(target, scope.getScale());
 		if (!summary.isDegenerate()) {
-			for (ILocator locator : context.getScale()) {
-				Object value = state.get(locator);
+			for (ILocator locator : scope.getScale()) {
+				Object value = target.get(locator);
 				if (value instanceof Number && !Double.isNaN(((Number) value).doubleValue())) {
 					double nval = ((Number) value).doubleValue();
 					nval = (nval - summary.getRange().get(0)) / (summary.getRange().get(1) - summary.getRange().get(0));

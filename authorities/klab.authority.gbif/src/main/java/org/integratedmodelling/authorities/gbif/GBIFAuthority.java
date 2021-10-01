@@ -20,18 +20,24 @@ import org.integratedmodelling.klab.rest.AuthorityIdentity;
 import org.integratedmodelling.klab.rest.AuthorityReference;
 import org.integratedmodelling.klab.utils.Escape;
 import org.integratedmodelling.klab.utils.JsonUtils;
+import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.klab.utils.StringUtils;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.Serializer;
 import org.springframework.web.client.RestTemplate;
 
-@Authority(id = GBIFAuthority.ID, description = "", catalogs = { "KINGDOM", "PHYLUM", "CLASS", "ORDER", "FAMILY",
+@Authority(id = GBIFAuthority.ID, description = GBIFAuthority.DESCRIPTION, catalogs = { "KINGDOM", "PHYLUM", "CLASS", "ORDER", "FAMILY",
 		"GENUS", "SPECIES" }, version = Version.CURRENT)
 public class GBIFAuthority implements IAuthority {
 
 	static final int pageSize = 100;
 	static final public String ID = "GBIF";
+	static final public String DESCRIPTION = "Global Biodiversity Information Facility (GBIF)\n\n"
+            + "GBIF provides stable identities for taxonomic entities. The available catalogs "
+            + " authority provides k.LAB identities at different taxonomic ranks.\n\n"
+            + "For more details, see the GBIF project at http://gbif.org";
 
 	public static final String KINGDOM_RANK = "kingdom";
 	public static final String PHYLUM_RANK = "phlyum";
@@ -153,6 +159,7 @@ public class GBIFAuthority implements IAuthority {
 				+ ((authorship == null || authorship.isEmpty()) ? "" : (" (" + authorship + ")"))
 				+ (parents == null ? "" : (". " + parents + ".")));
 		result.setConceptName("gbif" + key);
+		result.setLocator(ID + ":" + key);
 		if (parentKey != null) {
 			result.setParentIds(Collections.singletonList(parentKey));
 		}
@@ -199,13 +206,6 @@ public class GBIFAuthority implements IAuthority {
 		}
 	}
 
-	public String getDescription() {
-		return "<b>Global Biodiversity Information Facility (GBIF)</b>\n\n"
-				+ "GBIF provides stable identities for taxonomic entities. The available catalogs "
-				+ " authority provides k.LAB identities at different taxonomic ranks.\n\n"
-				+ "For more details, see the GBIF project at http://gbif.org";
-	}
-
 	@Override
 	public void document(String identityId, String mediaType, OutputStream destination) {
 		// TODO Auto-generated method stub
@@ -216,8 +216,12 @@ public class GBIFAuthority implements IAuthority {
 	public Capabilities getCapabilities() {
 		AuthorityReference ref = new AuthorityReference();
 		ref.setSearchable(true);
-		ref.setDescription(getDescription());
+		ref.setDescription(DESCRIPTION);
 		ref.getDocumentationFormats().add("text/plain");
+		ref.getSubAuthorities().add(new Pair<>("", "Any rank"));
+		for (String rank : ranks) {
+	        ref.getSubAuthorities().add(new Pair<>(rank.toUpperCase(), StringUtil.capitalize(rank) + " rank"));
+		}
 		ref.setName(ID);
 		return ref;
 	}

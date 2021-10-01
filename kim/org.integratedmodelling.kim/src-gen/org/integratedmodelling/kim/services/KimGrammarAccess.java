@@ -3939,6 +3939,152 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//UrnKvp
 		public RuleCall getUrnKvpParserRuleCall_9_2_1_1() { return cUrnKvpParserRuleCall_9_2_1_1; }
 	}
+	public class WellFormedUrnIdElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.WellFormedUrnId");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final RuleCall cPathNameParserRuleCall_0 = (RuleCall)cGroup.eContents().get(0);
+		private final Keyword cColonKeyword_1 = (Keyword)cGroup.eContents().get(1);
+		private final RuleCall cPathNameParserRuleCall_2 = (RuleCall)cGroup.eContents().get(2);
+		private final Keyword cColonKeyword_3 = (Keyword)cGroup.eContents().get(3);
+		private final RuleCall cPathNameParserRuleCall_4 = (RuleCall)cGroup.eContents().get(4);
+		private final Keyword cColonKeyword_5 = (Keyword)cGroup.eContents().get(5);
+		private final RuleCall cPathNameParserRuleCall_6 = (RuleCall)cGroup.eContents().get(6);
+		private final Group cGroup_7 = (Group)cGroup.eContents().get(7);
+		private final Keyword cColonKeyword_7_0 = (Keyword)cGroup_7.eContents().get(0);
+		private final RuleCall cVersionNumberParserRuleCall_7_1 = (RuleCall)cGroup_7.eContents().get(1);
+		private final Group cGroup_8 = (Group)cGroup.eContents().get(8);
+		private final Keyword cNumberSignKeyword_8_0 = (Keyword)cGroup_8.eContents().get(0);
+		private final Alternatives cAlternatives_8_1 = (Alternatives)cGroup_8.eContents().get(1);
+		private final RuleCall cPathParserRuleCall_8_1_0 = (RuleCall)cAlternatives_8_1.eContents().get(0);
+		private final RuleCall cUrnKvpParserRuleCall_8_1_1 = (RuleCall)cAlternatives_8_1.eContents().get(1);
+		
+		//WellFormedUrnId:
+		//    PathName ':'  PathName ':' PathName ':' (PathName) (':' VersionNumber)? ('#' (Path|UrnKvp))?;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//PathName ':'  PathName ':' PathName ':' (PathName) (':' VersionNumber)? ('#' (Path|UrnKvp))?
+		public Group getGroup() { return cGroup; }
+		
+		//PathName
+		public RuleCall getPathNameParserRuleCall_0() { return cPathNameParserRuleCall_0; }
+		
+		//':'
+		public Keyword getColonKeyword_1() { return cColonKeyword_1; }
+		
+		//PathName
+		public RuleCall getPathNameParserRuleCall_2() { return cPathNameParserRuleCall_2; }
+		
+		//':'
+		public Keyword getColonKeyword_3() { return cColonKeyword_3; }
+		
+		//PathName
+		public RuleCall getPathNameParserRuleCall_4() { return cPathNameParserRuleCall_4; }
+		
+		//':'
+		public Keyword getColonKeyword_5() { return cColonKeyword_5; }
+		
+		//(PathName)
+		public RuleCall getPathNameParserRuleCall_6() { return cPathNameParserRuleCall_6; }
+		
+		//(':' VersionNumber)?
+		public Group getGroup_7() { return cGroup_7; }
+		
+		//':'
+		public Keyword getColonKeyword_7_0() { return cColonKeyword_7_0; }
+		
+		//VersionNumber
+		public RuleCall getVersionNumberParserRuleCall_7_1() { return cVersionNumberParserRuleCall_7_1; }
+		
+		//('#' (Path|UrnKvp))?
+		public Group getGroup_8() { return cGroup_8; }
+		
+		//'#'
+		public Keyword getNumberSignKeyword_8_0() { return cNumberSignKeyword_8_0; }
+		
+		//(Path|UrnKvp)
+		public Alternatives getAlternatives_8_1() { return cAlternatives_8_1; }
+		
+		//Path
+		public RuleCall getPathParserRuleCall_8_1_0() { return cPathParserRuleCall_8_1_0; }
+		
+		//UrnKvp
+		public RuleCall getUrnKvpParserRuleCall_8_1_1() { return cUrnKvpParserRuleCall_8_1_1; }
+	}
+	public class WellFormedUrnIdWithFragmentElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.WellFormedUrnIdWithFragment");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final RuleCall cPathNameParserRuleCall_0 = (RuleCall)cGroup.eContents().get(0);
+		private final Keyword cColonKeyword_1 = (Keyword)cGroup.eContents().get(1);
+		private final RuleCall cPathNameParserRuleCall_2 = (RuleCall)cGroup.eContents().get(2);
+		private final Keyword cColonKeyword_3 = (Keyword)cGroup.eContents().get(3);
+		private final RuleCall cPathNameParserRuleCall_4 = (RuleCall)cGroup.eContents().get(4);
+		private final Keyword cColonKeyword_5 = (Keyword)cGroup.eContents().get(5);
+		private final RuleCall cPathNameParserRuleCall_6 = (RuleCall)cGroup.eContents().get(6);
+		private final Group cGroup_7 = (Group)cGroup.eContents().get(7);
+		private final Keyword cColonKeyword_7_0 = (Keyword)cGroup_7.eContents().get(0);
+		private final RuleCall cVersionNumberParserRuleCall_7_1 = (RuleCall)cGroup_7.eContents().get(1);
+		private final Keyword cNumberSignKeyword_8 = (Keyword)cGroup.eContents().get(8);
+		private final Alternatives cAlternatives_9 = (Alternatives)cGroup.eContents().get(9);
+		private final RuleCall cLOWERCASE_IDTerminalRuleCall_9_0 = (RuleCall)cAlternatives_9.eContents().get(0);
+		private final RuleCall cUPPERCASE_IDTerminalRuleCall_9_1 = (RuleCall)cAlternatives_9.eContents().get(1);
+		private final RuleCall cINTTerminalRuleCall_9_2 = (RuleCall)cAlternatives_9.eContents().get(2);
+		private final RuleCall cSTRINGTerminalRuleCall_9_3 = (RuleCall)cAlternatives_9.eContents().get(3);
+		
+		//WellFormedUrnIdWithFragment:
+		//    PathName ':'  PathName ':' PathName ':' (PathName) (':' VersionNumber)? '#' (LOWERCASE_ID|UPPERCASE_ID|INT|STRING);
+		@Override public ParserRule getRule() { return rule; }
+		
+		//PathName ':'  PathName ':' PathName ':' (PathName) (':' VersionNumber)? '#' (LOWERCASE_ID|UPPERCASE_ID|INT|STRING)
+		public Group getGroup() { return cGroup; }
+		
+		//PathName
+		public RuleCall getPathNameParserRuleCall_0() { return cPathNameParserRuleCall_0; }
+		
+		//':'
+		public Keyword getColonKeyword_1() { return cColonKeyword_1; }
+		
+		//PathName
+		public RuleCall getPathNameParserRuleCall_2() { return cPathNameParserRuleCall_2; }
+		
+		//':'
+		public Keyword getColonKeyword_3() { return cColonKeyword_3; }
+		
+		//PathName
+		public RuleCall getPathNameParserRuleCall_4() { return cPathNameParserRuleCall_4; }
+		
+		//':'
+		public Keyword getColonKeyword_5() { return cColonKeyword_5; }
+		
+		//(PathName)
+		public RuleCall getPathNameParserRuleCall_6() { return cPathNameParserRuleCall_6; }
+		
+		//(':' VersionNumber)?
+		public Group getGroup_7() { return cGroup_7; }
+		
+		//':'
+		public Keyword getColonKeyword_7_0() { return cColonKeyword_7_0; }
+		
+		//VersionNumber
+		public RuleCall getVersionNumberParserRuleCall_7_1() { return cVersionNumberParserRuleCall_7_1; }
+		
+		//'#'
+		public Keyword getNumberSignKeyword_8() { return cNumberSignKeyword_8; }
+		
+		//(LOWERCASE_ID|UPPERCASE_ID|INT|STRING)
+		public Alternatives getAlternatives_9() { return cAlternatives_9; }
+		
+		//LOWERCASE_ID
+		public RuleCall getLOWERCASE_IDTerminalRuleCall_9_0() { return cLOWERCASE_IDTerminalRuleCall_9_0; }
+		
+		//UPPERCASE_ID
+		public RuleCall getUPPERCASE_IDTerminalRuleCall_9_1() { return cUPPERCASE_IDTerminalRuleCall_9_1; }
+		
+		//INT
+		public RuleCall getINTTerminalRuleCall_9_2() { return cINTTerminalRuleCall_9_2; }
+		
+		//STRING
+		public RuleCall getSTRINGTerminalRuleCall_9_3() { return cSTRINGTerminalRuleCall_9_3; }
+	}
 	public class UrnKvpElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.UrnKvp");
 		private final Group cGroup = (Group)rule.eContents().get(1);
@@ -12057,51 +12203,61 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 	}
 	public class AuthorityIdElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.AuthorityId");
-		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Alternatives cAlternatives_0 = (Alternatives)cGroup.eContents().get(0);
-		private final RuleCall cUPPERCASE_PATHTerminalRuleCall_0_0 = (RuleCall)cAlternatives_0.eContents().get(0);
-		private final RuleCall cUPPERCASE_IDTerminalRuleCall_0_1 = (RuleCall)cAlternatives_0.eContents().get(1);
-		private final Keyword cColonKeyword_1 = (Keyword)cGroup.eContents().get(1);
-		private final Alternatives cAlternatives_2 = (Alternatives)cGroup.eContents().get(2);
-		private final RuleCall cLOWERCASE_IDTerminalRuleCall_2_0 = (RuleCall)cAlternatives_2.eContents().get(0);
-		private final RuleCall cUPPERCASE_IDTerminalRuleCall_2_1 = (RuleCall)cAlternatives_2.eContents().get(1);
-		private final RuleCall cINTTerminalRuleCall_2_2 = (RuleCall)cAlternatives_2.eContents().get(2);
-		private final RuleCall cSTRINGTerminalRuleCall_2_3 = (RuleCall)cAlternatives_2.eContents().get(3);
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final Group cGroup_0 = (Group)cAlternatives.eContents().get(0);
+		private final Alternatives cAlternatives_0_0 = (Alternatives)cGroup_0.eContents().get(0);
+		private final RuleCall cUPPERCASE_PATHTerminalRuleCall_0_0_0 = (RuleCall)cAlternatives_0_0.eContents().get(0);
+		private final RuleCall cUPPERCASE_IDTerminalRuleCall_0_0_1 = (RuleCall)cAlternatives_0_0.eContents().get(1);
+		private final Keyword cColonKeyword_0_1 = (Keyword)cGroup_0.eContents().get(1);
+		private final Alternatives cAlternatives_0_2 = (Alternatives)cGroup_0.eContents().get(2);
+		private final RuleCall cLOWERCASE_IDTerminalRuleCall_0_2_0 = (RuleCall)cAlternatives_0_2.eContents().get(0);
+		private final RuleCall cUPPERCASE_IDTerminalRuleCall_0_2_1 = (RuleCall)cAlternatives_0_2.eContents().get(1);
+		private final RuleCall cINTTerminalRuleCall_0_2_2 = (RuleCall)cAlternatives_0_2.eContents().get(2);
+		private final RuleCall cSTRINGTerminalRuleCall_0_2_3 = (RuleCall)cAlternatives_0_2.eContents().get(3);
+		private final RuleCall cWellFormedUrnIdWithFragmentParserRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
 		
 		//AuthorityId:
-		//    (UPPERCASE_PATH|UPPERCASE_ID) ':' (LOWERCASE_ID|UPPERCASE_ID|INT|STRING)
+		//    (UPPERCASE_PATH|UPPERCASE_ID) ':' (LOWERCASE_ID|UPPERCASE_ID|INT|STRING) |
+		//    WellFormedUrnIdWithFragment
 		//;
 		@Override public ParserRule getRule() { return rule; }
 		
+		//(UPPERCASE_PATH|UPPERCASE_ID) ':' (LOWERCASE_ID|UPPERCASE_ID|INT|STRING) |
+		//WellFormedUrnIdWithFragment
+		public Alternatives getAlternatives() { return cAlternatives; }
+		
 		//(UPPERCASE_PATH|UPPERCASE_ID) ':' (LOWERCASE_ID|UPPERCASE_ID|INT|STRING)
-		public Group getGroup() { return cGroup; }
+		public Group getGroup_0() { return cGroup_0; }
 		
 		//(UPPERCASE_PATH|UPPERCASE_ID)
-		public Alternatives getAlternatives_0() { return cAlternatives_0; }
+		public Alternatives getAlternatives_0_0() { return cAlternatives_0_0; }
 		
 		//UPPERCASE_PATH
-		public RuleCall getUPPERCASE_PATHTerminalRuleCall_0_0() { return cUPPERCASE_PATHTerminalRuleCall_0_0; }
+		public RuleCall getUPPERCASE_PATHTerminalRuleCall_0_0_0() { return cUPPERCASE_PATHTerminalRuleCall_0_0_0; }
 		
 		//UPPERCASE_ID
-		public RuleCall getUPPERCASE_IDTerminalRuleCall_0_1() { return cUPPERCASE_IDTerminalRuleCall_0_1; }
+		public RuleCall getUPPERCASE_IDTerminalRuleCall_0_0_1() { return cUPPERCASE_IDTerminalRuleCall_0_0_1; }
 		
 		//':'
-		public Keyword getColonKeyword_1() { return cColonKeyword_1; }
+		public Keyword getColonKeyword_0_1() { return cColonKeyword_0_1; }
 		
 		//(LOWERCASE_ID|UPPERCASE_ID|INT|STRING)
-		public Alternatives getAlternatives_2() { return cAlternatives_2; }
+		public Alternatives getAlternatives_0_2() { return cAlternatives_0_2; }
 		
 		//LOWERCASE_ID
-		public RuleCall getLOWERCASE_IDTerminalRuleCall_2_0() { return cLOWERCASE_IDTerminalRuleCall_2_0; }
+		public RuleCall getLOWERCASE_IDTerminalRuleCall_0_2_0() { return cLOWERCASE_IDTerminalRuleCall_0_2_0; }
 		
 		//UPPERCASE_ID
-		public RuleCall getUPPERCASE_IDTerminalRuleCall_2_1() { return cUPPERCASE_IDTerminalRuleCall_2_1; }
+		public RuleCall getUPPERCASE_IDTerminalRuleCall_0_2_1() { return cUPPERCASE_IDTerminalRuleCall_0_2_1; }
 		
 		//INT
-		public RuleCall getINTTerminalRuleCall_2_2() { return cINTTerminalRuleCall_2_2; }
+		public RuleCall getINTTerminalRuleCall_0_2_2() { return cINTTerminalRuleCall_0_2_2; }
 		
 		//STRING
-		public RuleCall getSTRINGTerminalRuleCall_2_3() { return cSTRINGTerminalRuleCall_2_3; }
+		public RuleCall getSTRINGTerminalRuleCall_0_2_3() { return cSTRINGTerminalRuleCall_0_2_3; }
+		
+		//WellFormedUrnIdWithFragment
+		public RuleCall getWellFormedUrnIdWithFragmentParserRuleCall_1() { return cWellFormedUrnIdWithFragmentParserRuleCall_1; }
 	}
 	public class PropertyIdElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.PropertyId");
@@ -12332,6 +12488,8 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 	private final OwlImportElements pOwlImport;
 	private final ImportElements pImport;
 	private final UrnIdElements pUrnId;
+	private final WellFormedUrnIdElements pWellFormedUrnId;
+	private final WellFormedUrnIdWithFragmentElements pWellFormedUrnIdWithFragment;
 	private final UrnKvpElements pUrnKvp;
 	private final LocalFilePathElements pLocalFilePath;
 	private final ObserveStatementElements pObserveStatement;
@@ -12450,6 +12608,8 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		this.pOwlImport = new OwlImportElements();
 		this.pImport = new ImportElements();
 		this.pUrnId = new UrnIdElements();
+		this.pWellFormedUrnId = new WellFormedUrnIdElements();
+		this.pWellFormedUrnIdWithFragment = new WellFormedUrnIdWithFragmentElements();
 		this.pUrnKvp = new UrnKvpElements();
 		this.pLocalFilePath = new LocalFilePathElements();
 		this.pObserveStatement = new ObserveStatementElements();
@@ -13086,6 +13246,26 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 	
 	public ParserRule getUrnIdRule() {
 		return getUrnIdAccess().getRule();
+	}
+	
+	//WellFormedUrnId:
+	//    PathName ':'  PathName ':' PathName ':' (PathName) (':' VersionNumber)? ('#' (Path|UrnKvp))?;
+	public WellFormedUrnIdElements getWellFormedUrnIdAccess() {
+		return pWellFormedUrnId;
+	}
+	
+	public ParserRule getWellFormedUrnIdRule() {
+		return getWellFormedUrnIdAccess().getRule();
+	}
+	
+	//WellFormedUrnIdWithFragment:
+	//    PathName ':'  PathName ':' PathName ':' (PathName) (':' VersionNumber)? '#' (LOWERCASE_ID|UPPERCASE_ID|INT|STRING);
+	public WellFormedUrnIdWithFragmentElements getWellFormedUrnIdWithFragmentAccess() {
+		return pWellFormedUrnIdWithFragment;
+	}
+	
+	public ParserRule getWellFormedUrnIdWithFragmentRule() {
+		return getWellFormedUrnIdWithFragmentAccess().getRule();
 	}
 	
 	//UrnKvp:
@@ -14296,7 +14476,8 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 	}
 	
 	//AuthorityId:
-	//    (UPPERCASE_PATH|UPPERCASE_ID) ':' (LOWERCASE_ID|UPPERCASE_ID|INT|STRING)
+	//    (UPPERCASE_PATH|UPPERCASE_ID) ':' (LOWERCASE_ID|UPPERCASE_ID|INT|STRING) |
+	//    WellFormedUrnIdWithFragment
 	//;
 	public AuthorityIdElements getAuthorityIdAccess() {
 		return pAuthorityId;

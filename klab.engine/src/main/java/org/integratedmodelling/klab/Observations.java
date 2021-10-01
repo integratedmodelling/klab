@@ -129,13 +129,13 @@ public enum Observations implements IObservationService {
     }
 
     @Override
-    public IState getStateView(IState state, IScale scale, IContextualizationScope context) {
-        return new RescalingState(state, (Scale) scale, (IRuntimeScope) context);
+    public IState getStateView(IState state, IScale scale, IContextualizationScope scope) {
+        return new RescalingState(state, (Scale) scale, (IRuntimeScope) scope);
     }
 
     @Override
-    public IState getStateViewAs(IObservable observable, IState state, IScale scale, IContextualizationScope context) {
-        return new RescalingState(state, observable, (Scale) scale, (IRuntimeScope) context);
+    public IState getStateViewAs(IObservable observable, IState state, IScale scale, IContextualizationScope scope) {
+        return new RescalingState(state, observable, (Scale) scale, (IRuntimeScope) scope);
     }
 
     /**

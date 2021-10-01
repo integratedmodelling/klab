@@ -39,7 +39,6 @@ public class KimObservable extends KimStatement implements IKimObservable {
 	private String currency;
 	private String formalName;
 	private Object value;
-	private boolean abstractObservable;
 	private boolean hasAttribute;
 	private boolean optional;
 	private List<Pair<ValueOperator, Object>> valueOperators = new ArrayList<>();
@@ -52,15 +51,6 @@ public class KimObservable extends KimStatement implements IKimObservable {
 	@Override
 	public IArtifact.Type getNonSemanticType() {
 		return nonSemanticType;
-	}
-
-	@Override
-	public boolean isAbstractObservable() {
-		return abstractObservable;
-	}
-
-	public void setAbstractObservable(boolean abstractObservable) {
-		this.abstractObservable = abstractObservable;
 	}
 
 	public void setMain(IKimConcept main) {
@@ -98,7 +88,6 @@ public class KimObservable extends KimStatement implements IKimObservable {
 		ret.formalName = declaration.getName();
 		ret.optional = declaration.isOptional();
 		ret.exclusive = declaration.isExclusive();
-		ret.abstractObservable = concept.is(Type.ABSTRACT) || declaration.isGeneric();
 		if (declaration.getValue() != null) {
 			String id = declaration.getValue().getId();
 			ret.value = Kim.INSTANCE.parseValue(declaration.getValue(),

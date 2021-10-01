@@ -57,7 +57,6 @@ import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
@@ -80,8 +79,8 @@ public class RasterEncoder implements IResourceEncoder {
 
     @Override
     public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
-            IKlabData.Builder builder, IContextualizationScope context) {
-        encodeFromCoverage(resource, urnParameters, getCoverage(resource, geometry), geometry, builder, context);
+            IKlabData.Builder builder, IContextualizationScope scope) {
+        encodeFromCoverage(resource, urnParameters, getCoverage(resource, geometry), geometry, builder, scope);
     }
 
     /**
@@ -93,10 +92,10 @@ public class RasterEncoder implements IResourceEncoder {
      * @param coverage
      * @param geometry
      * @param builder
-     * @param context
+     * @param scope
      */
     public void encodeFromCoverage(IResource resource, Map<String, String> urnParameters, GridCoverage coverage,
-            IGeometry geometry, IKlabData.Builder builder, IContextualizationScope context) {
+            IGeometry geometry, IKlabData.Builder builder, IContextualizationScope scope) {
 
         /*
          * Set the data from the transformed coverage
@@ -132,7 +131,7 @@ public class RasterEncoder implements IResourceEncoder {
          * TODO use different methods for non-doubles TODO support multi-band expressions
          */
 
-        builder = builder.startState(((IRuntimeScope) context).getTargetName());
+//        builder = builder.startState(((IRuntimeScope) scope).getTargetName());
 
         for (long ofs = 0; ofs < space.size(); ofs++) {
 
@@ -170,7 +169,7 @@ public class RasterEncoder implements IResourceEncoder {
 
             builder.add(value);
         }
-        builder = builder.finishState();
+//        builder = builder.finishState();
     }
 
     private Set<Double> getNodata(IResource resource, GridCoverage coverage, int band) {

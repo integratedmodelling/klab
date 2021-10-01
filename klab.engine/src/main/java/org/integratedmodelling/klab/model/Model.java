@@ -10,8 +10,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
-import java.util.logging.Level;
 
+import org.apache.commons.collections4.BidiMap;
+import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimConcept;
@@ -105,6 +106,8 @@ public class Model extends KimObject implements IModel {
     private IObservable archetype;
     private Set<IConcept> requiredTraits = null;
     private Set<IConcept> abstractTraits_ = null;
+    private BidiMap<String, String> localNames = new DualHashBidiMap<>();
+    private Map<String, IObservable> observablesByReferenceName = new HashMap<>();
 
     /*
      * the geometry implicitly declared for the project, gathered from the resources and the
@@ -220,10 +223,16 @@ public class Model extends KimObject implements IModel {
         this.dependencies.clear();
 
         for (IObservable observable : model.observables) {
-            this.observables.add(Observable.concretize(observable, resolvedPredicates, resolvedPredicatesContext));
+            IObservable obs = Observable.concretize(observable, resolvedPredicates, resolvedPredicatesContext);
+            this.observables.add(obs);
+            this.localNames.put(obs.getReferenceName(), obs.getName());
+            this.observablesByReferenceName.put(obs.getReferenceName(), obs);
         }
         for (IObservable dependency : model.dependencies) {
-            this.dependencies.add(Observable.concretize(dependency, resolvedPredicates, resolvedPredicatesContext));
+            IObservable obs = Observable.concretize(dependency, resolvedPredicates, resolvedPredicatesContext);
+            this.dependencies.add(obs);
+            this.localNames.put(obs.getReferenceName(), obs.getName());
+            this.observablesByReferenceName.put(obs.getReferenceName(), obs);
         }
 
     }
@@ -265,6 +274,8 @@ public class Model extends KimObject implements IModel {
                     attributeObservables.put(observable.getValue().toString(), obs);
                 } else {
                     observables.add(obs);
+                    observablesByReferenceName.put(obs.getReferenceName(), obs);
+                    localNames.put(obs.getReferenceName(), obs.getName());
                 }
             }
         }
@@ -272,6 +283,8 @@ public class Model extends KimObject implements IModel {
         for (IKimObservable dependency : model.getDependencies()) {
             Observable dep = Observables.INSTANCE.declare(dependency, monitor);
             dependencies.add(dep);
+            observablesByReferenceName.put(dep.getReferenceName(), dep);
+            localNames.put(dep.getReferenceName(), dep.getName());
         }
 
         /*
@@ -356,11 +369,15 @@ public class Model extends KimObject implements IModel {
                         .buildObservable();
 
                 observables.set(0, obsdep);
+                localNames.put(obsdep.getReferenceName(), obsdep.getName());
+                observablesByReferenceName.put(obsdep.getReferenceName(), obsdep);
 
                 if (findDependency(origin) != null) {
                     origin = (Observable) findDependency(origin);
                 } else {
                     dependencies.add(origin);
+                    localNames.put(origin.getReferenceName(), origin.getName());
+                    observablesByReferenceName.put(origin.getReferenceName(), origin);
                 }
 
                 if (origin.getAnnotations() == null) {
@@ -379,6 +396,8 @@ public class Model extends KimObject implements IModel {
                 IObservable inherent = getObservables().get(0).getBuilder(monitor).without(ObservableRole.CONTEXT)
                         .of(modelContext).buildObservable();
                 this.observables.set(0, inherent);
+                this.localNames.put(inherent.getReferenceName(), inherent.getName());
+                observablesByReferenceName.put(inherent.getReferenceName(), inherent);
                 for (i = 1; i < dependencies.size(); i++) {
                     if (Annotations.INSTANCE.hasAnnotation(dependencies.get(i), IModel.PREDICTOR_ANNOTATION)) {
                         if (!distributesLearning) {
@@ -411,7 +430,10 @@ public class Model extends KimObject implements IModel {
                 IObservable obs = observables.get(oo);
                 if (obs != null && obs.is(Type.QUALITY) && !changed.contains(obs.getType())) {
                     if (Observables.INSTANCE.isAffectedBy(obs, getMainObservable())) {
-                        toAdd.add(obs.getBuilder(monitor).as(UnarySemanticOperator.CHANGE).buildObservable());
+                        IObservable cobs = obs.getBuilder(monitor).as(UnarySemanticOperator.CHANGE).buildObservable();
+                        toAdd.add(cobs);
+                        this.localNames.put(cobs.getReferenceName(), cobs.getName());
+                        observablesByReferenceName.put(cobs.getReferenceName(), cobs);
                     } else {
                         monitor.error("observable " + obs.getType().getDefinition()
                                 + " output by a process model must be either affected or created by it", getStatement());
@@ -945,11 +967,17 @@ public class Model extends KimObject implements IModel {
         }
 
         this.id = mainObservable.getName() + (preds.isEmpty() ? "" : ("_" + preds)) + "_derived";
+        this.localNames.put(mainObservable.getReferenceName(), mainObservable.getName());
+        this.observablesByReferenceName.put(mainObservable.getReferenceName(), mainObservable);
         this.namespace = scope.getResolutionNamespace();
         this.contextualization = new Contextualization(null, this);
         this.observables.add(mainObservable);
         this.observationStrategy = candidateObservable.getStrategy();
         this.dependencies.addAll(candidateObservable.getObservables());
+        for (IObservable dep : this.dependencies) {
+            this.localNames.put(dep.getReferenceName(), dep.getName());
+            this.observablesByReferenceName.put(dep.getReferenceName(), dep);
+        }
         if (candidateObservable.getComputation() != null) {
             this.resources.addAll(candidateObservable.getComputation());
         }
@@ -983,6 +1011,8 @@ public class Model extends KimObject implements IModel {
         this.namespace = scope.getResolutionNamespace();
         this.contextualization = new Contextualization(null, this);
         this.observables.add(changeObservable);
+        this.localNames.put(changeObservable.getReferenceName(), changeObservable.getName());
+        this.observablesByReferenceName.put(changeObservable.getReferenceName(), changeObservable);
         this.coverage = scope.getScale();
 
         if (resource != null) {
@@ -1001,6 +1031,8 @@ public class Model extends KimObject implements IModel {
         this.namespace = scope.getResolutionNamespace();
         this.contextualization = new Contextualization(null, this);
         this.observables.add(mainObservable);
+        this.localNames.put(mainObservable.getReferenceName(), mainObservable.getName());
+        this.observablesByReferenceName.put(mainObservable.getReferenceName(), mainObservable);
         this.coverage = scope.getScale();
         this.resources.add(Klab.INSTANCE.getRuntimeProvider().getChangeResolver(mainObservable, resolvedChangingObservationName));
     }
@@ -1013,10 +1045,18 @@ public class Model extends KimObject implements IModel {
         this.viewModel = view;
         this.getAnnotations().addAll(view.getAnnotations());
         this.namespace = (Namespace) view.getNamespace();
-        this.observables.add(Observable.promote(Concepts.c(NS.CORE_VOID)));
+        Observable mainObservable = Observable.promote(Concepts.c(NS.CORE_VOID));
+        this.observables.add(mainObservable);
+        this.localNames.put(mainObservable.getReferenceName(), mainObservable.getName());
+        this.observablesByReferenceName.put(mainObservable.getReferenceName(), mainObservable);
+
         this.id = view.getId() + "_resolver";
         this.contextualization = new Contextualization(null, this);
         this.dependencies.addAll(view.getObservables());
+        for (IObservable obs : this.dependencies) {
+            this.localNames.put(obs.getReferenceName(), obs.getName());
+            this.observablesByReferenceName.put(obs.getReferenceName(), obs);
+        }
         this.resources.add(Klab.INSTANCE.getRuntimeProvider().getViewResolver(view));
     }
 
@@ -1264,18 +1304,8 @@ public class Model extends KimObject implements IModel {
     }
 
     @Override
-    public String getLocalNameFor(IObservable observable, IConcept context, IMonitor monitor) {
-        IObservable obs = getCompatibleOutput((Observable) observable, context, monitor);
-        if (obs != null) {
-            return obs.getName();
-        }
-        obs = getCompatibleInput((Observable) observable);
-        /**
-         * The observable's local name is returned in case we don't have it; this happens when an
-         * indirect observable is used to resolve a different one. If we returned null here, the
-         * resulting actuator will have a null name.
-         */
-        return obs == null ? observable.getName() : obs.getName();
+    public String getLocalNameFor(IObservable observable) {
+        return observable == null ? null : this.localNames.get(observable.getReferenceName());
     }
 
     @Override
@@ -1752,6 +1782,12 @@ public class Model extends KimObject implements IModel {
         org.integratedmodelling.klab.rest.DocumentationNode.Model ret = new org.integratedmodelling.klab.rest.DocumentationNode.Model();
         // TODO
         return ret;
+    }
+
+    @Override
+    public IObservable getObservableFor(String localName) {
+        String referenceName = localNames.inverseBidiMap().get(localName);
+        return referenceName == null ? null : observablesByReferenceName.get(referenceName);
     }
 
 }

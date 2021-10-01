@@ -118,7 +118,7 @@ public interface IRuntimeProvider {
 	 *                   resolver. This is passed because in case the main target is
 	 *                   a process, it should be used to retrieve the state that is
 	 *                   the ultimate target of the computation.
-	 * @param context    the context before distribution - i.e., all states in it
+	 * @param scope    the context before distribution - i.e., all states in it
 	 *                   will be whole states and need to be contextualized to each
 	 *                   extent before computation happens (the resolver expects
 	 *                   individual values at each call). The current version of the
@@ -134,7 +134,7 @@ public interface IRuntimeProvider {
 	 * @throws org.integratedmodelling.klab.exceptions.KlabException
 	 */
 	IObservation distributeComputation(IStateResolver resolver, IObservation mainTarget, IContextualizable resource,
-			IContextualizationScope context, ILocator locator) throws KlabException;
+            IContextualizationScope scope, ILocator locator) throws KlabException;
 
 	/**
 	 * The "empty" observation must contain the observable and the scale. It is
@@ -148,11 +148,11 @@ public interface IRuntimeProvider {
 	 * @param observable a
 	 *                   {@link org.integratedmodelling.klab.api.knowledge.IObservable}
 	 *                   object.
-	 * @param context    context for the observation, which must be correct.
+	 * @param scope    context for the observation, which must be correct.
 	 * @return a {@link org.integratedmodelling.klab.api.observations.IObservation}
 	 *         object.
 	 */
-	IObservation createEmptyObservation(IObservable observable, IContextualizationScope context);
+	IObservation createEmptyObservation(IObservable observable, IContextualizationScope scope);
 
 	/**
 	 * Create a state to be used for intermediate computations or temporary storage
@@ -164,10 +164,10 @@ public interface IRuntimeProvider {
 	 * @param observable
 	 * @param type
 	 * @param scale
-	 * @param context
+	 * @param scope
 	 * @return a new state
 	 */
-	IState createState(IObservable observable, IArtifact.Type type, IScale scale, IContextualizationScope context);
+	IState createState(IObservable observable, IArtifact.Type type, IScale scale, IContextualizationScope scope);
 
 	/**
 	 * If the runtime provides a computation that can turn the passed artifact type
@@ -257,16 +257,16 @@ public interface IRuntimeProvider {
 	 */
 	IContextualizable getChangeResolver(IObservable changeObservable, String changingObservationName);
 
-	/*
-	 * Called on a computation returned by getComputation() to change the target ID
-	 * after creation. FIXME this is ugly and unstable - needs a different logic and
-	 * removal
-	 * 
-	 * @param resource
-	 * 
-	 * @param targetId
-	 */
-	void setComputationTargetId(IContextualizable resource, String targetId);
+//	/*
+//	 * Called on a computation returned by getComputation() to change the target ID
+//	 * after creation. FIXME this is ugly and unstable - needs a different logic and
+//	 * removal
+//	 * 
+//	 * @param resource
+//	 * 
+//	 * @param targetId
+//	 */
+//	void setComputationTargetId(IContextualizable resource, String targetId);
 
 	/**
 	 * Return a void contextualizer that will resolve a view and send the compiled

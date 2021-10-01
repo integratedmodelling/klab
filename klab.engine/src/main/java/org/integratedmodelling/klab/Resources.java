@@ -184,7 +184,8 @@ public enum Resources implements IResourceService {
 
     Map<String, IWorkspace> workspaces = new HashMap<>();
 
-    // this is only for load-on-demand workspaces, engendered by loading "singleton" projects on demand
+    // this is only for load-on-demand workspaces, engendered by loading "singleton" projects on
+    // demand
     Map<File, IWorkspace> workspacesByRoot = new HashMap<>();
 
     /**
@@ -1080,12 +1081,12 @@ public enum Resources implements IResourceService {
                 throw new KlabUnsupportedFeatureException("adapter for resource of type " + kurn.getCatalog() + " not available");
             }
 
-            IContextualizationScope context = Expression.emptyContext(geometry, monitor);
+            IContextualizationScope scope = Expression.emptyContext(geometry, monitor);
             try {
-                adapter.encodeData(kurn, builder, geometry, context);
+                adapter.encodeData(kurn, builder, geometry, scope);
             } catch (Throwable e) {
                 // just return null later
-                context.getMonitor().error("could not extract data from " + urn + ": " + e.getMessage());
+                scope.getMonitor().error("could not extract data from " + urn + ": " + e.getMessage());
             }
 
         } else {
@@ -1114,18 +1115,35 @@ public enum Resources implements IResourceService {
      * @param resource
      * @param urnParameters
      * @param geometry
-     * @param context
+     * @param scope
      * @return KlabException if anything goes wrong
      */
     public IKlabData getResourceData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
-            IContextualizationScope context) {
+            IContextualizationScope scope) {
+        return getResourceData(resource, urnParameters, geometry, scope, null);
+    }
+
+    /**
+     * Like {@link #getResourceData(IResource, Map, IGeometry, IContextualizationScope)} but using a
+     * passed artifact instead of simply finding the target artifact in the scope. This is used when
+     * layers or other wrappers must be passed from the upstream contextualizer.
+     * 
+     * @param resource
+     * @param urnParameters
+     * @param geometry
+     * @param scope
+     * @param targetArtifact
+     * @return
+     */
+    public IKlabData getResourceData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
+            IContextualizationScope scope, IArtifact targetArtifact) {
 
         Urn urn = new Urn(resource.getUrn(), urnParameters);
         boolean local = Urns.INSTANCE.isLocal(resource.getUrn());
         RuntimeException error = null;
 
         SessionActivity.ResourceActivity descriptor = null;
-        AbstractTask<?> task = context.getMonitor().getIdentity().getParentIdentity(AbstractTask.class);
+        AbstractTask<?> task = scope.getMonitor().getIdentity().getParentIdentity(AbstractTask.class);
         if (task != null && task.getActivity().getActivityDescriptor() != null) {
             descriptor = task.getActivity().getActivityDescriptor().getResourceActivities().get(resource.getUrn());
             if (descriptor == null) {
@@ -1163,9 +1181,9 @@ public enum Resources implements IResourceService {
                     throw error;
                 }
 
-                IKlabData.Builder builder = new LocalDataBuilder((IRuntimeScope) context);
+                IKlabData.Builder builder = new LocalDataBuilder((IRuntimeScope) scope, targetArtifact);
                 try {
-                    adapter.encodeData(urn, builder, geometry, context);
+                    adapter.encodeData(urn, builder, geometry, scope);
                     IKlabData ret = builder.build();
                     if (descriptor != null) {
                         long elapsed = System.currentTimeMillis() - start;
@@ -1180,7 +1198,7 @@ public enum Resources implements IResourceService {
                     return ret;
                 } catch (Throwable e) {
                     // just return null later
-                    context.getMonitor().error("could not extract data from " + resource.getUrn() + ": " + e.getMessage());
+                    scope.getMonitor().error("could not extract data from " + resource.getUrn() + ": " + e.getMessage());
 
                     if (descriptor != null) {
                         descriptor.setnErrors(descriptor.getnErrors() + 1);
@@ -1205,9 +1223,9 @@ public enum Resources implements IResourceService {
                     throw error;
                 }
 
-                IKlabData.Builder builder = new LocalDataBuilder(context);
+                IKlabData.Builder builder = new LocalDataBuilder(scope, targetArtifact);
                 try {
-                    adapter.getEncoder().getEncodedData(resource, urnParameters, geometry, builder, context);
+                    adapter.getEncoder().getEncodedData(resource, urnParameters, geometry, builder, scope);
                     IKlabData ret = builder.build();
 
                     if (descriptor != null) {
@@ -1242,7 +1260,7 @@ public enum Resources implements IResourceService {
                 request.setUrn(urn.toString());
                 request.setGeometry(geometry.encode());
                 DecodingDataBuilder builder = new DecodingDataBuilder(
-                        node.getClient().post(API.NODE.RESOURCE.GET_DATA, request, Map.class), context);
+                        node.getClient().post(API.NODE.RESOURCE.GET_DATA, request, Map.class), scope);
                 IKlabData ret = builder.build();
 
                 if (descriptor != null) {

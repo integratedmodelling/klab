@@ -49,28 +49,28 @@ public class MergingInstantiator implements IExpression, IInstantiator {
     }
 
     @Override
-    public List<IObjectArtifact> instantiate(IObservable semantics, IContextualizationScope context) throws KlabException {
+    public List<IObjectArtifact> instantiate(IObservable semantics, IContextualizationScope scope) throws KlabException {
 
         List<IObjectArtifact> ret = new ArrayList<>();
-        IResource res = this.resource.contextualize(context.getScale(), context.getTargetArtifact(), urnParameters, context);
+        IResource res = this.resource.contextualize(scope.getScale(), scope.getTargetArtifact(), urnParameters, scope);
         Map<String, String> parameters = urnParameters;
 
         if (this.resource instanceof MergedResource) {
             List<Pair<IResource, Map<String, String>>> resources = ((MergedResource) this.resource)
-                    .contextualize(context.getScale(), context.getTargetArtifact());
+                    .contextualize(scope.getScale(), scope.getTargetArtifact());
             if (resources.isEmpty()) {
-                context.getMonitor().warn("resource " + this.resource.getUrn() + " cannot be contextualized in this scale");
+                scope.getMonitor().warn("resource " + this.resource.getUrn() + " cannot be contextualized in this scale");
                 return ret;
             }
 
             for (Pair<IResource, Map<String, String>> pr : resources) {
-                ((Report) context.getReport()).addContextualizedResource(this.resource.getUrn(),
+                ((Report) scope.getReport()).addContextualizedResource(this.resource.getUrn(),
                         pr.getFirst());
             }
 
             // TODO must contextualize the LIST, not just the first resource
             if (resources.size() > 1) {
-                context.getMonitor()
+                scope.getMonitor()
                         .warn("Warning: unimplemented use of multiple resources for one timestep. Choosing only the first.");
             }
 
@@ -79,7 +79,7 @@ public class MergingInstantiator implements IExpression, IInstantiator {
 
         }
 
-        IKlabData data = Resources.INSTANCE.getResourceData(res, parameters, context.getScale(), context);
+        IKlabData data = Resources.INSTANCE.getResourceData(res, parameters, scope.getScale(), scope);
 
         if (data != null && data.getArtifact() != null) {
             for (IArtifact artifact : data.getArtifact()) {

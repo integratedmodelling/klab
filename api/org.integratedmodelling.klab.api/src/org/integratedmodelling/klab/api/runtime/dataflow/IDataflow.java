@@ -82,8 +82,8 @@ public interface IDataflow<T extends IArtifact> extends IActuator {
     List<IDataflow<T>> getChildren();
 
     /**
-     * Each dataflow in the hierarchy must be able to produce the root dataflow, corresponding to the
-     * one that created the root observation.
+     * Each dataflow in the hierarchy must be able to produce the root dataflow, corresponding to
+     * the one that created the root observation.
      * 
      * @return
      */
@@ -99,19 +99,6 @@ public interface IDataflow<T extends IArtifact> extends IActuator {
      * @return
      */
     IScale getResolutionScale();
-
-    /**
-     * The applicable scale of the dataflow, which can be much broader than the scale of resolution.
-     * If {@link org.integratedmodelling.klab.api.resolution.ICoverage#isEmpty() its coverage is
-     * empty}, the dataflow will produce an
-     * {@link org.integratedmodelling.klab.api.provenance.IArtifact#isEmpty() empty artifact} when
-     * run. Otherwise the coverage reflects the applicable scale of the dataflow, i.e. the range of
-     * extents and resolutions where it applies. If null, the dataflow can be used universally. A
-     * resource built for this dataflow will have a geometry reflecting this coverage.
-     *
-     * @return the coverage of this dataflow.
-     */
-    ICoverage getCoverage();
 
     /**
      * Run the dataflow in the passed scale using the configured or default
@@ -130,16 +117,19 @@ public interface IDataflow<T extends IArtifact> extends IActuator {
 
     /**
      * Return the k.DL source code for the dataflow. If the dataflow has been read from a k.DL
-     * stream, return the original code, otherwise reconstruct it by decompiling the dataflow.
+     * stream, return the original code, otherwise reconstruct it by decompiling the dataflow. The
+     * code must be syntactically correct and usable within a resource. If serialization of large
+     * and complex extents makes the code unsuitable for transmission to clients, the runtime should
+     * not encode those directly but reference appropriate sidecar files.
      *
      * @return the k.DL code. Never null.
      */
     String getKdlCode();
 
     /**
-     * An empty dataflow results from an unsuccessful resolution and produces an
+     * An empty dataflow is a valid dataflow that produces an
      * {@link org.integratedmodelling.klab.api.provenance.IArtifact#isEmpty() empty artifact} when
-     * run - which may be legitimate if it's an "acknowledged" observation, e.g. a ISubject.
+     * run in its scale.
      *
      * @return true if the dataflow is empty
      */

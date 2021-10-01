@@ -26,7 +26,6 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.components.localstorage.impl.AbstractAdaptiveStorage;
 import org.integratedmodelling.klab.components.localstorage.impl.KeyedStorage;
-import org.integratedmodelling.klab.components.localstorage.impl.TimesliceLocator;
 import org.integratedmodelling.klab.data.storage.DataIterator;
 import org.integratedmodelling.klab.data.storage.LocatedState;
 import org.integratedmodelling.klab.data.storage.MediatingState;
@@ -127,6 +126,8 @@ public class State extends Observation implements IState, IKeyHolder {
         if (layer instanceof AbstractAdaptiveStorage) {
             ((AbstractAdaptiveStorage<?>) layer).setState(ret);
         }
+        // only for debugging
+        ((StateLayer)ret).setLayerType(type);
 
         return ret;
     }

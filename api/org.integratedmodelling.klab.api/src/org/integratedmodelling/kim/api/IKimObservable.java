@@ -50,11 +50,6 @@ public interface IKimObservable extends IKimStatement {
     List<Pair<ValueOperator, Object>> getValueOperators();
 
     /**
-     * @return true if abstract
-     */
-    boolean isAbstractObservable();
-
-    /**
      * If the observable specification had an identifier (rather than a literal value) before an
      * 'as' clause introducing the semantics, this will return true and the {@link #getValue()}
      * method will return a string with the identifier's value. The interpretation of the identifier

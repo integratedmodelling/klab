@@ -324,11 +324,11 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
         return null;
     }
 
-    @Override
-    public void rename(String name, String alias) {
-        // TODO Auto-generated method stub
-
-    }
+//    @Override
+//    public void rename(String name, String alias) {
+//        // TODO Auto-generated method stub
+//
+//    }
 
     @Override
     public void setTarget(IArtifact target) {
@@ -360,11 +360,11 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
         return null;
     }
 
-    @Override
-    public void replaceTarget(IArtifact self) {
-        // TODO Auto-generated method stub
-
-    }
+//    @Override
+//    public void replaceTarget(IArtifact self) {
+//        // TODO Auto-generated method stub
+//
+//    }
 
     @Override
     public Pair<String, IArtifact> findArtifact(IObservable observable) {
@@ -770,6 +770,12 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
     public <T extends IArtifact> Collection<T> getAnyArtifact(IConcept concept, Class<T> cls) {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public IRuntimeScope withCoverage(IScale scale) {
+        this.scale = ((Scale)this.scale).substituteExtents(scale);
+        return this;
     }
 
 }

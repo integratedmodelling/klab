@@ -116,10 +116,10 @@ public interface IDocumentation {
         /**
          * Compile into a report section
          * 
-         * @param context
+         * @param scope
          * @return
          */
-        void compile(IReport.Section section, IContextualizationScope context, Map<String, Object> templateVariables);
+        void compile(IReport.Section section, IContextualizationScope scope, Map<String, Object> templateVariables);
 
         /**
          * Return the section type that this applies to.

@@ -366,7 +366,7 @@ public class DocumentationEditor extends ViewPart {
         sashForm.setWeights(new int[] { 1, 1 });
 
         createActions();
-        initializeToolBar();
+//        initializeToolBar();
         initializeMenu();
 
     }
@@ -419,15 +419,15 @@ public class DocumentationEditor extends ViewPart {
     /**
      * Initialize the toolbar.
      */
-    private void initializeToolBar() {
-        IToolBarManager tbm = getViewSite().getActionBars().getToolBarManager();
-    }
+//    private void initializeToolBar() {
+//        IToolBarManager tbm = getViewSite().getActionBars().getToolBarManager();
+//    }
 
     /**
      * Initialize the menu.
      */
     private void initializeMenu() {
-        IMenuManager manager = getViewSite().getActionBars().getMenuManager();
+//        IMenuManager manager = getViewSite().getActionBars().getMenuManager();
     }
 
     @Override

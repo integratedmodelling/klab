@@ -17,7 +17,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 import java.util.logging.Level;
@@ -160,6 +159,9 @@ import groovy.lang.GroovyObjectSupport;
 
 /**
  * Engine session. Implements UserDetails to be directly usable as a principal in Spring security.
+ * 
+ * TODO this must become a front-end for session actors, managed uniformly within the runtime
+ * singleton.
  * 
  * @author ferdinando.villa
  *

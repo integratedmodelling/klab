@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.integratedmodelling.kim.api.IKimQuantity;
@@ -118,6 +119,24 @@ public class Time extends Extent implements ITime {
         public String toString() {
             return multiplier + " " + type;
         }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(multiplier, type);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            ResolutionImpl other = (ResolutionImpl) obj;
+            return Double.doubleToLongBits(multiplier) == Double.doubleToLongBits(other.multiplier) && type == other.type;
+        }
+
     }
 
     private Time() {
@@ -1502,9 +1521,9 @@ public class Time extends Extent implements ITime {
             return Double.NaN;
         }
         long periods = this.start.getPeriods(this.end, resolution);
-        ITimeInstant intend = this.start.plus((int)periods, resolution);
+        ITimeInstant intend = this.start.plus((int) periods, resolution);
         long leftover = this.end.getMilliseconds() - intend.getMilliseconds();
-        return (double)periods + ((double)leftover/(double)resolution.getSpan());
+        return (double) periods + ((double) leftover / (double) resolution.getSpan());
     }
 
 }

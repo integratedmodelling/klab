@@ -10,26 +10,18 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
-import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.rest.StateSummary;
 
 public class NormalizingResolver implements IResolver<IState>, IExpression, IProcessor {
 
-    IState state;
     boolean invert;
 
     public NormalizingResolver() {
     }
 
     public NormalizingResolver(IParameters<String> parameters, IContextualizationScope context) {
-
         this.invert = parameters.get("invert", Boolean.FALSE);
-        IArtifact artifact = context.getArtifact(parameters.get("artifact", String.class));
-        if (artifact instanceof IState && (artifact.getType() != Type.NUMBER && artifact.getType() != Type.VALUE)) {
-            throw new IllegalArgumentException("normalization operations can only be performed on numeric states");
-        }
-        this.state = (IState) artifact;
     }
 
     @Override
@@ -43,23 +35,24 @@ public class NormalizingResolver implements IResolver<IState>, IExpression, IPro
     }
 
     @Override
-    public IState resolve(IState ret, IContextualizationScope context) throws KlabException {
-        /*
-         * this is for when the contextualizer is used directly without arguments in a 'using'
-         * clause. In that circumstance, it means 'contextualize myself'.
-         */
-        if (state == null) {
-            state = context.get("self", IState.class);
+    public IState resolve(IState ret, IContextualizationScope scope) throws KlabException {
+
+        IState target = scope.get("self", IState.class);
+        if (scope.get("artifact") != null) {
+            target = scope.getArtifact(scope.get("artifact", String.class), IState.class);
+            if (target instanceof IState && (target.getType() != Type.NUMBER && target.getType() != Type.VALUE)) {
+                throw new IllegalArgumentException("normalization operations can only be performed on numeric states");
+            }
         }
 
         double min = Double.NaN;
         double max = Double.NaN;
 
-        StateSummary summary = Observations.INSTANCE.getStateSummary(state, context.getScale());
+        StateSummary summary = Observations.INSTANCE.getStateSummary(target, scope.getScale());
         if (!summary.isDegenerate()) {
 
-            for (ILocator locator : context.getScale()) {
-                Object value = state.get(locator);
+            for (ILocator locator : scope.getScale()) {
+                Object value = target.get(locator);
                 if (value instanceof Number && !Double.isNaN(((Number) value).doubleValue())) {
                     double nval = ((Number) value).doubleValue();
                     nval = (nval - summary.getRange().get(0)) / (summary.getRange().get(1) - summary.getRange().get(0));
@@ -69,12 +62,11 @@ public class NormalizingResolver implements IResolver<IState>, IExpression, IPro
                         min = min > nval ? nval : min;
                     }
                 }
-
             }
         }
 
         if (invert && !Double.isNaN(min) && !Double.isNaN(max)) {
-            for (ILocator locator : context.getScale()) {
+            for (ILocator locator : scope.getScale()) {
                 Object value = ret.get(locator);
                 if (value instanceof Number && !Double.isNaN(((Number) value).doubleValue())) {
                     ret.set(locator, max - ((Number) value).doubleValue() + min);

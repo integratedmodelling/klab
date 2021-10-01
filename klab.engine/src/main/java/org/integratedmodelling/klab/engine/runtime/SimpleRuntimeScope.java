@@ -100,7 +100,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 
     public SimpleRuntimeScope(Actuator actuator) {
         this.observable = actuator.getObservable();
-        this.scale = actuator.getDataflow().getScale();
+        this.scale = actuator.getDataflow().getMergedCoverage();
         this.structure = new Structure();
         this.network = new DefaultDirectedGraph<>(Relationship.class);
         this.artifacts = new HashMap<>();
@@ -374,11 +374,11 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
         return null;
     }
 
-    @Override
-    public void rename(String name, String alias) {
-        // TODO Auto-generated method stub
-
-    }
+    // @Override
+    // public void rename(String name, String alias) {
+    // // TODO Auto-generated method stub
+    //
+    // }
 
     @Override
     public void setTarget(IArtifact target) {
@@ -471,12 +471,13 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
         return observations.get(observationId);
     }
 
-    @Override
-    public void replaceTarget(IArtifact self) {
-        // should never be called
-        throw new IllegalStateException(
-                "replaceTarget called on a simple context: this context should never be used in computations");
-    }
+    // @Override
+    // public void replaceTarget(IArtifact self) {
+    // // should never be called
+    // throw new IllegalStateException(
+    // "replaceTarget called on a simple context: this context should never be used in
+    // computations");
+    // }
 
     /**
      * This must be called explicitly before the builder is called upon.
@@ -828,11 +829,11 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
     @SuppressWarnings("unchecked")
     @Override
     public <T extends IArtifact> Collection<T> getAnyArtifact(IConcept concept, Class<T> cls) {
-        
+
         Set<T> ret = new HashSet<>();
         for (IArtifact artifact : artifacts.values()) {
             if (artifact instanceof IObservation && ((IObservation) artifact).getObservable().getType().is(concept)) {
-                ret.add((T)artifact);
+                ret.add((T) artifact);
             }
         }
 
@@ -840,12 +841,18 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
         if (ret.size() > 1) {
             for (IArtifact artifact : ret) {
                 if (cls.isAssignableFrom(artifact.getClass())) {
-                    chosen.add((T)artifact);
+                    chosen.add((T) artifact);
                 }
             }
         }
 
         return chosen;
+    }
+
+    @Override
+    public IRuntimeScope withCoverage(IScale scale) {
+        this.scale = ((Scale)this.scale).substituteExtents(scale);
+        return this;
     }
 
 }

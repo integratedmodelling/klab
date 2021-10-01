@@ -14,6 +14,7 @@ import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IObservationGroup;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
@@ -49,11 +50,14 @@ public class LocalDataBuilder implements IKlabData.Builder {
     IConcept semantics;
     AtomicLong nextId = new AtomicLong(0L);
 
-    public LocalDataBuilder(IContextualizationScope context) {
+    public LocalDataBuilder(IContextualizationScope context, IArtifact targetArtifact) {
         this.context = context;
         this.observable = context.getTargetSemantics();
-        if (context.getTargetArtifact() instanceof IState) {
-            this.state = (IState) context.getTargetArtifact();
+        if (targetArtifact == null) {
+            targetArtifact = context.getTargetArtifact();
+        }
+        if (targetArtifact instanceof IState) {
+            this.state = (IState)targetArtifact;
         }
     }
 
