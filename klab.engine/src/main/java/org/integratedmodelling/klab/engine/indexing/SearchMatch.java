@@ -7,7 +7,7 @@ import java.util.Set;
 
 import org.integratedmodelling.kim.api.BinarySemanticOperator;
 import org.integratedmodelling.kim.api.IKimConcept;
-import org.integratedmodelling.kim.api.Modifier;
+import org.integratedmodelling.kim.api.SemanticModifier;
 import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.klab.api.services.IIndexingService;
@@ -26,7 +26,7 @@ public class SearchMatch implements IIndexingService.Match {
     UnarySemanticOperator unaryOperator = null;
     BinarySemanticOperator binaryOperator = null;
     ValueOperator valueOperator = null;
-    Modifier modifier = null;
+    SemanticModifier modifier = null;
 
     boolean isAbstract = false;
 
@@ -73,7 +73,7 @@ public class SearchMatch implements IIndexingService.Match {
         this.id = this.name = op.name().toLowerCase();
     }
 
-    public SearchMatch(Modifier op) {
+    public SearchMatch(SemanticModifier op) {
         this.modifier = op;
         this.matchType = Type.MODIFIER;
         this.id = this.name = modifier.declaration[0];
@@ -227,11 +227,11 @@ public class SearchMatch implements IIndexingService.Match {
         this.binaryOperator = binaryOperator;
     }
 
-    public Modifier getModifier() {
+    public SemanticModifier getModifier() {
         return modifier;
     }
 
-    public void setModifier(Modifier modifier) {
+    public void setModifier(SemanticModifier modifier) {
         this.modifier = modifier;
     }
 

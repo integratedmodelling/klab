@@ -362,7 +362,11 @@ public interface IKimConcept extends IKimStatement {
     public enum ObservableRole {
 
         // conceptual components
-        TRAIT, ROLE, CONTEXT, INHERENT, ADJACENT, CAUSED, CAUSANT, COMPRESENT, GOAL, COOCCURRENT, TEMPORAL_INHERENT, RELATIONSHIP_SOURCE, RELATIONSHIP_TARGET,
+        TRAIT, ROLE, CONTEXT, INHERENT, ADJACENT, CAUSED, CAUSANT, COMPRESENT, GOAL, COOCCURRENT,
+        /**
+         * temporal inherent is 'during each'. Support is partial. Not sure it's here to stay.
+         */
+        TEMPORAL_INHERENT, RELATIONSHIP_SOURCE, RELATIONSHIP_TARGET,
 
         // structural components and modifiers
         VALUE_OPERATOR, UNIT, CURRENCY, LOGICAL_OPERATOR, INLINE_VALUE, UNARY_OPERATOR,

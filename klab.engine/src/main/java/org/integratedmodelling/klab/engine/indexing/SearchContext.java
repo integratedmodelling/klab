@@ -13,7 +13,7 @@ import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.Query;
 import org.integratedmodelling.kim.api.BinarySemanticOperator;
 import org.integratedmodelling.kim.api.IKimConcept;
-import org.integratedmodelling.kim.api.Modifier;
+import org.integratedmodelling.kim.api.SemanticModifier;
 import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.Concepts;
@@ -227,11 +227,11 @@ public class SearchContext implements IIndexingService.Context {
 
 		// if not empty, these are in AND and filter is true
 		private List<Condition> conditions = new ArrayList<>();
-		private static Set<Modifier> allModifiers;
+		private static Set<SemanticModifier> allModifiers;
 
 		static {
 			allModifiers = new HashSet<>();
-			for (Modifier modifier : Modifier.values()) {
+			for (SemanticModifier modifier : SemanticModifier.values()) {
 				allModifiers.add(modifier);
 			}
 		}
@@ -239,7 +239,7 @@ public class SearchContext implements IIndexingService.Context {
 		boolean filter;
 		boolean query;
 		boolean matcher;
-		Set<Modifier> modifiers = null;
+		Set<SemanticModifier> modifiers = null;
 		Set<IConcept> baseTraitBlacklist;
 
 		// if set, all matches must have at least minMatches of the types in here
@@ -328,7 +328,7 @@ public class SearchContext implements IIndexingService.Context {
 					}
 					break;
 				case MODIFIER:
-					for (Modifier op : (modifiers == null ? allModifiers : modifiers)) {
+					for (SemanticModifier op : (modifiers == null ? allModifiers : modifiers)) {
 						if (op.declaration[0].startsWith(queryTerm)) {
 							ret.add(new SearchMatch(op));
 						}
@@ -510,46 +510,46 @@ public class SearchContext implements IIndexingService.Context {
 			ret.modifiers = new HashSet<>();
 			if (Kim.INSTANCE.is(semantics, IKimConcept.Type.QUALITY)) {
 
-				ret.modifiers.add(Modifier.BY);
-				ret.modifiers.add(Modifier.WHERE);
-				ret.modifiers.add(Modifier.IS);
-				ret.modifiers.add(Modifier.SAMEAS);
-				ret.modifiers.add(Modifier.WITHOUT);
+				ret.modifiers.add(SemanticModifier.BY);
+				ret.modifiers.add(SemanticModifier.WHERE);
+				ret.modifiers.add(SemanticModifier.IS);
+				ret.modifiers.add(SemanticModifier.SAMEAS);
+				ret.modifiers.add(SemanticModifier.WITHOUT);
 
 				if (Kim.INSTANCE.isNumeric(semantics)) {
 
-					ret.modifiers.add(Modifier.PLUS);
-					ret.modifiers.add(Modifier.TIMES);
-					ret.modifiers.add(Modifier.GREATER);
-					ret.modifiers.add(Modifier.GREATEREQUAL);
-					ret.modifiers.add(Modifier.LESS);
-					ret.modifiers.add(Modifier.LESSEQUAL);
-					ret.modifiers.add(Modifier.MINUS);
-					ret.modifiers.add(Modifier.OVER);
+					ret.modifiers.add(SemanticModifier.PLUS);
+					ret.modifiers.add(SemanticModifier.TIMES);
+					ret.modifiers.add(SemanticModifier.GREATER);
+					ret.modifiers.add(SemanticModifier.GREATEREQUAL);
+					ret.modifiers.add(SemanticModifier.LESS);
+					ret.modifiers.add(SemanticModifier.LESSEQUAL);
+					ret.modifiers.add(SemanticModifier.MINUS);
+					ret.modifiers.add(SemanticModifier.OVER);
 
 					if (Kim.INSTANCE.is(semantics, IKimConcept.Type.EXTENSIVE_PROPERTY)
 							|| Kim.INSTANCE.is(semantics, IKimConcept.Type.INTENSIVE_PROPERTY)) {
-						ret.modifiers.add(Modifier.IN);
+						ret.modifiers.add(SemanticModifier.IN);
 					}
 
 					if (Kim.INSTANCE.is(semantics, IKimConcept.Type.NUMEROSITY)) {
-						ret.modifiers.add(Modifier.PER);
+						ret.modifiers.add(SemanticModifier.PER);
 					}
 
 				}
 
 			}
-			ret.modifiers.add(Modifier.ADJACENT_TO);
-			ret.modifiers.add(Modifier.CAUSED_BY);
-			ret.modifiers.add(Modifier.CAUSING);
-			ret.modifiers.add(Modifier.CONTAINED_IN);
-			ret.modifiers.add(Modifier.CONTAINING);
-			ret.modifiers.add(Modifier.DOWN_TO);
-			ret.modifiers.add(Modifier.DURING);
-			ret.modifiers.add(Modifier.FOR);
-			ret.modifiers.add(Modifier.OF);
-			ret.modifiers.add(Modifier.WITH);
-			ret.modifiers.add(Modifier.WITHIN);
+			ret.modifiers.add(SemanticModifier.ADJACENT_TO);
+			ret.modifiers.add(SemanticModifier.CAUSED_BY);
+			ret.modifiers.add(SemanticModifier.CAUSING);
+			ret.modifiers.add(SemanticModifier.CONTAINED_IN);
+			ret.modifiers.add(SemanticModifier.CONTAINING);
+			ret.modifiers.add(SemanticModifier.DOWN_TO);
+			ret.modifiers.add(SemanticModifier.DURING);
+			ret.modifiers.add(SemanticModifier.FOR);
+			ret.modifiers.add(SemanticModifier.OF);
+			ret.modifiers.add(SemanticModifier.WITH);
+			ret.modifiers.add(SemanticModifier.WITHIN);
 
 			return ret;
 		}
@@ -704,8 +704,8 @@ public class SearchContext implements IIndexingService.Context {
 				ret.allow(Constraint.with(meaning.getSemantics()));
 				ret.allow(Constraint.allTraits(false).applyingTo(meaning.getSemantics()));
 				break;
-			case BY:
-				break;
+//			case BY:
+//				break;
 			default:
 				break;
 			}

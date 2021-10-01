@@ -40,7 +40,7 @@ import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
-import org.integratedmodelling.kim.api.Modifier;
+import org.integratedmodelling.kim.api.SemanticModifier;
 import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.kim.model.Kim;
@@ -305,34 +305,34 @@ public enum Indexer {
         for (ObservableRole role : composer.getAdmittedLexicalInput()) {
             switch(role) {
             case ADJACENT:
-                ret.add(new SearchMatch(Modifier.ADJACENT_TO));
+                ret.add(new SearchMatch(SemanticModifier.ADJACENT_TO));
                 break;
             case CAUSANT:
-                ret.add(new SearchMatch(Modifier.CAUSING));
+                ret.add(new SearchMatch(SemanticModifier.CAUSING));
                 break;
             case CAUSED:
-                ret.add(new SearchMatch(Modifier.CAUSED_BY));
+                ret.add(new SearchMatch(SemanticModifier.CAUSED_BY));
                 break;
             case COMPRESENT:
-                ret.add(new SearchMatch(Modifier.WITH));
+                ret.add(new SearchMatch(SemanticModifier.WITH));
                 break;
             case CONTEXT:
-                ret.add(new SearchMatch(Modifier.WITHIN));
+                ret.add(new SearchMatch(SemanticModifier.WITHIN));
                 break;
             case COOCCURRENT:
-                ret.add(new SearchMatch(Modifier.DURING));
+                ret.add(new SearchMatch(SemanticModifier.DURING));
                 break;
             case INHERENT:
-                ret.add(new SearchMatch(Modifier.OF));
+                ret.add(new SearchMatch(SemanticModifier.OF));
                 break;
             case RELATIONSHIP_SOURCE:
-                ret.add(new SearchMatch(Modifier.LINKING));
+                ret.add(new SearchMatch(SemanticModifier.LINKING));
                 break;
             case RELATIONSHIP_TARGET:
-                ret.add(new SearchMatch(Modifier.TO));
+                ret.add(new SearchMatch(SemanticModifier.TO));
                 break;
             case GOAL:
-                ret.add(new SearchMatch(Modifier.FOR));
+                ret.add(new SearchMatch(SemanticModifier.FOR));
                 break;
             case CURRENCY:
                 break;

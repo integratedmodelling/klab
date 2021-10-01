@@ -32,7 +32,6 @@ import org.integratedmodelling.klab.common.mediation.Currency;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
-import org.integratedmodelling.klab.rest.SearchResponse;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
 import org.integratedmodelling.klab.utils.StringUtil;
@@ -156,6 +155,9 @@ public class ObservableComposer {
 
     }
 
+    class Token {
+    }
+
     class State {
 
         public State() {
@@ -227,7 +229,6 @@ public class ObservableComposer {
         String unit;
         String currency;
         Range range;
-
     }
 
     private State pushState() {
@@ -1072,4 +1073,20 @@ public class ObservableComposer {
         this.data.put(key, value);
     }
 
+    /**
+     * Get the root composer, which can be used at any moment to produce the finished observable
+     * reflecting the current state.
+     * 
+     * @return
+     */
+    public ObservableComposer getRoot() {
+        ObservableComposer ret = this;
+        while(ret.parent != null) {
+            ret = ret.parent;
+        }
+        return ret;
+    }
+    
+    
 }
+
