@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
@@ -54,7 +55,7 @@ public class StatsService {
     @Autowired
     RestTemplate template;
 
-    HashMap<String, Collection<IObservation>> statsCache = new HashMap<>();
+    ConcurrentHashMap<String, Collection<IObservation>> statsCache = new ConcurrentHashMap<>();
     
     @Async
     @EventListener(condition = "#event.type == T(org.integratedmodelling.klab.engine.events.UserEventType).HISTORY")
