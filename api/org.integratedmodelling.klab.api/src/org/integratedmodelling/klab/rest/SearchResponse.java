@@ -17,6 +17,7 @@ public class SearchResponse {
 	private String contextId;
 	private long requestId;
 	private List<SearchMatch> matches = new ArrayList<>();
+	private List<StyledKimToken> code = new ArrayList<>();
 //	private boolean end;
 	private boolean error;
 	private boolean last;
@@ -106,5 +107,13 @@ public class SearchResponse {
 	public void setParenthesisDepth(int parenthesisDepth) {
 		this.parenthesisDepth = parenthesisDepth;
 	}
+
+    public List<StyledKimToken> getCode() {
+        return code;
+    }
+
+    public void setCode(List<StyledKimToken> code) {
+        this.code = code;
+    }
 
 }

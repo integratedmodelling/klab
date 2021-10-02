@@ -17,8 +17,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyleRange;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.DragSourceListener;
@@ -33,7 +31,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
@@ -47,13 +44,16 @@ import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.model.KlabPeer;
 import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
 import org.integratedmodelling.klab.ide.ui.AppView;
+import org.integratedmodelling.klab.ide.ui.StyledConceptDisplay;
 import org.integratedmodelling.klab.rest.Layout;
+import org.integratedmodelling.klab.rest.QueryStatusResponse;
 import org.integratedmodelling.klab.rest.SearchMatch;
 import org.integratedmodelling.klab.rest.SearchMatchAction;
 import org.integratedmodelling.klab.rest.SearchRequest;
 import org.integratedmodelling.klab.rest.SearchRequest.Mode;
 import org.integratedmodelling.klab.rest.SearchResponse;
 import org.integratedmodelling.klab.rest.ViewComponent;
+import org.eclipse.swt.layout.FillLayout;
 
 public class SearchView extends ViewPart {
 
@@ -66,7 +66,7 @@ public class SearchView extends ViewPart {
 	private String contextId = null;
 	private long requestId;
 	private List<SearchMatch> accepted = new ArrayList<>();
-	private StyledText resultText;
+	private StyledConceptDisplay resultText;
 	private KlabPeer klab;
 	private Composite topContainer;
 	private Composite searchView;
@@ -335,17 +335,12 @@ public class SearchView extends ViewPart {
 				});
 
 		Composite resultSet = new Composite(topContainer, SWT.BORDER | SWT.EMBEDDED);
-		resultSet.setLayout(new GridLayout(2, false));
-		resultSet.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-
-		Label lblNewLabel = new Label(resultSet, SWT.NONE);
-		GridData gd_lblNewLabel = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-		gd_lblNewLabel.widthHint = 16;
-		lblNewLabel.setLayoutData(gd_lblNewLabel);
-
-		resultText = new StyledText(resultSet, SWT.NONE);
+		GridData gd_resultSet = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+		gd_resultSet.heightHint = 38;
+		resultSet.setLayoutData(gd_resultSet);
+		resultSet.setLayout(new FillLayout(SWT.HORIZONTAL));
+		resultText = new StyledConceptDisplay(resultSet, SWT.NONE);
 		resultText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		resultText.setText("No results");
 
 		klab = new KlabPeer(Sender.ANY, (message) -> handleMessage(message));
 
@@ -391,7 +386,7 @@ public class SearchView extends ViewPart {
 		closed.setName(")");
 		closed.setCloseGroup(true);
 		accepted.add(closed);
-		setMatchedText();
+        // setMatchedText();
 		text.setText("");
 	}
 
@@ -415,7 +410,7 @@ public class SearchView extends ViewPart {
 		open.setName("(");
 		open.setOpenGroup(true);
 		accepted.add(open);
-		setMatchedText();
+//		setMatchedText();
 		text.setText("");
 	}
 
@@ -452,6 +447,10 @@ public class SearchView extends ViewPart {
 				paletteView.addWidget(message);
 			}
 			break;
+		case QueryStatus:
+		    QueryStatusResponse status = message.getPayload(QueryStatusResponse.class);
+		    resultText.setStatus(status);
+		    break;
 		default:
 			break;
 
@@ -461,9 +460,15 @@ public class SearchView extends ViewPart {
 	protected void reset() {
 		clearMatches();
 		accepted.clear();
-		setMatchedText();
+		resultText.reset();
+//		setMatchedText();
 		text.setText("");
 		contextId = null;
+		// tell the engine
+		SearchRequest request = new SearchRequest();
+        request.setContextId(this.contextId);
+        request.setCancelSearch(true);
+        Activator.post(IMessage.MessageClass.Search, IMessage.Type.SemanticSearch, request);
 	}
 
 	// probably doing way more than needed but I spent enough time. Secret to
@@ -503,7 +508,7 @@ public class SearchView extends ViewPart {
 
 	protected void acceptMatch(SearchMatch object, int matchIndex) {
 		accepted.add(object);
-		setMatchedText();
+//		setMatchedText();
 		text.setText("");
 		text.forceFocus();
 		clearMatches();
@@ -566,22 +571,22 @@ public class SearchView extends ViewPart {
 			reset();
 		} else if (accepted.size() > 0) {
 			accepted.remove(accepted.size() - 1);
-			setMatchedText();
+//			setMatchedText();
 		}
 	}
 
-	private void setMatchedText() {
-		String txt = "";
-		List<StyleRange> styles = new ArrayList<>();
-		for (SearchMatch match : accepted) {
-			int start = txt.length() - 1;
-			txt += (txt.isEmpty() ? "" : " ") + match.getId();
-			// Color blue = display.getSystemColor(SWT.COLOR_BLUE);
-			// StyleRange range = new StyleRange(0, 4, blue, null);
-			// resultText.setStyleRange(range);
-		}
-		resultText.setText(txt);
-	}
+//	private void setMatchedText() {
+//		String txt = "";
+//		List<StyleRange> styles = new ArrayList<>();
+//		for (SearchMatch match : accepted) {
+//			int start = txt.length() - 1;
+//			txt += (txt.isEmpty() ? "" : " ") + match.getId();
+//			// Color blue = display.getSystemColor(SWT.COLOR_BLUE);
+//			// StyleRange range = new StyleRange(0, 4, blue, null);
+//			// resultText.setStyleRange(range);
+//		}
+//		resultText.setText(txt);
+//	}
 
 	private String getMatchedText() {
 		String ret = "";

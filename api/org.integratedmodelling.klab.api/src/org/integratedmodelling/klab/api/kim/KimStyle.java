@@ -1,12 +1,44 @@
 package org.integratedmodelling.klab.api.kim;
 
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 
 public class KimStyle {
 
     public static KimStyle getStyle(IConcept concept) {
+
+        Color color = Color.UNKNOWN;
+        FontStyle fontStyle = FontStyle.NORMAL;
+
+        if (concept.is(IKimConcept.Type.DOMAIN)) {
+            color = Color.DOMAIN;
+        } else if (concept.is(IKimConcept.Type.QUALITY)) {
+            color = Color.QUALITY;
+        } else if (concept.is(IKimConcept.Type.SUBJECT)) {
+            color = Color.SUBJECT;
+        } else if (concept.is(IKimConcept.Type.AGENT)) {
+            color = Color.SUBJECT;
+        } else if (concept.is(IKimConcept.Type.RELATIONSHIP)) {
+            color = Color.RELATIONSHIP;
+        } else if (concept.is(IKimConcept.Type.EXTENT)) {
+            color = Color.EXTENT;
+        } else if (concept.is(IKimConcept.Type.EVENT)) {
+            color = Color.EVENT;
+        } else if (concept.is(IKimConcept.Type.PROCESS)) {
+            color = Color.PROCESS;
+        } else if (concept.is(IKimConcept.Type.NOTHING)) {
+            color = Color.ERROR;
+        } else if (concept.is(IKimConcept.Type.TRAIT)) {
+            color = Color.TRAIT;
+        } else if (concept.is(IKimConcept.Type.ROLE)) {
+            color = Color.ROLE;
+        }
         
-        return null;
+        if (concept.isAbstract()) {
+            fontStyle = FontStyle.ITALIC;
+        }
+        
+        return new KimStyle(color, fontStyle);
     }
 
     public enum FontStyle {
@@ -39,12 +71,20 @@ public class KimStyle {
         BINARY_OPERATOR(new int[]{0, 0, 0}),
         SEMANTIC_MODIFIER(new int[]{0, 0, 0});
 
-        int[] rgb;
+        public int[] rgb;
 
         Color(int[] rgb) {
             this.rgb = rgb;
         }
 
+    }
+
+    public KimStyle() {
+    }
+
+    public KimStyle(Color color, FontStyle fontStyle) {
+        this.color = color;
+        this.fontStyle = fontStyle;
     }
 
     private FontStyle fontStyle = FontStyle.NORMAL;

@@ -55,6 +55,7 @@ import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.ObservationRequest;
 import org.integratedmodelling.klab.rest.ProjectLoadResponse;
 import org.integratedmodelling.klab.rest.ProjectReference;
+import org.integratedmodelling.klab.rest.QueryStatusResponse;
 import org.integratedmodelling.klab.rest.ResourceImportRequest;
 import org.integratedmodelling.klab.rest.ResourceOperationResponse;
 import org.integratedmodelling.klab.rest.ResourcePublishResponse;
@@ -503,6 +504,12 @@ public class KlabSession extends KlabPeer {
 		send(message);
 	}
 
+
+    @MessageHandler(type = Type.QueryStatus)
+    public void handleQueryStatus(IMessage message, QueryStatusResponse response) {
+        send(message);
+    }
+	
 	@MessageHandler(type = Type.CreateViewComponent)
 	public void handleCreateComponent(IMessage message, ViewComponent component) {
 		send(message);

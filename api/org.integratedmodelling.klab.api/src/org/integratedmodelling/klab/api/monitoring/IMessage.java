@@ -337,7 +337,7 @@ public interface IMessage {
         /*
          * --- Query-class types ---
          */
-        QueryResult,
+        QueryResult, QueryStatus,
 
         /*
          * --- EngineLifecycle ---

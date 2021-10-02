@@ -2,6 +2,8 @@ package org.integratedmodelling.klab.owl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,6 +16,7 @@ import java.util.function.Consumer;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.api.SemanticModifier;
 import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.klab.Concepts;
@@ -32,6 +35,7 @@ import org.integratedmodelling.klab.common.mediation.Currency;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.rest.StyledKimToken;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
 import org.integratedmodelling.klab.utils.StringUtil;
@@ -158,6 +162,31 @@ public class ObservableComposer {
     class Token {
     }
 
+    class ConceptHolder {
+        
+        public IConcept simple;
+        private IConcept resolved;
+        public ObservableComposer complex;
+        
+        public ConceptHolder(ObservableComposer composer) {
+            this.complex = composer;
+        }
+        
+        public ConceptHolder(IConcept concept) {
+            this.simple = concept;
+        }
+
+        public IConcept resolved() {
+            if (simple != null) {
+                return simple;
+            }
+            if (resolved == null) {
+                resolved = this.complex.buildConcept();
+            }
+            return resolved;
+        }
+    }
+    
     class State {
 
         public State() {
@@ -181,8 +210,8 @@ public class ObservableComposer {
             this.comparisonTarget = other.comparisonTarget;
             this.valueOperators = other.valueOperators;
             this.concepts.addAll(other.concepts);
-            this.groups.addAll(other.groups);
             this.unaryOperator = other.unaryOperator;
+            this.unaryOperatorArgument = other.unaryOperatorArgument;
             this.name = other.name;
             this.unit = other.unit;
             this.currency = other.currency;
@@ -206,7 +235,7 @@ public class ObservableComposer {
          * illegal. Empty means everything's allowed, filled means any of those but nothing else.
          */
         Set<ObservableRole> lexicalRealm = EnumSet.noneOf(ObservableRole.class);
-
+        
         /*
          * a composer for each of the possible components.
          */
@@ -222,12 +251,13 @@ public class ObservableComposer {
         ObservableComposer relationshipTarget = null;
         ObservableComposer comparisonTarget = null;
         List<Pair<ValueOperator, Object>> valueOperators;
-        List<IConcept> concepts = new ArrayList<>();
-        List<ObservableComposer> groups = new ArrayList<>();
+        // this is either a concept or another composer (parenthesized)
+        List<ConceptHolder> concepts = new ArrayList<>();
         UnarySemanticOperator unaryOperator = null;
+        ObservableComposer unaryOperatorArgument = null;
         String name;
-        String unit;
-        String currency;
+        IUnit unit;
+        ICurrency currency;
         Range range;
     }
 
@@ -261,7 +291,8 @@ public class ObservableComposer {
             } else if (o instanceof Type) {
                 ret.state.peek().logicalRealm.add(Constraint.of(o));
             } else {
-                throw new KlabIllegalStateException("ObservableComposer: can't use initialization parameter " + o);
+                throw new KlabIllegalStateException(
+                        "ObservableComposer: can't use initialization parameter " + o);
             }
             // TODO more constraints
         }
@@ -281,10 +312,16 @@ public class ObservableComposer {
                 ret.state.peek().lexicalRealm.add((ObservableRole) o);
             } else if (o instanceof Type) {
                 ret.state.peek().logicalRealm.add(Constraint.of(o));
+            } else if (o instanceof UnarySemanticOperator) {
+                /*
+                 * prepare the child to receive the operator's argument
+                 */
             } else {
-                throw new KlabIllegalStateException("ObservableComposer: can't use initialization parameter " + o);
+                throw new KlabIllegalStateException(
+                        "ObservableComposer: can't use initialization parameter " + o);
             }
         }
+
         return ret;
     }
 
@@ -315,7 +352,8 @@ public class ObservableComposer {
      */
     public ObservableComposer setContext(IConcept context, IGeometry geometry) {
         if (parent != null) {
-            throw new KlabIllegalStateException("ObservableComposer: cannot set the observation context at non-root level");
+            throw new KlabIllegalStateException(
+                    "ObservableComposer: cannot set the observation context at non-root level");
         }
         this.contextSubject = context;
         this.geometry = geometry;
@@ -449,7 +487,12 @@ public class ObservableComposer {
     }
 
     public ObservableComposer operator(UnarySemanticOperator type) {
-        return null;
+        if (state.peek().unaryOperator != null || defines(Type.OBSERVABLE)) {
+            error("cannot add an operator once another operator or an observable is defined");
+            return this;
+        }
+        state.peek().unaryOperatorArgument = get(ObservableRole.UNARY_OPERATOR, type);
+        return state.peek().unaryOperatorArgument;
     }
 
     /**
@@ -489,7 +532,7 @@ public class ObservableComposer {
         // boolean inGroup = state.peek().lexicalRealm.contains(ObservableRole.GROUP_CLOSE);
 
         State s = pushState();
-        s.concepts.add(trait);
+        s.concepts.add(new ConceptHolder(trait));
         reviseRealms(trait);
 
         // if (!isError() && inGroup) {
@@ -552,16 +595,9 @@ public class ObservableComposer {
     private IConcept getConcept(Type type) {
 
         if (this.state.peek().concepts != null) {
-            for (IConcept c : this.state.peek().concepts) {
-                if (c.is(type)) {
-                    return c;
-                }
-            }
-        }
-        if (this.state.peek().groups != null) {
-            for (ObservableComposer c : this.state.peek().groups) {
-                if (c.defines(type)) {
-                    return c.buildConcept();
+            for (ConceptHolder c : this.state.peek().concepts) {
+                if (c.resolved().is(type)) {
+                    return c.resolved();
                 }
             }
         }
@@ -574,16 +610,9 @@ public class ObservableComposer {
         Set<IConcept> ret = new HashSet<>();
 
         if (this.state.peek().concepts != null) {
-            for (IConcept c : this.state.peek().concepts) {
-                if (type == null || c.is(type)) {
-                    ret.add(c);
-                }
-            }
-        }
-        if (this.state.peek().groups != null) {
-            for (ObservableComposer c : this.state.peek().groups) {
-                if (type == null || c.defines(type)) {
-                    ret.add(c.buildConcept());
+            for (ConceptHolder c : this.state.peek().concepts) {
+                if (type == null || c.resolved().is(type)) {
+                    ret.add(c.resolved());
                 }
             }
         }
@@ -633,7 +662,8 @@ public class ObservableComposer {
             if (((Concept) added).is(Type.QUALITY)) {
                 this.state.peek().lexicalRealm.add(ObservableRole.VALUE_OPERATOR);
                 if (parent == null) {
-                    if (((Concept) added).is(Type.EXTENSIVE_PROPERTY) || ((Concept) added).is(Type.INTENSIVE_PROPERTY)
+                    if (((Concept) added).is(Type.EXTENSIVE_PROPERTY)
+                            || ((Concept) added).is(Type.INTENSIVE_PROPERTY)
                             || ((Concept) added).is(Type.NUMEROSITY)) {
                         this.state.peek().lexicalRealm.add(ObservableRole.UNIT);
                     } else if (((Concept) added).is(Type.MONETARY_VALUE)) {
@@ -705,15 +735,8 @@ public class ObservableComposer {
 
     private boolean defines(Type type) {
         if (this.state.peek().concepts != null) {
-            for (IConcept c : this.state.peek().concepts) {
-                if (c.is(type)) {
-                    return true;
-                }
-            }
-        }
-        if (this.state.peek().groups != null) {
-            for (ObservableComposer c : this.state.peek().groups) {
-                if (c.defines(type)) {
+            for (ConceptHolder c : this.state.peek().concepts) {
+                if (c.resolved().is(type)) {
                     return true;
                 }
             }
@@ -723,7 +746,8 @@ public class ObservableComposer {
 
     @Override
     public String toString() {
-        return "Scope: " + state.peek().lexicalScope + "\n" + "Log: " + state.peek().logicalRealm + "\n" + "Lex: "
+        return "Scope: " + state.peek().lexicalScope + "\n" + "Log: " + state.peek().logicalRealm + "\n"
+                + "Lex: "
                 + state.peek().lexicalRealm + "\n";
     }
 
@@ -780,7 +804,9 @@ public class ObservableComposer {
 
         if (this.state.peek().unaryOperator != null) {
             builder = (ObservableBuilder) builder.as(this.state.peek().unaryOperator,
-                    this.state.peek().comparisonTarget == null ? null : this.state.peek().comparisonTarget.buildConcept());
+                    this.state.peek().comparisonTarget == null
+                            ? null
+                            : this.state.peek().comparisonTarget.buildConcept());
         }
 
         if (this.state.peek().adjacent != null) {
@@ -810,7 +836,9 @@ public class ObservableComposer {
         if (this.state.peek().relationshipSource != null) {
             IConcept source = this.state.peek().relationshipSource.buildConcept();
             builder.linking(source,
-                    this.state.peek().relationshipTarget == null ? source : this.state.peek().relationshipTarget.buildConcept());
+                    this.state.peek().relationshipTarget == null
+                            ? source
+                            : this.state.peek().relationshipTarget.buildConcept());
         }
 
         return builder.buildConcept();
@@ -826,7 +854,8 @@ public class ObservableComposer {
      */
     public IObservable buildObservable() {
         if (parent != null) {
-            throw new KlabIllegalStateException("ObservableComposer: can only call buildObservable on the root composer");
+            throw new KlabIllegalStateException(
+                    "ObservableComposer: can only call buildObservable on the root composer");
         }
 
         ObservableBuilder builder = new ObservableBuilder(buildConcept(), monitor);
@@ -875,7 +904,8 @@ public class ObservableComposer {
         IConcept observable = getConcept(Type.OBSERVABLE);
         for (IConcept trait : getConcepts(Type.PREDICATE)) {
             if (trait.is(Type.RESCALING)) {
-                error("cannot use unit " + unit + " on observable " + observable + " because the predicate " + trait
+                error("cannot use unit " + unit + " on observable " + observable + " because the predicate "
+                        + trait
                         + " removes it");
                 return this;
             }
@@ -886,7 +916,8 @@ public class ObservableComposer {
              * check the contextualization (no added constraints: if this is used for a semantic
              * assistant in editor, may have to read annotations in context).
              */
-            UnitContextualization ctx = Units.INSTANCE.getContextualization(Observable.promote(observable), geometry, null);
+            UnitContextualization ctx = Units.INSTANCE.getContextualization(Observable.promote(observable),
+                    geometry, null);
 
             boolean ok = unit.isCompatible(ctx.getChosenUnit());
             if (!ok) {
@@ -899,7 +930,8 @@ public class ObservableComposer {
             }
 
             if (!ok) {
-                error("unit " + unit + " is not compatible with observable " + observable + " in this geometry");
+                error("unit " + unit + " is not compatible with observable " + observable
+                        + " in this geometry");
             }
 
         } else {
@@ -1086,7 +1118,108 @@ public class ObservableComposer {
         }
         return ret;
     }
-    
-    
-}
 
+    public List<StyledKimToken> getStyledCode() {
+        List<StyledKimToken> ret = new ArrayList<>();
+
+        State s = state.peek();
+
+        List<StyledKimToken> traits = new ArrayList<>();
+        List<StyledKimToken> roles = new ArrayList<>();
+        StyledKimToken observable = null;
+        for (ConceptHolder c : s.concepts) {
+            if (c.resolved().is(Type.TRAIT)) {
+                traits.add(StyledKimToken.create(c));
+            } else if (c.resolved().is(Type.ROLE)) {
+                roles.add(StyledKimToken.create(c));
+            } else if (c.resolved().is(Type.OBSERVABLE)) {
+                observable = StyledKimToken.create(c);
+            }
+        }
+
+        if (!roles.isEmpty()) {
+            Collections.sort(roles, new Comparator<StyledKimToken>(){
+                @Override
+                public int compare(StyledKimToken o1, StyledKimToken o2) {
+                    return o1.getValue().compareTo(o2.getValue());
+                }
+            });
+            ret.addAll(roles);
+        }
+
+        if (!traits.isEmpty()) {
+            Collections.sort(traits, new Comparator<StyledKimToken>(){
+                @Override
+                public int compare(StyledKimToken o1, StyledKimToken o2) {
+                    return o1.getValue().compareTo(o2.getValue());
+                }
+            });
+            ret.addAll(traits);
+        }
+
+        if (s.unaryOperator != null) {
+            ret.add(StyledKimToken.create(s.unaryOperator));
+            List<StyledKimToken> arg = s.unaryOperatorArgument.getStyledCode();
+            ret.addAll(arg);
+            if (s.comparisonTarget != null) {
+                ret.add(StyledKimToken.create(s.unaryOperator, true));
+                addStyledTokens(s.unaryOperator, s.comparisonTarget, ret, true);
+            }
+        }
+
+        if (observable != null) {
+            ret.add(observable);
+        }
+
+        addStyledTokens(SemanticModifier.OF, state.peek().inherent, ret, false);
+        addStyledTokens(SemanticModifier.WITHIN, state.peek().context, ret, false);
+        addStyledTokens(SemanticModifier.WITH, state.peek().compresent, ret, false);
+        addStyledTokens(SemanticModifier.CAUSED_BY, state.peek().causant, ret, false);
+        addStyledTokens(SemanticModifier.CAUSING, state.peek().caused, ret, false);
+        addStyledTokens(SemanticModifier.FOR, state.peek().goal, ret, false);
+        addStyledTokens(SemanticModifier.ADJACENT_TO, state.peek().adjacent, ret, false);
+
+        // don't switch the next two
+        addStyledTokens(SemanticModifier.LINKING, state.peek().relationshipSource, ret, false);
+        addStyledTokens(SemanticModifier.TO, state.peek().relationshipTarget, ret, false);
+
+        if (s.unit != null) {
+            ret.add(StyledKimToken.create("in"));
+            ret.add(StyledKimToken.create(s.unit));
+        } else if (s.currency != null) {
+            ret.add(StyledKimToken.create("in"));
+            ret.add(StyledKimToken.create(s.currency));
+        }
+
+        if (s.valueOperators != null) {
+
+        }
+
+        return ret;
+    }
+
+    private void addStyledTokens(Object modifier, ObservableComposer composer,
+            List<StyledKimToken> ret, boolean alternative) {
+
+        if (composer == null) {
+            return;
+        }
+
+        List<StyledKimToken> arg = composer.getStyledCode();
+        if (!arg.isEmpty()) {
+
+            arg.add(StyledKimToken.create(modifier, alternative));
+
+            if (arg.size() > 1) {
+                ret.add(StyledKimToken.create("("));
+            }
+
+            ret.addAll(arg);
+
+            if (arg.size() > 1) {
+                ret.add(StyledKimToken.create(")"));
+            }
+        }
+    }
+
+}
