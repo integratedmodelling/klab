@@ -362,85 +362,138 @@ public interface IKimConcept extends IKimStatement {
     public enum ObservableRole {
 
         // conceptual components
-        TRAIT, ROLE, CONTEXT, INHERENT, ADJACENT, CAUSED, CAUSANT, COMPRESENT, GOAL, COOCCURRENT,
+        TRAIT(false),
+        ROLE(false),
+
+        /*
+         * these correspond to modifiers
+         */
+        CONTEXT(true),
+        INHERENT(true),
+        ADJACENT(true),
+        CAUSED(true),
+        CAUSANT(true),
+        COMPRESENT(true),
+        GOAL(true),
+        COOCCURRENT(true),
         /**
          * temporal inherent is 'during each'. Support is partial. Not sure it's here to stay.
          */
-        TEMPORAL_INHERENT, RELATIONSHIP_SOURCE, RELATIONSHIP_TARGET,
+        TEMPORAL_INHERENT(true),
+        RELATIONSHIP_SOURCE(true),
+        RELATIONSHIP_TARGET(true),
 
-        // structural components and modifiers
-        VALUE_OPERATOR, UNIT, CURRENCY, LOGICAL_OPERATOR, INLINE_VALUE, UNARY_OPERATOR,
+        // other structural components
+        VALUE_OPERATOR(false),
+        UNIT(false),
+        CURRENCY(false),
+        LOGICAL_OPERATOR(true),
+        INLINE_VALUE(false),
+        UNARY_OPERATOR(true),
         /** grouping scope for parenthesized logical expression */
-        GROUP_OPEN, GROUP_CLOSE
+        GROUP_OPEN(false),
+        GROUP_CLOSE(false);
+
+        /**
+         * If true, this represents an operator that can have a complex logical expression as
+         * argument.
+         */
+        public boolean subsumesObservable;
+
+        ObservableRole(boolean subsumesObservable) {
+            this.subsumesObservable = subsumesObservable;
+        }
     }
 
     /**
      * All declarable concept bits set. Each observable AND this must yield a set of size 1.
      */
-    public static final EnumSet<Type> DECLARABLE_TYPES = EnumSet.of(Type.QUALITY, Type.SUBJECT, Type.AGENT, Type.EVENT,
-            Type.CONFIGURATION, Type.DOMAIN, Type.RELATIONSHIP, Type.EXTENT, Type.PROCESS, Type.ATTRIBUTE, Type.REALM,
+    public static final EnumSet<Type> DECLARABLE_TYPES = EnumSet.of(Type.QUALITY, Type.SUBJECT, Type.AGENT,
+            Type.EVENT,
+            Type.CONFIGURATION, Type.DOMAIN, Type.RELATIONSHIP, Type.EXTENT, Type.PROCESS, Type.ATTRIBUTE,
+            Type.REALM,
             Type.IDENTITY, Type.ROLE);
 
     /**
      * Qualities that are naturally inherent and should not be allowed to have explicit inherency
      * but just context.
      */
-    public static final EnumSet<Type> INHERENT_QUALITIES = EnumSet.of(Type.PROPORTION, Type.PROBABILITY, Type.DISTANCE,
-            Type.VALUE, Type.OCCURRENCE, Type.PRESENCE, Type.UNCERTAINTY, Type.NUMEROSITY, Type.OBSERVABILITY, Type.RATE);
+    public static final EnumSet<Type> INHERENT_QUALITIES = EnumSet.of(Type.PROPORTION, Type.PROBABILITY,
+            Type.DISTANCE,
+            Type.VALUE, Type.OCCURRENCE, Type.PRESENCE, Type.UNCERTAINTY, Type.NUMEROSITY, Type.OBSERVABILITY,
+            Type.RATE);
 
     public static final Set<Type> OPERATOR_TYPES = EnumSet.of(Type.CHANGE, Type.NUMEROSITY, Type.DISTANCE,
-            /* FIXME MISSING: LEVEL */ Type.MAGNITUDE, Type.OBSERVABILITY, Type.OCCURRENCE, Type.PRESENCE, Type.PROBABILITY,
+            /* FIXME MISSING: LEVEL */ Type.MAGNITUDE, Type.OBSERVABILITY, Type.OCCURRENCE, Type.PRESENCE,
+            Type.PROBABILITY,
             Type.PROPORTION, Type.RATIO, Type.CLASS, Type.UNCERTAINTY, Type.VALUE, Type.MONETARY_VALUE);
 
     /**
      * All quality type bits sets (not QUALITY itself). Each quality AND this must yield a set of
      * size 1.
      */
-    public static final EnumSet<Type> QUALITY_TYPES = EnumSet.of(Type.CLASS, Type.QUANTITY, Type.ENERGY, Type.ENTROPY,
-            Type.LENGTH, Type.MASS, Type.VOLUME, Type.WEIGHT, Type.MONEY, Type.DURATION, Type.AREA, Type.ACCELERATION,
-            Type.PRIORITY, Type.ELECTRIC_POTENTIAL, Type.CHARGE, Type.RESISTANCE, Type.RESISTIVITY, Type.PRESSURE, Type.ANGLE,
-            Type.VELOCITY, Type.TEMPERATURE, Type.VISCOSITY, Type.UNCERTAINTY, Type.RATIO, Type.PROPORTION, Type.PROBABILITY,
-            Type.NUMEROSITY, Type.DISTANCE, Type.VALUE, Type.MONETARY_VALUE, Type.OCCURRENCE, Type.PRESENCE, Type.AMOUNT,
+    public static final EnumSet<Type> QUALITY_TYPES = EnumSet.of(Type.CLASS, Type.QUANTITY, Type.ENERGY,
+            Type.ENTROPY,
+            Type.LENGTH, Type.MASS, Type.VOLUME, Type.WEIGHT, Type.MONEY, Type.DURATION, Type.AREA,
+            Type.ACCELERATION,
+            Type.PRIORITY, Type.ELECTRIC_POTENTIAL, Type.CHARGE, Type.RESISTANCE, Type.RESISTIVITY,
+            Type.PRESSURE, Type.ANGLE,
+            Type.VELOCITY, Type.TEMPERATURE, Type.VISCOSITY, Type.UNCERTAINTY, Type.RATIO, Type.PROPORTION,
+            Type.PROBABILITY,
+            Type.NUMEROSITY, Type.DISTANCE, Type.VALUE, Type.MONETARY_VALUE, Type.OCCURRENCE, Type.PRESENCE,
+            Type.AMOUNT,
             Type.RATE);
 
     /**
      * All quality type bits sets including QUALITY itself. Each quality AND this must yield a set
      * of size 0.
      */
-    public static final EnumSet<Type> ALL_QUALITY_TYPES = EnumSet.of(Type.CLASS, Type.QUALITY, Type.QUANTITY, Type.ENERGY,
-            Type.ENTROPY, Type.LENGTH, Type.MASS, Type.VOLUME, Type.WEIGHT, Type.MONEY, Type.DURATION, Type.AREA,
-            Type.ACCELERATION, Type.PRIORITY, Type.ELECTRIC_POTENTIAL, Type.CHARGE, Type.RESISTANCE, Type.RESISTIVITY,
-            Type.PRESSURE, Type.ANGLE, Type.VELOCITY, Type.TEMPERATURE, Type.VISCOSITY, Type.UNCERTAINTY, Type.RATIO,
-            Type.PROPORTION, Type.PROBABILITY, Type.NUMEROSITY, Type.DISTANCE, Type.VALUE, Type.OCCURRENCE, Type.PRESENCE,
+    public static final EnumSet<Type> ALL_QUALITY_TYPES = EnumSet.of(Type.CLASS, Type.QUALITY, Type.QUANTITY,
+            Type.ENERGY,
+            Type.ENTROPY, Type.LENGTH, Type.MASS, Type.VOLUME, Type.WEIGHT, Type.MONEY, Type.DURATION,
+            Type.AREA,
+            Type.ACCELERATION, Type.PRIORITY, Type.ELECTRIC_POTENTIAL, Type.CHARGE, Type.RESISTANCE,
+            Type.RESISTIVITY,
+            Type.PRESSURE, Type.ANGLE, Type.VELOCITY, Type.TEMPERATURE, Type.VISCOSITY, Type.UNCERTAINTY,
+            Type.RATIO,
+            Type.PROPORTION, Type.PROBABILITY, Type.NUMEROSITY, Type.DISTANCE, Type.VALUE, Type.OCCURRENCE,
+            Type.PRESENCE,
             Type.AMOUNT, Type.RATE, Type.MONETARY_VALUE);
 
     /**
      * All qualities that are expressed through a continuous numeric state.
      */
-    public static final EnumSet<Type> CONTINUOUS_QUALITY_TYPES = EnumSet.of(Type.QUANTITY, Type.ENERGY, Type.ENTROPY, Type.LENGTH,
-            Type.MASS, Type.VOLUME, Type.WEIGHT, Type.MONEY, Type.DURATION, Type.AREA, Type.ACCELERATION, Type.PRIORITY,
-            Type.ELECTRIC_POTENTIAL, Type.CHARGE, Type.RESISTANCE, Type.RESISTIVITY, Type.PRESSURE, Type.ANGLE, Type.VELOCITY,
-            Type.TEMPERATURE, Type.VISCOSITY, Type.UNCERTAINTY, Type.RATIO, Type.PROPORTION, Type.PROBABILITY, Type.NUMEROSITY,
+    public static final EnumSet<Type> CONTINUOUS_QUALITY_TYPES = EnumSet.of(Type.QUANTITY, Type.ENERGY,
+            Type.ENTROPY, Type.LENGTH,
+            Type.MASS, Type.VOLUME, Type.WEIGHT, Type.MONEY, Type.DURATION, Type.AREA, Type.ACCELERATION,
+            Type.PRIORITY,
+            Type.ELECTRIC_POTENTIAL, Type.CHARGE, Type.RESISTANCE, Type.RESISTIVITY, Type.PRESSURE,
+            Type.ANGLE, Type.VELOCITY,
+            Type.TEMPERATURE, Type.VISCOSITY, Type.UNCERTAINTY, Type.RATIO, Type.PROPORTION, Type.PROBABILITY,
+            Type.NUMEROSITY,
             Type.DISTANCE, Type.VALUE, Type.OCCURRENCE, Type.PRESENCE, Type.AMOUNT, Type.MAGNITUDE, Type.RATE,
             Type.MONETARY_VALUE);
 
     /**
      * All direct observables
      */
-    public final static EnumSet<Type> DIRECT_OBSERVABLE_TYPES = EnumSet.of(Type.DIRECT_OBSERVABLE, Type.SUBJECT, Type.AGENT,
+    public final static EnumSet<Type> DIRECT_OBSERVABLE_TYPES = EnumSet.of(Type.DIRECT_OBSERVABLE,
+            Type.SUBJECT, Type.AGENT,
             Type.EVENT, Type.RELATIONSHIP, Type.PROCESS, Type.CONFIGURATION, Type.COUNTABLE,
             /* FIXME ??? */Type.ABSTRACT);
 
     /**
      * All base observables
      */
-    public final static EnumSet<Type> BASE_OBSERVABLE_TYPES = EnumSet.of(Type.SUBJECT, Type.EVENT, Type.RELATIONSHIP,
+    public final static EnumSet<Type> BASE_OBSERVABLE_TYPES = EnumSet.of(Type.SUBJECT, Type.EVENT,
+            Type.RELATIONSHIP,
             Type.PROCESS, Type.QUALITY, Type.AGENT);
 
     /**
      * Everything we can write a model for
      */
-    public final static EnumSet<Type> BASE_MODELABLE_TYPES = EnumSet.of(Type.SUBJECT, Type.EVENT, Type.RELATIONSHIP, Type.PROCESS,
+    public final static EnumSet<Type> BASE_MODELABLE_TYPES = EnumSet.of(Type.SUBJECT, Type.EVENT,
+            Type.RELATIONSHIP, Type.PROCESS,
             Type.QUALITY, Type.AGENT, Type.TRAIT, Type.CONFIGURATION);
 
     /**
@@ -452,7 +505,8 @@ public interface IKimConcept extends IKimStatement {
      * All trait type bits set (including TRAIT itself). Each trait AND this must yield a set of
      * size 1.
      */
-    public static final EnumSet<Type> ALL_TRAIT_TYPES = EnumSet.of(Type.ATTRIBUTE, Type.REALM, Type.IDENTITY, Type.TRAIT,
+    public static final EnumSet<Type> ALL_TRAIT_TYPES = EnumSet.of(Type.ATTRIBUTE, Type.REALM, Type.IDENTITY,
+            Type.TRAIT,
             Type.OBSERVABILITY);
 
     /**

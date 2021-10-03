@@ -1,5 +1,7 @@
 package org.integratedmodelling.kim.api;
 
+import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
+
 /**
  * Semantic subsetters for concepts. Should only include the first part; the remaining (unit and
  * value operators) are superseded by the appropriate enums and must be removed as soon as the new
@@ -10,64 +12,74 @@ package org.integratedmodelling.kim.api;
  */
 public enum SemanticModifier {
 
-    // Concept modifiers. Keep these only. Add their admitted arguments and 
-    WITHIN("within"),
-    OF("of"),
-    FOR("for"),
-    WITH("with"),
-    CAUSED_BY("caused by"),
-    ADJACENT_TO("adjacent to"),
-    CONTAINED_IN("contained in"),
-    CONTAINING("containing"),
-    CAUSING("causing"),
-    DURING("during"),
-    LINKING("linking"),
-    TO("to"),
+    WITHIN(ObservableRole.CONTEXT, "within"),
+    OF(ObservableRole.INHERENT, "of"),
+    FOR(ObservableRole.GOAL, "for"),
+    WITH(ObservableRole.COMPRESENT, "with"),
+    CAUSED_BY(ObservableRole.CAUSANT, "caused by"),
+    ADJACENT_TO(ObservableRole.ADJACENT, "adjacent to"),
+    CONTAINED_IN(null, "contained in"),
+    CONTAINING(null, "containing"),
+    CAUSING(ObservableRole.CAUSED, "causing"),
+    DURING(ObservableRole.COOCCURRENT, "during"),
+    LINKING(ObservableRole.RELATIONSHIP_SOURCE, "linking"),
+    TO(ObservableRole.RELATIONSHIP_TARGET, "to"),
 
     /*
      * TODO remove these
      */
     @Deprecated
-    IN("in"),
+    IN(null, "in"),
     @Deprecated
-    PER("per"),
+    PER(null, "per"),
 
     // Observable modifiers. TODO remove these in favor of ValueOperator
     @Deprecated
-    BY("by"),
+    BY(null, "by"),
     @Deprecated
-    DOWN_TO("down to"),
+    DOWN_TO(null, "down to"),
     @Deprecated
-    GREATER(">"),
+    GREATER(null, ">"),
     @Deprecated
-    LESS("<"),
+    LESS(null, "<"),
     @Deprecated
-    GREATEREQUAL(">="),
+    GREATEREQUAL(null, ">="),
     @Deprecated
-    LESSEQUAL("<="),
+    LESSEQUAL(null, "<="),
     @Deprecated
-    IS("="),
+    IS(null, "="),
     @Deprecated
-    SAMEAS("=="),
+    SAMEAS(null, "=="),
     @Deprecated
-    WITHOUT("without"),
+    WITHOUT(null, "without"),
     @Deprecated
-    WHERE("where"),
+    WHERE(null, "where"),
     @Deprecated
-    PLUS("plus"),
+    PLUS(null, "plus"),
     @Deprecated
-    MINUS("minus"),
+    MINUS(null, "minus"),
     @Deprecated
-    TIMES("times"),
+    TIMES(null, "times"),
     @Deprecated
-    OVER("over");
+    OVER(null, "over");
 
     public String[] declaration;
-
-    SemanticModifier(String... decl) {
+    public ObservableRole role;
+    
+    SemanticModifier(ObservableRole role, String... decl) {
         this.declaration = decl;
+        this.role = role;
     }
 
+    public static SemanticModifier forCode(String code) {
+        for (SemanticModifier val : values()) {
+            if (code.equals(val.declaration[0])) {
+                return val;
+            }
+        }
+        return null;
+    }
+    
     public static SemanticModifier getModifier(String valueModifier) {
         for (SemanticModifier m : SemanticModifier.values()) {
             if (m.declaration[0].equals(valueModifier)) {

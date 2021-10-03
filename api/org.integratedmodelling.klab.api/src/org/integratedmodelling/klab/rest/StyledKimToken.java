@@ -29,6 +29,15 @@ public class StyledKimToken {
     public static StyledKimToken create(Object c) {
         return create(c, false);
     }
+    
+    public static StyledKimToken unknown() {
+
+        StyledKimToken ret = new StyledKimToken();
+        ret.needsWhitespaceBefore = true;
+        ret.needsWhitespaceAfter = true;
+        ret.value = "?";
+        return ret;
+    }
 
     /**
      * Recognizes the type and fills in the style automatically. Only acceptable string token is

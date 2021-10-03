@@ -17,17 +17,18 @@ package org.integratedmodelling.kim.api;
 public enum BinarySemanticOperator {
 
     @Deprecated
-    NONE,
+    NONE(null),
 
     /**
      * A UNION B creates a concept that is either A or B.
      */
-    UNION,
+    UNION("or"),
+    
 
     /**
      * A INTERSECTION B creates a concept that is both A and B.
      */
-    INTERSECTION,
+    INTERSECTION("and"),
 
     /**
      * A FOLLOWS B applies to two event types and creates the event that corresponds to A following
@@ -38,5 +39,21 @@ public enum BinarySemanticOperator {
      * Life is (Death follows Adulthood follows Childhood follows Birth).
      * </pre>
      */
-    FOLLOWS
+    FOLLOWS("follows");
+    
+    String declaration;
+    
+    BinarySemanticOperator(String code) {
+        this.declaration = code;
+    }
+
+    public static BinarySemanticOperator forCode(String code) {
+        for (BinarySemanticOperator val : values()) {
+            if (code.equals(val.declaration)) {
+                return val;
+            }
+        }
+        return null;
+    }
+    
 }

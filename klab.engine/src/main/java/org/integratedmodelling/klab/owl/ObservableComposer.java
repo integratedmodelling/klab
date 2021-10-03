@@ -13,13 +13,14 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.function.Consumer;
 
+import org.integratedmodelling.kim.api.BinarySemanticOperator;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.api.SemanticModifier;
 import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.kim.api.ValueOperator;
-import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Units;
@@ -34,12 +35,15 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.mediation.Currency;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
+import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.rest.StyledKimToken;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
 import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.klab.utils.Utils;
+
+import edu.uci.ics.jung.visualization.layout.ObservableCachingLayout;
 
 /**
  * A state machine similar to ObservableBuilder but starting empty and including constraints on what
@@ -107,6 +111,7 @@ public class ObservableComposer {
     }
 
     private ObservableComposer(ObservableComposer parent, ObservableRole role) {
+
         this.errorHandler = parent.errorHandler;
         this.validator = parent.validator;
         this.geometry = parent.geometry;
@@ -115,6 +120,7 @@ public class ObservableComposer {
         this.state.peek().lexicalScope = role;
         this.monitor = parent.monitor;
         this.errors = parent.errors;
+
     }
 
     /**
@@ -163,15 +169,15 @@ public class ObservableComposer {
     }
 
     class ConceptHolder {
-        
+
         public IConcept simple;
         private IConcept resolved;
         public ObservableComposer complex;
-        
+
         public ConceptHolder(ObservableComposer composer) {
             this.complex = composer;
         }
-        
+
         public ConceptHolder(IConcept concept) {
             this.simple = concept;
         }
@@ -186,7 +192,7 @@ public class ObservableComposer {
             return resolved;
         }
     }
-    
+
     class State {
 
         public State() {
@@ -235,7 +241,7 @@ public class ObservableComposer {
          * illegal. Empty means everything's allowed, filled means any of those but nothing else.
          */
         Set<ObservableRole> lexicalRealm = EnumSet.noneOf(ObservableRole.class);
-        
+
         /*
          * a composer for each of the possible components.
          */
@@ -301,6 +307,133 @@ public class ObservableComposer {
         }
 
         return ret;
+    }
+
+    public ObservableComposer constrainFor(UnarySemanticOperator role) {
+
+        this.state.peek().logicalRealm.clear();
+        this.state.peek().lexicalRealm.clear();
+
+        // TODO! ADD OUTPUT TYPE
+        switch(role) {
+        case ASSESSMENT:
+            break;
+        case CHANGE:
+            this.state.peek().logicalRealm.add(Constraint.of(Type.QUALITY));
+            break;
+        case CHANGED:
+            this.state.peek().logicalRealm.add(Constraint.of(Type.QUALITY));
+            break;
+        case COUNT:
+            this.state.peek().logicalRealm.add(Constraint.of(Type.COUNTABLE));
+            break;
+        case DISTANCE:
+            this.state.peek().logicalRealm.add(Constraint.of(Type.COUNTABLE));
+            break;
+        case LEVEL:
+            this.state.peek().logicalRealm.add(Constraint.of(Type.QUALITY));
+            break;
+        case MAGNITUDE:
+            this.state.peek().logicalRealm.add(Constraint.of(Type.QUALITY));
+            break;
+        case MONETARY_VALUE:
+            this.state.peek().logicalRealm.add(Constraint.of(Type.OBSERVABLE));
+            break;
+        case NOT:
+            this.state.peek().logicalRealm.add(Constraint.of(Type.DENIABLE));
+            break;
+        case OBSERVABILITY:
+            this.state.peek().logicalRealm.add(Constraint.of(Type.OBSERVABLE));
+            break;
+        case OCCURRENCE:
+            this.state.peek().logicalRealm.add(Constraint.of(Type.COUNTABLE));
+            this.state.peek().logicalRealm.add(Constraint.of(Type.QUALITY));
+            break;
+        case PERCENTAGE:
+            this.state.peek().logicalRealm.add(Constraint.of(Type.QUALITY));
+            break;
+        case PRESENCE:
+            this.state.peek().logicalRealm.add(Constraint.of(Type.COUNTABLE));
+            break;
+        case PROBABILITY:
+            this.state.peek().logicalRealm.add(Constraint.of(Type.EVENT));
+            break;
+        case PROPORTION:
+            this.state.peek().logicalRealm.add(Constraint.of(Type.QUALITY));
+            break;
+        case RATE:
+            this.state.peek().logicalRealm.add(Constraint.of(Type.QUALITY));
+            break;
+        case RATIO:
+            this.state.peek().logicalRealm.add(Constraint.of(Type.QUALITY));
+            break;
+        case TYPE:
+            this.state.peek().logicalRealm.add(Constraint.of(Type.CLASS));
+            break;
+        case UNCERTAINTY:
+            this.state.peek().logicalRealm.add(Constraint.of(Type.QUALITY));
+            break;
+        case VALUE:
+            this.state.peek().logicalRealm.add(Constraint.of(Type.OBSERVABLE));
+            break;
+        default:
+            break;
+
+        }
+
+        return this;
+    }
+
+    public ObservableComposer constrainFor(SemanticModifier role) {
+
+        this.state.peek().logicalRealm.clear();
+        this.state.peek().lexicalRealm.clear();
+
+        switch(role) {
+        case ADJACENT_TO:
+            this.state.peek().logicalRealm.add(Constraint.of(Type.COUNTABLE));
+            break;
+        case CAUSED_BY:
+            this.state.peek().logicalRealm.add(Constraint.of(Type.QUALITY));
+            this.state.peek().logicalRealm.add(Constraint.of(Type.PROCESS));
+            this.state.peek().logicalRealm.add(Constraint.of(Type.EVENT));
+            break;
+        case CAUSING:
+            this.state.peek().logicalRealm.add(Constraint.of(Type.PROCESS));
+            this.state.peek().logicalRealm.add(Constraint.of(Type.EVENT));
+            break;
+        // case CONTAINED_IN:
+        // break;
+        // case CONTAINING:
+        // break;
+        case DURING:
+            this.state.peek().logicalRealm.add(Constraint.of(Type.PROCESS));
+            this.state.peek().logicalRealm.add(Constraint.of(Type.EVENT));
+            break;
+        case FOR:
+            this.state.peek().logicalRealm.add(Constraint.of(Type.OBSERVABLE));
+            break;
+        case LINKING:
+            this.state.peek().logicalRealm.add(Constraint.of(Type.COUNTABLE));
+            break;
+        case OF:
+            this.state.peek().logicalRealm.add(Constraint.of(Type.COUNTABLE));
+            break;
+        case TO:
+            this.state.peek().logicalRealm.add(Constraint.of(Type.COUNTABLE));
+            break;
+        case WITH:
+            this.state.peek().logicalRealm.add(Constraint.of(Type.OBSERVABLE));
+            break;
+        case WITHIN:
+            this.state.peek().logicalRealm.add(Constraint.of(Type.SUBJECT));
+            this.state.peek().logicalRealm.add(Constraint.of(Type.AGENT));
+            break;
+        default:
+            break;
+
+        }
+        return this;
     }
 
     private ObservableComposer get(ObservableRole scope, Object... objects) {
@@ -411,6 +544,27 @@ public class ObservableComposer {
     }
 
     /**
+     * Open a "parenthesized" scope.
+     * 
+     * @return
+     */
+    public ObservableComposer open() {
+        State s = pushState();
+        ObservableComposer ret = get(ObservableRole.GROUP_OPEN);
+        s.concepts.add(new ConceptHolder(ret));
+        return ret;
+    }
+
+    /**
+     * Close the inner scope. Note that proper use is a responsibility of the caller.
+     * 
+     * @return
+     */
+    public ObservableComposer close() {
+        return parent;
+    }
+
+    /**
      * Get the scope for an inherent type to the concept built so far
      * 
      * @param inherent
@@ -426,13 +580,7 @@ public class ObservableComposer {
         s.inherent = new ObservableComposer(this, ObservableRole.INHERENT);
         s.inherent.state.peek().lexicalRealm.clear();
         s.inherent.state.peek().logicalRealm.clear();
-        s.inherent.state.peek().lexicalRealm.add(ObservableRole.GROUP_OPEN);
-        // TODO add all the roles compatible with a subject/agent/relationship
-        s.inherent.state.peek().logicalRealm.add(Constraint.of(Type.SUBJECT));
-        s.inherent.state.peek().logicalRealm.add(Constraint.of(Type.AGENT));
-        s.inherent.state.peek().logicalRealm.add(Constraint.of(Type.EVENT));
-        s.inherent.state.peek().logicalRealm.add(Constraint.of(Type.RELATIONSHIP));
-        s.inherent.state.peek().logicalRealm.add(Constraint.of(Type.PREDICATE));
+        s.inherent.state.peek().logicalRealm.add(Constraint.of(Type.COUNTABLE));
         return s.inherent;
     }
 
@@ -486,14 +634,14 @@ public class ObservableComposer {
         return s.caused;
     }
 
-    public ObservableComposer operator(UnarySemanticOperator type) {
-        if (state.peek().unaryOperator != null || defines(Type.OBSERVABLE)) {
-            error("cannot add an operator once another operator or an observable is defined");
-            return this;
-        }
-        state.peek().unaryOperatorArgument = get(ObservableRole.UNARY_OPERATOR, type);
-        return state.peek().unaryOperatorArgument;
-    }
+    // public ObservableComposer operator(UnarySemanticOperator type) {
+    // if (state.peek().unaryOperator != null || defines(Type.OBSERVABLE)) {
+    // error("cannot add an operator once another operator or an observable is defined");
+    // return this;
+    // }
+    // state.peek().unaryOperatorArgument = get(ObservableRole.UNARY_OPERATOR, type);
+    // return state.peek().unaryOperatorArgument;
+    // }
 
     /**
      * Sets the "comparison" type for operators that admit one, such as ratios or proportions.
@@ -506,40 +654,117 @@ public class ObservableComposer {
     }
 
     /**
-     * Add traits to the concept being built. Pair with (@link {@link #withTrait(Collection)} as
-     * Java is WriteEverythingTwice, not DontRepeatYourself.
+     * Accept an input from the client side and behave accordingly. Input can be concept, semantic
+     * modifier, operator (value, unary or binary) or a syntactic element like a string (only
+     * parentheses and "in" for units are accepted).
      *
      * @param concepts
      * @return the same builder this was called on, for chaining calls
      */
-    public ObservableComposer submit(IConcept trait) {
+    public ObservableComposer accept(Object input) {
 
-        /*
-         * check if concept is acceptable
-         */
-        if (!state.peek().logicalRealm.isEmpty()) {
-            if (!checkLogicalConstraints(trait)) {
-                error("concept " + trait + " is not compatible with the current definition: expecting one of "
-                        + state.peek().logicalRealm);
+        if (input instanceof IConcept) {
+
+            IConcept concept = (IConcept) input;
+            /*
+             * check if concept is acceptable
+             */
+            if (!state.peek().logicalRealm.isEmpty()) {
+                if (!checkLogicalConstraints(concept)) {
+                    error("concept " + concept
+                            + " is not compatible with the current definition: expecting one of "
+                            + state.peek().logicalRealm);
+                    return this;
+                }
+            }
+
+            if (!validateConcept(concept)) {
                 return this;
             }
+
+            // boolean inGroup = state.peek().lexicalRealm.contains(ObservableRole.GROUP_CLOSE);
+
+            State s = pushState();
+            s.concepts.add(new ConceptHolder(concept));
+            // reviseRealms(concept);
+
+            if (concept.is(Type.OBSERVABLE) && parent != null) {
+
+                /*
+                 * If our parent is a group (FIXME we should look it up, not just look at the direct
+                 * parent) and the group is under an operator, we don't close the group, otherwise
+                 * the observable is the end of the inner specification.
+                 */
+                boolean isGroupOperand = parent.state.peek().lexicalScope == ObservableRole.GROUP_OPEN &&
+                        parent.parent != null && parent.parent.state.peek().lexicalScope != null
+                        && parent.parent.state.peek().lexicalScope.subsumesObservable;
+
+                if (!isGroupOperand) {
+                    return this.parent.reviseConstraints();
+                }
+            }
+
+        } else if (input instanceof UnarySemanticOperator) {
+
+            if (state.peek().unaryOperator != null || defines(Type.OBSERVABLE)) {
+                error("cannot add an operator once another operator or an observable is defined");
+                return this;
+            }
+            state.peek().unaryOperatorArgument = get(ObservableRole.UNARY_OPERATOR, input)
+                    .constrainFor((UnarySemanticOperator) input);
+            return state.peek().unaryOperatorArgument;
+
+        } else if (input instanceof SemanticModifier) {
+
+            State s = pushState();
+            switch((SemanticModifier) input) {
+            case ADJACENT_TO:
+                return (s.adjacent = new ObservableComposer(this, ((SemanticModifier) input).role)
+                        .constrainFor((SemanticModifier) input));
+            case CAUSED_BY:
+                return (s.causant = new ObservableComposer(this, ((SemanticModifier) input).role)
+                        .constrainFor((SemanticModifier) input));
+            case CAUSING:
+                return (s.caused = new ObservableComposer(this, ((SemanticModifier) input).role)
+                        .constrainFor((SemanticModifier) input));
+            // case CONTAINED_IN:
+            // return (s.compresent = new ObservableComposer(this, ((SemanticModifier)input).role));
+            // case CONTAINING:
+            // return (s.compresent = new ObservableComposer(this, ((SemanticModifier)input).role));
+            case DURING:
+                return (s.cooccurrent = new ObservableComposer(this, ((SemanticModifier) input).role)
+                        .constrainFor((SemanticModifier) input));
+            case FOR:
+                return (s.goal = new ObservableComposer(this, ((SemanticModifier) input).role)
+                        .constrainFor((SemanticModifier) input));
+            case LINKING:
+                return (s.relationshipSource = new ObservableComposer(this, ((SemanticModifier) input).role)
+                        .constrainFor((SemanticModifier) input));
+            case OF:
+                return (s.inherent = new ObservableComposer(this, ((SemanticModifier) input).role)
+                        .constrainFor((SemanticModifier) input));
+            case TO:
+                return (s.relationshipTarget = new ObservableComposer(this, ((SemanticModifier) input).role)
+                        .constrainFor((SemanticModifier) input));
+            case WITH:
+                return (s.compresent = new ObservableComposer(this, ((SemanticModifier) input).role)
+                        .constrainFor((SemanticModifier) input));
+            case WITHIN:
+                return (s.context = new ObservableComposer(this, ((SemanticModifier) input).role)
+                        .constrainFor((SemanticModifier) input));
+            default:
+                break;
+            }
+
+            throw new KlabInternalErrorException("obsolete or unsupported semantic modifier value!");
+
+        } else if (input instanceof BinarySemanticOperator) {
+
+        } else if (input instanceof ValueOperator) {
+
         }
 
-        if (!validateConcept(trait)) {
-            return this;
-        }
-
-        // boolean inGroup = state.peek().lexicalRealm.contains(ObservableRole.GROUP_CLOSE);
-
-        State s = pushState();
-        s.concepts.add(new ConceptHolder(trait));
-        reviseRealms(trait);
-
-        // if (!isError() && inGroup) {
-        // s.lexicalRealm.add(ObservableRole.GROUP_CLOSE);
-        // }
-
-        return this;
+        return this.reviseConstraints();
     }
 
     private boolean checkLogicalConstraints(IConcept concept) {
@@ -625,10 +850,77 @@ public class ObservableComposer {
     }
 
     /**
+     * Call after accepting any modification to redefine what is allowed.
+     * 
+     * @return
+     */
+    private ObservableComposer reviseConstraints() {
+
+        State s = this.state.peek();
+
+        /*
+         * clear current
+         */
+        s.logicalRealm.clear();
+        s.lexicalRealm.clear();
+
+        /*
+         * Check if we have an observable
+         */
+        IConcept observable = null;
+        List<IConcept> predicates = new ArrayList<>();
+        
+        for (ConceptHolder ch : s.concepts) {
+            if (ch.resolved().is(Type.OBSERVABLE)) {
+                observable = ch.resolved();
+            } else {
+                predicates.add(ch.resolved());
+            }
+        }
+        
+        /*
+         * if not and we have a unary operator, allow only the observables compatible with it in the
+         * next step.
+         */
+        if (observable == null) {
+            if (s.unaryOperator != null) {
+                
+            } else {
+                s.logicalRealm.add(Constraint.of(Type.OBSERVABLE));
+            }
+        }
+
+        /*
+         * If we do have it, no more concepts are allowed. Otherwise we can have more predicates (of
+         * a different base trait than those we have) and one observable, possibly constrained by
+         * the step above.
+         */
+
+        /*
+         * If we have an observable, we can have all the semantic modifiers that we don't have
+         * already and are compatible with it. WITH and DURING are alternative for continuants or
+         * occurrents.
+         */
+
+        /*
+         * If we have a quality observable we admit value operators.
+         */
+
+        /*
+         * If we have monetary values we admit currencies; if we have a physical property we admit
+         * units.
+         */
+
+        return this;
+    }
+
+    /**
      * Revise the realms in the current state to match the added element contextually to the
-     * existing state.
+     * existing state. FIXME substitute with reviseConstraints() as the object has been added
+     * already.
      * 
      * @param added
+     * @deprecated use reviseConstraints() after any accepted operation.
      */
     private void reviseRealms(Object added) {
 
@@ -750,14 +1042,14 @@ public class ObservableComposer {
                 + "Lex: "
                 + state.peek().lexicalRealm + "\n";
     }
-
-    public ObservableComposer submit(String trait) {
-        IConcept c = Concepts.INSTANCE.getConcept(trait);
-        if (c == null) {
-            return error("Concept " + trait + " is unknown");
-        }
-        return submit(c);
-    }
+    //
+    // public ObservableComposer submit(String trait) {
+    // IConcept c = Concepts.INSTANCE.getConcept(trait);
+    // if (c == null) {
+    // return error("Concept " + trait + " is unknown");
+    // }
+    // return accept(c);
+    // }
 
     private ObservableComposer error(String string) {
         if (errorHandler != null) {
@@ -1119,6 +1411,30 @@ public class ObservableComposer {
         return ret;
     }
 
+    /**
+     * Find out if we have an observable and which type it is. If it's unknown return null. Call on
+     * root.
+     * 
+     * @return
+     */
+    public IKimConcept.Type getObservableType() {
+        IKimConcept.Type ret = null;
+        for (ConceptHolder concept : state.peek().concepts) {
+            if (concept.resolved().is(Type.OBSERVABLE)) {
+                ret = Kim.INSTANCE.getFundamentalType(((Concept) concept.resolved()).getTypeSet());
+            }
+        }
+        if (ret != null && state.peek().concepts.size() > 0) {
+            ret = Kim.INSTANCE
+                    .getFundamentalType(((Concept) state.peek().concepts.get(0).resolved()).getTypeSet());
+        }
+
+        if (ret != null && state.peek().unaryOperator != null) {
+            ret = state.peek().unaryOperator.returnType;
+        }
+        return null;
+    }
+
     public List<StyledKimToken> getStyledCode() {
         List<StyledKimToken> ret = new ArrayList<>();
 
@@ -1129,11 +1445,11 @@ public class ObservableComposer {
         StyledKimToken observable = null;
         for (ConceptHolder c : s.concepts) {
             if (c.resolved().is(Type.TRAIT)) {
-                traits.add(StyledKimToken.create(c));
+                traits.add(StyledKimToken.create(c.resolved()));
             } else if (c.resolved().is(Type.ROLE)) {
-                roles.add(StyledKimToken.create(c));
+                roles.add(StyledKimToken.create(c.resolved()));
             } else if (c.resolved().is(Type.OBSERVABLE)) {
-                observable = StyledKimToken.create(c);
+                observable = StyledKimToken.create(c.resolved());
             }
         }
 
@@ -1159,8 +1475,12 @@ public class ObservableComposer {
 
         if (s.unaryOperator != null) {
             ret.add(StyledKimToken.create(s.unaryOperator));
-            List<StyledKimToken> arg = s.unaryOperatorArgument.getStyledCode();
-            ret.addAll(arg);
+            if (s.unaryOperatorArgument != null) {
+                List<StyledKimToken> arg = s.unaryOperatorArgument.getStyledCode();
+                ret.addAll(arg);
+            } else {
+                ret.add(StyledKimToken.unknown());
+            }
             if (s.comparisonTarget != null) {
                 ret.add(StyledKimToken.create(s.unaryOperator, true));
                 addStyledTokens(s.unaryOperator, s.comparisonTarget, ret, true);

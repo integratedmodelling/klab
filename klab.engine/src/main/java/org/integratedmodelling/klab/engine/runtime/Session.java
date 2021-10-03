@@ -24,9 +24,12 @@ import java.util.logging.Level;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.model.KActors;
 import org.integratedmodelling.kactors.model.KActorsBehavior;
+import org.integratedmodelling.kim.api.BinarySemanticOperator;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
+import org.integratedmodelling.kim.api.SemanticModifier;
+import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Authentication;
@@ -959,33 +962,38 @@ public class Session extends GroovyObjectSupport
     private ObservableComposer acceptChoice(ObservableComposer composer, SearchMatch searchMatch,
             String contextId) {
 
-        
+        Object input = searchMatch.getId();
+
         if (searchMatch.getMatchType() == Match.Type.CONCEPT) {
-            composer = composer.submit(Concepts.c(searchMatch.getId()));
+            input = Concepts.c(searchMatch.getId());
         } else if (searchMatch.getMatchType() == Match.Type.VALUE_OPERATOR) {
 
-        } else if (searchMatch.getMatchType() == Match.Type.UNARY_OPERATOR) {
-
-        } else if (searchMatch.getMatchType() == Match.Type.SEMANTIC_MODIFIER) {
-
+        } else if (searchMatch.getMatchType() == Match.Type.UNARY_OPERATOR
+                || searchMatch.getMatchType() == Match.Type.PREFIX_OPERATOR) {
+            input = UnarySemanticOperator.forCode(searchMatch.getId());
+        } else if (searchMatch.getMatchType() == Match.Type.SEMANTIC_MODIFIER
+                || searchMatch.getMatchType() == Match.Type.INFIX_OPERATOR) {
+            input = SemanticModifier.forCode(searchMatch.getId());
         } else if (searchMatch.getMatchType() == Match.Type.BINARY_OPERATOR) {
-
+            input = BinarySemanticOperator.forCode(searchMatch.getId());
         } else if (searchMatch.getMatchType() == Match.Type.MODIFIER) {
-
-        } else {
-
+            input = SemanticModifier.forCode(searchMatch.getId());
         }
 
         /*
-         * current composer becomes the main
+         * current composer becomes the main after accepting the input
          */
-        composers.put(contextId, composer);
-        
+        composers.put(contextId, (composer = composer.accept(input)));
+
+        /*
+         * send current status to client so it can be displayed
+         */
         QueryStatusResponse response = new QueryStatusResponse();
         response.setContextId(contextId);
         response.getErrors().addAll(composer.getErrors());
         response.getCode().addAll(composer.getStyledCode());
-
+        response.setCurrentType(composer.getObservableType());
+        
         monitor.send(IMessage.MessageClass.UserInterface, IMessage.Type.QueryStatus, response);
 
         return composer;
@@ -1105,12 +1113,12 @@ public class Session extends GroovyObjectSupport
                         // SYNTAX WITH TYPES FOR COLORING.
                         break;
                     case OPEN_SCOPE:
+                        composers.put(response.getContextId(), composers.get(response.getContextId()).open());
+                        break;
                     case CLOSE_SCOPE:
-                        // the parentheses mean: if we're in a scope, everything applies to the
-                        // current composer until we close it; otherwise we
-                        // close it immediately after the first input in it.
-                        request.setQueryString(request.getSearchMode() == Mode.OPEN_SCOPE ? "(" : ")");
-                        // fall through
+                        composers.put(response.getContextId(),
+                                composers.get(response.getContextId()).close());
+                        break;
                     case SEMANTIC:
                         if (request.isDefaultResults()) {
                             setDefaultSearchResults(response.getContextId(), request, response);
@@ -1170,20 +1178,14 @@ public class Session extends GroovyObjectSupport
     protected void runSemanticSearch(ObservableComposer composer, SearchRequest request,
             SearchResponse response) {
 
-        if (request.getQueryString().equals("(")) {
-            // TODO must set a "explicit group" flag in the current context to say it shouldn't be
-            // closed until a closing parenthesis is sent
-        } else if (request.getQueryString().equals("(")) {
-            // TODO current context must have flag and this triggers going back to the parent
-        } else {
-            for (Match match : Indexer.INSTANCE.query(request.getQueryString(), composer,
-                    request.getMaxResults())) {
-                response.getMatches().add(
-                        ((org.integratedmodelling.klab.engine.indexing.SearchMatch) match).getReference());
-            }
-            // save the matches so that we recognize a choice
-            composer.setData("matches", response);
+        for (Match match : Indexer.INSTANCE.query(request.getQueryString(), composer,
+                request.getMaxResults())) {
+            response.getMatches().add(
+                    ((org.integratedmodelling.klab.engine.indexing.SearchMatch) match).getReference());
         }
+
+        // save the matches so that we recognize a choice
+        composer.setData("matches", response);
     }
 
     /**
@@ -1235,7 +1237,6 @@ public class Session extends GroovyObjectSupport
         }
     }
 
-    
     @Deprecated
     @MessageHandler
     private void handleSearchRequest(SearchRequest request, IMessage message) {

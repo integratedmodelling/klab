@@ -105,7 +105,9 @@ public interface IIndexingService {
 
         public enum Type {
             CONCEPT,
+            @Deprecated // use UNARY_OPERATOR
             PREFIX_OPERATOR,
+            @Deprecated // use SEMANTIC_MODIFIER
             INFIX_OPERATOR,
             OBSERVATION,
             MODEL,
