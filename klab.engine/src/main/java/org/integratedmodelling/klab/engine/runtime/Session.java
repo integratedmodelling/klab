@@ -991,8 +991,8 @@ public class Session extends GroovyObjectSupport
         QueryStatusResponse response = new QueryStatusResponse();
         response.setContextId(contextId);
         response.getErrors().addAll(composer.getErrors());
-        response.getCode().addAll(composer.getStyledCode());
-        response.setCurrentType(composer.getObservableType());
+        response.getCode().addAll(composer.getRoot().getStyledCode());
+        response.setCurrentType(composer.getRoot().getObservableType());
         
         monitor.send(IMessage.MessageClass.UserInterface, IMessage.Type.QueryStatus, response);
 

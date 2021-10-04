@@ -212,10 +212,10 @@ public class SearchView extends ViewPart {
 					treeViewer.getTree().forceFocus();
 				} else if (e.keyCode == SWT.ESC) {
 					reset();
-				} else if (e.keyCode == '(' || e.keyCode == ')') {
-                    e.doit = false;
-                    text.setText("");
-                }else if (text.getText().trim().isEmpty()) {
+                } /*
+                   * else if (e.keyCode == '(' || e.keyCode == ')') { e.doit = false;
+                   * text.setText(""); }
+                   */else if (text.getText().trim().isEmpty()) {
 					clearMatches();
 				} else {
 					search(text.getText());
@@ -226,10 +226,12 @@ public class SearchView extends ViewPart {
 			public void keyPressed(KeyEvent e) {
 				if (text.getText().isEmpty() && e.keyCode == SWT.BS) {
 					removeLastMatch();
-				} else if (text.getText().isEmpty() && e.keyCode == '(') {
+				} else if (e.character == '(') {
+				    e.doit = false;
 					openParenthesis();
-				} else if (text.getText().isEmpty() && e.keyCode == ')') {
-					closeParenthesis();
+				} else if (e.character == ')') {
+				    e.doit = false;
+				    closeParenthesis();
 				}
 			}
 

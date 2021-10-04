@@ -347,8 +347,32 @@ public interface IKimConcept extends IKimStatement {
          */
         AUTHORITY_IDENTITY;
 
-        boolean isNumeric() {
+        public boolean isNumeric() {
             return IKimConcept.CONTINUOUS_QUALITY_TYPES.contains(this);
+        }
+        
+        public boolean isQuality() {
+            return IKimConcept.ALL_QUALITY_TYPES.contains(this);
+        }
+        
+        public boolean admitsUnits() {
+            return this == EXTENSIVE_PROPERTY || this == INTENSIVE_PROPERTY || this == NUMEROSITY;
+        }
+        
+        public boolean admitsCurrency() {
+            return this == MONETARY_VALUE;
+        }
+        
+        public boolean isCountable() {
+            return IKimConcept.DIRECT_OBSERVABLE_TYPES.contains(this);
+        }
+        
+        public boolean isPredicate() {
+            return this == ROLE || IKimConcept.TRAIT_TYPES.contains(this);
+        }
+
+        public boolean isTrait() {
+            return IKimConcept.TRAIT_TYPES.contains(this);
         }
 
     }
@@ -362,46 +386,96 @@ public interface IKimConcept extends IKimStatement {
     public enum ObservableRole {
 
         // conceptual components
-        TRAIT(false),
-        ROLE(false),
+        TRAIT(false, ""),
+        ROLE(false, ""),
 
         /*
          * these correspond to modifiers
          */
-        CONTEXT(true),
-        INHERENT(true),
-        ADJACENT(true),
-        CAUSED(true),
-        CAUSANT(true),
-        COMPRESENT(true),
-        GOAL(true),
-        COOCCURRENT(true),
+        CONTEXT(true, "within"),
+        INHERENT(true, "of"),
+        ADJACENT(true, "adjacent to"),
+        CAUSED(true, "caused by"),
+        CAUSANT(true, "causing"),
+        COMPRESENT(true, "with"),
+        GOAL(true, "for"),
+        COOCCURRENT(true, "during"),
         /**
          * temporal inherent is 'during each'. Support is partial. Not sure it's here to stay.
          */
-        TEMPORAL_INHERENT(true),
-        RELATIONSHIP_SOURCE(true),
-        RELATIONSHIP_TARGET(true),
+        TEMPORAL_INHERENT(true, "during each"),
+        RELATIONSHIP_SOURCE(true, "linking"),
+        RELATIONSHIP_TARGET(true, "to"),
 
         // other structural components
-        VALUE_OPERATOR(false),
-        UNIT(false),
-        CURRENCY(false),
-        LOGICAL_OPERATOR(true),
-        INLINE_VALUE(false),
-        UNARY_OPERATOR(true),
+        VALUE_OPERATOR(false, ""),
+        UNIT(false, "in"),
+        CURRENCY(false, "in"),
+        LOGICAL_OPERATOR(true, ""),
+        INLINE_VALUE(false, ""),
+        UNARY_OPERATOR(true, ""),
         /** grouping scope for parenthesized logical expression */
-        GROUP_OPEN(false),
-        GROUP_CLOSE(false);
+        GROUP_OPEN(false, ""),
+        GROUP_CLOSE(false, "");
 
         /**
          * If true, this represents an operator that can have a complex logical expression as
          * argument.
          */
         public boolean subsumesObservable;
+        public String kimDeclaration;
 
-        ObservableRole(boolean subsumesObservable) {
+        ObservableRole(boolean subsumesObservable, String kimDeclaration) {
             this.subsumesObservable = subsumesObservable;
+            this.kimDeclaration = kimDeclaration;
+        }
+
+        public boolean appliesTo(Type type) {
+            switch (this) {
+            case ADJACENT:
+                return type.isCountable();
+            case CAUSANT:
+                break;
+            case CAUSED:
+                break;
+            case COMPRESENT:
+                break;
+            case CONTEXT:
+                return type != Type.SUBJECT && type != Type.AGENT;
+            case COOCCURRENT:
+                break;
+            case GOAL:
+                break;
+            case GROUP_CLOSE:
+                break;
+            case GROUP_OPEN:
+                break;
+            case INHERENT:
+                return type != Type.SUBJECT && type != Type.AGENT;
+            case INLINE_VALUE:
+                break;
+            case LOGICAL_OPERATOR:
+                break;
+            case RELATIONSHIP_SOURCE:
+            case RELATIONSHIP_TARGET:
+                return type == Type.RELATIONSHIP;
+            case ROLE:
+                break;
+            case TEMPORAL_INHERENT:
+                break;
+            case TRAIT:
+                break;
+            case UNARY_OPERATOR:
+                break;
+            case UNIT:
+                break;
+            case VALUE_OPERATOR:
+                break;
+            default:
+                break;
+            
+            }
+            return true;
         }
     }
 

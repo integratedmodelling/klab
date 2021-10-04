@@ -301,64 +301,65 @@ public enum Indexer {
         if (maxResults <= 0) {
             maxResults = MAX_RESULT_COUNT;
         }
-        
-        for (ObservableRole role : composer.getAdmittedLexicalInput()) {
-            switch(role) {
-            case ADJACENT:
-                ret.add(new SearchMatch(SemanticModifier.ADJACENT_TO));
-                break;
-            case CAUSANT:
-                ret.add(new SearchMatch(SemanticModifier.CAUSING));
-                break;
-            case CAUSED:
-                ret.add(new SearchMatch(SemanticModifier.CAUSED_BY));
-                break;
-            case COMPRESENT:
-                ret.add(new SearchMatch(SemanticModifier.WITH));
-                break;
-            case CONTEXT:
-                ret.add(new SearchMatch(SemanticModifier.WITHIN));
-                break;
-            case COOCCURRENT:
-                ret.add(new SearchMatch(SemanticModifier.DURING));
-                break;
-            case INHERENT:
-                ret.add(new SearchMatch(SemanticModifier.OF));
-                break;
-            case RELATIONSHIP_SOURCE:
-                ret.add(new SearchMatch(SemanticModifier.LINKING));
-                break;
-            case RELATIONSHIP_TARGET:
-                ret.add(new SearchMatch(SemanticModifier.TO));
-                break;
-            case GOAL:
-                ret.add(new SearchMatch(SemanticModifier.FOR));
-                break;
-            case CURRENCY:
-                break;
-            case GROUP_CLOSE:
-                break;
-            case GROUP_OPEN:
-                break;
-            case INLINE_VALUE:
-                break;
-            case LOGICAL_OPERATOR:
-                break;
-            case ROLE:
-                break;
-            case TRAIT:
-                break;
-            case UNARY_OPERATOR:
-                ret.addAll(matchUnaryOperators(term));
-                break;
-            case UNIT:
-                break;
-            case VALUE_OPERATOR:
-                ret.addAll(matchValueOperators(term));
-                break;
-            default:
-                break;
 
+        for (ObservableRole role : composer.getAdmittedLexicalInput()) {
+            if (role.kimDeclaration.isEmpty() || role.kimDeclaration.startsWith(term)) {
+                switch(role) {
+                case ADJACENT:
+                    ret.add(new SearchMatch(SemanticModifier.ADJACENT_TO));
+                    break;
+                case CAUSANT:
+                    ret.add(new SearchMatch(SemanticModifier.CAUSING));
+                    break;
+                case CAUSED:
+                    ret.add(new SearchMatch(SemanticModifier.CAUSED_BY));
+                    break;
+                case COMPRESENT:
+                    ret.add(new SearchMatch(SemanticModifier.WITH));
+                    break;
+                case CONTEXT:
+                    ret.add(new SearchMatch(SemanticModifier.WITHIN));
+                    break;
+                case COOCCURRENT:
+                    ret.add(new SearchMatch(SemanticModifier.DURING));
+                    break;
+                case INHERENT:
+                    ret.add(new SearchMatch(SemanticModifier.OF));
+                    break;
+                case RELATIONSHIP_SOURCE:
+                    ret.add(new SearchMatch(SemanticModifier.LINKING));
+                    break;
+                case RELATIONSHIP_TARGET:
+                    ret.add(new SearchMatch(SemanticModifier.TO));
+                    break;
+                case GOAL:
+                    ret.add(new SearchMatch(SemanticModifier.FOR));
+                    break;
+                case CURRENCY:
+                    break;
+                case GROUP_CLOSE:
+                    break;
+                case GROUP_OPEN:
+                    break;
+                case INLINE_VALUE:
+                    break;
+                case LOGICAL_OPERATOR:
+                    break;
+                case ROLE:
+                    break;
+                case TRAIT:
+                    break;
+                case UNARY_OPERATOR:
+                    ret.addAll(matchUnaryOperators(term));
+                    break;
+                case UNIT:
+                    break;
+                case VALUE_OPERATOR:
+                    ret.addAll(matchValueOperators(term));
+                    break;
+                default:
+                    break;
+                }
             }
         }
 

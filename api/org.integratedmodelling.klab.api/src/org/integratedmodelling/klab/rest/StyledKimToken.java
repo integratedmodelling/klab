@@ -7,6 +7,7 @@ import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.klab.api.data.mediation.ICurrency;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.kim.KimStyle;
+import org.integratedmodelling.klab.api.kim.KimStyle.FontStyle;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
@@ -66,18 +67,22 @@ public class StyledKimToken {
             ret.value = ((ValueOperator) c).declaration;
         } else if (c instanceof SemanticModifier) {
             ret.value = ((SemanticModifier) c).declaration[alternative ? 1 : 0];
+            ret.font = FontStyle.BOLD;
         } else if (c instanceof UnarySemanticOperator) {
             ret.value = ((UnarySemanticOperator) c).declaration[alternative ? 1 : 0];
+            ret.font = FontStyle.BOLD;
         } else if (c instanceof BinarySemanticOperator) {
             ret.value = ((BinarySemanticOperator)c).name().toLowerCase();
+            ret.font = FontStyle.BOLD;
         } else if (c instanceof String) {
 
             if ("(".equals(c) || ")".equals(c)) {
                 ret.value = c.toString();
                 ret.needsWhitespaceBefore = "(".equals(c);
                 ret.needsWhitespaceAfter = ")".equals(c);
-            } else if ("in".equals(c)) {
+            } else if ("in".equals(c) || "per".equals(c)) {
                 ret.value = c.toString();
+                ret.font = FontStyle.BOLD;
             } else {
                 throw new KlabIllegalArgumentException("token " + c + " is not a recognized k.IM token");
             }
