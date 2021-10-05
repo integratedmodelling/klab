@@ -18,6 +18,7 @@ public class QueryStatusResponse {
     private List<String> errors = new ArrayList<>();
     private String contextId;
     private IKimConcept.Type currentType;
+    private String description;
 
     public List<StyledKimToken> getCode() {
         return code;
@@ -43,6 +44,12 @@ public class QueryStatusResponse {
     }
     public void setCurrentType(IKimConcept.Type currentType) {
         this.currentType = currentType;
+    }
+    public String getDescription() {
+        return description;
+    }
+    public void setDescription(String description) {
+        this.description = description;
     }
 
 }

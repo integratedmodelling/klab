@@ -8,18 +8,21 @@ import java.util.Map;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.wb.swt.ResourceManager;
+import org.eclipse.wb.swt.SWTResourceManager;
 import org.integratedmodelling.klab.api.kim.KimStyle;
 import org.integratedmodelling.klab.rest.QueryStatusResponse;
 import org.integratedmodelling.klab.rest.StyledKimToken;
-import org.integratedmodelling.klab.utils.Pair;
 
 /**
  * Shows a set of k.IM concepts with appropriate coloring and spacing, with the option of hiding
@@ -33,7 +36,7 @@ public class StyledConceptDisplay extends Composite {
     boolean showNamespaces = true;
     private StyledText styledText;
     private Button btnNewButton;
-    private Label lblNewLabel;
+    private Canvas lblNewLabel;
 
     Map<KimStyle.Color, Color> colors = new HashMap<>();
 
@@ -70,12 +73,20 @@ public class StyledConceptDisplay extends Composite {
         super(parent, style);
         setLayout(new GridLayout(3, false));
 
-        lblNewLabel = new Label(this, SWT.NONE);
+        lblNewLabel = new Canvas(this, SWT.NO_REDRAW_RESIZE);
         GridData gd_lblNewLabel = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-        gd_lblNewLabel.widthHint = 24;
+        gd_lblNewLabel.heightHint = 28;
+        gd_lblNewLabel.widthHint = 28;
         lblNewLabel.setLayoutData(gd_lblNewLabel);
-
-        styledText = new StyledText(this, SWT.BORDER | SWT.READ_ONLY | SWT.SINGLE);
+        lblNewLabel.addPaintListener(new PaintListener() {
+            public void paintControl(PaintEvent e) {
+                Rectangle clientArea = lblNewLabel.getClientArea();
+                e.gc.setBackground(SWTResourceManager.getColor(SWT.COLOR_GRAY));
+             e.gc.fillOval(0,0,clientArea.width,clientArea.height);
+            }
+        });
+        
+        styledText = new StyledText(this, SWT.READ_ONLY | SWT.SINGLE);
         GridData gd_styledText = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
         gd_styledText.heightHint = 37;
         styledText.setLayoutData(gd_styledText);
@@ -130,6 +141,10 @@ public class StyledConceptDisplay extends Composite {
             styledText.setText(text.toString());
             for (StyleRange style : styles) {
                 styledText.setStyleRange(style);
+            }
+            
+            if (status.getCurrentType() != null) {
+                lblNewLabel.redraw();
             }
 
         });

@@ -249,7 +249,15 @@ public class SearchView extends ViewPart {
 				}
 			}
 		});
+		
 		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        Composite resultSet = new Composite(topContainer, SWT.EMBEDDED);
+        GridData gd_resultSet = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+        gd_resultSet.heightHint = 38;
+        resultSet.setLayoutData(gd_resultSet);
+        resultSet.setLayout(new FillLayout(SWT.HORIZONTAL));
+        resultText = new StyledConceptDisplay(resultSet, SWT.NONE);
+        resultText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
 		actionArea = new Composite(topContainer, SWT.NONE);
 		GridLayout gl_actionArea = new GridLayout(1, false);
@@ -269,6 +277,7 @@ public class SearchView extends ViewPart {
 		paletteView.setLayoutData(gd_paletteView);
 		// end comment out
 
+		
 		searchView = new Composite(actionArea, SWT.NONE);
 		gd_searchView = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
 
@@ -336,14 +345,6 @@ public class SearchView extends ViewPart {
 					}
 				});
 
-		Composite resultSet = new Composite(topContainer, SWT.BORDER | SWT.EMBEDDED);
-		GridData gd_resultSet = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-		gd_resultSet.heightHint = 38;
-		resultSet.setLayoutData(gd_resultSet);
-		resultSet.setLayout(new FillLayout(SWT.HORIZONTAL));
-		resultText = new StyledConceptDisplay(resultSet, SWT.NONE);
-		resultText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-
 		klab = new KlabPeer(Sender.ANY, (message) -> handleMessage(message));
 
 		createActions();
@@ -374,22 +375,21 @@ public class SearchView extends ViewPart {
         request.setSearchMode(Mode.CLOSE_SCOPE);
         request.setContextId(this.contextId);
         
-        Activator.post((message) -> {
-            SearchResponse response = message.getPayload(SearchResponse.class);
-            this.matches.addAll(response.getMatches());
-            this.contextId = response.getContextId();
-            Display.getDefault().asyncExec(() -> {
-                treeViewer.setInput(matches);
-            });
-        }, IMessage.MessageClass.Search, IMessage.Type.SemanticSearch, request);
+        Activator.post(/*
+                        * (message) -> { SearchResponse response =
+                        * message.getPayload(SearchResponse.class);
+                        * this.matches.addAll(response.getMatches()); this.contextId =
+                        * response.getContextId(); Display.getDefault().asyncExec(() -> {
+                        * treeViewer.setInput(matches); }); },
+                        */IMessage.MessageClass.Search, IMessage.Type.SemanticSearch, request);
 	    
-		SearchMatch closed = new SearchMatch();
-		closed.setId(")");
-		closed.setName(")");
-		closed.setCloseGroup(true);
-		accepted.add(closed);
-        // setMatchedText();
-		text.setText("");
+//		SearchMatch closed = new SearchMatch();
+//		closed.setId(")");
+//		closed.setName(")");
+//		closed.setCloseGroup(true);
+//		accepted.add(closed);
+//        // setMatchedText();
+//		text.setText("");
 	}
 
 	protected void openParenthesis() {
@@ -398,22 +398,21 @@ public class SearchView extends ViewPart {
         request.setSearchMode(Mode.OPEN_SCOPE);
         request.setContextId(this.contextId);
         
-        Activator.post((message) -> {
-            SearchResponse response = message.getPayload(SearchResponse.class);
-            this.matches.addAll(response.getMatches());
-            this.contextId = response.getContextId();
-            Display.getDefault().asyncExec(() -> {
-                treeViewer.setInput(matches);
-            });
-        }, IMessage.MessageClass.Search, IMessage.Type.SemanticSearch, request);
+        Activator.post(/*
+                        * (message) -> { SearchResponse response =
+                        * message.getPayload(SearchResponse.class);
+                        * this.matches.addAll(response.getMatches()); this.contextId =
+                        * response.getContextId(); Display.getDefault().asyncExec(() -> {
+                        * treeViewer.setInput(matches); }); },
+                        */IMessage.MessageClass.Search, IMessage.Type.SemanticSearch, request);
 	    
-	    SearchMatch open = new SearchMatch();
-		open.setId("(");
-		open.setName("(");
-		open.setOpenGroup(true);
-		accepted.add(open);
-//		setMatchedText();
-		text.setText("");
+//	    SearchMatch open = new SearchMatch();
+//		open.setId("(");
+//		open.setName("(");
+//		open.setOpenGroup(true);
+//		accepted.add(open);
+////		setMatchedText();
+//		text.setText("");
 	}
 
 	protected void observeMatching() {
@@ -452,6 +451,8 @@ public class SearchView extends ViewPart {
 		case QueryStatus:
 		    QueryStatusResponse status = message.getPayload(QueryStatusResponse.class);
 		    resultText.setStatus(status);
+		    contextId = status.getContextId();
+		    System.out.println(status.getDescription());
 		    break;
 		default:
 			break;
@@ -560,21 +561,14 @@ public class SearchView extends ViewPart {
         request.setSearchMode(Mode.UNDO);
         request.setContextId(this.contextId);
         
-	    Activator.post((message) -> {
-            SearchResponse response = message.getPayload(SearchResponse.class);
-            this.matches.addAll(response.getMatches());
-            this.contextId = response.getContextId();
-            Display.getDefault().asyncExec(() -> {
-                treeViewer.setInput(matches);
-            });
-        }, IMessage.MessageClass.Search, IMessage.Type.SemanticSearch, request);
+	    Activator.post(IMessage.MessageClass.Search, IMessage.Type.SemanticSearch, request);
 	    
-	    if (accepted.size() == 1) {
-			reset();
-		} else if (accepted.size() > 0) {
-			accepted.remove(accepted.size() - 1);
-//			setMatchedText();
-		}
+//	    if (accepted.size() == 1) {
+//			reset();
+//		} else if (accepted.size() > 0) {
+//			accepted.remove(accepted.size() - 1);
+////			setMatchedText();
+//		}
 	}
 
 //	private void setMatchedText() {

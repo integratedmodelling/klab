@@ -7,6 +7,7 @@ import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.klab.api.data.mediation.ICurrency;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.kim.KimStyle;
+import org.integratedmodelling.klab.api.kim.KimStyle.Color;
 import org.integratedmodelling.klab.api.kim.KimStyle.FontStyle;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -36,6 +37,8 @@ public class StyledKimToken {
         StyledKimToken ret = new StyledKimToken();
         ret.needsWhitespaceBefore = true;
         ret.needsWhitespaceAfter = true;
+        ret.color = Color.ERROR;
+        ret.font = FontStyle.BOLD;
         ret.value = "?";
         return ret;
     }

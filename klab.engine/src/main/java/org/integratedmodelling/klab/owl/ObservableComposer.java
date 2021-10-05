@@ -538,8 +538,10 @@ public class ObservableComposer {
     public ObservableComposer undo() {
         if (this.state.size() > 1) {
             this.state.pop();
-        } // else beep loudly and raise a shitstorm
-        return this;
+        } else if (this.parent != null) {
+            return this.parent;
+        }
+        return null;
     }
 
     /**

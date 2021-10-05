@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.KlabPermissions;
 import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
@@ -93,6 +94,9 @@ public class EngineController {
             }
         }
 
+        ret.setVersion(Version.CURRENT);
+        ret.setBuild(Version.VERSION_BUILD + " " + Version.VERSION_COMMIT);
+
         ret.setAcceptSubmission(isAuthorized(user, submitting));
         ret.setAcceptQueries(isAuthorized(user, searching));
         ret.getResourceCatalogs().addAll(resourceManager.getCatalogs());
@@ -107,8 +111,8 @@ public class EngineController {
         }
 
         /**
-         * Temporarily stick the time since boot in here instead of adding a proper field, in fear that
-         * this would kill the entire k.LAB deployed network.
+         * Temporarily stick the time since boot in here instead of adding a proper field, in fear
+         * that this would kill the entire k.LAB deployed network.
          */
         ret.setRefreshFrequencyMillis(System.currentTimeMillis() - Node.getBootTime());
 
