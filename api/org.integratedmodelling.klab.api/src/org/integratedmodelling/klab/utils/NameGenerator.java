@@ -21,15 +21,15 @@
  *******************************************************************************/
 package org.integratedmodelling.klab.utils;
 
-import java.nio.ByteBuffer;
 import java.util.Collection;
-import java.util.UUID;
 
 /**
- * A utility class that knows how to create unique temporary names. Just a wrapper around Java UUIDs
+ * A utility class that knows how to create unique temporary names. Just a wrapper around Java nanotime
  * with some recognition methods.
  * 
  * TODO not sure if these methods need synchronization.
+ * This was changed from the call so UUID because under some conditions the system can run out of entropy
+ * resulting in blocking and long read times.
  * 
  * @author Ferdinando Villa, Ecoinformatics Collaboratory, UVM
  *
@@ -39,11 +39,11 @@ public class NameGenerator {
   static long index = 0;
 
   static public String newName() {
-    return "_uu_" + UUID.randomUUID();
+    return "_uu_" + System.nanoTime();
   }
 
   static public String newName(String prefix) {
-    return "_uu_" + prefix + ":" + UUID.randomUUID();
+    return "_uu_" + prefix + ":" + System.nanoTime();
   }
 
   static public boolean isGenerated(String name) {
@@ -51,13 +51,12 @@ public class NameGenerator {
   }
 
   /**
-   * Short ID with the same data of a random UUID.
+   * Short ID with the same data of a the JVM nanoTime.
    * 
    * @return a short uuid
    */
   public static String shortUUID() {
-    UUID uuid = UUID.randomUUID();
-    long l = ByteBuffer.wrap(uuid.toString().getBytes()).getLong();
+    long l = System.nanoTime();
     return Long.toString(l, Character.MAX_RADIX);
   }
 

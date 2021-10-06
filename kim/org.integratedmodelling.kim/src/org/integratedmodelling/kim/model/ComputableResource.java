@@ -55,7 +55,7 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 
     private static final long serialVersionUID = -5104679843126238555L;
 
-    private String _resourceId = UUID.randomUUID().toString();
+    private String _resourceId = Long.toString(System.nanoTime());
 
     private String language;
     private Object literal;
