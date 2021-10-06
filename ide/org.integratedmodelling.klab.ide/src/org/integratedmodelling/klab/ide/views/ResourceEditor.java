@@ -11,16 +11,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.layout.TableColumnLayout;
-import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -80,6 +76,7 @@ import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigatorActions;
+import org.integratedmodelling.klab.ide.ui.CodelistEditor;
 import org.integratedmodelling.klab.ide.ui.TimeEditor;
 import org.integratedmodelling.klab.ide.ui.WorldWidget;
 import org.integratedmodelling.klab.ide.ui.wizards.NewCategorizationWizard;
@@ -156,6 +153,8 @@ public class ResourceEditor extends ViewPart {
     private Button btnEdit;
 
     private boolean isLocal;
+    private TabItem codelistEditor;
+    private TabFolder mainViewTabFolder;
 
     public static class AttributeContentProvider implements IStructuredContentProvider {
 
@@ -570,7 +569,7 @@ public class ResourceEditor extends ViewPart {
         lblNewLabel_3.setFont(SWTResourceManager.getFont("Segoe UI", 8, SWT.BOLD));
         lblNewLabel_3.setText("LOCAL, UNPUBLISHED");
 
-        TabFolder mainViewTabFolder = new TabFolder(parent, SWT.NONE);
+        mainViewTabFolder = new TabFolder(parent, SWT.NONE);
         mainViewTabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
         TabItem tbtmResourceData = new TabItem(mainViewTabFolder, SWT.NONE);
@@ -825,7 +824,7 @@ public class ResourceEditor extends ViewPart {
         final TreeEditor editor = new TreeEditor(propertyTable);
         editor.horizontalAlignment = SWT.LEFT;
         editor.grabHorizontal = true;
-
+        
         propertyTable.addMouseListener(new MouseAdapter(){
 
             @Override
@@ -1117,12 +1116,19 @@ public class ResourceEditor extends ViewPart {
         notes.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
         scrolledComposite.setContent(composite_1);
         scrolledComposite.setMinSize(composite_1.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+        
+        codelistEditor = new TabItem(mainViewTabFolder, SWT.NONE);
+        codelistEditor.setText("Codelist");
+
+        CodelistEditor composite_5 = new CodelistEditor(mainViewTabFolder, SWT.NONE);
+        codelistEditor.setControl(composite_5);
         notes.addModifyListener(new ModifyListener(){
             public void modifyText(ModifyEvent e) {
                 metadata.put(IMetadata.IM_NOTES, notes.getText());
                 setDirty(true);
             }
         });
+        
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout gl_composite = new GridLayout(6, false);
         gl_composite.marginLeft = 4;
@@ -1134,7 +1140,7 @@ public class ResourceEditor extends ViewPart {
 
         Label lblNewLabel_6 = new Label(composite_4, SWT.NONE);
         lblNewLabel_6.setBounds(0, 0, 55, 15);
-        lblNewLabel_6.setText("Categorization");
+        lblNewLabel_6.setText("Codelist");
 
         categorizationsCombo = new Combo(composite_4, SWT.READ_ONLY);
         GridData gd_categorizationsCombo = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
@@ -1219,6 +1225,8 @@ public class ResourceEditor extends ViewPart {
         cancelButton.setText("Cancel");
         new Label(composite, SWT.NONE);
 
+        mainViewTabFolder.getTabList()[3].setEnabled(false);
+        
         createActions();
         initializeToolBar();
         initializeMenu();

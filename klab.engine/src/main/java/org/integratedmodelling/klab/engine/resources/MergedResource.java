@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.knowledge.ICodelist;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
@@ -634,6 +635,12 @@ public class MergedResource implements IResource {
 
     @Override
     public AvailabilityReference getAvailability() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public List<ICodelist<String, ?>> getCodelists() {
         // TODO Auto-generated method stub
         return null;
     }

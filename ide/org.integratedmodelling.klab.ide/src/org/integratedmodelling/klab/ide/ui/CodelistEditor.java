@@ -173,7 +173,7 @@ public class CodelistEditor extends Composite {
         TableColumn tblclmnValue_1 = tableViewerColumn_3.getColumn();
         tblclmnValue_1.setWidth(215);
         tblclmnValue_1.setText("Value");
-        sashForm.setWeights(new int[] {5, 5, 5, 5});
+        sashForm.setWeights(new int[] {5, 5});
         
         Composite actionArea = new Composite(this, SWT.NONE);
         actionArea.setLayout(new GridLayout(4, false));

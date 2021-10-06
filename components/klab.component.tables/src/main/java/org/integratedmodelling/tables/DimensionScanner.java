@@ -234,7 +234,7 @@ public class DimensionScanner<T> {
         if (o != null) {
             if (!this.mappings.isEmpty()) {
                 for (CodeList mapping : this.mappings) {
-                    o = mapping.map(o);
+                    o = mapping.value(o);
                 }
                 return (T) o;
             } else if (NumberUtils.encodesInteger(o.toString()) && ITime.class.isAssignableFrom(this.extent)) {
@@ -309,7 +309,7 @@ public class DimensionScanner<T> {
                 return ((AbstractTable<?>) table).stop();
             } else if (this.columnName != null) {
                 for (int i = mappings.size() - 1; i >= 0; i--) {
-                    value = mappings.get(i).reverseMap(value);
+                    value = mappings.get(i).key(value);
                 }
                 return ((AbstractTable<?>) table).newFilter(Filter.Type.COLUMN_MATCH, new Object[]{this.columnName, value});
             }
@@ -357,7 +357,7 @@ public class DimensionScanner<T> {
                         for (int n = 0; n < filtered.size(); n++) {
                             Object mappedExtent = filtered.get(n);
                             for (int i = mappings.size() - 1; i >= 0; i--) {
-                                mappedExtent = mappings.get(i).reverseMap(mappedExtent);
+                                mappedExtent = mappings.get(i).key(mappedExtent);
                             }
                             filtered.set(n, mappedExtent);
                         }
@@ -416,7 +416,7 @@ public class DimensionScanner<T> {
                 } else {
                     for (Object o : origin) {
                         for (int i = mappings.size() - 1; i >= 0; i--) {
-                            o = mappings.get(i).reverseMap(o);
+                            o = mappings.get(i).key(o);
                         }
                         if (o != null) {
                             values.add(o);

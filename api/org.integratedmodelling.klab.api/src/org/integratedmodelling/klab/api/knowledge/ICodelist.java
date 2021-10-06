@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.api.knowledge;
 
+import java.util.Collection;
+
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 
 /**
@@ -60,13 +62,27 @@ public interface ICodelist<K, T> {
      * @param key
      * @return
      */
-    T map(K key);
+    T value(K key);
 
     /**
      * 
      * @param value
      * @return
      */
-    K reverseMap(T value);
+    K key(T value);
+    
+    /**
+     * 
+     * @param key
+     * @return
+     */
+    Collection<T> values(K key);
+
+    /**
+     * 
+     * @param value
+     * @return
+     */
+    Collection<K> keys(T value);
 
 }

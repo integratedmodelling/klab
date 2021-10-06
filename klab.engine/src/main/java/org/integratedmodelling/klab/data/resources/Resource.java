@@ -36,6 +36,7 @@ import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
+import org.integratedmodelling.klab.api.knowledge.ICodelist;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -49,6 +50,7 @@ import org.integratedmodelling.klab.api.services.IResourceService;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.rest.AttributeReference;
+import org.integratedmodelling.klab.rest.CodelistReference;
 import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 import org.integratedmodelling.klab.rest.ResourceReference;
@@ -122,7 +124,8 @@ public class Resource implements IResource {
 	 * This is an absolute location only defined in node (public) resources.
 	 */
 	File resourcePath;
-
+	List<ICodelist<String,?>> codelists = new ArrayList<>();
+	
 	/*
 	 * TRY TEMPLATES FOR:
 	 * 
@@ -158,6 +161,10 @@ public class Resource implements IResource {
 		this.categorizables.addAll(reference.getCategorizables());
 		this.exports.putAll(reference.getExportFormats());
 		this.availability = reference.getAvailability();
+		
+		for (CodelistReference clr : reference.getCodelists()) {
+		    this.codelists.add(new Codelist<String,Object>(clr));
+		}
 		
 		for (ResourceReference ref : reference.getHistory()) {
 			this.history.add(ref);
@@ -228,6 +235,10 @@ public class Resource implements IResource {
 			}
 		}
 
+		for (ICodelist<?,?> clr : codelists) {
+		    ret.getCodelists().add(((Codelist<?,?>)clr).getReference());
+		}
+		
 		ret.setAvailability(this.availability);
 		
 		return ret;
@@ -613,4 +624,9 @@ public class Resource implements IResource {
         return availability;
     }
 
+    @Override
+    public List<ICodelist<String, ?>> getCodelists() {
+        return this.codelists;
+    }
+    
 }

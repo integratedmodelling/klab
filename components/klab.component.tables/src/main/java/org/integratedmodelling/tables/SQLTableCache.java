@@ -46,13 +46,13 @@ public class SQLTableCache {
     Map<String, String> sanitizedNames = new HashMap<>();
 
     public static int createCache(String id, Table table, IMonitor monitor) {
-        
+
         SQLTableCache cache = new SQLTableCache();
         List<Attribute> sortedAttributes = TablesawTable.getAttributes(table);
         for (Attribute attribute : sortedAttributes) {
             cache.sanitizedNames.put(cache.sanitize(attribute.getName()), attribute.getName());
         }
-        
+
         cache.dbname = cache.sanitize(id);
         cache.sortedAttributes_ = sortedAttributes;
         cache.database = H2Database.createPersistent(cache.dbname);
@@ -94,6 +94,12 @@ public class SQLTableCache {
     }
 
     private void createStructure() {
+
+        /**
+         * Re-entrant or we can't test anything. TODO should be an option for when things are
+         * expensive or temporary.
+         */
+        database.execute("DROP TABLE data IF EXISTS;");
 
         String sql = "CREATE TABLE data (\n   oid LONG";
         for (Attribute column : getSortedAttributes()) {
@@ -179,7 +185,7 @@ public class SQLTableCache {
             database.execute(sql);
             row++;
         }
-        
+
         return row;
     }
 

@@ -15,9 +15,12 @@ import java.util.logging.Level;
 
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.model.Kim;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResourceCatalog;
+import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
+import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
@@ -183,6 +186,13 @@ public class ResourceCatalog implements IResourceCatalog {
 		IResource ret = get(key);
 		// resources.remove(eq("urn", key));
 		File resourcePath = getResourcePath(ret);
+		IResourceAdapter adapter = Resources.INSTANCE.getResourceAdapter(ret.getAdapterType());
+		if (adapter != null) {
+		    IResourcePublisher publisher = adapter.getPublisher();
+		    if (publisher != null) {
+		        publisher.unpublish(ret, Klab.INSTANCE.getRootMonitor());
+		    }
+		}
 		if (resourcePath != null) {
 			try {
 				FileUtils.deleteDirectory(resourcePath);
@@ -205,6 +215,13 @@ public class ResourceCatalog implements IResourceCatalog {
 	public void clear() {
 		for (IResource resource : values()) {
 			File resourcePath = getResourcePath(resource);
+	        IResourceAdapter adapter = Resources.INSTANCE.getResourceAdapter(resource.getAdapterType());
+	        if (adapter != null) {
+	            IResourcePublisher publisher = adapter.getPublisher();
+	            if (publisher != null) {
+	                publisher.unpublish(resource, Klab.INSTANCE.getRootMonitor());
+	            }
+	        }
 			if (resourcePath.isDirectory()) {
 				try {
 					FileUtils.deleteDirectory(resourcePath);
@@ -298,6 +315,13 @@ public class ResourceCatalog implements IResourceCatalog {
 		if (previousDir != null && newData != null) {
 			try {
 				FileUtils.copyDirectory(previousDir, newData.getFirst());
+		        IResourceAdapter adapter = Resources.INSTANCE.getResourceAdapter(resource.getAdapterType());
+		        if (adapter != null) {
+		            IResourcePublisher publisher = adapter.getPublisher();
+		            if (publisher != null) {
+		                publisher.unpublish(resource, Klab.INSTANCE.getRootMonitor());
+		            }
+		        }
 				FileUtils.writeStringToFile(new File(newData.getFirst() + File.separator + "resource.json"),
 						JsonUtils.printAsJson(newData.getSecond()), StandardCharsets.UTF_8);
 				FileUtils.deleteDirectory(previousDir);

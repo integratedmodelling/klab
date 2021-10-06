@@ -736,10 +736,12 @@ public class ObservableComposer {
                 error("cannot add an operator once another operator or an observable is defined");
                 return this;
             }
+            // put the naked operator on the undo stack and set the argument into the current for later completion.
             state.peek().unaryOperator = (UnarySemanticOperator) input;
-            state.peek().unaryOperatorArgument = get(ObservableRole.UNARY_OPERATOR, input)
+            State s = pushState();
+            s.unaryOperatorArgument = get(ObservableRole.UNARY_OPERATOR, input)
                     .constrainFor((UnarySemanticOperator) input);
-            return state.peek().unaryOperatorArgument.constrainFor((UnarySemanticOperator) input);
+            return this;
 
         } else if (input instanceof SemanticModifier) {
 

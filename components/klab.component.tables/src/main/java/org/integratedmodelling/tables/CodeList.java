@@ -3,6 +3,8 @@ package org.integratedmodelling.tables;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -102,7 +104,7 @@ public class CodeList implements ICodelist<Object, Object> {
         }
     }
 
-    public Object map(Object value) {
+    public Object value(Object value) {
 
         if (this.mapping == Mapping.YEAR) {
 
@@ -136,7 +138,7 @@ public class CodeList implements ICodelist<Object, Object> {
         return null;
     }
 
-    public Object reverseMap(Object value) {
+    public Object key(Object value) {
 
         if (this.mapping == Mapping.YEAR) {
 
@@ -185,6 +187,18 @@ public class CodeList implements ICodelist<Object, Object> {
     public boolean isAuthority() {
         // TODO Auto-generated method stub
         return false;
+    }
+
+    @Override
+    public Collection<Object> values(Object key) {
+        // TODO Auto-generated method stub
+        return Collections.singleton(value(key));
+    }
+
+    @Override
+    public Collection<Object> keys(Object value) {
+        // TODO Auto-generated method stub
+        return Collections.singleton(key(value));
     }
 
 }

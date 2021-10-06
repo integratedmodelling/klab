@@ -101,6 +101,9 @@ public class ResourceBuilder implements IResource.Builder {
 		if (this.requiredUrns != null) {
 			ret.dependencies.addAll(this.requiredUrns);
 		}
+		for (CodelistReference cl : this.codelists) {
+		    ret.codelists.add(new Codelist<String, Object>(cl));
+		}
 		return ret;
 	}
 

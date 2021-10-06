@@ -642,6 +642,7 @@ public enum Concepts implements IConceptService {
             axioms.add(Axiom.AnnotationAssertion(identity.getConceptName(), NS.REFERENCE_NAME_PROPERTY,
                     "auth_" + identity.getAuthorityName().toLowerCase() + "_" + identity.getConceptName().toLowerCase()));
             axioms.add(Axiom.AnnotationAssertion(identity.getConceptName(), IMetadata.DC_LABEL, identity.getLabel()));
+            axioms.add(Axiom.AnnotationAssertion(identity.getConceptName(), NS.DISPLAY_LABEL_PROPERTY, identity.getLabel()));
             axioms.add(Axiom.AnnotationAssertion(identity.getConceptName(), IMetadata.DC_COMMENT, identity.getDescription()));
             axioms.add(
                     Axiom.AnnotationAssertion(identity.getConceptName(), NS.CONCEPT_DEFINITION_PROPERTY, identity.getLocator()));

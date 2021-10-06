@@ -15,6 +15,7 @@ import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
+import org.integratedmodelling.klab.api.knowledge.ICodelist;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IActivity;
@@ -244,7 +245,13 @@ public class FutureResource implements IResource, Future<IResource> {
     @Override
     public AvailabilityReference getAvailability() {
         // TODO Auto-generated method stub
-        return null;
+        return getDelegate(timeout).getAvailability();
+    }
+
+    @Override
+    public List<ICodelist<String, ?>> getCodelists() {
+        // TODO Auto-generated method stub
+        return getDelegate(timeout).getCodelists();
     }
 
 }

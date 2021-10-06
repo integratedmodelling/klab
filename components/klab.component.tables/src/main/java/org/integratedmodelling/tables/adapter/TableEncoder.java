@@ -118,7 +118,7 @@ public class TableEncoder implements IResourceEncoder {
                     for (Attribute attr : resource.getAttributes()) {
                         Object attrName = attr.getName();
                         for (CodeList m : collectedMappings) {
-                            attrName = m.map(attrName);
+                            attrName = m.value(attrName);
                         }
                         if (attrName instanceof IConcept) {
                             scannedAttributes.add(attr);
@@ -251,7 +251,7 @@ public class TableEncoder implements IResourceEncoder {
                     if (map == null) {
                         throw new KlabIllegalArgumentException("table resource does not include a codelist named " + columnId[i]);
                     }
-                    Object mapped = map.reverseMap(column);
+                    Object mapped = map.key(column);
                     if (mapped == null) {
                         scope.getMonitor().warn("Cannot map value " + column + " using mapping " + map.getDescription());
                         return;

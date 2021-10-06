@@ -24,6 +24,7 @@ import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
+import org.integratedmodelling.klab.api.knowledge.ICodelist;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -602,5 +603,13 @@ public interface IResource extends IProvenance.Node, Serializable {
      * @return this or another resource that can deal with the passed overall context.
      */
     IResource contextualize(IScale scale, IArtifact artifact, Map<String, String> urnParameters, IContextualizationScope scope);
+
+    /**
+     * Return all codelists defined within this resource. When allowed by the providers, these can
+     * be used as authorities and their codes referenced within k.IM code as identities.
+     * 
+     * @return
+     */
+    List<ICodelist<String, ?>> getCodelists();
 
 }
