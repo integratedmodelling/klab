@@ -12,6 +12,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMessage.RecipientType;
 
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.hub.config.EmailConfig;
 import org.integratedmodelling.klab.hub.config.LinkConfig;
 import org.integratedmodelling.klab.hub.exception.SendEmailException;
@@ -169,6 +170,7 @@ public class EmailManager {
 			}
 			mailSender.send(message);
     	} catch (MessagingException | MailException e) {
+    	    Logging.INSTANCE.error("[send]: Unable to send email.  Plase check email address and message", e);
     		throw new SendEmailException("[send]: Unable to send email.  Plase check email address and message");
 		}
     }
