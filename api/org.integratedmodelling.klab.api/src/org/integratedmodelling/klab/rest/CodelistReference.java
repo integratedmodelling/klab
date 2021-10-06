@@ -1,5 +1,8 @@
 package org.integratedmodelling.klab.rest;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 
 public class CodelistReference {
@@ -7,6 +10,7 @@ public class CodelistReference {
     private String id;
     private String name;
     private String description;
+    private Map<String, String> codeDescriptions = new HashMap<>();
     private AuthenticatedIdentity source;
     private MappingReference directMapping;
     private MappingReference inverseMapping;
@@ -15,7 +19,11 @@ public class CodelistReference {
     private boolean isAuthority;
     private String worldview;
     private IArtifact.Type type;
-
+    private String agency;
+    private String version;
+    private Map<String, String> metadata = new HashMap<>();
+    
+    
     public String getId() {
         return id;
     }
@@ -89,6 +97,30 @@ public class CodelistReference {
     }
     public void setType(IArtifact.Type type) {
         this.type = type;
+    }
+    public String getAgency() {
+        return agency;
+    }
+    public void setAgency(String agency) {
+        this.agency = agency;
+    }
+    public String getVersion() {
+        return version;
+    }
+    public void setVersion(String version) {
+        this.version = version;
+    }
+    public Map<String, String> getMetadata() {
+        return metadata;
+    }
+    public void setMetadata(Map<String, String> metadata) {
+        this.metadata = metadata;
+    }
+    public Map<String, String> getCodeDescriptions() {
+        return codeDescriptions;
+    }
+    public void setCodeDescriptions(Map<String, String> codeDescriptions) {
+        this.codeDescriptions = codeDescriptions;
     }
 
 }

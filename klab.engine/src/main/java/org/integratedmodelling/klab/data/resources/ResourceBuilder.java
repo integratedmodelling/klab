@@ -34,6 +34,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.rest.AttributeReference;
+import org.integratedmodelling.klab.rest.CodelistReference;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.utils.NotificationUtils;
@@ -66,6 +67,7 @@ public class ResourceBuilder implements IResource.Builder {
 	private String localName;
 	private List<String> requiredUrns;
 	private List<String> categorizables = new ArrayList<>();
+	private List<CodelistReference> codelists = new ArrayList<>();
 
 	// for importers
 	private String resourceId;
@@ -290,4 +292,10 @@ public class ResourceBuilder implements IResource.Builder {
 		this.dependencies.add(attribute);
 		return this;
 	}
+
+    @Override
+    public Builder addCodeList(CodelistReference codelist) {
+        this.codelists.add(codelist);
+        return this;
+    }
 }

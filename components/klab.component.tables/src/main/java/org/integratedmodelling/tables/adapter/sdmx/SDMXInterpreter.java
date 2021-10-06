@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Configuration;
@@ -24,16 +25,15 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.GeometryBuilder;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
-import org.integratedmodelling.klab.utils.MiscUtilities;
+import org.integratedmodelling.klab.rest.CodelistReference;
+import org.integratedmodelling.klab.rest.MappingReference;
+import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Triple;
 import org.integratedmodelling.tables.SQLTableCache;
 import org.integratedmodelling.tables.TableInterpreter;
-import org.integratedmodelling.tables.TablesComponent;
-import org.integratedmodelling.tables.TablesComponent.Encoding;
 
 import it.bancaditalia.oss.sdmx.api.BaseObservation;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
-import it.bancaditalia.oss.sdmx.api.Dataflow;
 import it.bancaditalia.oss.sdmx.api.Dimension;
 import it.bancaditalia.oss.sdmx.api.PortableTimeSeries;
 import it.bancaditalia.oss.sdmx.client.SdmxClientHandler;
@@ -218,7 +218,7 @@ public class SDMXInterpreter extends TableInterpreter {
         }
 
         Dataset data = getTimeseriesTable("UNDATA", SEEA_CF_SUPPLY_DATASET, ALL_QUERY, sortedDimensions);
-        
+
         data.table.write().csv(Configuration.INSTANCE.getExportFile("undata_stuff.csv"));
     }
 
@@ -261,7 +261,6 @@ public class SDMXInterpreter extends TableInterpreter {
                  */
             }
 
-            
             if (sortedDimensions != null && !sortedDimensions.isEmpty()) {
 
                 monitor.info("ingesting SDMX dataflow " + providerId + "/" + dataflowId + ": please be patient...");
@@ -274,21 +273,26 @@ public class SDMXInterpreter extends TableInterpreter {
                 }
 
                 monitor.info("SDMX dataflow has " + data.rows + " total rows of data");
-                
+
                 geometryBuilder.time().regular().start(data.start).end(data.end).resolution(data.resolution);
-                
+
                 /*
                  * wait for the table to have worked out before building the rest of the resource
                  */
 
                 for (Dimension dimension : sortedDimensions) {
+
                     Type type = dimension.getCodeList() == null ? Type.NUMBER : Type.TEXT;
 
-                    String codeList = defineCodelist(dimension);
-                    
+                    CodelistReference codeList = defineCodelist(dimension);
+                    if (codeList != null) {
+                        builder.addCodeList(codeList);
+                    }
+
                     builder.withAttribute(dimension.getId().toLowerCase(), type, true, false);
                     builder.withParameter("column." + dimension.getId().toLowerCase() + ".index", dimension.getPosition() - 1);
-                    builder.withParameter("column." + dimension.getId().toLowerCase() + ".mapping", codeList);
+                    builder.withParameter("column." + dimension.getId().toLowerCase() + ".mapping",
+                            codeList == null ? "" : codeList.getName());
                     builder.withParameter("column." + dimension.getId().toLowerCase() + ".originalId", dimension.getId());
                     builder.withParameter("column." + dimension.getId().toLowerCase() + ".originalName", dimension.getName());
                     builder.withParameter("column." + dimension.getId().toLowerCase() + ".size",
@@ -309,12 +313,10 @@ public class SDMXInterpreter extends TableInterpreter {
                 builder.withParameter("column.literaltime.index", sortedDimensions.size() + 2)
                         .withParameter("column.literaltime.mapping", "").withParameter("column.literaltime.size", "-1")
                         .withParameter("column.literaltime.searchable", "false");
-                
+
                 builder.withAttribute("value", Type.NUMBER, false, true);
-                builder.withParameter("column.value.index", sortedDimensions.size() + 3)
-                        .withParameter("column.value.mapping", "").withParameter("column.value.size", "-1")
-                        .withParameter("column.value.searchable", "false");
-                
+                builder.withParameter("column.value.index", sortedDimensions.size() + 3).withParameter("column.value.mapping", "")
+                        .withParameter("column.value.size", "-1").withParameter("column.value.searchable", "false");
 
                 builder.withParameter("rows.total", data.rows);
                 builder.withParameter("rows.data", data.rows);
@@ -327,13 +329,13 @@ public class SDMXInterpreter extends TableInterpreter {
                 builder.withParameter("resource.type", "sdmx");
 
                 /*
-                 * build the database by forcing the table into a SQL cache so we don't have to read this again. 
+                 * build the database by forcing the table into a SQL cache so we don't have to read
+                 * this again.
                  */
                 monitor.info("Creating SQLDB cache...");
                 int rows = SQLTableCache.createCache(dataflowId, data.table, monitor);
                 monitor.info("SQLDB cache created with " + rows + " rows of data");
-                
-                
+
                 //
                 // SDMXQuery query = null;
                 // if (userData.containsKey("query")) {
@@ -395,9 +397,31 @@ public class SDMXInterpreter extends TableInterpreter {
 
     }
 
-    private String defineCodelist(Dimension dimension) {
-        // TODO Auto-generated method stub
-        return "";
+    private CodelistReference defineCodelist(Dimension dimension) {
+
+        if (dimension.getCodeList() == null) {
+            return null;
+        }
+
+        CodelistReference codelist = new CodelistReference();
+
+        codelist.setAgency(dimension.getCodeList().getAgency());
+        codelist.setId(dimension.getCodeList().getId());
+        codelist.setVersion(dimension.getCodeList().getVersion());
+
+        MappingReference direct = new MappingReference();
+        MappingReference inverse = new MappingReference();
+        for (Entry<String, String> code : dimension.getCodeList().entrySet()) {
+            direct.getMappings().add(new Pair<>(code.getKey(), code.getValue()));
+            inverse.getMappings().add(new Pair<>(code.getValue(), code.getKey()));
+            codelist.getCodeDescriptions().put(code.getValue(), dimension.getCodeList().get(code.getValue()));
+        }
+
+        codelist.setDirectMapping(direct);
+        codelist.setInverseMapping(inverse);
+        codelist.setName(dimension.getCodeList().getFullIdentifier());
+
+        return codelist;
     }
 
     @Override

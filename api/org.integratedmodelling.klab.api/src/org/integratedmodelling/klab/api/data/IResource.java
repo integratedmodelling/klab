@@ -32,6 +32,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.services.IResourceService;
+import org.integratedmodelling.klab.rest.CodelistReference;
 import org.integratedmodelling.klab.rest.ResourceReference.AvailabilityReference;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 
@@ -345,6 +346,14 @@ public interface IResource extends IProvenance.Node, Serializable {
         Builder withSpatialExtent(SpatialExtent extent);
 
         /**
+         * Add a classification, which will be saved as a file upon building.
+         * 
+         * @param codelist
+         * @return
+         */
+        Builder addCodeList(CodelistReference codelist);
+
+        /**
          * True if error() was ever called.
          * 
          * @return true in error
@@ -593,5 +602,5 @@ public interface IResource extends IProvenance.Node, Serializable {
      * @return this or another resource that can deal with the passed overall context.
      */
     IResource contextualize(IScale scale, IArtifact artifact, Map<String, String> urnParameters, IContextualizationScope scope);
-    
+
 }

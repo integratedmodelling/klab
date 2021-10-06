@@ -26,7 +26,7 @@ import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.scale.AbstractExtent;
 import org.integratedmodelling.klab.utils.Pair;
 
-public class CodifiedExtent extends AbstractExtent implements ISpace {
+public class EnumeratedSpace extends AbstractExtent implements ISpace {
 
     IAuthority geographicAuthority;
     Set<String> codes = new HashSet<>();
@@ -111,8 +111,7 @@ public class CodifiedExtent extends AbstractExtent implements ISpace {
 
     @Override
     public long size() {
-        // TODO Auto-generated method stub
-        return 0;
+        return codes.size();
     }
 
     @Override
