@@ -249,7 +249,7 @@ public class FutureResource implements IResource, Future<IResource> {
     }
 
     @Override
-    public List<ICodelist<String, ?>> getCodelists() {
+    public List<String> getCodelists() {
         // TODO Auto-generated method stub
         return getDelegate(timeout).getCodelists();
     }

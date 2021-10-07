@@ -171,7 +171,7 @@ public class AuthorityEditor extends Composite {
         sashForm = new SashForm(composite_1, SWT.NONE);
         sashForm.setSashWidth(0);
 
-        description = new RichTextViewer(sashForm, SWT.BORDER);
+        description = new RichTextViewer(sashForm, SWT.BORDER | SWT.WRAP);
         description.setWordSplitRegex("\\s|\\-");
 
         sashForm.setWeights(new int[]{1});

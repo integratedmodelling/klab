@@ -412,13 +412,13 @@ public class SDMXInterpreter extends TableInterpreter {
         codelist.setAgency(dimension.getCodeList().getAgency());
         codelist.setId(dimension.getCodeList().getId());
         codelist.setVersion(dimension.getCodeList().getVersion());
+        codelist.setDescription(dimension.getName());
 
         MappingReference direct = new MappingReference();
         MappingReference inverse = new MappingReference();
         for (Entry<String, String> code : dimension.getCodeList().entrySet()) {
-            direct.getMappings().add(new Pair<>(code.getKey(), code.getValue()));
-            inverse.getMappings().add(new Pair<>(code.getValue(), code.getKey()));
-            codelist.getCodeDescriptions().put(code.getValue(), dimension.getCodeList().get(code.getValue()));
+            direct.getMappings().add(new Pair<>(code.getKey(), ""));
+            codelist.getCodeDescriptions().put(code.getKey(), code.getValue());
         }
 
         codelist.setDirectMapping(direct);

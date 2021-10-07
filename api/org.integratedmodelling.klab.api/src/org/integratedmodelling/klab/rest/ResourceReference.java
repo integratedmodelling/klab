@@ -119,7 +119,7 @@ public class ResourceReference {
     private List<AttributeReference> dependencies = null;
     private List<AttributeReference> outputs = null;
     private List<String> categorizables = new ArrayList<>();
-    private List<CodelistReference> codelists = new ArrayList<>();
+    private List<String> codelists = new ArrayList<>();
     
     /**
      * This will never be stored in a catalog: it's only for real-time operations such as
@@ -161,6 +161,7 @@ public class ResourceReference {
         this.outputs = other.outputs == null ? null : new ArrayList<>(other.outputs);
         this.exportFormats.putAll(other.exportFormats);
         this.categorizables.addAll(other.categorizables);
+        this.codelists.addAll(other.codelists);
     }
 
     public String getUrn() {
@@ -323,11 +324,11 @@ public class ResourceReference {
         this.availability = availability;
     }
 
-    public List<CodelistReference> getCodelists() {
+    public List<String> getCodelists() {
         return codelists;
     }
 
-    public void setCodelists(List<CodelistReference> codelists) {
+    public void setCodelists(List<String> codelists) {
         this.codelists = codelists;
     }
 

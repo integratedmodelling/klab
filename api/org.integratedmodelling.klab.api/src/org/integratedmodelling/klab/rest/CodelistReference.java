@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.rest;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -10,10 +11,11 @@ public class CodelistReference {
     private String id;
     private String name;
     private String description;
-    private Map<String, String> codeDescriptions = new HashMap<>();
+    private Map<String, String> codeDescriptions = new LinkedHashMap<>();
     private AuthenticatedIdentity source;
     private MappingReference directMapping;
     private MappingReference inverseMapping;
+    private boolean twoWay;
     private String authorityId;
     private String rootConceptId;
     private boolean isAuthority;
@@ -121,6 +123,12 @@ public class CodelistReference {
     }
     public void setCodeDescriptions(Map<String, String> codeDescriptions) {
         this.codeDescriptions = codeDescriptions;
+    }
+    public boolean isTwoWay() {
+        return twoWay;
+    }
+    public void setTwoWay(boolean twoWay) {
+        this.twoWay = twoWay;
     }
 
 }

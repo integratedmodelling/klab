@@ -605,11 +605,13 @@ public interface IResource extends IProvenance.Node, Serializable {
     IResource contextualize(IScale scale, IArtifact artifact, Map<String, String> urnParameters, IContextualizationScope scope);
 
     /**
-     * Return all codelists defined within this resource. When allowed by the providers, these can
-     * be used as authorities and their codes referenced within k.IM code as identities.
+     * Return the reference name for all codelists defined within this resource. A xxx.json file (in
+     * lowercase) must be present for each of these in the resource folder or in a public codelist
+     * repository. When allowed by the providers, these can be used as authorities and their codes
+     * referenced within k.IM code as identities.
      * 
      * @return
      */
-    List<ICodelist<String, ?>> getCodelists();
+    List<String> getCodelists();
 
 }

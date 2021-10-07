@@ -23,11 +23,13 @@ import java.util.logging.Level;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.validation.KimNotification;
+import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
+import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
@@ -37,6 +39,7 @@ import org.integratedmodelling.klab.rest.AttributeReference;
 import org.integratedmodelling.klab.rest.CodelistReference;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.rest.SpatialExtent;
+import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.NotificationUtils;
 import org.integratedmodelling.klab.utils.Parameters;
 
@@ -102,11 +105,25 @@ public class ResourceBuilder implements IResource.Builder {
 			ret.dependencies.addAll(this.requiredUrns);
 		}
 		for (CodelistReference cl : this.codelists) {
-		    ret.codelists.add(new Codelist<String, Object>(cl));
+		    File clfile = getLocalFile(cl.getId().toLowerCase() + ".json");
+		    JsonUtils.save(cl, clfile);
+		    ret.codelists.add(cl.getId());
 		}
 		return ret;
-	}
+	}  
 
+	private File getLocalFile(String filename) {
+	    if (this.projectName != null && this.localPath != null) {
+	        IProject project = Resources.INSTANCE.getProject(this.projectName);
+	        if (project != null) {
+	            File ret = new File(project.getRoot().getParentFile() + File.separator + this.localPath);
+	            ret.mkdirs();
+	            return new File(ret + File.separator + filename);
+	        }
+	    }
+	    return null;
+	}
+	
 	/** {@inheritDoc} */
 	@Override
 	public ResourceBuilder withMetadata(String key, Object value) {

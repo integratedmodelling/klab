@@ -72,6 +72,7 @@ import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.IResource.Attribute;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
+import org.integratedmodelling.klab.client.utils.JsonUtils;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.ide.Activator;
@@ -82,6 +83,7 @@ import org.integratedmodelling.klab.ide.ui.WorldWidget;
 import org.integratedmodelling.klab.ide.ui.wizards.NewCategorizationWizard;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.rest.AttributeReference;
+import org.integratedmodelling.klab.rest.CodelistReference;
 import org.integratedmodelling.klab.rest.NodeReference;
 import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.rest.ResourceAdapterReference;
@@ -153,8 +155,9 @@ public class ResourceEditor extends ViewPart {
     private Button btnEdit;
 
     private boolean isLocal;
-    private TabItem codelistEditor;
+    private TabItem codelistEditorTab;
     private TabFolder mainViewTabFolder;
+    private CodelistEditor codelistEditor;
 
     public static class AttributeContentProvider implements IStructuredContentProvider {
 
@@ -497,6 +500,10 @@ public class ResourceEditor extends ViewPart {
                     }
                 }
             }
+            for (String codelist : resource.getCodelists()) {
+                this.categorizationsCombo.add(codelist.toUpperCase());
+            }
+
             this.categorizationsCombo.select(0);
 
         }
@@ -506,6 +513,7 @@ public class ResourceEditor extends ViewPart {
          */
 
         setDirty(false);
+        mainViewTabFolder.getTabList()[3].setEnabled(false);
 
     }
 
@@ -824,7 +832,7 @@ public class ResourceEditor extends ViewPart {
         final TreeEditor editor = new TreeEditor(propertyTable);
         editor.horizontalAlignment = SWT.LEFT;
         editor.grabHorizontal = true;
-        
+
         propertyTable.addMouseListener(new MouseAdapter(){
 
             @Override
@@ -1116,19 +1124,19 @@ public class ResourceEditor extends ViewPart {
         notes.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
         scrolledComposite.setContent(composite_1);
         scrolledComposite.setMinSize(composite_1.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-        
-        codelistEditor = new TabItem(mainViewTabFolder, SWT.NONE);
-        codelistEditor.setText("Codelist");
 
-        CodelistEditor composite_5 = new CodelistEditor(mainViewTabFolder, SWT.NONE);
-        codelistEditor.setControl(composite_5);
+        codelistEditorTab = new TabItem(mainViewTabFolder, SWT.NONE);
+        codelistEditorTab.setText("Codelist");
+
+        codelistEditor = new CodelistEditor(mainViewTabFolder, SWT.NONE);
+        codelistEditorTab.setControl(codelistEditor);
         notes.addModifyListener(new ModifyListener(){
             public void modifyText(ModifyEvent e) {
                 metadata.put(IMetadata.IM_NOTES, notes.getText());
                 setDirty(true);
             }
         });
-        
+
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout gl_composite = new GridLayout(6, false);
         gl_composite.marginLeft = 4;
@@ -1143,6 +1151,20 @@ public class ResourceEditor extends ViewPart {
         lblNewLabel_6.setText("Codelist");
 
         categorizationsCombo = new Combo(composite_4, SWT.READ_ONLY);
+        categorizationsCombo.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                if (resource.getCodelists().contains(categorizationsCombo.getText())) {
+                    IFile clist = Eclipse.INSTANCE.getResourceFile(resource, categorizationsCombo.getText().toLowerCase() + ".json");
+                    if (clist.exists()) {
+                        CodelistReference ref = JsonUtils.load(clist.getLocation().toFile(), CodelistReference.class);
+                        codelistEditor.loadCodelist(ref);
+                        mainViewTabFolder.getTabList()[3].setEnabled(true);
+                        mainViewTabFolder.setSelection(3);
+                    }
+                }
+            }
+        });
         GridData gd_categorizationsCombo = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
         gd_categorizationsCombo.widthHint = 76;
         categorizationsCombo.setLayoutData(gd_categorizationsCombo);
@@ -1153,8 +1175,9 @@ public class ResourceEditor extends ViewPart {
         categorizationsCombo.setBounds(0, 0, 91, 23);
         categorizationsCombo.setEnabled(false);
 
+
         this.btnEdit = new Button(composite_4, SWT.NONE);
-        btnEdit.addSelectionListener(new SelectionAdapter() {
+        btnEdit.addSelectionListener(new SelectionAdapter(){
             @Override
             public void widgetSelected(SelectionEvent e) {
             }
@@ -1167,18 +1190,18 @@ public class ResourceEditor extends ViewPart {
                 editCategorization(categorizationsCombo.getText());
             }
         });
-        
+
         Button btnPublish = new Button(composite_4, SWT.NONE);
         btnPublish.setToolTipText("Expose as an authority");
         btnPublish.setText("Authority...");
-        btnPublish.setEnabled(false);       
+        btnPublish.setEnabled(false);
         btnEdit.addMouseListener(new MouseAdapter(){
             @Override
             public void mouseDown(MouseEvent e) {
                 publishCodelist(categorizationsCombo.getText());
             }
         });
-        
+
         new Label(composite_4, SWT.NONE);
 
         messageLabel = new Label(composite, SWT.NONE);
@@ -1225,8 +1248,6 @@ public class ResourceEditor extends ViewPart {
         cancelButton.setText("Cancel");
         new Label(composite, SWT.NONE);
 
-        mainViewTabFolder.getTabList()[3].setEnabled(false);
-        
         createActions();
         initializeToolBar();
         initializeMenu();
@@ -1236,7 +1257,7 @@ public class ResourceEditor extends ViewPart {
 
     protected void publishCodelist(String text) {
         // TODO Auto-generated method stub
-        
+
     }
 
     protected void editCategorization(String text) {
@@ -1409,14 +1430,14 @@ public class ResourceEditor extends ViewPart {
      * Initialize the toolbar.
      */
     private void initializeToolBar() {
-//        IToolBarManager tbm = getViewSite().getActionBars().getToolBarManager();
+        // IToolBarManager tbm = getViewSite().getActionBars().getToolBarManager();
     }
 
     /**
      * Initialize the menu.
      */
     private void initializeMenu() {
-//        IMenuManager manager = getViewSite().getActionBars().getMenuManager();
+        // IMenuManager manager = getViewSite().getActionBars().getMenuManager();
     }
 
     @Override

@@ -41,6 +41,7 @@ import org.integratedmodelling.klab.rest.StyledKimToken;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
 import org.integratedmodelling.klab.utils.StringUtil;
+import org.integratedmodelling.klab.utils.StringUtils;
 import org.integratedmodelling.klab.utils.Utils;
 
 /**
@@ -321,6 +322,7 @@ public class ObservableComposer {
 
         this.state.peek().logicalRealm.clear();
         this.state.peek().lexicalRealm.clear();
+        this.state.peek().concepts.clear();
 
         // TODO! ADD OUTPUT TYPE
         switch(role) {
@@ -396,6 +398,7 @@ public class ObservableComposer {
 
         this.state.peek().logicalRealm.clear();
         this.state.peek().lexicalRealm.clear();
+        this.state.peek().concepts.clear();
 
         switch(role) {
         case ADJACENT_TO:
@@ -462,8 +465,8 @@ public class ObservableComposer {
                  * copy the constraints from the passed state. If there's an observable add
                  * predicates. Called when opening a group.
                  */
-                ret.state.peek().logicalRealm.addAll(((State)o).logicalRealm);
-                ret.state.peek().lexicalRealm.addAll(((State)o).lexicalRealm);
+                ret.state.peek().logicalRealm.addAll(((State) o).logicalRealm);
+                ret.state.peek().lexicalRealm.addAll(((State) o).lexicalRealm);
                 if (ret.admits(Type.OBSERVABLE) && !ret.admits(Type.PREDICATE)) {
                     ret.state.peek().logicalRealm.add(Constraint.of(Type.PREDICATE));
                 }
@@ -736,11 +739,11 @@ public class ObservableComposer {
                 error("cannot add an operator once another operator or an observable is defined");
                 return this;
             }
-            // put the naked operator on the undo stack and set the argument into the current for later completion.
+            // put the naked operator on the undo stack and set the argument into the current for
+            // later completion.
             state.peek().unaryOperator = (UnarySemanticOperator) input;
             State s = pushState();
-            s.unaryOperatorArgument = get(ObservableRole.UNARY_OPERATOR, input)
-                    .constrainFor((UnarySemanticOperator) input);
+            s.unaryOperatorArgument = get(ObservableRole.UNARY_OPERATOR, input).constrainFor((UnarySemanticOperator) input);
             return this;
 
         } else if (input instanceof SemanticModifier) {
@@ -1116,8 +1119,7 @@ public class ObservableComposer {
 
     @Override
     public String toString() {
-        return "Scope: " + state.peek().lexicalScope + "\n" + "Log: " + state.peek().logicalRealm + "\n" + "Lex: "
-                + state.peek().lexicalRealm + "\n";
+        return dump(0);
     }
     //
     // public ObservableComposer submit(String trait) {
@@ -1371,21 +1373,21 @@ public class ObservableComposer {
         return argument;
     }
 
-    public ObservableComposer withOperand(Object operand) {
-        return null;
-    }
-
-    public ObservableComposer linkSource() {
-        State s = pushState();
-        s.relationshipSource = new ObservableComposer(this, ObservableRole.RELATIONSHIP_SOURCE);
-        return s.relationshipSource;
-    }
-
-    public ObservableComposer linkTarget() {
-        State s = pushState();
-        s.relationshipTarget = new ObservableComposer(this, ObservableRole.RELATIONSHIP_TARGET);
-        return s.relationshipTarget;
-    }
+    // public ObservableComposer withOperand(Object operand) {
+    // return null;
+    // }
+    //
+    // public ObservableComposer linkSource() {
+    // State s = pushState();
+    // s.relationshipSource = new ObservableComposer(this, ObservableRole.RELATIONSHIP_SOURCE);
+    // return s.relationshipSource;
+    // }
+    //
+    // public ObservableComposer linkTarget() {
+    // State s = pushState();
+    // s.relationshipTarget = new ObservableComposer(this, ObservableRole.RELATIONSHIP_TARGET);
+    // return s.relationshipTarget;
+    // }
 
     /**
      * Set the stated name for the observable, which will shadow the read-only "given" name based on
@@ -1616,6 +1618,18 @@ public class ObservableComposer {
         } else {
             ret.add(StyledKimToken.unknown());
         }
+    }
+
+    private String dump(int level) {
+        
+        String spacer = StringUtils.spaces(level);
+        
+        StringBuffer ret = new StringBuffer(1024);
+        ret.append(spacer + "Scope: " + state.peek().lexicalScope + "\n");
+        ret.append(spacer + "Log: " + state.peek().logicalRealm + "\n");
+        ret.append(spacer + "Lex: " + state.peek().lexicalRealm + "\n");
+        
+        return ret.toString();
     }
 
 }
