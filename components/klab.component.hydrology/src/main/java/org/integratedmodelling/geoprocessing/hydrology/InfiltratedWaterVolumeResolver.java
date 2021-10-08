@@ -52,6 +52,9 @@ public class InfiltratedWaterVolumeResolver implements IResolver<IProcess>, IExp
         IState streamPresenceState = context.getArtifact("presence_of_stream", IState.class);
         IState flowdirectionState = context.getArtifact("flow_directions_d8", IState.class);
 
+        GeotoolsUtils.INSTANCE.dumpToRaster(context, "Infiltration", petState, rainfallVolumeState, runoffVolumeState,
+                streamPresenceState, flowdirectionState);
+
         IState netInfiltratedWaterVolumeState = context.getArtifact("net_infiltrated_water_volume", IState.class);
         IState infiltratedWaterVolumeState = context.getArtifact("infiltrated_water_volume", IState.class);
 
@@ -82,8 +85,8 @@ public class InfiltratedWaterVolumeResolver implements IResolver<IProcess>, IExp
                 GeotoolsUtils.INSTANCE.coverageToState(v.outNetInfiltration, netInfiltratedWaterVolumeState, context.getScale(),
                         null);
             }
-            GeotoolsUtils.INSTANCE.dumpToRaster(context, "Infiltration", petState, rainfallVolumeState, runoffVolumeState,
-                    streamPresenceState, flowdirectionState, netInfiltratedWaterVolumeState, infiltratedWaterVolumeState);
+            GeotoolsUtils.INSTANCE.dumpToRaster(context, "Infiltration", netInfiltratedWaterVolumeState,
+                    infiltratedWaterVolumeState);
         }
         return infiltratedProcess;
     }

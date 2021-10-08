@@ -48,11 +48,11 @@ public class PotentialEvapotranspiredWaterVolumeResolver implements IResolver<IP
             pet.inMinTemp = getGridCoverage(context, minTempState);
             pet.inAtmosphericTemp = getGridCoverage(context, tempState);
 
-            // FIXME for now divide by 1000, since the solarradiation enters as J and not MJ as
+            // FIXME for now divide by 1000000, since the solarradiation enters as J and not MJ as
             // requested
             Function<Object, Object> transform = (value) -> {
                 if (value instanceof Number && !Double.isNaN(((Number) value).doubleValue())) {
-                    return ((Number) value).doubleValue() / 1000.0;
+                    return ((Number) value).doubleValue() / 1_000_000.0;
                 }
                 return value;
             };
