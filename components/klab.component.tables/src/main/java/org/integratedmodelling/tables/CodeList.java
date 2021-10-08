@@ -195,10 +195,4 @@ public class CodeList implements ICodelist<Object, Object> {
         return Collections.singleton(value(key));
     }
 
-    @Override
-    public Collection<Object> keys(Object value) {
-        // TODO Auto-generated method stub
-        return Collections.singleton(key(value));
-    }
-
 }

@@ -58,6 +58,8 @@ import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import com.beust.jcommander.internal.Lists;
+
 /*
  * GeoTools - The Open Source Java GIS Toolkit http://geotools.org
  *
@@ -121,19 +123,25 @@ public class NetCDFUtils {
 
     public static final String NETCDF_3 = "NetCDF-3";
 
-    public static final String STANDARD_PARALLEL_1 = MapProjection.AbstractProvider.STANDARD_PARALLEL_1.getName().getCode();
+    public static final String STANDARD_PARALLEL_1 = MapProjection.AbstractProvider.STANDARD_PARALLEL_1
+            .getName().getCode();
 
-    public static final String STANDARD_PARALLEL_2 = MapProjection.AbstractProvider.STANDARD_PARALLEL_2.getName().getCode();
+    public static final String STANDARD_PARALLEL_2 = MapProjection.AbstractProvider.STANDARD_PARALLEL_2
+            .getName().getCode();
 
-    public static final String CENTRAL_MERIDIAN = MapProjection.AbstractProvider.CENTRAL_MERIDIAN.getName().getCode();
+    public static final String CENTRAL_MERIDIAN = MapProjection.AbstractProvider.CENTRAL_MERIDIAN.getName()
+            .getCode();
 
-    public static final String LATITUDE_OF_ORIGIN = MapProjection.AbstractProvider.LATITUDE_OF_ORIGIN.getName().getCode();
+    public static final String LATITUDE_OF_ORIGIN = MapProjection.AbstractProvider.LATITUDE_OF_ORIGIN
+            .getName().getCode();
 
     public static final String SCALE_FACTOR = MapProjection.AbstractProvider.SCALE_FACTOR.getName().getCode();
 
-    public static final String FALSE_EASTING = MapProjection.AbstractProvider.FALSE_EASTING.getName().getCode();
+    public static final String FALSE_EASTING = MapProjection.AbstractProvider.FALSE_EASTING.getName()
+            .getCode();
 
-    public static final String FALSE_NORTHING = MapProjection.AbstractProvider.FALSE_NORTHING.getName().getCode();
+    public static final String FALSE_NORTHING = MapProjection.AbstractProvider.FALSE_NORTHING.getName()
+            .getCode();
 
     public static final String SEMI_MINOR = MapProjection.AbstractProvider.SEMI_MINOR.getName().getCode();
 
@@ -148,7 +156,8 @@ public class NetCDFUtils {
      * When true, the stack trace that created a reader that wasn't closed is recorded and then
      * printed out when warning the user about this.
      */
-    public static final Boolean TRACE_ENABLED = "true".equalsIgnoreCase(System.getProperty("gt2.netcdf.trace"));
+    public static final Boolean TRACE_ENABLED = "true"
+            .equalsIgnoreCase(System.getProperty("gt2.netcdf.trace"));
 
     private NetCDFUtils() {
     }
@@ -502,7 +511,8 @@ public class NetCDFUtils {
         } else if (!file.canWrite()) {
             if (LOGGER.isLoggable(Level.WARNING)) {
                 LOGGER.warning("The specified " + NETCDF_DATA_DIR + " property refers to "
-                        + "a directory which can't be written. Please check the path and" + " the permissions for: " + dir);
+                        + "a directory which can't be written. Please check the path and"
+                        + " the permissions for: " + dir);
             }
             return false;
         }
@@ -589,7 +599,8 @@ public class NetCDFUtils {
      * NetCDF files may contains a wide set of coverageDescriptorsCache. Some of them are unuseful
      * for our purposes. The method returns {@code true} if the specified variable is accepted.
      */
-    public static boolean isVariableAccepted(final Variable var, final CheckType checkType, final NetcdfDataset dataset) {
+    public static boolean isVariableAccepted(final Variable var, final CheckType checkType,
+            final NetcdfDataset dataset) {
         if (var instanceof CoordinateAxis1D) {
             return false;
         } else if (checkType == CheckType.NOSCALARS) {
@@ -661,7 +672,8 @@ public class NetCDFUtils {
         }
     }
 
-    private static Variable getAuxiliaryCoordinate(NetcdfDataset dataset, Group group, Variable var, String dimName) {
+    private static Variable getAuxiliaryCoordinate(NetcdfDataset dataset, Group group, Variable var,
+            String dimName) {
         Variable coordinateVariable = null;
         Attribute attribute = var.findAttribute(NetCDFUtils.COORDINATES);
         if (attribute != null) {
@@ -687,10 +699,12 @@ public class NetCDFUtils {
     public static boolean isVariableAccepted(final String name, final CheckType checkType) {
         if (checkType == CheckType.NONE) {
             return true;
-        } else if (name.equalsIgnoreCase(LATITUDE) || name.equalsIgnoreCase(LONGITUDE) || name.equalsIgnoreCase(LON)
+        } else if (name.equalsIgnoreCase(LATITUDE) || name.equalsIgnoreCase(LONGITUDE)
+                || name.equalsIgnoreCase(LON)
                 || name.equalsIgnoreCase(LAT) || name.equalsIgnoreCase(TIME) || name.equalsIgnoreCase(DEPTH)
                 || name.equalsIgnoreCase(ZETA) || name.equalsIgnoreCase(HEIGHT)
-                || name.toLowerCase().contains(COORDSYS.toLowerCase()) || name.endsWith(BOUNDS) || name.endsWith(BNDS)
+                || name.toLowerCase().contains(COORDSYS.toLowerCase()) || name.endsWith(BOUNDS)
+                || name.endsWith(BNDS)
                 || UNSUPPORTED_DIMENSIONS.contains(name)) {
             return false;
         } else {
@@ -717,7 +731,8 @@ public class NetCDFUtils {
             }
             // Search for GRIB signature in first count bytes (up to GRIB_SEARCH_BYTES)
             for (int i = 0; i < count - 3; i++) {
-                if (b[i] == (byte) 0x47 && b[i + 1] == (byte) 0x52 && b[i + 2] == (byte) 0x49 && b[i + 3] == (byte) 0x42) {
+                if (b[i] == (byte) 0x47 && b[i + 1] == (byte) 0x52 && b[i + 2] == (byte) 0x49
+                        && b[i + 3] == (byte) 0x42) {
                     return FileFormat.GRIB;
                 }
             }
@@ -983,7 +998,8 @@ public class NetCDFUtils {
         }
         String pattern = null;
         if (yearLast) {
-            pattern = (monthFirst ? "MMM dd-" : "dd-" + (namedMonth ? "MMM-" : "MM-")) + (twoDigitYear ? "yy" : "yyyy");
+            pattern = (monthFirst ? "MMM dd-" : "dd-" + (namedMonth ? "MMM-" : "MM-"))
+                    + (twoDigitYear ? "yy" : "yyyy");
         } else {
             pattern = (twoDigitYear ? "yy-" : "yyyy-") + (namedMonth ? "MMM-" : "MM-") + "dd";
             if (dateLength < pattern.length()) {
@@ -1028,7 +1044,8 @@ public class NetCDFUtils {
      * @param crs
      * @return
      */
-    public static SimpleFeatureType createFeatureType(String schemaName, String schemaDef, CoordinateReferenceSystem crs) {
+    public static SimpleFeatureType createFeatureType(String schemaName, String schemaDef,
+            CoordinateReferenceSystem crs) {
         SimpleFeatureType indexSchema = null;
         if (schemaDef == null) {
             throw new IllegalArgumentException("Unable to create feature type from null definition!");
@@ -1037,7 +1054,8 @@ public class NetCDFUtils {
         // get the schema
         try {
             indexSchema = DataUtilities.createType(schemaName, schemaDef);
-            indexSchema = DataUtilities.createSubType(indexSchema, DataUtilities.attributeNames(indexSchema), crs);
+            indexSchema = DataUtilities.createSubType(indexSchema, DataUtilities.attributeNames(indexSchema),
+                    crs);
         } catch (Throwable e) {
             if (LOGGER.isLoggable(Level.FINE))
                 LOGGER.log(Level.FINE, e.getLocalizedMessage(), e);
@@ -1366,7 +1384,8 @@ public class NetCDFUtils {
         } else if (DataType.BYTE.equals(type)) {
             return Byte.valueOf(value.byteValue());
         }
-        throw new IllegalArgumentException("Unsupported type or value: type = " + type.toString() + " value = " + value);
+        throw new IllegalArgumentException(
+                "Unsupported type or value: type = " + type.toString() + " value = " + value);
     }
 
     /**
@@ -1685,38 +1704,46 @@ public class NetCDFUtils {
 
     public static void main(String[] dio) {
 
-        String tocock = "C:\\Users\\Ferd\\.klab\\copernicus\\sis-agrometeorological-indicators\\aggregated\\cock.tiff";
+        String fileDir = System.getProperty("user.home") + File.separator + ".klab" + File.separator
+                + "copernicus" + File.separator + "sis-agrometeorological-indicators";
 
-        List<File> f2016 = new ArrayList<>();
-        f2016.add(new File(
-                "C:\\Users\\Ferd\\.klab\\copernicus\\sis-agrometeorological-indicators\\liquid_precipitation_volume_148\\Precipitation-Flux_C3S-glob-agric_AgERA5_20160101_final-v1.0.nc"));
-        f2016.add(new File(
-                "C:\\Users\\Ferd\\.klab\\copernicus\\sis-agrometeorological-indicators\\liquid_precipitation_volume_148\\Precipitation-Flux_C3S-glob-agric_AgERA5_20160102_final-v1.0.nc"));
-        f2016.add(new File(
-                "C:\\Users\\Ferd\\.klab\\copernicus\\sis-agrometeorological-indicators\\liquid_precipitation_volume_148\\Precipitation-Flux_C3S-glob-agric_AgERA5_20160103_final-v1.0.nc"));
-        f2016.add(new File(
-                "C:\\Users\\Ferd\\.klab\\copernicus\\sis-agrometeorological-indicators\\liquid_precipitation_volume_148\\Precipitation-Flux_C3S-glob-agric_AgERA5_20160104_final-v1.0.nc"));
-        f2016.add(new File(
-                "C:\\Users\\Ferd\\.klab\\copernicus\\sis-agrometeorological-indicators\\liquid_precipitation_volume_148\\Precipitation-Flux_C3S-glob-agric_AgERA5_20160105_final-v1.0.nc"));
-        f2016.add(new File(
-                "C:\\Users\\Ferd\\.klab\\copernicus\\sis-agrometeorological-indicators\\liquid_precipitation_volume_148\\Precipitation-Flux_C3S-glob-agric_AgERA5_20160106_final-v1.0.nc"));
+        String source_1 = fileDir + File.separator + "liquid_precipitation_volume_160" + File.separator + "Precipitation-Flux_C3S-glob-agric_AgERA5_20190101_final-v1.0.nc";
+        String source_2 = fileDir + File.separator + "liquid_precipitation_volume_160" + File.separator + "Precipitation-Flux_C3S-glob-agric_AgERA5_20190102_final-v1.0.nc";
+        String aggregated_1 = fileDir + File.separator + "aggregated" + File.separator + "test_1.tiff";
+        String aggregated_2 = fileDir + File.separator + "aggregated" + File.separator + "test_2.tiff";
+        
+//
+//        List<File> f2016 = new ArrayList<>();
+//        f2016.add(new File(
+//                "C:\\Users\\Ferd\\.klab\\copernicus\\sis-agrometeorological-indicators\\liquid_precipitation_volume_148\\Precipitation-Flux_C3S-glob-agric_AgERA5_20160101_final-v1.0.nc"));
+//        f2016.add(new File(
+//                "C:\\Users\\Ferd\\.klab\\copernicus\\sis-agrometeorological-indicators\\liquid_precipitation_volume_148\\Precipitation-Flux_C3S-glob-agric_AgERA5_20160102_final-v1.0.nc"));
+//        f2016.add(new File(
+//                "C:\\Users\\Ferd\\.klab\\copernicus\\sis-agrometeorological-indicators\\liquid_precipitation_volume_148\\Precipitation-Flux_C3S-glob-agric_AgERA5_20160103_final-v1.0.nc"));
+//        f2016.add(new File(
+//                "C:\\Users\\Ferd\\.klab\\copernicus\\sis-agrometeorological-indicators\\liquid_precipitation_volume_148\\Precipitation-Flux_C3S-glob-agric_AgERA5_20160104_final-v1.0.nc"));
+//        f2016.add(new File(
+//                "C:\\Users\\Ferd\\.klab\\copernicus\\sis-agrometeorological-indicators\\liquid_precipitation_volume_148\\Precipitation-Flux_C3S-glob-agric_AgERA5_20160105_final-v1.0.nc"));
+//        f2016.add(new File(
+//                "C:\\Users\\Ferd\\.klab\\copernicus\\sis-agrometeorological-indicators\\liquid_precipitation_volume_148\\Precipitation-Flux_C3S-glob-agric_AgERA5_20160106_final-v1.0.nc"));
+//
+//        List<File> f2019 = new ArrayList<>();
+//        f2019.add(new File(
+//                "C:\\Users\\Ferd\\.klab\\copernicus\\sis-agrometeorological-indicators\\liquid_precipitation_volume_160\\Precipitation-Flux_C3S-glob-agric_AgERA5_20190101_final-v1.0.nc"));
+//        f2019.add(new File(
+//                "C:\\Users\\Ferd\\.klab\\copernicus\\sis-agrometeorological-indicators\\liquid_precipitation_volume_160\\Precipitation-Flux_C3S-glob-agric_AgERA5_20190102_final-v1.0.nc"));
+//        f2019.add(new File(
+//                "C:\\Users\\Ferd\\.klab\\copernicus\\sis-agrometeorological-indicators\\liquid_precipitation_volume_160\\Precipitation-Flux_C3S-glob-agric_AgERA5_20190103_final-v1.0.nc"));
+//        f2019.add(new File(
+//                "C:\\Users\\Ferd\\.klab\\copernicus\\sis-agrometeorological-indicators\\liquid_precipitation_volume_160\\Precipitation-Flux_C3S-glob-agric_AgERA5_20190104_final-v1.0.nc"));
+//        f2019.add(new File(
+//                "C:\\Users\\Ferd\\.klab\\copernicus\\sis-agrometeorological-indicators\\liquid_precipitation_volume_160\\Precipitation-Flux_C3S-glob-agric_AgERA5_20190105_final-v1.0.nc"));
+//        f2019.add(new File(
+//                "C:\\Users\\Ferd\\.klab\\copernicus\\sis-agrometeorological-indicators\\liquid_precipitation_volume_160\\Precipitation-Flux_C3S-glob-agric_AgERA5_20190106_final-v1.0.nc"));
 
-        List<File> f2019 = new ArrayList<>();
-        f2019.add(new File(
-                "C:\\Users\\Ferd\\.klab\\copernicus\\sis-agrometeorological-indicators\\liquid_precipitation_volume_160\\Precipitation-Flux_C3S-glob-agric_AgERA5_20190101_final-v1.0.nc"));
-        f2019.add(new File(
-                "C:\\Users\\Ferd\\.klab\\copernicus\\sis-agrometeorological-indicators\\liquid_precipitation_volume_160\\Precipitation-Flux_C3S-glob-agric_AgERA5_20190102_final-v1.0.nc"));
-        f2019.add(new File(
-                "C:\\Users\\Ferd\\.klab\\copernicus\\sis-agrometeorological-indicators\\liquid_precipitation_volume_160\\Precipitation-Flux_C3S-glob-agric_AgERA5_20190103_final-v1.0.nc"));
-        f2019.add(new File(
-                "C:\\Users\\Ferd\\.klab\\copernicus\\sis-agrometeorological-indicators\\liquid_precipitation_volume_160\\Precipitation-Flux_C3S-glob-agric_AgERA5_20190104_final-v1.0.nc"));
-        f2019.add(new File(
-                "C:\\Users\\Ferd\\.klab\\copernicus\\sis-agrometeorological-indicators\\liquid_precipitation_volume_160\\Precipitation-Flux_C3S-glob-agric_AgERA5_20190105_final-v1.0.nc"));
-        f2019.add(new File(
-                "C:\\Users\\Ferd\\.klab\\copernicus\\sis-agrometeorological-indicators\\liquid_precipitation_volume_160\\Precipitation-Flux_C3S-glob-agric_AgERA5_20190106_final-v1.0.nc"));
-
-        aggregateGrid(f2019, new File(tocock), null, Aggregation.SUM, -9999.0);
-        aggregateGrid(f2016, new File(tocock), null, Aggregation.SUM, -9999.0);
+//        aggregateGrid(Collections.singletonList(new File(source_1)), new File(aggregated_1), null, Aggregation.SUM, -9999.0);
+        aggregateGrid(Lists.newArrayList(new File(source_1), new File(source_2)), new File(aggregated_2), null, Aggregation.MEAN, -9999.0);
+//        aggregateGrid(f2016, new File(tocock), null, Aggregation.SUM, -9999.0);
 
     }
 
@@ -1760,7 +1787,7 @@ public class NetCDFUtils {
 
                 System.out.println("Reading " + infile + "...");
 
-                try (GridDataset dataset = GridDataset.open(toAggregate.get(0).toString())) {
+                try (GridDataset dataset = GridDataset.open(infile.toString())) {
 
                     for (GridDatatype grid : dataset.getGrids()) {
 
@@ -1776,7 +1803,8 @@ public class NetCDFUtils {
                                         "NetCDF grids are only supported in lat/lon for the time being");
                             }
                             ProjectionRect bbox = crs.getBoundingBox();
-                            envelope = new ReferencedEnvelope(bbox.getMinX(), bbox.getMaxX(), bbox.getMinY(), bbox.getMaxY(),
+                            envelope = new ReferencedEnvelope(bbox.getMinX(), bbox.getMaxX(), bbox.getMinY(),
+                                    bbox.getMaxY(),
                                     Projection.getLatLon().getCRS());
                         }
 
@@ -1809,10 +1837,12 @@ public class NetCDFUtils {
                             /*
                              * Create storage for aggregation and open the writable file
                              */
-                            storage.put(v.getFullName(), new BasicFileMappedStorage<Double>(Double.class, cols, rows));
+                            storage.put(v.getFullName(),
+                                    new BasicFileMappedStorage<Double>(Double.class, cols, rows));
 
                         } else if (rows != v.getShape()[1] || cols != v.getShape()[2]) {
-                            throw new KlabIllegalArgumentException("NetCDF files to aggregate have different shapes: " + infile);
+                            throw new KlabIllegalArgumentException(
+                                    "NetCDF files to aggregate have different shapes: " + infile);
                         }
 
                         /*
@@ -1831,7 +1861,8 @@ public class NetCDFUtils {
                         BasicFileMappedStorage<Double> store = storage.get(v.getFullName());
 
                         if (chunkSizes.length == 3 && chunkSizes[0] != 1) {
-                            Logging.INSTANCE.warn("NetCDF reader: time chunk size != 1: proceed at your own risk");
+                            Logging.INSTANCE
+                                    .warn("NetCDF reader: time chunk size != 1: proceed at your own risk");
                         }
 
                         /*
@@ -1876,6 +1907,10 @@ public class NetCDFUtils {
                                         }
 
                                         Double sample = array.getDouble(index);
+                                        
+//                                        if (NumberUtils.equal(sample, 25.24)) {
+//                                            System.out.println("ZIO CAN " + (col+startCol) + " - " + (row + startRow));
+//                                        }
 
                                         if (first) {
                                             store.set(sample, col + startCol, row + startRow);
@@ -1895,40 +1930,6 @@ public class NetCDFUtils {
                         }
                     }
 
-                    // for (int time = 0; time < times; time++) {
-                    // for (int iRow = 0; iRow < rows; iRow++) {
-                    // if (nd > 2) {
-                    // readOrigin[0] = time;
-                    // readShape[0] = 1;
-                    // }
-                    //
-                    // readOrigin[rowDim] = iRow;
-                    // readOrigin[colDim] = 0;
-                    // readShape[rowDim] = 1;
-                    // readShape[colDim] = cols;
-                    //
-                    // Array array = v.read(readOrigin, readShape);
-                    // for (int iCol = 0; iCol < cols; iCol++) {
-                    //
-                    // Double sample = array.getDouble(iCol);
-                    //
-                    // if (first) {
-                    // store.set(sample, iCol, iRow);
-                    // } else {
-                    // Double d = store.get(iCol, iRow);
-                    // if (!NumberUtils.equal(d, noDataValue)) {
-                    // d = d + sample;
-                    // } else {
-                    // d = sample;
-                    // }
-                    // store.set(d, iCol, iRow);
-                    // }
-                    // }
-                    //
-                    // }
-                    // }
-                    // }
-
                 } catch (Throwable e) {
                     Logging.INSTANCE.error(e);
                 }
@@ -1942,7 +1943,8 @@ public class NetCDFUtils {
             /**
              * Create the output coverage (one band per variable).
              */
-            WritableRaster raster = RasterFactory.createBandedRaster(DataBuffer.TYPE_FLOAT, cols, rows, storage.size(), null);
+            WritableRaster raster = RasterFactory.createBandedRaster(DataBuffer.TYPE_FLOAT, cols, rows,
+                    storage.size(), null);
 
             int band = 0;
             for (String var : storage.keySet()) {

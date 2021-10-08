@@ -78,11 +78,4 @@ public class Codelist<K, T> implements ICodelist<K, T> {
         // TODO Auto-generated method stub
         return null;
     }
-
-    @Override
-    public Collection<K> keys(T value) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
 }

@@ -2,10 +2,14 @@ package org.integratedmodelling.klab.ide.ui;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
+import org.eclipse.core.internal.resources.RegexFileInfoMatcher;
+import org.eclipse.emf.ecore.xml.type.internal.RegEx;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -13,26 +17,38 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.ide.views.ResourceEditor.ResourceParameter;
 import org.integratedmodelling.klab.rest.CodelistReference;
+import org.integratedmodelling.klab.rest.ServicePrototype.Argument;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Triple;
+import org.integratedmodelling.klab.utils.UrlValidator;
+import org.integratedmodelling.klab.utils.Utils;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -89,7 +105,7 @@ public class CodelistEditor extends Composite {
                     return ((Triple<String, String, String>) element).getFirst();
                 case 1:
                     return ((Triple<String, String, String>) element).getSecond() == null
-                            ? "Unmapped"
+                            ? ""
                             : ((Triple<String, String, String>) element).getSecond();
                 case 2:
                     return ((Triple<String, String, String>) element).getThird() == null
@@ -201,7 +217,7 @@ public class CodelistEditor extends Composite {
         });
         manyToManyButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
         toolkit.adapt(manyToManyButton, true, true);
-        manyToManyButton.setText("Many-to-many");
+        manyToManyButton.setText("Many-to-one");
 
         Composite mappingArea = new Composite(this, SWT.NONE);
         mappingArea.setLayout(new GridLayout(1, false));
@@ -231,6 +247,93 @@ public class CodelistEditor extends Composite {
         directMappingsTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
         toolkit.paintBordersFor(directMappingsTable);
 
+        final TableEditor editor = new TableEditor(directMappingsTable);
+        editor.horizontalAlignment = SWT.LEFT;
+        editor.grabHorizontal = true;
+
+        directMappingsTable.addMouseListener(new MouseAdapter(){
+
+            @Override
+            public void mouseUp(final MouseEvent e) {
+                final Control oldEditor = editor.getEditor();
+                if (oldEditor != null) {
+                    oldEditor.dispose();
+                }
+
+                // Get the Point from the MouseEvent
+                final Point p = new Point(e.x, e.y);
+                // Get the TreeItem corresponding to that point
+                final TableItem item = directMappingsTable.getItem(p);
+                if (item == null) {
+                    return;
+                }
+                // Now that we know the TreeItem, we can use the getBounds() method
+                // to locate the corresponding column
+                for (int i = 0; i < directMappingsTable.getColumnCount(); ++i) {
+                    if (item.getBounds(i).contains(p)) {
+                        final int columnIndex = i;
+                        Triple<String, String, String> data = (Triple<String, String, String>) item.getData();
+                        if (columnIndex == 2/* && !data.nonexisting */) {
+
+                            final Text newEditor = new Text(directMappingsTable, SWT.NONE);
+                            newEditor.setText(item.getText(columnIndex));
+                            newEditor.addModifyListener(new ModifyListener(){
+                                public void modifyText(final ModifyEvent e) {
+
+                                    final Text text = (Text) editor.getEditor();
+                                    editor.getItem().setText(columnIndex, text.getText());
+
+                                    String value = text.getText();
+                                    boolean changed = true;
+//                                    Argument descriptor = data.descriptor;
+//
+//                                    String current = values.get(data.parameter);
+//                                    if (current != null && current.trim().isEmpty()) {
+//                                        current = null;
+//                                    }
+//                                    if (value != null && value.toString().isEmpty()) {
+//                                        value = null;
+//                                    }
+//                                    if ((value != null && current != null && value.equals(current))
+//                                            || (value == null && current == null)) {
+//                                        changed = false;
+//                                    }
+//
+//                                    if (changed) {
+//                                        setMessage(null, Level.INFO);
+//                                        if (value != null && descriptor != null) {
+//                                            if (!Utils.validateAs(value, descriptor.getType())) {
+//                                                setMessage("'" + value + "' is not a suitable value for type "
+//                                                        + descriptor.getType().name().toLowerCase(), Level.SEVERE);
+//                                            }
+//                                            if (data.parameter.endsWith("Url")) {
+//                                                if (!UrlValidator.getInstance().isValid(value.toString())) {
+//                                                    setMessage("'" + value + "' is not a valid URL", Level.SEVERE);
+//                                                }
+//                                            }
+//                                        }
+//                                        if (value == null) {
+//                                            values.remove(data.parameter);
+//                                            data.value = null;
+//                                        } else {
+//                                            values.put(data.parameter, value);
+//                                            data.value = value;
+//                                        }
+//                                        setDirty(true);
+//                                    }
+//                                    adapterPropertyViewer.update(data, null);
+                                }
+                            });
+                            newEditor.selectAll();
+                            newEditor.setFocus();
+                            // Set the editor for the matching column
+                            editor.setEditor(newEditor, item, columnIndex);
+                        }
+                    }
+                }
+            }
+        });
+        
         TableViewerColumn tableViewerColumn = new TableViewerColumn(directTableViewer, SWT.NONE);
         TableColumn tblclmnKey = tableViewerColumn.getColumn();
         tblclmnKey.setWidth(177);
@@ -286,13 +389,21 @@ public class CodelistEditor extends Composite {
         toolkit.paintBordersFor(actionArea);
 
         Button btnExposeAsAuthority = new Button(actionArea, SWT.CHECK);
+        btnExposeAsAuthority.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                if (btnExposeAsAuthority.getSelection() && authorityNameField.getText().isBlank() && codelist != null) {
+                    authorityNameField.setText(codelist.getAgency() + "." + codelist.getId());
+                }
+            }
+        });
         toolkit.adapt(btnExposeAsAuthority, true, true);
         btnExposeAsAuthority.setText("Expose as authority");
 
         Label lblName_1 = new Label(actionArea, SWT.NONE);
         lblName_1.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
         toolkit.adapt(lblName_1, true, true);
-        lblName_1.setText("Name (optional)");
+        lblName_1.setText("named ");
 
         authorityNameField = new Text(actionArea, SWT.BORDER);
         GridData gd_authorityNameField = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
@@ -301,20 +412,18 @@ public class CodelistEditor extends Composite {
         toolkit.adapt(authorityNameField, true, true);
 
         Composite composite_3 = new Composite(actionArea, SWT.NONE);
-        composite_3.setLayout(new GridLayout(2, false));
+        composite_3.setLayout(new GridLayout(1, false));
         composite_3.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
         toolkit.adapt(composite_3);
         toolkit.paintBordersFor(composite_3);
 
-        Button btnCancel = new Button(composite_3, SWT.NONE);
-        GridData gd_btnCancel = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-        gd_btnCancel.widthHint = 68;
-        btnCancel.setLayoutData(gd_btnCancel);
-        btnCancel.setBounds(0, 0, 90, 30);
-        toolkit.adapt(btnCancel, true, true);
-        btnCancel.setText("Cancel");
-
         Button btnNewButton = new Button(composite_3, SWT.NONE);
+        btnNewButton.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                saveCodelist();
+            }
+        });
         GridData gd_btnNewButton = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
         gd_btnNewButton.widthHint = 68;
         btnNewButton.setLayoutData(gd_btnNewButton);
@@ -329,11 +438,19 @@ public class CodelistEditor extends Composite {
 
     }
 
+    protected void saveCodelist() {
+        // TODO Auto-generated method stub
+        
+    }
+
     public void loadCodelist(CodelistReference ref) {
+        
         this.codelist = ref;
         this.nameField.setText(ref.getName());
-        this.descriptionField.setText(ref.getDescription());
-        this.agencyField.setText(ref.getAgency());
+        this.descriptionField.setText(ref.getDescription() == null ? "" : ref.getDescription());
+        this.agencyField.setText(ref.getAgency() == null ? "" : ref.getAgency());
+        this.authorityNameField.setText(ref.getAuthorityId() == null ? "" : ref.getAuthorityId());
+        
         if (ref.isTwoWay()) {
             manyToManyButton.setSelection(true);
         } else {
@@ -347,18 +464,23 @@ public class CodelistEditor extends Composite {
          * build support structures
          */
         Multimap<String, String> mapdirect = HashMultimap.create();
-        Multimap<String, String> maprevers = HashMultimap.create();
+        Map<String, String> maprevers = new HashMap<>();
+
         if (ref.getDirectMapping() != null) {
             for (Pair<String, String> zio : ref.getDirectMapping().getMappings()) {
                 mapdirect.put(zio.getFirst(), zio.getSecond());
             }
         }
         if (ref.getInverseMapping() != null) {
-            for (Pair<String, String> zio : ref.getDirectMapping().getMappings()) {
-                maprevers.put(zio.getFirst(), zio.getSecond());
+            for (Pair<String, String> zio : ref.getInverseMapping().getMappings()) {
+                maprevers.put(zio.getSecond(), zio.getFirst());
             }
         }
-        for (String s : ref.getCodeDescriptions().keySet()) {
+
+        List<String> skeys = new ArrayList<>(ref.getCodeDescriptions().keySet());
+        Collections.sort(skeys);
+
+        for (String s : skeys) {
             Collection<String> values = mapdirect.get(s);
             if (values.size() == 0) {
                 direct.add(new Triple<>(s, "", ref.getCodeDescriptions().get(s)));
@@ -367,14 +489,9 @@ public class CodelistEditor extends Composite {
                     direct.add(new Triple<>(s, value, ref.getCodeDescriptions().get(s)));
                 }
             }
-            // values = maprevers.get(s);
-            // if (values.size() == 0) {
-            // reverse.add(new Triple<>(value, "", ref.getCodeDescriptions().get(s)));
-            // } else {
-            // for (String value : values) {
-            // reverse.add(new Triple<>(s, value, ref.getCodeDescriptions().get(s)));
-            // }
-            // }
+            for (String value : maprevers.keySet()) {
+                reverse.add(new Triple<>(value, maprevers.get(value), ref.getCodeDescriptions().get(maprevers.get(value))));
+            }
         }
 
         directTableViewer.setInput(this.direct);
