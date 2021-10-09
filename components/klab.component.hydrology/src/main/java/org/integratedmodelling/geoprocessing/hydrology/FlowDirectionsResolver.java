@@ -7,6 +7,7 @@ import java.awt.image.DataBuffer;
 import org.hortonmachine.hmachine.modules.geomorphology.flow.OmsFlowDirections;
 import org.integratedmodelling.geoprocessing.TaskMonitor;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -15,6 +16,7 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.geospace.Geospace;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.utils.NumberUtils;
 
 public class FlowDirectionsResolver implements IResolver<IState>, IExpression {
 
@@ -43,6 +45,16 @@ public class FlowDirectionsResolver implements IResolver<IState>, IExpression {
             throw new KlabException(e);
         }
         if (!context.getMonitor().isInterrupted()) {
+            
+            for (ILocator locator : context.getScale()) {
+                Object val = target.get(locator);
+                if (val instanceof Number && !Double.isNaN(((Number)val).doubleValue())) {
+                    if (NumberUtils.equal(((Number)val).doubleValue(), 0)) {
+                        System.out.println("ZOPPODIO");
+                    }
+                }
+            }
+            
             GeotoolsUtils.INSTANCE.coverageToState(algorithm.outFlow, target, context.getScale(), (a) -> {
                 if (a == (double) floatNovalue) {
                     return Double.NaN;

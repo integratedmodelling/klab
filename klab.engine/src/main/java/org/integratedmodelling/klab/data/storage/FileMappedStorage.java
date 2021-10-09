@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.components.localstorage.impl.AbstractAdaptiv
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.utils.NameGenerator;
+import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Utils;
 
 public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements AutoCloseable {
@@ -74,7 +75,8 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
                 // 0 for false, 1 for true, Byte.MIN_VALUE for nodata
                 type_ = DataType.BYTE;
             } else {
-                throw new IllegalStateException("file-backed storage cannot use type " + valueClass.getCanonicalName());
+                throw new IllegalStateException(
+                        "file-backed storage cannot use type " + valueClass.getCanonicalName());
             }
         }
 
@@ -149,7 +151,7 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
         }
 
         for (long i = 0; i < getSliceSize(); i++) {
-            put(val, page1, -1);
+            put(val, page1, i);
         }
 
         if (highestSliceIndex < pageIndex) {
@@ -173,7 +175,6 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
         if (val instanceof Boolean) {
             val = Byte.valueOf((byte) (((Boolean) val) ? 1 : 0));
         }
-
         switch(type_) {
         case BYTE:
             page.put(((Byte) val).byteValue());
@@ -253,7 +254,8 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
             } else {
                 // read directly from file
                 if (backendTimeSlice > this.pageIndex1) {
-                    throw new IllegalStateException("file mapped storage: trying to read an unassigned value");
+                    throw new IllegalStateException(
+                            "file mapped storage: trying to read an unassigned value");
                 }
                 result = getDirect(offsetInSlice, backendTimeSlice);
             }
@@ -345,7 +347,8 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
             if (this.page1 != null) {
                 this.page1.force();
                 MappedByteBuffer newPage = this.storage.getChannel().map(FileChannel.MapMode.READ_WRITE,
-                        newSliceIndex * getSliceSize() * getDatatype().size, getSliceSize() * getDatatype().size);
+                        newSliceIndex * getSliceSize() * getDatatype().size,
+                        getSliceSize() * getDatatype().size);
                 this.page1.rewind();
                 newPage.put(this.page1);
                 this.pageIndex0 = sliceToCopy;

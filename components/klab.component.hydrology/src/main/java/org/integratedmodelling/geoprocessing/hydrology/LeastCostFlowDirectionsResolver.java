@@ -9,6 +9,7 @@ import org.geotools.coverage.grid.GridCoverage2D;
 import org.hortonmachine.hmachine.modules.geomorphology.flow.OmsLeastCostFlowDirections;
 import org.integratedmodelling.geoprocessing.TaskMonitor;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -17,6 +18,7 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.geospace.Geospace;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.utils.NumberUtils;
 
 public class LeastCostFlowDirectionsResolver implements IResolver<IState>, IExpression {
 
@@ -38,7 +40,6 @@ public class LeastCostFlowDirectionsResolver implements IResolver<IState>, IExpr
         algorithm.doAspect = false;
         algorithm.doSlope = false;
         algorithm.doTca = doTca;
-
         TaskMonitor taskMonitor = new TaskMonitor(context.getMonitor());
         taskMonitor.setTaskName("Least cost d8");
         algorithm.pm = taskMonitor;
