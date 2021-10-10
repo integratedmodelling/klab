@@ -68,14 +68,16 @@ public class CodelistEditor extends Composite {
     private CodelistReference codelist;
 
     BiMap<String, IArtifact.Type> typeDictionary = HashBiMap.create();
+    private Button codesOnlyButton;
     private Button oneToOneButton;
-    private Button manyToManyButton;
 
     // temporary holders for editable table rows
     List<Triple<String, String, String>> direct = new ArrayList<>();
     List<Triple<String, String, String>> reverse = new ArrayList<>();
     private TableViewer inverseTableViewer;
     private TableViewer directTableViewer;
+    private boolean dirty;
+    private Text text_1;
 
     public static class AttributeContentProvider implements IStructuredContentProvider {
 
@@ -151,8 +153,8 @@ public class CodelistEditor extends Composite {
         lblName.setText("Name");
 
         nameField = new Text(settingsArea, SWT.BORDER);
-        GridData gd_nameField = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-        gd_nameField.widthHint = 170;
+        GridData gd_nameField = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+        gd_nameField.widthHint = 200;
         nameField.setLayoutData(gd_nameField);
         toolkit.adapt(nameField, true, true);
 
@@ -162,7 +164,6 @@ public class CodelistEditor extends Composite {
         lblAgency.setText("Agency");
 
         agencyField = new Text(settingsArea, SWT.BORDER);
-        agencyField.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
         toolkit.adapt(agencyField, true, true);
 
         Label lblValueType = new Label(settingsArea, SWT.NONE);
@@ -171,7 +172,9 @@ public class CodelistEditor extends Composite {
         lblValueType.setText("Value Type");
 
         Combo valueTypeCombo = new Combo(settingsArea, SWT.READ_ONLY);
-        valueTypeCombo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        GridData gd_valueTypeCombo = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+        gd_valueTypeCombo.widthHint = 60;
+        valueTypeCombo.setLayoutData(gd_valueTypeCombo);
         toolkit.adapt(valueTypeCombo);
         toolkit.paintBordersFor(valueTypeCombo);
 
@@ -191,34 +194,52 @@ public class CodelistEditor extends Composite {
         new Label(settingsArea, SWT.NONE);
 
         Composite composite_2 = new Composite(settingsArea, SWT.NONE);
-        composite_2.setLayout(new GridLayout(2, false));
-        composite_2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        composite_2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+        composite_2.setLayout(new GridLayout(3, false));
         toolkit.adapt(composite_2);
         toolkit.paintBordersFor(composite_2);
 
+        codesOnlyButton = new Button(composite_2, SWT.RADIO);
+        codesOnlyButton.addSelectionListener(new SelectionAdapter(){
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                mappingSash.setWeights(1, 0);
+            }
+        });
+        GridData gd_codesOnlyButton = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
+        gd_codesOnlyButton.widthHint = 60;
+        codesOnlyButton.setLayoutData(gd_codesOnlyButton);
+        codesOnlyButton.setSelection(true);
+        toolkit.adapt(codesOnlyButton, true, true);
+        codesOnlyButton.setText("Codes");
+
         oneToOneButton = new Button(composite_2, SWT.RADIO);
+
+        GridData gd_oneToOneButton = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
+        gd_oneToOneButton.widthHint = 60;
+        oneToOneButton.setLayoutData(gd_oneToOneButton);
+        toolkit.adapt(oneToOneButton, true, true);
+        oneToOneButton.setText("1->1");
         oneToOneButton.addSelectionListener(new SelectionAdapter(){
             @Override
             public void widgetSelected(SelectionEvent e) {
                 mappingSash.setWeights(1, 0);
             }
         });
-        oneToOneButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
-        oneToOneButton.setSelection(true);
-        toolkit.adapt(oneToOneButton, true, true);
-        oneToOneButton.setText("1-to-1");
-
-        manyToManyButton = new Button(composite_2, SWT.RADIO);
-        manyToManyButton.addSelectionListener(new SelectionAdapter(){
+        
+        Button oneToManyButton = new Button(composite_2, SWT.RADIO);
+        GridData gd_oneToManyButton = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+        gd_oneToManyButton.widthHint = 60;
+        oneToManyButton.setLayoutData(gd_oneToManyButton);
+        toolkit.adapt(oneToManyButton, true, true);
+        oneToManyButton.setText("1->n");
+        oneToManyButton.addSelectionListener(new SelectionAdapter(){
             @Override
             public void widgetSelected(SelectionEvent e) {
                 mappingSash.setWeights(1, 1);
             }
         });
-        manyToManyButton.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
-        toolkit.adapt(manyToManyButton, true, true);
-        manyToManyButton.setText("Many-to-one");
-
+        
         Composite mappingArea = new Composite(this, SWT.NONE);
         mappingArea.setLayout(new GridLayout(1, false));
         mappingArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
@@ -230,15 +251,42 @@ public class CodelistEditor extends Composite {
         toolkit.adapt(mappingSash);
         toolkit.paintBordersFor(mappingSash);
 
-        Composite composite = new Composite(mappingSash, SWT.NONE);
+        Composite composite = new Composite(mappingSash, SWT.BORDER);
         toolkit.adapt(composite);
         toolkit.paintBordersFor(composite);
         composite.setLayout(new GridLayout(1, false));
-
-        Label lblNewLabel = new Label(composite, SWT.NONE);
-        lblNewLabel.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
-        toolkit.adapt(lblNewLabel, true, true);
-        lblNewLabel.setText("Direct mappings");
+        
+        Composite composite_4 = new Composite(composite, SWT.NONE);
+        composite_4.setLayout(new GridLayout(2, false));
+        composite_4.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+        toolkit.adapt(composite_4);
+        toolkit.paintBordersFor(composite_4);
+        
+                Label lblNewLabel = new Label(composite_4, SWT.NONE);
+                toolkit.adapt(lblNewLabel, true, true);
+                lblNewLabel.setText("Direct mappings");
+                
+                Composite composite_5 = new Composite(composite_4, SWT.NONE);
+                composite_5.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, true, false, 1, 1));
+                toolkit.adapt(composite_5);
+                toolkit.paintBordersFor(composite_5);
+                GridLayout gl_composite_5 = new GridLayout(2, false);
+                gl_composite_5.marginRight = 2;
+                gl_composite_5.marginWidth = 0;
+                gl_composite_5.marginHeight = 0;
+                gl_composite_5.horizontalSpacing = 3;
+                composite_5.setLayout(gl_composite_5);
+                
+                Label lblRegexPatternFor = new Label(composite_5, SWT.NONE);
+                lblRegexPatternFor.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+                toolkit.adapt(lblRegexPatternFor, true, true);
+                lblRegexPatternFor.setText("Regex pattern for unmapped codes ");
+                
+                text_1 = new Text(composite_5, SWT.BORDER);
+                GridData gd_text_1 = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+                gd_text_1.widthHint = 120;
+                text_1.setLayoutData(gd_text_1);
+                toolkit.adapt(text_1, true, true);
 
         directTableViewer = new TableViewer(composite, SWT.BORDER | SWT.FULL_SELECTION);
         directMappingsTable = directTableViewer.getTable();
@@ -272,8 +320,9 @@ public class CodelistEditor extends Composite {
                 for (int i = 0; i < directMappingsTable.getColumnCount(); ++i) {
                     if (item.getBounds(i).contains(p)) {
                         final int columnIndex = i;
+                        @SuppressWarnings("unchecked")
                         Triple<String, String, String> data = (Triple<String, String, String>) item.getData();
-                        if (columnIndex == 2/* && !data.nonexisting */) {
+                        if (columnIndex > 0/* && !data.nonexisting */) {
 
                             final Text newEditor = new Text(directMappingsTable, SWT.NONE);
                             newEditor.setText(item.getText(columnIndex));
@@ -285,21 +334,24 @@ public class CodelistEditor extends Composite {
 
                                     String value = text.getText();
                                     boolean changed = true;
-//                                    Argument descriptor = data.descriptor;
+                                    String current = (String)data.get(columnIndex);
+                                    if (current != null && current.trim().isEmpty()) {
+                                        current = null;
+                                    }
+                                    if (value != null && value.toString().isEmpty()) {
+                                        value = null;
+                                    }
+                                    if ((value != null && current != null && value.equals(current))
+                                            || (value == null && current == null)) {
+                                        changed = false;
+                                    }
 //
-//                                    String current = values.get(data.parameter);
-//                                    if (current != null && current.trim().isEmpty()) {
-//                                        current = null;
-//                                    }
-//                                    if (value != null && value.toString().isEmpty()) {
-//                                        value = null;
-//                                    }
-//                                    if ((value != null && current != null && value.equals(current))
-//                                            || (value == null && current == null)) {
-//                                        changed = false;
-//                                    }
-//
-//                                    if (changed) {
+                                    if (changed) {
+                                        
+                                        if (columnIndex == 1) {
+                                            System.out.println("VALIDATE THIS FUCKA " + current);
+                                        }
+                                        
 //                                        setMessage(null, Level.INFO);
 //                                        if (value != null && descriptor != null) {
 //                                            if (!Utils.validateAs(value, descriptor.getType())) {
@@ -319,17 +371,18 @@ public class CodelistEditor extends Composite {
 //                                            values.put(data.parameter, value);
 //                                            data.value = value;
 //                                        }
-//                                        setDirty(true);
-//                                    }
+                                        setDirty(true);
+                                    }
 //                                    adapterPropertyViewer.update(data, null);
                                 }
+
                             });
                             newEditor.selectAll();
                             newEditor.setFocus();
                             // Set the editor for the matching column
                             editor.setEditor(newEditor, item, columnIndex);
                         }
-                    }
+                     }
                 }
             }
         });
@@ -383,7 +436,7 @@ public class CodelistEditor extends Composite {
         mappingSash.setWeights(new int[]{1, 0});
 
         Composite actionArea = new Composite(this, SWT.NONE);
-        actionArea.setLayout(new GridLayout(4, false));
+        actionArea.setLayout(new GridLayout(6, false));
         actionArea.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         toolkit.adapt(actionArea);
         toolkit.paintBordersFor(actionArea);
@@ -410,6 +463,16 @@ public class CodelistEditor extends Composite {
         gd_authorityNameField.widthHint = 234;
         authorityNameField.setLayoutData(gd_authorityNameField);
         toolkit.adapt(authorityNameField, true, true);
+        
+        Label lblInResource = new Label(actionArea, SWT.NONE);
+        lblInResource.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+        toolkit.adapt(lblInResource, true, true);
+        lblInResource.setText("in resource");
+        
+        Combo combo = new Combo(actionArea, SWT.NONE);
+        combo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        toolkit.adapt(combo);
+        toolkit.paintBordersFor(combo);
 
         Composite composite_3 = new Composite(actionArea, SWT.NONE);
         composite_3.setLayout(new GridLayout(1, false));
@@ -452,9 +515,9 @@ public class CodelistEditor extends Composite {
         this.authorityNameField.setText(ref.getAuthorityId() == null ? "" : ref.getAuthorityId());
         
         if (ref.isTwoWay()) {
-            manyToManyButton.setSelection(true);
-        } else {
             oneToOneButton.setSelection(true);
+        } else {
+            codesOnlyButton.setSelection(true);
         }
 
         this.direct.clear();
@@ -498,4 +561,9 @@ public class CodelistEditor extends Composite {
         inverseTableViewer.setInput(this.reverse);
 
     }
+    
+    private void setDirty(boolean b) {
+        this.dirty = b;
+    }
+
 }

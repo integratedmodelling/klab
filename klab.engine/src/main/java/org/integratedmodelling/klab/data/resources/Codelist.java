@@ -74,8 +74,14 @@ public class Codelist<K, T> implements ICodelist<K, T> {
     }
 
     @Override
-    public Collection<T> values(K key) {
+    public Collection<K> keys(T value) {
         // TODO Auto-generated method stub
         return null;
     }
+
+    @Override
+    public String getPattern() {
+        return reference.getPattern();
+    }
+
 }

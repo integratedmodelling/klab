@@ -190,9 +190,15 @@ public class CodeList implements ICodelist<Object, Object> {
     }
 
     @Override
-    public Collection<Object> values(Object key) {
+    public Collection<Object> keys(Object value) {
         // TODO Auto-generated method stub
-        return Collections.singleton(value(key));
+        return null;
+    }
+
+    @Override
+    public String getPattern() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

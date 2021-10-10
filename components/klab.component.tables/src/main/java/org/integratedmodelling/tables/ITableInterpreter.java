@@ -53,10 +53,9 @@ public interface ITableInterpreter {
 	boolean canHandle(URL resource, IParameters<String> parameters);
 
 	/**
-	 * Create a property file with a standard, empty categorization for a dimension,
+	 * Create a codelist file with a standard, empty categorization for a dimension,
 	 * to be filled in by users. Category files start with "code_" and have
-	 * extension .properties. They contain properties named category.XXX for each
-	 * unique code admitted in the dimension, initialized at the empty string.
+	 * extension .json
 	 * 
 	 * @param resource
 	 * @param parameters

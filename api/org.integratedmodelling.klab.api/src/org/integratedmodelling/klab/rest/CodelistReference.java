@@ -24,7 +24,7 @@ public class CodelistReference {
     private String agency;
     private String version;
     private Map<String, String> metadata = new HashMap<>();
-    
+    private String pattern;
     
     public String getId() {
         return id;
@@ -129,6 +129,12 @@ public class CodelistReference {
     }
     public void setTwoWay(boolean twoWay) {
         this.twoWay = twoWay;
+    }
+    public String getPattern() {
+        return pattern;
+    }
+    public void setPattern(String pattern) {
+        this.pattern = pattern;
     }
 
 }

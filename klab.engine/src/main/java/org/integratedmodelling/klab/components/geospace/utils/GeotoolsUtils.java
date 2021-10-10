@@ -835,6 +835,11 @@ class BigCoverage {
     private static final int IMAGE_HEIGHT = 10000;
 
     public static void main(String[] args) throws Exception {
+        
+        /*
+         * TODO this works - use for larger TIFFs instead of current
+         */
+        
         JFileDataStoreChooser chooser = new JFileDataStoreChooser("tif");
         chooser.setDialogTitle("Create GeoTiff file");
 
@@ -864,7 +869,7 @@ class BigCoverage {
 
         GeoTiffWriter writer = new GeoTiffWriter(file, null);
         GridCoverageFactory factory = new GridCoverageFactory();
-        ReferencedEnvelope env = new ReferencedEnvelope(new Rectangle(0, 0, IMAGE_WIDTH, IMAGE_HEIGHT), null);
+        ReferencedEnvelope env = new ReferencedEnvelope(new Rectangle(0, 0, IMAGE_WIDTH, IMAGE_HEIGHT), Projection.getLatLon().getCoordinateReferenceSystem());
         GridCoverage2D coverage = factory.create("coverage", image, env);
         writer.write(coverage, null);
     }

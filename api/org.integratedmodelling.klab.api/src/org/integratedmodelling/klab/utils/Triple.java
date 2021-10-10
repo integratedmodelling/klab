@@ -28,6 +28,8 @@ package org.integratedmodelling.klab.utils;
 
 import java.io.Serializable;
 
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
+
 /**
   * Stupid generic pair class.
  * @param <T1> 
@@ -146,6 +148,18 @@ public class Triple<T1, T2, T3> implements Serializable {
 			return false;
 		return true;
 	}
+
+    public Object get(int columnIndex) {
+        switch (columnIndex) {
+        case 0:
+            return first;
+        case 1:
+            return second;
+        case 2:
+            return third;
+        }
+        throw new KlabIllegalArgumentException("cannot retrieve " + columnIndex + "-th element from a triple");
+    }
 
 
 }
