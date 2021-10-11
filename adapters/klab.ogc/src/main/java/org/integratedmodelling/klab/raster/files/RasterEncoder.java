@@ -47,6 +47,7 @@ import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
+import org.integratedmodelling.klab.api.knowledge.ICodelist;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
@@ -327,6 +328,12 @@ public class RasterEncoder implements IResourceEncoder {
             Map<String, String> urnParameters, IContextualizationScope scope) {
         // TODO Auto-generated method stub
         return resource;
+    }
+
+    @Override
+    public ICodelist categorize(IResource resource, String attribute, IMonitor monitor) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

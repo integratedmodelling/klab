@@ -105,7 +105,7 @@ public class ResourceBuilder implements IResource.Builder {
 			ret.dependencies.addAll(this.requiredUrns);
 		}
 		for (CodelistReference cl : this.codelists) {
-		    File clfile = getLocalFile(cl.getId().toLowerCase() + ".json");
+		    File clfile = getLocalFile("code_" + cl.getId() + ".json");
 		    JsonUtils.save(cl, clfile);
 		    ret.codelists.add(cl.getId());
 		}

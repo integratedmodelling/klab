@@ -226,7 +226,7 @@ public class CodelistEditor extends Composite {
                 mappingSash.setWeights(1, 0);
             }
         });
-        
+
         Button oneToManyButton = new Button(composite_2, SWT.RADIO);
         GridData gd_oneToManyButton = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
         gd_oneToManyButton.widthHint = 60;
@@ -239,7 +239,7 @@ public class CodelistEditor extends Composite {
                 mappingSash.setWeights(1, 1);
             }
         });
-        
+
         Composite mappingArea = new Composite(this, SWT.NONE);
         mappingArea.setLayout(new GridLayout(1, false));
         mappingArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
@@ -255,38 +255,38 @@ public class CodelistEditor extends Composite {
         toolkit.adapt(composite);
         toolkit.paintBordersFor(composite);
         composite.setLayout(new GridLayout(1, false));
-        
+
         Composite composite_4 = new Composite(composite, SWT.NONE);
         composite_4.setLayout(new GridLayout(2, false));
         composite_4.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
         toolkit.adapt(composite_4);
         toolkit.paintBordersFor(composite_4);
-        
-                Label lblNewLabel = new Label(composite_4, SWT.NONE);
-                toolkit.adapt(lblNewLabel, true, true);
-                lblNewLabel.setText("Direct mappings");
-                
-                Composite composite_5 = new Composite(composite_4, SWT.NONE);
-                composite_5.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, true, false, 1, 1));
-                toolkit.adapt(composite_5);
-                toolkit.paintBordersFor(composite_5);
-                GridLayout gl_composite_5 = new GridLayout(2, false);
-                gl_composite_5.marginRight = 2;
-                gl_composite_5.marginWidth = 0;
-                gl_composite_5.marginHeight = 0;
-                gl_composite_5.horizontalSpacing = 3;
-                composite_5.setLayout(gl_composite_5);
-                
-                Label lblRegexPatternFor = new Label(composite_5, SWT.NONE);
-                lblRegexPatternFor.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-                toolkit.adapt(lblRegexPatternFor, true, true);
-                lblRegexPatternFor.setText("Regex pattern for unmapped codes ");
-                
-                text_1 = new Text(composite_5, SWT.BORDER);
-                GridData gd_text_1 = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-                gd_text_1.widthHint = 120;
-                text_1.setLayoutData(gd_text_1);
-                toolkit.adapt(text_1, true, true);
+
+        Label lblNewLabel = new Label(composite_4, SWT.NONE);
+        toolkit.adapt(lblNewLabel, true, true);
+        lblNewLabel.setText("Direct mappings");
+
+        Composite composite_5 = new Composite(composite_4, SWT.NONE);
+        composite_5.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, true, false, 1, 1));
+        toolkit.adapt(composite_5);
+        toolkit.paintBordersFor(composite_5);
+        GridLayout gl_composite_5 = new GridLayout(2, false);
+        gl_composite_5.marginRight = 2;
+        gl_composite_5.marginWidth = 0;
+        gl_composite_5.marginHeight = 0;
+        gl_composite_5.horizontalSpacing = 3;
+        composite_5.setLayout(gl_composite_5);
+
+        Label lblRegexPatternFor = new Label(composite_5, SWT.NONE);
+        lblRegexPatternFor.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+        toolkit.adapt(lblRegexPatternFor, true, true);
+        lblRegexPatternFor.setText("Regex pattern for unmapped codes ");
+
+        text_1 = new Text(composite_5, SWT.BORDER);
+        GridData gd_text_1 = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+        gd_text_1.widthHint = 120;
+        text_1.setLayoutData(gd_text_1);
+        toolkit.adapt(text_1, true, true);
 
         directTableViewer = new TableViewer(composite, SWT.BORDER | SWT.FULL_SELECTION);
         directMappingsTable = directTableViewer.getTable();
@@ -334,7 +334,7 @@ public class CodelistEditor extends Composite {
 
                                     String value = text.getText();
                                     boolean changed = true;
-                                    String current = (String)data.get(columnIndex);
+                                    String current = (String) data.get(columnIndex);
                                     if (current != null && current.trim().isEmpty()) {
                                         current = null;
                                     }
@@ -345,35 +345,39 @@ public class CodelistEditor extends Composite {
                                             || (value == null && current == null)) {
                                         changed = false;
                                     }
-//
+                                    //
                                     if (changed) {
-                                        
+
                                         if (columnIndex == 1) {
                                             System.out.println("VALIDATE THIS FUCKA " + current);
                                         }
-                                        
-//                                        setMessage(null, Level.INFO);
-//                                        if (value != null && descriptor != null) {
-//                                            if (!Utils.validateAs(value, descriptor.getType())) {
-//                                                setMessage("'" + value + "' is not a suitable value for type "
-//                                                        + descriptor.getType().name().toLowerCase(), Level.SEVERE);
-//                                            }
-//                                            if (data.parameter.endsWith("Url")) {
-//                                                if (!UrlValidator.getInstance().isValid(value.toString())) {
-//                                                    setMessage("'" + value + "' is not a valid URL", Level.SEVERE);
-//                                                }
-//                                            }
-//                                        }
-//                                        if (value == null) {
-//                                            values.remove(data.parameter);
-//                                            data.value = null;
-//                                        } else {
-//                                            values.put(data.parameter, value);
-//                                            data.value = value;
-//                                        }
+
+                                        // setMessage(null, Level.INFO);
+                                        // if (value != null && descriptor != null) {
+                                        // if (!Utils.validateAs(value, descriptor.getType())) {
+                                        // setMessage("'" + value + "' is not a suitable value for
+                                        // type "
+                                        // + descriptor.getType().name().toLowerCase(),
+                                        // Level.SEVERE);
+                                        // }
+                                        // if (data.parameter.endsWith("Url")) {
+                                        // if
+                                        // (!UrlValidator.getInstance().isValid(value.toString())) {
+                                        // setMessage("'" + value + "' is not a valid URL",
+                                        // Level.SEVERE);
+                                        // }
+                                        // }
+                                        // }
+                                        // if (value == null) {
+                                        // values.remove(data.parameter);
+                                        // data.value = null;
+                                        // } else {
+                                        // values.put(data.parameter, value);
+                                        // data.value = value;
+                                        // }
                                         setDirty(true);
                                     }
-//                                    adapterPropertyViewer.update(data, null);
+                                    // adapterPropertyViewer.update(data, null);
                                 }
 
                             });
@@ -382,11 +386,11 @@ public class CodelistEditor extends Composite {
                             // Set the editor for the matching column
                             editor.setEditor(newEditor, item, columnIndex);
                         }
-                     }
+                    }
                 }
             }
         });
-        
+
         TableViewerColumn tableViewerColumn = new TableViewerColumn(directTableViewer, SWT.NONE);
         TableColumn tblclmnKey = tableViewerColumn.getColumn();
         tblclmnKey.setWidth(177);
@@ -442,10 +446,11 @@ public class CodelistEditor extends Composite {
         toolkit.paintBordersFor(actionArea);
 
         Button btnExposeAsAuthority = new Button(actionArea, SWT.CHECK);
-        btnExposeAsAuthority.addSelectionListener(new SelectionAdapter() {
+        btnExposeAsAuthority.addSelectionListener(new SelectionAdapter(){
             @Override
             public void widgetSelected(SelectionEvent e) {
-                if (btnExposeAsAuthority.getSelection() && authorityNameField.getText().isBlank() && codelist != null) {
+                if (btnExposeAsAuthority.getSelection() && authorityNameField.getText().isBlank()
+                        && codelist != null) {
                     authorityNameField.setText(codelist.getAgency() + "." + codelist.getId());
                 }
             }
@@ -463,12 +468,12 @@ public class CodelistEditor extends Composite {
         gd_authorityNameField.widthHint = 234;
         authorityNameField.setLayoutData(gd_authorityNameField);
         toolkit.adapt(authorityNameField, true, true);
-        
+
         Label lblInResource = new Label(actionArea, SWT.NONE);
         lblInResource.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
         toolkit.adapt(lblInResource, true, true);
         lblInResource.setText("in resource");
-        
+
         Combo combo = new Combo(actionArea, SWT.NONE);
         combo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         toolkit.adapt(combo);
@@ -481,7 +486,7 @@ public class CodelistEditor extends Composite {
         toolkit.paintBordersFor(composite_3);
 
         Button btnNewButton = new Button(composite_3, SWT.NONE);
-        btnNewButton.addSelectionListener(new SelectionAdapter() {
+        btnNewButton.addSelectionListener(new SelectionAdapter(){
             @Override
             public void widgetSelected(SelectionEvent e) {
                 saveCodelist();
@@ -503,65 +508,68 @@ public class CodelistEditor extends Composite {
 
     protected void saveCodelist() {
         // TODO Auto-generated method stub
-        
+
     }
 
     public void loadCodelist(CodelistReference ref) {
-        
-        this.codelist = ref;
-        this.nameField.setText(ref.getName());
-        this.descriptionField.setText(ref.getDescription() == null ? "" : ref.getDescription());
-        this.agencyField.setText(ref.getAgency() == null ? "" : ref.getAgency());
-        this.authorityNameField.setText(ref.getAuthorityId() == null ? "" : ref.getAuthorityId());
-        
-        if (ref.isTwoWay()) {
-            oneToOneButton.setSelection(true);
-        } else {
-            codesOnlyButton.setSelection(true);
-        }
+        Display.getDefault().asyncExec(() -> {
 
-        this.direct.clear();
-        this.reverse.clear();
+            this.codelist = ref;
+            this.nameField.setText(ref.getName());
+            this.descriptionField.setText(ref.getDescription() == null ? "" : ref.getDescription());
+            this.agencyField.setText(ref.getAgency() == null ? "" : ref.getAgency());
+            this.authorityNameField.setText(ref.getAuthorityId() == null ? "" : ref.getAuthorityId());
 
-        /*
-         * build support structures
-         */
-        Multimap<String, String> mapdirect = HashMultimap.create();
-        Map<String, String> maprevers = new HashMap<>();
-
-        if (ref.getDirectMapping() != null) {
-            for (Pair<String, String> zio : ref.getDirectMapping().getMappings()) {
-                mapdirect.put(zio.getFirst(), zio.getSecond());
-            }
-        }
-        if (ref.getInverseMapping() != null) {
-            for (Pair<String, String> zio : ref.getInverseMapping().getMappings()) {
-                maprevers.put(zio.getSecond(), zio.getFirst());
-            }
-        }
-
-        List<String> skeys = new ArrayList<>(ref.getCodeDescriptions().keySet());
-        Collections.sort(skeys);
-
-        for (String s : skeys) {
-            Collection<String> values = mapdirect.get(s);
-            if (values.size() == 0) {
-                direct.add(new Triple<>(s, "", ref.getCodeDescriptions().get(s)));
+            if (ref.isTwoWay()) {
+                oneToOneButton.setSelection(true);
             } else {
-                for (String value : values) {
-                    direct.add(new Triple<>(s, value, ref.getCodeDescriptions().get(s)));
+                codesOnlyButton.setSelection(true);
+            }
+
+            this.direct.clear();
+            this.reverse.clear();
+
+            /*
+             * build support structures
+             */
+            Multimap<String, String> mapdirect = HashMultimap.create();
+            Map<String, String> maprevers = new HashMap<>();
+
+            if (ref.getDirectMapping() != null) {
+                for (Pair<String, String> zio : ref.getDirectMapping().getMappings()) {
+                    mapdirect.put(zio.getFirst(), zio.getSecond());
                 }
             }
-            for (String value : maprevers.keySet()) {
-                reverse.add(new Triple<>(value, maprevers.get(value), ref.getCodeDescriptions().get(maprevers.get(value))));
+            if (ref.getInverseMapping() != null) {
+                for (Pair<String, String> zio : ref.getInverseMapping().getMappings()) {
+                    maprevers.put(zio.getSecond(), zio.getFirst());
+                }
             }
-        }
 
-        directTableViewer.setInput(this.direct);
-        inverseTableViewer.setInput(this.reverse);
+            List<String> skeys = new ArrayList<>(ref.getCodeDescriptions().keySet());
+            Collections.sort(skeys);
 
+            for (String s : skeys) {
+                Collection<String> values = mapdirect.get(s);
+                if (values.size() == 0) {
+                    direct.add(new Triple<>(s, "", ref.getCodeDescriptions().get(s)));
+                } else {
+                    for (String value : values) {
+                        direct.add(new Triple<>(s, value, ref.getCodeDescriptions().get(s)));
+                    }
+                }
+                for (String value : maprevers.keySet()) {
+                    reverse.add(new Triple<>(value, maprevers.get(value),
+                            ref.getCodeDescriptions().get(maprevers.get(value))));
+                }
+            }
+
+            directTableViewer.setInput(this.direct);
+            inverseTableViewer.setInput(this.reverse);
+
+        });
     }
-    
+
     private void setDirty(boolean b) {
         this.dirty = b;
     }

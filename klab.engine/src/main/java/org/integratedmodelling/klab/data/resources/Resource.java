@@ -52,6 +52,7 @@ import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.rest.ResourceReference.AvailabilityReference;
 import org.integratedmodelling.klab.rest.SpatialExtent;
+import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Path;
 import org.integratedmodelling.klab.utils.Utils;
@@ -166,9 +167,11 @@ public class Resource implements IResource {
         for (String key : reference.getMetadata().keySet()) {
             this.metadata.put(key, Utils.asPOD(reference.getMetadata().get(key)));
         }
-        for (org.integratedmodelling.klab.api.runtime.rest.INotification notification : reference.getNotifications()) {
-            this.notifications.add(new KimNotification(notification.getMessage(), Level.parse(notification.getLevel()),
-                    notification.getTimestamp()));
+        for (org.integratedmodelling.klab.api.runtime.rest.INotification notification : reference
+                .getNotifications()) {
+            this.notifications
+                    .add(new KimNotification(notification.getMessage(), Level.parse(notification.getLevel()),
+                            notification.getTimestamp()));
         }
         if (reference.getDependencies() != null) {
             this.inputs.addAll(reference.getDependencies());
@@ -192,8 +195,8 @@ public class Resource implements IResource {
         ret.getCategorizables().addAll(this.categorizables);
         ret.setSpatialExtent(spatialExtent);
         ret.getExportFormats().putAll(this.getExports());
-        ret.getCodelists().addAll(this.codelists);
-        
+        ret.getCodelists().addAll(getCodelists());
+
         for (ResourceReference h : this.history) {
             ret.getHistory().add(h);
         }
@@ -209,7 +212,8 @@ public class Resource implements IResource {
         }
         for (INotification notification : this.notifications) {
             ret.getNotifications()
-                    .add(new Notification(notification.getMessage(), notification.getLevel(), notification.getTimestamp()));
+                    .add(new Notification(notification.getMessage(), notification.getLevel(),
+                            notification.getTimestamp()));
         }
         for (Attribute attribute : attributes) {
             ret.getAttributes().add((AttributeReference) attribute);
@@ -368,8 +372,10 @@ public class Resource implements IResource {
 
     @Override
     public String toString() {
-        return "Resource [urn=" + urn + ", version=" + version + ", adapterType=" + adapterType + ", geometry=" + geometry
-                + ", parameters=" + parameters + ", history=" + history + ", notifications=" + notifications + "]";
+        return "Resource [urn=" + urn + ", version=" + version + ", adapterType=" + adapterType
+                + ", geometry=" + geometry
+                + ", parameters=" + parameters + ", history=" + history + ", notifications=" + notifications
+                + "]";
     }
 
     @Override
@@ -398,7 +404,8 @@ public class Resource implements IResource {
      */
     public void copyToHistory(String modificationLog) {
         ResourceReference ref = this.getReference();
-        ref.getNotifications().add(new Notification(modificationLog, Level.INFO.getName(), System.currentTimeMillis()));
+        ref.getNotifications()
+                .add(new Notification(modificationLog, Level.INFO.getName(), System.currentTimeMillis()));
         ref.getHistory().clear();
         history.add(ref);
     }
@@ -481,10 +488,12 @@ public class Resource implements IResource {
 
         if (this.parameters.containsKey(parameter)) {
             if (projectName != null) {
-                IProject project = Services.INSTANCE.getService(IResourceService.class).getProject(projectName);
+                IProject project = Services.INSTANCE.getService(IResourceService.class)
+                        .getProject(projectName);
                 if (project != null) {
-                    File folder = new File(project.getRoot() + File.separator + IKimProject.RESOURCE_FOLDER + File.separator
-                            + Path.getLast(urn, ':'));
+                    File folder = new File(
+                            project.getRoot() + File.separator + IKimProject.RESOURCE_FOLDER + File.separator
+                                    + Path.getLast(urn, ':'));
                     if (!folder.exists()) {
                         folder = new File(folder + ".v" + version);
                     }
@@ -513,7 +522,8 @@ public class Resource implements IResource {
         IProject project = Services.INSTANCE.getService(IResourceService.class).getProject(projectName);
         if (project != null) {
             ret = new File(
-                    project.getRoot() + File.separator + IKimProject.RESOURCE_FOLDER + File.separator + Path.getLast(urn, ':'));
+                    project.getRoot() + File.separator + IKimProject.RESOURCE_FOLDER + File.separator
+                            + Path.getLast(urn, ':'));
             if (!ret.exists() && version != null) {
                 ret = new File(ret + ".v" + version);
             }

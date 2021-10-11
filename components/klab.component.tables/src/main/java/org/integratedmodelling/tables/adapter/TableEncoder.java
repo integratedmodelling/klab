@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Observations;
+import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
@@ -22,6 +23,7 @@ import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.data.general.ITable;
 import org.integratedmodelling.klab.api.data.general.ITable.Filter;
 import org.integratedmodelling.klab.api.data.general.ITable.Filter.Type;
+import org.integratedmodelling.klab.api.knowledge.ICodelist;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -35,10 +37,13 @@ import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.SemanticType;
 import org.integratedmodelling.tables.AbstractTable;
 import org.integratedmodelling.tables.CodeList;
 import org.integratedmodelling.tables.DimensionScanner;
+import org.integratedmodelling.tables.ITableInterpreter;
+import org.integratedmodelling.tables.TablesComponent;
 
 public class TableEncoder implements IResourceEncoder {
 
@@ -118,7 +123,7 @@ public class TableEncoder implements IResourceEncoder {
                     for (Attribute attr : resource.getAttributes()) {
                         Object attrName = attr.getName();
                         for (CodeList m : collectedMappings) {
-                            attrName = m.value(attrName);
+                            attrName = m.value(attrName.toString());
                         }
                         if (attrName instanceof IConcept) {
                             scannedAttributes.add(attr);
@@ -420,6 +425,20 @@ public class TableEncoder implements IResourceEncoder {
     private Object processFilter(Attribute columnDescriptor, String filterSpecs) {
 
         return filterSpecs;
+    }
+
+    @Override
+    public ICodelist categorize(IResource resource, String attribute, IMonitor monitor) {
+        ITableInterpreter interpreter = TablesComponent.getTableInterpreter(resource.getAdapterType());
+        for (String codelist : resource.getCodelists()) {
+            if (attribute.equals(codelist)) {
+                return Resources.INSTANCE.getCodelist(resource, attribute, monitor);
+            }
+        }
+        interpreter.categorize(resource, Parameters.create("dimension", attribute), monitor);
+        resource.getCodelists().add(attribute);
+        Resources.INSTANCE.getCatalog(resource).update(resource, "Codelist " + attribute + " created");
+        return Resources.INSTANCE.getCodelist(resource, attribute, monitor);
     }
 
 }

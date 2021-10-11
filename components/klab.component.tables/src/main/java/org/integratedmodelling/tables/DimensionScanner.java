@@ -234,7 +234,7 @@ public class DimensionScanner<T> {
         if (o != null) {
             if (!this.mappings.isEmpty()) {
                 for (CodeList mapping : this.mappings) {
-                    o = mapping.value(o);
+                    o = mapping.value(o.toString());
                 }
                 return (T) o;
             } else if (NumberUtils.encodesInteger(o.toString()) && ITime.class.isAssignableFrom(this.extent)) {

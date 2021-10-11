@@ -10,12 +10,12 @@ import org.integratedmodelling.klab.rest.CodelistReference;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
 
-public class Codelist<K, T> implements ICodelist<K, T> {
+public class Codelist implements ICodelist {
 
     CodelistReference reference;
 
-    Multimap<K, T> direct = LinkedListMultimap.create();
-    Multimap<K, T> reverse = LinkedListMultimap.create();
+    Multimap<String, Object> direct = LinkedListMultimap.create();
+    Multimap<String, Object> reverse = LinkedListMultimap.create();
 
     public Codelist(CodelistReference reference) {
         this.reference = reference;
@@ -33,12 +33,12 @@ public class Codelist<K, T> implements ICodelist<K, T> {
     }
 
     @Override
-    public T value(K key) {
+    public Object value(String key) {
         return null;
     }
 
     @Override
-    public K key(T value) {
+    public String key(Object value) {
         return null;
     }
 
@@ -74,7 +74,7 @@ public class Codelist<K, T> implements ICodelist<K, T> {
     }
 
     @Override
-    public Collection<K> keys(T value) {
+    public Collection<String> keys(Object value) {
         // TODO Auto-generated method stub
         return null;
     }

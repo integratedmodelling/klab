@@ -16,9 +16,9 @@ import org.integratedmodelling.klab.rest.AuthorityReference;
  */
 public class ResourceAuthority implements IAuthority {
     
-    ICodelist<?,?> codelist;
+    ICodelist codelist;
 
-    ResourceAuthority(ICodelist<?,?> codelist) {
+    ResourceAuthority(ICodelist codelist) {
         this.codelist = codelist;
         indexCodelist();
     }

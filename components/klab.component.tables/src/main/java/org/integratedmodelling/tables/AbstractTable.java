@@ -813,7 +813,7 @@ public abstract class AbstractTable<T> implements ITable<T> {
 
         if (mappings.containsKey(attribute.getName())) {
             for (CodeList cmap : mappings.get(attribute.getName())) {
-                value = value == null ? cmap.value("null") : cmap.value(value);
+                value = value == null ? cmap.value("null") : cmap.value(value.toString());
             }
         }
 
@@ -840,7 +840,7 @@ public abstract class AbstractTable<T> implements ITable<T> {
      * @return
      */
     public Object getValue(Object value, Attribute attribute) {
-        return convertValue(mapValue(value, attribute), attribute);
+        return convertValue(mapValue(value.toString(), attribute), attribute);
     }
 
     /**

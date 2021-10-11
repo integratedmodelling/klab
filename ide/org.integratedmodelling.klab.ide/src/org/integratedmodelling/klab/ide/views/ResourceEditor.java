@@ -50,6 +50,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
@@ -177,7 +178,8 @@ public class ResourceEditor extends ViewPart {
         public Image getColumnImage(Object element, int columnIndex) {
             if (element instanceof Attribute) {
                 return columnIndex == 0
-                        ? ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/property.gif")
+                        ? ResourceManager.getPluginImage("org.integratedmodelling.klab.ide",
+                                "icons/property.gif")
                         : null;
             }
             return null;
@@ -190,7 +192,9 @@ public class ResourceEditor extends ViewPart {
                 case 0:
                     return ((Attribute) element).getName();
                 case 1:
-                    return ((Attribute) element).getType() == null ? "NULL!" : ((Attribute) element).getType().name();
+                    return ((Attribute) element).getType() == null
+                            ? "NULL!"
+                            : ((Attribute) element).getType().name();
                 case 2:
                     // TODO
                     return "";
@@ -295,7 +299,8 @@ public class ResourceEditor extends ViewPart {
         if (adapter != null) {
             for (Argument argument : adapter.getParameters().getArguments()) {
                 Object value = resource.getParameters().get(argument.getName());
-                known.add(new ResourceParameter(argument.getName(), value != null ? value.toString() : null, argument));
+                known.add(new ResourceParameter(argument.getName(), value != null ? value.toString() : null,
+                        argument));
                 added.add(argument.getName());
             }
         }
@@ -304,7 +309,8 @@ public class ResourceEditor extends ViewPart {
         for (String pid : resource.getParameters().keySet()) {
             if (!pid.contains(".") && !added.contains(pid)) {
                 Object value = resource.getParameters().get(pid);
-                other.add(new ResourceParameter(pid, value != null ? value.toString() : null, (Argument) null));
+                other.add(
+                        new ResourceParameter(pid, value != null ? value.toString() : null, (Argument) null));
                 added.add(pid);
             } else {
                 toAdd.add(Path.getFirst(pid, "."));
@@ -342,7 +348,9 @@ public class ResourceEditor extends ViewPart {
 
         @Override
         public Object[] getChildren(Object parentElement) {
-            return parentElement instanceof ResourceParameter ? ((ResourceParameter) parentElement).getChildren() : null;
+            return parentElement instanceof ResourceParameter
+                    ? ((ResourceParameter) parentElement).getChildren()
+                    : null;
         }
 
         @Override
@@ -389,9 +397,10 @@ public class ResourceEditor extends ViewPart {
             if (element instanceof ResourceParameter && ((ResourceParameter) element).descriptor != null
                     && (((ResourceParameter) element).descriptor.isFinal()
                             || ((ResourceParameter) element).descriptor.isRequired())) {
-                return ((ResourceParameter) element).value != null && !((ResourceParameter) element).value.isEmpty()
-                        ? SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN)
-                        : SWTResourceManager.getColor(SWT.COLOR_RED);
+                return ((ResourceParameter) element).value != null
+                        && !((ResourceParameter) element).value.isEmpty()
+                                ? SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN)
+                                : SWTResourceManager.getColor(SWT.COLOR_RED);
             }
             return null;
         }
@@ -454,8 +463,11 @@ public class ResourceEditor extends ViewPart {
         this.adapterPropertyViewer.setInput(getParameters());
         this.attributeViewer.setInput(resource.getAttributes());
         this.dependencyViewer
-                .setInput(resource.getDependencies() == null ? new ArrayList<Attribute>() : resource.getDependencies());
-        this.outputViewer.setInput(resource.getOutputs() == null ? new ArrayList<Attribute>() : resource.getOutputs());
+                .setInput(resource.getDependencies() == null
+                        ? new ArrayList<Attribute>()
+                        : resource.getDependencies());
+        this.outputViewer
+                .setInput(resource.getOutputs() == null ? new ArrayList<Attribute>() : resource.getOutputs());
 
         this.actionChooser.removeAll();
         if (this.adapter != null /* happens at init with engine off */) {
@@ -464,25 +476,42 @@ public class ResourceEditor extends ViewPart {
             }
         }
 
-        this.title.setText(this.metadata.containsKey(IMetadata.DC_TITLE) ? this.metadata.get(IMetadata.DC_TITLE) : "");
-        this.keywords.setText(this.metadata.containsKey(IMetadata.IM_KEYWORDS) ? this.metadata.get(IMetadata.IM_KEYWORDS) : "");
-        this.urlDoi.setText(this.metadata.containsKey(IMetadata.DC_URL) ? this.metadata.get(IMetadata.DC_URL) : "");
-        this.description.setText(this.metadata.containsKey(IMetadata.DC_COMMENT) ? this.metadata.get(IMetadata.DC_COMMENT) : "");
+        this.title.setText(
+                this.metadata.containsKey(IMetadata.DC_TITLE) ? this.metadata.get(IMetadata.DC_TITLE) : "");
+        this.keywords.setText(this.metadata.containsKey(IMetadata.IM_KEYWORDS)
+                ? this.metadata.get(IMetadata.IM_KEYWORDS)
+                : "");
+        this.urlDoi.setText(
+                this.metadata.containsKey(IMetadata.DC_URL) ? this.metadata.get(IMetadata.DC_URL) : "");
+        this.description.setText(this.metadata.containsKey(IMetadata.DC_COMMENT)
+                ? this.metadata.get(IMetadata.DC_COMMENT)
+                : "");
         this.originatingInstitution
-                .setText(this.metadata.containsKey(IMetadata.DC_ORIGINATOR) ? this.metadata.get(IMetadata.DC_ORIGINATOR) : "");
-        this.authors.setText(this.metadata.containsKey(IMetadata.DC_CREATOR) ? this.metadata.get(IMetadata.DC_CREATOR) : "");
+                .setText(this.metadata.containsKey(IMetadata.DC_ORIGINATOR)
+                        ? this.metadata.get(IMetadata.DC_ORIGINATOR)
+                        : "");
+        this.authors.setText(this.metadata.containsKey(IMetadata.DC_CREATOR)
+                ? this.metadata.get(IMetadata.DC_CREATOR)
+                : "");
         this.theme.setText(
-                this.metadata.containsKey(IMetadata.IM_THEMATIC_AREA) ? this.metadata.get(IMetadata.IM_THEMATIC_AREA) : "");
+                this.metadata.containsKey(IMetadata.IM_THEMATIC_AREA)
+                        ? this.metadata.get(IMetadata.IM_THEMATIC_AREA)
+                        : "");
         this.geoRegion.setText(
-                this.metadata.containsKey(IMetadata.IM_GEOGRAPHIC_AREA) ? this.metadata.get(IMetadata.IM_GEOGRAPHIC_AREA) : "");
-        this.references.setText(this.metadata.containsKey(IMetadata.DC_SOURCE) ? this.metadata.get(IMetadata.DC_SOURCE) : "");
-        this.notes.setText(this.metadata.containsKey(IMetadata.IM_NOTES) ? this.metadata.get(IMetadata.IM_NOTES) : "");
+                this.metadata.containsKey(IMetadata.IM_GEOGRAPHIC_AREA)
+                        ? this.metadata.get(IMetadata.IM_GEOGRAPHIC_AREA)
+                        : "");
+        this.references.setText(
+                this.metadata.containsKey(IMetadata.DC_SOURCE) ? this.metadata.get(IMetadata.DC_SOURCE) : "");
+        this.notes.setText(
+                this.metadata.containsKey(IMetadata.IM_NOTES) ? this.metadata.get(IMetadata.IM_NOTES) : "");
 
         this.publishingNodes = Activator.engineMonitor().isRunning()
                 ? Activator.klab().getPublishingNodes(resource.getAdapterType())
                 : new ArrayList<>();
 
-        this.publishButton.setEnabled(isLocal && this.isPublishable.getSelection() && !this.publishingNodes.isEmpty());
+        this.publishButton
+                .setEnabled(isLocal && this.isPublishable.getSelection() && !this.publishingNodes.isEmpty());
 
         File rpath = getResourcePath(resource);
 
@@ -491,20 +520,25 @@ public class ResourceEditor extends ViewPart {
             this.categorizationsCombo.setEnabled(true);
             this.btnEdit.setEnabled(true);
             this.categorizationsCombo.removeAll();
-            this.categorizationsCombo.add("New");
+            // this.categorizationsCombo.add("New");
             for (File file : rpath.listFiles()) {
+                /*
+                 * look for legacy codelists, only in local resources. These will be upgraded once
+                 * saved.
+                 */
                 if (file.toString().endsWith(".properties")) {
                     String ff = MiscUtilities.getFileBaseName(file);
                     if (ff.startsWith("code_")) {
-                        this.categorizationsCombo.add(ff.substring(5));
+                        String cl = ff.substring(5);
+                        if (!resource.getCodelists().contains(cl)) {
+                            this.categorizationsCombo.add(cl);
+                        }
                     }
                 }
             }
             for (String codelist : resource.getCodelists()) {
                 this.categorizationsCombo.add(codelist.toUpperCase());
             }
-
-            this.categorizationsCombo.select(0);
 
         }
 
@@ -522,7 +556,8 @@ public class ResourceEditor extends ViewPart {
         String project = Path.getFirst(path, "/");
         IKimProject prj = Kim.INSTANCE.getProject(project);
         if (project != null) {
-            File ret = new File(prj.getRoot() + File.separator + Path.getRemainder(resource.getLocalPath(), "/"));
+            File ret = new File(
+                    prj.getRoot() + File.separator + Path.getRemainder(resource.getLocalPath(), "/"));
             if (ret.exists()) {
                 return ret;
             }
@@ -557,7 +592,8 @@ public class ResourceEditor extends ViewPart {
         composite_1_1.setLayout(new GridLayout(2, false));
 
         Label lblNewLabel = new Label(composite_1_1, SWT.NONE);
-        lblNewLabel.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/logo_white_64.png"));
+        lblNewLabel.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide",
+                "icons/logo_white_64.png"));
 
         Composite composite_2 = new Composite(composite_1_1, SWT.NONE);
         RowLayout rl_composite_2 = new RowLayout(SWT.VERTICAL);
@@ -570,7 +606,8 @@ public class ResourceEditor extends ViewPart {
         lblNewLabel_1.setText("k.LAB Resource Editor");
 
         Label lblNewLabel_2 = new Label(composite_2, SWT.NONE);
-        lblNewLabel_2.setText("Define all the properties of a resource, its geometry and its provenance information");
+        lblNewLabel_2.setText(
+                "Define all the properties of a resource, its geometry and its provenance information");
 
         Label lblNewLabel_3 = new Label(composite_2, SWT.NONE);
         lblNewLabel_3.setForeground(SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN));
@@ -706,12 +743,14 @@ public class ResourceEditor extends ViewPart {
             tcl_composite.setColumnData(attributeName, new ColumnWeightData(40, true));
             attributeName.setText("Name");
 
-            TableViewerColumn attributesTableViewerColumn_Type = new TableViewerColumn(attributeViewer, SWT.NONE);
+            TableViewerColumn attributesTableViewerColumn_Type = new TableViewerColumn(attributeViewer,
+                    SWT.NONE);
             TableColumn attributeType = attributesTableViewerColumn_Type.getColumn();
             tcl_composite.setColumnData(attributeType, new ColumnWeightData(40, true));
             attributeType.setText("Type");
 
-            TableViewerColumn attributesTableViewerColumn_Example = new TableViewerColumn(attributeViewer, SWT.NONE);
+            TableViewerColumn attributesTableViewerColumn_Example = new TableViewerColumn(attributeViewer,
+                    SWT.NONE);
             TableColumn attributeExample = attributesTableViewerColumn_Example.getColumn();
             tcl_composite.setColumnData(attributeExample, new ColumnWeightData(20, true));
 
@@ -811,7 +850,8 @@ public class ResourceEditor extends ViewPart {
             });
 
             Label lblNewLabel_4 = new Label(composite_3, SWT.NONE);
-            lblNewLabel_4.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/help.gif"));
+            lblNewLabel_4.setImage(
+                    ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/help.gif"));
             {
                 geometryDefinition = new Label(grpGeometry, SWT.NONE);
                 geometryDefinition.setForeground(SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY));
@@ -886,11 +926,13 @@ public class ResourceEditor extends ViewPart {
                                         if (value != null && descriptor != null) {
                                             if (!Utils.validateAs(value, descriptor.getType())) {
                                                 setMessage("'" + value + "' is not a suitable value for type "
-                                                        + descriptor.getType().name().toLowerCase(), Level.SEVERE);
+                                                        + descriptor.getType().name().toLowerCase(),
+                                                        Level.SEVERE);
                                             }
                                             if (data.parameter.endsWith("Url")) {
                                                 if (!UrlValidator.getInstance().isValid(value.toString())) {
-                                                    setMessage("'" + value + "' is not a valid URL", Level.SEVERE);
+                                                    setMessage("'" + value + "' is not a valid URL",
+                                                            Level.SEVERE);
                                                 }
                                             }
                                         }
@@ -972,7 +1014,8 @@ public class ResourceEditor extends ViewPart {
         // TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
         // tabItem.setText("New Item");
 
-        ScrolledComposite scrolledComposite = new ScrolledComposite(mainViewTabFolder, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+        ScrolledComposite scrolledComposite = new ScrolledComposite(mainViewTabFolder,
+                SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
         tbtmProvenanceData.setControl(scrolledComposite);
         scrolledComposite.setExpandHorizontal(true);
         scrolledComposite.setExpandVertical(true);
@@ -1059,8 +1102,10 @@ public class ResourceEditor extends ViewPart {
         lblTheme.setText("Theme");
 
         theme = new Combo(grpThematicLocators, SWT.NONE);
-        theme.setItems(new String[]{"Agriculture", "Behavior and social", "Biology", "Chemistry", "Conservation", "Demography",
-                "Earth", "Ecology", "Economics", "Engineering", "Geography", "Geology", "Hydrology", "Infrastructure",
+        theme.setItems(new String[]{"Agriculture", "Behavior and social", "Biology", "Chemistry",
+                "Conservation", "Demography",
+                "Earth", "Ecology", "Economics", "Engineering", "Geography", "Geology", "Hydrology",
+                "Infrastructure",
                 "Landcover", "Physical and climatic", "Policy", "Socio-ecological", "Soil"});
         theme.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         theme.addModifyListener(new ModifyListener(){
@@ -1085,10 +1130,12 @@ public class ResourceEditor extends ViewPart {
         });
 
         Label lblNewLabel_5 = new Label(grpThematicLocators, SWT.NONE);
-        lblNewLabel_5.setToolTipText("These fields are open for new entries, but please endeavor to reuse existing keywords.\n"
-                + "In the geographic location, please start at the continental level and if more specific tags are needed,\n"
-                + "separate them with forward slashes: e.g. Europe/France/Gascogne");
-        lblNewLabel_5.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/help.gif"));
+        lblNewLabel_5.setToolTipText(
+                "These fields are open for new entries, but please endeavor to reuse existing keywords.\n"
+                        + "In the geographic location, please start at the continental level and if more specific tags are needed,\n"
+                        + "separate them with forward slashes: e.g. Europe/France/Gascogne");
+        lblNewLabel_5.setImage(
+                ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/help.gif"));
 
         Label lblKeywords = new Label(composite_1, SWT.NONE);
         lblKeywords.setText("Keywords");
@@ -1138,35 +1185,27 @@ public class ResourceEditor extends ViewPart {
         });
 
         Composite composite = new Composite(parent, SWT.NONE);
-        GridLayout gl_composite = new GridLayout(6, false);
+        GridLayout gl_composite = new GridLayout(5, false);
         gl_composite.marginLeft = 4;
         composite.setLayout(gl_composite);
         composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
         Composite composite_4 = new Composite(composite, SWT.NONE);
-        composite_4.setLayout(new GridLayout(5, false));
+        composite_4.setLayout(new GridLayout(3, false));
 
         Label lblNewLabel_6 = new Label(composite_4, SWT.NONE);
         lblNewLabel_6.setBounds(0, 0, 55, 15);
         lblNewLabel_6.setText("Codelist");
 
         categorizationsCombo = new Combo(composite_4, SWT.READ_ONLY);
-        categorizationsCombo.addSelectionListener(new SelectionAdapter() {
+        categorizationsCombo.addSelectionListener(new SelectionAdapter(){
             @Override
             public void widgetSelected(SelectionEvent e) {
-                if (resource.getCodelists().contains(categorizationsCombo.getText())) {
-                    IFile clist = Eclipse.INSTANCE.getResourceFile(resource, categorizationsCombo.getText().toLowerCase() + ".json");
-                    if (clist.exists()) {
-                        CodelistReference ref = JsonUtils.load(clist.getLocation().toFile(), CodelistReference.class);
-                        codelistEditor.loadCodelist(ref);
-                        mainViewTabFolder.getTabList()[3].setEnabled(true);
-                        mainViewTabFolder.setSelection(3);
-                    }
-                }
+                loadCodelist(categorizationsCombo.getText());
             }
         });
         GridData gd_categorizationsCombo = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-        gd_categorizationsCombo.widthHint = 76;
+        gd_categorizationsCombo.widthHint = 140;
         categorizationsCombo.setLayoutData(gd_categorizationsCombo);
         // categorizationsCombo.add("New");
         // for (String cat : getCategorizations()) {
@@ -1175,34 +1214,27 @@ public class ResourceEditor extends ViewPart {
         categorizationsCombo.setBounds(0, 0, 91, 23);
         categorizationsCombo.setEnabled(false);
 
-
         this.btnEdit = new Button(composite_4, SWT.NONE);
         btnEdit.addSelectionListener(new SelectionAdapter(){
             @Override
             public void widgetSelected(SelectionEvent e) {
             }
         });
-        btnEdit.setText("Edit...");
+        btnEdit.setText("New...");
         btnEdit.setEnabled(false);
         btnEdit.addMouseListener(new MouseAdapter(){
             @Override
             public void mouseDown(MouseEvent e) {
-                editCategorization(categorizationsCombo.getText());
+                createCodelist();
+                // editCategorization(categorizationsCombo.getText());
             }
         });
-
-        Button btnPublish = new Button(composite_4, SWT.NONE);
-        btnPublish.setToolTipText("Expose as an authority");
-        btnPublish.setText("Authority...");
-        btnPublish.setEnabled(false);
-        btnEdit.addMouseListener(new MouseAdapter(){
-            @Override
-            public void mouseDown(MouseEvent e) {
-                publishCodelist(categorizationsCombo.getText());
-            }
-        });
-
-        new Label(composite_4, SWT.NONE);
+        // btnEdit.addMouseListener(new MouseAdapter(){
+        // @Override
+        // public void mouseDown(MouseEvent e) {
+        // publishCodelist(categorizationsCombo.getText());
+        // }
+        // });
 
         messageLabel = new Label(composite, SWT.NONE);
         messageLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -1241,12 +1273,12 @@ public class ResourceEditor extends ViewPart {
             @Override
             public void mouseDown(MouseEvent e) {
                 if (!dirty || Eclipse.INSTANCE.confirm("Abandon changes?")) {
-                    PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().hideView(ResourceEditor.this);
+                    PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+                            .hideView(ResourceEditor.this);
                 }
             }
         });
         cancelButton.setText("Cancel");
-        new Label(composite, SWT.NONE);
 
         createActions();
         initializeToolBar();
@@ -1255,7 +1287,44 @@ public class ResourceEditor extends ViewPart {
         setDirty(false);
     }
 
-    protected void publishCodelist(String text) {
+    protected void loadCodelist(String codelist) {
+
+        if (resource != null) {
+            ResourceCRUDRequest request = new ResourceCRUDRequest();
+            request.getResourceUrns().add(resource.getUrn());
+            request.setCodelistAttribute(codelist);
+            Activator.post((message) -> {
+                CodelistReference ref = message.getPayload(CodelistReference.class);
+                codelistEditor.loadCodelist(ref);
+                Display.getDefault().asyncExec(() -> {
+                    mainViewTabFolder.getTabList()[3].setEnabled(true);
+                    mainViewTabFolder.setSelection(3);
+                });
+            }, IMessage.MessageClass.ResourceLifecycle, IMessage.Type.GetCodelist, request);
+        }
+    }
+
+    protected void createCodelist() {
+        // TODO Auto-generated method stub
+        List<String> cats = new ArrayList<>();
+        if (resource != null) {
+            for (String id : resource.getCategorizables()) {
+                cats.add(id);
+            }
+            for (AttributeReference attribute : resource.getAttributes()) {
+                cats.add(attribute.getName());
+            }
+        }
+        WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(),
+                new NewCategorizationWizard(cats, (id, cat) -> {
+                    openCategorization(id, cat);
+                    categorizationsCombo.add(id);
+                }));
+        dialog.create();
+        dialog.open();
+    }
+
+    protected void updateCodelist(String codelist) {
         // TODO Auto-generated method stub
 
     }
@@ -1272,10 +1341,11 @@ public class ResourceEditor extends ViewPart {
                     cats.add(attribute.getName());
                 }
             }
-            WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(), new NewCategorizationWizard(cats, (id, cat) -> {
-                openCategorization(id, cat);
-                categorizationsCombo.add(id);
-            }));
+            WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(),
+                    new NewCategorizationWizard(cats, (id, cat) -> {
+                        openCategorization(id, cat);
+                        categorizationsCombo.add(id);
+                    }));
             dialog.create();
             dialog.open();
         } else if (resource != null) {
@@ -1318,7 +1388,8 @@ public class ResourceEditor extends ViewPart {
                 if (operation.getDescription().equals(selectedOperation)) {
                     selectedOperation = operation.getName();
                     if (operation.isRequiresConfirmation()) {
-                        if (!Eclipse.INSTANCE.confirm("Confirm execution of " + operation.getName() + " operation?")) {
+                        if (!Eclipse.INSTANCE
+                                .confirm("Confirm execution of " + operation.getName() + " operation?")) {
                             selectedOperation = null;
                         }
                     }
@@ -1328,7 +1399,8 @@ public class ResourceEditor extends ViewPart {
             if (selectedOperation != null) {
                 request.setUrn(resource.getUrn());
                 request.setOperation(selectedOperation);
-                Activator.post(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceOperation, request);
+                Activator.post(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceOperation,
+                        request);
             }
         }
     }
@@ -1362,7 +1434,8 @@ public class ResourceEditor extends ViewPart {
                 request.setParameters(params);
             }
             try {
-                return Activator.ask(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceOperation, request).get();
+                return Activator.ask(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceOperation,
+                        request).get();
             } catch (Exception e) {
             }
         }
@@ -1410,7 +1483,8 @@ public class ResourceEditor extends ViewPart {
                     setPartName(getTitle().substring(2));
                 }
             }
-            saveButton.setEnabled(b && Activator.engineMonitor() != null && Activator.engineMonitor().isRunning());
+            saveButton.setEnabled(
+                    b && Activator.engineMonitor() != null && Activator.engineMonitor().isRunning());
             dirty = b;
         }
     }

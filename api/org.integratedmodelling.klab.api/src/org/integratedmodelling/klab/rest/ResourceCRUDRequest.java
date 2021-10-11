@@ -9,15 +9,19 @@ import org.integratedmodelling.klab.api.data.CRUDOperation;
 
 public class ResourceCRUDRequest {
 
-    private Set<String>   resourceUrns = new HashSet<>();
-    private String        destinationProject;
+    private Set<String> resourceUrns = new HashSet<>();
+    private String destinationProject;
     private CRUDOperation operation;
     private String adapter;
     private Map<String, String> parameters = new LinkedHashMap<>();
     private Map<String, String> metadata = new LinkedHashMap<>();
     private Map<String, ServicePrototype.Argument> attributes = new LinkedHashMap<>();
     private String geometry;
-    
+    // sent for codelist update/delete operations
+    private CodelistReference codelist;
+    // sent for codelist creation
+    private String codelistAttribute;
+
     public Set<String> getResourceUrns() {
         return resourceUrns;
     }
@@ -25,7 +29,7 @@ public class ResourceCRUDRequest {
     public void setResourceUrns(Set<String> resourceUrns) {
         this.resourceUrns = resourceUrns;
     }
-    
+
     public String getDestinationProject() {
         return destinationProject;
     }
@@ -42,44 +46,60 @@ public class ResourceCRUDRequest {
         this.operation = operation;
     }
 
-	public Map<String, ServicePrototype.Argument> getAttributes() {
-		return attributes;
-	}
+    public Map<String, ServicePrototype.Argument> getAttributes() {
+        return attributes;
+    }
 
-	public void setAttributes(Map<String, ServicePrototype.Argument> attributes) {
-		this.attributes = attributes;
-	}
+    public void setAttributes(Map<String, ServicePrototype.Argument> attributes) {
+        this.attributes = attributes;
+    }
 
-	public Map<String, String> getParameters() {
-		return parameters;
-	}
+    public Map<String, String> getParameters() {
+        return parameters;
+    }
 
-	public void setParameters(Map<String, String> parameters) {
-		this.parameters = parameters;
-	}
+    public void setParameters(Map<String, String> parameters) {
+        this.parameters = parameters;
+    }
 
-	public void setAdapter(String adapter) {
-		this.adapter = adapter;
-	}
+    public void setAdapter(String adapter) {
+        this.adapter = adapter;
+    }
 
-	public String getAdapter() {
-		return adapter;
-	}
+    public String getAdapter() {
+        return adapter;
+    }
 
-	public Map<String, String> getMetadata() {
-		return metadata;
-	}
+    public Map<String, String> getMetadata() {
+        return metadata;
+    }
 
-	public void setMetadata(Map<String, String> metadata) {
-		this.metadata = metadata;
-	}
+    public void setMetadata(Map<String, String> metadata) {
+        this.metadata = metadata;
+    }
 
-	public String getGeometry() {
-		return geometry;
-	}
+    public String getGeometry() {
+        return geometry;
+    }
 
-	public void setGeometry(String geometry) {
-		this.geometry = geometry;
-	}
+    public void setGeometry(String geometry) {
+        this.geometry = geometry;
+    }
+
+    public CodelistReference getCodelist() {
+        return codelist;
+    }
+
+    public void setCodelist(CodelistReference codelist) {
+        this.codelist = codelist;
+    }
+
+    public String getCodelistAttribute() {
+        return codelistAttribute;
+    }
+
+    public void setCodelistAttribute(String codelistAttribute) {
+        this.codelistAttribute = codelistAttribute;
+    }
 
 }

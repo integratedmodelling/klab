@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -43,7 +42,7 @@ import org.integratedmodelling.klab.utils.Utils;
  * @author Ferd
  *
  */
-public class CodeList implements ICodelist<Object, Object> {
+public class CodeList implements ICodelist {
 
     public enum Mapping {
         CODELIST, YEAR, DATE_PATTERN
@@ -51,7 +50,7 @@ public class CodeList implements ICodelist<Object, Object> {
     }
 
     private Properties properties = new Properties();
-    private BidiMap<Object, Object> mappings = new DualTreeBidiMap<>();
+    private BidiMap<String, Object> mappings = new DualTreeBidiMap<>();
     private IArtifact.Type type = null;
     private String worldview = null;
     private IConcept rootConcept = null;
@@ -104,7 +103,7 @@ public class CodeList implements ICodelist<Object, Object> {
         }
     }
 
-    public Object value(Object value) {
+    public Object value(String value) {
 
         if (this.mapping == Mapping.YEAR) {
 
@@ -138,7 +137,7 @@ public class CodeList implements ICodelist<Object, Object> {
         return null;
     }
 
-    public Object key(Object value) {
+    public String key(Object value) {
 
         if (this.mapping == Mapping.YEAR) {
 
@@ -190,7 +189,7 @@ public class CodeList implements ICodelist<Object, Object> {
     }
 
     @Override
-    public Collection<Object> keys(Object value) {
+    public Collection<String> keys(Object value) {
         // TODO Auto-generated method stub
         return null;
     }

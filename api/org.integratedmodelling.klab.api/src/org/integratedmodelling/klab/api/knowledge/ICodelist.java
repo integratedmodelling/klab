@@ -19,7 +19,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
  * @author Ferd
  *
  */
-public interface ICodelist<K, T> {
+public interface ICodelist {
 
     /**
      * Name of codelist. Usually a string with agency/name/version.
@@ -81,7 +81,7 @@ public interface ICodelist<K, T> {
      * @param key
      * @return
      */
-    T value(K key);
+    Object value(String key);
 
     /**
      * All keys correspondent to a value.
@@ -89,7 +89,7 @@ public interface ICodelist<K, T> {
      * @param value
      * @return
      */
-    Collection<K> keys(T value);
+    Collection<String> keys(Object value);
 
     /**
      * The preferential key correspondent to a value.
@@ -97,6 +97,6 @@ public interface ICodelist<K, T> {
      * @param value
      * @return
      */
-    K key(T value);
+    String key(Object value);
 
 }

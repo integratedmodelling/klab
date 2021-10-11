@@ -19,6 +19,7 @@ import org.integratedmodelling.klab.api.data.IResource.Attribute;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
+import org.integratedmodelling.klab.api.knowledge.ICodelist;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -370,5 +371,11 @@ public class WekaEncoder implements IResourceEncoder {
 		// TODO Auto-generated method stub
 		return resource;
 	}
+
+    @Override
+    public ICodelist categorize(IResource resource, String attribute, IMonitor monitor) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

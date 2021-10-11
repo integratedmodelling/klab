@@ -3,6 +3,7 @@ package org.integratedmodelling.klab;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,9 +13,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
@@ -42,6 +46,7 @@ import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator.Operation;
 import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
+import org.integratedmodelling.klab.api.knowledge.ICodelist;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
@@ -68,6 +73,7 @@ import org.integratedmodelling.klab.data.encoding.DecodingDataBuilder;
 import org.integratedmodelling.klab.data.encoding.LocalDataBuilder;
 import org.integratedmodelling.klab.data.encoding.StandaloneResourceBuilder;
 import org.integratedmodelling.klab.data.encoding.VisitingDataBuilder;
+import org.integratedmodelling.klab.data.resources.Codelist;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.data.resources.ResourceBuilder;
 import org.integratedmodelling.klab.data.storage.FutureResource;
@@ -89,6 +95,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.code.Expression;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
@@ -97,9 +104,11 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.kim.Prototype;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.rest.CodelistReference;
 import org.integratedmodelling.klab.rest.EngineEvent;
 import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.LocalResourceReference;
+import org.integratedmodelling.klab.rest.MappingReference;
 import org.integratedmodelling.klab.rest.NamespaceCompilationResult;
 import org.integratedmodelling.klab.rest.ProjectReference;
 import org.integratedmodelling.klab.rest.ResourceAdapterReference;
@@ -294,7 +303,8 @@ public enum Resources implements IResourceService {
                     }
                 }
             }
-            components = new ComponentsWorkspace("components", Configuration.INSTANCE.getDataPath("workspace/deploy"),
+            components = new ComponentsWorkspace("components",
+                    Configuration.INSTANCE.getDataPath("workspace/deploy"),
                     deployedComponents);
             workspaces.put(components.getName(), components);
             return true;
@@ -310,7 +320,8 @@ public enum Resources implements IResourceService {
      */
     public boolean loadWorldview(ICertificate certificate, IMonitor monitor) {
         try {
-            worldview = new Worldview(certificate.getWorldview(), Configuration.INSTANCE.getDataPath("worldview"),
+            worldview = new Worldview(certificate.getWorldview(),
+                    Configuration.INSTANCE.getDataPath("worldview"),
                     certificate.getWorldviewRepositories());
             this.loader = worldview.load(this.loader, monitor);
             workspaces.put(worldview.getName(), worldview);
@@ -402,8 +413,11 @@ public enum Resources implements IResourceService {
      * @return
      */
     public IProject retrieveAndLoadProject(String gitUrl) {
-        String projectId = GitUtils.requireUpdatedRepository(gitUrl, Configuration.INSTANCE.getDataPath("temp/projects"));
-        return projectId == null ? null : loadSingleton(projectId, Configuration.INSTANCE.getDataPath("temp/projects"));
+        String projectId = GitUtils.requireUpdatedRepository(gitUrl,
+                Configuration.INSTANCE.getDataPath("temp/projects"));
+        return projectId == null
+                ? null
+                : loadSingleton(projectId, Configuration.INSTANCE.getDataPath("temp/projects"));
     }
 
     public IProject loadSingleton(String projectId, File dataPath) {
@@ -426,7 +440,8 @@ public enum Resources implements IResourceService {
 
         String workspace = project.getWorkspace().getName();
 
-        if (projectCatalog.get(workspace) != null && projectCatalog.get(workspace).containsKey(project.getName())) {
+        if (projectCatalog.get(workspace) != null
+                && projectCatalog.get(workspace).containsKey(project.getName())) {
             return projectCatalog.get(workspace).get(project.getName());
         }
 
@@ -510,7 +525,8 @@ public enum Resources implements IResourceService {
                         /*
                          * get the resource descriptor directly from the node
                          */
-                        ResourceReference reference = node.getClient().get(API.NODE.RESOURCE.RESOLVE_URN, ResourceReference.class,
+                        ResourceReference reference = node.getClient().get(API.NODE.RESOURCE.RESOLVE_URN,
+                                ResourceReference.class,
                                 "urn", urn.getUrn());
                         ret = new Resource(reference);
                         this.remoteCache.put(urn.getUrn(), ret);
@@ -543,7 +559,8 @@ public enum Resources implements IResourceService {
     public String createLocalResourceUrn(String resourceId, IProject project) {
         IUserIdentity user = Authentication.INSTANCE.getAuthenticatedIdentity(IUserIdentity.class);
         if (user == null) {
-            throw new KlabAuthorizationException("cannot establish current user: resources cannot be created");
+            throw new KlabAuthorizationException(
+                    "cannot establish current user: resources cannot be created");
         }
         return "local:" + user.getUsername() + ":" + project.getName() + ":" + resourceId;
     }
@@ -594,12 +611,14 @@ public enum Resources implements IResourceService {
      * @return a {@link org.integratedmodelling.klab.api.data.IResource} object. with a local URN if
      *         successful.
      */
-    public IResource createLocalResource(String resourceId, File file, IParameters<String> parameters, IProject project,
+    public IResource createLocalResource(String resourceId, File file, IParameters<String> parameters,
+            IProject project,
             String adapterType, boolean forceUpdate, boolean asynchronous, IMonitor monitor) {
 
         IUserIdentity user = Authentication.INSTANCE.getAuthenticatedIdentity(IUserIdentity.class);
         if (user == null) {
-            throw new KlabAuthorizationException("cannot establish current user: resources cannot be created");
+            throw new KlabAuthorizationException(
+                    "cannot establish current user: resources cannot be created");
         }
 
         String urn = "local:" + user.getUsername() + ":" + project.getName() + ":" + resourceId;
@@ -636,7 +655,8 @@ public enum Resources implements IResourceService {
         }
 
         return asynchronous
-                ? importResourceAsynchronously(urn, project, adapterType, file, parameters, version, history, monitor)
+                ? importResourceAsynchronously(urn, project, adapterType, file, parameters, version, history,
+                        monitor)
                 : importResource(urn, project, adapterType, file, parameters, version, history, monitor);
     }
 
@@ -649,7 +669,8 @@ public enum Resources implements IResourceService {
      */
     public IResource createLocalResource(ResourceCRUDRequest request, Monitor monitor) {
 
-        monitor.info("Start importing resource " + request.getResourceUrns().iterator().next() + ": this may take a while");
+        monitor.info("Start importing resource " + request.getResourceUrns().iterator().next()
+                + ": this may take a while");
 
         String urn = request.getResourceUrns().iterator().next();
         IProject project = getProject(request.getDestinationProject());
@@ -677,7 +698,8 @@ public enum Resources implements IResourceService {
             }
         }
 
-        IResource ret = importResource(urn, project, adapterType, null, parameters, Version.create("0.0.1"), new ArrayList<>(),
+        IResource ret = importResource(urn, project, adapterType, null, parameters, Version.create("0.0.1"),
+                new ArrayList<>(),
                 monitor);
 
         monitor.info("Import of resource " + request.getResourceUrns().iterator().next() + " finished");
@@ -685,7 +707,8 @@ public enum Resources implements IResourceService {
         return ret;
     }
 
-    private IResource importResource(String urn, IProject project, String adapterType, File file, IParameters<String> parameters,
+    private IResource importResource(String urn, IProject project, String adapterType, File file,
+            IParameters<String> parameters,
             Version version, List<IResource> history, IMonitor monitor) {
 
         String id = Path.getLast(urn, ':');
@@ -717,7 +740,8 @@ public enum Resources implements IResourceService {
                 /*
                  * TODO use adapter metadata to validate the input before calling validate()
                  */
-                Builder builder = validator.validate(file == null ? null : file.toURI().toURL(), parameters, monitor);
+                Builder builder = validator.validate(file == null ? null : file.toURI().toURL(), parameters,
+                        monitor);
 
                 // add all history items
                 for (IResource his : history) {
@@ -730,18 +754,23 @@ public enum Resources implements IResourceService {
                  */
                 if (!builder.hasErrors() && file != null) {
                     resourceDatapath = new File(
-                            project.getRoot() + File.separator + "resources" + File.separator + resourceDataDir);
+                            project.getRoot() + File.separator + "resources" + File.separator
+                                    + resourceDataDir);
                     resourceDatapath.mkdirs();
 
                     for (File f : validator.getAllFilesForResource(file)) {
-                        FileUtils.copyFile(f, new File(resourceDatapath + File.separator + MiscUtilities.getFileName(f)));
+                        FileUtils.copyFile(f,
+                                new File(resourceDatapath + File.separator + MiscUtilities.getFileName(f)));
                         builder.addLocalResourcePath(
-                                project.getName() + "/resources/" + resourceDataDir + "/" + MiscUtilities.getFileName(f));
+                                project.getName() + "/resources/" + resourceDataDir + "/"
+                                        + MiscUtilities.getFileName(f));
                     }
                 }
 
-                resource = builder.withResourceVersion(version).withProjectName(project.getName()).withParameters(parameters)
-                        .withAdapterType(adapterType).withLocalPath(project.getName() + "/resources/" + resourceDataDir)
+                resource = builder.withResourceVersion(version).withProjectName(project.getName())
+                        .withParameters(parameters)
+                        .withAdapterType(adapterType)
+                        .withLocalPath(project.getName() + "/resources/" + resourceDataDir)
                         .build(urn);
 
                 resource.getExports().putAll(adapter.getImporter().getExportCapabilities(resource));
@@ -779,7 +808,8 @@ public enum Resources implements IResourceService {
         return resource;
     }
 
-    private FutureResource importResourceAsynchronously(String urn, IProject project, String adapterType, File file,
+    private FutureResource importResourceAsynchronously(String urn, IProject project, String adapterType,
+            File file,
             IParameters<String> parameters, Version version, List<IResource> history, IMonitor monitor) {
         // TODO create future, send it for execution, return it. The future knows its
         // URN so it can be used for basic ops.
@@ -798,7 +828,8 @@ public enum Resources implements IResourceService {
      *        the importer
      * @return
      */
-    public Collection<IResource> importResources(URL source, IProject project, @Nullable String adapterType, String regex) {
+    public Collection<IResource> importResources(URL source, IProject project, @Nullable String adapterType,
+            String regex) {
 
         List<IResourceAdapter> importers = new ArrayList<>();
         IParameters<String> parameters = new Parameters<String>();
@@ -809,7 +840,8 @@ public enum Resources implements IResourceService {
             parameters.put(REGEX_ENTRY, regex);
         }
         for (ResourceAdapterData adapter : resourceAdapters.values()) {
-            if ((adapterType == null || adapter.adapter.getName().equals(adapterType)) && adapter.adapter.getImporter() != null
+            if ((adapterType == null || adapter.adapter.getName().equals(adapterType))
+                    && adapter.adapter.getImporter() != null
                     && adapter.adapter.getImporter().canHandle(source.toString(), parameters)) {
                 importers.add(adapter.adapter);
             }
@@ -821,7 +853,8 @@ public enum Resources implements IResourceService {
 
             IResourceImporter importer = adapter.getImporter();
 
-            for (Builder builder : importer.importResources(source.toString(), parameters, Klab.INSTANCE.getRootMonitor())) {
+            for (Builder builder : importer.importResources(source.toString(), parameters,
+                    Klab.INSTANCE.getRootMonitor())) {
 
                 /*
                  * if no errors, copy files and add notifications to resource; set relative paths in
@@ -830,17 +863,20 @@ public enum Resources implements IResourceService {
                 if (!builder.hasErrors()) {
 
                     File resourceDatapath = new File(
-                            project.getRoot() + File.separator + "resources" + File.separator + builder.getResourceId());
+                            project.getRoot() + File.separator + "resources" + File.separator
+                                    + builder.getResourceId());
                     resourceDatapath.mkdirs();
 
                     for (File f : builder.getImportedFiles()) {
                         try {
-                            FileUtils.copyFile(f, new File(resourceDatapath + File.separator + MiscUtilities.getFileName(f)));
+                            FileUtils.copyFile(f, new File(
+                                    resourceDatapath + File.separator + MiscUtilities.getFileName(f)));
                         } catch (IOException e) {
                             throw new KlabIOException(e);
                         }
                         builder.addLocalResourcePath(
-                                project.getName() + "/resources/" + builder.getResourceId() + "/" + MiscUtilities.getFileName(f));
+                                project.getName() + "/resources/" + builder.getResourceId() + "/"
+                                        + MiscUtilities.getFileName(f));
                     }
                 }
 
@@ -848,7 +884,8 @@ public enum Resources implements IResourceService {
                 IUserIdentity user = Authentication.INSTANCE.getAuthenticatedIdentity(IUserIdentity.class);
                 String owner = user == null ? "integratedmodelling.org" : user.getUsername();
 
-                IResource resource = builder.withResourceVersion(Version.create("0.0.1")).withProjectName(project.getName())
+                IResource resource = builder.withResourceVersion(Version.create("0.0.1"))
+                        .withProjectName(project.getName())
                         .withParameters(parameters).withAdapterType(adapter.getName())
                         .withLocalPath(project.getName() + "/resources/" + builder.getResourceId())
                         .build(Urns.INSTANCE.getLocalUrn(builder.getResourceId(), project, owner));
@@ -971,7 +1008,8 @@ public enum Resources implements IResourceService {
     }
 
     // @Override
-    public Pair<IArtifact, IArtifact> resolveResourceToArtifact(String urn, IMonitor monitor, boolean forceGrid,
+    public Pair<IArtifact, IArtifact> resolveResourceToArtifact(String urn, IMonitor monitor,
+            boolean forceGrid,
             ISemantic observableSemantics, ISemantic contextObservableSemantics) {
 
         IObservable observable = observableSemantics instanceof IObservable
@@ -979,7 +1017,9 @@ public enum Resources implements IResourceService {
                 : (observableSemantics == null ? null : Observable.promote(observableSemantics.getType()));
         IObservable contextObservable = contextObservableSemantics instanceof IObservable
                 ? (IObservable) contextObservableSemantics
-                : (contextObservableSemantics == null ? null : Observable.promote(contextObservableSemantics.getType()));
+                : (contextObservableSemantics == null
+                        ? null
+                        : Observable.promote(contextObservableSemantics.getType()));
 
         Pair<String, Map<String, String>> urnp = Urns.INSTANCE.resolveParameters(urn);
         IResource resource = resolveResource(urn);
@@ -994,7 +1034,8 @@ public enum Resources implements IResourceService {
         }
 
         if (contextObservable == null) {
-            contextObservable = Observable.promote(OWL.INSTANCE.getNonsemanticPeer("Context", IArtifact.Type.OBJECT));
+            contextObservable = Observable
+                    .promote(OWL.INSTANCE.getNonsemanticPeer("Context", IArtifact.Type.OBJECT));
         }
 
         SimpleRuntimeScope context = new SimpleRuntimeScope((Observable) contextObservable, scale, monitor);
@@ -1004,7 +1045,8 @@ public enum Resources implements IResourceService {
             observable = Observable.promote(OWL.INSTANCE.getNonsemanticPeer("Artifact", resource.getType()));
         }
 
-        IKlabData data = getResourceData(resource, urnp.getSecond(), scale, context.getChild((Observable) observable, resource));
+        IKlabData data = getResourceData(resource, urnp.getSecond(), scale,
+                context.getChild((Observable) observable, resource));
 
         return data == null ? null : new Pair<>(ctxArtifact, data.getArtifact());
     }
@@ -1041,10 +1083,12 @@ public enum Resources implements IResourceService {
                 throw new KlabUnsupportedFeatureException(
                         "adapter for resource of type " + resource.getAdapterType() + " not available");
             }
-            adapter.getEncoder().getEncodedData(resource, kurn.getParameters(), resource.getGeometry(), builder,
+            adapter.getEncoder().getEncodedData(resource, kurn.getParameters(), resource.getGeometry(),
+                    builder,
                     Expression.emptyContext(resource.getGeometry(), monitor));
         } else {
-            throw new KlabInternalErrorException("getResourceData(): this call can only be used to access local resources");
+            throw new KlabInternalErrorException(
+                    "getResourceData(): this call can only be used to access local resources");
         }
         return builder.build();
     }
@@ -1058,7 +1102,8 @@ public enum Resources implements IResourceService {
      * @param monitor
      * @return
      */
-    public IKlabData getResourceData(String urn, IKlabData.Builder builder, IGeometry geometry, IMonitor monitor) {
+    public IKlabData getResourceData(String urn, IKlabData.Builder builder, IGeometry geometry,
+            IMonitor monitor) {
 
         Urn kurn = new Urn(urn);
         if (kurn.isLocal()) {
@@ -1078,7 +1123,8 @@ public enum Resources implements IResourceService {
 
             IUrnAdapter adapter = getUrnAdapter(kurn.getCatalog());
             if (adapter == null) {
-                throw new KlabUnsupportedFeatureException("adapter for resource of type " + kurn.getCatalog() + " not available");
+                throw new KlabUnsupportedFeatureException(
+                        "adapter for resource of type " + kurn.getCatalog() + " not available");
             }
 
             IContextualizationScope scope = Expression.emptyContext(geometry, monitor);
@@ -1095,7 +1141,8 @@ public enum Resources implements IResourceService {
                 ResourceDataRequest request = new ResourceDataRequest();
                 request.setUrn(urn.toString());
                 request.setGeometry(geometry.encode());
-                builder = new DecodingDataBuilder(node.getClient().post(API.NODE.RESOURCE.GET_DATA, request, Map.class),
+                builder = new DecodingDataBuilder(
+                        node.getClient().post(API.NODE.RESOURCE.GET_DATA, request, Map.class),
                         Expression.emptyContext(geometry, monitor));
             }
         }
@@ -1118,7 +1165,8 @@ public enum Resources implements IResourceService {
      * @param scope
      * @return KlabException if anything goes wrong
      */
-    public IKlabData getResourceData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
+    public IKlabData getResourceData(IResource resource, Map<String, String> urnParameters,
+            IGeometry geometry,
             IContextualizationScope scope) {
         return getResourceData(resource, urnParameters, geometry, scope, null);
     }
@@ -1135,7 +1183,8 @@ public enum Resources implements IResourceService {
      * @param targetArtifact
      * @return
      */
-    public IKlabData getResourceData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
+    public IKlabData getResourceData(IResource resource, Map<String, String> urnParameters,
+            IGeometry geometry,
             IContextualizationScope scope, IArtifact targetArtifact) {
 
         Urn urn = new Urn(resource.getUrn(), urnParameters);
@@ -1145,11 +1194,13 @@ public enum Resources implements IResourceService {
         SessionActivity.ResourceActivity descriptor = null;
         AbstractTask<?> task = scope.getMonitor().getIdentity().getParentIdentity(AbstractTask.class);
         if (task != null && task.getActivity().getActivityDescriptor() != null) {
-            descriptor = task.getActivity().getActivityDescriptor().getResourceActivities().get(resource.getUrn());
+            descriptor = task.getActivity().getActivityDescriptor().getResourceActivities()
+                    .get(resource.getUrn());
             if (descriptor == null) {
                 descriptor = new ResourceActivity();
                 descriptor.setUrn(urn.toString());
-                task.getActivity().getActivityDescriptor().getResourceActivities().put(resource.getUrn(), descriptor);
+                task.getActivity().getActivityDescriptor().getResourceActivities().put(resource.getUrn(),
+                        descriptor);
             }
         }
 
@@ -1198,7 +1249,8 @@ public enum Resources implements IResourceService {
                     return ret;
                 } catch (Throwable e) {
                     // just return null later
-                    scope.getMonitor().error("could not extract data from " + resource.getUrn() + ": " + e.getMessage());
+                    scope.getMonitor().error(
+                            "could not extract data from " + resource.getUrn() + ": " + e.getMessage());
 
                     if (descriptor != null) {
                         descriptor.setnErrors(descriptor.getnErrors() + 1);
@@ -1326,7 +1378,8 @@ public enum Resources implements IResourceService {
                          */
                         return Observations.INSTANCE.makeROIObserver(data.getObjectName(0),
                                 data.getObjectScale(0).getSpace().getShape(),
-                                org.integratedmodelling.klab.Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR),
+                                org.integratedmodelling.klab.Time.INSTANCE
+                                        .getGenericCurrentExtent(Resolution.Type.YEAR),
                                 data.getObjectMetadata(0));
                     }
                 }
@@ -1392,7 +1445,8 @@ public enum Resources implements IResourceService {
         urnAdapters.put(type, adapter);
     }
 
-    public void registerResourceAdapter(String type, IResourceAdapter adapter, boolean canDropFiles, boolean canCreateEmpty) {
+    public void registerResourceAdapter(String type, IResourceAdapter adapter, boolean canDropFiles,
+            boolean canCreateEmpty) {
         ResourceAdapterData data = new ResourceAdapterData();
         data.adapter = adapter;
         data.canCreateEmpty = canCreateEmpty;
@@ -1430,7 +1484,8 @@ public enum Resources implements IResourceService {
         if (Urns.INSTANCE.isLocal(resource.getUrn())) {
             return getLocalResourceCatalog();
         }
-        throw new KlabResourceAccessException("unimplemented alignment of public and local resource catalogs");
+        throw new KlabResourceAccessException(
+                "unimplemented alignment of public and local resource catalogs");
     }
 
     // @Override
@@ -1463,7 +1518,8 @@ public enum Resources implements IResourceService {
 
         if (!forceUpdate) {
             ResourceData cached = statusCache.get(resource.getUrn());
-            if (cached != null && (System.currentTimeMillis() - cached.timestamp) < (RETRY_INTERVAL_MINUTES * 60 * 1000)) {
+            if (cached != null && (System.currentTimeMillis() - cached.timestamp) < (RETRY_INTERVAL_MINUTES
+                    * 60 * 1000)) {
                 return cached.online;
             }
         }
@@ -1546,7 +1602,8 @@ public enum Resources implements IResourceService {
 
         @Override
         public IResource finish() {
-            return createLocalResource(this.id, this.file, this.parameters, this.project, this.adapter, true, false,
+            return createLocalResource(this.id, this.file, this.parameters, this.project, this.adapter, true,
+                    false,
                     Klab.INSTANCE.getRootMonitor());
         }
 
@@ -1614,7 +1671,8 @@ public enum Resources implements IResourceService {
 
         IProject sourceProject = getProject(resource.getLocalProjectName());
         if (sourceProject == null || sourceProject.getName().equals(destinationProject.getName())) {
-            throw new IllegalArgumentException("moving resource: source project is invalid or the same as the destination");
+            throw new IllegalArgumentException(
+                    "moving resource: source project is invalid or the same as the destination");
         }
 
         String originalUrn = resource.getUrn();
@@ -1625,9 +1683,11 @@ public enum Resources implements IResourceService {
          */
         ((Resource) resource).copyToHistory("Copied to new project " + destinationProject.getName());
         ((Resource) resource).setLocalProject(destinationProject.getName());
-        ((Resource) resource).setUrn(Urns.INSTANCE.changeLocalProject(originalUrn, destinationProject.getName()));
         ((Resource) resource)
-                .setLocalPath(destinationProject.getName() + resource.getLocalPath().substring(originalProject.length()));
+                .setUrn(Urns.INSTANCE.changeLocalProject(originalUrn, destinationProject.getName()));
+        ((Resource) resource)
+                .setLocalPath(destinationProject.getName()
+                        + resource.getLocalPath().substring(originalProject.length()));
 
         List<String> newLocalPaths = new ArrayList<>();
         for (String path : ((Resource) resource).getLocalPaths()) {
@@ -1639,7 +1699,8 @@ public enum Resources implements IResourceService {
         getLocalResourceCatalog().remove(originalUrn);
         getLocalResourceCatalog().put(resource.getUrn(), resource);
 
-        Logging.INSTANCE.info("moved resource " + originalUrn + " to project " + destinationProject.getName() + ": new URN is "
+        Logging.INSTANCE.info("moved resource " + originalUrn + " to project " + destinationProject.getName()
+                + ": new URN is "
                 + resource.getUrn());
     }
 
@@ -1684,7 +1745,8 @@ public enum Resources implements IResourceService {
                 ref.setParameters(Extensions.INSTANCE.describePrototype(configuration));
                 ref.setCanCreateEmpty(ad.canCreateEmpty);
                 ref.setAcceptsDrops(ad.canDropFiles);
-                ref.getExportCapabilities().putAll(ad.adapter.getImporter().getExportCapabilities((IResource) null));
+                ref.getExportCapabilities()
+                        .putAll(ad.adapter.getImporter().getExportCapabilities((IResource) null));
                 ref.setMultipleResources(ad.adapter.getImporter().acceptsMultiple());
 
                 for (Operation operation : ad.adapter.getValidator().getAllowedOperations(null)) {
@@ -1814,13 +1876,15 @@ public enum Resources implements IResourceService {
         }
         if (node == null) {
             throw new KlabResourceNotFoundException(
-                    "Resource " + resource.getUrn() + " cannot be published: node " + nodeId + " unresponsive or offline");
+                    "Resource " + resource.getUrn() + " cannot be published: node " + nodeId
+                            + " unresponsive or offline");
         }
 
         IUserIdentity user = Authentication.INSTANCE.getAuthenticatedIdentity(IUserIdentity.class);
         String userId = user == null ? "anonymous" : user.getUsername();
 
-        final ITicket ret = Klab.INSTANCE.getTicketManager().open("user", userId, ITicket.Type.ResourceSubmission, "node", nodeId,
+        final ITicket ret = Klab.INSTANCE.getTicketManager().open("user", userId,
+                ITicket.Type.ResourceSubmission, "node", nodeId,
                 "resource", resource.getUrn());
 
         new Thread(){
@@ -1831,25 +1895,30 @@ public enum Resources implements IResourceService {
                         if (!hasFileContent(resource)) {
                             ResourceReference reference = ((Resource) resource).getReference();
                             reference.getMetadata().putAll(suggestions);
-                            TicketResponse.Ticket response = node.getClient().post(API.NODE.RESOURCE.SUBMIT_DESCRIPTOR, reference,
+                            TicketResponse.Ticket response = node.getClient().post(
+                                    API.NODE.RESOURCE.SUBMIT_DESCRIPTOR, reference,
                                     TicketResponse.Ticket.class);
                             ret.update("ticket", response.getId());
                         } else {
                             if (!suggestions.isEmpty()) {
-                                File pprop = new File(((Resource) resource).getPath() + File.separator + "publish.properties");
+                                File pprop = new File(((Resource) resource).getPath() + File.separator
+                                        + "publish.properties");
                                 Properties properties = new Properties();
                                 properties.putAll(suggestions);
                                 try (OutputStream out = new FileOutputStream(pprop)) {
                                     properties.store(out, null);
                                 }
                             }
-                            File zipFile = new File(System.getProperty("java.io.tmpdir") + File.separator + ret.getId() + ".zip");
+                            File zipFile = new File(System.getProperty("java.io.tmpdir") + File.separator
+                                    + ret.getId() + ".zip");
                             ZipUtils.zip(zipFile, ((Resource) resource).getPath(), false, true);
                             if (!suggestions.isEmpty()) {
                                 FileUtils.deleteQuietly(
-                                        new File(((Resource) resource).getPath() + File.separator + "publish.properties"));
+                                        new File(((Resource) resource).getPath() + File.separator
+                                                + "publish.properties"));
                             }
-                            TicketResponse.Ticket response = node.getClient().postFile(API.NODE.RESOURCE.SUBMIT_FILES, zipFile,
+                            TicketResponse.Ticket response = node.getClient().postFile(
+                                    API.NODE.RESOURCE.SUBMIT_FILES, zipFile,
                                     TicketResponse.Ticket.class);
                             ret.update("ticket", response.getId());
                         }
@@ -1961,7 +2030,8 @@ public enum Resources implements IResourceService {
     public IResource updateResource(String urn, ResourceCRUDRequest request) {
 
         IResource previous = getLocalResourceCatalog().get(urn);
-        IResource resource = getResourceAdapter(previous.getAdapterType()).getValidator().update(previous, request);
+        IResource resource = getResourceAdapter(previous.getAdapterType()).getValidator().update(previous,
+                request);
         Resources.INSTANCE.getLocalResourceCatalog().put(urn, resource);
         return resource;
     }
@@ -1990,7 +2060,8 @@ public enum Resources implements IResourceService {
                 int width = (int) (geometry.getEast() - geometry.getWest());
                 int height = (int) (geometry.getNorth() - geometry.getSouth());
                 if (width < 2 && height < 2) {
-                    image.getGraphics().drawImage(ImageIO.read(getClass().getResource("/icons/target_red.png")), x - 8,
+                    image.getGraphics().drawImage(
+                            ImageIO.read(getClass().getResource("/icons/target_red.png")), x - 8,
                             180 - y - 8, null);
                 } else {
                     image.getGraphics().drawRect(x, 180 - y - height, width, height);
@@ -2034,13 +2105,106 @@ public enum Resources implements IResourceService {
                 ResourceContextualizationRequest request = new ResourceContextualizationRequest();
                 request.setResource(resource.getReference());
                 request.setGeometry(((Scale) scale).asGeometry().encode());
-                request.setOverallGeometry(((Scale) ((IObservation) observation).getScale()).asGeometry().encode());
+                request.setOverallGeometry(
+                        ((Scale) ((IObservation) observation).getScale()).asGeometry().encode());
                 ResourceReference reference = node.getClient().post(API.NODE.RESOURCE.CONTEXTUALIZE, request,
                         ResourceReference.class);
                 return new Resource(reference);
             }
         }
         return resource;
+    }
+
+    public ICodelist createCodelist(IResource resource, String codelistId, IMonitor monitor) {
+
+        ICodelist codelist = getCodelist(resource, codelistId, monitor);
+        if (codelist != null) {
+            throw new KlabIllegalArgumentException(
+                    "codelist " + codelistId + " already exists in resource " + resource.getUrn());
+        }
+
+        IResourceAdapter adapter = getResourceAdapter(resource.getAdapterType());
+        if (adapter != null) {
+            return adapter.getEncoder().categorize(resource, codelistId, monitor);
+        }
+
+        return null;
+    }
+
+    public ICodelist getCodelist(IResource resource, String attribute, IMonitor monitor) {
+
+        if (Urns.INSTANCE.isLocal(resource.getUrn())) {
+
+            CodelistReference reference = null;
+            String prefix = ((Resource)resource).getPath() + File.separator + "code_" + attribute;
+            if (new File(prefix + ".json").exists()) {
+                reference = JsonUtils.load(new File(prefix + ".json"), CodelistReference.class);
+            } else if (new File(prefix + ".properties").exists()) {
+                reference = upgradeCodelist(attribute, new File(prefix + ".properties"));
+            }
+
+            if (reference != null) {
+                return new Codelist(reference);
+            }
+
+        } else {
+
+            if (Urns.INSTANCE.isUniversal(resource.getUrn())) {
+                throw new KlabUnsupportedFeatureException("universal resources do not support codelists");
+            }
+            INodeIdentity node = Network.INSTANCE.getNodeForResource(new Urn(resource.getUrn()));
+            if (node != null) {
+                // TODO retrieve codelist from remote resource
+            }
+        }
+
+        return null;
+    }
+
+    private CodelistReference upgradeCodelist(String name, File file) {
+
+        CodelistReference ret = new CodelistReference();
+        Properties properties = new Properties();
+
+        ret.setName(name);
+        ret.setId(name);
+
+        try (InputStream input = new FileInputStream(file)) {
+            properties.load(input);
+            ret.setWorldview(properties.getProperty("worldview"));
+            ret.setAuthorityId(properties.getProperty("authority"));
+            String t = properties.getProperty("type");
+            if (t != null) {
+                ret.setType(IArtifact.Type.valueOf(t.toUpperCase()));
+            }
+            String rc = properties.getProperty("root.concept");
+            ret.setRootConceptId(rc);
+            ret.setDirectMapping(new MappingReference());
+            ret.setInverseMapping(new MappingReference());
+            String pattern = Pattern.quote("->");
+            ret.getDirectMapping().setKeyType(IArtifact.Type.TEXT);
+            Set<String> keys = new HashSet<>();
+            for (Object key : properties.keySet()) {
+                if (key.toString().startsWith("category.")) {
+                    String[] pp = properties.getProperty(key.toString()).split(pattern);
+                    if (pp.length > 1 && !pp[1].isEmpty()) {
+                        ret.getDirectMapping().getMappings().add(new Pair<>(pp[0], pp[1]));
+                        ret.getInverseMapping().getMappings().add(new Pair<>(pp[1], pp[0]));
+                    }
+                    if (keys.add(pp[0])) {
+                        ret.getCodeDescriptions().put(pp[0], "");
+                    }
+                }
+            }
+            
+            File outfile = MiscUtilities.changeExtension(file, "json");
+            JsonUtils.save(ret, outfile);
+            
+        } catch (Exception e) {
+            throw new KlabIOException(e);
+        }
+
+        return ret;
     }
 
 }

@@ -291,12 +291,12 @@ public class SQLTableCache {
             while(result.hasNext()) {
                 try {
                     if (retrieved.size() == 1) {
-                        ret.add(table.mapValue(result.result.getObject(1),
+                        ret.add(table.mapValue(result.result.getObject(1).toString(),
                                 table.getColumnDescriptor(sanitizedNames.get(retrieved.get(0)))));
                     } else if (retrieved.size() > 1) {
                         List<Object> row = new ArrayList<>();
                         for (int i = 0; i < retrieved.size(); i++) {
-                            row.add(table.mapValue(result.result.getObject(i + 1),
+                            row.add(table.mapValue(result.result.getObject(i + 1).toString(),
                                     table.getColumnDescriptor(sanitizedNames.get(retrieved.get(i)))));
                         }
                         ret.add(row);

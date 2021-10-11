@@ -174,7 +174,7 @@ public class TableCache {
 				for (int i = 0; i < dimensions[0]; i++) {
 					Object object1 = dataCache.get(new int[] { i, col });
 					for (Object object2 : match) {
-						if (AbstractTable.checkEquals(table.mapValue(object1, attr), object2, attr, scope)) {
+						if (AbstractTable.checkEquals(table.mapValue(object1.toString(), attr), object2, attr, scope)) {
 							indices.add(i);
 							break;
 						}

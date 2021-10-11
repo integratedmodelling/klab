@@ -6,6 +6,7 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
+import org.integratedmodelling.klab.api.knowledge.ICodelist;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
@@ -32,5 +33,11 @@ public class CDMEncoder implements IResourceEncoder {
 		// TODO Auto-generated method stub
 		return resource;
 	}
+
+    @Override
+    public ICodelist categorize(IResource resource, String attribute, IMonitor monitor) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }
