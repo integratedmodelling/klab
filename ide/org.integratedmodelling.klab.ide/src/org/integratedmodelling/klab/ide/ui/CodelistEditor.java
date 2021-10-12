@@ -131,6 +131,8 @@ public class CodelistEditor extends Composite {
         typeDictionary.put("Concept (identity)", IArtifact.Type.CONCEPT);
         typeDictionary.put("Number", IArtifact.Type.NUMBER);
         typeDictionary.put("Boolean (true/false)", IArtifact.Type.BOOLEAN);
+        typeDictionary.put("Time extent", IArtifact.Type.TEMPORALEXTENT);
+        typeDictionary.put("Spatial extent", IArtifact.Type.SPATIALEXTENT);
 
         addDisposeListener(new DisposeListener(){
             public void widgetDisposed(DisposeEvent e) {

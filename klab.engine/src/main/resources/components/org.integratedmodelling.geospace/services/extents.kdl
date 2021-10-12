@@ -6,6 +6,12 @@ spatialextent space
 	 enable the creation of single shapes using WKT and WKB notation, as well as regular grids and
 	 irregular spatial tessellations with shape masks."
 {
+	
+	optional text enumeration
+		"An authority providing an enumerated view of space, where each spatial tessellation is 
+		 identified only by a code. Using this parameter deactivates all
+		 others and turns off almost every other spatial functionalities in k.LAB."
+
 	optional text shape
 		"A string containing the WKT or WKB definition of a geographical shape, optionally 
 		 prefixed with the EPSG projection code including the authority (the default projection

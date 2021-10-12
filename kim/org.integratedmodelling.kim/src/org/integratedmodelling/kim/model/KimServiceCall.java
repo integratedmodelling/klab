@@ -33,202 +33,210 @@ import org.integratedmodelling.klab.utils.Range;
 
 public class KimServiceCall extends KimStatement implements IServiceCall {
 
-	private static final long serialVersionUID = 8447771460330621498L;
+    private static final long serialVersionUID = 8447771460330621498L;
 
-	protected String name;
-	protected Parameters<String> parameters = new Parameters<>();
-	protected Set<String> interactiveParameterIds = new HashSet<>();
+    protected String name;
+    protected Parameters<String> parameters = new Parameters<>();
+    protected Set<String> interactiveParameterIds = new HashSet<>();
 
-	protected KimServiceCall(EObject object, IKimStatement parent) {
-		super(object, parent);
-	}
+    protected KimServiceCall(EObject object, IKimStatement parent) {
+        super(object, parent);
+    }
 
-	/**
-	 * Create a function call from the passed parameters. All parameters after the
-	 * name must be given in pairs: (string, value)*
-	 * 
-	 * @param name
-	 * @param parameters
-	 * @return a new service call
-	 */
-	public static IServiceCall create(String name, Object... parameters) {
-		return new KimServiceCall(name, parameters);
-	}
+    /**
+     * Create a function call from the passed parameters. All parameters after the name must be
+     * given in pairs: (string, value)*
+     * 
+     * @param name
+     * @param parameters
+     * @return a new service call
+     */
+    public static IServiceCall create(String name, Object... parameters) {
+        return new KimServiceCall(name, parameters);
+    }
 
-	public KimServiceCall(Function statement, IKimStatement parent) {
-		super(statement, parent);
-		if (statement != null) {
-			KimNamespace namespace = Kim.INSTANCE.getNamespace(statement);
-			this.name = statement.getName();
-			if (statement.getParameters() != null) {
-				if (statement.getParameters().getSingleValue() != null
-						&& statement.getParameters().getSingleValue().size() > 0) {
-					List<Object> objects = new ArrayList<>();
-					for (Value value : statement.getParameters().getSingleValue()) {
-						objects.add(Kim.INSTANCE.parseValue(value, namespace));
-					}
-					this.parameters.put(DEFAULT_PARAMETER_NAME, objects.size() == 1 ? objects.get(0) : objects);
-				} else if (statement.getParameters().getPairs() != null) {
-					for (KeyValuePair kv : statement.getParameters().getPairs()) {
-						this.parameters.put(kv.getName(), Kim.INSTANCE.parseValue(kv.getValue(), namespace));
-						if (kv.isInteractive()) {
-							this.interactiveParameterIds.add(kv.getName());
-						}
-					}
-				}
-			}
-		}
-	}
+    public KimServiceCall(Function statement, IKimStatement parent) {
+        super(statement, parent);
+        if (statement != null) {
+            // if we don't check, the call causes a stack overflow in functions that are argument of
+            // a 'covering' clause in a namespace definition.
+            KimNamespace namespace = parent instanceof KimNamespace
+                    ? (KimNamespace) parent
+                    : Kim.INSTANCE.getNamespace(statement);
+            this.name = statement.getName();
+            if (statement.getParameters() != null) {
+                if (statement.getParameters().getSingleValue() != null
+                        && statement.getParameters().getSingleValue().size() > 0) {
+                    List<Object> objects = new ArrayList<>();
+                    for (Value value : statement.getParameters().getSingleValue()) {
+                        objects.add(Kim.INSTANCE.parseValue(value, namespace));
+                    }
+                    this.parameters.put(DEFAULT_PARAMETER_NAME,
+                            objects.size() == 1 ? objects.get(0) : objects);
+                } else if (statement.getParameters().getPairs() != null) {
+                    for (KeyValuePair kv : statement.getParameters().getPairs()) {
+                        this.parameters.put(kv.getName(), Kim.INSTANCE.parseValue(kv.getValue(), namespace));
+                        if (kv.isInteractive()) {
+                            this.interactiveParameterIds.add(kv.getName());
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-	public List<KimNotification> validateUsage(Set<IArtifact.Type> expectedType) {
-		return Kim.INSTANCE.validateFunctionCall(this, expectedType);
-	}
+    public List<KimNotification> validateUsage(Set<IArtifact.Type> expectedType) {
+        return Kim.INSTANCE.validateFunctionCall(this, expectedType);
+    }
 
-	public KimServiceCall(EObject statement, String name, Map<String, Object> parameters, IKimStatement parent) {
-		super(statement, parent);
-		this.name = name;
-		this.parameters.putAll(parameters);
-	}
+    public KimServiceCall(EObject statement, String name, Map<String, Object> parameters,
+            IKimStatement parent) {
+        super(statement, parent);
+        this.name = name;
+        this.parameters.putAll(parameters);
+    }
 
-	@SuppressWarnings("unchecked")
-	public KimServiceCall(String name, Object[] parameters) {
-		super((EObject) null, null);
-		this.name = name;
-		if (parameters != null && parameters.length == 1 && parameters[0] instanceof IParameters) {
-			this.parameters.putAll((IParameters<String>) (parameters[0]));
-		} else if (parameters != null) {
-			for (int i = 0; i < parameters.length; i++) {
-				String key = parameters[i].toString();
-				Object val = parameters[++i];
-				this.parameters.put(key, val);
-			}
-		}
-	}
+    @SuppressWarnings("unchecked")
+    public KimServiceCall(String name, Object[] parameters) {
+        super((EObject) null, null);
+        this.name = name;
+        if (parameters != null && parameters.length == 1 && parameters[0] instanceof IParameters) {
+            this.parameters.putAll((IParameters<String>) (parameters[0]));
+        } else if (parameters != null) {
+            for (int i = 0; i < parameters.length; i++) {
+                String key = parameters[i].toString();
+                Object val = parameters[++i];
+                this.parameters.put(key, val);
+            }
+        }
+    }
 
-	public KimServiceCall(String name, Map<String, Object> parameters) {
-		super((EObject) null, null);
-		this.name = name;
-		this.parameters.putAll(parameters);
-	}
+    public KimServiceCall(String name, Map<String, Object> parameters) {
+        super((EObject) null, null);
+        this.name = name;
+        this.parameters.putAll(parameters);
+    }
 
-	@Override
-	public String getSourceCode() {
+    @Override
+    public String getSourceCode() {
 
-		if (this.sourceCode == null || this.sourceCode.trim().isEmpty()) {
-			String ret = name + "(";
-			int i = 0;
-			for (String key : parameters.keySet()) {
+        if (this.sourceCode == null || this.sourceCode.trim().isEmpty()) {
+            String ret = name + "(";
+            int i = 0;
+            for (String key : parameters.keySet()) {
 
-				// internal parameters
-				if (key.startsWith("__")) {
-					continue;
-				}
-				ret += (i == 0 ? "" : ", ") + key + " = ";
-				Object val = parameters.get(key);
-				ret += val instanceof String ? ("\"" + Escape.forDoubleQuotedString((String) val, false) + "\"")
-						: (val == null ? "unknown" : getStringValue(val));
-				i++;
-			}
-			ret += ")";
-			return ret;
-		}
+                // internal parameters
+                if (key.startsWith("__")) {
+                    continue;
+                }
+                ret += (i == 0 ? "" : ", ") + key + " = ";
+                Object val = parameters.get(key);
+                ret += val instanceof String
+                        ? ("\"" + Escape.forDoubleQuotedString((String) val, false) + "\"")
+                        : (val == null ? "unknown" : getStringValue(val));
+                i++;
+            }
+            ret += ")";
+            return ret;
+        }
 
-		return super.getSourceCode();
-	}
+        return super.getSourceCode();
+    }
 
-	@Override
-	public void visit(Visitor visitor) {
-		// TODO must visit concept declarations in maps
-	}
-	
-	@Override
-	public String toString() {
-		return getSourceCode();
-	}
+    @Override
+    public void visit(Visitor visitor) {
+        // TODO must visit concept declarations in maps
+    }
 
-	private String getStringValue(Object val) {
+    @Override
+    public String toString() {
+        return getSourceCode();
+    }
 
-		if (val instanceof List) {
-			String ret = "(";
-			for (Object o : ((List<?>) val)) {
-				ret += (ret.length() == 1 ? "" : " ") + getStringValue(o);
-			}
-			return ret + ")";
-		} else if (val instanceof Map) {
-			String ret = "{";
-			for (Object o : ((Map<?, ?>) val).keySet()) {
-				ret += (ret.length() == 1 ? "" : " ") + o + " " + getStringValue(((Map<?, ?>) val).get(o));
-			}
-			return ret + "}";
-		} else if (val instanceof Range) {
-			return ((Range) val).getLowerBound() + " to " + ((Range) val).getUpperBound();
-		} else if (val instanceof IClassification) {
-			String ret = "";
-			for (Pair<IConcept, IClassifier> o : ((IClassification) val)) {
-				ret += (ret.isEmpty() ? "" : ", ") + o.getSecond().getSourceCode() + " : '" + o.getFirst() + "'";
-			}
-			return "{" + ret + "}";
-		} else if (val instanceof ILookupTable) {
-			String ret = "";
-			// TODO table literal
-			// TODO must also pass argument list to the same function...
-			return "{{" + ret + "}}";
-		} else if (val instanceof IKimExpression) {
-			return "[" + ((IKimExpression)val).getCode() + "]";
-		} else if (val instanceof KimServiceCall) {
-			return ((KimServiceCall) val).getSourceCode();
-		} else if (val instanceof ComputableResource) {
-			return ((ComputableResource) val).getSourceCode();
-		} else if (val instanceof IUnit || val instanceof ICurrency) {
-			return "\"" + val + "\""; 
-		}
-		return val.toString();
-	}
+    private String getStringValue(Object val) {
 
-	@Override
-	public String getName() {
-		return name;
-	}
+        if (val instanceof List) {
+            String ret = "(";
+            for (Object o : ((List<?>) val)) {
+                ret += (ret.length() == 1 ? "" : " ") + getStringValue(o);
+            }
+            return ret + ")";
+        } else if (val instanceof Map) {
+            String ret = "{";
+            for (Object o : ((Map<?, ?>) val).keySet()) {
+                ret += (ret.length() == 1 ? "" : " ") + o + " " + getStringValue(((Map<?, ?>) val).get(o));
+            }
+            return ret + "}";
+        } else if (val instanceof Range) {
+            return ((Range) val).getLowerBound() + " to " + ((Range) val).getUpperBound();
+        } else if (val instanceof IClassification) {
+            String ret = "";
+            for (Pair<IConcept, IClassifier> o : ((IClassification) val)) {
+                ret += (ret.isEmpty() ? "" : ", ") + o.getSecond().getSourceCode() + " : '" + o.getFirst()
+                        + "'";
+            }
+            return "{" + ret + "}";
+        } else if (val instanceof ILookupTable) {
+            String ret = "";
+            // TODO table literal
+            // TODO must also pass argument list to the same function...
+            return "{{" + ret + "}}";
+        } else if (val instanceof IKimExpression) {
+            return "[" + ((IKimExpression) val).getCode() + "]";
+        } else if (val instanceof KimServiceCall) {
+            return ((KimServiceCall) val).getSourceCode();
+        } else if (val instanceof ComputableResource) {
+            return ((ComputableResource) val).getSourceCode();
+        } else if (val instanceof IUnit || val instanceof ICurrency) {
+            return "\"" + val + "\"";
+        }
+        return val.toString();
+    }
 
-	@Override
-	public Parameters<String> getParameters() {
-		return parameters;
-	}
+    @Override
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    @Override
+    public Parameters<String> getParameters() {
+        return parameters;
+    }
 
-	public void setParameters(Parameters<String> parameters) {
-		this.parameters = parameters;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	@Override
-	public Collection<String> getInteractiveParameters() {
-		return interactiveParameterIds;
-	}
+    public void setParameters(Parameters<String> parameters) {
+        this.parameters = parameters;
+    }
 
-	public KimServiceCall copy() {
-		return (KimServiceCall) create(this.name, this.parameters);
-	}
+    @Override
+    public Collection<String> getInteractiveParameters() {
+        return interactiveParameterIds;
+    }
 
-	@Override
-	public int getParameterCount() {
-		int n = 0;
-		if (parameters.size() > 0) {
-			for (String s : parameters.keySet()) {
-				if (!s.startsWith("_")) {
-					n++;
-				}
-			}
-		}
-		return n;
-	}
+    public KimServiceCall copy() {
+        return (KimServiceCall) create(this.name, this.parameters);
+    }
 
-	@Override
-	public IPrototype getPrototype() {
-		IExtensionService exts = Services.INSTANCE.getService(IExtensionService.class);
-		return exts == null ? null : exts.getPrototype(name);
-	}
+    @Override
+    public int getParameterCount() {
+        int n = 0;
+        if (parameters.size() > 0) {
+            for (String s : parameters.keySet()) {
+                if (!s.startsWith("_")) {
+                    n++;
+                }
+            }
+        }
+        return n;
+    }
+
+    @Override
+    public IPrototype getPrototype() {
+        IExtensionService exts = Services.INSTANCE.getService(IExtensionService.class);
+        return exts == null ? null : exts.getPrototype(name);
+    }
 
 }

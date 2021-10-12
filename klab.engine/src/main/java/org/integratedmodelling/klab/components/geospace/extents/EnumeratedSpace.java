@@ -10,6 +10,7 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IAuthority;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
@@ -20,6 +21,7 @@ import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.authority.AuthorityView;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.rest.SpatialExtent;
@@ -28,9 +30,16 @@ import org.integratedmodelling.klab.utils.Pair;
 
 public class EnumeratedSpace extends AbstractExtent implements ISpace {
 
-    IAuthority geographicAuthority;
-    Set<String> codes = new HashSet<>();
+    AuthorityView geographicAuthority;
+    /*
+     * if empty, coverage is the entire authority
+     */
+    Set<IConcept> codes = new HashSet<>();
     
+    public EnumeratedSpace(IAuthority authority) {
+        this.geographicAuthority = new AuthorityView(authority);
+    }
+
     @Override
     public IExtent merge(IExtent extent) {
         // TODO Auto-generated method stub
@@ -70,7 +79,7 @@ public class EnumeratedSpace extends AbstractExtent implements ISpace {
     @Override
     public double getDimensionSize(IUnit unit) {
         // TODO Auto-generated method stub
-        return 0;
+        return codes.isEmpty() ? 263 : codes.size();
     }
 
     @Override
@@ -111,7 +120,7 @@ public class EnumeratedSpace extends AbstractExtent implements ISpace {
 
     @Override
     public long size() {
-        return codes.size();
+        return codes.isEmpty() ? geographicAuthority.size() : codes.size();
     }
 
     @Override

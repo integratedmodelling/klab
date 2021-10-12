@@ -58,6 +58,7 @@ import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.ObservableComposer;
+import org.integratedmodelling.klab.owl.syntax.SemanticScope;
 import org.integratedmodelling.klab.utils.NumberUtils;
 
 public enum Indexer {
@@ -294,7 +295,7 @@ public enum Indexer {
      * @param where
      * @return
      */
-    public List<Match> query(String term, ObservableComposer composer, int maxResults) {
+    public List<Match> query(String term, SemanticScope composer, int maxResults) {
 
         List<Match> ret = new ArrayList<>();
 
@@ -389,7 +390,7 @@ public enum Indexer {
                         continue;
                     }
 
-                    for (ObservableComposer.Constraint constraint : composer.getAdmittedLogicalInput()) {
+                    for (SemanticScope.Constraint constraint : composer.getAdmittedLogicalInput()) {
 
                         if (constraint.matches(concept)) {
 

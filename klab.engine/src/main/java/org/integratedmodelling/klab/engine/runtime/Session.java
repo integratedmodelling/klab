@@ -112,6 +112,7 @@ import org.integratedmodelling.klab.exceptions.KlabActorException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.ObservableComposer;
+import org.integratedmodelling.klab.owl.syntax.SemanticExpression;
 import org.integratedmodelling.klab.rest.AuthorityIdentity;
 import org.integratedmodelling.klab.rest.AuthorityQueryRequest;
 import org.integratedmodelling.klab.rest.AuthorityQueryResponse;
@@ -972,16 +973,15 @@ public class Session extends GroovyObjectSupport
     private void handleMatchAction(SearchMatchAction action, IMessage message) {
 
         if (message.getType() == IMessage.Type.SemanticMatch) {
-            ObservableComposer composer = composers.get(action.getContextId());
+            SemanticExpression expression = semanticExpressions.get(action.getContextId());
             /*
-             * Insert choice into composer and setup for next search.
+             * Insert choice into current expression and setup for next search.
              */
-            SearchResponse matches = composer.getData("matches", SearchResponse.class);
+            SearchResponse matches = expression.getData("matches", SearchResponse.class);
             if (matches != null && matches.getMatches().size() > action
                     .getMatchIndex()/* which would be weird */) {
-                composers.put(action.getContextId(),
-                        acceptChoice(composer, matches.getMatches().get(action.getMatchIndex()),
-                                action.getContextId()));
+                acceptChoice(expression, matches.getMatches().get(action.getMatchIndex()),
+                        action.getContextId());
             }
             return;
         }
@@ -1005,7 +1005,7 @@ public class Session extends GroovyObjectSupport
         searchContexts.put(contextId, new Pair<>(newContext, new ArrayList<>()));
     }
 
-    private ObservableComposer acceptChoice(ObservableComposer composer, SearchMatch searchMatch,
+    private void acceptChoice(SemanticExpression expression, SearchMatch searchMatch,
             String contextId) {
 
         Object input = searchMatch.getId();
@@ -1025,20 +1025,17 @@ public class Session extends GroovyObjectSupport
         } else if (searchMatch.getMatchType() == Match.Type.MODIFIER) {
             input = SemanticModifier.forCode(searchMatch.getId());
         }
-
-        /*
-         * current composer becomes the main after accepting the input
-         */
-        composers.put(contextId, (composer = composer.accept(input)));
+        
+        boolean ok = expression.accept(input);
 
         /*
          * send current status to client so it can be displayed
          */
         QueryStatusResponse response = new QueryStatusResponse();
         response.setContextId(contextId);
-        response.getErrors().addAll(composer.getErrors());
-        response.getCode().addAll(composer.getRoot().getStyledCode());
-        response.setCurrentType(composer.getRoot().getObservableType());
+        response.getErrors().addAll(expression.getErrors());
+        response.getCode().addAll(expression.getStyledCode());
+        response.setCurrentType(expression.getObservableType());
 
         StringBuffer code = new StringBuffer(256);
         for (StyledKimToken token : response.getCode()) {
@@ -1057,8 +1054,6 @@ public class Session extends GroovyObjectSupport
         }
 
         monitor.send(IMessage.MessageClass.UserInterface, IMessage.Type.QueryStatus, response);
-
-        return composer;
     }
 
     @MessageHandler(type = IMessage.Type.DataflowNodeDetail)
@@ -1143,7 +1138,7 @@ public class Session extends GroovyObjectSupport
     /**
      * Move up and substitute searchContexts when done.
      */
-    private Map<String, ObservableComposer> composers = new HashMap<>();
+    private Map<String, SemanticExpression> semanticExpressions = new HashMap<>();
 
     /**
      * The next-generation semantic search using ObservableComposer
@@ -1154,7 +1149,7 @@ public class Session extends GroovyObjectSupport
     private void semanticSearch(SearchRequest request, IMessage message) {
 
         if (request.isCancelSearch()) {
-            composers.remove(request.getContextId());
+            semanticExpressions.remove(request.getContextId());
             searchContexts.remove(request.getContextId());
         } else {
             /*
@@ -1174,21 +1169,22 @@ public class Session extends GroovyObjectSupport
                     case UNDO:
 
                         // client may be stupid, as mine is
-                        if (request.getContextId() != null && composers.containsKey(request.getContextId())) {
-                            ObservableComposer previous = composers.get(request.getContextId()).undo();
-                            if (previous == null) {
-                                composers.remove(request.getContextId());
+                        if (request.getContextId() != null && semanticExpressions.containsKey(request.getContextId())) {
+
+                            SemanticExpression expression = semanticExpressions.get(request.getContextId());
+                            boolean ok = true;
+                            if (!semanticExpressions.get(request.getContextId()).undo()) {
+                                semanticExpressions.remove(request.getContextId());
                                 searchContexts.remove(request.getContextId());
-                            } else {
-                                composers.put(request.getContextId(), previous);
+                                ok = false;
                             }
 
                             QueryStatusResponse qr = new QueryStatusResponse();
-                            qr.setContextId(previous == null ? null : request.getContextId());
-                            if (previous != null) {
-                                qr.getErrors().addAll(previous.getErrors());
-                                qr.getCode().addAll(previous.getRoot().getStyledCode());
-                                qr.setCurrentType(previous.getRoot().getObservableType());
+                            qr.setContextId(ok ? request.getContextId() : null);
+                            if (ok) {
+                                qr.getErrors().addAll(expression.getErrors());
+                                qr.getCode().addAll(expression.getStyledCode());
+                                qr.setCurrentType(expression.getObservableType());
                             }
                             monitor.send(IMessage.MessageClass.UserInterface, IMessage.Type.QueryStatus, qr);
                         }
@@ -1196,26 +1192,25 @@ public class Session extends GroovyObjectSupport
 
                     case OPEN_SCOPE:
 
-                        composers.put(response.getContextId(), composers.get(response.getContextId()).open());
+                        semanticExpressions.get(response.getContextId()).accept("(");
                         QueryStatusResponse qr = new QueryStatusResponse();
                         qr.setContextId(request.getContextId());
-                        qr.getErrors().addAll(composers.get(response.getContextId()).getErrors());
-                        qr.getCode().addAll(composers.get(response.getContextId()).getRoot().getStyledCode());
+                        qr.getErrors().addAll(semanticExpressions.get(response.getContextId()).getErrors());
+                        qr.getCode().addAll(semanticExpressions.get(response.getContextId()).getStyledCode());
                         qr.setCurrentType(
-                                composers.get(response.getContextId()).getRoot().getObservableType());
+                                semanticExpressions.get(response.getContextId()).getObservableType());
                         monitor.send(IMessage.MessageClass.UserInterface, IMessage.Type.QueryStatus, qr);
                         break;
 
                     case CLOSE_SCOPE:
 
-                        composers.put(response.getContextId(),
-                                composers.get(response.getContextId()).close());
+                        semanticExpressions.get(response.getContextId()).accept(")");
                         qr = new QueryStatusResponse();
                         qr.setContextId(request.getContextId());
-                        qr.getErrors().addAll(composers.get(response.getContextId()).getErrors());
-                        qr.getCode().addAll(composers.get(response.getContextId()).getRoot().getStyledCode());
+                        qr.getErrors().addAll(semanticExpressions.get(response.getContextId()).getErrors());
+                        qr.getCode().addAll(semanticExpressions.get(response.getContextId()).getStyledCode());
                         qr.setCurrentType(
-                                composers.get(response.getContextId()).getRoot().getObservableType());
+                                semanticExpressions.get(response.getContextId()).getObservableType());
                         monitor.send(IMessage.MessageClass.UserInterface, IMessage.Type.QueryStatus, qr);
                         break;
 
@@ -1224,12 +1219,12 @@ public class Session extends GroovyObjectSupport
                         if (request.isDefaultResults()) {
                             setDefaultSearchResults(response.getContextId(), request, response);
                         } else {
-                            ObservableComposer composer = composers.get(response.getContextId());
-                            if (composer == null) {
-                                composer = ObservableComposer.create();
-                                composers.put(response.getContextId(), composer);
+                            SemanticExpression expression = semanticExpressions.get(response.getContextId());
+                            if (expression == null) {
+                                expression = SemanticExpression.create();
+                                semanticExpressions.put(response.getContextId(), expression);
                             }
-                            runSemanticSearch(composer, request, response);
+                            runSemanticSearch(expression, request, response);
                         }
 
                         break;
@@ -1272,21 +1267,21 @@ public class Session extends GroovyObjectSupport
     /**
      * TODO move into semantics package
      * 
-     * @param composer
+     * @param expression
      * @param request
      * @param response
      */
-    protected void runSemanticSearch(ObservableComposer composer, SearchRequest request,
+    protected void runSemanticSearch(SemanticExpression expression, SearchRequest request,
             SearchResponse response) {
 
-        for (Match match : Indexer.INSTANCE.query(request.getQueryString(), composer,
+        for (Match match : Indexer.INSTANCE.query(request.getQueryString(), expression.getCurrent().getScope(),
                 request.getMaxResults())) {
             response.getMatches()
                     .add(((org.integratedmodelling.klab.engine.indexing.SearchMatch) match).getReference());
         }
 
-        // save the matches so that we recognize a choice
-        composer.setData("matches", response);
+        // save the matches in the expression so that we recognize a choice
+        expression.setData("matches", response);
     }
 
     /**
