@@ -48,16 +48,16 @@ public class PotentialEvapotranspiredWaterVolumeResolver implements IResolver<IP
             pet.inMinTemp = getGridCoverage(context, minTempState);
             pet.inAtmosphericTemp = getGridCoverage(context, tempState);
 
-            // FIXME for now divide by 1000000, since the solarradiation enters as J and not MJ as
-            // requested
-            Function<Object, Object> transform = (value) -> {
-                if (value instanceof Number && !Double.isNaN(((Number) value).doubleValue())) {
-                    return ((Number) value).doubleValue() / 1_000_000.0;
-                }
-                return value;
-            };
+//            // FIXME for now divide by 1000000, since the solarradiation enters as J and not MJ as
+//            // requested
+//            Function<Object, Object> transform = (value) -> {
+//                if (value instanceof Number && !Double.isNaN(((Number) value).doubleValue())) {
+//                    return ((Number) value).doubleValue() / 1_000_000.0;
+//                }
+//                return value;
+//            };
             GridCoverage2D solarRadiationGc = GeotoolsUtils.INSTANCE.stateToCoverage(solarRadiationState, context.getScale(),
-                    DataBuffer.TYPE_FLOAT, floatNovalue, false, transform);
+                    DataBuffer.TYPE_FLOAT, floatNovalue, false, null);
             pet.inSolarRadiation = solarRadiationGc;// getGridCoverage(context,
                                                     // solarRadiationState);
             pet.inRainfall = getGridCoverage(context, rainfallState);
