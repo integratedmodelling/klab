@@ -33,7 +33,6 @@ import org.integratedmodelling.klab.api.monitoring.IMessage.MessageClass;
 import org.integratedmodelling.klab.api.monitoring.IMessage.Repeatability;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.monitoring.MessageHandler;
-import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.engine.rest.messaging.WebsocketsMessageBus.ReceiverDescription.MethodDescriptor;
 import org.integratedmodelling.klab.engine.runtime.Session;

@@ -20,11 +20,11 @@ import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.klab.api.data.mediation.ICurrency;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
+import org.integratedmodelling.klab.owl.syntax.SemanticScope.Constraint;
 import org.integratedmodelling.klab.rest.StyledKimToken;
+import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.klab.utils.Utils;
-import org.jgraph.graph.GraphCell;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 
@@ -39,7 +39,7 @@ public class SemanticExpression {
     public class SemanticToken {
 
         public IConcept concept;
-        public SemanticToken group;
+        // public SemanticToken group;
         public IUnit unit;
         public ICurrency currency;
         public Object value;
@@ -48,8 +48,25 @@ public class SemanticExpression {
         private SemanticScope scope;
 
         public boolean isEmpty() {
-            return concept == null && unit == null && currency == null && value == null
-                    && (group == null || group.isEmpty());
+            return concept == null && unit == null && currency == null
+                    && value == null /* && (group == null || group.isEmpty()) */;
+        }
+
+        @Override
+        public String toString() {
+            if (concept != null) {
+                return "<" + concept + "> Admits: " + scope;
+            } else if (unit != null) {
+                return "<" + unit + "> Admits: " + scope;
+            } else if (currency != null) {
+                return "<" + currency + "> Admits: " + scope;
+            } else if (value != null) {
+                return "<" + value + "> Admits: " + scope;
+            } /*
+               * else if (group != null) { return "<" + group + "> Admits: " + scope; }
+               */
+
+            return "<empty> " + scope;
         }
 
         /**
@@ -64,6 +81,21 @@ public class SemanticExpression {
 
         public SemanticScope getScope() {
             return scope;
+        }
+
+        public SemanticToken getGroupParent() {
+            for (SemanticLink link : graph.incomingEdgesOf(this)) {
+                if (link.observableRole == ObservableRole.GROUP_OPEN) {
+                    return graph.getEdgeSource(link);
+                }
+            }
+            for (SemanticLink link : graph.incomingEdgesOf(this)) {
+                SemanticToken ret = graph.getEdgeSource(link).getGroupParent();
+                if (ret != null) {
+                    return ret;
+                }
+            }
+            return null;
         }
 
         /**
@@ -99,6 +131,24 @@ public class SemanticExpression {
 
         public boolean is(ObservableRole role) {
             return role.equals(this.observableRole);
+        }
+
+        @Override
+        public String toString() {
+            if (valueOperator != null) {
+                return "[" + valueOperator + "]";
+            } else if (unarySemanticOperator != null) {
+                return "[" + unarySemanticOperator + "]";
+            } else if (binarySemanticOperator != null) {
+                return "[" + binarySemanticOperator + "]";
+            } else if (semanticModifier != null) {
+                return "[" + semanticModifier + "]";
+            } else if (syntacticElement != null) {
+                return "[" + syntacticElement + "]";
+            } else if (observableRole != null) {
+                return "[" + observableRole + "]";
+            }
+            return "FUCK";
         }
 
     }
@@ -173,7 +223,8 @@ public class SemanticExpression {
             } else if (((IConcept) token).is(Type.PREDICATE)) {
                 link.observableRole = ObservableRole.TRAIT;
             }
-            added.concept = (IConcept)token;
+            added.concept = (IConcept) token;
+            added.scope = SemanticScope.scope(added.concept, this);
 
         } else if (token instanceof ValueOperator) {
 
@@ -214,17 +265,34 @@ public class SemanticExpression {
         } else if (token instanceof String) {
 
             if ("(".equals(token)) {
-
+                link.observableRole = ObservableRole.GROUP_OPEN;
+                added.scope = new SemanticScope();
+                added.scope.lexicalRealm.addAll(current.scope.getAdmittedLexicalInput());
+                added.scope.lexicalRealm.remove(ObservableRole.GROUP_OPEN);
+                added.scope.lexicalRealm.add(ObservableRole.GROUP_CLOSE);
+                added.scope.logicalRealm.addAll(current.scope.getAdmittedLogicalInput());
+                // open groups are always for observables, which are specified in the original
+                // scope, so add predicates
+                added.scope.logicalRealm.add(Constraint.of(Type.PREDICATE));
             } else if (")".equals(token)) {
+
+                SemanticToken parent = this.current.getGroupParent();
+                if (parent != null) {
+                    this.current = parent;
+                    // TODO review what is in the group. Then reassess the scope as if submitting the relevant
+                    // concept. If it's an observable, remove the
+                    // observable from the scope.
+                    // TODO undo stack?
+                    return true;
+                }
 
             } else {
                 // TODO according to context, it may be a unit or a currency, to be validated before
-                // acceptance.
+                // acceptance. This should be done in the session, not here.
             }
 
         } else {
-            throw new KlabIllegalStateException(
-                    "internal: semantic token was accepted but is not handled: " + token);
+            throw new KlabIllegalStateException("internal: semantic token was accepted but is not handled: " + token);
         }
 
         graph.addVertex(added);
@@ -307,19 +375,40 @@ public class SemanticExpression {
     private int collectStyledCode(SemanticToken token, List<StyledKimToken> tokens) {
 
         int n = tokens.size();
-        boolean openGroup = false;
-        
+
         if (token.concept != null) {
             tokens.add(StyledKimToken.create(token.concept));
-        } else if (token.group != null) {
-            tokens.add(StyledKimToken.create("("));
-            openGroup = true;
         } else if (token.unit != null) {
             tokens.add(StyledKimToken.create(token.unit));
         } else if (token.currency != null) {
             tokens.add(StyledKimToken.create(token.currency));
         } else if (token.value != null) {
             tokens.add(StyledKimToken.create(token.value));
+        }
+
+        List<SemanticLink> roles = new ArrayList<>();
+        List<SemanticLink> traits = new ArrayList<>();
+        // this will never be +1 but OK
+        List<SemanticLink> observables = new ArrayList<>();
+
+        for (SemanticLink link : graph.outgoingEdgesOf(token)) {
+            if (link.observableRole == ObservableRole.TRAIT) {
+                traits.add(link);
+            } else if (link.observableRole == ObservableRole.ROLE) {
+                roles.add(link);
+            } else if (link.observableRole == ObservableRole.OBSERVABLE) {
+                observables.add(link);
+            }
+        }
+
+        for (SemanticLink link : traits) {
+            collectStyledCode(graph.getEdgeTarget(link), tokens);
+        }
+        for (SemanticLink link : roles) {
+            collectStyledCode(graph.getEdgeTarget(link), tokens);
+        }
+        for (SemanticLink link : observables) {
+            collectStyledCode(graph.getEdgeTarget(link), tokens);
         }
 
         for (SemanticLink link : graph.outgoingEdgesOf(token)) {
@@ -337,7 +426,7 @@ public class SemanticExpression {
                 if (collectStyledCode(graph.getEdgeTarget(link), tokens) == 0) {
                     tokens.add(StyledKimToken.unknown());
                 }
-                
+
             } else if (link.semanticModifier != null) {
 
                 tokens.add(StyledKimToken.create(link.semanticModifier));
@@ -359,100 +448,16 @@ public class SemanticExpression {
                     tokens.add(StyledKimToken.unknown());
                 }
 
+            } else if (link.observableRole == ObservableRole.GROUP_OPEN) {
+                tokens.add(StyledKimToken.create("("));
+                if (collectStyledCode(graph.getEdgeTarget(link), tokens) == 0) {
+                    tokens.add(StyledKimToken.unknown());
+                }
+                tokens.add(StyledKimToken.create(")"));
             }
         }
 
-        if (openGroup) {
-            tokens.add(StyledKimToken.create(")"));
-        }
-        
         return tokens.size() - n;
-
-        // State s = state.peek();
-        //
-        // if (s.lexicalScope == ObservableRole.GROUP_OPEN) {
-        // ret.add(StyledKimToken.create("("));
-        // }
-        //
-        // List<StyledKimToken> traits = new ArrayList<>();
-        // List<StyledKimToken> roles = new ArrayList<>();
-        // StyledKimToken observable = null;
-        // for (ConceptHolder c : s.concepts) {
-        // if (c.resolved().is(Type.TRAIT)) {
-        // traits.add(StyledKimToken.create(c.resolved()));
-        // } else if (c.resolved().is(Type.ROLE)) {
-        // roles.add(StyledKimToken.create(c.resolved()));
-        // } else if (c.resolved().is(Type.OBSERVABLE)) {
-        // observable = StyledKimToken.create(c.resolved());
-        // }
-        // }
-        //
-        // if (!roles.isEmpty()) {
-        // Collections.sort(roles, new Comparator<StyledKimToken>(){
-        // @Override
-        // public int compare(StyledKimToken o1, StyledKimToken o2) {
-        // return o1.getValue().compareTo(o2.getValue());
-        // }
-        // });
-        // ret.addAll(roles);
-        // }
-        //
-        // if (!traits.isEmpty()) {
-        // Collections.sort(traits, new Comparator<StyledKimToken>(){
-        // @Override
-        // public int compare(StyledKimToken o1, StyledKimToken o2) {
-        // return o1.getValue().compareTo(o2.getValue());
-        // }
-        // });
-        // ret.addAll(traits);
-        // }
-        //
-        // if (s.unaryOperator != null) {
-        // ret.add(StyledKimToken.create(s.unaryOperator));
-        // if (s.unaryOperatorArgument.defines(Type.OBSERVABLE)) {
-        // List<StyledKimToken> arg = s.unaryOperatorArgument.getStyledCode();
-        // ret.addAll(arg);
-        // } else {
-        // ret.add(StyledKimToken.unknown());
-        // }
-        // if (s.comparisonTarget != null) {
-        // ret.add(StyledKimToken.create(s.unaryOperator, true));
-        // addStyledTokens(s.unaryOperator, s.comparisonTarget, ret, true);
-        // }
-        // }
-        //
-        // if (observable != null) {
-        // ret.add(observable);
-        // }
-        //
-        // addStyledTokens(SemanticModifier.OF, state.peek().inherent, ret, false);
-        // addStyledTokens(SemanticModifier.WITHIN, state.peek().context, ret, false);
-        // addStyledTokens(SemanticModifier.WITH, state.peek().compresent, ret, false);
-        // addStyledTokens(SemanticModifier.CAUSED_BY, state.peek().causant, ret, false);
-        // addStyledTokens(SemanticModifier.CAUSING, state.peek().caused, ret, false);
-        // addStyledTokens(SemanticModifier.FOR, state.peek().goal, ret, false);
-        // addStyledTokens(SemanticModifier.ADJACENT_TO, state.peek().adjacent, ret, false);
-        //
-        // // don't switch the next two
-        // addStyledTokens(SemanticModifier.LINKING, state.peek().relationshipSource, ret, false);
-        // addStyledTokens(SemanticModifier.TO, state.peek().relationshipTarget, ret, false);
-        //
-        // if (s.unit != null) {
-        // ret.add(StyledKimToken.create("in"));
-        // ret.add(StyledKimToken.create(s.unit));
-        // } else if (s.currency != null) {
-        // ret.add(StyledKimToken.create("in"));
-        // ret.add(StyledKimToken.create(s.currency));
-        // }
-        //
-        // if (s.valueOperators != null) {
-        //
-        // }
-        //
-        // if (s.lexicalScope == ObservableRole.GROUP_OPEN) {
-        // ret.add(StyledKimToken.create(")"));
-        // }
-
     }
 
     public Collection<? extends String> getErrors() {
@@ -479,6 +484,34 @@ public class SemanticExpression {
     public static SemanticExpression create() {
         return new SemanticExpression();
     }
+
+    public String dump() {
+        return dump(head, 0);
+    }
+
+    private String dump(SemanticToken token, int level) {
+
+        String ret = "";
+        String spacer = StringUtil.spaces(level);
+        ret += spacer + token + "\n";
+        for (SemanticLink link : graph.outgoingEdgesOf(token)) {
+            ret += spacer + "  \u2192 " + link + ":\n";
+            ret += dump(graph.getEdgeTarget(link), level + 4);
+        }
+        return ret;
+    }
+
+    @Override
+    public String toString() {
+        return dump(head, 0);
+    }
+
+    /**
+     * Recurse up to find the point where a parenthesis was opened and return the node where the
+     * current group is linked.
+     * 
+     * @return
+     */
 
     // private void addStyledTokens(Object modifier, SemanticToken composer, List<StyledKimToken>
     // ret, boolean alternative) {

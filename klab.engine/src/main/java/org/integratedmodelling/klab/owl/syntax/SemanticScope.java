@@ -1,8 +1,10 @@
 package org.integratedmodelling.klab.owl.syntax;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.BinarySemanticOperator;
@@ -12,6 +14,11 @@ import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.SemanticModifier;
 import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.kim.api.ValueOperator;
+import org.integratedmodelling.klab.Concepts;
+import org.integratedmodelling.klab.Observables;
+import org.integratedmodelling.klab.Observations;
+import org.integratedmodelling.klab.Units;
+import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 
 /**
@@ -33,9 +40,11 @@ public class SemanticScope {
      *
      */
     public static class Constraint {
+        
         public boolean negated = false;
         public Collection<Object> arguments = new HashSet<>();
-
+        public IUnit unit;
+        
         private Constraint() {
         }
 
@@ -56,8 +65,7 @@ public class SemanticScope {
 
         public boolean matches(IConcept concept) {
             for (Object o : arguments) {
-                if (o instanceof IKimConcept.Type
-                        && (!concept.is((Type) o) || (negated && concept.is((Type) o)))) {
+                if (o instanceof IKimConcept.Type && (!concept.is((Type) o) || (negated && concept.is((Type) o)))) {
                     return false;
                 } else if (o instanceof Constraint && (!((Constraint) o).matches(concept))
                         || (negated && ((Constraint) o).matches(concept))) {
@@ -69,6 +77,22 @@ public class SemanticScope {
 
         public String toString() {
             return (negated ? "<NOT " : "<") + arguments + ">";
+        }
+
+        public Constraint compatibleWith(IConcept concept) {
+            // TODO Auto-generated method stub
+            return this;
+        }
+
+        public Constraint withDifferentBaseTraitOf(IConcept concept) {
+            // TODO Auto-generated method stub
+            return this;
+        }
+        
+        public static Constraint compatibleUnit(IUnit unit) {
+            Constraint ret = new Constraint();
+            ret.unit = unit;
+            return ret;
         }
 
     }
@@ -87,6 +111,14 @@ public class SemanticScope {
 
     String error = null;
 
+    public String toString() {
+        if (logicalRealm.isEmpty() && lexicalRealm.isEmpty()) {
+            return "[]";
+        }
+
+        return lexicalRealm + ", " + logicalRealm;
+    }
+
     public static SemanticScope root() {
 
         SemanticScope ret = new SemanticScope();
@@ -95,6 +127,65 @@ public class SemanticScope {
         ret.logicalRealm.add(Constraint.of(IKimConcept.Type.OBSERVABLE));
         ret.logicalRealm.add(Constraint.of(IKimConcept.Type.PREDICATE));
         return ret;
+    }
+
+    public static SemanticScope scope(IConcept concept, SemanticExpression context) {
+
+        SemanticScope ret = new SemanticScope();
+
+        if (concept.is(Type.OBSERVABLE)) {
+
+            ret.lexicalRealm.addAll(compatibleModifiers(concept));
+            
+            if (concept.is(Type.QUALITY)) {
+                
+                /*
+                 * add value operators and constrain for those that are already present in the
+                 * current lexical scope
+                 * 
+                 * TODO check if we need to differentiate operators
+                 */
+                ret.lexicalRealm.add(ObservableRole.VALUE_OPERATOR);
+
+                /*
+                 * check for units and constrain for compatibility
+                 */
+                if (concept.is(Type.MONETARY_VALUE)) {
+                    ret.lexicalRealm.add(ObservableRole.CURRENCY);
+                } else if (concept.is(Type.EXTENSIVE_PROPERTY) || concept.is(Type.INTENSIVE_PROPERTY)) {
+                    IUnit baseUnit = Units.INSTANCE.getDefaultUnitFor(concept);
+                    if (baseUnit != null) {
+                        ret.lexicalRealm.add(ObservableRole.UNIT);
+                        ret.logicalRealm.add(Constraint.compatibleUnit(baseUnit));
+                    }
+                } else if (concept.is(Type.NUMEROSITY)) {
+                    ret.lexicalRealm.add(ObservableRole.UNIT);
+                    ret.logicalRealm.add(Constraint.compatibleUnit(Units.INSTANCE.getUnit("1")));
+                }
+            }
+            
+        } else {
+            ret.logicalRealm.add(Constraint.of(Type.PREDICATE).withDifferentBaseTraitOf(concept));
+            ret.logicalRealm.add(Constraint.of(Type.OBSERVABLE).compatibleWith(concept));
+        }
+
+        return ret;
+    }
+
+    private static Collection<? extends ObservableRole> compatibleModifiers(IConcept concept) {
+        List<ObservableRole> ret = new ArrayList<>();
+        for (SemanticModifier modifier : SemanticModifier.values()) {
+            if (modifier.role != null) {
+                for (Type type : modifier.applicable) {
+                    if (concept.is(type)) {
+                        ret.add(modifier.role);
+                        break;
+                    }
+                }
+            }
+        }
+        return ret;
+        
     }
 
     public static SemanticScope scope(String syntacticElement, SemanticExpression context) {
@@ -112,6 +203,8 @@ public class SemanticScope {
         case "per":
             // collect observable, set to numerosity
             break;
+        default:
+            // unit or currency: check context, validate, then return empty scope
         }
 
         return ret;
@@ -122,10 +215,18 @@ public class SemanticScope {
 
         switch(op) {
         case FOLLOWS:
+            ret.logicalRealm.add(Constraint.of(Type.EVENT));
+            ret.lexicalRealm.add(ObservableRole.GROUP_OPEN);
             break;
         case INTERSECTION:
+            // must intersect same type
+            ret.logicalRealm.addAll(context.getCurrent().getScope().getAdmittedLogicalInput());
+            ret.lexicalRealm.add(ObservableRole.GROUP_OPEN);
             break;
         case UNION:
+            // must intersect same type
+            ret.logicalRealm.addAll(context.getCurrent().getScope().getAdmittedLogicalInput());
+            ret.lexicalRealm.add(ObservableRole.GROUP_OPEN);
             break;
         }
 
@@ -179,58 +280,20 @@ public class SemanticScope {
     public static SemanticScope scope(SemanticModifier role, SemanticExpression context) {
 
         SemanticScope ret = new SemanticScope();
-
-        switch(role) {
-        case ADJACENT_TO:
-            ret.logicalRealm.add(Constraint.of(Type.COUNTABLE));
-            break;
-        case CAUSED_BY:
-            ret.logicalRealm.add(Constraint.of(Type.QUALITY));
-            ret.logicalRealm.add(Constraint.of(Type.PROCESS));
-            ret.logicalRealm.add(Constraint.of(Type.EVENT));
-            break;
-        case CAUSING:
-            ret.logicalRealm.add(Constraint.of(Type.PROCESS));
-            ret.logicalRealm.add(Constraint.of(Type.EVENT));
-            break;
-        // case CONTAINED_IN:
-        // break;
-        // case CONTAINING:
-        // break;
-        case DURING:
-            ret.logicalRealm.add(Constraint.of(Type.PROCESS));
-            ret.logicalRealm.add(Constraint.of(Type.EVENT));
-            break;
-        case FOR:
-            ret.logicalRealm.add(Constraint.of(Type.OBSERVABLE));
-            break;
-        case LINKING:
-            ret.logicalRealm.add(Constraint.of(Type.COUNTABLE));
-            break;
-        case OF:
-            ret.logicalRealm.add(Constraint.of(Type.COUNTABLE));
-            break;
-        case TO:
-            ret.logicalRealm.add(Constraint.of(Type.COUNTABLE));
-            break;
-        case WITH:
-            ret.logicalRealm.add(Constraint.of(Type.OBSERVABLE));
-            break;
-        case WITHIN:
-            ret.logicalRealm.add(Constraint.of(Type.SUBJECT));
-            ret.logicalRealm.add(Constraint.of(Type.AGENT));
-            break;
-        default:
-            break;
-
+        // always possible to scope for a complex observable
+        ret.lexicalRealm.add(ObservableRole.GROUP_OPEN);
+        for (Type type : role.argument) {
+            ret.logicalRealm.add(Constraint.of(type));
         }
-
         return ret;
     }
 
     public static SemanticScope scope(UnarySemanticOperator role, SemanticExpression context) {
 
         SemanticScope ret = new SemanticScope();
+
+        // always possible to scope for a complex observable
+        ret.lexicalRealm.add(ObservableRole.GROUP_OPEN);
 
         switch(role) {
         case ASSESSMENT:
@@ -323,7 +386,7 @@ public class SemanticScope {
             ret = this.lexicalRealm.contains(ObservableRole.VALUE_OPERATOR)
                     && !context.collect(ObservableRole.VALUE_OPERATOR).contains(token);
         } else if (token instanceof SemanticModifier) {
-            ret = this.lexicalRealm.contains(ObservableRole.SEMANTIC_MODIFIER)
+            ret = this.lexicalRealm.contains(((SemanticModifier)token).role)
                     && !context.collect(ObservableRole.SEMANTIC_MODIFIER).contains(token);
         } else if (token instanceof UnarySemanticOperator) {
             ret = this.lexicalRealm.contains(ObservableRole.UNARY_OPERATOR)
@@ -334,8 +397,10 @@ public class SemanticScope {
             switch((String) token) {
             case "(":
                 ret = this.lexicalRealm.contains(ObservableRole.GROUP_OPEN);
+                break;
             case ")":
-                ret = !context.collect(ObservableRole.GROUP_OPEN).isEmpty();
+                ret = context.getCurrent().getGroupParent() != null;
+                break;
             case "in":
                 Set<Object> obs = context.collect(ObservableRole.OBSERVABLE);
                 if (!obs.isEmpty()) {
@@ -343,30 +408,34 @@ public class SemanticScope {
                         ret = this.lexicalRealm.contains(ObservableRole.CURRENCY)
                                 && context.collect(ObservableRole.CURRENCY).isEmpty();
                     } else {
-                        ret = this.lexicalRealm.contains(ObservableRole.UNIT)
-                                && context.collect(ObservableRole.UNIT).isEmpty();
+                        ret = this.lexicalRealm.contains(ObservableRole.UNIT) && context.collect(ObservableRole.UNIT).isEmpty();
                     }
                 }
+                break;
             case "per":
                 ret = this.lexicalRealm.contains(ObservableRole.DISTRIBUTED_UNIT);
+                break;
             default:
-                
+
                 /*
                  * TODO must be under unit, currency or operator value; validate as required based
                  * on context
                  */
                 if (context.getCurrent().isAs(ObservableRole.UNIT)) {
-                    // validate against property (not numerosity). TODO may want a constraint for base unit
+                    // validate against property (not numerosity). TODO may want a constraint for
+                    // base unit
                 } else if (context.getCurrent().isAs(ObservableRole.CURRENCY)) {
                     // validate against monetary value
                 } else if (context.getCurrent().isAs(ObservableRole.DISTRIBUTED_UNIT)) {
-                    // validate against numerosity, must be unitless. TODO may want a constraint for base unit
+                    // validate against numerosity, must be unitless. TODO may want a constraint for
+                    // base unit
                 } else if (context.getCurrent().isAs(ObservableRole.INLINE_VALUE)) {
                     // validate against operator and observable. TODO may want a type constraint
                 }
+                break;
             }
         }
-        
+
         if (!ret && error == null) {
             // catch-all
             this.error = "token " + token + " is illegal in this position of a semantic expression";

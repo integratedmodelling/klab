@@ -1,5 +1,9 @@
 package org.integratedmodelling.kim.api;
 
+import java.util.EnumSet;
+import java.util.Set;
+
+import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
 
 /**
@@ -12,63 +16,67 @@ import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
  */
 public enum SemanticModifier {
 
-    WITHIN(ObservableRole.CONTEXT, "within"),
-    OF(ObservableRole.INHERENT, "of"),
-    FOR(ObservableRole.GOAL, "for"),
-    WITH(ObservableRole.COMPRESENT, "with"),
-    CAUSED_BY(ObservableRole.CAUSANT, "caused by"),
-    ADJACENT_TO(ObservableRole.ADJACENT, "adjacent to"),
-    CONTAINED_IN(null, "contained in"),
-    CONTAINING(null, "containing"),
-    CAUSING(ObservableRole.CAUSED, "causing"),
-    DURING(ObservableRole.COOCCURRENT, "during"),
-    LINKING(ObservableRole.RELATIONSHIP_SOURCE, "linking"),
-    TO(ObservableRole.RELATIONSHIP_TARGET, "to"),
+    WITHIN(ObservableRole.CONTEXT, "within", EnumSet.of(Type.OBSERVABLE), EnumSet.of(Type.AGENT, Type.SUBJECT)),
+    OF(ObservableRole.INHERENT, "of", EnumSet.of(Type.OBSERVABLE), EnumSet.of(Type.COUNTABLE)),
+    FOR(ObservableRole.GOAL, "for", EnumSet.of(Type.OBSERVABLE), EnumSet.of(Type.OBSERVABLE)),
+    WITH(ObservableRole.COMPRESENT, "with", EnumSet.of(Type.OBSERVABLE), EnumSet.of(Type.COUNTABLE)),
+    CAUSED_BY(ObservableRole.CAUSANT, "caused by", EnumSet.of(Type.OBSERVABLE), EnumSet.of(Type.OBSERVABLE)),
+    ADJACENT_TO(ObservableRole.ADJACENT, "adjacent to", EnumSet.of(Type.OBSERVABLE), EnumSet.of(Type.COUNTABLE)),
+    CONTAINED_IN(null, "contained in", EnumSet.of(Type.COUNTABLE), EnumSet.of(Type.COUNTABLE)),
+    CONTAINING(null, "containing", EnumSet.of(Type.COUNTABLE), EnumSet.of(Type.COUNTABLE)),
+    CAUSING(ObservableRole.CAUSED, "causing", EnumSet.of(Type.PROCESS, Type.EVENT), EnumSet.of(Type.OBSERVABLE)),
+    DURING(ObservableRole.COOCCURRENT, "during", EnumSet.of(Type.OBSERVABLE), EnumSet.of(Type.PROCESS, Type.EVENT)),
+    LINKING(ObservableRole.RELATIONSHIP_SOURCE, "linking", EnumSet.of(Type.RELATIONSHIP), EnumSet.of(Type.COUNTABLE)),
+    TO(ObservableRole.RELATIONSHIP_TARGET, "to", EnumSet.of(Type.RELATIONSHIP), EnumSet.of(Type.COUNTABLE)),
 
     /*
      * TODO remove these
      */
     @Deprecated
-    IN(null, "in"),
+    IN(null, "in", null, null),
     @Deprecated
-    PER(null, "per"),
+    PER(null, "per", null, null),
 
     // Observable modifiers. TODO remove these in favor of ValueOperator
     @Deprecated
-    BY(null, "by"),
+    BY(null, "by", null, null),
     @Deprecated
-    DOWN_TO(null, "down to"),
+    DOWN_TO(null, "down to", null, null),
     @Deprecated
-    GREATER(null, ">"),
+    GREATER(null, ">", null, null),
     @Deprecated
-    LESS(null, "<"),
+    LESS(null, "<", null, null),
     @Deprecated
-    GREATEREQUAL(null, ">="),
+    GREATEREQUAL(null, ">=", null, null),
     @Deprecated
-    LESSEQUAL(null, "<="),
+    LESSEQUAL(null, "<=", null, null),
     @Deprecated
-    IS(null, "="),
+    IS(null, "=", null, null),
     @Deprecated
-    SAMEAS(null, "=="),
+    SAMEAS(null, "==", null, null),
     @Deprecated
-    WITHOUT(null, "without"),
+    WITHOUT(null, "without", null, null),
     @Deprecated
-    WHERE(null, "where"),
+    WHERE(null, "where", null, null),
     @Deprecated
-    PLUS(null, "plus"),
+    PLUS(null, "plus", null, null),
     @Deprecated
-    MINUS(null, "minus"),
+    MINUS(null, "minus", null, null),
     @Deprecated
-    TIMES(null, "times"),
+    TIMES(null, "times", null, null),
     @Deprecated
-    OVER(null, "over");
+    OVER(null, "over", null, null);
 
     public String[] declaration;
     public ObservableRole role;
+    public Set<IKimConcept.Type> applicable;
+    public Set<IKimConcept.Type> argument;
     
-    SemanticModifier(ObservableRole role, String... decl) {
-        this.declaration = decl;
+    SemanticModifier(ObservableRole role, String decl, Set<IKimConcept.Type> applicable, Set<IKimConcept.Type> argument) {
+        this.declaration = new String[] {decl};
         this.role = role;
+        this.applicable = applicable;
+        this.argument = argument;
     }
 
     public static SemanticModifier forCode(String code) {
