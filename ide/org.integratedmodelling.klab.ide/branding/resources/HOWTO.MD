@@ -17,6 +17,26 @@ Note that the icons should come in pairs (standard and high resolution, e.g. for
 The instructions to produce icons are available in Apple documentation. You need to put icons named icon_\<sizeinpoints\>x\<sizeinpoints\>\[@\<scale\>\].png, e.g. icon_16x16.png, icon_16x16@2x.png, etc, into an .iconset folder. Then run iconutil tool to produce the ICNS file for Eclipse. Refer to Apple documentation for details.
 Alternatively, the ICNS file can be produced using the Icon Composer app (available with developer tools), but this method is no longer recommended by Apple.
 
+Useful code:
+```bash
+mkdir klab.iconset
+# generate icons from 102421024 png
+sips -z 16 16     KLAB_icono_circle_1024.png --out klab.iconset/icon_16x16.png
+sips -z 32 32     KLAB_icono_circle_1024.png --out klab.iconset/icon_16x16@2x.png
+sips -z 32 32     KLAB_icono_circle_1024.png --out klab.iconset/icon_32x32.png
+sips -z 64 64     KLAB_icono_circle_1024.png --out klab.iconset/icon_32x32@2x.png
+sips -z 128 128   KLAB_icono_circle_1024.png --out klab.iconset/icon_128x128.png
+sips -z 256 256   KLAB_icono_circle_1024.png --out klab.iconset/icon_128x128@2x.png
+sips -z 256 256   KLAB_icono_circle_1024.png --out klab.iconset/icon_256x256.png
+sips -z 512 512   KLAB_icono_circle_1024.png --out klab.iconset/icon_256x256@2x.png
+sips -z 512 512   KLAB_icono_circle_1024.png --out klab.iconset/icon_512x512.png
+cp KLAB_icono_circle_1024.png klab.iconset/icon_512x512@2x.png
+# generate icns
+iconutil -c icns klab.iconset
+# remove directory
+# rm -R klab.iconset
+```
+
 ## Windows
 Windows launcher is produced by replacing icons in Eclipse executable with provided ones. So if the replacement fails, the executable will contain Eclipse icons.
 To use with Tycho, you need to create a multi-icon ICO file. The .product file also provides fields to specify 7 separate BMP images to use as icons. Unfortunately, I could not manage to get it to work with Tycho 0.15.0 - it seemed to only pick the first one.
