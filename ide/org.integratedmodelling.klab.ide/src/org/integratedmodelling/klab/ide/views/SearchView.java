@@ -212,10 +212,7 @@ public class SearchView extends ViewPart {
 					treeViewer.getTree().forceFocus();
 				} else if (e.keyCode == SWT.ESC) {
 					reset();
-                } /*
-                   * else if (e.keyCode == '(' || e.keyCode == ')') { e.doit = false;
-                   * text.setText(""); }
-                   */else if (text.getText().trim().isEmpty()) {
+                } else if (text.getText().trim().isEmpty()) {
 					clearMatches();
 				} else {
 					search(text.getText());
@@ -374,22 +371,7 @@ public class SearchView extends ViewPart {
         SearchRequest request = new SearchRequest();
         request.setSearchMode(Mode.CLOSE_SCOPE);
         request.setContextId(this.contextId);
-        
-        Activator.post(/*
-                        * (message) -> { SearchResponse response =
-                        * message.getPayload(SearchResponse.class);
-                        * this.matches.addAll(response.getMatches()); this.contextId =
-                        * response.getContextId(); Display.getDefault().asyncExec(() -> {
-                        * treeViewer.setInput(matches); }); },
-                        */IMessage.MessageClass.Search, IMessage.Type.SemanticSearch, request);
-	    
-//		SearchMatch closed = new SearchMatch();
-//		closed.setId(")");
-//		closed.setName(")");
-//		closed.setCloseGroup(true);
-//		accepted.add(closed);
-//        // setMatchedText();
-//		text.setText("");
+        Activator.post(IMessage.MessageClass.Search, IMessage.Type.SemanticSearch, request);
 	}
 
 	protected void openParenthesis() {
@@ -397,22 +379,7 @@ public class SearchView extends ViewPart {
         SearchRequest request = new SearchRequest();
         request.setSearchMode(Mode.OPEN_SCOPE);
         request.setContextId(this.contextId);
-        
-        Activator.post(/*
-                        * (message) -> { SearchResponse response =
-                        * message.getPayload(SearchResponse.class);
-                        * this.matches.addAll(response.getMatches()); this.contextId =
-                        * response.getContextId(); Display.getDefault().asyncExec(() -> {
-                        * treeViewer.setInput(matches); }); },
-                        */IMessage.MessageClass.Search, IMessage.Type.SemanticSearch, request);
-	    
-//	    SearchMatch open = new SearchMatch();
-//		open.setId("(");
-//		open.setName("(");
-//		open.setOpenGroup(true);
-//		accepted.add(open);
-////		setMatchedText();
-//		text.setText("");
+        Activator.post(IMessage.MessageClass.Search, IMessage.Type.SemanticSearch, request);
 	}
 
 	protected void observeMatching() {

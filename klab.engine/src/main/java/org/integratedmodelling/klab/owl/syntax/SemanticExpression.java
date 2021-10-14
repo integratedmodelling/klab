@@ -17,10 +17,14 @@ import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.SemanticModifier;
 import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.kim.api.ValueOperator;
+import org.integratedmodelling.kim.model.Kim;
+import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.data.mediation.ICurrency;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
+import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.syntax.SemanticScope.Constraint;
 import org.integratedmodelling.klab.rest.StyledKimToken;
 import org.integratedmodelling.klab.utils.StringUtil;
@@ -39,17 +43,21 @@ public class SemanticExpression {
     public class SemanticToken {
 
         public IConcept concept;
-        // public SemanticToken group;
         public IUnit unit;
         public ICurrency currency;
         public Object value;
-
-        // the scope for further linked tokens
+        public Stack<SemanticToken> previous = new Stack<>();
         private SemanticScope scope;
 
+        SemanticToken() {
+        }
+
+        SemanticToken(SemanticToken previous) {
+            this.previous.push(previous);
+        }
+
         public boolean isEmpty() {
-            return concept == null && unit == null && currency == null
-                    && value == null /* && (group == null || group.isEmpty()) */;
+            return concept == null && unit == null && currency == null && value == null;
         }
 
         @Override
@@ -62,9 +70,7 @@ public class SemanticExpression {
                 return "<" + currency + "> Admits: " + scope;
             } else if (value != null) {
                 return "<" + value + "> Admits: " + scope;
-            } /*
-               * else if (group != null) { return "<" + group + "> Admits: " + scope; }
-               */
+            }
 
             return "<empty> " + scope;
         }
@@ -118,6 +124,30 @@ public class SemanticExpression {
             return false;
         }
 
+        public IObservable buildObservable() {
+            String declaration = buildDeclaration();
+            if (declaration.isBlank() || declaration.contains("?")) {
+                return null;
+            }
+            try {
+                return Observables.INSTANCE.declare(declaration);
+            } catch (Throwable t) {
+                //
+            }
+            return null;
+        }
+
+        public IConcept buildConcept() {
+            IObservable observable = buildObservable();
+            return observable == null ? null : observable.getType();
+        }
+
+        public String buildDeclaration() {
+            List<StyledKimToken> ret = new ArrayList<>();
+            collectStyledCode(this, ret);
+            return joinTokens(ret);
+        }
+
     }
 
     public class SemanticLink {
@@ -156,16 +186,41 @@ public class SemanticExpression {
     private SemanticToken head;
     private SemanticToken current;
     private String error = null;
-    private Stack<SemanticToken> stack = new Stack<>();
     private Graph<SemanticToken, SemanticLink> graph = new DefaultDirectedGraph<>(SemanticLink.class);
-    // user data to remember stuff in interactive use.
-
     private Map<String, Object> data = new HashMap<>();
 
     private SemanticExpression() {
         this.current = this.head = new SemanticToken();
         this.current.scope = SemanticScope.root();
         this.graph.addVertex(this.head);
+    }
+
+    public String joinTokens(List<StyledKimToken> ret) {
+
+        StringBuffer text = new StringBuffer(512);
+        StyledKimToken previous = null;
+        for (StyledKimToken token : ret) {
+            if (token.isNeedsWhitespaceBefore() && text.length() > 0) {
+                // there's probably a more readable way to say this
+                if (!(previous != null && !previous.isNeedsWhitespaceAfter())) {
+                    text.append(" ");
+                }
+            }
+            int a = text.length();
+            text.append(token.getValue());
+            int b = text.length();
+            if (token.getColor() != null && token.getFont() != null) {
+                // StyleRange style = new StyleRange();
+                // style.start = a;
+                // style.length = b - a;
+                // style.foreground = getColor(token.getColor());
+                // style.fontStyle = getFont(token.getFont());
+                // styles.add(style);
+            }
+            previous = token;
+        }
+
+        return text.toString();
     }
 
     public SemanticToken getCurrent() {
@@ -189,13 +244,14 @@ public class SemanticExpression {
      */
     public boolean undo() {
 
-        if (stack.isEmpty()) {
+        if (this.current.previous.isEmpty()) {
             return false;
         }
-
-        this.graph.removeVertex(this.current);
-        this.current = this.stack.pop();
-
+        SemanticToken previous = this.current.previous.pop();
+        if (this.current.previous.size() == 0) {
+            this.graph.removeVertex(this.current);
+        }
+        this.current = previous;
         return true;
     }
 
@@ -210,8 +266,9 @@ public class SemanticExpression {
          * If we get here, the token is accepted and we just have to add a token, link it and make
          * it current, and adjust the undo stack.
          */
-        SemanticToken added = new SemanticToken();
+        SemanticToken added = new SemanticToken(this.current);
         SemanticLink link = new SemanticLink();
+        // SemanticToken parent = this.current;
 
         if (token instanceof IConcept) {
 
@@ -267,6 +324,13 @@ public class SemanticExpression {
             if ("(".equals(token)) {
                 link.observableRole = ObservableRole.GROUP_OPEN;
                 added.scope = new SemanticScope();
+                // added.stack = new Stack<>();
+
+                /*
+                 * TODO if under a WHERE, must have a quality and optional operator. This allows too
+                 * much.
+                 */
+
                 added.scope.lexicalRealm.addAll(current.scope.getAdmittedLexicalInput());
                 added.scope.lexicalRealm.remove(ObservableRole.GROUP_OPEN);
                 added.scope.lexicalRealm.add(ObservableRole.GROUP_CLOSE);
@@ -276,15 +340,17 @@ public class SemanticExpression {
                 added.scope.logicalRealm.add(Constraint.of(Type.PREDICATE));
             } else if (")".equals(token)) {
 
+                /*
+                 * find the parent, push the current to the undo stack, revise the scope and throw
+                 * away the local node. No new links are made.
+                 */
                 SemanticToken parent = this.current.getGroupParent();
                 if (parent != null) {
-                    this.current = parent;
-                    // TODO review what is in the group. Then reassess the scope as if submitting the relevant
-                    // concept. If it's an observable, remove the
-                    // observable from the scope.
-                    // TODO undo stack?
-                    return true;
+                    parent.scope = SemanticScope.scope(parent.buildConcept(), this);
                 }
+                parent.previous.push(this.current);
+                this.current = parent;
+                return true;
 
             } else {
                 // TODO according to context, it may be a unit or a currency, to be validated before
@@ -297,7 +363,6 @@ public class SemanticExpression {
 
         graph.addVertex(added);
         graph.addEdge(this.current, added, link);
-        this.stack.push(this.current);
         this.current = added;
 
         return true;
@@ -465,6 +530,10 @@ public class SemanticExpression {
     }
 
     public Type getObservableType() {
+        IConcept concept = buildConcept();
+        if (concept != null) {
+            return Kim.INSTANCE.getFundamentalType(((Concept) concept).getTypeSet());
+        }
         return null;
     }
 
@@ -506,34 +575,15 @@ public class SemanticExpression {
         return dump(head, 0);
     }
 
-    /**
-     * Recurse up to find the point where a parenthesis was opened and return the node where the
-     * current group is linked.
-     * 
-     * @return
-     */
+    public IObservable buildObservable() {
+        return head.buildObservable();
+    }
 
-    // private void addStyledTokens(Object modifier, SemanticToken composer, List<StyledKimToken>
-    // ret, boolean alternative) {
-    //
-    // if (composer == null) {
-    // return;
-    // }
-    //
-    // List<StyledKimToken> arg = composer.getStyledCode();
-    // ret.add(StyledKimToken.create(modifier, alternative));
-    //
-    //// if (arg.size() > 1 || (arg.size() == 1 && !composer.defines(Type.OBSERVABLE))) {
-    ////
-    //// ret.addAll(arg);
-    //// if (!composer.defines(Type.OBSERVABLE)) {
-    //// ret.add(StyledKimToken.unknown());
-    //// }
-    ////
-    //// } else if (arg.size() > 0) {
-    //// ret.addAll(arg);
-    //// } else {
-    //// ret.add(StyledKimToken.unknown());
-    //// }
-    // }
+    public IConcept buildConcept() {
+        return head.buildConcept();
+    }
+
+    public String buildDeclaration() {
+        return head.buildDeclaration();
+    }
 }

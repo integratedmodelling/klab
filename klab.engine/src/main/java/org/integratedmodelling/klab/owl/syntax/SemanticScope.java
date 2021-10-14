@@ -48,7 +48,7 @@ public class SemanticScope {
         private Constraint() {
         }
 
-        public static Constraint not(IConcept arg) {
+        public static Constraint not(Object arg) {
             Constraint ret = new Constraint();
             ret.arguments.add(arg);
             ret.negated = true;
@@ -239,38 +239,33 @@ public class SemanticScope {
 
         switch(op) {
         case AVERAGED:
+        case TOTAL:
+        case SUMMED:
+            // no further input 
             break;
         case BY:
+            ret.logicalRealm.add(Constraint.of(Type.ABSTRACT, Type.CLASS));
+            ret.logicalRealm.add(Constraint.of(Type.COUNTABLE));
             break;
         case DOWN_TO:
-            break;
-        case GREATER:
+            ret.logicalRealm.add(Constraint.of(Constraint.not(Type.ABSTRACT), Type.CLASS));
+            ret.lexicalRealm.add(ObservableRole.INLINE_VALUE);
             break;
         case GREATEREQUAL:
-            break;
-        case IS:
-            break;
+        case GREATER:
         case LESS:
-            break;
         case LESSEQUAL:
-            break;
         case MINUS:
-            break;
         case OVER:
-            break;
         case PLUS:
-            break;
         case SAMEAS:
-            break;
-        case SUMMED:
-            break;
+        case IS:
         case TIMES:
-            break;
-        case TOTAL:
+        case WITHOUT:
+            ret.lexicalRealm.add(ObservableRole.INLINE_VALUE);
             break;
         case WHERE:
-            break;
-        case WITHOUT:
+            ret.lexicalRealm.add(ObservableRole.GROUP_OPEN);
             break;
         }
 
