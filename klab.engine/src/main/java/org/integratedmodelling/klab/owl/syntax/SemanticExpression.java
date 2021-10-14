@@ -350,6 +350,9 @@ public class SemanticExpression {
                 }
                 parent.previous.push(this.current);
                 this.current = parent;
+                
+                System.out.println(this);
+                
                 return true;
 
             } else {
@@ -365,6 +368,8 @@ public class SemanticExpression {
         graph.addEdge(this.current, added, link);
         this.current = added;
 
+        System.out.println(this);
+        
         return true;
     }
 

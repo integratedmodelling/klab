@@ -87,6 +87,9 @@ public class StyledConceptDisplay extends Composite {
         });
         
         styledText = new StyledText(this, SWT.READ_ONLY | SWT.SINGLE);
+        styledText.setLeftMargin(3);
+        styledText.setTopMargin(3);
+        styledText.setEnabled(false);
         GridData gd_styledText = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
         gd_styledText.heightHint = 37;
         styledText.setLayoutData(gd_styledText);
