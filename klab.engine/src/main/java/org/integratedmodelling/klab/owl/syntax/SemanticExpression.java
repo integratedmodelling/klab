@@ -268,7 +268,6 @@ public class SemanticExpression {
          */
         SemanticToken added = new SemanticToken(this.current);
         SemanticLink link = new SemanticLink();
-        // SemanticToken parent = this.current;
 
         if (token instanceof IConcept) {
 
@@ -322,9 +321,9 @@ public class SemanticExpression {
         } else if (token instanceof String) {
 
             if ("(".equals(token)) {
+            
                 link.observableRole = ObservableRole.GROUP_OPEN;
                 added.scope = new SemanticScope();
-                // added.stack = new Stack<>();
 
                 /*
                  * TODO if under a WHERE, must have a quality and optional operator. This allows too
@@ -338,6 +337,7 @@ public class SemanticExpression {
                 // open groups are always for observables, which are specified in the original
                 // scope, so add predicates
                 added.scope.logicalRealm.add(Constraint.of(Type.PREDICATE));
+
             } else if (")".equals(token)) {
 
                 /*

@@ -57,7 +57,6 @@ import org.integratedmodelling.klab.engine.indexing.SearchContext.Constraint;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
-import org.integratedmodelling.klab.owl.ObservableComposer;
 import org.integratedmodelling.klab.owl.syntax.SemanticScope;
 import org.integratedmodelling.klab.utils.NumberUtils;
 

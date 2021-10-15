@@ -165,6 +165,7 @@ public class SemanticScope {
             }
             
         } else {
+            ret.lexicalRealm.add(ObservableRole.UNARY_OPERATOR);
             ret.logicalRealm.add(Constraint.of(Type.PREDICATE).withDifferentBaseTraitOf(concept));
             ret.logicalRealm.add(Constraint.of(Type.OBSERVABLE).compatibleWith(concept));
         }

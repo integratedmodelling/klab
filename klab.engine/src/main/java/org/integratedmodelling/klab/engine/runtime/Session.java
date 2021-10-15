@@ -111,7 +111,6 @@ import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.exceptions.KlabActorException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.monitoring.Message;
-import org.integratedmodelling.klab.owl.ObservableComposer;
 import org.integratedmodelling.klab.owl.syntax.SemanticExpression;
 import org.integratedmodelling.klab.rest.AuthorityIdentity;
 import org.integratedmodelling.klab.rest.AuthorityQueryRequest;
