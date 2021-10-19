@@ -331,7 +331,7 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
 		}
 		
 		if (scope.getTargetSemantics() != null) {
-			bindings.setVariable("observable", scope.getTargetSemantics());
+			bindings.setVariable("semantics", scope.getTargetSemantics());
 		}
 
 		bindings.setVariable("_p", artifactTable);
