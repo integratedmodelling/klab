@@ -78,6 +78,7 @@ public class CodelistEditor extends Composite {
     private TableViewer directTableViewer;
     private boolean dirty;
     private Text text_1;
+    private Text text_2;
 
     public static class AttributeContentProvider implements IStructuredContentProvider {
 
@@ -156,7 +157,7 @@ public class CodelistEditor extends Composite {
 
         nameField = new Text(settingsArea, SWT.BORDER);
         GridData gd_nameField = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-        gd_nameField.widthHint = 200;
+        gd_nameField.widthHint = 160;
         nameField.setLayoutData(gd_nameField);
         toolkit.adapt(nameField, true, true);
 
@@ -197,7 +198,7 @@ public class CodelistEditor extends Composite {
 
         Composite composite_2 = new Composite(settingsArea, SWT.NONE);
         composite_2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-        composite_2.setLayout(new GridLayout(3, false));
+        composite_2.setLayout(new GridLayout(5, false));
         toolkit.adapt(composite_2);
         toolkit.paintBordersFor(composite_2);
 
@@ -208,7 +209,7 @@ public class CodelistEditor extends Composite {
                 mappingSash.setWeights(1, 0);
             }
         });
-        GridData gd_codesOnlyButton = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
+        GridData gd_codesOnlyButton = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
         gd_codesOnlyButton.widthHint = 60;
         codesOnlyButton.setLayoutData(gd_codesOnlyButton);
         codesOnlyButton.setSelection(true);
@@ -217,7 +218,7 @@ public class CodelistEditor extends Composite {
 
         oneToOneButton = new Button(composite_2, SWT.RADIO);
 
-        GridData gd_oneToOneButton = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
+        GridData gd_oneToOneButton = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
         gd_oneToOneButton.widthHint = 60;
         oneToOneButton.setLayoutData(gd_oneToOneButton);
         toolkit.adapt(oneToOneButton, true, true);
@@ -235,6 +236,15 @@ public class CodelistEditor extends Composite {
         oneToManyButton.setLayoutData(gd_oneToManyButton);
         toolkit.adapt(oneToManyButton, true, true);
         oneToManyButton.setText("1->n");
+        
+        Label lblRootConcept = new Label(composite_2, SWT.NONE);
+        lblRootConcept.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+        toolkit.adapt(lblRootConcept, true, true);
+        lblRootConcept.setText("Root concept");
+        
+        text_2 = new Text(composite_2, SWT.BORDER);
+        text_2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        toolkit.adapt(text_2, true, true);
         oneToManyButton.addSelectionListener(new SelectionAdapter(){
             @Override
             public void widgetSelected(SelectionEvent e) {

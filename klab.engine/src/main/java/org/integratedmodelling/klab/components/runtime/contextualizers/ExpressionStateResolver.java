@@ -55,11 +55,11 @@ public class ExpressionStateResolver implements IStateResolver {
 			}
 		}
 		if (condition != null) {
-			Object ret = condition.override("scale", context.getScale(), "space", context.getScale().getSpace())
+			Object ret = condition.override("scale", context.getScale(), "space", context.getScale().getSpace(), "semantics", semantics)
 					.eval(context, context, additionalParameters);
 			ok = ret instanceof Boolean && ((Boolean) ret);
 		}
-		return ok ? expression.override("scale", context.getScale(), "space", context.getScale().getSpace())
+		return ok ? expression.override("scale", context.getScale(), "space", context.getScale().getSpace(), "semantics", semantics)
 				.eval(context, context, additionalParameters) : null;
 	}
 

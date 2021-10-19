@@ -335,24 +335,21 @@ public enum Indexer {
                 case GOAL:
                     ret.add(new SearchMatch(SemanticModifier.FOR));
                     break;
+                case UNIT:
                 case CURRENCY:
-                    break;
-                case GROUP_CLOSE:
-                    break;
-                case GROUP_OPEN:
-                    break;
                 case INLINE_VALUE:
+                case GROUP_OPEN:
+                case DISTRIBUTED_UNIT:
+                	SearchMatch match = new SearchMatch(role);
+                	// space match gets suggestions in these cases
+                	if (term.isEmpty() || match.getId().startsWith(term)) {
+                		ret.add(match);
+                	}
                     break;
                 case LOGICAL_OPERATOR:
                     break;
-                case ROLE:
-                    break;
-                case TRAIT:
-                    break;
                 case UNARY_OPERATOR:
                     ret.addAll(matchUnaryOperators(term));
-                    break;
-                case UNIT:
                     break;
                 case VALUE_OPERATOR:
                     ret.addAll(matchValueOperators(term));

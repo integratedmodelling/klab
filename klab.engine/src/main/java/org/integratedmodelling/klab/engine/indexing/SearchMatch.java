@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.integratedmodelling.kim.api.BinarySemanticOperator;
 import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
 import org.integratedmodelling.kim.api.SemanticModifier;
 import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.kim.api.ValueOperator;
@@ -79,7 +80,32 @@ public class SearchMatch implements IIndexingService.Match {
         this.id = this.name = modifier.declaration[0];
     }
 
-    @Override
+    public SearchMatch(ObservableRole role) {
+    	switch(role) {
+        case CURRENCY:
+        case UNIT:
+            this.matchType = Type.MODIFIER;
+            this.id = this.name = "in";
+            break;
+        case INLINE_VALUE:
+            this.matchType = Type.INLINE_VALUE;
+            // TODO client should know which kind of value is admitted. Selecting # should enable free editing.
+            this.id = this.name = "#";
+            break;
+        case GROUP_OPEN:
+            this.matchType = Type.MODIFIER;
+            this.id = this.name = "(";
+            break;
+        case DISTRIBUTED_UNIT:
+            this.matchType = Type.MODIFIER;
+            this.id = this.name = "per";
+            break;
+        default:
+    		break;
+    	}
+	}
+
+	@Override
     public String getId() {
         return id;
     }

@@ -123,7 +123,8 @@ public interface IIndexingService {
             VALUE_OPERATOR,
             UNARY_OPERATOR,
             SEMANTIC_MODIFIER,
-            BINARY_OPERATOR
+            BINARY_OPERATOR,
+            INLINE_VALUE
         }
 
         /**

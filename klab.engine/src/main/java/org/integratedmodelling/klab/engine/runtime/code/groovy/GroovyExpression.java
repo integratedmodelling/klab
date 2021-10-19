@@ -326,6 +326,12 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
 		if (parameters.containsKey("self") && parameters.get("self") instanceof IObservation
 				&& !artifactTable.containsKey("self")) {
 			artifactTable.put("self", Wrapper.wrap(parameters.get("self"), "self", bindings));
+		} else if (scope.getTargetArtifact() != null) {
+			artifactTable.put("target", Wrapper.wrap(scope.getTargetArtifact(), "self", bindings));
+		}
+		
+		if (scope.getTargetSemantics() != null) {
+			bindings.setVariable("observable", scope.getTargetSemantics());
 		}
 
 		bindings.setVariable("_p", artifactTable);
