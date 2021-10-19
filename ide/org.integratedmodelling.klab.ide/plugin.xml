@@ -340,7 +340,7 @@
             name="kModeler">
          <property
                name="windowImages"
-               value="branding/k-lab-icon-16.gif,branding/k-lab-icon-32.gif,branding/k-lab-icon-48.gif,branding/k-lab-icon-64.gif,branding/k-lab-icon-128.gif,branding/k-lab-icon-256.gif">
+               value="branding/k-lab-icon-16.png,branding/k-lab-icon-32.png,branding/k-lab-icon-48.png,branding/k-lab-icon-64.png,branding/k-lab-icon-128.png,branding/k-lab-icon-256.png">
          </property>
          <property
                name="aboutText"
@@ -348,7 +348,7 @@
          </property>
          <property
                name="aboutImage"
-               value="branding/k-lab-icon-128.gif">
+               value="branding/k-lab-icon-128.png">
          </property>
          <property
                name="startupForegroundColor"
@@ -380,7 +380,7 @@
             name="k.Modeler">
          <property
                name="windowImages"
-               value="branding/k-lab-icon-16.gif,branding/k-lab-icon-32.gif,branding/k-lab-icon-48.gif,branding/k-lab-icon-64.gif,branding/k-lab-icon-128.gif,branding/k-lab-icon-256.gif">
+               value="branding/k-lab-icon-16.png,branding/k-lab-icon-32.png,branding/k-lab-icon-48.png,branding/k-lab-icon-64.png,branding/k-lab-icon-128.png,branding/k-lab-icon-256.png">
          </property>
          <property
                name="aboutText"
@@ -388,7 +388,7 @@
          </property>
          <property
                name="aboutImage"
-               value="branding/k-lab-icon-128.gif">
+               value="branding/k-lab-icon-128.png">
          </property>
          <property
                name="startupForegroundColor"

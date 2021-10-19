@@ -4,7 +4,7 @@
 <product name="k.Modeler" uid="org.integratedmodelling.klab.modeler.product" id="org.integratedmodelling.klab.ide.kModeler" application="org.eclipse.ui.ide.workbench" version="0.11.0.qualifier" useFeatures="true" includeLaunchers="true">
 
    <aboutInfo>
-      <image path="branding/k-lab-icon-128.gif"/>
+      <image path="branding/k-lab-icon-128.png"/>
       <text>
          k.Modeler is an integrated development environment for semantic modelling with the  k.IM language and the k.LAB software stack. It acts as a client for a k.LAB engine, which must be running locally.
       </text>
@@ -22,7 +22,7 @@
       </vmArgsMac>
    </launcherArgs>
 
-   <windowImages i16="branding/k-lab-icon-16.gif" i32="branding/k-lab-icon-32.gif" i48="branding/k-lab-icon-48.gif" i64="branding/k-lab-icon-64.gif" i128="branding/k-lab-icon-128.gif" i256="branding/k-lab-icon-256.gif"/>
+   <windowImages i16="branding/k-lab-icon-16.png" i32="branding/k-lab-icon-32.png" i48="branding/k-lab-icon-48.png" i64="branding/k-lab-icon-64.png" i128="branding/k-lab-icon-128.png" i256="branding/k-lab-icon-256.png"/>
 
    <splash
       location="org.integratedmodelling.klab.ide" />
@@ -31,16 +31,10 @@
       <macosx icon="branding/k-lab.icns"/>
       <win useIco="true">
          <ico path="branding/k-lab.ico"/>
-         <bmp
-            winSmallHigh="branding/kdot16.bmp"
-            winSmallLow="branding/kdot16_8.bmp"
-            winMediumHigh="branding/kdot32.bmp"
-            winMediumLow="branding/kdot32_8.bmp"
-            winLargeHigh="branding/kdot48.bmp"
-            winLargeLow="branding/kdot48_8.bmp"
-            winExtraLargeHigh="branding/kdot256.bmp"/>
+         <bmp/>
       </win>
    </launcher>
+
 
    <vm>
       <linux include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JRE-1.1</linux>
