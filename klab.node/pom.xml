@@ -140,7 +140,12 @@
 			<artifactId>jose4j</artifactId>
 			<version>0.6.3</version>
 		</dependency>
-		
+ 
+ 		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>klab.adapter.copernicus</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.component.amp</artifactId>
