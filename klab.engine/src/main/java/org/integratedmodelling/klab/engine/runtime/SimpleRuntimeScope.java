@@ -300,13 +300,18 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 
     @Override
     public IObservable getTargetSemantics() {
-        return semantics.get(getTargetName());
+        if (semantics == null) return null;
+        String name = getTargetName();
+        return name == null ? null : semantics.get(name);
     }
 
     @Override
     public String getTargetName() {
         if (targetName != null) {
             return targetName;
+        }
+        if (target == null) {
+        	return null;
         }
         return target instanceof IDirectObservation ? ((IDirectObservation) target).getName() : target.getObservable().getName();
     }
