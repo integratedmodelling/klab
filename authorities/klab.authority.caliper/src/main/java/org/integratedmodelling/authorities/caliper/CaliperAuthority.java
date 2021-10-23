@@ -84,7 +84,7 @@ public class CaliperAuthority implements IAuthority {
         CALIPER_URLS.put("ISIC", "http://stats-class.fao.uniroma2.it/ISIC/rev4");
         // CALIPER_SCHEMES.put("ICC10", "http://stats-class.fao.uniroma2.it/ICC/v1.0");
         CALIPER_URLS.put("ICC", "http://stats-class.fao.uniroma2.it/ICC/v1.1");
-        CALIPER_URLS.put("M49", "http://stats-class.fao.uniroma2.it/geo/M49");
+        CALIPER_URLS.put("M49", "http://stats-class.fao.uniroma2.it/geo/m49");
         CALIPER_URLS.put("SDGEO", "http://stats-class.fao.uniroma2.it/geo/M49/SDG-groups");
         CALIPER_URLS.put("FOODEX2", "http://stats-class.fao.uniroma2.it/foodex2");
         // CALIPER_SCHEMES.put("CPC20", "http://stats-class.fao.uniroma2.it/CPC/v2.0");

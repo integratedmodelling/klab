@@ -100,6 +100,9 @@ public class AuthorityEditor extends Composite {
         composite.setBounds(0, 0, 32, 32);
 
         mainAuthority = new Combo(composite, SWT.READ_ONLY);
+        GridData gd_mainAuthority = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+        gd_mainAuthority.widthHint = 100;
+        mainAuthority.setLayoutData(gd_mainAuthority);
         mainAuthority.addSelectionListener(new SelectionAdapter(){
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -125,6 +128,9 @@ public class AuthorityEditor extends Composite {
         mainAuthority.setBounds(0, 0, 57, 20);
 
         subAuthority = new Combo(composite, SWT.READ_ONLY);
+        GridData gd_subAuthority = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+        gd_subAuthority.widthHint = 100;
+        subAuthority.setLayoutData(gd_subAuthority);
         subAuthority.addSelectionListener(new SelectionAdapter(){
             @Override
             public void widgetSelected(SelectionEvent e) {

@@ -210,6 +210,28 @@ public class JsonUtils {
             throw new IllegalArgumentException("serialization failed: " + e.getMessage());
         }
     }
+    
+    /**
+     * Serialize the passed object as JSON and pretty-print the resulting code.
+     *
+     * @param object the object
+     * @param file 
+     * @return the string
+     */
+    public static void printAsJson(Object object, File file) {
+
+        ObjectMapper om = new ObjectMapper();
+        om.enable(SerializationFeature.INDENT_OUTPUT); // pretty print
+        om.enable(SerializationFeature.WRITE_NULL_MAP_VALUES); // pretty print
+        om.enable(SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED); // pretty print
+        om.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+
+        try {
+        	om.writeValue(file, object);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("serialization failed: " + e.getMessage());
+        }
+    }
 
     /**
      * Convert a map resulting from parsing generic JSON (or any other source) to the passed type.

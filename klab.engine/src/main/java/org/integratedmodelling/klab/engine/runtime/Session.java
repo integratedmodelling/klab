@@ -765,7 +765,26 @@ public class Session extends GroovyObjectSupport
             }
 
         } else if (message.getType() == IMessage.Type.UpdateCodelist) {
+        	
+            IResource resource = Resources.INSTANCE.resolveResource(request.getResourceUrns().iterator().next());
+            if (resource == null) {
+                monitor.error("requested resource not found: " + request.getResourceUrns().iterator().next());
+                return;
+            }
+
+            Resources.INSTANCE.updateCodelist(resource, request.getCodelist(), monitor);
+        	
         } else if (message.getType() == IMessage.Type.DeleteCodelist) {
+
+            IResource resource = Resources.INSTANCE.resolveResource(request.getResourceUrns().iterator().next());
+            if (resource == null) {
+                monitor.error("requested resource not found: " + request.getResourceUrns().iterator().next());
+                return;
+            }
+
+            Resources.INSTANCE.deleteCodelist(resource, request.getCodelist(), monitor);
+
+        
         } else {
 
             for (String urn : request.getResourceUrns()) {

@@ -30,7 +30,7 @@ public class Network implements ICommand {
                 if (network != null) {
                     for (INodeIdentity node : network.getNodes()) {
                         Duration uptime = new Duration(node.getUptime());
-                        ret += (ret.isEmpty() ? "" : "\n") + "   " + node.getName() + " at " + node.getUrls()
+                        ret += (ret.isEmpty() ? "" : "\n") + "   " + node.getName() + " v" + node.getVersion() + " at " + node.getUrls()
                                 + node.getAdapters().toString() + " (up " + PeriodFormat.getDefault().print(uptime.toPeriod()) + ")";
                     }
                 }

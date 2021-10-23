@@ -85,4 +85,11 @@ public interface INodeIdentity extends IServerIdentity {
 	 * @return
 	 */
 	long getUptime();
+
+	/**
+	 * k.LAB version and build
+	 * 
+	 * @return
+	 */
+	String getVersion();
 }

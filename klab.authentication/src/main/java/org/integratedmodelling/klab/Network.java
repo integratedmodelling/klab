@@ -130,6 +130,7 @@ public enum Network implements INetworkService {
 		node.getCatalogIds().addAll(capabilities.getResourceCatalogs());
 		node.getNamespaceIds().addAll(capabilities.getResourceNamespaces());
 		node.getResources().addAll(capabilities.getResourceUrns());
+		node.setVersion(capabilities.getBuild());
 		// FIXME use proper field
 		node.setUptime(capabilities.getRefreshFrequencyMillis());
 		node.setOnline(true);

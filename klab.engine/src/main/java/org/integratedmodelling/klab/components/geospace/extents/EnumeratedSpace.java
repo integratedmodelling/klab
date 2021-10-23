@@ -30,14 +30,14 @@ import org.integratedmodelling.klab.utils.Pair;
 
 public class EnumeratedSpace extends AbstractExtent implements ISpace {
 
-    AuthorityView geographicAuthority;
     /*
      * if empty, coverage is the entire authority
      */
     Set<IConcept> codes = new HashSet<>();
+    IConcept identity = null;
     
-    public EnumeratedSpace(IAuthority authority) {
-        this.geographicAuthority = new AuthorityView(authority);
+    public EnumeratedSpace(IConcept identity) {
+    	this.identity = identity;
     }
 
     @Override
@@ -66,14 +66,12 @@ public class EnumeratedSpace extends AbstractExtent implements ISpace {
 
     @Override
     public IExtent collapse() {
-        // TODO Auto-generated method stub
-        return null;
+        return this;
     }
 
     @Override
     public IExtent getBoundingExtent() {
-        // TODO Auto-generated method stub
-        return null;
+        return this;
     }
 
     @Override
@@ -120,7 +118,7 @@ public class EnumeratedSpace extends AbstractExtent implements ISpace {
 
     @Override
     public long size() {
-        return codes.isEmpty() ? geographicAuthority.size() : codes.size();
+        return 1; // codes.isEmpty() ? geographicAuthority.size() : codes.size();
     }
 
     @Override

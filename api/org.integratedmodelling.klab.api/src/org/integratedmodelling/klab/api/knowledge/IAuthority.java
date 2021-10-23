@@ -98,6 +98,12 @@ public interface IAuthority {
 
     interface Capabilities {
 
+    	/**
+    	 * 
+    	 * @return
+    	 */
+    	String getDescription();
+    	
         /**
          * If true, users can use the search API.
          * 

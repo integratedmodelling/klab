@@ -40,6 +40,7 @@ public class Node implements INodeIdentity {
 	private Date bootTime = new Date();
 	private String token;
 	private boolean online;
+	private String version;
 	private int retryPeriod = 15;
 	private long lastCheck = System.currentTimeMillis();
 	private Map<String, IAuthority.Capabilities> authorities = new HashMap<>();
@@ -273,5 +274,13 @@ public class Node implements INodeIdentity {
     public void setUptime(long uptime) {
         this.uptime = uptime;
     }
+
+	public String getVersion() {
+		return version;
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
+	}
 
 }

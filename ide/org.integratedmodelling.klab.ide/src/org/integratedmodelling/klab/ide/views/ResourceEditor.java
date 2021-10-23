@@ -1295,7 +1295,7 @@ public class ResourceEditor extends ViewPart {
             request.setCodelistAttribute(codelist);
             Activator.post((message) -> {
                 CodelistReference ref = message.getPayload(CodelistReference.class);
-                codelistEditor.loadCodelist(ref);
+                codelistEditor.loadCodelist(ref, this.resource.getUrn());
                 Display.getDefault().asyncExec(() -> {
                     mainViewTabFolder.getTabList()[3].setEnabled(true);
                     mainViewTabFolder.setSelection(3);
