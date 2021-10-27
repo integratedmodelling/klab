@@ -128,10 +128,10 @@ abstract class Observation<T extends IObservation> extends Wrapper<T> {
 		return new DirectObservation(unwrap().context, binding);
 	}
 
-    def getDisplayLabel() {
-        return Observations.INSTANCE.getDisplayLabel(unwrap());
-    }
-    
+	def getDisplayLabel() {
+		return Observations.INSTANCE.getDisplayLabel(unwrap());
+	}
+
 	/**
 	 * Used to force non-scalar usage when we need the object as is and
 	 * we have scalar usage in the same expression.

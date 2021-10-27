@@ -200,4 +200,9 @@ public class CodeList implements ICodelist {
         return null;
     }
 
+	@Override
+	public String getRootConceptId() {
+		return rootConcept == null ? null : rootConcept.getDefinition();
+	}
+
 }

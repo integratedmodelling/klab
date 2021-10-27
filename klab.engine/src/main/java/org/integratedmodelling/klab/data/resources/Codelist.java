@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Properties;
 
 import org.integratedmodelling.klab.api.knowledge.ICodelist;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.rest.CodelistReference;
 
@@ -13,7 +14,7 @@ import com.google.common.collect.Multimap;
 public class Codelist implements ICodelist {
 
     CodelistReference reference;
-
+    IConcept rootConcept;
     Multimap<String, Object> direct = LinkedListMultimap.create();
     Multimap<String, Object> reverse = LinkedListMultimap.create();
 
@@ -83,5 +84,10 @@ public class Codelist implements ICodelist {
     public String getPattern() {
         return reference.getPattern();
     }
+
+	@Override
+	public String getRootConceptId() {
+		return reference.getRootConceptId();
+	}
 
 }

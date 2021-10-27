@@ -710,7 +710,7 @@ public class Model extends KimObject implements IModel {
                     required = IArtifact.Type.VOID;
                 }
                 if (!IArtifact.Type.isCompatible(required, typechain.get(observable.getName()))) {
-                    monitor.error("the computation produces output of type " + typechain.get(observable.getName()) + " for "
+                    monitor.error("the computation chain produces output of type " + typechain.get(observable.getName()) + " for "
                             + observable.getName() + " when " + required + " is expected", this.getStatement());
                     setErrors(true);
                 }

@@ -111,7 +111,7 @@ public class CodelistEditor extends Composite {
 				case 1:
 					return ((Triple<String, String, String>) element).getSecond() == null ? ""
 							: ((Triple<String, String, String>) element).getSecond();
-				case 2:
+				case 3:
 					return ((Triple<String, String, String>) element).getThird() == null ? ""
 							: ((Triple<String, String, String>) element).getThird();
 				}
@@ -415,13 +415,17 @@ public class CodelistEditor extends Composite {
 
 		TableViewerColumn tableViewerColumn = new TableViewerColumn(directTableViewer, SWT.NONE);
 		TableColumn tblclmnKey = tableViewerColumn.getColumn();
-		tblclmnKey.setWidth(177);
+		tblclmnKey.setWidth(90);
 		tblclmnKey.setText("Key");
 
 		TableViewerColumn tableViewerColumn_4 = new TableViewerColumn(directTableViewer, SWT.NONE);
 		TableColumn tblclmnValue_2 = tableViewerColumn_4.getColumn();
-		tblclmnValue_2.setWidth(100);
+		tblclmnValue_2.setWidth(140);
 		tblclmnValue_2.setText("Value");
+		
+		TableColumn tblclmnLabelColumn = new TableColumn(directMappingsTable, SWT.NONE);
+		tblclmnLabelColumn.setWidth(140);
+		tblclmnLabelColumn.setText("Label");
 
 		TableViewerColumn tableViewerColumn_1 = new TableViewerColumn(directTableViewer, SWT.NONE);
 		TableColumn tblclmnValue = tableViewerColumn_1.getColumn();
@@ -521,10 +525,16 @@ public class CodelistEditor extends Composite {
 		toolkit.paintBordersFor(combo);
 
 		Composite composite_3 = new Composite(actionArea, SWT.NONE);
-		composite_3.setLayout(new GridLayout(1, false));
+		composite_3.setLayout(new GridLayout(2, false));
 		composite_3.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		toolkit.adapt(composite_3);
 		toolkit.paintBordersFor(composite_3);
+		
+		Button btnNewButton = new Button(composite_3, SWT.NONE);
+		btnNewButton.setEnabled(false);
+		btnNewButton.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
+		toolkit.adapt(btnNewButton, true, true);
+		btnNewButton.setText("Synchronize");
 
 		saveCodelistButton = new Button(composite_3, SWT.NONE);
 		saveCodelistButton.addSelectionListener(new SelectionAdapter() {

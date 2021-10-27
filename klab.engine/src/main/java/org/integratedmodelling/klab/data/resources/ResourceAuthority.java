@@ -8,6 +8,7 @@ import java.util.Map;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.knowledge.IAuthority;
 import org.integratedmodelling.klab.api.knowledge.ICodelist;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.engine.indexing.GenericRAMIndexer;
 import org.integratedmodelling.klab.rest.AuthorityIdentity;
@@ -27,6 +28,7 @@ public class ResourceAuthority implements IAuthority {
 
 	ICodelist codelist;
 	IResource resource;
+	IConcept rootIdentity;
 	GenericRAMIndexer<AuthorityIdentity> index = new GenericRAMIndexer<AuthorityIdentity>(AuthorityIdentity.class) {
 
 		@Override

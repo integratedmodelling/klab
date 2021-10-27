@@ -3,6 +3,7 @@ package org.integratedmodelling.ecology.biomass.lpjguess;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 public enum IntercropType {
+	
     NOINTERCROP,
     NATURALGRASS;
 

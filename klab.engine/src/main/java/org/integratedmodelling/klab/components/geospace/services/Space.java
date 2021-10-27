@@ -5,15 +5,14 @@ import java.util.Map;
 
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.klab.Authorities;
 import org.integratedmodelling.klab.Concepts;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.IQuantity;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
-import org.integratedmodelling.klab.api.knowledge.IAuthority;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
@@ -33,7 +32,7 @@ public class Space implements IExpression {
 	private static Map<String, ISpace> shapeCache = new HashMap<>();
 
 	@Override
-	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IContextualizationScope scope) throws KlabException {
 
 		Shape shape = null;
 		Double resolution = null;
@@ -92,7 +91,7 @@ public class Space implements IExpression {
 			ISpace space = shapeCache.get(urn);
 			if (space == null) {
 				Pair<IArtifact, IArtifact> artifact = Resources.INSTANCE.resolveResourceToArtifact(urn,
-						context.getMonitor());
+						scope == null ? Klab.INSTANCE.getRootMonitor() : scope.getMonitor());
 				if (artifact == null || artifact.getSecond().groupSize() < 1
 						|| artifact.getSecond().getGeometry().getDimension(Type.SPACE) == null) {
 					throw new KlabIllegalArgumentException("urn " + urn + " does not resolve to a spatial object");

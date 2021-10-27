@@ -178,6 +178,9 @@ public class Utils {
         if (value instanceof Boolean) {
             return Boolean.class;
         }
+        if (value instanceof IConcept) {
+        	return IConcept.class;
+        }
         return String.class;
     }
 

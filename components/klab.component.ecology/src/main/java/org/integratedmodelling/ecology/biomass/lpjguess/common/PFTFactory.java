@@ -484,6 +484,10 @@ public class PFTFactory {
         return result;
     }
 
+    public static void main(String[] args) {
+    	System.out.println("DIOI");
+    }
+    
     /*
      * FIXME remove, useless. 
      */

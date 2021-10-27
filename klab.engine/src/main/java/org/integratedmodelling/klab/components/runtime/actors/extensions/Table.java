@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.components.runtime.actors.extensions;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -13,132 +14,170 @@ import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.utils.StringUtils;
 import org.integratedmodelling.klab.utils.Utils;
 
 import groovy.lang.GroovyObjectSupport;
 
 public class Table extends GroovyObjectSupport {
 
-    /*
-     * if a key column isn't defined in the constructor, it becomes "row" indexing the string value
-     * of the row number.
-     */
-    String keyColumn = "row";
-    Set<String> columns = new LinkedHashSet<>();
-    // data are added by "row" using the primary key, and are filled in at each add() by column,
-    // defining the
-    // columns as we go.
-    Map<String, Map<String, Object>> data = new LinkedHashMap<>();
+	/*
+	 * if a key column isn't defined in the constructor, it becomes "row" indexing
+	 * the string value of the row number.
+	 */
+	Set<String> keyColumns = new LinkedHashSet<>();
+	Set<String> columns = new LinkedHashSet<>();
+	// data are added by "row" using the primary key, and are filled in at each
+	// add() by column,
+	// defining the
+	// columns as we go.
+	Map<String, Map<String, Object>> data = new LinkedHashMap<>();
 
-    public Table() {
+	public Table() {
+	}
 
-    }
+	@Override
+	public void setProperty(String key, Object value) {
+		switch (key) {
+		case "key":
+			if (value instanceof Collection) {
+				for (Object o : ((Collection<?>) value)) {
+					keyColumns.add(o.toString());
+				}
+			} else {
+				this.keyColumns.add(value.toString());
+			}
+			break;
+		default:
+			super.setProperty(key, value);
+		}
+	}
 
-    @Override
-    public void setProperty(String key, Object value) {
-        switch(key) {
-        case "key":
-            this.keyColumn = value.toString();
-            break;
-        default:
-            super.setProperty(key, value);
-        }
-    }
+	/**
+	 * Set a value into a column using a syntax like set(val, key=xxx, column=xxx).
+	 * The associated table must contain a key for each of the keys configured,
+	 * identifying the row (either a row number or a row key) and a column
+	 * identifier to choose the cell to set into.
+	 * 
+	 * @param objects
+	 */
+	public void set(Object value, Map<String, Object> keys) {
 
-    /**
-     * Set a value into a column using a syntax like add(val, key=xxx, column=xxx). The associated
-     * table must contain a key for the row (either a row number or a row key) and a column
-     * identifier.
-     * 
-     * @param objects
-     */
-    public void set(Object value, Map<String, Object> keys) {
-        if (!(keys.containsKey("key") || keys.containsKey(keyColumn)) || !keys.containsKey("column")) {
-            throw new KlabValidationException("table: need to pass a key and a column to add a value");
-        }
-        Object key = keys.get("key");
-        if (key == null) {
-            key = keys.get(keyColumn);
-        }
-        if (key == null) {
-            throw new KlabValidationException("table: key can't be null in add");
-        }
-        Object col = keys.get("column");
-        if (col == null) {
-            throw new KlabValidationException("table: column can't be null in add");
-        }
-        Map<String, Object> row = data.get(key.toString());
-        if (row == null) {
-            row = new HashMap<>();
-            data.put(key.toString(), row);
-        }
-        row.put(col.toString(), value);
-        columns.add(col.toString());
-    }
+		String rowKey = "";
+		Map<String, Object> keysig = new LinkedHashMap<>();
+		for (String key : keyColumns) {
+			if (!keys.containsKey(key)) {
+				throw new KlabValidationException("table: need to pass all keys and a column to add a value");
+			}
+			Object kvalue = keys.get(key);
+			rowKey += (rowKey.isEmpty() ? "" : ",") + kvalue.toString();
+			keys.put(key, kvalue);
+		}
 
-    /**
-     * Same as set, but if there is a numeric value in the column already and we get a valid number,
-     * add to it instead of substituting it.
-     * 
-     * @param value
-     * @param keys
-     */
-    public void add(Object value, Map<String, Object> keys) {
-        if (!(keys.containsKey("key") || keys.containsKey(keyColumn)) || !keys.containsKey("column")) {
-            throw new KlabValidationException("table: need to pass a key and a column to add a value");
-        }
-        Object key = keys.get("key");
-        if (key == null) {
-            key = keys.get(keyColumn);
-        }
-        if (key == null) {
-            throw new KlabValidationException("table: key can't be null in add");
-        }
-        Object col = keys.get("column");
-        if (col == null) {
-            throw new KlabValidationException("table: column can't be null in add");
-        }
-        Map<String, Object> row = data.get(key.toString());
-        if (row == null) {
-            row = new HashMap<>();
-            data.put(key.toString(), row);
-        }
+		Object col = keys.get("column");
+		if (!keys.containsKey("column")) {
+			throw new KlabValidationException("table: column can't be null in add");
+		}
+		
+		if (col == null) {
+			return;
+		} 
+		
+		Map<String, Object> row = data.get(rowKey);
+		if (row == null) {
+			row = new HashMap<>();
+			for (String key : keysig.keySet()) {
+				keysig.put(key, keysig.get(key));
+			}
+			data.put(rowKey, row);
+		}
 
-        Object existing = row.get(col.toString());
-        if (existing instanceof Number && value instanceof Number && Observations.INSTANCE.isData(value)) {
-            value = Observations.INSTANCE.isData(existing)
-                    ? ((Number) existing).doubleValue() + ((Number) value).doubleValue()
-                    : value;
-        }
+		row.put(col.toString(), value);
+		columns.add(col.toString());
+	}
 
-        row.put(col.toString(), value);
-        columns.add(col.toString());
-    }
+	/**
+	 * Same as set, but if there is a numeric value in the column already and we get
+	 * a valid number, add to it instead of substituting it.
+	 * 
+	 * @param value
+	 * @param keys
+	 */
+	public void add(Object value, Map<String, Object> keys) {
 
-    /**
-     * Export as CSV. If the file has a different extension than .csv, we don't care and output a
-     * CSV in it anyway. Tomorrow we may have a format option and be smarter about extensions.
-     * 
-     * @param filename
-     */
-    public void export(String filename) {
+		String rowKey = "";
+		Map<String, Object> keysig = new LinkedHashMap<>();
+		for (String key : keyColumns) {
+			if (!keys.containsKey(key)) {
+				throw new KlabValidationException("table: need to pass all keys and a column to add a value");
+			}
+			Object kvalue = keys.get(key);
+			rowKey += (rowKey.isEmpty() ? "" : ",") + kvalue.toString();
+		}
 
-        java.io.File output = Configuration.INSTANCE.getExportFile(filename);
-        try (FileWriter fileWriter = new FileWriter(output.toString()); PrintWriter printWriter = new PrintWriter(fileWriter)) {
+		Object col = keys.get("column");
+		if (!keys.containsKey("column")) {
+			throw new KlabValidationException("table: column can't be null in add");
+		}
+		
+		if (col == null) {
+			return;
+		}
 
-            printWriter.println(keyColumn + "," + Utils.join(columns, ","));
-            for (String row : data.keySet()) {
-                printWriter.print("\"" + row + "\"");
-                Map<String, Object> values = data.get(row);
-                for (String k : columns) {
-                    Object value = values.get(k);
-                    printWriter.print(",\"" + (value == null ? "" : value.toString()) + "\"");
-                }
-                printWriter.println();
-            }
-        } catch (IOException e) {
-            throw new KlabIOException(e);
-        }
-    }
+		Map<String, Object> row = data.get(rowKey);
+		if (row == null) {
+			row = new HashMap<>();
+			for (String key : keyColumns) {
+				row.put(key, keys.get(key));
+			}
+			data.put(rowKey, row);
+		}
+
+		Object existing = row.get(col.toString());
+		if (value instanceof Number && Observations.INSTANCE.isData(value)) {
+			value = (Observations.INSTANCE.isData(existing) && existing instanceof Number)
+					? ((Number) existing).doubleValue() + ((Number) value).doubleValue()
+					: value;
+		}
+
+		row.put(col.toString(), value);
+		columns.add(col.toString());
+	}
+
+	/**
+	 * Export as CSV. If the file has a different extension than .csv, we don't care
+	 * and output a CSV in it anyway. Tomorrow we may have a format option and be
+	 * smarter about extensions.
+	 * 
+	 * @param filename
+	 */
+	public void export(String filename) {
+
+		java.io.File output = Configuration.INSTANCE.getExportFile(filename);
+		try (FileWriter fileWriter = new FileWriter(output.toString());
+				PrintWriter printWriter = new PrintWriter(fileWriter)) {
+
+			printWriter.println(StringUtils.joinCollection(keyColumns, ',') + "," + Utils.join(columns, ","));
+			for (String row : data.keySet()) {
+
+				Map<String, Object> values = data.get(row);
+				boolean first = true;
+				for (String k : keyColumns) {
+					Object value = values.get(k);
+					printWriter.print((first ? "\"" : ",\"") + (value == null ? "" : value.toString()) + "\"");
+				}
+				for (String k : columns) {
+					if (keyColumns.contains(k)) {
+						continue;
+					}
+					Object value = values.get(k);
+					printWriter.print(",\"" + (value == null ? "" : value.toString()) + "\"");
+				}
+				printWriter.println();
+			}
+		} catch (IOException e) {
+			throw new KlabIOException(e);
+		}
+	}
 
 }

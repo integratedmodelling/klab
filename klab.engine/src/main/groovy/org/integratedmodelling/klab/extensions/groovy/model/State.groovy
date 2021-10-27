@@ -31,6 +31,14 @@ class State extends Observation<IState> {
 		return Observations.INSTANCE.getStateSummary(unwrap(), getScope().getScale());
 	}
 
+	public Collection<IConcept> getCategories() {
+		return ((org.integratedmodelling.klab.components.runtime.observations.State)unwrap()).getCategories();
+	}
+
+	public double getArea(Object value, String unit) {
+		return ((org.integratedmodelling.klab.components.runtime.observations.State)unwrap()).getArea(value, unit);
+	}
+
 	/**
 	 * Invert the state values if the state is numeric and has values.
 	 * 

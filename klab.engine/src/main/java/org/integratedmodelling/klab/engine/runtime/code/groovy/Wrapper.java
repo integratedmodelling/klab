@@ -43,7 +43,7 @@ public class Wrapper<T> {
     public IRuntimeScope getScope() {
     	return (IRuntimeScope) this.binding.getVariable("_c");
     }
-
+    
     /**
      * Produce the Groovy wrapper for the passed object and install it in the
      * bindings with the passed name. After this we can just point the wrapped

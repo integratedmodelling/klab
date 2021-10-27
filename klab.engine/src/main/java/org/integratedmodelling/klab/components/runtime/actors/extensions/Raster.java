@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.components.runtime.actors.extensions;
 import org.integratedmodelling.kactors.model.KActorsQuantity;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Observations;
-import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
