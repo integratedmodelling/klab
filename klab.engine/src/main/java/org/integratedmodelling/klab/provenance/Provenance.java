@@ -8,48 +8,60 @@ import java.util.Set;
 import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
+import org.integratedmodelling.klab.components.runtime.RuntimeScope;
+import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 
-public class Provenance extends DefaultDirectedGraph<IProvenance.Node, ProvenanceEdge> implements IProvenance {
+import groovy.lang.GroovyObjectSupport;
 
-  private static final long serialVersionUID = -699663910228938188L;
-    
-  /**
-   * TODO this should also take the agent and activity that created the initial subject.
-   */
-  public Provenance() {
-    super(ProvenanceEdge.class);
-  }
+public class Provenance extends GroovyObjectSupport implements IProvenance {
 
-  @Override
-  public boolean isEmpty() {
-    return vertexSet().isEmpty();
-  }
+	private Graph<IProvenance.Node, ProvenanceEdge> graph = new DefaultDirectedGraph(ProvenanceEdge.class);
+	private RuntimeScope scope;
 
-  @Override
-  public List<IActivity> getPrimaryActions() {
-    // TODO Auto-generated method stub
-    return null;
-  }
+	/**
+	 * TODO this should also take the agent and activity that created the initial
+	 * subject.
+	 */
+	public Provenance(RuntimeScope scope) {
+		super();
+	}
 
-  @Override
-  public IArtifact getRootArtifact() {
-    return null;
-  }
+	@Override
+	public boolean isEmpty() {
+		return graph.vertexSet().isEmpty();
+	}
 
-  @Override
-  public Collection<IArtifact> getArtifacts() {
-	  Set<IArtifact> ret = new HashSet<>();
-	  for (IProvenance.Node node : vertexSet()) {
-		  if (node instanceof IArtifact) {
-			  ret.add((IArtifact) node);
-		  }
-	  }
-	  return ret;
-  }
+	@Override
+	public List<IActivity> getPrimaryActions() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-  public void addArtifact(IArtifact ret) {
-    addVertex(ret);
-  }
+	@Override
+	public IArtifact getRootArtifact() {
+		return null;
+	}
+
+	@Override
+	public Collection<IArtifact> getArtifacts() {
+		Set<IArtifact> ret = new HashSet<>();
+		for (IProvenance.Node node : graph.vertexSet()) {
+			if (node instanceof IArtifact) {
+				ret.add((IArtifact) node);
+			}
+		}
+		return ret;
+	}
+
+	public void addArtifact(IArtifact ret) {
+		graph.addVertex(ret);
+	}
+
+	@Override
+	public <T> Collection<T> collect(Class<? extends T> cls) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

@@ -418,11 +418,12 @@ public class State extends Observation implements IState, IKeyHolder {
 		}
 
 		for (ILocator loc : (locator == null ? getScale() : getScale().at(locator))) {
+			
 			Object value = get(loc);
 
 			if ((Observations.INSTANCE.isData(value) && value.equals(state))
 					|| (Observations.INSTANCE.isNodata(value) && Observations.INSTANCE.isNodata(state))) {
-				ret += loc.as(ISpace.class).getStandardizedArea();
+				ret += ((IScale)loc).getSpace().getStandardizedArea();
 			}
 		}
 
@@ -430,9 +431,7 @@ public class State extends Observation implements IState, IKeyHolder {
 			ret = Unit.create(unit).convert(ret, Units.INSTANCE.SQUARE_METERS).doubleValue();
 		}
 
-		if (ret > 0) {
-			System.out.println("PORCKE " + state + " = " + ret);
-		}
+		System.out.println("PORCKE " + state + " = " + ret);
 
 		return ret;
 	}

@@ -53,6 +53,7 @@ public abstract class GenericDatacubeAdapter implements IUrnAdapter {
         for (String variableName : getDatacube(urn).getVariableNames(urn)) {
 
             ObservationStrategy strategy = getDatacube(urn).getStrategy(variableName, geometry);
+            
             if (strategy.getTimeToAvailabilitySeconds() < 0) {
                 scope.getMonitor().error(name + " adapter cannot fulfill request for " + urn + ": resource unavailable");
             } else if (strategy.getTimeToAvailabilitySeconds() > 0) {

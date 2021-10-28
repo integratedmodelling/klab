@@ -1,9 +1,5 @@
 package org.integratedmodelling.adapter.copernicus;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.integratedmodelling.adapter.copernicus.repositories.AgERA5Repository;
 import org.integratedmodelling.adapter.datacube.ChunkedDatacubeRepository;
 import org.integratedmodelling.adapter.datacube.GenericDatacubeAdapter;
 import org.integratedmodelling.klab.Extensions;

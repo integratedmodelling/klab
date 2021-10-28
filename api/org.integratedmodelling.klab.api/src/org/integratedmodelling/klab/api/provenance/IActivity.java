@@ -21,8 +21,10 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 
 /**
- * Activity (process). Primary processes produce observations. Secondary
- * processes (after creation) may modify them.
+ * Activity (process). Primary processes produce artifacts. Secondary processes
+ * (after creation) may modify them. Activities in k.LAB represent each
+ * execution of an actuator, which represents a IPlan (part of the overall plan
+ * that is the IActuator).
  * 
  * @author Ferd
  * @version $Id: $Id
@@ -103,9 +105,9 @@ public interface IActivity extends IProvenance.Node {
 		}
 	}
 
-	enum Type {
-		Creation, ValuesModified, ObjectsModified, Instances
-	}
+//	enum Type {
+//		Creation, ValuesModified, ObjectsModified, Instances
+//	}
 
 	/**
 	 * System time of start.
@@ -128,12 +130,12 @@ public interface IActivity extends IProvenance.Node {
 	 */
 	ITime getSchedulerTime();
 
-	/**
-	 * The type of the action.
-	 * 
-	 * @return
-	 */
-	Type getType();
+//	/**
+//	 * The type of the action.
+//	 * 
+//	 * @return
+//	 */
+//	Type getType();
 
 	/**
 	 * If the action was caused by another action, return the action that caused it.

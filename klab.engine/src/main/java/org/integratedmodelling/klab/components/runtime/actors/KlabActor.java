@@ -1913,12 +1913,28 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
                      * callback intervenes afterwards. Do not create UI (use raw scope).
                      */
                     for (IBehavior.Action action : KlabActor.this.behavior.getActions("init", "@init")) {
+                    	
                         Scope initScope = message.scope.forInit();
                         initScope.metadata = new Parameters<>(message.metadata);
                         if (behavior.getDestination() == Type.SCRIPT || behavior.getDestination() == Type.UNITTEST) {
                             initScope = initScope.synchronous();
                         }
+                        
                         KlabActor.this.run(action, initScope);
+                        
+                        if (initScope.getMonitor().isInterrupted() || initScope.getMonitor().hasErrors()) {
+                            /*
+                             * TODO if testing and init fails, the test is skipped. If not testing and init fails,
+                             * the rest of the behavior is not loaded.
+                             */
+                        	if (initScope.testScope != null) {
+                        		// TODO send message to notify skipped test case
+                        	}
+                        	
+                        	initScope.getMonitor().warn("Initialization failed: skipping rest of behavior");
+                        	
+                        	return;
+                        }
                     }
 
                     /*

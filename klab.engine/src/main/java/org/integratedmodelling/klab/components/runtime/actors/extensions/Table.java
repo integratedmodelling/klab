@@ -1,8 +1,10 @@
 package org.integratedmodelling.klab.components.runtime.actors.extensions;
 
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -10,6 +12,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.io.IOUtils;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
@@ -78,11 +81,11 @@ public class Table extends GroovyObjectSupport {
 		if (!keys.containsKey("column")) {
 			throw new KlabValidationException("table: column can't be null in add");
 		}
-		
+
 		if (col == null) {
 			return;
-		} 
-		
+		}
+
 		Map<String, Object> row = data.get(rowKey);
 		if (row == null) {
 			row = new HashMap<>();
@@ -119,7 +122,7 @@ public class Table extends GroovyObjectSupport {
 		if (!keys.containsKey("column")) {
 			throw new KlabValidationException("table: column can't be null in add");
 		}
-		
+
 		if (col == null) {
 			return;
 		}
@@ -154,30 +157,41 @@ public class Table extends GroovyObjectSupport {
 	public void export(String filename) {
 
 		java.io.File output = Configuration.INSTANCE.getExportFile(filename);
-		try (FileWriter fileWriter = new FileWriter(output.toString());
-				PrintWriter printWriter = new PrintWriter(fileWriter)) {
-
-			printWriter.println(StringUtils.joinCollection(keyColumns, ',') + "," + Utils.join(columns, ","));
-			for (String row : data.keySet()) {
-
-				Map<String, Object> values = data.get(row);
-				boolean first = true;
-				for (String k : keyColumns) {
-					Object value = values.get(k);
-					printWriter.print((first ? "\"" : ",\"") + (value == null ? "" : value.toString()) + "\"");
-				}
-				for (String k : columns) {
-					if (keyColumns.contains(k)) {
-						continue;
-					}
-					Object value = values.get(k);
-					printWriter.print(",\"" + (value == null ? "" : value.toString()) + "\"");
-				}
-				printWriter.println();
-			}
+		try (OutputStream out = new FileOutputStream(output)) {
+			out.write(getCSV().getBytes());
 		} catch (IOException e) {
 			throw new KlabIOException(e);
 		}
+	}
+	
+	public String toString() {
+		return getCSV();
+	}
+
+	public String getCSV() {
+
+		StringWriter sw = new StringWriter();
+		PrintWriter printWriter = new PrintWriter(sw);
+		
+		printWriter.println(StringUtils.joinCollection(keyColumns, ',') + "," + Utils.join(columns, ","));
+		for (String row : data.keySet()) {
+
+			Map<String, Object> values = data.get(row);
+			boolean first = true;
+			for (String k : keyColumns) {
+				Object value = values.get(k);
+				printWriter.print((first ? "\"" : ",\"") + (value == null ? "" : value.toString()) + "\"");
+			}
+			for (String k : columns) {
+				if (keyColumns.contains(k)) {
+					continue;
+				}
+				Object value = values.get(k);
+				printWriter.print(",\"" + (value == null ? "" : value.toString()) + "\"");
+			}
+			printWriter.println();
+		}
+		return sw.toString();
 	}
 
 }

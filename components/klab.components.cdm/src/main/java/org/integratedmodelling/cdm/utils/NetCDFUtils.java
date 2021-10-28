@@ -1908,10 +1908,6 @@ public class NetCDFUtils {
 
                                         Double sample = array.getDouble(index);
                                         
-//                                        if (NumberUtils.equal(sample, 25.24)) {
-//                                            System.out.println("ZIO CAN " + (col+startCol) + " - " + (row + startRow));
-//                                        }
-
                                         if (first) {
                                             store.set(sample, col + startCol, row + startRow);
                                         } else {

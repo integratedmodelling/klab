@@ -13,6 +13,7 @@ import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.actors.IBehavior.Action;
 import org.integratedmodelling.klab.documentation.AsciiDocBuilder;
+import org.integratedmodelling.klab.resolution.ResolutionConstraint;
 import org.integratedmodelling.klab.utils.LogFile;
 
 /**
@@ -47,7 +48,8 @@ public class TestScope {
     private Statistics globalStatistics;
     private Statistics localStatistics;
     private int assertions;
-
+    private List<ResolutionConstraint> resolutionConstraints;
+    
     /*
      * The root scope will build and pass around a document builder based on the extension of the
      * doc file. Lower-level doc file specs will be ignored.
@@ -56,6 +58,10 @@ public class TestScope {
     private long timestamp;
     private Action action;
 
+    /*
+     * TODO constraint system for URNs to use. Must be part of runtime, not the actor system.
+     */
+    
     public TestScope(TestScope other) {
         this.parentBehavior = other.parentBehavior;
         this.behavior = other.behavior;
@@ -64,6 +70,7 @@ public class TestScope {
         this.log = other.log;
         this.docBuilder = other.docBuilder;
         this.globalStatistics = other.globalStatistics;
+        this.resolutionConstraints = other.resolutionConstraints;
     }
 
     private LogFile getLog() {
@@ -91,6 +98,7 @@ public class TestScope {
         this.logFile = new File(absolute ? pathName : (Configuration.INSTANCE.getDataPath("test") + File.separator + pathName));
         this.log = new LogFile(logFile);
         this.docBuilder = new AsciiDocBuilder();
+        this.resolutionConstraints = new ArrayList<>();
         // NO - add this later with the header and statistics, then append the rest of the doc
 //        this.docBuilder.documentTitle("Test report for `" + behavior.getName() + "` started on " + DateTime.now());
     }

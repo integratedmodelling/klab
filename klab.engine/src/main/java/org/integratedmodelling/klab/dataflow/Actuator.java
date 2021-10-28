@@ -56,6 +56,7 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
@@ -94,8 +95,6 @@ import org.integratedmodelling.klab.scale.Coverage;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
-
-import scala.math.Ordering.BigDecimalOrdering;
 
 public class Actuator implements IActuator {
 
@@ -1644,4 +1643,28 @@ public class Actuator implements IActuator {
     public ICoverage getCoverage() {
         return coverage;
     }
+
+	@Override
+	public long getTimestamp() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public List<IActivity> getActions() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IProvenance getProvenance() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean isEmpty() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

@@ -41,7 +41,6 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
 import org.integratedmodelling.klab.api.services.IObservationService;
 import org.integratedmodelling.klab.common.LogicalConnector;
-import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Dataflow;

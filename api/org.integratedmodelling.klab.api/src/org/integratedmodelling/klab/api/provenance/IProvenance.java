@@ -85,9 +85,9 @@ import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
  * @version $Id: $Id
  */
 public interface IProvenance {
-	
+
 	/**
-	 * Everything except Actions is a node. Used only to allow generalizing the API.
+	 * The generic provenance node.
 	 * 
 	 * @author Ferd
 	 */
@@ -113,7 +113,7 @@ public interface IProvenance {
 		 * @return a {@link java.util.List} object.
 		 */
 		List<IActivity> getActions();
-		
+
 		/**
 		 * Return the graph we're part of.
 		 * 
@@ -157,5 +157,14 @@ public interface IProvenance {
 	 * @return a {@link java.util.Collection} object.
 	 */
 	Collection<IArtifact> getArtifacts();
+
+	/**
+	 * Collect all objects of a given class encountered in the provenance graph.
+	 * 
+	 * @param <T>
+	 * @param cls
+	 * @return
+	 */
+	<T> Collection<T> collect(Class<? extends T> cls);
 
 }

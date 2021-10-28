@@ -272,6 +272,7 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
 
 	@Override
 	protected String getDataLayer(String variable, int tick) {
+		
 		String[] fields = variable.split("\\.");
 		String cdsname = fields[0];
 		String file = getOriginalFile(variable, tick);
