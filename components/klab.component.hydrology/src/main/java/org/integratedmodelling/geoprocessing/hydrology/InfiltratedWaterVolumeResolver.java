@@ -89,7 +89,10 @@ public class InfiltratedWaterVolumeResolver implements IResolver<IProcess>, IExp
             }
             GeotoolsUtils.INSTANCE.dumpToRaster(context, "Infiltration", netInfiltratedWaterVolumeState,
                     infiltratedWaterVolumeState);
+        } else {
+            taskMonitor.errorMessage("Can't proceed with null input maps.");
         }
+
         return infiltratedProcess;
     }
 
