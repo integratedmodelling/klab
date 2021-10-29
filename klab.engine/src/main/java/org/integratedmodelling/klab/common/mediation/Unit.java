@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.measure.Dimension;
 import javax.measure.UnitConverter;
@@ -584,7 +585,7 @@ public class Unit implements IUnit {
 
     public Unit decontextualize(IScale scale) {
         return (Unit) Units.INSTANCE.removeExtents(this,
-                scale.getDimensions().stream().map(dim -> dim.getExtentDimension()).toList());
+                scale.getDimensions().stream().map(dim -> dim.getExtentDimension()).collect(Collectors.toList()));
     }
 
     /**
