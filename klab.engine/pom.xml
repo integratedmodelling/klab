@@ -17,9 +17,9 @@
 		</repository>
 		<!-- Another old library hosting its news builds on its own repo -->
 		<repository>
-			<id>orbisgis-nexus-snapshot</id>
-			<name>OrbisGIS nexus snapshot repository</name>
-			<url>https://nexus.orbisgis.org/repository/orbisgis-snapshot/</url>
+			<id>integratedmodelling-nexus</id>
+			<name>Integratedmodelling repository</name>
+			<url>https://integratedmodelling.org/nexus/repository/maven-snapshots/</url>
 		</repository>
 		<repository>
 			<id>topobyte</id>
@@ -559,7 +559,7 @@
 		<dependency>
 			<groupId>org.orbisgis</groupId>
 			<artifactId>h2gis</artifactId>
-			<version>1.5.1-20210913.033919-539</version>
+			<version>1.5.1-20211021.111326-1</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.locationtech.jts</groupId>
