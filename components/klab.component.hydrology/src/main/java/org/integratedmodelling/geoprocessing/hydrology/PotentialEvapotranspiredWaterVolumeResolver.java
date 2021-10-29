@@ -48,16 +48,23 @@ public class PotentialEvapotranspiredWaterVolumeResolver implements IResolver<IP
             pet.inMinTemp = getGridCoverage(context, minTempState);
             pet.inAtmosphericTemp = getGridCoverage(context, tempState);
 
-//            // FIXME for now divide by 1000000, since the solarradiation enters as J and not MJ as
-//            // requested
-//            Function<Object, Object> transform = (value) -> {
-//                if (value instanceof Number && !Double.isNaN(((Number) value).doubleValue())) {
-//                    return ((Number) value).doubleValue() / 1_000_000.0;
-//                }
-//                return value;
-//            };
+            Function<Object, Object> transform = (value) -> {
+                if (value instanceof Number && !Double.isNaN(((Number) value).doubleValue())) {
+                    // FIXME do to a wrong annotated solar radiation, we need to check and fix here.
+                    // Radiation in MJ should be around 10-20MJ, so if it is > 1000, let's assume it
+                    // is in kJ and divide by 10000.
+                    //
+                    // This should be removed once copernicus data are used.
+                    double doubleValue = ((Number) value).doubleValue();
+                    if (doubleValue > 1000) {
+                        return doubleValue / 1000;
+                    }
+                }
+                return value;
+            };
             GridCoverage2D solarRadiationGc = GeotoolsUtils.INSTANCE.stateToCoverage(solarRadiationState, context.getScale(),
-                    DataBuffer.TYPE_FLOAT, floatNovalue, false, null);
+                    DataBuffer.TYPE_FLOAT, floatNovalue, false, transform);
+
             pet.inSolarRadiation = solarRadiationGc;// getGridCoverage(context,
                                                     // solarRadiationState);
             pet.inRainfall = getGridCoverage(context, rainfallState);
