@@ -5,6 +5,7 @@ import static org.hortonmachine.gears.libs.modules.HMConstants.floatNovalue;
 import java.awt.image.DataBuffer;
 
 import org.geotools.coverage.grid.GridCoverage2D;
+import org.hortonmachine.gears.modules.r.cutout.OmsCutOut;
 import org.hortonmachine.hmachine.modules.hydrogeomorphology.infiltration.OmsInfiltratedWaterVolume;
 import org.integratedmodelling.geoprocessing.TaskMonitor;
 import org.integratedmodelling.kim.api.IParameters;
@@ -65,14 +66,15 @@ public class InfiltratedWaterVolumeResolver implements IResolver<IProcess>, IExp
                 && runoffVolumeState != null) {
 
             OmsInfiltratedWaterVolume v = new OmsInfiltratedWaterVolume();
-            v.pm = taskMonitor;
-            v.pAlpha = alpha;
-            v.inPet = getGridCoverage(context, petState);
-            v.inFlowdirections = getGridCoverage(context, flowdirectionState);
-            v.inNet = getGridCoverage(context, streamPresenceState);
-            v.inRainfall = getGridCoverage(context, rainfallVolumeState);
-            v.inRunoff = getGridCoverage(context, runoffVolumeState);
             try {
+                GridCoverage2D flowGC = getGridCoverage(context, flowdirectionState, null);
+                v.pm = taskMonitor;
+                v.pAlpha = alpha;
+                v.inPet = getGridCoverage(context, petState, flowGC);
+                v.inFlowdirections = flowGC;
+                v.inNet = getGridCoverage(context, streamPresenceState, null);
+                v.inRainfall = getGridCoverage(context, rainfallVolumeState, flowGC);
+                v.inRunoff = getGridCoverage(context, runoffVolumeState, flowGC);
                 v.process();
             } catch (Exception e) {
                 throw new KlabException(e);
@@ -91,11 +93,23 @@ public class InfiltratedWaterVolumeResolver implements IResolver<IProcess>, IExp
         return infiltratedProcess;
     }
 
-    private GridCoverage2D getGridCoverage(IContextualizationScope context, IState state) {
+    private GridCoverage2D getGridCoverage(IContextualizationScope context, IState state, GridCoverage2D flowGC)
+            throws Exception {
         if (state == null) {
             return null;
         }
-        return GeotoolsUtils.INSTANCE.stateToCoverage(state, context.getScale(), DataBuffer.TYPE_FLOAT, floatNovalue, false);
+        GridCoverage2D gc = GeotoolsUtils.INSTANCE.stateToCoverage(state, context.getScale(), DataBuffer.TYPE_FLOAT, floatNovalue,
+                false);
+
+        if (flowGC != null) {
+            OmsCutOut co = new OmsCutOut();
+            co.inMask = flowGC;
+            co.inRaster = gc;
+            co.process();
+            return co.outRaster;
+        } else {
+            return gc;
+        }
     }
 
     @Override
