@@ -18,6 +18,7 @@ import org.integratedmodelling.adapter.copernicus.CopernicusAdapter;
 import org.integratedmodelling.adapter.copernicus.CopernicusStaticAdapter;
 import org.integratedmodelling.adapter.copernicus.datacubes.CopernicusCDSDatacube;
 import org.integratedmodelling.cdm.utils.NetCDFUtils;
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.Aggregation;
@@ -40,7 +41,9 @@ import org.integratedmodelling.klab.rest.AttributeReference;
 import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.utils.MiscUtilities;
+import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.StringUtil;
+import org.joda.time.DateTime;
 
 /**
  * AgERA4 Meteo data. The humidity data are 3-hourly and can only be downloaded
@@ -567,9 +570,17 @@ public class AgERA5Repository extends CopernicusCDSDatacube {
 	private Strategy getRainyDaysPerMonth(IScale scale) {
 
 		Strategy ret = getStrategy(Variable.LIQUID_PRECIPITATION_VOLUME.codename, scale);
-		
+
+		/*
+		 * no precipitation, no rainy days
+		 */
+		if (ret.getTimeToAvailabilitySeconds() != 0) {
+			return ret;
+		}
+
 		List<Granule> granules = new ArrayList<>();
 		ITimeInstant start = scale.getTime().getStart();
+		int tavail = 0;
 		do {
 			Granule granule = new Granule();
 			int month = start.getMonth();
@@ -579,10 +590,17 @@ public class AgERA5Repository extends CopernicusCDSDatacube {
 				days++;
 				start = start.plus(1, Time.resolution(1, Resolution.Type.DAY));
 			}
+			// this sets the delay to 60 for each missing aggregation
 			requireRainyDaysCoverage(month, year, granule);
 			granule.multiplier = days;
+			tavail += granule.aggregationTimeSeconds;
 			granules.add(granule);
+
 		} while (start.getMilliseconds() < scale.getTime().getEnd().getMilliseconds());
+
+		ret.granules.clear();
+		ret.granules.addAll(granules);
+		ret.setTimeToAvailability(tavail);
 
 		return ret;
 	}
@@ -590,15 +608,53 @@ public class AgERA5Repository extends CopernicusCDSDatacube {
 	private void requireRainyDaysCoverage(int month, int year, Granule granule) {
 
 		File folder = new File(this.getDataFolder() + File.separator + "derived");
-		folder.mkdir();
-		File retfil = new File(
+		folder.mkdirs();
+		final File retfil = new File(
 				folder + File.separator + Variable.RAINY_DAYS_PER_MONTH.cdsname + "_" + month + "_" + year + ".tiff");
+		final String layerName = Variable.RAINY_DAYS_PER_MONTH.cdsname + "_" + month + "_" + year;
+
 		if (!retfil.exists()) {
-			// TODO make it based on the prec data. Must have entire months. It's a different aggregation so 
-			// must generalize the NetCDF aggregator.
+
+			final List<File> sourcePrecipitation = new ArrayList<>();
+			ITimeInstant start = TimeInstant.create(year, month, 1);
+			ITimeInstant end = start.plus(1, Time.resolution(1, Resolution.Type.MONTH));
+			for (Pair<Integer, Integer> tick : getTicks(
+					Time.create(start, end, Time.resolution(1, Resolution.Type.DAY)))) {
+				sourcePrecipitation.add(getDataFile(Variable.LIQUID_PRECIPITATION_VOLUME.codename, tick.getFirst()));
+			}
+
+			executor.execute(new Thread() {
+
+				@Override
+				public void run() {
+
+					Logging.INSTANCE.info(
+							"Creating monthly counts of days with precipitation for month " + month + " of " + year);
+
+					if (NetCDFUtils.aggregateGrid(sourcePrecipitation, retfil,
+							Time.resolution(1, Resolution.Type.MONTH), Aggregation.SUM, Double.NaN, (value) -> {
+								return value > STORM_PRECIPITATION_THRESHOLD_MMDAY ? 1.0 : 0.0;
+							})) {
+						if (!getGeoserver().createCoverageLayer(AgERA5Repository.this.getName(), layerName, retfil,
+								null)) {
+							Logging.INSTANCE.warn("Geoserver ingestion of " + retfil + " returned a failure code");
+						} else {
+							Logging.INSTANCE.info("Geoserver ingestion of " + retfil + " successful as "
+									+ AgERA5Repository.this.getName() + ":" + layerName);
+						}
+
+					} else {
+						Logging.INSTANCE.info("Creation of monthly counts of days with precipitation for month " + month
+								+ " of " + year + " successful");
+					}
+				}
+
+			});
+
+			granule.aggregationTimeSeconds += 60;
 		}
 
-		granule.layerName = Variable.RAINY_DAYS_PER_MONTH.cdsname + "_" + month + "_" + year;
+		granule.layerName = layerName;
 		granule.dataFile = retfil;
 	}
 

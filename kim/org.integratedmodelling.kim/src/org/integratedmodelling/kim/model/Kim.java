@@ -1082,7 +1082,7 @@ public enum Kim {
         case "domain":
             return EnumSet.of(Type.DOMAIN, Type.PREDICATE);
         case "energy":
-            return EnumSet.of(Type.ENERGY, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
+            return EnumSet.of(Type.ENERGY, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
         case "entropy":
             return EnumSet.of(Type.ENTROPY, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
         case "length":

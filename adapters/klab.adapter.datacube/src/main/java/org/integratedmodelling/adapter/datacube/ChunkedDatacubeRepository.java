@@ -102,7 +102,7 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 	private File aggregationDirectory;
 	private List<Resolution> aggregationPoints;
 	private TimeInstant timeBase;
-	private Executor executor = null;
+	protected Executor executor = null;
 	private boolean online;
 	private String statusMessage;
 	protected Geoserver geoserver;
@@ -448,6 +448,10 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 			}
 
 			return false;
+		}
+
+		public void setTimeToAvailability(int tavail) {
+			this.timeToAvailabilitySeconds = tavail;
 		}
 
 	}
@@ -807,7 +811,7 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 	}
 
 	protected File getDataFolder() {
-		return new File(mainDirectory + File.separator + getName());
+		return mainDirectory;
 	}
 
 	private int getChunk(int tick) {
@@ -843,9 +847,9 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 	 * observation along a period. No aggregation strategy is considered here.
 	 * 
 	 * @param time
-	 * @return
+	 * @return Pairs with tick and chunk
 	 */
-	List<Pair<Integer, Integer>> getTicks(ITime time) {
+	protected List<Pair<Integer, Integer>> getTicks(ITime time) {
 		List<Pair<Integer, Integer>> ret = new ArrayList<>();
 		for (int chunk : getChunks(time)) {
 			for (int tick : getChunkTicks(chunk)) {
