@@ -2346,4 +2346,18 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		return this;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T extends IArtifact> Collection<T> getAffectedArtifacts(IConcept processType, Class<T> cls) {
+		List<T> ret = new ArrayList<>();
+		for (IArtifact artifact : catalog.values()) {
+			if (artifact instanceof IObservation && cls.isAssignableFrom(artifact.getClass())) {
+				if (Observables.INSTANCE.isAffectedBy(((IObservation)artifact).getObservable(), processType)) {
+					ret.add((T)artifact);
+				}
+			}
+		}
+		return ret;
+	}
+
 }

@@ -860,4 +860,10 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
         return this;
     }
 
+	@Override
+	public <T extends IArtifact> Collection<T> getAffectedArtifacts(IConcept processType, Class<T> cls) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -43,7 +44,6 @@ import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.StringUtil;
-import org.joda.time.DateTime;
 
 /**
  * AgERA4 Meteo data. The humidity data are 3-hourly and can only be downloaded
@@ -61,6 +61,7 @@ public class AgERA5Repository extends CopernicusCDSDatacube {
 	private Map<String, Variable> variables = new HashMap<>();
 	private Map<String, Variable> svariables = new HashMap<>();
 	private Map<String, String> fileTemplates = new HashMap<>();
+	private Set<String> queued = new HashSet<>();
 
 	private double STORM_PRECIPITATION_THRESHOLD_MMDAY = 1.0;
 
@@ -581,6 +582,7 @@ public class AgERA5Repository extends CopernicusCDSDatacube {
 		List<Granule> granules = new ArrayList<>();
 		ITimeInstant start = scale.getTime().getStart();
 		int tavail = 0;
+		boolean done = true;
 		do {
 			Granule granule = new Granule();
 			int month = start.getMonth();
@@ -591,29 +593,38 @@ public class AgERA5Repository extends CopernicusCDSDatacube {
 				start = start.plus(1, Time.resolution(1, Resolution.Type.DAY));
 			}
 			// this sets the delay to 60 for each missing aggregation
-			requireRainyDaysCoverage(month, year, granule);
+			if (!requireRainyDaysCoverage(month, year, granule)) {
+				done = false;
+			}
+			
 			granule.multiplier = days;
 			tavail += granule.aggregationTimeSeconds;
 			granules.add(granule);
 
 		} while (start.getMilliseconds() < scale.getTime().getEnd().getMilliseconds());
 
+		ret.setVariable(Variable.RAINY_DAYS_PER_MONTH.codename);
 		ret.granules.clear();
 		ret.granules.addAll(granules);
+		ret.setFinished(done);
+		
 		ret.setTimeToAvailability(tavail);
 
 		return ret;
 	}
 
-	private void requireRainyDaysCoverage(int month, int year, Granule granule) {
+	private boolean requireRainyDaysCoverage(int month, int year, Granule granule) {
 
 		File folder = new File(this.getDataFolder() + File.separator + "derived");
 		folder.mkdirs();
 		final File retfil = new File(
 				folder + File.separator + Variable.RAINY_DAYS_PER_MONTH.cdsname + "_" + month + "_" + year + ".tiff");
 		final String layerName = Variable.RAINY_DAYS_PER_MONTH.cdsname + "_" + month + "_" + year;
+		final String id = month + "," + year;
 
-		if (!retfil.exists()) {
+		boolean ret = retfil.exists();
+
+		if (!retfil.exists() && !queued.contains(id)) {
 
 			final List<File> sourcePrecipitation = new ArrayList<>();
 			ITimeInstant start = TimeInstant.create(year, month, 1);
@@ -622,6 +633,7 @@ public class AgERA5Repository extends CopernicusCDSDatacube {
 					Time.create(start, end, Time.resolution(1, Resolution.Type.DAY)))) {
 				sourcePrecipitation.add(getDataFile(Variable.LIQUID_PRECIPITATION_VOLUME.codename, tick.getFirst()));
 			}
+			queued.add(id);
 
 			executor.execute(new Thread() {
 
@@ -656,6 +668,8 @@ public class AgERA5Repository extends CopernicusCDSDatacube {
 
 		granule.layerName = layerName;
 		granule.dataFile = retfil;
+		
+		return ret;
 	}
 
 }

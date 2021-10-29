@@ -181,6 +181,9 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 		}
 
 		private String variable;
+		// this is set to true if the strategy shouldn't be synchronized with
+		// copernicus.
+		private boolean finished;
 
 		public Strategy(String variable) {
 			this.variable = variable;
@@ -212,10 +215,15 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 		 */
 		@Override
 		public AvailabilityReference buildCache() {
-
+			
 			AvailabilityReference ret = new AvailabilityReference();
 			ret.setRetryTimeSeconds(this.timeToAvailabilitySeconds);
-
+			
+			if (finished) {
+				ret.setAvailability(Availability.COMPLETE);
+				return ret;
+			}
+			
 			List<Integer> toDownload = new ArrayList<>();
 			List<Integer> candidates = new ArrayList<>();
 
@@ -452,6 +460,14 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 
 		public void setTimeToAvailability(int tavail) {
 			this.timeToAvailabilitySeconds = tavail;
+		}
+
+		public void setVariable(String codename) {
+			this.variable = codename;
+		}
+
+		public void setFinished(boolean b) {
+			this.finished = b;
 		}
 
 	}
