@@ -12,7 +12,6 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.io.IOUtils;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
@@ -181,6 +180,7 @@ public class Table extends GroovyObjectSupport {
 			for (String k : keyColumns) {
 				Object value = values.get(k);
 				printWriter.print((first ? "\"" : ",\"") + (value == null ? "" : value.toString()) + "\"");
+				first = false;
 			}
 			for (String k : columns) {
 				if (keyColumns.contains(k)) {

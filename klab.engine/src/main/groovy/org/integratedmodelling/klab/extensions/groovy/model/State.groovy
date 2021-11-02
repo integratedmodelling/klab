@@ -145,6 +145,9 @@ class State extends Observation<IState> {
 		States.set(unwrap(), value, timePointer);
 	}
 
+	def getAreaHistogram(String unit) {
+		return ((org.integratedmodelling.klab.components.runtime.observations.State)unwrap()).getAreaHistogram(unit);
+	}
 
 	def setTimePointer() {
 		// reset this to force recompute

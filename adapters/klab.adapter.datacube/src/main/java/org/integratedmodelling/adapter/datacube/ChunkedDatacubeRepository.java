@@ -219,7 +219,7 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 			AvailabilityReference ret = new AvailabilityReference();
 			ret.setRetryTimeSeconds(this.timeToAvailabilitySeconds);
 			
-			if (finished) {
+			if (specialVariables.containsKey(this.variable)) {
 				ret.setAvailability(Availability.COMPLETE);
 				return ret;
 			}
@@ -375,6 +375,10 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 
 			for (Granule g : granules) {
 
+				if (specialVariables.containsKey(variable) && !g.dataFile.exists()) {
+					continue;
+				}
+				
 				if (!g.dataFile.exists()) {
 					if (g.multiplier == 1) {
 						scope.getMonitor().error("repository error: " + getName() + ": missing datafile "
@@ -416,6 +420,7 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 										* (aggregation == Aggregation.MEAN ? g.multiplier : 1.0);
 							}
 							data.set(d, xy);
+							
 						} else {
 
 							Double d = data.get(xy);

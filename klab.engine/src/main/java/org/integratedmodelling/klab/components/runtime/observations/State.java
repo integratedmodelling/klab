@@ -26,7 +26,6 @@ import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubjectiveState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.common.mediation.Unit;
@@ -418,20 +417,18 @@ public class State extends Observation implements IState, IKeyHolder {
 		}
 
 		for (ILocator loc : (locator == null ? getScale() : getScale().at(locator))) {
-			
+
 			Object value = get(loc);
 
 			if ((Observations.INSTANCE.isData(value) && value.equals(state))
 					|| (Observations.INSTANCE.isNodata(value) && Observations.INSTANCE.isNodata(state))) {
-				ret += ((IScale)loc).getSpace().getStandardizedArea();
+				ret += ((IScale) loc).getSpace().getStandardizedArea();
 			}
 		}
 
 		if (unit != null) {
 			ret = Unit.create(unit).convert(ret, Units.INSTANCE.SQUARE_METERS).doubleValue();
 		}
-
-		System.out.println("PORCKE " + state + " = " + ret);
 
 		return ret;
 	}
@@ -451,6 +448,27 @@ public class State extends Observation implements IState, IKeyHolder {
 			return ((KeyedStorage<?>) getStorage()).getTimesliceLocators();
 		}
 		return new ArrayList<>();
+	}
+
+	public Map<IConcept, Double> getAreaHistogram(String unit) {
+		return getAreaHistogram(unit, null);
+	}
+
+	public Map<IConcept, Double> getAreaHistogram(String unit, ILocator locator) {
+		Map<IConcept, Double> ret = new HashMap<>();
+		if (getDataKey() != null) {
+			for (ILocator loc : (locator == null ? getScale() : getScale().at(locator))) {
+				Object value = get(loc);
+				if (value instanceof IConcept) {
+					double area = ((IScale) loc).getSpace().getStandardizedArea();
+					if (unit != null) {
+						area = Unit.create(unit).convert(area, Units.INSTANCE.SQUARE_METERS).doubleValue();
+					}
+					ret.put((IConcept) value, ret.containsKey(value) ? ret.get((IConcept) value) + area : area);
+				}
+			}
+		}
+		return ret;
 	}
 
 }
