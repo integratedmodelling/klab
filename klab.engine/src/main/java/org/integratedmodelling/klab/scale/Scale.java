@@ -349,8 +349,7 @@ public class Scale implements IScale {
             if (add) {
 
                 if (existing instanceof Shape && spaceResolution != null) {
-                    existing = ((Shape) existing).getSimplified(spaceResolution);
-                    exts.add(existing);
+                    exts.add(Space.create((Shape)existing, spaceResolution));
                 } else {
                     exts.add(((AbstractExtent) existing).copy());
                 }

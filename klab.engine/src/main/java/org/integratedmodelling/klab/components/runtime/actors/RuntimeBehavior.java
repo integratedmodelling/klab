@@ -208,9 +208,10 @@ public class RuntimeBehavior {
 
 					if (observable != null) {
 						try {
-							Future<IArtifact> future = ((Session) identity).getState()
+							Future<IArtifact> future = ((Session) identity).getState().withScale(scale)
 									.submit(observable.getDefinition());
 							IArtifact result = future.get();
+							session.getState().withScale(null);
 							fire(result, scope);
 						} catch (Throwable e) {
 							fail(scope);

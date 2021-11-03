@@ -51,7 +51,7 @@ public class KlabGroovyShell extends GroovyShell {
 			runnable = (Script) constructor.newInstance(context);
 		} catch (NoSuchMethodException e) {
 			// Fallback for non-standard "Script" classes.
-			runnable = (Script) script.newInstance();
+			runnable = (Script) script.getConstructor().newInstance();
 			runnable.setBinding(context);
 		}
 		return runnable;
@@ -64,7 +64,7 @@ public class KlabGroovyShell extends GroovyShell {
 			runnable = (Script) constructor.newInstance(context);
 		} catch (NoSuchMethodException e) {
 			// Fallback for non-standard "Script" classes.
-			runnable = (Script) script.newInstance();
+			runnable = (Script) script.getConstructor().newInstance();
 			runnable.setBinding(context);
 		}
 		return runnable.run();

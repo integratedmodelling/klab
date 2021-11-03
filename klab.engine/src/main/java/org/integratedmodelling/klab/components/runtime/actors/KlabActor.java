@@ -448,11 +448,11 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
                 int cnt = 0;
                 while(!Actors.INSTANCE.expired(semaphore)) {
                     try {
-                        Thread.sleep(50);
+                        Thread.sleep(60);
                         cnt++;
-                        if (cnt % 100 == 0 && !semaphore.isWarned()) {
-                            identity.getMonitor().warn("Potential actor deadlock running " + getBehavior().getName() + ":"
-                                    + linenumber + ": check logics");
+                        if (cnt % 1000 == 0 && !semaphore.isWarned()) {
+                            identity.getMonitor().warn("Action is taking longer than 1 minute at " + getBehavior().getName() + ":"
+                                    + linenumber + ": potential actor deadlock?");
                             semaphore.setWarned();
                         }
                     } catch (InterruptedException e) {

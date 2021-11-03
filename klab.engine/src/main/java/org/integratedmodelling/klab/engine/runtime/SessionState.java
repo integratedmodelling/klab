@@ -137,6 +137,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
 	private Stack<ISubject> context = new Stack<>();
 	private String geocodingStrategy;
 	private Map<String, File> stagingArea = Collections.synchronizedMap(new HashMap<>());
+	private IScale forcedScale;
 
 	private class ListenerWrapper {
 
@@ -349,6 +350,11 @@ public class SessionState extends Parameters<String> implements ISessionState {
 
 	@Override
 	public IGeometry getGeometry() {
+
+		if (this.forcedScale != null) {
+			return this.forcedScale;
+		}
+
 		/*
 		 * If geometry does not contain enough info, return null to signal that we don't
 		 * have a completely specified ROI. Only possible situation is having no
@@ -1020,6 +1026,18 @@ public class SessionState extends Parameters<String> implements ISessionState {
 		if (obs instanceof ISubject) {
 			this.context.push((ISubject) obs);
 		}
+	}
+
+	/**
+	 * Force a scale to substitute to the user-defined scale hints. Must be
+	 * deactivated by passing null before control is given back to the UI.
+	 * 
+	 * @param scale
+	 * @return
+	 */
+	public ISessionState withScale(IScale scale) {
+		this.forcedScale = scale;
+		return this;
 	}
 
 }

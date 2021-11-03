@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.knowledge.ICodelist;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -509,9 +510,11 @@ public class MergedResource implements IResource {
 		 */
 
 		ITime resolutionTime = scale.getTime();
+		boolean isDynamic = artifact != null && artifact.getGeometry().getDimension(Dimension.Type.TIME) != null
+				&& artifact.getGeometry().getDimension(Dimension.Type.TIME).size() > 1;
 
 		if (resolutionTime != null && resolutionTime.getStart() != null) {
-			if (resolutionTime.getTimeType() == ITime.Type.INITIALIZATION) {
+			if (resolutionTime.getTimeType() == ITime.Type.INITIALIZATION && isDynamic) {
 				// shouldn't happen, but just in case.
 				resolutionTime = Time.getPreviousExtent(resolutionTime);
 			}
@@ -526,10 +529,10 @@ public class MergedResource implements IResource {
 			}
 		} else {
 
-            Entry<Long, ResourceSet> set = /*
-                                            * scale.getTime().is(ITime.Type.INITIALIZATION) ?
-                                            * resources.ceilingEntry(locator) :
-                                            */resources.floorEntry(locator);
+			Entry<Long, ResourceSet> set = /*
+											 * scale.getTime().is(ITime.Type.INITIALIZATION) ?
+											 * resources.ceilingEntry(locator) :
+											 */resources.floorEntry(locator);
 
 			/*
 			 * lenient check for unsuccessful initialization
@@ -538,7 +541,7 @@ public class MergedResource implements IResource {
 				locator = resolutionTime.getEnd().getMilliseconds();
 				set = resources.floorEntry(locator);
 				if (set == null) {
-	                set = resources.ceilingEntry(locator);
+					set = resources.ceilingEntry(locator);
 				}
 			}
 
@@ -617,32 +620,32 @@ public class MergedResource implements IResource {
 		return urns;
 	}
 
-    @Override
-    public Collection<String> getCategorizables() {
-        // TODO shouldn't be called as it's only for the editor
-        return null;
-    }
+	@Override
+	public Collection<String> getCategorizables() {
+		// TODO shouldn't be called as it's only for the editor
+		return null;
+	}
 
-    public List<IResource> getResources() {
-        List<IResource> ret = new ArrayList<>();
-        for (ResourceSet rs: resources.values()) {
-            for (Pair<IResource, Map<String, String>> pr : rs.resources) {
-                ret.add(pr.getFirst());
-            }
-        }
-        return ret;
-    }
+	public List<IResource> getResources() {
+		List<IResource> ret = new ArrayList<>();
+		for (ResourceSet rs : resources.values()) {
+			for (Pair<IResource, Map<String, String>> pr : rs.resources) {
+				ret.add(pr.getFirst());
+			}
+		}
+		return ret;
+	}
 
-    @Override
-    public AvailabilityReference getAvailability() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public AvailabilityReference getAvailability() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public List<String> getCodelists() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public List<String> getCodelists() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }
