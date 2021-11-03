@@ -17,32 +17,30 @@ import org.integratedmodelling.klab.engine.runtime.Session;
  */
 public class Main {
 
-    public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws Exception {
 
-        CliStartupOptions options = new CliStartupOptions();
-        options.initialize(args);
+		CliStartupOptions options = new CliStartupOptions();
+		options.initialize(args);
 
-        if (options.isHelp()) {
-            System.out.println(new EngineStartupOptions().usage());
-            System.exit(0);
-        }
+		if (options.isHelp()) {
+			System.out.println(new EngineStartupOptions().usage());
+			System.exit(0);
+		}
 
-        if (options.getArguments().length == 0) {
-            // default
-            options.setNetwork(true);
-            TermConsole console = new TermConsole();
-            console.start(options);
-        } else {
-            SysConsole console = new SysConsole();
-            ISession session = CliRuntime.INSTANCE.initialize(console, options);
-            int exitCode = 0;
-            for (String argument : options.getArguments()) {
-                if (argument.endsWith(".kactors")) {
-                    exitCode += Actors.INSTANCE.run(argument, session);
-                }
-            }            
-            CliRuntime.INSTANCE.shutdown();
-            System.exit(exitCode);
-        }
-    }
+		if (options.getArguments().length == 0) {
+			// default
+			options.setNetwork(true);
+			TermConsole console = new TermConsole();
+			console.start(options);
+		} else {
+			SysConsole console = new SysConsole();
+			ISession session = CliRuntime.INSTANCE.initialize(console, options);
+			int exitCode = 0;
+			for (String argument : options.getArguments()) {
+				exitCode += Actors.INSTANCE.run(argument, session);
+			}
+			CliRuntime.INSTANCE.shutdown();
+			System.exit(exitCode);
+		}
+	}
 }

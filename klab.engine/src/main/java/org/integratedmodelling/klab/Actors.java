@@ -1232,39 +1232,49 @@ public enum Actors implements IActorsService {
 	 */
 	public int run(String argument, ISession session) {
 
-		File file = Configuration.INSTANCE.findFile(argument);
 		String app = null;
-		if (file != null) {
-			IKActorsBehavior behavior = declare(file);
-			if (!(behavior.getType() == Type.SCRIPT || behavior.getType() == Type.UNITTEST)) {
-				Logging.INSTANCE.error("cannot run " + behavior.getName() + ": not a script or a unit test");
-			}
-			org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior b = new org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior(
-					behavior);
-			behaviors.put(behavior.getName(), b);
-			Logging.INSTANCE.info("Running " + (behavior.getType() == Type.SCRIPT ? "k.Actors script " : "unit test ")
-					+ behavior.getName() + " [ID=" + behavior.getName() + "]");
-			app = session.load(b, new SimpleRuntimeScope(session));
+		if (behaviors.containsKey(argument)) {
+			IBehavior behavior = behaviors.get(argument);
+			Logging.INSTANCE.info(
+					"Running " + (behavior.getStatement().getType() == Type.SCRIPT ? "k.Actors script " : "unit test ")
+							+ behavior.getName() + " [ID=" + behavior.getName() + "]");
+			app = session.load(behavior, new SimpleRuntimeScope(session));
 		} else {
-			URL resource = this.getClass().getClassLoader().getResource(argument);
-			if (resource != null) {
-				try (InputStream input = resource.openStream()) {
-					IKActorsBehavior behavior = declare(input);
-					if (!(behavior.getType() == Type.SCRIPT || behavior.getType() == Type.UNITTEST)) {
-						Logging.INSTANCE.error("cannot run " + behavior.getName() + ": not a script or a unit test");
-					}
-					org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior b = new org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior(
-							behavior);
-					behaviors.put(behavior.getName(), b);
-					Logging.INSTANCE
-							.info("Running " + (behavior.getType() == Type.SCRIPT ? "k.Actors script " : "unit test ")
-									+ behavior.getName() + " [ID=" + behavior.getName() + "]");
-					app = session.load(b, new SimpleRuntimeScope(session));
-				} catch (Throwable t) {
-					throw new KlabActorException(t);
+			File file = Configuration.INSTANCE.findFile(argument);
+			if (file != null) {
+				IKActorsBehavior behavior = declare(file);
+				if (!(behavior.getType() == Type.SCRIPT || behavior.getType() == Type.UNITTEST)) {
+					Logging.INSTANCE.error("cannot run " + behavior.getName() + ": not a script or a unit test");
 				}
+				org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior b = new org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior(
+						behavior);
+				behaviors.put(behavior.getName(), b);
+				Logging.INSTANCE
+						.info("Running " + (behavior.getType() == Type.SCRIPT ? "k.Actors script " : "unit test ")
+								+ behavior.getName() + " [ID=" + behavior.getName() + "]");
+				app = session.load(b, new SimpleRuntimeScope(session));
 			} else {
-				Logging.INSTANCE.error("cannot run " + argument + ": resource not found");
+				URL resource = this.getClass().getClassLoader().getResource(argument);
+				if (resource != null) {
+					try (InputStream input = resource.openStream()) {
+						IKActorsBehavior behavior = declare(input);
+						if (!(behavior.getType() == Type.SCRIPT || behavior.getType() == Type.UNITTEST)) {
+							Logging.INSTANCE
+									.error("cannot run " + behavior.getName() + ": not a script or a unit test");
+						}
+						org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior b = new org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior(
+								behavior);
+						behaviors.put(behavior.getName(), b);
+						Logging.INSTANCE.info(
+								"Running " + (behavior.getType() == Type.SCRIPT ? "k.Actors script " : "unit test ")
+										+ behavior.getName() + " [ID=" + behavior.getName() + "]");
+						app = session.load(b, new SimpleRuntimeScope(session));
+					} catch (Throwable t) {
+						throw new KlabActorException(t);
+					}
+				} else {
+					Logging.INSTANCE.error("cannot run " + argument + ": resource not found");
+				}
 			}
 		}
 

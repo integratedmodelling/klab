@@ -296,6 +296,7 @@ public class TableCompiler {
         boolean start;
         boolean end;
         boolean init;
+        boolean steps;
         Resolution resolution;
         private String displayLabel;
 
@@ -306,6 +307,7 @@ public class TableCompiler {
                 this.start = "start".equals(o);
                 this.init = "init".equals(o);
                 this.end = "end".equals(o);
+                this.steps = "steps".equals(o);
             }
         }
 
@@ -316,13 +318,19 @@ public class TableCompiler {
             if (end) {
                 return "end";
             }
+            if (start) {
+            	return "start";
+            }
+            if (steps) {
+            	return "steps";
+            }
             return "IMPLEMENT ME";
         }
 
         public String getDisplayLabel(IRuntimeScope scope) {
+        	
             if (this.displayLabel == null) {
                 if (this.init) {
-
                     if (timelabels != null && timelabels.containsKey("init")) {
                         // TODO eval if it's an expression
                         return timelabels.get("init").toString();
@@ -342,6 +350,7 @@ public class TableCompiler {
 
                     this.displayLabel = Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getStart(),
                             scope.getRootSubject().getScale().getTime().getResolution());
+
                 } else if (this.end) {
 
                     if (timelabels != null && timelabels.containsKey("end")) {
@@ -1964,6 +1973,7 @@ public class TableCompiler {
                 case "start":
                 case "end":
                 case "init":
+                case "steps":
                     phaseItems.add(o.toString());
                     categorize(TIME, o.toString(), sorted, null);
                     break;
