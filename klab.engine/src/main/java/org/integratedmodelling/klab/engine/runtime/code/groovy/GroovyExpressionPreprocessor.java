@@ -484,7 +484,7 @@ public class GroovyExpressionPreprocessor {
 
 		token.setLength(0);
 		for (String t : tokens) {
-			if (t.contains("@")) {
+			if (t.contains("@") && !(t.startsWith("@") || t.endsWith("@"))) {
 				t = t.trim();
 				String[] tt = t.split("@");
 

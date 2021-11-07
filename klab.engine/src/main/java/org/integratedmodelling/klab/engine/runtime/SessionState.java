@@ -69,6 +69,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.OWL;
+import org.integratedmodelling.klab.resolution.ResolutionConstraint;
 import org.integratedmodelling.klab.rest.ContextualizationRequest;
 import org.integratedmodelling.klab.rest.DataflowState;
 import org.integratedmodelling.klab.rest.LoadApplicationRequest;
@@ -138,6 +139,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
 	private String geocodingStrategy;
 	private Map<String, File> stagingArea = Collections.synchronizedMap(new HashMap<>());
 	private IScale forcedScale;
+	private List<ResolutionConstraint> resolutionConstraints = new ArrayList<>();
 
 	private class ListenerWrapper {
 
@@ -1038,6 +1040,10 @@ public class SessionState extends Parameters<String> implements ISessionState {
 	public ISessionState withScale(IScale scale) {
 		this.forcedScale = scale;
 		return this;
+	}
+
+	public List<ResolutionConstraint> getResolutionConstraints() {
+		return resolutionConstraints;
 	}
 
 }

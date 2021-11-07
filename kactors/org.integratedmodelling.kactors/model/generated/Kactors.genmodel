@@ -116,6 +116,7 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Assertion/value"/>
     </genClasses>
     <genClasses ecoreClass="Kactors.ecore#//Assignment">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Assignment/local"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Assignment/recipient"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Assignment/variable"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Assignment/value"/>

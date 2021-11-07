@@ -1690,7 +1690,10 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	public class AssignmentElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.Assignment");
 		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Keyword cSetKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Alternatives cAlternatives_0 = (Alternatives)cGroup.eContents().get(0);
+		private final Keyword cSetKeyword_0_0 = (Keyword)cAlternatives_0.eContents().get(0);
+		private final Assignment cLocalAssignment_0_1 = (Assignment)cAlternatives_0.eContents().get(1);
+		private final Keyword cLocalDefKeyword_0_1_0 = (Keyword)cLocalAssignment_0_1.eContents().get(0);
 		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
 		private final Assignment cRecipientAssignment_1_0 = (Assignment)cGroup_1.eContents().get(0);
 		private final RuleCall cRecipientLOWERCASE_IDTerminalRuleCall_1_0_0 = (RuleCall)cRecipientAssignment_1_0.eContents().get(0);
@@ -1701,15 +1704,24 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		private final RuleCall cValueValueWithConstructorParserRuleCall_3_0 = (RuleCall)cValueAssignment_3.eContents().get(0);
 		
 		//Assignment:
-		//    'set' (recipient=LOWERCASE_ID '.')? variable=LOWERCASE_ID value=ValueWithConstructor
+		//    ('set'|local?='def') (recipient=LOWERCASE_ID '.')? variable=LOWERCASE_ID value=ValueWithConstructor
 		//;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//'set' (recipient=LOWERCASE_ID '.')? variable=LOWERCASE_ID value=ValueWithConstructor
+		//('set'|local?='def') (recipient=LOWERCASE_ID '.')? variable=LOWERCASE_ID value=ValueWithConstructor
 		public Group getGroup() { return cGroup; }
 		
+		//('set'|local?='def')
+		public Alternatives getAlternatives_0() { return cAlternatives_0; }
+		
 		//'set'
-		public Keyword getSetKeyword_0() { return cSetKeyword_0; }
+		public Keyword getSetKeyword_0_0() { return cSetKeyword_0_0; }
+		
+		//local?='def'
+		public Assignment getLocalAssignment_0_1() { return cLocalAssignment_0_1; }
+		
+		//'def'
+		public Keyword getLocalDefKeyword_0_1_0() { return cLocalDefKeyword_0_1_0; }
 		
 		//(recipient=LOWERCASE_ID '.')?
 		public Group getGroup_1() { return cGroup_1; }
@@ -7732,7 +7744,7 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	}
 	
 	//Assignment:
-	//    'set' (recipient=LOWERCASE_ID '.')? variable=LOWERCASE_ID value=ValueWithConstructor
+	//    ('set'|local?='def') (recipient=LOWERCASE_ID '.')? variable=LOWERCASE_ID value=ValueWithConstructor
 	//;
 	public AssignmentElements getAssignmentAccess() {
 		return pAssignment;

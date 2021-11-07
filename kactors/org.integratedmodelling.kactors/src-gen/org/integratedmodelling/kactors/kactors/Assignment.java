@@ -14,6 +14,7 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Assignment#isLocal <em>Local</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Assignment#getRecipient <em>Recipient</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Assignment#getVariable <em>Variable</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Assignment#getValue <em>Value</em>}</li>
@@ -25,6 +26,28 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface Assignment extends EObject
 {
+  /**
+   * Returns the value of the '<em><b>Local</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Local</em>' attribute.
+   * @see #setLocal(boolean)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getAssignment_Local()
+   * @model
+   * @generated
+   */
+  boolean isLocal();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Assignment#isLocal <em>Local</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Local</em>' attribute.
+   * @see #isLocal()
+   * @generated
+   */
+  void setLocal(boolean value);
+
   /**
    * Returns the value of the '<em><b>Recipient</b></em>' attribute.
    * <!-- begin-user-doc -->

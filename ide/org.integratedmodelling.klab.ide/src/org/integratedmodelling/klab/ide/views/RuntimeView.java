@@ -998,6 +998,11 @@ public class RuntimeView extends ViewPart {
 	}
 
 	private void refreshTrees() {
+		
+		if (Activator.session() == null) {
+			return;
+		}
+		
 		Display.getDefault().asyncExec(() -> {
 			if (currentPriority == DisplayPriority.TASK_FIRST) {
 				taskViewer.setInput(Activator.session().getCurrentContextDescriptor());

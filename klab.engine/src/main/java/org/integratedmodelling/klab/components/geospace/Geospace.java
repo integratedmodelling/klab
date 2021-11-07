@@ -18,7 +18,9 @@ import org.locationtech.jts.geom.GeometryFactory;
 @Component(id = "org.integratedmodelling.geospace", version = Version.CURRENT)
 public class Geospace {
 
-    public static GeometryFactory gFactory = new GeometryFactory();
+    public static final double AUTHALIC_EARTH_RADIUS_M = 6371007.2;
+    
+	public static GeometryFactory gFactory = new GeometryFactory();
 
     static {
     }

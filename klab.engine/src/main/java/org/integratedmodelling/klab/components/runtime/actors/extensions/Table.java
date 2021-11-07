@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -27,13 +28,9 @@ public class Table extends GroovyObjectSupport {
 	 * if a key column isn't defined in the constructor, it becomes "row" indexing
 	 * the string value of the row number.
 	 */
-	Set<String> keyColumns = new LinkedHashSet<>();
-	Set<String> columns = new LinkedHashSet<>();
-	// data are added by "row" using the primary key, and are filled in at each
-	// add() by column,
-	// defining the
-	// columns as we go.
-	Map<String, Map<String, Object>> data = new LinkedHashMap<>();
+	Set<String> keyColumns = Collections.synchronizedSet(new LinkedHashSet<>());
+	Set<String> columns = Collections.synchronizedSet(new LinkedHashSet<>());
+	Map<String, Map<String, Object>> data = Collections.synchronizedMap(new LinkedHashMap<>());
 
 	public Table() {
 	}
@@ -108,7 +105,6 @@ public class Table extends GroovyObjectSupport {
 	public void add(Object value, Map<String, Object> keys) {
 
 		String rowKey = "";
-		Map<String, Object> keysig = new LinkedHashMap<>();
 		for (String key : keyColumns) {
 			if (!keys.containsKey(key)) {
 				throw new KlabValidationException("table: need to pass all keys and a column to add a value");

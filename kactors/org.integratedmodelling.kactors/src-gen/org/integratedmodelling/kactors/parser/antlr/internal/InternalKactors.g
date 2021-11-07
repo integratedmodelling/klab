@@ -2833,16 +2833,33 @@ ruleAssignment returns [EObject current=null]
 	leaveRule();
 }:
 	(
-		otherlv_0='set'
-		{
-			newLeafNode(otherlv_0, grammarAccess.getAssignmentAccess().getSetKeyword_0());
-		}
+		(
+			otherlv_0='set'
+			{
+				newLeafNode(otherlv_0, grammarAccess.getAssignmentAccess().getSetKeyword_0_0());
+			}
+			    |
+			(
+				(
+					lv_local_1_0='def'
+					{
+						newLeafNode(lv_local_1_0, grammarAccess.getAssignmentAccess().getLocalDefKeyword_0_1_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getAssignmentRule());
+						}
+						setWithLastConsumed($current, "local", lv_local_1_0 != null, "def");
+					}
+				)
+			)
+		)
 		(
 			(
 				(
-					lv_recipient_1_0=RULE_LOWERCASE_ID
+					lv_recipient_2_0=RULE_LOWERCASE_ID
 					{
-						newLeafNode(lv_recipient_1_0, grammarAccess.getAssignmentAccess().getRecipientLOWERCASE_IDTerminalRuleCall_1_0_0());
+						newLeafNode(lv_recipient_2_0, grammarAccess.getAssignmentAccess().getRecipientLOWERCASE_IDTerminalRuleCall_1_0_0());
 					}
 					{
 						if ($current==null) {
@@ -2851,21 +2868,21 @@ ruleAssignment returns [EObject current=null]
 						setWithLastConsumed(
 							$current,
 							"recipient",
-							lv_recipient_1_0,
+							lv_recipient_2_0,
 							"org.integratedmodelling.kactors.Kactors.LOWERCASE_ID");
 					}
 				)
 			)
-			otherlv_2='.'
+			otherlv_3='.'
 			{
-				newLeafNode(otherlv_2, grammarAccess.getAssignmentAccess().getFullStopKeyword_1_1());
+				newLeafNode(otherlv_3, grammarAccess.getAssignmentAccess().getFullStopKeyword_1_1());
 			}
 		)?
 		(
 			(
-				lv_variable_3_0=RULE_LOWERCASE_ID
+				lv_variable_4_0=RULE_LOWERCASE_ID
 				{
-					newLeafNode(lv_variable_3_0, grammarAccess.getAssignmentAccess().getVariableLOWERCASE_IDTerminalRuleCall_2_0());
+					newLeafNode(lv_variable_4_0, grammarAccess.getAssignmentAccess().getVariableLOWERCASE_IDTerminalRuleCall_2_0());
 				}
 				{
 					if ($current==null) {
@@ -2874,7 +2891,7 @@ ruleAssignment returns [EObject current=null]
 					setWithLastConsumed(
 						$current,
 						"variable",
-						lv_variable_3_0,
+						lv_variable_4_0,
 						"org.integratedmodelling.kactors.Kactors.LOWERCASE_ID");
 				}
 			)
@@ -2884,7 +2901,7 @@ ruleAssignment returns [EObject current=null]
 				{
 					newCompositeNode(grammarAccess.getAssignmentAccess().getValueValueWithConstructorParserRuleCall_3_0());
 				}
-				lv_value_4_0=ruleValueWithConstructor
+				lv_value_5_0=ruleValueWithConstructor
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getAssignmentRule());
@@ -2892,7 +2909,7 @@ ruleAssignment returns [EObject current=null]
 					set(
 						$current,
 						"value",
-						lv_value_4_0,
+						lv_value_5_0,
 						"org.integratedmodelling.kactors.Kactors.ValueWithConstructor");
 					afterParserOrEnumRuleCall();
 				}

@@ -10,6 +10,7 @@ public class KActorsAssignment extends KActorsStatement implements Assignment {
 	private String recipient;
 	private String variable;
 	private KActorsValue value;
+	private boolean local;
 
 	public KActorsAssignment(org.integratedmodelling.kactors.kactors.Assignment assignment,
 			KActorCodeStatement parent) {
@@ -20,6 +21,7 @@ public class KActorsAssignment extends KActorsStatement implements Assignment {
 		}
 		this.variable = assignment.getVariable();
 		this.recipient = assignment.getRecipient();
+		this.local = assignment.isLocal();
 	}
 
 	@Override
@@ -42,6 +44,11 @@ public class KActorsAssignment extends KActorsStatement implements Assignment {
         visitor.visitValue(value, this, action);
         super.visit(action, visitor);
     }
+
+	@Override
+	public boolean isLocal() {
+		return this.local;
+	}
     
 
 }

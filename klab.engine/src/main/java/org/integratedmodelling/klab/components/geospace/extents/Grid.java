@@ -33,6 +33,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.common.Offset;
+import org.integratedmodelling.klab.components.geospace.Geospace;
 import org.integratedmodelling.klab.components.geospace.extents.mediators.Subgrid;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.rest.SpatialExtent;
@@ -58,7 +59,7 @@ public class Grid extends Area implements IGrid {
     }
 
     /**
-     * A trivial grid mask with almost no memory footpring that automatically graduates to a proper
+     * A trivial grid mask with almost no memory footprint that automatically graduates to a proper
      * one when any operation sets a cell inactive.
      * 
      * @author ferdinando.villa
@@ -454,7 +455,9 @@ public class Grid extends Area implements IGrid {
     }
 
     public Grid copy() {
-        return create(getShape().copy(), getXCells(), getYCells());
+        Grid ret = create(getShape().copy(), getXCells(), getYCells());
+        ret.mask = this.mask;
+        return ret;
     }
 
     public class CellImpl extends AbstractExtent implements Cell {
@@ -861,6 +864,22 @@ public class Grid extends Area implements IGrid {
 
         @Override
         public double getStandardizedArea() {
+
+        	/*
+        	 * TODO if latlon:"
+        	 * 
+        	 * Convert lat and lon to radians (Radians = Degrees * PI / 180)
+        	 * Area is (sin(f1) - sin(f0)) * (l1 - l0) * R^2
+        	 * where f = latitude, l = longitude, R = authalic earth radius = 6371007.2m
+        	 */
+        	if (projection.equals(Projection.getLatLon())) {
+        		double l0 = getWest() * Math.PI / 180.0;
+        		double l1 = getEast() * Math.PI / 180.0;
+        		double f0 = getSouth() * Math.PI / 180.0;
+        		double f1 = getNorth() * Math.PI / 180.0;
+        		return (Math.sin(f1) - Math.sin(f0)) * (l1 - l0) * (Geospace.AUTHALIC_EARTH_RADIUS_M * Geospace.AUTHALIC_EARTH_RADIUS_M);
+        	}
+        	
             return getFirstCell().getStandardizedArea();
         }
 

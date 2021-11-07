@@ -1019,13 +1019,22 @@ public interface KactorsPackage extends EPackage
   int ASSIGNMENT = 14;
 
   /**
+   * The feature id for the '<em><b>Local</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ASSIGNMENT__LOCAL = 0;
+
+  /**
    * The feature id for the '<em><b>Recipient</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ASSIGNMENT__RECIPIENT = 0;
+  int ASSIGNMENT__RECIPIENT = 1;
 
   /**
    * The feature id for the '<em><b>Variable</b></em>' attribute.
@@ -1034,7 +1043,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ASSIGNMENT__VARIABLE = 1;
+  int ASSIGNMENT__VARIABLE = 2;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' containment reference.
@@ -1043,7 +1052,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ASSIGNMENT__VALUE = 2;
+  int ASSIGNMENT__VALUE = 3;
 
   /**
    * The number of structural features of the '<em>Assignment</em>' class.
@@ -1052,7 +1061,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ASSIGNMENT_FEATURE_COUNT = 3;
+  int ASSIGNMENT_FEATURE_COUNT = 4;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.IfStatementImpl <em>If Statement</em>}' class.
@@ -4789,6 +4798,17 @@ public interface KactorsPackage extends EPackage
   EClass getAssignment();
 
   /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Assignment#isLocal <em>Local</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Local</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Assignment#isLocal()
+   * @see #getAssignment()
+   * @generated
+   */
+  EAttribute getAssignment_Local();
+
+  /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Assignment#getRecipient <em>Recipient</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -8467,6 +8487,14 @@ public interface KactorsPackage extends EPackage
      * @generated
      */
     EClass ASSIGNMENT = eINSTANCE.getAssignment();
+
+    /**
+     * The meta object literal for the '<em><b>Local</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute ASSIGNMENT__LOCAL = eINSTANCE.getAssignment_Local();
 
     /**
      * The meta object literal for the '<em><b>Recipient</b></em>' attribute feature.
