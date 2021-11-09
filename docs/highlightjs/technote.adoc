@@ -49,7 +49,7 @@ This document describes the main principles and architecture of {kl}. More detai
 
 ## Architecture of the k.LAB platform
 
-The open source k.LAB software stack includes client and server components that support the creation, maintenance and use of a distributed _semantic web platform_ where scientific information can be stored, published, curated and connected. The software is licensed through the Affero General Public License (AGPL) v.3.0; the core components are available as a single project in the https://bitbucket.org/integratedmodelling/klab[{kl} git repository].
+The open source k.LAB software stack includes client and server components that support the creation, maintenance and use of a distributed _semantic web platform_ where scientific information can be stored, published, curated and connected. The software is licensed through the Affero General Public License (AGPL) v.3.0; the core components are available as a single project in the https://github.com/integratedmodelling/klab[{kl} git repository].
 
 ### The software stack
 
