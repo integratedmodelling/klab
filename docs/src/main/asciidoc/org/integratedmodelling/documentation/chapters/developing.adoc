@@ -144,7 +144,7 @@ So far we have discussed the k.LAB engine.
 
 == Developing extensions
 
-A major part of many independent developers’ interests will likely include development of `components` – independent packages that provide functionalities for k.LAB, such as new model integrations. A  Maven archetype is provided that installs a sample component to use as a template. The https://bitbucket.org/integratedmodelling/klab[klab] project in Bitbucket contains the components that are currently distributed with the system.
+A major part of many independent developers’ interests will likely include development of `components` – independent packages that provide functionalities for k.LAB, such as new model integrations. A  Maven archetype is provided that installs a sample component to use as a template. The https://github.com/integratedmodelling/klab[klab] project in Github contains the components that are currently distributed with the system.
 
 Components can provide:
 
