@@ -452,8 +452,8 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
 						Thread.sleep(60);
 						cnt++;
 						if (cnt % 1000 == 0 && !semaphore.isWarned()) {
-							identity.getMonitor().warn("Action is taking longer than 1 minute at "
-									+ getBehavior().getName() + ":" + linenumber + ": potential actor deadlock?");
+							identity.getMonitor().warn("Blocking action is taking longer than 1 minute at "
+									+ getBehavior().getName() + ":" + linenumber);
 							semaphore.setWarned();
 						}
 					} catch (InterruptedException e) {

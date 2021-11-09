@@ -988,6 +988,17 @@ public enum Actors implements IActorsService {
 							}
 						}
 					}
+					
+					// check for void, no-args initialization method to call after all properties are set
+					try {
+						Method method = cls.getMethod("initialize");
+						if (method != null) {
+							method.invoke(ret);
+						}
+					} catch (NoSuchMethodException e) {
+						// not this one, either.
+					}
+
 				}
 
 			}
@@ -1164,27 +1175,48 @@ public enum Actors implements IActorsService {
 			 */
 			if (jargs.size() == 0) {
 				try {
-					Method getter = reactor.getClass().getDeclaredMethod("get" + StringUtil.capitalize(methodName)); // new
-																														// PropertyDescriptor(methodName,
-																														// reactor.getClass()).getReadMethod();
-					if (getter != null) {
-						ret = getter.invoke(reactor, jargs.toArray());
+					// getter
+					method = reactor.getClass().getDeclaredMethod("get" + StringUtil.capitalize(methodName));
+					if (method != null) {
+						ret = method.invoke(reactor, jargs.toArray());
 					}
 				} catch (Throwable e) {
 					// move on
 				}
+
 			} else if (jargs.size() == 1) {
 				try {
-					Method setter = new PropertyDescriptor(methodName, reactor.getClass()).getWriteMethod();
-					if (setter != null) {
-						ret = setter.invoke(reactor, jargs.toArray());
+					// setter
+					method = new PropertyDescriptor(methodName, reactor.getClass()).getWriteMethod();
+					if (method != null) {
+						ret = method.invoke(reactor, jargs.toArray());
 					}
 				} catch (Throwable e) {
 					// move on
 				}
 			}
 
-			if (ret != null) {
+			if (method == null) {
+
+				/*
+				 * last chance: lookup a method taking Object[] and if found, pass whatever we
+				 * have
+				 */
+				try {
+					method = reactor.getClass().getDeclaredMethod(methodName, Object[].class);
+					if (method != null) {
+						ret = method.invoke(reactor, (Object)jargs.toArray());
+					}
+				} catch (Throwable e) {
+					if (scope != null) {
+						scope.getMonitor().error(e);
+					} else {
+						Logging.INSTANCE.error(e);
+					}
+				}
+			}
+
+			if (ret != null || method != null) {
 				return ret;
 			}
 

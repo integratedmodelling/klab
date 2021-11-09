@@ -93,6 +93,13 @@
 	</build>
 	<dependencies>
 
+		<!-- for debugging: visualize jgrapht graphs -->
+		<dependency>
+			<groupId>com.github.vlsi.mxgraph</groupId>
+			<artifactId>jgraphx</artifactId>
+			<version>4.2.2</version>
+		</dependency>
+
 		<!-- xChart for the charting extension of the table view -->
 		<dependency>
 			<groupId>org.knowm.xchart</groupId>
