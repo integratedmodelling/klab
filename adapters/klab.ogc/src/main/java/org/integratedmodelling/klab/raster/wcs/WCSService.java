@@ -364,23 +364,37 @@ public class WCSService {
 				this.originalEnvelope = Envelope.create(lowerCorner[0], upperCorner[0], lowerCorner[1], upperCorner[1],
 						(Projection) this.originalProjection);
 
-				// rangeType: bands
-				Map<?, ?> rangeType = MapUtils.get(coverage, RANGE_TYPE, Map.class);
-				if (rangeType instanceof Map && !rangeType.isEmpty()) {
+                // rangeType: bands
+                Map<?, ?> rangeType = MapUtils.get(coverage, RANGE_TYPE, Map.class);
+                if (rangeType instanceof Map && !rangeType.isEmpty()) {
 
-					Map<?, ?> fields = MapUtils.get(rangeType, "swe:DataRecord/swe:field", Map.class);
+                    Object fields = MapUtils.get(rangeType, "swe:DataRecord/swe:field", Object.class);
 
-					if (fields instanceof Map) {
-						if (fields.containsKey("field")) {
-							List<?> bandefs = (List<?>) ((Map<?, ?>) fields).get("field");
-							for (Object o : bandefs) {
-								bands.add(new Band((Map<?, ?>) o));
-							}
-						} else if (fields.containsKey("-name")) {
-							bands.add(new Band((Map<?, ?>) fields));
-						}
-					}
-				}
+                    if (fields instanceof Map) {
+                        if (((Map<?, ?>) fields).containsKey("field")) {
+                            List<?> bandefs = (List<?>) ((Map<?, ?>) fields).get("field");
+                            for (Object o : bandefs) {
+                                bands.add(new Band((Map<?, ?>) o));
+                            }
+                        } else if (((Map<?, ?>) fields).containsKey("-name")) {
+                            bands.add(new Band((Map<?, ?>) fields));
+                        }
+                    } else if (fields instanceof List) {
+                        for (Object o : (List<?>) fields) {
+
+                            if (o instanceof Map) {
+                                if (((Map<?, ?>) o).containsKey("field")) {
+                                    List<?> bandefs = (List<?>) ((Map<?, ?>) o).get("field");
+                                    for (Object fo : bandefs) {
+                                        bands.add(new Band((Map<?, ?>) fo));
+                                    }
+                                } else if (((Map<?, ?>) o).containsKey("-name")) {
+                                    bands.add(new Band((Map<?, ?>) o));
+                                }
+                            }
+                        }
+                    }
+                }
 
 				// resolution and CRS: domainSet
 				Map<?, ?> domain = MapUtils.get(coverage, "gml:domainSet/gml:RectifiedGrid/gml:limits/gml:GridEnvelope", Map.class);
