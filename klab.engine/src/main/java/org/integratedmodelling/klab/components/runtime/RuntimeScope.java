@@ -85,7 +85,6 @@ import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.documentation.Report;
 import org.integratedmodelling.klab.engine.runtime.AbstractTask;
-import org.integratedmodelling.klab.engine.runtime.ConfigurationDetector;
 import org.integratedmodelling.klab.engine.runtime.EventBus;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
@@ -131,7 +130,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	INamespace namespace;
 	Provenance provenance;
 	EventBus eventBus;
-	ConfigurationDetector configurationDetector;
+//	ConfigurationDetector configurationDetector;
 	Graph<IDirectObservation, IRelationship> network;
 	Structure structure;
 	Map<String, IArtifact> catalog;
@@ -283,7 +282,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		this.namespace = context.namespace;
 		this.provenance = context.provenance;
 		this.eventBus = context.eventBus;
-		this.configurationDetector = context.configurationDetector;
+//		this.configurationDetector = context.configurationDetector;
 		this.network = context.network;
 		this.contextualizationStrategy = context.contextualizationStrategy;
 		this.structure = context.structure;
@@ -358,10 +357,10 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		return eventBus;
 	}
 
-	@Override
-	public ConfigurationDetector getConfigurationDetector() {
-		return configurationDetector;
-	}
+//	@Override
+//	public ConfigurationDetector getConfigurationDetector() {
+//		return configurationDetector;
+//	}
 
 	@Override
 	public Collection<IRelationship> getOutgoingRelationships(IDirectObservation observation) {

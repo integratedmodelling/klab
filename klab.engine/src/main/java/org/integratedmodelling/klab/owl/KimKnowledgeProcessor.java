@@ -147,8 +147,10 @@ public enum KimKnowledgeProcessor {
                 ns.addAxiom(Axiom.AnnotationAssertion(ret.getName(), NS.BASE_DECLARATION, "true"));
                 createProperties(ret, ns);
                 ns.define();
-
-                Observables.INSTANCE.registerConfigurations(ret);
+                
+                if (ret.is(Type.CONFIGURATION)) {
+                    Observables.INSTANCE.registerConfiguration(concept, ret);
+                }
 
                 if (coreConceptPeers.containsKey(ret.toString()) && upperConceptDefined != null
                         && "true".equals(upperConceptDefined.getMetadata().get(NS.IS_CORE_KIM_TYPE, "false"))) {

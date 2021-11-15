@@ -20,7 +20,6 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
-import org.integratedmodelling.klab.api.runtime.IConfigurationDetector;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
@@ -31,9 +30,9 @@ import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.model.Model;
+import org.integratedmodelling.klab.owl.ConfigurationDetector;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.provenance.Provenance;
-import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
 
 /**
@@ -115,13 +114,13 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 */
 	void set(String name, Object value);
 
-	/**
-	 * Each context that handles a temporal scale must expose a configuration
-	 * detector.
-	 * 
-	 * @return the configuration detector for the context
-	 */
-	IConfigurationDetector getConfigurationDetector();
+//	/**
+//	 * Each context that handles a temporal scale must expose a configuration
+//	 * detector.
+//	 * 
+//	 * @return the configuration detector for the context
+//	 */
+//	ConfigurationDetector getConfigurationDetector();
 
 	/**
 	 * Produce a deep copy of this context so it can be used for parameters without

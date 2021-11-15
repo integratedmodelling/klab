@@ -36,7 +36,6 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
-import org.integratedmodelling.klab.api.runtime.IConfigurationDetector;
 import org.integratedmodelling.klab.api.runtime.IEventBus;
 import org.integratedmodelling.klab.api.runtime.IScheduler;
 import org.integratedmodelling.klab.api.runtime.IVariable;
@@ -312,11 +311,11 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
 
     }
 
-    @Override
-    public IConfigurationDetector getConfigurationDetector() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+//    @Override
+//    public IConfigurationDetector getConfigurationDetector() {
+//        // TODO Auto-generated method stub
+//        return null;
+//    }
 
     @Override
     public IRuntimeScope copy() {

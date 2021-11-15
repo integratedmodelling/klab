@@ -20,6 +20,7 @@ import org.eclipse.xtext.testing.util.ParseHelper;
 import org.integratedmodelling.kim.api.BinarySemanticOperator;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimConceptStatement.DescriptionType;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.ValueOperator;
@@ -27,7 +28,6 @@ import org.integratedmodelling.kim.kim.Model;
 import org.integratedmodelling.kim.kim.ObservableSemantics;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.KimObservable;
-import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -58,6 +58,7 @@ import org.integratedmodelling.klab.engine.resources.CoreOntology;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.owl.Concept;
+import org.integratedmodelling.klab.owl.ConfigurationDetector;
 import org.integratedmodelling.klab.owl.KimKnowledgeProcessor;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Observable;
@@ -74,6 +75,8 @@ public enum Observables implements IObservableService {
 
     INSTANCE;
 
+    ConfigurationDetector configurationDetector = new ConfigurationDetector();
+    
     /**
      * Describes a configuration for the configuration detector.
      * 
@@ -718,6 +721,7 @@ public enum Observables implements IObservableService {
      * Register any configuration directly or through inherency.
      * 
      * @param concept
+     * @deprecated
      */
     public void registerConfigurations(IConcept concept) {
 
@@ -747,6 +751,7 @@ public enum Observables implements IObservableService {
         }
     }
 
+    @Deprecated
     private void registerConfiguration(IConcept concept) {
         // register the configuration with the configuration detector
         if (!concept.isAbstract()) {
@@ -1355,5 +1360,10 @@ public enum Observables implements IObservableService {
         }
         return ret;
 
+    }
+
+    public void registerConfiguration(IKimConceptStatement statement, IConcept concept) {
+        // TODO Auto-generated method stub
+        this.configurationDetector.registerConfiguration(statement);
     }
 }
