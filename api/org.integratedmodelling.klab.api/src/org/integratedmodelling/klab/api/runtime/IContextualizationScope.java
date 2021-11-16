@@ -18,6 +18,7 @@ import java.util.Map;
 
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
@@ -30,6 +31,7 @@ import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IObservationGroup;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
@@ -40,7 +42,6 @@ import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.utils.Pair;
 
 /**
@@ -182,7 +183,8 @@ public interface IContextualizationScope extends IParameters<String> {
      * corresponds to the primary observable of the model that has defined the computation. If the
      * computation is an instantiation, the target artifact is null.
      *
-     * @return the target artifact, or null in instantiation computations.
+     * @return the target artifact, an {@link IObservationGroup} when the computation is an
+     *         instantiations.
      */
     IArtifact getTargetArtifact();
 
@@ -232,6 +234,22 @@ public interface IContextualizationScope extends IParameters<String> {
      * @return
      */
     <T extends IArtifact> T getArtifact(IConcept concept, Class<T> cls);
+
+    /**
+     * Use to retrieve a state correspondent to a concept when the observable has a unit, currency
+     * or range and a specific other mediator is wanted. The result state will either be the
+     * original state (if the mediator is the same as the original observable's) or a mediating
+     * state that will convert the values in both get() and set() operations. The mediation will be
+     * aware of scale, so it is OK to ask for units that aggregate or distribute values over space
+     * or time. Asking for a non-null mediator when the state does not admit one, or the reverse,
+     * will raise an exception. Asking for a state that does not exist in the scope will simply
+     * return null.
+     * 
+     * @param concept
+     * @param unit
+     * @return
+     */
+    IState getState(IConcept concept, IValueMediator unit);
 
     /**
      * Get any artifacts that incarnate the passed concept, using transitive reasoning.
@@ -359,7 +377,7 @@ public interface IContextualizationScope extends IParameters<String> {
      * @throw IllegalArgumentException if the observable describes a non-countable or a
      *        relationship.
      */
-    IObjectArtifact newObservation(IObservable observable, String name, IScale scale, IMetadata metadata) throws KlabException;
+    IObjectArtifact newObservation(IObservable observable, String name, IScale scale, IMetadata metadata);
 
     /**
      * Create and resolve a new observation of the specified relationship with with the specified
@@ -491,6 +509,6 @@ public interface IContextualizationScope extends IParameters<String> {
      * 
      * @return
      */
-    IExpression.Context getExpressionContext();
+    IExpression.Scope getExpressionContext();
 
 }

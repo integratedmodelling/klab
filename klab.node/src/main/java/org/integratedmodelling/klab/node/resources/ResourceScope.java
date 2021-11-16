@@ -9,12 +9,13 @@ import java.util.Set;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
-import org.integratedmodelling.klab.api.data.general.IExpression.Context;
+import org.integratedmodelling.klab.api.data.general.IExpression.Scope;
 import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -257,7 +258,7 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
     }
 
     @Override
-    public Context getExpressionContext() {
+    public Scope getExpressionContext() {
         // TODO Auto-generated method stub
         return null;
     }
@@ -779,6 +780,12 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
 
 	@Override
 	public <T extends IArtifact> Collection<T> getAffectedArtifacts(IConcept processType, Class<T> cls) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IState getState(IConcept concept, IValueMediator unit) {
 		// TODO Auto-generated method stub
 		return null;
 	}

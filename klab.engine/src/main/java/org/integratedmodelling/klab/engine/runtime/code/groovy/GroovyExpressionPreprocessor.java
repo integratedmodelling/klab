@@ -159,7 +159,7 @@ public class GroovyExpressionPreprocessor {
 	private Set<String> scalarIds = new HashSet<>();
 	private Set<String> contextualizers = new HashSet<>();
 	List<TokenDescriptor> tokens = new ArrayList<>();
-	IExpression.Context context;
+	IExpression.Scope context;
 	private boolean contextual;
 	private List<IObservable> declarations = new ArrayList<>();
 	private boolean recontextualizeAsMap;
@@ -184,7 +184,7 @@ public class GroovyExpressionPreprocessor {
 	private static final String DECLARATION_ID_PREFIX = "___DECL_";
 
 	public GroovyExpressionPreprocessor(INamespace currentNamespace, Set<String> knownIdentifiers, IGeometry geometry,
-			IExpression.Context context, boolean contextual, Set<CompilerOption> options) {
+			IExpression.Scope context, boolean contextual, Set<CompilerOption> options) {
 		this.domains = geometry;
 		this.namespace = currentNamespace;
 		this.knownIdentifiers = knownIdentifiers;
@@ -259,7 +259,7 @@ public class GroovyExpressionPreprocessor {
 			return ret;
 		}
 
-		public String translate(IExpression.Context context) {
+		public String translate(IExpression.Scope context) {
 			String ret = token;
 			switch (type) {
 			case KNOWLEDGE:
@@ -523,7 +523,7 @@ public class GroovyExpressionPreprocessor {
 
 	}
 
-	public IKimConcept.Type getIdentifierType(String identifier, IExpression.Context context) {
+	public IKimConcept.Type getIdentifierType(String identifier, IExpression.Scope context) {
 
 		if (context == null) {
 			return IKimConcept.Type.PRIORITY;

@@ -101,7 +101,7 @@ public class ExpressionClassifier implements IPredicateClassifier<IDirectObserva
 		ILanguageProcessor processor = Extensions.INSTANCE
 				.getLanguageProcessor(parameters.get("language", Extensions.DEFAULT_EXPRESSION_LANGUAGE));
 
-		IExpression.Context expressionContext = context.getExpressionContext();
+		IExpression.Scope expressionContext = context.getExpressionContext();
 		Descriptor selector = processor.describe(parameters.get("code", String.class), expressionContext);
 		Descriptor condition = null;
 		if (parameters.get("ifcondition") != null || parameters.get("unlesscondition") != null) {

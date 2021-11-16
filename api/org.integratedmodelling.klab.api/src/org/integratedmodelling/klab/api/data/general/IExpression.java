@@ -67,7 +67,7 @@ public interface IExpression {
      * @author ferdinando.villa
      *
      */
-    public interface Context {
+    public interface Scope {
 
         /**
          * The expected return type, if known.

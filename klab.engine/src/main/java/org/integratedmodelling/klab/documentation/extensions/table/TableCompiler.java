@@ -36,7 +36,7 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.classification.IClassifier;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
-import org.integratedmodelling.klab.api.data.general.IExpression.Context;
+import org.integratedmodelling.klab.api.data.general.IExpression.Scope;
 import org.integratedmodelling.klab.api.extensions.ILanguageExpression;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
@@ -861,7 +861,7 @@ public class TableCompiler {
             if (expression != null && computation == null) {
                 ILanguageProcessor processor = Extensions.INSTANCE.getLanguageProcessor(
                         expression.getLanguage() == null ? Extensions.DEFAULT_EXPRESSION_LANGUAGE : expression.getLanguage());
-                Context context = scope.getExpressionContext();
+                Scope context = scope.getExpressionContext();
 
                 // register row and column names unless the rows/colums are aggregations
                 for (Dimension dimension : rows.values()) {

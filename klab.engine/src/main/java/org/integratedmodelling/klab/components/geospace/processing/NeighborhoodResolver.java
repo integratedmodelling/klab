@@ -71,7 +71,7 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 
 	private NeighborhoodResolver(IParameters<String> parameters, IContextualizationScope context) {
 
-		IExpression.Context expressionContext = context.getExpressionContext();
+		IExpression.Scope expressionContext = context.getExpressionContext();
 
 		// TODO should be artifact OBJECT type
 		expressionContext.addKnownIdentifier("cell", IKimConcept.Type.SUBJECT);

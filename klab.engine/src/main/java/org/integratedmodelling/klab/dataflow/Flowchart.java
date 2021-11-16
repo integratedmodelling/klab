@@ -24,7 +24,7 @@ import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Attribute;
-import org.integratedmodelling.klab.api.data.general.IExpression.Context;
+import org.integratedmodelling.klab.api.data.general.IExpression.Scope;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -663,7 +663,7 @@ public class Flowchart {
                 }
             }
         }
-        Descriptor descriptor = Extensions.INSTANCE.getLanguageProcessor(explang).describe(expcode, new Context(){
+        Descriptor descriptor = Extensions.INSTANCE.getLanguageProcessor(explang).describe(expcode, new Scope(){
 
             @Override
             public Collection<String> getStateIdentifiers() {

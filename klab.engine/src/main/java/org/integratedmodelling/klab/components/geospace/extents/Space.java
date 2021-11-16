@@ -192,7 +192,7 @@ public class Space extends Extent implements ISpace {
         }
 
         return (ISpace) new org.integratedmodelling.klab.components.geospace.services.Space().eval(spaceAnnotation,
-                new Expression.Scope(Klab.INSTANCE.getRootMonitor()));
+                new Expression.SimpleScope(Klab.INSTANCE.getRootMonitor()));
     }
 
     private Space() {

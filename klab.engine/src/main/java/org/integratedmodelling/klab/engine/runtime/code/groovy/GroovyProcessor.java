@@ -34,9 +34,9 @@ public enum GroovyProcessor implements ILanguageProcessor {
 		private boolean forcedScalar;
 		private Map<String, Set<String>> mapIdentifiers;
 		private Set<CompilerOption> options;
-		private IExpression.Context context;
+		private IExpression.Scope context;
 		
-		GroovyDescriptor(String expression, IExpression.Context context, boolean contextual, CompilerOption... options) {
+		GroovyDescriptor(String expression, IExpression.Scope context, boolean contextual, CompilerOption... options) {
 
 			this.options = Sets.newHashSet(options == null ? new CompilerOption[] {} : options);
 			
@@ -149,13 +149,13 @@ public enum GroovyProcessor implements ILanguageProcessor {
 	}
 
 	@Override
-	public IExpression compile(String expression, IExpression.Context context, CompilerOption... options)
+	public IExpression compile(String expression, IExpression.Scope context, CompilerOption... options)
 			throws KlabValidationException {
 		return new GroovyDescriptor(expression, context, true, options).compile();
 	}
 
 	@Override
-	public Descriptor describe(String expression, IExpression.Context context, CompilerOption... options)
+	public Descriptor describe(String expression, IExpression.Scope context, CompilerOption... options)
 			throws KlabValidationException {
 		return new GroovyDescriptor(expression, context, true, options);
 	}

@@ -20,6 +20,7 @@ import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Klab;
@@ -34,7 +35,9 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IStorage;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
-import org.integratedmodelling.klab.api.data.general.IExpression.Context;
+import org.integratedmodelling.klab.api.data.general.IExpression.Scope;
+import org.integratedmodelling.klab.api.data.mediation.ICurrency;
+import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.documentation.IReport.View;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -77,6 +80,7 @@ import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.components.time.extents.Scheduler;
 import org.integratedmodelling.klab.components.time.extents.Time;
+import org.integratedmodelling.klab.data.storage.MediatingState;
 import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Actuator.Computation;
@@ -92,6 +96,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.engine.runtime.code.ExpressionContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.extensions.groovy.model.Concept;
 import org.integratedmodelling.klab.model.Model;
@@ -108,6 +113,7 @@ import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
+import org.integratedmodelling.klab.utils.Range;
 import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.klab.utils.Triple;
 import org.jgrapht.Graph;
@@ -1790,7 +1796,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	}
 
 	@Override
-	public Context getExpressionContext() {
+	public Scope getExpressionContext() {
 		return ExpressionContext.create(this);
 	}
 
@@ -2351,12 +2357,43 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		List<T> ret = new ArrayList<>();
 		for (IArtifact artifact : catalog.values()) {
 			if (artifact instanceof IObservation && cls.isAssignableFrom(artifact.getClass())) {
-				if (Observables.INSTANCE.isAffectedBy(((IObservation)artifact).getObservable(), processType)) {
-					ret.add((T)artifact);
+				if (Observables.INSTANCE.isAffectedBy(((IObservation) artifact).getObservable(), processType)) {
+					ret.add((T) artifact);
 				}
 			}
 		}
 		return ret;
+	}
+
+	@Override
+	public IState getState(IConcept concept, IValueMediator unit) {
+		IState state = getArtifact(concept, IState.class);
+		if (state != null) {
+			if (state.getObservable().getUnit() != null) {
+				if (!(unit instanceof IUnit)) {
+					throw new KlabIllegalArgumentException("cannot mediate state " + state + " to " + unit);
+				}
+				return ((IUnit) unit).equals(state.getObservable().getUnit()) ? state
+						: new MediatingState(state, this, state.getObservable().getUnit(), unit);
+			} else if (state.getObservable().getCurrency() != null) {
+				if (!(unit instanceof ICurrency)) {
+					throw new KlabIllegalArgumentException("cannot mediate state " + state + " to " + unit);
+				}
+				return ((ICurrency) unit).equals(state.getObservable().getCurrency()) ? state
+						: new MediatingState(state, this, state.getObservable().getCurrency(), unit);
+			} else if (state.getObservable().getRange() != null) {
+				if (!(unit instanceof Range)) {
+					throw new KlabIllegalArgumentException("cannot mediate state " + state + " to " + unit);
+				}
+				return ((Range) unit).equals(state.getObservable().getRange()) ? state
+						: new MediatingState(state, this, state.getObservable().getRange(), unit);
+			} else if (unit != null) {
+				throw new KlabIllegalArgumentException("cannot mediate state " + state + " to " + unit);
+			} else {
+				return state;
+			}
+		}
+		return null;
 	}
 
 }

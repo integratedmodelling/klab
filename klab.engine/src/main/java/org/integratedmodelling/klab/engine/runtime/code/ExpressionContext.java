@@ -18,7 +18,7 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 
-public class ExpressionContext implements IExpression.Context {
+public class ExpressionContext implements IExpression.Scope {
 
 	private Type returnType = Type.VALUE;
 	private INamespace namespace;

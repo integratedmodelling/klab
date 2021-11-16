@@ -72,7 +72,7 @@ public class ExpressionCharacterizer implements IPredicateResolver<IDirectObserv
 		ILanguageProcessor processor = Extensions.INSTANCE
 				.getLanguageProcessor(parameters.get("language", Extensions.DEFAULT_EXPRESSION_LANGUAGE));
 
-		IExpression.Context expressionContext = context.getExpressionContext();
+		IExpression.Scope expressionContext = context.getExpressionContext();
 
 		/*
 		 * compile in scalar context as this is applied to an individual object (we want

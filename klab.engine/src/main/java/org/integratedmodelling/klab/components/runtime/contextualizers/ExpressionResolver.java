@@ -103,7 +103,7 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 		ILanguageProcessor processor = Extensions.INSTANCE
 				.getLanguageProcessor(parameters.get("language", Extensions.DEFAULT_EXPRESSION_LANGUAGE));
 
-		IExpression.Context expressionContext = context.getExpressionContext();
+		IExpression.Scope expressionContext = context.getExpressionContext();
 		Boolean forceScalar = parameters.get("scalar", Boolean.FALSE);
 		Descriptor descriptor = processor.describe(parameters.get("code", String.class), expressionContext);
 		Descriptor condition = null;

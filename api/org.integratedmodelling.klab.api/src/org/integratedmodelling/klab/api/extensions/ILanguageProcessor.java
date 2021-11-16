@@ -153,7 +153,7 @@ public interface ILanguageProcessor {
      * @throws org.integratedmodelling.klab.exceptions.KlabValidationException if compilation
      *         produces any errors
      */
-    IExpression compile(String expression, IExpression.Context context, CompilerOption... options) throws KlabValidationException;
+    IExpression compile(String expression, IExpression.Scope context, CompilerOption... options) throws KlabValidationException;
 
     /**
      * Preprocess an expression and return the descriptor. The context may be null, but the
@@ -169,7 +169,7 @@ public interface ILanguageProcessor {
      * @throws org.integratedmodelling.klab.exceptions.KlabValidationException if the expression
      *         contains syntax of logical errors
      */
-    Descriptor describe(String expression, IExpression.Context context, CompilerOption... options) throws KlabValidationException;
+    Descriptor describe(String expression, IExpression.Scope context, CompilerOption... options) throws KlabValidationException;
 
     /**
      * Preprocess an expression and return the descriptor. Not passing a context means the

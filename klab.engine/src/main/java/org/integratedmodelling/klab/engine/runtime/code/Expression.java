@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
@@ -19,6 +20,7 @@ import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IRelationship;
+import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -37,22 +39,22 @@ import org.integratedmodelling.klab.utils.Parameters;
 public abstract class Expression implements IExpression {
 
 	// A dummy context to use when we don't have a context to pass
-	public static class Scope extends Parameters<String> implements IContextualizationScope {
+	public static class SimpleScope extends Parameters<String> implements IContextualizationScope {
 
 		private IMonitor monitor;
 		private INamespace namespace;
 		private IScale scale;
 
-		public Scope(IMonitor monitor) {
+		public SimpleScope(IMonitor monitor) {
 			this.monitor = monitor;
 		}
 
-		Scope(IMonitor monitor, INamespace namespace) {
+		SimpleScope(IMonitor monitor, INamespace namespace) {
 			this.monitor = monitor;
 			this.namespace = namespace;
 		}
 
-		Scope(IGeometry geometry, IMonitor monitor) {
+		SimpleScope(IGeometry geometry, IMonitor monitor) {
 			this.monitor = monitor;
 			this.scale = geometry instanceof IScale ? (IScale) geometry : Scale.create(geometry);
 		}
@@ -203,7 +205,7 @@ public abstract class Expression implements IExpression {
 		}
 
 		@Override
-		public org.integratedmodelling.klab.api.data.general.IExpression.Context getExpressionContext() {
+		public org.integratedmodelling.klab.api.data.general.IExpression.Scope getExpressionContext() {
 			// TODO Auto-generated method stub
 			return null;
 		}
@@ -285,17 +287,23 @@ public abstract class Expression implements IExpression {
             // TODO Auto-generated method stub
             return null;
         }
+
+        @Override
+        public IState getState(IConcept concept, IValueMediator unit) {
+            // TODO Auto-generated method stub
+            return null;
+        }
 	}
 
 	public static IContextualizationScope emptyContext(IMonitor monitor) {
-		return new Scope(monitor);
+		return new SimpleScope(monitor);
 	}
 
 	public static IContextualizationScope emptyContext(IMonitor monitor, INamespace namespace) {
-		return new Scope(monitor, namespace);
+		return new SimpleScope(monitor, namespace);
 	}
 
 	public static IContextualizationScope emptyContext(IGeometry geometry, IMonitor monitor) {
-		return new Scope(geometry, monitor);
+		return new SimpleScope(geometry, monitor);
 	}
 }

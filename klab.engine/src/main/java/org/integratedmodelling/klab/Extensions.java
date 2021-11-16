@@ -324,7 +324,7 @@ public enum Extensions implements IExtensionService {
 		return getLanguageProcessor(language).compile(expressionCode, null, compilerOptions);
 	}
 
-	public IExpression compileExpression(String expressionCode, IExpression.Context context, String language,
+	public IExpression compileExpression(String expressionCode, IExpression.Scope context, String language,
 			CompilerOption... compilerOptions) {
 		return getLanguageProcessor(language).compile(expressionCode, context, compilerOptions);
 	}

@@ -324,7 +324,7 @@ public class Time extends Extent implements ITime {
         }
 
         return (Time) new org.integratedmodelling.klab.components.time.services.Time().eval(timeAnnotation,
-                new Expression.Scope(Klab.INSTANCE.getRootMonitor()));
+                new Expression.SimpleScope(Klab.INSTANCE.getRootMonitor()));
     }
 
     public static ITimeInstant instant(KimDate date) {
