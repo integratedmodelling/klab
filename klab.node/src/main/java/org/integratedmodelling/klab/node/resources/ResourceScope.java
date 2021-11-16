@@ -790,4 +790,10 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
 		return null;
 	}
 
+	@Override
+	public IState getState(String name, IValueMediator unit) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

@@ -2366,8 +2366,17 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	}
 
 	@Override
+	public IState getState(String name, IValueMediator unit) {
+		return getMediatingState(getArtifact(name, IState.class), unit);
+	}
+
+	@Override
 	public IState getState(IConcept concept, IValueMediator unit) {
-		IState state = getArtifact(concept, IState.class);
+		return getMediatingState(getArtifact(concept, IState.class), unit);
+	}
+
+	private IState getMediatingState(IState state, IValueMediator unit) {
+
 		if (state != null) {
 			if (state.getObservable().getUnit() != null) {
 				if (!(unit instanceof IUnit)) {
