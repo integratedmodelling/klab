@@ -1599,14 +1599,14 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	// }
 	// }
 
-	private boolean differentAndCompatible(IArtifact current, IArtifact target) {
-		if (current == null) {
-			return true;
-		} else if (current != target) {
-			return current instanceof IState && target instanceof IState;
-		}
-		return false;
-	}
+//	private boolean differentAndCompatible(IArtifact current, IArtifact target) {
+//		if (current == null) {
+//			return true;
+//		} else if (current != target) {
+//			return current instanceof IState && target instanceof IState;
+//		}
+//		return false;
+//	}
 
 	@Override
 	public Pair<String, IArtifact> findArtifact(IObservable observable) {

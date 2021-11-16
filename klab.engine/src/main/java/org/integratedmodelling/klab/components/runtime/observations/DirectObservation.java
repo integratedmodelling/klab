@@ -2,8 +2,10 @@ package org.integratedmodelling.klab.components.runtime.observations;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept;
@@ -20,6 +22,7 @@ import org.integratedmodelling.klab.api.observations.ISubjectiveObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.owl.ConfigurationDetector.Configuration;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.scale.Scale;
@@ -32,6 +35,8 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 
 	// contains the IDs of any subjective observations that we have made.
 	private Set<String> subjectivelyObserved = new HashSet<>();
+	// cache for the configuration detector
+	private Map<String, Configuration> configurationCache = new HashMap<>();
 
 	/*
 	 * Predicates added to the observable by a classification which we still need to
@@ -237,6 +242,10 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 	@Override
 	public String dump() {
 		return "";
+	}
+
+	public Map<String, Configuration> getConfigurationCache() {
+		return configurationCache;
 	}
 
 }

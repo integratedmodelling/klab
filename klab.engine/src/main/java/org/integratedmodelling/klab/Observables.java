@@ -1363,7 +1363,6 @@ public enum Observables implements IObservableService {
     }
 
     public void registerConfiguration(IKimConceptStatement statement, IConcept concept) {
-        // TODO Auto-generated method stub
-        this.configurationDetector.registerConfiguration(statement);
+        this.configurationDetector.registerConfiguration(statement, concept);
     }
 }
