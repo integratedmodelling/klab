@@ -167,7 +167,7 @@ public class ResourceController {
 	}
 	
 	@RequestMapping(value = API.ENGINE.RESOURCE.GET_CODELIST, method = RequestMethod.GET)
-	public CodelistReference getCodelist(Principal principal, @RequestParam String urn, @PathVariable String codelist) throws Exception {
+	public CodelistReference getCodelist(Principal principal, @PathVariable String urn, @PathVariable String codelist) throws Exception {
 
 		IResource resource = Resources.INSTANCE.resolveResource(urn);
 		if (resource == null) {

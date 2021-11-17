@@ -567,10 +567,8 @@ public class CodelistEditor extends Composite {
 	protected void saveCodelist() {
 
 		if (dirty && resourceUrn != null && Activator.engineMonitor().isRunning()) {
-			/*
-			 * TODO use REST instead
-			 */
 			try {
+				// use REST calls or a big codelist will kill the websocket bus
 				File codelistFile = File.createTempFile("cls", ".json");
 				JsonUtils.save(this.codelist, codelistFile);
 				Activator.client().upload(API.ENGINE.RESOURCE.UPDATE_CODELIST.replace(API.P_URN, resourceUrn),
@@ -578,6 +576,7 @@ public class CodelistEditor extends Composite {
 			} catch (IOException e) {
 				Eclipse.INSTANCE.handleException(e);
 			}
+			// Original WS code, still working but dangerous
 //			ResourceCRUDRequest request = new ResourceCRUDRequest();
 //			request.setResourceUrns(Sets.newHashSet(resourceUrn));
 //			request.setCodelist(this.codelist);
