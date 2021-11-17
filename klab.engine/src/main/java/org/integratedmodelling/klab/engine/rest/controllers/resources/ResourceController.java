@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.integratedmodelling.klab.Configuration;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.API;
@@ -24,13 +25,19 @@ import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
+import org.integratedmodelling.klab.data.resources.Codelist;
 import org.integratedmodelling.klab.engine.resources.Worldview;
 import org.integratedmodelling.klab.engine.rest.controllers.engine.EngineSessionController;
 import org.integratedmodelling.klab.engine.runtime.ObserveContextTask;
 import org.integratedmodelling.klab.engine.runtime.Session;
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
+import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.model.Observer;
+import org.integratedmodelling.klab.rest.CodelistReference;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.springframework.http.HttpStatus;
@@ -124,8 +131,7 @@ public class ResourceController {
 
 			IScale scale = Scale.create(session.getState().getGeometry());
 			Observer observer = Observations.INSTANCE.makeROIObserver((Shape) ret.getScale().getSpace().getShape(),
-					scale.getTime(),
-					null, session.getState().getRegionOfInterestName(), session.getMonitor());
+					scale.getTime(), null, session.getState().getRegionOfInterestName(), session.getMonitor());
 			try {
 				new ObserveContextTask((Session) session, observer, new ArrayList<>()).get();
 			} catch (InterruptedException | ExecutionException e) {
@@ -134,6 +140,52 @@ public class ResourceController {
 		}
 
 		return new ResponseEntity<HttpStatus>(HttpStatus.OK);
+	}
+
+	@RequestMapping(value = API.ENGINE.RESOURCE.UPDATE_CODELIST, method = RequestMethod.POST)
+	public void updateCodelist(Principal principal, @PathVariable String urn,
+			@RequestParam("file") MultipartFile[] files) throws Exception {
+
+		if (!Urns.INSTANCE.isLocal(urn)) {
+			throw new KlabIllegalStateException("Updating of codelists is only allowed on local engines and resources");
+		}
+		
+		IResource resource = Resources.INSTANCE.resolveResource(urn);
+		if (resource == null) {
+			throw new KlabIllegalArgumentException("Update codelist: resource '" + urn + "' not found in catalog");
+		}
+		
+		for (MultipartFile f : files) {
+			File destination = new File(
+					Configuration.INSTANCE.getDataPath("uploads") + File.separator + f.getOriginalFilename());
+			f.transferTo(destination);
+			destination.deleteOnExit();
+			CodelistReference codelist = JsonUtils.load(destination, CodelistReference.class);
+			Resources.INSTANCE.updateCodelist(resource, codelist, Klab.INSTANCE.getRootMonitor());
+		}
+		
+	}
+	
+	@RequestMapping(value = API.ENGINE.RESOURCE.GET_CODELIST, method = RequestMethod.GET)
+	public CodelistReference getCodelist(Principal principal, @RequestParam String urn, @PathVariable String codelist) throws Exception {
+
+		IResource resource = Resources.INSTANCE.resolveResource(urn);
+		if (resource == null) {
+			throw new KlabIllegalArgumentException("Update codelist: resource '" + urn + "' not found in catalog");
+		}
+		
+		return ((Codelist)Resources.INSTANCE.getCodelist(resource, codelist, Klab.INSTANCE.getRootMonitor())).getReference();
+	}
+	
+	@RequestMapping(value = API.ENGINE.RESOURCE.CREATE_CODELIST, method = RequestMethod.GET)
+	public CodelistReference createCodelist(Principal principal, @RequestParam String urn, @PathVariable String codelist) throws Exception {
+
+		IResource resource = Resources.INSTANCE.resolveResource(urn);
+		if (resource == null) {
+			throw new KlabIllegalArgumentException("Update codelist: resource '" + urn + "' not found in catalog");
+		}
+		
+		return ((Codelist)Resources.INSTANCE.createCodelist(resource, codelist, Klab.INSTANCE.getRootMonitor())).getReference();
 	}
 
 	@RequestMapping(value = API.NODE.RESOURCE.EXPORT_URN, method = RequestMethod.GET)

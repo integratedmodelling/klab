@@ -355,7 +355,7 @@ ObserveStatementBody:
 ObservableSemantics:
 	// value may be an ID and in that case it can be used in models as an attribute for the URN as long
 	// as the ID is not defined in the namespace.
-	(value=Value 'as')?
+	(value=LiteralValueWithConcept 'as')?
 	(generic?='any')?
 	declaration=ConceptDeclaration
 	(
@@ -514,8 +514,9 @@ Concept:
 	ratio?='ratio' 'of' concept=SimpleConceptDeclaration => 'to' other=SimpleConceptDeclaration |
 	(monetary?='monetary')? value?='value' 'of' concept=SimpleConceptDeclaration (=> 'over' other=SimpleConceptDeclaration)? |
 	occurrence?='occurrence' 'of' concept=SimpleConceptDeclaration |
-	// this form specifies an authority concept with no alias (the authority may provide a default label)
-	authConcept?='identity' (stringIdentifier=(ID|STRING|UPPERCASE_ID|CAMELCASE_ID) | intIdentifier=INT) 'by' authority=(UPPERCASE_ID|UPPERCASE_PATH) |
+//	authorityId=AuthorityId |
+//	// this form specifies an authority concept with no alias (the authority may provide a default label)
+//	authConcept?='identity' (stringIdentifier=(ID|STRING|UPPERCASE_ID|CAMELCASE_ID) | intIdentifier=INT) 'by' authority=(UPPERCASE_ID|UPPERCASE_PATH) |
 	'(' declaration=Expression ')';
 
 Expression returns ConceptDeclaration:

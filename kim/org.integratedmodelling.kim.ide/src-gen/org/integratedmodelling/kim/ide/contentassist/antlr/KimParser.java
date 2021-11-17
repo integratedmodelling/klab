@@ -146,9 +146,6 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getConceptAccess().getAlternatives_3_1(), "rule__Concept__Alternatives_3_1");
 			builder.put(grammarAccess.getConceptAccess().getAlternatives_6_0(), "rule__Concept__Alternatives_6_0");
 			builder.put(grammarAccess.getConceptAccess().getAlternatives_6_0_0_1(), "rule__Concept__Alternatives_6_0_0_1");
-			builder.put(grammarAccess.getConceptAccess().getAlternatives_17_1(), "rule__Concept__Alternatives_17_1");
-			builder.put(grammarAccess.getConceptAccess().getStringIdentifierAlternatives_17_1_0_0(), "rule__Concept__StringIdentifierAlternatives_17_1_0_0");
-			builder.put(grammarAccess.getConceptAccess().getAuthorityAlternatives_17_3_0(), "rule__Concept__AuthorityAlternatives_17_3_0");
 			builder.put(grammarAccess.getFactorAccess().getOperatorsAlternatives_1_0_0(), "rule__Factor__OperatorsAlternatives_1_0_0");
 			builder.put(grammarAccess.getUpperOntologyDefinitionAccess().getAlternatives_1(), "rule__UpperOntologyDefinition__Alternatives_1");
 			builder.put(grammarAccess.getUpperOntologyDefinitionAccess().getAlternatives_1_0_0(), "rule__UpperOntologyDefinition__Alternatives_1_0_0");
@@ -475,7 +472,6 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getConceptAccess().getGroup_15_4(), "rule__Concept__Group_15_4__0");
 			builder.put(grammarAccess.getConceptAccess().getGroup_16(), "rule__Concept__Group_16__0");
 			builder.put(grammarAccess.getConceptAccess().getGroup_17(), "rule__Concept__Group_17__0");
-			builder.put(grammarAccess.getConceptAccess().getGroup_18(), "rule__Concept__Group_18__0");
 			builder.put(grammarAccess.getTermAccess().getGroup(), "rule__Term__Group__0");
 			builder.put(grammarAccess.getTermAccess().getGroup_1(), "rule__Term__Group_1__0");
 			builder.put(grammarAccess.getFactorAccess().getGroup(), "rule__Factor__Group__0");
@@ -1011,11 +1007,7 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getConceptAccess().getOtherAssignment_15_4_1(), "rule__Concept__OtherAssignment_15_4_1");
 			builder.put(grammarAccess.getConceptAccess().getOccurrenceAssignment_16_0(), "rule__Concept__OccurrenceAssignment_16_0");
 			builder.put(grammarAccess.getConceptAccess().getConceptAssignment_16_2(), "rule__Concept__ConceptAssignment_16_2");
-			builder.put(grammarAccess.getConceptAccess().getAuthConceptAssignment_17_0(), "rule__Concept__AuthConceptAssignment_17_0");
-			builder.put(grammarAccess.getConceptAccess().getStringIdentifierAssignment_17_1_0(), "rule__Concept__StringIdentifierAssignment_17_1_0");
-			builder.put(grammarAccess.getConceptAccess().getIntIdentifierAssignment_17_1_1(), "rule__Concept__IntIdentifierAssignment_17_1_1");
-			builder.put(grammarAccess.getConceptAccess().getAuthorityAssignment_17_3(), "rule__Concept__AuthorityAssignment_17_3");
-			builder.put(grammarAccess.getConceptAccess().getDeclarationAssignment_18_1(), "rule__Concept__DeclarationAssignment_18_1");
+			builder.put(grammarAccess.getConceptAccess().getDeclarationAssignment_17_1(), "rule__Concept__DeclarationAssignment_17_1");
 			builder.put(grammarAccess.getTermAccess().getOperatorsAssignment_1_0(), "rule__Term__OperatorsAssignment_1_0");
 			builder.put(grammarAccess.getTermAccess().getOperandsAssignment_1_1(), "rule__Term__OperandsAssignment_1_1");
 			builder.put(grammarAccess.getFactorAccess().getOperatorsAssignment_1_0(), "rule__Factor__OperatorsAssignment_1_0");

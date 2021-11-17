@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.ide.ui;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -17,6 +19,8 @@ import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
@@ -38,9 +42,12 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.client.utils.JsonUtils;
 import org.integratedmodelling.klab.ide.Activator;
+import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.rest.CodelistReference;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 import org.integratedmodelling.klab.utils.Pair;
@@ -51,8 +58,6 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
 
 public class CodelistEditor extends Composite {
 
@@ -422,7 +427,7 @@ public class CodelistEditor extends Composite {
 		TableColumn tblclmnValue_2 = tableViewerColumn_4.getColumn();
 		tblclmnValue_2.setWidth(140);
 		tblclmnValue_2.setText("Value");
-		
+
 		TableColumn tblclmnLabelColumn = new TableColumn(directMappingsTable, SWT.NONE);
 		tblclmnLabelColumn.setWidth(140);
 		tblclmnLabelColumn.setText("Label");
@@ -529,7 +534,7 @@ public class CodelistEditor extends Composite {
 		composite_3.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		toolkit.adapt(composite_3);
 		toolkit.paintBordersFor(composite_3);
-		
+
 		Button btnNewButton = new Button(composite_3, SWT.NONE);
 		btnNewButton.setEnabled(false);
 		btnNewButton.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
@@ -544,7 +549,7 @@ public class CodelistEditor extends Composite {
 			}
 		});
 		saveCodelistButton.setEnabled(false);
-		
+
 		GridData gd_saveCodelistButton = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_saveCodelistButton.widthHint = 68;
 		saveCodelistButton.setLayoutData(gd_saveCodelistButton);
@@ -560,11 +565,23 @@ public class CodelistEditor extends Composite {
 	}
 
 	protected void saveCodelist() {
-		if (dirty && resourceUrn != null) {
-			ResourceCRUDRequest request = new ResourceCRUDRequest();
-			request.setResourceUrns(Sets.newHashSet(resourceUrn));
-			request.setCodelist(this.codelist);
-			Activator.post(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.UpdateCodelist, request);
+
+		if (dirty && resourceUrn != null && Activator.engineMonitor().isRunning()) {
+			/*
+			 * TODO use REST instead
+			 */
+			try {
+				File codelistFile = File.createTempFile("cls", ".json");
+				JsonUtils.save(this.codelist, codelistFile);
+				Activator.client().upload(API.ENGINE.RESOURCE.UPDATE_CODELIST.replace(API.P_URN, resourceUrn),
+						codelistFile);
+			} catch (IOException e) {
+				Eclipse.INSTANCE.handleException(e);
+			}
+//			ResourceCRUDRequest request = new ResourceCRUDRequest();
+//			request.setResourceUrns(Sets.newHashSet(resourceUrn));
+//			request.setCodelist(this.codelist);
+//			Activator.post(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.UpdateCodelist, request);
 		}
 	}
 
@@ -627,7 +644,7 @@ public class CodelistEditor extends Composite {
 			directTableViewer.setInput(this.direct);
 			inverseTableViewer.setInput(this.reverse);
 			setDirty(false);
-			
+
 		});
 	}
 

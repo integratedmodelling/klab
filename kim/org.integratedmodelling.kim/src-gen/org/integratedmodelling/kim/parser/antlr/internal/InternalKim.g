@@ -6822,9 +6822,9 @@ ruleObservableSemantics returns [EObject current=null]
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getObservableSemanticsAccess().getValueValueParserRuleCall_0_0_0());
+						newCompositeNode(grammarAccess.getObservableSemanticsAccess().getValueLiteralValueWithConceptParserRuleCall_0_0_0());
 					}
-					lv_value_0_0=ruleValue
+					lv_value_0_0=ruleLiteralValueWithConcept
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getObservableSemanticsRule());
@@ -6833,7 +6833,7 @@ ruleObservableSemantics returns [EObject current=null]
 							$current,
 							"value",
 							lv_value_0_0,
-							"org.integratedmodelling.kim.Kim.Value");
+							"org.integratedmodelling.kim.Kim.LiteralValueWithConcept");
 						afterParserOrEnumRuleCall();
 					}
 				)
@@ -10863,158 +10863,16 @@ ruleConcept returns [EObject current=null]
 		)
 		    |
 		(
-			(
-				(
-					lv_authConcept_69_0='identity'
-					{
-						newLeafNode(lv_authConcept_69_0, grammarAccess.getConceptAccess().getAuthConceptIdentityKeyword_17_0_0());
-					}
-					{
-						if ($current==null) {
-							$current = createModelElement(grammarAccess.getConceptRule());
-						}
-						setWithLastConsumed($current, "authConcept", lv_authConcept_69_0 != null, "identity");
-					}
-				)
-			)
-			(
-				(
-					(
-						(
-							lv_stringIdentifier_70_1=RULE_ID
-							{
-								newLeafNode(lv_stringIdentifier_70_1, grammarAccess.getConceptAccess().getStringIdentifierIDTerminalRuleCall_17_1_0_0_0());
-							}
-							{
-								if ($current==null) {
-									$current = createModelElement(grammarAccess.getConceptRule());
-								}
-								setWithLastConsumed(
-									$current,
-									"stringIdentifier",
-									lv_stringIdentifier_70_1,
-									"org.eclipse.xtext.common.Terminals.ID");
-							}
-							    |
-							lv_stringIdentifier_70_2=RULE_STRING
-							{
-								newLeafNode(lv_stringIdentifier_70_2, grammarAccess.getConceptAccess().getStringIdentifierSTRINGTerminalRuleCall_17_1_0_0_1());
-							}
-							{
-								if ($current==null) {
-									$current = createModelElement(grammarAccess.getConceptRule());
-								}
-								setWithLastConsumed(
-									$current,
-									"stringIdentifier",
-									lv_stringIdentifier_70_2,
-									"org.eclipse.xtext.common.Terminals.STRING");
-							}
-							    |
-							lv_stringIdentifier_70_3=RULE_UPPERCASE_ID
-							{
-								newLeafNode(lv_stringIdentifier_70_3, grammarAccess.getConceptAccess().getStringIdentifierUPPERCASE_IDTerminalRuleCall_17_1_0_0_2());
-							}
-							{
-								if ($current==null) {
-									$current = createModelElement(grammarAccess.getConceptRule());
-								}
-								setWithLastConsumed(
-									$current,
-									"stringIdentifier",
-									lv_stringIdentifier_70_3,
-									"org.integratedmodelling.kim.Kim.UPPERCASE_ID");
-							}
-							    |
-							lv_stringIdentifier_70_4=RULE_CAMELCASE_ID
-							{
-								newLeafNode(lv_stringIdentifier_70_4, grammarAccess.getConceptAccess().getStringIdentifierCAMELCASE_IDTerminalRuleCall_17_1_0_0_3());
-							}
-							{
-								if ($current==null) {
-									$current = createModelElement(grammarAccess.getConceptRule());
-								}
-								setWithLastConsumed(
-									$current,
-									"stringIdentifier",
-									lv_stringIdentifier_70_4,
-									"org.integratedmodelling.kim.Kim.CAMELCASE_ID");
-							}
-						)
-					)
-				)
-				    |
-				(
-					(
-						lv_intIdentifier_71_0=RULE_INT
-						{
-							newLeafNode(lv_intIdentifier_71_0, grammarAccess.getConceptAccess().getIntIdentifierINTTerminalRuleCall_17_1_1_0());
-						}
-						{
-							if ($current==null) {
-								$current = createModelElement(grammarAccess.getConceptRule());
-							}
-							setWithLastConsumed(
-								$current,
-								"intIdentifier",
-								lv_intIdentifier_71_0,
-								"org.eclipse.xtext.common.Terminals.INT");
-						}
-					)
-				)
-			)
-			otherlv_72='by'
+			otherlv_69='('
 			{
-				newLeafNode(otherlv_72, grammarAccess.getConceptAccess().getByKeyword_17_2());
-			}
-			(
-				(
-					(
-						lv_authority_73_1=RULE_UPPERCASE_ID
-						{
-							newLeafNode(lv_authority_73_1, grammarAccess.getConceptAccess().getAuthorityUPPERCASE_IDTerminalRuleCall_17_3_0_0());
-						}
-						{
-							if ($current==null) {
-								$current = createModelElement(grammarAccess.getConceptRule());
-							}
-							setWithLastConsumed(
-								$current,
-								"authority",
-								lv_authority_73_1,
-								"org.integratedmodelling.kim.Kim.UPPERCASE_ID");
-						}
-						    |
-						lv_authority_73_2=RULE_UPPERCASE_PATH
-						{
-							newLeafNode(lv_authority_73_2, grammarAccess.getConceptAccess().getAuthorityUPPERCASE_PATHTerminalRuleCall_17_3_0_1());
-						}
-						{
-							if ($current==null) {
-								$current = createModelElement(grammarAccess.getConceptRule());
-							}
-							setWithLastConsumed(
-								$current,
-								"authority",
-								lv_authority_73_2,
-								"org.integratedmodelling.kim.Kim.UPPERCASE_PATH");
-						}
-					)
-				)
-			)
-		)
-		    |
-		(
-			otherlv_74='('
-			{
-				newLeafNode(otherlv_74, grammarAccess.getConceptAccess().getLeftParenthesisKeyword_18_0());
+				newLeafNode(otherlv_69, grammarAccess.getConceptAccess().getLeftParenthesisKeyword_17_0());
 			}
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getConceptAccess().getDeclarationExpressionParserRuleCall_18_1_0());
+						newCompositeNode(grammarAccess.getConceptAccess().getDeclarationExpressionParserRuleCall_17_1_0());
 					}
-					lv_declaration_75_0=ruleExpression
+					lv_declaration_70_0=ruleExpression
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getConceptRule());
@@ -11022,15 +10880,15 @@ ruleConcept returns [EObject current=null]
 						set(
 							$current,
 							"declaration",
-							lv_declaration_75_0,
+							lv_declaration_70_0,
 							"org.integratedmodelling.kim.Kim.Expression");
 						afterParserOrEnumRuleCall();
 					}
 				)
 			)
-			otherlv_76=')'
+			otherlv_71=')'
 			{
-				newLeafNode(otherlv_76, grammarAccess.getConceptAccess().getRightParenthesisKeyword_18_2());
+				newLeafNode(otherlv_71, grammarAccess.getConceptAccess().getRightParenthesisKeyword_17_2());
 			}
 		)
 	)

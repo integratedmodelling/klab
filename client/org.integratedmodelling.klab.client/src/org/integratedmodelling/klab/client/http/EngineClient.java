@@ -333,14 +333,15 @@ public class EngineClient extends RestTemplate {
 
 	/**
 	 * Upload contents from a URL/file and return the response after upload is
-	 * complete. Blocking, so meant for small payloads.
+	 * complete. Blocking, so meant for small payloads or use in a thread.
 	 * 
 	 * @param url
+	 * @param method POST or PUT
 	 * @param contents
 	 * @param responseType
 	 * @return
 	 */
-	public <T> T upload(String endpoint, File contents, Class<T> responseType) {
+	public <T> T upload(String endpoint,  File contents, Class<T> responseType) {
 
 		LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 		map.add("file", new FileSystemResource(contents));
@@ -353,6 +354,32 @@ public class EngineClient extends RestTemplate {
 		return result.getBody();
 	}
 
+	/**
+	 * Upload contents from a URL/file expecting a void response. Still blocking.
+	 *
+	 * @param endpoint
+	 * @param method
+	 * @param contents
+	 */
+	public boolean upload(String endpoint, File contents) {
+
+		LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+		map.add("file", new FileSystemResource(contents));
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+		HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity = new HttpEntity<LinkedMultiValueMap<String, Object>>(
+				map, headers);
+		try {
+			exchange(url + endpoint, HttpMethod.POST, requestEntity, Object.class);
+			return true;
+		} catch (Throwable e) {
+			//
+		}
+		return false;
+	}
+
+	
 	/**
 	 * Upload contents from a URL/file with asynchronous treatment of the upload.
 	 * Will periodically recheck the upload status, invoking the passed consumer
@@ -367,7 +394,7 @@ public class EngineClient extends RestTemplate {
 	 * @param errorConsumer
 	 * @return
 	 */
-	public <T> void uploadAsynchronous(String endpoint, File contents, Class<T> responseType,
+	public <T> void uploadAsynchronous(String endpoint, HttpMethod method, File contents, Class<T> responseType,
 			Consumer<T> responseConsumer, @Nullable Consumer<String> errorConsumer) {
 		LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 		map.add("file", new FileSystemResource(contents));
@@ -376,7 +403,7 @@ public class EngineClient extends RestTemplate {
 
 		HttpEntity<LinkedMultiValueMap<String, Object>> requestEntity = new HttpEntity<LinkedMultiValueMap<String, Object>>(
 				map, headers);
-		ResponseEntity<T> response = exchange(url + endpoint, HttpMethod.POST, requestEntity, responseType);
+		ResponseEntity<T> response = exchange(url + endpoint, method, requestEntity, responseType);
 		switch (response.getStatusCodeValue()) {
 		case 200:
 			responseConsumer.accept(response.getBody());

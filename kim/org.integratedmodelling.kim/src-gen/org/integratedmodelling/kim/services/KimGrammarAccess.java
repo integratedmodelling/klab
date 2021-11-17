@@ -4523,7 +4523,7 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Group cGroup_0 = (Group)cGroup.eContents().get(0);
 		private final Assignment cValueAssignment_0_0 = (Assignment)cGroup_0.eContents().get(0);
-		private final RuleCall cValueValueParserRuleCall_0_0_0 = (RuleCall)cValueAssignment_0_0.eContents().get(0);
+		private final RuleCall cValueLiteralValueWithConceptParserRuleCall_0_0_0 = (RuleCall)cValueAssignment_0_0.eContents().get(0);
 		private final Keyword cAsKeyword_0_1 = (Keyword)cGroup_0.eContents().get(1);
 		private final Assignment cGenericAssignment_1 = (Assignment)cGroup.eContents().get(1);
 		private final Keyword cGenericAnyKeyword_1_0 = (Keyword)cGenericAssignment_1.eContents().get(0);
@@ -4575,7 +4575,7 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//ObservableSemantics:
 		//    // value may be an ID and in that case it can be used in models as an attribute for the URN as long
 		//    // as the ID is not defined in the namespace.
-		//    (value=Value 'as')?
+		//    (value=LiteralValueWithConcept 'as')?
 		//    (generic?='any')?
 		//    declaration=ConceptDeclaration
 		//    (
@@ -4593,7 +4593,7 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		
 		//// value may be an ID and in that case it can be used in models as an attribute for the URN as long
 		//// as the ID is not defined in the namespace.
-		//(value=Value 'as')?
+		//(value=LiteralValueWithConcept 'as')?
 		//(generic?='any')?
 		//declaration=ConceptDeclaration
 		//(
@@ -4611,14 +4611,14 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		
 		//// value may be an ID and in that case it can be used in models as an attribute for the URN as long
 		//// as the ID is not defined in the namespace.
-		//(value=Value 'as')?
+		//(value=LiteralValueWithConcept 'as')?
 		public Group getGroup_0() { return cGroup_0; }
 		
-		//value=Value
+		//value=LiteralValueWithConcept
 		public Assignment getValueAssignment_0_0() { return cValueAssignment_0_0; }
 		
-		//Value
-		public RuleCall getValueValueParserRuleCall_0_0_0() { return cValueValueParserRuleCall_0_0_0; }
+		//LiteralValueWithConcept
+		public RuleCall getValueLiteralValueWithConceptParserRuleCall_0_0_0() { return cValueLiteralValueWithConceptParserRuleCall_0_0_0; }
 		
 		//'as'
 		public Keyword getAsKeyword_0_1() { return cAsKeyword_0_1; }
@@ -5587,27 +5587,28 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//    main+=Concept+
 		//        // binary semantic operators; also 'as', 'by' and 'follows' handled in other rules
 		//        (=>
-		//            // primary inherency (when secondary is given using 'within')
+		//            // primary physical inherency (observational inherency is given using 'within'). Any observable can be inherent to any countable.
 		//            ('of' ((distributedOfInherency?='each')? inherency=SimpleConceptDeclaration))? &
-		//            // purpose (achievement event created from target)
+		//            // purpose (achievement event created from target). Partitions qualities and applies to anything that can be created.
 		//            ('for' ((distributedForInherency?='each')? motivation=SimpleConceptDeclaration))? &
 		//            // compresence (subject, process, event, presence or partitioned quality)
 		//            ('with' compresent=SimpleConceptDeclaration)? &
 		//            // cause towards self - causant can be anything (?)
 		//            ('caused' 'by' causant=SimpleConceptDeclaration)? &
-		//            // spatial adjacency (see 'follows' operator for temporal adjacency in events) - subject, event or relationship
+		//            // spatial adjacency (see 'follows' operator for temporal adjacency in events) - Only for countables
 		//            ('adjacent' 'to' adjacent=SimpleConceptDeclaration)? &
-		//            // being contained - subject
+		//            // being contained - Countables only
 		//            ('contained' 'in' container=SimpleConceptDeclaration)? &
-		//            // containing - subject
+		//            // containing - Countables only
 		//            ('containing' contained=SimpleConceptDeclaration)? &
-		//            // cause towards event (?)
+		//            // cause towards events, processes, quality partitions
 		//            ('causing'   caused=SimpleConceptDeclaration)? &
-		//            // concomitant with event (?)
+		//            // concomitant with any occurrent
 		//            ('during'   ((distributedTemporalInherency?='each')? during=SimpleConceptDeclaration))? &
-		//            // context or secondary inherency
+		//            // observational inherency: specifies context for observations, either as part of semantics or to
+		//            // subclass the use of a model to a specified context. Applies to any observable, only countables as argument
 		//            ('within' ((distributedWithinInherency?='each')? context=SimpleConceptDeclaration))? &
-		//            // for relationships: specialize source and target types
+		//            // for relationships: specialize source and target types, both subjects
 		//            ('linking' relationshipSource=SimpleConceptDeclaration 'to' relationshipTarget=SimpleConceptDeclaration)?
 		//        )?
 		//;
@@ -5616,27 +5617,28 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//main+=Concept+
 		//    // binary semantic operators; also 'as', 'by' and 'follows' handled in other rules
 		//    (=>
-		//        // primary inherency (when secondary is given using 'within')
+		//        // primary physical inherency (observational inherency is given using 'within'). Any observable can be inherent to any countable.
 		//        ('of' ((distributedOfInherency?='each')? inherency=SimpleConceptDeclaration))? &
-		//        // purpose (achievement event created from target)
+		//        // purpose (achievement event created from target). Partitions qualities and applies to anything that can be created.
 		//        ('for' ((distributedForInherency?='each')? motivation=SimpleConceptDeclaration))? &
 		//        // compresence (subject, process, event, presence or partitioned quality)
 		//        ('with' compresent=SimpleConceptDeclaration)? &
 		//        // cause towards self - causant can be anything (?)
 		//        ('caused' 'by' causant=SimpleConceptDeclaration)? &
-		//        // spatial adjacency (see 'follows' operator for temporal adjacency in events) - subject, event or relationship
+		//        // spatial adjacency (see 'follows' operator for temporal adjacency in events) - Only for countables
 		//        ('adjacent' 'to' adjacent=SimpleConceptDeclaration)? &
-		//        // being contained - subject
+		//        // being contained - Countables only
 		//        ('contained' 'in' container=SimpleConceptDeclaration)? &
-		//        // containing - subject
+		//        // containing - Countables only
 		//        ('containing' contained=SimpleConceptDeclaration)? &
-		//        // cause towards event (?)
+		//        // cause towards events, processes, quality partitions
 		//        ('causing'   caused=SimpleConceptDeclaration)? &
-		//        // concomitant with event (?)
+		//        // concomitant with any occurrent
 		//        ('during'   ((distributedTemporalInherency?='each')? during=SimpleConceptDeclaration))? &
-		//        // context or secondary inherency
+		//        // observational inherency: specifies context for observations, either as part of semantics or to
+		//        // subclass the use of a model to a specified context. Applies to any observable, only countables as argument
 		//        ('within' ((distributedWithinInherency?='each')? context=SimpleConceptDeclaration))? &
-		//        // for relationships: specialize source and target types
+		//        // for relationships: specialize source and target types, both subjects
 		//        ('linking' relationshipSource=SimpleConceptDeclaration 'to' relationshipTarget=SimpleConceptDeclaration)?
 		//    )?
 		public Group getGroup() { return cGroup; }
@@ -5649,33 +5651,34 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		
 		//// binary semantic operators; also 'as', 'by' and 'follows' handled in other rules
 		//(=>
-		//    // primary inherency (when secondary is given using 'within')
+		//    // primary physical inherency (observational inherency is given using 'within'). Any observable can be inherent to any countable.
 		//    ('of' ((distributedOfInherency?='each')? inherency=SimpleConceptDeclaration))? &
-		//    // purpose (achievement event created from target)
+		//    // purpose (achievement event created from target). Partitions qualities and applies to anything that can be created.
 		//    ('for' ((distributedForInherency?='each')? motivation=SimpleConceptDeclaration))? &
 		//    // compresence (subject, process, event, presence or partitioned quality)
 		//    ('with' compresent=SimpleConceptDeclaration)? &
 		//    // cause towards self - causant can be anything (?)
 		//    ('caused' 'by' causant=SimpleConceptDeclaration)? &
-		//    // spatial adjacency (see 'follows' operator for temporal adjacency in events) - subject, event or relationship
+		//    // spatial adjacency (see 'follows' operator for temporal adjacency in events) - Only for countables
 		//    ('adjacent' 'to' adjacent=SimpleConceptDeclaration)? &
-		//    // being contained - subject
+		//    // being contained - Countables only
 		//    ('contained' 'in' container=SimpleConceptDeclaration)? &
-		//    // containing - subject
+		//    // containing - Countables only
 		//    ('containing' contained=SimpleConceptDeclaration)? &
-		//    // cause towards event (?)
+		//    // cause towards events, processes, quality partitions
 		//    ('causing'   caused=SimpleConceptDeclaration)? &
-		//    // concomitant with event (?)
+		//    // concomitant with any occurrent
 		//    ('during'   ((distributedTemporalInherency?='each')? during=SimpleConceptDeclaration))? &
-		//    // context or secondary inherency
+		//    // observational inherency: specifies context for observations, either as part of semantics or to
+		//    // subclass the use of a model to a specified context. Applies to any observable, only countables as argument
 		//    ('within' ((distributedWithinInherency?='each')? context=SimpleConceptDeclaration))? &
-		//    // for relationships: specialize source and target types
+		//    // for relationships: specialize source and target types, both subjects
 		//    ('linking' relationshipSource=SimpleConceptDeclaration 'to' relationshipTarget=SimpleConceptDeclaration)?
 		//)?
 		public UnorderedGroup getUnorderedGroup_1() { return cUnorderedGroup_1; }
 		
 		//=>
-		//            // primary inherency (when secondary is given using 'within')
+		//            // primary physical inherency (observational inherency is given using 'within'). Any observable can be inherent to any countable.
 		//            ('of' ((distributedOfInherency?='each')? inherency=SimpleConceptDeclaration))?
 		public Group getGroup_1_0() { return cGroup_1_0; }
 		
@@ -5700,7 +5703,7 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//SimpleConceptDeclaration
 		public RuleCall getInherencySimpleConceptDeclarationParserRuleCall_1_0_0_1_1_0() { return cInherencySimpleConceptDeclarationParserRuleCall_1_0_0_1_1_0; }
 		
-		//// purpose (achievement event created from target)
+		//// purpose (achievement event created from target). Partitions qualities and applies to anything that can be created.
 		//('for' ((distributedForInherency?='each')? motivation=SimpleConceptDeclaration))?
 		public Group getGroup_1_1() { return cGroup_1_1; }
 		
@@ -5751,7 +5754,7 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//SimpleConceptDeclaration
 		public RuleCall getCausantSimpleConceptDeclarationParserRuleCall_1_3_2_0() { return cCausantSimpleConceptDeclarationParserRuleCall_1_3_2_0; }
 		
-		//// spatial adjacency (see 'follows' operator for temporal adjacency in events) - subject, event or relationship
+		//// spatial adjacency (see 'follows' operator for temporal adjacency in events) - Only for countables
 		//('adjacent' 'to' adjacent=SimpleConceptDeclaration)?
 		public Group getGroup_1_4() { return cGroup_1_4; }
 		
@@ -5767,7 +5770,7 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//SimpleConceptDeclaration
 		public RuleCall getAdjacentSimpleConceptDeclarationParserRuleCall_1_4_2_0() { return cAdjacentSimpleConceptDeclarationParserRuleCall_1_4_2_0; }
 		
-		//// being contained - subject
+		//// being contained - Countables only
 		//('contained' 'in' container=SimpleConceptDeclaration)?
 		public Group getGroup_1_5() { return cGroup_1_5; }
 		
@@ -5783,7 +5786,7 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//SimpleConceptDeclaration
 		public RuleCall getContainerSimpleConceptDeclarationParserRuleCall_1_5_2_0() { return cContainerSimpleConceptDeclarationParserRuleCall_1_5_2_0; }
 		
-		//// containing - subject
+		//// containing - Countables only
 		//('containing' contained=SimpleConceptDeclaration)?
 		public Group getGroup_1_6() { return cGroup_1_6; }
 		
@@ -5796,7 +5799,7 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//SimpleConceptDeclaration
 		public RuleCall getContainedSimpleConceptDeclarationParserRuleCall_1_6_1_0() { return cContainedSimpleConceptDeclarationParserRuleCall_1_6_1_0; }
 		
-		//// cause towards event (?)
+		//// cause towards events, processes, quality partitions
 		//('causing'   caused=SimpleConceptDeclaration)?
 		public Group getGroup_1_7() { return cGroup_1_7; }
 		
@@ -5809,7 +5812,7 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//SimpleConceptDeclaration
 		public RuleCall getCausedSimpleConceptDeclarationParserRuleCall_1_7_1_0() { return cCausedSimpleConceptDeclarationParserRuleCall_1_7_1_0; }
 		
-		//// concomitant with event (?)
+		//// concomitant with any occurrent
 		//('during'   ((distributedTemporalInherency?='each')? during=SimpleConceptDeclaration))?
 		public Group getGroup_1_8() { return cGroup_1_8; }
 		
@@ -5831,7 +5834,8 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//SimpleConceptDeclaration
 		public RuleCall getDuringSimpleConceptDeclarationParserRuleCall_1_8_1_1_0() { return cDuringSimpleConceptDeclarationParserRuleCall_1_8_1_1_0; }
 		
-		//// context or secondary inherency
+		//// observational inherency: specifies context for observations, either as part of semantics or to
+		//// subclass the use of a model to a specified context. Applies to any observable, only countables as argument
 		//('within' ((distributedWithinInherency?='each')? context=SimpleConceptDeclaration))?
 		public Group getGroup_1_9() { return cGroup_1_9; }
 		
@@ -5853,7 +5857,7 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//SimpleConceptDeclaration
 		public RuleCall getContextSimpleConceptDeclarationParserRuleCall_1_9_1_1_0() { return cContextSimpleConceptDeclarationParserRuleCall_1_9_1_1_0; }
 		
-		//// for relationships: specialize source and target types
+		//// for relationships: specialize source and target types, both subjects
 		//('linking' relationshipSource=SimpleConceptDeclaration 'to' relationshipTarget=SimpleConceptDeclaration)?
 		public Group getGroup_1_10() { return cGroup_1_10; }
 		
@@ -6622,27 +6626,10 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		private final Assignment cConceptAssignment_16_2 = (Assignment)cGroup_16.eContents().get(2);
 		private final RuleCall cConceptSimpleConceptDeclarationParserRuleCall_16_2_0 = (RuleCall)cConceptAssignment_16_2.eContents().get(0);
 		private final Group cGroup_17 = (Group)cAlternatives.eContents().get(17);
-		private final Assignment cAuthConceptAssignment_17_0 = (Assignment)cGroup_17.eContents().get(0);
-		private final Keyword cAuthConceptIdentityKeyword_17_0_0 = (Keyword)cAuthConceptAssignment_17_0.eContents().get(0);
-		private final Alternatives cAlternatives_17_1 = (Alternatives)cGroup_17.eContents().get(1);
-		private final Assignment cStringIdentifierAssignment_17_1_0 = (Assignment)cAlternatives_17_1.eContents().get(0);
-		private final Alternatives cStringIdentifierAlternatives_17_1_0_0 = (Alternatives)cStringIdentifierAssignment_17_1_0.eContents().get(0);
-		private final RuleCall cStringIdentifierIDTerminalRuleCall_17_1_0_0_0 = (RuleCall)cStringIdentifierAlternatives_17_1_0_0.eContents().get(0);
-		private final RuleCall cStringIdentifierSTRINGTerminalRuleCall_17_1_0_0_1 = (RuleCall)cStringIdentifierAlternatives_17_1_0_0.eContents().get(1);
-		private final RuleCall cStringIdentifierUPPERCASE_IDTerminalRuleCall_17_1_0_0_2 = (RuleCall)cStringIdentifierAlternatives_17_1_0_0.eContents().get(2);
-		private final RuleCall cStringIdentifierCAMELCASE_IDTerminalRuleCall_17_1_0_0_3 = (RuleCall)cStringIdentifierAlternatives_17_1_0_0.eContents().get(3);
-		private final Assignment cIntIdentifierAssignment_17_1_1 = (Assignment)cAlternatives_17_1.eContents().get(1);
-		private final RuleCall cIntIdentifierINTTerminalRuleCall_17_1_1_0 = (RuleCall)cIntIdentifierAssignment_17_1_1.eContents().get(0);
-		private final Keyword cByKeyword_17_2 = (Keyword)cGroup_17.eContents().get(2);
-		private final Assignment cAuthorityAssignment_17_3 = (Assignment)cGroup_17.eContents().get(3);
-		private final Alternatives cAuthorityAlternatives_17_3_0 = (Alternatives)cAuthorityAssignment_17_3.eContents().get(0);
-		private final RuleCall cAuthorityUPPERCASE_IDTerminalRuleCall_17_3_0_0 = (RuleCall)cAuthorityAlternatives_17_3_0.eContents().get(0);
-		private final RuleCall cAuthorityUPPERCASE_PATHTerminalRuleCall_17_3_0_1 = (RuleCall)cAuthorityAlternatives_17_3_0.eContents().get(1);
-		private final Group cGroup_18 = (Group)cAlternatives.eContents().get(18);
-		private final Keyword cLeftParenthesisKeyword_18_0 = (Keyword)cGroup_18.eContents().get(0);
-		private final Assignment cDeclarationAssignment_18_1 = (Assignment)cGroup_18.eContents().get(1);
-		private final RuleCall cDeclarationExpressionParserRuleCall_18_1_0 = (RuleCall)cDeclarationAssignment_18_1.eContents().get(0);
-		private final Keyword cRightParenthesisKeyword_18_2 = (Keyword)cGroup_18.eContents().get(2);
+		private final Keyword cLeftParenthesisKeyword_17_0 = (Keyword)cGroup_17.eContents().get(0);
+		private final Assignment cDeclarationAssignment_17_1 = (Assignment)cGroup_17.eContents().get(1);
+		private final RuleCall cDeclarationExpressionParserRuleCall_17_1_0 = (RuleCall)cDeclarationAssignment_17_1.eContents().get(0);
+		private final Keyword cRightParenthesisKeyword_17_2 = (Keyword)cGroup_17.eContents().get(2);
 		
 		//Concept:
 		//    (negated?=('not'|'no'))? name=ConceptReference
@@ -6665,34 +6652,36 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//    ratio?='ratio' 'of' concept=SimpleConceptDeclaration => 'to' other=SimpleConceptDeclaration |
 		//    (monetary?='monetary')? value?='value' 'of' concept=SimpleConceptDeclaration (=> 'over' other=SimpleConceptDeclaration)? |
 		//    occurrence?='occurrence' 'of' concept=SimpleConceptDeclaration |
-		//    // this form specifies an authority concept with no alias (the authority may provide a default label)
-		//    authConcept?='identity' (stringIdentifier=(ID|STRING|UPPERCASE_ID|CAMELCASE_ID) | intIdentifier=INT) 'by' authority=(UPPERCASE_ID|UPPERCASE_PATH) |
+		////    authorityId=AuthorityId |
+		////    // this form specifies an authority concept with no alias (the authority may provide a default label)
+		////    authConcept?='identity' (stringIdentifier=(ID|STRING|UPPERCASE_ID|CAMELCASE_ID) | intIdentifier=INT) 'by' authority=(UPPERCASE_ID|UPPERCASE_PATH) |
 		//    '(' declaration=Expression ')';
 		@Override public ParserRule getRule() { return rule; }
 		
-		//(negated?=('not'|'no'))? name=ConceptReference
-		//    // if the following is there, the name becomes an alias for the authority concept
-		//    (authConcept?='identified' 'as' (stringIdentifier=(ID|STRING|UPPERCASE_ID|CAMELCASE_ID) | intIdentifier=INT) 'by' authority=(UPPERCASE_ID|UPPERCASE_PATH))? |
-		//// unary operators
-		//presence?='presence' 'of' concept=SimpleConceptDeclaration |
-		//count?='count' 'of' concept=SimpleConceptDeclaration |
-		//distance?='distance' ('to' | 'from') concept=SimpleConceptDeclaration |
-		//probability?='probability' 'of' concept=SimpleConceptDeclaration |
-		//assessment?='assessment' 'of' concept=SimpleConceptDeclaration |
-		//('change' (change?='in' | (rate?='rate' 'of')) | changed?='changed') concept=SimpleConceptDeclaration |
-		//uncertainty?='uncertainty' 'of' concept=SimpleConceptDeclaration |
-		//magnitude?='magnitude' 'of' concept=SimpleConceptDeclaration |
-		//level?='level' 'of' concept=SimpleConceptDeclaration |
-		//type?='type' 'of' concept=SimpleConceptDeclaration |
-		//observability?='observability' 'of' concept=SimpleConceptDeclaration |
-		//proportion?='proportion' 'of' concept=SimpleConceptDeclaration (=> 'in' other=SimpleConceptDeclaration)? |
-		//percentage?='percentage' 'of' concept=SimpleConceptDeclaration (=> 'in' other=SimpleConceptDeclaration)? |
-		//ratio?='ratio' 'of' concept=SimpleConceptDeclaration => 'to' other=SimpleConceptDeclaration |
-		//(monetary?='monetary')? value?='value' 'of' concept=SimpleConceptDeclaration (=> 'over' other=SimpleConceptDeclaration)? |
-		//occurrence?='occurrence' 'of' concept=SimpleConceptDeclaration |
-		//// this form specifies an authority concept with no alias (the authority may provide a default label)
-		//authConcept?='identity' (stringIdentifier=(ID|STRING|UPPERCASE_ID|CAMELCASE_ID) | intIdentifier=INT) 'by' authority=(UPPERCASE_ID|UPPERCASE_PATH) |
-		//'(' declaration=Expression ')'
+		//    (negated?=('not'|'no'))? name=ConceptReference
+		//        // if the following is there, the name becomes an alias for the authority concept
+		//        (authConcept?='identified' 'as' (stringIdentifier=(ID|STRING|UPPERCASE_ID|CAMELCASE_ID) | intIdentifier=INT) 'by' authority=(UPPERCASE_ID|UPPERCASE_PATH))? |
+		//    // unary operators
+		//    presence?='presence' 'of' concept=SimpleConceptDeclaration |
+		//    count?='count' 'of' concept=SimpleConceptDeclaration |
+		//    distance?='distance' ('to' | 'from') concept=SimpleConceptDeclaration |
+		//    probability?='probability' 'of' concept=SimpleConceptDeclaration |
+		//    assessment?='assessment' 'of' concept=SimpleConceptDeclaration |
+		//    ('change' (change?='in' | (rate?='rate' 'of')) | changed?='changed') concept=SimpleConceptDeclaration |
+		//    uncertainty?='uncertainty' 'of' concept=SimpleConceptDeclaration |
+		//    magnitude?='magnitude' 'of' concept=SimpleConceptDeclaration |
+		//    level?='level' 'of' concept=SimpleConceptDeclaration |
+		//    type?='type' 'of' concept=SimpleConceptDeclaration |
+		//    observability?='observability' 'of' concept=SimpleConceptDeclaration |
+		//    proportion?='proportion' 'of' concept=SimpleConceptDeclaration (=> 'in' other=SimpleConceptDeclaration)? |
+		//    percentage?='percentage' 'of' concept=SimpleConceptDeclaration (=> 'in' other=SimpleConceptDeclaration)? |
+		//    ratio?='ratio' 'of' concept=SimpleConceptDeclaration => 'to' other=SimpleConceptDeclaration |
+		//    (monetary?='monetary')? value?='value' 'of' concept=SimpleConceptDeclaration (=> 'over' other=SimpleConceptDeclaration)? |
+		//    occurrence?='occurrence' 'of' concept=SimpleConceptDeclaration |
+		////    authorityId=AuthorityId |
+		////    // this form specifies an authority concept with no alias (the authority may provide a default label)
+		////    authConcept?='identity' (stringIdentifier=(ID|STRING|UPPERCASE_ID|CAMELCASE_ID) | intIdentifier=INT) 'by' authority=(UPPERCASE_ID|UPPERCASE_PATH) |
+		//    '(' declaration=Expression ')'
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//(negated?=('not'|'no'))? name=ConceptReference
@@ -7147,73 +7136,26 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//SimpleConceptDeclaration
 		public RuleCall getConceptSimpleConceptDeclarationParserRuleCall_16_2_0() { return cConceptSimpleConceptDeclarationParserRuleCall_16_2_0; }
 		
-		//// this form specifies an authority concept with no alias (the authority may provide a default label)
-		//authConcept?='identity' (stringIdentifier=(ID|STRING|UPPERCASE_ID|CAMELCASE_ID) | intIdentifier=INT) 'by' authority=(UPPERCASE_ID|UPPERCASE_PATH)
+		////    authorityId=AuthorityId |
+		////    // this form specifies an authority concept with no alias (the authority may provide a default label)
+		////    authConcept?='identity' (stringIdentifier=(ID|STRING|UPPERCASE_ID|CAMELCASE_ID) | intIdentifier=INT) 'by' authority=(UPPERCASE_ID|UPPERCASE_PATH) |
+		//    '(' declaration=Expression ')'
 		public Group getGroup_17() { return cGroup_17; }
 		
-		//// this form specifies an authority concept with no alias (the authority may provide a default label)
-		//authConcept?='identity'
-		public Assignment getAuthConceptAssignment_17_0() { return cAuthConceptAssignment_17_0; }
-		
-		//'identity'
-		public Keyword getAuthConceptIdentityKeyword_17_0_0() { return cAuthConceptIdentityKeyword_17_0_0; }
-		
-		//(stringIdentifier=(ID|STRING|UPPERCASE_ID|CAMELCASE_ID) | intIdentifier=INT)
-		public Alternatives getAlternatives_17_1() { return cAlternatives_17_1; }
-		
-		//stringIdentifier=(ID|STRING|UPPERCASE_ID|CAMELCASE_ID)
-		public Assignment getStringIdentifierAssignment_17_1_0() { return cStringIdentifierAssignment_17_1_0; }
-		
-		//(ID|STRING|UPPERCASE_ID|CAMELCASE_ID)
-		public Alternatives getStringIdentifierAlternatives_17_1_0_0() { return cStringIdentifierAlternatives_17_1_0_0; }
-		
-		//ID
-		public RuleCall getStringIdentifierIDTerminalRuleCall_17_1_0_0_0() { return cStringIdentifierIDTerminalRuleCall_17_1_0_0_0; }
-		
-		//STRING
-		public RuleCall getStringIdentifierSTRINGTerminalRuleCall_17_1_0_0_1() { return cStringIdentifierSTRINGTerminalRuleCall_17_1_0_0_1; }
-		
-		//UPPERCASE_ID
-		public RuleCall getStringIdentifierUPPERCASE_IDTerminalRuleCall_17_1_0_0_2() { return cStringIdentifierUPPERCASE_IDTerminalRuleCall_17_1_0_0_2; }
-		
-		//CAMELCASE_ID
-		public RuleCall getStringIdentifierCAMELCASE_IDTerminalRuleCall_17_1_0_0_3() { return cStringIdentifierCAMELCASE_IDTerminalRuleCall_17_1_0_0_3; }
-		
-		//intIdentifier=INT
-		public Assignment getIntIdentifierAssignment_17_1_1() { return cIntIdentifierAssignment_17_1_1; }
-		
-		//INT
-		public RuleCall getIntIdentifierINTTerminalRuleCall_17_1_1_0() { return cIntIdentifierINTTerminalRuleCall_17_1_1_0; }
-		
-		//'by'
-		public Keyword getByKeyword_17_2() { return cByKeyword_17_2; }
-		
-		//authority=(UPPERCASE_ID|UPPERCASE_PATH)
-		public Assignment getAuthorityAssignment_17_3() { return cAuthorityAssignment_17_3; }
-		
-		//(UPPERCASE_ID|UPPERCASE_PATH)
-		public Alternatives getAuthorityAlternatives_17_3_0() { return cAuthorityAlternatives_17_3_0; }
-		
-		//UPPERCASE_ID
-		public RuleCall getAuthorityUPPERCASE_IDTerminalRuleCall_17_3_0_0() { return cAuthorityUPPERCASE_IDTerminalRuleCall_17_3_0_0; }
-		
-		//UPPERCASE_PATH
-		public RuleCall getAuthorityUPPERCASE_PATHTerminalRuleCall_17_3_0_1() { return cAuthorityUPPERCASE_PATHTerminalRuleCall_17_3_0_1; }
-		
-		//'(' declaration=Expression ')'
-		public Group getGroup_18() { return cGroup_18; }
-		
-		//'('
-		public Keyword getLeftParenthesisKeyword_18_0() { return cLeftParenthesisKeyword_18_0; }
+		////    authorityId=AuthorityId |
+		////    // this form specifies an authority concept with no alias (the authority may provide a default label)
+		////    authConcept?='identity' (stringIdentifier=(ID|STRING|UPPERCASE_ID|CAMELCASE_ID) | intIdentifier=INT) 'by' authority=(UPPERCASE_ID|UPPERCASE_PATH) |
+		//    '('
+		public Keyword getLeftParenthesisKeyword_17_0() { return cLeftParenthesisKeyword_17_0; }
 		
 		//declaration=Expression
-		public Assignment getDeclarationAssignment_18_1() { return cDeclarationAssignment_18_1; }
+		public Assignment getDeclarationAssignment_17_1() { return cDeclarationAssignment_17_1; }
 		
 		//Expression
-		public RuleCall getDeclarationExpressionParserRuleCall_18_1_0() { return cDeclarationExpressionParserRuleCall_18_1_0; }
+		public RuleCall getDeclarationExpressionParserRuleCall_17_1_0() { return cDeclarationExpressionParserRuleCall_17_1_0; }
 		
 		//')'
-		public Keyword getRightParenthesisKeyword_18_2() { return cRightParenthesisKeyword_18_2; }
+		public Keyword getRightParenthesisKeyword_17_2() { return cRightParenthesisKeyword_17_2; }
 	}
 	public class ExpressionElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.Expression");
@@ -13370,7 +13312,7 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 	//ObservableSemantics:
 	//    // value may be an ID and in that case it can be used in models as an attribute for the URN as long
 	//    // as the ID is not defined in the namespace.
-	//    (value=Value 'as')?
+	//    (value=LiteralValueWithConcept 'as')?
 	//    (generic?='any')?
 	//    declaration=ConceptDeclaration
 	//    (
@@ -13484,27 +13426,28 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 	//    main+=Concept+
 	//        // binary semantic operators; also 'as', 'by' and 'follows' handled in other rules
 	//        (=>
-	//            // primary inherency (when secondary is given using 'within')
+	//            // primary physical inherency (observational inherency is given using 'within'). Any observable can be inherent to any countable.
 	//            ('of' ((distributedOfInherency?='each')? inherency=SimpleConceptDeclaration))? &
-	//            // purpose (achievement event created from target)
+	//            // purpose (achievement event created from target). Partitions qualities and applies to anything that can be created.
 	//            ('for' ((distributedForInherency?='each')? motivation=SimpleConceptDeclaration))? &
 	//            // compresence (subject, process, event, presence or partitioned quality)
 	//            ('with' compresent=SimpleConceptDeclaration)? &
 	//            // cause towards self - causant can be anything (?)
 	//            ('caused' 'by' causant=SimpleConceptDeclaration)? &
-	//            // spatial adjacency (see 'follows' operator for temporal adjacency in events) - subject, event or relationship
+	//            // spatial adjacency (see 'follows' operator for temporal adjacency in events) - Only for countables
 	//            ('adjacent' 'to' adjacent=SimpleConceptDeclaration)? &
-	//            // being contained - subject
+	//            // being contained - Countables only
 	//            ('contained' 'in' container=SimpleConceptDeclaration)? &
-	//            // containing - subject
+	//            // containing - Countables only
 	//            ('containing' contained=SimpleConceptDeclaration)? &
-	//            // cause towards event (?)
+	//            // cause towards events, processes, quality partitions
 	//            ('causing'   caused=SimpleConceptDeclaration)? &
-	//            // concomitant with event (?)
+	//            // concomitant with any occurrent
 	//            ('during'   ((distributedTemporalInherency?='each')? during=SimpleConceptDeclaration))? &
-	//            // context or secondary inherency
+	//            // observational inherency: specifies context for observations, either as part of semantics or to
+	//            // subclass the use of a model to a specified context. Applies to any observable, only countables as argument
 	//            ('within' ((distributedWithinInherency?='each')? context=SimpleConceptDeclaration))? &
-	//            // for relationships: specialize source and target types
+	//            // for relationships: specialize source and target types, both subjects
 	//            ('linking' relationshipSource=SimpleConceptDeclaration 'to' relationshipTarget=SimpleConceptDeclaration)?
 	//        )?
 	//;
@@ -13583,8 +13526,9 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 	//    ratio?='ratio' 'of' concept=SimpleConceptDeclaration => 'to' other=SimpleConceptDeclaration |
 	//    (monetary?='monetary')? value?='value' 'of' concept=SimpleConceptDeclaration (=> 'over' other=SimpleConceptDeclaration)? |
 	//    occurrence?='occurrence' 'of' concept=SimpleConceptDeclaration |
-	//    // this form specifies an authority concept with no alias (the authority may provide a default label)
-	//    authConcept?='identity' (stringIdentifier=(ID|STRING|UPPERCASE_ID|CAMELCASE_ID) | intIdentifier=INT) 'by' authority=(UPPERCASE_ID|UPPERCASE_PATH) |
+	////    authorityId=AuthorityId |
+	////    // this form specifies an authority concept with no alias (the authority may provide a default label)
+	////    authConcept?='identity' (stringIdentifier=(ID|STRING|UPPERCASE_ID|CAMELCASE_ID) | intIdentifier=INT) 'by' authority=(UPPERCASE_ID|UPPERCASE_PATH) |
 	//    '(' declaration=Expression ')';
 	public ConceptElements getConceptAccess() {
 		return pConcept;

@@ -73,7 +73,6 @@ import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.IResource.Attribute;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
-import org.integratedmodelling.klab.client.utils.JsonUtils;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.ide.Activator;
@@ -1290,6 +1289,11 @@ public class ResourceEditor extends ViewPart {
     protected void loadCodelist(String codelist) {
 
         if (resource != null) {
+        	
+        	/*
+        	 * TODO use REST instead
+        	 */
+        	
             ResourceCRUDRequest request = new ResourceCRUDRequest();
             request.getResourceUrns().add(resource.getUrn());
             request.setCodelistAttribute(codelist);
@@ -1322,11 +1326,6 @@ public class ResourceEditor extends ViewPart {
                 }));
         dialog.create();
         dialog.open();
-    }
-
-    protected void updateCodelist(String codelist) {
-        // TODO Auto-generated method stub
-
     }
 
     protected void editCategorization(String text) {
