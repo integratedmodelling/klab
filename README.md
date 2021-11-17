@@ -4,6 +4,8 @@ This project contains version 0.10.x of k.LAB. The k.LAB software stack implemen
 a semantic web platform for integrated, distributed semantic modeling. See http://www.integratedmodelling.org 
 for details on k.LAB and the mission behind it.
 
+A technical overview of the k.LAB software stack is available at https://docs.integratedmodelling.org/technote/index.html. 
+
 k.LAB aims to address the activity of _integrated modeling_, which reconciles strong 
 semantics with modeling practice, helping achieve advantages such as modularity, 
 interoperability, reusability, and integration of multiple paradigms and scales. 
@@ -64,9 +66,10 @@ the United Nations and other actors, starting in 2007.
 
 The main active developers are:
 
-* Ferdinando Villa (lead developer and designer)
-* Enrico Girotto (Web development, release engineering)
-* Steven Wohl (authentication, server infrastructure)
+* Ferdinando Villa (lead developer and designer, modeling engine and IDE)
+* Enrico Girotto (UI, web development, release engineering)
+* Steven Wohl (networking, authentication, security)
+* Andrea Antonello (geospatial and hydrological modeling)
 
 Any inquiries should be directed to info@integratedmodelling.org.
 

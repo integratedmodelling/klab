@@ -27,7 +27,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Endpoints used by engines to inquire about a node's capabilities and offerings.
+ * Endpoints used by engines to inquire about a node's capabilities and
+ * offerings.
  * 
  * @author ferdinando.villa
  *
@@ -35,109 +36,110 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class EngineController {
 
-    @Autowired
-    ResourceManager resourceManager;
+	@Autowired
+	ResourceManager resourceManager;
 
-    @RequestMapping(value = API.NODE.WHO, method = RequestMethod.GET, produces = "application/json")
-    @ResponseBody
-    public Map<?, ?> getUserDetails(Principal user) {
+	@RequestMapping(value = API.NODE.WHO, method = RequestMethod.GET, produces = "application/json")
+	@ResponseBody
+	public Map<?, ?> getUserDetails(Principal user) {
 
-        EngineAuthorization u = (EngineAuthorization) user;
-        Map<String, Object> ret = new HashMap<>();
-        ret.put("username", u.getName());
-        List<String> roles = new ArrayList<>();
-        List<String> groups = new ArrayList<>();
-        for (Role role : u.getRoles()) {
-            roles.add(role.name());
-        }
-        for (Group group : u.getGroups()) {
-            groups.add(group.getId());
-        }
+		EngineAuthorization u = (EngineAuthorization) user;
+		Map<String, Object> ret = new HashMap<>();
+		ret.put("username", u.getName());
+		List<String> roles = new ArrayList<>();
+		List<String> groups = new ArrayList<>();
+		for (Role role : u.getRoles()) {
+			roles.add(role.name());
+		}
+		for (Group group : u.getGroups()) {
+			groups.add(group.getId());
+		}
 
-        ret.put("roles", roles);
-        ret.put("groups", groups);
+		ret.put("roles", roles);
+		ret.put("groups", groups);
 
-        /*
-         * TODO access details, other users if requested and admin
-         */
+		/*
+		 * TODO access details, other users if requested and admin
+		 */
 
-        return ret;
-    }
+		return ret;
+	}
 
-    /**
-     * In a node, the capabilities endpoint is secured and the result depends on the authorized
-     * privileges.
-     * 
-     * @param user
-     * @return
-     */
-    @RequestMapping(value = API.CAPABILITIES, method = RequestMethod.GET, produces = "application/json")
-    @ResponseBody
-    public NodeCapabilities capabilities(EngineAuthorization user) {
+	/**
+	 * In a node, the capabilities endpoint is secured and the result depends on the
+	 * authorized privileges.
+	 * 
+	 * @param user
+	 * @return
+	 */
+	@RequestMapping(value = API.CAPABILITIES, method = RequestMethod.GET, produces = "application/json")
+	@ResponseBody
+	public NodeCapabilities capabilities(EngineAuthorization user) {
 
-        NodeCapabilities ret = new NodeCapabilities();
+		NodeCapabilities ret = new NodeCapabilities();
 
-        String submitting = Configuration.INSTANCE.getProperty("klab.node.submitting", "NONE");
-        String searching = Configuration.INSTANCE.getProperty("klab.node.searching", "NONE");
-        List<String> universalResourceUrns = new ArrayList<>();
+		String submitting = Configuration.INSTANCE.getProperty("klab.node.submitting", "NONE");
+		String searching = Configuration.INSTANCE.getProperty("klab.node.searching", "NONE");
+		List<String> universalResourceUrns = new ArrayList<>();
 
-        for (ResourceAdapterReference adapter : Resources.INSTANCE.describeResourceAdapters()) {
-            // check if the adapter is authorized for this user
-            String authorized = Configuration.INSTANCE.getProperty("klab.adapter." + adapter.getName().toLowerCase() + ".auth",
-                    "");
-            if (isAuthorized(user, authorized)) {
-                ret.getResourceAdapters().add(adapter);
-                if (adapter.isUniversal()) {
-                    IUrnAdapter uad = Resources.INSTANCE.getUrnAdapter(adapter.getName());
-                    universalResourceUrns.addAll(uad.getResourceUrns());
-                }
-            }
-        }
+		for (ResourceAdapterReference adapter : Resources.INSTANCE.describeResourceAdapters()) {
+			// check if the adapter is authorized for this user
+			String authorized = Configuration.INSTANCE
+					.getProperty("klab.adapter." + adapter.getName().toLowerCase() + ".auth", "");
+			if (isAuthorized(user, authorized)) {
+				ret.getResourceAdapters().add(adapter);
+				if (adapter.isUniversal()) {
+					IUrnAdapter uad = Resources.INSTANCE.getUrnAdapter(adapter.getName());
+					universalResourceUrns.addAll(uad.getResourceUrns());
+				}
+			}
+		}
 
-        ret.setVersion(Version.CURRENT);
-        ret.setBuild(Version.VERSION_BUILD + " " + Version.VERSION_COMMIT);
+		ret.setVersion(Version.CURRENT);
+		ret.setBuild(Version.VERSION_BUILD + " "
+				+ (Version.VERSION_COMMIT == null ? ":unknown" : (Version.VERSION_COMMIT.substring(0, 7))));
 
-        ret.setAcceptSubmission(isAuthorized(user, submitting));
-        ret.setAcceptQueries(isAuthorized(user, searching));
-        ret.getResourceCatalogs().addAll(resourceManager.getCatalogs());
-        ret.getResourceNamespaces().addAll(resourceManager.getNamespaces());
-        ret.getResourceCatalogs().add(resourceManager.getDefaultCatalog());
-        ret.getResourceNamespaces().add(resourceManager.getDefaultNamespace());
+		ret.setAcceptSubmission(isAuthorized(user, submitting));
+		ret.setAcceptQueries(isAuthorized(user, searching));
+		ret.getResourceCatalogs().addAll(resourceManager.getCatalogs());
+		ret.getResourceNamespaces().addAll(resourceManager.getNamespaces());
+		ret.getResourceCatalogs().add(resourceManager.getDefaultCatalog());
+		ret.getResourceNamespaces().add(resourceManager.getDefaultNamespace());
 
-        for (String urn : resourceManager.getOnlineResources()) {
-            if (resourceManager.canAccess(urn, (EngineAuthorization) user)) {
-                ret.getResourceUrns().add(urn);
-            }
-        }
+		for (String urn : resourceManager.getOnlineResources()) {
+			if (resourceManager.canAccess(urn, (EngineAuthorization) user)) {
+				ret.getResourceUrns().add(urn);
+			}
+		}
 
-        /**
-         * Temporarily stick the time since boot in here instead of adding a proper field, in fear
-         * that this would kill the entire k.LAB deployed network.
-         */
-        ret.setRefreshFrequencyMillis(System.currentTimeMillis() - Node.getBootTime());
+		/**
+		 * Temporarily stick the time since boot in here instead of adding a proper
+		 * field, in fear that this would kill the entire k.LAB deployed network.
+		 */
+		ret.setRefreshFrequencyMillis(System.currentTimeMillis() - Node.getBootTime());
 
-        ret.getResourceUrns().addAll(universalResourceUrns);
-        ret.setOnline(true);
+		ret.getResourceUrns().addAll(universalResourceUrns);
+		ret.setOnline(true);
 
-        return ret;
-    }
+		return ret;
+	}
 
-    public static boolean isAuthorized(EngineAuthorization user, String permissions) {
+	public static boolean isAuthorized(EngineAuthorization user, String permissions) {
 
-        if (user == null) {
-            return false;
-        }
+		if (user == null) {
+			return false;
+		}
 
-        if ("*".equals(permissions)) {
-            return true;
-        } else if ("NONE".equals(permissions)) {
-            return false;
-        } else {
-            KlabPermissions perms = KlabPermissions.create(permissions);
-            Collection<String> groups = new ArrayList<>();
-            user.getGroups().forEach(g -> groups.add(g.getId()));
-            return perms.isAuthorized(user.getUsername(), groups);
-        }
-    }
+		if ("*".equals(permissions)) {
+			return true;
+		} else if ("NONE".equals(permissions)) {
+			return false;
+		} else {
+			KlabPermissions perms = KlabPermissions.create(permissions);
+			Collection<String> groups = new ArrayList<>();
+			user.getGroups().forEach(g -> groups.add(g.getId()));
+			return perms.isAuthorized(user.getUsername(), groups);
+		}
+	}
 
 }
