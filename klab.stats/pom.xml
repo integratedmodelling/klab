@@ -1,5 +1,4 @@
-<project
-	xmlns="http://maven.apache.org/POM/4.0.0"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
@@ -12,34 +11,34 @@
 	<name>k.LAB Stats</name>
 	<description>k.LAB Stats Collection Server</description>
 	<build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>${spring-boot.version}</version>
-            </plugin>
-            <plugin>
-                <groupId>com.google.cloud.tools</groupId>
-                <artifactId>jib-maven-plugin</artifactId>
-                <configuration>
-                    <from>
-        				 <image>${env.REGISTRY}/${env.BASE_CONTAINER}</image>
-        				 <auth>
-				    		<username>${env.USERNAME}</username>
-				    		<password>${env.PASSWORD}</password>
-            			</auth>
-      				</from>
-                    <to>
-                        <image>${env.REGISTRY}/${env.STAT_CONTAINER}</image>
-                        <tags>
-                        	<tag>${env.STAT_TAG}</tag>
-				      		<tag>latest</tag>
-				    	</tags>
-				    	<auth>
-				    		<username>${env.USERNAME}</username>
-				    		<password>${env.PASSWORD}</password>
-            			</auth>
-                    </to>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>${spring-boot.version}</version>
+			</plugin>
+			<plugin>
+				<groupId>com.google.cloud.tools</groupId>
+				<artifactId>jib-maven-plugin</artifactId>
+				<configuration>
+					<from>
+						<image>${env.REGISTRY}/${env.BASE_CONTAINER}</image>
+						<auth>
+							<username>${env.USERNAME}</username>
+							<password>${env.PASSWORD}</password>
+						</auth>
+					</from>
+					<to>
+						<image>${env.REGISTRY}/${env.STAT_CONTAINER}</image>
+						<tags>
+							<tag>${env.STAT_TAG}</tag>
+							<tag>latest</tag>
+						</tags>
+						<auth>
+							<username>${env.USERNAME}</username>
+							<password>${env.PASSWORD}</password>
+						</auth>
+					</to>
 					<container>
 						<user>klab:klab</user>
 						<jvmFlags>
@@ -53,41 +52,26 @@
 						<labels>
 						</labels>
 					</container>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-	
-<!-- 	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>${spring-boot-version}</version>
-				<configuration>
-					<fork>true</fork>
-					<mainClass>org.integratedmodelling.klab.stats.Main</mainClass>
 				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>repackage</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
-	</build> -->
+	</build>
+
+	<!-- <build> <plugins> <plugin> <groupId>org.springframework.boot</groupId> 
+		<artifactId>spring-boot-maven-plugin</artifactId> <version>${spring-boot-version}</version> 
+		<configuration> <fork>true</fork> <mainClass>org.integratedmodelling.klab.stats.Main</mainClass> 
+		</configuration> <executions> <execution> <goals> <goal>repackage</goal> 
+		</goals> </execution> </executions> </plugin> </plugins> </build> -->
 	<dependencyManagement>
-	    <dependencies>
-	        <dependency>
-	            <groupId>org.springframework.cloud</groupId>
-	            <artifactId>spring-cloud-dependencies</artifactId>
-	            <version>${spring-cloud.version}</version>
-	            <type>pom</type>
-	            <scope>import</scope>
-	        </dependency>
-	    </dependencies>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
 	</dependencyManagement>
 	<dependencies>
 		<dependency>
@@ -98,21 +82,21 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-consul-config</artifactId>
 		</dependency>
- 		<dependency>
-		    <groupId>org.springframework.cloud</groupId>
-		    <artifactId>spring-cloud-starter-bootstrap</artifactId>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-bootstrap</artifactId>
 		</dependency>
 		<dependency>
-		   <groupId>org.springframework.boot</groupId>
-		   <artifactId>spring-boot-starter-web</artifactId>
-		   <version>${spring-boot.version}</version>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+			<version>${spring-boot.version}</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-test -->
 		<dependency>
-		    <groupId>org.springframework.boot</groupId>
-		    <artifactId>spring-boot-starter-test</artifactId>
-		    <version>${spring-boot.version}</version>
-		    <scope>test</scope>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<version>${spring-boot.version}</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -124,52 +108,53 @@
 			<artifactId>org.integratedmodelling.klab.api</artifactId>
 			<version>${klab.version}</version>
 		</dependency>
-		
-				
+
+
 		<!-- https://mvnrepository.com/artifact/de.bwaldvogel/mongo-java-server -->
 		<dependency>
-		    <groupId>de.bwaldvogel</groupId>
-		    <artifactId>mongo-java-server</artifactId>
-		    <version>1.36.0</version>
+			<groupId>de.bwaldvogel</groupId>
+			<artifactId>mongo-java-server</artifactId>
+			<version>1.36.0</version>
 		</dependency>
-		
-	    <dependency>
-	        <groupId>org.mongodb</groupId>
-	        <artifactId>mongodb-driver-sync</artifactId>
-	        <version>4.2.3</version>
-	    </dependency>
-	    
-<!-- 		<dependency> -->
-<!-- 		    <groupId>org.junit.jupiter</groupId> -->
-<!-- 		    <artifactId>junit-jupiter-engine</artifactId> -->
-<!-- 		    <version>5.7.0</version> -->
-<!-- 		    <scope>test</scope> -->
-<!-- 		</dependency> -->
-<!-- 		<dependency> -->
-<!-- 		  	<groupId>org.junit</groupId> -->
-<!-- 		    <artifactId>junit-bom</artifactId> -->
-<!-- 		    <version>5.7.0</version> -->
-<!-- 		    <type>pom</type> -->
-<!-- 		</dependency> -->
-		
-<!-- 		<dependency> -->
-<!-- 		    <groupId>org.junit.platform</groupId> -->
-<!-- 		    <artifactId>junit-platform-launcher</artifactId> -->
-<!-- 		    <version>1.7.0</version> -->
-<!-- 		    <scope>test</scope> -->
-<!-- 		</dependency> -->
-		
+
 		<dependency>
-		    <groupId>net.oneandone.reflections8</groupId>
-		    <artifactId>reflections8</artifactId>
-		    <version>0.11.5</version>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongodb-driver-sync</artifactId>
+			<version>4.2.3</version>
 		</dependency>
-				
+
+		<!-- <dependency> -->
+		<!-- <groupId>org.junit.jupiter</groupId> -->
+		<!-- <artifactId>junit-jupiter-engine</artifactId> -->
+		<!-- <version>5.7.0</version> -->
+		<!-- <scope>test</scope> -->
+		<!-- </dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>org.junit</groupId> -->
+		<!-- <artifactId>junit-bom</artifactId> -->
+		<!-- <version>5.7.0</version> -->
+		<!-- <type>pom</type> -->
+		<!-- </dependency> -->
+
+		<!-- <dependency> -->
+		<!-- <groupId>org.junit.platform</groupId> -->
+		<!-- <artifactId>junit-platform-launcher</artifactId> -->
+		<!-- <version>1.7.0</version> -->
+		<!-- <scope>test</scope> -->
+		<!-- </dependency> -->
+
+		<!-- https://mvnrepository.com/artifact/org.reflections/reflections -->
+		<dependency>
+			<groupId>org.reflections</groupId>
+			<artifactId>reflections</artifactId>
+			<version>0.10.2</version>
+		</dependency>
+
 		<dependency>
 			<groupId>com.fasterxml.jackson.datatype</groupId>
 			<artifactId>jackson-datatype-joda</artifactId>
 			<version>${jackson-version}</version>
 		</dependency>
-		
+
 	</dependencies>
 </project>

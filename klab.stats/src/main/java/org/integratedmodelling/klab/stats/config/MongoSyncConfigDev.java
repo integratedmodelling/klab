@@ -8,16 +8,21 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.bson.codecs.configuration.CodecRegistry;
+import org.bson.codecs.pojo.ClassModel;
+import org.bson.codecs.pojo.ClassModelBuilder;
+import org.bson.codecs.pojo.Convention;
+import org.bson.codecs.pojo.Conventions;
 import org.bson.codecs.pojo.PojoCodecProvider;
-import org.reflections8.Reflections;
-import org.reflections8.scanners.ResourcesScanner;
-import org.reflections8.scanners.SubTypesScanner;
-import org.reflections8.util.ClasspathHelper;
-import org.reflections8.util.ConfigurationBuilder;
-import org.reflections8.util.FilterBuilder;
+import org.reflections.Reflections;
+import org.reflections.scanners.ResourcesScanner;
+import org.reflections.scanners.SubTypesScanner;
+import org.reflections.util.ClasspathHelper;
+import org.reflections.util.ConfigurationBuilder;
+import org.reflections.util.FilterBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
@@ -26,11 +31,6 @@ import com.mongodb.client.MongoClients;
 import de.bwaldvogel.mongo.MongoServer;
 import de.bwaldvogel.mongo.ServerVersion;
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
-
-import org.bson.codecs.pojo.ClassModel;
-import org.bson.codecs.pojo.ClassModelBuilder;
-import org.bson.codecs.pojo.Convention;
-import org.bson.codecs.pojo.Conventions;
 
 @Configuration
 @Profile("development")
@@ -75,7 +75,7 @@ public class MongoSyncConfigDev {
         ConfigurationBuilder config = new ConfigurationBuilder()
         		.setScanners(new SubTypesScanner(false /* don't exclude Object.class */), new ResourcesScanner())
         		.setUrls(ClasspathHelper.forClassLoader(classLoadersList.toArray(new ClassLoader[0])))
-        		.filterInputsBy(new FilterBuilder().include(FilterBuilder.prefix("org.integratedmodelling.klab.rest")));
+        		.filterInputsBy(new FilterBuilder().includePackage("org.integratedmodelling.klab.rest"));
         
         Reflections reflections = new Reflections(config);
 

@@ -12,8 +12,8 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.reflections8.Reflections;
-import org.reflections8.scanners.ResourcesScanner;
+import org.reflections.Reflections;
+import org.reflections.scanners.ResourcesScanner;
 
 /**
  * Parse KDL files in src/test/resources for now. Later will run them

@@ -4,7 +4,6 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 import org.integratedmodelling.kim.api.IServiceCall;
@@ -14,8 +13,8 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.utils.MiscUtilities;
-import org.reflections8.Reflections;
-import org.reflections8.scanners.ResourcesScanner;
+import org.reflections.Reflections;
+import org.reflections.scanners.ResourcesScanner;
 
 public class Run implements ICommand {
 

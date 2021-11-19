@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.api.data.general;
 
 import java.util.List;
-import java.util.Map;
 
 import org.integratedmodelling.klab.api.data.IResource.Attribute;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;

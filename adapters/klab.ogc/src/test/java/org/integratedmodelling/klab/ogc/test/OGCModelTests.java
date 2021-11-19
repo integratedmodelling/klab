@@ -15,8 +15,6 @@
  */
 package org.integratedmodelling.klab.ogc.test;
 
-import java.util.regex.Pattern;
-
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.knowledge.IProject;
@@ -25,8 +23,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.reflections8.Reflections;
-import org.reflections8.scanners.ResourcesScanner;
 
 /**
  * Test cases with local resources. Will create a project and load/validate

@@ -7,8 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bson.codecs.configuration.CodecRegistry;
+import org.bson.codecs.pojo.ClassModel;
+import org.bson.codecs.pojo.ClassModelBuilder;
+import org.bson.codecs.pojo.Convention;
+import org.bson.codecs.pojo.Conventions;
 import org.bson.codecs.pojo.PojoCodecProvider;
-import org.reflections8.Reflections;
+import org.reflections.Reflections;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,11 +22,6 @@ import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
-
-import org.bson.codecs.pojo.ClassModel;
-import org.bson.codecs.pojo.ClassModelBuilder;
-import org.bson.codecs.pojo.Convention;
-import org.bson.codecs.pojo.Conventions;
 
 @Configuration
 @Profile("production")
