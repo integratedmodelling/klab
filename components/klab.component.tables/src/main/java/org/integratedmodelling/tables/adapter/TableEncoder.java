@@ -37,6 +37,7 @@ import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.SemanticType;
 import org.integratedmodelling.tables.AbstractTable;
@@ -187,6 +188,9 @@ public class TableEncoder implements IResourceEncoder {
                                 if (collectCondition != null) {
                                     if (collectCondition.startsWith(">")) {
                                         Double min = Double.parseDouble(collectCondition.substring(1));
+                                        if (value instanceof String && NumberUtils.encodesDouble((String)value)) {
+                                            value = Double.parseDouble((String)value);
+                                        }
                                         ok = value instanceof Number && ((Number) value).doubleValue() > min;
                                     }
                                 }
@@ -225,7 +229,11 @@ public class TableEncoder implements IResourceEncoder {
 
             /*
              * if we asked for a specific column in the value attribute, map it first if needed,
-             * then filter
+             * then filter. TODO If we didn't, the column should be "value" unless there is only one
+             * column.
+             * 
+             * TODO if we have >1 unresolved keys, the object returned can be a TABLE instead of a
+             * VALUE.
              * 
              * TODO this should be <-, i.e. the mapping should always follow the arrows - worried
              * that it makes it impossible to understand (it probably already is though). Correctly
@@ -315,7 +323,7 @@ public class TableEncoder implements IResourceEncoder {
                             value = valueCache.get(filter);
                         } else {
                             if (filter != null) {
-//                                System.out.println("   NEW SPATIAL FILTER " + filter);
+                                System.out.println("   NEW SPATIAL FILTER " + filter);
                                 t = t.filter(filter);
                             }
                             /*
@@ -323,13 +331,13 @@ public class TableEncoder implements IResourceEncoder {
                              * aggregator that fits the semantics.
                              */
                             value = t.get(Object.class, scope, aggregator);
-//                            System.out.println("       aggregated value = " + value);
+                            System.out.println("       aggregated value = " + value);
                             valueCache.put(filter, value);
                         }
                     } else if (!cached || ignoreSpace) {
                         value = t.get(Object.class, scope, aggregator);
                         cached = true;
-//                        System.out.println("       aggregated value = " + value);
+                        System.out.println("       aggregated value = " + value);
                     }
                 }
 

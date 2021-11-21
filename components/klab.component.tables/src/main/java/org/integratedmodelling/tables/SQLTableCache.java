@@ -22,12 +22,9 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.persistence.h2.H2Database;
 import org.integratedmodelling.klab.persistence.h2.H2Database.DBIterator;
 import org.integratedmodelling.klab.persistence.h2.SQL;
-import org.integratedmodelling.klab.rest.AttributeReference;
 import org.integratedmodelling.klab.utils.Utils;
 
-import tech.tablesaw.api.StringColumn;
 import tech.tablesaw.api.Table;
-import tech.tablesaw.columns.Column;
 
 /**
  * H2-based cache - hopefully faster than the other based on DB. Can be created from a resource
@@ -285,18 +282,22 @@ public class SQLTableCache {
 
         String query = "SELECT " + fields + " FROM data" + (where.isEmpty() ? "" : (" WHERE " + where)) + ";";
 
-        // System.out.println(query);
+        System.out.println(query);
 
         try (DBIterator result = database.query(query)) {
             while(result.hasNext()) {
                 try {
                     if (retrieved.size() == 1) {
-                        ret.add(table.mapValue(result.result.getObject(1).toString(),
+                        Object res = result.result.getObject(1);
+                        ret.add(table.mapValue(res == null
+                                ? null
+                                : res/* .toString() */,
                                 table.getColumnDescriptor(sanitizedNames.get(retrieved.get(0)))));
                     } else if (retrieved.size() > 1) {
                         List<Object> row = new ArrayList<>();
                         for (int i = 0; i < retrieved.size(); i++) {
-                            row.add(table.mapValue(result.result.getObject(i + 1).toString(),
+                            Object res = result.result.getObject(i + 1);
+                            row.add(table.mapValue(res == null ? null : res/*.toString()*/,
                                     table.getColumnDescriptor(sanitizedNames.get(retrieved.get(i)))));
                         }
                         ret.add(row);

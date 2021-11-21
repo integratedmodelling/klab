@@ -35,7 +35,6 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.api.runtime.rest.INotification.Mode;
 import org.integratedmodelling.klab.common.LogicalConnector;
-import org.integratedmodelling.klab.components.geospace.utils.SpatialDisplay;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
@@ -59,8 +58,6 @@ import org.integratedmodelling.klab.utils.Utils;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
-
-import net.bytebuddy.asm.Advice.This;
 
 /**
  * The semantically aware implementation of {@link IDataflow}, built by the k.LAB runtime as a
@@ -922,6 +919,11 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
             ret = ret.parent;
         }
         return ret;
+    }
+    
+    @Override
+    public String toString() {
+        return getKdlCode();
     }
 
 }

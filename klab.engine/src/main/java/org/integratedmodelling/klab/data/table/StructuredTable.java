@@ -14,7 +14,7 @@ import org.integratedmodelling.klab.api.data.classification.IClassifier;
 import org.integratedmodelling.klab.api.data.general.IStructuredTable;
 import org.integratedmodelling.klab.data.classification.Classifier;
 
-public class Table<T> implements IStructuredTable<T> {
+public class StructuredTable<T> implements IStructuredTable<T> {
 
 	private List<T[]> rows;
 	private List<String> columnHeaders = new ArrayList<>();
@@ -103,7 +103,7 @@ public class Table<T> implements IStructuredTable<T> {
 		return new StructureImpl(name);
 	}
 
-	public static Table<IClassifier> create(IKimTable table) {
+	public static StructuredTable<IClassifier> create(IKimTable table) {
 
 		List<String> headers = table.getHeaders();
 		List<IClassifier[]> rows = new ArrayList<>();
@@ -122,12 +122,12 @@ public class Table<T> implements IStructuredTable<T> {
 			rows.add(row);
 		}
 
-		Table<IClassifier> ret = new Table<>(rows, headers);
+		StructuredTable<IClassifier> ret = new StructuredTable<>(rows, headers);
 		ret.expressions = exprs;
 		return ret;
 	}
 
-	private Table(List<T[]> rows, List<String> headers) {
+	private StructuredTable(List<T[]> rows, List<String> headers) {
 		this.rows = rows;
 		if (this.columnHeaders == null) {
 			for (int i = 0; i < (rows.size() == 0 ? 0 : rows.get(i).length); i++) {

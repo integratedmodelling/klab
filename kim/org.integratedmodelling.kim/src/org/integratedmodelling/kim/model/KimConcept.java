@@ -307,11 +307,11 @@ public class KimConcept extends KimStatement implements IKimConcept {
 				ret.template = true;
 			}
 			if (ret.type.contains(IKimConcept.Type.TRAIT) || ret.type.contains(IKimConcept.Type.ROLE)) {
-				/*
-				 * inherency is for the trait, i.e. this can only be used in an observable.
-				 */
-				ret.inherent = ret.context;
-				ret.context = null;
+//				/*
+//				 * inherency is for the trait, i.e. this can only be used in an observable.
+//				 */
+//				ret.inherent = ret.context;
+//				ret.context = null;
 				ret.traitObservable = true;
 			}
 		}

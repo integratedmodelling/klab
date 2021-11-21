@@ -95,7 +95,8 @@ public class ObservationStrategy {
      * @param scope
      * @return
      */
-    public static List<ObservationStrategy> computeDependencies(IObservable observable, IModel model, IResolutionScope scope) {
+    public static List<ObservationStrategy> computeDependencies(IObservable observable, IModel model,
+            IResolutionScope scope) {
 
         List<ObservationStrategy> ret = new ArrayList<>();
         List<IObservable> dependencies = new ArrayList<>();
@@ -123,7 +124,8 @@ public class ObservationStrategy {
 
         if (observable.getTemporalInherent() != null) {
             if (findDependency(dependencies, observable.getTemporalInherent()) == null) {
-                ret.add(new ObservationStrategy(Observable.promote(observable.getTemporalInherent()), Mode.INSTANTIATION));
+                ret.add(new ObservationStrategy(Observable.promote(observable.getTemporalInherent()),
+                        Mode.INSTANTIATION));
             }
         }
 
@@ -134,7 +136,8 @@ public class ObservationStrategy {
         if (observable.getDescriptionType() == IActivity.Description.CLASSIFICATION) {
             IConcept dep = Observables.INSTANCE.getDescribedType(observable.getType());
             if (findDependency(dependencies, dep) == null) {
-                ret.add(new ObservationStrategy(Observable.promote(dep), observable.getDescriptionType().getResolutionMode()));
+                ret.add(new ObservationStrategy(Observable.promote(dep),
+                        observable.getDescriptionType().getResolutionMode()));
             }
         }
 
@@ -178,7 +181,8 @@ public class ObservationStrategy {
             } else if (operator.getSecond() instanceof IObservable) {
                 IObservable dep = (IObservable) operator.getSecond();
                 if (findDependency(dependencies, dep) == null) {
-                    ret.add(new ObservationStrategy((Observable) dep, dep.getDescriptionType().getResolutionMode()));
+                    ret.add(new ObservationStrategy((Observable) dep,
+                            dep.getDescriptionType().getResolutionMode()));
                 }
             }
         }
@@ -240,7 +244,8 @@ public class ObservationStrategy {
      * @param scope
      * @return
      */
-    public static List<ObservationStrategy> computeStrategies(IObservable observable, IResolutionScope scope, Mode mode) {
+    public static List<ObservationStrategy> computeStrategies(IObservable observable, IResolutionScope scope,
+            Mode mode) {
 
         List<ObservationStrategy> ret = new ArrayList<>();
 
@@ -260,9 +265,11 @@ public class ObservationStrategy {
         IConcept directInherent = Observables.INSTANCE.getDirectInherentType(observable.getType());
         IConcept inherent = observable.is(Type.OBSERVABLE) ? directInherent : null;
         if (inherent != null) {
-            IConcept context = /* Observables.INSTANCE.getContextType(observable.getType()) */ observable.getContext();
+            IConcept context = /* Observables.INSTANCE.getContextType(observable.getType()) */ observable
+                    .getContext();
             if (context != null && context.equals(inherent)) {
-                observable = observable.getBuilder(scope.getMonitor()).without(ObservableRole.INHERENT).buildObservable();
+                observable = observable.getBuilder(scope.getMonitor()).without(ObservableRole.INHERENT)
+                        .buildObservable();
                 ret.add(new ObservationStrategy((Observable) observable, mode));
                 // next if should never be necessary as it's not legal to use direct context
                 // except in an output
@@ -288,7 +295,8 @@ public class ObservationStrategy {
              * encourages use of partial information as primary.
              */
 
-            target = (Observable) ((Observable) observable).getBuilder(scope.getMonitor()).withoutValueOperators()
+            target = (Observable) ((Observable) observable).getBuilder(scope.getMonitor())
+                    .withoutValueOperators()
                     .buildObservable();
             Observable previous = ((ResolutionScope) scope).getResolvedObservable(target, mode);
             if (previous != null) {
@@ -309,8 +317,9 @@ public class ObservationStrategy {
             }
 
             for (Pair<ValueOperator, Object> operator : ops) {
-                alternative.computation.add(Klab.INSTANCE.getRuntimeProvider().getOperatorResolver(target, operator.getFirst(),
-                        operator.getSecond(), modifiers));
+                alternative.computation.add(
+                        Klab.INSTANCE.getRuntimeProvider().getOperatorResolver(target, operator.getFirst(),
+                                operator.getSecond(), modifiers));
             }
 
             ret.add(alternative);
@@ -353,9 +362,11 @@ public class ObservationStrategy {
 
             if (attribute != null) {
 
-                Observable filter = (Observable) new ObservableBuilder(attribute, scope.getMonitor()).of(Observables.INSTANCE
-                        .getBaseObservable(target.getType()))/* .filtering(target) */
-                        .withTargetPredicate(targetAttribute).withDistributedInherency(observable.is(Type.COUNTABLE))
+                Observable filter = (Observable) new ObservableBuilder(attribute, scope.getMonitor())
+                        .of(Observables.INSTANCE
+                                .getBaseObservable(target.getType()))/* .filtering(target) */
+                        .withTargetPredicate(targetAttribute)
+                        .withDistributedInherency(observable.is(Type.COUNTABLE))
                         .buildObservable();
 
                 ObservationStrategy alternative = new ObservationStrategy(target,
@@ -379,19 +390,24 @@ public class ObservationStrategy {
             if (observable.is(Type.PRESENCE)) {
 
                 inherent = Observables.INSTANCE.getDescribedType(observable.getType());
-                if (inherent != null && !((ResolutionScope) scope).isBeingResolved(inherent, Mode.INSTANTIATION)) {
-                    computations.addAll(Klab.INSTANCE.getRuntimeProvider().getComputation(Observable.promote(inherent),
-                            Mode.RESOLUTION, observable));
+                if (inherent != null
+                        && !((ResolutionScope) scope).isBeingResolved(inherent, Mode.INSTANTIATION)) {
+                    computations.addAll(
+                            Klab.INSTANCE.getRuntimeProvider().getComputation(Observable.promote(inherent),
+                                    Mode.RESOLUTION, observable));
                     strategy = Strategy.DEREIFICATION;
                 }
 
-            } else if (scope.getCoverage().getSpace() != null && scope.getCoverage().getSpace().getDimensionality() >= 2
+            } else if (scope.getCoverage().getSpace() != null
+                    && scope.getCoverage().getSpace().getDimensionality() >= 2
                     && observable.is(Type.DISTANCE) || observable.is(Type.NUMEROSITY)) {
 
                 inherent = Observables.INSTANCE.getDescribedType(observable.getType());
-                if (inherent != null && !((ResolutionScope) scope).isBeingResolved(inherent, Mode.INSTANTIATION)) {
-                    computations.addAll(Klab.INSTANCE.getRuntimeProvider().getComputation(Observable.promote(inherent),
-                            Mode.RESOLUTION, observable));
+                if (inherent != null
+                        && !((ResolutionScope) scope).isBeingResolved(inherent, Mode.INSTANTIATION)) {
+                    computations.addAll(
+                            Klab.INSTANCE.getRuntimeProvider().getComputation(Observable.promote(inherent),
+                                    Mode.RESOLUTION, observable));
                     strategy = Strategy.DEREIFICATION;
                 }
 
@@ -417,18 +433,22 @@ public class ObservationStrategy {
                 ret.add(alternative);
             }
 
-        } else if (target.getType().is(Type.PREDICATE) && directInherent == null && scope.getContext() != null) {
-
-            /*
-             * target is a predicate and has no inherency: we add the inherent type of the context
-             * as it's illegal to write a naked "model predicate" characterizer to resolve the
-             * predicate independent of context.
-             */
-            IObservable contextualized = target.getBuilder(scope.getMonitor()).of(scope.getContext().getObservable().getType())
-                    .buildObservable();
-            ret.add(new ObservationStrategy((Observable) contextualized, mode, strategy));
-
-        } else {
+        } /*
+           * else if (target.getType().is(Type.PREDICATE) && directInherent == null &&
+           * scope.getContext() != null) {
+           * 
+           * 
+           * target is a predicate and has no inherency: we add the inherent type of the context as
+           * it's illegal to write a naked "model predicate" characterizer to resolve the predicate
+           * independent of context.
+           * 
+           * IObservable contextualized =
+           * target.getBuilder(scope.getMonitor()).of(scope.getContext().getObservable().getType())
+           * .buildObservable(); ret.add(new ObservationStrategy((Observable) contextualized, mode,
+           * strategy));
+           * 
+           * }
+           */else {
 
             /*
              * just add as is

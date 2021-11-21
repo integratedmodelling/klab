@@ -288,6 +288,10 @@ public class Resolver {
 					IObservable.Builder builder = new ObservableBuilder(predicate, scope.getMonitor());
 					if (observable.getInherent() != null) {
 						builder = builder.of(observable.getInherent());
+					} 
+					IConcept context = observable.getContext();
+					if (context != null) {
+					    builder = builder.within(context);
 					}
 					Observable pobs = (Observable) builder.buildObservable();
 
@@ -316,7 +320,7 @@ public class Resolver {
 						 * resolution succeeds, so check.
 						 */
 						Collection<IConcept> predicates = dataflow.getRuntimeScope() == null ? null
-								: dataflow.getRuntimeScope().getConcreteIdentities(pobs.getType());
+								: dataflow.getRuntimeScope().getConcreteIdentities(predicate);
 						if (predicates != null && !predicates.isEmpty()) {
 							// use a stable order so that the reporting system can know when the
 							// last one is contextualized

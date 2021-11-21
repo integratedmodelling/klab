@@ -45,7 +45,7 @@ public class LookupTable implements ILookupTable {
         }
     }
 
-    Table<IClassifier> table;
+    StructuredTable<IClassifier> table;
     List<Argument> variables = new ArrayList<>();
     IArtifact.Type type;
     int searchIndex;
@@ -66,7 +66,7 @@ public class LookupTable implements ILookupTable {
 
     public LookupTable(IKimLookupTable lookupTable) {
 
-        this.table = Table.create(lookupTable.getTable());
+        this.table = StructuredTable.create(lookupTable.getTable());
         this.twoWay = lookupTable.isTwoWay();
 
         for (IKimLookupTable.Argument a : lookupTable.getArguments()) {

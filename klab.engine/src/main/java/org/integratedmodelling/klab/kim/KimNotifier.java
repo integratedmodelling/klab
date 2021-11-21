@@ -35,7 +35,7 @@ import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.common.CompileNotification;
-import org.integratedmodelling.klab.data.table.Table;
+import org.integratedmodelling.klab.data.table.StructuredTable;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -238,7 +238,7 @@ public class KimNotifier implements Kim.Notifier {
 					}
 				
 				} else if (value instanceof IKimTable) {
-					value = Table.create((IKimTable) value);
+					value = StructuredTable.create((IKimTable) value);
 				}
 
                 ns.getSymbolTable().put(name, value);

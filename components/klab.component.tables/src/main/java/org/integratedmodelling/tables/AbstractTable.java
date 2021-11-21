@@ -34,8 +34,6 @@ import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Utils;
 import org.integratedmodelling.tables.adapter.TableAdapter;
 
-import net.bytebuddy.asm.Advice.This;
-
 public abstract class AbstractTable<T> implements ITable<T> {
 
     class FilterDescriptor implements Filter {
@@ -271,7 +269,6 @@ public abstract class AbstractTable<T> implements ITable<T> {
             }
             return changed ? new FilterDescriptor(this.filter, args.toArray()) : this;
         }
-
     }
 
     protected IResource resource;
