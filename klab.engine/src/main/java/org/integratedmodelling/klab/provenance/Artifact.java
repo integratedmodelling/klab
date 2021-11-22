@@ -75,6 +75,11 @@ public abstract class Artifact extends GroovyObjectSupport implements IArtifact 
 	}
 
 	@Override
+	public ValuePresentation getValuePresentation() {
+		return ValuePresentation.VALUE;
+	}
+	
+	@Override
 	public long getTimestamp() {
 		return timestamp;
 	}

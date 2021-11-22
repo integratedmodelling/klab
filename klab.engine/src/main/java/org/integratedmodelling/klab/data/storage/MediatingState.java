@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.provenance.IArtifact.ValuePresentation;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;

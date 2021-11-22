@@ -56,6 +56,7 @@ public class State extends Observation implements IState, IKeyHolder {
 
 	public static final String STATE_SUMMARY_METADATA_KEY = "metadata.keys.state_summary_";
 
+	ValuePresentation valuePresentation = ValuePresentation.VALUE;
 	Set<Pair<Long, Long>> timeCoverage;
 
 	public class StateListener implements Consumer<ILocator> {
@@ -88,6 +89,15 @@ public class State extends Observation implements IState, IKeyHolder {
 		return new State(observable, scale, context);
 	}
 
+	@Override
+	public ValuePresentation getValuePresentation() {
+		return this.valuePresentation;
+	}
+	
+	public void setValuePresentation(ValuePresentation vp) {
+		this.valuePresentation = vp;
+	}
+	
 	private State(Observable observable, Scale scale, IRuntimeScope context) {
 		super(observable, scale, context);
 		this.setArchetype(true);
