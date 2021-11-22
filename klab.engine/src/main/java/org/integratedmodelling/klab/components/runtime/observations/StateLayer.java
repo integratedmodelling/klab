@@ -62,4 +62,12 @@ public class StateLayer extends State implements IState {
         this.layerType = type;
     }
 
+	@Override
+	public void setValuePresentation(ValuePresentation vp) {
+		delegate.setValuePresentation(vp);
+		super.setValuePresentation(vp);
+	}
+
+    
+    
 }

@@ -484,6 +484,7 @@ public class CodelistEditor extends Composite {
 						&& codelist != null) {
 					authorityNameField.setText(codelist.getAgency() + "." + codelist.getId());
 					codelist.setAuthorityId(authorityNameField.getText());
+					codelist.setAuthority(true);
 					setDirty(true);
 				}
 				if (!btnExposeAsAuthority.getSelection()) {
@@ -491,6 +492,7 @@ public class CodelistEditor extends Composite {
 						setDirty(true);
 					}
 					codelist.setAuthorityId(null);
+					codelist.setAuthority(false);
 					authorityNameField.setText("");
 				}
 			}

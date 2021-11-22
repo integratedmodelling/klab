@@ -58,6 +58,27 @@ import org.integratedmodelling.klab.utils.Range;
  */
 public interface IArtifact extends IProvenance.Node, Iterable<IArtifact> {
 
+	enum ValuePresentation {
+
+		/**
+		 * Artifact value is a single value of the specified type.
+		 */
+		VALUE,
+
+		/**
+		 * Artifact value is presented as a discrete, empirical probability distribution
+		 * assigning different probabilities to each value, with probabilities summing
+		 * up to 1.
+		 */
+		PROBABILITY_DISTRIBUTION,
+
+		/**
+		 * Artifact value is presented as a table, i.e. a multi-entry map with a value
+		 * column and one or more keys to be matched outside the context.
+		 */
+		TABLE
+	}
+
 	/**
 	 * Type contextualized by the actor. Mimics IKdlActuator.Type for now, should be
 	 * integrated with it.
@@ -110,6 +131,7 @@ public interface IArtifact extends IProvenance.Node, Iterable<IArtifact> {
 		 * specified externally.
 		 */
 		ENUM,
+
 		/**
 		 * Produce extents other than time or space
 		 */
@@ -138,14 +160,10 @@ public interface IArtifact extends IProvenance.Node, Iterable<IArtifact> {
 
 		/**
 		 * One map value guarantees functional correspondences between key and value.
+		 * Adapters that produce map values should return tables, not maps, as a map is
+		 * a special case of a value table.
 		 */
-		MAP,
-
-		/**
-		 * Tables are supersets of maps so map literals are valid tables, but tables
-		 * guarantee naming of columns and multiplicity.
-		 */
-		TABLE;
+		MAP;
 
 		/**
 		 * Classify a POD type producing the type that represents it.
@@ -425,6 +443,15 @@ public interface IArtifact extends IProvenance.Node, Iterable<IArtifact> {
 	 * @return the type
 	 */
 	Type getType();
+
+	/**
+	 * Get the form that the value will present itself in this artifact. This should
+	 * be VALUE for all artifacts that aren't qualities, and may be a distribution
+	 * or a table for numeric and categorical artifacts.
+	 * 
+	 * @return the value presentation
+	 */
+	ValuePresentation getValuePresentation();
 
 	/**
 	 * Call when the artifact can be disposed of. This should schedule the removal

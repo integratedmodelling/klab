@@ -34,7 +34,8 @@ public class AgencyAuthority implements IAuthority {
 
 	@Override
 	public Identity getIdentity(String identityId, String catalog) {
-		return authorities.get(catalog).getIdentity(identityId, null);
+		IAuthority auth = authorities.get(catalog);
+		return auth == null ? null : auth.getIdentity(identityId, null);
 	}
 
 	@Override

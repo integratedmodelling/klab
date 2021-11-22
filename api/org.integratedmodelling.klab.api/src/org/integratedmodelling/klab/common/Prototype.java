@@ -329,11 +329,6 @@ public class Prototype implements IPrototype {
 			break;
 		case VALUE:
 			break;
-		case TABLE:
-			if (!(val instanceof Map || val instanceof IStructuredTable)) {
-				return null;
-			}
-			break;
 		case VOID:
 			// shouldn't happen
 			break;

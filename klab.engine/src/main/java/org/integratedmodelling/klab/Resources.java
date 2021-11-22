@@ -1605,7 +1605,7 @@ public enum Resources implements IResourceService {
 				for (String codelistId : resource.getCodelists()) {
 					ICodelist codelist = getCodelist(resource, codelistId, Klab.INSTANCE.getRootMonitor());
 					if (codelist == null) {
-						Logging.INSTANCE.error("null codelist " + codelistId + " from resource " + resource.getUrn());
+						Logging.INSTANCE.error("non-existent codelist " + codelistId + " referenced in resource " + resource.getUrn());
 					} else if (codelist.isAuthority()) {
 						Authorities.INSTANCE.registerResourceAuthority(codelist, resource);
 					}
