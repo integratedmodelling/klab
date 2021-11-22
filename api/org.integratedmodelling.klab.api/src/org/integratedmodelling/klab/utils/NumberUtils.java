@@ -27,6 +27,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
+
 public class NumberUtils {
 
 	/**
@@ -155,7 +157,7 @@ public class NumberUtils {
 		return ret;
 	}
 
-	public static Object[] objectArrayFromString(String array, String splitRegex) {
+	public static Object[] objectArrayFromString(String array, String splitRegex, Class<?> cls) {
 
 		if (array.startsWith("[")) {
 			array = array.substring(1);
@@ -166,33 +168,69 @@ public class NumberUtils {
 		String[] s = array.split(splitRegex);
 		Object[] ret = new Object[s.length];
 		for (int i = 0; i < s.length; i++) {
-			if (encodesDouble(s[i].trim())) {
-				ret[i] = Double.parseDouble(s[i].trim());
-			} else if (encodesInteger(s[i].trim())) {
-				ret[i] = Integer.parseInt(s[i].trim());
-			} else {
-				ret[i] = s[i];
-			}
 
+			if (cls != null && !Object.class.equals(cls)) {
+				ret[i] = Utils.parseAsType(s[i], cls);
+			} else {
+				if (encodesDouble(s[i].trim())) {
+					ret[i] = Double.parseDouble(s[i].trim());
+				} else if (encodesInteger(s[i].trim())) {
+					ret[i] = Integer.parseInt(s[i].trim());
+				} else {
+					ret[i] = s[i];
+				}
+			}
 		}
 		return ret;
 	}
 
-	public static Object podArrayFromString(String array, String splitRegex) {
-		Object[] pods = objectArrayFromString(array, splitRegex);
+	public static Object podArrayFromString(String array, String splitRegex, Class<?> cls) {
+		Object[] pods = objectArrayFromString(array, splitRegex, cls);
 		double[] dret = new double[pods.length];
 		int[] iret = new int[pods.length];
+		long[] lret = new long[pods.length];
+		float[] fret = new float[pods.length];
+		boolean[] bret = new boolean[pods.length];
 		int nd = 0, ni = 0;
+		int cl = 0;
 		for (int i = 0; i < pods.length; i++) {
 			if (pods[i] instanceof Double) {
+				cl = 1;
 				dret[i] = (Double) pods[i];
 				nd++;
 			} else if (pods[i] instanceof Integer) {
+				cl = 2;
 				iret[i] = (Integer) pods[i];
+				ni++;
+			} else if (pods[i] instanceof Long) {
+				cl = 3;
+				lret[i] = (Long) pods[i];
+				ni++;
+			} else if (pods[i] instanceof Float) {
+				cl = 4;
+				fret[i] = (Float) pods[i];
+				ni++;
+			} else if (pods[i] instanceof Boolean) {
+				cl = 5;
+				bret[i] = (Boolean) pods[i];
 				ni++;
 			}
 		}
-		return ni == pods.length ? iret : (nd == pods.length ? dret : pods);
+		
+		switch (cl) {
+		case 1:
+			return dret;
+		case 2:
+			return iret;
+		case 3:
+			return lret;
+		case 4:
+			return fret;
+		case 5:
+			return bret;
+		}
+		
+		throw new KlabIllegalArgumentException("cannot turn array into PODs: type not handled");
 	}
 
 	public static double[] doubleArrayFromString(String array, String splitRegex) {
@@ -350,7 +388,7 @@ public class NumberUtils {
 		}
 		return ret;
 	}
-	
+
 	public static int[] intArrayFromCollection(Collection<? extends Number> vals) {
 		int[] ret = new int[vals.size()];
 		int i = 0;
@@ -412,8 +450,7 @@ public class NumberUtils {
 		return x % 2 != 0;
 	}
 
-	public static int nextPowerOf2(int n)
-	{
+	public static int nextPowerOf2(int n) {
 		// decrement n (to handle cases when n itself is a power of 2)
 		n--;
 

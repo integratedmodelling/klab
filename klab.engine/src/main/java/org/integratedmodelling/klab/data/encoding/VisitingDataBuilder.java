@@ -63,6 +63,10 @@ public class VisitingDataBuilder implements IKlabData.Builder {
 	public VisitingDataBuilder() {
 	}
 
+	public VisitingDataBuilder(IScale scale) {
+		this.geometry = scale;
+	}
+
 	public VisitingDataBuilder(int maxObjectsToVisit) {
 		this.maxObjects = maxObjectsToVisit;
 	}
@@ -91,7 +95,7 @@ public class VisitingDataBuilder implements IKlabData.Builder {
 	}
 
 	@Override
-	public Builder startState(String name) {
+	public VisitingDataBuilder startState(String name) {
 		return new VisitingDataBuilder(this, new Descriptor(name, null, this.geometry, false));
 	}
 

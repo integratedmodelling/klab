@@ -103,6 +103,17 @@ public abstract class TableInterpreter implements ITableInterpreter {
                 ? null
                 : ret.getDimension(Dimension.Type.TIME).encode();
 
+        /**
+         * Recompute from parameters, if nothing is passed use the defaults
+         */
+        if (!parameters.containsKey("space.encoding") && resource.getParameters().containsKey("space.encoding")) {
+        	parameters.put("space.encoding", resource.getParameters().get("space.encoding").toString());
+        }
+        
+        if (!parameters.containsKey("time.encoding") && resource.getParameters().containsKey("time.encoding")) {
+        	parameters.put("time.encoding", resource.getParameters().get("time.encoding").toString());
+        }
+        
         ITable<?> table = null;
 
         if (parameters.containsKey("space.encoding") && !parameters.get("space.encoding").trim().isEmpty()) {

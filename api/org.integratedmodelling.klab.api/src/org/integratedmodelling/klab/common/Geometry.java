@@ -513,6 +513,18 @@ public class Geometry implements IGeometry {
                 for (int d : (int[]) val) {
                     ret += (ret.length() == 1 ? "" : " ") + d;
                 }
+            } else if (long[].class.isAssignableFrom(val.getClass())) {
+                for (long d : (long[]) val) {
+                    ret += (ret.length() == 1 ? "" : " ") + d;
+                }
+            } else if (float[].class.isAssignableFrom(val.getClass())) {
+                for (float d : (float[]) val) {
+                    ret += (ret.length() == 1 ? "" : " ") + d;
+                }
+            } else if (boolean[].class.isAssignableFrom(val.getClass())) {
+                for (boolean d : (boolean[]) val) {
+                    ret += (ret.length() == 1 ? "" : " ") + d;
+                }
             } else {
                 for (Object d : (Object[]) val) {
                     ret += (ret.length() == 1 ? "" : " ") + d;
@@ -1039,7 +1051,7 @@ public class Geometry implements IGeometry {
             String val = kk[1].trim();
             Object v = null;
             if (val.startsWith("[") && val.endsWith("]")) {
-                v = NumberUtils.podArrayFromString(val, "\\s+");
+                v = NumberUtils.podArrayFromString(val, "\\s+", getParameterPODType(key));
             } else if (!PARAMETER_SPACE_SHAPE.equals(key) && NumberUtils.encodesLong(val)) {
                 // This way all integers will be longs and the next won't be called - check if
                 // that's OK. Must avoid shape parameters with WKB values that should stay
@@ -1059,7 +1071,15 @@ public class Geometry implements IGeometry {
         return ret;
     }
 
-    private DimensionImpl newDimension() {
+    private static Class<?> getParameterPODType(String kvp) {
+		switch (kvp) {
+		case PARAMETER_TIME_PERIOD:
+			return Long.class;
+		}
+		return null;
+	}
+
+	private DimensionImpl newDimension() {
         return new DimensionImpl();
     }
 

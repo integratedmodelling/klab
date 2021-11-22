@@ -204,6 +204,14 @@ public class Parameters<T> implements IParameters<T> {
         }
     }
 
+    public Map<String, String> asStringMap() {
+    	Map<String, String> ret = new LinkedHashMap<>();
+    	for (T object : keySet()) {
+    		ret.put(object.toString(), ret.get(object) == null ? null : ret.get(object).toString());
+    	}
+    	return ret;
+    }
+    
     public void clear() {
         delegate.clear();
     }

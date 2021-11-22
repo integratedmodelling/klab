@@ -21,6 +21,8 @@ import org.integratedmodelling.klab.api.provenance.IActivity.Description;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
+import org.integratedmodelling.klab.rest.ResourceReference.OperationReference;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.tables.TablesComponent;
 
 import com.google.common.collect.Lists;
@@ -53,6 +55,11 @@ public class TableValidator implements IResourceValidator {
 	@Override
 	public List<Operation> getAllowedOperations(IResource resource) {
 		List<Operation> ret = new ArrayList<>();
+		OperationReference op = new OperationReference();
+		op.setDescription("Recompute the resource's geometry based on the configuration");
+		op.setName("Align geometry");
+		op.setShouldConfirm(true);
+		ret.add(op);
 		return ret;
 	}
 
@@ -63,7 +70,18 @@ public class TableValidator implements IResourceValidator {
 		case "categorize":
 			TablesComponent.getTableInterpreter(resource.getAdapterType()).categorize(resource, parameters, monitor);
 			break;
+		case "Align geometry":
+			IGeometry original = resource.getGeometry();
+			IGeometry geometry = TablesComponent.getTableInterpreter(resource.getAdapterType()).recomputeGeometry(resource,
+					((Parameters<String>) parameters).asStringMap(), monitor);
+			if (!original.equals(geometry)) {
+				((Resource)resource).setGeometry(geometry);
+				((Resource)resource).touch();
+				Resources.INSTANCE.getLocalResourceCatalog().update(resource, "Resource geometry recomputed by external user action");
+			}
+			break;
 		}
+
 		return null;
 	}
 

@@ -410,7 +410,7 @@ class KimValidator extends AbstractKimValidator {
 				}
 
 				if (observable.main !== null && (observable.main.is(Type.TRAIT) || observable.main.is(Type.ROLE)) &&
-					observable.main.inherent === null) {
+					/* observable.main.inherent === null && */ observable.main.context === null) {
 					error("Lone predicates are not valid observables. Use classifying observables to attribute " +
 						" or resolve predicates, or use 'type of' to observe them over a context.",
 						KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, REASONING_PROBLEM)

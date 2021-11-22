@@ -624,4 +624,8 @@ public class Resource implements IResource {
         return this.codelists;
     }
 
+	public void touch() {
+		this.resourceTimestamp = System.currentTimeMillis();
+	}
+
 }

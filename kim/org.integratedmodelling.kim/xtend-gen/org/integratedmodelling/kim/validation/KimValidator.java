@@ -566,7 +566,7 @@ public class KimValidator extends AbstractKimValidator {
               KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, KimValidator.REASONING_PROBLEM);
           }
           if ((((observable.getMain() != null) && (observable.getMain().is(IKimConcept.Type.TRAIT) || observable.getMain().is(IKimConcept.Type.ROLE))) && 
-            (observable.getMain().getInherent() == null))) {
+            (observable.getMain().getContext() == null))) {
             this.error(("Lone predicates are not valid observables. Use classifying observables to attribute " + 
               " or resolve predicates, or use \'type of\' to observe them over a context."), 
               KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, KimValidator.REASONING_PROBLEM);

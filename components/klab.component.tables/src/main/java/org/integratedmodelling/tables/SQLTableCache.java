@@ -251,7 +251,7 @@ public class SQLTableCache {
             case INCLUDE_ROWS:
                 break;
             case NO_RESULTS:
-                break;
+            	return Collections.emptyList();
             case ROW_HEADER:
                 break;
             case ROW_MATCH:
