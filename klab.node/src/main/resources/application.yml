@@ -23,6 +23,8 @@ klab:
          auth: "*"
       wfs:
          auth: "*"
+      copernicus:
+         auth: "*"
    geoserver:
       password: password
       url: http://geoserver:8080/geoserver 
