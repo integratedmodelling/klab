@@ -4,6 +4,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -14,9 +15,7 @@ import java.util.Set;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.UnarySemanticOperator;
-import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Models;
-import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -36,7 +35,6 @@ import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.model.Model;
@@ -1439,7 +1437,8 @@ public class ResolutionScope implements IResolutionScope {
 
 	/**
 	 * Visit the entire resolution tree and report the resolved observables in the
-	 * order they have been resolved.
+	 * order they have been resolved. Sorts by observable concept name before
+	 * returning, for debugging purposes.
 	 * 
 	 * @param types
 	 * @return
@@ -1447,7 +1446,20 @@ public class ResolutionScope implements IResolutionScope {
 	public Collection<ObservedConcept> getResolved(IKimConcept.Type... types) {
 		LinkedHashSet<ObservedConcept> ret = new LinkedHashSet<>();
 		collectResolved(getRootScope(), types, ret);
-		return ret;
+
+		/*
+		 * not useful except to get a constant ordering for debugging
+		 */
+		List<ObservedConcept> sorted = new ArrayList<>(ret);
+		Collections.sort(sorted, new Comparator<ObservedConcept>() {
+
+			@Override
+			public int compare(ObservedConcept o1, ObservedConcept o2) {
+				return o1.getObservable().toString().compareTo(o2.getObservable().toString());
+			}
+		});
+
+		return sorted;
 	}
 
 	private void collectResolved(ResolutionScope scope, Type[] types, LinkedHashSet<ObservedConcept> ret) {

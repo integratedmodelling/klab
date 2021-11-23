@@ -82,11 +82,11 @@
 		</dependency>
 
 		<!-- TODO REMOVE! We don't want this to be available locally.  -->
-		<dependency>
+<!-- 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.adapter.copernicus</artifactId>
 			<version>${klab.version}</version>
-		</dependency>
+		</dependency> -->
 
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>

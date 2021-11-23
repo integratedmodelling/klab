@@ -39,8 +39,8 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
 	private String apiKey;
 	private String user;
 
-	public static final String CDS_USER_NUMBER_PROPERTY = "copernicus.cds.user";
-	public static final String CDS_API_KEY_PROPERTY = "copernicus.cds.apikey";
+	public static final String CDS_USER_NUMBER_PROPERTY = "klab.copernicus.cds.user";
+	public static final String CDS_API_KEY_PROPERTY = "klab.copernicus.cds.apikey";
 	private int TIMEOUT_SECONDS = 30;
 	private static Pattern pattern = Pattern.compile(".*(_[0-9]{8}_).*");
 

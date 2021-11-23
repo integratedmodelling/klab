@@ -207,6 +207,10 @@ public class Resolver {
 					ret.getMonitor().debug("Resolution scope is occurrent: resolving additional observable "
 							+ Concepts.INSTANCE.getDisplayName(toResolve.getType()));
 
+					if (Concepts.INSTANCE.getDisplayName(toResolve.getType()).equals ("YieldFromEcologicalProcessChange")) {
+						System.out.println("ECOCIOIDFU OIYFU FIUY FIY FUIY FUIY ");
+					}
+					
 					ResolutionScope cscope = resolve((Observable) toResolve,
 							parentScope.acceptResolutions(ret, observable.getScope().getResolutionNamespace()),
 							Mode.RESOLUTION);
@@ -288,10 +292,10 @@ public class Resolver {
 					IObservable.Builder builder = new ObservableBuilder(predicate, scope.getMonitor());
 					if (observable.getInherent() != null) {
 						builder = builder.of(observable.getInherent());
-					} 
+					}
 					IConcept context = observable.getContext();
 					if (context != null) {
-					    builder = builder.within(context);
+						builder = builder.within(context);
 					}
 					Observable pobs = (Observable) builder.buildObservable();
 
@@ -500,7 +504,7 @@ public class Resolver {
 	private ResolutionScope resolveConcrete(Observable observable, ResolutionScope parentScope,
 			Map<IConcept, IConcept> resolvedPredicates, Map<IConcept, Set<IConcept>> resolvedPredicatesContext,
 			Mode mode) {
-	    
+
 		/*
 		 * Check first if we need to redistribute the observable, in which case we only
 		 * resolve the distribution context and we leave it to the runtime context to
@@ -676,11 +680,12 @@ public class Resolver {
 
 							if (mscope.getCoverage().isRelevant()) {
 
-								Coverage newCoverage = coverage.mergeExtents(mscope.getCoverage(), LogicalConnector.UNION);
+								Coverage newCoverage = coverage.mergeExtents(mscope.getCoverage(),
+										LogicalConnector.UNION);
 								if (!newCoverage.isRelevant()) {
 									continue;
 								}
-								
+
 								// for reporting
 								boolean wasZero = percentCovered == 0;
 								// percent covered by new model
@@ -756,7 +761,7 @@ public class Resolver {
 			 * from an instantiator, so a dataflow that creates them is generated.
 			 */
 			ret.acceptEmpty();
-		} 
+		}
 		return ret;
 	}
 

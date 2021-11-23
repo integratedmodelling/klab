@@ -262,9 +262,24 @@ public class LocalData implements IKlabData {
         }
 
         if (data.containsKey("notifications")) {
-            // TODO send them over to the monitor
-            for (Object o : (List<?>) data.get("notification")) {
-                // System.out.println("GOT NOTIFICATION " + o);
+            for (Object o : (List<?>) data.get("notifications")) {
+            	if (o instanceof Map && ((Map<?,?>)o).containsKey("severity")) {
+                   	System.out.println("DIO TORTA " + o);
+                   	switch(((Map<?,?>)o).get("severity").toString()) {
+                   	case "ERROR":
+                   		context.getMonitor().error("remote service reported: " + ((Map<?,?>)o).get("text"));
+                   		break;
+                   	case "WARNING":
+                   	case "WARN":
+                   		context.getMonitor().warn("remote service reported: " + ((Map<?,?>)o).get("text"));
+                   		break;
+                   	case "INFO":
+                   		context.getMonitor().info("remote service reported: " + ((Map<?,?>)o).get("text"));
+                   		break;
+                   	case "DEBUG":
+                   		context.getMonitor().debug("remote service reported: " + ((Map<?,?>)o).get("text"));
+                   		break;                   	}
+            	}
             }
         }
     }
