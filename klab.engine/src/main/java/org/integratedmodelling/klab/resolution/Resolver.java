@@ -207,9 +207,9 @@ public class Resolver {
 					ret.getMonitor().debug("Resolution scope is occurrent: resolving additional observable "
 							+ Concepts.INSTANCE.getDisplayName(toResolve.getType()));
 
-					if (Concepts.INSTANCE.getDisplayName(toResolve.getType()).equals ("YieldFromEcologicalProcessChange")) {
-						System.out.println("ECOCIOIDFU OIYFU FIUY FIY FUIY FUIY ");
-					}
+//					if (Concepts.INSTANCE.getDisplayName(toResolve.getType()).equals ("YieldFromEcologicalProcessChange")) {
+//						System.out.println("ECOCIOIDFU OIYFU FIUY FIY FUIY FUIY ");
+//					}
 					
 					ResolutionScope cscope = resolve((Observable) toResolve,
 							parentScope.acceptResolutions(ret, observable.getScope().getResolutionNamespace()),

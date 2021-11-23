@@ -264,7 +264,7 @@ public class LocalData implements IKlabData {
         if (data.containsKey("notifications")) {
             for (Object o : (List<?>) data.get("notifications")) {
             	if (o instanceof Map && ((Map<?,?>)o).containsKey("severity")) {
-                   	System.out.println("DIO TORTA " + o);
+//                   	System.out.println("DIO TORTA " + o);
                    	switch(((Map<?,?>)o).get("severity").toString()) {
                    	case "ERROR":
                    		context.getMonitor().error("remote service reported: " + ((Map<?,?>)o).get("text"));
