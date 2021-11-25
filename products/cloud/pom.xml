@@ -44,7 +44,6 @@
                         <image>${env.REGISTRY}/${env.ENGINE_CONTAINER}</image>
                         <tags>
                         	<tag>${env.ENGINE_TAG}</tag>
-				      		<tag>latest</tag>
 				    	</tags>
 				    	<auth>
 				    		<username>${env.USERNAME}</username>
