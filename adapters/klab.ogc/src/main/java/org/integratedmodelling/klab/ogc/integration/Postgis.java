@@ -322,14 +322,13 @@ public class Postgis {
             // add the data and compute names. We don't need the name in the main table.
             con.setAutoCommit(false);
             st.setFetchSize(50);
-            ResultSet rs = st.executeQuery("SELECT fid, the_geom FROM \"" + tableName + "\" WHERE fid = " + featureId + ";");
+            ResultSet rs = st.executeQuery("SELECT fid, ST_AsBinary(the_geom) as the_geom FROM \"" + tableName + "\" WHERE fid = " + featureId + ";");
 
             if (rs.next()) {
 
                 WKBReader wkb = new WKBReader();
 
-                PGobject thegeom = (PGobject) rs.getObject(2);
-                Geometry geometry = wkb.read(WKBReader.hexToBytes(thegeom.getValue()));
+                Geometry geometry = wkb.read(rs.getBytes("the_geom"));
                 return Shape.create(geometry, Projection.getLatLon());
             }
 
@@ -392,7 +391,7 @@ public class Postgis {
 
             String envSql = "ST_MakeEnvelope(" + envelope.getMinX() + ", " + envelope.getMinY() + ", " + envelope.getMaxX() + ", "
                     + envelope.getMaxY() + ", 4326)";
-            String chooseShape = "SELECT gid, table_name, shape_name, geom, level from " + smTableName + "\n" + "WHERE \n"
+            String chooseShape = "SELECT gid, table_name, shape_name, ST_AsBinary(geom) as geom, level from " + smTableName + "\n" + "WHERE \n"
                     + "   level = " + level + "  \n" + "       AND \n" + " geom && " + envSql + ";";
 
             WKBReader wkb = new WKBReader();
@@ -416,8 +415,7 @@ public class Postgis {
                         String sourceTable = rs.getString(2);
                         String shapeName = rs.getString(3);
 
-                        PGobject thegeom = (PGobject) rs.getObject(4);
-                        Geometry geometry = wkb.read(WKBReader.hexToBytes(thegeom.getValue()));
+                        Geometry geometry = wkb.read(rs.getBytes("geom"));
 
                         Shape sh = Shape.create(geometry, Projection.getLatLon());
                         sh.getMetadata().put(FSCANEncoder.FEATURE_ID, gid);
@@ -462,7 +460,7 @@ public class Postgis {
          * this retrieves the best candidate. Should be relatively fast - adjust the simplification
          * settings for speed vs. precision.
          */
-        String chooseShape = "SELECT gid, table_name, shape_name, geom, level, ABS(1 - (ST_Area(ST_Intersection(geom, " + envSql
+        String chooseShape = "SELECT gid, table_name, shape_name, ST_AsBinary(geom) as geom, level, ABS(1 - (ST_Area(ST_Intersection(geom, " + envSql
                 + "))/" + area + ")) as ared from " + smTableName + "\n" + "WHERE \n" + "	rank BETWEEN " + (rank - 1) + " and "
                 + (rank + 2) + "  \n" + "		AND \n" + "	geom && " + envSql + "\n" + "	ORDER BY ared LIMIT 6;";
 
@@ -488,8 +486,7 @@ public class Postgis {
                     int level = rs.getInt(5);
                     double factor = rs.getDouble(6);
 
-                    PGobject thegeom = (PGobject) rs.getObject(4);
-                    Geometry geometry = wkb.read(WKBReader.hexToBytes(thegeom.getValue()));
+                    Geometry geometry = wkb.read(rs.getBytes("geom"));
                     Shape shape = Shape.create(geometry, Projection.getLatLon());
                     shape.getMetadata().put(FSCANEncoder.FEATURE_ID, gid);
                     shape.getMetadata().put(FSCANEncoder.COLLECTION_ID, sourceTable);
@@ -667,8 +664,7 @@ public class Postgis {
 
                     // create bounding box and statistics
                     // gid is fid in original feature
-                    PGobject thegeom = (PGobject) rs.getObject("the_geom");
-                    Geometry geometry = wkb.read(WKBReader.hexToBytes(thegeom.getValue()));
+                    Geometry geometry = wkb.read(rs.getBytes("the_geom"));
                     Shape shape = Shape.create(geometry, projection);
                     double shape_area = geometry.getArea();
                     IEnvelope envelope = shape.getEnvelope();
