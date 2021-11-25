@@ -154,7 +154,7 @@ public class ResolutionScope implements IResolutionScope {
 
 	// additional resolutions for change in states that explicitly
 	// include transition contextualizers in the initialization run.
-	private List<ResolutionScope> occurrentResolutions = new ArrayList<>();
+	private List<ResolutionScope> occurrentResolutions;
 
 	// observables for which change is not specified but may change if they
 	// depend on changed observations
@@ -383,6 +383,7 @@ public class ResolutionScope implements IResolutionScope {
 			throws KlabException {
 		this.coverage = Coverage.full(contextSubject.getScale());
 		this.context = contextSubject;
+		this.occurrentResolutions =  new ArrayList<>();
 		this.scenarios.addAll(scenarios);
 		this.roles.putAll(monitor.getIdentity().getParentIdentity(ISession.class).getState().getRoles());
 		this.resolutionNamespace = contextSubject.getNamespace();
@@ -395,6 +396,7 @@ public class ResolutionScope implements IResolutionScope {
 		this.scenarios.addAll(scenarios);
 		this.roles.putAll(monitor.getIdentity().getParentIdentity(ISession.class).getState().getRoles());
 		this.resolutionNamespace = observer.getNamespace();
+		this.occurrentResolutions =  new ArrayList<>();
 		this.observer = observer;
 		this.monitor = monitor;
 		this.occurrent = this.coverage.isTemporallyDistributed();
@@ -428,6 +430,7 @@ public class ResolutionScope implements IResolutionScope {
 	private void copy(ResolutionScope other, boolean copyResolution) {
 		this.scenarios.addAll(other.scenarios);
 		this.resolutionNamespace = other.resolutionNamespace;
+		this.occurrentResolutions = other.occurrentResolutions;
 		this.mode = other.mode;
 		this.interactive = other.interactive;
 		this.monitor = other.monitor;
@@ -1182,13 +1185,24 @@ public class ResolutionScope implements IResolutionScope {
 		}
 
 		/*
-		 * look up in parents until the observable is the same and the mode is
-		 * instantiation.
+		 * look up in parents as far as the observable is the same (or the incarnated
+		 * abstract observable is) and the mode is resolution. If the observable is
+		 * found earlier, return that.
 		 */
 		ResolutionScope target = this;
-		while (target != null && target.observable != null && target.observable.equals(observable)) {
+		while (target != null /*
+								 * && target.observable != null && (target.observable.equals(observable) ||
+								 * target.observable.incarnatesSame(observable))
+								 */) {
 			if (target.mode == Mode.INSTANTIATION) {
 				break;
+			}
+			if (target.observable != null
+					&& !(target.observable.equals(observable) || target.observable.incarnatesSame(observable))) {
+				break;
+			}
+			if (target.resolverCache.get(observable) != null) {
+				return new Pair<>(target.coverage.asScale(), target.resolverCache.get(observable));
 			}
 			target = target.parent;
 		}
@@ -1581,11 +1595,6 @@ public class ResolutionScope implements IResolutionScope {
 		return this.resolving.contains(new ObservedConcept(observable, mode));
 	}
 
-	// public ResolutionScope resolving(IObservable observable) {
-	// this.resolving.add(new ObservedConcept(observable));
-	// return this;
-	// }
-
 	public Map<IConcept, Set<IConcept>> getResolvedPredicatesContext() {
 		return this.resolvedPredicatesContext;
 	}
@@ -1601,5 +1610,9 @@ public class ResolutionScope implements IResolutionScope {
 		}
 		return false;
 	}
+
+//	public void updateResolutionCache(ResolutionScope mscope) {
+//		this.resolverCache.putAll(mscope.resolverCache);
+//	}
 
 }
