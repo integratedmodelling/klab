@@ -317,19 +317,24 @@ public abstract class AbstractTable<T> implements ITable<T> {
         return new FilterDescriptor(Filter.Type.NO_RESULTS, null);
     }
 
-    public SQLTableCache getCache() {
+    public SQLTableCache getCache(IResource resource) {
         /*
          * TODO! FIXME! add properties with a timestamp for the source to ensure we rebuild the
          * cache if the source data have changed.
          */
-        if (cache_.isEmpty()) {
+        if (cache_.isEmpty() || isOutdated(resource)) {
             monitor.info("building table cache for " + resource.getUrn());
             cache_.reset(this);
         }
         return cache_;
     }
 
-    private void validateFilters() {
+    protected boolean isOutdated(IResource resource) {
+		// implement this to check if the authoritative source has changed 
+		return false;
+	}
+
+	private void validateFilters() {
         // TODO
     }
 
@@ -765,7 +770,7 @@ public abstract class AbstractTable<T> implements ITable<T> {
                 break;
             }
 
-            Collection<Object> data = getCache().scan(this, CollectionUtils.join(this.filters, located), scope);
+            Collection<Object> data = getCache(resource).scan(this, CollectionUtils.join(this.filters, located), scope);
             if (data.size() == 0) {
                 return aggregator == null ? Utils.emptyValue(cls) : null;
             }

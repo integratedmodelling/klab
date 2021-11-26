@@ -21,6 +21,10 @@ public interface ITableInterpreter {
 	 * Return the resource in the form of a table, in whatever form makes it quicker
 	 * to scan and use it. The geometry may be null, which returns the entire table.
 	 * 
+	 * Caching versions should ensure that the table is up to date with the current
+	 * authoritative source of the data - i.e. if it comes from a file, store the 
+	 * version and if newer, read from scratch.
+	 * 
 	 * @param resource
 	 * @param geometry
 	 * @return

@@ -16,7 +16,6 @@ import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.provenance.IArtifact.ValuePresentation;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
@@ -67,11 +66,14 @@ public class MediatingState extends Observation implements IState {
     }
 
     IValueMediator getContextualizedUnit(ILocator locator) {
-        if (contextualize) {
-            if (!(locator instanceof IScale)) {
+       
+    	if (contextualize) {
+            
+        	if (!(locator instanceof IScale)) {
                 throw new KlabUnimplementedException(
                         "cannot yet recontexualize a mediating state on anything other than a scale");
             }
+            
             if (contextualized == null) {
                 contextualized = to.contextualize(getObservable(), (IScale) locator);
             } else if (irregularExtents.isEmpty()) {
@@ -82,8 +84,8 @@ public class MediatingState extends Observation implements IState {
                  */
                 boolean changed = false;
                 for (IGeometry.Dimension.Type extType : irregularExtents.keySet()) {
-                    changed = true;
                     if (!((IScale) locator).getDimension(extType).equals(irregularExtents.get(extType))) {
+                        changed = true;
                         irregularExtents.put(extType, (IExtent) ((IScale) locator).getDimension(extType));
                     }
                 }
@@ -91,7 +93,10 @@ public class MediatingState extends Observation implements IState {
                     contextualized = to.contextualize(getObservable(), (IScale) locator);
                 }
             }
+            
+            return contextualized == null ? to : contextualized;
         }
+        
         return to;
     }
 
