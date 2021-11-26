@@ -325,12 +325,12 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 		@Override
 		public boolean execute(Urn urn, IGeometry geometry, Builder builder, IContextualizationScope scope) {
 
-			System.out.println(this.dump());
-
 			if (!(scope.getScale().getSpace() instanceof Space)
 					|| ((Space) scope.getScale().getSpace()).getGrid() == null) {
 				throw new KlabIllegalStateException("Copernicus adapter only support grid geometries for now");
 			}
+
+			scope.getMonitor().debug("datacube adapter: executing strategy: " + this.dump());
 
 			boolean first = true;
 			IGrid grid = ((Space) scope.getScale().getSpace()).getGrid();

@@ -215,6 +215,9 @@ public class Postgis {
          * The geometry type in the resource
          */
         public String geometryType;
+        
+        
+        public String geometryAttribute;
     }
 
     /**
@@ -664,7 +667,8 @@ public class Postgis {
 
                     // create bounding box and statistics
                     // gid is fid in original feature
-                    Geometry geometry = wkb.read(rs.getBytes("the_geom"));
+                    PGobject thegeom = (PGobject) rs.getObject(published.geometryAttribute);
+                    Geometry geometry = wkb.read(WKBReader.hexToBytes(thegeom.getValue()));
                     Shape shape = Shape.create(geometry, projection);
                     double shape_area = geometry.getArea();
                     IEnvelope envelope = shape.getEnvelope();
@@ -679,7 +683,7 @@ public class Postgis {
 
                     parameters.clear();
                     for (Attribute attribute : published.attributes) {
-                        if (!"the_geom".equals(attribute.name)) {
+                        if (!published.geometryAttribute.equals(attribute.name)) {
                             parameters.put(attribute.name, rs.getObject(attribute.name));
                         }
                     }
@@ -773,7 +777,8 @@ public class Postgis {
 
             ret.srs = Projection.create(featureSource.getSchema().getCoordinateReferenceSystem()).getSimpleSRS();
             ret.geometryType = featureSource.getSchema().getGeometryDescriptor().getType().getName().toString();
-
+            ret.geometryAttribute = featureSource.getSchema().getGeometryDescriptor().getName().toString();
+            
             for (AttributeDescriptor ad : featureSource.getSchema().getAttributeDescriptors()) {
                 PublishedResource.Attribute attribute = new Attribute();
                 attribute.name = ad.getLocalName();
