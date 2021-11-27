@@ -92,10 +92,15 @@ class CSVTable extends AbstractTable<Object> {
 
 	@Override
 	protected boolean isOutdated(IResource resource) {
-		Long timestamp = Long.parseLong(resource.getParameters().get("resource.timestamp", "0"));
+	    String property = resource.getUrn().replaceAll(":", "_") + ".timestamp";
+		Long timestamp = Long.parseLong(Resources.INSTANCE.getProperty(property, "0"));
 		if (this.file.lastModified() > timestamp) {
 			Logging.INSTANCE.info("Rebuilding resource cache from " + this.file);
-			resource.getParameters().put("resource.timestamp", "" + this.file.lastModified());
+			Resources.INSTANCE.setProperty(property, "" + this.file.lastModified());
+			Resources.INSTANCE.persistProperties();
+			((Resource)resource).touch();
+			table_ = null;
+			getTable();
 			Resources.INSTANCE.getCatalog(resource).update(resource, "Rebuild data cache after source file modification");
 			return true;
 		}

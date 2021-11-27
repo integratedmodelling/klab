@@ -324,7 +324,7 @@ public abstract class AbstractTable<T> implements ITable<T> {
          */
         if (cache_.isEmpty() || isOutdated(resource)) {
             monitor.info("building table cache for " + resource.getUrn());
-            cache_.reset(this);
+            cache_.reset(this, true);
         }
         return cache_;
     }

@@ -197,7 +197,11 @@ public class Utils {
 			return Integer.parseInt(value);
 		} catch (Throwable e) {
 		}
-		try {
+        try {
+            return Long.parseLong(value);
+        } catch (Throwable e) {
+        }
+        try {
 			return Double.parseDouble(value);
 		} catch (Throwable e) {
 		}

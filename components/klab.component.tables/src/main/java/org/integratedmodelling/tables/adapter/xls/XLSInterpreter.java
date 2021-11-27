@@ -202,7 +202,7 @@ public class XLSInterpreter extends TableInterpreter {
 
         builder.withParameter("resource.type", "csv");
         builder.withParameter("resource.file", MiscUtilities.getFileName(file));
-
+        
         if (checkHeaders) {
             /*
              * add column headers to the list of categorizables
