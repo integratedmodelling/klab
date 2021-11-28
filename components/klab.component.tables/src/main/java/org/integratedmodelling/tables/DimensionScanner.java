@@ -15,6 +15,7 @@ import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.general.ITable;
@@ -325,8 +326,8 @@ public class DimensionScanner<T> {
 					: (locator instanceof IScale ? ((IScale) locator).getTime() : null);
 
 			if (time != null && this.temporalDimensions != null) {
-
-				if (time.getTimeType() == ITime.Type.INITIALIZATION) {
+			    
+				if (time.getTimeType() == ITime.Type.INITIALIZATION && time.size() > 1) {
 					time = Time.getPreviousExtent(time);
 				}
 
