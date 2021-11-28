@@ -15,11 +15,13 @@ import java.util.regex.Pattern;
 
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.klab.Extensions;
+import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Attribute;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
 import org.integratedmodelling.klab.api.data.general.ITable;
+import org.integratedmodelling.klab.api.knowledge.ICodelist;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -879,6 +881,16 @@ public abstract class AbstractTable<T> implements ITable<T> {
 
     public CodeList getMapping(String string) {
         CodeList ret = this.mappingCatalog.get(string);
+        if (ret == null) {
+            String[] cll = string.split("\\/");
+            if (cll.length > 1) {
+                string = cll[1];
+            }
+            ICodelist codelist = Resources.INSTANCE.getCodelist(resource, string, monitor);
+            if (codelist != null) {
+                return new CodeList(codelist);
+            }
+        }
         if (ret == null) {
             File mapfile = new File(((Resource) resource).getPath() + File.separator + "code_" + string + ".properties");
             if (mapfile.exists()) {

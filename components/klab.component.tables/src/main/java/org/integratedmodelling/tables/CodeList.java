@@ -61,6 +61,7 @@ public class CodeList implements ICodelist {
     private Mapping mapping = Mapping.CODELIST;
     private String mappingKey;
     private String name;
+    private ICodelist codelist;
 
     public CodeList(Mapping type, String value) {
         this.mapping = type;
@@ -103,8 +104,16 @@ public class CodeList implements ICodelist {
         }
     }
 
+    public CodeList(ICodelist codelist) {
+        this.codelist = codelist;
+    }
+
     public Object value(String value) {
 
+        if (this.codelist != null) {
+            return this.codelist.value(value);
+        }
+        
         if (this.mapping == Mapping.YEAR) {
 
             if (NumberUtils.encodesInteger(value.toString())) {
@@ -139,6 +148,10 @@ public class CodeList implements ICodelist {
 
     public String key(Object value) {
 
+        if (this.codelist != null) {
+            return this.codelist.key(value);
+        }
+        
         if (this.mapping == Mapping.YEAR) {
 
             if (value instanceof Time) {
@@ -155,11 +168,11 @@ public class CodeList implements ICodelist {
     }
 
     public IConcept getRootConcept() {
-        return rootConcept;
+        return  codelist == null ? rootConcept : (codelist.getRootConceptId() == null ? null : Concepts.c(codelist.getRootConceptId()));
     }
 
     public String getWorldview() {
-        return worldview;
+        return codelist == null ? worldview : codelist.getWorldview();
     }
 
     public IArtifact.Type getType() {
