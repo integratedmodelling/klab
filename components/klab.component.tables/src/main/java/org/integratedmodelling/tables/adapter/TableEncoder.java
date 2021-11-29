@@ -350,8 +350,8 @@ public class TableEncoder implements IResourceEncoder {
 
     @SuppressWarnings("unchecked")
     private ITable<?> getTable(IResource resource, IMonitor monitor) {
+    	
         ITable<?> ret = (ITable<?>) ((Resource) resource).getRuntimeData().get("table");
-
         if (ret == null) {
             ret = setFilters(resource, TableAdapter.getOriginalTable(resource, true, monitor), null);
             DimensionScanner<IExtent> space = TableAdapter.runtimeData.get(resource.getUrn() + "_space", DimensionScanner.class);

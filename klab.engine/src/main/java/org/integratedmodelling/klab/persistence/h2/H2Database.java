@@ -453,7 +453,7 @@ public class H2Database {
      * Check which version of H2 the specified kbox was made with. If unknown, or not the same, move
      * the previous kbox to a different directory and create a new one.
      */
-    private static void checkVersions(String kboxName) {
+    private static synchronized void checkVersions(String kboxName) {
 
         boolean refresh = false;
         File directory = Configuration.INSTANCE.getDataPath("kbox/" + kboxName);

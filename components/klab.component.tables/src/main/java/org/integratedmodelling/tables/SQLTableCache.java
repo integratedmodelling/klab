@@ -155,8 +155,8 @@ public class SQLTableCache {
         return urn.replaceAll(":", "_");
     }
 
-    public void reset(ITable<?> table) {
-        if (isEmpty()) {
+    public void reset(ITable<?> table, boolean force) {
+        if (isEmpty() || force) {
             database.execute("DROP TABLE IF EXISTS data;");
             createStructure();
             loadData(table);

@@ -190,9 +190,14 @@ public class Resolver {
 						// these are mere transformations and we don't need their change.
 						continue;
 					}
-
+					
 					IObservable toResolve = observable.getObservable().getBuilder(parentScope.getMonitor())
 							.as(UnarySemanticOperator.CHANGE).buildObservable();
+					
+					/*
+					 * if the original quality observable incarnates a predicate, its change incarnates the
+					 * original variable's change 
+					 */
 
 					if (parentScope.getResolvedObservable(toResolve, Mode.RESOLUTION) != null
 							|| ret.getImplicitlyChangingObservables().contains(observable)
@@ -207,10 +212,6 @@ public class Resolver {
 					ret.getMonitor().debug("Resolution scope is occurrent: resolving additional observable "
 							+ Concepts.INSTANCE.getDisplayName(toResolve.getType()));
 
-//					if (Concepts.INSTANCE.getDisplayName(toResolve.getType()).equals ("YieldFromEcologicalProcessChange")) {
-//						System.out.println("ECOCIOIDFU OIYFU FIUY FIY FUIY FUIY ");
-//					}
-					
 					ResolutionScope cscope = resolve((Observable) toResolve,
 							parentScope.acceptResolutions(ret, observable.getScope().getResolutionNamespace()),
 							Mode.RESOLUTION);
@@ -463,6 +464,9 @@ public class Resolver {
 				ret = mscope;
 				coverage = mscope.getCoverage();
 			} else {
+//				// if we don't do this, change models for incarnated predicates won't be remembered
+//				ret.updateResolutionCache(mscope);
+				ret.acceptResolutions(mscope, mscope.getResolutionNamespace());
 				coverage = coverage.merge(mscope.getCoverage(), LogicalConnector.INTERSECTION);
 			}
 

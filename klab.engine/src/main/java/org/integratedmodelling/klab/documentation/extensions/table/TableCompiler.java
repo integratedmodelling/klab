@@ -341,6 +341,7 @@ public class TableCompiler {
                     this.displayLabel = "at start of "
                             + Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getStart(),
                                     scope.getRootSubject().getScale().getTime().getResolution());
+                    
                 } else if (this.start) {
 
                     if (timelabels != null && timelabels.containsKey("start")) {
@@ -358,8 +359,8 @@ public class TableCompiler {
                         return timelabels.get("end").toString();
                     }
 
-                    this.displayLabel = "at start of "
-                            + Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getEnd(),
+                    this.displayLabel = /* "at start of "
+                            + */ Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().latest().getStart(),
                                     scope.getRootSubject().getScale().getTime().getResolution());
                 }
             }
