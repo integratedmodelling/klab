@@ -13,6 +13,7 @@
  */
 package org.integratedmodelling.klab.api.data.adapters;
 
+import java.io.OutputStream;
 import java.util.Map;
 
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -31,62 +32,81 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
  */
 public interface IResourceEncoder {
 
-    /**
-     * Check if the resource can be accessed. This should ensure the ability of calling
-     * {@link #getEncodedData(IResource, IGeometry, org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder, IContextualizationScope)}
-     * without spending too much time. Full information should be provided through the monitor: this
-     * will be called also on-demand to individually trace resource issues.
-     * 
-     * @param resource
-     * @param monitor use to report any situation with the needed level of detail.
-     * 
-     * @return true if resource can be used at the moment of this call.
-     */
-    boolean isOnline(IResource resource, IMonitor monitor);
+	/**
+	 * Check if the resource can be accessed. This should ensure the ability of
+	 * calling
+	 * {@link #getEncodedData(IResource, IGeometry, org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder, IContextualizationScope)}
+	 * without spending too much time. Full information should be provided through
+	 * the monitor: this will be called also on-demand to individually trace
+	 * resource issues.
+	 * 
+	 * @param resource
+	 * @param monitor  use to report any situation with the needed level of detail.
+	 * 
+	 * @return true if resource can be used at the moment of this call.
+	 */
+	boolean isOnline(IResource resource, IMonitor monitor);
 
-    /**
-     * Ensure the resource is ready for contextualizing the target observation in the passed scale
-     * and scope. Called at each getResourceData, which will be called once per time extent. If
-     * needed, a copy of the resource may be returned, tuned to the passed context information. If
-     * not needed, returning the unmodified resource is the default answer. In no instance should
-     * the original resource be modified.
-     * 
-     * @param resource
-     * @param scale
-     * @param targetObservation
-     * @param scope
-     * @return
-     */
-    IResource contextualize(IResource resource, IScale scale, IArtifact targetObservation,
-            Map<String, String> urnParameters, IContextualizationScope scope);
+	/**
+	 * Ensure the resource is ready for contextualizing the target observation in
+	 * the passed scale and scope. Called at each getResourceData, which will be
+	 * called once per time extent. If needed, a copy of the resource may be
+	 * returned, tuned to the passed context information. If not needed, returning
+	 * the unmodified resource is the default answer. In no instance should the
+	 * original resource be modified.
+	 * 
+	 * @param resource
+	 * @param scale
+	 * @param targetObservation
+	 * @param scope
+	 * @return
+	 */
+	IResource contextualize(IResource resource, IScale scale, IArtifact targetObservation,
+			Map<String, String> urnParameters, IContextualizationScope scope);
 
-    /**
-     * Create a default codelist based on an attribute. Normally only called if the resource
-     * contains categorizable attributes, but any resource with discrete values may admit
-     * categorizations.
-     * 
-     * @param resource
-     * @param attribute
-     * @param monitor
-     * @return
-     */
-    ICodelist categorize(IResource resource, String attribute, IMonitor monitor);
+	/**
+	 * Create a default codelist based on an attribute. Normally only called if the
+	 * resource contains categorizable attributes, but any resource with discrete
+	 * values may admit categorizations.
+	 * 
+	 * @param resource
+	 * @param attribute
+	 * @param monitor
+	 * @return
+	 */
+	ICodelist categorize(IResource resource, String attribute, IMonitor monitor);
 
-    /**
-     * Build the resource data corresponding to the passed resource in the passed geometry. The data
-     * are created using a builder passed by the runtime.
-     *
-     * @param resource a {@link org.integratedmodelling.klab.api.data.IResource}. It should have
-     *        been recently inspected with {@link #isOnline(IResource)} so it can be assumed that it
-     *        is correct and active.
-     * @param urnParameters any parameters passed in the URN reference to the resource, using the
-     *        URN fragment. A single parameter without key has the key 'value'.
-     * @param geometry the {@link org.integratedmodelling.klab.api.data.IGeometry} of reference for
-     *        the query. The resolution process should guarantee that the intersection with the
-     *        resource's geometry is not empty.
-     * @param builder a suitable builder to use to build the dataset
-     * @param scope the context of computation
-     */
-    void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
-            IKlabData.Builder builder, IContextualizationScope scope);
+	/**
+	 * Build the resource data corresponding to the passed resource in the passed
+	 * geometry. The data are created using a builder passed by the runtime.
+	 *
+	 * @param resource      a
+	 *                      {@link org.integratedmodelling.klab.api.data.IResource}.
+	 *                      It should have been recently inspected with
+	 *                      {@link #isOnline(IResource)} so it can be assumed that
+	 *                      it is correct and active.
+	 * @param urnParameters any parameters passed in the URN reference to the
+	 *                      resource, using the URN fragment. A single parameter
+	 *                      without key has the key 'value'.
+	 * @param geometry      the
+	 *                      {@link org.integratedmodelling.klab.api.data.IGeometry}
+	 *                      of reference for the query. The resolution process
+	 *                      should guarantee that the intersection with the
+	 *                      resource's geometry is not empty.
+	 * @param builder       a suitable builder to use to build the dataset
+	 * @param scope         the context of computation
+	 */
+	void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
+			IKlabData.Builder builder, IContextualizationScope scope);
+
+	/**
+	 * For debugging: list the resource contents on the passed output stream, with
+	 * detail tuned to screen printing in either verbose or succint mode. Bound to
+	 * the CLI command 'resource detail'.
+	 * 
+	 * @param resource
+	 * @param stream
+	 * @param monitor  TODO
+	 */
+	void listDetail(IResource resource, OutputStream stream, boolean verbose, IMonitor monitor);
 }

@@ -1,5 +1,6 @@
 package org.integratedmodelling.cdm.adapter;
 
+import java.io.OutputStream;
 import java.util.Map;
 
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -39,5 +40,11 @@ public class CDMEncoder implements IResourceEncoder {
         // TODO Auto-generated method stub
         return null;
     }
+
+	@Override
+	public void listDetail(IResource resource, OutputStream stream, boolean verbose, IMonitor monitor) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

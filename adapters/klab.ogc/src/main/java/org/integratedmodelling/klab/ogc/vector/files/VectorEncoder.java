@@ -17,6 +17,7 @@ package org.integratedmodelling.klab.ogc.vector.files;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -345,5 +346,11 @@ public class VectorEncoder implements IResourceEncoder {
         // TODO Auto-generated method stub
         return null;
     }
+
+	@Override
+	public void listDetail(IResource resource, OutputStream stream, boolean verbose, IMonitor monitor) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

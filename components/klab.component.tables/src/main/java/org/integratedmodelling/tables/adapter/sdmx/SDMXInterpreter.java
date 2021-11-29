@@ -328,9 +328,11 @@ public class SDMXInterpreter extends TableInterpreter {
                 builder.withParameter("columns.data", "1");
                 builder.withParameter("headers.columns", false);
                 builder.withParameter("headers.rows", false);
-                builder.withParameter("time.encoding", "");
+                builder.withParameter("time.encoding", "timestart,timeend->PERIOD");
                 builder.withParameter("space.encoding", "");
                 builder.withParameter("resource.type", "sdmx");
+                builder.withParameter("update.query", updateQuery == null ? "" : updateQuery);
+                builder.withParameter("update.frequency", "AUTOMATIC");
 
                 /*
                  * build the database by forcing the table into a SQL cache so we don't have to read
@@ -339,54 +341,6 @@ public class SDMXInterpreter extends TableInterpreter {
                 monitor.info("Creating SQLDB cache...");
                 int rows = SQLTableCache.createCache(dataflowId, data.table, monitor);
                 monitor.info("SQLDB cache created with " + rows + " rows of data");
-
-                //
-                // SDMXQuery query = null;
-                // if (userData.containsKey("query")) {
-                // query = new SDMXQuery(userData.get("query", String.class), dimensions);
-                // }
-                //
-                // builder.withParameter("provider", userData.get("provider",
-                // String.class)).withParameter("dataflow",
-                // userData.get("dataflow", String.class));
-                //
-                // int dataDims = 0;
-                //
-                // for (Dimension dimension : dimensions) {
-                // Encoding descriptor =
-                // TablesComponent.getEncoding(dimension.getCodeList().getFullIdentifier());
-                // if (descriptor == null || !descriptor.isDimension()) {
-                // // attribute dimension; can't have more than 2
-                // dataDims++;
-                // if (dataDims > 2) {
-                // boolean locked = dimension.getCodeList().size() == 1;
-                // if (!locked && query != null && query.containsKey(dimension.getName())) {
-                // locked = query.getDimensionSize(dimension.getName()) == 1;
-                // }
-                // if (!locked) {
-                // builder.addError(
-                // "More than 2 non-contextual dimensions with multiple values: please restrict
-                // dimensionality using a query");
-                // break;
-                // }
-                //
-                // }
-                // } else {
-                // // rebuild the codelist descriptor INSIDE the resource so it can be seen and
-                // // edited if needed (will need actions on update)
-                // String queryValue = query == null ? null : query.get(dimension.getName());
-                // // may be contextual or categorical
-                // descriptor.setGeometry(geometryBuilder, queryValue);
-                // // TODO recover queried value for dimension, if any is passed in "query"
-                // // parameter
-                // Map<String, String> localizedCodes =
-                // descriptor.localizeEncoding(dimension.getName());
-                // for (String key : localizedCodes.keySet()) {
-                // builder.withParameter(key, localizedCodes.get(key));
-                // }
-                // }
-                // }
-
                 monitor.info("SDMX dataflow " + providerId + "/" + dataflowId + " is available in local cache");
 
                 builder.withGeometry(geometryBuilder.build());

@@ -16,6 +16,7 @@ package org.integratedmodelling.klab.raster.files;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -335,5 +336,11 @@ public class RasterEncoder implements IResourceEncoder {
         // TODO Auto-generated method stub
         return null;
     }
+
+	@Override
+	public void listDetail(IResource resource, OutputStream stream, boolean verbose, IMonitor monitor) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

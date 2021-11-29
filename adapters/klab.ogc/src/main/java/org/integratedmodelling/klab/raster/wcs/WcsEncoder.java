@@ -15,6 +15,7 @@ package org.integratedmodelling.klab.raster.wcs;
 
 import java.io.File;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.util.Map;
 
@@ -144,5 +145,11 @@ public class WcsEncoder implements IResourceEncoder {
         // TODO Auto-generated method stub
         return null;
     }
+
+	@Override
+	public void listDetail(IResource resource, OutputStream stream, boolean verbose, IMonitor monitor) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

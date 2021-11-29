@@ -1,5 +1,6 @@
 package org.integratedmodelling.tables.adapter;
 
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -448,5 +449,13 @@ public class TableEncoder implements IResourceEncoder {
         Resources.INSTANCE.getCatalog(resource).update(resource, "Codelist " + attribute + " created");
         return Resources.INSTANCE.getCodelist(resource, attribute, monitor);
     }
+
+	@Override
+	public void listDetail(IResource resource, OutputStream stream, boolean verbose, IMonitor monitor) {
+		// TODO Auto-generated method stub
+
+        ITable<?> table = getTable(resource, monitor);
+        
+	}
 
 }
