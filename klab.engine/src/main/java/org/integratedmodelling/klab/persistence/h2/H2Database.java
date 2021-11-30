@@ -245,6 +245,20 @@ public class H2Database {
         }
         return ret;
     }
+    
+    public int countRows(String tableName) {
+    	int ret = -1;
+    	if (hasTable(tableName)) {
+    		DBIterator result = query("SELECT COUNT(*) FROM " + tableName + ";");
+    		try {
+				ret = result.result.getInt(1);
+			} catch (SQLException e) {
+				// return -1
+				System.out.println("DIO CANE");
+			}
+    	}
+    	return ret;
+    }
 
     public boolean hasTable(String tableName) throws KlabException {
 
@@ -315,7 +329,7 @@ public class H2Database {
             return;
         }
 
-        // System.out.println(sql);
+        System.out.println(sql);
 
         Connection connection = null;
         try {

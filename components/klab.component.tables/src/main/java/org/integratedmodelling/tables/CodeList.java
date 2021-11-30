@@ -25,193 +25,201 @@ import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Utils;
 
 /**
- * Maps the values in a table (as strings) to other values, in either direction. Can be initialized
- * parametrically (as a function), with conventional mapping types, or initialized from a property
- * file that besides the category mappings (expressed as category.nn=X->Y) may contain a type for
- * the values, a worldview identifier and a root concept if the type is concept and the worldview is
- * set.
+ * Maps the values in a table (as strings) to other values, in either direction.
+ * Can be initialized parametrically (as a function), with conventional mapping
+ * types, or initialized from a property file that besides the category mappings
+ * (expressed as category.nn=X->Y) may contain a type for the values, a
+ * worldview identifier and a root concept if the type is concept and the
+ * worldview is set.
  * 
- * TODO must become more sophisticated and enable 1) separate, optional bi-directional
- * specifications and 2) many-to-many mapping. The current implementation uses a bidimap which only
- * handles functional mappings.
+ * TODO must become more sophisticated and enable 1) separate, optional
+ * bi-directional specifications and 2) many-to-many mapping. The current
+ * implementation uses a bidimap which only handles functional mappings.
  * 
  * TODO must provide a constructor to initialize from a SDMX codelist
  * 
- * TODO must enable descriptions and other metadata for each code - a Map<String, IMetadata>
+ * TODO must enable descriptions and other metadata for each code - a
+ * Map<String, IMetadata>
  * 
  * @author Ferd
  *
  */
 public class CodeList implements ICodelist {
 
-    public enum Mapping {
-        CODELIST, YEAR, DATE_PATTERN
-        // ....
-    }
+	public enum Mapping {
+		CODELIST, YEAR, DATE_PATTERN, PERIOD
+		// ....
+	}
 
-    private Properties properties = new Properties();
-    private BidiMap<String, Object> mappings = new DualTreeBidiMap<>();
-    private IArtifact.Type type = null;
-    private String worldview = null;
-    private IConcept rootConcept = null;
-    private IAuthority authority;
-    private Map<String, IMetadata> metadata = new HashMap<>();
+	private Properties properties = new Properties();
+	private BidiMap<String, Object> mappings = new DualTreeBidiMap<>();
+	private IArtifact.Type type = null;
+	private String worldview = null;
+	private IConcept rootConcept = null;
+	private IAuthority authority;
+	private Map<String, IMetadata> metadata = new HashMap<>();
 
-    // we either encode the mapping in a file or use the logic encoded in the next fields
-    private Mapping mapping = Mapping.CODELIST;
-    private String mappingKey;
-    private String name;
-    private ICodelist codelist;
+	// we either encode the mapping in a file or use the logic encoded in the next
+	// fields
+	private Mapping mapping = Mapping.CODELIST;
+	private String mappingKey;
+	private String name;
+	private ICodelist codelist;
 
-    public CodeList(Mapping type, String value) {
-        this.mapping = type;
-        this.mappingKey = value;
-        this.name = type + ": " + value;
-    }
+	public CodeList(Mapping type, String value) {
+		this.mapping = type;
+		this.mappingKey = value;
+		this.name = type + ": " + value;
+	}
 
-    public CodeList(String name, File propertiesFile) {
-        this.name = name;
-        try (InputStream input = new FileInputStream(propertiesFile)) {
-            properties.load(input);
-            this.worldview = properties.getProperty("worldview");
-            if (properties.containsKey("authority")) {
-                this.authority = Authorities.INSTANCE.getAuthority(properties.getProperty("authority"));
-            }
-            String t = properties.getProperty("type");
-            if (t != null) {
-                this.type = IArtifact.Type.valueOf(t.toUpperCase());
-            }
-            if (this.worldview != null && this.type == IArtifact.Type.CONCEPT) {
-                /*
-                 * check for root concept
-                 */
-                String rc = properties.getProperty("root.concept");
-                if (rc != null) {
-                    this.rootConcept = Concepts.INSTANCE.declare(Concepts.INSTANCE.declare(rc));
-                }
-            }
-            String pattern = Pattern.quote("->");
-            for (Object key : properties.keySet()) {
-                if (key.toString().startsWith("category.")) {
-                    String[] pp = properties.getProperty(key.toString()).split(pattern);
-                    if (pp.length > 1 && !pp[1].isEmpty()) {
-                        mappings.put(pp[0], pp[1]);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            throw new KlabIOException(e);
-        }
-    }
+	public CodeList(String name, File propertiesFile) {
+		this.name = name;
+		try (InputStream input = new FileInputStream(propertiesFile)) {
+			properties.load(input);
+			this.worldview = properties.getProperty("worldview");
+			if (properties.containsKey("authority")) {
+				this.authority = Authorities.INSTANCE.getAuthority(properties.getProperty("authority"));
+			}
+			String t = properties.getProperty("type");
+			if (t != null) {
+				this.type = IArtifact.Type.valueOf(t.toUpperCase());
+			}
+			if (this.worldview != null && this.type == IArtifact.Type.CONCEPT) {
+				/*
+				 * check for root concept
+				 */
+				String rc = properties.getProperty("root.concept");
+				if (rc != null) {
+					this.rootConcept = Concepts.INSTANCE.declare(Concepts.INSTANCE.declare(rc));
+				}
+			}
+			String pattern = Pattern.quote("->");
+			for (Object key : properties.keySet()) {
+				if (key.toString().startsWith("category.")) {
+					String[] pp = properties.getProperty(key.toString()).split(pattern);
+					if (pp.length > 1 && !pp[1].isEmpty()) {
+						mappings.put(pp[0], pp[1]);
+					}
+				}
+			}
+		} catch (Exception e) {
+			throw new KlabIOException(e);
+		}
+	}
 
-    public CodeList(ICodelist codelist) {
-        this.codelist = codelist;
-    }
+	public CodeList(ICodelist codelist) {
+		this.codelist = codelist;
+	}
 
-    public Object value(String value) {
+	public Object value(String value) {
 
-        if (this.codelist != null) {
-            return this.codelist.value(value);
-        }
-        
-        if (this.mapping == Mapping.YEAR) {
+		if (this.codelist != null) {
+			return this.codelist.value(value);
+		}
 
-            if (NumberUtils.encodesInteger(value.toString())) {
-                int year = Integer.parseInt(value.toString());
-                Time ret = Time.create(year);
-                mappings.put(value, ret.encode());
-                return ret;
-            }
+		if (this.mapping == Mapping.YEAR) {
 
-        } else if (this.mapping == Mapping.DATE_PATTERN) {
+			if (NumberUtils.encodesInteger(value.toString())) {
+				int year = Integer.parseInt(value.toString());
+				Time ret = Time.create(year);
+				mappings.put(value, ret.encode());
+				return ret;
+			}
 
-            // TODO
+		} else if (this.mapping == Mapping.DATE_PATTERN) {
 
-        } else {
+			// TODO
 
-            Object ret = value == null ? null : mappings.get(value.toString());
-            if (ret != null) {
-                if (this.authority != null) {
-                    ret = this.authority.getIdentity(ret.toString(), null);
-                } else if (rootConcept != null && this.type == Type.CONCEPT) {
-                    ret = Concepts.c(ret.toString());
-                    // TODO error if unknown?
-                } else if (this.type != null) {
-                    ret = Utils.asType(ret, Utils.getClassForType(this.type));
-                }
-            }
-            return ret;
-        }
+		} else if (this.mapping == Mapping.PERIOD) {
+		
+			// TODO
+		
+		} else {
 
-        return null;
-    }
+			Object ret = value == null ? null : mappings.get(value.toString());
+			if (ret != null) {
+				if (this.authority != null) {
+					ret = this.authority.getIdentity(ret.toString(), null);
+				} else if (rootConcept != null && this.type == Type.CONCEPT) {
+					ret = Concepts.c(ret.toString());
+					// TODO error if unknown?
+				} else if (this.type != null) {
+					ret = Utils.asType(ret, Utils.getClassForType(this.type));
+				}
+			}
+			return ret;
+		}
 
-    public String key(Object value) {
+		return null;
+	}
 
-        if (this.codelist != null) {
-            return this.codelist.key(value);
-        }
-        
-        if (this.mapping == Mapping.YEAR) {
+	public String key(Object value) {
 
-            if (value instanceof Time) {
-                return mappings.inverseBidiMap().get(((Time) value).encode());
-            }
+		if (this.codelist != null) {
+			return this.codelist.key(value);
+		}
 
-        } else if (this.mapping == Mapping.DATE_PATTERN) {
+		if (this.mapping == Mapping.YEAR) {
 
-            // TODO
+			if (value instanceof Time) {
+				return mappings.inverseBidiMap().get(((Time) value).encode());
+			}
 
-        }
+		} else if (this.mapping == Mapping.DATE_PATTERN) {
 
-        return value == null ? null : mappings.inverseBidiMap().get(value.toString());
-    }
+			// TODO
 
-    public IConcept getRootConcept() {
-        return  codelist == null ? rootConcept : (codelist.getRootConceptId() == null ? null : Concepts.c(codelist.getRootConceptId()));
-    }
+		}
 
-    public String getWorldview() {
-        return codelist == null ? worldview : codelist.getWorldview();
-    }
+		return value == null ? null : mappings.inverseBidiMap().get(value.toString());
+	}
 
-    public IArtifact.Type getType() {
-        return type;
-    }
+	public IConcept getRootConcept() {
+		return codelist == null ? rootConcept
+				: (codelist.getRootConceptId() == null ? null : Concepts.c(codelist.getRootConceptId()));
+	}
 
-    public String getDescription() {
-        return this.name;
-    }
+	public String getWorldview() {
+		return codelist == null ? worldview : codelist.getWorldview();
+	}
 
-    @Override
-    public String getName() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	public IArtifact.Type getType() {
+		return type;
+	}
 
-    @Override
-    public String getAuthorityId() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	public String getDescription() {
+		return this.name;
+	}
 
-    @Override
-    public boolean isAuthority() {
-        // TODO Auto-generated method stub
-        return false;
-    }
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public Collection<String> keys(Object value) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public String getAuthorityId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public String getPattern() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public boolean isAuthority() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Collection<String> keys(Object value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getPattern() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	@Override
 	public String getRootConceptId() {

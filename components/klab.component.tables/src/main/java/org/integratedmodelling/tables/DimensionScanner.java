@@ -156,6 +156,10 @@ public class DimensionScanner<T> {
 				 */
 				if ("YEAR".equals(definition[i]) && ITime.class.isAssignableFrom(cls)) {
 					mappings.add(new CodeList(Mapping.YEAR, null));
+				} else if ("PERIOD".equals(definition[i]) && ITime.class.isAssignableFrom(cls)) {
+					mappings.add(new CodeList(Mapping.PERIOD, ss[0]));
+					break;
+
 				} else if (Time.class.isAssignableFrom(cls)
 						&& org.integratedmodelling.klab.Time.INSTANCE.isTimePattern(definition[i])) {
 					mappings.add(new CodeList(Mapping.DATE_PATTERN, definition[i]));

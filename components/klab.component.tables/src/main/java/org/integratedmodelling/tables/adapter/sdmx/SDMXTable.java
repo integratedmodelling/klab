@@ -12,7 +12,7 @@ public class SDMXTable extends AbstractTable<Object> {
     public SDMXTable(IResource resource, IMonitor monitor) {
         super(resource, Object.class, monitor);
     }
-
+    
     @Override
     public List<Object> getRowItems(Object rowLocator) {
         // TODO Auto-generated method stub
@@ -39,8 +39,9 @@ public class SDMXTable extends AbstractTable<Object> {
 
     @Override
     protected AbstractTable<Object> copy() {
-        // TODO Auto-generated method stub
-        return null;
+        return new SDMXTable(resource, monitor);
     }
 
+    
+    
 }
