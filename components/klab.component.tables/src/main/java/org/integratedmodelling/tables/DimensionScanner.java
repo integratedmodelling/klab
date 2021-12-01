@@ -220,8 +220,13 @@ public class DimensionScanner<T> {
 
 		} else if (this.columnName != null) {
 
+			Object[] cols = new Object[] {this.columnName};
+			if (this.columnName.contains(",")) {
+				cols = this.columnName.split(",");
+			}
+			
 			Set<Object> items = new LinkedHashSet<>();
-			for (Object o : table.resetFilters().asList(this.columnName)) {
+			for (Object o : table.resetFilters().asList(cols)) {
 				if (Observations.INSTANCE.isData(o)) {
 					items.add(o);
 				}

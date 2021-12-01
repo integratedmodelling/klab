@@ -886,6 +886,8 @@ public enum Resources implements IResourceService {
                                 project.getName() + "/resources/" + builder.getResourceId() + "/"
                                         + MiscUtilities.getFileName(f));
                     }
+                } else {
+                	Logging.INSTANCE.error("resource " + source + " was not imported due to errors in the import process");
                 }
 
                 // NB: should never be null but it is

@@ -430,7 +430,8 @@ public abstract class AbstractTable<T> implements ITable<T> {
 
 		int row = -1;
 		int col = -1;
-
+		int cl2 = -1;
+		
 		if (this.lastScannedIndices != null) {
 			this.lastScannedIndices.clear();
 		}
@@ -439,6 +440,12 @@ public abstract class AbstractTable<T> implements ITable<T> {
 			if (locators.length == 2) {
 				row = getIndex(locators[0], 0);
 				col = getIndex(locators[1], 1);
+				
+				if (row < 0) {
+					// two columns
+					cl2 = getIndex(locators[0], 1);
+				}
+				
 			} else if (locators.length == 1) {
 				if (TableAdapter.COLUMN_HEADER_CATEGORIZABLE.equals(locators[0].toString())) {
 					List<T> ret = new ArrayList<>();
@@ -486,7 +493,11 @@ public abstract class AbstractTable<T> implements ITable<T> {
 			}
 		} else if (row < 0) {
 			// take all columns for a given row
-			ret.addAll(getColumnItems(col));
+			if (cl2 < 0) {
+				ret.addAll(getColumnItems(col));
+			} else {
+				ret.addAll(getColumnItems(new int[] {col, cl2}));
+			}
 		} else {
 			// return a list with a single element for row,col, no filtering
 			ret.add(getItem(row, col));

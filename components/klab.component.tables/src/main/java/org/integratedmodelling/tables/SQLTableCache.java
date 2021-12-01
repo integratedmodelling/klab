@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,6 +27,7 @@ import org.integratedmodelling.klab.persistence.h2.H2Database;
 import org.integratedmodelling.klab.persistence.h2.H2Database.DBIterator;
 import org.integratedmodelling.klab.persistence.h2.SQL;
 import org.integratedmodelling.klab.utils.Utils;
+import org.integratedmodelling.tables.DimensionScanner.Dimension;
 
 import tech.tablesaw.api.Table;
 
@@ -381,6 +383,20 @@ public class SQLTableCache {
 			return ret;
 		}
 		return field + " = " + SQL.wrapPOD(value);
+	}
+
+	public Iterator<Iterable<?>> iterator() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public List<Object> query(Object rowLocator, Dimension dimension) {
+		return null;
+	}
+
+	public Object query(Object rowLocator, Object columnLocator) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
