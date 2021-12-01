@@ -72,6 +72,8 @@ public interface IResourceValidator {
 	 * produce the resource to be published or to report any errors resulting from
 	 * unsuccessful validation.
 	 *
+	 * @param urn      the URN that will be assigned to the resource if the validator
+	 *                 succeeds. This should be used to create the resource builder.
 	 * @param url      the URL to the raw resource (normally a file resource). In
 	 *                 some situations, e.g. when wrapping service calls that are
 	 *                 not directly described by a single URL, this may be null and
@@ -84,7 +86,7 @@ public interface IResourceValidator {
 	 * @return a builder for the resource, containing any validation errors. Never
 	 *         null.
 	 */
-	Builder validate(URL url, IParameters<String> userData, IMonitor monitor);
+	Builder validate(String urn, URL url, IParameters<String> userData, IMonitor monitor);
 
 	/**
 	 * Called to revalidate a resource after an update done from the resource

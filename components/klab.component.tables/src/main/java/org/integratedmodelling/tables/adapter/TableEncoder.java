@@ -467,7 +467,7 @@ public class TableEncoder implements IResourceEncoder {
 	public void listDetail(IResource resource, OutputStream stream, boolean verbose, IMonitor monitor) {
 
 		OutputStreamWriter writer = new OutputStreamWriter(stream);
-		ITable<?> table = getTable(resource, monitor);
+		ITable<?> table = TableAdapter.getOriginalTable(resource, false, monitor);
 		
 		try {
 

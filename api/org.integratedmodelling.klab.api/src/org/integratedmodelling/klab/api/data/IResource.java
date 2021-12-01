@@ -368,7 +368,7 @@ public interface IResource extends IProvenance.Node, Serializable {
          * @param urn the resource URN to use
          * @return the built resource
          */
-        IResource build(String urn);
+        IResource build();
 
         /**
          * Set the adapter type of the built resource.
@@ -500,6 +500,13 @@ public interface IResource extends IProvenance.Node, Serializable {
          * @return
          */
         Builder withCategorizable(String id);
+
+        /**
+         * The builder knows in advance the URN for the prospective resource.
+         * 
+         * @return
+         */
+		String getUrn();
 
     }
 

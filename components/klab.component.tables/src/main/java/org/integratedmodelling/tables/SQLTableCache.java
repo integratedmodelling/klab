@@ -1,6 +1,7 @@
 package org.integratedmodelling.tables;
 
 import java.io.OutputStreamWriter;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,7 +46,7 @@ public class SQLTableCache {
 	int[] dimensions;
 	Map<String, String> sanitizedNames = new HashMap<>();
 
-	public static int createCache(String id, Table table, IMonitor monitor) {
+	public static long createCache(String id, Table table, IMonitor monitor) {
 
 		SQLTableCache cache = new SQLTableCache();
 		List<Attribute> sortedAttributes = TablesawTable.getAttributes(table);
@@ -56,16 +57,19 @@ public class SQLTableCache {
 		cache.dbname = cache.sanitize(id);
 		cache.sortedAttributes_ = sortedAttributes;
 		cache.database = H2Database.createPersistent(cache.dbname);
-		cache.createStructure();
-		return cache.loadData(new TablesawTable(table, monitor));
+		if (cache.isEmpty()) {
+			cache.createStructure();
+			cache.loadData(new TablesawTable(table, monitor));
+		}
+		return cache.database.countRows("data");
 	}
 
 	private SQLTableCache() {
 	}
 
-	public SQLTableCache(IResource resource) {
+	public SQLTableCache(IResource resource, String dbname) {
 
-		this.dbname = sanitize(resource.getUrn());
+		this.dbname = dbname;
 		this.resource = resource;
 		this.dimensions = new int[] { Integer.parseInt(resource.getParameters().get("rows.data").toString()),
 				Integer.parseInt(resource.getParameters().get("columns.data").toString()) };
@@ -152,7 +156,8 @@ public class SQLTableCache {
 	}
 
 	public boolean isEmpty() {
-		return database.countRows("data") <= 0;
+		long rows = database.countRows("data");
+		return rows <= 0;
 	}
 
 	private String sanitize(String urn) {
@@ -184,7 +189,7 @@ public class SQLTableCache {
 		List<String> fields = new ArrayList<>();
 
 		try {
-			
+
 			for (DBIterator res = database.query("SELECT * FROM data LIMIT " + (rows == 0 ? 1 : rows) + ";"); res
 					.hasNext(); res.advance()) {
 
@@ -201,10 +206,11 @@ public class SQLTableCache {
 					boolean firstfld = true;
 					for (String s : fields) {
 						writer.append((firstfld ? "" : ",") + res.result.getObject(s));
+						firstfld = false;
 					}
 					writer.append("\n");
 				}
-				
+
 				first = false;
 			}
 		} catch (Exception s) {
@@ -218,6 +224,7 @@ public class SQLTableCache {
 		// this.properties.put("dimensions",
 		// NumberUtils.toString(table.getDimensions()));
 		int row = 0;
+		Connection connection = database.getConnection();
 		for (Iterable<?> it : table) {
 			int col = 0;
 			String sql = "INSERT INTO data VALUES (" + row;
@@ -226,8 +233,14 @@ public class SQLTableCache {
 				col++;
 			}
 			sql += ");";
-			database.execute(sql);
+			database.execute(sql, connection);
 			row++;
+		}
+
+		try {
+			connection.commit();
+		} catch (SQLException e) {
+			throw new KlabStorageException(e);
 		}
 
 		return row;

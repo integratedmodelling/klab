@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.data.general.ITable;
+import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
@@ -30,8 +31,10 @@ import org.integratedmodelling.klab.rest.CodelistReference;
 import org.integratedmodelling.klab.rest.MappingReference;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Triple;
+import org.integratedmodelling.tables.DimensionScanner;
 import org.integratedmodelling.tables.SQLTableCache;
 import org.integratedmodelling.tables.TableInterpreter;
+import org.integratedmodelling.tables.adapter.TableAdapter;
 
 import it.bancaditalia.oss.sdmx.api.BaseObservation;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
@@ -140,8 +143,8 @@ public class SDMXInterpreter extends TableInterpreter {
 
 		}
 
-		columns.add(LongColumn.create("starttime"));
-		columns.add(LongColumn.create("endtime"));
+		columns.add(LongColumn.create("timestart"));
+		columns.add(LongColumn.create("timeend"));
 		columns.add(StringColumn.create("literaltime"));
 		columns.add(DoubleColumn.create("value"));
 
@@ -186,8 +189,8 @@ public class SDMXInterpreter extends TableInterpreter {
 					String value = t.getDimension(attribute);
 					row.setString(attribute, value);
 				}
-				row.setLong("starttime", time.getFirst().getMilliseconds());
-				row.setLong("endtime", time.getSecond().getMilliseconds());
+				row.setLong("timestart", time.getFirst().getMilliseconds());
+				row.setLong("timeend", time.getSecond().getMilliseconds());
 				row.setString("literaltime", observation.getTimeslot());
 				row.setDouble("value", observation.getValueAsDouble());
 			}
@@ -233,7 +236,7 @@ public class SDMXInterpreter extends TableInterpreter {
 		data.table.write().csv(Configuration.INSTANCE.getExportFile("undata_stuff.csv"));
 	}
 
-	public int synchronizeData(IResource resource, IMonitor monitor) {
+	public long synchronizeData(IResource resource, IMonitor monitor) {
 
 		monitor.info("Data cache in " + resource.getUrn() + " needs updating");
 		
@@ -267,7 +270,7 @@ public class SDMXInterpreter extends TableInterpreter {
 			Dataset data = getTimeseriesTable(providerId, dataflowId, query == null ? allQuery : query, sortedDimensions);
 			
 			monitor.info("Creating SQLDB cache...");
-			int rows = SQLTableCache.createCache(dataflowId, data.table, monitor);
+			long rows = SQLTableCache.createCache(resource.getUrn().replaceAll(":", "_"), data.table, monitor);
 			monitor.info("SQLDB cache created with " + rows + " rows of data");
 			monitor.info("SDMX dataflow " + providerId + "/" + dataflowId + " is available in local cache");
 
@@ -397,7 +400,7 @@ public class SDMXInterpreter extends TableInterpreter {
 				 * read this again.
 				 */
 				monitor.info("Creating SQLDB cache...");
-				int rows = SQLTableCache.createCache(dataflowId, data.table, monitor);
+				long rows = SQLTableCache.createCache(builder.getUrn().replaceAll(":", "_"), data.table, monitor);
 				monitor.info("SQLDB cache created with " + rows + " rows of data");
 				monitor.info("SDMX dataflow " + providerId + "/" + dataflowId + " is available in local cache");
 
@@ -448,7 +451,7 @@ public class SDMXInterpreter extends TableInterpreter {
 
 	@Override
 	public ITable<?> getTable(IResource resource, IGeometry geometry, IMonitor monitor) {
-		// TODO Auto-generated method stub
+		
 		SDMXTable table = new SDMXTable(resource, monitor);
 		if (table.isEmpty()) {
 			synchronizeData(resource, monitor);

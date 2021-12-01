@@ -27,9 +27,9 @@ import org.integratedmodelling.klab.utils.Path;
 public class FSCANValidator implements IResourceValidator {
 
 	@Override
-	public Builder validate(URL url, IParameters<String> userData, IMonitor monitor) {
+	public Builder validate(String urn, URL url, IParameters<String> userData, IMonitor monitor) {
 
-		IResource.Builder ret = Resources.INSTANCE.createResourceBuilder();
+		IResource.Builder ret = Resources.INSTANCE.createResourceBuilder(urn);
 
 		// TODO - start empty and populate by adding new resources.
 		ret.withGeometry(Geometry.scalar());

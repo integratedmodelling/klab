@@ -85,7 +85,7 @@ class CSVTable extends AbstractTable<Object> {
 	}
 
 	public CSVTable(IResource resource, IMonitor monitor) {
-		super(resource, Object.class, monitor);
+		super(resource, resource.getUrn().replaceAll(":", "_"), Object.class, monitor);
 		this.skipHeader = "true".equals(resource.getParameters().get("headers.columns").toString());
 		this.file = ((Resource) resource).getLocalFile("resource.file");
 	}

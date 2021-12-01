@@ -45,7 +45,7 @@ import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 public class WcsValidator implements IResourceValidator {
 
     @Override
-    public Builder validate(URL url, IParameters<String> userData, IMonitor monitor) {
+    public Builder validate(String urn, URL url, IParameters<String> userData, IMonitor monitor) {
 
         if (!canHandle(null, userData)) {
             throw new IllegalArgumentException("WCS specifications are invalid or incomplete");
@@ -83,7 +83,7 @@ public class WcsValidator implements IResourceValidator {
         }
         IGeometry geometry = layer.getGeometry();
 
-        return new ResourceBuilder().withParameters(userData).withParameter("transform", "").withType(Type.NUMBER)
+        return new ResourceBuilder(urn).withParameters(userData).withParameter("transform", "").withType(Type.NUMBER)
                 .withGeometry(geometry).withSpatialExtent(layer.getSpatialExtent());
     }
 

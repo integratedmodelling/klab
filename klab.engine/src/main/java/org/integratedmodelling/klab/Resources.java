@@ -750,7 +750,7 @@ public enum Resources implements IResourceService {
                 /*
                  * TODO use adapter metadata to validate the input before calling validate()
                  */
-                Builder builder = validator.validate(file == null ? null : file.toURI().toURL(), parameters,
+                Builder builder = validator.validate(urn, file == null ? null : file.toURI().toURL(), parameters,
                         monitor);
 
                 // add all history items
@@ -778,7 +778,7 @@ public enum Resources implements IResourceService {
 
                 resource = builder.withResourceVersion(version).withProjectName(project.getName())
                         .withParameters(parameters).withAdapterType(adapterType)
-                        .withLocalPath(project.getName() + "/resources/" + resourceDataDir).build(urn);
+                        .withLocalPath(project.getName() + "/resources/" + resourceDataDir).build();
 
                 resource.getExports().putAll(adapter.getImporter().getExportCapabilities(resource));
 
@@ -860,7 +860,7 @@ public enum Resources implements IResourceService {
 
             IResourceImporter importer = adapter.getImporter();
 
-            for (Builder builder : importer.importResources(source.toString(), parameters,
+            for (Builder builder : importer.importResources(source.toString(), project, parameters,
                     Klab.INSTANCE.getRootMonitor())) {
 
                 /*
@@ -896,7 +896,7 @@ public enum Resources implements IResourceService {
                         .withProjectName(project.getName()).withParameters(parameters)
                         .withAdapterType(adapter.getName())
                         .withLocalPath(project.getName() + "/resources/" + builder.getResourceId())
-                        .build(Urns.INSTANCE.getLocalUrn(builder.getResourceId(), project, owner));
+                        .build();
 
                 if (resource != null && !resource.hasErrors()) {
                     resource.getExports().putAll(adapter.getImporter().getExportCapabilities(resource));
@@ -1498,8 +1498,8 @@ public enum Resources implements IResourceService {
     }
 
     // @Override
-    public Builder createResourceBuilder() {
-        return new ResourceBuilder();
+    public Builder createResourceBuilder(String urn) {
+        return new ResourceBuilder(urn);
     }
 
     @Override

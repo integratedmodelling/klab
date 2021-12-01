@@ -41,13 +41,13 @@ public class WfsValidator extends VectorValidator {
 	private boolean swapLatlonAxes;
 
 	@Override
-	public IResource.Builder validate(URL url, IParameters<String> userData, IMonitor monitor) {
+	public IResource.Builder validate(String urn, URL url, IParameters<String> userData, IMonitor monitor) {
 
 		if (!canHandle(null, userData)) {
 			throw new IllegalArgumentException("WFS specifications are invalid or incomplete");
 		}
 		
-		IResource.Builder ret = Resources.INSTANCE.createResourceBuilder().withAdapterType("wfs");
+		IResource.Builder ret = Resources.INSTANCE.createResourceBuilder(urn).withAdapterType("wfs");
 		Version version = Version.create(userData.get("wfsVersion", "1.0.0"));
 
 		try {

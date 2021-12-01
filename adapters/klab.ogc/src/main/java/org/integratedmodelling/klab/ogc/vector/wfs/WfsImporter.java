@@ -18,6 +18,7 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
+import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
@@ -30,17 +31,19 @@ public class WfsImporter implements IResourceImporter {
 
 	WfsValidator validator = new WfsValidator();
 
-    @Override
-    public IResourceImporter withOption(String option, Object value) {
-        return this;
-    }
+	@Override
+	public IResourceImporter withOption(String option, Object value) {
+		return this;
+	}
 
 	@Override
-	public Collection<Builder> importResources(String importLocation, IParameters<String> userData, IMonitor monitor) {
+	public Collection<Builder> importResources(String importLocation, IProject project, IParameters<String> userData,
+			IMonitor monitor) {
 
 		List<Builder> ret = new ArrayList<>();
 
-		// TODO parse from parameter string - for now just force it. USE 1.0.0 OR THE WFS
+		// TODO parse from parameter string - for now just force it. USE 1.0.0 OR THE
+		// WFS
 		// AXIS SWAP WILL TAKE OVER ANY EFFORT TO CIRCUMVENT IT.
 		String wfsVersion = "1.0.0";
 		try {
@@ -53,13 +56,14 @@ public class WfsImporter implements IResourceImporter {
 				userData.remove(Resources.REGEX_ENTRY);
 			}
 			/*
-			 * capabilities will come with EPSG:4326 lat/lon in all services except 1.0.0. But fixing the mess
-			 * entails lots worse than the following line. For now just force 1.0.0 and screw it.
+			 * capabilities will come with EPSG:4326 lat/lon in all services except 1.0.0.
+			 * But fixing the mess entails lots worse than the following line. For now just
+			 * force 1.0.0 and screw it.
 			 */
 			// validator.swapLatlonAxes(!wfsVersion.equals("1.0.0"));
 
 			for (String layer : dataStore.getTypeNames()) {
-				
+
 				if (regex != null && !layer.matches(regex)) {
 					Logging.INSTANCE.info("layer " + layer + " doesn't match regex, skipped.");
 					continue;
@@ -73,10 +77,11 @@ public class WfsImporter implements IResourceImporter {
 					parameters.put("wfsVersion", wfsVersion);
 					parameters.put("wfsIdentifier", layer);
 
-					Builder builder = validator.validate(new URL(importLocation), parameters, monitor);
+					String layerId = layer.toLowerCase().replaceAll("__", ".").replaceAll("\\:", "_");
+					Builder builder = validator.validate(Resources.INSTANCE.createLocalResourceUrn(layerId, project),
+							new URL(importLocation), parameters, monitor);
 
 					if (builder != null) {
-						String layerId = layer.toLowerCase().replaceAll("__", ".").replaceAll("\\:", "_");
 						builder.withLocalName(layerId).setResourceId(layerId);
 						ret.add(builder.withParameters(parameters));
 					}
@@ -108,42 +113,42 @@ public class WfsImporter implements IResourceImporter {
 				&& lowurl.contains("service=wfs") && lowurl.contains("getcapabilities");
 	}
 
+	@Override
+	public List<Triple<String, String, String>> getExportCapabilities(IObservation observation) {
+		List<Triple<String, String, String>> ret = new ArrayList<>();
+		return ret;
+	}
 
-    @Override
-    public List<Triple<String, String, String>> getExportCapabilities(IObservation observation) {
-        List<Triple<String, String, String>> ret = new ArrayList<>();
-        return ret;
-    }
+	@Override
+	public File exportObservation(File file, IObservation observation, ILocator locator, String format,
+			IMonitor monitor) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public File exportObservation(File file, IObservation observation, ILocator locator, String format, IMonitor monitor) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public Map<String, String> getExportCapabilities(IResource resource) {
+		Map<String, String> ret = new HashMap<>();
+		return ret;
+	}
 
-    @Override
-    public Map<String, String> getExportCapabilities(IResource resource) {
-        Map<String, String> ret = new HashMap<>();
-        return ret;
-    }
+	@Override
+	public boolean exportResource(File file, IResource resource, String format) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
-    @Override
-    public boolean exportResource(File file, IResource resource, String format) {
-        // TODO Auto-generated method stub
-        return false;
-    }
+	@Override
+	public boolean importIntoResource(URL importLocation, IResource target, IMonitor monitor) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
-    @Override
-    public boolean importIntoResource(URL importLocation, IResource target, IMonitor monitor) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public boolean resourceCanHandle(IResource resource, String importLocation) {
-        // TODO Auto-generated method stub
-        return false;
-    }
+	@Override
+	public boolean resourceCanHandle(IResource resource, String importLocation) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
 	@Override
 	public boolean acceptsMultiple() {

@@ -286,12 +286,12 @@ public abstract class AbstractTable<T> implements ITable<T> {
 	private Map<String, CodeList> mappingCatalog = Collections.synchronizedMap(new HashMap<>());
 	Collection<Attribute> attributes;
 
-	public AbstractTable(IResource resource, Class<? extends T> cls, IMonitor monitor) {
+	public AbstractTable(IResource resource, String dbname, Class<? extends T> cls, IMonitor monitor) {
 		this.resource = resource;
 		this.attributes = resource.getAttributes();
 		this.valueClass = cls;
 		buildAttributeIndex();
-		this.cache_ = new SQLTableCache(resource);
+		this.cache_ = new SQLTableCache(resource, dbname);
 		this.monitor = monitor;
 	}
 

@@ -10,10 +10,14 @@ import org.integratedmodelling.tables.AbstractTable;
 public class SDMXTable extends AbstractTable<Object> {
 
     public SDMXTable(IResource resource, IMonitor monitor) {
-        super(resource, Object.class, monitor);
+        super(resource, resource.getUrn().replaceAll(":", "_"), Object.class, monitor);
     }
     
-    @Override
+    public SDMXTable(SDMXTable sdmxTable) {
+    	super(sdmxTable);
+	}
+
+	@Override
     public List<Object> getRowItems(Object rowLocator) {
         // TODO Auto-generated method stub
         return null;
@@ -39,7 +43,8 @@ public class SDMXTable extends AbstractTable<Object> {
 
     @Override
     protected AbstractTable<Object> copy() {
-        return new SDMXTable(resource, monitor);
+    	System.out.println("COCCODIO COPIA");
+        return new SDMXTable(this);
     }
 
     
