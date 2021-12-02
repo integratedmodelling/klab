@@ -116,6 +116,7 @@ public class TableEncoder implements IResourceEncoder {
 					String[] cc = collected.split(Pattern.quote("->"));
 					collected = cc[0];
 					for (int i = 1; i < cc.length; i++) {
+						// succeeds
 						CodeList cm = ((AbstractTable<?>) table).getMapping(cc[i]);
 						if (cm == null) {
 							throw new KlabValidationException("table resource refers to non-existent mapping " + cc[i]);
@@ -126,6 +127,7 @@ public class TableEncoder implements IResourceEncoder {
 
 				if ("header".equals(collected)) {
 
+					// adds stuff
 					for (Attribute attr : resource.getAttributes()) {
 						Object attrName = attr.getName();
 						for (CodeList m : collectedMappings) {

@@ -2273,6 +2273,9 @@ public enum Resources implements IResourceService {
             ret.setInverseMapping(new MappingReference());
             String pattern = Pattern.quote("->");
             ret.getDirectMapping().setKeyType(IArtifact.Type.TEXT);
+            ret.getDirectMapping().setValueType(ret.getType());
+            ret.getDirectMapping().setValueType(ret.getType());
+            ret.getDirectMapping().setKeyType(IArtifact.Type.TEXT);
             Set<String> keys = new HashSet<>();
             for (Object key : properties.keySet()) {
                 if (key.toString().startsWith("category.")) {
