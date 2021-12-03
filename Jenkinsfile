@@ -11,30 +11,36 @@ pipeline {
 
     parameters {
         string(name: 'BRANCH',
+            defaultValue: '',
             description :'Which branch should be used for the build?\n' + 
             'Empty is the default value and will generate build on the latest commit'
         )
 
         string(name: 'TAG',
+            defaultValue: '',
             description: 'Variable used for tagging the container images or generating ' +
             'a build based on a tagged commit.  Default is empty and the tag is determined ' +
             'by the most recent commit.'
         )   
 
         string(name: 'MINIO_HOST',
+            defaultValue: 'http://192.168.250.224:9000',
             description: 'Minio host used to archive files'
         )
 
         string(name: 'MINIO_CREDENTIALS',
+            defaultValue: 'bc42afcf-7037-4d23-a7cb-6c66b8a0aa45',
             description: 'Minio credentials used to be used by job'
         )
             
         string(name: 'REGISTRY_CREDENTIALS',
+            defaultValue: '83f9fb8b-e503-4566-9784-e80f2f2d7c64',
             description: 'Docker registry credentials used to be used by job'
         ) 
             
         string(
             name: 'GIT_CREDENTIALS',
+            defaultValue: '2f30d924-29e5-4235-b61f-a0dbe2bb7783',
             description: 'Git Credentials'
         )
     }
