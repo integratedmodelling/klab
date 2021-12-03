@@ -156,6 +156,11 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 		 */
 		public int startTick, endTick;
 
+		@Override
+		public String toString() {
+			return "Granule [dataFile=" + dataFile + ", multiplier=" + multiplier + ", layerName=" + layerName + "]";
+		}
+
 	}
 
 	/**
@@ -207,6 +212,11 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 			return ret.toString();
 		}
 
+		@Override
+		public String toString() {
+			return dump();
+		}
+
 		/**
 		 * Start any necessary processing, recording the ongoing operations so that
 		 * successive calls don't make a mess. If availability is delayed, exits after
@@ -215,15 +225,15 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 		 */
 		@Override
 		public AvailabilityReference buildCache() {
-			
+
 			AvailabilityReference ret = new AvailabilityReference();
 			ret.setRetryTimeSeconds(this.timeToAvailabilitySeconds);
-			
+
 			if (specialVariables.containsKey(this.variable)) {
 				ret.setAvailability(Availability.COMPLETE);
 				return ret;
 			}
-			
+
 			List<Integer> toDownload = new ArrayList<>();
 			List<Integer> candidates = new ArrayList<>();
 
@@ -325,12 +335,13 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 		@Override
 		public boolean execute(Urn urn, IGeometry geometry, Builder builder, IContextualizationScope scope) {
 
+			// FIXME remove
+			Logging.INSTANCE.info("entering strategy.execute()");
+
 			if (!(scope.getScale().getSpace() instanceof Space)
 					|| ((Space) scope.getScale().getSpace()).getGrid() == null) {
 				throw new KlabIllegalStateException("Copernicus adapter only support grid geometries for now");
 			}
-
-			scope.getMonitor().debug("datacube adapter: executing strategy: " + this.dump());
 
 			boolean first = true;
 			IGrid grid = ((Space) scope.getScale().getSpace()).getGrid();
@@ -342,12 +353,16 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 			 * no state for the variable: return
 			 */
 			if (stateName == null) {
+				// FIXME remove
+				Logging.INSTANCE.info("no state for variable: return w/o result");
 				return false;
 			}
 
 			IState state = scope.getArtifact(stateName, IState.class);
 			if (state == null) {
 				// this would be crazy
+				// FIXME remove
+				Logging.INSTANCE.info("named state does not exist: return w/o result");
 				return false;
 			}
 
@@ -375,10 +390,13 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 
 			for (Granule g : granules) {
 
+				// FIXME remove
+				Logging.INSTANCE.info("adding granule " + g);
+
 				if (specialVariables.containsKey(variable) && !g.dataFile.exists()) {
 					continue;
 				}
-				
+
 				if (!g.dataFile.exists()) {
 					if (g.multiplier == 1) {
 						scope.getMonitor().error("repository error: " + getName() + ": missing datafile "
@@ -420,7 +438,7 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 										* (aggregation == Aggregation.MEAN ? g.multiplier : 1.0);
 							}
 							data.set(d, xy);
-							
+
 						} else {
 
 							Double d = data.get(xy);

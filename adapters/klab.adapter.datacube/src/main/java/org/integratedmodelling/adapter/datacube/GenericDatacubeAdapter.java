@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.integratedmodelling.adapter.datacube.api.IDatacube.ObservationStrategy;
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -44,6 +45,9 @@ public abstract class GenericDatacubeAdapter implements IUrnAdapter {
     @Override
     public void encodeData(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope scope) {
 
+    	// FIXME remove
+    	Logging.INSTANCE.info("entering encodeData from " + urn);
+    	
         // just in case
         if (!getDatacube(urn).isOnline()) {
             scope.getMonitor().error("datacube is offline"
@@ -52,7 +56,14 @@ public abstract class GenericDatacubeAdapter implements IUrnAdapter {
 
         for (String variableName : getDatacube(urn).getVariableNames(urn)) {
 
+        	// FIXME remove
+        	Logging.INSTANCE.info("   building strategy for " + variableName);
+        	
             ObservationStrategy strategy = getDatacube(urn).getStrategy(variableName, geometry);
+
+        	// FIXME remove
+        	Logging.INSTANCE.info("strategy is " + strategy);
+
             
             if (strategy.getTimeToAvailabilitySeconds() < 0) {
                 scope.getMonitor().error(name + " adapter cannot fulfill request for " + urn + ": resource unavailable");
