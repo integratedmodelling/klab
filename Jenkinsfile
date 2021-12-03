@@ -145,7 +145,8 @@ pipeline {
                         echo "Tagged commit build"
                         env.TAG == LATEST_TAGGED_COMMIT
                     }
-
+                  
+                    env.BRANCH = BRANCH
                     currentBuild.description = "${BRANCH} build with container tag: ${env.TAG}"
                     
                 }
@@ -195,7 +196,7 @@ pipeline {
                 expression { return env.BRANCH.equalsIgnoreCase(env.DEVELOP) }
             }
             steps {
-                pushProducts(DEVELOP, kmodelers)
+                pushProducts(env.DEVELOP, kmodelers)
             }
         }
 
