@@ -267,5 +267,3 @@ def prepareKmodelersUpload(list, destination) {
         }
     }
 }
-
-
