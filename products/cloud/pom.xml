@@ -43,7 +43,7 @@
                     <to>
                         <image>${env.REGISTRY}/${env.ENGINE_CONTAINER}</image>
                         <tags>
-                        	<tag>${env.ENGINE_TAG}</tag>
+                        	<tag>${env.TAG}</tag>
 				    	</tags>
 				    	<auth>
 				    		<username>${env.USERNAME}</username>
