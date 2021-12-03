@@ -98,11 +98,12 @@ pipeline {
                         echo "branch paramatized"
                         sh "git checkout ${BRANCH}"
                         if (BRANCH.equalsIgnoreCase(MAIN)) {
-                            echo "latest"
+                            env.BRANCH = MAIN
                             env.TAG = "latest"
                         }
                         if (BRANCH.equalsIgnoreCase(env.DEVELOP)) {
                             env.TAG = BRANCH
+                            env.BRANCH = DEVELOP
                         }
                     }
                     //unparamatized checkout of latest commit
@@ -116,9 +117,11 @@ pipeline {
                         env.TAG = BRANCH.replace("/","-")
                         if (BRANCH == MAIN) {
                             env.TAG = "latest"
+                            env.BRANCH = MAIN
                         }
                         if (BRANCH == DEVELOP) {
                             env.TAG = BRANCH
+                            env.BRANCH = DEVELOP
                         }
                     }
 
@@ -145,7 +148,8 @@ pipeline {
                         echo "Tagged commit build"
                         env.TAG == LATEST_TAGGED_COMMIT
                     }
-
+                  
+                    env.BRANCH = BRANCH
                     currentBuild.description = "${BRANCH} build with container tag: ${env.TAG}"
                     
                 }
@@ -195,7 +199,7 @@ pipeline {
                 expression { return env.BRANCH.equalsIgnoreCase(env.DEVELOP) }
             }
             steps {
-                pushProducts(DEVELOP, kmodelers)
+                pushProducts(env.DEVELOP, kmodelers)
             }
         }
 
