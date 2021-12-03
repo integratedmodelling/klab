@@ -26,6 +26,7 @@ import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.auth.IActorIdentity;
 import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
 import org.integratedmodelling.klab.api.data.IQuantity;
+import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
@@ -126,7 +127,7 @@ public class RuntimeBehavior {
 			} else {
 
 				Object arg = evaluateArgument(0, scope);
-				if (arg instanceof Urn) {
+				if (arg instanceof Urn && arguments.getUnnamedArguments().size() == 1) {
 					try {
 						Future<IArtifact> future = ((Session) identity).getState().submit(((Urn) arg).getUrn());
 						IArtifact result = future.get();
@@ -147,6 +148,7 @@ public class RuntimeBehavior {
 					ITimePeriod time = null;
 					IObservable observable = null;
 					List<IExtent> extents = new ArrayList<>();
+					IResource resource = null;
 
 					// more: shapes, time res, time spans, etc
 					for (Object o : arguments.getUnnamedArguments()) {
@@ -178,14 +180,14 @@ public class RuntimeBehavior {
 					if (artifact != null) {
 						scale = spaceResolution == null ? Scale.create(artifact.getGeometry())
 								: Scale.create(artifact.getGeometry(), spaceResolution);
-					} 
-					
+					}
+
 					if (!extents.isEmpty()) {
 						if (scale == null) {
 							scale = Scale.create(extents);
 						} else {
 							for (IExtent extent : extents) {
-								((Scale)scale).mergeExtent(extent);
+								((Scale) scale).mergeExtent(extent);
 							}
 						}
 					}
@@ -241,7 +243,8 @@ public class RuntimeBehavior {
 	@Action(id = "submit", fires = Type.OBSERVATION, description = "Submit a URN for observation, either in the current context or creating one from the "
 			+ " current preferences. The session will add it to the observation queue and make the observation when possible. "
 			+ "When done, the correspondent artifact (or an error) will be fired. Before then, the action will fire WAITING when the task is "
-			+ "queued, STARTED when it starts computing, and ABORTED in case of error.")
+			+ "queued, STARTED when it starts computing, and ABORTED in case of error. Submit without arguments will set the context according to what"
+			+ "is specified in the session state.")
 
 	public static class Submit extends KlabActionExecutor {
 
@@ -269,6 +272,19 @@ public class RuntimeBehavior {
 						}, (task, exception) -> {
 							fire(Status.ABORTED, scope);
 						});
+			} else {
+				fire(Status.WAITING, scope);
+				identity.getParentIdentity(Session.class).getState().submit((task, observation) -> {
+					if (observation == null) {
+						fire(Status.STARTED, scope);
+					} else if (task.getMonitor().isInterrupted()) {
+						fire(Status.INTERRUPTED, scope);
+					} else {
+						fire(observation, scope);
+					}
+				}, (task, exception) -> {
+					fire(Status.ABORTED, scope);
+				});
 			}
 		}
 
