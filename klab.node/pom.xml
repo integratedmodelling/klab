@@ -25,8 +25,7 @@
 					<to>
 						<image>${env.REGISTRY}/${env.NODE_CONTAINER}</image>
 						<tags>
-							<tag>${env.NODE_TAG}</tag>
-							<tag>latest</tag>
+							<tag>${env.TAG}</tag>
 						</tags>
 						<auth>
 							<username>${env.USERNAME}</username>
