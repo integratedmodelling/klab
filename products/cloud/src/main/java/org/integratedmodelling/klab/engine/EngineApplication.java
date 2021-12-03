@@ -27,7 +27,6 @@ import org.springframework.web.client.RestTemplate;
 @EnableAutoConfiguration
 @EnableDiscoveryClient
 @ComponentScan
-@EnableAspectJAutoProxy
 public class EngineApplication {
 	
 	private ConfigurableApplicationContext context;
