@@ -24,7 +24,7 @@ pipeline {
         )   
 
         string(name: 'MINIO_HOST',
-            string defaultValue: '',
+            defaultValue: '',
             description: 'Minio host used to archive files'
         )
 
@@ -267,3 +267,4 @@ def prepareKmodelersUpload(list, destination) {
         }
     }
 }
+
