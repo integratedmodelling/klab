@@ -293,7 +293,7 @@ public class DimensionScanner<T> {
 			if (auxiliaryResource != null && spatialContextualizer == null) {
 
 				VisitingDataBuilder builder = new VisitingDataBuilder().keepStates(scope.getScale())
-						.startState("space");
+						.startState("space", null, scope);
 				IKlabData data = Resources.INSTANCE.getResourceData(auxiliaryResourceUrn, builder, scope.getScale(),
 						scope.getMonitor());
 				ret.spatialContextualizer = (IDataArtifact) data.getArtifact();
