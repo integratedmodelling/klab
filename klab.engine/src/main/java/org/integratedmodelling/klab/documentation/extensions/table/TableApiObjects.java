@@ -58,6 +58,9 @@ public class TableApiObjects {
                 return false;
             }
             Object comparison = ((TableDimension) what).getState(((IScale) this.locator).at((ILocator) locateFrom));
+            if (!(comparison instanceof IConcept)) {
+                return false;
+            } //if the comparison is unabled by the presence of nodata assumes no change 
             if (comparison != null && !(comparison instanceof IConcept)) {
                 return false;
             }
@@ -105,6 +108,7 @@ public class TableApiObjects {
             // if ((from.equals(to) && oFrom.equals(cTo) && oFrom.equals(cFrom)) --> true
             Object oFrom = ((TableDimension) from).getState(((IScale) this.locator).at((ILocator) locateFrom));
             return oFrom != null &&  oFrom.equals(cFrom) && !oFrom.equals(cTo); 
+//            return oFrom != null &&  (from.equals(to) ? oFrom.equals(cTo) : oFrom.equals(cFrom));
         }
 
         public Object getProperty(String state) {
