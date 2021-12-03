@@ -23,6 +23,7 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
 
 /**
@@ -59,12 +60,17 @@ public interface IKlabData {
 		 * to the previous when built.
 		 * 
 		 * @param name TODO
+		 * @param unit the unit this will be set in if predefined, which may need to be
+		 *             converted at the receiving end if the adapter isn't flexible. Can
+		 *             and should be null when appropriate.
+		 * @param the  scope must be passed in case there is an extensive unit and it
+		 *             needs to be matched to the extents of contextualization.
 		 * @return a builder on which the add() functions can be called.
 		 * @throws IllegalArgumentException if the state being build has a name not
 		 *                                  recognized by the context associated with
 		 *                                  this builder.
 		 */
-		Builder startState(String name);
+		Builder startState(String name, String unit, IContextualizationScope scope);
 
 		/**
 		 * Add a value to the state being defined by this builder. The state is added in

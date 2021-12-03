@@ -358,32 +358,38 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 				return false;
 			}
 
-			IState state = scope.getArtifact(stateName, IState.class);
-			if (state == null) {
-				// this would be crazy
-				// FIXME remove
-				Logging.INSTANCE.info("named state does not exist: return w/o result");
-				return false;
-			}
+			/**
+			 * FIXME this doesn't work with the remote adapter - there will be no state
+			 * there! Must set the original units in the builder, and convert when the
+			 * artifact is filled.
+			 */
+//			IState state = scope.getArtifact(stateName, IState.class);
+//			if (state == null) {
+//				// this would be crazy
+//				// FIXME remove
+//				Logging.INSTANCE.info("named state does not exist: return w/o result");
+//				return false;
+//			}
 
-			Builder stateBuilder = builder.startState(stateName);
+			IUnit originalUnit = getOriginalUnit(variable);
+			Builder stateBuilder = builder.startState(stateName, originalUnit == null ? null : originalUnit.toString(), scope);
 
 			Function<Number, Number> converter = null;
-			if (state.getObservable().getUnit() != null) {
-
-				/*
-				 * these are grids, so one cell is like any other w.r.t. spatial mediation;
-				 * compute the factor for the first cell and reuse it for speed.
-				 */
-				IScale conversionScale = Scale.create((IExtent) scope.getScale().getTime(),
-						(IExtent) scope.getScale().getSpace().iterator().next());
-				IUnit originalUnit = getOriginalUnit(variable);
-				IUnit targetUnit = state.getObservable().getUnit().contextualize(state.getObservable(),
-						conversionScale);
-				converter = (num) -> {
-					return targetUnit.convert(num, originalUnit);
-				};
-			}
+//			if (state.getObservable().getUnit() != null) {
+//
+//				/*
+//				 * these are grids, so one cell is like any other w.r.t. spatial mediation;
+//				 * compute the factor for the first cell and reuse it for speed.
+//				 */
+//				IScale conversionScale = Scale.create((IExtent) scope.getScale().getTime(),
+//						(IExtent) scope.getScale().getSpace().iterator().next());
+//				IUnit originalUnit = getOriginalUnit(variable);
+//				IUnit targetUnit = state.getObservable().getUnit().contextualize(state.getObservable(),
+//						conversionScale);
+//				converter = (num) -> {
+//					return targetUnit.convert(num, originalUnit);
+//				};
+//			}
 
 			double wsum = 0.0;
 			Aggregation aggregation = getAggregation(variable);

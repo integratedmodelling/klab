@@ -317,7 +317,7 @@ public class RandomAdapter implements IUrnAdapter {
 
     private void makeData(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope context) {
         Object distribution = getDistribution(urn);
-        Builder stateBuilder = builder.startState("result");
+        Builder stateBuilder = builder.startState("result", null, context);
         for (ILocator locator : geometry) {
             if (distribution instanceof RealDistribution) {
                 stateBuilder.add(((RealDistribution) distribution).sample());

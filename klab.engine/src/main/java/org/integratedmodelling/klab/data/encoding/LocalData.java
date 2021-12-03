@@ -14,12 +14,13 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
+import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.observations.IObservationGroup;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IObservationGroup;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -51,6 +52,8 @@ public class LocalData implements IKlabData {
     List<INotification> notifications = new ArrayList<>();
     boolean error = false;
     IConcept semantics = null;
+    IUnit originalUnit = null;
+    IUnit targetUnit = null;
 
     static Set<String> reservedFields = null;
 
@@ -100,6 +103,13 @@ public class LocalData implements IKlabData {
                     this.state = art;
                 } else {
                     ((Artifact) this.state).chain(art);
+                }
+                
+                if (state.containsKey("metadata")) {
+                	/*
+                	 * TODO check out units
+                	 */
+                	System.out.println("OST I METADATI CON LE UNITS");
                 }
 
             }
