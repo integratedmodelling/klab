@@ -150,7 +150,6 @@ pipeline {
                     }
                   
                     env.BRANCH = BRANCH
-                    echo "Need to delete"
                     currentBuild.description = "${BRANCH} build with container tag: ${env.TAG}"
                     
                 }
