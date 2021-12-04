@@ -148,7 +148,7 @@ public class EncodingDataBuilder implements IKlabData.Builder {
 		ret.stateBuilder = KlabData.State.newBuilder();
 		ret.stateBuilder.setName(name);
 		if (unit != null) {
-			ret.stateBuilder.getMetadataMap().put("originalUnit", unit);
+			ret.stateBuilder.putMetadata("originalUnit", unit);
 		}
 		return ret;
 	}
