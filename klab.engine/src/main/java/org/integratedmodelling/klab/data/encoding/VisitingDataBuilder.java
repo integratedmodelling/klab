@@ -11,6 +11,7 @@ import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
@@ -95,7 +96,7 @@ public class VisitingDataBuilder implements IKlabData.Builder {
 	}
 
 	@Override
-	public VisitingDataBuilder startState(String name) {
+	public VisitingDataBuilder startState(String name, String unit, IContextualizationScope scope) {
 		return new VisitingDataBuilder(this, new Descriptor(name, null, this.geometry, false));
 	}
 

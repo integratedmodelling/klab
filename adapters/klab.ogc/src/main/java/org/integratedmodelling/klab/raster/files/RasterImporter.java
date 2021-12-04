@@ -65,10 +65,10 @@ public class RasterImporter extends AbstractFilesetImporter {
     }
 
     @Override
-    protected Builder importFile(File file, IParameters<String> userData, IMonitor monitor) {
+    protected Builder importFile(String urn, File file, IParameters<String> userData, IMonitor monitor) {
         try {
 
-            Builder builder = validator.validate(file.toURI().toURL(), userData, monitor);
+            Builder builder = validator.validate(urn, file.toURI().toURL(), userData, monitor);
 
             if (builder != null) {
                 String layerId = MiscUtilities.getFileBaseName(file).toLowerCase();

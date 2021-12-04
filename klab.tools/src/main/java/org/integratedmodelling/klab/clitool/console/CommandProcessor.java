@@ -183,7 +183,6 @@ public class CommandProcessor extends org.integratedmodelling.klab.clitool.contr
                 }
             }
         }
-
     }
 
     private Object execute(Command command, String pack) throws Exception {

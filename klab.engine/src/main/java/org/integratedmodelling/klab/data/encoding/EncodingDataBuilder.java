@@ -10,6 +10,7 @@ import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.common.Offset;
@@ -33,6 +34,8 @@ public class EncodingDataBuilder implements IKlabData.Builder {
 	KlabData.State.Builder stateBuilder = null;
 	KlabData.Object.Builder objectBuilder = null;
 	EncodingDataBuilder parent = null;
+	String stateUnit;
+
 	private IConcept semantics;
 
 	public EncodingDataBuilder() {
@@ -42,7 +45,7 @@ public class EncodingDataBuilder implements IKlabData.Builder {
 
 		private int waitTime;
 
-        @Override
+		@Override
 		public void info(Object... info) {
 			Notification.Builder nb = Notification.newBuilder();
 			nb.setSeverity(Severity.INFO);
@@ -104,27 +107,27 @@ public class EncodingDataBuilder implements IKlabData.Builder {
 		@Override
 		public void post(Consumer<IMessage> handler, Object... message) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
-        @Override
-        public void addWait(int seconds) {
-            // TODO improve with specific messages
-            this.waitTime = seconds;
-            warn("Please try this operation again in " + seconds + " seconds");
-        }
+		@Override
+		public void addWait(int seconds) {
+			// TODO improve with specific messages
+			this.waitTime = seconds;
+			warn("Please try this operation again in " + seconds + " seconds");
+		}
 
-        @Override
-        public int getWaitTime() {
-            // TODO Auto-generated method stub
-            return this.waitTime;
-        }
+		@Override
+		public int getWaitTime() {
+			// TODO Auto-generated method stub
+			return this.waitTime;
+		}
 
 	}
-	
+
 	/**
-	 * Use this monitor to build a context that will notify any notification to
-	 * the underlying KlabData object.
+	 * Use this monitor to build a context that will notify any notification to the
+	 * underlying KlabData object.
 	 * 
 	 * @return
 	 */
@@ -140,10 +143,13 @@ public class EncodingDataBuilder implements IKlabData.Builder {
 	}
 
 	@Override
-	public Builder startState(String name) {
+	public Builder startState(String name, String unit, IContextualizationScope scope) {
 		EncodingDataBuilder ret = new EncodingDataBuilder(this);
 		ret.stateBuilder = KlabData.State.newBuilder();
 		ret.stateBuilder.setName(name);
+		if (unit != null) {
+			ret.stateBuilder.getMetadataMap().put("originalUnit", unit);
+		}
 		return ret;
 	}
 
@@ -236,7 +242,7 @@ public class EncodingDataBuilder implements IKlabData.Builder {
 			}
 		}
 	}
-	
+
 	@Override
 	public Builder withSemantics(IConcept semantics) {
 		this.semantics = semantics;

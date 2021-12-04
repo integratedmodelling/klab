@@ -39,6 +39,7 @@ import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
@@ -77,9 +78,9 @@ import org.locationtech.jts.simplify.TopologyPreservingSimplifier;
 public class VectorValidator implements IResourceValidator {
 
 	@Override
-	public IResource.Builder validate(URL url, IParameters<String> userData, IMonitor monitor) {
+	public IResource.Builder validate(String urn, URL url, IParameters<String> userData, IMonitor monitor) {
 
-		IResource.Builder ret = Resources.INSTANCE.createResourceBuilder();
+		IResource.Builder ret = Resources.INSTANCE.createResourceBuilder(urn);
 
 		try {
 
@@ -98,7 +99,7 @@ public class VectorValidator implements IResourceValidator {
 
 			// TODO check and honor any charset in the resource. This could be the default.
 			map.put(ShapefileDataStoreFactory.DBFCHARSET.key, "UTF-8");
-			
+
 			DataStore dataStore = DataStoreFinder.getDataStore(map);
 			String typeName = dataStore.getTypeNames()[0];
 			FeatureSource<SimpleFeatureType, SimpleFeature> source = dataStore.getFeatureSource(typeName);
@@ -121,6 +122,12 @@ public class VectorValidator implements IResourceValidator {
 		Filter filter = Filter.INCLUDE;
 		FeatureCollection<SimpleFeatureType, SimpleFeature> collection = source.getFeatures(filter);
 		String geomName = source.getSchema().getGeometryDescriptor().getName().toString();
+
+		/**
+		 * The property can be used to force a default dimensionality when the layer does not advertise it.
+		 */
+		int defaultDimensionality = Integer
+				.parseInt(Configuration.INSTANCE.getProperty("klab.vector.default.dimensionality", "-1"));
 
 		ReferencedEnvelope envelope = source.getBounds();
 		CoordinateReferenceSystem crs = collection.getSchema().getCoordinateReferenceSystem();
@@ -164,6 +171,8 @@ public class VectorValidator implements IResourceValidator {
 						shapeDimension = 2;
 					} else if (Arrays.contains(ad.getType().getBinding().getInterfaces(), Puntal.class)) {
 						shapeDimension = 0;
+					} else if (defaultDimensionality >= 0) {
+						shapeDimension = defaultDimensionality;
 					} else {
 						ret.addError("cannot establish geometry dimensionality for vector resource");
 					}
@@ -193,7 +202,7 @@ public class VectorValidator implements IResourceValidator {
 						Object shape = feature.getDefaultGeometryProperty().getValue();
 						if (shape instanceof org.locationtech.jts.geom.Geometry) {
 							geometry = geometry == null ? (org.locationtech.jts.geom.Geometry) shape
-									: geometry.union(( org.locationtech.jts.geom.Geometry) shape);
+									: geometry.union((org.locationtech.jts.geom.Geometry) shape);
 						}
 					}
 				}

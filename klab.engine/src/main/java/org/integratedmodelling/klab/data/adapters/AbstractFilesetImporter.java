@@ -9,8 +9,10 @@ import java.util.List;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
+import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 
@@ -27,30 +29,30 @@ public abstract class AbstractFilesetImporter implements IResourceImporter {
 	 * @param monitor
 	 * @return a builder for the resource or null.
 	 */
-	protected abstract Builder importFile(File file, IParameters<String> userData, IMonitor monitor);
+	protected abstract Builder importFile(String urn, File file, IParameters<String> userData, IMonitor monitor);
 	
 	protected AbstractFilesetImporter(String[] recognizedExtensions) {
 		this.recognizedExtensions = recognizedExtensions;
 	}
 
 	@Override
-	public Collection<Builder> importResources(String importLocation, IParameters<String> userData, IMonitor monitor) {
+	public Collection<Builder> importResources(String importLocation, IProject project, IParameters<String> userData, IMonitor monitor) {
 		List<Builder> ret = new ArrayList<>();
 		File file = getFile(importLocation);
 		if (file != null && file.isDirectory()) {
-			scanDirectory(file, userData, ret, monitor);
+			scanDirectory(file, project, userData, ret, monitor);
 		}
 		return ret;
 	}
 
-	private void scanDirectory(File directory, IParameters<String> userData, List<Builder> ret, IMonitor monitor) {
+	private void scanDirectory(File directory, IProject project, IParameters<String> userData, List<Builder> ret, IMonitor monitor) {
 		for (File file : directory.listFiles()) {
 			if (file.isDirectory()) {
-				scanDirectory(file, userData, ret, monitor);
+				scanDirectory(file, project, userData, ret, monitor);
 			} else if (file.canRead()) {
 				for (String s : recognizedExtensions) {
 					if (MiscUtilities.getFileExtension(file).equals(s)) {
-						Builder builder = importFile(file, userData, monitor);
+						Builder builder = importFile(Resources.INSTANCE.createLocalResourceUrn(MiscUtilities.getFileName(file), project), file, userData, monitor);
 						if (builder != null) {
 							ret.add(builder);
 						}

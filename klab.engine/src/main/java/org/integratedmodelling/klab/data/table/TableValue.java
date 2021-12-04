@@ -117,4 +117,10 @@ public class TableValue<T> implements ITable<T> {
         return null;
     }
 
+	@Override
+	public int[] size() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

@@ -23,8 +23,7 @@ public interface ITable<T> extends Iterable<Iterable<?>> {
 	interface Filter {
 		public enum Type {
 			COLUMN_HEADER, ROW_HEADER/* , ATTRIBUTE_VALUE */, INCLUDE_COLUMNS/* , EXCLUDE_COLUMNS */,
-			INCLUDE_ROWS/* , EXCLUDE_ROWS */,
-			NO_RESULTS, COLUMN_EXPRESSION, COLUMN_MATCH, ROW_MATCH
+			INCLUDE_ROWS/* , EXCLUDE_ROWS */, NO_RESULTS, COLUMN_EXPRESSION, COLUMN_MATCH, ROW_MATCH
 		}
 
 		Type getType();
@@ -56,13 +55,21 @@ public interface ITable<T> extends Iterable<Iterable<?>> {
 	}
 
 	/**
-	 * The table dimensions. Could be >2 in length for a generic datacube, although
-	 * at the moment not everything is ready for that kind of use and individual
-	 * adapter may expect dimensionality <= 2.
+	 * The table dimensions, i.e. rows by the number of <em>value</em> columns.
+	 * Could be >2 in length for a generic datacube, although at the moment not
+	 * everything is ready for that kind of use and individual adapter may expect
+	 * dimensionality <= 2.
 	 * 
 	 * @return
 	 */
 	int[] getDimensions();
+
+	/**
+	 * Size in terms of n. of rows and columns, independent of dimensions.
+	 * 
+	 * @return
+	 */
+	int[] size();
 
 	/**
 	 * Typed version of get(), which should endeavor to make any meaningful

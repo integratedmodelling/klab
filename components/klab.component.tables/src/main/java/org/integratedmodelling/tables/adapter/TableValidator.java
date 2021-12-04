@@ -37,9 +37,9 @@ public class TableValidator implements IResourceValidator {
 	}
 
 	@Override
-	public Builder validate(URL url, IParameters<String> userData, IMonitor monitor) {
+	public Builder validate(String urn, URL url, IParameters<String> userData, IMonitor monitor) {
 
-		IResource.Builder ret = Resources.INSTANCE.createResourceBuilder();
+		IResource.Builder ret = Resources.INSTANCE.createResourceBuilder(urn);
 
 		if (url != null) {
 			userData.put(FILE_URL, url);

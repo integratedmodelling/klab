@@ -192,6 +192,112 @@ public class SessionState extends Parameters<String> implements ISessionState {
 		return submit(urn, null, null);
 	}
 
+//	@Override
+	public Future<IArtifact> submit(BiConsumer<ITaskIdentity, IArtifact> observationListener,
+			BiConsumer<ITaskIdentity, Throwable> errorListener) {
+
+		final SessionActivity activity = new SessionActivity();
+
+		activity.setUser(session.getParentIdentity(IUserIdentity.class).getUsername());
+		activity.setSessionId(session.getId());
+
+		IGeometry geometry = getGeometry();
+
+		if (geometry == null) {
+			throw new KlabContextualizationException("Not enough predefined information to create a context");
+		}
+
+		/**
+		 * Submit all we know about the context. TODO metadata should contain provenance
+		 * info about the choices made to get here.
+		 */
+		Observer observer = Observations.INSTANCE.makeROIObserver(scaleOfInterest.getName(), geometry, new Metadata());
+		List<BiConsumer<ITaskIdentity, IArtifact>> oListeners = new ArrayList<>();
+		List<BiConsumer<ITaskIdentity, Throwable>> eListeners = new ArrayList<>();
+
+		oListeners.add((task, observation) -> {
+
+			if (this.currentActivity != null) {
+				activity.setContextId(this.currentActivity.getContextId());
+			}
+
+			if (observation == null) {
+				/*
+				 * task has started; record geometry (proxy to size). TODO tap into provenance
+				 * to report resources used and results.
+				 */
+				IGeometry geom = getGeometry();
+				activity.setStart(System.currentTimeMillis());
+				if (this.currentActivity.getGeometrySet() == null && geom != null) {
+					this.currentActivity.setGeometrySet(geom.encode());
+				}
+				activity.setActivityId(task.getId());
+
+			} else {
+				/*
+				 * activity ended successfully - TODO report actual computational load
+				 */
+				activity.setEnd(System.currentTimeMillis());
+				activity.setStatus(DataflowState.Status.FINISHED);
+
+				if (this.currentActivity != null
+						&& activity.getActivityId().equals(this.currentActivity.getActivityId())) {
+					this.currentActivity.setContextId(observation.getId());
+					this.historyByContext.put(observation.getId(), activity);
+				}
+
+				for (ListenerWrapper listener : listeners.values()) {
+					if (this.currentActivity != null) {
+						listener.listener.historyChanged(this.currentActivity,
+								activity.getActivityId().equals(this.currentActivity.getActivityId()) ? null
+										: activity);
+					}
+				}
+			}
+		});
+
+		eListeners.add((task, error) -> {
+
+			/*
+			 * activity ended with error - TODO report actual computational load
+			 */
+			activity.setEnd(System.currentTimeMillis());
+			activity.setStatus(DataflowState.Status.FINISHED);
+			activity.setStackTrace(ExceptionUtils.getStackTrace(error));
+
+			for (ListenerWrapper listener : listeners.values()) {
+				if (this.currentActivity != null) {
+					listener.listener.historyChanged(this.currentActivity,
+							activity.getActivityId().equals(this.currentActivity.getActivityId()) ? null : activity);
+				}
+			}
+
+		});
+
+		/*
+		 * goes into executor; next one won't exec before this is finished. Only call
+		 * the obs listener at the beginning of the contextualization.
+		 */
+		List<BiConsumer<ITaskIdentity, IArtifact>> ctxListeners = new ArrayList<>(oListeners);
+		ctxListeners.add((tsk, obs) -> {
+			if (obs == null && observationListener != null) {
+				observationListener.accept(tsk, obs);
+			}
+		});
+
+		Future<IArtifact> task = new ObserveContextTask(this.session, observer, scenarios, ctxListeners, eListeners,
+				executor, activity);
+		try {
+			this.scaleOfInterest.setShape(null);
+			this.context.push((ISubject) task.get());
+		} catch (InterruptedException | ExecutionException e) {
+			// just return
+		}
+
+		return task;
+
+	}
+
 	public Future<IArtifact> submit(String urn, BiConsumer<ITaskIdentity, IArtifact> observationListener,
 			BiConsumer<ITaskIdentity, Throwable> errorListener) {
 

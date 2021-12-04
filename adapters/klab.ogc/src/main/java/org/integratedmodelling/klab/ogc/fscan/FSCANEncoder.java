@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.ogc.fscan;
 
 import java.io.File;
+import java.io.OutputStream;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -229,6 +230,12 @@ public class FSCANEncoder implements IResourceEncoder {
 	public ICodelist categorize(IResource resource, String attribute, IMonitor monitor) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void listDetail(IResource resource, OutputStream stream, boolean verbose, IMonitor monitor) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

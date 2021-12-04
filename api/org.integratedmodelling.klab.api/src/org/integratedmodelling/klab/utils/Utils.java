@@ -197,11 +197,11 @@ public class Utils {
 			return Integer.parseInt(value);
 		} catch (Throwable e) {
 		}
-        try {
-            return Long.parseLong(value);
-        } catch (Throwable e) {
-        }
-        try {
+		try {
+			return Long.parseLong(value);
+		} catch (Throwable e) {
+		}
+		try {
 			return Double.parseDouble(value);
 		} catch (Throwable e) {
 		}
@@ -287,6 +287,7 @@ public class Utils {
 			}
 		}
 
+		
 		if (cls.equals(List.class)) {
 			List<Object> list = new ArrayList<>();
 			if (ret instanceof Collection) {
@@ -375,9 +376,15 @@ public class Utils {
 			if (cls.equals(Boolean.class)) {
 				return (T) new Boolean(Boolean.parseBoolean((String) ret));
 			}
+			if (cls.equals(IConcept.class)) {
+				IConceptService service = Services.INSTANCE.getService(IConceptService.class);
+				if (service != null) {
+					return (T)service.declare(service.declare(ret.toString()));
+				}
+			}
 		}
 
-		throw new KlabIllegalArgumentException("cannot interpret value " + ret + " as a " + cls.getCanonicalName());
+			throw new KlabIllegalArgumentException("cannot interpret value " + ret + " as a " + cls.getCanonicalName());
 	}
 
 	public static <T> T parseAsType(String ret, Class<?> cls) {
@@ -393,21 +400,21 @@ public class Utils {
 			if (cls.equals(Long.class)) {
 				if (ret.contains(".") || ret.contains("E")) {
 					// fix legacy issues
-					ret = ""+ new Double(Double.parseDouble(ret)).longValue();
+					ret = "" + new Double(Double.parseDouble(ret)).longValue();
 				}
 				return (T) new Long(Long.parseLong(ret));
 			}
 			if (cls.equals(Integer.class)) {
 				if (ret.contains(".") || ret.contains("E")) {
 					// fix legacy issues
-					ret = ""+ new Double(Double.parseDouble(ret)).intValue();
+					ret = "" + new Double(Double.parseDouble(ret)).intValue();
 				}
 				return (T) new Integer(Integer.parseInt(ret));
 			}
 			if (cls.equals(Short.class)) {
 				if (ret.contains(".") || ret.contains("E")) {
 					// fix legacy issues
-					ret = ""+ new Double(Double.parseDouble(ret)).shortValue();
+					ret = "" + new Double(Double.parseDouble(ret)).shortValue();
 				}
 				return (T) new Short(Short.parseShort(ret));
 			}

@@ -76,10 +76,16 @@ public class ResourceBuilder implements IResource.Builder {
 	private String resourceId;
 	private List<File> importedFiles = new ArrayList<>();
 	private SpatialExtent spatialExtent;
+	
+	private String urn;
 
+	public ResourceBuilder(String urn) {
+		this.urn = urn;
+	}
+	
 	/** {@inheritDoc} */
 	@Override
-	public IResource build(String urn) {
+	public IResource build() {
 
 		Resource ret = new Resource();
 		ret.urn = urn;
@@ -318,4 +324,9 @@ public class ResourceBuilder implements IResource.Builder {
         this.codelists.add(codelist);
         return this;
     }
+
+	@Override
+	public String getUrn() {
+		return this.urn;
+	}
 }

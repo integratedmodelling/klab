@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
+import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
@@ -30,13 +31,14 @@ public class WcsImporter implements IResourceImporter {
 
 	WcsValidator validator = new WcsValidator();
 
-    @Override
-    public IResourceImporter withOption(String option, Object value) {
-        return this;
-    }
+	@Override
+	public IResourceImporter withOption(String option, Object value) {
+		return this;
+	}
 
 	@Override
-	public Collection<Builder> importResources(String importLocation, IParameters<String> userData, IMonitor monitor) {
+	public Collection<Builder> importResources(String importLocation, IProject project, IParameters<String> userData,
+			IMonitor monitor) {
 		List<Builder> ret = new ArrayList<>();
 		// TODO parse from parameter string - for now just force it
 		String wcsVersion = "2.0.1";
@@ -60,16 +62,19 @@ public class WcsImporter implements IResourceImporter {
 					continue;
 				}
 				try {
-					
+
 					Parameters<String> parameters = new Parameters<>();
 					parameters.putAll(userData);
 					parameters.put("serviceUrl", importLocation);
 					parameters.put("wcsVersion", wcsVersion);
 					parameters.put("wcsIdentifier", layer.getIdentifier());
-					Builder builder = validator.validate(new URL(importLocation), parameters, monitor);
+
+					String layerId = layer.getIdentifier().toLowerCase().replaceAll("__", ".");
+
+					Builder builder = validator.validate(Resources.INSTANCE.createLocalResourceUrn(layerId, project),
+							new URL(importLocation), parameters, monitor);
 
 					if (builder != null) {
-						String layerId = layer.getIdentifier().toLowerCase().replaceAll("__", ".");
 						builder.withLocalName(layerId).setResourceId(layerId);
 						ret.add(builder);
 					}
@@ -102,43 +107,43 @@ public class WcsImporter implements IResourceImporter {
 		return url != null && url.getProtocol().startsWith("http") && lowurl.contains("?")
 				&& lowurl.contains("service=wcs") && lowurl.contains("getcapabilities");
 	}
-	
 
-    @Override
-    public List<Triple<String, String, String>> getExportCapabilities(IObservation observation) {
-        List<Triple<String, String, String>> ret = new ArrayList<>();
-        return ret;
-    }
+	@Override
+	public List<Triple<String, String, String>> getExportCapabilities(IObservation observation) {
+		List<Triple<String, String, String>> ret = new ArrayList<>();
+		return ret;
+	}
 
-    @Override
-    public File exportObservation(File file, IObservation observation, ILocator locator, String format, IMonitor monitor) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public File exportObservation(File file, IObservation observation, ILocator locator, String format,
+			IMonitor monitor) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public Map<String, String> getExportCapabilities(IResource resource) {
-        Map<String, String> ret = new HashMap<>();
-        return ret;
-    }
+	@Override
+	public Map<String, String> getExportCapabilities(IResource resource) {
+		Map<String, String> ret = new HashMap<>();
+		return ret;
+	}
 
-    @Override
-    public boolean exportResource(File file, IResource resource, String format) {
-        // TODO Auto-generated method stub
-        return false;
-    }
+	@Override
+	public boolean exportResource(File file, IResource resource, String format) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
-    @Override
-    public boolean importIntoResource(URL importLocation, IResource target, IMonitor monitor) {
-        // TODO Auto-generated method stub
-        return false;
-    }
+	@Override
+	public boolean importIntoResource(URL importLocation, IResource target, IMonitor monitor) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
-    @Override
-    public boolean resourceCanHandle(IResource resource, String importLocation) {
-        // TODO Auto-generated method stub
-        return false;
-    }
+	@Override
+	public boolean resourceCanHandle(IResource resource, String importLocation) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
 	@Override
 	public boolean acceptsMultiple() {

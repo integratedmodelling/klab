@@ -15,6 +15,7 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
+import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.resources.Resource;
@@ -34,7 +35,7 @@ public class FSCANImporter implements IResourceImporter {
 	}
 
 	@Override
-	public Collection<Builder> importResources(String importLocation, IParameters<String> userData, IMonitor monitor) {
+	public Collection<Builder> importResources(String importLocation, IProject project, IParameters<String> userData, IMonitor monitor) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -43,7 +44,7 @@ public class FSCANImporter implements IResourceImporter {
 	public boolean importIntoResource(URL importLocation, IResource target, IMonitor monitor) {
 		if (vectorValidator.canHandle(new File(importLocation.getFile()), null)) {
 
-			Builder builder = vectorValidator.validate(importLocation, target.getParameters(), monitor);
+			Builder builder = vectorValidator.validate(target.getUrn(), importLocation, target.getParameters(), monitor);
 			if (!builder.hasErrors()) {
 
 				File originalFile = new File(importLocation.getFile());

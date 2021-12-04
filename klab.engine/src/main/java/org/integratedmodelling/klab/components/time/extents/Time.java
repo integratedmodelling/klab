@@ -1111,7 +1111,7 @@ public class Time extends Extent implements ITime {
         }
 
         args.add("type");
-        args.add(extentType.name());
+        args.add(extentType == null ? ITime.Type.LOGICAL : extentType.name());
 
         return new KimServiceCall("time", args.toArray());
     }

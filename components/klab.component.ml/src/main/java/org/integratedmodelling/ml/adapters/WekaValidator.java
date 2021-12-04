@@ -29,9 +29,9 @@ import weka.classifiers.bayes.BayesNet;
 public class WekaValidator implements IResourceValidator {
 
 	@Override
-	public Builder validate(URL url, IParameters<String> userData, IMonitor monitor) {
+	public Builder validate(String urn, URL url, IParameters<String> userData, IMonitor monitor) {
 
-		IResource.Builder ret = Resources.INSTANCE.createResourceBuilder().withType(IArtifact.Type.VALUE);
+		IResource.Builder ret = Resources.INSTANCE.createResourceBuilder(urn).withType(IArtifact.Type.VALUE);
 
 		try {
 

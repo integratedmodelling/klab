@@ -9,6 +9,7 @@ import java.util.Map;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.utils.Triple;
@@ -54,11 +55,12 @@ public interface IResourceImporter {
      * resources by name
      * 
      * @param importLocation
+     * @param project 
      * @param userData
      * @param monitor
      * @return builders for all found resources, possibly with errors.
      */
-    Collection<IResource.Builder> importResources(String importLocation, IParameters<String> userData, IMonitor monitor);
+    Collection<IResource.Builder> importResources(String importLocation, IProject project, IParameters<String> userData, IMonitor monitor);
 
     /**
      * Import the resources from the passed location into an existing resource.

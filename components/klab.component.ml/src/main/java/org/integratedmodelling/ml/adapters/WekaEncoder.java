@@ -2,11 +2,9 @@ package org.integratedmodelling.ml.adapters;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.math3.distribution.EnumeratedRealDistribution;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
@@ -377,5 +375,11 @@ public class WekaEncoder implements IResourceEncoder {
         // TODO Auto-generated method stub
         return null;
     }
+
+	@Override
+	public void listDetail(IResource resource, OutputStream stream, boolean verbose, IMonitor monitor) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

@@ -32,7 +32,7 @@ public class DecodingDataBuilder implements IKlabData.Builder {
 	}
 
 	@Override
-	public Builder startState(String name) {
+	public Builder startState(String name, String unit, IContextualizationScope scope) {
 		throw new IllegalStateException("modifying methods should not be called on a decoding builder");
 	}
 

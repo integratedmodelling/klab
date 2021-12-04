@@ -21,7 +21,7 @@ import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 public class CDMValidator implements IResourceValidator {
 
 	@Override
-	public Builder validate(URL url, IParameters<String> userData, IMonitor monitor) {
+	public Builder validate(String urn, URL url, IParameters<String> userData, IMonitor monitor) {
 		// TODO Auto-generated method stub
 		return null;
 	}

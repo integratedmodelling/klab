@@ -13,6 +13,7 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
+import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.utils.Triple;
@@ -29,7 +30,7 @@ public class TableImporter implements IResourceImporter {
     }
 
 	@Override
-    public Collection<Builder> importResources(String importLocation, IParameters<String> userData, IMonitor monitor) {
+    public Collection<Builder> importResources(String importLocation, IProject project, IParameters<String> userData, IMonitor monitor) {
         // TODO Auto-generated method stub
         return null;
     }

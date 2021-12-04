@@ -26,6 +26,7 @@ public class StandaloneResourceBuilder extends ResourceBuilder {
 	private IProject project;
 
 	public StandaloneResourceBuilder(IProject project, String resourceId) {
+		super(Resources.INSTANCE.createLocalResourceUrn(resourceId, project));
 		setResourceId(resourceId);
 		this.project = project;
 		withProjectName(project.getName());
@@ -45,8 +46,6 @@ public class StandaloneResourceBuilder extends ResourceBuilder {
 	}
 
 	public IResource build(ISession session) {
-
-		String resourceUrn = Resources.INSTANCE.createLocalResourceUrn(getResourceId(), project);
 
 		// create the directory
 		File resourceDir = new File(
@@ -69,7 +68,7 @@ public class StandaloneResourceBuilder extends ResourceBuilder {
 					project.getName() + "/resources/" + getResourceId() + "/" + MiscUtilities.getFileName(file));
 		}
 		
-		return ((Session) session).registerResource(super.build(resourceUrn));
+		return ((Session) session).registerResource(super.build());
 
 	}
 

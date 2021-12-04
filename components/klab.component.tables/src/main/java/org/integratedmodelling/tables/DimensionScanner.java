@@ -156,6 +156,10 @@ public class DimensionScanner<T> {
 				 */
 				if ("YEAR".equals(definition[i]) && ITime.class.isAssignableFrom(cls)) {
 					mappings.add(new CodeList(Mapping.YEAR, null));
+				} else if ("PERIOD".equals(definition[i]) && ITime.class.isAssignableFrom(cls)) {
+					mappings.add(new CodeList(Mapping.PERIOD, ss[0]));
+					break;
+
 				} else if (Time.class.isAssignableFrom(cls)
 						&& org.integratedmodelling.klab.Time.INSTANCE.isTimePattern(definition[i])) {
 					mappings.add(new CodeList(Mapping.DATE_PATTERN, definition[i]));
@@ -216,8 +220,13 @@ public class DimensionScanner<T> {
 
 		} else if (this.columnName != null) {
 
+			Object[] cols = new Object[] {this.columnName};
+			if (this.columnName.contains(",")) {
+				cols = this.columnName.split(",");
+			}
+			
 			Set<Object> items = new LinkedHashSet<>();
-			for (Object o : table.resetFilters().asList(this.columnName)) {
+			for (Object o : table.resetFilters().asList(cols)) {
 				if (Observations.INSTANCE.isData(o)) {
 					items.add(o);
 				}
@@ -284,7 +293,7 @@ public class DimensionScanner<T> {
 			if (auxiliaryResource != null && spatialContextualizer == null) {
 
 				VisitingDataBuilder builder = new VisitingDataBuilder().keepStates(scope.getScale())
-						.startState("space");
+						.startState("space", null, scope);
 				IKlabData data = Resources.INSTANCE.getResourceData(auxiliaryResourceUrn, builder, scope.getScale(),
 						scope.getMonitor());
 				ret.spatialContextualizer = (IDataArtifact) data.getArtifact();

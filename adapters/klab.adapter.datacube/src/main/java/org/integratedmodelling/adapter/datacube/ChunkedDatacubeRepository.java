@@ -156,6 +156,11 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 		 */
 		public int startTick, endTick;
 
+		@Override
+		public String toString() {
+			return "Granule [dataFile=" + dataFile + ", multiplier=" + multiplier + ", layerName=" + layerName + "]";
+		}
+
 	}
 
 	/**
@@ -207,6 +212,11 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 			return ret.toString();
 		}
 
+		@Override
+		public String toString() {
+			return dump();
+		}
+
 		/**
 		 * Start any necessary processing, recording the ongoing operations so that
 		 * successive calls don't make a mess. If availability is delayed, exits after
@@ -215,15 +225,15 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 		 */
 		@Override
 		public AvailabilityReference buildCache() {
-			
+
 			AvailabilityReference ret = new AvailabilityReference();
 			ret.setRetryTimeSeconds(this.timeToAvailabilitySeconds);
-			
+
 			if (specialVariables.containsKey(this.variable)) {
 				ret.setAvailability(Availability.COMPLETE);
 				return ret;
 			}
-			
+
 			List<Integer> toDownload = new ArrayList<>();
 			List<Integer> candidates = new ArrayList<>();
 
@@ -325,12 +335,13 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 		@Override
 		public boolean execute(Urn urn, IGeometry geometry, Builder builder, IContextualizationScope scope) {
 
+			// FIXME remove
+			Logging.INSTANCE.info("entering strategy.execute()");
+
 			if (!(scope.getScale().getSpace() instanceof Space)
 					|| ((Space) scope.getScale().getSpace()).getGrid() == null) {
 				throw new KlabIllegalStateException("Copernicus adapter only support grid geometries for now");
 			}
-
-			scope.getMonitor().debug("datacube adapter: executing strategy: " + this.dump());
 
 			boolean first = true;
 			IGrid grid = ((Space) scope.getScale().getSpace()).getGrid();
@@ -342,43 +353,56 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 			 * no state for the variable: return
 			 */
 			if (stateName == null) {
+				// FIXME remove
+				Logging.INSTANCE.info("no state for variable: return w/o result");
 				return false;
 			}
 
-			IState state = scope.getArtifact(stateName, IState.class);
-			if (state == null) {
-				// this would be crazy
-				return false;
-			}
+			/**
+			 * FIXME this doesn't work with the remote adapter - there will be no state
+			 * there! Must set the original units in the builder, and convert when the
+			 * artifact is filled.
+			 */
+//			IState state = scope.getArtifact(stateName, IState.class);
+//			if (state == null) {
+//				// this would be crazy
+//				// FIXME remove
+//				Logging.INSTANCE.info("named state does not exist: return w/o result");
+//				return false;
+//			}
 
-			Builder stateBuilder = builder.startState(stateName);
+			IUnit originalUnit = getOriginalUnit(variable);
+			Builder stateBuilder = builder.startState(stateName, originalUnit == null ? null : originalUnit.toString(), scope);
 
 			Function<Number, Number> converter = null;
-			if (state.getObservable().getUnit() != null) {
-
-				/*
-				 * these are grids, so one cell is like any other w.r.t. spatial mediation;
-				 * compute the factor for the first cell and reuse it for speed.
-				 */
-				IScale conversionScale = Scale.create((IExtent) scope.getScale().getTime(),
-						(IExtent) scope.getScale().getSpace().iterator().next());
-				IUnit originalUnit = getOriginalUnit(variable);
-				IUnit targetUnit = state.getObservable().getUnit().contextualize(state.getObservable(),
-						conversionScale);
-				converter = (num) -> {
-					return targetUnit.convert(num, originalUnit);
-				};
-			}
+//			if (state.getObservable().getUnit() != null) {
+//
+//				/*
+//				 * these are grids, so one cell is like any other w.r.t. spatial mediation;
+//				 * compute the factor for the first cell and reuse it for speed.
+//				 */
+//				IScale conversionScale = Scale.create((IExtent) scope.getScale().getTime(),
+//						(IExtent) scope.getScale().getSpace().iterator().next());
+//				IUnit originalUnit = getOriginalUnit(variable);
+//				IUnit targetUnit = state.getObservable().getUnit().contextualize(state.getObservable(),
+//						conversionScale);
+//				converter = (num) -> {
+//					return targetUnit.convert(num, originalUnit);
+//				};
+//			}
 
 			double wsum = 0.0;
 			Aggregation aggregation = getAggregation(variable);
 
 			for (Granule g : granules) {
 
+				// FIXME remove
+				Logging.INSTANCE.info("adding granule " + g);
+
 				if (specialVariables.containsKey(variable) && !g.dataFile.exists()) {
 					continue;
 				}
-				
+
 				if (!g.dataFile.exists()) {
 					if (g.multiplier == 1) {
 						scope.getMonitor().error("repository error: " + getName() + ": missing datafile "
@@ -420,7 +444,7 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 										* (aggregation == Aggregation.MEAN ? g.multiplier : 1.0);
 							}
 							data.set(d, xy);
-							
+
 						} else {
 
 							Double d = data.get(xy);

@@ -67,6 +67,20 @@ void info
 	class org.integratedmodelling.klab.cli.commands.resources.Info
 }
 
+void detail
+	"List the contents of a resource, possibly in abbreviated form, either as structure or data."
+{	
+
+	optional boolean verbose
+		"Verbose output: list resource details"
+		default false
+
+	optional text node
+		"A node name to delete resources."
+	
+	class org.integratedmodelling.klab.cli.commands.resources.Details
+}
+
 void update
 	"Update resource parameters. Call with the URN as a first parameter, followed either
 	  by 'set', the value key and the value to be set (which may include spaces) or with 
