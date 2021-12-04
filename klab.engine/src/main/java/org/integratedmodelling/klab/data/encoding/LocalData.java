@@ -229,16 +229,16 @@ public class LocalData implements IKlabData {
 						? ((Iterable<?>) state.get("doubledata")).iterator()
 						: null;
 
-				for (ILocator locator : target.getScale()) {
+				for (ILocator locator : context.getScale()) {
 
-					if (originalUnit != null && target.getObservable().getUnit() != null && targetUnit != null) {
+					if (originalUnit != null && target.getObservable().getUnit() != null && targetUnit == null) {
 						IScale conversionScale = Scale.create((IExtent) context.getScale().getTime(),
 								(IExtent) context.getScale().getSpace().iterator().next());
 						targetUnit = target.getObservable().getUnit().contextualize(target.getObservable(),
 								conversionScale);
 					}
 
-					if (doubles != null) {
+					if (doubles != null && doubles.hasNext()) {
 						Object o = doubles.next();
 						// yes, they do this, mixed in with doubles.
 						if ("NaN".equals(o)) {
