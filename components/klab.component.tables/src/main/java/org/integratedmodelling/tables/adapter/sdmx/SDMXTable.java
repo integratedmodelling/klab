@@ -19,13 +19,13 @@ public class SDMXTable extends AbstractTable<Object> {
 	}
 
 	@Override
-    public List<Object> getRowItems(Object rowLocator) {
-        return getCache(resource).query(rowLocator, Dimension.ROW);
+    public List<Object> getRowItems(Object... rowLocator) {
+        return getCache(resource).query(Dimension.ROW, rowLocator);
     }
 
     @Override
-    public List<Object> getColumnItems(Object columnLocator) {
-        return getCache(resource).query(columnLocator, Dimension.COLUMN);
+    public List<Object> getColumnItems(Object... columnLocator) {
+        return getCache(resource).query(Dimension.COLUMN, columnLocator);
     }
 
     @Override

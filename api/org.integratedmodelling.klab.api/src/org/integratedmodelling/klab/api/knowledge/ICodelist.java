@@ -97,7 +97,7 @@ public interface ICodelist {
 	 * @param key
 	 * @return
 	 */
-	Object value(String key);
+	Object value(Object key);
 
 	/**
 	 * All keys correspondent to a value.
@@ -105,7 +105,7 @@ public interface ICodelist {
 	 * @param value
 	 * @return
 	 */
-	Collection<String> keys(Object value);
+	Collection<Object> keys(Object value);
 
 	/**
 	 * The preferential key correspondent to a value.
@@ -113,6 +113,6 @@ public interface ICodelist {
 	 * @param value
 	 * @return
 	 */
-	String key(Object value);
+	Object key(Object value);
 
 }

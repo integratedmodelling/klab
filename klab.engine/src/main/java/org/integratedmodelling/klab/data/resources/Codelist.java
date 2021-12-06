@@ -48,7 +48,7 @@ public class Codelist implements ICodelist {
 	}
 
 	@Override
-	public Object value(String key) {
+	public Object value(Object key) {
 		Collection<Object> ret = direct.get(key);
 		return ret.isEmpty() ? null : ret.iterator().next();
 	}
@@ -92,13 +92,8 @@ public class Codelist implements ICodelist {
 	}
 
 	@Override
-	public Collection<String> keys(Object value) {
-		Set<String> ret = new HashSet<>();
-		Collection<Object> rr = reverse.get(value);
-		for (Object r : rr) {
-			ret.add(r == null ? null : r.toString());
-		}
-		return ret;
+	public Collection<Object> keys(Object value) {
+		return new HashSet<>(reverse.get(value));
 	}
 
 	@Override

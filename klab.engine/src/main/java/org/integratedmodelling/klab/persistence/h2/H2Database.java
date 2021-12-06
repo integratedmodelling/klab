@@ -68,6 +68,12 @@ import org.integratedmodelling.klab.utils.Pair;
  * newer {@link IStructuredTable} interface when the structure is simple. The
  * kboxes use the old structure, so that will remain until we reimplement them.
  * 
+ * DEBUG: H2 URL for kbox "local_ferdinando.villa_un.seea.cf_seea.cf.supply" will be 
+ * jdbc:h2:~/.klab/kbox/local_ferdinando.villa_un.seea.cf_seea.cf.supply/local_ferdinando.villa_un.seea.cf_seea.cf.supply
+ * with username=sa, password=sa
+ * 
+ * Use with org.h2.tools.Console
+ * 
  * @author Ferd
  *
  */

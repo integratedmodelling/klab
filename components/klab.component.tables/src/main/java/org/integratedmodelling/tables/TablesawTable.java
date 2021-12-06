@@ -48,9 +48,13 @@ public class TablesawTable extends AbstractTable<Object> {
     }
     
     @Override
-    public List<Object> getRowItems(Object rowLocator) {
+    public List<Object> getRowItems(Object... rowLocator) {
+        Object loc = rowLocator != null && rowLocator.length >= 1 ? rowLocator[0] : null;
         List<Object> ret = new ArrayList<>();
-        Row row = table.row(getRowIndex(rowLocator));
+        if (loc == null) {
+            return ret;
+        }
+        Row row = table.row(getRowIndex(loc));
         for (int i = 0; i < row.columnCount(); i++) {
             ret.add((T)row.getObject(i));
         }
@@ -76,9 +80,13 @@ public class TablesawTable extends AbstractTable<Object> {
     }
 
     @Override
-    public List<Object> getColumnItems(Object columnLocator) {
+    public List<Object> getColumnItems(Object... columnLocator) {
+        Object loc = columnLocator != null && columnLocator.length >= 1 ? columnLocator[0] : null;
         List<Object> ret = new ArrayList<>();
-        Column<?> column = table.column(getColumnIndex(columnLocator));
+        if (loc == null) {
+            return ret;
+        }
+        Column<?> column = table.column(getColumnIndex(loc));
         for (int i = 0; i < column.size(); i++) {
             ret.add(column.get(i));
         }
