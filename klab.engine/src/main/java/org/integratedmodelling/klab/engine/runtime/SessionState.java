@@ -228,7 +228,8 @@ public class SessionState extends Parameters<String> implements ISessionState {
 				 */
 				IGeometry geom = getGeometry();
 				activity.setStart(System.currentTimeMillis());
-				if (this.currentActivity.getGeometrySet() == null && geom != null) {
+				if (this.currentActivity != null
+                        && this.currentActivity.getGeometrySet() == null && geom != null) {
 					this.currentActivity.setGeometrySet(geom.encode());
 				}
 				activity.setActivityId(task.getId());
