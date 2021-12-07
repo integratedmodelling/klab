@@ -125,6 +125,16 @@ public class Shape extends AbstractExtent implements IShape {
         return ret;
     }
 
+    public static Shape create(String wkt, Projection projection) throws KlabValidationException {
+        Shape ret = new Shape();
+        ret.parseWkt(wkt);
+        ret.projection = projection;
+        if (ret.shapeGeometry != null) {
+            ret.envelope = Envelope.create(ret.shapeGeometry.getEnvelopeInternal(), ret.projection);
+        }
+        return ret;
+    }
+
     public static Shape create(double x1, double y1, double x2, double y2, Projection projection) {
         Shape ret = new Shape();
         ret.shapeGeometry = makeCell(x1, y1, x2, y2);

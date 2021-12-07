@@ -110,7 +110,11 @@ public class Space extends Extent implements ISpace {
         }
 
         if (shapeSpec != null) {
-            shape = Shape.create(shapeSpec);
+            if(projection== null) {
+                shape = Shape.create(shapeSpec);
+            }else {
+                shape = Shape.create(shapeSpec, projection);
+            }
         } else if (bbox != null && projection != null) {
             shape = Shape.create(bbox[0], bbox[2], bbox[1], bbox[3], projection);
         } else if (llat != null) {
