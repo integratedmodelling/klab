@@ -78,5 +78,10 @@ public class WRBAuthority implements IAuthority {
 		// TODO Auto-generated method stub
 		return true;
 	}
+	
+	@Override
+	public String getName() {
+		return ID;
+	}
 
 }

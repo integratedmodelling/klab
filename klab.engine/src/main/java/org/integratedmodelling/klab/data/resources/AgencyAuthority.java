@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.klab.api.knowledge.IAuthority;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
+import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.rest.AuthorityReference;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.StringUtil;
@@ -71,6 +74,23 @@ public class AgencyAuthority implements IAuthority {
 	@Override
 	public boolean setup(Map<String, String> options) {
 		return true;
+	}
+
+	public IAuthority getAuthority(IConcept c) {
+		String conceptId = c.getMetadata().get(NS.CONCEPT_DEFINITION_PROPERTY, String.class);
+		if (conceptId != null) {
+			String auth = conceptId.split("\\:")[0];
+			if (auth.startsWith(agency + ".")) {
+				auth = auth.substring(agency.length() + 1);
+			}
+			return authorities.get(auth);
+		}
+		return null;
+	}
+
+	@Override
+	public String getName() {
+		throw new KlabIllegalStateException("agency authority should not be used directly");
 	}
 
 }

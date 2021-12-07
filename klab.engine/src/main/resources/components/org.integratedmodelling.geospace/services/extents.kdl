@@ -4,12 +4,21 @@
 spatialextent space
 	"Generates spatial geographical extents to use in observations or to constrain models. Parameters
 	 enable the creation of single shapes using WKT and WKB notation, as well as regular grids and
-	 irregular spatial tessellations with shape masks."
+	 irregular spatial tessellations with shape masks. Enumerated spaces with arbitrary authorities
+	 and identities are also possible."
 {
 	optional concept identifier
 		"An authority concept providing an view of space as a value from an enumerated list (normally
 		 an authority), where each spatial tessellation is identified only by a code. Using this parameter 
 		 deactivates all others and turns off almost every other spatial functionalities in k.LAB."
+		 
+	optional text authority
+		"Authority from which to pick the concept(s) for a partially defined enumerated space. Alternative
+		 to baseidentity and identifier."
+
+	optional concept baseidentity
+		"Base abstract identity from which to pick the concept(s) for a partially defined enumerated space. 
+		 Alternative to identifier and authority."
 
 	optional text shape
 		"A string containing the WKT or WKB definition of a geographical shape, optionally 

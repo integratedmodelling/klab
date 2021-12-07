@@ -44,6 +44,13 @@ public interface ICodelist {
 	 * @return
 	 */
 	String getAuthorityId();
+	
+	/**
+	 * Total number of codes.
+	 * 
+	 * @return
+	 */
+	int size();
 
 	/**
 	 * If true, the codelist is exposed as an authority, referenceable through the

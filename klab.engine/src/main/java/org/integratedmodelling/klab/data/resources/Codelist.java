@@ -106,4 +106,9 @@ public class Codelist implements ICodelist {
 		return reference.getRootConceptId();
 	}
 
+	@Override
+	public int size() {
+		return direct.size();
+	}
+
 }

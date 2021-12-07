@@ -150,6 +150,13 @@ public interface IAuthority {
     }
 
     /**
+     * Unique name of this authority.
+     * 
+     * @return
+     */
+    String getName();
+    
+    /**
      * Create the concept corresponding to the identity. It must be an identity semantically, and
      * may or may not have structure to locate it in a hierarchy if appropriate. The client may pass
      * a path to the catalog if the authority has multiple layers.

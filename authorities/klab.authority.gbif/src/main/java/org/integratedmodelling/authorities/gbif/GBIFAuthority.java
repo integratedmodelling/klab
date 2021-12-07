@@ -238,4 +238,9 @@ public class GBIFAuthority implements IAuthority {
 		}
 		return true;
 	}
+
+	@Override
+	public String getName() {
+		return ID;
+	}
 }

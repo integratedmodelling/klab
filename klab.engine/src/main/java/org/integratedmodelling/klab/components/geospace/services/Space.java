@@ -43,16 +43,24 @@ public class Space implements IExpression {
 
 		org.integratedmodelling.klab.components.geospace.extents.Space ret = null;
 
-		if (parameters.contains("identifier")) {
-			IKimConcept concept = parameters.get("identifier", IKimConcept.class);
-			if (concept != null) {
-				IConcept c = Concepts.INSTANCE.declare(concept);
-				if (c != null && c.is(IKimConcept.Type.IDENTITY)) {
-					return new EnumeratedSpace(c);
+		if (parameters.contains("identifier") || parameters.contains("authority")
+				|| parameters.contains("baseidentity")) {
+
+			if (parameters.contains("identifier")) {
+				IKimConcept concept = parameters.get("identifier", IKimConcept.class);
+				if (concept != null) {
+					IConcept c = Concepts.INSTANCE.declare(concept);
+					if (c != null && c.is(IKimConcept.Type.IDENTITY)) {
+						return new EnumeratedSpace(c);
+					}
 				}
+				throw new KlabIllegalArgumentException(
+						"value of spatial identity unknown or illegal: " + parameters.get("identifier"));
+			} else if (parameters.contains("authority")) {
+				System.out.println("ZIBU");
+			} else if (parameters.contains("baseidentity")) {
+				System.out.println("ZOBU");
 			}
-			throw new KlabIllegalArgumentException(
-					"value of spatial identity unknown or illegal: " + parameters.get("identifier"));
 		}
 
 		if (parameters.containsKey("shape")) {

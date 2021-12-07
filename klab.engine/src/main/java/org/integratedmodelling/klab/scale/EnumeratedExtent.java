@@ -1,245 +1,316 @@
 package org.integratedmodelling.klab.scale;
 
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+import org.eclipse.collections.impl.factory.Sets;
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.klab.Authorities;
+import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.Traits;
+import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
+import org.integratedmodelling.klab.api.knowledge.IAuthority;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
+import org.integratedmodelling.klab.api.observations.scale.IEnumeratedExtent;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
+import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.scale.Scale.Mediator;
 import org.integratedmodelling.klab.utils.Pair;
 
-public class EnumeratedExtent extends Extent {
+public class EnumeratedExtent extends Extent implements IEnumeratedExtent {
 
-    @Override
-    public IExtent merge(IExtent extent) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	private IAuthority authority;
+	private IConcept baseIdentity;
+	protected Set<IConcept> concepts = new LinkedHashSet<>();
+	protected String originalDeclaration;
+	
+	protected EnumeratedExtent(IConcept concept) {
+		this.originalDeclaration = concept.getDefinition();
+		if (concept.is(IKimConcept.Type.UNION)) {
+			concepts.addAll(concept.getOperands());
+		} else {
+			concepts.add(concept);
+		}
 
-    @Override
-    public IExtent adopt(IExtent extent, IMonitor monitor) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+		if (!concept.is(IKimConcept.Type.IDENTITY)) {
+			throw new KlabIllegalArgumentException("enumerated space must use an identity for its concept space");
+		}
 
-    @Override
-    public IExtent at(Object... locators) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+		this.authority = Authorities.INSTANCE.getAuthority(concept);
+		this.baseIdentity = Traits.INSTANCE.getBaseParentTrait(concept);
+	}
+	
+	private EnumeratedExtent(EnumeratedExtent original, Collection<IConcept> concepts) {
+		this.concepts.addAll(concepts);
+		boolean isOr = false;
+		for (IConcept c : concepts) {
+			if (originalDeclaration == null) {
+				originalDeclaration = c.getDefinition();
+			} else {
+				isOr = true;
+				originalDeclaration += " or " + c.getDefinition();
+			}
+		}
+		if (isOr) {
+			originalDeclaration = "(" + originalDeclaration + ")";
+		}
+	}
 
-    @Override
-    public int getScaleRank() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
+	public EnumeratedExtent(IAuthority authority, IConcept baseConcept) {
+		this.authority = authority;
+		this.baseIdentity = baseConcept;
+	}
 
-    @Override
-    public IExtent collapse() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public IExtent merge(IExtent extent) {
+		if (!(extent instanceof EnumeratedExtent)) {
+			throw new KlabIllegalArgumentException("cannot merge an enumerated extent with a non-enumerated one");
+		}
+		Set<IConcept> newx = Sets.intersect(concepts, ((EnumeratedExtent) extent).concepts);
+		return new EnumeratedExtent(this, newx);
+	}
 
-    @Override
-    public IExtent getBoundingExtent() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public IExtent adopt(IExtent extent, IMonitor monitor) {
+		if (!(extent instanceof EnumeratedExtent)) {
+			throw new KlabIllegalArgumentException("cannot merge an enumerated extent with a non-enumerated one");
+		}
+		Set<IConcept> newx = Sets.union(concepts, ((EnumeratedExtent) extent).concepts);
+		return new EnumeratedExtent(this, newx);
+	}
 
-    @Override
-    public double getDimensionSize(IUnit unit) {
-        // TODO Auto-generated method stub
-        return 0;
-    }
+	@Override
+	public IAuthority getAuthority() {
+		return authority;
+	}
+	
+	@Override
+	public IConcept getBaseIdentity() {
+		return baseIdentity;
+	}
+	
+	@Override
+	public IExtent at(Object... locators) {
+		// TODO Auto-generated method stub
+		return this;
+	}
 
-    @Override
-    public Pair<Double, IUnit> getStandardizedDimension(ILocator locator) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public int getScaleRank() {
+		return 0;
+	}
 
-    @Override
-    public IScaleMediator getMediator(IExtent extent) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public IExtent collapse() {
+		return this;
+	}
 
-    @Override
-    public IExtent merge(ITopologicallyComparable<?> other, LogicalConnector how) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public IExtent getBoundingExtent() {
+		return this;
+	}
 
-    @Override
-    public IGeometry getGeometry() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public double getDimensionSize(IUnit unit) {
+		if (!unit.isUnitless()) {
+			throw new KlabIllegalArgumentException(
+					"cannot use unit " + unit + " to measure the size of an enumerated extent");
+		}
+		return concepts.size();
+	}
 
-    @Override
-    public <T extends ILocator> T as(Class<T> cls) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public Pair<Double, IUnit> getStandardizedDimension(ILocator locator) {
+		return new Pair<Double, IUnit>((double) concepts.size(), Units.INSTANCE.COUNTER);
+	}
 
-    @Override
-    public long size() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
+	@Override
+	public IScaleMediator getMediator(IExtent extent) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public boolean contains(IExtent o) throws KlabException {
-        // TODO Auto-generated method stub
-        return false;
-    }
+	@Override
+	public IExtent merge(ITopologicallyComparable<?> other, LogicalConnector how) {
 
-    @Override
-    public boolean overlaps(IExtent o) throws KlabException {
-        // TODO Auto-generated method stub
-        return false;
-    }
+		switch (how.value) {
+		case LogicalConnector._UNION:
+			return adopt((IExtent) other, Klab.INSTANCE.getRootMonitor());
+		case LogicalConnector._INTERSECTION:
+			return merge((IExtent) other);
+		default:
+			break;
+		}
 
-    @Override
-    public boolean intersects(IExtent o) throws KlabException {
-        // TODO Auto-generated method stub
-        return false;
-    }
+		throw new KlabIllegalStateException("cannot merge enumerated extent with " + how);
+	}
 
-    @Override
-    public boolean isGeneric() {
-        // TODO Auto-generated method stub
-        return false;
-    }
+	@Override
+	public IGeometry getGeometry() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public Type getType() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public <T extends ILocator> T as(Class<T> cls) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public boolean isRegular() {
-        // TODO Auto-generated method stub
-        return false;
-    }
+	@Override
+	public long size() {
+		return concepts.size();
+	}
 
-    @Override
-    public int getDimensionality() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
+	@Override
+	public boolean contains(IExtent o) throws KlabException {
+		return o instanceof EnumeratedExtent && concepts.containsAll(((EnumeratedExtent) o).concepts);
+	}
 
-    @Override
-    public long getOffset(long... offsets) {
-        // TODO Auto-generated method stub
-        return 0;
-    }
+	@Override
+	public boolean overlaps(IExtent o) throws KlabException {
+		return o instanceof EnumeratedExtent && Sets.intersect(concepts, ((EnumeratedExtent) o).concepts).size() > 0;
+	}
 
-    @Override
-    public long[] shape() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public boolean intersects(IExtent o) throws KlabException {
+		return overlaps(o);
+	}
 
-    @Override
-    public IParameters<String> getParameters() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public boolean isGeneric() {
+		return concepts.size() == 0;
+	}
 
-    @Override
-    public ExtentDimension getExtentDimension() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public Type getType() {
+		return Type.NUMEROSITY;
+	}
 
-    @Override
-    public boolean isConsistent() {
-        // TODO Auto-generated method stub
-        return false;
-    }
+	@Override
+	public boolean isRegular() {
+		return true;
+	}
 
-    @Override
-    public boolean isEmpty() {
-        // TODO Auto-generated method stub
-        return false;
-    }
+	@Override
+	public int getDimensionality() {
+		return 1;
+	}
 
-    @Override
-    public long[] getDimensionSizes() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public long getOffset(long... offsets) {
+		return offsets[0];
+	}
 
-    @Override
-    public Mediator getMediator(IExtent extent, IObservable observable, IConcept trait) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public long[] shape() {
+		return new long[] { size() };
+	}
 
-    @Override
-    public boolean isCovered(long stateIndex) {
-        // TODO Auto-generated method stub
-        return false;
-    }
+	@Override
+	public IParameters<String> getParameters() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public IExtent getExtent(long stateIndex) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public ExtentDimension getExtentDimension() {
+		return ExtentDimension.CONCEPTUAL;
+	}
 
-    @Override
-    public double getCoveredExtent() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
+	@Override
+	public boolean isConsistent() {
+		return concepts.size() > 0;
+	}
 
-    @Override
-    public String encode() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public boolean isEmpty() {
+		return concepts.isEmpty();
+	}
 
-    @Override
-    public IExtent mergeCoverage(IExtent other, LogicalConnector connector) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public long[] getDimensionSizes() {
+		return shape();
+	}
 
-    @Override
-    public IExtent getExtent() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public Mediator getMediator(IExtent extent, IObservable observable, IConcept trait) {
+		// TODO
+		return null;
+	}
 
-    @Override
-    public AbstractExtent copy() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public boolean isCovered(long stateIndex) {
+		return stateIndex >= 0 && stateIndex < size();
+	}
 
-    @Override
-    public IServiceCall getKimSpecification() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public IExtent getExtent(long stateIndex) {
+		IConcept c = null;
+		Iterator<IConcept> it = concepts.iterator();
+		for (int i = 0; i < stateIndex; i++) {
+			c = it.next();
+		}
+		return new EnumeratedExtent(c);
+	}
 
-    @Override
-    protected IExtent contextualizeTo(IExtent other, IAnnotation constraint) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public double getCoveredExtent() {
+		return size();
+	}
+
+	@Override
+	public String encode() {
+		String ret = (isGeneric() ? "\u03b4" : "D") + "1(" + size() + "){";
+		if (isConsistent()) {
+			ret += "declaration=" + originalDeclaration;
+		} else if (getAuthority() != null) {
+			ret += "authority=" + getAuthority().getName();
+		} else if (getBaseIdentity() != null) {
+			ret += "baseIdentity=" + getBaseIdentity().getDefinition();
+		}
+		return ret + "}";
+	}
+
+	@Override
+	public IExtent mergeCoverage(IExtent other, LogicalConnector connector) {
+		return merge(other, connector);
+	}
+
+	@Override
+	public IExtent getExtent() {
+		return this;
+	}
+
+	@Override
+	public AbstractExtent copy() {
+		return new EnumeratedExtent(this, concepts);
+	}
+
+	@Override
+	public IServiceCall getKimSpecification() {
+		return null;
+	}
+
+	@Override
+	protected IExtent contextualizeTo(IExtent other, IAnnotation constraint) {
+		return null;
+	}
 
 }
