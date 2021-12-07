@@ -9,15 +9,18 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.extensions.Authority;
 import org.integratedmodelling.klab.api.knowledge.IAuthority;
 import org.integratedmodelling.klab.api.knowledge.ICodelist;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.services.IAuthorityService;
 import org.integratedmodelling.klab.data.resources.AgencyAuthority;
 import org.integratedmodelling.klab.data.resources.ResourceAuthority;
+import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.rest.AuthorityIdentity;
 import org.integratedmodelling.klab.rest.AuthorityReference;
 import org.integratedmodelling.klab.utils.Pair;
@@ -194,6 +197,23 @@ public enum Authorities implements IAuthorityService {
 						+ ": unsupported number of levels");
 			}
 		}
+	}
+
+	/**
+	 * Get the authority this concept is part of, or null.
+	 * 
+	 * @param c
+	 * @return
+	 */
+	public IAuthority getAuthority(IConcept c) {
+		IAuthority ret = null;
+		if (c.is(IKimConcept.Type.AUTHORITY_IDENTITY)) {
+			ret = getAuthority(c.getMetadata().get(NS.AUTHORITY_ID_PROPERTY, String.class));
+			if (ret instanceof AgencyAuthority) {
+				ret = ((AgencyAuthority)ret).getAuthority(c);
+			}
+		}
+		return ret;
 	}
 
 }

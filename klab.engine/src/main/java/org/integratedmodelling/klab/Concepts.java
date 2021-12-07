@@ -62,7 +62,6 @@ import org.integratedmodelling.klab.utils.Path;
 import org.springframework.util.StringUtils;
 
 import com.google.common.collect.Sets;
-import com.google.common.collect.Sets.SetView;
 
 /**
  * The Enum Concepts.
@@ -626,6 +625,7 @@ public enum Concepts implements IConceptService {
                 axioms.add(Axiom.ClassAssertion(baseIdentity, type));
                 // TODO check - there should be a base identity per leaf vocabulary
                 axioms.add(Axiom.AnnotationAssertion(baseIdentity, NS.BASE_DECLARATION, "true"));
+                axioms.add(Axiom.AnnotationAssertion(baseIdentity, NS.AUTHORITY_ID_PROPERTY, identity.getAuthorityName()));
                 axioms.add(Axiom.AnnotationAssertion(baseIdentity, NS.REFERENCE_NAME_PROPERTY,
                         "auth_" + identity.getAuthorityName().toLowerCase() + "_" + baseIdentity.toLowerCase()));
                 axioms.add(Axiom.ObjectPropertyAssertion(pName));
@@ -643,6 +643,7 @@ public enum Concepts implements IConceptService {
                     "auth_" + identity.getAuthorityName().toLowerCase() + "_" + identity.getConceptName().toLowerCase()));
             axioms.add(Axiom.AnnotationAssertion(identity.getConceptName(), IMetadata.DC_LABEL, identity.getLabel()));
             axioms.add(Axiom.AnnotationAssertion(identity.getConceptName(), NS.DISPLAY_LABEL_PROPERTY, identity.getLabel()));
+            axioms.add(Axiom.AnnotationAssertion(identity.getConceptName(), NS.AUTHORITY_ID_PROPERTY, identity.getAuthorityName()));
             axioms.add(Axiom.AnnotationAssertion(identity.getConceptName(), IMetadata.DC_COMMENT, identity.getDescription()));
             axioms.add(
                     Axiom.AnnotationAssertion(identity.getConceptName(), NS.CONCEPT_DEFINITION_PROPERTY, identity.getLocator()));

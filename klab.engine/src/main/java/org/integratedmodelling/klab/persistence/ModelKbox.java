@@ -21,6 +21,7 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.klab.api.observations.scale.IEnumeratedExtent;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.resolution.IPrioritizer;
@@ -43,7 +44,6 @@ import org.integratedmodelling.klab.scale.AbstractExtent;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Escape;
 import org.integratedmodelling.klab.utils.Pair;
-
 import org.locationtech.jts.geom.Geometry;
 
 public class ModelKbox extends ObservableKbox {
@@ -365,6 +365,11 @@ public class ModelKbox extends ObservableKbox {
      * non-distributed space/time. ALSO the dimensionality!
      */
     private String spaceQuery(ISpace space) {
+    	
+    	if (space instanceof IEnumeratedExtent) {
+    		// TODO! Accept anything that is from the same authority or baseconcept
+    		return "";
+    	}
 
         if (((ISpace) ((AbstractExtent) space).getExtent()).getShape().isEmpty()) {
             return "";

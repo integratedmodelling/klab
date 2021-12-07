@@ -8,6 +8,8 @@ import java.util.List;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
+import org.integratedmodelling.klab.Authorities;
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Units;
@@ -79,7 +81,7 @@ public class Space extends Extent implements ISpace {
         return EMPTY_SPACE;
     }
 
-    public static Space create(Dimension dimension) {
+    public static ISpace create(Dimension dimension) {
         return create(dimension, null);
     }
 
@@ -87,8 +89,21 @@ public class Space extends Extent implements ISpace {
         return create((Shape) shape, org.integratedmodelling.klab.components.geospace.services.Space.parseResolution(resolution));
     }
 
-    public static Space create(Dimension dimension, IQuantity resolution) {
+    public static ISpace create(Dimension dimension, IQuantity resolution) {
 
+    	String authority = dimension.getParameters().get(Geometry.PARAMETER_ENUMERATED_AUTHORITY, String.class);
+    	String baseidentity = dimension.getParameters().get(Geometry.PARAMETER_ENUMERATED_BASE_IDENTITY, String.class);
+    	String identity = dimension.getParameters().get(Geometry.PARAMETER_ENUMERATED_IDENTIFIER, String.class);
+    	
+    	if (authority != null) {
+    		return new EnumeratedSpace(Authorities.INSTANCE.getAuthority(authority), null);
+    	} else if (baseidentity != null) {
+    		return new EnumeratedSpace(null, Concepts.INSTANCE.declare(Concepts.INSTANCE.declare(identity)));
+    	} else if (identity != null) {
+    		return new EnumeratedSpace(Concepts.INSTANCE.declare(Concepts.INSTANCE.declare(identity)));
+    	}
+    	
+    	
         double[] bbox = dimension.getParameters().get(Geometry.PARAMETER_SPACE_BOUNDINGBOX, double[].class);
         double[] llat = dimension.getParameters().get(Geometry.PARAMETER_SPACE_LONLAT, double[].class);
         String gridres = dimension.getParameters().get(Geometry.PARAMETER_SPACE_GRIDRESOLUTION, String.class);

@@ -205,6 +205,21 @@ public class Geometry implements IGeometry {
     public static final String PARAMETER_SPACE_LONLAT = "latlon";
 
     /**
+     * Authority specifier for generic enumerated extent (may be D or S)
+     */
+    public static final String PARAMETER_ENUMERATED_AUTHORITY = "authority";
+
+    /**
+     * Base identity  specifier for generic enumerated extent (may be D or S)
+     */
+    public static final String PARAMETER_ENUMERATED_BASE_IDENTITY = "baseidentity";
+    
+    /**
+     * Concrete identity for enumerated extent (D or S)
+     */
+    public static final String PARAMETER_ENUMERATED_IDENTIFIER = "identifier";
+    
+    /**
      * Projection code
      */
     public static final String PARAMETER_SPACE_PROJECTION = "proj";

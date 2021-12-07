@@ -16,7 +16,6 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.data.general.ITable;
-import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
@@ -31,10 +30,8 @@ import org.integratedmodelling.klab.rest.CodelistReference;
 import org.integratedmodelling.klab.rest.MappingReference;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Triple;
-import org.integratedmodelling.tables.DimensionScanner;
 import org.integratedmodelling.tables.SQLTableCache;
 import org.integratedmodelling.tables.TableInterpreter;
-import org.integratedmodelling.tables.adapter.TableAdapter;
 
 import it.bancaditalia.oss.sdmx.api.BaseObservation;
 import it.bancaditalia.oss.sdmx.api.DataFlowStructure;
@@ -459,11 +456,4 @@ public class SDMXInterpreter extends TableInterpreter {
 		return table;
 	}
 
-	@Override
-	public IGeometry recomputeGeometry(IResource resource, Map<String, String> parameters, IMonitor monitor) {
-
-		IGeometry ret = resource.getGeometry();
-
-		return ret;
-	}
 }

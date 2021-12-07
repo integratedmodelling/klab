@@ -307,4 +307,9 @@ public class CaliperAuthority implements IAuthority {
 
     }
 
+	@Override
+	public String getName() {
+		return ID;
+	}
+
 }

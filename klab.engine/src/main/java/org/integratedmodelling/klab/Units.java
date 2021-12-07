@@ -70,6 +70,7 @@ public enum Units implements IUnitService {
     public IUnit MINUTES = getUnit("min");
     public IUnit HOURS = getUnit("h");
     public IUnit MILLISECONDS = getUnit("ms");
+    public IUnit COUNTER = Unit.unitless();
 
     private Map<String, Unit> defaultUnitCache = Collections.synchronizedMap(new HashMap<>());
 
