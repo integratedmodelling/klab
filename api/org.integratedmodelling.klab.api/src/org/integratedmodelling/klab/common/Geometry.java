@@ -20,6 +20,8 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
+import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.rest.ScaleReference;
 import org.integratedmodelling.klab.utils.MultidimensionalCursor;
 import org.integratedmodelling.klab.utils.NumberUtils;
@@ -101,7 +103,8 @@ public class Geometry implements IGeometry {
         @Override
         public String toString() {
             return "<L " + (type == null ? "" : type.name()) + (extent == null ? "" : extent.toString())
-                    + (geometry == null ? "" : geometry.toString()) + (offsets == null ? "" : Arrays.toString(offsets)) + ">";
+                    + (geometry == null ? "" : geometry.toString())
+                    + (offsets == null ? "" : Arrays.toString(offsets)) + ">";
         }
     }
 
@@ -161,7 +164,7 @@ public class Geometry implements IGeometry {
                         } else if (ITime.class.isAssignableFrom((Class<?>) o)) {
                             current.type = Dimension.Type.TIME;
                         } else {
-                            throw new IllegalArgumentException("illegal locator definition: " + o);
+                            throw new KlabIllegalArgumentException("illegal locator definition: " + o);
                         }
                     } else {
                         // add to 'weird' stuff for other APIs to process
@@ -183,11 +186,11 @@ public class Geometry implements IGeometry {
         }
 
         if (haveGeometry && ret.size() > 1) {
-            throw new IllegalArgumentException(
+            throw new KlabIllegalArgumentException(
                     "locators defined through a concrete geometry cannot have any other locator parameter");
         }
         if (nExtents > 0 && ret.size() != nExtents) {
-            throw new IllegalArgumentException(
+            throw new KlabIllegalArgumentException(
                     "locators defined through concrete extents cannot have non-extent locator parameters");
         }
 
@@ -210,15 +213,15 @@ public class Geometry implements IGeometry {
     public static final String PARAMETER_ENUMERATED_AUTHORITY = "authority";
 
     /**
-     * Base identity  specifier for generic enumerated extent (may be D or S)
+     * Base identity specifier for generic enumerated extent (may be D or S)
      */
     public static final String PARAMETER_ENUMERATED_BASE_IDENTITY = "baseidentity";
-    
+
     /**
      * Concrete identity for enumerated extent (D or S)
      */
     public static final String PARAMETER_ENUMERATED_IDENTIFIER = "identifier";
-    
+
     /**
      * Projection code
      */
@@ -296,7 +299,8 @@ public class Geometry implements IGeometry {
         if (dim.shape() != null && !isUndefined(dim.shape())) {
             ret += "(";
             for (int i = 0; i < dim.shape().length; i++) {
-                ret += (i == 0 ? "" : ",") + (dim.shape()[i] == INFINITE_SIZE ? "\u221E" : ("" + dim.shape()[i]));
+                ret += (i == 0 ? "" : ",")
+                        + (dim.shape()[i] == INFINITE_SIZE ? "\u221E" : ("" + dim.shape()[i]));
             }
             ret += ")";
         }
@@ -325,7 +329,8 @@ public class Geometry implements IGeometry {
         String spec = scaleRef.getSpaceUnit() == null ? "S1" : "S2";
         boolean hasTime = false;
 
-        Geometry ret = Geometry.create(spec).withProjection("EPSG:4326").withBoundingBox(scaleRef.getEast(), scaleRef.getWest(),
+        Geometry ret = Geometry.create(spec).withProjection("EPSG:4326").withBoundingBox(scaleRef.getEast(),
+                scaleRef.getWest(),
                 scaleRef.getSouth(), scaleRef.getNorth());
 
         if (scaleRef.getSpaceUnit() != null) {
@@ -341,7 +346,8 @@ public class Geometry implements IGeometry {
             hasTime = true;
         }
         if (scaleRef.getTimeResolutionDescription() != null) {
-            ret = ret.withTemporalResolution(scaleRef.getTimeResolutionMultiplier() + "." + scaleRef.getTimeUnit());
+            ret = ret.withTemporalResolution(
+                    scaleRef.getTimeResolutionMultiplier() + "." + scaleRef.getTimeUnit());
             hasTime = true;
         }
 
@@ -374,7 +380,8 @@ public class Geometry implements IGeometry {
         // hasTime = true;
         // }
 
-        Geometry ret = Geometry.create(spec).withProjection("EPSG:4326").withBoundingBox(scaleRef.getEast(), scaleRef.getWest(),
+        Geometry ret = Geometry.create(spec).withProjection("EPSG:4326").withBoundingBox(scaleRef.getEast(),
+                scaleRef.getWest(),
                 scaleRef.getSouth(), scaleRef.getNorth());
 
         if (scaleRef.getSpaceUnit() != null) {
@@ -395,7 +402,8 @@ public class Geometry implements IGeometry {
             hasTime = true;
         }
         if (scaleRef.getTimeResolutionDescription() != null) {
-            ret = ret.withTemporalResolution(scaleRef.getTimeResolutionMultiplier() + "." + scaleRef.getTimeUnit());
+            ret = ret.withTemporalResolution(
+                    scaleRef.getTimeResolutionMultiplier() + "." + scaleRef.getTimeUnit());
             hasTime = true;
         }
         // }
@@ -637,11 +645,11 @@ public class Geometry implements IGeometry {
                 return 0;
             }
             if (offsets.length != dimensionality) {
-                throw new IllegalArgumentException("geometry: cannot address a " + dimensionality
+                throw new KlabIllegalArgumentException("geometry: cannot address a " + dimensionality
                         + "-dimensional extent with an offset array of lenght " + offsets.length);
             }
             if (shape == null) {
-                throw new IllegalArgumentException("geometry: cannot address a geometry with no shape");
+                throw new KlabIllegalArgumentException("geometry: cannot address a geometry with no shape");
             }
 
             if (offsets.length == 1) {
@@ -795,7 +803,7 @@ public class Geometry implements IGeometry {
     public Geometry withBoundingBox(double minX, double maxX, double minY, double maxY) {
         Dimension space = getDimension(Type.SPACE);
         if (space == null) {
-            throw new IllegalStateException("cannot set spatial parameters on a geometry without space");
+            throw new KlabIllegalStateException("cannot set spatial parameters on a geometry without space");
         }
         space.getParameters().put(PARAMETER_SPACE_BOUNDINGBOX, new double[]{minX, maxX, minY, maxY});
         return this;
@@ -945,7 +953,7 @@ public class Geometry implements IGeometry {
     public Geometry withTemporalBoundaries(long start, long end) {
         Dimension time = getDimension(Type.TIME);
         if (time == null) {
-            throw new IllegalStateException("cannot set temporal parameters on a geometry without time");
+            throw new KlabIllegalStateException("cannot set temporal parameters on a geometry without time");
         }
         time.getParameters().put(PARAMETER_TIME_PERIOD, new long[]{start, end});
         return this;
@@ -996,7 +1004,7 @@ public class Geometry implements IGeometry {
                         dimensionality.generic = true;
                     }
                 } else {
-                    throw new IllegalArgumentException("unrecognized geometry dimension identifier " + c);
+                    throw new KlabIllegalArgumentException("unrecognized geometry dimension identifier " + c);
                     // if (dimDictionary.containsKey(Character.toLowerCase(c))) {
                     // dimensionality.type = dimDictionary.get(Character.toLowerCase(c));
                     // } else {
@@ -1042,7 +1050,9 @@ public class Geometry implements IGeometry {
                         shape.append(geometry.charAt(idx));
                         idx++;
                     }
-                    dimensionality.parameters.putAll(readParameters(shape.toString()));
+                    if (!shape.toString().isEmpty()) {
+                        dimensionality.parameters.putAll(readParameters(shape.toString()));
+                    }
                 }
 
                 ret.dimensions.add(dimensionality);
@@ -1060,7 +1070,7 @@ public class Geometry implements IGeometry {
         for (String kvp : kvs.trim().split(",")) {
             String[] kk = kvp.trim().split("=");
             if (kk.length != 2) {
-                throw new IllegalArgumentException("wrong key/value pair in geometry definition: " + kvp);
+                throw new KlabIllegalArgumentException("wrong key/value pair in geometry definition: " + kvp);
             }
             String key = kk[0].trim();
             String val = kk[1].trim();
@@ -1087,14 +1097,14 @@ public class Geometry implements IGeometry {
     }
 
     private static Class<?> getParameterPODType(String kvp) {
-		switch (kvp) {
-		case PARAMETER_TIME_PERIOD:
-			return Long.class;
-		}
-		return null;
-	}
+        switch(kvp) {
+        case PARAMETER_TIME_PERIOD:
+            return Long.class;
+        }
+        return null;
+    }
 
-	private DimensionImpl newDimension() {
+    private DimensionImpl newDimension() {
         return new DimensionImpl();
     }
 
@@ -1107,8 +1117,7 @@ public class Geometry implements IGeometry {
 
         // System.out.println(separateTargets(ITime.class, 1, Dimension.Type.SPACE, 2, 3));
 
-        Geometry gg = create(
-                "τ1{tend=725846400000,tscope=1.0,tstart=694224000000,ttype=logical,tunit=year}S2(129599,64799){bbox=[-180.0 180.00000000002876 -90.00000000001438 90.0],proj=EPSG:4326}");
+        Geometry gg = create("σ1(866){authority=IMF.CL_AREA}");
         System.out.println(gg.toString());
         // System.out.println(separateTargets(ITime.class, Dimension.Type.SPACE, 2, 3));
     }
@@ -1177,12 +1186,13 @@ public class Geometry implements IGeometry {
             return (T) this;
         } else if (Offset.class.isAssignableFrom(cls)) {
             if (!hasShape(this)) {
-                throw new IllegalStateException(
+                throw new KlabIllegalStateException(
                         "cannot see a geometry as an offset locator unless shape is specified for all extents");
             }
             return (T) new Offset(this);
         }
-        throw new IllegalArgumentException("cannot translate a simple geometry into a " + cls.getCanonicalName());
+        throw new KlabIllegalArgumentException(
+                "cannot translate a simple geometry into a " + cls.getCanonicalName());
     }
 
     @Override
@@ -1193,7 +1203,7 @@ public class Geometry implements IGeometry {
     private ILocator at(List<DimensionTarget> targets) {
 
         if (!hasShape(this)) {
-            throw new IllegalStateException("Geometry has no specified shape: cannot create locators");
+            throw new KlabIllegalStateException("Geometry has no specified shape: cannot create locators");
         }
 
         /*
@@ -1208,7 +1218,8 @@ public class Geometry implements IGeometry {
         }
 
         if (overall != null && targets.size() > 1) {
-            throw new IllegalStateException("Geometry cannot be located with both dimension-specific and overall locators");
+            throw new KlabIllegalStateException(
+                    "Geometry cannot be located with both dimension-specific and overall locators");
         }
 
         if (overall != null) {
@@ -1224,7 +1235,8 @@ public class Geometry implements IGeometry {
 
                     if (target.coordinates != null || target.otherLocators != null) {
                         // we don't handle these here
-                        throw new IllegalStateException("Unrecognized locators for a Geometry: check usage");
+                        throw new KlabIllegalStateException(
+                                "Unrecognized locators for a Geometry: check usage");
                     }
 
                     if (target.type != null && target.type == dimension.getType()) {
@@ -1422,7 +1434,8 @@ public class Geometry implements IGeometry {
 
     @Override
     public boolean isInfiniteTime() {
-        return getDimension(Dimension.Type.TIME) != null && getDimension(Dimension.Type.TIME).size() == INFINITE_SIZE;
+        return getDimension(Dimension.Type.TIME) != null
+                && getDimension(Dimension.Type.TIME).size() == INFINITE_SIZE;
     }
 
     public void setOriginalScale(IScale originalScale) {
@@ -1444,7 +1457,8 @@ public class Geometry implements IGeometry {
     public static Object[] getLocatorParameters(Dimension extent) {
         if (extent.getType() == Type.TIME && extent.getParameters().containsKey(PARAMETER_TIME_LOCATOR)) {
             return new Object[]{extent.getParameters().get(PARAMETER_TIME_LOCATOR)};
-        } else if (extent.getType() == Type.SPACE && extent.getParameters().containsKey(PARAMETER_SPACE_LONLAT)) {
+        } else if (extent.getType() == Type.SPACE
+                && extent.getParameters().containsKey(PARAMETER_SPACE_LONLAT)) {
             double[] latlon = extent.getParameters().get(PARAMETER_SPACE_LONLAT, double[].class);
             return Utils.boxArray(latlon);
         } // TODO others maybe

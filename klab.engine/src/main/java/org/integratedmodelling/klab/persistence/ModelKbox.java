@@ -41,6 +41,7 @@ import org.integratedmodelling.klab.resolution.Resolver;
 import org.integratedmodelling.klab.rest.ModelReference;
 import org.integratedmodelling.klab.rest.ModelReference.Mediation;
 import org.integratedmodelling.klab.scale.AbstractExtent;
+import org.integratedmodelling.klab.scale.EnumeratedExtent;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Escape;
 import org.integratedmodelling.klab.utils.Pair;
@@ -81,15 +82,24 @@ public class ModelKbox extends ObservableKbox {
 
                 @Override
                 public String getCreateSQL() {
-                    String ret = "CREATE TABLE model (" + "oid LONG, " + "serverid VARCHAR(64), " + "id VARCHAR(256), "
-                            + "name VARCHAR(256), " + "namespaceid VARCHAR(128), " + "projectid VARCHAR(128), " + "typeid LONG, "
-                            + "otypeid LONG, " + "scope VARCHAR(16), " + "isresolved BOOLEAN, " + "isreification BOOLEAN, "
-                            + "inscenario BOOLEAN, " + "hasdirectobjects BOOLEAN, " + "hasdirectdata BOOLEAN, "
-                            + "timestart LONG, " + "timeend LONG, " + "isspatial BOOLEAN, " + "istemporal BOOLEAN, "
-                            + "timemultiplicity LONG, " + "spacemultiplicity LONG, " + "scalemultiplicity LONG, "
-                            + "dereifyingattribute VARCHAR(256), " + "minspatialscale INTEGER, " + "maxspatialscale INTEGER, "
+                    String ret = "CREATE TABLE model (" + "oid LONG, " + "serverid VARCHAR(64), "
+                            + "id VARCHAR(256), "
+                            + "name VARCHAR(256), " + "namespaceid VARCHAR(128), "
+                            + "projectid VARCHAR(128), " + "typeid LONG, "
+                            + "otypeid LONG, " + "scope VARCHAR(16), " + "isresolved BOOLEAN, "
+                            + "isreification BOOLEAN, "
+                            + "inscenario BOOLEAN, " + "hasdirectobjects BOOLEAN, "
+                            + "hasdirectdata BOOLEAN, "
+                            + "timestart LONG, " + "timeend LONG, " + "isspatial BOOLEAN, "
+                            + "istemporal BOOLEAN, "
+                            + "timemultiplicity LONG, " + "spacemultiplicity LONG, "
+                            + "scalemultiplicity LONG, "
+                            + "dereifyingattribute VARCHAR(256), " + "minspatialscale INTEGER, "
+                            + "maxspatialscale INTEGER, "
                             + "mintimescale INTEGER, " + "maxtimescale INTEGER, " + "space GEOMETRY, "
-                            + "observationtype VARCHAR(256), " + "); " + "CREATE INDEX model_oid_index ON model(oid); "
+                            + "observationtype VARCHAR(256), " + "enumeratedspacedomain VARCHAR(256), "
+                            + "enumeratedspacelocation VARCHAR(1024), " + "); "
+                            + "CREATE INDEX model_oid_index ON model(oid); "
                     // + "CREATE SPATIAL INDEX model_space ON model(space);"
                     ;
 
@@ -109,23 +119,33 @@ public class ModelKbox extends ObservableKbox {
 
                     long tid = requireConceptId(model.getObservableConcept(), monitor);
 
-                    String ret = "INSERT INTO model VALUES (" + primaryKey + ", " + "'" + cn(model.getServerId()) + "', " + "'"
-                            + cn(model.getId()) + "', " + "'" + cn(model.getName()) + "', " + "'" + cn(model.getNamespaceId())
+                    String ret = "INSERT INTO model VALUES (" + primaryKey + ", " + "'"
+                            + cn(model.getServerId()) + "', " + "'"
+                            + cn(model.getId()) + "', " + "'" + cn(model.getName()) + "', " + "'"
+                            + cn(model.getNamespaceId())
                             + "', " + "'" + cn(model.getProjectId()) + "', " + tid + ", "
-                            + /* observation concept is obsolete oid */ 0 + ", '" + (model.getScope().name()) + "', "
-                            + (model.isResolved() ? "TRUE" : "FALSE") + ", " + (model.isReification() ? "TRUE" : "FALSE") + ", "
-                            + (model.isInScenario() ? "TRUE" : "FALSE") + ", " + (model.isHasDirectObjects() ? "TRUE" : "FALSE")
-                            + ", " + (model.isHasDirectData() ? "TRUE" : "FALSE") + ", " + model.getTimeStart() + ", "
+                            + /* observation concept is obsolete oid */ 0 + ", '" + (model.getScope().name())
+                            + "', "
+                            + (model.isResolved() ? "TRUE" : "FALSE") + ", "
+                            + (model.isReification() ? "TRUE" : "FALSE") + ", "
+                            + (model.isInScenario() ? "TRUE" : "FALSE") + ", "
+                            + (model.isHasDirectObjects() ? "TRUE" : "FALSE")
+                            + ", " + (model.isHasDirectData() ? "TRUE" : "FALSE") + ", "
+                            + model.getTimeStart() + ", "
                             + model.getTimeEnd() + ", " + (model.isSpatial() ? "TRUE" : "FALSE") + ", "
-                            + (model.isTemporal() ? "TRUE" : "FALSE") + ", " + model.getTimeMultiplicity() + ", "
+                            + (model.isTemporal() ? "TRUE" : "FALSE") + ", " + model.getTimeMultiplicity()
+                            + ", "
                             + model.getSpaceMultiplicity() + ", " + model.getScaleMultiplicity() + ", " + "'"
-                            + cn(model.getDereifyingAttribute()) + "', " + model.getMinSpatialScaleFactor() + ", "
+                            + cn(model.getDereifyingAttribute()) + "', " + model.getMinSpatialScaleFactor()
+                            + ", "
                             + model.getMaxSpatialScaleFactor() + ", " + model.getMinTimeScaleFactor() + ", "
                             + model.getMaxTimeScaleFactor() + ", " + "'"
                             + (model.getShape() == null
                                     ? "GEOMETRYCOLLECTION EMPTY"
                                     : ((Shape) model.getShape()).getStandardizedGeometry().toString())
-                            + "', '" + model.getObservationType() + "');";
+                            + "', '" + model.getObservationType() + "', '"
+                            + cn(model.getEnumeratedSpaceDomain()) + "', '"
+                            + cn(model.getEnumeratedSpaceLocation()) + "');";
 
                     if (model.getMetadata() != null && model.getMetadata().size() > 0) {
                         storeMetadataFor(primaryKey, model.getMetadata());
@@ -148,7 +168,8 @@ public class ModelKbox extends ObservableKbox {
      * @return models resulting from query, best first.
      * @throws KlabException
      */
-    public List<IRankedModel> query(IObservable observable, ResolutionScope resolutionScope) throws KlabException {
+    public List<IRankedModel> query(IObservable observable, ResolutionScope resolutionScope)
+            throws KlabException {
 
         initialize(resolutionScope.getMonitor());
 
@@ -156,7 +177,8 @@ public class ModelKbox extends ObservableKbox {
         // contextualization is deferred.
         if (resolutionScope.getContext() != null && !observable.getType().is(Type.PREDICATE)
                 && ((Observable) observable).mustContextualizeAtResolution()) {
-            observable = Observables.INSTANCE.contextualizeTo(observable, resolutionScope.getContext().getObservable().getType(),
+            observable = Observables.INSTANCE.contextualizeTo(observable,
+                    resolutionScope.getContext().getObservable().getType(),
                     true, resolutionScope.getMonitor());
         }
 
@@ -249,7 +271,8 @@ public class ModelKbox extends ObservableKbox {
      * @return all unranked model descriptors matching the query
      * @throws KlabException
      */
-    public List<ModelReference> queryModels(IObservable observable, ResolutionScope context) throws KlabException {
+    public List<ModelReference> queryModels(IObservable observable, ResolutionScope context)
+            throws KlabException {
 
         List<ModelReference> ret = new ArrayList<>();
 
@@ -258,7 +281,9 @@ public class ModelKbox extends ObservableKbox {
         }
 
         String query = "SELECT model.oid FROM model WHERE ";
-        IConcept contextObservable = context.getContextObservable() == null ? null : context.getContextObservable().getType();
+        IConcept contextObservable = context.getContextObservable() == null
+                ? null
+                : context.getContextObservable().getType();
         String typequery = observableQuery(observable, contextObservable, context.getMode());
 
         if (typequery == null) {
@@ -295,8 +320,10 @@ public class ModelKbox extends ObservableKbox {
         }
 
         Logging.INSTANCE
-                .info("model query for " + (context.getMode() == Mode.INSTANTIATION ? "instantiation of " : "explanation of ")
-                        + observable + " found " + (ret.size() == 1 ? ret.get(0).getName() : (ret.size() + " models")));
+                .info("model query for "
+                        + (context.getMode() == Mode.INSTANTIATION ? "instantiation of " : "explanation of ")
+                        + observable + " found "
+                        + (ret.size() == 1 ? ret.get(0).getName() : (ret.size() + " models")));
 
         return ret;
     }
@@ -365,11 +392,13 @@ public class ModelKbox extends ObservableKbox {
      * non-distributed space/time. ALSO the dimensionality!
      */
     private String spaceQuery(ISpace space) {
-    	
-    	if (space instanceof IEnumeratedExtent) {
-    		// TODO! Accept anything that is from the same authority or baseconcept
-    		return "";
-    	}
+
+        if (space instanceof IEnumeratedExtent) {
+            // Accept anything that is from the same authority or baseconcept. If the requesting
+            // context needs specific values, these should be checked later in the prioritizer.
+            Pair<String, String> defs = ((EnumeratedExtent) space).getExtentDescriptors();
+            return "model.enumeratedspacedomain = '" + defs.getFirst() + "'";
+        }
 
         if (((ISpace) ((AbstractExtent) space).getExtent()).getShape().isEmpty()) {
             return "";
@@ -577,7 +606,8 @@ public class ModelKbox extends ObservableKbox {
     protected int deleteAllObjectsWithNamespace(String namespaceId, IMonitor monitor) throws KlabException {
         initialize(monitor);
         int n = 0;
-        for (long oid : database.queryIds("SELECT oid FROM model where namespaceid = '" + Escape.forSQL(namespaceId) + "';")) {
+        for (long oid : database.queryIds(
+                "SELECT oid FROM model where namespaceid = '" + Escape.forSQL(namespaceId) + "';")) {
             deleteObjectWithId(oid, monitor);
             n++;
         }
@@ -661,7 +691,8 @@ public class ModelKbox extends ObservableKbox {
                 if (model.isInstantiator()) {
                     IConcept context = Observables.INSTANCE.getContextType(type);
                     if (context == null || !context.is(model.getObservables().get(0))) {
-                        type = attr.getBuilder(monitor).of(model.getObservables().get(0).getType()).buildConcept();
+                        type = attr.getBuilder(monitor).of(model.getObservables().get(0).getType())
+                                .buildConcept();
                     }
                 }
                 ModelReference m = ret.get(0).copy();
@@ -683,7 +714,8 @@ public class ModelKbox extends ObservableKbox {
         return ret;
     }
 
-    private static Collection<ModelReference> getModelDescriptors(org.integratedmodelling.klab.model.Model model,
+    private static Collection<ModelReference> getModelDescriptors(
+            org.integratedmodelling.klab.model.Model model,
             IMonitor monitor) {
 
         List<ModelReference> ret = new ArrayList<>();
@@ -704,11 +736,17 @@ public class ModelKbox extends ObservableKbox {
         long timeEnd = -1;
         boolean isSpatial = false;
         boolean isTemporal = false;
+        String enumeratedSpaceDomain = null;
+        String enumeratedSpaceLocation = null;
 
         if (scale != null) {
 
             scaleMultiplicity = scale.size();
-            if (scale.getSpace() != null) {
+            if (scale.getSpace() instanceof IEnumeratedExtent) {
+                Pair<String, String> defs = ((EnumeratedExtent) scale.getSpace()).getExtentDescriptors();
+                enumeratedSpaceDomain = defs.getFirst();
+                enumeratedSpaceLocation = defs.getSecond();
+            } else if (scale.getSpace() != null) {
                 spaceExtent = (Shape) scale.getSpace().getShape();
                 // may be null when we just say 'over space'.
                 if (spaceExtent != null) {
@@ -763,6 +801,8 @@ public class ModelKbox extends ObservableKbox {
                 m.setSpatial(isSpatial);
                 m.setTemporal(isTemporal);
                 m.setShape(spaceExtent);
+                m.setEnumeratedSpaceDomain(enumeratedSpaceDomain);
+                m.setEnumeratedSpaceLocation(enumeratedSpaceLocation);
 
                 m.setObservable(obs.getType().getDefinition());
                 m.setObservationType(obs.getDescriptionType().name());
@@ -774,12 +814,17 @@ public class ModelKbox extends ObservableKbox {
                 m.setReification(model.isInstantiator());
                 m.setResolved(model.isResolved());
                 m.setHasDirectData(model.isResolved() && model.getObservables().get(0).is(Type.QUALITY));
-                m.setHasDirectObjects(model.isResolved() && model.getObservables().get(0).is(Type.DIRECT_OBSERVABLE));
+                m.setHasDirectObjects(
+                        model.isResolved() && model.getObservables().get(0).is(Type.DIRECT_OBSERVABLE));
 
-                m.setMinSpatialScaleFactor(model.getMetadata().get(IMetadata.IM_MIN_SPATIAL_SCALE, ISpace.MIN_SCALE_RANK));
-                m.setMaxSpatialScaleFactor(model.getMetadata().get(IMetadata.IM_MAX_SPATIAL_SCALE, ISpace.MAX_SCALE_RANK));
-                m.setMinTimeScaleFactor(model.getMetadata().get(IMetadata.IM_MIN_TEMPORAL_SCALE, ITime.MIN_SCALE_RANK));
-                m.setMaxTimeScaleFactor(model.getMetadata().get(IMetadata.IM_MAX_TEMPORAL_SCALE, ITime.MAX_SCALE_RANK));
+                m.setMinSpatialScaleFactor(
+                        model.getMetadata().get(IMetadata.IM_MIN_SPATIAL_SCALE, ISpace.MIN_SCALE_RANK));
+                m.setMaxSpatialScaleFactor(
+                        model.getMetadata().get(IMetadata.IM_MAX_SPATIAL_SCALE, ISpace.MAX_SCALE_RANK));
+                m.setMinTimeScaleFactor(
+                        model.getMetadata().get(IMetadata.IM_MIN_TEMPORAL_SCALE, ITime.MIN_SCALE_RANK));
+                m.setMaxTimeScaleFactor(
+                        model.getMetadata().get(IMetadata.IM_MAX_TEMPORAL_SCALE, ITime.MAX_SCALE_RANK));
 
                 m.setPrimaryObservable(first);
                 first = false;

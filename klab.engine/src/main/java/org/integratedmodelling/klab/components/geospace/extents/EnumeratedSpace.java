@@ -21,7 +21,7 @@ public class EnumeratedSpace extends EnumeratedExtent implements ISpace {
 
 	@Override
 	public String encode() {
-		String ret = (isGeneric() ? "\u03c4" : "S") + "1(" + size() + "){";
+		String ret = (isGeneric() ? "\u03c3" : "S") + "1(" + size() + "){";
 		if (isConsistent()) {
 			ret += "declaration=" + originalDeclaration;
 		} else if (getAuthority() != null) {

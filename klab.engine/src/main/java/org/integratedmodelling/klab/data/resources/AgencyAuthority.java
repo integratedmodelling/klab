@@ -35,6 +35,10 @@ public class AgencyAuthority implements IAuthority {
 		this.authorities.put(id, authority);
 	}
 
+	public IAuthority getSubAuthority(String id) {
+	    return authorities.get(id);
+	}
+	
 	@Override
 	public Identity getIdentity(String identityId, String catalog) {
 		IAuthority auth = authorities.get(catalog);

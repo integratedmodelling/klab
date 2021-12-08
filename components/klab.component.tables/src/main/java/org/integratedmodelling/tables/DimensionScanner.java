@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 
+import org.integratedmodelling.klab.Authorities;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.ILocator;
@@ -21,6 +22,8 @@ import org.integratedmodelling.klab.api.data.general.ITable;
 import org.integratedmodelling.klab.api.data.general.ITable.Filter;
 import org.integratedmodelling.klab.api.data.general.ITable.Filter.Type;
 import org.integratedmodelling.klab.api.knowledge.ICodelist;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.observations.scale.IEnumeratedExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
@@ -51,6 +54,10 @@ public class DimensionScanner<T> {
     // if not null, this matches a row/column header (according to dimension) to
     // extract a string to match to the extent.
     private Pattern dimensionHeaderMatch;
+
+    // if not null, these are the codes to match in the
+    // reference column (columnName) that adopts a codelist.
+    private Set<String> codes;
 
     // scan this dimension
     private Dimension dimension = Dimension.ROW;
@@ -105,6 +112,7 @@ public class DimensionScanner<T> {
         this.indices = other.indices;
         this.rowName = other.rowName;
         this.columnName = other.columnName;
+        this.codes = other.codes;
         this.auxiliaryResourceUrn = other.auxiliaryResourceUrn;
     }
 
@@ -302,10 +310,23 @@ public class DimensionScanner<T> {
             } else if (columnName != null) {
 
                 ICodelist codelist = table.getCodelist(columnName);
-                if (codelist != null) {
+                if (codelist != null && extent instanceof IEnumeratedExtent) {
                     /*
-                     * space is mapped to a codelist. 
+                     * space is mapped to a codelist which in turn must come from an authority.
+                     * Store the codes to match when filtering.
                      */
+                    for (IConcept concept : ((IEnumeratedExtent) extent).getExtension()) {
+                        String code = Authorities.INSTANCE.getAuthorityCode(concept);
+                        if (code == null) {
+                            scope.getMonitor().error("concept " + concept
+                                    + " used as enumerated space extension does not correspond to a searchable code");
+                        } else {
+                            if (this.codes == null) {
+                                ret.codes = new LinkedHashSet<>();
+                            }
+                            ret.codes.add(code);
+                        }
+                    }
                 }
 
             }
@@ -340,6 +361,14 @@ public class DimensionScanner<T> {
                 return ((AbstractTable<?>) table).newFilter(Filter.Type.COLUMN_MATCH,
                         new Object[]{this.columnName, value});
             }
+        } else if (ISpace.class.isAssignableFrom(this.extent)) {
+
+            if (this.codes == null || this.codes.isEmpty()) {
+                return ((AbstractTable<?>) table).newFilter(Filter.Type.NO_RESULTS, null);
+            }
+            return ((AbstractTable<?>) table).newFilter(Filter.Type.COLUMN_MATCH,
+                    new Object[]{this.columnName, this.codes});
+
         } else if (ITime.class.isAssignableFrom(this.extent)) {
 
             ITime time = locator instanceof ITime
