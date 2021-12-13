@@ -44,6 +44,11 @@ public class PotentialEvapotranspiredWaterVolumeResolver implements IResolver<IP
 
             OmsPotentialEvapotranspiredWaterVolume pet = new OmsPotentialEvapotranspiredWaterVolume();
             pet.pm = taskMonitor;
+            
+            int startDay = context.getScale().getTime().getStart().getDayOfYear();
+            int endDay = context.getScale().getTime().getEnd().getDayOfYear();
+            int days = endDay - startDay;
+            pet.pDaysInTimestep = (double) days;
             pet.inCropCoefficient = getGridCoverage(context, cropCoefficientState);
             pet.inMaxTemp = getGridCoverage(context, maxTempState);
             pet.inMinTemp = getGridCoverage(context, minTempState);
