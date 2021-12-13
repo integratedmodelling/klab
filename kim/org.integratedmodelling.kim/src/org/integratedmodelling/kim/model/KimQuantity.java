@@ -17,7 +17,7 @@ public class KimQuantity extends KimStatement implements IKimQuantity {
 		super(quantity, null);
 	}
 	
-	private KimQuantity() {
+	public KimQuantity() {
 	}
 
 	@Override

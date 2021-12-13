@@ -1014,7 +1014,6 @@ public class Scheduler implements IScheduler {
 				computed.add(observable);
 				computeImplicitDependents(precursor, changed, computed, time, runtimeScope, dependencies, catalog,
 						dataflow);
-				System.out.println("CHECKING IF " + precursor + " HAS CHANGED FOR " + observable);
 				if (changed.contains(precursor) && !changed.contains(observable)) {
 					IObservation pre = catalog.get(precursor);
 					IObservation post = catalog.get(observable);

@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.components.time.services;
 import org.integratedmodelling.kim.api.IKimQuantity;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.model.KimDate;
+import org.integratedmodelling.klab.api.data.IQuantity;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
@@ -81,8 +82,8 @@ public class Time implements IExpression {
 		}
 		if (parameters.contains("step")) {
 
-			if (parameters.get("step") instanceof IKimQuantity) {
-				IKimQuantity sq = parameters.get("step", IKimQuantity.class);
+			if (parameters.get("step") instanceof IQuantity) {
+				IQuantity sq = parameters.get("step", IQuantity.class);
 				if (resolution == null) {
 					resolution = org.integratedmodelling.klab.components.time.extents.Time.resolution(sq);
 					if (resolution.getType() != null && resolution.getType().isRegular()) {
