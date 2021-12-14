@@ -135,7 +135,7 @@ public class Resolver {
 		 * resolve and run
 		 */
 		ResolutionScope scope = resolve(resolvable,
-				ResolutionScope.create((Subject) context, monitor, Arrays.asList(scenarios)));
+				ResolutionScope.create((Subject) context, monitor, Arrays.asList(scenarios)), false);
 		if (scope.getCoverage().isRelevant()) {
 			return Dataflows.INSTANCE.compile(taskId, scope, parentDataflow);
 		}
@@ -154,7 +154,11 @@ public class Resolver {
 	 * @return the resolved scope
 	 * @throws KlabException
 	 */
-	public ResolutionScope resolve(IResolvable resolvable, ResolutionScope parentScope) throws KlabException {
+	public ResolutionScope resolve(IResolvable resolvable, ResolutionScope parentScope) {
+		return resolve(resolvable, parentScope, true);
+	}
+	
+	private ResolutionScope resolve(IResolvable resolvable, ResolutionScope parentScope, boolean isRoot) throws KlabException {
 
 		ResolutionScope ret = null;
 		if (resolvable instanceof Observable) {
@@ -174,13 +178,15 @@ public class Resolver {
 
 		if (ret != null) {
 
-			if (ret.isOccurrent()) {
+			if (ret.isOccurrent() && isRoot) {
+
+				Collection<ObservedConcept> ziocane = parentScope.getResolved(Type.QUALITY);
 
 				/*
 				 * visit the scope (building a list of ResolvedObservable for all qualities that
 				 * may change) and resolve their change in the original scope
 				 */
-				for (ObservedConcept observable : parentScope.getResolved(Type.QUALITY)) {
+				for (ObservedConcept observable : ziocane) {
 
 					if (!OWL.INSTANCE.isSemantic(observable.getObservable())) {
 						continue;
@@ -190,13 +196,13 @@ public class Resolver {
 						// these are mere transformations and we don't need their change.
 						continue;
 					}
-					
+
 					IObservable toResolve = observable.getObservable().getBuilder(parentScope.getMonitor())
 							.as(UnarySemanticOperator.CHANGE).buildObservable();
-					
+
 					/*
-					 * if the original quality observable incarnates a predicate, its change incarnates the
-					 * original variable's change 
+					 * if the original quality observable incarnates a predicate, its change
+					 * incarnates the original variable's change
 					 */
 
 					if (parentScope.getResolvedObservable(toResolve, Mode.RESOLUTION) != null
@@ -680,7 +686,7 @@ public class Resolver {
 							model = concretizeModel(model, resolvedPredicates, resolvedPredicatesContext,
 									parentScope.getMonitor());
 
-							ResolutionScope mscope = resolve(model, ret);
+							ResolutionScope mscope = resolve(model, ret, false);
 
 							if (mscope.getCoverage().isRelevant()) {
 

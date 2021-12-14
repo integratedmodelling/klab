@@ -143,7 +143,7 @@ public class VectorImporter extends AbstractFilesetImporter {
                     }
                     attr = attr.replaceAll(":", "_");
                     if (s.length() != attr.length()) {
-                        monitor.warn("shapefile export: shortening metadata field name "
+                        monitor.info("shapefile export: shortening metadata field name "
                                 + s + " to " + attr);
                     }
                     metadataId.add(new Pair<>(s, attr));
@@ -161,7 +161,7 @@ public class VectorImporter extends AbstractFilesetImporter {
                     String attr = state.getObservable().getName();
                     if (attr.length() > 10) {
                         attr = attr.substring(0, 10);
-                        monitor.warn("shapefile export: shortening attribute name "
+                        monitor.info("shapefile export: shortening attribute name "
                                 + state.getObservable().getName() + " to " + attr);
                     }
                     stateId.add(new Pair<>(state.getObservable().getName(), attr));

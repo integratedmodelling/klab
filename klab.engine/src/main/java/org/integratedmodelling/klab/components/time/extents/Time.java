@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.integratedmodelling.kim.api.IKimQuantity;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimDate;
@@ -18,6 +17,7 @@ import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.IQuantity;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -337,7 +337,7 @@ public class Time extends Extent implements ITime {
         return instant(KimDate.asDate(year));
     }
 
-    public static ITimeDuration duration(IKimQuantity spec) {
+    public static ITimeDuration duration(IQuantity spec) {
         Resolution res = new ResolutionImpl(Resolution.Type.parse(spec.getUnit()), spec.getValue().doubleValue());
         return TimeDuration.create((long) (res.getMultiplier() * res.getType().getMilliseconds()), res.getType());
     }
@@ -355,7 +355,7 @@ public class Time extends Extent implements ITime {
         return TimeDuration.create(number.longValue(), type);
     }
 
-    public static Resolution resolution(IKimQuantity spec) {
+    public static Resolution resolution(IQuantity spec) {
         return new ResolutionImpl(Resolution.Type.parse(spec.getUnit()), spec.getValue().doubleValue());
     }
 

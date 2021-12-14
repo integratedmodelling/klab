@@ -119,11 +119,16 @@ class CSVTable extends AbstractTable<Object> {
 	}
 
 	@Override
-	public List<Object> getRowItems(Object rowLocator) {
+	public List<Object> getRowItems(Object... rowLocator) {
 
-		List<Object> ret = new ArrayList<>();
-		if (rowLocator instanceof Integer) {
-			int rown = (Integer) rowLocator;
+	    Object loc = rowLocator != null && rowLocator.length >= 1 ? rowLocator[0] : null;
+	    List<Object> ret = new ArrayList<>();
+		if (loc == null) {
+		    return ret;
+		}
+		
+		if (loc instanceof Integer) {
+			int rown = (Integer) loc;
 			if (this.skipHeader) {
 				rown++;
 			}
@@ -147,13 +152,18 @@ class CSVTable extends AbstractTable<Object> {
 	}
 
 	@Override
-	public List<Object> getColumnItems(Object columnLocator) {
+	public List<Object> getColumnItems(Object... columnLocator) {
 
-		List<Object> ret = new ArrayList<>();
+	    Object loc = columnLocator != null && columnLocator.length >= 1 ? columnLocator[0] : null;
+        List<Object> ret = new ArrayList<>();
+        if (loc == null) {
+            return ret;
+        }
+
 		Attribute attr = null;
-		int column = columnLocator instanceof Integer ? (Integer) columnLocator : -1;
+		int column = loc instanceof Integer ? (Integer) loc : -1;
 		if (column >= 0) {
-			attr = getColumnDescriptor(columnLocator.toString());
+			attr = getColumnDescriptor(loc.toString());
 			if (attr != null) {
 				column = attr.getIndex();
 			}

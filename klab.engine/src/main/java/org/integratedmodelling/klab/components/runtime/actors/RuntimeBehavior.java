@@ -41,6 +41,7 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITimePeriod;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.ISessionState;
+import org.integratedmodelling.klab.common.mediation.Quantity;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.AppReset;
 import org.integratedmodelling.klab.components.runtime.actors.extensions.Artifact;
@@ -164,6 +165,12 @@ public class RuntimeBehavior {
 								spaceResolution = (IQuantity) o;
 							} else if (Units.INSTANCE.SECONDS.isCompatible(Unit.create(((IQuantity) o).getUnit()))) {
 								timeResolution = (IQuantity) o;
+							} // TODO
+						} else if (o instanceof Quantity) {
+							if (Units.INSTANCE.METERS.isCompatible(((Quantity) o).getUnit())) {
+								spaceResolution = ((Quantity) o).getUnitStatement();
+							} else if (Units.INSTANCE.SECONDS.isCompatible(Unit.create(((IQuantity) o).getUnit()))) {
+								timeResolution = ((Quantity) o).getUnitStatement();
 							} // TODO
 						} else if (o instanceof IObservable) {
 							observable = (IObservable) o;

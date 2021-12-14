@@ -365,6 +365,10 @@ public class AgERA5Repository extends CopernicusCDSDatacube {
     @Override
     protected String getStateName(Urn urn, String variable) {
 
+        /**
+         * Must match the var passed in the URN, with the possible exception of turning dots into
+         * underscores.
+         */
         String[] vars = urn.getResourceId().split(",");
         for (String var : vars) {
             VariableConfiguration vc = new VariableConfiguration(var);
@@ -374,37 +378,6 @@ public class AgERA5Repository extends CopernicusCDSDatacube {
         }
         return variable;
 
-        // if (scope.getArtifact(variable) != null) {
-        // return variable;
-        // } else if (scope.getArtifact(vc.variable.shortname) != null) {
-        // return vc.variable.shortname;
-        // } else if (scope.getArtifact(vc.getVariableName()) != null) {
-        // return vc.getVariableName();
-        // } else if (scope.getArtifact(vc.variable.codename) != null) {
-        // return vc.variable.codename;
-        // } else if (scope.getArtifact(vc.variable.cdsname) != null) {
-        // return vc.variable.cdsname;
-        // } else {
-        // String mangled = vc.id.replaceAll("\\.", "_");
-        // if (scope.getArtifact(mangled) != null) {
-        // return mangled;
-        // } else {
-        // /*
-        // * go back to the URN, find out the name for the variable in the original URN,
-        // * and try the ID coming from it.
-        // */
-        // for (VariableConfiguration vvc : getVariable(urn)) {
-        // if (vvc.equals(vc)) {
-        // mangled = vvc.id.replaceAll("\\.", "_");
-        // if (scope.getArtifact(mangled) != null) {
-        // return mangled;
-        // }
-        // }
-        // }
-        //
-        // }
-        // }
-        // return super.getStateName(urn, variable, scope);
     }
 
     @Override

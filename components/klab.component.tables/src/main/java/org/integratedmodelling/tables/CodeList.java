@@ -3,7 +3,9 @@ package org.integratedmodelling.tables;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -17,10 +19,13 @@ import org.integratedmodelling.klab.api.knowledge.IAuthority;
 import org.integratedmodelling.klab.api.knowledge.ICodelist;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
+import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.components.time.extents.Time;
+import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Utils;
 
@@ -111,10 +116,10 @@ public class CodeList implements ICodelist {
 		this.codelist = codelist;
 	}
 
-	public Object value(String value) {
+	public Object value(Object value) {
 
 		if (this.codelist != null) {
-			return this.codelist.value(value);
+			return this.codelist.value(value.toString());
 		}
 
 		if (this.mapping == Mapping.YEAR) {
@@ -122,7 +127,7 @@ public class CodeList implements ICodelist {
 			if (NumberUtils.encodesInteger(value.toString())) {
 				int year = Integer.parseInt(value.toString());
 				Time ret = Time.create(year);
-				mappings.put(value, ret.encode());
+				mappings.put(value.toString(), ret.encode());
 				return ret;
 			}
 
@@ -131,9 +136,26 @@ public class CodeList implements ICodelist {
 			// TODO
 
 		} else if (this.mapping == Mapping.PERIOD) {
-		
-			// TODO
-		
+
+			// value must be two numbers
+			if (!value.getClass().isArray() || Array.getLength(value) != 2) {
+				throw new KlabIllegalStateException("period code mapping requires two numbers as mapped value");
+			}
+
+			Object d1 = Array.get(value, 0);
+			Object d2 = Array.get(value, 1);
+
+			if (!(d1 instanceof Number && d2 instanceof Number)) {
+				throw new KlabIllegalStateException("period code mapping requires two numbers as mapped value");
+			}
+
+			long start = ((Number) d1).longValue();
+			long end = ((Number) d2).longValue();
+
+			Time ret = Time.create(start > end ? end : start, start > end ? start : end);
+			mappings.put(value.toString(), ret.encode());
+			return ret;
+
 		} else {
 
 			Object ret = value == null ? null : mappings.get(value.toString());
@@ -153,7 +175,7 @@ public class CodeList implements ICodelist {
 		return null;
 	}
 
-	public String key(Object value) {
+	public Object key(Object value) {
 
 		if (this.codelist != null) {
 			return this.codelist.key(value);
@@ -184,46 +206,47 @@ public class CodeList implements ICodelist {
 	}
 
 	public IArtifact.Type getType() {
-		return type;
+		return codelist == null ? type : codelist.getType();
 	}
 
 	public String getDescription() {
-		return this.name;
+		return codelist == null ? this.name : codelist.getDescription();
 	}
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+		return codelist == null ? name : codelist.getName();
 	}
 
 	@Override
 	public String getAuthorityId() {
-		// TODO Auto-generated method stub
-		return null;
+		return codelist == null ? null : codelist.getAuthorityId();
 	}
 
 	@Override
 	public boolean isAuthority() {
-		// TODO Auto-generated method stub
-		return false;
+		return codelist == null ? false : codelist.isAuthority();
 	}
 
 	@Override
-	public Collection<String> keys(Object value) {
-		// TODO Auto-generated method stub
-		return null;
+	public Collection<Object> keys(Object value) {
+		return codelist == null ? Collections.singleton(mappings.getKey(value)) : codelist.keys(value);
 	}
 
 	@Override
 	public String getPattern() {
-		// TODO Auto-generated method stub
-		return null;
+		return codelist == null ? null : codelist.getPattern();
 	}
 
 	@Override
 	public String getRootConceptId() {
-		return rootConcept == null ? null : rootConcept.getDefinition();
+		return codelist == null ? (rootConcept == null ? null : rootConcept.getDefinition())
+				: codelist.getRootConceptId();
+	}
+
+	@Override
+	public int size() {
+		return codelist == null ? mappings.size() : codelist.size();
 	}
 
 }

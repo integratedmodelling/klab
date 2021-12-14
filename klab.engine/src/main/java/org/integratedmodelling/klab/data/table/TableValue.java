@@ -6,6 +6,7 @@ import java.util.List;
 import org.integratedmodelling.klab.api.data.IResource.Attribute;
 import org.integratedmodelling.klab.api.data.general.ITable;
 import org.integratedmodelling.klab.api.data.general.ITable.Filter.Type;
+import org.integratedmodelling.klab.api.knowledge.ICodelist;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 
 /**
@@ -58,13 +59,13 @@ public class TableValue<T> implements ITable<T> {
     }
 
     @Override
-    public List<T> getRowItems(Object rowLocator) {
+    public List<T> getRowItems(Object... rowLocator) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public List<T> getColumnItems(Object columnLocator) {
+    public List<T> getColumnItems(Object... columnLocator) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -122,5 +123,11 @@ public class TableValue<T> implements ITable<T> {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+    @Override
+    public ICodelist getCodelist(String columnId) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

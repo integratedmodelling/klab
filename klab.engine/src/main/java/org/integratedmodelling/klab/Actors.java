@@ -32,6 +32,7 @@ import org.integratedmodelling.kactors.model.KActors;
 import org.integratedmodelling.kactors.model.KActors.CodeAssistant.BehaviorId;
 import org.integratedmodelling.kactors.model.KActors.Notifier;
 import org.integratedmodelling.kactors.model.KActors.ValueTranslator;
+import org.integratedmodelling.kactors.model.KActorsQuantity;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimExpression;
@@ -58,6 +59,9 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IActorsService;
 import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.common.Urns;
+import org.integratedmodelling.klab.common.mediation.Currency;
+import org.integratedmodelling.klab.common.mediation.Quantity;
+import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActionExecutor;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.ActorReference;
@@ -333,6 +337,14 @@ public enum Actors implements IActorsService {
 					case ANYTRUE:
 						// only used in matching
 						return true;
+					case QUANTITY:
+						if (value instanceof KActorsQuantity) {
+							if (((KActorsQuantity) value).getCurrency() != null) {
+								return Quantity.create(((KActorsQuantity) value).getValue(), Currency.create(((KActorsQuantity) value).getCurrency()));
+							} else if (((KActorsQuantity) value).getUnit() != null) {
+								return Quantity.create(((KActorsQuantity) value).getValue(), Unit.create(((KActorsQuantity) value).getUnit()));
+							}
+						}
 					default:
 						break;
 					}
@@ -988,8 +1000,9 @@ public enum Actors implements IActorsService {
 							}
 						}
 					}
-					
-					// check for void, no-args initialization method to call after all properties are set
+
+					// check for void, no-args initialization method to call after all properties
+					// are set
 					try {
 						Method method = cls.getMethod("initialize");
 						if (method != null) {
@@ -1205,7 +1218,7 @@ public enum Actors implements IActorsService {
 				try {
 					method = reactor.getClass().getDeclaredMethod(methodName, Object[].class);
 					if (method != null) {
-						ret = method.invoke(reactor, (Object)jargs.toArray());
+						ret = method.invoke(reactor, (Object) jargs.toArray());
 					}
 				} catch (Throwable e) {
 					if (scope != null) {

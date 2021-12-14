@@ -1,12 +1,14 @@
 package org.integratedmodelling.klab.common.mediation;
 
+import org.integratedmodelling.kim.model.KimQuantity;
+import org.integratedmodelling.klab.api.data.IQuantity;
 import org.integratedmodelling.klab.api.data.mediation.ICurrency;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.utils.Range;
 
 /**
- * Mimics the equivalent in jscience, adding currency and range mediators. Used to
- * translate the new nnn.unit expressions in k.IM.
+ * Mimics the equivalent in jscience, adding currency and range mediators. Used
+ * to translate the new nnn.unit expressions in k.IM.
  * 
  * @author Ferd
  *
@@ -17,25 +19,46 @@ public class Quantity {
 	IUnit unit;
 	ICurrency currency;
 	Range range;
-	
-	private Quantity() {}
-	
+
+	private Quantity() {
+	}
+
 	public IUnit getUnit() {
 		return unit;
 	}
-	
+
 	public Number getValue() {
 		return value;
 	}
-	
+
 	public ICurrency getCurrency() {
 		return currency;
 	}
-	
+
 	public Range getRange() {
 		return range;
 	}
-	
+
+	public IQuantity getUnitStatement() {
+		if (unit == null) {
+			return null;
+		}
+		KimQuantity ret = new KimQuantity();
+		ret.setValue(value);
+		ret.setUnit(unit.toString());
+		return ret;
+	}
+
+	public IQuantity getCurrencyStatement() {
+		if (currency == null) {
+			return null;
+		}
+		KimQuantity ret = new KimQuantity();
+		ret.setValue(value);
+		ret.setCurrency(currency.toString());
+		return ret;
+	}
+
 	/**
 	 * Parseable: only range produces output incompatible with KimQuantity.parse().
 	 */
@@ -49,7 +72,7 @@ public class Quantity {
 		}
 		return value.toString() + (range == null ? "" : (" ") + range);
 	}
-	
+
 	public static Quantity create(Number value, IUnit unit) {
 		Quantity ret = new Quantity();
 		ret.value = value;
@@ -70,7 +93,7 @@ public class Quantity {
 		ret.range = range;
 		return ret;
 	}
-	
+
 	public static Quantity create(Quantity value, IUnit unit) {
 		Quantity ret = new Quantity();
 		ret.value = value.in(unit);

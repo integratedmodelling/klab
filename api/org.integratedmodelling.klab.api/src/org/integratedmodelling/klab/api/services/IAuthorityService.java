@@ -19,6 +19,7 @@ import java.util.Collection;
 
 import org.integratedmodelling.klab.api.knowledge.IAuthority;
 import org.integratedmodelling.klab.api.knowledge.IAuthority.Identity;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 
 /**
  * The Interface IAuthorityService. For the time being simply a catalog of
@@ -55,5 +56,21 @@ public interface IAuthorityService {
 	 * @return
 	 */
 	Identity getIdentity(String authorityId, String identityId);
+
+    /**
+     * Get the authority official code for the passed concept, which must come from an authority.
+     * 
+     * @param c
+     * @return
+     */
+    String getAuthorityCode(IConcept c);
+
+    /**
+     * Get the authority this concept is part of, or null.
+     * 
+     * @param c
+     * @return
+     */
+    IAuthority getAuthority(IConcept c);
 
 }

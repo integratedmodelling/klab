@@ -23,7 +23,7 @@ public abstract class GenericDatacubeAdapter implements IUrnAdapter {
 
     private String name;
     private boolean dynamic;
-    
+
     public abstract ChunkedDatacubeRepository getDatacube(Urn urn);
 
     public GenericDatacubeAdapter(String name, boolean dynamic) {
@@ -45,34 +45,42 @@ public abstract class GenericDatacubeAdapter implements IUrnAdapter {
     @Override
     public void encodeData(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope scope) {
 
-    	// FIXME remove
-    	Logging.INSTANCE.info("entering encodeData from " + urn);
-    	
+        // FIXME remove
+        Logging.INSTANCE.info("entering encodeData from " + urn);
+
         // just in case
         if (!getDatacube(urn).isOnline()) {
             scope.getMonitor().error("datacube is offline"
-                    + (getDatacube(urn).getStatusMessage() == null ? "" : (": " + getDatacube(urn).getStatusMessage())));
+                    + (getDatacube(urn).getStatusMessage() == null
+                            ? ""
+                            : (": " + getDatacube(urn).getStatusMessage())));
         }
 
         for (String variableName : getDatacube(urn).getVariableNames(urn)) {
 
-        	// FIXME remove
-        	Logging.INSTANCE.info("   building strategy for " + variableName);
-        	
+            // FIXME remove
+            Logging.INSTANCE.info("   building strategy for " + variableName);
+
             ObservationStrategy strategy = getDatacube(urn).getStrategy(variableName, geometry);
 
-        	// FIXME remove
-        	Logging.INSTANCE.info("strategy is " + strategy);
+            // FIXME remove
+            Logging.INSTANCE.info("strategy is " + strategy);
 
-            
             if (strategy.getTimeToAvailabilitySeconds() < 0) {
-                scope.getMonitor().error(name + " adapter cannot fulfill request for " + urn + ": resource unavailable");
+                scope.getMonitor().error(
+                        name + " adapter cannot fulfill request for " + urn + ": resource unavailable");
             } else if (strategy.getTimeToAvailabilitySeconds() > 0) {
                 AvailabilityReference availability = strategy.buildCache();
                 if (availability.getAvailability() == Availability.DELAYED) {
-                    scope.getMonitor().addWait(availability.getRetryTimeSeconds());
+                    /**
+                     * FIXME times are wildly wrong; using minutes instead of seconds is much closer
+                     * to the current times. When estimating correctly, REMOVE the multiplicative
+                     * factor.
+                     */
+                    scope.getMonitor().addWait(availability.getRetryTimeSeconds() * 60);
                 } else if (availability.getAvailability() == Availability.NONE) {
-                    scope.getMonitor().error(name + " adapter cannot fulfill request for " + urn + ": resource unavailable");
+                    scope.getMonitor().error(
+                            name + " adapter cannot fulfill request for " + urn + ": resource unavailable");
                 }
             } else {
                 strategy.execute(urn, geometry, builder, scope);
@@ -103,7 +111,8 @@ public abstract class GenericDatacubeAdapter implements IUrnAdapter {
     }
 
     @Override
-    public IResource contextualize(IResource resource, IGeometry scale, IGeometry overallScale, IObservable semantics) {
+    public IResource contextualize(IResource resource, IGeometry scale, IGeometry overallScale,
+            IObservable semantics) {
 
         /*
          * Logic should be: the first time that the availability for the current geometry isn't
@@ -119,7 +128,8 @@ public abstract class GenericDatacubeAdapter implements IUrnAdapter {
             if (strategy.getTimeToAvailabilitySeconds() < 0) {
                 availability.setAvailability(Availability.NONE);
             } else if (strategy.getTimeToAvailabilitySeconds() > 0) {
-                ObservationStrategy overallStrategy = getDatacube(urn).getStrategy(variableName, overallScale);
+                ObservationStrategy overallStrategy = getDatacube(urn).getStrategy(variableName,
+                        overallScale);
                 AvailabilityReference newav = overallStrategy.buildCache();
                 mergeAvailability(newav, availability);
             }

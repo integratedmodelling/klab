@@ -37,6 +37,7 @@ import org.integratedmodelling.klab.common.Geometry.DimensionTarget;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.common.Offset;
 import org.integratedmodelling.klab.common.mediation.Unit;
+import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.time.extents.Time;

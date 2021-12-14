@@ -21,4 +21,10 @@ public interface IQuantity {
 	 * @return
 	 */
 	String getUnit();
+	
+	/**
+	 * 
+	 * @return
+	 */
+	String getCurrency();
 }
