@@ -1643,4 +1643,8 @@ public class Grid extends Area implements IGrid {
 				(long) ((maxY - minY) / cellHeight), this.projection);
 	}
 
+	public boolean isConsistent() {
+		return getXCells() > 0 && getYCells() > 0;
+	}
+
 }

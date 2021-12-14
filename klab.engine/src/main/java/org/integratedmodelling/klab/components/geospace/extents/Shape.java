@@ -943,7 +943,7 @@ public class Shape extends AbstractExtent implements IShape {
             grid = (Grid) ((Space) other).getGrid();
         }
 
-        if (grid != null) {
+        if (grid != null && grid.isConsistent()) {
             return Space.create(this, grid, true);
         }
 

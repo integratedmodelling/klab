@@ -218,11 +218,6 @@ public class Resolver {
 					ret.getMonitor().debug("Resolution scope is occurrent: resolving additional observable "
 							+ Concepts.INSTANCE.getDisplayName(toResolve.getType()));
 
-					if ("change_in_presence_of_chemistry__burned_earth__region".equals(toResolve.getReferenceName())
-							|| "change_in_landcover__land_cover_type".equals(toResolve.getReferenceName())) {
-						System.out.println("PODODOIO");
-					}
-
 					ResolutionScope cscope = resolve((Observable) toResolve,
 							parentScope.acceptResolutions(ret, observable.getScope().getResolutionNamespace()),
 							Mode.RESOLUTION);

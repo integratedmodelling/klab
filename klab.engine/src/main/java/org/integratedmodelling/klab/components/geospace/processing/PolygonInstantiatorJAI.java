@@ -263,7 +263,7 @@ public class PolygonInstantiatorJAI implements IExpression, IInstantiator {
                 if (Observations.INSTANCE.isData(val) && !(val instanceof Boolean)) {
                     throw new KlabValidationException("polygon instantiator: select expression must return a true/false value");
                 }
-                selected = (Boolean) val;
+                selected = val instanceof Boolean ? (Boolean) val : false;
             }
             if (selected) {
                 if (categorizeExpression != null) {
