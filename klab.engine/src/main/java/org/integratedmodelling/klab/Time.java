@@ -82,7 +82,8 @@ public enum Time implements ITimeService {
             // TODO if we really want it.
             break;
         case YEAR:
-            begin = new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), 0, 0, 0, 0, DateTimeZone.UTC);
+            begin = new DateTime(now.getYear() - 1, 1, 1, 0, 0, 0, 0, DateTimeZone.UTC);
+//            begin = new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), 0, 0, 0, 0, DateTimeZone.UTC);
             end = begin.plus(Years.ONE);
             break;
         default:
