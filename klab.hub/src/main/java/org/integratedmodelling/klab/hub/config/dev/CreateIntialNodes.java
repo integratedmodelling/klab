@@ -26,7 +26,7 @@ public class CreateIntialNodes {
 		hSet.addAll(groupRepo.findAll());
 		mongoNode.setGroups(hSet);
 		mongoNode.setName("knot");
-		mongoNode.setUrl("http://172.17.0.1:8287/node");
+		mongoNode.setUrl("http://127.0.0.1:8287/node");
 		new CreateMongoNode(mongoNode, nodeRepo).execute();	
 	}
 	
