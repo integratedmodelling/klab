@@ -70,6 +70,7 @@ pipeline {
 
                 checkout([
                     $class: 'GitSCM',
+                    branches: [[name: '**']],
                     extensions: [],
                     userRemoteConfigs: [[
                         credentialsId: "${params.GIT_CREDENTIALS}", 

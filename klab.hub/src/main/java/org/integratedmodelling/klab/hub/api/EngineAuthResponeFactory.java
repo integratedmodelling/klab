@@ -11,6 +11,7 @@ import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.hub.commands.GenerateHubReference;
 import org.integratedmodelling.klab.hub.exception.LicenseConfigDoestNotExists;
 import org.integratedmodelling.klab.hub.exception.LicenseExpiredException;
+import org.integratedmodelling.klab.hub.exception.UserDoesNotExistException;
 import org.integratedmodelling.klab.hub.licenses.services.LicenseConfigService;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.hub.network.NodeNetworkManager;
@@ -171,9 +172,10 @@ public class EngineAuthResponeFactory {
 		DateTime tomorrow = now.plusDays(90);
 		
 		ProfileResource profile = null;
-		
-		profile = profileService.getRawUserProfile(request.getName());
-		if (profile == null) {
+		try {
+			profile = profileService.getRawUserProfile(request.getName());
+		} catch (UserDoesNotExistException ex) {
+			Logging.INSTANCE.info("No user found locally, defaulting to hades.");
 			profile = profileService.getRawUserProfile("hades");
 		}
 		ArrayList<HubNotificationMessage> messages = new ArrayList<HubNotificationMessage>();
