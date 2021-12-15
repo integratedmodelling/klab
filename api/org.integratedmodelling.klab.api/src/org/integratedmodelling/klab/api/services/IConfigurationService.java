@@ -52,7 +52,7 @@ public interface IConfigurationService {
 	public static final String KLAB_CONNECTION_TIMEOUT = "klab.connection.timeout";
 	public static final String KLAB_PROJECT_BLACKLIST_PROPERTY = "klab.project.blacklist";
 	public static final String KLAB_STATS_SERVER_URL_PROPERTY = "stats.server.url";
-	
+
 	/**
 	 * Minutes after which a session times out. Default 60.
 	 */
@@ -68,7 +68,7 @@ public interface IConfigurationService {
 	public static final String KLAB_TEMPORARY_DATA_DIRECTORY = "klab.temporary.data.directory";
 
 	public static final String KLAB_DISABLE_CONSOLE_ECHO = "klab.disable.console.echo";
-	
+
 	public static final String KLAB_ACCEPTED_WAIT_TIME_SECONDS = "klab.accepted.wait.time";
 
 	/**
@@ -95,21 +95,28 @@ public interface IConfigurationService {
 	public static final String RUNTIME_PROVIDER_COMPONENT = "klab.runtime.provider.class";
 
 	/**
-	 * If defined, the engine will print times for each actuator run 
+	 * If defined, the engine will print times for each actuator run
 	 */
 	public static final String KLAB_SHOWTIMES_PROPERTY = "klab.showtimes";
 
 	/**
-	 * If defined and set to <code>true</code>, then the region context will be extended assure 
-	 * square grid cells.
+	 * If defined and set to <code>true</code>, then the region context will be
+	 * extended assure square grid cells.
 	 */
 	public static final String KLAB_GRID_CONSTRAINT = "klab.grid.forceSquarecells";
 
 	/**
-	 * If defined and set to <code>true</code>, then intermediate data processed by the models
-	 * are to be dumped to disk.
+	 * If defined and set to <code>true</code>, then intermediate data processed by
+	 * the models are to be dumped to disk.
 	 */
 	public static final String KLAB_MODEL_DUMP_INTERMEDIATE = "klab.model.dumpIntermediateData";
+
+	/**
+	 * URL of local node (must match certfile) when running in develop config. Pass
+	 * to hub as -D to override the default (which won't work on Win), normally with 
+	 * a 127.0.0.1-based URL.
+	 */
+	public static final String KLAB_DEV_NODE_URL = "klab.dev.node.url";
 
 	/**
 	 * The main properties, read and written by default to

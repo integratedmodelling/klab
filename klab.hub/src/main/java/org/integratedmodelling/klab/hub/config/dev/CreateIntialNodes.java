@@ -3,6 +3,8 @@ package org.integratedmodelling.klab.hub.config.dev;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.integratedmodelling.klab.Configuration;
+import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.hub.api.MongoGroup;
 import org.integratedmodelling.klab.hub.api.MongoNode;
 import org.integratedmodelling.klab.hub.commands.CreateMongoNode;
@@ -13,6 +15,8 @@ public class CreateIntialNodes {
 
 	private MongoNodeRepository nodeRepo;
 	private MongoGroupRepository groupRepo;
+	
+	public static String LOCAL_DEV_NODE_URL = "http://172.17.0.1:8287/node";
 
 	public CreateIntialNodes(MongoNodeRepository nodeRepo, MongoGroupRepository groupRepo) {
 		this.nodeRepo = nodeRepo;
@@ -26,7 +30,7 @@ public class CreateIntialNodes {
 		hSet.addAll(groupRepo.findAll());
 		mongoNode.setGroups(hSet);
 		mongoNode.setName("knot");
-		mongoNode.setUrl("http://127.0.0.1:8287/node");
+		mongoNode.setUrl(Configuration.INSTANCE.getProperty(IConfigurationService.KLAB_DEV_NODE_URL, LOCAL_DEV_NODE_URL));
 		new CreateMongoNode(mongoNode, nodeRepo).execute();	
 	}
 	
