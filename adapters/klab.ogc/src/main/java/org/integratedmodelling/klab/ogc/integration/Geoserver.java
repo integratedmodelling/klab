@@ -95,18 +95,23 @@ public class Geoserver {
 
 	public boolean isOnline() {
 		if (isEnabled()) {
+			GetRequest request = Unirest.get(this.url + "/rest/namespaces").header("Accept", "application/json")
+					.connectTimeout(timeout);
+			if (this.username != null) {
+				request = request.basicAuth(username, password);
+			}
 			try {
-				GetRequest request = Unirest.get(this.url + "/rest/namespaces").header("Accept", "application/json")
-						.connectTimeout(timeout);
-				if (this.username != null) {
-					request = request.basicAuth(username, password);
-				}
 				HttpResponse<JsonNode> result = request.asJson();
-				JSONObject response = result.getBody().getObject();
-				if (response.has("namespaces")) {
+				if(!result.isSuccess() && result.getStatus() == 401) {
+					Logging.INSTANCE.warn("Unable to connect to geoserver: " + result.getStatusText());
+					return false;
+				} else if (result.isSuccess() && result.getBody().getObject().has("namespace")) {
 					return true;
+				} else {
+					Logging.INSTANCE.warn("Unable to detect geoserver namespaces: " + request.getUrl());
 				}
 			} catch (UnirestException e) {
+				Logging.INSTANCE.warn("Unable to connect to geoserver: " + e.getMessage());
 				return false;
 			}
 		}
