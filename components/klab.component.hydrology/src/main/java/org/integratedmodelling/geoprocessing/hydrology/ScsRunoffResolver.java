@@ -34,7 +34,7 @@ public class ScsRunoffResolver implements IResolver<IProcess>, IExpression {
         IState curveNumberState = context.getArtifact("curve_number", IState.class);
 
         if (rainfallVolumeState != null && streamPresenceState != null && curveNumberState != null) {
-            IState numberOfEventsState = context.getArtifact("number_of_events", IState.class);
+            IState numberOfEventsState = context.getArtifact("number_of_storm_events", IState.class);
             if (numberOfEventsState == null) {
                 context.getMonitor().warn("No number of events available, default to 1.");
             }
@@ -57,7 +57,7 @@ public class ScsRunoffResolver implements IResolver<IProcess>, IExpression {
             }
 
             GeotoolsUtils.INSTANCE.dumpToRaster(context, "ScsRunoff", rainfallVolumeState, streamPresenceState, curveNumberState,
-                    runoffState);
+                    runoffState, numberOfEventsState);
         }
         return runoffProcess;
     }
