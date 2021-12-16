@@ -60,6 +60,7 @@ import org.integratedmodelling.kactors.kactors.Preamble;
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getVersion <em>Version</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getVersionString <em>Version String</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getLocale <em>Locale</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getLocales <em>Locales</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getOutput <em>Output</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getCreated <em>Created</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getCreatecomment <em>Createcomment</em>}</li>
@@ -560,6 +561,16 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
    * @ordered
    */
   protected String locale = LOCALE_EDEFAULT;
+
+  /**
+   * The cached value of the '{@link #getLocales() <em>Locales</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getLocales()
+   * @generated
+   * @ordered
+   */
+  protected List locales;
 
   /**
    * The default value of the '{@link #getOutput() <em>Output</em>}' attribute.
@@ -1398,6 +1409,56 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
    * @generated
    */
   @Override
+  public List getLocales()
+  {
+    return locales;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetLocales(List newLocales, NotificationChain msgs)
+  {
+    List oldLocales = locales;
+    locales = newLocales;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__LOCALES, oldLocales, newLocales);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setLocales(List newLocales)
+  {
+    if (newLocales != locales)
+    {
+      NotificationChain msgs = null;
+      if (locales != null)
+        msgs = ((InternalEObject)locales).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.PREAMBLE__LOCALES, null, msgs);
+      if (newLocales != null)
+        msgs = ((InternalEObject)newLocales).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.PREAMBLE__LOCALES, null, msgs);
+      msgs = basicSetLocales(newLocales, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__LOCALES, newLocales, newLocales));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public String getOutput()
   {
     return output;
@@ -1583,6 +1644,8 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         return basicSetObservables(null, msgs);
       case KactorsPackage.PREAMBLE__INLINE_STYLE:
         return basicSetInlineStyle(null, msgs);
+      case KactorsPackage.PREAMBLE__LOCALES:
+        return basicSetLocales(null, msgs);
       case KactorsPackage.PREAMBLE__CREATED:
         return basicSetCreated(null, msgs);
       case KactorsPackage.PREAMBLE__MODIFIED:
@@ -1655,6 +1718,8 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         return getVersionString();
       case KactorsPackage.PREAMBLE__LOCALE:
         return getLocale();
+      case KactorsPackage.PREAMBLE__LOCALES:
+        return getLocales();
       case KactorsPackage.PREAMBLE__OUTPUT:
         return getOutput();
       case KactorsPackage.PREAMBLE__CREATED:
@@ -1762,6 +1827,9 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         return;
       case KactorsPackage.PREAMBLE__LOCALE:
         setLocale((String)newValue);
+        return;
+      case KactorsPackage.PREAMBLE__LOCALES:
+        setLocales((List)newValue);
         return;
       case KactorsPackage.PREAMBLE__OUTPUT:
         setOutput((String)newValue);
@@ -1873,6 +1941,9 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
       case KactorsPackage.PREAMBLE__LOCALE:
         setLocale(LOCALE_EDEFAULT);
         return;
+      case KactorsPackage.PREAMBLE__LOCALES:
+        setLocales((List)null);
+        return;
       case KactorsPackage.PREAMBLE__OUTPUT:
         setOutput(OUTPUT_EDEFAULT);
         return;
@@ -1956,6 +2027,8 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         return VERSION_STRING_EDEFAULT == null ? versionString != null : !VERSION_STRING_EDEFAULT.equals(versionString);
       case KactorsPackage.PREAMBLE__LOCALE:
         return LOCALE_EDEFAULT == null ? locale != null : !LOCALE_EDEFAULT.equals(locale);
+      case KactorsPackage.PREAMBLE__LOCALES:
+        return locales != null;
       case KactorsPackage.PREAMBLE__OUTPUT:
         return OUTPUT_EDEFAULT == null ? output != null : !OUTPUT_EDEFAULT.equals(output);
       case KactorsPackage.PREAMBLE__CREATED:

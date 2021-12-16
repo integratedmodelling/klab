@@ -37,6 +37,7 @@ public class BehaviorReference {
 	private String logo;
 	private String label;
 	private Platform platform;
+	private List<String> locales = new ArrayList<>();
 	
 	public String getName() {
 		return name;
@@ -100,6 +101,14 @@ public class BehaviorReference {
 	
 	public String getProjectId() {
 		return this.projectId;
+	}
+
+	public List<String> getLocales() {
+		return locales;
+	}
+
+	public void setLocales(List<String> locales) {
+		this.locales = locales;
 	}
 
 }

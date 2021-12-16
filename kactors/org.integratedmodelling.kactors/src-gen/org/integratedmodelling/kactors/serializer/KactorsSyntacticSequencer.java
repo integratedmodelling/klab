@@ -373,6 +373,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     (rule start) (ambiguity) 'description' description=STRING
 	 *     (rule start) (ambiguity) 'import' imports+=PathName
 	 *     (rule start) (ambiguity) 'locale' locale=LOCALE
+	 *     (rule start) (ambiguity) 'locale' locales=List
 	 *     (rule start) (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     (rule start) (ambiguity) 'logo' logo=Path
 	 *     (rule start) (ambiguity) 'logo' logo=STRING
@@ -393,6 +394,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     authors+=LOCALIZED_STRING_REFERENCE (ambiguity) 'description' description=STRING
 	 *     authors+=LOCALIZED_STRING_REFERENCE (ambiguity) 'import' imports+=PathName
 	 *     authors+=LOCALIZED_STRING_REFERENCE (ambiguity) 'locale' locale=LOCALE
+	 *     authors+=LOCALIZED_STRING_REFERENCE (ambiguity) 'locale' locales=List
 	 *     authors+=LOCALIZED_STRING_REFERENCE (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     authors+=LOCALIZED_STRING_REFERENCE (ambiguity) 'logo' logo=Path
 	 *     authors+=LOCALIZED_STRING_REFERENCE (ambiguity) 'logo' logo=STRING
@@ -413,6 +415,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     authors+=STRING (ambiguity) 'description' description=STRING
 	 *     authors+=STRING (ambiguity) 'import' imports+=PathName
 	 *     authors+=STRING (ambiguity) 'locale' locale=LOCALE
+	 *     authors+=STRING (ambiguity) 'locale' locales=List
 	 *     authors+=STRING (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     authors+=STRING (ambiguity) 'logo' logo=Path
 	 *     authors+=STRING (ambiguity) 'logo' logo=STRING
@@ -433,6 +436,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     createcomment=STRING (ambiguity) 'description' description=STRING
 	 *     createcomment=STRING (ambiguity) 'import' imports+=PathName
 	 *     createcomment=STRING (ambiguity) 'locale' locale=LOCALE
+	 *     createcomment=STRING (ambiguity) 'locale' locales=List
 	 *     createcomment=STRING (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     createcomment=STRING (ambiguity) 'logo' logo=Path
 	 *     createcomment=STRING (ambiguity) 'logo' logo=STRING
@@ -453,6 +457,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     created=Date (ambiguity) 'description' description=STRING
 	 *     created=Date (ambiguity) 'import' imports+=PathName
 	 *     created=Date (ambiguity) 'locale' locale=LOCALE
+	 *     created=Date (ambiguity) 'locale' locales=List
 	 *     created=Date (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     created=Date (ambiguity) 'logo' logo=Path
 	 *     created=Date (ambiguity) 'logo' logo=STRING
@@ -473,6 +478,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     description=LOCALIZED_STRING_REFERENCE (ambiguity) 'description' description=STRING
 	 *     description=LOCALIZED_STRING_REFERENCE (ambiguity) 'import' imports+=PathName
 	 *     description=LOCALIZED_STRING_REFERENCE (ambiguity) 'locale' locale=LOCALE
+	 *     description=LOCALIZED_STRING_REFERENCE (ambiguity) 'locale' locales=List
 	 *     description=LOCALIZED_STRING_REFERENCE (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     description=LOCALIZED_STRING_REFERENCE (ambiguity) 'logo' logo=Path
 	 *     description=LOCALIZED_STRING_REFERENCE (ambiguity) 'logo' logo=STRING
@@ -493,6 +499,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     description=STRING (ambiguity) 'description' description=STRING
 	 *     description=STRING (ambiguity) 'import' imports+=PathName
 	 *     description=STRING (ambiguity) 'locale' locale=LOCALE
+	 *     description=STRING (ambiguity) 'locale' locales=List
 	 *     description=STRING (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     description=STRING (ambiguity) 'logo' logo=Path
 	 *     description=STRING (ambiguity) 'logo' logo=STRING
@@ -513,6 +520,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     imports+=PathName (ambiguity) 'description' description=STRING
 	 *     imports+=PathName (ambiguity) 'import' imports+=PathName
 	 *     imports+=PathName (ambiguity) 'locale' locale=LOCALE
+	 *     imports+=PathName (ambiguity) 'locale' locales=List
 	 *     imports+=PathName (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     imports+=PathName (ambiguity) 'logo' logo=Path
 	 *     imports+=PathName (ambiguity) 'logo' logo=STRING
@@ -533,6 +541,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     inlineStyle=Map (ambiguity) 'description' description=STRING
 	 *     inlineStyle=Map (ambiguity) 'import' imports+=PathName
 	 *     inlineStyle=Map (ambiguity) 'locale' locale=LOCALE
+	 *     inlineStyle=Map (ambiguity) 'locale' locales=List
 	 *     inlineStyle=Map (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     inlineStyle=Map (ambiguity) 'logo' logo=Path
 	 *     inlineStyle=Map (ambiguity) 'logo' logo=STRING
@@ -553,6 +562,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     label=LOCALIZED_STRING_REFERENCE (ambiguity) 'description' description=STRING
 	 *     label=LOCALIZED_STRING_REFERENCE (ambiguity) 'import' imports+=PathName
 	 *     label=LOCALIZED_STRING_REFERENCE (ambiguity) 'locale' locale=LOCALE
+	 *     label=LOCALIZED_STRING_REFERENCE (ambiguity) 'locale' locales=List
 	 *     label=LOCALIZED_STRING_REFERENCE (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     label=LOCALIZED_STRING_REFERENCE (ambiguity) 'logo' logo=Path
 	 *     label=LOCALIZED_STRING_REFERENCE (ambiguity) 'logo' logo=STRING
@@ -573,6 +583,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     label=STRING (ambiguity) 'description' description=STRING
 	 *     label=STRING (ambiguity) 'import' imports+=PathName
 	 *     label=STRING (ambiguity) 'locale' locale=LOCALE
+	 *     label=STRING (ambiguity) 'locale' locales=List
 	 *     label=STRING (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     label=STRING (ambiguity) 'logo' logo=Path
 	 *     label=STRING (ambiguity) 'logo' logo=STRING
@@ -593,6 +604,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     locale=LOCALE (ambiguity) 'description' description=STRING
 	 *     locale=LOCALE (ambiguity) 'import' imports+=PathName
 	 *     locale=LOCALE (ambiguity) 'locale' locale=LOCALE
+	 *     locale=LOCALE (ambiguity) 'locale' locales=List
 	 *     locale=LOCALE (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     locale=LOCALE (ambiguity) 'logo' logo=Path
 	 *     locale=LOCALE (ambiguity) 'logo' logo=STRING
@@ -606,6 +618,27 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     locale=LOCALE (ambiguity) 'versionstring' versionString=STRING
 	 *     locale=LOCALE (ambiguity) 'worldview' worldview=PathName
 	 *     locale=LOCALE (ambiguity) (rule end)
+	 *     locales=List (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
+	 *     locales=List (ambiguity) 'author' authors+=STRING
+	 *     locales=List (ambiguity) 'created' created=Date
+	 *     locales=List (ambiguity) 'description' description=LOCALIZED_STRING_REFERENCE
+	 *     locales=List (ambiguity) 'description' description=STRING
+	 *     locales=List (ambiguity) 'import' imports+=PathName
+	 *     locales=List (ambiguity) 'locale' locale=LOCALE
+	 *     locales=List (ambiguity) 'locale' locales=List
+	 *     locales=List (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
+	 *     locales=List (ambiguity) 'logo' logo=Path
+	 *     locales=List (ambiguity) 'logo' logo=STRING
+	 *     locales=List (ambiguity) 'modified' modified=Date
+	 *     locales=List (ambiguity) 'observable' observable=Observable
+	 *     locales=List (ambiguity) 'observable' observables=List
+	 *     locales=List (ambiguity) 'output' output=STRING
+	 *     locales=List (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
+	 *     locales=List (ambiguity) 'permissions' permissions=STRING
+	 *     locales=List (ambiguity) 'version' version=VersionNumber
+	 *     locales=List (ambiguity) 'versionstring' versionString=STRING
+	 *     locales=List (ambiguity) 'worldview' worldview=PathName
+	 *     locales=List (ambiguity) (rule end)
 	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
 	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) 'author' authors+=STRING
 	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) 'created' created=Date
@@ -613,6 +646,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) 'description' description=STRING
 	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) 'import' imports+=PathName
 	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) 'locale' locale=LOCALE
+	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) 'locale' locales=List
 	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) 'logo' logo=Path
 	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) 'logo' logo=STRING
@@ -633,6 +667,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     logo=Path (ambiguity) 'description' description=STRING
 	 *     logo=Path (ambiguity) 'import' imports+=PathName
 	 *     logo=Path (ambiguity) 'locale' locale=LOCALE
+	 *     logo=Path (ambiguity) 'locale' locales=List
 	 *     logo=Path (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     logo=Path (ambiguity) 'logo' logo=Path
 	 *     logo=Path (ambiguity) 'logo' logo=STRING
@@ -653,6 +688,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     logo=STRING (ambiguity) 'description' description=STRING
 	 *     logo=STRING (ambiguity) 'import' imports+=PathName
 	 *     logo=STRING (ambiguity) 'locale' locale=LOCALE
+	 *     logo=STRING (ambiguity) 'locale' locales=List
 	 *     logo=STRING (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     logo=STRING (ambiguity) 'logo' logo=Path
 	 *     logo=STRING (ambiguity) 'logo' logo=STRING
@@ -673,6 +709,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     modcomment=STRING (ambiguity) 'description' description=STRING
 	 *     modcomment=STRING (ambiguity) 'import' imports+=PathName
 	 *     modcomment=STRING (ambiguity) 'locale' locale=LOCALE
+	 *     modcomment=STRING (ambiguity) 'locale' locales=List
 	 *     modcomment=STRING (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     modcomment=STRING (ambiguity) 'logo' logo=Path
 	 *     modcomment=STRING (ambiguity) 'logo' logo=STRING
@@ -693,6 +730,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     modified=Date (ambiguity) 'description' description=STRING
 	 *     modified=Date (ambiguity) 'import' imports+=PathName
 	 *     modified=Date (ambiguity) 'locale' locale=LOCALE
+	 *     modified=Date (ambiguity) 'locale' locales=List
 	 *     modified=Date (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     modified=Date (ambiguity) 'logo' logo=Path
 	 *     modified=Date (ambiguity) 'logo' logo=STRING
@@ -713,6 +751,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     name=PathName (ambiguity) 'description' description=STRING
 	 *     name=PathName (ambiguity) 'import' imports+=PathName
 	 *     name=PathName (ambiguity) 'locale' locale=LOCALE
+	 *     name=PathName (ambiguity) 'locale' locales=List
 	 *     name=PathName (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     name=PathName (ambiguity) 'logo' logo=Path
 	 *     name=PathName (ambiguity) 'logo' logo=STRING
@@ -733,6 +772,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     observable=Observable (ambiguity) 'description' description=STRING
 	 *     observable=Observable (ambiguity) 'import' imports+=PathName
 	 *     observable=Observable (ambiguity) 'locale' locale=LOCALE
+	 *     observable=Observable (ambiguity) 'locale' locales=List
 	 *     observable=Observable (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     observable=Observable (ambiguity) 'logo' logo=Path
 	 *     observable=Observable (ambiguity) 'logo' logo=STRING
@@ -753,6 +793,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     observables=List (ambiguity) 'description' description=STRING
 	 *     observables=List (ambiguity) 'import' imports+=PathName
 	 *     observables=List (ambiguity) 'locale' locale=LOCALE
+	 *     observables=List (ambiguity) 'locale' locales=List
 	 *     observables=List (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     observables=List (ambiguity) 'logo' logo=Path
 	 *     observables=List (ambiguity) 'logo' logo=STRING
@@ -773,6 +814,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     output=STRING (ambiguity) 'description' description=STRING
 	 *     output=STRING (ambiguity) 'import' imports+=PathName
 	 *     output=STRING (ambiguity) 'locale' locale=LOCALE
+	 *     output=STRING (ambiguity) 'locale' locales=List
 	 *     output=STRING (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     output=STRING (ambiguity) 'logo' logo=Path
 	 *     output=STRING (ambiguity) 'logo' logo=STRING
@@ -793,6 +835,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) 'description' description=STRING
 	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) 'import' imports+=PathName
 	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) 'locale' locale=LOCALE
+	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) 'locale' locales=List
 	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) 'logo' logo=Path
 	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) 'logo' logo=STRING
@@ -813,6 +856,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     permissions=STRING (ambiguity) 'description' description=STRING
 	 *     permissions=STRING (ambiguity) 'import' imports+=PathName
 	 *     permissions=STRING (ambiguity) 'locale' locale=LOCALE
+	 *     permissions=STRING (ambiguity) 'locale' locales=List
 	 *     permissions=STRING (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     permissions=STRING (ambiguity) 'logo' logo=Path
 	 *     permissions=STRING (ambiguity) 'logo' logo=STRING
@@ -833,6 +877,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     style=PathName (ambiguity) 'description' description=STRING
 	 *     style=PathName (ambiguity) 'import' imports+=PathName
 	 *     style=PathName (ambiguity) 'locale' locale=LOCALE
+	 *     style=PathName (ambiguity) 'locale' locales=List
 	 *     style=PathName (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     style=PathName (ambiguity) 'logo' logo=Path
 	 *     style=PathName (ambiguity) 'logo' logo=STRING
@@ -853,6 +898,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     version=VersionNumber (ambiguity) 'description' description=STRING
 	 *     version=VersionNumber (ambiguity) 'import' imports+=PathName
 	 *     version=VersionNumber (ambiguity) 'locale' locale=LOCALE
+	 *     version=VersionNumber (ambiguity) 'locale' locales=List
 	 *     version=VersionNumber (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     version=VersionNumber (ambiguity) 'logo' logo=Path
 	 *     version=VersionNumber (ambiguity) 'logo' logo=STRING
@@ -873,6 +919,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     versionString=STRING (ambiguity) 'description' description=STRING
 	 *     versionString=STRING (ambiguity) 'import' imports+=PathName
 	 *     versionString=STRING (ambiguity) 'locale' locale=LOCALE
+	 *     versionString=STRING (ambiguity) 'locale' locales=List
 	 *     versionString=STRING (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     versionString=STRING (ambiguity) 'logo' logo=Path
 	 *     versionString=STRING (ambiguity) 'logo' logo=STRING
@@ -893,6 +940,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     worldview=PathName (ambiguity) 'description' description=STRING
 	 *     worldview=PathName (ambiguity) 'import' imports+=PathName
 	 *     worldview=PathName (ambiguity) 'locale' locale=LOCALE
+	 *     worldview=PathName (ambiguity) 'locale' locales=List
 	 *     worldview=PathName (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     worldview=PathName (ambiguity) 'logo' logo=Path
 	 *     worldview=PathName (ambiguity) 'logo' logo=STRING
@@ -940,6 +988,8 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     label=STRING (ambiguity) style=PathName
 	 *     locale=LOCALE (ambiguity) inlineStyle=Map
 	 *     locale=LOCALE (ambiguity) style=PathName
+	 *     locales=List (ambiguity) inlineStyle=Map
+	 *     locales=List (ambiguity) style=PathName
 	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) inlineStyle=Map
 	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) style=PathName
 	 *     logo=Path (ambiguity) inlineStyle=Map

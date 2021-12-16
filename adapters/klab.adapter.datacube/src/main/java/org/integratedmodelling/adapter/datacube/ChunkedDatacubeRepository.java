@@ -389,6 +389,12 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
                 }
 
                 GridCoverage2D coverage = getCoverage(g.layerName, scope.getScale().getSpace());
+                
+                if (coverage == null) {
+                	scope.getMonitor().error("coverage retrieval for " + g.layerName + " failed: geoserver may be offline");
+                	return false;
+                }
+                
                 if (granules.size() == 1) {
 
                     geoserver.encode(coverage, grid, stateBuilder, 0, noDataValue, null);

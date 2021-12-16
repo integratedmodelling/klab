@@ -39,7 +39,7 @@ Preamble: {Preamble}
 		('logo' logo=(Path|(STRING|LOCALIZED_STRING_REFERENCE)))? &
 		('version' version=VersionNumber)? & 
 		('versionstring' versionString=STRING)? & 
-		('locale' locale=LOCALE)? & 
+		('locale' (locale=LOCALE | locales=List))? & 
 		('output' output=STRING)? & 
 		('created' created=Date (createcomment=STRING)?)? &
 		('modified' modified=Date (modcomment=STRING)?)? 

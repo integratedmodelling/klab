@@ -43,6 +43,7 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getPreambleAccess().getAlternatives_3_6_1(), "rule__Preamble__Alternatives_3_6_1");
 			builder.put(grammarAccess.getPreambleAccess().getLogoAlternatives_3_7_1_0(), "rule__Preamble__LogoAlternatives_3_7_1_0");
 			builder.put(grammarAccess.getPreambleAccess().getLogoAlternatives_3_7_1_0_1(), "rule__Preamble__LogoAlternatives_3_7_1_0_1");
+			builder.put(grammarAccess.getPreambleAccess().getAlternatives_3_10_1(), "rule__Preamble__Alternatives_3_10_1");
 			builder.put(grammarAccess.getDefinitionAccess().getAlternatives_1(), "rule__Definition__Alternatives_1");
 			builder.put(grammarAccess.getMessageCallAccess().getAlternatives_1(), "rule__MessageCall__Alternatives_1");
 			builder.put(grammarAccess.getStatementAccess().getAlternatives_0(), "rule__Statement__Alternatives_0");
@@ -378,7 +379,8 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getPreambleAccess().getLogoAssignment_3_7_1(), "rule__Preamble__LogoAssignment_3_7_1");
 			builder.put(grammarAccess.getPreambleAccess().getVersionAssignment_3_8_1(), "rule__Preamble__VersionAssignment_3_8_1");
 			builder.put(grammarAccess.getPreambleAccess().getVersionStringAssignment_3_9_1(), "rule__Preamble__VersionStringAssignment_3_9_1");
-			builder.put(grammarAccess.getPreambleAccess().getLocaleAssignment_3_10_1(), "rule__Preamble__LocaleAssignment_3_10_1");
+			builder.put(grammarAccess.getPreambleAccess().getLocaleAssignment_3_10_1_0(), "rule__Preamble__LocaleAssignment_3_10_1_0");
+			builder.put(grammarAccess.getPreambleAccess().getLocalesAssignment_3_10_1_1(), "rule__Preamble__LocalesAssignment_3_10_1_1");
 			builder.put(grammarAccess.getPreambleAccess().getOutputAssignment_3_11_1(), "rule__Preamble__OutputAssignment_3_11_1");
 			builder.put(grammarAccess.getPreambleAccess().getCreatedAssignment_3_12_1(), "rule__Preamble__CreatedAssignment_3_12_1");
 			builder.put(grammarAccess.getPreambleAccess().getCreatecommentAssignment_3_12_2(), "rule__Preamble__CreatecommentAssignment_3_12_2");

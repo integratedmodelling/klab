@@ -14,9 +14,7 @@ public class CopernicusAdapter extends GenericDatacubeAdapter {
 	public static final String ID = "copernicus";
 	
 	public CopernicusAdapter() {
-
 		super(ID, true);
-		
 	}
 
 	@Override

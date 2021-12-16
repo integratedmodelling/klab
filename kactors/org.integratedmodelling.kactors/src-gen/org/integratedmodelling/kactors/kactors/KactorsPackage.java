@@ -349,13 +349,22 @@ public interface KactorsPackage extends EPackage
   int PREAMBLE__LOCALE = 26;
 
   /**
+   * The feature id for the '<em><b>Locales</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PREAMBLE__LOCALES = 27;
+
+  /**
    * The feature id for the '<em><b>Output</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int PREAMBLE__OUTPUT = 27;
+  int PREAMBLE__OUTPUT = 28;
 
   /**
    * The feature id for the '<em><b>Created</b></em>' containment reference.
@@ -364,7 +373,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__CREATED = 28;
+  int PREAMBLE__CREATED = 29;
 
   /**
    * The feature id for the '<em><b>Createcomment</b></em>' attribute.
@@ -373,7 +382,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__CREATECOMMENT = 29;
+  int PREAMBLE__CREATECOMMENT = 30;
 
   /**
    * The feature id for the '<em><b>Modified</b></em>' containment reference.
@@ -382,7 +391,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__MODIFIED = 30;
+  int PREAMBLE__MODIFIED = 31;
 
   /**
    * The feature id for the '<em><b>Modcomment</b></em>' attribute.
@@ -391,7 +400,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__MODCOMMENT = 31;
+  int PREAMBLE__MODCOMMENT = 32;
 
   /**
    * The number of structural features of the '<em>Preamble</em>' class.
@@ -400,7 +409,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE_FEATURE_COUNT = 32;
+  int PREAMBLE_FEATURE_COUNT = 33;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.DefinitionImpl <em>Definition</em>}' class.
@@ -4149,6 +4158,17 @@ public interface KactorsPackage extends EPackage
    * @generated
    */
   EAttribute getPreamble_Locale();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Preamble#getLocales <em>Locales</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Locales</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Preamble#getLocales()
+   * @see #getPreamble()
+   * @generated
+   */
+  EReference getPreamble_Locales();
 
   /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Preamble#getOutput <em>Output</em>}'.
@@ -7981,6 +8001,14 @@ public interface KactorsPackage extends EPackage
      * @generated
      */
     EAttribute PREAMBLE__LOCALE = eINSTANCE.getPreamble_Locale();
+
+    /**
+     * The meta object literal for the '<em><b>Locales</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference PREAMBLE__LOCALES = eINSTANCE.getPreamble_Locales();
 
     /**
      * The meta object literal for the '<em><b>Output</b></em>' attribute feature.

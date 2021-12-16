@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import org.integratedmodelling.kactors.api.IKActorsAction;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.kactors.Definition;
+import org.integratedmodelling.kactors.kactors.ListElement;
 import org.integratedmodelling.kactors.kactors.Model;
 import org.integratedmodelling.kactors.kactors.Preamble;
 import org.integratedmodelling.kactors.model.KActors.BehaviorDescriptor;
@@ -36,6 +37,7 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
     private Map<String, String> styleSpecs;
     private List<String> imports = new ArrayList<>();
     private List<IKActorsAction> actions = new ArrayList<>();
+    private List<String> locales = new ArrayList<>();
     private String label;
     private String description;
     private String logo;
@@ -115,6 +117,21 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
             this.platform = Platform.MOBILE;
         }
 
+        if (preamble.getLocale() != null) {
+        	this.locales.add(preamble.getLocale());
+        }
+        if (preamble.getLocales() != null) {
+            for (ListElement val : preamble.getLocales().getContents()) {
+                if (val.getValue() != null) {
+                	KActorsValue value = new KActorsValue(val.getValue(), parent);
+                	this.locales.add(value.getStatedValue().toString());
+                } else if (val.getTag() != null) {
+                	// TODO
+//                    this.setTag(val.getTag().substring(1));
+                }
+            }
+        }
+        
         for (String s : preamble.getImports()) {
             this.imports.add(s);
         }
@@ -220,6 +237,7 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
         ret.setProjectId(getProjectId());
         ret.setLogo(this.getLogo());
         ret.setPlatform(this.platform);
+        ret.getLocales().addAll(this.getLocales());
         return ret;
     }
 
@@ -230,21 +248,23 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 
     @Override
     public void visit(Visitor visitor) {
-        // TODO Auto-generated method stub
         /*
          * visit preamble
          */
-
         for (IKActorsAction action : getActions()) {
             visitor.visitAction(action);
             ((KActorsStatement) action.getCode()).visit(action, visitor);
         }
-
     }
 
     @Override
     public String getOutput() {
         return output;
     }
+
+	@Override
+	public List<String> getLocales() {
+		return this.locales;
+	}
 
 }

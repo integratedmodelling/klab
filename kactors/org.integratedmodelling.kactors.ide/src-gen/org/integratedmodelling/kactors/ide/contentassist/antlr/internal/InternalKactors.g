@@ -2167,6 +2167,27 @@ finally {
 	restoreStackSize(stackSize);
 }
 
+rule__Preamble__Alternatives_3_10_1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getPreambleAccess().getLocaleAssignment_3_10_1_0()); }
+		(rule__Preamble__LocaleAssignment_3_10_1_0)
+		{ after(grammarAccess.getPreambleAccess().getLocaleAssignment_3_10_1_0()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getPreambleAccess().getLocalesAssignment_3_10_1_1()); }
+		(rule__Preamble__LocalesAssignment_3_10_1_1)
+		{ after(grammarAccess.getPreambleAccess().getLocalesAssignment_3_10_1_1()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
 rule__Definition__Alternatives_1
 	@init {
 		int stackSize = keepStackSize();
@@ -5784,9 +5805,9 @@ rule__Preamble__Group_3_10__1__Impl
 	}
 :
 (
-	{ before(grammarAccess.getPreambleAccess().getLocaleAssignment_3_10_1()); }
-	(rule__Preamble__LocaleAssignment_3_10_1)
-	{ after(grammarAccess.getPreambleAccess().getLocaleAssignment_3_10_1()); }
+	{ before(grammarAccess.getPreambleAccess().getAlternatives_3_10_1()); }
+	(rule__Preamble__Alternatives_3_10_1)
+	{ after(grammarAccess.getPreambleAccess().getAlternatives_3_10_1()); }
 )
 ;
 finally {
@@ -22707,15 +22728,30 @@ finally {
 	restoreStackSize(stackSize);
 }
 
-rule__Preamble__LocaleAssignment_3_10_1
+rule__Preamble__LocaleAssignment_3_10_1_0
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 	(
-		{ before(grammarAccess.getPreambleAccess().getLocaleLOCALETerminalRuleCall_3_10_1_0()); }
+		{ before(grammarAccess.getPreambleAccess().getLocaleLOCALETerminalRuleCall_3_10_1_0_0()); }
 		RULE_LOCALE
-		{ after(grammarAccess.getPreambleAccess().getLocaleLOCALETerminalRuleCall_3_10_1_0()); }
+		{ after(grammarAccess.getPreambleAccess().getLocaleLOCALETerminalRuleCall_3_10_1_0_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__Preamble__LocalesAssignment_3_10_1_1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getPreambleAccess().getLocalesListParserRuleCall_3_10_1_1_0()); }
+		ruleList
+		{ after(grammarAccess.getPreambleAccess().getLocalesListParserRuleCall_3_10_1_1_0()); }
 	)
 ;
 finally {

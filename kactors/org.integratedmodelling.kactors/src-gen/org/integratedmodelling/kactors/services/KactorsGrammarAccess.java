@@ -170,8 +170,11 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		private final RuleCall cVersionStringSTRINGTerminalRuleCall_3_9_1_0 = (RuleCall)cVersionStringAssignment_3_9_1.eContents().get(0);
 		private final Group cGroup_3_10 = (Group)cUnorderedGroup_3.eContents().get(10);
 		private final Keyword cLocaleKeyword_3_10_0 = (Keyword)cGroup_3_10.eContents().get(0);
-		private final Assignment cLocaleAssignment_3_10_1 = (Assignment)cGroup_3_10.eContents().get(1);
-		private final RuleCall cLocaleLOCALETerminalRuleCall_3_10_1_0 = (RuleCall)cLocaleAssignment_3_10_1.eContents().get(0);
+		private final Alternatives cAlternatives_3_10_1 = (Alternatives)cGroup_3_10.eContents().get(1);
+		private final Assignment cLocaleAssignment_3_10_1_0 = (Assignment)cAlternatives_3_10_1.eContents().get(0);
+		private final RuleCall cLocaleLOCALETerminalRuleCall_3_10_1_0_0 = (RuleCall)cLocaleAssignment_3_10_1_0.eContents().get(0);
+		private final Assignment cLocalesAssignment_3_10_1_1 = (Assignment)cAlternatives_3_10_1.eContents().get(1);
+		private final RuleCall cLocalesListParserRuleCall_3_10_1_1_0 = (RuleCall)cLocalesAssignment_3_10_1_1.eContents().get(0);
 		private final Group cGroup_3_11 = (Group)cUnorderedGroup_3.eContents().get(11);
 		private final Keyword cOutputKeyword_3_11_0 = (Keyword)cGroup_3_11.eContents().get(0);
 		private final Assignment cOutputAssignment_3_11_1 = (Assignment)cGroup_3_11.eContents().get(1);
@@ -222,7 +225,7 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//        ('logo' logo=(Path|(STRING|LOCALIZED_STRING_REFERENCE)))? &
 		//        ('version' version=VersionNumber)? &
 		//        ('versionstring' versionString=STRING)? &
-		//        ('locale' locale=LOCALE)? &
+		//        ('locale' (locale=LOCALE | locales=List))? &
 		//        ('output' output=STRING)? &
 		//        ('created' created=Date (createcomment=STRING)?)? &
 		//        ('modified' modified=Date (modcomment=STRING)?)?
@@ -263,7 +266,7 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//       ('logo' logo=(Path|(STRING|LOCALIZED_STRING_REFERENCE)))? &
 		//       ('version' version=VersionNumber)? &
 		//       ('versionstring' versionString=STRING)? &
-		//       ('locale' locale=LOCALE)? &
+		//       ('locale' (locale=LOCALE | locales=List))? &
 		//       ('output' output=STRING)? &
 		//       ('created' created=Date (createcomment=STRING)?)? &
 		//       ('modified' modified=Date (modcomment=STRING)?)?
@@ -430,7 +433,7 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//    ('logo' logo=(Path|(STRING|LOCALIZED_STRING_REFERENCE)))? &
 		//    ('version' version=VersionNumber)? &
 		//    ('versionstring' versionString=STRING)? &
-		//    ('locale' locale=LOCALE)? &
+		//    ('locale' (locale=LOCALE | locales=List))? &
 		//    ('output' output=STRING)? &
 		//    ('created' created=Date (createcomment=STRING)?)? &
 		//    ('modified' modified=Date (modcomment=STRING)?)?
@@ -632,17 +635,26 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//STRING
 		public RuleCall getVersionStringSTRINGTerminalRuleCall_3_9_1_0() { return cVersionStringSTRINGTerminalRuleCall_3_9_1_0; }
 		
-		//('locale' locale=LOCALE)?
+		//('locale' (locale=LOCALE | locales=List))?
 		public Group getGroup_3_10() { return cGroup_3_10; }
 		
 		//'locale'
 		public Keyword getLocaleKeyword_3_10_0() { return cLocaleKeyword_3_10_0; }
 		
+		//(locale=LOCALE | locales=List)
+		public Alternatives getAlternatives_3_10_1() { return cAlternatives_3_10_1; }
+		
 		//locale=LOCALE
-		public Assignment getLocaleAssignment_3_10_1() { return cLocaleAssignment_3_10_1; }
+		public Assignment getLocaleAssignment_3_10_1_0() { return cLocaleAssignment_3_10_1_0; }
 		
 		//LOCALE
-		public RuleCall getLocaleLOCALETerminalRuleCall_3_10_1_0() { return cLocaleLOCALETerminalRuleCall_3_10_1_0; }
+		public RuleCall getLocaleLOCALETerminalRuleCall_3_10_1_0_0() { return cLocaleLOCALETerminalRuleCall_3_10_1_0_0; }
+		
+		//locales=List
+		public Assignment getLocalesAssignment_3_10_1_1() { return cLocalesAssignment_3_10_1_1; }
+		
+		//List
+		public RuleCall getLocalesListParserRuleCall_3_10_1_1_0() { return cLocalesListParserRuleCall_3_10_1_1_0; }
 		
 		//('output' output=STRING)?
 		public Group getGroup_3_11() { return cGroup_3_11; }
@@ -7516,7 +7528,7 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	//        ('logo' logo=(Path|(STRING|LOCALIZED_STRING_REFERENCE)))? &
 	//        ('version' version=VersionNumber)? &
 	//        ('versionstring' versionString=STRING)? &
-	//        ('locale' locale=LOCALE)? &
+	//        ('locale' (locale=LOCALE | locales=List))? &
 	//        ('output' output=STRING)? &
 	//        ('created' created=Date (createcomment=STRING)?)? &
 	//        ('modified' modified=Date (modcomment=STRING)?)?

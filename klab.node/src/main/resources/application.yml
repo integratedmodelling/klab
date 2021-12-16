@@ -26,11 +26,11 @@ klab:
       copernicus:
          auth: "*"
    geoserver:
-      password: password
-      url: http://geoserver:8080/geoserver 
+      password: geoserver
+      url: http://127.0.0.1:8080/geoserver
       user: admin
    postgres:
-      host: postgres
+      host: localhost
       password: password
       port: 5432
       user: postgres
