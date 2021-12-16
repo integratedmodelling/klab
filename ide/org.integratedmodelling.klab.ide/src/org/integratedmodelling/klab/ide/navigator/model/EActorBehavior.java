@@ -153,4 +153,9 @@ public class EActorBehavior extends EKimObject implements IKActorsBehavior {
         return behavior.getOutput();
     }
 
+	@Override
+	public List<String> getLocales() {
+		return behavior.getLocales();
+	}
+
 }
