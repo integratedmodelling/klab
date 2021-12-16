@@ -397,7 +397,7 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
                 
                 if (granules.size() == 1) {
 
-                    geoserver.encode(coverage, grid, stateBuilder, 0, noDataValue, null);
+                    geoserver.encode(coverage, scope.getScale(), stateBuilder, 0, noDataValue, null);
                     stateBuilder.finishState();
                     return true;
 

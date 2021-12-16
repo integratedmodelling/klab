@@ -229,32 +229,53 @@ public class LocalData implements IKlabData {
 						? ((Iterable<?>) state.get("doubledata")).iterator()
 						: null;
 
-				for (ILocator locator : context.getScale()) {
-
-					if (originalUnit != null && target.getObservable().getUnit() != null && targetUnit == null) {
-						IScale conversionScale = Scale.create((IExtent) context.getScale().getTime(),
-								(IExtent) context.getScale().getSpace().iterator().next());
-						targetUnit = target.getObservable().getUnit().contextualize(target.getObservable(),
-								conversionScale);
+				Object o = null;
+				long offset = 0;
+				while (doubles.hasNext()) {
+					
+					o = doubles.next();
+					// yes, they do this, mixed in with doubles.
+					if ("NaN".equals(o)) {
+						o = null;
 					}
 
-					if (doubles != null && doubles.hasNext()) {
-						Object o = doubles.next();
-						// yes, they do this, mixed in with doubles.
-						if ("NaN".equals(o)) {
-							o = null;
-						}
-
-						if (targetUnit != null && o instanceof Number) {
-							o = targetUnit.convert((Number) o, originalUnit);
-						}
-
-						target.set(locator, o);
+					if (targetUnit != null && o instanceof Number) {
+						o = targetUnit.convert((Number) o, originalUnit);
 					}
+
+					target.set(context.getScale().at(offset++), o);
 				}
 
+
+//			for (ILocator locator : context.getScale()) {
+//
+//				if (originalUnit != null && target.getObservable().getUnit() != null && targetUnit == null) {
+//					IScale conversionScale = Scale.create((IExtent) context.getScale().getTime(),
+//							(IExtent) context.getScale().getSpace().iterator().next());
+//					targetUnit = target.getObservable().getUnit().contextualize(target.getObservable(),
+//							conversionScale);
+//				}
+//
+//				Object o = null;
+//				if (doubles != null/* && doubles.hasNext() */) {
+//					o = doubles.next();
+//					// yes, they do this, mixed in with doubles.
+//					if ("NaN".equals(o)) {
+//						o = null;
+//					}
+//
+//					if (targetUnit != null && o instanceof Number) {
+//						o = targetUnit.convert((Number) o, originalUnit);
+//					}
+//				}
+//
+//				target.set(locator, o);
+//			}
+
 			}
-		} else if (data.containsKey("objects")) {
+		} else if (data.containsKey("objects"))
+
+		{
 
 			for (Object object : ((List<?>) data.get("objects"))) {
 

@@ -919,6 +919,11 @@ public class Scale implements IScale {
 
         Scale targetScale = this;
 
+        if (locators != null && locators.length == 1 && locators[0] instanceof Number) {
+        	// long offset
+        	return new Scale(this, ((Number)locators[0]).longValue());
+        }
+        
         // /*
         // * Special handling of time initialization: use scale w/o time unless time is
         // * generic.

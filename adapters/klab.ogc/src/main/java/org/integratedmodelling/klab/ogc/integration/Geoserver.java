@@ -25,16 +25,18 @@ import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
-import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
+import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.ogc.WcsAdapter;
 import org.integratedmodelling.klab.ogc.integration.Postgis.PublishedResource;
 import org.integratedmodelling.klab.ogc.integration.Postgis.PublishedResource.Attribute;
+import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.NumberUtils;
@@ -617,7 +619,7 @@ public class Geoserver {
 	 * @param band
 	 * @param noDataValue
 	 */
-	public void encode(GridCoverage coverage, IGrid grid, IKlabData.Builder builder, int band,
+	public void encode(GridCoverage coverage, IScale scale, IKlabData.Builder builder, int band,
 			double noDataValue, Function<Number, Number> converter) {
 
 		/*
@@ -627,7 +629,44 @@ public class Geoserver {
 		RandomIter iterator = RandomIterFactory.create(image, null);
 		Set<Double> nodata = new HashSet<>();
 		nodata.add(noDataValue);
+		Grid grid = null;
+		if (scale.getSpace() instanceof Space && ((Space)scale.getSpace()).getGrid() != null) {
+			grid = (Grid)((Space)scale.getSpace()).getGrid();
+		}
 
+		if (grid == null) {
+			// TODO add error notification
+			return;
+		}
+		
+//		for (ILocator locator : scale) {
+//
+//			Cell cell = locator.as(Cell.class);
+//
+//			double value = iterator.getSampleDouble((int) cell.getX(), (int) cell.getY(), band);
+//
+//			// this is cheeky but will catch most of the nodata and
+//			// none of the good data
+//			// FIXME see if this is really necessary
+//			if (value < -1.0E35 || value > 1.0E35) {
+//				value = Double.NaN;
+//			}
+//
+//			for (double nd : nodata) {
+//				if (NumberUtils.equal(value, nd)) {
+//					value = Double.NaN;
+//					break;
+//				}
+//			}
+//			
+//			if (converter != null && Observations.INSTANCE.isData(value)) {
+//			    value = converter.apply(value).doubleValue();
+//			}
+//			
+//			builder.add(value);
+//			
+//		}
+//		
 		for (long ofs = 0; ofs < grid.getCellCount(); ofs++) {
 
 			long[] xy = Grid.getXYCoordinates(ofs, grid.getXCells(), grid.getYCells());
