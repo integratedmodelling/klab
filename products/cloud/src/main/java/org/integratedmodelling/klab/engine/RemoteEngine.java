@@ -25,7 +25,7 @@ public class RemoteEngine extends Engine {
 
     private static final long serialVersionUID = -7180871922872370852L;
 
-    private Long sessionDeadBand = 1L;
+    private Long sessionDeadBand = 8L;
     private ConsulDnsService dnsService;
     private UserEventPublisher publisher;
     private AgentServiceCheck check;
