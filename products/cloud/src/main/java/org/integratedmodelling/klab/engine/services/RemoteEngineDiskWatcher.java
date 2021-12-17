@@ -13,15 +13,15 @@ public class RemoteEngineDiskWatcher {
 	@Autowired
 	AgentServiceCheck agent;
 	
-	@Scheduled(fixedDelay = 10000)
+	@Scheduled(fixedDelay = 200000)
 	public void detectDiskFull() {
 		File tmpdir = new File(System.getProperty("java.io.tmpdir"));
 		double freeSpace = tmpdir.getFreeSpace() * 0.000001;
-		Logging.INSTANCE.info("Temporary Disk free space: " + freeSpace);
 		if (freeSpace < 10) {
 			System.exit(0);
 		}
 		if (freeSpace < 100) {
+			Logging.INSTANCE.info("Temporary Disk free space: " + freeSpace);
 			int halfWeight = agent.weight / 2 + 1;
 			agent.setweight(halfWeight);
 		}
