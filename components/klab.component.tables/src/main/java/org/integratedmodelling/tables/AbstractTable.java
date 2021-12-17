@@ -3,11 +3,9 @@ package org.integratedmodelling.tables;
 import java.io.File;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -964,5 +962,6 @@ public abstract class AbstractTable<T> implements ITable<T> {
         }
         return ret;
     }
+    
 
 }
