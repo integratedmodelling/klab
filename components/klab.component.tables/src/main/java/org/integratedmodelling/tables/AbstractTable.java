@@ -49,7 +49,11 @@ public abstract class AbstractTable<T> implements ITable<T> {
         int dimension = -1; // special filter
         String signature;
         boolean cached = false;
-
+        
+        private FilterDescriptor(Filter.Type type) {
+            this.filter = type;
+        }
+        
         public FilterDescriptor(Filter.Type filter, Object[] locators) {
             this.filter = filter;
             if (locators != null) {
@@ -136,6 +140,10 @@ public abstract class AbstractTable<T> implements ITable<T> {
 
         public boolean isCached() {
             return cached;
+        }
+        
+        public FilterDescriptor filter(Filter.Type type) {
+            return new FilterDescriptor(type);
         }
 
         boolean matches(AbstractTable<?> table, Object o, int... location) {

@@ -1729,4 +1729,23 @@ public class Scale implements IScale {
         return create(exts.toArray(new IExtent[exts.size()]));
     }
 
+    @Override
+    public boolean isRegular(Type... dimensions) {
+        if (dimensions != null) {
+            for (Type dimension : dimensions) {
+                IExtent extent = getExtent(dimension);
+                if (extent != null && !extent.isRegular()) {
+                    return false;
+                }
+            }
+        } else {
+            for (IExtent extent : getExtents()) {
+                if (!extent.isRegular()) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
 }
