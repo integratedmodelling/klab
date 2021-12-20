@@ -26,6 +26,7 @@ import org.integratedmodelling.klab.api.knowledge.ICodelist;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.common.ExpressionST;
 import org.integratedmodelling.klab.data.Aggregator;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
@@ -40,7 +41,7 @@ import org.integratedmodelling.tables.adapter.TableAdapter;
 
 public abstract class AbstractTable<T> implements ITable<T> {
 
-    class FilterDescriptor implements Filter {
+    class FilterDescriptor extends ExpressionST implements Filter {
 
         Filter.Type filter;
         List<Object> locators = new ArrayList<>();

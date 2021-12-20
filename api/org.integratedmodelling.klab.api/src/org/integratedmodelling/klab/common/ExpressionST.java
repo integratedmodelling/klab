@@ -15,10 +15,18 @@ import java.util.List;
  */
 public class ExpressionST {
 
-    public class Translator {
+    public static class Translator {
 
         protected String toString(Object o) {
             return o.toString();
+        }
+
+        public String openParenthesis() {
+            return "(";
+        }
+
+        public Object closeParenthesis() {
+            return ")";
         }
 
     }
@@ -72,16 +80,49 @@ public class ExpressionST {
         StringBuffer ret = new StringBuffer(128);
         if (!noop()) {
             if (operator == null) {
-                ret.append("(");
+                ret.append(t.openParenthesis());
             }
+            if (operator != null) {
+                if (prefix) {
+                    ret.append(operator);
+                    for (Object arg : arguments) {
+                        if (arg instanceof ExpressionST) {
+                            ret.append(" " + ((ExpressionST) arg).translate(t));
+                        } else {
+                            ret.append(" " + arg);
+                        }
+                    }
+                } else {
+                    int i = 0;
+                    for (Object arg : arguments) {
+                        if (arg instanceof ExpressionST) {
+                            ret.append(((ExpressionST) arg).translate(t) + (i == arguments.size() - 1 ? "" : (" " + operator + " ")));
+                        } else {
+                            ret.append(arg + (i == arguments.size() - 1 ? "" : (" " + operator + " ")));
+                        }
+                        i++;
+                    }
+                }
+            } else {
+                for (Object arg : arguments) {
+                    if (arg instanceof ExpressionST) {
+                        ret.append(((ExpressionST) arg).translate(t));
+                    } else {
+                        ret.append(arg);
+                    }
+                }
+                
+            }
+
             if (operator == null) {
-                ret.append(")");
+                ret.append(t.closeParenthesis());
             }
         }
         return ret.toString();
     }
 
     public static void main(String[] plop) {
-        ExpressionST op = ExpressionST.infix("between", 1, 10);
+        ExpressionST op = infix("<", "a", infix("+", 2, 10));
+        System.out.println(op.translate(new Translator()));
     }
 }
