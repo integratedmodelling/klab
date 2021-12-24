@@ -1295,6 +1295,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				/*
 				 * register the obs and potentially the root subject
 				 */
+				boolean wasRoot = false;
 				this.observations.put(observation.getId(), observation);
 				if (this.rootSubject == null && observation instanceof ISubject) {
 					this.rootSubject = (ISubject) observation;
@@ -1304,6 +1305,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 					 * subjected to a view asking for it at the time of session establishment.
 					 */
 					watchedObservations.add(observation.getId());
+					wasRoot = true;
 				}
 				this.catalog.put(name, observation);
 				this.structure.add(observation);
@@ -1319,6 +1321,19 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				 */
 				if (observation instanceof IConfiguration) {
 					((Configuration) observation).setTargets(actuator.getDataflow().getConfigurationTargets());
+				}
+
+				if (wasRoot && this.resolutionScope.getObserver() != null) {
+					for (IObservable state : this.resolutionScope.getObserver().getStates()) {
+						if (state.getValue() != null) {
+							IObservation ostate = DefaultRuntimeProvider.createObservation(state, scale, this, false);
+							actuator.notifyNewObservation(ostate);
+							this.observations.put(ostate.getId(), ostate);
+							this.catalog.put(state.getName(), ostate);
+							this.structure.add(ostate);
+							link(ostate, observation);
+						}
+					}
 				}
 
 				/*

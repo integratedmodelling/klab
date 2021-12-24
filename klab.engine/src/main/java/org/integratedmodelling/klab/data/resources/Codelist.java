@@ -50,11 +50,27 @@ public class Codelist implements ICodelist {
 	@Override
 	public Object value(Object key) {
 		Collection<Object> ret = direct.get(key);
-		return ret.isEmpty() ? null : ret.iterator().next();
+		// an empty mapping is the object mapping on itself
+		return isEmpty(ret) ? key : ret.iterator().next();
+	}
+
+	private boolean isEmpty(Collection<Object> ret) {
+		if (ret.isEmpty()) {
+			return true;
+		}
+		if (ret.size() == 1) {
+			Object content = ret.iterator().next();
+			return content == null || (content instanceof String && ((String)content).isEmpty());
+		}
+		return false;
 	}
 
 	@Override
 	public String key(Object value) {
+		// if there are no reverse mappings, the key to the value is the value itself.
+		if (reverse.isEmpty()) {
+			return value.toString();
+		}
 		Collection<Object> ret = reverse.get(Utils.asType(value, reference.getInverseMapping().getKeyType() == null
 				? String.class
 				: Utils.getClassForType(reference.getInverseMapping().getKeyType())));

@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
+import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Resources;
@@ -52,6 +53,9 @@ public class Observer extends KimObject implements IObserver {
 		this.behavior = new Contextualization(statement.getBehavior(), this);
 		this.urn = statement.getUrn();
 		this.setErrors(statement.isErrors());
+		for (IKimObservable state : statement.getStates()) {
+			this.states.add(Observables.INSTANCE.declare(state, monitor));
+		}
 	}
 
 	public Observer(SpatialExtent regionOfInterest, ITime time, Observable observable, Namespace namespace) {
