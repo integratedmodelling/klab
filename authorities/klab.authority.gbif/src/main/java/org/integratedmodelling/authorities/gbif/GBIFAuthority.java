@@ -15,6 +15,7 @@ import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.extensions.Authority;
 import org.integratedmodelling.klab.api.knowledge.IAuthority;
+import org.integratedmodelling.klab.api.knowledge.ICodelist;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.rest.AuthorityIdentity;
 import org.integratedmodelling.klab.rest.AuthorityReference;
@@ -242,5 +243,10 @@ public class GBIFAuthority implements IAuthority {
 	@Override
 	public String getName() {
 		return ID;
+	}
+
+	@Override
+	public ICodelist getCodelist() {
+		return null;
 	}
 }

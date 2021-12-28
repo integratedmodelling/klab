@@ -1,0 +1,36 @@
+package org.integratedmodelling.klab.api.data.general;
+
+/**
+ * Values used in k.LAB states that may assume different representations besides
+ * PODs and concepts should be reducible, so that a POD representation is always
+ * possible.
+ * 
+ * For the time being in k.LAB these can be statistical distributions and
+ * tables.
+ * 
+ * @author Ferd
+ *
+ */
+public interface IReducible {
+
+	/**
+	 * Return the most reduced form possible for the object. The returned value may
+	 * be of the passed class, or another IReducible that contains any remaining
+	 * unresolved keys. Passing force = true will reduce even the irreducible values
+	 * and mandatorily return a value of the passed class.
+	 * 
+	 * @param <T>
+	 * @param cls
+	 * @return
+	 */
+	Object reduce(Class<?> cls, boolean forceReduction);
+
+	/**
+	 * Return a string representation that uniquely represents the contents,
+	 * computed in the fastest possible way (and potentially cached in the object).
+	 * 
+	 * @return
+	 */
+	String getSignature();
+
+}

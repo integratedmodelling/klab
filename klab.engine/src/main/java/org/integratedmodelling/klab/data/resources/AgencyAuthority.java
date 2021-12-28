@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.klab.api.knowledge.IAuthority;
+import org.integratedmodelling.klab.api.knowledge.ICodelist;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
@@ -94,6 +95,11 @@ public class AgencyAuthority implements IAuthority {
 
 	@Override
 	public String getName() {
+		throw new KlabIllegalStateException("agency authority should not be used directly");
+	}
+
+	@Override
+	public ICodelist getCodelist() {
 		throw new KlabIllegalStateException("agency authority should not be used directly");
 	}
 

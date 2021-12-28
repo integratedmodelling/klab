@@ -11,6 +11,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -20,14 +21,18 @@ import org.integratedmodelling.klab.api.data.IResource.Attribute;
 import org.integratedmodelling.klab.api.data.general.ITable;
 import org.integratedmodelling.klab.api.data.general.ITable.Filter;
 import org.integratedmodelling.klab.api.data.general.ITable.SearchOptions;
+import org.integratedmodelling.klab.api.knowledge.ICodelist;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.data.Aggregator;
+import org.integratedmodelling.klab.data.table.TableValue;
 import org.integratedmodelling.klab.exceptions.KlabStorageException;
 import org.integratedmodelling.klab.persistence.h2.H2Database;
 import org.integratedmodelling.klab.persistence.h2.H2Database.DBIterator;
 import org.integratedmodelling.klab.persistence.h2.SQL;
+import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Utils;
 import org.integratedmodelling.tables.DimensionScanner.Dimension;
 
@@ -251,21 +256,23 @@ public class SQLTableCache {
 	}
 
 	/**
-	 * Pass a set of filters and return a list of results - either a singleton, a
-	 * list or a list of lists according to the dimensionality of the result. Lists
-	 * of lists can be nested as needed to represent n-dimensional results.
+	 * Pass a set of filters and return the result to be reduced as requested
+	 * through the return type and the resource specs.
 	 * 
 	 * @param dimensionIndex
 	 * @param filters
 	 * @return
 	 */
-	public List<Object> scan(AbstractTable<?> table, Collection<Filter> filters, IContextualizationScope scope) {
+	public TableValue scan(AbstractTable<?> table, Collection<Filter> filters, IContextualizationScope scope, Aggregator aggregator) {
 
 		String fields = "";
 		String where = "";
 
 		Set<String> searchedColumns = new HashSet<>();
-		List<String> retrieved = new ArrayList<>();
+		Set<String> keyFields = new LinkedHashSet<>();
+
+		boolean functional = "true".equals(resource.getParameters().get("value.functional", "false"));
+		String valueField = resource.getParameters().get("value.column", (String) null);
 
 		for (Filter filter : filters) {
 			switch (filter.getType()) {
@@ -309,21 +316,25 @@ public class SQLTableCache {
 					Attribute attribute = table.getColumnDescriptor(index);
 					if (attribute != null) {
 						fields += (fields.isEmpty() ? "" : ", ") + sanitize(attribute.getName());
-						retrieved.add(sanitize(attribute.getName()));
+						keyFields.add(sanitize(attribute.getName()));
+					}
+					if (valueField == null) {
+						valueField = attribute.getName();
 					}
 				}
 				break;
 			case INCLUDE_ROWS:
 				break;
 			case NO_RESULTS:
-				return Collections.emptyList();
+				return TableValue.empty();
 			case ROW_HEADER:
 				break;
 			case ROW_MATCH:
 				break;
 			case TIME_BETWEEN_FIELDS:
-				String timecond = sanitize(filter.getArguments().get(0).toString()) + " >= " + scope.getScale().getTime().getStart().getMilliseconds()
-						+ " AND " + sanitize(filter.getArguments().get(0).toString()) + " < "
+				String timecond = sanitize(filter.getArguments().get(0).toString()) + " >= "
+						+ scope.getScale().getTime().getStart().getMilliseconds() + " AND "
+						+ sanitize(filter.getArguments().get(0).toString()) + " < "
 						+ scope.getScale().getTime().getEnd().getMilliseconds();
 				where += (where.isEmpty() ? "(" : " AND (") + timecond + ")";
 				break;
@@ -332,19 +343,43 @@ public class SQLTableCache {
 			}
 		}
 
+		Map<String, ICodelist> codelists = new HashMap<>();
+
+		if (keyFields.isEmpty() && functional) {
+			for (Pair<String, ICodelist> codes : table.getClassifiedColumns()) {
+				if (!searchedColumns.contains(codes.getFirst())) {
+					codelists.put(codes.getFirst(), codes.getSecond());
+					keyFields.add(codes.getFirst());
+					fields += (fields.isEmpty() ? "" : ", ") + codes.getFirst();
+				}
+			}
+		}
+
 		if (fields.isEmpty()) {
 			fields = "*";
 			for (Attribute attr : getSortedAttributes()) {
-				retrieved.add(sanitize(attr.getName()));
+				keyFields.add(sanitize(attr.getName()));
 			}
 		}
+
+		/*
+		 * List of all retrieved fields including those searched
+		 */
+		List<String> allFields = new ArrayList<>(keyFields);
+
+		if (valueField != null && !keyFields.contains(valueField)) {
+			fields += (fields.isEmpty() ? "" : ", ") + valueField;
+			allFields.add(valueField);
+		}
+
 
 		/*
 		 * ensure all the columns we're searching are indexed
 		 */
 		for (String searched : searchedColumns) {
-			if (!retrieved.contains(searched) && !"*".equals(fields)) {
+			if (!keyFields.contains(searched) && !"*".equals(fields)) {
 				fields += ", " + searched;
+				allFields.add(searched);
 			}
 			database.execute("CREATE INDEX IF NOT EXISTS " + searched + "_index ON data(" + searched + ");");
 		}
@@ -358,27 +393,28 @@ public class SQLTableCache {
 		try (DBIterator result = database.query(query)) {
 			while (result.hasNext()) {
 				try {
-					if (retrieved.size() == 1) {
+					if (keyFields.size() == 1) {
 						Object res = result.result.getObject(1);
-						ret.add(table.mapValue(res == null ? null : res/* .toString() */,
-								table.getColumnDescriptor(sanitizedNames.get(retrieved.get(0)))));
-					} else if (retrieved.size() > 1) {
+						ret.add(table.mapValue(res == null ? null : res,
+								table.getColumnDescriptor(sanitizedNames.get(keyFields.iterator().next()))));
+					} else if (keyFields.size() > 1) {
 						List<Object> row = new ArrayList<>();
-						for (int i = 0; i < retrieved.size(); i++) {
-							Object res = result.result.getObject(retrieved.get(i));
-							row.add(table.mapValue(res == null ? null : res/* .toString() */,
-									table.getColumnDescriptor(sanitizedNames.get(retrieved.get(i)))));
+						for (int i = 0; i < allFields.size(); i++) {
+							Object res = result.result.getObject(allFields.get(i));
+							row.add(table.mapValue(res == null ? null : res,
+									table.getColumnDescriptor(sanitizedNames.get(allFields.get(i)))));
 						}
 						ret.add(row);
 					}
 					result.advance();
 				} catch (SQLException e) {
-					// TODO shouldn't happen
+					// shouldn't happen
+					throw new KlabStorageException(e);
 				}
 			}
 		}
-
-		return ret;
+		
+		return new TableValue(ret, allFields, keyFields, valueField, codelists, aggregator);
 	}
 
 	private String getCondition(String field, Object value) {
@@ -395,7 +431,7 @@ public class SQLTableCache {
 				ret += (ret.isEmpty() ? "(" : " OR (") + getCondition(field, Array.get(value, i)) + ")";
 			}
 			return ret;
-			
+
 		}
 		return field + " = " + SQL.wrapPOD(value);
 	}

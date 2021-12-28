@@ -20,6 +20,7 @@ import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.classification.IClassifier;
+import org.integratedmodelling.klab.api.knowledge.IAuthority;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -445,6 +446,12 @@ public class Classification implements IClassification {
 			}
 		}
 		return this.definitionSet;
+	}
+
+	@Override
+	public IAuthority getAuthority() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -132,13 +132,14 @@ public class Parameters<T> implements IParameters<T> {
         return delegate;
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public <K> K get(T name, K defaultValue) {
         Object ret = get(name);
         if (ret == null) {
             return defaultValue;
         }
-        return defaultValue == null ? null : Utils.asType(ret, defaultValue.getClass());
+        return defaultValue == null ? (K)ret : Utils.asType(ret, defaultValue.getClass());
     }
 
     @Override

@@ -128,4 +128,9 @@ public class ResourceAuthority implements IAuthority {
 		return codelist.getAuthorityId();
 	}
 
+	@Override
+	public ICodelist getCodelist() {
+		return codelist;
+	}
+
 }

@@ -19,11 +19,8 @@ import org.integratedmodelling.klab.api.knowledge.IAuthority;
 import org.integratedmodelling.klab.api.knowledge.ICodelist;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
-import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.components.time.extents.Time;
-import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.utils.NumberUtils;
@@ -37,11 +34,13 @@ import org.integratedmodelling.klab.utils.Utils;
  * worldview identifier and a root concept if the type is concept and the
  * worldview is set.
  * 
+ * This may be a front to an official codelist (such as those retrieved from
+ * SDMX). The {@link #getCodelistBackend()} method returns it if it's there.
+ * Otherwise it allows more sophisticated types of mapping.
+ * 
  * TODO must become more sophisticated and enable 1) separate, optional
  * bi-directional specifications and 2) many-to-many mapping. The current
  * implementation uses a bidimap which only handles functional mappings.
- * 
- * TODO must provide a constructor to initialize from a SDMX codelist
  * 
  * TODO must enable descriptions and other metadata for each code - a
  * Map<String, IMetadata>
@@ -112,6 +111,15 @@ public class CodeList implements ICodelist {
 		}
 	}
 
+	/**
+	 * If this is based on an official codelist, return it
+	 * 
+	 * @return
+	 */
+	public ICodelist getCodelistBackend() {
+		return codelist;
+	}
+
 	public CodeList(ICodelist codelist) {
 		this.codelist = codelist;
 	}
@@ -162,7 +170,7 @@ public class CodeList implements ICodelist {
 			if (ret != null) {
 				if (this.authority != null) {
 					ret = this.authority.getIdentity(ret.toString(), null);
-				} else if (rootConcept != null && this.type == Type.CONCEPT) {
+				} else if (rootConcept != null && this.type == IArtifact.Type.CONCEPT) {
 					ret = Concepts.c(ret.toString());
 					// TODO error if unknown?
 				} else if (this.type != null) {

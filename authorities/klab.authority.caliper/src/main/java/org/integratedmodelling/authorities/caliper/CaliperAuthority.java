@@ -21,6 +21,7 @@ import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.extensions.Authority;
 import org.integratedmodelling.klab.api.knowledge.IAuthority;
+import org.integratedmodelling.klab.api.knowledge.ICodelist;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.rest.AuthorityIdentity;
@@ -310,6 +311,12 @@ public class CaliperAuthority implements IAuthority {
 	@Override
 	public String getName() {
 		return ID;
+	}
+
+	@Override
+	public ICodelist getCodelist() {
+		// TODO this may be less than obvious with Caliper
+		return null;
 	}
 
 }

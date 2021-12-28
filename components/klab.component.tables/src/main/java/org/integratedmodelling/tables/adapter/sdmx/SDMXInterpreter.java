@@ -362,6 +362,10 @@ public class SDMXInterpreter extends TableInterpreter {
 					n++;
 				}
 
+				builder.withParameter("value.column", "value");
+				builder.withParameter("value.type", Type.NUMBER.name());
+				builder.withParameter("value.functional", "true");
+				
 				builder.withAttribute("timestart", Type.NUMBER, false, true);
 				builder.withParameter("column.timestart.index", sortedDimensions.size())
 						.withParameter("column.timestart.mapping", "").withParameter("column.timestart.size", "-1")

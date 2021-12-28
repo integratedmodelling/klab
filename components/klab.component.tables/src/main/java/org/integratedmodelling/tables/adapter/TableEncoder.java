@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.klab.Authorities;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
@@ -28,6 +29,7 @@ import org.integratedmodelling.klab.api.data.general.ITable.Filter;
 import org.integratedmodelling.klab.api.data.general.ITable.Filter.Type;
 import org.integratedmodelling.klab.api.knowledge.ICodelist;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
@@ -42,8 +44,10 @@ import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.utils.NumberUtils;
+import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.SemanticType;
+import org.integratedmodelling.klab.utils.Triple;
 import org.integratedmodelling.tables.AbstractTable;
 import org.integratedmodelling.tables.CodeList;
 import org.integratedmodelling.tables.DimensionScanner;
@@ -67,7 +71,6 @@ public class TableEncoder implements IResourceEncoder {
 	public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
 			Builder builder, IContextualizationScope scope) {
 
-		// System.out.println("ENCODING " + resource.getUrn());
 		boolean ignoreTime = false;
 		boolean ignoreSpace = false;
 		if (urnParameters.containsKey("ignore")) {
@@ -237,11 +240,10 @@ public class TableEncoder implements IResourceEncoder {
 
 			/*
 			 * if we asked for a specific column in the value attribute, map it first if
-			 * needed, then filter. TODO If we didn't, the column should be "value" unless
-			 * there is only one column.
+			 * needed, then filter.
 			 * 
-			 * TODO if we have >1 unresolved keys, the object returned can be a TABLE
-			 * instead of a VALUE.
+			 * If we have >1 unresolved keys and the value attribute wasn't specified, the
+			 * object returned can be a TABLE instead of a VALUE.
 			 * 
 			 * TODO this should be <-, i.e. the mapping should always follow the arrows -
 			 * worried that it makes it impossible to understand (it probably already is
@@ -305,6 +307,22 @@ public class TableEncoder implements IResourceEncoder {
 				}
 			}
 
+			/*
+			 * find out which observed states are mapped to attribute codelists, if any
+			 */
+			List<Triple<IState, ICodelist, String>> mappedStates = new ArrayList<>();
+			for (Pair<String, IState> state : scope.getArtifacts(IState.class)) {
+				if (state.getSecond().getDataKey() != null && state.getSecond().getDataKey().getAuthority() != null) {
+					ICodelist codelist = state.getSecond().getDataKey().getAuthority().getCodelist();
+					if (codelist != null) {
+						String columnId = ((AbstractTable<?>) table).findClassifiedColumn(codelist);
+						if (columnId != null) {
+							mappedStates.add(new Triple<>(state.getSecond(), codelist, columnId));
+						}
+					}
+				}
+			}
+
 			/**
 			 * Otherwise, we just scan the space (time has been filtered upstream) and
 			 * collect the values corresponding to the remaining filtering in the table. If
@@ -319,9 +337,29 @@ public class TableEncoder implements IResourceEncoder {
 					return;
 				}
 
+				Set<Filter> filters = new HashSet<>();
+
 				if (!table.isEmpty()) {
 
 					ITable<?> t = table;
+
+					/*
+					 * Filter for any keys observed through states. TODO the value cache should look
+					 * at ALL these filters, space and the others.
+					 */
+					for (Triple<IState, ICodelist, String> mst : mappedStates) {
+						Object aid = mst.getFirst().get(locator);
+						if (aid instanceof IConcept) {
+							String code = Authorities.INSTANCE.getAuthorityCode((IConcept) aid);
+							if (code != null) {
+								t = t.filter(Filter.Type.COLUMN_MATCH,
+										new Object[] { mst.getThird(), mst.getSecond().value(code) });
+							} else {
+								builder.set(null, locator);
+								return;
+							}
+						}
+					}
 
 					if (space != null && !ignoreSpace) {
 
@@ -470,21 +508,21 @@ public class TableEncoder implements IResourceEncoder {
 
 		OutputStreamWriter writer = new OutputStreamWriter(stream);
 		ITable<?> table = TableAdapter.getOriginalTable(resource, false, monitor);
-		
+
 		try {
 
-			if (table instanceof AbstractTable && ((AbstractTable<?>)table).getCache(resource) != null) {
-				((AbstractTable<?>)table).getCache(resource).dumpData(verbose ? 50 : 0, writer);
+			if (table instanceof AbstractTable && ((AbstractTable<?>) table).getCache(resource) != null) {
+				((AbstractTable<?>) table).getCache(resource).dumpData(verbose ? 50 : 0, writer);
 				writer.flush();
 				return;
 			}
-			
+
 			if (verbose) {
 
 				/*
 				 * list the first 50 data rows
 				 */
-				int[] dims =  table.size();
+				int[] dims = table.size();
 				for (int i = 0; i < (dims[0] < 50 ? dims[0] : 50); i++) {
 					List<?> row = table.getRowItems(i);
 					boolean first = true;
@@ -500,20 +538,19 @@ public class TableEncoder implements IResourceEncoder {
 				/*
 				 * list the structure + the first 10 values per each field
 				 */
-				int[] dims =  table.size();
-				for (int i = 0; i <dims[1]; i++) {
+				int[] dims = table.size();
+				for (int i = 0; i < dims[1]; i++) {
 					Attribute column = table.getColumnDescriptor(i);
 					writer.append(column.getName() + ": " + column.getType() + "\n");
 				}
 			}
-		
+
 			writer.flush();
-			
+
 		} catch (IOException e) {
 			throw new KlabIOException(e);
 		}
-		
-		
+
 	}
 
 }

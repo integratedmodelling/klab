@@ -9,6 +9,7 @@ import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
+import org.integratedmodelling.klab.api.knowledge.IAuthority;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
@@ -183,6 +184,12 @@ public class KeyedDebugStorage<T> implements IDataStorage<T>, IKeyHolder {
 			if (!this.key.containsKey((T)value)) {
 				this.key.put((T)value, this.key.size());
 			}
+		}
+
+		@Override
+		public IAuthority getAuthority() {
+			// TODO Auto-generated method stub
+			return null;
 		}
 
 	}

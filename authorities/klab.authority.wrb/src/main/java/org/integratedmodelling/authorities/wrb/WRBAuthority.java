@@ -11,6 +11,7 @@ import org.integratedmodelling.authorities.wrb.utils.WRBUtils;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.extensions.Authority;
 import org.integratedmodelling.klab.api.knowledge.IAuthority;
+import org.integratedmodelling.klab.api.knowledge.ICodelist;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.rest.AuthorityReference;
 
@@ -82,6 +83,11 @@ public class WRBAuthority implements IAuthority {
 	@Override
 	public String getName() {
 		return ID;
+	}
+
+	@Override
+	public ICodelist getCodelist() {
+		return null;
 	}
 
 }

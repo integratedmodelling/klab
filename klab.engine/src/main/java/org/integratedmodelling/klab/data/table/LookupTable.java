@@ -19,6 +19,7 @@ import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.data.classification.IClassifier;
 import org.integratedmodelling.klab.api.data.classification.ILookupTable;
 import org.integratedmodelling.klab.api.data.general.IStructuredTable;
+import org.integratedmodelling.klab.api.knowledge.IAuthority;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
@@ -291,5 +292,11 @@ public class LookupTable implements ILookupTable {
     public boolean isTwoWay() {
         return twoWay;
     }
+
+	@Override
+	public IAuthority getAuthority() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

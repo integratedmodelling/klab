@@ -18,7 +18,6 @@ import java.util.Iterator;
 import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
-import org.integratedmodelling.klab.api.data.general.IStructuredTable;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 
 /**
@@ -70,15 +69,6 @@ public interface IState extends IObservation, IDataArtifact {
 
     @Override
     IState at(ILocator locator);
-
-    // /**
-    // * Numeric states with an aggregated observable ('by' a countable or a class) are
-    // * given a table summary of their values.
-    // *
-    // * @return the aggregation table, or null if not applicable.
-    // * @deprecated tables are now a legitimate artifact and should only be requested explicitly
-    // */
-    // IStructuredTable<Number> getTable();
 
     @Override
     ISubjectiveState reinterpret(IDirectObservation observer);

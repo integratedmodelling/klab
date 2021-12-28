@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +28,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.ExpressionST;
 import org.integratedmodelling.klab.data.Aggregator;
 import org.integratedmodelling.klab.data.resources.Resource;
+import org.integratedmodelling.klab.data.table.TableValue;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
@@ -36,6 +36,7 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.rest.AttributeReference;
 import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.NumberUtils;
+import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Utils;
 import org.integratedmodelling.tables.adapter.TableAdapter;
 
@@ -753,14 +754,6 @@ public abstract class AbstractTable<T> implements ITable<T> {
 		List<Attribute> columns = new ArrayList<>();
 		int row = -1;
 		List<Integer> cols = new ArrayList<>();
-		Object ret = null;
-
-		// single-valued list output
-		final int LIST = 0;
-		// map c1 -> c2 output
-		final int MAP = 1;
-		// list of iterables with multiple columns values output
-		final int ALIST = 2;
 
 		// if set, aggregate everything before return unless it's just one value
 		Aggregator aggregator = null;
@@ -798,73 +791,17 @@ public abstract class AbstractTable<T> implements ITable<T> {
 			located.add(newFilter(Filter.Type.INCLUDE_ROWS, new Object[] { row }));
 		}
 
-		boolean singleValue = cols.size() > 0 && row >= 0;
-
-		if (singleValue) {
-
-		} else/* if (columns.size() > 0) */ {
-
-			int restype = -1;
-
-			/**
-			 * columns not empty and row = -1
-			 * 
-			 * Return type should be list if 1 column, table or map otherwise. If map,
-			 * should be 2 columns and the first will be used as key. This requires two
-			 * steps in scanDimension, one that returns the dimensionality of the result,
-			 * another that scans it.
-			 */
-			if (aggregator != null || (List.class.isAssignableFrom(cls) && cols.size() == 1)) {
-				restype = LIST;
-			} else if (Map.class.isAssignableFrom(cls) && cols.size() == 2) {
-				restype = MAP;
-			} else if (List.class.isAssignableFrom(cls) && cols.size() > 1) {
-				restype = ALIST;
-			} else {
-				throw new KlabValidationException("table get() called with inconsistent arguments");
-			}
-
-			switch (restype) {
-			case LIST:
-			case ALIST:
-				ret = new ArrayList<Object>();
-				break;
-			case MAP:
-				ret = new LinkedHashMap<Object, Object>();
-				break;
-			}
-
-			Collection<Object> data = getCache(resource).scan(this, CollectionUtils.join(this.filters, located), scope);
-			if (data.size() == 0) {
-				return aggregator == null ? Utils.emptyValue(cls) : null;
-			}
-			switch (restype) {
-			case LIST:
-				((List<Object>) ret).addAll(data);
-				break;
-			// TODO build a list of arrays, turn into a map if requested
-			// case MAP:
-			// String key = getCache().getObject(rowIndex, cols.get(0));
-			// value = getCache().getObject(rowIndex, cols.get(1));
-			// ((Map<Object, Object>) ret).put(getValue(key, columns.get(0)),
-			// getValue(value, columns.get(1)));
-			// break;
-			// case ALIST:
-			// List<Object> rval = new ArrayList<>();
-			// for (int c = 0; c < cols.size(); c++) {
-			// value = getCache().getObject(rowIndex, cols.get(c));
-			// rval.add(getValue(value, columns.get(c)));
-			// }
-			// ((List<Object>) ret).add(rval);
-			// break;
-			}
+		TableValue ret = getCache(resource).scan(this, CollectionUtils.join(this.filters, located), scope,
+				aggregator);
+		if (ret == null) {
+			return aggregator == null ? Utils.emptyValue(cls) : null;
 		}
 
-		if (ret instanceof List && aggregator != null) {
-			return (E) aggregator.aggregate((List<?>) ret);
-		}
-
-		return (E) ret;
+		/**
+		 * This will return the table if keyed values remain, or a single (potentially
+		 * aggregated) value if not
+		 */
+		return (E) ret.reduce(cls, false);
 	}
 
 	/**
@@ -899,7 +836,7 @@ public abstract class AbstractTable<T> implements ITable<T> {
 				objs.add(value);
 			}
 		}
-		
+
 		return objs.size() == 1 ? objs.get(0) : objs;
 	}
 
@@ -964,6 +901,33 @@ public abstract class AbstractTable<T> implements ITable<T> {
 			if (mapfile.exists()) {
 				ret = new CodeList(string, mapfile);
 				this.mappingCatalog.put(string, ret);
+			}
+		}
+		return ret;
+	}
+
+	public String findClassifiedColumn(ICodelist codelist) {
+		for (String mapped : mappings.keySet()) {
+			if (mappings.get(mapped).size() == 1) {
+				// only simple mappings allowed
+				CodeList cl = mappings.get(mapped).get(0);
+				if (cl.getCodelistBackend() != null && codelist.getName().equals(cl.getCodelistBackend().getName())) {
+					return mapped;
+				}
+			}
+		}
+		return null;
+	}
+
+	public List<Pair<String, ICodelist>> getClassifiedColumns() {
+		List<Pair<String, ICodelist>> ret = new ArrayList<>();
+		for (String mapped : mappings.keySet()) {
+			if (mappings.get(mapped).size() == 1) {
+				// only simple mappings allowed
+				CodeList cl = mappings.get(mapped).get(0);
+				if (cl.getCodelistBackend() != null) {
+					ret.add(new Pair<>(mapped, cl));
+				}
 			}
 		}
 		return ret;

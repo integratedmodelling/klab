@@ -2,7 +2,6 @@ package org.integratedmodelling.klab.data.resources;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
 
 import org.integratedmodelling.klab.api.knowledge.ICodelist;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -126,5 +125,7 @@ public class Codelist implements ICodelist {
 	public int size() {
 		return direct.size();
 	}
+	
+	
 
 }

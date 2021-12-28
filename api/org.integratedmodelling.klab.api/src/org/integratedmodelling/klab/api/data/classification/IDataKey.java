@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.api.data.classification;
 
 import java.util.List;
 
+import org.integratedmodelling.klab.api.knowledge.IAuthority;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.utils.Pair;
 
@@ -80,10 +81,17 @@ public interface IDataKey {
 
 	/**
 	 * Ensure that the key includes the passed value, which should be compatible in
-	 * type with those already present. 
+	 * type with those already present.
 	 * 
 	 * @param value
 	 */
 	void include(Object value);
+
+	/**
+	 * The datakey may be a proxy for a codelist, which is returned here.
+	 * 
+	 * @return
+	 */
+	IAuthority getAuthority();
 
 }
