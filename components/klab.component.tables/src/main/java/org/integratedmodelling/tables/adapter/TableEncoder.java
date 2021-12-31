@@ -84,6 +84,10 @@ public class TableEncoder implements IResourceEncoder {
 			}
 		}
 
+		if ("local:ferdinando.villa:im.data.global:crops.country.reference.totals".equals(resource.getUrn())) {
+			System.out.println("ZIPIPIPP");
+		}
+
 		if (ignoreTime && scope.getScale().getTime() != null
 				&& scope.getScale().getTime().getTimeType() != ITime.Type.INITIALIZATION) {
 			// just don't move.
@@ -350,10 +354,16 @@ public class TableEncoder implements IResourceEncoder {
 					for (Triple<IState, ICodelist, String> mst : mappedStates) {
 						Object aid = mst.getFirst().get(locator);
 						if (aid instanceof IConcept) {
-							String code = Authorities.INSTANCE.getAuthorityCode((IConcept) aid);
-							if (code != null) {
-								t = t.filter(Filter.Type.COLUMN_MATCH,
-										new Object[] { mst.getThird(), mst.getSecond().value(code) });
+							Set<Object> codes = new HashSet<>();
+							for (IConcept cid : ((IConcept) aid).getOperands()) {
+								String code = Authorities.INSTANCE.getAuthorityCode((IConcept) cid);
+								if (code != null) {
+									codes.add(mst.getSecond().value(code));
+								}
+							}
+							if (!codes.isEmpty()) {
+								t = t.filter(Filter.Type.COLUMN_MATCH, new Object[] { mst.getThird(),
+										(codes.size() == 1 ? codes.iterator().next() : codes.toArray()) });
 							} else {
 								builder.set(null, locator);
 								return;
@@ -366,7 +376,8 @@ public class TableEncoder implements IResourceEncoder {
 						Filter filter = space.locate(table, locator);
 
 						/*
-						 * cache the spatial filter only as the others don't change
+						 * cache the spatial filter only as the others don't change. TODO cache ALL
+						 * filters including those from classified codes.
 						 */
 						if (valueCache.containsKey(filter)) {
 							value = valueCache.get(filter);

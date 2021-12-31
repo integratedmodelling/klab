@@ -301,15 +301,12 @@ public enum Observations implements IObservationService {
 		// TODO Auto-generated method stub
 	}
 
-	public ObservationReference createArtifactDescriptor(IObservation observation, /*
-																					 * IObservation parent,
-																					 */
-			ILocator locator, int childLevel) {
-		return createArtifactDescriptor(observation, /* parent, */locator, childLevel, null);
+	public ObservationReference createArtifactDescriptor(IObservation observation, ILocator locator, int childLevel) {
+		return createArtifactDescriptor(observation, locator, childLevel, null);
 	}
 
-	public ObservationReference createArtifactDescriptor(IObservation observation/* , IObservation parent */,
-			ILocator locator, int childLevel, String viewId) {
+	public ObservationReference createArtifactDescriptor(IObservation observation, ILocator locator, int childLevel,
+			String viewId) {
 
 		ObservationReference ret = new ObservationReference();
 
@@ -378,8 +375,20 @@ public enum Observations implements IObservationService {
 
 			ScaleReference scaleReference = new ScaleReference();
 			if (space instanceof IEnumeratedExtent) {
-				// FIXME TODO
+				
+				scaleReference.setSpaceEnumerated(true);
+				String description = "";
+				for (IConcept c : ((IEnumeratedExtent) space).getExtension()) {
+					scaleReference.getSpaceExtension().add(c.getDefinition());
+					description += (description.isEmpty() ? "" : ", ") + Concepts.INSTANCE.getDisplayLabel(c);
+				}
+				scaleReference.setName(description);
+				
+				// TODO use convention-based metadata for bounding box, shape, rank etc., if any
+				// are available (see which vocabulary to adopt).
+
 			} else if (space != null) {
+
 				IEnvelope envelope = space.getEnvelope();
 				Grid grid = space instanceof Space ? (Grid) ((Space) space).getGrid() : null;
 				Pair<Integer, String> resolution = ((Envelope) envelope).getResolutionForZoomLevel();
@@ -439,9 +448,9 @@ public enum Observations implements IObservationService {
 
 		// fill in spatio/temporal info and mode of visualization
 		if (space instanceof IEnumeratedExtent) {
-			
+
 			// TODO!
-			
+
 		} else if (space != null) {
 
 			ret.getMetadata().put("Total area",

@@ -10,19 +10,19 @@
 void info
 	"Send an info message through the session channel"
 {
-	class org.integratedmodelling.klab.clitool.console.commands.message.Logging
+	class org.integratedmodelling.klab.cli.commands.message.Logging
 }
 
 void warning
 	"Send a warning message through the session channel"
 {
-	class org.integratedmodelling.klab.clitool.console.commands.message.Logging
+	class org.integratedmodelling.klab.cli.commands.message.Logging
 }
 
 void error
 	"Send an error message through the session channel"
 {
-	class org.integratedmodelling.klab.clitool.console.commands.message.Logging
+	class org.integratedmodelling.klab.cli.commands.message.Logging
 }
 
 void debug

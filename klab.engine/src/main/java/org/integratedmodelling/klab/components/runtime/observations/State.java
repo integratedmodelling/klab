@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IStorage;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
+import org.integratedmodelling.klab.api.data.general.IReducible;
 import org.integratedmodelling.klab.api.data.general.IStructuredTable;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
@@ -93,11 +94,11 @@ public class State extends Observation implements IState, IKeyHolder {
 	public ValuePresentation getValuePresentation() {
 		return this.valuePresentation;
 	}
-	
+
 	public void setValuePresentation(ValuePresentation vp) {
 		this.valuePresentation = vp;
 	}
-	
+
 	private State(Observable observable, Scale scale, IRuntimeScope context) {
 		super(observable, scale, context);
 		this.setArchetype(true);
@@ -155,6 +156,13 @@ public class State extends Observation implements IState, IKeyHolder {
 
 	public long set(ILocator index, Object value) {
 		touch();
+		if (value instanceof IReducible) {
+			if (this.valuePresentation != ValuePresentation.VALUE
+					&& ((IReducible) value).getValuePresentation() != this.valuePresentation) {
+				// TODO allow? curse?
+			}
+			this.valuePresentation = ((IReducible) value).getValuePresentation();
+		}
 		if (dataKey != null && value != null) {
 			dataKey.include(value);
 		}
@@ -478,7 +486,7 @@ public class State extends Observation implements IState, IKeyHolder {
 				}
 			}
 		}
-		
+
 		return ret;
 	}
 

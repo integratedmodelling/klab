@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.engine.runtime;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.rest.ITaskReference.Status;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
@@ -75,6 +76,7 @@ public abstract class AbstractTask<T extends IArtifact> implements ITaskTree<T> 
 	Activity activity;
 	Monitor monitor;
 	Subject context;
+	protected IResolvable resolvable;
 	Session session;
 	String token = "t" + NameGenerator.shortUUID();
 	String[] scenarios;
@@ -211,5 +213,10 @@ public abstract class AbstractTask<T extends IArtifact> implements ITaskTree<T> 
 	public boolean stop() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+	
+	@Override
+	public IResolvable getResolvable() {
+		return this.resolvable;
 	}
 }

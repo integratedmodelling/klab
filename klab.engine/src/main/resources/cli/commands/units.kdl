@@ -10,7 +10,7 @@
 void info
 	"Print useful information and k.IM bindings for a resource."
 {
-	class org.integratedmodelling.klab.clitool.console.commands.unit.Info
+	class org.integratedmodelling.klab.cli.commands.unit.Info
 }
 
 void contextualize

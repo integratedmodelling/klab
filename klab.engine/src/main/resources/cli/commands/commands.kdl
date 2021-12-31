@@ -12,7 +12,7 @@
 void help
 	"List all available commands and their options."
 {
-	class org.integratedmodelling.klab.clitool.console.commands.Help
+	class org.integratedmodelling.klab.cli.commands.Help
 }
 
 void run
@@ -72,7 +72,7 @@ void ls
 void 'dependencies'
 	"Show the namespace dependency graph"
 {
-	class org.integratedmodelling.klab.clitool.console.commands.visualization.ShowDependencies
+	class org.integratedmodelling.klab.cli.commands.visualization.ShowDependencies
 }
 
 void get

@@ -64,14 +64,17 @@ public class KeyedStorage<T> implements IDataStorage<T>, IKeyHolder {
 			if (cValue == null) {
 				cValue = conceptKey.size();
 			}
-			
+
 			if (!authorityTested && value instanceof IConcept) {
-				if (Authorities.INSTANCE.getAuthority((IConcept) value) != null) {
-					this.authority = Authorities.INSTANCE.getAuthority((IConcept) value);
+				for (IConcept concept : ((IConcept) value).getOperands()) {
+					if (Authorities.INSTANCE.getAuthority((IConcept) concept) != null) {
+						this.authority = Authorities.INSTANCE.getAuthority((IConcept) concept);
+						break;
+					}
 				}
 				this.authorityTested = true;
 			}
-			
+
 			if (conceptKey.containsKey(value)) {
 				cValue = conceptKey.get(value);
 			} else {

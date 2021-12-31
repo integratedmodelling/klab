@@ -92,7 +92,7 @@ public class TableCompiler {
         AREA, DURATION, QUALITY, NUMEROSITY
     }
 
-    enum Style {
+    public enum Style {
         RIGHT, LEFT, CENTER, BOLD, ITALIC, BG_HIGHLIGHT, FG_HIGHLIGHT
     }
 

@@ -83,6 +83,7 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
 			this.session = session;
 			this.taskDescription = "Observation of " + observer.getId();
 			this.activity.setActivityDescriptor(activityDescriptor);
+			this.resolvable = observer;
 
 			session.touch();
 

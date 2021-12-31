@@ -19,15 +19,24 @@ import java.util.concurrent.Future;
 
 import org.integratedmodelling.klab.api.auth.ITaskIdentity;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.resolution.IResolvable;
 
 /**
- * A ITask computes an observational artifact, delegating to a Java Future that returns it when
- * available.
+ * A ITask computes an observational artifact, delegating to a Java Future that
+ * returns it when available.
  *
  * @author ferdinando.villa
  * @version $Id: $Id
  * @param <T> the type of observation being resolved
  */
 public interface ITask<T extends IArtifact> extends ITaskIdentity, Future<T> {
-  
+
+	/**
+	 * The "resolvable" unit that this task is dedicated to resolving (not
+	 * necessarily successfully).
+	 * 
+	 * @return
+	 */
+	IResolvable getResolvable();
+
 }

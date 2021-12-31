@@ -60,11 +60,13 @@ import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IActivity.Description;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.provenance.IArtifact.ValuePresentation;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.IScheduler;
 import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.IVariable;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
@@ -82,6 +84,7 @@ import org.integratedmodelling.klab.components.time.extents.Scheduler;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.data.storage.MediatingState;
 import org.integratedmodelling.klab.data.storage.RescalingState;
+import org.integratedmodelling.klab.data.table.TableValue;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Actuator.Computation;
 import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
@@ -1417,6 +1420,47 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				 */
 				if (!notifiedObservations.contains(observation.getId())) {
 
+					boolean isMain = this.monitor.getIdentity() instanceof ITask
+							&& ((ITask<?>) this.monitor.getIdentity()).getResolvable()
+									.equals(observation.getObservable());
+
+					if (observation instanceof IState
+							&& ((IState) observation).getValuePresentation() != ValuePresentation.VALUE) {
+
+						/*
+						 * main artifact with a single table value as result causes the table to be sent
+						 * to clients. TODO the same should happen with distributions, obviously with a
+						 * different message. TODO decorations should also be linked to models and added
+						 * to getCompiledView().
+						 */
+						if (isMain && ((IState) observation).getValuePresentation() == ValuePresentation.TABLE
+								&& observation.getScale().size() == 1) {
+
+							/*
+							 * report a single table if this is the main observable and it only contains one
+							 * table. This may need to be reviewed for generality but it seems OK for now.
+							 */
+							Object table = ((IState) observation).get(scale.iterator().next());
+
+							if (table instanceof TableValue) {
+
+								KnowledgeViewReference descriptor = new KnowledgeViewReference();
+								descriptor.setContextId(
+										monitor.getIdentity().getParentIdentity(ITaskTree.class).getContextId());
+								descriptor.setBody(((TableValue) table).getCompiledView("text/html").getText());
+								descriptor.setViewClass(View.TABLES);
+								descriptor.setTitle(((TableValue) table).getTitle());
+								descriptor.setViewId(((TableValue) table).getId());
+								descriptor.getExportFormats().addAll(((TableValue) table).getExportFormats());
+								descriptor.setLabel(((TableValue) table).getLabel());
+
+								report.addView((TableValue) table, descriptor);
+								session.getMonitor().send(Message.create(session.getId(),
+										IMessage.MessageClass.UserInterface, IMessage.Type.ViewAvailable, descriptor));
+							}
+						}
+					}
+
 					IObservationReference descriptor = Observations.INSTANCE
 							.createArtifactDescriptor(observation/* , getParentArtifactOf(observation) */,
 									observation.getScale().initialization(), 0)
@@ -1426,10 +1470,9 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 					session.getMonitor().send(Message.create(session.getId(),
 							IMessage.MessageClass.ObservationLifecycle, IMessage.Type.NewObservation, descriptor));
 
-					session.getState().notifyObservation(observation);
-
 					report.include(descriptor, observation);
 
+					session.getState().notifyObservation(observation);
 					notifiedObservations.add(observation.getId());
 				}
 
