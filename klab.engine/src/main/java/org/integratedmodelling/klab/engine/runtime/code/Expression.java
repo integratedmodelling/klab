@@ -29,6 +29,7 @@ import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.IEventBus;
 import org.integratedmodelling.klab.api.runtime.IScheduler;
+import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.IVariable;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -299,6 +300,12 @@ public abstract class Expression implements IExpression {
 			// TODO Auto-generated method stub
 			return null;
 		}
+		
+		@Override
+		public ISession getSession() {
+			return monitor.getIdentity().getParentIdentity(ISession.class);
+		}
+
 	}
 
 	public static IContextualizationScope emptyContext(IMonitor monitor) {

@@ -20,13 +20,16 @@ import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.IValueMediator;
+import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
+import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Roles;
 import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.api.actors.IBehavior;
@@ -91,6 +94,7 @@ import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.documentation.Report;
+import org.integratedmodelling.klab.documentation.style.StyleDefinition;
 import org.integratedmodelling.klab.engine.runtime.AbstractTask;
 import org.integratedmodelling.klab.engine.runtime.EventBus;
 import org.integratedmodelling.klab.engine.runtime.Session;
@@ -2461,6 +2465,30 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * See if the model we're working with is associated to an output style through a style
+	 * annotation; if so, find it and return it
+	 */
+	public StyleDefinition getOutputStyle() {
+		if (((Actuator) this.actuator).getModel() != null) {
+			IAnnotation astyle = Annotations.INSTANCE.getAnnotation(((Actuator) this.actuator).getModel(), "style");
+			if (astyle != null) {
+				Object o = Resources.INSTANCE
+						.getNamespaceObject(astyle.get(IServiceCall.DEFAULT_PARAMETER_NAME, String.class));
+				if (o instanceof StyleDefinition) {
+					return (StyleDefinition) o;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	@Override
+	public ISession getSession() {
+		return monitor.getIdentity().getParentIdentity(ISession.class);
 	}
 
 }

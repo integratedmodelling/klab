@@ -26,8 +26,10 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.data.Aggregator;
 import org.integratedmodelling.klab.data.table.TableValue;
+import org.integratedmodelling.klab.documentation.style.StyleDefinition;
 import org.integratedmodelling.klab.exceptions.KlabStorageException;
 import org.integratedmodelling.klab.persistence.h2.H2Database;
 import org.integratedmodelling.klab.persistence.h2.H2Database.DBIterator;
@@ -263,14 +265,26 @@ public class SQLTableCache {
 	 * @param filters
 	 * @return
 	 */
-	public TableValue scan(AbstractTable<?> table, Collection<Filter> filters, IContextualizationScope scope, Aggregator aggregator) {
+	public TableValue scan(AbstractTable<?> table, Collection<Filter> filters, IContextualizationScope scope,
+			Aggregator aggregator) {
 
 		String fields = "";
 		String where = "";
 
 		Set<String> searchedColumns = new HashSet<>();
 		Set<String> keyFields = new LinkedHashSet<>();
+		Set<String> reqFields = new LinkedHashSet<>();
 
+		// we look for the style early as it may mandate keeping keys that we wouldn't
+		// otherwise
+		StyleDefinition style = (scope instanceof RuntimeScope ? ((RuntimeScope) scope).getOutputStyle() : null);
+		if (style != null && style.get("keep") instanceof Collection) {
+			for (Object o : (Collection<?>) style.get("keep")) {
+				if (table.getColumnDescriptor(o.toString()) != null) {
+					reqFields.add(o.toString());
+				}
+			}
+		}
 		boolean functional = "true".equals(resource.getParameters().get("value.functional", "false"));
 		String valueField = resource.getParameters().get("value.column", (String) null);
 
@@ -367,11 +381,18 @@ public class SQLTableCache {
 		 */
 		List<String> allFields = new ArrayList<>(keyFields);
 
+		for (String reqField : reqFields) {
+			if (!keyFields.contains(reqField)) {
+				fields += (fields.isEmpty() ? "" : ", ") + reqField;
+				allFields.add(reqField);
+				keyFields.add(reqField);
+			}
+		}
+
 		if (valueField != null && !keyFields.contains(valueField)) {
 			fields += (fields.isEmpty() ? "" : ", ") + valueField;
 			allFields.add(valueField);
 		}
-
 
 		/*
 		 * ensure all the columns we're searching are indexed
@@ -413,8 +434,8 @@ public class SQLTableCache {
 				}
 			}
 		}
-		
-		return new TableValue(ret, allFields, keyFields, valueField, codelists, aggregator);
+
+		return new TableValue(ret, allFields, keyFields, valueField, codelists, aggregator, style, scope);
 	}
 
 	private String getCondition(String field, Object value) {

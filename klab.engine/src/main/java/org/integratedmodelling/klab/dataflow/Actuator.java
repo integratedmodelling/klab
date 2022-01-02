@@ -88,6 +88,7 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.resolution.RankedModel;
 import org.integratedmodelling.klab.rest.DataflowState;
 import org.integratedmodelling.klab.rest.DataflowState.Status;
 import org.integratedmodelling.klab.rest.ObservationChange;
@@ -1321,7 +1322,7 @@ public class Actuator implements IActuator {
     }
 
     public Model getModel() {
-        return this.model;
+        return this.model instanceof RankedModel ? ((RankedModel)this.model).getDelegate() : this.model;
     }
 
     public Dataflow getDataflow() {

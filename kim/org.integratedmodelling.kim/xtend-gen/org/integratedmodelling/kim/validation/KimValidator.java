@@ -1859,9 +1859,7 @@ public class KimValidator extends AbstractKimValidator {
       for (final ConceptDeclaration operand : _operands) {
         {
           EnumSet<IKimConcept.Type> otype = this.checkDeclaration(operand);
-          boolean _isCompatible = Kim.isCompatible(type, otype);
-          boolean _not_25 = (!_isCompatible);
-          if (_not_25) {
+          if (((Kim.isDeclarable(type) && Kim.isDeclarable(otype)) && (!Kim.isCompatible(type, otype)))) {
             String _get = declaration.getOperators().get(i);
             String _plus_16 = ("Operands in the \'" + _get);
             String _plus_17 = (_plus_16 + "\' expression are of incompatible types");

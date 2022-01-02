@@ -34,4 +34,12 @@ public interface IReducible {
 	 */
 	Object reduce(Class<?> cls, boolean forceReduction);
 
+	/**
+	 * The equivalent of a null in this representation. If isEmpty(), reduce should
+	 * return an appropriate nodata.
+	 * 
+	 * @return
+	 */
+	boolean isEmpty();
+
 }

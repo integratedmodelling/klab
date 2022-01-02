@@ -555,4 +555,12 @@ public interface IContextualizationScope extends IParameters<String> {
 	 */
 	IExpression.Scope getExpressionContext();
 
+	/**
+	 * Return the session we're in. In some scopes (such as those for remote
+	 * execution) this may be null.
+	 * 
+	 * @return
+	 */
+	ISession getSession();
+
 }

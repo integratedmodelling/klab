@@ -1339,6 +1339,18 @@ public enum Resources implements IResourceService {
 		return null;
 	}
 
+	/**
+	 * Return an object defined by a URN within a namespace's symbol table
+	 * 
+	 * @return
+	 */
+	public Object getNamespaceObject(String urn) {
+		String namespace = Path.getLeading(urn, '.');
+		INamespace ns = Namespaces.INSTANCE.getNamespace(namespace);
+		return ns == null ? null : ns.getSymbolTable().get(Path.getLast(urn, '.'));
+	}
+	
+	
 	@Override
 	public IKimObject getModelObject(String urn) {
 

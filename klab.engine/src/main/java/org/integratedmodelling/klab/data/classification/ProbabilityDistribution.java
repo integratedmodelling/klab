@@ -29,5 +29,11 @@ public class ProbabilityDistribution extends EnumeratedRealDistribution implemen
 		return getNumericalMean();
 	}
 
+	@Override
+	public boolean isEmpty() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 	
 }

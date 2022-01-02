@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -14,10 +13,7 @@ import java.util.Set;
 import org.apache.commons.collections4.keyvalue.MultiKey;
 import org.apache.commons.collections4.map.MultiKeyMap;
 import org.integratedmodelling.klab.Configuration;
-import org.integratedmodelling.klab.api.data.IResource.Attribute;
 import org.integratedmodelling.klab.api.data.general.IReducible;
-import org.integratedmodelling.klab.api.data.general.ITable;
-import org.integratedmodelling.klab.api.data.general.ITable.Filter.Type;
 import org.integratedmodelling.klab.api.documentation.views.IDocumentationView;
 import org.integratedmodelling.klab.api.documentation.views.ITableView;
 import org.integratedmodelling.klab.api.knowledge.ICodelist;
@@ -32,11 +28,14 @@ import org.integratedmodelling.klab.documentation.extensions.table.TableArtifact
 import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler;
 import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler.Style;
 import org.integratedmodelling.klab.documentation.extensions.table.TableView;
+import org.integratedmodelling.klab.documentation.style.StyleDefinition;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.rest.DocumentationNode.Table;
 import org.integratedmodelling.klab.rest.DocumentationNode.Table.Column;
 import org.integratedmodelling.klab.rest.ObservationReference.ExportFormat;
 import org.integratedmodelling.klab.utils.JsonUtils;
+import org.integratedmodelling.klab.utils.TemplateUtils;
 import org.integratedmodelling.klab.utils.Utils;
 import org.springframework.util.StringUtils;
 
@@ -52,24 +51,27 @@ import org.springframework.util.StringUtils;
  *
  * @param <T>
  */
-public class TableValue implements ITable<Object>, IReducible {
+public class TableValue implements /* ITable<Object>, */IReducible {
 
 	Map<String, Metadata> metadata = new HashMap<>();
 	MultiKeyMap<String, Object> data;
 	Map<String, ICodelist> codelists = new HashMap<>();
 	Object scalar;
 	private Aggregator aggregator;
+	private StyleDefinition style;
 
 	// compiled views indexed by media type
 	private Map<String, ITableView> compiledViews = new HashMap<>();
 	private List<String> keyFields = new ArrayList<>();
 	private String valueField;
 	private IArtifact.Type valueType = IArtifact.Type.NUMBER;
+	private IContextualizationScope scope;
 
 	private TableValue() {
 	}
 
 	/**
+	 * Just a few parameters
 	 * 
 	 * @param data       the data, either a list of values or a list of lists, each
 	 *                   a row indexed by allFields
@@ -80,17 +82,30 @@ public class TableValue implements ITable<Object>, IReducible {
 	 * @param codelists  any codelists for the key fields
 	 * @param aggregator an aggregator to use when the keys match for multiple
 	 *                   values (or there are no keys)
+	 * @param style      any style definition associated to the generating model
+	 * @param scope      the scope so that we can access the session state for
+	 *                   template substitution etc.
+	 * 
 	 */
 	public TableValue(List<Object> data, List<String> allFields, Set<String> keyFields, String valueField,
-			Map<String, ICodelist> codelists, Aggregator aggregator) {
+			Map<String, ICodelist> codelists, Aggregator aggregator, StyleDefinition style,
+			IContextualizationScope scope) {
 
 		this.codelists = codelists;
 		this.aggregator = aggregator;
 		this.valueField = valueField;
+		this.style = style;
+		this.scope = scope;
 
 		List<Object> scalarData = null;
 		boolean first = true;
-		
+
+		if (this.style != null && this.style.get("keep") instanceof Collection) {
+			for (Object o : (Collection<?>) this.style.get("keep")) {
+				keyFields.add(o.toString());
+			}
+		}
+
 		for (Object o : data) {
 			if (keyFields != null && !keyFields.isEmpty() && o instanceof List && valueField != null) {
 				if (this.data == null) {
@@ -135,7 +150,7 @@ public class TableValue implements ITable<Object>, IReducible {
 				}
 				scalarData.add(o);
 			}
-			
+
 			first = false;
 		}
 
@@ -159,106 +174,14 @@ public class TableValue implements ITable<Object>, IReducible {
 	}
 
 	@Override
-	public Iterator<Iterable<?>> iterator() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public int[] getDimensions() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public <E> E get(Class<E> cls, IContextualizationScope scope, Object... locators) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Object> asList(Object... locators) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ITable<Object> filter(Type target, Object... locators) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ITable<Object> filter(Filter filter) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Object> getRowItems(Object... rowLocator) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Object> getColumnItems(Object... columnLocator) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Object getItem(Object rowLocator, Object columnLocator) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ITable<Object> collectIndices(List<Integer> indices) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Attribute getColumnDescriptor(String columnName) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Attribute getColumnDescriptor(int index) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ITable<?> resetFilters() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public boolean isEmpty() {
 		return scalar == null && (data == null || data.isEmpty());
 	}
 
-	@Override
-	public List<Filter> getFilters() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ITable<Object> contextualize(IContextualizationScope scope) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public int[] size() {
 		return null;
 	}
 
-	@Override
 	public ICodelist getCodelist(String columnId) {
 		return this.codelists == null ? null : this.codelists.get(columnId);
 	}
@@ -313,43 +236,43 @@ public class TableValue implements ITable<Object>, IReducible {
 			}
 
 			int sheetId = ret.sheet(this.getId());
-	        int hTable = ret.table(getTitle(), sheetId);
-	        int hHeader = ret.header(hTable);
-	        int hRow = ret.newRow(hHeader);
-	        for (String key : keyFields) {
-                int cell = ret.newHeaderCell(hRow, 1, false);
-                ret.write(cell, key, Double.NaN, Style.BOLD);
-	        }
-            int cell = ret.newHeaderCell(hRow, 1, false);
-            ret.write(cell, valueField, Double.NaN, Style.BOLD);
+			int hTable = ret.table(getTitle(), sheetId);
+			int hHeader = ret.header(hTable);
+			int hRow = ret.newRow(hHeader);
+			for (String key : keyFields) {
+				int cell = ret.newHeaderCell(hRow, 1, false);
+				ret.write(cell, key, Double.NaN, Style.BOLD);
+			}
+			int cell = ret.newHeaderCell(hRow, 1, false);
+			ret.write(cell, valueField, Double.NaN, Style.BOLD);
 
-            int hBody = ret.body(hTable);
+			int hBody = ret.body(hTable);
 			for (Map<String, Object> rDesc : getRows()) {
-	            hRow = ret.newRow(hBody);
-	            for (String key : this.keyFields) {
-	                ret.write(ret.newCell(hRow), rDesc.get(key), Double.NaN, getStyle(key));
-	            }
-                ret.write(ret.newCell(hRow), rDesc.get(valueField), Double.NaN, getStyle(valueField));
-	        }
+				hRow = ret.newRow(hBody);
+				for (String key : this.keyFields) {
+					ret.write(ret.newCell(hRow), rDesc.get(key), Double.NaN, getStyle(key));
+				}
+				ret.write(ret.newCell(hRow), rDesc.get(valueField), Double.NaN, getStyle(valueField));
+			}
 
 			this.compiledViews.put(mediaType, ret);
 		}
 		return ret;
 	}
 
-	// TODO use style 
-    private Set<TableCompiler.Style> getStyle(String key) {
-        Set<TableCompiler.Style> style = new HashSet<>();
-        // TODO
-        return style;
-    }
+	// TODO use style
+	private Set<TableCompiler.Style> getStyle(String key) {
+		Set<TableCompiler.Style> style = new HashSet<>();
+		// TODO
+		return style;
+	}
 
-    // TODO use style for sorting and filtering
+	// TODO use style for sorting and filtering
 	public List<Map<String, Object>> getRows() {
 		List<Map<String, Object>> ret = new ArrayList<>();
 		if (scalar != null) {
 			if (scalar instanceof Collection) {
-				for (Object value : (Collection<?>)scalar) {
+				for (Object value : (Collection<?>) scalar) {
 					Map<String, Object> row = new HashMap<>();
 					row.put(valueField, value);
 					ret.add(row);
@@ -371,7 +294,7 @@ public class TableValue implements ITable<Object>, IReducible {
 		}
 		return ret;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(data, scalar);
@@ -390,8 +313,10 @@ public class TableValue implements ITable<Object>, IReducible {
 	}
 
 	public String getTitle() {
-		// TODO Link to table decorations. Use template substitution {space} {time}
-		return "SEEA-CF: Fossil fuel energy assets, Belgium 2010";
+		if (style != null) {
+			return getStyleProperty(style, "title");
+		}
+		return "Untitled table";
 	}
 
 	public String getId() {
@@ -407,62 +332,72 @@ public class TableValue implements ITable<Object>, IReducible {
 	}
 
 	public String getLabel() {
-		// TODO Auto-generated method stub
-		return "Energy assets table";
+		if (style != null) {
+			return getStyleProperty(style, "label");
+		}
+		return "Unnamed table";
 	}
 
-    @SuppressWarnings("unchecked")
-    public <T> T getBean(Class<T> cls) {
+	private String getStyleProperty(StyleDefinition style2, String key) {
+		String title = style.get(key, String.class);
+		if (title != null && scope != null) {
+			title = TemplateUtils.expandMatches(title, scope.getSession().getState()).get(0);
+		}
+		return title;
+	}
 
-        if (Table.class.isAssignableFrom(cls)) {
-            Table ret = new Table();
-            compile(ret);
-            return (T) ret;
-        }
+	@SuppressWarnings("unchecked")
+	public <T> T getBean(Class<T> cls) {
 
-        return null;
-    }
+		if (Table.class.isAssignableFrom(cls)) {
+			Table ret = new Table();
+			compile(ret);
+			return (T) ret;
+		}
 
-    /**
-     * Compile to bean. FIXME the logics when cells are not computed should be in one place only -
-     * at worst, just identify the places where that is called and call compileView (text) to ensure
-     * it's done.
-     * 
-     * @param ret
-     */
-    private void compile(Table ret) {
+		return null;
+	}
 
-        ret.setNumberFormat(getNumberFormat() == null ? "%.2f" : getNumberFormat());
+	/**
+	 * Compile to bean. FIXME the logics when cells are not computed should be in
+	 * one place only - at worst, just identify the places where that is called and
+	 * call compileView (text) to ensure it's done.
+	 * 
+	 * @param ret
+	 */
+	private void compile(Table ret) {
+
+		ret.setNumberFormat(getNumberFormat() == null ? "%.2f" : getNumberFormat());
 //        ret.setDocumentationIdentifier(getDocumentationIdentifier());
 
-        for (String key : keyFields) {
-            Column column = new Column();
-            column.setId(key);
-            column.setTitle(StringUtils.capitalize(key) /* TODO use codelist */);
-            column.setType(IArtifact.Type.TEXT);
-            ret.getColumns().add(column);
-        }
+		for (String key : keyFields) {
+			Column column = new Column();
+			column.setId(key);
+			column.setTitle(StringUtils.capitalize(key) /* TODO use codelist */);
+			column.setType(IArtifact.Type.TEXT);
+			ret.getColumns().add(column);
+		}
 
-        Column column = new Column();
-        column.setId(valueField);
-        column.setTitle(StringUtils.capitalize(valueField) /* TODO use codelist */);
-        column.setType(valueType);
-        ret.getColumns().add(column);
-        
+		Column column = new Column();
+		column.setId(valueField);
+		column.setTitle(StringUtils.capitalize(valueField) /* TODO use codelist */);
+		column.setType(valueType);
+		ret.getColumns().add(column);
+
 		for (Map<String, Object> rDesc : getRows()) {
-	        Map<String, String> rowData = new HashMap<>();
-            for (String key : this.keyFields) {
-            	rowData.put(key, rDesc.get(key) == null ? "" : rDesc.get(key).toString());
-            }
-            // TODO number format
-            rowData.put(valueField, rDesc.get(valueField) == null ? "" : rDesc.get(valueField).toString());
-            ret.getRows().add(rowData);
-        }
+			Map<String, String> rowData = new HashMap<>();
+			for (String key : this.keyFields) {
+				rowData.put(key, rDesc.get(key) == null ? "" : rDesc.get(key).toString());
+			}
+			// TODO number format
+			rowData.put(valueField, rDesc.get(valueField) == null ? "" : rDesc.get(valueField).toString());
+			ret.getRows().add(rowData);
+		}
 
 		if (Configuration.INSTANCE.isEchoEnabled()) {
-            System.out.println(JsonUtils.printAsJson(ret));
-        }
-    }
+			System.out.println(JsonUtils.printAsJson(ret));
+		}
+	}
 
 //    private String getDocumentationIdentifier() {
 //		// TODO Auto-generated method stub
@@ -470,7 +405,10 @@ public class TableValue implements ITable<Object>, IReducible {
 //	}
 
 	private String getNumberFormat() {
-		// TODO Auto-generated method stub
+		if (style != null) {
+
+		}
 		return null;
 	}
+
 }

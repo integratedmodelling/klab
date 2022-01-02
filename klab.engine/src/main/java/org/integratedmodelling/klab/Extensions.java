@@ -44,6 +44,7 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IExtensionService;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.documentation.style.StyleDefinition;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.code.Expression;
 import org.integratedmodelling.klab.engine.runtime.code.groovy.GroovyProcessor;
@@ -121,6 +122,8 @@ public enum Extensions implements IExtensionService {
 			return new TableViewModel(definition, statement, namespace, monitor);
 		case "chart":
 			return new GraphViewModel(definition, statement, namespace, monitor);
+		case "style":
+			return new StyleDefinition(definition, statement, namespace, monitor);
 		}
 
 		return definition;

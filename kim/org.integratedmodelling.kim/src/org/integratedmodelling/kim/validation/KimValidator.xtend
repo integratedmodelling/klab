@@ -1503,7 +1503,9 @@ class KimValidator extends AbstractKimValidator {
 			var i = 0
 			for (operand : declaration.operands) {
 				var otype = checkDeclaration(operand)
-				if (!Kim.isCompatible(type, otype)) {
+				// first two conditions exclude authority types which are unknown at this stage and must be
+				// validated by the engine.
+				if (Kim.isDeclarable(type) && Kim.isDeclarable(otype) && !Kim.isCompatible(type, otype)) {
 					error("Operands in the '" + declaration.operators.get(i) + "' expression are of incompatible types",
 						operand, KimPackage.Literals.CONCEPT_DECLARATION__OPERANDS, i)
 					error = true

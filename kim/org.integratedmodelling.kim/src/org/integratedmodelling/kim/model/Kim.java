@@ -1220,7 +1220,11 @@ public enum Kim {
 		// one and only one common declarable must have left
 		return intersection(common, IKimConcept.DECLARABLE_TYPES).size() == 1;
 	}
-
+	
+	static public boolean isDeclarable(Set<Type> type) {
+		return intersection(type, IKimConcept.DECLARABLE_TYPES).size() == 1;
+	}
+	
 	static public boolean hasCompatibleTypes(Set<Type> a, Set<Type> b) {
 		EnumSet<Type> common = intersection(a, b);
 		// one and only one common declarable must have left

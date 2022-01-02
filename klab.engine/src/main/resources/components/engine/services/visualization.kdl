@@ -93,6 +93,13 @@ annotation color
 		default 1.0
 }
 
+annotation style	
+	"Specify a previously defined style object to decorate the outputs of this model"
+{
+	text 'value'
+		"The URN of a style definition from a k.IM namespace"
+}
+
 annotation icon 
 	"Specify the SVG code for the icon that point features of the annotated concept or model should be 
      visualized with."

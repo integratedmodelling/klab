@@ -40,6 +40,7 @@ import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.IEventBus;
 import org.integratedmodelling.klab.api.runtime.IScheduler;
+import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.IVariable;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
@@ -803,5 +804,11 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public ISession getSession() {
+		return monitor.getIdentity().getParentIdentity(ISession.class);
+	}
+
 
 }
