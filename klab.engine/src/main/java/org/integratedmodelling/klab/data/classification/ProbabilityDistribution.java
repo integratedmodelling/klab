@@ -35,5 +35,4 @@ public class ProbabilityDistribution extends EnumeratedRealDistribution implemen
 		return false;
 	}
 
-	
 }

@@ -12,13 +12,11 @@ import java.util.Set;
 
 import org.apache.commons.collections4.keyvalue.MultiKey;
 import org.apache.commons.collections4.map.MultiKeyMap;
-import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.data.general.IReducible;
 import org.integratedmodelling.klab.api.documentation.views.IDocumentationView;
 import org.integratedmodelling.klab.api.documentation.views.ITableView;
 import org.integratedmodelling.klab.api.knowledge.ICodelist;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
-import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.ValuePresentation;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.data.Aggregator;
@@ -29,15 +27,10 @@ import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler
 import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler.Style;
 import org.integratedmodelling.klab.documentation.extensions.table.TableView;
 import org.integratedmodelling.klab.documentation.style.StyleDefinition;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.rest.DocumentationNode.Table;
-import org.integratedmodelling.klab.rest.DocumentationNode.Table.Column;
 import org.integratedmodelling.klab.rest.ObservationReference.ExportFormat;
-import org.integratedmodelling.klab.utils.JsonUtils;
-import org.integratedmodelling.klab.utils.TemplateUtils;
 import org.integratedmodelling.klab.utils.Utils;
-import org.springframework.util.StringUtils;
 
 /**
  * This is the table that gets into states when a IArtifact.Type.TABLE is the
@@ -51,7 +44,7 @@ import org.springframework.util.StringUtils;
  *
  * @param <T>
  */
-public class TableValue implements /* ITable<Object>, */IReducible {
+public class TableValue extends TableProcessor implements IReducible {
 
 	Map<String, Metadata> metadata = new HashMap<>();
 	MultiKeyMap<String, Object> data;
@@ -62,12 +55,9 @@ public class TableValue implements /* ITable<Object>, */IReducible {
 
 	// compiled views indexed by media type
 	private Map<String, ITableView> compiledViews = new HashMap<>();
-	private List<String> keyFields = new ArrayList<>();
-	private String valueField;
-	private IArtifact.Type valueType = IArtifact.Type.NUMBER;
-	private IContextualizationScope scope;
 
 	private TableValue() {
+		super(null, null, null);
 	}
 
 	/**
@@ -87,14 +77,17 @@ public class TableValue implements /* ITable<Object>, */IReducible {
 	 *                   template substitution etc.
 	 * 
 	 */
+	@SuppressWarnings("unchecked")
 	public TableValue(List<Object> data, List<String> allFields, Set<String> keyFields, String valueField,
 			Map<String, ICodelist> codelists, Aggregator aggregator, StyleDefinition style,
 			IContextualizationScope scope) {
 
+		super(style, valueField, scope);
+
+		List<String> keyList = new ArrayList<>();
+
 		this.codelists = codelists;
 		this.aggregator = aggregator;
-		this.valueField = valueField;
-		this.style = style;
 		this.scope = scope;
 
 		List<Object> scalarData = null;
@@ -107,6 +100,7 @@ public class TableValue implements /* ITable<Object>, */IReducible {
 		}
 
 		for (Object o : data) {
+
 			if (keyFields != null && !keyFields.isEmpty() && o instanceof List && valueField != null) {
 				if (this.data == null) {
 					this.data = new MultiKeyMap<>();
@@ -119,7 +113,7 @@ public class TableValue implements /* ITable<Object>, */IReducible {
 				for (String field : allFields) {
 					if (keyFields.contains(field)) {
 						if (first) {
-							this.keyFields.add(field);
+							keyList.add(field);
 						}
 						keys.add(row.get(i) == null ? "null" : row.get(i).toString());
 					}
@@ -170,6 +164,8 @@ public class TableValue implements /* ITable<Object>, */IReducible {
 					}
 				}
 			}
+
+			super.setKeyFields(keyList);
 		}
 	}
 
@@ -239,7 +235,7 @@ public class TableValue implements /* ITable<Object>, */IReducible {
 			int hTable = ret.table(getTitle(), sheetId);
 			int hHeader = ret.header(hTable);
 			int hRow = ret.newRow(hHeader);
-			for (String key : keyFields) {
+			for (String key : getKeyFields()) {
 				int cell = ret.newHeaderCell(hRow, 1, false);
 				ret.write(cell, key, Double.NaN, Style.BOLD);
 			}
@@ -249,7 +245,7 @@ public class TableValue implements /* ITable<Object>, */IReducible {
 			int hBody = ret.body(hTable);
 			for (Map<String, Object> rDesc : getRows()) {
 				hRow = ret.newRow(hBody);
-				for (String key : this.keyFields) {
+				for (String key : getKeyFields()) {
 					ret.write(ret.newCell(hRow), rDesc.get(key), Double.NaN, getStyle(key));
 				}
 				ret.write(ret.newCell(hRow), rDesc.get(valueField), Double.NaN, getStyle(valueField));
@@ -260,6 +256,13 @@ public class TableValue implements /* ITable<Object>, */IReducible {
 		return ret;
 	}
 
+	public String getId() {
+		// TODO FIXME this will be the same if the artifact contains multiple table
+		// values. We should add an ID linked to the locator used for extraction, or
+		// (better) to the signature of the filters that have generated the value.
+		return scope.getTargetArtifact().getId();
+	}
+
 	// TODO use style
 	private Set<TableCompiler.Style> getStyle(String key) {
 		Set<TableCompiler.Style> style = new HashSet<>();
@@ -267,7 +270,6 @@ public class TableValue implements /* ITable<Object>, */IReducible {
 		return style;
 	}
 
-	// TODO use style for sorting and filtering
 	public List<Map<String, Object>> getRows() {
 		List<Map<String, Object>> ret = new ArrayList<>();
 		if (scalar != null) {
@@ -286,7 +288,7 @@ public class TableValue implements /* ITable<Object>, */IReducible {
 		for (Entry<MultiKey<? extends String>, Object> row : data.entrySet()) {
 			Map<String, Object> rowData = new HashMap<>();
 			int index = 0;
-			for (String key : keyFields) {
+			for (String key : getKeyFields()) {
 				rowData.put(key, row.getKey().getKey(index++));
 			}
 			rowData.put(valueField, row.getValue());
@@ -312,18 +314,6 @@ public class TableValue implements /* ITable<Object>, */IReducible {
 		return Objects.equals(data, other.data) && Objects.equals(scalar, other.scalar);
 	}
 
-	public String getTitle() {
-		if (style != null) {
-			return getStyleProperty(style, "title");
-		}
-		return "Untitled table";
-	}
-
-	public String getId() {
-		// TODO Link to table decorations. Use template substitution {space} {time}
-		return "ID";
-	}
-
 	public Collection<ExportFormat> getExportFormats() {
 		List<ExportFormat> ret = new ArrayList<>();
 		ret.add(new ExportFormat("Excel worksheet", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -331,83 +321,15 @@ public class TableValue implements /* ITable<Object>, */IReducible {
 		return ret;
 	}
 
-	public String getLabel() {
-		if (style != null) {
-			return getStyleProperty(style, "label");
-		}
-		return "Unnamed table";
-	}
-
-	private String getStyleProperty(StyleDefinition style2, String key) {
-		String title = style.get(key, String.class);
-		if (title != null && scope != null) {
-			title = TemplateUtils.expandMatches(title, scope.getSession().getState()).get(0);
-		}
-		return title;
-	}
-
 	@SuppressWarnings("unchecked")
 	public <T> T getBean(Class<T> cls) {
 
 		if (Table.class.isAssignableFrom(cls)) {
 			Table ret = new Table();
-			compile(ret);
+			compile(getRows(), ret);
 			return (T) ret;
 		}
 
-		return null;
-	}
-
-	/**
-	 * Compile to bean. FIXME the logics when cells are not computed should be in
-	 * one place only - at worst, just identify the places where that is called and
-	 * call compileView (text) to ensure it's done.
-	 * 
-	 * @param ret
-	 */
-	private void compile(Table ret) {
-
-		ret.setNumberFormat(getNumberFormat() == null ? "%.2f" : getNumberFormat());
-//        ret.setDocumentationIdentifier(getDocumentationIdentifier());
-
-		for (String key : keyFields) {
-			Column column = new Column();
-			column.setId(key);
-			column.setTitle(StringUtils.capitalize(key) /* TODO use codelist */);
-			column.setType(IArtifact.Type.TEXT);
-			ret.getColumns().add(column);
-		}
-
-		Column column = new Column();
-		column.setId(valueField);
-		column.setTitle(StringUtils.capitalize(valueField) /* TODO use codelist */);
-		column.setType(valueType);
-		ret.getColumns().add(column);
-
-		for (Map<String, Object> rDesc : getRows()) {
-			Map<String, String> rowData = new HashMap<>();
-			for (String key : this.keyFields) {
-				rowData.put(key, rDesc.get(key) == null ? "" : rDesc.get(key).toString());
-			}
-			// TODO number format
-			rowData.put(valueField, rDesc.get(valueField) == null ? "" : rDesc.get(valueField).toString());
-			ret.getRows().add(rowData);
-		}
-
-		if (Configuration.INSTANCE.isEchoEnabled()) {
-			System.out.println(JsonUtils.printAsJson(ret));
-		}
-	}
-
-//    private String getDocumentationIdentifier() {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
-
-	private String getNumberFormat() {
-		if (style != null) {
-
-		}
 		return null;
 	}
 

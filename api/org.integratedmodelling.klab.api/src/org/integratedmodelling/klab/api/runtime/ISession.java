@@ -20,11 +20,8 @@ import java.util.concurrent.Future;
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
-import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.engine.IEngine;
 import org.integratedmodelling.klab.api.observations.IObservation;
-import org.integratedmodelling.klab.api.observations.ISubject;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
@@ -107,6 +104,7 @@ public interface ISession extends IEngineSessionIdentity, Closeable {
      * @return true if the human has set the session to interactive.
      */
     boolean isInteractive();
+    
     /**
      * The session promotes its state to a structured {@link ISessionState} that can be saved or
      * restored, as well as used to build observation contexts with successive atomic operations.
