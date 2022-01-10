@@ -122,4 +122,12 @@ public interface ICodelist {
 	 */
 	Object key(Object value);
 
+	/**
+	 * If codes have a description, return it.
+	 * 
+	 * @param code
+	 * @return
+	 */
+	String getDescription(Object code);
+
 }

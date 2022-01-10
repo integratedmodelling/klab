@@ -74,7 +74,7 @@ public class Classification implements IClassification {
 		this(rootClass);
 		int i = 0;
 		for (IConcept concept : conceptOrder) {
-			this.classifiers.add(new Pair<>(concept, Classifier.NumberMatcher(i++)));
+			this.classifiers.add(new Pair<>(concept, Classifier.numberMatch(i++)));
 			this.conceptOrder.add(concept);
 		}
 		initialize();

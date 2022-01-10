@@ -2660,7 +2660,7 @@ public class TableCompiler {
 						filter.targetType = ((Pair<?, ?>) o).getSecond() == null ? targetType : null;
 					}
 				} else if (((Pair<?, ?>) o).getFirst() instanceof Boolean) {
-					filter.classifier = Classifier.BooleanMatcher((Boolean) ((Pair<?, ?>) o).getFirst());
+					filter.classifier = Classifier.booleanMatch((Boolean) ((Pair<?, ?>) o).getFirst());
 					filter.target = ((Pair<?, ?>) o).getSecond() == null ? target
 							: (ObservedConcept) ((Pair<?, ?>) o).getSecond();
 					filter.targetType = ((Pair<?, ?>) o).getSecond() == null ? targetType : null;

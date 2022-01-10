@@ -384,4 +384,20 @@ public class StringUtil {
         return ret;
     }
 
+    /**
+     * True if string o contains any of the characters in string string
+     * 
+     * @param o
+     * @param string
+     * @return
+     */
+	public static boolean containsAny(String o, String string) {
+		for (int i = 0; i < string.length(); i++) {
+			if (o.indexOf(string.charAt(i)) >= 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 }

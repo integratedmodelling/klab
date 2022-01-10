@@ -36,9 +36,12 @@ import org.integratedmodelling.klab.utils.Utils;
  * This is the table that gets into states when a IArtifact.Type.TABLE is the
  * representation type in a state. The table is in fact a multiple-key hash with
  * one and only one value column, and is optimized for size and speed of
- * comparison. The keys can be of any type, while T describes the type of the
- * value. Like anything that is in a state, it can be reduced to a single atomic
- * value for display or conventional export. (IReducible interface TBI).
+ * comparison. Like anything that is stored in a state, it can be reduced to a
+ * single atomic value (IReducible interface).
+ * <p>
+ * The TableProcessor inheritance gives it the ability of complex table stying
+ * and transformation when compiled, if a style has been associated to the data,
+ * normally through a {@code @style} annotation on the observing model.
  * 
  * @author Ferd
  *
@@ -50,14 +53,13 @@ public class TableValue extends TableProcessor implements IReducible {
 	MultiKeyMap<String, Object> data;
 	Map<String, ICodelist> codelists = new HashMap<>();
 	Object scalar;
-	private Aggregator aggregator;
 	private StyleDefinition style;
 
 	// compiled views indexed by media type
 	private Map<String, ITableView> compiledViews = new HashMap<>();
 
 	private TableValue() {
-		super(null, null, null);
+		super(null, null, null, null);
 	}
 
 	/**
@@ -82,13 +84,11 @@ public class TableValue extends TableProcessor implements IReducible {
 			Map<String, ICodelist> codelists, Aggregator aggregator, StyleDefinition style,
 			IContextualizationScope scope) {
 
-		super(style, valueField, scope);
+		super(style, valueField, aggregator, scope);
 
 		List<String> keyList = new ArrayList<>();
 
 		this.codelists = codelists;
-		this.aggregator = aggregator;
-		this.scope = scope;
 
 		List<Object> scalarData = null;
 		boolean first = true;
@@ -333,4 +333,24 @@ public class TableValue extends TableProcessor implements IReducible {
 		return null;
 	}
 
+	@Override
+	protected String getValueLabel(String targetField, Object value) {
+		ICodelist codelist = getCodelist(targetField);
+		if (codelist != null) {
+			String ret = codelist.getDescription(value);
+			if (ret != null) {
+				return ret;
+			}
+		}
+		return super.getValueLabel(targetField, value);
+	}
+
+	@Override
+	public String getLabel() {
+		// TODO Auto-generated method stub
+		return super.getLabel();
+	}
+
+	
+	
 }

@@ -77,6 +77,14 @@ public class Codelist implements ICodelist {
 	}
 
 	@Override
+	public String getDescription(Object code) {
+		if (code != null && reference.getCodeDescriptions() != null) {
+			return reference.getCodeDescriptions().get(code.toString());
+		}
+		return null;
+	}
+	
+	@Override
 	public String getWorldview() {
 		return reference.getWorldview();
 	}

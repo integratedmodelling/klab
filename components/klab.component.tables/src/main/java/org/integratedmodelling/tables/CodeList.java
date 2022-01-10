@@ -257,4 +257,10 @@ public class CodeList implements ICodelist {
 		return codelist == null ? mappings.size() : codelist.size();
 	}
 
+	@Override
+	public String getDescription(Object code) {
+		// TODO Auto-generated method stub
+		return codelist != null ? codelist.getDescription(code) : null;
+	}
+
 }

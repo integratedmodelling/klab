@@ -14,6 +14,7 @@
 package org.integratedmodelling.klab.api.data.classification;
 
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable.Resolution;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
@@ -26,96 +27,113 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
  */
 public interface IClassifier {
 
-    /**
-     * True if passed object matches the conditions of the classifier.
-     *
-     * @param o the o
-     * @param scope the context
-     * @return True if passed object matches the conditions of the classifier
-     */
-    public boolean classify(Object o, IContextualizationScope scope);
+	/**
+	 * True if passed object matches the conditions of the classifier.
+	 *
+	 * @param o     the o
+	 * @param scope the context
+	 * @return True if passed object matches the conditions of the classifier
+	 */
+	boolean classify(Object o, IContextualizationScope scope);
 
-    /**
-     * True if this classifier matches everything.
-     *
-     * @return True if this classifier matches everything
-     */
-    boolean isUniversal();
+	/**
+	 * True if this classifier matches everything.
+	 *
+	 * @return True if this classifier matches everything
+	 */
+	boolean isUniversal();
 
-    /**
-     * True if this classifier only matches null (unknown).
-     *
-     * @return True if this classifier only matches null
-     */
-    boolean isNil();
+	/**
+	 * True if this classifier only matches null (unknown).
+	 *
+	 * @return True if this classifier only matches null
+	 */
+	boolean isNil();
 
-    /**
-     * True if this is an interval classifier.
-     *
-     * @return True if this is an interval classifier
-     */
-    boolean isInterval();
+	/**
+	 * True if this is an interval classifier.
+	 *
+	 * @return True if this is an interval classifier
+	 */
+	boolean isInterval();
 
-    /**
-     * True if the classifier must be computed, passing a context, when
-     * {@link #asValue(IContextualizationScope)} is called.
-     * 
-     * @return true if computed
-     */
-    boolean isComputed();
+	/**
+	 * True if the classifier must be computed, passing a context, when
+	 * {@link #asValue(IContextualizationScope)} is called.
+	 * 
+	 * @return true if computed
+	 */
+	boolean isComputed();
 
-    /**
-     * Source code for k.IM and KDL serialization
-     * 
-     * @return parseable source code
-     */
-    String getSourceCode();
+	/**
+	 * 
+	 * @return
+	 */
+	boolean isStringMatch();
+	
+	/**
+	 * Source code for k.IM and KDL serialization
+	 * 
+	 * @return parseable source code
+	 */
+	String getSourceCode();
 
-    /**
-     * Classifiers may be used as a value; this one should return the most appropriate value
-     * translation of the classifier, i.e. the matched object if it's matching a single one, or
-     * possibly a random object among the choices if it's in OR.
-     *
-     * @param scope pass a context for complex evaluations, like expressions
-     * 
-     * @return the value this classifier resolves to.
-     */
-    Object asValue(IContextualizationScope scope);
+	/**
+	 * Classifiers may be used as a value; this one should return the most
+	 * appropriate value translation of the classifier, i.e. the matched object if
+	 * it's matching a single one, or possibly a random object among the choices if
+	 * it's in OR.
+	 *
+	 * @param scope pass a context for complex evaluations, like expressions
+	 * 
+	 * @return the value this classifier resolves to.
+	 */
+	Object asValue(IContextualizationScope scope);
 
-    /**
-     * Return the type of the classifier when used as a value.
-     * 
-     * @return
-     */
-    Type getType();
+	/**
+	 * Return the type of the classifier when used as a value.
+	 * 
+	 * @return
+	 */
+	Type getType();
 
-    /**
-     * True if this classifies a concept
-     * 
-     * @return
-     */
-    public boolean isConcept();
+	/**
+	 * True if this classifies a concept
+	 * 
+	 * @return
+	 */
+	boolean isConcept();
 
-    /**
-     * True if this classifies presence/absence
-     * 
-     * @return
-     */
-    public boolean isBoolean();
+	/**
+	 * True if this classifies presence/absence
+	 * 
+	 * @return
+	 */
+	boolean isBoolean();
 
-    /**
-     * If isConcept(), getConcept.
-     * 
-     * @return
-     */
-    public IConcept getConcept();
+	/**
+	 * If isConcept(), getConcept.
+	 * 
+	 * @return
+	 */
+	IConcept getConcept();
 
-    /**
-     * If isConcept(), return the way the concept is resolved. If Resolution.Only the concept is
-     * matched exactly, if Any the concept is matched using the reasoner for subsumption.
-     * 
-     * @return
-     */
-    Resolution getConceptResolution();
+	/**
+	 * This should not return null. Metadata aren't associated to classifiers
+	 * through k.IM but may be added by code for specific purposes, such as
+	 * visualization for tables and the like.
+	 * 
+	 * @return
+	 */
+	IMetadata getMetadata();
+
+	/**
+	 * If isConcept(), return the way the concept is resolved. If Resolution.Only
+	 * the concept is matched exactly, if Any the concept is matched using the
+	 * reasoner for subsumption.
+	 * 
+	 * @return
+	 */
+	Resolution getConceptResolution();
 
 }

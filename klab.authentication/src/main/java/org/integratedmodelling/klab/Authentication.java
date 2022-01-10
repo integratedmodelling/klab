@@ -15,6 +15,7 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
+import org.apache.http.util.ExceptionUtils;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.auth.ICertificate.Type;
 import org.integratedmodelling.klab.api.auth.IIdentity;
@@ -42,6 +43,7 @@ import org.integratedmodelling.klab.rest.HubReference;
 import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.rest.ObservableReference;
 import org.integratedmodelling.klab.utils.FileCatalog;
+import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Duration;
@@ -276,6 +278,7 @@ public enum Authentication implements IAuthenticationService {
                 Logging.INSTANCE.error("authentication failed for user "
                         + certificate.getProperty(KlabCertificate.KEY_USERNAME) + ": " + e.getMessage());
                 // TODO inspect exception; fatal if 403, warn and proceed offline otherwise
+                System.out.println("AUTH EXCEPTION is " + MiscUtilities.getExceptionPrintout(e));
             }
         }
 

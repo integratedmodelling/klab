@@ -120,7 +120,7 @@ ClassifierRHSWithIdNoSet returns ClassifierRHS:
 	concept=ConceptDeclaration | 
 	id = (LOWERCASE_ID | PropertyId) |
 	op=REL_OPERATOR expression=Number | 
-	nodata='unknown' |
+	nodata='unknown' |	
 	star?='*';		
 	
 Urn:
@@ -957,6 +957,8 @@ PROPERTY_TYPE:
 	
 terminal ANNOTATION_ID:
 	'@' LOWERCASE_ID;
+
+
 
 /*
  * Full observable without the 'as <role>' but with 'optional'

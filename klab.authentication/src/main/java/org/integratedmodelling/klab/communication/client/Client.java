@@ -376,8 +376,12 @@ public class Client extends RestTemplate implements IClient {
 				return (T) response.getBody();
 			}
 
-			return objectMapper.convertValue(response.getBody(), cls);
-
+			try {
+				return objectMapper.convertValue(response.getBody(), cls);
+			} catch (Throwable t) {
+				System.out.println("Unrecognized response: " + response.getBody());
+				throw t;
+			}
 		} catch (RestClientException e) {
 			throw new KlabIOException(e);
 		}

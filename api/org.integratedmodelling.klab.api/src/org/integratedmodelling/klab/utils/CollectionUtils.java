@@ -28,7 +28,7 @@ public class CollectionUtils {
 		}
 		return ret;
 	}
-	
+
 	@SafeVarargs
 	public static <T> List<T> join(Iterable<T>... resources) {
 		List<T> ret = new ArrayList<>();
@@ -39,9 +39,10 @@ public class CollectionUtils {
 		}
 		return ret;
 	}
-	
+
 	/**
-	 * Return a single collection containing all the artifacts in each artifact passed.
+	 * Return a single collection containing all the artifacts in each artifact
+	 * passed.
 	 * 
 	 * @param artifacts
 	 * @return
@@ -55,37 +56,63 @@ public class CollectionUtils {
 		}
 		return ret;
 	}
-	
+
 	public static Collection<IObservation> joinObservations(Collection<IObservation> artifacts) {
 		List<IObservation> ret = new ArrayList<>();
 		for (IObservation artifact : artifacts) {
 			for (IArtifact a : artifact) {
-				ret.add((IObservation)a);
+				ret.add((IObservation) a);
 			}
 		}
 		return ret;
 	}
 
-    public static Collection<Object> flatCollection(Object... objects) {
-        List<Object> ret = new ArrayList<>();
-        addToCollection(ret, objects);
-        return ret;
-    }
-    
-    private static void addToCollection(List<Object> ret, Object... objects) {
-        for (Object o : objects) {
-            if (o instanceof Collection) {
-                for (Object oo : ((Collection<?>)o)) {
-                    addToCollection(ret, oo);
-                }
-            } else if (o != null && o.getClass().isArray()) {
-                for (int i = 0; i < Array.getLength(o); i++) {
-                    addToCollection(ret, Array.get(o, i));
-                }
-            } else {
-                ret.add(o);
-            }
-        }
-    }
+	/**
+	 * Pack the arguments into a collection; if any argument is a collection, add
+	 * its elements but do not unpack below the first level.
+	 * 
+	 * @param objects
+	 * @return
+	 */
+	public static Collection<Object> shallowCollection(Object... objects) {
+		List<Object> ret = new ArrayList<>();
+		for (Object o : objects) {
+			if (o instanceof Collection) {
+				ret.addAll((Collection<?>) o);
+			} else {
+				ret.add(o);
+			}
+		}
+		return ret;
+	}
+
+	/**
+	 * Pack the arguments into a collection; if any argument is a collection, unpack
+	 * its elements recursively so that no collections remain.
+	 * 
+	 * @param objects
+	 * @return
+	 */
+	public static Collection<Object> flatCollection(Object... objects) {
+		List<Object> ret = new ArrayList<>();
+		addToCollection(ret, objects);
+		return ret;
+	}
+
+	private static void addToCollection(List<Object> ret, Object... objects) {
+		for (Object o : objects) {
+			if (o instanceof Collection) {
+				for (Object oo : ((Collection<?>) o)) {
+					addToCollection(ret, oo);
+				}
+			} else if (o != null && o.getClass().isArray()) {
+				for (int i = 0; i < Array.getLength(o); i++) {
+					addToCollection(ret, Array.get(o, i));
+				}
+			} else {
+				ret.add(o);
+			}
+		}
+	}
 
 }

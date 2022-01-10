@@ -365,6 +365,8 @@ public class SQLTableCache {
 					codelists.put(codes.getFirst(), codes.getSecond());
 					keyFields.add(codes.getFirst());
 					fields += (fields.isEmpty() ? "" : ", ") + codes.getFirst();
+				} else if (reqFields.contains(codes.getFirst())) {
+					codelists.put(codes.getFirst(), codes.getSecond());
 				}
 			}
 		}
