@@ -95,7 +95,7 @@ pipeline {
                         BRANCH = MAIN
                         env.TAG = TAG
                     }
-					if (TAG.isEMPTY() == true) {
+					if (TAG.isEmpty() == true) {
 						if (BRANCH.isEmpty() ==  false) {
 					    	echo "branch paramatized"
 					    }
