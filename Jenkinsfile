@@ -58,6 +58,7 @@ pipeline {
         BASE_CONTAINER = "klab-base-16"
         MAIN = "master"
         DEVELOP = "develop"
+        PRODUCTS_GEN = true
     }
 
     stages {
@@ -94,39 +95,33 @@ pipeline {
                         BRANCH = MAIN
                         env.TAG = TAG
                     }
-                    //paramatized branch checkout
-                    if (BRANCH.isEmpty() ==  false && TAG.isEmpty() == true ) {
-                        echo "branch paramatized"
-                        sh "git checkout ${BRANCH}"
-                        if (BRANCH.equalsIgnoreCase(MAIN)) {
-                            env.BRANCH = MAIN
-                            env.TAG = "latest"
-                        }
-                        if (BRANCH.equalsIgnoreCase(env.DEVELOP)) {
-                            env.TAG = BRANCH
-                            env.BRANCH = DEVELOP
-                        }
-                    }
-                    //unparamatized checkout of latest commit
-                    if (BRANCH.isEmpty() == true && TAG.isEmpty() == true ){
-                        echo "unparamatized"
-                        BRANCH = sh(
-                            returnStdout: true,
-                            script: 'git for-each-ref --count=1 --sort=-committerdate --format="%(refname:short)"'
-                        ).trim().replace("origin/", "")
-                        sh "git checkout ${BRANCH}"
-                        env.TAG = BRANCH.replace("/","-")
-                        if (BRANCH == MAIN) {
-                            env.TAG = "latest"
-                            env.BRANCH = MAIN
-                        }
-                        if (BRANCH == DEVELOP) {
-                            env.TAG = BRANCH
-                            env.BRANCH = DEVELOP
-                        }
-                    }
-
-                    env.SNAPSHOT = sh(
+					if (TAG.isEMPTY() == true) {
+						if (BRANCH.isEmpty() ==  false) {
+					    	echo "branch paramatized"
+					    }
+						if (BRANCH.isEmpty() == true) {
+					    	//unparamatized checkout of latest commit
+					    	BRANCH = sh(
+					        	returnStdout: true,
+					        	script: 'git for-each-ref --count=1 --sort=-committerdate --format="%(refname:short)"'
+					    	).trim().replace("origin/", "")
+					    }
+					    sh "git checkout ${BRANCH}"
+					    env.TAG = BRANCH.replace("/","-")
+					    if (BRANCH == MAIN) {
+					        env.TAG = "latest"
+					        env.BRANCH = MAIN
+					    }
+					    if (BRANCH == DEVELOP) {
+					        env.TAG = DEVELOP
+					        env.BRANCH = DEVELOP
+					    }
+						if (BRANCH != MAIN && BRANCH != DEVELOP) {
+					        PRODUCTS_GEN = false
+					    }    
+					}
+					
+              		env.SNAPSHOT = sh(
                         returnStdout: true, 
                         script: 'mvn org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate ' +
                                 '-Dexpression=project.version -q -DforceStdout ' +
@@ -148,6 +143,7 @@ pipeline {
                     if (env.CURRENT_COMMIT == env.LATEST_TAGGED_COMMIT) {
                         echo "Tagged commit build"
                         env.TAG == LATEST_TAGGED_COMMIT
+                        PRODUCTS_GEN = true
                     }
                   
                     env.BRANCH = BRANCH
@@ -171,42 +167,16 @@ pipeline {
         }
 
         stage('Maven install with jib') {
-            when { expression { env.TAG.isEmpty() == false } }
             steps {
                 withCredentials([usernamePassword(credentialsId: "${params.REGISTRY_CREDENTIALS}", passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
                     sh 'export JAVA_HOME=/opt/java16/openjdk && mvn clean install -U -DskipTests jib:build -Djib.httpTimeout=60000'
                 }
             }
         }
-        
-        stage('Maven install') {
-            when { expression { env.TAG.isEmpty() == true} }
-            steps {
-                sh 'export JAVA_HOME=/opt/java16/openjdk && mvn clean install -U -DskipTests'
-            }
-        }
 
-        stage('Push latest products') {
+        stage('Push products') {
             when {
-                expression { return env.BRANCH.equalsIgnoreCase(env.MAIN) }
-            }
-            steps {
-                pushProducts("latest", kmodelers)
-            }
-        }
-
-        stage('Push develop products') {
-            when {
-                expression { return env.BRANCH.equalsIgnoreCase(env.DEVELOP) }
-            }
-            steps {
-                pushProducts(env.DEVELOP, kmodelers)
-            }
-        }
-
-        stage ('Push tagged products') {
-            when {
-                expression { env.LATEST_COMMIT == env.LATEST_TAGGED_COMMIT }
+                expression { PRODUCTS_GEN == true }
             }
             steps {
                 pushProducts(env.TAG, kmodelers)
