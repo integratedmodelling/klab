@@ -140,7 +140,7 @@ pipeline {
                             returnStdout: true).trim()
 
                     if (env.CURRENT_COMMIT == env.LATEST_TAGGED_COMMIT) {
-                        echo "Tagged commit build: ${LATEST_TAGGED_COMMIT}"
+                        echo "Tagged commit build ${LATEST_TAGGED_COMMIT} with tag ${LATEST_TAG}"
                         env.TAG = env.LATEST_TAG
                         PRODUCTS_GEN = "yes"
                     }
