@@ -89,18 +89,18 @@ pipeline {
 
                 script {
                     
-                    if  (TAG.isEmpty() == false) {
-                        echo "tag paramatized"
+                    if  (!TAG.isEmpty()) {
+                        echo "Tag parameterize"
                         sh "git checkout tags/${TAG} -b latest"
                         BRANCH = MAIN
                         env.TAG = TAG
                     }
-					if (TAG.isEmpty() == true) {
-						if (BRANCH.isEmpty() ==  false) {
-					    	echo "branch paramatized"
+					else {
+						if (!BRANCH.isEmpty()) {
+					    	echo "Branch parameterize"
 					    }
-						if (BRANCH.isEmpty() == true) {
-					    	//unparamatized checkout of latest commit
+						else (BRANCH.isEmpty() == true) {
+					    	echo "Unparameterize checkout of latest commit"
 					    	BRANCH = sh(
 					        	returnStdout: true,
 					        	script: 'git for-each-ref --count=1 --sort=-committerdate --format="%(refname:short)"'
@@ -109,15 +109,18 @@ pipeline {
 					    sh "git checkout ${BRANCH}"
 					    env.TAG = BRANCH.replace("/","-")
 					    if (BRANCH == MAIN) {
-					        env.TAG = "latest"
 					        env.BRANCH = MAIN
+					        env.TAG = "latest"
+					        echo "Latest"
 					    }
-					    if (BRANCH == DEVELOP) {
-					        env.TAG = DEVELOP
+					    else if (BRANCH == DEVELOP) {
 					        env.BRANCH = DEVELOP
+					        env.TAG = DEVELOP
+					        echo "Develop"
 					    }
-						if (BRANCH != MAIN && BRANCH != DEVELOP) {
+						else {
 					        PRODUCTS_GEN = false
+					        echo "Other: ${BRANCH}"
 					    }    
 					}
 					
@@ -141,7 +144,7 @@ pipeline {
                             returnStdout: true).trim()
 
                     if (env.CURRENT_COMMIT == env.LATEST_TAGGED_COMMIT) {
-                        echo "Tagged commit build"
+                        echo "Tagged commit build: ${LATEST_TAGGED_COMMIT}"
                         env.TAG == LATEST_TAGGED_COMMIT
                         PRODUCTS_GEN = true
                     }
