@@ -89,14 +89,14 @@ pipeline {
 
                 script {
                     
-                    if  (!TAG.isEmpty()) {
+                    if  (TAG.isEmpty() == false) {
                         echo "Tag parameterize"
                         sh "git checkout tags/${TAG} -b latest"
                         BRANCH = MAIN
                         env.TAG = TAG
                     }
 					else {
-						if (!BRANCH.isEmpty()) {
+						if (BRANCH.isEmpty() == false) {
 					    	echo "Branch parameterize"
 					    }
 						else (BRANCH.isEmpty() == true) {
