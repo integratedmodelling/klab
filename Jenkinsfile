@@ -141,6 +141,7 @@ pipeline {
 
                     if (env.CURRENT_COMMIT == env.LATEST_TAGGED_COMMIT) {
                         echo "Tagged commit build: ${LATEST_TAGGED_COMMIT}"
+                        env.TAG = env.LATEST_TAG
                         PRODUCTS_GEN = "yes"
                     }
                   	
