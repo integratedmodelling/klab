@@ -170,7 +170,14 @@ public class EmailManager {
 			}
 			mailSender.send(message);
     	} catch (MessagingException | MailException e) {
-    	    Logging.INSTANCE.error("[send]: Unable to send email.  Plase check email address and message", e);
+    	    StringBuffer error = new StringBuffer("Unable to send email.\n")
+    	            .append("from: [").append(from).append("]\nto: ");
+    	    for (String receipt : to) {
+    	        error.append("[").append(receipt).append("]");
+    	    }
+    	    error.append("\nsubject: [").append(subject).append("]");
+    	        // .append("\nmessage: [").append(msg).append("]");
+    	    Logging.INSTANCE.error(error.toString(), e);
     		throw new SendEmailException("[send]: Unable to send email.  Plase check email address and message");
 		}
     }
