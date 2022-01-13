@@ -94,12 +94,10 @@ pipeline {
                         sh "git checkout tags/${TAG} -b latest"
                         BRANCH = MAIN
                         env.TAG = TAG
-                    }
-					else {
+                    } else {
 						if (BRANCH.isEmpty() == false) {
 					    	echo "Branch parameterize"
-					    }
-						else (BRANCH.isEmpty() == true) {
+					    } else {
 					    	echo "Unparameterize checkout of latest commit"
 					    	BRANCH = sh(
 					        	returnStdout: true,
@@ -112,13 +110,11 @@ pipeline {
 					        env.BRANCH = MAIN
 					        env.TAG = "latest"
 					        echo "Latest"
-					    }
-					    else if (BRANCH == DEVELOP) {
+					    } else if (BRANCH == DEVELOP) {
 					        env.BRANCH = DEVELOP
 					        env.TAG = DEVELOP
 					        echo "Develop"
-					    }
-						else {
+					    } else {
 					        PRODUCTS_GEN = false
 					        echo "Other: ${BRANCH}"
 					    }    
