@@ -40,6 +40,7 @@
 ** Resolution and contextualization
 ** The dataflow
 ** Artifacts
+** Styling and transforming outputs
 ** Report generation
 ** Component reference
 *** Basic runtime services

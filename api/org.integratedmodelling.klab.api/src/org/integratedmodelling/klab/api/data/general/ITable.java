@@ -8,12 +8,15 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 
 /**
  * Unstructured n-dimensional table, where objects are addressed by 1+ keys of
- * any type and views can be extracted as maps, lists or sub-tables.
+ * any type and views can be extracted as maps, lists or sub-tables. Grew out of
+ * needs, not much of logic or design, so should be considered temporary and
+ * tentative. When _values_ are tables, they don't implement this interface -
+ * just IReducible.
  * <p>
- * A table is an iterable of iterables, which may be in turn be iterate
- * iterables if the table is a hypertable with dimensions > 2. For now we assume
- * that the dimension is always 2, i.e. the implementation won't cover the
- * generic datacube.
+ * A table is an iterable of iterables, which may be in turn be iterables if the
+ * table is a hypertable with dimensions > 2. For now we assume that the
+ * dimension is always 2, i.e. the implementation won't cover the generic
+ * datacube.
  * 
  * @author Ferd
  *
