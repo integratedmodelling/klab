@@ -58,7 +58,7 @@ pipeline {
         BASE_CONTAINER = "klab-base-16"
         MAIN = "master"
         DEVELOP = "develop"
-        PRODUCTS_GEN = true
+        PRODUCTS_GEN = "yes"
     }
 
     stages {
@@ -115,7 +115,7 @@ pipeline {
 					        env.TAG = DEVELOP
 					        echo "Develop"
 					    } else {
-					        PRODUCTS_GEN = false
+					        PRODUCTS_GEN = "no"
 					        echo "Other: ${BRANCH}"
 					    }    
 					}
@@ -142,12 +142,12 @@ pipeline {
                     if (env.CURRENT_COMMIT == env.LATEST_TAGGED_COMMIT) {
                         echo "Tagged commit build: ${LATEST_TAGGED_COMMIT}"
                         env.TAG == LATEST_TAGGED_COMMIT
-                        PRODUCTS_GEN = true
+                        PRODUCTS_GEN = "yes"
                     }
-                  
+                  	
                     env.BRANCH = BRANCH
                     currentBuild.description = "${BRANCH} build with container tag: ${env.TAG}"
-                    
+                    echo "${BRANCH} build with container tag: ${env.TAG} and products generations is ${PRODUCTS_GEN}"
                 }
 
             }
@@ -175,7 +175,7 @@ pipeline {
 
         stage('Push products') {
             when {
-                expression { PRODUCTS_GEN == true }
+                expression { PRODUCTS_GEN == "yes" }
             }
             steps {
                 pushProducts(env.TAG, kmodelers)
