@@ -325,7 +325,7 @@ public class TableValue extends TableProcessor implements IReducible {
 	public <T> T getBean(Class<T> cls) {
 
 		if (Table.class.isAssignableFrom(cls)) {
-			Table ret = new Table();
+		    Table ret = new Table();
 			compile(getRows(), ret);
 			return (T) ret;
 		}

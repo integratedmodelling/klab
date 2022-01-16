@@ -1,0 +1,147 @@
+{
+  "@context": {
+    "AMP": "http://lingualogica.net/AMP#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "envo": "http://purl.obolibrary.org/obo/envo#",
+    "chebi": "http://purl.obolibrary.org/obo/chebi#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "shacl": "http://www.w3.org/ns/shacl#",
+    "AMP:fillValue": {
+      "@type": "xsd:double"
+    },
+    "AMP:modifiedDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:createdDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:dimensionSize": {
+      "@type": "xsd:double"
+    },
+    "AMP:offset": {
+      "@type": "xsd:double"
+    },
+    "AMP:scaleFactor": {
+      "@type": "xsd:double"
+    },
+    "AMP:collection": {
+      "@type": "@id"
+    }
+  },
+  "@type": "Variable",
+  "AMP:featureOfInterest": {
+    "AMP:additionalInformation": [
+      "<http://purl.obolibrary.org/obo/CHEBI_17245>",
+      "<https://en.wikipedia.org/wiki/Carbon_monoxide>",
+      "<http://glossary.ametsoc.org/wiki/Carbon_monoxide>"
+    ],
+    "skos:altLabel": "CO",
+    "skos:prefLabel": "Carbon Monoxide",
+    "@id": "AMP:Carbon_Monoxide"
+  },
+  "AMP:spatialResolution": {
+    "AMP:longitudeResolution": [
+      1.0,
+      "1"
+    ],
+    "skos:prefLabel": "1 X 1 degrees Grid",
+    "AMP:latitudeResolution": [
+      1.0,
+      "1"
+    ],
+    "AMP:unitOfMeasure": "AMP:degrees",
+    "@id": "AMP:Grid1X1degrees"
+  },
+  "skos:prefLabel": "RetrievedCOMixingRatioProfileDay",
+  "AMP:unitString": "ppbv",
+  "AMP:variableName": "/HDFEOS/GRIDS/MOP03/Data Fields/RetrievedCOMixingRatioProfileDay",
+  "AMP:unitOfMeasure": {
+    "skos:prefLabel": "ppbv",
+    "skos:altLabel": "parts per billion by volume",
+    "@id": "AMP:PartsPerBillionByVolume"
+  },
+  "AMP:modifiedDate": "2021-11-03T00:00:00.000000Z",
+  "AMP:measurementContext": [
+    {
+      "skos:prefLabel": "Daytime",
+      "AMP:additionalInformation": [
+        "<https://en.wikipedia.org/wiki/Daytime>",
+        "<http://purl.obolibrary.org/obo/NCIT_C64928>"
+      ],
+      "@id": "AMP:Daytime"
+    },
+    {
+      "AMP:additionalInformation": "<http://purl.obolibrary.org/obo/ENVO_01000810>",
+      "skos:prefLabel": "Earth's Atmosphere",
+      "@id": "AMP:Atmosphere-Earth"
+    }
+  ],
+  "AMP:dimension": [
+    {
+      "AMP:indexRange": "[900, 100]",
+      "AMP:dimensionType": "AMP:PressureDimension",
+      "AMP:dimensionSize": 9,
+      "skos:prefLabel": "Prs",
+      "AMP:variableName": "/HDFEOS/GRIDS/MOP03/Prs",
+      "@id": "AMP:_24616c22-ca2f-4b56-b950-27107642"
+    },
+    {
+      "AMP:variableName": "/HDFEOS/GRIDS/MOP03/XDim",
+      "skos:prefLabel": "Longitude",
+      "AMP:dimensionType": "AMP:LongitudeDimension",
+      "AMP:indexRange": "[-180.0, 179.0]",
+      "AMP:dimensionSize": 360,
+      "@id": "AMP:_ff8c7677da4a-4531b3822b75176ccd5f"
+    },
+    {
+      "skos:prefLabel": "Latitude",
+      "AMP:indexRange": "[-90.0, 89.0]",
+      "AMP:dimensionSize": 180,
+      "AMP:dimensionType": "AMP:LatitudeDimension",
+      "AMP:variableName": "/HDFEOS/GRIDS/MOP03/YDim",
+      "@id": "AMP:_053b13f6d298-4691599e7021b803a6e066"
+    }
+  ],
+  "AMP:createdDate": "2021-11-03T00:00:00.000000Z",
+  "AMP:temporalResolution": {
+    "skos:altLabel": [
+      "One Day",
+      "24 hours",
+      "24 Hours"
+    ],
+    "skos:prefLabel": "1.0 days",
+    "@id": "AMP:_1.0days"
+  },
+  "AMP:distributionURL": "<https://asdc.larc.nasa.gov/data/MOPITT/MOP03J.008/>",
+  "AMP:additionalInformation": "https://doi.org/10.5067/TERRA/MOPITT/MOP03J_L3.008",
+  "AMP:offset": 0.0,
+  "AMP:temporalCoverageStartDate": "2000-03-03T00:00:00Z",
+  "AMP:fillValue": -9999.0,
+  "AMP:instrument": {
+    "skos:altLabel": "Measurements Of Pollution In The Troposphere",
+    "skos:prefLabel": "MOPITT",
+    "AMP:additionalInformation": "<http://database.eohandbook.com/database/instrumentsummary.aspx?instrumentID=119>",
+    "AMP:ceosID": "119",
+    "@id": "AMP:MOPITTInstrument"
+  },
+  "AMP:measuredQuantity": {
+    "AMP:additionalInformation": "<http://goldbook.iupac.org/terms/view/M03948>",
+    "skos:prefLabel": "Mixing Ratio By Volume",
+    "skos:altLabel": "Volumetric Mixing Ratio",
+    "@id": "AMP:Mixing_Ratio_By_Volume"
+  },
+  "AMP:collection": {
+    "AMP:distributionURL": "https://asdc.larc.nasa.gov/data/MOPITT/MOP03J.008/",
+    "AMP:doi": "https://doi.org/10.5067/TERRA/MOPITT/MOP03J_L3.008",
+    "AMP:temporalCoverageStartDate": "2000-03-03T00:00:00Z",
+    "AMP:currentVersion": true,
+    "skos:prefLabel": "MOP03J_8",
+    "skos:altLabel": "MOPITT CO gridded daily means (Near and Thermal Infrared Radiances) V008",
+    "AMP:grid": "AMP:Grid1X1degrees",
+    "@id": "AMP:MOP03J_8"
+  },
+  "AMP:scaleFactor": 1.0,
+  "@id": "AMP:_895c6f66-2111-4780-b2d3-da03efcb7b52"
+}

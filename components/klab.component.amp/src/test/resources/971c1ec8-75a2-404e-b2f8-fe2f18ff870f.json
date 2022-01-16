@@ -1,0 +1,151 @@
+{
+  "@context": {
+    "AMP": "http://lingualogica.net/AMP#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "envo": "http://purl.obolibrary.org/obo/envo#",
+    "chebi": "http://purl.obolibrary.org/obo/chebi#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "shacl": "http://www.w3.org/ns/shacl#",
+    "AMP:fillValue": {
+      "@type": "xsd:double"
+    },
+    "AMP:modifiedDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:createdDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:dimensionSize": {
+      "@type": "xsd:double"
+    },
+    "AMP:offset": {
+      "@type": "xsd:double"
+    },
+    "AMP:scaleFactor": {
+      "@type": "xsd:double"
+    },
+    "AMP:collection": {
+      "@type": "@id"
+    }
+  },
+  "@type": "Variable",
+  "AMP:fillValue": -9999.0,
+  "AMP:createdDate": "2021-11-03T00:00:00.000000Z",
+  "AMP:measurementContext": [
+    {
+      "AMP:additionalInformation": "<http://purl.obolibrary.org/obo/ENVO_01000810>",
+      "skos:prefLabel": "Earth's Atmosphere",
+      "@id": "AMP:Atmosphere-Earth"
+    },
+    {
+      "AMP:additionalInformation": [
+        "<http://purl.obolibrary.org/obo/ENVO_01001428>",
+        "<http://glossary.ametsoc.org/wiki/Cloud>"
+      ],
+      "skos:prefLabel": "Cloud (Water-based)",
+      "@id": "AMP:Cloud-Water-based"
+    }
+  ],
+  "AMP:unitOfMeasure": {
+    "skos:altLabel": [
+      "g/m^2",
+      "gram per square meter",
+      "gram per meter squared"
+    ],
+    "skos:prefLabel": "g m-2",
+    "AMP:additionalInformation": "<http://purl.obolibrary.org/obo/UO_0000086>",
+    "@id": "AMP:Gram_Per_Square_Meter"
+  },
+  "AMP:temporalCoverageStartDate": "2012-01-19T00:00:00Z",
+  "AMP:cfStandardName": "atmosphere_mass_content_of_cloud_liquid_water",
+  "AMP:additionalInformation": "https://doi.org/10.5067/VIIRS/CLDPROP_M3_MODIS_Aqua.011",
+  "AMP:scaleFactor": 1.0,
+  "AMP:collection": {
+    "AMP:grid": "AMP:Grid1X1degrees",
+    "AMP:CMRConceptID": "C1655783889-LAADS",
+    "AMP:doi": "https://doi.org/10.5067/VIIRS/CLDPROP_M3_MODIS_Aqua.011",
+    "AMP:temporalCoverageStartDate": "2012-01-19T00:00:00Z",
+    "AMP:currentVersion": true,
+    "AMP:distributionURL": "https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/5110/CLDPROP_M3_MODIS_Aqua/",
+    "skos:prefLabel": "CLDPROP_M3_MODIS_AQUA_V1.1",
+    "AMP:longName": "MODIS/Aqua Cloud Properties Level 3 monthly, 1x1 degree grid",
+    "@id": "AMP:CLDPROP_M3_MODIS_Aqua_V1-1"
+  },
+  "AMP:longName": "atmosphere_mass_content_of_cloud_liquid_water",
+  "AMP:spatialResolution": {
+    "AMP:longitudeResolution": [
+      1.0,
+      "1"
+    ],
+    "skos:prefLabel": "1 X 1 degrees Grid",
+    "AMP:latitudeResolution": [
+      1.0,
+      "1"
+    ],
+    "AMP:unitOfMeasure": "AMP:degrees",
+    "@id": "AMP:Grid1X1degrees"
+  },
+  "AMP:modifiedDate": "2021-11-03T00:00:00.000000Z",
+  "AMP:instrument": {
+    "AMP:ceosID": "395",
+    "skos:prefLabel": "MODIS",
+    "AMP:additionalInformation": "<http://database.eohandbook.com/database/instrumentsummary.aspx?instrumentID=395>",
+    "skos:altLabel": "MODerate-Resolution Imaging Spectroradiometer",
+    "@id": "AMP:MODISInstrument"
+  },
+  "AMP:variableName": "Cloud_Water_Path_1621_PCL_Liquid/Mean",
+  "AMP:featureOfInterest": {
+    "skos:altLabel": [
+      "H20, Liquid",
+      "Water, Liquid Phase"
+    ],
+    "skos:prefLabel": "Liquid, Water",
+    "AMP:additionalInformation": [
+      "<http://glossary.ametsoc.org/wiki/Water>",
+      "<http://purl.obolibrary.org/obo/CHEBI_15377>"
+    ],
+    "@id": "AMP:Water-Liquid"
+  },
+  "AMP:measuredQuantity": {
+    "skos:altLabel": [
+      "Surface Density",
+      "Area Density"
+    ],
+    "AMP:additionalInformation": [
+      "<http://purl.obolibrary.org/obo/PATO_0001351>",
+      "<https://en.wikipedia.org/wiki/Area_density>"
+    ],
+    "skos:prefLabel": "Mass Per Area",
+    "@id": "AMP:Mass_Per_Area"
+  },
+  "AMP:unitString": "g/m^2",
+  "skos:prefLabel": "Cloud_Water_Path_1621_PCL_Liquid",
+  "AMP:dimension": [
+    {
+      "AMP:dimensionSize": "180",
+      "skos:prefLabel": "Latitude",
+      "AMP:indexRange": "[-89.5, 89.5]",
+      "@id": "AMP:_08e0d18c-a4a0-41d3-b41e-f830afa4551bDim2"
+    },
+    {
+      "AMP:indexRange": "[-179.5, 179.5]",
+      "AMP:variableName": "/longitude",
+      "AMP:dimensionSize": "360",
+      "skos:prefLabel": "Longitude",
+      "@id": "AMP:_0da21f0b-c6e9-4067-985e-4ee6df81445bDim1"
+    }
+  ],
+  "AMP:temporalResolution": {
+    "skos:altLabel": "One Month",
+    "skos:prefLabel": [
+      "1.0 months",
+      "1 Month"
+    ],
+    "@id": "AMP:_1.0months"
+  },
+  "skos:altLabel": "cloud_water_path-liquid",
+  "AMP:offset": 0.0,
+  "@id": "AMP:_971c1ec8-75a2-404e-b2f8-fe2f18ff870f"
+}

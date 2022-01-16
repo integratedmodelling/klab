@@ -1,0 +1,122 @@
+{
+  "@context": {
+    "AMP": "http://lingualogica.net/AMP#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "envo": "http://purl.obolibrary.org/obo/envo#",
+    "chebi": "http://purl.obolibrary.org/obo/chebi#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "shacl": "http://www.w3.org/ns/shacl#",
+    "AMP:fillValue": {
+      "@type": "xsd:double"
+    },
+    "AMP:modifiedDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:createdDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:dimensionSize": {
+      "@type": "xsd:double"
+    },
+    "AMP:offset": {
+      "@type": "xsd:double"
+    },
+    "AMP:scaleFactor": {
+      "@type": "xsd:double"
+    },
+    "AMP:collection": {
+      "@type": "@id"
+    }
+  },
+  "@type": "Variable",
+  "AMP:spatialResolution": {
+    "AMP:latitudeResolution": "0.2",
+    "skos:prefLabel": "0.2 X 0.2 degrees Grid",
+    "AMP:longitudeResolution": "0.2",
+    "AMP:unitOfMeasure": "AMP:degrees",
+    "@id": "AMP:Grid0.2X0.2degrees"
+  },
+  "AMP:variableName": "/analysed_sst",
+  "AMP:featureOfInterest": {
+    "AMP:additionalInformation": [
+      "<http://purl.obolibrary.org/obo/ENVO_00002042>",
+      "<http://purl.obolibrary.org/obo/CHEBI_15377>",
+      "<http://glossary.ametsoc.org/wiki/Water>"
+    ],
+    "skos:prefLabel": "Water, All Phases",
+    "skos:altLabel": "H20",
+    "@id": "AMP:Water-All_Phases"
+  },
+  "AMP:collection": {
+    "AMP:grid": "AMP:Grid0.2X0.2degrees",
+    "AMP:doi": "<https://doi.org/10.5067/GHCMC-4FM02>",
+    "AMP:distributionURL": [
+      "https://podaac-tools.jpl.nasa.gov/drive/files/allData/ghrsst/data/GDS2/L4/GLOB/CMC/CMC0.2deg/v2",
+      "https://podaac.jpl.nasa.gov/ws/search/granule/?datasetId=PODAAC-GHCMC-4FM02&apidoc",
+      "https://thredds.jpl.nasa.gov/thredds/catalog_ghrsst_gds2.html?dataset=CMC0.2deg-CMC-L4-GLOB-v2.0"
+    ],
+    "AMP:temporalCoverageStartDate": "1991-09-01T00:00:00.000Z",
+    "AMP:CMRConceptID": "C1655116877-PODAAC",
+    "AMP:currentVersion": "true",
+    "AMP:temporalCoverageEndDate": "1991-09-01T00:00:00.000Z",
+    "@id": "AMP:CMC0.2deg-CMC-L4-GLOB-v2.0_2.0"
+  },
+  "AMP:additionalInformation": "<https://doi.org/10.5067/GHCMC-4FM02>",
+  "AMP:temporalCoverageEndDate": "1991-09-01T00:00:00.000Z",
+  "AMP:unitString": "kelvin",
+  "AMP:scaleFactor": 1.0,
+  "AMP:modifiedDate": "2021-11-19T21:27:14.139263Z",
+  "AMP:fillValue": -32768.0,
+  "AMP:temporalResolution": {
+    "skos:altLabel": [
+      "One Day",
+      "24 Hours",
+      "24 hours"
+    ],
+    "skos:prefLabel": "1.0 days",
+    "@id": "AMP:_1.0days"
+  },
+  "AMP:measurementContext": {
+    "skos:altLabel": "Ocean Surface",
+    "skos:prefLabel": "Sea Surface",
+    "@id": "AMP:Ocean_Surface"
+  },
+  "AMP:dimension": [
+    {
+      "AMP:variableName": "/lat",
+      "AMP:collection": "AMP:CMC0.2deg-CMC-L4-GLOB-v2.0_2.0",
+      "AMP:indexRange": "[-90.0, 90.0]",
+      "AMP:dimensionSize": 901,
+      "@id": "AMP:_df22a96f044640b59e4bb5a478f1b5aa"
+    },
+    {
+      "AMP:indexRange": "[-180.0, 179.8000030517578]",
+      "AMP:collection": "AMP:CMC0.2deg-CMC-L4-GLOB-v2.0_2.0",
+      "AMP:variableName": "/lon",
+      "AMP:dimensionSize": 1800,
+      "@id": "AMP:_1f98ef94d6324d27b65c5e95f971d2b8"
+    },
+    {
+      "AMP:variableName": "/time",
+      "AMP:collection": "AMP:CMC0.2deg-CMC-L4-GLOB-v2.0_2.0",
+      "AMP:indexRange": "[336571200.0, 336571200.0]",
+      "AMP:dimensionSize": 1,
+      "@id": "AMP:_4b236f1535a54fffa817a7cdceeba788"
+    }
+  ],
+  "AMP:temporalCoverageStartDate": "1991-09-01T00:00:00.000Z",
+  "AMP:createdDate": "2021-11-19T21:27:14.139263Z",
+  "AMP:measuredQuantity": {
+    "skos:prefLabel": "Temperature",
+    "AMP:additionalInformation": [
+      "<https://glossary.ametsoc.org/wiki/Temperature>",
+      "<https://en.wikipedia.org/wiki/Temperature>"
+    ],
+    "@id": "AMP:Temperature"
+  },
+  "AMP:offset": 0.0,
+  "AMP:cfStandardName": "sea_surface_temperature",
+  "@id": "AMP:_34711cad83554029bd1973a8081b6495"
+}

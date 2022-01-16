@@ -1,0 +1,149 @@
+{
+  "@context": {
+    "AMP": "http://lingualogica.net/AMP#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "envo": "http://purl.obolibrary.org/obo/envo#",
+    "chebi": "http://purl.obolibrary.org/obo/chebi#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "shacl": "http://www.w3.org/ns/shacl#",
+    "AMP:fillValue": {
+      "@type": "xsd:double"
+    },
+    "AMP:modifiedDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:createdDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:dimensionSize": {
+      "@type": "xsd:double"
+    },
+    "AMP:offset": {
+      "@type": "xsd:double"
+    },
+    "AMP:scaleFactor": {
+      "@type": "xsd:double"
+    },
+    "AMP:collection": {
+      "@type": "@id"
+    }
+  },
+  "@type": "Variable",
+  "AMP:spatialResolution": {
+    "AMP:longitudeResolution": [
+      1.0,
+      "1"
+    ],
+    "skos:prefLabel": "1 X 1 degrees Grid",
+    "AMP:latitudeResolution": [
+      1.0,
+      "1"
+    ],
+    "AMP:unitOfMeasure": "AMP:degrees",
+    "@id": "AMP:Grid1X1degrees"
+  },
+  "AMP:instrument": {
+    "skos:altLabel": "Cloud and the Earth's Radiant Energy System",
+    "AMP:additionalInformation": "<http://database.eohandbook.com/database/instrumentsummary.aspx?instrumentID=397>",
+    "skos:prefLabel": "CERES",
+    "AMP:ceosID": "397",
+    "@id": "AMP:CERESInstrument"
+  },
+  "AMP:measurementContext": [
+    {
+      "AMP:additionalInformation": "<http://purl.obolibrary.org/obo/ENVO_01000324>",
+      "skos:prefLabel": "Earth Surface",
+      "@id": "AMP:Earth_Surface"
+    },
+    {
+      "skos:prefLabel": "Sky Conditions, Clear",
+      "AMP:additionalInformation": "<http://glossary.ametsoc.org/wiki/Clear_sky>",
+      "@id": "AMP:Sky_Conditions-Clear"
+    }
+  ],
+  "AMP:dimension": [
+    {
+      "AMP:variableName": "latitude (dimension)",
+      "AMP:dimensionSize": 180,
+      "skos:prefLabel": "Latitude",
+      "AMP:dimensionType": "AMP:LatitudeDimension",
+      "AMP:unitString": "degrees-north",
+      "AMP:indexRange": "[-89.5, 89.5]",
+      "@id": "AMP:_1837593-578392-rd8375629"
+    },
+    {
+      "skos:prefLabel": "Longitude",
+      "AMP:variableName": "longitude (dimension)",
+      "AMP:indexRange": "[-179.5, 179.5]",
+      "AMP:dimensionType": "AMP:LongitudeDimension",
+      "AMP:unitString": "degrees-east",
+      "AMP:dimensionSize": 360,
+      "@id": "AMP:_1837593-578392-rd8375629_1"
+    }
+  ],
+  "skos:altLabel": [
+    "OLR",
+    "Outgoing Longwave Radiation"
+  ],
+  "AMP:createdDate": "2021-11-03T00:00:00.000000Z",
+  "AMP:featureOfInterest": [
+    {
+      "skos:prefLabel": "Electromagnetic Radiation, Upwelling",
+      "@id": "AMP:Electromagnetic_Radiation-Upwelling"
+    },
+    {
+      "skos:prefLabel": "Electromagnetic Radiation, Longwave",
+      "AMP:additionalInformation": "<http://glossary.ametsoc.org/wiki/Longwave_radiation>",
+      "skos:altLabel": "LW Radiation",
+      "@id": "AMP:Electromagnetic_Radiation-Longwave"
+    }
+  ],
+  "AMP:offset": 0.0,
+  "AMP:unitOfMeasure": {
+    "skos:prefLabel": "W m-2",
+    "skos:altLabel": [
+      "Watts Per Square Meter",
+      "w/m^2 "
+    ],
+    "@id": "AMP:Watts_Per_Square_Meter"
+  },
+  "AMP:variableName": "Initial_ClearSky_Fluxes/init_clr_sfc_lw_up",
+  "AMP:temporalCoverageStartDate": "2002-07-01T00:00:00Z",
+  "AMP:temporalResolution": {
+    "skos:altLabel": [
+      "One Day",
+      "24 hours",
+      "24 Hours"
+    ],
+    "skos:prefLabel": "1.0 days",
+    "@id": "AMP:_1.0days"
+  },
+  "AMP:collection": {
+    "skos:altLabel": "CERES and GEO-Enhanced TOA, Within-Atmosphere and Surface Fluxes, Clouds and Aerosols Daily Terra Edition4A",
+    "AMP:distributionURL": "https://opendap.larc.nasa.gov/opendap/CERES/SYN1deg-Day/Terra-Aqua-MODIS_Edition4A/contents.html",
+    "skos:prefLabel": "CER_SYN1deg-Day_Terra-Aqua-MODIS_Edition4A",
+    "AMP:grid": "AMP:Grid1X1degrees",
+    "AMP:doi": "https://doi.org/10.5067/TERRA+AQUA/CERES/SYN1DEG-Day_L3.004A",
+    "AMP:temporalCoverageStartDate": "2002-07-01T00:00:00Z",
+    "AMP:currentVersion": true,
+    "@id": "AMP:CER_SYN1deg-Day_Terra-Aqua-MODIS_Edition4A"
+  },
+  "AMP:additionalInformation": "https://doi.org/10.5067/TERRA+AQUA/CERES/SYN1DEG-Day_L3.004A",
+  "AMP:measuredQuantity": {
+    "skos:altLabel": [
+      "Heat flux density",
+      "Radiative flux",
+      "Irradiance",
+      "Radiant Flux Density"
+    ],
+    "skos:prefLabel": "Power Per Area",
+    "@id": "AMP:Power_Per_Area"
+  },
+  "AMP:scaleFactor": 1.0,
+  "AMP:unitString": "W m-2",
+  "AMP:fillValue": 3.4028235e+38,
+  "AMP:modifiedDate": "2021-11-03T00:00:00.000000Z",
+  "@id": "AMP:_3d85928375-3829573-8975hs4839"
+}

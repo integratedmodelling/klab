@@ -1,0 +1,135 @@
+{
+  "@context": {
+    "AMP": "http://lingualogica.net/AMP#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "envo": "http://purl.obolibrary.org/obo/envo#",
+    "chebi": "http://purl.obolibrary.org/obo/chebi#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "shacl": "http://www.w3.org/ns/shacl#",
+    "AMP:fillValue": {
+      "@type": "xsd:double"
+    },
+    "AMP:modifiedDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:createdDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:dimensionSize": {
+      "@type": "xsd:double"
+    },
+    "AMP:offset": {
+      "@type": "xsd:double"
+    },
+    "AMP:scaleFactor": {
+      "@type": "xsd:double"
+    },
+    "AMP:collection": {
+      "@type": "@id"
+    }
+  },
+  "@type": "Variable",
+  "AMP:featureOfInterest": [
+    {
+      "skos:prefLabel": "Electromagnetic Radiation, Net",
+      "@id": "AMP:Electromagnetic_Radiation-Net"
+    },
+    {
+      "skos:prefLabel": "Heat, Sensible",
+      "@id": "AMP:Heat-Sensible"
+    },
+    {
+      "skos:prefLabel": "Electromagnetic Radiation, Upwelling",
+      "@id": "AMP:Electromagnetic_Radiation-Upwelling"
+    }
+  ],
+  "AMP:variableName": "/Qh_tavg",
+  "AMP:dimension": [
+    {
+      "AMP:dimensionSize": 1,
+      "AMP:variableName": "/time",
+      "AMP:indexRange": "[0.0, 0.0]",
+      "@id": "AMP:_fa13503e128f43c2957fcc0500aadad4"
+    },
+    {
+      "AMP:variableName": "/lon",
+      "AMP:indexRange": "[-179.875, 179.875]",
+      "AMP:dimensionSize": 1440,
+      "@id": "AMP:_cffbba0a8d264d459af2e459c0960a2f"
+    },
+    {
+      "AMP:variableName": "/lat",
+      "AMP:dimensionSize": 600,
+      "AMP:indexRange": "[-59.875, 89.875]",
+      "@id": "AMP:_ecacb68274284fa880b5734f49a8850c"
+    }
+  ],
+  "AMP:temporalCoverageStartDate": "2000-01-01T00:00:00Z",
+  "AMP:spatialResolution": {
+    "AMP:latitudeResolution": [
+      "0.25",
+      0.25
+    ],
+    "AMP:unitOfMeasure": "AMP:degrees",
+    "skos:prefLabel": "0.25 X 0.25 degrees Grid",
+    "AMP:longitudeResolution": [
+      "0.25",
+      0.25
+    ],
+    "@id": "AMP:Grid0.25X0.25degrees"
+  },
+  "AMP:fillValue": -9999.0,
+  "AMP:createdDate": "2021-11-03T00:00:00.000000Z",
+  "AMP:additionalInformation": "https://doi.org/10.5067/E7TYRXPJKWOQ",
+  "AMP:unitOfMeasure": {
+    "skos:altLabel": [
+      "Watts Per Square Meter",
+      "w/m^2 "
+    ],
+    "skos:prefLabel": "W m-2",
+    "@id": "AMP:Watts_Per_Square_Meter"
+  },
+  "AMP:scaleFactor": 1.0,
+  "AMP:unitString": "W m-2",
+  "AMP:measurementContext": {
+    "AMP:additionalInformation": "<http://purl.obolibrary.org/obo/ENVO_01000324>",
+    "skos:prefLabel": "Earth Surface",
+    "@id": "AMP:Earth_Surface"
+  },
+  "AMP:collection": {
+    "AMP:distributionURL": "https://hydro1.gesdisc.eosdis.nasa.gov/data/GLDAS/GLDAS_NOAH025_3H.2.1/",
+    "AMP:grid": "AMP:Grid0.25X0.25degrees",
+    "AMP:doi": "https://doi.org/10.5067/E7TYRXPJKWOQ",
+    "skos:prefLabel": "GLDAS_NOAH025_3H_2.1",
+    "AMP:currentVersion": true,
+    "AMP:temporalCoverageStartDate": "2000-01-01T00:00:00Z",
+    "@id": "AMP:GLDAS_NOAH025_3H_2.1"
+  },
+  "AMP:temporalResolution": {
+    "skos:altLabel": [
+      "Three Hours",
+      "180 Minutes"
+    ],
+    "skos:prefLabel": "3.0 hours",
+    "@id": "AMP:_3.0hours"
+  },
+  "AMP:measuredQuantity": {
+    "skos:altLabel": [
+      "Heat flux density",
+      "Radiative flux",
+      "Radiant Flux Density",
+      "Irradiance"
+    ],
+    "skos:prefLabel": "Power Per Area",
+    "@id": "AMP:Power_Per_Area"
+  },
+  "AMP:modifiedDate": "2021-11-03T00:00:00.000000Z",
+  "AMP:instrument": {
+    "skos:prefLabel": "Noah Land Surface Model",
+    "@id": "AMP:Noah-LSM"
+  },
+  "AMP:offset": 0.0,
+  "@id": "AMP:_1bba4d71a3304e7e85f87f3cbb8cd911"
+}

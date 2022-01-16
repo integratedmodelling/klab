@@ -1,0 +1,129 @@
+{
+  "@context": {
+    "AMP": "http://lingualogica.net/AMP#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "envo": "http://purl.obolibrary.org/obo/envo#",
+    "chebi": "http://purl.obolibrary.org/obo/chebi#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "shacl": "http://www.w3.org/ns/shacl#",
+    "AMP:fillValue": {
+      "@type": "xsd:double"
+    },
+    "AMP:modifiedDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:createdDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:dimensionSize": {
+      "@type": "xsd:double"
+    },
+    "AMP:offset": {
+      "@type": "xsd:double"
+    },
+    "AMP:scaleFactor": {
+      "@type": "xsd:double"
+    },
+    "AMP:collection": {
+      "@type": "@id"
+    }
+  },
+  "@type": "Variable",
+  "AMP:measuredQuantity": {
+    "skos:altLabel": [
+      "Surface Density",
+      "Area Density"
+    ],
+    "AMP:additionalInformation": [
+      "<http://purl.obolibrary.org/obo/PATO_0001351>",
+      "<https://en.wikipedia.org/wiki/Area_density>"
+    ],
+    "skos:prefLabel": "Mass Per Area",
+    "@id": "AMP:Mass_Per_Area"
+  },
+  "AMP:featureOfInterest": {
+    "AMP:additionalInformation": [
+      "<https://en.wikipedia.org/wiki/Snow>",
+      "<http://glossary.ametsoc.org/wiki/Snow>",
+      "<http://purl.obolibrary.org/obo/ENVO_01000406>"
+    ],
+    "skos:prefLabel": "Snow",
+    "@id": "AMP:Snow"
+  },
+  "AMP:collection": {
+    "AMP:distributionURL": "https://n5eil01u.ecs.nsidc.org/SMAP/SPL4SMGP.004/",
+    "AMP:doi": "https://doi.org/10.5067/KPJNN2GI1DQR",
+    "AMP:grid": "AMP:Grid9X9kilometers",
+    "AMP:temporalCoverageStartDate": "2015-03-31T00:00:00Z",
+    "AMP:currentVersion": true,
+    "skos:prefLabel": "SPL4SMGP_V005",
+    "@id": "AMP:SPL4SMGP_V005"
+  },
+  "AMP:dimension": [
+    {
+      "AMP:dimensionSize": "1624",
+      "skos:prefLabel": "Latitude",
+      "AMP:indexRange": "[84.65644, -84.65644]",
+      "@id": "AMP:_19b180c85d3294e5d58479da88b5cdc"
+    },
+    {
+      "AMP:indexRange": "[-179.953, 179.953]",
+      "AMP:dimensionSize": "3856",
+      "skos:prefLabel": "x",
+      "@id": "AMP:_19b180c8-5d57-4e5d-8358-9da88e6b5cdcDim2"
+    }
+  ],
+  "skos:prefLabel": "snow_mass",
+  "AMP:temporalResolution": {
+    "skos:altLabel": [
+      "Three Hours",
+      "180 Minutes"
+    ],
+    "skos:prefLabel": "3.0 hours",
+    "@id": "AMP:_3.0hours"
+  },
+  "AMP:offset": 0.0,
+  "AMP:temporalCoverageStartDate": "2015-03-31T00:00:00Z",
+  "AMP:modifiedDate": "2021-11-03T00:00:00.000000Z",
+  "AMP:additionalInformation": [
+    "<https://doi.org/10.5067/KPJNN2GI1DQR>",
+    "https://doi.org/10.5067/KPJNN2GI1DQR"
+  ],
+  "AMP:distributionURL": "<https://n5eil01u.ecs.nsidc.org/SMAP/SPL4SMGP.004/>",
+  "AMP:variableName": "/Geophysical_Data/snow_mass",
+  "AMP:spatialResolution": {
+    "AMP:unitOfMeasure": "AMP:kilometers",
+    "AMP:longitudeResolution": 9.0,
+    "skos:prefLabel": "9 X 9 kilometers Grid",
+    "AMP:latitudeResolution": 9.0,
+    "@id": "AMP:Grid9X9kilometers"
+  },
+  "AMP:fillValue": -9999.0,
+  "AMP:unitOfMeasure": {
+    "skos:prefLabel": "kg m-2",
+    "skos:altLabel": [
+      "Kilogram Per Meter Squared",
+      "kg/m^2"
+    ],
+    "AMP:additionalInformation": "<http://purl.obolibrary.org/obo/UO_0000086>",
+    "@id": "AMP:KilogramPerSquareMeter"
+  },
+  "AMP:createdDate": "2021-11-03T00:00:00.000000Z",
+  "AMP:measurementContext": {
+    "AMP:additionalInformation": "<http://purl.obolibrary.org/obo/ENVO_01001785>",
+    "skos:prefLabel": "Earth Surface-Land",
+    "@id": "AMP:Earth_Surface-Land"
+  },
+  "AMP:scaleFactor": 1.0,
+  "AMP:instrument": {
+    "skos:altLabel": "L-band Radiometer (SMAP)",
+    "AMP:ceosID": "1554",
+    "skos:prefLabel": "SMAP L-band Radiometer",
+    "AMP:additionalInformation": "<http://database.eohandbook.com/database/instrumentsummary.aspx?instrumentID=1554>",
+    "@id": "AMP:SMAPL-bandRadiometerInstrument"
+  },
+  "AMP:unitString": "kg m-2",
+  "@id": "AMP:_19b180c8-5d57-4e5d-8358-9da88e6b5cdc"
+}

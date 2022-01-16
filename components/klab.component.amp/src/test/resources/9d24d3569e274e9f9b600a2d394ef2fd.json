@@ -1,0 +1,137 @@
+{
+  "@context": {
+    "AMP": "http://lingualogica.net/AMP#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "envo": "http://purl.obolibrary.org/obo/envo#",
+    "chebi": "http://purl.obolibrary.org/obo/chebi#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "shacl": "http://www.w3.org/ns/shacl#",
+    "AMP:fillValue": {
+      "@type": "xsd:double"
+    },
+    "AMP:modifiedDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:createdDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:dimensionSize": {
+      "@type": "xsd:double"
+    },
+    "AMP:offset": {
+      "@type": "xsd:double"
+    },
+    "AMP:scaleFactor": {
+      "@type": "xsd:double"
+    },
+    "AMP:collection": {
+      "@type": "@id"
+    }
+  },
+  "@type": "Variable",
+  "AMP:additionalInformation": "<https://doi.org/10.5067/GHOST-4FK02>",
+  "AMP:spatialResolution": {
+    "skos:prefLabel": "0.05 X 0.05 degrees Grid",
+    "AMP:latitudeResolution": "0.05",
+    "AMP:unitOfMeasure": "AMP:degrees",
+    "AMP:longitudeResolution": "0.05",
+    "@id": "AMP:Grid0.05X0.05degrees"
+  },
+  "AMP:variableName": "/sea_ice_fraction",
+  "AMP:dimension": [
+    {
+      "AMP:dimensionSize": 3600,
+      "AMP:variableName": "/lat",
+      "AMP:indexRange": "[-89.9749984741211, 89.9749984741211]",
+      "AMP:collection": "AMP:OSTIA-UKMO-L4-GLOB-v2.0_2.0",
+      "@id": "AMP:_4d15b58f327649078616eccdae030e84"
+    },
+    {
+      "AMP:variableName": "/time",
+      "AMP:collection": "AMP:OSTIA-UKMO-L4-GLOB-v2.0_2.0",
+      "AMP:dimensionSize": 1,
+      "AMP:indexRange": "[820497600.0, 820497600.0]",
+      "@id": "AMP:_943420bc7d604145a9a048f69a12d6a3"
+    },
+    {
+      "AMP:variableName": "/lon",
+      "AMP:collection": "AMP:OSTIA-UKMO-L4-GLOB-v2.0_2.0",
+      "AMP:indexRange": "[-179.97500610351562, 179.97500610351562]",
+      "AMP:dimensionSize": 7200,
+      "@id": "AMP:_d625bb1eeef84c57b5c8666bdfd03d65"
+    }
+  ],
+  "AMP:temporalResolution": {
+    "skos:altLabel": [
+      "One Day",
+      "24 Hours",
+      "24 hours"
+    ],
+    "skos:prefLabel": "1.0 days",
+    "@id": "AMP:_1.0days"
+  },
+  "AMP:collection": {
+    "AMP:currentVersion": "true",
+    "AMP:distributionURL": [
+      "https://podaac.jpl.nasa.gov/ws/search/granule/?datasetId=PODAAC-GHOST-4FK02&apidoc",
+      "https://podaac-tools.jpl.nasa.gov/drive/files/allData/ghrsst/data/GDS2/L4/GLOB/UKMO/OSTIA/v2",
+      "https://thredds.jpl.nasa.gov/thredds/catalog_ghrsst_gds2.html?dataset=OSTIA-UKMO-L4-GLOB-v2.0"
+    ],
+    "AMP:temporalCoverageStartDate": "2006-12-31T00:00:00.000Z",
+    "AMP:CMRConceptID": "C1652972902-PODAAC",
+    "AMP:grid": "AMP:Grid0.05X0.05degrees",
+    "AMP:doi": "<https://doi.org/10.5067/GHOST-4FK02>",
+    "@id": "AMP:OSTIA-UKMO-L4-GLOB-v2.0_2.0"
+  },
+  "AMP:featureOfInterest": {
+    "skos:altLabel": [
+      "H20, Solid Phase",
+      "H20, Ice",
+      "Water, Solid Phase"
+    ],
+    "skos:prefLabel": "Water, Ice",
+    "AMP:additionalInformation": "<http://glossary.ametsoc.org/wiki/Ice>",
+    "@id": "AMP:Water-Ice"
+  },
+  "AMP:instrument": [
+    {
+      "skos:altLabel": "Advanced Baseline Imager",
+      "skos:prefLabel": "ABI",
+      "AMP:ceosID": "870",
+      "AMP:additionalInformation": "<http://database.eohandbook.com/database/instrumentsummary.aspx?instrumentID=870>",
+      "@id": "AMP:ABIInstrument"
+    },
+    {
+      "AMP:additionalInformation": "<http://database.eohandbook.com/database/instrumentsummary.aspx?instrumentID=302>",
+      "skos:prefLabel": "SEVIRI",
+      "AMP:ceosID": "302",
+      "skos:altLabel": "Spinning Enhanced Visible and Infra-Red Imager",
+      "@id": "AMP:SEVIRIInstrument"
+    }
+  ],
+  "AMP:createdDate": "2021-11-20T17:12:53.861454Z",
+  "AMP:fillValue": -128.0,
+  "AMP:offset": 0.0,
+  "AMP:cfStandardName": "sea_ice_area_fraction",
+  "AMP:temporalCoverageStartDate": "2006-12-31T00:00:00.000Z",
+  "AMP:measuredQuantity": {
+    "skos:prefLabel": "Area Fraction",
+    "skos:altLabel": [
+      "Area/Area",
+      "Area Per Area"
+    ],
+    "@id": "AMP:Area_Fraction"
+  },
+  "AMP:unitString": "1",
+  "AMP:measurementContext": {
+    "skos:altLabel": "Sea",
+    "skos:prefLabel": "Ocean",
+    "AMP:additionalInformation": "<http://purl.obolibrary.org/obo/ENVO_00000015>",
+    "@id": "AMP:Ocean"
+  },
+  "AMP:modifiedDate": "2021-11-20T17:12:53.861454Z",
+  "AMP:scaleFactor": 1.0,
+  "@id": "AMP:_9d24d3569e274e9f9b600a2d394ef2fd"
+}

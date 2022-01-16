@@ -1,0 +1,141 @@
+{
+  "@context": {
+    "AMP": "http://lingualogica.net/AMP#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "envo": "http://purl.obolibrary.org/obo/envo#",
+    "chebi": "http://purl.obolibrary.org/obo/chebi#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "shacl": "http://www.w3.org/ns/shacl#",
+    "AMP:fillValue": {
+      "@type": "xsd:double"
+    },
+    "AMP:modifiedDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:createdDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:dimensionSize": {
+      "@type": "xsd:double"
+    },
+    "AMP:offset": {
+      "@type": "xsd:double"
+    },
+    "AMP:scaleFactor": {
+      "@type": "xsd:double"
+    },
+    "AMP:collection": {
+      "@type": "@id"
+    }
+  },
+  "@type": "Variable",
+  "AMP:featureOfInterest": {
+    "AMP:additionalInformation": [
+      "<http://glossary.ametsoc.org/wiki/Air>",
+      "<http://purl.obolibrary.org/obo/ENVO_00002005>"
+    ],
+    "skos:prefLabel": "Air",
+    "@id": "AMP:Air"
+  },
+  "AMP:unitOfMeasure": {
+    "skos:altLabel": "Kelvin",
+    "skos:prefLabel": "K",
+    "@id": "AMP:Kelvin"
+  },
+  "AMP:measuredQuantity": {
+    "AMP:additionalInformation": [
+      "<http://glossary.ametsoc.org/wiki/Temperature>",
+      "<http://purl.obolibrary.org/obo/PATO_0000146>"
+    ],
+    "skos:prefLabel": "Temperature, Mean",
+    "@id": "AMP:Temperature-Mean"
+  },
+  "AMP:fillValue": -9999.0,
+  "AMP:longName": "air_temperature",
+  "AMP:variableName": "/HDFEOS/GRIDS/MOP03/Data Fields/RetrievedSurfaceTemperatureDay",
+  "AMP:scaleFactor": 1.0,
+  "AMP:unitString": "K",
+  "AMP:createdDate": "2021-11-03T00:00:00.000000Z",
+  "AMP:collection": {
+    "AMP:temporalCoverageStartDate": "2000-03-03T00:00:00Z",
+    "skos:altLabel": "MOPITT CO gridded daily means (Near and Thermal Infrared Radiances) V008",
+    "AMP:currentVersion": true,
+    "skos:prefLabel": "MOP03J_8",
+    "AMP:grid": "AMP:Grid1X1degrees",
+    "AMP:doi": "https://doi.org/10.5067/TERRA/MOPITT/MOP03J_L3.008",
+    "AMP:distributionURL": "https://asdc.larc.nasa.gov/data/MOPITT/MOP03J.008/",
+    "@id": "AMP:MOP03J_8"
+  },
+  "AMP:temporalResolution": {
+    "skos:altLabel": [
+      "One Day",
+      "24 Hours",
+      "24 hours"
+    ],
+    "skos:prefLabel": "1.0 days",
+    "@id": "AMP:_1.0days"
+  },
+  "AMP:dimension": [
+    {
+      "AMP:variableName": "/HDFEOS/GRIDS/MOP03/YDim",
+      "AMP:dimensionSize": 180,
+      "skos:prefLabel": "Latitude",
+      "AMP:indexRange": "[-90.0, 89.0]",
+      "AMP:dimensionType": "AMP:LatitudeDimension",
+      "@id": "AMP:_053b13f6d298-4691599e7021b803a6e066"
+    },
+    {
+      "AMP:variableName": "/HDFEOS/GRIDS/MOP03/XDim",
+      "AMP:dimensionSize": 360,
+      "skos:prefLabel": "Longitude",
+      "AMP:dimensionType": "AMP:LongitudeDimension",
+      "AMP:indexRange": "[-180.0, 179.0]",
+      "@id": "AMP:_ff8c7677da4a-4531b3822b75176ccd5f"
+    }
+  ],
+  "AMP:instrument": {
+    "skos:altLabel": "Measurements Of Pollution In The Troposphere",
+    "AMP:additionalInformation": "<http://database.eohandbook.com/database/instrumentsummary.aspx?instrumentID=119>",
+    "AMP:ceosID": "119",
+    "skos:prefLabel": "MOPITT",
+    "@id": "AMP:MOPITTInstrument"
+  },
+  "AMP:measurementContext": [
+    {
+      "skos:prefLabel": "Earth's Atmosphere",
+      "AMP:additionalInformation": "<http://purl.obolibrary.org/obo/ENVO_01000810>",
+      "@id": "AMP:Atmosphere-Earth"
+    },
+    {
+      "AMP:additionalInformation": [
+        "<https://en.wikipedia.org/wiki/Daytime>",
+        "<http://purl.obolibrary.org/obo/NCIT_C64928>"
+      ],
+      "skos:prefLabel": "Daytime",
+      "@id": "AMP:Daytime"
+    }
+  ],
+  "AMP:offset": 0.0,
+  "AMP:cfStandardName": "air_temperature",
+  "AMP:additionalInformation": "https://doi.org/10.5067/TERRA/MOPITT/MOP03J_L3.008",
+  "skos:prefLabel": "RetrievedSurfaceTemperatureDay",
+  "AMP:temporalCoverageStartDate": "2000-03-03T00:00:00Z",
+  "AMP:modifiedDate": "2021-11-03T00:00:00.000000Z",
+  "AMP:distributionURL": "<https://asdc.larc.nasa.gov/data/MOPITT/MOP03J.008/>",
+  "AMP:spatialResolution": {
+    "AMP:longitudeResolution": [
+      1.0,
+      "1"
+    ],
+    "AMP:latitudeResolution": [
+      1.0,
+      "1"
+    ],
+    "skos:prefLabel": "1 X 1 degrees Grid",
+    "AMP:unitOfMeasure": "AMP:degrees",
+    "@id": "AMP:Grid1X1degrees"
+  },
+  "@id": "AMP:_3746da19-cc57-4cde-a766-b640ca3a7154"
+}

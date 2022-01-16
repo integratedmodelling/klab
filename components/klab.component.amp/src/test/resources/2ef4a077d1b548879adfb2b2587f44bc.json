@@ -1,0 +1,93 @@
+{
+  "@context": {
+    "AMP": "http://lingualogica.net/AMP#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "envo": "http://purl.obolibrary.org/obo/envo#",
+    "chebi": "http://purl.obolibrary.org/obo/chebi#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "shacl": "http://www.w3.org/ns/shacl#",
+    "AMP:fillValue": {
+      "@type": "xsd:double"
+    },
+    "AMP:modifiedDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:createdDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:dimensionSize": {
+      "@type": "xsd:double"
+    },
+    "AMP:offset": {
+      "@type": "xsd:double"
+    },
+    "AMP:scaleFactor": {
+      "@type": "xsd:double"
+    },
+    "AMP:collection": {
+      "@type": "@id"
+    }
+  },
+  "@type": "Variable",
+  "AMP:temporalCoverageStartDate": "2000-06-01T00:00:00.000Z",
+  "AMP:collection": {
+    "AMP:doi": "<https://doi.org/10.5067/GPM/IMERG/3B-HH-E/06>",
+    "AMP:temporalCoverageStartDate": "2000-06-01T00:00:00.000Z",
+    "AMP:distributionURL": "https://gpm1.gesdisc.eosdis.nasa.gov/data/GPM_L3/GPM_3IMERGHHE.06/",
+    "AMP:grid": "AMP:Grid0.1X0.1degrees",
+    "AMP:currentVersion": "true",
+    "AMP:CMRConceptID": "C1598621094-GES_DISC",
+    "@id": "AMP:GPM_3IMERGHHE_06"
+  },
+  "AMP:variableName": "/Grid/precipitationCal",
+  "AMP:dimension": [
+    {
+      "AMP:dimensionSize": 3600,
+      "AMP:collection": "AMP:GPM_3IMERGHHE_06",
+      "AMP:indexRange": "[-179.9499969482422, 179.9499969482422]",
+      "AMP:variableName": "/Grid/lon",
+      "@id": "AMP:_0682e96a26f84c0f8b6a56a60598ecc1"
+    },
+    {
+      "AMP:variableName": "/Grid/time",
+      "AMP:collection": "AMP:GPM_3IMERGHHE_06",
+      "AMP:indexRange": "[959817600.0, 959817600.0]",
+      "AMP:dimensionSize": 1,
+      "@id": "AMP:_dcba3e3d60764afd89a5713574466bb0"
+    },
+    {
+      "AMP:indexRange": "[-89.94999694824219, 89.94999694824219]",
+      "AMP:variableName": "/Grid/lat",
+      "AMP:collection": "AMP:GPM_3IMERGHHE_06",
+      "AMP:dimensionSize": 1800,
+      "@id": "AMP:_dc75fa7f34114efcb503892a05ed0a21"
+    }
+  ],
+  "AMP:offset": 0.0,
+  "AMP:createdDate": "2021-11-20T20:06:16.966048Z",
+  "AMP:additionalInformation": "<https://doi.org/10.5067/GPM/IMERG/3B-HH-E/06>",
+  "AMP:scaleFactor": 1.0,
+  "AMP:spatialResolution": {
+    "AMP:unitOfMeasure": "AMP:degrees",
+    "skos:prefLabel": "0.1 X 0.1 degrees Grid",
+    "AMP:longitudeResolution": [
+      0.1,
+      "0.1"
+    ],
+    "AMP:latitudeResolution": [
+      0.1,
+      "0.1"
+    ],
+    "@id": "AMP:Grid0.1X0.1degrees"
+  },
+  "AMP:fillValue": -9999.900390625,
+  "AMP:unitString": "mm/hr",
+  "AMP:modifiedDate": "2021-11-20T20:06:16.966048Z",
+  "AMP:temporalResolution": {
+    "skos:prefLabel": "0.5 hours",
+    "@id": "AMP:_0.5hours"
+  },
+  "@id": "AMP:_2ef4a077d1b548879adfb2b2587f44bc"
+}

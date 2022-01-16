@@ -1165,26 +1165,27 @@ public class Model extends KimObject implements IModel {
                         case "WARNING":
                             monitor.warn(notification.getMessage(), getStatement());
                             break;
-                        case "INFO":
-                            if (Urns.INSTANCE.isLocal(res.getUrn())
-                                    || Urns.INSTANCE.isUniversal(res.getUrn())) {
-                                /*
-                                 * node resources shouldn't talk as they contain lots of import
-                                 * history
-                                 */
-                                monitor.info(notification.getMessage(), getStatement());
-                            }
-                            break;
-                        case "FINE":
-                            if (Urns.INSTANCE.isLocal(res.getUrn())
-                                    || Urns.INSTANCE.isUniversal(res.getUrn())) {
-                                /*
-                                 * node resources shouldn't talk as they contain lots of import
-                                 * history
-                                 */
-                                monitor.debug(notification.getMessage(), getStatement());
-                            }
-                            break;
+                            // we don't need info and debug messages to end up in the editor
+//                        case "INFO":
+//                            if (Urns.INSTANCE.isLocal(res.getUrn())
+//                                    || Urns.INSTANCE.isUniversal(res.getUrn())) {
+//                                /*
+//                                 * node resources shouldn't talk as they contain lots of import
+//                                 * history
+//                                 */
+//                                monitor.info(notification.getMessage(), getStatement());
+//                            }
+//                            break;
+//                        case "FINE":
+//                            if (Urns.INSTANCE.isLocal(res.getUrn())
+//                                    || Urns.INSTANCE.isUniversal(res.getUrn())) {
+//                                /*
+//                                 * node resources shouldn't talk as they contain lots of import
+//                                 * history
+//                                 */
+//                                monitor.debug(notification.getMessage(), getStatement());
+//                            }
+//                            break;
                         }
                     }
                 }

@@ -1,0 +1,109 @@
+{
+  "@context": {
+    "AMP": "http://lingualogica.net/AMP#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "envo": "http://purl.obolibrary.org/obo/envo#",
+    "chebi": "http://purl.obolibrary.org/obo/chebi#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "shacl": "http://www.w3.org/ns/shacl#",
+    "AMP:fillValue": {
+      "@type": "xsd:double"
+    },
+    "AMP:modifiedDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:createdDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:dimensionSize": {
+      "@type": "xsd:double"
+    },
+    "AMP:offset": {
+      "@type": "xsd:double"
+    },
+    "AMP:scaleFactor": {
+      "@type": "xsd:double"
+    },
+    "AMP:collection": {
+      "@type": "@id"
+    }
+  },
+  "@type": "Variable",
+  "AMP:fillValue": -32768.0,
+  "AMP:temporalResolution": {
+    "skos:altLabel": [
+      "One Day",
+      "24 Hours",
+      "24 hours"
+    ],
+    "skos:prefLabel": "1.0 days",
+    "@id": "AMP:_1.0days"
+  },
+  "AMP:temporalCoverageStartDate": "2002-09-01T09:00:00.000Z",
+  "AMP:dimension": [
+    {
+      "AMP:collection": "AMP:MUR25-JPL-L4-GLOB-v04.2_4.2",
+      "AMP:indexRange": "[-89.875, 89.875]",
+      "AMP:dimensionSize": 720,
+      "AMP:variableName": "/lat",
+      "@id": "AMP:_dd9c7766a3ec4eed95a3d5f2f0846977"
+    },
+    {
+      "AMP:variableName": "/lon",
+      "AMP:collection": "AMP:MUR25-JPL-L4-GLOB-v04.2_4.2",
+      "AMP:indexRange": "[-179.875, 179.875]",
+      "AMP:dimensionSize": 1440,
+      "@id": "AMP:_3ee38a68fb41405599c42b994a588df3"
+    },
+    {
+      "AMP:dimensionSize": 1,
+      "AMP:indexRange": "[683715600.0, 683715600.0]",
+      "AMP:collection": "AMP:MUR25-JPL-L4-GLOB-v04.2_4.2",
+      "AMP:variableName": "/time",
+      "@id": "AMP:_8304f96611474b62bbe46a418b87db67"
+    }
+  ],
+  "AMP:collection": {
+    "AMP:distributionURL": [
+      "https://thredds.jpl.nasa.gov/thredds/catalog_ghrsst_gds2.html?dataset=MUR25-JPL-L4-GLOB-v04.2",
+      "https://podaac-tools.jpl.nasa.gov/drive/files/allData/ghrsst/data/GDS2/L4/GLOB/JPL/MUR25/v4.2",
+      "https://podaac.jpl.nasa.gov/ws/search/granule/?datasetId=PODAAC-GHM25-4FJ42"
+    ],
+    "AMP:currentVersion": "true",
+    "AMP:doi": "<https://doi.org/10.5067/GHM25-4FJ42>",
+    "AMP:temporalCoverageStartDate": "2002-09-01T09:00:00.000Z",
+    "AMP:CMRConceptID": "C1646568487-PODAAC",
+    "AMP:grid": "AMP:Grid0.25X0.25degrees",
+    "@id": "AMP:MUR25-JPL-L4-GLOB-v04.2_4.2"
+  },
+  "AMP:modifiedDate": "2021-11-22T20:17:04.648487Z",
+  "AMP:instrument": {
+    "skos:prefLabel": "MODIS",
+    "AMP:additionalInformation": "<http://database.eohandbook.com/database/instrumentsummary.aspx?instrumentID=395>",
+    "AMP:ceosID": "395",
+    "skos:altLabel": "MODerate-Resolution Imaging Spectroradiometer",
+    "@id": "AMP:MODISInstrument"
+  },
+  "AMP:offset": 0.0,
+  "AMP:variableName": "/analysed_sst",
+  "AMP:additionalInformation": "<https://doi.org/10.5067/GHM25-4FJ42>",
+  "AMP:createdDate": "2021-11-22T20:17:04.648487Z",
+  "AMP:spatialResolution": {
+    "AMP:latitudeResolution": [
+      "0.25",
+      0.25
+    ],
+    "AMP:unitOfMeasure": "AMP:degrees",
+    "skos:prefLabel": "0.25 X 0.25 degrees Grid",
+    "AMP:longitudeResolution": [
+      "0.25",
+      0.25
+    ],
+    "@id": "AMP:Grid0.25X0.25degrees"
+  },
+  "AMP:unitString": "kelvin",
+  "AMP:scaleFactor": 1.0,
+  "@id": "AMP:_df1fdfeb460644e0ba75b35d9bccc130"
+}

@@ -1,0 +1,128 @@
+{
+  "@context": {
+    "AMP": "http://lingualogica.net/AMP#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "envo": "http://purl.obolibrary.org/obo/envo#",
+    "chebi": "http://purl.obolibrary.org/obo/chebi#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "shacl": "http://www.w3.org/ns/shacl#",
+    "AMP:fillValue": {
+      "@type": "xsd:double"
+    },
+    "AMP:modifiedDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:createdDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:dimensionSize": {
+      "@type": "xsd:double"
+    },
+    "AMP:offset": {
+      "@type": "xsd:double"
+    },
+    "AMP:scaleFactor": {
+      "@type": "xsd:double"
+    },
+    "AMP:collection": {
+      "@type": "@id"
+    }
+  },
+  "@type": "Variable",
+  "AMP:variableName": "/sea_ice_fraction",
+  "AMP:dimension": [
+    {
+      "AMP:indexRange": "[-89.95600128173828, 89.95600128173828]",
+      "AMP:collection": "AMP:MW_IR_OI-REMSS-L4-GLOB-v5.0_5.0",
+      "AMP:dimensionSize": 2048,
+      "AMP:variableName": "/lat",
+      "@id": "AMP:_2f2a425b24b94df9898fcfe924015d60"
+    },
+    {
+      "AMP:dimensionSize": 1,
+      "AMP:indexRange": "[675777600.0, 675777600.0]",
+      "AMP:collection": "AMP:MW_IR_OI-REMSS-L4-GLOB-v5.0_5.0",
+      "AMP:variableName": "/time",
+      "@id": "AMP:_939df4edc5be4cd9965e7d2c75b54eeb"
+    },
+    {
+      "AMP:dimensionSize": 4096,
+      "AMP:variableName": "/lon",
+      "AMP:collection": "AMP:MW_IR_OI-REMSS-L4-GLOB-v5.0_5.0",
+      "AMP:indexRange": "[-179.95599365234375, 179.95599365234375]",
+      "@id": "AMP:_5ddff9220bc64757a8adf2014ef235c8"
+    }
+  ],
+  "AMP:modifiedDate": "2021-11-19T23:59:47.359242Z",
+  "AMP:featureOfInterest": {
+    "skos:altLabel": [
+      "H20, Solid Phase",
+      "H20, Ice",
+      "Water, Solid Phase"
+    ],
+    "skos:prefLabel": "Water, Ice",
+    "AMP:additionalInformation": "<http://glossary.ametsoc.org/wiki/Ice>",
+    "@id": "AMP:Water-Ice"
+  },
+  "AMP:temporalCoverageStartDate": "2002-06-01T00:00:00.000Z",
+  "AMP:cfStandardName": "sea_ice_area_fraction",
+  "AMP:spatialResolution": {
+    "AMP:latitudeResolution": "0.09",
+    "skos:prefLabel": "0.09 X 0.09 degrees Grid",
+    "AMP:longitudeResolution": "0.09",
+    "AMP:unitOfMeasure": "AMP:degrees",
+    "@id": "AMP:Grid0.09X0.09degrees"
+  },
+  "AMP:instrument": {
+    "skos:prefLabel": "MODIS",
+    "AMP:additionalInformation": "<http://database.eohandbook.com/database/instrumentsummary.aspx?instrumentID=395>",
+    "AMP:ceosID": "395",
+    "skos:altLabel": "MODerate-Resolution Imaging Spectroradiometer",
+    "@id": "AMP:MODISInstrument"
+  },
+  "AMP:offset": 0.0,
+  "AMP:createdDate": "2021-11-19T23:59:47.359242Z",
+  "AMP:collection": {
+    "AMP:CMRConceptID": "C1658476085-PODAAC",
+    "AMP:distributionURL": [
+      "https://thredds.jpl.nasa.gov/thredds/catalog_ghrsst_gds2.html?dataset=MW_IR_OI-REMSS-L4-GLOB-v5.0",
+      "https://podaac.jpl.nasa.gov/ws/search/granule/?datasetId=PODAAC-GHMWI-4FR04&apidoc",
+      "https://podaac-tools.jpl.nasa.gov/drive/files/allData/ghrsst/data/GDS2/L4/GLOB/REMSS/mw_ir_OI/v5.0"
+    ],
+    "AMP:currentVersion": "true",
+    "AMP:doi": "<https://doi.org/10.5067/GHMWI-4FR05>",
+    "AMP:temporalCoverageStartDate": "2002-06-01T00:00:00.000Z",
+    "AMP:grid": "AMP:Grid0.09X0.09degrees",
+    "@id": "AMP:MW_IR_OI-REMSS-L4-GLOB-v5.0_5.0"
+  },
+  "AMP:fillValue": -127.0,
+  "AMP:measuredQuantity": {
+    "skos:prefLabel": "Area Fraction",
+    "skos:altLabel": [
+      "Area/Area",
+      "Area Per Area"
+    ],
+    "@id": "AMP:Area_Fraction"
+  },
+  "AMP:unitString": "1",
+  "AMP:additionalInformation": "<https://doi.org/10.5067/GHMWI-4FR05>",
+  "AMP:measurementContext": {
+    "skos:altLabel": "Sea",
+    "skos:prefLabel": "Ocean",
+    "AMP:additionalInformation": "<http://purl.obolibrary.org/obo/ENVO_00000015>",
+    "@id": "AMP:Ocean"
+  },
+  "AMP:scaleFactor": 1.0,
+  "AMP:temporalResolution": {
+    "skos:altLabel": [
+      "One Day",
+      "24 Hours",
+      "24 hours"
+    ],
+    "skos:prefLabel": "1.0 days",
+    "@id": "AMP:_1.0days"
+  },
+  "@id": "AMP:_b6530de05de64cc391067467ff988cb8"
+}

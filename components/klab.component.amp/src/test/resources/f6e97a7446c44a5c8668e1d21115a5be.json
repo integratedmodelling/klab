@@ -1,0 +1,133 @@
+{
+  "@context": {
+    "AMP": "http://lingualogica.net/AMP#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "envo": "http://purl.obolibrary.org/obo/envo#",
+    "chebi": "http://purl.obolibrary.org/obo/chebi#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "shacl": "http://www.w3.org/ns/shacl#",
+    "AMP:fillValue": {
+      "@type": "xsd:double"
+    },
+    "AMP:modifiedDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:createdDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:dimensionSize": {
+      "@type": "xsd:double"
+    },
+    "AMP:offset": {
+      "@type": "xsd:double"
+    },
+    "AMP:scaleFactor": {
+      "@type": "xsd:double"
+    },
+    "AMP:collection": {
+      "@type": "@id"
+    }
+  },
+  "@type": "Variable",
+  "AMP:additionalInformation": "https://doi.org/10.5067/Terra+Aqua/CERES/CLDTYPHIST_L3.004",
+  "AMP:featureOfInterest": {
+    "skos:altLabel": "Sea",
+    "skos:prefLabel": "Ocean",
+    "AMP:additionalInformation": "<http://purl.obolibrary.org/obo/ENVO_00000015>",
+    "@id": "AMP:Ocean"
+  },
+  "AMP:dimension": [
+    {
+      "AMP:dimensionSize": 360,
+      "AMP:indexRange": "[-179.5, 179.5]",
+      "AMP:variableName": "/longitude",
+      "@id": "AMP:_20cd13e57c544a858b6207127e326765"
+    },
+    {
+      "AMP:variableName": "/latitude",
+      "AMP:dimensionSize": 180,
+      "AMP:indexRange": "[-89.5, 89.5]",
+      "@id": "AMP:_c2a67b686c054d039fca040ad47bd402"
+    }
+  ],
+  "AMP:scaleFactor": 1.0,
+  "AMP:unitString": "%",
+  "AMP:instrument": {
+    "AMP:ceosID": "397",
+    "skos:prefLabel": "CERES",
+    "skos:altLabel": "Cloud and the Earth's Radiant Energy System",
+    "AMP:additionalInformation": "<http://database.eohandbook.com/database/instrumentsummary.aspx?instrumentID=397>",
+    "@id": "AMP:CERESInstrument"
+  },
+  "AMP:temporalResolution": {
+    "skos:altLabel": "One Month",
+    "skos:prefLabel": [
+      "1.0 months",
+      "1 Month"
+    ],
+    "@id": "AMP:_1.0months"
+  },
+  "AMP:measurementContext": [
+    {
+      "AMP:additionalInformation": "<http://purl.obolibrary.org/obo/ENVO_01000324>",
+      "skos:prefLabel": "Earth Surface",
+      "@id": "AMP:Earth_Surface"
+    },
+    {
+      "AMP:additionalInformation": [
+        "<https://en.wikipedia.org/wiki/Daytime>",
+        "<http://purl.obolibrary.org/obo/NCIT_C64928>"
+      ],
+      "skos:prefLabel": "Daytime",
+      "@id": "AMP:Daytime"
+    }
+  ],
+  "AMP:temporalCoverageStartDate": "2000-03-01T00:00:00.000000Z",
+  "AMP:variableName": "/Monthly_Day_Averages/Regional_Information_Monthly_Day/ocean_coverage_md",
+  "AMP:collection": {
+    "AMP:grid": "AMP:Grid1X1degrees",
+    "AMP:distributionURL": [
+      "https://search.earthdata.nasa.gov/search/project?p=!C1385072232-LARC_ASDC",
+      "https://opendap.larc.nasa.gov/opendap/CERES/CldTypHist/GEO-MODIS_Edition4A/contents.html"
+    ],
+    "skos:prefLabel": "CER_CldTypHist_GEO-MODIS_Edition4A",
+    "AMP:CMRConceptID": "C1385072232-LARC_ASDC",
+    "AMP:temporalCoverageStartDate": "2000-03-01T00:00:00.000000Z",
+    "AMP:doi": "https://doi.org/10.5067/Terra+Aqua/CERES/CLDTYPHIST_L3.004",
+    "AMP:currentVersion": true,
+    "@id": "AMP:CER_CldTypHist_GEO-MODIS_Edition4A"
+  },
+  "AMP:offset": 0.0,
+  "AMP:modifiedDate": "2021-11-03T00:00:00.000000Z",
+  "AMP:unitOfMeasure": {
+    "skos:altLabel": "%",
+    "skos:prefLabel": "Percent",
+    "@id": "AMP:Percent"
+  },
+  "AMP:spatialResolution": {
+    "AMP:longitudeResolution": [
+      1.0,
+      "1"
+    ],
+    "AMP:latitudeResolution": [
+      1.0,
+      "1"
+    ],
+    "skos:prefLabel": "1 X 1 degrees Grid",
+    "AMP:unitOfMeasure": "AMP:degrees",
+    "@id": "AMP:Grid1X1degrees"
+  },
+  "AMP:measuredQuantity": {
+    "skos:prefLabel": "Area Fraction",
+    "skos:altLabel": [
+      "Area/Area",
+      "Area Per Area"
+    ],
+    "@id": "AMP:Area_Fraction"
+  },
+  "AMP:createdDate": "2021-11-03T00:00:00.000000Z",
+  "AMP:fillValue": 3.4028234663852886e+38,
+  "@id": "AMP:_f6e97a7446c44a5c8668e1d21115a5be"
+}

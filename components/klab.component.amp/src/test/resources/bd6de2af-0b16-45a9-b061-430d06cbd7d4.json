@@ -1,0 +1,128 @@
+{
+  "@context": {
+    "AMP": "http://lingualogica.net/AMP#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "envo": "http://purl.obolibrary.org/obo/envo#",
+    "chebi": "http://purl.obolibrary.org/obo/chebi#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "shacl": "http://www.w3.org/ns/shacl#",
+    "AMP:fillValue": {
+      "@type": "xsd:double"
+    },
+    "AMP:modifiedDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:createdDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:dimensionSize": {
+      "@type": "xsd:double"
+    },
+    "AMP:offset": {
+      "@type": "xsd:double"
+    },
+    "AMP:scaleFactor": {
+      "@type": "xsd:double"
+    },
+    "AMP:collection": {
+      "@type": "@id"
+    }
+  },
+  "@type": "Variable",
+  "AMP:fillValue": -9999.0,
+  "AMP:createdDate": "2021-11-03T00:00:00.000000Z",
+  "skos:prefLabel": "sm_rootzone_pctl",
+  "AMP:scaleFactor": 1.0,
+  "AMP:instrument": {
+    "skos:altLabel": "L-band Radiometer (SMAP)",
+    "AMP:ceosID": "1554",
+    "skos:prefLabel": "SMAP L-band Radiometer",
+    "AMP:additionalInformation": "<http://database.eohandbook.com/database/instrumentsummary.aspx?instrumentID=1554>",
+    "@id": "AMP:SMAPL-bandRadiometerInstrument"
+  },
+  "AMP:measuredQuantity": {
+    "skos:prefLabel": "Volume Fraction",
+    "skos:altLabel": [
+      "Volume Per Volume",
+      "Volume/Volume"
+    ],
+    "@id": "AMP:Volume_Fraction"
+  },
+  "AMP:collection": {
+    "AMP:distributionURL": "https://n5eil01u.ecs.nsidc.org/SMAP/SPL4SMGP.004/",
+    "AMP:doi": "https://doi.org/10.5067/KPJNN2GI1DQR",
+    "AMP:grid": "AMP:Grid9X9kilometers",
+    "AMP:temporalCoverageStartDate": "2015-03-31T00:00:00Z",
+    "AMP:currentVersion": true,
+    "skos:prefLabel": "SPL4SMGP_V005",
+    "@id": "AMP:SPL4SMGP_V005"
+  },
+  "AMP:dimension": [
+    {
+      "skos:prefLabel": "x",
+      "AMP:dimensionType": "AMP:LongitudeDimension",
+      "AMP:dimensionSize": "3856",
+      "AMP:indexRange": "[-179.953, 179.953]",
+      "@id": "AMP:_bd6de2af-0b16-45a9-b061-430d06cbd7d4Dim2"
+    },
+    {
+      "AMP:dimensionType": "AMP:LatitudeDimension",
+      "AMP:indexRange": "[84.65644, -84.65644]",
+      "skos:prefLabel": "y",
+      "AMP:dimensionSize": "1624",
+      "@id": "AMP:_bd6de2af-0b16-45a9-b061-430d06cbd7d4Dim1"
+    }
+  ],
+  "AMP:measurementContext": {
+    "skos:altLabel": [
+      "Soil Root Zone",
+      "Root Zone"
+    ],
+    "AMP:additionalInformation": "<https://www.soils.org/publications/soils-glossary/#>",
+    "skos:prefLabel": "Soil-Root Zone Layer",
+    "@id": "AMP:Soil-Root_Zone_Layer"
+  },
+  "AMP:modifiedDate": "2021-11-03T00:00:00.000000Z",
+  "AMP:temporalResolution": {
+    "skos:altLabel": [
+      "Three Hours",
+      "180 Minutes"
+    ],
+    "skos:prefLabel": "3.0 hours",
+    "@id": "AMP:_3.0hours"
+  },
+  "AMP:offset": 0.0,
+  "AMP:variableName": "/Geophysical_Data/sm_rootzone_pctl",
+  "AMP:distributionURL": "<https://n5eil01u.ecs.nsidc.org/SMAP/SPL4SMGP.004/>",
+  "AMP:featureOfInterest": {
+    "AMP:additionalInformation": [
+      "<http://purl.obolibrary.org/obo/ENVO_00002042>",
+      "<http://purl.obolibrary.org/obo/CHEBI_15377>",
+      "<http://glossary.ametsoc.org/wiki/Water>"
+    ],
+    "skos:prefLabel": "Water, All Phases",
+    "skos:altLabel": "H20",
+    "@id": "AMP:Water-All_Phases"
+  },
+  "AMP:temporalCoverageStartDate": "2015-03-31T00:00:00Z",
+  "AMP:unitOfMeasure": {
+    "skos:altLabel": "%",
+    "skos:prefLabel": "Percent",
+    "@id": "AMP:Percent"
+  },
+  "AMP:unitString": "percent",
+  "AMP:additionalInformation": [
+    "<https://doi.org/10.5067/KPJNN2GI1DQR>",
+    "https://doi.org/10.5067/KPJNN2GI1DQR"
+  ],
+  "AMP:spatialResolution": {
+    "AMP:unitOfMeasure": "AMP:kilometers",
+    "AMP:longitudeResolution": 9.0,
+    "skos:prefLabel": "9 X 9 kilometers Grid",
+    "AMP:latitudeResolution": 9.0,
+    "@id": "AMP:Grid9X9kilometers"
+  },
+  "@id": "AMP:_bd6de2af-0b16-45a9-b061-430d06cbd7d4"
+}

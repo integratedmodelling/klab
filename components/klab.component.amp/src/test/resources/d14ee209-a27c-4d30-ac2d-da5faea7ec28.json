@@ -1,0 +1,131 @@
+{
+  "@context": {
+    "AMP": "http://lingualogica.net/AMP#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "envo": "http://purl.obolibrary.org/obo/envo#",
+    "chebi": "http://purl.obolibrary.org/obo/chebi#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "shacl": "http://www.w3.org/ns/shacl#",
+    "AMP:fillValue": {
+      "@type": "xsd:double"
+    },
+    "AMP:modifiedDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:createdDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:dimensionSize": {
+      "@type": "xsd:double"
+    },
+    "AMP:offset": {
+      "@type": "xsd:double"
+    },
+    "AMP:scaleFactor": {
+      "@type": "xsd:double"
+    },
+    "AMP:collection": {
+      "@type": "@id"
+    }
+  },
+  "@type": "Variable",
+  "AMP:dimension": [
+    {
+      "AMP:indexRange": "[-179.953, 179.953]",
+      "AMP:dimensionSize": "3856",
+      "skos:prefLabel": "x",
+      "AMP:dimensionType": "AMP:LongitudeDimension",
+      "@id": "AMP:_d14ee209-a27c-4d30-ac2d-da5faea7ec28Dim2"
+    },
+    {
+      "skos:prefLabel": "y",
+      "AMP:dimensionType": "AMP:LatitudeDimension",
+      "AMP:indexRange": "[84.65644, -84.65644]",
+      "AMP:dimensionSize": "1624",
+      "@id": "AMP:_d14ee209-a27c-4d30-ac2d-da5faea7ec28Dim1"
+    }
+  ],
+  "AMP:measurementContext": {
+    "skos:altLabel": [
+      "Soil-All Layers",
+      "soil (all layers)",
+      "soil",
+      "Soil (All Layers)",
+      "soil-all layers"
+    ],
+    "AMP:additionalInformation": "<https://en.wikipedia.org/wiki/Soil>",
+    "skos:prefLabel": "Soil, All Layers",
+    "@id": "AMP:Soil_All_Layers"
+  },
+  "AMP:collection": {
+    "AMP:distributionURL": "https://n5eil01u.ecs.nsidc.org/SMAP/SPL4SMGP.004/",
+    "AMP:doi": "https://doi.org/10.5067/KPJNN2GI1DQR",
+    "AMP:grid": "AMP:Grid9X9kilometers",
+    "AMP:temporalCoverageStartDate": "2015-03-31T00:00:00Z",
+    "AMP:currentVersion": true,
+    "skos:prefLabel": "SPL4SMGP_V005",
+    "@id": "AMP:SPL4SMGP_V005"
+  },
+  "AMP:temporalResolution": {
+    "skos:altLabel": [
+      "Three Hours",
+      "180 Minutes"
+    ],
+    "skos:prefLabel": "3.0 hours",
+    "@id": "AMP:_3.0hours"
+  },
+  "AMP:temporalCoverageStartDate": "2015-03-31T00:00:00Z",
+  "AMP:offset": 0.0,
+  "AMP:modifiedDate": "2021-11-03T00:00:00.000000Z",
+  "AMP:variableName": "/Geophysical_Data/sm_profile_pctl",
+  "AMP:additionalInformation": [
+    "<https://doi.org/10.5067/KPJNN2GI1DQR>",
+    "https://doi.org/10.5067/KPJNN2GI1DQR"
+  ],
+  "AMP:featureOfInterest": {
+    "AMP:additionalInformation": [
+      "<http://purl.obolibrary.org/obo/ENVO_00002042>",
+      "<http://purl.obolibrary.org/obo/CHEBI_15377>",
+      "<http://glossary.ametsoc.org/wiki/Water>"
+    ],
+    "skos:prefLabel": "Water, All Phases",
+    "skos:altLabel": "H20",
+    "@id": "AMP:Water-All_Phases"
+  },
+  "AMP:distributionURL": "<https://n5eil01u.ecs.nsidc.org/SMAP/SPL4SMGP.004/>",
+  "AMP:unitOfMeasure": {
+    "skos:altLabel": "%",
+    "skos:prefLabel": "Percent",
+    "@id": "AMP:Percent"
+  },
+  "AMP:unitString": "percent",
+  "AMP:fillValue": -9999.0,
+  "AMP:spatialResolution": {
+    "AMP:unitOfMeasure": "AMP:kilometers",
+    "AMP:longitudeResolution": 9.0,
+    "skos:prefLabel": "9 X 9 kilometers Grid",
+    "AMP:latitudeResolution": 9.0,
+    "@id": "AMP:Grid9X9kilometers"
+  },
+  "AMP:createdDate": "2021-11-03T00:00:00.000000Z",
+  "skos:prefLabel": "sm_profile_pctl",
+  "AMP:scaleFactor": 1.0,
+  "AMP:measuredQuantity": {
+    "skos:prefLabel": "Volume Fraction",
+    "skos:altLabel": [
+      "Volume Per Volume",
+      "Volume/Volume"
+    ],
+    "@id": "AMP:Volume_Fraction"
+  },
+  "AMP:instrument": {
+    "skos:altLabel": "L-band Radiometer (SMAP)",
+    "AMP:ceosID": "1554",
+    "skos:prefLabel": "SMAP L-band Radiometer",
+    "AMP:additionalInformation": "<http://database.eohandbook.com/database/instrumentsummary.aspx?instrumentID=1554>",
+    "@id": "AMP:SMAPL-bandRadiometerInstrument"
+  },
+  "@id": "AMP:_d14ee209-a27c-4d30-ac2d-da5faea7ec28"
+}

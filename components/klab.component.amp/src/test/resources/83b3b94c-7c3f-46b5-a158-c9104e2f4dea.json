@@ -1,0 +1,127 @@
+{
+  "@context": {
+    "AMP": "http://lingualogica.net/AMP#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "envo": "http://purl.obolibrary.org/obo/envo#",
+    "chebi": "http://purl.obolibrary.org/obo/chebi#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "shacl": "http://www.w3.org/ns/shacl#",
+    "AMP:fillValue": {
+      "@type": "xsd:double"
+    },
+    "AMP:modifiedDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:createdDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:dimensionSize": {
+      "@type": "xsd:double"
+    },
+    "AMP:offset": {
+      "@type": "xsd:double"
+    },
+    "AMP:scaleFactor": {
+      "@type": "xsd:double"
+    },
+    "AMP:collection": {
+      "@type": "@id"
+    }
+  },
+  "@type": "Variable",
+  "AMP:collection": {
+    "AMP:grid": "AMP:Grid1X1degrees",
+    "AMP:distributionURL": "https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/5110/CLDPROP_M3_MODIS_Aqua/",
+    "AMP:CMRConceptID": "C1655783889-LAADS",
+    "AMP:doi": "https://doi.org/10.5067/VIIRS/CLDPROP_M3_MODIS_Aqua.011",
+    "skos:prefLabel": "CLDPROP_M3_MODIS_AQUA_V1.1",
+    "AMP:temporalCoverageStartDate": "2012-01-19T00:00:00Z",
+    "AMP:currentVersion": true,
+    "AMP:longName": "MODIS/Aqua Cloud Properties Level 3 monthly, 1x1 degree grid",
+    "@id": "AMP:CLDPROP_M3_MODIS_Aqua_V1-1"
+  },
+  "AMP:dimension": [
+    {
+      "AMP:dimensionSize": "180",
+      "skos:prefLabel": "Latitude",
+      "AMP:indexRange": "[-89.5, 89.5]",
+      "@id": "AMP:_08e0d18c-a4a0-41d3-b41e-f830afa4551bDim2"
+    },
+    {
+      "skos:prefLabel": "Longitude",
+      "AMP:indexRange": "[-179.5, 179.5]",
+      "AMP:variableName": "/longitude",
+      "AMP:dimensionSize": "360",
+      "@id": "AMP:_0da21f0b-c6e9-4067-985e-4ee6df81445bDim1"
+    }
+  ],
+  "AMP:featureOfInterest": {
+    "skos:prefLabel": "Cloud (Water-based, Ice)",
+    "AMP:additionalInformation": "<http://glossary.ametsoc.org/wiki/Ice-crystal_cloud>",
+    "@id": "AMP:Cloud-Water-based-Ice"
+  },
+  "AMP:measuredQuantity": {
+    "skos:altLabel": "Optical Thickness-Extinction",
+    "skos:prefLabel": "Optical Depth-Extinction",
+    "AMP:additionalInformation": [
+      "<http://glossary.ametsoc.org/wiki/Optical_depth>",
+      "<https://en.wikipedia.org/wiki/Optical_depth>"
+    ],
+    "@id": "AMP:Optical_Depth-Extinction"
+  },
+  "AMP:measurementContext": {
+    "AMP:additionalInformation": "<http://purl.obolibrary.org/obo/ENVO_01000810>",
+    "skos:prefLabel": "Earth's Atmosphere",
+    "@id": "AMP:Atmosphere-Earth"
+  },
+  "AMP:temporalResolution": {
+    "skos:altLabel": "One Month",
+    "skos:prefLabel": [
+      "1.0 months",
+      "1 Month"
+    ],
+    "@id": "AMP:_1.0months"
+  },
+  "AMP:unitOfMeasure": {
+    "skos:altLabel": [
+      "Dimensionless",
+      "N/A",
+      "None"
+    ],
+    "skos:prefLabel": "Unitless",
+    "@id": "AMP:Unitless"
+  },
+  "AMP:modifiedDate": "2021-11-03T00:00:00.000000Z",
+  "AMP:spatialResolution": {
+    "AMP:longitudeResolution": [
+      1.0,
+      "1"
+    ],
+    "AMP:latitudeResolution": [
+      1.0,
+      "1"
+    ],
+    "skos:prefLabel": "1 X 1 degrees Grid",
+    "AMP:unitOfMeasure": "AMP:degrees",
+    "@id": "AMP:Grid1X1degrees"
+  },
+  "AMP:instrument": {
+    "skos:prefLabel": "MODIS",
+    "AMP:additionalInformation": "<http://database.eohandbook.com/database/instrumentsummary.aspx?instrumentID=395>",
+    "AMP:ceosID": "395",
+    "skos:altLabel": "MODerate-Resolution Imaging Spectroradiometer",
+    "@id": "AMP:MODISInstrument"
+  },
+  "AMP:offset": 0.0,
+  "AMP:temporalCoverageStartDate": "2012-01-19T00:00:00Z",
+  "AMP:additionalInformation": "https://doi.org/10.5067/VIIRS/CLDPROP_M3_MODIS_Aqua.011",
+  "AMP:unitString": "none",
+  "AMP:createdDate": "2021-11-03T00:00:00.000000Z",
+  "AMP:variableName": "Cloud_Optical_Thickness_16_Ice/Mean",
+  "AMP:scaleFactor": 1.0,
+  "skos:prefLabel": "Cloud_Optical_Thickness_16_Ice",
+  "AMP:fillValue": -9999.0,
+  "@id": "AMP:_83b3b94c-7c3f-46b5-a158-c9104e2f4dea"
+}

@@ -1,0 +1,124 @@
+{
+  "@context": {
+    "AMP": "http://lingualogica.net/AMP#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "envo": "http://purl.obolibrary.org/obo/envo#",
+    "chebi": "http://purl.obolibrary.org/obo/chebi#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "shacl": "http://www.w3.org/ns/shacl#",
+    "AMP:fillValue": {
+      "@type": "xsd:double"
+    },
+    "AMP:modifiedDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:createdDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:dimensionSize": {
+      "@type": "xsd:double"
+    },
+    "AMP:offset": {
+      "@type": "xsd:double"
+    },
+    "AMP:scaleFactor": {
+      "@type": "xsd:double"
+    },
+    "AMP:collection": {
+      "@type": "@id"
+    }
+  },
+  "@type": "Variable",
+  "AMP:variableName": "/Geophysical_Data/snow_melt_flux",
+  "AMP:additionalInformation": [
+    "<https://doi.org/10.5067/KPJNN2GI1DQR>",
+    "https://doi.org/10.5067/KPJNN2GI1DQR"
+  ],
+  "AMP:unitOfMeasure": {
+    "skos:altLabel": [
+      "kg/m^2/s^1",
+      "kilogram per square meter per second"
+    ],
+    "skos:prefLabel": "kg m-2 s-1",
+    "@id": "AMP:KilogramPerSquareMeterPerSecond"
+  },
+  "AMP:dimension": [
+    {
+      "skos:prefLabel": "y",
+      "AMP:dimensionSize": "1624",
+      "AMP:indexRange": "[84.65644, -84.65644]",
+      "@id": "AMP:_a94a47bb-cf4e-4247-b2d9-01a38263371eDim1"
+    },
+    {
+      "skos:prefLabel": "x",
+      "AMP:indexRange": "[-179.953, 179.953]",
+      "AMP:dimensionSize": "3856",
+      "@id": "AMP:_a94a47bb-cf4e-4247-b2d9-01a38263371eDim2"
+    }
+  ],
+  "AMP:createdDate": "2021-11-03T00:00:00.000000Z",
+  "AMP:scaleFactor": 1.0,
+  "AMP:spatialResolution": {
+    "AMP:unitOfMeasure": "AMP:kilometers",
+    "AMP:longitudeResolution": 9.0,
+    "skos:prefLabel": "9 X 9 kilometers Grid",
+    "AMP:latitudeResolution": 9.0,
+    "@id": "AMP:Grid9X9kilometers"
+  },
+  "AMP:fillValue": -9999.0,
+  "AMP:measuredQuantity": {
+    "skos:prefLabel": "Mass Per Area Per Time",
+    "skos:altLabel": [
+      "Mass Flow Per Area",
+      "Mass Flux"
+    ],
+    "AMP:additionalInformation": "<https://en.wikipedia.org/wiki/Mass_flux>",
+    "@id": "AMP:Mass_Per_Area_Per_Time"
+  },
+  "AMP:measurementContext": {
+    "AMP:additionalInformation": "<http://purl.obolibrary.org/obo/ENVO_01001785>",
+    "skos:prefLabel": "Earth Surface-Land",
+    "@id": "AMP:Earth_Surface-Land"
+  },
+  "AMP:featureOfInterest": {
+    "skos:prefLabel": "Snowmelt",
+    "skos:altLabel": [
+      "snowmelt",
+      "snow melt"
+    ],
+    "@id": "AMP:Snowmelt"
+  },
+  "AMP:instrument": {
+    "skos:altLabel": "L-band Radiometer (SMAP)",
+    "AMP:ceosID": "1554",
+    "skos:prefLabel": "SMAP L-band Radiometer",
+    "AMP:additionalInformation": "<http://database.eohandbook.com/database/instrumentsummary.aspx?instrumentID=1554>",
+    "@id": "AMP:SMAPL-bandRadiometerInstrument"
+  },
+  "AMP:collection": {
+    "AMP:doi": "https://doi.org/10.5067/KPJNN2GI1DQR",
+    "AMP:distributionURL": "https://n5eil01u.ecs.nsidc.org/SMAP/SPL4SMGP.004/",
+    "AMP:grid": "AMP:Grid9X9kilometers",
+    "AMP:temporalCoverageStartDate": "2015-03-31T00:00:00Z",
+    "AMP:currentVersion": true,
+    "skos:prefLabel": "SPL4SMGP_V005",
+    "@id": "AMP:SPL4SMGP_V005"
+  },
+  "AMP:unitString": "kg m-2 s-1",
+  "AMP:temporalCoverageStartDate": "2015-03-31T00:00:00Z",
+  "skos:prefLabel": "snow_melt_flux",
+  "AMP:modifiedDate": "2021-11-03T00:00:00.000000Z",
+  "AMP:temporalResolution": {
+    "skos:altLabel": [
+      "Three Hours",
+      "180 Minutes"
+    ],
+    "skos:prefLabel": "3.0 hours",
+    "@id": "AMP:_3.0hours"
+  },
+  "AMP:offset": 0.0,
+  "AMP:distributionURL": "<https://n5eil01u.ecs.nsidc.org/SMAP/SPL4SMGP.004/>",
+  "@id": "AMP:_a94a47bb-cf4e-4247-b2d9-01a38263371e"
+}

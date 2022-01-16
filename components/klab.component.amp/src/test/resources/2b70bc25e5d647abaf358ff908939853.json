@@ -1,0 +1,99 @@
+{
+  "@context": {
+    "AMP": "http://lingualogica.net/AMP#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "envo": "http://purl.obolibrary.org/obo/envo#",
+    "chebi": "http://purl.obolibrary.org/obo/chebi#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "shacl": "http://www.w3.org/ns/shacl#",
+    "AMP:fillValue": {
+      "@type": "xsd:double"
+    },
+    "AMP:modifiedDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:createdDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:dimensionSize": {
+      "@type": "xsd:double"
+    },
+    "AMP:offset": {
+      "@type": "xsd:double"
+    },
+    "AMP:scaleFactor": {
+      "@type": "xsd:double"
+    },
+    "AMP:collection": {
+      "@type": "@id"
+    }
+  },
+  "@type": "Variable",
+  "AMP:collection": {
+    "AMP:temporalCoverageStartDate": "1980-01-01T00:00:00.000Z",
+    "AMP:currentVersion": "true",
+    "AMP:CMRConceptID": "C1276812866-GES_DISC",
+    "AMP:grid": "AMP:Grid0.625X0.5degrees",
+    "AMP:distributionURL": "https://goldsmr4.gesdisc.eosdis.nasa.gov/data/MERRA2_MONTHLY/M2TMNXAER.5.12.4/",
+    "AMP:doi": "<https://doi.org/10.5067/FH9A0MLJPC7N>",
+    "@id": "AMP:M2TMNXAER_5.12.4"
+  },
+  "AMP:dimension": [
+    {
+      "AMP:variableName": "/lat",
+      "AMP:collection": "AMP:M2TMNXAER_5.12.4",
+      "AMP:indexRange": "[-90.0, 90.0]",
+      "AMP:dimensionSize": 361,
+      "@id": "AMP:_fd565a4e952a492fbf691c94fb6bc29f"
+    },
+    {
+      "AMP:variableName": "/lon",
+      "AMP:dimensionSize": 576,
+      "AMP:collection": "AMP:M2TMNXAER_5.12.4",
+      "AMP:indexRange": "[-180.0, 179.375]",
+      "@id": "AMP:_962c980c040742da93bd3fbdbc07459c"
+    },
+    {
+      "AMP:dimensionSize": 1,
+      "AMP:variableName": "/time",
+      "AMP:indexRange": "[0.0, 0.0]",
+      "AMP:collection": "AMP:M2TMNXAER_5.12.4",
+      "@id": "AMP:_73c2cd6fe16249449e518cf3adef0d60"
+    }
+  ],
+  "AMP:unitString": "1",
+  "AMP:fillValue": 999999986991104.0,
+  "AMP:temporalResolution": {
+    "skos:altLabel": [
+      "One Day",
+      "24 Hours",
+      "24 hours"
+    ],
+    "skos:prefLabel": "1.0 days",
+    "@id": "AMP:_1.0days"
+  },
+  "AMP:modifiedDate": "2021-11-22T19:33:14.754641Z",
+  "AMP:variableName": "/BCANGSTR",
+  "AMP:scaleFactor": 1.0,
+  "AMP:temporalCoverageStartDate": "1980-01-01T00:00:00.000Z",
+  "AMP:instrument": {
+    "AMP:additionalInformation": "<https://gmao.gsfc.nasa.gov/reanalysis/MERRA-2/>",
+    "skos:altLabel": "MERRA-2",
+    "AMP:description": "The second Modern-Era Retrospective Analysis_for Research and Applications",
+    "skos:prefLabel": "MERRA-2",
+    "@id": "AMP:MERRA-2Instrument"
+  },
+  "AMP:spatialResolution": {
+    "AMP:latitudeResolution": "0.625",
+    "AMP:unitOfMeasure": "AMP:degrees",
+    "AMP:longitudeResolution": "0.5",
+    "skos:prefLabel": "0.625 X 0.5 degrees Grid",
+    "@id": "AMP:Grid0.625X0.5degrees"
+  },
+  "AMP:additionalInformation": "<https://doi.org/10.5067/FH9A0MLJPC7N>",
+  "AMP:createdDate": "2021-11-22T19:33:14.754641Z",
+  "AMP:offset": 0.0,
+  "@id": "AMP:_2b70bc25e5d647abaf358ff908939853"
+}

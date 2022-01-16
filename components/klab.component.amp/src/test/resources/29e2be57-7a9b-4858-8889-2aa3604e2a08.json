@@ -1,0 +1,140 @@
+{
+  "@context": {
+    "AMP": "http://lingualogica.net/AMP#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "envo": "http://purl.obolibrary.org/obo/envo#",
+    "chebi": "http://purl.obolibrary.org/obo/chebi#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "shacl": "http://www.w3.org/ns/shacl#",
+    "AMP:fillValue": {
+      "@type": "xsd:double"
+    },
+    "AMP:modifiedDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:createdDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:dimensionSize": {
+      "@type": "xsd:double"
+    },
+    "AMP:offset": {
+      "@type": "xsd:double"
+    },
+    "AMP:scaleFactor": {
+      "@type": "xsd:double"
+    },
+    "AMP:collection": {
+      "@type": "@id"
+    }
+  },
+  "@type": "Variable",
+  "AMP:spatialResolution": {
+    "AMP:longitudeResolution": [
+      1.0,
+      "1"
+    ],
+    "AMP:latitudeResolution": [
+      1.0,
+      "1"
+    ],
+    "skos:prefLabel": "1 X 1 degrees Grid",
+    "AMP:unitOfMeasure": "AMP:degrees",
+    "@id": "AMP:Grid1X1degrees"
+  },
+  "AMP:collection": {
+    "AMP:temporalCoverageStartDate": "2002-07-01T00:00:00Z",
+    "skos:prefLabel": "CER_SYN1deg-3Hour_Terra-Aqua-MODIS_Edition4A",
+    "skos:altLabel": "CERES and GEO-Enhanced TOA, Within-Atmosphere and Surface Fluxes, Clouds and Aerosols 3-Hourly Terra Edition4A",
+    "AMP:doi": "https://doi.org/10.5067/TERRA+AQUA/CERES/SYN1DEG-3HOUR_L3.004A",
+    "AMP:currentVersion": true,
+    "AMP:distributionURL": "https://opendap.larc.nasa.gov/opendap/CERES/SYN1deg-3Hour/Terra-Aqua-MODIS_Edition4A/contents.html",
+    "AMP:grid": "AMP:Grid1X1degrees",
+    "@id": "AMP:CER_SYN1deg-3Hour_Terra-Aqua-MODIS_Edition4A"
+  },
+  "AMP:offset": 0.0,
+  "AMP:dimension": [
+    {
+      "skos:prefLabel": "Latitude",
+      "AMP:variableName": "/latitude (dimension)",
+      "AMP:indexRange": "[89.5, -89.5]",
+      "AMP:dimensionSize": "180",
+      "@id": "AMP:_06239a72b98f47a7753ff40ddae27571"
+    },
+    {
+      "skos:prefLabel": "Time",
+      "AMP:dimensionSize": "8",
+      "AMP:variableName": "/gmt_3hr_index (dimension)",
+      "AMP:indexRange": "[1, 8]",
+      "@id": "AMP:_06239a726e9-406747a7af4f-f40ddae2757"
+    },
+    {
+      "AMP:indexRange": "[-179.5, 179.5 ]",
+      "AMP:variableName": "/longitude (dimension)",
+      "AMP:dimensionSize": "360",
+      "skos:prefLabel": "Longitude",
+      "@id": "AMP:_4607fc6ca416239a79753-e36ff8f15c30"
+    }
+  ],
+  "AMP:featureOfInterest": {
+    "AMP:additionalInformation": [
+      "<http://glossary.ametsoc.org/wiki/Cloud>",
+      "<http://purl.obolibrary.org/obo/ENVO_01001428>"
+    ],
+    "skos:prefLabel": "Cloud (Water-based)",
+    "@id": "AMP:Cloud-Water-based"
+  },
+  "AMP:createdDate": "2021-11-03T00:00:00.000000Z",
+  "AMP:additionalInformation": "https://doi.org/10.5067/TERRA+AQUA/CERES/SYN1DEG-3HOUR_L3.004A",
+  "AMP:unitString": "Kilometer",
+  "skos:prefLabel": "Effective Height",
+  "AMP:scaleFactor": 1.0,
+  "AMP:temporalCoverageStartDate": "2002-07-01T00:00:00Z",
+  "AMP:instrument": {
+    "AMP:ceosID": "397",
+    "skos:prefLabel": "CERES",
+    "skos:altLabel": "Cloud and the Earth's Radiant Energy System",
+    "AMP:additionalInformation": "<http://database.eohandbook.com/database/instrumentsummary.aspx?instrumentID=397>",
+    "@id": "AMP:CERESInstrument"
+  },
+  "AMP:measurementContext": {
+    "AMP:additionalInformation": "<http://purl.obolibrary.org/obo/ENVO_01000810>",
+    "skos:prefLabel": "Earth's Atmosphere",
+    "@id": "AMP:Atmosphere-Earth"
+  },
+  "AMP:unitOfMeasure": {
+    "AMP:additionalInformation": [
+      "<http://purl.obolibrary.org/obo/NCIT_C71177>",
+      "<https://en.wikipedia.org/wiki/Kilometre>"
+    ],
+    "skos:altLabel": [
+      "kilometre",
+      "km"
+    ],
+    "skos:prefLabel": "km",
+    "@id": "AMP:kilometers"
+  },
+  "AMP:temporalResolution": {
+    "skos:altLabel": [
+      "Three Hours",
+      "180 Minutes"
+    ],
+    "skos:prefLabel": "3.0 hours",
+    "@id": "AMP:_3.0hours"
+  },
+  "AMP:measuredQuantity": {
+    "skos:altLabel": [
+      "Altitude",
+      "Elevation"
+    ],
+    "AMP:additionalInformation": "<http://purl.obolibrary.org/obo/PATO_0001687>",
+    "skos:prefLabel": "Height",
+    "@id": "AMP:Height"
+  },
+  "AMP:variableName": "/Cloud Layer - UpperMid/Effective Height",
+  "AMP:modifiedDate": "2021-11-03T00:00:00.000000Z",
+  "AMP:fillValue": 3.4028235e+38,
+  "@id": "AMP:_29e2be57-7a9b-4858-8889-2aa3604e2a08"
+}

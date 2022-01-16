@@ -1,0 +1,159 @@
+{
+  "@context": {
+    "AMP": "http://lingualogica.net/AMP#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "envo": "http://purl.obolibrary.org/obo/envo#",
+    "chebi": "http://purl.obolibrary.org/obo/chebi#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "shacl": "http://www.w3.org/ns/shacl#",
+    "AMP:fillValue": {
+      "@type": "xsd:double"
+    },
+    "AMP:modifiedDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:createdDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:dimensionSize": {
+      "@type": "xsd:double"
+    },
+    "AMP:offset": {
+      "@type": "xsd:double"
+    },
+    "AMP:scaleFactor": {
+      "@type": "xsd:double"
+    },
+    "AMP:collection": {
+      "@type": "@id"
+    }
+  },
+  "@type": "Variable",
+  "AMP:dimension": [
+    {
+      "AMP:indexRange": "[1.0, 31.0]",
+      "AMP:dimensionSize": 31,
+      "AMP:variableName": "/day_of_month",
+      "@id": "AMP:_dfebd0904fa14ea88a213579b80ae82d"
+    },
+    {
+      "AMP:variableName": "/longitude",
+      "AMP:dimensionSize": 360,
+      "AMP:indexRange": "[-179.5, 179.5]",
+      "@id": "AMP:_6f214934b6a14d9684ecb4caf5fa0638"
+    },
+    {
+      "AMP:dimensionSize": 180,
+      "AMP:variableName": "/latitude",
+      "AMP:indexRange": "[-89.5, 89.5]",
+      "@id": "AMP:_311500c38404407bba33e0cc7ac43212"
+    }
+  ],
+  "AMP:measurementContext": {
+    "skos:altLabel": "TOA",
+    "skos:prefLabel": "Earth's Atmosphere-Top of Atmosphere",
+    "AMP:additionalInformation": "<http://purl.obolibrary.org/obo/ENVO_01000810>",
+    "@id": "AMP:Atmosphere-Earth-Top"
+  },
+  "AMP:scaleFactor": 1.0,
+  "AMP:createdDate": "2021-11-03T00:00:00.000Z",
+  "AMP:offset": 0.0,
+  "AMP:featureOfInterest": [
+    {
+      "skos:prefLabel": "Electromagnetic Radiation, Longwave",
+      "AMP:additionalInformation": "<http://glossary.ametsoc.org/wiki/Longwave_radiation>",
+      "skos:altLabel": "LW Radiation",
+      "@id": "AMP:Electromagnetic_Radiation-Longwave"
+    },
+    {
+      "skos:prefLabel": "Electromagnetic Radiation, Upwelling",
+      "@id": "AMP:Electromagnetic_Radiation-Upwelling"
+    }
+  ],
+  "AMP:fillValue": 3.4028234663852886e+38,
+  "AMP:temporalResolution": {
+    "skos:altLabel": [
+      "One Day",
+      "24 hours",
+      "24 Hours"
+    ],
+    "skos:prefLabel": "1.0 days",
+    "@id": "AMP:_1.0days"
+  },
+  "AMP:temporalCoverageStartDate": [
+    "2002-07-01T00:00:00Z",
+    "2002-07-01T00:00:00.000Z"
+  ],
+  "AMP:instrument": {
+    "skos:altLabel": "Cloud and the Earth's Radiant Energy System",
+    "AMP:additionalInformation": "<http://database.eohandbook.com/database/instrumentsummary.aspx?instrumentID=397>",
+    "skos:prefLabel": "CERES",
+    "AMP:ceosID": "397",
+    "@id": "AMP:CERESInstrument"
+  },
+  "AMP:measuredQuantity": {
+    "skos:altLabel": [
+      "Heat flux density",
+      "Radiative flux",
+      "Irradiance",
+      "Radiant Flux Density"
+    ],
+    "skos:prefLabel": "Power Per Area",
+    "@id": "AMP:Power_Per_Area"
+  },
+  "AMP:collection": {
+    "AMP:longName": "CERES Time-Interpolated TOA Fluxes, Clouds and Aerosols Daily Aqua Edition4A",
+    "AMP:temporalCoverageStartDate": [
+      "2002-07-01T00:00:00.000Z",
+      "2002-07-01T00:00:00Z"
+    ],
+    "AMP:grid": "AMP:Grid1X1degrees",
+    "AMP:distributionURL": "https://opendap.larc.nasa.gov/opendap/CERES/SSF1deg-Day/Aqua-MODIS_Edition4A/contents.html",
+    "AMP:doi": [
+      "https://doi.org/10.5067/AQUA/CERES/SSF1DEGDAY_L3.004A",
+      "<https://doi.org/10.5067/AQUA/CERES/SSF1DEGDAY_L3.004A>"
+    ],
+    "AMP:currentVersion": [
+      true,
+      "true"
+    ],
+    "skos:prefLabel": "CER_SSF1deg-Day_Aqua-MODIS_Edition4A",
+    "AMP:CMRConceptID": "C1000000600-LARC_ASDC",
+    "@id": "AMP:CER_SSF1deg-Day_Aqua-MODIS_Edition4A"
+  },
+  "AMP:additionalInformation": [
+    "https://doi.org/10.5067/AQUA/CERES/SSF1DEGDAY_L3.004A",
+    "<https://doi.org/10.5067/AQUA/CERES/SSF1DEGDAY_L3.004A>"
+  ],
+  "AMP:unitOfMeasure": {
+    "skos:prefLabel": "W m-2",
+    "skos:altLabel": [
+      "Watts Per Square Meter",
+      "w/m^2 "
+    ],
+    "@id": "AMP:Watts_Per_Square_Meter"
+  },
+  "skos:altLabel": [
+    "Outgoing Longwave Radiation",
+    "OLR"
+  ],
+  "AMP:spatialResolution": {
+    "AMP:longitudeResolution": [
+      1.0,
+      "1"
+    ],
+    "skos:prefLabel": "1 X 1 degrees Grid",
+    "AMP:latitudeResolution": [
+      1.0,
+      "1"
+    ],
+    "AMP:unitOfMeasure": "AMP:degrees",
+    "@id": "AMP:Grid1X1degrees"
+  },
+  "AMP:modifiedDate": "2021-11-03T00:00:00.000Z",
+  "AMP:unitString": "W m-2",
+  "AMP:variableName": "/CERES_TOA_Fluxes/clr_toa_lw",
+  "@id": "AMP:_d0be9d1046f9455c85fc5913f87467ab"
+}

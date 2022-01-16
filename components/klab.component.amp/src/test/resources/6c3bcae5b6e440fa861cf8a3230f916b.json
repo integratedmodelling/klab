@@ -1,0 +1,138 @@
+{
+  "@context": {
+    "AMP": "http://lingualogica.net/AMP#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "envo": "http://purl.obolibrary.org/obo/envo#",
+    "chebi": "http://purl.obolibrary.org/obo/chebi#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "shacl": "http://www.w3.org/ns/shacl#",
+    "AMP:fillValue": {
+      "@type": "xsd:double"
+    },
+    "AMP:modifiedDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:createdDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:dimensionSize": {
+      "@type": "xsd:double"
+    },
+    "AMP:offset": {
+      "@type": "xsd:double"
+    },
+    "AMP:scaleFactor": {
+      "@type": "xsd:double"
+    },
+    "AMP:collection": {
+      "@type": "@id"
+    }
+  },
+  "@type": "Variable",
+  "AMP:fillValue": 3.4028234663852886e+38,
+  "AMP:scaleFactor": 1.0,
+  "AMP:unitString": "K",
+  "AMP:temporalResolution": {
+    "skos:altLabel": [
+      "One Day",
+      "24 Hours",
+      "24 hours"
+    ],
+    "skos:prefLabel": "1.0 days",
+    "@id": "AMP:_1.0days"
+  },
+  "AMP:instrument": [
+    {
+      "AMP:ceosID": "397",
+      "skos:prefLabel": "CERES",
+      "skos:altLabel": "Cloud and the Earth's Radiant Energy System",
+      "AMP:additionalInformation": "<http://database.eohandbook.com/database/instrumentsummary.aspx?instrumentID=397>",
+      "@id": "AMP:CERESInstrument"
+    },
+    {
+      "skos:prefLabel": "MODIS",
+      "AMP:additionalInformation": "<http://database.eohandbook.com/database/instrumentsummary.aspx?instrumentID=395>",
+      "AMP:ceosID": "395",
+      "skos:altLabel": "MODerate-Resolution Imaging Spectroradiometer",
+      "@id": "AMP:MODISInstrument"
+    }
+  ],
+  "AMP:createdDate": "2021-11-22T22:15:25.992905Z",
+  "AMP:dimension": [
+    {
+      "AMP:indexRange": "[-179.5, 179.5]",
+      "AMP:collection": "AMP:CER_FluxByCldTyp-Day_Terra-Aqua-MODIS_Edition4A",
+      "AMP:variableName": "/longitude",
+      "AMP:dimensionSize": 360,
+      "@id": "AMP:_d57ce4fcbec64a1fb8f882e78785c13a"
+    },
+    {
+      "AMP:collection": "AMP:CER_FluxByCldTyp-Day_Terra-Aqua-MODIS_Edition4A",
+      "AMP:indexRange": "[1.0, 31.0]",
+      "AMP:dimensionSize": 31,
+      "AMP:variableName": "/day_index",
+      "@id": "AMP:_b02055af19dd4728ada35aa508871b67"
+    },
+    {
+      "AMP:dimensionSize": 180,
+      "AMP:indexRange": "[-89.5, 89.5]",
+      "AMP:collection": "AMP:CER_FluxByCldTyp-Day_Terra-Aqua-MODIS_Edition4A",
+      "AMP:variableName": "/latitude",
+      "@id": "AMP:_5f964ffe9e0f4f5788cce52b05d9ee70"
+    }
+  ],
+  "AMP:additionalInformation": "<https://doi.org/10.5067/Terra-Aqua/CERES/FLUXBYCLDTYP-DAY_L3.004A>",
+  "AMP:variableName": "/FluxByCldTyp_Total_Cloud_Properties/cldtot_eff_temp",
+  "AMP:temporalCoverageStartDate": "2002-07-01T00:00:00.000Z",
+  "AMP:offset": 0.0,
+  "AMP:spatialResolution": {
+    "AMP:longitudeResolution": [
+      1.0,
+      "1"
+    ],
+    "AMP:latitudeResolution": [
+      1.0,
+      "1"
+    ],
+    "skos:prefLabel": "1 X 1 degrees Grid",
+    "AMP:unitOfMeasure": "AMP:degrees",
+    "@id": "AMP:Grid1X1degrees"
+  },
+  "AMP:featureOfInterest": {
+    "AMP:additionalInformation": [
+      "<http://glossary.ametsoc.org/wiki/Air>",
+      "<http://purl.obolibrary.org/obo/ENVO_00002005>"
+    ],
+    "skos:prefLabel": "Air",
+    "@id": "AMP:Air"
+  },
+  "AMP:modifiedDate": "2021-11-22T22:15:25.992905Z",
+  "AMP:measuredQuantity": {
+    "AMP:additionalInformation": [
+      "<http://glossary.ametsoc.org/wiki/Effective_temperature>",
+      "<https://en.wikipedia.org/wiki/Effective_temperature>"
+    ],
+    "skos:prefLabel": "Temperature, Effective",
+    "@id": "AMP:Temperature-Effective"
+  },
+  "AMP:measurementContext": {
+    "AMP:additionalInformation": [
+      "<http://glossary.ametsoc.org/wiki/Cloud>",
+      "<http://purl.obolibrary.org/obo/ENVO_01001428>"
+    ],
+    "skos:prefLabel": "Cloud (Water-based)",
+    "@id": "AMP:Cloud-Water-based"
+  },
+  "AMP:collection": {
+    "AMP:CMRConceptID": "C1886238385-LARC_ASDC",
+    "AMP:grid": "AMP:Grid1X1degrees",
+    "AMP:distributionURL": "https://opendap.larc.nasa.gov/opendap/CERES/FluxByCldTyp-Day/Terra-Aqua-MODIS_Edition4A/contents.html",
+    "AMP:temporalCoverageStartDate": "2002-07-01T00:00:00.000Z",
+    "AMP:currentVersion": "true",
+    "AMP:doi": "<https://doi.org/10.5067/Terra-Aqua/CERES/FLUXBYCLDTYP-DAY_L3.004A>",
+    "@id": "AMP:CER_FluxByCldTyp-Day_Terra-Aqua-MODIS_Edition4A"
+  },
+  "@id": "AMP:_6c3bcae5b6e440fa861cf8a3230f916b"
+}

@@ -1,0 +1,143 @@
+{
+  "@context": {
+    "AMP": "http://lingualogica.net/AMP#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "envo": "http://purl.obolibrary.org/obo/envo#",
+    "chebi": "http://purl.obolibrary.org/obo/chebi#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "shacl": "http://www.w3.org/ns/shacl#",
+    "AMP:fillValue": {
+      "@type": "xsd:double"
+    },
+    "AMP:modifiedDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:createdDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:dimensionSize": {
+      "@type": "xsd:double"
+    },
+    "AMP:offset": {
+      "@type": "xsd:double"
+    },
+    "AMP:scaleFactor": {
+      "@type": "xsd:double"
+    },
+    "AMP:collection": {
+      "@type": "@id"
+    }
+  },
+  "@type": "Variable",
+  "AMP:offset": 0.0,
+  "AMP:additionalInformation": [
+    "https://doi.org/10.5067/KPJNN2GI1DQR",
+    "<https://doi.org/10.5067/KPJNN2GI1DQR>"
+  ],
+  "AMP:variableName": "/Geophysical_Data/baseflow_flux",
+  "AMP:unitOfMeasure": {
+    "skos:altLabel": [
+      "kg/m^2/s^1",
+      "kilogram per square meter per second"
+    ],
+    "skos:prefLabel": "kg m-2 s-1",
+    "@id": "AMP:KilogramPerSquareMeterPerSecond"
+  },
+  "AMP:createdDate": "2021-11-03T00:00:00.000000Z",
+  "AMP:measuredQuantity": {
+    "skos:prefLabel": "Mass Per Area Per Time",
+    "skos:altLabel": [
+      "Mass Flow Per Area",
+      "Mass Flux"
+    ],
+    "AMP:additionalInformation": "<https://en.wikipedia.org/wiki/Mass_flux>",
+    "@id": "AMP:Mass_Per_Area_Per_Time"
+  },
+  "AMP:featureOfInterest": [
+    {
+      "skos:altLabel": [
+        "Water, Liquid Phase",
+        "H20, Liquid"
+      ],
+      "AMP:additionalInformation": [
+        "<http://glossary.ametsoc.org/wiki/Water>",
+        "<http://purl.obolibrary.org/obo/CHEBI_15377>"
+      ],
+      "skos:prefLabel": "Liquid, Water",
+      "@id": "AMP:Water-Liquid"
+    },
+    {
+      "skos:altLabel": "Baseflow",
+      "AMP:additionalInformation": "<https://link.springer.com/referenceworkentry/10.1007%2F978-90-481-2642-2_36>",
+      "skos:prefLabel": "Baseflow",
+      "@id": "AMP:Baseflow"
+    }
+  ],
+  "AMP:spatialResolution": {
+    "AMP:unitOfMeasure": "AMP:kilometers",
+    "AMP:longitudeResolution": 9.0,
+    "skos:prefLabel": "9 X 9 kilometers Grid",
+    "AMP:latitudeResolution": 9.0,
+    "@id": "AMP:Grid9X9kilometers"
+  },
+  "AMP:instrument": {
+    "skos:altLabel": "L-band Radiometer (SMAP)",
+    "AMP:ceosID": "1554",
+    "skos:prefLabel": "SMAP L-band Radiometer",
+    "AMP:additionalInformation": "<http://database.eohandbook.com/database/instrumentsummary.aspx?instrumentID=1554>",
+    "@id": "AMP:SMAPL-bandRadiometerInstrument"
+  },
+  "AMP:measurementContext": {
+    "skos:altLabel": [
+      "stream bed",
+      "streambed",
+      "Stream Bed"
+    ],
+    "AMP:additionalInformation": "<https://en.wikipedia.org/wiki/Stream_bed>",
+    "skos:prefLabel": "Stream Bed, Earth Surface",
+    "@id": "AMP:Earth_Surface-Stream_Bed"
+  },
+  "AMP:scaleFactor": 1.0,
+  "AMP:fillValue": -9999.0,
+  "AMP:collection": {
+    "AMP:doi": "https://doi.org/10.5067/KPJNN2GI1DQR",
+    "AMP:distributionURL": "https://n5eil01u.ecs.nsidc.org/SMAP/SPL4SMGP.004/",
+    "AMP:grid": "AMP:Grid9X9kilometers",
+    "AMP:temporalCoverageStartDate": "2015-03-31T00:00:00Z",
+    "AMP:currentVersion": true,
+    "skos:prefLabel": "SPL4SMGP_V005",
+    "@id": "AMP:SPL4SMGP_V005"
+  },
+  "skos:prefLabel": "baseflow_flux",
+  "AMP:dimension": [
+    {
+      "skos:prefLabel": "x",
+      "AMP:dimensionType": "AMP:LongitudeDimension",
+      "AMP:indexRange": "[-179.953, 179.953]",
+      "AMP:dimensionSize": "3856",
+      "@id": "AMP:_f9207760-b8f9-468d-aea4-bff4073bbae5Dim2"
+    },
+    {
+      "AMP:dimensionType": "AMP:LatitudeDimension",
+      "AMP:dimensionSize": "1624",
+      "skos:prefLabel": "y",
+      "AMP:indexRange": "[84.65644, -84.65644]",
+      "@id": "AMP:_f9207760-b8f9-468d-aea4-bff4073bbae5Dim1"
+    }
+  ],
+  "AMP:temporalCoverageStartDate": "2015-03-31T00:00:00Z",
+  "AMP:temporalResolution": {
+    "skos:altLabel": [
+      "Three Hours",
+      "180 Minutes"
+    ],
+    "skos:prefLabel": "3.0 hours",
+    "@id": "AMP:_3.0hours"
+  },
+  "AMP:distributionURL": "<https://n5eil01u.ecs.nsidc.org/SMAP/SPL4SMGP.004/>",
+  "AMP:modifiedDate": "2021-11-03T00:00:00.000000Z",
+  "AMP:unitString": "kg m-2 s-1",
+  "@id": "AMP:_f9207760-b8f9-468d-aea4-bff4073bbae5"
+}

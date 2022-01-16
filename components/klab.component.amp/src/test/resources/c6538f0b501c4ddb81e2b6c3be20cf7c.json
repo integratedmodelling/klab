@@ -1,0 +1,103 @@
+{
+  "@context": {
+    "AMP": "http://lingualogica.net/AMP#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "envo": "http://purl.obolibrary.org/obo/envo#",
+    "chebi": "http://purl.obolibrary.org/obo/chebi#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "shacl": "http://www.w3.org/ns/shacl#",
+    "AMP:fillValue": {
+      "@type": "xsd:double"
+    },
+    "AMP:modifiedDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:createdDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:dimensionSize": {
+      "@type": "xsd:double"
+    },
+    "AMP:offset": {
+      "@type": "xsd:double"
+    },
+    "AMP:scaleFactor": {
+      "@type": "xsd:double"
+    },
+    "AMP:collection": {
+      "@type": "@id"
+    }
+  },
+  "@type": "Variable",
+  "AMP:createdDate": "2021-11-19T23:06:58.456931Z",
+  "AMP:dimension": [
+    {
+      "AMP:dimensionSize": 17999,
+      "AMP:indexRange": "[-89.98999786376953, 89.98999786376953]",
+      "AMP:variableName": "/lat",
+      "AMP:collection": "AMP:MUR-JPL-L4-GLOB-v4.1_4.1",
+      "@id": "AMP:_dcc53b7d0bbf4def83f5c399676e228d"
+    },
+    {
+      "AMP:variableName": "/time",
+      "AMP:indexRange": "[675766800.0, 675766800.0]",
+      "AMP:dimensionSize": 1,
+      "AMP:collection": "AMP:MUR-JPL-L4-GLOB-v4.1_4.1",
+      "@id": "AMP:_1e9feb1c591b44ca9d72d3f67d48b492"
+    },
+    {
+      "AMP:variableName": "/lon",
+      "AMP:indexRange": "[-179.99000549316406, 180.0]",
+      "AMP:collection": "AMP:MUR-JPL-L4-GLOB-v4.1_4.1",
+      "AMP:dimensionSize": 36000,
+      "@id": "AMP:_0c51c853919642bebb245be144739455"
+    }
+  ],
+  "AMP:spatialResolution": {
+    "AMP:latitudeResolution": "0.01",
+    "skos:prefLabel": "0.01 X 0.01 degrees Grid",
+    "AMP:unitOfMeasure": "AMP:degrees",
+    "AMP:longitudeResolution": "0.01",
+    "@id": "AMP:Grid0.01X0.01degrees"
+  },
+  "AMP:scaleFactor": 1.0,
+  "AMP:temporalResolution": {
+    "skos:altLabel": [
+      "One Day",
+      "24 Hours",
+      "24 hours"
+    ],
+    "skos:prefLabel": "1.0 days",
+    "@id": "AMP:_1.0days"
+  },
+  "AMP:collection": {
+    "AMP:grid": "AMP:Grid0.01X0.01degrees",
+    "AMP:currentVersion": "true",
+    "AMP:distributionURL": [
+      "http://thredds.jpl.nasa.gov/thredds/catalog_ghrsst_gds2.html?dataset=MUR-JPL-L4-GLOB-v4.1",
+      "https://podaac.jpl.nasa.gov/ws/search/granule/?datasetId=PODAAC-GHGMR-4FJ04",
+      "https://podaac-tools.jpl.nasa.gov/drive/files/allData/ghrsst/data/GDS2/L4/GLOB/JPL/MUR/v4.1"
+    ],
+    "AMP:CMRConceptID": "C1664741463-PODAAC",
+    "AMP:temporalCoverageStartDate": "2002-06-01T09:00:00.000Z",
+    "AMP:doi": "<https://doi.org/10.5067/GHGMR-4FJ04>",
+    "@id": "AMP:MUR-JPL-L4-GLOB-v4.1_4.1"
+  },
+  "AMP:variableName": "/sea_ice_fraction",
+  "AMP:temporalCoverageStartDate": "2002-06-01T09:00:00.000Z",
+  "AMP:modifiedDate": "2021-11-19T23:06:58.456931Z",
+  "AMP:additionalInformation": "<https://doi.org/10.5067/GHGMR-4FJ04>",
+  "AMP:fillValue": -128.0,
+  "AMP:offset": 0.0,
+  "AMP:unitString": "fraction (between 0 and 1)",
+  "AMP:instrument": {
+    "skos:prefLabel": "MODIS",
+    "AMP:additionalInformation": "<http://database.eohandbook.com/database/instrumentsummary.aspx?instrumentID=395>",
+    "AMP:ceosID": "395",
+    "skos:altLabel": "MODerate-Resolution Imaging Spectroradiometer",
+    "@id": "AMP:MODISInstrument"
+  },
+  "@id": "AMP:_c6538f0b501c4ddb81e2b6c3be20cf7c"
+}

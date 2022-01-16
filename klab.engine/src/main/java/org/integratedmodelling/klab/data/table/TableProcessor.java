@@ -38,6 +38,7 @@ public class TableProcessor {
 	private AtomicInteger groupIds = new AtomicInteger(0);
 	private AtomicInteger rowCounter = new AtomicInteger(0);
 	private AtomicInteger columnCounter = new AtomicInteger(0);
+    private AtomicInteger boxCounter = new AtomicInteger(0);
 
 	/*
 	 * there is zero or one root header box for both rows and columns; each row or
@@ -48,7 +49,11 @@ public class TableProcessor {
 		String header;
 		Group group;
 		List<Box> contents = new ArrayList<>();
-		public Box next;
+		String boxId = "bx" +  boxCounter.incrementAndGet();
+		Box next;
+		Box parentBox;
+		// 
+		String id;
 
 		/**
 		 * Get the depth of this box
@@ -100,6 +105,11 @@ public class TableProcessor {
 			}
 			return ret;
 		}
+
+        public void addChild(Box container) {
+            container.parentBox = this;
+            this.contents.add(container);
+        }
 
 	}
 
@@ -256,6 +266,16 @@ public class TableProcessor {
 		public Type getType() {
 			return type;
 		}
+
+        public String getPath() {
+            String ret = getId();
+            Group group = this.originator;
+            while (group != null) {
+                ret = group.id + "." + ret;
+                group = group.parent;
+            }
+            return ret;
+        }
 	}
 
 	protected StyleDefinition style;
@@ -463,7 +483,7 @@ public class TableProcessor {
 	 * @param ret
 	 */
 	protected void compile(List<Map<String, Object>> data, Table ret) {
-
+	    
 		ret.setNumberFormat(getNumberFormat());
 
 		if (style != null) {
@@ -641,7 +661,7 @@ public class TableProcessor {
 				} else {
 					val = aggregator.aggregate(value);
 				}
-				rowData.put(col.getId(), /* TODO number format etc */ val.toString());
+				rowData.put(col.boxId, /* TODO number format etc */ val.toString());
 			}
 		}
 		ret.getRows().add(rowData);
@@ -657,7 +677,8 @@ public class TableProcessor {
 	private Column makeColumns(Column parent, Box cbox) {
 		Column column = new Column();
 		column.setTitle(cbox.header);
-		column.setId(cbox.getId());
+//		column.setId(cbox.getId());
+		column.setId(cbox.boxId);
 		for (Box child : cbox.contents) {
 			makeColumns(column, child);
 		}
@@ -703,7 +724,7 @@ public class TableProcessor {
 			 */
 			ret = new Box();
 			ret.header = getFieldHeader((String) containerKey);
-			ret.contents.add(container);
+			ret.addChild(container);
 
 		} else if (containerKey instanceof List) {
 
@@ -739,9 +760,9 @@ public class TableProcessor {
 					box.group = group;
 
 					if (ret != null) {
-						box.contents.add(ret);
+						box.addChild(ret);
 					} else {
-						box.contents.add(container);
+						box.addChild(container);
 					}
 					ret = box;
 				}
@@ -757,9 +778,9 @@ public class TableProcessor {
 						box.span++;
 					}
 					if (ret != null) {
-						box.contents.add(ret);
+						box.addChild(ret);
 					} else {
-						box.contents.add(container);
+						box.addChild(container);
 					}
 					ret = box;
 				}

@@ -1,0 +1,103 @@
+{
+  "@context": {
+    "AMP": "http://lingualogica.net/AMP#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "envo": "http://purl.obolibrary.org/obo/envo#",
+    "chebi": "http://purl.obolibrary.org/obo/chebi#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "shacl": "http://www.w3.org/ns/shacl#",
+    "AMP:fillValue": {
+      "@type": "xsd:double"
+    },
+    "AMP:modifiedDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:createdDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:dimensionSize": {
+      "@type": "xsd:double"
+    },
+    "AMP:offset": {
+      "@type": "xsd:double"
+    },
+    "AMP:scaleFactor": {
+      "@type": "xsd:double"
+    },
+    "AMP:collection": {
+      "@type": "@id"
+    }
+  },
+  "@type": "Variable",
+  "AMP:collection": {
+    "AMP:grid": "AMP:Grid0.01X0.01degrees",
+    "AMP:currentVersion": "true",
+    "AMP:distributionURL": [
+      "http://thredds.jpl.nasa.gov/thredds/catalog_ghrsst_gds2.html?dataset=MUR-JPL-L4-GLOB-v4.1",
+      "https://podaac.jpl.nasa.gov/ws/search/granule/?datasetId=PODAAC-GHGMR-4FJ04",
+      "https://podaac-tools.jpl.nasa.gov/drive/files/allData/ghrsst/data/GDS2/L4/GLOB/JPL/MUR/v4.1"
+    ],
+    "AMP:temporalCoverageStartDate": "2002-06-01T09:00:00.000Z",
+    "AMP:doi": "<https://doi.org/10.5067/GHGMR-4FJ04>",
+    "AMP:CMRConceptID": "C1664741463-PODAAC",
+    "@id": "AMP:MUR-JPL-L4-GLOB-v4.1_4.1"
+  },
+  "AMP:dimension": [
+    {
+      "AMP:dimensionSize": 1,
+      "AMP:collection": "AMP:MUR-JPL-L4-GLOB-v4.1_4.1",
+      "AMP:variableName": "/time",
+      "AMP:indexRange": "[675766800.0, 675766800.0]",
+      "@id": "AMP:_2cb68d748bff412d98e220f0dc737d9c"
+    },
+    {
+      "AMP:dimensionSize": 36000,
+      "AMP:indexRange": "[-179.99000549316406, 180.0]",
+      "AMP:variableName": "/lon",
+      "AMP:collection": "AMP:MUR-JPL-L4-GLOB-v4.1_4.1",
+      "@id": "AMP:_020881aef3894b1fa143e1a790c3f807"
+    },
+    {
+      "AMP:indexRange": "[-89.98999786376953, 89.98999786376953]",
+      "AMP:collection": "AMP:MUR-JPL-L4-GLOB-v4.1_4.1",
+      "AMP:variableName": "/lat",
+      "AMP:dimensionSize": 17999,
+      "@id": "AMP:_fe90dba741b946e1acf93a836f5e3b14"
+    }
+  ],
+  "AMP:additionalInformation": "<https://doi.org/10.5067/GHGMR-4FJ04>",
+  "AMP:instrument": {
+    "skos:prefLabel": "MODIS",
+    "AMP:additionalInformation": "<http://database.eohandbook.com/database/instrumentsummary.aspx?instrumentID=395>",
+    "AMP:ceosID": "395",
+    "skos:altLabel": "MODerate-Resolution Imaging Spectroradiometer",
+    "@id": "AMP:MODISInstrument"
+  },
+  "AMP:offset": 0.0,
+  "AMP:temporalCoverageStartDate": "2002-06-01T09:00:00.000Z",
+  "AMP:variableName": "/analysis_error",
+  "AMP:modifiedDate": "2021-11-20T16:16:59.791362Z",
+  "AMP:spatialResolution": {
+    "AMP:latitudeResolution": "0.01",
+    "skos:prefLabel": "0.01 X 0.01 degrees Grid",
+    "AMP:unitOfMeasure": "AMP:degrees",
+    "AMP:longitudeResolution": "0.01",
+    "@id": "AMP:Grid0.01X0.01degrees"
+  },
+  "AMP:unitString": "kelvin",
+  "AMP:scaleFactor": 1.0,
+  "AMP:fillValue": -32768.0,
+  "AMP:temporalResolution": {
+    "skos:altLabel": [
+      "One Day",
+      "24 Hours",
+      "24 hours"
+    ],
+    "skos:prefLabel": "1.0 days",
+    "@id": "AMP:_1.0days"
+  },
+  "AMP:createdDate": "2021-11-20T16:16:59.791362Z",
+  "@id": "AMP:_7af928956b8546978a60ca6c4b828b84"
+}

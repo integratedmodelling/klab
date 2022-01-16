@@ -1,0 +1,113 @@
+{
+  "@context": {
+    "AMP": "http://lingualogica.net/AMP#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "envo": "http://purl.obolibrary.org/obo/envo#",
+    "chebi": "http://purl.obolibrary.org/obo/chebi#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "shacl": "http://www.w3.org/ns/shacl#",
+    "AMP:fillValue": {
+      "@type": "xsd:double"
+    },
+    "AMP:modifiedDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:createdDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:dimensionSize": {
+      "@type": "xsd:double"
+    },
+    "AMP:offset": {
+      "@type": "xsd:double"
+    },
+    "AMP:scaleFactor": {
+      "@type": "xsd:double"
+    },
+    "AMP:collection": {
+      "@type": "@id"
+    }
+  },
+  "@type": "Variable",
+  "AMP:modifiedDate": "2021-11-21T02:36:41.686062Z",
+  "AMP:dimension": [
+    {
+      "AMP:variableName": "/Grid/time",
+      "AMP:collection": "AMP:GPM_3IMERGM_06",
+      "AMP:indexRange": "[959817600.0, 959817600.0]",
+      "AMP:dimensionSize": 1,
+      "@id": "AMP:_5c6570ac51c647ee8862bdf6a578a25c"
+    },
+    {
+      "AMP:dimensionSize": 1800,
+      "AMP:collection": "AMP:GPM_3IMERGM_06",
+      "AMP:indexRange": "[-89.94999694824219, 89.94999694824219]",
+      "AMP:variableName": "/Grid/lat",
+      "@id": "AMP:_b5365339c0eb4a75b4eade8ba6afffd6"
+    },
+    {
+      "AMP:collection": "AMP:GPM_3IMERGM_06",
+      "AMP:dimensionSize": 3600,
+      "AMP:indexRange": "[-179.9499969482422, 179.9499969482422]",
+      "AMP:variableName": "/Grid/lon",
+      "@id": "AMP:_d89bda3d60b64f609b21eb5555ccf565"
+    }
+  ],
+  "AMP:scaleFactor": 1.0,
+  "AMP:additionalInformation": "<https://doi.org/10.5067/GPM/IMERG/3B-MONTH/06>",
+  "AMP:collection": {
+    "AMP:distributionURL": "https://gpm1.gesdisc.eosdis.nasa.gov/data/GPM_L3/GPM_3IMERGM.06/",
+    "AMP:temporalCoverageStartDate": "2000-06-01T00:00:00.000Z",
+    "AMP:CMRConceptID": "C1598621092-GES_DISC",
+    "AMP:grid": "AMP:Grid0.1X0.1degrees",
+    "AMP:doi": "<https://doi.org/10.5067/GPM/IMERG/3B-MONTH/06>",
+    "AMP:currentVersion": "true",
+    "@id": "AMP:GPM_3IMERGM_06"
+  },
+  "AMP:fillValue": -9999.900390625,
+  "AMP:unitString": "mm/hr",
+  "AMP:spatialResolution": {
+    "AMP:unitOfMeasure": "AMP:degrees",
+    "skos:prefLabel": "0.1 X 0.1 degrees Grid",
+    "AMP:longitudeResolution": [
+      0.1,
+      "0.1"
+    ],
+    "AMP:latitudeResolution": [
+      0.1,
+      "0.1"
+    ],
+    "@id": "AMP:Grid0.1X0.1degrees"
+  },
+  "AMP:offset": 0.0,
+  "AMP:createdDate": "2021-11-21T02:36:41.686062Z",
+  "AMP:temporalResolution": {
+    "skos:altLabel": "One Month",
+    "skos:prefLabel": [
+      "1.0 months",
+      "1 Month"
+    ],
+    "@id": "AMP:_1.0months"
+  },
+  "AMP:featureOfInterest": {
+    "skos:prefLabel": "Precipitation",
+    "AMP:additionalInformation": "<http://purl.obolibrary.org/obo/ENVO_01000703>",
+    "@id": "AMP:Precipitation"
+  },
+  "AMP:measurementContext": {
+    "AMP:additionalInformation": "<http://purl.obolibrary.org/obo/ENVO_01000324>",
+    "skos:prefLabel": "Earth Surface",
+    "@id": "AMP:Earth_Surface"
+  },
+  "AMP:variableName": "/Grid/precipitation",
+  "AMP:temporalCoverageStartDate": "2000-06-01T00:00:00.000Z",
+  "AMP:measuredQuantity": {
+    "AMP:additionalInformation": "https://glossary.ametsoc.org/wiki/Rainfall_rate",
+    "skos:altLabel": "Rate",
+    "skos:prefLabel": "Amount Per Time",
+    "@id": "AMP:Accumulation_Per_Time"
+  },
+  "@id": "AMP:_c81cfd6e28174347a03802d2801396d2"
+}

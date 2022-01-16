@@ -1,0 +1,143 @@
+{
+  "@context": {
+    "AMP": "http://lingualogica.net/AMP#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "envo": "http://purl.obolibrary.org/obo/envo#",
+    "chebi": "http://purl.obolibrary.org/obo/chebi#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "shacl": "http://www.w3.org/ns/shacl#",
+    "AMP:fillValue": {
+      "@type": "xsd:double"
+    },
+    "AMP:modifiedDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:createdDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:dimensionSize": {
+      "@type": "xsd:double"
+    },
+    "AMP:offset": {
+      "@type": "xsd:double"
+    },
+    "AMP:scaleFactor": {
+      "@type": "xsd:double"
+    },
+    "AMP:collection": {
+      "@type": "@id"
+    }
+  },
+  "@type": "Variable",
+  "AMP:createdDate": "2021-11-03T00:00:00.000000Z",
+  "AMP:variableName": "/Geophysical_Data/sm_profile",
+  "skos:prefLabel": "sm_profile",
+  "AMP:measuredQuantity": {
+    "skos:altLabel": [
+      "Volume/Volume",
+      "Volume Per Volume"
+    ],
+    "skos:prefLabel": "Volume Fraction",
+    "@id": "AMP:Volume_Fraction"
+  },
+  "AMP:temporalCoverageStartDate": "2015-03-31T00:00:00Z",
+  "AMP:offset": 0.0,
+  "AMP:dimension": [
+    {
+      "AMP:indexRange": "[84.65644, -84.65644]",
+      "skos:prefLabel": "y",
+      "AMP:dimensionSize": "1624",
+      "AMP:dimensionType": "AMP:LatitudeDimension",
+      "@id": "AMP:_75d53680-244b-49d3-9f04-7e69ac728102Dim1"
+    },
+    {
+      "AMP:indexRange": "[-179.953, 179.953]",
+      "AMP:dimensionType": "AMP:LongitudeDimension",
+      "skos:prefLabel": "x",
+      "AMP:dimensionSize": "3856",
+      "@id": "AMP:_75d53680-244b-49d3-9f04-7e69ac728102Dim2"
+    }
+  ],
+  "AMP:fillValue": -9999.0,
+  "AMP:unitString": "m3 m-3",
+  "AMP:distributionURL": "<https://n5eil01u.ecs.nsidc.org/SMAP/SPL4SMGP.004/>",
+  "AMP:featureOfInterest": {
+    "AMP:additionalInformation": [
+      "<http://purl.obolibrary.org/obo/CHEBI_15377>",
+      "<http://purl.obolibrary.org/obo/ENVO_00002042>",
+      "<http://glossary.ametsoc.org/wiki/Water>"
+    ],
+    "skos:altLabel": "H20",
+    "skos:prefLabel": "Water, All Phases",
+    "@id": "AMP:Water-All_Phases"
+  },
+  "AMP:additionalInformation": [
+    "https://doi.org/10.5067/KPJNN2GI1DQR",
+    "<https://doi.org/10.5067/KPJNN2GI1DQR>"
+  ],
+  "AMP:measurementContext": {
+    "skos:altLabel": [
+      "Soil-All Layers",
+      "Soil (All Layers)",
+      "soil",
+      "soil-all layers",
+      "soil (all layers)"
+    ],
+    "skos:prefLabel": "Soil, All Layers",
+    "AMP:additionalInformation": "<https://en.wikipedia.org/wiki/Soil>",
+    "@id": "AMP:Soil_All_Layers"
+  },
+  "AMP:scaleFactor": 1.0,
+  "AMP:spatialResolution": {
+    "skos:prefLabel": "9 X 9 kilometers Grid",
+    "AMP:latitudeResolution": 9.0,
+    "AMP:unitOfMeasure": "AMP:kilometers",
+    "AMP:longitudeResolution": 9.0,
+    "@id": "AMP:Grid9X9kilometers"
+  },
+  "AMP:instrument": {
+    "AMP:ceosID": "1554",
+    "AMP:additionalInformation": "<http://database.eohandbook.com/database/instrumentsummary.aspx?instrumentID=1554>",
+    "skos:altLabel": "L-band Radiometer (SMAP)",
+    "skos:prefLabel": "SMAP L-band Radiometer",
+    "@id": "AMP:SMAPL-bandRadiometerInstrument"
+  },
+  "AMP:collection": {
+    "AMP:distributionURL": "https://n5eil01u.ecs.nsidc.org/SMAP/SPL4SMGP.004/",
+    "AMP:doi": "https://doi.org/10.5067/KPJNN2GI1DQR",
+    "AMP:temporalCoverageStartDate": "2015-03-31T00:00:00Z",
+    "AMP:currentVersion": true,
+    "AMP:grid": "AMP:Grid9X9kilometers",
+    "skos:prefLabel": "SPL4SMGP_V005",
+    "@id": "AMP:SPL4SMGP_V005"
+  },
+  "AMP:temporalResolution": {
+    "skos:prefLabel": "3.0 hours",
+    "skos:altLabel": [
+      "180 Minutes",
+      "Three Hours"
+    ],
+    "@id": "AMP:_3.0hours"
+  },
+  "AMP:modifiedDate": "2021-11-03T00:00:00.000000Z",
+  "AMP:unitOfMeasure": {
+    "skos:prefLabel": [
+      "m m-3",
+      "m s-1"
+    ],
+    "AMP:additionalInformation": [
+      "<https://en.wikipedia.org/wiki/Kilometre>",
+      "<http://purl.obolibrary.org/obo/NCIT_C71177>"
+    ],
+    "skos:altLabel": [
+      "Cubic Meter Per Cubic Meter",
+      "m^3/m^3",
+      "Meter Cubed Per Meter Cubed",
+      "m3/m3"
+    ],
+    "@id": "AMP:Meter_Cubed_Per_Meter_Cubed"
+  },
+  "@id": "AMP:_75d53680-244b-49d3-9f04-7e69ac728102"
+}

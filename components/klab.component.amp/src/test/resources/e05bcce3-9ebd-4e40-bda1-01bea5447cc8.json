@@ -1,0 +1,154 @@
+{
+  "@context": {
+    "AMP": "http://lingualogica.net/AMP#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "envo": "http://purl.obolibrary.org/obo/envo#",
+    "chebi": "http://purl.obolibrary.org/obo/chebi#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "shacl": "http://www.w3.org/ns/shacl#",
+    "AMP:fillValue": {
+      "@type": "xsd:double"
+    },
+    "AMP:modifiedDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:createdDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:dimensionSize": {
+      "@type": "xsd:double"
+    },
+    "AMP:offset": {
+      "@type": "xsd:double"
+    },
+    "AMP:scaleFactor": {
+      "@type": "xsd:double"
+    },
+    "AMP:collection": {
+      "@type": "@id"
+    }
+  },
+  "@type": "Variable",
+  "AMP:measurementContext": [
+    {
+      "AMP:additionalInformation": "<http://purl.obolibrary.org/obo/ENVO_01000810>",
+      "skos:prefLabel": "Earth's Atmosphere",
+      "@id": "AMP:Atmosphere-Earth"
+    },
+    {
+      "AMP:additionalInformation": [
+        "<http://purl.obolibrary.org/obo/ENVO_01001428>",
+        "<http://glossary.ametsoc.org/wiki/Cloud>"
+      ],
+      "skos:prefLabel": "Cloud (Water-based)",
+      "@id": "AMP:Cloud-Water-based"
+    }
+  ],
+  "AMP:temporalResolution": {
+    "skos:prefLabel": "3.0 hours",
+    "skos:altLabel": [
+      "180 Minutes",
+      "Three Hours"
+    ],
+    "@id": "AMP:_3.0hours"
+  },
+  "AMP:spatialResolution": {
+    "AMP:longitudeResolution": [
+      1.0,
+      "1"
+    ],
+    "skos:prefLabel": "1 X 1 degrees Grid",
+    "AMP:latitudeResolution": [
+      1.0,
+      "1"
+    ],
+    "AMP:unitOfMeasure": "AMP:degrees",
+    "@id": "AMP:Grid1X1degrees"
+  },
+  "AMP:dimension": [
+    {
+      "AMP:indexRange": "[89.5, -89.5]",
+      "AMP:dimensionSize": "180",
+      "skos:prefLabel": "Latitude",
+      "AMP:variableName": "/latitude (dimension)",
+      "@id": "AMP:_06239a72b98f47a7753ff40ddae27571"
+    },
+    {
+      "AMP:indexRange": "[1, 8]",
+      "AMP:variableName": "/gmt_3hr_index (dimension)",
+      "skos:prefLabel": "Time",
+      "AMP:dimensionSize": "8",
+      "@id": "AMP:_06239a726e9-406747a7af4f-f40ddae2757"
+    },
+    {
+      "AMP:variableName": "/longitude (dimension)",
+      "AMP:indexRange": "[-179.5, 179.5 ]",
+      "skos:prefLabel": "Longitude",
+      "AMP:dimensionSize": "360",
+      "@id": "AMP:_4607fc6ca416239a79753-e36ff8f15c30"
+    }
+  ],
+  "skos:prefLabel": "Ice Water Path",
+  "AMP:variableName": "/Cloud Layer - Low/Ice Water Path",
+  "AMP:instrument": {
+    "skos:altLabel": "Cloud and the Earth's Radiant Energy System",
+    "AMP:additionalInformation": "<http://database.eohandbook.com/database/instrumentsummary.aspx?instrumentID=397>",
+    "skos:prefLabel": "CERES",
+    "AMP:ceosID": "397",
+    "@id": "AMP:CERESInstrument"
+  },
+  "skos:altLabel": "cloud_water_path-ice",
+  "AMP:measuredQuantity": {
+    "skos:altLabel": [
+      "Surface Density",
+      "Area Density"
+    ],
+    "AMP:additionalInformation": [
+      "<http://purl.obolibrary.org/obo/PATO_0001351>",
+      "<https://en.wikipedia.org/wiki/Area_density>"
+    ],
+    "skos:prefLabel": "Mass Per Area",
+    "@id": "AMP:Mass_Per_Area"
+  },
+  "AMP:offset": 0.0,
+  "AMP:modifiedDate": "2021-11-03T00:00:00.000000Z",
+  "AMP:createdDate": "2021-11-03T00:00:00.000000Z",
+  "AMP:additionalInformation": "https://doi.org/10.5067/TERRA+AQUA/CERES/SYN1DEG-3HOUR_L3.004A",
+  "AMP:featureOfInterest": {
+    "skos:prefLabel": "Water, Ice",
+    "skos:altLabel": [
+      "H20, Solid Phase",
+      "H20, Ice",
+      "Water, Solid Phase"
+    ],
+    "AMP:additionalInformation": "<http://glossary.ametsoc.org/wiki/Ice>",
+    "@id": "AMP:Water-Ice"
+  },
+  "AMP:fillValue": 3.4028235e+38,
+  "AMP:scaleFactor": 1.0,
+  "AMP:temporalCoverageStartDate": "2002-07-01T00:00:00Z",
+  "AMP:unitString": "Grams per square meter",
+  "AMP:unitOfMeasure": {
+    "skos:altLabel": [
+      "g/m^2",
+      "gram per square meter",
+      "gram per meter squared"
+    ],
+    "skos:prefLabel": "g m-2",
+    "AMP:additionalInformation": "<http://purl.obolibrary.org/obo/UO_0000086>",
+    "@id": "AMP:Gram_Per_Square_Meter"
+  },
+  "AMP:collection": {
+    "AMP:temporalCoverageStartDate": "2002-07-01T00:00:00Z",
+    "AMP:distributionURL": "https://opendap.larc.nasa.gov/opendap/CERES/SYN1deg-3Hour/Terra-Aqua-MODIS_Edition4A/contents.html",
+    "AMP:grid": "AMP:Grid1X1degrees",
+    "skos:prefLabel": "CER_SYN1deg-3Hour_Terra-Aqua-MODIS_Edition4A",
+    "skos:altLabel": "CERES and GEO-Enhanced TOA, Within-Atmosphere and Surface Fluxes, Clouds and Aerosols 3-Hourly Terra Edition4A",
+    "AMP:doi": "https://doi.org/10.5067/TERRA+AQUA/CERES/SYN1DEG-3HOUR_L3.004A",
+    "AMP:currentVersion": true,
+    "@id": "AMP:CER_SYN1deg-3Hour_Terra-Aqua-MODIS_Edition4A"
+  },
+  "@id": "AMP:_e05bcce3-9ebd-4e40-bda1-01bea5447cc8"
+}

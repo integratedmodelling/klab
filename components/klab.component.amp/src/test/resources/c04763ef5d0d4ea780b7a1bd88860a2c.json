@@ -1,0 +1,142 @@
+{
+  "@context": {
+    "AMP": "http://lingualogica.net/AMP#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "envo": "http://purl.obolibrary.org/obo/envo#",
+    "chebi": "http://purl.obolibrary.org/obo/chebi#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "shacl": "http://www.w3.org/ns/shacl#",
+    "AMP:fillValue": {
+      "@type": "xsd:double"
+    },
+    "AMP:modifiedDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:createdDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:dimensionSize": {
+      "@type": "xsd:double"
+    },
+    "AMP:offset": {
+      "@type": "xsd:double"
+    },
+    "AMP:scaleFactor": {
+      "@type": "xsd:double"
+    },
+    "AMP:collection": {
+      "@type": "@id"
+    }
+  },
+  "@type": "Variable",
+  "AMP:dimension": [
+    {
+      "AMP:collection": "AMP:AIRSAC3MNH3_3",
+      "AMP:indexRange": "[506.118408203125, 972.2639770507812]",
+      "AMP:dimensionSize": 12,
+      "AMP:variableName": "/press_level",
+      "@id": "AMP:_ef9a72ec7a1e4728820bad3a5aba0dd9"
+    },
+    {
+      "AMP:indexRange": "[-179.5, 179.5]",
+      "AMP:collection": "AMP:AIRSAC3MNH3_3",
+      "AMP:variableName": "/lon",
+      "AMP:dimensionSize": 360,
+      "@id": "AMP:_240a0aa860dd4986ba2e4141a3abd588"
+    },
+    {
+      "AMP:variableName": "/time",
+      "AMP:indexRange": "[1032134399.5, 1032134399.5]",
+      "AMP:collection": "AMP:AIRSAC3MNH3_3",
+      "AMP:dimensionSize": 1,
+      "@id": "AMP:_d7f226a9ee5d4bd3a55655fa7688d8a0"
+    },
+    {
+      "AMP:dimensionSize": 180,
+      "AMP:variableName": "/lat",
+      "AMP:indexRange": "[-89.5, 89.5]",
+      "AMP:collection": "AMP:AIRSAC3MNH3_3",
+      "@id": "AMP:_c775e93d8cd842cbb8553216c6af0976"
+    }
+  ],
+  "AMP:temporalCoverageEndDate": "2002-09-01T00:00:00.000Z",
+  "AMP:spatialResolution": {
+    "AMP:longitudeResolution": [
+      1.0,
+      "1"
+    ],
+    "AMP:latitudeResolution": [
+      1.0,
+      "1"
+    ],
+    "skos:prefLabel": "1 X 1 degrees Grid",
+    "AMP:unitOfMeasure": "AMP:degrees",
+    "@id": "AMP:Grid1X1degrees"
+  },
+  "AMP:variableName": "/nh3_vmr",
+  "AMP:createdDate": "2021-11-21T14:05:14.758865Z",
+  "AMP:unitString": "mol/mol, number of moles of ammonia per mole of air",
+  "AMP:offset": 0.0,
+  "AMP:instrument": [
+    {
+      "skos:prefLabel": "AIRS",
+      "skos:altLabel": "Atmospheric Infra-red Sounder",
+      "AMP:ceosID": "347",
+      "AMP:additionalInformation": "<http://database.eohandbook.com/database/instrumentsummary.aspx?instrumentID=347>",
+      "@id": "AMP:AIRSInstrument"
+    },
+    {
+      "skos:altLabel": "Advanced Microwave Sounding Unit-A",
+      "skos:prefLabel": "AMSU-A",
+      "AMP:ceosID": [
+        "1555",
+        "312"
+      ],
+      "AMP:additionalInformation": [
+        "<http://database.eohandbook.com/database/instrumentsummary.aspx?instrumentID=1555>",
+        "<http://database.eohandbook.com/database/instrumentsummary.aspx?instrumentID=312>"
+      ],
+      "@id": "AMP:AMSU-AInstrument"
+    }
+  ],
+  "AMP:collection": {
+    "AMP:distributionURL": [
+      "https://search.uat.earthdata.nasa.gov/search?q=AIRSAC3MNH3",
+      "https://acdisc.gesdisc.eosdis.nasa.gov/data/Aqua_AIRS_Level3/AIRSAC3MNH3.3/"
+    ],
+    "AMP:grid": "AMP:Grid1X1degrees",
+    "AMP:temporalCoverageStartDate": "2002-09-01T00:00:00.000Z",
+    "AMP:doi": "<https://doi.org/10.5067/06YIT7GX74FN>",
+    "AMP:currentVersion": "true",
+    "AMP:temporalCoverageEndDate": "2002-09-01T00:00:00.000Z",
+    "AMP:CMRConceptID": "C1619004533-GES_DISC",
+    "@id": "AMP:AIRSAC3MNH3_3"
+  },
+  "AMP:additionalInformation": "<https://doi.org/10.5067/06YIT7GX74FN>",
+  "AMP:temporalResolution": [
+    {
+      "skos:altLabel": [
+        "One Day",
+        "24 Hours",
+        "24 hours"
+      ],
+      "skos:prefLabel": "1.0 days",
+      "@id": "AMP:_1.0days"
+    },
+    {
+      "skos:altLabel": "One Month",
+      "skos:prefLabel": [
+        "1.0 months",
+        "1 Month"
+      ],
+      "@id": "AMP:_1.0months"
+    }
+  ],
+  "AMP:fillValue": -999.9000244140625,
+  "AMP:scaleFactor": 1.0,
+  "AMP:modifiedDate": "2021-11-21T14:05:14.758865Z",
+  "AMP:temporalCoverageStartDate": "2002-09-01T00:00:00.000Z",
+  "@id": "AMP:_c04763ef5d0d4ea780b7a1bd88860a2c"
+}

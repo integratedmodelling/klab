@@ -1,0 +1,123 @@
+{
+  "@context": {
+    "AMP": "http://lingualogica.net/AMP#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "envo": "http://purl.obolibrary.org/obo/envo#",
+    "chebi": "http://purl.obolibrary.org/obo/chebi#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "shacl": "http://www.w3.org/ns/shacl#",
+    "AMP:fillValue": {
+      "@type": "xsd:double"
+    },
+    "AMP:modifiedDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:createdDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:dimensionSize": {
+      "@type": "xsd:double"
+    },
+    "AMP:offset": {
+      "@type": "xsd:double"
+    },
+    "AMP:scaleFactor": {
+      "@type": "xsd:double"
+    },
+    "AMP:collection": {
+      "@type": "@id"
+    }
+  },
+  "@type": "Variable",
+  "AMP:temporalResolution": {
+    "skos:altLabel": [
+      "One Day",
+      "24 Hours",
+      "24 hours"
+    ],
+    "skos:prefLabel": "1.0 days",
+    "@id": "AMP:_1.0days"
+  },
+  "AMP:dimension": [
+    {
+      "AMP:indexRange": "[-90.0, 90.0]",
+      "AMP:dimensionSize": 361,
+      "AMP:variableName": "/lat",
+      "@id": "AMP:_1768ad608bae4709bbcdfabcd85ab692"
+    },
+    {
+      "AMP:indexRange": "[690.0, 690.0]",
+      "AMP:dimensionSize": 1,
+      "AMP:variableName": "/time",
+      "@id": "AMP:_3ef356036e574929b87fefdcb53c360f"
+    },
+    {
+      "AMP:dimensionSize": 576,
+      "AMP:indexRange": "[-180.0, 179.375]",
+      "AMP:variableName": "/lon",
+      "@id": "AMP:_584d89cb96654abf92fe7ff2e15262ab"
+    }
+  ],
+  "AMP:temporalCoverageStartDate": "1980-01-01T00:00:00Z",
+  "AMP:instrument": {
+    "AMP:additionalInformation": "<https://gmao.gsfc.nasa.gov/reanalysis/MERRA-2/>",
+    "skos:altLabel": "MERRA-2",
+    "AMP:description": "The second Modern-Era Retrospective Analysis_for Research and Applications",
+    "skos:prefLabel": "MERRA-2",
+    "@id": "AMP:MERRA-2Instrument"
+  },
+  "AMP:collection": {
+    "AMP:temporalCoverageStartDate": "1980-01-01T00:00:00Z",
+    "AMP:doi": "https://doi.org/10.5067/9SC1VNTWGWV3",
+    "AMP:distributionURL": "https://goldsmr4.gesdisc.eosdis.nasa.gov/data/MERRA2/M2SDNXSLV.5.12.4/",
+    "AMP:grid": "AMP:Grid0.5X0.625degrees",
+    "AMP:currentVersion": true,
+    "skos:prefLabel": "M2SDNXSLV_5.12.4",
+    "AMP:CMRConceptID": "C1276812843-GES_DISC",
+    "@id": "AMP:M2SDNXSLV_5.12.4"
+  },
+  "AMP:measurementContext": {
+    "AMP:additionalInformation": "<http://purl.obolibrary.org/obo/ENVO_01000810>",
+    "skos:prefLabel": "Earth's Atmosphere",
+    "@id": "AMP:Atmosphere-Earth"
+  },
+  "AMP:offset": 0.0,
+  "AMP:modifiedDate": "2021-11-03T00:00:00.000000Z",
+  "AMP:variableName": "/T2MMEAN",
+  "AMP:unitOfMeasure": {
+    "skos:altLabel": "Kelvin",
+    "skos:prefLabel": "K",
+    "@id": "AMP:Kelvin"
+  },
+  "AMP:featureOfInterest": {
+    "AMP:additionalInformation": [
+      "<http://glossary.ametsoc.org/wiki/Air>",
+      "<http://purl.obolibrary.org/obo/ENVO_00002005>"
+    ],
+    "skos:prefLabel": "Air",
+    "@id": "AMP:Air"
+  },
+  "AMP:createdDate": "2021-11-03T00:00:00.000000Z",
+  "AMP:scaleFactor": 1.0,
+  "AMP:fillValue": 999999986991104.0,
+  "AMP:measuredQuantity": {
+    "AMP:additionalInformation": [
+      "<http://glossary.ametsoc.org/wiki/Temperature>",
+      "<http://purl.obolibrary.org/obo/PATO_0000146>"
+    ],
+    "skos:prefLabel": "Temperature, Mean",
+    "@id": "AMP:Temperature-Mean"
+  },
+  "AMP:additionalInformation": "https://doi.org/10.5067/9SC1VNTWGWV3",
+  "AMP:unitString": "K",
+  "AMP:spatialResolution": {
+    "AMP:unitOfMeasure": "AMP:degrees",
+    "AMP:latitudeResolution": 0.5,
+    "skos:prefLabel": "0.5 X 0.625 degrees Grid",
+    "AMP:longitudeResolution": 0.625,
+    "@id": "AMP:Grid0.5X0.625degrees"
+  },
+  "@id": "AMP:_cb5248274d13430c874e705e916500da"
+}

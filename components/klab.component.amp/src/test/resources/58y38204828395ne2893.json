@@ -1,0 +1,126 @@
+{
+  "@context": {
+    "AMP": "http://lingualogica.net/AMP#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "envo": "http://purl.obolibrary.org/obo/envo#",
+    "chebi": "http://purl.obolibrary.org/obo/chebi#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "shacl": "http://www.w3.org/ns/shacl#",
+    "AMP:fillValue": {
+      "@type": "xsd:double"
+    },
+    "AMP:modifiedDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:createdDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:dimensionSize": {
+      "@type": "xsd:double"
+    },
+    "AMP:offset": {
+      "@type": "xsd:double"
+    },
+    "AMP:scaleFactor": {
+      "@type": "xsd:double"
+    },
+    "AMP:collection": {
+      "@type": "@id"
+    }
+  },
+  "@type": "Variable",
+  "AMP:measurementContext": {
+    "AMP:additionalInformation": "<http://purl.obolibrary.org/obo/ENVO_01000324>",
+    "skos:prefLabel": "Earth Surface",
+    "@id": "AMP:Earth_Surface"
+  },
+  "AMP:offset": 0.0,
+  "AMP:modifiedDate": [
+    "2021-11-03T00:00:00.000000Z",
+    "2021-09-15T00:00:00.000000Z"
+  ],
+  "AMP:instrument": {
+    "AMP:additionalInformation": "<https://ldas.gsfc.nasa.gov/gldas/>",
+    "skos:altLabel": "GLDAS Catchment Land Surface Model",
+    "skos:prefLabel": "GLDAS Catchment LSM",
+    "@id": "AMP:Catchment_LSM"
+  },
+  "AMP:unitString": "kg m-2 s-1",
+  "AMP:temporalCoverageStartDate": "2000-02-01T00:00:00Z",
+  "AMP:createdDate": [
+    "2021-11-03T00:00:00.000000Z",
+    "2021-09-15T00:00:00.000000Z"
+  ],
+  "AMP:additionalInformation": "http://dx.doi.org/10.1175/BAMS-85-3-381",
+  "AMP:unitOfMeasure": {
+    "skos:altLabel": [
+      "kg/m^2/s^1",
+      "kilogram per square meter per second"
+    ],
+    "skos:prefLabel": "kg m-2 s-1",
+    "@id": "AMP:KilogramPerSquareMeterPerSecond"
+  },
+  "AMP:spatialResolution": {
+    "AMP:latitudeResolution": [
+      "0.25",
+      0.25
+    ],
+    "AMP:unitOfMeasure": "AMP:degrees",
+    "skos:prefLabel": "0.25 X 0.25 degrees Grid",
+    "AMP:longitudeResolution": [
+      "0.25",
+      0.25
+    ],
+    "@id": "AMP:Grid0.25X0.25degrees"
+  },
+  "AMP:scaleFactor": 1.0,
+  "AMP:fillValue": -9999.0,
+  "AMP:measuredQuantity": {
+    "skos:prefLabel": "Mass Per Area Per Time",
+    "skos:altLabel": [
+      "Mass Flow Per Area",
+      "Mass Flux"
+    ],
+    "AMP:additionalInformation": "<https://en.wikipedia.org/wiki/Mass_flux>",
+    "@id": "AMP:Mass_Per_Area_Per_Time"
+  },
+  "AMP:featureOfInterest": [
+    {
+      "skos:prefLabel": "Precipitation",
+      "AMP:additionalInformation": "<http://purl.obolibrary.org/obo/ENVO_01000703>",
+      "@id": "AMP:Precipitation"
+    },
+    {
+      "AMP:additionalInformation": [
+        "<https://en.wikipedia.org/wiki/Snow>",
+        "<http://glossary.ametsoc.org/wiki/Snow>",
+        "<http://purl.obolibrary.org/obo/ENVO_01000406>"
+      ],
+      "skos:prefLabel": "Snow",
+      "@id": "AMP:Snow"
+    }
+  ],
+  "AMP:temporalResolution": {
+    "skos:altLabel": [
+      "One Day",
+      "24 Hours",
+      "24 hours"
+    ],
+    "skos:prefLabel": "1.0 days",
+    "@id": "AMP:_1.0days"
+  },
+  "AMP:collection": {
+    "AMP:temporalCoverageStartDate": "2000-02-01T00:00:00Z",
+    "skos:prefLabel": "GLDAS Catchment Land Surface Model L4 daily 0.25 x 0.25 degree V2.0",
+    "AMP:currentVersion": true,
+    "AMP:distributionURL": "https://hydro1.gesdisc.eosdis.nasa.gov/data/GLDAS/GLDAS_CLSM025_DA1_D.2.2/",
+    "AMP:grid": "AMP:Grid0.25X0.25degrees",
+    "AMP:doi": "http://dx.doi.org/10.1175/BAMS-85-3-381",
+    "@id": "AMP:GLDAS_CLSM025_D_V2.0"
+  },
+  "AMP:variableName": "/Snowf_tavg",
+  "@id": "AMP:_58y38204828395ne2893",
+  "AMP:dimension": []
+}

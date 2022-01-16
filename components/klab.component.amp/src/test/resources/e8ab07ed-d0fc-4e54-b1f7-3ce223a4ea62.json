@@ -1,0 +1,133 @@
+{
+  "@context": {
+    "AMP": "http://lingualogica.net/AMP#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "envo": "http://purl.obolibrary.org/obo/envo#",
+    "chebi": "http://purl.obolibrary.org/obo/chebi#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "shacl": "http://www.w3.org/ns/shacl#",
+    "AMP:fillValue": {
+      "@type": "xsd:double"
+    },
+    "AMP:modifiedDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:createdDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:dimensionSize": {
+      "@type": "xsd:double"
+    },
+    "AMP:offset": {
+      "@type": "xsd:double"
+    },
+    "AMP:scaleFactor": {
+      "@type": "xsd:double"
+    },
+    "AMP:collection": {
+      "@type": "@id"
+    }
+  },
+  "@type": "Variable",
+  "AMP:offset": 0.0,
+  "AMP:featureOfInterest": [
+    {
+      "AMP:additionalInformation": [
+        "<https://en.wikipedia.org/wiki/Thermal_radiation>",
+        "<http://glossary.ametsoc.org/wiki/Thermal_radiation>"
+      ],
+      "skos:prefLabel": "Electromagnetic Radiation, Thermal",
+      "skos:altLabel": "Heat",
+      "@id": "AMP:Electromagnetic_Radiation-Thermal"
+    },
+    {
+      "skos:prefLabel": "Electromagnetic Radiation, Upwelling",
+      "@id": "AMP:Electromagnetic_Radiation-Upwelling"
+    }
+  ],
+  "AMP:additionalInformation": [
+    "https://doi.org/10.5067/KPJNN2GI1DQR",
+    "<https://doi.org/10.5067/KPJNN2GI1DQR>"
+  ],
+  "AMP:variableName": "/Geophysical_Data/heat_flux_sensible",
+  "AMP:dimension": [
+    {
+      "skos:prefLabel": "x",
+      "AMP:dimensionSize": "3856",
+      "AMP:indexRange": "[-179.953, 179.953]",
+      "@id": "AMP:_e8ab07ed-d0fc-4e54-b1f7-3ce223a4ea62Dim2"
+    },
+    {
+      "skos:prefLabel": "y",
+      "AMP:indexRange": "[84.65644, -84.65644]",
+      "AMP:dimensionSize": "1624",
+      "@id": "AMP:_e8ab07ed-d0fc-4e54-b1f7-3ce223a4ea62Dim1"
+    }
+  ],
+  "AMP:createdDate": "2021-11-03T00:00:00.000000Z",
+  "skos:altLabel": "latent heat flux",
+  "AMP:scaleFactor": 1.0,
+  "AMP:unitOfMeasure": {
+    "skos:altLabel": [
+      "Watts Per Square Meter",
+      "w/m^2 "
+    ],
+    "skos:prefLabel": "W m-2",
+    "@id": "AMP:Watts_Per_Square_Meter"
+  },
+  "AMP:spatialResolution": {
+    "AMP:unitOfMeasure": "AMP:kilometers",
+    "AMP:longitudeResolution": 9.0,
+    "skos:prefLabel": "9 X 9 kilometers Grid",
+    "AMP:latitudeResolution": 9.0,
+    "@id": "AMP:Grid9X9kilometers"
+  },
+  "AMP:instrument": {
+    "skos:altLabel": "L-band Radiometer (SMAP)",
+    "AMP:ceosID": "1554",
+    "skos:prefLabel": "SMAP L-band Radiometer",
+    "AMP:additionalInformation": "<http://database.eohandbook.com/database/instrumentsummary.aspx?instrumentID=1554>",
+    "@id": "AMP:SMAPL-bandRadiometerInstrument"
+  },
+  "AMP:distributionURL": "<https://n5eil01u.ecs.nsidc.org/SMAP/SPL4SMGP.004/>",
+  "AMP:unitString": "W m-2",
+  "AMP:fillValue": -9999.0,
+  "AMP:collection": {
+    "AMP:distributionURL": "https://n5eil01u.ecs.nsidc.org/SMAP/SPL4SMGP.004/",
+    "AMP:doi": "https://doi.org/10.5067/KPJNN2GI1DQR",
+    "AMP:grid": "AMP:Grid9X9kilometers",
+    "AMP:temporalCoverageStartDate": "2015-03-31T00:00:00Z",
+    "AMP:currentVersion": true,
+    "skos:prefLabel": "SPL4SMGP_V005",
+    "@id": "AMP:SPL4SMGP_V005"
+  },
+  "skos:prefLabel": "heat_flux_sensible",
+  "AMP:measurementContext": {
+    "AMP:additionalInformation": "<http://purl.obolibrary.org/obo/ENVO_01000324>",
+    "skos:prefLabel": "Earth Surface",
+    "@id": "AMP:Earth_Surface"
+  },
+  "AMP:temporalResolution": {
+    "skos:altLabel": [
+      "Three Hours",
+      "180 Minutes"
+    ],
+    "skos:prefLabel": "3.0 hours",
+    "@id": "AMP:_3.0hours"
+  },
+  "AMP:measuredQuantity": {
+    "skos:altLabel": [
+      "Heat flux density",
+      "Radiative flux",
+      "Radiant Flux Density",
+      "Irradiance"
+    ],
+    "skos:prefLabel": "Power Per Area",
+    "@id": "AMP:Power_Per_Area"
+  },
+  "AMP:temporalCoverageStartDate": "2015-03-31T00:00:00Z",
+  "AMP:modifiedDate": "2021-11-03T00:00:00.000000Z",
+  "@id": "AMP:_e8ab07ed-d0fc-4e54-b1f7-3ce223a4ea62"
+}

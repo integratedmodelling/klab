@@ -1,0 +1,129 @@
+{
+  "@context": {
+    "AMP": "http://lingualogica.net/AMP#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "envo": "http://purl.obolibrary.org/obo/envo#",
+    "chebi": "http://purl.obolibrary.org/obo/chebi#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "shacl": "http://www.w3.org/ns/shacl#",
+    "AMP:fillValue": {
+      "@type": "xsd:double"
+    },
+    "AMP:modifiedDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:createdDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:dimensionSize": {
+      "@type": "xsd:double"
+    },
+    "AMP:offset": {
+      "@type": "xsd:double"
+    },
+    "AMP:scaleFactor": {
+      "@type": "xsd:double"
+    },
+    "AMP:collection": {
+      "@type": "@id"
+    }
+  },
+  "@type": "Variable",
+  "AMP:createdDate": "2021-11-03T00:00:00.000000Z",
+  "AMP:additionalInformation": [
+    "https://doi.og/10.5067/VIIRS/CLDPROP_D3_MODIS_Aqua.011",
+    "https://doi.org/10.5067/MODIS/CLDPROP_D3_MODIS_Aqua.011"
+  ],
+  "AMP:temporalResolution": {
+    "skos:altLabel": [
+      "One Day",
+      "24 Hours",
+      "24 hours"
+    ],
+    "skos:prefLabel": "1.0 days",
+    "@id": "AMP:_1.0days"
+  },
+  "AMP:measuredQuantity": {
+    "skos:altLabel": "Optical Thickness-Extinction",
+    "skos:prefLabel": "Optical Depth-Extinction",
+    "AMP:additionalInformation": [
+      "<http://glossary.ametsoc.org/wiki/Optical_depth>",
+      "<https://en.wikipedia.org/wiki/Optical_depth>"
+    ],
+    "@id": "AMP:Optical_Depth-Extinction"
+  },
+  "AMP:featureOfInterest": {
+    "skos:prefLabel": "Cloud (Water-based, Ice)",
+    "AMP:additionalInformation": "<http://glossary.ametsoc.org/wiki/Ice-crystal_cloud>",
+    "@id": "AMP:Cloud-Water-based-Ice"
+  },
+  "AMP:variableName": "/Cloud_Optical_Thickness_1621_PCL_Log_Ice/Mean",
+  "AMP:dimension": [
+    {
+      "AMP:variableName": "/latitude (dimension)",
+      "AMP:indexRange": "[89.5, -89.5]",
+      "AMP:dimensionSize": "180",
+      "@id": "AMP:_06ecafd2828a5-a0db-af04070fcee8"
+    },
+    {
+      "AMP:variableName": "/longitude (dimension)",
+      "AMP:dimensionSize": "360",
+      "AMP:indexRange": "[-179.5, 179.5]",
+      "@id": "AMP:_cf8d089122404178331abee32b510d"
+    }
+  ],
+  "AMP:modifiedDate": "2021-11-03T00:00:00.000000Z",
+  "AMP:spatialResolution": {
+    "AMP:longitudeResolution": [
+      1.0,
+      "1"
+    ],
+    "AMP:latitudeResolution": [
+      1.0,
+      "1"
+    ],
+    "skos:prefLabel": "1 X 1 degrees Grid",
+    "AMP:unitOfMeasure": "AMP:degrees",
+    "@id": "AMP:Grid1X1degrees"
+  },
+  "AMP:offset": 0.0,
+  "AMP:collection": {
+    "skos:prefLabel": "CLDPROP_D3_MODIS_AQUA_V1.1",
+    "AMP:currentVersion": true,
+    "AMP:longName": "MODIS/Aqua Cloud Properties Level 3 daily, 1x1 degree grid",
+    "AMP:distributionURL": "https://ladsweb.modaps.eosdis.nasa.gov/archive/allData/5110/CLDPROP_D3_MODIS_Aqua/",
+    "AMP:temporalCoverageStartDate": "2012-01-19T00:00:00Z",
+    "AMP:doi": "https://doi.org/10.5067/MODIS/CLDPROP_D3_MODIS_Aqua.011",
+    "AMP:grid": "AMP:Grid1X1degrees",
+    "AMP:CMRConceptID": "C1655784008-LAADS",
+    "@id": "AMP:CLDPROP_D3_MODIS_Aqua_V1-1"
+  },
+  "AMP:unitOfMeasure": {
+    "skos:altLabel": [
+      "Dimensionless",
+      "N/A",
+      "None"
+    ],
+    "skos:prefLabel": "Unitless",
+    "@id": "AMP:Unitless"
+  },
+  "skos:prefLabel": "Mean",
+  "AMP:temporalCoverageStartDate": "2012-01-19T00:00:00Z",
+  "AMP:instrument": {
+    "skos:prefLabel": "MODIS",
+    "AMP:additionalInformation": "<http://database.eohandbook.com/database/instrumentsummary.aspx?instrumentID=395>",
+    "AMP:ceosID": "395",
+    "skos:altLabel": "MODerate-Resolution Imaging Spectroradiometer",
+    "@id": "AMP:MODISInstrument"
+  },
+  "AMP:unitString": "Unitless",
+  "AMP:measurementContext": {
+    "AMP:additionalInformation": "<http://purl.obolibrary.org/obo/ENVO_01000810>",
+    "skos:prefLabel": "Earth's Atmosphere-Vertical Column",
+    "@id": "AMP:Atmosphere-Earth-Vertical_Column"
+  },
+  "AMP:scaleFactor": 1.0,
+  "@id": "AMP:_939c2246-c77d-464f-98c2-56f147e2f256"
+}

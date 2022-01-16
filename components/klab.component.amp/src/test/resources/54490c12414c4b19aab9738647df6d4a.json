@@ -1,0 +1,127 @@
+{
+  "@context": {
+    "AMP": "http://lingualogica.net/AMP#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "envo": "http://purl.obolibrary.org/obo/envo#",
+    "chebi": "http://purl.obolibrary.org/obo/chebi#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "shacl": "http://www.w3.org/ns/shacl#",
+    "AMP:fillValue": {
+      "@type": "xsd:double"
+    },
+    "AMP:modifiedDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:createdDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:dimensionSize": {
+      "@type": "xsd:double"
+    },
+    "AMP:offset": {
+      "@type": "xsd:double"
+    },
+    "AMP:scaleFactor": {
+      "@type": "xsd:double"
+    },
+    "AMP:collection": {
+      "@type": "@id"
+    }
+  },
+  "@type": "Variable",
+  "AMP:modifiedDate": "2021-11-19T23:59:47.296535Z",
+  "AMP:scaleFactor": 1.0,
+  "AMP:unitString": "K",
+  "AMP:temporalResolution": {
+    "skos:altLabel": [
+      "One Day",
+      "24 Hours",
+      "24 hours"
+    ],
+    "skos:prefLabel": "1.0 days",
+    "@id": "AMP:_1.0days"
+  },
+  "AMP:dimension": [
+    {
+      "AMP:dimensionSize": 4096,
+      "AMP:variableName": "/lon",
+      "AMP:collection": "AMP:MW_IR_OI-REMSS-L4-GLOB-v5.0_5.0",
+      "AMP:indexRange": "[-179.95599365234375, 179.95599365234375]",
+      "@id": "AMP:_5ddff9220bc64757a8adf2014ef235c8"
+    },
+    {
+      "AMP:indexRange": "[-89.95600128173828, 89.95600128173828]",
+      "AMP:collection": "AMP:MW_IR_OI-REMSS-L4-GLOB-v5.0_5.0",
+      "AMP:dimensionSize": 2048,
+      "AMP:variableName": "/lat",
+      "@id": "AMP:_2f2a425b24b94df9898fcfe924015d60"
+    },
+    {
+      "AMP:dimensionSize": 1,
+      "AMP:indexRange": "[675777600.0, 675777600.0]",
+      "AMP:variableName": "/time",
+      "AMP:collection": "AMP:MW_IR_OI-REMSS-L4-GLOB-v5.0_5.0",
+      "@id": "AMP:_939df4edc5be4cd9965e7d2c75b54eeb"
+    }
+  ],
+  "AMP:measurementContext": {
+    "skos:altLabel": "Ocean Surface",
+    "skos:prefLabel": "Sea Surface",
+    "@id": "AMP:Ocean_Surface"
+  },
+  "AMP:additionalInformation": "<https://doi.org/10.5067/GHMWI-4FR05>",
+  "AMP:createdDate": "2021-11-19T23:59:47.296535Z",
+  "AMP:measuredQuantity": {
+    "skos:prefLabel": "Temperature",
+    "AMP:additionalInformation": [
+      "<https://glossary.ametsoc.org/wiki/Temperature>",
+      "<https://en.wikipedia.org/wiki/Temperature>"
+    ],
+    "@id": "AMP:Temperature"
+  },
+  "AMP:spatialResolution": {
+    "AMP:unitOfMeasure": "AMP:degrees",
+    "AMP:latitudeResolution": "0.09",
+    "skos:prefLabel": "0.09 X 0.09 degrees Grid",
+    "AMP:longitudeResolution": "0.09",
+    "@id": "AMP:Grid0.09X0.09degrees"
+  },
+  "AMP:cfStandardName": "sea_surface_temperature",
+  "AMP:instrument": {
+    "skos:prefLabel": "MODIS",
+    "AMP:additionalInformation": "<http://database.eohandbook.com/database/instrumentsummary.aspx?instrumentID=395>",
+    "AMP:ceosID": "395",
+    "skos:altLabel": "MODerate-Resolution Imaging Spectroradiometer",
+    "@id": "AMP:MODISInstrument"
+  },
+  "AMP:temporalCoverageStartDate": "2002-06-01T00:00:00.000Z",
+  "AMP:variableName": "/analysed_sst",
+  "AMP:offset": 0.0,
+  "AMP:collection": {
+    "AMP:CMRConceptID": "C1658476085-PODAAC",
+    "AMP:distributionURL": [
+      "https://thredds.jpl.nasa.gov/thredds/catalog_ghrsst_gds2.html?dataset=MW_IR_OI-REMSS-L4-GLOB-v5.0",
+      "https://podaac.jpl.nasa.gov/ws/search/granule/?datasetId=PODAAC-GHMWI-4FR04&apidoc",
+      "https://podaac-tools.jpl.nasa.gov/drive/files/allData/ghrsst/data/GDS2/L4/GLOB/REMSS/mw_ir_OI/v5.0"
+    ],
+    "AMP:currentVersion": "true",
+    "AMP:doi": "<https://doi.org/10.5067/GHMWI-4FR05>",
+    "AMP:temporalCoverageStartDate": "2002-06-01T00:00:00.000Z",
+    "AMP:grid": "AMP:Grid0.09X0.09degrees",
+    "@id": "AMP:MW_IR_OI-REMSS-L4-GLOB-v5.0_5.0"
+  },
+  "AMP:featureOfInterest": {
+    "AMP:additionalInformation": [
+      "<http://purl.obolibrary.org/obo/ENVO_00002042>",
+      "<http://purl.obolibrary.org/obo/CHEBI_15377>",
+      "<http://glossary.ametsoc.org/wiki/Water>"
+    ],
+    "skos:prefLabel": "Water, All Phases",
+    "skos:altLabel": "H20",
+    "@id": "AMP:Water-All_Phases"
+  },
+  "AMP:fillValue": -32767.0,
+  "@id": "AMP:_54490c12414c4b19aab9738647df6d4a"
+}

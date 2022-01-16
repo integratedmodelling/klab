@@ -1,0 +1,130 @@
+{
+  "@context": {
+    "AMP": "http://lingualogica.net/AMP#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "envo": "http://purl.obolibrary.org/obo/envo#",
+    "chebi": "http://purl.obolibrary.org/obo/chebi#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "shacl": "http://www.w3.org/ns/shacl#",
+    "AMP:fillValue": {
+      "@type": "xsd:double"
+    },
+    "AMP:modifiedDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:createdDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:dimensionSize": {
+      "@type": "xsd:double"
+    },
+    "AMP:offset": {
+      "@type": "xsd:double"
+    },
+    "AMP:scaleFactor": {
+      "@type": "xsd:double"
+    },
+    "AMP:collection": {
+      "@type": "@id"
+    }
+  },
+  "@type": "Variable",
+  "AMP:offset": 0.0,
+  "AMP:modifiedDate": "2021-11-19T21:44:56.850920Z",
+  "AMP:temporalCoverageStartDate": "1997-12-08T00:00:00.000Z",
+  "AMP:variableName": "/water_vapor",
+  "AMP:measurementContext": {
+    "AMP:additionalInformation": "<http://purl.obolibrary.org/obo/ENVO_01000810>",
+    "skos:prefLabel": "Earth's Atmosphere-Vertical Column",
+    "@id": "AMP:Atmosphere-Earth-Vertical_Column"
+  },
+  "AMP:dimension": [
+    {
+      "AMP:indexRange": "[-179.875, 179.875]",
+      "AMP:dimensionSize": 1440,
+      "AMP:variableName": "/lon",
+      "AMP:collection": "AMP:TMI-REMSS-L3U-v7.1a_7.1a",
+      "@id": "AMP:_b5feeaee8e38458a99a1d314a288dced"
+    },
+    {
+      "AMP:variableName": "/time",
+      "AMP:dimensionSize": 2,
+      "AMP:indexRange": "[534384000.0, 534470400.0]",
+      "AMP:collection": "AMP:TMI-REMSS-L3U-v7.1a_7.1a",
+      "@id": "AMP:_f3c916c0f99b432c9b0f6ee19e4db018"
+    },
+    {
+      "AMP:dimensionSize": 720,
+      "AMP:variableName": "/lat",
+      "AMP:collection": "AMP:TMI-REMSS-L3U-v7.1a_7.1a",
+      "AMP:indexRange": "[-89.875, 89.875]",
+      "@id": "AMP:_fea0114d8d7f4fa8a7a07f867b160e5e"
+    }
+  ],
+  "AMP:collection": {
+    "AMP:CMRConceptID": "C1661293002-PODAAC",
+    "AMP:distributionURL": [
+      "https://thredds.jpl.nasa.gov/thredds/catalog_ghrsst_gds2.html?dataset=TMI-REMSS-L3U-v7.1a",
+      "https://podaac.jpl.nasa.gov/ws/search/granule/?datasetId=PODAAC-GHTMI-3UR71",
+      "https://podaac-tools.jpl.nasa.gov/drive/files/allData/ghrsst/data/GDS2/L3U/TMI/REMSS/v7.1a"
+    ],
+    "AMP:temporalCoverageStartDate": "1997-12-08T00:00:00.000Z",
+    "AMP:doi": "<https://doi.org/10.5067/GHTMI-3UR71>",
+    "AMP:temporalCoverageEndDate": "1997-12-08T00:00:00.000Z",
+    "AMP:grid": "AMP:Grid0.25X0.25degrees",
+    "AMP:currentVersion": "true",
+    "@id": "AMP:TMI-REMSS-L3U-v7.1a_7.1a"
+  },
+  "AMP:spatialResolution": {
+    "AMP:latitudeResolution": [
+      "0.25",
+      0.25
+    ],
+    "AMP:unitOfMeasure": "AMP:degrees",
+    "skos:prefLabel": "0.25 X 0.25 degrees Grid",
+    "AMP:longitudeResolution": [
+      "0.25",
+      0.25
+    ],
+    "@id": "AMP:Grid0.25X0.25degrees"
+  },
+  "AMP:temporalCoverageEndDate": "1997-12-08T00:00:00.000Z",
+  "AMP:scaleFactor": 1.0,
+  "AMP:unitString": "kg m-2",
+  "AMP:temporalResolution": {
+    "skos:altLabel": [
+      "One Day",
+      "24 Hours",
+      "24 hours"
+    ],
+    "skos:prefLabel": "1.0 days",
+    "@id": "AMP:_1.0days"
+  },
+  "AMP:createdDate": "2021-11-19T21:44:56.850920Z",
+  "AMP:featureOfInterest": {
+    "AMP:additionalInformation": [
+      "<http://purl.obolibrary.org/obo/ENVO_01000266>",
+      "<https://glossary.ametsoc.org/wiki/Water_vapor>"
+    ],
+    "skos:prefLabel": "Water Vapor",
+    "@id": "AMP:Water_Vapor"
+  },
+  "AMP:measuredQuantity": {
+    "skos:altLabel": [
+      "Surface Density",
+      "Area Density"
+    ],
+    "AMP:additionalInformation": [
+      "<http://purl.obolibrary.org/obo/PATO_0001351>",
+      "<https://en.wikipedia.org/wiki/Area_density>"
+    ],
+    "skos:prefLabel": "Mass Per Area",
+    "@id": "AMP:Mass_Per_Area"
+  },
+  "AMP:additionalInformation": "<https://doi.org/10.5067/GHTMI-3UR71>",
+  "AMP:fillValue": -128.0,
+  "AMP:cfStandardName": "atmosphere_mass_content_of_water_vapor",
+  "@id": "AMP:_f9c9b37652cf4ff5a15e832f4f7943da"
+}

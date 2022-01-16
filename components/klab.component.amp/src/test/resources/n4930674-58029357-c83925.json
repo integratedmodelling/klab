@@ -1,0 +1,120 @@
+{
+  "@context": {
+    "AMP": "http://lingualogica.net/AMP#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "envo": "http://purl.obolibrary.org/obo/envo#",
+    "chebi": "http://purl.obolibrary.org/obo/chebi#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "shacl": "http://www.w3.org/ns/shacl#",
+    "AMP:fillValue": {
+      "@type": "xsd:double"
+    },
+    "AMP:modifiedDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:createdDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:dimensionSize": {
+      "@type": "xsd:double"
+    },
+    "AMP:offset": {
+      "@type": "xsd:double"
+    },
+    "AMP:scaleFactor": {
+      "@type": "xsd:double"
+    },
+    "AMP:collection": {
+      "@type": "@id"
+    }
+  },
+  "@type": "Variable",
+  "AMP:additionalInformation": "http://dx.doi.org/10.1175/BAMS-85-3-381",
+  "AMP:variableName": "/SWE_tavg",
+  "AMP:createdDate": "2021-11-03T00:00:00.000000Z",
+  "AMP:featureOfInterest": [
+    {
+      "skos:prefLabel": "Electromagnetic Radiation, Net",
+      "@id": "AMP:Electromagnetic_Radiation-Net"
+    },
+    {
+      "AMP:additionalInformation": [
+        "<https://en.wikipedia.org/wiki/Shortwave_radiation>",
+        "<http://glossary.ametsoc.org/wiki/Shortwave_radiation>",
+        "<http://purl.obolibrary.org/obo/ENVO_01001861>"
+      ],
+      "skos:prefLabel": "Electromagnetic Radiation, Shortwave",
+      "@id": "AMP:Electromagnetic_Radiation-Shortwave"
+    }
+  ],
+  "AMP:spatialResolution": {
+    "AMP:latitudeResolution": [
+      "0.25",
+      0.25
+    ],
+    "AMP:unitOfMeasure": "AMP:degrees",
+    "skos:prefLabel": "0.25 X 0.25 degrees Grid",
+    "AMP:longitudeResolution": [
+      "0.25",
+      0.25
+    ],
+    "@id": "AMP:Grid0.25X0.25degrees"
+  },
+  "AMP:scaleFactor": 1.0,
+  "AMP:unitOfMeasure": {
+    "skos:altLabel": [
+      "Watts Per Square Meter",
+      "w/m^2 "
+    ],
+    "skos:prefLabel": "W m-2",
+    "@id": "AMP:Watts_Per_Square_Meter"
+  },
+  "AMP:unitString": "W m-2",
+  "AMP:fillValue": -9999.0,
+  "AMP:temporalResolution": {
+    "skos:altLabel": [
+      "One Day",
+      "24 Hours",
+      "24 hours"
+    ],
+    "skos:prefLabel": "1.0 days",
+    "@id": "AMP:_1.0days"
+  },
+  "AMP:collection": {
+    "AMP:temporalCoverageStartDate": "2000-02-01T00:00:00Z",
+    "skos:prefLabel": "GLDAS Catchment Land Surface Model L4 daily 0.25 x 0.25 degree V2.0",
+    "AMP:currentVersion": true,
+    "AMP:distributionURL": "https://hydro1.gesdisc.eosdis.nasa.gov/data/GLDAS/GLDAS_CLSM025_DA1_D.2.2/",
+    "AMP:grid": "AMP:Grid0.25X0.25degrees",
+    "AMP:doi": "http://dx.doi.org/10.1175/BAMS-85-3-381",
+    "@id": "AMP:GLDAS_CLSM025_D_V2.0"
+  },
+  "AMP:measurementContext": {
+    "AMP:additionalInformation": "<http://purl.obolibrary.org/obo/ENVO_01000324>",
+    "skos:prefLabel": "Earth Surface",
+    "@id": "AMP:Earth_Surface"
+  },
+  "AMP:temporalCoverageStartDate": "2000-02-01T00:00:00Z",
+  "AMP:measuredQuantity": {
+    "skos:altLabel": [
+      "Heat flux density",
+      "Radiative flux",
+      "Radiant Flux Density",
+      "Irradiance"
+    ],
+    "skos:prefLabel": "Power Per Area",
+    "@id": "AMP:Power_Per_Area"
+  },
+  "AMP:modifiedDate": "2021-11-03T00:00:00.000000Z",
+  "AMP:instrument": {
+    "AMP:additionalInformation": "<https://ldas.gsfc.nasa.gov/gldas/>",
+    "skos:altLabel": "GLDAS Catchment Land Surface Model",
+    "skos:prefLabel": "GLDAS Catchment LSM",
+    "@id": "AMP:Catchment_LSM"
+  },
+  "AMP:offset": 0.0,
+  "@id": "AMP:_n4930674-58029357-c83925",
+  "AMP:dimension": []
+}

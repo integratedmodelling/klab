@@ -1,0 +1,134 @@
+{
+  "@context": {
+    "AMP": "http://lingualogica.net/AMP#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "envo": "http://purl.obolibrary.org/obo/envo#",
+    "chebi": "http://purl.obolibrary.org/obo/chebi#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "shacl": "http://www.w3.org/ns/shacl#",
+    "AMP:fillValue": {
+      "@type": "xsd:double"
+    },
+    "AMP:modifiedDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:createdDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:dimensionSize": {
+      "@type": "xsd:double"
+    },
+    "AMP:offset": {
+      "@type": "xsd:double"
+    },
+    "AMP:scaleFactor": {
+      "@type": "xsd:double"
+    },
+    "AMP:collection": {
+      "@type": "@id"
+    }
+  },
+  "@type": "Variable",
+  "AMP:createdDate": "2021-11-20T17:37:28.347186Z",
+  "AMP:dimension": [
+    {
+      "AMP:indexRange": "[-90.0, 90.0]",
+      "AMP:variableName": "/lat",
+      "AMP:dimensionSize": 1801,
+      "AMP:collection": "AMP:CMC0.1deg-CMC-L4-GLOB-v3.0_3.0",
+      "@id": "AMP:_0fc9592bf060457faff61415436c0894"
+    },
+    {
+      "AMP:collection": "AMP:CMC0.1deg-CMC-L4-GLOB-v3.0_3.0",
+      "AMP:variableName": "/lon",
+      "AMP:indexRange": "[-180.0, 179.89999389648438]",
+      "AMP:dimensionSize": 3600,
+      "@id": "AMP:_a3adecb5470347a3820f343da8e4b0e1"
+    },
+    {
+      "AMP:dimensionSize": 1,
+      "AMP:collection": "AMP:CMC0.1deg-CMC-L4-GLOB-v3.0_3.0",
+      "AMP:variableName": "/time",
+      "AMP:indexRange": "[1104494400.0, 1104494400.0]",
+      "@id": "AMP:_859f16777b9c4fd9b27f5c42f507076c"
+    }
+  ],
+  "AMP:fillValue": -1.0,
+  "AMP:cfStandardName": "sea_ice_area_fraction",
+  "AMP:collection": {
+    "AMP:distributionURL": [
+      "https://podaac-tools.jpl.nasa.gov/drive/files/allData/ghrsst/data/GDS2/L4/GLOB/CMC/CMC0.1deg/v3",
+      "https://podaac.jpl.nasa.gov/ws/search/granule/?datasetId=PODAAC-GHCMC-4FM03",
+      "http://thredds.jpl.nasa.gov/thredds/catalog_ghrsst_gds2.html?dataset=CMC0.1deg-CMC-L4-GLOB-v3.0"
+    ],
+    "AMP:temporalCoverageStartDate": "2016-01-01T00:00:00.000Z",
+    "AMP:currentVersion": "true",
+    "AMP:CMRConceptID": "C1652972273-PODAAC",
+    "AMP:grid": "AMP:Grid0.1X0.1degrees",
+    "AMP:doi": "<https://doi.org/10.5067/GHCMC-4FM03>",
+    "@id": "AMP:CMC0.1deg-CMC-L4-GLOB-v3.0_3.0"
+  },
+  "AMP:offset": 0.0,
+  "AMP:modifiedDate": "2021-11-20T17:37:28.347186Z",
+  "AMP:measuredQuantity": {
+    "skos:prefLabel": "Area Fraction",
+    "skos:altLabel": [
+      "Area/Area",
+      "Area Per Area"
+    ],
+    "@id": "AMP:Area_Fraction"
+  },
+  "AMP:unitString": "1",
+  "AMP:measurementContext": {
+    "skos:altLabel": "Sea",
+    "skos:prefLabel": "Ocean",
+    "AMP:additionalInformation": "<http://purl.obolibrary.org/obo/ENVO_00000015>",
+    "@id": "AMP:Ocean"
+  },
+  "AMP:additionalInformation": "<https://doi.org/10.5067/GHCMC-4FM03>",
+  "AMP:instrument": {
+    "skos:prefLabel": "VIIRS",
+    "skos:altLabel": "Visible/Infrared Imager Radiometer Suite",
+    "AMP:ceosID": "412",
+    "AMP:additionalInformation": "<http://database.eohandbook.com/database/instrumentsummary.aspx?instrumentID=412>",
+    "@id": "AMP:VIIRSInstrument"
+  },
+  "AMP:scaleFactor": 1.0,
+  "AMP:featureOfInterest": {
+    "skos:altLabel": [
+      "H20, Solid Phase",
+      "H20, Ice",
+      "Water, Solid Phase"
+    ],
+    "skos:prefLabel": "Water, Ice",
+    "AMP:additionalInformation": "<http://glossary.ametsoc.org/wiki/Ice>",
+    "@id": "AMP:Water-Ice"
+  },
+  "AMP:spatialResolution": {
+    "AMP:unitOfMeasure": "AMP:degrees",
+    "skos:prefLabel": "0.1 X 0.1 degrees Grid",
+    "AMP:longitudeResolution": [
+      0.1,
+      "0.1"
+    ],
+    "AMP:latitudeResolution": [
+      0.1,
+      "0.1"
+    ],
+    "@id": "AMP:Grid0.1X0.1degrees"
+  },
+  "AMP:temporalResolution": {
+    "skos:altLabel": [
+      "One Day",
+      "24 Hours",
+      "24 hours"
+    ],
+    "skos:prefLabel": "1.0 days",
+    "@id": "AMP:_1.0days"
+  },
+  "AMP:temporalCoverageStartDate": "2016-01-01T00:00:00.000Z",
+  "AMP:variableName": "/sea_ice_fraction",
+  "@id": "AMP:_eaf90921901342d29d763e1ce62cb409"
+}

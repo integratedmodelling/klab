@@ -1,0 +1,149 @@
+{
+  "@context": {
+    "AMP": "http://lingualogica.net/AMP#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "envo": "http://purl.obolibrary.org/obo/envo#",
+    "chebi": "http://purl.obolibrary.org/obo/chebi#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "shacl": "http://www.w3.org/ns/shacl#",
+    "AMP:fillValue": {
+      "@type": "xsd:double"
+    },
+    "AMP:modifiedDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:createdDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:dimensionSize": {
+      "@type": "xsd:double"
+    },
+    "AMP:offset": {
+      "@type": "xsd:double"
+    },
+    "AMP:scaleFactor": {
+      "@type": "xsd:double"
+    },
+    "AMP:collection": {
+      "@type": "@id"
+    }
+  },
+  "@type": "Variable",
+  "AMP:collection": {
+    "AMP:grid": "AMP:Grid1X1degrees",
+    "AMP:distributionURL": [
+      "https://search.earthdata.nasa.gov/search/project?p=!C1385072232-LARC_ASDC",
+      "https://opendap.larc.nasa.gov/opendap/CERES/CldTypHist/GEO-MODIS_Edition4A/contents.html"
+    ],
+    "skos:prefLabel": "CER_CldTypHist_GEO-MODIS_Edition4A",
+    "AMP:CMRConceptID": "C1385072232-LARC_ASDC",
+    "AMP:temporalCoverageStartDate": "2000-03-01T00:00:00.000000Z",
+    "AMP:doi": "https://doi.org/10.5067/Terra+Aqua/CERES/CLDTYPHIST_L3.004",
+    "AMP:currentVersion": true,
+    "@id": "AMP:CER_CldTypHist_GEO-MODIS_Edition4A"
+  },
+  "AMP:spatialResolution": {
+    "AMP:longitudeResolution": [
+      1.0,
+      "1"
+    ],
+    "AMP:latitudeResolution": [
+      1.0,
+      "1"
+    ],
+    "skos:prefLabel": "1 X 1 degrees Grid",
+    "AMP:unitOfMeasure": "AMP:degrees",
+    "@id": "AMP:Grid1X1degrees"
+  },
+  "AMP:variableName": "/Monthly_Day_Averages/Cloud_Properties_for_9_Cloud_Types_Monthly_Day/cld_liq_radius_md",
+  "AMP:measurementContext": [
+    {
+      "AMP:additionalInformation": [
+        "<http://glossary.ametsoc.org/wiki/Cloud>",
+        "<http://purl.obolibrary.org/obo/ENVO_01001428>"
+      ],
+      "skos:prefLabel": "Cloud (Water-based)",
+      "@id": "AMP:Cloud-Water-based"
+    },
+    {
+      "AMP:additionalInformation": "<http://purl.obolibrary.org/obo/ENVO_01000810>",
+      "skos:prefLabel": "Earth's Atmosphere",
+      "@id": "AMP:Atmosphere-Earth"
+    },
+    {
+      "AMP:additionalInformation": [
+        "<https://en.wikipedia.org/wiki/Daytime>",
+        "<http://purl.obolibrary.org/obo/NCIT_C64928>"
+      ],
+      "skos:prefLabel": "Daytime",
+      "@id": "AMP:Daytime"
+    }
+  ],
+  "AMP:offset": 0.0,
+  "AMP:unitOfMeasure": {
+    "skos:altLabel": "meter",
+    "skos:prefLabel": "m",
+    "@id": "AMP:meters"
+  },
+  "AMP:additionalInformation": "https://doi.org/10.5067/Terra+Aqua/CERES/CLDTYPHIST_L3.004",
+  "AMP:measuredQuantity": {
+    "skos:prefLabel": "Radius",
+    "@id": "AMP:Radius"
+  },
+  "AMP:featureOfInterest": {
+    "skos:prefLabel": "Cloud Water Particle (Liquid)",
+    "AMP:additionalInformation": "<http://glossary.ametsoc.org/wiki/Cloud_particle>",
+    "@id": "AMP:Cloud_Water_Particle-Liquid"
+  },
+  "AMP:fillValue": 3.4028234663852886e+38,
+  "AMP:createdDate": "2021-11-03T00:00:00.000000Z",
+  "AMP:dimension": [
+    {
+      "AMP:variableName": "/latitude",
+      "AMP:dimensionSize": 180,
+      "AMP:indexRange": "[-89.5, 89.5]",
+      "@id": "AMP:_c2a67b686c054d039fca040ad47bd402"
+    },
+    {
+      "AMP:variableName": "/press_layer",
+      "AMP:dimensionSize": 3,
+      "AMP:indexRange": "[225.0, 840.0]",
+      "@id": "AMP:_c496f3ed46b4485c8fe1a064f833a39c"
+    },
+    {
+      "AMP:dimensionSize": 360,
+      "AMP:indexRange": "[-179.5, 179.5]",
+      "AMP:variableName": "/longitude",
+      "@id": "AMP:_20cd13e57c544a858b6207127e326765"
+    },
+    {
+      "AMP:dimensionSize": 3,
+      "AMP:indexRange": "[1.784999966621399, 200.63999938964844]",
+      "AMP:variableName": "/od_bin",
+      "@id": "AMP:_18542ef421f24e969c20bd25d5cc74f3"
+    }
+  ],
+  "AMP:scaleFactor": 1.0,
+  "AMP:modifiedDate": "2021-11-03T00:00:00.000000Z",
+  "AMP:temporalCoverageStartDate": "2000-03-01T00:00:00.000000Z",
+  "AMP:temporalResolution": {
+    "skos:altLabel": "One Month",
+    "skos:prefLabel": [
+      "1.0 months",
+      "1 Month"
+    ],
+    "@id": "AMP:_1.0months"
+  },
+  "AMP:instrument": {
+    "AMP:ceosID": "397",
+    "skos:prefLabel": "CERES",
+    "skos:altLabel": "Cloud and the Earth's Radiant Energy System",
+    "AMP:additionalInformation": "<http://database.eohandbook.com/database/instrumentsummary.aspx?instrumentID=397>",
+    "@id": "AMP:CERESInstrument"
+  },
+  "AMP:unitString": "m",
+  "AMP:cfStandardName": "effective_radius_of_cloud_liquid_water_particle",
+  "@id": "AMP:_ed15e457eed04cbd8302b62e0a121a4e"
+}

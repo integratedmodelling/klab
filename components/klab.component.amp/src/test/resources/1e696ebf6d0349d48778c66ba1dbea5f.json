@@ -1,0 +1,126 @@
+{
+  "@context": {
+    "AMP": "http://lingualogica.net/AMP#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "envo": "http://purl.obolibrary.org/obo/envo#",
+    "chebi": "http://purl.obolibrary.org/obo/chebi#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "shacl": "http://www.w3.org/ns/shacl#",
+    "AMP:fillValue": {
+      "@type": "xsd:double"
+    },
+    "AMP:modifiedDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:createdDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:dimensionSize": {
+      "@type": "xsd:double"
+    },
+    "AMP:offset": {
+      "@type": "xsd:double"
+    },
+    "AMP:scaleFactor": {
+      "@type": "xsd:double"
+    },
+    "AMP:collection": {
+      "@type": "@id"
+    }
+  },
+  "@type": "Variable",
+  "AMP:measurementContext": {
+    "AMP:additionalInformation": "<http://purl.obolibrary.org/obo/ENVO_01000324>",
+    "skos:prefLabel": "Earth Surface",
+    "@id": "AMP:Earth_Surface"
+  },
+  "AMP:measuredQuantity": {
+    "AMP:additionalInformation": "https://glossary.ametsoc.org/wiki/Rainfall_rate",
+    "skos:altLabel": "Rate",
+    "skos:prefLabel": "Amount Per Time",
+    "@id": "AMP:Accumulation_Per_Time"
+  },
+  "AMP:offset": 0.0,
+  "AMP:collection": {
+    "AMP:grid": "AMP:Grid0.1X0.1degrees",
+    "AMP:temporalCoverageStartDate": "2000-06-01T00:00:00Z",
+    "skos:prefLabel": "GPM_3IMERGDF_V06",
+    "AMP:distributionURL": "https://gpm1.gesdisc.eosdis.nasa.gov/data/GPM_L3/GPM_3IMERGDF.06/",
+    "AMP:currentVersion": true,
+    "AMP:CMRConceptID": "C1598621096-GES_DISC",
+    "skos:altLabel": "GPM IMERG Final Precipitation L3 1 day 0.1 degree x 0.1 degree V06",
+    "AMP:doi": "https://doi.org/10.5067/GPM/IMERGDF/DAY/06",
+    "@id": "AMP:GPM_3IMERGDF_06"
+  },
+  "AMP:modifiedDate": "2021-11-03T00:00:00.000000Z",
+  "AMP:createdDate": "2021-11-03T00:00:00.000000Z",
+  "AMP:additionalInformation": "https://doi.org/10.5067/GPM/IMERGDF/DAY/06",
+  "AMP:unitString": "mm",
+  "AMP:dimension": [
+    {
+      "AMP:variableName": "/lon",
+      "AMP:dimensionSize": 3600,
+      "AMP:indexRange": "[-179.9499969482422, 179.9499969482422]",
+      "@id": "AMP:_0a4dbdc6a03e4bffa50fbcdab582af75"
+    },
+    {
+      "AMP:dimensionSize": 1800,
+      "AMP:variableName": "/lat",
+      "AMP:indexRange": "[-89.94999694824219, 89.95001220703125]",
+      "@id": "AMP:_2d1fa739cddd4e2ca13c80cc4d154a02"
+    },
+    {
+      "AMP:dimensionSize": 1,
+      "AMP:variableName": "/time",
+      "AMP:indexRange": "[11109.0, 11109.0]",
+      "@id": "AMP:_e379be7c011742d7aeb5fd2d3423ce46"
+    }
+  ],
+  "AMP:spatialResolution": {
+    "AMP:unitOfMeasure": "AMP:degrees",
+    "skos:prefLabel": "0.1 X 0.1 degrees Grid",
+    "AMP:longitudeResolution": [
+      0.1,
+      "0.1"
+    ],
+    "AMP:latitudeResolution": [
+      0.1,
+      "0.1"
+    ],
+    "@id": "AMP:Grid0.1X0.1degrees"
+  },
+  "AMP:variableName": "/precipitationCal",
+  "AMP:instrument": {
+    "AMP:additionalInformation": "<http://database.eohandbook.com/database/instrumentsummary.aspx?instrumentID=773>",
+    "skos:prefLabel": "GMI",
+    "skos:altLabel": "GPM Microwave Imager",
+    "AMP:ceosID": "773",
+    "@id": "AMP:GMIInstrument"
+  },
+  "AMP:fillValue": -9999.900390625,
+  "AMP:scaleFactor": 1.0,
+  "AMP:unitOfMeasure": {
+    "skos:altLabel": "Millimetre",
+    "skos:prefLabel": "mm",
+    "AMP:additionalInformation": "<https://www.nist.gov/pml/weights-and-measures/metric-si-prefixes>",
+    "@id": "AMP:Millimeter"
+  },
+  "AMP:temporalResolution": {
+    "skos:altLabel": [
+      "One Day",
+      "24 Hours",
+      "24 hours"
+    ],
+    "skos:prefLabel": "1.0 days",
+    "@id": "AMP:_1.0days"
+  },
+  "AMP:featureOfInterest": {
+    "skos:prefLabel": "Precipitation",
+    "AMP:additionalInformation": "<http://purl.obolibrary.org/obo/ENVO_01000703>",
+    "@id": "AMP:Precipitation"
+  },
+  "AMP:temporalCoverageStartDate": "2000-06-01T00:00:00Z",
+  "@id": "AMP:_1e696ebf6d0349d48778c66ba1dbea5f"
+}

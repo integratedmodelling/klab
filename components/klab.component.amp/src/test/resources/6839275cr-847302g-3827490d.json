@@ -1,0 +1,131 @@
+{
+  "@context": {
+    "AMP": "http://lingualogica.net/AMP#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "envo": "http://purl.obolibrary.org/obo/envo#",
+    "chebi": "http://purl.obolibrary.org/obo/chebi#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "shacl": "http://www.w3.org/ns/shacl#",
+    "AMP:fillValue": {
+      "@type": "xsd:double"
+    },
+    "AMP:modifiedDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:createdDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:dimensionSize": {
+      "@type": "xsd:double"
+    },
+    "AMP:offset": {
+      "@type": "xsd:double"
+    },
+    "AMP:scaleFactor": {
+      "@type": "xsd:double"
+    },
+    "AMP:collection": {
+      "@type": "@id"
+    }
+  },
+  "@type": "Variable",
+  "AMP:modifiedDate": "2021-09-25T14:59:00Z",
+  "AMP:scaleFactor": 1.0,
+  "AMP:fillValue": 9.96921e+36,
+  "AMP:collection": {
+    "AMP:currentVersion": true,
+    "AMP:temporalCoverageStartDate": "2019-08-06T00:00:00Z",
+    "AMP:doi": "https://doi.org/10.5270/S5P-74eidii",
+    "skos:prefLabel": "S5P_L2__SO2____HiR_V2",
+    "AMP:distributionURL": "https://tropomi.gesdisc.eosdis.nasa.gov/opendap/S5P_TROPOMI_Level2/S5P_L2__SO2____HiR.2/contents.html",
+    "AMP:grid": "AMP:Swath5.5kilometersX7kilometers",
+    "AMP:CMRConceptID": "C1918210292-GES_DISC",
+    "@id": "AMP:S5P_L2__SO2____HiR_V2"
+  },
+  "AMP:instrument": {
+    "skos:altLabel": "TROPOspheric Monitoring Instrument",
+    "AMP:ceosID": "942",
+    "AMP:additionalInformation": "<http://database.eohandbook.com/database/instrumentsummary.aspx?instrumentID=942>",
+    "skos:prefLabel": "TROPOMI",
+    "@id": "AMP:TROPOMIInstrument"
+  },
+  "AMP:unitOfMeasure": {
+    "skos:prefLabel": "mol m-2",
+    "skos:altLabel": "mol/m^2",
+    "@id": "AMP:Mol_Per_Meter_Squared"
+  },
+  "AMP:variableName": "PRODUCT/sulfurdioxide_total_vertical_column",
+  "AMP:offset": 0.0,
+  "AMP:createdDate": "2021-09-25T14:59:00Z",
+  "AMP:additionalInformation": "https://doi.org/10.5270/S5P-74eidii",
+  "AMP:temporalResolution": {
+    "skos:altLabel": [
+      "60 minutes",
+      "One Hour"
+    ],
+    "skos:prefLabel": "1 hour",
+    "@id": "AMP:_1.0hours"
+  },
+  "AMP:dimension": [
+    {
+      "AMP:indexRange": "[-90.0, 90.0]",
+      "AMP:description": "Pixel center latitude",
+      "AMP:createdDate": "2021-09-28T08:53:00Z",
+      "AMP:collection": "AMP:S5P_L2__SO2____HiR_V2",
+      "AMP:variableName": "/PRODUCT/latitude",
+      "AMP:unitString": "degrees-north",
+      "AMP:dimensionType": "AMP:LatitudeDimension",
+      "AMP:dimensionSize": 1680750,
+      "AMP:modifiedDate": "2021-09-28T08:53:00Z",
+      "@id": "AMP:_483956fg-2839587-19375ns-2839572"
+    },
+    {
+      "AMP:collection": "AMP:S5P_L2__SO2____HiR_V2",
+      "AMP:modifiedDate": "2021-09-28T14:38:00Z",
+      "AMP:unitString": "degrees-north",
+      "AMP:dimensionSize": 1680750,
+      "AMP:dimensionType": "AMP:LongitudeDimension",
+      "AMP:indexRange": "[-180.0, 180.0]",
+      "AMP:createdDate": "2021-09-28T14:38:00Z",
+      "AMP:description": "Pixel center latitude",
+      "AMP:variableName": "/PRODUCT/latitude",
+      "@id": "AMP:_r839562-48375940-bd039j2-37583"
+    }
+  ],
+  "AMP:temporalCoverageStartDate": "2019-08-06T00:00:00Z",
+  "AMP:measurementContext": {
+    "AMP:additionalInformation": "<http://purl.obolibrary.org/obo/ENVO_01000810>",
+    "skos:prefLabel": "Earth's Atmosphere-Vertical Column",
+    "@id": "AMP:Atmosphere-Earth-Vertical_Column"
+  },
+  "AMP:featureOfInterest": {
+    "skos:prefLabel": "SO2",
+    "AMP:additionalInformation": [
+      "http://purl.obolibrary.org/obo/CHEBI_18422",
+      "https://glossary.ametsoc.org/wiki/Sulfur_dioxide"
+    ],
+    "skos:altLabel": [
+      "Sulphur Dioxide",
+      "Sulfur Dioxide"
+    ],
+    "@id": "AMP:Sulphur_Dioxide"
+  },
+  "AMP:unitString": "mol m-2",
+  "AMP:spatialResolution": {
+    "AMP:longitudeResolution": 7.0,
+    "AMP:latitudeResolution": 5.5,
+    "AMP:unitOfMeasure": "AMP:kilometers",
+    "@id": "AMP:Swath5.5kilometersX7kilometers"
+  },
+  "AMP:measuredQuantity": {
+    "skos:altLabel": [
+      "molar areal density",
+      "Mole Content"
+    ],
+    "skos:prefLabel": "Moles Per Area",
+    "@id": "AMP:Moles_Per_Area"
+  },
+  "@id": "AMP:_6839275cr-847302g-3827490d"
+}

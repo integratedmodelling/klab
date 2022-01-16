@@ -1,0 +1,128 @@
+{
+  "@context": {
+    "AMP": "http://lingualogica.net/AMP#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "envo": "http://purl.obolibrary.org/obo/envo#",
+    "chebi": "http://purl.obolibrary.org/obo/chebi#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "shacl": "http://www.w3.org/ns/shacl#",
+    "AMP:fillValue": {
+      "@type": "xsd:double"
+    },
+    "AMP:modifiedDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:createdDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:dimensionSize": {
+      "@type": "xsd:double"
+    },
+    "AMP:offset": {
+      "@type": "xsd:double"
+    },
+    "AMP:scaleFactor": {
+      "@type": "xsd:double"
+    },
+    "AMP:collection": {
+      "@type": "@id"
+    }
+  },
+  "@type": "Variable",
+  "AMP:createdDate": "2021-11-19T21:13:58.869844Z",
+  "AMP:dimension": [
+    {
+      "AMP:indexRange": "[-89.875, 89.875]",
+      "AMP:collection": "AMP:AVHRR_OI-NCEI-L4-GLOB-v2.0_2.0",
+      "AMP:dimensionSize": 720,
+      "AMP:variableName": "/lat",
+      "@id": "AMP:_d3f5d05466544871bdf577f2a0c37fe4"
+    },
+    {
+      "AMP:collection": "AMP:AVHRR_OI-NCEI-L4-GLOB-v2.0_2.0",
+      "AMP:variableName": "/time",
+      "AMP:indexRange": "[20995200.0, 20995200.0]",
+      "AMP:dimensionSize": 1,
+      "@id": "AMP:_d068c64fae934808896b02e0b4ee2476"
+    },
+    {
+      "AMP:collection": "AMP:AVHRR_OI-NCEI-L4-GLOB-v2.0_2.0",
+      "AMP:variableName": "/lon",
+      "AMP:indexRange": "[-179.875, 179.875]",
+      "AMP:dimensionSize": 1440,
+      "@id": "AMP:_8ebc3c7324634e68aaa14550bf918f4b"
+    }
+  ],
+  "AMP:spatialResolution": {
+    "AMP:latitudeResolution": [
+      "0.25",
+      0.25
+    ],
+    "AMP:unitOfMeasure": "AMP:degrees",
+    "skos:prefLabel": "0.25 X 0.25 degrees Grid",
+    "AMP:longitudeResolution": [
+      0.25,
+      "0.25"
+    ],
+    "@id": "AMP:Grid0.25X0.25degrees"
+  },
+  "AMP:scaleFactor": 1.0,
+  "AMP:additionalInformation": "<https://doi.org/10.5067/GHAAO-4BC02>",
+  "AMP:collection": {
+    "AMP:temporalCoverageStartDate": "1981-09-01T00:00:00.000Z",
+    "AMP:CMRConceptID": "C1652971997-PODAAC",
+    "AMP:temporalCoverageEndDate": "1981-09-01T00:00:00.000Z",
+    "AMP:grid": "AMP:Grid0.25X0.25degrees",
+    "AMP:doi": "<https://doi.org/10.5067/GHAAO-4BC02>",
+    "AMP:distributionURL": [
+      "https://thredds.jpl.nasa.gov/thredds/catalog_ghrsst_gds2.html?dataset=AVHRR_OI-NCEI-L4-GLOB-v2.0",
+      "https://podaac.jpl.nasa.gov/ws/search/granule/?datasetId=PODAAC-GHAAO-4BC02",
+      "https://podaac-tools.jpl.nasa.gov/drive/files/allData/ghrsst/data/GDS2/L4/GLOB/NCEI/AVHRR_OI/v2"
+    ],
+    "AMP:currentVersion": "true",
+    "@id": "AMP:AVHRR_OI-NCEI-L4-GLOB-v2.0_2.0"
+  },
+  "AMP:unitString": "kelvin",
+  "AMP:fillValue": -32768.0,
+  "AMP:temporalCoverageStartDate": "1981-09-01T00:00:00.000Z",
+  "AMP:temporalResolution": {
+    "skos:altLabel": [
+      "One Day",
+      "24 Hours",
+      "24 hours"
+    ],
+    "skos:prefLabel": "1.0 days",
+    "@id": "AMP:_1.0days"
+  },
+  "AMP:measurementContext": {
+    "skos:altLabel": "Ocean Surface",
+    "skos:prefLabel": "Sea Surface",
+    "@id": "AMP:Ocean_Surface"
+  },
+  "AMP:modifiedDate": "2021-11-19T21:13:58.869844Z",
+  "AMP:temporalCoverageEndDate": "1981-09-01T00:00:00.000Z",
+  "AMP:measuredQuantity": {
+    "skos:prefLabel": "Temperature",
+    "AMP:additionalInformation": [
+      "<https://glossary.ametsoc.org/wiki/Temperature>",
+      "<https://en.wikipedia.org/wiki/Temperature>"
+    ],
+    "@id": "AMP:Temperature"
+  },
+  "AMP:offset": 0.0,
+  "AMP:variableName": "/analysed_sst",
+  "AMP:cfStandardName": "sea_surface_temperature",
+  "AMP:featureOfInterest": {
+    "AMP:additionalInformation": [
+      "<http://purl.obolibrary.org/obo/ENVO_00002042>",
+      "<http://purl.obolibrary.org/obo/CHEBI_15377>",
+      "<http://glossary.ametsoc.org/wiki/Water>"
+    ],
+    "skos:prefLabel": "Water, All Phases",
+    "skos:altLabel": "H20",
+    "@id": "AMP:Water-All_Phases"
+  },
+  "@id": "AMP:_a07ba3c7dc4244f0852a8dd9b73089d7"
+}

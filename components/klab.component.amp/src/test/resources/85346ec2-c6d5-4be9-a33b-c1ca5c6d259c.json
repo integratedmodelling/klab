@@ -1,0 +1,123 @@
+{
+  "@context": {
+    "AMP": "http://lingualogica.net/AMP#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "envo": "http://purl.obolibrary.org/obo/envo#",
+    "chebi": "http://purl.obolibrary.org/obo/chebi#",
+    "skos": "http://www.w3.org/2004/02/skos/core#",
+    "shacl": "http://www.w3.org/ns/shacl#",
+    "AMP:fillValue": {
+      "@type": "xsd:double"
+    },
+    "AMP:modifiedDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:createdDate": {
+      "@type": "xsd:dateTime"
+    },
+    "AMP:dimensionSize": {
+      "@type": "xsd:double"
+    },
+    "AMP:offset": {
+      "@type": "xsd:double"
+    },
+    "AMP:scaleFactor": {
+      "@type": "xsd:double"
+    },
+    "AMP:collection": {
+      "@type": "@id"
+    }
+  },
+  "@type": "Variable",
+  "AMP:additionalInformation": [
+    "<https://doi.org/10.5067/KPJNN2GI1DQR>",
+    "https://doi.org/10.5067/KPJNN2GI1DQR"
+  ],
+  "AMP:distributionURL": "<https://n5eil01u.ecs.nsidc.org/SMAP/SPL4SMGP.004/>",
+  "AMP:temporalCoverageStartDate": "2015-03-31T00:00:00Z",
+  "skos:prefLabel": "snow_depth",
+  "AMP:unitOfMeasure": {
+    "skos:altLabel": "meter",
+    "skos:prefLabel": "m",
+    "@id": "AMP:meters"
+  },
+  "AMP:measurementContext": {
+    "AMP:additionalInformation": "<http://purl.obolibrary.org/obo/ENVO_01001785>",
+    "skos:prefLabel": "Earth Surface-Land",
+    "@id": "AMP:Earth_Surface-Land"
+  },
+  "AMP:measuredQuantity": {
+    "skos:altLabel": "Length",
+    "AMP:additionalInformation": "<http://purl.obolibrary.org/obo/NCIT_C25333>",
+    "skos:prefLabel": "Depth",
+    "@id": "AMP:Depth"
+  },
+  "AMP:spatialResolution": {
+    "AMP:unitOfMeasure": "AMP:kilometers",
+    "AMP:longitudeResolution": 9.0,
+    "skos:prefLabel": "9 X 9 kilometers Grid",
+    "AMP:latitudeResolution": 9.0,
+    "@id": "AMP:Grid9X9kilometers"
+  },
+  "AMP:instrument": {
+    "skos:altLabel": "L-band Radiometer (SMAP)",
+    "AMP:ceosID": "1554",
+    "skos:prefLabel": "SMAP L-band Radiometer",
+    "AMP:additionalInformation": "<http://database.eohandbook.com/database/instrumentsummary.aspx?instrumentID=1554>",
+    "@id": "AMP:SMAPL-bandRadiometerInstrument"
+  },
+  "AMP:longName": "surface_snow_thickness",
+  "AMP:variableName": "/Geophysical_Data/snow_depth",
+  "AMP:dimension": [
+    {
+      "skos:prefLabel": "x",
+      "AMP:dimensionType": "AMP:LongitudeDimension",
+      "AMP:dimensionSize": "3856",
+      "AMP:indexRange": "[-179.953, 179.953]",
+      "@id": "AMP:_85346ec2-c6d5-4be9-a33b-c1ca5c6d259cDim2"
+    },
+    {
+      "AMP:indexRange": "[84.65644, -84.65644]",
+      "AMP:dimensionType": "AMP:LatitudeDimension",
+      "AMP:dimensionSize": "1624",
+      "skos:prefLabel": "y",
+      "@id": "AMP:_85346ec2-c6d5-4be9-a33b-c1ca5c6d259cDim1"
+    }
+  ],
+  "AMP:fillValue": -9999.0,
+  "AMP:createdDate": "2021-11-03T00:00:00.000000Z",
+  "AMP:unitString": "m",
+  "AMP:cfStandardName": "surface_snow_thickness",
+  "AMP:scaleFactor": 1.0,
+  "AMP:featureOfInterest": {
+    "AMP:additionalInformation": [
+      "<https://en.wikipedia.org/wiki/Snow>",
+      "<http://glossary.ametsoc.org/wiki/Snow>",
+      "<http://purl.obolibrary.org/obo/ENVO_01000406>"
+    ],
+    "skos:prefLabel": "Snow",
+    "@id": "AMP:Snow"
+  },
+  "AMP:temporalResolution": {
+    "skos:altLabel": [
+      "Three Hours",
+      "180 Minutes"
+    ],
+    "skos:prefLabel": "3.0 hours",
+    "@id": "AMP:_3.0hours"
+  },
+  "AMP:collection": {
+    "AMP:distributionURL": "https://n5eil01u.ecs.nsidc.org/SMAP/SPL4SMGP.004/",
+    "AMP:doi": "https://doi.org/10.5067/KPJNN2GI1DQR",
+    "AMP:grid": "AMP:Grid9X9kilometers",
+    "AMP:temporalCoverageStartDate": "2015-03-31T00:00:00Z",
+    "AMP:currentVersion": true,
+    "skos:prefLabel": "SPL4SMGP_V005",
+    "@id": "AMP:SPL4SMGP_V005"
+  },
+  "AMP:offset": 0.0,
+  "AMP:modifiedDate": "2021-11-03T00:00:00.000000Z",
+  "@id": "AMP:_85346ec2-c6d5-4be9-a33b-c1ca5c6d259c"
+}
