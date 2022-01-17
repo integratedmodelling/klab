@@ -38,7 +38,7 @@ public class TableProcessor {
 	private AtomicInteger groupIds = new AtomicInteger(0);
 	private AtomicInteger rowCounter = new AtomicInteger(0);
 	private AtomicInteger columnCounter = new AtomicInteger(0);
-    private AtomicInteger boxCounter = new AtomicInteger(0);
+	private AtomicInteger boxCounter = new AtomicInteger(0);
 
 	/*
 	 * there is zero or one root header box for both rows and columns; each row or
@@ -49,11 +49,11 @@ public class TableProcessor {
 		String header;
 		Group group;
 		List<Box> contents = new ArrayList<>();
-		String boxId = "bx" +  boxCounter.incrementAndGet();
+		String boxId = "bx" + boxCounter.incrementAndGet();
 		Box next;
 		Box parentBox;
 		boolean skipped;
-		// 
+		//
 		String id;
 
 		/**
@@ -90,7 +90,7 @@ public class TableProcessor {
 		public String getPath() {
 			return (this.parentBox == null ? "" : this.parentBox.getPath()) + (skipped ? "" : boxId);
 		}
-		
+
 		public String getId() {
 			if (this instanceof Container) {
 				return ((Container) this).id;
@@ -111,10 +111,18 @@ public class TableProcessor {
 			return ret;
 		}
 
-        public void addChild(Box container) {
-            container.parentBox = this;
-            this.contents.add(container);
-        }
+		public void addChild(Box container) {
+			container.parentBox = this;
+			// FIXME this should not happen!
+			if (!this.contents.contains(container)) {
+				this.contents.add(container);
+			}
+		}
+		
+		@Override
+		public String toString() {
+			return "Box[" + (header == null ? "innermost" : header) + "](" + this.contents.size() + ")";
+		}
 
 	}
 
@@ -479,7 +487,7 @@ public class TableProcessor {
 	 * @param ret
 	 */
 	protected void compile(List<Map<String, Object>> data, Table ret) {
-	    
+
 		ret.setNumberFormat(getNumberFormat());
 
 		if (style != null) {
@@ -640,8 +648,8 @@ public class TableProcessor {
 
 	}
 
-	private Map<String, String> processRow(Container row, Table ret, Map<Pair<Container, Container>, List<Object>> storage,
-			Map<Object, Container> columns, boolean trivial) {
+	private Map<String, String> processRow(Container row, Table ret,
+			Map<Pair<Container, Container>, List<Object>> storage, Map<Object, Container> columns, boolean trivial) {
 		// TODO Auto-generated method stub
 		Map<String, String> rowData = new HashMap<>();
 		for (Container col : columns.values()) {
@@ -695,7 +703,7 @@ public class TableProcessor {
 	private Box computeHeaders(DimensionType dimension, Map<Object, Container> described,
 			Map<Object, Container> orthogonal) {
 		Box ret = null;
-		Map<Group, Box> boxCatalog = new HashMap<>();
+		Map<String, Box> boxCatalog = new HashMap<>();
 		Box current = null;
 		for (Object containerKey : described.keySet()) {
 			Box box = box(described.get(containerKey), containerKey, boxCatalog, 0);
@@ -709,7 +717,7 @@ public class TableProcessor {
 		return ret;
 	}
 
-	private Box box(Box container, Object containerKey, Map<Group, Box> boxCatalog, int depth) {
+	private Box box(Box container, Object containerKey, Map<String, Box> boxCatalog, int depth) {
 
 		Box ret = null;
 
@@ -731,6 +739,8 @@ public class TableProcessor {
 			 */
 			for (int i = ((List<?>) containerKey).size() - 1; i >= 0; i--) {
 
+				boolean innermost = i == ((List<?>) containerKey).size() - 1;
+				
 				Classifier classifier = (Classifier) ((List<?>) containerKey).get(i);
 				Group group = classifier.getMetadata().get("group", Group.class);
 				boolean distributed = classifier.getMetadata().get("distributed", false);
@@ -742,20 +752,23 @@ public class TableProcessor {
 				}
 
 				if (clabel != null) {
-					
+
 					Map<String, Object> variables = new HashMap<>();
 					variables.put("value", classifier.asValue(scope));
 					if (group.targetField != null && classifier.isStringMatch()) {
 						variables.put("description", getValueLabel(group.targetField, classifier.asValue(scope)));
 					}
-					
+
 					// process special fields in label and apply to classifier
 					clabel = TemplateUtils.expandMatches(clabel, variables).get(0);
-
-					Box box = new Box();
-					box.header = clabel;
-					box.group = group;
-
+					String boxKey = group.id + "@" + classifier.dumpCode();
+					Box box = innermost ? null : boxCatalog.get(boxKey);
+					if (box == null) {
+						box = new Box();
+						box.header = clabel;
+						box.group = group;
+						boxCatalog.put(boxKey, box);
+					}
 					if (ret != null) {
 						box.addChild(ret);
 					} else {
@@ -765,15 +778,19 @@ public class TableProcessor {
 				}
 
 				if (group.title != null) {
-					Box box = boxCatalog.get(group);
+					Box box = boxCatalog.get(group.id);
 					if (box == null) {
 						box = new Box();
 						box.header = group.title;
 						box.group = group;
-						boxCatalog.put(group, box);
+						boxCatalog.put(group.id, box);
 					} else {
 						box.span++;
 					}
+					
+					/*
+					 * no check for duplicates: addChild() won't add a box that is already there
+					 */
 					if (ret != null) {
 						box.addChild(ret);
 					} else {
