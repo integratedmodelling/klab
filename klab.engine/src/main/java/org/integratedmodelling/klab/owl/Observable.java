@@ -79,6 +79,7 @@ public class Observable extends GroovyObjectSupport implements IObservable {
 	private boolean active = true;
 	private IConcept temporalInherent;
 	private Resolution resolution;
+	private boolean specialized = false;
 	private Set<IConcept> contextualRoles = new HashSet<>();
 
 	/**
@@ -1054,6 +1055,15 @@ public class Observable extends GroovyObjectSupport implements IObservable {
 
 	public void setIncarnatedAbstract(IObservable incarnatedAbstract) {
 		this.incarnatedAbstract = incarnatedAbstract;
+	}
+
+	@Override
+	public boolean isSpecialized() {
+		return specialized;
+	}
+
+	public void setSpecialized(boolean specialized) {
+		this.specialized = specialized;
 	}
 
 }

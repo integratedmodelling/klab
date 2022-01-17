@@ -52,6 +52,7 @@ public class TableProcessor {
 		String boxId = "bx" +  boxCounter.incrementAndGet();
 		Box next;
 		Box parentBox;
+		boolean skipped;
 		// 
 		String id;
 
@@ -86,6 +87,10 @@ public class TableProcessor {
 			return ret;
 		}
 
+		public String getPath() {
+			return (this.parentBox == null ? "" : this.parentBox.getPath()) + (skipped ? "" : boxId);
+		}
+		
 		public String getId() {
 			if (this instanceof Container) {
 				return ((Container) this).id;
@@ -267,15 +272,6 @@ public class TableProcessor {
 			return type;
 		}
 
-        public String getPath() {
-            String ret = getId();
-            Group group = this.originator;
-            while (group != null) {
-                ret = group.id + "." + ret;
-                group = group.parent;
-            }
-            return ret;
-        }
 	}
 
 	protected StyleDefinition style;
@@ -661,7 +657,7 @@ public class TableProcessor {
 				} else {
 					val = aggregator.aggregate(value);
 				}
-				rowData.put(col.boxId, /* TODO number format etc */ val.toString());
+				rowData.put(col.getPath(), /* TODO number format etc */ val.toString());
 			}
 		}
 		ret.getRows().add(rowData);
@@ -684,6 +680,7 @@ public class TableProcessor {
 		}
 		// simplify empty boxes (currently not supported by viewer)
 		if (column.getColumns().size() == 1 && column.getColumns().get(0).getTitle() == null) {
+			cbox.skipped = true;
 			Column inner = column.getColumns().get(0);
 			column.setId(inner.getId());
 			column.getColumns().clear();
