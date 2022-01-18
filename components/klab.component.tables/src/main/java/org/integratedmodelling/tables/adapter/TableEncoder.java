@@ -84,10 +84,6 @@ public class TableEncoder implements IResourceEncoder {
 			}
 		}
 
-		if ("local:ferdinando.villa:im.data.global:crops.country.reference.totals".equals(resource.getUrn())) {
-			System.out.println("ZIPIPIPP");
-		}
-
 		if (ignoreTime && scope.getScale().getTime() != null
 				&& scope.getScale().getTime().getTimeType() != ITime.Type.INITIALIZATION) {
 			// just don't move.

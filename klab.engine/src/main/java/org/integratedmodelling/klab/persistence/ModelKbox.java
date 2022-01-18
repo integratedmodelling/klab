@@ -98,7 +98,9 @@ public class ModelKbox extends ObservableKbox {
                             + "maxspatialscale INTEGER, "
                             + "mintimescale INTEGER, " + "maxtimescale INTEGER, " + "space GEOMETRY, "
                             + "observationtype VARCHAR(256), " + "enumeratedspacedomain VARCHAR(256), "
-                            + "enumeratedspacelocation VARCHAR(1024), " + "); "
+                            + "enumeratedspacelocation VARCHAR(1024), " 
+                            + "specializedObservable BOOLEAN, " 
+                            + "); "
                             + "CREATE INDEX model_oid_index ON model(oid); "
                     // + "CREATE SPATIAL INDEX model_space ON model(space);"
                     ;
@@ -145,7 +147,9 @@ public class ModelKbox extends ObservableKbox {
                                     : ((Shape) model.getShape()).getStandardizedGeometry().toString())
                             + "', '" + model.getObservationType() + "', '"
                             + cn(model.getEnumeratedSpaceDomain()) + "', '"
-                            + cn(model.getEnumeratedSpaceLocation()) + "');";
+                            + cn(model.getEnumeratedSpaceLocation()) + "', " 
+                            + (model.isSpecializedObservable() ? "TRUE" : "FALSE")
+                            + ");";
 
                     if (model.getMetadata() != null && model.getMetadata().size() > 0) {
                         storeMetadataFor(primaryKey, model.getMetadata());
@@ -827,6 +831,11 @@ public class ModelKbox extends ObservableKbox {
                         model.getMetadata().get(IMetadata.IM_MAX_TEMPORAL_SCALE, ITime.MAX_SCALE_RANK));
 
                 m.setPrimaryObservable(first);
+                
+                if (first && obs.isSpecialized()) {
+                	m.setSpecializedObservable(true);
+                }
+                
                 first = false;
 
                 m.setMetadata(translateMetadata(model.getMetadata()));

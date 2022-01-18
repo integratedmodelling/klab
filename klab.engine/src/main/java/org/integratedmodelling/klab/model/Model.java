@@ -277,6 +277,22 @@ public class Model extends KimObject implements IModel {
                     explicitContext = context != null
                             && context.equals(Observables.INSTANCE.getDirectContextType(obs.getType()));
                     first = false;
+                    
+                    /*
+                     * for the first observable, check if there is an explicit context that specializes the
+                     * natural observable's, and if so set the specialized flag.
+                     */
+                    IConcept directCtx = Observables.INSTANCE.getDirectContextType(obs.getType());
+                    if (directCtx != null) {
+                    	IConcept baseObs = Observables.INSTANCE.getBaseObservable(obs.getType());
+                    	IConcept baseCtx = Observables.INSTANCE.getContextType(baseObs);
+                    	/*
+                    	 * second condition should be pre-validated but this excludes erroneous observables
+                    	 */
+                    	if (baseCtx == null || (!baseCtx.equals(directCtx) && directCtx.is(baseCtx))) {
+                    		((Observable)obs).setSpecialized(true);
+                    	}
+                    }
                 }
 
                 if (observable.hasAttributeIdentifier()) {

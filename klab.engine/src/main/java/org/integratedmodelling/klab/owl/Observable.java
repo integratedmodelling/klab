@@ -280,6 +280,7 @@ public class Observable extends GroovyObjectSupport implements IObservable {
 		this.resolvedPredicates.putAll(observable.resolvedPredicates);
 		this.resolvedPredicatesContext.putAll(observable.resolvedPredicatesContext);
 		this.dereified = observable.dereified;
+		this.specialized = observable.specialized;
 	}
 
 	public static IObservable replaceComponent(Observable original, Map<IConcept, IConcept> replacements) {

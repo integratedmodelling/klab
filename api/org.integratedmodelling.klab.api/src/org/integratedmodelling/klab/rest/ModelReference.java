@@ -106,6 +106,7 @@ public class ModelReference {
     private int minTimeScaleFactor = ITime.MIN_SCALE_RANK;
     private int maxTimeScaleFactor = ITime.MAX_SCALE_RANK;
     private int priority = 0;
+    private boolean specializedObservable = false;
 
     transient private IConcept observableConcept;
     transient private IShape shape;
@@ -157,7 +158,8 @@ public class ModelReference {
         ret.enumeratedSpaceDomain = enumeratedSpaceDomain;
         ret.enumeratedSpaceLocation = enumeratedSpaceLocation;
         ret.shape = shape;
-
+        ret.specializedObservable = specializedObservable;
+        
         return ret;
     }
 
@@ -818,5 +820,13 @@ public class ModelReference {
     public void setEnumeratedSpaceLocation(String enumeratedSpaceLocation) {
         this.enumeratedSpaceLocation = enumeratedSpaceLocation;
     }
+
+	public boolean isSpecializedObservable() {
+		return specializedObservable;
+	}
+
+	public void setSpecializedObservable(boolean specializedObservable) {
+		this.specializedObservable = specializedObservable;
+	}
 
 }

@@ -53,9 +53,15 @@ public class EnumeratedExtent extends Extent implements IEnumeratedExtent {
             throw new KlabIllegalArgumentException(
                     "enumerated space must use an identity for its concept space");
         }
-
-        this.authority = Authorities.INSTANCE.getAuthority(concept);
-        this.baseIdentity = Traits.INSTANCE.getBaseParentTrait(concept);
+        
+        for (IConcept c : concepts) {
+        	if (this.authority == null) {
+        		this.authority = Authorities.INSTANCE.getAuthority(c);
+        		this.baseIdentity = Traits.INSTANCE.getBaseParentTrait(c);
+        	} else if (this.authority != Authorities.INSTANCE.getAuthority(c)) {
+        		throw new KlabIllegalStateException("cannot merge concepts from different authorities");
+        	}
+        }
     }
 
     private EnumeratedExtent(EnumeratedExtent original, Collection<IConcept> concepts) {
