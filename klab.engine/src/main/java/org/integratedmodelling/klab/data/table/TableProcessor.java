@@ -2,6 +2,8 @@ package org.integratedmodelling.klab.data.table;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -118,7 +120,7 @@ public class TableProcessor {
 				this.contents.add(container);
 			}
 		}
-		
+
 		@Override
 		public String toString() {
 			return "Box[" + (header == null ? "innermost" : header) + "](" + this.contents.size() + ")";
@@ -147,7 +149,8 @@ public class TableProcessor {
 		DimensionType dimension;
 		Group parent;
 		String title;
-		// select:
+		String sort;
+		// classify:
 		List<IClassifier> classifiers = new ArrayList<>();
 		List<Group> children = new ArrayList<>();
 		Set<Style> style;
@@ -328,7 +331,7 @@ public class TableProcessor {
 				for (Object o : ((Map<?, ?>) g).keySet()) {
 					Object column = ((Map<?, ?>) g).get(o);
 					if (column instanceof Map) {
-						this.columns.add(parseGroups((Map<?, ?>) column, DimensionType.COLUMN, null, 0, o.toString()));
+						this.columns.add(parseGroup((Map<?, ?>) column, DimensionType.COLUMN, null, 0, o.toString()));
 					}
 				}
 			}
@@ -344,7 +347,7 @@ public class TableProcessor {
 				for (Object o : ((Map<?, ?>) g).keySet()) {
 					Object row = ((Map<?, ?>) g).get(o);
 					if (row instanceof Map) {
-						this.rows.add(parseGroups((Map<?, ?>) row, DimensionType.ROW, null, 0, o.toString()));
+						this.rows.add(parseGroup((Map<?, ?>) row, DimensionType.ROW, null, 0, o.toString()));
 					}
 				}
 			}
@@ -368,10 +371,10 @@ public class TableProcessor {
 		return StringUtils.capitalize(field).replace("_", " ");
 	}
 
-	private Group parseGroups(Map<?, ?> groups, DimensionType dimension, Group parent, int depth, String targetField) {
+	private Group parseGroup(Map<?, ?> group, DimensionType dimension, Group parent, int depth, String targetField) {
 
 		@SuppressWarnings("unchecked")
-		IParameters<Object> gmap = Parameters.wrap((Map<Object, Object>) groups);
+		IParameters<Object> gmap = Parameters.wrap((Map<Object, Object>) group);
 
 		Group ret = new Group();
 
@@ -383,13 +386,14 @@ public class TableProcessor {
 		ret.label = gmap.get("label", String.class);
 		ret.classifiers = parseClassifiers(gmap.get("classify"), ret);
 		ret.style = parseStyle(gmap.get("style"));
+		ret.sort = gmap.get("sort", String.class);
 
 		if (dimension == DimensionType.COLUMN && gmap.containsKey("columns") && gmap.get("columns") instanceof Map) {
 			Map<?, ?> dim = (Map<?, ?>) gmap.get("columns");
 			for (Object o : dim.keySet()) {
 				Object d = dim.get(o);
 				if (d instanceof Map) {
-					ret.children.add(parseGroups((Map<?, ?>) d, dimension, ret, depth + 1, o.toString()));
+					ret.children.add(parseGroup((Map<?, ?>) d, dimension, ret, depth + 1, o.toString()));
 				}
 			}
 		} else if (dimension == DimensionType.ROW && gmap.containsKey("rows") && gmap.get("rows") instanceof Map) {
@@ -397,7 +401,7 @@ public class TableProcessor {
 			for (Object o : dim.keySet()) {
 				Object d = dim.get(o);
 				if (d instanceof Map) {
-					ret.children.add(parseGroups((Map<?, ?>) d, dimension, ret, depth + 1, o.toString()));
+					ret.children.add(parseGroup((Map<?, ?>) d, dimension, ret, depth + 1, o.toString()));
 				}
 			}
 		}
@@ -683,10 +687,11 @@ public class TableProcessor {
 		column.setTitle(cbox.header);
 //		column.setId(cbox.getId());
 		column.setId(cbox.boxId);
-		for (Box child : cbox.contents) {
+		for (Box child : sortContents(cbox)) {
 			makeColumns(column, child);
 		}
-		// simplify empty boxes (currently not supported by viewer)
+		// simplify empty boxes (viewer will insert another untitled column and make it
+		// sortable with a header)
 		if (column.getColumns().size() == 1 && column.getColumns().get(0).getTitle() == null) {
 			cbox.skipped = true;
 			Column inner = column.getColumns().get(0);
@@ -698,6 +703,82 @@ public class TableProcessor {
 			parent.getColumns().add(column);
 		}
 		return parent == null ? column : parent;
+	}
+
+	private List<Box> sortContents(Box box) {
+		List<Box> ret = box.contents;
+		if (ret.size() > 1) {
+			Group sortingGroup = getSortingGroup(box);
+			if (sortingGroup != null) {
+				switch (sortingGroup.sort) {
+				case "numeric":
+					Collections.sort(ret, new Comparator<Box>() {
+						@Override
+						public int compare(Box o1, Box o2) {
+							return Long.valueOf(o1.header).compareTo(Long.valueOf(o2.header));
+						}
+					});
+					break;
+				case "numeric_descending":
+					Collections.sort(ret, new Comparator<Box>() {
+						@Override
+						public int compare(Box o1, Box o2) {
+							return Long.valueOf(o2.header).compareTo(Long.valueOf(o1.header));
+						}
+					});
+					break;
+				case "ascending":
+					Collections.sort(ret, new Comparator<Box>() {
+						@Override
+						public int compare(Box o1, Box o2) {
+							return o1.header.compareTo(o2.header);
+						}
+					});
+					break;
+				case "descending":
+					Collections.sort(ret, new Comparator<Box>() {
+						@Override
+						public int compare(Box o1, Box o2) {
+							return o2.header.compareTo(o1.header);
+						}
+					});
+					break;
+				default:
+					throw new KlabIllegalStateException("unknown sorting option: " + sortingGroup.sort);
+				}
+			}
+		}
+		return ret;
+	}
+
+	/**
+	 * Called if a box has >1 children, which can be other boxes with more box
+	 * children (upper-level subdivision, group of the main box is the
+	 * sort-providing group) or other boxes with 1 Container as a child, in which
+	 * case each box is just a wrapper of the container providing a header for each
+	 * container, and the sorting criterion is the group each box belongs to, as
+	 * long as it is the same group for all boxes.
+	 * 
+	 * Returns null unless the group providing the sorting has a sort specification.
+	 * 
+	 * @param box
+	 * @return
+	 */
+	private Group getSortingGroup(Box box) {
+		Group g = null;
+		boolean different = false;
+		for (Box b : box.contents) {
+			if (b.contents.size() == 1 && b.contents.get(0) instanceof Container) {
+				if (g == null) {
+					g = b.group;
+				} else if (g != b.group) {
+					different = true;
+				}
+			} else {
+				g = box.group;
+			}
+		}
+		return different ? null : (g.sort == null ? null : g);
 	}
 
 	private Box computeHeaders(DimensionType dimension, Map<Object, Container> described,
@@ -740,7 +821,7 @@ public class TableProcessor {
 			for (int i = ((List<?>) containerKey).size() - 1; i >= 0; i--) {
 
 				boolean innermost = i == ((List<?>) containerKey).size() - 1;
-				
+
 				Classifier classifier = (Classifier) ((List<?>) containerKey).get(i);
 				Group group = classifier.getMetadata().get("group", Group.class);
 				boolean distributed = classifier.getMetadata().get("distributed", false);
@@ -787,7 +868,7 @@ public class TableProcessor {
 					} else {
 						box.span++;
 					}
-					
+
 					/*
 					 * no check for duplicates: addChild() won't add a box that is already there
 					 */
