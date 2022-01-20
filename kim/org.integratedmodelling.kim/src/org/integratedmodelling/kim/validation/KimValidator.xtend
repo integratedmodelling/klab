@@ -837,7 +837,7 @@ class KimValidator extends AbstractKimValidator {
 				 */
 				var n = 0
 				for (object : ns.children) {
-					if (object instanceof KimModel && (object as KimModel).name.startsWith(descriptor.name)) {
+					if (object instanceof KimModel && (object as KimModel).name.equals(descriptor.name)) {
 						n++;
 					}
 				}

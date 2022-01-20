@@ -27,4 +27,19 @@ public class ResolverBehavior {
 		}
 
 	}
+	
+	@Action(id = "exclude", fires = {})
+	public static class Exclude extends KlabActionExecutor {
+
+		public Exclude(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, Scope scope,
+				ActorRef<KlabMessage> sender, String callId) {
+			super(identity, arguments, scope, sender, callId);
+		}
+
+		@Override
+		void run(Scope scope) {
+			// constraint should be scoped to the actor, which means the root test scope
+		}
+
+	}
 }

@@ -27,6 +27,7 @@ public class BaseFlowWaterVolumeResolver implements IResolver<IProcess>, IExpres
 
     @Override
     public IProcess resolve(IProcess baseflowProcess, IContextualizationScope context) throws KlabException {
+    	
         IState netInfiltratedWaterVolumeState = context.getArtifact("net_infiltrated_water_volume", IState.class);
         IState infiltratedWaterVolumeState = context.getArtifact("infiltrated_water_volume", IState.class);
         IState streamPresenceState = context.getArtifact("presence_of_stream", IState.class);

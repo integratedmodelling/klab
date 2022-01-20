@@ -32,6 +32,7 @@ public class LeastCostFlowDirectionsResolver implements IResolver<IState>, IExpr
 
     @Override
     public IState resolve(IState target, IContextualizationScope context) throws KlabException {
+    	
         IState dem = context.getArtifact("elevation", IState.class);
 
         OmsLeastCostFlowDirections algorithm = new OmsLeastCostFlowDirections();

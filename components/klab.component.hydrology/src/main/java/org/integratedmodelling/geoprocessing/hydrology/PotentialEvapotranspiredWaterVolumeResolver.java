@@ -28,6 +28,7 @@ public class PotentialEvapotranspiredWaterVolumeResolver implements IResolver<IP
 
     @Override
     public IProcess resolve(IProcess evapotranspirationProcess, IContextualizationScope context) throws KlabException {
+    	
         IState cropCoefficientState = context.getArtifact("crop_coefficient", IState.class);
         IState maxTempState = context.getArtifact("maximum_temperature", IState.class);
         IState minTempState = context.getArtifact("minimum_temperature", IState.class);

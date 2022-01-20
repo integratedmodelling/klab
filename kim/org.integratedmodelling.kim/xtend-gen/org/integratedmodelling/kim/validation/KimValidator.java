@@ -1089,7 +1089,7 @@ public class KimValidator extends AbstractKimValidator {
         int n = 0;
         java.util.List<IKimScope> _children = ns_1.getChildren();
         for (final IKimScope object : _children) {
-          if (((object instanceof KimModel) && ((KimModel) object).name.startsWith(descriptor.name))) {
+          if (((object instanceof KimModel) && ((KimModel) object).name.equals(descriptor.name))) {
             n++;
           }
         }

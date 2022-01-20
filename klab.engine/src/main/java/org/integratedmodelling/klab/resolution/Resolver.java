@@ -157,8 +157,9 @@ public class Resolver {
 	public ResolutionScope resolve(IResolvable resolvable, ResolutionScope parentScope) {
 		return resolve(resolvable, parentScope, true);
 	}
-	
-	private ResolutionScope resolve(IResolvable resolvable, ResolutionScope parentScope, boolean isRoot) throws KlabException {
+
+	private ResolutionScope resolve(IResolvable resolvable, ResolutionScope parentScope, boolean isRoot)
+			throws KlabException {
 
 		ResolutionScope ret = null;
 		if (resolvable instanceof Observable) {
@@ -470,10 +471,35 @@ public class Resolver {
 				ret = mscope;
 				coverage = mscope.getCoverage();
 			} else {
-//				// if we don't do this, change models for incarnated predicates won't be remembered
-//				ret.updateResolutionCache(mscope);
 				ret.acceptResolutions(mscope, mscope.getResolutionNamespace());
 				coverage = coverage.merge(mscope.getCoverage(), LogicalConnector.INTERSECTION);
+			}
+
+			/*
+			 * if coverage is empty and this is a quality with a specializable context and
+			 * it's not optional, try the extreme ratio of distributed specialized
+			 * resolution.
+			 */
+			if (coverage.isEmpty() && !observable.isOptional() && observable.is(Type.QUALITY)) {
+
+				parentScope.getMonitor().debug("can't resolve mandatory quality "
+						+ Observables.INSTANCE.getDisplayName(observable) + ": trying distributed resolution in specialized contexts");
+
+//				Observable specialized = new Observable((Observable)observable);
+//				specialized.setSpecialized(true);
+//				
+//				mscope = resolveConcrete((Observable) specialized, parentScope,
+//						((Observable) specialized).getResolvedPredicates(),
+//						((Observable) specialized).getResolvedPredicatesContext(), mode);
+//
+//				if (ret == null) {
+//					ret = mscope;
+//					coverage = mscope.getCoverage();
+//				} else {
+//					ret.acceptResolutions(mscope, mscope.getResolutionNamespace());
+//					coverage = coverage.merge(mscope.getCoverage(), LogicalConnector.INTERSECTION);
+//				}
+				
 			}
 
 			if (coverage.isEmpty()) {

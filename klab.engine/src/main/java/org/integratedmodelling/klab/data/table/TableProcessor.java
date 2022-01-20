@@ -154,6 +154,7 @@ public class TableProcessor {
 		List<IClassifier> classifiers = new ArrayList<>();
 		List<Group> children = new ArrayList<>();
 		Set<Style> style;
+		String align = null;
 		public String label;
 		int depth;
 		public String targetField;
@@ -387,6 +388,7 @@ public class TableProcessor {
 		ret.classifiers = parseClassifiers(gmap.get("classify"), ret);
 		ret.style = parseStyle(gmap.get("style"));
 		ret.sort = gmap.get("sort", String.class);
+		ret.align = gmap.get("align", String.class);
 
 		if (dimension == DimensionType.COLUMN && gmap.containsKey("columns") && gmap.get("columns") instanceof Map) {
 			Map<?, ?> dim = (Map<?, ?>) gmap.get("columns");
@@ -687,6 +689,7 @@ public class TableProcessor {
 		column.setTitle(cbox.header);
 //		column.setId(cbox.getId());
 		column.setId(cbox.boxId);
+		column.setHozAlign(cbox.group == null ? null : cbox.group.align);
 		for (Box child : sortContents(cbox)) {
 			makeColumns(column, child);
 		}
