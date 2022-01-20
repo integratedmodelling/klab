@@ -1,0 +1,37 @@
+{
+  "access_right": "open",
+  "title":"k.LAB",
+  "description":"k.LAB: an open source semantic web platform for science",
+  "language": "eng",
+  "license": {"id":"AGPL-3.0"},
+  "keywords": ["fair principles", "integratedmodelling", "semantic", "modelling", "gis","hydrology", "geomorphology", "java"],
+  "creators": [
+     {
+       "name":"Ferdinando Villa",
+       "affiliation":"BC3 Basque Centre for Climate Change",
+       "orcid":"0000-0002-5114-3007"
+     }
+  ],
+  "contributors": [
+     {
+       "name":"Enrico Girotto",
+       "affiliation":"BC3 Basque Centre for Climate Change",
+       "orcid":"0000-0001-7937-9751",
+       "type": "Other"
+     },
+     {
+       "name":"Steve Wohl",
+       "affiliation":"BC3 Basque Centre for Climate Change",
+       "type": "Other"
+     },
+     {
+       "name":"Andrea Antonello",
+       "affiliation":"HydroloGIS S.r.l., Free University of Bolzano",
+       "orcid":"0000-0001-9543-751X",
+       "type": "Other"
+     }
+  ],
+  "references": [
+    
+  ]
+}
