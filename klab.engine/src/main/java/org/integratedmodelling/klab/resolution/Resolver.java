@@ -181,13 +181,13 @@ public class Resolver {
 
 			if (ret.isOccurrent() && isRoot) {
 
-				Collection<ObservedConcept> ziocane = parentScope.getResolved(Type.QUALITY);
+				Collection<ObservedConcept> changeable = parentScope.getResolved(Type.QUALITY);
 
 				/*
 				 * visit the scope (building a list of ResolvedObservable for all qualities that
 				 * may change) and resolve their change in the original scope
 				 */
-				for (ObservedConcept observable : ziocane) {
+				for (ObservedConcept observable : changeable) {
 
 					if (!OWL.INSTANCE.isSemantic(observable.getObservable())) {
 						continue;
@@ -482,24 +482,25 @@ public class Resolver {
 			 */
 			if (coverage.isEmpty() && !observable.isOptional() && observable.is(Type.QUALITY)) {
 
-				parentScope.getMonitor().debug("can't resolve mandatory quality "
-						+ Observables.INSTANCE.getDisplayName(observable) + ": trying distributed resolution in specialized contexts");
+				parentScope.getMonitor()
+						.debug("can't resolve mandatory quality " + Observables.INSTANCE.getDisplayName(observable)
+								+ ": trying distributed resolution in specialized contexts");
 
-//				Observable specialized = new Observable((Observable)observable);
-//				specialized.setSpecialized(true);
-//				
-//				mscope = resolveConcrete((Observable) specialized, parentScope,
-//						((Observable) specialized).getResolvedPredicates(),
-//						((Observable) specialized).getResolvedPredicatesContext(), mode);
-//
-//				if (ret == null) {
-//					ret = mscope;
-//					coverage = mscope.getCoverage();
-//				} else {
-//					ret.acceptResolutions(mscope, mscope.getResolutionNamespace());
-//					coverage = coverage.merge(mscope.getCoverage(), LogicalConnector.INTERSECTION);
-//				}
-				
+				Observable specialized = new Observable((Observable) observable);
+				specialized.setSpecialized(true);
+
+				mscope = resolveConcrete((Observable) specialized, parentScope,
+						((Observable) specialized).getResolvedPredicates(),
+						((Observable) specialized).getResolvedPredicatesContext(), mode);
+
+				if (ret == null) {
+					ret = mscope;
+					coverage = mscope.getCoverage();
+				} else {
+					ret.acceptResolutions(mscope, mscope.getResolutionNamespace());
+					coverage = coverage.merge(mscope.getCoverage(), LogicalConnector.INTERSECTION);
+				}
+
 			}
 
 			if (coverage.isEmpty()) {
@@ -569,6 +570,7 @@ public class Resolver {
 
 				deferredObservable = (Observable) observable.getBuilder(parentScope.getMonitor())
 						.without(ObservableRole.CONTEXT).buildObservable();
+				deferredObservable.setModelReference(((Observable)observable).getModelReference());
 				observable = (Observable) deferredObservable.getBuilder(parentScope.getMonitor()).of(deferTo.getType())
 						.buildObservable();
 			}
@@ -599,12 +601,6 @@ public class Resolver {
 		 * infinite recursion.
 		 */
 		ResolutionScope ret = parentScope.getChildScope(observable, mode);
-
-//		/*
-//		 * ensure the reference name represents unique semantics across the resolution
-//		 * tree FIXME remove and just use a non-ambiguous reference name
-//		 */
-//		observable = parentScope.disambiguateObservable(observable);
 
 		/*
 		 * pre-resolved artifacts contain a number, concept, boolean, expression or
@@ -708,6 +704,19 @@ public class Resolver {
 						List<Link> links = new ArrayList<>();
 
 						for (IRankedModel model : candidateModels) {
+
+							/*
+							 * if the observable comes from a query that admits specialized observables, the
+							 * model must be distributed over its specialized context, so we must resolve in
+							 * a deferred way using the observable of the model instead of the original one,
+							 * with the model already preset.
+							 */
+							if (observable.isSpecialized()) {
+								Observable deferred = new Observable((Observable) model.getObservables().get(0));
+								deferred.setModelReference(model.getName());
+								return resolveConcrete(deferred, parentScope, resolvedPredicates,
+										resolvedPredicatesContext, mode);
+							}
 
 							model = concretizeModel(model, resolvedPredicates, resolvedPredicatesContext,
 									parentScope.getMonitor());

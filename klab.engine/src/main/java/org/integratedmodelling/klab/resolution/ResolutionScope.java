@@ -1259,98 +1259,6 @@ public class ResolutionScope implements IResolutionScope {
 		this.originalScope = originalScope;
 	}
 
-	// /**
-	// * Check the passed observable against all the ones we already know and those
-	// in the context.
-	// If
-	// * we have an observable with the same reference name but with a different
-	// semantics, return a
-	// * new observable with an unambiguous name.
-	// *
-	// * @deprecated the reference name should always be unambiguous
-	// * @param resolvable
-	// * @return
-	// */
-	// public Observable disambiguateObservable(Observable resolvable) {
-	//
-	// Observable ret = resolvable;
-	// Map<String, IObservable> knownObservables = new HashMap<>();
-	// if (context != null) {
-	// IRuntimeScope ctx = context.getScope();
-	// if (ctx != null) {
-	// for (Pair<String, IObservation> obs : ctx.getArtifacts(IObservation.class)) {
-	// knownObservables.put(obs.getSecond().getObservable().getReferenceName(),
-	// obs.getSecond().getObservable());
-	// }
-	// }
-	// }
-	// for (ObservedConcept o : resolvedObservables.keySet()) {
-	// ResolutionScope scope = (ResolutionScope)
-	// o.getData().get("resolved.observable.scope");
-	// knownObservables.put(scope.observable.getReferenceName(), scope.observable);
-	// }
-	//
-	// if (knownObservables.containsKey(resolvable.getReferenceName())
-	// && !((Observable)
-	// knownObservables.get(resolvable.getReferenceName())).resolvesStrictly(resolvable))
-	// {
-	//
-	// boolean domainsTested = false;
-	// boolean namespacesTested = false;
-	//
-	// String newName = resolvable.getReferenceName();
-	// int i = 1;
-	// do {
-	//
-	// if (!domainsTested) {
-	// /*
-	// * try domains first
-	// */
-	// IConcept baseOb =
-	// Observables.INSTANCE.getBaseObservable(resolvable.getType());
-	// if (baseOb != null) {
-	// IConcept domain = baseOb.getDomain();
-	// if (domain != null) {
-	// newName = resolvable.getReferenceName() + "__" +
-	// Concepts.INSTANCE.getCodeName(domain);
-	// }
-	// }
-	// domainsTested = true;
-	// }
-	//
-	// else if (!namespacesTested) {
-	//
-	// /*
-	// * then namespaces
-	// */
-	// IConcept baseOb =
-	// Observables.INSTANCE.getBaseObservable(resolvable.getType());
-	// if (baseOb != null) {
-	// String namespace = baseOb.getNamespace();
-	// if (namespace != null) {
-	// newName = resolvable.getReferenceName() + "__" + namespace.replaceAll("\\.",
-	// "_");
-	// }
-	// }
-	// namespacesTested = true;
-	//
-	// } else {
-	//
-	// /*
-	// * worst case, resort to numbers - should be very unlikely
-	// */
-	// newName = resolvable.getReferenceName() + "__" + (i++);
-	// }
-	// } while(knownObservables.containsKey(newName));
-	//
-	// ret = new Observable(resolvable);
-	// ret.setReferenceName(newName);
-	//
-	// }
-	//
-	// return ret;
-	// }
-
 	@Override
 	public Scale getScale() {
 		return Scale.create(getCoverage().getExtents());
@@ -1364,11 +1272,6 @@ public class ResolutionScope implements IResolutionScope {
 		ret.coverage = Coverage.full(scale);
 		return ret;
 	}
-
-	// public void distribute(IObservable distributingObservable) {
-	// this.observable =
-	// this.observable.distributeIn(distributingObservable.getType());
-	// }
 
 	public boolean isDeferred() {
 		return deferred;
@@ -1610,9 +1513,5 @@ public class ResolutionScope implements IResolutionScope {
 		}
 		return false;
 	}
-
-//	public void updateResolutionCache(ResolutionScope mscope) {
-//		this.resolverCache.putAll(mscope.resolverCache);
-//	}
 
 }

@@ -1067,4 +1067,8 @@ public class Observable extends GroovyObjectSupport implements IObservable {
 		this.specialized = specialized;
 	}
 
+	public String getModelReference() {
+		return this.modelReference;
+	}
+
 }
