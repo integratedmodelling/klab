@@ -484,22 +484,16 @@ public class Resolver {
 
 				parentScope.getMonitor()
 						.debug("can't resolve mandatory quality " + Observables.INSTANCE.getDisplayName(observable)
-								+ ": trying distributed resolution in specialized contexts");
+								+ ": trying distributed resolution in specialized context");
 
 				Observable specialized = new Observable((Observable) observable);
 				specialized.setSpecialized(true);
 
-				mscope = resolveConcrete((Observable) specialized, parentScope,
+				ret = resolveConcrete((Observable) specialized, parentScope,
 						((Observable) specialized).getResolvedPredicates(),
 						((Observable) specialized).getResolvedPredicatesContext(), mode);
 
-				if (ret == null) {
-					ret = mscope;
-					coverage = mscope.getCoverage();
-				} else {
-					ret.acceptResolutions(mscope, mscope.getResolutionNamespace());
-					coverage = coverage.merge(mscope.getCoverage(), LogicalConnector.INTERSECTION);
-				}
+				coverage = ret == null ? Coverage.empty(parentScope.getCoverage()) : ret.getCoverage();
 
 			}
 
@@ -570,7 +564,7 @@ public class Resolver {
 
 				deferredObservable = (Observable) observable.getBuilder(parentScope.getMonitor())
 						.without(ObservableRole.CONTEXT).buildObservable();
-				deferredObservable.setModelReference(((Observable)observable).getModelReference());
+				deferredObservable.setModelReference(((Observable) observable).getModelReference());
 				observable = (Observable) deferredObservable.getBuilder(parentScope.getMonitor()).of(deferTo.getType())
 						.buildObservable();
 			}
