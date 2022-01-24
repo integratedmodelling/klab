@@ -175,8 +175,8 @@ public class EmailManager {
     	    for (String receipt : to) {
     	        error.append("[").append(receipt).append("]");
     	    }
-    	    error.append("\nsubject: [").append(subject).append("]\n")
-    	        .append("\nmessage: [").append(msg).append("]");
+    	    error.append("\nsubject: [").append(subject).append("]");
+    	    //    .append("\nmessage: [").append(msg).append("]");
     	    Logging.INSTANCE.error(error.toString(), e);
     		throw new SendEmailException("[send]: Unable to send email.  Plase check email address and message");
 		}
