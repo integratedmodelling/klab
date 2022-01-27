@@ -8,7 +8,7 @@ def kmodelers = [
 
 pipeline {
     agent { label "mvn-java-agent"}
-
+    options { skipDefaultCheckout(true) }
     parameters {
         string(name: 'BRANCH',
             defaultValue: '',
