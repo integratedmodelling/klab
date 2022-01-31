@@ -32,7 +32,9 @@ import org.geotools.styling.RasterSymbolizer;
 import org.geotools.styling.ShadedRelief;
 import org.geotools.styling.StyleBuilder;
 import org.geotools.styling.StyleFactory;
+import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Concepts;
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -47,6 +49,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
+import org.integratedmodelling.klab.documentation.DataflowDocumentation;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.rest.Colormap;
 import org.integratedmodelling.klab.rest.StateSummary;
@@ -59,6 +62,9 @@ import org.integratedmodelling.klab.utils.Triple;
 import org.opengis.style.ContrastMethod;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
 
 /**
  * Rendering functions for raster coverages and possibly more. Uses Geotools' SLD support and
@@ -85,10 +91,15 @@ public enum Renderer {
          * 
          * TODO do the same from confDir/colors and components
          */
-        for (String schema : new Reflections("colors", new ResourcesScanner()).getResources(Pattern.compile(".*\\.json"))) {
-            ColorScheme scheme = JsonUtils.load(getClass().getClassLoader().getResource(schema), ColorScheme.class);
-            colorSchemata.put(scheme.getName(), scheme);
-        }
+		ResourcePatternResolver patternResolver = new PathMatchingResourcePatternResolver();
+		try {
+			for (Resource res : patternResolver.getResources("colors/*.json")) {
+	            ColorScheme scheme = JsonUtils.load(res.getFile(), ColorScheme.class);
+	            colorSchemata.put(scheme.getName(), scheme);
+			}
+		} catch (Exception e) {
+			Logging.INSTANCE.error(e);
+		}
     }
 
     /**
