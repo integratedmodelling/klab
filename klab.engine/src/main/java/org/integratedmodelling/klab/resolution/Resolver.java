@@ -476,15 +476,16 @@ public class Resolver {
 			}
 
 			/*
-			 * if coverage is empty and this is a quality with a specializable context and
-			 * it's not optional, try the extreme ratio of distributed specialized
+			 * if coverage is empty and this is a resolution with a specializable context
+			 * and it's not optional, try the extreme ratio of distributed specialized
 			 * resolution.
 			 */
-			if (coverage.isEmpty() && !observable.isOptional() && observable.is(Type.QUALITY)) {
+			if (coverage.isEmpty() && !observable.isOptional() && mode == Mode.RESOLUTION) {
 
 				parentScope.getMonitor()
-						.debug("can't resolve mandatory quality " + Observables.INSTANCE.getDisplayName(observable)
-								+ ": trying distributed resolution in specialized context");
+						.debug("direct resolution of mandatory dependency "
+								+ Observables.INSTANCE.getDisplayName(observable)
+								+ " failed: trying distributed resolution in specialized context");
 
 				Observable specialized = new Observable((Observable) observable);
 				specialized.setSpecialized(true);

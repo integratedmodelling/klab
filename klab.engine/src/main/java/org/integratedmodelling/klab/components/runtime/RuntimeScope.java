@@ -2196,6 +2196,17 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		structure.swap(original, replacement);
 		observations.remove(original.getId());
 		observations.put(replacement.getId(), (IObservation) replacement);
+		// swap in catalog using dumb search for the object\
+		String name = null;
+		for (String key : catalog.keySet()) {
+			if (catalog.get(key) == original) {
+				name = key;
+				break;
+			}
+		}
+		if (name != null) {
+			catalog.put(name, replacement);
+		}
 	}
 
 	@Override

@@ -185,8 +185,11 @@ public class Space extends Extent implements ISpace {
 	}
 
 	private static Space create(Shape shape, long xCells, long yCells) {
-		Grid grid = Grid.create(shape, xCells, yCells);
-		Space ret = new Space(shape, grid);
+		Grid grid = null;
+		if (xCells > 1 || yCells > 1) {
+			grid = Grid.create(shape, xCells, yCells);
+		}
+		Space ret = grid == null ? new Space(shape) : new Space(shape, grid);
 		return ret;
 	}
 

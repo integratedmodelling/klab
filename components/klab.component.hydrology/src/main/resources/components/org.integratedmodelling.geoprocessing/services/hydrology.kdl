@@ -18,7 +18,9 @@ export number fillsinks
 }
 
 export number leastcostflowdirections
-	
+     "Import a DEM (no need to fill sinks) and produce flow directions and total contributing area. Flow directions
+     are computed as D8 (values from 1 to 8, i.e. the exponents to be applied to 2 in the standard 
+	 D8 scheme) unless angles are requested."
 	 label 'Least cost flow directions'
 {
 	import number elevation
@@ -29,8 +31,14 @@ export number leastcostflowdirections
 		default false
 	
 	optional boolean dotca
-		"If true, the tca map is returned instead of the flow directions D8 map."
+		"If true, the number of contributing cells is returned instead of the flow directions D8 map. To 
+		 output the actual upstream area, also use the areas=true parameter."
 		default false
+
+	optional boolean areas
+		"If true and dotca is also true, output the actual upstream area instead of the number of upstream
+		 cells."
+	   default false
 
 	geometry S2
 
@@ -39,9 +47,9 @@ export number leastcostflowdirections
 
 export number flowdirections
 	
-	"Import a hydrologically corrected DEM and produce flow directions using configurable methods. For now
-	 only D8 is supported. Returns values from 1 to 8, i.e. the exponents to be applied to 2 in the standard 
-	 D8 scheme."
+	"Import a hydrologically corrected DEM and produce flow directions using configurable methods. Flow directions
+     are computed as D8 (values from 1 to 8, i.e. the exponents to be applied to 2 in the standard 
+	 D8 scheme) unless angles are requested."
 	 
 	 label 'Flow directions'
 {

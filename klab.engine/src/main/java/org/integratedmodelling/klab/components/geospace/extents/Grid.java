@@ -209,6 +209,11 @@ public class Grid extends Area implements IGrid {
 		mask = createMask(shape);
 	}
 
+	public void computeMask() {
+		this.mask = createMask(this.shape);
+	}
+	
+	
 	/*
 	 * Make a trivial mask unless the shape differs from its envelope
 	 */
@@ -1639,8 +1644,12 @@ public class Grid extends Area implements IGrid {
 			maxY -= this.cellHeight;
 		}
 
-		return new Grid(shape, minX, minY, maxX, maxY, (long) ((maxX - minX) / this.cellWidth),
+		Grid ret = new Grid(shape, minX, minY, maxX, maxY, (long) ((maxX - minX) / this.cellWidth),
 				(long) ((maxY - minY) / cellHeight), this.projection);
+		
+		ret.computeMask();
+		
+		return ret;
 	}
 
 	public boolean isConsistent() {

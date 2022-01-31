@@ -9,32 +9,44 @@ import org.geotools.coverage.grid.GridCoverage2D;
 import org.hortonmachine.hmachine.modules.geomorphology.flow.OmsLeastCostFlowDirections;
 import org.integratedmodelling.geoprocessing.TaskMonitor;
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.geospace.Geospace;
+import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.utils.NumberUtils;
 
 public class LeastCostFlowDirectionsResolver implements IResolver<IState>, IExpression {
 
-    boolean computeAngles = false;
-    boolean doTca = false;
+	boolean computeAngles = false;
+	boolean doTca = false;
+	boolean areas = false;
 
-    @Override
-    public Type getType() {
-        return Type.NUMBER;
-    }
+	@Override
+	public Type getType() {
+		return Type.NUMBER;
+	}
 
-    @Override
+	@Override
     public IState resolve(IState target, IContextualizationScope context) throws KlabException {
     	
         IState dem = context.getArtifact("elevation", IState.class);
-
+        
+        double cellArea = 1;
+        if (context.getScale().getSpace() instanceof Space && ((Space)context.getScale().getSpace()).getGrid() != null) {
+        	cellArea = ((Space)context.getScale().getSpace()).getGrid().getCell(0l).getStandardizedArea();
+        	if (target.getObservable().getUnit() != null) {
+        		cellArea = target.getObservable().getUnit().convert(cellArea, Units.INSTANCE.SQUARE_METERS).doubleValue();
+        	}
+        }
+        
+        // really, the compiler should do this.
+        final double carea = cellArea;
+        
         OmsLeastCostFlowDirections algorithm = new OmsLeastCostFlowDirections();
         algorithm.inElev = GeotoolsUtils.INSTANCE.stateToCoverage(dem, context.getScale(), DataBuffer.TYPE_FLOAT, floatNovalue,
                 false);
@@ -46,6 +58,7 @@ public class LeastCostFlowDirectionsResolver implements IResolver<IState>, IExpr
         algorithm.pm = taskMonitor;
         algorithm.doProcess = true;
         algorithm.doReset = false;
+        
         context.getMonitor().info("computing " + (doTca ? "total contributing area" : "flow directions") + "...");
         try {
             algorithm.process();
@@ -61,6 +74,9 @@ public class LeastCostFlowDirectionsResolver implements IResolver<IState>, IExpr
                 if (!doTca && computeAngles) {
                     return toAngle(a);
                 }
+                if (doTca && areas) {
+                	return a.doubleValue() * carea;
+                }
                 return a;
             };
             GeotoolsUtils.INSTANCE.coverageToState(outCoverage, target, context.getScale(), transformation);
@@ -68,18 +84,19 @@ public class LeastCostFlowDirectionsResolver implements IResolver<IState>, IExpr
         return target;
     }
 
-    public double toAngle(double code) {
-        if (Double.isNaN(code)) {
-            return code;
-        }
-        return Geospace.getHeading((int) code);
-    }
+	public double toAngle(double code) {
+		if (Double.isNaN(code)) {
+			return code;
+		}
+		return Geospace.getHeading((int) code);
+	}
 
-    @Override
-    public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
-        LeastCostFlowDirectionsResolver ret = new LeastCostFlowDirectionsResolver();
-        ret.computeAngles = parameters.get("angles", Boolean.FALSE);
-        ret.doTca = parameters.get("dotca", Boolean.FALSE);
-        return ret;
-    }
+	@Override
+	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
+		LeastCostFlowDirectionsResolver ret = new LeastCostFlowDirectionsResolver();
+		ret.computeAngles = parameters.get("angles", Boolean.FALSE);
+		ret.doTca = parameters.get("dotca", Boolean.FALSE);
+		ret.areas = parameters.get("areas", Boolean.FALSE);
+		return ret;
+	}
 }
