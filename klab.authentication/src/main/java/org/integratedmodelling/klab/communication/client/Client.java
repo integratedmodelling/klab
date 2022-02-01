@@ -43,6 +43,7 @@ import org.integratedmodelling.klab.api.runtime.rest.IClient;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
+import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.rest.EngineAuthenticationRequest;
 import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
 import org.integratedmodelling.klab.rest.NodeAuthenticationRequest;
@@ -356,6 +357,8 @@ public class Client extends RestTemplate implements IClient {
 				throw new KlabAuthorizationException("unauthorized request " + url);
 			case 404:
 				throw new KlabInternalErrorException("internal: request " + url + " was not accepted");
+			case 500:
+				throw new KlabResourceAccessException("internal: request " + url + " caused a remote server error");
 			}
 
 			if (response.getBody() == null) {
