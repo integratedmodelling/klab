@@ -35,6 +35,11 @@ public class Info implements ICommand {
 				ret += "\n   " + (model.isDeprecated() ? "DEPRECATED" : "NOT DEPRECATED");
 				ret += "\n   " + (model.isInstantiator() ? "INSTANTIATOR" : "RESOLVER");
 				ret += "\n   " + (model.isErrors() ? "HAS ERRORS" : "NO ERRORS");
+				if (model.isErrors()) {
+					for (String error : model.getErrors()) {
+						ret += "\n      " + error;
+					}
+				}
 				ret += "\n   " + (model.isInactive() ? "INACTIVE" : "ACTIVE");
 				ret += "\n   " + (model.isLearning() ? "LEARNING" : "NOT LEARNING");
 				ret += "\n   " + (model.isResolved() ? "RESOLVED" : "UNRESOLVED");

@@ -24,6 +24,7 @@ class OffsetIterator implements Iterator<Offset> {
 	Iterator<ILocator>[] iterators;
 	List<IExtent> extents;
 	long current = 0;
+	boolean degenerate = false;
 
 	@SuppressWarnings("unchecked")
 	OffsetIterator(IScale scale, List<IExtent> extents) {
@@ -43,7 +44,7 @@ class OffsetIterator implements Iterator<Offset> {
 
 	@Override
 	public boolean hasNext() {
-		return current < cursor.getMultiplicity();
+		return !degenerate && current < cursor.getMultiplicity();
 	}
 
 	@Override
@@ -58,6 +59,9 @@ class OffsetIterator implements Iterator<Offset> {
 			}	
 			AbstractExtent extent = ((AbstractExtent)iterators[i].next());
 			if (extent == null) {
+				// happens in edge situations
+				this.degenerate = true;
+				current ++;
 				return null;
 			}
 			offsets[i] = extent.getLocatedOffset();

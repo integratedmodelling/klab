@@ -18,15 +18,19 @@ public abstract class KimObject implements IKimObject {
 	private IMetadata metadata = new Metadata();
 	protected List<IKimObject> children = new ArrayList<>();
 	private List<IAnnotation> annotations = new ArrayList<>();
-	private boolean errors;
+	private List<String> errorMessages = new ArrayList<>();
 	
 	@Override
 	public boolean isErrors() {
-		return errors;
+		return errorMessages.size() > 0;
 	}
 
-	public void setErrors(boolean errors) {
-		this.errors = errors;
+	public void addError(String error) {
+		this.errorMessages.add(error);
+	}
+	
+	public List<String> getErrors() {
+		return errorMessages;
 	}
 
 	public KimObject(IKimStatement statement) {

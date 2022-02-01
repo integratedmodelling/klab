@@ -183,8 +183,6 @@ public class MergingState extends State {
 						} else if (Observations.INSTANCE.isData(value)) {
 							return value;
 						}
-					} else {
-						break;
 					}
 				}
 			}

@@ -52,7 +52,9 @@ public class Observer extends KimObject implements IObserver {
 		this.name = statement.getName();
 		this.behavior = new Contextualization(statement.getBehavior(), this);
 		this.urn = statement.getUrn();
-		this.setErrors(statement.isErrors());
+		if (statement.isErrors()) {
+			this.addError("Syntax errors in k.IM observer specifications");
+		}
 		for (IKimObservable state : statement.getStates()) {
 			this.states.add(Observables.INSTANCE.declare(state, monitor));
 		}
@@ -85,16 +87,16 @@ public class Observer extends KimObject implements IObserver {
 						? (double) envelope.getResolutionForZoomLevel().getFirst()
 						: regionOfInterest.getGridResolution();
 
-				ISpace space =  Space.create(Shape.create(envelope), resolution);
+				ISpace space = Space.create(Shape.create(envelope), resolution);
 //				ITime time = Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR);
-				
-				return /*Collections.singletonList(space); */ Lists.newArrayList(time, space);
+
+				return /* Collections.singletonList(space); */ Lists.newArrayList(time, space);
 			}
 		};
 	}
 
 	public Observer(String name, IScale scale, Observable observable, Namespace namespace) {
-		
+
 		super(null);
 
 		this.namespace = namespace;
@@ -113,9 +115,9 @@ public class Observer extends KimObject implements IObserver {
 			}
 		};
 	}
-	
+
 	public Observer(Shape shape, ITime time, Observable observable, Namespace namespace) {
-		
+
 		super(null);
 
 		this.namespace = namespace;
@@ -137,10 +139,10 @@ public class Observer extends KimObject implements IObserver {
 				}
 
 				double resolution = shape.getEnvelope().getResolutionForZoomLevel().getFirst();
-				
+
 //				ITime time = Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR);
 				ISpace space = Space.create(shape, resolution);
-				
+
 				return /* Collections.singletonList(space); */ Lists.newArrayList(time, space);
 			}
 		};
