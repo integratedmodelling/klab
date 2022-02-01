@@ -1590,6 +1590,10 @@ public class Grid extends Area implements IGrid {
 
 			Cell ret = getCellAt(new double[] { x, y }, false);
 
+			if (ret == null) {
+				return null;
+			}
+			
 			// coverage
 			Range cellHr = Range.create(ret.getWest(), ret.getEast());
 			Range cellVr = Range.create(ret.getSouth(), ret.getNorth());

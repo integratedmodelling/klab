@@ -57,6 +57,9 @@ class OffsetIterator implements Iterator<Offset> {
 				iterators[i] = extents.get(i).iterator();
 			}	
 			AbstractExtent extent = ((AbstractExtent)iterators[i].next());
+			if (extent == null) {
+				return null;
+			}
 			offsets[i] = extent.getLocatedOffset();
 			if (offsets[i] < 0) {
 				// original extent wasn't located, i.e. use the full extent with offset 0

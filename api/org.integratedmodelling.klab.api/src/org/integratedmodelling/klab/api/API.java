@@ -55,7 +55,7 @@ import org.integratedmodelling.klab.rest.TicketRequest;
  *
  * @author ferdinando.villa
  * @author J. Luke Scott
- * @version $Id: $Id
+ * @author Steven Wohl
  */
 public interface API {
 
@@ -495,7 +495,7 @@ public interface API {
 			 * Add a resource to the public catalog by uploading zipped contents from a
 			 * valid local resource. Return URN after validation.
 			 * 
-			 * PUT
+			 * POST
 			 */
 			public static final String SUBMIT_FILES = "/resource/submitfiles";
 
