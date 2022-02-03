@@ -45,6 +45,7 @@ public class MaximaFinderInstantiator implements IInstantiator, IExpression {
 	private double maxRadius;
 	private double borderDistanceThreshold = -1;
 	private double downsize = 0.6;
+	private boolean allowNovalues;
 	private boolean circular;
 	private int windowSize = 3;
 	private Mode mode = Mode.CUSTOM;
@@ -69,6 +70,7 @@ public class MaximaFinderInstantiator implements IInstantiator, IExpression {
 		ret.chmId = parameters.get("chm", String.class);
 		ret.surfaceId = parameters.get("surface", String.class);
 		ret.circular = parameters.get("circular", Boolean.FALSE);
+		ret.allowNovalues = parameters.get("allownovalue", Boolean.TRUE);
 		ret.maxRadius = parameters.get("radius", 0.0);
 		ret.relativeThreshold = parameters.get("relative-threshold", 0.0);
 		ret.downsize = parameters.get("downsize", 0.6);
@@ -110,10 +112,17 @@ public class MaximaFinderInstantiator implements IInstantiator, IExpression {
 			algorithm.inDsmDtmDiff = GeotoolsUtils.INSTANCE.stateToCoverage(state, context.getScale(), DataBuffer.TYPE_FLOAT, floatNovalue, false,
 					(value) -> {
 						if (value instanceof Number && !Double.isNaN(((Number) value).doubleValue())) {
-							value = ((Number) value).doubleValue() - summary.getRange().get(0);
+							value = ((Number) value).doubleValue() - summary.getRange().get(0); 
+							// TODO inDsmDtmDiff is meant to be a normalization with flattening. 
+							// I think removing the minimum can be counterproductive. I believe 
+							// that it makes the statement present in thresholdExpression not corrently applied. 
+							// I saw they use for example: threshold = [(max - min) < 500 ? 10000 : max * 0.65]
+							// max - min are related to the original raster, while the raster will be 
+							// trimmed on the lower side. 
 						}
 						return value;
-					});
+					}
+					);
 
 			if (relativeThreshold > 0) {
 				double cutoff = 0;
@@ -133,7 +142,7 @@ public class MaximaFinderInstantiator implements IInstantiator, IExpression {
 					Object o = threx.eval(
 							Parameters.create("min", summary.getRange().get(0), "max", summary.getRange().get(1),
 									"mean", summary.getMean(), "std", summary.getStandardDeviation(), "target", state),
-							context);
+							context); // TODO see long comment above
 
 					if (!(o instanceof Number)) {
 						throw new IllegalStateException(
@@ -173,12 +182,13 @@ public class MaximaFinderInstantiator implements IInstantiator, IExpression {
 		} else if (algorithm.pSize > grid.getXCells() / 10) {
 			algorithm.pSize = (int) grid.getXCells() / 10;
 		}
-		algorithm.pPercent = (int) (downsize * 100);
-		algorithm.pMaxRadius = maxRadius;
+		algorithm.pPercent = (int) (downsize * 100); // TODO THIS IS IGNORED IN CUSTOM MODE
+		algorithm.pMaxRadius = maxRadius; // TODO THIS IS IGNORED IN CUSTOM MODE
 		// see this - should probably be larger in small-scale, high-res contexts.
 		// Default was 2 and prevented any results.
 		algorithm.pTopBufferThresCellCount = 0;
-		algorithm.doCircular = circular;
+		algorithm.doCircular = circular; // TODO I changed this to be circular by default, I think it should work better for mountain peeks. 
+		algorithm.doAllowNovalues = allowNovalues;
 		algorithm.pBorderDistanceThres = borderDistanceThreshold;
 		algorithm.pm = new TaskMonitor(context.getMonitor());
 		algorithm.doProcess = true;
