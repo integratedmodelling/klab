@@ -12,6 +12,8 @@ import java.util.TreeMap;
  */
 public class TreeMapList<K, V> extends TreeMap<K, List<V>> implements SortedMapList<K, V> {
 
+	private static final long serialVersionUID = 2313041935663770329L;
+
 	/**
 	 * Create a new empty TreeMapList
 	 */

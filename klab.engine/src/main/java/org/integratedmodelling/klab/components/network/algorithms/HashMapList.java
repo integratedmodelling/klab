@@ -13,6 +13,8 @@ import java.util.List;
  */
 public class HashMapList<K, V> extends HashMap<K, List<V>> implements MapList<K, V> {
 
+	private static final long serialVersionUID = -7757284542722893714L;
+
 	/**
 	 * Create an empty HashMapList
 	 */
