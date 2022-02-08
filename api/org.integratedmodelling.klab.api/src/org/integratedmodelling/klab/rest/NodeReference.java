@@ -32,15 +32,18 @@ public class NodeReference {
 
 	}
 	
+	public NodeReference(INodeIdentity node, boolean online) {
+	    this.id = node.getName();
+        this.permissions.addAll(node.getPermissions());
+        this.namespaces.addAll(node.getNamespaceIds());
+        this.catalogs.addAll(node.getCatalogIds());
+//      this.resources.addAll(node.getResources());
+        this.urls.addAll(node.getUrls());
+        this.online = online;
+	}
+	
 	public NodeReference(INodeIdentity node) {
-		this.id = node.getName();
-		this.permissions.addAll(node.getPermissions());
-		this.namespaces.addAll(node.getNamespaceIds());
-		this.catalogs.addAll(node.getCatalogIds());
-//		this.resources.addAll(node.getResources());
-		this.urls.addAll(node.getUrls());
-		this.online = node.isOnline();
-		
+		this(node, node.isOnline());
 	}
 
 	public NodeReference(NodeCapabilities capabilities) {

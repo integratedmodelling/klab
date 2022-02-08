@@ -22,7 +22,7 @@ import org.integratedmodelling.klab.hub.commands.GetNodeAuthenticatedIdentity;
 import org.integratedmodelling.klab.hub.commands.GetNodesGroups;
 import org.integratedmodelling.klab.hub.exception.CertificateCipherExcepetion;
 import org.integratedmodelling.klab.hub.licenses.services.LicenseConfigService;
-import org.integratedmodelling.klab.hub.network.NodeNetworkManager;
+import org.integratedmodelling.klab.hub.network.NodeStatusManager;
 import org.integratedmodelling.klab.hub.nodes.services.NodeService;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.hub.security.NetworkKeyManager;
@@ -104,7 +104,7 @@ public class NodeAuthResponeFactory {
     				Authentication.INSTANCE.getAuthenticatedIdentity(Hub.class).getName(),
     				groups,
     				NetworkKeyManager.INSTANCE.getEncodedPublicKey());
-        	NodeNetworkManager.INSTANCE.notifyAuthorizedNode(nodeIdentity, true);
+        	NodeStatusManager.INSTANCE.notifyAuthorizedNode(nodeIdentity, true);
     		return response;
         } else {
         	return new NodeAuthenticationResponse();
@@ -146,7 +146,7 @@ public class NodeAuthResponeFactory {
 						groups,
 						NetworkKeyManager.INSTANCE.getEncodedPublicKey());
 		
-		NodeNetworkManager.INSTANCE.notifyAuthorizedNode(node, true);
+		NodeStatusManager.INSTANCE.notifyAuthorizedNode(node, true);
 		return response;
 	}
 	

@@ -33,8 +33,6 @@ public class EngineAuthResponeFactory {
     
     private UserProfileService profileService;
     
-    private MongoGroupRepository groupRepository;
-    
     private LicenseConfigService configService;
     
     private UserAuthTokenService tokenService;
@@ -44,7 +42,6 @@ public class EngineAuthResponeFactory {
             LicenseConfigService configService,
             UserAuthTokenService tokenService) {
         this.profileService = profileService;
-        this.groupRepository = groupRepository;
         this.configService = configService;
         this.tokenService = tokenService;
     }
@@ -150,7 +147,7 @@ public class EngineAuthResponeFactory {
 	    		Logging.INSTANCE.info("Remote Engine Run on hub with User: " + engine.getUsername());
 	    		HubReference hub = new GenerateHubReference().execute();
 	    		EngineAuthenticationResponse resp = new EngineAuthenticationResponse(authenticatedIdentity, hub,
-	    				NodeNetworkManager.INSTANCE.getNodeReferences());
+	    		        NodeNetworkManager.INSTANCE.getNodeReferences());
 	    		
 	    		if (!messages.isEmpty()) {
 	    			resp.setMessages(messages);
@@ -215,7 +212,7 @@ public class EngineAuthResponeFactory {
 		Logging.INSTANCE.info("Local Engine Run on hub with User: " + engine.getUsername());
 		HubReference hub = new GenerateHubReference().execute();
 		EngineAuthenticationResponse resp = new EngineAuthenticationResponse(authenticatedIdentity, hub,
-                NodeNetworkManager.INSTANCE.getNodeReferences());;
+		        NodeNetworkManager.INSTANCE.getNodeReferences());;
 		if (!messages.isEmpty()) {
             resp.setMessages(messages);
         }
