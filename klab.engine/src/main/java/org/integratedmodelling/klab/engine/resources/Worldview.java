@@ -1,7 +1,8 @@
 package org.integratedmodelling.klab.engine.resources;
 
 import java.io.File;
-import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Namespaces;
@@ -14,7 +15,7 @@ import org.integratedmodelling.klab.scale.Scale;
 
 public class Worldview extends MonitorableGitWorkspace implements IWorldview {
 
-	public Worldview(String name, File root, Collection<String> gitUrls) {
+	public Worldview(String name, File root, Map<String, Set<String>> gitUrls) {
 		super(root, name, gitUrls);
 		this.setSkipSync(System.getProperty("skipWorldviewSync") != null);
 	}

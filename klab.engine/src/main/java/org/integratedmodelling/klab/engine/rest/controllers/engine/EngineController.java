@@ -5,6 +5,7 @@ import java.security.Principal;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.engine.Engine;
@@ -43,9 +44,8 @@ public class EngineController {
 
 		String info = null;
 		ISession session = Authentication.INSTANCE.getIdentity(previousToJoin, ISession.class);
-		if (session == null) {
-			// TODO must do it for the user that owns the context!
-			session = engine.createSession();
+		if (session == null && user instanceof IUserIdentity) {
+			session = engine.createSession((IUserIdentity)user);
 			info = "requested session was unavailable: returning a new session";
 		}
 
@@ -71,8 +71,7 @@ public class EngineController {
 			throw new IllegalAccessError("engine is not present: cannot create a session");
 		}
 
-		// TODO must do it for the user that owns the context!
-		session = engine.createSession();
+		session = user instanceof IUserIdentity ? engine.createSession((IUserIdentity)user) : engine.createSession();
 
 		AuthorizeSessionResponse ret = new AuthorizeSessionResponse();
 

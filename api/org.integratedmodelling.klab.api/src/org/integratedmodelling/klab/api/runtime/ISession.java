@@ -114,10 +114,15 @@ public interface ISession extends IEngineSessionIdentity, Closeable {
 
     /**
      * Interrupt all observation tasks that are running at the moment of calling.
-     * 
      */
     void interruptAllTasks();
 
+    /**
+     * 
+     * @return
+     */
+    IUserIdentity getUser();
+    
 	void addListener(Listener listener);
 
 	boolean isDefault();

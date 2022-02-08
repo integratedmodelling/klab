@@ -9,13 +9,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
-import org.apache.http.util.ExceptionUtils;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.auth.ICertificate.Type;
 import org.integratedmodelling.klab.api.auth.IIdentity;
@@ -50,6 +51,8 @@ import org.joda.time.Duration;
 import org.joda.time.format.PeriodFormat;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 
+import com.google.common.collect.Sets;
+
 public enum Authentication implements IAuthenticationService {
 
     /**
@@ -75,6 +78,12 @@ public enum Authentication implements IAuthenticationService {
      * any external credentials taken from the .klab/credentials.json file if any.
      */
     private FileCatalog<ExternalAuthenticationCredentials> externalCredentials;
+
+    /**
+     * Projects coming from the network record the groups that enable them here. Used to check
+     * permissions in user sessions that don't belong to the engine user.
+     */
+    private Map<String, Set<String>> projectPermissions = Collections.synchronizedMap(new HashMap<>());
 
     /**
      * Status of a user wrt. the network. Starts at UNKNOWN.
@@ -403,6 +412,19 @@ public enum Authentication implements IAuthenticationService {
         };
     }
 
+    public void setProjectPermissions(String projectId, Set<String> groups) {
+        this.projectPermissions.put(projectId, groups);
+    }
+    
+    public boolean canAccess(IUserIdentity user, String projectId) {
+        Set<String> userGroups = user.getGroups().stream().map((group) -> group.getId()).collect(Collectors.toSet());
+        Set<String> permissions = this.projectPermissions.get(projectId);
+        if (permissions != null && !permissions.isEmpty()) {
+            return Sets.intersection(permissions, userGroups).size() > 0;
+        }
+        return true;
+    }
+    
     public List<ObservableReference> getDefaultObservables(IIdentity identity) {
         List<ObservableReference> ret = new ArrayList<>();
         IUserIdentity user = identity.getParentIdentity(IUserIdentity.class);
@@ -411,14 +433,6 @@ public enum Authentication implements IAuthenticationService {
                 ret.addAll(group.getObservables());
             }
         }
-        // TODO extract from user's groups, not defaults!
-        // if (defaultGroups != null) {
-        // for (String groupId : defaultGroups.keySet()) {
-        // for (ObservableReference observable : defaultGroups.get(groupId).getObservables()) {
-        // ret.add(observable);
-        // }
-        // }
-        // }
         return ret;
     }
 

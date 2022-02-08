@@ -12,25 +12,29 @@ import org.integratedmodelling.klab.utils.JsonUtils;
 
 public class Who implements ICommand {
 
-	@Override
-	public Object execute(IServiceCall call, ISession session) {
+    @Override
+    public Object execute(IServiceCall call, ISession session) {
 
-		String ret = "";
-		String nodeId = call.getParameters().containsKey("node") ? call.getParameters().get("node").toString() : null;
+        String nodeId = call.getParameters().containsKey("node")
+                ? call.getParameters().get("node").toString()
+                : null;
 
-		if (nodeId != null) {
-			INodeIdentity node = Network.INSTANCE.getNode(nodeId);
-			if (node != null && node.isOnline()) {
-				Map<?,?> result = node.getClient().get(API.NODE.WHO, Map.class);	
-				ret = JsonUtils.printAsJson(result);
-			} else {
-				ret = "Node " + nodeId + " is " + (node == null ? "unknown" : "offline");
-			}
-		} else {
-			// TODO
-		}
+        String ret = "Session ID = " + session.getId() + " [" + session.getUser().getUsername() + " "
+                + session.getUser().getEmailAddress() + "]";
 
-		return ret;
-	}
+        if (nodeId != null) {
+            INodeIdentity node = Network.INSTANCE.getNode(nodeId);
+            if (node != null && node.isOnline()) {
+                Map<?, ?> result = node.getClient().get(API.NODE.WHO, Map.class);
+                ret = JsonUtils.printAsJson(result);
+            } else {
+                ret = "Node " + nodeId + " is " + (node == null ? "unknown" : "offline");
+            }
+        } else {
+            // TODO
+        }
+
+        return ret;
+    }
 
 }

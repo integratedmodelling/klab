@@ -13,7 +13,9 @@ import java.util.Set;
 import org.h2gis.utilities.SpatialResultSet;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimStatement.Scope;
+import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Configuration;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -98,8 +100,8 @@ public class ModelKbox extends ObservableKbox {
                             + "maxspatialscale INTEGER, "
                             + "mintimescale INTEGER, " + "maxtimescale INTEGER, " + "space GEOMETRY, "
                             + "observationtype VARCHAR(256), " + "enumeratedspacedomain VARCHAR(256), "
-                            + "enumeratedspacelocation VARCHAR(1024), " 
-                            + "specializedObservable BOOLEAN, " 
+                            + "enumeratedspacelocation VARCHAR(1024), "
+                            + "specializedObservable BOOLEAN, "
                             + "); "
                             + "CREATE INDEX model_oid_index ON model(oid); "
                     // + "CREATE SPATIAL INDEX model_space ON model(space);"
@@ -147,7 +149,7 @@ public class ModelKbox extends ObservableKbox {
                                     : ((Shape) model.getShape()).getStandardizedGeometry().toString())
                             + "', '" + model.getObservationType() + "', '"
                             + cn(model.getEnumeratedSpaceDomain()) + "', '"
-                            + cn(model.getEnumeratedSpaceLocation()) + "', " 
+                            + cn(model.getEnumeratedSpaceLocation()) + "', "
                             + (model.isSpecializedObservable() ? "TRUE" : "FALSE")
                             + ");";
 
@@ -221,8 +223,11 @@ public class ModelKbox extends ObservableKbox {
          */
         if (database.hasTable("model")) {
             for (ModelReference md : queryModels(observable, resolutionScope)) {
-                local.add(md);
-                ret.addModel(md);
+                if (Authentication.INSTANCE.canAccess(resolutionScope.getSession().getUser(),
+                        md.getProjectId())) {
+                    local.add(md);
+                    ret.addModel(md);
+                }
             }
         }
 
@@ -691,6 +696,8 @@ public class ModelKbox extends ObservableKbox {
                 }
 
                 // attribute type must have inherent type added if it's an instantiated quality
+                // (from an instantiator or as a secondary
+                // observable of a resolver with explicit, specialized inherency)
                 IConcept type = attr.getType();
                 if (model.isInstantiator()) {
                     IConcept context = Observables.INSTANCE.getContextType(type);
@@ -783,7 +790,7 @@ public class ModelKbox extends ObservableKbox {
                 main = oobs;
             }
 
-            for (IObservable obs : unpackObservables(oobs, main, first)) {
+            for (IObservable obs : unpackObservables(oobs, main, first, monitor)) {
 
                 ModelReference m = new ModelReference();
 
@@ -831,11 +838,11 @@ public class ModelKbox extends ObservableKbox {
                         model.getMetadata().get(IMetadata.IM_MAX_TEMPORAL_SCALE, ITime.MAX_SCALE_RANK));
 
                 m.setPrimaryObservable(first);
-                
+
                 if (first && obs.isSpecialized()) {
-                	m.setSpecializedObservable(true);
+                    m.setSpecializedObservable(true);
                 }
-                
+
                 first = false;
 
                 m.setMetadata(translateMetadata(model.getMetadata()));
@@ -860,23 +867,21 @@ public class ModelKbox extends ObservableKbox {
         return ret;
     }
 
-    private static List<IObservable> unpackObservables(IObservable oobs, IObservable main, boolean first) {
+    private static List<IObservable> unpackObservables(IObservable oobs, IObservable main, boolean first,
+            IMonitor monitor) {
+
         List<IObservable> ret = new ArrayList<>();
-        // if (first || !main.is(Type.PROCESS)) {
+        if (!first) {
+            /**
+             * Subsequent observables inherit any explicit specialization in the main observable of
+             * a model
+             */
+            IConcept specialized = Observables.INSTANCE.getDirectContextType(main.getType());
+            if (specialized != null && (oobs.getContext() == null || !oobs.getContext().is(specialized))) {
+                oobs = oobs.getBuilder(monitor).within(specialized).buildObservable();
+            }
+        }
         ret.add(oobs);
-        // } else {
-        // if (main.is(Type.PROCESS) && oobs.is(Type.QUALITY)) {
-        //
-        // /*
-        // * if the main observable is a process, any qualities CREATED should provide
-        // * only a model of their CHANGE; qualities AFFECTED that are output should
-        // * provide BOTH a change and a quality model.
-        // */
-        //
-        // } else {
-        // ret.add(oobs);
-        // }
-        // }
         return ret;
     }
 

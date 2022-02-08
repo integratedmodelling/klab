@@ -7,10 +7,12 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.integratedmodelling.klab.Configuration;
@@ -45,7 +47,7 @@ public class KlabCertificate implements ICertificate {
 	private String cause = null;
 	private DateTime expiry;
 	private String worldview = DEFAULT_WORLDVIEW;
-	private Collection<String> worldview_repositories = StringUtil.splitOnCommas(DEFAULT_WORLDVIEW_REPOSITORIES);
+	private Map<String, Set<String>> worldview_repositories = new HashMap<>();
 	private Type type = Type.ENGINE;
 	private Level level = Level.USER;
 
@@ -148,14 +150,26 @@ public class KlabCertificate implements ICertificate {
 	 */
 	private KlabCertificate(File file) {
 		this.file = file;
+        for (String w : StringUtil
+                .splitOnCommas(KlabCertificate.DEFAULT_WORLDVIEW_REPOSITORIES)) {
+            worldview_repositories.put(w, new HashSet<>());
+        }
 	}
 
 	private KlabCertificate(String resource) {
 		this.resource = resource;
+        for (String w : StringUtil
+                .splitOnCommas(KlabCertificate.DEFAULT_WORLDVIEW_REPOSITORIES)) {
+            worldview_repositories.put(w, new HashSet<>());
+        }
 	}
 
 	public KlabCertificate(Properties props) {
 		this.properties = props;
+        for (String w : StringUtil
+                .splitOnCommas(KlabCertificate.DEFAULT_WORLDVIEW_REPOSITORIES)) {
+            worldview_repositories.put(w, new HashSet<>());
+        }
 	}
 
 	public boolean isValid() {
@@ -314,7 +328,7 @@ public class KlabCertificate implements ICertificate {
 		return worldview;
 	}
 
-	public Collection<String> getWorldviewRepositories() {
+	public Map<String, Set<String>> getWorldviewRepositories() {
 		return worldview_repositories;
 	}
 	

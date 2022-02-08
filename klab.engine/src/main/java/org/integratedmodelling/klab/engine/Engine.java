@@ -43,6 +43,7 @@ import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IKlabUserIdentity;
 import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
 import org.integratedmodelling.klab.api.auth.IUserCredentials;
+import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.api.engine.IEngine;
 import org.integratedmodelling.klab.api.engine.IEngineStartupOptions;
@@ -352,7 +353,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 	}
 
 	@Override
-	public Session createSession(IEngineUserIdentity user) {
+	public Session createSession(IUserIdentity user) {
 		return new Session(this, user);
 	}
 

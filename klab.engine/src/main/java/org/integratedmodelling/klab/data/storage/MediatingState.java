@@ -23,6 +23,8 @@ import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.scale.Scale;
 
+import scala.Unit;
+
 /**
  * The state we wrap has the desired semantics but its values must be converted and potentially
  * rescaled. Used in base runtime contextualizers that implement value mediation and as the return
@@ -97,6 +99,10 @@ public class MediatingState extends Observation implements IState {
             return contextualized == null ? to : contextualized;
         }
         
+    	if (Unit.toString().equals("MJ·day/m²")) {
+    	    System.out.println("L'HO CAGATA");
+    	}
+    	
         return to;
     }
 

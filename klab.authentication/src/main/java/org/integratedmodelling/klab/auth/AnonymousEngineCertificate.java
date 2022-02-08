@@ -1,61 +1,66 @@
 package org.integratedmodelling.klab.auth;
 
-import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.utils.StringUtil;
 
 public class AnonymousEngineCertificate implements ICertificate {
 
-	private String worldview = KlabCertificate.DEFAULT_WORLDVIEW;
-	private Collection<String> worldview_repositories = StringUtil
-			.splitOnCommas(KlabCertificate.DEFAULT_WORLDVIEW_REPOSITORIES);
+    private String worldview = KlabCertificate.DEFAULT_WORLDVIEW;
+    private Map<String, Set<String>> worldview_repositories = new HashMap<>();
 
-	public AnonymousEngineCertificate() {
-		// TODO Auto-generated constructor stub
-	}
+    public AnonymousEngineCertificate() {
+        for (String w : StringUtil
+                .splitOnCommas(KlabCertificate.DEFAULT_WORLDVIEW_REPOSITORIES)) {
+            worldview_repositories.put(w, new HashSet<>());
+        }
+    }
 
-	@Override
-	public String getWorldview() {
-		return worldview;
-	}
-	
-	@Override
-	public Collection<String> getWorldviewRepositories() {
-		return worldview_repositories;
-	}
+    @Override
+    public String getWorldview() {
+        return worldview;
+    }
 
-	@Override
-	public boolean isValid() {
-		return true;
-	}
+    @Override
+    public Map<String, Set<String>> getWorldviewRepositories() {
+        return worldview_repositories;
+    }
 
-	@Override
-	public String getInvalidityCause() {
-		return null;
-	}
+    @Override
+    public boolean isValid() {
+        return true;
+    }
 
-	@Override
-	public String getProperty(String property) {
-		switch (property) {
-		case KEY_PARTNER_HUB:
-			return "http://127.0.0.1:8284/klab";
-		case KEY_CERTIFICATE_LEVEL:
-			return ICertificate.Level.ANONYMOUS.name();
-		case KEY_USERNAME:
-			return "anonymous";
-		}
-		return null;
-	}
+    @Override
+    public String getInvalidityCause() {
+        return null;
+    }
 
-	@Override
-	public Type getType() {
-		return Type.ENGINE;
-	}
+    @Override
+    public String getProperty(String property) {
+        switch(property) {
+        case KEY_PARTNER_HUB:
+            return "http://127.0.0.1:8284/klab";
+        case KEY_CERTIFICATE_LEVEL:
+            return ICertificate.Level.ANONYMOUS.name();
+        case KEY_USERNAME:
+            return "anonymous";
+        }
+        return null;
+    }
 
-	@Override
-	public Level getLevel() {
-		return Level.ANONYMOUS;
-	}
+    @Override
+    public Type getType() {
+        return Type.ENGINE;
+    }
+
+    @Override
+    public Level getLevel() {
+        return Level.ANONYMOUS;
+    }
 
 }

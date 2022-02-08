@@ -4,10 +4,13 @@ import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.integratedmodelling.kim.model.KimWorkspace;
+import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -17,63 +20,87 @@ import org.integratedmodelling.klab.utils.MiscUtilities;
 
 public class MonitorableGitWorkspace extends MonitorableFileWorkspace {
 
-	Collection<String> gitUrls;
-	boolean synced;
-	boolean skipSync = false;
-	// to handle deletion
-	Map<String, String> gitUrlByName = new HashMap<>();
+    Collection<String> gitUrls;
+    boolean synced;
+    boolean skipSync = false;
+    // to handle deletion
+    Map<String, String> gitUrlByName = new HashMap<>();
 
-	public MonitorableGitWorkspace(File root, String name, Collection<String> gitUrls, File... overridingProjects) {
+    /**
+     * 
+     * @param root
+     * @param name
+     * @param gitUrls URL for each project -> set of groups that have access to it
+     * @param overridingProjects
+     */
+    public MonitorableGitWorkspace(File root, String name, Map<String, Set<String>> gitUrls,
+            File... overridingProjects) {
 
-		delegate = new KimWorkspace(root, name) {
+        delegate = new KimWorkspace(root, name){
 
-			@Override
-			public void readProjects() {
+            @Override
+            public void readProjects() {
 
-				if (!synced && (!skipSync || !root.exists())) {
-					synced = true;
-					for (String url : gitUrls) {
+                IUserIdentity user = Authentication.INSTANCE.getAuthenticatedIdentity(IUserIdentity.class);
 
-						/*
-						 * skip blacklisted projects
-						 */
-						if (Configuration.INSTANCE
-								.getProperty(IConfigurationService.KLAB_PROJECT_BLACKLIST_PROPERTY, "")
-								.contains(MiscUtilities.getURLBaseName(url))) {
-							continue;
-						}
+                /*
+                 * catalog projects already existing in workspace; whatever is not allowed for user
+                 * gets removed.
+                 */
 
-						try {
-							GitUtils.requireUpdatedRepository(url, getRoot());
-							addProjectPath(new File(root + File.separator + MiscUtilities.getURLBaseName(url)));
-							gitUrlByName.put(MiscUtilities.getURLBaseName(url), url);
-						} catch (KlabException e) {
-							if (new File(
-									root + File.separator + MiscUtilities.getURLBaseName(url) + File.separator + ".git")
-											.exists()) {
-								Logging.INSTANCE.error(
-										"cannot sync existing repository " + url + ": error is " + e.getMessage());
-							} else {
-								throw new KlabIOException(e);
-							}
-						}
-					}
-				}
+                if (!synced && (!skipSync || !root.exists())) {
+                    synced = true;
+                    for (String url : gitUrls.keySet()) {
 
-				super.readProjects();
-			}
-		};
-		this.gitUrls = gitUrls;
+                        /*
+                         * skip blacklisted projects
+                         */
+                        if (Configuration.INSTANCE
+                                .getProperty(IConfigurationService.KLAB_PROJECT_BLACKLIST_PROPERTY, "")
+                                .contains(MiscUtilities.getURLBaseName(url))) {
+                            continue;
+                        }
 
-	}
+                        try {
+                            GitUtils.requireUpdatedRepository(url, getRoot());
+                            Set<String> groups = gitUrls.get(url);
+                            if (!groups.isEmpty()) {
+                                /*
+                                 * merge group permissions with project properties for the reader
+                                 */
+                            }
+                            addProjectPath(
+                                    new File(root + File.separator + MiscUtilities.getURLBaseName(url)));
+                            gitUrlByName.put(MiscUtilities.getURLBaseName(url), url);
+                        } catch (KlabException e) {
+                            if (new File(
+                                    root + File.separator + MiscUtilities.getURLBaseName(url) + File.separator
+                                            + ".git")
+                                                    .exists()) {
+                                Logging.INSTANCE.error(
+                                        "cannot sync existing repository " + url + ": error is "
+                                                + e.getMessage());
+                            } else {
+                                throw new KlabIOException(e);
+                            }
+                        }
+                    }
+                }
 
-	public void setSkipSync(boolean skipSync) {
-		this.skipSync = skipSync;
-	}
+                super.readProjects();
+            }
+        };
+        this.gitUrls = gitUrls.keySet();
 
-	public void deleteProject(IProject project) {
-		gitUrlByName.remove(project.getName());
-		super.deleteProject(project);
-	}
+    }
+
+    public void setSkipSync(boolean skipSync) {
+        this.skipSync = skipSync;
+    }
+
+    public void deleteProject(IProject project) {
+        gitUrlByName.remove(project.getName());
+        super.deleteProject(project);
+    }
 
 }

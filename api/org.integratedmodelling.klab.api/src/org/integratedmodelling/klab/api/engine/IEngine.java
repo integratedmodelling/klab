@@ -16,7 +16,7 @@ package org.integratedmodelling.klab.api.engine;
 import java.net.URL;
 
 import org.integratedmodelling.klab.api.auth.IEngineIdentity;
-import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
+import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -42,7 +42,7 @@ public interface IEngine extends IEngineIdentity, IServer {
    * @param user a {@link org.integratedmodelling.klab.api.auth.IEngineUserIdentity} object.
    * @return a new session
    */
-  ISession createSession(IEngineUserIdentity user);
+  ISession createSession(IUserIdentity user);
 
   /**
    * Engines have the ability to run a single-file, self-contained 'script' that can either be a

@@ -237,6 +237,12 @@ public class Unit implements IUnit {
 			}
 			if (!this.contextualization.containsKey(unit)) {
 				Pair<Unit, Double> ctx = this.getContextualizationFactor(this.observable, unit, this.scale);
+				if (ctx == null) {
+				    /*
+				     * shouldn't happen
+				     */
+				    throw new KlabValidationException("cannot apply unit " + unit + " to  observable in " + this.observable.getUnit() + " in this context");
+				}
 				this.contextualization.put((Unit) unit, new Triple<>(this, ctx.getFirst(), ctx.getSecond()));
 			}
 

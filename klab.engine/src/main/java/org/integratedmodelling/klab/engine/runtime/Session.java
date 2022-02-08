@@ -194,7 +194,7 @@ public class Session extends GroovyObjectSupport
 
     Monitor monitor;
     String token = "s" + NameGenerator.shortUUID();
-    IEngineUserIdentity user;
+    IUserIdentity user;
     List<Listener> listeners = new ArrayList<>();
     boolean closed = false;
     Set<GrantedAuthority> authorities = new HashSet<>();
@@ -322,7 +322,7 @@ public class Session extends GroovyObjectSupport
 
     }
 
-    public Session(Engine engine, IEngineUserIdentity user) {
+    public Session(Engine engine, IUserIdentity user) {
         this.user = user;
         this.monitor = ((Monitor) engine.getMonitor()).get(this);
         this.lastNetworkCheck.set(System.currentTimeMillis());
@@ -355,7 +355,7 @@ public class Session extends GroovyObjectSupport
 
     @Override
     public IEngineUserIdentity getParentIdentity() {
-        return user;
+        return (IEngineUserIdentity)user;
     }
 
     @Override
@@ -2053,6 +2053,11 @@ public class Session extends GroovyObjectSupport
     public int getScriptReturnValue(String app) {
         // TODO Auto-generated method stub
         return 0;
+    }
+
+    @Override
+    public IUserIdentity getUser() {
+        return user;
     }
 
 }
