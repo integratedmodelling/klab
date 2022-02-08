@@ -68,16 +68,7 @@ pipeline {
         */
         stage ('Clone Repo') {
             steps {
-
-                checkout([
-                    $class: 'GitSCM',
-                    branches: [[name: '**']],
-                    extensions: [],
-                    userRemoteConfigs: [[
-                        credentialsId: "${params.GIT_CREDENTIALS}", 
-                        url: 'git@github.com:integratedmodelling/klab.git'
-                    ]]
-                ])
+		checkout scm
 
                 withCredentials(
                     [usernamePassword(
