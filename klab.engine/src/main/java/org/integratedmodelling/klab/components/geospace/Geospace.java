@@ -11,6 +11,7 @@ import org.integratedmodelling.klab.api.extensions.component.Initialize;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
 import org.integratedmodelling.klab.api.observations.scale.space.Orientation;
+import org.integratedmodelling.klab.components.geospace.utils.AdditionalEpsg;
 import org.integratedmodelling.klab.utils.Pair;
 
 import org.locationtech.jts.geom.GeometryFactory;
@@ -33,6 +34,17 @@ public class Geospace {
         System.setProperty("org.geotools.referencing.forceXY", "true");
         Hints hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE);
         javax.imageio.spi.IIORegistry.getDefaultInstance().registerApplicationClasspathSpis();
+        
+        
+        /**
+         * enable additional epsg codes
+         */
+        try {
+            AdditionalEpsg.registerAdditionalEpsgCodes();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     /**
