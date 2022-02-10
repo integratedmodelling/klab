@@ -9,6 +9,8 @@ import java.util.List;
 import org.eclipse.xtext.Action;
 import org.eclipse.xtext.Alternatives;
 import org.eclipse.xtext.Assignment;
+import org.eclipse.xtext.EnumLiteralDeclaration;
+import org.eclipse.xtext.EnumRule;
 import org.eclipse.xtext.Grammar;
 import org.eclipse.xtext.GrammarUtil;
 import org.eclipse.xtext.Group;
@@ -445,10 +447,15 @@ public class KdlGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		private final RuleCall cEnumValuesUPPERCASE_IDTerminalRuleCall_14_1_2_1_0_1 = (RuleCall)cEnumValuesAlternatives_14_1_2_1_0.eContents().get(1);
 		private final RuleCall cEnumValuesLOWERCASE_IDTerminalRuleCall_14_1_2_1_0_2 = (RuleCall)cEnumValuesAlternatives_14_1_2_1_0.eContents().get(2);
 		private final RuleCall cEnumValuesCAMELCASE_IDTerminalRuleCall_14_1_2_1_0_3 = (RuleCall)cEnumValuesAlternatives_14_1_2_1_0.eContents().get(3);
-		private final Group cGroup_15 = (Group)cGroup.eContents().get(15);
-		private final Keyword cDefaultKeyword_15_0 = (Keyword)cGroup_15.eContents().get(0);
-		private final Assignment cDefaultAssignment_15_1 = (Assignment)cGroup_15.eContents().get(1);
-		private final RuleCall cDefaultValueParserRuleCall_15_1_0 = (RuleCall)cDefaultAssignment_15_1.eContents().get(0);
+		private final UnorderedGroup cUnorderedGroup_15 = (UnorderedGroup)cGroup.eContents().get(15);
+		private final Group cGroup_15_0 = (Group)cUnorderedGroup_15.eContents().get(0);
+		private final Keyword cDefaultKeyword_15_0_0 = (Keyword)cGroup_15_0.eContents().get(0);
+		private final Assignment cDefaultAssignment_15_0_1 = (Assignment)cGroup_15_0.eContents().get(1);
+		private final RuleCall cDefaultValueParserRuleCall_15_0_1_0 = (RuleCall)cDefaultAssignment_15_0_1.eContents().get(0);
+		private final Group cGroup_15_1 = (Group)cUnorderedGroup_15.eContents().get(1);
+		private final Keyword cUnitKeyword_15_1_0 = (Keyword)cGroup_15_1.eContents().get(0);
+		private final Assignment cUnitAssignment_15_1_1 = (Assignment)cGroup_15_1.eContents().get(1);
+		private final RuleCall cUnitUnitParserRuleCall_15_1_1_0 = (RuleCall)cUnitAssignment_15_1_1.eContents().get(0);
 		private final Group cGroup_16 = (Group)cGroup.eContents().get(16);
 		private final Keyword cAsKeyword_16_0 = (Keyword)cGroup_16.eContents().get(0);
 		private final Assignment cLocalNameAssignment_16_1 = (Assignment)cGroup_16.eContents().get(1);
@@ -489,7 +496,8 @@ public class KdlGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//        ) |
 		//        ('values' enumValues+=(STRING|UPPERCASE_ID|LOWERCASE_ID|CAMELCASE_ID) (',' enumValues+=(STRING|UPPERCASE_ID|LOWERCASE_ID|CAMELCASE_ID))*)
 		//    )?
-		//    ('default' default=Value)?
+		//    (('default' default=Value)? &
+		//    ('unit' unit=Unit)?)
 		//    ('as' localName=LOWERCASE_ID)?
 		//    ('over' coverage+=Function (',' coverage+=Function)*)?
 		//;
@@ -521,7 +529,8 @@ public class KdlGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//    ) |
 		//    ('values' enumValues+=(STRING|UPPERCASE_ID|LOWERCASE_ID|CAMELCASE_ID) (',' enumValues+=(STRING|UPPERCASE_ID|LOWERCASE_ID|CAMELCASE_ID))*)
 		//)?
-		//('default' default=Value)?
+		//(('default' default=Value)? &
+		//('unit' unit=Unit)?)
 		//('as' localName=LOWERCASE_ID)?
 		//('over' coverage+=Function (',' coverage+=Function)*)?
 		public Group getGroup() { return cGroup; }
@@ -827,17 +836,33 @@ public class KdlGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//CAMELCASE_ID
 		public RuleCall getEnumValuesCAMELCASE_IDTerminalRuleCall_14_1_2_1_0_3() { return cEnumValuesCAMELCASE_IDTerminalRuleCall_14_1_2_1_0_3; }
 		
+		//(('default' default=Value)? &
+		//('unit' unit=Unit)?)
+		public UnorderedGroup getUnorderedGroup_15() { return cUnorderedGroup_15; }
+		
 		//('default' default=Value)?
-		public Group getGroup_15() { return cGroup_15; }
+		public Group getGroup_15_0() { return cGroup_15_0; }
 		
 		//'default'
-		public Keyword getDefaultKeyword_15_0() { return cDefaultKeyword_15_0; }
+		public Keyword getDefaultKeyword_15_0_0() { return cDefaultKeyword_15_0_0; }
 		
 		//default=Value
-		public Assignment getDefaultAssignment_15_1() { return cDefaultAssignment_15_1; }
+		public Assignment getDefaultAssignment_15_0_1() { return cDefaultAssignment_15_0_1; }
 		
 		//Value
-		public RuleCall getDefaultValueParserRuleCall_15_1_0() { return cDefaultValueParserRuleCall_15_1_0; }
+		public RuleCall getDefaultValueParserRuleCall_15_0_1_0() { return cDefaultValueParserRuleCall_15_0_1_0; }
+		
+		//('unit' unit=Unit)?
+		public Group getGroup_15_1() { return cGroup_15_1; }
+		
+		//'unit'
+		public Keyword getUnitKeyword_15_1_0() { return cUnitKeyword_15_1_0; }
+		
+		//unit=Unit
+		public Assignment getUnitAssignment_15_1_1() { return cUnitAssignment_15_1_1; }
+		
+		//Unit
+		public RuleCall getUnitUnitParserRuleCall_15_1_1_0() { return cUnitUnitParserRuleCall_15_1_1_0; }
 		
 		//('as' localName=LOWERCASE_ID)?
 		public Group getGroup_16() { return cGroup_16; }
@@ -1098,6 +1123,161 @@ public class KdlGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		
 		//STRING
 		public RuleCall getDocstringSTRINGTerminalRuleCall_2_0() { return cDocstringSTRINGTerminalRuleCall_2_0; }
+	}
+	public class UnitElementElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kdl.Kdl.UnitElement");
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final Assignment cIdAssignment_0 = (Assignment)cAlternatives.eContents().get(0);
+		private final Alternatives cIdAlternatives_0_0 = (Alternatives)cIdAssignment_0.eContents().get(0);
+		private final RuleCall cIdCAMELCASE_IDTerminalRuleCall_0_0_0 = (RuleCall)cIdAlternatives_0_0.eContents().get(0);
+		private final RuleCall cIdLOWERCASE_IDTerminalRuleCall_0_0_1 = (RuleCall)cIdAlternatives_0_0.eContents().get(1);
+		private final RuleCall cIdUPPERCASE_IDTerminalRuleCall_0_0_2 = (RuleCall)cIdAlternatives_0_0.eContents().get(2);
+		private final RuleCall cIdBACKCASE_IDTerminalRuleCall_0_0_3 = (RuleCall)cIdAlternatives_0_0.eContents().get(3);
+		private final Group cGroup_1 = (Group)cAlternatives.eContents().get(1);
+		private final Keyword cLeftParenthesisKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
+		private final Assignment cUnitAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
+		private final RuleCall cUnitUnitParserRuleCall_1_1_0 = (RuleCall)cUnitAssignment_1_1.eContents().get(0);
+		private final Keyword cRightParenthesisKeyword_1_2 = (Keyword)cGroup_1.eContents().get(2);
+		
+		//UnitElement:
+		//    id=(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID|BACKCASE_ID) |
+		//    '(' unit=Unit ')';
+		@Override public ParserRule getRule() { return rule; }
+		
+		//id=(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID|BACKCASE_ID) |
+		//'(' unit=Unit ')'
+		public Alternatives getAlternatives() { return cAlternatives; }
+		
+		//id=(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID|BACKCASE_ID)
+		public Assignment getIdAssignment_0() { return cIdAssignment_0; }
+		
+		//(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID|BACKCASE_ID)
+		public Alternatives getIdAlternatives_0_0() { return cIdAlternatives_0_0; }
+		
+		//CAMELCASE_ID
+		public RuleCall getIdCAMELCASE_IDTerminalRuleCall_0_0_0() { return cIdCAMELCASE_IDTerminalRuleCall_0_0_0; }
+		
+		//LOWERCASE_ID
+		public RuleCall getIdLOWERCASE_IDTerminalRuleCall_0_0_1() { return cIdLOWERCASE_IDTerminalRuleCall_0_0_1; }
+		
+		//UPPERCASE_ID
+		public RuleCall getIdUPPERCASE_IDTerminalRuleCall_0_0_2() { return cIdUPPERCASE_IDTerminalRuleCall_0_0_2; }
+		
+		//BACKCASE_ID
+		public RuleCall getIdBACKCASE_IDTerminalRuleCall_0_0_3() { return cIdBACKCASE_IDTerminalRuleCall_0_0_3; }
+		
+		//'(' unit=Unit ')'
+		public Group getGroup_1() { return cGroup_1; }
+		
+		//'('
+		public Keyword getLeftParenthesisKeyword_1_0() { return cLeftParenthesisKeyword_1_0; }
+		
+		//unit=Unit
+		public Assignment getUnitAssignment_1_1() { return cUnitAssignment_1_1; }
+		
+		//Unit
+		public RuleCall getUnitUnitParserRuleCall_1_1_0() { return cUnitUnitParserRuleCall_1_1_0; }
+		
+		//')'
+		public Keyword getRightParenthesisKeyword_1_2() { return cRightParenthesisKeyword_1_2; }
+	}
+	public class UnitElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kdl.Kdl.Unit");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Action cUnitAction_0 = (Action)cGroup.eContents().get(0);
+		private final Assignment cRootAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cRootUnitElementParserRuleCall_1_0 = (RuleCall)cRootAssignment_1.eContents().get(0);
+		private final Group cGroup_2 = (Group)cGroup.eContents().get(2);
+		private final Group cGroup_2_0 = (Group)cGroup_2.eContents().get(0);
+		private final Assignment cConnectorsAssignment_2_0_0 = (Assignment)cGroup_2_0.eContents().get(0);
+		private final RuleCall cConnectorsUnitOpEnumRuleCall_2_0_0_0 = (RuleCall)cConnectorsAssignment_2_0_0.eContents().get(0);
+		private final Assignment cUnitsAssignment_2_1 = (Assignment)cGroup_2.eContents().get(1);
+		private final RuleCall cUnitsUnitElementParserRuleCall_2_1_0 = (RuleCall)cUnitsAssignment_2_1.eContents().get(0);
+		
+		//Unit:
+		//    {Unit} (root=UnitElement)? (=> (connectors+=UnitOp) (units+=UnitElement))*;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//{Unit} (root=UnitElement)? (=> (connectors+=UnitOp) (units+=UnitElement))*
+		public Group getGroup() { return cGroup; }
+		
+		//{Unit}
+		public Action getUnitAction_0() { return cUnitAction_0; }
+		
+		//(root=UnitElement)?
+		public Assignment getRootAssignment_1() { return cRootAssignment_1; }
+		
+		//UnitElement
+		public RuleCall getRootUnitElementParserRuleCall_1_0() { return cRootUnitElementParserRuleCall_1_0; }
+		
+		//(=> (connectors+=UnitOp) (units+=UnitElement))*
+		public Group getGroup_2() { return cGroup_2; }
+		
+		//=> (connectors+=UnitOp)
+		public Group getGroup_2_0() { return cGroup_2_0; }
+		
+		//connectors+=UnitOp
+		public Assignment getConnectorsAssignment_2_0_0() { return cConnectorsAssignment_2_0_0; }
+		
+		//UnitOp
+		public RuleCall getConnectorsUnitOpEnumRuleCall_2_0_0_0() { return cConnectorsUnitOpEnumRuleCall_2_0_0_0; }
+		
+		//(units+=UnitElement)
+		public Assignment getUnitsAssignment_2_1() { return cUnitsAssignment_2_1; }
+		
+		//UnitElement
+		public RuleCall getUnitsUnitElementParserRuleCall_2_1_0() { return cUnitsUnitElementParserRuleCall_2_1_0; }
+	}
+	public class CurrencyElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kdl.Kdl.Currency");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Assignment cIdAssignment_0 = (Assignment)cGroup.eContents().get(0);
+		private final RuleCall cIdUPPERCASE_IDTerminalRuleCall_0_0 = (RuleCall)cIdAssignment_0.eContents().get(0);
+		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
+		private final Keyword cCommercialAtKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
+		private final Assignment cYearAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
+		private final RuleCall cYearINTTerminalRuleCall_1_1_0 = (RuleCall)cYearAssignment_1_1.eContents().get(0);
+		private final Group cGroup_2 = (Group)cGroup.eContents().get(2);
+		private final Keyword cSolidusKeyword_2_0 = (Keyword)cGroup_2.eContents().get(0);
+		private final Assignment cUnitsAssignment_2_1 = (Assignment)cGroup_2.eContents().get(1);
+		private final RuleCall cUnitsUnitElementParserRuleCall_2_1_0 = (RuleCall)cUnitsAssignment_2_1.eContents().get(0);
+		
+		//Currency:
+		//    id=UPPERCASE_ID ('@' year=INT) (=> '/' (units+=UnitElement))*;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//id=UPPERCASE_ID ('@' year=INT) (=> '/' (units+=UnitElement))*
+		public Group getGroup() { return cGroup; }
+		
+		//id=UPPERCASE_ID
+		public Assignment getIdAssignment_0() { return cIdAssignment_0; }
+		
+		//UPPERCASE_ID
+		public RuleCall getIdUPPERCASE_IDTerminalRuleCall_0_0() { return cIdUPPERCASE_IDTerminalRuleCall_0_0; }
+		
+		//('@' year=INT)
+		public Group getGroup_1() { return cGroup_1; }
+		
+		//'@'
+		public Keyword getCommercialAtKeyword_1_0() { return cCommercialAtKeyword_1_0; }
+		
+		//year=INT
+		public Assignment getYearAssignment_1_1() { return cYearAssignment_1_1; }
+		
+		//INT
+		public RuleCall getYearINTTerminalRuleCall_1_1_0() { return cYearINTTerminalRuleCall_1_1_0; }
+		
+		//(=> '/' (units+=UnitElement))*
+		public Group getGroup_2() { return cGroup_2; }
+		
+		//=> '/'
+		public Keyword getSolidusKeyword_2_0() { return cSolidusKeyword_2_0; }
+		
+		//(units+=UnitElement)
+		public Assignment getUnitsAssignment_2_1() { return cUnitsAssignment_2_1; }
+		
+		//UnitElement
+		public RuleCall getUnitsUnitElementParserRuleCall_2_1_0() { return cUnitsUnitElementParserRuleCall_2_1_0; }
 	}
 	public class ACTORElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kdl.Kdl.ACTOR");
@@ -3114,6 +3294,41 @@ public class KdlGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		public RuleCall getUPPERCASE_IDTerminalRuleCall_3_1() { return cUPPERCASE_IDTerminalRuleCall_3_1; }
 	}
 	
+	public class UnitOpElements extends AbstractElementFinder.AbstractEnumRuleElementFinder {
+		private final EnumRule rule = (EnumRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kdl.Kdl.UnitOp");
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final EnumLiteralDeclaration cOVEREnumLiteralDeclaration_0 = (EnumLiteralDeclaration)cAlternatives.eContents().get(0);
+		private final Keyword cOVERSolidusKeyword_0_0 = (Keyword)cOVEREnumLiteralDeclaration_0.eContents().get(0);
+		private final EnumLiteralDeclaration cCARETEnumLiteralDeclaration_1 = (EnumLiteralDeclaration)cAlternatives.eContents().get(1);
+		private final Keyword cCARETCircumflexAccentKeyword_1_0 = (Keyword)cCARETEnumLiteralDeclaration_1.eContents().get(0);
+		private final EnumLiteralDeclaration cSTAREnumLiteralDeclaration_2 = (EnumLiteralDeclaration)cAlternatives.eContents().get(2);
+		private final Keyword cSTARAsteriskKeyword_2_0 = (Keyword)cSTAREnumLiteralDeclaration_2.eContents().get(0);
+		
+		//enum UnitOp:
+		//    OVER='/' | CARET='^' | STAR='*';
+		public EnumRule getRule() { return rule; }
+		
+		//OVER='/' | CARET='^' | STAR='*'
+		public Alternatives getAlternatives() { return cAlternatives; }
+		
+		//OVER='/'
+		public EnumLiteralDeclaration getOVEREnumLiteralDeclaration_0() { return cOVEREnumLiteralDeclaration_0; }
+		
+		//'/'
+		public Keyword getOVERSolidusKeyword_0_0() { return cOVERSolidusKeyword_0_0; }
+		
+		//CARET='^'
+		public EnumLiteralDeclaration getCARETEnumLiteralDeclaration_1() { return cCARETEnumLiteralDeclaration_1; }
+		
+		//'^'
+		public Keyword getCARETCircumflexAccentKeyword_1_0() { return cCARETCircumflexAccentKeyword_1_0; }
+		
+		//STAR='*'
+		public EnumLiteralDeclaration getSTAREnumLiteralDeclaration_2() { return cSTAREnumLiteralDeclaration_2; }
+		
+		//'*'
+		public Keyword getSTARAsteriskKeyword_2_0() { return cSTARAsteriskKeyword_2_0; }
+	}
 	
 	private final ModelElements pModel;
 	private final TerminalRule tANNOTATION_ID;
@@ -3123,6 +3338,10 @@ public class KdlGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 	private final ComputationElements pComputation;
 	private final GeometryElements pGeometry;
 	private final ParameterElements pParameter;
+	private final UnitOpElements eUnitOp;
+	private final UnitElementElements pUnitElement;
+	private final UnitElements pUnit;
+	private final CurrencyElements pCurrency;
 	private final ACTORElements pACTOR;
 	private final TARGETElements pTARGET;
 	private final ClassifierRHSElements pClassifierRHS;
@@ -3156,6 +3375,7 @@ public class KdlGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 	private final TerminalRule tUPPERCASE_ID;
 	private final TerminalRule tUPPERCASE_PATH;
 	private final TerminalRule tCAMELCASE_ID;
+	private final TerminalRule tBACKCASE_ID;
 	private final NamespaceIdElements pNamespaceId;
 	private final PropertyIdElements pPropertyId;
 	private final VersionNumberElements pVersionNumber;
@@ -3177,6 +3397,10 @@ public class KdlGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		this.pComputation = new ComputationElements();
 		this.pGeometry = new GeometryElements();
 		this.pParameter = new ParameterElements();
+		this.eUnitOp = new UnitOpElements();
+		this.pUnitElement = new UnitElementElements();
+		this.pUnit = new UnitElements();
+		this.pCurrency = new CurrencyElements();
 		this.pACTOR = new ACTORElements();
 		this.pTARGET = new TARGETElements();
 		this.pClassifierRHS = new ClassifierRHSElements();
@@ -3210,6 +3434,7 @@ public class KdlGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		this.tUPPERCASE_ID = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kdl.Kdl.UPPERCASE_ID");
 		this.tUPPERCASE_PATH = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kdl.Kdl.UPPERCASE_PATH");
 		this.tCAMELCASE_ID = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kdl.Kdl.CAMELCASE_ID");
+		this.tBACKCASE_ID = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kdl.Kdl.BACKCASE_ID");
 		this.pNamespaceId = new NamespaceIdElements();
 		this.pPropertyId = new PropertyIdElements();
 		this.pVersionNumber = new VersionNumberElements();
@@ -3310,7 +3535,8 @@ public class KdlGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 	//        ) |
 	//        ('values' enumValues+=(STRING|UPPERCASE_ID|LOWERCASE_ID|CAMELCASE_ID) (',' enumValues+=(STRING|UPPERCASE_ID|LOWERCASE_ID|CAMELCASE_ID))*)
 	//    )?
-	//    ('default' default=Value)?
+	//    (('default' default=Value)? &
+	//    ('unit' unit=Unit)?)
 	//    ('as' localName=LOWERCASE_ID)?
 	//    ('over' coverage+=Function (',' coverage+=Function)*)?
 	//;
@@ -3367,6 +3593,47 @@ public class KdlGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 	
 	public ParserRule getParameterRule() {
 		return getParameterAccess().getRule();
+	}
+	
+	//enum UnitOp:
+	//    OVER='/' | CARET='^' | STAR='*';
+	public UnitOpElements getUnitOpAccess() {
+		return eUnitOp;
+	}
+	
+	public EnumRule getUnitOpRule() {
+		return getUnitOpAccess().getRule();
+	}
+	
+	//UnitElement:
+	//    id=(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID|BACKCASE_ID) |
+	//    '(' unit=Unit ')';
+	public UnitElementElements getUnitElementAccess() {
+		return pUnitElement;
+	}
+	
+	public ParserRule getUnitElementRule() {
+		return getUnitElementAccess().getRule();
+	}
+	
+	//Unit:
+	//    {Unit} (root=UnitElement)? (=> (connectors+=UnitOp) (units+=UnitElement))*;
+	public UnitElements getUnitAccess() {
+		return pUnit;
+	}
+	
+	public ParserRule getUnitRule() {
+		return getUnitAccess().getRule();
+	}
+	
+	//Currency:
+	//    id=UPPERCASE_ID ('@' year=INT) (=> '/' (units+=UnitElement))*;
+	public CurrencyElements getCurrencyAccess() {
+		return pCurrency;
+	}
+	
+	public ParserRule getCurrencyRule() {
+		return getCurrencyAccess().getRule();
 	}
 	
 	//ACTOR:
@@ -3740,6 +4007,12 @@ public class KdlGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 	//    ('A'..'Z') ('A'..'z' | '0'..'9')*;
 	public TerminalRule getCAMELCASE_IDRule() {
 		return tCAMELCASE_ID;
+	}
+	
+	//terminal BACKCASE_ID:
+	//    ('a'..'z') ('A'..'z'|'0'..'9')*;
+	public TerminalRule getBACKCASE_IDRule() {
+		return tBACKCASE_ID;
 	}
 	
 	//NamespaceId:

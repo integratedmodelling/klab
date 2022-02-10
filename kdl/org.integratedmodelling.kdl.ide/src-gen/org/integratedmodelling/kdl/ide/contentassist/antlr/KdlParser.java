@@ -43,6 +43,8 @@ public class KdlParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getActorDefinitionAccess().getEnumValuesAlternatives_14_1_2_1_0(), "rule__ActorDefinition__EnumValuesAlternatives_14_1_2_1_0");
 			builder.put(grammarAccess.getDataflowBodyAccess().getJavaClassAlternatives_2_2_1_1_0(), "rule__DataflowBody__JavaClassAlternatives_2_2_1_1_0");
 			builder.put(grammarAccess.getGeometryAccess().getAlternatives(), "rule__Geometry__Alternatives");
+			builder.put(grammarAccess.getUnitElementAccess().getAlternatives(), "rule__UnitElement__Alternatives");
+			builder.put(grammarAccess.getUnitElementAccess().getIdAlternatives_0_0(), "rule__UnitElement__IdAlternatives_0_0");
 			builder.put(grammarAccess.getACTORAccess().getAlternatives(), "rule__ACTOR__Alternatives");
 			builder.put(grammarAccess.getTARGETAccess().getAlternatives(), "rule__TARGET__Alternatives");
 			builder.put(grammarAccess.getClassifierRHSAccess().getAlternatives(), "rule__ClassifierRHS__Alternatives");
@@ -79,6 +81,7 @@ public class KdlParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getPathAccess().getAlternatives_1_0(), "rule__Path__Alternatives_1_0");
 			builder.put(grammarAccess.getPropertyIdAccess().getAlternatives_2(), "rule__PropertyId__Alternatives_2");
 			builder.put(grammarAccess.getVersionNumberAccess().getAlternatives_3(), "rule__VersionNumber__Alternatives_3");
+			builder.put(grammarAccess.getUnitOpAccess().getAlternatives(), "rule__UnitOp__Alternatives");
 			builder.put(grammarAccess.getModelAccess().getGroup(), "rule__Model__Group__0");
 			builder.put(grammarAccess.getModelAccess().getGroup_0_0(), "rule__Model__Group_0_0__0");
 			builder.put(grammarAccess.getModelAccess().getGroup_0_1(), "rule__Model__Group_0_1__0");
@@ -108,7 +111,8 @@ public class KdlParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getActorDefinitionAccess().getGroup_14_0_2(), "rule__ActorDefinition__Group_14_0_2__0");
 			builder.put(grammarAccess.getActorDefinitionAccess().getGroup_14_1(), "rule__ActorDefinition__Group_14_1__0");
 			builder.put(grammarAccess.getActorDefinitionAccess().getGroup_14_1_2(), "rule__ActorDefinition__Group_14_1_2__0");
-			builder.put(grammarAccess.getActorDefinitionAccess().getGroup_15(), "rule__ActorDefinition__Group_15__0");
+			builder.put(grammarAccess.getActorDefinitionAccess().getGroup_15_0(), "rule__ActorDefinition__Group_15_0__0");
+			builder.put(grammarAccess.getActorDefinitionAccess().getGroup_15_1(), "rule__ActorDefinition__Group_15_1__0");
 			builder.put(grammarAccess.getActorDefinitionAccess().getGroup_16(), "rule__ActorDefinition__Group_16__0");
 			builder.put(grammarAccess.getActorDefinitionAccess().getGroup_17(), "rule__ActorDefinition__Group_17__0");
 			builder.put(grammarAccess.getActorDefinitionAccess().getGroup_17_2(), "rule__ActorDefinition__Group_17_2__0");
@@ -122,6 +126,13 @@ public class KdlParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getGeometryAccess().getGroup_1(), "rule__Geometry__Group_1__0");
 			builder.put(grammarAccess.getGeometryAccess().getGroup_1_1(), "rule__Geometry__Group_1_1__0");
 			builder.put(grammarAccess.getParameterAccess().getGroup(), "rule__Parameter__Group__0");
+			builder.put(grammarAccess.getUnitElementAccess().getGroup_1(), "rule__UnitElement__Group_1__0");
+			builder.put(grammarAccess.getUnitAccess().getGroup(), "rule__Unit__Group__0");
+			builder.put(grammarAccess.getUnitAccess().getGroup_2(), "rule__Unit__Group_2__0");
+			builder.put(grammarAccess.getUnitAccess().getGroup_2_0(), "rule__Unit__Group_2_0__0");
+			builder.put(grammarAccess.getCurrencyAccess().getGroup(), "rule__Currency__Group__0");
+			builder.put(grammarAccess.getCurrencyAccess().getGroup_1(), "rule__Currency__Group_1__0");
+			builder.put(grammarAccess.getCurrencyAccess().getGroup_2(), "rule__Currency__Group_2__0");
 			builder.put(grammarAccess.getClassifierRHSAccess().getGroup_1(), "rule__ClassifierRHS__Group_1__0");
 			builder.put(grammarAccess.getClassifierRHSAccess().getGroup_3(), "rule__ClassifierRHS__Group_3__0");
 			builder.put(grammarAccess.getClassifierRHSAccess().getGroup_6(), "rule__ClassifierRHS__Group_6__0");
@@ -221,7 +232,8 @@ public class KdlParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getActorDefinitionAccess().getRangeMaxAssignment_14_0_2_3(), "rule__ActorDefinition__RangeMaxAssignment_14_0_2_3");
 			builder.put(grammarAccess.getActorDefinitionAccess().getEnumValuesAssignment_14_1_1(), "rule__ActorDefinition__EnumValuesAssignment_14_1_1");
 			builder.put(grammarAccess.getActorDefinitionAccess().getEnumValuesAssignment_14_1_2_1(), "rule__ActorDefinition__EnumValuesAssignment_14_1_2_1");
-			builder.put(grammarAccess.getActorDefinitionAccess().getDefaultAssignment_15_1(), "rule__ActorDefinition__DefaultAssignment_15_1");
+			builder.put(grammarAccess.getActorDefinitionAccess().getDefaultAssignment_15_0_1(), "rule__ActorDefinition__DefaultAssignment_15_0_1");
+			builder.put(grammarAccess.getActorDefinitionAccess().getUnitAssignment_15_1_1(), "rule__ActorDefinition__UnitAssignment_15_1_1");
 			builder.put(grammarAccess.getActorDefinitionAccess().getLocalNameAssignment_16_1(), "rule__ActorDefinition__LocalNameAssignment_16_1");
 			builder.put(grammarAccess.getActorDefinitionAccess().getCoverageAssignment_17_1(), "rule__ActorDefinition__CoverageAssignment_17_1");
 			builder.put(grammarAccess.getActorDefinitionAccess().getCoverageAssignment_17_2_1(), "rule__ActorDefinition__CoverageAssignment_17_2_1");
@@ -235,6 +247,14 @@ public class KdlParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getParameterAccess().getNameAssignment_0(), "rule__Parameter__NameAssignment_0");
 			builder.put(grammarAccess.getParameterAccess().getValueAssignment_1(), "rule__Parameter__ValueAssignment_1");
 			builder.put(grammarAccess.getParameterAccess().getDocstringAssignment_2(), "rule__Parameter__DocstringAssignment_2");
+			builder.put(grammarAccess.getUnitElementAccess().getIdAssignment_0(), "rule__UnitElement__IdAssignment_0");
+			builder.put(grammarAccess.getUnitElementAccess().getUnitAssignment_1_1(), "rule__UnitElement__UnitAssignment_1_1");
+			builder.put(grammarAccess.getUnitAccess().getRootAssignment_1(), "rule__Unit__RootAssignment_1");
+			builder.put(grammarAccess.getUnitAccess().getConnectorsAssignment_2_0_0(), "rule__Unit__ConnectorsAssignment_2_0_0");
+			builder.put(grammarAccess.getUnitAccess().getUnitsAssignment_2_1(), "rule__Unit__UnitsAssignment_2_1");
+			builder.put(grammarAccess.getCurrencyAccess().getIdAssignment_0(), "rule__Currency__IdAssignment_0");
+			builder.put(grammarAccess.getCurrencyAccess().getYearAssignment_1_1(), "rule__Currency__YearAssignment_1_1");
+			builder.put(grammarAccess.getCurrencyAccess().getUnitsAssignment_2_1(), "rule__Currency__UnitsAssignment_2_1");
 			builder.put(grammarAccess.getClassifierRHSAccess().getBooleanAssignment_0_0(), "rule__ClassifierRHS__BooleanAssignment_0_0");
 			builder.put(grammarAccess.getClassifierRHSAccess().getBooleanAssignment_0_1(), "rule__ClassifierRHS__BooleanAssignment_0_1");
 			builder.put(grammarAccess.getClassifierRHSAccess().getInt0Assignment_1_0(), "rule__ClassifierRHS__Int0Assignment_1_0");
@@ -334,6 +354,7 @@ public class KdlParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getNumberAccess().getExpNegativeAssignment_3_0_1_1(), "rule__Number__ExpNegativeAssignment_3_0_1_1");
 			builder.put(grammarAccess.getNumberAccess().getExpAssignment_3_0_2(), "rule__Number__ExpAssignment_3_0_2");
 			builder.put(grammarAccess.getModelAccess().getUnorderedGroup_0(), "rule__Model__UnorderedGroup_0");
+			builder.put(grammarAccess.getActorDefinitionAccess().getUnorderedGroup_15(), "rule__ActorDefinition__UnorderedGroup_15");
 			builder.put(grammarAccess.getDataflowBodyAccess().getUnorderedGroup_2(), "rule__DataflowBody__UnorderedGroup_2");
 		}
 	}

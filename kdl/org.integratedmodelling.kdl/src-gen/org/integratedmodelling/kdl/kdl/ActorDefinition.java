@@ -39,6 +39,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getRangeMax <em>Range Max</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getEnumValues <em>Enum Values</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getDefault <em>Default</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getUnit <em>Unit</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getLocalName <em>Local Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getCoverage <em>Coverage</em>}</li>
  * </ul>
@@ -524,6 +525,28 @@ public interface ActorDefinition extends EObject
    * @generated
    */
   void setDefault(Value value);
+
+  /**
+   * Returns the value of the '<em><b>Unit</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Unit</em>' containment reference.
+   * @see #setUnit(Unit)
+   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getActorDefinition_Unit()
+   * @model containment="true"
+   * @generated
+   */
+  Unit getUnit();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getUnit <em>Unit</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Unit</em>' containment reference.
+   * @see #getUnit()
+   * @generated
+   */
+  void setUnit(Unit value);
 
   /**
    * Returns the value of the '<em><b>Local Name</b></em>' attribute.

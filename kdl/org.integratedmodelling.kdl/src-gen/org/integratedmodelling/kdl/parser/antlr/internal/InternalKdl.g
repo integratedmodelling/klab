@@ -24,6 +24,7 @@ import org.eclipse.xtext.parser.*;
 import org.eclipse.xtext.parser.impl.*;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.common.util.Enumerator;
 import org.eclipse.xtext.parser.antlr.AbstractInternalAntlrParser;
 import org.eclipse.xtext.parser.antlr.XtextTokenStream;
 import org.eclipse.xtext.parser.antlr.XtextTokenStream.HiddenTokens;
@@ -664,16 +665,26 @@ ruleAnnotation returns [EObject current=null]
 ;
 
 // Entry rule entryRuleActorDefinition
-entryRuleActorDefinition returns [EObject current=null]:
+entryRuleActorDefinition returns [EObject current=null]@init {
+	UnorderedGroupState myUnorderedGroupState = getUnorderedGroupHelper().snapShot(
+	grammarAccess.getActorDefinitionAccess().getUnorderedGroup_15()
+	);
+}:
 	{ newCompositeNode(grammarAccess.getActorDefinitionRule()); }
 	iv_ruleActorDefinition=ruleActorDefinition
 	{ $current=$iv_ruleActorDefinition.current; }
 	EOF;
+finally {
+	myUnorderedGroupState.restore();
+}
 
 // Rule ActorDefinition
 ruleActorDefinition returns [EObject current=null]
 @init {
 	enterRule();
+	UnorderedGroupState myUnorderedGroupState = getUnorderedGroupHelper().snapShot(
+	grammarAccess.getActorDefinitionAccess().getUnorderedGroup_15()
+	);
 }
 @after {
 	leaveRule();
@@ -1361,40 +1372,97 @@ ruleActorDefinition returns [EObject current=null]
 			)
 		)?
 		(
-			otherlv_38='default'
-			{
-				newLeafNode(otherlv_38, grammarAccess.getActorDefinitionAccess().getDefaultKeyword_15_0());
-			}
 			(
+				{ 
+				  getUnorderedGroupHelper().enter(grammarAccess.getActorDefinitionAccess().getUnorderedGroup_15());
+				}
 				(
+					(
+			(
+				{getUnorderedGroupHelper().canSelect(grammarAccess.getActorDefinitionAccess().getUnorderedGroup_15(), 0)}?=>(
 					{
-						newCompositeNode(grammarAccess.getActorDefinitionAccess().getDefaultValueParserRuleCall_15_1_0());
+						getUnorderedGroupHelper().select(grammarAccess.getActorDefinitionAccess().getUnorderedGroup_15(), 0);
 					}
-					lv_default_39_0=ruleValue
+								({true}?=>(otherlv_39='default'
+								{
+									newLeafNode(otherlv_39, grammarAccess.getActorDefinitionAccess().getDefaultKeyword_15_0_0());
+								}
+								(
+									(
+										{
+											newCompositeNode(grammarAccess.getActorDefinitionAccess().getDefaultValueParserRuleCall_15_0_1_0());
+										}
+										lv_default_40_0=ruleValue
+										{
+											if ($current==null) {
+												$current = createModelElementForParent(grammarAccess.getActorDefinitionRule());
+											}
+											set(
+												$current,
+												"default",
+												lv_default_40_0,
+												"org.integratedmodelling.kdl.Kdl.Value");
+											afterParserOrEnumRuleCall();
+										}
+									)
+								)
+								))
+					{ 
+						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getActorDefinitionAccess().getUnorderedGroup_15());
+					}
+				)
+			)|
+			(
+				{getUnorderedGroupHelper().canSelect(grammarAccess.getActorDefinitionAccess().getUnorderedGroup_15(), 1)}?=>(
 					{
-						if ($current==null) {
-							$current = createModelElementForParent(grammarAccess.getActorDefinitionRule());
-						}
-						set(
-							$current,
-							"default",
-							lv_default_39_0,
-							"org.integratedmodelling.kdl.Kdl.Value");
-						afterParserOrEnumRuleCall();
+						getUnorderedGroupHelper().select(grammarAccess.getActorDefinitionAccess().getUnorderedGroup_15(), 1);
+					}
+								({true}?=>(otherlv_41='unit'
+								{
+									newLeafNode(otherlv_41, grammarAccess.getActorDefinitionAccess().getUnitKeyword_15_1_0());
+								}
+								(
+									(
+										{
+											newCompositeNode(grammarAccess.getActorDefinitionAccess().getUnitUnitParserRuleCall_15_1_1_0());
+										}
+										lv_unit_42_0=ruleUnit
+										{
+											if ($current==null) {
+												$current = createModelElementForParent(grammarAccess.getActorDefinitionRule());
+											}
+											set(
+												$current,
+												"unit",
+												lv_unit_42_0,
+												"org.integratedmodelling.kdl.Kdl.Unit");
+											afterParserOrEnumRuleCall();
+										}
+									)
+								)
+								))
+					{ 
+						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getActorDefinitionAccess().getUnorderedGroup_15());
 					}
 				)
 			)
-		)?
+					)*
+				)
+			)
+				{ 
+				  getUnorderedGroupHelper().leave(grammarAccess.getActorDefinitionAccess().getUnorderedGroup_15());
+				}
+		)
 		(
-			otherlv_40='as'
+			otherlv_43='as'
 			{
-				newLeafNode(otherlv_40, grammarAccess.getActorDefinitionAccess().getAsKeyword_16_0());
+				newLeafNode(otherlv_43, grammarAccess.getActorDefinitionAccess().getAsKeyword_16_0());
 			}
 			(
 				(
-					lv_localName_41_0=RULE_LOWERCASE_ID
+					lv_localName_44_0=RULE_LOWERCASE_ID
 					{
-						newLeafNode(lv_localName_41_0, grammarAccess.getActorDefinitionAccess().getLocalNameLOWERCASE_IDTerminalRuleCall_16_1_0());
+						newLeafNode(lv_localName_44_0, grammarAccess.getActorDefinitionAccess().getLocalNameLOWERCASE_IDTerminalRuleCall_16_1_0());
 					}
 					{
 						if ($current==null) {
@@ -1403,23 +1471,23 @@ ruleActorDefinition returns [EObject current=null]
 						setWithLastConsumed(
 							$current,
 							"localName",
-							lv_localName_41_0,
+							lv_localName_44_0,
 							"org.integratedmodelling.kdl.Kdl.LOWERCASE_ID");
 					}
 				)
 			)
 		)?
 		(
-			otherlv_42='over'
+			otherlv_45='over'
 			{
-				newLeafNode(otherlv_42, grammarAccess.getActorDefinitionAccess().getOverKeyword_17_0());
+				newLeafNode(otherlv_45, grammarAccess.getActorDefinitionAccess().getOverKeyword_17_0());
 			}
 			(
 				(
 					{
 						newCompositeNode(grammarAccess.getActorDefinitionAccess().getCoverageFunctionParserRuleCall_17_1_0());
 					}
-					lv_coverage_43_0=ruleFunction
+					lv_coverage_46_0=ruleFunction
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getActorDefinitionRule());
@@ -1427,23 +1495,23 @@ ruleActorDefinition returns [EObject current=null]
 						add(
 							$current,
 							"coverage",
-							lv_coverage_43_0,
+							lv_coverage_46_0,
 							"org.integratedmodelling.kdl.Kdl.Function");
 						afterParserOrEnumRuleCall();
 					}
 				)
 			)
 			(
-				otherlv_44=','
+				otherlv_47=','
 				{
-					newLeafNode(otherlv_44, grammarAccess.getActorDefinitionAccess().getCommaKeyword_17_2_0());
+					newLeafNode(otherlv_47, grammarAccess.getActorDefinitionAccess().getCommaKeyword_17_2_0());
 				}
 				(
 					(
 						{
 							newCompositeNode(grammarAccess.getActorDefinitionAccess().getCoverageFunctionParserRuleCall_17_2_1_0());
 						}
-						lv_coverage_45_0=ruleFunction
+						lv_coverage_48_0=ruleFunction
 						{
 							if ($current==null) {
 								$current = createModelElementForParent(grammarAccess.getActorDefinitionRule());
@@ -1451,7 +1519,7 @@ ruleActorDefinition returns [EObject current=null]
 							add(
 								$current,
 								"coverage",
-								lv_coverage_45_0,
+								lv_coverage_48_0,
 								"org.integratedmodelling.kdl.Kdl.Function");
 							afterParserOrEnumRuleCall();
 						}
@@ -1461,6 +1529,9 @@ ruleActorDefinition returns [EObject current=null]
 		)?
 	)
 ;
+finally {
+	myUnorderedGroupState.restore();
+}
 
 // Entry rule entryRuleDataflowBody
 entryRuleDataflowBody returns [EObject current=null]@init {
@@ -1864,6 +1935,216 @@ ruleParameter returns [EObject current=null]
 				}
 			)
 		)?
+	)
+;
+
+// Entry rule entryRuleUnitElement
+entryRuleUnitElement returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getUnitElementRule()); }
+	iv_ruleUnitElement=ruleUnitElement
+	{ $current=$iv_ruleUnitElement.current; }
+	EOF;
+
+// Rule UnitElement
+ruleUnitElement returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		(
+			(
+				(
+					lv_id_0_1=RULE_CAMELCASE_ID
+					{
+						newLeafNode(lv_id_0_1, grammarAccess.getUnitElementAccess().getIdCAMELCASE_IDTerminalRuleCall_0_0_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getUnitElementRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"id",
+							lv_id_0_1,
+							"org.integratedmodelling.kdl.Kdl.CAMELCASE_ID");
+					}
+					    |
+					lv_id_0_2=RULE_LOWERCASE_ID
+					{
+						newLeafNode(lv_id_0_2, grammarAccess.getUnitElementAccess().getIdLOWERCASE_IDTerminalRuleCall_0_0_1());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getUnitElementRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"id",
+							lv_id_0_2,
+							"org.integratedmodelling.kdl.Kdl.LOWERCASE_ID");
+					}
+					    |
+					lv_id_0_3=RULE_UPPERCASE_ID
+					{
+						newLeafNode(lv_id_0_3, grammarAccess.getUnitElementAccess().getIdUPPERCASE_IDTerminalRuleCall_0_0_2());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getUnitElementRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"id",
+							lv_id_0_3,
+							"org.integratedmodelling.kdl.Kdl.UPPERCASE_ID");
+					}
+					    |
+					lv_id_0_4=RULE_BACKCASE_ID
+					{
+						newLeafNode(lv_id_0_4, grammarAccess.getUnitElementAccess().getIdBACKCASE_IDTerminalRuleCall_0_0_3());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getUnitElementRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"id",
+							lv_id_0_4,
+							"org.integratedmodelling.kdl.Kdl.BACKCASE_ID");
+					}
+				)
+			)
+		)
+		    |
+		(
+			otherlv_1='('
+			{
+				newLeafNode(otherlv_1, grammarAccess.getUnitElementAccess().getLeftParenthesisKeyword_1_0());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getUnitElementAccess().getUnitUnitParserRuleCall_1_1_0());
+					}
+					lv_unit_2_0=ruleUnit
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getUnitElementRule());
+						}
+						set(
+							$current,
+							"unit",
+							lv_unit_2_0,
+							"org.integratedmodelling.kdl.Kdl.Unit");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			otherlv_3=')'
+			{
+				newLeafNode(otherlv_3, grammarAccess.getUnitElementAccess().getRightParenthesisKeyword_1_2());
+			}
+		)
+	)
+;
+
+// Entry rule entryRuleUnit
+entryRuleUnit returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getUnitRule()); }
+	iv_ruleUnit=ruleUnit
+	{ $current=$iv_ruleUnit.current; }
+	EOF;
+
+// Rule Unit
+ruleUnit returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		(
+			{
+				/* */
+			}
+			{
+				$current = forceCreateModelElement(
+					grammarAccess.getUnitAccess().getUnitAction_0(),
+					$current);
+			}
+		)
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getUnitAccess().getRootUnitElementParserRuleCall_1_0());
+				}
+				lv_root_1_0=ruleUnitElement
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getUnitRule());
+					}
+					set(
+						$current,
+						"root",
+						lv_root_1_0,
+						"org.integratedmodelling.kdl.Kdl.UnitElement");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)?
+		(
+			(
+				((
+					(
+						ruleUnitOp
+					)
+				)
+				)=>
+				(
+					(
+						{
+							newCompositeNode(grammarAccess.getUnitAccess().getConnectorsUnitOpEnumRuleCall_2_0_0_0());
+						}
+						lv_connectors_2_0=ruleUnitOp
+						{
+							if ($current==null) {
+								$current = createModelElementForParent(grammarAccess.getUnitRule());
+							}
+							add(
+								$current,
+								"connectors",
+								lv_connectors_2_0,
+								"org.integratedmodelling.kdl.Kdl.UnitOp");
+							afterParserOrEnumRuleCall();
+						}
+					)
+				)
+			)
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getUnitAccess().getUnitsUnitElementParserRuleCall_2_1_0());
+					}
+					lv_units_3_0=ruleUnitElement
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getUnitRule());
+						}
+						add(
+							$current,
+							"units",
+							lv_units_3_0,
+							"org.integratedmodelling.kdl.Kdl.UnitElement");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)*
 	)
 ;
 
@@ -5177,6 +5458,41 @@ ruleVersionNumber returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleT
 	)
 ;
 
+// Rule UnitOp
+ruleUnitOp returns [Enumerator current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		(
+			enumLiteral_0='/'
+			{
+				$current = grammarAccess.getUnitOpAccess().getOVEREnumLiteralDeclaration_0().getEnumLiteral().getInstance();
+				newLeafNode(enumLiteral_0, grammarAccess.getUnitOpAccess().getOVEREnumLiteralDeclaration_0());
+			}
+		)
+		    |
+		(
+			enumLiteral_1='^'
+			{
+				$current = grammarAccess.getUnitOpAccess().getCARETEnumLiteralDeclaration_1().getEnumLiteral().getInstance();
+				newLeafNode(enumLiteral_1, grammarAccess.getUnitOpAccess().getCARETEnumLiteralDeclaration_1());
+			}
+		)
+		    |
+		(
+			enumLiteral_2='*'
+			{
+				$current = grammarAccess.getUnitOpAccess().getSTAREnumLiteralDeclaration_2().getEnumLiteral().getInstance();
+				newLeafNode(enumLiteral_2, grammarAccess.getUnitOpAccess().getSTAREnumLiteralDeclaration_2());
+			}
+		)
+	)
+;
+
 RULE_ANNOTATION_ID : '@' RULE_LOWERCASE_ID;
 
 RULE_EXPR : '[' ('\\' ('b'|'t'|'n'|'f'|'r'|'u'|']'|'\\')|~(('\\'|']')))* ']';
@@ -5192,6 +5508,8 @@ RULE_UPPERCASE_ID : 'A'..'Z' ('A'..'Z')*;
 RULE_UPPERCASE_PATH : RULE_UPPERCASE_ID ('.' RULE_UPPERCASE_ID)*;
 
 RULE_CAMELCASE_ID : 'A'..'Z' ('A'..'z'|'0'..'9')*;
+
+RULE_BACKCASE_ID : 'a'..'z' ('A'..'z'|'0'..'9')*;
 
 RULE_ID : '^'? ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*;
 

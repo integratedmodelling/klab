@@ -12,6 +12,7 @@ import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.cli.ICommand;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.JsonUtils;
 
@@ -29,8 +30,12 @@ public class Info implements ICommand {
 			if (node == null && !(u.isLocal() || u.isUniversal())) {
 				node = u.getNodeName();
 			}
-			ret += (node == null ? resourceInfo(Resources.INSTANCE.getLocalResourceCatalog().get(urn))
+			if (u.isUniversal()) {
+			    ret += resourceInfo(Resources.INSTANCE.resolveResource(urn.toString()));
+			} else {
+			    ret += (node == null ? resourceInfo(Resources.INSTANCE.getLocalResourceCatalog().get(urn))
 					: remoteResourceInfo(node, urn)) + "\n";
+			}
 		}
 		return ret;
 	}
@@ -51,10 +56,22 @@ public class Info implements ICommand {
 
 		String ret = "";
 
+        ret += "Urn:        " + resource.getUrn();
+        ret += "\nGeometry:   " + resource.getGeometry();
+        ret += "\nAdapter:    " + resource.getAdapterType();
+        ret += "\nOnline:     " + (Resources.INSTANCE.isResourceOnline(resource) ? "true" : "false");
+                
+		if (!Urns.INSTANCE.isLocal(resource.getUrn())) {
+            INodeIdentity node = Network.INSTANCE.getNodeForResource(new Urn(resource.getUrn()));
+            ret += "\nServed by:  " + (node == null ? "[no node]" : node.getName()); 
+		}
+		
 		/*
 		 * Build a sample observation for the resource scale
 		 */
 		Scale scale = Scale.create(resource.getGeometry());
+		
+		
 		if (!scale.isEmpty()) {
 			ret += "observe " + (scale.getSpace() != null ? "earth:Region" : "im:Thing") + " named test\n   over";
 			List<IServiceCall> scaleSpecs = scale.getKimSpecification();

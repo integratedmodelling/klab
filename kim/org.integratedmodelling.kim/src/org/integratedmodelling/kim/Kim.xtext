@@ -1012,13 +1012,6 @@ NamedObservableSemantics returns ObservableSemantics:
  * Unit of measurement re: jsr-108, parseable by Java
  * ---------------------------------------
  */
-UnitElement:
-	id=(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID|BACKCASE_ID) |
-	'(' unit=Unit ')';
-
-enum UnitOp:
-	OVER='/' | CARET='^' | STAR='*';
-
 REL_OPERATOR:
 	(gt?='>' |
 	lt?='<' |
@@ -1026,6 +1019,13 @@ REL_OPERATOR:
 	ne?='!=' |
 	le?='<=' |
 	ge?='>=');
+
+enum UnitOp:
+	OVER='/' | CARET='^' | STAR='*';
+
+UnitElement:
+	id=(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID|BACKCASE_ID) |
+	'(' unit=Unit ')';
 
 Unit:
 	{Unit} (root=UnitElement)? (=> (connectors+=UnitOp) (units+=UnitElement))*;

@@ -48,6 +48,7 @@ import org.integratedmodelling.klab.rest.EngineAuthenticationRequest;
 import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
 import org.integratedmodelling.klab.rest.NodeAuthenticationRequest;
 import org.integratedmodelling.klab.rest.NodeAuthenticationResponse;
+import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.Escape;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
@@ -78,6 +79,8 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+
 
 /**
  * Helper to avoid having to write 10 lines every time I need to do a GET with
@@ -372,6 +375,8 @@ public class Client extends RestTemplate implements IClient {
 				// Object path = map.get("path");
 				Object message = map.get("message");
 				// Object error = map.get("error");
+				
+	            dumpRequest(url, headers, data);
 				throw new KlabIOException("remote  exception: " + (message == null ? exception : message));
 			}
 
@@ -380,17 +385,32 @@ public class Client extends RestTemplate implements IClient {
 			}
 
 			try {
-				return objectMapper.convertValue(response.getBody(), cls);
+
+			    return objectMapper.convertValue(response.getBody(), cls);
 			} catch (Throwable t) {
 				System.out.println("Unrecognized response: " + response.getBody());
 				throw t;
 			}
 		} catch (RestClientException e) {
+		    
+		    System.out.println("ANDATA MALE: REST exception: " + e.getMessage());
+		    dumpRequest(url, headers, data);
 			throw new KlabIOException(e);
 		}
 	}
 
-	public void setUrl(String... url) {
+	private void dumpRequest(String url, HttpHeaders headers, Object data) {
+
+        System.out.println("Endpoint: " + url);
+        System.out.println("Headers:");
+        for (String header : headers.keySet()) {
+            System.out.println("  " + header + " = " + headers.get(header));
+        }
+        System.out.println("Data:\n" + printAsJson(data));
+
+    }
+
+    public void setUrl(String... url) {
 		if (url == null || url.length == 0) {
 			this.endpoints.clear();
 		} else {
@@ -663,4 +683,19 @@ public class Client extends RestTemplate implements IClient {
 
 	}
 
+    public static String printAsJson(Object object) {
+
+        ObjectMapper om = new ObjectMapper();
+        om.enable(SerializationFeature.INDENT_OUTPUT); // pretty print
+        om.enable(SerializationFeature.WRITE_NULL_MAP_VALUES); // pretty print
+        om.enable(SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED); // pretty print
+        om.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+
+        try {
+            return om.writeValueAsString(object);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("serialization failed: " + e.getMessage());
+        }
+    }
+	
 }

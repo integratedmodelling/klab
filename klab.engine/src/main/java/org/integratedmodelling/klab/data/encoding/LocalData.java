@@ -235,7 +235,7 @@ public class LocalData implements IKlabData {
                 while(doubles.hasNext()) {
 
                     o = doubles.next();
-                    // yes, they do this, mixed in with doubles.
+                    // yes, they do this, mixed in with actual doubles.
                     if ("NaN".equals(o)) {
                         o = null;
                     }

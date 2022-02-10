@@ -5,6 +5,7 @@ package org.integratedmodelling.kdl.kdl;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
@@ -448,13 +449,22 @@ public interface KdlPackage extends EPackage
   int ACTOR_DEFINITION__DEFAULT = 22;
 
   /**
+   * The feature id for the '<em><b>Unit</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ACTOR_DEFINITION__UNIT = 23;
+
+  /**
    * The feature id for the '<em><b>Local Name</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION__LOCAL_NAME = 23;
+  int ACTOR_DEFINITION__LOCAL_NAME = 24;
 
   /**
    * The feature id for the '<em><b>Coverage</b></em>' containment reference list.
@@ -463,7 +473,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION__COVERAGE = 24;
+  int ACTOR_DEFINITION__COVERAGE = 25;
 
   /**
    * The number of structural features of the '<em>Actor Definition</em>' class.
@@ -472,7 +482,7 @@ public interface KdlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTOR_DEFINITION_FEATURE_COUNT = 25;
+  int ACTOR_DEFINITION_FEATURE_COUNT = 26;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kdl.kdl.impl.DataflowBodyImpl <em>Dataflow Body</em>}' class.
@@ -613,6 +623,135 @@ public interface KdlPackage extends EPackage
   int PARAMETER_FEATURE_COUNT = 3;
 
   /**
+   * The meta object id for the '{@link org.integratedmodelling.kdl.kdl.impl.UnitElementImpl <em>Unit Element</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kdl.kdl.impl.UnitElementImpl
+   * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getUnitElement()
+   * @generated
+   */
+  int UNIT_ELEMENT = 6;
+
+  /**
+   * The feature id for the '<em><b>Id</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int UNIT_ELEMENT__ID = 0;
+
+  /**
+   * The feature id for the '<em><b>Unit</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int UNIT_ELEMENT__UNIT = 1;
+
+  /**
+   * The number of structural features of the '<em>Unit Element</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int UNIT_ELEMENT_FEATURE_COUNT = 2;
+
+  /**
+   * The meta object id for the '{@link org.integratedmodelling.kdl.kdl.impl.UnitImpl <em>Unit</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kdl.kdl.impl.UnitImpl
+   * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getUnit()
+   * @generated
+   */
+  int UNIT = 7;
+
+  /**
+   * The feature id for the '<em><b>Root</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int UNIT__ROOT = 0;
+
+  /**
+   * The feature id for the '<em><b>Connectors</b></em>' attribute list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int UNIT__CONNECTORS = 1;
+
+  /**
+   * The feature id for the '<em><b>Units</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int UNIT__UNITS = 2;
+
+  /**
+   * The number of structural features of the '<em>Unit</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int UNIT_FEATURE_COUNT = 3;
+
+  /**
+   * The meta object id for the '{@link org.integratedmodelling.kdl.kdl.impl.CurrencyImpl <em>Currency</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kdl.kdl.impl.CurrencyImpl
+   * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getCurrency()
+   * @generated
+   */
+  int CURRENCY = 8;
+
+  /**
+   * The feature id for the '<em><b>Id</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CURRENCY__ID = 0;
+
+  /**
+   * The feature id for the '<em><b>Year</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CURRENCY__YEAR = 1;
+
+  /**
+   * The feature id for the '<em><b>Units</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CURRENCY__UNITS = 2;
+
+  /**
+   * The number of structural features of the '<em>Currency</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CURRENCY_FEATURE_COUNT = 3;
+
+  /**
    * The meta object id for the '{@link org.integratedmodelling.kdl.kdl.impl.ClassifierRHSImpl <em>Classifier RHS</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -620,7 +759,7 @@ public interface KdlPackage extends EPackage
    * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getClassifierRHS()
    * @generated
    */
-  int CLASSIFIER_RHS = 6;
+  int CLASSIFIER_RHS = 9;
 
   /**
    * The feature id for the '<em><b>Boolean</b></em>' attribute.
@@ -783,7 +922,7 @@ public interface KdlPackage extends EPackage
    * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getList()
    * @generated
    */
-  int LIST = 7;
+  int LIST = 10;
 
   /**
    * The feature id for the '<em><b>Contents</b></em>' containment reference list.
@@ -811,7 +950,7 @@ public interface KdlPackage extends EPackage
    * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getLiteral()
    * @generated
    */
-  int LITERAL = 8;
+  int LITERAL = 11;
 
   /**
    * The feature id for the '<em><b>Number</b></em>' containment reference.
@@ -893,7 +1032,7 @@ public interface KdlPackage extends EPackage
    * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getMetadata()
    * @generated
    */
-  int METADATA = 9;
+  int METADATA = 12;
 
   /**
    * The feature id for the '<em><b>Ids</b></em>' attribute list.
@@ -930,7 +1069,7 @@ public interface KdlPackage extends EPackage
    * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getParameterList()
    * @generated
    */
-  int PARAMETER_LIST = 10;
+  int PARAMETER_LIST = 13;
 
   /**
    * The feature id for the '<em><b>Values</b></em>' containment reference list.
@@ -967,7 +1106,7 @@ public interface KdlPackage extends EPackage
    * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getValue()
    * @generated
    */
-  int VALUE = 11;
+  int VALUE = 14;
 
   /**
    * The feature id for the '<em><b>Literal</b></em>' containment reference.
@@ -1058,7 +1197,7 @@ public interface KdlPackage extends EPackage
    * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getUrn()
    * @generated
    */
-  int URN = 12;
+  int URN = 15;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1086,7 +1225,7 @@ public interface KdlPackage extends EPackage
    * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getMap()
    * @generated
    */
-  int MAP = 13;
+  int MAP = 16;
 
   /**
    * The feature id for the '<em><b>Entries</b></em>' containment reference list.
@@ -1114,7 +1253,7 @@ public interface KdlPackage extends EPackage
    * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getMapEntry()
    * @generated
    */
-  int MAP_ENTRY = 14;
+  int MAP_ENTRY = 17;
 
   /**
    * The feature id for the '<em><b>Classifier</b></em>' containment reference.
@@ -1151,7 +1290,7 @@ public interface KdlPackage extends EPackage
    * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getLookupTable()
    * @generated
    */
-  int LOOKUP_TABLE = 15;
+  int LOOKUP_TABLE = 18;
 
   /**
    * The feature id for the '<em><b>Table</b></em>' containment reference.
@@ -1179,7 +1318,7 @@ public interface KdlPackage extends EPackage
    * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getTable()
    * @generated
    */
-  int TABLE = 16;
+  int TABLE = 19;
 
   /**
    * The feature id for the '<em><b>Rows</b></em>' containment reference list.
@@ -1207,7 +1346,7 @@ public interface KdlPackage extends EPackage
    * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getTableRow()
    * @generated
    */
-  int TABLE_ROW = 17;
+  int TABLE_ROW = 20;
 
   /**
    * The feature id for the '<em><b>Elements</b></em>' containment reference list.
@@ -1235,7 +1374,7 @@ public interface KdlPackage extends EPackage
    * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getKeyValuePair()
    * @generated
    */
-  int KEY_VALUE_PAIR = 18;
+  int KEY_VALUE_PAIR = 21;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1281,7 +1420,7 @@ public interface KdlPackage extends EPackage
    * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getFunction()
    * @generated
    */
-  int FUNCTION = 19;
+  int FUNCTION = 22;
 
   /**
    * The feature id for the '<em><b>Mediated</b></em>' attribute.
@@ -1381,7 +1520,7 @@ public interface KdlPackage extends EPackage
    * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getREL_OPERATOR()
    * @generated
    */
-  int REL_OPERATOR = 20;
+  int REL_OPERATOR = 23;
 
   /**
    * The feature id for the '<em><b>Gt</b></em>' attribute.
@@ -1454,7 +1593,7 @@ public interface KdlPackage extends EPackage
    * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getNumber()
    * @generated
    */
-  int NUMBER = 21;
+  int NUMBER = 24;
 
   /**
    * The feature id for the '<em><b>Negative</b></em>' attribute.
@@ -1527,6 +1666,16 @@ public interface KdlPackage extends EPackage
    * @ordered
    */
   int NUMBER_FEATURE_COUNT = 7;
+
+  /**
+   * The meta object id for the '{@link org.integratedmodelling.kdl.kdl.UnitOp <em>Unit Op</em>}' enum.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kdl.kdl.UnitOp
+   * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getUnitOp()
+   * @generated
+   */
+  int UNIT_OP = 25;
 
 
   /**
@@ -1978,6 +2127,17 @@ public interface KdlPackage extends EPackage
   EReference getActorDefinition_Default();
 
   /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getUnit <em>Unit</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Unit</em>'.
+   * @see org.integratedmodelling.kdl.kdl.ActorDefinition#getUnit()
+   * @see #getActorDefinition()
+   * @generated
+   */
+  EReference getActorDefinition_Unit();
+
+  /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getLocalName <em>Local Name</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -2127,6 +2287,124 @@ public interface KdlPackage extends EPackage
    * @generated
    */
   EAttribute getParameter_Docstring();
+
+  /**
+   * Returns the meta object for class '{@link org.integratedmodelling.kdl.kdl.UnitElement <em>Unit Element</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Unit Element</em>'.
+   * @see org.integratedmodelling.kdl.kdl.UnitElement
+   * @generated
+   */
+  EClass getUnitElement();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kdl.kdl.UnitElement#getId <em>Id</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Id</em>'.
+   * @see org.integratedmodelling.kdl.kdl.UnitElement#getId()
+   * @see #getUnitElement()
+   * @generated
+   */
+  EAttribute getUnitElement_Id();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.UnitElement#getUnit <em>Unit</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Unit</em>'.
+   * @see org.integratedmodelling.kdl.kdl.UnitElement#getUnit()
+   * @see #getUnitElement()
+   * @generated
+   */
+  EReference getUnitElement_Unit();
+
+  /**
+   * Returns the meta object for class '{@link org.integratedmodelling.kdl.kdl.Unit <em>Unit</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Unit</em>'.
+   * @see org.integratedmodelling.kdl.kdl.Unit
+   * @generated
+   */
+  EClass getUnit();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kdl.kdl.Unit#getRoot <em>Root</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Root</em>'.
+   * @see org.integratedmodelling.kdl.kdl.Unit#getRoot()
+   * @see #getUnit()
+   * @generated
+   */
+  EReference getUnit_Root();
+
+  /**
+   * Returns the meta object for the attribute list '{@link org.integratedmodelling.kdl.kdl.Unit#getConnectors <em>Connectors</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute list '<em>Connectors</em>'.
+   * @see org.integratedmodelling.kdl.kdl.Unit#getConnectors()
+   * @see #getUnit()
+   * @generated
+   */
+  EAttribute getUnit_Connectors();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kdl.kdl.Unit#getUnits <em>Units</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Units</em>'.
+   * @see org.integratedmodelling.kdl.kdl.Unit#getUnits()
+   * @see #getUnit()
+   * @generated
+   */
+  EReference getUnit_Units();
+
+  /**
+   * Returns the meta object for class '{@link org.integratedmodelling.kdl.kdl.Currency <em>Currency</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Currency</em>'.
+   * @see org.integratedmodelling.kdl.kdl.Currency
+   * @generated
+   */
+  EClass getCurrency();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kdl.kdl.Currency#getId <em>Id</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Id</em>'.
+   * @see org.integratedmodelling.kdl.kdl.Currency#getId()
+   * @see #getCurrency()
+   * @generated
+   */
+  EAttribute getCurrency_Id();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kdl.kdl.Currency#getYear <em>Year</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Year</em>'.
+   * @see org.integratedmodelling.kdl.kdl.Currency#getYear()
+   * @see #getCurrency()
+   * @generated
+   */
+  EAttribute getCurrency_Year();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kdl.kdl.Currency#getUnits <em>Units</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Units</em>'.
+   * @see org.integratedmodelling.kdl.kdl.Currency#getUnits()
+   * @see #getCurrency()
+   * @generated
+   */
+  EReference getCurrency_Units();
 
   /**
    * Returns the meta object for class '{@link org.integratedmodelling.kdl.kdl.ClassifierRHS <em>Classifier RHS</em>}'.
@@ -3037,6 +3315,16 @@ public interface KdlPackage extends EPackage
   EAttribute getNumber_Exp();
 
   /**
+   * Returns the meta object for enum '{@link org.integratedmodelling.kdl.kdl.UnitOp <em>Unit Op</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for enum '<em>Unit Op</em>'.
+   * @see org.integratedmodelling.kdl.kdl.UnitOp
+   * @generated
+   */
+  EEnum getUnitOp();
+
+  /**
    * Returns the factory that creates the instances of the model.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -3394,6 +3682,14 @@ public interface KdlPackage extends EPackage
     EReference ACTOR_DEFINITION__DEFAULT = eINSTANCE.getActorDefinition_Default();
 
     /**
+     * The meta object literal for the '<em><b>Unit</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference ACTOR_DEFINITION__UNIT = eINSTANCE.getActorDefinition_Unit();
+
+    /**
      * The meta object literal for the '<em><b>Local Name</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -3510,6 +3806,100 @@ public interface KdlPackage extends EPackage
      * @generated
      */
     EAttribute PARAMETER__DOCSTRING = eINSTANCE.getParameter_Docstring();
+
+    /**
+     * The meta object literal for the '{@link org.integratedmodelling.kdl.kdl.impl.UnitElementImpl <em>Unit Element</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kdl.kdl.impl.UnitElementImpl
+     * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getUnitElement()
+     * @generated
+     */
+    EClass UNIT_ELEMENT = eINSTANCE.getUnitElement();
+
+    /**
+     * The meta object literal for the '<em><b>Id</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute UNIT_ELEMENT__ID = eINSTANCE.getUnitElement_Id();
+
+    /**
+     * The meta object literal for the '<em><b>Unit</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference UNIT_ELEMENT__UNIT = eINSTANCE.getUnitElement_Unit();
+
+    /**
+     * The meta object literal for the '{@link org.integratedmodelling.kdl.kdl.impl.UnitImpl <em>Unit</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kdl.kdl.impl.UnitImpl
+     * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getUnit()
+     * @generated
+     */
+    EClass UNIT = eINSTANCE.getUnit();
+
+    /**
+     * The meta object literal for the '<em><b>Root</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference UNIT__ROOT = eINSTANCE.getUnit_Root();
+
+    /**
+     * The meta object literal for the '<em><b>Connectors</b></em>' attribute list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute UNIT__CONNECTORS = eINSTANCE.getUnit_Connectors();
+
+    /**
+     * The meta object literal for the '<em><b>Units</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference UNIT__UNITS = eINSTANCE.getUnit_Units();
+
+    /**
+     * The meta object literal for the '{@link org.integratedmodelling.kdl.kdl.impl.CurrencyImpl <em>Currency</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kdl.kdl.impl.CurrencyImpl
+     * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getCurrency()
+     * @generated
+     */
+    EClass CURRENCY = eINSTANCE.getCurrency();
+
+    /**
+     * The meta object literal for the '<em><b>Id</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CURRENCY__ID = eINSTANCE.getCurrency_Id();
+
+    /**
+     * The meta object literal for the '<em><b>Year</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CURRENCY__YEAR = eINSTANCE.getCurrency_Year();
+
+    /**
+     * The meta object literal for the '<em><b>Units</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference CURRENCY__UNITS = eINSTANCE.getCurrency_Units();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kdl.kdl.impl.ClassifierRHSImpl <em>Classifier RHS</em>}' class.
@@ -4214,6 +4604,16 @@ public interface KdlPackage extends EPackage
      * @generated
      */
     EAttribute NUMBER__EXP = eINSTANCE.getNumber_Exp();
+
+    /**
+     * The meta object literal for the '{@link org.integratedmodelling.kdl.kdl.UnitOp <em>Unit Op</em>}' enum.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kdl.kdl.UnitOp
+     * @see org.integratedmodelling.kdl.kdl.impl.KdlPackageImpl#getUnitOp()
+     * @generated
+     */
+    EEnum UNIT_OP = eINSTANCE.getUnitOp();
 
   }
 

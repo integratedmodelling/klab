@@ -78,6 +78,33 @@ public interface KdlFactory extends EFactory
   Parameter createParameter();
 
   /**
+   * Returns a new object of class '<em>Unit Element</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Unit Element</em>'.
+   * @generated
+   */
+  UnitElement createUnitElement();
+
+  /**
+   * Returns a new object of class '<em>Unit</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Unit</em>'.
+   * @generated
+   */
+  Unit createUnit();
+
+  /**
+   * Returns a new object of class '<em>Currency</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Currency</em>'.
+   * @generated
+   */
+  Currency createCurrency();
+
+  /**
    * Returns a new object of class '<em>Classifier RHS</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

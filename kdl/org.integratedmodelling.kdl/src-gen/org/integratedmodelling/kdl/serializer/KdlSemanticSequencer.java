@@ -18,6 +18,7 @@ import org.integratedmodelling.kdl.kdl.ActorDefinition;
 import org.integratedmodelling.kdl.kdl.Annotation;
 import org.integratedmodelling.kdl.kdl.ClassifierRHS;
 import org.integratedmodelling.kdl.kdl.Computation;
+import org.integratedmodelling.kdl.kdl.Currency;
 import org.integratedmodelling.kdl.kdl.DataflowBody;
 import org.integratedmodelling.kdl.kdl.Function;
 import org.integratedmodelling.kdl.kdl.KdlPackage;
@@ -33,6 +34,8 @@ import org.integratedmodelling.kdl.kdl.ParameterList;
 import org.integratedmodelling.kdl.kdl.REL_OPERATOR;
 import org.integratedmodelling.kdl.kdl.Table;
 import org.integratedmodelling.kdl.kdl.TableRow;
+import org.integratedmodelling.kdl.kdl.Unit;
+import org.integratedmodelling.kdl.kdl.UnitElement;
 import org.integratedmodelling.kdl.kdl.Urn;
 import org.integratedmodelling.kdl.kdl.Value;
 import org.integratedmodelling.kdl.services.KdlGrammarAccess;
@@ -69,6 +72,9 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 				else break;
 			case KdlPackage.COMPUTATION:
 				sequence_Computation(context, (Computation) semanticObject); 
+				return; 
+			case KdlPackage.CURRENCY:
+				sequence_Currency(context, (Currency) semanticObject); 
 				return; 
 			case KdlPackage.DATAFLOW_BODY:
 				sequence_DataflowBody(context, (DataflowBody) semanticObject); 
@@ -129,6 +135,12 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 			case KdlPackage.TABLE_ROW:
 				sequence_TableRow(context, (TableRow) semanticObject); 
 				return; 
+			case KdlPackage.UNIT:
+				sequence_Unit(context, (Unit) semanticObject); 
+				return; 
+			case KdlPackage.UNIT_ELEMENT:
+				sequence_UnitElement(context, (UnitElement) semanticObject); 
+				return; 
 			case KdlPackage.URN:
 				sequence_Urn(context, (Urn) semanticObject); 
 				return; 
@@ -170,6 +182,7 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *             )
 	 *         )? 
 	 *         default=Value? 
+	 *         (unit=Unit? default=Value?)* 
 	 *         localName=LOWERCASE_ID? 
 	 *         (coverage+=Function coverage+=Function*)?
 	 *     )
@@ -223,6 +236,18 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     (functions+=Function functions+=Function*)
 	 */
 	protected void sequence_Computation(ISerializationContext context, Computation semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Currency returns Currency
+	 *
+	 * Constraint:
+	 *     (id=UPPERCASE_ID year=INT units+=UnitElement*)
+	 */
+	protected void sequence_Currency(ISerializationContext context, Currency semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -517,6 +542,30 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *     (rows+=TableRow rows+=TableRow*)
 	 */
 	protected void sequence_Table(ISerializationContext context, Table semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     UnitElement returns UnitElement
+	 *
+	 * Constraint:
+	 *     (id=CAMELCASE_ID | id=LOWERCASE_ID | id=UPPERCASE_ID | id=BACKCASE_ID | unit=Unit)
+	 */
+	protected void sequence_UnitElement(ISerializationContext context, UnitElement semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Unit returns Unit
+	 *
+	 * Constraint:
+	 *     (root=UnitElement? (connectors+=UnitOp units+=UnitElement)*)
+	 */
+	protected void sequence_Unit(ISerializationContext context, Unit semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	

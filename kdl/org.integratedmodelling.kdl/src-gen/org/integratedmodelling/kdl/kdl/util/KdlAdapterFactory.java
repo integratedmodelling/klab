@@ -14,6 +14,7 @@ import org.integratedmodelling.kdl.kdl.ActorDefinition;
 import org.integratedmodelling.kdl.kdl.Annotation;
 import org.integratedmodelling.kdl.kdl.ClassifierRHS;
 import org.integratedmodelling.kdl.kdl.Computation;
+import org.integratedmodelling.kdl.kdl.Currency;
 import org.integratedmodelling.kdl.kdl.DataflowBody;
 import org.integratedmodelling.kdl.kdl.Function;
 import org.integratedmodelling.kdl.kdl.KdlPackage;
@@ -30,6 +31,8 @@ import org.integratedmodelling.kdl.kdl.ParameterList;
 import org.integratedmodelling.kdl.kdl.REL_OPERATOR;
 import org.integratedmodelling.kdl.kdl.Table;
 import org.integratedmodelling.kdl.kdl.TableRow;
+import org.integratedmodelling.kdl.kdl.Unit;
+import org.integratedmodelling.kdl.kdl.UnitElement;
 import org.integratedmodelling.kdl.kdl.Urn;
 import org.integratedmodelling.kdl.kdl.Value;
 
@@ -125,6 +128,21 @@ public class KdlAdapterFactory extends AdapterFactoryImpl
       public Adapter caseParameter(Parameter object)
       {
         return createParameterAdapter();
+      }
+      @Override
+      public Adapter caseUnitElement(UnitElement object)
+      {
+        return createUnitElementAdapter();
+      }
+      @Override
+      public Adapter caseUnit(Unit object)
+      {
+        return createUnitAdapter();
+      }
+      @Override
+      public Adapter caseCurrency(Currency object)
+      {
+        return createCurrencyAdapter();
       }
       @Override
       public Adapter caseClassifierRHS(ClassifierRHS object)
@@ -314,6 +332,51 @@ public class KdlAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createParameterAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kdl.kdl.UnitElement <em>Unit Element</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kdl.kdl.UnitElement
+   * @generated
+   */
+  public Adapter createUnitElementAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kdl.kdl.Unit <em>Unit</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kdl.kdl.Unit
+   * @generated
+   */
+  public Adapter createUnitAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kdl.kdl.Currency <em>Currency</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kdl.kdl.Currency
+   * @generated
+   */
+  public Adapter createCurrencyAdapter()
   {
     return null;
   }

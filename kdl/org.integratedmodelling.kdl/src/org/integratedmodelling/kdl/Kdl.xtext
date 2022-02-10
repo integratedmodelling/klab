@@ -55,7 +55,8 @@ ActorDefinition:
 		) |
 		('values' enumValues+=(STRING|UPPERCASE_ID|LOWERCASE_ID|CAMELCASE_ID) (',' enumValues+=(STRING|UPPERCASE_ID|LOWERCASE_ID|CAMELCASE_ID))*)		
 	)?
-	('default' default=Value)?
+	(('default' default=Value)? &
+	('unit' unit=Unit)?)
 	('as' localName=LOWERCASE_ID)?
 	('over' coverage+=Function (',' coverage+=Function)*)? 
 ;
@@ -78,6 +79,19 @@ Geometry:
 
 Parameter:
 	name=LOWERCASE_ID value=Value (docstring=STRING)?;
+
+enum UnitOp:
+	OVER='/' | CARET='^' | STAR='*';
+
+UnitElement:
+	id=(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID|BACKCASE_ID) |
+	'(' unit=Unit ')';
+
+Unit:
+	{Unit} (root=UnitElement)? (=> (connectors+=UnitOp) (units+=UnitElement))*;
+
+Currency:
+	id=UPPERCASE_ID ('@' year=INT) (=> '/' (units+=UnitElement))*;
 
 ACTOR:
 	// countable, so always a dataflow for direct object instantiation. Resolvers for single objects are inside the instantiation
@@ -233,6 +247,8 @@ terminal UPPERCASE_PATH:
 	UPPERCASE_ID ('.' UPPERCASE_ID)*;
 terminal CAMELCASE_ID:
 	('A'..'Z') ('A'..'z' | '0'..'9')*;
+terminal BACKCASE_ID:
+	('a'..'z') ('A'..'z'|'0'..'9')*;
 NamespaceId:
 	PathName ':' CAMELCASE_ID;
 PropertyId:

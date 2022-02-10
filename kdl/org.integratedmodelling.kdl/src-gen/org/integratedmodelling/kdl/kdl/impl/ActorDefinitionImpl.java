@@ -25,6 +25,7 @@ import org.integratedmodelling.kdl.kdl.Annotation;
 import org.integratedmodelling.kdl.kdl.DataflowBody;
 import org.integratedmodelling.kdl.kdl.Function;
 import org.integratedmodelling.kdl.kdl.KdlPackage;
+import org.integratedmodelling.kdl.kdl.Unit;
 import org.integratedmodelling.kdl.kdl.Value;
 
 /**
@@ -58,6 +59,7 @@ import org.integratedmodelling.kdl.kdl.Value;
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getRangeMax <em>Range Max</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getEnumValues <em>Enum Values</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getDefault <em>Default</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getUnit <em>Unit</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getLocalName <em>Local Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getCoverage <em>Coverage</em>}</li>
  * </ul>
@@ -455,6 +457,16 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
    * @ordered
    */
   protected Value default_;
+
+  /**
+   * The cached value of the '{@link #getUnit() <em>Unit</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getUnit()
+   * @generated
+   * @ordered
+   */
+  protected Unit unit;
 
   /**
    * The default value of the '{@link #getLocalName() <em>Local Name</em>}' attribute.
@@ -1158,6 +1170,56 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
    * @generated
    */
   @Override
+  public Unit getUnit()
+  {
+    return unit;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetUnit(Unit newUnit, NotificationChain msgs)
+  {
+    Unit oldUnit = unit;
+    unit = newUnit;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KdlPackage.ACTOR_DEFINITION__UNIT, oldUnit, newUnit);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setUnit(Unit newUnit)
+  {
+    if (newUnit != unit)
+    {
+      NotificationChain msgs = null;
+      if (unit != null)
+        msgs = ((InternalEObject)unit).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KdlPackage.ACTOR_DEFINITION__UNIT, null, msgs);
+      if (newUnit != null)
+        msgs = ((InternalEObject)newUnit).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KdlPackage.ACTOR_DEFINITION__UNIT, null, msgs);
+      msgs = basicSetUnit(newUnit, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.ACTOR_DEFINITION__UNIT, newUnit, newUnit));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public String getLocalName()
   {
     return localName;
@@ -1212,6 +1274,8 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
         return basicSetRangeMax(null, msgs);
       case KdlPackage.ACTOR_DEFINITION__DEFAULT:
         return basicSetDefault(null, msgs);
+      case KdlPackage.ACTOR_DEFINITION__UNIT:
+        return basicSetUnit(null, msgs);
       case KdlPackage.ACTOR_DEFINITION__COVERAGE:
         return ((InternalEList<?>)getCoverage()).basicRemove(otherEnd, msgs);
     }
@@ -1274,6 +1338,8 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
         return getEnumValues();
       case KdlPackage.ACTOR_DEFINITION__DEFAULT:
         return getDefault();
+      case KdlPackage.ACTOR_DEFINITION__UNIT:
+        return getUnit();
       case KdlPackage.ACTOR_DEFINITION__LOCAL_NAME:
         return getLocalName();
       case KdlPackage.ACTOR_DEFINITION__COVERAGE:
@@ -1365,6 +1431,9 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
       case KdlPackage.ACTOR_DEFINITION__DEFAULT:
         setDefault((Value)newValue);
         return;
+      case KdlPackage.ACTOR_DEFINITION__UNIT:
+        setUnit((Unit)newValue);
+        return;
       case KdlPackage.ACTOR_DEFINITION__LOCAL_NAME:
         setLocalName((String)newValue);
         return;
@@ -1455,6 +1524,9 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
       case KdlPackage.ACTOR_DEFINITION__DEFAULT:
         setDefault((Value)null);
         return;
+      case KdlPackage.ACTOR_DEFINITION__UNIT:
+        setUnit((Unit)null);
+        return;
       case KdlPackage.ACTOR_DEFINITION__LOCAL_NAME:
         setLocalName(LOCAL_NAME_EDEFAULT);
         return;
@@ -1521,6 +1593,8 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
         return enumValues != null && !enumValues.isEmpty();
       case KdlPackage.ACTOR_DEFINITION__DEFAULT:
         return default_ != null;
+      case KdlPackage.ACTOR_DEFINITION__UNIT:
+        return unit != null;
       case KdlPackage.ACTOR_DEFINITION__LOCAL_NAME:
         return LOCAL_NAME_EDEFAULT == null ? localName != null : !LOCAL_NAME_EDEFAULT.equals(localName);
       case KdlPackage.ACTOR_DEFINITION__COVERAGE:

@@ -4,6 +4,7 @@
 package org.integratedmodelling.kdl.kdl.impl;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 
@@ -15,6 +16,7 @@ import org.integratedmodelling.kdl.kdl.ActorDefinition;
 import org.integratedmodelling.kdl.kdl.Annotation;
 import org.integratedmodelling.kdl.kdl.ClassifierRHS;
 import org.integratedmodelling.kdl.kdl.Computation;
+import org.integratedmodelling.kdl.kdl.Currency;
 import org.integratedmodelling.kdl.kdl.DataflowBody;
 import org.integratedmodelling.kdl.kdl.Function;
 import org.integratedmodelling.kdl.kdl.KdlFactory;
@@ -32,6 +34,9 @@ import org.integratedmodelling.kdl.kdl.ParameterList;
 import org.integratedmodelling.kdl.kdl.REL_OPERATOR;
 import org.integratedmodelling.kdl.kdl.Table;
 import org.integratedmodelling.kdl.kdl.TableRow;
+import org.integratedmodelling.kdl.kdl.Unit;
+import org.integratedmodelling.kdl.kdl.UnitElement;
+import org.integratedmodelling.kdl.kdl.UnitOp;
 import org.integratedmodelling.kdl.kdl.Urn;
 import org.integratedmodelling.kdl.kdl.Value;
 
@@ -93,6 +98,9 @@ public class KdlFactoryImpl extends EFactoryImpl implements KdlFactory
       case KdlPackage.DATAFLOW_BODY: return createDataflowBody();
       case KdlPackage.COMPUTATION: return createComputation();
       case KdlPackage.PARAMETER: return createParameter();
+      case KdlPackage.UNIT_ELEMENT: return createUnitElement();
+      case KdlPackage.UNIT: return createUnit();
+      case KdlPackage.CURRENCY: return createCurrency();
       case KdlPackage.CLASSIFIER_RHS: return createClassifierRHS();
       case KdlPackage.LIST: return createList();
       case KdlPackage.LITERAL: return createLiteral();
@@ -111,6 +119,40 @@ public class KdlFactoryImpl extends EFactoryImpl implements KdlFactory
       case KdlPackage.NUMBER: return createNumber();
       default:
         throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
+    }
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Object createFromString(EDataType eDataType, String initialValue)
+  {
+    switch (eDataType.getClassifierID())
+    {
+      case KdlPackage.UNIT_OP:
+        return createUnitOpFromString(eDataType, initialValue);
+      default:
+        throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
+    }
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public String convertToString(EDataType eDataType, Object instanceValue)
+  {
+    switch (eDataType.getClassifierID())
+    {
+      case KdlPackage.UNIT_OP:
+        return convertUnitOpToString(eDataType, instanceValue);
+      default:
+        throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
     }
   }
 
@@ -184,6 +226,42 @@ public class KdlFactoryImpl extends EFactoryImpl implements KdlFactory
   {
     ParameterImpl parameter = new ParameterImpl();
     return parameter;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public UnitElement createUnitElement()
+  {
+    UnitElementImpl unitElement = new UnitElementImpl();
+    return unitElement;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Unit createUnit()
+  {
+    UnitImpl unit = new UnitImpl();
+    return unit;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Currency createCurrency()
+  {
+    CurrencyImpl currency = new CurrencyImpl();
+    return currency;
   }
 
   /**
@@ -376,6 +454,28 @@ public class KdlFactoryImpl extends EFactoryImpl implements KdlFactory
   {
     NumberImpl number = new NumberImpl();
     return number;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public UnitOp createUnitOpFromString(EDataType eDataType, String initialValue)
+  {
+    UnitOp result = UnitOp.get(initialValue);
+    if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+    return result;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String convertUnitOpToString(EDataType eDataType, Object instanceValue)
+  {
+    return instanceValue == null ? null : instanceValue.toString();
   }
 
   /**

@@ -5,6 +5,7 @@ package org.integratedmodelling.kdl.kdl.impl;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
@@ -14,6 +15,7 @@ import org.integratedmodelling.kdl.kdl.ActorDefinition;
 import org.integratedmodelling.kdl.kdl.Annotation;
 import org.integratedmodelling.kdl.kdl.ClassifierRHS;
 import org.integratedmodelling.kdl.kdl.Computation;
+import org.integratedmodelling.kdl.kdl.Currency;
 import org.integratedmodelling.kdl.kdl.DataflowBody;
 import org.integratedmodelling.kdl.kdl.Function;
 import org.integratedmodelling.kdl.kdl.KdlFactory;
@@ -30,6 +32,9 @@ import org.integratedmodelling.kdl.kdl.Parameter;
 import org.integratedmodelling.kdl.kdl.ParameterList;
 import org.integratedmodelling.kdl.kdl.Table;
 import org.integratedmodelling.kdl.kdl.TableRow;
+import org.integratedmodelling.kdl.kdl.Unit;
+import org.integratedmodelling.kdl.kdl.UnitElement;
+import org.integratedmodelling.kdl.kdl.UnitOp;
 import org.integratedmodelling.kdl.kdl.Urn;
 import org.integratedmodelling.kdl.kdl.Value;
 
@@ -82,6 +87,27 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    * @generated
    */
   private EClass parameterEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass unitElementEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass unitEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass currencyEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -194,6 +220,13 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    * @generated
    */
   private EClass numberEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EEnum unitOpEEnum = null;
 
   /**
    * Creates an instance of the model <b>Package</b>, registered with
@@ -715,9 +748,20 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    * @generated
    */
   @Override
+  public EReference getActorDefinition_Unit()
+  {
+    return (EReference)actorDefinitionEClass.getEStructuralFeatures().get(23);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EAttribute getActorDefinition_LocalName()
   {
-    return (EAttribute)actorDefinitionEClass.getEStructuralFeatures().get(23);
+    return (EAttribute)actorDefinitionEClass.getEStructuralFeatures().get(24);
   }
 
   /**
@@ -728,7 +772,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
   @Override
   public EReference getActorDefinition_Coverage()
   {
-    return (EReference)actorDefinitionEClass.getEStructuralFeatures().get(24);
+    return (EReference)actorDefinitionEClass.getEStructuralFeatures().get(25);
   }
 
   /**
@@ -861,6 +905,127 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
   public EAttribute getParameter_Docstring()
   {
     return (EAttribute)parameterEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EClass getUnitElement()
+  {
+    return unitElementEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getUnitElement_Id()
+  {
+    return (EAttribute)unitElementEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getUnitElement_Unit()
+  {
+    return (EReference)unitElementEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EClass getUnit()
+  {
+    return unitEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getUnit_Root()
+  {
+    return (EReference)unitEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getUnit_Connectors()
+  {
+    return (EAttribute)unitEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getUnit_Units()
+  {
+    return (EReference)unitEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EClass getCurrency()
+  {
+    return currencyEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getCurrency_Id()
+  {
+    return (EAttribute)currencyEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getCurrency_Year()
+  {
+    return (EAttribute)currencyEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getCurrency_Units()
+  {
+    return (EReference)currencyEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -1793,6 +1958,17 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    * @generated
    */
   @Override
+  public EEnum getUnitOp()
+  {
+    return unitOpEEnum;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public KdlFactory getKdlFactory()
   {
     return (KdlFactory)getEFactoryInstance();
@@ -1861,6 +2037,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
     createEReference(actorDefinitionEClass, ACTOR_DEFINITION__RANGE_MAX);
     createEAttribute(actorDefinitionEClass, ACTOR_DEFINITION__ENUM_VALUES);
     createEReference(actorDefinitionEClass, ACTOR_DEFINITION__DEFAULT);
+    createEReference(actorDefinitionEClass, ACTOR_DEFINITION__UNIT);
     createEAttribute(actorDefinitionEClass, ACTOR_DEFINITION__LOCAL_NAME);
     createEReference(actorDefinitionEClass, ACTOR_DEFINITION__COVERAGE);
 
@@ -1878,6 +2055,20 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
     createEAttribute(parameterEClass, PARAMETER__NAME);
     createEReference(parameterEClass, PARAMETER__VALUE);
     createEAttribute(parameterEClass, PARAMETER__DOCSTRING);
+
+    unitElementEClass = createEClass(UNIT_ELEMENT);
+    createEAttribute(unitElementEClass, UNIT_ELEMENT__ID);
+    createEReference(unitElementEClass, UNIT_ELEMENT__UNIT);
+
+    unitEClass = createEClass(UNIT);
+    createEReference(unitEClass, UNIT__ROOT);
+    createEAttribute(unitEClass, UNIT__CONNECTORS);
+    createEReference(unitEClass, UNIT__UNITS);
+
+    currencyEClass = createEClass(CURRENCY);
+    createEAttribute(currencyEClass, CURRENCY__ID);
+    createEAttribute(currencyEClass, CURRENCY__YEAR);
+    createEReference(currencyEClass, CURRENCY__UNITS);
 
     classifierRHSEClass = createEClass(CLASSIFIER_RHS);
     createEAttribute(classifierRHSEClass, CLASSIFIER_RHS__BOOLEAN);
@@ -1978,6 +2169,9 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
     createEAttribute(numberEClass, NUMBER__EXPONENTIAL);
     createEAttribute(numberEClass, NUMBER__EXP_NEGATIVE);
     createEAttribute(numberEClass, NUMBER__EXP);
+
+    // Create enums
+    unitOpEEnum = createEEnum(UNIT_OP);
   }
 
   /**
@@ -2054,6 +2248,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
     initEReference(getActorDefinition_RangeMax(), this.getNumber(), null, "rangeMax", null, 0, 1, ActorDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getActorDefinition_EnumValues(), ecorePackage.getEString(), "enumValues", null, 0, -1, ActorDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getActorDefinition_Default(), this.getValue(), null, "default", null, 0, 1, ActorDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getActorDefinition_Unit(), this.getUnit(), null, "unit", null, 0, 1, ActorDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getActorDefinition_LocalName(), ecorePackage.getEString(), "localName", null, 0, 1, ActorDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getActorDefinition_Coverage(), this.getFunction(), null, "coverage", null, 0, -1, ActorDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
@@ -2071,6 +2266,20 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
     initEAttribute(getParameter_Name(), ecorePackage.getEString(), "name", null, 0, 1, Parameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getParameter_Value(), this.getValue(), null, "value", null, 0, 1, Parameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getParameter_Docstring(), ecorePackage.getEString(), "docstring", null, 0, 1, Parameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(unitElementEClass, UnitElement.class, "UnitElement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getUnitElement_Id(), ecorePackage.getEString(), "id", null, 0, 1, UnitElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getUnitElement_Unit(), this.getUnit(), null, "unit", null, 0, 1, UnitElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(unitEClass, Unit.class, "Unit", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getUnit_Root(), this.getUnitElement(), null, "root", null, 0, 1, Unit.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getUnit_Connectors(), this.getUnitOp(), "connectors", null, 0, -1, Unit.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getUnit_Units(), this.getUnitElement(), null, "units", null, 0, -1, Unit.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(currencyEClass, Currency.class, "Currency", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getCurrency_Id(), ecorePackage.getEString(), "id", null, 0, 1, Currency.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getCurrency_Year(), ecorePackage.getEInt(), "year", null, 0, 1, Currency.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getCurrency_Units(), this.getUnitElement(), null, "units", null, 0, -1, Currency.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(classifierRHSEClass, ClassifierRHS.class, "ClassifierRHS", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getClassifierRHS_Boolean(), ecorePackage.getEString(), "boolean", null, 0, 1, ClassifierRHS.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -2171,6 +2380,12 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
     initEAttribute(getNumber_Exponential(), ecorePackage.getEBoolean(), "exponential", null, 0, 1, org.integratedmodelling.kdl.kdl.Number.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getNumber_ExpNegative(), ecorePackage.getEBoolean(), "expNegative", null, 0, 1, org.integratedmodelling.kdl.kdl.Number.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getNumber_Exp(), ecorePackage.getEInt(), "exp", null, 0, 1, org.integratedmodelling.kdl.kdl.Number.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    // Initialize enums and add enum literals
+    initEEnum(unitOpEEnum, UnitOp.class, "UnitOp");
+    addEEnumLiteral(unitOpEEnum, UnitOp.OVER);
+    addEEnumLiteral(unitOpEEnum, UnitOp.CARET);
+    addEEnumLiteral(unitOpEEnum, UnitOp.STAR);
 
     // Create resource
     createResource(eNS_URI);
