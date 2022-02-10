@@ -18,6 +18,7 @@ import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.IGeometry.Encoding;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IQuantity;
@@ -1228,10 +1229,10 @@ public class Scale implements IScale {
     }
 
     @Override
-    public String encode() {
+    public String encode(Encoding...options) {
         String ret = "";
         for (IExtent extent : extents) {
-            ret += ((AbstractExtent) extent).encode();
+            ret += ((AbstractExtent) extent).encode(options);
         }
         return ret;
     }
@@ -1251,9 +1252,9 @@ public class Scale implements IScale {
      * 
      * @return the fully specified geometry underlying this scale
      */
-    public Geometry asGeometry() {
+    public Geometry asGeometry(Encoding...options) {
         if (this.geometry == null) {
-            this.geometry = Geometry.create(encode());
+            this.geometry = Geometry.create(encode(options));
         }
         return this.geometry;
     }

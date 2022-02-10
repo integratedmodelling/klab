@@ -40,6 +40,7 @@ import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.IResourceCalculator;
 import org.integratedmodelling.klab.api.data.IResourceCatalog;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
@@ -70,6 +71,7 @@ import org.integratedmodelling.klab.common.CompileInfo;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.SemanticType;
 import org.integratedmodelling.klab.common.Urns;
+import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.data.encoding.DecodingDataBuilder;
 import org.integratedmodelling.klab.data.encoding.LocalDataBuilder;
 import org.integratedmodelling.klab.data.encoding.StandaloneResourceBuilder;
@@ -1129,8 +1131,9 @@ public enum Resources implements IResourceService {
             IMonitor monitor) {
 
         Urn kurn = new Urn(urn);
+        IResource resource = resolveResource(urn);
+
         if (kurn.isLocal()) {
-            IResource resource = resolveResource(urn);
             if (resource == null) {
                 throw new KlabResourceAccessException("Access to resource data failed for resource " + urn);
             }
@@ -1163,7 +1166,7 @@ public enum Resources implements IResourceService {
             if (node != null) {
                 ResourceDataRequest request = new ResourceDataRequest();
                 request.setUrn(urn.toString());
-                request.setGeometry(geometry.encode());
+                request.setGeometry(encodeScale(geometry, resource));
                 builder = new DecodingDataBuilder(
                         node.getClient().post(API.NODE.RESOURCE.GET_DATA, request, Map.class),
                         Expression.emptyContext(geometry, monitor));
@@ -1334,7 +1337,7 @@ public enum Resources implements IResourceService {
                 ResourceDataRequest request = new ResourceDataRequest();
                 // send toString() with all parameters!
                 request.setUrn(urn.toString());
-                request.setGeometry(geometry.encode());
+                request.setGeometry(encodeScale(geometry, resource));
                 DecodingDataBuilder builder = new DecodingDataBuilder(
                         node.getClient().post(API.NODE.RESOURCE.GET_DATA, request, Map.class), scope);
                 IKlabData ret = builder.build();
@@ -2151,9 +2154,9 @@ public enum Resources implements IResourceService {
             if (node != null) {
                 ResourceContextualizationRequest request = new ResourceContextualizationRequest();
                 request.setResource(resource.getReference());
-                request.setGeometry(((Scale) scale).asGeometry().encode());
+                request.setGeometry(encodeScale(scale, resource));
                 request.setOverallGeometry(
-                        ((Scale) ((IObservation) observation).getScale()).asGeometry().encode());
+                        encodeScale(((IObservation) observation).getScale(), resource));
                 try {
                     ResourceReference reference = node.getClient().post(API.NODE.RESOURCE.CONTEXTUALIZE,
                             request,
@@ -2166,6 +2169,21 @@ public enum Resources implements IResourceService {
             }
         }
         return resource;
+    }
+
+    private String encodeScale(IGeometry scale, IResource resource) {
+
+        Dimension space = resource.getGeometry().getDimension(Dimension.Type.SPACE);
+        IGeometry.Encoding[] options = space != null && space.isRegular()
+                ? new IGeometry.Encoding[]{IGeometry.Encoding.SKIP_GRID_SHAPE}
+                : new IGeometry.Encoding[]{};
+
+        IGeometry geometry = scale instanceof Scale ? ((Scale) scale).asGeometry(options) : (IGeometry) scale;
+
+        // TODO scale of remote contextualization - for space, decide if we want to pass the shape,
+        // default is send the full bounding box only if regular
+
+        return geometry.encode();
     }
 
     public ICodelist createCodelist(IResource resource, String codelistId, IMonitor monitor) {

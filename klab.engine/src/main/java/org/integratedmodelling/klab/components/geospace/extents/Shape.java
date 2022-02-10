@@ -23,6 +23,7 @@ import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IQuantity;
+import org.integratedmodelling.klab.api.data.IGeometry.Encoding;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.model.IAnnotation;
@@ -584,7 +585,7 @@ public class Shape extends AbstractExtent implements IShape {
     }
 
     @Override
-    public String encode() {
+    public String encode(Encoding...options) {
         return "s2(1,1){shape=" + ((Shape) getShape()).getWKB() + "," + getEnvelope().encode() + ",proj="
                 + getProjection().getSimpleSRS() + "}";
     }

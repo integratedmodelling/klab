@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.components.geospace.extents;
 
+import org.integratedmodelling.klab.api.data.IGeometry.Encoding;
 import org.integratedmodelling.klab.api.knowledge.IAuthority;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
@@ -20,7 +21,7 @@ public class EnumeratedSpace extends EnumeratedExtent implements ISpace {
 	}
 
 	@Override
-	public String encode() {
+	public String encode(Encoding...options) {
 		String ret = (isGeneric() ? "\u03c3" : "S") + "1(" + size() + "){";
 		if (isConsistent()) {
 			ret += "declaration=" + originalDeclaration;

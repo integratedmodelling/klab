@@ -100,6 +100,16 @@ public interface IGeometry extends Serializable, ILocator {
 		 */
 		MULTIPLE
 	}
+	
+	/**
+	 * Options for encoding to string.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	enum Encoding {
+	    SKIP_GRID_SHAPE
+	}
 
 	/**
 	 * Constant for non-dimensional (referenced but not distributed) return value of
@@ -244,7 +254,7 @@ public interface IGeometry extends Serializable, ILocator {
 		 * 
 		 * @return
 		 */
-		String encode();
+		String encode(Encoding...options);
 
 	}
 
@@ -255,7 +265,7 @@ public interface IGeometry extends Serializable, ILocator {
 	 * 
 	 * @return the encoded geometry
 	 */
-	String encode();
+	String encode(Encoding...options);
 
 	/**
 	 * A geometry may imply another for component objects. E.g. spatial data may

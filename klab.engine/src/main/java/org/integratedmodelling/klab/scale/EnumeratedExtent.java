@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.IGeometry.Encoding;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IAuthority;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -291,7 +292,7 @@ public class EnumeratedExtent extends Extent implements IEnumeratedExtent {
     }
 
     @Override
-    public String encode() {
+    public String encode(Encoding...options) {
         String ret = (isGeneric() ? "\u03b4" : "D") + "1(" + size() + "){";
         if (isConsistent()) {
             ret += "declaration=" + originalDeclaration;

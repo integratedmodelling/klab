@@ -6,6 +6,7 @@ import java.util.function.Function;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
+import org.integratedmodelling.klab.api.data.IGeometry.Encoding;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
@@ -160,7 +161,7 @@ public abstract class AbstractExtent implements IExtent {
 	 * 
 	 * @return the encoded representation
 	 */
-	public abstract String encode();
+	public abstract String encode(Encoding...options);
 
 	/**
 	 * Merge only the extents, without regard for the grain or internal

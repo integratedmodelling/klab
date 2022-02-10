@@ -14,6 +14,7 @@ import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
+import org.integratedmodelling.klab.api.data.IGeometry.Encoding;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.model.IAnnotation;
@@ -809,7 +810,7 @@ public class Grid extends Area implements IGrid {
 		}
 
 		@Override
-		public String encode() {
+		public String encode(Encoding...options) {
 			return "S2(1,1){shape=" + ((Shape) getShape()).getWKB() + ",proj=" + getProjection().getSimpleSRS() + "}";
 		}
 

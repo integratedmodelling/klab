@@ -74,7 +74,7 @@ public class ResourceController {
      * <p>
      * TODO: another similar one should be provided that accepts a KlabData object, encoding
      * everything but with the option of providing data for the contextualization scope. This is
-     * needed to allow computations that take inputs or parameters. The KlabData should have an
+     * needed to enable computations that take inputs or parameters. The KlabData should have an
      * option to transfer only diffs vs. current situation to avoid unneeded transfer.
      * <p>
      * TODO: As the volume of data can be large, this is probably the perfect place for a reactive

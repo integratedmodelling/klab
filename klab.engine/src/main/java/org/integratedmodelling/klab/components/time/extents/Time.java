@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
+import org.integratedmodelling.klab.api.data.IGeometry.Encoding;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IQuantity;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
@@ -977,7 +978,7 @@ public class Time extends Extent implements ITime {
     }
 
     @Override
-    public String encode() {
+    public String encode(Encoding...options) {
 
         String prefix = "T";
         if (getTimeType() == ITime.Type.LOGICAL) {

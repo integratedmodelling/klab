@@ -13,6 +13,7 @@ import java.util.Map;
 import org.integratedmodelling.kim.api.IKimQuantity;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.IGeometry.Encoding;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
@@ -486,7 +487,7 @@ public class Geometry implements IGeometry {
      * 
      * @return the string representation for the geometry
      */
-    public String encode() {
+    public String encode(Encoding...options) {
 
         if (isEmpty()) {
             return "X";
@@ -635,7 +636,7 @@ public class Geometry implements IGeometry {
         }
 
         @Override
-        public String encode() {
+        public String encode(Encoding...options) {
             return encodeDimension(this);
         }
 
