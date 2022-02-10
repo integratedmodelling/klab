@@ -544,10 +544,10 @@ public class AgERA5Repository extends CopernicusCDSDatacube {
 
     @Override
     protected IGeometry getResourceGeometry(Urn urn) {
-        // TODO add 10km grid for globe
-        return Geometry.create("\u03c41\u03c32(2)");
+        // τ1Σ2 - TODO add 10km grid for globe
+        return Geometry.create("\u03c41\u03a32");
     }
-
+    
     @Override
     protected Collection<String> getVariableNames(Urn urn) {
         List<String> ret = new ArrayList<>();

@@ -289,11 +289,12 @@ public class Geometry implements IGeometry {
     }
 
     private static String encodeDimension(Dimension dim) {
+        
         String ret = "";
         ret += dim.getType() == Type.SPACE
-                ? (dim.isGeneric() ? "\u03c3" : (dim.isRegular() ? "S" : "s"))
+                ? (dim.isGeneric() ? (dim.isRegular() ? "\u03a3" : "\u03c3") : (dim.isRegular() ? "S" : "s"))
                 : (dim.getType() == Type.TIME
-                        ? (dim.isGeneric() ? "\u03c4" : (dim.isRegular() ? "T" : "t"))
+                        ? (dim.isGeneric() ? (dim.isRegular() ? "\u03a4" : "\u03c4") : (dim.isRegular() ? "T" : "t"))
                         : /* TODO others */ "");
         ret += dim.getDimensionality();
         if (dim.shape() != null && !isUndefined(dim.shape())) {
@@ -991,18 +992,24 @@ public class Geometry implements IGeometry {
             char c = geometry.charAt(idx);
             if (c == '#') {
                 ret.granularity = Granularity.MULTIPLE;
-            } else if ((c >= 'A' && c <= 'z') || c == 0x03C3 || c == 0x03C4) {
+            } else if ((c >= 'A' && c <= 'z') || c == 0x03C3 || c == 0x03C4|| c == 0x03A3 || c == 0x03A4) {
                 DimensionImpl dimensionality = ret.newDimension();
-                if (c == 'S' || c == 's' || c == 0x03C3) {
+                if (c == 'S' || c == 's' || c == 0x03C3 || c == 0x03A3) {
+                    
                     dimensionality.type = Type.SPACE;
-                    if (c == 0x03C3) {
+                    if (c == 0x03C3 || c == 0x03A3) {
                         dimensionality.generic = true;
                     }
-                } else if (c == 'T' || c == 't' || c == 0x03C4) {
+                    dimensionality.regular = (c == 'S' || c == 0x03A3);
+                    
+                } else if (c == 'T' || c == 't' || c == 0x03C4 || c == 0x03A4) {
+                    
                     dimensionality.type = Type.TIME;
-                    if (c == 0x03C4) {
+                    if (c == 0x03C4 || c == 0x03A4) {
                         dimensionality.generic = true;
                     }
+                    dimensionality.regular = (c == 'T' || c == 0x03A4);
+                    
                 } else {
                     throw new KlabIllegalArgumentException("unrecognized geometry dimension identifier " + c);
                     // if (dimDictionary.containsKey(Character.toLowerCase(c))) {
@@ -1013,8 +1020,6 @@ public class Geometry implements IGeometry {
                     // dimensionality.type = n;
                     // }
                 }
-
-                dimensionality.regular = Character.isUpperCase(c);
 
                 idx++;
                 if (geometry.charAt(idx) == '.') {
