@@ -16,27 +16,28 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
+import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.utils.DebugFile;
 
 public class InfiltratedWaterVolumeResolver implements IResolver<IProcess>, IExpression {
 
     /**
-     * Fraction of upslope available recharge (upgradient subsidy) that is available
-     * for month m or for the selected reference interval.
+     * Fraction of upslope available recharge (upgradient subsidy) that is available for month m or
+     * for the selected reference interval.
      */
     double alpha = 1.0;
 
     /**
-     * (spatial availability parameter) the fraction of the upgradient subsidy that
-     * is available for downgradient evapotranspiration, it is based on local
-     * topography and geology
+     * (spatial availability parameter) the fraction of the upgradient subsidy that is available for
+     * downgradient evapotranspiration, it is based on local topography and geology
      */
     double beta = 1.0;
 
     /**
-     * the fraction of pixel recharge that is available to downgradient pixels,
-     * represents what extent local recharge enters a local groundwater system and
-     * might be used again as oppose to entering a deeper groundwater system
+     * the fraction of pixel recharge that is available to downgradient pixels, represents what
+     * extent local recharge enters a local groundwater system and might be used again as oppose to
+     * entering a deeper groundwater system
      */
     double gamma = 1.0;
 
@@ -46,23 +47,28 @@ public class InfiltratedWaterVolumeResolver implements IResolver<IProcess>, IExp
     }
 
     @Override
-    public IProcess resolve(IProcess infiltratedProcess, IContextualizationScope context) throws KlabException {
+    public IProcess resolve(IProcess infiltratedProcess, IContextualizationScope context)
+            throws KlabException {
         IState petState = context.getArtifact("potential_evapotranspired_water_volume", IState.class);
         IState rainfallVolumeState = context.getArtifact("rainfall_volume", IState.class);
         IState runoffVolumeState = context.getArtifact("runoff_water_volume", IState.class);
         IState streamPresenceState = context.getArtifact("presence_of_stream", IState.class);
         IState flowdirectionState = context.getArtifact("flow_directions_d8", IState.class);
 
-        GeotoolsUtils.INSTANCE.dumpToRaster(context, "Infiltration", petState, rainfallVolumeState, runoffVolumeState,
+        GeotoolsUtils.INSTANCE.dumpToRaster(context, "Infiltration", petState, rainfallVolumeState,
+                runoffVolumeState,
                 streamPresenceState, flowdirectionState);
 
-        IState netInfiltratedWaterVolumeState = context.getArtifact("net_infiltrated_water_volume", IState.class);
+        IState netInfiltratedWaterVolumeState = context.getArtifact("net_infiltrated_water_volume",
+                IState.class);
         IState infiltratedWaterVolumeState = context.getArtifact("infiltrated_water_volume", IState.class);
 
         TaskMonitor taskMonitor = new TaskMonitor(context.getMonitor());
         taskMonitor.setTaskName("Infiltration");
 
-        if (petState != null && rainfallVolumeState != null && flowdirectionState != null && streamPresenceState != null
+
+        if (petState != null && rainfallVolumeState != null && flowdirectionState != null
+                && streamPresenceState != null
                 && runoffVolumeState != null) {
 
             OmsInfiltratedWaterVolume v = new OmsInfiltratedWaterVolume();
@@ -83,8 +89,10 @@ public class InfiltratedWaterVolumeResolver implements IResolver<IProcess>, IExp
                 // NOTE: also AET and LSUM maps are produced, but not passed as process output,
                 // since it is not defined in the semantics.
 
-                GeotoolsUtils.INSTANCE.coverageToState(v.outInfiltration, infiltratedWaterVolumeState, context.getScale(), null);
-                GeotoolsUtils.INSTANCE.coverageToState(v.outNetInfiltration, netInfiltratedWaterVolumeState, context.getScale(),
+                GeotoolsUtils.INSTANCE.coverageToState(v.outInfiltration, infiltratedWaterVolumeState,
+                        context.getScale(), null);
+                GeotoolsUtils.INSTANCE.coverageToState(v.outNetInfiltration, netInfiltratedWaterVolumeState,
+                        context.getScale(),
                         null);
             }
             GeotoolsUtils.INSTANCE.dumpToRaster(context, "Infiltration", netInfiltratedWaterVolumeState,
@@ -96,17 +104,18 @@ public class InfiltratedWaterVolumeResolver implements IResolver<IProcess>, IExp
         return infiltratedProcess;
     }
 
-    private GridCoverage2D getGridCoverage(IContextualizationScope context, IState state, GridCoverage2D flowGC)
+    private GridCoverage2D getGridCoverage(IContextualizationScope context, IState state, GridCoverage2D mask)
             throws Exception {
         if (state == null) {
             return null;
         }
-        GridCoverage2D gc = GeotoolsUtils.INSTANCE.stateToCoverage(state, context.getScale(), DataBuffer.TYPE_FLOAT, floatNovalue,
+        GridCoverage2D gc = GeotoolsUtils.INSTANCE.stateToCoverage(state, context.getScale(),
+                DataBuffer.TYPE_FLOAT, floatNovalue,
                 false);
 
-        if (flowGC != null) {
+        if (mask != null) {
             OmsCutOut co = new OmsCutOut();
-            co.inMask = flowGC;
+            co.inMask = mask;
             co.inRaster = gc;
             co.process();
             return co.outRaster;

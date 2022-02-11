@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 
+import org.geotools.geometry.jts.Geometries;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Units;
@@ -249,7 +250,8 @@ public class Scale implements IScale {
                 } else {
                     locatedOffsets[i] = 0;
                     if (multiple) {
-                        throw new KlabUnimplementedException("Scanning of multiple dimensions in subscales is unsupported");
+                        throw new KlabUnimplementedException(
+                                "Scanning of multiple dimensions in subscales is unsupported");
                     }
                     multiple = true;
                 }
@@ -351,7 +353,7 @@ public class Scale implements IScale {
             if (add) {
 
                 if (existing instanceof Shape && spaceResolution != null) {
-                    exts.add(Space.create((Shape)existing, spaceResolution));
+                    exts.add(Space.create((Shape) existing, spaceResolution));
                 } else {
                     exts.add(((AbstractExtent) existing).copy());
                 }
@@ -564,7 +566,8 @@ public class Scale implements IScale {
         // better safe than sorry. Only time can be infinite so this should be pretty
         // safe and not at all sorry, as long as the comparator above works.
         if (isInfiniteTime && extents.get(0).size() != Geometry.INFINITE_SIZE) {
-            throw new KlabInternalErrorException("internal error: infinite dimension is not the first in scale");
+            throw new KlabInternalErrorException(
+                    "internal error: infinite dimension is not the first in scale");
         }
 
         // recompute strided offsets for quick extent access
@@ -623,7 +626,8 @@ public class Scale implements IScale {
     public boolean contains(IScale scale) throws KlabException {
 
         for (IExtent e : extents) {
-            if (scale.getDimension(e.getType()) == null || !e.contains(((Scale) scale).getDimension(e.getType()))) {
+            if (scale.getDimension(e.getType()) == null
+                    || !e.contains(((Scale) scale).getDimension(e.getType()))) {
                 return false;
             }
         }
@@ -921,10 +925,10 @@ public class Scale implements IScale {
         Scale targetScale = this;
 
         if (locators != null && locators.length == 1 && locators[0] instanceof Number) {
-        	// long offset
-        	return new Scale(this, ((Number)locators[0]).longValue());
+            // long offset
+            return new Scale(this, ((Number) locators[0]).longValue());
         }
-        
+
         // /*
         // * Special handling of time initialization: use scale w/o time unless time is
         // * generic.
@@ -1002,7 +1006,8 @@ public class Scale implements IScale {
         }
 
         if (overall != null && targets.size() > 1) {
-            throw new IllegalStateException("Geometry cannot be located with both dimension-specific and overall locators");
+            throw new IllegalStateException(
+                    "Geometry cannot be located with both dimension-specific and overall locators");
         }
 
         if (overall != null) {
@@ -1048,7 +1053,8 @@ public class Scale implements IScale {
             for (Pair<Type, Object[]> def : defs) {
                 if (extdef.containsKey(def.getFirst())) {
                     throw new IllegalArgumentException(
-                            "Scale locator contains duplicate specifications for " + def.getFirst().name().toLowerCase());
+                            "Scale locator contains duplicate specifications for "
+                                    + def.getFirst().name().toLowerCase());
                 }
                 extdef.put(def.getFirst(), def.getSecond());
             }
@@ -1229,7 +1235,7 @@ public class Scale implements IScale {
     }
 
     @Override
-    public String encode(Encoding...options) {
+    public String encode(Encoding... options) {
         String ret = "";
         for (IExtent extent : extents) {
             ret += ((AbstractExtent) extent).encode(options);
@@ -1252,11 +1258,19 @@ public class Scale implements IScale {
      * 
      * @return the fully specified geometry underlying this scale
      */
-    public Geometry asGeometry(Encoding...options) {
-        if (this.geometry == null) {
-            this.geometry = Geometry.create(encode(options));
+    public Geometry asGeometry(Encoding... options) {
+        
+        /*
+         * only cache the full geometry spec
+         */
+        if (options == null || options.length == 0) {
+            if (this.geometry == null) {
+                this.geometry = Geometry.create(encode(options));
+            }
+            return this.geometry;
         }
-        return this.geometry;
+        
+        return Geometry.create(encode(options));
     }
 
     /**
@@ -1271,7 +1285,8 @@ public class Scale implements IScale {
             if (extent instanceof ISpace) {
                 Shape shape = (Shape) ((ISpace) extent).getShape();
                 // make it a grid with a good res for visualization
-                exts.add(Space.create(shape, (double) shape.getEnvelope().getResolutionForZoomLevel(50, 2).getFirst()));
+                exts.add(Space.create(shape,
+                        (double) shape.getEnvelope().getResolutionForZoomLevel(50, 2).getFirst()));
             } else if (extent instanceof ITime) {
                 if (extent.size() > 1) {
                     extents.add((IExtent) extent.iterator().next());
@@ -1472,10 +1487,12 @@ public class Scale implements IScale {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T extends ILocator> Iterable<T> scan(Class<T> desiredLocatorClass, Object... dimensionIdentifiers) {
+    public <T extends ILocator> Iterable<T> scan(Class<T> desiredLocatorClass,
+            Object... dimensionIdentifiers) {
         if (dimensionIdentifiers != null && dimensionIdentifiers.length == 2) {
             // typical case: scanning a grid with no time or time == 1
-            if (getSpace() != null && ((Space) getSpace()).getGrid() != null && (getTime() == null || getTime().size() == 1)) {
+            if (getSpace() != null && ((Space) getSpace()).getGrid() != null
+                    && (getTime() == null || getTime().size() == 1)) {
                 if (dimensionIdentifiers[1] instanceof Class
                         && IGrid.class.isAssignableFrom((Class<?>) dimensionIdentifiers[1])) {
                     if (dimensionIdentifiers[0] == Offset.class) {
@@ -1488,7 +1505,8 @@ public class Scale implements IScale {
             }
         }
 
-        throw new IllegalArgumentException("Scale scan() called with non-supported arguments: use normal iteration");
+        throw new IllegalArgumentException(
+                "Scale scan() called with non-supported arguments: use normal iteration");
 
     }
 
@@ -1652,7 +1670,8 @@ public class Scale implements IScale {
      *        null or contain annotation of different types than the ones we care for.
      * @return
      */
-    public static IScale contextualize(IScale scale, IScale contextScale, List<IAnnotation> annotations, IMonitor monitor) {
+    public static IScale contextualize(IScale scale, IScale contextScale, List<IAnnotation> annotations,
+            IMonitor monitor) {
 
         if (!scale.equals(contextScale)) {
 
@@ -1671,8 +1690,9 @@ public class Scale implements IScale {
             for (IExtent e : other.getExtents()) {
                 if (commonConcepts.contains(e.getType())) {
                     // IExtent oext = other.getDimension(e.getType());
-                    IExtent merged = ((AbstractExtent) ((Scale) scale).getExtent(e.getType())).contextualizeTo(e,
-                            getConstraint(annotations, e.getType()));
+                    IExtent merged = ((AbstractExtent) ((Scale) scale).getExtent(e.getType()))
+                            .contextualizeTo(e,
+                                    getConstraint(annotations, e.getType()));
                     ret.mergeExtent(merged);
                 } else {
                     ret.mergeExtent(e);

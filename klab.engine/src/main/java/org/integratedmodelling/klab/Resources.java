@@ -2183,7 +2183,7 @@ public enum Resources implements IResourceService {
         // TODO scale of remote contextualization - for space, decide if we want to pass the shape,
         // default is send the full bounding box only if regular
 
-        return geometry.encode();
+        return geometry.encode(options);
     }
 
     public ICodelist createCodelist(IResource resource, String codelistId, IMonitor monitor) {
