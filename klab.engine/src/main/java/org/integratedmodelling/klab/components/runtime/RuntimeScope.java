@@ -352,10 +352,10 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
          * if not within a partition, the target has been created by the upstream createChild(...
          * Actuator ...), so we just set it from the catalog.
          */
-        if (catalog.get(ret.targetName) == null) {
+        ret.target = getArtifact(ret.targetName);
+        if (ret.target == null) {
             ret.target = createTarget(indirectTarget);
         }
-        ret.target = catalog.get(ret.targetName);
         return ret;
     }
 
@@ -368,11 +368,6 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
     public EventBus getEventBus() {
         return eventBus;
     }
-
-    // @Override
-    // public ConfigurationDetector getConfigurationDetector() {
-    // return configurationDetector;
-    // }
 
     @Override
     public Collection<IRelationship> getOutgoingRelationships(IDirectObservation observation) {
@@ -2216,20 +2211,6 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
         return ret;
     }
-
-    // @Override
-    // public Collection<IArtifact> getAdditionalOutputs() {
-    // List<IArtifact> ret = new ArrayList<>();
-    // if (this.model != null) {
-    // for (int i = 0; i < model.getObservables().size(); i++) {
-    // IArtifact out = findArtifact(model.getObservables().get(i)).getSecond();
-    // if (out != null) {
-    // ret.add(out);
-    // }
-    // }
-    // }
-    // return ret;
-    // }
 
     @Override
     public Collection<IObservable> getDependents(IObservable observable, Mode resolutionMode) {
