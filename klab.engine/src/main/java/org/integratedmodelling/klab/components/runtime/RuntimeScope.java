@@ -2567,4 +2567,19 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
         return monitor.getIdentity().getParentIdentity(ISession.class);
     }
 
+    @Override
+    public Collection<String> getStateIdentifiers() {
+        Set<String> ret = new HashSet<>();
+        if (model != null) {
+            for (IObservable obs : model.getDependencies()) {
+                ret.add(obs.getName());
+            }
+         } else {
+             for (Pair<String, IState> state : getArtifacts(IState.class)) {
+                 ret.add(state.getSecond().getObservable().getName());
+             }
+        }
+        return ret;
+    }
+
 }

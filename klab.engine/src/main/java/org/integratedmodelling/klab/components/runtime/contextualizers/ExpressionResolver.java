@@ -142,7 +142,7 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 		 */
 		boolean scalar = false;
 		if (targetType == Type.QUALITY) {
-			Collection<String> distributedStateIds = getDistributedStateIds(context);
+			Collection<String> distributedStateIds = context.getStateIdentifiers();
 			distributedStateIds.add("self");
 			scalar = descriptor.isScalar(distributedStateIds);
 			if (!scalar && condition != null) {
@@ -160,13 +160,13 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 		return new ExpressionResolver(descriptor, condition, parameters, context, additionalParameters);
 	}
 
-	private Set<String> getDistributedStateIds(IContextualizationScope context) {
-		Set<String> ret = new HashSet<>();
-		for (Pair<String, IState> state : context.getArtifacts(IState.class)) {
-			ret.add(state.getFirst());
-		}
-		return ret;
-	}
+//	private Set<String> getDistributedStateIds(IContextualizationScope context) {
+//		Set<String> ret = new HashSet<>();
+//		for (Pair<String, IState> state : context.getStateIdentifiers(IState.class)) {
+//			ret.add(state.getFirst());
+//		}
+//		return ret;
+//	}
 
 	@Override
 	public IArtifact resolve(IArtifact ret, IContextualizationScope scope) throws KlabException {

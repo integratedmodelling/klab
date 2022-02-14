@@ -306,6 +306,12 @@ public abstract class Expression implements IExpression {
 			return monitor.getIdentity().getParentIdentity(ISession.class);
 		}
 
+        @Override
+        public Collection<String> getStateIdentifiers() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
 	}
 
 	public static IContextualizationScope emptyContext(IMonitor monitor) {

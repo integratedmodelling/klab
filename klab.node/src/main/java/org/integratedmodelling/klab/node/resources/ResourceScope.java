@@ -810,5 +810,11 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
 		return monitor.getIdentity().getParentIdentity(ISession.class);
 	}
 
+    @Override
+    public Collection<String> getStateIdentifiers() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 
 }
