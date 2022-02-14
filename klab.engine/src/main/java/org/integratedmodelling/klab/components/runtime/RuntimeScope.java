@@ -436,7 +436,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
              * was null
              */
             for (IArtifact artifact : catalog.values()) {
-                if (artifact instanceof IObservation && name.equals(((IObservation)artifact).getObservable().getName())) {
+                if (artifact instanceof IObservation
+                        && name.equals(((IObservation) artifact).getObservable().getName())) {
                     ret = artifact;
                     break;
                 }
@@ -1466,9 +1467,14 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
                  */
                 if (!notifiedObservations.contains(observation.getId())) {
 
-                    boolean isMain = this.monitor.getIdentity() instanceof ITask
-                            && ((ITask<?>) this.monitor.getIdentity()).getResolvable()
-                                    .equals(observation.getObservable());
+                    /*
+                     * first condition is for when the identity is a task that resolves an
+                     * instantiated object. TODO should probably put the subject as the resolvable.
+                     */
+                    boolean isMain = ((ITask<?>) this.monitor.getIdentity()).getResolvable() == null
+                            || (this.monitor.getIdentity() instanceof ITask
+                                    && ((ITask<?>) this.monitor.getIdentity()).getResolvable()
+                                            .equals(observation.getObservable()));
 
                     if (observation instanceof IState
                             && ((IState) observation).getValuePresentation() != ValuePresentation.VALUE) {
@@ -2574,10 +2580,10 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
             for (IObservable obs : model.getDependencies()) {
                 ret.add(obs.getName());
             }
-         } else {
-             for (Pair<String, IState> state : getArtifacts(IState.class)) {
-                 ret.add(state.getSecond().getObservable().getName());
-             }
+        } else {
+            for (Pair<String, IState> state : getArtifacts(IState.class)) {
+                ret.add(state.getSecond().getObservable().getName());
+            }
         }
         return ret;
     }

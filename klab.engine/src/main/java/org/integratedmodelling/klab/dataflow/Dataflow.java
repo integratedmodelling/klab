@@ -926,4 +926,18 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
         return getKdlCode();
     }
 
+    /**
+     * Dataflows that have resolved a specific instantiated actuator
+     * 
+     * @param actuator2
+     * @return
+     */
+    public Collection<IDataflow<IArtifact>> childrenOf(Actuator actuator2) {
+        List<IDataflow<IArtifact>> ret = new ArrayList<>();
+        for (IDataflow<IArtifact> child : children) {
+            System.out.println("ZIO PEO");
+        }
+        return ret;
+    }
+
 }

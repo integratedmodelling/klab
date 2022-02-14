@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.dataflow;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -64,6 +65,7 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.IVariable;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
+import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.api.services.IConfigurationService;
@@ -1059,8 +1061,10 @@ public class Actuator implements IActuator {
 
     protected String encodeBody(int offset, String ofs) {
 
+        Collection<IDataflow<IArtifact>> children = dataflow.childrenOf(this);
+        
         boolean hasBody = actuators.size() > 0 || computationStrategy.size() > 0 || mediationStrategy.size() > 0
-                || mode == Mode.RESOLUTION;
+                || mode == Mode.RESOLUTION || children.size() > 0;
 
         String ret = "";
 

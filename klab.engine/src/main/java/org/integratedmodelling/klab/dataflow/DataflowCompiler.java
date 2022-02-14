@@ -439,9 +439,13 @@ public class DataflowCompiler {
 						child.setObservable(this.observable);
 						child.setName(observable.getReferenceName());
 						if (models.size() > 0) {
-							child.setAlias(models.iterator().next().model.getCompatibleOutput(
-									inherentAttribute == null ? observable : (Observable) inherentAttribute,
-									getDataflowContext(), monitor).getName());
+						    IObservable compatibleOutput = models.iterator().next().model.getCompatibleOutput(
+                                    inherentAttribute == null ? observable : (Observable) inherentAttribute,
+                                    getDataflowContext(), monitor);
+						    if (compatibleOutput != null) {
+						        // null in derived observables such as "change in"
+						        child.setAlias(compatibleOutput.getName());
+						    }
 						}
 						child.setType(this.observable.getArtifactType());
 						child.setExport(true);
