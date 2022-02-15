@@ -12,7 +12,6 @@ import java.util.logging.Level;
 
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IServiceCall;
-import org.integratedmodelling.klab.api.data.general.IStructuredTable;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.utils.CastUtils;
@@ -37,6 +36,7 @@ public class Prototype implements IPrototype {
 		public String defaultValue = null;
 		public Set<String> enumValues = new HashSet<>();
 		public String label = null;
+		public String unit = null;
 
 		public ArgumentImpl() {
 		}
@@ -165,6 +165,11 @@ public class Prototype implements IPrototype {
 		public void setExpression(boolean expression) {
 			this.expression = expression;
 		}
+
+        @Override
+        public String getUnit() {
+            return this.unit;
+        }
 
 	}
 

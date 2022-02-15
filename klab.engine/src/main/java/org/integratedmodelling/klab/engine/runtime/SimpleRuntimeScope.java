@@ -715,7 +715,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 
 	@Override
 	public <T extends IArtifact> T resolve(IObservable observable, IDirectObservation context, ITaskTree<?> task,
-			Mode mode, IDataflow<?> parentDataflow) {
+			Mode mode, IActuator parentDataflow) {
 		// TODO Auto-generated method stub
 		return null;
 	}

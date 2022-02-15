@@ -16,9 +16,10 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
+import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
-public class BaseFlowWaterVolumeResolver implements IResolver<IProcess>, IExpression {
+public class BaseFlowWaterVolumeResolver extends AbstractContextualizer implements IResolver<IProcess>, IExpression {
 
     @Override
     public Type getType() {
@@ -28,19 +29,19 @@ public class BaseFlowWaterVolumeResolver implements IResolver<IProcess>, IExpres
     @Override
     public IProcess resolve(IProcess baseflowProcess, IContextualizationScope context) throws KlabException {
     	
-        IState netInfiltratedWaterVolumeState = context.getArtifact("net_infiltrated_water_volume", IState.class);
-        IState infiltratedWaterVolumeState = context.getArtifact("infiltrated_water_volume", IState.class);
-        IState streamPresenceState = context.getArtifact("presence_of_stream", IState.class);
-        IState flowdirectionState = context.getArtifact("flow_directions_d8", IState.class);
+        IState netInfiltratedWaterVolumeState = getInput("net_infiltrated_water_volume", IState.class);
+        IState infiltratedWaterVolumeState = getInput("infiltrated_water_volume", IState.class);
+        IState streamPresenceState = getInput("presence_of_stream", IState.class);
+        IState flowdirectionState = getInput("flow_directions_d8", IState.class);
 
         GeotoolsUtils.INSTANCE.dumpToRaster(context, "Baseflow", netInfiltratedWaterVolumeState, infiltratedWaterVolumeState,
                 streamPresenceState, flowdirectionState);
 
-        IState baseflowWaterVolumeState = context.getArtifact("base_flow_water_volume", IState.class);
+        IState baseflowWaterVolumeState = getOutput("base_flow_water_volume", IState.class);
         TaskMonitor taskMonitor = new TaskMonitor(context.getMonitor());
         taskMonitor.setTaskName("Baseflow");
-        if (flowdirectionState != null && streamPresenceState != null && netInfiltratedWaterVolumeState != null
-                && infiltratedWaterVolumeState != null) {
+//        if (flowdirectionState != null && streamPresenceState != null && netInfiltratedWaterVolumeState != null
+//                && infiltratedWaterVolumeState != null) {
             OmsBaseflowWaterVolume b = new OmsBaseflowWaterVolume();
             try {
                 GridCoverage2D flowGc = getGridCoverage(context, flowdirectionState, null);
@@ -62,9 +63,9 @@ public class BaseFlowWaterVolumeResolver implements IResolver<IProcess>, IExpres
             }
 
             GeotoolsUtils.INSTANCE.dumpToRaster(context, "Baseflow", baseflowWaterVolumeState);
-        } else {
-            taskMonitor.errorMessage("Can't proceed with null input maps.");
-        }
+//        } else {
+//            taskMonitor.errorMessage("Can't proceed with null input maps.");
+//        }
         return baseflowProcess;
     }
 

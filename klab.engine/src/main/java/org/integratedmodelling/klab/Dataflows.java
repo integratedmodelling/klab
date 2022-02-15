@@ -14,10 +14,10 @@ import org.integratedmodelling.kdl.api.IKdlDataflow;
 import org.integratedmodelling.kdl.kdl.Model;
 import org.integratedmodelling.kdl.model.Kdl;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
-import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
-import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
+import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.services.IDataflowService;
+import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.dataflow.DataflowCompiler;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -83,9 +83,9 @@ public enum Dataflows implements IDataflowService {
 	}
 
 //	@Override
-	public Dataflow compile(String name, IResolutionScope scope, Dataflow parentDataflow) throws KlabException {
+	public Dataflow compile(String name, IResolutionScope scope, IActuator parentDataflow) throws KlabException {
 
-		DataflowCompiler compiler = new DataflowCompiler(name, scope, parentDataflow);
+		DataflowCompiler compiler = new DataflowCompiler(name, scope, (Actuator)parentDataflow);
 
 		if (((ResolutionScope) scope).getObserver() != null) {
 			compiler = compiler.withResolvable(((ResolutionScope) scope).getObserver());

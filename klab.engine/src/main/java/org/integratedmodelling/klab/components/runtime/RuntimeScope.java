@@ -560,7 +560,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
     @Override
     public <T extends IArtifact> T resolve(IObservable observable, IDirectObservation observation,
             ITaskTree<?> task,
-            Mode mode, IDataflow<?> parentDataflow) {
+            Mode mode, IActuator parentDataflow) {
 
         /*
          * preload all the possible resolvers in the wider scope before specializing the scope to
@@ -595,8 +595,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
             if (scope.getCoverage().isRelevant()) {
                 dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + task.getId(),
-                        scope,
-                        (Dataflow) parentDataflow);
+                        scope, parentDataflow);
                 pairs.add(new Pair<>(dataflow.getCoverage(), dataflow));
             }
         }

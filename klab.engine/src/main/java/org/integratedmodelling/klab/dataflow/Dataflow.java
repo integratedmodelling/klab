@@ -93,10 +93,6 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
     private IDirectObservation relationshipSource;
     private IDirectObservation relationshipTarget;
 
-    // this could simply be the "dataflow" in the parent actuator but it's clearer
-    // this way.
-    private Dataflow parent;
-    private List<IDataflow<IArtifact>> children = new ArrayList<>();
 
     /**
      * Each dataflow used to resolve subjects within this one is recorded here with all the subjects
@@ -164,14 +160,14 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
     private boolean primary;
 
     private Dataflow(Dataflow parent) {
-        this.parent = parent;
+        this.parentDataflow = parent;
     }
 
-    public Dataflow(ISession session, Dataflow parent) {
+    public Dataflow(ISession session, Actuator parent) {
         this.session = session;
-        this.parent = parent;
-        if (this.parent != null) {
-            this.parent.children.add(this);
+        this.parentDataflow = parent;
+        if (this.parentDataflow != null) {
+            this.parentDataflow.childDataflows.add(this);
         }
     }
 
@@ -904,7 +900,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
     @Override
     public List<IDataflow<IArtifact>> getChildren() {
-        return children;
+        return childDataflows;
     }
 
     public Dataflow setPrimary(boolean primary) {
@@ -914,11 +910,11 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
     @Override
     public IDataflow<IArtifact> getRootDataflow() {
-        Dataflow ret = this;
-        while(ret.parent != null) {
-            ret = ret.parent;
+        Actuator ret = this;
+        while(ret.parentDataflow != null) {
+            ret = ret.parentDataflow;
         }
-        return ret;
+        return (Dataflow)ret;
     }
     
     @Override
@@ -934,7 +930,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
      */
     public Collection<IDataflow<IArtifact>> childrenOf(Actuator actuator2) {
         List<IDataflow<IArtifact>> ret = new ArrayList<>();
-        for (IDataflow<IArtifact> child : children) {
+        for (IDataflow<IArtifact> child : childDataflows) {
             System.out.println("ZIO PEO");
         }
         return ret;

@@ -123,7 +123,7 @@ class ViewScope {
      * @param action
      * @param identity2 
      * @param appId 
-     * @param parent
+     * @param parentDataflow
      * @return
      */
     public ViewPanel createPanel(Action action, String appId, IActorIdentity<?> identity) {

@@ -301,7 +301,9 @@ public class TableProcessor {
             IContextualizationScope scope) {
         this.style = style;
         this.valueField = valueField;
-        this.valueType = scope.getTargetSemantics().getArtifactType();
+        this.valueType = scope == null || scope.getTargetSemantics() == null
+                ? Type.NUMBER
+                : scope.getTargetSemantics().getArtifactType();
         this.aggregator = aggregator;
         this.scope = scope;
 

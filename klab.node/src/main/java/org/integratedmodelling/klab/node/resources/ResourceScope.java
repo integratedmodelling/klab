@@ -35,7 +35,6 @@ import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IAgent;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
-import org.integratedmodelling.klab.api.provenance.IArtifact.ValuePresentation;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.IEventBus;
@@ -644,7 +643,7 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
 
 	@Override
 	public <T extends IArtifact> T resolve(IObservable observable, IDirectObservation context, ITaskTree<?> task,
-			Mode mode, IDataflow<?> dataflow) {
+			Mode mode, IActuator dataflow) {
 		// TODO Auto-generated method stub
 		return null;
 	}

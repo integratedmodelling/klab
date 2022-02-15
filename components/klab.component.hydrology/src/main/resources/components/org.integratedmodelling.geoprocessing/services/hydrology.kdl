@@ -355,10 +355,12 @@ export process baseflowcalc
 {
 	import number net_infiltrated_water_volume
 		"The net infiltrated water volume."
+		unit mm
 
 	import number infiltrated_water_volume
 		"The infiltrated water volume."
-
+		unit mm
+		
 	import boolean presence_of_stream
 		"The marker of stream network presence." 
 		
@@ -367,7 +369,8 @@ export process baseflowcalc
 		
 	export number base_flow_water_volume
 		"TODO"
-
+		unit mm
+		
 	geometry T1S2
 
 	class org.integratedmodelling.geoprocessing.hydrology.BaseFlowWaterVolumeResolver
@@ -392,12 +395,15 @@ export process infiltratedcalc
 		
 	import number potential_evapotranspired_water_volume
 		"The potential evapotranspiration water volume."
+		unit mm
 
 	import number rainfall_volume
 		"The liquid precipitation volume."
-
+		unit mm
+		
 	import number runoff_water_volume
 		"The marker of stream network presence." 
+		unit mm
 		
 	import boolean presence_of_stream
 		"The marker of stream network presence." 
@@ -407,9 +413,11 @@ export process infiltratedcalc
 
 	export number net_infiltrated_water_volume
 		"TODO"
-	
+		unit mm
+		
 	export number infiltrated_water_volume
 		"TODO"
+		unit mm
 		
 	geometry T1S2
 
@@ -425,21 +433,27 @@ export process petcalc
 	
 	import number maximum_temperature
 		"TODO"
+		unit Celsius
 	
 	import number minimum_temperature
 		"TODO"
-	
+		unit Celsius
+		
 	import number atmospheric_temperature
 		"TODO"
-	
+		unit Celsius
+		
 	import number solar_radiation
 		"TODO"
+		unit MJ/(m^2*day)
 		
 	import number rainfall_volume
 		"The liquid precipitation volume."
+		unit mm
 
 	export number potential_evapotranspired_water_volume
 		"TODO"
+		unit mm
 		
 	geometry T1S2
 
@@ -453,7 +467,8 @@ export process scsrunoffcalc
 		
 	import number rainfall_volume
 		"The liquid precipitation volume."
-
+		unit mm
+		
 	import number number_of_storm_events
 		"TODO"
 	
@@ -465,6 +480,7 @@ export process scsrunoffcalc
 
 	export number runoff_water_volume
 		"TODO"
+		unit mm
 		
 	geometry T1S2
 

@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.xtext.nodemodel.ICompositeNode;
+import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.integratedmodelling.kdl.api.IKdlActuator;
 import org.integratedmodelling.kdl.api.IKdlAnnotation;
 import org.integratedmodelling.kdl.api.IKdlComputation;
@@ -38,6 +40,7 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
 	String javaClass;
 	String label;
 	Type type;
+	String unit;
 
 	boolean exported = false;
 	boolean imported = false;
@@ -83,7 +86,12 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
 		this.isExpression = o.isExpression();
 		this.isFilter = o.isFilter();
 		this.setResolution(o.getType().equals("resolve"));
-
+		
+		if (o.getUnit() != null) {
+		    ICompositeNode node = NodeModelUtils.getNode(o.getUnit());
+            this.unit = node.getText().trim();
+		}
+		
 		for (String s : o.getEnumValues()) {
 			this.enumValues.add(s);
 		}
@@ -453,5 +461,10 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
 	public void setResolution(boolean isResolution) {
 		this.isResolution = isResolution;
 	}
+
+    @Override
+    public String getUnit() {
+        return unit;
+    }
 
 }

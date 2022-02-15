@@ -15,9 +15,10 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
+import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
-public class ScsRunoffResolver implements IResolver<IProcess>, IExpression {
+public class ScsRunoffResolver extends AbstractContextualizer implements IResolver<IProcess>, IExpression {
 
     @Override
     public Type getType() {
@@ -26,20 +27,22 @@ public class ScsRunoffResolver implements IResolver<IProcess>, IExpression {
 
     @Override
     public IProcess resolve(IProcess runoffProcess, IContextualizationScope context) throws KlabException {
+        
         TaskMonitor taskMonitor = new TaskMonitor(context.getMonitor());
         taskMonitor.setTaskName("SCS Runoff");
 
-        IState rainfallVolumeState = context.getArtifact("rainfall_volume", IState.class);
-        IState streamPresenceState = context.getArtifact("presence_of_stream", IState.class);
-        IState curveNumberState = context.getArtifact("curve_number", IState.class);
+        IState rainfallVolumeState = getInput("rainfall_volume", IState.class);
+        IState streamPresenceState = getInput("presence_of_stream", IState.class);
+        IState curveNumberState = getInput("curve_number", IState.class);
 
-        if (rainfallVolumeState != null && streamPresenceState != null && curveNumberState != null) {
-            IState numberOfEventsState = context.getArtifact("number_of_storm_events", IState.class);
+//        if (rainfallVolumeState != null && streamPresenceState != null && curveNumberState != null) {
+            
+            IState numberOfEventsState = getInput("number_of_storm_events", IState.class);
             if (numberOfEventsState == null) {
                 context.getMonitor().warn("No number of events available, default to 1.");
             }
 
-            IState runoffState = context.getArtifact("runoff_water_volume", IState.class);
+            IState runoffState = getOutput("runoff_water_volume", IState.class);
 
             OmsScsRunoff scsRunoff = new OmsScsRunoff();
             scsRunoff.pm = taskMonitor;
@@ -58,7 +61,7 @@ public class ScsRunoffResolver implements IResolver<IProcess>, IExpression {
 
             GeotoolsUtils.INSTANCE.dumpToRaster(context, "ScsRunoff", rainfallVolumeState, streamPresenceState, curveNumberState,
                     runoffState, numberOfEventsState);
-        }
+//        }
         return runoffProcess;
     }
 

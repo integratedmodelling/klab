@@ -70,7 +70,7 @@ public class DataflowCompiler {
 	private String name;
 	private DirectObservation context;
 	private IResolutionScope scope;
-	private Dataflow parentDataflow;
+	private Actuator parentDataflow;
 
 	/*
 	 * keep the observables of each merged model to create proper references.
@@ -121,7 +121,7 @@ public class DataflowCompiler {
 		}
 	}
 
-	public DataflowCompiler(String name, IResolutionScope scope, Dataflow parentDataflow) {
+	public DataflowCompiler(String name, IResolutionScope scope, Actuator parentDataflow) {
 		this.name = name;
 		this.scope = scope;
 		this.context = (DirectObservation) scope.getContext();

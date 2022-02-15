@@ -44,6 +44,8 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IExtensionService;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.components.runtime.RuntimeScope;
+import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.documentation.style.StyleDefinition;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.code.Expression;
@@ -203,6 +205,12 @@ public enum Extensions implements IExtensionService {
 					throw new KlabInternalErrorException(e);
 				}
 			}
+			
+            if (ret instanceof AbstractContextualizer && scope instanceof RuntimeScope) {
+                ((AbstractContextualizer)ret).setPrototype(prototype);
+                ((AbstractContextualizer)ret).setScope((RuntimeScope)scope);
+            }
+			
 		}
 
 		return ret;
