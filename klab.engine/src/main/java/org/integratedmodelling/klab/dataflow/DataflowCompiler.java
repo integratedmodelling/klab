@@ -342,7 +342,7 @@ public class DataflowCompiler {
 		Object inlineValue;
 		ResolvedArtifact resolvedArtifact;
 		Strategy strategy = Strategy.DIRECT;
-		List<Observable> deferredObservables = new ArrayList<>();
+        List<Observable> deferredObservables = new ArrayList<>();
 
 		public String toString() {
 			return (root ? "ROOT " : "") + ("[" + children.size() + "]")
