@@ -724,6 +724,7 @@ public class Resolver {
                                 Observable deferred = new Observable(
                                         (Observable) model.getObservables().get(0));
                                 deferred.setModelReference(model.getName());
+                                deferred.setDeferredTarget(observable);
                                 return resolveConcrete(deferred, parentScope, resolvedPredicates,
                                         resolvedPredicatesContext, mode);
                             }

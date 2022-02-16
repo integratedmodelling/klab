@@ -110,6 +110,8 @@ public class ObservableBuilder implements IObservable.Builder {
 
 	private Observable incarnatedAbstractObservable;
 
+    private Observable deferredTarget;
+
 	public static ObservableBuilder getBuilder(IObservable observable, IMonitor monitor) {
 		return new ObservableBuilder((Observable) observable, monitor);
 	}
@@ -166,7 +168,8 @@ public class ObservableBuilder implements IObservable.Builder {
 //       NO! don't carry this around. Needs an explicit .named() call. this.statedName = observable.getStatedName();
 		this.annotations.addAll(observable.getAnnotations());
 		this.incarnatedAbstractObservable = observable.incarnatedAbstractObservable;
-
+		this.deferredTarget = observable.getDeferredTarget();
+		
 		for (IConcept role : Roles.INSTANCE.getDirectRoles(observable.getType())) {
 			this.roles.add(role);
 		}
@@ -210,7 +213,8 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.statedName = other.statedName;
 		this.dereified = other.dereified;
 		this.incarnatedAbstractObservable = other.incarnatedAbstractObservable;
-
+		this.deferredTarget = other.deferredTarget;
+		
 		checkTrivial();
 	}
 
@@ -476,6 +480,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		ret.optional = this.optional;
 		ret.mustContextualize = mustContextualize;
 		ret.annotations.addAll(annotations);
+		ret.deferredTarget = deferredTarget;
 
 		return ret;
 	}
@@ -726,7 +731,7 @@ public class ObservableBuilder implements IObservable.Builder {
 	void checkTrivial() {
 		this.isTrivial = causant == null && adjacent == null && caused == null && comparison == null
 				&& compresent == null && context == null && inherent == null && cooccurrent == null & goal == null
-				&& traits.isEmpty() && roles.isEmpty();
+				&& traits.isEmpty() && roles.isEmpty() && deferredTarget == null;
 	}
 
 	@Override
@@ -2200,6 +2205,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		ret.setFluidUnits(this.fluidUnits);
 		ret.setGlobal(this.global);
 		ret.setIncarnatedAbstractObservable(this.incarnatedAbstractObservable);
+		ret.setDeferredTarget(this.deferredTarget);
 		
 		if (unitStatement != null) {
 			/* TODO CHECK */

@@ -377,7 +377,7 @@ public class Client extends RestTemplate implements IClient {
 				// Object error = map.get("error");
 				
 	            dumpRequest(url, headers, data);
-				throw new KlabIOException("remote  exception: " + (message == null ? exception : message));
+				throw new KlabIOException("remote exception: " + (message == null ? exception : message));
 			}
 
 			if (cls.isAssignableFrom(response.getBody().getClass())) {
@@ -393,7 +393,7 @@ public class Client extends RestTemplate implements IClient {
 			}
 		} catch (RestClientException e) {
 		    
-		    System.out.println("ANDATA MALE: REST exception: " + e.getMessage());
+		    System.out.println("ANDATA MALE: REST  exception: " + e.getMessage());
 		    dumpRequest(url, headers, data);
 			throw new KlabIOException(e);
 		}

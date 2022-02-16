@@ -44,6 +44,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -61,9 +62,23 @@ public class ResourceController {
 
     @PostMapping(value = API.NODE.RESOURCE.CONTEXTUALIZE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResourceReference getUrnData(@RequestBody ResourceContextualizationRequest request, Principal principal) {
+    public ResourceReference getUrnData(@RequestBody ResourceContextualizationRequest request,
+            Principal principal) {
         IGeometry geometry = Geometry.create(request.getGeometry());
-        IObservable semantics = request.getSemantics() == null ? null : Observables.INSTANCE.declare(request.getSemantics());
+        IObservable semantics = request.getSemantics() == null
+                ? null
+                : Observables.INSTANCE.declare(request.getSemantics());
+
+        /*
+         * TODO should add the content length header to the response, otherwise long messages may
+         * randomly fail with a "Premature end of chunk coded message body: closing chunk expected"
+         * exception.
+         * 
+         * HttpHeaders headers = new HttpHeaders(); headers.set(HttpHeaders.CONTENT_LENGTH,
+         * String.valueOf(new ObjectMapper().writeValueAsString(map).length())); return new
+         * ResponseEntity<Map<String, ContactInfo>>(map, headers, HttpStatus.CREATED);
+         */
+
         return resourceManager.contextualizeResource(request.getResource(), geometry, semantics);
     }
 
@@ -88,6 +103,16 @@ public class ResourceController {
             throw new SecurityException(request.getUrn());
         }
         // TODO also check that the principal can access the adapter
+
+        /*
+         * TODO should add the content length header to the response, otherwise long messages may
+         * randomly fail with a "Premature end of chunk coded message body: closing chunk expected"
+         * exception.
+         * 
+         * HttpHeaders headers = new HttpHeaders(); headers.set(HttpHeaders.CONTENT_LENGTH,
+         * String.valueOf(new ObjectMapper().writeValueAsString(map).length())); return new
+         * ResponseEntity<Map<String, ContactInfo>>(map, headers, HttpStatus.CREATED);
+         */
 
         // TODO log and record
         Logging.INSTANCE.info("authorized access to " + request.getUrn() + " by "
@@ -125,7 +150,8 @@ public class ResourceController {
      */
     @GetMapping(value = API.NODE.RESOURCE.LIST, produces = "application/json")
     @ResponseBody
-    public List<ResourceReference> listResources(Principal principal, @RequestParam(required = false) String query) {
+    public List<ResourceReference> listResources(Principal principal,
+            @RequestParam(required = false) String query) {
         List<ResourceReference> ret = new ArrayList<>();
         if (query != null) {
             for (Match match : resourceManager.queryResources(query)) {
@@ -142,7 +168,8 @@ public class ResourceController {
         } else {
             for (String urn : resourceManager.getOnlineResources()) {
                 if (resourceManager.canAccess(urn, (EngineAuthorization) principal)) {
-                    IResource resource = resourceManager.getResource(urn, ((EngineAuthorization) principal).getGroups());
+                    IResource resource = resourceManager.getResource(urn,
+                            ((EngineAuthorization) principal).getGroups());
                     if (resource != null) {
                         ret.add(((Resource) resource).getReference());
                     }
@@ -177,9 +204,11 @@ public class ResourceController {
      */
     @PostMapping(API.NODE.RESOURCE.SUBMIT_FILES)
     @ResponseBody
-    public TicketResponse.Ticket submitResource(@RequestParam("file") MultipartFile file, Principal principal) {
+    public TicketResponse.Ticket submitResource(@RequestParam("file") MultipartFile file,
+            Principal principal) {
         String fileName = fileStorageService.storeFile(file);
-        ITicket ticket = resourceManager.publishResource(null, new File(fileName), (EngineAuthorization) principal,
+        ITicket ticket = resourceManager.publishResource(null, new File(fileName),
+                (EngineAuthorization) principal,
                 Klab.INSTANCE.getRootMonitor());
         return TicketManager.encode(ticket);
     }
@@ -194,7 +223,8 @@ public class ResourceController {
      */
     @PostMapping(value = API.NODE.RESOURCE.SUBMIT_DESCRIPTOR, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public TicketResponse.Ticket submitResource(@RequestBody ResourceReference resource, Principal principal) {
+    public TicketResponse.Ticket submitResource(@RequestBody ResourceReference resource,
+            Principal principal) {
         ITicket ticket = resourceManager.publishResource(resource, null, (EngineAuthorization) principal,
                 Klab.INSTANCE.getRootMonitor());
         return TicketManager.encode(ticket);
@@ -235,7 +265,8 @@ public class ResourceController {
      */
     @DeleteMapping(value = API.NODE.RESOURCE.DELETE_URN)
     public boolean deleteResource(@PathVariable String urn, Principal principal) {
-        return resourceManager.deleteResource(urn, (EngineAuthorization) principal, Klab.INSTANCE.getRootMonitor());
+        return resourceManager.deleteResource(urn, (EngineAuthorization) principal,
+                Klab.INSTANCE.getRootMonitor());
     }
 
     /**
@@ -251,8 +282,10 @@ public class ResourceController {
      * @return a ticket for
      */
     @PutMapping(value = API.NODE.RESOURCE.UPDATE_URN, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void updateResource(@PathVariable String urn, @RequestBody ResourceReference resource, Principal principal) {
-        resourceManager.updateResource(urn, resource, (EngineAuthorization) principal, Klab.INSTANCE.getRootMonitor());
+    public void updateResource(@PathVariable String urn, @RequestBody ResourceReference resource,
+            Principal principal) {
+        resourceManager.updateResource(urn, resource, (EngineAuthorization) principal,
+                Klab.INSTANCE.getRootMonitor());
     }
 
     /**
@@ -268,9 +301,11 @@ public class ResourceController {
      * @return a ticket for
      */
     @PostMapping(value = API.NODE.RESOURCE.UPDATE_URN, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public TicketResponse.Ticket updateResource(@PathVariable String urn, @RequestBody ResourceOperationRequest resource,
+    public TicketResponse.Ticket updateResource(@PathVariable String urn,
+            @RequestBody ResourceOperationRequest resource,
             Principal principal) {
-        return resourceManager.updateResource(urn, resource, (EngineAuthorization) principal, Klab.INSTANCE.getRootMonitor());
+        return resourceManager.updateResource(urn, resource, (EngineAuthorization) principal,
+                Klab.INSTANCE.getRootMonitor());
     }
 
 }
