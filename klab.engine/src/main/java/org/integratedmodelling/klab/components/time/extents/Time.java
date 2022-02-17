@@ -1527,4 +1527,9 @@ public class Time extends Extent implements ITime {
         return (double) periods + ((double) leftover / (double) resolution.getSpan());
     }
 
+    @Override
+    public boolean isDistributed() {
+        return size() > 1 || isRegular() || this.getTimeType() == ITime.Type.GRID;
+    }
+
 }

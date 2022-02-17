@@ -869,7 +869,7 @@ public enum Observables implements IObservableService {
             return (Observable) observable;
         }
 
-        return (Observable) new ObservableBuilder((Observable) observable, monitor).within(newContext)
+        return (Observable) new ObservableBuilder((Observable) observable, monitor).withUrl(((Observable)observable).getUrl()).within(newContext)
                 .named(originalName, originalReferenceName).buildObservable();
     }
 

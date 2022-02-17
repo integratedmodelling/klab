@@ -345,4 +345,9 @@ public class EnumeratedExtent extends Extent implements IEnumeratedExtent {
         return concepts;
     }
 
+    @Override
+    public boolean isDistributed() {
+        return size() > 1;
+    }
+
 }

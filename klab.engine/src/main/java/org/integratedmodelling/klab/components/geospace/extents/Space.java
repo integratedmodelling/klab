@@ -1180,4 +1180,9 @@ public class Space extends Extent implements ISpace {
         return getShape().getDimensionSize(unit);
     }
 
+    @Override
+    public boolean isDistributed() {
+        return size() > 1 || isRegular();
+    }
+
 }

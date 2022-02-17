@@ -334,6 +334,7 @@ public enum KimKnowledgeProcessor {
         IObservable.Builder builder = ObservableBuilder.getBuilder(main, monitor);
 
         ret.setUrl(concept.getURI());
+        builder.withUrl(concept.getURI());
         
         boolean unitsSet = false;
         

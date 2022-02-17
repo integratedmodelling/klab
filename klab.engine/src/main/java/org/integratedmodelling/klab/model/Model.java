@@ -873,7 +873,7 @@ public class Model extends KimObject implements IModel {
 			/*
 			 * if we get here, we have an incompatible unit
 			 */
-			String err = getName() + ": unit " + statedUnit + " is incompatible with this observable in a "
+			String err = getName() + ": unit " + statedUnit + " is incompatible with a "
 					+ ((Geometry) this.geometry).getLabel() + " context"
 					+ (baseUnit.isCompatible(contextualization.getChosenUnit())
 							? ". You may add @intensive/@extensive annotations to force dimensionality."
