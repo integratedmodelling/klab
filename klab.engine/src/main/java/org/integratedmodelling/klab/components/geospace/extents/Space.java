@@ -790,7 +790,7 @@ public class Space extends Extent implements ISpace {
         }
 
         if (generic) {
-            return regular ? (forceGrid ? "0x03A32" : "0x03A31") : (forceGrid ? "0x03C32" : "0x03C31");
+            return regular ? (forceGrid ? "\u03A32" : "\u03A31") : (forceGrid ? "\u03C32" : "\u03C31");
         }
 
         return shape == null ? (forceGrid ? "S2" : "s1") : getShape().encode();

@@ -677,10 +677,6 @@ public class Model extends KimObject implements IModel {
 		if (observables.size() == 0 || observables.get(0) == null) {
 			return;
 		}
-
-		if (getName().equals("aries.global.water.yield.weather-resolver")) {
-		    System.out.println("POPOPOP");
-		}
 		
 		Map<String, IArtifact.Type> typechain = new HashMap<>();
 
