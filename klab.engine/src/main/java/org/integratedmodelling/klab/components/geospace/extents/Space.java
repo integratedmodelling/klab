@@ -72,6 +72,8 @@ public class Space extends Extent implements ISpace {
     private boolean consistent = false;
     private String gridSpecs = null;
     private boolean generic = false;
+    // used only if generic, to remember a regular statement from the encoding geometry
+    private boolean regular = false;
     private boolean forceGrid;
 
     private static Space EMPTY_SPACE = new Space(Shape.empty());
@@ -163,6 +165,10 @@ public class Space extends Extent implements ISpace {
         }
 
         Space ret = shape == null ? new Space() : create(shape);
+
+        if (generic && dimension.isRegular()) {
+            ret.regular = true;
+        }
 
         if ((ret.generic = generic)) {
             if (ret.projection == null) {
@@ -768,7 +774,7 @@ public class Space extends Extent implements ISpace {
         }
 
         if (grid != null) {
-            
+
             return "S2("
                     + grid.getXCells() + "," + grid.getYCells() + "){" + grid.getEnvelope().encode() + (opts
                             .contains(Encoding.SKIP_GRID_SHAPE)
@@ -776,13 +782,18 @@ public class Space extends Extent implements ISpace {
                                     : (",shape="
                                             + getShape().getWKB()))
                     + ",proj=" + getProjection().getSimpleSRS() + "}";
-            
+
         } else if (features != null) {
             return "s1(" + features.size() + "){proj=" + getProjection().getSimpleSRS() + ","
                     + getEnvelope().encode()
                     + "}";
         }
-        return shape == null ? (forceGrid ? "S2(0)" : "s1(0)") : getShape().encode();
+
+        if (generic) {
+            return regular ? (forceGrid ? "0x03A32" : "0x03A31") : (forceGrid ? "0x03C32" : "0x03C31");
+        }
+
+        return shape == null ? (forceGrid ? "S2" : "s1") : getShape().encode();
     }
 
     @Override

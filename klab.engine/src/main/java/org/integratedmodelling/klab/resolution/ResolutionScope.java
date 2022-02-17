@@ -515,29 +515,29 @@ public class ResolutionScope implements IResolutionScope {
 		return ret;
 	}
 
-	/*
-	 * take all resolved predicates and finalize them in the scope, removing any
-	 * alternatives
-	 */
-	private void resolve(Map<IConcept, IConcept> resolvedPredicates) {
-
-		List<Pair<IConcept, IConcept>> toRemove = new ArrayList<>();
-		for (IConcept p : this.roles.keySet()) {
-			for (IConcept r : resolvedPredicates.keySet()) {
-				if (r.is(p)) {
-					toRemove.add(new Pair<>(p, resolvedPredicates.get(r)));
-					break;
-				}
-			}
-		}
-
-		for (Pair<IConcept, IConcept> p : toRemove) {
-			this.roles.put(p.getFirst(), Sets.newHashSet(p.getSecond()));
-		}
-
-		resolvedPredicates.putAll(observable.getResolvedPredicates());
-
-	}
+//	/*
+//	 * take all resolved predicates and finalize them in the scope, removing any
+//	 * alternatives
+//	 */
+//	private void resolve(Map<IConcept, IConcept> resolvedPredicates) {
+//
+//		List<Pair<IConcept, IConcept>> toRemove = new ArrayList<>();
+//		for (IConcept p : this.roles.keySet()) {
+//			for (IConcept r : resolvedPredicates.keySet()) {
+//				if (r.is(p)) {
+//					toRemove.add(new Pair<>(p, resolvedPredicates.get(r)));
+//					break;
+//				}
+//			}
+//		}
+//
+//		for (Pair<IConcept, IConcept> p : toRemove) {
+//			this.roles.put(p.getFirst(), Sets.newHashSet(p.getSecond()));
+//		}
+//
+//		resolvedPredicates.putAll(observable.getResolvedPredicates());
+//
+//	}
 
 	public ResolutionScope getChildScope(LogicalConnector connector) {
 		ResolutionScope ret = new ResolutionScope(this);
