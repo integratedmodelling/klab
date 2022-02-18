@@ -16,6 +16,7 @@ import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.klab.Models;
+import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -239,6 +240,7 @@ public class ResolutionScope implements IResolutionScope {
     private boolean occurrent = false;
     private Set<ObservedConcept> resolving = new HashSet<>();
     private Map<IConcept, Set<IConcept>> resolvedPredicatesContext = new HashMap<>();
+    private boolean deferToInherent;
 
     private void addResolvedScope(ObservedConcept concept, ResolutionScope scope) {
         List<ResolutionScope> slist = resolvedObservables.get(concept);
@@ -1298,6 +1300,15 @@ public class ResolutionScope implements IResolutionScope {
      */
     public Observable getDeferredObservableFor(Observable observable2) {
 
+        
+        if (this.deferToInherent) {
+            IConcept inherent = Observables.INSTANCE.getDirectInherentType(observable2.getType());
+            if (inherent != null) {
+                return Observable.promote(inherent);
+            }
+        }
+        
+        
         if (!observable2.is(Type.OBSERVABLE)) {
             // attribute resolvers and the like
             return null;
@@ -1517,6 +1528,12 @@ public class ResolutionScope implements IResolutionScope {
             return !resolutions.get(obs).isEmpty();
         }
         return false;
+    }
+
+    public ResolutionScope deferToInherent() {
+        ResolutionScope ret = new ResolutionScope(this, true);
+        ret.deferToInherent = true;
+        return ret;
     }
 
 }

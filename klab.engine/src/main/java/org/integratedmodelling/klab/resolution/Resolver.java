@@ -483,24 +483,48 @@ public class Resolver {
 
             /*
              * if coverage is empty and this is a resolution with a specializable context and it's
-             * not optional, try the extreme ratio of distributed specialized resolution.
+             * not optional, try the extreme ratio of distributed specialized resolution unless a
+             * specific inherent type is mentioned.
              */
-            if (coverage.isEmpty() && !observable.isOptional() && mode == Mode.RESOLUTION) {
+            if (coverage.isEmpty()) {
 
-                parentScope.getMonitor()
-                        .debug("direct resolution of mandatory dependency "
-                                + Observables.INSTANCE.getDisplayName(observable)
-                                + " failed: trying distributed resolution in specialized context");
+                if (Observables.INSTANCE.getDirectInherentType(observable.getType()) == null) {
 
-                Observable specialized = new Observable((Observable) observable);
-                specialized.setSpecialized(true);
+                    if (!observable.isOptional() && mode == Mode.RESOLUTION) {
+                        parentScope.getMonitor()
+                                .debug("direct resolution of mandatory dependency "
+                                        + Observables.INSTANCE.getDisplayName(observable)
+                                        + " failed: trying distributed resolution in specialized context");
 
-                ret = resolveConcrete((Observable) specialized, parentScope,
-                        ((Observable) specialized).getResolvedPredicates(),
-                        ((Observable) specialized).getResolvedPredicatesContext(), mode);
+                        Observable specialized = new Observable((Observable) observable);
+                        specialized.setSpecialized(true);
 
-                coverage = ret == null ? Coverage.empty(parentScope.getCoverage()) : ret.getCoverage();
+                        ret = resolveConcrete((Observable) specialized, parentScope,
+                                ((Observable) specialized).getResolvedPredicates(),
+                                ((Observable) specialized).getResolvedPredicatesContext(), mode);
 
+                        coverage = ret == null
+                                ? Coverage.empty(parentScope.getCoverage())
+                                : ret.getCoverage();
+
+                    }
+
+                } else {
+
+                    /*
+                     * try resolving within the inherent type, force deferring in the observable
+                     */
+                    Observable distributed = (Observable) observable.getBuilder(parentScope.getMonitor())
+                            .without(ObservableRole.INHERENT)
+                            .within(Observables.INSTANCE.getDirectInherentType(observable.getType()))
+                            .buildObservable();
+
+                    ret = resolveConcrete(distributed, parentScope,
+                            ((Observable) observable).getResolvedPredicates(),
+                            ((Observable) observable).getResolvedPredicatesContext(), mode);
+
+                    coverage = ret == null ? Coverage.empty(parentScope.getCoverage()) : ret.getCoverage();
+                }
             }
 
             if (coverage.isEmpty()) {

@@ -459,7 +459,7 @@ public class Model extends KimObject implements IModel {
 			for (int oo = 1; oo < observables.size(); oo++) {
 				IObservable obs = observables.get(oo);
 				if (obs != null && obs.is(Type.QUALITY) && !changed.contains(obs.getType())) {
-					if (Observables.INSTANCE.isAffectedBy(obs, getMainObservable())) {
+					if (Observables.INSTANCE.isAffectedBy(obs, getMainObservable()) || Observables.INSTANCE.isCreatedBy(obs, getMainObservable())) {
 						IObservable cobs = obs.getBuilder(monitor).as(UnarySemanticOperator.CHANGE).buildObservable();
 						toAdd.add(cobs);
 						this.localNames.put(cobs.getReferenceName(), cobs.getName());

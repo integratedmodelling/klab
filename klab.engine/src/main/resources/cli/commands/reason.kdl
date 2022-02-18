@@ -39,7 +39,7 @@ void restrictions
 
 void compare
 	"Cross-compare a set of concepts for specificity and compatibility. List concepts to
-	 compare as arguments; for complex declarations, use 'to' as separator."
+	 compare as arguments; for complex declarations, use 'vs.' as separator."
 {
 	optional boolean context 
 		"Use the currently set context type for logical contextualization"
@@ -47,8 +47,14 @@ void compare
 	class org.integratedmodelling.klab.cli.commands.reason.Compare
 }
 
+void affected
+	"Check if concept 1 is created or affected by concept 2. Use 'vs.' to separate complex declarations."
+{
+	class org.integratedmodelling.klab.cli.commands.reason.Affected
+}
+
 void contextualize
-	"Recontextualize a concept to another and describe it. Use 'to' as separator."
+	"Recontextualize a concept to another and describe it. Use 'vs.' as separator."
 {
 	class org.integratedmodelling.klab.cli.commands.reason.Contextualize
 }

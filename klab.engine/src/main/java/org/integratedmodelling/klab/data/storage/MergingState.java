@@ -210,7 +210,7 @@ public class MergingState extends State {
 
         if (!(index instanceof IScale)) {
             throw new KlabIllegalArgumentException(
-                    "MergingState: cannot merge states unless the locator is a scale");
+                    "MergingState: cannot merge states unless the locator is a scale: " + index);
         }
         IScale scale = (IScale) index;
 
