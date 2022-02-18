@@ -344,6 +344,7 @@ public enum KimKnowledgeProcessor {
         }
 
         if (concept.getCurrency() != null) {
+            unitsSet = true;
             builder = builder.withCurrency(concept.getCurrency());
         }
 

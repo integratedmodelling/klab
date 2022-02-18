@@ -11,6 +11,7 @@ import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IObservationGroup;
 import org.integratedmodelling.klab.api.observations.ISubjectiveObservation;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.engine.runtime.AbstractTask;
 import org.integratedmodelling.klab.engine.runtime.api.IModificationListener;
@@ -64,6 +65,18 @@ public class ObservationGroupView extends CountableObservation implements IObser
 				// reset the filtered list on modification
 				filtered = null;
 			}
+
+            @Override
+            public void onFirstNontrivialState(Object state, ITime currentTime) {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void onTemporalExtension(ITime time) {
+                // TODO Auto-generated method stub
+                
+            }
 		});
 		
 		filters.add(filter);

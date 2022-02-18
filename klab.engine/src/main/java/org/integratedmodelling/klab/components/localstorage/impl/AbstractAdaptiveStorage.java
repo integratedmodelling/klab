@@ -21,8 +21,11 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.common.Offset;
+import org.integratedmodelling.klab.components.runtime.observations.Observation;
+import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.engine.debugger.Debugger.Watcher;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
+import org.integratedmodelling.klab.engine.runtime.api.IModificationListener;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.scale.Extent;
@@ -266,12 +269,13 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
         Offset offsets = locator.as(Offset.class);
 
         if (offsets.length != geometry.getDimensions().size()) {
-            throw new KlabInternalErrorException("locator has different dimensionality than observation: should never happen");
+            throw new KlabInternalErrorException(
+                    "locator has different dimensionality than observation: should never happen");
         }
 
         long timeOffset = trivial ? 0 : offsets.pos[0];
         long sliceOffset = product(offsets.pos, trivial ? 0 : 1);
-        
+
         /*
          * To index the slice, use time end directly unless we're at initialization. Record start,
          * end and offset in state's scale in the slice.
@@ -292,28 +296,29 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
         } else {
             throw new KlabUnimplementedException("unexpected locator in mapped storage!");
         }
-        
+
         Slice slice = getSlice(locator);
-        
+
         /*
          * check for non-conformant time extent (!= to the extent of the slice): this means that the
          * requesting scale isn't the same as the native one, or that there have been in-between
          * timestep changes in the state due to processes or events operating at different scales.
          */
-//        if (!initialization && sliceOffset >= 0 && slice != null && !slice.isInitialization()
-//                && (slice.timestart != timeStart || slice.timeend != timeEnd)) {
-//            /*
-//             * TODO if needed, aggregate within the boundary of the requesting scale, otherwise keep
-//             * the latest value
-//             */
-//            NavigableMap<Long, Slice> aggregatable = slices.subMap(timeStart, false, timeEnd, true);
-//            if (aggregatable.isEmpty()) {
-//                Slice theSlice = slices.get(timeStart);
-//                // use state before start if existing, otherwise result is NaN
-//                return theSlice == null ? (slice == null ? null : slice.getAt(sliceOffset)) : theSlice.getAt(sliceOffset);
-//            }
-//            return aggregate(aggregatable, sliceOffset);
-//        }
+        // if (!initialization && sliceOffset >= 0 && slice != null && !slice.isInitialization()
+        // && (slice.timestart != timeStart || slice.timeend != timeEnd)) {
+        // /*
+        // * TODO if needed, aggregate within the boundary of the requesting scale, otherwise keep
+        // * the latest value
+        // */
+        // NavigableMap<Long, Slice> aggregatable = slices.subMap(timeStart, false, timeEnd, true);
+        // if (aggregatable.isEmpty()) {
+        // Slice theSlice = slices.get(timeStart);
+        // // use state before start if existing, otherwise result is NaN
+        // return theSlice == null ? (slice == null ? null : slice.getAt(sliceOffset)) :
+        // theSlice.getAt(sliceOffset);
+        // }
+        // return aggregate(aggregatable, sliceOffset);
+        // }
 
         return slice == null ? null : slice.getAt(sliceOffset);
     }
@@ -355,7 +360,8 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
         Offset offsets = locator.as(Offset.class);
 
         if (offsets.length != geometry.getDimensions().size()) {
-            throw new KlabInternalErrorException("locator has different dimensionality than observation: should never happen");
+            throw new KlabInternalErrorException(
+                    "locator has different dimensionality than observation: should never happen");
         }
 
         /*
@@ -369,7 +375,8 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
             time = ((IScale) locator).getTime();
         }
 
-        if (time != null && time.getTimeType() != ITime.Type.INITIALIZATION && time.getStart() != null && time.getEnd() != null) {
+        if (time != null && time.getTimeType() != ITime.Type.INITIALIZATION && time.getStart() != null
+                && time.getEnd() != null) {
             timeStart = time.getStart().getMilliseconds();
             timeEnd = time.getEnd().getMilliseconds();
         }
@@ -401,7 +408,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
                 // don't store anything until it's different from the previous slice.
                 return trivial ? sliceOffset : (sliceOffset * (timeOffset + 1));
             }
-            
+
             /*
              * if we get here, we need to store in a slice of our own unless we found the exact
              * timestep.
@@ -410,6 +417,11 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
                 slice = addSlice(timeOffset, timeStart, timeEnd, slice);
                 for (Consumer<ILocator> listener : this.listeners) {
                     listener.accept(locator);
+                }
+                if (this.state instanceof Observation && time != null) {
+                    for (IModificationListener listener : ((Observation) state).getModificationListeners()) {
+                        listener.onTemporalExtension(time);
+                    }
                 }
                 if (this.watches != null) {
                     for (Watcher watch : watches.values()) {
@@ -439,7 +451,8 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
     }
 
     private boolean equals(Object valueAt, T value) {
-        return (valueAt == null && value == null) || (valueAt != null && value != null && valueAt.equals(value));
+        return (valueAt == null && value == null)
+                || (valueAt != null && value != null && valueAt.equals(value));
     }
 
     private Slice getClosest(long timeSlice) {
@@ -515,9 +528,9 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
     public Slice getSlice(ILocator locator) {
 
         if (locator instanceof TimesliceLocator) {
-            return getSlice(((TimesliceLocator)locator).sliceIndex);
+            return getSlice(((TimesliceLocator) locator).sliceIndex);
         }
-        
+
         Offset offsets = locator.as(Offset.class);
         long timeOffset = trivial ? 0 : offsets.pos[0];
 
@@ -540,7 +553,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
         if (time != null && time.getFocus() != null) {
             timepoint = time.getFocus().getMilliseconds();
         } else if (time != null && time.getStart() != null && time.getEnd() != null) {
-//            timeStart = time.getStart().getMilliseconds();
+            // timeStart = time.getStart().getMilliseconds();
             timeEnd = time.getEnd().getMilliseconds();
             initialization = time.getTimeType() == ITime.Type.INITIALIZATION;
         }

@@ -348,6 +348,11 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	public void addModificationListener(IModificationListener listener) {
 		this.modificationListeners.add(listener);
 	}
+	
+    public Collection<IModificationListener> getModificationListeners() {
+        return this.modificationListeners;
+    }
+
 
 	public void evaluateChanges() {
 		// does nothing here; overridden in each final class
