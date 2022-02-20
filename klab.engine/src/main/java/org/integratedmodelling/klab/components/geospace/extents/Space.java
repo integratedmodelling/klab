@@ -352,7 +352,7 @@ public class Space extends Extent implements ISpace {
                         + "  into " + getClass().getCanonicalName());
 
     }
-
+    
     @Override
     public boolean isConsistent() {
         return consistent;
@@ -1081,7 +1081,8 @@ public class Space extends Extent implements ISpace {
                             if (((CellImpl) otherCell).getGrid().equals(this.grid)) {
                                 return otherCell;
                             }
-                            return this.grid.getCoveredExtent(otherCell);
+                            double[] center = otherCell.getCenter();
+                            return this.grid.covers(center) ? this.grid.getCellAt(center, false) : null;
                         }
                     }
                 } else if (locators[0] instanceof Number && !Utils.isFloatingPoint((Number) locators[0])) {

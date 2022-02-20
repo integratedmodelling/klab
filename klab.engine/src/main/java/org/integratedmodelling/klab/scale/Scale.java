@@ -13,13 +13,11 @@ import java.util.Map;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 
-import org.geotools.geometry.jts.Geometries;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.IGeometry;
-import org.integratedmodelling.klab.api.data.IGeometry.Encoding;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IQuantity;
@@ -39,12 +37,12 @@ import org.integratedmodelling.klab.common.Geometry.DimensionTarget;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.common.Offset;
 import org.integratedmodelling.klab.common.mediation.Unit;
-import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.utils.MultidimensionalCursor;
@@ -664,6 +662,23 @@ public class Scale implements IScale {
         return true;
     }
 
+    private void substituteExtent(IExtent extent) {
+
+        List<IExtent> exts = new ArrayList<>();
+        for (IExtent e : getExtents()) {
+            if (e.getType().equals(extent.getType())) {
+                exts.add(extent);
+            } else {
+                exts.add(e);
+            }
+        }
+
+        extents.clear();
+        extents.addAll(exts);
+        sort();
+
+    }
+
     /**
      * Add a missing extent or use the custom merge() function to inherit the usable info from the
      * passed one. Do not confuse this with the ones from ITopology.
@@ -714,6 +729,34 @@ public class Scale implements IScale {
         }
 
         sort();
+    }
+
+    /**
+     * If we have time and it does not "tick" at the passed transition, incorporate the transition
+     * so that the resulting scale will have grid time and tick at that transition. This will only
+     * be called for successive times during contextualization. Return whether the passed time has
+     * modified the scale.
+     * 
+     * @param time
+     * @return
+     */
+    public boolean mergeTransition(Dimension transition) {
+
+        if (transition.getType() != Type.TIME) {
+            throw new KlabIllegalArgumentException("trying to merge a non-temporal transition in a scale");
+        }
+        ITime time = getTime();
+        if (time != null) {
+            ITime trns = Time.promote(transition);
+            if (trns.getTimeType() != ITime.Type.INITIALIZATION) {
+                if (((Time) time).mergeTransition(transition)) {
+                    sort();
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /*
@@ -1259,7 +1302,7 @@ public class Scale implements IScale {
      * @return the fully specified geometry underlying this scale
      */
     public Geometry asGeometry(Encoding... options) {
-        
+
         /*
          * only cache the full geometry spec
          */
@@ -1269,7 +1312,7 @@ public class Scale implements IScale {
             }
             return this.geometry;
         }
-        
+
         return Geometry.create(encode(options));
     }
 

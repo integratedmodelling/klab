@@ -872,7 +872,7 @@ public class Actuator implements IActuator {
              * ensure we return a view if that's necessary
              */
             ret = scope.getObservationGroupView((Observable) observable, (IObservation) ret);
-         
+
         } else if (contextualizer instanceof IPredicateResolver) {
 
             /*
@@ -1008,40 +1008,12 @@ public class Actuator implements IActuator {
             }
         }
 
-        /**
-         * Rename in scope
-         */
-        // for (String key : localNames.keySet()) {
-        // if (ret.getArtifact(key) != null) {
-        // ret.rename(key, localNames.get(key));
-        // }
-        // }
-
         if (this.getType() == IArtifact.Type.PROCESS) {
             ret = ret.targetForChange();
         }
 
         return ret;
     }
-
-    // /**
-    // * Done above for the initialization run; this is called in the scheduler to ensure names are
-    // * appropriate for the actuator being run.
-    // *
-    // * @param scope
-    // * @return
-    // */
-    // public IRuntimeScope localizeNames(IRuntimeScope scope) {
-    //
-    // IRuntimeScope ret = scope.copy();
-    // for (IActuator input : getActuators()) {
-    // if (ret.getArtifact(input.getName()) != null) {
-    // // no effect if not aliased
-    // ret.rename(input.getName(), input.getAlias());
-    // }
-    // }
-    // return ret;
-    // }
 
     public String toString() {
         return "<" + getName()

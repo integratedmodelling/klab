@@ -141,7 +141,7 @@ public class MergingState extends State {
 
                 @Override
                 public void onFirstNontrivialState(Object state, ITime currentTime) {
-                           }
+                }
 
                 @Override
                 public void onTemporalExtension(ITime time) {
@@ -154,21 +154,19 @@ public class MergingState extends State {
 
     private void checkExtent(ITime time) {
 
-        System.out.println(time);
-        
-        // TODO add to time locators
-        
-        ObservationChange change = new ObservationChange();
-        change.setContextId(getScope().getRootSubject().getId());
-        change.setId(getId());
-        change.setTimestamp(time.getEnd().getMilliseconds());
-        change.setType(ObservationChange.Type.ValueChange);
-        ISession session = getScope().getMonitor().getIdentity()
-                .getParentIdentity(ISession.class);
-        session.getMonitor()
-                .send(Message.create(session.getId(),
-                        IMessage.MessageClass.ObservationLifecycle,
-                        IMessage.Type.ModifiedObservation, change));
+        if (((Scale) this.getScale()).mergeTransition(time)) {
+            ObservationChange change = new ObservationChange();
+            change.setContextId(getScope().getRootSubject().getId());
+            change.setId(getId());
+            change.setTimestamp(time.getEnd().getMilliseconds());
+            change.setType(ObservationChange.Type.ValueChange);
+            ISession session = getScope().getMonitor().getIdentity()
+                    .getParentIdentity(ISession.class);
+            session.getMonitor()
+                    .send(Message.create(session.getId(),
+                            IMessage.MessageClass.ObservationLifecycle,
+                            IMessage.Type.ModifiedObservation, change));
+        }
     }
 
     private List<IState> applicable(ILocator locator) {
@@ -226,21 +224,23 @@ public class MergingState extends State {
             }
 
             if (exts.size() == scale.getExtentCount()) {
+                
+                Object value = state.get(Scale.create(exts));
 
-                OffsetIterator iterator = new OffsetIterator(state.getScale(), exts);
-                while(iterator.hasNext()) {
-                    Offset offset = iterator.next();
-                    if (offset != null) {
-                        Object value = state.get(offset);
+//                OffsetIterator iterator = new OffsetIterator(state.getScale(), exts);
+//                while(iterator.hasNext()) {
+//                    Offset offset = iterator.next();
+//                    if (offset != null) {
+//                        Object value = state.get(offset);
                         if (aggregate) {
                             aggregator.add(value, state.getObservable(), index);
                         } else if (Observations.INSTANCE.isData(value)) {
                             return value;
                         }
-                    }
+//                    }
                 }
             }
-        }
+            // }
 
         return aggregate ? aggregator.aggregate() : null;
     }

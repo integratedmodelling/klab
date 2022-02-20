@@ -64,6 +64,7 @@ import org.integratedmodelling.klab.components.runtime.observations.ObservationG
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroupView;
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.data.classification.Discretization;
+import org.integratedmodelling.klab.data.storage.MergingState;
 import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.indexing.Indexer;
@@ -158,7 +159,7 @@ public enum Observations implements IObservationService {
 
 		long time = -1;
 
-		if (state instanceof State) {
+		if (state instanceof State && !(state instanceof MergingState)) {
 			time = ((State) state).getStorage().getTemporalOffset(locator);
 		} else {
 			if (locator instanceof IScale && ((IScale) locator).getTime() != null) {

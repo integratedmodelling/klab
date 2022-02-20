@@ -23,12 +23,14 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.common.Offset;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.State;
+import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.engine.debugger.Debugger.Watcher;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 import org.integratedmodelling.klab.engine.runtime.api.IModificationListener;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.scale.Extent;
+import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.StringUtil;
 
@@ -415,6 +417,9 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
              */
             if (slice == null || slice.timestep != timeOffset) {
                 slice = addSlice(timeOffset, timeStart, timeEnd, slice);
+                if (time != null && state != null) {
+                    ((State) state).getScale().mergeTransition(time);
+                }
                 for (Consumer<ILocator> listener : this.listeners) {
                     listener.accept(locator);
                 }
@@ -529,6 +534,11 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 
         if (locator instanceof TimesliceLocator) {
             return getSlice(((TimesliceLocator) locator).sliceIndex);
+        } else if (locator instanceof Time && ((Time) locator).getLocatedTimeslice() >= 0) {
+            return getSlice(((Time) locator).getLocatedTimeslice());
+        } else if (locator instanceof Scale && ((Scale) locator).getTime() instanceof Time
+                && ((Time) ((Scale) locator).getTime()).getLocatedTimeslice() >= 0) {
+            return slices.floorEntry(((Scale)locator).getTime().getFocus().getMilliseconds()).getValue();
         }
 
         Offset offsets = locator.as(Offset.class);
@@ -548,7 +558,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
             throw new KlabUnimplementedException("unexpected locator in mapped storage!");
         }
 
-        boolean initialization = true;
+        boolean initialization = timeOffset <= 0;
         long timepoint = -1;
         if (time != null && time.getFocus() != null) {
             timepoint = time.getFocus().getMilliseconds();
