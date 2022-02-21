@@ -331,8 +331,12 @@ public enum GeotoolsUtils {
             for(int y = 0; y < grid.getYCells(); y++) {
                 raster.setSample(x, y, 0, noDataValue);
             }
-        }
-
+        }        
+        
+        double min = Double.NaN;
+        double max = Double.NaN;
+        long ndata = 0;
+        
         /*
          * only go through active cells. State should have been located through a proxy
          * for other extents.
@@ -349,16 +353,26 @@ public enum GeotoolsUtils {
                 if (transformation != null) {
                     o = transformation.apply(o);
                 }
-                raster.setSample((int) cell.getX(), (int) cell.getY(), 0, ((Number) o).floatValue());
+                float value = ((Number) o).floatValue();
+                if (Double.isNaN(min) || min > value) {
+                	min = value;
+                }
+                if (Double.isNaN(max) || max < value) {
+                	max = value;
+                }
+                ndata ++;
+                raster.setSample((int) cell.getX(), (int) cell.getY(), 0, value);
             } else if (o instanceof Boolean) {
                 if (transformation != null) {
                     o = transformation.apply(o);
                 }
+                ndata ++;
                 raster.setSample((int) cell.getX(), (int) cell.getY(), 0, (float) (((Boolean) o) ? 1. : 0.));
             } else if (o instanceof IConcept) {
                 if (transformation != null) {
                     o = transformation.apply(o);
                 }
+                ndata ++;
                 raster.setSample((int) cell.getX(), (int) cell.getY(), 0, (float) state.getDataKey().reverseLookup((IConcept) o));
             }
         }
@@ -398,13 +412,19 @@ public enum GeotoolsUtils {
 
         }
 
+        // TODO stick these somewhere
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("dataRange", new double[] {min, max});
+        properties.put("dataCount", ndata);
+        
+//        System.out.println(state.getObservable().getReferenceName() + " raster has range " + min + " to " + max + " (" + ndata + ")");
+        
         ReferencedEnvelope jtsEnvelope = checkEnvelope(((Space) space).getShape().getJTSEnvelope());
         if (key == null || pork) {
             return rasterFactory.create(state.getObservable().getName(), raster, jtsEnvelope);
         }
 
         return rasterFactory.create(state.getObservable().getName(), raster, jtsEnvelope, new GridSampleDimension[]{key});
-
     }
 
     public GridCoverage2D stateToIntCoverage(IState state, ILocator locator, Integer noDataValue,
@@ -520,6 +540,10 @@ public enum GeotoolsUtils {
 
         ISpace ext = state.getScale().getSpace();
 
+        double min = Double.NaN;
+        double max = Double.NaN;
+        long ndata = 0;
+        
         if (!(ext instanceof Space && ((Space) ext).getGrid() != null)) {
             throw new KlabValidationException("cannot write a gridded state from a non-gridded extent");
         }
@@ -541,10 +565,25 @@ public enum GeotoolsUtils {
                     value = Double.NaN;
                 }
             }
+            
+            if (Double.isNaN(min) || min > value) {
+            	min = value;
+            }
+            if (Double.isNaN(max) || max < value) {
+            	max = value;
+            }
+            
+            if (!Double.isNaN(value)) {
+            	ndata ++;
+            }
+            
             for(ILocator spp : spl) {
                 state.set(spp, value);
             }
         }
+
+//        System.out.println(state.getObservable().getReferenceName() + " raster has range " + min + " to " + max + " (" + ndata + ")");
+
     }
 
     /**

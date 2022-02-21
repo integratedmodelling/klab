@@ -1359,7 +1359,17 @@ public class Scale implements IScale {
             if (locatedOffsets != null) {
                 return (T) new Offset(this, locatedOffsets);
             } else {
-                return (T) new Offset(this);
+            	long[] locofs = new long[extents.size()];
+            	boolean useofs = true;
+            	int i = 0;
+            	for (IExtent extent : extents) {
+            		if (((AbstractExtent)extent).getLocatedOffset() >= 0) {
+            			locofs[i++] = ((AbstractExtent)extent).getLocatedOffset();
+            		} else {
+            			useofs = false;
+            		}
+            	}
+                return (T) (useofs ? new Offset(this, locofs) : new Offset(this));
             }
         }
 
