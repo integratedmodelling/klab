@@ -191,6 +191,7 @@ public class ObservationReference implements IObservationReference {
     private boolean alive;
     private boolean main;
     private boolean dynamic;
+    private List<Long> timeEvents;
 
     /*
      * Only sent when the observation redefines the scale (new context)
@@ -726,5 +727,13 @@ public class ObservationReference implements IObservationReference {
     public void setContextualized(boolean contextualized) {
         this.contextualized = contextualized;
     }
+
+	public List<Long> getTimeEvents() {
+		return timeEvents;
+	}
+
+	public void setTimeEvents(List<Long> timeEvents) {
+		this.timeEvents = timeEvents;
+	}
 
 }

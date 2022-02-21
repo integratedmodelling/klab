@@ -19,10 +19,10 @@ import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
-import org.integratedmodelling.klab.common.Offset;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.components.runtime.observations.State;
+import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.data.Aggregator;
 import org.integratedmodelling.klab.engine.runtime.api.IModificationListener;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
@@ -245,6 +245,15 @@ public class MergingState extends State {
         return aggregate ? aggregator.aggregate() : null;
     }
 
+    @Override
+    public long[] getUpdateTimestamps() {
+        if (isDynamic() && getScale().getTime() != null) {
+        	Time time = (Time)getScale().getTime();
+        	return time.getUpdateTimestamps();
+        }
+        return new long[] {};
+    }
+    
     public long set(ILocator index, Object value) {
         throw new KlabIllegalStateException("Merging states are read-only");
     }

@@ -95,6 +95,8 @@ import org.integratedmodelling.klab.utils.Triple;
 import org.integratedmodelling.klab.utils.Utils;
 import org.integratedmodelling.klab.utils.ZipUtils;
 
+import com.google.common.collect.Lists;
+
 public enum Observations implements IObservationService {
 
 	INSTANCE;
@@ -440,6 +442,14 @@ public enum Observations implements IObservationService {
 			ret.setScaleReference(scaleReference);
 		}
 
+		long[] updateTimestamps = ((Observation)observation).getUpdateTimestamps();
+		if (updateTimestamps != null && updateTimestamps.length > 0) {
+			ret.setTimeEvents(new ArrayList<>());
+			for (long l : updateTimestamps) {
+				ret.getTimeEvents().add(l);
+			}
+		}
+		
 		if (observation instanceof State) {
 			String modTimes = ((State) observation).getUpdateDescription();
 			if (!modTimes.isEmpty()) {

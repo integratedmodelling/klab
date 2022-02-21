@@ -1637,5 +1637,12 @@ public class Time extends Extent implements ITime {
         this.timeSlice = i;
         return this;
     }
+
+	public long[] getUpdateTimestamps() {
+		if (extension != null) {
+			return extension.getTimestamps();
+		}
+		return new long[] {};
+	}
     
 }
