@@ -815,5 +815,11 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
         return null;
     }
 
+	@Override
+	public Actuator getActuator() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 }

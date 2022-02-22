@@ -1072,18 +1072,21 @@ public class Actuator implements IActuator {
 
     protected String encodeBody(int offset, String ofs) {
 
-        Collection<IDataflow<IArtifact>> children = dataflow.childrenOf(this);
-
         boolean hasBody = actuators.size() > 0 || computationStrategy.size() > 0
                 || mediationStrategy.size() > 0
-                || mode == Mode.RESOLUTION || children.size() > 0;
+                || mode == Mode.RESOLUTION || childDataflows.size() > 0;
 
         String ret = "";
 
+        
         if (hasBody) {
 
             ret = " {\n";
 
+            for (IDataflow<?> child : childDataflows) {
+        		ret += ((Dataflow)child).encode(offset + 3, false) + "\n\n";
+            }
+        		
             for (IActuator actuator : getSortedChildren(this, false)) {
                 ret += ((Actuator) actuator).encode(offset + 3) + "\n";
             }

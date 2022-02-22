@@ -25,140 +25,154 @@ import org.jgrapht.graph.DefaultEdge;
  * observations. Dataflows are added after resolution, independent of whether
  * the contextualization after it is successful.
  * 
+ * FIXME this should host a single root dataflow (and potentially a map of
+ * individual components), not a graph, as the hierarchy is kept in the dataflow
+ * itself.
+ * 
  * @author Ferd
  *
  */
 public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, DefaultEdge> {
 
-    String id = NameGenerator.shortUUID();
-    private KlabElkGraphFactory kelk = KlabElkGraphFactory.keINSTANCE;
-    private Map<String, ElkConnectableShape> nodes = new HashMap<>();
-    private Map<String, Element> elements = new HashMap<>();
-    private Map<String, String> node2dataflowId = new HashMap<>();
+	String id = NameGenerator.shortUUID();
+	private KlabElkGraphFactory kelk = KlabElkGraphFactory.keINSTANCE;
+	private Map<String, ElkConnectableShape> nodes = new HashMap<>();
+	private Map<String, Element> elements = new HashMap<>();
+	private Map<String, String> node2dataflowId = new HashMap<>();
+	private Dataflow rootDataflow;
 
-    public ContextualizationStrategy() {
-        super(DefaultEdge.class);
-    }
+	public ContextualizationStrategy() {
+		super(DefaultEdge.class);
+	}
 
-    List<Dataflow> rootNodes = new ArrayList<>();
+	List<Dataflow> rootNodes = new ArrayList<>();
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    public void add(Dataflow dataflow) {
-        synchronized (rootNodes) {
-            addVertex(dataflow);
-            rootNodes.add(dataflow);
-        }
-    }
+	public void add(Dataflow dataflow) {
 
-    public void add(Dataflow dataflow, Dataflow parent) {
-        synchronized (this) {
-            addVertex(dataflow);
-            addEdge(parent, dataflow);
-        }
-    }
+		if (this.rootDataflow == null) {
+			this.rootDataflow = dataflow;
+		}
+		
+		synchronized (rootNodes) {
+			addVertex(dataflow);
+			rootNodes.add(dataflow);
+		}
+	}
 
-    public static String getElkGraph(Dataflow dataflow) {
-    	ContextualizationStrategy strategy = new ContextualizationStrategy();
-    	strategy.add(dataflow);
-    	return strategy.getElkGraph();
-    }
-    
-    public String getElkGraph() {
+	public void add(Dataflow dataflow, Dataflow parent) {
+		synchronized (this) {
+			addVertex(dataflow);
+			addEdge(parent, dataflow);
+		}
+	}
 
-        List<Flowchart> flowcharts = new ArrayList<>();
+	public String getKdl() {
+		return rootDataflow == null ? null : rootDataflow.getKdlCode();
+	}
 
-        //		if (json == null) {
-        synchronized (this) {
+	public static String getElkGraph(Dataflow dataflow) {
+		ContextualizationStrategy strategy = new ContextualizationStrategy();
+		strategy.add(dataflow);
+		return strategy.getElkGraph();
+	}
 
-            elements.clear();
-            nodes.clear();
-            node2dataflowId.clear();
-            flowcharts.clear();
+	public String getElkGraph() {
 
-            ElkNode root = kelk.createGraph(id);
+		List<Flowchart> flowcharts = new ArrayList<>();
 
-            /*
-             * first create the flowcharts and link them, creating outputs for any exported
-             * observation. Then make the graph from the linked flowcharts.
-             */
-            List<Triple<String, String, String>> connections = new ArrayList<>();
-            for (Dataflow df : rootNodes) {
+		// if (json == null) {
+		synchronized (this) {
 
-                Flowchart current = Flowchart.create(df);
+			elements.clear();
+			nodes.clear();
+			node2dataflowId.clear();
+			flowcharts.clear();
 
-                for (String input : current.getExternalInputs().keySet()) {
-                    for (Flowchart previous : flowcharts) {
-                        String output = previous.pullOutput(input);
-                        if (output != null) {
-                            connections.add(new Triple<>(input, output, current.getExternalInputs().get(input)));
-                        }
-                    }
-                }
+			ElkNode root = kelk.createGraph(id);
 
-                flowcharts.add(current);
-            }
+			/*
+			 * first create the flowcharts and link them, creating outputs for any exported
+			 * observation. Then make the graph from the linked flowcharts.
+			 */
+			List<Triple<String, String, String>> connections = new ArrayList<>();
+			for (Dataflow df : rootNodes) {
 
-            // new nodes
-            ElkNode contextNode = null;
-            for (Flowchart flowchart : flowcharts) {
-                DataflowGraph graph = new DataflowGraph(flowchart, this, kelk);
-                // TODO children - recurse on secondary contextualizations
-                ElkNode tgraph = graph.getRootNode();
-                if (tgraph != null) {
-                    root.getChildren().add(tgraph);
-                    if (contextNode == null) {
-                        contextNode = tgraph;
-                    } else {
-                        int i = 0;
-                        for (ElkConnectableShape outPort : graph.getOutputs()) {
-                            kelk.createSimpleEdge(outPort, contextNode, "ctx" + outPort.getIdentifier() + "_" + i);
-                        }
-                    }
-                }
-            }
+				Flowchart current = Flowchart.create(df);
 
-            for (Triple<String, String, String> connection : connections) {
-                kelk.createSimpleEdge(nodes.get(connection.getSecond()), nodes.get(connection.getThird()), "external."
-                        + connection.getSecond() + "." + connection.getThird() + "." + connection.getFirst());
-            }
+				for (String input : current.getExternalInputs().keySet()) {
+					for (Flowchart previous : flowcharts) {
+						String output = previous.pullOutput(input);
+						if (output != null) {
+							connections.add(new Triple<>(input, output, current.getExternalInputs().get(input)));
+						}
+					}
+				}
 
-            RecursiveGraphLayoutEngine engine = new RecursiveGraphLayoutEngine();
-            engine.layout(root, new BasicProgressMonitor());
+				flowcharts.add(current);
+			}
 
-            String json = ElkGraphJson.forGraph(root).omitLayout(false).omitZeroDimension(true).omitZeroPositions(true)
-                    .shortLayoutOptionKeys(true).prettyPrint(true).toJson();
+			// new nodes
+			ElkNode contextNode = null;
+			for (Flowchart flowchart : flowcharts) {
+				DataflowGraph graph = new DataflowGraph(flowchart, this, kelk);
+				// TODO children - recurse on secondary contextualizations
+				ElkNode tgraph = graph.getRootNode();
+				if (tgraph != null) {
+					root.getChildren().add(tgraph);
+					if (contextNode == null) {
+						contextNode = tgraph;
+					} else {
+						int i = 0;
+						for (ElkConnectableShape outPort : graph.getOutputs()) {
+							kelk.createSimpleEdge(outPort, contextNode, "ctx" + outPort.getIdentifier() + "_" + i);
+						}
+					}
+				}
+			}
 
-            // System.out.println(json);
-            return json;
-        }
-        //        }
+			for (Triple<String, String, String> connection : connections) {
+				kelk.createSimpleEdge(nodes.get(connection.getSecond()), nodes.get(connection.getThird()), "external."
+						+ connection.getSecond() + "." + connection.getThird() + "." + connection.getFirst());
+			}
 
-        //		return null;
-    }
+			RecursiveGraphLayoutEngine engine = new RecursiveGraphLayoutEngine();
+			engine.layout(root, new BasicProgressMonitor());
 
-    public Map<String, ElkConnectableShape> getNodes() {
-        synchronized (rootNodes) {
-            return nodes;
-        }
-    }
+			String json = ElkGraphJson.forGraph(root).omitLayout(false).omitZeroDimension(true).omitZeroPositions(true)
+					.shortLayoutOptionKeys(true).prettyPrint(true).toJson();
 
-    public Map<String, Element> getElements() {
-        synchronized (rootNodes) {
-            return elements;
-        }
-    }
+			// System.out.println(json);
+			return json;
+		}
+		// }
 
-    public Map<String, String> getComputationToNodeIdTable() {
-        synchronized (rootNodes) {
-            return node2dataflowId;
-        }
-    }
+		// return null;
+	}
 
-    public Element findDataflowElement(String nodeId) {
-        synchronized (rootNodes) {
-            return elements.get(nodeId);
-        }
-    }
+	public Map<String, ElkConnectableShape> getNodes() {
+		synchronized (rootNodes) {
+			return nodes;
+		}
+	}
+
+	public Map<String, Element> getElements() {
+		synchronized (rootNodes) {
+			return elements;
+		}
+	}
+
+	public Map<String, String> getComputationToNodeIdTable() {
+		synchronized (rootNodes) {
+			return node2dataflowId;
+		}
+	}
+
+	public Element findDataflowElement(String nodeId) {
+		synchronized (rootNodes) {
+			return elements.get(nodeId);
+		}
+	}
 
 }

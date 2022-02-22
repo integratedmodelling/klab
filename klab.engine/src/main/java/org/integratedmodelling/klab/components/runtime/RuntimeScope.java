@@ -174,7 +174,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
     // cache for repeated dataflow resolutions
     Map<ResolvedObservable, List<Pair<ICoverage, Dataflow>>> dataflowCache = new HashMap<>();
-    private IActuator actuator;
+    private Actuator actuator;
     private boolean occurrent;
     private Map<String, IKnowledgeView> views;
     private Map<String, IKnowledgeView> viewsByUrn;
@@ -546,7 +546,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
         if (scope.getCoverage().isRelevant()) {
             Dataflow dataflow = Dataflows.INSTANCE.compile(
                     "local:task:" + session.getId() + ":" + subtask.getId(),
-                    scope, this.dataflow);
+                    scope, this.actuator);
             dataflow.setModel((Model) model);
             ret = (IConfiguration) dataflow.withMetadata(metadata).withConfigurationTargets(targets)
                     .run(scale.initialization(), (Actuator) this.actuator, subtask.getMonitor());
@@ -595,7 +595,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
             if (scope.getCoverage().isRelevant()) {
                 dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + task.getId(),
-                        scope, parentDataflow);
+                        scope, actuator);
                 pairs.add(new Pair<>(dataflow.getCoverage(), dataflow));
             }
         }
@@ -673,7 +673,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
                 dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + subtask.getId(),
                         scope,
-                        this.dataflow)/*
+                        this.actuator)/*
                                        * .setPrimary(false)
                                        */;
                 dataflow.setModel((Model) model);
@@ -804,7 +804,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
                 dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + subtask.getId(),
                         scope,
-                        this.dataflow);
+                        this.actuator);
                 dataflow.setModel((Model) model);
                 pairs.add(new Pair<>(dataflow.getCoverage(), dataflow));
 
@@ -1032,7 +1032,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
         ret.targetSemantics = ((Actuator) actuator).getObservable();
         ret.monitor = monitor;
         ret.semantics.put(actuator.getName(), ret.targetSemantics);
-        ret.actuator = actuator;
+        ret.actuator = (Actuator)actuator;
         ret.contextSubject = scope.getContext();
         ret.dataflow = (Dataflow) dataflow;
 
@@ -1888,7 +1888,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
         return ret;
     }
 
-    public IActuator getActuator() {
+    public Actuator getActuator() {
         return actuator;
     }
 

@@ -139,7 +139,7 @@ public class ObserveInContextTask extends AbstractTask<IArtifact> {
 					if (scope.getCoverage().isRelevant()) {
 
 						Dataflow dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + token,
-								scope, (Dataflow) context.getScope().getDataflow()).setPrimary(parentTask == null);
+								scope, context.getScope().getActuator()).setPrimary(parentTask == null);
 
 						dataflow.setDescription(taskDescription);
 

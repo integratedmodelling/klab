@@ -842,7 +842,7 @@ public class RuntimeView extends ViewPart {
 
 	protected void handleSelection(Object o) {
 		if (o instanceof DataflowReference) {
-			Eclipse.INSTANCE.edit(((DataflowReference) o).getKdlCode(), "dataflow", "kdl", false);
+			Eclipse.INSTANCE.edit(Activator.get().session().getDataflow(currentContext.getId()), "dataflow", "kdl", false);
 		} else if (o instanceof Notification) {
 			switch (((Notification) o).getLevel()) {
 			case "SEVERE":

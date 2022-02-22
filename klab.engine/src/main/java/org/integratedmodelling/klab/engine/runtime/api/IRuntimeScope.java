@@ -478,4 +478,11 @@ public interface IRuntimeScope extends IContextualizationScope {
      */
     <T extends IArtifact> Collection<T> getAffectedArtifacts(IConcept processType, Class<T> cls);
 
+    /**
+     * The actuator being executed in this scope. Should never be null.
+     * 
+     * @return
+     */
+	Actuator getActuator();
+
 }

@@ -21,6 +21,7 @@ import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.api.IKActorsBehavior.Platform;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Configuration;
+import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessage.Type;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
@@ -340,9 +341,10 @@ public class KlabSession extends KlabPeer {
 	public void launchTest(URL url) {
 		Activator.post(IMessage.MessageClass.Run, IMessage.Type.RunTest, new LoadApplicationRequest(url, true));
 	}
-	
+
 	public void searchAuthority(String authorityId, String authorityCatalog, String queryString) {
-        Activator.post(IMessage.MessageClass.UserInterface, IMessage.Type.AuthorityQuery, new AuthorityQueryRequest(authorityId, authorityCatalog, queryString));
+		Activator.post(IMessage.MessageClass.UserInterface, IMessage.Type.AuthorityQuery,
+				new AuthorityQueryRequest(authorityId, authorityCatalog, queryString));
 	}
 
 	public void launchApp(String behavior) {
@@ -418,10 +420,10 @@ public class KlabSession extends KlabPeer {
 			break;
 		}
 	}
-	
+
 	@MessageHandler(type = IMessage.Type.AuthoritySearchResults)
 	public void handleAuthoritySearchResults(IMessage message, AuthorityQueryResponse response) {
-	    send(message);
+		send(message);
 	}
 
 	@MessageHandler(messageClass = IMessage.MessageClass.Authorization, type = IMessage.Type.NetworkStatus)
@@ -504,12 +506,11 @@ public class KlabSession extends KlabPeer {
 		send(message);
 	}
 
+	@MessageHandler(type = Type.QueryStatus)
+	public void handleQueryStatus(IMessage message, QueryStatusResponse response) {
+		send(message);
+	}
 
-    @MessageHandler(type = Type.QueryStatus)
-    public void handleQueryStatus(IMessage message, QueryStatusResponse response) {
-        send(message);
-    }
-	
 	@MessageHandler(type = Type.CreateViewComponent)
 	public void handleCreateComponent(IMessage message, ViewComponent component) {
 		send(message);
@@ -586,6 +587,13 @@ public class KlabSession extends KlabPeer {
 
 	public List<String> getUserBehaviors() {
 		return this.sessionReference == null ? new ArrayList<>() : this.sessionReference.getUserAppUrns();
+	}
+
+	public String getDataflow(String id) {
+		DataflowReference dataflow = Activator.client().with(getIdentity()).get(
+				API.ENGINE.OBSERVATION.RETRIEVE_DATAFLOW.replace(API.ENGINE.OBSERVATION.P_CONTEXT, id) + "?format=kdl",
+				DataflowReference.class);
+		return dataflow.getKdlCode();
 	}
 
 }

@@ -903,4 +903,10 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
         return null;
     }
 
+	@Override
+	public Actuator getActuator() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

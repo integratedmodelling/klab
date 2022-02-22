@@ -506,7 +506,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
         return encode(offset, true);
     }
 
-    private String encode(int offset, boolean encodePreamble) {
+    String encode(int offset, boolean encodePreamble) {
 
         String ret = "";
 
