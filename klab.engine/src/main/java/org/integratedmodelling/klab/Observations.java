@@ -165,9 +165,18 @@ public enum Observations implements IObservationService {
 			time = ((State) state).getStorage().getTemporalOffset(locator);
 		} else {
 			if (locator instanceof IScale && ((IScale) locator).getTime() != null) {
-				time = ((IScale) locator).getTime().getStart().getMilliseconds();
+				ITime timeExtent = ((IScale) locator).getTime();
+				time = timeExtent.getStart().getMilliseconds();
+				if (timeExtent.getFocus() != null && timeExtent.getFocus().isAfter(timeExtent.getStart())) {
+					time += (timeExtent.getEnd().getMilliseconds() - timeExtent.getStart().getMilliseconds())/2;
+				}
 			} else if (locator instanceof ITime) {
+				ITime timeExtent = (ITime)locator;
+				time = timeExtent.getStart().getMilliseconds();
 				time = ((ITime) locator).getStart().getMilliseconds();
+				if (timeExtent.getFocus() != null && timeExtent.getFocus().isAfter(timeExtent.getStart())) {
+					time += (timeExtent.getEnd().getMilliseconds() - timeExtent.getStart().getMilliseconds())/2;
+				}
 			}
 		}
 

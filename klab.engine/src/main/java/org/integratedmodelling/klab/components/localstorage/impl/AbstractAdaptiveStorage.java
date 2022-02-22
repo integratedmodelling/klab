@@ -52,7 +52,8 @@ import org.integratedmodelling.klab.utils.StringUtil;
  */
 public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 
-	private NavigableMap<Long, Slice> slices = new TreeMap<>();
+	private NavigableMap<Long, Slice> slicesByEnd = new TreeMap<>();
+	private NavigableMap<Long, Slice> slicesByStart = new TreeMap<>();
 	private long highTimeOffset = -1;
 	private long maxTimeOffset;
 	private long sliceSize;
@@ -136,7 +137,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 			this.timestep = timestep;
 			this.timestart = timeStart;
 			this.timeend = timeEnd;
-			this.index = slices.size();
+			this.index = slicesByEnd.size();
 			if (closest != null) {
 				if (closest.sliceOffsetInBackend >= 0) {
 					this.sliceOffsetInBackend = closest.sliceOffsetInBackend + 1;
@@ -199,7 +200,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 	 * @return
 	 */
 	Slice getSlice(int index) {
-		Iterator<Slice> it = slices.values().iterator();
+		Iterator<Slice> it = slicesByEnd.values().iterator();
 		while (index-- > 0) {
 			it.next();
 		}
@@ -272,7 +273,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 			return (T) scalarValue;
 		}
 
-		if (slices.isEmpty()) {
+		if (slicesByEnd.isEmpty()) {
 			return null;
 		}
 
@@ -401,7 +402,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 
 		synchronized (this) {
 
-			if (noData && slices.isEmpty()) {
+			if (noData && slicesByEnd.isEmpty()) {
 				// everything's nodata so far, no need to store.
 				return trivial ? sliceOffset : (sliceOffset * (timeOffset + 1));
 			}
@@ -416,7 +417,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 			/*
 			 * find the closest slice for the time
 			 */
-			Slice slice = getClosest(/* timeOffset */timeEnd);
+			Slice slice = getClosest(/* timeOffset */timeEnd, false);
 			if (slice != null/* && slice.timestep != timeOffset */ && !slice.isEmpty()
 					&& equals(slice.getAt(sliceOffset), value)) {
 				// don't store anything until it's different from the previous slice.
@@ -463,7 +464,8 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 
 	private Slice addSlice(long timeOffset, long timeStart, long timeEnd, Slice closest) {
 		Slice slice = new Slice(timeOffset, timeStart, timeEnd, closest);
-		slices.put(timeEnd, slice);
+		slicesByEnd.put(timeEnd, slice);
+		slicesByStart.put(timeStart, slice);
 		return slice;
 	}
 
@@ -471,13 +473,13 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 		return (valueAt == null && value == null) || (valueAt != null && value != null && valueAt.equals(value));
 	}
 
-	private Slice getClosest(long timeSlice) {
-		Map.Entry<Long, Slice> low = slices.floorEntry(timeSlice);
+	private Slice getClosest(long timeSlice, boolean fromUpwards) {
+		Map.Entry<Long, Slice> low = fromUpwards ? slicesByStart.floorEntry(timeSlice) : slicesByEnd.floorEntry(timeSlice);
 		return low == null ? null : low.getValue();
 	}
 
 	protected int sliceCount() {
-		return slices.size();
+		return slicesByEnd.size();
 	}
 
 	@Override
@@ -505,8 +507,8 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 		SimpleDateFormat f = new SimpleDateFormat("dd/MM/yy-hh:mm");
 		String spacer = StringUtil.spaces(indent);
 		String ret = "";
-		for (Long key : slices.keySet()) {
-			Slice slice = slices.get(key);
+		for (Long key : slicesByEnd.keySet()) {
+			Slice slice = slicesByEnd.get(key);
 			ret += spacer
 					+ ((slice.timestart == 0 || slice.timeend == 0) ? "Initialization"
 							: (slice.timestart + ": " + f.format(new Date(slice.timestart)) + " "
@@ -524,7 +526,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 	public Object[] getTimeseries(ILocator locator) {
 		List<Object> ret = new ArrayList<>();
 		long sliceOffset = getSliceOffset(locator);
-		for (Slice slice : slices.values()) {
+		for (Slice slice : slicesByEnd.values()) {
 			ret.add(slice.getAt(sliceOffset));
 		}
 		return ret.toArray();
@@ -532,7 +534,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 
 	public List<ILocator> getTimesliceLocators() {
 		List<ILocator> ret = new ArrayList<>();
-		for (int i = 0; i < slices.size(); i++) {
+		for (int i = 0; i < slicesByEnd.size(); i++) {
 			Slice slice = getSlice(i);
 			TimesliceLocator locator = new TimesliceLocator(this, slice, i);
 			ret.add(locator);
@@ -549,7 +551,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 		} else if (locator instanceof Scale && ((Scale) locator).getTime() instanceof Time
 				&& ((Time) ((Scale) locator).getTime()).getLocatedTimeslice() >= 0) {
 //        	return getSlice(((Time) ((Scale) locator).getTime()).getLocatedTimeslice() + 1);
-			return getClosest(((Scale) locator).getTime().getFocus().getMilliseconds());
+			return getClosest(((Scale) locator).getTime().getFocus().getMilliseconds(), true);
 		}
 
 		Offset offsets = locator.as(Offset.class);
@@ -589,7 +591,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 			 * the state before Feb 1st happens.
 			 */
 			Slice lastSlice = null;
-			for (Slice s : slices.values()) {
+			for (Slice s : slicesByEnd.values()) {
 				if (timepoint >= s.timestart && timepoint < s.timeend) {
 					slice = s;
 					break;
@@ -604,7 +606,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 
 		} else {
 			// can only be the closest at this point, unless there was no slice at all
-			slice = getClosest(initialization ? 0 : timeEnd);
+			slice = getClosest(initialization ? 0 : timeEnd, false);
 		}
 		return slice;
 	}
