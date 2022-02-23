@@ -416,6 +416,13 @@ public enum Authentication implements IAuthenticationService {
         this.projectPermissions.put(projectId, groups);
     }
     
+    public Set<String> getProjectPermissions(String projectId) {
+    	if (this.projectPermissions.containsKey(projectId)) {
+    		return this.projectPermissions.get(projectId);
+    	}
+    	return Collections.emptySet();
+    }
+    
     public boolean canAccess(IUserIdentity user, String projectId) {
         Set<String> userGroups = user.getGroups().stream().map((group) -> group.getId()).collect(Collectors.toSet());
         Set<String> permissions = this.projectPermissions.get(projectId);

@@ -99,7 +99,7 @@ public interface IDataflow<T extends IArtifact> extends IActuator {
      * @return
      */
     IScale getResolutionScale();
-
+    
     /**
      * Run the dataflow in the passed scale using the configured or default
      * {@link org.integratedmodelling.klab.api.runtime.IRuntimeProvider} and return the resulting
