@@ -944,6 +944,17 @@ ruleActorDefinition returns [EObject current=null]
 							lv_name_13_3,
 							"org.eclipse.xtext.common.Terminals.STRING");
 					}
+					    |
+					lv_name_13_4='*'
+					{
+						newLeafNode(lv_name_13_4, grammarAccess.getActorDefinitionAccess().getNameAsteriskKeyword_8_0_3());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getActorDefinitionRule());
+						}
+						setWithLastConsumed($current, "name", lv_name_13_4, null);
+					}
 				)
 			)
 		)

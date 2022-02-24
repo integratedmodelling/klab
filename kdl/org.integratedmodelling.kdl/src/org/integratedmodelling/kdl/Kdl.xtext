@@ -42,7 +42,9 @@ ActorDefinition:
 	type=ACTOR 
 		// expressions must return the type; they are evaluated in the context and the artifacts named in them are imports
 		(expression?='expression')? 
-		name=(LOWERCASE_ID|LOWERCASE_DASHID|STRING) 
+		// resolvers named '*' must be void and in the scope of an instantiator; they are meant to resolve 
+		// instantiated objects within their scale of reference .
+		name=(LOWERCASE_ID|LOWERCASE_DASHID|STRING|'*') 
 		// extends only allowed at root level; must extend another upstream in same file
 		('extends' extended=(LOWERCASE_ID|LOWERCASE_DASHID|STRING))?
 		('for' targets+=TARGET (',' targets+=TARGET)*)? (docstring=STRING)? ('label' label=STRING)?

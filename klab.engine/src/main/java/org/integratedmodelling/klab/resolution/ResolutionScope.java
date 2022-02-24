@@ -35,6 +35,7 @@ import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
+import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
@@ -45,8 +46,6 @@ import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.scale.Coverage;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
-
-import com.google.common.collect.Sets;
 
 public class ResolutionScope implements IResolutionScope {
 
@@ -241,6 +240,7 @@ public class ResolutionScope implements IResolutionScope {
     private Set<ObservedConcept> resolving = new HashSet<>();
     private Map<IConcept, Set<IConcept>> resolvedPredicatesContext = new HashMap<>();
     private boolean deferToInherent;
+    private ContextualizationStrategy contextualizationStrategy;
 
     private void addResolvedScope(ObservedConcept concept, ResolutionScope scope) {
         List<ResolutionScope> slist = resolvedObservables.get(concept);
@@ -403,6 +403,7 @@ public class ResolutionScope implements IResolutionScope {
         this.roles.putAll(monitor.getIdentity().getParentIdentity(ISession.class).getState().getRoles());
         this.resolutionNamespace = observer.getNamespace();
         this.occurrentResolutions = new ArrayList<>();
+        this.contextualizationStrategy = new ContextualizationStrategy();
         this.observer = observer;
         this.monitor = monitor;
         this.occurrent = this.coverage.isTemporallyDistributed();
@@ -441,6 +442,7 @@ public class ResolutionScope implements IResolutionScope {
         this.interactive = other.interactive;
         this.monitor = other.monitor;
         this.parent = other;
+        this.contextualizationStrategy = other.contextualizationStrategy;
         this.context = other.context;
         this.coverage = other.coverage;
         this.beingResolved.addAll(other.beingResolved);
@@ -1534,6 +1536,10 @@ public class ResolutionScope implements IResolutionScope {
         ResolutionScope ret = new ResolutionScope(this, true);
         ret.deferToInherent = true;
         return ret;
+    }
+
+    public ContextualizationStrategy getContextualizationStrategy() {
+        return this.contextualizationStrategy;
     }
 
 }

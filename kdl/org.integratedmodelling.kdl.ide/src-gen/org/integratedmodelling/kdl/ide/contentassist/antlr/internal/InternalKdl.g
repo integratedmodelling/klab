@@ -1103,6 +1103,12 @@ rule__ActorDefinition__NameAlternatives_8_0
 		RULE_STRING
 		{ after(grammarAccess.getActorDefinitionAccess().getNameSTRINGTerminalRuleCall_8_0_2()); }
 	)
+	|
+	(
+		{ before(grammarAccess.getActorDefinitionAccess().getNameAsteriskKeyword_8_0_3()); }
+		'*'
+		{ after(grammarAccess.getActorDefinitionAccess().getNameAsteriskKeyword_8_0_3()); }
+	)
 ;
 finally {
 	restoreStackSize(stackSize);

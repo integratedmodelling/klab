@@ -166,7 +166,7 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *         parameter?='parameter'? 
 	 *         type=ACTOR 
 	 *         expression?='expression'? 
-	 *         (name=LOWERCASE_ID | name=LOWERCASE_DASHID | name=STRING) 
+	 *         (name=LOWERCASE_ID | name=LOWERCASE_DASHID | name=STRING | name='*') 
 	 *         (extended=LOWERCASE_ID | extended=LOWERCASE_DASHID | extended=STRING)? 
 	 *         (targets+=TARGET targets+=TARGET*)? 
 	 *         docstring=STRING? 

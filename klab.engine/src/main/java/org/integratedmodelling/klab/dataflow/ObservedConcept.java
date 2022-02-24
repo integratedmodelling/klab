@@ -3,10 +3,10 @@ package org.integratedmodelling.klab.dataflow;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.ValueOperator;
-import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
@@ -31,22 +31,28 @@ public class ObservedConcept {
 
     private IObservable observable = null;
     private IResolutionScope.Mode mode;
+    private IObservable observationContext = null;
     private ResolutionScope scope;
 
     private Map<String, Object> data = new HashMap<>();
     String conceptDeclaration = null;
+    String contextConceptDeclaration = null;
     private List<Pair<ValueOperator, Object>> valueOperators;
 
     public ObservedConcept(IConcept observable) {
-        this(Observable.promote(observable), observable.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
+        this(Observable.promote(observable),
+                observable.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION, (IObservable) null);
     }
 
     public ObservedConcept(IObservable observable) {
-        this(observable, observable.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
+        this(observable, observable.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION,
+                (IObservable) null);
     }
 
-    public ObservedConcept(IObservable observable, IResolutionScope.Mode mode) {
+    public ObservedConcept(IObservable observable, IResolutionScope.Mode mode,
+            IObservable observationContext) {
         this.observable = observable;
+        this.observationContext = observationContext;
         if (!observable.getValueOperators().isEmpty()) {
             this.valueOperators = observable.getValueOperators();
         }
@@ -55,9 +61,24 @@ public class ObservedConcept {
         }
         this.mode = mode;
         this.conceptDeclaration = observable.getType().getDefinition();
+        if (this.observationContext != null) {
+            this.contextConceptDeclaration = this.observationContext.getType().getDefinition();
+        }
     }
+
+    public ObservedConcept(IObservable observable, IResolutionScope.Mode mode) {
+        this(observable, mode, (IObservable) null);
+    }
+            
+    /**
+     * NOTE: this does NOT set the context observable from the scope!
+     * 
+     * @param observable
+     * @param mode
+     * @param scope
+     */
     public ObservedConcept(IObservable observable, IResolutionScope.Mode mode, ResolutionScope scope) {
-        this(observable, mode);
+        this(observable, mode, (IObservable)null/*scope.getContext() == null ? null : scope.getContext().getObservable()*/);
         this.scope = scope;
     }
 
@@ -75,12 +96,7 @@ public class ObservedConcept {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((conceptDeclaration == null) ? 0 : conceptDeclaration.hashCode());
-        result = prime * result + ((mode == null) ? 0 : mode.hashCode());
-        result = prime * result + ((valueOperators == null) ? 0 : valueOperators.hashCode());
-        return result;
+        return Objects.hash(conceptDeclaration, contextConceptDeclaration, mode, valueOperators);
     }
 
     @Override
@@ -92,19 +108,9 @@ public class ObservedConcept {
         if (getClass() != obj.getClass())
             return false;
         ObservedConcept other = (ObservedConcept) obj;
-        if (conceptDeclaration == null) {
-            if (other.conceptDeclaration != null)
-                return false;
-        } else if (!conceptDeclaration.equals(other.conceptDeclaration))
-            return false;
-        if (mode != other.mode)
-            return false;
-        if (valueOperators == null) {
-            if (other.valueOperators != null)
-                return false;
-        } else if (!Observables.INSTANCE.compareOperators(valueOperators, other.valueOperators))
-            return false;
-        return true;
+        return Objects.equals(conceptDeclaration, other.conceptDeclaration)
+                && Objects.equals(contextConceptDeclaration, other.contextConceptDeclaration)
+                && mode == other.mode && Objects.equals(valueOperators, other.valueOperators);
     }
 
     /**

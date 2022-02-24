@@ -388,6 +388,7 @@ public class KdlGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		private final RuleCall cNameLOWERCASE_IDTerminalRuleCall_8_0_0 = (RuleCall)cNameAlternatives_8_0.eContents().get(0);
 		private final RuleCall cNameLOWERCASE_DASHIDTerminalRuleCall_8_0_1 = (RuleCall)cNameAlternatives_8_0.eContents().get(1);
 		private final RuleCall cNameSTRINGTerminalRuleCall_8_0_2 = (RuleCall)cNameAlternatives_8_0.eContents().get(2);
+		private final Keyword cNameAsteriskKeyword_8_0_3 = (Keyword)cNameAlternatives_8_0.eContents().get(3);
 		private final Group cGroup_9 = (Group)cGroup.eContents().get(9);
 		private final Keyword cExtendsKeyword_9_0 = (Keyword)cGroup_9.eContents().get(0);
 		private final Assignment cExtendedAssignment_9_1 = (Assignment)cGroup_9.eContents().get(1);
@@ -483,7 +484,9 @@ public class KdlGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//    type=ACTOR
 		//        // expressions must return the type; they are evaluated in the context and the artifacts named in them are imports
 		//        (expression?='expression')?
-		//        name=(LOWERCASE_ID|LOWERCASE_DASHID|STRING)
+		//        // resolvers named '*' must be void and in the scope of an instantiator; they are meant to resolve
+		//        // instantiated objects within their scale of reference .
+		//        name=(LOWERCASE_ID|LOWERCASE_DASHID|STRING|'*')
 		//        // extends only allowed at root level; must extend another upstream in same file
 		//        ('extends' extended=(LOWERCASE_ID|LOWERCASE_DASHID|STRING))?
 		//        ('for' targets+=TARGET (',' targets+=TARGET)*)? (docstring=STRING)? ('label' label=STRING)?
@@ -516,7 +519,9 @@ public class KdlGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//type=ACTOR
 		//    // expressions must return the type; they are evaluated in the context and the artifacts named in them are imports
 		//    (expression?='expression')?
-		//    name=(LOWERCASE_ID|LOWERCASE_DASHID|STRING)
+		//    // resolvers named '*' must be void and in the scope of an instantiator; they are meant to resolve
+		//    // instantiated objects within their scale of reference .
+		//    name=(LOWERCASE_ID|LOWERCASE_DASHID|STRING|'*')
 		//    // extends only allowed at root level; must extend another upstream in same file
 		//    ('extends' extended=(LOWERCASE_ID|LOWERCASE_DASHID|STRING))?
 		//    ('for' targets+=TARGET (',' targets+=TARGET)*)? (docstring=STRING)? ('label' label=STRING)?
@@ -632,10 +637,12 @@ public class KdlGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//'expression'
 		public Keyword getExpressionExpressionKeyword_7_0() { return cExpressionExpressionKeyword_7_0; }
 		
-		//name=(LOWERCASE_ID|LOWERCASE_DASHID|STRING)
+		//// resolvers named '*' must be void and in the scope of an instantiator; they are meant to resolve
+		//// instantiated objects within their scale of reference .
+		//name=(LOWERCASE_ID|LOWERCASE_DASHID|STRING|'*')
 		public Assignment getNameAssignment_8() { return cNameAssignment_8; }
 		
-		//(LOWERCASE_ID|LOWERCASE_DASHID|STRING)
+		//(LOWERCASE_ID|LOWERCASE_DASHID|STRING|'*')
 		public Alternatives getNameAlternatives_8_0() { return cNameAlternatives_8_0; }
 		
 		//LOWERCASE_ID
@@ -646,6 +653,9 @@ public class KdlGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		
 		//STRING
 		public RuleCall getNameSTRINGTerminalRuleCall_8_0_2() { return cNameSTRINGTerminalRuleCall_8_0_2; }
+		
+		//'*'
+		public Keyword getNameAsteriskKeyword_8_0_3() { return cNameAsteriskKeyword_8_0_3; }
 		
 		//// extends only allowed at root level; must extend another upstream in same file
 		//('extends' extended=(LOWERCASE_ID|LOWERCASE_DASHID|STRING))?
@@ -3522,7 +3532,9 @@ public class KdlGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 	//    type=ACTOR
 	//        // expressions must return the type; they are evaluated in the context and the artifacts named in them are imports
 	//        (expression?='expression')?
-	//        name=(LOWERCASE_ID|LOWERCASE_DASHID|STRING)
+	//        // resolvers named '*' must be void and in the scope of an instantiator; they are meant to resolve
+	//        // instantiated objects within their scale of reference .
+	//        name=(LOWERCASE_ID|LOWERCASE_DASHID|STRING|'*')
 	//        // extends only allowed at root level; must extend another upstream in same file
 	//        ('extends' extended=(LOWERCASE_ID|LOWERCASE_DASHID|STRING))?
 	//        ('for' targets+=TARGET (',' targets+=TARGET)*)? (docstring=STRING)? ('label' label=STRING)?

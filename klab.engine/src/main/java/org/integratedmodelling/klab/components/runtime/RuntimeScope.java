@@ -172,8 +172,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
     // root scope of the entire dataflow, unchanging, for downstream resolutions
     ResolutionScope resolutionScope;
 
-    // cache for repeated dataflow resolutions
-    Map<ResolvedObservable, List<Pair<ICoverage, Dataflow>>> dataflowCache = new HashMap<>();
+//    // cache for repeated dataflow resolutions
+//    Map<ObservedConcept, List<Pair<ICoverage, Dataflow>>> dataflowCache = new HashMap<>();
     private Actuator actuator;
     private boolean occurrent;
     private Map<String, IKnowledgeView> views;
@@ -255,16 +255,15 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
          * Complex and convoluted, but there is no other way to get this which must be created by
          * the task for the first context. Successive contextualizations will add to it.
          */
-        this.contextualizationStrategy = monitor.getIdentity().getParentIdentity(AbstractTask.class)
-                .getContextualizationStrategy();
+        this.contextualizationStrategy = ((ResolutionScope)scope).getContextualizationStrategy();
 
-        if (this.contextualizationStrategy == null) {
-            /*
-             * happens when a characterizer is contextualized during resolution, before anything has
-             * happened yet. We throw this away after we're done.
-             */
-            this.contextualizationStrategy = new ContextualizationStrategy();
-        }
+//        if (this.contextualizationStrategy == null) {
+//            /*
+//             * happens when a characterizer is contextualized during resolution, before anything has
+//             * happened yet. We throw this away after we're done.
+//             */
+//            this.contextualizationStrategy = new ContextualizationStrategy();
+//        }
 
         // store and set up for further resolutions
         this.resolutionScope = (ResolutionScope) scope;
@@ -312,7 +311,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
         this.rootSubject = context.rootSubject;
         this.contextSubject = context.contextSubject;
         this.observations = context.observations;
-        this.dataflowCache.putAll(context.dataflowCache);
+//        this.dataflowCache.putAll(context.dataflowCache);
         this.actuator = context.actuator;
         this.target = context.target;
         this.notifiedObservations = context.notifiedObservations;
@@ -573,7 +572,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
         Dataflow dataflow = null;
 
         List<Pair<ICoverage, Dataflow>> pairs = dataflowCache
-                .get(new ResolvedObservable((Observable) observable, mode));
+                .get(new ObservedConcept((Observable) observable, mode));
 
         if (pairs != null) {
             for (Pair<ICoverage, Dataflow> pair : pairs) {
@@ -587,7 +586,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
             if (pairs == null) {
                 pairs = new ArrayList<>();
-                dataflowCache.put(new ResolvedObservable((Observable) observable, mode), pairs);
+                dataflowCache.put(new ObservedConcept((Observable) observable, mode), pairs);
             }
 
             ResolutionScope scope = Resolver.create(this.dataflow).resolve((Observable) observable,
@@ -646,7 +645,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
         Dataflow dataflow = null;
 
         List<Pair<ICoverage, Dataflow>> pairs = dataflowCache
-                .get(new ResolvedObservable((Observable) observable, Mode.RESOLUTION));
+                .get(new ObservedConcept((Observable) observable, Mode.RESOLUTION));
 
         ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
 
@@ -662,7 +661,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
             if (pairs == null) {
                 pairs = new ArrayList<>();
-                dataflowCache.put(new ResolvedObservable((Observable) observable, Mode.RESOLUTION), pairs);
+                dataflowCache.put(new ObservedConcept((Observable) observable, Mode.RESOLUTION), pairs);
             }
 
             ResolutionScope scope = Resolver.create(this.dataflow).resolve((Observable) observable,
@@ -689,7 +688,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
                  */
                 pairs.add(new Pair<>(null,
                         dataflow = Dataflow.empty(observable, observable.getName(), scope, this.dataflow)));
-                dataflowCache.put(new ResolvedObservable((Observable) observable, Mode.RESOLUTION), pairs);
+                dataflowCache.put(new ObservedConcept((Observable) observable, Mode.RESOLUTION), pairs);
             }
         }
 
@@ -779,7 +778,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
         ResolutionScope scope = this.resolutionScope.getChildScope(target, Mode.RESOLUTION);
 
         List<Pair<ICoverage, Dataflow>> pairs = dataflowCache
-                .get(new ResolvedObservable((Observable) observable, Mode.RESOLUTION));
+                .get(new ObservedConcept((Observable) observable, Mode.RESOLUTION));
 
         if (pairs != null) {
             for (Pair<ICoverage, Dataflow> pair : pairs) {
@@ -793,7 +792,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
             if (pairs == null) {
                 pairs = new ArrayList<>();
-                dataflowCache.put(new ResolvedObservable((Observable) observable, Mode.RESOLUTION), pairs);
+                dataflowCache.put(new ObservedConcept((Observable) observable, Mode.RESOLUTION), pairs);
             }
 
             // TODO check model parameter
@@ -818,7 +817,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
                  */
                 pairs.add(
                         new Pair<>(null, dataflow = Dataflow.empty(observable, null, scope, this.dataflow)));
-                dataflowCache.put(new ResolvedObservable((Observable) observable, Mode.RESOLUTION), pairs);
+                dataflowCache.put(new ObservedConcept((Observable) observable, Mode.RESOLUTION), pairs);
             }
         }
 
@@ -1828,53 +1827,6 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
         structure.removeArtifact(object);
     }
 
-    // wrapper for proper caching of sub-dataflows
-    class ResolvedObservable {
-
-        Observable observable;
-        Mode resolutionMode;
-
-        ResolvedObservable(Observable observable, Mode mode) {
-            this.observable = observable;
-            this.resolutionMode = mode;
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + getOuterType().hashCode();
-            result = prime * result + ((observable == null) ? 0 : observable.hashCode());
-            result = prime * result + ((resolutionMode == null) ? 0 : resolutionMode.hashCode());
-            return result;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            if (getClass() != obj.getClass())
-                return false;
-            ResolvedObservable other = (ResolvedObservable) obj;
-            if (!getOuterType().equals(other.getOuterType()))
-                return false;
-            if (observable == null) {
-                if (other.observable != null)
-                    return false;
-            } else if (!observable.equals(other.observable))
-                return false;
-            if (resolutionMode != other.resolutionMode)
-                return false;
-            return true;
-        }
-
-        private RuntimeScope getOuterType() {
-            return RuntimeScope.this;
-        }
-
-    }
 
     @Override
     public Collection<IArtifact> getArtifact(IConcept observable) {
