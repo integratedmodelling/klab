@@ -93,53 +93,53 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
 	private String description;
 
-	@Deprecated
-	private DirectObservation context;
-	@Deprecated
-	private ResolutionScope resolutionScope;
-	@Deprecated
-	private IDirectObservation relationshipSource;
-	@Deprecated
-	private IDirectObservation relationshipTarget;
+//	@Deprecated
+//	private DirectObservation context;
+//	@Deprecated
+//	private ResolutionScope resolutionScope;
+//	@Deprecated
+//	private IDirectObservation relationshipSource;
+//	@Deprecated
+//	private IDirectObservation relationshipTarget;
 
-	/**
-	 * Each dataflow used to resolve subjects within this one is recorded here with
-	 * all the subjects it was used for.
-	 */
-	@Deprecated
-	Map<Dataflow, List<IDirectObservation>> inherentResolutions = new HashMap<>();
+//	/**
+//	 * Each dataflow used to resolve subjects within this one is recorded here with
+//	 * all the subjects it was used for.
+//	 */
+//	@Deprecated
+//	Map<Dataflow, List<IDirectObservation>> inherentResolutions = new HashMap<>();
 
-	/*
-	 * if true, we observe occurrents and we may need to upgrade a generic T context
-	 * to a specific one.
-	 */
-	@Deprecated
-	boolean hasOccurrents = false;
-	// if true, we have one time step and occurrents, so we should autostart
-	boolean autoStartTransitions = false;
+//	/*
+//	 * if true, we observe occurrents and we may need to upgrade a generic T context
+//	 * to a specific one.
+//	 */
+//	@Deprecated
+//	boolean hasOccurrents = false;
+//	// if true, we have one time step and occurrents, so we should autostart
+//	boolean autoStartTransitions = false;
 
 	// execution parameters for user modification if running interactively
 	private List<InteractiveParameter> fields = new ArrayList<>();
 	private List<Pair<IContextualizable, List<String>>> resources = new ArrayList<>();
 	private List<Pair<IAnnotation, List<String>>> annotations = new ArrayList<>();
-	@Deprecated
-	private IMetadata metadata;
-	@Deprecated
-	private Collection<IObservation> configurationTargets;
-	@Deprecated
-	private String targetName;
+//	@Deprecated
+//	private IMetadata metadata;
+//	@Deprecated
+//	private Collection<IObservation> configurationTargets;
+//	@Deprecated
+//	private String targetName;
 
-	// dependency structure, shared along the entire hierarchy
-	@Deprecated // should be in scope
-	Graph<ObservedConcept, DefaultEdge> dependencies;
+//	// dependency structure, shared along the entire hierarchy
+//	@Deprecated // should be in scope
+//	Graph<ObservedConcept, DefaultEdge> dependencies;
 
-	/**
-	 * This is available for inspection after dataflow.run() in case the dataflow is
-	 * only run for side effects on the scope. This happens, for example, during
-	 * in-resolution characterization of abstract identities.
-	 */
-	@Deprecated
-	IRuntimeScope runtimeScope = null;
+//	/**
+//	 * This is available for inspection after dataflow.run() in case the dataflow is
+//	 * only run for side effects on the scope. This happens, for example, during
+//	 * in-resolution characterization of abstract identities.
+//	 */
+//	@Deprecated
+//	IRuntimeScope runtimeScope = null;
 
 	class AnnotationParameterValue {
 
@@ -157,20 +157,20 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	}
 
 	List<AnnotationParameterValue> annotationParameters = new ArrayList<>();
-	@Deprecated
-	private Scale resolutionScale;
-	@Deprecated
-	private boolean secondary;
+//	@Deprecated
+//	private Scale resolutionScale;
+//	@Deprecated
+//	private boolean secondary;
 
-	/*
-	 * keep the IDs of the dataflows already merged (during run()) so that we only
-	 * merge each dataflow once when reusing them for multiple instances.
-	 */
-	@Deprecated
-	Set<String> dataflowIds = new HashSet<>();
-	private ObservationGroup observationGroup;
-	@Deprecated
-	private Mode notificationMode = INotification.Mode.Normal;
+//	/*
+//	 * keep the IDs of the dataflows already merged (during run()) so that we only
+//	 * merge each dataflow once when reusing them for multiple instances.
+//	 */
+//	@Deprecated
+//	Set<String> dataflowIds = new HashSet<>();
+//	private ObservationGroup observationGroup;
+//	@Deprecated
+//	private Mode notificationMode = INotification.Mode.Normal;
 
 	/*
 	 * primary dataflows are created by first-level observation tasks. They run
@@ -541,9 +541,9 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 			ret += "@klab " + Version.CURRENT + "\n";
 			ret += "@dataflow " + getName() + "\n";
 			ret += "@author 'k.LAB resolver " + creationTime + "'" + "\n";
-			if (getContext() != null) {
-				ret += "@context " + getContext().getUrn() + "\n";
-			}
+//			if (getContext() != null) {
+//				ret += "@context " + getContext().getUrn() + "\n";
+//			}
 			if (coverage != null && coverage.getExtentCount() > 0) {
 				List<IServiceCall> scaleSpecs = ((Scale) coverage).getKimSpecification();
 				if (!scaleSpecs.isEmpty()) {
@@ -580,17 +580,17 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		return encode(0);
 	}
 
-	public DirectObservation getContext() {
-		return context;
-	}
-
-	public void setContext(DirectObservation context) {
-		this.context = context;
-	}
-
-	public void setResolutionScope(ResolutionScope scope) {
-		this.resolutionScope = scope;
-	}
+//	public DirectObservation getContext() {
+//		return context;
+//	}
+//
+//	public void setContext(DirectObservation context) {
+//		this.context = context;
+//	}
+//
+//	public void setResolutionScope(ResolutionScope scope) {
+//		this.resolutionScope = scope;
+//	}
 
 	public static Dataflow empty(Dataflow parent) {
 		return new Dataflow(parent);
@@ -598,8 +598,8 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
 	public static Dataflow empty(ResolutionScope scope, Dataflow parent) {
 		Dataflow ret = new Dataflow(parent);
-		ret.resolutionScope = scope;
-		ret.session = scope.getSession();
+//		ret.resolutionScope = scope;
+//		ret.session = scope.getSession();
 		return ret;
 	}
 
@@ -652,73 +652,73 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		this.description = description;
 	}
 
-	public Dataflow withMetadata(IMetadata metadata) {
-		this.metadata = metadata;
-		return this;
-	}
+//	public Dataflow withMetadata(IMetadata metadata) {
+//		this.metadata = metadata;
+//		return this;
+//	}
+//
+//	public Dataflow connecting(IDirectObservation source, IDirectObservation target) {
+//		this.relationshipSource = source;
+//		this.relationshipTarget = target;
+//		return this;
+//	}
 
-	public Dataflow connecting(IDirectObservation source, IDirectObservation target) {
-		this.relationshipSource = source;
-		this.relationshipTarget = target;
-		return this;
-	}
+//	/**
+//	 * Metadata may be added to the dataflow before computation to resolve states
+//	 * and/or add to the target observation as specified by the model.
+//	 * 
+//	 * @return
+//	 */
+//	public IMetadata getMetadata() {
+//		return metadata;
+//	}
+//
+//	public IDirectObservation getRelationshipSource() {
+//		return relationshipSource;
+//	}
+//
+//	public IDirectObservation getRelationshipTarget() {
+//		return relationshipTarget;
+//	}
+//
+//	@Deprecated
+//	public Dataflow withConfigurationTargets(Collection<IObservation> targets) {
+//		this.configurationTargets = targets;
+//		return this;
+//	}
 
-	/**
-	 * Metadata may be added to the dataflow before computation to resolve states
-	 * and/or add to the target observation as specified by the model.
-	 * 
-	 * @return
-	 */
-	public IMetadata getMetadata() {
-		return metadata;
-	}
-
-	public IDirectObservation getRelationshipSource() {
-		return relationshipSource;
-	}
-
-	public IDirectObservation getRelationshipTarget() {
-		return relationshipTarget;
-	}
-
-	@Deprecated
-	public Dataflow withConfigurationTargets(Collection<IObservation> targets) {
-		this.configurationTargets = targets;
-		return this;
-	}
-
-	@Deprecated
-	public Collection<IObservation> getConfigurationTargets() {
-		return this.configurationTargets;
-	}
-
-	@Override
-	@Deprecated
-	public IScale getResolutionScale() {
-		if (this.resolutionScale == null && resolutionScope != null) {
-			this.resolutionScale = resolutionScope.getScale();
-			if (hasOccurrents && this.resolutionScale.getTime() != null) {
-				ITime time = this.resolutionScale.getTime();
-				if (time.isGeneric() || time.size() == 1) {
-
-					if (time.getStart() == null || time.getEnd() == null) {
-						throw new KlabContextualizationException(
-								"cannot contextualize occurrents (processes and events) without a specified temporal extent");
-					}
-
-					// turn time into a 1-step grid (so size = 2)
-					this.resolutionScale = Scale.substituteExtent(this.resolutionScale,
-							((Time) time).upgradeForOccurrents());
-				}
-
-				// set the dataflow to autostart transitions if we only have one
-				if (this.resolutionScale.getTime().size() >= 2) {
-					autoStartTransitions = true;
-				}
-			}
-		}
-		return this.resolutionScale;
-	}
+//	@Deprecated
+//	public Collection<IObservation> getConfigurationTargets() {
+//		return this.configurationTargets;
+//	}
+//
+//	@Override
+//	@Deprecated
+//	public IScale getResolutionScale() {
+//		if (this.resolutionScale == null && resolutionScope != null) {
+//			this.resolutionScale = resolutionScope.getScale();
+//			if (hasOccurrents && this.resolutionScale.getTime() != null) {
+//				ITime time = this.resolutionScale.getTime();
+//				if (time.isGeneric() || time.size() == 1) {
+//
+//					if (time.getStart() == null || time.getEnd() == null) {
+//						throw new KlabContextualizationException(
+//								"cannot contextualize occurrents (processes and events) without a specified temporal extent");
+//					}
+//
+//					// turn time into a 1-step grid (so size = 2)
+//					this.resolutionScale = Scale.substituteExtent(this.resolutionScale,
+//							((Time) time).upgradeForOccurrents());
+//				}
+//
+//				// set the dataflow to autostart transitions if we only have one
+//				if (this.resolutionScale.getTime().size() >= 2) {
+//					autoStartTransitions = true;
+//				}
+//			}
+//		}
+//		return this.resolutionScale;
+//	}
 
 	public void notifyOccurrents() {
 		this.hasOccurrents = true;
@@ -728,55 +728,55 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		return this.autoStartTransitions;
 	}
 
-	/**
-	 * TODO/FIXME if withScope is called, it must be called before this one.
-	 * 
-	 * @param scale
-	 * @return
-	 */
-	@Deprecated
-	public Dataflow withScopeScale(IScale scale) {
-		if (this.resolutionScope != null) {
-			this.resolutionScope = this.resolutionScope.rescale(scale);
-		}
-		return this;
-	}
+//	/**
+//	 * TODO/FIXME if withScope is called, it must be called before this one.
+//	 * 
+//	 * @param scale
+//	 * @return
+//	 */
+//	@Deprecated
+//	public Dataflow withScopeScale(IScale scale) {
+//		if (this.resolutionScope != null) {
+//			this.resolutionScope = this.resolutionScope.rescale(scale);
+//		}
+//		return this;
+//	}
 
-	/**
-	 * TODO this should create a new dataflow if we want concurrent execution of
-	 * dataflows with different scopes. Also this MUST be called before
-	 * withScopeScale if that is used.
-	 * 
-	 * @param scope
-	 * @return
-	 */
-	@Deprecated
-	public Dataflow withScope(ResolutionScope scope) {
-		this.resolutionScope = scope;
-		return this;
-	}
+//	/**
+//	 * TODO this should create a new dataflow if we want concurrent execution of
+//	 * dataflows with different scopes. Also this MUST be called before
+//	 * withScopeScale if that is used.
+//	 * 
+//	 * @param scope
+//	 * @return
+//	 */
+//	@Deprecated
+//	public Dataflow withScope(ResolutionScope scope) {
+//		this.resolutionScope = scope;
+//		return this;
+//	}
+//
+//	@Deprecated
+//	public ResolutionScope getResolutionScope() {
+//		return this.resolutionScope;
+//	}
+//
+//	/*
+//	 * FIXME this shouldn't be necessary - use the hierarchy
+//	 */
+//	@Deprecated
+//	public void setSecondary(boolean b) {
+//		this.secondary = b;
+//	}
 
-	@Deprecated
-	public ResolutionScope getResolutionScope() {
-		return this.resolutionScope;
-	}
-
-	/*
-	 * FIXME this shouldn't be necessary - use the hierarchy
-	 */
-	@Deprecated
-	public void setSecondary(boolean b) {
-		this.secondary = b;
-	}
-
-	/*
-	 * FIXME this shouldn't be necessary - use the hierarchy. Also conflicts with
-	 * isPrimary() in meaning.
-	 */
-	@Deprecated
-	public boolean isSecondary() {
-		return this.secondary;
-	}
+//	/*
+//	 * FIXME this shouldn't be necessary - use the hierarchy. Also conflicts with
+//	 * isPrimary() in meaning.
+//	 */
+//	@Deprecated
+//	public boolean isSecondary() {
+//		return this.secondary;
+//	}
 
 //	public void reattributeActuators() {
 //		for (IActuator actuator : actuators) {
@@ -791,69 +791,69 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 //		}
 //	}
 
-	@Deprecated
-	public Dataflow withContext(IDirectObservation contextSubject) {
-		this.context = (DirectObservation) contextSubject;
-		return this;
-	}
+//	@Deprecated
+//	public Dataflow withContext(IDirectObservation contextSubject) {
+//		this.context = (DirectObservation) contextSubject;
+//		return this;
+//	}
+//
+//	@Deprecated
+//	public Dataflow withinGroup(ObservationGroup group) {
+//		this.observationGroup = group;
+//		return this;
+//	}
+//
+//	@Deprecated
+//	public ObservationGroup getObservationGroup() {
+//		return this.observationGroup;
+//	}
+//
+//	@Deprecated
+//	public String getTargetName() {
+//		return targetName;
+//	}
+//
+//	@Deprecated
+//	public void setTargetName(String targetName) {
+//		this.targetName = targetName;
+//	}
 
-	@Deprecated
-	public Dataflow withinGroup(ObservationGroup group) {
-		this.observationGroup = group;
-		return this;
-	}
+//	@Deprecated
+//	public Dataflow withTargetName(String targetName) {
+//		this.targetName = targetName;
+//		return this;
+//	}
+//
+//	public Mode getNotificationMode() {
+//		return this.notificationMode;
+//	}
+//
+//	public void setNotificationMode(INotification.Mode mode) {
+//		this.notificationMode = mode;
+//	}
+//
+//	public Dataflow withNotificationMode(INotification.Mode mode) {
+//		this.notificationMode = mode;
+//		return this;
+//	}
+//
+//	public Graph<ObservedConcept, DefaultEdge> getDependencies() {
+//		return this.dependencies;
+//	}
+//
+//	public Set<ObservedConcept> getImplicitlyChangingObservables() {
+//		return resolutionScope.getImplicitlyChangingObservables();
+//	}
+//
+//	@Deprecated
+//	public IRuntimeScope getRuntimeScope() {
+//		return this.runtimeScope;
+//	}
 
-	@Deprecated
-	public ObservationGroup getObservationGroup() {
-		return this.observationGroup;
-	}
-
-	@Deprecated
-	public String getTargetName() {
-		return targetName;
-	}
-
-	@Deprecated
-	public void setTargetName(String targetName) {
-		this.targetName = targetName;
-	}
-
-	@Deprecated
-	public Dataflow withTargetName(String targetName) {
-		this.targetName = targetName;
-		return this;
-	}
-
-	public Mode getNotificationMode() {
-		return this.notificationMode;
-	}
-
-	public void setNotificationMode(INotification.Mode mode) {
-		this.notificationMode = mode;
-	}
-
-	public Dataflow withNotificationMode(INotification.Mode mode) {
-		this.notificationMode = mode;
-		return this;
-	}
-
-	public Graph<ObservedConcept, DefaultEdge> getDependencies() {
-		return this.dependencies;
-	}
-
-	public Set<ObservedConcept> getImplicitlyChangingObservables() {
-		return resolutionScope.getImplicitlyChangingObservables();
-	}
-
-	@Deprecated
-	public IRuntimeScope getRuntimeScope() {
-		return this.runtimeScope;
-	}
-
-	@Deprecated
-	public void setRuntimeScope(IRuntimeScope runtimeScope) {
-		this.runtimeScope = runtimeScope;
-	}
+//	@Deprecated
+//	public void setRuntimeScope(IRuntimeScope runtimeScope) {
+//		this.runtimeScope = runtimeScope;
+//	}
 
 	/**
 	 * Fill in the localNames map in each actuator for independent relocation of
@@ -883,24 +883,24 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		actuator.getLocalNames().putAll(hashMap);
 	}
 
-	/**
-	 * Record that the passed observation was resolved using the passed dataflow.
-	 * Scheduling will need to use this information.
-	 * 
-	 * @param observation
-	 * @param dataflow
-	 */
-	@Deprecated
-	public void registerResolution(IDirectObservation observation, Dataflow dataflow) {
-		List<IDirectObservation> obs = inherentResolutions.get(dataflow);
-		if (obs == null) {
-			obs = new ArrayList<>();
-			inherentResolutions.put(dataflow, obs);
-		}
-		if (!obs.contains(observation)) {
-			obs.add(observation);
-		}
-	}
+//	/**
+//	 * Record that the passed observation was resolved using the passed dataflow.
+//	 * Scheduling will need to use this information.
+//	 * 
+//	 * @param observation
+//	 * @param dataflow
+//	 */
+//	@Deprecated
+//	public void registerResolution(IDirectObservation observation, Dataflow dataflow) {
+//		List<IDirectObservation> obs = inherentResolutions.get(dataflow);
+//		if (obs == null) {
+//			obs = new ArrayList<>();
+//			inherentResolutions.put(dataflow, obs);
+//		}
+//		if (!obs.contains(observation)) {
+//			obs.add(observation);
+//		}
+//	}
 
 	@Override
 	public int hashCode() {

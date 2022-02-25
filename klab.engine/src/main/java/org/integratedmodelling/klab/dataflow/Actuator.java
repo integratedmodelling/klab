@@ -152,12 +152,12 @@ public class Actuator implements IActuator {
      * documentation templates to figure out what can be said. When the computation starts and ends,
      * the timestamps are updated.
      */
-	@Deprecated
-    private AtomicInteger status = new AtomicInteger(0);
-	@Deprecated
-    private AtomicLong startComputation = new AtomicLong(0);
-	@Deprecated
-    private AtomicLong endComputation = new AtomicLong(0);
+//	@Deprecated
+//    private AtomicInteger status = new AtomicInteger(0);
+//	@Deprecated
+//    private AtomicLong startComputation = new AtomicLong(0);
+//	@Deprecated
+//    private AtomicLong endComputation = new AtomicLong(0);
 
     /*
      * The coverage is generic and is set to the coverage of the generating models. The dataflow
@@ -194,16 +194,16 @@ public class Actuator implements IActuator {
     // output port
     private boolean exported;
 
-    @Deprecated
-    protected ISession session;
+//    @Deprecated
+//    protected ISession session;
 
     /**
      * these are added when observations should be made "within" resolved objects after
      * instantiation and initial resolution. Resolution and dataflow caching is done in the runtime
      * scope.
      */
-    @Deprecated
-    private List<Observable> deferredObservables = new ArrayList<>();
+//    @Deprecated
+//    private List<Observable> deferredObservables = new ArrayList<>();
 
     // this is only for the API
     private List<IContextualizable> computedResources = new ArrayList<>();
@@ -212,13 +212,13 @@ public class Actuator implements IActuator {
     private List<IAnnotation> annotations = new ArrayList<>();
 
     // this is for documentation templates, not saved
-    @Deprecated
-    private transient IRuntimeScope currentContext;
+//    @Deprecated
+//    private transient IRuntimeScope currentContext;
 
     /*
      * this gets a copy of the original model resource, so we can do things to it.
      */
-    public void addComputation(IContextualizable resource) {
+    public void addComputation(IContextualizable resource, ISession session) {
         ((ComputableResource) resource).setOriginalObservable(this.observable);
         computedResources.add(resource);
         // the call is null if we are just building a variable to use downstream.
@@ -229,7 +229,7 @@ public class Actuator implements IActuator {
         computationStrategy.add(new Pair<>(serviceCall, resource));
     }
 
-    public void addMediation(IContextualizable resource, Actuator target) {
+    public void addMediation(IContextualizable resource, Actuator target, ISession session) {
         ((ComputableResource) resource)
                 .setTargetId(target.getAlias() == null ? target.getName() : target.getAlias());
         ((ComputableResource) resource).setMediation(true);
@@ -262,11 +262,11 @@ public class Actuator implements IActuator {
      */
     private List<IDocumentation> documentation = new ArrayList<>();
 
-    /*
-     * keep all computed observations here for notifyArtifact() to send on the message bus
-     */
-	@Deprecated
-    private List<IObservation> products = new ArrayList<>();
+//    /*
+//     * keep all computed observations here for notifyArtifact() to send on the message bus
+//     */
+//	@Deprecated
+//    private List<IObservation> products = new ArrayList<>();
 
     // if this is non-null, coverage is also non-null and the actuator defines a
     // partition of the named target artifact, covering our coverage only.
@@ -280,19 +280,19 @@ public class Actuator implements IActuator {
     private Mode mode;
     private Model model;
 
-    /*
-     * the scale of computation for partials. This is set by the dataflow when the actual context is
-     * known. FIXME this is kind of dirty: the dataflow will set it into the actuator, so each
-     * actuator tree should be used only once.
-     */
-	@Deprecated
-    private Scale mergedCoverage;
+//    /*
+//     * the scale of computation for partials. This is set by the dataflow when the actual context is
+//     * known. FIXME this is kind of dirty: the dataflow will set it into the actuator, so each
+//     * actuator tree should be used only once.
+//     */
+//	@Deprecated
+//    private Scale mergedCoverage;
 
-    /*
-     * The scale at runtime, computed by merging the overall scale with any specific model coverage.
-     */
-	@Deprecated
-    private IScale runtimeScale = null;
+//    /*
+//     * The scale at runtime, computed by merging the overall scale with any specific model coverage.
+//     */
+//	@Deprecated
+//    private IScale runtimeScale = null;
 
     @Override
     public String getName() {
