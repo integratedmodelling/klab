@@ -191,6 +191,7 @@ public class Actuator implements IActuator {
     // output port
     private boolean exported;
 
+    @Deprecated
     protected ISession session;
 
     /**
@@ -198,6 +199,7 @@ public class Actuator implements IActuator {
      * instantiation and initial resolution. Resolution and dataflow caching is done in the runtime
      * scope.
      */
+    @Deprecated
     private List<Observable> deferredObservables = new ArrayList<>();
 
     // this is only for the API
@@ -207,6 +209,7 @@ public class Actuator implements IActuator {
     private List<IAnnotation> annotations = new ArrayList<>();
 
     // this is for documentation templates, not saved
+    @Deprecated
     private transient IRuntimeScope currentContext;
 
     /*

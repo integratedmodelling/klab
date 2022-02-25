@@ -92,21 +92,28 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	public static final String ACTUATOR = "ACTUATOR";
 
 	private String description;
+
+	@Deprecated
 	private DirectObservation context;
+	@Deprecated
 	private ResolutionScope resolutionScope;
+	@Deprecated
 	private IDirectObservation relationshipSource;
+	@Deprecated
 	private IDirectObservation relationshipTarget;
 
 	/**
 	 * Each dataflow used to resolve subjects within this one is recorded here with
 	 * all the subjects it was used for.
 	 */
+	@Deprecated
 	Map<Dataflow, List<IDirectObservation>> inherentResolutions = new HashMap<>();
 
 	/*
 	 * if true, we observe occurrents and we may need to upgrade a generic T context
 	 * to a specific one.
 	 */
+	@Deprecated
 	boolean hasOccurrents = false;
 	// if true, we have one time step and occurrents, so we should autostart
 	boolean autoStartTransitions = false;
@@ -115,11 +122,15 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	private List<InteractiveParameter> fields = new ArrayList<>();
 	private List<Pair<IContextualizable, List<String>>> resources = new ArrayList<>();
 	private List<Pair<IAnnotation, List<String>>> annotations = new ArrayList<>();
+	@Deprecated
 	private IMetadata metadata;
+	@Deprecated
 	private Collection<IObservation> configurationTargets;
+	@Deprecated
 	private String targetName;
 
 	// dependency structure, shared along the entire hierarchy
+	@Deprecated // should be in scope
 	Graph<ObservedConcept, DefaultEdge> dependencies;
 
 	/**
@@ -127,6 +138,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	 * only run for side effects on the scope. This happens, for example, during
 	 * in-resolution characterization of abstract identities.
 	 */
+	@Deprecated
 	IRuntimeScope runtimeScope = null;
 
 	class AnnotationParameterValue {
@@ -145,15 +157,19 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	}
 
 	List<AnnotationParameterValue> annotationParameters = new ArrayList<>();
+	@Deprecated
 	private Scale resolutionScale;
+	@Deprecated
 	private boolean secondary;
 
 	/*
 	 * keep the IDs of the dataflows already merged (during run()) so that we only
 	 * merge each dataflow once when reusing them for multiple instances.
 	 */
+	@Deprecated
 	Set<String> dataflowIds = new HashSet<>();
 	private ObservationGroup observationGroup;
+	@Deprecated
 	private Mode notificationMode = INotification.Mode.Normal;
 
 	/*
@@ -195,6 +211,8 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	 * manually so that any resolution issue also get reported as pertaining to the
 	 * same observation task).
 	 * 
+	 * FIXME MUST USE SCOPE!
+	 * 
 	 * @param scale
 	 * @param parentComputation
 	 * @param monitor
@@ -229,9 +247,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		 * and notifying it would be a lot of notification if it's called for 3000
 		 * instantiated objects.
 		 */
-		boolean trivial = actuators.size() < 2 && (actuators.size() == 0 || (actuators.size() == 1
-				&& ((Actuator) actuators.get(0)).getObservable().is(IKimConcept.Type.COUNTABLE)
-				&& ((Actuator) actuators.get(0)).isTrivial()));
+		boolean trivial = isTrivial();
 
 		if (!trivial && parentComputation != null && monitor.getIdentity() instanceof AbstractTask) {
 			((AbstractTask<?>) monitor.getIdentity()).notifyStart();
@@ -613,8 +629,9 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	}
 
 	public boolean isTrivial() {
-		return actuators.size() == 1 && actuators.get(0).isEmpty()
-				&& resolutionScope.getMode() == IResolutionScope.Mode.RESOLUTION;
+		return actuators.size() < 2 && (actuators.size() == 0 || (actuators.size() == 1
+				&& ((Actuator) actuators.get(0)).getObservable().is(IKimConcept.Type.COUNTABLE)
+				&& ((Actuator) actuators.get(0)).isTrivial()));
 	}
 
 	/**
@@ -664,16 +681,19 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		return relationshipTarget;
 	}
 
+	@Deprecated
 	public Dataflow withConfigurationTargets(Collection<IObservation> targets) {
 		this.configurationTargets = targets;
 		return this;
 	}
 
+	@Deprecated
 	public Collection<IObservation> getConfigurationTargets() {
 		return this.configurationTargets;
 	}
 
 	@Override
+	@Deprecated
 	public IScale getResolutionScale() {
 		if (this.resolutionScale == null && resolutionScope != null) {
 			this.resolutionScale = resolutionScope.getScale();
@@ -714,6 +734,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	 * @param scale
 	 * @return
 	 */
+	@Deprecated
 	public Dataflow withScopeScale(IScale scale) {
 		if (this.resolutionScope != null) {
 			this.resolutionScope = this.resolutionScope.rescale(scale);
@@ -729,11 +750,13 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	 * @param scope
 	 * @return
 	 */
+	@Deprecated
 	public Dataflow withScope(ResolutionScope scope) {
 		this.resolutionScope = scope;
 		return this;
 	}
 
+	@Deprecated
 	public ResolutionScope getResolutionScope() {
 		return this.resolutionScope;
 	}
@@ -741,6 +764,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	/*
 	 * FIXME this shouldn't be necessary - use the hierarchy
 	 */
+	@Deprecated
 	public void setSecondary(boolean b) {
 		this.secondary = b;
 	}
@@ -749,45 +773,52 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	 * FIXME this shouldn't be necessary - use the hierarchy. Also conflicts with
 	 * isPrimary() in meaning.
 	 */
+	@Deprecated
 	public boolean isSecondary() {
 		return this.secondary;
 	}
 
-	public void reattributeActuators() {
-		for (IActuator actuator : actuators) {
-			reattributeActuator(actuator);
-		}
-	}
+//	public void reattributeActuators() {
+//		for (IActuator actuator : actuators) {
+//			reattributeActuator(actuator);
+//		}
+//	}
+//
+//	private void reattributeActuator(IActuator actuator) {
+//		((Actuator) actuator).setDataflow(this);
+//		for (IActuator a : actuator.getActuators()) {
+//			reattributeActuator(a);
+//		}
+//	}
 
-	private void reattributeActuator(IActuator actuator) {
-		((Actuator) actuator).setDataflow(this);
-		for (IActuator a : actuator.getActuators()) {
-			reattributeActuator(a);
-		}
-	}
-
+	@Deprecated
 	public Dataflow withContext(IDirectObservation contextSubject) {
 		this.context = (DirectObservation) contextSubject;
 		return this;
 	}
 
+	@Deprecated
 	public Dataflow withinGroup(ObservationGroup group) {
 		this.observationGroup = group;
 		return this;
 	}
 
+	@Deprecated
 	public ObservationGroup getObservationGroup() {
 		return this.observationGroup;
 	}
 
+	@Deprecated
 	public String getTargetName() {
 		return targetName;
 	}
 
+	@Deprecated
 	public void setTargetName(String targetName) {
 		this.targetName = targetName;
 	}
 
+	@Deprecated
 	public Dataflow withTargetName(String targetName) {
 		this.targetName = targetName;
 		return this;
@@ -814,10 +845,12 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		return resolutionScope.getImplicitlyChangingObservables();
 	}
 
+	@Deprecated
 	public IRuntimeScope getRuntimeScope() {
 		return this.runtimeScope;
 	}
 
+	@Deprecated
 	public void setRuntimeScope(IRuntimeScope runtimeScope) {
 		this.runtimeScope = runtimeScope;
 	}
@@ -857,6 +890,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	 * @param observation
 	 * @param dataflow
 	 */
+	@Deprecated
 	public void registerResolution(IDirectObservation observation, Dataflow dataflow) {
 		List<IDirectObservation> obs = inherentResolutions.get(dataflow);
 		if (obs == null) {
@@ -893,19 +927,19 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		return true;
 	}
 
-	/**
-	 * Use to quickly compare different dataflows for equality of executable
-	 * methods. Useful to group resolution dataflows for multiple objects into the
-	 * minimum number of distinct ones. Does not compare preambles.
-	 * 
-	 * TODO this may skip differences in lookup tables or other parameters that are
-	 * currently not printed in full literal form in the code.
-	 * 
-	 * @return an hex signature that will be equal if the actuator part is equal.
-	 */
-	public String getSignature() {
-		return DigestUtils.md5Hex(encode(0, false));
-	}
+//	/**
+//	 * Use to quickly compare different dataflows for equality of executable
+//	 * methods. Useful to group resolution dataflows for multiple objects into the
+//	 * minimum number of distinct ones. Does not compare preambles.
+//	 * 
+//	 * TODO this may skip differences in lookup tables or other parameters that are
+//	 * currently not printed in full literal form in the code.
+//	 * 
+//	 * @return an hex signature that will be equal if the actuator part is equal.
+//	 */
+//	public String getSignature() {
+//		return DigestUtils.md5Hex(encode(0, false));
+//	}
 
 	@Override
 	public List<IDataflow<IArtifact>> getChildren() {
@@ -929,20 +963,6 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	@Override
 	public String toString() {
 		return getKdlCode();
-	}
-
-	/**
-	 * Dataflows that have resolved a specific instantiated actuator
-	 * 
-	 * @param actuator2
-	 * @return
-	 */
-	public Collection<IDataflow<IArtifact>> childrenOf(Actuator actuator2) {
-		List<IDataflow<IArtifact>> ret = new ArrayList<>();
-		for (IDataflow<IArtifact> child : childDataflows) {
-			System.out.println("ZIO PEO");
-		}
-		return ret;
 	}
 
 }
