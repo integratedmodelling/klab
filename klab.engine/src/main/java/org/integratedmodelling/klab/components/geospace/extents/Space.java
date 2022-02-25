@@ -590,7 +590,11 @@ public class Space extends Extent implements ISpace {
                             + other.getClass().getCanonicalName());
         }
         Shape oShape = (Shape) ((ISpace) other).getShape();
-        return shape == null || oShape == null ? false : shape.shapeGeometry.contains(oShape.shapeGeometry);
+        if (this.shape == null || oShape == null) {
+        	// we contain multitudes or the other doesn't care
+        	return true;
+        }
+        return shape.shapeGeometry.contains(oShape.shapeGeometry);
     }
 
     @Override

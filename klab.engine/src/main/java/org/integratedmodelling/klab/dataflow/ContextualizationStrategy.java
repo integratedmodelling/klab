@@ -120,8 +120,13 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
 			found = true;
 			for (Pair<ICoverage, Dataflow> pair : pairs) {
 				if (pair.getFirst() == null || pair.getFirst().contains(scale)) {
-					ret = pair.getSecond();
-					break;
+					// TODO only feasible if we copy the dataflow and localize afterwards. Just keep
+					// the
+					// empty ones, otherwise the scheduling won't work.
+					if (pair.getSecond().isTrivial()) {
+						ret = pair.getSecond();
+						break;
+					}
 				}
 			}
 		}

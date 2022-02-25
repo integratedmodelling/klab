@@ -1696,7 +1696,6 @@ public class Actuator implements IActuator {
 
     @Override
     public boolean isEmpty() {
-        // TODO Auto-generated method stub
-        return false;
+        return actuators.size() == 0;
     }
 }
