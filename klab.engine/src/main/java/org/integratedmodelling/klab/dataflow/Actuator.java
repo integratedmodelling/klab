@@ -152,8 +152,11 @@ public class Actuator implements IActuator {
      * documentation templates to figure out what can be said. When the computation starts and ends,
      * the timestamps are updated.
      */
+	@Deprecated
     private AtomicInteger status = new AtomicInteger(0);
+	@Deprecated
     private AtomicLong startComputation = new AtomicLong(0);
+	@Deprecated
     private AtomicLong endComputation = new AtomicLong(0);
 
     /*
@@ -262,6 +265,7 @@ public class Actuator implements IActuator {
     /*
      * keep all computed observations here for notifyArtifact() to send on the message bus
      */
+	@Deprecated
     private List<IObservation> products = new ArrayList<>();
 
     // if this is non-null, coverage is also non-null and the actuator defines a
@@ -281,11 +285,13 @@ public class Actuator implements IActuator {
      * known. FIXME this is kind of dirty: the dataflow will set it into the actuator, so each
      * actuator tree should be used only once.
      */
+	@Deprecated
     private Scale mergedCoverage;
 
     /*
      * The scale at runtime, computed by merging the overall scale with any specific model coverage.
      */
+	@Deprecated
     private IScale runtimeScale = null;
 
     @Override
