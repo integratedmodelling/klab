@@ -1,19 +1,28 @@
 package org.integratedmodelling.klab.components.runtime;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
+import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.components.time.extents.Time;
+import org.integratedmodelling.klab.dataflow.Actuator.Status;
+import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Parameters;
+import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultEdge;
 
 /**
  * Provides the state needed at runtime that was previously in (stateful) actuators. All other
@@ -24,14 +33,20 @@ import org.integratedmodelling.klab.utils.Parameters;
  */
 public abstract class AbstractRuntimeScope extends Parameters<String> implements IRuntimeScope {
 
+    Dataflow dataflow;
     Scale resolutionScale;
     ResolutionScope resolutionScope;
     boolean autoStartTransitions = false;
     Map<IActuator, IScale> partialScales;
+    Map<IActuator, Status> actuatorStatus;
+    Map<IActuator, Set<IObservation>> actuatorProducts;
+    private Graph<IObservedConcept, DefaultEdge> dependencyGraph;
 
-    protected AbstractRuntimeScope(IResolutionScope resolutionScope) {
+    protected AbstractRuntimeScope(Dataflow dataflow, IResolutionScope resolutionScope) {
         this.resolutionScope = (ResolutionScope) resolutionScope;
-        partialScales = Collections.synchronizedMap(new HashMap<>());
+        this.dataflow = dataflow;
+        this.partialScales = Collections.synchronizedMap(new HashMap<>());
+        this.actuatorStatus = Collections.synchronizedMap(new HashMap<>());
     }
 
     protected AbstractRuntimeScope(AbstractRuntimeScope scope) {
@@ -40,6 +55,9 @@ public abstract class AbstractRuntimeScope extends Parameters<String> implements
         this.resolutionScope = scope.resolutionScope;
         this.autoStartTransitions = scope.autoStartTransitions;
         this.partialScales = scope.partialScales;
+        this.actuatorStatus = scope.actuatorStatus;
+        this.dependencyGraph = scope.dependencyGraph;
+        this.dataflow = scope.dataflow;
     }
 
     @Override
@@ -62,7 +80,7 @@ public abstract class AbstractRuntimeScope extends Parameters<String> implements
         
         if (this.resolutionScale == null && resolutionScope != null) {
             this.resolutionScale = resolutionScope.getScale();
-            if (hasOccurrents && this.resolutionScale.getTime() != null) {
+            if (dataflow.occurs() && this.resolutionScale.getTime() != null) {
                 ITime time = this.resolutionScale.getTime();
                 if (time.isGeneric() || time.size() == 1) {
 
@@ -86,5 +104,35 @@ public abstract class AbstractRuntimeScope extends Parameters<String> implements
         }
         return this.resolutionScale;
     }
+    
+    @Override
+    public Status getStatus(IActuator actuator) {
+        Status ret = actuatorStatus.get(actuator);
+        if (ret == null) {
+            ret = new Status();
+            actuatorStatus.put(actuator, ret);
+        }
+        return ret;
+    }
 
+    @Override
+    public void setDependencyGraph(Graph<IObservedConcept, DefaultEdge> graph) {
+        this.dependencyGraph = graph;
+    }
+
+    @Override
+    public Graph<IObservedConcept, DefaultEdge> getDependencyGraph() {
+        return this.dependencyGraph;
+    }
+
+    @Override
+    public Collection<IObservation> getActuatorProducts(IActuator actuator) {
+        Set<IObservation> ret = this.actuatorProducts.get(actuator);
+        if (ret == null) {
+            ret = new LinkedHashSet<>();
+            this.actuatorProducts.put(actuator, ret);
+        }
+        return ret;
+    }
+    
 }

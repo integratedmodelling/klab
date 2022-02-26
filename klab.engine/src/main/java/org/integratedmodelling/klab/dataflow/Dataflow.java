@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.Interaction;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -406,7 +407,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
         return ret;
     }
 
-    private void definePartitions(IScale scale, IRuntimeScopes scope) {
+    private void definePartitions(IScale scale, IRuntimeScope scope) {
         _definePartialScales(this, (Scale) scale, scope);
     }
 
@@ -456,8 +457,8 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
         }
     }
 
-    private Graph<ObservedConcept, DefaultEdge> buildDependencies() {
-        Graph<ObservedConcept, DefaultEdge> ret = new DefaultDirectedGraph<>(DefaultEdge.class);
+    private Graph<IObservedConcept, DefaultEdge> buildDependencies() {
+        Graph<IObservedConcept, DefaultEdge> ret = new DefaultDirectedGraph<>(DefaultEdge.class);
         boolean primary = true;
         for (IActuator actuator : getActuators()) {
             buildDependencies((Actuator) actuator, ret, primary);
@@ -466,7 +467,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
         return ret;
     }
 
-    private ObservedConcept buildDependencies(Actuator actuator, Graph<ObservedConcept, DefaultEdge> graph,
+    private IObservedConcept buildDependencies(Actuator actuator, Graph<IObservedConcept, DefaultEdge> graph,
             boolean primary) {
 
         ObservedConcept observable = new ObservedConcept(actuator.getObservable(), actuator.getMode());
@@ -962,6 +963,11 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
     public void export(String baseName, File directory) {
         // TODO Auto-generated method stub
 
+    }
+
+    public boolean occurs() {
+        // TODO Auto-generated method stub
+        return false;
     }
 
 }

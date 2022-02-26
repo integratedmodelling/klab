@@ -42,6 +42,7 @@ import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
 import org.integratedmodelling.klab.api.knowledge.IViewModel.Schedule;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
@@ -463,7 +464,7 @@ public class TableCompiler {
 			return ret;
 		}
 
-		boolean isEnabled(Map<ObservedConcept, IObservation> catalog, IContextualizationScope scope) {
+		boolean isEnabled(Map<IObservedConcept, IObservation> catalog, IContextualizationScope scope) {
 
 			// TODO there may be other situations, like ranges that can't be matched, but
 			// maybe it's not worth checking compared to this.
@@ -496,7 +497,7 @@ public class TableCompiler {
 			return true;
 		}
 
-		boolean matches(Map<ObservedConcept, IObservation> catalog, ILocator locator, Phase phase, Object currentState,
+		boolean matches(Map<IObservedConcept, IObservation> catalog, ILocator locator, Phase phase, Object currentState,
 				Dimension dimension, IContextualizationScope scope) {
 			if (universal) {
 				return true;
@@ -539,7 +540,7 @@ public class TableCompiler {
 			return true;
 		}
 
-		IObservation getObservation(Map<ObservedConcept, IObservation> catalog, IClassifier classifier,
+		IObservation getObservation(Map<IObservedConcept, IObservation> catalog, IClassifier classifier,
 				Dimension dimension) {
 
 			if (this.target.getObservable().isAbstract() && classifier.isConcept()) {
@@ -642,8 +643,8 @@ public class TableCompiler {
 			}
 		}
 
-		public ObservedConcept transform(ObservedConcept trg) {
-			ObservedConcept ret = trg;
+		public IObservedConcept transform(IObservedConcept trg) {
+			IObservedConcept ret = trg;
 			if (this.operatorAdd != null) {
 				return new ObservedConcept(
 						trg.getObservable().getBuilder(monitor).as(this.operatorAdd).buildObservable(), trg.getMode());
@@ -992,7 +993,7 @@ public class TableCompiler {
 
 		// ensures that all rows get their target computed properly and transformed as
 		// needed before any cell is computed.
-		public Map<String, ObservedConcept> columnTargets = new HashMap<>();
+		public Map<String, IObservedConcept> columnTargets = new HashMap<>();
 
 		/**
 		 * Called once at sorting to weed out dimensions that cannot match the data
@@ -1002,7 +1003,7 @@ public class TableCompiler {
 		 * @param scope
 		 * @return
 		 */
-		public boolean isEnabled(Map<ObservedConcept, IObservation> catalog, IContextualizationScope scope) {
+		public boolean isEnabled(Map<IObservedConcept, IObservation> catalog, IContextualizationScope scope) {
 
 			if (this.filters != null) {
 				for (Filter filter : this.filters) {
@@ -1035,7 +1036,7 @@ public class TableCompiler {
 		 *                     observation according to what we're computing against.
 		 * @return
 		 */
-		public boolean isActive(Map<ObservedConcept, IObservation> catalog, ILocator locator, Phase phase,
+		public boolean isActive(Map<IObservedConcept, IObservation> catalog, ILocator locator, Phase phase,
 				Object currentState, IContextualizationScope scope) {
 
 			if (this.separator) {
@@ -1253,7 +1254,7 @@ public class TableCompiler {
 	 * @return
 	 */
 	private List<Dimension> getSortedDimension(Map<String, Dimension> dimensions,
-			Map<ObservedConcept, IObservation> catalog, IRuntimeScope scope) {
+			Map<IObservedConcept, IObservation> catalog, IRuntimeScope scope) {
 		List<Dimension> ret = new ArrayList<>();
 
 		List<Dimension> originalDims = new ArrayList<>();
@@ -1572,8 +1573,8 @@ public class TableCompiler {
 
 					if (scope != null) {
 
-						Map<ObservedConcept, IObservation> catalog = scope.getCatalog();
-						for (ObservedConcept concept : catalog.keySet()) {
+						Map<IObservedConcept, IObservation> catalog = scope.getCatalog();
+						for (IObservedConcept concept : catalog.keySet()) {
 							boolean stateOK = trg.resolves(concept.getObservable(),
 									scope.getContextObservation() == null ? null
 											: scope.getContextObservation().getObservable().getType());
@@ -1980,8 +1981,8 @@ public class TableCompiler {
 
 					if (scope != null) {
 
-						Map<ObservedConcept, IObservation> catalog = scope.getCatalog();
-						for (ObservedConcept concept : catalog.keySet()) {
+						Map<IObservedConcept, IObservation> catalog = scope.getCatalog();
+						for (IObservedConcept concept : catalog.keySet()) {
 							boolean stateOK = observable.resolves(concept.getObservable(),
 									scope.getContextObservation() == null ? null
 											: scope.getContextObservation().getObservable().getType());
@@ -2163,7 +2164,7 @@ public class TableCompiler {
 
 		scope.getMonitor().info("start computing table " + name);
 
-		Map<ObservedConcept, IObservation> catalog = scope.getCatalog();
+		Map<IObservedConcept, IObservation> catalog = scope.getCatalog();
 		if (this.target != null && !this.target.getObservable().isAbstract()) {
 			targetObservation = catalog.get(this.target);
 		}
@@ -2268,7 +2269,7 @@ public class TableCompiler {
 						}
 
 						// bring along the data of computation closest to us
-						ObservedConcept rowTarget = getCellTarget(row, column, columnTarget);
+						IObservedConcept rowTarget = getCellTarget(row, column, columnTarget);
 						TargetType rowTargetType = row.targetType == null ? columnTargetType : row.targetType;
 						ComputationType forcedAggregation = row.forcedAggregation == null ? column.forcedAggregation
 								: row.forcedAggregation;
@@ -2399,11 +2400,11 @@ public class TableCompiler {
 		}
 	}
 
-	private ObservedConcept getCellTarget(Dimension row, Dimension column, ObservedConcept defaultTarget) {
+	private IObservedConcept getCellTarget(Dimension row, Dimension column, IObservedConcept defaultTarget) {
 
 		if (!row.columnTargets.containsKey(column.getName())) {
 
-			ObservedConcept trg = row.target;
+			IObservedConcept trg = row.target;
 			if (trg == null) {
 				/*
 				 * get the closest target for the row, then for the column, then the default.
@@ -2469,7 +2470,7 @@ public class TableCompiler {
 	private Object evaluate(ILanguageExpression rowExpression, Object self, Set<String> scalarSymbols,
 			Set<String> objectSymbols, Pair<Object, ILocator> value, TableArtifact ret, int columnIndex, int rowIndex,
 			Dimension column, Dimension row, boolean isValue, Map<String, ITime> phases,
-			Map<ObservedConcept, IObservation> catalog, IRuntimeScope scope) {
+			Map<IObservedConcept, IObservation> catalog, IRuntimeScope scope) {
 
 		IParameters<String> parameters = Parameters.create(scope);
 		parameters.put("self", self);

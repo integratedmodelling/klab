@@ -4,13 +4,13 @@ import java.util.Map;
 
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.cli.ICommand;
+import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.components.localstorage.impl.AbstractAdaptiveStorage;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.State;
-import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 
 public class Info implements ICommand {
@@ -21,8 +21,8 @@ public class Info implements ICommand {
 		String ret = "";
 		ISubject ctx = session.getState().getCurrentContext();
 		if (ctx != null) {
-			Map<ObservedConcept, IObservation> catalog = ((IRuntimeScope)((Observation)ctx).getScope()).getCatalog();
-			for (ObservedConcept c : catalog.keySet()) {
+			Map<IObservedConcept, IObservation> catalog = ((IRuntimeScope)((Observation)ctx).getScope()).getCatalog();
+			for (IObservedConcept c : catalog.keySet()) {
 				IObservation obs = catalog.get(c);
 				ret += c + ":\n";
 				ret += dump(obs, 0);

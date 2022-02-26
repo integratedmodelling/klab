@@ -11,6 +11,7 @@ import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
 import org.integratedmodelling.klab.api.model.contextualization.IProcessor;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -57,7 +58,7 @@ public class EuclideanDistanceResolver implements IResolver<IState>, IExpression
 	@Override
 	public IState resolve(IState ret, IContextualizationScope context) throws KlabException {
 
-		Map<ObservedConcept, IObservation> catalog = ((IRuntimeScope) context).getCatalog();
+		Map<IObservedConcept, IObservation> catalog = ((IRuntimeScope) context).getCatalog();
 
 		Set<IState> targets = extractStates("target", catalog, context);
 		Set<IState> sources = extractStates("source", catalog, context);
@@ -96,7 +97,7 @@ public class EuclideanDistanceResolver implements IResolver<IState>, IExpression
 
 	}
 
-	private Set<IState> extractStates(String string, Map<ObservedConcept, IObservation> catalog,
+	private Set<IState> extractStates(String string, Map<IObservedConcept, IObservation> catalog,
 			IContextualizationScope scope) {
 		Set<IState> ret = new HashSet<>();
 		Object o = parameters.get(string);
@@ -110,13 +111,13 @@ public class EuclideanDistanceResolver implements IResolver<IState>, IExpression
 		return ret;
 	}
 
-	private Set<IState> extractState(Object o, Map<ObservedConcept, IObservation> catalog,
+	private Set<IState> extractState(Object o, Map<IObservedConcept, IObservation> catalog,
 			IContextualizationScope scope) {
 		Set<IState> ret = new HashSet<>();
 		if (o instanceof IKimConcept) {
 			IConcept concept = Concepts.INSTANCE.declare((IKimConcept) o);
 			if (concept.is(IKimConcept.Type.ROLE)) {
-				for (ObservedConcept key : catalog.keySet()) {
+				for (IObservedConcept key : catalog.keySet()) {
 					for (IConcept role : key.getObservable().getContextualRoles()) {
 						if (((RuntimeScope) scope).cached_is(role, concept) && catalog.get(key) instanceof IState) {
 							ret.add((IState) catalog.get(key));

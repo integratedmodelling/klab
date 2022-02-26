@@ -10,7 +10,6 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -27,6 +26,7 @@ import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -734,20 +734,20 @@ public class Scheduler implements IScheduler {
 	}
 
 	private List<Registration> computeDynamicDependencyOrder(List<Registration> registrations,
-			Graph<ObservedConcept, DefaultEdge> dependencies) {
+			Graph<IObservedConcept, DefaultEdge> dependencies) {
 
 		/*
 		 * Create a new dependency graph taking the dependency relationships from the
 		 * original dataflow, considering only the actuators involved in the schedule.
 		 */
-		Graph<ObservedConcept, DefaultEdge> dynamicDependencies = new DefaultDirectedGraph<>(DefaultEdge.class);
+		Graph<IObservedConcept, DefaultEdge> dynamicDependencies = new DefaultDirectedGraph<>(DefaultEdge.class);
 		for (Registration r : registrations) {
 			if (r.actuator != null) {
 				dynamicDependencies.addVertex(new ObservedConcept(r.actuator.getObservable(), r.actuator.getMode()));
 			}
 		}
 
-		for (ObservedConcept oc : dynamicDependencies.vertexSet()) {
+		for (IObservedConcept oc : dynamicDependencies.vertexSet()) {
 			// if (dependencies.vertexSet().contains(oc)) {
 			for (DefaultEdge dc : dependencies.incomingEdgesOf(oc)) {
 				if (dynamicDependencies.containsVertex(dependencies.getEdgeSource(dc))) {
@@ -763,8 +763,8 @@ public class Scheduler implements IScheduler {
 		 * then change in X depends on change in Y. If the dependency creates a cycle,
 		 * don't add it and cross fingers.
 		 */
-		List<ObservedConcept> ccs = new ArrayList<>(dynamicDependencies.vertexSet());
-		for (ObservedConcept oc : dynamicDependencies.vertexSet()) {
+		List<IObservedConcept> ccs = new ArrayList<>(dynamicDependencies.vertexSet());
+		for (IObservedConcept oc : dynamicDependencies.vertexSet()) {
 
 			/*
 			 * may not have all the dependencies. Check if: 1) it's change in y; 2) we have
@@ -781,7 +781,7 @@ public class Scheduler implements IScheduler {
 						Observable.promote(Observables.INSTANCE.getDescribedType(oc.getObservable().getType())),
 						Mode.RESOLUTION);
 
-				for (ObservedConcept dc : ccs) {
+				for (IObservedConcept dc : ccs) {
 
 					if (dc.equals(oc)) {
 						continue;
@@ -793,10 +793,10 @@ public class Scheduler implements IScheduler {
 						 * try adding the dependency on a clone. If that creates cycles, warn and move
 						 * on.
 						 */
-						Graph<ObservedConcept, DefaultEdge> clone = Graphs.copy(dynamicDependencies,
+						Graph<IObservedConcept, DefaultEdge> clone = Graphs.copy(dynamicDependencies,
 								new DefaultDirectedGraph<>(DefaultEdge.class));
 						clone.addEdge(oc, dc);
-						CycleDetector<ObservedConcept, DefaultEdge> cycles = new CycleDetector<>(clone);
+						CycleDetector<IObservedConcept, DefaultEdge> cycles = new CycleDetector<>(clone);
 						if (cycles.detectCycles()) {
 							monitor.warn("Implicit temporal dependency of "
 									+ Concepts.INSTANCE.getDisplayLabel(oc.getObservable().getType()) + " on "
@@ -819,7 +819,7 @@ public class Scheduler implements IScheduler {
 		}
 
 		List<Registration> ret = new ArrayList<>();
-		TopologicalOrderIterator<ObservedConcept, DefaultEdge> order = new TopologicalOrderIterator<ObservedConcept, DefaultEdge>(
+		TopologicalOrderIterator<IObservedConcept, DefaultEdge> order = new TopologicalOrderIterator<IObservedConcept, DefaultEdge>(
 				dynamicDependencies);
 
 		while (order.hasNext()) {
@@ -858,7 +858,7 @@ public class Scheduler implements IScheduler {
 		long time = startTime;
 		long lastAdvanced = startTime;
 
-		Map<ObservedConcept, IObservation> catalog = this.runtimeScope.getCatalog();
+		Map<IObservedConcept, IObservation> catalog = this.runtimeScope.getCatalog();
 
 		while (this.activeRegistrations > 0) {
 
@@ -875,7 +875,7 @@ public class Scheduler implements IScheduler {
 
 				this.wheel[cursor].clear();
 
-				Set<ObservedConcept> changed = new HashSet<>();
+				Set<IObservedConcept> changed = new HashSet<>();
 
 				long delay = 0;
 
@@ -911,8 +911,8 @@ public class Scheduler implements IScheduler {
 						 */
 						if (toRun != null && registration.endsPeriod && changed.size() > 0) {
 
-							Set<ObservedConcept> computed = new HashSet<>();
-							for (ObservedConcept tracked : runtimeScope.getResolutionScope()
+							Set<IObservedConcept> computed = new HashSet<>();
+							for (IObservedConcept tracked : runtimeScope.getResolutionScope()
 									.getImplicitlyChangingObservables()) {
 								computeImplicitDependents(tracked, changed, computed, toRun, registration.scope,
 										runtimeScope.getDependencyGraph(), catalog,
@@ -1019,9 +1019,9 @@ public class Scheduler implements IScheduler {
 	 * @param changed
 	 * @param computed
 	 */
-	private void computeImplicitDependents(ObservedConcept observable, Set<ObservedConcept> changed,
-			Set<ObservedConcept> computed, ITime time, IRuntimeScope runtimeScope,
-			Graph<ObservedConcept, DefaultEdge> dependencies, Map<ObservedConcept, IObservation> catalog,
+	private void computeImplicitDependents(IObservedConcept observable, Set<IObservedConcept> changed,
+			Set<IObservedConcept> computed, ITime time, IRuntimeScope runtimeScope,
+			Graph<IObservedConcept, DefaultEdge> dependencies, Map<IObservedConcept, IObservation> catalog,
 			IDataflow<?> dataflow) {
 
 		if (monitor.isInterrupted()) {
@@ -1030,7 +1030,7 @@ public class Scheduler implements IScheduler {
 
 		if (!computed.contains(observable)) {
 			boolean recompute = false;
-			for (ObservedConcept precursor : getPrecursors(dependencies, observable)) {
+			for (IObservedConcept precursor : getPrecursors(dependencies, observable)) {
 				computed.add(observable);
 				computeImplicitDependents(precursor, changed, computed, time, runtimeScope, dependencies, catalog,
 						dataflow);
@@ -1145,16 +1145,16 @@ public class Scheduler implements IScheduler {
 	 * crazy, but because observable is guaranteed to have at least one precursor
 	 * when this is called, we can retrieve the linked data this way.
 	 */
-	private Actuator getActuator(ObservedConcept observable, Graph<ObservedConcept, DefaultEdge> dependencies) {
+	private Actuator getActuator(IObservedConcept observable, Graph<IObservedConcept, DefaultEdge> dependencies) {
 		for (DefaultEdge edge : dependencies.incomingEdgesOf(observable)) {
 			return (Actuator) dependencies.getEdgeTarget(edge).getData().get(Dataflow.ACTUATOR);
 		}
 		return null;
 	}
 
-	private Set<ObservedConcept> getPrecursors(Graph<ObservedConcept, DefaultEdge> dependencies,
-			ObservedConcept observable) {
-		Set<ObservedConcept> ret = new HashSet<>();
+	private Set<IObservedConcept> getPrecursors(Graph<IObservedConcept, DefaultEdge> dependencies,
+			IObservedConcept observable) {
+		Set<IObservedConcept> ret = new HashSet<>();
 		if (dependencies.containsVertex(observable)) {
 			for (DefaultEdge edge : dependencies.incomingEdgesOf(observable)) {
 				ret.add(dependencies.getEdgeSource(edge));

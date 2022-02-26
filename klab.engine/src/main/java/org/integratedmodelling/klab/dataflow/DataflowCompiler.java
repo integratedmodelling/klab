@@ -132,7 +132,7 @@ public class DataflowCompiler {
             Graphs.show(resolutionGraph, "Resolution graph");
         }
 
-        Dataflow ret = new Dataflow(monitor.getIdentity().getParentIdentity(ISession.class), parentDataflow);
+        Dataflow ret = new Dataflow(parentDataflow);
 
         ret.setName(this.name);
         // ret.setContext(this.context);
@@ -339,7 +339,6 @@ public class DataflowCompiler {
         Object inlineValue;
         ResolvedArtifact resolvedArtifact;
         Strategy strategy = Strategy.DIRECT;
-        List<Observable> deferredObservables = new ArrayList<>();
 
         public String toString() {
             return (root ? "ROOT " : "") + ("[" + children.size() + "]")
@@ -462,7 +461,7 @@ public class DataflowCompiler {
             ret.getObservable().setDereifiedAttribute(attributeId);
             ret.setName(observable.getReferenceName());
             ret.setAlias(observable.getName());
-            ret.getDeferredObservables().addAll(deferredObservables);
+//            ret.getObservable().getDeferredObservables().addAll(deferredObservables);
 
             /*
              * FIXME this condition is silly; also there will be more problems due to this check. It
@@ -601,7 +600,7 @@ public class DataflowCompiler {
              * 
              * FIXME this shouldn't be a list. Ignoring any element > 1.
              */
-            for (Observable deferred : deferredObservables) {
+            for (Observable deferred : observable.getDeferredObservables()) {
 
                 /*
                  * remember the dereification so that we don't schedule it, which would require that
@@ -1036,7 +1035,7 @@ public class DataflowCompiler {
                      * Add the additional resolution step to the node, to be merged into the
                      * actuator.
                      */
-                    ret.deferredObservables.add((Observable) source);
+                    ret.observable.getDeferredObservables().add((Observable) source);
 
                 } else {
 

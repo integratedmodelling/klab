@@ -24,6 +24,7 @@ import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IConfiguration;
@@ -53,6 +54,7 @@ import org.integratedmodelling.klab.components.runtime.observations.Relationship
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Actuator;
+import org.integratedmodelling.klab.dataflow.Actuator.Status;
 import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
@@ -103,7 +105,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 
 	public SimpleRuntimeScope(Actuator actuator) {
 		this.observable = actuator.getObservable();
-		this.scale = actuator.getDataflow().getMergedCoverage();
+        this.scale = /* actuator.getDataflow(). */getMergedScale(actuator);
 		this.structure = new Structure();
 		this.network = new DefaultDirectedGraph<>(Relationship.class);
 		this.artifacts = new HashMap<>();
@@ -923,7 +925,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
     }
 
     @Override
-    public Graph<ObservedConcept, DefaultEdge> getDependencyGraph() {
+    public Graph<IObservedConcept, DefaultEdge> getDependencyGraph() {
         // TODO Auto-generated method stub
         return null;
     }
@@ -936,6 +938,24 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 
     @Override
     public IScale getMergedScale(IActuator actuator) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public IScale getResolutionScale() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Collection<IObservation> getActuatorProducts(IActuator actuator) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Status getStatus(IActuator actuator) {
         // TODO Auto-generated method stub
         return null;
     }

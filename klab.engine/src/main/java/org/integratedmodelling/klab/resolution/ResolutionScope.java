@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
@@ -156,7 +157,7 @@ public class ResolutionScope implements IResolutionScope {
 
     // observables for which change is not specified but may change if they
     // depend on changed observations
-    private Set<ObservedConcept> implicitlyChangingObservables = new HashSet<>();
+    private Set<IObservedConcept> implicitlyChangingObservables = new HashSet<>();
 
     /**
      * If not null, this is a scope for a logical combination of resolutions.
@@ -1445,7 +1446,7 @@ public class ResolutionScope implements IResolutionScope {
     }
 
     @Override
-    public Set<ObservedConcept> getImplicitlyChangingObservables() {
+    public Set<IObservedConcept> getImplicitlyChangingObservables() {
         return implicitlyChangingObservables;
     }
 

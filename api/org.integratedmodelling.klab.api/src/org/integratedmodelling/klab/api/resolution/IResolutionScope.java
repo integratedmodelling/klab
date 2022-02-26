@@ -19,13 +19,13 @@ import java.util.Set;
 
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.dataflow.ObservedConcept;
 
 /**
  * The resolution scope contains all the contextual information gathered during resolution,
@@ -218,11 +218,11 @@ public interface IResolutionScope {
 
     /**
      * Observables that may change if they depend on changing values but have no explicit change
-     * model associated.
+     * model associated. Report them along with their mode of observation.
      * 
      * @return
      */
 
-    Set<ObservedConcept> getImplicitlyChangingObservables();
+    Set<IObservedConcept> getImplicitlyChangingObservables();
 
 }

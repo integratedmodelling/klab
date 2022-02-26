@@ -326,9 +326,11 @@ public class Resolver {
 
                         Dataflow dataflow = Dataflows.INSTANCE.compile(NameGenerator.shortUUID(), oscope,
                                 null);
+                        
                         dataflow.setDescription(
                                 "Resolution of abstract predicate " + predicate.getDefinition());
                         dataflow.run(oscope.getCoverage().copy(), oscope.getMonitor());
+                        
                         /*
                          * Get the traits from the scope, add to set. Scope is only created if
                          * resolution succeeds, so check.
@@ -336,6 +338,7 @@ public class Resolver {
                         Collection<IConcept> predicates = dataflow.getRuntimeScope() == null
                                 ? null
                                 : dataflow.getRuntimeScope().getConcreteIdentities(predicate);
+                        
                         if (predicates != null && !predicates.isEmpty()) {
                             // use a stable order so that the reporting system can know when the
                             // last one is contextualized

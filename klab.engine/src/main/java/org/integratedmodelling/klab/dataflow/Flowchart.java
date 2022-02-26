@@ -89,7 +89,7 @@ public class Flowchart {
             this.type = ElementType.ACTUATOR;
             this.name = actuator.getName();
             this.label = StringUtils.capitalize(actuator.getName().replaceAll("_", " "));
-            this.documentation = DataflowDocumentation.INSTANCE.getDocumentation(this, actuator);
+            this.documentation = DataflowDocumentation.INSTANCE.getDocumentation(this, actuator, Flowchart.this.runtimeScope);
 
             elementsByName.put(actuator.getName(), this);
             elementsById.put(this.id, this);
@@ -678,7 +678,7 @@ public class Flowchart {
 
             @Override
             public IScale getScale() {
-                return ((Actuator) context).getDataflow().getMergedCoverage();
+                return runtimeScope.getMergedScale(context);
             }
 
             @Override

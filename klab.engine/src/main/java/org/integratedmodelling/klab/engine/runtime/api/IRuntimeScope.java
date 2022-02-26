@@ -11,6 +11,7 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
 import org.integratedmodelling.klab.api.observations.IConfiguration;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IKnowledgeView;
@@ -27,6 +28,7 @@ import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.dataflow.Actuator;
+import org.integratedmodelling.klab.dataflow.Actuator.Status;
 import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.model.Model;
@@ -395,7 +397,7 @@ public interface IRuntimeScope extends IContextualizationScope {
      * 
      * @return
      */
-    Map<ObservedConcept, IObservation> getCatalog();
+    Map<IObservedConcept, IObservation> getCatalog();
 
     /**
      * Add a view after it was computed. The result is typically compiled text, such as HTML or
@@ -495,14 +497,14 @@ public interface IRuntimeScope extends IContextualizationScope {
      * 
      * @param buildDependencies
      */
-    void setDependencyGraph(Graph<ObservedConcept, DefaultEdge> buildDependencies);
+    void setDependencyGraph(Graph<IObservedConcept, DefaultEdge> buildDependencies);
 
     /**
      * Return the current dataflow's dependency graph.
      * 
      * @return
      */
-    Graph<ObservedConcept, DefaultEdge> getDependencyGraph();
+    Graph<IObservedConcept, DefaultEdge> getDependencyGraph();
 
     /**
      * Record the merged scale for an actuator that only partially covers the overall scale.
@@ -535,6 +537,14 @@ public interface IRuntimeScope extends IContextualizationScope {
      * @param actuator
      * @return
      */
-    Collection<IObservation> getActuatorProducts(Actuator actuator);
+    Collection<IObservation> getActuatorProducts(IActuator actuator);
+
+    /**
+     * Maintain the status of all actuators referenced, creating it if needed.
+     * 
+     * @param actuator
+     * @return
+     */
+    Status getStatus(IActuator actuator);
 
 }

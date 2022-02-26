@@ -149,6 +149,8 @@ public class Observable extends GroovyObjectSupport implements IObservable {
     // explicitly set in the builder, used to avoid scheduling for now
     private boolean dereified;
     private Observable deferredTarget;
+    // TODO check if the above fills the scope of this one. 
+    List<Observable> deferredObservables = new ArrayList<>();
 
     Observable(Concept concept) {
         this.observable = concept;
@@ -1085,4 +1087,12 @@ public class Observable extends GroovyObjectSupport implements IObservable {
         return this.deferredTarget;
     }
 
+    /**
+     * FIXME this may need to be integrated with the previous, needs to be checked.
+     * 
+     * @return
+     */
+    public Collection<Observable> getDeferredObservables() {
+        return this.deferredObservables;
+    }
 }

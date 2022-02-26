@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.dataflow;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -9,8 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
@@ -61,13 +58,13 @@ import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
-import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.IVariable;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
+import org.integratedmodelling.klab.api.runtime.rest.ITaskReference;
 import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
@@ -81,7 +78,6 @@ import org.integratedmodelling.klab.documentation.Report;
 import org.integratedmodelling.klab.documentation.extensions.DocumentationExtensions;
 import org.integratedmodelling.klab.documentation.extensions.DocumentationExtensions.Annotation;
 import org.integratedmodelling.klab.engine.debugger.Debug;
-import org.integratedmodelling.klab.engine.runtime.SimpleRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.IKeyHolder;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
@@ -92,7 +88,6 @@ import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.resolution.RankedModel;
 import org.integratedmodelling.klab.rest.DataflowState;
-import org.integratedmodelling.klab.rest.DataflowState.Status;
 import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.scale.Coverage;
 import org.integratedmodelling.klab.scale.Scale;
@@ -130,6 +125,51 @@ public class Actuator implements IActuator {
 
     }
 
+    /**
+     * Scope keeps status for all actuators during contextualization, so that clients can inquire.
+     * 
+     * @author Ferd
+     *
+     */
+    public static class Status {
+
+        private DataflowState.Status status = DataflowState.Status.WAITING;
+        private long start;
+        private long end;
+
+        public DataflowState.Status getStatus() {
+            return status;
+        }
+
+        public long getStart() {
+            return start;
+        }
+
+        public long getEnd() {
+            return end;
+        }
+
+        public void start() {
+            this.start = System.currentTimeMillis();
+            status = DataflowState.Status.STARTED;
+        }
+
+        public void finish() {
+            this.end = System.currentTimeMillis();
+            status = DataflowState.Status.FINISHED;
+        }
+
+        public void abort() {
+            this.end = System.currentTimeMillis();
+            status = DataflowState.Status.ABORTED;
+        }
+
+        public void interrupt() {
+            this.end = System.currentTimeMillis();
+            status = DataflowState.Status.INTERRUPTED;
+        }
+    }
+
     // these are part of graphs so they should behave wrt. equality. Adding an ID
     // for comparison just to ensure that future changes upstream do not affect the
     // logics.
@@ -152,12 +192,12 @@ public class Actuator implements IActuator {
      * documentation templates to figure out what can be said. When the computation starts and ends,
      * the timestamps are updated.
      */
-//	@Deprecated
-//    private AtomicInteger status = new AtomicInteger(0);
-//	@Deprecated
-//    private AtomicLong startComputation = new AtomicLong(0);
-//	@Deprecated
-//    private AtomicLong endComputation = new AtomicLong(0);
+    // @Deprecated
+    // private AtomicInteger status = new AtomicInteger(0);
+    // @Deprecated
+    // private AtomicLong startComputation = new AtomicLong(0);
+    // @Deprecated
+    // private AtomicLong endComputation = new AtomicLong(0);
 
     /*
      * The coverage is generic and is set to the coverage of the generating models. The dataflow
@@ -194,16 +234,16 @@ public class Actuator implements IActuator {
     // output port
     private boolean exported;
 
-//    @Deprecated
-//    protected ISession session;
+    // @Deprecated
+    // protected ISession session;
 
     /**
      * these are added when observations should be made "within" resolved objects after
      * instantiation and initial resolution. Resolution and dataflow caching is done in the runtime
      * scope.
      */
-//    @Deprecated
-//    private List<Observable> deferredObservables = new ArrayList<>();
+    // @Deprecated
+    // private List<Observable> deferredObservables = new ArrayList<>();
 
     // this is only for the API
     private List<IContextualizable> computedResources = new ArrayList<>();
@@ -212,8 +252,8 @@ public class Actuator implements IActuator {
     private List<IAnnotation> annotations = new ArrayList<>();
 
     // this is for documentation templates, not saved
-//    @Deprecated
-//    private transient IRuntimeScope currentContext;
+    // @Deprecated
+    // private transient IRuntimeScope currentContext;
 
     /*
      * this gets a copy of the original model resource, so we can do things to it.
@@ -262,11 +302,11 @@ public class Actuator implements IActuator {
      */
     private List<IDocumentation> documentation = new ArrayList<>();
 
-//    /*
-//     * keep all computed observations here for notifyArtifact() to send on the message bus
-//     */
-//	@Deprecated
-//    private List<IObservation> products = new ArrayList<>();
+    // /*
+    // * keep all computed observations here for notifyArtifact() to send on the message bus
+    // */
+    // @Deprecated
+    // private List<IObservation> products = new ArrayList<>();
 
     // if this is non-null, coverage is also non-null and the actuator defines a
     // partition of the named target artifact, covering our coverage only.
@@ -280,19 +320,21 @@ public class Actuator implements IActuator {
     private Mode mode;
     private Model model;
 
-//    /*
-//     * the scale of computation for partials. This is set by the dataflow when the actual context is
-//     * known. FIXME this is kind of dirty: the dataflow will set it into the actuator, so each
-//     * actuator tree should be used only once.
-//     */
-//	@Deprecated
-//    private Scale mergedCoverage;
+    // /*
+    // * the scale of computation for partials. This is set by the dataflow when the actual context
+    // is
+    // * known. FIXME this is kind of dirty: the dataflow will set it into the actuator, so each
+    // * actuator tree should be used only once.
+    // */
+    // @Deprecated
+    // private Scale mergedCoverage;
 
-//    /*
-//     * The scale at runtime, computed by merging the overall scale with any specific model coverage.
-//     */
-//	@Deprecated
-//    private IScale runtimeScale = null;
+    // /*
+    // * The scale at runtime, computed by merging the overall scale with any specific model
+    // coverage.
+    // */
+    // @Deprecated
+    // private IScale runtimeScale = null;
 
     @Override
     public String getName() {
@@ -341,9 +383,8 @@ public class Actuator implements IActuator {
      */
     public IArtifact compute(IArtifact target, IRuntimeScope scope) throws KlabException {
 
-//        this.currentContext = scope;
-        this.status.set(1);
-        this.startComputation.set(System.currentTimeMillis());
+        // this.currentContext = scope;
+        scope.getStatus(this).start();
 
         /*
          * poor-man attempt at reentrancy in case this has to get called more than once for any
@@ -533,9 +574,7 @@ public class Actuator implements IActuator {
         }
 
         if (scope.getMonitor().isInterrupted()) {
-            this.status.set(3);
-            this.currentContext = null;
-            this.endComputation.set(System.currentTimeMillis());
+            scope.getStatus(this).interrupt();
             return ret;
         }
 
@@ -627,9 +666,7 @@ public class Actuator implements IActuator {
             }
         }
 
-//        this.currentContext = null;
-        this.endComputation.set(System.currentTimeMillis());
-        this.status.set(2);
+        scope.getStatus(this).finish();
 
         return ret;
     }
@@ -668,7 +705,7 @@ public class Actuator implements IActuator {
         DataflowState state = new DataflowState();
         state.setNodeId(scope.getContextualizationStrategy().getComputationToNodeIdTable()
                 .get(resource.getDataflowId()));
-        state.setStatus(Status.STARTED);
+        state.setStatus(DataflowState.Status.STARTED);
         state.setMonitorable(false); // for now
         session.getMonitor().send(
                 Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
@@ -770,7 +807,7 @@ public class Actuator implements IActuator {
                      * resolve and compute any distributed observables
                      */
                     ITaskTree<?> task = null;
-                    for (Observable deferred : deferredObservables) {
+                    for (Observable deferred : this.observable.getDeferredObservables()) {
 
                         if (task == null) {
                             task = ((ITaskTree<?>) scope.getMonitor().getIdentity())
@@ -920,7 +957,7 @@ public class Actuator implements IActuator {
             ((Observation) ret).setContextualized(true);
         }
 
-        state.setStatus(Status.FINISHED);
+        state.setStatus(DataflowState.Status.FINISHED);
         session.getMonitor().send(
                 Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
                         IMessage.Type.DataflowStateChanged, state));
@@ -1087,15 +1124,14 @@ public class Actuator implements IActuator {
 
         String ret = "";
 
-        
         if (hasBody) {
 
             ret = " {\n";
 
             for (IDataflow<?> child : childDataflows) {
-        		ret += ((Dataflow)child).encode(offset + 3, false) + "\n\n";
+                ret += ((Dataflow) child).encode(offset + 3, false) + "\n\n";
             }
-        		
+
             for (IActuator actuator : getSortedChildren(this, false)) {
                 ret += ((Actuator) actuator).encode(offset + 3) + "\n";
             }
@@ -1162,7 +1198,7 @@ public class Actuator implements IActuator {
         Actuator ret = new Actuator();
         ret.mode = mode;
         ret.dataflow = dataflow;
-//        ret.session = dataflow.getSession();
+        // ret.session = dataflow.getSession();
         return ret;
     }
 
@@ -1216,9 +1252,9 @@ public class Actuator implements IActuator {
         return reference;
     }
 
-//    public ISession getSession() {
-//        return this.session;
-//    }
+    // public ISession getSession() {
+    // return this.session;
+    // }
 
     @Override
     public boolean isComputed() {
@@ -1367,13 +1403,13 @@ public class Actuator implements IActuator {
         return this.dataflow;
     }
 
-//    public void setMergedScale(Scale scale) {
-//        this.mergedCoverage = scale;
-//    }
-//
-//    public Scale getMergedCoverage() {
-//        return mergedCoverage;
-//    }
+    // public void setMergedScale(Scale scale) {
+    // this.mergedCoverage = scale;
+    // }
+    //
+    // public Scale getMergedCoverage() {
+    // return mergedCoverage;
+    // }
 
     /**
      * Find the actuator with the given name. Call it on the dataflow for the full experience.
@@ -1463,7 +1499,7 @@ public class Actuator implements IActuator {
                 continue;
             }
 
-            if (((Actuator) act).getDeferredObservables().size() > 0) {
+            if (((Actuator) act).observable.getDeferredObservables().size() > 0) {
                 deferred.add(act);
             } else if (((Actuator) act).observable.equals(actuator.observable)) {
                 partitions.add(act);
@@ -1501,7 +1537,7 @@ public class Actuator implements IActuator {
      */
     public void notifyArtifacts(boolean isMainObservable, IRuntimeScope scope) {
 
-//        this.currentContext = context;
+        // this.currentContext = context;
 
         if (Klab.INSTANCE.getMessageBus() == null || isPartition()) {
             return;
@@ -1553,15 +1589,15 @@ public class Actuator implements IActuator {
             }
         }
 
-//        this.currentContext = null;
+        // this.currentContext = null;
     }
 
-//    public IContextualizationScope getCurrentContext() {
-//        if (currentContext == null) {
-//            return new SimpleRuntimeScope(this);
-//        }
-//        return currentContext;
-//    }
+    // public IContextualizationScope getCurrentContext() {
+    // if (currentContext == null) {
+    // return new SimpleRuntimeScope(this);
+    // }
+    // return currentContext;
+    // }
 
     public boolean isFilter() {
         return observable.getDescriptionType() == IActivity.Description.CHARACTERIZATION
@@ -1611,17 +1647,17 @@ public class Actuator implements IActuator {
         ret.type = this.type;
         ret.observable = this.observable;
         ret.namespace = this.namespace;
-//        ret.session = this.session;
+        // ret.session = this.session;
         ret.mode = this.mode;
         return ret;
     }
 
-//    public void resetScales() {
-//        this.runtimeScale = null;
-//        for (IActuator actuator : actuators) {
-//            ((Actuator) actuator).resetScales();
-//        }
-//    }
+    // public void resetScales() {
+    // this.runtimeScale = null;
+    // for (IActuator actuator : actuators) {
+    // ((Actuator) actuator).resetScales();
+    // }
+    // }
 
     public Actuator withAlias(String alias) {
         this.alias = alias;
@@ -1647,9 +1683,9 @@ public class Actuator implements IActuator {
         return this.runtimeScale;
     }
 
-//    public void addNotifiable(IState state) {
-//        this.products.add(state);
-//    }
+    // public void addNotifiable(IState state) {
+    // this.products.add(state);
+    // }
 
     public void setDataflow(Dataflow dataflow) {
         this.dataflow = dataflow;
@@ -1659,9 +1695,9 @@ public class Actuator implements IActuator {
         this.exported = true;
     }
 
-//    public List<Observable> getDeferredObservables() {
-//        return deferredObservables;
-//    }
+    // public List<Observable> getDeferredObservables() {
+    // return deferredObservables;
+    // }
 
     public boolean isTrivial() {
         return actuators.isEmpty() && computationStrategy.isEmpty() && mediationStrategy.isEmpty();

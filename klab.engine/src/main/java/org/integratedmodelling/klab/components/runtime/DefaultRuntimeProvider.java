@@ -36,6 +36,7 @@ import org.integratedmodelling.klab.api.documentation.IDocumentation.Trigger;
 import org.integratedmodelling.klab.api.extensions.Component;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
 import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
@@ -386,7 +387,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
         IArtifact self = context.get("self", IArtifact.class);
         IState trg = data instanceof IState ? (IState) data : context.getArtifact(resource.getTargetId(), IState.class);
         if (trg == null && data instanceof IProcess && data.getObservable().is(Type.CHANGE)) {
-            Map<ObservedConcept, IObservation> catalog = ((IRuntimeScope) context).getCatalog();
+            Map<IObservedConcept, IObservation> catalog = ((IRuntimeScope) context).getCatalog();
             ObservedConcept changing = new ObservedConcept(Observables.INSTANCE.getDescribedType(data.getObservable().getType()));
             if (catalog.get(changing) instanceof IState) {
                 trg = (IState) catalog.get(changing);

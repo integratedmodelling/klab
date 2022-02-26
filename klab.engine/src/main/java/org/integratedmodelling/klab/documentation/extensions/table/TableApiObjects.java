@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -126,9 +127,9 @@ public class TableApiObjects {
         private IConcept concept;
         private IObservation observation;
         private boolean checked;
-        private Map<ObservedConcept, IObservation> catalog;
+        private Map<IObservedConcept, IObservation> catalog;
 
-        public TableDimension(Dimension dimension, Map<ObservedConcept, IObservation> catalog, ILocator locator) {
+        public TableDimension(Dimension dimension, Map<IObservedConcept, IObservation> catalog, ILocator locator) {
             this.dimension = dimension;
             this.catalog = catalog;
         }
