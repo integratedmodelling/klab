@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.dataflow.Flowchart.Element;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
@@ -89,10 +90,10 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
 		return rootDataflow == null ? null : rootDataflow.getKdlCode();
 	}
 
-	public static String getElkGraph(Dataflow dataflow) {
+	public static String getElkGraph(Dataflow dataflow, IRuntimeScope scope) {
 		ContextualizationStrategy strategy = new ContextualizationStrategy();
 		strategy.add(dataflow);
-		return strategy.getElkGraph();
+		return strategy.getElkGraph(scope);
 	}
 
 	/**
@@ -145,7 +146,7 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
 		return ret;
 	}
 
-	public String getElkGraph() {
+	public String getElkGraph(IRuntimeScope scope) {
 
 		List<Flowchart> flowcharts = new ArrayList<>();
 
@@ -166,7 +167,7 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
 			List<Triple<String, String, String>> connections = new ArrayList<>();
 			for (Dataflow df : rootNodes) {
 
-				Flowchart current = Flowchart.create(df);
+				Flowchart current = Flowchart.create(df, scope);
 
 				for (String input : current.getExternalInputs().keySet()) {
 					for (Flowchart previous : flowcharts) {

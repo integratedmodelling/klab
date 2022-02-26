@@ -9,17 +9,20 @@ import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.owl.Observable;
-import org.integratedmodelling.klab.resolution.ResolutionScope;
+// import org.integratedmodelling.klab.owl.Observable;
+// import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.utils.Pair;
 
 /**
  * A container for an observable concept and a resolution mode with appropriate equality assessment
  * that matches interoperability rules (only consider the concept definition and any value
- * operators, but no units, range, currency or name). Used to create the dependency tree in the
- * contextualization scope. Can also carry arbitrary data through a generic map.
+ * operators, but no units, range, currency or name). Used as a key in contextualizations to create
+ * dependency trees in the contextualization scope. Can also carry arbitrary data through a generic
+ * map.
  * 
  * TODO this must evolve into the implementation of IProvenance.Activity, returned by
  * Actuator.compute() and Scheduler.run().
@@ -27,12 +30,12 @@ import org.integratedmodelling.klab.utils.Pair;
  * @author Ferd
  *
  */
-public class ObservedConcept {
+public class ObservedConcept implements IObservedConcept {
 
     private IObservable observable = null;
     private IResolutionScope.Mode mode;
     private IObservable observationContext = null;
-    private ResolutionScope scope;
+    private IResolutionScope scope;
 
     private Map<String, Object> data = new HashMap<>();
     String conceptDeclaration = null;
@@ -69,7 +72,7 @@ public class ObservedConcept {
     public ObservedConcept(IObservable observable, IResolutionScope.Mode mode) {
         this(observable, mode, (IObservable) null);
     }
-            
+
     /**
      * NOTE: this does NOT set the context observable from the scope!
      * 
@@ -77,19 +80,25 @@ public class ObservedConcept {
      * @param mode
      * @param scope
      */
-    public ObservedConcept(IObservable observable, IResolutionScope.Mode mode, ResolutionScope scope) {
-        this(observable, mode, (IObservable)null/*scope.getContext() == null ? null : scope.getContext().getObservable()*/);
+    public ObservedConcept(IObservable observable, IResolutionScope.Mode mode, IResolutionScope scope) {
+        this(observable, mode, (IObservable) null/*
+                                                  * scope.getContext() == null ? null :
+                                                  * scope.getContext().getObservable()
+                                                  */);
         this.scope = scope;
     }
 
+    @Override
     public IObservable getObservable() {
         return observable;
     }
 
+    @Override
     public IConcept getConcept() {
         return observable.getType();
     }
 
+    @Override
     public IResolutionScope.Mode getMode() {
         return mode;
     }
@@ -118,6 +127,7 @@ public class ObservedConcept {
      * 
      * @return
      */
+    @Override
     public Map<String, Object> getData() {
         return data;
     }
@@ -134,11 +144,12 @@ public class ObservedConcept {
      * 
      * @return
      */
-    public ResolutionScope getScope() {
+    @Override
+    public IResolutionScope getScope() {
         return scope;
     }
 
-    public void setScope(ResolutionScope scope) {
+    public void setScope(IResolutionScope scope) {
         this.scope = scope;
     }
 

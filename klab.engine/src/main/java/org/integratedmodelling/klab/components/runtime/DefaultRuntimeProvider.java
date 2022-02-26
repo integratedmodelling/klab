@@ -162,10 +162,10 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
                     runtimeScope = ((Subject) context).getScope().createChild(actuatorScale, initializer, scope, monitor);
                 }
 
-                /*
-                 * for posterity, needed in some situations
-                 */
-                ((Dataflow) dataflow).setRuntimeScope(runtimeScope);
+//                /*
+//                 * for posterity, needed in some situations
+//                 */
+//                ((Dataflow) dataflow).setRuntimeScope(runtimeScope);
 
                 /*
                  * record all resolutions for the documentation

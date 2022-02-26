@@ -752,6 +752,7 @@ public class ResolutionScope implements IResolutionScope {
         return observable;
     }
 
+    @Override
     public ResolvedArtifact getResolvedArtifact() {
         return resolvedArtifact;
     }
@@ -1443,12 +1444,7 @@ public class ResolutionScope implements IResolutionScope {
         return occurrentResolutions;
     }
 
-    /**
-     * Observables that may change if they depend on changing values but have no explicit change
-     * model associated.
-     * 
-     * @return
-     */
+    @Override
     public Set<ObservedConcept> getImplicitlyChangingObservables() {
         return implicitlyChangingObservables;
     }

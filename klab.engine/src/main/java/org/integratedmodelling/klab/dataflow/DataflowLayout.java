@@ -9,11 +9,10 @@ import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.graph.ElkConnectableShape;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.ElkPort;
-import org.integratedmodelling.kim.api.IKimConcept.Type;
-import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.dataflow.Flowchart.Element;
 import org.integratedmodelling.klab.dataflow.Flowchart.ElementType;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.utils.Pair;
 
 /**
@@ -33,13 +32,13 @@ public class DataflowLayout {
     private Map<String, String> computationToNodeId;
     private Map<String, Element> elements;
 
-    public static DataflowLayout create(IDataflow<?> dataflow) {
-        return new DataflowLayout(compile(dataflow), KlabElkGraphFactory.keINSTANCE);
+    public static DataflowLayout create(IDataflow<?> dataflow, IRuntimeScope scope) {
+        return new DataflowLayout(compile(dataflow, scope), KlabElkGraphFactory.keINSTANCE);
     }
     
-    private static Flowchart compile(IDataflow<?> dataflow) {
+    private static Flowchart compile(IDataflow<?> dataflow, IRuntimeScope scope) {
 
-        Flowchart ret = new Flowchart();
+        Flowchart ret = new Flowchart(scope);
 //      if (dataflow.getActuators().size() > 0) {
 //          Actuator actuator = (Actuator) dataflow.getActuators().get(0);
 //          ret.compileActuator(actuator, null);

@@ -38,6 +38,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.classification.Classification;
 import org.integratedmodelling.klab.data.table.LookupTable;
 import org.integratedmodelling.klab.documentation.DataflowDocumentation;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.StringUtils;
@@ -57,6 +58,7 @@ public class Flowchart {
     private Map<String, Element> elementsById = new HashMap<>();
     private Map<String, String> externalInputs = new HashMap<>();
     private Map<String, String> outputs = new HashMap<>();
+    public IRuntimeScope runtimeScope;
 
     public static enum ElementType {
         // actor types
@@ -101,7 +103,7 @@ public class Flowchart {
             this.type = ElementType.RESOLVER;
             this.label = Extensions.INSTANCE.getServiceLabel(resource.getFirst());
             this.name = resource.getFirst().getName();
-            this.documentation = DataflowDocumentation.INSTANCE.getDocumentation(this, resource, actuator.getCurrentContext());
+            this.documentation = DataflowDocumentation.INSTANCE.getDocumentation(this, resource, Flowchart.this.runtimeScope);
             elementsById.put(this.id, this);
         }
 
@@ -254,15 +256,19 @@ public class Flowchart {
 
     }
 
+    public Flowchart(IRuntimeScope scope) {
+        this.runtimeScope = scope;
+    }
+
     /**
      * Create a flowchart from a dataflow. Pull out the passed output(s) if not null.
      * 
      * @param dataflow
      * @return
      */
-    public static Flowchart create(Dataflow dataflow) {
+    public static Flowchart create(Dataflow dataflow, IRuntimeScope scope) {
 
-        Flowchart ret = new Flowchart();
+        Flowchart ret = new Flowchart(scope);
         if (dataflow.getActuators().size() > 0) {
             Actuator actuator = (Actuator) dataflow.getActuators().get(0);
             ret.compileActuator(actuator, null);
@@ -687,7 +693,7 @@ public class Flowchart {
 
             @Override
             public IMonitor getMonitor() {
-                return ((Actuator) context).getSession().getMonitor();
+                return runtimeScope.getSession().getMonitor();
             }
 
             @Override

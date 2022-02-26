@@ -13,13 +13,13 @@
  */
 package org.integratedmodelling.klab.api.runtime.dataflow;
 
+import java.io.File;
 import java.util.List;
 
-import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.resolution.ICoverage;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -89,17 +89,17 @@ public interface IDataflow<T extends IArtifact> extends IActuator {
      */
     IDataflow<T> getRootDataflow();
 
-    /**
-     * The scale of the resolution from which this dataflow was built. It will never be null and
-     * will at most encompass the context of resolution.
-     * 
-     * TODO/CHECK: this could be a multiplicity of scales if the same DF is built to resolve the
-     * same observable in different scales.
-     * 
-     * @return
-     */
-    IScale getResolutionScale();
-    
+    // /**
+    // * The scale of the resolution from which this dataflow was built. It will never be null and
+    // * will at most encompass the context of resolution.
+    // *
+    // * TODO/CHECK: this could be a multiplicity of scales if the same DF is built to resolve the
+    // * same observable in different scales.
+    // *
+    // * @return
+    // */
+    // IScale getResolutionScale();
+
     /**
      * Run the dataflow in the passed scale using the configured or default
      * {@link org.integratedmodelling.klab.api.runtime.IRuntimeProvider} and return the resulting
@@ -109,22 +109,33 @@ public interface IDataflow<T extends IArtifact> extends IActuator {
      *        scale of the resolution that generated this dataflow. The dataflow's perdurants will
      *        initially be resolved in the initialization scale. TODO the scale should be checked
      *        against the coverage and the empty artifact should be returned if incompatible.
-     * @param monitor a {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
+     * @param scope the scope for the contextualization. Should contain the scale, which should also
+     *        not be passed.
      * @return the built artifact. May be empty, never null.
      * @throws org.integratedmodelling.klab.exceptions.KlabException
      */
-    T run(IScale scale, IMonitor monitor) throws KlabException;
+    T run(@Deprecated IScale scale, IContextualizationScope scope) throws KlabException;
 
     /**
      * Return the k.DL source code for the dataflow. If the dataflow has been read from a k.DL
      * stream, return the original code, otherwise reconstruct it by decompiling the dataflow. The
      * code must be syntactically correct and usable within a resource. If serialization of large
      * and complex extents makes the code unsuitable for transmission to clients, the runtime should
-     * not encode those directly but reference appropriate sidecar files.
+     * not encode those directly but reference appropriate sidecar files which must be built by
+     * export().
      *
      * @return the k.DL code. Never null.
      */
     String getKdlCode();
+
+    /**
+     * Export the dataflow as a basename.kdl file in the passed directory, adding any needed side
+     * files in it.
+     * 
+     * @param baseName
+     * @param directory
+     */
+    void export(String baseName, File directory);
 
     /**
      * An empty dataflow is a valid dataflow that produces an

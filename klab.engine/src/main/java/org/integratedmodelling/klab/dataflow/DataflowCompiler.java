@@ -135,8 +135,8 @@ public class DataflowCompiler {
         Dataflow ret = new Dataflow(monitor.getIdentity().getParentIdentity(ISession.class), parentDataflow);
 
         ret.setName(this.name);
-        ret.setContext(this.context);
-        ret.setResolutionScope((ResolutionScope) scope);
+        // ret.setContext(this.context);
+        // ret.setResolutionScope((ResolutionScope) scope);
 
         for (IResolvable root : getRootResolvables(resolutionGraph)) {
 
@@ -168,7 +168,8 @@ public class DataflowCompiler {
                     && ((Observable) root).getType().is(IKimConcept.Type.QUALITY)) {
                 for (IContextualizable mediator : computeMediators(sources.get(actuator.getObservedConcept()),
                         node.observable, node.scale)) {
-                    actuator.addComputation(mediator);
+                    actuator.addComputation(mediator,
+                            scope.getMonitor().getIdentity().getParentIdentity(ISession.class));
                 }
             }
 
@@ -224,7 +225,8 @@ public class DataflowCompiler {
                     child.setAlias(contextModel.getObservables().get(i).getName());
                     child.setType(contextModel.getObservables().get(i).getArtifactType());
                     child.addComputation(
-                            ComputableResource.create(contextModel.getObservables().get(i).getValue()));
+                            ComputableResource.create(contextModel.getObservables().get(i).getValue()),
+                            scope.getMonitor().getIdentity().getParentIdentity(ISession.class));
                     actuator.getActuators().add(child);
                 }
             }
@@ -234,7 +236,8 @@ public class DataflowCompiler {
              */
             for (IAction action : contextModel.getContextualization().getActions(Trigger.INSTANTIATION)) {
                 for (IContextualizable resource : action.getComputation()) {
-                    actuator.addComputation(((ComputableResource) resource).copy());
+                    actuator.addComputation(((ComputableResource) resource).copy(),
+                            scope.getMonitor().getIdentity().getParentIdentity(ISession.class));
                 }
             }
         }
@@ -579,7 +582,8 @@ public class DataflowCompiler {
                 ret.getAnnotations().addAll(Annotations.INSTANCE.collectAnnotations(observable));
 
             } else if (inlineValue != null) {
-                ret.addComputation(ComputableResource.create(inlineValue));
+                ret.addComputation(ComputableResource.create(inlineValue),
+                        scope.getMonitor().getIdentity().getParentIdentity(ISession.class));
             }
 
             if (partials) {
@@ -627,7 +631,8 @@ public class DataflowCompiler {
                  */
                 outer.addComputation(
                         Klab.INSTANCE.getRuntimeProvider().getDereifyingResolver(observable.getType(),
-                                deferred.getType(), dereified.getArtifactType()));
+                                deferred.getType(), dereified.getArtifactType()),
+                        scope.getMonitor().getIdentity().getParentIdentity(ISession.class));
 
                 outer.actuators.add(ret);
                 ret = outer;
@@ -682,7 +687,7 @@ public class DataflowCompiler {
 
                 generated.add(theModel);
                 for (IContextualizable resource : getModelComputation(model, ret.getType(), true)) {
-                    ret.addComputation(resource);
+                    ret.addComputation(resource, scope.getMonitor().getIdentity().getParentIdentity(ISession.class));
                 }
 
                 ret.getAnnotations().addAll(Annotations.INSTANCE.collectAnnotations(observable, model));
@@ -797,7 +802,7 @@ public class DataflowCompiler {
                                 .getDirectContextType(child.observable.getType());
 
                         if (directContext != null && directContext.equals(childContext)
-                                && !dataflow.getContext().getObservable().is(directContext)) {
+                                && !scope.getContext().getObservable().is(directContext)) {
                             /*
                              * can only be resolved through the instantiator of the object. TODO we
                              * should ensure that a dependency for the primary observable is
@@ -820,7 +825,7 @@ public class DataflowCompiler {
                             for (IContextualizable mediator : computeMediators(
                                     sources.get(achild.getObservedConcept()),
                                     achild.getObservable(), scale)) {
-                                ret.addMediation(mediator, achild);
+                                ret.addMediation(mediator, achild, scope.getMonitor().getIdentity().getParentIdentity(ISession.class));
                             }
                         }
                     }

@@ -154,7 +154,7 @@ public class ObserveInContextTask extends AbstractTask<IArtifact> {
 
 						session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
 								IMessage.Type.DataflowCompiled, new DataflowReference(token, dataflow.getKdlCode(),
-										ctx.getContextualizationStrategy().getElkGraph())));
+										ctx.getContextualizationStrategy().getElkGraph(ctx))));
 
 						// make a copy of the coverage so that we ensure it's a scale, behaving
 						// properly
@@ -166,7 +166,7 @@ public class ObserveInContextTask extends AbstractTask<IArtifact> {
 						 */
 						Actuator actuator = (Actuator) (ctx.getDataflow().getActuators().isEmpty() ? null
 								: ctx.getDataflow().getActuators().get(0));
-						IArtifact result = dataflow.run(scope.getCoverage(), actuator, monitor);
+						IArtifact result = dataflow.run(scope.getCoverage(), actuator, ctx);
 						if (result instanceof IObservation) {
 							ret = (IObservation) result;
 						} else {

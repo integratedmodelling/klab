@@ -526,7 +526,7 @@ public class Scheduler implements IScheduler {
 		/*
 		 * make a scale from the scheduling specs and merge
 		 */
-		final IScale overall = runtimeScope.getDataflow().getResolutionScale();
+		final IScale overall = runtimeScope.getResolutionScale();
 		final IScale actionScale = Scale.substituteExtent(overall, time);
 		IScale scale = actionScale.merge(overall);
 
@@ -566,7 +566,7 @@ public class Scheduler implements IScheduler {
 		/*
 		 * overall scale fills in any missing info.
 		 */
-		final IScale overall = actuator.getDataflow().getResolutionScale();
+		final IScale overall = scope.getResolutionScale();
 
 		/*
 		 * model and individual computables determine the temporal aspects of the
@@ -662,7 +662,7 @@ public class Scheduler implements IScheduler {
 		 * there are successive resolutions for change this no longer holds.
 		 */
 		if (dataflow != null) {
-			regs = computeDynamicDependencyOrder(regs, dataflow.getDependencies());
+			regs = computeDynamicDependencyOrder(regs, runtimeScope.getDependencyGraph());
 		}
 
 		if (this.wheel == null) {
@@ -912,10 +912,10 @@ public class Scheduler implements IScheduler {
 						if (toRun != null && registration.endsPeriod && changed.size() > 0) {
 
 							Set<ObservedConcept> computed = new HashSet<>();
-							for (ObservedConcept tracked : registration.actuator.getDataflow()
+							for (ObservedConcept tracked : runtimeScope.getResolutionScope()
 									.getImplicitlyChangingObservables()) {
 								computeImplicitDependents(tracked, changed, computed, toRun, registration.scope,
-										registration.actuator.getDataflow().getDependencies(), catalog,
+										runtimeScope.getDependencyGraph(), catalog,
 										registration.actuator.getDataflow());
 
 								if (monitor.isInterrupted()) {
@@ -1069,7 +1069,7 @@ public class Scheduler implements IScheduler {
 		if (targetd != null) {
 
 			IObservation target = (IObservation) targetd.getSecond();
-			ILocator transitionScale = dataflow.getResolutionScale().at(time);
+			ILocator transitionScale = runtimeScope.getResolutionScale().at(time);
 			IRuntimeScope transitionContext = runtimeScope.targetToObservation(target).locate(transitionScale, monitor);
 			long lastUpdate = target.getLastUpdate();
 

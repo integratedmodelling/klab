@@ -70,6 +70,7 @@ import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
+import org.jgrapht.graph.DefaultEdge;
 
 /**
  * Trivial context that will only build simple hierarchies and observations.
@@ -908,5 +909,35 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+    @Override
+    public IResolutionScope getResolutionScope() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void setDependencyGraph(Graph<ObservedConcept, DefaultEdge> buildDependencies) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public Graph<ObservedConcept, DefaultEdge> getDependencyGraph() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void setMergedScale(IActuator actuator, IScale merge) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public IScale getMergedScale(IActuator actuator) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

@@ -136,7 +136,7 @@ import com.google.common.cache.LoadingCache;
  * 
  * @author ferdinando.villa
  */
-public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
+public class RuntimeScope extends AbstractRuntimeScope {
 
 	INamespace namespace;
 	Provenance provenance;
@@ -198,7 +198,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	private LoadingCache<String, Boolean> relatedReasonerCache;
 
 	public RuntimeScope(Actuator actuator, IResolutionScope scope, IScale scale, IMonitor monitor) {
-
+	    super(scope);
 		this.catalog = new HashMap<>();
 		this.behaviorBindings = new IntelligentMap<>();
 		this.report = new Report(this, scope, monitor.getIdentity().getParentIdentity(ISession.class).getId());
@@ -282,13 +282,13 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	}
 
 	RuntimeScope(RuntimeScope scope, Map<String, IVariable> variables) {
-		this(scope);
+		super(scope);
 		this.model = scope.model;
 		this.getVariables().putAll(variables);
 	}
 
 	RuntimeScope(RuntimeScope context) {
-		this.putAll(context);
+	    super(context);
 		this.namespace = context.namespace;
 		this.provenance = context.provenance;
 		this.eventBus = context.eventBus;

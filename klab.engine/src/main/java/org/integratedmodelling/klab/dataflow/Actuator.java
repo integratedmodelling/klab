@@ -341,7 +341,7 @@ public class Actuator implements IActuator {
      */
     public IArtifact compute(IArtifact target, IRuntimeScope scope) throws KlabException {
 
-        this.currentContext = scope;
+//        this.currentContext = scope;
         this.status.set(1);
         this.startComputation.set(System.currentTimeMillis());
 
@@ -508,7 +508,7 @@ public class Actuator implements IActuator {
                     // ACH creates problems later
                     int i = 0;
                     int toRemove = -1;
-                    for (IObservation o : this.products) {
+                    for (IObservation o : scope.getActuatorProducts(this)) {
                         if (o.getObservable().getName()
                                 .equals(((IObservation) ret).getObservable().getName())) {
                             // added before: can only happen if this computation transformed it, so
@@ -520,9 +520,9 @@ public class Actuator implements IActuator {
                         i++;
                     }
                     if (toRemove >= 0) {
-                        this.products.remove(toRemove);
+                        scope.getActuatorProducts(this).remove(toRemove);
                     }
-                    this.products.add((IObservation) ret);
+                    scope.getActuatorProducts(this).add((IObservation) ret);
                 }
             }
 
@@ -595,10 +595,10 @@ public class Actuator implements IActuator {
 
             // consolidate the lists, secondary first.
             if (!secondary.isEmpty()) {
-                List<IObservation> primary = new ArrayList<>(this.products);
-                this.products.clear();
-                this.products.addAll(secondary);
-                this.products.addAll(primary);
+                List<IObservation> primary = new ArrayList<>(scope.getActuatorProducts(this));
+                scope.getActuatorProducts(this).clear();
+                scope.getActuatorProducts(this).addAll(secondary);
+                scope.getActuatorProducts(this).addAll(primary);
             }
 
             IConfiguration configuration = null;
@@ -621,13 +621,13 @@ public class Actuator implements IActuator {
                             /* TODO metadata */ new Metadata());
 
                     if (configuration != null) {
-                        this.products.add(configuration);
+                        scope.getActuatorProducts(this).add(configuration);
                     }
                 }
             }
         }
 
-        this.currentContext = null;
+//        this.currentContext = null;
         this.endComputation.set(System.currentTimeMillis());
         this.status.set(2);
 
@@ -1162,7 +1162,7 @@ public class Actuator implements IActuator {
         Actuator ret = new Actuator();
         ret.mode = mode;
         ret.dataflow = dataflow;
-        ret.session = dataflow.getSession();
+//        ret.session = dataflow.getSession();
         return ret;
     }
 
@@ -1216,9 +1216,9 @@ public class Actuator implements IActuator {
         return reference;
     }
 
-    public ISession getSession() {
-        return this.session;
-    }
+//    public ISession getSession() {
+//        return this.session;
+//    }
 
     @Override
     public boolean isComputed() {
@@ -1367,13 +1367,13 @@ public class Actuator implements IActuator {
         return this.dataflow;
     }
 
-    public void setMergedScale(Scale scale) {
-        this.mergedCoverage = scale;
-    }
-
-    public Scale getMergedCoverage() {
-        return mergedCoverage;
-    }
+//    public void setMergedScale(Scale scale) {
+//        this.mergedCoverage = scale;
+//    }
+//
+//    public Scale getMergedCoverage() {
+//        return mergedCoverage;
+//    }
 
     /**
      * Find the actuator with the given name. Call it on the dataflow for the full experience.
@@ -1499,17 +1499,17 @@ public class Actuator implements IActuator {
      * 
      * @param isMainObservable
      */
-    public void notifyArtifacts(boolean isMainObservable, IRuntimeScope context) {
+    public void notifyArtifacts(boolean isMainObservable, IRuntimeScope scope) {
 
-        this.currentContext = context;
+//        this.currentContext = context;
 
         if (Klab.INSTANCE.getMessageBus() == null || isPartition()) {
             return;
         }
 
-        if (this.products.isEmpty()) {
-            if (context.getArtifact(this.name) != null && !context.getArtifact(this.name).isArchetype()) {
-                this.products.add((IObservation) context.getArtifact(this.name));
+        if (scope.getActuatorProducts(this).isEmpty()) {
+            if (scope.getArtifact(this.name) != null && !scope.getArtifact(this.name).isArchetype()) {
+                scope.getActuatorProducts(this).add((IObservation) scope.getArtifact(this.name));
             }
         }
 
@@ -1523,14 +1523,14 @@ public class Actuator implements IActuator {
             }
         }
 
-        for (IObservation product : products) {
+        for (IObservation product : scope.getActuatorProducts(this)) {
 
             if (product.isArchetype()) {
                 continue;
             }
 
             if (isMain) {
-                ((Observation) product).getChangeset().add(ObservationChange.main(product, context));
+                ((Observation) product).getChangeset().add(ObservationChange.main(product, scope));
             }
 
             /*
@@ -1538,7 +1538,7 @@ public class Actuator implements IActuator {
              * such as groups with new children.
              */
             if (product instanceof IState || ((Observation) product).getChangeset().size() > 0) {
-                context.updateNotifications(product);
+                scope.updateNotifications(product);
             }
         }
 
@@ -1547,21 +1547,21 @@ public class Actuator implements IActuator {
          */
         for (IDocumentation doc : getDocumentation()) {
             for (IDocumentation.Template template : doc.get(Trigger.DEFINITION)) {
-                if (doc.instrumentReport(context.getReport(), template, Trigger.DEFINITION, this, context)) {
-                    ((Report) context.getReport()).include(template, context, doc);
+                if (doc.instrumentReport(scope.getReport(), template, Trigger.DEFINITION, this, scope)) {
+                    ((Report) scope.getReport()).include(template, scope, doc);
                 }
             }
         }
 
-        this.currentContext = null;
+//        this.currentContext = null;
     }
 
-    public IContextualizationScope getCurrentContext() {
-        if (currentContext == null) {
-            return new SimpleRuntimeScope(this);
-        }
-        return currentContext;
-    }
+//    public IContextualizationScope getCurrentContext() {
+//        if (currentContext == null) {
+//            return new SimpleRuntimeScope(this);
+//        }
+//        return currentContext;
+//    }
 
     public boolean isFilter() {
         return observable.getDescriptionType() == IActivity.Description.CHARACTERIZATION
@@ -1611,17 +1611,17 @@ public class Actuator implements IActuator {
         ret.type = this.type;
         ret.observable = this.observable;
         ret.namespace = this.namespace;
-        ret.session = this.session;
+//        ret.session = this.session;
         ret.mode = this.mode;
         return ret;
     }
 
-    public void resetScales() {
-        this.runtimeScale = null;
-        for (IActuator actuator : actuators) {
-            ((Actuator) actuator).resetScales();
-        }
-    }
+//    public void resetScales() {
+//        this.runtimeScale = null;
+//        for (IActuator actuator : actuators) {
+//            ((Actuator) actuator).resetScales();
+//        }
+//    }
 
     public Actuator withAlias(String alias) {
         this.alias = alias;
@@ -1647,9 +1647,9 @@ public class Actuator implements IActuator {
         return this.runtimeScale;
     }
 
-    public void addNotifiable(IState state) {
-        this.products.add(state);
-    }
+//    public void addNotifiable(IState state) {
+//        this.products.add(state);
+//    }
 
     public void setDataflow(Dataflow dataflow) {
         this.dataflow = dataflow;
@@ -1659,9 +1659,9 @@ public class Actuator implements IActuator {
         this.exported = true;
     }
 
-    public List<Observable> getDeferredObservables() {
-        return deferredObservables;
-    }
+//    public List<Observable> getDeferredObservables() {
+//        return deferredObservables;
+//    }
 
     public boolean isTrivial() {
         return actuators.isEmpty() && computationStrategy.isEmpty() && mediationStrategy.isEmpty();

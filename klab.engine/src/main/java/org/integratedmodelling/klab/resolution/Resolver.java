@@ -319,6 +319,7 @@ public class Resolver {
                     // scope.
                     ResolutionScope oscope = resolveConcrete(pobs, rscope, pobs.getResolvedPredicates(),
                             pobs.getResolvedPredicatesContext(), Mode.RESOLUTION);
+                    
                     if (oscope.getCoverage().isComplete()) {
 
                         done = true;
