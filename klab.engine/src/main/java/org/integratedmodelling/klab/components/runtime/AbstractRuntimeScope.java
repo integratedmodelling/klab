@@ -52,7 +52,8 @@ public abstract class AbstractRuntimeScope extends Parameters<String> implements
         this.monitor = monitor;
         this.partialScales = Collections.synchronizedMap(new HashMap<>());
         this.actuatorStatus = Collections.synchronizedMap(new HashMap<>());
-        this.contextualizationStrategy = ((ResolutionScope)resolutionScope).getContextualizationStrategy();
+        this.actuatorProducts = Collections.synchronizedMap(new HashMap<>());
+        this.contextualizationStrategy = ((ResolutionScope) resolutionScope).getContextualizationStrategy();
     }
 
     protected AbstractRuntimeScope(AbstractRuntimeScope scope) {
@@ -62,6 +63,7 @@ public abstract class AbstractRuntimeScope extends Parameters<String> implements
         this.autoStartTransitions = scope.autoStartTransitions;
         this.partialScales = scope.partialScales;
         this.actuatorStatus = scope.actuatorStatus;
+        this.actuatorProducts = scope.actuatorProducts;
         this.dependencyGraph = scope.dependencyGraph;
         this.dataflow = scope.dataflow;
     }
@@ -70,7 +72,7 @@ public abstract class AbstractRuntimeScope extends Parameters<String> implements
     public IResolutionScope getResolutionScope() {
         return resolutionScope;
     }
-    
+
     @Override
     public void setMergedScale(IActuator actuator, IScale scale) {
         this.partialScales.put(actuator, scale);
@@ -83,7 +85,7 @@ public abstract class AbstractRuntimeScope extends Parameters<String> implements
 
     @Override
     public IScale getResolutionScale() {
-        
+
         if (this.resolutionScale == null && resolutionScope != null) {
             this.resolutionScale = resolutionScope.getScale();
             if (dataflow.occurs() && this.resolutionScale.getTime() != null) {
@@ -110,7 +112,7 @@ public abstract class AbstractRuntimeScope extends Parameters<String> implements
         }
         return this.resolutionScale;
     }
-    
+
     @Override
     public Status getStatus(IActuator actuator) {
         Status ret = actuatorStatus.get(actuator);

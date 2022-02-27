@@ -82,7 +82,6 @@ public enum Dataflows implements IDataflowService {
 		return null;
 	}
 
-//	@Override
 	public Dataflow compile(String name, IResolutionScope scope, IActuator parentDataflow) throws KlabException {
 
 		DataflowCompiler compiler = new DataflowCompiler(name, scope, (Actuator)parentDataflow);

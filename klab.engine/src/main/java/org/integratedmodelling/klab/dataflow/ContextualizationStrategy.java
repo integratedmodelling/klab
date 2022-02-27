@@ -47,9 +47,11 @@ import org.jgrapht.graph.DefaultEdge;
  * individual components), not a graph, as the hierarchy is kept in the dataflow
  * itself.
  * 
+ * Ri FIXME - this should disappear and become part of the root contextualization scope.
  * @author Ferd
  *
  */
+@Deprecated
 public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, DefaultEdge> {
 
     private String id = NameGenerator.shortUUID();

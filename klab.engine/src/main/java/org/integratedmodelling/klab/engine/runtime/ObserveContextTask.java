@@ -113,6 +113,11 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
                         // Observations
                         // and use that here.
                         ResolutionScope scope = Resolver.create(null).resolve(observer, monitor, scenarios);
+                        /*
+                         * create the root contextualization scope for the context
+                         */
+                        IRuntimeScope runtimeScope = RuntimeScope.rootScope(scope);
+
                         if (scope.getCoverage().isRelevant()) {
 
                             Dataflow dataflow = Dataflows.INSTANCE
@@ -133,10 +138,6 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
                                     .getContextualizationStrategy();
                             contextualizationStrategy.add(dataflow);
 
-                            /*
-                             * create the root contextualization scope for the context
-                             */
-                            IRuntimeScope runtimeScope = RuntimeScope.rootScope(dataflow, scope, monitor);
 
                             // context will take it from the task identity when it's created
                             setContextualizationStrategy(contextualizationStrategy);

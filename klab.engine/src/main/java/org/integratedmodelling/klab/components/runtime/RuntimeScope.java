@@ -160,7 +160,6 @@ public class RuntimeScope extends AbstractRuntimeScope {
     Set<String> notifiedObservations;
     Map<IConcept, ObservationGroup> groups;
     Map<String, IVariable> symbolTable = new HashMap<>();
-    Dataflow dataflow;
     IntelligentMap<Pair<String, IKimExpression>> behaviorBindings;
     Set<String> watchedObservations = null;
 
@@ -222,7 +221,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
     public RuntimeScope getContextScope(Actuator actuator, IResolutionScope scope, IScale scale,
             IMonitor monitor) {
 
-        RuntimeScope ret = new RuntimeScope(actuator.getDataflow(), (ResolutionScope) scope, monitor);
+        RuntimeScope ret = new RuntimeScope((ResolutionScope) scope);
         ret.parent = this;
         ret.catalog = new HashMap<>();
         ret.behaviorBindings = new IntelligentMap<>();
@@ -368,8 +367,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
         // this.objectMetadata = context.objectMetadata;
     }
 
-    public RuntimeScope(Dataflow dataflow, ResolutionScope resolutionScope, IMonitor monitor) {
-        super(dataflow, resolutionScope, monitor);
+    private RuntimeScope(ResolutionScope resolutionScope) {
+        super(null, resolutionScope, resolutionScope.getMonitor());
     }
 
     @Override
@@ -2516,9 +2515,9 @@ public class RuntimeScope extends AbstractRuntimeScope {
         return ret;
     }
 
-    public static IRuntimeScope rootScope(Dataflow dataflow, ResolutionScope resolutionScope,
-            IMonitor monitor) {
-        RuntimeScope ret = new RuntimeScope(dataflow, resolutionScope, monitor);
+    public static IRuntimeScope rootScope(ResolutionScope resolutionScope) {
+        RuntimeScope ret = new RuntimeScope(resolutionScope);
+        resolutionScope.setRootContextualizationScope(ret);
         return ret;
     }
 

@@ -34,9 +34,11 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
 import org.integratedmodelling.klab.common.LogicalConnector;
+import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
+import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
@@ -241,7 +243,12 @@ public class ResolutionScope implements IResolutionScope {
     private Set<ObservedConcept> resolving = new HashSet<>();
     private Map<IConcept, Set<IConcept>> resolvedPredicatesContext = new HashMap<>();
     private boolean deferToInherent;
+    // FIXME merge with the root contextualization scope
     private ContextualizationStrategy contextualizationStrategy;
+    private RuntimeScope rootContextualizationScope;
+    // these get parked here because they will have to be added as children to the root dataflow,
+    // which does not exist yet
+    private List<Dataflow> predicateResolutionDataflows = new ArrayList<>();
 
     private void addResolvedScope(ObservedConcept concept, ResolutionScope scope) {
         List<ResolutionScope> slist = resolvedObservables.get(concept);
@@ -437,6 +444,7 @@ public class ResolutionScope implements IResolutionScope {
 
     private void copy(ResolutionScope other, boolean copyResolution) {
         this.scenarios.addAll(other.scenarios);
+        this.rootContextualizationScope = other.rootContextualizationScope;
         this.resolutionNamespace = other.resolutionNamespace;
         this.occurrentResolutions = other.occurrentResolutions;
         this.mode = other.mode;
@@ -1304,15 +1312,13 @@ public class ResolutionScope implements IResolutionScope {
      */
     public Observable getDeferredObservableFor(Observable observable2) {
 
-        
         if (this.deferToInherent) {
             IConcept inherent = Observables.INSTANCE.getDirectInherentType(observable2.getType());
             if (inherent != null) {
                 return Observable.promote(inherent);
             }
         }
-        
-        
+
         if (!observable2.is(Type.OBSERVABLE)) {
             // attribute resolvers and the like
             return null;
@@ -1537,6 +1543,18 @@ public class ResolutionScope implements IResolutionScope {
 
     public ContextualizationStrategy getContextualizationStrategy() {
         return this.contextualizationStrategy;
+    }
+
+    public void setRootContextualizationScope(RuntimeScope ret) {
+        this.rootContextualizationScope = ret;
+    }
+
+    public RuntimeScope getRootContextualizationScope() {
+        return this.rootContextualizationScope;
+    }
+
+    public List<Dataflow> getPredicateResolutionDataflows() {
+        return this.predicateResolutionDataflows;
     }
 
 }

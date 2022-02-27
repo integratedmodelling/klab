@@ -329,10 +329,12 @@ public class Resolver {
                         // resolution dataflow if that's not yet defined.
                         Dataflow dataflow = Dataflows.INSTANCE.compile(NameGenerator.shortUUID(), oscope,
                                 null);
-
                         dataflow.setDescription(
                                 "Resolution of abstract predicate " + predicate.getDefinition());
-                        dataflow.run(oscope.getCoverage().copy(), oscope.getMonitor());
+                        
+                        scope.getPredicateResolutionDataflows().add(dataflow);
+                        
+                        dataflow.run(oscope.getCoverage().copy(), scope.getRootContextualizationScope());
 
                         /*
                          * Get the traits from the scope, add to set. Scope is only created if
@@ -340,9 +342,9 @@ public class Resolver {
                          * 
                          * TODO scope needs to exist beforehand.
                          */
-                        Collection<IConcept> predicates = dataflow.getRuntimeScope() == null
+                        Collection<IConcept> predicates = scope.getRootScope() == null
                                 ? null
-                                : dataflow.getRuntimeScope().getConcreteIdentities(predicate);
+                                : scope.getRootContextualizationScope().getConcreteIdentities(predicate);
 
                         if (predicates != null && !predicates.isEmpty()) {
                             // use a stable order so that the reporting system can know when the
