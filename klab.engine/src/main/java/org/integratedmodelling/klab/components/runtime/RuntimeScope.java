@@ -47,6 +47,7 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IObservable.Builder;
+import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
 import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IModel;
@@ -89,7 +90,6 @@ import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.data.table.TableValue;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Actuator.Computation;
-import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.documentation.Report;
@@ -117,7 +117,6 @@ import org.integratedmodelling.klab.rest.KnowledgeViewReference;
 import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
-import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Range;
 import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.klab.utils.Triple;
@@ -144,7 +143,6 @@ public class RuntimeScope extends AbstractRuntimeScope {
     Graph<IDirectObservation, IRelationship> network;
     Structure structure;
     Map<String, IArtifact> catalog;
-    IMonitor monitor;
     RuntimeScope parent;
     IArtifact target;
     IScale scale;
@@ -157,7 +155,6 @@ public class RuntimeScope extends AbstractRuntimeScope {
     Map<String, IObservation> observations;
     IScheduler scheduler;
     Report report;
-    ContextualizationStrategy contextualizationStrategy;
     // set only by the actuator, relevant only in instantiators with attributes
     IModel model;
     Set<String> notifiedObservations;
@@ -166,6 +163,17 @@ public class RuntimeScope extends AbstractRuntimeScope {
     Dataflow dataflow;
     IntelligentMap<Pair<String, IKimExpression>> behaviorBindings;
     Set<String> watchedObservations = null;
+
+    /*
+     * info that may be filled in when contextualizing particular objects
+     */
+    IDirectObservation relationshipSource;
+    IDirectObservation relationshipTarget;
+    String directObservationName;
+    ObservationGroup currentGroup;
+    IMetadata objectMetadata;
+    INotification.Mode notificationMode;
+    Collection<IObservation> configurationTargets;
 
     // root scope of the entire dataflow, unchanging, for downstream resolutions
     ResolutionScope resolutionScope;
@@ -195,33 +203,52 @@ public class RuntimeScope extends AbstractRuntimeScope {
     private LoadingCache<String, Boolean> reasonerCache;
     private LoadingCache<String, Boolean> relatedReasonerCache;
 
-    public RuntimeScope(Actuator actuator, IResolutionScope scope, IScale scale, IMonitor monitor) {
-        super(scope);
-        this.catalog = new HashMap<>();
-        this.behaviorBindings = new IntelligentMap<>();
-        this.report = new Report(this, scope,
+    /**
+     * Each dataflow used to resolve subjects within this one is recorded here with all the subjects
+     * it was used for.
+     */
+    Map<Dataflow, List<IDirectObservation>> inherentResolutions = new HashMap<>();
+
+    /**
+     * Get a child scope for the entire context. Must be called only on the root scope.
+     * 
+     * @param actuator
+     * @param scope
+     * @param scale
+     * @param monitor
+     * @return
+     */
+    @Override
+    public RuntimeScope getContextScope(Actuator actuator, IResolutionScope scope, IScale scale,
+            IMonitor monitor) {
+
+        RuntimeScope ret = new RuntimeScope(actuator.getDataflow(), (ResolutionScope) scope, monitor);
+        ret.parent = this;
+        ret.catalog = new HashMap<>();
+        ret.behaviorBindings = new IntelligentMap<>();
+        ret.report = new Report(this, scope,
                 monitor.getIdentity().getParentIdentity(ISession.class).getId());
-        this.observations = new HashMap<>();
-        this.network = new DefaultDirectedGraph<>(IRelationship.class);
-        this.structure = new Structure();
-        this.provenance = new Provenance(this);
-        this.notifiedObservations = new HashSet<>();
-        this.groups = new HashMap<>();
-        this.monitor = monitor;
-        this.namespace = actuator.getNamespace();
-        this.scale = scale;
-        this.targetName = actuator.isPartition() ? actuator.getPartitionedTarget() : actuator.getName();
-        this.actuator = actuator;
-        this.targetSemantics = actuator.getObservable();
-        this.artifactType = Observables.INSTANCE.getObservableType(actuator.getObservable(), true);
-        this.dataflow = actuator.getDataflow();
-        this.watchedObservations = Collections.synchronizedSet(new HashSet<>());
-        this.views = new LinkedHashMap<>();
-        this.viewsByUrn = new LinkedHashMap<>();
-        this.concreteIdentities = new HashMap<>();
+        ret.observations = new HashMap<>();
+        ret.network = new DefaultDirectedGraph<>(IRelationship.class);
+        ret.structure = new Structure();
+        ret.provenance = new Provenance(this);
+        ret.notifiedObservations = new HashSet<>();
+        ret.groups = new HashMap<>();
+        ret.monitor = monitor;
+        ret.namespace = actuator.getNamespace();
+        ret.scale = scale;
+        ret.targetName = actuator.isPartition() ? actuator.getPartitionedTarget() : actuator.getName();
+        ret.actuator = actuator;
+        ret.targetSemantics = actuator.getObservable();
+        ret.artifactType = Observables.INSTANCE.getObservableType(actuator.getObservable(), true);
+        ret.dataflow = actuator.getDataflow();
+        ret.watchedObservations = Collections.synchronizedSet(new HashSet<>());
+        ret.views = new LinkedHashMap<>();
+        ret.viewsByUrn = new LinkedHashMap<>();
+        ret.concreteIdentities = new HashMap<>();
 
         // cache for groovy IS operator in this context
-        this.reasonerCache = CacheBuilder.newBuilder().maximumSize(2048)
+        ret.reasonerCache = CacheBuilder.newBuilder().maximumSize(2048)
                 .build(new CacheLoader<String, Boolean>(){
                     @Override
                     public Boolean load(String key) throws Exception {
@@ -232,7 +259,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
                     }
                 });
 
-        this.relatedReasonerCache = CacheBuilder.newBuilder().maximumSize(2048)
+        ret.relatedReasonerCache = CacheBuilder.newBuilder().maximumSize(2048)
                 .build(new CacheLoader<String, Boolean>(){
                     @Override
                     public Boolean load(String key) throws Exception {
@@ -249,11 +276,12 @@ public class RuntimeScope extends AbstractRuntimeScope {
                     }
                 });
 
-        /*
-         * Complex and convoluted, but there is no other way to get this which must be created by
-         * the task for the first context. Successive contextualizations will add to it.
-         */
-        this.contextualizationStrategy = ((ResolutionScope) scope).getContextualizationStrategy();
+        // /*
+        // * Complex and convoluted, but there is no other way to get this which must be created by
+        // * the task for the first context. Successive contextualizations will add to it.
+        // */
+        // ret.contextualizationStrategy = ((ResolutionScope) scope).getContextualizationStrategy();
+        // ret.contextualizationStrategy.setScope(this);
 
         // if (this.contextualizationStrategy == null) {
         // /*
@@ -264,20 +292,27 @@ public class RuntimeScope extends AbstractRuntimeScope {
         // }
 
         // store and set up for further resolutions
-        this.resolutionScope = (ResolutionScope) scope;
-        this.semantics = new HashMap<>();
-        this.semantics.put(actuator.getName(), this.targetSemantics);
+        ret.resolutionScope = (ResolutionScope) scope;
+        ret.semantics = new HashMap<>();
+        ret.semantics.put(actuator.getName(), this.targetSemantics);
 
         for (IActuator a : actuator.getActuators()) {
             if (!((Actuator) a).isExported()) {
                 String id = a.getAlias() == null ? a.getName() : a.getAlias();
-                this.semantics.put(id, ((Actuator) a).getObservable());
+                ret.semantics.put(id, ((Actuator) a).getObservable());
             }
         }
         for (IActuator a : actuator.getOutputs()) {
             String id = a.getAlias() == null ? a.getName() : a.getAlias();
-            this.semantics.put(id, ((Actuator) a).getObservable());
+            ret.semantics.put(id, ((Actuator) a).getObservable());
         }
+
+        IArtifact target = ret.createTarget((Actuator) actuator, scope.getScale(), scope, null);
+        if (target instanceof IDirectObservation) {
+            ((ResolutionScope) scope).setContext((IDirectObservation) target);
+        }
+
+        return ret;
     }
 
     RuntimeScope(RuntimeScope scope, Map<String, IVariable> variables) {
@@ -322,6 +357,19 @@ public class RuntimeScope extends AbstractRuntimeScope {
         this.relatedReasonerCache = context.relatedReasonerCache;
         this.concreteIdentities = context.concreteIdentities;
         this.resolvedPredicates.putAll(context.resolvedPredicates);
+        this.notificationMode = context.notificationMode;
+        this.inherentResolutions.putAll(context.inherentResolutions);
+
+        // FIXME - Should these be inherited? Probably not
+        // this.currentGroup = context.currentGroup;
+        // this.directObservationName = context.directObservationName;
+        // this.relationshipSource = context.relationshipSource;
+        // this.relationshipTarget = context.relationshipTarget;
+        // this.objectMetadata = context.objectMetadata;
+    }
+
+    public RuntimeScope(Dataflow dataflow, ResolutionScope resolutionScope, IMonitor monitor) {
+        super(dataflow, resolutionScope, monitor);
     }
 
     @Override
@@ -453,21 +501,6 @@ public class RuntimeScope extends AbstractRuntimeScope {
         if (ret == null) {
             ret = this.viewsByUrn.get(localName);
         }
-        // if (ret == null) {
-        // /*
-        // * Leniently lookup each observation based on observable name. This solves a
-        // couple NPEs
-        // * with nested value operators, but shouldn't really be needed as those are
-        // the bugs,
-        // * not this.
-        // */
-        // for (IArtifact o : catalog.values()) {
-        // if (o instanceof IObservation && ((IObservation)
-        // o).getObservable().getName().equals(localName)) {
-        // return o;
-        // }
-        // }
-        // }
         return ret;
     }
 
@@ -479,24 +512,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
     @Override
     public IRuntimeScope copy() {
         RuntimeScope ret = new RuntimeScope(this);
-        // // make a deep copy of all localizable info so we can rename elements
-        // ret.catalog = new HashMap<>(this.catalog);
-        // ret.semantics = new HashMap<>(this.semantics);
         return ret;
     }
-    //
-    // @Override
-    // public void rename(String name, String alias) {
-    // IArtifact obj = catalog.get(name);
-    // if (obj != null) {
-    // catalog.remove(name);
-    // catalog.put(alias, obj);
-    // IObservable obs = semantics.remove(name);
-    // if (obs != null) {
-    // semantics.put(alias, obs);
-    // }
-    // }
-    // }
 
     @Override
     public void setData(String name, IArtifact data) {
@@ -545,13 +562,20 @@ public class RuntimeScope extends AbstractRuntimeScope {
                     "local:task:" + session.getId() + ":" + subtask.getId(),
                     scope, this.actuator);
             dataflow.setModel((Model) model);
-            ret = (IConfiguration) dataflow.withMetadata(metadata).withConfigurationTargets(targets)
-                    .run(scale.initialization(), (Actuator) this.actuator, subtask.getMonitor());
+
+            RuntimeScope runtimeScope = new RuntimeScope(this).withMetadata(metadata)
+                    .withConfigurationTargets(targets);
+
+            ret = (IConfiguration) dataflow.run(scale.initialization(), (Actuator) this.actuator,
+                    runtimeScope);
         }
         return ret;
     }
 
-    //
+    private RuntimeScope withConfigurationTargets(Collection<IObservation> targets) {
+        this.configurationTargets = targets;
+        return this;
+    }
 
     @SuppressWarnings("unchecked")
     @Override
@@ -566,7 +590,6 @@ public class RuntimeScope extends AbstractRuntimeScope {
          */
         this.resolutionScope.preloadResolvers(observable, observation);
         ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
-
         Dataflow dataflow = contextualizationStrategy.getDataflow(observable, mode, observation.getScale(),
                 observation,
                 () -> {
@@ -600,11 +623,21 @@ public class RuntimeScope extends AbstractRuntimeScope {
             }
         } else {
 
-            this.dataflow.registerResolution(observation, dataflow);
+            List<IDirectObservation> obs = inherentResolutions.get(dataflow);
+            if (obs == null) {
+                obs = new ArrayList<>();
+                inherentResolutions.put(dataflow, obs);
+            }
+            if (!obs.contains(observation)) {
+                obs.add(observation);
+            }
 
-            ret = dataflow.withScope(this.resolutionScope.getDeferredChildScope(observation, mode))
-                    .withScopeScale(observation.getScale()).withMetadata(observation.getMetadata())
-                    .run(observation.getScale(), (Actuator) this.actuator, task.getMonitor());
+            RuntimeScope runtimeScope = new RuntimeScope(this)
+                    .withScope(this.resolutionScope.getDeferredChildScope(observation,
+                            mode).rescale(observation.getScale()))
+                    .withMetadata(observation.getMetadata());
+
+            ret = dataflow.run(observation.getScale(), (Actuator) this.actuator, runtimeScope);
         }
 
         return (T) ret;
@@ -624,7 +657,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
      * @param subtask
      * @return
      */
-    public Dataflow resolve(IObservable observable, String name, IScale scale, ITaskTree<?> subtask) {
+    public Dataflow resolve(IObservable observable, String name, IScale scale,
+            ITaskTree<?> subtask) {
 
         /*
          * preload all the possible resolvers in the wider scope before specializing the scope to
@@ -633,37 +667,40 @@ public class RuntimeScope extends AbstractRuntimeScope {
          */
         this.resolutionScope.preloadResolvers(observable, contextSubject);
         ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
+        return contextualizationStrategy.getDataflow(observable, Mode.RESOLUTION, scale, null,
+                () -> {
 
-        return contextualizationStrategy.getDataflow(observable, Mode.RESOLUTION, scale, null, () -> {
+                    Dataflow df = null;
 
-            Dataflow df = null;
+                    ResolutionScope scope = Resolver.create(this.dataflow).resolve((Observable) observable,
+                            this.resolutionScope.getChildScope(observable, scale, name), Mode.RESOLUTION,
+                            scale,
+                            model);
 
-            ResolutionScope scope = Resolver.create(this.dataflow).resolve((Observable) observable,
-                    this.resolutionScope.getChildScope(observable, scale, name), Mode.RESOLUTION, scale,
-                    model);
+                    if (scope.getCoverage().isRelevant()) {
 
-            if (scope.getCoverage().isRelevant()) {
+                        df = Dataflows.INSTANCE.compile(
+                                "local:task:" + session.getId() + ":" + subtask.getId(),
+                                scope,
+                                this.actuator)/*
+                                               * .setPrimary(false)
+                                               */;
+                        dataflow.setModel((Model) model);
 
-                df = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + subtask.getId(),
-                        scope,
-                        this.actuator)/*
-                                       * .setPrimary(false)
-                                       */;
-                dataflow.setModel((Model) model);
+                    } else if (resolutionScope.getPreresolvedModels(observable) == null
+                            || this.resolutionScope.getPreresolvedModels(observable).getSecond()
+                                    .size() == 0) {
 
-            } else if (resolutionScope.getPreresolvedModels(observable) == null
-                    || this.resolutionScope.getPreresolvedModels(observable).getSecond().size() == 0) {
+                        /*
+                         * Add an empty dataflow to create the observation. This is only done if
+                         * there are no preloaded resolvers in this scale, so we are certain that
+                         * other subjects will encounter the same conditions.
+                         */
+                        df = Dataflow.empty(observable, observable.getName(), scope, dataflow);
+                    }
 
-                /*
-                 * Add an empty dataflow to create the observation. This is only done if there are
-                 * no preloaded resolvers in this scale, so we are certain that other subjects will
-                 * encounter the same conditions.
-                 */
-                df = Dataflow.empty(observable, observable.getName(), scope, dataflow);
-            }
-            return df;
-        });
-
+                    return df;
+                });
     }
 
     /**
@@ -702,24 +739,46 @@ public class RuntimeScope extends AbstractRuntimeScope {
         ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity()).createChild("Resolution of " + name);
         Dataflow dataflow = resolve(obs, name, scale, subtask);
 
-        // TODO switch to a builder pattern that copies the dataflow so we can run
-        // concurrently
-        IArtifact observation = dataflow
+        RuntimeScope runtimeScope = new RuntimeScope(this)
                 .withScope(this.resolutionScope.getChildScope(observable, contextSubject, scale))
                 .withMetadata(metadata)
-                .withTargetName(name).withNotificationMode(notificationMode)
-                .withinGroup(this.target instanceof ObservationGroup ? (ObservationGroup) this.target : null)
-                .run(scale.initialization(), (Actuator) this.actuator, subtask.getMonitor());
+                .withDirectObservationName(name).withNotificationMode(notificationMode)
+                .withinGroup(this.target instanceof ObservationGroup ? (ObservationGroup) this.target : null);
+
+        IArtifact observation = dataflow.run(scale.initialization(), (Actuator) this.actuator,
+                runtimeScope);
 
         if (observation instanceof IDirectObservation) {
             ret = (IDirectObservation) observation;
             ((DirectObservation) ret).setName(name);
-            // for (ObservationListener listener : listeners.values()) {
-            // listener.newObservation(ret, getRootSubject());
-            // }
         }
 
         return ret;
+    }
+
+    private RuntimeScope withinGroup(ObservationGroup object) {
+        this.currentGroup = object;
+        return this;
+    }
+
+    private RuntimeScope withNotificationMode(INotification.Mode notificationMode2) {
+        this.notificationMode = notificationMode2;
+        return this;
+    }
+
+    private RuntimeScope withDirectObservationName(String name) {
+        this.directObservationName = name;
+        return null;
+    }
+
+    private RuntimeScope withMetadata(IMetadata metadata) {
+        this.objectMetadata = metadata;
+        return this;
+    }
+
+    private RuntimeScope withScope(ResolutionScope childScope) {
+        this.resolutionScope = childScope;
+        return this;
     }
 
     @Override
@@ -780,15 +839,14 @@ public class RuntimeScope extends AbstractRuntimeScope {
                 });
 
         if (dataflow != null) {
-            dataflow.run(scale.initialization(), (Actuator) this.actuator, subtask.getMonitor());
+            dataflow.run(scale.initialization(), (Actuator) this.actuator, this);
         }
 
     }
 
     @Override
     public IRelationship newRelationship(IObservable observable, String name, IScale scale,
-            IObjectArtifact source,
-            IObjectArtifact target, IMetadata metadata) {
+            IObjectArtifact source, IObjectArtifact target, IMetadata metadata) {
 
         if (!observable.is(Type.RELATIONSHIP)) {
             throw new IllegalArgumentException(
@@ -813,15 +871,18 @@ public class RuntimeScope extends AbstractRuntimeScope {
                 .createChild("Resolution of relationship " + name);
         Dataflow dataflow = resolve(obs, name, scale, subtask);
 
-        // TODO switch to a builder pattern for the dataflow
-        IRelationship ret = (IRelationship) dataflow.withMetadata(metadata)
-                .withScope(this.resolutionScope.getChildScope(observable, contextSubject, scale))
-                .withNotificationMode(notificationMode)
-                .connecting((IDirectObservation) source, (IDirectObservation) target).withTargetName(name)
+        RuntimeScope runtimeScope = new RuntimeScope(this).withDirectObservationName(name)
                 .withinGroup(this.target instanceof ObservationGroup ? (ObservationGroup) this.target : null)
-                .run(scale.initialization(), (Actuator) this.actuator, subtask.getMonitor());
+                .withNotificationMode(notificationMode)
+                .connecting((IDirectObservation) source, (IDirectObservation) target).withMetadata(metadata)
+                .withScope(this.resolutionScope.getChildScope(observable, contextSubject, scale));
+
+        // TODO switch to a builder pattern for the dataflow
+        IRelationship ret = (IRelationship) dataflow.run(scale.initialization(), (Actuator) this.actuator,
+                runtimeScope);
 
         if (ret != null) {
+            // FIXME shouldn't be necessary
             ((DirectObservation) ret).setName(name);
             // for (ObservationListener listener : listeners.values()) {
             // listener.newObservation(ret, getRootSubject());
@@ -829,6 +890,12 @@ public class RuntimeScope extends AbstractRuntimeScope {
         }
 
         return ret;
+    }
+
+    private RuntimeScope connecting(IDirectObservation source, IDirectObservation target2) {
+        this.relationshipSource = source;
+        this.relationshipTarget = target2;
+        return this;
     }
 
     @Override
@@ -969,8 +1036,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
      */
     @Override
     public IRuntimeScope createContext(IScale scale, IActuator actuator, IDataflow<?> dataflow,
-            IResolutionScope scope,
-            IMonitor monitor) {
+            IResolutionScope scope) {
 
         RuntimeScope ret = new RuntimeScope(this);
         ret.parent = this;
@@ -989,7 +1055,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
         ret.monitor = monitor;
         ret.semantics.put(actuator.getName(), ret.targetSemantics);
         ret.actuator = (Actuator) actuator;
-        ret.contextSubject = scope.getContext();
+        // ret.contextSubject = scope.getContext();
         ret.dataflow = (Dataflow) dataflow;
 
         for (IActuator a : actuator.getActuators()) {
@@ -1210,17 +1276,17 @@ public class RuntimeScope extends AbstractRuntimeScope {
                 Observable obs = observable;
 
                 // attribute the name if any
-                if (dataflow.getTargetName() != null && ((Actuator) actuator).getMode() == Mode.RESOLUTION
-                        && dataflow.getObservationGroup() != null
-                        && observable.is(dataflow.getObservationGroup().getObservable())) {
+                if (directObservationName != null && ((Actuator) actuator).getMode() == Mode.RESOLUTION
+                        && currentGroup != null
+                        && observable.is(currentGroup.getObservable())) {
                     obs = new Observable(obs);
-                    obs.setName(dataflow.getTargetName());
+                    obs.setName(directObservationName);
                 }
 
                 if (obs.is(Type.RELATIONSHIP)) {
                     observation = DefaultRuntimeProvider.createRelationship(obs, scale,
-                            actuator.getDataflow().getRelationshipSource(),
-                            actuator.getDataflow().getRelationshipTarget(), this);
+                            relationshipSource,
+                            relationshipTarget, this);
                 } else {
                     observation = DefaultRuntimeProvider.createObservation(obs, scale, this, op.getThird());
                 }
@@ -1235,9 +1301,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
                  * states before resolution is attempted. States are resolved from resource metadata
                  * only if no contextual states are present.
                  */
-                IMetadata metadata = actuator.getDataflow().getMetadata();
-                if (metadata != null) {
-                    observation.getMetadata().putAll(metadata);
+                if (objectMetadata != null) {
+                    observation.getMetadata().putAll(objectMetadata);
                 }
 
                 if (parent != null && actuator.getDataflow().getModel() != null) {
@@ -1251,10 +1316,10 @@ public class RuntimeScope extends AbstractRuntimeScope {
                          */
 
                         boolean done = false;
-                        if (metadata != null) {
+                        if (objectMetadata != null) {
                             /* state specs may be in metadata from resource attributes */
-                            if (metadata.containsKey(attr)) {
-                                Object obj = metadata.getCaseInsensitive(attr);
+                            if (objectMetadata.containsKey(attr)) {
+                                Object obj = objectMetadata.getCaseInsensitive(attr);
                                 IState state = (IState) DefaultRuntimeProvider.createObservation(
                                         actuator.getDataflow().getModel().getAttributeObservables().get(attr),
                                         scale,
@@ -1322,8 +1387,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
                  * set the target observations if this is a configuration
                  */
                 if (observation instanceof IConfiguration) {
-                    ((Configuration) observation)
-                            .setTargets(actuator.getDataflow().getConfigurationTargets());
+                    ((Configuration) observation).setTargets(configurationTargets);
                 }
 
                 if (wasRoot && this.resolutionScope.getObserver() != null) {
@@ -1353,11 +1417,11 @@ public class RuntimeScope extends AbstractRuntimeScope {
                     /*
                      * chain to the group if we're in one and we're supposed to
                      */
-                    if (this.dataflow.getObservationGroup() != null
+                    if (currentGroup != null
                             && ((Actuator) actuator).getMode() == Mode.RESOLUTION
-                            && observable.is(dataflow.getObservationGroup().getObservable())) {
-                        this.dataflow.getObservationGroup().chain(observation,
-                                dataflow.getNotificationMode() != INotification.Mode.Silent);
+                            && observable.is(currentGroup.getObservable())) {
+                        this.currentGroup.chain(observation,
+                                notificationMode != INotification.Mode.Silent);
                     }
 
                     /*
@@ -1384,9 +1448,9 @@ public class RuntimeScope extends AbstractRuntimeScope {
     }
 
     private IArtifact getLinkTarget() {
-        if (dataflow.getObservationGroup() != null && ((Actuator) actuator).getMode() == Mode.RESOLUTION) {
-            if (this.targetSemantics.is(dataflow.getObservationGroup().getObservable())) {
-                return dataflow.getObservationGroup();
+        if (currentGroup != null && ((Actuator) actuator).getMode() == Mode.RESOLUTION) {
+            if (this.targetSemantics.is(currentGroup.getObservable())) {
+                return currentGroup;
             }
         }
         return contextSubject;
@@ -1400,7 +1464,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
     @Override
     public void updateNotifications(IObservation observation) {
 
-        if (dataflow.getNotificationMode() == INotification.Mode.Silent) {
+        if (notificationMode == INotification.Mode.Silent) {
             return;
         }
 
@@ -1498,7 +1562,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
                             change));
                 }
 
-            } else if (dataflow.getNotificationMode() == INotification.Mode.Verbose
+            } else if (notificationMode == INotification.Mode.Verbose
                     || (grandpa != null && watchedObservations.contains(parent.getId()))) {
 
                 // subscribed to grandparent and parent is closed: send change
@@ -1544,10 +1608,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
                 this.catalog.put(observable.getName(), ret);
                 this.structure.add(ret);
                 if (contextSubject != null) {
-                    link(ret,
-                            dataflow.getObservationGroup() == null
-                                    ? contextSubject
-                                    : dataflow.getObservationGroup());
+                    link(ret, currentGroup == null ? contextSubject : currentGroup);
                 }
             }
         }
@@ -1571,7 +1632,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
         IObservation observation = null;
 
         if (observable.is(Type.COUNTABLE)) {
-            observation = getObservationGroup(observable, getDataflow().getResolutionScale());
+            observation = getObservationGroup(observable, getResolutionScale());
         } else if (observable.is(Type.TRAIT) || observable.is(Type.ROLE)) {
             /*
              * TODO this should happen when a predicate observation is made explicitly from a
@@ -1581,7 +1642,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
             Logging.INSTANCE.warn("unexpected call to createTarget: check logics");
         } else {
             observation = DefaultRuntimeProvider.createObservation(observable,
-                    getDataflow().getResolutionScale(),
+                    getResolutionScale(),
                     this);
         }
 
@@ -1599,8 +1660,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
         this.catalog.put(observable.getReferenceName(), observation);
         this.structure.add(observation);
         if (contextSubject != null) {
-            link(observation,
-                    dataflow.getObservationGroup() == null ? contextSubject : dataflow.getObservationGroup());
+            link(observation, currentGroup == null ? contextSubject : currentGroup);
         }
         if (observation instanceof ISubject) {
             this.network.addVertex((ISubject) observation);
@@ -1655,38 +1715,6 @@ public class RuntimeScope extends AbstractRuntimeScope {
     public IScheduler getScheduler() {
         return getRootScope().scheduler;
     }
-
-    // @Override
-    // public void replaceTarget(IArtifact target) {
-    // this.target = target;
-    // if (target != null) {
-    // IArtifact current = this.catalog.get(targetName);
-    // /*
-    // * FIXME this avoid some error conditions when targets are processes and they
-    // substitute
-    // * their changing states, but it's definitely not thought through properly
-    // yet. This
-    // * kind of switch must happen to enable layering in states that start numeric
-    // and become
-    // * categorical or the like.
-    // */
-    // if (differentAndCompatible(current, target)) {
-    // Map<String, IArtifact> newCatalog = new HashMap<>();
-    // newCatalog.putAll(this.catalog);
-    // newCatalog.put(targetName, target);
-    // this.catalog = newCatalog;
-    // }
-    // }
-    // }
-
-    // private boolean differentAndCompatible(IArtifact current, IArtifact target) {
-    // if (current == null) {
-    // return true;
-    // } else if (current != target) {
-    // return current instanceof IState && target instanceof IState;
-    // }
-    // return false;
-    // }
 
     @Override
     public Pair<String, IArtifact> findArtifact(IObservable observable) {
@@ -1757,11 +1785,6 @@ public class RuntimeScope extends AbstractRuntimeScope {
     @Override
     public IReport getReport() {
         return report;
-    }
-
-    @Override
-    public ContextualizationStrategy getContextualizationStrategy() {
-        return contextualizationStrategy;
     }
 
     @Override
@@ -2213,8 +2236,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
     }
 
     @Override
-    public Map<ObservedConcept, IObservation> getCatalog() {
-        Map<ObservedConcept, IObservation> ret = new HashMap<>();
+    public Map<IObservedConcept, IObservation> getCatalog() {
+        Map<IObservedConcept, IObservation> ret = new HashMap<>();
         for (IArtifact artifact : catalog.values()) {
             if (artifact instanceof IObservation) {
                 ret.put(new ObservedConcept(((IObservation) artifact).getObservable(),
@@ -2490,6 +2513,12 @@ public class RuntimeScope extends AbstractRuntimeScope {
                 ret.add(state.getSecond().getObservable().getName());
             }
         }
+        return ret;
+    }
+
+    public static IRuntimeScope rootScope(Dataflow dataflow, ResolutionScope resolutionScope,
+            IMonitor monitor) {
+        RuntimeScope ret = new RuntimeScope(dataflow, resolutionScope, monitor);
         return ret;
     }
 

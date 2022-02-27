@@ -48,6 +48,7 @@ import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.model.Model;
+import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Observable;
@@ -220,7 +221,7 @@ public class Resolver {
 
                     ResolutionScope cscope = resolve((Observable) toResolve,
                             parentScope.acceptResolutions(ret,
-                                    observable.getScope().getResolutionNamespace()),
+                                    (Namespace)observable.getScope().getResolutionNamespace()),
                             Mode.RESOLUTION);
 
                     if (cscope.getCoverage().isRelevant()) {
@@ -319,26 +320,30 @@ public class Resolver {
                     // scope.
                     ResolutionScope oscope = resolveConcrete(pobs, rscope, pobs.getResolvedPredicates(),
                             pobs.getResolvedPredicatesContext(), Mode.RESOLUTION);
-                    
+
                     if (oscope.getCoverage().isComplete()) {
 
                         done = true;
 
+                        // TODO set in the contextualization strategy as "orphan" for the root
+                        // resolution dataflow if that's not yet defined.
                         Dataflow dataflow = Dataflows.INSTANCE.compile(NameGenerator.shortUUID(), oscope,
                                 null);
-                        
+
                         dataflow.setDescription(
                                 "Resolution of abstract predicate " + predicate.getDefinition());
                         dataflow.run(oscope.getCoverage().copy(), oscope.getMonitor());
-                        
+
                         /*
                          * Get the traits from the scope, add to set. Scope is only created if
                          * resolution succeeds, so check.
+                         * 
+                         * TODO scope needs to exist beforehand.
                          */
                         Collection<IConcept> predicates = dataflow.getRuntimeScope() == null
                                 ? null
                                 : dataflow.getRuntimeScope().getConcreteIdentities(predicate);
-                        
+
                         if (predicates != null && !predicates.isEmpty()) {
                             // use a stable order so that the reporting system can know when the
                             // last one is contextualized

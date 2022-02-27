@@ -15,6 +15,7 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
 import org.integratedmodelling.klab.api.model.contextualization.IProcessor;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -71,7 +72,7 @@ public class ValueOperatorResolver implements IResolver<IState>, IProcessor, IEx
                  * should be "presence of x"
                  */
                 IObservable observable = stop instanceof IObservable ? (IObservable) stop : Observable.promote((IConcept) stop);
-                Map<ObservedConcept, IObservation> catalog = ((IRuntimeScope) context).getCatalog();
+                Map<IObservedConcept, IObservation> catalog = ((IRuntimeScope) context).getCatalog();
                 stateOperand = catalog.get(new ObservedConcept(observable));
             }
         }

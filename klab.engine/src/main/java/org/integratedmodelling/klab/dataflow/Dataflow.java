@@ -166,6 +166,8 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
      */
     private boolean primary;
 
+    private boolean isOccurrent;
+
     private Dataflow(Dataflow parent) {
         this.parentDataflow = parent;
     }
@@ -329,7 +331,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
         IArtifact ret = null;
         try {
             ret = Klab.INSTANCE.getRuntimeProvider()
-                    .compute(this, scale.initialization(), scope.getResolutionScope(), scope.getMonitor())
+                    .compute(this, scale.initialization(), scope)
                     .get();
         } catch (Throwable e) {
             if (scope.getMonitor().isInterrupted()) {
@@ -921,20 +923,6 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
         return true;
     }
 
-    // /**
-    // * Use to quickly compare different dataflows for equality of executable
-    // * methods. Useful to group resolution dataflows for multiple objects into the
-    // * minimum number of distinct ones. Does not compare preambles.
-    // *
-    // * TODO this may skip differences in lookup tables or other parameters that are
-    // * currently not printed in full literal form in the code.
-    // *
-    // * @return an hex signature that will be equal if the actuator part is equal.
-    // */
-    // public String getSignature() {
-    // return DigestUtils.md5Hex(encode(0, false));
-    // }
-
     @Override
     public List<IDataflow<IArtifact>> getChildren() {
         return childDataflows;
@@ -962,12 +950,14 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
     @Override
     public void export(String baseName, File directory) {
         // TODO Auto-generated method stub
-
     }
 
     public boolean occurs() {
-        // TODO Auto-generated method stub
-        return false;
+        return this.isOccurrent;
+    }
+
+    public void notifyOccurrents() {
+        this.isOccurrent = true;
     }
 
 }

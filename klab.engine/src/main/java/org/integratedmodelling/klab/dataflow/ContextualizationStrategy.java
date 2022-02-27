@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
+import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.dataflow.Flowchart.Element;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.owl.Observable;
@@ -51,19 +52,20 @@ import org.jgrapht.graph.DefaultEdge;
  */
 public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, DefaultEdge> {
 
-	String id = NameGenerator.shortUUID();
+    private String id = NameGenerator.shortUUID();
 	private KlabElkGraphFactory kelk = KlabElkGraphFactory.keINSTANCE;
 	private Map<String, ElkConnectableShape> nodes = new HashMap<>();
 	private Map<String, Element> elements = new HashMap<>();
 	private Map<String, String> node2dataflowId = new HashMap<>();
 	private Dataflow rootDataflow;
-	Map<ObservedConcept, List<Pair<ICoverage, Dataflow>>> dataflowCache = new HashMap<>();
+	private Map<ObservedConcept, List<Pair<ICoverage, Dataflow>>> dataflowCache = new HashMap<>();
 
 	public ContextualizationStrategy() {
 		super(DefaultEdge.class);
 	}
 
 	List<Dataflow> rootNodes = new ArrayList<>();
+    private IRuntimeScope scope;
 
 	private static final long serialVersionUID = 1L;
 
@@ -92,8 +94,9 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
 
 	public static String getElkGraph(Dataflow dataflow, IRuntimeScope scope) {
 		ContextualizationStrategy strategy = new ContextualizationStrategy();
+		strategy.setScope(scope);
 		strategy.add(dataflow);
-		return strategy.getElkGraph(scope);
+		return strategy.getElkGraph();
 	}
 
 	/**
@@ -146,7 +149,7 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
 		return ret;
 	}
 
-	public String getElkGraph(IRuntimeScope scope) {
+	public String getElkGraph() {
 
 		List<Flowchart> flowcharts = new ArrayList<>();
 
@@ -242,5 +245,9 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
 			return elements.get(nodeId);
 		}
 	}
+
+    public void setScope(IRuntimeScope runtimeScope) {
+        this.scope = runtimeScope;
+    }
 
 }

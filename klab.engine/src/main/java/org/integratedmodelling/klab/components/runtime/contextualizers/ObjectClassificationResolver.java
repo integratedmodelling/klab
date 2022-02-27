@@ -19,6 +19,7 @@ import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.documentation.IDocumentationProvider;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
 import org.integratedmodelling.klab.api.model.contextualization.IProcessor;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
@@ -63,7 +64,7 @@ public class ObjectClassificationResolver implements IResolver<IState>, IProcess
 
     @Override
     public Object eval(IParameters<String> parameters, IContextualizationScope context) {
-        Map<ObservedConcept, IObservation> catalog = ((IRuntimeScope) context).getCatalog();
+        Map<IObservedConcept, IObservation> catalog = ((IRuntimeScope) context).getCatalog();
         return new ObjectClassificationResolver(catalog.get(parameters.get("observable", ObservedConcept.class)),
                 parameters.get("classifier", IConcept.class));
     }

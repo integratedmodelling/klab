@@ -14,6 +14,7 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
@@ -27,7 +28,6 @@ import org.integratedmodelling.klab.api.runtime.ISessionState.Listener;
 import org.integratedmodelling.klab.components.localstorage.impl.AbstractAdaptiveStorage;
 import org.integratedmodelling.klab.components.localstorage.impl.KeyedStorage;
 import org.integratedmodelling.klab.components.runtime.observations.State;
-import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.rest.ScaleReference;
 import org.integratedmodelling.klab.rest.SessionActivity;
@@ -48,7 +48,7 @@ public abstract class Debugger {
     private Cell cellFocus;
     private ILocator prospectiveFocus;
     private String listenerId;
-    private Map<Integer, ObservedConcept> scopeCatalog = new HashMap<>();
+    private Map<Integer, IObservedConcept> scopeCatalog = new HashMap<>();
     private Map<String, IObservation> watches = new LinkedHashMap<>();
 
     protected abstract void setTitle(String string);
@@ -152,9 +152,9 @@ public abstract class Debugger {
         if (getScope() == null) {
             this.println("No context.");
         }
-        Map<ObservedConcept, IObservation> cat = getScope().getCatalog();
+        Map<IObservedConcept, IObservation> cat = getScope().getCatalog();
         int n = 1;
-        for (ObservedConcept key : cat.keySet()) {
+        for (IObservedConcept key : cat.keySet()) {
             this.scopeCatalog.put(n, key);
             this.println(String.format("%2d. %38s %s", n, cat.get(key).getObservable().getName(), describeValue(cat.get(key)),
                     key.toString()));
@@ -296,7 +296,7 @@ public abstract class Debugger {
     private Collection<IObservation> getObservations(String target) {
         Set<IObservation> ret = new HashSet<>();
         if (NumberUtils.encodesInteger(target)) {
-            ObservedConcept art = this.scopeCatalog.get(Integer.parseInt(target));
+            IObservedConcept art = this.scopeCatalog.get(Integer.parseInt(target));
             if (art != null) {
                 IObservation obs = getScope().getCatalog().get(art);
                 if (obs != null) {

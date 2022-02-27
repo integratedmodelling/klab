@@ -312,6 +312,12 @@ public abstract class Expression implements IExpression {
             return null;
         }
 
+        @Override
+        public IScale getResolutionScale() {
+            // TODO Auto-generated method stub
+            return scale;
+        }
+
 	}
 
 	public static IContextualizationScope emptyContext(IMonitor monitor) {

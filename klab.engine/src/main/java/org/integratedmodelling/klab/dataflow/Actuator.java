@@ -62,9 +62,7 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.IVariable;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
-import org.integratedmodelling.klab.api.runtime.rest.ITaskReference;
 import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
@@ -1001,9 +999,9 @@ public class Actuator implements IActuator {
     private IRuntimeScope setupScope(IArtifact target, final IRuntimeScope scope) throws KlabException {
 
         IRuntimeScope ret = scope.copy();
-
-        if (this.mergedCoverage != null) {
-            ret = ret.withCoverage(this.getMergedCoverage());
+        IScale coverage = scope.getMergedScale(this);
+        if (coverage != null) {
+            ret = ret.withCoverage(coverage);
         }
 
         /*
@@ -1668,19 +1666,21 @@ public class Actuator implements IActuator {
         return new ObservedConcept(this.observable, this.mode);
     }
 
-    public IScale mergeScale(IScale scale, IMonitor monitor) {
+    public IScale mergeScale(IScale scale, IRuntimeScope scope) {
 
-        if (this.runtimeScale == null) {
-            this.runtimeScale = scale;
+        IScale runtimeScale = scope.getMergedScale(this);
+
+        if (runtimeScale == null) {
+            scope.setMergedScale(this, runtimeScale = scale);
             if (this.model != null) {
-                IScale modelScale = model.getCoverage(monitor);
+                IScale modelScale = model.getCoverage(scope.getMonitor());
                 if (!modelScale.isEmpty()) {
-                    this.runtimeScale = scale.adopt(modelScale, monitor);
+                    scope.setMergedScale(this, scale.adopt(modelScale, scope.getMonitor()));
                 }
             }
         }
 
-        return this.runtimeScale;
+        return runtimeScale;
     }
 
     // public void addNotifiable(IState state) {

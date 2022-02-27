@@ -18,11 +18,13 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.engine.Engine;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.monitoring.Message;
@@ -131,6 +133,11 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
                                     .getContextualizationStrategy();
                             contextualizationStrategy.add(dataflow);
 
+                            /*
+                             * create the root contextualization scope for the context
+                             */
+                            IRuntimeScope runtimeScope = RuntimeScope.rootScope(dataflow, scope, monitor);
+
                             // context will take it from the task identity when it's created
                             setContextualizationStrategy(contextualizationStrategy);
 
@@ -145,7 +152,7 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
                              * actuator creates its artifacts, then initialization is handled when
                              * computing.
                              */
-                            ret = (ISubject) dataflow.run(scope.getCoverage().copy(), monitor);
+                            ret = (ISubject) dataflow.run(scope.getCoverage().copy(), runtimeScope);
 
                             if (ret != null) {
                                 setContext((Subject) ret);

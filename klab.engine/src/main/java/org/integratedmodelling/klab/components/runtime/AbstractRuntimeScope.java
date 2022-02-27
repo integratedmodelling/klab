@@ -13,8 +13,10 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.dataflow.Actuator.Status;
+import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
@@ -41,12 +43,16 @@ public abstract class AbstractRuntimeScope extends Parameters<String> implements
     Map<IActuator, Status> actuatorStatus;
     Map<IActuator, Set<IObservation>> actuatorProducts;
     private Graph<IObservedConcept, DefaultEdge> dependencyGraph;
+    ContextualizationStrategy contextualizationStrategy;
+    IMonitor monitor;
 
-    protected AbstractRuntimeScope(Dataflow dataflow, IResolutionScope resolutionScope) {
+    protected AbstractRuntimeScope(Dataflow dataflow, IResolutionScope resolutionScope, IMonitor monitor) {
         this.resolutionScope = (ResolutionScope) resolutionScope;
         this.dataflow = dataflow;
+        this.monitor = monitor;
         this.partialScales = Collections.synchronizedMap(new HashMap<>());
         this.actuatorStatus = Collections.synchronizedMap(new HashMap<>());
+        this.contextualizationStrategy = ((ResolutionScope)resolutionScope).getContextualizationStrategy();
     }
 
     protected AbstractRuntimeScope(AbstractRuntimeScope scope) {
@@ -134,5 +140,10 @@ public abstract class AbstractRuntimeScope extends Parameters<String> implements
         }
         return ret;
     }
-    
+
+    @Override
+    public ContextualizationStrategy getContextualizationStrategy() {
+        return contextualizationStrategy;
+    }
+
 }

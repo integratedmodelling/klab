@@ -56,7 +56,6 @@ import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Actuator.Status;
 import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
-import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
@@ -532,13 +531,6 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	}
 
 	@Override
-	public IRuntimeScope createContext(IScale scale, IActuator target, IDataflow<?> dataflow, IResolutionScope scope,
-			IMonitor monitor) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public IReport getReport() {
 		// TODO Auto-generated method stub
 		return null;
@@ -789,7 +781,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	}
 
 	@Override
-	public Map<ObservedConcept, IObservation> getCatalog() {
+	public Map<IObservedConcept, IObservation> getCatalog() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -919,7 +911,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
     }
 
     @Override
-    public void setDependencyGraph(Graph<ObservedConcept, DefaultEdge> buildDependencies) {
+    public void setDependencyGraph(Graph<IObservedConcept, DefaultEdge> buildDependencies) {
         // TODO Auto-generated method stub
         
     }
@@ -956,6 +948,20 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 
     @Override
     public Status getStatus(IActuator actuator) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public IRuntimeScope createContext(IScale scale, IActuator target, IDataflow<?> dataflow,
+            IResolutionScope scope) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public IRuntimeScope getContextScope(Actuator actuator, IResolutionScope scope, IScale scale,
+            IMonitor monitor) {
         // TODO Auto-generated method stub
         return null;
     }
