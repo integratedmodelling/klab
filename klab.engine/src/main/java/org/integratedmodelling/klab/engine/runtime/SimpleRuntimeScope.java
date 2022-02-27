@@ -966,4 +966,16 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
         return null;
     }
 
+    @Override
+    public void setRuntimeScale(IActuator actuator, IScale scale) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public IScale getRuntimeScale(IActuator actuator) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

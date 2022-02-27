@@ -885,4 +885,16 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
         return null;
     }
 
+    @Override
+    public void setRuntimeScale(IActuator actuator, IScale scale) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public IScale getRuntimeScale(IActuator actuator) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

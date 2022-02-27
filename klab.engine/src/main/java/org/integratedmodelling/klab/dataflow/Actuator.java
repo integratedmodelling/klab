@@ -1668,14 +1668,14 @@ public class Actuator implements IActuator {
 
     public IScale mergeScale(IScale scale, IRuntimeScope scope) {
 
-        IScale runtimeScale = scope.getMergedScale(this);
+        IScale runtimeScale = scope.getRuntimeScale(this);
 
         if (runtimeScale == null) {
-            scope.setMergedScale(this, runtimeScale = scale);
+            scope.setRuntimeScale(this, runtimeScale = scale);
             if (this.model != null) {
                 IScale modelScale = model.getCoverage(scope.getMonitor());
                 if (!modelScale.isEmpty()) {
-                    scope.setMergedScale(this, scale.adopt(modelScale, scope.getMonitor()));
+                    scope.setRuntimeScale(this, scale.adopt(modelScale, scope.getMonitor()));
                 }
             }
         }
