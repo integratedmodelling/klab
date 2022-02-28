@@ -176,7 +176,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
         // this.session = session;
         this.parentDataflow = parent;
         if (this.parentDataflow != null) {
-            this.parentDataflow.childDataflows.add(this);
+            parent.actuators.add(this);
         }
     }
 
@@ -198,8 +198,6 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
      * Pass an actuator to use to register ourselves into. If the parent is not null, notify the
      * task through the monitor (top-level observation do it manually so that any resolution issue
      * also get reported as pertaining to the same observation task).
-     * 
-     * FIXME MUST USE SCOPE!
      * 
      * @param scale
      * @param parentComputation
@@ -923,10 +921,10 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
         return true;
     }
 
-    @Override
-    public List<IDataflow<IArtifact>> getChildren() {
-        return childDataflows;
-    }
+//    @Override
+//    public List<IDataflow<IArtifact>> getChildren() {
+//        return childDataflows;
+//    }
 
     public Dataflow setPrimary(boolean primary) {
         this.primary = primary;

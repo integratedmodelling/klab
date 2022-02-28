@@ -551,21 +551,21 @@ public interface IRuntimeScope extends IContextualizationScope {
      */
     Status getStatus(IActuator actuator);
 
-    /**
-     * Set the runtime scale for this actuator. Used when the scale is not merged with a specific
-     * one for the actuator.
-     * 
-     * @param actuator
-     * @param scale
-     */
-    void setRuntimeScale(IActuator actuator, IScale scale);
-
-    /**
-     * Get the runtime (not merged) scale for the actuator.
-     * 
-     * @param actuator
-     * @return
-     */
-    IScale getRuntimeScale(IActuator actuator);
+//    /**
+//     * Set the runtime scale for this actuator. Used when the scale is not merged with a specific
+//     * one for the actuator.
+//     * 
+//     * @param actuator
+//     * @param scale
+//     */
+//    void setRuntimeScale(IActuator actuator, IScale scale);
+//
+//    /**
+//     * Get the runtime (not merged) scale for the actuator.
+//     * 
+//     * @param actuator
+//     * @return
+//     */
+//    IScale getRuntimeScale(IActuator actuator);
 
 }

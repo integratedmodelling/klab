@@ -14,7 +14,6 @@
 package org.integratedmodelling.klab.api.runtime.dataflow;
 
 import java.io.File;
-import java.util.List;
 
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -70,16 +69,16 @@ import org.integratedmodelling.klab.exceptions.KlabException;
  */
 public interface IDataflow<T extends IArtifact> extends IActuator {
 
-    /**
-     * Each context has one root dataflow (the one that created the root context) and a set of child
-     * dataflows which may be run once (for qualities) or more than once (to resolve direct
-     * observations, some or all of which may use the same dataflow). In general there is one
-     * dataflow per resolved direct observation, possibly reusing the contextualization strategy of
-     * another.
-     * 
-     * @return
-     */
-    List<IDataflow<T>> getChildren();
+//    /**
+//     * Each context has one root dataflow (the one that created the root context) and a set of child
+//     * dataflows which may be run once (for qualities) or more than once (to resolve direct
+//     * observations, some or all of which may use the same dataflow). In general there is one
+//     * dataflow per resolved direct observation, possibly reusing the contextualization strategy of
+//     * another.
+//     * 
+//     * @return
+//     */
+//    List<IDataflow<T>> getChildren();
 
     /**
      * Each dataflow in the hierarchy must be able to produce the root dataflow, corresponding to

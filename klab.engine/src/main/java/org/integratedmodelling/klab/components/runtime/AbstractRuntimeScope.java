@@ -39,7 +39,7 @@ public abstract class AbstractRuntimeScope extends Parameters<String> implements
     Scale resolutionScale;
     ResolutionScope resolutionScope;
     boolean autoStartTransitions = false;
-    Map<IActuator, IScale> runtimeScales;
+//    Map<IActuator, IScale> runtimeScales;
     Map<IActuator, IScale> partialScales;
     Map<IActuator, Status> actuatorStatus;
     Map<IActuator, Set<IObservation>> actuatorProducts;
@@ -51,7 +51,7 @@ public abstract class AbstractRuntimeScope extends Parameters<String> implements
         this.resolutionScope = (ResolutionScope) resolutionScope;
         this.dataflow = dataflow;
         this.monitor = monitor;
-        this.runtimeScales = Collections.synchronizedMap(new HashMap<>());
+//        this.runtimeScales = Collections.synchronizedMap(new HashMap<>());
         this.partialScales = Collections.synchronizedMap(new HashMap<>());
         this.actuatorStatus = Collections.synchronizedMap(new HashMap<>());
         this.actuatorProducts = Collections.synchronizedMap(new HashMap<>());
@@ -64,7 +64,7 @@ public abstract class AbstractRuntimeScope extends Parameters<String> implements
         this.resolutionScope = scope.resolutionScope;
         this.autoStartTransitions = scope.autoStartTransitions;
         this.partialScales = scope.partialScales;
-        this.runtimeScales = scope.runtimeScales;
+//        this.runtimeScales = scope.runtimeScales;
         this.actuatorStatus = scope.actuatorStatus;
         this.actuatorProducts = scope.actuatorProducts;
         this.dependencyGraph = scope.dependencyGraph;
@@ -85,16 +85,16 @@ public abstract class AbstractRuntimeScope extends Parameters<String> implements
     public IScale getMergedScale(IActuator actuator) {
         return this.partialScales.get(actuator);
     }
-    
-    @Override
-    public void setRuntimeScale(IActuator actuator, IScale scale) {
-        this.runtimeScales.put(actuator, scale);
-    }
-
-    @Override
-    public IScale getRuntimeScale(IActuator actuator) {
-        return this.runtimeScales.get(actuator);
-    }
+//    
+//    @Override
+//    public void setRuntimeScale(IActuator actuator, IScale scale) {
+//        this.runtimeScales.put(actuator, scale);
+//    }
+//
+//    @Override
+//    public IScale getRuntimeScale(IActuator actuator) {
+//        return this.runtimeScales.get(actuator);
+//    }
 
     @Override
     public IScale getResolutionScale() {

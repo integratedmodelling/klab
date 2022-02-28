@@ -150,7 +150,7 @@ public class ObserveInContextTask extends AbstractTask<IArtifact> {
 						}
 
 						IRuntimeScope ctx = ((Observation) context).getScope();
-						ctx.getContextualizationStrategy().add(dataflow);
+//						ctx.getContextualizationStrategy().add(dataflow);
 
 						session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
 								IMessage.Type.DataflowCompiled, new DataflowReference(token, dataflow.getKdlCode(),

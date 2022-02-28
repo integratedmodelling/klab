@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
+import java.util.function.Function;
 
 import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
@@ -16,15 +16,12 @@ import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
-import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.dataflow.Flowchart.Element;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Triple;
-import org.jgrapht.graph.DefaultDirectedGraph;
-import org.jgrapht.graph.DefaultEdge;
 
 /**
  * A tree of dataflows, possibly connected through internal links. Root nodes
@@ -47,48 +44,56 @@ import org.jgrapht.graph.DefaultEdge;
  * individual components), not a graph, as the hierarchy is kept in the dataflow
  * itself.
  * 
- * Ri FIXME - this should disappear and become part of the root contextualization scope.
+ * Ri FIXME - this should disappear and become part of the root
+ * contextualization scope.
+ * 
  * @author Ferd
  *
  */
-@Deprecated
-public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, DefaultEdge> {
+public class ContextualizationStrategy /* extends DefaultDirectedGraph<Dataflow, DefaultEdge> */ {
 
-    private String id = NameGenerator.shortUUID();
+	private String id = NameGenerator.shortUUID();
 	private KlabElkGraphFactory kelk = KlabElkGraphFactory.keINSTANCE;
 	private Map<String, ElkConnectableShape> nodes = new HashMap<>();
 	private Map<String, Element> elements = new HashMap<>();
 	private Map<String, String> node2dataflowId = new HashMap<>();
+
 	private Dataflow rootDataflow;
+	/**
+	 * These are created and run during resolution, before the root dataflow exists.
+	 * Normally used to resolve abstract predicates. They are "orphans" when created,
+	 * and the root dataflow will adopt them as soon as it is created.
+	 */
+	private List<Dataflow> preContextualizationDataflows = new ArrayList<>();
 	private Map<ObservedConcept, List<Pair<ICoverage, Dataflow>>> dataflowCache = new HashMap<>();
 
 	public ContextualizationStrategy() {
-		super(DefaultEdge.class);
+//		super(DefaultEdge.class);
 	}
 
 	List<Dataflow> rootNodes = new ArrayList<>();
-    private IRuntimeScope scope;
+	private IRuntimeScope scope;
 
-	private static final long serialVersionUID = 1L;
+//	private static final long serialVersionUID = 1L;
 
-	public void add(Dataflow dataflow) {
-
-		if (this.rootDataflow == null) {
-			this.rootDataflow = dataflow;
-		}
-
-		synchronized (rootNodes) {
-			addVertex(dataflow);
-			rootNodes.add(dataflow);
-		}
-	}
-
-	public void add(Dataflow dataflow, Dataflow parent) {
-		synchronized (this) {
-			addVertex(dataflow);
-			addEdge(parent, dataflow);
-		}
-	}
+//	public void add(Dataflow dataflow) {
+//
+//		if (this.rootDataflow == null) {
+//			this.rootDataflow = dataflow;
+//		}
+//
+//		synchronized (rootNodes) {
+//			addVertex(dataflow);
+//			rootNodes.add(dataflow);
+//		}
+//	}
+//
+//	public void add(Dataflow dataflow, Dataflow parent) {
+//		synchronized (this) {
+//			addVertex(dataflow);
+//			addEdge(parent, dataflow);
+//		}
+//	}
 
 	public String getKdl() {
 		return rootDataflow == null ? null : rootDataflow.getKdlCode();
@@ -97,7 +102,7 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
 	public static String getElkGraph(Dataflow dataflow, IRuntimeScope scope) {
 		ContextualizationStrategy strategy = new ContextualizationStrategy();
 		strategy.setScope(scope);
-		strategy.add(dataflow);
+		strategy.rootDataflow = dataflow;
 		return strategy.getElkGraph();
 	}
 
@@ -114,31 +119,26 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
 	 * @return
 	 */
 	public Dataflow getDataflow(IObservable observable, IResolutionScope.Mode mode, IScale scale,
-			IDirectObservation context, Supplier<Dataflow> ifMissing) {
+			IDirectObservation context, Function<IScale, Dataflow> ifMissing) {
 
 		Dataflow ret = null;
 		ObservedConcept key = new ObservedConcept((Observable) observable, mode,
 				context == null ? null : context.getObservable());
 		List<Pair<ICoverage, Dataflow>> pairs = dataflowCache.get(key);
 
-		boolean found = false;
+//		boolean found = false;
 		if (pairs != null) {
-			found = true;
+//			found = true;
 			for (Pair<ICoverage, Dataflow> pair : pairs) {
 				if (pair.getFirst() == null || pair.getFirst().contains(scale)) {
-					// TODO only feasible if we copy the dataflow and localize afterwards. Just keep
-					// the
-					// empty ones, otherwise the scheduling won't work.
-					if (pair.getSecond().isTrivial()) {
-						ret = pair.getSecond();
-						break;
-					}
+					ret = pair.getSecond();
+					break;
 				}
 			}
 		}
 
 		if (ret == null) {
-			ret = ifMissing.get();
+			ret = ifMissing.apply(scale);
 			if (pairs == null) {
 				pairs = new ArrayList<>();
 				dataflowCache.put(key, pairs);
@@ -248,8 +248,8 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
 		}
 	}
 
-    public void setScope(IRuntimeScope runtimeScope) {
-        this.scope = runtimeScope;
-    }
+	public void setScope(IRuntimeScope runtimeScope) {
+		this.scope = runtimeScope;
+	}
 
 }

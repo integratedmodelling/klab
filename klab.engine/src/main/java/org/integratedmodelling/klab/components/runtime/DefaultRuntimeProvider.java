@@ -143,25 +143,25 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
                         && initializer.getObservable().getType().is(Type.COUNTABLE)
                         && scope.getResolutionScope().getMode() == Mode.RESOLUTION;
 
-                /*
-                 * We get the overall scale, which we merge with the actuator's. This ensures that
-                 * scale constraints at the model level are dealt with before own artifacts are
-                 * created.
-                 * 
-                 * TODO/CHECK should use all the top-level actuators and merge from the dataflow
-                 */
-                IScale actuatorScale = initializer.mergeScale(scale, scope);
+//                /*
+//                 * We get the overall scale, which we merge with the actuator's. This ensures that
+//                 * scale constraints at the model level are dealt with before own artifacts are
+//                 * created.
+//                 * 
+//                 * TODO/CHECK should use all the top-level actuators and merge from the dataflow
+//                 */
+//                IScale actuatorScale = initializer.mergeScale(scale, scope);
 
                 if (switchContext) {
                     // new catalog, new scale, context subject is in the scope, network remains
-                    runtimeScope = scope.createContext(actuatorScale, initializer, dataflow,
+                    runtimeScope = scope.createContext(scale, initializer, dataflow,
                             scope.getResolutionScope());
                 } else if (context == null) {
                     // new context
-                    runtimeScope = scope.getContextScope(initializer, scope.getResolutionScope(), actuatorScale, scope.getMonitor());
+                    runtimeScope = scope.getContextScope(initializer, scope.getResolutionScope(), scale, scope.getMonitor());
                 } else {
                     // instantiating or resolving states: stay in context
-                    runtimeScope = ((Subject) context).getScope().createChild(actuatorScale, initializer,
+                    runtimeScope = ((Subject) context).getScope().createChild(scale, initializer,
                             scope.getResolutionScope(), scope.getMonitor());
                 }
 
@@ -194,7 +194,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
                     List<Actuator> order = ((Actuator) actuator).dependencyOrder();
 
                     // must merge in any constraints from the model before calling this.
-                    IScale initializationScale = ((Scale) actuatorScale).copy().initialization();
+                    IScale initializationScale = ((Scale) scale).copy().initialization();
 
                     int i = 0;
                     for (Actuator active : order) {
@@ -205,7 +205,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
                         IRuntimeScope ctx = runtimeScope;
                         if (active != firstActuator) {
-                            ctx = runtimeScope.createChild(actuatorScale, active, scope.getResolutionScope(), runtimeScope.getMonitor()).locate(
+                            ctx = runtimeScope.createChild(scale, active, scope.getResolutionScope(), runtimeScope.getMonitor()).locate(
                                     initializationScale,
                                     runtimeScope.getMonitor());
                         }

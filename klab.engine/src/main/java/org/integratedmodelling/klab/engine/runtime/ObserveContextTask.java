@@ -136,7 +136,7 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
                              */
                             ContextualizationStrategy contextualizationStrategy = scope
                                     .getContextualizationStrategy();
-                            contextualizationStrategy.add(dataflow);
+//                            contextualizationStrategy.add(dataflow);
 
 
                             // context will take it from the task identity when it's created
