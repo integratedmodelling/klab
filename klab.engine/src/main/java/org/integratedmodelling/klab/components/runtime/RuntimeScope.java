@@ -767,7 +767,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
 
     private RuntimeScope withDirectObservationName(String name) {
         this.directObservationName = name;
-        return null;
+        return this;
     }
 
     private RuntimeScope withMetadata(IMetadata metadata) {
@@ -1054,7 +1054,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
         ret.monitor = monitor;
         ret.semantics.put(actuator.getName(), ret.targetSemantics);
         ret.actuator = (Actuator) actuator;
-        // ret.contextSubject = scope.getContext();
+        ret.contextSubject = scope.getContext();
         ret.dataflow = (Dataflow) dataflow;
 
         for (IActuator a : actuator.getActuators()) {

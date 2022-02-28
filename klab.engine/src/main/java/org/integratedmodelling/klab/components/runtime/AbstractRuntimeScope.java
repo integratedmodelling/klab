@@ -64,6 +64,7 @@ public abstract class AbstractRuntimeScope extends Parameters<String> implements
         this.resolutionScope = scope.resolutionScope;
         this.autoStartTransitions = scope.autoStartTransitions;
         this.partialScales = scope.partialScales;
+        this.runtimeScales = scope.runtimeScales;
         this.actuatorStatus = scope.actuatorStatus;
         this.actuatorProducts = scope.actuatorProducts;
         this.dependencyGraph = scope.dependencyGraph;
