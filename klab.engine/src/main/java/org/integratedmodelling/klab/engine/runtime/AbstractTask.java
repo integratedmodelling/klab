@@ -7,7 +7,6 @@ import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.rest.ITaskReference.Status;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
-import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -17,8 +16,6 @@ import org.integratedmodelling.klab.rest.TaskReference;
 import org.integratedmodelling.klab.utils.NameGenerator;
 
 public abstract class AbstractTask<T extends IArtifact> implements ITaskTree<T> {
-
-	private ContextualizationStrategy contextualizationStrategy;
 
 	/**
 	 * Specialized exception wrapper to avoid cascade notifications
@@ -92,20 +89,6 @@ public abstract class AbstractTask<T extends IArtifact> implements ITaskTree<T> 
 
 	public Activity getActivity() {
 		return activity;
-	}
-
-	/**
-	 * This is needed for the first runtime context to pick its strategy before
-	 * anything is run.
-	 * 
-	 * @return
-	 */
-	public ContextualizationStrategy getContextualizationStrategy() {
-		return this.contextualizationStrategy;
-	}
-
-	public void setContextualizationStrategy(ContextualizationStrategy contextualizationStrategy) {
-		this.contextualizationStrategy = contextualizationStrategy;
 	}
 
 	@Override

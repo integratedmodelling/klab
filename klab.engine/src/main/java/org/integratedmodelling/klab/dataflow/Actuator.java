@@ -64,6 +64,7 @@ import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.api.services.IConfigurationService;
+import org.integratedmodelling.klab.components.runtime.AbstractRuntimeScope;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservedArtifact;
@@ -348,7 +349,7 @@ public class Actuator implements IActuator {
 	}
 
 	@Override
-	public List<IActuator> getActuators() {
+	public List<IActuator> getChildren() {
 		return actuators;
 	}
 
@@ -710,7 +711,7 @@ public class Actuator implements IActuator {
 		ISession session = scope.getMonitor().getIdentity().getParentIdentity(ISession.class);
 		DataflowState state = new DataflowState();
 		state.setNodeId(
-				scope.getContextualizationStrategy().getComputationToNodeIdTable().get(resource.getDataflowId()));
+				((AbstractRuntimeScope)scope).getComputationToNodeIdTable().get(resource.getDataflowId()));
 		state.setStatus(DataflowState.Status.STARTED);
 		state.setMonitorable(false); // for now
 		session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
@@ -1053,7 +1054,7 @@ public class Actuator implements IActuator {
 	}
 
 	public String toString() {
-		return "<" + getName() + ((getAlias() != null && !getAlias().equals(getName())) ? " as " + getAlias() : "")
+		return "<" + getType() + ": " + getName() + ((getAlias() != null && !getAlias().equals(getName())) ? " as " + getAlias() : "")
 				+ " [" + (computationStrategy.size() + mediationStrategy.size()) + "]>";
 	}
 
@@ -1124,7 +1125,7 @@ public class Actuator implements IActuator {
 			for (IActuator actuator : getSortedChildren(this, false)) {
 
 				if (actuator instanceof Dataflow) {
-	                ret += ((Dataflow) actuator).encode(offset + 3, false) + "\n\n";
+					ret += ((Dataflow) actuator).encode(offset + 3, false) + "\n\n";
 				} else {
 					ret += ((Actuator) actuator).encode(offset + 3) + "\n";
 				}
@@ -1480,7 +1481,7 @@ public class Actuator implements IActuator {
 		List<IActuator> ret = new ArrayList<>();
 		List<IActuator> partitions = new ArrayList<>();
 		List<IActuator> deferred = new ArrayList<>();
-		for (IActuator act : actuator.getActuators()) {
+		for (IActuator act : actuator.getChildren()) {
 
 			// these are sub-dataflow that are run after instantiation
 			if (skipSubdataflows && (act instanceof Dataflow || act.getType() == IArtifact.Type.VOID)) {
@@ -1733,5 +1734,27 @@ public class Actuator implements IActuator {
 	@Override
 	public boolean isEmpty() {
 		return actuators.size() == 0;
+	}
+
+	@Override
+	public List<IActuator> getActuators() {
+		List<IActuator> ret = new ArrayList<>();
+		for (IActuator actuator : actuators) {
+			if (!(actuator instanceof IDataflow)) {
+				ret.add(actuator);
+			}
+		}
+		return ret;
+	}
+
+	@Override
+	public List<IDataflow<?>> getDataflows() {
+		List<IDataflow<?>> ret = new ArrayList<>();
+		for (IActuator actuator : actuators) {
+			if (actuator instanceof IDataflow) {
+				ret.add((IDataflow<?>)actuator);
+			}
+		}
+		return ret;
 	}
 }

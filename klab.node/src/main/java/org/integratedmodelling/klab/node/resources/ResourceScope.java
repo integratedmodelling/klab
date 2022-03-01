@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.node.resources;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -49,7 +50,6 @@ import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.data.encoding.Encoding.KlabData;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Actuator.Status;
-import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -369,12 +369,6 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
 
     @Override
     public Pair<String, IArtifact> findArtifact(IObservable observable) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public ContextualizationStrategy getContextualizationStrategy() {
         // TODO Auto-generated method stub
         return null;
     }
@@ -880,7 +874,7 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
 
     @Override
     public IRuntimeScope getContextScope(Actuator actuator, IResolutionScope scope, IScale scale,
-            IMonitor monitor) {
+            IDataflow<?> dataflow, IMonitor monitor) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -896,5 +890,23 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
 //        // TODO Auto-generated method stub
 //        return null;
 //    }
+
+	@Override
+	public String getElkGraph() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getKdl() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void exportDataflow(String baseName, File directory) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

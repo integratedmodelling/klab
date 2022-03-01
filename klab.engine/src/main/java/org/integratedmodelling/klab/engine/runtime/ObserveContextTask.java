@@ -18,10 +18,10 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.runtime.AbstractRuntimeScope;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
-import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
@@ -130,23 +130,13 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
                                 activity.getActivityDescriptor().setDataflowCode(dataflow.getKdlCode());
                             }
 
-                            /*
-                             * There is no context yet, but the strategy for the context is in the
-                             * scope.
-                             */
-                            ContextualizationStrategy contextualizationStrategy = scope
-                                    .getContextualizationStrategy();
-//                            contextualizationStrategy.add(dataflow);
-
-
-                            // context will take it from the task identity when it's created
-                            setContextualizationStrategy(contextualizationStrategy);
-
+                            ((AbstractRuntimeScope)runtimeScope).setRootDataflow(dataflow);
+                            
                             session.getMonitor()
                                     .send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
                                             IMessage.Type.DataflowCompiled, new DataflowReference(token,
                                                     dataflow.getKdlCode(),
-                                                    contextualizationStrategy.getElkGraph())));
+                                                    runtimeScope.getElkGraph())));
                             /*
                              * make a copy of the coverage so that we ensure it's a scale, behaving
                              * properly at merge. FIXME this must be the entire scale now - each

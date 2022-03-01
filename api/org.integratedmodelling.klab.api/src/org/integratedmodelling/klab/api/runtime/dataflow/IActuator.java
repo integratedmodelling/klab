@@ -79,16 +79,35 @@ public interface IActuator extends IDataflowNode, IPlan {
 	 *
 	 * @return all the internal actuators in order of declaration.
 	 */
-	public List<IActuator> getActuators();
+	public List<IActuator> getChildren();
 
 	/**
 	 * Return the subset of actuators that are not resolved and must reference
 	 * others in the same dataflow. These serialize with the modifier
 	 * <code>import</code> in k.DL.
 	 *
-	 * @return all imported actuators
+	 * @return all imported actuators, including the sub-dataflows. Use
+	 *         {@link #getActuators()} to only retrieve the true actuators that make
+	 *         up the computable set.
 	 */
 	List<IActuator> getInputs();
+
+	/**
+	 * Return all the computable actuators in the children, excluding the void ones
+	 * and the dataflows.
+	 * 
+	 * @return
+	 */
+	List<IActuator> getActuators();
+
+	/**
+	 * Return all the dataflows in our children. These are meant to contextualize
+	 * objects instantiated by this one or to concretize predicates before the
+	 * others are computed.
+	 * 
+	 * @return
+	 */
+	List<IDataflow<?>> getDataflows();
 
 	/**
 	 * Return all actuators that have been declared as exported, i.e. represent

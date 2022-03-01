@@ -222,9 +222,12 @@ public class RuntimeScope extends AbstractRuntimeScope {
 	 * @return
 	 */
 	@Override
-	public RuntimeScope getContextScope(Actuator actuator, IResolutionScope scope, IScale scale, IMonitor monitor) {
+	public RuntimeScope getContextScope(Actuator actuator, IResolutionScope scope, IScale scale, IDataflow<?> dataflow,
+			IMonitor monitor) {
 
 		RuntimeScope ret = new RuntimeScope((ResolutionScope) scope);
+		ret.copyDataflowInfo(this);
+		ret.setRootDataflow((Dataflow)dataflow);
 		ret.parent = this;
 		ret.catalog = new HashMap<>();
 		ret.behaviorBindings = new IntelligentMap<>();
@@ -332,7 +335,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
 		this.eventBus = context.eventBus;
 		// this.configurationDetector = context.configurationDetector;
 		this.network = context.network;
-		this.contextualizationStrategy = context.contextualizationStrategy;
+//		this.contextualizationStrategy = context.contextualizationStrategy;
 		this.structure = context.structure;
 		this.monitor = context.monitor;
 		this.catalog = context.catalog;
@@ -590,21 +593,19 @@ public class RuntimeScope extends AbstractRuntimeScope {
 		 */
 		this.resolutionScope.preloadResolvers(observable, observation);
 		ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
-		Dataflow dataflow = contextualizationStrategy.getDataflow(observable, mode, observation.getScale(), observation,
-				(geometry) -> {
+		Dataflow dataflow = getDataflow(observable, mode, observation.getScale(), observation, (geometry) -> {
 
-					Dataflow df = null;
+			Dataflow df = null;
 
-					ResolutionScope scope = Resolver.create(this.dataflow).resolve((Observable) observable,
-							this.resolutionScope.getDeferredChildScope(observation, mode), mode, geometry, model);
+			ResolutionScope scope = Resolver.create(this.dataflow).resolve((Observable) observable,
+					this.resolutionScope.getDeferredChildScope(observation, mode), mode, geometry, model);
 
-					if (scope.getCoverage().isRelevant()) {
-						df = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + task.getId(), scope,
-								actuator);
-					}
+			if (scope.getCoverage().isRelevant()) {
+				df = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + task.getId(), scope, actuator);
+			}
 
-					return df;
-				});
+			return df;
+		});
 
 		IArtifact ret = null;
 		if (dataflow == null) {
@@ -660,7 +661,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
 		 */
 		this.resolutionScope.preloadResolvers(observable, contextSubject);
 		ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
-		return contextualizationStrategy.getDataflow(observable, Mode.RESOLUTION, scale, null, (geometry) -> {
+		return getDataflow(observable, Mode.RESOLUTION, scale, null, (geometry) -> {
 
 			Dataflow df = null;
 
@@ -787,33 +788,32 @@ public class RuntimeScope extends AbstractRuntimeScope {
 				+ Concepts.INSTANCE.getDisplayName(predicate) + " within " + target.getName());
 		ResolutionScope scope = this.resolutionScope.getChildScope(target, Mode.RESOLUTION);
 
-		Dataflow dataflow = contextualizationStrategy.getDataflow(observable, Mode.RESOLUTION, target.getScale(),
-				contextSubject, (geometry) -> {
+		Dataflow dataflow = getDataflow(observable, Mode.RESOLUTION, target.getScale(), contextSubject, (geometry) -> {
 
-					Dataflow df = null;
-					ResolutionScope scp = Resolver.create(this.dataflow).resolve((Observable) observable, scope,
-							Mode.RESOLUTION, geometry, model);
+			Dataflow df = null;
+			ResolutionScope scp = Resolver.create(this.dataflow).resolve((Observable) observable, scope,
+					Mode.RESOLUTION, geometry, model);
 
-					if (scp.getCoverage().isRelevant()) {
+			if (scp.getCoverage().isRelevant()) {
 
-						df = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + subtask.getId(), scp,
-								this.actuator);
-						df.setModel((Model) model);
+				df = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + subtask.getId(), scp,
+						this.actuator);
+				df.setModel((Model) model);
 
-					} else if (resolutionScope.getPreresolvedModels(observable) == null
-							|| resolutionScope.getPreresolvedModels(observable).getSecond().size() == 0) {
+			} else if (resolutionScope.getPreresolvedModels(observable) == null
+					|| resolutionScope.getPreresolvedModels(observable).getSecond().size() == 0) {
 
-						/*
-						 * Add an empty dataflow to create the predicate without further consequences.
-						 * This is only done if there are no preloaded resolvers in this scale, so we
-						 * are certain that other subjects will encounter the same conditions.
-						 */
-						df = Dataflow.empty(observable, null, scp, this.dataflow);
-					}
+				/*
+				 * Add an empty dataflow to create the predicate without further consequences.
+				 * This is only done if there are no preloaded resolvers in this scale, so we
+				 * are certain that other subjects will encounter the same conditions.
+				 */
+				df = Dataflow.empty(observable, null, scp, this.dataflow);
+			}
 
-					return df;
+			return df;
 
-				});
+		});
 
 		if (dataflow != null) {
 			dataflow.run(target.getScale(), (Actuator) this.actuator, this);
@@ -853,8 +853,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
 				.withScope(this.resolutionScope.getChildScope(observable, contextSubject, scale));
 
 		// TODO switch to a builder pattern for the dataflow
-		IRelationship ret = (IRelationship) dataflow.run(scale, (Actuator) this.actuator,
-				runtimeScope);
+		IRelationship ret = (IRelationship) dataflow.run(scale, (Actuator) this.actuator, runtimeScope);
 
 		if (ret != null) {
 			// FIXME shouldn't be necessary
@@ -1025,7 +1024,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
 		ret.objectMetadata = this.objectMetadata;
 		ret.directObservationName = this.directObservationName;
 		ret.currentGroup = this.currentGroup;
-		
+
 		for (IActuator a : actuator.getActuators()) {
 			if (!((Actuator) a).isExported()) {
 				String id = a.getAlias() == null ? a.getName() : a.getAlias();
@@ -2443,6 +2442,15 @@ public class RuntimeScope extends AbstractRuntimeScope {
 		RuntimeScope ret = new RuntimeScope(resolutionScope);
 		resolutionScope.setRootContextualizationScope(ret);
 		return ret;
+	}
+
+	@Override
+	public String getElkGraph() {
+		return getElkGraph(this);
+	}
+
+	public void addPrecontextualizationDataflow(Dataflow dataflow) {
+		addPrecontextualizationDataflow((Dataflow)dataflow, this.dataflow);
 	}
 
 }

@@ -150,11 +150,10 @@ public class ObserveInContextTask extends AbstractTask<IArtifact> {
 						}
 
 						IRuntimeScope ctx = ((Observation) context).getScope();
-//						ctx.getContextualizationStrategy().add(dataflow);
 
 						session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
 								IMessage.Type.DataflowCompiled, new DataflowReference(token, dataflow.getKdlCode(),
-										ctx.getContextualizationStrategy().getElkGraph())));
+										ctx.getElkGraph())));
 
 						// make a copy of the coverage so that we ensure it's a scale, behaving
 						// properly

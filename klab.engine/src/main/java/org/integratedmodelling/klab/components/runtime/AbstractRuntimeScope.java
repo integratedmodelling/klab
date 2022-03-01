@@ -16,13 +16,12 @@ import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.dataflow.Actuator.Status;
-import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
 import org.integratedmodelling.klab.dataflow.Dataflow;
+import org.integratedmodelling.klab.dataflow.DataflowHandler;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.scale.Scale;
-import org.integratedmodelling.klab.utils.Parameters;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 
@@ -33,7 +32,7 @@ import org.jgrapht.graph.DefaultEdge;
  * @author Ferd
  *
  */
-public abstract class AbstractRuntimeScope extends Parameters<String> implements IRuntimeScope {
+public abstract class AbstractRuntimeScope extends DataflowHandler implements IRuntimeScope {
 
     Dataflow dataflow;
     Scale resolutionScale;
@@ -44,7 +43,7 @@ public abstract class AbstractRuntimeScope extends Parameters<String> implements
     Map<IActuator, Status> actuatorStatus;
     Map<IActuator, Set<IObservation>> actuatorProducts;
     private Graph<IObservedConcept, DefaultEdge> dependencyGraph;
-    ContextualizationStrategy contextualizationStrategy;
+//    ContextualizationStrategy contextualizationStrategy;
     IMonitor monitor;
 
     protected AbstractRuntimeScope(Dataflow dataflow, IResolutionScope resolutionScope, IMonitor monitor) {
@@ -55,11 +54,12 @@ public abstract class AbstractRuntimeScope extends Parameters<String> implements
         this.partialScales = Collections.synchronizedMap(new HashMap<>());
         this.actuatorStatus = Collections.synchronizedMap(new HashMap<>());
         this.actuatorProducts = Collections.synchronizedMap(new HashMap<>());
-        this.contextualizationStrategy = ((ResolutionScope) resolutionScope).getContextualizationStrategy();
+//        this.contextualizationStrategy = ((ResolutionScope) resolutionScope).getContextualizationStrategy();
     }
 
     protected AbstractRuntimeScope(AbstractRuntimeScope scope) {
-        this.putAll(scope);
+    	super(scope);
+    	this.putAll(scope);
         this.resolutionScale = scope.resolutionScale;
         this.resolutionScope = scope.resolutionScope;
         this.autoStartTransitions = scope.autoStartTransitions;
@@ -156,9 +156,9 @@ public abstract class AbstractRuntimeScope extends Parameters<String> implements
         return ret;
     }
 
-    @Override
-    public ContextualizationStrategy getContextualizationStrategy() {
-        return contextualizationStrategy;
-    }
+//    @Override
+//    public ContextualizationStrategy getContextualizationStrategy() {
+//        return contextualizationStrategy;
+//    }
 
 }

@@ -148,7 +148,7 @@ public class DataflowCompiler {
             node.root = true;
 
             Actuator actuator = node.getActuatorTree(ret, monitor, new HashSet<>(), 0);
-            ret.getActuators().add(actuator);
+            ret.getChildren().add(actuator);
 
             // compute coverage
             try {
@@ -184,7 +184,7 @@ public class DataflowCompiler {
          * This happens when we resolved a countable observable (from a previous instantiator calls)
          * without an observer and resolution did not find any models.
          */
-        if (ret.getActuators().isEmpty()
+        if (ret.getChildren().isEmpty()
                 && ((ResolutionScope) scope).getObservable().is(IKimConcept.Type.COUNTABLE)
                 && scope.getMode() == Mode.RESOLUTION) {
 
@@ -194,7 +194,7 @@ public class DataflowCompiler {
             actuator.setNamespace(((ResolutionScope) scope).getResolutionNamespace());
             actuator.setName(((ResolutionScope) scope).getObservable().getReferenceName());
             setModelContext(((ResolutionScope) scope).getContextModel(), actuator, ret);
-            ret.getActuators().add(actuator);
+            ret.getChildren().add(actuator);
             ret.setNamespace(actuator.getNamespace());
         }
 
@@ -227,7 +227,7 @@ public class DataflowCompiler {
                     child.addComputation(
                             ComputableResource.create(contextModel.getObservables().get(i).getValue()),
                             scope.getMonitor().getIdentity().getParentIdentity(ISession.class));
-                    actuator.getActuators().add(child);
+                    actuator.getChildren().add(child);
                 }
             }
 
@@ -574,7 +574,7 @@ public class DataflowCompiler {
                     partial.setCoverage(modelDesc.coverage);
                     modelIds.add(name);
 
-                    ret.getActuators().add(partial);
+                    ret.getChildren().add(partial);
 
                 }
 
@@ -818,7 +818,7 @@ public class DataflowCompiler {
                             continue;
                         }
 
-                        ret.getActuators().add(achild);
+                        ret.getChildren().add(achild);
                         recordUnits(achild, chosenUnits);
                         if (sources.containsKey(achild.getObservedConcept())) {
                             for (IContextualizable mediator : computeMediators(

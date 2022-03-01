@@ -332,7 +332,7 @@ public class Resolver {
                         dataflow.setDescription(
                                 "Resolution of abstract predicate " + predicate.getDefinition());
                         
-                        scope.getPredicateResolutionDataflows().add(dataflow);
+                        scope.addPredicateResolutionDataflow(dataflow);
                         
                         dataflow.run(oscope.getCoverage().copy(), scope.getRootContextualizationScope());
 

@@ -30,7 +30,7 @@ public class DataflowGraph {
     private Map<String, String> computationToNodeId;
     private Map<String, Element> elements;
 
-    public DataflowGraph(Flowchart flowchart, ContextualizationStrategy strategy, KlabElkGraphFactory kelk) {
+    public DataflowGraph(Flowchart flowchart, DataflowHandler strategy, KlabElkGraphFactory kelk) {
         this.nodes = strategy.getNodes();
         this.elements = strategy.getElements();
         this.computationToNodeId = strategy.getComputationToNodeIdTable();

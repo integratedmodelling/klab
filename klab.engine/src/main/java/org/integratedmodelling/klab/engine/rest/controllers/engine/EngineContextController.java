@@ -70,10 +70,10 @@ public class EngineContextController {
 		}
 		if ("elk".equals(format)) {
 			return new DataflowReference(session.getId(), null,
-				((Observation) ctx).getScope().getContextualizationStrategy().getElkGraph());
+				((Observation) ctx).getScope().getElkGraph());
 		} else if ("kdl".equals(format)) {
 			return new DataflowReference(session.getId(),
-					((Observation) ctx).getScope().getContextualizationStrategy().getKdl(), null);
+					((Observation) ctx).getScope().getKdl(), null);
 		}
 		
 		throw new KlabIllegalArgumentException("dataflow: invalid format " + format);

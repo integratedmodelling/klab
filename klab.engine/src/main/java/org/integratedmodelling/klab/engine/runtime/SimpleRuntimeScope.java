@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.engine.runtime;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -55,7 +56,6 @@ import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Actuator.Status;
-import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
@@ -537,12 +537,6 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	}
 
 	@Override
-	public ContextualizationStrategy getContextualizationStrategy() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public void setModel(Model model) {
 		// TODO Auto-generated method stub
 
@@ -961,7 +955,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 
     @Override
     public IRuntimeScope getContextScope(Actuator actuator, IResolutionScope scope, IScale scale,
-            IMonitor monitor) {
+            IDataflow<?> dataflow, IMonitor monitor) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -977,5 +971,23 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 //        // TODO Auto-generated method stub
 //        return null;
 //    }
+
+	@Override
+	public String getElkGraph() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getKdl() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void exportDataflow(String baseName, File directory) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

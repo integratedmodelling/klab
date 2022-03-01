@@ -269,6 +269,12 @@ public class Flowchart {
     public static Flowchart create(Dataflow dataflow, IRuntimeScope scope) {
 
         Flowchart ret = new Flowchart(scope);
+
+        if (dataflow.getDataflows().size() > 0) {
+        	System.out.println("SHATZ FUCKA DATAFLOW HCOCK");
+        }
+        
+        
         if (dataflow.getActuators().size() > 0) {
             Actuator actuator = (Actuator) dataflow.getActuators().get(0);
             ret.compileActuator(actuator, null);
@@ -291,6 +297,10 @@ public class Flowchart {
 
         Element element = new Element(actuator);
 
+        for (IActuator child : actuator.getDataflows()) {
+        	System.out.println("SHITE MUST COMPILE THIS " + child);
+        }
+        
         for (IActuator child : actuator.getActuators()) {
 
             Element cel = compileActuator((Actuator) child, element);

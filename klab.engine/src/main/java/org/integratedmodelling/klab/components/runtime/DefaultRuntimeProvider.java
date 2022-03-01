@@ -158,7 +158,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
                             scope.getResolutionScope());
                 } else if (context == null) {
                     // new context
-                    runtimeScope = scope.getContextScope(initializer, scope.getResolutionScope(), scale, scope.getMonitor());
+                    runtimeScope = scope.getContextScope(initializer, scope.getResolutionScope(), scale, dataflow, scope.getMonitor());
                 } else {
                     // instantiating or resolving states: stay in context
                     runtimeScope = ((Subject) context).getScope().createChild(scale, initializer,
@@ -177,7 +177,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
                 IActuator firstActuator = null;
 
-                for (IActuator actuator : dataflow.getActuators()) {
+                for (IActuator actuator : dataflow.getChildren()) {
 
                     if (scope.getMonitor().isInterrupted()) {
                         return null;
@@ -252,7 +252,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
                 /*
                  * run termination doc actions
                  */
-                for (IActuator actuator : dataflow.getActuators()) {
+                for (IActuator actuator : dataflow.getChildren()) {
                     List<Actuator> order = ((Actuator) actuator).dependencyOrder();
                     for (Actuator active : order) {
                         for (IDocumentation doc : active.getDocumentation()) {
