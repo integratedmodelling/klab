@@ -37,6 +37,7 @@ import org.integratedmodelling.klab.resolution.ResolvedArtifact;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.klab.utils.Triple;
 import org.integratedmodelling.klab.utils.TypeUtils;
 import org.integratedmodelling.klab.utils.Utils;
@@ -437,14 +438,27 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
 	@Override
 	protected String encode(int offset) {
-		return encode(offset, true);
+		return encode(offset, null);
 	}
 
-	String encode(int offset, boolean encodePreamble) {
+	/**
+	 * Preamble is output only at level zero and if the parameter is set to true.
+	 * Dataflows are explicitly wrapped in "resolve" only when 1) at root level
+	 * (resolving the context) or 2) when in the scope of an instantiator, to
+	 * resolve the individual objects. Otherwise only their contents are output. In
+	 * a dataflow, the first actuator is always a void (resolves the context) which
+	 * is also output inline.
+	 * 
+	 * @param offset
+	 * @param encodePreamble
+	 * @return
+	 */
+	String encode(int offset, Actuator parentActuator) {
 
 		String ret = "";
+		String spacer = StringUtil.spaces(offset);
 
-		if (offset == 0 && encodePreamble) {
+		if (offset == 0 && parentActuator == null) {
 			ret += "@klab " + Version.CURRENT + "\n";
 //			ret += "@dataflow " + getName() + "\n";
 			ret += "@author 'k.LAB resolver " + creationTime + "'" + "\n";
@@ -470,10 +484,54 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 			ret += "\n";
 		}
 
-		for (IActuator actuator : actuators) {
-			ret += ((Actuator) actuator).encode(offset) + "\n";
+		boolean wrap = parentActuator == null
+				|| (parentActuator.getType() == Type.OBJECT || parentActuator.getType() == Type.EVENT);
+
+		if (wrap) {
+			if (getDataflowObservable() != null) {
+				ret = spacer + "@semantics(type='" + getDataflowObservable().getDeclaration() + "'"
+						+ encodePredicates(getDataflowObservable()) + ")\n";
+			}
+			ret += spacer + "resolve " + getDataflowSubjectName() + " {\n";
 		}
 
+		for (IActuator actuator : actuators) {
+
+			if (!wrap) {
+				/*
+				 * the main resolution actuator is output inline and only if it's not trivial
+				 */
+				for (IActuator act : actuator.getChildren()) {
+					ret += ((Actuator) act).encode(offset + 3) + "\n";
+				}
+			} else {
+				ret += ((Actuator) actuator).encode(offset + 3) + "\n";
+			}
+		}
+
+		ret += spacer + "}";
+
+		return ret;
+	}
+
+
+	private Observable getDataflowObservable() {
+		Observable ret = null;
+		for (IActuator actuator : actuators) {
+			ret = ((Actuator) actuator).getObservable();
+			if (ret != null) {
+				break;
+			}
+		}
+		return ret;
+	}
+
+	String getDataflowSubjectName() {
+		String ret = "*";
+		for (IActuator actuator : actuators) {
+			ret = actuator.getName().replace(' ', '_');
+			break;
+		}
 		return ret;
 	}
 
@@ -603,11 +661,6 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 			ret = ret.parentDataflow;
 		}
 		return (Dataflow) ret;
-	}
-
-	@Override
-	public String toString() {
-		return getKdlCode();
 	}
 
 	@Override

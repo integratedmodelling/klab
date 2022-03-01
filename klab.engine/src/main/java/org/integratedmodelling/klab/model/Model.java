@@ -309,6 +309,12 @@ public class Model extends KimObject implements IModel {
 
 		for (IKimObservable dependency : model.getDependencies()) {
 			Observable dep = Observables.INSTANCE.declare(dependency, monitor);
+			if (dep == null) {
+				String err = "Undefined semantics for dependency '" + dependency.getDefinition() + "'";
+				monitor.error(err, dependency);
+				addError(err);
+				continue;
+			}
 			dependencies.add(dep);
 			observablesByReferenceName.put(dep.getReferenceName(), dep);
 			localNames.put(dep.getReferenceName(), dep.getName());

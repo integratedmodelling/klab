@@ -92,6 +92,7 @@ import org.integratedmodelling.klab.scale.Coverage;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.StringUtil;
 
 public class Actuator implements IActuator {
 
@@ -1054,8 +1055,7 @@ public class Actuator implements IActuator {
 	}
 
 	public String toString() {
-		return "<" + getType() + ": " + getName() + ((getAlias() != null && !getAlias().equals(getName())) ? " as " + getAlias() : "")
-				+ " [" + (computationStrategy.size() + mediationStrategy.size()) + "]>";
+		return dump();
 	}
 
 	/**
@@ -1076,7 +1076,7 @@ public class Actuator implements IActuator {
 				+ encodeBody(offset, ofs);
 	}
 
-	private String encodePredicates(Observable observable) {
+	protected String encodePredicates(Observable observable) {
 		String ret = "";
 		if (!observable.getResolvedPredicates().isEmpty()) {
 			for (IConcept key : observable.getResolvedPredicates().keySet()) {
@@ -1118,14 +1118,10 @@ public class Actuator implements IActuator {
 
 			ret = " {\n";
 
-//            for (IDataflow<?> child : childDataflows) {
-//                ret += ((Dataflow) child).encode(offset + 3, false) + "\n\n";
-//            }
-
 			for (IActuator actuator : getSortedChildren(this, false)) {
 
 				if (actuator instanceof Dataflow) {
-					ret += ((Dataflow) actuator).encode(offset + 3, false) + "\n\n";
+					ret += ((Dataflow) actuator).encode(offset + 3, this) + "\n"; 
 				} else {
 					ret += ((Actuator) actuator).encode(offset + 3) + "\n";
 				}
@@ -1181,6 +1177,59 @@ public class Actuator implements IActuator {
 		return ret;
 	}
 
+	protected String dump() {
+		return dump(this, 0);
+	}
+
+	protected String dump(Actuator actuator, int offset) {
+
+		String ret = "";
+		String spacer = StringUtil.spaces(offset);
+		String ofs = StringUtil.spaces(offset + 3);
+
+		ret += spacer + ((actuator instanceof Dataflow) ? "DATAFLOW " : "ACTUATOR ")
+				+ (actuator.getType() + " ")
+				+ ((actuator instanceof Dataflow) ? ((Dataflow) actuator).getDataflowSubjectName() : actuator.getName())
+				+ (actuator.getAlias() == null ? "" : (" as " + actuator.getAlias()))
+				+ "\n";
+
+		for (IActuator act : actuator.actuators) {
+			ret += dump((Actuator) act, offset + 3);
+		}
+
+		int cout = actuator.mediationStrategy.size() + actuator.computationStrategy.size();
+		int nout = 0;
+		for (int i = 0; i < actuator.mediationStrategy.size(); i++) {
+			ret += ofs
+					+ (actuator.mediationStrategy.get(i).getSecond().getMediationTargetId() == null ? ""
+							: (actuator.mediationStrategy.get(i).getSecond().getMediationTargetId() + " >> "))
+					+ actuator.mediationStrategy.get(i).getFirst().getSourceCode()
+					+ (nout < actuator.mediationStrategy.size() - 1 || actuator.computationStrategy.size() > 0 ? ","
+							: "")
+					+ "\n";
+			nout++;
+		}
+
+		for (int i = 0; i < actuator.computationStrategy.size(); i++) {
+			ret += ofs
+					+ (actuator.computationStrategy.get(i).getSecond().isVariable()
+							? (actuator.computationStrategy.get(i).getSecond().getTargetId() + " <- ")
+							: "")
+					+ (actuator.computationStrategy.get(i).getSecond().isVariable()
+							? actuator.computationStrategy.get(i).getSecond().getSourceCode()
+							: actuator.computationStrategy.get(i).getFirst().getSourceCode())
+					+ ((actuator.computationStrategy.get(i).getSecond().getTarget() == null
+							|| actuator.computationStrategy.get(i).getSecond().isVariable()
+							|| actuator.computationStrategy.get(i).getSecond().getTarget().equals(actuator.getObservable()))
+									? ""
+									: (" >> " + actuator.computationStrategy.get(i).getSecond().getTarget().getName()))
+					+ (nout < actuator.computationStrategy.size() - 1 ? "," : "") + "\n";
+			nout++;
+		}
+
+		return ret;
+
+	}
 	public static Actuator create(Dataflow dataflow, IResolutionScope.Mode mode) {
 		Actuator ret = new Actuator();
 		ret.mode = mode;
