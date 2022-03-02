@@ -175,9 +175,6 @@ public class RuntimeScope extends AbstractRuntimeScope {
 	INotification.Mode notificationMode;
 	Collection<IObservation> configurationTargets;
 
-	// root scope of the entire dataflow, unchanging, for downstream resolutions
-	ResolutionScope resolutionScope;
-
 	// // cache for repeated dataflow resolutions
 	// Map<ObservedConcept, List<Pair<ICoverage, Dataflow>>> dataflowCache = new
 	// HashMap<>();
@@ -601,7 +598,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
 					this.resolutionScope.getDeferredChildScope(observation, mode), mode, observation.getScale(), model);
 
 			if (scope.getCoverage().isRelevant()) {
-				df = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + task.getId(), scope, actuator);
+				df = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + task.getId(), scope,
+						parentDataflow);
 			}
 
 			return df;
@@ -628,12 +626,11 @@ public class RuntimeScope extends AbstractRuntimeScope {
 //				obs.add(observation);
 //			}
 
-			RuntimeScope runtimeScope = new RuntimeScope(this)
-					.withContext(observation)
+			RuntimeScope runtimeScope = new RuntimeScope(this).withContext(observation)
 					.withScope(this.resolutionScope.getDeferredChildScope(observation, mode))
 					.withMetadata(observation.getMetadata());
 
-			ret = dataflow.run(observation.getScale(), (Actuator) this.actuator, runtimeScope);
+			ret = dataflow.run(observation.getScale(), (Actuator) parentDataflow, runtimeScope);
 		}
 
 		return (T) ret;
@@ -736,7 +733,6 @@ public class RuntimeScope extends AbstractRuntimeScope {
 
 		if (observation instanceof IDirectObservation) {
 			ret = (IDirectObservation) observation;
-			((DirectObservation) ret).setName(name);
 		}
 
 		return ret;
@@ -860,18 +856,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
 				.connecting((IDirectObservation) source, (IDirectObservation) target).withMetadata(metadata)
 				.withScope(this.resolutionScope.getChildScope(observable, contextSubject, scale));
 
-		// TODO switch to a builder pattern for the dataflow
-		IRelationship ret = (IRelationship) dataflow.run(scale, (Actuator) this.actuator, runtimeScope);
-
-		if (ret != null) {
-			// FIXME shouldn't be necessary
-			((DirectObservation) ret).setName(name);
-			// for (ObservationListener listener : listeners.values()) {
-			// listener.newObservation(ret, getRootSubject());
-			// }
-		}
-
-		return ret;
+		return (IRelationship) dataflow.run(scale, (Actuator) this.actuator, runtimeScope);
 	}
 
 	private RuntimeScope connecting(IDirectObservation source, IDirectObservation target2) {
