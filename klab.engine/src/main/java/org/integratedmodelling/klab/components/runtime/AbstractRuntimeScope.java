@@ -7,6 +7,9 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.klab.Concepts;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -24,6 +27,10 @@ import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.scale.Scale;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
+
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 /**
  * Provides the state needed at runtime that was previously in (stateful) actuators. All other
@@ -44,6 +51,11 @@ public abstract class AbstractRuntimeScope extends DataflowHandler implements IR
     private Graph<IObservedConcept, DefaultEdge> dependencyGraph;
     IMonitor monitor;
 
+    // cache for IS operator in groovy expressions, both for proper subsumption and
+    // correlations such as "adopts role/trait"
+    protected LoadingCache<String, Boolean> reasonerCache;
+    protected LoadingCache<String, Boolean> relatedReasonerCache;
+
     protected AbstractRuntimeScope(Dataflow dataflow, IResolutionScope resolutionScope, IMonitor monitor) {
         this.resolutionScope = (ResolutionScope) resolutionScope;
         this.dataflow = dataflow;
@@ -51,11 +63,40 @@ public abstract class AbstractRuntimeScope extends DataflowHandler implements IR
         this.partialScales = Collections.synchronizedMap(new HashMap<>());
         this.actuatorStatus = Collections.synchronizedMap(new HashMap<>());
         this.actuatorProducts = Collections.synchronizedMap(new HashMap<>());
+
+        // cache for groovy IS operator in this context
+        this.reasonerCache = CacheBuilder.newBuilder().maximumSize(2048)
+                .build(new CacheLoader<String, Boolean>(){
+                    @Override
+                    public Boolean load(String key) throws Exception {
+                        String[] split = key.split(";");
+                        IConcept a = Concepts.c(split[0]);
+                        IConcept b = Concepts.c(split[1]);
+                        return a.is(b);
+                    }
+                });
+
+        this.relatedReasonerCache = CacheBuilder.newBuilder().maximumSize(2048)
+                .build(new CacheLoader<String, Boolean>(){
+                    @Override
+                    public Boolean load(String key) throws Exception {
+                        String[] split = key.split(";");
+
+                        IConcept a = Concepts.c(split[0]);
+                        IConcept b = Concepts.c(split[1]);
+
+                        boolean ret = a.is(b);
+                        if (!ret && (b.is(Type.PREDICATE))) {
+                            // TODO check for adoption
+                        }
+                        return ret;
+                    }
+                });
     }
 
     protected AbstractRuntimeScope(AbstractRuntimeScope scope) {
-    	super(scope);
-    	this.putAll(scope);
+        super(scope);
+        this.putAll(scope);
         this.resolutionScale = scope.resolutionScale;
         this.resolutionScope = scope.resolutionScope;
         this.autoStartTransitions = scope.autoStartTransitions;
@@ -64,6 +105,8 @@ public abstract class AbstractRuntimeScope extends DataflowHandler implements IR
         this.actuatorProducts = scope.actuatorProducts;
         this.dependencyGraph = scope.dependencyGraph;
         this.dataflow = scope.dataflow;
+        this.reasonerCache = scope.reasonerCache;
+        this.relatedReasonerCache = scope.relatedReasonerCache;
     }
 
     @Override

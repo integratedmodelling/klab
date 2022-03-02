@@ -197,10 +197,6 @@ public class RuntimeScope extends AbstractRuntimeScope {
 	 */
 	Map<IConcept, IConcept> resolvedPredicates = new HashMap<>();
 
-	// cache for IS operator in groovy expressions, both for proper subsumption and
-	// correlations such as "adopts role/trait"
-	private LoadingCache<String, Boolean> reasonerCache;
-	private LoadingCache<String, Boolean> relatedReasonerCache;
 
 //	/**
 //	 * Each dataflow used to resolve subjects within this one is recorded here with
@@ -247,34 +243,6 @@ public class RuntimeScope extends AbstractRuntimeScope {
 		ret.views = new LinkedHashMap<>();
 		ret.viewsByUrn = new LinkedHashMap<>();
 		ret.concreteIdentities = new HashMap<>();
-
-		// cache for groovy IS operator in this context
-		ret.reasonerCache = CacheBuilder.newBuilder().maximumSize(2048).build(new CacheLoader<String, Boolean>() {
-			@Override
-			public Boolean load(String key) throws Exception {
-				String[] split = key.split(";");
-				IConcept a = Concepts.c(split[0]);
-				IConcept b = Concepts.c(split[1]);
-				return a.is(b);
-			}
-		});
-
-		ret.relatedReasonerCache = CacheBuilder.newBuilder().maximumSize(2048)
-				.build(new CacheLoader<String, Boolean>() {
-					@Override
-					public Boolean load(String key) throws Exception {
-						String[] split = key.split(";");
-
-						IConcept a = Concepts.c(split[0]);
-						IConcept b = Concepts.c(split[1]);
-
-						boolean ret = a.is(b);
-						if (!ret && (b.is(Type.PREDICATE))) {
-							// TODO check for adoption
-						}
-						return ret;
-					}
-				});
 
 		// /*
 		// * Complex and convoluted, but there is no other way to get this which must be
