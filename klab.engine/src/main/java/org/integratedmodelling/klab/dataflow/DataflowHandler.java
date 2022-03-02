@@ -84,7 +84,11 @@ public class DataflowHandler extends Parameters<String> {
 	}
 
 	public String getKdl() {
-		return rootDataflow == null ? null : rootDataflow.getKdlCode();
+		if (rootDataflow == null) {
+			return "";
+		} 
+		System.out.println(rootDataflow.dump());
+		return rootDataflow.getKdlCode();
 	}
 
 	public static String getElkGraph(Dataflow dataflow, IRuntimeScope scope) {

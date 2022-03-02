@@ -400,4 +400,22 @@ public class StringUtil {
 		return false;
 	}
 
+	public static boolean containsUppercase(String string) {
+		for (int i = 0; i < string.length(); i++) {
+			if (Character.isUpperCase(string.charAt(i))) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static boolean containsLowercase(String string) {
+		for (int i = 0; i < string.length(); i++) {
+			if (Character.isLowerCase(string.charAt(i))) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 }

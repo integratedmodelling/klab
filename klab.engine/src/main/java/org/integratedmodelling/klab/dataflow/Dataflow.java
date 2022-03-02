@@ -110,6 +110,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
 	private Dataflow(Dataflow parent) {
 		this.parentDataflow = parent;
+		this.setType(Type.VOID);
 	}
 
 	public Dataflow(Actuator parent) {
@@ -117,6 +118,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		if (this.parentDataflow != null) {
 			parent.actuators.add(this);
 		}
+		this.setType(Type.VOID);
 	}
 
 	@Override
@@ -436,10 +438,10 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		return null;
 	}
 
-	@Override
-	protected String encode(int offset) {
-		return encode(offset, null);
-	}
+//	@Override
+//	protected String encode(int offset, List<IActuator> children) {
+//		return encode(offset, children);
+//	}
 
 	/**
 	 * Preamble is output only at level zero and if the parameter is set to true.
@@ -484,36 +486,34 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 			ret += "\n";
 		}
 
-		boolean wrap = parentActuator == null
-				|| (parentActuator.getType() == Type.OBJECT || parentActuator.getType() == Type.EVENT);
+		Pair<IActuator, List<IActuator>> structure = getResolutionStructure();
 
-		if (wrap) {
-			if (getDataflowObservable() != null) {
-				ret = spacer + "@semantics(type='" + getDataflowObservable().getDeclaration() + "'"
-						+ encodePredicates(getDataflowObservable()) + ")\n";
+		if (structure == null) {
+			for (IActuator actuator : actuators) {
+				ret += ((Actuator) actuator).encode(offset, null) + "\n";
 			}
-			ret += spacer + "resolve " + getDataflowSubjectName() + " {\n";
+			return ret;
 		}
 
-		for (IActuator actuator : actuators) {
-
-			if (!wrap) {
-				/*
-				 * the main resolution actuator is output inline and only if it's not trivial
-				 */
-				for (IActuator act : actuator.getChildren()) {
-					ret += ((Actuator) act).encode(offset + 3) + "\n";
-				}
-			} else {
-				ret += ((Actuator) actuator).encode(offset + 3) + "\n";
-			}
-		}
-
-		ret += spacer + "}";
-
-		return ret;
+		return ret + ((Actuator) structure.getFirst()).encode(0,
+				structure.getSecond().isEmpty() ? (List<IActuator>) null : structure.getSecond());
 	}
 
+	/**
+	 * If the dataflow is meant to resolve an instantiated object, it will have a
+	 * void actuator as its first one. In this case, this will return it, otherwise
+	 * it will return null.
+	 * 
+	 * @return the resolver actuator (possibly trivial), or null.
+	 */
+	@Override
+	public IActuator getResolver() {
+		if (this.getChildren().size() > 0 && !(this.getChildren().get(0) instanceof Dataflow)
+				&& this.getChildren().get(0).getType() == Type.VOID) {
+			return this.getChildren().get(0);
+		}
+		return null;
+	}
 
 	private Observable getDataflowObservable() {
 		Observable ret = null;
@@ -542,7 +542,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	 */
 	@Override
 	public String getKdlCode() {
-		return encode(0);
+		return encode(0, (Actuator) null);
 	}
 
 	public static Dataflow empty(Dataflow parent) {
@@ -674,6 +674,28 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
 	public void notifyOccurrents() {
 		this.isOccurrent = true;
+	}
+
+	/**
+	 * If the dataflow contain a resolution actuator (void) and others for
+	 * successive resolutions (processes etc), return the first and the list of the
+	 * others so they can be nested properly when outputting the k.DL. Otherwise
+	 * return null.
+	 * 
+	 * TODO make this a triple and add the coverage statement
+	 * 
+	 * @return
+	 */
+	public Pair<IActuator, List<IActuator>> getResolutionStructure() {
+		IActuator resolver =  getResolver();
+		if (resolver != null) {
+			List<IActuator> second = new ArrayList<>();
+			for (int i = 1; i < this.actuators.size(); i++) {
+				second.add(this.actuators.get(i));
+			}
+			return new Pair<>(resolver, second);
+		}
+		return null;
 	}
 
 }

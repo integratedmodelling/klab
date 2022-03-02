@@ -711,8 +711,7 @@ public class Actuator implements IActuator {
 
 		ISession session = scope.getMonitor().getIdentity().getParentIdentity(ISession.class);
 		DataflowState state = new DataflowState();
-		state.setNodeId(
-				((AbstractRuntimeScope)scope).getComputationToNodeIdTable().get(resource.getDataflowId()));
+		state.setNodeId(((AbstractRuntimeScope) scope).getComputationToNodeIdTable().get(resource.getDataflowId()));
 		state.setStatus(DataflowState.Status.STARTED);
 		state.setMonitorable(false); // for now
 		session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
@@ -818,8 +817,18 @@ public class Actuator implements IActuator {
 							task = ((ITaskTree<?>) scope.getMonitor().getIdentity()).createChild("Resolution of "
 									+ Observables.INSTANCE.getDisplayName(deferred) + " within " + object.getName());
 						}
+
+						/*
+						 * choose the resolver linked to this actuator as parent for the resolution
+						 * dataflow
+						 */
+						IActuator resolver = this.getResolver();
+						if (resolver == null) {
+							resolver = this;
+						}
+
 						scope.resolve(deferred, (IDirectObservation) object, task,
-								deferred.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION, this);
+								deferred.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION, resolver);
 					}
 
 					if (notificationMode == INotification.Mode.Verbose) {
@@ -1064,16 +1073,28 @@ public class Actuator implements IActuator {
 	 * @param offset
 	 * @return
 	 */
-	protected String encode(int offset) {
+	protected String encode(int offset, List<IActuator> children) {
 		String ofs = StringUtils.repeat(" ", offset);
 		String ret = "";
-		if (!isPartition()) {
+		if (!isPartition() && getObservable() != null) {
 			ret = ofs + "@semantics(type='" + getObservable().getDeclaration() + "'" + encodePredicates(observable)
 					+ ")\n";
 		}
 		return ret + ofs + (input ? "import " : "") + (exported ? "export " : "")
-				+ (isPartition() ? "partition" : getType().name().toLowerCase()) + " " + getName()
-				+ encodeBody(offset, ofs);
+				+ (isPartition() ? "partition" : getKdlActorType()) + " " + getKdlName()
+				+ encodeBody(offset, ofs, children);
+	}
+
+	private String getKdlName() {
+		String ret = getName();
+		if (ret.contains(" ") || StringUtils.containsWhitespace(ret) || StringUtil.containsUppercase(ret)) {
+			ret = "'" + ret + "'";
+		}
+		return ret;
+	}
+
+	private String getKdlActorType() {
+		return (getType() == IArtifact.Type.VOID) ? "resolve" : getType().name().toLowerCase();
 	}
 
 	protected String encodePredicates(Observable observable) {
@@ -1107,7 +1128,7 @@ public class Actuator implements IActuator {
 		return computationStrategy;
 	}
 
-	protected String encodeBody(int offset, String ofs) {
+	protected String encodeBody(int offset, String ofs, List<IActuator> children) {
 
 		boolean hasBody = actuators.size() > 0 || computationStrategy.size() > 0 || mediationStrategy.size() > 0
 				|| mode == Mode.RESOLUTION;
@@ -1118,12 +1139,19 @@ public class Actuator implements IActuator {
 
 			ret = " {\n";
 
-			for (IActuator actuator : getSortedChildren(this, false)) {
+			for (IActuator actuator : children == null ? getSortedChildren(this, false) : children) {
 
 				if (actuator instanceof Dataflow) {
-					ret += ((Dataflow) actuator).encode(offset + 3, this) + "\n"; 
+					Pair<IActuator, List<IActuator>> structure = ((Dataflow) actuator).getResolutionStructure();
+					if (structure == null) {
+						for (IActuator act : actuator.getChildren()) {
+							ret += ((Actuator) act).encode(offset + 3, null) + "\n";
+						}
+					} else {
+						ret += ((Actuator) structure.getFirst()).encode(offset + 3, structure.getSecond()) + "\n";
+					}
 				} else {
-					ret += ((Actuator) actuator).encode(offset + 3) + "\n";
+					ret += ((Actuator) actuator).encode(offset + 3, null) + "\n";
 				}
 			}
 
@@ -1184,14 +1212,13 @@ public class Actuator implements IActuator {
 	protected String dump(Actuator actuator, int offset) {
 
 		String ret = "";
-		String spacer = StringUtil.spaces(offset);
-		String ofs = StringUtil.spaces(offset + 3);
+		String spacer = StringUtil.repeat('.', offset);
+		String ofs = StringUtil.repeat('.', offset + 3);
 
-		ret += spacer + ((actuator instanceof Dataflow) ? "DATAFLOW " : "ACTUATOR ")
-				+ (actuator.getType() + " ")
+		ret += spacer + ((actuator instanceof Dataflow) ? "DATAFLOW " : "ACTUATOR ") + (actuator.getType() + " ")
 				+ ((actuator instanceof Dataflow) ? ((Dataflow) actuator).getDataflowSubjectName() : actuator.getName())
-				+ (actuator.getAlias() == null ? "" : (" as " + actuator.getAlias()))
-				+ "\n";
+				+ ((actuator instanceof Dataflow) ? (" (" + ((Dataflow) actuator).getDescription() + ")") : "")
+				+ (actuator.getAlias() == null ? "" : (" as " + actuator.getAlias())) + "\n";
 
 		for (IActuator act : actuator.actuators) {
 			ret += dump((Actuator) act, offset + 3);
@@ -1200,7 +1227,7 @@ public class Actuator implements IActuator {
 		int cout = actuator.mediationStrategy.size() + actuator.computationStrategy.size();
 		int nout = 0;
 		for (int i = 0; i < actuator.mediationStrategy.size(); i++) {
-			ret += ofs
+			ret += ofs + "MEDIATE "
 					+ (actuator.mediationStrategy.get(i).getSecond().getMediationTargetId() == null ? ""
 							: (actuator.mediationStrategy.get(i).getSecond().getMediationTargetId() + " >> "))
 					+ actuator.mediationStrategy.get(i).getFirst().getSourceCode()
@@ -1211,7 +1238,7 @@ public class Actuator implements IActuator {
 		}
 
 		for (int i = 0; i < actuator.computationStrategy.size(); i++) {
-			ret += ofs
+			ret += ofs + "COMPUTE "
 					+ (actuator.computationStrategy.get(i).getSecond().isVariable()
 							? (actuator.computationStrategy.get(i).getSecond().getTargetId() + " <- ")
 							: "")
@@ -1220,9 +1247,11 @@ public class Actuator implements IActuator {
 							: actuator.computationStrategy.get(i).getFirst().getSourceCode())
 					+ ((actuator.computationStrategy.get(i).getSecond().getTarget() == null
 							|| actuator.computationStrategy.get(i).getSecond().isVariable()
-							|| actuator.computationStrategy.get(i).getSecond().getTarget().equals(actuator.getObservable()))
-									? ""
-									: (" >> " + actuator.computationStrategy.get(i).getSecond().getTarget().getName()))
+							|| actuator.computationStrategy.get(i).getSecond().getTarget()
+									.equals(actuator.getObservable()))
+											? ""
+											: (" >> " + actuator.computationStrategy.get(i).getSecond().getTarget()
+													.getName()))
 					+ (nout < actuator.computationStrategy.size() - 1 ? "," : "") + "\n";
 			nout++;
 		}
@@ -1230,6 +1259,7 @@ public class Actuator implements IActuator {
 		return ret;
 
 	}
+
 	public static Actuator create(Dataflow dataflow, IResolutionScope.Mode mode) {
 		Actuator ret = new Actuator();
 		ret.mode = mode;
@@ -1285,10 +1315,6 @@ public class Actuator implements IActuator {
 	public boolean isReference() {
 		return reference;
 	}
-
-	// public ISession getSession() {
-	// return this.session;
-	// }
 
 	@Override
 	public boolean isComputed() {
@@ -1438,14 +1464,6 @@ public class Actuator implements IActuator {
 	public Dataflow getDataflow() {
 		return this.dataflow;
 	}
-
-	// public void setMergedScale(Scale scale) {
-	// this.mergedCoverage = scale;
-	// }
-	//
-	// public Scale getMergedCoverage() {
-	// return mergedCoverage;
-	// }
 
 	/**
 	 * Find the actuator with the given name. Call it on the dataflow for the full
@@ -1628,15 +1646,7 @@ public class Actuator implements IActuator {
 			}
 		}
 
-		// this.currentContext = null;
 	}
-
-	// public IContextualizationScope getCurrentContext() {
-	// if (currentContext == null) {
-	// return new SimpleRuntimeScope(this);
-	// }
-	// return currentContext;
-	// }
 
 	public boolean isFilter() {
 		return observable.getDescriptionType() == IActivity.Description.CHARACTERIZATION
@@ -1691,13 +1701,6 @@ public class Actuator implements IActuator {
 		return ret;
 	}
 
-	// public void resetScales() {
-	// this.runtimeScale = null;
-	// for (IActuator actuator : actuators) {
-	// ((Actuator) actuator).resetScales();
-	// }
-	// }
-
 	public Actuator withAlias(String alias) {
 		this.alias = alias;
 		return this;
@@ -1706,27 +1709,6 @@ public class Actuator implements IActuator {
 	public ObservedConcept getObservedConcept() {
 		return new ObservedConcept(this.observable, this.mode);
 	}
-//
-//    public IScale mergeScale(IScale scale, IRuntimeScope scope) {
-//
-//        IScale runtimeScale = scope.getRuntimeScale(this);
-//
-//        if (runtimeScale == null) {
-//            scope.setRuntimeScale(this, runtimeScale = scale);
-//            if (this.model != null) {
-//                IScale modelScale = model.getCoverage(scope.getMonitor());
-//                if (!modelScale.isEmpty()) {
-//                    scope.setRuntimeScale(this, scale.adopt(modelScale, scope.getMonitor()));
-//                }
-//            }
-//        }
-//
-//        return runtimeScale;
-//    }
-
-	// public void addNotifiable(IState state) {
-	// this.products.add(state);
-	// }
 
 	public void setDataflow(Dataflow dataflow) {
 		this.dataflow = dataflow;
@@ -1735,10 +1717,6 @@ public class Actuator implements IActuator {
 	public void setExport(boolean b) {
 		this.exported = true;
 	}
-
-	// public List<Observable> getDeferredObservables() {
-	// return deferredObservables;
-	// }
 
 	public boolean isTrivial() {
 		return actuators.isEmpty() && computationStrategy.isEmpty() && mediationStrategy.isEmpty();
@@ -1801,9 +1779,27 @@ public class Actuator implements IActuator {
 		List<IDataflow<?>> ret = new ArrayList<>();
 		for (IActuator actuator : actuators) {
 			if (actuator instanceof IDataflow) {
-				ret.add((IDataflow<?>)actuator);
+				ret.add((IDataflow<?>) actuator);
 			}
 		}
 		return ret;
 	}
+
+	/**
+	 * If this actuator is a resolver (type == void), return self. Otherwise, check
+	 * if it contains a resolution dataflow (which is mandatorily the first) and if
+	 * so, return its resolver actuator. Otherwise, return null.
+	 * 
+	 * @return
+	 */
+	public IActuator getResolver() {
+		if (this.getType() == IArtifact.Type.VOID) {
+			return this;
+		}
+		if (this.actuators.size() > 0 && this.actuators.get(0) instanceof Dataflow) {
+			return ((Dataflow) this.actuators.get(0)).getResolver();
+		}
+		return null;
+	}
+
 }
