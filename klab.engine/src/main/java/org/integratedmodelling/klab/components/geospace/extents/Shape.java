@@ -434,7 +434,10 @@ public class Shape extends AbstractExtent implements IShape {
         if (this.equals(o)) {
             return true;
         }
-        // TODO Auto-generated method stub
+        if (o instanceof ISpace) {
+            IShape shp = ((ISpace)o).getShape();
+            return this.getStandardizedGeometry().contains(((Shape)shp).getStandardizedGeometry());
+        }
         return false;
     }
 

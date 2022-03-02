@@ -1139,7 +1139,7 @@ public class Actuator implements IActuator {
 
 			ret = " {\n";
 
-			for (IActuator actuator : children == null ? getSortedChildren(this, false) : children) {
+			for (IActuator actuator : (children == null || children.isEmpty()) ? getSortedChildren(this, false) : children) {
 
 				if (actuator instanceof Dataflow) {
 					Pair<IActuator, List<IActuator>> structure = ((Dataflow) actuator).getResolutionStructure();
