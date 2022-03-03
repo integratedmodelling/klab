@@ -909,4 +909,10 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
 		
 	}
 
+	@Override
+	public Set<IObservedConcept> getImplicitlyChangingObservables() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

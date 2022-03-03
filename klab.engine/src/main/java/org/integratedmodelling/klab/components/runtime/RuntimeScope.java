@@ -183,12 +183,6 @@ public class RuntimeScope extends AbstractRuntimeScope {
 	private Map<String, IKnowledgeView> views;
 	private Map<String, IKnowledgeView> viewsByUrn;
 
-	/**
-	 * This is used by characterizing models to report the result of
-	 * characterization during their own contextualization, which happens during
-	 * <em>resolution</em> of dependencies with abstract predicates.
-	 */
-	Map<IConcept, Collection<IConcept>> concreteIdentities;
 
 	/**
 	 * This is used during <em>contextualization</em> of previously characterized
@@ -221,6 +215,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
 		RuntimeScope ret = new RuntimeScope((ResolutionScope) scope);
 		ret.copyDataflowInfo(this);
 		ret.setRootDataflow((Dataflow) dataflow);
+		ret.implicitlyChangingObservables = this.implicitlyChangingObservables;
 		ret.parent = this;
 		ret.catalog = new HashMap<>();
 		ret.behaviorBindings = new IntelligentMap<>();
@@ -242,7 +237,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
 		ret.watchedObservations = Collections.synchronizedSet(new HashSet<>());
 		ret.views = new LinkedHashMap<>();
 		ret.viewsByUrn = new LinkedHashMap<>();
-		ret.concreteIdentities = new HashMap<>();
+		ret.concreteIdentities = this.concreteIdentities;
 
 		// /*
 		// * Complex and convoluted, but there is no other way to get this which must be
@@ -298,9 +293,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
 		this.namespace = context.namespace;
 		this.provenance = context.provenance;
 		this.eventBus = context.eventBus;
-		// this.configurationDetector = context.configurationDetector;
 		this.network = context.network;
-//		this.contextualizationStrategy = context.contextualizationStrategy;
 		this.structure = context.structure;
 		this.monitor = context.monitor;
 		this.catalog = context.catalog;
@@ -316,7 +309,6 @@ public class RuntimeScope extends AbstractRuntimeScope {
 		this.rootSubject = context.rootSubject;
 		this.contextSubject = context.contextSubject;
 		this.observations = context.observations;
-		// this.dataflowCache.putAll(context.dataflowCache);
 		this.actuator = context.actuator;
 		this.target = context.target;
 		this.notifiedObservations = context.notifiedObservations;
@@ -325,12 +317,9 @@ public class RuntimeScope extends AbstractRuntimeScope {
 		this.watchedObservations = context.watchedObservations;
 		this.views = context.views;
 		this.viewsByUrn = context.viewsByUrn;
-		this.reasonerCache = context.reasonerCache;
-		this.relatedReasonerCache = context.relatedReasonerCache;
 		this.concreteIdentities = context.concreteIdentities;
 		this.resolvedPredicates.putAll(context.resolvedPredicates);
 		this.notificationMode = context.notificationMode;
-//		this.inherentResolutions.putAll(context.inherentResolutions);
 
 		// FIXME - Should these be inherited? Probably not
 		// this.currentGroup = context.currentGroup;
@@ -1591,7 +1580,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
 		return rootSubject;
 	}
 
-	private RuntimeScope getRootScope() {
+	public RuntimeScope getRootScope() {
 		RuntimeScope ret = this;
 		while (ret.parent != null) {
 			ret = ret.parent;

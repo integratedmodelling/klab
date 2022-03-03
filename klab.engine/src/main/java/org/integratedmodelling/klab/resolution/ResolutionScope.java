@@ -156,10 +156,6 @@ public class ResolutionScope implements IResolutionScope {
     // include transition contextualizers in the initialization run.
     private List<ResolutionScope> occurrentResolutions;
 
-    // observables for which change is not specified but may change if they
-    // depend on changed observations
-    private Set<IObservedConcept> implicitlyChangingObservables = new HashSet<>();
-
     /**
      * If not null, this is a scope for a logical combination of resolutions.
      */
@@ -243,9 +239,9 @@ public class ResolutionScope implements IResolutionScope {
     private Map<IConcept, Set<IConcept>> resolvedPredicatesContext = new HashMap<>();
     private boolean deferToInherent;
     private RuntimeScope rootContextualizationScope;
-    // these get parked here because they will have to be added as children to the root dataflow,
-    // which does not exist yet
-    private List<Dataflow> predicateResolutionDataflows = new ArrayList<>();
+//    // these get parked here because they will have to be added as children to the root dataflow,
+//    // which does not exist yet
+//    private List<Dataflow> predicateResolutionDataflows = new ArrayList<>();
 
     private void addResolvedScope(ObservedConcept concept, ResolutionScope scope) {
         List<ResolutionScope> slist = resolvedObservables.get(concept);
@@ -399,6 +395,7 @@ public class ResolutionScope implements IResolutionScope {
         this.resolutionNamespace = contextSubject.getNamespace();
         this.monitor = monitor;
         this.occurrent = contextSubject.getScope().isOccurrent() || this.coverage.isTemporallyDistributed();
+        this.rootContextualizationScope = ((RuntimeScope)contextSubject.getScope()).getRootScope();
     }
 
     private ResolutionScope(Observer observer, IMonitor monitor, Collection<String> scenarios)
@@ -1445,12 +1442,7 @@ public class ResolutionScope implements IResolutionScope {
     public List<ResolutionScope> getOccurrentResolutions() {
         return occurrentResolutions;
     }
-
-    @Override
-    public Set<IObservedConcept> getImplicitlyChangingObservables() {
-        return implicitlyChangingObservables;
-    }
-
+    
     /**
      * Publish the resolutions in the links into a storage that is passed to children and consulted
      * to ensure that previously resolved observables are not resolved again. This is used when

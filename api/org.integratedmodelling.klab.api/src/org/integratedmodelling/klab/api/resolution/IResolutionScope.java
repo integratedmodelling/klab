@@ -216,13 +216,5 @@ public interface IResolutionScope {
      */
     IResolvable getResolvedArtifact();
 
-    /**
-     * Observables that may change if they depend on changing values but have no explicit change
-     * model associated. Report them along with their mode of observation.
-     * 
-     * @return
-     */
-
-    Set<IObservedConcept> getImplicitlyChangingObservables();
 
 }

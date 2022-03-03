@@ -595,21 +595,15 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 */
 	void exportDataflow(String baseName, File directory);
 
-//    /**
-//     * Set the runtime scale for this actuator. Used when the scale is not merged with a specific
-//     * one for the actuator.
-//     * 
-//     * @param actuator
-//     * @param scale
-//     */
-//    void setRuntimeScale(IActuator actuator, IScale scale);
-//
-//    /**
-//     * Get the runtime (not merged) scale for the actuator.
-//     * 
-//     * @param actuator
-//     * @return
-//     */
-//    IScale getRuntimeScale(IActuator actuator);
+	/**
+	 * Observables that may change if they depend on changing values but have no
+	 * explicit change model associated. Resolutions add and remove them as models
+	 * are registered. Return a set that is intended to be modified by the resolver
+	 * and remain the same context-wide; the concepts must contain the context type.
+	 * 
+	 * @return
+	 */
+
+	Set<IObservedConcept> getImplicitlyChangingObservables();
 
 }

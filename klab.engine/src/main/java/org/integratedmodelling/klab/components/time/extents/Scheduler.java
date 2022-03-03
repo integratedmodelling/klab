@@ -285,7 +285,7 @@ public class Scheduler implements IScheduler {
 					 */
 					ILocator transitionScale = time == null ? Registration.this.scale.termination()
 							: Registration.this.scale.at(time);
-					
+
 					IRuntimeScope transitionContext = scope;
 					transitionContext = scope.locate(transitionScale, monitor);
 
@@ -912,8 +912,7 @@ public class Scheduler implements IScheduler {
 						if (toRun != null && registration.endsPeriod && changed.size() > 0) {
 
 							Set<IObservedConcept> computed = new HashSet<>();
-							for (IObservedConcept tracked : runtimeScope.getResolutionScope()
-									.getImplicitlyChangingObservables()) {
+							for (IObservedConcept tracked : runtimeScope.getImplicitlyChangingObservables()) {
 								computeImplicitDependents(tracked, changed, computed, toRun, registration.scope,
 										runtimeScope.getDependencyGraph(), catalog,
 										registration.actuator.getDataflow());

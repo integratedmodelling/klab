@@ -990,4 +990,10 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 		
 	}
 
+	@Override
+	public Set<IObservedConcept> getImplicitlyChangingObservables() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

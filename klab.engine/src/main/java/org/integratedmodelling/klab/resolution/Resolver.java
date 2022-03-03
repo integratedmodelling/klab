@@ -207,11 +207,13 @@ public class Resolver {
                      */
 
                     if (parentScope.getResolvedObservable(toResolve, Mode.RESOLUTION) != null
-                            || ret.getImplicitlyChangingObservables().contains(observable)
+                            || ret.getRootContextualizationScope().getImplicitlyChangingObservables().contains(observable)
                             || ret.hasResolved(toResolve)) {
                         if (!ret.hasResolvedSuccessfully(toResolve)) {
                             // needed for downstream resolutions to register implicit changes
-                            ret.getImplicitlyChangingObservables().add(observable);
+                            ret.getRootContextualizationScope().getImplicitlyChangingObservables().add(observable);
+                        } else {
+                            ret.getRootContextualizationScope().getImplicitlyChangingObservables().remove(observable);
                         }
                         continue;
                     }
@@ -233,9 +235,10 @@ public class Resolver {
                                 + " coverage");
 
                         ret.getOccurrentResolutions().add(cscope);
+                        ret.getRootContextualizationScope().getImplicitlyChangingObservables().remove(observable);
 
                     } else {
-                        ret.getImplicitlyChangingObservables().add(observable);
+                        ret.getRootContextualizationScope().getImplicitlyChangingObservables().add(observable);
                     }
                 }
 
