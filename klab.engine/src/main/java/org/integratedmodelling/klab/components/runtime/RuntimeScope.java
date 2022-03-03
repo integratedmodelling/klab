@@ -203,7 +203,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
 
 		RuntimeScope ret = new RuntimeScope((ResolutionScope) scope);
 		ret.copyDataflowInfo(this);
-		ret.setRootDataflow((Dataflow) dataflow, this.rootSubject.getId());
+		ret.setRootDataflow((Dataflow) dataflow, null);
 		ret.implicitlyChangingObservables = this.implicitlyChangingObservables;
 		ret.parent = this;
 		ret.catalog = new HashMap<>();
