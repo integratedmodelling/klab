@@ -93,6 +93,8 @@ import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.StringUtil;
+import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultEdge;
 
 public class Actuator implements IActuator {
 
@@ -189,18 +191,6 @@ public class Actuator implements IActuator {
 	private INamespace namespace;
 	private Observable observable;
 
-	/**
-	 * Status is 0 = waiting, 1 = computing, 2 = computed, 3 = interrupted. Used
-	 * within documentation templates to figure out what can be said. When the
-	 * computation starts and ends, the timestamps are updated.
-	 */
-	// @Deprecated
-	// private AtomicInteger status = new AtomicInteger(0);
-	// @Deprecated
-	// private AtomicLong startComputation = new AtomicLong(0);
-	// @Deprecated
-	// private AtomicLong endComputation = new AtomicLong(0);
-
 	/*
 	 * The coverage is generic and is set to the coverage of the generating models.
 	 * The dataflow will set the actual scale of computation into partialScale just
@@ -211,10 +201,6 @@ public class Actuator implements IActuator {
 	private Dataflow dataflow;
 	List<IActuator> actuators = new ArrayList<>();
 	Date creationTime = new Date();
-
-//    // the child/parent hierarchy refers to DATAFLOWS, not actuators. Children are added at deferred
-//    // resolutions and instantiated object resolution.
-//    protected List<IDataflow<IArtifact>> childDataflows = new ArrayList<>();
 	protected Actuator parentDataflow;
 
 	/**
@@ -238,26 +224,11 @@ public class Actuator implements IActuator {
 	// output port
 	private boolean exported;
 
-	// @Deprecated
-	// protected ISession session;
-
-	/**
-	 * these are added when observations should be made "within" resolved objects
-	 * after instantiation and initial resolution. Resolution and dataflow caching
-	 * is done in the runtime scope.
-	 */
-	// @Deprecated
-	// private List<Observable> deferredObservables = new ArrayList<>();
-
 	// this is only for the API
 	private List<IContextualizable> computedResources = new ArrayList<>();
 	// we store the annotations from the model to enable probes or other
 	// non-semantic options
 	private List<IAnnotation> annotations = new ArrayList<>();
-
-	// this is for documentation templates, not saved
-	// @Deprecated
-	// private transient IRuntimeScope currentContext;
 
 	/*
 	 * this gets a copy of the original model resource, so we can do things to it.
@@ -306,13 +277,6 @@ public class Actuator implements IActuator {
 	 */
 	private List<IDocumentation> documentation = new ArrayList<>();
 
-	// /*
-	// * keep all computed observations here for notifyArtifact() to send on the
-	// message bus
-	// */
-	// @Deprecated
-	// private List<IObservation> products = new ArrayList<>();
-
 	// if this is non-null, coverage is also non-null and the actuator defines a
 	// partition of the named target artifact, covering our coverage only.
 	private String partitionedTarget;
@@ -324,25 +288,6 @@ public class Actuator implements IActuator {
 	private int priority = 0;
 	private Mode mode;
 	private Model model;
-
-	// /*
-	// * the scale of computation for partials. This is set by the dataflow when the
-	// actual context
-	// is
-	// * known. FIXME this is kind of dirty: the dataflow will set it into the
-	// actuator, so each
-	// * actuator tree should be used only once.
-	// */
-	// @Deprecated
-	// private Scale mergedCoverage;
-
-	// /*
-	// * The scale at runtime, computed by merging the overall scale with any
-	// specific model
-	// coverage.
-	// */
-	// @Deprecated
-	// private IScale runtimeScale = null;
 
 	@Override
 	public String getName() {
@@ -952,8 +897,6 @@ public class Actuator implements IActuator {
 		}
 
 		// pre-compute before notification to speed up visualization
-		// TODO change to a state callback to finalize a transition after all values are
-		// in
 		if (ret instanceof Observation && (scale.getTime() == null || scale.getTime().is(ITime.Type.INITIALIZATION))) {
 			/*
 			 * May be null for void contextualizers
@@ -1032,8 +975,7 @@ public class Actuator implements IActuator {
 			 * TODO check: is this ever right?
 			 */
 			if (ret.getArtifact(input.getName()) != null) {
-				// // no effect if not aliased
-				// ret.rename(input.getName(), input.getAlias());
+
 				/*
 				 * scan mediations and apply them as needed
 				 */
@@ -1128,6 +1070,30 @@ public class Actuator implements IActuator {
 		return computationStrategy;
 	}
 
+	protected Actuator makeDataflowStructure(IActuator parent, List<IActuator> children,
+			Graph<IActuator, DefaultEdge> graph) {
+
+		graph.addVertex(this);
+		
+		for (IActuator actuator : (children == null || children.isEmpty()) ? getSortedChildren(this, false)
+				: children) {
+			if (actuator instanceof Dataflow) {
+				Pair<IActuator, List<IActuator>> structure = ((Dataflow) actuator).getResolutionStructure();
+				if (structure == null) {
+					for (IActuator act : actuator.getChildren()) {
+						graph.addEdge(makeDataflowStructure(act, null, graph), this);
+					}
+				} else {
+					graph.addEdge(makeDataflowStructure(structure.getFirst(), structure.getSecond(), graph), this);
+				}
+			} else {
+				graph.addEdge(makeDataflowStructure(actuator, null, graph), this);
+			}
+		}
+
+		return this;
+	}
+
 	protected String encodeBody(int offset, String ofs, List<IActuator> children) {
 
 		boolean hasBody = actuators.size() > 0 || computationStrategy.size() > 0 || mediationStrategy.size() > 0
@@ -1139,7 +1105,8 @@ public class Actuator implements IActuator {
 
 			ret = " {\n";
 
-			for (IActuator actuator : (children == null || children.isEmpty()) ? getSortedChildren(this, false) : children) {
+			for (IActuator actuator : (children == null || children.isEmpty()) ? getSortedChildren(this, false)
+					: children) {
 
 				if (actuator instanceof Dataflow) {
 					Pair<IActuator, List<IActuator>> structure = ((Dataflow) actuator).getResolutionStructure();
@@ -1224,7 +1191,7 @@ public class Actuator implements IActuator {
 			ret += dump((Actuator) act, offset + 3);
 		}
 
-		int cout = actuator.mediationStrategy.size() + actuator.computationStrategy.size();
+//		int cout = actuator.mediationStrategy.size() + actuator.computationStrategy.size();
 		int nout = 0;
 		for (int i = 0; i < actuator.mediationStrategy.size(); i++) {
 			ret += ofs + "MEDIATE "
@@ -1264,7 +1231,6 @@ public class Actuator implements IActuator {
 		Actuator ret = new Actuator();
 		ret.mode = mode;
 		ret.dataflow = dataflow;
-		// ret.session = dataflow.getSession();
 		return ret;
 	}
 
@@ -1296,10 +1262,7 @@ public class Actuator implements IActuator {
 	}
 
 	public IArtifact.Type getType() {
-		return /*
-				 * (mode == IResolutionScope.Mode.RESOLUTION && type == IArtifact.Type.OBJECT) ?
-				 * IArtifact.Type.VOID :
-				 */type;
+		return type;
 	}
 
 	public void setType(IArtifact.Type type) {
@@ -1594,8 +1557,6 @@ public class Actuator implements IActuator {
 	 * @param isMainObservable
 	 */
 	public void notifyArtifacts(boolean isMainObservable, IRuntimeScope scope) {
-
-		// this.currentContext = context;
 
 		if (Klab.INSTANCE.getMessageBus() == null || isPartition()) {
 			return;

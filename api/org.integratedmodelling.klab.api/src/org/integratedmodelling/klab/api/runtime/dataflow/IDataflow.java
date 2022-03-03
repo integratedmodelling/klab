@@ -69,17 +69,6 @@ import org.integratedmodelling.klab.exceptions.KlabException;
  */
 public interface IDataflow<T extends IArtifact> extends IActuator {
 
-//    /**
-//     * Each context has one root dataflow (the one that created the root context) and a set of child
-//     * dataflows which may be run once (for qualities) or more than once (to resolve direct
-//     * observations, some or all of which may use the same dataflow). In general there is one
-//     * dataflow per resolved direct observation, possibly reusing the contextualization strategy of
-//     * another.
-//     * 
-//     * @return
-//     */
-//    List<IDataflow<T>> getChildren();
-
     /**
      * Each dataflow in the hierarchy must be able to produce the root dataflow, corresponding to
      * the one that created the root observation.
@@ -87,17 +76,6 @@ public interface IDataflow<T extends IArtifact> extends IActuator {
      * @return
      */
     IDataflow<T> getRootDataflow();
-
-    // /**
-    // * The scale of the resolution from which this dataflow was built. It will never be null and
-    // * will at most encompass the context of resolution.
-    // *
-    // * TODO/CHECK: this could be a multiplicity of scales if the same DF is built to resolve the
-    // * same observable in different scales.
-    // *
-    // * @return
-    // */
-    // IScale getResolutionScale();
 
     /**
      * Run the dataflow in the passed scale using the configured or default
@@ -113,7 +91,7 @@ public interface IDataflow<T extends IArtifact> extends IActuator {
      * @return the built artifact. May be empty, never null.
      * @throws org.integratedmodelling.klab.exceptions.KlabException
      */
-    T run(@Deprecated IScale scale, IContextualizationScope scope) throws KlabException;
+    T run(IScale scale, IContextualizationScope scope) throws KlabException;
 
     /**
      * Return the k.DL source code for the dataflow. If the dataflow has been read from a k.DL

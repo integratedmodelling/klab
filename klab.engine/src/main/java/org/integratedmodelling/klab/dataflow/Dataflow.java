@@ -37,7 +37,6 @@ import org.integratedmodelling.klab.resolution.ResolvedArtifact;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.Pair;
-import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.klab.utils.Triple;
 import org.integratedmodelling.klab.utils.TypeUtils;
 import org.integratedmodelling.klab.utils.Utils;
@@ -46,8 +45,8 @@ import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 
 /**
- * The semantically aware implementation of {@link IDataflow}, built by the
- * k.LAB runtime as a result of a semantic resolution. Its
+ * The semantically aware implementation of {@link IDataflow}, as built by the
+ * k.LAB runtime as a result of semantic resolution. Its
  * {@link #run(IScale, IMonitor)} produces {@link IObservation observations}
  * unless the dataflow is {@link #isEmpty() empty}.
  * <p>
@@ -68,7 +67,8 @@ import org.jgrapht.graph.DefaultEdge;
  * A dataflow is a void actuator in k.DL. A void actuator resolves the context
  * it's run into. When objects are created, the containing actuator may contain
  * the dataflow(s) to resolve it and/or specific qualities declared "within" the
- * object.
+ * object. The "clean" actuator hierarchy is built from this by the scope, and
+ * it is the proper one for visualization, serialization and reuse.
  * 
  * @author Ferd
  *
@@ -173,9 +173,9 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		ISession session = scope.getSession();
 
 		/*
-		 * Set the .partialScale field in the scope for all actuators that represent
-		 * partitions of the overall scale to reflect the portion of the actual scale
-		 * they must cover.
+		 * Set the partial scale of each actuator in the scope for all actuators that
+		 * represent partitions of the overall scale to reflect the portion of the
+		 * actual scale they must cover.
 		 */
 		definePartitions(scale, scope);
 
@@ -270,52 +270,6 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 				return null;
 			}
 		}
-
-//		Set<String> dataflowIds = new HashSet<>();
-		/*
-		 * Dataflow rootDataflow = null; boolean added = false; if (parentComputation ==
-		 * null && ret != null) { rootDataflow = this; ((RuntimeScope) ((Observation)
-		 * ret).getScope()).setDataflow(this); }
-		 */ /*
-			 * else if (ret != null) {
-			 * 
-			 * rootDataflow = (Dataflow) ((Observation) ret).getScope().getDataflow();
-			 * 
-			 * if (!dataflowIds.contains(this.getName())) {
-			 * 
-			 * added = true; dataflowIds.add(this.getName());
-			 * 
-			 * Actuator parent = parentComputation;
-			 * 
-			 * // again, this is currently just one actuator for (IActuator actuator :
-			 * getActuators()) {
-			 * 
-			 * // I am the resolver if (actuator.getType() == Type.VOID) {
-			 * parent.getChildren().add(actuator); } else if (parent.getType() != Type.VOID)
-			 * {
-			 * 
-			 * 
-			 * should be within an instantiator, which at this point has resolved its
-			 * instances so it should have a void child with the same name
-			 * 
-			 * for (IActuator pc : parent.getChildren()) { if (pc.getType() == Type.VOID &&
-			 * pc.getName().equals(parent.getName())) { parent = (Actuator) pc; break; } }
-			 * // if (parent.getType() == Type.VOID) { //
-			 * parent.getChildren().add(actuator); // } } } } }
-			 */
-
-//		if (added && !trivial && isPrimary()) {
-//			/*
-//			 * send dataflow after execution is finished. TODO add style elements or flags
-//			 * to make sure it's shown statically.
-//			 */
-//			session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
-//					IMessage.Type.DataflowCompiled, new DataflowReference(session.getMonitor().getIdentity().getId(),
-//							getKdlCode(), ContextualizationStrategy.getElkGraph(this, scope))));
-//			if (Configuration.INSTANCE.isEchoEnabled()) {
-//				System.out.println(rootDataflow.getKdlCode());
-//			}
-//		}
 
 		if (!trivial && parentComputation != null && scope.getMonitor().getIdentity() instanceof AbstractTask) {
 			((AbstractTask<?>) scope.getMonitor().getIdentity()).notifyEnd();
@@ -494,6 +448,25 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 				structure.getSecond().isEmpty() ? (List<IActuator>) null : structure.getSecond());
 	}
 
+	public Graph<IActuator, DefaultEdge> getDataflowStructure() {
+
+		Graph<IActuator, DefaultEdge> ret = new DefaultDirectedGraph<>(DefaultEdge.class);
+
+		Pair<IActuator, List<IActuator>> structure = getResolutionStructure();
+
+		if (structure == null) {
+			for (IActuator actuator : actuators) {
+				((Actuator) actuator).makeDataflowStructure(null, null, ret);
+			}
+			return ret;
+		}
+
+		((Actuator) structure.getFirst()).makeDataflowStructure(null, structure.getSecond(), ret);
+
+		return ret;
+
+	}
+
 	/**
 	 * If the dataflow is meant to resolve an instantiated object, it will have a
 	 * void actuator as its first one. In this case, this will return it, otherwise
@@ -510,16 +483,16 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		return null;
 	}
 
-	private Observable getDataflowObservable() {
-		Observable ret = null;
-		for (IActuator actuator : actuators) {
-			ret = ((Actuator) actuator).getObservable();
-			if (ret != null) {
-				break;
-			}
-		}
-		return ret;
-	}
+//	private Observable getDataflowObservable() {
+//		Observable ret = null;
+//		for (IActuator actuator : actuators) {
+//			ret = ((Actuator) actuator).getObservable();
+//			if (ret != null) {
+//				break;
+//			}
+//		}
+//		return ret;
+//	}
 
 	String getDataflowSubjectName() {
 		String ret = "*";
@@ -682,7 +655,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	 * @return
 	 */
 	public Pair<IActuator, List<IActuator>> getResolutionStructure() {
-		IActuator resolver =  getResolver();
+		IActuator resolver = getResolver();
 		if (resolver != null) {
 			List<IActuator> second = new ArrayList<>();
 			for (int i = 1; i < this.actuators.size(); i++) {

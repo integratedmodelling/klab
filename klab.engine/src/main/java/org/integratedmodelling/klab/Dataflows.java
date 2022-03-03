@@ -17,6 +17,7 @@ import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.services.IDataflowService;
+import org.integratedmodelling.klab.components.runtime.AbstractRuntimeScope;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.dataflow.DataflowCompiler;
@@ -100,7 +101,9 @@ public enum Dataflows implements IDataflowService {
 			}
 		}
 		
-		return compiler.compile(scope.getMonitor());
+		Dataflow ret = compiler.compile(scope.getMonitor());
+		
+		return ret;
 	}
 
 	/**

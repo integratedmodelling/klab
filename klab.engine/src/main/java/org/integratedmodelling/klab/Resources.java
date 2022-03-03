@@ -36,11 +36,11 @@ import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.IResourceCalculator;
 import org.integratedmodelling.klab.api.data.IResourceCatalog;
-import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
@@ -71,7 +71,6 @@ import org.integratedmodelling.klab.common.CompileInfo;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.SemanticType;
 import org.integratedmodelling.klab.common.Urns;
-import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.data.encoding.DecodingDataBuilder;
 import org.integratedmodelling.klab.data.encoding.LocalDataBuilder;
 import org.integratedmodelling.klab.data.encoding.StandaloneResourceBuilder;
@@ -99,6 +98,7 @@ import org.integratedmodelling.klab.engine.runtime.code.Expression;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
+import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
@@ -133,13 +133,11 @@ import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Path;
 import org.integratedmodelling.klab.utils.StringUtil;
-import org.integratedmodelling.klab.utils.URLUtils;
 import org.integratedmodelling.klab.utils.Utils;
 import org.integratedmodelling.klab.utils.ZipUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.security.web.util.UrlUtils;
 
 /**
  * Management and resolution of URNs. Also holds the URN metadata database for local and public
@@ -684,6 +682,17 @@ public enum Resources implements IResourceService {
                 : importResource(urn, project, adapterType, file, parameters, version, history, monitor);
     }
 
+    @Override
+    public IResource createLocalResource(IContextualizationScope scope, String resourceId, IProject project) {
+    	
+    	if (scope instanceof IRuntimeScope) {
+	
+    		return null;
+    	}
+    	
+    	throw new KlabIllegalStateException("cannot create a dataflow resource from a non-resolution scope");
+    }
+    
     /**
      * Create a resource from a remote request, which is assumed valid and non-existing.
      * 

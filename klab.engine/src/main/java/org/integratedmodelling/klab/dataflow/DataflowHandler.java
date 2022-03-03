@@ -12,20 +12,25 @@ import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.graph.ElkConnectableShape;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.json.ElkGraphJson;
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
+import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.dataflow.Flowchart.Element;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.rest.DataflowReference;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Triple;
-import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultEdge;
 
 /**
  * The root contextualization scope ultimately handles a dataflow that can be
@@ -49,6 +54,7 @@ public class DataflowHandler extends Parameters<String> {
 	private Map<String, Element> elements = new HashMap<>();
 	private Map<String, String> node2dataflowId = new HashMap<>();
 	private Dataflow rootDataflow;
+	private int dataflowCodeLength = 0;
 
 	/**
 	 * These are created and run during resolution, before the root dataflow exists.
@@ -58,6 +64,7 @@ public class DataflowHandler extends Parameters<String> {
 	private List<Dataflow> preContextualizationDataflows = new ArrayList<>();
 	private Map<ObservedConcept, List<Pair<ICoverage, Dataflow>>> dataflowCache = new HashMap<>();
 	List<Dataflow> rootNodes = new ArrayList<>();
+	private String rootContextId;
 
 	public DataflowHandler() {
 		this.id = NameGenerator.shortUUID();
@@ -83,13 +90,13 @@ public class DataflowHandler extends Parameters<String> {
 		this.preContextualizationDataflows = other.preContextualizationDataflows;
 		this.dataflowCache = other.dataflowCache;
 		this.rootNodes = other.rootNodes;
+		this.dataflowCodeLength = other.dataflowCodeLength;
 	}
 
 	public String getKdl() {
 		if (rootDataflow == null) {
 			return "";
 		}
-		System.out.println(rootDataflow.dump());
 		return rootDataflow.getKdlCode();
 	}
 
@@ -99,8 +106,9 @@ public class DataflowHandler extends Parameters<String> {
 		return strategy.getElkGraph(scope);
 	}
 
-	public void setRootDataflow(Dataflow dataflow) {
+	public void setRootDataflow(Dataflow dataflow, String contextId) {
 		this.rootDataflow = dataflow;
+		this.rootContextId = contextId;
 		dataflow.actuators.addAll(0, preContextualizationDataflows);
 	}
 
@@ -112,15 +120,32 @@ public class DataflowHandler extends Parameters<String> {
 		}
 	}
 
+	public void notifyDataflowChanges(IRuntimeScope scope) {
+
+		String code = getKdl();
+		if (code.length() > dataflowCodeLength) {
+			scope.getSession().getMonitor()
+					.send(Message.create(scope.getSession().getId(), IMessage.MessageClass.TaskLifecycle,
+							IMessage.Type.DataflowCompiled,
+							new DataflowReference(rootContextId, code, getElkGraph(scope))));
+			this.dataflowCodeLength = code.length();
+			if (Configuration.INSTANCE.isEchoEnabled()) {
+				System.out.println(rootDataflow.getKdlCode());
+			}
+		}
+	}
+
 	public void exportDataflow(String baseName, File directory) {
 
 	}
 
 	/**
-	 * Return or compute all the dataflows needed to resolve the passed observable
-	 * in the passed mode, scale, scope and context. If >1, the dataflows will cover
-	 * different portions of the scale. Empty dataflows mean no way to resolve this
-	 * observable.
+	 * Return or create the dataflow needed to resolve the passed observable in the
+	 * passed mode, scale, scope and context. Cache the result for the observable
+	 * and coverage so that no resolution will be required for compatible,
+	 * previously computed ones. TODO the caching DOES prevent better specific
+	 * dataflows to be resolved after more generic ones, so it should be conditional
+	 * to an option.
 	 * 
 	 * @param observable
 	 * @param mode
@@ -167,11 +192,17 @@ public class DataflowHandler extends Parameters<String> {
 	 * 
 	 * @return
 	 */
-	public Graph<Actuator, DefaultEdge> getDataflowStructure() {
-		return null;
+	public Graph<IActuator, DefaultEdge> getDataflowStructure() {
+		return rootDataflow == null ? null : rootDataflow.getDataflowStructure();
 	}
 
 	public String getElkGraph(IRuntimeScope scope) {
+
+		Graph<IActuator, DefaultEdge> structure = getDataflowStructure();
+
+		if (structure == null) {
+			return null;
+		}
 
 		List<Flowchart> flowcharts = new ArrayList<>();
 

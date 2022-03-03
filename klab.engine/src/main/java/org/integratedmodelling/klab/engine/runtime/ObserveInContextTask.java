@@ -22,6 +22,7 @@ import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.runtime.AbstractRuntimeScope;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Actuator;
@@ -150,11 +151,8 @@ public class ObserveInContextTask extends AbstractTask<IArtifact> {
 						}
 
 						IRuntimeScope ctx = ((Observation) context).getScope();
-
-						session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
-								IMessage.Type.DataflowCompiled, new DataflowReference(token, dataflow.getKdlCode(),
-										ctx.getElkGraph())));
-
+						((AbstractRuntimeScope)ctx).notifyDataflowChanges(ctx);
+						
 						// make a copy of the coverage so that we ensure it's a scale, behaving
 						// properly
 						// at merge.

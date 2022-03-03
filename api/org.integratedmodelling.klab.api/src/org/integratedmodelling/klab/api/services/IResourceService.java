@@ -278,6 +278,22 @@ public interface IResourceService {
 	 */
 	File getFilesystemLocation(IResource resource);
 
+	/**
+	 * Get the public resource catalog. Only not null in nodes.
+	 * 
+	 * @return
+	 */
 	IPublicResourceCatalog getPublicResourceCatalog();
+
+	/**
+	 * Create a resource containing the current dataflow in the passed scope, which
+	 * must be a runtime scope created by resolution.
+	 * 
+	 * @param scope
+	 * @param resourceId
+	 * @param project
+	 * @return
+	 */
+	IResource createLocalResource(IContextualizationScope scope, String resourceId, IProject project);
 
 }

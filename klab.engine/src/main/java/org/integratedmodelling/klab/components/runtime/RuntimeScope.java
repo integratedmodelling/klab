@@ -123,10 +123,6 @@ import org.integratedmodelling.klab.utils.Triple;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-
 /**
  * A runtime scope is installed in the root subject to keep track of what
  * happens during contextualization. Children of the root scope are used across
@@ -191,13 +187,6 @@ public class RuntimeScope extends AbstractRuntimeScope {
 	 */
 	Map<IConcept, IConcept> resolvedPredicates = new HashMap<>();
 
-
-//	/**
-//	 * Each dataflow used to resolve subjects within this one is recorded here with
-//	 * all the subjects it was used for.
-//	 */
-//	Map<Dataflow, List<IDirectObservation>> inherentResolutions = new HashMap<>();
-
 	/**
 	 * Get a child scope for the entire context. Must be called only on the root
 	 * scope.
@@ -214,7 +203,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
 
 		RuntimeScope ret = new RuntimeScope((ResolutionScope) scope);
 		ret.copyDataflowInfo(this);
-		ret.setRootDataflow((Dataflow) dataflow);
+		ret.setRootDataflow((Dataflow) dataflow, this.rootSubject.getId());
 		ret.implicitlyChangingObservables = this.implicitlyChangingObservables;
 		ret.parent = this;
 		ret.catalog = new HashMap<>();
@@ -238,25 +227,6 @@ public class RuntimeScope extends AbstractRuntimeScope {
 		ret.views = new LinkedHashMap<>();
 		ret.viewsByUrn = new LinkedHashMap<>();
 		ret.concreteIdentities = this.concreteIdentities;
-
-		// /*
-		// * Complex and convoluted, but there is no other way to get this which must be
-		// created by
-		// * the task for the first context. Successive contextualizations will add to
-		// it.
-		// */
-		// ret.contextualizationStrategy = ((ResolutionScope)
-		// scope).getContextualizationStrategy();
-		// ret.contextualizationStrategy.setScope(this);
-
-		// if (this.contextualizationStrategy == null) {
-		// /*
-		// * happens when a characterizer is contextualized during resolution, before
-		// anything has
-		// * happened yet. We throw this away after we're done.
-		// */
-		// this.contextualizationStrategy = new ContextualizationStrategy();
-		// }
 
 		// store and set up for further resolutions
 		ret.resolutionScope = (ResolutionScope) scope;
@@ -320,13 +290,6 @@ public class RuntimeScope extends AbstractRuntimeScope {
 		this.concreteIdentities = context.concreteIdentities;
 		this.resolvedPredicates.putAll(context.resolvedPredicates);
 		this.notificationMode = context.notificationMode;
-
-		// FIXME - Should these be inherited? Probably not
-		// this.currentGroup = context.currentGroup;
-		// this.directObservationName = context.directObservationName;
-		// this.relationshipSource = context.relationshipSource;
-		// this.relationshipTarget = context.relationshipTarget;
-		// this.objectMetadata = context.objectMetadata;
 	}
 
 	private RuntimeScope(ResolutionScope resolutionScope) {
@@ -526,6 +489,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
 			RuntimeScope runtimeScope = new RuntimeScope(this).withMetadata(metadata).withConfigurationTargets(targets);
 
 			ret = (IConfiguration) dataflow.run(scale, (Actuator) this.actuator, runtimeScope);
+
+			runtimeScope.notifyDataflowChanges(runtimeScope);
 		}
 		return ret;
 	}
@@ -540,12 +505,6 @@ public class RuntimeScope extends AbstractRuntimeScope {
 	public <T extends IArtifact> T resolve(IObservable observable, IDirectObservation observation, ITaskTree<?> task,
 			Mode mode, IActuator parentDataflow) {
 
-//		/*
-//		 * preload all the possible resolvers in the wider scope before specializing the
-//		 * scope to the child observation. Then leave it to the kbox to use the context
-//		 * with the preloaded cache.
-//		 */
-//		this.resolutionScope.preloadResolvers(observable, observation);
 		ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
 		Dataflow dataflow = getDataflow(observable, mode, observation.getScale(), observation, (geometry) -> {
 
@@ -574,20 +533,14 @@ public class RuntimeScope extends AbstractRuntimeScope {
 			}
 		} else {
 
-//			List<IDirectObservation> obs = inherentResolutions.get(dataflow);
-//			if (obs == null) {
-//				obs = new ArrayList<>();
-//				inherentResolutions.put(dataflow, obs);
-//			}
-//			if (!obs.contains(observation)) {
-//				obs.add(observation);
-//			}
-
 			RuntimeScope runtimeScope = new RuntimeScope(this).withContext(observation)
 					.withScope(this.resolutionScope.getDeferredChildScope(observation, mode))
 					.withMetadata(observation.getMetadata());
 
 			ret = dataflow.run(observation.getScale(), (Actuator) parentDataflow, runtimeScope);
+
+			runtimeScope.notifyDataflowChanges(runtimeScope);
+
 		}
 
 		return (T) ret;
@@ -609,12 +562,6 @@ public class RuntimeScope extends AbstractRuntimeScope {
 	 */
 	public Dataflow resolve(IObservable observable, String name, IScale scale, ITaskTree<?> subtask) {
 
-//		/*
-//		 * preload all the possible resolvers in the wider scope before specializing the
-//		 * scope to the child observation. Then leave it to the kbox to use the context
-//		 * with the preloaded cache.
-//		 */
-//		this.resolutionScope.preloadResolvers(observable, contextSubject);
 		ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
 		return getDataflow(observable, Mode.RESOLUTION, scale, null, (geometry) -> {
 
@@ -631,6 +578,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
 										 */;
 				df.setModel((Model) model);
 				df.setDescription("Resolution of " + observable);
+
+				notifyDataflowChanges(this);
 
 			} else if (resolutionScope.getPreresolvedModels(observable) == null
 					|| this.resolutionScope.getPreresolvedModels(observable).getSecond().size() == 0) {
@@ -771,6 +720,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
 				 */
 				df = Dataflow.empty(observable, null, scp, this.dataflow);
 			}
+
+			notifyDataflowChanges(this);
 
 			return df;
 

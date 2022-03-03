@@ -64,8 +64,10 @@ public interface IActuator extends IDataflowNode, IPlan {
 
 	/**
 	 * Each actuator reports the artifact type of the observation it produces. Pure
-	 * resolvers (e.g. the resolver for an object) report a void type. Actuators
-	 * whose type defines an occurrent are not run at initialization.
+	 * resolvers (e.g. the resolver for an object) report the special RESOLVE type;
+	 * VOID actuators resolve views or predicates Actuators whose type defines an
+	 * occurrent are not run at initialization but just called upon to schedule
+	 * temporal actions.
 	 * 
 	 * @return
 	 */
@@ -76,6 +78,7 @@ public interface IActuator extends IDataflowNode, IPlan {
 	 * not correspond to the order of contextualization, which is computed by the
 	 * runtime, although it is expected that child actuators at the same level
 	 * without mutual dependencies have a non-random order which should be honored.
+	 * In a runtime context, the child list may contain other dataflows.
 	 *
 	 * @return all the internal actuators in order of declaration.
 	 */
@@ -93,8 +96,8 @@ public interface IActuator extends IDataflowNode, IPlan {
 	List<IActuator> getInputs();
 
 	/**
-	 * Return all the computable actuators in the children, excluding the void ones
-	 * and the dataflows.
+	 * Return all the computable actuators in the children, excluding the resolution
+	 * ones and the dataflows.
 	 * 
 	 * @return
 	 */
@@ -103,7 +106,8 @@ public interface IActuator extends IDataflowNode, IPlan {
 	/**
 	 * Return all the dataflows in our children. These are meant to contextualize
 	 * objects instantiated by this one or to concretize predicates before the
-	 * others are computed.
+	 * others are computed. Dataflows loaded from serialized resolutions will not
+	 * report any dataflow.
 	 * 
 	 * @return
 	 */

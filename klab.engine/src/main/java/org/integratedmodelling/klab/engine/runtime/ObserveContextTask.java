@@ -130,13 +130,6 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
                                 activity.getActivityDescriptor().setDataflowCode(dataflow.getKdlCode());
                             }
 
-                            ((AbstractRuntimeScope)runtimeScope).setRootDataflow(dataflow);
-                            
-                            session.getMonitor()
-                                    .send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
-                                            IMessage.Type.DataflowCompiled, new DataflowReference(token,
-                                                    dataflow.getKdlCode(),
-                                                    runtimeScope.getElkGraph())));
                             /*
                              * make a copy of the coverage so that we ensure it's a scale, behaving
                              * properly at merge. FIXME this must be the entire scale now - each
@@ -145,7 +138,12 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
                              */
                             ret = (ISubject) dataflow.run(scope.getCoverage().copy(), runtimeScope);
 
+
                             if (ret != null) {
+
+                            	((AbstractRuntimeScope)runtimeScope).setRootDataflow(dataflow, ret.getId());
+                                ((AbstractRuntimeScope)runtimeScope).notifyDataflowChanges(runtimeScope);
+
                                 setContext((Subject) ret);
                                 getDescriptor().setContextId(ret.getId());
                                 /*
