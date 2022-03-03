@@ -1094,7 +1094,7 @@ public class Actuator implements IActuator {
 	}
 
 	private String getKdlActorType() {
-		return (getType() == IArtifact.Type.VOID) ? "resolve" : getType().name().toLowerCase();
+		return getType().name().toLowerCase();
 	}
 
 	protected String encodePredicates(Observable observable) {
@@ -1296,8 +1296,10 @@ public class Actuator implements IActuator {
 	}
 
 	public IArtifact.Type getType() {
-		// FIXME generate them this way instead.
-		return (mode == IResolutionScope.Mode.RESOLUTION && type == IArtifact.Type.OBJECT) ? IArtifact.Type.VOID : type;
+		return /*
+				 * (mode == IResolutionScope.Mode.RESOLUTION && type == IArtifact.Type.OBJECT) ?
+				 * IArtifact.Type.VOID :
+				 */type;
 	}
 
 	public void setType(IArtifact.Type type) {
@@ -1551,7 +1553,7 @@ public class Actuator implements IActuator {
 		for (IActuator act : actuator.getChildren()) {
 
 			// these are sub-dataflow that are run after instantiation
-			if (skipSubdataflows && (act instanceof Dataflow || act.getType() == IArtifact.Type.VOID)) {
+			if (skipSubdataflows && (act instanceof Dataflow || act.getType() == IArtifact.Type.RESOLVE)) {
 				continue;
 			}
 
@@ -1793,7 +1795,7 @@ public class Actuator implements IActuator {
 	 * @return
 	 */
 	public IActuator getResolver() {
-		if (this.getType() == IArtifact.Type.VOID) {
+		if (this.getType() == IArtifact.Type.RESOLVE) {
 			return this;
 		}
 		if (this.actuators.size() > 0 && this.actuators.get(0) instanceof Dataflow) {

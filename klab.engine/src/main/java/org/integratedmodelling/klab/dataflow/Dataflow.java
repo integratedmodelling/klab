@@ -438,11 +438,6 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		return null;
 	}
 
-//	@Override
-//	protected String encode(int offset, List<IActuator> children) {
-//		return encode(offset, children);
-//	}
-
 	/**
 	 * Preamble is output only at level zero and if the parameter is set to true.
 	 * Dataflows are explicitly wrapped in "resolve" only when 1) at root level
@@ -458,7 +453,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	String encode(int offset, Actuator parentActuator) {
 
 		String ret = "";
-		String spacer = StringUtil.spaces(offset);
+//		String spacer = StringUtil.spaces(offset);
 
 		if (offset == 0 && parentActuator == null) {
 			ret += "@klab " + Version.CURRENT + "\n";
@@ -509,7 +504,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	@Override
 	public IActuator getResolver() {
 		if (this.getChildren().size() > 0 && !(this.getChildren().get(0) instanceof Dataflow)
-				&& this.getChildren().get(0).getType() == Type.VOID) {
+				&& this.getChildren().get(0).getType() == Type.RESOLVE) {
 			return this.getChildren().get(0);
 		}
 		return null;

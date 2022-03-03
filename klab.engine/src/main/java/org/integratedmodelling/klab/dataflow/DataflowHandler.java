@@ -24,6 +24,8 @@ import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Triple;
+import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.Graph;
 
 /**
  * The root contextualization scope ultimately handles a dataflow that can be
@@ -56,7 +58,7 @@ public class DataflowHandler extends Parameters<String> {
 	private List<Dataflow> preContextualizationDataflows = new ArrayList<>();
 	private Map<ObservedConcept, List<Pair<ICoverage, Dataflow>>> dataflowCache = new HashMap<>();
 	List<Dataflow> rootNodes = new ArrayList<>();
-	
+
 	public DataflowHandler() {
 		this.id = NameGenerator.shortUUID();
 		this.kelk = KlabElkGraphFactory.keINSTANCE;
@@ -67,11 +69,11 @@ public class DataflowHandler extends Parameters<String> {
 		this.dataflowCache = new HashMap<>();
 		this.rootNodes = new ArrayList<>();
 	}
-	
+
 	protected DataflowHandler(DataflowHandler other) {
 		copyDataflowInfo(other);
 	}
-	
+
 	protected void copyDataflowInfo(DataflowHandler other) {
 		this.id = other.id;
 		this.kelk = other.kelk;
@@ -86,7 +88,7 @@ public class DataflowHandler extends Parameters<String> {
 	public String getKdl() {
 		if (rootDataflow == null) {
 			return "";
-		} 
+		}
 		System.out.println(rootDataflow.dump());
 		return rootDataflow.getKdlCode();
 	}
@@ -155,6 +157,18 @@ public class DataflowHandler extends Parameters<String> {
 		}
 
 		return ret;
+	}
+
+	/**
+	 * Return the synthesized actuator structure for a dataflow that was built
+	 * incrementally by successive resolutions. Compared to the original dataflow,
+	 * this one won't contain sub-dataflows and will report complete coverages. It
+	 * is the graph that should be used for serialization and visualization.
+	 * 
+	 * @return
+	 */
+	public Graph<Actuator, DefaultEdge> getDataflowStructure() {
+		return null;
 	}
 
 	public String getElkGraph(IRuntimeScope scope) {

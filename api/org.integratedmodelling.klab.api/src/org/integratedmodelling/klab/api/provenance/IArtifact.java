@@ -152,9 +152,17 @@ public interface IArtifact extends IProvenance.Node, Iterable<IArtifact> {
 		 * A list value
 		 */
 		LIST,
+
 		/**
-		 * No value - the type of computations that resolve objects (acknowledgements),
-		 * and for options in command prototypes
+		 * Not an artifact type, but adopted by the (void) actuators that resolve
+		 * acknowledged objects. Must be distinct from void as the latter may make view
+		 * observations. Translates directly to the k.DL actuator type.
+		 */
+		RESOLVE,
+
+		/**
+		 * No value - the type of computations that resolve views and for options in
+		 * command prototypes
 		 */
 		VOID,
 

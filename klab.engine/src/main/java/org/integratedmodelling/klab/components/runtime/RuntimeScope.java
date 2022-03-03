@@ -288,7 +288,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
 	}
 
 	RuntimeScope(RuntimeScope scope, Map<String, IVariable> variables) {
-		super(scope);
+		this(scope);
 		this.model = scope.model;
 		this.getVariables().putAll(variables);
 	}
@@ -640,8 +640,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
 						this.actuator)/*
 										 * .setPrimary(false)
 										 */;
-				dataflow.setModel((Model) model);
-				dataflow.setDescription("Resolution of " + observable);
+				df.setModel((Model) model);
+				df.setDescription("Resolution of " + observable);
 
 			} else if (resolutionScope.getPreresolvedModels(observable) == null
 					|| this.resolutionScope.getPreresolvedModels(observable).getSecond().size() == 0) {
