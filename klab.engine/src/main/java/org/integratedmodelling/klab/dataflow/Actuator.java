@@ -1006,7 +1006,8 @@ public class Actuator implements IActuator {
 	}
 
 	public String toString() {
-		return dump();
+		return "<" + getName() + ((getAlias() != null && !getAlias().equals(getName())) ? " as " + getAlias() : "")
+				+ " [" + (computationStrategy.size() + mediationStrategy.size()) + "]>";
 	}
 
 	/**
@@ -1074,21 +1075,24 @@ public class Actuator implements IActuator {
 			Graph<IActuator, DefaultEdge> graph) {
 
 		graph.addVertex(this);
-		
 		for (IActuator actuator : (children == null || children.isEmpty()) ? getSortedChildren(this, false)
 				: children) {
 			if (actuator instanceof Dataflow) {
 				Pair<IActuator, List<IActuator>> structure = ((Dataflow) actuator).getResolutionStructure();
 				if (structure == null) {
 					for (IActuator act : actuator.getChildren()) {
-						graph.addEdge(makeDataflowStructure(act, null, graph), this);
+						((Actuator) act).makeDataflowStructure(this, null, graph);
 					}
 				} else {
-					graph.addEdge(makeDataflowStructure(structure.getFirst(), structure.getSecond(), graph), this);
+					((Actuator) structure.getFirst()).makeDataflowStructure(this, structure.getSecond(), graph);
 				}
 			} else {
-				graph.addEdge(makeDataflowStructure(actuator, null, graph), this);
+				((Actuator) actuator).makeDataflowStructure(this, null, graph);
 			}
+		}
+
+		if (parent != null) {
+			graph.addEdge(this, parent);
 		}
 
 		return this;
@@ -1381,37 +1385,12 @@ public class Actuator implements IActuator {
 		return input;
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((_actuatorId == null) ? 0 : _actuatorId.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Actuator other = (Actuator) obj;
-		if (_actuatorId == null) {
-			if (other._actuatorId != null)
-				return false;
-		} else if (!_actuatorId.equals(other._actuatorId))
-			return false;
-		return true;
-	}
-
 	public String getId() {
 		return _actuatorId;
 	}
 
 	public String getDataflowId() {
-		return getId();
+		return getDataflow().getId();
 	}
 
 	public IResolutionScope.Mode getMode() {

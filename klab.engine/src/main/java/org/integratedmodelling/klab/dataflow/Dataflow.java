@@ -448,22 +448,23 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 				structure.getSecond().isEmpty() ? (List<IActuator>) null : structure.getSecond());
 	}
 
-	public Graph<IActuator, DefaultEdge> getDataflowStructure() {
+	public Pair<List<IActuator>, Graph<IActuator, DefaultEdge>> getDataflowStructure() {
 
 		Graph<IActuator, DefaultEdge> ret = new DefaultDirectedGraph<>(DefaultEdge.class);
 
+		List<IActuator> rootNodes = new ArrayList<>();
 		Pair<IActuator, List<IActuator>> structure = getResolutionStructure();
 
 		if (structure == null) {
 			for (IActuator actuator : actuators) {
-				((Actuator) actuator).makeDataflowStructure(null, null, ret);
+				rootNodes.add(((Actuator) actuator).makeDataflowStructure(null, null, ret));
 			}
-			return ret;
+			return new Pair<>(rootNodes, ret);
 		}
 
-		((Actuator) structure.getFirst()).makeDataflowStructure(null, structure.getSecond(), ret);
+		rootNodes.add(((Actuator) structure.getFirst()).makeDataflowStructure(null, structure.getSecond(), ret));
 
-		return ret;
+		return new Pair<>(rootNodes, ret);
 
 	}
 
@@ -482,17 +483,6 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		}
 		return null;
 	}
-
-//	private Observable getDataflowObservable() {
-//		Observable ret = null;
-//		for (IActuator actuator : actuators) {
-//			ret = ((Actuator) actuator).getObservable();
-//			if (ret != null) {
-//				break;
-//			}
-//		}
-//		return ret;
-//	}
 
 	String getDataflowSubjectName() {
 		String ret = "*";
@@ -590,31 +580,6 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 			}
 		}
 		actuator.getLocalNames().putAll(hashMap);
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((_actuatorId == null) ? 0 : _actuatorId.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Dataflow other = (Dataflow) obj;
-		if (_actuatorId == null) {
-			if (other._actuatorId != null)
-				return false;
-		} else if (!_actuatorId.equals(other._actuatorId))
-			return false;
-		return true;
 	}
 
 	public Dataflow setPrimary(boolean primary) {

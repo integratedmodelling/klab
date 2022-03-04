@@ -190,17 +190,17 @@ public class DataflowHandler extends Parameters<String> {
 	 * this one won't contain sub-dataflows and will report complete coverages. It
 	 * is the graph that should be used for serialization and visualization.
 	 * 
-	 * @return
+	 * @return the root node(s) and the full, normalized actuator graph.
 	 */
-	public Graph<IActuator, DefaultEdge> getDataflowStructure() {
+	public Pair<List<IActuator>, Graph<IActuator, DefaultEdge>> getDataflowStructure() {
 		return rootDataflow == null ? null : rootDataflow.getDataflowStructure();
 	}
 
 	public String getElkGraph(IRuntimeScope scope) {
 
-		Graph<IActuator, DefaultEdge> structure = getDataflowStructure();
+		Pair<List<IActuator>, Graph<IActuator, DefaultEdge>> structure = getDataflowStructure();
 
-		if (structure == null) {
+		if (structure == null || structure.getFirst().isEmpty()) {
 			return null;
 		}
 
