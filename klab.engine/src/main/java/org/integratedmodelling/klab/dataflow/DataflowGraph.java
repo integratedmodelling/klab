@@ -31,9 +31,9 @@ public class DataflowGraph {
     private Map<String, Element> elements;
 
     public DataflowGraph(Flowchart flowchart, DataflowHandler strategy, KlabElkGraphFactory kelk) {
-        this.nodes = strategy.getNodes();
-        this.elements = strategy.getElements();
-        this.computationToNodeId = strategy.getComputationToNodeIdTable();
+//        this.nodes = strategy.getNodes();
+//        this.elements = strategy.getElements();
+//        this.computationToNodeId = strategy.getComputationToNodeIdTable();
         this.kelk = kelk;
         this.flowchart = flowchart;
         rootNode = compile(flowchart);

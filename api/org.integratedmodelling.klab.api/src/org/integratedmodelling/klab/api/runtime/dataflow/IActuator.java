@@ -35,7 +35,7 @@ import org.integratedmodelling.klab.api.resolution.ICoverage;
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-public interface IActuator extends IDataflowNode, IPlan {
+public interface IActuator extends /* IDataflowNode, */IPlan {
 
 	/**
 	 * All actuators have a name that corresponds to the semantics it was created to

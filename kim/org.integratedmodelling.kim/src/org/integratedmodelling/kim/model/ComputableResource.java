@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -649,13 +648,13 @@ public class ComputableResource extends KimStatement implements IContextualizabl
         return true;
     }
 
-    public String getDataflowId() {
-        return dataflowId;
-    }
-
-    public void setDataflowId(String dataflowId) {
-        this.dataflowId = dataflowId;
-    }
+//    public String getDataflowId() {
+//        return dataflowId;
+//    }
+//
+//    public void setDataflowId(String dataflowId) {
+//        this.dataflowId = dataflowId;
+//    }
 
     @Override
     public Collection<String> getInteractiveParameters() {

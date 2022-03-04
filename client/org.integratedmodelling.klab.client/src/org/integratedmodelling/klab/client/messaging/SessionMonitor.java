@@ -53,6 +53,8 @@ public abstract class SessionMonitor extends ContextMonitor {
 			List<Object> ret = new ArrayList<>();
 			if (dataflow != null) {
 				ret.add(dataflow);
+			} else if (contextId != null) {
+				ret.add(new DataflowReference(contextId));
 			}
 			for (String task : observationTasks) {
 				ret.add(beans.get(task));

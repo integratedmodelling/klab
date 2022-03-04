@@ -448,6 +448,9 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 				structure.getSecond().isEmpty() ? (List<IActuator>) null : structure.getSecond());
 	}
 
+	/*
+	 * the root dataflow is guaranteed to have only one root node, the others do not.
+	 */
 	public Pair<List<IActuator>, Graph<IActuator, DefaultEdge>> getDataflowStructure() {
 
 		Graph<IActuator, DefaultEdge> ret = new DefaultDirectedGraph<>(DefaultEdge.class);

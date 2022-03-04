@@ -8,6 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -22,6 +23,7 @@ import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.dataflow.Actuator.Status;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.dataflow.DataflowHandler;
+import org.integratedmodelling.klab.dataflow.Flowchart.Element;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
@@ -200,6 +202,16 @@ public abstract class AbstractRuntimeScope extends DataflowHandler implements IR
 	@Override
 	public Set<IObservedConcept> getImplicitlyChangingObservables() {
 		return implicitlyChangingObservables;
+	}
+
+	public Element findDataflowElement(String nodeId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getNodeId(IContextualizable resource) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

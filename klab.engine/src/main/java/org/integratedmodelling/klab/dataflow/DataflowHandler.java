@@ -7,11 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
-import org.eclipse.elk.core.util.BasicProgressMonitor;
-import org.eclipse.elk.graph.ElkConnectableShape;
-import org.eclipse.elk.graph.ElkNode;
-import org.eclipse.elk.graph.json.ElkGraphJson;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
@@ -20,15 +15,14 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
-import org.integratedmodelling.klab.dataflow.Flowchart.Element;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.rest.DataflowReference;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
-import org.integratedmodelling.klab.utils.Triple;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 
@@ -49,10 +43,6 @@ import org.jgrapht.graph.DefaultEdge;
 public class DataflowHandler extends Parameters<String> {
 
 	private String id;
-	private KlabElkGraphFactory kelk = KlabElkGraphFactory.keINSTANCE;
-	private Map<String, ElkConnectableShape> nodes = new HashMap<>();
-	private Map<String, Element> elements = new HashMap<>();
-	private Map<String, String> node2dataflowId = new HashMap<>();
 	private Dataflow rootDataflow;
 	private int dataflowCodeLength = 0;
 
@@ -65,13 +55,10 @@ public class DataflowHandler extends Parameters<String> {
 	private Map<ObservedConcept, List<Pair<ICoverage, Dataflow>>> dataflowCache = new HashMap<>();
 	List<Dataflow> rootNodes = new ArrayList<>();
 	private String rootContextId;
+	private Flowchart flowchart;
 
 	public DataflowHandler() {
 		this.id = NameGenerator.shortUUID();
-		this.kelk = KlabElkGraphFactory.keINSTANCE;
-		this.nodes = new HashMap<>();
-		this.elements = new HashMap<>();
-		this.node2dataflowId = new HashMap<>();
 		this.preContextualizationDataflows = new ArrayList<>();
 		this.dataflowCache = new HashMap<>();
 		this.rootNodes = new ArrayList<>();
@@ -83,10 +70,6 @@ public class DataflowHandler extends Parameters<String> {
 
 	protected void copyDataflowInfo(DataflowHandler other) {
 		this.id = other.id;
-		this.kelk = other.kelk;
-		this.nodes = other.nodes;
-		this.elements = other.elements;
-		this.node2dataflowId = other.node2dataflowId;
 		this.preContextualizationDataflows = other.preContextualizationDataflows;
 		this.dataflowCache = other.dataflowCache;
 		this.rootNodes = other.rootNodes;
@@ -124,13 +107,12 @@ public class DataflowHandler extends Parameters<String> {
 
 		String code = getKdl();
 		if (code.length() > dataflowCodeLength) {
-			scope.getSession().getMonitor()
-					.send(Message.create(scope.getSession().getId(), IMessage.MessageClass.TaskLifecycle,
-							IMessage.Type.DataflowCompiled,
-							new DataflowReference(rootContextId, code, getElkGraph(scope))));
+			DataflowReference dataflow = new DataflowReference(rootContextId, code, getElkGraph(scope));
+			scope.getSession().getMonitor().send(Message.create(scope.getSession().getId(),
+					IMessage.MessageClass.TaskLifecycle, IMessage.Type.DataflowCompiled, dataflow));
 			this.dataflowCodeLength = code.length();
 			if (Configuration.INSTANCE.isEchoEnabled()) {
-				System.out.println(rootDataflow.getKdlCode());
+				System.out.println(dataflow.getJsonElkLayout());
 			}
 		}
 	}
@@ -190,109 +172,30 @@ public class DataflowHandler extends Parameters<String> {
 	 * this one won't contain sub-dataflows and will report complete coverages. It
 	 * is the graph that should be used for serialization and visualization.
 	 * 
-	 * @return the root node(s) and the full, normalized actuator graph.
+	 * @return the root node and the full, normalized actuator graph. Because this
+	 *         is executed on the root dataflow, the root node is guaranteed unique.
 	 */
-	public Pair<List<IActuator>, Graph<IActuator, DefaultEdge>> getDataflowStructure() {
-		return rootDataflow == null ? null : rootDataflow.getDataflowStructure();
+	public Pair<IActuator, Graph<IActuator, DefaultEdge>> getDataflowStructure() {
+		if (rootDataflow == null) {
+			return null;
+		}
+		Pair<List<IActuator>, Graph<IActuator, DefaultEdge>> ret = rootDataflow.getDataflowStructure();
+		if (ret.getFirst().size() != 1) {
+			throw new KlabInternalErrorException("root dataflow has more than one root node");
+		}
+		return new Pair<>(ret.getFirst().get(0), ret.getSecond());
 	}
 
 	public String getElkGraph(IRuntimeScope scope) {
 
-		Pair<List<IActuator>, Graph<IActuator, DefaultEdge>> structure = getDataflowStructure();
+		Pair<IActuator, Graph<IActuator, DefaultEdge>> structure = getDataflowStructure();
 
-		if (structure == null || structure.getFirst().isEmpty()) {
+		if (structure == null) {
 			return null;
 		}
 
-		List<Flowchart> flowcharts = new ArrayList<>();
-
-		synchronized (this) {
-
-			elements.clear();
-			nodes.clear();
-			node2dataflowId.clear();
-			flowcharts.clear();
-
-			ElkNode root = kelk.createGraph(id);
-
-			/*
-			 * first create the flowcharts and link them, creating outputs for any exported
-			 * observation. Then make the graph from the linked flowcharts.
-			 */
-			List<Triple<String, String, String>> connections = new ArrayList<>();
-			for (Dataflow df : rootNodes) {
-
-				Flowchart current = Flowchart.create(df, scope);
-
-				for (String input : current.getExternalInputs().keySet()) {
-					for (Flowchart previous : flowcharts) {
-						String output = previous.pullOutput(input);
-						if (output != null) {
-							connections.add(new Triple<>(input, output, current.getExternalInputs().get(input)));
-						}
-					}
-				}
-
-				flowcharts.add(current);
-			}
-
-			// new nodes
-			ElkNode contextNode = null;
-			for (Flowchart flowchart : flowcharts) {
-				DataflowGraph graph = new DataflowGraph(flowchart, this, kelk);
-				// TODO children - recurse on secondary contextualizations
-				ElkNode tgraph = graph.getRootNode();
-				if (tgraph != null) {
-					root.getChildren().add(tgraph);
-					if (contextNode == null) {
-						contextNode = tgraph;
-					} else {
-						int i = 0;
-						for (ElkConnectableShape outPort : graph.getOutputs()) {
-							kelk.createSimpleEdge(outPort, contextNode, "ctx" + outPort.getIdentifier() + "_" + i);
-						}
-					}
-				}
-			}
-
-			for (Triple<String, String, String> connection : connections) {
-				kelk.createSimpleEdge(nodes.get(connection.getSecond()), nodes.get(connection.getThird()), "external."
-						+ connection.getSecond() + "." + connection.getThird() + "." + connection.getFirst());
-			}
-
-			RecursiveGraphLayoutEngine engine = new RecursiveGraphLayoutEngine();
-			engine.layout(root, new BasicProgressMonitor());
-
-			String json = ElkGraphJson.forGraph(root).omitLayout(false).omitZeroDimension(true).omitZeroPositions(true)
-					.shortLayoutOptionKeys(true).prettyPrint(true).toJson();
-
-			// System.out.println(json);
-			return json;
-		}
-	}
-
-	public Map<String, ElkConnectableShape> getNodes() {
-		synchronized (rootNodes) {
-			return nodes;
-		}
-	}
-
-	public Map<String, Element> getElements() {
-		synchronized (rootNodes) {
-			return elements;
-		}
-	}
-
-	public Map<String, String> getComputationToNodeIdTable() {
-		synchronized (rootNodes) {
-			return node2dataflowId;
-		}
-	}
-
-	public Element findDataflowElement(String nodeId) {
-		synchronized (rootNodes) {
-			return elements.get(nodeId);
-		}
+		this.flowchart = Flowchart.create(structure.getFirst(), structure.getSecond(), scope);
+		return flowchart.getJsonLayout();
 	}
 
 }

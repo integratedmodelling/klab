@@ -656,7 +656,7 @@ public class Actuator implements IActuator {
 
 		ISession session = scope.getMonitor().getIdentity().getParentIdentity(ISession.class);
 		DataflowState state = new DataflowState();
-		state.setNodeId(((AbstractRuntimeScope) scope).getComputationToNodeIdTable().get(resource.getDataflowId()));
+		state.setNodeId(((AbstractRuntimeScope) scope).getNodeId(resource));
 		state.setStatus(DataflowState.Status.STARTED);
 		state.setMonitorable(false); // for now
 		session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
@@ -1652,9 +1652,9 @@ public class Actuator implements IActuator {
 		return new ObservedConcept(this.observable, this.mode);
 	}
 
-	public void setDataflow(Dataflow dataflow) {
-		this.dataflow = dataflow;
-	}
+//	public void setDataflow(Dataflow dataflow) {
+//		this.dataflow = dataflow;
+//	}
 
 	public void setExport(boolean b) {
 		this.exported = true;
