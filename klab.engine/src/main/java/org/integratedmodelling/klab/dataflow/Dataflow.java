@@ -323,10 +323,11 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	}
 
 	public Graph<IObservedConcept, DefaultEdge> getDependencyGraph() {
-	    if (this.dependencyGraph == null) {
-	        this.dependencyGraph = buildDependencies();
-	    }
-	    return this.dependencyGraph;
+	    return buildDependencies();
+	    //	    if (this.dependencyGraph == null) {
+//	        this.dependencyGraph = buildDependencies();
+//	    }
+//	    return this.dependencyGraph;
 	}
 	
 	private Graph<IObservedConcept, DefaultEdge> buildDependencies() {

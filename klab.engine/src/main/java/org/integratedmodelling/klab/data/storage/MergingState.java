@@ -48,9 +48,10 @@ public class MergingState extends State {
     STRtree spatialIndex;
     List<IState> states = new ArrayList<>();
     private boolean indexBuilt;
-    // if false (default), expect multiple data in one point to be the same result,
-    // and average
-    // instead of aggregating according to semantics.
+    /*
+     * if false (default), expect multiple data in one point to be the same result, and average
+     * instead of aggregating according to semantics.
+     */
     private boolean aggregate = false;
     private TemporalExtension timeExtension = null;
 
@@ -159,7 +160,7 @@ public class MergingState extends State {
         if (timeExtension == null) {
             timeExtension = new TemporalExtension(getScale().getTime());
         }
-        
+
         if (timeExtension.add(time)) {
             ObservationChange change = new ObservationChange();
             change.setContextId(getScope().getRootSubject().getId());
@@ -233,23 +234,15 @@ public class MergingState extends State {
             }
 
             if (exts.size() == scale.getExtentCount()) {
-                
-                Object value = state.get(Scale.create(exts));
 
-//                OffsetIterator iterator = new OffsetIterator(state.getScale(), exts);
-//                while(iterator.hasNext()) {
-//                    Offset offset = iterator.next();
-//                    if (offset != null) {
-//                        Object value = state.get(offset);
-                        if (aggregate) {
-                            aggregator.add(value, state.getObservable(), index);
-                        } else if (Observations.INSTANCE.isData(value)) {
-                            return value;
-                        }
-//                    }
+                Object value = state.get(Scale.create(exts));
+                if (aggregate) {
+                    aggregator.add(value, state.getObservable(), index);
+                } else if (Observations.INSTANCE.isData(value)) {
+                    return value;
                 }
             }
-            // }
+        }
 
         return aggregate ? aggregator.aggregate() : null;
     }
@@ -260,12 +253,12 @@ public class MergingState extends State {
             return timeExtension.getTimestamps();
         }
         if (isDynamic() && getScale().getTime() != null) {
-        	Time time = (Time)getScale().getTime();
-        	return time.getUpdateTimestamps();
+            Time time = (Time) getScale().getTime();
+            return time.getUpdateTimestamps();
         }
         return delegate.getUpdateTimestamps();
     }
-    
+
     public long set(ILocator index, Object value) {
         throw new KlabIllegalStateException("Merging states are read-only");
     }

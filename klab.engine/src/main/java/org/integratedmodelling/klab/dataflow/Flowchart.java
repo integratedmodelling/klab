@@ -78,7 +78,7 @@ public class Flowchart {
 	private Map<String, ElkConnectableShape> nodes;
 	private Map<String, String> computationToNodeId;
 	private Map<String, Element> elements;
-	private String id;
+//	private String id;
 
 	public static enum ElementType {
 		// actor types
@@ -278,10 +278,10 @@ public class Flowchart {
 
 	}
 
-	public Flowchart(String id, IRuntimeScope scope, Graph<IActuator, DefaultEdge> dataflow) {
+    public Flowchart(/* String id, */IRuntimeScope scope, Graph<IActuator, DefaultEdge> dataflow) {
 		this.runtimeScope = scope;
 		this.graph = dataflow;
-		this.id = id;
+//		this.id = id;
 	}
 
 	/**
@@ -293,10 +293,7 @@ public class Flowchart {
 	 */
 	public static Flowchart create(IActuator dataflow, Graph<IActuator, DefaultEdge> structure, IRuntimeScope scope) {
 
-		Flowchart ret = new Flowchart(dataflow.getId(), scope, structure);
-
-		// if (dataflow.getActuators().size() > 0) {
-//            Actuator actuator = (Actuator) dataflow.getActuators().get(0);
+        Flowchart ret = new Flowchart(/* dataflow.getId(), */ scope, structure);
 		ret.compileActuator((Actuator) dataflow, null);
 
 		if (!(((Actuator) dataflow).getObservable().is(Type.COUNTABLE)
@@ -306,7 +303,6 @@ public class Flowchart {
 				ret.outputs.put(dataflow.getName(), ret.root.getOrCreateOutput(dataflow.getName()));
 			}
 		}
-//        }
 		return ret;
 	}
 
