@@ -22,6 +22,7 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.components.runtime.observations.State;
+import org.integratedmodelling.klab.components.time.extents.TemporalExtension;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.data.Aggregator;
 import org.integratedmodelling.klab.engine.runtime.api.IModificationListener;
@@ -51,6 +52,7 @@ public class MergingState extends State {
     // and average
     // instead of aggregating according to semantics.
     private boolean aggregate = false;
+    private TemporalExtension timeExtension = null;
 
     class StateLocator {
         public IShape shape;
@@ -154,7 +156,11 @@ public class MergingState extends State {
 
     private void checkExtent(ITime time) {
 
-        if (((Scale) this.getScale()).mergeTransition(time)) {
+        if (timeExtension == null) {
+            timeExtension = new TemporalExtension(getScale().getTime());
+        }
+        
+        if (timeExtension.add(time)) {
             ObservationChange change = new ObservationChange();
             change.setContextId(getScope().getRootSubject().getId());
             change.setId(getId());
@@ -191,6 +197,9 @@ public class MergingState extends State {
 
     @Override
     public boolean isDynamic() {
+        if (timeExtension != null) {
+            return true;
+        }
         for (IState state : states) {
             if (state.isDynamic()) {
                 return true;
@@ -247,11 +256,14 @@ public class MergingState extends State {
 
     @Override
     public long[] getUpdateTimestamps() {
+        if (timeExtension != null) {
+            return timeExtension.getTimestamps();
+        }
         if (isDynamic() && getScale().getTime() != null) {
         	Time time = (Time)getScale().getTime();
         	return time.getUpdateTimestamps();
         }
-        return new long[] {};
+        return delegate.getUpdateTimestamps();
     }
     
     public long set(ILocator index, Object value) {
