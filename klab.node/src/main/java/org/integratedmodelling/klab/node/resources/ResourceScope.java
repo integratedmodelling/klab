@@ -824,12 +824,6 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
     }
 
     @Override
-    public void setDependencyGraph(Graph<IObservedConcept, DefaultEdge> buildDependencies) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
     public Graph<IObservedConcept, DefaultEdge> getDependencyGraph() {
         // TODO Auto-generated method stub
         return null;

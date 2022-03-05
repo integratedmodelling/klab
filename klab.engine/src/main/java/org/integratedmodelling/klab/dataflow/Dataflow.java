@@ -90,6 +90,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	private List<InteractiveParameter> fields = new ArrayList<>();
 	private List<Pair<IContextualizable, List<String>>> resources = new ArrayList<>();
 	private List<Pair<IAnnotation, List<String>>> annotations = new ArrayList<>();
+	private Graph<IObservedConcept, DefaultEdge> dependencyGraph;
 
 	class AnnotationParameterValue {
 
@@ -139,13 +140,6 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	 * @throws KlabException
 	 */
 	public IArtifact run(IScale scale, Actuator parentComputation, IRuntimeScope scope) throws KlabException {
-
-		/*
-		 * build the observable dependency hierarchy to put in the runtime context. The
-		 * scheduler will use this to determine which actuators need recomputation among
-		 * those that have only implicit change associated.
-		 */
-		scope.setDependencyGraph(buildDependencies());
 
 		/*
 		 * we need the initialization scale for the dataflow but we must create our
@@ -328,10 +322,18 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		}
 	}
 
+	public Graph<IObservedConcept, DefaultEdge> getDependencyGraph() {
+	    if (this.dependencyGraph == null) {
+	        this.dependencyGraph = buildDependencies();
+	    }
+	    return this.dependencyGraph;
+	}
+	
 	private Graph<IObservedConcept, DefaultEdge> buildDependencies() {
 		Graph<IObservedConcept, DefaultEdge> ret = new DefaultDirectedGraph<>(DefaultEdge.class);
 		boolean primary = true;
-		for (IActuator actuator : getActuators()) {
+		// use the logical structure to only get true actuators and recurse sub-dataflows
+		for (IActuator actuator : getDataflowStructure().getSecond().vertexSet()) {
 			buildDependencies((Actuator) actuator, ret, primary);
 			primary = false;
 		}
@@ -610,6 +612,11 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
 	public void notifyOccurrents() {
 		this.isOccurrent = true;
+	}
+	
+	@Override
+	public String toString() {
+	    return dump();
 	}
 
 	/**

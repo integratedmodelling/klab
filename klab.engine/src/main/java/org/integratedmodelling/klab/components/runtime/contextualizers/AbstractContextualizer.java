@@ -74,7 +74,7 @@ public abstract class AbstractContextualizer implements IContextualizer {
             artifact = (T) scope.getState(stateIdentifier, Unit.create(input.getUnit()));
         } else if (input.getUnit() == null) {
             artifact = scope.getArtifact(stateIdentifier, cls);
-            if (artifact.getObservable().getArtifactType() != input.getType()) {
+            if (artifact != null && artifact.getObservable().getArtifactType() != input.getType()) {
                 throw new KlabIllegalStateException("input '" + stateIdentifier + "' in function "
                         + prototype.getName() + " is not of the declared " + input.getType()
                         + " type (actual = " + artifact.getObservable().getArtifactType() + ")");

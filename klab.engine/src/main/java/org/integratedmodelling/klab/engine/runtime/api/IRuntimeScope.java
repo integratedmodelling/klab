@@ -521,14 +521,14 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 * @return
 	 */
 	Actuator getActuator();
-
-	/**
-	 * Set the dataflow's dependency graph into the scope so it's available during
-	 * contextualization.
-	 * 
-	 * @param buildDependencies
-	 */
-	void setDependencyGraph(Graph<IObservedConcept, DefaultEdge> buildDependencies);
+//
+//	/**
+//	 * Set the dataflow's dependency graph into the scope so it's available during
+//	 * contextualization.
+//	 * 
+//	 * @param buildDependencies
+//	 */
+//	void setDependencyGraph(Graph<IObservedConcept, DefaultEdge> buildDependencies);
 
 	/**
 	 * Return the current dataflow's dependency graph.

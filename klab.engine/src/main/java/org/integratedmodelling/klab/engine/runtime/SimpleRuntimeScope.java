@@ -905,12 +905,6 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
     }
 
     @Override
-    public void setDependencyGraph(Graph<IObservedConcept, DefaultEdge> buildDependencies) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
     public Graph<IObservedConcept, DefaultEdge> getDependencyGraph() {
         // TODO Auto-generated method stub
         return null;
