@@ -58,7 +58,6 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
 	Object defaultValue = null;
 	Set<String> enumValues = new HashSet<>();
 	Set<Target> targets = new HashSet<>();
-
 	List<IKdlContextualizer> coverage = new ArrayList<>();
 
 	private boolean isResolution;
@@ -151,8 +150,9 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
 				}
 				for (IKdlAnnotation annotation : extended.getAnnotations()) {
 					this.annotations.add(annotation);
-				}
-
+				} 
+			} else {
+				this.errors.add("cannot find imported actuator " + o.getExtended());
 			}
 		}
 
@@ -478,5 +478,4 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
 	public boolean isTaggingAnnotation() {
 		return isTaggingAnnotation;
 	}
-
 }
