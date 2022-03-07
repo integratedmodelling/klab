@@ -33,7 +33,7 @@ public class Prototype extends org.integratedmodelling.klab.common.Prototype {
 
 		this.name = (namespace == null ? "" : (namespace + ".")) + actuator.getName();
 		this.type = IArtifact.Type.valueOf(actuator.getType().name());
-		this.contextualizer = actuator.isExported();
+		this.contextualizer = actuator.isExport();
 		this.filter = actuator.isFilter();
 
 		if (actuator.getDescription() != null) {
@@ -48,6 +48,7 @@ public class Prototype extends org.integratedmodelling.klab.common.Prototype {
 		for (IKdlActuator arg : actuator.getActors()) {
 
 			ArgumentImpl a = new ArgumentImpl();
+
 			a.name = arg.getName();
 			a.description = arg.getDescription() == null ? "" : StringUtil.pack(arg.getDescription()).trim();
 			a.type = arg.getType() == null ? null : Type.valueOf(arg.getType().name());
@@ -57,41 +58,31 @@ public class Prototype extends org.integratedmodelling.klab.common.Prototype {
 			a.setParameter(arg.isParameter());
 			a.enumValues.addAll(arg.getEnumValues());
 			a.defaultValue = arg.getDefaultValue() == null ? null : arg.getDefaultValue().toString();
-			a.artifact = arg.isImported();
+			a.artifact = arg.isImport();
 			a.unit = arg.getUnit();
 			a.setExpression(arg.isExpression());
-			
+
 			if (arg.getLabel() != null) {
 				a.label = arg.getLabel();
 			} else {
 				a.label = StringUtil.capitalize(a.name).replaceAll("_", " ").replaceAll("\\-", " ");
 			}
 
-			if (arg.isImported()) {
+			if (arg.isTaggingAnnotation()) {
+				if (arg.isImport()) {
+					this.inputAnnotations.add(a);
+				} else if (arg.isExport()) {
+					this.outputAnnotations.add(a);
+				}
+			} else if (arg.isImport()) {
 				this.imports.add(a);
-			} else if (arg.isExported()) {
+			} else if (arg.isExport()) {
 				this.exports.add(a);
 			} else {
 				arguments.put(a.name, a);
 			}
 		}
 
-		/*
-		 * annotations may contain @taginput to specify runtime input tags
-		 */
-		for (IKdlAnnotation annotation : actuator.getAnnotations()) {
-			if ("taginput".equals(annotation.getName())) {
-				Object value = annotation.get(IKdlAnnotation.DEFAULT_PARAMETER_NAME);
-				if (value instanceof Collection) {
-					for (Object v : ((Collection<?>)value)) {
-						this.inputTags.add(v.toString());
-					}
-				} else {
-					this.inputTags.add(value.toString());
-				}
-			}
-		}
-		
 		if (actuator.getJavaClass() != null) {
 			try {
 				implementation = Class.forName(actuator.getJavaClass(), true, actuator.getClass().getClassLoader());

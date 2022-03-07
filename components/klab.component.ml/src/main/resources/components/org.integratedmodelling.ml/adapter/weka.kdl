@@ -6,7 +6,6 @@
 	 k.LAB models using Weka contextualizers, or can be imported from external resources such as Weka serialized models
 	 (.model) or Bayesian network specifications. The adapter is compatible with BIF, NET (Netica), XSDL (Genie)." 	
  {
-
  	final text 'model'
  		"The URL of the service providing the data."
  

@@ -611,9 +611,9 @@ public class Flowchart {
 
             IModel model = context.getModel();
             if (model != null) {
-                for (String s : prototype.listInputTags()) {
+                for (Argument s : prototype.listImportAnnotations()) {
                     for (IObservable observable : model.getDependencies()) {
-                        if (Annotations.INSTANCE.hasAnnotation(observable, s)) {
+                        if (Annotations.INSTANCE.hasAnnotation(observable, s.getName())) {
                             computationInputs.add(observable.getName());
                         }
                     }

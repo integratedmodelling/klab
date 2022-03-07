@@ -5,9 +5,15 @@
 @version 0.10.0
 @namespace im.weka
 
-@taginput(predictor)
-@taginput(archetype)
 abstract value classifier {		
+	
+	import observation @archetype
+		"The archetype for learning. Can be a sampled distributed quality or a direct observation, which must have the
+		 predictor state values."
+
+	import value @predictor
+		"Tags the predictors qualities used in building the training set, either at sampled values of the archetype or
+		 as qualities in each archetype observation."
 	
 	optional text resource 
 		"ID of the local resource containing the trained model. Ignored if the model is not a 'learn' model, 

@@ -158,33 +158,36 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *
 	 * Constraint:
 	 *     (
-	 *         annotations+=Annotation* 
-	 *         abstract?='abstract'? 
-	 *         final?='final'? 
-	 *         optional?='optional'? 
-	 *         (exported?='export' | filter?='filter' | (imported?='import' (multiple?='multiple' | (arity=INT minimum?='+'?))?))? 
-	 *         parameter?='parameter'? 
-	 *         type=ACTOR 
-	 *         expression?='expression'? 
-	 *         (name=LOWERCASE_ID | name=LOWERCASE_DASHID | name=STRING | name='*') 
-	 *         (extended=LOWERCASE_ID | extended=LOWERCASE_DASHID | extended=STRING)? 
-	 *         (targets+=TARGET targets+=TARGET*)? 
-	 *         docstring=STRING? 
-	 *         label=STRING? 
-	 *         body=DataflowBody? 
+	 *         ((exported?='export' | imported?='import') type=ACTOR annotationTag=ANNOTATION_ID docstring=STRING? label=STRING?) | 
 	 *         (
-	 *             rangeMin=Number | 
-	 *             rangeMax=Number | 
-	 *             (rangeMin=Number rangeMax=Number) | 
+	 *             annotations+=Annotation* 
+	 *             abstract?='abstract'? 
+	 *             final?='final'? 
+	 *             optional?='optional'? 
+	 *             (exported?='export' | filter?='filter' | (imported?='import' (multiple?='multiple' | (arity=INT minimum?='+'?))?))? 
+	 *             parameter?='parameter'? 
+	 *             type=ACTOR 
+	 *             expression?='expression'? 
+	 *             (name=LOWERCASE_ID | name=LOWERCASE_DASHID | name=STRING | name='*') 
+	 *             (extended=LOWERCASE_ID | extended=LOWERCASE_DASHID | extended=STRING)? 
+	 *             (targets+=TARGET targets+=TARGET*)? 
+	 *             docstring=STRING? 
+	 *             label=STRING? 
+	 *             body=DataflowBody? 
 	 *             (
-	 *                 (enumValues+=STRING | enumValues+=UPPERCASE_ID | enumValues+=LOWERCASE_ID | enumValues+=CAMELCASE_ID) 
-	 *                 (enumValues+=STRING | enumValues+=UPPERCASE_ID | enumValues+=LOWERCASE_ID | enumValues+=CAMELCASE_ID)*
-	 *             )
-	 *         )? 
-	 *         default=Value? 
-	 *         (unit=Unit? default=Value?)* 
-	 *         localName=LOWERCASE_ID? 
-	 *         (coverage+=Function coverage+=Function*)?
+	 *                 rangeMin=Number | 
+	 *                 rangeMax=Number | 
+	 *                 (rangeMin=Number rangeMax=Number) | 
+	 *                 (
+	 *                     (enumValues+=STRING | enumValues+=UPPERCASE_ID | enumValues+=LOWERCASE_ID | enumValues+=CAMELCASE_ID) 
+	 *                     (enumValues+=STRING | enumValues+=UPPERCASE_ID | enumValues+=LOWERCASE_ID | enumValues+=CAMELCASE_ID)*
+	 *                 )
+	 *             )? 
+	 *             default=Value? 
+	 *             (unit=Unit? default=Value?)* 
+	 *             localName=LOWERCASE_ID? 
+	 *             (coverage+=Function coverage+=Function*)?
+	 *         )
 	 *     )
 	 */
 	protected void sequence_ActorDefinition(ISerializationContext context, ActorDefinition semanticObject) {

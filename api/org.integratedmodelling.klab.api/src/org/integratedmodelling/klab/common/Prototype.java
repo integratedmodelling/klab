@@ -166,10 +166,10 @@ public class Prototype implements IPrototype {
 			this.expression = expression;
 		}
 
-        @Override
-        public String getUnit() {
-            return this.unit;
-        }
+		@Override
+		public String getUnit() {
+			return this.unit;
+		}
 
 	}
 
@@ -186,7 +186,8 @@ public class Prototype implements IPrototype {
 	protected String label = null;
 	protected List<ArgumentImpl> exports = new ArrayList<>();
 	protected List<ArgumentImpl> imports = new ArrayList<>();
-	protected Set<String> inputTags = new HashSet<>();
+	protected List<ArgumentImpl> inputAnnotations = new ArrayList<>();
+	protected List<ArgumentImpl> outputAnnotations = new ArrayList<>();
 
 	public String getLabel() {
 		return label;
@@ -419,6 +420,48 @@ public class Prototype implements IPrototype {
 				}
 			}
 
+			if (inputAnnotations.size() > 0) {
+				ret += "\n\n" + (tags ? "<p>" : "");
+				ret += "Annotation tags for inputs:" + (tags ? "</p>" : "") + "\n\n";
+				if (tags) {
+					ret += "<dl>";
+				}
+				for (Argument arg : outputAnnotations) {
+					ret += "  " + (tags ? "<dt>" : "") + (arg.isOptional() ? "" : "* ") + arg.getName()
+							+ (tags ? "</dt>" : "") + (tags ? "" : ": ");
+					String description = StringUtil.pack(
+							arg.getDescription() == null || arg.getDescription().isEmpty() ? "No description provided."
+									: arg.getDescription());
+					ret += tags ? ("<dd>" + description + "</dd>")
+							: StringUtil.indent(StringUtil.justifyLeft(description, 50), 5);
+					ret += (tags ? "" : "\n");
+				}
+				if (tags) {
+					ret += "</dl>";
+				}
+			}
+
+			if (outputAnnotations.size() > 0) {
+				ret += "\n\n" + (tags ? "<p>" : "");
+				ret += "Annotation tags for outputs:" + (tags ? "</p>" : "") + "\n\n";
+				if (tags) {
+					ret += "<dl>";
+				}
+				for (Argument arg : outputAnnotations) {
+					ret += "  " + (tags ? "<dt>" : "") + (arg.isOptional() ? "" : "* ") + arg.getName()
+							+ (tags ? "</dt>" : "") + (tags ? "" : ": ");
+					String description = StringUtil.pack(
+							arg.getDescription() == null || arg.getDescription().isEmpty() ? "No description provided."
+									: arg.getDescription());
+					ret += tags ? ("<dd>" + description + "</dd>")
+							: StringUtil.indent(StringUtil.justifyLeft(description, 50), 5);
+					ret += (tags ? "" : "\n");
+				}
+				if (tags) {
+					ret += "</dl>";
+				}
+			}
+
 			return ret;
 
 		}
@@ -509,13 +552,18 @@ public class Prototype implements IPrototype {
 	}
 
 	@Override
-	public Collection<String> listInputTags() {
-		return inputTags;
+	public Collection<Argument> listImportAnnotations() {
+		return new CastUtils<ArgumentImpl, Argument>().cast(inputAnnotations);
 	}
 
 	@Override
 	public boolean isFilter() {
 		return filter;
+	}
+
+	@Override
+	public Collection<Argument> listExportAnnotations() {
+		return new CastUtils<ArgumentImpl, Argument>().cast(outputAnnotations);
 	}
 
 }

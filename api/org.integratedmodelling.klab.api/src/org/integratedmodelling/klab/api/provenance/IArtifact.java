@@ -152,7 +152,10 @@ public interface IArtifact extends IProvenance.Node, Iterable<IArtifact> {
 		 * A list value
 		 */
 		LIST,
-
+		/**
+		 * Contextualizes any observation. Only legal in contracts.
+		 */
+		OBSERVATION,
 		/**
 		 * Not an artifact type, but adopted by the (void) actuators that resolve
 		 * acknowledged objects. Must be distinct from void as the latter may make view
