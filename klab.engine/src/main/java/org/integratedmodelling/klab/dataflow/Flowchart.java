@@ -98,11 +98,12 @@ public class Flowchart {
 		private ElementType type;
 
 		/*
-		 * inputs and outputs map the reference name of the observable to the correspondent
-		 * port ID in the element.
+		 * inputs and outputs map the reference name of the observable to the
+		 * correspondent port ID in the element.
 		 */
 		private Map<String, String> inputs = new LinkedHashMap<>();
 		private Map<String, String> outputs = new LinkedHashMap<>();
+		private Map<String, String> localNames = new HashMap<>();
 		private List<Element> children = new ArrayList<>();
 
 		/**
@@ -118,7 +119,8 @@ public class Flowchart {
 			this.id = actuator.getId();
 			this.type = ElementType.ACTUATOR;
 			this.name = actuator.getName();
-			this.label = StringUtils.capitalize(actuator.getName().replaceAll("_", " "));
+			this.label = StringUtils
+					.capitalize(Observables.INSTANCE.getDisplayName(actuator.getObservable()).replaceAll("_", " "));
 			this.documentation = DataflowDocumentation.INSTANCE.getDocumentation(this, actuator,
 					Flowchart.this.runtimeScope);
 
@@ -130,24 +132,25 @@ public class Flowchart {
 		}
 
 		Element(IServiceCall serviceCall, IContextualizable contextualizable, Element parent) {
-			this.id = ((ComputableResource) contextualizable).getId();
+			this.id = "res" + ((ComputableResource) contextualizable).getId();
 			this.type = ElementType.RESOLVER;
 			this.label = Extensions.INSTANCE.getServiceLabel(serviceCall);
 			this.name = serviceCall.getName();
 			this.documentation = DataflowDocumentation.INSTANCE.getDocumentation(this,
 					new Pair<>(serviceCall, contextualizable), Flowchart.this.runtimeScope);
 			elementsById.put(this.id, this);
+			parent.children.add(this);
 		}
 
-		Element(Actuator actuator, Pair<IServiceCall, IContextualizable> resource) {
-			this.id = ((ComputableResource) resource.getSecond()).getId();
-			this.type = ElementType.RESOLVER;
-			this.label = Extensions.INSTANCE.getServiceLabel(resource.getFirst());
-			this.name = resource.getFirst().getName();
-			this.documentation = DataflowDocumentation.INSTANCE.getDocumentation(this, resource,
-					Flowchart.this.runtimeScope);
-			elementsById.put(this.id, this);
-		}
+//		Element(Actuator actuator, Pair<IServiceCall, IContextualizable> resource) {
+//			this.id = ((ComputableResource) resource.getSecond()).getId();
+//			this.type = ElementType.RESOLVER;
+//			this.label = Extensions.INSTANCE.getServiceLabel(resource.getFirst());
+//			this.name = resource.getFirst().getName();
+//			this.documentation = DataflowDocumentation.INSTANCE.getDocumentation(this, resource,
+//					Flowchart.this.runtimeScope);
+//			elementsById.put(this.id, this);
+//		}
 
 		// only for the root element
 		private Element() {
@@ -202,15 +205,18 @@ public class Flowchart {
 		}
 
 		public String getMainOutput() {
-			return this.outputs.isEmpty() ? null : this.outputs.get(getOutputs().get(0));
+			if (this.outputs.isEmpty()) {
+				return null;
+			}
+			return this.outputs.get(this.outputs.keySet().iterator().next());
 		}
 
 		public String getOrCreateInput(String inputId, String... infixes) {
-			
+
 			if (inputs.containsKey(inputId)) {
 				return inputs.get(inputId);
 			}
-			
+
 			String ret = id + ".in.";
 			if (infixes != null) {
 				for (String infix : infixes) {
@@ -219,7 +225,7 @@ public class Flowchart {
 			}
 			ret += inputId;
 			inputs.put(inputId, ret);
-			
+
 			return ret;
 		}
 
@@ -228,7 +234,7 @@ public class Flowchart {
 			if (outputs.containsKey(inputId)) {
 				return outputs.get(inputId);
 			}
-			
+
 			String ret = id + ".out.";
 			if (infixes != null) {
 				for (String infix : infixes) {
@@ -237,7 +243,7 @@ public class Flowchart {
 			}
 			ret += inputId;
 			outputs.put(inputId, ret);
-			
+
 			return ret;
 		}
 
@@ -427,238 +433,458 @@ public class Flowchart {
 
 		Element ret = new Element(computedDeclaration, contextualizable, parent);
 
-		System.out.println("PUTOZ");
+		computeDatapaths(computedDeclaration, contextualizable, ret, actuator, isMediation, parent);
+
+		for (String output : ret.outputs.keySet()) {
+			if (parent.datapaths.containsKey(output)) {
+				/*
+				 * connect the correspondent output of the current element to the input of the
+				 * next
+				 */
+				Element current = parent.datapaths.get(output);
+				connect(current.getOrCreateOutput(output), ret.getOrCreateInput(output));
+			}
+			parent.datapaths.put(output, ret);
+		}
 	}
 
-	private Element compileActuator(Actuator actuator, Element parent) {
+	/**
+	 * Compute inputs and outputs for the passed resource and insert them into the
+	 * containers in the element that describes them. This is contextual for the
+	 * contextualizers that use annotations to define their inputs (depends on
+	 * annotations that will be inherited by the states through their observables,
+	 * so we can find them in the dependent actuators' observables).
+	 * 
+	 * @param computedDeclaration
+	 * @param contextualizable
+	 * @param element
+	 * @param actuator
+	 * @param isMediation
+	 */
+	private void computeDatapaths(IServiceCall computedDeclaration, IContextualizable contextualizable, Element element,
+			Actuator actuator, boolean isMediation, Element parent) {
 
-		if (actuator.isReference()) {
-			return null;
+		if (actuator.getAlias() != null) {
+			element.localNames.put(actuator.getName(), actuator.getAlias());
 		}
 
-		if (actuator.isInput()) {
-			// TODO an import may be compiled into something different
-			return null;
-		}
+		if (contextualizable.getServiceCall() != null) {
 
-		Element element = new Element(actuator);
+			System.out.println("PERASTRA");
 
-		/*
-		 * Compile the outputs first: if a resolver, one output per actuator contained
-		 * in the graph plus any model output if there is a model; otherwise, put ports
-		 * for all model outputs except processes and only connect those that get used.
-		 */
+//			analyzeServiceCall(computation.getSecond().getServiceCall(), context, ret, parent, computationTarget,
+//					computationInputs, computationOutputs);
 
-		for (DefaultEdge edge : graph.incomingEdgesOf(actuator)) {
+		} else if (contextualizable.getExpression() != null) {
 
-			IActuator child = graph.getEdgeSource(edge);
+			System.out.println("PERASTRA");
 
-			Element cel = compileActuator((Actuator) child, element);
-			if (cel != null) {
-				element.addChild(cel);
-			} else if (child.isInput()) {
-				externalInputs.put(child.getName(), root.getOrCreateInput(child.getName(), "import"));
-			}
-		}
-
-		/*
-		 * compile mediations for any of the inputs. These will extend the input
-		 * pathways.
-		 */
-		for (Pair<IServiceCall, IContextualizable> actor : actuator.getMediationStrategy()) {
-			compileComputation(actor, element, actuator);
-		}
-
-		/*
-		 * go down into computations; filter inputs through local names. Track indirect
-		 * targets and 'self' when the input is the same name as the actuator.
-		 */
-		for (Pair<IServiceCall, IContextualizable> actor : actuator.getComputationStrategy()) {
-			if (actor.getFirst() != null) {
-				compileComputation(actor, element, actuator);
-			}
-		}
-
-		return element;
-	}
-
-	private Element compileComputation(Pair<IServiceCall, IContextualizable> computation, Element parent,
-			Actuator context) {
-
-		Element ret = new Element(context, computation);
-
-		// TODO description, documentation (template with parameter substitution)
-		ret.label = Extensions.INSTANCE.getServiceLabel(computation.getFirst());
-
-		parent.addChild(ret);
-
-		String computationTarget = (computation.getSecond().getTarget() == null
-				|| computation.getSecond().getTarget().equals(context.getObservable())) ? context.getName()
-						: computation.getSecond().getTarget().getName();
-		if (computation.getSecond().isMediation()) {
-			computationTarget = formalNameOf(computation.getSecond().getMediationTargetId(), context);
-		}
-
-		Set<String> computationOutputs = new HashSet<>();
-		Set<String> computationInputs = new HashSet<>();
-
-		/*
-		 * Normally we have the literal resource as second element and the service call
-		 * that contextualizes it as first.
-		 * 
-		 * If the second element is an expression, the inputs may or may not be
-		 * expressed as parameters in it.
-		 */
-
-		if (computation.getSecond().getServiceCall() != null) {
-
-			analyzeServiceCall(computation.getSecond().getServiceCall(), context, ret, parent, computationTarget,
-					computationInputs, computationOutputs);
-
-		} else if (computation.getSecond().getExpression() != null) {
-
-			computationOutputs.add(computationTarget);
-
-			/*
-			 * the calling function is important if the expression is passed to a classifier
-			 * or something more complex.
-			 */
-			analyzeServiceCall(computation.getFirst(), context, ret, parent, computationTarget, computationInputs,
-					computationOutputs);
-
-			for (String input : getExpressionInputs(computation.getSecond().getExpression().getCode(),
-					computation.getSecond().getLanguage(), context)) {
-				computationInputs.add("self".equals(input) ? computationTarget : input);
+			Actuator target = actuator;
+			if (contextualizable.getTargetId() != null) {
+				target = findActuator(contextualizable.getTargetId(), actuator);
 			}
 
-		} else if (computation.getSecond().getUrn() != null) {
+			if (target != null) {
 
-			ret.type = ElementType.RESOURCE;
-			IResource resource = Resources.INSTANCE.resolveResource(computation.getSecond().getUrn());
+				element.outputs.put(target.getName(), element.getOrCreateOutput(target.getName()));
+
+				/*
+				 * the calling function is important if the expression is passed to a classifier
+				 * or something more complex.
+				 */
+//				analyzeServiceCall(computedDeclaration, actuator, element, parent, target.getName());
+//
+//				for (String input : getExpressionInputs(computation.getSecond().getExpression().getCode(),
+//						computation.getSecond().getLanguage(), context)) {
+//					computationInputs.add("self".equals(input) ? computationTarget : input);
+//				}
+			}
+
+		} else if (contextualizable.getUrn() != null) {
+
+			element.type = ElementType.RESOURCE;
+			IResource resource = Resources.INSTANCE.resolveResource(contextualizable.getUrn());
 			if (resource != null) {
 
 				if (resource.getType() != IArtifact.Type.VOID) {
-					computationOutputs.add(computationTarget);
+					element.outputs.put(actuator.getName(), element.getOrCreateOutput(actuator.getName()));
 				}
 
 				// personalize label and description
-				ret.name = resource.getUrn();
-				ret.label = resource.getAdapterType().toUpperCase() + " resource";
-				ret.setTooltip("Contextualize URN " + resource.getUrn());
+				element.name = resource.getUrn();
+				element.label = resource.getAdapterType().toUpperCase() + " resource";
+				element.setTooltip("Contextualize URN " + resource.getUrn());
 
 				/*
 				 * Resources: use inputs, check output map for additional outputs and add ret as
 				 * a producer if used.
 				 */
 				for (Attribute input : resource.getInputs()) {
-					String name = localNameFor(input.getName(), context);
-					if (parent.datapaths.containsKey(name)) {
-						computationInputs.add(input.getName());
+					Actuator dependency = findActuator(input.getName(), actuator);
+					if (dependency != null) {
+						element.inputs.put(dependency.getName(), element.getOrCreateInput(dependency.getName()));
+						if (!dependency.getName().equals(input.getName())) {
+							element.localNames.put(dependency.getName(), input.getName());
+						}
 					}
 				}
 
+				/*
+				 * additional outputs only if they are linked through the model's observables
+				 */
 				for (Attribute output : resource.getOutputs()) {
-					if (elementsByName.containsKey(output.getName())) {
-						computationOutputs.add(output.getName());
+					IObservable out = findOutput(output.getName(), actuator);
+					if (out != null) {
+						element.outputs.put(out.getReferenceName(), element.getOrCreateOutput(out.getReferenceName()));
 					}
 				}
 			}
 
-		} else if (computation.getSecond().getType() == IContextualizable.Type.CLASSIFICATION) {
+		} else if (contextualizable.getType() == IContextualizable.Type.CLASSIFICATION) {
 
-			// works as a filter. Ignore expressions in classifiers for now.
-			computationInputs.add(computationTarget);
-			computationOutputs.add(computationTarget);
-			ret.type = ElementType.TABLE;
+			// works as a filter, so the main observable gets in and out
+			element.outputs.put(actuator.getName(), element.getOrCreateOutput(actuator.getName()));
+			element.inputs.put(actuator.getName(), element.getOrCreateInput(actuator.getName()));
+			element.type = ElementType.TABLE;
+//
+			if (((ComputableResource) contextualizable).getValidatedResource(Object.class) instanceof Classification) {
 
-			if (((ComputableResource) computation.getSecond())
-					.getValidatedResource(Object.class) instanceof Classification) {
-
-				for (IKimExpression expression : ((ComputableResource) computation.getSecond())
+				for (IKimExpression expression : ((ComputableResource) contextualizable)
 						.getValidatedResource(Classification.class).getUniqueExpressions()) {
 					String expcode = expression.getCode();
 					String explang = expression.getLanguage();
-					for (String input : getExpressionInputs(expcode, explang, context)) {
-						if (!computationInputs.contains(input)) {
-							computationInputs.add(input);
+					for (String input : getExpressionInputs(expcode, explang, actuator)) {
+						Actuator dependency = findActuator(input, actuator);
+						if (dependency != null) {
+							element.inputs.put(dependency.getName(), element.getOrCreateInput(dependency.getName()));
+							if (!dependency.getName().equals(input)) {
+								element.localNames.put(dependency.getName(), input);
+							}
 						}
 					}
 				}
 			}
 
-		} else if (computation.getSecond().getLookupTable() != null) {
+		} else if (contextualizable.getLookupTable() != null) {
 
-			computationOutputs.add(computationTarget);
+			element.outputs.put(actuator.getName(), element.getOrCreateOutput(actuator.getName()));
 
 			/*
 			 * Lookup tables need their inputs and if the result column contains
 			 * expressions, they will also need their expression inputs, but we ignore them
 			 * as in classifications.
 			 */
-			for (IKimLookupTable.Argument s : computation.getSecond().getLookupTable().getArguments()) {
+			for (IKimLookupTable.Argument s : contextualizable.getLookupTable().getArguments()) {
 				if (s.id != null) {
-					String iid = s.id;
+					String input = s.id;
 					if ("self".equals(s.id)) {
-						iid = computationTarget;
+						input = actuator.getName();
 					}
-					if (!"?".equals(iid) && !"*".equals(iid)) {
-						computationInputs.add(iid);
-					}
-				}
-			}
-
-			if (((ComputableResource) computation.getSecond())
-					.getValidatedResource(Object.class) instanceof LookupTable) {
-
-				for (IKimExpression expression : ((ComputableResource) computation.getSecond())
-						.getValidatedResource(LookupTable.class).getUniqueExpressions()) {
-					String expcode = expression.getCode();
-					String explang = expression.getLanguage();
-					for (String input : getExpressionInputs(expcode, explang, context)) {
-						if (!computationInputs.contains(input)) {
-							computationInputs.add(input);
+					if (!"?".equals(input) && !"*".equals(input)) {
+						Actuator dependency = findActuator(input, actuator);
+						if (dependency != null) {
+							element.inputs.put(dependency.getName(), element.getOrCreateInput(dependency.getName()));
+							if (!dependency.getName().equals(input)) {
+								element.localNames.put(dependency.getName(), input);
+							}
 						}
 					}
 				}
 			}
 
-			ret.type = ElementType.TABLE;
+			if (((ComputableResource) contextualizable).getValidatedResource(Object.class) instanceof LookupTable) {
 
-		} else if (computation.getSecond().getType() == IContextualizable.Type.CONVERSION) {
-
-			if (computation.getSecond().getServiceCall() != null) {
-				ret.label = Extensions.INSTANCE.getServiceLabel(computation.getSecond().getServiceCall());
-			}
-
-			computationInputs.add(computationTarget);
-			computationOutputs.add(computationTarget);
-
-		} else {
-			Logging.INSTANCE.warn("INTERNAL: unhandled computation in dataflow graph: " + computation.getSecond());
-		}
-
-		for (String input : computationInputs) {
-
-			String inport = ret.getOrCreateInput(input);
-			if (!parent.datapaths.containsKey(input)) {
-				String actualName = formalNameOf(input, context);
-				Element producer = elementsByName.get(actualName);
-				if (producer != null) {
-					String output = producer.getOrCreateOutput(actualName);
-//					parent.datapaths.put(input, output);
-				} else if (externalInputs.containsKey(actualName)) {
-//					parent.datapaths.put(input, externalInputs.get(actualName));
+				for (IKimExpression expression : ((ComputableResource) contextualizable)
+						.getValidatedResource(LookupTable.class).getUniqueExpressions()) {
+					String expcode = expression.getCode();
+					String explang = expression.getLanguage();
+					for (String input : getExpressionInputs(expcode, explang, actuator)) {
+						Actuator dependency = findActuator(input, actuator);
+						if (dependency != null) {
+							element.inputs.put(dependency.getName(), element.getOrCreateInput(dependency.getName()));
+							if (!dependency.getName().equals(input)) {
+								element.localNames.put(dependency.getName(), input);
+							}
+						}
+					}
 				}
 			}
-//			connections.add(new Pair<>(parent.datapaths.get(input), inport));
+
+			element.type = ElementType.TABLE;
+
+		} else if (contextualizable.getType() == IContextualizable.Type.CONVERSION) {
+
+			if (contextualizable.getServiceCall() != null) {
+				element.label = Extensions.INSTANCE.getServiceLabel(contextualizable.getServiceCall());
+			}
+
+			element.outputs.put(actuator.getName(), element.getOrCreateOutput(actuator.getName()));
+			element.inputs.put(actuator.getName(), element.getOrCreateInput(actuator.getName()));
+
+		} else {
+			Logging.INSTANCE.warn("INTERNAL: unhandled computation in dataflow graph: " + contextualizable);
 		}
 
-		for (String output : computationOutputs) {
-//			parent.datapaths.put(output, ret.id);
-		}
-
-		return ret;
 	}
+
+	/**
+	 * FIXME needs to account for resources with custom output naming strategies.
+	 * 
+	 * @param name
+	 * @param actuator
+	 * @return
+	 */
+	private IObservable findOutput(String name, Actuator actuator) {
+		if (actuator.getModel() != null) {
+			for (int n = 1; n < actuator.getModel().getObservables().size(); n++) {
+				if (name.equals(actuator.getModel().getObservables().get(n).getName())) {
+					return actuator.getModel().getObservables().get(n);
+				}
+			}
+		}
+		return null;
+	}
+
+	private Actuator findActuator(String name, Actuator actuator) {
+		for (DefaultEdge edge : graph.incomingEdgesOf(actuator)) {
+			IActuator child = graph.getEdgeSource(edge);
+			if (name.equals(child.getName()) || name.equals(child.getAlias())) {
+				return (Actuator) child;
+			}
+		}
+		return null;
+	}
+
+//	private Element compileActuator(Actuator actuator, Element parent) {
+//
+//		if (actuator.isReference()) {
+//			return null;
+//		}
+//
+//		if (actuator.isInput()) {
+//			// TODO an import may be compiled into something different
+//			return null;
+//		}
+//
+//		Element element = new Element(actuator);
+//
+//		/*
+//		 * Compile the outputs first: if a resolver, one output per actuator contained
+//		 * in the graph plus any model output if there is a model; otherwise, put ports
+//		 * for all model outputs except processes and only connect those that get used.
+//		 */
+//
+//		for (DefaultEdge edge : graph.incomingEdgesOf(actuator)) {
+//
+//			IActuator child = graph.getEdgeSource(edge);
+//
+//			Element cel = compileActuator((Actuator) child, element);
+//			if (cel != null) {
+//				element.addChild(cel);
+//			} else if (child.isInput()) {
+//				externalInputs.put(child.getName(), root.getOrCreateInput(child.getName(), "import"));
+//			}
+//		}
+//
+//		/*
+//		 * compile mediations for any of the inputs. These will extend the input
+//		 * pathways.
+//		 */
+//		for (Pair<IServiceCall, IContextualizable> actor : actuator.getMediationStrategy()) {
+//			compileComputation(actor, element, actuator);
+//		}
+//
+//		/*
+//		 * go down into computations; filter inputs through local names. Track indirect
+//		 * targets and 'self' when the input is the same name as the actuator.
+//		 */
+//		for (Pair<IServiceCall, IContextualizable> actor : actuator.getComputationStrategy()) {
+//			if (actor.getFirst() != null) {
+//				compileComputation(actor, element, actuator);
+//			}
+//		}
+//
+//		return element;
+//	}
+
+	// private Element compileComputation(Pair<IServiceCall, IContextualizable>
+	// computation, Element parent,
+//			Actuator context) {
+//
+//		Element ret = new Element(context, computation);
+//
+//		// TODO description, documentation (template with parameter substitution)
+//		ret.label = Extensions.INSTANCE.getServiceLabel(computation.getFirst());
+//
+//		parent.addChild(ret);
+//
+//		String computationTarget = (computation.getSecond().getTarget() == null
+//				|| computation.getSecond().getTarget().equals(context.getObservable())) ? context.getName()
+//						: computation.getSecond().getTarget().getName();
+//		if (computation.getSecond().isMediation()) {
+//			computationTarget = formalNameOf(computation.getSecond().getMediationTargetId(), context);
+//		}
+//
+//		Set<String> computationOutputs = new HashSet<>();
+//		Set<String> computationInputs = new HashSet<>();
+//
+//		/*
+//		 * Normally we have the literal resource as second element and the service call
+//		 * that contextualizes it as first.
+//		 * 
+//		 * If the second element is an expression, the inputs may or may not be
+//		 * expressed as parameters in it.
+//		 */
+//
+//		if (computation.getSecond().getServiceCall() != null) {
+//
+//			analyzeServiceCall(computation.getSecond().getServiceCall(), context, ret, parent, computationTarget,
+//					computationInputs, computationOutputs);
+//
+//		} else if (computation.getSecond().getExpression() != null) {
+//
+//			computationOutputs.add(computationTarget);
+//
+//			/*
+//			 * the calling function is important if the expression is passed to a classifier
+//			 * or something more complex.
+//			 */
+//			analyzeServiceCall(computation.getFirst(), context, ret, parent, computationTarget, computationInputs,
+//					computationOutputs);
+//
+//			for (String input : getExpressionInputs(computation.getSecond().getExpression().getCode(),
+//					computation.getSecond().getLanguage(), context)) {
+//				computationInputs.add("self".equals(input) ? computationTarget : input);
+//			}
+//
+//		} else if (computation.getSecond().getUrn() != null) {
+//
+//			ret.type = ElementType.RESOURCE;
+//			IResource resource = Resources.INSTANCE.resolveResource(computation.getSecond().getUrn());
+//			if (resource != null) {
+//
+//				if (resource.getType() != IArtifact.Type.VOID) {
+//					computationOutputs.add(computationTarget);
+//				}
+//
+//				// personalize label and description
+//				ret.name = resource.getUrn();
+//				ret.label = resource.getAdapterType().toUpperCase() + " resource";
+//				ret.setTooltip("Contextualize URN " + resource.getUrn());
+//
+//				/*
+//				 * Resources: use inputs, check output map for additional outputs and add ret as
+//				 * a producer if used.
+//				 */
+//				for (Attribute input : resource.getInputs()) {
+//					String name = localNameFor(input.getName(), context);
+//					if (parent.datapaths.containsKey(name)) {
+//						computationInputs.add(input.getName());
+//					}
+//				}
+//
+//				for (Attribute output : resource.getOutputs()) {
+//					if (elementsByName.containsKey(output.getName())) {
+//						computationOutputs.add(output.getName());
+//					}
+//				}
+//			}
+//
+//		} else if (computation.getSecond().getType() == IContextualizable.Type.CLASSIFICATION) {
+//
+//			// works as a filter. Ignore expressions in classifiers for now.
+//			computationInputs.add(computationTarget);
+//			computationOutputs.add(computationTarget);
+//			ret.type = ElementType.TABLE;
+//
+//			if (((ComputableResource) computation.getSecond())
+//					.getValidatedResource(Object.class) instanceof Classification) {
+//
+//				for (IKimExpression expression : ((ComputableResource) computation.getSecond())
+//						.getValidatedResource(Classification.class).getUniqueExpressions()) {
+//					String expcode = expression.getCode();
+//					String explang = expression.getLanguage();
+//					for (String input : getExpressionInputs(expcode, explang, context)) {
+//						if (!computationInputs.contains(input)) {
+//							computationInputs.add(input);
+//						}
+//					}
+//				}
+//			}
+//
+//		} else if (computation.getSecond().getLookupTable() != null) {
+//
+//			computationOutputs.add(computationTarget);
+//
+//			/*
+//			 * Lookup tables need their inputs and if the result column contains
+//			 * expressions, they will also need their expression inputs, but we ignore them
+//			 * as in classifications.
+//			 */
+//			for (IKimLookupTable.Argument s : computation.getSecond().getLookupTable().getArguments()) {
+//				if (s.id != null) {
+//					String iid = s.id;
+//					if ("self".equals(s.id)) {
+//						iid = computationTarget;
+//					}
+//					if (!"?".equals(iid) && !"*".equals(iid)) {
+//						computationInputs.add(iid);
+//					}
+//				}
+//			}
+//
+//			if (((ComputableResource) computation.getSecond())
+//					.getValidatedResource(Object.class) instanceof LookupTable) {
+//
+//				for (IKimExpression expression : ((ComputableResource) computation.getSecond())
+//						.getValidatedResource(LookupTable.class).getUniqueExpressions()) {
+//					String expcode = expression.getCode();
+//					String explang = expression.getLanguage();
+//					for (String input : getExpressionInputs(expcode, explang, context)) {
+//						if (!computationInputs.contains(input)) {
+//							computationInputs.add(input);
+//						}
+//					}
+//				}
+//			}
+//
+//			ret.type = ElementType.TABLE;
+//
+//		} else if (computation.getSecond().getType() == IContextualizable.Type.CONVERSION) {
+//
+//			if (computation.getSecond().getServiceCall() != null) {
+//				ret.label = Extensions.INSTANCE.getServiceLabel(computation.getSecond().getServiceCall());
+//			}
+//
+//			computationInputs.add(computationTarget);
+//			computationOutputs.add(computationTarget);
+//
+//		} else {
+//			Logging.INSTANCE.warn("INTERNAL: unhandled computation in dataflow graph: " + computation.getSecond());
+//		}
+//
+//		for (String input : computationInputs) {
+//
+//			String inport = ret.getOrCreateInput(input);
+//			if (!parent.datapaths.containsKey(input)) {
+//				String actualName = formalNameOf(input, context);
+//				Element producer = elementsByName.get(actualName);
+//				if (producer != null) {
+//					String output = producer.getOrCreateOutput(actualName);
+////					parent.datapaths.put(input, output);
+//				} else if (externalInputs.containsKey(actualName)) {
+////					parent.datapaths.put(input, externalInputs.get(actualName));
+//				}
+//			}
+////			connections.add(new Pair<>(parent.datapaths.get(input), inport));
+//		}
+//
+//		for (String output : computationOutputs) {
+////			parent.datapaths.put(output, ret.id);
+//		}
+//
+//		return ret;
+//	}
 
 	private void analyzeServiceCall(IServiceCall serviceCall, Actuator context, Element ret, Element parent,
 			String computationTarget, Set<String> computationInputs, Set<String> computationOutputs) {
@@ -780,21 +1006,21 @@ public class Flowchart {
 	public String toString() {
 		return dump();
 	}
-
-	private String localNameFor(String name, Actuator context) {
-		if (name.equals(context.getName())) {
-			return name;
-		}
-		if ("self".equals(name)) {
-			return context.getName();
-		}
-		for (IActuator child : context.getActuators()) {
-			if (child.getName().equals(name)) {
-				return child.getAlias();
-			}
-		}
-		return name;
-	}
+//
+//	private String localNameFor(String name, Actuator context) {
+//		if (name.equals(context.getName())) {
+//			return name;
+//		}
+//		if ("self".equals(name)) {
+//			return context.getName();
+//		}
+//		for (IActuator child : context.getActuators()) {
+//			if (child.getName().equals(name)) {
+//				return child.getAlias();
+//			}
+//		}
+//		return name;
+//	}
 
 	/**
 	 * Get formal name for passed input in context actuator
@@ -931,9 +1157,13 @@ public class Flowchart {
 		for (String input : element.getOutputs()) {
 			ret += "\n" + prefix + "   O: " + input;
 		}
+//		for (String key : element.datapaths.keySet()) {
+//			ret += "\n path for " + key + " --> " +element.datapaths.get(key).id;
+//		}
 		for (Element e : element.getChildren()) {
 			ret += "\n" + dump(e, indent + 3);
 		}
+
 		return ret;
 	}
 
@@ -1037,7 +1267,7 @@ public class Flowchart {
 
 		return ret;
 	}
-	
+
 	private PortSide getPortSide(String input, PortSide defaultValue) {
 		PortSide ret = defaultValue;
 		if (input.contains(".import.")) {
