@@ -55,7 +55,6 @@ public class DataflowHandler extends Parameters<String> {
 	private Map<ObservedConcept, List<Pair<ICoverage, Dataflow>>> dataflowCache = new HashMap<>();
 	List<Dataflow> rootNodes = new ArrayList<>();
 	private String rootContextId;
-	private Flowchart flowchart;
 
 	public DataflowHandler() {
 		this.id = NameGenerator.shortUUID();
@@ -112,7 +111,7 @@ public class DataflowHandler extends Parameters<String> {
 					IMessage.MessageClass.TaskLifecycle, IMessage.Type.DataflowCompiled, dataflow));
 			this.dataflowCodeLength = code.length();
 			if (Configuration.INSTANCE.isEchoEnabled()) {
-				System.out.println(dataflow.getJsonElkLayout());
+				System.out.println(code);
 			}
 		}
 	}
@@ -186,16 +185,33 @@ public class DataflowHandler extends Parameters<String> {
 		return new Pair<>(ret.getFirst().get(0), ret.getSecond());
 	}
 
-	public String getElkGraph(IRuntimeScope scope) {
-
+	/**
+	 * Create the flowchart structure illustrating the dataflow.
+	 * 
+	 * @param scope
+	 * @return
+	 */
+	public Flowchart getFlowchart(IRuntimeScope scope) {
 		Pair<IActuator, Graph<IActuator, DefaultEdge>> structure = getDataflowStructure();
-
 		if (structure == null) {
 			return null;
 		}
+		return Flowchart.create(structure.getFirst(), structure.getSecond(), scope);
+	}
 
-		this.flowchart = Flowchart.create(structure.getFirst(), structure.getSecond(), scope);
-		return flowchart.getJsonLayout();
+	/**
+	 * Layout the flowchart into an ELK diagram and return the JSON definition.
+	 * 
+	 * @param scope
+	 * @return
+	 */
+	public String getElkGraph(IRuntimeScope scope) {
+		Flowchart flowchart = getFlowchart(scope);
+		if (flowchart != null) {
+			System.out.println(flowchart.dump());
+			return flowchart.getJsonLayout();
+		}
+		return null;
 	}
 
 }

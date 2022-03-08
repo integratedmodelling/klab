@@ -308,10 +308,9 @@ public class Flowchart {
 
 	}
 
-	public Flowchart(/* String id, */IRuntimeScope scope, Graph<IActuator, DefaultEdge> dataflow) {
+	public Flowchart(IRuntimeScope scope, Graph<IActuator, DefaultEdge> dataflow) {
 		this.runtimeScope = scope;
 		this.graph = dataflow;
-		// this.id = id;
 	}
 
 	/**
@@ -324,8 +323,7 @@ public class Flowchart {
 	public static Flowchart create(IActuator dataflow, Graph<IActuator, DefaultEdge> structure, IRuntimeScope scope) {
 
 		Flowchart ret = new Flowchart(scope, structure);
-		ret.root = ret.getRoot();
-		ret.compile((Actuator) dataflow, ret.root);
+		ret.root = ret.compile((Actuator) dataflow, null);
 		return ret;
 	}
 
@@ -367,9 +365,9 @@ public class Flowchart {
 			for (IObservable observable : actuator.getModel().getObservables()) {
 				outputsDefined.add(ret.getOrCreateOutput(observable.getReferenceName()));
 			}
-			for (IObservable dependency : actuator.getModel().getDependencies()) {
-				inputsDefined.add(ret.getOrCreateInput(dependency.getReferenceName()));
-			}
+//			for (IObservable dependency : actuator.getModel().getDependencies()) {
+//				inputsDefined.add(ret.getOrCreateInput(dependency.getReferenceName()));
+//			}
 		}
 
 		/*
@@ -411,7 +409,7 @@ public class Flowchart {
 		for (Pair<IServiceCall, IContextualizable> actor : actuator.getComputationStrategy()) {
 			compile(actor.getFirst(), actor.getSecond(), ret, actuator, false);
 		}
-
+		
 		/*
 		 * connect the final leg of all instantiated datapaths to its output for the
 		 * actuator.
@@ -435,6 +433,13 @@ public class Flowchart {
 
 		computeDatapaths(computedDeclaration, contextualizable, ret, actuator, isMediation, parent);
 
+		/*
+		 * inputs from the computation come from the parent's actuators, which have been computed upstream
+		 */
+		for (String input : ret.inputs.keySet()) {
+			connect(findProvider(input, parent), ret.inputs.get(input));
+		}
+		
 		for (String output : ret.outputs.keySet()) {
 			if (parent.datapaths.containsKey(output)) {
 				/*
@@ -446,6 +451,15 @@ public class Flowchart {
 			}
 			parent.datapaths.put(output, ret);
 		}
+	}
+
+	private String findProvider(String input, Element element) {
+		for (Element child : element.children) {
+			if (input.equals(child.name)) {
+				return child.getMainOutput();
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -468,21 +482,20 @@ public class Flowchart {
 			element.localNames.put(actuator.getName(), actuator.getAlias());
 		}
 
+		Actuator target = actuator;
+		String contextualizationTarget = actuator.getName();
+		if (contextualizable.getTargetId() != null) {
+			target = findActuator(contextualizable.getTargetId(), actuator);
+			if (target != null) {
+				contextualizationTarget = target.getName();
+			}
+		}
+
 		if (contextualizable.getServiceCall() != null) {
 
-			System.out.println("PERASTRA");
-
-//			analyzeServiceCall(computation.getSecond().getServiceCall(), context, ret, parent, computationTarget,
-//					computationInputs, computationOutputs);
+			analyzeServiceCall(contextualizable.getServiceCall(), actuator, element, parent, contextualizationTarget);
 
 		} else if (contextualizable.getExpression() != null) {
-
-			System.out.println("PERASTRA");
-
-			Actuator target = actuator;
-			if (contextualizable.getTargetId() != null) {
-				target = findActuator(contextualizable.getTargetId(), actuator);
-			}
 
 			if (target != null) {
 
@@ -492,12 +505,18 @@ public class Flowchart {
 				 * the calling function is important if the expression is passed to a classifier
 				 * or something more complex.
 				 */
-//				analyzeServiceCall(computedDeclaration, actuator, element, parent, target.getName());
-//
-//				for (String input : getExpressionInputs(computation.getSecond().getExpression().getCode(),
-//						computation.getSecond().getLanguage(), context)) {
-//					computationInputs.add("self".equals(input) ? computationTarget : input);
-//				}
+				analyzeServiceCall(computedDeclaration, actuator, element, parent, target.getName());
+
+				for (String input : getExpressionInputs(contextualizable.getExpression().getCode(),
+						contextualizable.getLanguage(), actuator)) {
+					Actuator dependency = findActuator(input, actuator);
+					if (dependency != null) {
+						element.inputs.put(dependency.getName(), element.getOrCreateInput(dependency.getName()));
+						if (!dependency.getName().equals(input)) {
+							element.localNames.put(dependency.getName(), input);
+						}
+					}
+				}
 			}
 
 		} else if (contextualizable.getUrn() != null) {
@@ -646,6 +665,9 @@ public class Flowchart {
 	}
 
 	private Actuator findActuator(String name, Actuator actuator) {
+		if ("self".equals(name)) {
+			return actuator;
+		}
 		for (DefaultEdge edge : graph.incomingEdgesOf(actuator)) {
 			IActuator child = graph.getEdgeSource(edge);
 			if (name.equals(child.getName()) || name.equals(child.getAlias())) {
@@ -886,8 +908,8 @@ public class Flowchart {
 //		return ret;
 //	}
 
-	private void analyzeServiceCall(IServiceCall serviceCall, Actuator context, Element ret, Element parent,
-			String computationTarget, Set<String> computationInputs, Set<String> computationOutputs) {
+	private void analyzeServiceCall(IServiceCall serviceCall, Actuator context, Element element, Element parent,
+			String computationTarget/* , Set<String> computationInputs, Set<String> computationOutputs */) {
 
 		/*
 		 * Functions: check any parameters that identify artifacts against local catalog
@@ -898,10 +920,10 @@ public class Flowchart {
 
 		if (prototype != null) {
 
-			ret.label = Extensions.INSTANCE.getServiceLabel(serviceCall);
+			element.label = Extensions.INSTANCE.getServiceLabel(serviceCall);
 
 			if (prototype.getType() != IArtifact.Type.VOID) {
-				computationOutputs.add(computationTarget);
+				element.outputs.put(computationTarget, element.getOrCreateOutput(computationTarget));
 			}
 
 			/*
@@ -911,12 +933,14 @@ public class Flowchart {
 			 */
 			Set<String> importArgs = new HashSet<>();
 			for (Argument arg : prototype.listImports()) {
-				String name = formalNameOf(arg.getName(), context);
-				if (name != null && (elementsByName.containsKey(name) || parent.datapaths.containsKey(arg.getName()))) {
-					computationInputs.add(arg.getName());
-				} else {
-					importArgs.add(arg.getName());
+				Actuator dependency = findActuator(arg.getName(), context);
+				if (dependency != null) {
+					element.inputs.put(dependency.getName(), element.getOrCreateInput(dependency.getName()));
+					if (!dependency.getName().equals(arg.getName())) {
+						element.localNames.put(dependency.getName(), arg.getName());
+					}
 				}
+
 			}
 
 			/*
@@ -929,19 +953,19 @@ public class Flowchart {
 				if (importArgs.contains(arg)) {
 					if (parameter instanceof IConcept || parameter instanceof IObservable) {
 
-						// must be a known observables, which we will link through its alias
-						IConcept concept = parameter instanceof IConcept ? ((IConcept) parameter)
-								: ((IObservable) parameter).getType();
-
-						for (IActuator dependency : context.getActuators()) {
-							if (concept.getSemanticDistance(((Actuator) dependency).getObservable().getType()) >= 0) {
-								parameter = ((Actuator) dependency).getAlias();
-								break;
-							}
-						}
-					}
-
-					computationInputs.add(parameter.toString());
+//						// must be a known observables, which we will link through its alias
+//						IConcept concept = parameter instanceof IConcept ? ((IConcept) parameter)
+//								: ((IObservable) parameter).getType();
+//
+//						for (IActuator dependency : context.getActuators()) {
+//							if (concept.getSemanticDistance(((Actuator) dependency).getObservable().getType()) >= 0) {
+//								parameter = ((Actuator) dependency).getAlias();
+//								break;
+//							}
+//						}
+//					}
+//
+//					computationInputs.add(parameter.toString());
 
 				} else if (argument == null) {
 					continue;
@@ -952,7 +976,14 @@ public class Flowchart {
 					String explang = expression instanceof IKimExpression ? ((IKimExpression) expression).getLanguage()
 							: null;
 					for (String input : getExpressionInputs(expcode, explang, context)) {
-						computationInputs.add(input);
+						Actuator dependency = findActuator(input, context);
+						if (dependency != null) {
+							element.inputs.put(dependency.getName(), element.getOrCreateInput(dependency.getName()));
+							if (!dependency.getName().equals(input)) {
+								element.localNames.put(dependency.getName(), input);
+							}
+						}
+
 					}
 				}
 			}
@@ -962,7 +993,8 @@ public class Flowchart {
 				for (Argument s : prototype.listImportAnnotations()) {
 					for (IObservable observable : model.getDependencies()) {
 						if (Annotations.INSTANCE.hasAnnotation(observable, s.getName())) {
-							computationInputs.add(observable.getName());
+								element.inputs.put(observable.getReferenceName(), element.getOrCreateInput(observable.getReferenceName()));
+							}
 						}
 					}
 				}
@@ -977,22 +1009,22 @@ public class Flowchart {
 			/*
 			 * add any further outputs if it's used.
 			 */
-			for (Argument arg : prototype.listExports()) {
-				if (elementsByName.containsKey(arg.getName())) {
-					computationOutputs.add(arg.getName());
-				}
-			}
+//			for (Argument arg : prototype.listExports()) {
+//				if (elementsByName.containsKey(arg.getName())) {
+//					computationOutputs.add(arg.getName());
+//				}
+//			}
 
 			/*
 			 * we let computations with a single artifact parameter default their argument
 			 * to the main target.
 			 */
-			if (computationInputs.isEmpty() && singleArtifact) {
-				computationInputs.add(computationTarget);
+			if (element.inputs.isEmpty() && singleArtifact) {
+				element.inputs.put(computationTarget, element.getOrCreateInput(computationTarget));
 			}
 
 			if (prototype.getType().isCountable()) {
-				ret.type = ElementType.INSTANTIATOR;
+				element.type = ElementType.INSTANTIATOR;
 			}
 
 		} else {
@@ -1006,21 +1038,6 @@ public class Flowchart {
 	public String toString() {
 		return dump();
 	}
-//
-//	private String localNameFor(String name, Actuator context) {
-//		if (name.equals(context.getName())) {
-//			return name;
-//		}
-//		if ("self".equals(name)) {
-//			return context.getName();
-//		}
-//		for (IActuator child : context.getActuators()) {
-//			if (child.getName().equals(name)) {
-//				return child.getAlias();
-//			}
-//		}
-//		return name;
-//	}
 
 	/**
 	 * Get formal name for passed input in context actuator
@@ -1157,9 +1174,6 @@ public class Flowchart {
 		for (String input : element.getOutputs()) {
 			ret += "\n" + prefix + "   O: " + input;
 		}
-//		for (String key : element.datapaths.keySet()) {
-//			ret += "\n path for " + key + " --> " +element.datapaths.get(key).id;
-//		}
 		for (Element e : element.getChildren()) {
 			ret += "\n" + dump(e, indent + 3);
 		}
@@ -1218,7 +1232,9 @@ public class Flowchart {
 		this.elements = new HashMap<>();
 		this.computationToNodeId = new HashMap<>();
 
-		ElkNode ret = compile(getRoot(), null);
+		ElkNode ret = kelk.createGraph(runtimeScope.getContextObservation().getId());
+		compile(getRoot(), ret);
+
 		for (Pair<String, String> connection : getConnections()) {
 			ElkConnectableShape source = nodes.get(connection.getFirst());
 			ElkConnectableShape target = nodes.get(connection.getSecond());
@@ -1283,7 +1299,7 @@ public class Flowchart {
 		RecursiveGraphLayoutEngine engine = new RecursiveGraphLayoutEngine();
 		ElkNode rootNode = compile();
 		engine.layout(rootNode, new BasicProgressMonitor());
-
+		System.out.println(dump());
 		return ElkGraphJson.forGraph(rootNode).omitLayout(false).omitZeroDimension(true).omitZeroPositions(true)
 				.shortLayoutOptionKeys(true).prettyPrint(true).toJson();
 
