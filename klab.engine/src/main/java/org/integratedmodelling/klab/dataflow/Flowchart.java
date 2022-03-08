@@ -477,7 +477,7 @@ public class Flowchart {
 	 */
 	private void computeDatapaths(IServiceCall computedDeclaration, IContextualizable contextualizable, Element element,
 			Actuator actuator, boolean isMediation, Element parent) {
-
+		
 		if (actuator.getAlias() != null) {
 			element.localNames.put(actuator.getName(), actuator.getAlias());
 		}
@@ -665,6 +665,9 @@ public class Flowchart {
 	}
 
 	private Actuator findActuator(String name, Actuator actuator) {
+		if (name == null) {
+			return null;
+		}
 		if ("self".equals(name)) {
 			return actuator;
 		}
@@ -933,7 +936,7 @@ public class Flowchart {
 			 */
 			Set<String> importArgs = new HashSet<>();
 			for (Argument arg : prototype.listImports()) {
-				Actuator dependency = findActuator(arg.getName(), context);
+				Actuator dependency = findActuator(serviceCall.getParameters().get(arg.getName(), String.class), context);
 				if (dependency != null) {
 					element.inputs.put(dependency.getName(), element.getOrCreateInput(dependency.getName()));
 					if (!dependency.getName().equals(arg.getName())) {
