@@ -90,7 +90,6 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	private List<InteractiveParameter> fields = new ArrayList<>();
 	private List<Pair<IContextualizable, List<String>>> resources = new ArrayList<>();
 	private List<Pair<IAnnotation, List<String>>> annotations = new ArrayList<>();
-	private Graph<IObservedConcept, DefaultEdge> dependencyGraph;
 
 	class AnnotationParameterValue {
 
@@ -322,18 +321,21 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		}
 	}
 
+	/**
+	 * Build and return the dependency graph. Save externally if appropriate -
+	 * caching does create issues in contextualization and scheduling.
+	 * 
+	 * @return
+	 */
 	public Graph<IObservedConcept, DefaultEdge> getDependencyGraph() {
-	    return buildDependencies();
-	    //	    if (this.dependencyGraph == null) {
-//	        this.dependencyGraph = buildDependencies();
-//	    }
-//	    return this.dependencyGraph;
+		return buildDependencies();
 	}
-	
+
 	private Graph<IObservedConcept, DefaultEdge> buildDependencies() {
 		Graph<IObservedConcept, DefaultEdge> ret = new DefaultDirectedGraph<>(DefaultEdge.class);
 		boolean primary = true;
-		// use the logical structure to only get true actuators and recurse sub-dataflows
+		// use the logical structure to only get true actuators and recurse
+		// sub-dataflows
 		for (IActuator actuator : getDataflowStructure().getSecond().vertexSet()) {
 			buildDependencies((Actuator) actuator, ret, primary);
 			primary = false;
@@ -410,31 +412,18 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	String encode(int offset, Actuator parentActuator) {
 
 		String ret = "";
-//		String spacer = StringUtil.spaces(offset);
 
 		if (offset == 0 && parentActuator == null) {
 			ret += "@klab " + Version.CURRENT + "\n";
-//			ret += "@dataflow " + getName() + "\n";
 			ret += "@author 'k.LAB resolver " + creationTime + "'" + "\n";
-			// if (getContext() != null) {
-			// ret += "@context " + getContext().getUrn() + "\n";
-			// }
-			if (coverage != null && coverage.getExtentCount() > 0) {
-				List<IServiceCall> scaleSpecs = ((Scale) coverage).getKimSpecification();
-				if (!scaleSpecs.isEmpty()) {
-					ret += "@coverage load_me_from_some_sidecar_file()";
-					// TODO this can get huge and is transmitted over websockets, so can't put it
-					// here as is. Needs
-					// supplemental material and a ref instead.
-					// for (int i = 0; i < scaleSpecs.size(); i++) {
-					// if (scaleSpecs.get(i) != null) {
-					// ret += " " + scaleSpecs.get(i).getSourceCode()
-					// + ((i < scaleSpecs.size() - 1) ? (",\n" + " ") : "");
-					// }
-					// }
-					ret += "\n";
-				}
-			}
+			// TODO should encode coverage after the resolver.
+//			if (coverage != null && coverage.getExtentCount() > 0) {
+//				List<IServiceCall> scaleSpecs = ((Scale) coverage).getKimSpecification();
+//				if (!scaleSpecs.isEmpty()) {
+//					ret += "@coverage load_me_from_some_sidecar_file()";
+//					ret += "\n";
+//				}
+//			}
 			ret += "\n";
 		}
 
@@ -452,7 +441,8 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	}
 
 	/*
-	 * the root dataflow is guaranteed to have only one root node, the others do not.
+	 * the root dataflow is guaranteed to have only one root node, the others do
+	 * not.
 	 */
 	public Pair<List<IActuator>, Graph<IActuator, DefaultEdge>> getDataflowStructure() {
 
@@ -614,10 +604,10 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	public void notifyOccurrents() {
 		this.isOccurrent = true;
 	}
-	
+
 	@Override
 	public String toString() {
-	    return dump();
+		return dump();
 	}
 
 	/**

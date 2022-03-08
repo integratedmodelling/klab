@@ -42,7 +42,6 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.LogicalConnector;
-import org.integratedmodelling.klab.components.runtime.AbstractRuntimeScope;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
