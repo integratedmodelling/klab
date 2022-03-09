@@ -64,28 +64,28 @@ public class EuclideanDistanceResolver implements IResolver<IState>, IExpression
 		Object weight = parameters.get("weights");
 
 		for (ILocator locator : context.getScale()) {
+		    double sum = Double.NaN;
+            for (IState state : sources) {
+                Object value = state.get(locator);
+                if (value instanceof Number) {
+                    double w = 1.0/(double)sources.size();
+                    if (weight instanceof Number) {
+                        w = ((Number) weight).doubleValue();
+                    } else if (weight instanceof Map) {
+                        // TODO look up the observable in the map and get the weight; cache the search
+                        // based on observable name for later reference
+                    }
+                    double factor = w * (((Number) value).doubleValue() * ((Number) value).doubleValue());
+                    sum = Double.isNaN(sum) ? factor : (sum + factor);
+                }
 
+            }
 			switch (parameters.get("indicator", "distance")) {
 			case "distance":
+			    ret.set(locator, Double.isNaN(sum) ? null : Math.sqrt(sum));
+
 				break;
-			case "reverse":
-				double sum = Double.NaN;
-				for (IState state : sources) {
-					Object value = state.get(locator);
-					if (value instanceof Number) {
-						double w = 1.0/(double)sources.size();
-						if (weight instanceof Number) {
-							w = ((Number) weight).doubleValue();
-						} else if (weight instanceof Map) {
-							// TODO look up the observable in the map and get the weight; cache the search
-							// based on observable name for later reference
-						}
-						double factor = w * (((Number) value).doubleValue() * ((Number) value).doubleValue());
-						sum = Double.isNaN(sum) ? factor : (sum + factor);
-					}
-
-				}
-
+			case "similarity":
 				ret.set(locator, Double.isNaN(sum) ? null : (1.0 / (1.0 + Math.sqrt(sum))));
 
 				break;
