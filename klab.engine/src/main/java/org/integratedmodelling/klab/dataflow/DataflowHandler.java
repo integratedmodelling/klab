@@ -208,7 +208,6 @@ public class DataflowHandler extends Parameters<String> {
 	public String getElkGraph(IRuntimeScope scope) {
 		Flowchart flowchart = getFlowchart(scope);
 		if (flowchart != null) {
-			System.out.println(flowchart.dump());
 			return flowchart.getJsonLayout();
 		}
 		return null;

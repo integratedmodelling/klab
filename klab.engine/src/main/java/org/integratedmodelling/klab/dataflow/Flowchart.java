@@ -1006,7 +1006,6 @@ public class Flowchart {
 		RecursiveGraphLayoutEngine engine = new RecursiveGraphLayoutEngine();
 		ElkNode rootNode = compile();
 		engine.layout(rootNode, new BasicProgressMonitor());
-		System.out.println(dump());
 		return ElkGraphJson.forGraph(rootNode).omitLayout(false).omitZeroDimension(true).omitZeroPositions(true)
 				.shortLayoutOptionKeys(true).prettyPrint(true).toJson();
 
