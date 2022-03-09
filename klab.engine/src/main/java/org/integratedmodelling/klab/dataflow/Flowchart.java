@@ -436,6 +436,9 @@ public class Flowchart {
 				return child.getMainOutput();
 			}
 		}
+		if (element.inputs.containsKey(input)) {
+			return element.inputs.get(input);
+		}
 		return null;
 	}
 
