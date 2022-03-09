@@ -77,17 +77,17 @@ export value resourcechange
 	class org.integratedmodelling.klab.components.runtime.contextualizers.ChangingResourceResolver
 }
 
-export value replay
-	"Return a process resolver that will replay the change already built into a pre-contextualized
-	 observation, so that any dependencies may react during a successive resolution."
-	 label 'Extract time'
-{				
-
-	import value artifact 
-		"The definition of the change concept that this is resolving"
-
-	class org.integratedmodelling.klab.components.runtime.contextualizers.ContextReplayResolver
-}
+//export value replay
+//	"Return a process resolver that will replay the change already built into a pre-contextualized
+//	 observation, so that any dependencies may react during a successive resolution."
+//	 label 'Extract time'
+//{				
+//
+//	import value artifact 
+//		"The definition of the change concept that this is resolving"
+//
+//	class org.integratedmodelling.klab.components.runtime.contextualizers.ContextReplayResolver
+//}
 
 filter number convert
 	"Convert a numeric state from a unit, range or currency to a compatible other."

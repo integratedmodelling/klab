@@ -1068,19 +1068,19 @@ public class Model extends KimObject implements IModel {
 		}
 	}
 
-	public Model(IObservable mainObservable, String resolvedChangingObservationName, ResolutionScope scope) {
-		super(null);
-		this.derived = true;
-		this.id = mainObservable.getName() + "_resolved_change";
-		this.namespace = scope.getResolutionNamespace();
-		this.contextualization = new Contextualization(null, this);
-		this.observables.add(mainObservable);
-		this.localNames.put(mainObservable.getReferenceName(), mainObservable.getName());
-		this.observablesByReferenceName.put(mainObservable.getReferenceName(), mainObservable);
-		this.coverage = scope.getScale();
-		this.resources.add(
-				Klab.INSTANCE.getRuntimeProvider().getChangeResolver(mainObservable, resolvedChangingObservationName));
-	}
+//	public Model(IObservable mainObservable, String resolvedChangingObservationName, ResolutionScope scope) {
+//		super(null);
+//		this.derived = true;
+//		this.id = mainObservable.getName() + "_resolved_change";
+//		this.namespace = scope.getResolutionNamespace();
+//		this.contextualization = new Contextualization(null, this);
+//		this.observables.add(mainObservable);
+//		this.localNames.put(mainObservable.getReferenceName(), mainObservable.getName());
+//		this.observablesByReferenceName.put(mainObservable.getReferenceName(), mainObservable);
+//		this.coverage = scope.getScale();
+//		this.resources.add(
+//				Klab.INSTANCE.getRuntimeProvider().getChangeResolver(mainObservable, resolvedChangingObservationName));
+//	}
 
 	public Model(IViewModel view) {
 		super(null);

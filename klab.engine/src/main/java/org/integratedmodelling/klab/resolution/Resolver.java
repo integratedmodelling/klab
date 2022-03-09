@@ -678,15 +678,16 @@ public class Resolver {
                         .getObservationResolving(observable);
                 if (previous != null) {
 
-                    String previousArtifactName = ((DirectObservation) ret.getContext()).getScope()
-                            .getArtifactName(previous);
-
-                    if (observable.is(Type.CHANGE) && previous.getObservable().is(Type.QUALITY)) {
-                        observable = observable
-                                .withResolvedModel(new Model(observable, previousArtifactName, ret));
-                    } else {
+                	// FIXME FIXME check if it's OK to remove all this
+//                    String previousArtifactName = ((DirectObservation) ret.getContext()).getScope()
+//                            .getArtifactName(previous);
+//
+//                    if (observable.is(Type.CHANGE) && previous.getObservable().is(Type.QUALITY)) {
+//                        observable = observable
+//                                .withResolvedModel(new Model(observable, previousArtifactName, ret));
+//                    } else {
                         previousArtifact = new Pair<>(previous.getObservable().getName(), previous);
-                    }
+//                    }
                 }
             }
         }

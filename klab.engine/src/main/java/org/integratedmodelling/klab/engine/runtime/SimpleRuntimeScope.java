@@ -16,6 +16,7 @@ import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Namespaces;
 import org.integratedmodelling.klab.api.actors.IBehavior;
+import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IStorage;
@@ -986,6 +987,12 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 
 	@Override
 	public Set<IObservedConcept> getImplicitlyChangingObservables() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IRuntimeScope getChild(IRuntimeIdentity identity) {
 		// TODO Auto-generated method stub
 		return null;
 	}

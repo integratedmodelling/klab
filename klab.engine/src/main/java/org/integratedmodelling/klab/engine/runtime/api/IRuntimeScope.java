@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.klab.api.actors.IBehavior;
+import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -605,5 +606,13 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 */
 
 	Set<IObservedConcept> getImplicitlyChangingObservables();
+
+	/**
+	 * Return a copy of this scope operating under the passed monitor and identity.
+	 * 
+	 * @param identity
+	 * @return
+	 */
+	IRuntimeScope getChild(IRuntimeIdentity identity);
 
 }

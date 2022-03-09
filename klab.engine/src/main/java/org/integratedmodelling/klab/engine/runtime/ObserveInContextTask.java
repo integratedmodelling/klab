@@ -147,7 +147,7 @@ public class ObserveInContextTask extends AbstractTask<IArtifact> {
 							activity.getActivityDescriptor().setDataflowCode(dataflow.getKdlCode());
 						}
 
-						IRuntimeScope ctx = ((Observation) context).getScope();
+						IRuntimeScope ctx = ((Observation) context).getScope().getChild(ObserveInContextTask.this);
 						((AbstractRuntimeScope)ctx).notifyDataflowChanges(ctx);
 						
 						// make a copy of the coverage so that we ensure it's a scale, behaving

@@ -22,7 +22,6 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubjectiveObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
@@ -34,14 +33,12 @@ import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.debugger.Debugger;
 import org.integratedmodelling.klab.engine.debugger.Debugger.Watcher;
 import org.integratedmodelling.klab.engine.runtime.Session;
-import org.integratedmodelling.klab.engine.runtime.ViewImpl;
 import org.integratedmodelling.klab.engine.runtime.api.IModificationListener;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.exceptions.KlabActorException;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.owl.Observable;
-import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.NameGenerator;
@@ -79,16 +76,16 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	private boolean contextualized;
 	private View view;
 
-	/*
-	 * If this is not null, the observation is being recontextualized by a dataflow
-	 * successive to the one that produced its change, and the getLastUpdate()
-	 * method should respond a time relative to that instead of the very last one.
-	 * 
-	 * FIXME this is a potentially dangerous approach but using a wrapper destroys
-	 * the referential integrity of the context. Should externalize this info within
-	 * the scheduler.
-	 */
-	protected ITime replayingTime = null;
+//	/*
+//	 * If this is not null, the observation is being recontextualized by a dataflow
+//	 * successive to the one that produced its change, and the getLastUpdate()
+//	 * method should respond a time relative to that instead of the very last one.
+//	 * 
+//	 * FIXME this is a potentially dangerous approach but using a wrapper destroys
+//	 * the referential integrity of the context. Should externalize this info within
+//	 * the scheduler.
+//	 */
+//	protected ITime replayingTime = null;
 
 	/*
 	 * Any modification that needs to be reported to clients is recorded here
@@ -165,9 +162,9 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 		this.changeset.add(change);
 	}
 
-	public void setReplayingTime(ITime time) {
-		this.replayingTime = time;
-	}
+//	public void setReplayingTime(ITime time) {
+//		this.replayingTime = time;
+//	}
 
 	protected void touch() {
 		this.timestamp = System.currentTimeMillis();

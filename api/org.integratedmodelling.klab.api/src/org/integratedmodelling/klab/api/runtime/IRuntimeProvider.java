@@ -245,16 +245,16 @@ public interface IRuntimeProvider {
 	 */
 	IContextualizable getChangeResolver(IObservable changeObservable, IResource mergedResource);
 
-	/**
-	 * Return a no-op computation whose only purpose is to "replay" an existing,
-	 * dynamic observation which already contains changes as a changing resource, to
-	 * fit a context where the change must be played out anew.
-	 * 
-	 * @param changeObservable
-	 * @param changingObservation
-	 * @return
-	 */
-	IContextualizable getChangeResolver(IObservable changeObservable, String changingObservationName);
+//	/**
+//	 * Return a no-op computation whose only purpose is to "replay" an existing,
+//	 * dynamic observation which already contains changes as a changing resource, to
+//	 * fit a context where the change must be played out anew.
+//	 * 
+//	 * @param changeObservable
+//	 * @param changingObservation
+//	 * @return
+//	 */
+//	IContextualizable getChangeResolver(IObservable changeObservable, String changingObservationName);
 
 //	/*
 //	 * Called on a computation returned by getComputation() to change the target ID

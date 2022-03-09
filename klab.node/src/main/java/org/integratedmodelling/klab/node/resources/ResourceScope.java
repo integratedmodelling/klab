@@ -12,6 +12,7 @@ import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.api.actors.IBehavior;
+import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -905,6 +906,12 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
 
 	@Override
 	public Set<IObservedConcept> getImplicitlyChangingObservables() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IRuntimeScope getChild(IRuntimeIdentity identity) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -59,7 +59,6 @@ import org.integratedmodelling.klab.components.runtime.contextualizers.CastingSt
 import org.integratedmodelling.klab.components.runtime.contextualizers.CategoryClassificationResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ChangingResourceResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ClassifyingStateResolver;
-import org.integratedmodelling.klab.components.runtime.contextualizers.ContextReplayResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ConversionResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.DereifyingStateResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ExpressionResolver;
@@ -680,9 +679,9 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
         return new ComputableResource(KnowledgeViewResolver.getServiceCall(view), Mode.RESOLUTION);
     }
 
-    @Override
-    public IContextualizable getChangeResolver(IObservable changeObservable, String changingObservationName) {
-        return new ComputableResource(ContextReplayResolver.getServiceCall(changingObservationName),
-                Mode.RESOLUTION);
-    }
+//    @Override
+//    public IContextualizable getChangeResolver(IObservable changeObservable, String changingObservationName) {
+//        return new ComputableResource(ContextReplayResolver.getServiceCall(changingObservationName),
+//                Mode.RESOLUTION);
+//    }
 }

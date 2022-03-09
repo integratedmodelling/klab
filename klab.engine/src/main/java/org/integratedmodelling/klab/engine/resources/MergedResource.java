@@ -553,6 +553,10 @@ public class MergedResource implements IResource {
 					 * if the artifact has already been contextualized up to this, don't add
 					 * anything
 					 */
+					/*
+					 * FIXME FIXME check correctly for resources that were contextualized beyond
+					 * this transition in previous contextualizations
+					 */
 					long seen = artifact.getLastUpdate();
 					if (seen > set.getKey()) {
 						ok = false;

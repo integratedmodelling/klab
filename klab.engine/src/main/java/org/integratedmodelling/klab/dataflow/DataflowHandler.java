@@ -73,6 +73,8 @@ public class DataflowHandler extends Parameters<String> {
 		this.dataflowCache = other.dataflowCache;
 		this.rootNodes = other.rootNodes;
 		this.dataflowCodeLength = other.dataflowCodeLength;
+		this.rootDataflow = other.rootDataflow;
+		this.rootContextId = other.rootContextId;
 	}
 
 	public String getKdl() {

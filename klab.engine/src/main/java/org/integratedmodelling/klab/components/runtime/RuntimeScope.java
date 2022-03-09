@@ -33,6 +33,7 @@ import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Roles;
 import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.api.actors.IBehavior;
+import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IStorage;
@@ -67,6 +68,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.ValuePresentation;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
+import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.IScheduler;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.ITask;
@@ -178,7 +180,6 @@ public class RuntimeScope extends AbstractRuntimeScope {
 	private boolean occurrent;
 	private Map<String, IKnowledgeView> views;
 	private Map<String, IKnowledgeView> viewsByUrn;
-
 
 	/**
 	 * This is used during <em>contextualization</em> of previously characterized
@@ -1326,9 +1327,10 @@ public class RuntimeScope extends AbstractRuntimeScope {
 
 		IObservation parent = this.getParentArtifactOf(observation);
 
-		// if I am subscribed to the father and not to its father, send the number of
-		// children
-		// for the father
+		/*
+		 * if I am subscribed to the father and not to its father, send the number of
+		 * children for the father
+		 */
 		if (parent == null || watchedObservations.contains(parent.getId())) {
 
 			IObservation grandpa = parent == null ? null : getParentArtifactOf(parent);
@@ -1345,9 +1347,11 @@ public class RuntimeScope extends AbstractRuntimeScope {
 					 * first condition is for when the identity is a task that resolves an
 					 * instantiated object. TODO should probably put the subject as the resolvable.
 					 */
-					boolean isMain = ((ITask<?>) this.monitor.getIdentity()).getResolvable() == null
-							|| (this.monitor.getIdentity() instanceof ITask && ((ITask<?>) this.monitor.getIdentity())
-									.getResolvable().equals(observation.getObservable()));
+					IResolvable resolvable = this.monitor.getIdentity() instanceof ITask
+							? ((ITask<?>) this.monitor.getIdentity()).getResolvable()
+							: null;
+
+					boolean isMain = resolvable == null || resolvable.equals(observation.getObservable());
 
 					if (observation instanceof IState
 							&& ((IState) observation).getValuePresentation() != ValuePresentation.VALUE) {
@@ -2352,6 +2356,13 @@ public class RuntimeScope extends AbstractRuntimeScope {
 
 	public void addPrecontextualizationDataflow(Dataflow dataflow) {
 		addPrecontextualizationDataflow((Dataflow) dataflow, this.dataflow);
+	}
+
+	@Override
+	public IRuntimeScope getChild(IRuntimeIdentity identity) {
+		IRuntimeScope ret = copy();
+		((RuntimeScope)ret).monitor = identity.getMonitor();
+		return ret;
 	}
 
 }
