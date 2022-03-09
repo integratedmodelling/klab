@@ -123,7 +123,6 @@ public class Flowchart {
 					.capitalize(Observables.INSTANCE.getDisplayName(actuator.getObservable()).replaceAll("_", " "));
 			this.documentation = DataflowDocumentation.INSTANCE.getDocumentation(this, actuator,
 					Flowchart.this.runtimeScope);
-
 			elementsByName.put(actuator.getName(), this);
 			elementsById.put(this.id, this);
 			if (root == null) {
@@ -141,16 +140,6 @@ public class Flowchart {
 			elementsById.put(this.id, this);
 			parent.children.add(this);
 		}
-
-//		Element(Actuator actuator, Pair<IServiceCall, IContextualizable> resource) {
-//			this.id = ((ComputableResource) resource.getSecond()).getId();
-//			this.type = ElementType.RESOLVER;
-//			this.label = Extensions.INSTANCE.getServiceLabel(resource.getFirst());
-//			this.name = resource.getFirst().getName();
-//			this.documentation = DataflowDocumentation.INSTANCE.getDocumentation(this, resource,
-//					Flowchart.this.runtimeScope);
-//			elementsById.put(this.id, this);
-//		}
 
 		// only for the root element
 		private Element() {
@@ -247,10 +236,6 @@ public class Flowchart {
 			return ret;
 		}
 
-//		public void setInputs(List<String> inputs) {
-//			this.inputs = inputs;
-//		}
-
 		/**
 		 * Inputs have the format containingelement.formalnameofinput
 		 * 
@@ -259,15 +244,6 @@ public class Flowchart {
 		public List<String> getOutputs() {
 			return new ArrayList<>(outputs.values());
 		}
-
-//		/**
-//		 * Outputs have the format containingelement.formalnameofoutput.
-//		 * 
-//		 * @return
-//		 */
-//		public void setOutputs(List<String> outputs) {
-//			this.outputs = outputs;
-//		}
 
 		public List<Element> getChildren() {
 			return children;
@@ -329,15 +305,16 @@ public class Flowchart {
 
 	private Element compile(Actuator actuator, Element parentNode) {
 
+		if (actuator.isReference() || actuator.isInput()) {
+			return null;
+		}
+		
 		Element ret = new Element(actuator);
 
 		if (parentNode != null) {
 			parentNode.children.add(ret);
 		}
 
-		// these to avoid double counting
-		Set<String> outputsDefined = new HashSet<>();
-		Set<String> inputsDefined = new HashSet<>();
 		Map<IActuator, String> queriedConnections = new HashMap<>();
 
 		/*
@@ -350,11 +327,8 @@ public class Flowchart {
 				IActuator child = graph.getEdgeSource(edge);
 				String queriedOutput = ret
 						.getOrCreateOutput("queried." + ((Actuator) child).getObservable().getReferenceName());
-				outputsDefined.add(queriedOutput);
 				queriedConnections.put(child, queriedOutput);
 			}
-		} else {
-			elementsByName.put(actuator.getName(), ret);
 		}
 
 		/*
@@ -363,7 +337,7 @@ public class Flowchart {
 		 */
 		if (actuator.getModel() != null) {
 			for (IObservable observable : actuator.getModel().getObservables()) {
-				outputsDefined.add(ret.getOrCreateOutput(observable.getReferenceName()));
+				ret.getOrCreateOutput(observable.getReferenceName());
 			}
 		}
 
@@ -380,12 +354,17 @@ public class Flowchart {
 				 * record actuator as an input, using the local name. We must have the reference
 				 * name in the inputs already from the model.
 				 */
+				if (elementsByName.containsKey(childActuator.getName())) {
+					connect(elementsByName.get(childActuator.getName()).getMainOutput(), ret.getOrCreateInput(childActuator.getName()));
+				} else {
+					throw new KlabInternalErrorException("Unresolved reference in dataflow: " + childActuator.getName());
+				}
 			}
 
 			/*
 			 * if we have queried outputs, connect the main output of the actuator
 			 */
-			if (queriedConnections.containsKey(childActuator)) {
+			if (child != null && queriedConnections.containsKey(childActuator)) {
 				connect(child.getMainOutput(), queriedConnections.get(childActuator));
 			}
 
@@ -559,11 +538,10 @@ public class Flowchart {
 
 		} else if (contextualizable.getType() == IContextualizable.Type.CLASSIFICATION) {
 
-			// works as a filter, so the main observable gets in and out
 			element.outputs.put(actuator.getName(), element.getOrCreateOutput(actuator.getName()));
 			element.inputs.put(actuator.getName(), element.getOrCreateInput(actuator.getName()));
 			element.type = ElementType.TABLE;
-//
+
 			if (((ComputableResource) contextualizable).getValidatedResource(Object.class) instanceof Classification) {
 
 				for (IKimExpression expression : ((ComputableResource) contextualizable)
@@ -639,6 +617,7 @@ public class Flowchart {
 			element.inputs.put(actuator.getName(), element.getOrCreateInput(actuator.getName()));
 
 		} else {
+			// TODO happens with literal resources
 			Logging.INSTANCE.warn("INTERNAL: unhandled computation in dataflow graph: " + contextualizable);
 		}
 
@@ -939,33 +918,6 @@ public class Flowchart {
 
 	public Collection<String> getOutputs() {
 		return root.getOutputs();
-	}
-
-	public Element getElementById(String nodeId) {
-		return elementsById.get(nodeId);
-	}
-
-	@Deprecated
-	public String pullOutput(String input) {
-
-		if (elementsByName.containsKey(input)) {
-			String ret = root.getOrCreateOutput(input, "export");
-			Element element = elementsByName.get(input);
-			if (!element.getId().equals(root.getId())) {
-				String eout = element.getOrCreateOutput(input);
-				connections.add(new Pair<>(eout, ret));
-			}
-			return ret;
-		}
-		return null;
-	}
-
-	public Collection<ElkConnectableShape> getOutputShapes() {
-		List<ElkConnectableShape> ret = new ArrayList<>();
-		for (String s : getOutputs()) {
-			ret.add(nodes.get(s));
-		}
-		return ret;
 	}
 
 	public ElkConnectableShape getOutput(String observable) {
