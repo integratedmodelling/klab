@@ -34,6 +34,7 @@ import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IAgent;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -628,6 +629,12 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
             // TODO Auto-generated method stub
             return 0;
         }
+
+		@Override
+		public boolean hasChangedDuring(ITime time) {
+			// TODO Auto-generated method stub
+			return false;
+		}
 
     }
 

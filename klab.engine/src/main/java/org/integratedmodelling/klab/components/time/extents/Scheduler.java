@@ -8,10 +8,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
@@ -89,9 +89,15 @@ public class Scheduler implements IScheduler {
 	private Synchronicity synchronicity = Synchronicity.SYNCHRONOUS;
 	private AtomicBoolean stopped = new AtomicBoolean(false);
 	private int cursor = 0;
-//    private ExecutorService executor;
 	private WaitStrategy waitStrategy;
 	private boolean finished = false;
+
+	/*
+	 * keep changed observations here so we can replay the change at each replay of
+	 * the schedule in successive resolutions. This is needed so that any new
+	 * dependents can be updated.
+	 */
+	private Set<IObservation> changedObservations = new LinkedHashSet<>();
 
 	/*
 	 * used to track change in states that don't have processes connected
@@ -142,6 +148,12 @@ public class Scheduler implements IScheduler {
 		private Observation recipient;
 		private int dependencyOrder;
 		public ITime time;
+
+		// if this is not null, the action simply reassesses the dependencies and calls
+		// the actuators of other dependent observations that depend on the change.
+		private IObservation replayedObservation;
+		private int changeIndex = 0;
+		private ITime[] timeChanges;
 
 		/**
 		 * Register a scheduled action from a behavior.
@@ -241,6 +253,42 @@ public class Scheduler implements IScheduler {
 		}
 
 		/**
+		 * Special case registration that replays previous change. Used only in
+		 * contextualizations that may depend on change that has already been recorded.
+		 * 
+		 * @param replayedObservation
+		 * @param scope
+		 * @param catalog
+		 * @param changes
+		 */
+		public Registration(IObservation replayedObservation, IRuntimeScope scope, ITime[] changes, Actuator actuator) {
+
+			this.replayedObservation = replayedObservation;
+			this.scope = scope;
+			this.timeChanges = changes;
+			this.changeIndex = 0;
+			this.actuator = actuator;
+			this.action = new Function<IMonitor, Collection<ObservedConcept>>() {
+
+				@Override
+				public Collection<ObservedConcept> apply(IMonitor monitor) {
+
+					Set<IObservedConcept> container = new HashSet<>();
+					container.add(new ObservedConcept(replayedObservation.getObservable(), Mode.RESOLUTION));
+					Set<IObservedConcept> computed = new HashSet<>();
+					for (IObservedConcept tracked : scope.getImplicitlyChangingObservables()) {
+						computeImplicitDependents(tracked, container, computed, timeChanges[changeIndex], scope,
+								scope.getDependencyGraph(), catalog,
+								((IRuntimeScope) (Observation) replayedObservation.getScope()).getDataflow());
+					}
+
+					return new ArrayList<>();
+				}
+			};
+
+		}
+
+		/**
 		 * Register a computation from an actuator
 		 * 
 		 * @param actuator
@@ -260,7 +308,7 @@ public class Scheduler implements IScheduler {
 			this.scope = scope;
 			this.computations = computation;
 
-			action = new Function<IMonitor, Collection<ObservedConcept>>() {
+			this.action = new Function<IMonitor, Collection<ObservedConcept>>() {
 
 				@Override
 				public Collection<ObservedConcept> apply(IMonitor monitor) {
@@ -347,13 +395,7 @@ public class Scheduler implements IScheduler {
 							for (IState state : scope.getAffectedArtifacts(
 									((IProcess) computation.target).getObservable().getType(), IState.class)) {
 
-								/*
-								 * FIXME FIXME check correctly for resources that were contextualized beyond
-								 * this transition in previous contextualizations
-								 */
-
-								if (state.getLastUpdate() > transitionContext.getScale().getTime().getStart()
-										.getMilliseconds()) {
+								if (state.hasChangedDuring(transitionContext.getScale().getTime())) {
 									changed.add(state);
 									ret.add(new ObservedConcept(state.getObservable(), Mode.RESOLUTION));
 								}
@@ -361,13 +403,7 @@ public class Scheduler implements IScheduler {
 						} else if (computation.target instanceof IState
 								&& actuator.getObservable().is(IKimConcept.Type.CHANGE)) {
 
-							/*
-							 * FIXME FIXME check correctly for resources that were contextualized beyond
-							 * this transition in previous contextualizations
-							 */
-
-							if (computation.target.getLastUpdate() > transitionContext.getScale().getTime().getStart()
-									.getMilliseconds()) {
+							if (computation.target.hasChangedDuring(transitionContext.getScale().getTime())) {
 								changed.add((IObservation) computation.target);
 								ret.add(new ObservedConcept(((IObservation) computation.target).getObservable(),
 										actuator.getMode()));
@@ -398,6 +434,11 @@ public class Scheduler implements IScheduler {
 					} else {
 
 						for (IObservation observation : changed) {
+
+							/**
+							 * keep a memory of the change for future contextualizations
+							 */
+							Scheduler.this.changedObservations.add(observation);
 
 							((Observation) observation).finalizeTransition((IScale) transitionScale);
 
@@ -476,9 +517,11 @@ public class Scheduler implements IScheduler {
 		}
 
 		public boolean runsAtTermination() {
-			for (Actuator.Computation computation : this.computations) {
-				if (computation.schedule != null && computation.schedule.isEnd()) {
-					return true;
+			if (this.computations != null) {
+				for (Actuator.Computation computation : this.computations) {
+					if (computation.schedule != null && computation.schedule.isEnd()) {
+						return true;
+					}
 				}
 			}
 			return false;
@@ -506,6 +549,7 @@ public class Scheduler implements IScheduler {
 	// views can do this.
 	private Map<Pair<IDirectObservation, Dataflow>, List<Registration>> terminationRegistrations = new HashMap<>();
 	private IRuntimeScope runtimeScope;
+	private Map<IObservedConcept, IObservation> catalog; // only for the registrations that replay change
 
 	Map<Pair<IDirectObservation, Dataflow>, List<Registration>> dataflows;
 
@@ -642,7 +686,9 @@ public class Scheduler implements IScheduler {
 		dataflows = new LinkedHashMap<>();
 
 		for (Registration registration : registrations) {
-			Dataflow dataflow = registration.actuator.getDataflow();
+			Dataflow dataflow = registration.actuator == null
+					? (Dataflow) ((RuntimeScope) registration.scope).getDataflow()
+					: registration.actuator.getDataflow();
 			Pair<IDirectObservation, Dataflow> key = new Pair<>(registration.target, dataflow);
 			if (!dataflows.containsKey(key)) {
 				dataflows.put(key, new ArrayList<>());
@@ -871,6 +917,13 @@ public class Scheduler implements IScheduler {
 		monitor.send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
 				IMessage.Type.SchedulingStarted, notification));
 
+		/**
+		 * This is only for the benefit of replayed registrations. The catalog changes
+		 * during transitions so most functions that need it should keep extracting it
+		 * when needed.
+		 */
+		this.catalog = runtimeScope.getCatalog();
+
 		long time = startTime;
 		long lastAdvanced = startTime;
 
@@ -991,8 +1044,7 @@ public class Scheduler implements IScheduler {
 		}
 
 		// don't do this again if we make further observations later
-		this.registrations.clear();
-		this.dataflows.clear();
+		resetAfterRun();
 
 		this.finished = true;
 
@@ -1003,6 +1055,23 @@ public class Scheduler implements IScheduler {
 		notification.setCurrentTime(time);
 		monitor.send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
 				IMessage.Type.SchedulingFinished, notification));
+	}
+
+	private void resetAfterRun() {
+
+		this.registrations.clear();
+		this.dataflows.clear();
+
+		/*
+		 * enqueue registrations to replay change for the next pass reusing this info.
+		 * Dependent variables will need to do that automatically.
+		 */
+		Graph<IObservedConcept, DefaultEdge> dependencies = runtimeScope.getDependencyGraph();
+		for (IObservation changing : this.changedObservations) {
+			this.registrations.add(
+					new Registration(changing, runtimeScope, ((Time) changing.getScale().getTime()).getChangedExtents(),
+							getActuator(new ObservedConcept(changing.getObservable(), Mode.RESOLUTION), dependencies)));
+		}
 	}
 
 	private List<Registration> tagExpirations(List<Registration> set) {
@@ -1052,14 +1121,7 @@ public class Scheduler implements IScheduler {
 				if (changed.contains(precursor) && !changed.contains(observable)) {
 					IObservation pre = catalog.get(precursor);
 					IObservation post = catalog.get(observable);
-
-					/*
-					 * FIXME FIXME check correctly for resources that were contextualized beyond
-					 * this transition in previous contextualizations
-					 */
-
-
-					if (pre != null && post != null && pre.getLastUpdate() > post.getLastUpdate()) {
+					if (pre != null && post != null && pre.hasChangedDuring(time)) {
 						recompute = true;
 					}
 				}
@@ -1093,7 +1155,7 @@ public class Scheduler implements IScheduler {
 			IObservation target = (IObservation) targetd.getSecond();
 			ILocator transitionScale = runtimeScope.getResolutionScale().at(time);
 			IRuntimeScope transitionContext = runtimeScope.targetToObservation(target).locate(transitionScale, monitor);
-			
+
 			/*
 			 * FIXME FIXME check correctly for resources that were contextualized beyond
 			 * this transition in previous contextualizations
@@ -1211,7 +1273,9 @@ public class Scheduler implements IScheduler {
 		/*
 		 * first time interval in registration, skip initialization
 		 */
-		if (first) {
+		if (registration.timeChanges != null) {
+			registration.time = registration.timeChanges[registration.changeIndex++];
+		} else if (first) {
 			registration.time = registration.scale.getTime().earliest();
 		} else {
 			registration.time = registration.time.getNext();

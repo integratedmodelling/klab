@@ -30,6 +30,7 @@ import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.utils.Range;
 
 /**
@@ -517,4 +518,13 @@ public interface IArtifact extends IProvenance.Node, Iterable<IArtifact> {
 	 * @return
 	 */
 	long getLastUpdate();
+
+	/**
+	 * Checks if the artifact has changed in any way during the passed temporal
+	 * transition. Will return false if {@link #isDynamic()} is false.
+	 * 
+	 * @param time
+	 * @return
+	 */
+	boolean hasChangedDuring(ITime time);
 }

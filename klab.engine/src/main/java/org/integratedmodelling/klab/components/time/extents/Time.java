@@ -1638,11 +1638,26 @@ public class Time extends Extent implements ITime {
         return this;
     }
 
+    public ITime[] getChangedExtents() {
+    	long[] timestamps = getUpdateTimestamps();
+    	ITime[] ret = new ITime[timestamps.length];
+    	for (int i = 0; i < timestamps.length-1; i++) {
+          Pair<Long, Long> ext = extension.getExtension(i);
+          ret[i] = create(ext.getFirst(), ext.getSecond()).withLocatedOffset(timestamps[i]);
+    	}
+    	return ret;
+    }
+    
 	public long[] getUpdateTimestamps() {
 		if (extension != null) {
 			return extension.getTimestamps();
 		}
 		return new long[] {};
+	}
+
+	@Override
+	public boolean hasChangeDuring(ITime time) {
+		return extension == null ? false : extension.hasChangeDuring(time);
 	}
     
 }

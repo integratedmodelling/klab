@@ -50,7 +50,7 @@ public class TemporalExtension {
 
 		boolean as = extension.add(transition.getStart().getMilliseconds());
 		boolean ae = extension.add(transition.getEnd().getMilliseconds());
-		
+
 		return as || ae;
 	}
 
@@ -109,6 +109,10 @@ public class TemporalExtension {
 			ret[i++] = l;
 		}
 		return ret;
+	}
+
+	public boolean hasChangeDuring(ITime time) {
+		return extension.subSet(time.getStart().getMilliseconds(), time.getEnd().getMilliseconds()).size() > 0;
 	}
 
 }
