@@ -83,7 +83,8 @@ filter number euclideandistance
 		this is passed, must match one of those indicators that compute implicit distances."
 		
 	optional text indicator
-		"The indicator we compute. For now either nothing (traditional ED), "	
+		"The indicator we compute. Default value is distance calculating the Euclidean distance from the vector to the origin. 
+		Use similarity to calculate the similarity between the vector and the origin. "	
 		
 	class org.integratedmodelling.klab.data.transformations.EuclideanDistanceResolver
 }
