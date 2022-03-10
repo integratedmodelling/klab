@@ -347,16 +347,12 @@ public class Scheduler implements IScheduler {
 						// TODO
 					}
 
-					// // ensure we have the names we expect
-					// transitionContext = actuator.localizeNames(transitionContext);
-
 					monitor.debug("running " + actuator
 							+ (time == null ? " at termination"
 									: (" at [" + new Date(time.getStart().getMilliseconds()) + " - "
 											+ new Date(time.getEnd().getMilliseconds()) + "]")));
 
 					IArtifact artifact = null;
-//                    IArtifact ctarget = null;
 
 					/*
 					 * 3. Run all contextualizers in the context that react to transitions; check
@@ -372,7 +368,6 @@ public class Scheduler implements IScheduler {
 
 						if (artifact == null) {
 							artifact = computation.target;
-//                            ctarget = computation.target;
 						}
 
 						/*
@@ -411,21 +406,7 @@ public class Scheduler implements IScheduler {
 						}
 
 					}
-
-					// /*
-					// * report only states for now - must become discriminating and intelligent. If
-					// * in folder...
-					// *
-					// */
-					// if (artifact instanceof IState /*
-					// * TODO check if changes happened independent of type
-					// */) {
-					// changed.add((IObservation) ctarget);
-					// ret.add(new ObservedConcept(((IObservation) ctarget).getObservable(),
-					// ((IObservation) ctarget) instanceof ObservationGroup ? Mode.INSTANTIATION
-					// : Mode.RESOLUTION));
-					// }
-
+					
 					/*
 					 * 4. Notify whatever has changed.
 					 */
@@ -526,10 +507,6 @@ public class Scheduler implements IScheduler {
 			}
 			return false;
 		}
-
-//        private Scheduler getEnclosingInstance() {
-//            return Scheduler.this;
-//        }
 	}
 
 	private List<Registration> registrations = new ArrayList<>();
