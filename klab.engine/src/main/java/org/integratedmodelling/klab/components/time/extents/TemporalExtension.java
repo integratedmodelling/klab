@@ -31,6 +31,12 @@ public class TemporalExtension {
 		extension.add(this.start);
 		extension.add(this.end);
 	}
+	
+	TemporalExtension(TemporalExtension other) {
+		this.start = other.start;
+		this.end = other.end;
+		this.extension.addAll(other.extension);
+	}
 
 	/**
 	 * Add a transition and redefine the size. Return true if the transition has

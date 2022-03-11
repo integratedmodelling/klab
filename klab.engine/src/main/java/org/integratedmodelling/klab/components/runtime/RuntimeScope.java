@@ -1041,7 +1041,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
 		if (!observable.is(Type.QUALITY)) {
 			throw new KlabValidationException("klab: API usage: adding a state with a non-quality observable");
 		}
-		IObservation ret = DefaultRuntimeProvider.createObservation(observable, target.getScale(), this, false);
+		IObservation ret = DefaultRuntimeProvider.createObservation(observable, Scale.copyForObservation(target.getScale()), this, false);
 		if (data != null) {
 			((IState) ret).fill(data);
 		}
@@ -1148,10 +1148,10 @@ public class RuntimeScope extends AbstractRuntimeScope {
 				}
 
 				if (obs.is(Type.RELATIONSHIP)) {
-					observation = DefaultRuntimeProvider.createRelationship(obs, scale, relationshipSource,
+					observation = DefaultRuntimeProvider.createRelationship(obs, Scale.copyForObservation(scale), relationshipSource,
 							relationshipTarget, this);
 				} else {
-					observation = DefaultRuntimeProvider.createObservation(obs, scale, this, op.getThird());
+					observation = DefaultRuntimeProvider.createObservation(obs, Scale.copyForObservation(scale), this, op.getThird());
 				}
 
 				if (getRootSubject() != null) {
@@ -1183,7 +1183,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
 							if (objectMetadata.containsKey(attr)) {
 								Object obj = objectMetadata.getCaseInsensitive(attr);
 								IState state = (IState) DefaultRuntimeProvider.createObservation(
-										actuator.getDataflow().getModel().getAttributeObservables().get(attr), scale,
+										actuator.getDataflow().getModel().getAttributeObservables().get(attr), Scale.copyForObservation(scale),
 										this);
 								((State) state).distributeScalar(obj);
 								predefinedStates.add(state);
@@ -1481,7 +1481,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
 		IObservation observation = null;
 
 		if (observable.is(Type.COUNTABLE)) {
-			observation = getObservationGroup(observable, getResolutionScale());
+			observation = getObservationGroup(observable, Scale.copyForObservation(getResolutionScale()));
 		} else if (observable.is(Type.TRAIT) || observable.is(Type.ROLE)) {
 			/*
 			 * TODO this should happen when a predicate observation is made explicitly from
@@ -1490,7 +1490,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
 			 */
 			Logging.INSTANCE.warn("unexpected call to createTarget: check logics");
 		} else {
-			observation = DefaultRuntimeProvider.createObservation(observable, getResolutionScale(), this);
+			observation = DefaultRuntimeProvider.createObservation(observable, Scale.copyForObservation(getResolutionScale()), this);
 		}
 
 		if (getRootSubject() != null) {

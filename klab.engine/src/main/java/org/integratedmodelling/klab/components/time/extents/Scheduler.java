@@ -75,8 +75,7 @@ import org.joda.time.DateTime;
 import akka.actor.typed.ActorRef;
 
 /**
- * Scheduler for actors in either real or mock time. Akka does not allow the
- * latter so we need to roll up our own.
+ * Scheduler for actors and actuators, in either real or mock time.
  * 
  * @author ferdinando.villa
  *
@@ -261,13 +260,13 @@ public class Scheduler implements IScheduler {
 		 * @param catalog
 		 * @param changes
 		 */
-		public Registration(IObservation replayedObservation, IRuntimeScope scope, ITime[] changes, Actuator actuator) {
+		public Registration(IObservation replayedObservation, IRuntimeScope scope, ITime[] changes) {
 
 			this.replayedObservation = replayedObservation;
 			this.scope = scope;
 			this.timeChanges = changes;
 			this.changeIndex = 0;
-			this.actuator = actuator;
+			this.scale = replayedObservation.getScale();
 			this.action = new Function<IMonitor, Collection<ObservedConcept>>() {
 
 				@Override
@@ -276,10 +275,10 @@ public class Scheduler implements IScheduler {
 					Set<IObservedConcept> container = new HashSet<>();
 					container.add(new ObservedConcept(replayedObservation.getObservable(), Mode.RESOLUTION));
 					Set<IObservedConcept> computed = new HashSet<>();
+					IRuntimeScope runtimeScope = (IRuntimeScope) replayedObservation.getScope();
 					for (IObservedConcept tracked : scope.getImplicitlyChangingObservables()) {
 						computeImplicitDependents(tracked, container, computed, timeChanges[changeIndex], scope,
-								scope.getDependencyGraph(), catalog,
-								((IRuntimeScope) (Observation) replayedObservation.getScope()).getDataflow());
+								scope.getDependencyGraph(), catalog, runtimeScope.getDataflow());
 					}
 
 					return new ArrayList<>();
@@ -406,7 +405,7 @@ public class Scheduler implements IScheduler {
 						}
 
 					}
-					
+
 					/*
 					 * 4. Notify whatever has changed.
 					 */
@@ -783,6 +782,9 @@ public class Scheduler implements IScheduler {
 		for (Registration r : registrations) {
 			if (r.actuator != null) {
 				dynamicDependencies.addVertex(new ObservedConcept(r.actuator.getObservable(), r.actuator.getMode()));
+			} else if (r.replayedObservation != null) {
+				dynamicDependencies
+						.addVertex(new ObservedConcept(r.replayedObservation.getObservable(), Mode.RESOLUTION));
 			}
 		}
 
@@ -854,6 +856,8 @@ public class Scheduler implements IScheduler {
 		for (Registration r : registrations) {
 			if (r.actuator != null) {
 				index.put(new ObservedConcept(r.actuator.getObservable(), r.actuator.getMode()), r);
+			} else if (r.replayedObservation != null) {
+				index.put(new ObservedConcept(r.replayedObservation.getObservable(), Mode.RESOLUTION), r);
 			}
 		}
 
@@ -1043,11 +1047,9 @@ public class Scheduler implements IScheduler {
 		 * enqueue registrations to replay change for the next pass reusing this info.
 		 * Dependent variables will need to do that automatically.
 		 */
-		Graph<IObservedConcept, DefaultEdge> dependencies = runtimeScope.getDependencyGraph();
 		for (IObservation changing : this.changedObservations) {
-			this.registrations.add(
-					new Registration(changing, runtimeScope, ((Time) changing.getScale().getTime()).getChangedExtents(),
-							getActuator(new ObservedConcept(changing.getObservable(), Mode.RESOLUTION), dependencies)));
+			this.registrations.add(new Registration(changing, runtimeScope,
+					((Time) changing.getScale().getTime()).getChangedExtents()));
 		}
 	}
 
@@ -1089,6 +1091,13 @@ public class Scheduler implements IScheduler {
 			return;
 		}
 
+		/*
+		 * previously computed in another contextualization
+		 */
+		if (catalog.get(observable).hasChangedDuring(time)) {
+			return;
+		}
+		
 		if (!computed.contains(observable)) {
 			boolean recompute = false;
 			for (IObservedConcept precursor : getPrecursors(dependencies, observable)) {
@@ -1098,7 +1107,11 @@ public class Scheduler implements IScheduler {
 				if (changed.contains(precursor) && !changed.contains(observable)) {
 					IObservation pre = catalog.get(precursor);
 					IObservation post = catalog.get(observable);
-					if (pre != null && post != null && pre.hasChangedDuring(time)) {
+					
+					System.out.println(post + " depends on " + pre);
+					
+					// only recompute those that haven't changed already in previous resolutions
+					if (pre != null && post != null && pre.hasChangedDuring(time) && !post.hasChangedDuring(time)) {
 						recompute = true;
 					}
 				}
