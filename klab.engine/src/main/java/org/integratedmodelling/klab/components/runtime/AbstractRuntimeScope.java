@@ -206,14 +206,5 @@ public abstract class AbstractRuntimeScope extends DataflowHandler implements IR
         return implicitlyChangingObservables;
     }
 
-    public Element findDataflowElement(String nodeId) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    public String getNodeId(IContextualizable resource) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
+    
 }

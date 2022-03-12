@@ -64,7 +64,6 @@ import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.api.services.IConfigurationService;
-import org.integratedmodelling.klab.components.runtime.AbstractRuntimeScope;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
@@ -652,7 +651,7 @@ public class Actuator implements IActuator {
 
         ISession session = scope.getMonitor().getIdentity().getParentIdentity(ISession.class);
         DataflowState state = new DataflowState();
-        state.setNodeId(((AbstractRuntimeScope) scope).getNodeId(resource));
+        state.setNodeId(((RuntimeScope) scope).getNodeId(resource));
         state.setStatus(DataflowState.Status.STARTED);
         state.setMonitorable(false); // for now
         session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,

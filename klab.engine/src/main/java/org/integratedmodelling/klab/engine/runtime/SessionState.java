@@ -64,6 +64,7 @@ import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Use
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.data.encoding.VisitingDataBuilder;
+import org.integratedmodelling.klab.dataflow.Flowchart;
 import org.integratedmodelling.klab.documentation.extensions.table.TableArtifact;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
@@ -140,6 +141,9 @@ public class SessionState extends Parameters<String> implements ISessionState {
 	private Map<String, File> stagingArea = Collections.synchronizedMap(new HashMap<>());
 	private IScale forcedScale;
 	private List<ResolutionConstraint> resolutionConstraints = new ArrayList<>();
+
+    // just for parking a flowchart in the root dataflow.
+    private Flowchart flowchart;
 
 	private class ListenerWrapper {
 
@@ -1153,4 +1157,11 @@ public class SessionState extends Parameters<String> implements ISessionState {
 		return resolutionConstraints;
 	}
 
+    public void setFlowchart(Flowchart flowchart) {
+        this.flowchart = flowchart;
+    }
+
+    public Flowchart getFlowchart() {
+        return this.flowchart;
+    }
 }

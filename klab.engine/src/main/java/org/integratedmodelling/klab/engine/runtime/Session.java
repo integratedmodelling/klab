@@ -91,7 +91,7 @@ import org.integratedmodelling.klab.common.monitoring.TicketManager;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.geocoding.Geocoder;
 import org.integratedmodelling.klab.components.geospace.geocoding.Geocoder.Location;
-import org.integratedmodelling.klab.components.runtime.AbstractRuntimeScope;
+import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.ActorReference;
 import org.integratedmodelling.klab.components.runtime.actors.SessionActor;
@@ -1042,7 +1042,7 @@ public class Session extends GroovyObjectSupport
 
 		IRuntimeScope context = findContext(state.getContextId());
 		if (context != null) {
-			Flowchart.Element element = ((AbstractRuntimeScope) context).findDataflowElement(state.getNodeId());
+			Flowchart.Element element = ((RuntimeScope) context).findDataflowElement(state.getNodeId());
 			if (element != null) {
 				String documentation = DataflowDocumentation.INSTANCE.getDocumentation(element, context);
 				if (documentation != null) {
