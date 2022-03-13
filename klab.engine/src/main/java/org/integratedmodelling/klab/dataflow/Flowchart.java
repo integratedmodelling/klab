@@ -1034,4 +1034,9 @@ public class Flowchart {
         return elementsById.get(Path.getLast(nodeId, '.'));
     }
 
+    public String getResourceNodeId(IContextualizable resource) {
+        Element node = elementsById.get("res" + ((ComputableResource) resource).getId());
+        return node == null ? null : node.getNodeId();
+    }
+
 }

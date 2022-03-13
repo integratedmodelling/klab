@@ -2442,7 +2442,9 @@ public class RuntimeScope extends AbstractRuntimeScope {
     }
 
     public String getNodeId(IContextualizable resource) {
-        // TODO Auto-generated method stub
+        if (((SessionState)getSession().getState()).getFlowchart() != null) {
+            return ((SessionState)getSession().getState()).getFlowchart().getResourceNodeId(resource);
+        }
         return null;
     }
 }
