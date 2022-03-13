@@ -21,11 +21,13 @@ import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IKimLookupTable;
+import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IPrototype.Argument;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.ComputableResource;
 import org.integratedmodelling.klab.Annotations;
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Observables;
@@ -36,6 +38,7 @@ import org.integratedmodelling.klab.api.data.general.IExpression.Scope;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.ISemantic;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -658,17 +661,29 @@ public class Flowchart {
         return null;
     }
 
-    private Actuator findActuator(String name, Actuator actuator) {
-        if (name == null) {
+    private Actuator findActuator(Object pointer, Actuator actuator) {
+        if (pointer == null) {
             return null;
         }
-        if ("self".equals(name)) {
+        if (pointer instanceof IKimConcept || pointer instanceof IKimObservable) {
+            pointer = pointer instanceof IKimConcept
+                    ? Concepts.INSTANCE.declare((IKimConcept) pointer)
+                    : Observables.INSTANCE.declare((IKimObservable) pointer, runtimeScope.getMonitor()).getType();
+        }
+        if ("self".equals(pointer)) {
             return actuator;
         }
         for (DefaultEdge edge : graph.incomingEdgesOf(actuator)) {
             IActuator child = graph.getEdgeSource(edge);
-            if (name.equals(child.getName()) || name.equals(child.getAlias())) {
-                return (Actuator) child;
+            if (pointer instanceof String) {
+                if (((String) pointer).equals(child.getName())
+                        || ((String) pointer).equals(child.getAlias())) {
+                    return (Actuator) child; 
+                }
+            } else if (pointer instanceof ISemantic) {
+                if (((Actuator)child).getObservable().is((ISemantic)pointer)) {
+                    return (Actuator)child;
+                }
             }
         }
         return null;
@@ -688,9 +703,9 @@ public class Flowchart {
 
             element.label = Extensions.INSTANCE.getServiceLabel(serviceCall);
 
-            if (prototype.getType() != IArtifact.Type.VOID) {
-                element.outputs.put(computationTarget, element.getOrCreateOutput(computationTarget));
-            }
+            // if (prototype.getType() != IArtifact.Type.VOID) {
+            element.outputs.put(computationTarget, element.getOrCreateOutput(computationTarget));
+            // }
 
             /*
              * match imported artifacts declared in the prototype to imports in the function. If not
@@ -698,16 +713,26 @@ public class Flowchart {
              */
             Set<String> importArgs = new HashSet<>();
             for (Argument arg : prototype.listImports()) {
-                Actuator dependency = findActuator(
-                        serviceCall.getParameters().get(arg.getName(), String.class),
-                        context);
-                if (dependency != null) {
-                    element.inputs.put(dependency.getName(), element.getOrCreateInput(dependency.getName()));
-                    if (!dependency.getName().equals(arg.getName())) {
-                        element.localNames.put(dependency.getName(), arg.getName());
+
+                List<Actuator> actuators = new ArrayList<>();
+                Object imp = serviceCall.getParameters().get(arg.getName());
+                if (imp instanceof Collection) {
+                    for (Object o : ((Collection<?>) imp)) {
+                        actuators.add(findActuator(o, context));
                     }
+                } else {
+                    actuators.add(findActuator(imp, context));
                 }
 
+                for (Actuator dependency : actuators) {
+                    if (dependency != null) {
+                        element.inputs.put(dependency.getName(),
+                                element.getOrCreateInput(dependency.getName()));
+                        if (!dependency.getName().equals(arg.getName())) {
+                            element.localNames.put(dependency.getName(), arg.getName());
+                        }
+                    }
+                }
             }
 
             /*

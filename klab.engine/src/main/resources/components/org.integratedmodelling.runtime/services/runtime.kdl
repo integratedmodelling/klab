@@ -250,11 +250,19 @@ export object instantiate
 
 }
 
+/*
+ * TODO this can become a 'value' actuator so that a table, if appropriate, can be sent as a 
+ * value into another computation.
+*/
 export void compileview
 	"Compile a knowledge view and send the results to the monitor for clients to do what they want with."
 {
 	text view
 		"The fully qualified name of the view to compile against the current context."
+	
+	import value artifacts
+		"The IDs or observables of the states involved in the view. Used only to compile the flow diagram.
+		 Admits a single value or a list."	
 		
 	class org.integratedmodelling.klab.components.runtime.contextualizers.KnowledgeViewResolver
 }

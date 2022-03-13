@@ -426,14 +426,14 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
         // System.err.println("DISTRIBUTING COMPUTATION FOR " + data + " AT " + scale + " WITH " +
         // resolver);
 
-//        if (reentrant && !Debug.INSTANCE.isDebugging()) {
-//            StreamSupport.stream(((Scale) scale).spliterator(context.getMonitor()), true).forEach((state) -> {
-//                if (!context.getMonitor().isInterrupted()) {
-//                    target.set(state, resolver.resolve(target.getObservable(),
-//                            variables.isEmpty() ? ctx : localizeContext(ctx, state, self, variables)));
-//                }
-//            });
-//        } else {
+        if (reentrant && !Debug.INSTANCE.isDebugging()) {
+            StreamSupport.stream(((Scale) scale).spliterator(context.getMonitor()), true).forEach((state) -> {
+                if (!context.getMonitor().isInterrupted()) {
+                    target.set(state, resolver.resolve(target.getObservable(),
+                            variables.isEmpty() ? ctx : localizeContext(ctx, state, self, variables)));
+                }
+            });
+        } else {
             for (ILocator state : scale) {
                 if (context.getMonitor().isInterrupted()) {
                     break;
@@ -441,7 +441,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
                 target.set(state, resolver.resolve(target.getObservable(),
                         variables.isEmpty() ? ctx : localizeContext(ctx, (IScale) state, self, variables)));
             }
-//        }
+        }
 
         // System.err.println("DONE " + data);
         //
@@ -583,14 +583,6 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
         return null;
     }
 
-    // @Override
-    // public void setComputationTargetId(IContextualizable resource, String targetId) {
-    // if (resource.getServiceCall() != null &&
-    // resource.getServiceCall().getParameters().containsKey("artifact")) {
-    // resource.getServiceCall().getParameters().put("artifact", targetId);
-    // }
-    // }
-
     @Override
     public IState createState(IObservable observable, IArtifact.Type type, IScale scale,
             IContextualizationScope context) {
@@ -679,9 +671,4 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
         return new ComputableResource(KnowledgeViewResolver.getServiceCall(view), Mode.RESOLUTION);
     }
 
-//    @Override
-//    public IContextualizable getChangeResolver(IObservable changeObservable, String changingObservationName) {
-//        return new ComputableResource(ContextReplayResolver.getServiceCall(changingObservationName),
-//                Mode.RESOLUTION);
-//    }
 }
