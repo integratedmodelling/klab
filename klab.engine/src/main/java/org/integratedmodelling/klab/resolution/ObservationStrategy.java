@@ -1,15 +1,17 @@
 package org.integratedmodelling.klab.resolution;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IContextualizable;
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.ValueOperator;
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Traits;
@@ -19,6 +21,7 @@ import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IObservableService;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.owl.Observable;
@@ -172,17 +175,10 @@ public class ObservationStrategy {
          */
         for (Pair<ValueOperator, Object> operator : observable.getValueOperators()) {
 
-            if (operator.getSecond() instanceof IConcept) {
-                IConcept dep = (IConcept) operator.getSecond();
+        	Observable dep = extractObservable(operator.getSecond(), scope.getMonitor());
+            if (dep != null) {
                 if (findDependency(dependencies, dep) == null) {
-                    ret.add(new ObservationStrategy(Observable.promote(dep),
-                            dep.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION));
-                }
-            } else if (operator.getSecond() instanceof IObservable) {
-                IObservable dep = (IObservable) operator.getSecond();
-                if (findDependency(dependencies, dep) == null) {
-                    ret.add(new ObservationStrategy((Observable) dep,
-                            dep.getDescriptionType().getResolutionMode()));
+                    ret.add(new ObservationStrategy(dep, dep.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION));
                 }
             }
         }
@@ -190,7 +186,20 @@ public class ObservationStrategy {
         return ret;
     }
 
-    /*
+    private static Observable extractObservable(Object arg, IMonitor monitor) {
+    	if (arg instanceof Observable) {
+    		return (Observable)arg;
+    	} else if (arg instanceof IConcept) {
+    		return Observable.promote((IConcept)arg);
+    	} else if (arg instanceof IKimObservable) {
+    		return (Observable)Observables.INSTANCE.declare((IKimObservable)arg, monitor);
+    	} else if (arg instanceof IKimConcept) {
+    		return Observable.promote(Concepts.INSTANCE.declare((IKimConcept)arg));
+    	}
+    	return null;
+	}
+
+	/*
      * TODO/FIXME - see if this is necessary vs. the other, and if the canResolve implementation is
      * still OK. Could/should have a single implementation with ISemantic as an argument.
      */

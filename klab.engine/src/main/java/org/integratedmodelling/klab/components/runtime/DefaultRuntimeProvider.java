@@ -142,15 +142,6 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
                         && initializer.getObservable().getType().is(Type.COUNTABLE)
                         && scope.getResolutionScope().getMode() == Mode.RESOLUTION;
 
-//                /*
-//                 * We get the overall scale, which we merge with the actuator's. This ensures that
-//                 * scale constraints at the model level are dealt with before own artifacts are
-//                 * created.
-//                 * 
-//                 * TODO/CHECK should use all the top-level actuators and merge from the dataflow
-//                 */
-//                IScale actuatorScale = initializer.mergeScale(scale, scope);
-
                 if (switchContext) {
                     // new catalog, new scale, context subject is in the scope, network remains
                     runtimeScope = scope.createContext(scale, initializer, dataflow,
@@ -163,11 +154,6 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
                     runtimeScope = ((Subject) context).getScope().createChild(scale, initializer,
                             scope.getResolutionScope(), scope.getMonitor());
                 }
-
-                // /*
-                // * for posterity, needed in some situations
-                // */
-                // ((Dataflow) dataflow).setRuntimeScope(runtimeScope);
 
                 /*
                  * record all resolutions for the documentation
@@ -279,19 +265,6 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
         return executor.submit(task);
     }
-
-//    @Override
-//    public RuntimeScope createRuntimeContext(IActuator actuator, IResolutionScope scope, IScale scale,
-//            IMonitor monitor) {
-//        RuntimeScope ret = scope.getCon((Actuator) actuator, scope, scale, monitor);
-//        // targets are created using the resolution scale, not the time-scalar scale
-//        // we're running in.
-//        IArtifact target = ret.createTarget((Actuator) actuator, scope.getScale(), scope, null);
-//        if (target instanceof IDirectObservation) {
-//            ((ResolutionScope) scope).setContext((IDirectObservation) target);
-//        }
-//        return ret;
-//    }
 
     @Override
     public IServiceCall getServiceCall(IContextualizable resource, IObservable observable, ISession session) {
