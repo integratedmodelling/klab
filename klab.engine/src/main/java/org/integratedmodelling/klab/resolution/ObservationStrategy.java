@@ -256,6 +256,10 @@ public class ObservationStrategy {
     public static List<ObservationStrategy> computeStrategies(IObservable observable, IResolutionScope scope,
             Mode mode) {
 
+    	if ("es_nca__ecosystem_type_is_es_nca__forest_ecosystem".equals(observable.getReferenceName())) {
+    		System.out.println("ZIDODOODIOID");
+    	}
+    	
         List<ObservationStrategy> ret = new ArrayList<>();
 
         Observable target = (Observable) observable;

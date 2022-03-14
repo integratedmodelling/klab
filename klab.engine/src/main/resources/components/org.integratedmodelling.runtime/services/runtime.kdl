@@ -168,13 +168,13 @@ filter value transform
 	optional import value artifact
 		"The artifact to categorize" 
 
-	optional value operand
+	optional import value operand
 		"The literal to use as operand. Not passed only if the operator is unary." 
 
-	optional value state
+	optional import value state
 		"The operand when it is another state." 
 		
-	import enum operator
+	enum operator
 		"The artifact to categorize by"
 		values GREATER, LESS, GREATEREQUAL, LESSEQUAL, IS, SAMEAS, WITHOUT, WHERE, PLUS, MINUS, TIMES, OVER, TOTAL
 		
