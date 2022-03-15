@@ -1,0 +1,25 @@
+= Semantic modeling
+
+== The basics: provenance
+
+Science can be https://en.wikipedia.org/wiki/Science[defined] as a process that "builds and organizes knowledge in the form of testable explanations and predictions about the universe". Much scientific activity is aimed at producing informational artifacts that describe the structure and/or the function of the world around us. Two main types of artifacts are _data_, embodying an "observed" view of the world obtained through measurements and categorizations, and _models_, embodying a causal hypothesis about how a particular aspect of the world changes and evolves. All of these, no matter how accurate, are merely _descriptions_ of the world around us: the job of science is to constantly improve these descriptions so that they can best serve the needs of humanity. 
+
+Often... bending our most successful representational strategies (e.g. raster maps, differential equations) around reality so that they can be put to effective use throughout the scientific process. This often results in distorsions of meaning, to which scientists are vulnerable: "variables", "equations", round horses and the like are often part of the narrative as if the world was actually represented that way. Semantic modeling suggest a pathway for scientists to realign the _meaning_ of the observed world with the artifacts that describe it. Turns out that in the process, it can also effectively address one of the worst problems of modern science: the "ivory tower" problem of incompatible representations, languages, jargons, methods across disciplines, scales and communities. 
+
+Provenance, a science that addresses the tracking and documentation of the life cycle of scientific artifacts through all transformations, analyses, and interpretation, provides a useful starting point to understand the rationale of semantic modeling.
+
+== Observables and observations
+
+== Subjects and qualities
+
+== Predicates
+
+== Occurrence: when time changes
+
+=== Processes and change
+
+=== Events
+
+== Relationships
+
+== Configurations
