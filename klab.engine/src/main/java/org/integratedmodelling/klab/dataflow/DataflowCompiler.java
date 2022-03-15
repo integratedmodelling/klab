@@ -128,10 +128,10 @@ public class DataflowCompiler {
 
 	public Dataflow compile(IMonitor monitor) {
 
-		if (!Configuration.INSTANCE.getProperty("visualize", "false").equals("false")
-				&& resolutionGraph.vertexSet().size() > 1) {
+//		if (!Configuration.INSTANCE.getProperty("visualize", "false").equals("false")
+//				&& resolutionGraph.vertexSet().size() > 1) {
 			Graphs.show(resolutionGraph, "Resolution graph");
-		}
+//		}
 
 		Dataflow ret = new Dataflow(parentDataflow);
 
