@@ -32,6 +32,7 @@ import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IModelService;
+import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.indexing.Indexer;
 import org.integratedmodelling.klab.engine.resources.MergedResource;
@@ -262,10 +263,16 @@ public enum Models implements IModelService {
 	 */
 	public List<IRankedModel> createDerivedModel(Observable mainObservable, ObservationStrategy candidateObservable,
 			ResolutionScope scope) {
+	    ObservedConcept oc = new ObservedConcept(mainObservable);
+	    if (scope.getResolutions().containsKey(oc)) {
+	        return scope.getResolutions().get(oc);
+	    }
 		org.integratedmodelling.klab.model.Model inner = new org.integratedmodelling.klab.model.Model(mainObservable,
 				candidateObservable, scope);
 		RankedModel outer = new RankedModel(inner);
-		return Collections.singletonList(outer);
+		List<IRankedModel> ret = Collections.singletonList(outer);
+        scope.getResolutions().put(oc, ret);
+        return ret;
 	}
 
 	/**

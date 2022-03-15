@@ -579,7 +579,7 @@ public class Resolver {
             Map<IConcept, IConcept> resolvedPredicates,
             Map<IConcept, Set<IConcept>> resolvedPredicatesContext,
             Mode mode) {
-
+        
         /*
          * Check first if we need to redistribute the observable, in which case we only resolve the
          * distribution context and we leave it to the runtime context to finish the job, as we do
@@ -804,6 +804,7 @@ public class Resolver {
 
                             if (coverage.isComplete()) {
                                 done = true;
+                                ret.merge(mscope);
                                 break;
                             }
                         }

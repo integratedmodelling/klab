@@ -174,7 +174,7 @@ public class ModelKbox extends ObservableKbox {
 					resolutionScope.getContext().getObservable().getType(), true, resolutionScope.getMonitor());
 		}
 
-		Pair<Scale, Set<IRankedModel>> preResolved = resolutionScope.isCaching() ? null
+		Pair<Scale, Collection<IRankedModel>> preResolved = resolutionScope.isCaching() ? null
 				: resolutionScope.getPreresolvedModels(observable);
 
 		IPrioritizer<ModelReference> prioritizer = Resolver.getPrioritizer(resolutionScope);

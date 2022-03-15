@@ -20,7 +20,6 @@ import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
@@ -231,7 +230,7 @@ public class ResolutionScope implements IResolutionScope {
      * the instance. This is a set because the kbox will reassess all models based on the specific
      * instance being resolved.
      */
-    private Map<IObservable, Set<IRankedModel>> resolverCache = new HashMap<>();
+    private Map<ObservedConcept, Collection<IRankedModel>> resolverCache = new HashMap<>();
     private boolean caching;
     private IModel contextModel;
     private boolean occurrent = false;
@@ -239,9 +238,9 @@ public class ResolutionScope implements IResolutionScope {
     private Map<IConcept, Set<IConcept>> resolvedPredicatesContext = new HashMap<>();
     private boolean deferToInherent;
     private RuntimeScope rootContextualizationScope;
-//    // these get parked here because they will have to be added as children to the root dataflow,
-//    // which does not exist yet
-//    private List<Dataflow> predicateResolutionDataflows = new ArrayList<>();
+    // // these get parked here because they will have to be added as children to the root dataflow,
+    // // which does not exist yet
+    // private List<Dataflow> predicateResolutionDataflows = new ArrayList<>();
 
     private void addResolvedScope(ObservedConcept concept, ResolutionScope scope) {
         List<ResolutionScope> slist = resolvedObservables.get(concept);
@@ -283,7 +282,7 @@ public class ResolutionScope implements IResolutionScope {
                  */
                 IObservable change = main.getBuilder(monitor).as(UnarySemanticOperator.CHANGE)
                         .buildObservable();
-                resolverCache.put(change,
+                resolverCache.put(new ObservedConcept(change),
                         Collections
                                 .singleton(Models.INSTANCE.createChangeModel(main, modelScope.model, this)));
 
@@ -395,7 +394,7 @@ public class ResolutionScope implements IResolutionScope {
         this.resolutionNamespace = contextSubject.getNamespace();
         this.monitor = monitor;
         this.occurrent = contextSubject.getScope().isOccurrent() || this.coverage.isTemporallyDistributed();
-        this.rootContextualizationScope = ((RuntimeScope)contextSubject.getScope()).getRootScope();
+        this.rootContextualizationScope = ((RuntimeScope) contextSubject.getScope()).getRootScope();
     }
 
     private ResolutionScope(Observer observer, IMonitor monitor, Collection<String> scenarios)
@@ -465,6 +464,7 @@ public class ResolutionScope implements IResolutionScope {
             this.links.addAll(other.links);
             this.resolvedObservables.putAll(other.resolvedObservables);
         }
+        // this.resolvedObservables.putAll(other.resolvedObservables);
         this.resolutions = other.resolutions;
     }
 
@@ -800,9 +800,7 @@ public class ResolutionScope implements IResolutionScope {
     }
 
     /**
-     * Merge an accepted child scope (which has, in turn, been merged before this is called). The
-     * scope must represent the entire result of a downstream resolution, not just partially - if
-     * not, use the other version ({@link #merge(ResolutionScope, LogicalConnector)}).
+     * Merge an accepted child scope (which has, in turn, been merged before this is called).
      * 
      * @param childScope
      * @return true if the merge did anything significant
@@ -1124,51 +1122,53 @@ public class ResolutionScope implements IResolutionScope {
         return this.coverage;
     }
 
-//    /**
-//     * Called before each instance resolution when the passed observable is instantiated in our
-//     * context. Should fill in the resolver set in our scale only once, so the same resolvers can be
-//     * used above. The models will then be ranked in the scale of each instance. The resulting
-//     * dataflows will need to swap their resolution scope before being usable to resolve any direct
-//     * observation different from the original.
-//     * 
-//     * @param observable
-//     */
-//    public void preloadResolvers(IObservable observable, IDirectObservation context) {
-//
-//        /**
-//         * only search for resolvers if we haven't already
-//         */
-//        if (this.resolverCache.get(observable) != null) {
-//            return;
-//        }
-//
-//        Set<IRankedModel> resolvers = new HashSet<>();
-//
-//        /*
-//         * preload and cache resolvers to explain the observable in the current scale. Called after
-//         * instantiation when the first instance is resolved. The resolvers are used by the kbox if
-//         * a cache for this observable and scale is present (including if empty). The kbox will
-//         * return any model within our scale, independent of how much of the context they cover;
-//         * they will be ranked in the scale of the instance, not ours.
-//         */
-//        ResolutionScope scope = this.getChildScope((Observable) observable, Mode.RESOLUTION);
-//        // ensure we don't try to find the cache for the cache
-//        scope.caching = true;
-//        resolvers.addAll(
-//                Models.INSTANCE.resolve(observable,
-//                        scope.getChildScope(observable, context, context.getScale())));
-//
-//        /*
-//         * TODO this may include the existing states in the context, with enough metadata to choose
-//         * wisely on their use or not according to the subscales. Order does not matter as they
-//         * should be reassessed by
-//         */
-//
-//        /*
-//         * add the possibly empty set even if no resolvers are found, to prevent additional search.
-//         */
-//        resolverCache.put(observable, resolvers);
-//    }
+    // /**
+    // * Called before each instance resolution when the passed observable is instantiated in our
+    // * context. Should fill in the resolver set in our scale only once, so the same resolvers can
+    // be
+    // * used above. The models will then be ranked in the scale of each instance. The resulting
+    // * dataflows will need to swap their resolution scope before being usable to resolve any
+    // direct
+    // * observation different from the original.
+    // *
+    // * @param observable
+    // */
+    // public void preloadResolvers(IObservable observable, IDirectObservation context) {
+    //
+    // /**
+    // * only search for resolvers if we haven't already
+    // */
+    // if (this.resolverCache.get(observable) != null) {
+    // return;
+    // }
+    //
+    // Set<IRankedModel> resolvers = new HashSet<>();
+    //
+    // /*
+    // * preload and cache resolvers to explain the observable in the current scale. Called after
+    // * instantiation when the first instance is resolved. The resolvers are used by the kbox if
+    // * a cache for this observable and scale is present (including if empty). The kbox will
+    // * return any model within our scale, independent of how much of the context they cover;
+    // * they will be ranked in the scale of the instance, not ours.
+    // */
+    // ResolutionScope scope = this.getChildScope((Observable) observable, Mode.RESOLUTION);
+    // // ensure we don't try to find the cache for the cache
+    // scope.caching = true;
+    // resolvers.addAll(
+    // Models.INSTANCE.resolve(observable,
+    // scope.getChildScope(observable, context, context.getScale())));
+    //
+    // /*
+    // * TODO this may include the existing states in the context, with enough metadata to choose
+    // * wisely on their use or not according to the subscales. Order does not matter as they
+    // * should be reassessed by
+    // */
+    //
+    // /*
+    // * add the possibly empty set even if no resolvers are found, to prevent additional search.
+    // */
+    // resolverCache.put(observable, resolvers);
+    // }
 
     /**
      * True if this scope is being used to build a cache, indicating that we shouldn't try to use
@@ -1187,11 +1187,13 @@ public class ResolutionScope implements IResolutionScope {
      * @param observable
      * @return
      */
-    public Pair<Scale, Set<IRankedModel>> getPreresolvedModels(IObservable observable) {
+    public Pair<Scale, Collection<IRankedModel>> getPreresolvedModels(IObservable observable) {
 
         if (mode != Mode.RESOLUTION) {
             return null;
         }
+
+        ObservedConcept obc = new ObservedConcept(observable, Mode.RESOLUTION);
 
         /*
          * look up in parents as far as the observable is the same (or the incarnated abstract
@@ -1212,14 +1214,14 @@ public class ResolutionScope implements IResolutionScope {
                             || target.observable.incarnatesSame(observable))) {
                 break;
             }
-            if (target.resolverCache.get(observable) != null) {
-                return new Pair<>(target.coverage.asScale(), target.resolverCache.get(observable));
+            if (target.resolverCache.get(obc) != null) {
+                return new Pair<>(target.coverage.asScale(), target.resolverCache.get(obc));
             }
             target = target.parent;
         }
-        return (target == null || target.resolverCache.get(observable) == null)
+        return (target == null || target.resolverCache.get(obc) == null)
                 ? null
-                : new Pair<>(target.coverage.asScale(), target.resolverCache.get(observable));
+                : new Pair<>(target.coverage.asScale(), target.resolverCache.get(obc));
     }
 
     @Override
@@ -1442,7 +1444,7 @@ public class ResolutionScope implements IResolutionScope {
     public List<ResolutionScope> getOccurrentResolutions() {
         return occurrentResolutions;
     }
-    
+
     /**
      * Publish the resolutions in the links into a storage that is passed to children and consulted
      * to ensure that previously resolved observables are not resolved again. This is used when
@@ -1537,7 +1539,7 @@ public class ResolutionScope implements IResolutionScope {
     }
 
     public void addPredicateResolutionDataflow(Dataflow dataflow) {
-    	this.rootContextualizationScope.addPrecontextualizationDataflow(dataflow);;
+        this.rootContextualizationScope.addPrecontextualizationDataflow(dataflow);;
     }
 
 }
