@@ -202,7 +202,7 @@ public class DataflowHandler extends Parameters<String> {
         }
         // keep the latest flowchart to address queries from the UI
         ((SessionState) scope.getSession().getState())
-                .setFlowchart(Flowchart.create(structure.getFirst(), structure.getSecond(), scope));
+                .setFlowchart(Flowchart.create(rootDataflow, structure.getFirst(), structure.getSecond(), scope));
         return ((SessionState) scope.getSession().getState()).getFlowchart();
     }
 

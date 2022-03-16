@@ -1,0 +1,66 @@
+# A k.LAB primer for first-time users
+:doctype: article
+:encoding: utf-8
+:lang: en
+:title-page:
+:toclevels: 5
+:sectnums:
+:sectnumlevels: 5
+:numbered:
+:experimental:
+:reproducible:
+:icons: font
+:listing-caption: Listing
+:sectnums:
+:autofit-option:
+:mdash: &#8212;
+:language: asciidoc
+:stem:
+
+<<<
+
+[AHA]
+====
+This Confluence space is a "primer for modelers" that focuses primarily on the use of k.Modeler (the k.LAB IDE for modelers) and the k.IM declarative language, which allows users to create and share data and models through shared semantics. For a deeper understanding of the k.LAB platform and its components please refer to the https://docs.integratedmodelling.org[full documentation] (largely incomplete at the time of this writing) or to the https://docs.integratedmodelling.org/technote/index.html[k.LAB technical note].
+
+Full information on how to download the user-side k.LAB software is available at: https://docs.integratedmodelling.org/klab/get_started/index.html. Documentation on k.Explorer, the web user interface for non-technical k.LAB users, is available upon launching k.Explorer, and is also summarized here.
+
+Public questions can be asked at: https://confluence.integratedmodelling.org/questions.
+
+If problems arise, users are encouraged to write to support@integratedmodelling.org or chat with the team at https://chat.integratedmodelling.org/channel/support (log in with your k.LAB user ID and password).
+====
+
+https://www.integratedmodelling.org[Integrated modeling] is a practice meant to maximize the value of scientific information by ensuring its modularity, reusability, interoperability and traceability throughout the scientific process. The open source k.LAB software discussed here is a full-stack solution for integrated modeling, supporting the production, curation, linking, and deployment of scientific artifacts such as datasets, data services, modular model components and distributed computational services.
+
+https://aries.integratedmodelling.org[Artificial Intelligence for Environment and Sustainability (ARIES)] is the best-known project developed using the k.LAB (which stands for Knowledge Laboratory) modeling technology, which also facilitates interoperability and reusability of a wide range of environmental and Earth systems models.
+
+This guide is intended for novice- to intermediate-level modelers who are interested in getting started with ARIES/k.LAB. It enables users to contribute, test, and use content within the technical k.Modeler software. Data and models made available through k.Modeler become available within {kex}, which is a web browser accessible to decision makers and nontechnical stakeholders. Experts and programmers interested in the full technical details should refer to the full k.LAB technical documentation.
+
+This guide is divided into four parts:
+
+. First, we introduce the k.Modeler interface, the k.IM (Knowledge - Integrated Modelling) programming language, the basic semantics underlying all k.LAB models and the concept of machine reasoning. Machine reasoning is the artificial intelligence approach k.LAB uses to select and assemble data and models into workflows to satisfy a user query.
+. Second, we guide the reader through how k.LAB uses resources that represent traditional datasets and data services, and how to import, semantically annotate and use such resources within k.LAB. 
+. Third, we describe how to create, use, and link a wide variety of model types supported within k.LAB. k.LAB intentionally supports the integration of diverse types of models, ranging from simple lookup tables and arithmetic models to process models and machine learning models.
+. Finally, we discuss a variety of intermediate-level features used to document models, interpret the results of a k.LAB session and test and debug models.
+
+Terms and conditions
+
+The k.LAB technology and all the projects built with it (such as ARIES) serve the needs of both users and producers of integrated data and model content. Data and model producers need specialized tools to import, annotate and publish data and models on the k.LAB semantic web, which makes them easier to share, reuse, and link.
+
+An End User Licence Agreement (EULA) regulates the access and use of the k.LAB System hosted by BC3's INFRASTRUCTURE, including the semantic web of data, models powered by the k.LAB SOFTWARE, and other data and resources made available to the USER through the BC3 INFRASTRUCTURE. For more information, see: https://integratedmodelling.org/statics/terms/terms.html
+
+All users must be authenticated through a valid, secure certificate, which also establishes the semantic worldview of reference and any user permissions for the certificate holder. Register at: https://integratedmodelling.org/hub/#/login
+
+In addition and outside the EULA, the USER may obtain an open source license of the k.LAB SOFTWARE under the terms of the Affero General Public License 3.0 or any higher version through the website integratedmodelling.org, which will allow the user to exploit the k.LAB SOFTWARE under the terms of that license.
+
+Available source code
+
+The source code of k.LAB, including this documentation, can be accessed at https://github.com/integratedmodelling/klab.
+
+Some k.IM projects may be useful for users to import and browse:
+
+. The https://bitbucket.org/integratedmodelling/im[im project] contains the Tier 1 ontologies for the IM Worldview, divided into several domains. Tier 2 ontologies that specialize the view of ecosystem services and socio-ecological systems used in ARIES can be found in the https://bitbucket.org/integratedmodelling/im.aries[im.aries project].
+. The https://bitbucket.org/integratedmodelling/im.aries.global[im.aries.global project] implements base ecosystem services-related modeling components, including different modeling approaches (e.g., look-up tables, machine learning, multi-criteria analysis).
+. The https://bitbucket.org/integratedmodelling/un.seea.aries[un.seea.aries project] defines models and tables supporting the System of Environmental-Economic Accounting (SEEA) and includes the source code of the ARIES for SEEA application.
+
+

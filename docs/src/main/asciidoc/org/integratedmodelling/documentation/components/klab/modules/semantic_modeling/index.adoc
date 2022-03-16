@@ -6,7 +6,25 @@ Science can be https://en.wikipedia.org/wiki/Science[defined] as a process that 
 
 Often... bending our most successful representational strategies (e.g. raster maps, differential equations) around reality so that they can be put to effective use throughout the scientific process. This often results in distorsions of meaning, to which scientists are vulnerable: "variables", "equations", round horses and the like are often part of the narrative as if the world was actually represented that way. Semantic modeling suggest a pathway for scientists to realign the _meaning_ of the observed world with the artifacts that describe it. Turns out that in the process, it can also effectively address one of the worst problems of modern science: the "ivory tower" problem of incompatible representations, languages, jargons, methods across disciplines, scales and communities. 
 
-Provenance, a science that addresses the tracking and documentation of the life cycle of scientific artifacts through all transformations, analyses, and interpretation, provides a useful starting point to understand the rationale of semantic modeling.
+Provenance, a science that addresses the tracking and documentation of the life cycle of scientific artifacts through all transformations, analyses, and interpretation, provides a useful starting point to understand the rationale of semantic modeling. 
+
+====
+Before we begin
+
+When citing existing literature about integration, provenance, scientific artifacts and their curation, etc., it is very likely that the scientific product the original source mentioned is _data_. While "data" are definitely valuable artifacts in science, the approach we take is necessarily more radical: we consider as scientific artifacts _any_ scientific product that offers a scientifically valid _description_ of some phenomenon. This assumption is key to continuing our path towards semantic modeling and semantic integration towards its more useful end goals. For this reason
+
+. You should feel free to substitute _data_ in common literature with something broader in our conceptualization, including any other artifact (i.e. an equation, a machine-learned tensor, etc.) that represents the "serialization" of a scientific observation of the world. We like to use the term _scientific knowledge_ when possible.
+. While we're at it: we do not necessarily hold the view that data are automatically "evidence" and models are "hypotheses" about the world. as .... (scale, assumptions etc). 
+
+====
+
+Modeling = producing and curating artifacts. Provenance model gives us all the "conventional" words to refer to this process. Users can refer to the OPM for details; the concepts we need from it are
+
+...
+
+=== Semantic modeling in a nutshell
+
+Quick and effective, hostia.
 
 == Observables and observations
 

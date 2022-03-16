@@ -13,7 +13,7 @@ import akka.actor.typed.ActorRef;
 @Behavior(id = "resolver", version = Version.CURRENT)
 public class ResolverBehavior {
 
-	@Action(id = "constrain", fires = {})
+	@Action(id = "whitelist", fires = {})
 	public static class Constrain extends KlabActionExecutor {
 
 		public Constrain(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, Scope scope,
@@ -28,7 +28,7 @@ public class ResolverBehavior {
 
 	}
 	
-	@Action(id = "exclude", fires = {})
+	@Action(id = "blacklist", fires = {})
 	public static class Exclude extends KlabActionExecutor {
 
 		public Exclude(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, Scope scope,

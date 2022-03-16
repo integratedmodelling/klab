@@ -51,6 +51,7 @@ import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.resolution.IResolutionConstraint;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.ISessionState;
 import org.integratedmodelling.klab.common.Geometry;
@@ -70,7 +71,6 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.OWL;
-import org.integratedmodelling.klab.resolution.ResolutionConstraint;
 import org.integratedmodelling.klab.rest.ContextualizationRequest;
 import org.integratedmodelling.klab.rest.DataflowState;
 import org.integratedmodelling.klab.rest.LoadApplicationRequest;
@@ -140,7 +140,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
 	private String geocodingStrategy;
 	private Map<String, File> stagingArea = Collections.synchronizedMap(new HashMap<>());
 	private IScale forcedScale;
-	private List<ResolutionConstraint> resolutionConstraints = new ArrayList<>();
+	private List<IResolutionConstraint> resolutionConstraints = new ArrayList<>();
 
     // just for parking a flowchart in the root dataflow.
     private Flowchart flowchart;
@@ -1153,7 +1153,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
 		return this;
 	}
 
-	public List<ResolutionConstraint> getResolutionConstraints() {
+	public List<IResolutionConstraint> getResolutionConstraints() {
 		return resolutionConstraints;
 	}
 

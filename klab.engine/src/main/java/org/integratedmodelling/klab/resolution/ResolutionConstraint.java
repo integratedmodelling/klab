@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.model.IModel;
+import org.integratedmodelling.klab.api.resolution.IResolutionConstraint;
 
 /**
  * Resolution constraints can be added through k.Actors or options to affect the
@@ -14,7 +15,7 @@ import org.integratedmodelling.klab.api.model.IModel;
  * @author Ferd
  *
  */
-public class ResolutionConstraint {
+public class ResolutionConstraint implements IResolutionConstraint {
 
 	List<IModel> modelWhitelist = new ArrayList<>();
 	List<IResource> resourceWhitelist = new ArrayList<>();
@@ -22,10 +23,12 @@ public class ResolutionConstraint {
 	List<IResource> resourceBlacklist = new ArrayList<>();
 	boolean feasible;
 
+	@Override
 	public boolean accepts(IModel model) {
 		return true;
 	}
 
+	@Override
 	public boolean accepts(IResource model) {
 		return true;
 	}

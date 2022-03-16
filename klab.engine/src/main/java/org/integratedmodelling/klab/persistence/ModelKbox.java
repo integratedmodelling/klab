@@ -17,7 +17,6 @@ import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Observables;
-import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -29,6 +28,7 @@ import org.integratedmodelling.klab.api.observations.scale.IEnumeratedExtent;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.resolution.IPrioritizer;
+import org.integratedmodelling.klab.api.resolution.IResolutionConstraint;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -269,6 +269,7 @@ public class ModelKbox extends ObservableKbox {
 
 		List<ModelReference> ret = new ArrayList<>();
 		IUserIdentity user = context.getSession().getParentIdentity(IUserIdentity.class);
+		Collection<IResolutionConstraint> constraints = context.getSession().getState().getResolutionConstraints();
 		Set<String> userPermissions = new HashSet<>(user.getGroups().stream().map((g) -> g.getId()).toList());
 
 		if (!database.hasTable("model")) {
