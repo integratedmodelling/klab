@@ -321,13 +321,16 @@ public class RandomAdapter implements IUrnAdapter {
 		return Scale.create(extents).asGeometry();
 	}
 
-	private void makeData(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope context) {
+	private void makeData(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope scope) {
+
+		Builder stateBuilder = builder.startState(scope.getTargetName() == null ? "result" : scope.getTargetName(),
+				null, scope);
+
 		Object distribution = null;
 		if (!"year".equals(urn.getResourceId())) {
 			distribution = getDistribution(urn);
 		}
-		double year = context.getScale().getTime() == null ? 0 : context.getScale().getTime().getStart().getYear();
-		Builder stateBuilder = builder.startState("result", null, context);
+		double year = scope.getScale().getTime() == null ? 0 : scope.getScale().getTime().getStart().getYear();
 		for (ILocator locator : geometry) {
 			if ("year".equals(urn.getResourceId())) {
 				stateBuilder.add(year);

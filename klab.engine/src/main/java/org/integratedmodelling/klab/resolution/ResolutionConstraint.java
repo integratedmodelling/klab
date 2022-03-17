@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.model.IModel;
+import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.resolution.IResolutionConstraint;
 
 /**
@@ -51,5 +52,10 @@ public class ResolutionConstraint implements IResolutionConstraint {
 
 	public boolean isFeasible() {
 		return feasible;
+	}
+
+	@Override
+	public boolean accepts(INamespace namespace) {
+		return true;
 	}
 }

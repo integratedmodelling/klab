@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.api.resolution;
 
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.model.IModel;
+import org.integratedmodelling.klab.api.model.INamespace;
 
 /**
  * One or more resolution constraints may be added to a session through k.Actors
@@ -14,8 +15,8 @@ import org.integratedmodelling.klab.api.model.IModel;
 public interface IResolutionConstraint {
 
 	/**
-	 * Return true if the model is part of a whitelist, is not blacklisted, and uses
-	 * accepted resources.
+	 * Return true if the model is part of a whitelist, is not blacklisted, comes
+	 * from an accepted namespace, and uses accepted resources.
 	 * 
 	 * @param model
 	 * @return
@@ -30,5 +31,12 @@ public interface IResolutionConstraint {
 	 * @return
 	 */
 	boolean accepts(IResource model);
+
+	/**
+	 * 
+	 * @param namespace
+	 * @return
+	 */
+	boolean accepts(INamespace namespace);
 
 }
