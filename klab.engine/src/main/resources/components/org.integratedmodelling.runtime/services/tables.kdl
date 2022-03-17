@@ -1,0 +1,9 @@
+@klab 0.10.0
+@version 0.10.0
+@namespace tables.compiler
+
+value pairwise
+	"Custom table compiler for pairwise comparisons"
+{
+	class 'org.integratedmodelling.klab.documentation.extensions.table.compilers.PairwiseTableCompiler'
+}

@@ -17,11 +17,13 @@ import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Observables;
+import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IProject;
+import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.scale.IEnumeratedExtent;
@@ -306,7 +308,7 @@ public class ModelKbox extends ObservableKbox {
 		for (long l : oids) {
 			ModelReference model = retrieveModel(l, context.getMonitor());
 			if (model != null) {
-				if (isAuthorized(model, userPermissions) && !context.isResolving(model.getName())) {
+				if (isAuthorized(model, userPermissions, constraints) && !context.isResolving(model.getName())) {
 					ret.add(model);
 				}
 			} else {
@@ -321,13 +323,28 @@ public class ModelKbox extends ObservableKbox {
 		return ret;
 	}
 
-	private boolean isAuthorized(ModelReference model, Set<String> userPermissions) {
+	private boolean isAuthorized(ModelReference model, Set<String> userPermissions, Collection<IResolutionConstraint> constraints) {
+		
 		if (model.getProjectId() != null) {
 			Set<String> permissions = Authentication.INSTANCE.getProjectPermissions(model.getProjectId());
 			if (!permissions.isEmpty()) {
-				return Sets.intersection(permissions, userPermissions).size() > 0;
+				if (Sets.intersection(permissions, userPermissions).size() == 0) {
+					return false;
+				}
 			}
 		}
+		
+		if (constraints != null) {
+			for (IResolutionConstraint c : constraints) {
+				 IKimObject m = Resources.INSTANCE.getModelObject(model.getUrn());
+				 if (m instanceof IModel) {
+					 if (!c.accepts((IModel)m)) {
+						 return false;
+					 }
+				 }
+			}
+		}
+		
 		return true;
 	}
 

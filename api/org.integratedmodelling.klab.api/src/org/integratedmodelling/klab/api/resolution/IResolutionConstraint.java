@@ -13,8 +13,22 @@ import org.integratedmodelling.klab.api.model.IModel;
  */
 public interface IResolutionConstraint {
 
+	/**
+	 * Return true if the model is part of a whitelist, is not blacklisted, and uses
+	 * accepted resources.
+	 * 
+	 * @param model
+	 * @return
+	 */
 	boolean accepts(IModel model);
 
+	/**
+	 * Check for blacklisted or whitelisted resources. Also used by
+	 * {@link #accepts(IModel)} when the model passed to it contains resources.
+	 * 
+	 * @param model
+	 * @return
+	 */
 	boolean accepts(IResource model);
 
 }

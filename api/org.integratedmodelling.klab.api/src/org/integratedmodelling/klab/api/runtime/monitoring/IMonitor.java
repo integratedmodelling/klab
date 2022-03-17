@@ -192,4 +192,12 @@ public interface IMonitor {
 	 */
 	boolean hasErrors();
 
+	/**
+	 * A monitor may carry an inspector for debugging. Each operation decides what
+	 * to let the inspector see, examining its configuration at key points.
+	 * 
+	 * @return
+	 */
+	IInspector getInspector();
+
 }

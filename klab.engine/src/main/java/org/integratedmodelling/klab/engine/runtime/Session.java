@@ -78,6 +78,7 @@ import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.ITicket;
+import org.integratedmodelling.klab.api.runtime.monitoring.IInspector;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.api.services.IIndexingService;
@@ -317,6 +318,12 @@ public class Session extends GroovyObjectSupport
 		public int getWaitTime() {
 			// TODO Auto-generated method stub
 			return 0;
+		}
+
+		@Override
+		public IInspector getInspector() {
+			// TODO Auto-generated method stub
+			return null;
 		}
 
 	}

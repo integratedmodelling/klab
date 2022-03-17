@@ -11,6 +11,7 @@ import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.api.runtime.monitoring.IInspector;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.common.Offset;
@@ -121,6 +122,12 @@ public class EncodingDataBuilder implements IKlabData.Builder {
 		public int getWaitTime() {
 			// TODO Auto-generated method stub
 			return this.waitTime;
+		}
+
+		@Override
+		public IInspector getInspector() {
+			// TODO Auto-generated method stub
+			return null;
 		}
 
 	}

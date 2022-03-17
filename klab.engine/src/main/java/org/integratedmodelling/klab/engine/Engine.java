@@ -52,6 +52,7 @@ import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.IScript;
+import org.integratedmodelling.klab.api.runtime.monitoring.IInspector;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.runtime.rest.IClient;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
@@ -300,6 +301,12 @@ public class Engine extends Server implements IEngine, UserDetails {
             // TODO Auto-generated method stub
             return this.waitTime;
         }
+
+		@Override
+		public IInspector getInspector() {
+			// TODO Auto-generated method stub
+			return null;
+		}
 	}
 
 	public Engine(ICertificate certificate) {

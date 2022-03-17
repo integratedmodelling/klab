@@ -17,11 +17,27 @@ import org.integratedmodelling.klab.api.resolution.IResolutionConstraint;
  */
 public class ResolutionConstraint implements IResolutionConstraint {
 
+	public static ResolutionConstraint whitelist(Object... objects) {
+		ResolutionConstraint ret = new ResolutionConstraint();
+		if (objects != null) {
+			for (Object o : objects) {
+				if (o instanceof IModel) {
+					
+				} else if (o instanceof IResource) {
+					
+				} else if (o instanceof String) {
+					
+				}
+			}
+		}
+		return ret;
+	}
+
 	List<IModel> modelWhitelist = new ArrayList<>();
 	List<IResource> resourceWhitelist = new ArrayList<>();
 	List<IModel> modelBlacklist = new ArrayList<>();
 	List<IResource> resourceBlacklist = new ArrayList<>();
-	boolean feasible;
+	boolean feasible = true;
 
 	@Override
 	public boolean accepts(IModel model) {

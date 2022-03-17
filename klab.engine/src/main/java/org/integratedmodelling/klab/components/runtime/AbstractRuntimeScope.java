@@ -53,6 +53,7 @@ public abstract class AbstractRuntimeScope extends DataflowHandler implements IR
     Map<IActuator, Status> actuatorStatus;
     Map<IActuator, Set<IObservation>> actuatorProducts;
     IMonitor monitor;
+    
     /**
      * This is used by characterizing models to report the result of characterization during their
      * own contextualization, which happens during <em>resolution</em> of dependencies with abstract

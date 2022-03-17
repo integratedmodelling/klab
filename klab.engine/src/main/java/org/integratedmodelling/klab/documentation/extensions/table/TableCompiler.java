@@ -23,6 +23,7 @@ import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimQuantity;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.klab.Concepts;
@@ -40,6 +41,7 @@ import org.integratedmodelling.klab.api.data.general.IExpression.Scope;
 import org.integratedmodelling.klab.api.extensions.ILanguageExpression;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
+import org.integratedmodelling.klab.api.extensions.ITableCompiler;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
@@ -1246,6 +1248,8 @@ public class TableCompiler {
 	// unspecified.
 	private String identifier;
 
+	private ITableCompiler compiler;
+
 	/**
 	 * Return the passed dimensions in order of dependency. If circular dependencies
 	 * are detected throw a validation exception as the definition is misconfigured.
@@ -1384,6 +1388,16 @@ public class TableCompiler {
 		this.definition = definition;
 		if (definition.get("timelabels") instanceof Map) {
 			this.timelabels = (Map<?, ?>) definition.get("timelabels");
+		}
+
+		if (definition.containsKey("use")) {
+			if (definition.get("use") instanceof IServiceCall) {
+				Object o = Extensions.INSTANCE.callFunction((IServiceCall) definition.get("use"), scope);
+				if (o instanceof ITableCompiler) {
+					this.compiler = (ITableCompiler) o;
+					this.compiler.initialize(((IServiceCall) definition).getParameters(), definition, scope);
+				}
+			}
 		}
 
 		/*

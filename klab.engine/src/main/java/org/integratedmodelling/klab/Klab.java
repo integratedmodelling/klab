@@ -33,6 +33,7 @@ import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.api.runtime.ITicket.Status;
 import org.integratedmodelling.klab.api.runtime.ITicketManager;
+import org.integratedmodelling.klab.api.runtime.monitoring.IInspector;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.api.services.IRuntimeService;
@@ -433,6 +434,12 @@ public enum Klab implements IRuntimeService {
 		public int getWaitTime() {
 			// TODO Auto-generated method stub
 			return this.waitTime;
+		}
+
+		@Override
+		public IInspector getInspector() {
+			// TODO Auto-generated method stub
+			return null;
 		}
 	}
 

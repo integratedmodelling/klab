@@ -196,7 +196,6 @@ public class SessionState extends Parameters<String> implements ISessionState {
 		return submit(urn, null, null);
 	}
 
-//	@Override
 	public Future<IArtifact> submit(BiConsumer<ITaskIdentity, IArtifact> observationListener,
 			BiConsumer<ITaskIdentity, Throwable> errorListener) {
 
