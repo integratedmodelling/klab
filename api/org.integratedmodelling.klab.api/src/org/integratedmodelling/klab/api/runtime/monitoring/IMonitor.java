@@ -194,10 +194,20 @@ public interface IMonitor {
 
 	/**
 	 * A monitor may carry an inspector for debugging. Each operation decides what
-	 * to let the inspector see, examining its configuration at key points.
+	 * to let the inspector see, examining its configuration at key points. A
+	 * monitor that returns null here isn't "armed" for debugging but code can still
+	 * call {@link #notifyInspector(Object...)} without consequences.
 	 * 
 	 * @return
 	 */
 	IInspector getInspector();
+
+	/**
+	 * Code will call this at monitorable points; any installed triggers in the
+	 * inspector will be activated when matching, if the inspector is armed.
+	 * 
+	 * @param triggerArguments
+	 */
+	void notifyInspector(Object... triggerArguments);
 
 }

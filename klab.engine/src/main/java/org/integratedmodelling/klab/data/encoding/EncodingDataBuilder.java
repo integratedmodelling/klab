@@ -18,6 +18,7 @@ import org.integratedmodelling.klab.common.Offset;
 import org.integratedmodelling.klab.data.encoding.Encoding.KlabData;
 import org.integratedmodelling.klab.data.encoding.Encoding.KlabData.Notification;
 import org.integratedmodelling.klab.data.encoding.Encoding.KlabData.Severity;
+import org.integratedmodelling.klab.engine.debugger.Inspector;
 import org.integratedmodelling.klab.utils.NotificationUtils;
 
 /**
@@ -45,6 +46,7 @@ public class EncodingDataBuilder implements IKlabData.Builder {
 	class Monitor implements IMonitor {
 
 		private int waitTime;
+		private Inspector inspector;
 
 		@Override
 		public void info(Object... info) {
@@ -127,7 +129,14 @@ public class EncodingDataBuilder implements IKlabData.Builder {
 		@Override
 		public IInspector getInspector() {
 			// TODO Auto-generated method stub
-			return null;
+			return inspector;
+		}
+		
+		@Override
+		public void notifyInspector(Object... triggerArguments) {
+			if (inspector != null) {
+				inspector.trigger(triggerArguments);
+			}
 		}
 
 	}

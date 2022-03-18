@@ -106,6 +106,7 @@ import org.integratedmodelling.klab.documentation.DataflowDocumentation;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.debugger.Debug;
+import org.integratedmodelling.klab.engine.debugger.Inspector;
 import org.integratedmodelling.klab.engine.indexing.Indexer;
 import org.integratedmodelling.klab.engine.resources.Project;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
@@ -253,6 +254,7 @@ public class Session extends GroovyObjectSupport
 
 		List<Notification> notifications = new ArrayList<>();
 		int errors = 0;
+		Inspector inspector;
 
 		@Override
 		public void info(Object... info) {
@@ -322,8 +324,14 @@ public class Session extends GroovyObjectSupport
 
 		@Override
 		public IInspector getInspector() {
-			// TODO Auto-generated method stub
-			return null;
+			return inspector;
+		}
+
+		@Override
+		public void notifyInspector(Object... triggerArguments) {
+			if (inspector != null) {
+				inspector.trigger(triggerArguments);
+			}
 		}
 
 	}

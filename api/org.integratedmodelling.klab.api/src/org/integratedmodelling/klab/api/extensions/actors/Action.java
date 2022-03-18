@@ -68,4 +68,12 @@ public @interface Action {
 	 */
 	IKActorsValue.Type[] fires() default {};
 
+	/**
+	 * If this is set to false, the action will not be synchronized even in a
+	 * synchronous scope. Use for event handlers that must run in scripts and tests.
+	 * 
+	 * @return
+	 */
+	boolean synchronize() default true;
+
 }

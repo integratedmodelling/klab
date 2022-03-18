@@ -1395,7 +1395,7 @@ public class TableCompiler {
 				Object o = Extensions.INSTANCE.callFunction((IServiceCall) definition.get("use"), scope);
 				if (o instanceof ITableCompiler) {
 					this.compiler = (ITableCompiler) o;
-					this.compiler.initialize(((IServiceCall) definition).getParameters(), definition, scope);
+					this.compiler.initialize(((IServiceCall) definition.get("use")).getParameters(), definition, scope);
 				}
 			}
 		}

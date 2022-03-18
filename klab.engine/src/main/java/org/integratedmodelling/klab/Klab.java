@@ -38,6 +38,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.api.services.IRuntimeService;
 import org.integratedmodelling.klab.common.monitoring.TicketManager;
+import org.integratedmodelling.klab.engine.debugger.Inspector;
 import org.integratedmodelling.klab.engine.extensions.Component;
 import org.integratedmodelling.klab.engine.rest.SchemaExtractor;
 import org.integratedmodelling.klab.exceptions.KlabConfigurationException;
@@ -322,6 +323,7 @@ public enum Klab implements IRuntimeService {
 
 		int errors = 0;
         private int waitTime;
+        private Inspector inspector;
 
 		@Override
 		public void info(Object... info) {
@@ -439,7 +441,14 @@ public enum Klab implements IRuntimeService {
 		@Override
 		public IInspector getInspector() {
 			// TODO Auto-generated method stub
-			return null;
+			return inspector;
+		}
+		
+		@Override
+		public void notifyInspector(Object... triggerArguments) {
+			if (inspector != null) {
+				inspector.trigger(triggerArguments);
+			}
 		}
 	}
 

@@ -10,25 +10,33 @@ package org.integratedmodelling.klab.api.runtime.monitoring;
  *
  */
 public interface IInspector {
-
-	// the context of the recording
-	public enum Asset {
-		MODEL,
-		RESOURCE,
-		STATE_SLICE
-	}
 	
+	// the subject of the recording
+	public enum Asset {
+		MODEL, RESOURCE, OBSERVATION, STATE_SLICE, ACTUATOR, DATAFLOW, SCHEDULE
+	}
+
 	// what to record
 	public enum Metric {
-		
 	}
-	
+
 	// when to record
 	public enum Event {
-		CREATION,
-		START,
-		FINISH
+		CREATION, START, FIRST_ACCESS, FIRST_READ, FIRST_WRITE, FINISH
 	}
 	
+	/**
+	 * User installs a trigger calling this one. Arguments are recognized based on type.
+	 * 
+	 * @param triggerArguments
+	 */
+	void setTrigger(Object...triggerArguments);
+
+	/**
+	 * Code will call this at monitorable points; any installed triggers will be activated when matching.
+	 * 
+	 * @param triggerArguments
+	 */
+	void trigger(Object... triggerArguments);
 	
 }

@@ -134,6 +134,9 @@ public enum Actors implements IActorsService {
 	private Map<String, BehaviorReference> behaviorDescriptors = Collections.synchronizedMap(new HashMap<>());
 	private Map<String, Pair<String, Class<? extends KlabActionExecutor>>> actionClasses = Collections
 			.synchronizedMap(new HashMap<>());
+	// the annotations for the classes defined through code
+	private Map<Class<?>, Action> actionDefinitions = Collections
+			.synchronizedMap(new HashMap<>());
 	private Map<String, Pair<String, Class<? extends KlabWidgetActionExecutor>>> viewActionClasses = Collections
 			.synchronizedMap(new HashMap<>());
 	AtomicLong semaphoreId = new AtomicLong(1L);
@@ -434,6 +437,8 @@ public enum Actors implements IActorsService {
 			return BehaviorId.STATE;
 		case "session":
 			return BehaviorId.SESSION;
+		case "test":
+			return BehaviorId.TEST;
 		case "explorer":
 			return BehaviorId.EXPLORER;
 		}
@@ -495,6 +500,7 @@ public enum Actors implements IActorsService {
 				descriptor.getActions().add(ad);
 				this.actionClasses.put(message.id(),
 						new Pair<>(annotation.id(), (Class<? extends KlabActionExecutor>) cl));
+				this.actionDefinitions.put(cl, message);
 				if (KlabActionExecutor.class.isAssignableFrom(cl)) {
 					this.viewActionClasses.put(message.id(),
 							new Pair<>(annotation.id(), (Class<? extends KlabWidgetActionExecutor>) cl));
@@ -543,7 +549,9 @@ public enum Actors implements IActorsService {
 			try {
 				Constructor<? extends KlabActionExecutor> constructor = cls.getSecond().getConstructor(
 						IActorIdentity.class, IParameters.class, KlabActor.Scope.class, ActorRef.class, String.class);
-				return constructor.newInstance(identity, arguments, scope, sender, callId);
+				KlabActionExecutor ret = constructor.newInstance(identity, arguments, scope, sender, callId);
+				ret.notifyDefinition(this.actionDefinitions.get(cls.getSecond()));
+				return ret;
 			} catch (Throwable e) {
 				scope.getMonitor().error("Error while creating action " + id + ": " + e.getMessage());
 			}

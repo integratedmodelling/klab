@@ -4,6 +4,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.integratedmodelling.kactors.api.IKActorsStatement.Assert.Assertion;
 import org.integratedmodelling.kactors.api.IKActorsValue;
+import org.integratedmodelling.kactors.api.IKActorsValue.Type;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Actors;
@@ -140,5 +141,53 @@ public class TestBehavior {
         Period period = new Period(ms);
         return periodFormat.print(period);
     }
+    
+	@Action(id = "whitelist", fires = {})
+	public static class Constrain extends KlabActionExecutor {
+
+		public Constrain(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, Scope scope,
+				ActorRef<KlabMessage> sender, String callId) {
+			super(identity, arguments, scope, sender, callId);
+		}
+
+		@Override
+		void run(Scope scope) {
+			// constraint should be scoped to the actor, which means the root test scope
+			System.out.println("ZIO");
+		}
+
+	}
+	
+	@Action(id = "blacklist", fires = {})
+	public static class Exclude extends KlabActionExecutor {
+
+		public Exclude(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, Scope scope,
+				ActorRef<KlabMessage> sender, String callId) {
+			super(identity, arguments, scope, sender, callId);
+		}
+
+		@Override
+		void run(Scope scope) {
+			// constraint should be scoped to the actor, which means the root test scope
+			System.out.println("ZEO");
+		}
+
+	}
+	
+	@Action(id = "inspect", fires = {Type.ANYVALUE}, synchronize = false)
+	public static class Inspect extends KlabActionExecutor {
+
+		public Inspect(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, Scope scope,
+				ActorRef<KlabMessage> sender, String callId) {
+			super(identity, arguments, scope, sender, callId);
+		}
+
+		@Override
+		void run(Scope scope) {
+			// constraint should be scoped to the actor, which means the root test scope
+			System.out.println("ZUA");
+		}
+
+	}
 
 }

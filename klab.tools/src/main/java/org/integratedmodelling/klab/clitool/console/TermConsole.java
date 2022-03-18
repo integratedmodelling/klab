@@ -45,6 +45,7 @@ import org.integratedmodelling.klab.clitool.CliStartupOptions;
 import org.integratedmodelling.klab.clitool.api.IConsole;
 import org.integratedmodelling.klab.clitool.contrib.console.DragonConsole.SearchHandler;
 import org.integratedmodelling.klab.clitool.contrib.console.DragonConsoleFrame;
+import org.integratedmodelling.klab.engine.debugger.Inspector;
 import org.integratedmodelling.klab.engine.indexing.Indexer;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.utils.NotificationUtils;
@@ -61,7 +62,8 @@ public class TermConsole implements IConsole {
 	public class Monitor implements IMonitor {
 
 		private int waitTime;
-
+		private Inspector inspector;
+		
         @Override
 		public void send(Object... o) {
 			if (o != null && o.length > 0) {
@@ -160,10 +162,15 @@ public class TermConsole implements IConsole {
 
 		@Override
 		public IInspector getInspector() {
-			// TODO Auto-generated method stub
-			return null;
+			return inspector;
 		}
-
+		
+		@Override
+		public void notifyInspector(Object... triggerArguments) {
+			if (inspector != null) {
+				inspector.trigger(triggerArguments);
+			}
+		}
 	}
 
 	public void start(CliStartupOptions options) throws Exception {
