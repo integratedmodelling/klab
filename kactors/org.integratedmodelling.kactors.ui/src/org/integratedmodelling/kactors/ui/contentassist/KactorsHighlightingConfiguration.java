@@ -60,7 +60,7 @@ public class KactorsHighlightingConfiguration extends DefaultHighlightingConfigu
 	public static final RGB UNKNOWN_VERB_COLOR = new RGB(100, 100, 100);
 	public static final RGB VIEW_VERB_COLOR = new RGB(63, 8, 165);
 	public static final RGB SESSION_VERB_COLOR = new RGB(204, 68, 10);
-	public static final RGB TEST_VERB_COLOR = new RGB(188, 90, 79);
+	public static final RGB TEST_VERB_COLOR = new RGB(168, 40, 109);
 	public static final RGB EXPLORER_VERB_COLOR = new RGB(218,165,32);
 	public static final RGB LOCAL_VERB_COLOR = new RGB(20, 20, 20);
 	public static final RGB IMPORTED_VERB_COLOR = new RGB(20, 20, 20);
