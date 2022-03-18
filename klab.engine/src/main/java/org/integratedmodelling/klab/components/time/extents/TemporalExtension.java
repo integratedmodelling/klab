@@ -96,7 +96,10 @@ public class TemporalExtension {
 //            milliseconds --;
 //        }
 		long start = extension.floor(milliseconds);
-		long end = extension.ceiling(start + 1);
+		Long end = extension.ceiling(start + 1);
+		if (end == null) {
+		    throw new KlabIllegalArgumentException("Invalid timestamp");
+		}
 		int i = 0;
 		Iterator<Long> it = extension.iterator();
 		while (it.hasNext()) {
