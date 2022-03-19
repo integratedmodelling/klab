@@ -1,12 +1,16 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.commons.lang3.EnumUtils;
 import org.integratedmodelling.kactors.api.IKActorsStatement.Assert.Assertion;
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.api.IKActorsValue.Type;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Version;
@@ -16,9 +20,13 @@ import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
 import org.integratedmodelling.klab.api.knowledge.IProject;
+import org.integratedmodelling.klab.api.runtime.monitoring.IInspector;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
+import org.integratedmodelling.klab.engine.Engine;
+import org.integratedmodelling.klab.engine.debugger.Inspector;
 import org.integratedmodelling.klab.engine.runtime.Session;
+import org.integratedmodelling.klab.engine.runtime.SessionState;
 import org.integratedmodelling.klab.exceptions.KlabActorException;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.joda.time.Period;
@@ -29,19 +37,19 @@ import akka.actor.typed.ActorRef;
 
 @Behavior(id = "test", version = Version.CURRENT)
 public class TestBehavior {
-    
+
     private static final PeriodFormatter periodFormat = new PeriodFormatterBuilder().appendDays()
             .appendSuffix(" day", " days").appendSeparator(" ").printZeroIfSupported().minimumPrintedDigits(2)
             .appendHours().appendSeparator(":").appendMinutes().printZeroIfSupported().minimumPrintedDigits(2)
-            .appendSeparator(":").appendSeconds().minimumPrintedDigits(2).appendSeparator(".").appendMillis3Digit().
-            toFormatter();
-
+            .appendSeparator(":").appendSeconds().minimumPrintedDigits(2).appendSeparator(".")
+            .appendMillis3Digit().toFormatter();
 
     @Action(id = "test", fires = {}, description = "Run all the test included in one or more projects, naming the project ID, "
             + "a URL or a Git URL (git:// or http....*.git")
     public static class Test extends KlabActionExecutor {
 
-        public Test(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+        public Test(IActorIdentity<KlabMessage> identity, IParameters<String> arguments,
+                KlabActor.Scope scope,
                 ActorRef<KlabMessage> sender, String callId) {
             super(identity, arguments, scope, sender, callId);
         }
@@ -62,26 +70,27 @@ public class TestBehavior {
         if (project != null) {
             if (project != null) {
                 scope.getMonitor().info("Test engine: running test cases from " + project.getName());
-                final  AtomicBoolean done = new AtomicBoolean(false);
+                final AtomicBoolean done = new AtomicBoolean(false);
                 for (IBehavior testcase : project.getUnitTests()) {
-                    
+
                     if (scope.identity instanceof Session) {
-                        ((Session)scope.identity).loadScript(testcase, scope.getChild(testcase), () -> done.set(true));
+                        ((Session) scope.identity).loadScript(testcase, scope.getChild(testcase),
+                                () -> done.set(true));
                     } else {
                         scope.identity.load(testcase, scope.runtimeScope);
                     }
-                    
+
                     /*
                      * wait until test is done
                      */
-                    while (!done.get()) {
+                    while(!done.get()) {
                         try {
                             Thread.sleep(200);
                         } catch (InterruptedException e) {
                             break;
                         }
                     }
-                    
+
                 }
             }
         } else {
@@ -96,7 +105,8 @@ public class TestBehavior {
                 IProject existing = Resources.INSTANCE.getLocalWorkspace()
                         .getProject(MiscUtilities.getURLBaseName(arg.toString()));
                 if (existing != null) {
-                    monitor.warn("Project " + existing.getName() + " is present in the local workspace: using local version");
+                    monitor.warn("Project " + existing.getName()
+                            + " is present in the local workspace: using local version");
                     return existing;
                 }
                 ret = Resources.INSTANCE.retrieveAndLoadProject(arg.toString());
@@ -136,58 +146,110 @@ public class TestBehavior {
         scope.testScope.notifyAssertion(returned, comparison, ok, assertion);
 
     }
-    
+
     public static String printPeriod(long ms) {
         Period period = new Period(ms);
         return periodFormat.print(period);
     }
-    
-	@Action(id = "whitelist", fires = {})
-	public static class Constrain extends KlabActionExecutor {
 
-		public Constrain(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, Scope scope,
-				ActorRef<KlabMessage> sender, String callId) {
-			super(identity, arguments, scope, sender, callId);
-		}
+    @Action(id = "whitelist", fires = {})
+    public static class Constrain extends KlabActionExecutor {
 
-		@Override
-		void run(Scope scope) {
-			// constraint should be scoped to the actor, which means the root test scope
-			System.out.println("ZIO");
-		}
+        public Constrain(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, Scope scope,
+                ActorRef<KlabMessage> sender, String callId) {
+            super(identity, arguments, scope, sender, callId);
+        }
 
-	}
-	
-	@Action(id = "blacklist", fires = {})
-	public static class Exclude extends KlabActionExecutor {
+        @Override
+        void run(Scope scope) {
 
-		public Exclude(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, Scope scope,
-				ActorRef<KlabMessage> sender, String callId) {
-			super(identity, arguments, scope, sender, callId);
-		}
+            List<Object> args = new ArrayList<>();
+            for (Object o : arguments.getUnnamedArguments()) {
+                if (o instanceof KActorsValue) {
+                    o = ((KActorsValue) o).evaluate(scope, identity, true);
+                }
+                args.add(o);
+            }
 
-		@Override
-		void run(Scope scope) {
-			// constraint should be scoped to the actor, which means the root test scope
-			System.out.println("ZEO");
-		}
+            ((SessionState)scope.runtimeScope.getSession().getState()).whitelist((Object[])args.toArray());
 
-	}
-	
-	@Action(id = "inspect", fires = {Type.ANYVALUE}, synchronize = false)
-	public static class Inspect extends KlabActionExecutor {
+        }
 
-		public Inspect(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, Scope scope,
-				ActorRef<KlabMessage> sender, String callId) {
-			super(identity, arguments, scope, sender, callId);
-		}
+    }
 
-		@Override
-		void run(Scope scope) {
-			// constraint should be scoped to the actor, which means the root test scope
-			System.out.println("ZUA");
-		}
+    @Action(id = "blacklist", fires = {})
+    public static class Exclude extends KlabActionExecutor {
 
-	}
+        public Exclude(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, Scope scope,
+                ActorRef<KlabMessage> sender, String callId) {
+            super(identity, arguments, scope, sender, callId);
+        }
+
+        @Override
+        void run(Scope scope) {
+            List<Object> args = new ArrayList<>();
+            for (Object o : arguments.getUnnamedArguments()) {
+                if (o instanceof KActorsValue) {
+                    o = ((KActorsValue) o).evaluate(scope, identity, true);
+                }
+                args.add(o);
+            }
+
+            ((SessionState)scope.runtimeScope.getSession().getState()).whitelist((Object[])args.toArray());
+        }
+
+    }
+
+    @Action(id = "inspect", fires = {Type.ANYVALUE}, synchronize = false)
+    public static class Inspect extends KlabActionExecutor {
+
+        public Inspect(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, Scope scope,
+                ActorRef<KlabMessage> sender, String callId) {
+            super(identity, arguments, scope, sender, callId);
+        }
+
+        @Override
+        void run(Scope scope) {
+
+            List<Object> triggerArguments = new ArrayList<>();
+
+            for (Object o : arguments.getUnnamedArguments()) {
+
+                if (o instanceof KActorsValue) {
+
+                    if (((KActorsValue) o).getType() == Type.CONSTANT) {
+
+                        o = ((KActorsValue) o).evaluate(scope, identity, true);
+
+                        /*
+                         * check against all enums
+                         */
+                        if (EnumUtils.isValidEnum(IInspector.Asset.class, o.toString())) {
+                            triggerArguments.add(IInspector.Asset.valueOf(o.toString()));
+                        } else if (EnumUtils.isValidEnum(IInspector.Metric.class, o.toString())) {
+                            triggerArguments.add(IInspector.Metric.valueOf(o.toString()));
+                        } else if (EnumUtils.isValidEnum(IInspector.Event.class, o.toString())) {
+                            triggerArguments.add(IInspector.Event.valueOf(o.toString()));
+                        } else if (EnumUtils.isValidEnum(IInspector.Action.class, o.toString())) {
+                            triggerArguments.add(IInspector.Action.valueOf(o.toString()));
+                        } else if (EnumUtils.isValidEnum(ValueOperator.class, o.toString())) {
+                            triggerArguments.add(ValueOperator.valueOf(o.toString()));
+                        }
+                    } else {
+                        o = ((KActorsValue) o).evaluate(scope, identity, true);
+                    }
+                }
+            }
+
+            if (scope.runtimeScope.getMonitor().getInspector() == null) {
+                ((Engine.Monitor) scope.runtimeScope.getMonitor()).setInspector(new Inspector());
+            }
+
+            scope.runtimeScope.getMonitor().getInspector().setTrigger((trigger) -> {
+                fire(trigger.getSubject(), scope);
+            }, (Object[]) triggerArguments.toArray());
+        }
+
+    }
 
 }

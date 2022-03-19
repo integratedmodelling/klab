@@ -1,6 +1,9 @@
 package org.integratedmodelling.klab.api.runtime.monitoring;
 
+import java.util.function.BiConsumer;
+
 import org.integratedmodelling.kim.api.ValueOperator;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 
 /**
  * The monitor may carry an inspector which, if present, is notified of a variety of possible
@@ -12,18 +15,81 @@ import org.integratedmodelling.kim.api.ValueOperator;
  */
 public interface IInspector {
 
+    /**
+     * The trigger passed to the handler when a configured trigger matches.
+     * 
+     * @author Ferd
+     *
+     */
+    interface Trigger {
+
+        /**
+         * Same as configured
+         * 
+         * @return
+         */
+        Asset getAsset();
+
+        /**
+         * Same as configured
+         * 
+         * @return
+         */
+        Metric getMetric();
+
+        /**
+         * Same as configured
+         * 
+         * @return
+         */
+        Event getEvent();
+
+        /**
+         * The actual asset that triggered this
+         * 
+         * @return
+         */
+        Object getSubject();
+
+        /**
+         * If applicable, the trigger value or object that matched any trigger condition (e.g. if
+         * trigger is mean > 1000, the actual mean)
+         * 
+         * @return
+         */
+        Object getTriggerValue();
+    }
+
     // the subject of the recording
     public enum Asset {
         MODEL, RESOURCE, OBSERVATION, STATE_SLICE, ACTUATOR, DATAFLOW, SCHEDULE
     }
 
-    // what to record
+    // Metrics or extracted objects to apply to what is recorded
     public enum Metric {
     }
 
     // when to record
     public enum Event {
-        CREATION, START, FIRST_ACCESS, FIRST_READ, FIRST_WRITE, FINISH
+        CREATION, SELECTION, START, FIRST_ACCESS, FIRST_READ, FIRST_WRITE, FINISH
+    }
+    
+    // for future use: for now contextualization just continues
+    public enum Action {
+        /**
+         * Trigger the action and move on, the only supported for now
+         */
+        CONTINUE,
+        
+        /**
+         * Pause in inspector until user does something
+         */
+        PAUSE,
+        
+        /**
+         * Stop contextualization and reset 
+         */
+        FAIL
     }
 
     /**
@@ -33,7 +99,7 @@ public interface IInspector {
      * 
      * @param triggerArguments
      */
-    void setTrigger(Object... triggerArguments);
+    void setTrigger(BiConsumer<Trigger, IContextualizationScope> handler, Object... triggerArguments);
 
     /**
      * Code will call this at monitorable points; any installed triggers will be activated when

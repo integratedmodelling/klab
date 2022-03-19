@@ -364,6 +364,10 @@ public enum Actors implements IActorsService {
 								(IActorIdentity<?>) identity);
 					}
 				}
+				
+				if (value == null && container.getType() == KActorsValue.Type.IDENTIFIER) {
+				    value = container.getStatedValue();
+				}
 
 				return value;
 			}
