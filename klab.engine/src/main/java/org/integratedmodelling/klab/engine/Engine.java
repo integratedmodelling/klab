@@ -125,7 +125,6 @@ public class Engine extends Server implements IEngine, UserDetails {
 		private AtomicBoolean isInterrupted = new AtomicBoolean(false);
 		List<Listener> listeners = new ArrayList<>();
         private int waitTime;
-        private Inspector inspector;
 
 		protected Monitor(IIdentity engine) {
 			this.identity = engine;
@@ -241,10 +240,6 @@ public class Engine extends Server implements IEngine, UserDetails {
 				}
 			}
 		}
-
-		public void setInspector(Inspector inspector) {
-			this.inspector = inspector;
-		}
 		
 		@Override
 		public IIdentity getIdentity() {
@@ -306,17 +301,6 @@ public class Engine extends Server implements IEngine, UserDetails {
             return this.waitTime;
         }
 
-		@Override
-		public Inspector getInspector() {
-			return inspector;
-		}
-
-		@Override
-		public void notifyInspector(Object... triggerArguments) {
-			if (inspector != null) {
-				inspector.trigger(triggerArguments);
-			}
-		}
 	}
 
 	public Engine(ICertificate certificate) {

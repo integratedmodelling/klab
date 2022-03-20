@@ -55,6 +55,7 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.NonReentrant;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
+import org.integratedmodelling.klab.api.runtime.monitoring.IInspector;
 import org.integratedmodelling.klab.components.runtime.contextualizers.CastingStateResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.CategoryClassificationResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ChangingResourceResolver;
@@ -510,6 +511,8 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
         ret.setGenerator(activity);
 
+        scope.notifyInspector(IInspector.Asset.OBSERVATION, IInspector.Event.CREATION, ret);
+        
         return ret;
     }
 

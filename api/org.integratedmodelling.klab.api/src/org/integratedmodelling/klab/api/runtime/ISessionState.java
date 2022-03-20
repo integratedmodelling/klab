@@ -15,6 +15,7 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionConstraint;
+import org.integratedmodelling.klab.api.runtime.monitoring.IInspector;
 import org.integratedmodelling.klab.rest.ScaleReference;
 import org.integratedmodelling.klab.rest.SessionActivity;
 
@@ -191,4 +192,13 @@ public interface ISessionState extends IParameters<String> {
 	 */
 	Collection<IResolutionConstraint> getResolutionConstraints();
 
+    /**
+     * A session may carry an inspector for debugging. Each operation decides what
+     * to let the inspector see, examining its configuration at key points. A
+     * session that returns null here isn't "armed" for debugging but code can still
+     * call {@link #notifyInspector(Object...)} without consequences.
+     * 
+     * @return
+     */
+    IInspector getInspector();
 }

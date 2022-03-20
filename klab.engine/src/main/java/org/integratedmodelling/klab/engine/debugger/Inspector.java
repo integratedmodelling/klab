@@ -23,9 +23,10 @@ public class Inspector implements IInspector {
         // condition to match for trigger: if not empty, the fields of the trigger will be
         // accessible with their names
         Object condition;
-
         List<Pair<ValueOperator, Object>> operators = new ArrayList<>();
 
+        // data for matching, used only in triggered events for ease of comparison
+        List<Object> data = new ArrayList<>();
         BiConsumer<Trigger, IContextualizationScope> handler;
 
         @Override
@@ -49,9 +50,14 @@ public class Inspector implements IInspector {
             return condition;
         }
 
+        @Override
+        public List<Object> getData() {
+            return data;
+        }
+
         TriggerImpl() {
         }
-        
+
         TriggerImpl(TriggerImpl model, Object self, Object condition) {
             this.asset = model.asset;
             this.metric = model.metric;
@@ -59,6 +65,15 @@ public class Inspector implements IInspector {
             this.action = model.action;
             this.self = self;
             this.condition = condition;
+        }
+        public boolean matches(TriggerImpl trigger) {
+            if (trigger.asset != null && (this.asset == null || this.asset != trigger.asset)) {
+                return false;
+            }
+            if (trigger.event != null && (this.event == null || this.event != trigger.event)) {
+                return false;
+            }
+            return true;
         }
     }
 
@@ -90,12 +105,41 @@ public class Inspector implements IInspector {
                 trigger.operators.add(op);
             }
         }
+        trigger.handler = handler;
         triggers.add(trigger);
     }
 
     @Override
-    public void trigger(Object... triggerArguments) {
-        // TODO Auto-generated method stub
+    public void trigger(IContextualizationScope scope, Object... triggerArguments) {
+
+        if (triggerArguments == null || triggers.isEmpty()) {
+            return;
+        }
+
+        TriggerImpl trigger = new TriggerImpl();
+        Pair<ValueOperator, Object> op = null;
+        for (Object o : triggerArguments) {
+            if (o instanceof Action) {
+                trigger.action = (Action) o;
+            } else if (o instanceof Event) {
+                trigger.event = (Event) o;
+            } else if (o instanceof Metric) {
+                trigger.metric = (Metric) o;
+            } else if (o instanceof Asset) {
+                trigger.asset = (Asset) o;
+            } else {
+                if (trigger.self == null) {
+                    trigger.self = o;
+                }
+                trigger.data.add(o);
+            }
+        }
+
+        for (TriggerImpl t : triggers) {
+            if (t.matches(trigger)) {
+                t.handler.accept(trigger, scope);
+            }
+        }
 
     }
 

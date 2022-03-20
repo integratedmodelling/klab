@@ -53,7 +53,9 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionConstraint;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.ISessionState;
+import org.integratedmodelling.klab.api.runtime.monitoring.IInspector;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
@@ -67,6 +69,7 @@ import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.data.encoding.VisitingDataBuilder;
 import org.integratedmodelling.klab.dataflow.Flowchart;
 import org.integratedmodelling.klab.documentation.extensions.table.TableArtifact;
+import org.integratedmodelling.klab.engine.debugger.Inspector;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.model.Observer;
@@ -141,6 +144,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
     private Map<String, File> stagingArea = Collections.synchronizedMap(new HashMap<>());
     private IScale forcedScale;
     private List<IResolutionConstraint> resolutionConstraints = new ArrayList<>();
+    private Inspector inspector;
 
     // just for parking a flowchart in the root dataflow.
     private Flowchart flowchart;
@@ -1201,10 +1205,20 @@ public class SessionState extends Parameters<String> implements ISessionState {
     }
 
     public void whitelist(Object... o) {
-        this.resolutionConstraints.add(ResolutionConstraint.whitelist(o));   
+        this.resolutionConstraints.add(ResolutionConstraint.whitelist(o));
     }
 
     public void blacklist(Object... o) {
-        this.resolutionConstraints.add(ResolutionConstraint.blacklist(o));   
+        this.resolutionConstraints.add(ResolutionConstraint.blacklist(o));
     }
+
+    public void setInspector(Inspector inspector) {
+        this.inspector = inspector;
+    }
+
+    @Override
+    public Inspector getInspector() {
+        return inspector;
+    }
+
 }

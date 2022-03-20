@@ -318,6 +318,12 @@ public abstract class Expression implements IExpression {
             return scale;
         }
 
+        @Override
+        public void notifyInspector(Object... triggerArguments) {
+            // TODO Auto-generated method stub
+            
+        }
+
 	}
 
 	public static IContextualizationScope emptyContext(IMonitor monitor) {

@@ -49,22 +49,22 @@ public class UrnInstantiator implements IExpression, IInstantiator {
     }
 
     @Override
-    public List<IObjectArtifact> instantiate(IObservable semantics, IContextualizationScope context) throws KlabException {
+    public List<IObjectArtifact> instantiate(IObservable semantics, IContextualizationScope scope) throws KlabException {
 
         List<IObjectArtifact> ret = new ArrayList<>();
-        IResource res = this.resource.contextualize(context.getScale(), context.getTargetArtifact(), urnParameters, context);
+        IResource res = this.resource.contextualize(scope.getScale(), scope.getTargetArtifact(), urnParameters, scope);
         Map<String, String> parameters = urnParameters;
         
         if (res.getAvailability() != null) {
             switch(res.getAvailability().getAvailability()) {
             case DELAYED:
-                context.getMonitor().addWait(res.getAvailability().getRetryTimeSeconds());
+                scope.getMonitor().addWait(res.getAvailability().getRetryTimeSeconds());
                 return ret;
             case NONE:
-                context.getMonitor().error("resource " + resource.getUrn() + " has no data available in this context");
+                scope.getMonitor().error("resource " + resource.getUrn() + " has no data available in this context");
                 return ret;
             case PARTIAL:
-                context.getMonitor().warn("resource " + resource.getUrn() + " reports partial availability in this context");
+                scope.getMonitor().warn("resource " + resource.getUrn() + " reports partial availability in this context");
                 break;
             case COMPLETE:
                 break;
@@ -74,7 +74,7 @@ public class UrnInstantiator implements IExpression, IInstantiator {
         if (this.resource instanceof MergedResource) {
 
             List<Pair<IResource, Map<String, String>>> resources = ((MergedResource) this.resource)
-                    .contextualize(context.getScale(), context.getTargetArtifact());
+                    .contextualize(scope.getScale(), scope.getTargetArtifact(), scope);
             if (resources.isEmpty()) {
                 // it's OK if the resource was already contextualized up to the available data. TODO
                 // distinguish the use cases.
@@ -84,12 +84,12 @@ public class UrnInstantiator implements IExpression, IInstantiator {
             }
 
             for (Pair<IResource, Map<String, String>> pr : resources) {
-                ((Report) context.getReport()).addContextualizedResource(this.resource.getUrn(), pr.getFirst());
+                ((Report) scope.getReport()).addContextualizedResource(this.resource.getUrn(), pr.getFirst());
             }
 
             // TODO must contextualize the LIST, not just the first resource
             if (resources.size() > 1) {
-                context.getMonitor()
+                scope.getMonitor()
                         .warn("Warning: unimplemented use of multiple resources for one timestep. Choosing only the first.");
             }
 
@@ -98,7 +98,7 @@ public class UrnInstantiator implements IExpression, IInstantiator {
 
         }
 
-        IKlabData data = Resources.INSTANCE.getResourceData(res, parameters, context.getScale(), context);
+        IKlabData data = Resources.INSTANCE.getResourceData(res, parameters, scope.getScale(), scope);
 
         if (data != null && data.getArtifact() != null) {
             for (IArtifact artifact : data.getArtifact()) {

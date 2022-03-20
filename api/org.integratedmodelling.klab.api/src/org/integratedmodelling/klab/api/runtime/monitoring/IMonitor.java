@@ -25,6 +25,8 @@ import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessage.MessageClass;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
@@ -191,23 +193,5 @@ public interface IMonitor {
 	 * @return true if errors have happened in this context of monitoring.
 	 */
 	boolean hasErrors();
-
-	/**
-	 * A monitor may carry an inspector for debugging. Each operation decides what
-	 * to let the inspector see, examining its configuration at key points. A
-	 * monitor that returns null here isn't "armed" for debugging but code can still
-	 * call {@link #notifyInspector(Object...)} without consequences.
-	 * 
-	 * @return
-	 */
-	IInspector getInspector();
-
-	/**
-	 * Code will call this at monitorable points; any installed triggers in the
-	 * inspector will be activated when matching, if the inspector is armed.
-	 * 
-	 * @param triggerArguments
-	 */
-	void notifyInspector(Object... triggerArguments);
 
 }

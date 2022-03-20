@@ -544,4 +544,13 @@ public interface IContextualizationScope extends IParameters<String> {
      */
     Collection<String> getStateIdentifiers();
 
+    /**
+     * Code can call this at monitorable points; any installed triggers in the inspector will be
+     * activated when matching, if the inspector is armed in the session and listening. See
+     * {@link IInspectors} for what to pass.
+     * 
+     * @param triggerArguments
+     */
+    void notifyInspector(Object... triggerArguments);
+
 }

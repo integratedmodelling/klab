@@ -241,11 +241,12 @@ public class TestBehavior {
                 }
             }
 
-            if (scope.runtimeScope.getMonitor().getInspector() == null) {
-                ((Engine.Monitor) scope.runtimeScope.getMonitor()).setInspector(new Inspector());
+            if (scope.runtimeScope.getSession().getState().getInspector() == null) {
+                ((SessionState) scope.runtimeScope.getSession().getState()).setInspector(new Inspector());
             }
 
-            scope.runtimeScope.getMonitor().getInspector().setTrigger((trigger) -> {
+            ((SessionState) scope.runtimeScope.getSession().getState()).getInspector().setTrigger((trigger, sc) -> {
+                // TODO set variables in scope for expressions and assertions
                 fire(trigger.getSubject(), scope);
             }, (Object[]) triggerArguments.toArray());
         }

@@ -923,4 +923,10 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
 		return null;
 	}
 
+    @Override
+    public void notifyInspector(Object... triggerArguments) {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

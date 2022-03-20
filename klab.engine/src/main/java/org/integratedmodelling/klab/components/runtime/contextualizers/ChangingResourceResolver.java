@@ -55,10 +55,10 @@ public class ChangingResourceResolver implements IResolver<IArtifact>, IExpressi
     }
 
     @Override
-    public IArtifact resolve(IArtifact ret, IContextualizationScope context) throws KlabException {
+    public IArtifact resolve(IArtifact ret, IContextualizationScope scope) throws KlabException {
 
-        List<Pair<IResource, Map<String, String>>> resources = ((MergedResource) this.resource).contextualize(context.getScale(),
-                ret);
+        List<Pair<IResource, Map<String, String>>> resources = ((MergedResource) this.resource).contextualize(scope.getScale(),
+                ret, scope);
 
         if (resources.isEmpty()) {
             // this can happen when the resource can't add anything to the artifact.
@@ -66,7 +66,7 @@ public class ChangingResourceResolver implements IResolver<IArtifact>, IExpressi
         }
 
         for (Pair<IResource, Map<String, String>> pr : resources) {
-            ((Report) context.getReport()).addContextualizedResource(this.resource.getUrn(),
+            ((Report) scope.getReport()).addContextualizedResource(this.resource.getUrn(),
                     pr.getFirst());
         }
 
@@ -75,7 +75,7 @@ public class ChangingResourceResolver implements IResolver<IArtifact>, IExpressi
         // multiple spatial extents, but it could happen also with multiple temporal
         // slices.
         if (resources.size() > 1) {
-            context.getMonitor()
+            scope.getMonitor()
                     .warn("Warning: unimplemented use of multiple resources for one timestep. Choosing only the first.");
         }
 
@@ -84,13 +84,13 @@ public class ChangingResourceResolver implements IResolver<IArtifact>, IExpressi
         if (Configuration.INSTANCE.isEchoEnabled()) {
             System.err.println("GETTING DATA FROM " + res.getUrn());
         }
-        IKlabData data = Resources.INSTANCE.getResourceData(res, resources.get(0).getSecond(), context.getScale(), context, ret);
+        IKlabData data = Resources.INSTANCE.getResourceData(res, resources.get(0).getSecond(), scope.getScale(), scope, ret);
         if (Configuration.INSTANCE.isEchoEnabled()) {
             System.err.println("DONE " + res.getUrn());
         }
 
         if (data == null) {
-            context.getMonitor().error("Cannot extract data from resource " + resource.getUrn());
+            scope.getMonitor().error("Cannot extract data from resource " + resource.getUrn());
         }
 
         return data == null ? ret : data.getArtifact();

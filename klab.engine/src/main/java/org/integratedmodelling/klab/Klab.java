@@ -29,6 +29,7 @@ import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessage.MessageClass;
 import org.integratedmodelling.klab.api.monitoring.IMessage.Type;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.api.runtime.ITicket.Status;
@@ -436,19 +437,6 @@ public enum Klab implements IRuntimeService {
 		public int getWaitTime() {
 			// TODO Auto-generated method stub
 			return this.waitTime;
-		}
-
-		@Override
-		public IInspector getInspector() {
-			// TODO Auto-generated method stub
-			return inspector;
-		}
-		
-		@Override
-		public void notifyInspector(Object... triggerArguments) {
-			if (inspector != null) {
-				inspector.trigger(triggerArguments);
-			}
 		}
 	}
 

@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.api.runtime.monitoring;
 
+import java.util.List;
 import java.util.function.BiConsumer;
 
 import org.integratedmodelling.kim.api.ValueOperator;
@@ -58,6 +59,14 @@ public interface IInspector {
          * @return
          */
         Object getTriggerValue();
+
+        /**
+         * Any trigger from code may add data in addition to the subject. This will report all data
+         * sent to the trigger function of the inspector, INCLUDING the main subject.
+         * 
+         * @return
+         */
+        List<Object> getData();
     }
 
     // the subject of the recording
@@ -73,21 +82,21 @@ public interface IInspector {
     public enum Event {
         CREATION, SELECTION, START, FIRST_ACCESS, FIRST_READ, FIRST_WRITE, FINISH
     }
-    
+
     // for future use: for now contextualization just continues
     public enum Action {
         /**
          * Trigger the action and move on, the only supported for now
          */
         CONTINUE,
-        
+
         /**
          * Pause in inspector until user does something
          */
         PAUSE,
-        
+
         /**
-         * Stop contextualization and reset 
+         * Stop contextualization and reset
          */
         FAIL
     }
@@ -107,6 +116,6 @@ public interface IInspector {
      * 
      * @param triggerArguments
      */
-    void trigger(Object... triggerArguments);
+    void trigger(IContextualizationScope scope, Object... triggerArguments);
 
 }

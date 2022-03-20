@@ -322,18 +322,6 @@ public class Session extends GroovyObjectSupport
 			return 0;
 		}
 
-		@Override
-		public IInspector getInspector() {
-			return inspector;
-		}
-
-		@Override
-		public void notifyInspector(Object... triggerArguments) {
-			if (inspector != null) {
-				inspector.trigger(triggerArguments);
-			}
-		}
-
 	}
 
 	public Session(Engine engine, IUserIdentity user) {

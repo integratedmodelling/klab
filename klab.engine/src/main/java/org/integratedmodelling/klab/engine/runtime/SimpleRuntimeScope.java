@@ -997,4 +997,10 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 		return null;
 	}
 
+    @Override
+    public void notifyInspector(Object... triggerArguments) {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

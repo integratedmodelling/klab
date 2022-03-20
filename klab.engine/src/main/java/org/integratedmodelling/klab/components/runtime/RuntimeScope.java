@@ -75,6 +75,7 @@ import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.IVariable;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
+import org.integratedmodelling.klab.api.runtime.monitoring.IInspector;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
@@ -2395,4 +2396,12 @@ public class RuntimeScope extends AbstractRuntimeScope {
 		}
 		return null;
 	}
+	
+    @Override
+    public void notifyInspector(Object... triggerArguments) {
+        IInspector inspector = getSession().getState().getInspector();
+        if (inspector != null) {
+            inspector.trigger(this, triggerArguments);
+        }
+    }
 }

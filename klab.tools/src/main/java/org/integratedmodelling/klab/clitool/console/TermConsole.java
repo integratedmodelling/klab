@@ -35,6 +35,7 @@ import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IInspector;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
@@ -159,18 +160,6 @@ public class TermConsole implements IConsole {
             // TODO Auto-generated method stub
             return this.waitTime;
         }
-
-		@Override
-		public IInspector getInspector() {
-			return inspector;
-		}
-		
-		@Override
-		public void notifyInspector(Object... triggerArguments) {
-			if (inspector != null) {
-				inspector.trigger(triggerArguments);
-			}
-		}
 	}
 
 	public void start(CliStartupOptions options) throws Exception {

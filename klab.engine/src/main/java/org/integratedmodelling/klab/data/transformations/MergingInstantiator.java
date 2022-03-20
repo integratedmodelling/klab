@@ -57,7 +57,7 @@ public class MergingInstantiator implements IExpression, IInstantiator {
 
         if (this.resource instanceof MergedResource) {
             List<Pair<IResource, Map<String, String>>> resources = ((MergedResource) this.resource)
-                    .contextualize(scope.getScale(), scope.getTargetArtifact());
+                    .contextualize(scope.getScale(), scope.getTargetArtifact(), scope);
             if (resources.isEmpty()) {
                 scope.getMonitor().warn("resource " + this.resource.getUrn() + " cannot be contextualized in this scale");
                 return ret;

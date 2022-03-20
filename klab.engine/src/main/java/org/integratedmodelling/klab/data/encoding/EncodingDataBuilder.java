@@ -126,19 +126,6 @@ public class EncodingDataBuilder implements IKlabData.Builder {
 			return this.waitTime;
 		}
 
-		@Override
-		public IInspector getInspector() {
-			// TODO Auto-generated method stub
-			return inspector;
-		}
-		
-		@Override
-		public void notifyInspector(Object... triggerArguments) {
-			if (inspector != null) {
-				inspector.trigger(triggerArguments);
-			}
-		}
-
 	}
 
 	/**
