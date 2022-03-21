@@ -49,6 +49,7 @@ import org.integratedmodelling.klab.api.knowledge.IViewModel.Schedule;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IObservationGroup;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -2174,8 +2175,15 @@ public class TableCompiler {
 	 * Compute all cells that want to be computed. Target comes from caller, if null
 	 * we must have an observable and find it in the catalog.
 	 */
-	public TableArtifact compute(IObservation targetObservation, IRuntimeScope scope) {
+	public IKnowledgeView compute(IObservation targetObservation, IRuntimeScope scope) {
 
+		if (this.compiler != null) {
+			scope.getMonitor().info("Computing table " + name + " using custom builder");
+			IKnowledgeView.Builder builder = SimpleTableArtifact.builder(this, scope);
+			this.compiler.compile(builder);
+			return (TableArtifact)builder.build();
+		}
+		
 		scope.getMonitor().info("start computing table " + name);
 
 		Map<IObservedConcept, IObservation> catalog = scope.getCatalog();
@@ -2572,11 +2580,11 @@ public class TableCompiler {
 						ret.add(new Phase((IScale) trg.getScale().initialization(), "init").setKey("init"));
 					}
 					if (phaseItems.contains("start")) {
-						ret.add(new Phase((IScale) trg.getScale().at(time.getExtent(time.size() < 3 ? 0 : 1)), "start")
+						ret.add(new Phase((IScale) trg.getScale().at(time.earliest()), "start")
 								.setKey("start"));
 					}
 					if (phaseItems.contains("end")) {
-						ret.add(new Phase((IScale) trg.getScale().at(time.getExtent(time.size() - 1)), "end")
+						ret.add(new Phase((IScale) trg.getScale().at(time.latest()), "end")
 								.setKey("end"));
 					}
 				} else {

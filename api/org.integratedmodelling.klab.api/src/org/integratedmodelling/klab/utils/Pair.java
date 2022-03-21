@@ -15,6 +15,8 @@
  */
 package org.integratedmodelling.klab.utils;
 
+import java.util.Objects;
+
 import org.integratedmodelling.klab.api.data.utils.IPair;
 
 /**
@@ -106,7 +108,6 @@ public class Pair<T1, T2> implements IPair<T1, T2> {
 		return second;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "{" + getFirst() + "," + getSecond() + "}";
@@ -114,11 +115,7 @@ public class Pair<T1, T2> implements IPair<T1, T2> {
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((first == null) ? 0 : first.hashCode());
-		result = prime * result + ((second == null) ? 0 : second.hashCode());
-		return result;
+		return Objects.hash(first, second);
 	}
 
 	@Override
@@ -129,20 +126,8 @@ public class Pair<T1, T2> implements IPair<T1, T2> {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Pair<?,?> other = (Pair<?,?>) obj;
-		if (first == null) {
-			if (other.first != null)
-				return false;
-		} else if (!first.equals(other.first))
-			return false;
-		if (second == null) {
-			if (other.second != null)
-				return false;
-		} else if (!second.equals(other.second))
-			return false;
-		return true;
+		Pair<?,?> other = (Pair) obj;
+		return Objects.equals(first, other.first) && Objects.equals(second, other.second);
 	}
-
-
 
 }

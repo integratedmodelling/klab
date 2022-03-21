@@ -1177,4 +1177,5 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
         return 0;
     }
 
+
 }

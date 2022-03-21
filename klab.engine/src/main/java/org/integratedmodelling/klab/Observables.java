@@ -31,6 +31,7 @@ import org.integratedmodelling.kim.model.KimObservable;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
 import org.integratedmodelling.klab.api.model.IModel;
@@ -57,6 +58,7 @@ import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.engine.resources.CoreOntology;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.ConfigurationDetector;
 import org.integratedmodelling.klab.owl.KimKnowledgeProcessor;
@@ -1422,4 +1424,40 @@ public enum Observables implements IObservableService {
     public void registerConfiguration(IKimConceptStatement statement, IConcept concept) {
         this.configurationDetector.registerConfiguration(statement, concept);
     }
+
+    /**
+     * Convert any legitimate statement or object into an observed concept.
+     * 
+     * @param object
+     * @return
+     */
+    public IObservedConcept asObservedConcept(Object object) {
+    	if (object instanceof IObservedConcept) {
+    		return (IObservedConcept)object;
+    	}
+    	return new ObservedConcept(asObservable(object));
+    }
+    
+    /**
+     * Convert any legitimate statement or object into an observable.
+     * 
+     * @param object
+     * @return
+     */
+    public IObservable asObservable(Object object) {
+		if (object instanceof IObservedConcept) {
+			return ((IObservedConcept) object).getObservable();
+		} else if (object instanceof IConcept) {
+			return Observable.promote((IConcept)object);
+		} else if (object instanceof IObservable) {
+			return (IObservable)object;
+		} else if (object instanceof IKimObservable) {
+			return declare((IKimObservable)object, Klab.INSTANCE.getRootMonitor());
+		} else if (object instanceof IKimConcept) {
+			return Observable.promote(Concepts.INSTANCE.declare((IKimConcept)object));
+		} else if (object instanceof String) {
+			return declare((String)object);
+		}
+		throw new KlabIllegalArgumentException("cannot interpret " + object + " as an observable");
+	}
 }

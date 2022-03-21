@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.api.extensions;
 
 import java.util.Map;
 
+import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.utils.Parameters;
 
@@ -26,5 +27,12 @@ public interface ITableCompiler {
 	 * @param scope
 	 */
 	void initialize(Parameters<String> parameters, Map<?,?> tableDefinition, IContextualizationScope scope);
+	
+	/**
+	 * Build the artifact using the passed builder.
+	 * 
+	 * @param builder
+	 */
+	void compile(IKnowledgeView.Builder builder);
 
 }

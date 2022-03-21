@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.documentation.extensions.table;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
