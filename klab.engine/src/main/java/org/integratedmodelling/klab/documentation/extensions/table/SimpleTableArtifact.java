@@ -25,7 +25,8 @@ public class SimpleTableArtifact extends Artifact implements IKnowledgeView {
 
 	static class Dimension {
 		public Dimension(String string, Object[] options) {
-			// TODO Auto-generated constructor stub
+		    this.id = string;
+		    // TODO handle options
 		}
 
 		boolean header;

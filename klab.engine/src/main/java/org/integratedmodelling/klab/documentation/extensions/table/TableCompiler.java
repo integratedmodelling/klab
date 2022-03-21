@@ -1500,6 +1500,10 @@ public class TableCompiler {
 
 		int ret = 0;
 
+		if (object == null) {
+		    return ret;
+		}
+		
 		if (object instanceof Collection) {
 			for (Object o : ((Collection<?>) object)) {
 				if (o instanceof Map) {

@@ -117,7 +117,7 @@ public class PairwiseTableCompiler implements ITableCompiler {
 			for (ILocator locator : sourceState.getScale().at(last)) {
 
 				double value = 1;
-				if ("area".equals("reportedValue")) {
+				if ("area".equals(reportedValue)) {
 					value = Units.INSTANCE.SQUARE_KILOMETERS
 							.convert(((IScale) locator).getSpace().getStandardizedArea(), Units.INSTANCE.SQUARE_METERS).doubleValue();
 				}
