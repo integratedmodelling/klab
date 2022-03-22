@@ -15,7 +15,9 @@ import java.util.Set;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Observations;
+import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.documentation.views.IDocumentationView;
 import org.integratedmodelling.klab.api.documentation.views.ITableView;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
@@ -62,7 +64,9 @@ public class SimpleTableArtifact extends Artifact implements IKnowledgeView {
 		Map<Pair<String, String>, Cell> cells = new HashMap<>();
 		boolean colHeaders = false;
 		boolean rowHeaders = false;
-
+		boolean rowTotals = false;
+		boolean colTotals = false;
+		
 		TableBuilder(TableCompiler compiler, IRuntimeScope scope) {
 			this.scope = scope;
 			this.compiler = compiler;
@@ -74,10 +78,10 @@ public class SimpleTableArtifact extends Artifact implements IKnowledgeView {
 			if (dim == null) {
 				dim = new Dimension("c" + ccols.size() + 1, options);
 				if (classifier instanceof ISemantic) {
-					dim.label = Concepts.INSTANCE.getDisplayLabel((ISemantic)classifier);
+					dim.label = Concepts.INSTANCE.getDisplayLabel((ISemantic) classifier);
 					colHeaders = true;
 				} else if (classifier instanceof String) {
-					dim.label = (String)classifier;
+					dim.label = (String) classifier;
 					colHeaders = true;
 				}
 				ccols.put(classifier, dim);
@@ -91,10 +95,10 @@ public class SimpleTableArtifact extends Artifact implements IKnowledgeView {
 			if (dim == null) {
 				dim = new Dimension("r" + crows.size() + 1, options);
 				if (classifier instanceof ISemantic) {
-					dim.label = Concepts.INSTANCE.getDisplayLabel((ISemantic)classifier);
+					dim.label = Concepts.INSTANCE.getDisplayLabel((ISemantic) classifier);
 					rowHeaders = true;
 				} else if (classifier instanceof String) {
-					dim.label = (String)classifier;
+					dim.label = (String) classifier;
 					rowHeaders = true;
 				}
 				crows.put(classifier, dim);
@@ -116,7 +120,14 @@ public class SimpleTableArtifact extends Artifact implements IKnowledgeView {
 
 		@Override
 		public IKnowledgeView build() {
-			return new SimpleTableArtifact(new ArrayList<>(crows.values()), new ArrayList<>(ccols.values()), cells, compiler, scope, rowHeaders, colHeaders);
+			return new SimpleTableArtifact(new ArrayList<>(crows.values()), new ArrayList<>(ccols.values()), cells,
+					compiler, scope, rowHeaders, colHeaders, rowTotals, colTotals);
+		}
+
+		@Override
+		public void setTotals(boolean rowTotals, boolean colTotals) {
+			this.rowTotals = rowTotals;
+			this.colTotals = colTotals;
 		}
 	}
 
@@ -128,10 +139,12 @@ public class SimpleTableArtifact extends Artifact implements IKnowledgeView {
 	private Map<Pair<String, String>, Cell> cells;
 	private boolean rowHeaders;
 //	private boolean colHeaders;
+	private boolean rowTotals;
+	private boolean colTotals;
 
-	private SimpleTableArtifact(List<Dimension> rows, List<Dimension> cols,
-			Map<Pair<String, String>, Cell> cells, TableCompiler compiler, IRuntimeScope scope,
-			boolean rowHeaders, boolean colHeaders) {
+	private SimpleTableArtifact(List<Dimension> rows, List<Dimension> cols, Map<Pair<String, String>, Cell> cells,
+			TableCompiler compiler, IRuntimeScope scope, boolean rowHeaders, boolean colHeaders, boolean rowTotals,
+			boolean colTotals) {
 		this.rows = rows;
 		this.columns = cols;
 		this.cells = cells;
@@ -139,6 +152,8 @@ public class SimpleTableArtifact extends Artifact implements IKnowledgeView {
 //		this.scope = scope;
 		this.rowHeaders = rowHeaders;
 //		this.colHeaders = colHeaders;
+		this.rowTotals = rowTotals;
+		this.colTotals = colTotals;
 	}
 
 	@Override
@@ -221,20 +236,20 @@ public class SimpleTableArtifact extends Artifact implements IKnowledgeView {
 	private IDocumentationView getCompiledView(ITableView view, int sheetId) {
 
 		int hTable = view.table(this.tableCompiler.getTitle(), sheetId);
-        /*
-         * data and row titles. Row groups can go to hell for now.
-         */
-        int hBody = view.body(hTable);
-        for (Dimension rDesc : rows) {
-            int hRow = view.newRow(hBody);
-            for (Dimension column : columns) {
-                view.write(view.newHeaderCell(hRow, true),column.label, Double.NaN, rDesc.style);
-            }
-            for (Dimension cDesc : columns) {
-                Cell cell = cells.get(new Pair<>(rDesc.id, cDesc.id));
-                view.write(view.newCell(hRow), getData(cell), getNumberValue(cell), cell == null ? null : cell.style);
-            }
-        }
+		/*
+		 * data and row titles. Row groups can go to hell for now.
+		 */
+		int hBody = view.body(hTable);
+		for (Dimension rDesc : rows) {
+			int hRow = view.newRow(hBody);
+			for (Dimension column : columns) {
+				view.write(view.newHeaderCell(hRow, true), column.label, Double.NaN, rDesc.style);
+			}
+			for (Dimension cDesc : columns) {
+				Cell cell = cells.get(new Pair<>(rDesc.id, cDesc.id));
+				view.write(view.newCell(hRow), getData(cell), getNumberValue(cell), cell == null ? null : cell.style);
+			}
+		}
 
 		return view;
 	}
@@ -270,16 +285,16 @@ public class SimpleTableArtifact extends Artifact implements IKnowledgeView {
 		ret.setDocumentationIdentifier(this.tableCompiler.getIdentifier());
 
 		if (rowHeaders) {
-	        Column head = new Column();
-	        head.setId("rowheaders");
-	        head.setTitle("");
-	        head.setType(IArtifact.Type.TEXT);
-	        ret.getColumns().add(head);
+			Column head = new Column();
+			head.setId("rowheaders");
+			head.setTitle("");
+			head.setType(IArtifact.Type.TEXT);
+			ret.getColumns().add(head);
 		}
 
 		for (Dimension column : columns) {
-            ret.getColumns().add(compileColumn(column));
-        }
+			ret.getColumns().add(compileColumn(column));
+		}
 
 		for (Dimension rDesc : rows) {
 			Map<String, String> rowData = new HashMap<>();
@@ -288,11 +303,11 @@ public class SimpleTableArtifact extends Artifact implements IKnowledgeView {
 			}
 			for (Dimension cDesc : columns) {
 				Cell cell = cells.get(new Pair<>(rDesc.id, cDesc.id));
-                Object value = getNumberValue(cell);
-                if (value instanceof Double && Double.isNaN((Double) value)) {
-                    value = getData(cell);
-                }
-                rowData.put(cDesc.id, value.toString());
+				Object value = getNumberValue(cell);
+				if (value instanceof Double && Double.isNaN((Double) value)) {
+					value = getData(cell);
+				}
+				rowData.put(cDesc.id, value.toString());
 			}
 			data.add(rowData);
 		}
@@ -304,48 +319,48 @@ public class SimpleTableArtifact extends Artifact implements IKnowledgeView {
 		}
 	}
 
-    private Column compileColumn(Dimension column) {
-        Column ret = new Column();
-        ret.setId(column.id);
-        ret.setTitle(column.label);
-        ret.setType(IArtifact.Type.NUMBER);
-        return ret;
-    }
-	
-    private String getData(Cell cell) {
+	private Column compileColumn(Dimension column) {
+		Column ret = new Column();
+		ret.setId(column.id);
+		ret.setTitle(column.label);
+		ret.setType(IArtifact.Type.NUMBER);
+		return ret;
+	}
 
-        if (cell == null) {
-            return "";
-        }
+	private String getData(Cell cell) {
 
-        Object ret = cell.value;
-        if (Observations.INSTANCE.isNodata(ret)) {
-            return "";
-        }
-        if (ret instanceof Number) {
-            // TODO harvest format specs from row, then col
-            ret = NumberFormat.getNumberInstance().format((Number) ret);
-        }
-        return ret.toString();
-    }
+		if (cell == null) {
+			return tableCompiler.getNumberFormat() == null ? "" : "0";
+		}
 
-    private double getNumberValue(Cell cell) {
+		Object ret = cell.value;
+		if (Observations.INSTANCE.isNodata(ret)) {
+			return "";
+		}
+		if (ret instanceof Number) {
+			// TODO harvest format specs from row, then col
+			ret = NumberFormat.getNumberInstance().format((Number) ret);
+		}
+		return ret.toString();
+	}
 
-        if (cell == null) {
-            return Double.NaN;
-        }
+	private double getNumberValue(Cell cell) {
 
-        Object ret = cell.value;
-        if (Observations.INSTANCE.isNodata(ret)) {
-            return Double.NaN;
-        }
-        if (ret instanceof Number) {
-            // TODO harvest format specs from row, then col
-            return ((Number) ret).doubleValue();
-        }
-        return Double.NaN;
-    }
-	
+		if (cell == null) {
+			return Double.NaN;
+		}
+
+		Object ret = cell.value;
+		if (Observations.INSTANCE.isNodata(ret)) {
+			return Double.NaN;
+		}
+		if (ret instanceof Number) {
+			// TODO harvest format specs from row, then col
+			return ((Number) ret).doubleValue();
+		}
+		return Double.NaN;
+	}
+
 	/**
 	 * Get a builder for the custom plugins
 	 */

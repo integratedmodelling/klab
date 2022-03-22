@@ -11,6 +11,7 @@ import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.extensions.ITableCompiler;
 import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
@@ -41,6 +42,7 @@ public class PairwiseTableCompiler implements ITableCompiler {
 	String reportedValue;
 	boolean rowTotals = false;
 	boolean colTotals = false;
+	IUnit areaUnit = Units.INSTANCE.SQUARE_KILOMETERS;
 
 	/*
 	 * hashes to keep the correspondence between the original values and their
@@ -68,6 +70,10 @@ public class PairwiseTableCompiler implements ITableCompiler {
 			}
 		}
 
+		if (parameters.contains("unit")) {
+			areaUnit = Unit.create(parameters.get("unit", String.class));
+		}
+		
 		this.comparedStates = parameters.get("compare", List.class);
 		this.contabilizeNulls = parameters.get("contabilize-nulls", Boolean.FALSE);
 		this.rowTotals = parameters.get("row-totals", Boolean.FALSE);
@@ -94,6 +100,8 @@ public class PairwiseTableCompiler implements ITableCompiler {
 		ITime first = getTime(sourceState.getScale().getTime(), this.comparedStates.get(0));
 		ITime last = getTime(sourceState.getScale().getTime(), this.comparedStates.get(1));
 
+		builder.setTotals(rowTotals, colTotals);
+
 		/*
 		 * Create temporary storage during the first pass, using the multiplier.
 		 */
@@ -118,10 +126,11 @@ public class PairwiseTableCompiler implements ITableCompiler {
 
 				double value = 1;
 				if ("area".equals(reportedValue)) {
-					value = Units.INSTANCE.SQUARE_KILOMETERS
-							.convert(((IScale) locator).getSpace().getStandardizedArea(), Units.INSTANCE.SQUARE_METERS).doubleValue();
+					value = areaUnit
+							.convert(((IScale) locator).getSpace().getStandardizedArea(), Units.INSTANCE.SQUARE_METERS)
+							.doubleValue();
 				}
-				
+
 				Object state2 = sourceState.get(locator);
 				Object state1 = codes.inverse().get(storage.get(ofs++).intValue());
 				Pair<Object, Object> states = new Pair<>(state1, state2);
@@ -174,8 +183,8 @@ public class PairwiseTableCompiler implements ITableCompiler {
 				rowKeys.put("Total", builder.getRow("Total", Style.BOLD));
 			}
 			
-			for (Pair<Object,Object> key : bins.keySet()) {
-				String row = rowKeys.get(key.getFirst() == null ? "Unaccounted" : labels.get(key.getFirst())); 
+			for (Pair<Object, Object> key : bins.keySet()) {
+				String row = rowKeys.get(key.getFirst() == null ? "Unaccounted" : labels.get(key.getFirst()));
 				String col = colKeys.get(key.getSecond() == null ? "Unaccounted" : labels.get(key.getSecond()));
 				builder.setCell(row, col, bins.get(key));
 			}

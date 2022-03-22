@@ -58,6 +58,14 @@ public interface IKnowledgeView extends IArtifact {
 		 * @return
 		 */
 		IKnowledgeView build();
+
+		/**
+		 * Create row and column totals. Default false for both.
+		 * 
+		 * @param rowTotals
+		 * @param colTotals
+		 */
+		void setTotals(boolean rowTotals, boolean colTotals);
 	}
 
 	/**
