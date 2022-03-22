@@ -1336,8 +1336,8 @@ public class ResolutionScope implements IResolutionScope {
              * with the context. In that case, we let it pass as is, as the learning process will
              * deal with the distribution.
              */
-            if (observable2.getReferencedModel() != null && observable2.getReferencedModel().isLearning()) {
-                for (IObservable archetype : ((Model) observable2.getReferencedModel()).getArchetypes()) {
+            if (observable2.getReferencedModel(this) != null && observable2.getReferencedModel(this).isLearning()) {
+                for (IObservable archetype : ((Model) observable2.getReferencedModel(this)).getArchetypes()) {
                     if (archetype.is(context)) {
                         return null;
                     }
@@ -1500,6 +1500,17 @@ public class ResolutionScope implements IResolutionScope {
         this.resolutions.put(new ObservedConcept(observable, mode), result);
     }
 
+    public IModel findResolvedModel(String modelId) {
+    	for (List<IRankedModel> resolved : this.resolutions.values()) {
+    		for (IRankedModel model : resolved) {
+    			if (modelId.equals(model.getName())) {
+    				return model;
+    			}
+    		}
+    	}
+    	return null;
+    }
+    
     public Map<ObservedConcept, List<IRankedModel>> getResolutions() {
         return this.resolutions;
     }

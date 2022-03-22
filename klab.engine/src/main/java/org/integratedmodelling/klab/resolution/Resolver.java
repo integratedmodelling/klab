@@ -165,7 +165,7 @@ public class Resolver {
         if (resolvable instanceof Observable) {
 
             parentScope.setOriginalScope(
-                    ((Observable) resolvable).getReferencedModel() == null ? Scope.OBSERVABLE : Scope.MODEL);
+                    ((Observable) resolvable).getReferencedModel(parentScope) == null ? Scope.OBSERVABLE : Scope.MODEL);
             ret = resolve((Observable) resolvable, parentScope,
                     ((Observable) resolvable).getDescriptionType().getResolutionMode());
 
@@ -698,10 +698,10 @@ public class Resolver {
                     previousArtifact.getFirst());
             coverage = ret.getCoverage();
 
-        } else if (observable.getReferencedModel() != null) {
+        } else if (observable.getReferencedModel(ret) != null) {
 
             // observable comes complete with model, semantic or not
-            ResolutionScope mscope = resolve((Model) observable.getReferencedModel(), ret);
+            ResolutionScope mscope = resolve((Model) observable.getReferencedModel(ret), ret);
             if (mscope.getCoverage().isRelevant() && ret.or(mscope)) {
                 ret.link(mscope);
                 coverage = mscope.getCoverage();

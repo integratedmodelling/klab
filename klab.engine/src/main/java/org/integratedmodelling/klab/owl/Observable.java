@@ -48,6 +48,7 @@ import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.model.Annotation;
 import org.integratedmodelling.klab.model.Model;
+import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
 
@@ -547,9 +548,12 @@ public class Observable extends GroovyObjectSupport implements IObservable {
         this.modelReference = modelReference;
     }
 
-    public IModel getReferencedModel() {
+    public IModel getReferencedModel(ResolutionScope scope) {
         if (this.resolvedModel == null && this.modelReference != null) {
             IKimObject model = Resources.INSTANCE.getModelObject(modelReference);
+            if (model == null && scope != null) {
+            	model = scope.findResolvedModel(modelReference);
+            }
             if (!(model instanceof IModel)) {
                 throw new KlabValidationException(
                         "referenced object " + modelReference + " does not exist or is not a model");
