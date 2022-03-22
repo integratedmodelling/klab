@@ -38,6 +38,9 @@ import org.integratedmodelling.klab.utils.Pair;
 
 public class SimpleTableArtifact extends Artifact implements IKnowledgeView {
 
+	String emptyValue = "0";
+	String noDataValue = "0";
+
 	static class Dimension {
 		public Dimension(String string, Object[] options) {
 			this.id = string;
@@ -66,7 +69,9 @@ public class SimpleTableArtifact extends Artifact implements IKnowledgeView {
 		boolean rowHeaders = false;
 		boolean rowTotals = false;
 		boolean colTotals = false;
-		
+		String emptyValue = "0";
+		String noDataValue = "0";
+
 		TableBuilder(TableCompiler compiler, IRuntimeScope scope) {
 			this.scope = scope;
 			this.compiler = compiler;
@@ -121,14 +126,15 @@ public class SimpleTableArtifact extends Artifact implements IKnowledgeView {
 		@Override
 		public IKnowledgeView build() {
 			return new SimpleTableArtifact(new ArrayList<>(crows.values()), new ArrayList<>(ccols.values()), cells,
-					compiler, scope, rowHeaders, colHeaders, rowTotals, colTotals);
+					compiler, scope, rowHeaders, colHeaders, emptyValue, noDataValue);
 		}
 
 		@Override
-		public void setTotals(boolean rowTotals, boolean colTotals) {
-			this.rowTotals = rowTotals;
-			this.colTotals = colTotals;
+		public void setEmptyCells(String emptyValue, String noDataValue) {
+			this.emptyValue = emptyValue;
+			this.noDataValue = noDataValue;
 		}
+
 	}
 
 	private TableCompiler tableCompiler;
@@ -139,12 +145,11 @@ public class SimpleTableArtifact extends Artifact implements IKnowledgeView {
 	private Map<Pair<String, String>, Cell> cells;
 	private boolean rowHeaders;
 //	private boolean colHeaders;
-	private boolean rowTotals;
-	private boolean colTotals;
+	private boolean hasNumbers;
 
 	private SimpleTableArtifact(List<Dimension> rows, List<Dimension> cols, Map<Pair<String, String>, Cell> cells,
-			TableCompiler compiler, IRuntimeScope scope, boolean rowHeaders, boolean colHeaders, boolean rowTotals,
-			boolean colTotals) {
+			TableCompiler compiler, IRuntimeScope scope, boolean rowHeaders, boolean colHeaders, String emptyValue,
+			String noDataValue) {
 		this.rows = rows;
 		this.columns = cols;
 		this.cells = cells;
@@ -152,8 +157,8 @@ public class SimpleTableArtifact extends Artifact implements IKnowledgeView {
 //		this.scope = scope;
 		this.rowHeaders = rowHeaders;
 //		this.colHeaders = colHeaders;
-		this.rowTotals = rowTotals;
-		this.colTotals = colTotals;
+		this.emptyValue = emptyValue;
+		this.noDataValue = noDataValue;
 	}
 
 	@Override
@@ -330,12 +335,12 @@ public class SimpleTableArtifact extends Artifact implements IKnowledgeView {
 	private String getData(Cell cell) {
 
 		if (cell == null) {
-			return tableCompiler.getNumberFormat() == null ? "" : "0";
+			return emptyValue;
 		}
 
 		Object ret = cell.value;
 		if (Observations.INSTANCE.isNodata(ret)) {
-			return "";
+			return noDataValue;
 		}
 		if (ret instanceof Number) {
 			// TODO harvest format specs from row, then col

@@ -23,12 +23,12 @@ public interface IKnowledgeView extends IArtifact {
 	 *
 	 */
 	interface Builder {
-		
+
 		/**
 		 * Create or retrieve a column for a given classifier.
 		 * 
 		 * @param classifier
-		 * @param options sorting, style, header
+		 * @param options    sorting, style, header
 		 * @return the ID for the column
 		 */
 		String getColumn(Object classifier, Object... options);
@@ -37,7 +37,7 @@ public interface IKnowledgeView extends IArtifact {
 		 * Create or retrieve a row for a given classifier.
 		 * 
 		 * @param classifier
-		 * @param options style, header
+		 * @param options    style, header
 		 * @return the ID for the row
 		 */
 		String getRow(Object classifier, Object... options);
@@ -60,12 +60,12 @@ public interface IKnowledgeView extends IArtifact {
 		IKnowledgeView build();
 
 		/**
-		 * Create row and column totals. Default false for both.
+		 * Define the appearance of empty and nodata cells
 		 * 
-		 * @param rowTotals
-		 * @param colTotals
+		 * @param emptyValue
+		 * @param noDataValue
 		 */
-		void setTotals(boolean rowTotals, boolean colTotals);
+		void setEmptyCells(String emptyValue, String noDataValue);
 	}
 
 	/**

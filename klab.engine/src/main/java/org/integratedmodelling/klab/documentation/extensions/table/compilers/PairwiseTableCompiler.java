@@ -43,6 +43,8 @@ public class PairwiseTableCompiler implements ITableCompiler {
 	boolean rowTotals = false;
 	boolean colTotals = false;
 	IUnit areaUnit = Units.INSTANCE.SQUARE_KILOMETERS;
+	String emptyValue = "0.0";
+	String noDataValue = "0.0";
 
 	/*
 	 * hashes to keep the correspondence between the original values and their
@@ -79,6 +81,8 @@ public class PairwiseTableCompiler implements ITableCompiler {
 		this.rowTotals = parameters.get("row-totals", Boolean.FALSE);
 		this.colTotals = parameters.get("column-totals", Boolean.FALSE);
 		this.reportedValue = parameters.get("report", "count");
+		this.emptyValue = parameters.get("empty", "0.0");
+		this.noDataValue = parameters.get("no-data", "0.0");
 		if (this.sourceState == null || this.comparedStates == null || this.comparedStates.size() != 2) {
 			throw new KlabIllegalArgumentException(
 					"Pairwise table compiler called with insufficient or wrong arguments");
@@ -93,14 +97,14 @@ public class PairwiseTableCompiler implements ITableCompiler {
 		codes.clear();
 		nextId = 2;
 
+		builder.setEmptyCells(emptyValue, noDataValue);
+		
 		/*
 		 * Get the two slices to compare; use the storage directly if possible. If same
 		 * slice or non-existing, give up.
 		 */
 		ITime first = getTime(sourceState.getScale().getTime(), this.comparedStates.get(0));
 		ITime last = getTime(sourceState.getScale().getTime(), this.comparedStates.get(1));
-
-		builder.setTotals(rowTotals, colTotals);
 
 		/*
 		 * Create temporary storage during the first pass, using the multiplier.
