@@ -2185,7 +2185,7 @@ public class TableCompiler {
 			scope.getMonitor().info("Computing table " + name + " using custom builder");
 			IKnowledgeView.Builder builder = SimpleTableArtifact.builder(this, scope);
 			this.compiler.compile(builder);
-			return (TableArtifact)builder.build();
+			return builder.build();
 		}
 		
 		scope.getMonitor().info("start computing table " + name);

@@ -50,7 +50,7 @@ public interface IKnowledgeView extends IArtifact {
 		 * @param options
 		 * @return
 		 */
-		String getCell(String rowId, String colId, Object value, Object... options);
+		void setCell(String rowId, String colId, Object value, Object... options);
 
 		/**
 		 * Return the view artifact.

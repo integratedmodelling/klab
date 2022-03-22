@@ -378,7 +378,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
             }
         }
 
-        List<Dimension> shit = getActiveColumns();
+//        List<Dimension> shit = getActiveColumns();
 
         /*
          * precompute all cells with aggregators and not those that aggregate them; the latter are

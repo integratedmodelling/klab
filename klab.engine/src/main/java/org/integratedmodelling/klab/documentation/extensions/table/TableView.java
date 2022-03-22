@@ -54,13 +54,17 @@ public class TableView implements ITableView {
 			this.span = span;
 		}
 
-
 		public String getHtmlContents() {
-            if (contents == null) {
-				return (header ? "<th" + (span > 1 ? (" colspan=\"" + span + "\"") : "") + (rowScope ? " scope=\"row\"" : "") + "></th>" : "<td></td>");
+			if (contents == null) {
+				return (header
+						? "<th" + (span > 1 ? (" colspan=\"" + span + "\"") : "") + (rowScope ? " scope=\"row\"" : "")
+								+ "></th>"
+						: "<td></td>");
 			}
-			return (header ? ("<th" + (span > 1 ? (" colspan=\"" + span + "\"") : "") + (rowScope ? " scope=\"ro\"" : "")) : "<td") + getStyle(style) + ">"
-					+ Escape.forHTML(contents.toString()) + (header ? "</th>" : "</td>");
+			return (header
+					? ("<th" + (span > 1 ? (" colspan=\"" + span + "\"") : "") + (rowScope ? " scope=\"ro\"" : ""))
+					: "<td") + getStyle(style) + ">" + Escape.forHTML(contents.toString())
+					+ (header ? "</th>" : "</td>");
 		}
 
 		private String getStyle(Set<Style> style) {
@@ -145,9 +149,9 @@ public class TableView implements ITableView {
 			ret.append("</table>\n");
 		}
 		ret.append("</div>");
-		
+
 //		System.out.println(ret);
-		
+
 		return ret.toString();
 	}
 
@@ -235,16 +239,18 @@ public class TableView implements ITableView {
 	@Override
 	public void write(int cell, Object content, double value, Object... options) {
 		Cell cll = cells.get(cell);
-		for (Object option : options) {
-			if (option instanceof Set) {
-				cll.style = (Set<Style>) option;
+		if (options != null) {
+			for (Object option : options) {
+				if (option instanceof Set) {
+					cll.style = (Set<Style>) option;
+				}
+				// TODO other parameters
 			}
-			// TODO other parameters
 		}
 		// TODO if there is formatting in the options, add it
-		cll.contents = content.toString();
+		cll.contents = content == null ? "" : content.toString();
 		if (!Double.isNaN(value)) {
-		    cll.value = value;
+			cll.value = value;
 		}
 	}
 

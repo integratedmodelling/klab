@@ -177,7 +177,7 @@ public class PairwiseTableCompiler implements ITableCompiler {
 			for (Pair<Object,Object> key : bins.keySet()) {
 				String row = rowKeys.get(key.getFirst() == null ? "Unaccounted" : labels.get(key.getFirst())); 
 				String col = colKeys.get(key.getSecond() == null ? "Unaccounted" : labels.get(key.getSecond()));
-				builder.getCell(row, col, bins.get(key));
+				builder.setCell(row, col, bins.get(key));
 			}
 
 		} catch (Throwable e) {
