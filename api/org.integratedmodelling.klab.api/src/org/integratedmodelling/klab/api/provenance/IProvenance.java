@@ -18,12 +18,12 @@ package org.integratedmodelling.klab.api.provenance;
 import java.util.Collection;
 import java.util.List;
 
+import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.klab.api.auth.IEngineIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.model.IModel;
-import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 
 /**
@@ -37,17 +37,19 @@ import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
  * All k.LAB objects are mapped to the OPM according to the following
  * conventions:
  * <p>
- * All OPM Entities, including Bundles but not Plans, are {@link IArtifact}s,
- * typically {@link IObservation}s. A model (provided by a contributor or built
- * by k.LAB, such as in learning) is also an artifact: in this case, the model
- * artifact is its {@link IKimModel syntactic specification}, not a
- * {@link IModel runtime} incarnation of the model, which is an Agent.
+ * All OPM Entities, including Bundles but not Plans, are
+ * {@link IContextualizable}s that <em>produce</em> knowledge or
+ * {@link IArtifact} that organize it and make it available for successive
+ * steps. Contextualizables that transform knowledge produced by others are
+ * activities; the chain always starts at resources and ends at artifacts. The
+ * derivation relationships that build the graph have a scale associated; if
+ * more than one derivation is present between two entities, they must have
+ * different and non-overlapping scales in space, time or both.
  * <p>
- * The equivalent of a OPM Plan is a {@link IDataflow}, which organizes model
- * Agents into a strategy to perform Activities. The latter are
- * <strong>observation activities</strong> and are typed according to
- * {@link IActivity.Description}: they may be acknowledgements, computations
- * (either resolutions or instantiations) or detections.
+ * A model (provided by a contributor or built by k.LAB, such as in learning) is
+ * a plan that provides the logical sequence and organizes the
+ * contextualizables. An overall plan, the {@link IDataflow}, is built by the
+ * resolver and creates the provenance graph as it runs.
  * <p>
  * The observation Activities are organized into super-activities (processes)
  * correspondent to ITask identities in k.LAB. The responsibility for Activities
@@ -101,7 +103,7 @@ public interface IProvenance {
 		String getId();
 
 		/**
-		 * Timestamp of creation.
+		 * Timestamp of creation or execution.
 		 * 
 		 * @return
 		 */

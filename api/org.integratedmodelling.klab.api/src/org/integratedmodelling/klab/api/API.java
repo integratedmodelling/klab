@@ -598,7 +598,6 @@ public interface API {
 			public static final String INFO = "/resource/info/" + P_URN;
 
 		}
-
 	}
 
 	/**
@@ -621,6 +620,19 @@ public interface API {
 	 * <b>Authentication:</b> open
 	 */
 	public static final String SCHEMA = "/schema";
+
+	/**
+	 * The <em>public</em> k.LAB engine and authentication API is the only part of
+	 * the API where a commitment to stability is made. The endpoints in this may
+	 * duplicate others in specific sub-components. All k.LAB clients should
+	 * <em>only</em> use endpoints from the public API.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	public interface PUBLIC {
+
+	}
 
 	/**
 	 * All authority endpoints are public, although some may limit access according

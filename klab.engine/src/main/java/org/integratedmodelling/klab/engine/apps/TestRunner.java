@@ -231,7 +231,7 @@ public class TestRunner implements Annotations.Handler {
 							if (subject.getScale().getSpace() != null) {
 								SpatialDisplay display = new SpatialDisplay(subject.getScale());
 
-								for (IArtifact artifact : subject.getProvenance().getArtifacts()) {
+								for (IArtifact artifact : ((IRuntimeScope)subject.getScope()).getCatalog().values()) {
 
 									if (artifact instanceof IState) {
 										display.add((IState) artifact);

@@ -2226,15 +2226,15 @@ public class TableCompiler {
 		 */
 		TableArtifact ret = new TableArtifact(this, sortedRows, sortedColumns, scope);
 
-		Double fixedAreaMq = null;
-		Double adaptedAreaMq = null;
-		if (targetObservation.getScale().getSpace() != null
-				&& targetObservation.getScale().getSpace() instanceof Space) {
-			Space space = (Space) targetObservation.getScale().getSpace();
-			if (space.getGrid() != null) {
-				fixedAreaMq = space.getGrid().getCell(0).getStandardizedArea();
-			}
-		}
+//		Double fixedAreaMq = null;
+//		Double adaptedAreaMq = null;
+//		if (targetObservation.getScale().getSpace() != null
+//				&& targetObservation.getScale().getSpace() instanceof Space) {
+//			Space space = (Space) targetObservation.getScale().getSpace();
+//			if (space.getGrid() != null) {
+//				fixedAreaMq = space.getGrid().getCell(0).getStandardizedArea();
+//			}
+//		}
 
 		boolean abstractStates = isState(targetObservation) && targetObservation instanceof IObservationGroup;
 
@@ -2326,17 +2326,25 @@ public class TableCompiler {
 						if (rowTargetType != null && rowTarget != null) {
 							switch (rowTargetType) {
 							case AREA:
-								// use precomputed if grid
-								if (adaptedAreaMq != null) {
-									val = adaptedAreaMq;
-								} else if (fixedAreaMq != null) {
-									val = adaptedAreaMq = rowTarget.getObservable().getUnit()
-											.convert(fixedAreaMq, Units.INSTANCE.SQUARE_METERS).doubleValue();
-								} else {
+								
+//								double area = 0;
+////								Space space = (Space) targetObservation.getScale().getSpace();
+////								if (space.getGrid() != null) {
+//									area = ((IScale)value.getSecond()).getSpace().getStandardizedArea();
+////								}
+//
+//								
+//								// use precomputed if grid
+//								if (adaptedAreaMq != null) {
+//									val = adaptedAreaMq;
+//								} else if (fixedAreaMq != null) {
+//									val = adaptedAreaMq = rowTarget.getObservable().getUnit()
+//											.convert(fixedAreaMq, Units.INSTANCE.SQUARE_METERS).doubleValue();
+//								} else {
 									val = rowTarget.getObservable().getUnit().convert(
 											((IScale) value.getSecond()).getSpace().getStandardizedArea(),
 											Units.INSTANCE.SQUARE_METERS);
-								}
+//								}
 								break;
 							case DURATION:
 								// TODO same

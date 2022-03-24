@@ -8,6 +8,7 @@ import java.util.Set;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.utils.Pair;
 
@@ -35,7 +36,7 @@ import org.integratedmodelling.klab.utils.Pair;
  * @author Ferd
  *
  */
-public interface IContextualizable extends IKimStatement/* , IDataflowNode */ {
+public interface IContextualizable extends IKimStatement, IProvenance.Node {
 
 	public static enum Type {
 		CLASSIFICATION, SERVICE, LOOKUP_TABLE, RESOURCE, EXPRESSION, CONVERSION, LITERAL,

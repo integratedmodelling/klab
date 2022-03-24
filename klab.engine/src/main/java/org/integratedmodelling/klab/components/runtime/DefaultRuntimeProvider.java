@@ -183,6 +183,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
                     IScale initializationScale = ((Scale) scale).copy().initialization();
 
                     int i = 0;
+                    Actuator latest = null;
                     for (Actuator active : order) {
 
                         if (runtimeScope.getMonitor().isInterrupted()) {
@@ -214,7 +215,9 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
                         }
 
                         ctx.scheduleActions(active);
-
+                        
+                        latest = active;
+                        
                         i++;
                     }
                 }

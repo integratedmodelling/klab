@@ -107,7 +107,7 @@ public class PairwiseTableCompiler implements ITableCompiler {
 		ITime last = getTime(sourceState.getScale().getTime(), this.comparedStates.get(1));
 
 		/*
-		 * Create temporary storage during the first pass, using the multiplier.
+		 * Create temporary storage during the first pass
 		 */
 		try (BasicFileMappedStorage<Double> storage = new BasicFileMappedStorage<Double>(Double.class,
 				sourceState.getSpace().size(), 1)) {
@@ -123,7 +123,7 @@ public class PairwiseTableCompiler implements ITableCompiler {
 			}
 
 			/*
-			 * second pass: build histogram with combined values
+			 * second pass: build histogram for each pair of states
 			 */
 			ofs = 0;
 			for (ILocator locator : sourceState.getScale().at(last)) {
