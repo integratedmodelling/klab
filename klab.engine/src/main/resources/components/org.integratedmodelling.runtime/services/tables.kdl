@@ -7,3 +7,9 @@ value pairwise
 {
 	class 'org.integratedmodelling.klab.documentation.extensions.table.compilers.PairwiseTableCompiler'
 }
+
+value additionsreductions
+	"Custom table compiler for addition-reduction"
+{
+	class 'org.integratedmodelling.klab.documentation.extensions.table.compilers.AdditionReductionTableCompiler'
+}

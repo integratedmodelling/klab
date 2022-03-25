@@ -829,6 +829,10 @@ public class TableCompiler {
 
 		private int multiplicity = 1;
 
+		// if true, dimensions that point to numeric cells that are all 0 or nodata will
+		// be removed before compiling the final table
+		boolean hideZero = false;
+
 		// if the dimension describes a concretized target, it must choose a state from
 		// the concrete
 		// ones available according to the filters it implements. We keep the state and
@@ -841,6 +845,7 @@ public class TableCompiler {
 			this.aggregation = dim.aggregation;
 			this.computation = dim.computation;
 			this.expression = dim.expression;
+			this.hideZero = dim.hideZero;
 			this.dimensionType = dim.dimensionType;
 			this.forcedAggregation = dim.forcedAggregation;
 			this.computationType = dim.computationType;
@@ -1164,6 +1169,7 @@ public class TableCompiler {
 			ret.referencedObjects.addAll(this.referencedObjects);
 			ret.targetOperation.addAll(this.targetOperation);
 			ret.parent = this.parent;
+			ret.hideZero = this.hideZero;
 			ret.children.addAll(this.children);
 			ret.filterClassId = this.filterClassId;
 			ret.multiplicity = this.multiplicity;
@@ -1501,9 +1507,9 @@ public class TableCompiler {
 		int ret = 0;
 
 		if (object == null) {
-		    return ret;
+			return ret;
 		}
-		
+
 		if (object instanceof Collection) {
 			for (Object o : ((Collection<?>) object)) {
 				if (o instanceof Map) {
@@ -1687,6 +1693,10 @@ public class TableCompiler {
 			ret.parent.children.add(ret);
 		}
 
+		if (definition.containsKey("hidezero")) {
+			ret.hideZero = (Boolean)definition.get("hidezero");
+		}
+		
 		if (definition.containsKey("name")) {
 			ret.id = definition.get("name").toString();
 		} else {
@@ -2187,7 +2197,7 @@ public class TableCompiler {
 			this.compiler.compile(builder);
 			return builder.build();
 		}
-		
+
 		scope.getMonitor().info("start computing table " + name);
 
 		Map<IObservedConcept, IObservation> catalog = scope.getCatalog();
@@ -2326,7 +2336,7 @@ public class TableCompiler {
 						if (rowTargetType != null && rowTarget != null) {
 							switch (rowTargetType) {
 							case AREA:
-								
+
 //								double area = 0;
 ////								Space space = (Space) targetObservation.getScale().getSpace();
 ////								if (space.getGrid() != null) {
@@ -2341,9 +2351,9 @@ public class TableCompiler {
 //									val = adaptedAreaMq = rowTarget.getObservable().getUnit()
 //											.convert(fixedAreaMq, Units.INSTANCE.SQUARE_METERS).doubleValue();
 //								} else {
-									val = rowTarget.getObservable().getUnit().convert(
-											((IScale) value.getSecond()).getSpace().getStandardizedArea(),
-											Units.INSTANCE.SQUARE_METERS);
+								val = rowTarget.getObservable().getUnit().convert(
+										((IScale) value.getSecond()).getSpace().getStandardizedArea(),
+										Units.INSTANCE.SQUARE_METERS);
 //								}
 								break;
 							case DURATION:
@@ -2592,12 +2602,10 @@ public class TableCompiler {
 						ret.add(new Phase((IScale) trg.getScale().initialization(), "init").setKey("init"));
 					}
 					if (phaseItems.contains("start")) {
-						ret.add(new Phase((IScale) trg.getScale().at(time.earliest()), "start")
-								.setKey("start"));
+						ret.add(new Phase((IScale) trg.getScale().at(time.earliest()), "start").setKey("start"));
 					}
 					if (phaseItems.contains("end")) {
-						ret.add(new Phase((IScale) trg.getScale().at(time.latest()), "end")
-								.setKey("end"));
+						ret.add(new Phase((IScale) trg.getScale().at(time.latest()), "end").setKey("end"));
 					}
 				} else {
 					ret.add(new Phase(trg.getScale(), 1).setKey("main"));

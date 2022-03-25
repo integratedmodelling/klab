@@ -264,7 +264,7 @@ public enum Models implements IModelService {
 	public List<IRankedModel> createDerivedModel(Observable mainObservable, ObservationStrategy candidateObservable,
 			ResolutionScope scope) {
 	    ObservedConcept oc = new ObservedConcept(mainObservable);
-	    if (scope.getResolutions().containsKey(oc)) {
+	    if (scope.getResolutions().containsKey(oc) && scope.getResolutions().get(oc).size() > 0) {
 	        return scope.getResolutions().get(oc);
 	    }
 		org.integratedmodelling.klab.model.Model inner = new org.integratedmodelling.klab.model.Model(mainObservable,
