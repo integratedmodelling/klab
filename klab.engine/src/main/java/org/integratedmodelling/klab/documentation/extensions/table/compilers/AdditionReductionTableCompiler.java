@@ -24,9 +24,9 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.data.storage.BasicFileMappedStorage;
-import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler.Style;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
+import org.integratedmodelling.klab.exceptions.KlabStorageException;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
@@ -56,6 +56,7 @@ public class AdditionReductionTableCompiler implements ITableCompiler {
 	IUnit areaUnit = Units.INSTANCE.SQUARE_KILOMETERS;
 	String emptyValue = "0.0";
 	String noDataValue = "0.0";
+	boolean hasNulls = false;
 
 	/*
 	 * hashes to keep the correspondence between the original values and their
@@ -107,7 +108,6 @@ public class AdditionReductionTableCompiler implements ITableCompiler {
 		double additions = 0;
 		double reductions = 0;
 	};
-	
 
 	@Override
 	public void compile(Builder builder) {
@@ -126,7 +126,7 @@ public class AdditionReductionTableCompiler implements ITableCompiler {
 		ITime last = getTime(sourceState.getScale().getTime(), this.comparedStates.get(1));
 
 		Map<Object, SData> data = new HashMap<>();
-		
+
 		/*
 		 * Create temporary storage during the first pass
 		 */
@@ -145,7 +145,7 @@ public class AdditionReductionTableCompiler implements ITableCompiler {
 							.convert(((IScale) locator).getSpace().getStandardizedArea(), Units.INSTANCE.SQUARE_METERS)
 							.doubleValue();
 				}
-				
+
 				Object val = sourceState.get(locator);
 				int code = getCode(val);
 				storage.set((double) code, ofs++);
@@ -159,7 +159,7 @@ public class AdditionReductionTableCompiler implements ITableCompiler {
 					dat = new SData();
 					data.put(val, dat);
 				}
-				
+
 				dat.opening += value;
 			}
 
@@ -178,11 +178,13 @@ public class AdditionReductionTableCompiler implements ITableCompiler {
 
 				Object state2 = sourceState.get(locator);
 				Object state1 = codes.inverse().get(storage.get(ofs++).intValue());
-				
+
 				if (state1 == null) {
+					hasNulls = true;
 					state1 = OWL.INSTANCE.getNothing();
 				}
 				if (state2 == null) {
+					hasNulls = true;
 					state2 = OWL.INSTANCE.getNothing();
 				}
 
@@ -200,64 +202,38 @@ public class AdditionReductionTableCompiler implements ITableCompiler {
 				}
 			}
 
-			/*
-			 * make final summary: list of all codes with their key...
-			 */
-			boolean hasNulls = false;
-			BiMap<Object, String> labels = HashBiMap.create();
-			for (Pair<Object, Object> o : bins.keySet()) {
-				if (o.getFirst() == null || o.getSecond() == null) {
-					hasNulls = true;
-				}
-				if (o.getFirst() != null && !labels.containsKey(o.getFirst())) {
-					labels.put(o.getFirst(), getLabel(o.getFirst()));
-				}
-				if (o.getSecond() != null && !labels.containsKey(o.getSecond())) {
-					labels.put(o.getSecond(), getLabel(o.getSecond()));
-				}
-			}
-
-			/*
-			 * columns and rows are identical
-			 */
-			List<String> keys = new ArrayList<>(labels.values());
-			Collections.sort(keys);
-			Map<String, String> colKeys = new HashMap<>();
-			Map<String, String> rowKeys = new HashMap<>();
-			for (String key : keys) {
-				colKeys.put(key, builder.getColumn(key));
-				rowKeys.put(key, builder.getRow(key));
-			}
-
-			if (contabilizeNulls && hasNulls) {
-				colKeys.put("Unaccounted", builder.getColumn("Unaccounted"));
-				rowKeys.put("Unaccounted", builder.getRow("Unaccounted"));
-			}
-
-			if (rowTotals) {
-				colKeys.put("Total", builder.getColumn("Total", Style.BOLD));
-			}
-			if (colTotals) {
-				rowKeys.put("Total", builder.getRow("Total", Style.BOLD));
-			}
-
-			for (Pair<Object, Object> key : bins.keySet()) {
-				String row = rowKeys.get(key.getFirst() == null ? "Unaccounted" : labels.get(key.getFirst()));
-				String col = colKeys.get(key.getSecond() == null ? "Unaccounted" : labels.get(key.getSecond()));
-				builder.setCell(row, col, bins.get(key));
-			}
-
 		} catch (Throwable e) {
-
+			throw new KlabStorageException(e);
 		}
 
+		/*
+		 * build the fucka
+		 */
+		SData unassigned = null;
+		Map<String, Object> labels = new HashMap<>();
+		for (Object key : data.keySet()) {
+			if (OWL.INSTANCE.equals(key)) {
+				unassigned = data.get(key);
+			} else {
+				labels.put(getLabel(key), key);
+			}
+		}
+		
+		List<String> labs = new ArrayList<>(labels.keySet());
+		Collections.sort(labs);
+		
+		String col0 = builder.getColumn("")
+		
 	}
 
 	private String getLabel(Object object) {
+		if (OWL.INSTANCE.getNothing().equals(object)) {
+			return "Unassigned";
+		}
 		if (object instanceof ISemantic) {
 			return Concepts.INSTANCE.getDisplayLabel(((ISemantic) object).getType());
 		}
-		return object == null ? "Unassigned" : object.toString();
+		return "";
 	}
 
 	private int getCode(Object object) {

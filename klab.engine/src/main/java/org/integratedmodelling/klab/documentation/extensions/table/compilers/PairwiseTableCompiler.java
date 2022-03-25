@@ -137,6 +137,7 @@ public class PairwiseTableCompiler implements ITableCompiler {
 
 				Object state2 = sourceState.get(locator);
 				Object state1 = codes.inverse().get(storage.get(ofs++).intValue());
+				
 				Pair<Object, Object> states = new Pair<>(state1, state2);
 				Double n = bins.get(states);
 				if (n == null) {
