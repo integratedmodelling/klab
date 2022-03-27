@@ -17,14 +17,14 @@ import org.integratedmodelling.klab.api.documentation.views.IDocumentationView;
 import org.integratedmodelling.klab.api.documentation.views.ITableView;
 import org.integratedmodelling.klab.api.knowledge.ICodelist;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
+import org.integratedmodelling.klab.api.observations.IKnowledgeView;
+import org.integratedmodelling.klab.api.observations.IKnowledgeView.Style;
 import org.integratedmodelling.klab.api.provenance.IArtifact.ValuePresentation;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.data.Aggregator;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.documentation.extensions.table.ExcelView;
 import org.integratedmodelling.klab.documentation.extensions.table.TableArtifact;
-import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler;
-import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler.Style;
 import org.integratedmodelling.klab.documentation.extensions.table.TableView;
 import org.integratedmodelling.klab.documentation.style.StyleDefinition;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -237,10 +237,10 @@ public class TableValue extends TableProcessor implements IReducible {
 			int hRow = ret.newRow(hHeader);
 			for (String key : getKeyFields()) {
 				int cell = ret.newHeaderCell(hRow, 1, false);
-				ret.write(cell, key, Double.NaN, Style.BOLD);
+				ret.write(cell, key, Double.NaN, IKnowledgeView.Style.BOLD);
 			}
 			int cell = ret.newHeaderCell(hRow, 1, false);
-			ret.write(cell, valueField, Double.NaN, Style.BOLD);
+			ret.write(cell, valueField, Double.NaN, IKnowledgeView.Style.BOLD);
 
 			int hBody = ret.body(hTable);
 			for (Map<String, Object> rDesc : getRows()) {
@@ -264,8 +264,8 @@ public class TableValue extends TableProcessor implements IReducible {
 	}
 
 	// TODO use style
-	private Set<TableCompiler.Style> getStyle(String key) {
-		Set<TableCompiler.Style> style = new HashSet<>();
+	private Set<IKnowledgeView.Style> getStyle(String key) {
+		Set<IKnowledgeView.Style> style = new HashSet<>();
 		// TODO
 		return style;
 	}

@@ -15,7 +15,9 @@ import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.extensions.ITableCompiler;
 import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
+import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.observations.IKnowledgeView.Builder;
+import org.integratedmodelling.klab.api.observations.IKnowledgeView.Style;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -24,7 +26,6 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.data.storage.BasicFileMappedStorage;
-import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler.Style;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.utils.Pair;
@@ -182,10 +183,10 @@ public class PairwiseTableCompiler implements ITableCompiler {
 			}
 
 			if (rowTotals) {
-				colKeys.put("Total", builder.getColumn("Total", Style.BOLD));
+				colKeys.put("Total", builder.getColumn("Total", IKnowledgeView.Style.BOLD));
 			}
 			if (colTotals) {
-				rowKeys.put("Total", builder.getRow("Total", Style.BOLD));
+				rowKeys.put("Total", builder.getRow("Total", IKnowledgeView.Style.BOLD));
 			}
 			
 			for (Pair<Object, Object> key : bins.keySet()) {

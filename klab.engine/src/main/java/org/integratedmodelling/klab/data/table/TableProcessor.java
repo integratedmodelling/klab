@@ -15,13 +15,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.classification.IClassifier;
+import org.integratedmodelling.klab.api.observations.IKnowledgeView;
+import org.integratedmodelling.klab.api.observations.IKnowledgeView.Style;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.data.Aggregator;
 import org.integratedmodelling.klab.data.classification.Classifier;
 import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler.DimensionType;
-import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler.Style;
 import org.integratedmodelling.klab.documentation.style.StyleDefinition;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.rest.DocumentationNode.Table;
@@ -151,7 +152,7 @@ public class TableProcessor {
         // classify:
         List<IClassifier> classifiers = new ArrayList<>();
         List<Group> children = new ArrayList<>();
-        Set<Style> style;
+        Set<IKnowledgeView.Style> style;
         String align = null;
         public String label;
         int depth;
@@ -419,12 +420,12 @@ public class TableProcessor {
         return ret;
     }
 
-    private Set<Style> parseStyle(Object object) {
-        Set<Style> ret = null;
+    private Set<IKnowledgeView.Style> parseStyle(Object object) {
+        Set<IKnowledgeView.Style> ret = null;
         if (object != null) {
             for (Object o : CollectionUtils.flatCollection(object)) {
                 try {
-                    Style s = Style.valueOf(o.toString().toUpperCase());
+                    IKnowledgeView.Style s = IKnowledgeView.Style.valueOf(o.toString().toUpperCase());
                     if (ret == null) {
                         ret = new HashSet<>();
                     }

@@ -22,9 +22,9 @@ import org.integratedmodelling.klab.api.documentation.views.IDocumentationView;
 import org.integratedmodelling.klab.api.documentation.views.ITableView;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
 import org.integratedmodelling.klab.api.observations.IKnowledgeView;
+import org.integratedmodelling.klab.api.observations.IKnowledgeView.Style;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.common.Geometry;
-import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler.Style;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -50,12 +50,12 @@ public class SimpleTableArtifact extends Artifact implements IKnowledgeView {
 		boolean header;
 		String id;
 		String label;
-		Set<Style> style = EnumSet.noneOf(Style.class);
+		Set<IKnowledgeView.Style> style = EnumSet.noneOf(IKnowledgeView.Style.class);
 	}
 
 	static class Cell {
 		Object value;
-		Set<Style> style = EnumSet.noneOf(Style.class);
+		Set<IKnowledgeView.Style> style = EnumSet.noneOf(IKnowledgeView.Style.class);
 	}
 
 	public static class TableBuilder implements IKnowledgeView.Builder {

@@ -212,7 +212,7 @@ public class AdditionReductionTableCompiler implements ITableCompiler {
 		SData unassigned = null;
 		Map<String, Object> labels = new HashMap<>();
 		for (Object key : data.keySet()) {
-			if (OWL.INSTANCE.equals(key)) {
+			if (OWL.INSTANCE.getNothing().equals(key)) {
 				unassigned = data.get(key);
 			} else {
 				labels.put(getLabel(key), key);
@@ -222,7 +222,7 @@ public class AdditionReductionTableCompiler implements ITableCompiler {
 		List<String> labs = new ArrayList<>(labels.keySet());
 		Collections.sort(labs);
 		
-		String col0 = builder.getColumn("")
+//		String col0 = builder.getColumn("")
 		
 	}
 

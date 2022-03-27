@@ -11,7 +11,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.klab.api.documentation.views.ITableView;
-import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler.Style;
+import org.integratedmodelling.klab.api.observations.IKnowledgeView;
+import org.integratedmodelling.klab.api.observations.IKnowledgeView.Style;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.utils.Escape;
 
@@ -40,7 +41,7 @@ public class TableView implements ITableView {
 		boolean rowScope;
 		Double value;
 		String contents;
-		Set<Style> style;
+		Set<IKnowledgeView.Style> style;
 		int span = 1;
 
 		public Cell(boolean b, boolean rowScope) {
@@ -67,11 +68,11 @@ public class TableView implements ITableView {
 					+ (header ? "</th>" : "</td>");
 		}
 
-		private String getStyle(Set<Style> style) {
+		private String getStyle(Set<IKnowledgeView.Style> style) {
 
 			if (style != null && !style.isEmpty()) {
 				String ret = "\"";
-				for (Style s : style) {
+				for (IKnowledgeView.Style s : style) {
 					switch (s) {
 					case BOLD:
 						ret += (ret.length() == 1 ? "" : " ") + "kv-bold";
@@ -242,7 +243,7 @@ public class TableView implements ITableView {
 		if (options != null) {
 			for (Object option : options) {
 				if (option instanceof Set) {
-					cll.style = (Set<Style>) option;
+					cll.style = (Set<IKnowledgeView.Style>) option;
 				}
 				// TODO other parameters
 			}

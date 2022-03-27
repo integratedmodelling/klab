@@ -29,14 +29,14 @@ import org.integratedmodelling.klab.api.documentation.views.ITableView;
 import org.integratedmodelling.klab.api.extensions.ILanguageExpression;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IKnowledgeView;
+import org.integratedmodelling.klab.api.observations.IKnowledgeView.ComputationType;
+import org.integratedmodelling.klab.api.observations.IKnowledgeView.Style;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.data.Aggregator;
-import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler.ComputationType;
 import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler.Dimension;
 import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler.DimensionType;
 import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler.Phase;
-import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler.Style;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -89,7 +89,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 		 */
 		public Object computedValue;
 
-		public ComputationType computationType;
+		public IKnowledgeView.ComputationType computationType;
 
 		/*
 		 * cells that aggregate other aggregated cells must be computed last, so we add
@@ -184,7 +184,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 	 * @param row
 	 */
 	public void accumulate(Object value, IObservable observable, ILocator locator, Phase phase, int column, int row,
-			ComputationType forcedAggregation) {
+			IKnowledgeView.ComputationType forcedAggregation) {
 
 		/*
 		 * at this point the catalogs are stable
@@ -413,7 +413,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 						cell.computedValue = cell.get();
 					} else if (cell.computationType != null) {
 						// those with summarizing computations go first
-						if (cell.computationType == ComputationType.Summarize) {
+						if (cell.computationType == IKnowledgeView.ComputationType.Summarize) {
 							cell.aggregationLevel = 0;
 						} else {
 							cell.aggregationLevel++;
@@ -604,7 +604,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 						cell.computedValue = cell.get();
 					} else if (cell.computationType != null) {
 						// those with summarizing computations go first
-						if (cell.computationType == ComputationType.Summarize) {
+						if (cell.computationType == IKnowledgeView.ComputationType.Summarize) {
 							cell.aggregationLevel = 0;
 						} else {
 							cell.aggregationLevel++;
@@ -684,7 +684,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 						nCols++;
 					}
 					int cell = view.newHeaderCell(tRow, group.nDimensions, false);
-					view.write(cell, group.title, Double.NaN, Style.BOLD);
+					view.write(cell, group.title, Double.NaN, IKnowledgeView.Style.BOLD);
 					nCols += group.nDimensions;
 				}
 
@@ -899,11 +899,11 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 		}
 	}
 
-	private Set<Style> getStyle(Cell cell) {
+	private Set<IKnowledgeView.Style> getStyle(Cell cell) {
 		if (cell == null) {
 			return null;
 		}
-		Set<Style> style = cell.column.style;
+		Set<IKnowledgeView.Style> style = cell.column.style;
 		style.addAll(cell.row.style);
 		return style;
 	}
@@ -921,8 +921,8 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 		 * usual shit to fix: if both dimension have ctype and only one is summarize,
 		 * the other is the aggregating.
 		 */
-		ComputationType raggr = cell.row.computationType;
-		ComputationType caggr = cell.column.computationType;
+		IKnowledgeView.ComputationType raggr = cell.row.computationType;
+		IKnowledgeView.ComputationType caggr = cell.column.computationType;
 
 		DimensionType aggregatingDimension = null;
 
@@ -930,9 +930,9 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 		 * Sant'Ignazio di Loyola FIX this
 		 */
 		if ((raggr != null && caggr != null)
-				&& ((raggr == ComputationType.Summarize && caggr != ComputationType.Summarize)
-						|| ((raggr != ComputationType.Summarize && caggr == ComputationType.Summarize)))) {
-			aggregatingDimension = caggr == ComputationType.Summarize ? DimensionType.ROW : DimensionType.COLUMN;
+				&& ((raggr == IKnowledgeView.ComputationType.Summarize && caggr != IKnowledgeView.ComputationType.Summarize)
+						|| ((raggr != IKnowledgeView.ComputationType.Summarize && caggr == IKnowledgeView.ComputationType.Summarize)))) {
+			aggregatingDimension = caggr == IKnowledgeView.ComputationType.Summarize ? DimensionType.ROW : DimensionType.COLUMN;
 		} else {
 			aggregatingDimension = (cell.row.computationType != null && cell.row.computationType.isAggregation())
 					? DimensionType.ROW
@@ -940,7 +940,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 		}
 		Dimension dimension = aggregatingDimension == DimensionType.ROW ? cell.row : cell.column;
 
-		if (cell.computationType == ComputationType.Summarize) {
+		if (cell.computationType == IKnowledgeView.ComputationType.Summarize) {
 
 			ILanguageExpression expression = dimension.getExpression(scope);
 
@@ -1145,7 +1145,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 	 * @param index
 	 * @param index2
 	 */
-	public void aggregate(ComputationType rowComputationType, Phase phase, int column, int row, int aggregationLevel) {
+	public void aggregate(IKnowledgeView.ComputationType rowComputationType, Phase phase, int column, int row, int aggregationLevel) {
 
 		/*
 		 * at this point the catalogs are stable
