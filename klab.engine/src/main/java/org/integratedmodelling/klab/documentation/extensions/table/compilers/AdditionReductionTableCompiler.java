@@ -15,7 +15,9 @@ import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.extensions.ITableCompiler;
 import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
+import org.integratedmodelling.klab.api.observations.IKnowledgeView.Attribute;
 import org.integratedmodelling.klab.api.observations.IKnowledgeView.Builder;
+import org.integratedmodelling.klab.api.observations.IKnowledgeView.Style;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -30,6 +32,7 @@ import org.integratedmodelling.klab.exceptions.KlabStorageException;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
+import org.integratedmodelling.klab.utils.TemplateUtils;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -57,6 +60,7 @@ public class AdditionReductionTableCompiler implements ITableCompiler {
 	String emptyValue = "0.0";
 	String noDataValue = "0.0";
 	boolean hasNulls = false;
+	Map<String, Object> templateVars;
 
 	/*
 	 * hashes to keep the correspondence between the original values and their
@@ -95,11 +99,23 @@ public class AdditionReductionTableCompiler implements ITableCompiler {
 		this.reportedValue = parameters.get("report", "count");
 		this.emptyValue = parameters.get("empty", "0.0");
 		this.noDataValue = parameters.get("no-data", "0.0");
+		this.templateVars = getTemplateVars(scope);
 		if (this.sourceState == null || this.comparedStates == null || this.comparedStates.size() != 2) {
 			throw new KlabIllegalArgumentException(
 					"Pairwise table compiler called with insufficient or wrong arguments");
 		}
 
+	}
+
+	private Map<String, Object> getTemplateVars(IContextualizationScope scope) {
+		Map<String, Object> ret = new HashMap<>();
+		ret.put("init", "at start of " + Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getStart(),
+				scope.getRootSubject().getScale().getTime().getResolution()));
+		ret.put("start", Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getStart(),
+				scope.getRootSubject().getScale().getTime().getResolution()));
+		ret.put("end", "at start of " + Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getEnd(),
+				scope.getRootSubject().getScale().getTime().getResolution()));
+		return ret;
 	}
 
 	class SData {
@@ -218,12 +234,46 @@ public class AdditionReductionTableCompiler implements ITableCompiler {
 				labels.put(getLabel(key), key);
 			}
 		}
-		
+
 		List<String> labs = new ArrayList<>(labels.keySet());
 		Collections.sort(labs);
-		
-//		String col0 = builder.getColumn("")
-		
+		if (unassigned != null) {
+			labs.add("Unassigned");
+			labels.put("Unassigned", OWL.INSTANCE.getNothing());
+		}
+
+		String rowIncoming = builder.getRow(Attribute.HEADER_0,
+				TemplateUtils.expandMatches("Opening area {start}", templateVars).get(0), Style.BOLD);
+		String rowAdditions = builder.getRow(Attribute.HEADER_1, "Expansions");
+		String rowReductions = builder.getRow(Attribute.HEADER_1, "Regressions");
+		String rowNetChange = builder.getRow(Attribute.HEADER_1, "Net change");
+		String rowOutgoing = builder.getRow(Attribute.HEADER_0,
+				TemplateUtils.expandMatches("Closing area {end}", templateVars).get(0), Style.BOLD);
+
+		SData totals = new SData();
+
+		for (Object label : labs) {
+			SData dat = data.get(labels.get(label));
+			String column = builder.getColumn("Unassigned".equals(label) ? label : labels.get(label));
+			builder.setCell(rowIncoming, column, dat.opening);
+			builder.setCell(rowOutgoing, column, dat.closing);
+			builder.setCell(rowNetChange, column, dat.closing - dat.opening);
+			builder.setCell(rowAdditions, column, dat.additions);
+			builder.setCell(rowReductions, column, dat.reductions);
+
+			totals.opening += dat.opening;
+			totals.closing += dat.closing;
+			totals.additions += dat.additions;
+			totals.reductions += dat.reductions;
+		}
+
+		String colTotals = builder.getColumn("Totals", Style.BOLD);
+		builder.setCell(rowIncoming, colTotals, totals.opening);
+		builder.setCell(rowOutgoing, colTotals, totals.closing);
+		builder.setCell(rowNetChange, colTotals, totals.closing - totals.opening);
+		builder.setCell(rowAdditions, colTotals, totals.additions);
+		builder.setCell(rowReductions, colTotals, totals.reductions);
+
 	}
 
 	private String getLabel(Object object) {

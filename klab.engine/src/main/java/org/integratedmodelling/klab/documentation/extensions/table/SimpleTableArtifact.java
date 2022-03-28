@@ -15,14 +15,11 @@ import java.util.Set;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Observations;
-import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry;
-import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.documentation.views.IDocumentationView;
 import org.integratedmodelling.klab.api.documentation.views.ITableView;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
 import org.integratedmodelling.klab.api.observations.IKnowledgeView;
-import org.integratedmodelling.klab.api.observations.IKnowledgeView.Style;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
@@ -71,44 +68,93 @@ public class SimpleTableArtifact extends Artifact implements IKnowledgeView {
 		boolean colTotals = false;
 		String emptyValue = "0";
 		String noDataValue = "0";
+		private int unnamedDimensions;
 
 		TableBuilder(TableCompiler compiler, IRuntimeScope scope) {
 			this.scope = scope;
 			this.compiler = compiler;
 		}
 
-		@Override
-		public String getColumn(Object classifier, Object... options) {
-			Dimension dim = ccols.get(classifier);
-			if (dim == null) {
-				dim = new Dimension("c" + ccols.size() + 1, options);
-				if (classifier instanceof ISemantic) {
-					dim.label = Concepts.INSTANCE.getDisplayLabel((ISemantic) classifier);
-					colHeaders = true;
-				} else if (classifier instanceof String) {
-					dim.label = (String) classifier;
+		private String getDimension(boolean isRow, Object... options) {
+
+			Object classifier = null;
+			Object header = null;
+			Set<Style> styles = EnumSet.noneOf(Style.class);
+			if (options != null) {
+				for (int i = 0; i < options.length; i++) {
+					if (options[i] instanceof Attribute) {
+						switch ((Attribute) options[i]) {
+						case HEADER:
+							header = options[++i];
+							break;
+						case HEADER_0:
+							// TODO record nesting
+							header = options[++i];
+							break;
+						case HEADER_1:
+							// TODO record nesting
+							header = "  " + options[++i];
+							break;
+						case HEADER_2:
+							// TODO record nesting
+							header = "    " + options[++i];
+							break;
+						case HEADER_3:
+							// TODO record nesting
+							header = "      " + options[++i];
+							break;
+						default:
+							break;
+						}
+					} else if (options[i] instanceof Style) {
+						styles.add((Style) options[i]);
+					} else {
+						// TODO more options
+						classifier = options[i];
+					}
+				}
+			}
+
+			if (classifier != null || header != null) {
+				if (isRow) {
+					rowHeaders = true;
+				} else {
 					colHeaders = true;
 				}
-				ccols.put(classifier, dim);
 			}
+
+			if (classifier == null) {
+				classifier = "_" + (unnamedDimensions++);
+			}
+
+			Map<Object, Dimension> hash = isRow ? this.crows : this.ccols;
+			Dimension dim = hash.get(classifier);
+			if (dim == null) {
+				dim = new Dimension("c" + hash.size(), options);
+				if (classifier instanceof ISemantic) {
+					dim.label = Concepts.INSTANCE.getDisplayLabel((ISemantic) classifier);
+				} else if (classifier instanceof String) {
+					dim.label = (String) classifier;
+				}
+				hash.put(classifier, dim);
+			}
+			
+			if (header != null) {
+				dim.label = header.toString();
+			}
+			
 			return dim.id;
+
 		}
 
 		@Override
-		public String getRow(Object classifier, Object... options) {
-			Dimension dim = crows.get(classifier);
-			if (dim == null) {
-				dim = new Dimension("r" + crows.size() + 1, options);
-				if (classifier instanceof ISemantic) {
-					dim.label = Concepts.INSTANCE.getDisplayLabel((ISemantic) classifier);
-					rowHeaders = true;
-				} else if (classifier instanceof String) {
-					dim.label = (String) classifier;
-					rowHeaders = true;
-				}
-				crows.put(classifier, dim);
-			}
-			return dim.id;
+		public String getColumn(Object... options) {
+			return getDimension(false, options);
+		}
+
+		@Override
+		public String getRow(Object... options) {
+			return getDimension(true, options);
 		}
 
 		@Override

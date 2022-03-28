@@ -16,202 +16,214 @@ import org.integratedmodelling.klab.rest.ObservationReference.ExportFormat;
  */
 public interface IKnowledgeView extends IArtifact {
 
-    enum AggregationType {
-        Aggregator, Differentiator, Comparator, Counter
-    }
+	enum AggregationType {
+		Aggregator, Differentiator, Comparator, Counter
+	}
 
-    enum TargetType {
-        AREA, DURATION, QUALITY, NUMEROSITY
-    }
+	enum TargetType {
+		AREA, DURATION, QUALITY, NUMEROSITY
+	}
 
-    enum Style {
-        RIGHT,
-        LEFT,
-        CENTER,
-        BOLD,
-        ITALIC,
-        BG_HIGHLIGHT,
-        FG_HIGHLIGHT,
-        /** make 0 columns empty */
-        EMPTY,
-        /** make empty columns zeros */
-        ZERO
-        /* TODO borders, font size etc */
-    }
+	enum Style {
+		RIGHT, LEFT, CENTER, BOLD, ITALIC, BG_HIGHLIGHT, FG_HIGHLIGHT,
+		/** make 0 columns empty */
+		EMPTY,
+		/** make empty columns zeros */
+		ZERO
+		/* TODO borders, font size etc */
+	}
 
-    enum ComputationType {
+	/**
+	 * Attribute roles for rows or columns being created, to be followed by their
+	 * argument if needed.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	enum Attribute {
+		HEADER, HEADER_0, HEADER_1, HEADER_2, HEADER_3
+	}
 
-        /**
-         * Sum
-         */
-        Sum(Aggregation.SUM),
-        /**
-         * Sum
-         */
-        Average(Aggregation.MEAN),
-        /**
-         * Sum
-         */
-        Std(Aggregation.STD),
-        /**
-         * Sum
-         */
-        Variance(Aggregation.VARIANCE),
-        /**
-         * Sum
-         */
-        Min(Aggregation.MIN),
-        /**
-         * Sum
-         */
-        Max(Aggregation.MAX),
-        /**
-         * Compute a specific expression in the expression field, to be evaluated at each pass and
-         * whose result is aggregated.
-         */
-        Expression(null),
-        /**
-         * Compute an expression at the end of everything and only once, based on results in other
-         * cells.
-         */
-        Summarize(null);
+	enum ComputationType {
 
-        Aggregation aggregation;
+		/**
+		 * Sum
+		 */
+		Sum(Aggregation.SUM),
+		/**
+		 * Sum
+		 */
+		Average(Aggregation.MEAN),
+		/**
+		 * Sum
+		 */
+		Std(Aggregation.STD),
+		/**
+		 * Sum
+		 */
+		Variance(Aggregation.VARIANCE),
+		/**
+		 * Sum
+		 */
+		Min(Aggregation.MIN),
+		/**
+		 * Sum
+		 */
+		Max(Aggregation.MAX),
+		/**
+		 * Compute a specific expression in the expression field, to be evaluated at
+		 * each pass and whose result is aggregated.
+		 */
+		Expression(null),
+		/**
+		 * Compute an expression at the end of everything and only once, based on
+		 * results in other cells.
+		 */
+		Summarize(null);
 
-        ComputationType(Aggregation aggregation) {
-            this.aggregation = aggregation;
-        }
+		Aggregation aggregation;
 
-        public Aggregation getAggregation() {
-            return this.aggregation;
-        }
+		ComputationType(Aggregation aggregation) {
+			this.aggregation = aggregation;
+		}
 
-        public boolean isAggregation() {
-            return this.aggregation != null || this == Summarize;
-        }
-    }
+		public Aggregation getAggregation() {
+			return this.aggregation;
+		}
 
-    /**
-     * A builder for a view, used for now only in custom builders where the structure is created
-     * from the data or other specs, so not a full builder.
-     * 
-     * @author Ferd
-     *
-     */
-    interface Builder {
+		public boolean isAggregation() {
+			return this.aggregation != null || this == Summarize;
+		}
+	}
 
-        /**
-         * Create or retrieve a column for a given classifier.
-         * 
-         * @param classifier. Can be null for a column that is only used for row headers.
-         * @param options sorting, style, header - any of the enums above
-         * @return the ID for the column
-         */
-        String getColumn(Object classifier, Object... options);
+	/**
+	 * A builder for a view, used for now only in custom builders where the
+	 * structure is created from the data or other specs, so not a full builder.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	interface Builder {
 
-        /**
-         * Create or retrieve a row for a given classifier.
-         * 
-         * @param classifier
-         * @param options style, header
-         * @return the ID for the row
-         */
-        String getRow(Object classifier, Object... options);
+		/**
+		 * Create or retrieve a column for a given classifier.
+		 * 
+		 * @param options classifier, sorting, style, header - any of the enums above.
+		 *                If a floating value is passed that does not correspond to a
+		 *                parameter for a preceding operator, it's interpreted as the
+		 *                classifier, which may be null. If there is no classifier,
+		 *                there should be header options.
+		 * @return the ID for the column
+		 */
+		String getColumn(Object... options);
 
-        /**
-         * 
-         * @param rowId
-         * @param colId
-         * @param value
-         * @param options
-         * @return
-         */
-        void setCell(String rowId, String colId, Object value, Object... options);
+		/**
+		 * Create or retrieve a row for a given classifier.
+		 * 
+		 * @param options classifier, sorting, style, header - any of the enums above.
+		 *                If a floating value is passed that does not correspond to a
+		 *                parameter for a preceding operator, it's interpreted as the
+		 *                classifier, which may be null. If there is no classifier,
+		 *                there should be header options.
+		 * @return the ID for the row
+		 */
+		String getRow(Object... options);
 
-        /**
-         * Return the view artifact.
-         * 
-         * @return
-         */
-        IKnowledgeView build();
+		/**
+		 * 
+		 * @param rowId
+		 * @param colId
+		 * @param value
+		 * @param options
+		 * @return
+		 */
+		void setCell(String rowId, String colId, Object value, Object... options);
 
-        /**
-         * Define the appearance of empty and nodata cells
-         * 
-         * @param emptyValue
-         * @param noDataValue
-         */
-        void setEmptyCells(String emptyValue, String noDataValue);
-    }
+		/**
+		 * Return the view artifact.
+		 * 
+		 * @return
+		 */
+		IKnowledgeView build();
 
-    /**
-     * 
-     * @return
-     */
-    String getViewClass();
+		/**
+		 * Define the appearance of empty and nodata cells
+		 * 
+		 * @param emptyValue
+		 * @param noDataValue
+		 */
+		void setEmptyCells(String emptyValue, String noDataValue);
+	}
 
-    /**
-     * 
-     * @return
-     */
-    String getName();
+	/**
+	 * 
+	 * @return
+	 */
+	String getViewClass();
 
-    /**
-     * A possibly long caption for the artifact we represent.
-     * 
-     * @return
-     */
-    String getTitle();
+	/**
+	 * 
+	 * @return
+	 */
+	String getName();
 
-    /**
-     * If a label is specified, return it for user-level referencing and indexing.
-     * 
-     * @return
-     */
-    String getLabel();
+	/**
+	 * A possibly long caption for the artifact we represent.
+	 * 
+	 * @return
+	 */
+	String getTitle();
 
-    /**
-     * Export formats; if empty, no export is possible
-     * 
-     * @return
-     */
-    Collection<ExportFormat> getExportFormats();
+	/**
+	 * If a label is specified, return it for user-level referencing and indexing.
+	 * 
+	 * @return
+	 */
+	String getLabel();
 
-    /**
-     * Return the compiled view in exportable form as a {@link IDocumentationView}.
-     * 
-     * @param mediaType
-     * @return
-     */
-    IDocumentationView getCompiledView(String mediaType);
+	/**
+	 * Export formats; if empty, no export is possible
+	 * 
+	 * @return
+	 */
+	Collection<ExportFormat> getExportFormats();
 
-    /**
-     * 
-     * @param file
-     * @param mediaType
-     * @return
-     */
-    boolean export(File file, String mediaType);
+	/**
+	 * Return the compiled view in exportable form as a {@link IDocumentationView}.
+	 * 
+	 * @param mediaType
+	 * @return
+	 */
+	IDocumentationView getCompiledView(String mediaType);
 
-    /**
-     * Return a suitable bean for transferring the view to clients. Class is usually mandatory in
-     * each implementation, added here for fluency in calls to avoid painful typing at the class
-     * level.
-     * 
-     * @param <T>
-     * @param cls
-     * @return
-     */
-    <T> T getBean(Class<T> cls);
+	/**
+	 * 
+	 * @param file
+	 * @param mediaType
+	 * @return
+	 */
+	boolean export(File file, String mediaType);
 
-    /**
-     * A view can be given an additional identifier (tied to the "name" parameter in specifications)
-     * that can be the same across groups of related tables and is used to retrieve a view in
-     * documentation, regardless of which specific model has computed it. This is never null as it
-     * defaults to the model name if left unspecified.
-     * 
-     * @return
-     */
-    String getIdentifier();
+	/**
+	 * Return a suitable bean for transferring the view to clients. Class is usually
+	 * mandatory in each implementation, added here for fluency in calls to avoid
+	 * painful typing at the class level.
+	 * 
+	 * @param <T>
+	 * @param cls
+	 * @return
+	 */
+	<T> T getBean(Class<T> cls);
+
+	/**
+	 * A view can be given an additional identifier (tied to the "name" parameter in
+	 * specifications) that can be the same across groups of related tables and is
+	 * used to retrieve a view in documentation, regardless of which specific model
+	 * has computed it. This is never null as it defaults to the model name if left
+	 * unspecified.
+	 * 
+	 * @return
+	 */
+	String getIdentifier();
 
 }
