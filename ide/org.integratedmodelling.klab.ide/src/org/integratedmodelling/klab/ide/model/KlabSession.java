@@ -10,7 +10,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -62,7 +61,6 @@ import org.integratedmodelling.klab.rest.ResourceOperationResponse;
 import org.integratedmodelling.klab.rest.ResourcePublishResponse;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.rest.RuntimeEvent;
-import org.integratedmodelling.klab.rest.SearchRequest;
 import org.integratedmodelling.klab.rest.SearchResponse;
 import org.integratedmodelling.klab.rest.SessionReference;
 import org.integratedmodelling.klab.rest.TaskReference;
@@ -88,7 +86,7 @@ public class KlabSession extends KlabPeer {
 	// six hours
 	private static final long MAX_TICKET_AGE = 1000l * 60l * 60l * 6l;
 
-	private AtomicLong queryCounter = new AtomicLong();
+//	private AtomicLong queryCounter = new AtomicLong();
 	private Map<EngineEvent.Type, Set<Long>> engineEvents = Collections.synchronizedMap(new HashMap<>());
 	private SessionReference sessionReference;
 
@@ -376,17 +374,6 @@ public class KlabSession extends KlabPeer {
 		Activator.post(IMessage.MessageClass.ObservationLifecycle, IMessage.Type.RequestObservation,
 				new ObservationRequest(resource.getUrn(), currentRootContextId, null));
 	}
-
-//	public long startQuery(String query) {
-//
-//		long queryIndex = queryCounter.getAndIncrement();
-//
-//		SearchRequest request = new SearchRequest();
-//		request.setRequestId(queryIndex);
-//		request.setQueryString(query);
-//
-//		return queryIndex;
-//	}
 
 	// nah, use the response feature in the message bus and make it right
 	public void continueQuery(String query, long previous) {

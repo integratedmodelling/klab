@@ -45,14 +45,14 @@ public class EngineController {
 		String info = null;
 		ISession session = Authentication.INSTANCE.getIdentity(previousToJoin, ISession.class);
 		if (session == null && user instanceof IUserIdentity) {
-			session = engine.createSession((IUserIdentity)user);
+			session = engine.createSession((IUserIdentity) user);
 			info = "requested session was unavailable: returning a new session";
 		}
 
 		if (relayId != null) {
-			((Session)session).addRelayId(relayId);
+			((Session) session).addRelayId(relayId);
 		}
-		
+
 		AuthorizeSessionResponse ret = new AuthorizeSessionResponse();
 		ret.setInfo(info);
 		ret.setSessionId(session.getId());
@@ -71,7 +71,7 @@ public class EngineController {
 			throw new IllegalAccessError("engine is not present: cannot create a session");
 		}
 
-		session = user instanceof IUserIdentity ? engine.createSession((IUserIdentity)user) : engine.createSession();
+		session = user instanceof IUserIdentity ? engine.createSession((IUserIdentity) user) : engine.createSession();
 
 		AuthorizeSessionResponse ret = new AuthorizeSessionResponse();
 

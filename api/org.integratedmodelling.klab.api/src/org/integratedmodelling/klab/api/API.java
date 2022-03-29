@@ -15,6 +15,8 @@ package org.integratedmodelling.klab.api;
 
 import org.integratedmodelling.klab.api.auth.INetworkSessionIdentity;
 import org.integratedmodelling.klab.monitoring.Message;
+import org.integratedmodelling.klab.rest.ContextRequest;
+import org.integratedmodelling.klab.rest.PingResponse;
 import org.integratedmodelling.klab.rest.TicketRequest;
 
 /**
@@ -86,13 +88,14 @@ public interface API {
 	public static final String P_CODELIST = "{codelist}";
 
 	/**
-	 * Ping service. Simply returns the number of milliseconds since engine boot, or
-	 * 0 if engine is not running. Accepts HEAD requests to simply check for
-	 * heartbeat.
+	 * Ping service. Accepts HEAD requests to simply check for heartbeat, or GET to
+	 * return meaningful info on the engine's status. If the engine is local (i.e.
+	 * the request comes from a local IP) and accepts local connections, also adds
+	 * an engine session ID so that it can be connected to.
 	 * 
 	 * <p>
 	 * <b>Protocol:</b> GET, HEAD <br/>
-	 * <b>Response type:</b> long (if used with GET) <br/>
+	 * <b>Response type:</b> {@link PingResponse} <br/>
 	 * <b>Authentication:</b>
 	 */
 	public static final String PING = "/ping";
@@ -631,6 +634,35 @@ public interface API {
 	 *
 	 */
 	public interface PUBLIC {
+
+		public static final String P_SESSION = "{session}";
+		public static final String P_CONTEXT = "{context}";
+
+		public static final String PUBLIC_BASE = HUB.API_BASE + "/public";
+
+		/**
+		 * Called by users to log in and receive an authentication token for a remote
+		 * engine. Duplicate from HUB. POST with username and password in data.
+		 */
+		public static final String AUTHENTICATE_USER = HUB.AUTHENTICATE_USER;
+
+		/**
+		 * Called by users to log off from a remote engine. Duplicate from HUB.
+		 */
+		public static final String DEAUTHENTICATE_USER = HUB.DEAUTHENTICATE_USER;
+
+		/**
+		 * Post a {@link ContextRequest} to create a context or get an estimate for it.
+		 * Returns a task ID to poll and retrieve the outcome when done.
+		 */
+		public static final String CREATE_CONTEXT = PUBLIC_BASE + "/observe/context/" + P_SESSION;
+
+		/**
+		 * Post a {@link ContextRequest} to make an observation in an existing context
+		 * or get an estimate for it. Returns a task ID to poll and retrieve the outcome
+		 * when done.
+		 */
+		public static final String OBSERVE_IN_CONTEXT = PUBLIC_BASE + "/observe/" + P_SESSION + "/" + P_CONTEXT;
 
 	}
 
