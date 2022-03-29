@@ -2,13 +2,10 @@ package org.integratedmodelling.klab.ide;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdapterFactory;
-import org.eclipse.emf.ecore.EObject;
-import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
 import org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem;
 
 public class KlabAdapterFactory implements IAdapterFactory {
 
-	@SuppressWarnings("unchecked")
     @Override
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		if (adaptableObject instanceof ENavigatorItem) {
