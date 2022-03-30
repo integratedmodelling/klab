@@ -19,7 +19,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IContextualizable;
-import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.klab.api.auth.IEngineIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.data.IResource;

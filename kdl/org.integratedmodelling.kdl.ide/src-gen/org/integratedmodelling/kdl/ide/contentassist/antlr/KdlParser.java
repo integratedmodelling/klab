@@ -34,7 +34,7 @@ public class KdlParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getModelAccess().getNameAlternatives_0_0_1_0(), "rule__Model__NameAlternatives_0_0_1_0");
 			builder.put(grammarAccess.getModelAccess().getPackageAlternatives_0_9_1_0(), "rule__Model__PackageAlternatives_0_9_1_0");
 			builder.put(grammarAccess.getActorDefinitionAccess().getAlternatives(), "rule__ActorDefinition__Alternatives");
-			builder.put(grammarAccess.getActorDefinitionAccess().getAlternatives_0_0(), "rule__ActorDefinition__Alternatives_0_0");
+			builder.put(grammarAccess.getActorDefinitionAccess().getAlternatives_0_1(), "rule__ActorDefinition__Alternatives_0_1");
 			builder.put(grammarAccess.getActorDefinitionAccess().getAlternatives_1_4(), "rule__ActorDefinition__Alternatives_1_4");
 			builder.put(grammarAccess.getActorDefinitionAccess().getAlternatives_1_4_2_1(), "rule__ActorDefinition__Alternatives_1_4_2_1");
 			builder.put(grammarAccess.getActorDefinitionAccess().getNameAlternatives_1_8_0(), "rule__ActorDefinition__NameAlternatives_1_8_0");
@@ -101,7 +101,7 @@ public class KdlParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getAnnotationAccess().getGroup(), "rule__Annotation__Group__0");
 			builder.put(grammarAccess.getAnnotationAccess().getGroup_1(), "rule__Annotation__Group_1__0");
 			builder.put(grammarAccess.getActorDefinitionAccess().getGroup_0(), "rule__ActorDefinition__Group_0__0");
-			builder.put(grammarAccess.getActorDefinitionAccess().getGroup_0_4(), "rule__ActorDefinition__Group_0_4__0");
+			builder.put(grammarAccess.getActorDefinitionAccess().getGroup_0_5(), "rule__ActorDefinition__Group_0_5__0");
 			builder.put(grammarAccess.getActorDefinitionAccess().getGroup_1(), "rule__ActorDefinition__Group_1__0");
 			builder.put(grammarAccess.getActorDefinitionAccess().getGroup_1_4_2(), "rule__ActorDefinition__Group_1_4_2__0");
 			builder.put(grammarAccess.getActorDefinitionAccess().getGroup_1_4_2_1_1(), "rule__ActorDefinition__Group_1_4_2_1_1__0");
@@ -210,12 +210,13 @@ public class KdlParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getModelAccess().getActorsAssignment_1(), "rule__Model__ActorsAssignment_1");
 			builder.put(grammarAccess.getAnnotationAccess().getNameAssignment_0(), "rule__Annotation__NameAssignment_0");
 			builder.put(grammarAccess.getAnnotationAccess().getParametersAssignment_1_1(), "rule__Annotation__ParametersAssignment_1_1");
-			builder.put(grammarAccess.getActorDefinitionAccess().getExportedAssignment_0_0_0(), "rule__ActorDefinition__ExportedAssignment_0_0_0");
-			builder.put(grammarAccess.getActorDefinitionAccess().getImportedAssignment_0_0_1(), "rule__ActorDefinition__ImportedAssignment_0_0_1");
-			builder.put(grammarAccess.getActorDefinitionAccess().getTypeAssignment_0_1(), "rule__ActorDefinition__TypeAssignment_0_1");
-			builder.put(grammarAccess.getActorDefinitionAccess().getAnnotationTagAssignment_0_2(), "rule__ActorDefinition__AnnotationTagAssignment_0_2");
-			builder.put(grammarAccess.getActorDefinitionAccess().getDocstringAssignment_0_3(), "rule__ActorDefinition__DocstringAssignment_0_3");
-			builder.put(grammarAccess.getActorDefinitionAccess().getLabelAssignment_0_4_1(), "rule__ActorDefinition__LabelAssignment_0_4_1");
+			builder.put(grammarAccess.getActorDefinitionAccess().getConstAssignment_0_0(), "rule__ActorDefinition__ConstAssignment_0_0");
+			builder.put(grammarAccess.getActorDefinitionAccess().getExportedAssignment_0_1_0(), "rule__ActorDefinition__ExportedAssignment_0_1_0");
+			builder.put(grammarAccess.getActorDefinitionAccess().getImportedAssignment_0_1_1(), "rule__ActorDefinition__ImportedAssignment_0_1_1");
+			builder.put(grammarAccess.getActorDefinitionAccess().getTypeAssignment_0_2(), "rule__ActorDefinition__TypeAssignment_0_2");
+			builder.put(grammarAccess.getActorDefinitionAccess().getAnnotationTagAssignment_0_3(), "rule__ActorDefinition__AnnotationTagAssignment_0_3");
+			builder.put(grammarAccess.getActorDefinitionAccess().getDocstringAssignment_0_4(), "rule__ActorDefinition__DocstringAssignment_0_4");
+			builder.put(grammarAccess.getActorDefinitionAccess().getLabelAssignment_0_5_1(), "rule__ActorDefinition__LabelAssignment_0_5_1");
 			builder.put(grammarAccess.getActorDefinitionAccess().getAnnotationsAssignment_1_0(), "rule__ActorDefinition__AnnotationsAssignment_1_0");
 			builder.put(grammarAccess.getActorDefinitionAccess().getAbstractAssignment_1_1(), "rule__ActorDefinition__AbstractAssignment_1_1");
 			builder.put(grammarAccess.getActorDefinitionAccess().getFinalAssignment_1_2(), "rule__ActorDefinition__FinalAssignment_1_2");

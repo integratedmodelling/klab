@@ -252,4 +252,12 @@ public interface IKdlActuator extends IKdlStatement {
 	 */
 	String getUnit();
 
+	/**
+	 * Const is for parameters that point to immutable resources, such as URNs or
+	 * literals. Used in building the provenance diagram.
+	 * 
+	 * @return
+	 */
+	boolean isConst();
+
 }

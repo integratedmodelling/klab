@@ -29,6 +29,11 @@ Annotation:
 ActorDefinition:
 	
 	/*
+	 * const means that the a parameter denotes a resource that is immutable within the prototype. Used to build
+	 * the provenance diagram, normally on parameters that must be URNs or literals.
+	 */
+	(const?='const')? 
+	/*
 	 * short special-case form to denote a specific annotation ID as a tag and type for imports or exports
 	 */
 	(exported?='export' | imported?='import') type=ACTOR annotationTag=ANNOTATION_ID 

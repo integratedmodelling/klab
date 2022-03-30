@@ -50,6 +50,7 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
 	boolean isAbstract = false;
 	boolean isFilter = false;
 	boolean isExpression = false;
+	boolean isConst = false;
 	boolean isTaggingAnnotation = false;
 	boolean multipleInstances;
 	boolean moreInstancesAllowed;
@@ -91,6 +92,7 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
 		this.label = o.getLabel();
 		this.isExpression = o.isExpression();
 		this.isFilter = o.isFilter();
+		this.isConst = o.isConst();
 		this.setResolution(o.getType().equals("resolve"));
 
 		if (o.getUnit() != null) {
@@ -477,5 +479,10 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
 	@Override
 	public boolean isTaggingAnnotation() {
 		return isTaggingAnnotation;
+	}
+
+	@Override
+	public boolean isConst() {
+		return isConst;
 	}
 }

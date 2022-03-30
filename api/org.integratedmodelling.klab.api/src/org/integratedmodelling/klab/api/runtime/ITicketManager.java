@@ -14,12 +14,12 @@ import java.util.List;
 public interface ITicketManager {
 
 	/**
-	 * Open a new ticket.
+	 * Open a new ticket. Arguments will be put in the ticket according to their
+	 * type.
 	 * 
 	 * @param ticket
 	 */
 	ITicket open(Object... data);
-	
 
 	/**
 	 * Return the ticket(s) correspondent to the passed selectors, which can be
@@ -36,7 +36,7 @@ public interface ITicketManager {
 	 * @return
 	 */
 	List<ITicket> getTickets();
-	
+
 	/**
 	 * Get a specific ticket, or null.
 	 * 
@@ -52,6 +52,7 @@ public interface ITicketManager {
 
 	/**
 	 * Get all tickets resolved after the passed time.
+	 * 
 	 * @param l
 	 * @return
 	 */

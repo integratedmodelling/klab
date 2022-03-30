@@ -60,6 +60,7 @@ public class Prototype extends org.integratedmodelling.klab.common.Prototype {
 			a.defaultValue = arg.getDefaultValue() == null ? null : arg.getDefaultValue().toString();
 			a.artifact = arg.isImport();
 			a.unit = arg.getUnit();
+			a.isConst = arg.isConst();
 			a.setExpression(arg.isExpression());
 
 			if (arg.getLabel() != null) {

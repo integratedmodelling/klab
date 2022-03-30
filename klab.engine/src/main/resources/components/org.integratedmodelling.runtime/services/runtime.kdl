@@ -36,7 +36,7 @@ export value literal
 	 different value semantics"
 	 label '$val'
 {
-	object val
+	const object val
 		"The value to be contextualized"
 				
 	class org.integratedmodelling.klab.components.runtime.contextualizers.LiteralStateResolver

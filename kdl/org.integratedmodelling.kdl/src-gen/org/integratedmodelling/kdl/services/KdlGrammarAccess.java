@@ -354,21 +354,23 @@ public class KdlGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kdl.Kdl.ActorDefinition");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final Group cGroup_0 = (Group)cAlternatives.eContents().get(0);
-		private final Alternatives cAlternatives_0_0 = (Alternatives)cGroup_0.eContents().get(0);
-		private final Assignment cExportedAssignment_0_0_0 = (Assignment)cAlternatives_0_0.eContents().get(0);
-		private final Keyword cExportedExportKeyword_0_0_0_0 = (Keyword)cExportedAssignment_0_0_0.eContents().get(0);
-		private final Assignment cImportedAssignment_0_0_1 = (Assignment)cAlternatives_0_0.eContents().get(1);
-		private final Keyword cImportedImportKeyword_0_0_1_0 = (Keyword)cImportedAssignment_0_0_1.eContents().get(0);
-		private final Assignment cTypeAssignment_0_1 = (Assignment)cGroup_0.eContents().get(1);
-		private final RuleCall cTypeACTORParserRuleCall_0_1_0 = (RuleCall)cTypeAssignment_0_1.eContents().get(0);
-		private final Assignment cAnnotationTagAssignment_0_2 = (Assignment)cGroup_0.eContents().get(2);
-		private final RuleCall cAnnotationTagANNOTATION_IDTerminalRuleCall_0_2_0 = (RuleCall)cAnnotationTagAssignment_0_2.eContents().get(0);
-		private final Assignment cDocstringAssignment_0_3 = (Assignment)cGroup_0.eContents().get(3);
-		private final RuleCall cDocstringSTRINGTerminalRuleCall_0_3_0 = (RuleCall)cDocstringAssignment_0_3.eContents().get(0);
-		private final Group cGroup_0_4 = (Group)cGroup_0.eContents().get(4);
-		private final Keyword cLabelKeyword_0_4_0 = (Keyword)cGroup_0_4.eContents().get(0);
-		private final Assignment cLabelAssignment_0_4_1 = (Assignment)cGroup_0_4.eContents().get(1);
-		private final RuleCall cLabelSTRINGTerminalRuleCall_0_4_1_0 = (RuleCall)cLabelAssignment_0_4_1.eContents().get(0);
+		private final Assignment cConstAssignment_0_0 = (Assignment)cGroup_0.eContents().get(0);
+		private final Keyword cConstConstKeyword_0_0_0 = (Keyword)cConstAssignment_0_0.eContents().get(0);
+		private final Alternatives cAlternatives_0_1 = (Alternatives)cGroup_0.eContents().get(1);
+		private final Assignment cExportedAssignment_0_1_0 = (Assignment)cAlternatives_0_1.eContents().get(0);
+		private final Keyword cExportedExportKeyword_0_1_0_0 = (Keyword)cExportedAssignment_0_1_0.eContents().get(0);
+		private final Assignment cImportedAssignment_0_1_1 = (Assignment)cAlternatives_0_1.eContents().get(1);
+		private final Keyword cImportedImportKeyword_0_1_1_0 = (Keyword)cImportedAssignment_0_1_1.eContents().get(0);
+		private final Assignment cTypeAssignment_0_2 = (Assignment)cGroup_0.eContents().get(2);
+		private final RuleCall cTypeACTORParserRuleCall_0_2_0 = (RuleCall)cTypeAssignment_0_2.eContents().get(0);
+		private final Assignment cAnnotationTagAssignment_0_3 = (Assignment)cGroup_0.eContents().get(3);
+		private final RuleCall cAnnotationTagANNOTATION_IDTerminalRuleCall_0_3_0 = (RuleCall)cAnnotationTagAssignment_0_3.eContents().get(0);
+		private final Assignment cDocstringAssignment_0_4 = (Assignment)cGroup_0.eContents().get(4);
+		private final RuleCall cDocstringSTRINGTerminalRuleCall_0_4_0 = (RuleCall)cDocstringAssignment_0_4.eContents().get(0);
+		private final Group cGroup_0_5 = (Group)cGroup_0.eContents().get(5);
+		private final Keyword cLabelKeyword_0_5_0 = (Keyword)cGroup_0_5.eContents().get(0);
+		private final Assignment cLabelAssignment_0_5_1 = (Assignment)cGroup_0_5.eContents().get(1);
+		private final RuleCall cLabelSTRINGTerminalRuleCall_0_5_1_0 = (RuleCall)cLabelAssignment_0_5_1.eContents().get(0);
 		private final Group cGroup_1 = (Group)cAlternatives.eContents().get(1);
 		private final Assignment cAnnotationsAssignment_1_0 = (Assignment)cGroup_1.eContents().get(0);
 		private final RuleCall cAnnotationsAnnotationParserRuleCall_1_0_0 = (RuleCall)cAnnotationsAssignment_1_0.eContents().get(0);
@@ -489,6 +491,11 @@ public class KdlGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		
 		//ActorDefinition:
 		//    /*
+		//     * const means that the a parameter denotes a resource that is immutable within the prototype. Used to build
+		//     * the provenance diagram, normally on parameters that must be URNs or literals.
+		//     */
+		//    (const?='const')?
+		//    /*
 		//     * short special-case form to denote a specific annotation ID as a tag and type for imports or exports
 		//     */
 		//    (exported?='export' | imported?='import') type=ACTOR annotationTag=ANNOTATION_ID
@@ -530,6 +537,11 @@ public class KdlGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		@Override public ParserRule getRule() { return rule; }
 		
 		///*
+		// * const means that the a parameter denotes a resource that is immutable within the prototype. Used to build
+		// * the provenance diagram, normally on parameters that must be URNs or literals.
+		// */
+		//(const?='const')?
+		///*
 		// * short special-case form to denote a specific annotation ID as a tag and type for imports or exports
 		// */
 		//(exported?='export' | imported?='import') type=ACTOR annotationTag=ANNOTATION_ID
@@ -570,6 +582,11 @@ public class KdlGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		///*
+		// * const means that the a parameter denotes a resource that is immutable within the prototype. Used to build
+		// * the provenance diagram, normally on parameters that must be URNs or literals.
+		// */
+		//(const?='const')?
+		///*
 		// * short special-case form to denote a specific annotation ID as a tag and type for imports or exports
 		// */
 		//(exported?='export' | imported?='import') type=ACTOR annotationTag=ANNOTATION_ID
@@ -577,52 +594,62 @@ public class KdlGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		public Group getGroup_0() { return cGroup_0; }
 		
 		///*
+		// * const means that the a parameter denotes a resource that is immutable within the prototype. Used to build
+		// * the provenance diagram, normally on parameters that must be URNs or literals.
+		// */
+		//(const?='const')?
+		public Assignment getConstAssignment_0_0() { return cConstAssignment_0_0; }
+		
+		//'const'
+		public Keyword getConstConstKeyword_0_0_0() { return cConstConstKeyword_0_0_0; }
+		
+		///*
 		// * short special-case form to denote a specific annotation ID as a tag and type for imports or exports
 		// */
 		//(exported?='export' | imported?='import')
-		public Alternatives getAlternatives_0_0() { return cAlternatives_0_0; }
+		public Alternatives getAlternatives_0_1() { return cAlternatives_0_1; }
 		
 		//exported?='export'
-		public Assignment getExportedAssignment_0_0_0() { return cExportedAssignment_0_0_0; }
+		public Assignment getExportedAssignment_0_1_0() { return cExportedAssignment_0_1_0; }
 		
 		//'export'
-		public Keyword getExportedExportKeyword_0_0_0_0() { return cExportedExportKeyword_0_0_0_0; }
+		public Keyword getExportedExportKeyword_0_1_0_0() { return cExportedExportKeyword_0_1_0_0; }
 		
 		//imported?='import'
-		public Assignment getImportedAssignment_0_0_1() { return cImportedAssignment_0_0_1; }
+		public Assignment getImportedAssignment_0_1_1() { return cImportedAssignment_0_1_1; }
 		
 		//'import'
-		public Keyword getImportedImportKeyword_0_0_1_0() { return cImportedImportKeyword_0_0_1_0; }
+		public Keyword getImportedImportKeyword_0_1_1_0() { return cImportedImportKeyword_0_1_1_0; }
 		
 		//type=ACTOR
-		public Assignment getTypeAssignment_0_1() { return cTypeAssignment_0_1; }
+		public Assignment getTypeAssignment_0_2() { return cTypeAssignment_0_2; }
 		
 		//ACTOR
-		public RuleCall getTypeACTORParserRuleCall_0_1_0() { return cTypeACTORParserRuleCall_0_1_0; }
+		public RuleCall getTypeACTORParserRuleCall_0_2_0() { return cTypeACTORParserRuleCall_0_2_0; }
 		
 		//annotationTag=ANNOTATION_ID
-		public Assignment getAnnotationTagAssignment_0_2() { return cAnnotationTagAssignment_0_2; }
+		public Assignment getAnnotationTagAssignment_0_3() { return cAnnotationTagAssignment_0_3; }
 		
 		//ANNOTATION_ID
-		public RuleCall getAnnotationTagANNOTATION_IDTerminalRuleCall_0_2_0() { return cAnnotationTagANNOTATION_IDTerminalRuleCall_0_2_0; }
+		public RuleCall getAnnotationTagANNOTATION_IDTerminalRuleCall_0_3_0() { return cAnnotationTagANNOTATION_IDTerminalRuleCall_0_3_0; }
 		
 		//(docstring=STRING)?
-		public Assignment getDocstringAssignment_0_3() { return cDocstringAssignment_0_3; }
+		public Assignment getDocstringAssignment_0_4() { return cDocstringAssignment_0_4; }
 		
 		//STRING
-		public RuleCall getDocstringSTRINGTerminalRuleCall_0_3_0() { return cDocstringSTRINGTerminalRuleCall_0_3_0; }
+		public RuleCall getDocstringSTRINGTerminalRuleCall_0_4_0() { return cDocstringSTRINGTerminalRuleCall_0_4_0; }
 		
 		//('label' label=STRING)?
-		public Group getGroup_0_4() { return cGroup_0_4; }
+		public Group getGroup_0_5() { return cGroup_0_5; }
 		
 		//'label'
-		public Keyword getLabelKeyword_0_4_0() { return cLabelKeyword_0_4_0; }
+		public Keyword getLabelKeyword_0_5_0() { return cLabelKeyword_0_5_0; }
 		
 		//label=STRING
-		public Assignment getLabelAssignment_0_4_1() { return cLabelAssignment_0_4_1; }
+		public Assignment getLabelAssignment_0_5_1() { return cLabelAssignment_0_5_1; }
 		
 		//STRING
-		public RuleCall getLabelSTRINGTerminalRuleCall_0_4_1_0() { return cLabelSTRINGTerminalRuleCall_0_4_1_0; }
+		public RuleCall getLabelSTRINGTerminalRuleCall_0_5_1_0() { return cLabelSTRINGTerminalRuleCall_0_5_1_0; }
 		
 		///*
 		// * This is the form that specifies actuators
@@ -3643,6 +3670,11 @@ public class KdlGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 	}
 	
 	//ActorDefinition:
+	//    /*
+	//     * const means that the a parameter denotes a resource that is immutable within the prototype. Used to build
+	//     * the provenance diagram, normally on parameters that must be URNs or literals.
+	//     */
+	//    (const?='const')?
 	//    /*
 	//     * short special-case form to denote a specific annotation ID as a tag and type for imports or exports
 	//     */

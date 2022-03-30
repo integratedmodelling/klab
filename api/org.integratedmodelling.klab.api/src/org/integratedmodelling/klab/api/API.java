@@ -179,13 +179,15 @@ public interface API {
 	 */
 	public static interface TICKET {
 
+		public static final String P_TICKET = "{ticket}";
+
 		/**
 		 * Retrieve the specific ticket with the passed ID. If ticket==all, get a list
 		 * of all tickets.
 		 * 
 		 * GET
 		 */
-		public static final String INFO = "/ticket/info/{ticket}";
+		public static final String INFO = "/ticket/info/" + P_TICKET;
 
 		/**
 		 * Retrieve all tickets matching the field values in the query string.
@@ -637,6 +639,7 @@ public interface API {
 
 		public static final String P_SESSION = "{session}";
 		public static final String P_CONTEXT = "{context}";
+		public static final String P_TICKET = "{ticket}";
 
 		public static final String PUBLIC_BASE = HUB.API_BASE + "/public";
 
@@ -663,6 +666,14 @@ public interface API {
 		 * when done.
 		 */
 		public static final String OBSERVE_IN_CONTEXT = PUBLIC_BASE + "/observe/" + P_SESSION + "/" + P_CONTEXT;
+
+		/**
+		 * Check the status of the passed ticket. Same as the one in API.TICKET but only
+		 * accessing tickets created by calls in the public API and requesting the
+		 * session as a parameter. GET request returns the entire ticket for inspection;
+		 * asking for a ticket not created in the same session is an error.
+		 */
+		public static final String TICKET_INFO = PUBLIC_BASE + "/ticket/info/" + P_SESSION + "/" + P_TICKET;
 
 	}
 

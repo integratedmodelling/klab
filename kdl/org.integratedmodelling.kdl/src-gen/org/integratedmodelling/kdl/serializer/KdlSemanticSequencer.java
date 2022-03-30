@@ -158,7 +158,14 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *
 	 * Constraint:
 	 *     (
-	 *         ((exported?='export' | imported?='import') type=ACTOR annotationTag=ANNOTATION_ID docstring=STRING? label=STRING?) | 
+	 *         (
+	 *             const?='const'? 
+	 *             (exported?='export' | imported?='import') 
+	 *             type=ACTOR 
+	 *             annotationTag=ANNOTATION_ID 
+	 *             docstring=STRING? 
+	 *             label=STRING?
+	 *         ) | 
 	 *         (
 	 *             annotations+=Annotation* 
 	 *             abstract?='abstract'? 

@@ -6,8 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Future;
+import java.util.function.BiConsumer;
 
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.api.auth.ITaskIdentity;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -63,7 +65,27 @@ public interface ISessionState extends IParameters<String> {
 
 	}
 
+	/**
+	 * Submit an observation request for the passed URN. If the URN is null and a
+	 * context has been predefined, just create the context as the main artifact
+	 * with no error.
+	 * 
+	 * @param urn
+	 * @return
+	 */
 	Future<IArtifact> submit(String urn);
+
+	/**
+	 * Like {@link #submit(String)} but with listeners to be called when the
+	 * observation is done or errors are encountered.
+	 * 
+	 * @param urn
+	 * @param observationListener
+	 * @param errorListener
+	 * @return
+	 */
+	Future<IArtifact> submit(String urn, BiConsumer<ITaskIdentity, IArtifact> observationListener,
+			BiConsumer<ITaskIdentity, Throwable> errorListener);
 
 	boolean activateScenario(String scenario);
 
@@ -192,13 +214,14 @@ public interface ISessionState extends IParameters<String> {
 	 */
 	Collection<IResolutionConstraint> getResolutionConstraints();
 
-    /**
-     * A session may carry an inspector for debugging. Each operation decides what
-     * to let the inspector see, examining its configuration at key points. A
-     * session that returns null here isn't "armed" for debugging but code can still
-     * call {@link #notifyInspector(Object...)} without consequences.
-     * 
-     * @return
-     */
-    IInspector getInspector();
+	/**
+	 * A session may carry an inspector for debugging. Each operation decides what
+	 * to let the inspector see, examining its configuration at key points. A
+	 * session that returns null here isn't "armed" for debugging but code can still
+	 * call {@link #notifyInspector(Object...)} without consequences.
+	 * 
+	 * @return
+	 */
+	IInspector getInspector();
+
 }

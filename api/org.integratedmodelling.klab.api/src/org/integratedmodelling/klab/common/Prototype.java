@@ -37,8 +37,17 @@ public class Prototype implements IPrototype {
 		public Set<String> enumValues = new HashSet<>();
 		public String label = null;
 		public String unit = null;
-
+		public boolean isConst;
+		
 		public ArgumentImpl() {
+		}
+
+		public boolean isConst() {
+			return isConst;
+		}
+
+		public void setConst(boolean isConst) {
+			this.isConst = isConst;
 		}
 
 		@Override

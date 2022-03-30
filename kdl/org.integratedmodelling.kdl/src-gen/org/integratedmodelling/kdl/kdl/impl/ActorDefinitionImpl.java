@@ -36,6 +36,7 @@ import org.integratedmodelling.kdl.kdl.Value;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#isConst <em>Const</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#isExported <em>Exported</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#isImported <em>Imported</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getType <em>Type</em>}</li>
@@ -69,6 +70,26 @@ import org.integratedmodelling.kdl.kdl.Value;
  */
 public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements ActorDefinition
 {
+  /**
+   * The default value of the '{@link #isConst() <em>Const</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isConst()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean CONST_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isConst() <em>Const</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isConst()
+   * @generated
+   * @ordered
+   */
+  protected boolean const_ = CONST_EDEFAULT;
+
   /**
    * The default value of the '{@link #isExported() <em>Exported</em>}' attribute.
    * <!-- begin-user-doc -->
@@ -538,6 +559,31 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
   protected EClass eStaticClass()
   {
     return KdlPackage.Literals.ACTOR_DEFINITION;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public boolean isConst()
+  {
+    return const_;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setConst(boolean newConst)
+  {
+    boolean oldConst = const_;
+    const_ = newConst;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.ACTOR_DEFINITION__CONST, oldConst, const_));
   }
 
   /**
@@ -1338,6 +1384,8 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
   {
     switch (featureID)
     {
+      case KdlPackage.ACTOR_DEFINITION__CONST:
+        return isConst();
       case KdlPackage.ACTOR_DEFINITION__EXPORTED:
         return isExported();
       case KdlPackage.ACTOR_DEFINITION__IMPORTED:
@@ -1407,6 +1455,9 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
   {
     switch (featureID)
     {
+      case KdlPackage.ACTOR_DEFINITION__CONST:
+        setConst((Boolean)newValue);
+        return;
       case KdlPackage.ACTOR_DEFINITION__EXPORTED:
         setExported((Boolean)newValue);
         return;
@@ -1506,6 +1557,9 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
   {
     switch (featureID)
     {
+      case KdlPackage.ACTOR_DEFINITION__CONST:
+        setConst(CONST_EDEFAULT);
+        return;
       case KdlPackage.ACTOR_DEFINITION__EXPORTED:
         setExported(EXPORTED_EDEFAULT);
         return;
@@ -1601,6 +1655,8 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
   {
     switch (featureID)
     {
+      case KdlPackage.ACTOR_DEFINITION__CONST:
+        return const_ != CONST_EDEFAULT;
       case KdlPackage.ACTOR_DEFINITION__EXPORTED:
         return exported != EXPORTED_EDEFAULT;
       case KdlPackage.ACTOR_DEFINITION__IMPORTED:
@@ -1670,7 +1726,9 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
     if (eIsProxy()) return super.toString();
 
     StringBuilder result = new StringBuilder(super.toString());
-    result.append(" (exported: ");
+    result.append(" (const: ");
+    result.append(const_);
+    result.append(", exported: ");
     result.append(exported);
     result.append(", imported: ");
     result.append(imported);

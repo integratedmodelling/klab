@@ -202,6 +202,10 @@ public class SessionState extends Parameters<String> implements ISessionState {
     public Future<IArtifact> submit(BiConsumer<ITaskIdentity, IArtifact> observationListener,
             BiConsumer<ITaskIdentity, Throwable> errorListener) {
 
+    	/*
+    	 * TODO allow the urn to be null, meaning "just create the predefined context".
+    	 */
+    	
         final SessionActivity activity = new SessionActivity();
 
         activity.setUser(session.getParentIdentity(IUserIdentity.class).getUsername());
@@ -310,6 +314,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
 
     }
 
+    @Override
     public Future<IArtifact> submit(String urn, BiConsumer<ITaskIdentity, IArtifact> observationListener,
             BiConsumer<ITaskIdentity, Throwable> errorListener) {
 

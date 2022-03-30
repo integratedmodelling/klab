@@ -16,6 +16,7 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isConst <em>Const</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isExported <em>Exported</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isImported <em>Imported</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getType <em>Type</em>}</li>
@@ -51,6 +52,28 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface ActorDefinition extends EObject
 {
+  /**
+   * Returns the value of the '<em><b>Const</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Const</em>' attribute.
+   * @see #setConst(boolean)
+   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getActorDefinition_Const()
+   * @model
+   * @generated
+   */
+  boolean isConst();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isConst <em>Const</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Const</em>' attribute.
+   * @see #isConst()
+   * @generated
+   */
+  void setConst(boolean value);
+
   /**
    * Returns the value of the '<em><b>Exported</b></em>' attribute.
    * <!-- begin-user-doc -->
