@@ -238,8 +238,8 @@ public class AdditionReductionTableCompiler implements ITableCompiler {
 		List<String> labs = new ArrayList<>(labels.keySet());
 		Collections.sort(labs);
 		if (unassigned != null) {
-			labs.add("Unassigned");
-			labels.put("Unassigned", OWL.INSTANCE.getNothing());
+			labs.add("Unaccounted");
+			labels.put("Unaccounted", OWL.INSTANCE.getNothing());
 		}
 
 		String rowIncoming = builder.getRow(Attribute.HEADER_0,
@@ -254,7 +254,7 @@ public class AdditionReductionTableCompiler implements ITableCompiler {
 
 		for (Object label : labs) {
 			SData dat = data.get(labels.get(label));
-			String column = builder.getColumn("Unassigned".equals(label) ? label : labels.get(label));
+			String column = builder.getColumn("Unaccounted".equals(label) ? label : labels.get(label));
 			builder.setCell(rowIncoming, column, dat.opening);
 			builder.setCell(rowOutgoing, column, dat.closing);
 			builder.setCell(rowNetChange, column, dat.closing - dat.opening);
@@ -278,7 +278,7 @@ public class AdditionReductionTableCompiler implements ITableCompiler {
 
 	private String getLabel(Object object) {
 		if (OWL.INSTANCE.getNothing().equals(object)) {
-			return "Unassigned";
+			return "Unaccounted";
 		}
 		if (object instanceof ISemantic) {
 			return Concepts.INSTANCE.getDisplayLabel(((ISemantic) object).getType());
