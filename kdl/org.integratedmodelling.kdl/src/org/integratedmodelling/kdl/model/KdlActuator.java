@@ -50,6 +50,8 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
 	boolean isAbstract = false;
 	boolean isFilter = false;
 	boolean isExpression = false;
+	boolean isConst = false;
+	boolean isTaggingAnnotation = false;
 	boolean multipleInstances;
 	boolean moreInstancesAllowed;
 	int instanceCount;
@@ -57,7 +59,6 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
 	Object defaultValue = null;
 	Set<String> enumValues = new HashSet<>();
 	Set<Target> targets = new HashSet<>();
-
 	List<IKdlContextualizer> coverage = new ArrayList<>();
 
 	private boolean isResolution;
@@ -74,7 +75,13 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
 			this.annotations.add(new KdlAnnotation(annotation));
 		}
 
-		this.name = o.getName();
+		if (o.getAnnotationTag() != null) {
+			this.name = o.getAnnotationTag().substring(1);
+			this.isTaggingAnnotation = true;
+		} else {
+			this.name = o.getName();
+		}
+		
 		this.alias = o.getLocalName();
 		this.exported = o.isExported();
 		this.imported = o.isImported();
@@ -85,13 +92,14 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
 		this.label = o.getLabel();
 		this.isExpression = o.isExpression();
 		this.isFilter = o.isFilter();
+		this.isConst = o.isConst();
 		this.setResolution(o.getType().equals("resolve"));
-		
+
 		if (o.getUnit() != null) {
-		    ICompositeNode node = NodeModelUtils.getNode(o.getUnit());
-            this.unit = node.getText().trim();
+			ICompositeNode node = NodeModelUtils.getNode(o.getUnit());
+			this.unit = node.getText().trim();
 		}
-		
+
 		for (String s : o.getEnumValues()) {
 			this.enumValues.add(s);
 		}
@@ -144,8 +152,9 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
 				}
 				for (IKdlAnnotation annotation : extended.getAnnotations()) {
 					this.annotations.add(annotation);
-				}
-
+				} 
+			} else {
+				this.errors.add("cannot find imported actuator " + o.getExtended());
 			}
 		}
 
@@ -164,10 +173,10 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
 
 			for (ActorDefinition actor : o.getBody().getDataflows()) {
 				IKdlActuator act = new KdlActuator(actor, previousActuators);
-				if (act.isImported()) {
+				if (act.isImport()) {
 					this.inputs.add(act);
 				}
-				if (act.isExported()) {
+				if (act.isExport()) {
 					this.outputs.add(act);
 				}
 				if (act.isParameter()) {
@@ -214,12 +223,12 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
 	}
 
 	@Override
-	public boolean isExported() {
+	public boolean isExport() {
 		return exported;
 	}
 
 	@Override
-	public boolean isImported() {
+	public boolean isImport() {
 		return imported;
 	}
 
@@ -462,9 +471,18 @@ public class KdlActuator extends KdlStatement implements IKdlActuator {
 		this.isResolution = isResolution;
 	}
 
-    @Override
-    public String getUnit() {
-        return unit;
-    }
+	@Override
+	public String getUnit() {
+		return unit;
+	}
 
+	@Override
+	public boolean isTaggingAnnotation() {
+		return isTaggingAnnotation;
+	}
+
+	@Override
+	public boolean isConst() {
+		return isConst;
+	}
 }

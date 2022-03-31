@@ -38,6 +38,7 @@ import org.integratedmodelling.klab.components.localstorage.impl.TimesliceLocato
 import org.integratedmodelling.klab.components.time.extents.mediators.TimeIdentity;
 import org.integratedmodelling.klab.engine.runtime.code.Expression;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.scale.Extent;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.scale.Scale.Mediator;
@@ -66,12 +67,19 @@ public class Time extends Extent implements ITime {
     boolean irregintervals = false;
     long __id = nextId.incrementAndGet();
     Time parentExtent = null;
+    int timeSlice = -1;
+
+    /*
+     * if this is not null, time has recorded events besides its original definition, and the
+     * timeline takes over
+     */
+    TemporalExtension extension = null;
 
     /**
      * Observations distributed over irregular time extents can't use offsets to locate a particular
      * state, so we add a "focus" time instant to enable them to focus on a given timepoint.
      */
-    private ITimeInstant focus;
+    ITimeInstant focus;
 
     private static AtomicLong nextId = new AtomicLong(Long.MIN_VALUE);
 
@@ -135,7 +143,8 @@ public class Time extends Extent implements ITime {
             if (getClass() != obj.getClass())
                 return false;
             ResolutionImpl other = (ResolutionImpl) obj;
-            return Double.doubleToLongBits(multiplier) == Double.doubleToLongBits(other.multiplier) && type == other.type;
+            return Double.doubleToLongBits(multiplier) == Double.doubleToLongBits(other.multiplier)
+                    && type == other.type;
         }
 
     }
@@ -150,6 +159,11 @@ public class Time extends Extent implements ITime {
         this.resolution = resolution(start, end);
     }
 
+    /**
+     * DOES NOT (intentionally) copy the extension.
+     * 
+     * @param time
+     */
     private Time(Time time) {
         this.baseDimension = time.baseDimension;
         this.end = time.end;
@@ -159,6 +173,7 @@ public class Time extends Extent implements ITime {
         this.resolution = time.resolution == null ? null : ((ResolutionImpl) time.resolution).copy();
         this.start = time.start;
         this.step = time.step;
+        this.timeSlice = time.timeSlice;
     }
 
     private static Time initialization(Scale scale) {
@@ -245,8 +260,9 @@ public class Time extends Extent implements ITime {
         return ret;
     }
 
-    public static Time create(ITime.Type type, Resolution.Type resolutionType, Double resolutionMultiplier, ITimeInstant start,
-            ITimeInstant end, ITimeDuration period, Resolution.Type coverageUnit, Long coverageStart, Long coverageEnd) {
+    public static Time create(ITime.Type type, Resolution.Type resolutionType, Double resolutionMultiplier,
+            ITimeInstant start, ITimeInstant end, ITimeDuration period, Resolution.Type coverageUnit,
+            Long coverageStart, Long coverageEnd) {
 
         Time ret = new Time();
         ret.extentType = type;
@@ -292,8 +308,8 @@ public class Time extends Extent implements ITime {
         }
     }
 
-    public static Time create(ITime.Type type, Resolution.Type resolutionType, double resolutionMultiplier, ITimeInstant start,
-            ITimeInstant end, ITimeDuration period) {
+    public static Time create(ITime.Type type, Resolution.Type resolutionType, double resolutionMultiplier,
+            ITimeInstant start, ITimeInstant end, ITimeDuration period) {
         return create(type, resolutionType, resolutionMultiplier, start, end, period, null, null, null);
     }
 
@@ -329,7 +345,8 @@ public class Time extends Extent implements ITime {
     }
 
     public static ITimeInstant instant(KimDate date) {
-        DateTime dtime = new DateTime(date.getYear(), date.getMonth(), date.getDay(), date.getHour(), date.getMin(),
+        DateTime dtime = new DateTime(date.getYear(), date.getMonth(), date.getDay(), date.getHour(),
+                date.getMin(),
                 date.getSec(), date.getMs(), DateTimeZone.UTC);
         return new TimeInstant(dtime);
     }
@@ -339,13 +356,17 @@ public class Time extends Extent implements ITime {
     }
 
     public static ITimeDuration duration(IQuantity spec) {
-        Resolution res = new ResolutionImpl(Resolution.Type.parse(spec.getUnit()), spec.getValue().doubleValue());
-        return TimeDuration.create((long) (res.getMultiplier() * res.getType().getMilliseconds()), res.getType());
+        Resolution res = new ResolutionImpl(Resolution.Type.parse(spec.getUnit()),
+                spec.getValue().doubleValue());
+        return TimeDuration.create((long) (res.getMultiplier() * res.getType().getMilliseconds()),
+                res.getType());
     }
 
     public static ITimeDuration duration(Quantity spec) {
-        Resolution res = new ResolutionImpl(Resolution.Type.parse(spec.getUnit().toString()), spec.getValue().doubleValue());
-        return TimeDuration.create((long) (res.getMultiplier() * res.getType().getMilliseconds()), res.getType());
+        Resolution res = new ResolutionImpl(Resolution.Type.parse(spec.getUnit().toString()),
+                spec.getValue().doubleValue());
+        return TimeDuration.create((long) (res.getMultiplier() * res.getType().getMilliseconds()),
+                res.getType());
     }
 
     public static ITimeDuration duration(String string) {
@@ -361,7 +382,8 @@ public class Time extends Extent implements ITime {
     }
 
     public static Resolution resolution(Quantity spec) {
-        return new ResolutionImpl(Resolution.Type.parse(spec.getUnit().toString()), spec.getValue().doubleValue());
+        return new ResolutionImpl(Resolution.Type.parse(spec.getUnit().toString()),
+                spec.getValue().doubleValue());
     }
 
     public static Resolution resolution(ITimeInstant start, ITimeInstant end) {
@@ -410,7 +432,8 @@ public class Time extends Extent implements ITime {
 
             ret.multiplicity = 1;
             if (ret.start != null && ret.end != null && ret.step != null) {
-                ret.multiplicity = (ret.end.getMilliseconds() - ret.start.getMilliseconds()) / ret.step.getMilliseconds() + 1;
+                ret.multiplicity = (ret.end.getMilliseconds() - ret.start.getMilliseconds())
+                        / ret.step.getMilliseconds() + 1;
             } else if (ret.getTimeType() == ITime.Type.GRID) {
                 ret.setupExtents();
             }
@@ -451,6 +474,11 @@ public class Time extends Extent implements ITime {
 
     @Override
     public long size() {
+
+        // if (this.extension != null) {
+        // return this.extension.size() + 1;
+        // }
+
         if (end == null || start == null) {
             return this.getTimeType() == ITime.Type.GRID ? Geometry.INFINITE_SIZE : 1;
         }
@@ -459,7 +487,8 @@ public class Time extends Extent implements ITime {
             multiplicity = 0;
             for (long i = 0;; i++) {
                 Time ext = makeExtent(i);
-                if (!ext.is(ITime.Type.INITIALIZATION) && ext.end.getMilliseconds() > this.end.getMilliseconds()) {
+                if (!ext.is(ITime.Type.INITIALIZATION)
+                        && ext.end.getMilliseconds() > this.end.getMilliseconds()) {
                     break;
                 }
                 multiplicity++;
@@ -510,9 +539,10 @@ public class Time extends Extent implements ITime {
         return isConsistent()
                 ? create(this.extentType == ITime.Type.LOGICAL ? ITime.Type.LOGICAL : ITime.Type.PHYSICAL,
                         (this.resolution == null ? null : this.resolution.getType()),
-                        (this.resolution == null ? null : this.resolution.getMultiplier(start, end)), start, end, null,
-                        (this.coverageResolution == null ? null : this.coverageResolution.getType()), this.coverageStart,
-                        this.coverageEnd)
+                        (this.resolution == null ? null : this.resolution.getMultiplier(start, end)), start,
+                        end, null,
+                        (this.coverageResolution == null ? null : this.coverageResolution.getType()),
+                        this.coverageStart, this.coverageEnd)
                 : this;
     }
 
@@ -534,8 +564,14 @@ public class Time extends Extent implements ITime {
     @Override
     public IExtent getExtent(long stateIndex) {
 
+        // if (this.extension != null && stateIndex > 0) {
+        // Pair<Long, Long> ext = extension.getExtension((int)stateIndex - 1);
+        // return create(ext.getFirst(), ext.getSecond()).withLocatedOffset(stateIndex);
+        // }
+
         if (stateIndex >= size() || stateIndex < 0) {
-            throw new IllegalArgumentException("time: state " + stateIndex + " requested when size == " + multiplicity);
+            throw new KlabIllegalArgumentException(
+                    "time: state " + stateIndex + " requested when size == " + multiplicity);
         }
 
         if (size() == 1) {
@@ -749,8 +785,19 @@ public class Time extends Extent implements ITime {
         Time ret = null;
 
         if (stateIndex == 0) {
+
             ret = initialization(this);
+
         } else {
+
+            DateTime start = null;
+            DateTime end = null;
+
+            // if (this.extension != null) {
+            // Pair<Long, Long> span = this.extension.getExtension((int) stateIndex - 1);
+            // start = new DateTime(span.getFirst());
+            // end = new DateTime(span.getSecond());
+            // } else {
 
             /*
              * break down the step into an integer offset and a fraction
@@ -777,9 +824,6 @@ public class Time extends Extent implements ITime {
                 intStep += bigDecimal.longValue();
                 leftover = bigDecimal.subtract(new BigDecimal(bigDecimal.longValue())).doubleValue();
             }
-
-            DateTime start = null;
-            DateTime end = null;
 
             if (this.start != null) {
 
@@ -917,6 +961,7 @@ public class Time extends Extent implements ITime {
                     break;
                 }
             }
+            // }
 
             // we're a grid, the state we use is
             stateIndex--;
@@ -978,7 +1023,7 @@ public class Time extends Extent implements ITime {
     }
 
     @Override
-    public String encode(Encoding...options) {
+    public String encode(Encoding... options) {
 
         String prefix = "T";
         if (getTimeType() == ITime.Type.LOGICAL) {
@@ -993,8 +1038,8 @@ public class Time extends Extent implements ITime {
         if (!this.is(ITime.Type.INITIALIZATION)) {
             if (start != null) {
                 if (end != null) {
-                    args += "," + Geometry.PARAMETER_TIME_PERIOD + "=[" + start.getMilliseconds() + " " + end.getMilliseconds()
-                            + "]";
+                    args += "," + Geometry.PARAMETER_TIME_PERIOD + "=[" + start.getMilliseconds() + " "
+                            + end.getMilliseconds() + "]";
                 } else {
                     args += "," + Geometry.PARAMETER_TIME_LOCATOR + "=" + start.getMilliseconds();
                 }
@@ -1048,7 +1093,8 @@ public class Time extends Extent implements ITime {
 
                 ret.extentType = extentType == ITime.Type.LOGICAL ? ITime.Type.LOGICAL : ITime.Type.PHYSICAL;
                 ret.step = null;
-                ((ResolutionImpl) ret.resolution).setMultiplier(ret.resolution.getMultiplier(ret.start, ret.end));
+                ((ResolutionImpl) ret.resolution)
+                        .setMultiplier(ret.resolution.getMultiplier(ret.start, ret.end));
 
             } else {
                 return ret;
@@ -1080,12 +1126,18 @@ public class Time extends Extent implements ITime {
     }
 
     public Time focus(ITimeInstant focal) {
-        Time ret = copy();
+
+        Time ret = this.extension != null ? this.extension.at(focal.getMilliseconds()) : copy();
+
         ret.focus = focal;
-        // keep location info
-        ret.locatedOffsets = this.locatedOffsets;
-        ret.locatedExtent = this.locatedExtent;
-        ret.locatedLinearOffset = this.locatedLinearOffset;
+
+        if (this.extension == null) {
+            // keep location info
+            ret.locatedOffsets = this.locatedOffsets;
+            ret.locatedExtent = this.locatedExtent;
+            ret.locatedLinearOffset = this.locatedLinearOffset;
+        }
+
         return ret;
     }
 
@@ -1151,7 +1203,8 @@ public class Time extends Extent implements ITime {
     public static Time create(Dimension dimension) {
 
         long[] period = dimension.getParameters().get(Geometry.PARAMETER_TIME_PERIOD, long[].class);
-        String representation = dimension.getParameters().get(Geometry.PARAMETER_TIME_REPRESENTATION, String.class);
+        String representation = dimension.getParameters().get(Geometry.PARAMETER_TIME_REPRESENTATION,
+                String.class);
         Double scope = dimension.getParameters().get(Geometry.PARAMETER_TIME_SCOPE, Double.class);
         String unit = dimension.getParameters().get(Geometry.PARAMETER_TIME_SCOPE_UNIT, String.class);
         Long locator = dimension.getParameters().get(Geometry.PARAMETER_TIME_LOCATOR, Long.class);
@@ -1196,8 +1249,8 @@ public class Time extends Extent implements ITime {
             scope = rres.getMultiplier();
         }
 
-        return create(type, resType, (scope == null ? null : 1.0), start, end, null, coverage, (cstart == null ? -1 : cstart),
-                (cend == null ? -1 : cend));
+        return create(type, resType, (scope == null ? null : 1.0), start, end, null, coverage,
+                (cstart == null ? -1 : cstart), (cend == null ? -1 : cend));
     }
 
     @Override
@@ -1241,6 +1294,10 @@ public class Time extends Extent implements ITime {
                                                                                            * .getStart
                                                                                            * ())
                                                                                            */;
+                } else if (((Time) locators[0]).getLocatedOffsets() != null) {
+                    return (IExtent)locators[0];
+                } else if (((Time) locators[0]).focus != null) {
+                    return focus(((Time) locators[0]).focus);
                 } else {
                     /*
                      * Mediation situation. Because of the irregular extents, not doing the coverage
@@ -1263,20 +1320,27 @@ public class Time extends Extent implements ITime {
                  * Pick the sub-extent containing the instant or return the entire scale if we have
                  * none. In all cases focalize on the specific instant requested.
                  */
+                if (end.equals((ITimeInstant) locators[0])) {
+                    return termination(this);
+                }
                 if (!(start == null || start.isAfter((ITimeInstant) locators[0])
                         || (end != null && end.isBefore((ITimeInstant) locators[0])))) {
 
-                    if (size() <= 1) {
+                    if (size() <= 1 || extension != null) {
                         return this.focus((ITimeInstant) locators[0]);
                     }
                     Time last = null;
                     for (int i = 1; i < size(); i++) {
                         last = (Time) getExtent(i);
-                        if (last.getStart().getMilliseconds() >= ((ITimeInstant) locators[0]).getMilliseconds()
-                                || last.getEnd().getMilliseconds() > ((ITimeInstant) locators[0]).getMilliseconds()) {
+                        if (last.getStart().getMilliseconds() >= ((ITimeInstant) locators[0])
+                                .getMilliseconds()
+                                || last.getEnd().getMilliseconds() > ((ITimeInstant) locators[0])
+                                        .getMilliseconds()) {
                             return last.focus((ITimeInstant) locators[0]);
                         }
-                        if (last != null && last.getEnd().getMilliseconds() == ((ITimeInstant) locators[0]).getMilliseconds()) {
+                        if (last != null
+                                && last.getEnd().getMilliseconds() == ((ITimeInstant) locators[0])
+                                        .getMilliseconds()) {
                             // admit a locator focused on the immediate after
                             return last.focus((ITimeInstant) locators[0]);
                         }
@@ -1324,7 +1388,7 @@ public class Time extends Extent implements ITime {
         return this;
     }
 
-    private Time withLocatedOffset(long n) {
+    Time withLocatedOffset(long n) {
         this.locatedLinearOffset = n;
         this.locatedOffsets = new long[]{n};
         return this;
@@ -1350,9 +1414,10 @@ public class Time extends Extent implements ITime {
         if (extent instanceof Time) {
             Time other = (Time) extent;
             if (other.getStep() != null) {
-                return create(ITime.Type.GRID, other.getResolution().getType(), other.getResolution().getMultiplier(),
-                        getStart() == null ? other.getStart() : getStart(), getEnd() == null ? other.getEnd() : getEnd(),
-                        other.getStep());
+                return create(ITime.Type.GRID, other.getResolution().getType(),
+                        other.getResolution().getMultiplier(),
+                        getStart() == null ? other.getStart() : getStart(),
+                        getEnd() == null ? other.getEnd() : getEnd(), other.getStep());
             }
         }
         return this;
@@ -1394,7 +1459,8 @@ public class Time extends Extent implements ITime {
         }
 
         // /*
-        // * Cover a span with the original resolution, produce variable coverages in the
+        // * Cover a span with the original resolution, produce variable coverages in
+        // the
         // * resulting grid
         // */
         // Time other = create(ITime.Type.PHYSICAL, Resolution.Type.WEEK, 2,
@@ -1460,7 +1526,9 @@ public class Time extends Extent implements ITime {
         if (this.end == null || this.start == null) {
             return 0;
         }
-        return temporalUnit.convert(this.end.getMilliseconds() - this.start.getMilliseconds(), Units.INSTANCE.MILLISECONDS)
+        return temporalUnit
+                .convert(this.end.getMilliseconds() - this.start.getMilliseconds(),
+                        Units.INSTANCE.MILLISECONDS)
                 .doubleValue();
     }
 
@@ -1492,10 +1560,12 @@ public class Time extends Extent implements ITime {
         if (resolution.getType() == Resolution.Type.YEAR) {
             return "" + ((TimeInstant) time).time.getYear();
         } else if (resolution.getType() == Resolution.Type.MONTH) {
-            YearMonth md = new YearMonth(((TimeInstant) time).time.getYear(), ((TimeInstant) time).time.getMonthOfYear());
+            YearMonth md = new YearMonth(((TimeInstant) time).time.getYear(),
+                    ((TimeInstant) time).time.getMonthOfYear());
             return "" + md.monthOfYear().getAsShortText() + " " + ((TimeInstant) time).time.getYear();
         } else if (resolution.getType() == Resolution.Type.MONTH) {
-            YearMonth md = new YearMonth(((TimeInstant) time).time.getYear(), ((TimeInstant) time).time.getMonthOfYear());
+            YearMonth md = new YearMonth(((TimeInstant) time).time.getYear(),
+                    ((TimeInstant) time).time.getMonthOfYear());
             return "" + md.monthOfYear().getAsShortText() + ((TimeInstant) time).time.getDayOfMonth() + ", "
                     + ((TimeInstant) time).time.getYear();
         }
@@ -1525,6 +1595,85 @@ public class Time extends Extent implements ITime {
         ITimeInstant intend = this.start.plus((int) periods, resolution);
         long leftover = this.end.getMilliseconds() - intend.getMilliseconds();
         return (double) periods + ((double) leftover / (double) resolution.getSpan());
+    }
+
+    @Override
+    public boolean isDistributed() {
+        return size() > 1 || isRegular() || this.getTimeType() == ITime.Type.GRID;
+    }
+
+    public boolean mergeTransition(Dimension transition) {
+
+        ITime tr = promote(transition);
+        if (tr.getTimeType() == ITime.Type.INITIALIZATION) {
+            return false;
+        }
+        if (extension == null) {
+            extension = new TemporalExtension(this);
+        }
+        if (extension.add(tr)) {
+            // this.extentType = ITime.Type.GRID;
+            // multiplicity = extension.size() + 1;
+            return true;
+        }
+
+        return false;
+    }
+
+    public static ITime promote(Dimension transition) {
+        if (transition instanceof ITime) {
+            return (ITime) transition;
+        }
+        return create(transition);
+    }
+
+    public int getLocatedTimeslice() {
+        return this.timeSlice;
+    }
+
+    Time withLocatedTimeslice(int i) {
+        this.withLocatedOffset(i + 1);
+        this.timeSlice = i;
+        return this;
+    }
+
+    public ITime[] getChangedExtents() {
+        long[] timestamps = getUpdateTimestamps();
+        ITime[] ret = new ITime[extension.size()];
+        for (int i = 0; i < extension.size(); i++) {
+            Pair<Long, Long> ext = extension.getExtension(i);
+            ret[i] = create(ext.getFirst(), ext.getSecond()).withLocatedOffset(timestamps[i]);
+        }
+        return ret;
+    }
+
+    public long[] getUpdateTimestamps() {
+        if (extension != null) {
+            return extension.getTimestamps();
+        }
+        return new long[]{};
+    }
+
+    @Override
+    public boolean hasChangeDuring(ITime time) {
+        return extension == null ? false : extension.hasChangeDuring(time);
+    }
+
+    /**
+     * Copier with option to copy the "stateful" extension events.
+     * 
+     * @param copyExtension
+     * @return
+     */
+    public Time copy(boolean copyExtension, boolean copyScaleLocation) {
+        Time ret = new Time(this);
+        if (copyExtension) {
+            ret.extension = this.extension == null ? null : new TemporalExtension(this.extension);
+        }
+        if (copyScaleLocation) {
+            ret.copyScaleLocation(this);
+        }
+        return ret;
     }
 
 }

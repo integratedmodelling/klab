@@ -18,11 +18,13 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.runtime.AbstractRuntimeScope;
+import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
-import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.engine.Engine;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.monitoring.Message;
@@ -40,229 +42,229 @@ import org.integratedmodelling.klab.utils.Parameters;
  */
 public class ObserveContextTask extends AbstractTask<IArtifact> {
 
-	FutureTask<ISubject> delegate;
-	String taskDescription = "<uninitialized observation task " + token + ">";
-	IParameters<String> globalState = Parameters.create();
+    FutureTask<ISubject> delegate;
+    String taskDescription = "<uninitialized observation task " + token + ">";
+    IParameters<String> globalState = Parameters.create();
 
-	@Override
-	public IParameters<String> getState() {
-		return globalState;
-	}
+    @Override
+    public IParameters<String> getState() {
+        return globalState;
+    }
 
-	public ObserveContextTask(ObserveContextTask parent, String description) {
-		super(parent);
-		this.delegate = parent.delegate;
-		this.taskDescription = description;
-	}
+    public ObserveContextTask(ObserveContextTask parent, String description) {
+        super(parent);
+        this.delegate = parent.delegate;
+        this.taskDescription = description;
+    }
 
-	public ObserveContextTask(Session session, Observer observer, Collection<String> scenarios) {
-		this(session, observer, scenarios, null, null, session.getParentIdentity(Engine.class).getTaskExecutor(), null);
-	}
+    public ObserveContextTask(Session session, Observer observer, Collection<String> scenarios) {
+        this(session, observer, scenarios, null, null,
+                session.getParentIdentity(Engine.class).getTaskExecutor(), null);
+    }
 
-	/**
-	 * Listener consumers are called as things progress. The observation listener is
-	 * first called with null as a parameter when starting, then (if no error
-	 * occurs) another time with the observation as argument. The observation may be
-	 * empty. If an exception is thrown, the error listener is called with the
-	 * exception as argument.
-	 * 
-	 * @param session
-	 * @param observer
-	 * @param scenarios
-	 * @param observationListener
-	 * @param errorListener
-	 */
-	public ObserveContextTask(Session session, Observer observer, Collection<String> scenarios,
-			Collection<BiConsumer<ITaskIdentity, IArtifact>> observationListeners,
-			Collection<BiConsumer<ITaskIdentity, Throwable>> errorListeners, Executor executor,
-			SessionActivity activityDescriptor) {
+    /**
+     * Listener consumers are called as things progress. The observation listener is first called
+     * with null as a parameter when starting, then (if no error occurs) another time with the
+     * observation as argument. The observation may be empty. If an exception is thrown, the error
+     * listener is called with the exception as argument.
+     * 
+     * @param session
+     * @param observer
+     * @param scenarios
+     * @param observationListener
+     * @param errorListener
+     */
+    public ObserveContextTask(Session session, Observer observer, Collection<String> scenarios,
+            Collection<BiConsumer<ITaskIdentity, IArtifact>> observationListeners,
+            Collection<BiConsumer<ITaskIdentity, Throwable>> errorListeners, Executor executor,
+            SessionActivity activityDescriptor) {
 
-		try {
+        try {
 
-			this.monitor = (session.getMonitor()).get(this);
-			this.session = session;
-			this.taskDescription = "Observation of " + observer.getId();
-			this.activity.setActivityDescriptor(activityDescriptor);
-			this.resolvable = observer;
+            this.monitor = (session.getMonitor()).get(this);
+            this.session = session;
+            this.taskDescription = "Observation of " + observer.getId();
+            this.activity.setActivityDescriptor(activityDescriptor);
+            this.resolvable = observer;
 
-			session.touch();
+            session.touch();
 
-			delegate = new FutureTask<ISubject>(new MonitoredCallable<ISubject>(this) {
+            delegate = new FutureTask<ISubject>(new MonitoredCallable<ISubject>(this){
 
-				@Override
-				public ISubject run() throws Exception {
+                @Override
+                public ISubject run() throws Exception {
 
-					ISubject ret = null;
+                    ISubject ret = null;
 
-					try {
+                    try {
 
-						/*
-						 * register the task so it can be interrupted and inquired about
-						 */
-						notifyStart();
+                        /*
+                         * register the task so it can be interrupted and inquired about
+                         */
+                        notifyStart();
 
-						if (observationListeners != null) {
-							for (BiConsumer<ITaskIdentity, IArtifact> observationListener : observationListeners) {
-								observationListener.accept((ITaskIdentity) this.task, null);
-							}
-						}
+                        if (observationListeners != null) {
+                            for (BiConsumer<ITaskIdentity, IArtifact> observationListener : observationListeners) {
+                                observationListener.accept((ITaskIdentity) this.task, null);
+                            }
+                        }
 
-						// TODO put all this logics in the resolver, call it from within Observations
-						// and use that here.
-						ResolutionScope scope = Resolver.create(null).resolve(observer, monitor, scenarios);
-						if (scope.getCoverage().isRelevant()) {
+                        // TODO put all this logics in the resolver, call it from within
+                        // Observations
+                        // and use that here.
+                        ResolutionScope scope = Resolver.create(null).resolve(observer, monitor, scenarios);
+                        /*
+                         * create the root contextualization scope for the context
+                         */
+                        IRuntimeScope runtimeScope = RuntimeScope.rootScope(scope);
 
-							Dataflow dataflow = Dataflows.INSTANCE
-									.compile("local:task:" + session.getId() + ":" + token, scope, null)
-									.setPrimary(true);
+                        if (scope.getCoverage().isRelevant()) {
 
-							dataflow.setDescription(taskDescription);
+                            Dataflow dataflow = Dataflows.INSTANCE
+                                    .compile("local:task:" + session.getId() + ":" + token, scope, null)
+                                    .setPrimary(true);
 
-							if (activity.getActivityDescriptor() != null) {
-								activity.getActivityDescriptor().setDataflowCode(dataflow.getKdlCode());
-							}
+                            dataflow.setDescription(taskDescription);
 
-							/*
-							 * Instantiate a preliminary contextualization strategy as there is no context
-							 * yet.
-							 */
-							ContextualizationStrategy contextualizationStrategy = new ContextualizationStrategy();
-							contextualizationStrategy.add(dataflow);
+                            if (activity.getActivityDescriptor() != null) {
+                                activity.getActivityDescriptor().setDataflowCode(dataflow.getKdlCode());
+                            }
 
-							// context will take it from the task identity when it's created
-							setContextualizationStrategy(contextualizationStrategy);
+                            /*
+                             * make a copy of the coverage so that we ensure it's a scale, behaving
+                             * properly at merge. FIXME this must be the entire scale now - each
+                             * actuator creates its artifacts, then initialization is handled when
+                             * computing.
+                             */
+                            ret = (ISubject) dataflow.run(scope.getCoverage().copy(), runtimeScope);
 
-							session.getMonitor()
-									.send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
-											IMessage.Type.DataflowCompiled, new DataflowReference(token,
-													dataflow.getKdlCode(), contextualizationStrategy.getElkGraph())));
-							/*
-							 * make a copy of the coverage so that we ensure it's a scale, behaving properly
-							 * at merge. FIXME this must be the entire scale now - each actuator creates its
-							 * artifacts, then initialization is handled when computing.
-							 */
-							ret = (ISubject) dataflow.run(scope.getCoverage().copy(), monitor);
 
-							if (ret != null) {
-								setContext((Subject) ret);
-								getDescriptor().setContextId(ret.getId());
-								/*
-								 * load any behaviors and schedule repeating actions
-								 */
-								Actors.INSTANCE.instrument(observer.getAnnotations(), (Observation) ret);
+                            if (ret != null) {
 
-								/*
-								 * Register the observation context with the session. It will be disposed of
-								 * and/or persisted by the session itself.
-								 */
-								session.registerObservationContext(((Observation) ret).getScope());
+                            	((AbstractRuntimeScope)runtimeScope).setRootDataflow(dataflow, ret.getId());
+                                ((AbstractRuntimeScope)runtimeScope).notifyDataflowChanges(runtimeScope);
 
-								/*
-								 * tell the scope to notify internal listeners (for actors and the like)
-								 */
-								((Observation) ret).getScope().notifyListeners((IObservation) ret);
+                                setContext((Subject) ret);
+                                getDescriptor().setContextId(ret.getId());
+                                /*
+                                 * load any behaviors and schedule repeating actions
+                                 */
+                                Actors.INSTANCE.instrument(observer.getAnnotations(), (Observation) ret);
 
-							}
+                                /*
+                                 * Register the observation context with the session. It will be
+                                 * disposed of and/or persisted by the session itself.
+                                 */
+                                session.registerObservationContext(((Observation) ret).getScope());
 
-							getActivity().finished();
+                                /*
+                                 * tell the scope to notify internal listeners (for actors and the
+                                 * like)
+                                 */
+                                ((Observation) ret).getScope().notifyListeners((IObservation) ret);
 
-						}
+                            }
 
-						if (observationListeners != null) {
-							for (BiConsumer<ITaskIdentity, IArtifact> observationListener : observationListeners) {
-								observationListener.accept((ITaskIdentity) this.task, ret);
-							}
-						}
+                            getActivity().finished();
 
-						notifyEnd();
+                        }
 
-					} catch (Throwable e) {
+                        if (observationListeners != null) {
+                            for (BiConsumer<ITaskIdentity, IArtifact> observationListener : observationListeners) {
+                                observationListener.accept((ITaskIdentity) this.task, ret);
+                            }
+                        }
 
-						if (errorListeners != null) {
-							for (BiConsumer<ITaskIdentity, Throwable> errorListener : errorListeners) {
-								errorListener.accept((ITaskIdentity) this.task, e);
-							}
-						}
+                        notifyEnd();
 
-						throw notifyAbort(e);
+                    } catch (Throwable e) {
 
-					}
-					return ret;
-				}
+                        if (errorListeners != null) {
+                            for (BiConsumer<ITaskIdentity, Throwable> errorListener : errorListeners) {
+                                errorListener.accept((ITaskIdentity) this.task, e);
+                            }
+                        }
 
-			});
+                        throw notifyAbort(e);
 
-			executor.execute(delegate);
+                    }
+                    return ret;
+                }
 
-		} catch (Throwable e) {
-			monitor.error("error initializing context task: " + e.getMessage());
-		}
-	}
+            });
 
-	@Override
-	public String toString() {
-		return taskDescription;
-	}
+            executor.execute(delegate);
 
-	@Override
-	public String getId() {
-		return token;
-	}
+        } catch (Throwable e) {
+            monitor.error("error initializing context task: " + e.getMessage());
+        }
+    }
 
-	@Override
-	public boolean is(Type type) {
-		return type == Type.TASK;
-	}
+    @Override
+    public String toString() {
+        return taskDescription;
+    }
 
-	@Override
-	public <T extends IIdentity> T getParentIdentity(Class<T> type) {
-		return IIdentity.findParent(this, type);
-	}
+    @Override
+    public String getId() {
+        return token;
+    }
 
-	@Override
-	public IIdentity getParentIdentity() {
-		return parentTask == null ? session : parentTask;
-	}
+    @Override
+    public boolean is(Type type) {
+        return type == Type.TASK;
+    }
 
-	@Override
-	public IMonitor getMonitor() {
-		return monitor;
-	}
+    @Override
+    public <T extends IIdentity> T getParentIdentity(Class<T> type) {
+        return IIdentity.findParent(this, type);
+    }
 
-	@Override
-	public boolean cancel(boolean mayInterruptIfRunning) {
-		monitor.interrupt();
-		return delegate.cancel(mayInterruptIfRunning);
-	}
+    @Override
+    public IIdentity getParentIdentity() {
+        return parentTask == null ? session : parentTask;
+    }
 
-	@Override
-	public boolean isCancelled() {
-		return delegate.isCancelled();
-	}
+    @Override
+    public IMonitor getMonitor() {
+        return monitor;
+    }
 
-	@Override
-	public boolean isDone() {
-		return delegate.isDone();
-	}
+    @Override
+    public boolean cancel(boolean mayInterruptIfRunning) {
+        monitor.interrupt();
+        return delegate.cancel(mayInterruptIfRunning);
+    }
 
-	@Override
-	public ISubject get() throws InterruptedException, ExecutionException {
-		return delegate.get();
-	}
+    @Override
+    public boolean isCancelled() {
+        return delegate.isCancelled();
+    }
 
-	@Override
-	public ISubject get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-		return delegate.get(timeout, unit);
-	}
+    @Override
+    public boolean isDone() {
+        return delegate.isDone();
+    }
 
-	@Override
-	public ITaskTree<IArtifact> createChild(String description) {
-		return new ObserveContextTask(this, description);
-	}
+    @Override
+    public ISubject get() throws InterruptedException, ExecutionException {
+        return delegate.get();
+    }
 
-	@Override
-	protected String getTaskDescription() {
-		return taskDescription;
-	}
+    @Override
+    public ISubject get(long timeout, TimeUnit unit)
+            throws InterruptedException, ExecutionException, TimeoutException {
+        return delegate.get(timeout, unit);
+    }
+
+    @Override
+    public ITaskTree<IArtifact> createChild(String description) {
+        return new ObserveContextTask(this, description);
+    }
+
+    @Override
+    protected String getTaskDescription() {
+        return taskDescription;
+    }
 
 }

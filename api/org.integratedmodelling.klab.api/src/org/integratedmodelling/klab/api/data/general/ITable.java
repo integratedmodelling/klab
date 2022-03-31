@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.integratedmodelling.klab.api.data.IResource.Attribute;
 import org.integratedmodelling.klab.api.knowledge.ICodelist;
+import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 
 /**
@@ -27,7 +28,7 @@ public interface ITable<T> extends Iterable<Iterable<?>> {
 	public enum SearchOptions {
 		UNIQUE, SORTED_ASCENDENT, SORTED_DESCENDENT
 	}
-
+	
 	interface Filter {
 		public enum Type {
 			COLUMN_HEADER, ROW_HEADER/* , ATTRIBUTE_VALUE */, INCLUDE_COLUMNS/* , EXCLUDE_COLUMNS */,

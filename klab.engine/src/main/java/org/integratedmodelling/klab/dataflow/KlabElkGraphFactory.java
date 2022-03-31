@@ -9,6 +9,8 @@ import java.awt.image.BufferedImage;
 import java.util.EnumSet;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.elk.alg.layered.options.CenterEdgeLabelPlacementStrategy;
+import org.eclipse.elk.alg.layered.options.EdgeLabelSideSelection;
 import org.eclipse.elk.alg.layered.options.LayeredMetaDataProvider;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.layered.options.WrappingStrategy;
@@ -18,6 +20,7 @@ import org.eclipse.elk.core.labels.LabelManagementOptions;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.options.EdgeLabelPlacement;
 import org.eclipse.elk.core.options.HierarchyHandling;
 import org.eclipse.elk.core.options.NodeLabelPlacement;
 import org.eclipse.elk.core.options.PortSide;
@@ -186,9 +189,22 @@ public class KlabElkGraphFactory {
 	}
 	
 	public ElkEdge createSimpleEdge(final ElkConnectableShape source, final ElkConnectableShape target, final String identifier) {
+//	    String[] palabras = {"Lorem", "ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit"};
+//	    int index = (int) Math.floor(Math.random() * (palabras.length + 2));
+//	    return createSimpleEdge(source, target, identifier, index >= palabras.length ? null : palabras[index]);
+	    return createSimpleEdge(source, target, identifier, null);
+	}
+	
+	public ElkEdge createSimpleEdge(final ElkConnectableShape source, final ElkConnectableShape target, final String identifier, final String label) {
 		ElkEdge simpleEdge = ElkGraphUtil.createSimpleEdge(source, target);
 		if (identifier != null) {
 			simpleEdge.setIdentifier(identifier);
+		}
+		if (label != null) {
+		    ElkLabel elkLabel = createLabel(label, source.getIdentifier() + "_" + target.getIdentifier(), simpleEdge);
+		    elkLabel.setProperty(CoreOptions.EDGE_LABELS_INLINE, true);
+		    // elkLabel.setProperty(CoreOptions.SPACING_LABEL_NODE, 0.0);
+		    // elkLabel.setProperty(LayeredMetaDataProvider.EDGE_LABELS_SIDE_SELECTION, EdgeLabelSideSelection.ALWAYS_UP);
 		}
 		return simpleEdge;
 	}

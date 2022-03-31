@@ -14,7 +14,8 @@ import java.util.Map;
 public interface ITicket {
 
 	enum Type {
-		ResourceSubmission, ResourcePublication, ComponentSetup
+		ResourceSubmission, ResourcePublication, ComponentSetup, ContextObservation, ObservationInContext,
+		ContextEstimate, ObservationEstimate
 	}
 
 	enum Status {
@@ -35,13 +36,15 @@ public interface ITicket {
 
 	/**
 	 * Resolve the ticket and update in the manager. Pass any new data in key, value
-	 * pairs. Should also be able to use a network bean.
+	 * pairs. Should also be able to use a network bean. If the data contain an
+	 * exception, resolve as error.
 	 * 
 	 */
-	void resolve(Object...data);
+	void resolve(Object... data);
 
 	/**
-	 * Resolve the ticket as error and update in the manager.
+	 * Resolve the ticket as error with the passed status message and update in the
+	 * manager.
 	 */
 	void error(String status);
 

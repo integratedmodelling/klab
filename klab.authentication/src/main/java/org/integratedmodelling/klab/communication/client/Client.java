@@ -48,7 +48,6 @@ import org.integratedmodelling.klab.rest.EngineAuthenticationRequest;
 import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
 import org.integratedmodelling.klab.rest.NodeAuthenticationRequest;
 import org.integratedmodelling.klab.rest.NodeAuthenticationResponse;
-import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.Escape;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
@@ -199,7 +198,6 @@ public class Client extends RestTemplate implements IClient {
 			setMessageConverters(messageConverters);
 			this.setInterceptors(Collections.singletonList(new AuthorizationInterceptor()));
 			this.authToken = node.getId();
-
 		}
 	}
 

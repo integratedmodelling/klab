@@ -11,6 +11,10 @@ public class DataflowReference implements IDataflowReference {
 	public DataflowReference() {
 	}
 
+	public DataflowReference(String contextId) {
+		this.taskId = contextId;
+	}
+
 	public DataflowReference(String taskId, String kdlCode, String jsonElkLayout) {
 		this.taskId = taskId;
 		this.kdlCode = kdlCode;

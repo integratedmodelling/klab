@@ -352,7 +352,7 @@ public class Space extends Extent implements ISpace {
                         + "  into " + getClass().getCanonicalName());
 
     }
-
+    
     @Override
     public boolean isConsistent() {
         return consistent;
@@ -590,7 +590,11 @@ public class Space extends Extent implements ISpace {
                             + other.getClass().getCanonicalName());
         }
         Shape oShape = (Shape) ((ISpace) other).getShape();
-        return shape == null || oShape == null ? false : shape.shapeGeometry.contains(oShape.shapeGeometry);
+        if (this.shape == null || oShape == null) {
+        	// we contain multitudes or the other doesn't care
+        	return true;
+        }
+        return shape.shapeGeometry.contains(oShape.shapeGeometry);
     }
 
     @Override
@@ -1081,7 +1085,8 @@ public class Space extends Extent implements ISpace {
                             if (((CellImpl) otherCell).getGrid().equals(this.grid)) {
                                 return otherCell;
                             }
-                            return this.grid.getCoveredExtent(otherCell);
+                            double[] center = otherCell.getCenter();
+                            return this.grid.covers(center) ? this.grid.getCellAt(center, false) : null;
                         }
                     }
                 } else if (locators[0] instanceof Number && !Utils.isFloatingPoint((Number) locators[0])) {
@@ -1178,6 +1183,11 @@ public class Space extends Extent implements ISpace {
     @Override
     public double getDimensionSize(IUnit unit) {
         return getShape().getDimensionSize(unit);
+    }
+
+    @Override
+    public boolean isDistributed() {
+        return size() > 1 || isRegular();
     }
 
 }

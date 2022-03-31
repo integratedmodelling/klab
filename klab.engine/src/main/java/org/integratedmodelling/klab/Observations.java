@@ -64,6 +64,7 @@ import org.integratedmodelling.klab.components.runtime.observations.ObservationG
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroupView;
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.data.classification.Discretization;
+import org.integratedmodelling.klab.data.storage.MergingState;
 import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.indexing.Indexer;
@@ -93,6 +94,8 @@ import org.integratedmodelling.klab.utils.Range;
 import org.integratedmodelling.klab.utils.Triple;
 import org.integratedmodelling.klab.utils.Utils;
 import org.integratedmodelling.klab.utils.ZipUtils;
+
+import com.google.common.collect.Lists;
 
 public enum Observations implements IObservationService {
 
@@ -158,13 +161,22 @@ public enum Observations implements IObservationService {
 
 		long time = -1;
 
-		if (state instanceof State) {
+		if (state instanceof State && !(state instanceof MergingState)) {
 			time = ((State) state).getStorage().getTemporalOffset(locator);
 		} else {
 			if (locator instanceof IScale && ((IScale) locator).getTime() != null) {
-				time = ((IScale) locator).getTime().getStart().getMilliseconds();
+				ITime timeExtent = ((IScale) locator).getTime();
+				time = timeExtent.getStart().getMilliseconds();
+				if (timeExtent.getFocus() != null && timeExtent.getFocus().isAfter(timeExtent.getStart())) {
+					time += (timeExtent.getEnd().getMilliseconds() - timeExtent.getStart().getMilliseconds())/2;
+				}
 			} else if (locator instanceof ITime) {
+				ITime timeExtent = (ITime)locator;
+				time = timeExtent.getStart().getMilliseconds();
 				time = ((ITime) locator).getStart().getMilliseconds();
+				if (timeExtent.getFocus() != null && timeExtent.getFocus().isAfter(timeExtent.getStart())) {
+					time += (timeExtent.getEnd().getMilliseconds() - timeExtent.getStart().getMilliseconds())/2;
+				}
 			}
 		}
 
@@ -439,6 +451,14 @@ public enum Observations implements IObservationService {
 			ret.setScaleReference(scaleReference);
 		}
 
+		long[] updateTimestamps = ((Observation)observation).getUpdateTimestamps();
+		if (updateTimestamps != null && updateTimestamps.length > 0) {
+			ret.setTimeEvents(new ArrayList<>());
+			for (long l : updateTimestamps) {
+				ret.getTimeEvents().add(l);
+			}
+		}
+		
 		if (observation instanceof State) {
 			String modTimes = ((State) observation).getUpdateDescription();
 			if (!modTimes.isEmpty()) {

@@ -18,44 +18,46 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.utils.NumberUtils;
 
-public class PotentialEvapotranspiredWaterVolumeResolver extends AbstractContextualizer implements IResolver<IProcess>, IExpression {
+public class PotentialEvapotranspiredWaterVolumeResolver extends AbstractContextualizer
+		implements IResolver<IProcess>, IExpression {
 
-    @Override
-    public Type getType() {
-        return Type.PROCESS;
-    }
+	@Override
+	public Type getType() {
+		return Type.PROCESS;
+	}
 
-    @Override
-    public IProcess resolve(IProcess evapotranspirationProcess, IContextualizationScope context) throws KlabException {
-    	
-        IState cropCoefficientState = getInput("crop_coefficient", IState.class);
-        IState maxTempState = getInput("maximum_temperature", IState.class);
-        IState minTempState = getInput("minimum_temperature", IState.class);
-        IState tempState = getInput("atmospheric_temperature", IState.class);
-        IState solarRadiationState = getInput("solar_radiation", IState.class);
-        IState rainfallState = getInput("rainfall_volume", IState.class);
+	@Override
+	public IProcess resolve(IProcess evapotranspirationProcess, IContextualizationScope context) throws KlabException {
 
-        IState petState = getOutput("potential_evapotranspired_water_volume", IState.class);
+		IState cropCoefficientState = getInput("crop_coefficient", IState.class);
+		IState maxTempState = getInput("maximum_temperature", IState.class);
+		IState minTempState = getInput("minimum_temperature", IState.class);
+		IState tempState = getInput("atmospheric_temperature", IState.class);
+		IState solarRadiationState = getInput("solar_radiation", IState.class);
+		IState rainfallState = getInput("rainfall_volume", IState.class);
 
-        TaskMonitor taskMonitor = new TaskMonitor(context.getMonitor());
-        taskMonitor.setTaskName("Potential Evapotranspiration");
+		IState petState = getOutput("potential_evapotranspired_water_volume", IState.class);
+
+		TaskMonitor taskMonitor = new TaskMonitor(context.getMonitor());
+		taskMonitor.setTaskName("Potential Evapotranspiration");
 
 //        if (cropCoefficientState != null) {
 
-            OmsPotentialEvapotranspiredWaterVolume pet = new OmsPotentialEvapotranspiredWaterVolume();
-            pet.pm = taskMonitor;
-            
-            int startDay = context.getScale().getTime().getStart().getDayOfYear();
-            int endDay = context.getScale().getTime().getEnd().getDayOfYear();
-            int days = endDay - startDay;
-            pet.pDaysInTimestep = (double) days;
-            pet.inCropCoefficient = getGridCoverage(context, cropCoefficientState);
-            pet.inMaxTemp = getGridCoverage(context, maxTempState);
-            pet.inMinTemp = getGridCoverage(context, minTempState);
-            pet.inAtmosphericTemp = getGridCoverage(context, tempState);
+		OmsPotentialEvapotranspiredWaterVolume pet = new OmsPotentialEvapotranspiredWaterVolume();
+		pet.pm = taskMonitor;
 
-            Function<Object, Object> transform = null;
+		int startDay = context.getScale().getTime().getStart().getDayOfYear();
+		int endDay = context.getScale().getTime().getEnd().getDayOfYear();
+		int days = endDay - startDay;
+		pet.pDaysInTimestep = (double) days;
+		pet.inCropCoefficient = getGridCoverage(context, cropCoefficientState);
+		pet.inMaxTemp = getGridCoverage(context, maxTempState);
+		pet.inMinTemp = getGridCoverage(context, minTempState);
+		pet.inAtmosphericTemp = getGridCoverage(context, tempState);
+
+		Function<Object, Object> transform = null;
 //            (value) -> {
 //                if (value instanceof Number && !Double.isNaN(((Number) value).doubleValue())) {
 //                    // FIXME do to a wrong annotated solar radiation, we need to check and fix here.
@@ -70,39 +72,41 @@ public class PotentialEvapotranspiredWaterVolumeResolver extends AbstractContext
 //                }
 //                return value;
 //            };
-            GridCoverage2D solarRadiationGc = GeotoolsUtils.INSTANCE.stateToCoverage(solarRadiationState, context.getScale(),
-                    DataBuffer.TYPE_FLOAT, floatNovalue, false, transform);
+		GridCoverage2D solarRadiationGc = GeotoolsUtils.INSTANCE.stateToCoverage(solarRadiationState,
+				context.getScale(), DataBuffer.TYPE_FLOAT, floatNovalue, false, transform);
 
-            pet.inSolarRadiation = solarRadiationGc;// getGridCoverage(context,
-                                                    // solarRadiationState);
-            pet.inRainfall = getGridCoverage(context, rainfallState);
-            pet.inReferenceEtp = null; // TODO consider a case in which reference etp is passed?
+		pet.inSolarRadiation = solarRadiationGc;// getGridCoverage(context,
+												// solarRadiationState);
+		pet.inRainfall = getGridCoverage(context, rainfallState);
+		pet.inReferenceEtp = null; // TODO consider a case in which reference etp is passed?
 
-            try {
-                pet.process();
-            } catch (Exception e) {
-                throw new KlabException(e);
-            }
-            if (!context.getMonitor().isInterrupted()) {
-                GeotoolsUtils.INSTANCE.coverageToState(pet.outputPet, petState, context.getScale(), null);
-            }
+		try {
+			pet.process();
+		} catch (Exception e) {
+			throw new KlabException(e);
+		}
+		if (!context.getMonitor().isInterrupted()) {
+			GeotoolsUtils.INSTANCE.coverageToState(pet.outputPet, petState, context.getScale(),
+					(val) -> NumberUtils.equal(val, -9999) ? Double.NaN : val);
+		}
 
-            GeotoolsUtils.INSTANCE.dumpToRaster(context, "PET", cropCoefficientState, rainfallState, tempState, maxTempState,
-                    minTempState, solarRadiationState, petState);
-            // }
-            return evapotranspirationProcess;
-    }
+		GeotoolsUtils.INSTANCE.dumpToRaster(context, "PET", cropCoefficientState, rainfallState, tempState,
+				maxTempState, minTempState, solarRadiationState, petState);
+		// }
+		return evapotranspirationProcess;
+	}
 
-    private GridCoverage2D getGridCoverage(IContextualizationScope context, IState state) {
-        if (state == null) {
-            return null;
-        }
-        return GeotoolsUtils.INSTANCE.stateToCoverage(state, context.getScale(), DataBuffer.TYPE_FLOAT, floatNovalue, false);
-    }
+	private GridCoverage2D getGridCoverage(IContextualizationScope context, IState state) {
+		if (state == null) {
+			return null;
+		}
+		return GeotoolsUtils.INSTANCE.stateToCoverage(state, context.getScale(), DataBuffer.TYPE_FLOAT, floatNovalue,
+				false);
+	}
 
-    @Override
-    public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
-        return new PotentialEvapotranspiredWaterVolumeResolver();
-    }
+	@Override
+	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
+		return new PotentialEvapotranspiredWaterVolumeResolver();
+	}
 
 }

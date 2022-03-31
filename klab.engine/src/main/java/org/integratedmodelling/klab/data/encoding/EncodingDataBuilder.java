@@ -11,12 +11,14 @@ import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.api.runtime.monitoring.IInspector;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.common.Offset;
 import org.integratedmodelling.klab.data.encoding.Encoding.KlabData;
 import org.integratedmodelling.klab.data.encoding.Encoding.KlabData.Notification;
 import org.integratedmodelling.klab.data.encoding.Encoding.KlabData.Severity;
+import org.integratedmodelling.klab.engine.debugger.Inspector;
 import org.integratedmodelling.klab.utils.NotificationUtils;
 
 /**
@@ -44,6 +46,7 @@ public class EncodingDataBuilder implements IKlabData.Builder {
 	class Monitor implements IMonitor {
 
 		private int waitTime;
+		private Inspector inspector;
 
 		@Override
 		public void info(Object... info) {

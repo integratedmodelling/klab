@@ -13,13 +13,11 @@ import java.util.Map;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 
-import org.geotools.geometry.jts.Geometries;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.IGeometry;
-import org.integratedmodelling.klab.api.data.IGeometry.Encoding;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IQuantity;
@@ -39,12 +37,12 @@ import org.integratedmodelling.klab.common.Geometry.DimensionTarget;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.common.Offset;
 import org.integratedmodelling.klab.common.mediation.Unit;
-import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.utils.MultidimensionalCursor;
@@ -279,7 +277,8 @@ public class Scale implements IScale {
 
         // for (int i = 0; i < this.parentScale.extents.size(); i++) {
         // IExtent ext = this.parentScale.extents.get(i) instanceof Extent
-        // ? ((Extent) this.parentScale.extents.get(i)).getExtent(this.locatedOffsets[i])
+        // ? ((Extent)
+        // this.parentScale.extents.get(i)).getExtent(this.locatedOffsets[i])
         // : this.parentScale.extents.get(i);
         // this.extents.add(ext);
         // if (ext instanceof ISpace) {
@@ -664,6 +663,23 @@ public class Scale implements IScale {
         return true;
     }
 
+    private void substituteExtent(IExtent extent) {
+
+        List<IExtent> exts = new ArrayList<>();
+        for (IExtent e : getExtents()) {
+            if (e.getType().equals(extent.getType())) {
+                exts.add(extent);
+            } else {
+                exts.add(e);
+            }
+        }
+
+        extents.clear();
+        extents.addAll(exts);
+        sort();
+
+    }
+
     /**
      * Add a missing extent or use the custom merge() function to inherit the usable info from the
      * passed one. Do not confuse this with the ones from ITopology.
@@ -714,6 +730,34 @@ public class Scale implements IScale {
         }
 
         sort();
+    }
+
+    /**
+     * If we have time and it does not "tick" at the passed transition, incorporate the transition
+     * so that the resulting scale will have grid time and tick at that transition. This will only
+     * be called for successive times during contextualization. Return whether the passed time has
+     * modified the scale.
+     * 
+     * @param time
+     * @return
+     */
+    public boolean mergeTransition(Dimension transition) {
+
+        if (transition.getType() != Type.TIME) {
+            throw new KlabIllegalArgumentException("trying to merge a non-temporal transition in a scale");
+        }
+        ITime time = getTime();
+        if (time != null) {
+            ITime trns = Time.promote(transition);
+            if (trns.getTimeType() != ITime.Type.INITIALIZATION) {
+                if (((Time) time).mergeTransition(transition)) {
+                    sort();
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /*
@@ -924,60 +968,21 @@ public class Scale implements IScale {
 
         Scale targetScale = this;
 
+        /*
+         * simplest cases with no mediation first
+         */
         if (locators != null && locators.length == 1 && locators[0] instanceof Number) {
             // long offset
             return new Scale(this, ((Number) locators[0]).longValue());
         }
 
-        // /*
-        // * Special handling of time initialization: use scale w/o time unless time is
-        // * generic.
-        // */
-        // boolean hasTimeInitialization = false;
-        // for (Object l : locators) {
-        // if (l == Time.INITIALIZATION) {
-        // hasTimeInitialization = true;
-        // break;
-        // }
-        // }
-        //
-        // if (locators != null && locators.length > 0 && hasTimeInitialization) {
-        // // remove initializer and proceed with scale w/o time unless generic
-        // if (getTime() == null) {
-        // // I want you just the way you are. If generic, it should already be compatible
-        // // by design.
-        // targetScale = this;
-        // } else {
-        // // FIXME/CHECK probably will need an initialization that still holds the period
-        // // and step.
-        // // initialization scale will run the dataflow w/o time.
-        // // Dependencies have already been resolved properly to tune the resource on
-        // // init, but the contextualizer won't know the time from the passed context.
-        // targetScale = substituteExtent(targetScale, Time.INITIALIZATION);
-        // }
-        //
-        // if (locators.length == 1) {
-        // return targetScale;
-        // }
-        //
-        // // if continuing, we use the remaining locators on the target.
-        // Object[] newLocators = new Object[locators.length - 1];
-        // for (int i = 0, l = 0; i < locators.length; i++) {
-        // if (locators[i] == Time.INITIALIZATION) {
-        // continue;
-        // }
-        // newLocators[l++] = locators[i];
-        // }
-        // locators = newLocators;
-        // }
-
         /*
-         * reinterpret through augmented version of Geometry.as(locators).
+         * Complex cases are reinterpreted through the augmented version of Geometry.as(locators).
          */
         return locate(targetScale, Geometry.separateTargets(locators));
 
     }
-
+    
     /*
      * This gets a series of locators that are guaranteed to have either: one geometry, a set of
      * extents, or the same stuff that Geometry.as() gets, with the ability to also handle double
@@ -1052,9 +1057,8 @@ public class Scale implements IScale {
 
             for (Pair<Type, Object[]> def : defs) {
                 if (extdef.containsKey(def.getFirst())) {
-                    throw new IllegalArgumentException(
-                            "Scale locator contains duplicate specifications for "
-                                    + def.getFirst().name().toLowerCase());
+                    throw new IllegalArgumentException("Scale locator contains duplicate specifications for "
+                            + def.getFirst().name().toLowerCase());
                 }
                 extdef.put(def.getFirst(), def.getSecond());
             }
@@ -1259,7 +1263,7 @@ public class Scale implements IScale {
      * @return the fully specified geometry underlying this scale
      */
     public Geometry asGeometry(Encoding... options) {
-        
+
         /*
          * only cache the full geometry spec
          */
@@ -1269,7 +1273,7 @@ public class Scale implements IScale {
             }
             return this.geometry;
         }
-        
+
         return Geometry.create(encode(options));
     }
 
@@ -1316,7 +1320,17 @@ public class Scale implements IScale {
             if (locatedOffsets != null) {
                 return (T) new Offset(this, locatedOffsets);
             } else {
-                return (T) new Offset(this);
+                long[] locofs = new long[extents.size()];
+                boolean useofs = true;
+                int i = 0;
+                for (IExtent extent : extents) {
+                    if (((AbstractExtent) extent).getLocatedOffset() >= 0) {
+                        locofs[i++] = ((AbstractExtent) extent).getLocatedOffset();
+                    } else {
+                        useofs = false;
+                    }
+                }
+                return (T) (useofs ? new Offset(this, locofs) : new Offset(this));
             }
         }
 
@@ -1767,6 +1781,31 @@ public class Scale implements IScale {
             }
         }
         return true;
+    }
+
+    /**
+     * Create a copy of the passed scale that is suitable to become the scale of a new observation.
+     * This means that any changes resulting from contextualization must remain local to the scale.
+     * Because some parameters can be large, the resulting extents should adopt a COW pattern when
+     * possible.
+     * 
+     * TODO FIXME for now time is small and space doesn't change, so we just copy time removing any
+     * extension events and leave space as is.
+     * 
+     * @param scale
+     * @return
+     */
+    public static IScale copyForObservation(IScale scale) {
+        List<IExtent> exts = new ArrayList<>();
+        for (IExtent e : scale.getExtents()) {
+            if (e instanceof Time) {
+                exts.add(((Time) e).copy(false, true));
+            } else {
+                // TODO FIXME when space can change, this must also change.
+                exts.add(e);
+            }
+        }
+        return create(exts);
     }
 
 }

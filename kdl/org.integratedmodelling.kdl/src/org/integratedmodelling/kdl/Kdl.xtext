@@ -29,10 +29,20 @@ Annotation:
 ActorDefinition:
 	
 	/*
-	 * This is the form that specifies dataflows
+	 * const means that the a parameter denotes a resource that is immutable within the prototype. Used to build
+	 * the provenance diagram, normally on parameters that must be URNs or literals.
 	 */
-	
-	annotations += Annotation*
+	(const?='const')? 
+	/*
+	 * short special-case form to denote a specific annotation ID as a tag and type for imports or exports
+	 */
+	(exported?='export' | imported?='import') type=ACTOR annotationTag=ANNOTATION_ID 
+	 	(docstring=STRING)? ('label' label=STRING)?
+	|
+	/*
+	 * This is the form that specifies actuators
+	 */
+	(annotations += Annotation*
 	// abstract only allowed at root level; only exists to be extended
 	(abstract?='abstract')? (final?='final')? (optional?='optional')? 
 	(
@@ -42,7 +52,9 @@ ActorDefinition:
 	type=ACTOR 
 		// expressions must return the type; they are evaluated in the context and the artifacts named in them are imports
 		(expression?='expression')? 
-		name=(LOWERCASE_ID|LOWERCASE_DASHID|STRING) 
+		// resolvers named '*' must be void and in the scope of an instantiator; they are meant to resolve 
+		// instantiated objects within their scale of reference .
+		name=(LOWERCASE_ID|LOWERCASE_DASHID|STRING|'*') 
 		// extends only allowed at root level; must extend another upstream in same file
 		('extends' extended=(LOWERCASE_ID|LOWERCASE_DASHID|STRING))?
 		('for' targets+=TARGET (',' targets+=TARGET)*)? (docstring=STRING)? ('label' label=STRING)?
@@ -58,7 +70,7 @@ ActorDefinition:
 	(('default' default=Value)? &
 	('unit' unit=Unit)?)
 	('as' localName=LOWERCASE_ID)?
-	('over' coverage+=Function (',' coverage+=Function)*)? 
+	('over' coverage+=Function (',' coverage+=Function)*)? )
 ;
 	
 DataflowBody:
@@ -97,6 +109,8 @@ ACTOR:
 	// countable, so always a dataflow for direct object instantiation. Resolvers for single objects are inside the instantiation
 	// actuator and void
 	'object' | 'event' |
+	// any observation, for declarations only
+	'observation' |
 	// any acceptable quality type, for declarations only
 	'value' |
 	// process and event are the two endurants, for which contextualizers are only run at transitions

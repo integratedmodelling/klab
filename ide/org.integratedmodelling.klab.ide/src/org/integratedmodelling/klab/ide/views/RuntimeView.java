@@ -24,8 +24,11 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.MenuAdapter;
+import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.events.TreeListener;
 import org.eclipse.swt.graphics.Color;
@@ -40,6 +43,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Tree;
@@ -697,6 +702,37 @@ public class RuntimeView extends ViewPart {
 			}
 		});
 
+
+	    final Menu menu = new Menu(taskTree);
+	    taskTree.setMenu(menu);
+	    menu.addMenuListener(new MenuAdapter()
+	    {
+	        public void menuShown(MenuEvent e)
+	        {
+	            MenuItem[] items = menu.getItems();
+	            for (int i = 0; i < items.length; i++)
+	            {
+	                items[i].dispose();
+	            }
+	            if ("Dataflow".equals(taskTree.getSelection()[0].getText())) {
+	            	MenuItem newItem = new MenuItem(menu, SWT.NONE);
+	            	newItem.setText("Export dataflow as a resource...");
+	            	newItem.addSelectionListener(new SelectionListener() {
+						
+						@Override
+						public void widgetSelected(SelectionEvent e) {
+							exportDataflow();
+						}
+						
+						@Override
+						public void widgetDefaultSelected(SelectionEvent e) {
+						}
+					});
+	            }
+	        }
+	    });
+
+		
 		detailViewer = new TableViewer(taskArea, SWT.BORDER | SWT.FULL_SELECTION);
 		detailTable = detailViewer.getTable();
 		detailTable.setVisible(true);
@@ -840,9 +876,14 @@ public class RuntimeView extends ViewPart {
 
 	}
 
+	private void exportDataflow() {
+		// TODO Auto-generated method stub
+		System.out.println("EXPORT DATAFLOW ZIOCA");
+	}
+	
 	protected void handleSelection(Object o) {
 		if (o instanceof DataflowReference) {
-			Eclipse.INSTANCE.edit(((DataflowReference) o).getKdlCode(), "dataflow", "kdl", false);
+			Eclipse.INSTANCE.edit(Activator.session().getDataflow(currentContext.getId()), "dataflow", "kdl", false);
 		} else if (o instanceof Notification) {
 			switch (((Notification) o).getLevel()) {
 			case "SEVERE":

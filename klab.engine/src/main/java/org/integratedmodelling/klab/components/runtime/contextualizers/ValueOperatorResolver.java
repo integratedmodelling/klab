@@ -9,12 +9,14 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Concepts;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
 import org.integratedmodelling.klab.api.model.contextualization.IProcessor;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -51,7 +53,10 @@ public class ValueOperatorResolver implements IResolver<IState>, IProcessor, IEx
 
     public static IServiceCall getServiceCall(IObservable classified, ValueOperator operator, Object operand)
             throws KlabValidationException {
-        return KimServiceCall.create(FUNCTION_ID, "artifact", classified.getReferenceName(), "operator", operator.name(), "value",
+    	if (operand instanceof IKimObservable) {
+    		operand = Observables.INSTANCE.declare((IKimObservable)operand, Klab.INSTANCE.getRootMonitor());
+    	}
+        return KimServiceCall.create(FUNCTION_ID, "artifact", classified.getReferenceName(), "operator", operator.name(), "operand",
                 operand instanceof IObservable ? ((IObservable) operand).getReferenceName() : operand);
     }
 
@@ -62,8 +67,8 @@ public class ValueOperatorResolver implements IResolver<IState>, IProcessor, IEx
         IArtifact stateOperand = null;
         ValueOperator operator = ValueOperator.valueOf(parameters.get("operator", String.class));
 
-        if (parameters.containsKey("value")) {
-            Object stop = parameters.get("value");
+        if (parameters.containsKey("operand")) {
+            Object stop = parameters.get("operand");
             if (stop instanceof String) {
                 stateOperand = context.getArtifact(stop.toString());
             } else if (operator == ValueOperator.WHERE && (stop instanceof IConcept || stop instanceof IObservable)) {
@@ -71,12 +76,13 @@ public class ValueOperatorResolver implements IResolver<IState>, IProcessor, IEx
                  * should be "presence of x"
                  */
                 IObservable observable = stop instanceof IObservable ? (IObservable) stop : Observable.promote((IConcept) stop);
-                Map<ObservedConcept, IObservation> catalog = ((IRuntimeScope) context).getCatalog();
+                Map<IObservedConcept, IObservation> catalog = ((IRuntimeScope) context).getCatalog();
                 stateOperand = catalog.get(new ObservedConcept(observable));
             }
         }
 
-        Object valueOperand = parameters.get("value");
+        Object valueOperand = parameters.get("operand");
+        
         if (valueOperand instanceof IKimConcept) {
             valueOperand = Concepts.INSTANCE.declare((IKimConcept)valueOperand);
         } else if (valueOperand instanceof IKimObservable) {

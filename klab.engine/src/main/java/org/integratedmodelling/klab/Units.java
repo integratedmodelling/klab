@@ -863,7 +863,7 @@ public enum Units implements IUnitService {
          */
         Set<ExtentDimension> aggregatable = new HashSet<>();
         for (IGeometry.Dimension dimension : geometry.getDimensions()) {
-            if (dimension.size() > 1 || dimension.isRegular()) {
+            if (dimension.isDistributed()) {
                 aggregatable.add(dimension.getExtentDimension());
             }
         }

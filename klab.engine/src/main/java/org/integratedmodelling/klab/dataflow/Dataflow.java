@@ -1,54 +1,39 @@
 package org.integratedmodelling.klab.dataflow;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IContextualizable.InteractiveParameter;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IServiceCall;
-import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Interaction;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Version;
-import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
 import org.integratedmodelling.klab.api.model.IAnnotation;
-import org.integratedmodelling.klab.api.monitoring.IMessage;
-import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
-import org.integratedmodelling.klab.api.resolution.ICoverage;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.api.runtime.rest.INotification;
-import org.integratedmodelling.klab.api.runtime.rest.INotification.Mode;
 import org.integratedmodelling.klab.common.LogicalConnector;
-import org.integratedmodelling.klab.components.runtime.RuntimeScope;
-import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
-import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
-import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.engine.runtime.AbstractTask;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
-import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Annotation;
-import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
-import org.integratedmodelling.klab.rest.DataflowReference;
+import org.integratedmodelling.klab.resolution.ResolvedArtifact;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.Pair;
@@ -60,8 +45,8 @@ import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 
 /**
- * The semantically aware implementation of {@link IDataflow}, built by the k.LAB runtime as a
- * result of a semantic resolution. Its {@link #run(IScale, IMonitor)} produces {@link IObservation
+ * The semantically aware implementation of {@link IDataflow}, as built by the k.LAB runtime as a
+ * result of semantic resolution. Its {@link #run(IScale, IMonitor)} produces {@link IObservation
  * observations} unless the dataflow is {@link #isEmpty() empty}.
  * <p>
  * Each context has a single, hierarchically organized dataflow made up of sub-dataflow. The root
@@ -78,7 +63,8 @@ import org.jgrapht.graph.DefaultEdge;
  * <p>
  * A dataflow is a void actuator in k.DL. A void actuator resolves the context it's run into. When
  * objects are created, the containing actuator may contain the dataflow(s) to resolve it and/or
- * specific qualities declared "within" the object.
+ * specific qualities declared "within" the object. The "clean" actuator hierarchy is built from
+ * this by the scope, and it is the proper one for visualization, serialization and reuse.
  * 
  * @author Ferd
  *
@@ -88,43 +74,17 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
     public static final String ACTUATOR = "ACTUATOR";
 
     private String description;
-    private DirectObservation context;
-    private ResolutionScope resolutionScope;
-    private IDirectObservation relationshipSource;
-    private IDirectObservation relationshipTarget;
-
-
-    /**
-     * Each dataflow used to resolve subjects within this one is recorded here with all the subjects
-     * it was used for.
-     */
-    Map<Dataflow, List<IDirectObservation>> inherentResolutions = new HashMap<>();
-
     /*
-     * if true, we observe occurrents and we may need to upgrade a generic T context to a specific
-     * one.
+     * primary dataflows are created by first-level observation tasks. They run temporal transitions
+     * with a schedule that also includes their child dataflows.
      */
-    boolean hasOccurrents = false;
-    // if true, we have one time step and occurrents, so we should autostart
-    boolean autoStartTransitions = false;
+    private boolean primary;
+    private boolean isOccurrent;
 
     // execution parameters for user modification if running interactively
     private List<InteractiveParameter> fields = new ArrayList<>();
     private List<Pair<IContextualizable, List<String>>> resources = new ArrayList<>();
     private List<Pair<IAnnotation, List<String>>> annotations = new ArrayList<>();
-    private IMetadata metadata;
-    private Collection<IObservation> configurationTargets;
-    private String targetName;
-
-    // dependency structure, shared along the entire hierarchy
-    Graph<ObservedConcept, DefaultEdge> dependencies;
-
-    /**
-     * This is available for inspection after dataflow.run() in case the dataflow is only run for
-     * side effects on the scope. This happens, for example, during in-resolution characterization
-     * of abstract identities.
-     */
-    IRuntimeScope runtimeScope = null;
 
     class AnnotationParameterValue {
 
@@ -142,46 +102,23 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
     }
 
     List<AnnotationParameterValue> annotationParameters = new ArrayList<>();
-    private Scale resolutionScale;
-    private boolean secondary;
-
-    /*
-     * keep the IDs of the dataflows already merged (during run()) so that we only merge each
-     * dataflow once when reusing them for multiple instances.
-     */
-    Set<String> dataflowIds = new HashSet<>();
-    private ObservationGroup observationGroup;
-    private Mode notificationMode = INotification.Mode.Normal;
-
-    /*
-     * primary dataflows are created by first-level observation tasks. They run temporal transitions
-     * with a schedule that also includes their child dataflows.
-     */
-    private boolean primary;
 
     private Dataflow(Dataflow parent) {
         this.parentDataflow = parent;
+        this.setType(Type.VOID);
     }
 
-    public Dataflow(ISession session, Actuator parent) {
-        this.session = session;
+    public Dataflow(Actuator parent) {
         this.parentDataflow = parent;
         if (this.parentDataflow != null) {
-            this.parentDataflow.childDataflows.add(this);
+            parent.actuators.add(this);
         }
-    }
-
-    /**
-     * If the dataflow is reused more than once, this must be called before any repeated execution.
-     */
-    public void reset() {
-        this.resolutionScale = null;
-        resetScales();
+        this.setType(Type.VOID);
     }
 
     @Override
-    public IArtifact run(IScale scale, IMonitor monitor) throws KlabException {
-        return run(scale, null, monitor);
+    public IArtifact run(IScale scale, IContextualizationScope scope) throws KlabException {
+        return run(scale, null, (IRuntimeScope) scope);
     }
 
     /**
@@ -191,20 +128,11 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
      * 
      * @param scale
      * @param parentComputation
-     * @param monitor
+     * @param scope
      * @return
      * @throws KlabException
      */
-    public IArtifact run(IScale scale, Actuator parentComputation, IMonitor monitor) throws KlabException {
-
-        reset();
-
-        /*
-         * build the observable dependency hierarchy to put in the runtime context. The scheduler
-         * will use this to determine which actuators need recomputation among those that have only
-         * implicit change associated.
-         */
-        this.dependencies = buildDependencies();
+    public IArtifact run(IScale scale, Actuator parentComputation, IRuntimeScope scope) throws KlabException {
 
         /*
          * we need the initialization scale for the dataflow but we must create our targets with the
@@ -212,8 +140,8 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
          * resolution if any is specified.
          */
         if (actuators.size() == 0) {
-            if (resolutionScope.getResolvedArtifact() != null) {
-                return resolutionScope.getResolvedArtifact().getArtifact();
+            if (scope.getResolutionScope().getResolvedArtifact() != null) {
+                return ((ResolvedArtifact) scope.getResolutionScope().getResolvedArtifact()).getArtifact();
             }
             return Observation.empty();
         }
@@ -222,19 +150,21 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
          * a trivial dataflow is the one that won't do anything but create the target, and notifying
          * it would be a lot of notification if it's called for 3000 instantiated objects.
          */
-        boolean trivial = actuators.size() < 2 && (actuators.size() == 0
-                || (actuators.size() == 1 && ((Actuator) actuators.get(0)).getObservable().is(IKimConcept.Type.COUNTABLE)
-                        && ((Actuator) actuators.get(0)).isTrivial()));
+        boolean trivial = isTrivial();
 
-        if (!trivial && parentComputation != null && monitor.getIdentity() instanceof AbstractTask) {
-            ((AbstractTask<?>) monitor.getIdentity()).notifyStart();
+        if (!trivial && parentComputation != null
+                && scope.getMonitor().getIdentity() instanceof AbstractTask) {
+            ((AbstractTask<?>) scope.getMonitor().getIdentity()).notifyStart();
         }
 
+        ISession session = scope.getSession();
+
         /*
-         * Set the .partialScale field in all actuators that represent partitions of the context to
-         * reflect the portion of the actual scale they must cover.
+         * Set the partial scale of each actuator in the scope for all actuators that represent
+         * partitions of the overall scale to reflect the portion of the actual scale they must
+         * cover.
          */
-        definePartitions(scale);
+        definePartitions(scale, scope);
 
         if (session != null && session.isInteractive()) {
             /*
@@ -253,13 +183,15 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
                             actuator.getModel().getDependencies())) {
                         List<String> parameterIds = null;
                         for (IAnnotation annotation : o.getAnnotations()) {
-                            for (InteractiveParameter parameter : Interaction.INSTANCE.getInteractiveParameters(annotation, o)) {
+                            for (InteractiveParameter parameter : Interaction.INSTANCE
+                                    .getInteractiveParameters(annotation, o)) {
                                 if (parameterIds == null) {
                                     parameterIds = new ArrayList<>();
                                 }
                                 fields.add(parameter);
                                 parameterIds.add(parameter.getId());
-                                annotationParameters.add(new AnnotationParameterValue(((Annotation) annotation).getId(),
+                                annotationParameters.add(new AnnotationParameterValue(
+                                        ((Annotation) annotation).getId(),
                                         parameter.getId(), parameter.getInitialValue(), parameter.getType()));
                             }
                             if (parameterIds != null) {
@@ -271,7 +203,8 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
                     // interactive computations
                     for (IContextualizable computable : actuator.getComputation()) {
                         List<String> parameterIds = null;
-                        for (InteractiveParameter parameter : Interaction.INSTANCE.getInteractiveParameters(computable,
+                        for (InteractiveParameter parameter : Interaction.INSTANCE.getInteractiveParameters(
+                                computable,
                                 actuator.getModel())) {
                             if (parameterIds == null) {
                                 parameterIds = new ArrayList<>();
@@ -290,8 +223,8 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
                  * Issue request, wait for answer and reset parameters in the computation. Method
                  * returns all interactive observable annotation parameters for recording.
                  */
-                Collection<Triple<String, String, String>> values = Interaction.INSTANCE.submitParameters(this.resources,
-                        this.fields, session);
+                Collection<Triple<String, String, String>> values = Interaction.INSTANCE
+                        .submitParameters(this.resources, this.fields, session);
 
                 if (values == null) {
                     return null;
@@ -314,94 +247,40 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
          */
         IArtifact ret = null;
         try {
-            ret = Klab.INSTANCE.getRuntimeProvider().compute(this, scale.initialization(), resolutionScope, monitor).get();
+            ret = Klab.INSTANCE.getRuntimeProvider().compute(this, scale.initialization(), scope).get();
         } catch (Throwable e) {
-            if (monitor.isInterrupted()) {
+            if (scope.getMonitor().isInterrupted()) {
                 return null;
             }
-            if (!trivial && parentComputation != null && monitor.getIdentity() instanceof AbstractTask) {
-                ((AbstractTask<?>) monitor.getIdentity()).notifyAbort(e);
+            if (!trivial && parentComputation != null
+                    && scope.getMonitor().getIdentity() instanceof AbstractTask) {
+                ((AbstractTask<?>) scope.getMonitor().getIdentity()).notifyAbort(e);
                 return null;
             }
         }
 
-        Dataflow rootDataflow = null;
-        boolean added = false;
-        if (parentComputation == null && ret != null) {
-            rootDataflow = this;
-            ((RuntimeScope) ((Observation) ret).getScope()).setDataflow(this);
-        } else if (ret != null) {
-
-            rootDataflow = (Dataflow) ((Observation) ret).getScope().getDataflow();
-
-            if (!rootDataflow.dataflowIds.contains(this.getName())) {
-
-                added = true;
-                rootDataflow.dataflowIds.add(this.getName());
-
-                Actuator parent = parentComputation;
-
-                // again, this is currently just one actuator
-                for (IActuator actuator : actuators) {
-
-                    // I am the resolver
-                    if (actuator.getType() == Type.VOID) {
-                        parent.getActuators().add(actuator);
-                    } else if (parent.getType() != Type.VOID) {
-
-                        /*
-                         * should be within an instantiator, which at this point has resolved its
-                         * instances so it should have a void child with the same name
-                         */
-                        for (IActuator pc : parent.getActuators()) {
-                            if (pc.getType() == Type.VOID && pc.getName().equals(parent.getName())) {
-                                parent = (Actuator) pc;
-                                break;
-                            }
-                        }
-                        if (parent.getType() == Type.VOID) {
-                            parent.getActuators().add(actuator);
-                        }
-                    }
-                }
-            }
-        }
-
-        if (added && !trivial && isPrimary()) {
-            /*
-             * send dataflow after execution is finished. TODO add style elements or flags to make
-             * sure it's shown statically.
-             */
-            session.getMonitor()
-                    .send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle, IMessage.Type.DataflowCompiled,
-                            new DataflowReference(session.getMonitor().getIdentity().getId(), getKdlCode(),
-                                    ContextualizationStrategy.getElkGraph(this))));
-            if (Configuration.INSTANCE.isEchoEnabled()) {
-                System.out.println(rootDataflow.getKdlCode());
-            }
-        }
-
-        if (!trivial && parentComputation != null && monitor.getIdentity() instanceof AbstractTask) {
-            ((AbstractTask<?>) monitor.getIdentity()).notifyEnd();
+        if (!trivial && parentComputation != null
+                && scope.getMonitor().getIdentity() instanceof AbstractTask) {
+            ((AbstractTask<?>) scope.getMonitor().getIdentity()).notifyEnd();
         }
 
         return ret;
     }
 
-    private void definePartitions(IScale scale) {
-        _definePartialScales(this, (Scale) scale);
+    private void definePartitions(IScale scale, IRuntimeScope scope) {
+        _definePartialScales(this, (Scale) scale, scope);
     }
 
-    private Scale _definePartialScales(Actuator actuator, Scale current) {
+    private Scale _definePartialScales(Actuator actuator, Scale current, IRuntimeScope scope) {
 
         if (actuator.getModel() != null) {
 
-            Scale mcoverage = actuator.getModel().getCoverage(resolutionScope.getMonitor());
+            Scale mcoverage = actuator.getModel().getCoverage(scope.getMonitor());
             if (!mcoverage.isEmpty() || actuator.isPartition()) {
                 Scale coverage = mcoverage;
                 if (actuator.isPartition()) {
                     coverage = current.merge(mcoverage, LogicalConnector.INTERSECTION);
-                    actuator.setMergedScale(coverage.merge(current));
+                    scope.setMergedScale(actuator, coverage.merge(current));
                 }
 
                 /*
@@ -419,7 +298,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
         }
 
         for (IActuator child : actuator.getActuators()) {
-            current = _definePartialScales((Actuator) child, current);
+            current = _definePartialScales((Actuator) child, current, scope);
         }
 
         return current;
@@ -438,17 +317,30 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
         }
     }
 
-    private Graph<ObservedConcept, DefaultEdge> buildDependencies() {
-        Graph<ObservedConcept, DefaultEdge> ret = new DefaultDirectedGraph<>(DefaultEdge.class);
+    /**
+     * Build and return the dependency graph. Save externally if appropriate - caching does create
+     * issues in contextualization and scheduling.
+     * 
+     * @return
+     */
+    public Graph<IObservedConcept, DefaultEdge> getDependencyGraph() {
+        return buildDependencies();
+    }
+
+    private Graph<IObservedConcept, DefaultEdge> buildDependencies() {
+        Graph<IObservedConcept, DefaultEdge> ret = new DefaultDirectedGraph<>(DefaultEdge.class);
         boolean primary = true;
-        for (IActuator actuator : getActuators()) {
+        // use the logical structure to only get true actuators and recurse
+        // sub-dataflows
+        for (IActuator actuator : getDataflowStructure().getSecond().vertexSet()) {
             buildDependencies((Actuator) actuator, ret, primary);
             primary = false;
         }
         return ret;
     }
 
-    private ObservedConcept buildDependencies(Actuator actuator, Graph<ObservedConcept, DefaultEdge> graph, boolean primary) {
+    private IObservedConcept buildDependencies(Actuator actuator, Graph<IObservedConcept, DefaultEdge> graph,
+            boolean primary) {
 
         ObservedConcept observable = new ObservedConcept(actuator.getObservable(), actuator.getMode());
         observable.getData().put(ACTUATOR, actuator);
@@ -501,45 +393,93 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
         return null;
     }
 
-    @Override
-    protected String encode(int offset) {
-        return encode(offset, true);
-    }
-
-    private String encode(int offset, boolean encodePreamble) {
+    /**
+     * Preamble is output only at level zero and if the parameter is set to true. Dataflows are
+     * explicitly wrapped in "resolve" only when 1) at root level (resolving the context) or 2) when
+     * in the scope of an instantiator, to resolve the individual objects. Otherwise only their
+     * contents are output. In a dataflow, the first actuator is always a void (resolves the
+     * context) which is also output inline.
+     * 
+     * @param offset
+     * @param encodePreamble
+     * @return
+     */
+    String encode(int offset, Actuator parentActuator) {
 
         String ret = "";
 
-        if (offset == 0 && encodePreamble) {
+        if (offset == 0 && parentActuator == null) {
             ret += "@klab " + Version.CURRENT + "\n";
-            ret += "@dataflow " + getName() + "\n";
             ret += "@author 'k.LAB resolver " + creationTime + "'" + "\n";
-            if (getContext() != null) {
-                ret += "@context " + getContext().getUrn() + "\n";
-            }
-            if (coverage != null && coverage.getExtentCount() > 0) {
-                List<IServiceCall> scaleSpecs = ((Scale) coverage).getKimSpecification();
-                if (!scaleSpecs.isEmpty()) {
-                    ret += "@coverage load_me_from_some_sidecar_file()";
-                    // TODO this can get huge and is transmitted over websockets, so can't put it
-                    // here as is. Needs
-                    // supplemental material and a ref instead.
-                    // for (int i = 0; i < scaleSpecs.size(); i++) {
-                    // if (scaleSpecs.get(i) != null) {
-                    // ret += " " + scaleSpecs.get(i).getSourceCode()
-                    // + ((i < scaleSpecs.size() - 1) ? (",\n" + " ") : "");
-                    // }
-                    // }
-                    ret += "\n";
-                }
-            }
+            // TODO should encode coverage after the resolver.
+            // if (coverage != null && coverage.getExtentCount() > 0) {
+            // List<IServiceCall> scaleSpecs = ((Scale) coverage).getKimSpecification();
+            // if (!scaleSpecs.isEmpty()) {
+            // ret += "@coverage load_me_from_some_sidecar_file()";
+            // ret += "\n";
+            // }
+            // }
             ret += "\n";
         }
 
-        for (IActuator actuator : actuators) {
-            ret += ((Actuator) actuator).encode(offset) + "\n";
+        Pair<IActuator, List<IActuator>> structure = getResolutionStructure();
+
+        if (structure == null) {
+            for (IActuator actuator : actuators) {
+                ret += ((Actuator) actuator).encode(offset, null) + "\n";
+            }
+            return ret;
         }
 
+        return ret + ((Actuator) structure.getFirst()).encode(0,
+                structure.getSecond().isEmpty() ? (List<IActuator>) null : structure.getSecond());
+    }
+
+    /*
+     * the root dataflow is guaranteed to have only one root node, the others do not.
+     */
+    public Pair<List<IActuator>, Graph<IActuator, DefaultEdge>> getDataflowStructure() {
+
+        Graph<IActuator, DefaultEdge> ret = new DefaultDirectedGraph<>(DefaultEdge.class);
+
+        List<IActuator> rootNodes = new ArrayList<>();
+        Pair<IActuator, List<IActuator>> structure = getResolutionStructure();
+
+        if (structure == null) {
+            for (IActuator actuator : actuators) {
+                rootNodes.add(((Actuator) actuator).makeDataflowStructure(null, null, ret));
+            }
+            return new Pair<>(rootNodes, ret);
+        }
+
+        rootNodes.add(
+                ((Actuator) structure.getFirst()).makeDataflowStructure(null, structure.getSecond(), ret));
+
+        return new Pair<>(rootNodes, ret);
+
+    }
+
+    /**
+     * If the dataflow is meant to resolve an instantiated object, it will have a void actuator as
+     * its first one. In this case, this will return it, otherwise it will return null.
+     * 
+     * @return the resolver actuator (possibly trivial), or null.
+     */
+    @Override
+    public IActuator getResolver() {
+        if (this.getChildren().size() > 0 && !(this.getChildren().get(0) instanceof Dataflow)
+                && this.getChildren().get(0).getType() == Type.RESOLVE) {
+            return this.getChildren().get(0);
+        }
+        return null;
+    }
+
+    String getDataflowSubjectName() {
+        String ret = "*";
+        for (IActuator actuator : actuators) {
+            ret = actuator.getName().replace(' ', '_');
+            break;
+        }
         return ret;
     }
 
@@ -550,35 +490,11 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
      */
     @Override
     public String getKdlCode() {
-        return encode(0);
-    }
-
-    @Override
-    public ICoverage getCoverage() {
-        return coverage;
-    }
-
-    public DirectObservation getContext() {
-        return context;
-    }
-
-    public void setContext(DirectObservation context) {
-        this.context = context;
-    }
-
-    public void setResolutionScope(ResolutionScope scope) {
-        this.resolutionScope = scope;
+        return encode(0, (Actuator) null);
     }
 
     public static Dataflow empty(Dataflow parent) {
         return new Dataflow(parent);
-    }
-
-    public static Dataflow empty(ResolutionScope scope, Dataflow parent) {
-        Dataflow ret = new Dataflow(parent);
-        ret.resolutionScope = scope;
-        ret.session = scope.getSession();
-        return ret;
     }
 
     /**
@@ -588,26 +504,26 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
      * @param scope
      * @return
      */
-    public static Dataflow empty(IObservable observable, String name, ResolutionScope scope, Dataflow parent) {
+    public static Dataflow empty(IObservable observable, String name, ResolutionScope scope,
+            Dataflow parent) {
 
         Dataflow ret = new Dataflow(parent);
-        ret.resolutionScope = scope;
-        ret.session = scope.getSession();
 
         Actuator actuator = Actuator.create(ret, scope.getMode());
         actuator.setObservable((Observable) observable);
         actuator.setType(observable.getArtifactType());
         actuator.setNamespace(((ResolutionScope) scope).getResolutionNamespace());
         actuator.setName(name);
-        ret.getActuators().add(actuator);
+        ret.getChildren().add(actuator);
         ret.setNamespace(actuator.getNamespace());
 
         return ret;
     }
 
-    @Override
-    public boolean isEmpty() {
-        return actuators.size() == 0;
+    public boolean isTrivial() {
+        return actuators.size() < 2 && (actuators.size() == 0 || (actuators.size() == 1
+                && ((Actuator) actuators.get(0)).getObservable().is(IKimConcept.Type.COUNTABLE)
+                && ((Actuator) actuators.get(0)).isTrivial()));
     }
 
     /**
@@ -626,191 +542,6 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public Dataflow withMetadata(IMetadata metadata) {
-        this.metadata = metadata;
-        return this;
-    }
-
-    public Dataflow connecting(IDirectObservation source, IDirectObservation target) {
-        this.relationshipSource = source;
-        this.relationshipTarget = target;
-        return this;
-    }
-
-    /**
-     * Metadata may be added to the dataflow before computation to resolve states and/or add to the
-     * target observation as specified by the model.
-     * 
-     * @return
-     */
-    public IMetadata getMetadata() {
-        return metadata;
-    }
-
-    public IDirectObservation getRelationshipSource() {
-        return relationshipSource;
-    }
-
-    public IDirectObservation getRelationshipTarget() {
-        return relationshipTarget;
-    }
-
-    public Dataflow withConfigurationTargets(Collection<IObservation> targets) {
-        this.configurationTargets = targets;
-        return this;
-    }
-
-    public Collection<IObservation> getConfigurationTargets() {
-        return this.configurationTargets;
-    }
-
-    @Override
-    public IScale getResolutionScale() {
-        if (this.resolutionScale == null && resolutionScope != null) {
-            this.resolutionScale = resolutionScope.getScale();
-            if (hasOccurrents && this.resolutionScale.getTime() != null) {
-                ITime time = this.resolutionScale.getTime();
-                if (time.isGeneric() || time.size() == 1) {
-
-                    if (time.getStart() == null || time.getEnd() == null) {
-                        throw new KlabContextualizationException(
-                                "cannot contextualize occurrents (processes and events) without a specified temporal extent");
-                    }
-
-                    // turn time into a 1-step grid (so size = 2)
-                    this.resolutionScale = Scale.substituteExtent(this.resolutionScale, ((Time) time).upgradeForOccurrents());
-                }
-
-                // set the dataflow to autostart transitions if we only have one
-                if (this.resolutionScale.getTime().size() >= 2) {
-                    autoStartTransitions = true;
-                }
-            }
-        }
-        return this.resolutionScale;
-    }
-
-    public void notifyOccurrents() {
-        this.hasOccurrents = true;
-    }
-
-    public boolean isAutoStartTransitions() {
-        return this.autoStartTransitions;
-    }
-
-    /**
-     * TODO/FIXME if withScope is called, it must be called before this one.
-     * 
-     * @param scale
-     * @return
-     */
-    public Dataflow withScopeScale(IScale scale) {
-        if (this.resolutionScope != null) {
-            this.resolutionScope = this.resolutionScope.rescale(scale);
-        }
-        return this;
-    }
-
-    /**
-     * TODO this should create a new dataflow if we want concurrent execution of dataflows with
-     * different scopes. Also this MUST be called before withScopeScale if that is used.
-     * 
-     * @param scope
-     * @return
-     */
-    public Dataflow withScope(ResolutionScope scope) {
-        this.resolutionScope = scope;
-        return this;
-    }
-
-    public ResolutionScope getResolutionScope() {
-        return this.resolutionScope;
-    }
-
-    /*
-     * FIXME this shouldn't be necessary - use the hierarchy
-     */
-    public void setSecondary(boolean b) {
-        this.secondary = b;
-    }
-
-    /*
-     * FIXME this shouldn't be necessary - use the hierarchy. Also conflicts with isPrimary() in
-     * meaning.
-     */
-    public boolean isSecondary() {
-        return this.secondary;
-    }
-
-    public void reattributeActuators() {
-        for (IActuator actuator : actuators) {
-            reattributeActuator(actuator);
-        }
-    }
-
-    private void reattributeActuator(IActuator actuator) {
-        ((Actuator) actuator).setDataflow(this);
-        for (IActuator a : actuator.getActuators()) {
-            reattributeActuator(a);
-        }
-    }
-
-    public Dataflow withContext(IDirectObservation contextSubject) {
-        this.context = (DirectObservation) contextSubject;
-        return this;
-    }
-
-    public Dataflow withinGroup(ObservationGroup group) {
-        this.observationGroup = group;
-        return this;
-    }
-
-    public ObservationGroup getObservationGroup() {
-        return this.observationGroup;
-    }
-
-    public String getTargetName() {
-        return targetName;
-    }
-
-    public void setTargetName(String targetName) {
-        this.targetName = targetName;
-    }
-
-    public Dataflow withTargetName(String targetName) {
-        this.targetName = targetName;
-        return this;
-    }
-
-    public Mode getNotificationMode() {
-        return this.notificationMode;
-    }
-
-    public void setNotificationMode(INotification.Mode mode) {
-        this.notificationMode = mode;
-    }
-
-    public Dataflow withNotificationMode(INotification.Mode mode) {
-        this.notificationMode = mode;
-        return this;
-    }
-
-    public Graph<ObservedConcept, DefaultEdge> getDependencies() {
-        return this.dependencies;
-    }
-
-    public Set<ObservedConcept> getImplicitlyChangingObservables() {
-        return resolutionScope.getImplicitlyChangingObservables();
-    }
-
-    public IRuntimeScope getRuntimeScope() {
-        return this.runtimeScope;
-    }
-
-    public void setRuntimeScope(IRuntimeScope runtimeScope) {
-        this.runtimeScope = runtimeScope;
     }
 
     /**
@@ -841,68 +572,6 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
         actuator.getLocalNames().putAll(hashMap);
     }
 
-    /**
-     * Record that the passed observation was resolved using the passed dataflow. Scheduling will
-     * need to use this information.
-     * 
-     * @param observation
-     * @param dataflow
-     */
-    public void registerResolution(IDirectObservation observation, Dataflow dataflow) {
-        List<IDirectObservation> obs = inherentResolutions.get(dataflow);
-        if (obs == null) {
-            obs = new ArrayList<>();
-            inherentResolutions.put(dataflow, obs);
-        }
-        if (!obs.contains(observation)) {
-            obs.add(observation);
-        }
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((_actuatorId == null) ? 0 : _actuatorId.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Dataflow other = (Dataflow) obj;
-        if (_actuatorId == null) {
-            if (other._actuatorId != null)
-                return false;
-        } else if (!_actuatorId.equals(other._actuatorId))
-            return false;
-        return true;
-    }
-
-    /**
-     * Use to quickly compare different dataflows for equality of executable methods. Useful to
-     * group resolution dataflows for multiple objects into the minimum number of distinct ones.
-     * Does not compare preambles.
-     * 
-     * TODO this may skip differences in lookup tables or other parameters that are currently not
-     * printed in full literal form in the code.
-     * 
-     * @return an hex signature that will be equal if the actuator part is equal.
-     */
-    public String getSignature() {
-        return DigestUtils.md5Hex(encode(0, false));
-    }
-
-    @Override
-    public List<IDataflow<IArtifact>> getChildren() {
-        return childDataflows;
-    }
-
     public Dataflow setPrimary(boolean primary) {
         this.primary = primary;
         return this;
@@ -914,26 +583,46 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
         while(ret.parentDataflow != null) {
             ret = ret.parentDataflow;
         }
-        return (Dataflow)ret;
+        return (Dataflow) ret;
     }
-    
+
+    @Override
+    public void export(String baseName, File directory) {
+        // TODO Auto-generated method stub
+    }
+
+    public boolean occurs() {
+        return this.isOccurrent;
+    }
+
+    public void notifyOccurrents() {
+        this.isOccurrent = true;
+    }
+
     @Override
     public String toString() {
-        return getKdlCode();
+        return dump();
     }
 
     /**
-     * Dataflows that have resolved a specific instantiated actuator
+     * If the dataflow contain a resolution actuator (void) and others for successive resolutions
+     * (processes etc), return the first and the list of the others so they can be nested properly
+     * when outputting the k.DL. Otherwise return null.
      * 
-     * @param actuator2
+     * TODO make this a triple and add the coverage statement
+     * 
      * @return
      */
-    public Collection<IDataflow<IArtifact>> childrenOf(Actuator actuator2) {
-        List<IDataflow<IArtifact>> ret = new ArrayList<>();
-        for (IDataflow<IArtifact> child : childDataflows) {
-            System.out.println("ZIO PEO");
+    public Pair<IActuator, List<IActuator>> getResolutionStructure() {
+        IActuator resolver = getResolver();
+        if (resolver != null) {
+            List<IActuator> second = new ArrayList<>();
+            for (int i = 1; i < this.actuators.size(); i++) {
+                second.add(this.actuators.get(i));
+            }
+            return new Pair<>(resolver, second);
         }
-        return ret;
+        return null;
     }
 
 }

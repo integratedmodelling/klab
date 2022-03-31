@@ -23,6 +23,7 @@ import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimQuantity;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.klab.Concepts;
@@ -40,12 +41,15 @@ import org.integratedmodelling.klab.api.data.general.IExpression.Scope;
 import org.integratedmodelling.klab.api.extensions.ILanguageExpression;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
+import org.integratedmodelling.klab.api.extensions.ITableCompiler;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
 import org.integratedmodelling.klab.api.knowledge.IViewModel.Schedule;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IObservationGroup;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -84,75 +88,6 @@ import com.google.common.collect.Sets;
  * @author Ferd
  */
 public class TableCompiler {
-
-	enum AggregationType {
-		Aggregator, Differentiator, Comparator, Counter
-	};
-
-	enum TargetType {
-		AREA, DURATION, QUALITY, NUMEROSITY
-	}
-
-	public enum Style {
-		RIGHT, LEFT, CENTER, BOLD, ITALIC, BG_HIGHLIGHT, FG_HIGHLIGHT,
-		/** make 0 columns empty */
-		EMPTY,
-		/** make empty columns zeros */
-		ZERO
-		/* TODO borders, font size etc */
-	}
-
-	enum ComputationType {
-
-		/**
-		 * Sum
-		 */
-		Sum(Aggregation.SUM),
-		/**
-		 * Sum
-		 */
-		Average(Aggregation.MEAN),
-		/**
-		 * Sum
-		 */
-		Std(Aggregation.STD),
-		/**
-		 * Sum
-		 */
-		Variance(Aggregation.VARIANCE),
-		/**
-		 * Sum
-		 */
-		Min(Aggregation.MIN),
-		/**
-		 * Sum
-		 */
-		Max(Aggregation.MAX),
-		/**
-		 * Compute a specific expression in the expression field, to be evaluated at
-		 * each pass and whose result is aggregated.
-		 */
-		Expression(null),
-		/**
-		 * Compute an expression at the end of everything and only once, based on
-		 * results in other cells.
-		 */
-		Summarize(null);
-
-		Aggregation aggregation;
-
-		ComputationType(Aggregation aggregation) {
-			this.aggregation = aggregation;
-		}
-
-		public Aggregation getAggregation() {
-			return this.aggregation;
-		}
-
-		public boolean isAggregation() {
-			return this.aggregation != null || this == Summarize;
-		}
-	}
 
 	/**
 	 * Each phase is a scan of the target observation. There is always at least one
@@ -463,7 +398,7 @@ public class TableCompiler {
 			return ret;
 		}
 
-		boolean isEnabled(Map<ObservedConcept, IObservation> catalog, IContextualizationScope scope) {
+		boolean isEnabled(Map<IObservedConcept, IObservation> catalog, IContextualizationScope scope) {
 
 			// TODO there may be other situations, like ranges that can't be matched, but
 			// maybe it's not worth checking compared to this.
@@ -496,7 +431,7 @@ public class TableCompiler {
 			return true;
 		}
 
-		boolean matches(Map<ObservedConcept, IObservation> catalog, ILocator locator, Phase phase, Object currentState,
+		boolean matches(Map<IObservedConcept, IObservation> catalog, ILocator locator, Phase phase, Object currentState,
 				Dimension dimension, IContextualizationScope scope) {
 			if (universal) {
 				return true;
@@ -539,7 +474,7 @@ public class TableCompiler {
 			return true;
 		}
 
-		IObservation getObservation(Map<ObservedConcept, IObservation> catalog, IClassifier classifier,
+		IObservation getObservation(Map<IObservedConcept, IObservation> catalog, IClassifier classifier,
 				Dimension dimension) {
 
 			if (this.target.getObservable().isAbstract() && classifier.isConcept()) {
@@ -642,8 +577,8 @@ public class TableCompiler {
 			}
 		}
 
-		public ObservedConcept transform(ObservedConcept trg) {
-			ObservedConcept ret = trg;
+		public IObservedConcept transform(IObservedConcept trg) {
+			IObservedConcept ret = trg;
 			if (this.operatorAdd != null) {
 				return new ObservedConcept(
 						trg.getObservable().getBuilder(monitor).as(this.operatorAdd).buildObservable(), trg.getMode());
@@ -746,7 +681,7 @@ public class TableCompiler {
 		 * This tells us if we're scanning the actual values of the target or only the
 		 * associated context metrics such as area occupied per category or counts.
 		 */
-		public TargetType targetType;
+		public IKnowledgeView.TargetType targetType;
 
 		/**
 		 * This is associated to the target and will determine the default for
@@ -783,12 +718,12 @@ public class TableCompiler {
 		/**
 		 * Aggregation type, if any. (UNUSED)
 		 */
-		AggregationType aggregation = null;
+		IKnowledgeView.AggregationType aggregation = null;
 
 		/**
 		 * This takes over the type of aggregator if specified with 'aggregation'.
 		 */
-		ComputationType forcedAggregation = null;
+		IKnowledgeView.ComputationType forcedAggregation = null;
 
 		/**
 		 * Computation type may require the use of specific formulas or defer
@@ -796,7 +731,7 @@ public class TableCompiler {
 		 * with expressions are computed in order of dependency; rows of sums or other
 		 * aggregation must always be computed after all others.
 		 */
-		ComputationType computationType = null;
+		IKnowledgeView.ComputationType computationType = null;
 
 		/**
 		 * Expression is assigned on parsing, the actual compilation is done before
@@ -813,7 +748,7 @@ public class TableCompiler {
 		/**
 		 * Styles if any were specified
 		 */
-		Set<Style> style = new HashSet<>();
+		Set<IKnowledgeView.Style> style = new HashSet<>();
 
 		private Map<String, Set<String>> phaseReferences = new HashMap<>();
 
@@ -824,6 +759,10 @@ public class TableCompiler {
 		private Set<String> referencedObjects = new HashSet<>();
 
 		private int multiplicity = 1;
+
+		// if true, dimensions that point to numeric cells that are all 0 or nodata will
+		// be removed before compiling the final table
+		boolean hideZero = false;
 
 		// if the dimension describes a concretized target, it must choose a state from
 		// the concrete
@@ -837,6 +776,7 @@ public class TableCompiler {
 			this.aggregation = dim.aggregation;
 			this.computation = dim.computation;
 			this.expression = dim.expression;
+			this.hideZero = dim.hideZero;
 			this.dimensionType = dim.dimensionType;
 			this.forcedAggregation = dim.forcedAggregation;
 			this.computationType = dim.computationType;
@@ -992,7 +932,7 @@ public class TableCompiler {
 
 		// ensures that all rows get their target computed properly and transformed as
 		// needed before any cell is computed.
-		public Map<String, ObservedConcept> columnTargets = new HashMap<>();
+		public Map<String, IObservedConcept> columnTargets = new HashMap<>();
 
 		/**
 		 * Called once at sorting to weed out dimensions that cannot match the data
@@ -1002,7 +942,7 @@ public class TableCompiler {
 		 * @param scope
 		 * @return
 		 */
-		public boolean isEnabled(Map<ObservedConcept, IObservation> catalog, IContextualizationScope scope) {
+		public boolean isEnabled(Map<IObservedConcept, IObservation> catalog, IContextualizationScope scope) {
 
 			if (this.filters != null) {
 				for (Filter filter : this.filters) {
@@ -1035,7 +975,7 @@ public class TableCompiler {
 		 *                     observation according to what we're computing against.
 		 * @return
 		 */
-		public boolean isActive(Map<ObservedConcept, IObservation> catalog, ILocator locator, Phase phase,
+		public boolean isActive(Map<IObservedConcept, IObservation> catalog, ILocator locator, Phase phase,
 				Object currentState, IContextualizationScope scope) {
 
 			if (this.separator) {
@@ -1160,6 +1100,7 @@ public class TableCompiler {
 			ret.referencedObjects.addAll(this.referencedObjects);
 			ret.targetOperation.addAll(this.targetOperation);
 			ret.parent = this.parent;
+			ret.hideZero = this.hideZero;
 			ret.children.addAll(this.children);
 			ret.filterClassId = this.filterClassId;
 			ret.multiplicity = this.multiplicity;
@@ -1220,7 +1161,7 @@ public class TableCompiler {
 	private int activeRows;
 	private IMonitor monitor;
 	private Set<Object> phaseItems = new HashSet<>();
-	private TargetType targetType;
+	private IKnowledgeView.TargetType targetType;
 	private String name;
 	private String title;
 	private String label;
@@ -1245,6 +1186,8 @@ public class TableCompiler {
 	// unspecified.
 	private String identifier;
 
+	private ITableCompiler compiler;
+
 	/**
 	 * Return the passed dimensions in order of dependency. If circular dependencies
 	 * are detected throw a validation exception as the definition is misconfigured.
@@ -1253,7 +1196,7 @@ public class TableCompiler {
 	 * @return
 	 */
 	private List<Dimension> getSortedDimension(Map<String, Dimension> dimensions,
-			Map<ObservedConcept, IObservation> catalog, IRuntimeScope scope) {
+			Map<IObservedConcept, IObservation> catalog, IRuntimeScope scope) {
 		List<Dimension> ret = new ArrayList<>();
 
 		List<Dimension> originalDims = new ArrayList<>();
@@ -1350,7 +1293,7 @@ public class TableCompiler {
 		this.monitor = monitor;
 		this.scope = scope;
 		this.targetObservable = target;
-		List<Pair<ObservedConcept, TargetType>> tdesc = parseTarget(definition.get("target"));
+		List<Pair<ObservedConcept, IKnowledgeView.TargetType>> tdesc = parseTarget(definition.get("target"));
 		if (tdesc.size() > 1) {
 			throw new KlabValidationException(
 					"Only one specific target is admitted for the top-level target of a table");
@@ -1383,6 +1326,16 @@ public class TableCompiler {
 		this.definition = definition;
 		if (definition.get("timelabels") instanceof Map) {
 			this.timelabels = (Map<?, ?>) definition.get("timelabels");
+		}
+
+		if (definition.containsKey("use")) {
+			if (definition.get("use") instanceof IServiceCall) {
+				Object o = Extensions.INSTANCE.callFunction((IServiceCall) definition.get("use"), scope);
+				if (o instanceof ITableCompiler) {
+					this.compiler = (ITableCompiler) o;
+					this.compiler.initialize(((IServiceCall) definition.get("use")).getParameters(), definition, scope);
+				}
+			}
 		}
 
 		/*
@@ -1484,6 +1437,10 @@ public class TableCompiler {
 
 		int ret = 0;
 
+		if (object == null) {
+			return ret;
+		}
+
 		if (object instanceof Collection) {
 			for (Object o : ((Collection<?>) object)) {
 				if (o instanceof Map) {
@@ -1521,7 +1478,7 @@ public class TableCompiler {
 
 		int ret = 0;
 
-		for (Pair<ObservedConcept, TargetType> target : parseTarget(map.get("target"))) {
+		for (Pair<ObservedConcept, IKnowledgeView.TargetType> target : parseTarget(map.get("target"))) {
 			Object classifiers = map.containsKey("filter") ? map.get("filter") : map.get("classifier");
 			boolean isClassifier = map.containsKey("classifier");
 			Pair<Collection<List<Filter>>, String> clss = expandClassifier(target.getFirst(), target.getSecond(),
@@ -1539,12 +1496,12 @@ public class TableCompiler {
 		return ret;
 	}
 
-	private List<Pair<ObservedConcept, TargetType>> parseTarget(Object object) {
+	private List<Pair<ObservedConcept, IKnowledgeView.TargetType>> parseTarget(Object object) {
 
-		List<Pair<ObservedConcept, TargetType>> ret = new ArrayList<>();
+		List<Pair<ObservedConcept, IKnowledgeView.TargetType>> ret = new ArrayList<>();
 
 		ObservedConcept target = null;
-		TargetType targetType = null;
+		IKnowledgeView.TargetType targetType = null;
 
 		if (object instanceof IKimConcept || object instanceof IKimObservable) {
 
@@ -1560,7 +1517,7 @@ public class TableCompiler {
 					if (trg.is(c)) {
 						for (IConcept targ : session.getState().getRoles().get(c)) {
 							ret.add(new Pair<>(new ObservedConcept(Observable.promote(targ), Mode.RESOLUTION),
-									trg.is(Type.QUALITY) ? TargetType.QUALITY : null));
+									trg.is(Type.QUALITY) ? IKnowledgeView.TargetType.QUALITY : null));
 						}
 					}
 				}
@@ -1572,8 +1529,8 @@ public class TableCompiler {
 
 					if (scope != null) {
 
-						Map<ObservedConcept, IObservation> catalog = scope.getCatalog();
-						for (ObservedConcept concept : catalog.keySet()) {
+						Map<IObservedConcept, IObservation> catalog = scope.getCatalog();
+						for (IObservedConcept concept : catalog.keySet()) {
 							boolean stateOK = trg.resolves(concept.getObservable(),
 									scope.getContextObservation() == null ? null
 											: scope.getContextObservation().getObservable().getType());
@@ -1593,14 +1550,14 @@ public class TableCompiler {
 							observable.is(IKimConcept.Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
 
 					if (trg.getType().equals(Concepts.c(NS.CORE_AREA))) {
-						targetType = TargetType.AREA;
+						targetType = IKnowledgeView.TargetType.AREA;
 					} else if (trg.getType().equals(Concepts.c(NS.CORE_DURATION))) {
-						targetType = TargetType.DURATION;
+						targetType = IKnowledgeView.TargetType.DURATION;
 					} else if (trg.getType().equals(Concepts.c(NS.CORE_COUNT))) {
-						targetType = TargetType.NUMEROSITY;
+						targetType = IKnowledgeView.TargetType.NUMEROSITY;
 					} else {
 						this.observables.add(target);
-						targetType = observable.is(Type.QUALITY) ? TargetType.QUALITY : null;
+						targetType = observable.is(Type.QUALITY) ? IKnowledgeView.TargetType.QUALITY : null;
 					}
 
 					ret.add(new Pair<>(target, targetType));
@@ -1618,7 +1575,7 @@ public class TableCompiler {
 				IObservable trgObs = ((IModel) resource).getObservables().get(0);
 				target = new ObservedConcept(Observable.promote((IModel) resource),
 						trgObs.is(IKimConcept.Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
-				targetType = trgObs.is(Type.QUALITY) ? TargetType.QUALITY : null;
+				targetType = trgObs.is(Type.QUALITY) ? IKnowledgeView.TargetType.QUALITY : null;
 				ret.add(new Pair<>(target, targetType));
 				this.observables.add(target);
 
@@ -1648,7 +1605,7 @@ public class TableCompiler {
 
 	}
 
-	private Dimension newDimension(ObservedConcept target, TargetType targetType, List<Filter> filters,
+	private Dimension newDimension(ObservedConcept target, IKnowledgeView.TargetType targetType, List<Filter> filters,
 			Map<?, ?> definition, DimensionType type, int lastIndex, boolean filtersAreClassifiers,
 			String filterClassId, Dimension parent, List<Dimension> dimensions) {
 
@@ -1667,6 +1624,10 @@ public class TableCompiler {
 			ret.parent.children.add(ret);
 		}
 
+		if (definition.containsKey("hidezero")) {
+			ret.hideZero = (Boolean)definition.get("hidezero");
+		}
+		
 		if (definition.containsKey("name")) {
 			ret.id = definition.get("name").toString();
 		} else {
@@ -1734,25 +1695,25 @@ public class TableCompiler {
 					: Collections.singleton(definition.get("style")))) {
 				switch (style.toString()) {
 				case "bold":
-					ret.style.add(Style.BOLD);
+					ret.style.add(IKnowledgeView.Style.BOLD);
 					break;
 				case "italic":
-					ret.style.add(Style.ITALIC);
+					ret.style.add(IKnowledgeView.Style.ITALIC);
 					break;
 				case "right":
-					ret.style.add(Style.RIGHT);
+					ret.style.add(IKnowledgeView.Style.RIGHT);
 					break;
 				case "left":
-					ret.style.add(Style.LEFT);
+					ret.style.add(IKnowledgeView.Style.LEFT);
 					break;
 				case "center":
-					ret.style.add(Style.CENTER);
+					ret.style.add(IKnowledgeView.Style.CENTER);
 					break;
 				case "bg_highlight":
-					ret.style.add(Style.BG_HIGHLIGHT);
+					ret.style.add(IKnowledgeView.Style.BG_HIGHLIGHT);
 					break;
 				case "fg_highlight":
-					ret.style.add(Style.FG_HIGHLIGHT);
+					ret.style.add(IKnowledgeView.Style.FG_HIGHLIGHT);
 					break;
 				default:
 					throw new KlabValidationException("table: unrecognized style " + style);
@@ -1762,29 +1723,29 @@ public class TableCompiler {
 
 		if (definition.get("compute") instanceof IKimExpression) {
 			ret.expression = (IKimExpression) definition.get("compute");
-			ret.computationType = ComputationType.Expression;
+			ret.computationType = IKnowledgeView.ComputationType.Expression;
 		} else if (definition.get("summarize") instanceof IKimExpression) {
 			ret.expression = (IKimExpression) definition.get("summarize");
-			ret.computationType = ComputationType.Summarize;
+			ret.computationType = IKnowledgeView.ComputationType.Summarize;
 		} else if (definition.containsKey("summarize")) {
 			switch (definition.get("summarize").toString()) {
 			case "sum":
-				ret.computationType = ComputationType.Sum;
+				ret.computationType = IKnowledgeView.ComputationType.Sum;
 				break;
 			case "average":
-				ret.computationType = ComputationType.Average;
+				ret.computationType = IKnowledgeView.ComputationType.Average;
 				break;
 			case "variance":
-				ret.computationType = ComputationType.Variance;
+				ret.computationType = IKnowledgeView.ComputationType.Variance;
 				break;
 			case "std":
-				ret.computationType = ComputationType.Std;
+				ret.computationType = IKnowledgeView.ComputationType.Std;
 				break;
 			case "min":
-				ret.computationType = ComputationType.Min;
+				ret.computationType = IKnowledgeView.ComputationType.Min;
 				break;
 			case "max":
-				ret.computationType = ComputationType.Max;
+				ret.computationType = IKnowledgeView.ComputationType.Max;
 				break;
 			default:
 				throw new KlabValidationException(
@@ -1795,22 +1756,22 @@ public class TableCompiler {
 		if (definition.containsKey("aggregation")) {
 			switch (definition.get("aggregation").toString()) {
 			case "sum":
-				ret.forcedAggregation = ComputationType.Sum;
+				ret.forcedAggregation = IKnowledgeView.ComputationType.Sum;
 				break;
 			case "average":
-				ret.forcedAggregation = ComputationType.Average;
+				ret.forcedAggregation = IKnowledgeView.ComputationType.Average;
 				break;
 			case "variance":
-				ret.forcedAggregation = ComputationType.Variance;
+				ret.forcedAggregation = IKnowledgeView.ComputationType.Variance;
 				break;
 			case "std":
-				ret.forcedAggregation = ComputationType.Std;
+				ret.forcedAggregation = IKnowledgeView.ComputationType.Std;
 				break;
 			case "min":
-				ret.forcedAggregation = ComputationType.Min;
+				ret.forcedAggregation = IKnowledgeView.ComputationType.Min;
 				break;
 			case "max":
-				ret.forcedAggregation = ComputationType.Max;
+				ret.forcedAggregation = IKnowledgeView.ComputationType.Max;
 				break;
 			default:
 				throw new KlabValidationException(
@@ -1872,7 +1833,7 @@ public class TableCompiler {
 
 	}
 
-	private Pair<Collection<List<Filter>>, String> expandClassifier(ObservedConcept target, TargetType targetType,
+	private Pair<Collection<List<Filter>>, String> expandClassifier(ObservedConcept target, IKnowledgeView.TargetType targetType,
 			Object declaration, Map<?, ?> dimensionDeclaration) {
 
 		List<List<Filter>> ret = new ArrayList<>();
@@ -1888,7 +1849,7 @@ public class TableCompiler {
 				if ("default".equals(entry.getKey())) {
 					expandClassifiers(target, targetType, declaration, ret, dimensionDeclaration);
 				} else {
-					List<Pair<ObservedConcept, TargetType>> classifierTarget = parseTarget(entry.getKey());
+					List<Pair<ObservedConcept, IKnowledgeView.TargetType>> classifierTarget = parseTarget(entry.getKey());
 					if (classifierTarget.size() > 1) {
 						throw new KlabValidationException("Only one specific target is admitted in a classifier");
 					} else if (classifierTarget.size() > 0) {
@@ -1904,7 +1865,7 @@ public class TableCompiler {
 		return new Pair<>(ret, classId);
 	}
 
-	private void expandClassifiers(ObservedConcept target, TargetType targetType, Object declaration,
+	private void expandClassifiers(ObservedConcept target, IKnowledgeView.TargetType targetType, Object declaration,
 			List<List<Filter>> ret, Map<?, ?> dimensionDeclaration) {
 		Map<Integer, List<Object>> sorted = new HashMap<>();
 
@@ -1980,8 +1941,8 @@ public class TableCompiler {
 
 					if (scope != null) {
 
-						Map<ObservedConcept, IObservation> catalog = scope.getCatalog();
-						for (ObservedConcept concept : catalog.keySet()) {
+						Map<IObservedConcept, IObservation> catalog = scope.getCatalog();
+						for (IObservedConcept concept : catalog.keySet()) {
 							boolean stateOK = observable.resolves(concept.getObservable(),
 									scope.getContextObservation() == null ? null
 											: scope.getContextObservation().getObservable().getType());
@@ -2159,11 +2120,18 @@ public class TableCompiler {
 	 * Compute all cells that want to be computed. Target comes from caller, if null
 	 * we must have an observable and find it in the catalog.
 	 */
-	public TableArtifact compute(IObservation targetObservation, IRuntimeScope scope) {
+	public IKnowledgeView compute(IObservation targetObservation, IRuntimeScope scope) {
+
+		if (this.compiler != null) {
+			scope.getMonitor().info("Computing table " + name + " using custom builder");
+			IKnowledgeView.Builder builder = SimpleTableArtifact.builder(this, scope);
+			this.compiler.compile(builder);
+			return builder.build();
+		}
 
 		scope.getMonitor().info("start computing table " + name);
 
-		Map<ObservedConcept, IObservation> catalog = scope.getCatalog();
+		Map<IObservedConcept, IObservation> catalog = scope.getCatalog();
 		if (this.target != null && !this.target.getObservable().isAbstract()) {
 			targetObservation = catalog.get(this.target);
 		}
@@ -2199,15 +2167,15 @@ public class TableCompiler {
 		 */
 		TableArtifact ret = new TableArtifact(this, sortedRows, sortedColumns, scope);
 
-		Double fixedAreaMq = null;
-		Double adaptedAreaMq = null;
-		if (targetObservation.getScale().getSpace() != null
-				&& targetObservation.getScale().getSpace() instanceof Space) {
-			Space space = (Space) targetObservation.getScale().getSpace();
-			if (space.getGrid() != null) {
-				fixedAreaMq = space.getGrid().getCell(0).getStandardizedArea();
-			}
-		}
+//		Double fixedAreaMq = null;
+//		Double adaptedAreaMq = null;
+//		if (targetObservation.getScale().getSpace() != null
+//				&& targetObservation.getScale().getSpace() instanceof Space) {
+//			Space space = (Space) targetObservation.getScale().getSpace();
+//			if (space.getGrid() != null) {
+//				fixedAreaMq = space.getGrid().getCell(0).getStandardizedArea();
+//			}
+//		}
 
 		boolean abstractStates = isState(targetObservation) && targetObservation instanceof IObservationGroup;
 
@@ -2242,8 +2210,8 @@ public class TableCompiler {
 					}
 
 					ObservedConcept columnTarget = column.target == null ? this.target : column.target;
-					TargetType columnTargetType = column.targetType == null ? this.targetType : column.targetType;
-					ComputationType columnComputationType = column.computationType;
+					IKnowledgeView.TargetType columnTargetType = column.targetType == null ? this.targetType : column.targetType;
+					IKnowledgeView.ComputationType columnComputationType = column.computationType;
 					int aggregationLevel = (column.computationType != null && column.computationType.isAggregation())
 							? 1
 							: 0;
@@ -2268,11 +2236,11 @@ public class TableCompiler {
 						}
 
 						// bring along the data of computation closest to us
-						ObservedConcept rowTarget = getCellTarget(row, column, columnTarget);
-						TargetType rowTargetType = row.targetType == null ? columnTargetType : row.targetType;
-						ComputationType forcedAggregation = row.forcedAggregation == null ? column.forcedAggregation
+						IObservedConcept rowTarget = getCellTarget(row, column, columnTarget);
+						IKnowledgeView.TargetType rowTargetType = row.targetType == null ? columnTargetType : row.targetType;
+						IKnowledgeView.ComputationType forcedAggregation = row.forcedAggregation == null ? column.forcedAggregation
 								: row.forcedAggregation;
-						ComputationType rowComputationType = row.computationType == null ? column.computationType
+						IKnowledgeView.ComputationType rowComputationType = row.computationType == null ? column.computationType
 								: row.computationType;
 						ILanguageExpression rowExpression = row.getExpression(scope) == null
 								? column.getExpression(scope)
@@ -2299,17 +2267,25 @@ public class TableCompiler {
 						if (rowTargetType != null && rowTarget != null) {
 							switch (rowTargetType) {
 							case AREA:
-								// use precomputed if grid
-								if (adaptedAreaMq != null) {
-									val = adaptedAreaMq;
-								} else if (fixedAreaMq != null) {
-									val = adaptedAreaMq = rowTarget.getObservable().getUnit()
-											.convert(fixedAreaMq, Units.INSTANCE.SQUARE_METERS).doubleValue();
-								} else {
-									val = rowTarget.getObservable().getUnit().convert(
-											((IScale) value.getSecond()).getSpace().getStandardizedArea(),
-											Units.INSTANCE.SQUARE_METERS);
-								}
+
+//								double area = 0;
+////								Space space = (Space) targetObservation.getScale().getSpace();
+////								if (space.getGrid() != null) {
+//									area = ((IScale)value.getSecond()).getSpace().getStandardizedArea();
+////								}
+//
+//								
+//								// use precomputed if grid
+//								if (adaptedAreaMq != null) {
+//									val = adaptedAreaMq;
+//								} else if (fixedAreaMq != null) {
+//									val = adaptedAreaMq = rowTarget.getObservable().getUnit()
+//											.convert(fixedAreaMq, Units.INSTANCE.SQUARE_METERS).doubleValue();
+//								} else {
+								val = rowTarget.getObservable().getUnit().convert(
+										((IScale) value.getSecond()).getSpace().getStandardizedArea(),
+										Units.INSTANCE.SQUARE_METERS);
+//								}
 								break;
 							case DURATION:
 								// TODO same
@@ -2353,7 +2329,7 @@ public class TableCompiler {
 							// ","
 							// + ((Cell) ((IScale) value.getSecond()).getSpace()).getY());
 
-						} else if (rowComputationType == ComputationType.Expression) {
+						} else if (rowComputationType == IKnowledgeView.ComputationType.Expression) {
 
 							phaseMap.put("time", scope.getScale().getTime());
 
@@ -2375,11 +2351,11 @@ public class TableCompiler {
 						} else if (!inconsistentAggregation) {
 							// schedule for aggregation after all other cells are computed
 							ret.aggregate(rowComputationType, phase, column.index, row.index, aggregationLevel);
-						} else if (inconsistentAggregation && (rowComputationType == ComputationType.Summarize
-								|| column.computationType == ComputationType.Summarize)) {
+						} else if (inconsistentAggregation && (rowComputationType == IKnowledgeView.ComputationType.Summarize
+								|| column.computationType == IKnowledgeView.ComputationType.Summarize)) {
 							// this mess shouldn't be here. Stems from Summarize being considered
 							// aggregation when it shouldn't.
-							ret.aggregate(rowComputationType == ComputationType.Summarize ? columnComputationType
+							ret.aggregate(rowComputationType == IKnowledgeView.ComputationType.Summarize ? columnComputationType
 									: rowComputationType, phase, column.index, row.index, aggregationLevel);
 						}
 
@@ -2399,11 +2375,11 @@ public class TableCompiler {
 		}
 	}
 
-	private ObservedConcept getCellTarget(Dimension row, Dimension column, ObservedConcept defaultTarget) {
+	private IObservedConcept getCellTarget(Dimension row, Dimension column, IObservedConcept defaultTarget) {
 
 		if (!row.columnTargets.containsKey(column.getName())) {
 
-			ObservedConcept trg = row.target;
+			IObservedConcept trg = row.target;
 			if (trg == null) {
 				/*
 				 * get the closest target for the row, then for the column, then the default.
@@ -2469,7 +2445,7 @@ public class TableCompiler {
 	private Object evaluate(ILanguageExpression rowExpression, Object self, Set<String> scalarSymbols,
 			Set<String> objectSymbols, Pair<Object, ILocator> value, TableArtifact ret, int columnIndex, int rowIndex,
 			Dimension column, Dimension row, boolean isValue, Map<String, ITime> phases,
-			Map<ObservedConcept, IObservation> catalog, IRuntimeScope scope) {
+			Map<IObservedConcept, IObservation> catalog, IRuntimeScope scope) {
 
 		IParameters<String> parameters = Parameters.create(scope);
 		parameters.put("self", self);
@@ -2557,12 +2533,10 @@ public class TableCompiler {
 						ret.add(new Phase((IScale) trg.getScale().initialization(), "init").setKey("init"));
 					}
 					if (phaseItems.contains("start")) {
-						ret.add(new Phase((IScale) trg.getScale().at(time.getExtent(time.size() < 3 ? 0 : 1)), "start")
-								.setKey("start"));
+						ret.add(new Phase((IScale) trg.getScale().at(time.earliest()), "start").setKey("start"));
 					}
 					if (phaseItems.contains("end")) {
-						ret.add(new Phase((IScale) trg.getScale().at(time.getExtent(time.size() - 1)), "end")
-								.setKey("end"));
+						ret.add(new Phase((IScale) trg.getScale().at(time.latest()), "end").setKey("end"));
 					}
 				} else {
 					ret.add(new Phase(trg.getScale(), 1).setKey("main"));
@@ -2627,7 +2601,7 @@ public class TableCompiler {
 		return ret;
 	}
 
-	public List<Filter> compileFilters(ObservedConcept target, TargetType targetType, List<Object> classifiers) {
+	public List<Filter> compileFilters(ObservedConcept target, IKnowledgeView.TargetType targetType, List<Object> classifiers) {
 		List<Filter> ret = new ArrayList<>();
 
 		for (Object o : classifiers) {

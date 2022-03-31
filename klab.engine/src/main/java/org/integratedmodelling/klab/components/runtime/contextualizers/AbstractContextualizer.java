@@ -7,6 +7,7 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
+import org.integratedmodelling.klab.dataflow.DataflowHandler;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
@@ -73,7 +74,7 @@ public abstract class AbstractContextualizer implements IContextualizer {
             artifact = (T) scope.getState(stateIdentifier, Unit.create(input.getUnit()));
         } else if (input.getUnit() == null) {
             artifact = scope.getArtifact(stateIdentifier, cls);
-            if (artifact.getObservable().getArtifactType() != input.getType()) {
+            if (artifact != null && artifact.getObservable().getArtifactType() != input.getType()) {
                 throw new KlabIllegalStateException("input '" + stateIdentifier + "' in function "
                         + prototype.getName() + " is not of the declared " + input.getType()
                         + " type (actual = " + artifact.getObservable().getArtifactType() + ")");

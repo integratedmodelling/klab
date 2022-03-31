@@ -16,24 +16,26 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isConst <em>Const</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isExported <em>Exported</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isImported <em>Imported</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getType <em>Type</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getAnnotationTag <em>Annotation Tag</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getDocstring <em>Docstring</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getLabel <em>Label</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getAnnotations <em>Annotations</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isAbstract <em>Abstract</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isFinal <em>Final</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isOptional <em>Optional</em>}</li>
- *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isExported <em>Exported</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isFilter <em>Filter</em>}</li>
- *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isImported <em>Imported</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isMultiple <em>Multiple</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getArity <em>Arity</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isMinimum <em>Minimum</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isParameter <em>Parameter</em>}</li>
- *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getType <em>Type</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isExpression <em>Expression</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getName <em>Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getExtended <em>Extended</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getTargets <em>Targets</em>}</li>
- *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getDocstring <em>Docstring</em>}</li>
- *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getLabel <em>Label</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getBody <em>Body</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getRangeMin <em>Range Min</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getRangeMax <em>Range Max</em>}</li>
@@ -50,6 +52,160 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface ActorDefinition extends EObject
 {
+  /**
+   * Returns the value of the '<em><b>Const</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Const</em>' attribute.
+   * @see #setConst(boolean)
+   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getActorDefinition_Const()
+   * @model
+   * @generated
+   */
+  boolean isConst();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isConst <em>Const</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Const</em>' attribute.
+   * @see #isConst()
+   * @generated
+   */
+  void setConst(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Exported</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Exported</em>' attribute.
+   * @see #setExported(boolean)
+   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getActorDefinition_Exported()
+   * @model
+   * @generated
+   */
+  boolean isExported();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isExported <em>Exported</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Exported</em>' attribute.
+   * @see #isExported()
+   * @generated
+   */
+  void setExported(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Imported</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Imported</em>' attribute.
+   * @see #setImported(boolean)
+   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getActorDefinition_Imported()
+   * @model
+   * @generated
+   */
+  boolean isImported();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isImported <em>Imported</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Imported</em>' attribute.
+   * @see #isImported()
+   * @generated
+   */
+  void setImported(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Type</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Type</em>' attribute.
+   * @see #setType(String)
+   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getActorDefinition_Type()
+   * @model
+   * @generated
+   */
+  String getType();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getType <em>Type</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Type</em>' attribute.
+   * @see #getType()
+   * @generated
+   */
+  void setType(String value);
+
+  /**
+   * Returns the value of the '<em><b>Annotation Tag</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Annotation Tag</em>' attribute.
+   * @see #setAnnotationTag(String)
+   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getActorDefinition_AnnotationTag()
+   * @model
+   * @generated
+   */
+  String getAnnotationTag();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getAnnotationTag <em>Annotation Tag</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Annotation Tag</em>' attribute.
+   * @see #getAnnotationTag()
+   * @generated
+   */
+  void setAnnotationTag(String value);
+
+  /**
+   * Returns the value of the '<em><b>Docstring</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Docstring</em>' attribute.
+   * @see #setDocstring(String)
+   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getActorDefinition_Docstring()
+   * @model
+   * @generated
+   */
+  String getDocstring();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getDocstring <em>Docstring</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Docstring</em>' attribute.
+   * @see #getDocstring()
+   * @generated
+   */
+  void setDocstring(String value);
+
+  /**
+   * Returns the value of the '<em><b>Label</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Label</em>' attribute.
+   * @see #setLabel(String)
+   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getActorDefinition_Label()
+   * @model
+   * @generated
+   */
+  String getLabel();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getLabel <em>Label</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Label</em>' attribute.
+   * @see #getLabel()
+   * @generated
+   */
+  void setLabel(String value);
+
   /**
    * Returns the value of the '<em><b>Annotations</b></em>' containment reference list.
    * The list contents are of type {@link org.integratedmodelling.kdl.kdl.Annotation}.
@@ -129,28 +285,6 @@ public interface ActorDefinition extends EObject
   void setOptional(boolean value);
 
   /**
-   * Returns the value of the '<em><b>Exported</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Exported</em>' attribute.
-   * @see #setExported(boolean)
-   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getActorDefinition_Exported()
-   * @model
-   * @generated
-   */
-  boolean isExported();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isExported <em>Exported</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Exported</em>' attribute.
-   * @see #isExported()
-   * @generated
-   */
-  void setExported(boolean value);
-
-  /**
    * Returns the value of the '<em><b>Filter</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -171,28 +305,6 @@ public interface ActorDefinition extends EObject
    * @generated
    */
   void setFilter(boolean value);
-
-  /**
-   * Returns the value of the '<em><b>Imported</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Imported</em>' attribute.
-   * @see #setImported(boolean)
-   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getActorDefinition_Imported()
-   * @model
-   * @generated
-   */
-  boolean isImported();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#isImported <em>Imported</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Imported</em>' attribute.
-   * @see #isImported()
-   * @generated
-   */
-  void setImported(boolean value);
 
   /**
    * Returns the value of the '<em><b>Multiple</b></em>' attribute.
@@ -283,28 +395,6 @@ public interface ActorDefinition extends EObject
   void setParameter(boolean value);
 
   /**
-   * Returns the value of the '<em><b>Type</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Type</em>' attribute.
-   * @see #setType(String)
-   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getActorDefinition_Type()
-   * @model
-   * @generated
-   */
-  String getType();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getType <em>Type</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Type</em>' attribute.
-   * @see #getType()
-   * @generated
-   */
-  void setType(String value);
-
-  /**
    * Returns the value of the '<em><b>Expression</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -381,50 +471,6 @@ public interface ActorDefinition extends EObject
    * @generated
    */
   EList<String> getTargets();
-
-  /**
-   * Returns the value of the '<em><b>Docstring</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Docstring</em>' attribute.
-   * @see #setDocstring(String)
-   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getActorDefinition_Docstring()
-   * @model
-   * @generated
-   */
-  String getDocstring();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getDocstring <em>Docstring</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Docstring</em>' attribute.
-   * @see #getDocstring()
-   * @generated
-   */
-  void setDocstring(String value);
-
-  /**
-   * Returns the value of the '<em><b>Label</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Label</em>' attribute.
-   * @see #setLabel(String)
-   * @see org.integratedmodelling.kdl.kdl.KdlPackage#getActorDefinition_Label()
-   * @model
-   * @generated
-   */
-  String getLabel();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kdl.kdl.ActorDefinition#getLabel <em>Label</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Label</em>' attribute.
-   * @see #getLabel()
-   * @generated
-   */
-  void setLabel(String value);
 
   /**
    * Returns the value of the '<em><b>Body</b></em>' containment reference.

@@ -20,12 +20,18 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
+import org.integratedmodelling.klab.api.runtime.monitoring.IInspector;
 import org.integratedmodelling.klab.common.Offset;
+import org.integratedmodelling.klab.components.runtime.observations.Observation;
+import org.integratedmodelling.klab.components.runtime.observations.State;
+import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.engine.debugger.Debugger.Watcher;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
+import org.integratedmodelling.klab.engine.runtime.api.IModificationListener;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.scale.Extent;
+import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.StringUtil;
 
@@ -45,7 +51,8 @@ import org.integratedmodelling.klab.utils.StringUtil;
  */
 public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 
-    private NavigableMap<Long, Slice> slices = new TreeMap<>();
+    private NavigableMap<Long, Slice> slicesByEnd = new TreeMap<>();
+    private NavigableMap<Long, Slice> slicesByStart = new TreeMap<>();
     private long highTimeOffset = -1;
     private long maxTimeOffset;
     private long sliceSize;
@@ -128,7 +135,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
             this.timestep = timestep;
             this.timestart = timeStart;
             this.timeend = timeEnd;
-            this.index = slices.size();
+            this.index = slicesByEnd.size();
             if (closest != null) {
                 if (closest.sliceOffsetInBackend >= 0) {
                     this.sliceOffsetInBackend = closest.sliceOffsetInBackend + 1;
@@ -189,7 +196,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
      * @return
      */
     Slice getSlice(int index) {
-        Iterator<Slice> it = slices.values().iterator();
+        Iterator<Slice> it = slicesByEnd.values().iterator();
         while(index-- > 0) {
             it.next();
         }
@@ -259,19 +266,20 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
             return (T) scalarValue;
         }
 
-        if (slices.isEmpty()) {
+        if (slicesByEnd.isEmpty()) {
             return null;
         }
 
         Offset offsets = locator.as(Offset.class);
 
         if (offsets.length != geometry.getDimensions().size()) {
-            throw new KlabInternalErrorException("locator has different dimensionality than observation: should never happen");
+            throw new KlabInternalErrorException(
+                    "locator has different dimensionality than observation: should never happen");
         }
 
         long timeOffset = trivial ? 0 : offsets.pos[0];
         long sliceOffset = product(offsets.pos, trivial ? 0 : 1);
-        
+
         /*
          * To index the slice, use time end directly unless we're at initialization. Record start,
          * end and offset in state's scale in the slice.
@@ -292,28 +300,32 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
         } else {
             throw new KlabUnimplementedException("unexpected locator in mapped storage!");
         }
-        
+
         Slice slice = getSlice(locator);
-        
+
         /*
          * check for non-conformant time extent (!= to the extent of the slice): this means that the
          * requesting scale isn't the same as the native one, or that there have been in-between
          * timestep changes in the state due to processes or events operating at different scales.
          */
-//        if (!initialization && sliceOffset >= 0 && slice != null && !slice.isInitialization()
-//                && (slice.timestart != timeStart || slice.timeend != timeEnd)) {
-//            /*
-//             * TODO if needed, aggregate within the boundary of the requesting scale, otherwise keep
-//             * the latest value
-//             */
-//            NavigableMap<Long, Slice> aggregatable = slices.subMap(timeStart, false, timeEnd, true);
-//            if (aggregatable.isEmpty()) {
-//                Slice theSlice = slices.get(timeStart);
-//                // use state before start if existing, otherwise result is NaN
-//                return theSlice == null ? (slice == null ? null : slice.getAt(sliceOffset)) : theSlice.getAt(sliceOffset);
-//            }
-//            return aggregate(aggregatable, sliceOffset);
-//        }
+        // if (!initialization && sliceOffset >= 0 && slice != null &&
+        // !slice.isInitialization()
+        // && (slice.timestart != timeStart || slice.timeend != timeEnd)) {
+        // /*
+        // * TODO if needed, aggregate within the boundary of the requesting scale,
+        // otherwise keep
+        // * the latest value
+        // */
+        // NavigableMap<Long, Slice> aggregatable = slices.subMap(timeStart, false,
+        // timeEnd, true);
+        // if (aggregatable.isEmpty()) {
+        // Slice theSlice = slices.get(timeStart);
+        // // use state before start if existing, otherwise result is NaN
+        // return theSlice == null ? (slice == null ? null : slice.getAt(sliceOffset)) :
+        // theSlice.getAt(sliceOffset);
+        // }
+        // return aggregate(aggregatable, sliceOffset);
+        // }
 
         return slice == null ? null : slice.getAt(sliceOffset);
     }
@@ -355,7 +367,8 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
         Offset offsets = locator.as(Offset.class);
 
         if (offsets.length != geometry.getDimensions().size()) {
-            throw new KlabInternalErrorException("locator has different dimensionality than observation: should never happen");
+            throw new KlabInternalErrorException(
+                    "locator has different dimensionality than observation: should never happen");
         }
 
         /*
@@ -369,7 +382,8 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
             time = ((IScale) locator).getTime();
         }
 
-        if (time != null && time.getTimeType() != ITime.Type.INITIALIZATION && time.getStart() != null && time.getEnd() != null) {
+        if (time != null && time.getTimeType() != ITime.Type.INITIALIZATION && time.getStart() != null
+                && time.getEnd() != null) {
             timeStart = time.getStart().getMilliseconds();
             timeEnd = time.getEnd().getMilliseconds();
         }
@@ -380,7 +394,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 
         synchronized (this) {
 
-            if (noData && slices.isEmpty()) {
+            if (noData && slicesByEnd.isEmpty()) {
                 // everything's nodata so far, no need to store.
                 return trivial ? sliceOffset : (sliceOffset * (timeOffset + 1));
             }
@@ -395,21 +409,29 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
             /*
              * find the closest slice for the time
              */
-            Slice slice = getClosest(/* timeOffset */timeEnd);
+            Slice slice = getClosest(/* timeOffset */timeEnd, false);
             if (slice != null/* && slice.timestep != timeOffset */ && !slice.isEmpty()
                     && equals(slice.getAt(sliceOffset), value)) {
                 // don't store anything until it's different from the previous slice.
                 return trivial ? sliceOffset : (sliceOffset * (timeOffset + 1));
             }
-            
+
             /*
              * if we get here, we need to store in a slice of our own unless we found the exact
              * timestep.
              */
             if (slice == null || slice.timestep != timeOffset) {
                 slice = addSlice(timeOffset, timeStart, timeEnd, slice);
+                if (time != null && state != null) {
+                    ((State) state).getScale().mergeTransition(time);
+                }
                 for (Consumer<ILocator> listener : this.listeners) {
                     listener.accept(locator);
+                }
+                if (this.state instanceof Observation && time != null) {
+                    for (IModificationListener listener : ((Observation) state).getModificationListeners()) {
+                        listener.onTemporalExtension(time);
+                    }
                 }
                 if (this.watches != null) {
                     for (Watcher watch : watches.values()) {
@@ -434,21 +456,27 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 
     private Slice addSlice(long timeOffset, long timeStart, long timeEnd, Slice closest) {
         Slice slice = new Slice(timeOffset, timeStart, timeEnd, closest);
-        slices.put(timeEnd, slice);
+        slicesByEnd.put(timeEnd, slice);
+        slicesByStart.put(timeStart, slice);
+        state.getScope().notifyInspector(IInspector.Asset.STATE_SLICE,
+                IInspector.Event.CREATION, slice, state);
         return slice;
     }
 
     private boolean equals(Object valueAt, T value) {
-        return (valueAt == null && value == null) || (valueAt != null && value != null && valueAt.equals(value));
+        return (valueAt == null && value == null)
+                || (valueAt != null && value != null && valueAt.equals(value));
     }
 
-    private Slice getClosest(long timeSlice) {
-        Map.Entry<Long, Slice> low = slices.floorEntry(timeSlice);
+    private Slice getClosest(long timeSlice, boolean fromUpwards) {
+        Map.Entry<Long, Slice> low = fromUpwards
+                ? slicesByStart.floorEntry(timeSlice)
+                : slicesByEnd.floorEntry(timeSlice);
         return low == null ? null : low.getValue();
     }
 
     protected int sliceCount() {
-        return slices.size();
+        return slicesByEnd.size();
     }
 
     @Override
@@ -476,8 +504,8 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
         SimpleDateFormat f = new SimpleDateFormat("dd/MM/yy-hh:mm");
         String spacer = StringUtil.spaces(indent);
         String ret = "";
-        for (Long key : slices.keySet()) {
-            Slice slice = slices.get(key);
+        for (Long key : slicesByEnd.keySet()) {
+            Slice slice = slicesByEnd.get(key);
             ret += spacer
                     + ((slice.timestart == 0 || slice.timeend == 0)
                             ? "Initialization"
@@ -496,7 +524,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
     public Object[] getTimeseries(ILocator locator) {
         List<Object> ret = new ArrayList<>();
         long sliceOffset = getSliceOffset(locator);
-        for (Slice slice : slices.values()) {
+        for (Slice slice : slicesByEnd.values()) {
             ret.add(slice.getAt(sliceOffset));
         }
         return ret.toArray();
@@ -504,7 +532,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 
     public List<ILocator> getTimesliceLocators() {
         List<ILocator> ret = new ArrayList<>();
-        for (int i = 0; i < slices.size(); i++) {
+        for (int i = 0; i < slicesByEnd.size(); i++) {
             Slice slice = getSlice(i);
             TimesliceLocator locator = new TimesliceLocator(this, slice, i);
             ret.add(locator);
@@ -515,9 +543,15 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
     public Slice getSlice(ILocator locator) {
 
         if (locator instanceof TimesliceLocator) {
-            return getSlice(((TimesliceLocator)locator).sliceIndex);
+            return getSlice(((TimesliceLocator) locator).sliceIndex);
+        } else if (locator instanceof Time && ((Time) locator).getLocatedTimeslice() >= 0) {
+            return getSlice(((Time) locator).getLocatedTimeslice());
+        } else if (locator instanceof Scale && ((Scale) locator).getTime() instanceof Time
+                && ((Time) ((Scale) locator).getTime()).getLocatedTimeslice() >= 0) {
+            // return getSlice(((Time) ((Scale) locator).getTime()).getLocatedTimeslice() + 1);
+            return getClosest(((Scale) locator).getTime().getFocus().getMilliseconds(), true);
         }
-        
+
         Offset offsets = locator.as(Offset.class);
         long timeOffset = trivial ? 0 : offsets.pos[0];
 
@@ -535,12 +569,12 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
             throw new KlabUnimplementedException("unexpected locator in mapped storage!");
         }
 
-        boolean initialization = true;
+        boolean initialization = timeOffset <= 0;
         long timepoint = -1;
         if (time != null && time.getFocus() != null) {
             timepoint = time.getFocus().getMilliseconds();
         } else if (time != null && time.getStart() != null && time.getEnd() != null) {
-//            timeStart = time.getStart().getMilliseconds();
+            // timeStart = time.getStart().getMilliseconds();
             timeEnd = time.getEnd().getMilliseconds();
             initialization = time.getTimeType() == ITime.Type.INITIALIZATION;
         }
@@ -555,7 +589,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
              * happens.
              */
             Slice lastSlice = null;
-            for (Slice s : slices.values()) {
+            for (Slice s : slicesByEnd.values()) {
                 if (timepoint >= s.timestart && timepoint < s.timeend) {
                     slice = s;
                     break;
@@ -570,7 +604,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 
         } else {
             // can only be the closest at this point, unless there was no slice at all
-            slice = getClosest(initialization ? 0 : timeEnd);
+            slice = getClosest(initialization ? 0 : timeEnd, false);
         }
         return slice;
     }

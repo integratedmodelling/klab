@@ -37,7 +37,7 @@ filter object merge
 	 original objects will remain in the source observation groups unless remove=true." 
 	label "Aggregate"
 {
-	optional concept semantics 
+	optional import concept semantics 
 		"The semantics that identifies the states to aggregate. Can be abstract or general: all observations that resolve it will be aggregated"
 		
 	optional boolean remove
@@ -54,7 +54,7 @@ filter value aggregate
 	 original objects will remain in the source observation groups unless remove=true." 
 	label "Aggregate"
 {
-	optional concept semantics 
+	optional import concept semantics 
 		"The semantics that identifies the states to aggregate. Can be abstract or general: all observations that resolve it will be aggregated"
 		
 	// TODO unimplemented: make this an enum when implementing
@@ -66,7 +66,7 @@ filter value aggregate
 
 filter number euclideandistance 
 	"Compute a family of Euclidean distance-based metrics and indicators." 
-	label "Standardize"
+	label "Distance indicator"
 {
 	optional import number artifact 
 		"The artifact to standardize. Defaults to the target artifact."
@@ -75,7 +75,7 @@ filter number euclideandistance
 		"Weighting scheme for the observations: either a number (equal for all) or a map of concept -> weight. If no weight is specified, equal 
 		 weights summing to 1 are used."
 		
-	optional value source
+	optional import value source
 		"What to aggregate as distance source: a role, attribute, observable, or list thereof. All dependencies will be matched."
 
 	optional value target
@@ -83,7 +83,8 @@ filter number euclideandistance
 		this is passed, must match one of those indicators that compute implicit distances."
 		
 	optional text indicator
-		"The indicator we compute. For now either nothing (traditional ED), "	
+		"The indicator we compute. Default value is distance calculating the Euclidean distance from the vector to the origin. 
+		Use similarity to calculate the similarity between the vector and the origin. "	
 		
 	class org.integratedmodelling.klab.data.transformations.EuclideanDistanceResolver
 }

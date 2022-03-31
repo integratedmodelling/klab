@@ -73,6 +73,7 @@ public class ObservableBuilder implements IObservable.Builder {
 	private IConcept temporalInherent;
 	private boolean mustContextualize = false;
 	private String statedName;
+	private String url;
 
 	private List<IConcept> traits = new ArrayList<>();
 	private List<IConcept> roles = new ArrayList<>();
@@ -214,6 +215,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.dereified = other.dereified;
 		this.incarnatedAbstractObservable = other.incarnatedAbstractObservable;
 		this.deferredTarget = other.deferredTarget;
+		this.url = other.url;
 		
 		checkTrivial();
 	}
@@ -2206,6 +2208,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		ret.setGlobal(this.global);
 		ret.setIncarnatedAbstractObservable(this.incarnatedAbstractObservable);
 		ret.setDeferredTarget(this.deferredTarget);
+		ret.setUrl(this.url);
 		
 		if (unitStatement != null) {
 			/* TODO CHECK */
@@ -2368,5 +2371,11 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.global = global;
 		return this;
 	}
+
+    @Override
+    public Builder withUrl(String uri) {
+        this.url = uri;
+        return this;
+    }
 
 }

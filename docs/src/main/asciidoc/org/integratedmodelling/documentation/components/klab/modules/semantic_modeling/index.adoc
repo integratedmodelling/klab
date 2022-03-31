@@ -1,0 +1,45 @@
+= Semantic modeling
+
+== The basics: provenance
+
+Science can be https://en.wikipedia.org/wiki/Science[defined] as a process that "builds and organizes knowledge in the form of testable explanations and predictions about the universe". Much scientific activity is aimed at producing informational artifacts that describe the structure and/or the function of the world around us. Two main types of artifacts are _data_, embodying an "observed" view of the world obtained through measurements and categorizations, and _models_, embodying a causal hypothesis about how a particular aspect of the world changes and evolves. All of these, no matter how accurate, are _descriptions_ of the world around us: the job of science is to constantly improve these descriptions so that they can best serve the needs of humanity. 
+
+Often... bending our most successful representational strategies (e.g. raster maps, differential equations) around reality so that they can be put to effective use throughout the scientific process. This often results in distorsions of meaning, to which scientists are vulnerable: "variables", "equations", round horses and the like are often part of the narrative as if the world was actually represented that way. Semantic modeling suggest a pathway for scientists to realign the _meaning_ of the observed world with the artifacts that describe it. Turns out that in the process, it can also effectively address one of the worst problems of modern science: the "ivory tower" problem of incompatible representations, languages, jargons, methods across disciplines, scales and communities. 
+
+Provenance, a science that addresses the tracking and documentation of the life cycle of scientific artifacts through all transformations, analyses, and interpretation, provides a useful starting point to understand the rationale of semantic modeling. 
+
+====
+Before we begin
+
+Existing literature, initiatives and conversations regarding integration, provenance, scientific artifacts and their curation, etc., are usually entirely about _data_, as "the" scientific product of interest. While data, however defined, are definitely valuable artifacts in science, the approach we take is necessarily more radical: we consider as scientific artifacts _any_ scientific product that offers a scientifically valid _description_ of some phenomenon. This assumption is key to continuing our path towards semantic modeling and semantic integration towards its more useful end goals. For this reason
+
+. You should feel free to substitute _data_ in common literature with something broader in our conceptualization, including any other artifact (i.e. an equation, a machine-learned tensor, etc.) that represents the "serialization" of a scientific observation of the world. We like to use the term _scientific knowledge_ when possible.
+. We do not necessarily hold the view that data are automatically "evidence" and models are hypotheses. as .... (scale, assumptions etc). 
+
+====
+
+As a start, we define the process of modeling as the production and curation of scientific artifacts. Provenance model gives us all the (few) words we need to refer to this process (interested users can refer to the http://openprovenance.org[Open Provenance Model] for details). the concepts we need from it are
+
+...
+
+=== Semantic modeling in a nutshell
+
+Semantic modeling takes the provenance model briefly discussed above and adds _meaning_ to it. We call artifacts paired with meaning _observations_. It is intuitive to see, for example, a temperature map for a region as an "observation of temperature" - meaning, a scientific artifact containing numbers that describe the measurement of the temperature concept in a given region and at a given unit of measurement and observational extent/resolution. 
+
+Quick and effective, hostia.
+
+== Observables and observations
+
+== Subjects and qualities
+
+== Predicates
+
+== Occurrence: when time changes
+
+=== Processes and change
+
+=== Events
+
+== Relationships
+
+== Configurations

@@ -309,6 +309,12 @@ public class Model extends KimObject implements IModel {
 
 		for (IKimObservable dependency : model.getDependencies()) {
 			Observable dep = Observables.INSTANCE.declare(dependency, monitor);
+			if (dep == null) {
+				String err = "Undefined semantics for dependency '" + dependency.getDefinition() + "'";
+				monitor.error(err, dependency);
+				addError(err);
+				continue;
+			}
 			dependencies.add(dep);
 			observablesByReferenceName.put(dep.getReferenceName(), dep);
 			localNames.put(dep.getReferenceName(), dep.getName());
@@ -459,7 +465,7 @@ public class Model extends KimObject implements IModel {
 			for (int oo = 1; oo < observables.size(); oo++) {
 				IObservable obs = observables.get(oo);
 				if (obs != null && obs.is(Type.QUALITY) && !changed.contains(obs.getType())) {
-					if (Observables.INSTANCE.isAffectedBy(obs, getMainObservable())) {
+					if (Observables.INSTANCE.isAffectedBy(obs, getMainObservable()) || Observables.INSTANCE.isCreatedBy(obs, getMainObservable())) {
 						IObservable cobs = obs.getBuilder(monitor).as(UnarySemanticOperator.CHANGE).buildObservable();
 						toAdd.add(cobs);
 						this.localNames.put(cobs.getReferenceName(), cobs.getName());
@@ -873,7 +879,7 @@ public class Model extends KimObject implements IModel {
 			/*
 			 * if we get here, we have an incompatible unit
 			 */
-			String err = getName() + ": unit " + statedUnit + " is incompatible with this observable in a "
+			String err = getName() + ": unit " + statedUnit + " is incompatible with a "
 					+ ((Geometry) this.geometry).getLabel() + " context"
 					+ (baseUnit.isCompatible(contextualization.getChosenUnit())
 							? ". You may add @intensive/@extensive annotations to force dimensionality."
@@ -1062,19 +1068,19 @@ public class Model extends KimObject implements IModel {
 		}
 	}
 
-	public Model(IObservable mainObservable, String resolvedChangingObservationName, ResolutionScope scope) {
-		super(null);
-		this.derived = true;
-		this.id = mainObservable.getName() + "_resolved_change";
-		this.namespace = scope.getResolutionNamespace();
-		this.contextualization = new Contextualization(null, this);
-		this.observables.add(mainObservable);
-		this.localNames.put(mainObservable.getReferenceName(), mainObservable.getName());
-		this.observablesByReferenceName.put(mainObservable.getReferenceName(), mainObservable);
-		this.coverage = scope.getScale();
-		this.resources.add(
-				Klab.INSTANCE.getRuntimeProvider().getChangeResolver(mainObservable, resolvedChangingObservationName));
-	}
+//	public Model(IObservable mainObservable, String resolvedChangingObservationName, ResolutionScope scope) {
+//		super(null);
+//		this.derived = true;
+//		this.id = mainObservable.getName() + "_resolved_change";
+//		this.namespace = scope.getResolutionNamespace();
+//		this.contextualization = new Contextualization(null, this);
+//		this.observables.add(mainObservable);
+//		this.localNames.put(mainObservable.getReferenceName(), mainObservable.getName());
+//		this.observablesByReferenceName.put(mainObservable.getReferenceName(), mainObservable);
+//		this.coverage = scope.getScale();
+//		this.resources.add(
+//				Klab.INSTANCE.getRuntimeProvider().getChangeResolver(mainObservable, resolvedChangingObservationName));
+//	}
 
 	public Model(IViewModel view) {
 		super(null);

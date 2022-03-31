@@ -16,6 +16,7 @@ import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.klab.Models;
+import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -32,8 +33,10 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
 import org.integratedmodelling.klab.common.LogicalConnector;
+import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
+import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
@@ -44,8 +47,6 @@ import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.scale.Coverage;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
-
-import com.google.common.collect.Sets;
 
 public class ResolutionScope implements IResolutionScope {
 
@@ -156,10 +157,6 @@ public class ResolutionScope implements IResolutionScope {
 	// include transition contextualizers in the initialization run.
 	private List<ResolutionScope> occurrentResolutions;
 
-	// observables for which change is not specified but may change if they
-	// depend on changed observations
-	private Set<ObservedConcept> implicitlyChangingObservables = new HashSet<>();
-
 	/**
 	 * If not null, this is a scope for a logical combination of resolutions.
 	 */
@@ -237,12 +234,18 @@ public class ResolutionScope implements IResolutionScope {
 	 * because the kbox will reassess all models based on the specific instance
 	 * being resolved.
 	 */
-	private Map<IObservable, Set<IRankedModel>> resolverCache = new HashMap<>();
+	private Map<ObservedConcept, Collection<IRankedModel>> resolverCache = new HashMap<>();
 	private boolean caching;
 	private IModel contextModel;
 	private boolean occurrent = false;
 	private Set<ObservedConcept> resolving = new HashSet<>();
 	private Map<IConcept, Set<IConcept>> resolvedPredicatesContext = new HashMap<>();
+	private boolean deferToInherent;
+	private RuntimeScope rootContextualizationScope;
+	// // these get parked here because they will have to be added as children to
+	// the root dataflow,
+	// // which does not exist yet
+	// private List<Dataflow> predicateResolutionDataflows = new ArrayList<>();
 
 	private void addResolvedScope(ObservedConcept concept, ResolutionScope scope) {
 		List<ResolutionScope> slist = resolvedObservables.get(concept);
@@ -275,12 +278,12 @@ public class ResolutionScope implements IResolutionScope {
 		 */
 		if (modelScope.model.changesIn(Dimension.Type.TIME, coverage.asScale())) {
 			IObservable main = modelScope.model.getObservables().get(0);
-			if (!main.is(Type.CHANGE) && !main.is(Type.PREDICATE)) {
+			if (!main.is(Type.CHANGE) && !main.is(Type.PREDICATE) && !main.is(Type.PROCESS) && !main.is(Type.EVENT)) {
 				/*
 				 * models with temporally merged resources also handle change
 				 */
 				IObservable change = main.getBuilder(monitor).as(UnarySemanticOperator.CHANGE).buildObservable();
-				resolverCache.put(change,
+				resolverCache.put(new ObservedConcept(change),
 						Collections.singleton(Models.INSTANCE.createChangeModel(main, modelScope.model, this)));
 
 			}
@@ -383,12 +386,13 @@ public class ResolutionScope implements IResolutionScope {
 			throws KlabException {
 		this.coverage = Coverage.full(contextSubject.getScale());
 		this.context = contextSubject;
-		this.occurrentResolutions =  new ArrayList<>();
+		this.occurrentResolutions = new ArrayList<>();
 		this.scenarios.addAll(scenarios);
 		this.roles.putAll(monitor.getIdentity().getParentIdentity(ISession.class).getState().getRoles());
 		this.resolutionNamespace = contextSubject.getNamespace();
 		this.monitor = monitor;
 		this.occurrent = contextSubject.getScope().isOccurrent() || this.coverage.isTemporallyDistributed();
+		this.rootContextualizationScope = ((RuntimeScope) contextSubject.getScope()).getRootScope();
 	}
 
 	private ResolutionScope(Observer observer, IMonitor monitor, Collection<String> scenarios) throws KlabException {
@@ -396,7 +400,7 @@ public class ResolutionScope implements IResolutionScope {
 		this.scenarios.addAll(scenarios);
 		this.roles.putAll(monitor.getIdentity().getParentIdentity(ISession.class).getState().getRoles());
 		this.resolutionNamespace = observer.getNamespace();
-		this.occurrentResolutions =  new ArrayList<>();
+		this.occurrentResolutions = new ArrayList<>();
 		this.observer = observer;
 		this.monitor = monitor;
 		this.occurrent = this.coverage.isTemporallyDistributed();
@@ -429,6 +433,7 @@ public class ResolutionScope implements IResolutionScope {
 
 	private void copy(ResolutionScope other, boolean copyResolution) {
 		this.scenarios.addAll(other.scenarios);
+		this.rootContextualizationScope = other.rootContextualizationScope;
 		this.resolutionNamespace = other.resolutionNamespace;
 		this.occurrentResolutions = other.occurrentResolutions;
 		this.mode = other.mode;
@@ -456,6 +461,7 @@ public class ResolutionScope implements IResolutionScope {
 			this.links.addAll(other.links);
 			this.resolvedObservables.putAll(other.resolvedObservables);
 		}
+		// this.resolvedObservables.putAll(other.resolvedObservables);
 		this.resolutions = other.resolutions;
 	}
 
@@ -515,29 +521,29 @@ public class ResolutionScope implements IResolutionScope {
 		return ret;
 	}
 
-//	/*
-//	 * take all resolved predicates and finalize them in the scope, removing any
-//	 * alternatives
-//	 */
-//	private void resolve(Map<IConcept, IConcept> resolvedPredicates) {
-//
-//		List<Pair<IConcept, IConcept>> toRemove = new ArrayList<>();
-//		for (IConcept p : this.roles.keySet()) {
-//			for (IConcept r : resolvedPredicates.keySet()) {
-//				if (r.is(p)) {
-//					toRemove.add(new Pair<>(p, resolvedPredicates.get(r)));
-//					break;
-//				}
-//			}
-//		}
-//
-//		for (Pair<IConcept, IConcept> p : toRemove) {
-//			this.roles.put(p.getFirst(), Sets.newHashSet(p.getSecond()));
-//		}
-//
-//		resolvedPredicates.putAll(observable.getResolvedPredicates());
-//
-//	}
+	// /*
+	// * take all resolved predicates and finalize them in the scope, removing any
+	// * alternatives
+	// */
+	// private void resolve(Map<IConcept, IConcept> resolvedPredicates) {
+	//
+	// List<Pair<IConcept, IConcept>> toRemove = new ArrayList<>();
+	// for (IConcept p : this.roles.keySet()) {
+	// for (IConcept r : resolvedPredicates.keySet()) {
+	// if (r.is(p)) {
+	// toRemove.add(new Pair<>(p, resolvedPredicates.get(r)));
+	// break;
+	// }
+	// }
+	// }
+	//
+	// for (Pair<IConcept, IConcept> p : toRemove) {
+	// this.roles.put(p.getFirst(), Sets.newHashSet(p.getSecond()));
+	// }
+	//
+	// resolvedPredicates.putAll(observable.getResolvedPredicates());
+	//
+	// }
 
 	public ResolutionScope getChildScope(LogicalConnector connector) {
 		ResolutionScope ret = new ResolutionScope(this);
@@ -740,6 +746,7 @@ public class ResolutionScope implements IResolutionScope {
 		return observable;
 	}
 
+	@Override
 	public ResolvedArtifact getResolvedArtifact() {
 		return resolvedArtifact;
 	}
@@ -785,9 +792,7 @@ public class ResolutionScope implements IResolutionScope {
 
 	/**
 	 * Merge an accepted child scope (which has, in turn, been merged before this is
-	 * called). The scope must represent the entire result of a downstream
-	 * resolution, not just partially - if not, use the other version
-	 * ({@link #merge(ResolutionScope, LogicalConnector)}).
+	 * called).
 	 * 
 	 * @param childScope
 	 * @return true if the merge did anything significant
@@ -1113,53 +1118,66 @@ public class ResolutionScope implements IResolutionScope {
 		return this.coverage;
 	}
 
-	/**
-	 * Called before each instance resolution when the passed observable is
-	 * instantiated in our context. Should fill in the resolver set in our scale
-	 * only once, so the same resolvers can be used above. The models will then be
-	 * ranked in the scale of each instance. The resulting dataflows will need to
-	 * swap their resolution scope before being usable to resolve any direct
-	 * observation different from the original.
-	 * 
-	 * @param observable
-	 */
-	public void preloadResolvers(IObservable observable, IDirectObservation context) {
-
-		/**
-		 * only search for resolvers if we haven't already
-		 */
-		if (this.resolverCache.get(observable) != null) {
-			return;
-		}
-
-		Set<IRankedModel> resolvers = new HashSet<>();
-
-		/*
-		 * preload and cache resolvers to explain the observable in the current scale.
-		 * Called after instantiation when the first instance is resolved. The resolvers
-		 * are used by the kbox if a cache for this observable and scale is present
-		 * (including if empty). The kbox will return any model within our scale,
-		 * independent of how much of the context they cover; they will be ranked in the
-		 * scale of the instance, not ours.
-		 */
-		ResolutionScope scope = this.getChildScope((Observable) observable, Mode.RESOLUTION);
-		// ensure we don't try to find the cache for the cache
-		scope.caching = true;
-		resolvers.addAll(
-				Models.INSTANCE.resolve(observable, scope.getChildScope(observable, context, context.getScale())));
-
-		/*
-		 * TODO this may include the existing states in the context, with enough
-		 * metadata to choose wisely on their use or not according to the subscales.
-		 * Order does not matter as they should be reassessed by
-		 */
-
-		/*
-		 * add the possibly empty set even if no resolvers are found, to prevent
-		 * additional search.
-		 */
-		resolverCache.put(observable, resolvers);
-	}
+	// /**
+	// * Called before each instance resolution when the passed observable is
+	// instantiated in our
+	// * context. Should fill in the resolver set in our scale only once, so the
+	// same resolvers can
+	// be
+	// * used above. The models will then be ranked in the scale of each instance.
+	// The resulting
+	// * dataflows will need to swap their resolution scope before being usable to
+	// resolve any
+	// direct
+	// * observation different from the original.
+	// *
+	// * @param observable
+	// */
+	// public void preloadResolvers(IObservable observable, IDirectObservation
+	// context) {
+	//
+	// /**
+	// * only search for resolvers if we haven't already
+	// */
+	// if (this.resolverCache.get(observable) != null) {
+	// return;
+	// }
+	//
+	// Set<IRankedModel> resolvers = new HashSet<>();
+	//
+	// /*
+	// * preload and cache resolvers to explain the observable in the current scale.
+	// Called after
+	// * instantiation when the first instance is resolved. The resolvers are used
+	// by the kbox if
+	// * a cache for this observable and scale is present (including if empty). The
+	// kbox will
+	// * return any model within our scale, independent of how much of the context
+	// they cover;
+	// * they will be ranked in the scale of the instance, not ours.
+	// */
+	// ResolutionScope scope = this.getChildScope((Observable) observable,
+	// Mode.RESOLUTION);
+	// // ensure we don't try to find the cache for the cache
+	// scope.caching = true;
+	// resolvers.addAll(
+	// Models.INSTANCE.resolve(observable,
+	// scope.getChildScope(observable, context, context.getScale())));
+	//
+	// /*
+	// * TODO this may include the existing states in the context, with enough
+	// metadata to choose
+	// * wisely on their use or not according to the subscales. Order does not
+	// matter as they
+	// * should be reassessed by
+	// */
+	//
+	// /*
+	// * add the possibly empty set even if no resolvers are found, to prevent
+	// additional search.
+	// */
+	// resolverCache.put(observable, resolvers);
+	// }
 
 	/**
 	 * True if this scope is being used to build a cache, indicating that we
@@ -1178,11 +1196,13 @@ public class ResolutionScope implements IResolutionScope {
 	 * @param observable
 	 * @return
 	 */
-	public Pair<Scale, Set<IRankedModel>> getPreresolvedModels(IObservable observable) {
+	public Pair<Scale, Collection<IRankedModel>> getPreresolvedModels(IObservable observable) {
 
 		if (mode != Mode.RESOLUTION) {
 			return null;
 		}
+
+		ObservedConcept obc = new ObservedConcept(observable, Mode.RESOLUTION);
 
 		/*
 		 * look up in parents as far as the observable is the same (or the incarnated
@@ -1201,13 +1221,13 @@ public class ResolutionScope implements IResolutionScope {
 					&& !(target.observable.equals(observable) || target.observable.incarnatesSame(observable))) {
 				break;
 			}
-			if (target.resolverCache.get(observable) != null) {
-				return new Pair<>(target.coverage.asScale(), target.resolverCache.get(observable));
+			if (target.resolverCache.get(obc) != null) {
+				return new Pair<>(target.coverage.asScale(), target.resolverCache.get(obc));
 			}
 			target = target.parent;
 		}
-		return (target == null || target.resolverCache.get(observable) == null) ? null
-				: new Pair<>(target.coverage.asScale(), target.resolverCache.get(observable));
+		return (target == null || target.resolverCache.get(obc) == null) ? null
+				: new Pair<>(target.coverage.asScale(), target.resolverCache.get(obc));
 	}
 
 	@Override
@@ -1292,6 +1312,13 @@ public class ResolutionScope implements IResolutionScope {
 	 */
 	public Observable getDeferredObservableFor(Observable observable2) {
 
+		if (this.deferToInherent) {
+			IConcept inherent = Observables.INSTANCE.getDirectInherentType(observable2.getType());
+			if (inherent != null) {
+				return Observable.promote(inherent);
+			}
+		}
+
 		if (!observable2.is(Type.OBSERVABLE)) {
 			// attribute resolvers and the like
 			return null;
@@ -1315,8 +1342,8 @@ public class ResolutionScope implements IResolutionScope {
 			 * compatible with the context. In that case, we let it pass as is, as the
 			 * learning process will deal with the distribution.
 			 */
-			if (observable2.getReferencedModel() != null && observable2.getReferencedModel().isLearning()) {
-				for (IObservable archetype : ((Model) observable2.getReferencedModel()).getArchetypes()) {
+			if (observable2.getReferencedModel(this) != null && observable2.getReferencedModel(this).isLearning()) {
+				for (IObservable archetype : ((Model) observable2.getReferencedModel(this)).getArchetypes()) {
 					if (archetype.is(context)) {
 						return null;
 					}
@@ -1424,16 +1451,6 @@ public class ResolutionScope implements IResolutionScope {
 	}
 
 	/**
-	 * Observables that may change if they depend on changing values but have no
-	 * explicit change model associated.
-	 * 
-	 * @return
-	 */
-	public Set<ObservedConcept> getImplicitlyChangingObservables() {
-		return implicitlyChangingObservables;
-	}
-
-	/**
 	 * Publish the resolutions in the links into a storage that is passed to
 	 * children and consulted to ensure that previously resolved observables are not
 	 * resolved again. This is used when resolving change or any observable that is
@@ -1487,7 +1504,22 @@ public class ResolutionScope implements IResolutionScope {
 	 * @param result
 	 */
 	public void notifyResolution(IObservable observable, List<IRankedModel> result, Mode mode) {
-		this.resolutions.put(new ObservedConcept(observable, mode), result);
+		// only notify successful resolutions because otherwise alternative strategies
+		// won't work
+		if (result.size() > 0) {
+			this.resolutions.put(new ObservedConcept(observable, mode), result);
+		}
+	}
+
+	public IModel findResolvedModel(String modelId) {
+		for (List<IRankedModel> resolved : this.resolutions.values()) {
+			for (IRankedModel model : resolved) {
+				if (modelId.equals(model.getName())) {
+					return model;
+				}
+			}
+		}
+		return null;
 	}
 
 	public Map<ObservedConcept, List<IRankedModel>> getResolutions() {
@@ -1512,6 +1544,25 @@ public class ResolutionScope implements IResolutionScope {
 			return !resolutions.get(obs).isEmpty();
 		}
 		return false;
+	}
+
+	public ResolutionScope deferToInherent() {
+		ResolutionScope ret = new ResolutionScope(this, true);
+		ret.deferToInherent = true;
+		return ret;
+	}
+
+	public void setRootContextualizationScope(RuntimeScope ret) {
+		this.rootContextualizationScope = ret;
+	}
+
+	public RuntimeScope getRootContextualizationScope() {
+		return this.rootContextualizationScope;
+	}
+
+	public void addPredicateResolutionDataflow(Dataflow dataflow) {
+		this.rootContextualizationScope.addPrecontextualizationDataflow(dataflow);
+		;
 	}
 
 }

@@ -18,6 +18,7 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.utils.NumberUtils;
 
 public class InfiltratedWaterVolumeResolver extends AbstractContextualizer
         implements
@@ -93,10 +94,9 @@ public class InfiltratedWaterVolumeResolver extends AbstractContextualizer
             // since it is not defined in the semantics.
 
             GeotoolsUtils.INSTANCE.coverageToState(v.outInfiltration, infiltratedWaterVolumeState,
-                    context.getScale(), null);
+                    context.getScale(), (val) -> NumberUtils.equal(val, -9999) ? Double.NaN : val);
             GeotoolsUtils.INSTANCE.coverageToState(v.outNetInfiltration, netInfiltratedWaterVolumeState,
-                    context.getScale(),
-                    null);
+                    context.getScale(), (val) -> NumberUtils.equal(val, -9999) ? Double.NaN : val);
         }
         GeotoolsUtils.INSTANCE.dumpToRaster(context, "Infiltration", netInfiltratedWaterVolumeState,
                 infiltratedWaterVolumeState);

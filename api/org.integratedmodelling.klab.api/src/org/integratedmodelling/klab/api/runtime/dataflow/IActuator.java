@@ -35,7 +35,7 @@ import org.integratedmodelling.klab.api.resolution.ICoverage;
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-public interface IActuator extends IDataflowNode, IPlan {
+public interface IActuator extends /* IDataflowNode, */IPlan {
 
 	/**
 	 * All actuators have a name that corresponds to the semantics it was created to
@@ -64,8 +64,10 @@ public interface IActuator extends IDataflowNode, IPlan {
 
 	/**
 	 * Each actuator reports the artifact type of the observation it produces. Pure
-	 * resolvers (e.g. the resolver for an object) report a void type. Actuators
-	 * whose type defines an occurrent are not run at initialization.
+	 * resolvers (e.g. the resolver for an object) report the special RESOLVE type;
+	 * VOID actuators resolve views or predicates Actuators whose type defines an
+	 * occurrent are not run at initialization but just called upon to schedule
+	 * temporal actions.
 	 * 
 	 * @return
 	 */
@@ -76,19 +78,40 @@ public interface IActuator extends IDataflowNode, IPlan {
 	 * not correspond to the order of contextualization, which is computed by the
 	 * runtime, although it is expected that child actuators at the same level
 	 * without mutual dependencies have a non-random order which should be honored.
+	 * In a runtime context, the child list may contain other dataflows.
 	 *
 	 * @return all the internal actuators in order of declaration.
 	 */
-	public List<IActuator> getActuators();
+	public List<IActuator> getChildren();
 
 	/**
 	 * Return the subset of actuators that are not resolved and must reference
 	 * others in the same dataflow. These serialize with the modifier
 	 * <code>import</code> in k.DL.
 	 *
-	 * @return all imported actuators
+	 * @return all imported actuators, including the sub-dataflows. Use
+	 *         {@link #getActuators()} to only retrieve the true actuators that make
+	 *         up the computable set.
 	 */
 	List<IActuator> getInputs();
+
+	/**
+	 * Return all the computable actuators in the children, excluding the resolution
+	 * ones and the dataflows.
+	 * 
+	 * @return
+	 */
+	List<IActuator> getActuators();
+
+	/**
+	 * Return all the dataflows in our children. These are meant to contextualize
+	 * objects instantiated by this one or to concretize predicates before the
+	 * others are computed. Dataflows loaded from serialized resolutions will not
+	 * report any dataflow.
+	 * 
+	 * @return
+	 */
+	List<IDataflow<?>> getDataflows();
 
 	/**
 	 * Return all actuators that have been declared as exported, i.e. represent

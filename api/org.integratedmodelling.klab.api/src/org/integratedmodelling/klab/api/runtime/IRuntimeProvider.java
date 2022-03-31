@@ -66,29 +66,28 @@ public interface IRuntimeProvider {
 	 * @return a future that is computing the final artifact for the actuator.
 	 * @throws org.integratedmodelling.klab.exceptions.KlabException
 	 */
-	Future<IArtifact> compute(IDataflow<? extends IArtifact> dataflow, IScale scale, IResolutionScope scope,
-			IMonitor monitor) throws KlabException;
+	Future<IArtifact> compute(IDataflow<? extends IArtifact> dataflow, IScale scale, IContextualizationScope scope) throws KlabException;
 
-	/**
-	 * Create an empty runtime context for the dataflow that will build the context
-	 * subject. The context will also create the subject itself according to the
-	 * runtime's expectations.
-	 *
-	 * @param actuator a
-	 *                 {@link org.integratedmodelling.klab.api.runtime.dataflow.IActuator}
-	 *                 object.
-	 * @param scope    a
-	 *                 {@link org.integratedmodelling.klab.api.resolution.IResolutionScope}
-	 *                 object.
-	 * @param scale    the scale for the contextualization (must be compatible with
-	 *                 scope.getScale() but can be different)
-	 * @param monitor  a
-	 *                 {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor}
-	 *                 object.
-	 * @return a new runtime context.
-	 */
-	IContextualizationScope createRuntimeContext(IActuator actuator, IResolutionScope scope, IScale scale,
-			IMonitor monitor);
+//	/**
+//	 * Create an empty runtime context for the dataflow that will build the context
+//	 * subject. The context will also create the subject itself according to the
+//	 * runtime's expectations.
+//	 *
+//	 * @param actuator a
+//	 *                 {@link org.integratedmodelling.klab.api.runtime.dataflow.IActuator}
+//	 *                 object.
+//	 * @param scope    a
+//	 *                 {@link org.integratedmodelling.klab.api.resolution.IResolutionScope}
+//	 *                 object.
+//	 * @param scale    the scale for the contextualization (must be compatible with
+//	 *                 scope.getScale() but can be different)
+//	 * @param monitor  a
+//	 *                 {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor}
+//	 *                 object.
+//	 * @return a new runtime context.
+//	 */
+//	IContextualizationScope createRuntimeContext(IActuator actuator, IResolutionScope scope, IScale scale,
+//			IMonitor monitor);
 
 	/**
 	 * Get a service call that, once executed, will turn the passed specification
@@ -246,16 +245,16 @@ public interface IRuntimeProvider {
 	 */
 	IContextualizable getChangeResolver(IObservable changeObservable, IResource mergedResource);
 
-	/**
-	 * Return a no-op computation whose only purpose is to "replay" an existing,
-	 * dynamic observation which already contains changes as a changing resource, to
-	 * fit a context where the change must be played out anew.
-	 * 
-	 * @param changeObservable
-	 * @param changingObservation
-	 * @return
-	 */
-	IContextualizable getChangeResolver(IObservable changeObservable, String changingObservationName);
+//	/**
+//	 * Return a no-op computation whose only purpose is to "replay" an existing,
+//	 * dynamic observation which already contains changes as a changing resource, to
+//	 * fit a context where the change must be played out anew.
+//	 * 
+//	 * @param changeObservable
+//	 * @param changingObservation
+//	 * @return
+//	 */
+//	IContextualizable getChangeResolver(IObservable changeObservable, String changingObservationName);
 
 //	/*
 //	 * Called on a computation returned by getComputation() to change the target ID

@@ -52,6 +52,7 @@ import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.IScript;
+import org.integratedmodelling.klab.api.runtime.monitoring.IInspector;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.runtime.rest.IClient;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
@@ -61,6 +62,7 @@ import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.auth.UserIdentity;
 import org.integratedmodelling.klab.documentation.DataflowDocumentation;
+import org.integratedmodelling.klab.engine.debugger.Inspector;
 import org.integratedmodelling.klab.engine.indexing.Indexer;
 import org.integratedmodelling.klab.engine.rest.SchemaExtractor;
 import org.integratedmodelling.klab.engine.runtime.Script;
@@ -238,7 +240,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 				}
 			}
 		}
-
+		
 		@Override
 		public IIdentity getIdentity() {
 			return identity;
@@ -290,16 +292,15 @@ public class Engine extends Server implements IEngine, UserDetails {
 
         @Override
         public void addWait(int seconds) {
-            // TODO improve with specific messages
             this.waitTime = seconds;
             warn("Please try this operation again in " + seconds + " seconds");
         }
 
         @Override
         public int getWaitTime() {
-            // TODO Auto-generated method stub
             return this.waitTime;
         }
+
 	}
 
 	public Engine(ICertificate certificate) {

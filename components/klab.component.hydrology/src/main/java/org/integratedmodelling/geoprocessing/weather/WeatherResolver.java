@@ -49,10 +49,10 @@ public class WeatherResolver implements IResolver<IProcess>, IExpression {
 	public WeatherResolver() {
 	}
 
-	public WeatherResolver(IParameters<String> parameters, IContextualizationScope context) {
+	public WeatherResolver(IParameters<String> parameters, IContextualizationScope scope) {
 		// put this away: we get the resources in one shot with all the data for
 		// efficiency
-		resolutionScale = context.getDataflow().getResolutionScale();
+		resolutionScale = scope.getResolutionScale();
 		if (parameters.containsKey("source")) {
 			this.source = parameters.get("source", String.class);
 		}
@@ -64,7 +64,7 @@ public class WeatherResolver implements IResolver<IProcess>, IExpression {
 	}
 
 	@Override
-	public IProcess resolve(IProcess target, IContextualizationScope context) throws KlabException {
+	public IProcess resolve(IProcess target, IContextualizationScope scope) throws KlabException {
 
 		if (weatherStations == null) {
 
@@ -72,26 +72,26 @@ public class WeatherResolver implements IResolver<IProcess>, IExpression {
 			 * the entire scale with the current resolution
 			 */
 			IScale wscale = Scale.create(Time.create(resolutionScale.getTime().getStart(),
-					resolutionScale.getTime().getEnd(), context.getScale().getTime().getResolution()),
+					resolutionScale.getTime().getEnd(), scope.getScale().getTime().getResolution()),
 					resolutionScale.getSpace().getBoundingExtent());
 
 			String urn = "klab:weather:stations:" + source;
 			String fragment = "";
 
 			// add all outputs according to our model's observables.
-			for (int i = 1; i < context.getModel().getObservables().size(); i++) {
-				String variable = context.getModel().getObservables().get(i).getName();
+			for (int i = 1; i < scope.getModel().getObservables().size(); i++) {
+				String variable = scope.getModel().getObservables().get(i).getName();
 				fragment += (fragment.isEmpty() ? "" : "&") + variable;
-				IState state = context.getArtifact(variable, IState.class);
+				IState state = scope.getArtifact(variable, IState.class);
 				if (state == null) {
-					context.getMonitor().warn("weather: cannot find state for " + variable);
+					scope.getMonitor().warn("weather: cannot find state for " + variable);
 				} else {
 					states.add(new Pair<>(variable, state));
 				}
 			}
 			urn += "#" + fragment + "&expand=true";
 
-			this.weatherStations = Resources.INSTANCE.getResourceData(urn, wscale, context.getMonitor()).getArtifact();
+			this.weatherStations = Resources.INSTANCE.getResourceData(urn, wscale, scope.getMonitor()).getArtifact();
 
 			if (this.weatherStations == null) {
 				throw new KlabResourceNotFoundException("the weather service is not available on the k.LAB network");
@@ -100,19 +100,19 @@ public class WeatherResolver implements IResolver<IProcess>, IExpression {
 			/**
 			 * TODO provide a choice of interpolators. For now this is the one we use.
 			 */
-			this.interpolator = new ThiessenInterpolator(context.getArtifact("elevation", IState.class),
+			this.interpolator = new ThiessenInterpolator(scope.getArtifact("elevation", IState.class),
 					(IObjectArtifact) weatherStations);
 
 		}
 
-		Offset offset = context.getScale().as(Offset.class);
+		Offset offset = scope.getScale().as(Offset.class);
 
 		/**
 		 * Interpolate the station data for all requested variables.
 		 */
 		for (Pair<String, IState> ps : states) {
 			this.interpolator.computeState(ps.getSecond(), ps.getFirst(), offset.getOffset(Dimension.Type.TIME) - 1,
-					context.getScale(), null /*
+					scope.getScale(), null /*
 												 * TODO whatever is needed to turn into required units, potentially
 												 * including recontextualization - must interoperate with the resource
 												 */);

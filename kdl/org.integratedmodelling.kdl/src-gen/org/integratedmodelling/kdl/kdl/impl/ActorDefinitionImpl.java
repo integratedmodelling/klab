@@ -36,24 +36,26 @@ import org.integratedmodelling.kdl.kdl.Value;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#isConst <em>Const</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#isExported <em>Exported</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#isImported <em>Imported</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getType <em>Type</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getAnnotationTag <em>Annotation Tag</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getDocstring <em>Docstring</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getLabel <em>Label</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getAnnotations <em>Annotations</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#isAbstract <em>Abstract</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#isFinal <em>Final</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#isOptional <em>Optional</em>}</li>
- *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#isExported <em>Exported</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#isFilter <em>Filter</em>}</li>
- *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#isImported <em>Imported</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#isMultiple <em>Multiple</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getArity <em>Arity</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#isMinimum <em>Minimum</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#isParameter <em>Parameter</em>}</li>
- *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getType <em>Type</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#isExpression <em>Expression</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getExtended <em>Extended</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getTargets <em>Targets</em>}</li>
- *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getDocstring <em>Docstring</em>}</li>
- *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getLabel <em>Label</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getBody <em>Body</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getRangeMin <em>Range Min</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ActorDefinitionImpl#getRangeMax <em>Range Max</em>}</li>
@@ -68,6 +70,146 @@ import org.integratedmodelling.kdl.kdl.Value;
  */
 public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements ActorDefinition
 {
+  /**
+   * The default value of the '{@link #isConst() <em>Const</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isConst()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean CONST_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isConst() <em>Const</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isConst()
+   * @generated
+   * @ordered
+   */
+  protected boolean const_ = CONST_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #isExported() <em>Exported</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isExported()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean EXPORTED_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isExported() <em>Exported</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isExported()
+   * @generated
+   * @ordered
+   */
+  protected boolean exported = EXPORTED_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #isImported() <em>Imported</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isImported()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean IMPORTED_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isImported() <em>Imported</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isImported()
+   * @generated
+   * @ordered
+   */
+  protected boolean imported = IMPORTED_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getType() <em>Type</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getType()
+   * @generated
+   * @ordered
+   */
+  protected static final String TYPE_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getType() <em>Type</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getType()
+   * @generated
+   * @ordered
+   */
+  protected String type = TYPE_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getAnnotationTag() <em>Annotation Tag</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getAnnotationTag()
+   * @generated
+   * @ordered
+   */
+  protected static final String ANNOTATION_TAG_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getAnnotationTag() <em>Annotation Tag</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getAnnotationTag()
+   * @generated
+   * @ordered
+   */
+  protected String annotationTag = ANNOTATION_TAG_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getDocstring() <em>Docstring</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getDocstring()
+   * @generated
+   * @ordered
+   */
+  protected static final String DOCSTRING_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getDocstring() <em>Docstring</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getDocstring()
+   * @generated
+   * @ordered
+   */
+  protected String docstring = DOCSTRING_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getLabel() <em>Label</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getLabel()
+   * @generated
+   * @ordered
+   */
+  protected static final String LABEL_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getLabel() <em>Label</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getLabel()
+   * @generated
+   * @ordered
+   */
+  protected String label = LABEL_EDEFAULT;
+
   /**
    * The cached value of the '{@link #getAnnotations() <em>Annotations</em>}' containment reference list.
    * <!-- begin-user-doc -->
@@ -139,26 +281,6 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
   protected boolean optional = OPTIONAL_EDEFAULT;
 
   /**
-   * The default value of the '{@link #isExported() <em>Exported</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isExported()
-   * @generated
-   * @ordered
-   */
-  protected static final boolean EXPORTED_EDEFAULT = false;
-
-  /**
-   * The cached value of the '{@link #isExported() <em>Exported</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isExported()
-   * @generated
-   * @ordered
-   */
-  protected boolean exported = EXPORTED_EDEFAULT;
-
-  /**
    * The default value of the '{@link #isFilter() <em>Filter</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -177,26 +299,6 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
    * @ordered
    */
   protected boolean filter = FILTER_EDEFAULT;
-
-  /**
-   * The default value of the '{@link #isImported() <em>Imported</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isImported()
-   * @generated
-   * @ordered
-   */
-  protected static final boolean IMPORTED_EDEFAULT = false;
-
-  /**
-   * The cached value of the '{@link #isImported() <em>Imported</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isImported()
-   * @generated
-   * @ordered
-   */
-  protected boolean imported = IMPORTED_EDEFAULT;
 
   /**
    * The default value of the '{@link #isMultiple() <em>Multiple</em>}' attribute.
@@ -279,26 +381,6 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
   protected boolean parameter = PARAMETER_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getType() <em>Type</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getType()
-   * @generated
-   * @ordered
-   */
-  protected static final String TYPE_EDEFAULT = null;
-
-  /**
-   * The cached value of the '{@link #getType() <em>Type</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getType()
-   * @generated
-   * @ordered
-   */
-  protected String type = TYPE_EDEFAULT;
-
-  /**
    * The default value of the '{@link #isExpression() <em>Expression</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -367,46 +449,6 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
    * @ordered
    */
   protected EList<String> targets;
-
-  /**
-   * The default value of the '{@link #getDocstring() <em>Docstring</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getDocstring()
-   * @generated
-   * @ordered
-   */
-  protected static final String DOCSTRING_EDEFAULT = null;
-
-  /**
-   * The cached value of the '{@link #getDocstring() <em>Docstring</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getDocstring()
-   * @generated
-   * @ordered
-   */
-  protected String docstring = DOCSTRING_EDEFAULT;
-
-  /**
-   * The default value of the '{@link #getLabel() <em>Label</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getLabel()
-   * @generated
-   * @ordered
-   */
-  protected static final String LABEL_EDEFAULT = null;
-
-  /**
-   * The cached value of the '{@link #getLabel() <em>Label</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getLabel()
-   * @generated
-   * @ordered
-   */
-  protected String label = LABEL_EDEFAULT;
 
   /**
    * The cached value of the '{@link #getBody() <em>Body</em>}' containment reference.
@@ -525,6 +567,181 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
    * @generated
    */
   @Override
+  public boolean isConst()
+  {
+    return const_;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setConst(boolean newConst)
+  {
+    boolean oldConst = const_;
+    const_ = newConst;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.ACTOR_DEFINITION__CONST, oldConst, const_));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public boolean isExported()
+  {
+    return exported;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setExported(boolean newExported)
+  {
+    boolean oldExported = exported;
+    exported = newExported;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.ACTOR_DEFINITION__EXPORTED, oldExported, exported));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public boolean isImported()
+  {
+    return imported;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setImported(boolean newImported)
+  {
+    boolean oldImported = imported;
+    imported = newImported;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.ACTOR_DEFINITION__IMPORTED, oldImported, imported));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public String getType()
+  {
+    return type;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setType(String newType)
+  {
+    String oldType = type;
+    type = newType;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.ACTOR_DEFINITION__TYPE, oldType, type));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public String getAnnotationTag()
+  {
+    return annotationTag;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setAnnotationTag(String newAnnotationTag)
+  {
+    String oldAnnotationTag = annotationTag;
+    annotationTag = newAnnotationTag;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.ACTOR_DEFINITION__ANNOTATION_TAG, oldAnnotationTag, annotationTag));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public String getDocstring()
+  {
+    return docstring;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setDocstring(String newDocstring)
+  {
+    String oldDocstring = docstring;
+    docstring = newDocstring;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.ACTOR_DEFINITION__DOCSTRING, oldDocstring, docstring));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public String getLabel()
+  {
+    return label;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setLabel(String newLabel)
+  {
+    String oldLabel = label;
+    label = newLabel;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.ACTOR_DEFINITION__LABEL, oldLabel, label));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EList<Annotation> getAnnotations()
   {
     if (annotations == null)
@@ -615,31 +832,6 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
    * @generated
    */
   @Override
-  public boolean isExported()
-  {
-    return exported;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setExported(boolean newExported)
-  {
-    boolean oldExported = exported;
-    exported = newExported;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.ACTOR_DEFINITION__EXPORTED, oldExported, exported));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
   public boolean isFilter()
   {
     return filter;
@@ -657,31 +849,6 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
     filter = newFilter;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.ACTOR_DEFINITION__FILTER, oldFilter, filter));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public boolean isImported()
-  {
-    return imported;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setImported(boolean newImported)
-  {
-    boolean oldImported = imported;
-    imported = newImported;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.ACTOR_DEFINITION__IMPORTED, oldImported, imported));
   }
 
   /**
@@ -790,31 +957,6 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
    * @generated
    */
   @Override
-  public String getType()
-  {
-    return type;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setType(String newType)
-  {
-    String oldType = type;
-    type = newType;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.ACTOR_DEFINITION__TYPE, oldType, type));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
   public boolean isExpression()
   {
     return expression;
@@ -897,56 +1039,6 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
       targets = new EDataTypeEList<String>(String.class, this, KdlPackage.ACTOR_DEFINITION__TARGETS);
     }
     return targets;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public String getDocstring()
-  {
-    return docstring;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setDocstring(String newDocstring)
-  {
-    String oldDocstring = docstring;
-    docstring = newDocstring;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.ACTOR_DEFINITION__DOCSTRING, oldDocstring, docstring));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public String getLabel()
-  {
-    return label;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setLabel(String newLabel)
-  {
-    String oldLabel = label;
-    label = newLabel;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KdlPackage.ACTOR_DEFINITION__LABEL, oldLabel, label));
   }
 
   /**
@@ -1292,6 +1384,20 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
   {
     switch (featureID)
     {
+      case KdlPackage.ACTOR_DEFINITION__CONST:
+        return isConst();
+      case KdlPackage.ACTOR_DEFINITION__EXPORTED:
+        return isExported();
+      case KdlPackage.ACTOR_DEFINITION__IMPORTED:
+        return isImported();
+      case KdlPackage.ACTOR_DEFINITION__TYPE:
+        return getType();
+      case KdlPackage.ACTOR_DEFINITION__ANNOTATION_TAG:
+        return getAnnotationTag();
+      case KdlPackage.ACTOR_DEFINITION__DOCSTRING:
+        return getDocstring();
+      case KdlPackage.ACTOR_DEFINITION__LABEL:
+        return getLabel();
       case KdlPackage.ACTOR_DEFINITION__ANNOTATIONS:
         return getAnnotations();
       case KdlPackage.ACTOR_DEFINITION__ABSTRACT:
@@ -1300,12 +1406,8 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
         return isFinal();
       case KdlPackage.ACTOR_DEFINITION__OPTIONAL:
         return isOptional();
-      case KdlPackage.ACTOR_DEFINITION__EXPORTED:
-        return isExported();
       case KdlPackage.ACTOR_DEFINITION__FILTER:
         return isFilter();
-      case KdlPackage.ACTOR_DEFINITION__IMPORTED:
-        return isImported();
       case KdlPackage.ACTOR_DEFINITION__MULTIPLE:
         return isMultiple();
       case KdlPackage.ACTOR_DEFINITION__ARITY:
@@ -1314,8 +1416,6 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
         return isMinimum();
       case KdlPackage.ACTOR_DEFINITION__PARAMETER:
         return isParameter();
-      case KdlPackage.ACTOR_DEFINITION__TYPE:
-        return getType();
       case KdlPackage.ACTOR_DEFINITION__EXPRESSION:
         return isExpression();
       case KdlPackage.ACTOR_DEFINITION__NAME:
@@ -1324,10 +1424,6 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
         return getExtended();
       case KdlPackage.ACTOR_DEFINITION__TARGETS:
         return getTargets();
-      case KdlPackage.ACTOR_DEFINITION__DOCSTRING:
-        return getDocstring();
-      case KdlPackage.ACTOR_DEFINITION__LABEL:
-        return getLabel();
       case KdlPackage.ACTOR_DEFINITION__BODY:
         return getBody();
       case KdlPackage.ACTOR_DEFINITION__RANGE_MIN:
@@ -1359,6 +1455,27 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
   {
     switch (featureID)
     {
+      case KdlPackage.ACTOR_DEFINITION__CONST:
+        setConst((Boolean)newValue);
+        return;
+      case KdlPackage.ACTOR_DEFINITION__EXPORTED:
+        setExported((Boolean)newValue);
+        return;
+      case KdlPackage.ACTOR_DEFINITION__IMPORTED:
+        setImported((Boolean)newValue);
+        return;
+      case KdlPackage.ACTOR_DEFINITION__TYPE:
+        setType((String)newValue);
+        return;
+      case KdlPackage.ACTOR_DEFINITION__ANNOTATION_TAG:
+        setAnnotationTag((String)newValue);
+        return;
+      case KdlPackage.ACTOR_DEFINITION__DOCSTRING:
+        setDocstring((String)newValue);
+        return;
+      case KdlPackage.ACTOR_DEFINITION__LABEL:
+        setLabel((String)newValue);
+        return;
       case KdlPackage.ACTOR_DEFINITION__ANNOTATIONS:
         getAnnotations().clear();
         getAnnotations().addAll((Collection<? extends Annotation>)newValue);
@@ -1372,14 +1489,8 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
       case KdlPackage.ACTOR_DEFINITION__OPTIONAL:
         setOptional((Boolean)newValue);
         return;
-      case KdlPackage.ACTOR_DEFINITION__EXPORTED:
-        setExported((Boolean)newValue);
-        return;
       case KdlPackage.ACTOR_DEFINITION__FILTER:
         setFilter((Boolean)newValue);
-        return;
-      case KdlPackage.ACTOR_DEFINITION__IMPORTED:
-        setImported((Boolean)newValue);
         return;
       case KdlPackage.ACTOR_DEFINITION__MULTIPLE:
         setMultiple((Boolean)newValue);
@@ -1393,9 +1504,6 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
       case KdlPackage.ACTOR_DEFINITION__PARAMETER:
         setParameter((Boolean)newValue);
         return;
-      case KdlPackage.ACTOR_DEFINITION__TYPE:
-        setType((String)newValue);
-        return;
       case KdlPackage.ACTOR_DEFINITION__EXPRESSION:
         setExpression((Boolean)newValue);
         return;
@@ -1408,12 +1516,6 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
       case KdlPackage.ACTOR_DEFINITION__TARGETS:
         getTargets().clear();
         getTargets().addAll((Collection<? extends String>)newValue);
-        return;
-      case KdlPackage.ACTOR_DEFINITION__DOCSTRING:
-        setDocstring((String)newValue);
-        return;
-      case KdlPackage.ACTOR_DEFINITION__LABEL:
-        setLabel((String)newValue);
         return;
       case KdlPackage.ACTOR_DEFINITION__BODY:
         setBody((DataflowBody)newValue);
@@ -1455,6 +1557,27 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
   {
     switch (featureID)
     {
+      case KdlPackage.ACTOR_DEFINITION__CONST:
+        setConst(CONST_EDEFAULT);
+        return;
+      case KdlPackage.ACTOR_DEFINITION__EXPORTED:
+        setExported(EXPORTED_EDEFAULT);
+        return;
+      case KdlPackage.ACTOR_DEFINITION__IMPORTED:
+        setImported(IMPORTED_EDEFAULT);
+        return;
+      case KdlPackage.ACTOR_DEFINITION__TYPE:
+        setType(TYPE_EDEFAULT);
+        return;
+      case KdlPackage.ACTOR_DEFINITION__ANNOTATION_TAG:
+        setAnnotationTag(ANNOTATION_TAG_EDEFAULT);
+        return;
+      case KdlPackage.ACTOR_DEFINITION__DOCSTRING:
+        setDocstring(DOCSTRING_EDEFAULT);
+        return;
+      case KdlPackage.ACTOR_DEFINITION__LABEL:
+        setLabel(LABEL_EDEFAULT);
+        return;
       case KdlPackage.ACTOR_DEFINITION__ANNOTATIONS:
         getAnnotations().clear();
         return;
@@ -1467,14 +1590,8 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
       case KdlPackage.ACTOR_DEFINITION__OPTIONAL:
         setOptional(OPTIONAL_EDEFAULT);
         return;
-      case KdlPackage.ACTOR_DEFINITION__EXPORTED:
-        setExported(EXPORTED_EDEFAULT);
-        return;
       case KdlPackage.ACTOR_DEFINITION__FILTER:
         setFilter(FILTER_EDEFAULT);
-        return;
-      case KdlPackage.ACTOR_DEFINITION__IMPORTED:
-        setImported(IMPORTED_EDEFAULT);
         return;
       case KdlPackage.ACTOR_DEFINITION__MULTIPLE:
         setMultiple(MULTIPLE_EDEFAULT);
@@ -1488,9 +1605,6 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
       case KdlPackage.ACTOR_DEFINITION__PARAMETER:
         setParameter(PARAMETER_EDEFAULT);
         return;
-      case KdlPackage.ACTOR_DEFINITION__TYPE:
-        setType(TYPE_EDEFAULT);
-        return;
       case KdlPackage.ACTOR_DEFINITION__EXPRESSION:
         setExpression(EXPRESSION_EDEFAULT);
         return;
@@ -1502,12 +1616,6 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
         return;
       case KdlPackage.ACTOR_DEFINITION__TARGETS:
         getTargets().clear();
-        return;
-      case KdlPackage.ACTOR_DEFINITION__DOCSTRING:
-        setDocstring(DOCSTRING_EDEFAULT);
-        return;
-      case KdlPackage.ACTOR_DEFINITION__LABEL:
-        setLabel(LABEL_EDEFAULT);
         return;
       case KdlPackage.ACTOR_DEFINITION__BODY:
         setBody((DataflowBody)null);
@@ -1547,6 +1655,20 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
   {
     switch (featureID)
     {
+      case KdlPackage.ACTOR_DEFINITION__CONST:
+        return const_ != CONST_EDEFAULT;
+      case KdlPackage.ACTOR_DEFINITION__EXPORTED:
+        return exported != EXPORTED_EDEFAULT;
+      case KdlPackage.ACTOR_DEFINITION__IMPORTED:
+        return imported != IMPORTED_EDEFAULT;
+      case KdlPackage.ACTOR_DEFINITION__TYPE:
+        return TYPE_EDEFAULT == null ? type != null : !TYPE_EDEFAULT.equals(type);
+      case KdlPackage.ACTOR_DEFINITION__ANNOTATION_TAG:
+        return ANNOTATION_TAG_EDEFAULT == null ? annotationTag != null : !ANNOTATION_TAG_EDEFAULT.equals(annotationTag);
+      case KdlPackage.ACTOR_DEFINITION__DOCSTRING:
+        return DOCSTRING_EDEFAULT == null ? docstring != null : !DOCSTRING_EDEFAULT.equals(docstring);
+      case KdlPackage.ACTOR_DEFINITION__LABEL:
+        return LABEL_EDEFAULT == null ? label != null : !LABEL_EDEFAULT.equals(label);
       case KdlPackage.ACTOR_DEFINITION__ANNOTATIONS:
         return annotations != null && !annotations.isEmpty();
       case KdlPackage.ACTOR_DEFINITION__ABSTRACT:
@@ -1555,12 +1677,8 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
         return final_ != FINAL_EDEFAULT;
       case KdlPackage.ACTOR_DEFINITION__OPTIONAL:
         return optional != OPTIONAL_EDEFAULT;
-      case KdlPackage.ACTOR_DEFINITION__EXPORTED:
-        return exported != EXPORTED_EDEFAULT;
       case KdlPackage.ACTOR_DEFINITION__FILTER:
         return filter != FILTER_EDEFAULT;
-      case KdlPackage.ACTOR_DEFINITION__IMPORTED:
-        return imported != IMPORTED_EDEFAULT;
       case KdlPackage.ACTOR_DEFINITION__MULTIPLE:
         return multiple != MULTIPLE_EDEFAULT;
       case KdlPackage.ACTOR_DEFINITION__ARITY:
@@ -1569,8 +1687,6 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
         return minimum != MINIMUM_EDEFAULT;
       case KdlPackage.ACTOR_DEFINITION__PARAMETER:
         return parameter != PARAMETER_EDEFAULT;
-      case KdlPackage.ACTOR_DEFINITION__TYPE:
-        return TYPE_EDEFAULT == null ? type != null : !TYPE_EDEFAULT.equals(type);
       case KdlPackage.ACTOR_DEFINITION__EXPRESSION:
         return expression != EXPRESSION_EDEFAULT;
       case KdlPackage.ACTOR_DEFINITION__NAME:
@@ -1579,10 +1695,6 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
         return EXTENDED_EDEFAULT == null ? extended != null : !EXTENDED_EDEFAULT.equals(extended);
       case KdlPackage.ACTOR_DEFINITION__TARGETS:
         return targets != null && !targets.isEmpty();
-      case KdlPackage.ACTOR_DEFINITION__DOCSTRING:
-        return DOCSTRING_EDEFAULT == null ? docstring != null : !DOCSTRING_EDEFAULT.equals(docstring);
-      case KdlPackage.ACTOR_DEFINITION__LABEL:
-        return LABEL_EDEFAULT == null ? label != null : !LABEL_EDEFAULT.equals(label);
       case KdlPackage.ACTOR_DEFINITION__BODY:
         return body != null;
       case KdlPackage.ACTOR_DEFINITION__RANGE_MIN:
@@ -1614,18 +1726,28 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
     if (eIsProxy()) return super.toString();
 
     StringBuilder result = new StringBuilder(super.toString());
-    result.append(" (abstract: ");
+    result.append(" (const: ");
+    result.append(const_);
+    result.append(", exported: ");
+    result.append(exported);
+    result.append(", imported: ");
+    result.append(imported);
+    result.append(", type: ");
+    result.append(type);
+    result.append(", annotationTag: ");
+    result.append(annotationTag);
+    result.append(", docstring: ");
+    result.append(docstring);
+    result.append(", label: ");
+    result.append(label);
+    result.append(", abstract: ");
     result.append(abstract_);
     result.append(", final: ");
     result.append(final_);
     result.append(", optional: ");
     result.append(optional);
-    result.append(", exported: ");
-    result.append(exported);
     result.append(", filter: ");
     result.append(filter);
-    result.append(", imported: ");
-    result.append(imported);
     result.append(", multiple: ");
     result.append(multiple);
     result.append(", arity: ");
@@ -1634,8 +1756,6 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
     result.append(minimum);
     result.append(", parameter: ");
     result.append(parameter);
-    result.append(", type: ");
-    result.append(type);
     result.append(", expression: ");
     result.append(expression);
     result.append(", name: ");
@@ -1644,10 +1764,6 @@ public class ActorDefinitionImpl extends MinimalEObjectImpl.Container implements
     result.append(extended);
     result.append(", targets: ");
     result.append(targets);
-    result.append(", docstring: ");
-    result.append(docstring);
-    result.append(", label: ");
-    result.append(label);
     result.append(", enumValues: ");
     result.append(enumValues);
     result.append(", localName: ");

@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -41,7 +40,9 @@ import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
+import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.services.IExtensionService;
@@ -79,6 +80,8 @@ public class ComputableResource extends KimStatement implements IContextualizabl
     // if true, this computes a single value to be added to the expression context
     // later.
     private boolean variable;
+    private Long timestamp = System.currentTimeMillis();
+    
     /**
      * Slot to save a validated resource so that it won't need to be validated twice. Shouldn't be
      * serialized.
@@ -649,14 +652,6 @@ public class ComputableResource extends KimStatement implements IContextualizabl
         return true;
     }
 
-    public String getDataflowId() {
-        return dataflowId;
-    }
-
-    public void setDataflowId(String dataflowId) {
-        this.dataflowId = dataflowId;
-    }
-
     @Override
     public Collection<String> getInteractiveParameters() {
 
@@ -842,5 +837,28 @@ public class ComputableResource extends KimStatement implements IContextualizabl
         }
         return super.getSourceCode();
     }
+
+	@Override
+	public long getTimestamp() {
+		return timestamp;
+	}
+
+	@Override
+	public List<IActivity> getActions() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IProvenance getProvenance() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean isEmpty() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
 }

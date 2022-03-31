@@ -107,6 +107,7 @@ public class ModelReference {
     private int maxTimeScaleFactor = ITime.MAX_SCALE_RANK;
     private int priority = 0;
     private boolean specializedObservable = false;
+    private Set<String> permissions = new HashSet<>();
 
     transient private IConcept observableConcept;
     transient private IShape shape;
@@ -159,6 +160,7 @@ public class ModelReference {
         ret.enumeratedSpaceLocation = enumeratedSpaceLocation;
         ret.shape = shape;
         ret.specializedObservable = specializedObservable;
+        ret.permissions.addAll(permissions);
         
         return ret;
     }
@@ -827,6 +829,14 @@ public class ModelReference {
 
 	public void setSpecializedObservable(boolean specializedObservable) {
 		this.specializedObservable = specializedObservable;
+	}
+
+	public Set<String> getPermissions() {
+		return permissions;
+	}
+
+	public void setPermissions(Set<String> permissions) {
+		this.permissions = permissions;
 	}
 
 }

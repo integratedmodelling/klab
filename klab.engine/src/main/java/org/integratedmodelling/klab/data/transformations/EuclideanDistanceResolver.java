@@ -11,6 +11,7 @@ import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
 import org.integratedmodelling.klab.api.model.contextualization.IProcessor;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -57,35 +58,35 @@ public class EuclideanDistanceResolver implements IResolver<IState>, IExpression
 	@Override
 	public IState resolve(IState ret, IContextualizationScope context) throws KlabException {
 
-		Map<ObservedConcept, IObservation> catalog = ((IRuntimeScope) context).getCatalog();
+		Map<IObservedConcept, IObservation> catalog = ((IRuntimeScope) context).getCatalog();
 
 		Set<IState> targets = extractStates("target", catalog, context);
 		Set<IState> sources = extractStates("source", catalog, context);
 		Object weight = parameters.get("weights");
 
 		for (ILocator locator : context.getScale()) {
+		    double sum = Double.NaN;
+            for (IState state : sources) {
+                Object value = state.get(locator);
+                if (value instanceof Number) {
+                    double w = 1.0/(double)sources.size();
+                    if (weight instanceof Number) {
+                        w = ((Number) weight).doubleValue();
+                    } else if (weight instanceof Map) {
+                        // TODO look up the observable in the map and get the weight; cache the search
+                        // based on observable name for later reference
+                    }
+                    double factor = w * (((Number) value).doubleValue() * ((Number) value).doubleValue());
+                    sum = Double.isNaN(sum) ? factor : (sum + factor);
+                }
 
+            }
 			switch (parameters.get("indicator", "distance")) {
 			case "distance":
+			    ret.set(locator, Double.isNaN(sum) ? null : Math.sqrt(sum));
+
 				break;
-			case "reverse":
-				double sum = Double.NaN;
-				for (IState state : sources) {
-					Object value = state.get(locator);
-					if (value instanceof Number) {
-						double w = 1.0/(double)sources.size();
-						if (weight instanceof Number) {
-							w = ((Number) weight).doubleValue();
-						} else if (weight instanceof Map) {
-							// TODO look up the observable in the map and get the weight; cache the search
-							// based on observable name for later reference
-						}
-						double factor = w * (((Number) value).doubleValue() * ((Number) value).doubleValue());
-						sum = Double.isNaN(sum) ? factor : (sum + factor);
-					}
-
-				}
-
+			case "similarity":
 				ret.set(locator, Double.isNaN(sum) ? null : (1.0 / (1.0 + Math.sqrt(sum))));
 
 				break;
@@ -96,7 +97,7 @@ public class EuclideanDistanceResolver implements IResolver<IState>, IExpression
 
 	}
 
-	private Set<IState> extractStates(String string, Map<ObservedConcept, IObservation> catalog,
+	private Set<IState> extractStates(String string, Map<IObservedConcept, IObservation> catalog,
 			IContextualizationScope scope) {
 		Set<IState> ret = new HashSet<>();
 		Object o = parameters.get(string);
@@ -110,13 +111,13 @@ public class EuclideanDistanceResolver implements IResolver<IState>, IExpression
 		return ret;
 	}
 
-	private Set<IState> extractState(Object o, Map<ObservedConcept, IObservation> catalog,
+	private Set<IState> extractState(Object o, Map<IObservedConcept, IObservation> catalog,
 			IContextualizationScope scope) {
 		Set<IState> ret = new HashSet<>();
 		if (o instanceof IKimConcept) {
 			IConcept concept = Concepts.INSTANCE.declare((IKimConcept) o);
 			if (concept.is(IKimConcept.Type.ROLE)) {
-				for (ObservedConcept key : catalog.keySet()) {
+				for (IObservedConcept key : catalog.keySet()) {
 					for (IConcept role : key.getObservable().getContextualRoles()) {
 						if (((RuntimeScope) scope).cached_is(role, concept) && catalog.get(key) instanceof IState) {
 							ret.add((IState) catalog.get(key));

@@ -48,6 +48,7 @@ public class KactorsHighlightingConfiguration extends DefaultHighlightingConfigu
 	public static final String UNKNOWN_VERB_ID = "unknownverb";
 	public static final String VIEW_VERB_ID = "viewverb";
 	public static final String SESSION_VERB_ID = "sessionverb";
+	public static final String TEST_VERB_ID = "testverb";
 	public static final String EXPLORER_VERB_ID = "explorerverb";
 	public static final String LOCAL_VERB_ID = "localverb";
 	public static final String IMPORTED_VERB_ID = "importedverb";
@@ -59,6 +60,7 @@ public class KactorsHighlightingConfiguration extends DefaultHighlightingConfigu
 	public static final RGB UNKNOWN_VERB_COLOR = new RGB(100, 100, 100);
 	public static final RGB VIEW_VERB_COLOR = new RGB(63, 8, 165);
 	public static final RGB SESSION_VERB_COLOR = new RGB(204, 68, 10);
+	public static final RGB TEST_VERB_COLOR = new RGB(168, 40, 109);
 	public static final RGB EXPLORER_VERB_COLOR = new RGB(218,165,32);
 	public static final RGB LOCAL_VERB_COLOR = new RGB(20, 20, 20);
 	public static final RGB IMPORTED_VERB_COLOR = new RGB(20, 20, 20);
@@ -109,6 +111,7 @@ public class KactorsHighlightingConfiguration extends DefaultHighlightingConfigu
 		acceptor.acceptDefaultHighlighting(UNKNOWN_VERB_ID, "Unknown action", unknownVerbTextStyle());
 		acceptor.acceptDefaultHighlighting(VIEW_VERB_ID, "View action", viewVerbTextStyle());
 		acceptor.acceptDefaultHighlighting(SESSION_VERB_ID, "Session action", sessionVerbTextStyle());
+		acceptor.acceptDefaultHighlighting(TEST_VERB_ID, "Test action", testVerbTextStyle());
 		acceptor.acceptDefaultHighlighting(EXPLORER_VERB_ID, "Explorer action", explorerVerbTextStyle());
 		acceptor.acceptDefaultHighlighting(LOCAL_VERB_ID, "Local action", localVerbTextStyle());
 		acceptor.acceptDefaultHighlighting(IMPORTED_VERB_ID, "Imported action", importedVerbTextStyle());
@@ -316,6 +319,13 @@ public class KactorsHighlightingConfiguration extends DefaultHighlightingConfigu
 	protected TextStyle sessionVerbTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
 		textStyle.setColor(SESSION_VERB_COLOR);
+		textStyle.setStyle(SWT.BOLD);
+		return textStyle;
+	}
+
+	protected TextStyle testVerbTextStyle() {
+		TextStyle textStyle = defaultTextStyle().copy();
+		textStyle.setColor(TEST_VERB_COLOR);
 		textStyle.setStyle(SWT.BOLD);
 		return textStyle;
 	}

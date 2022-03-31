@@ -1615,6 +1615,11 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
 
 				if (executor != null) {
 
+					if (!executor.isSynchronized()) {
+						// disable the fencing if it's there
+						scope.semaphore = null;
+					}
+					
 					actionCache.put(executorId, executor);
 
 					if (executor instanceof KlabActionExecutor.Actor) {
@@ -1984,7 +1989,9 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
 							testScope.metadata = new Parameters<>(message.metadata);
 							testScope.runtimeScope.getMonitor()
 									.info(KlabActor.this.behavior.getName() + ": running test " + action.getName());
+							// TODO arm the inspector in the runtime scope
 							KlabActor.this.run(action, testScope);
+							// TODO remove the inspector
 							testScope.testScope.finalizeTest(action, testScope.valueScope);
 						}
 						message.scope.runtimeScope.getMonitor()

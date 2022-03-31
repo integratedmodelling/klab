@@ -214,6 +214,15 @@ public class Grid extends Area implements IGrid {
 		this.mask = createMask(this.shape);
 	}
 	
+
+    public boolean covers(double[] worldCoordinates) {
+        if (mask != null) {
+            long offset = getOffsetFromWorldCoordinates(worldCoordinates[0], worldCoordinates[1]);
+            long[] xy = getXYOffsets(offset);
+            return mask.isActive(xy[0], xy[1]);
+        }
+        return true;
+    }
 	
 	/*
 	 * Make a trivial mask unless the shape differs from its envelope
@@ -1011,6 +1020,11 @@ public class Grid extends Area implements IGrid {
 		public double getDimensionSize(IUnit unit) {
 			return unit.convert(getStandardizedArea(), Units.INSTANCE.SQUARE_METERS).doubleValue();
 		}
+
+        @Override
+        public boolean isDistributed() {
+            return false;
+        }
 	}
 
 	Shape shape;

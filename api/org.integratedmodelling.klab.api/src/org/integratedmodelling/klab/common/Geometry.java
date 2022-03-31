@@ -290,12 +290,14 @@ public class Geometry implements IGeometry {
     }
 
     private static String encodeDimension(Dimension dim) {
-        
+
         String ret = "";
         ret += dim.getType() == Type.SPACE
                 ? (dim.isGeneric() ? (dim.isRegular() ? "\u03a3" : "\u03c3") : (dim.isRegular() ? "S" : "s"))
                 : (dim.getType() == Type.TIME
-                        ? (dim.isGeneric() ? (dim.isRegular() ? "\u03a4" : "\u03c4") : (dim.isRegular() ? "T" : "t"))
+                        ? (dim.isGeneric()
+                                ? (dim.isRegular() ? "\u03a4" : "\u03c4")
+                                : (dim.isRegular() ? "T" : "t"))
                         : /* TODO others */ "");
         ret += dim.getDimensionality();
         if (dim.shape() != null && !isUndefined(dim.shape())) {
@@ -487,7 +489,7 @@ public class Geometry implements IGeometry {
      * 
      * @return the string representation for the geometry
      */
-    public String encode(Encoding...options) {
+    public String encode(Encoding... options) {
 
         if (isEmpty()) {
             return "X";
@@ -636,7 +638,7 @@ public class Geometry implements IGeometry {
         }
 
         @Override
-        public String encode(Encoding...options) {
+        public String encode(Encoding... options) {
             return encodeDimension(this);
         }
 
@@ -742,6 +744,12 @@ public class Geometry implements IGeometry {
                 break;
             }
             return null;
+        }
+
+        @Override
+        public boolean isDistributed() {
+            return size() > 1 || isRegular() || (this.type == Type.TIME
+                    && "GRID".equals(parameters.get(PARAMETER_TIME_REPRESENTATION)));
         }
 
     }
@@ -993,24 +1001,24 @@ public class Geometry implements IGeometry {
             char c = geometry.charAt(idx);
             if (c == '#') {
                 ret.granularity = Granularity.MULTIPLE;
-            } else if ((c >= 'A' && c <= 'z') || c == 0x03C3 || c == 0x03C4|| c == 0x03A3 || c == 0x03A4) {
+            } else if ((c >= 'A' && c <= 'z') || c == 0x03C3 || c == 0x03C4 || c == 0x03A3 || c == 0x03A4) {
                 DimensionImpl dimensionality = ret.newDimension();
                 if (c == 'S' || c == 's' || c == 0x03C3 || c == 0x03A3) {
-                    
+
                     dimensionality.type = Type.SPACE;
                     if (c == 0x03C3 || c == 0x03A3) {
                         dimensionality.generic = true;
                     }
                     dimensionality.regular = (c == 'S' || c == 0x03A3);
-                    
+
                 } else if (c == 'T' || c == 't' || c == 0x03C4 || c == 0x03A4) {
-                    
+
                     dimensionality.type = Type.TIME;
                     if (c == 0x03C4 || c == 0x03A4) {
                         dimensionality.generic = true;
                     }
                     dimensionality.regular = (c == 'T' || c == 0x03A4);
-                    
+
                 } else {
                     throw new KlabIllegalArgumentException("unrecognized geometry dimension identifier " + c);
                     // if (dimDictionary.containsKey(Character.toLowerCase(c))) {

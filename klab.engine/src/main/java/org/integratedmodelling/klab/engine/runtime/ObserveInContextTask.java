@@ -18,11 +18,10 @@ import org.integratedmodelling.klab.api.auth.ITaskIdentity;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.model.IModel;
-import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.runtime.AbstractRuntimeScope;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Actuator;
@@ -31,12 +30,10 @@ import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
-import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
-import org.integratedmodelling.klab.rest.DataflowReference;
 import org.integratedmodelling.klab.rest.SessionActivity;
 import org.integratedmodelling.klab.utils.Parameters;
 
@@ -139,7 +136,7 @@ public class ObserveInContextTask extends AbstractTask<IArtifact> {
 					if (scope.getCoverage().isRelevant()) {
 
 						Dataflow dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + token,
-								scope, (Dataflow) context.getScope().getDataflow()).setPrimary(parentTask == null);
+								scope, context.getScope().getActuator()).setPrimary(parentTask == null);
 
 						dataflow.setDescription(taskDescription);
 
@@ -150,13 +147,9 @@ public class ObserveInContextTask extends AbstractTask<IArtifact> {
 							activity.getActivityDescriptor().setDataflowCode(dataflow.getKdlCode());
 						}
 
-						IRuntimeScope ctx = ((Observation) context).getScope();
-						ctx.getContextualizationStrategy().add(dataflow);
-
-						session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
-								IMessage.Type.DataflowCompiled, new DataflowReference(token, dataflow.getKdlCode(),
-										ctx.getContextualizationStrategy().getElkGraph())));
-
+						IRuntimeScope ctx = ((Observation) context).getScope().getChild(ObserveInContextTask.this);
+						((AbstractRuntimeScope)ctx).notifyDataflowChanges(ctx);
+						
 						// make a copy of the coverage so that we ensure it's a scale, behaving
 						// properly
 						// at merge.
@@ -167,7 +160,7 @@ public class ObserveInContextTask extends AbstractTask<IArtifact> {
 						 */
 						Actuator actuator = (Actuator) (ctx.getDataflow().getActuators().isEmpty() ? null
 								: ctx.getDataflow().getActuators().get(0));
-						IArtifact result = dataflow.run(scope.getCoverage(), actuator, monitor);
+						IArtifact result = dataflow.run(scope.getCoverage(), actuator, ctx);
 						if (result instanceof IObservation) {
 							ret = (IObservation) result;
 						} else {

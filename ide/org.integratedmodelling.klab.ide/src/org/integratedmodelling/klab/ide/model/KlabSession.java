@@ -10,7 +10,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -21,6 +20,7 @@ import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.api.IKActorsBehavior.Platform;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Configuration;
+import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessage.Type;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
@@ -61,7 +61,6 @@ import org.integratedmodelling.klab.rest.ResourceOperationResponse;
 import org.integratedmodelling.klab.rest.ResourcePublishResponse;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.rest.RuntimeEvent;
-import org.integratedmodelling.klab.rest.SearchRequest;
 import org.integratedmodelling.klab.rest.SearchResponse;
 import org.integratedmodelling.klab.rest.SessionReference;
 import org.integratedmodelling.klab.rest.TaskReference;
@@ -87,7 +86,7 @@ public class KlabSession extends KlabPeer {
 	// six hours
 	private static final long MAX_TICKET_AGE = 1000l * 60l * 60l * 6l;
 
-	private AtomicLong queryCounter = new AtomicLong();
+//	private AtomicLong queryCounter = new AtomicLong();
 	private Map<EngineEvent.Type, Set<Long>> engineEvents = Collections.synchronizedMap(new HashMap<>());
 	private SessionReference sessionReference;
 
@@ -340,9 +339,10 @@ public class KlabSession extends KlabPeer {
 	public void launchTest(URL url) {
 		Activator.post(IMessage.MessageClass.Run, IMessage.Type.RunTest, new LoadApplicationRequest(url, true));
 	}
-	
+
 	public void searchAuthority(String authorityId, String authorityCatalog, String queryString) {
-        Activator.post(IMessage.MessageClass.UserInterface, IMessage.Type.AuthorityQuery, new AuthorityQueryRequest(authorityId, authorityCatalog, queryString));
+		Activator.post(IMessage.MessageClass.UserInterface, IMessage.Type.AuthorityQuery,
+				new AuthorityQueryRequest(authorityId, authorityCatalog, queryString));
 	}
 
 	public void launchApp(String behavior) {
@@ -374,17 +374,6 @@ public class KlabSession extends KlabPeer {
 		Activator.post(IMessage.MessageClass.ObservationLifecycle, IMessage.Type.RequestObservation,
 				new ObservationRequest(resource.getUrn(), currentRootContextId, null));
 	}
-
-//	public long startQuery(String query) {
-//
-//		long queryIndex = queryCounter.getAndIncrement();
-//
-//		SearchRequest request = new SearchRequest();
-//		request.setRequestId(queryIndex);
-//		request.setQueryString(query);
-//
-//		return queryIndex;
-//	}
 
 	// nah, use the response feature in the message bus and make it right
 	public void continueQuery(String query, long previous) {
@@ -418,10 +407,10 @@ public class KlabSession extends KlabPeer {
 			break;
 		}
 	}
-	
+
 	@MessageHandler(type = IMessage.Type.AuthoritySearchResults)
 	public void handleAuthoritySearchResults(IMessage message, AuthorityQueryResponse response) {
-	    send(message);
+		send(message);
 	}
 
 	@MessageHandler(messageClass = IMessage.MessageClass.Authorization, type = IMessage.Type.NetworkStatus)
@@ -504,12 +493,11 @@ public class KlabSession extends KlabPeer {
 		send(message);
 	}
 
+	@MessageHandler(type = Type.QueryStatus)
+	public void handleQueryStatus(IMessage message, QueryStatusResponse response) {
+		send(message);
+	}
 
-    @MessageHandler(type = Type.QueryStatus)
-    public void handleQueryStatus(IMessage message, QueryStatusResponse response) {
-        send(message);
-    }
-	
 	@MessageHandler(type = Type.CreateViewComponent)
 	public void handleCreateComponent(IMessage message, ViewComponent component) {
 		send(message);
@@ -586,6 +574,13 @@ public class KlabSession extends KlabPeer {
 
 	public List<String> getUserBehaviors() {
 		return this.sessionReference == null ? new ArrayList<>() : this.sessionReference.getUserAppUrns();
+	}
+
+	public String getDataflow(String id) {
+		DataflowReference dataflow = Activator.client().with(getIdentity()).get(
+				API.ENGINE.OBSERVATION.RETRIEVE_DATAFLOW.replace(API.ENGINE.OBSERVATION.P_CONTEXT, id) + "?format=kdl",
+				DataflowReference.class);
+		return dataflow.getKdlCode();
 	}
 
 }

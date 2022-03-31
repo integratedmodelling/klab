@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.engine.runtime;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -15,6 +16,7 @@ import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Namespaces;
 import org.integratedmodelling.klab.api.actors.IBehavior;
+import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IStorage;
@@ -24,6 +26,7 @@ import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IConfiguration;
@@ -53,8 +56,7 @@ import org.integratedmodelling.klab.components.runtime.observations.Relationship
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Actuator;
-import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
-import org.integratedmodelling.klab.dataflow.ObservedConcept;
+import org.integratedmodelling.klab.dataflow.Actuator.Status;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
@@ -70,6 +72,7 @@ import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
+import org.jgrapht.graph.DefaultEdge;
 
 /**
  * Trivial context that will only build simple hierarchies and observations.
@@ -102,7 +105,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 
 	public SimpleRuntimeScope(Actuator actuator) {
 		this.observable = actuator.getObservable();
-		this.scale = actuator.getDataflow().getMergedCoverage();
+        this.scale = /* actuator.getDataflow(). */getMergedScale(actuator);
 		this.structure = new Structure();
 		this.network = new DefaultDirectedGraph<>(Relationship.class);
 		this.artifacts = new HashMap<>();
@@ -529,20 +532,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	}
 
 	@Override
-	public IRuntimeScope createContext(IScale scale, IActuator target, IDataflow<?> dataflow, IResolutionScope scope,
-			IMonitor monitor) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public IReport getReport() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ContextualizationStrategy getContextualizationStrategy() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -786,7 +776,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	}
 
 	@Override
-	public Map<ObservedConcept, IObservation> getCatalog() {
+	public Map<IObservedConcept, IObservation> getCatalog() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -901,6 +891,116 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
     public Collection<String> getStateIdentifiers() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+	@Override
+	public Actuator getActuator() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+    @Override
+    public IResolutionScope getResolutionScope() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Graph<IObservedConcept, DefaultEdge> getDependencyGraph() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void setMergedScale(IActuator actuator, IScale merge) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public IScale getMergedScale(IActuator actuator) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public IScale getResolutionScale() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Collection<IObservation> getActuatorProducts(IActuator actuator) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Status getStatus(IActuator actuator) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public IRuntimeScope createContext(IScale scale, IActuator target, IDataflow<?> dataflow,
+            IResolutionScope scope) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public IRuntimeScope getContextScope(Actuator actuator, IResolutionScope scope, IScale scale,
+            IDataflow<?> dataflow, IMonitor monitor) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+//
+//    @Override
+//    public void setRuntimeScale(IActuator actuator, IScale scale) {
+//        // TODO Auto-generated method stub
+//        
+//    }
+//
+//    @Override
+//    public IScale getRuntimeScale(IActuator actuator) {
+//        // TODO Auto-generated method stub
+//        return null;
+//    }
+
+	@Override
+	public String getElkGraph() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getKdl() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void exportDataflow(String baseName, File directory) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Set<IObservedConcept> getImplicitlyChangingObservables() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IRuntimeScope getChild(IRuntimeIdentity identity) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+    @Override
+    public void notifyInspector(Object... triggerArguments) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

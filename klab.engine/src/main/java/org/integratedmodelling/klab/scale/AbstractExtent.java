@@ -66,6 +66,16 @@ public abstract class AbstractExtent implements IExtent {
 				: this.coverage;
 	}
 
+	protected void copyScaleLocation(AbstractExtent other) {
+	    this.scaleId = other.scaleId;
+	    this.geometry = other.geometry;
+	    this.baseDimension = other.baseDimension;
+	    this.locatedExtent = other.locatedExtent;
+	    this.locatedLinearOffset = other.locatedLinearOffset;
+	    this.locatedOffsets = other.locatedOffsets;
+	    this.coverage = other.coverage;
+	}
+	
 	/**
 	 * If we are in a situation where coverage may need to be computed, install the
 	 * necessary logics here. Done this way to avoid expensive pre-computation when

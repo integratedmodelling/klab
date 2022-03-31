@@ -31,7 +31,7 @@ public class Compare implements ICommand {
 		List<String> declarations = new ArrayList<>();
 		String declaration = "";
 		for (Object p : (List<?>) call.getParameters().get("arguments")) {
-			if (p.toString().equals("to")) {
+			if (p.toString().equals("vs.")) {
 				declarations.add(declaration.trim());
 				declaration = "";
 			} else {

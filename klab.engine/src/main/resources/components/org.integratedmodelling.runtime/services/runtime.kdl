@@ -77,18 +77,6 @@ export value resourcechange
 	class org.integratedmodelling.klab.components.runtime.contextualizers.ChangingResourceResolver
 }
 
-export value replay
-	"Return a process resolver that will replay the change already built into a pre-contextualized
-	 observation, so that any dependencies may react during a successive resolution."
-	 label 'Extract time'
-{				
-
-	import value artifact 
-		"The definition of the change concept that this is resolving"
-
-	class org.integratedmodelling.klab.components.runtime.contextualizers.ContextReplayResolver
-}
-
 filter number convert
 	"Convert a numeric state from a unit, range or currency to a compatible other."
 	label '$original to $target'
@@ -180,13 +168,13 @@ filter value transform
 	optional import value artifact
 		"The artifact to categorize" 
 
-	optional value 'value'
+	optional import value operand
 		"The literal to use as operand. Not passed only if the operator is unary." 
 
-	optional value state
+	optional import value state
 		"The operand when it is another state." 
 		
-	import enum operator
+	enum operator
 		"The artifact to categorize by"
 		values GREATER, LESS, GREATEREQUAL, LESSEQUAL, IS, SAMEAS, WITHOUT, WHERE, PLUS, MINUS, TIMES, OVER, TOTAL
 		
@@ -250,11 +238,19 @@ export object instantiate
 
 }
 
+/*
+ * TODO this can become a 'value' actuator so that a table, if appropriate, can be sent as a 
+ * value into another computation.
+*/
 export void compileview
 	"Compile a knowledge view and send the results to the monitor for clients to do what they want with."
 {
 	text view
 		"The fully qualified name of the view to compile against the current context."
+	
+	import value artifacts
+		"The IDs or observables of the states involved in the view. Used only to compile the flow diagram.
+		 Admits a single value or a list."	
 		
 	class org.integratedmodelling.klab.components.runtime.contextualizers.KnowledgeViewResolver
 }

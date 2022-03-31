@@ -30,6 +30,7 @@ import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.utils.Range;
 
 /**
@@ -153,8 +154,19 @@ public interface IArtifact extends IProvenance.Node, Iterable<IArtifact> {
 		 */
 		LIST,
 		/**
-		 * No value - the type of computations that resolve objects (acknowledgements),
-		 * and for options in command prototypes
+		 * Contextualizes any observation. Only legal in contracts.
+		 */
+		OBSERVATION,
+		/**
+		 * Not an artifact type, but adopted by the (void) actuators that resolve
+		 * acknowledged objects. Must be distinct from void as the latter may make view
+		 * observations. Translates directly to the k.DL actuator type.
+		 */
+		RESOLVE,
+
+		/**
+		 * No value - the type of computations that resolve views and for options in
+		 * command prototypes
 		 */
 		VOID,
 
@@ -506,4 +518,13 @@ public interface IArtifact extends IProvenance.Node, Iterable<IArtifact> {
 	 * @return
 	 */
 	long getLastUpdate();
+
+	/**
+	 * Checks if the artifact has changed in any way during the passed temporal
+	 * transition. Will return false if {@link #isDynamic()} is false.
+	 * 
+	 * @param time
+	 * @return
+	 */
+	boolean hasChangedDuring(ITime time);
 }

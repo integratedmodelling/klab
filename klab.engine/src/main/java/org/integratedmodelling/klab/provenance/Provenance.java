@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
@@ -25,6 +26,7 @@ public class Provenance extends GroovyObjectSupport implements IProvenance {
 	 */
 	public Provenance(RuntimeScope scope) {
 		super();
+		this.scope = scope;
 	}
 
 	@Override
@@ -53,10 +55,25 @@ public class Provenance extends GroovyObjectSupport implements IProvenance {
 		}
 		return ret;
 	}
-
-	public void addArtifact(IArtifact ret) {
-		graph.addVertex(ret);
+	
+	public void add(Node node, Node previous, IScale scale) {
+		graph.addVertex(node);
+		graph.addVertex(previous);
+		boolean linked = false;
+		for (ProvenanceEdge edge : graph.incomingEdgesOf(node)) {
+			// should never be > 1
+			edge.merge(scale);
+			linked = true;
+		}
+		if (!linked) {
+			// TODO add the plan (model) to the edge
+			graph.addEdge(previous, node, new ProvenanceEdge(scale));
+		}
 	}
+
+//	public void addArtifact(IArtifact ret) {
+//		graph.addVertex(ret);
+//	}
 
 	@Override
 	public <T> Collection<T> collect(Class<? extends T> cls) {

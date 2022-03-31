@@ -87,7 +87,12 @@ public interface IActivity extends IProvenance.Node {
 		 * Compilation is the observation of a void observable, producing only side
 		 * effects. Creates non-semantic artifacts such as tables, charts, reports etc.
 		 */
-		COMPILATION(IResolutionScope.Mode.RESOLUTION);
+		COMPILATION(IResolutionScope.Mode.RESOLUTION),
+		/**
+		 * Acknowledgement is the no-op of observation activity: an object exists and we
+		 * just take notice of it.
+		 */
+		ACKNOWLEDGEMENT(IResolutionScope.Mode.RESOLUTION);
 
 		IResolutionScope.Mode mode;
 

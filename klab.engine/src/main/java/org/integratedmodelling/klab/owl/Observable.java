@@ -48,6 +48,7 @@ import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.model.Annotation;
 import org.integratedmodelling.klab.model.Model;
+import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
 
@@ -149,6 +150,8 @@ public class Observable extends GroovyObjectSupport implements IObservable {
     // explicitly set in the builder, used to avoid scheduling for now
     private boolean dereified;
     private Observable deferredTarget;
+    // TODO check if the above fills the scope of this one. 
+    List<Observable> deferredObservables = new ArrayList<>();
 
     Observable(Concept concept) {
         this.observable = concept;
@@ -545,9 +548,12 @@ public class Observable extends GroovyObjectSupport implements IObservable {
         this.modelReference = modelReference;
     }
 
-    public IModel getReferencedModel() {
+    public IModel getReferencedModel(ResolutionScope scope) {
         if (this.resolvedModel == null && this.modelReference != null) {
             IKimObject model = Resources.INSTANCE.getModelObject(modelReference);
+            if (model == null && scope != null) {
+            	model = scope.findResolvedModel(modelReference);
+            }
             if (!(model instanceof IModel)) {
                 throw new KlabValidationException(
                         "referenced object " + modelReference + " does not exist or is not a model");
@@ -1085,4 +1091,12 @@ public class Observable extends GroovyObjectSupport implements IObservable {
         return this.deferredTarget;
     }
 
+    /**
+     * FIXME this may need to be integrated with the previous, needs to be checked.
+     * 
+     * @return
+     */
+    public Collection<Observable> getDeferredObservables() {
+        return this.deferredObservables;
+    }
 }

@@ -1,5 +1,8 @@
 package org.integratedmodelling.klab.components.runtime.contextualizers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
@@ -34,7 +37,11 @@ public class KnowledgeViewResolver implements IResolver<IArtifact>, IExpression 
 	}
 
 	public static IServiceCall getServiceCall(IViewModel view) {
-		return KimServiceCall.create(FUNCTION_ID, "view", view.getName());
+	    List<String> observables = new ArrayList<>();
+	    for (IObservable observable : view.getObservables()) {
+	        observables.add(observable.getReferenceName());
+	    }
+		return KimServiceCall.create(FUNCTION_ID, "view", view.getName(), "artifacts", observables);
 	}
 
 	@Override

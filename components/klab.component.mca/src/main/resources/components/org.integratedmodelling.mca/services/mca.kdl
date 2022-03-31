@@ -5,23 +5,26 @@
 @version 0.10.0
 @namespace im.mca
 
-@taginput(cost)
-@taginput(benefit)
 export number concordance
 	"Run a concordance analysis to compute the concordance of a set of criteria variables with corresponding values from
 	 observers in the context. Can turn quantitative distributed observations into alternatives for spatial and/or temporal 
 	 MCA assessment. Uses the annotations @cost and @benefit to define the criteria."
 	 label 'MCA concordance'
 {
+	import number @cost
+		"Tags the qualities used to provide cost criteria, where a higher value means a less desirable outcome."
+
+	import number @benefit
+		"Tags the qualities used to provide benefit criteria, where a higher value means a more desirable outcome."
+
 	optional number levels
 		"The number of levels to discretize distributed continuous variables. Default is 5."
+		default 5
 		
 	class org.integratedmodelling.mca.services.ConcordanceResolver
 }
 
 // TODO constraints for attributes according to method
-@taginput(cost)
-@taginput(benefit)
 filter object ranking
 	"Run a concordance analysis to rank the set of alternatives produced by a resource or a contextualizer. Acts as a filter
 	 that computes the concordance ranking and sorts the output set by decreasing concordance. The score will be added to the
@@ -29,6 +32,12 @@ filter object ranking
 	 to define the criteria."
 	 label 'MCA ranking'
 {
+	import number @cost
+		"Tags the qualities used to provide cost criteria, where a higher value means a less desirable outcome."
+
+	import number @benefit
+		"Tags the qualities used to provide benefit criteria, where a higher value means a more desirable outcome."
+
 	optional import object artifact 
 		"The artifact to filter"
 	

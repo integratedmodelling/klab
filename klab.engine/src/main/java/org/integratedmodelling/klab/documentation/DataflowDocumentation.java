@@ -29,7 +29,6 @@ import org.integratedmodelling.klab.dataflow.Flowchart;
 import org.integratedmodelling.klab.dataflow.Flowchart.Element;
 import org.integratedmodelling.klab.engine.resources.MergedResource;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
-import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.utils.MarkdownUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Pair;
@@ -102,10 +101,10 @@ public enum DataflowDocumentation {
      * @param actuator
      * @return
      */
-    public String getDocumentation(Element element, Actuator actuator) {
+    public String getDocumentation(Element element, Actuator actuator, IRuntimeScope scope) {
 
         if (templates.containsKey(ACTUATOR_TEMPLATE)) {
-            return render(templates.get(ACTUATOR_TEMPLATE), getContext(actuator));
+            return render(templates.get(ACTUATOR_TEMPLATE), getContext(actuator, scope));
         }
 
         /*
@@ -237,7 +236,7 @@ public enum DataflowDocumentation {
         return ret;
     }
 
-    private VelocityContext getContext(Actuator actuator) {
+    private VelocityContext getContext(Actuator actuator, IRuntimeScope scope) {
 
         VelocityContext ret = new VelocityContext(rootContext);
         /*
@@ -251,7 +250,7 @@ public enum DataflowDocumentation {
                     report = new Report();
                 }
                 for (IDocumentation.Template ktemp : doc.get(Trigger.DOCUMENTATION)) {
-                    report.include(ktemp, actuator.getCurrentContext(), doc);
+                    report.include(ktemp, scope, doc);
                 }
             }
             if (report != null) {

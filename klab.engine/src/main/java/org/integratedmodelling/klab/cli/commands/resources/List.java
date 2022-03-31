@@ -83,13 +83,13 @@ public class List implements ICommand {
 		String ret = urn;
 		IResource resource = null;
 		if (online) {
-			resource = Resources.INSTANCE.getLocalResourceCatalog().get(urn);
+			resource = Resources.INSTANCE.resolveResource(urn);
 			ret += " [" + (Resources.INSTANCE.isResourceOnline(resource, forceUpdate) ? "ONLINE" : "OFFLINE") + "]";
 		}
 		if (verbose) {
 			ret += ":";
 			if (resource == null) {
-				resource = Resources.INSTANCE.getLocalResourceCatalog().get(urn);
+				resource = Resources.INSTANCE.resolveResource(urn);
 			}
 			if (resource == null) {
 				ret += " Error retrieving resource!";

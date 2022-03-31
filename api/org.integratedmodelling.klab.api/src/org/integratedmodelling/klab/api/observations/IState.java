@@ -18,6 +18,7 @@ import java.util.Iterator;
 import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 
 /**
@@ -91,5 +92,6 @@ public interface IState extends IObservation, IDataArtifact {
      * @param locators
      */
     void fill(Object value);
+
 
 }

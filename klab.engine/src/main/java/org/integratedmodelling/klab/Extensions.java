@@ -195,7 +195,7 @@ public enum Extensions implements IExtensionService {
 				    scope.getMonitor().error(e);
 					throw new KlabInternalErrorException(e);
 				}
-			} else if (IContextualizer.class.isAssignableFrom(cls)) {
+			} else /* if (IContextualizer.class.isAssignableFrom(cls)) */{
 				try {
 					ret = cls.getDeclaredConstructor().newInstance();
 					// TODO initialize with the parameters and monitor

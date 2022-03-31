@@ -181,7 +181,7 @@ public interface IContextualizationScope extends IParameters<String> {
     /**
      * Even computations that have more than one output have a single target artifact, which
      * corresponds to the primary observable of the model that has defined the computation. If the
-     * computation is an instantiation, the target artifact is null.
+     * computation is an instantiation, the target artifact is null. FIXME should be a folder
      *
      * @return the target artifact, an {@link IObservationGroup} when the computation is an
      *         instantiations.
@@ -342,11 +342,18 @@ public interface IContextualizationScope extends IParameters<String> {
      * Return the geometry for the computation (in k.LAB typically a
      * {@link org.integratedmodelling.klab.api.observations.scale.IScale}). The scale is for the
      * CURRENT computation, which may be different from the scale of the full resolution. To
-     * retrieve the latter, use getDataflow().getResolutionScale();
+     * retrieve the latter, use {@link #getResolutionScale()}.
      *
      * @return the current geometry. Should never be null.
      */
-    public IScale getScale();
+    IScale getScale();
+
+    /**
+     * Get the overall scale of resolution.
+     * 
+     * @return
+     */
+    IScale getResolutionScale();
 
     /**
      * Get the semantics for the passed identifier, which must be one of those returned by either
@@ -536,5 +543,14 @@ public interface IContextualizationScope extends IParameters<String> {
      * @return
      */
     Collection<String> getStateIdentifiers();
+
+    /**
+     * Code can call this at monitorable points; any installed triggers in the inspector will be
+     * activated when matching, if the inspector is armed in the session and listening. See
+     * {@link IInspectors} for what to pass.
+     * 
+     * @param triggerArguments
+     */
+    void notifyInspector(Object... triggerArguments);
 
 }

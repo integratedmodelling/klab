@@ -13,6 +13,8 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.INetwork;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IAgent;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -209,6 +211,12 @@ public abstract class Artifact extends GroovyObjectSupport implements IArtifact 
 				// TODO Auto-generated method stub
 				return 0;
 			}
+
+			@Override
+			public boolean hasChangedDuring(ITime time) {
+				// TODO Auto-generated method stub
+				return false;
+			}
 		};
 		ret.empty = true;
 		return ret;
@@ -283,4 +291,15 @@ public abstract class Artifact extends GroovyObjectSupport implements IArtifact 
 	
 	public abstract IArtifact getGroupMember(int n);
 
+	
+	public boolean hasChangedDuring(ITime time) {
+		if (getLastUpdate() > time.getStart().getMilliseconds()) {
+			return true;
+		}
+		if (this.getGeometry() instanceof IScale) {
+			ITime myTime =  ((IScale)this.getGeometry()).getTime();
+			return myTime.hasChangeDuring(time);
+		}
+		return false;
+	}
 }

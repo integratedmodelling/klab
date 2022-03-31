@@ -48,6 +48,7 @@ import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.model.Model;
+import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Observable;
@@ -164,7 +165,7 @@ public class Resolver {
         if (resolvable instanceof Observable) {
 
             parentScope.setOriginalScope(
-                    ((Observable) resolvable).getReferencedModel() == null ? Scope.OBSERVABLE : Scope.MODEL);
+                    ((Observable) resolvable).getReferencedModel(parentScope) == null ? Scope.OBSERVABLE : Scope.MODEL);
             ret = resolve((Observable) resolvable, parentScope,
                     ((Observable) resolvable).getDescriptionType().getResolutionMode());
 
@@ -206,11 +207,13 @@ public class Resolver {
                      */
 
                     if (parentScope.getResolvedObservable(toResolve, Mode.RESOLUTION) != null
-                            || ret.getImplicitlyChangingObservables().contains(observable)
+                            || ret.getRootContextualizationScope().getImplicitlyChangingObservables().contains(observable)
                             || ret.hasResolved(toResolve)) {
                         if (!ret.hasResolvedSuccessfully(toResolve)) {
                             // needed for downstream resolutions to register implicit changes
-                            ret.getImplicitlyChangingObservables().add(observable);
+                            ret.getRootContextualizationScope().getImplicitlyChangingObservables().add(observable);
+                        } else {
+                            ret.getRootContextualizationScope().getImplicitlyChangingObservables().remove(observable);
                         }
                         continue;
                     }
@@ -220,7 +223,7 @@ public class Resolver {
 
                     ResolutionScope cscope = resolve((Observable) toResolve,
                             parentScope.acceptResolutions(ret,
-                                    observable.getScope().getResolutionNamespace()),
+                                    (Namespace)observable.getScope().getResolutionNamespace()),
                             Mode.RESOLUTION);
 
                     if (cscope.getCoverage().isRelevant()) {
@@ -232,9 +235,10 @@ public class Resolver {
                                 + " coverage");
 
                         ret.getOccurrentResolutions().add(cscope);
+                        ret.getRootContextualizationScope().getImplicitlyChangingObservables().remove(observable);
 
                     } else {
-                        ret.getImplicitlyChangingObservables().add(observable);
+                        ret.getRootContextualizationScope().getImplicitlyChangingObservables().add(observable);
                     }
                 }
 
@@ -319,22 +323,32 @@ public class Resolver {
                     // scope.
                     ResolutionScope oscope = resolveConcrete(pobs, rscope, pobs.getResolvedPredicates(),
                             pobs.getResolvedPredicatesContext(), Mode.RESOLUTION);
+
                     if (oscope.getCoverage().isComplete()) {
 
                         done = true;
 
+                        // TODO set in the contextualization strategy as "orphan" for the root
+                        // resolution dataflow if that's not yet defined.
                         Dataflow dataflow = Dataflows.INSTANCE.compile(NameGenerator.shortUUID(), oscope,
                                 null);
                         dataflow.setDescription(
                                 "Resolution of abstract predicate " + predicate.getDefinition());
-                        dataflow.run(oscope.getCoverage().copy(), oscope.getMonitor());
+                        
+                        scope.addPredicateResolutionDataflow(dataflow);
+                        
+                        dataflow.run(oscope.getCoverage().copy(), scope.getRootContextualizationScope());
+
                         /*
                          * Get the traits from the scope, add to set. Scope is only created if
                          * resolution succeeds, so check.
+                         * 
+                         * TODO scope needs to exist beforehand.
                          */
-                        Collection<IConcept> predicates = dataflow.getRuntimeScope() == null
+                        Collection<IConcept> predicates = scope.getRootScope() == null
                                 ? null
-                                : dataflow.getRuntimeScope().getConcreteIdentities(predicate);
+                                : scope.getRootContextualizationScope().getConcreteIdentities(predicate);
+
                         if (predicates != null && !predicates.isEmpty()) {
                             // use a stable order so that the reporting system can know when the
                             // last one is contextualized
@@ -483,24 +497,48 @@ public class Resolver {
 
             /*
              * if coverage is empty and this is a resolution with a specializable context and it's
-             * not optional, try the extreme ratio of distributed specialized resolution.
+             * not optional, try the extreme ratio of distributed specialized resolution unless a
+             * specific inherent type is mentioned.
              */
-            if (coverage.isEmpty() && !observable.isOptional() && mode == Mode.RESOLUTION) {
+            if (coverage.isEmpty()) {
 
-                parentScope.getMonitor()
-                        .debug("direct resolution of mandatory dependency "
-                                + Observables.INSTANCE.getDisplayName(observable)
-                                + " failed: trying distributed resolution in specialized context");
+                if (Observables.INSTANCE.getDirectInherentType(observable.getType()) == null) {
 
-                Observable specialized = new Observable((Observable) observable);
-                specialized.setSpecialized(true);
+                    if (!observable.isOptional() && mode == Mode.RESOLUTION) {
+                        parentScope.getMonitor()
+                                .debug("direct resolution of mandatory dependency "
+                                        + Observables.INSTANCE.getDisplayName(observable)
+                                        + " failed: trying distributed resolution in specialized context");
 
-                ret = resolveConcrete((Observable) specialized, parentScope,
-                        ((Observable) specialized).getResolvedPredicates(),
-                        ((Observable) specialized).getResolvedPredicatesContext(), mode);
+                        Observable specialized = new Observable((Observable) observable);
+                        specialized.setSpecialized(true);
 
-                coverage = ret == null ? Coverage.empty(parentScope.getCoverage()) : ret.getCoverage();
+                        ret = resolveConcrete((Observable) specialized, parentScope,
+                                ((Observable) specialized).getResolvedPredicates(),
+                                ((Observable) specialized).getResolvedPredicatesContext(), mode);
 
+                        coverage = ret == null
+                                ? Coverage.empty(parentScope.getCoverage())
+                                : ret.getCoverage();
+
+                    }
+
+                } else {
+
+                    /*
+                     * try resolving within the inherent type, force deferring in the observable
+                     */
+                    Observable distributed = (Observable) observable.getBuilder(parentScope.getMonitor())
+                            .without(ObservableRole.INHERENT)
+                            .within(Observables.INSTANCE.getDirectInherentType(observable.getType()))
+                            .buildObservable();
+
+                    ret = resolveConcrete(distributed, parentScope,
+                            ((Observable) observable).getResolvedPredicates(),
+                            ((Observable) observable).getResolvedPredicatesContext(), mode);
+
+                    coverage = ret == null ? Coverage.empty(parentScope.getCoverage()) : ret.getCoverage();
+                }
             }
 
             if (coverage.isEmpty()) {
@@ -541,7 +579,7 @@ public class Resolver {
             Map<IConcept, IConcept> resolvedPredicates,
             Map<IConcept, Set<IConcept>> resolvedPredicatesContext,
             Mode mode) {
-
+        
         /*
          * Check first if we need to redistribute the observable, in which case we only resolve the
          * distribution context and we leave it to the runtime context to finish the job, as we do
@@ -640,15 +678,16 @@ public class Resolver {
                         .getObservationResolving(observable);
                 if (previous != null) {
 
-                    String previousArtifactName = ((DirectObservation) ret.getContext()).getScope()
-                            .getArtifactName(previous);
-
-                    if (observable.is(Type.CHANGE) && previous.getObservable().is(Type.QUALITY)) {
-                        observable = observable
-                                .withResolvedModel(new Model(observable, previousArtifactName, ret));
-                    } else {
+                	// FIXME FIXME check if it's OK to remove all this
+//                    String previousArtifactName = ((DirectObservation) ret.getContext()).getScope()
+//                            .getArtifactName(previous);
+//
+//                    if (observable.is(Type.CHANGE) && previous.getObservable().is(Type.QUALITY)) {
+//                        observable = observable
+//                                .withResolvedModel(new Model(observable, previousArtifactName, ret));
+//                    } else {
                         previousArtifact = new Pair<>(previous.getObservable().getName(), previous);
-                    }
+//                    }
                 }
             }
         }
@@ -659,10 +698,10 @@ public class Resolver {
                     previousArtifact.getFirst());
             coverage = ret.getCoverage();
 
-        } else if (observable.getReferencedModel() != null) {
+        } else if (observable.getReferencedModel(ret) != null) {
 
             // observable comes complete with model, semantic or not
-            ResolutionScope mscope = resolve((Model) observable.getReferencedModel(), ret);
+            ResolutionScope mscope = resolve((Model) observable.getReferencedModel(ret), ret);
             if (mscope.getCoverage().isRelevant() && ret.or(mscope)) {
                 ret.link(mscope);
                 coverage = mscope.getCoverage();
@@ -765,6 +804,7 @@ public class Resolver {
 
                             if (coverage.isComplete()) {
                                 done = true;
+                                ret.merge(mscope);
                                 break;
                             }
                         }

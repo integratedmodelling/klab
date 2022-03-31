@@ -51,23 +51,23 @@ public class UrnResolver implements IExpression, IResolver<IArtifact> {
     }
 
     @Override
-    public IArtifact resolve(IArtifact observation, IContextualizationScope context) {
+    public IArtifact resolve(IArtifact observation, IContextualizationScope scope) {
 
         /**
          * Contextualize the resource to the passed context and parameters.
          */
-        IResource res = this.resource.contextualize(context.getScale(), observation, urnParameters, context);
+        IResource res = this.resource.contextualize(scope.getScale(), observation, urnParameters, scope);
 
         if (res.getAvailability() != null) {
             switch(res.getAvailability().getAvailability()) {
             case DELAYED:
-                context.getMonitor().addWait(res.getAvailability().getRetryTimeSeconds());
+                scope.getMonitor().addWait(res.getAvailability().getRetryTimeSeconds());
                 return observation;
             case NONE:
-                context.getMonitor().error("resource " + resource.getUrn() + " has no data available in this context");
+                scope.getMonitor().error("resource " + resource.getUrn() + " has no data available in this context");
                 return observation;
             case PARTIAL:
-                context.getMonitor().warn("resource " + resource.getUrn() + " reports partial availability in this context");
+                scope.getMonitor().warn("resource " + resource.getUrn() + " reports partial availability in this context");
                 break;
             case COMPLETE:
                 break;
@@ -80,7 +80,7 @@ public class UrnResolver implements IExpression, IResolver<IArtifact> {
         if (this.resource instanceof MergedResource) {
 
             List<Pair<IResource, Map<String, String>>> resources = ((MergedResource) this.resource)
-                    .contextualize(context.getScale(), observation);
+                    .contextualize(scope.getScale(), observation, scope);
             if (resources.isEmpty()) {
                 // it's OK if the resource was already contextualized up to the available data. TODO
                 // distinguish the use cases.
@@ -90,14 +90,14 @@ public class UrnResolver implements IExpression, IResolver<IArtifact> {
             }
 
             for (Pair<IResource, Map<String, String>> pr : resources) {
-                ((Report) context.getReport()).addContextualizedResource(this.resource.getUrn(), pr.getFirst());
+                ((Report) scope.getReport()).addContextualizedResource(this.resource.getUrn(), pr.getFirst());
             }
 
             // TODO must contextualize the LIST, not just the first resource. For now it can only
             // happen with
             // multiple spatial extents, but it could happen also with multiple temporal slices.
             if (resources.size() > 1) {
-                context.getMonitor()
+                scope.getMonitor()
                         .warn("Warning: unimplemented use of multiple resources for one timestep. Choosing only the first.");
             }
 
@@ -108,13 +108,13 @@ public class UrnResolver implements IExpression, IResolver<IArtifact> {
         if (Configuration.INSTANCE.isEchoEnabled()) {
             System.err.println("GETTING DATA FROM " + res.getUrn());
         }
-        IKlabData data = Resources.INSTANCE.getResourceData(res, parameters, context.getScale(), context, observation);
+        IKlabData data = Resources.INSTANCE.getResourceData(res, parameters, scope.getScale(), scope, observation);
         if (Configuration.INSTANCE.isEchoEnabled()) {
             System.err.println("DONE " + res.getUrn());
         }
 
         if (data == null) {
-            context.getMonitor().error("Cannot extract data from resource " + resource.getUrn());
+            scope.getMonitor().error("Cannot extract data from resource " + resource.getUrn());
         }
 
         return data == null ? observation : data.getArtifact();
