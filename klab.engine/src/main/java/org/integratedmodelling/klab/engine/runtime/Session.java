@@ -170,6 +170,7 @@ import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.NotificationUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
+import org.integratedmodelling.klab.utils.StringUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -1026,7 +1027,7 @@ public class Session extends GroovyObjectSupport
 			code.append(token.getValue() + " ");
 		}
 		String cc = code.toString();
-		if (!cc.isBlank() && !cc.contains("?")) {
+		if (!StringUtils.isBlank(cc) && !cc.contains("?")) {
 			try {
 				IObservable observable = Observables.INSTANCE.declare(cc);
 				if (observable != null) {

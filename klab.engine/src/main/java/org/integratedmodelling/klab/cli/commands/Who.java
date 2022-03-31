@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.cli.commands;
 
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Network;
@@ -19,7 +20,7 @@ public class Who implements ICommand {
 
 		String ret = "Session ID = " + session.getId() + "\n" + session.getUser().getUsername() + " ("
 				+ session.getUser().getEmailAddress() + ") "
-				+ session.getUser().getGroups().stream().map((g) -> g.getId()).toList();
+				+ session.getUser().getGroups().stream().map((g) -> g.getId()).collect(Collectors.toList());
 
 		if (nodeId != null) {
 			INodeIdentity node = Network.INSTANCE.getNode(nodeId);

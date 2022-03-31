@@ -28,6 +28,7 @@ import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.syntax.SemanticScope.Constraint;
 import org.integratedmodelling.klab.rest.StyledKimToken;
 import org.integratedmodelling.klab.utils.StringUtil;
+import org.integratedmodelling.klab.utils.StringUtils;
 import org.integratedmodelling.klab.utils.Utils;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
@@ -126,7 +127,7 @@ public class SemanticExpression {
 
         public IObservable buildObservable() {
             String declaration = buildDeclaration();
-            if (declaration.isBlank() || declaration.contains("?")) {
+            if (StringUtils.isBlank(declaration) || declaration.contains("?")) {
                 return null;
             }
             try {

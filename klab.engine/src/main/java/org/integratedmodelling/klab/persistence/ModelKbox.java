@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.h2gis.utilities.SpatialResultSet;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
@@ -272,7 +273,7 @@ public class ModelKbox extends ObservableKbox {
 		List<ModelReference> ret = new ArrayList<>();
 		IUserIdentity user = context.getSession().getParentIdentity(IUserIdentity.class);
 		Collection<IResolutionConstraint> constraints = context.getSession().getState().getResolutionConstraints();
-		Set<String> userPermissions = new HashSet<>(user.getGroups().stream().map((g) -> g.getId()).toList());
+		Set<String> userPermissions = new HashSet<>(user.getGroups().stream().map((g) -> g.getId()).collect(Collectors.toList()));
 
 		if (!database.hasTable("model")) {
 			return ret;
