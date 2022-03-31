@@ -45,7 +45,7 @@ public interface ISpace extends IExtent, ISpatial {
 	 * @return coordinate reference system
 	 */
 	IProjection getProjection();
-	
+
 	/**
 	 * Build a lat/lon descriptor for the extent we represent. This shouldn't really
 	 * be API.
@@ -74,7 +74,7 @@ public interface ISpace extends IExtent, ISpatial {
 	 * @return
 	 */
 	double getStandardizedWidth();
-	
+
 	/**
 	 * Centroid in whatever standard coordinates the implementation uses.
 	 * 
@@ -110,7 +110,22 @@ public interface ISpace extends IExtent, ISpatial {
 	 * @param shape
 	 * @return the distance
 	 */
-    double getStandardizedDistance(ISpace extent);
-    
+	double getStandardizedDistance(ISpace extent);
+
+	/**
+	 * Quickly check if the passed string looks like a WKT string in the k.LAB
+	 * supported format (potentially with a projection). No validation, just simple
+	 * heuristics to discriminate URNs or other obviously different strings.
+	 * 
+	 * @param urn
+	 * @return
+	 */
+	static boolean isWKT(String urn) {
+		if ((urn.contains("POLYGON") || urn.contains("POINT") || urn.contains("LINESTRING")) && urn.contains("(")
+				&& urn.contains(")")) {
+			return true;
+		}
+		return false;
+	}
 
 }

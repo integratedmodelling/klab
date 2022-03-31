@@ -16,6 +16,7 @@ package org.integratedmodelling.klab.api;
 import org.integratedmodelling.klab.api.auth.INetworkSessionIdentity;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.rest.ContextRequest;
+import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.PingResponse;
 import org.integratedmodelling.klab.rest.TicketRequest;
 
@@ -639,6 +640,7 @@ public interface API {
 
 		public static final String P_SESSION = "{session}";
 		public static final String P_CONTEXT = "{context}";
+		public static final String P_OBSERVATION = "{observation}";
 		public static final String P_TICKET = "{ticket}";
 
 		public static final String PUBLIC_BASE = HUB.API_BASE + "/public";
@@ -666,6 +668,13 @@ public interface API {
 		 * when done.
 		 */
 		public static final String OBSERVE_IN_CONTEXT = PUBLIC_BASE + "/observe/" + P_SESSION + "/" + P_CONTEXT;
+
+		/**
+		 * Retrieve the {@link ObservationReference} JSON bean that describes the passed observation, which must be
+		 * available.
+		 */
+		public static final String RETRIEVE_OBSERVATION_DESCRIPTOR = PUBLIC_BASE + "/get/observation/" + P_SESSION + "/"
+				+ P_OBSERVATION;
 
 		/**
 		 * Check the status of the passed ticket. Same as the one in API.TICKET but only

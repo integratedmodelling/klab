@@ -313,6 +313,10 @@ public enum Observations implements IObservationService {
 		// TODO Auto-generated method stub
 	}
 
+	public ObservationReference createArtifactDescriptor(IObservation observation) {
+		return createArtifactDescriptor(observation, null, 0);
+	}
+
 	public ObservationReference createArtifactDescriptor(IObservation observation, ILocator locator, int childLevel) {
 		return createArtifactDescriptor(observation, locator, childLevel, null);
 	}

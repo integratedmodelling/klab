@@ -36,7 +36,7 @@ export value literal
 	 different value semantics"
 	 label '$val'
 {
-	object val
+	const object val
 		"The value to be contextualized"
 				
 	class org.integratedmodelling.klab.components.runtime.contextualizers.LiteralStateResolver
@@ -71,7 +71,7 @@ export value resourcechange
 	text change 
 		"The definition of the change concept that this is resolving"
 
-	list resources
+	const list resources
 		"A list of URNs to be merged and used to resolve the changing observable"
 
 	class org.integratedmodelling.klab.components.runtime.contextualizers.ChangingResourceResolver
@@ -220,7 +220,7 @@ export value contextualize
 	label 'Extract data from URN'
 {
 	
-	text urn
+	const text urn
 		"The URN pointing to the resource to be resolved and retrieved"
 				
 	class org.integratedmodelling.klab.components.runtime.contextualizers.UrnResolver
@@ -231,7 +231,7 @@ export object instantiate
 	label 'Extract objects from URN'
 {
 	
-	text urn
+	const text urn
 		"The URN pointing to the resource to be resolved and retrieved"
 				
 	class org.integratedmodelling.klab.components.runtime.contextualizers.UrnInstantiator

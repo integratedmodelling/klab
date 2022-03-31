@@ -169,6 +169,7 @@ public class KdlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 	 *         (
 	 *             annotations+=Annotation* 
 	 *             abstract?='abstract'? 
+	 *             const?='const'? 
 	 *             final?='final'? 
 	 *             optional?='optional'? 
 	 *             (exported?='export' | filter?='filter' | (imported?='import' (multiple?='multiple' | (arity=INT minimum?='+'?))?))? 
