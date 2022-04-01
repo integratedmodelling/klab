@@ -84,8 +84,8 @@ public interface ISessionState extends IParameters<String> {
 	 * @param errorListener
 	 * @return
 	 */
-	Future<IArtifact> submit(String urn, BiConsumer<ITaskIdentity, IArtifact> observationListener,
-			BiConsumer<ITaskIdentity, Throwable> errorListener);
+	Future<IArtifact> submit(String urn, BiConsumer<ITask<?>, IArtifact> observationListener,
+			BiConsumer<ITask<?>, Throwable> errorListener);
 
 	boolean activateScenario(String scenario);
 

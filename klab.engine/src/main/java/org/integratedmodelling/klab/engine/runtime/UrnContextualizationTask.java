@@ -186,4 +186,12 @@ public class UrnContextualizationTask extends AbstractTask<ISubject> {
 		return taskDescription;
 	}
 
+    @Override
+    public boolean start() {
+        if (autostart) {
+            return false;
+        }
+        executor.execute(delegate);
+        return true;
+    }
 }

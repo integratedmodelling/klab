@@ -14,12 +14,12 @@ import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.auth.IIdentity;
-import org.integratedmodelling.klab.api.auth.ITaskIdentity;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.AbstractRuntimeScope;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
@@ -79,9 +79,9 @@ public class ObserveInContextTask extends AbstractTask<IArtifact> {
 	 * @param observationListener
 	 * @param errorListener
 	 */
-	public ObserveInContextTask(Subject context, String urn, Collection<String> scenarios,
-			Collection<BiConsumer<ITaskIdentity, IArtifact>> observationListeners,
-			Collection<BiConsumer<ITaskIdentity, Throwable>> errorListeners, Executor executor,
+	public ObserveInContextTask(Subject context, String urn, Collection<String> scenarioList,
+			Collection<BiConsumer<ITask<?>, IArtifact>> oListeners,
+			Collection<BiConsumer<ITask<?>, Throwable>> eListeners, Executor executor,
 			SessionActivity activityDescriptor) {
 
 		this.context = context;
@@ -89,7 +89,18 @@ public class ObserveInContextTask extends AbstractTask<IArtifact> {
 		this.session = context.getParentIdentity(Session.class);
 		this.activity.setActivityDescriptor(activityDescriptor);
 		this.taskDescription = "Observation of " + urn + " in " + context.getName();
+		this.executor = executor;
 
+        if (scenarioList != null && !scenarioList.isEmpty()) {
+            this.scenarios.addAll(scenarioList);
+        }
+
+        if (oListeners != null) {
+            observationListeners.addAll(oListeners);
+        }
+        if (eListeners != null) {
+            errorListeners.addAll(eListeners);
+        }
 		session.touch();
 
 		delegate = new FutureTask<IObservation>(new MonitoredCallable<IObservation>(this) {
@@ -104,8 +115,8 @@ public class ObserveInContextTask extends AbstractTask<IArtifact> {
 					notifyStart();
 
 					if (observationListeners != null) {
-						for (BiConsumer<ITaskIdentity, IArtifact> observationListener : observationListeners) {
-							observationListener.accept((ITaskIdentity) this.task, null);
+						for (BiConsumer<ITask<?>, IArtifact> observationListener : observationListeners) {
+							observationListener.accept((ITask<?>) this.task, null);
 						}
 					}
 
@@ -191,16 +202,16 @@ public class ObserveInContextTask extends AbstractTask<IArtifact> {
 					notifyEnd();
 
 					if (observationListeners != null) {
-						for (BiConsumer<ITaskIdentity, IArtifact> observationListener : observationListeners) {
-							observationListener.accept((ITaskIdentity) this.task, ret);
+						for (BiConsumer<ITask<?>, IArtifact> observationListener : observationListeners) {
+							observationListener.accept((ITask<?>) this.task, ret);
 						}
 					}
 
 				} catch (Throwable e) {
 
 					if (errorListeners != null) {
-						for (BiConsumer<ITaskIdentity, Throwable> errorListener : errorListeners) {
-							errorListener.accept((ITaskIdentity) this.task, e);
+						for (BiConsumer<ITask<?>, Throwable> errorListener : errorListeners) {
+							errorListener.accept((ITask<?>) this.task, e);
 						}
 					}
 
@@ -211,7 +222,9 @@ public class ObserveInContextTask extends AbstractTask<IArtifact> {
 			}
 		});
 
-		executor.execute(delegate);
+		if (autostart) {
+		    executor.execute(delegate);
+		}
 	}
 
 	public String toString() {
@@ -279,5 +292,14 @@ public class ObserveInContextTask extends AbstractTask<IArtifact> {
 	protected String getTaskDescription() {
 		return taskDescription;
 	}
+
+	@Override
+    public boolean start() {
+        if (autostart) {
+            return false;
+        }
+        executor.execute(delegate);
+        return true;
+    }
 
 }

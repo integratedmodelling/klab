@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.api.auth.ITaskIdentity;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.AbstractRuntimeScope;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
@@ -52,6 +53,7 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
         super(parent);
         this.delegate = parent.delegate;
         this.taskDescription = description;
+        this.autostart = parent.autostart;
     }
 
     public ObserveContextTask(Session session, Observer observer, Collection<String> scenarios) {
@@ -71,9 +73,9 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
      * @param observationListener
      * @param errorListener
      */
-    public ObserveContextTask(Session session, Observer observer, Collection<String> scenarios,
-            Collection<BiConsumer<ITaskIdentity, IArtifact>> observationListeners,
-            Collection<BiConsumer<ITaskIdentity, Throwable>> errorListeners, Executor executor,
+    public ObserveContextTask(Session session, Observer observer, Collection<String> scenarioList,
+            Collection<BiConsumer<ITask<?>, IArtifact>> oListeners,
+            Collection<BiConsumer<ITask<?>, Throwable>> eListeners, Executor executor,
             SessionActivity activityDescriptor) {
 
         try {
@@ -83,6 +85,18 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
             this.taskDescription = "Observation of " + observer.getId();
             this.activity.setActivityDescriptor(activityDescriptor);
             this.resolvable = observer;
+            this.executor = executor;
+
+            if (scenarioList != null && !scenarioList.isEmpty()) {
+                this.scenarios.addAll(scenarioList);
+            }
+
+            if (oListeners != null) {
+                observationListeners.addAll(oListeners);
+            }
+            if (eListeners != null) {
+                errorListeners.addAll(eListeners);
+            }
 
             session.touch();
 
@@ -101,8 +115,8 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
                         notifyStart();
 
                         if (observationListeners != null) {
-                            for (BiConsumer<ITaskIdentity, IArtifact> observationListener : observationListeners) {
-                                observationListener.accept((ITaskIdentity) this.task, null);
+                            for (BiConsumer<ITask<?>, IArtifact> observationListener : observationListeners) {
+                                observationListener.accept((ITask<?>) this.task, null);
                             }
                         }
 
@@ -135,11 +149,10 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
                              */
                             ret = (ISubject) dataflow.run(scope.getCoverage().copy(), runtimeScope);
 
-
                             if (ret != null) {
 
-                            	((AbstractRuntimeScope)runtimeScope).setRootDataflow(dataflow, ret.getId());
-                                ((AbstractRuntimeScope)runtimeScope).notifyDataflowChanges(runtimeScope);
+                                ((AbstractRuntimeScope) runtimeScope).setRootDataflow(dataflow, ret.getId());
+                                ((AbstractRuntimeScope) runtimeScope).notifyDataflowChanges(runtimeScope);
 
                                 setContext((Subject) ret);
                                 getDescriptor().setContextId(ret.getId());
@@ -167,8 +180,8 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
                         }
 
                         if (observationListeners != null) {
-                            for (BiConsumer<ITaskIdentity, IArtifact> observationListener : observationListeners) {
-                                observationListener.accept((ITaskIdentity) this.task, ret);
+                            for (BiConsumer<ITask<?>, IArtifact> observationListener : observationListeners) {
+                                observationListener.accept((ITask<?>) this.task, ret);
                             }
                         }
 
@@ -177,8 +190,8 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
                     } catch (Throwable e) {
 
                         if (errorListeners != null) {
-                            for (BiConsumer<ITaskIdentity, Throwable> errorListener : errorListeners) {
-                                errorListener.accept((ITaskIdentity) this.task, e);
+                            for (BiConsumer<ITask<?>, Throwable> errorListener : errorListeners) {
+                                errorListener.accept((ITask<?>) this.task, e);
                             }
                         }
 
@@ -190,7 +203,9 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
 
             });
 
-            executor.execute(delegate);
+            if (autostart) {
+                executor.execute(delegate);
+            }
 
         } catch (Throwable e) {
             monitor.error("error initializing context task: " + e.getMessage());
@@ -262,6 +277,15 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
     @Override
     protected String getTaskDescription() {
         return taskDescription;
+    }
+
+    @Override
+    public boolean start() {
+        if (autostart) {
+            return false;
+        }
+        executor.execute(delegate);
+        return true;
     }
 
 }

@@ -15,7 +15,9 @@
  */
 package org.integratedmodelling.klab.api.runtime;
 
+import java.util.Collection;
 import java.util.concurrent.Future;
+import java.util.function.BiConsumer;
 
 import org.integratedmodelling.klab.api.auth.ITaskIdentity;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -40,5 +42,13 @@ public interface ITask<T extends IArtifact> extends ITaskIdentity, Future<T> {
 	 * @return
 	 */
 	IResolvable getResolvable();
+	
+	void addObservationListener(BiConsumer<ITask<?>, T> listener);
+	
+	void addErrorListener(BiConsumer<ITask<?>, Throwable> listener);
+	
+	void addScenarios(Collection<String> scenarios);
+
+    boolean start();
 
 }

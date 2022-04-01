@@ -53,9 +53,8 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionConstraint;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
-import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.ISessionState;
-import org.integratedmodelling.klab.api.runtime.monitoring.IInspector;
+import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
@@ -223,8 +222,8 @@ public class SessionState extends Parameters<String> implements ISessionState {
          */
         Observer observer = Observations.INSTANCE.makeROIObserver(scaleOfInterest.getName(), geometry,
                 new Metadata());
-        List<BiConsumer<ITaskIdentity, IArtifact>> oListeners = new ArrayList<>();
-        List<BiConsumer<ITaskIdentity, Throwable>> eListeners = new ArrayList<>();
+        List<BiConsumer<ITask<?>, IArtifact>> oListeners = new ArrayList<>();
+        List<BiConsumer<ITask<?>, Throwable>> eListeners = new ArrayList<>();
 
         oListeners.add((task, observation) -> {
 
@@ -293,7 +292,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
          * goes into executor; next one won't exec before this is finished. Only call the obs
          * listener at the beginning of the contextualization.
          */
-        List<BiConsumer<ITaskIdentity, IArtifact>> ctxListeners = new ArrayList<>(oListeners);
+        List<BiConsumer<ITask<?>, IArtifact>> ctxListeners = new ArrayList<>(oListeners);
         ctxListeners.add((tsk, obs) -> {
             if (obs == null && observationListener != null) {
                 observationListener.accept(tsk, obs);
@@ -315,8 +314,8 @@ public class SessionState extends Parameters<String> implements ISessionState {
     }
 
     @Override
-    public Future<IArtifact> submit(String urn, BiConsumer<ITaskIdentity, IArtifact> observationListener,
-            BiConsumer<ITaskIdentity, Throwable> errorListener) {
+    public Future<IArtifact> submit(String urn, BiConsumer<ITask<?>, IArtifact> observationListener,
+            BiConsumer<ITask<?>, Throwable> errorListener) {
 
         final SessionActivity activity = new SessionActivity();
 
@@ -341,8 +340,8 @@ public class SessionState extends Parameters<String> implements ISessionState {
             activity.setParentActivityId(this.currentActivity.getActivityId());
         }
 
-        List<BiConsumer<ITaskIdentity, IArtifact>> oListeners = new ArrayList<>();
-        List<BiConsumer<ITaskIdentity, Throwable>> eListeners = new ArrayList<>();
+        List<BiConsumer<ITask<?>, IArtifact>> oListeners = new ArrayList<>();
+        List<BiConsumer<ITask<?>, Throwable>> eListeners = new ArrayList<>();
 
         oListeners.add((task, observation) -> {
 
@@ -438,7 +437,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
              * goes into executor; next one won't exec before this is finished. Only call the obs
              * listener at the beginning of the contextualization.
              */
-            List<BiConsumer<ITaskIdentity, IArtifact>> ctxListeners = new ArrayList<>(oListeners);
+            List<BiConsumer<ITask<?>, IArtifact>> ctxListeners = new ArrayList<>(oListeners);
             ctxListeners.add((tsk, obs) -> {
                 if (obs == null && observationListener != null) {
                     observationListener.accept(tsk, obs);
