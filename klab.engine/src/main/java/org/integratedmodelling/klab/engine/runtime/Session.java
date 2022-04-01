@@ -59,6 +59,7 @@ import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.api.cli.IConsole;
 import org.integratedmodelling.klab.api.data.CRUDOperation;
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
@@ -78,7 +79,6 @@ import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.ITicket;
-import org.integratedmodelling.klab.api.runtime.monitoring.IInspector;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.api.services.IIndexingService;
@@ -2073,6 +2073,12 @@ public class Session extends GroovyObjectSupport
 	@Override
 	public IUserIdentity getUser() {
 		return user;
+	}
+
+	@Override
+	public ITask<ISubject> observe(IObservable observable, IGeometry geometry) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

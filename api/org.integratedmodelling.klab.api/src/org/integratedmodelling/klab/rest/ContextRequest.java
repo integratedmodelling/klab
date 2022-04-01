@@ -6,9 +6,10 @@ import java.util.List;
 public class ContextRequest {
 
 	private String geometry;
-	private String urn;
-	private boolean estimate;
+	private String contextType;
+	private List<String> observables = new ArrayList<>();
 	private List<String> scenarios = new ArrayList<>();
+	private boolean estimate;
 
 	public String getGeometry() {
 		return geometry;
@@ -18,20 +19,20 @@ public class ContextRequest {
 		this.geometry = geometry;
 	}
 
-	public String getUrn() {
-		return urn;
+	public String getContextType() {
+		return contextType;
 	}
 
-	public void setUrn(String urn) {
-		this.urn = urn;
+	public void setContextType(String contextType) {
+		this.contextType = contextType;
 	}
 
-	public boolean isEstimate() {
-		return estimate;
+	public List<String> getObservables() {
+		return observables;
 	}
 
-	public void setEstimate(boolean estimate) {
-		this.estimate = estimate;
+	public void setObservables(List<String> observables) {
+		this.observables = observables;
 	}
 
 	public List<String> getScenarios() {
@@ -40,6 +41,14 @@ public class ContextRequest {
 
 	public void setScenarios(List<String> scenarios) {
 		this.scenarios = scenarios;
+	}
+
+	public boolean isEstimate() {
+		return estimate;
+	}
+
+	public void setEstimate(boolean estimate) {
+		this.estimate = estimate;
 	}
 
 }

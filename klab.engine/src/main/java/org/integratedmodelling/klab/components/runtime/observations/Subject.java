@@ -3,12 +3,15 @@ package org.integratedmodelling.klab.components.runtime.observations;
 import java.util.Collection;
 import java.util.Map;
 
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IIndividual;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IConfiguration;
 import org.integratedmodelling.klab.api.observations.IEvent;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.ISubject;
@@ -80,9 +83,15 @@ public class Subject extends CountableObservation implements ISubject {
 		return null;
 	}
 
-	@Override
+	@Deprecated // old API, should use the API methods with configurable async tasks
 	public ITask<IArtifact> observe(String urn, String... scenarios) {
 		return new ObserveInContextTask(this, urn, CollectionUtils.arrayToList(scenarios));
+	}
+
+	@Override
+	public ITask<IObservation> observe(IObservable observable, IGeometry geometry) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

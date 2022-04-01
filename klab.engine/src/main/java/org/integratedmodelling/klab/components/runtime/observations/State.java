@@ -42,6 +42,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IModificationListener;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.rest.StateSummary;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.AggregationUtils;
 import org.integratedmodelling.klab.utils.Pair;
@@ -489,6 +490,13 @@ public class State extends Observation implements IState, IKeyHolder {
 		}
 
 		return ret;
+	}
+
+	public StateSummary getOverallSummary() {
+		if (storage instanceof AbstractAdaptiveStorage) {
+			return ((AbstractAdaptiveStorage<?>)storage).getOverallSummary();
+		}
+		return null;
 	}
 
 }

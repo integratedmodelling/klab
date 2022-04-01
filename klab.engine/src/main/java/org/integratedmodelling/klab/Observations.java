@@ -95,8 +95,6 @@ import org.integratedmodelling.klab.utils.Triple;
 import org.integratedmodelling.klab.utils.Utils;
 import org.integratedmodelling.klab.utils.ZipUtils;
 
-import com.google.common.collect.Lists;
-
 public enum Observations implements IObservationService {
 
 	INSTANCE;
@@ -154,13 +152,16 @@ public enum Observations implements IObservationService {
 	 */
 	public StateSummary getStateSummary(IState state, ILocator locator) {
 
-		// TODO index by time signature or state timestamp
-		// FIXME review all this - this gets CELLS in locators when used in Groovy state
-		// expressions!
-		// JUST INDEX BY TIME.START or -1 and set this in the state.
-
 		long time = -1;
 
+		if (locator == null) {
+			if (state instanceof State) {
+				return ((State)state).getOverallSummary();
+			}
+			// not equipped
+			return null;
+		}
+		
 		if (state instanceof State && !(state instanceof MergingState)) {
 			time = ((State) state).getStorage().getTemporalOffset(locator);
 		} else {
@@ -528,22 +529,6 @@ public enum Observations implements IObservationService {
 			// TODO
 		}
 
-		// if (observation instanceof IDirectObservation) {
-		// /*
-		// * physical parent
-		// */
-		// if (observation instanceof DirectObservation) {
-		// if (viewId != null) {
-		// ret.setParentArtifactId(viewId);
-		// } else {
-		// ret.setParentArtifactId(((DirectObservation) observation).getGroup() == null
-		// ?
-		// ret.getParentId()
-		// : ((DirectObservation) observation).getGroup().getId());
-		// }
-		// }
-		// }
-
 		if (observation instanceof IDirectObservation && !observation.isEmpty() && (childLevel < 0 || childLevel > 0)) {
 
 			for (IArtifact child : observation.getChildArtifacts()) {
@@ -557,10 +542,6 @@ public enum Observations implements IObservationService {
 		}
 
 		if (observation instanceof IState) {
-
-//            if (((IState) observation).getTable() != null) {
-//                ret.getGeometryTypes().add(GeometryType.TABLE);
-//            }
 
 			StateSummary summary = getStateSummary((IState) observation, locator);
 

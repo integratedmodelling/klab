@@ -3,7 +3,9 @@ package org.integratedmodelling.klab.rest;
 import java.util.List;
 
 /**
- * Describes the numeric and distributional properties of a state.
+ * Describes the numeric and distributional properties of a state. Can be merged
+ * with another summary to describe the joint properties of >1 states or
+ * temporal slices.
  * 
  * @author ferdinando.villa
  *
@@ -195,5 +197,21 @@ public class StateSummary {
 		this.singleValued = b;
 	}
 
-
+	public void merge(StateSummary other) {
+		this.degenerate = this.degenerate || other.degenerate;
+		this.singleValued = other.singleValued && this.singleValued;
+		this.sum += other.sum;
+		if (this.range.get(0) > other.range.get(0)) {
+			this.range.set(0, other.range.get(0));
+		}
+		if (this.range.get(1) < other.range.get(1)) {
+			this.range.set(1, other.range.get(1));
+		}
+		this.nodataPercentage = (this.nodataPercentage+other.nodataPercentage)/2; 
+		this.mean = (this.mean + other.mean) / 2.0;
+		// FIXME these are obviously wrong
+		this.standardDeviation = (this.standardDeviation + other.standardDeviation) / 2.0;
+		this.variance = (this.variance + other.variance) / 2.0;
+	}
+	
 }

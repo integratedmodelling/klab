@@ -68,7 +68,7 @@ import org.integratedmodelling.kim.api.IKimConceptStatement;
  * 
  * @see IKimConceptStatement
  */
-public final class SemanticType implements Serializable {
+public class SemanticType implements Serializable {
 
     private static final long serialVersionUID = -647901196357082946L;
 

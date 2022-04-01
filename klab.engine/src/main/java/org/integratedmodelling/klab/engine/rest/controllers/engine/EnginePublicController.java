@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.engine.rest.controllers.engine;
 
 import java.security.Principal;
+import java.util.List;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.integratedmodelling.klab.Authentication;
@@ -10,10 +11,10 @@ import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.monitoring.TicketManager;
-import org.integratedmodelling.klab.components.runtime.observations.ObservationGroupView;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
@@ -50,24 +51,28 @@ public class EnginePublicController implements API.PUBLIC {
 		IUserIdentity user = s.getUser();
 		Scale scale = Scale.create(Geometry.create(request.getGeometry()));
 		s.getState().resetContext();
-		
+
 		/**
 		 * TODO the tickets should be in the sessions and disappear with it. Should use
 		 * MapDB to store, not the file-based ticket manager.
 		 */
 		ITicket ticket = Klab.INSTANCE.getTicketManager().open(
 				request.isEstimate() ? ITicket.Type.ContextEstimate : ITicket.Type.ContextObservation, "url",
-				CREATE_CONTEXT, "user", user.getUsername(), "geometry", request.getGeometry(), "urn", request.getUrn(),
-				"email", user.getEmailAddress());
+				CREATE_CONTEXT, "user", user.getUsername(), "geometry", request.getGeometry(), "urn",
+				request.getContextType(), "email", user.getEmailAddress());
 
 		if (request.isEstimate()) {
 
 		} else {
 			/*
-			 * submit the task with a listener that closes the ticket.
+			 * submit the task with a listener that closes the ticket. TODO do not use the session
+			 * state - submit context, then all one by one in a specific method with specific listeners.
 			 */
-			s.getState().withScale(scale).submit(request.getUrn(), (task, artifact) -> {
+			s.getState().withScale(scale).submit(request.getContextType(), (task, artifact) -> {
 				if (artifact != null) {
+					/*
+					 * TODO only resolve when the last of the observations requested comes in
+					 */
 					ticket.resolve("artifact", artifact.getId(), "session", s.getId(), "context",
 							((IObservation) artifact).getScope().getRootSubject().getId());
 				}
@@ -100,7 +105,13 @@ public class EnginePublicController implements API.PUBLIC {
 			throw new KlabIllegalArgumentException("observation " + observation + " does not exist");
 		}
 
-		return Observations.INSTANCE.createArtifactDescriptor((IObservation) obs);
+		ObservationReference ret = Observations.INSTANCE.createArtifactDescriptor((IObservation) obs);
+		
+		/*
+		 * TODO map the children to the URN of their requested observable for reference in the result. 
+		 */
+		
+		return ret;
 	}
 
 	@RequestMapping(value = TICKET_INFO, method = RequestMethod.GET, produces = "application/json")
@@ -114,5 +125,6 @@ public class EnginePublicController implements API.PUBLIC {
 		}
 		return t == null ? null : TicketManager.encode(t);
 	}
+	
 
 }

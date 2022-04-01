@@ -38,7 +38,9 @@ import org.integratedmodelling.klab.rest.SessionActivity;
 import org.integratedmodelling.klab.utils.Parameters;
 
 /**
- * A ITask that creates one or more Observations within a context subject.
+ * A ITask that creates one or more Observations within a context subject. TODO
+ * add option to choose when to start the observation and implement remaining
+ * task options and listeners.
  * 
  * @author ferdinando.villa
  *
@@ -148,8 +150,8 @@ public class ObserveInContextTask extends AbstractTask<IArtifact> {
 						}
 
 						IRuntimeScope ctx = ((Observation) context).getScope().getChild(ObserveInContextTask.this);
-						((AbstractRuntimeScope)ctx).notifyDataflowChanges(ctx);
-						
+						((AbstractRuntimeScope) ctx).notifyDataflowChanges(ctx);
+
 						// make a copy of the coverage so that we ensure it's a scale, behaving
 						// properly
 						// at merge.

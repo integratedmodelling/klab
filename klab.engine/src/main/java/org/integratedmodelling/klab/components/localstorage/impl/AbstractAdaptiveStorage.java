@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.components.localstorage.impl;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
@@ -30,6 +31,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 import org.integratedmodelling.klab.engine.runtime.api.IModificationListener;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
+import org.integratedmodelling.klab.rest.StateSummary;
 import org.integratedmodelling.klab.scale.Extent;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
@@ -102,6 +104,19 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
             return getValueFromBackend(sliceOffset, this.sliceOffsetInBackend);
         }
 
+        public StateSummary getStateSummary() {
+        	StateSummary ret = new StateSummary();
+        	ret.setMean(this.statistics.getMean());
+        	ret.setNodataPercentage(((double)this.nodata)/((double)sliceSize));
+        	ret.setDegenerate(isEmpty());
+        	ret.setSingleValued(scalarValue != null);
+        	ret.setStandardDeviation(this.statistics.getStandardDeviation());
+        	ret.setVariance(this.statistics.getVariance());
+        	ret.setRange(Arrays.asList(this.statistics.getMin(), this.statistics.getMax()));
+        	ret.setSum(this.statistics.getSum());
+        	return ret;
+        }
+        
         // TODO synchronization here voids the parallelism in most functions. The
         // newSlice thing should be
         // put in the implementation and synchronized there, so that multiple put() may
@@ -618,5 +633,17 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
     public IState getState() {
         return state;
     }
+
+	public StateSummary getOverallSummary() {
+		StateSummary ret = null;
+		for (Slice slice : slicesByStart.values()) {
+			if (ret == null) {
+				ret = slice.getStateSummary();
+			} else {
+				ret.merge(slice.getStateSummary());
+			}
+		}
+		return ret;
+	}
 
 }

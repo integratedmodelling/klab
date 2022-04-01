@@ -24,6 +24,8 @@ import org.integratedmodelling.klab.api.resolution.IResolvable;
 /**
  * A ITask computes an observational artifact, delegating to a Java Future that
  * returns it when available.
+ * 
+ * TODO add observation and error listeners, scenarios and options for resolution
  *
  * @author ferdinando.villa
  * @version $Id: $Id

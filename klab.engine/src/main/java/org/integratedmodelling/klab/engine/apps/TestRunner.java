@@ -200,7 +200,7 @@ public class TestRunner implements Annotations.Handler {
 						ISubject subject = (ISubject) session.getState().submit(observer.getName()).get();
 						if (subject != null) {
 							for (Object o : observations) {
-								IArtifact ret = subject.observe(o.toString()).get();
+								IArtifact ret = ((Subject)subject).observe(o.toString()).get();
 								if (ret == null) {
 									monitor.warn(id + ": observation of " + o + " in context " + subject.getName()
 											+ " was unsuccessful");

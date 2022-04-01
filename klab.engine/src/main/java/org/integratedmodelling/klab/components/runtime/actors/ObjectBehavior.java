@@ -14,6 +14,7 @@ import org.integratedmodelling.klab.api.extensions.actors.Behavior;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.utils.Pair;
 
@@ -37,7 +38,7 @@ public class ObjectBehavior {
 				Object arg = evaluateArgument(0, scope);
 				if (arg instanceof IObservable) {
 					try {
-						Future<IArtifact> future = ((ISubject) identity)
+						Future<IArtifact> future = ((Subject) identity)
 								.observe(((IObservable) arg).getDefinition());
 						fire(future.get(), scope);
 					} catch (Throwable e) {
