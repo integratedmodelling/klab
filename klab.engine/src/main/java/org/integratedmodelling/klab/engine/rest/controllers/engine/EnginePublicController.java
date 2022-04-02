@@ -100,7 +100,7 @@ public class EnginePublicController implements API.PUBLIC {
         return TicketManager.encode(ticket);
     }
 
-    @RequestMapping(value = TICKET_INFO, method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = SUBMIT_ESTIMATE, method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public TicketResponse.Ticket submitEstimate(@PathVariable String session, @PathVariable String estimate) {
 
