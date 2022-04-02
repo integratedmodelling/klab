@@ -157,7 +157,6 @@ import org.integratedmodelling.klab.rest.SearchMatch.TokenClass;
 import org.integratedmodelling.klab.rest.SearchMatchAction;
 import org.integratedmodelling.klab.rest.SearchRequest;
 import org.integratedmodelling.klab.rest.SearchRequest.Mode;
-import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.rest.SearchResponse;
 import org.integratedmodelling.klab.rest.SessionReference;
 import org.integratedmodelling.klab.rest.SettingChangeRequest;
@@ -200,6 +199,29 @@ public class Session extends GroovyObjectSupport
 
     private static final long serialVersionUID = -1571090827271892549L;
 
+    public static class Estimate {
+        
+        public long estimatedCost;
+        public ContextRequest contextRequest;
+        public ObservationRequest observationRequest;
+
+        public Estimate(long cost, ContextRequest contextRequest, ObservationRequest observationRequest) {
+        
+            this.estimatedCost = cost;
+            if (contextRequest != null) {
+                contextRequest.setEstimate(false);
+                contextRequest.setEstimatedCost(cost);
+            }
+            if (observationRequest != null) {
+                observationRequest.setEstimate(false);
+                observationRequest.setEstimatedCost(cost);
+            }
+            this.contextRequest = contextRequest;
+            this.observationRequest = observationRequest;
+        }
+        
+    }
+    
     Monitor monitor;
     String token = "s" + NameGenerator.shortUUID();
     IUserIdentity user;
@@ -216,7 +238,7 @@ public class Session extends GroovyObjectSupport
     private View view;
     private Map<String, IConsole> consoles = new HashMap<>();
     // estimated costs of jobs by ticket ID
-    private Map<String, Long> estimatedCosts = new HashMap<>();
+    private Map<String, Estimate> estimates = Collections.synchronizedMap(new HashMap<>());
 
     // tracks the setting of the actor so we can avoid the ask pattern
     private AtomicBoolean actorSet = new AtomicBoolean(Boolean.FALSE);
@@ -2183,13 +2205,12 @@ public class Session extends GroovyObjectSupport
         // TODO FIXME switch to local ticket manager
         return Klab.INSTANCE.getTicketManager().getTicket(ticketId);
     }
-
-    public void setObservationCost(String ticketId, long cost) {
-        this.estimatedCosts.put(ticketId, cost);
-    }
-
-    public long getObservationCost(String ticketId) {
-        return this.estimatedCosts.get(ticketId);
+    
+    /*
+     * Estimates are handled externally by the API, we only expose the catalog
+     */
+    public Map<String, Estimate> getEstimates() {
+        return this.estimates;
     }
 
 }

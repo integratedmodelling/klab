@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
+import org.integratedmodelling.klab.engine.runtime.Session.Estimate;
 import org.integratedmodelling.klab.rest.ContextRequest;
 import org.integratedmodelling.klab.rest.ObservationRequest;
 import org.integratedmodelling.klab.utils.Pair;
@@ -47,8 +48,8 @@ public class APIObservationTask extends Thread {
 
     public static void submit(ContextRequest request, ISession session, IScale scale, ITicket ticket) {
         APIObservationTask task = new APIObservationTask(request, session, scale, ticket);
-        if (!request.isEstimate() && request.getEstimateId() != null) {
-            task.estimatedCost = ((Session) session).getObservationCost(request.getEstimateId());
+        if (!request.isEstimate() && request.getEstimatedCost() >= 0) {
+            task.estimatedCost = request.getEstimatedCost();
         }
         task.start();
     }
@@ -56,8 +57,8 @@ public class APIObservationTask extends Thread {
     public static void submit(ObservationRequest request, ISession session, IDirectObservation ctx,
             ITicket ticket) {
         APIObservationTask task = new APIObservationTask(request, session, ctx, ticket);
-        if (!request.isEstimate() && request.getEstimateId() != null) {
-            task.estimatedCost = ((Session) session).getObservationCost(request.getEstimateId());
+        if (!request.isEstimate() && request.getEstimatedCost() >= 0) {
+            task.estimatedCost = request.getEstimatedCost();
         }
         task.start();
     }
@@ -131,12 +132,15 @@ public class APIObservationTask extends Thread {
 
         Pair<Double, String> userCost = getUserCost(cost);
 
-        ticket.resolve("estimate", "" + userCost.getFirst(), "currency", "" + userCost.getSecond());
+        ticket.resolve("estimate", ticket.getId(), "cost", "" + userCost.getFirst(), "currency",
+                "" + userCost.getSecond());
 
         /*
-         * remember the estimate for charging if the estimate is accepted.
+         * remember the estimate for charging if the estimate is accepted. The request will be stored with
+         * the estimate field set to false and the cost set to 0+.
          */
-        ((Session) session).setObservationCost(ticket.getId(), cost);
+        ((Session) session).getEstimates().put(ticket.getId(),
+                new Estimate(cost, contextRequest, observationRequest));
 
     }
 

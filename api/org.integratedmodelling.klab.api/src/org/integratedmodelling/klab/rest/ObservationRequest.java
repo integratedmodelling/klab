@@ -9,13 +9,15 @@ public class ObservationRequest {
     private String contextId;
     private String searchContextId;
     private boolean estimate;
-    private String estimateId;
+    private long estimatedCost;
     private List<String> scenarios = new ArrayList<>();
 
     public ObservationRequest() {
+        this.estimatedCost = -1;
     }
 
     public ObservationRequest(String urn, String contextId, String contextSearchId) {
+        this.estimatedCost = -1;
         this.urn = urn;
         this.contextId = contextId;
         this.searchContextId = contextSearchId;
@@ -53,11 +55,12 @@ public class ObservationRequest {
         this.scenarios = scenarios;
     }
 
-	@Override
-	public String toString() {
-		return "ObservationRequest [urn=" + urn + ", contextId=" + contextId + ", searchContextId=" + searchContextId
-				+ ", scenarios=" + scenarios + "]";
-	}
+    @Override
+    public String toString() {
+        return "ObservationRequest [urn=" + urn + ", contextId=" + contextId + ", searchContextId="
+                + searchContextId
+                + ", scenarios=" + scenarios + "]";
+    }
 
     public boolean isEstimate() {
         return estimate;
@@ -67,14 +70,12 @@ public class ObservationRequest {
         this.estimate = estimate;
     }
 
-    public String getEstimateId() {
-        return estimateId;
+    public long getEstimatedCost() {
+        return estimatedCost;
     }
 
-    public void setEstimateId(String estimateId) {
-        this.estimateId = estimateId;
+    public void setEstimatedCost(long estimatedCost) {
+        this.estimatedCost = estimatedCost;
     }
-    
-    
 
 }

@@ -14,6 +14,7 @@ import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.monitoring.TicketManager;
 import org.integratedmodelling.klab.engine.runtime.APIObservationTask;
 import org.integratedmodelling.klab.engine.runtime.Session;
+import org.integratedmodelling.klab.engine.runtime.Session.Estimate;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.rest.ContextRequest;
@@ -37,7 +38,7 @@ public class EnginePublicController implements API.PUBLIC {
 
     @RequestMapping(value = CREATE_CONTEXT, method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    public TicketResponse.Ticket contextRequest(Principal principal, @RequestBody ContextRequest request,
+    public TicketResponse.Ticket contextRequest(@RequestBody ContextRequest request,
             @PathVariable String session) {
 
         Session s = Authentication.INSTANCE.getIdentity(session, Session.class);
@@ -97,6 +98,31 @@ public class EnginePublicController implements API.PUBLIC {
         APIObservationTask.submit(request, s, (IDirectObservation) ctx, ticket);
 
         return TicketManager.encode(ticket);
+    }
+
+    @RequestMapping(value = TICKET_INFO, method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public TicketResponse.Ticket submitEstimate(@PathVariable String session, @PathVariable String estimate) {
+
+        Session s = Authentication.INSTANCE.getIdentity(session, Session.class);
+        if (s == null) {
+            // FIXME not illegitimate in case of server failure or restart with persistent tickets;
+            // should send an error ticket instead
+            throw new KlabIllegalStateException("submit estimate: invalid session ID");
+        }
+        
+        Estimate est = ((Session)s).getEstimates().remove(estimate);
+        if (est == null) {
+            // FIXME not illegitimate in case of server failure or restart with persistent tickets;
+            // should send an error ticket instead
+            throw new KlabIllegalStateException("submit estimate: estimate ID could not be found");
+        }
+        
+        if (est.contextRequest != null) {
+            return contextRequest(est.contextRequest, session);
+        }
+        
+        return observationRequest(est.observationRequest, session, est.observationRequest.getContextId());
     }
 
     @RequestMapping(value = RETRIEVE_OBSERVATION_DESCRIPTOR, method = RequestMethod.GET, produces = "application/json")

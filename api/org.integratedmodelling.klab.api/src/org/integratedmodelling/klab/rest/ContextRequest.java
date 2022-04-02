@@ -10,7 +10,11 @@ public class ContextRequest {
     private List<String> observables = new ArrayList<>();
     private List<String> scenarios = new ArrayList<>();
     private boolean estimate;
-    private String estimateId;
+    private long estimatedCost;
+    
+    public ContextRequest() {
+        this.estimatedCost = -1;
+    }
     
     public String getGeometry() {
         return geometry;
@@ -52,12 +56,12 @@ public class ContextRequest {
         this.estimate = estimate;
     }
 
-    public String getEstimateId() {
-        return estimateId;
+    public long getEstimatedCost() {
+        return estimatedCost;
     }
 
-    public void setEstimateId(String estimateId) {
-        this.estimateId = estimateId;
+    public void setEstimatedCost(long estimatedCost) {
+        this.estimatedCost = estimatedCost;
     }
 
 }
