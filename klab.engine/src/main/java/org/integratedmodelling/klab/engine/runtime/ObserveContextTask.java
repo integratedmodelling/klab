@@ -6,13 +6,14 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.api.auth.IIdentity;
-import org.integratedmodelling.klab.api.auth.ITaskIdentity;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -43,7 +44,9 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
     FutureTask<ISubject> delegate;
     String taskDescription = "<uninitialized observation task " + token + ">";
     IParameters<String> globalState = Parameters.create();
-
+    AtomicReference<ISubject> result = new AtomicReference<>();
+    AtomicBoolean disaster = new AtomicBoolean(Boolean.FALSE);
+    
     @Override
     public IParameters<String> getState() {
         return globalState;
@@ -105,6 +108,7 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
             this.activity.setActivityDescriptor(activityDescriptor);
             this.resolvable = observer;
             this.executor = executor;
+            this.autostart = autostart;
 
             if (scenarioList != null && !scenarioList.isEmpty()) {
                 this.scenarios.addAll(scenarioList);
@@ -213,10 +217,15 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
                                 errorListener.accept((ITask<?>) this.task, e);
                             }
                         }
+                        
+                        disaster.set(true);
 
                         throw notifyAbort(e);
 
                     }
+                    
+                    result.set(ret);
+                    
                     return ret;
                 }
 
@@ -284,6 +293,10 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
             start();
         }
         return delegate.get();
+//        while (result.get() == null && !disaster.get()) {
+//            Thread.sleep(400);
+//        }
+//        return disaster.get() ? null : result.get();
     }
 
     @Override
@@ -292,6 +305,7 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
         if (!started) {
             start();
         }
+        
         return delegate.get(timeout, unit);
     }
 

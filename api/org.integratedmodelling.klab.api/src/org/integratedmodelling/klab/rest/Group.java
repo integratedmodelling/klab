@@ -1,7 +1,9 @@
 package org.integratedmodelling.klab.rest;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Group {
 
@@ -13,6 +15,7 @@ public class Group {
 	private List<ObservableReference> observables = new ArrayList<>();
 	private boolean worldview;
 	private long maxUpload;
+	private Map<String, String> groupData = new HashMap<>();
 	
 	// TODO add owner and possibly more authentication
 
@@ -141,5 +144,13 @@ public class Group {
 	public long getMaxUpload() {
 		return maxUpload;
 	}
+
+    public Map<String, String> getGroupData() {
+        return groupData;
+    }
+
+    public void setGroupData(Map<String, String> groupData) {
+        this.groupData = groupData;
+    }
 
 }

@@ -150,4 +150,5 @@ public interface ISession extends IEngineSessionIdentity, Closeable {
 
 	boolean isDefault();
 
+
 }

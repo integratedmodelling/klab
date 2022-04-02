@@ -8,6 +8,8 @@ public class ObservationRequest {
     private String urn;
     private String contextId;
     private String searchContextId;
+    private boolean estimate;
+    private String estimateId;
     private List<String> scenarios = new ArrayList<>();
 
     public ObservationRequest() {
@@ -56,6 +58,22 @@ public class ObservationRequest {
 		return "ObservationRequest [urn=" + urn + ", contextId=" + contextId + ", searchContextId=" + searchContextId
 				+ ", scenarios=" + scenarios + "]";
 	}
+
+    public boolean isEstimate() {
+        return estimate;
+    }
+
+    public void setEstimate(boolean estimate) {
+        this.estimate = estimate;
+    }
+
+    public String getEstimateId() {
+        return estimateId;
+    }
+
+    public void setEstimateId(String estimateId) {
+        this.estimateId = estimateId;
+    }
     
     
 
