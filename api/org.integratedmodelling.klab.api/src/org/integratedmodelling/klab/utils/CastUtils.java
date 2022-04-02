@@ -19,7 +19,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-// TODO: Auto-generated Javadoc
 /**
  * Utility to reduce the ugliness of casting generic collections in Java. If you have say a
  * Collection<A> (ca) that you know is a Collection<B extends A> and you need a Collection<B>, do

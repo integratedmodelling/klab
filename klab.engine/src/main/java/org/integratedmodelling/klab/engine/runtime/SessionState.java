@@ -201,10 +201,10 @@ public class SessionState extends Parameters<String> implements ISessionState {
     public Future<IArtifact> submit(BiConsumer<ITaskIdentity, IArtifact> observationListener,
             BiConsumer<ITaskIdentity, Throwable> errorListener) {
 
-    	/*
-    	 * TODO allow the urn to be null, meaning "just create the predefined context".
-    	 */
-    	
+        /*
+         * TODO allow the urn to be null, meaning "just create the predefined context".
+         */
+
         final SessionActivity activity = new SessionActivity();
 
         activity.setUser(session.getParentIdentity(IUserIdentity.class).getUsername());
@@ -300,8 +300,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
         });
 
         Future<IArtifact> task = new ObserveContextTask(this.session, observer, scenarios, ctxListeners,
-                eListeners,
-                executor, activity);
+                eListeners, executor, activity, true);
         try {
             this.scaleOfInterest.setShape(null);
             this.context.push((ISubject) task.get());
@@ -415,7 +414,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
         if (resolvable instanceof Observer) {
             return new ObserveContextTask(this.session, (Observer) resolvable, scenarios, oListeners,
                     eListeners,
-                    executor, activity);
+                    executor, activity, true);
         }
 
         if (this.context.isEmpty() && !(resolvable instanceof IObserver)) {
@@ -445,8 +444,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
             });
 
             Future<IArtifact> task = new ObserveContextTask(this.session, observer, scenarios, ctxListeners,
-                    eListeners,
-                    executor, activity);
+                    eListeners, executor, activity, true);
             try {
                 this.scaleOfInterest.setShape(null);
                 this.context.push((ISubject) task.get());
@@ -459,8 +457,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
          * Submit the actual resolvable
          */
         return new ObserveInContextTask((Subject) this.getCurrentContext(), urn, this.scenarios, oListeners,
-                eListeners,
-                this.executor, activity);
+                eListeners, this.executor, activity, true);
     }
 
     @Override

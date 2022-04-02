@@ -88,10 +88,10 @@ public class Subject extends CountableObservation implements ISubject {
 		return new ObserveInContextTask(this, urn, CollectionUtils.arrayToList(scenarios));
 	}
 
-	@Override
-	public ITask<IObservation> observe(IObservable observable, IGeometry geometry) {
-		// TODO Auto-generated method stub
-		return null;
+	@SuppressWarnings({"rawtypes", "unchecked"})
+    @Override
+	public ITask<IObservation> observe(IObservable observable) {
+		return (ITask<IObservation>)(ITask)ObserveInContextTask.create(this, observable.getDefinition(), false);
 	}
 
 }

@@ -98,6 +98,7 @@ import org.integratedmodelling.klab.components.runtime.actors.KlabActor.ActorRef
 import org.integratedmodelling.klab.components.runtime.actors.SessionActor;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Spawn;
+import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.data.resources.Codelist;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.dataflow.Flowchart;
@@ -113,6 +114,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.exceptions.KlabActorException;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.syntax.SemanticExpression;
 import org.integratedmodelling.klab.rest.AuthorityIdentity;
@@ -2075,10 +2077,11 @@ public class Session extends GroovyObjectSupport
 		return user;
 	}
 
-	@Override
+	@SuppressWarnings({"rawtypes", "unchecked"})
+    @Override
 	public ITask<ISubject> observe(IObservable observable, IGeometry geometry) {
-		// TODO Auto-generated method stub
-		return null;
+		Observer observer = Observations.INSTANCE.makeObserver(observable, geometry, new Metadata());
+		return (ITask<ISubject>)(ITask)ObserveContextTask.create(this, observer, false);
 	}
 
 }

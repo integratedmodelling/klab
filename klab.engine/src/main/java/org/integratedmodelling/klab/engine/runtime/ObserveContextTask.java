@@ -56,9 +56,28 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
         this.autostart = parent.autostart;
     }
 
+    /**
+     * Use to control autostart sequencing so that listeners and scenarios may be added before
+     * calling start().
+     * 
+     * @param session
+     * @param observer
+     * @param autostart
+     * @return
+     */
+    public static ObserveContextTask create(Session session, Observer observer, boolean autostart) {
+        return new ObserveContextTask(session, observer, null, autostart);
+    }
+
+    private ObserveContextTask(Session session, Observer observer, Collection<String> scenarios,
+            boolean autostart) {
+        this(session, observer, scenarios, null, null,
+                session.getParentIdentity(Engine.class).getTaskExecutor(), null, autostart);
+    }
+
     public ObserveContextTask(Session session, Observer observer, Collection<String> scenarios) {
         this(session, observer, scenarios, null, null,
-                session.getParentIdentity(Engine.class).getTaskExecutor(), null);
+                session.getParentIdentity(Engine.class).getTaskExecutor(), null, true);
     }
 
     /**
@@ -76,7 +95,7 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
     public ObserveContextTask(Session session, Observer observer, Collection<String> scenarioList,
             Collection<BiConsumer<ITask<?>, IArtifact>> oListeners,
             Collection<BiConsumer<ITask<?>, Throwable>> eListeners, Executor executor,
-            SessionActivity activityDescriptor) {
+            SessionActivity activityDescriptor, boolean autostart) {
 
         try {
 
@@ -204,6 +223,7 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
             });
 
             if (autostart) {
+                started = true;
                 executor.execute(delegate);
             }
 
@@ -260,12 +280,18 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
 
     @Override
     public ISubject get() throws InterruptedException, ExecutionException {
+        if (!started) {
+            start();
+        }
         return delegate.get();
     }
 
     @Override
     public ISubject get(long timeout, TimeUnit unit)
             throws InterruptedException, ExecutionException, TimeoutException {
+        if (!started) {
+            start();
+        }
         return delegate.get(timeout, unit);
     }
 
@@ -280,8 +306,17 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
     }
 
     @Override
+    public boolean stop() {
+        if (started) {
+            cancel(true);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public boolean start() {
-        if (autostart) {
+        if (autostart || monitor.isInterrupted()) {
             return false;
         }
         executor.execute(delegate);

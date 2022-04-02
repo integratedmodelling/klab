@@ -87,6 +87,7 @@ public abstract class AbstractTask<T extends IArtifact> implements ITaskTree<T> 
     Subject context;
     protected IResolvable resolvable;
     protected boolean autostart = true;
+    protected boolean started = false;
     Session session;
     String token = "t" + NameGenerator.shortUUID();
     Set<String> scenarios = new HashSet<>();
@@ -210,7 +211,6 @@ public abstract class AbstractTask<T extends IArtifact> implements ITaskTree<T> 
     
     @Override
     public boolean stop() {
-        // TODO Auto-generated method stub
         return false;
     }
 
