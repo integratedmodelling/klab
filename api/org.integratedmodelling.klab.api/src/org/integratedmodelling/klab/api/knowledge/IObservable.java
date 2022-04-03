@@ -429,8 +429,8 @@ public interface IObservable extends ISemantic, IResolvable {
         Builder global(boolean global);
 
         /**
-         * Set the URL for the observable when it comes from a k.IM specification. Only use with full
-         * awareness.
+         * Set the URL for the observable when it comes from a k.IM specification. Only use with
+         * full awareness.
          * 
          * @param uri
          * @return
@@ -722,5 +722,15 @@ public interface IObservable extends ISemantic, IResolvable {
      * @return
      */
     boolean isSpecialized();
+
+    /**
+     * The declaration is the same string returned by {@link #getDefinition()}, but if a name was
+     * stated in the original declaration, the 'named' clause is added to the definition. Apart from
+     * that, the definition remains normalized so it may differ from an original, user-supplied
+     * string.
+     * 
+     * @return
+     */
+    String getDeclaration();
 
 }

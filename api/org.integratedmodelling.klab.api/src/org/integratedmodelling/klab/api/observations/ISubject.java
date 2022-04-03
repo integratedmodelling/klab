@@ -108,14 +108,27 @@ public interface ISubject extends IDirectObservation {
      * Observe the passed observable in this context, returning an asynchronous future that will
      * produce an observation. This is the primary, asynchronous context observation method for the
      * k.LAB modeling API. Interactive sessions and applications use the {@link ISessionState} to
-     * organize and schedule observations. When this method is used, the task should not have
-     * started, so the user has a chance to apply listeners, scenarios and other options and must
-     * call start() on it manually.
+     * organize and schedule observations. When this method is used, the task returned is only
+     * started when get() or start() are called on it manually, so scenarios and listeners can be
+     * added to the task after it is returned.
      * 
-     * @param observable
-     * @return a paused task to call start() on.
+     * @param observable an observable that is compatible with this subject's semantics as its
+     *        context.
+     * @return a paused task to optionally configure and use by calling get() or start().
      */
     ITask<IObservation> observe(IObservable observable);
+
+    /**
+     * Observe the resolvable correspondent to the passed URN in this context, returning an
+     * asynchronous future that will produce an observation. Equivalent to
+     * {@link #observe(IObservable)} but will permit calling model URNs as well as semantic
+     * observables. This is available in code usage but is not exposed through the public API.
+     * 
+     * @param observable a URN that resolves to a resolvable object - a concept, observable,
+     *        observer or model (semantic or non-semantic).
+     * @return a paused task to optionally configure and use by calling get() or start().
+     */
+    ITask<IObservation> observe(String resolvableUrn);
 
     /*
      * ----------------------------------------------------------------------------- ---------

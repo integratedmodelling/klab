@@ -63,7 +63,7 @@ public class Observable extends GroovyObjectSupport implements IObservable {
 
     private IObservable incarnatedAbstract;
     protected Concept observable;
-    private String declaration;
+    private String definition;
     private boolean isAbstract;
     private Range range;
     private Unit unit;
@@ -150,7 +150,7 @@ public class Observable extends GroovyObjectSupport implements IObservable {
     // explicitly set in the builder, used to avoid scheduling for now
     private boolean dereified;
     private Observable deferredTarget;
-    // TODO check if the above fills the scope of this one. 
+    // TODO check if the above fills the scope of this one.
     List<Observable> deferredObservables = new ArrayList<>();
 
     Observable(Concept concept) {
@@ -179,7 +179,7 @@ public class Observable extends GroovyObjectSupport implements IObservable {
     public static Observable promote(IViewModel view) {
         Observable ret = new Observable(Concepts.c(NS.CORE_VOID));
         ret.generic = false;
-        ret.declaration = NS.CORE_VOID;
+        ret.definition = NS.CORE_VOID;
         ret.referenceName = ret.name = view.getName().replaceAll("\\.", "_");
         ret.resolvedModel = new Model(view);
         return ret;
@@ -190,7 +190,7 @@ public class Observable extends GroovyObjectSupport implements IObservable {
         Observable ret = new Observable((Concept) concept);
 
         ret.observable = (Concept) concept;
-        ret.declaration = concept.getDefinition().trim();
+        ret.definition = concept.getDefinition().trim();
         ret.isAbstract = concept.isAbstract();
         ret.generic = concept.is(Type.ROLE);
         ret.referenceName = concept.getReferenceName();
@@ -256,7 +256,7 @@ public class Observable extends GroovyObjectSupport implements IObservable {
         this.observable = observable.observable;
         this.name = observable.name;
         this.referenceName = observable.referenceName;
-        this.declaration = observable.declaration;
+        this.definition = observable.definition;
         this.isAbstract = observable.isAbstract;
         this.range = observable.range;
         this.unit = observable.unit;
@@ -356,8 +356,8 @@ public class Observable extends GroovyObjectSupport implements IObservable {
         return this;
     }
 
-    public void setDeclaration(String declaration) {
-        this.declaration = declaration.trim();
+    public void setDefinition(String definition) {
+        this.definition = definition.trim();
     }
 
     public void setAbstract(boolean isAbstract) {
@@ -387,7 +387,7 @@ public class Observable extends GroovyObjectSupport implements IObservable {
 
     @Override
     public String getDefinition() {
-        return declaration;
+        return definition;
     }
 
     @Override
@@ -400,8 +400,9 @@ public class Observable extends GroovyObjectSupport implements IObservable {
         return this.contextualRoles;
     }
 
+    @Override
     public String getDeclaration() {
-        return declaration;
+        return definition + (statedName == null ? "" : (" named " + statedName));
     }
 
     public void setValue(Object value) {
@@ -457,7 +458,7 @@ public class Observable extends GroovyObjectSupport implements IObservable {
     }
 
     public String toString() {
-        return "[" + getName() + " = " + this.declaration + "]";
+        return "[" + getName() + " = " + this.definition + "]";
     }
 
     /**
@@ -552,7 +553,7 @@ public class Observable extends GroovyObjectSupport implements IObservable {
         if (this.resolvedModel == null && this.modelReference != null) {
             IKimObject model = Resources.INSTANCE.getModelObject(modelReference);
             if (model == null && scope != null) {
-            	model = scope.findResolvedModel(modelReference);
+                model = scope.findResolvedModel(modelReference);
             }
             if (!(model instanceof IModel)) {
                 throw new KlabValidationException(
