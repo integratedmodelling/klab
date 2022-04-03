@@ -21,6 +21,7 @@ import org.atteo.evo.inflector.English;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.ILocator.UniversalLocator;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
@@ -160,8 +161,7 @@ public enum Observations implements IObservationService {
             if (state instanceof State) {
                 return ((State) state).getOverallSummary();
             }
-            // not equipped
-            return null;
+            locator = UniversalLocator.INSTANCE;
         }
 
         if (state instanceof State && !(state instanceof MergingState)) {
@@ -192,7 +192,7 @@ public enum Observations implements IObservationService {
             ret = cached.get(state.getId());
         } else {
             ret = computeStateSummary(state,
-                    getTemporalLocator(state, locator == null ? state.getScale() : locator));
+                    getTemporalLocator(state, locator instanceof UniversalLocator ? state.getScale() : locator));
             if (cached == null) {
                 cached = new HashMap<>();
                 summaryCache.put(time, cached);

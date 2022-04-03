@@ -515,7 +515,8 @@ public class Actuator implements IActuator {
                         i++;
                     }
                     if (toRemove >= 0) {
-                        scope.getActuatorProducts(this).remove(toRemove);
+                        List<IObservation> sortedSet = new ArrayList<>(scope.getActuatorProducts(this));
+                        scope.getActuatorProducts(this).remove(sortedSet.get(toRemove));
                     }
                     scope.getActuatorProducts(this).add((IObservation) ret);
                 }

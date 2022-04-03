@@ -402,7 +402,10 @@ public class Observable extends GroovyObjectSupport implements IObservable {
 
     @Override
     public String getDeclaration() {
-        return definition + (statedName == null ? "" : (" named " + statedName));
+        return definition
+                + (unit == null ? "" : (" in " + unit))
+                + (currency == null ? "" : (" in " + currency))
+                + (statedName == null ? "" : (" named " + statedName));
     }
 
     public void setValue(Object value) {

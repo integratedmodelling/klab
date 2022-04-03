@@ -352,7 +352,7 @@ public class Space extends Extent implements ISpace {
                         + "  into " + getClass().getCanonicalName());
 
     }
-    
+
     @Override
     public boolean isConsistent() {
         return consistent;
@@ -591,8 +591,8 @@ public class Space extends Extent implements ISpace {
         }
         Shape oShape = (Shape) ((ISpace) other).getShape();
         if (this.shape == null || oShape == null) {
-        	// we contain multitudes or the other doesn't care
-        	return true;
+            // we contain multitudes or the other doesn't care
+            return true;
         }
         return shape.shapeGeometry.contains(oShape.shapeGeometry);
     }
@@ -1043,16 +1043,16 @@ public class Space extends Extent implements ISpace {
 
     @Override
     public Pair<Double, IUnit> getStandardizedDimension(ILocator locator) {
-        if (locator == ILocator.FULL) {
+        if (locator == null || locator instanceof UniversalLocator) {
             return new Pair<>(getStandardizedArea(), Units.INSTANCE.SQUARE_METERS);
         }
         if (locator instanceof Scale) {
             return ((Scale) locator).getDimension(Type.SPACE) == null
                     ? null
-                    : ((Scale) locator).getDimension(Type.SPACE).getStandardizedDimension(FULL);
+                    : ((Scale) locator).getDimension(Type.SPACE).getStandardizedDimension(null);
         }
         if (locator instanceof ISpace) {
-            return ((ISpace) locator).getStandardizedDimension(ILocator.FULL);
+            return ((ISpace) locator).getStandardizedDimension(null);
         }
         throw new KlabUnimplementedException("Space::getStandardizedDimension()");
     }
