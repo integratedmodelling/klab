@@ -13,6 +13,7 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.ValueOperator;
@@ -402,7 +403,8 @@ public class Observable extends GroovyObjectSupport implements IObservable {
 
     @Override
     public String getDeclaration() {
-        return definition
+        return  (value == null ? "" : (Kim.INSTANCE.encodeValue(value) + " as "))
+                + definition
                 + (unit == null ? "" : (" in " + unit))
                 + (currency == null ? "" : (" in " + currency))
                 + (statedName == null ? "" : (" named " + statedName));

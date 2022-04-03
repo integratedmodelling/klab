@@ -107,7 +107,7 @@ public class ObserveInContextTask extends AbstractTask<IArtifact> {
         this.monitor = context.getMonitor().get(this);
         this.session = context.getParentIdentity(Session.class);
         this.activity.setActivityDescriptor(activityDescriptor);
-        this.taskDescription = "Observation of " + urn + " in " + context.getName();
+        this.taskDescription = "Observation of {" + urn + "} in " + context.getName();
         this.executor = executor;
         this.autostart = autostart;
 
@@ -177,7 +177,7 @@ public class ObserveInContextTask extends AbstractTask<IArtifact> {
 
                         if (Configuration.INSTANCE.isEchoEnabled()) {
                             System.out.println(dataflow.getKdlCode());
-                        }
+                        } 
                         if (activity.getActivityDescriptor() != null) {
                             activity.getActivityDescriptor().setDataflowCode(dataflow.getKdlCode());
                         }
