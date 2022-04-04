@@ -7,6 +7,7 @@ import org.integratedmodelling.klab.clitool.CliStartupOptions;
 import org.integratedmodelling.klab.clitool.console.SysConsole;
 import org.integratedmodelling.klab.clitool.console.TermConsole;
 import org.integratedmodelling.klab.engine.EngineStartupOptions;
+import org.integratedmodelling.klab.engine.runtime.Session;
 
 /**
  * A CLI-driven k.LAB modeler.
