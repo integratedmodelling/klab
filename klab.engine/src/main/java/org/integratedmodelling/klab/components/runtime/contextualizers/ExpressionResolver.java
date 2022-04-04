@@ -41,7 +41,7 @@ import org.integratedmodelling.klab.utils.Utils;
  * @author Ferd
  *
  */
-public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
+public class ExpressionResolver extends AbstractContextualizer implements IResolver<IArtifact>, IExpression {
 
 	static final public String FUNCTION_ID = "klab.runtime.exec";
 

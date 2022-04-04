@@ -400,7 +400,8 @@ public class Actuator implements IActuator {
                 // this isn't
                 throw new KlabValidationException(
                         "function " + service.getFirst().getName() + " does not produce a contextualizer");
-            }
+            } /* TODO else call contextualize() and swap the contextualizable in the pair */
+            
 
             computation.add(new Pair<>((IContextualizer) contextualizer, service.getSecond()));
         }

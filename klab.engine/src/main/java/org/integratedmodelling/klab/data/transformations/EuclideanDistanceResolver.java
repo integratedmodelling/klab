@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
+import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -32,7 +33,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
  * @author Ferd
  *
  */
-public class EuclideanDistanceResolver implements IResolver<IState>, IExpression, IProcessor {
+public class EuclideanDistanceResolver extends AbstractContextualizer implements IResolver<IState>, IExpression, IProcessor {
 
 	private IContextualizationScope scope;
 	private IParameters<String> parameters;

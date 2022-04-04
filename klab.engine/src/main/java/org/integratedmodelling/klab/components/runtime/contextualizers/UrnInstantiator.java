@@ -24,7 +24,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.utils.Pair;
 
-public class UrnInstantiator implements IExpression, IInstantiator {
+public class UrnInstantiator extends AbstractContextualizer implements IExpression, IInstantiator {
 
     public final static String FUNCTION_ID = "klab.runtime.instantiate";
 

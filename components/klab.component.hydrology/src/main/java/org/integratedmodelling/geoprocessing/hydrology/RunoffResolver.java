@@ -17,12 +17,13 @@ import org.integratedmodelling.klab.components.geospace.Geospace;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 import org.locationtech.jts.geom.Point;
 
-public class RunoffResolver implements IResolver<IProcess>, IExpression {
+public class RunoffResolver extends AbstractContextualizer implements IResolver<IProcess>, IExpression {
 
 	// only one official output for now (see k.DL specs)
 	String[] outputIds = { "runoff_water_volume" };

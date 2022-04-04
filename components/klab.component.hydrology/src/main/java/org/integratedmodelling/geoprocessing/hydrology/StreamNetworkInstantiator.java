@@ -21,6 +21,7 @@ import org.integratedmodelling.klab.components.geospace.Geospace;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.Scale;
@@ -34,7 +35,7 @@ import org.locationtech.jts.geom.Point;
  * StreamConnections and StreamJunctions, with a mandatory secondary output for
  * the latter.
  */
-public class StreamNetworkInstantiator implements IInstantiator, IExpression {
+public class StreamNetworkInstantiator extends AbstractContextualizer implements IInstantiator, IExpression {
 
 	private static final double DEFAULT_TCA_THRESHOLD = 0.006;
 

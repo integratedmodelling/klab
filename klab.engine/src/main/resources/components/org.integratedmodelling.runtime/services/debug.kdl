@@ -6,7 +6,7 @@
 @version 0.10.0
 @namespace klab.debug
 
-export value grid
+const export value grid
 	"Debugging grid offsets."
 	label 'Grid'
 {

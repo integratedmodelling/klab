@@ -6,11 +6,12 @@ import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.landcover.model.LandcoverChange;
 
-public class LandcoverChangeResolver implements IResolver<IProcess>, IExpression {
+public class LandcoverChangeResolver extends AbstractContextualizer implements IResolver<IProcess>, IExpression {
 
 	private LandcoverChange model = null;
 	private IParameters<String> parameters;

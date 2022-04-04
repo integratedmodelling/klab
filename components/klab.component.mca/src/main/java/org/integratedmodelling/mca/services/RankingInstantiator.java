@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.api.observations.ISubjectiveObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.mca.MCAComponent;
@@ -25,16 +26,11 @@ import org.integratedmodelling.mca.api.IAlternative;
 import org.integratedmodelling.mca.api.ICriterion;
 import org.integratedmodelling.mca.api.IStakeholder;
 
-public class RankingInstantiator implements IInstantiator, IProcessor, IExpression {
+public class RankingInstantiator extends AbstractContextualizer implements IInstantiator, IProcessor, IExpression {
 
 	String targetArtifact = null;
 	Method method = Method.EVAMIX;
 	boolean normalize = true;
-	
-//	@Override
-//	public IGeometry getGeometry() {
-//		return Geometry.create("#");
-//	}
 
 	@Override
 	public Type getType() {

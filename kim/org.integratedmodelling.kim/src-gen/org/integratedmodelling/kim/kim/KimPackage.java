@@ -4231,43 +4231,6 @@ public interface KimPackage extends EPackage
   int FUNCTION_FEATURE_COUNT = 2;
 
   /**
-   * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.UnitElementImpl <em>Unit Element</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see org.integratedmodelling.kim.kim.impl.UnitElementImpl
-   * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getUnitElement()
-   * @generated
-   */
-  int UNIT_ELEMENT = 49;
-
-  /**
-   * The feature id for the '<em><b>Id</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int UNIT_ELEMENT__ID = 0;
-
-  /**
-   * The feature id for the '<em><b>Unit</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int UNIT_ELEMENT__UNIT = 1;
-
-  /**
-   * The number of structural features of the '<em>Unit Element</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int UNIT_ELEMENT_FEATURE_COUNT = 2;
-
-  /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.REL_OPERATORImpl <em>REL OPERATOR</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -4275,7 +4238,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getREL_OPERATOR()
    * @generated
    */
-  int REL_OPERATOR = 50;
+  int REL_OPERATOR = 49;
 
   /**
    * The feature id for the '<em><b>Gt</b></em>' attribute.
@@ -4339,6 +4302,43 @@ public interface KimPackage extends EPackage
    * @ordered
    */
   int REL_OPERATOR_FEATURE_COUNT = 6;
+
+  /**
+   * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.UnitElementImpl <em>Unit Element</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kim.kim.impl.UnitElementImpl
+   * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getUnitElement()
+   * @generated
+   */
+  int UNIT_ELEMENT = 50;
+
+  /**
+   * The feature id for the '<em><b>Id</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int UNIT_ELEMENT__ID = 0;
+
+  /**
+   * The feature id for the '<em><b>Unit</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int UNIT_ELEMENT__UNIT = 1;
+
+  /**
+   * The number of structural features of the '<em>Unit Element</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int UNIT_ELEMENT_FEATURE_COUNT = 2;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.UnitImpl <em>Unit</em>}' class.
@@ -9130,38 +9130,6 @@ public interface KimPackage extends EPackage
   EReference getFunction_Parameters();
 
   /**
-   * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.UnitElement <em>Unit Element</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Unit Element</em>'.
-   * @see org.integratedmodelling.kim.kim.UnitElement
-   * @generated
-   */
-  EClass getUnitElement();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.UnitElement#getId <em>Id</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Id</em>'.
-   * @see org.integratedmodelling.kim.kim.UnitElement#getId()
-   * @see #getUnitElement()
-   * @generated
-   */
-  EAttribute getUnitElement_Id();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.UnitElement#getUnit <em>Unit</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Unit</em>'.
-   * @see org.integratedmodelling.kim.kim.UnitElement#getUnit()
-   * @see #getUnitElement()
-   * @generated
-   */
-  EReference getUnitElement_Unit();
-
-  /**
    * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.REL_OPERATOR <em>REL OPERATOR</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -9236,6 +9204,38 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EAttribute getREL_OPERATOR_Ge();
+
+  /**
+   * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.UnitElement <em>Unit Element</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Unit Element</em>'.
+   * @see org.integratedmodelling.kim.kim.UnitElement
+   * @generated
+   */
+  EClass getUnitElement();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.UnitElement#getId <em>Id</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Id</em>'.
+   * @see org.integratedmodelling.kim.kim.UnitElement#getId()
+   * @see #getUnitElement()
+   * @generated
+   */
+  EAttribute getUnitElement_Id();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.UnitElement#getUnit <em>Unit</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Unit</em>'.
+   * @see org.integratedmodelling.kim.kim.UnitElement#getUnit()
+   * @see #getUnitElement()
+   * @generated
+   */
+  EReference getUnitElement_Unit();
 
   /**
    * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.Unit <em>Unit</em>}'.
@@ -12979,32 +12979,6 @@ public interface KimPackage extends EPackage
     EReference FUNCTION__PARAMETERS = eINSTANCE.getFunction_Parameters();
 
     /**
-     * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.UnitElementImpl <em>Unit Element</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see org.integratedmodelling.kim.kim.impl.UnitElementImpl
-     * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getUnitElement()
-     * @generated
-     */
-    EClass UNIT_ELEMENT = eINSTANCE.getUnitElement();
-
-    /**
-     * The meta object literal for the '<em><b>Id</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute UNIT_ELEMENT__ID = eINSTANCE.getUnitElement_Id();
-
-    /**
-     * The meta object literal for the '<em><b>Unit</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference UNIT_ELEMENT__UNIT = eINSTANCE.getUnitElement_Unit();
-
-    /**
      * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.REL_OPERATORImpl <em>REL OPERATOR</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -13061,6 +13035,32 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EAttribute REL_OPERATOR__GE = eINSTANCE.getREL_OPERATOR_Ge();
+
+    /**
+     * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.UnitElementImpl <em>Unit Element</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kim.kim.impl.UnitElementImpl
+     * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getUnitElement()
+     * @generated
+     */
+    EClass UNIT_ELEMENT = eINSTANCE.getUnitElement();
+
+    /**
+     * The meta object literal for the '<em><b>Id</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute UNIT_ELEMENT__ID = eINSTANCE.getUnitElement_Id();
+
+    /**
+     * The meta object literal for the '<em><b>Unit</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference UNIT_ELEMENT__UNIT = eINSTANCE.getUnitElement_Unit();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.UnitImpl <em>Unit</em>}' class.

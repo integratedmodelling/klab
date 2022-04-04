@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.data.Aggregator;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -24,7 +25,7 @@ import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.utils.Pair;
 
-public class AggregatingResolver implements IResolver<IState>, IExpression, IProcessor {
+public class AggregatingResolver extends AbstractContextualizer implements IResolver<IState>, IExpression, IProcessor {
 
     IConcept semantics;
     boolean ignoreNodata;

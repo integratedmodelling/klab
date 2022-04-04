@@ -30,6 +30,7 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.GeometryBuilder;
+import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.data.encoding.StandaloneResourceBuilder;
 import org.integratedmodelling.klab.data.storage.MergingState;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
@@ -52,7 +53,8 @@ import weka.classifiers.Classifier;
 import weka.core.Attribute;
 import weka.core.Instance;
 
-public abstract class AbstractWekaResolver<T extends Classifier> implements IResolver<IState>, IDocumentationProvider {
+public abstract class AbstractWekaResolver<T extends Classifier> extends AbstractContextualizer
+		implements IResolver<IState>, IDocumentationProvider {
 
 	protected WekaClassifier classifier = null;
 	protected WekaOptions options;
@@ -148,7 +150,7 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 			 */
 			if (((Model) context.getModel()).learnsWithinArchetype()
 					&& !((Model) context.getModel()).distributesLearning()) {
-				ret = MergingState.promote(ret, 
+				ret = MergingState.promote(ret,
 						context.getObservations(((Model) context.getModel()).getArchetype().getType()));
 			} else {
 				for (ILocator locator : ret.getScale()) {
@@ -287,7 +289,7 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 
 			IState state = predicted ? instances.getPredictedState() : instances.getPredictor(attribute.name());
 			if (state != null && !state.isArchetype()) {
-				
+
 				// goes through here even when training on objects....
 				StateSummary summary = Observations.INSTANCE.getStateSummary(state, context.getScale());
 				if (!predicted) {
@@ -306,8 +308,8 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 				} else {
 					// trained on state
 					builder.withParameter(predicted ? "predicted.range" : ("predictor." + attribute.name() + ".range"),
-						"[" + summary.getRange().get(0) + "," + summary.getRange().get(1) + "]");
-				}				
+							"[" + summary.getRange().get(0) + "," + summary.getRange().get(1) + "]");
+				}
 			} else {
 
 				IObservable observable = predicted ? instances.getPredictedObservable()
@@ -322,7 +324,7 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 				Range range = instances.getDataRange(observable.getName());
 				if (!range.isInfinite()) {
 					builder.withParameter(predicted ? "predicted.range" : ("predictor." + attribute.name() + ".range"),
-						"[" + range.getLowerBound() + "," + range.getUpperBound() + "]");
+							"[" + range.getLowerBound() + "," + range.getUpperBound() + "]");
 				}
 			}
 

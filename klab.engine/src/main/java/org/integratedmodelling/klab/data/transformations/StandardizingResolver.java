@@ -10,10 +10,11 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.rest.StateSummary;
 
-public class StandardizingResolver implements IResolver<IState>, IProcessor, IExpression {
+public class StandardizingResolver extends AbstractContextualizer implements IResolver<IState>, IProcessor, IExpression {
 
 	boolean invert;
 

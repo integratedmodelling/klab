@@ -18,12 +18,13 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
+import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.rest.StateSummary;
 import org.integratedmodelling.klab.utils.Utils;
 
-public class ContributingAreaResolver implements IResolver<IState>, IExpression {
+public class ContributingAreaResolver extends AbstractContextualizer implements IResolver<IState>, IExpression {
 
 	boolean cells = false;
 

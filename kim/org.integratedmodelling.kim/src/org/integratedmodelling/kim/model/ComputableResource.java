@@ -861,4 +861,37 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 		return false;
 	}
 
+	@Override
+	public boolean isFinal() {
+
+		switch(getType()) {
+	        case LITERAL:
+	            return true;
+	        case RESOURCE:
+	        	if (validatedResource == null) {
+	        		IResourceService resourceService = Services.INSTANCE.getService(IResourceService.class);
+	        		if (resourceService != null) {
+	        			validatedResource = resourceService.resolveResource(this.resource);
+	        		}
+	        	}
+        		return validatedResource instanceof IResource ? ((IResource)validatedResource).getInputs().isEmpty() : false;
+	        case SERVICE:
+	        	if (getServiceCall() != null) {
+	        		IExtensionService extensionService = Services.INSTANCE.getService(IExtensionService.class);
+	        		IPrototype prototype = extensionService.getPrototype(getServiceCall().getName());
+	        		if (prototype != null && prototype.isFinal()) {
+	        			return true;
+	        		}
+	        	}
+	        	return false;
+	        case EXPRESSION:
+	        	// TODO must check if there are state identifiers in the code
+	            return false;
+	        default:
+	            break;
+
+	        }
+		return false;
+	}
+
 }

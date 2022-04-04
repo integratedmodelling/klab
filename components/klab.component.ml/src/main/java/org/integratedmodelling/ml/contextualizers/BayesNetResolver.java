@@ -3,7 +3,6 @@ package org.integratedmodelling.ml.contextualizers;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.api.data.general.IExpression;
-import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 

@@ -23,7 +23,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.utils.Pair;
 
-public class UrnResolver implements IExpression, IResolver<IArtifact> {
+public class UrnResolver extends AbstractContextualizer implements IExpression, IResolver<IArtifact> {
 
     public final static String FUNCTION_ID = "klab.runtime.contextualize";
 

@@ -427,14 +427,14 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass unitElementEClass = null;
+  private EClass reL_OPERATOREClass = null;
 
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass reL_OPERATOREClass = null;
+  private EClass unitElementEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -5042,39 +5042,6 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EClass getUnitElement()
-  {
-    return unitElementEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EAttribute getUnitElement_Id()
-  {
-    return (EAttribute)unitElementEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EReference getUnitElement_Unit()
-  {
-    return (EReference)unitElementEClass.getEStructuralFeatures().get(1);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
   public EClass getREL_OPERATOR()
   {
     return reL_OPERATOREClass;
@@ -5144,6 +5111,39 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   public EAttribute getREL_OPERATOR_Ge()
   {
     return (EAttribute)reL_OPERATOREClass.getEStructuralFeatures().get(5);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EClass getUnitElement()
+  {
+    return unitElementEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getUnitElement_Id()
+  {
+    return (EAttribute)unitElementEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getUnitElement_Unit()
+  {
+    return (EReference)unitElementEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -5997,10 +5997,6 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEAttribute(functionEClass, FUNCTION__NAME);
     createEReference(functionEClass, FUNCTION__PARAMETERS);
 
-    unitElementEClass = createEClass(UNIT_ELEMENT);
-    createEAttribute(unitElementEClass, UNIT_ELEMENT__ID);
-    createEReference(unitElementEClass, UNIT_ELEMENT__UNIT);
-
     reL_OPERATOREClass = createEClass(REL_OPERATOR);
     createEAttribute(reL_OPERATOREClass, REL_OPERATOR__GT);
     createEAttribute(reL_OPERATOREClass, REL_OPERATOR__LT);
@@ -6008,6 +6004,10 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEAttribute(reL_OPERATOREClass, REL_OPERATOR__NE);
     createEAttribute(reL_OPERATOREClass, REL_OPERATOR__LE);
     createEAttribute(reL_OPERATOREClass, REL_OPERATOR__GE);
+
+    unitElementEClass = createEClass(UNIT_ELEMENT);
+    createEAttribute(unitElementEClass, UNIT_ELEMENT__ID);
+    createEReference(unitElementEClass, UNIT_ELEMENT__UNIT);
 
     unitEClass = createEClass(UNIT);
     createEReference(unitEClass, UNIT__ROOT);
@@ -6539,10 +6539,6 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEAttribute(getFunction_Name(), ecorePackage.getEString(), "name", null, 0, 1, Function.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getFunction_Parameters(), this.getParameterList(), null, "parameters", null, 0, 1, Function.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(unitElementEClass, UnitElement.class, "UnitElement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getUnitElement_Id(), ecorePackage.getEString(), "id", null, 0, 1, UnitElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getUnitElement_Unit(), this.getUnit(), null, "unit", null, 0, 1, UnitElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
     initEClass(reL_OPERATOREClass, org.integratedmodelling.kim.kim.REL_OPERATOR.class, "REL_OPERATOR", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getREL_OPERATOR_Gt(), ecorePackage.getEBoolean(), "gt", null, 0, 1, org.integratedmodelling.kim.kim.REL_OPERATOR.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getREL_OPERATOR_Lt(), ecorePackage.getEBoolean(), "lt", null, 0, 1, org.integratedmodelling.kim.kim.REL_OPERATOR.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -6550,6 +6546,10 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEAttribute(getREL_OPERATOR_Ne(), ecorePackage.getEBoolean(), "ne", null, 0, 1, org.integratedmodelling.kim.kim.REL_OPERATOR.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getREL_OPERATOR_Le(), ecorePackage.getEBoolean(), "le", null, 0, 1, org.integratedmodelling.kim.kim.REL_OPERATOR.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getREL_OPERATOR_Ge(), ecorePackage.getEBoolean(), "ge", null, 0, 1, org.integratedmodelling.kim.kim.REL_OPERATOR.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(unitElementEClass, UnitElement.class, "UnitElement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getUnitElement_Id(), ecorePackage.getEString(), "id", null, 0, 1, UnitElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getUnitElement_Unit(), this.getUnit(), null, "unit", null, 0, 1, UnitElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(unitEClass, Unit.class, "Unit", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getUnit_Root(), this.getUnitElement(), null, "root", null, 0, 1, Unit.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

@@ -16,7 +16,7 @@ import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
-public class LookupStateResolver implements IStateResolver, IProcessor, IExpression {
+public class LookupStateResolver extends AbstractContextualizer implements IStateResolver, IProcessor, IExpression {
 
 	static final public String FUNCTION_ID = "klab.runtime.lookup";
 

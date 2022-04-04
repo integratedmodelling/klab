@@ -1,10 +1,13 @@
 package org.integratedmodelling.klab.components.runtime.contextualizers;
 
+import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IPrototype.Argument;
 import org.integratedmodelling.klab.api.model.contextualization.IContextualizer;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.dataflow.DataflowHandler;
@@ -130,5 +133,13 @@ public abstract class AbstractContextualizer implements IContextualizer {
 
         return artifact;
     }
+
+	@Override
+	public IContextualizable contextualize(IContextualizable resource, IArtifact target,
+			IContextualizationScope scope) {
+		return resource;
+	}
+    
+    
 
 }

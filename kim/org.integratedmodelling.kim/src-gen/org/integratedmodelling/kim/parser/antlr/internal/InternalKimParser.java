@@ -44773,11 +44773,11 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             	            else if ( (LA340_0==RULE_UPPERCASE_ID) ) {
             	                int LA340_2 = input.LA(2);
 
-            	                if ( (LA340_2==EOF||LA340_2==RULE_INT||LA340_2==20||LA340_2==27||(LA340_2>=31 && LA340_2<=33)||LA340_2==35||LA340_2==37||(LA340_2>=40 && LA340_2<=41)||LA340_2==43||LA340_2==46||LA340_2==52||(LA340_2>=58 && LA340_2<=60)||(LA340_2>=66 && LA340_2<=71)||(LA340_2>=80 && LA340_2<=92)||LA340_2==111||(LA340_2>=117 && LA340_2<=120)||(LA340_2>=122 && LA340_2<=125)||(LA340_2>=254 && LA340_2<=255)||LA340_2==262) ) {
-            	                    alt340=1;
-            	                }
-            	                else if ( (LA340_2==253) ) {
+            	                if ( (LA340_2==253) ) {
             	                    alt340=2;
+            	                }
+            	                else if ( (LA340_2==EOF||LA340_2==RULE_INT||LA340_2==20||LA340_2==27||(LA340_2>=31 && LA340_2<=33)||LA340_2==35||LA340_2==37||(LA340_2>=40 && LA340_2<=41)||LA340_2==43||LA340_2==46||LA340_2==52||(LA340_2>=58 && LA340_2<=60)||(LA340_2>=66 && LA340_2<=71)||(LA340_2>=80 && LA340_2<=92)||LA340_2==111||(LA340_2>=117 && LA340_2<=120)||(LA340_2>=122 && LA340_2<=125)||(LA340_2>=254 && LA340_2<=255)||LA340_2==262) ) {
+            	                    alt340=1;
             	                }
             	                else {
             	                    if (state.backtracking>0) {state.failed=true; return current;}
@@ -46605,8 +46605,325 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
     // $ANTLR end "ruleNamedObservableSemantics"
 
 
+    // $ANTLR start "entryRuleREL_OPERATOR"
+    // InternalKim.g:17266:1: entryRuleREL_OPERATOR returns [EObject current=null] : iv_ruleREL_OPERATOR= ruleREL_OPERATOR EOF ;
+    public final EObject entryRuleREL_OPERATOR() throws RecognitionException {
+        EObject current = null;
+
+        EObject iv_ruleREL_OPERATOR = null;
+
+
+        try {
+            // InternalKim.g:17266:53: (iv_ruleREL_OPERATOR= ruleREL_OPERATOR EOF )
+            // InternalKim.g:17267:2: iv_ruleREL_OPERATOR= ruleREL_OPERATOR EOF
+            {
+            if ( state.backtracking==0 ) {
+               newCompositeNode(grammarAccess.getREL_OPERATORRule()); 
+            }
+            pushFollow(FOLLOW_1);
+            iv_ruleREL_OPERATOR=ruleREL_OPERATOR();
+
+            state._fsp--;
+            if (state.failed) return current;
+            if ( state.backtracking==0 ) {
+               current =iv_ruleREL_OPERATOR; 
+            }
+            match(input,EOF,FOLLOW_2); if (state.failed) return current;
+
+            }
+
+        }
+
+            catch (RecognitionException re) {
+                recover(input,re);
+                appendSkippedTokens();
+            }
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "entryRuleREL_OPERATOR"
+
+
+    // $ANTLR start "ruleREL_OPERATOR"
+    // InternalKim.g:17273:1: ruleREL_OPERATOR returns [EObject current=null] : ( ( (lv_gt_0_0= '>' ) ) | ( (lv_lt_1_0= '<' ) ) | ( (lv_eq_2_0= '=' ) ) | ( (lv_ne_3_0= '!=' ) ) | ( (lv_le_4_0= '<=' ) ) | ( (lv_ge_5_0= '>=' ) ) ) ;
+    public final EObject ruleREL_OPERATOR() throws RecognitionException {
+        EObject current = null;
+
+        Token lv_gt_0_0=null;
+        Token lv_lt_1_0=null;
+        Token lv_eq_2_0=null;
+        Token lv_ne_3_0=null;
+        Token lv_le_4_0=null;
+        Token lv_ge_5_0=null;
+
+
+        	enterRule();
+
+        try {
+            // InternalKim.g:17279:2: ( ( ( (lv_gt_0_0= '>' ) ) | ( (lv_lt_1_0= '<' ) ) | ( (lv_eq_2_0= '=' ) ) | ( (lv_ne_3_0= '!=' ) ) | ( (lv_le_4_0= '<=' ) ) | ( (lv_ge_5_0= '>=' ) ) ) )
+            // InternalKim.g:17280:2: ( ( (lv_gt_0_0= '>' ) ) | ( (lv_lt_1_0= '<' ) ) | ( (lv_eq_2_0= '=' ) ) | ( (lv_ne_3_0= '!=' ) ) | ( (lv_le_4_0= '<=' ) ) | ( (lv_ge_5_0= '>=' ) ) )
+            {
+            // InternalKim.g:17280:2: ( ( (lv_gt_0_0= '>' ) ) | ( (lv_lt_1_0= '<' ) ) | ( (lv_eq_2_0= '=' ) ) | ( (lv_ne_3_0= '!=' ) ) | ( (lv_le_4_0= '<=' ) ) | ( (lv_ge_5_0= '>=' ) ) )
+            int alt354=6;
+            switch ( input.LA(1) ) {
+            case 80:
+                {
+                alt354=1;
+                }
+                break;
+            case 83:
+                {
+                alt354=2;
+                }
+                break;
+            case 46:
+                {
+                alt354=3;
+                }
+                break;
+            case 88:
+                {
+                alt354=4;
+                }
+                break;
+            case 82:
+                {
+                alt354=5;
+                }
+                break;
+            case 81:
+                {
+                alt354=6;
+                }
+                break;
+            default:
+                if (state.backtracking>0) {state.failed=true; return current;}
+                NoViableAltException nvae =
+                    new NoViableAltException("", 354, 0, input);
+
+                throw nvae;
+            }
+
+            switch (alt354) {
+                case 1 :
+                    // InternalKim.g:17281:3: ( (lv_gt_0_0= '>' ) )
+                    {
+                    // InternalKim.g:17281:3: ( (lv_gt_0_0= '>' ) )
+                    // InternalKim.g:17282:4: (lv_gt_0_0= '>' )
+                    {
+                    // InternalKim.g:17282:4: (lv_gt_0_0= '>' )
+                    // InternalKim.g:17283:5: lv_gt_0_0= '>'
+                    {
+                    lv_gt_0_0=(Token)match(input,80,FOLLOW_2); if (state.failed) return current;
+                    if ( state.backtracking==0 ) {
+
+                      					newLeafNode(lv_gt_0_0, grammarAccess.getREL_OPERATORAccess().getGtGreaterThanSignKeyword_0_0());
+                      				
+                    }
+                    if ( state.backtracking==0 ) {
+
+                      					if (current==null) {
+                      						current = createModelElement(grammarAccess.getREL_OPERATORRule());
+                      					}
+                      					setWithLastConsumed(current, "gt", lv_gt_0_0 != null, ">");
+                      				
+                    }
+
+                    }
+
+
+                    }
+
+
+                    }
+                    break;
+                case 2 :
+                    // InternalKim.g:17296:3: ( (lv_lt_1_0= '<' ) )
+                    {
+                    // InternalKim.g:17296:3: ( (lv_lt_1_0= '<' ) )
+                    // InternalKim.g:17297:4: (lv_lt_1_0= '<' )
+                    {
+                    // InternalKim.g:17297:4: (lv_lt_1_0= '<' )
+                    // InternalKim.g:17298:5: lv_lt_1_0= '<'
+                    {
+                    lv_lt_1_0=(Token)match(input,83,FOLLOW_2); if (state.failed) return current;
+                    if ( state.backtracking==0 ) {
+
+                      					newLeafNode(lv_lt_1_0, grammarAccess.getREL_OPERATORAccess().getLtLessThanSignKeyword_1_0());
+                      				
+                    }
+                    if ( state.backtracking==0 ) {
+
+                      					if (current==null) {
+                      						current = createModelElement(grammarAccess.getREL_OPERATORRule());
+                      					}
+                      					setWithLastConsumed(current, "lt", lv_lt_1_0 != null, "<");
+                      				
+                    }
+
+                    }
+
+
+                    }
+
+
+                    }
+                    break;
+                case 3 :
+                    // InternalKim.g:17311:3: ( (lv_eq_2_0= '=' ) )
+                    {
+                    // InternalKim.g:17311:3: ( (lv_eq_2_0= '=' ) )
+                    // InternalKim.g:17312:4: (lv_eq_2_0= '=' )
+                    {
+                    // InternalKim.g:17312:4: (lv_eq_2_0= '=' )
+                    // InternalKim.g:17313:5: lv_eq_2_0= '='
+                    {
+                    lv_eq_2_0=(Token)match(input,46,FOLLOW_2); if (state.failed) return current;
+                    if ( state.backtracking==0 ) {
+
+                      					newLeafNode(lv_eq_2_0, grammarAccess.getREL_OPERATORAccess().getEqEqualsSignKeyword_2_0());
+                      				
+                    }
+                    if ( state.backtracking==0 ) {
+
+                      					if (current==null) {
+                      						current = createModelElement(grammarAccess.getREL_OPERATORRule());
+                      					}
+                      					setWithLastConsumed(current, "eq", lv_eq_2_0 != null, "=");
+                      				
+                    }
+
+                    }
+
+
+                    }
+
+
+                    }
+                    break;
+                case 4 :
+                    // InternalKim.g:17326:3: ( (lv_ne_3_0= '!=' ) )
+                    {
+                    // InternalKim.g:17326:3: ( (lv_ne_3_0= '!=' ) )
+                    // InternalKim.g:17327:4: (lv_ne_3_0= '!=' )
+                    {
+                    // InternalKim.g:17327:4: (lv_ne_3_0= '!=' )
+                    // InternalKim.g:17328:5: lv_ne_3_0= '!='
+                    {
+                    lv_ne_3_0=(Token)match(input,88,FOLLOW_2); if (state.failed) return current;
+                    if ( state.backtracking==0 ) {
+
+                      					newLeafNode(lv_ne_3_0, grammarAccess.getREL_OPERATORAccess().getNeExclamationMarkEqualsSignKeyword_3_0());
+                      				
+                    }
+                    if ( state.backtracking==0 ) {
+
+                      					if (current==null) {
+                      						current = createModelElement(grammarAccess.getREL_OPERATORRule());
+                      					}
+                      					setWithLastConsumed(current, "ne", lv_ne_3_0 != null, "!=");
+                      				
+                    }
+
+                    }
+
+
+                    }
+
+
+                    }
+                    break;
+                case 5 :
+                    // InternalKim.g:17341:3: ( (lv_le_4_0= '<=' ) )
+                    {
+                    // InternalKim.g:17341:3: ( (lv_le_4_0= '<=' ) )
+                    // InternalKim.g:17342:4: (lv_le_4_0= '<=' )
+                    {
+                    // InternalKim.g:17342:4: (lv_le_4_0= '<=' )
+                    // InternalKim.g:17343:5: lv_le_4_0= '<='
+                    {
+                    lv_le_4_0=(Token)match(input,82,FOLLOW_2); if (state.failed) return current;
+                    if ( state.backtracking==0 ) {
+
+                      					newLeafNode(lv_le_4_0, grammarAccess.getREL_OPERATORAccess().getLeLessThanSignEqualsSignKeyword_4_0());
+                      				
+                    }
+                    if ( state.backtracking==0 ) {
+
+                      					if (current==null) {
+                      						current = createModelElement(grammarAccess.getREL_OPERATORRule());
+                      					}
+                      					setWithLastConsumed(current, "le", lv_le_4_0 != null, "<=");
+                      				
+                    }
+
+                    }
+
+
+                    }
+
+
+                    }
+                    break;
+                case 6 :
+                    // InternalKim.g:17356:3: ( (lv_ge_5_0= '>=' ) )
+                    {
+                    // InternalKim.g:17356:3: ( (lv_ge_5_0= '>=' ) )
+                    // InternalKim.g:17357:4: (lv_ge_5_0= '>=' )
+                    {
+                    // InternalKim.g:17357:4: (lv_ge_5_0= '>=' )
+                    // InternalKim.g:17358:5: lv_ge_5_0= '>='
+                    {
+                    lv_ge_5_0=(Token)match(input,81,FOLLOW_2); if (state.failed) return current;
+                    if ( state.backtracking==0 ) {
+
+                      					newLeafNode(lv_ge_5_0, grammarAccess.getREL_OPERATORAccess().getGeGreaterThanSignEqualsSignKeyword_5_0());
+                      				
+                    }
+                    if ( state.backtracking==0 ) {
+
+                      					if (current==null) {
+                      						current = createModelElement(grammarAccess.getREL_OPERATORRule());
+                      					}
+                      					setWithLastConsumed(current, "ge", lv_ge_5_0 != null, ">=");
+                      				
+                    }
+
+                    }
+
+
+                    }
+
+
+                    }
+                    break;
+
+            }
+
+
+            }
+
+            if ( state.backtracking==0 ) {
+
+              	leaveRule();
+
+            }
+        }
+
+            catch (RecognitionException re) {
+                recover(input,re);
+                appendSkippedTokens();
+            }
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "ruleREL_OPERATOR"
+
+
     // $ANTLR start "entryRuleUnitElement"
-    // InternalKim.g:17266:1: entryRuleUnitElement returns [EObject current=null] : iv_ruleUnitElement= ruleUnitElement EOF ;
+    // InternalKim.g:17374:1: entryRuleUnitElement returns [EObject current=null] : iv_ruleUnitElement= ruleUnitElement EOF ;
     public final EObject entryRuleUnitElement() throws RecognitionException {
         EObject current = null;
 
@@ -46614,8 +46931,8 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalKim.g:17266:52: (iv_ruleUnitElement= ruleUnitElement EOF )
-            // InternalKim.g:17267:2: iv_ruleUnitElement= ruleUnitElement EOF
+            // InternalKim.g:17374:52: (iv_ruleUnitElement= ruleUnitElement EOF )
+            // InternalKim.g:17375:2: iv_ruleUnitElement= ruleUnitElement EOF
             {
             if ( state.backtracking==0 ) {
                newCompositeNode(grammarAccess.getUnitElementRule()); 
@@ -46646,7 +46963,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleUnitElement"
-    // InternalKim.g:17273:1: ruleUnitElement returns [EObject current=null] : ( ( ( (lv_id_0_1= RULE_CAMELCASE_ID | lv_id_0_2= RULE_LOWERCASE_ID | lv_id_0_3= RULE_UPPERCASE_ID | lv_id_0_4= RULE_BACKCASE_ID ) ) ) | (otherlv_1= '(' ( (lv_unit_2_0= ruleUnit ) ) otherlv_3= ')' ) ) ;
+    // InternalKim.g:17381:1: ruleUnitElement returns [EObject current=null] : ( ( ( (lv_id_0_1= RULE_CAMELCASE_ID | lv_id_0_2= RULE_LOWERCASE_ID | lv_id_0_3= RULE_UPPERCASE_ID | lv_id_0_4= RULE_BACKCASE_ID ) ) ) | (otherlv_1= '(' ( (lv_unit_2_0= ruleUnit ) ) otherlv_3= ')' ) ) ;
     public final EObject ruleUnitElement() throws RecognitionException {
         EObject current = null;
 
@@ -46663,70 +46980,70 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalKim.g:17279:2: ( ( ( ( (lv_id_0_1= RULE_CAMELCASE_ID | lv_id_0_2= RULE_LOWERCASE_ID | lv_id_0_3= RULE_UPPERCASE_ID | lv_id_0_4= RULE_BACKCASE_ID ) ) ) | (otherlv_1= '(' ( (lv_unit_2_0= ruleUnit ) ) otherlv_3= ')' ) ) )
-            // InternalKim.g:17280:2: ( ( ( (lv_id_0_1= RULE_CAMELCASE_ID | lv_id_0_2= RULE_LOWERCASE_ID | lv_id_0_3= RULE_UPPERCASE_ID | lv_id_0_4= RULE_BACKCASE_ID ) ) ) | (otherlv_1= '(' ( (lv_unit_2_0= ruleUnit ) ) otherlv_3= ')' ) )
+            // InternalKim.g:17387:2: ( ( ( ( (lv_id_0_1= RULE_CAMELCASE_ID | lv_id_0_2= RULE_LOWERCASE_ID | lv_id_0_3= RULE_UPPERCASE_ID | lv_id_0_4= RULE_BACKCASE_ID ) ) ) | (otherlv_1= '(' ( (lv_unit_2_0= ruleUnit ) ) otherlv_3= ')' ) ) )
+            // InternalKim.g:17388:2: ( ( ( (lv_id_0_1= RULE_CAMELCASE_ID | lv_id_0_2= RULE_LOWERCASE_ID | lv_id_0_3= RULE_UPPERCASE_ID | lv_id_0_4= RULE_BACKCASE_ID ) ) ) | (otherlv_1= '(' ( (lv_unit_2_0= ruleUnit ) ) otherlv_3= ')' ) )
             {
-            // InternalKim.g:17280:2: ( ( ( (lv_id_0_1= RULE_CAMELCASE_ID | lv_id_0_2= RULE_LOWERCASE_ID | lv_id_0_3= RULE_UPPERCASE_ID | lv_id_0_4= RULE_BACKCASE_ID ) ) ) | (otherlv_1= '(' ( (lv_unit_2_0= ruleUnit ) ) otherlv_3= ')' ) )
-            int alt355=2;
-            int LA355_0 = input.LA(1);
+            // InternalKim.g:17388:2: ( ( ( (lv_id_0_1= RULE_CAMELCASE_ID | lv_id_0_2= RULE_LOWERCASE_ID | lv_id_0_3= RULE_UPPERCASE_ID | lv_id_0_4= RULE_BACKCASE_ID ) ) ) | (otherlv_1= '(' ( (lv_unit_2_0= ruleUnit ) ) otherlv_3= ')' ) )
+            int alt356=2;
+            int LA356_0 = input.LA(1);
 
-            if ( ((LA355_0>=RULE_LOWERCASE_ID && LA355_0<=RULE_UPPERCASE_ID)||LA355_0==RULE_CAMELCASE_ID||LA355_0==RULE_BACKCASE_ID) ) {
-                alt355=1;
+            if ( ((LA356_0>=RULE_LOWERCASE_ID && LA356_0<=RULE_UPPERCASE_ID)||LA356_0==RULE_CAMELCASE_ID||LA356_0==RULE_BACKCASE_ID) ) {
+                alt356=1;
             }
-            else if ( (LA355_0==38) ) {
-                alt355=2;
+            else if ( (LA356_0==38) ) {
+                alt356=2;
             }
             else {
                 if (state.backtracking>0) {state.failed=true; return current;}
                 NoViableAltException nvae =
-                    new NoViableAltException("", 355, 0, input);
+                    new NoViableAltException("", 356, 0, input);
 
                 throw nvae;
             }
-            switch (alt355) {
+            switch (alt356) {
                 case 1 :
-                    // InternalKim.g:17281:3: ( ( (lv_id_0_1= RULE_CAMELCASE_ID | lv_id_0_2= RULE_LOWERCASE_ID | lv_id_0_3= RULE_UPPERCASE_ID | lv_id_0_4= RULE_BACKCASE_ID ) ) )
+                    // InternalKim.g:17389:3: ( ( (lv_id_0_1= RULE_CAMELCASE_ID | lv_id_0_2= RULE_LOWERCASE_ID | lv_id_0_3= RULE_UPPERCASE_ID | lv_id_0_4= RULE_BACKCASE_ID ) ) )
                     {
-                    // InternalKim.g:17281:3: ( ( (lv_id_0_1= RULE_CAMELCASE_ID | lv_id_0_2= RULE_LOWERCASE_ID | lv_id_0_3= RULE_UPPERCASE_ID | lv_id_0_4= RULE_BACKCASE_ID ) ) )
-                    // InternalKim.g:17282:4: ( (lv_id_0_1= RULE_CAMELCASE_ID | lv_id_0_2= RULE_LOWERCASE_ID | lv_id_0_3= RULE_UPPERCASE_ID | lv_id_0_4= RULE_BACKCASE_ID ) )
+                    // InternalKim.g:17389:3: ( ( (lv_id_0_1= RULE_CAMELCASE_ID | lv_id_0_2= RULE_LOWERCASE_ID | lv_id_0_3= RULE_UPPERCASE_ID | lv_id_0_4= RULE_BACKCASE_ID ) ) )
+                    // InternalKim.g:17390:4: ( (lv_id_0_1= RULE_CAMELCASE_ID | lv_id_0_2= RULE_LOWERCASE_ID | lv_id_0_3= RULE_UPPERCASE_ID | lv_id_0_4= RULE_BACKCASE_ID ) )
                     {
-                    // InternalKim.g:17282:4: ( (lv_id_0_1= RULE_CAMELCASE_ID | lv_id_0_2= RULE_LOWERCASE_ID | lv_id_0_3= RULE_UPPERCASE_ID | lv_id_0_4= RULE_BACKCASE_ID ) )
-                    // InternalKim.g:17283:5: (lv_id_0_1= RULE_CAMELCASE_ID | lv_id_0_2= RULE_LOWERCASE_ID | lv_id_0_3= RULE_UPPERCASE_ID | lv_id_0_4= RULE_BACKCASE_ID )
+                    // InternalKim.g:17390:4: ( (lv_id_0_1= RULE_CAMELCASE_ID | lv_id_0_2= RULE_LOWERCASE_ID | lv_id_0_3= RULE_UPPERCASE_ID | lv_id_0_4= RULE_BACKCASE_ID ) )
+                    // InternalKim.g:17391:5: (lv_id_0_1= RULE_CAMELCASE_ID | lv_id_0_2= RULE_LOWERCASE_ID | lv_id_0_3= RULE_UPPERCASE_ID | lv_id_0_4= RULE_BACKCASE_ID )
                     {
-                    // InternalKim.g:17283:5: (lv_id_0_1= RULE_CAMELCASE_ID | lv_id_0_2= RULE_LOWERCASE_ID | lv_id_0_3= RULE_UPPERCASE_ID | lv_id_0_4= RULE_BACKCASE_ID )
-                    int alt354=4;
+                    // InternalKim.g:17391:5: (lv_id_0_1= RULE_CAMELCASE_ID | lv_id_0_2= RULE_LOWERCASE_ID | lv_id_0_3= RULE_UPPERCASE_ID | lv_id_0_4= RULE_BACKCASE_ID )
+                    int alt355=4;
                     switch ( input.LA(1) ) {
                     case RULE_CAMELCASE_ID:
                         {
-                        alt354=1;
+                        alt355=1;
                         }
                         break;
                     case RULE_LOWERCASE_ID:
                         {
-                        alt354=2;
+                        alt355=2;
                         }
                         break;
                     case RULE_UPPERCASE_ID:
                         {
-                        alt354=3;
+                        alt355=3;
                         }
                         break;
                     case RULE_BACKCASE_ID:
                         {
-                        alt354=4;
+                        alt355=4;
                         }
                         break;
                     default:
                         if (state.backtracking>0) {state.failed=true; return current;}
                         NoViableAltException nvae =
-                            new NoViableAltException("", 354, 0, input);
+                            new NoViableAltException("", 355, 0, input);
 
                         throw nvae;
                     }
 
-                    switch (alt354) {
+                    switch (alt355) {
                         case 1 :
-                            // InternalKim.g:17284:6: lv_id_0_1= RULE_CAMELCASE_ID
+                            // InternalKim.g:17392:6: lv_id_0_1= RULE_CAMELCASE_ID
                             {
                             lv_id_0_1=(Token)match(input,RULE_CAMELCASE_ID,FOLLOW_2); if (state.failed) return current;
                             if ( state.backtracking==0 ) {
@@ -46750,7 +47067,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                             }
                             break;
                         case 2 :
-                            // InternalKim.g:17299:6: lv_id_0_2= RULE_LOWERCASE_ID
+                            // InternalKim.g:17407:6: lv_id_0_2= RULE_LOWERCASE_ID
                             {
                             lv_id_0_2=(Token)match(input,RULE_LOWERCASE_ID,FOLLOW_2); if (state.failed) return current;
                             if ( state.backtracking==0 ) {
@@ -46774,7 +47091,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                             }
                             break;
                         case 3 :
-                            // InternalKim.g:17314:6: lv_id_0_3= RULE_UPPERCASE_ID
+                            // InternalKim.g:17422:6: lv_id_0_3= RULE_UPPERCASE_ID
                             {
                             lv_id_0_3=(Token)match(input,RULE_UPPERCASE_ID,FOLLOW_2); if (state.failed) return current;
                             if ( state.backtracking==0 ) {
@@ -46798,7 +47115,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                             }
                             break;
                         case 4 :
-                            // InternalKim.g:17329:6: lv_id_0_4= RULE_BACKCASE_ID
+                            // InternalKim.g:17437:6: lv_id_0_4= RULE_BACKCASE_ID
                             {
                             lv_id_0_4=(Token)match(input,RULE_BACKCASE_ID,FOLLOW_2); if (state.failed) return current;
                             if ( state.backtracking==0 ) {
@@ -46834,10 +47151,10 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalKim.g:17347:3: (otherlv_1= '(' ( (lv_unit_2_0= ruleUnit ) ) otherlv_3= ')' )
+                    // InternalKim.g:17455:3: (otherlv_1= '(' ( (lv_unit_2_0= ruleUnit ) ) otherlv_3= ')' )
                     {
-                    // InternalKim.g:17347:3: (otherlv_1= '(' ( (lv_unit_2_0= ruleUnit ) ) otherlv_3= ')' )
-                    // InternalKim.g:17348:4: otherlv_1= '(' ( (lv_unit_2_0= ruleUnit ) ) otherlv_3= ')'
+                    // InternalKim.g:17455:3: (otherlv_1= '(' ( (lv_unit_2_0= ruleUnit ) ) otherlv_3= ')' )
+                    // InternalKim.g:17456:4: otherlv_1= '(' ( (lv_unit_2_0= ruleUnit ) ) otherlv_3= ')'
                     {
                     otherlv_1=(Token)match(input,38,FOLLOW_183); if (state.failed) return current;
                     if ( state.backtracking==0 ) {
@@ -46845,11 +47162,11 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       				newLeafNode(otherlv_1, grammarAccess.getUnitElementAccess().getLeftParenthesisKeyword_1_0());
                       			
                     }
-                    // InternalKim.g:17352:4: ( (lv_unit_2_0= ruleUnit ) )
-                    // InternalKim.g:17353:5: (lv_unit_2_0= ruleUnit )
+                    // InternalKim.g:17460:4: ( (lv_unit_2_0= ruleUnit ) )
+                    // InternalKim.g:17461:5: (lv_unit_2_0= ruleUnit )
                     {
-                    // InternalKim.g:17353:5: (lv_unit_2_0= ruleUnit )
-                    // InternalKim.g:17354:6: lv_unit_2_0= ruleUnit
+                    // InternalKim.g:17461:5: (lv_unit_2_0= ruleUnit )
+                    // InternalKim.g:17462:6: lv_unit_2_0= ruleUnit
                     {
                     if ( state.backtracking==0 ) {
 
@@ -46914,323 +47231,6 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         return current;
     }
     // $ANTLR end "ruleUnitElement"
-
-
-    // $ANTLR start "entryRuleREL_OPERATOR"
-    // InternalKim.g:17380:1: entryRuleREL_OPERATOR returns [EObject current=null] : iv_ruleREL_OPERATOR= ruleREL_OPERATOR EOF ;
-    public final EObject entryRuleREL_OPERATOR() throws RecognitionException {
-        EObject current = null;
-
-        EObject iv_ruleREL_OPERATOR = null;
-
-
-        try {
-            // InternalKim.g:17380:53: (iv_ruleREL_OPERATOR= ruleREL_OPERATOR EOF )
-            // InternalKim.g:17381:2: iv_ruleREL_OPERATOR= ruleREL_OPERATOR EOF
-            {
-            if ( state.backtracking==0 ) {
-               newCompositeNode(grammarAccess.getREL_OPERATORRule()); 
-            }
-            pushFollow(FOLLOW_1);
-            iv_ruleREL_OPERATOR=ruleREL_OPERATOR();
-
-            state._fsp--;
-            if (state.failed) return current;
-            if ( state.backtracking==0 ) {
-               current =iv_ruleREL_OPERATOR; 
-            }
-            match(input,EOF,FOLLOW_2); if (state.failed) return current;
-
-            }
-
-        }
-
-            catch (RecognitionException re) {
-                recover(input,re);
-                appendSkippedTokens();
-            }
-        finally {
-        }
-        return current;
-    }
-    // $ANTLR end "entryRuleREL_OPERATOR"
-
-
-    // $ANTLR start "ruleREL_OPERATOR"
-    // InternalKim.g:17387:1: ruleREL_OPERATOR returns [EObject current=null] : ( ( (lv_gt_0_0= '>' ) ) | ( (lv_lt_1_0= '<' ) ) | ( (lv_eq_2_0= '=' ) ) | ( (lv_ne_3_0= '!=' ) ) | ( (lv_le_4_0= '<=' ) ) | ( (lv_ge_5_0= '>=' ) ) ) ;
-    public final EObject ruleREL_OPERATOR() throws RecognitionException {
-        EObject current = null;
-
-        Token lv_gt_0_0=null;
-        Token lv_lt_1_0=null;
-        Token lv_eq_2_0=null;
-        Token lv_ne_3_0=null;
-        Token lv_le_4_0=null;
-        Token lv_ge_5_0=null;
-
-
-        	enterRule();
-
-        try {
-            // InternalKim.g:17393:2: ( ( ( (lv_gt_0_0= '>' ) ) | ( (lv_lt_1_0= '<' ) ) | ( (lv_eq_2_0= '=' ) ) | ( (lv_ne_3_0= '!=' ) ) | ( (lv_le_4_0= '<=' ) ) | ( (lv_ge_5_0= '>=' ) ) ) )
-            // InternalKim.g:17394:2: ( ( (lv_gt_0_0= '>' ) ) | ( (lv_lt_1_0= '<' ) ) | ( (lv_eq_2_0= '=' ) ) | ( (lv_ne_3_0= '!=' ) ) | ( (lv_le_4_0= '<=' ) ) | ( (lv_ge_5_0= '>=' ) ) )
-            {
-            // InternalKim.g:17394:2: ( ( (lv_gt_0_0= '>' ) ) | ( (lv_lt_1_0= '<' ) ) | ( (lv_eq_2_0= '=' ) ) | ( (lv_ne_3_0= '!=' ) ) | ( (lv_le_4_0= '<=' ) ) | ( (lv_ge_5_0= '>=' ) ) )
-            int alt356=6;
-            switch ( input.LA(1) ) {
-            case 80:
-                {
-                alt356=1;
-                }
-                break;
-            case 83:
-                {
-                alt356=2;
-                }
-                break;
-            case 46:
-                {
-                alt356=3;
-                }
-                break;
-            case 88:
-                {
-                alt356=4;
-                }
-                break;
-            case 82:
-                {
-                alt356=5;
-                }
-                break;
-            case 81:
-                {
-                alt356=6;
-                }
-                break;
-            default:
-                if (state.backtracking>0) {state.failed=true; return current;}
-                NoViableAltException nvae =
-                    new NoViableAltException("", 356, 0, input);
-
-                throw nvae;
-            }
-
-            switch (alt356) {
-                case 1 :
-                    // InternalKim.g:17395:3: ( (lv_gt_0_0= '>' ) )
-                    {
-                    // InternalKim.g:17395:3: ( (lv_gt_0_0= '>' ) )
-                    // InternalKim.g:17396:4: (lv_gt_0_0= '>' )
-                    {
-                    // InternalKim.g:17396:4: (lv_gt_0_0= '>' )
-                    // InternalKim.g:17397:5: lv_gt_0_0= '>'
-                    {
-                    lv_gt_0_0=(Token)match(input,80,FOLLOW_2); if (state.failed) return current;
-                    if ( state.backtracking==0 ) {
-
-                      					newLeafNode(lv_gt_0_0, grammarAccess.getREL_OPERATORAccess().getGtGreaterThanSignKeyword_0_0());
-                      				
-                    }
-                    if ( state.backtracking==0 ) {
-
-                      					if (current==null) {
-                      						current = createModelElement(grammarAccess.getREL_OPERATORRule());
-                      					}
-                      					setWithLastConsumed(current, "gt", lv_gt_0_0 != null, ">");
-                      				
-                    }
-
-                    }
-
-
-                    }
-
-
-                    }
-                    break;
-                case 2 :
-                    // InternalKim.g:17410:3: ( (lv_lt_1_0= '<' ) )
-                    {
-                    // InternalKim.g:17410:3: ( (lv_lt_1_0= '<' ) )
-                    // InternalKim.g:17411:4: (lv_lt_1_0= '<' )
-                    {
-                    // InternalKim.g:17411:4: (lv_lt_1_0= '<' )
-                    // InternalKim.g:17412:5: lv_lt_1_0= '<'
-                    {
-                    lv_lt_1_0=(Token)match(input,83,FOLLOW_2); if (state.failed) return current;
-                    if ( state.backtracking==0 ) {
-
-                      					newLeafNode(lv_lt_1_0, grammarAccess.getREL_OPERATORAccess().getLtLessThanSignKeyword_1_0());
-                      				
-                    }
-                    if ( state.backtracking==0 ) {
-
-                      					if (current==null) {
-                      						current = createModelElement(grammarAccess.getREL_OPERATORRule());
-                      					}
-                      					setWithLastConsumed(current, "lt", lv_lt_1_0 != null, "<");
-                      				
-                    }
-
-                    }
-
-
-                    }
-
-
-                    }
-                    break;
-                case 3 :
-                    // InternalKim.g:17425:3: ( (lv_eq_2_0= '=' ) )
-                    {
-                    // InternalKim.g:17425:3: ( (lv_eq_2_0= '=' ) )
-                    // InternalKim.g:17426:4: (lv_eq_2_0= '=' )
-                    {
-                    // InternalKim.g:17426:4: (lv_eq_2_0= '=' )
-                    // InternalKim.g:17427:5: lv_eq_2_0= '='
-                    {
-                    lv_eq_2_0=(Token)match(input,46,FOLLOW_2); if (state.failed) return current;
-                    if ( state.backtracking==0 ) {
-
-                      					newLeafNode(lv_eq_2_0, grammarAccess.getREL_OPERATORAccess().getEqEqualsSignKeyword_2_0());
-                      				
-                    }
-                    if ( state.backtracking==0 ) {
-
-                      					if (current==null) {
-                      						current = createModelElement(grammarAccess.getREL_OPERATORRule());
-                      					}
-                      					setWithLastConsumed(current, "eq", lv_eq_2_0 != null, "=");
-                      				
-                    }
-
-                    }
-
-
-                    }
-
-
-                    }
-                    break;
-                case 4 :
-                    // InternalKim.g:17440:3: ( (lv_ne_3_0= '!=' ) )
-                    {
-                    // InternalKim.g:17440:3: ( (lv_ne_3_0= '!=' ) )
-                    // InternalKim.g:17441:4: (lv_ne_3_0= '!=' )
-                    {
-                    // InternalKim.g:17441:4: (lv_ne_3_0= '!=' )
-                    // InternalKim.g:17442:5: lv_ne_3_0= '!='
-                    {
-                    lv_ne_3_0=(Token)match(input,88,FOLLOW_2); if (state.failed) return current;
-                    if ( state.backtracking==0 ) {
-
-                      					newLeafNode(lv_ne_3_0, grammarAccess.getREL_OPERATORAccess().getNeExclamationMarkEqualsSignKeyword_3_0());
-                      				
-                    }
-                    if ( state.backtracking==0 ) {
-
-                      					if (current==null) {
-                      						current = createModelElement(grammarAccess.getREL_OPERATORRule());
-                      					}
-                      					setWithLastConsumed(current, "ne", lv_ne_3_0 != null, "!=");
-                      				
-                    }
-
-                    }
-
-
-                    }
-
-
-                    }
-                    break;
-                case 5 :
-                    // InternalKim.g:17455:3: ( (lv_le_4_0= '<=' ) )
-                    {
-                    // InternalKim.g:17455:3: ( (lv_le_4_0= '<=' ) )
-                    // InternalKim.g:17456:4: (lv_le_4_0= '<=' )
-                    {
-                    // InternalKim.g:17456:4: (lv_le_4_0= '<=' )
-                    // InternalKim.g:17457:5: lv_le_4_0= '<='
-                    {
-                    lv_le_4_0=(Token)match(input,82,FOLLOW_2); if (state.failed) return current;
-                    if ( state.backtracking==0 ) {
-
-                      					newLeafNode(lv_le_4_0, grammarAccess.getREL_OPERATORAccess().getLeLessThanSignEqualsSignKeyword_4_0());
-                      				
-                    }
-                    if ( state.backtracking==0 ) {
-
-                      					if (current==null) {
-                      						current = createModelElement(grammarAccess.getREL_OPERATORRule());
-                      					}
-                      					setWithLastConsumed(current, "le", lv_le_4_0 != null, "<=");
-                      				
-                    }
-
-                    }
-
-
-                    }
-
-
-                    }
-                    break;
-                case 6 :
-                    // InternalKim.g:17470:3: ( (lv_ge_5_0= '>=' ) )
-                    {
-                    // InternalKim.g:17470:3: ( (lv_ge_5_0= '>=' ) )
-                    // InternalKim.g:17471:4: (lv_ge_5_0= '>=' )
-                    {
-                    // InternalKim.g:17471:4: (lv_ge_5_0= '>=' )
-                    // InternalKim.g:17472:5: lv_ge_5_0= '>='
-                    {
-                    lv_ge_5_0=(Token)match(input,81,FOLLOW_2); if (state.failed) return current;
-                    if ( state.backtracking==0 ) {
-
-                      					newLeafNode(lv_ge_5_0, grammarAccess.getREL_OPERATORAccess().getGeGreaterThanSignEqualsSignKeyword_5_0());
-                      				
-                    }
-                    if ( state.backtracking==0 ) {
-
-                      					if (current==null) {
-                      						current = createModelElement(grammarAccess.getREL_OPERATORRule());
-                      					}
-                      					setWithLastConsumed(current, "ge", lv_ge_5_0 != null, ">=");
-                      				
-                    }
-
-                    }
-
-
-                    }
-
-
-                    }
-                    break;
-
-            }
-
-
-            }
-
-            if ( state.backtracking==0 ) {
-
-              	leaveRule();
-
-            }
-        }
-
-            catch (RecognitionException re) {
-                recover(input,re);
-                appendSkippedTokens();
-            }
-        finally {
-        }
-        return current;
-    }
-    // $ANTLR end "ruleREL_OPERATOR"
 
 
     // $ANTLR start "entryRuleUnit"
@@ -55808,11 +55808,11 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                 else if ( (LA507_0==RULE_UPPERCASE_ID) ) {
                     int LA507_2 = input.LA(2);
 
-                    if ( (LA507_2==253) ) {
-                        alt507=2;
-                    }
-                    else if ( (LA507_2==EOF||LA507_2==43||LA507_2==111||LA507_2==262) ) {
+                    if ( (LA507_2==EOF||LA507_2==43||LA507_2==111||LA507_2==262) ) {
                         alt507=1;
+                    }
+                    else if ( (LA507_2==253) ) {
+                        alt507=2;
                     }
                     else {
                         if (state.backtracking>0) {state.failed=true; return ;}
@@ -56473,11 +56473,11 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                 else if ( (LA513_0==RULE_UPPERCASE_ID) ) {
                     int LA513_2 = input.LA(2);
 
-                    if ( (LA513_2==253) ) {
-                        alt513=2;
-                    }
-                    else if ( (LA513_2==EOF||LA513_2==43||LA513_2==111||LA513_2==262) ) {
+                    if ( (LA513_2==EOF||LA513_2==43||LA513_2==111||LA513_2==262) ) {
                         alt513=1;
+                    }
+                    else if ( (LA513_2==253) ) {
+                        alt513=2;
                     }
                     else {
                         if (state.backtracking>0) {state.failed=true; return ;}
@@ -65104,11 +65104,11 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                 else if ( (LA642_0==RULE_UPPERCASE_ID) ) {
                     int LA642_2 = input.LA(2);
 
-                    if ( (LA642_2==253) ) {
-                        alt642=2;
-                    }
-                    else if ( (LA642_2==EOF||LA642_2==43||LA642_2==111||LA642_2==262) ) {
+                    if ( (LA642_2==EOF||LA642_2==43||LA642_2==111||LA642_2==262) ) {
                         alt642=1;
+                    }
+                    else if ( (LA642_2==253) ) {
+                        alt642=2;
                     }
                     else {
                         if (state.backtracking>0) {state.failed=true; return ;}

@@ -98,7 +98,6 @@ import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.Observable;
-import org.integratedmodelling.klab.provenance.Activity;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
 
@@ -477,12 +476,12 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
     public static IObservation createObservation(IObservable observable, IScale scale, RuntimeScope scope,
             boolean createArchetype) {
 
-        Activity activity = null;
+//        Activity activity = null;
 
         IIdentity identity = scope.getMonitor().getIdentity();
-        if (identity instanceof AbstractTask) {
-            activity = ((AbstractTask<?>) identity).getActivity();
-        }
+//        if (identity instanceof AbstractTask) {
+//            activity = ((AbstractTask<?>) identity).getActivity();
+//        }
 
         Observation ret = null;
         if (observable.is(Type.SUBJECT) || observable.is(Type.AGENT)) {
@@ -512,7 +511,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
                     (Observable) observable, (Scale) scale, scope);
         }
 
-        ret.setGenerator(activity);
+//        ret.setGenerator(activity);
 
         scope.notifyInspector(IInspector.Asset.OBSERVATION, IInspector.Event.CREATION, ret);
         
@@ -523,17 +522,17 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
             IDirectObservation relationshipSource,
             IDirectObservation relationshipTarget, RuntimeScope runtimeContext) {
 
-        Activity activity = null;
+//        Activity activity = null;
 
-        IIdentity identity = runtimeContext.getMonitor().getIdentity();
-        if (identity instanceof AbstractTask) {
-            activity = ((AbstractTask<?>) identity).getActivity();
-        }
+//        IIdentity identity = runtimeContext.getMonitor().getIdentity();
+//        if (identity instanceof AbstractTask) {
+//            activity = ((AbstractTask<?>) identity).getActivity();
+//        }
 
         IRelationship ret = new Relationship(observable.getName(), (Observable) observable, (Scale) scale,
                 runtimeContext);
         runtimeContext.network.addEdge(relationshipSource, relationshipTarget, ret);
-        ((Observation) ret).setGenerator(activity);
+//        ((Observation) ret).setGenerator(activity);
 
         // TODO if actors must be created (i.e. there are temporal transitions etc) wrap
         // into an Akka

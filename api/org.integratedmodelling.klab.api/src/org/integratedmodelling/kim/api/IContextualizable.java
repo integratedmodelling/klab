@@ -390,5 +390,11 @@ public interface IContextualizable extends IKimStatement, IProvenance.Node {
 	 * @return
 	 */
 	boolean isVariable();
-	
+
+	/**
+	 * True if the resource needs no inputs to be contextualized.
+	 * 
+	 * @return
+	 */
+	boolean isFinal();
 }

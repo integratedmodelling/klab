@@ -15,10 +15,11 @@ import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.geospace.Geospace;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
+import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.utils.NumberUtils;
 
-public class FlowDirectionsResolver implements IResolver<IState>, IExpression {
+public class FlowDirectionsResolver extends AbstractContextualizer implements IResolver<IState>, IExpression {
 
     boolean computeAngles = false;
 

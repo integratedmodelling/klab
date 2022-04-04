@@ -26,13 +26,14 @@ import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
+import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.Scale;
 
 import org.locationtech.jts.geom.Point;
 
-public class WatershedInstantiator implements IInstantiator, IExpression {
+public class WatershedInstantiator extends AbstractContextualizer implements IInstantiator, IExpression {
 
 	private boolean whole = false;
 

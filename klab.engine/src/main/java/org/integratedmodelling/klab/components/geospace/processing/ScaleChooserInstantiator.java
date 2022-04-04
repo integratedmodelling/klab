@@ -18,6 +18,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.data.encoding.VisitingDataBuilder;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
@@ -37,7 +38,7 @@ import org.integratedmodelling.klab.utils.Triple;
  * @author Ferd
  *
  */
-public abstract class ScaleChooserInstantiator implements IInstantiator {
+public abstract class ScaleChooserInstantiator extends AbstractContextualizer implements IInstantiator {
 
 	/**
 	 * If true, always cover the context completely: either by choosing a larger

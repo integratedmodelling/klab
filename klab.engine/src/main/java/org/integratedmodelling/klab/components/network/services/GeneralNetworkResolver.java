@@ -6,6 +6,7 @@ import org.integratedmodelling.klab.api.observations.IConfiguration;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.network.model.Network;
+import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
@@ -15,16 +16,10 @@ import org.integratedmodelling.klab.exceptions.KlabException;
  * @author Ferd
  *
  */
-public class GeneralNetworkResolver implements IResolver<IConfiguration> {
+public class GeneralNetworkResolver extends AbstractContextualizer implements IResolver<IConfiguration> {
 
 	Network network;
 	
-//	@Override
-//	public IGeometry getGeometry() {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
-
 	@Override
 	public Type getType() {
 		// TODO Auto-generated method stub

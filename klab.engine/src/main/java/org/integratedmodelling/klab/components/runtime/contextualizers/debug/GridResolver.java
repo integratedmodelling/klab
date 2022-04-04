@@ -11,9 +11,10 @@ import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
-public class GridResolver implements IResolver<IState>, IExpression {
+public class GridResolver extends AbstractContextualizer implements IResolver<IState>, IExpression {
 
 	enum Output {
 		OFFSET,

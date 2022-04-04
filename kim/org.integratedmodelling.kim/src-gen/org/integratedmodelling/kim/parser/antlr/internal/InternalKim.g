@@ -17262,6 +17262,114 @@ ruleNamedObservableSemantics returns [EObject current=null]
 	)
 ;
 
+// Entry rule entryRuleREL_OPERATOR
+entryRuleREL_OPERATOR returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getREL_OPERATORRule()); }
+	iv_ruleREL_OPERATOR=ruleREL_OPERATOR
+	{ $current=$iv_ruleREL_OPERATOR.current; }
+	EOF;
+
+// Rule REL_OPERATOR
+ruleREL_OPERATOR returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		(
+			(
+				lv_gt_0_0='>'
+				{
+					newLeafNode(lv_gt_0_0, grammarAccess.getREL_OPERATORAccess().getGtGreaterThanSignKeyword_0_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getREL_OPERATORRule());
+					}
+					setWithLastConsumed($current, "gt", lv_gt_0_0 != null, ">");
+				}
+			)
+		)
+		    |
+		(
+			(
+				lv_lt_1_0='<'
+				{
+					newLeafNode(lv_lt_1_0, grammarAccess.getREL_OPERATORAccess().getLtLessThanSignKeyword_1_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getREL_OPERATORRule());
+					}
+					setWithLastConsumed($current, "lt", lv_lt_1_0 != null, "<");
+				}
+			)
+		)
+		    |
+		(
+			(
+				lv_eq_2_0='='
+				{
+					newLeafNode(lv_eq_2_0, grammarAccess.getREL_OPERATORAccess().getEqEqualsSignKeyword_2_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getREL_OPERATORRule());
+					}
+					setWithLastConsumed($current, "eq", lv_eq_2_0 != null, "=");
+				}
+			)
+		)
+		    |
+		(
+			(
+				lv_ne_3_0='!='
+				{
+					newLeafNode(lv_ne_3_0, grammarAccess.getREL_OPERATORAccess().getNeExclamationMarkEqualsSignKeyword_3_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getREL_OPERATORRule());
+					}
+					setWithLastConsumed($current, "ne", lv_ne_3_0 != null, "!=");
+				}
+			)
+		)
+		    |
+		(
+			(
+				lv_le_4_0='<='
+				{
+					newLeafNode(lv_le_4_0, grammarAccess.getREL_OPERATORAccess().getLeLessThanSignEqualsSignKeyword_4_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getREL_OPERATORRule());
+					}
+					setWithLastConsumed($current, "le", lv_le_4_0 != null, "<=");
+				}
+			)
+		)
+		    |
+		(
+			(
+				lv_ge_5_0='>='
+				{
+					newLeafNode(lv_ge_5_0, grammarAccess.getREL_OPERATORAccess().getGeGreaterThanSignEqualsSignKeyword_5_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getREL_OPERATORRule());
+					}
+					setWithLastConsumed($current, "ge", lv_ge_5_0 != null, ">=");
+				}
+			)
+		)
+	)
+;
+
 // Entry rule entryRuleUnitElement
 entryRuleUnitElement returns [EObject current=null]:
 	{ newCompositeNode(grammarAccess.getUnitElementRule()); }
@@ -17372,114 +17480,6 @@ ruleUnitElement returns [EObject current=null]
 			{
 				newLeafNode(otherlv_3, grammarAccess.getUnitElementAccess().getRightParenthesisKeyword_1_2());
 			}
-		)
-	)
-;
-
-// Entry rule entryRuleREL_OPERATOR
-entryRuleREL_OPERATOR returns [EObject current=null]:
-	{ newCompositeNode(grammarAccess.getREL_OPERATORRule()); }
-	iv_ruleREL_OPERATOR=ruleREL_OPERATOR
-	{ $current=$iv_ruleREL_OPERATOR.current; }
-	EOF;
-
-// Rule REL_OPERATOR
-ruleREL_OPERATOR returns [EObject current=null]
-@init {
-	enterRule();
-}
-@after {
-	leaveRule();
-}:
-	(
-		(
-			(
-				lv_gt_0_0='>'
-				{
-					newLeafNode(lv_gt_0_0, grammarAccess.getREL_OPERATORAccess().getGtGreaterThanSignKeyword_0_0());
-				}
-				{
-					if ($current==null) {
-						$current = createModelElement(grammarAccess.getREL_OPERATORRule());
-					}
-					setWithLastConsumed($current, "gt", lv_gt_0_0 != null, ">");
-				}
-			)
-		)
-		    |
-		(
-			(
-				lv_lt_1_0='<'
-				{
-					newLeafNode(lv_lt_1_0, grammarAccess.getREL_OPERATORAccess().getLtLessThanSignKeyword_1_0());
-				}
-				{
-					if ($current==null) {
-						$current = createModelElement(grammarAccess.getREL_OPERATORRule());
-					}
-					setWithLastConsumed($current, "lt", lv_lt_1_0 != null, "<");
-				}
-			)
-		)
-		    |
-		(
-			(
-				lv_eq_2_0='='
-				{
-					newLeafNode(lv_eq_2_0, grammarAccess.getREL_OPERATORAccess().getEqEqualsSignKeyword_2_0());
-				}
-				{
-					if ($current==null) {
-						$current = createModelElement(grammarAccess.getREL_OPERATORRule());
-					}
-					setWithLastConsumed($current, "eq", lv_eq_2_0 != null, "=");
-				}
-			)
-		)
-		    |
-		(
-			(
-				lv_ne_3_0='!='
-				{
-					newLeafNode(lv_ne_3_0, grammarAccess.getREL_OPERATORAccess().getNeExclamationMarkEqualsSignKeyword_3_0());
-				}
-				{
-					if ($current==null) {
-						$current = createModelElement(grammarAccess.getREL_OPERATORRule());
-					}
-					setWithLastConsumed($current, "ne", lv_ne_3_0 != null, "!=");
-				}
-			)
-		)
-		    |
-		(
-			(
-				lv_le_4_0='<='
-				{
-					newLeafNode(lv_le_4_0, grammarAccess.getREL_OPERATORAccess().getLeLessThanSignEqualsSignKeyword_4_0());
-				}
-				{
-					if ($current==null) {
-						$current = createModelElement(grammarAccess.getREL_OPERATORRule());
-					}
-					setWithLastConsumed($current, "le", lv_le_4_0 != null, "<=");
-				}
-			)
-		)
-		    |
-		(
-			(
-				lv_ge_5_0='>='
-				{
-					newLeafNode(lv_ge_5_0, grammarAccess.getREL_OPERATORAccess().getGeGreaterThanSignEqualsSignKeyword_5_0());
-				}
-				{
-					if ($current==null) {
-						$current = createModelElement(grammarAccess.getREL_OPERATORRule());
-					}
-					setWithLastConsumed($current, "ge", lv_ge_5_0 != null, ">=");
-				}
-			)
 		)
 	)
 ;

@@ -210,9 +210,9 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getAlternatives_3_1(), "rule__AlternativeDependencyObservableSemantics__Alternatives_3_1");
 			builder.put(grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getAlternatives_3_1_0_1(), "rule__AlternativeDependencyObservableSemantics__Alternatives_3_1_0_1");
 			builder.put(grammarAccess.getNamedObservableSemanticsAccess().getNameAlternatives_2_0(), "rule__NamedObservableSemantics__NameAlternatives_2_0");
+			builder.put(grammarAccess.getREL_OPERATORAccess().getAlternatives(), "rule__REL_OPERATOR__Alternatives");
 			builder.put(grammarAccess.getUnitElementAccess().getAlternatives(), "rule__UnitElement__Alternatives");
 			builder.put(grammarAccess.getUnitElementAccess().getIdAlternatives_0_0(), "rule__UnitElement__IdAlternatives_0_0");
-			builder.put(grammarAccess.getREL_OPERATORAccess().getAlternatives(), "rule__REL_OPERATOR__Alternatives");
 			builder.put(grammarAccess.getNumberAccess().getAlternatives_0(), "rule__Number__Alternatives_0");
 			builder.put(grammarAccess.getNumberAccess().getExponentialAlternatives_4_0_0_0(), "rule__Number__ExponentialAlternatives_4_0_0_0");
 			builder.put(grammarAccess.getNumberAccess().getAlternatives_4_0_1(), "rule__Number__Alternatives_4_0_1");
@@ -1223,14 +1223,14 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getAlternativeDependencyObservableSemanticsAccess().getConditionAssignment_4_1(), "rule__AlternativeDependencyObservableSemantics__ConditionAssignment_4_1");
 			builder.put(grammarAccess.getNamedObservableSemanticsAccess().getDeclarationAssignment_0(), "rule__NamedObservableSemantics__DeclarationAssignment_0");
 			builder.put(grammarAccess.getNamedObservableSemanticsAccess().getNameAssignment_2(), "rule__NamedObservableSemantics__NameAssignment_2");
-			builder.put(grammarAccess.getUnitElementAccess().getIdAssignment_0(), "rule__UnitElement__IdAssignment_0");
-			builder.put(grammarAccess.getUnitElementAccess().getUnitAssignment_1_1(), "rule__UnitElement__UnitAssignment_1_1");
 			builder.put(grammarAccess.getREL_OPERATORAccess().getGtAssignment_0(), "rule__REL_OPERATOR__GtAssignment_0");
 			builder.put(grammarAccess.getREL_OPERATORAccess().getLtAssignment_1(), "rule__REL_OPERATOR__LtAssignment_1");
 			builder.put(grammarAccess.getREL_OPERATORAccess().getEqAssignment_2(), "rule__REL_OPERATOR__EqAssignment_2");
 			builder.put(grammarAccess.getREL_OPERATORAccess().getNeAssignment_3(), "rule__REL_OPERATOR__NeAssignment_3");
 			builder.put(grammarAccess.getREL_OPERATORAccess().getLeAssignment_4(), "rule__REL_OPERATOR__LeAssignment_4");
 			builder.put(grammarAccess.getREL_OPERATORAccess().getGeAssignment_5(), "rule__REL_OPERATOR__GeAssignment_5");
+			builder.put(grammarAccess.getUnitElementAccess().getIdAssignment_0(), "rule__UnitElement__IdAssignment_0");
+			builder.put(grammarAccess.getUnitElementAccess().getUnitAssignment_1_1(), "rule__UnitElement__UnitAssignment_1_1");
 			builder.put(grammarAccess.getUnitAccess().getRootAssignment_1(), "rule__Unit__RootAssignment_1");
 			builder.put(grammarAccess.getUnitAccess().getConnectorsAssignment_2_0_0(), "rule__Unit__ConnectorsAssignment_2_0_0");
 			builder.put(grammarAccess.getUnitAccess().getUnitsAssignment_2_1(), "rule__Unit__UnitsAssignment_2_1");

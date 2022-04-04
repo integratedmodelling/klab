@@ -31,6 +31,7 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.indexing.DistanceCalculator;
+import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -44,7 +45,7 @@ import org.jgrapht.alg.CycleDetector;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 
-public class ConfigurableRelationshipInstantiator implements IExpression, IInstantiator {
+public class ConfigurableRelationshipInstantiator extends AbstractContextualizer implements IExpression, IInstantiator {
 
 	private String sourceArtifact = null;
 	private String targetArtifact = null;

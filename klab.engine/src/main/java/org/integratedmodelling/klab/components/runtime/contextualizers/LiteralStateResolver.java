@@ -14,7 +14,7 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
-public class LiteralStateResolver implements IStateResolver, IExpression {
+public class LiteralStateResolver extends AbstractContextualizer implements IStateResolver, IExpression {
 
 	static final public String FUNCTION_ID = "klab.runtime.literal";
 

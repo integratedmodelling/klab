@@ -174,8 +174,8 @@ public class KimFactoryImpl extends EFactoryImpl implements KimFactory
       case KimPackage.PARAMETER_LIST: return createParameterList();
       case KimPackage.VALUE: return createValue();
       case KimPackage.FUNCTION: return createFunction();
-      case KimPackage.UNIT_ELEMENT: return createUnitElement();
       case KimPackage.REL_OPERATOR: return createREL_OPERATOR();
+      case KimPackage.UNIT_ELEMENT: return createUnitElement();
       case KimPackage.UNIT: return createUnit();
       case KimPackage.CURRENCY: return createCurrency();
       case KimPackage.NUMBER: return createNumber();
@@ -818,10 +818,10 @@ public class KimFactoryImpl extends EFactoryImpl implements KimFactory
    * @generated
    */
   @Override
-  public UnitElement createUnitElement()
+  public REL_OPERATOR createREL_OPERATOR()
   {
-    UnitElementImpl unitElement = new UnitElementImpl();
-    return unitElement;
+    REL_OPERATORImpl reL_OPERATOR = new REL_OPERATORImpl();
+    return reL_OPERATOR;
   }
 
   /**
@@ -830,10 +830,10 @@ public class KimFactoryImpl extends EFactoryImpl implements KimFactory
    * @generated
    */
   @Override
-  public REL_OPERATOR createREL_OPERATOR()
+  public UnitElement createUnitElement()
   {
-    REL_OPERATORImpl reL_OPERATOR = new REL_OPERATORImpl();
-    return reL_OPERATOR;
+    UnitElementImpl unitElement = new UnitElementImpl();
+    return unitElement;
   }
 
   /**

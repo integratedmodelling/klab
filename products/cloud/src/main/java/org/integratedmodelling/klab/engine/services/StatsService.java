@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.engine.services;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -41,8 +40,6 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-
-import groovyjarjarantlr4.v4.parse.GrammarTreeVisitor.locals_return;
 
 @Component
 @ConditionalOnProperty(value = "stats.server.url", havingValue = "", matchIfMissing = false)

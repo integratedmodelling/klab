@@ -23,7 +23,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Pair;
 
-public class ChangingResourceResolver implements IResolver<IArtifact>, IExpression {
+public class ChangingResourceResolver extends AbstractContextualizer implements IResolver<IArtifact>, IExpression {
 
     static final public String FUNCTION_ID = "klab.runtime.resourcechange";
 

@@ -25,7 +25,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.utils.Pair;
 
-public class UrnCharacterizer implements IResolver<IArtifact>, IProcessor, IExpression {
+public class UrnCharacterizer extends AbstractContextualizer implements IResolver<IArtifact>, IProcessor, IExpression {
 
     public final static String FUNCTION_ID = "klab.runtime.characterize";
 

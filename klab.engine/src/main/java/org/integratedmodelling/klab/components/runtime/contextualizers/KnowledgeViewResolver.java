@@ -22,7 +22,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Pair;
 
-public class KnowledgeViewResolver implements IResolver<IArtifact>, IExpression {
+public class KnowledgeViewResolver extends AbstractContextualizer implements IResolver<IArtifact>, IExpression {
 
 	static final public String FUNCTION_ID = "klab.runtime.compileview";
 

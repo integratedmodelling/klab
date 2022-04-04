@@ -28,12 +28,13 @@ import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
+import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.StringUtil;
 
-public class StreamOutletInstantiator implements IInstantiator, IExpression {
+public class StreamOutletInstantiator extends AbstractContextualizer implements IInstantiator, IExpression {
 
 	private double threshold = 0.05;
 	private int extract = 1;

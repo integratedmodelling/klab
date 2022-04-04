@@ -16,11 +16,12 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.processing.Rasterizer;
+import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.scale.Scale;
 
-public class PresenceResolver implements IResolver<IDataArtifact>, IExpression {
+public class PresenceResolver extends AbstractContextualizer implements IResolver<IDataArtifact>, IExpression {
 
 	static final public String FUNCTION_ID = "klab.runtime.dereifiers.presence";
 

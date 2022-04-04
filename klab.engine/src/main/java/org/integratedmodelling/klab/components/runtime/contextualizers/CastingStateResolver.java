@@ -14,7 +14,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.NumberUtils;
 
-public class CastingStateResolver implements IStateResolver, IProcessor, IExpression {
+public class CastingStateResolver extends AbstractContextualizer implements IStateResolver, IProcessor, IExpression {
 
 	static final public String FUNCTION_ID = "klab.runtime.cast";
 

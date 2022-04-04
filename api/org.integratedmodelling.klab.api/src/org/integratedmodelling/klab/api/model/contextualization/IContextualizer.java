@@ -15,7 +15,9 @@
  */
 package org.integratedmodelling.klab.api.model.contextualization;
 
+import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 
 /**
  * A contextualizer builds the observation of an observable in a context based
@@ -28,17 +30,17 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
  * and
  * {@link org.integratedmodelling.klab.api.model.contextualization.IInstantiator}
  * respectively.
- *<p>
+ * <p>
  * Contextualizers can be contributed by components and are managed by
  * {@link org.integratedmodelling.klab.api.runtime.dataflow.IActuator}s during
  * the execution of
  * {@link org.integratedmodelling.klab.api.runtime.dataflow.IDataflow}s. In KDL
  * dataflow specifications, contextualizers are called in <code> compute </code>
  * statements.
- *<p>
+ * <p>
  * In a workflow engine such as Ptolemy, contextualizers represent context-aware
  * actors specified by {@link org.integratedmodelling.kim.api.IServiceCall}s.
- *<p>
+ * <p>
  * To provide a new contextualizer, extend one of the non-abstract child
  * interfaces and provide the specifications of its k.LAB identity using a KDL
  * file specifying a component definition.
@@ -48,15 +50,28 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
  */
 public abstract interface IContextualizer {
 
-    /**
-     * Contextualizers can expose a type so that an artifact chain can be established
-     * when intermediate computations of different types are required for an
-     * observation. Returning null will use the type declared by the service 
-     * prototype; the type returned here may specialize it (in case it's VALUE) and
-     * must be compatible.
-     * 
-     * @return
-     */
-    IArtifact.Type getType();
+	/**
+	 * Contextualizers can expose a type so that an artifact chain can be
+	 * established when intermediate computations of different types are required
+	 * for an observation. Returning null will use the type declared by the service
+	 * prototype; the type returned here may specialize it (in case it's VALUE) and
+	 * must be compatible.
+	 * 
+	 * @return
+	 */
+	IArtifact.Type getType();
+
+	/**
+	 * If the resource that we serve needs to be contextualized before use, do that,
+	 * set any internal state for the subsequent call, and return a contextualizable
+	 * with the recontextualized resource. In case no action is needed, simply return
+	 * the resource as passed.
+	 * 
+	 * @param resource
+	 * @param target
+	 * @param scope
+	 * @return
+	 */
+	IContextualizable contextualize(IContextualizable resource, IArtifact target, IContextualizationScope scope);
 
 }

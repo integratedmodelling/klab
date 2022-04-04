@@ -19,6 +19,7 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.indexing.DistanceCalculator;
 import org.integratedmodelling.klab.components.geospace.indexing.SpatialIndex;
+import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
@@ -29,7 +30,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
  * @author Ferd
  *
  */
-public class DistanceResolver implements IResolver<IDataArtifact>, IExpression {
+public class DistanceResolver extends AbstractContextualizer implements IResolver<IDataArtifact>, IExpression {
 
 	static final public String FUNCTION_ID = "klab.runtime.dereifiers.distance";
 

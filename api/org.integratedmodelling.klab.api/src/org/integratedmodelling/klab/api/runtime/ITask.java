@@ -25,15 +25,17 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 
 /**
- * A ITask computes an observational artifact, delegating to a Java Future that returns it when
- * available. The task will first resolve its resolvable object, then if successful compile the
- * resolution tree into a dataflow which will be sent to the configured runtime to produce the
- * artifact.
+ * A ITask computes an observational artifact, delegating to a Java Future that
+ * returns it when available. The task will first resolve its resolvable object,
+ * then if successful compile the resolution tree into a dataflow which will be
+ * sent to the configured runtime to produce the artifact.
  * <p>
- * In API usage, the first task that creates the context subject is obtained by calling
- * {@link ISession#observe(IObservable, IGeometry)}. Afterwards, more observations in the context
- * may be made by using {@link ISubject#observe(IObservable, IGeometry)}. These functions return
- * paused tasks that are started at get() or can be started explicitly using start().
+ * In API usage, the first task that creates the context subject is obtained by
+ * calling {@link ISession#observe(IObservable, IGeometry)}. Afterwards, more
+ * observations in the context may be made by using
+ * {@link ISubject#observe(IObservable, IGeometry)}. These functions return lazy
+ * tasks that are started when get() is called, or can be started explicitly
+ * using start().
  * 
  * @author ferdinando.villa
  * @version $Id: $Id
@@ -41,47 +43,49 @@ import org.integratedmodelling.klab.api.resolution.IResolvable;
  */
 public interface ITask<T extends IArtifact> extends ITaskIdentity, Future<T> {
 
-    /**
-     * The "resolvable" unit that this task is dedicated to resolving (not necessarily
-     * successfully). May be an observable, a concept, a model or an observer.
-     * 
-     * @return
-     */
-    IResolvable getResolvable();
+	/**
+	 * The "resolvable" unit that this task is dedicated to resolving (not
+	 * necessarily successfully). May be an observable, a concept, a model or an
+	 * observer.
+	 * 
+	 * @return
+	 */
+	IResolvable getResolvable();
 
-    /**
-     * Add a listener to call when the artifact is produced. For consistent results this must be
-     * called before the task is started (the ISubject and ISession observe() functions return lazy
-     * tasks that only start when get() is called).
-     * 
-     * @param listener
-     */
-    void addObservationListener(BiConsumer<ITask<?>, T> listener);
+	/**
+	 * Add a listener to call when the artifact is produced. For consistent results
+	 * this must be called before the task is started (the ISubject and ISession
+	 * observe() functions return lazy tasks that only start when get() is called).
+	 * 
+	 * @param listener
+	 */
+	void addObservationListener(BiConsumer<ITask<?>, T> listener);
 
-    /**
-     * Add a listener to call whenever an exception is produced. For consistent results this must be
-     * called before the task is started (the ISubject and ISession observe() functions return lazy
-     * tasks that only start when get() is called).
-     * 
-     * @param listener
-     */
-    void addErrorListener(BiConsumer<ITask<?>, Throwable> listener);
+	/**
+	 * Add a listener to call whenever an exception is produced. For consistent
+	 * results this must be called before the task is started (the ISubject and
+	 * ISession observe() functions return lazy tasks that only start when get() is
+	 * called).
+	 * 
+	 * @param listener
+	 */
+	void addErrorListener(BiConsumer<ITask<?>, Throwable> listener);
 
-    /**
-     * Add any number of scenarios to use in resolution. For consistent results this must be called
-     * before the task is started (the ISubject and ISession observe() functions return lazy tasks
-     * that only start when get() is called).
-     * 
-     * @param scenarios
-     */
-    void addScenarios(Collection<String> scenarios);
+	/**
+	 * Add any number of scenarios to use in resolution. For consistent results this
+	 * must be called before the task is started (the ISubject and ISession
+	 * observe() functions return lazy tasks that only start when get() is called).
+	 * 
+	 * @param scenarios
+	 */
+	void addScenarios(Collection<String> scenarios);
 
-    /**
-     * Call start() if you want to control execution without calling get(). Implementations may
-     * provide autostarting tasks where this call has no effect.
-     * 
-     * @return
-     */
-    boolean start();
+	/**
+	 * Call start() if you want to control execution without calling get().
+	 * Implementations may provide autostarting tasks where this call has no effect.
+	 * 
+	 * @return
+	 */
+	boolean start();
 
 }

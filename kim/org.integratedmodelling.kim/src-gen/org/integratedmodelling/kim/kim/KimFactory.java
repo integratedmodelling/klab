@@ -466,15 +466,6 @@ public interface KimFactory extends EFactory
   Function createFunction();
 
   /**
-   * Returns a new object of class '<em>Unit Element</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Unit Element</em>'.
-   * @generated
-   */
-  UnitElement createUnitElement();
-
-  /**
    * Returns a new object of class '<em>REL OPERATOR</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -482,6 +473,15 @@ public interface KimFactory extends EFactory
    * @generated
    */
   REL_OPERATOR createREL_OPERATOR();
+
+  /**
+   * Returns a new object of class '<em>Unit Element</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Unit Element</em>'.
+   * @generated
+   */
+  UnitElement createUnitElement();
 
   /**
    * Returns a new object of class '<em>Unit</em>'.

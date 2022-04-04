@@ -11488,68 +11488,6 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//STRING
 		public RuleCall getNameSTRINGTerminalRuleCall_2_0_2() { return cNameSTRINGTerminalRuleCall_2_0_2; }
 	}
-	public class UnitElementElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.UnitElement");
-		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final Assignment cIdAssignment_0 = (Assignment)cAlternatives.eContents().get(0);
-		private final Alternatives cIdAlternatives_0_0 = (Alternatives)cIdAssignment_0.eContents().get(0);
-		private final RuleCall cIdCAMELCASE_IDTerminalRuleCall_0_0_0 = (RuleCall)cIdAlternatives_0_0.eContents().get(0);
-		private final RuleCall cIdLOWERCASE_IDTerminalRuleCall_0_0_1 = (RuleCall)cIdAlternatives_0_0.eContents().get(1);
-		private final RuleCall cIdUPPERCASE_IDTerminalRuleCall_0_0_2 = (RuleCall)cIdAlternatives_0_0.eContents().get(2);
-		private final RuleCall cIdBACKCASE_IDTerminalRuleCall_0_0_3 = (RuleCall)cIdAlternatives_0_0.eContents().get(3);
-		private final Group cGroup_1 = (Group)cAlternatives.eContents().get(1);
-		private final Keyword cLeftParenthesisKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
-		private final Assignment cUnitAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
-		private final RuleCall cUnitUnitParserRuleCall_1_1_0 = (RuleCall)cUnitAssignment_1_1.eContents().get(0);
-		private final Keyword cRightParenthesisKeyword_1_2 = (Keyword)cGroup_1.eContents().get(2);
-		
-		///**
-		// * ---------------------------------------
-		// * Unit of measurement re: jsr-108, parseable by Java
-		// * ---------------------------------------
-		// */
-		//UnitElement:
-		//    id=(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID|BACKCASE_ID) |
-		//    '(' unit=Unit ')';
-		@Override public ParserRule getRule() { return rule; }
-		
-		//id=(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID|BACKCASE_ID) |
-		//'(' unit=Unit ')'
-		public Alternatives getAlternatives() { return cAlternatives; }
-		
-		//id=(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID|BACKCASE_ID)
-		public Assignment getIdAssignment_0() { return cIdAssignment_0; }
-		
-		//(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID|BACKCASE_ID)
-		public Alternatives getIdAlternatives_0_0() { return cIdAlternatives_0_0; }
-		
-		//CAMELCASE_ID
-		public RuleCall getIdCAMELCASE_IDTerminalRuleCall_0_0_0() { return cIdCAMELCASE_IDTerminalRuleCall_0_0_0; }
-		
-		//LOWERCASE_ID
-		public RuleCall getIdLOWERCASE_IDTerminalRuleCall_0_0_1() { return cIdLOWERCASE_IDTerminalRuleCall_0_0_1; }
-		
-		//UPPERCASE_ID
-		public RuleCall getIdUPPERCASE_IDTerminalRuleCall_0_0_2() { return cIdUPPERCASE_IDTerminalRuleCall_0_0_2; }
-		
-		//BACKCASE_ID
-		public RuleCall getIdBACKCASE_IDTerminalRuleCall_0_0_3() { return cIdBACKCASE_IDTerminalRuleCall_0_0_3; }
-		
-		//'(' unit=Unit ')'
-		public Group getGroup_1() { return cGroup_1; }
-		
-		//'('
-		public Keyword getLeftParenthesisKeyword_1_0() { return cLeftParenthesisKeyword_1_0; }
-		
-		//unit=Unit
-		public Assignment getUnitAssignment_1_1() { return cUnitAssignment_1_1; }
-		
-		//Unit
-		public RuleCall getUnitUnitParserRuleCall_1_1_0() { return cUnitUnitParserRuleCall_1_1_0; }
-		
-		//')'
-		public Keyword getRightParenthesisKeyword_1_2() { return cRightParenthesisKeyword_1_2; }
-	}
 	public class REL_OPERATORElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.REL_OPERATOR");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
@@ -11566,6 +11504,11 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		private final Assignment cGeAssignment_5 = (Assignment)cAlternatives.eContents().get(5);
 		private final Keyword cGeGreaterThanSignEqualsSignKeyword_5_0 = (Keyword)cGeAssignment_5.eContents().get(0);
 		
+		///**
+		// * ---------------------------------------
+		// * Unit of measurement re: jsr-108, parseable by Java
+		// * ---------------------------------------
+		// */
 		//REL_OPERATOR:
 		//    (gt?='>' |
 		//    lt?='<' |
@@ -11618,6 +11561,63 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		
 		//'>='
 		public Keyword getGeGreaterThanSignEqualsSignKeyword_5_0() { return cGeGreaterThanSignEqualsSignKeyword_5_0; }
+	}
+	public class UnitElementElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.UnitElement");
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final Assignment cIdAssignment_0 = (Assignment)cAlternatives.eContents().get(0);
+		private final Alternatives cIdAlternatives_0_0 = (Alternatives)cIdAssignment_0.eContents().get(0);
+		private final RuleCall cIdCAMELCASE_IDTerminalRuleCall_0_0_0 = (RuleCall)cIdAlternatives_0_0.eContents().get(0);
+		private final RuleCall cIdLOWERCASE_IDTerminalRuleCall_0_0_1 = (RuleCall)cIdAlternatives_0_0.eContents().get(1);
+		private final RuleCall cIdUPPERCASE_IDTerminalRuleCall_0_0_2 = (RuleCall)cIdAlternatives_0_0.eContents().get(2);
+		private final RuleCall cIdBACKCASE_IDTerminalRuleCall_0_0_3 = (RuleCall)cIdAlternatives_0_0.eContents().get(3);
+		private final Group cGroup_1 = (Group)cAlternatives.eContents().get(1);
+		private final Keyword cLeftParenthesisKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
+		private final Assignment cUnitAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
+		private final RuleCall cUnitUnitParserRuleCall_1_1_0 = (RuleCall)cUnitAssignment_1_1.eContents().get(0);
+		private final Keyword cRightParenthesisKeyword_1_2 = (Keyword)cGroup_1.eContents().get(2);
+		
+		//UnitElement:
+		//    id=(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID|BACKCASE_ID) |
+		//    '(' unit=Unit ')';
+		@Override public ParserRule getRule() { return rule; }
+		
+		//id=(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID|BACKCASE_ID) |
+		//'(' unit=Unit ')'
+		public Alternatives getAlternatives() { return cAlternatives; }
+		
+		//id=(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID|BACKCASE_ID)
+		public Assignment getIdAssignment_0() { return cIdAssignment_0; }
+		
+		//(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID|BACKCASE_ID)
+		public Alternatives getIdAlternatives_0_0() { return cIdAlternatives_0_0; }
+		
+		//CAMELCASE_ID
+		public RuleCall getIdCAMELCASE_IDTerminalRuleCall_0_0_0() { return cIdCAMELCASE_IDTerminalRuleCall_0_0_0; }
+		
+		//LOWERCASE_ID
+		public RuleCall getIdLOWERCASE_IDTerminalRuleCall_0_0_1() { return cIdLOWERCASE_IDTerminalRuleCall_0_0_1; }
+		
+		//UPPERCASE_ID
+		public RuleCall getIdUPPERCASE_IDTerminalRuleCall_0_0_2() { return cIdUPPERCASE_IDTerminalRuleCall_0_0_2; }
+		
+		//BACKCASE_ID
+		public RuleCall getIdBACKCASE_IDTerminalRuleCall_0_0_3() { return cIdBACKCASE_IDTerminalRuleCall_0_0_3; }
+		
+		//'(' unit=Unit ')'
+		public Group getGroup_1() { return cGroup_1; }
+		
+		//'('
+		public Keyword getLeftParenthesisKeyword_1_0() { return cLeftParenthesisKeyword_1_0; }
+		
+		//unit=Unit
+		public Assignment getUnitAssignment_1_1() { return cUnitAssignment_1_1; }
+		
+		//Unit
+		public RuleCall getUnitUnitParserRuleCall_1_1_0() { return cUnitUnitParserRuleCall_1_1_0; }
+		
+		//')'
+		public Keyword getRightParenthesisKeyword_1_2() { return cRightParenthesisKeyword_1_2; }
 	}
 	public class UnitElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.Unit");
@@ -12513,9 +12513,9 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 	private final DependencyObservableSemanticsElements pDependencyObservableSemantics;
 	private final AlternativeDependencyObservableSemanticsElements pAlternativeDependencyObservableSemantics;
 	private final NamedObservableSemanticsElements pNamedObservableSemantics;
-	private final UnitElementElements pUnitElement;
-	private final UnitOpElements eUnitOp;
 	private final REL_OPERATORElements pREL_OPERATOR;
+	private final UnitOpElements eUnitOp;
+	private final UnitElementElements pUnitElement;
 	private final UnitElements pUnit;
 	private final CurrencyElements pCurrency;
 	private final NumberElements pNumber;
@@ -12633,9 +12633,9 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		this.pDependencyObservableSemantics = new DependencyObservableSemanticsElements();
 		this.pAlternativeDependencyObservableSemantics = new AlternativeDependencyObservableSemanticsElements();
 		this.pNamedObservableSemantics = new NamedObservableSemanticsElements();
-		this.pUnitElement = new UnitElementElements();
-		this.eUnitOp = new UnitOpElements();
 		this.pREL_OPERATOR = new REL_OPERATORElements();
+		this.eUnitOp = new UnitOpElements();
+		this.pUnitElement = new UnitElementElements();
 		this.pUnit = new UnitElements();
 		this.pCurrency = new CurrencyElements();
 		this.pNumber = new NumberElements();
@@ -14281,27 +14281,6 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 	// * Unit of measurement re: jsr-108, parseable by Java
 	// * ---------------------------------------
 	// */
-	//UnitElement:
-	//    id=(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID|BACKCASE_ID) |
-	//    '(' unit=Unit ')';
-	public UnitElementElements getUnitElementAccess() {
-		return pUnitElement;
-	}
-	
-	public ParserRule getUnitElementRule() {
-		return getUnitElementAccess().getRule();
-	}
-	
-	//enum UnitOp:
-	//    OVER='/' | CARET='^' | STAR='*';
-	public UnitOpElements getUnitOpAccess() {
-		return eUnitOp;
-	}
-	
-	public EnumRule getUnitOpRule() {
-		return getUnitOpAccess().getRule();
-	}
-	
 	//REL_OPERATOR:
 	//    (gt?='>' |
 	//    lt?='<' |
@@ -14315,6 +14294,27 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 	
 	public ParserRule getREL_OPERATORRule() {
 		return getREL_OPERATORAccess().getRule();
+	}
+	
+	//enum UnitOp:
+	//    OVER='/' | CARET='^' | STAR='*';
+	public UnitOpElements getUnitOpAccess() {
+		return eUnitOp;
+	}
+	
+	public EnumRule getUnitOpRule() {
+		return getUnitOpAccess().getRule();
+	}
+	
+	//UnitElement:
+	//    id=(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID|BACKCASE_ID) |
+	//    '(' unit=Unit ')';
+	public UnitElementElements getUnitElementAccess() {
+		return pUnitElement;
+	}
+	
+	public ParserRule getUnitElementRule() {
+		return getUnitElementAccess().getRule();
 	}
 	
 	//Unit:

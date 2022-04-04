@@ -32,6 +32,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
+import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
@@ -40,7 +41,7 @@ import org.integratedmodelling.klab.utils.NumberUtils;
 import org.locationtech.jts.geom.Point;
 import org.opengis.feature.simple.SimpleFeatureType;
 
-public class KrigingResolver implements IResolver<IState>, IExpression {
+public class KrigingResolver extends AbstractContextualizer implements IResolver<IState>, IExpression {
 
 	private String artifactId;
 	private String elevationId;

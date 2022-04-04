@@ -2146,6 +2146,8 @@ public enum Kim {
             return "'" + ((String) value).replace("'", "\\'") + "'";
         } else if (value instanceof IConcept) {
             return ((IConcept)value).getDefinition();
+        } else if (value instanceof Range) {
+        	return ((Range)value).getKimCode();
         }
         return value == null ? "unknown" : value.toString();
     }

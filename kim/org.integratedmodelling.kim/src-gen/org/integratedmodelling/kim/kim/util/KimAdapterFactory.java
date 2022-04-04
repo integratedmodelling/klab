@@ -377,14 +377,14 @@ public class KimAdapterFactory extends AdapterFactoryImpl
         return createFunctionAdapter();
       }
       @Override
-      public Adapter caseUnitElement(UnitElement object)
-      {
-        return createUnitElementAdapter();
-      }
-      @Override
       public Adapter caseREL_OPERATOR(REL_OPERATOR object)
       {
         return createREL_OPERATORAdapter();
+      }
+      @Override
+      public Adapter caseUnitElement(UnitElement object)
+      {
+        return createUnitElementAdapter();
       }
       @Override
       public Adapter caseUnit(Unit object)
@@ -1169,21 +1169,6 @@ public class KimAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.UnitElement <em>Unit Element</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see org.integratedmodelling.kim.kim.UnitElement
-   * @generated
-   */
-  public Adapter createUnitElementAdapter()
-  {
-    return null;
-  }
-
-  /**
    * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.REL_OPERATOR <em>REL OPERATOR</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -1194,6 +1179,21 @@ public class KimAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createREL_OPERATORAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.UnitElement <em>Unit Element</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kim.kim.UnitElement
+   * @generated
+   */
+  public Adapter createUnitElementAdapter()
   {
     return null;
   }

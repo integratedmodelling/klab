@@ -14,7 +14,7 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.utils.Parameters;
 
-public class ExpressionStateResolver implements IStateResolver {
+public class ExpressionStateResolver extends AbstractContextualizer implements IStateResolver {
 
 	Descriptor expressionDescriptor;
 	Descriptor conditionDescriptor;
