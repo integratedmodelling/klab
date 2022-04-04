@@ -248,4 +248,7 @@
 			</modules>
 		</profile>
 	</profiles>
+
+	<version>0.11.0-SNAPSHOT</version>
+	<groupId>org.integratedmodelling</groupId>
 </project>
