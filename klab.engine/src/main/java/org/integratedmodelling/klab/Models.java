@@ -284,6 +284,7 @@ public enum Models implements IModelService {
 	 * @param unchangedObservable
 	 * @param resource
 	 * @return
+	 * @deprecated should not be necessary
 	 */
 	public IRankedModel createChangeModel(IObservable unchangedObservable, IModel model, ResolutionScope scope) {
 		MergedResource resource = ((org.integratedmodelling.klab.model.Model) model).getMergedResource();

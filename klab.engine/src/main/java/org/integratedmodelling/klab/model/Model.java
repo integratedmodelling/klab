@@ -1040,6 +1040,7 @@ public class Model extends KimObject implements IModel {
 	 * @param mainObservable
 	 * @param resource
 	 * @param scope
+	 * @deprecated
 	 */
 	public Model(IObservable mainObservable, MergedResource resource, IModel originalModel, ResolutionScope scope) {
 		super(null);
