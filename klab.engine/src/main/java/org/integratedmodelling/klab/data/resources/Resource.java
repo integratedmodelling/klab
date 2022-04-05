@@ -133,6 +133,10 @@ public class Resource implements IResource {
     File uploadFolder = null;
 
     public Resource(ResourceReference reference) {
+        copy(reference);
+    }
+
+    protected void copy(ResourceReference reference) {
 
         this.urn = reference.getUrn();
         this.version = Version.create(reference.getVersion());
@@ -167,6 +171,7 @@ public class Resource implements IResource {
         if (reference.getDependencies() != null) {
             this.inputs.addAll(reference.getDependencies());
         }
+
     }
 
     public ResourceReference getReference() {

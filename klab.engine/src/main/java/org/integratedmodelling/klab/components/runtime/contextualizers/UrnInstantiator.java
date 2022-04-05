@@ -80,28 +80,28 @@ public class UrnInstantiator extends AbstractContextualizer implements IExpressi
 
             System.out.println("PORRCOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
             
-            List<Pair<IResource, Map<String, String>>> resources = ((MergedResource) this.resource)
-                    .contextualize(scope.getScale(), scope.getTargetArtifact(), scope);
-            if (resources.isEmpty()) {
-                // it's OK if the resource was already contextualized up to the available data. TODO
-                // distinguish the use cases.
-                // context.getMonitor().warn("resource " + this.resource.getUrn() + " cannot be
-                // contextualized in this scale");
-                return ret;
-            }
-
-            for (Pair<IResource, Map<String, String>> pr : resources) {
-                ((Report) scope.getReport()).addContextualizedResource(this.resource.getUrn(), pr.getFirst());
-            }
-
-            // TODO must contextualize the LIST, not just the first resource
-            if (resources.size() > 1) {
-                scope.getMonitor()
-                        .warn("Warning: unimplemented use of multiple resources for one timestep. Choosing only the first.");
-            }
-
-            this.resource = resources.get(0).getFirst();
-            parameters = resources.get(0).getSecond();
+//            List<Pair<IResource, Map<String, String>>> resources = ((MergedResource) this.resource)
+//                    .contextualize(scope.getScale(), scope.getTargetArtifact(), scope);
+//            if (resources.isEmpty()) {
+//                // it's OK if the resource was already contextualized up to the available data. TODO
+//                // distinguish the use cases.
+//                // context.getMonitor().warn("resource " + this.resource.getUrn() + " cannot be
+//                // contextualized in this scale");
+//                return ret;
+//            }
+//
+//            for (Pair<IResource, Map<String, String>> pr : resources) {
+//                ((Report) scope.getReport()).addContextualizedResource(this.resource.getUrn(), pr.getFirst());
+//            }
+//
+//            // TODO must contextualize the LIST, not just the first resource
+//            if (resources.size() > 1) {
+//                scope.getMonitor()
+//                        .warn("Warning: unimplemented use of multiple resources for one timestep. Choosing only the first.");
+//            }
+//
+//            this.resource = resources.get(0).getFirst();
+//            parameters = resources.get(0).getSecond();
 
         }
 

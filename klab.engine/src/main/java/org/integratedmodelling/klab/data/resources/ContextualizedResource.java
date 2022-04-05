@@ -10,6 +10,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.services.IResourceService;
+import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.utils.Pair;
 
@@ -48,8 +49,13 @@ public class ContextualizedResource extends Resource {
      * @param ret
      */
     public ContextualizedResource(List<Pair<IResource, Map<String, String>>> ret) {
-        System.out.println("FEROTOIJUOIU OIU OIU OIU OIU OIU");
-        // TODO Auto-generated constructor stub
+        if (ret.size() == 1) {
+            IResource resource = ((Resource) ret.get(0).getFirst());
+            copy(((Resource) resource).getReference());
+            resourceStructure.add(new Pair<>(resource, null));
+        } else {
+            throw new KlabUnimplementedException("multiple resources per contextualization are still unsupported");
+        }
     }
 
     public ContextualizedResource(ResourceReference reference) {

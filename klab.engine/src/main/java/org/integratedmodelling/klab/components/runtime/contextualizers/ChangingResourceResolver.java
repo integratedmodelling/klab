@@ -23,6 +23,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Pair;
 
+@Deprecated
 public class ChangingResourceResolver extends AbstractContextualizer implements IResolver<IArtifact>, IExpression {
 
     static final public String FUNCTION_ID = "klab.runtime.resourcechange";
@@ -57,42 +58,44 @@ public class ChangingResourceResolver extends AbstractContextualizer implements 
     @Override
     public IArtifact resolve(IArtifact ret, IContextualizationScope scope) throws KlabException {
 
-        List<Pair<IResource, Map<String, String>>> resources = ((MergedResource) this.resource).contextualize(scope.getScale(),
-                ret, scope);
-
-        if (resources.isEmpty()) {
-            // this can happen when the resource can't add anything to the artifact.
-            return ret;
-        }
-
-        for (Pair<IResource, Map<String, String>> pr : resources) {
-            ((Report) scope.getReport()).addContextualizedResource(this.resource.getUrn(),
-                    pr.getFirst());
-        }
-
-        // TODO must contextualize the LIST, not just the first resource. For now it can
-        // only happen with
-        // multiple spatial extents, but it could happen also with multiple temporal
-        // slices.
-        if (resources.size() > 1) {
-            scope.getMonitor()
-                    .warn("Warning: unimplemented use of multiple resources for one timestep. Choosing only the first.");
-        }
-
-        IResource res = resources.get(0).getFirst();
-
-        if (Configuration.INSTANCE.isEchoEnabled()) {
-            System.err.println("GETTING DATA FROM " + res.getUrn());
-        }
-        IKlabData data = Resources.INSTANCE.getResourceData(res, resources.get(0).getSecond(), scope.getScale(), scope, ret);
-        if (Configuration.INSTANCE.isEchoEnabled()) {
-            System.err.println("DONE " + res.getUrn());
-        }
-
-        if (data == null) {
-            scope.getMonitor().error("Cannot extract data from resource " + resource.getUrn());
-        }
-
-        return data == null ? ret : data.getArtifact();
+        System.out.println("PUTOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
+        return ret;
+//        List<Pair<IResource, Map<String, String>>> resources = ((MergedResource) this.resource).contextualize(scope.getScale(),
+//                ret, scope);
+//
+//        if (resources.isEmpty()) {
+//            // this can happen when the resource can't add anything to the artifact.
+//            return ret;
+//        }
+//
+//        for (Pair<IResource, Map<String, String>> pr : resources) {
+//            ((Report) scope.getReport()).addContextualizedResource(this.resource.getUrn(),
+//                    pr.getFirst());
+//        }
+//
+//        // TODO must contextualize the LIST, not just the first resource. For now it can
+//        // only happen with
+//        // multiple spatial extents, but it could happen also with multiple temporal
+//        // slices.
+//        if (resources.size() > 1) {
+//            scope.getMonitor()
+//                    .warn("Warning: unimplemented use of multiple resources for one timestep. Choosing only the first.");
+//        }
+//
+//        IResource res = resources.get(0).getFirst();
+//
+//        if (Configuration.INSTANCE.isEchoEnabled()) {
+//            System.err.println("GETTING DATA FROM " + res.getUrn());
+//        }
+//        IKlabData data = Resources.INSTANCE.getResourceData(res, resources.get(0).getSecond(), scope.getScale(), scope, ret);
+//        if (Configuration.INSTANCE.isEchoEnabled()) {
+//            System.err.println("DONE " + res.getUrn());
+//        }
+//
+//        if (data == null) {
+//            scope.getMonitor().error("Cannot extract data from resource " + resource.getUrn());
+//        }
+//
+//        return data == null ? ret : data.getArtifact();
     }
 }

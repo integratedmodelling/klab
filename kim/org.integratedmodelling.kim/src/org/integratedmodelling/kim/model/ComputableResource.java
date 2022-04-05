@@ -919,6 +919,9 @@ public class ComputableResource extends KimStatement implements IContextualizabl
             IResourceService service = Services.INSTANCE.getService(IResourceService.class);
             if (service != null) {
                 validatedResource = service.resolveResource(getUrn());
+                if (validatedResource != null) {
+                    return (IResource) validatedResource;
+                }
             }
         }
         throw new KlabIllegalStateException("getResource() called on a non-resource contextualizable");
