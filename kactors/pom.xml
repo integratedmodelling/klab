@@ -279,32 +279,6 @@
 			</plugins>
 		</pluginManagement>
 	</build>
-	<repositories>
-		<repository>
-			<id>codehaus-snapshots</id>
-			<name>disable dead 'Codehaus Snapshots' repository, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=481478</name>
-			<url>http://nexus.codehaus.org/snapshots/</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>codehaus-snapshots</id>
-			<name>disable dead 'Codehaus Snapshots' repository, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=481478</name>
-			<url>http://nexus.codehaus.org/snapshots/</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</pluginRepository>
-	</pluginRepositories>
 	<profiles>
 		<profile>
 			<id>macos</id>
@@ -328,7 +302,4 @@
 			</properties>
 		</profile>
 	</profiles>
-
-	<dependencies>
-	</dependencies>
 </project>
