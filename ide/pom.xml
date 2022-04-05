@@ -205,32 +205,8 @@
 	<repositories>
 		<repository>
 			<id>2021-06</id>
-			<url>https://download.eclipse.org/releases/2021-06/</url>
+			<url>https://download.eclipse.org/releases/2021-06</url>
 			<layout>p2</layout>
 		</repository>
-		<repository>
-			<id>codehaus-snapshots</id>
-			<name>disable dead 'Codehaus Snapshots' repository, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=481478</name>
-			<url>http://nexus.codehaus.org/snapshots/</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
 	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>codehaus-snapshots</id>
-			<name>disable dead 'Codehaus Snapshots' repository, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=481478</name>
-			<url>http://nexus.codehaus.org/snapshots/</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</pluginRepository>
-	</pluginRepositories>
 </project>
