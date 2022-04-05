@@ -135,9 +135,8 @@ public abstract class AbstractContextualizer implements IContextualizer {
     }
 
 	@Override
-	public IContextualizable contextualize(IContextualizable resource, IArtifact target,
+	public void notifyContextualizedResource(IContextualizable resource, IArtifact target,
 			IContextualizationScope scope) {
-		return resource;
 	}
     
     

@@ -18,7 +18,6 @@ import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.IResource;
-import org.integratedmodelling.klab.api.knowledge.ICodelist;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
@@ -36,6 +35,7 @@ import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.data.Metadata;
+import org.integratedmodelling.klab.data.resources.ContextualizedResource;
 import org.integratedmodelling.klab.data.storage.ResourceCatalog;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -492,7 +492,7 @@ public class MergedResource implements IResource {
      * @param scale
      * @return
      */
-    public List<Pair<IResource, Map<String, String>>> contextualize(IScale scale, IArtifact artifact,
+    public ContextualizedResource contextualize(IScale scale, IArtifact artifact,
             IContextualizationScope scope) {
 
         long locator = -1;
@@ -577,7 +577,7 @@ public class MergedResource implements IResource {
             }
         }
 
-        return ret;
+        return new ContextualizedResource(ret);
     }
 
     @Override
@@ -592,21 +592,6 @@ public class MergedResource implements IResource {
             ret.append(new Date(key) + ": " + resources.get(key).resources + "\n");
         }
         return ret.toString();
-    }
-
-    @Override
-    public IResource contextualize(IScale scale, IArtifact observation, Map<String, String> urnParameters,
-            IContextualizationScope scope) {
-
-        MergedResource ret = new MergedResource(this);
-        //
-        // /*
-        // * if logical time, prepare to locate the closest resource after anchoring the
-        // * interval in the resources to the expected transitions.
-        // */
-        // ret.resolutionTime = scale.getTime();
-        //
-        return ret;
     }
 
     /**

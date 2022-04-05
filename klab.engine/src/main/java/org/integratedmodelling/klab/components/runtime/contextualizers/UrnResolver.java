@@ -27,10 +27,10 @@ public class UrnResolver extends AbstractContextualizer implements IExpression, 
 
     public final static String FUNCTION_ID = "klab.runtime.contextualize";
 
+    // only used for initial validation
+    private IResource originalResource;
     private IResource resource;
     private Map<String, String> urnParameters;
-    // private boolean localized = false;
-    // private IScale overallScale;
 
     // don't remove - only used as expression
     public UrnResolver() {
@@ -38,12 +38,11 @@ public class UrnResolver extends AbstractContextualizer implements IExpression, 
 
     public UrnResolver(String urn, IContextualizationScope overallContext) {
         Pair<String, Map<String, String>> call = Urns.INSTANCE.resolveParameters(urn);
-        this.resource = Resources.INSTANCE.resolveResource(urn);
-        if (this.resource == null || !Resources.INSTANCE.isResourceOnline(this.resource)) {
+        this.originalResource = Resources.INSTANCE.resolveResource(urn);
+        if (this.originalResource == null || !Resources.INSTANCE.isResourceOnline(this.originalResource)) {
             throw new KlabResourceNotFoundException("resource with URN " + urn + " is unavailable or offline");
         }
         this.urnParameters = call.getSecond();
-        // this.overallScale = overallContext.getContextObservation().getScale();
     }
 
     public static IServiceCall getServiceCall(String urn, IContextualizable condition, boolean conditionNegated) {
@@ -51,17 +50,17 @@ public class UrnResolver extends AbstractContextualizer implements IExpression, 
     }
 
     @Override
+    public void notifyContextualizedResource(IContextualizable resource, IArtifact target, IContextualizationScope scope) {
+        this.resource = resource.getResource();
+    }
+
+    @Override
     public IArtifact resolve(IArtifact observation, IContextualizationScope scope) {
 
-        /**
-         * Contextualize the resource to the passed context and parameters.
-         */
-        IResource res = this.resource.contextualize(scope.getScale(), observation, urnParameters, scope);
-
-        if (res.getAvailability() != null) {
-            switch(res.getAvailability().getAvailability()) {
+        if (this.resource.getAvailability() != null) {
+            switch(this.resource.getAvailability().getAvailability()) {
             case DELAYED:
-                scope.getMonitor().addWait(res.getAvailability().getRetryTimeSeconds());
+                scope.getMonitor().addWait(this.resource.getAvailability().getRetryTimeSeconds());
                 return observation;
             case NONE:
                 scope.getMonitor().error("resource " + resource.getUrn() + " has no data available in this context");
@@ -77,8 +76,11 @@ public class UrnResolver extends AbstractContextualizer implements IExpression, 
         Map<String, String> parameters = urnParameters;
         // this.localized = true;
 
+        // Should be impossible now
         if (this.resource instanceof MergedResource) {
 
+            System.out.println("PORRCOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
+            
             List<Pair<IResource, Map<String, String>>> resources = ((MergedResource) this.resource)
                     .contextualize(scope.getScale(), observation, scope);
             if (resources.isEmpty()) {
@@ -101,16 +103,16 @@ public class UrnResolver extends AbstractContextualizer implements IExpression, 
                         .warn("Warning: unimplemented use of multiple resources for one timestep. Choosing only the first.");
             }
 
-            res = resources.get(0).getFirst();
+            this.resource = resources.get(0).getFirst();
             parameters = resources.get(0).getSecond();
         }
 
         if (Configuration.INSTANCE.isEchoEnabled()) {
-            System.err.println("GETTING DATA FROM " + res.getUrn());
+            System.err.println("GETTING DATA FROM " + this.resource.getUrn());
         }
-        IKlabData data = Resources.INSTANCE.getResourceData(res, parameters, scope.getScale(), scope, observation);
+        IKlabData data = Resources.INSTANCE.getResourceData(this.resource, parameters, scope.getScale(), scope, observation);
         if (Configuration.INSTANCE.isEchoEnabled()) {
-            System.err.println("DONE " + res.getUrn());
+            System.err.println("DONE " + this.resource.getUrn());
         }
 
         if (data == null) {

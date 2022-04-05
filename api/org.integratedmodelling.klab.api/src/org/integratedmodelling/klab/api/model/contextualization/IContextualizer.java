@@ -70,8 +70,7 @@ public abstract interface IContextualizer {
 	 * @param resource
 	 * @param target
 	 * @param scope
-	 * @return
 	 */
-	IContextualizable contextualize(IContextualizable resource, IArtifact target, IContextualizationScope scope);
+	void notifyContextualizedResource(IContextualizable resource, IArtifact target, IContextualizationScope scope);
 
 }

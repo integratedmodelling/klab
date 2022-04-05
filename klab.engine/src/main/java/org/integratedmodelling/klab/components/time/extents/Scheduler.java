@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
+import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Configuration;
@@ -27,6 +28,7 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
+import org.integratedmodelling.klab.api.model.contextualization.IContextualizer;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -379,13 +381,21 @@ public class Scheduler implements IScheduler {
                             artifact = computation.target;
                         }
 
+                        IRuntimeScope transitionScope = actuator.setupScope(artifact, transitionContext);
+
+                        IContextualizable resource = computation.resource;
+                        if (resource != null) {
+                            resource = resource.contextualize(target, transitionScope);
+                            computation.contextualizer.notifyContextualizedResource(resource, target, transitionScope);
+                        }
+
                         /*
                          * substitute the target for the next computation if we're using layers
                          */
                         artifact = actuator.runContextualizer(computation.contextualizer,
                                 computation.observable,
-                                computation.resource, artifact,
-                                actuator.setupScope(artifact, transitionContext),
+                                resource, artifact,
+                                transitionScope,
                                 (IScale) transitionScale);
 
                         if (computation.target instanceof IDirectObservation

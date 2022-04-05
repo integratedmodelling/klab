@@ -402,8 +402,16 @@ public class Actuator implements IActuator {
                         "function " + service.getFirst().getName() + " does not produce a contextualizer");
             } /* TODO else call contextualize() and swap the contextualizable in the pair */
             
-
-            computation.add(new Pair<>((IContextualizer) contextualizer, service.getSecond()));
+            /*
+             * ensure the resource matches if needed
+             */
+            IContextualizable resource = service.getSecond();
+            if (resource != null) {
+                resource = resource.contextualize(target, ctx);
+                ((IContextualizer)contextualizer).notifyContextualizedResource(resource, target, ctx);
+            }
+            
+            computation.add(new Pair<>((IContextualizer) contextualizer, resource));
         }
 
         IArtifact ret = target;
@@ -654,6 +662,11 @@ public class Actuator implements IActuator {
             Debug.INSTANCE.startTimer("Contextualizing " + getObservable(), null);
         }
 
+        /*
+         * record the recontextualized resource in provenance
+         */
+        System.out.println("PROVENANCE, CAZZO");
+        
         ISession session = scope.getMonitor().getIdentity().getParentIdentity(ISession.class);
         DataflowState state = new DataflowState();
         state.setNodeId(((RuntimeScope) scope).getNodeId(resource));

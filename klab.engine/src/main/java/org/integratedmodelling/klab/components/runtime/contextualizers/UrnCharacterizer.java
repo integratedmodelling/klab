@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
@@ -50,6 +51,11 @@ public class UrnCharacterizer extends AbstractContextualizer implements IResolve
     }
 
     @Override
+    public void notifyContextualizedResource(IContextualizable resource, IArtifact target, IContextualizationScope scope) {
+        this.resource = resource.getResource();
+    }
+    
+    @Override
     public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
         return new UrnCharacterizer(parameters.get("urn", String.class));
     }
@@ -62,12 +68,12 @@ public class UrnCharacterizer extends AbstractContextualizer implements IResolve
     @Override
     public IArtifact resolve(IArtifact ret, IContextualizationScope context) throws KlabException {
 
-        IResource res = this.resource.contextualize(context.getScale(), context.getTargetArtifact(), urnParameters, context);
+//        IResource res = this.resource.contextualize(context.getScale(), context.getTargetArtifact(), urnParameters, context);
         
-        if (res.getAvailability() != null) {
-            switch(res.getAvailability().getAvailability()) {
+        if (this.resource.getAvailability() != null) {
+            switch(this.resource.getAvailability().getAvailability()) {
             case DELAYED:
-                context.getMonitor().addWait(res.getAvailability().getRetryTimeSeconds());
+                context.getMonitor().addWait(this.resource.getAvailability().getRetryTimeSeconds());
                 return ret;
             case NONE:
                 context.getMonitor().error("resource " + resource.getUrn() + " has no data available in this context");
@@ -79,7 +85,8 @@ public class UrnCharacterizer extends AbstractContextualizer implements IResolve
                 break;
             }
         }
-        IKlabData data = Resources.INSTANCE.getResourceData(res, urnParameters, context.getScale(), context, ret);
+        
+        IKlabData data = Resources.INSTANCE.getResourceData(this.resource, urnParameters, context.getScale(), context, ret);
         if (data != null) {
             IConcept concept = data.getSemantics();
             if (concept != null) {

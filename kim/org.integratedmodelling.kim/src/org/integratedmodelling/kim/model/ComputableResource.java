@@ -30,6 +30,7 @@ import org.integratedmodelling.kim.kim.ValueAssignment;
 import org.integratedmodelling.kim.model.Kim.UrnDescriptor;
 import org.integratedmodelling.kim.model.Kim.Validator;
 import org.integratedmodelling.klab.Services;
+import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
@@ -45,9 +46,11 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.services.IExtensionService;
 import org.integratedmodelling.klab.api.services.IResourceService;
 import org.integratedmodelling.klab.common.Geometry;
+import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
@@ -893,5 +896,32 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 	        }
 		return false;
 	}
+
+    @Override
+    public IContextualizable contextualize(IArtifact target, IContextualizationScope scope) {
+        if (getType() == Type.RESOURCE) {
+            Urn urn = new Urn(getUrn());
+            IResourceService resourceService = Services.INSTANCE.getService(IResourceService.class);
+            IResource resource = resourceService.contextualizeResource(getResource(), urn.getParameters(), scope.getScale(), target, scope);
+            ComputableResource ret = copy();
+            ret.validatedResource = resource;
+            return ret;
+        }
+        return this;
+    }
+
+    @Override
+    public IResource getResource() {
+        if (validatedResource instanceof IResource) {
+            return (IResource)validatedResource;
+        }
+        if (getUrn() != null && validatedResource == null) {
+            IResourceService service = Services.INSTANCE.getService(IResourceService.class);
+            if (service != null) {
+                validatedResource = service.resolveResource(getUrn());
+            }
+        }
+        throw new KlabIllegalStateException("getResource() called on a non-resource contextualizable");
+    }
 
 }

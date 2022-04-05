@@ -79,7 +79,7 @@ import org.integratedmodelling.klab.rest.SpatialExtent;
  * @author Ferd
  * @version $Id: $Id
  */
-public interface IResource extends IProvenance.Node, Serializable {
+public interface IResource extends IProvenance.Node {
 
 	public enum Availability {
 		COMPLETE, PARTIAL, DELAYED, NONE
@@ -611,45 +611,6 @@ public interface IResource extends IProvenance.Node, Serializable {
 	 * @return project name
 	 */
 	String getLocalProjectName();
-
-	/**
-	 * A resource that handles multiple time periods and/or disjoint spatial
-	 * contexts may need to be contextualized explicitly before use. This method
-	 * should return the same resource it's called on, unless structural changes
-	 * need to be made before the normal contextualization can take place, operated
-	 * by
-	 * {@link IResourceService#getResourceData(IResource, Map, IGeometry, IContextualizationScope)}.
-	 * <p>
-	 * If the contextualization ends up requiring more than one "slice", a resource
-	 * merger capable of aggregating appropriately should be returned; otherwise,
-	 * the most suitable sub-resource or self should be returned. The function is
-	 * called on all resources before use in each uniform time period, handling both
-	 * state and change in state when the resource is dynamic over the
-	 * contextualized time. The resource adapter may also need to be informed of an
-	 * incoming set of requests and prepare for it, returning an identifier that
-	 * will need to be in the metadata of the contextualized resource.
-	 * <p>
-	 * Resources that have flexible typing (getType() returns null) should at this
-	 * point have enough information to return the appropriate type, adapting to the
-	 * passed observation.
-	 * 
-	 * @deprecated move this into IContextualizer THROUGH the IContextualizable (?)
-	 *             and have the actuator call it to build the provenance graph.
-	 * 
-	 * @param scale         the scale of contextualization
-	 * @param artifact      the contextualized artifact (including semantics if an
-	 *                      instance of {@link IObservation}). This can be used to
-	 *                      determine the type of aggregation needed and the
-	 *                      resource type if still undefined. May be null when the
-	 *                      observation is a characterization and the resource type
-	 *                      is void.
-	 * @param urnParameters any parameters sent to the URN
-	 * @param scope         the contextualization scope
-	 * @return this or another resource that can deal with the passed overall
-	 *         context.
-	 */
-	IResource contextualize(IScale scale, IArtifact artifact, Map<String, String> urnParameters,
-			IContextualizationScope scope);
 
 	/**
 	 * Return the reference name for all codelists defined within this resource. A

@@ -49,16 +49,21 @@ public class UrnInstantiator extends AbstractContextualizer implements IExpressi
     }
 
     @Override
+    public void notifyContextualizedResource(IContextualizable resource, IArtifact target, IContextualizationScope scope) {
+        this.resource = resource.getResource();
+    }
+    
+    @Override
     public List<IObjectArtifact> instantiate(IObservable semantics, IContextualizationScope scope) throws KlabException {
 
         List<IObjectArtifact> ret = new ArrayList<>();
-        IResource res = this.resource.contextualize(scope.getScale(), scope.getTargetArtifact(), urnParameters, scope);
+//        IResource res = this.resource.contextualize(scope.getScale(), scope.getTargetArtifact(), urnParameters, scope);
         Map<String, String> parameters = urnParameters;
         
-        if (res.getAvailability() != null) {
-            switch(res.getAvailability().getAvailability()) {
+        if (this.resource.getAvailability() != null) {
+            switch(this.resource.getAvailability().getAvailability()) {
             case DELAYED:
-                scope.getMonitor().addWait(res.getAvailability().getRetryTimeSeconds());
+                scope.getMonitor().addWait(this.resource.getAvailability().getRetryTimeSeconds());
                 return ret;
             case NONE:
                 scope.getMonitor().error("resource " + resource.getUrn() + " has no data available in this context");
@@ -73,6 +78,8 @@ public class UrnInstantiator extends AbstractContextualizer implements IExpressi
         
         if (this.resource instanceof MergedResource) {
 
+            System.out.println("PORRCOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
+            
             List<Pair<IResource, Map<String, String>>> resources = ((MergedResource) this.resource)
                     .contextualize(scope.getScale(), scope.getTargetArtifact(), scope);
             if (resources.isEmpty()) {
@@ -93,12 +100,12 @@ public class UrnInstantiator extends AbstractContextualizer implements IExpressi
                         .warn("Warning: unimplemented use of multiple resources for one timestep. Choosing only the first.");
             }
 
-            res = resources.get(0).getFirst();
+            this.resource = resources.get(0).getFirst();
             parameters = resources.get(0).getSecond();
 
         }
 
-        IKlabData data = Resources.INSTANCE.getResourceData(res, parameters, scope.getScale(), scope);
+        IKlabData data = Resources.INSTANCE.getResourceData(this.resource, parameters, scope.getScale(), scope);
 
         if (data != null && data.getArtifact() != null) {
             for (IArtifact artifact : data.getArtifact()) {
