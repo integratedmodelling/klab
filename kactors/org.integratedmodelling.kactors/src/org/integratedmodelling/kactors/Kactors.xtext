@@ -128,6 +128,7 @@ Assertion:
 		(expression=EXPR | 
 		(methodCalls+=MethodCall '.')* methodCalls+=MethodCallWithActions) 
 		('is' (ok='ok' | value=Value))?
+		(metadata=Metadata)?
 ;
 
 NextStatement returns Statement:
@@ -382,7 +383,7 @@ Annotation:
 	name=ANNOTATION_ID ('(' parameters=ParameterList? ')')?;
 	
 Literal:
-	number=Number | from=Number 'to' to=Number | string=(STRING|LOCALIZED_STRING_REFERENCE) | date=Date | boolean=('true' | 'false');
+	number=Number | from=Number 'to' to=Number | string=(STRING|LOCALIZED_STRING_REFERENCE) | date=Date | expression=EXPR | boolean=('true' | 'false');
 	
 ParameterList:
 	pairs+=KeyValuePair (=> (',')? pairs+=KeyValuePair)*;
