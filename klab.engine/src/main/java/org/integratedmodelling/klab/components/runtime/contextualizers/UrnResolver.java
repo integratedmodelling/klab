@@ -1,6 +1,5 @@
 package org.integratedmodelling.klab.components.runtime.contextualizers;
 
-import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.IContextualizable;
@@ -17,8 +16,6 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Urns;
-import org.integratedmodelling.klab.documentation.Report;
-import org.integratedmodelling.klab.engine.resources.MergedResource;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.utils.Pair;
@@ -76,11 +73,11 @@ public class UrnResolver extends AbstractContextualizer implements IExpression, 
         Map<String, String> parameters = urnParameters;
         // this.localized = true;
 
-        // Should be impossible now
-        if (this.resource instanceof MergedResource) {
-
-            System.out.println("PORRCOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
-            
+//        // Should be impossible now
+//        if (this.resource instanceof MergedResource) {
+//
+//            System.out.println("PORRCOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
+//            
 //            List<Pair<IResource, Map<String, String>>> resources = ((MergedResource) this.resource)
 //                    .contextualize(scope.getScale(), observation, scope);
 //            if (resources.isEmpty()) {
@@ -105,7 +102,7 @@ public class UrnResolver extends AbstractContextualizer implements IExpression, 
 //
 //            this.resource = resources.get(0).getFirst();
 //            parameters = resources.get(0).getSecond();
-        }
+//        }
 
         if (Configuration.INSTANCE.isEchoEnabled()) {
             System.err.println("GETTING DATA FROM " + this.resource.getUrn());

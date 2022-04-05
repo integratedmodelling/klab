@@ -73,6 +73,7 @@ public class MergedResource implements IResource {
     private boolean logicalTime;
     private ITime.Resolution resolution;
     private List<String> urns = new ArrayList<>();
+    private Map<String, Map<String, String>> resourceParameters = new HashMap<>();
 
     class ResourceSet {
         long start = -1;
@@ -148,6 +149,8 @@ public class MergedResource implements IResource {
                 this.resolution = scale.getTime().getCoverageResolution();
             }
 
+            resourceParameters.put(uurn.getUrn(), uurn.getParameters());
+            
             getResourceSet(scale).resources.add(new Pair<>(resource, uurn.getParameters()));
 
         }
@@ -208,8 +211,7 @@ public class MergedResource implements IResource {
         }
 
         if (resolution != null && !time.getCoverageResolution().equals(resolution)) {
-            throw new KlabValidationException(
-                    "Cannot merge resources in logical time and different coverage resolutions");
+            throw new KlabValidationException("Cannot merge resources in logical time and different coverage resolutions");
         }
 
         if (!resources.isEmpty()) {
@@ -222,8 +224,7 @@ public class MergedResource implements IResource {
                 // new one
                 for (ResourceSet set : resources.values()) {
                     if (set.coverage.getTime() == null) {
-                        throw new KlabValidationException(
-                                "Cannot merge temporal resources with non-temporal resources");
+                        throw new KlabValidationException("Cannot merge temporal resources with non-temporal resources");
                     }
                     if (time.is(ITime.Type.LOGICAL) && time.getCoverageResolution() != null) {
                         if (timeStart == time.getCoverageLocatorStart()) {
@@ -292,8 +293,7 @@ public class MergedResource implements IResource {
                 shape = set.coverage.getSpace().getShape();
             } else {
                 if (set.coverage.getSpace() == null) {
-                    throw new KlabValidationException(
-                            "Cannot merge spatial resources with non-spatial resources");
+                    throw new KlabValidationException("Cannot merge spatial resources with non-spatial resources");
                 }
                 shape = shape.union(set.coverage.getSpace().getShape());
             }
@@ -331,10 +331,8 @@ public class MergedResource implements IResource {
             time = Time.create(ITime.Type.PHYSICAL, restype, resMultiplier, new TimeInstant(timeStart),
                     timeEnd > 0 ? new TimeInstant(timeEnd) : null, null);
         } else {
-            time = Time.create(ITime.Type.LOGICAL, restype, resMultiplier,
-                    timeStart > 0 ? new TimeInstant(timeStart) : null,
-                    timeEnd > 0 ? new TimeInstant(timeEnd) : null,
-                    null);
+            time = Time.create(ITime.Type.LOGICAL, restype, resMultiplier, timeStart > 0 ? new TimeInstant(timeStart) : null,
+                    timeEnd > 0 ? new TimeInstant(timeEnd) : null, null);
         }
 
         this.resolution = time.getResolution();
@@ -492,8 +490,7 @@ public class MergedResource implements IResource {
      * @param scale
      * @return
      */
-    public ContextualizedResource contextualize(IScale scale, IArtifact artifact,
-            IContextualizationScope scope) {
+    public ContextualizedResource contextualize(IScale scale, IArtifact artifact, IContextualizationScope scope) {
 
         long locator = -1;
 
@@ -509,8 +506,7 @@ public class MergedResource implements IResource {
          */
 
         ITime resolutionTime = scale.getTime();
-        boolean isDynamic = artifact != null
-                && artifact.getGeometry().getDimension(Dimension.Type.TIME) != null
+        boolean isDynamic = artifact != null && artifact.getGeometry().getDimension(Dimension.Type.TIME) != null
                 && artifact.getGeometry().getDimension(Dimension.Type.TIME).size() > 1;
 
         if (resolutionTime != null && resolutionTime.getStart() != null) {
@@ -568,9 +564,8 @@ public class MergedResource implements IResource {
                     /*
                      * TODO for now only notifies the first resource
                      */
-                    scope.notifyInspector(scope, IInspector.Asset.RESOURCE,
-                            IInspector.Event.SELECTION, set.getValue().resources.get(0), artifact,
-                            scale.getTime());
+                    scope.notifyInspector(scope, IInspector.Asset.RESOURCE, IInspector.Event.SELECTION,
+                            set.getValue().resources.get(0), artifact, scale.getTime());
 
                     ret.addAll(set.getValue().resources);
                 }
@@ -642,6 +637,10 @@ public class MergedResource implements IResource {
     public List<String> getCodelists() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    public Map<String, String> getParameters(String urn2) {
+        return resourceParameters.get(urn2);
     }
 
 }

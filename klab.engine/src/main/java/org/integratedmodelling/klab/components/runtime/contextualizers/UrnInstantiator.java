@@ -76,10 +76,10 @@ public class UrnInstantiator extends AbstractContextualizer implements IExpressi
             }
         }
         
-        if (this.resource instanceof MergedResource) {
-
-            System.out.println("PORRCOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
-            
+//        if (this.resource instanceof MergedResource) {
+//
+//            System.out.println("PORRCOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
+//            
 //            List<Pair<IResource, Map<String, String>>> resources = ((MergedResource) this.resource)
 //                    .contextualize(scope.getScale(), scope.getTargetArtifact(), scope);
 //            if (resources.isEmpty()) {
@@ -102,8 +102,8 @@ public class UrnInstantiator extends AbstractContextualizer implements IExpressi
 //
 //            this.resource = resources.get(0).getFirst();
 //            parameters = resources.get(0).getSecond();
-
-        }
+//
+//        }
 
         IKlabData data = Resources.INSTANCE.getResourceData(this.resource, parameters, scope.getScale(), scope);
 
