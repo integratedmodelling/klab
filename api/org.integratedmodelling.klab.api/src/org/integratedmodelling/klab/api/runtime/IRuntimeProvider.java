@@ -191,18 +191,15 @@ public interface IRuntimeProvider {
     IContextualizable getOperatorResolver(IObservable classifiedObservable, ValueOperator operator, Object operand,
             Set<ValueOperator> modifiers);
 
-    /**
-     * Return a process computation that will pick the appropriate temporal slice from a resource to
-     * resolve the passed change process by contextualizing the appropriate values in the changing
-     * observable.
-     * 
-     * @param changeObservable
-     * @param mergedResource
-     * @return
-     * @deprecated must use the regular resource contextualization mechanism and just compile in an
-     *             urn resolver
-     */
-    IContextualizable getChangeResolver(IObservable changeObservable, IResource mergedResource);
+//    /**
+//     * Return a process computation that will resolve a resource. Redundant with some cases of
+//     * {@link #getComputation(IObservable, IResolutionScope.Mode, IObservable)}, should clean up.
+//     * 
+//     * @param changeObservable
+//     * @param mergedResource
+//     * @return
+//     */
+//    IContextualizable getResolver(IObservable changeObservable, IResource mergedResource);
 
     /**
      * Return a void contextualizer that will resolve a view and send the compiled results to the

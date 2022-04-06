@@ -256,7 +256,7 @@ public class MergedResource implements IResource {
                     ret.resolution = time.getResolution();
                 }
             }
-
+            
             if (ret.start == -1 && ret.end == -1) {
                 throw new KlabValidationException("Resources that are merged must have temporal boundaries");
             }
@@ -566,13 +566,13 @@ public class MergedResource implements IResource {
                      */
                     scope.notifyInspector(scope, IInspector.Asset.RESOURCE, IInspector.Event.SELECTION,
                             set.getValue().resources.get(0), artifact, scale.getTime());
-
+                    
                     ret.addAll(set.getValue().resources);
                 }
             }
         }
 
-        return new ContextualizedResource(ret);
+        return new ContextualizedResource(this, ret);
     }
 
     @Override

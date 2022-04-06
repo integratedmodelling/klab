@@ -902,6 +902,9 @@ public class ComputableResource extends KimStatement implements IContextualizabl
         if (getType() == Type.RESOURCE) {
             Urn urn = new Urn(getUrn());
             IResourceService resourceService = Services.INSTANCE.getService(IResourceService.class);
+            if (urn.toString().contains(":merged:")) {
+                System.out.println("FUROP POROODIOC");
+            }
             IResource resource = resourceService.contextualizeResource(getResource(), urn.getParameters(), scope.getScale(), target, scope);
             ComputableResource ret = copy();
             ret.validatedResource = resource;

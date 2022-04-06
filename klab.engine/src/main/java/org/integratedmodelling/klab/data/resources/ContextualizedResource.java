@@ -10,6 +10,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.services.IResourceService;
+import org.integratedmodelling.klab.engine.resources.MergedResource;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.utils.Pair;
@@ -32,7 +33,8 @@ import org.integratedmodelling.klab.utils.Pair;
 public class ContextualizedResource extends Resource {
 
     List<Pair<IResource, ICoverage>> resourceStructure = new ArrayList<>();
-
+    boolean empty = false;
+    
     /**
      * Simple copy of all resource data
      * 
@@ -43,13 +45,21 @@ public class ContextualizedResource extends Resource {
         resourceStructure.add(new Pair<>(resource, null));
     }
 
+    @Override
+    public boolean isEmpty() {
+        return empty;
+    }
+    
     /**
      * Resource holds the result of contextualizing a merging resource.
      * 
      * @param ret
      */
-    public ContextualizedResource(List<Pair<IResource, Map<String, String>>> ret) {
-        if (ret.size() == 1) {
+    public ContextualizedResource(MergedResource source, List<Pair<IResource, Map<String, String>>> ret) {
+        if (ret.size() == 0) {
+            empty = true;
+            copyContents(source);
+        } else if (ret.size() == 1) {
             IResource resource = ((Resource) ret.get(0).getFirst());
             copy(((Resource) resource).getReference());
             resourceStructure.add(new Pair<>(resource, null));

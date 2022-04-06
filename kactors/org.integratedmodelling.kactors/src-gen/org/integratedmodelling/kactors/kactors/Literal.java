@@ -19,7 +19,6 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kactors.kactors.Literal#getTo <em>To</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Literal#getString <em>String</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Literal#getDate <em>Date</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.Literal#getExpression <em>Expression</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Literal#getBoolean <em>Boolean</em>}</li>
  * </ul>
  *
@@ -138,28 +137,6 @@ public interface Literal extends EObject
    * @generated
    */
   void setDate(Date value);
-
-  /**
-   * Returns the value of the '<em><b>Expression</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Expression</em>' attribute.
-   * @see #setExpression(String)
-   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getLiteral_Expression()
-   * @model
-   * @generated
-   */
-  String getExpression();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Literal#getExpression <em>Expression</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Expression</em>' attribute.
-   * @see #getExpression()
-   * @generated
-   */
-  void setExpression(String value);
 
   /**
    * Returns the value of the '<em><b>Boolean</b></em>' attribute.

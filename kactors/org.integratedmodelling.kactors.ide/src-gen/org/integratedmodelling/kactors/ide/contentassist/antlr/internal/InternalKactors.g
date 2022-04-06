@@ -3610,15 +3610,9 @@ rule__Literal__Alternatives
 	)
 	|
 	(
-		{ before(grammarAccess.getLiteralAccess().getExpressionAssignment_4()); }
-		(rule__Literal__ExpressionAssignment_4)
-		{ after(grammarAccess.getLiteralAccess().getExpressionAssignment_4()); }
-	)
-	|
-	(
-		{ before(grammarAccess.getLiteralAccess().getBooleanAssignment_5()); }
-		(rule__Literal__BooleanAssignment_5)
-		{ after(grammarAccess.getLiteralAccess().getBooleanAssignment_5()); }
+		{ before(grammarAccess.getLiteralAccess().getBooleanAssignment_4()); }
+		(rule__Literal__BooleanAssignment_4)
+		{ after(grammarAccess.getLiteralAccess().getBooleanAssignment_4()); }
 	)
 ;
 finally {
@@ -3646,21 +3640,21 @@ finally {
 	restoreStackSize(stackSize);
 }
 
-rule__Literal__BooleanAlternatives_5_0
+rule__Literal__BooleanAlternatives_4_0
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 	(
-		{ before(grammarAccess.getLiteralAccess().getBooleanTrueKeyword_5_0_0()); }
+		{ before(grammarAccess.getLiteralAccess().getBooleanTrueKeyword_4_0_0()); }
 		'true'
-		{ after(grammarAccess.getLiteralAccess().getBooleanTrueKeyword_5_0_0()); }
+		{ after(grammarAccess.getLiteralAccess().getBooleanTrueKeyword_4_0_0()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getLiteralAccess().getBooleanFalseKeyword_5_0_1()); }
+		{ before(grammarAccess.getLiteralAccess().getBooleanFalseKeyword_4_0_1()); }
 		'false'
-		{ after(grammarAccess.getLiteralAccess().getBooleanFalseKeyword_5_0_1()); }
+		{ after(grammarAccess.getLiteralAccess().getBooleanFalseKeyword_4_0_1()); }
 	)
 ;
 finally {
@@ -26972,30 +26966,15 @@ finally {
 	restoreStackSize(stackSize);
 }
 
-rule__Literal__ExpressionAssignment_4
+rule__Literal__BooleanAssignment_4
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 	(
-		{ before(grammarAccess.getLiteralAccess().getExpressionEXPRTerminalRuleCall_4_0()); }
-		RULE_EXPR
-		{ after(grammarAccess.getLiteralAccess().getExpressionEXPRTerminalRuleCall_4_0()); }
-	)
-;
-finally {
-	restoreStackSize(stackSize);
-}
-
-rule__Literal__BooleanAssignment_5
-	@init {
-		int stackSize = keepStackSize();
-	}
-:
-	(
-		{ before(grammarAccess.getLiteralAccess().getBooleanAlternatives_5_0()); }
-		(rule__Literal__BooleanAlternatives_5_0)
-		{ after(grammarAccess.getLiteralAccess().getBooleanAlternatives_5_0()); }
+		{ before(grammarAccess.getLiteralAccess().getBooleanAlternatives_4_0()); }
+		(rule__Literal__BooleanAlternatives_4_0)
+		{ after(grammarAccess.getLiteralAccess().getBooleanAlternatives_4_0()); }
 	)
 ;
 finally {

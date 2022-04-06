@@ -29,7 +29,6 @@ import org.integratedmodelling.kactors.kactors.Literal;
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.LiteralImpl#getTo <em>To</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.LiteralImpl#getString <em>String</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.LiteralImpl#getDate <em>Date</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.LiteralImpl#getExpression <em>Expression</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.LiteralImpl#getBoolean <em>Boolean</em>}</li>
  * </ul>
  *
@@ -96,26 +95,6 @@ public class LiteralImpl extends MinimalEObjectImpl.Container implements Literal
    * @ordered
    */
   protected Date date;
-
-  /**
-   * The default value of the '{@link #getExpression() <em>Expression</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getExpression()
-   * @generated
-   * @ordered
-   */
-  protected static final String EXPRESSION_EDEFAULT = null;
-
-  /**
-   * The cached value of the '{@link #getExpression() <em>Expression</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getExpression()
-   * @generated
-   * @ordered
-   */
-  protected String expression = EXPRESSION_EDEFAULT;
 
   /**
    * The default value of the '{@link #getBoolean() <em>Boolean</em>}' attribute.
@@ -389,31 +368,6 @@ public class LiteralImpl extends MinimalEObjectImpl.Container implements Literal
    * @generated
    */
   @Override
-  public String getExpression()
-  {
-    return expression;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setExpression(String newExpression)
-  {
-    String oldExpression = expression;
-    expression = newExpression;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.LITERAL__EXPRESSION, oldExpression, expression));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
   public String getBoolean()
   {
     return boolean_;
@@ -475,8 +429,6 @@ public class LiteralImpl extends MinimalEObjectImpl.Container implements Literal
         return getString();
       case KactorsPackage.LITERAL__DATE:
         return getDate();
-      case KactorsPackage.LITERAL__EXPRESSION:
-        return getExpression();
       case KactorsPackage.LITERAL__BOOLEAN:
         return getBoolean();
     }
@@ -507,9 +459,6 @@ public class LiteralImpl extends MinimalEObjectImpl.Container implements Literal
         return;
       case KactorsPackage.LITERAL__DATE:
         setDate((Date)newValue);
-        return;
-      case KactorsPackage.LITERAL__EXPRESSION:
-        setExpression((String)newValue);
         return;
       case KactorsPackage.LITERAL__BOOLEAN:
         setBoolean((String)newValue);
@@ -543,9 +492,6 @@ public class LiteralImpl extends MinimalEObjectImpl.Container implements Literal
       case KactorsPackage.LITERAL__DATE:
         setDate((Date)null);
         return;
-      case KactorsPackage.LITERAL__EXPRESSION:
-        setExpression(EXPRESSION_EDEFAULT);
-        return;
       case KactorsPackage.LITERAL__BOOLEAN:
         setBoolean(BOOLEAN_EDEFAULT);
         return;
@@ -573,8 +519,6 @@ public class LiteralImpl extends MinimalEObjectImpl.Container implements Literal
         return STRING_EDEFAULT == null ? string != null : !STRING_EDEFAULT.equals(string);
       case KactorsPackage.LITERAL__DATE:
         return date != null;
-      case KactorsPackage.LITERAL__EXPRESSION:
-        return EXPRESSION_EDEFAULT == null ? expression != null : !EXPRESSION_EDEFAULT.equals(expression);
       case KactorsPackage.LITERAL__BOOLEAN:
         return BOOLEAN_EDEFAULT == null ? boolean_ != null : !BOOLEAN_EDEFAULT.equals(boolean_);
     }
@@ -594,8 +538,6 @@ public class LiteralImpl extends MinimalEObjectImpl.Container implements Literal
     StringBuilder result = new StringBuilder(super.toString());
     result.append(" (string: ");
     result.append(string);
-    result.append(", expression: ");
-    result.append(expression);
     result.append(", boolean: ");
     result.append(boolean_);
     result.append(')');

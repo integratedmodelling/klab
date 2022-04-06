@@ -1119,6 +1119,13 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		private final Assignment cNextAssignment_1 = (Assignment)cGroup.eContents().get(1);
 		private final RuleCall cNextNextStatementParserRuleCall_1_0 = (RuleCall)cNextAssignment_1.eContents().get(0);
 		
+		////MetadataWithExpr returns Metadata:
+		////    pairs+=MetadataPairWithExpr+
+		////;
+		////
+		////MetadataPairWithExpr returns MetadataPair:
+		////    key=KEY (value=LiteralWithExpr)?
+		////;
 		//StatementList:
 		//    first=Statement next+=NextStatement*
 		//;
@@ -1502,14 +1509,14 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//        (expression=EXPR |
 		//        (methodCalls+=MethodCall '.')* methodCalls+=MethodCallWithActions)
 		//        ('is' (ok='ok' | value=Value))?
-		//        (metadata=Metadata)?
+		//        (=> metadata=Metadata)?
 		//;
 		@Override public ParserRule getRule() { return rule; }
 		
 		//(expression=EXPR |
 		//(methodCalls+=MethodCall '.')* methodCalls+=MethodCallWithActions)
 		//('is' (ok='ok' | value=Value))?
-		//(metadata=Metadata)?
+		//(=> metadata=Metadata)?
 		public Group getGroup() { return cGroup; }
 		
 		//(expression=EXPR |
@@ -1564,7 +1571,7 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//Value
 		public RuleCall getValueValueParserRuleCall_1_1_1_0() { return cValueValueParserRuleCall_1_1_1_0; }
 		
-		//(metadata=Metadata)?
+		//(=> metadata=Metadata)?
 		public Assignment getMetadataAssignment_2() { return cMetadataAssignment_2; }
 		
 		//Metadata
@@ -4706,18 +4713,16 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		private final RuleCall cStringLOCALIZED_STRING_REFERENCETerminalRuleCall_2_0_1 = (RuleCall)cStringAlternatives_2_0.eContents().get(1);
 		private final Assignment cDateAssignment_3 = (Assignment)cAlternatives.eContents().get(3);
 		private final RuleCall cDateDateParserRuleCall_3_0 = (RuleCall)cDateAssignment_3.eContents().get(0);
-		private final Assignment cExpressionAssignment_4 = (Assignment)cAlternatives.eContents().get(4);
-		private final RuleCall cExpressionEXPRTerminalRuleCall_4_0 = (RuleCall)cExpressionAssignment_4.eContents().get(0);
-		private final Assignment cBooleanAssignment_5 = (Assignment)cAlternatives.eContents().get(5);
-		private final Alternatives cBooleanAlternatives_5_0 = (Alternatives)cBooleanAssignment_5.eContents().get(0);
-		private final Keyword cBooleanTrueKeyword_5_0_0 = (Keyword)cBooleanAlternatives_5_0.eContents().get(0);
-		private final Keyword cBooleanFalseKeyword_5_0_1 = (Keyword)cBooleanAlternatives_5_0.eContents().get(1);
+		private final Assignment cBooleanAssignment_4 = (Assignment)cAlternatives.eContents().get(4);
+		private final Alternatives cBooleanAlternatives_4_0 = (Alternatives)cBooleanAssignment_4.eContents().get(0);
+		private final Keyword cBooleanTrueKeyword_4_0_0 = (Keyword)cBooleanAlternatives_4_0.eContents().get(0);
+		private final Keyword cBooleanFalseKeyword_4_0_1 = (Keyword)cBooleanAlternatives_4_0.eContents().get(1);
 		
 		//Literal:
-		//    number=Number | from=Number 'to' to=Number | string=(STRING|LOCALIZED_STRING_REFERENCE) | date=Date | expression=EXPR | boolean=('true' | 'false');
+		//    number=Number | from=Number 'to' to=Number | string=(STRING|LOCALIZED_STRING_REFERENCE) | date=Date | boolean=('true' | 'false');
 		@Override public ParserRule getRule() { return rule; }
 		
-		//number=Number | from=Number 'to' to=Number | string=(STRING|LOCALIZED_STRING_REFERENCE) | date=Date | expression=EXPR | boolean=('true' | 'false')
+		//number=Number | from=Number 'to' to=Number | string=(STRING|LOCALIZED_STRING_REFERENCE) | date=Date | boolean=('true' | 'false')
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//number=Number
@@ -4762,23 +4767,17 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//Date
 		public RuleCall getDateDateParserRuleCall_3_0() { return cDateDateParserRuleCall_3_0; }
 		
-		//expression=EXPR
-		public Assignment getExpressionAssignment_4() { return cExpressionAssignment_4; }
-		
-		//EXPR
-		public RuleCall getExpressionEXPRTerminalRuleCall_4_0() { return cExpressionEXPRTerminalRuleCall_4_0; }
-		
 		//boolean=('true' | 'false')
-		public Assignment getBooleanAssignment_5() { return cBooleanAssignment_5; }
+		public Assignment getBooleanAssignment_4() { return cBooleanAssignment_4; }
 		
 		//('true' | 'false')
-		public Alternatives getBooleanAlternatives_5_0() { return cBooleanAlternatives_5_0; }
+		public Alternatives getBooleanAlternatives_4_0() { return cBooleanAlternatives_4_0; }
 		
 		//'true'
-		public Keyword getBooleanTrueKeyword_5_0_0() { return cBooleanTrueKeyword_5_0_0; }
+		public Keyword getBooleanTrueKeyword_4_0_0() { return cBooleanTrueKeyword_4_0_0; }
 		
 		//'false'
-		public Keyword getBooleanFalseKeyword_5_0_1() { return cBooleanFalseKeyword_5_0_1; }
+		public Keyword getBooleanFalseKeyword_4_0_1() { return cBooleanFalseKeyword_4_0_1; }
 	}
 	public class ParameterListElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.ParameterList");
@@ -4791,6 +4790,8 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		private final Assignment cPairsAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
 		private final RuleCall cPairsKeyValuePairParserRuleCall_1_1_0 = (RuleCall)cPairsAssignment_1_1.eContents().get(0);
 		
+		////LiteralWithExpr:
+		////    number=Number | from=Number 'to' to=Number | string=(STRING|LOCALIZED_STRING_REFERENCE) | date=Date | expression=EXPR | boolean=('true' | 'false');
 		//ParameterList:
 		//    pairs+=KeyValuePair (=> (',')? pairs+=KeyValuePair)*;
 		@Override public ParserRule getRule() { return rule; }
@@ -7657,6 +7658,13 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		return getMetadataPairAccess().getRule();
 	}
 	
+	////MetadataWithExpr returns Metadata:
+	////    pairs+=MetadataPairWithExpr+
+	////;
+	////
+	////MetadataPairWithExpr returns MetadataPair:
+	////    key=KEY (value=LiteralWithExpr)?
+	////;
 	//StatementList:
 	//    first=Statement next+=NextStatement*
 	//;
@@ -7740,7 +7748,7 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	//        (expression=EXPR |
 	//        (methodCalls+=MethodCall '.')* methodCalls+=MethodCallWithActions)
 	//        ('is' (ok='ok' | value=Value))?
-	//        (metadata=Metadata)?
+	//        (=> metadata=Metadata)?
 	//;
 	public AssertionElements getAssertionAccess() {
 		return pAssertion;
@@ -8218,7 +8226,7 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	}
 	
 	//Literal:
-	//    number=Number | from=Number 'to' to=Number | string=(STRING|LOCALIZED_STRING_REFERENCE) | date=Date | expression=EXPR | boolean=('true' | 'false');
+	//    number=Number | from=Number 'to' to=Number | string=(STRING|LOCALIZED_STRING_REFERENCE) | date=Date | boolean=('true' | 'false');
 	public LiteralElements getLiteralAccess() {
 		return pLiteral;
 	}
@@ -8227,6 +8235,8 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		return getLiteralAccess().getRule();
 	}
 	
+	////LiteralWithExpr:
+	////    number=Number | from=Number 'to' to=Number | string=(STRING|LOCALIZED_STRING_REFERENCE) | date=Date | expression=EXPR | boolean=('true' | 'false');
 	//ParameterList:
 	//    pairs+=KeyValuePair (=> (',')? pairs+=KeyValuePair)*;
 	public ParameterListElements getParameterListAccess() {

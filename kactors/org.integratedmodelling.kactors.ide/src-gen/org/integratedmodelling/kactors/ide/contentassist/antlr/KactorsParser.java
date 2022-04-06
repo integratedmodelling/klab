@@ -84,7 +84,7 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getQuantityAccess().getAlternatives_2(), "rule__Quantity__Alternatives_2");
 			builder.put(grammarAccess.getLiteralAccess().getAlternatives(), "rule__Literal__Alternatives");
 			builder.put(grammarAccess.getLiteralAccess().getStringAlternatives_2_0(), "rule__Literal__StringAlternatives_2_0");
-			builder.put(grammarAccess.getLiteralAccess().getBooleanAlternatives_5_0(), "rule__Literal__BooleanAlternatives_5_0");
+			builder.put(grammarAccess.getLiteralAccess().getBooleanAlternatives_4_0(), "rule__Literal__BooleanAlternatives_4_0");
 			builder.put(grammarAccess.getKeyValuePairAccess().getAlternatives(), "rule__KeyValuePair__Alternatives");
 			builder.put(grammarAccess.getKeyValuePairAccess().getAlternatives_1_0_1(), "rule__KeyValuePair__Alternatives_1_0_1");
 			builder.put(grammarAccess.getUnitElementAccess().getAlternatives(), "rule__UnitElement__Alternatives");
@@ -652,8 +652,7 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getLiteralAccess().getToAssignment_1_2(), "rule__Literal__ToAssignment_1_2");
 			builder.put(grammarAccess.getLiteralAccess().getStringAssignment_2(), "rule__Literal__StringAssignment_2");
 			builder.put(grammarAccess.getLiteralAccess().getDateAssignment_3(), "rule__Literal__DateAssignment_3");
-			builder.put(grammarAccess.getLiteralAccess().getExpressionAssignment_4(), "rule__Literal__ExpressionAssignment_4");
-			builder.put(grammarAccess.getLiteralAccess().getBooleanAssignment_5(), "rule__Literal__BooleanAssignment_5");
+			builder.put(grammarAccess.getLiteralAccess().getBooleanAssignment_4(), "rule__Literal__BooleanAssignment_4");
 			builder.put(grammarAccess.getParameterListAccess().getPairsAssignment_0(), "rule__ParameterList__PairsAssignment_0");
 			builder.put(grammarAccess.getParameterListAccess().getPairsAssignment_1_1(), "rule__ParameterList__PairsAssignment_1_1");
 			builder.put(grammarAccess.getKeyValuePairAccess().getTagAssignment_0(), "rule__KeyValuePair__TagAssignment_0");

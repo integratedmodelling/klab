@@ -87,6 +87,14 @@ MetadataPair:
 	key=KEY (value=Literal)?
 ;
 
+//MetadataWithExpr returns Metadata:
+//	pairs+=MetadataPairWithExpr+
+//;
+//
+//MetadataPairWithExpr returns MetadataPair:
+//	key=KEY (value=LiteralWithExpr)?
+//;
+
 StatementList:
 	first=Statement next+=NextStatement*
 ;
@@ -128,7 +136,7 @@ Assertion:
 		(expression=EXPR | 
 		(methodCalls+=MethodCall '.')* methodCalls+=MethodCallWithActions) 
 		('is' (ok='ok' | value=Value))?
-		(metadata=Metadata)?
+		(=> metadata=Metadata)?
 ;
 
 NextStatement returns Statement:
@@ -383,7 +391,10 @@ Annotation:
 	name=ANNOTATION_ID ('(' parameters=ParameterList? ')')?;
 	
 Literal:
-	number=Number | from=Number 'to' to=Number | string=(STRING|LOCALIZED_STRING_REFERENCE) | date=Date | expression=EXPR | boolean=('true' | 'false');
+	number=Number | from=Number 'to' to=Number | string=(STRING|LOCALIZED_STRING_REFERENCE) | date=Date | boolean=('true' | 'false');
+
+//LiteralWithExpr:
+//	number=Number | from=Number 'to' to=Number | string=(STRING|LOCALIZED_STRING_REFERENCE) | date=Date | expression=EXPR | boolean=('true' | 'false');
 	
 ParameterList:
 	pairs+=KeyValuePair (=> (',')? pairs+=KeyValuePair)*;

@@ -42,7 +42,7 @@ public class UrnResolver extends AbstractContextualizer implements IExpression, 
         this.urnParameters = call.getSecond();
     }
 
-    public static IServiceCall getServiceCall(String urn, IContextualizable condition, boolean conditionNegated) {
+    public static IServiceCall getServiceCall(String urn) {
         return KimServiceCall.create(FUNCTION_ID, "urn", urn);
     }
 

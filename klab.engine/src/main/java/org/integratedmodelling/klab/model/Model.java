@@ -1060,7 +1060,7 @@ public class Model extends KimObject implements IModel {
 		this.coverage = scope.getScale();
 
 		if (resource != null) {
-			this.resources.add(Klab.INSTANCE.getRuntimeProvider().getChangeResolver(changeObservable, resource));
+			this.resources.add(new ComputableResource(resource.getUrn(), Mode.RESOLUTION));
 		}
 		for (int i = (resource == null ? 0 : 1); i < ((Model) originalModel).getComputation().size(); i++) {
 			ComputableResource computation = (ComputableResource) ((Model) originalModel).getComputation().get(i);

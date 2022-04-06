@@ -1,0 +1,15 @@
+#!/bin/bash
+
+if [ -d ~/.klab/jre16 ]; then 
+	JAVA_HOME="~/.klab/jre16"
+fi
+function set_java_home {
+  if [ -z $JAVA_HOME ]; then
+      echo "Using default value for JAVA_HOME: /usr/java/default"
+      JAVA_HOME=/usr/java/default
+  fi
+  export -p JAVA_HOME
+  echo $JAVA_HOME > java.home.config
+  echo "JAVA_HOME variable set to $JAVA_HOME ."
+}
+

@@ -174,6 +174,47 @@ public class Resource implements IResource {
 
     }
 
+    /*
+     * copy the essential from another resource of any type. Only used in suspicious internals.
+     */
+    protected void copyContents(IResource other) {
+        this.urn = other.getUrn();
+        this.version = other.getVersion();
+        this.adapterType = other.getAdapterType();
+        this.localPath = other.getLocalPath();
+        this.type = other.getType();
+        this.resourceTimestamp = other.getResourceTimestamp();
+        this.localPaths.addAll(other.getLocalPaths());
+        this.geometry = other.getGeometry();
+        // this.projectName = other.getProjectName();
+        // this.localName = other.getLocalName();
+        // this.spatialExtent = reference.getSpatialExtent();
+        // this.attributes.addAll(reference.getAttributes());
+        // this.categorizables.addAll(reference.getCategorizables());
+        // this.exports.putAll(reference.getExportFormats());
+        // this.availability = reference.getAvailability();
+        // this.codelists.addAll(reference.getCodelists());
+
+        // for (ResourceReference ref : reference.getHistory()) {
+        // this.history.add(ref);
+        // }
+        for (String key : other.getParameters().keySet()) {
+            this.parameters.put(key, other.getParameters().get(key));
+        }
+        for (String key : other.getMetadata().keySet()) {
+            this.metadata.put(key, other.getMetadata().get(key));
+        }
+        // for (org.integratedmodelling.klab.api.runtime.rest.INotification notification :
+        // other.getNotifications()) {
+        // this.notifications.add(new KimNotification(notification.getMessage(),
+        // Level.parse(notification.getLevel()),
+        // notification.getTimestamp()));
+        // }
+        // if (other.getDependencies() != null) {
+        // this.inputs.add(other.getDependencies().get());
+        // }
+    }
+
     public ResourceReference getReference() {
 
         ResourceReference ret = new ResourceReference();

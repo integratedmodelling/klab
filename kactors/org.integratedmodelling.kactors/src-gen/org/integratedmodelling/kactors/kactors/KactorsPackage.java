@@ -2673,22 +2673,13 @@ public interface KactorsPackage extends EPackage
   int LITERAL__DATE = 4;
 
   /**
-   * The feature id for the '<em><b>Expression</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int LITERAL__EXPRESSION = 5;
-
-  /**
    * The feature id for the '<em><b>Boolean</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int LITERAL__BOOLEAN = 6;
+  int LITERAL__BOOLEAN = 5;
 
   /**
    * The number of structural features of the '<em>Literal</em>' class.
@@ -2697,7 +2688,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int LITERAL_FEATURE_COUNT = 7;
+  int LITERAL_FEATURE_COUNT = 6;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.ParameterListImpl <em>Parameter List</em>}' class.
@@ -6516,17 +6507,6 @@ public interface KactorsPackage extends EPackage
   EReference getLiteral_Date();
 
   /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Literal#getExpression <em>Expression</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Expression</em>'.
-   * @see org.integratedmodelling.kactors.kactors.Literal#getExpression()
-   * @see #getLiteral()
-   * @generated
-   */
-  EAttribute getLiteral_Expression();
-
-  /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Literal#getBoolean <em>Boolean</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -9845,14 +9825,6 @@ public interface KactorsPackage extends EPackage
      * @generated
      */
     EReference LITERAL__DATE = eINSTANCE.getLiteral_Date();
-
-    /**
-     * The meta object literal for the '<em><b>Expression</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute LITERAL__EXPRESSION = eINSTANCE.getLiteral_Expression();
 
     /**
      * The meta object literal for the '<em><b>Boolean</b></em>' attribute feature.

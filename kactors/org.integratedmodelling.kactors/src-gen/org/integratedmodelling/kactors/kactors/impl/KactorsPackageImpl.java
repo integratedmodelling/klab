@@ -3230,20 +3230,9 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getLiteral_Expression()
-  {
-    return (EAttribute)literalEClass.getEStructuralFeatures().get(5);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
   public EAttribute getLiteral_Boolean()
   {
-    return (EAttribute)literalEClass.getEStructuralFeatures().get(6);
+    return (EAttribute)literalEClass.getEStructuralFeatures().get(5);
   }
 
   /**
@@ -4806,7 +4795,6 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     createEReference(literalEClass, LITERAL__TO);
     createEAttribute(literalEClass, LITERAL__STRING);
     createEReference(literalEClass, LITERAL__DATE);
-    createEAttribute(literalEClass, LITERAL__EXPRESSION);
     createEAttribute(literalEClass, LITERAL__BOOLEAN);
 
     parameterListEClass = createEClass(PARAMETER_LIST);
@@ -5254,7 +5242,6 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     initEReference(getLiteral_To(), this.getNumber(), null, "to", null, 0, 1, Literal.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getLiteral_String(), ecorePackage.getEString(), "string", null, 0, 1, Literal.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getLiteral_Date(), this.getDate(), null, "date", null, 0, 1, Literal.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getLiteral_Expression(), ecorePackage.getEString(), "expression", null, 0, 1, Literal.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getLiteral_Boolean(), ecorePackage.getEString(), "boolean", null, 0, 1, Literal.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(parameterListEClass, ParameterList.class, "ParameterList", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);

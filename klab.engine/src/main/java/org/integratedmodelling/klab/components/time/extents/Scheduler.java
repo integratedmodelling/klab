@@ -832,8 +832,9 @@ public class Scheduler implements IScheduler {
         for (IObservedConcept oc : dynamicDependencies.vertexSet()) {
             // if (dependencies.vertexSet().contains(oc)) {
             for (DefaultEdge dc : dependencies.incomingEdgesOf(oc)) {
-                if (dynamicDependencies.containsVertex(dependencies.getEdgeSource(dc))) {
-                    dynamicDependencies.addEdge(dependencies.getEdgeSource(dc), oc);
+                IObservedConcept source = dependencies.getEdgeSource(dc);
+                if (!source.equals(oc) && dynamicDependencies.containsVertex(source)) {
+                    dynamicDependencies.addEdge(source, oc);
                 }
             }
             // }

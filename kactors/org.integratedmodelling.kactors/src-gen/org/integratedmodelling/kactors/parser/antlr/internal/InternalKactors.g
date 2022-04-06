@@ -2616,6 +2616,10 @@ ruleAssertion returns [EObject current=null]
 			)
 		)?
 		(
+			((
+				ruleMetadata
+			)
+			)=>
 			(
 				{
 					newCompositeNode(grammarAccess.getAssertionAccess().getMetadataMetadataParserRuleCall_2_0());
@@ -8057,46 +8061,27 @@ ruleLiteral returns [EObject current=null]
 		    |
 		(
 			(
-				lv_expression_6_0=RULE_EXPR
-				{
-					newLeafNode(lv_expression_6_0, grammarAccess.getLiteralAccess().getExpressionEXPRTerminalRuleCall_4_0());
-				}
-				{
-					if ($current==null) {
-						$current = createModelElement(grammarAccess.getLiteralRule());
-					}
-					setWithLastConsumed(
-						$current,
-						"expression",
-						lv_expression_6_0,
-						"org.integratedmodelling.kactors.Kactors.EXPR");
-				}
-			)
-		)
-		    |
-		(
-			(
 				(
-					lv_boolean_7_1='true'
+					lv_boolean_6_1='true'
 					{
-						newLeafNode(lv_boolean_7_1, grammarAccess.getLiteralAccess().getBooleanTrueKeyword_5_0_0());
+						newLeafNode(lv_boolean_6_1, grammarAccess.getLiteralAccess().getBooleanTrueKeyword_4_0_0());
 					}
 					{
 						if ($current==null) {
 							$current = createModelElement(grammarAccess.getLiteralRule());
 						}
-						setWithLastConsumed($current, "boolean", lv_boolean_7_1, null);
+						setWithLastConsumed($current, "boolean", lv_boolean_6_1, null);
 					}
 					    |
-					lv_boolean_7_2='false'
+					lv_boolean_6_2='false'
 					{
-						newLeafNode(lv_boolean_7_2, grammarAccess.getLiteralAccess().getBooleanFalseKeyword_5_0_1());
+						newLeafNode(lv_boolean_6_2, grammarAccess.getLiteralAccess().getBooleanFalseKeyword_4_0_1());
 					}
 					{
 						if ($current==null) {
 							$current = createModelElement(grammarAccess.getLiteralRule());
 						}
-						setWithLastConsumed($current, "boolean", lv_boolean_7_2, null);
+						setWithLastConsumed($current, "boolean", lv_boolean_6_2, null);
 					}
 				)
 			)
