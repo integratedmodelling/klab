@@ -473,8 +473,10 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
         Slice slice = new Slice(timeOffset, timeStart, timeEnd, closest);
         slicesByEnd.put(timeEnd, slice);
         slicesByStart.put(timeStart, slice);
-        state.getScope().notifyInspector(IInspector.Asset.STATE_SLICE,
+        if (state != null) {
+            state.getScope().notifyInspector(IInspector.Asset.STATE_SLICE,
                 IInspector.Event.CREATION, slice, state);
+        }
         return slice;
     }
 
