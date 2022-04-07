@@ -10,7 +10,7 @@
 	<licenses>
 		<license>
 			<name>GNU Affero General Public License (AGPL) version 3.0</name>
-			<url>https://www.gnu.org/licenses/agpl-3.0.en.html</url>
+			<url>http://www.gnu.org/licenses/agpl-3.0.en.html</url>
 		</license>
 	</licenses>
 
@@ -19,19 +19,19 @@
 			<name>Ferdinando Villa</name>
 			<email>ferdinando.villa@bc3research.org</email>
 			<organization>Basque Centre for Climate Change (BC3); IKERBASQUE, Basque foundation for science</organization>
-			<organizationUrl>https://www.bc3research.org</organizationUrl>
+			<organizationUrl>http://www.bc3research.org</organizationUrl>
 		</developer>
 		<developer>
 			<name>Enrico Girotto</name>
 			<email>enrico.girotto@gmail.com</email>
 			<organization>Basque Centre for Climate Change (BC3)</organization>
-			<organizationUrl>https://www.bc3research.org</organizationUrl>
+			<organizationUrl>http://www.bc3research.org</organizationUrl>
 		</developer>
 		<developer>
 			<name>Steven Wohl</name>
 			<email>steven.wohl@bc3research.org</email>
 			<organization>Basque Centre for Climate Change (BC3)</organization>
-			<organizationUrl>https://www.bc3research.org</organizationUrl>
+			<organizationUrl>http://www.bc3research.org</organizationUrl>
 		</developer>
 		<developer>
 			<name>Andrea Antonello</name>
@@ -48,14 +48,14 @@
 	</developers>
 
 	<scm>
-		<connection>scm:git:https://bitbucket.org/integratedmodelling/klab</connection>
+		<connection>scm:git:http://bitbucket.org/integratedmodelling/klab</connection>
 		<developerConnection>scm:git:https://bitbucket.org/integratedmodelling/klab</developerConnection>
-		<url>https://github.com/integratedmodelling/klab.git</url>
+		<url>https://bitbucket.org/integratedmodelling/klab.git</url>
 	</scm>
 
 	<organization>
 		<name>integratedmodelling.org</name>
-		<url>https://integratedmodelling.org</url>
+		<url>http://www.integratedmodelling.org</url>
 	</organization>
 
 	<distributionManagement>
@@ -104,8 +104,8 @@
 		<hortonmachine.version>0.10.5-SNAPSHOT</hortonmachine.version>
 		<jts.version>1.18.1</jts.version>
 		<h2gis.version>1.5.0</h2gis.version>
-		<maven.compiler.source>11</maven.compiler.source>
-		<maven.compiler.target>11</maven.compiler.target>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
 		<tycho-version>2.3.0</tycho-version>
 		<xtextVersion>2.25.0</xtextVersion>
 		<mweVersion>2.12.1</mweVersion>

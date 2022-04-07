@@ -2,6 +2,8 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.integratedmodelling</groupId>
+	<version>0.11.0-SNAPSHOT</version>
 	<artifactId>api</artifactId>
 	<packaging>pom</packaging>
 	<parent>
@@ -9,6 +11,11 @@
 		<artifactId>klab</artifactId>
 		<version>0.11.0-SNAPSHOT</version>
 	</parent>
+	<properties>
+		<project.build.sourceEncoding>windows-1252</project.build.sourceEncoding>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
+	</properties>
 	<modules>
 		<module>org.integratedmodelling.klab.api</module>
 	</modules>
@@ -39,11 +46,18 @@
 							<goal>plugin-source</goal>
 						</goals>
 					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho.extras</groupId>
+				<artifactId>tycho-source-feature-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<executions>
 					<execution>
-						<id>feature-source</id>
+						<id>source-feature</id>
 						<phase>package</phase>
 						<goals>
-							<goal>feature-source</goal>
+							<goal>source-feature</goal>
 						</goals>
 					</execution>
 				</executions>
@@ -188,9 +202,33 @@
 	</build>
 	<repositories>
 		<repository>
-			<id>eclipse-2021-06</id>
-			<url>https://download.eclipse.org/releases/2021-06</url>
+			<id>eclipse-oxygen</id>
+			<url>https://download.eclipse.org/releases/2021-03/</url>
 			<layout>p2</layout>
 		</repository>
+		<repository>
+			<id>codehaus-snapshots</id>
+			<name>disable dead 'Codehaus Snapshots' repository, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=481478</name>
+			<url>http://nexus.codehaus.org/snapshots/</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
 	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>codehaus-snapshots</id>
+			<name>disable dead 'Codehaus Snapshots' repository, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=481478</name>
+			<url>http://nexus.codehaus.org/snapshots/</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
 </project>
