@@ -1,6 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.integratedmodelling</groupId>
@@ -40,6 +38,14 @@
 				<configuration>
 					<!-- we don't want jib to execute on this module -->
 					<skip>true</skip>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.4.0</version>
+				<configuration>
+					<mainClass>org.integratedmodelling.klab.k.Main</mainClass>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -82,7 +88,7 @@
 		</dependency>
 
 		<!-- TODO REMOVE! We don't want this to be available locally.  -->
-<!-- 		<dependency>
+		<!-- 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.adapter.copernicus</artifactId>
 			<version>${klab.version}</version>

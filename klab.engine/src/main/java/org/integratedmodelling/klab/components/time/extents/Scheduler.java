@@ -385,7 +385,10 @@ public class Scheduler implements IScheduler {
 
                         IContextualizable resource = computation.resource;
                         if (resource != null) {
-                            resource = resource.contextualize(target, transitionScope);
+                            resource = resource.contextualize(artifact, transitionScope);
+                            if (resource.isEmpty()) {
+                                continue;
+                            }
                             computation.contextualizer.notifyContextualizedResource(resource, target, transitionScope);
                         }
 
@@ -663,7 +666,7 @@ public class Scheduler implements IScheduler {
         IScale scale = modelScale.merge(overall);
 
         ITimeInstant start = scale.getTime().getStart();
-        ITimeInstant end = scale.getTime().getStart();
+        ITimeInstant end = scale.getTime().getEnd();
 
         if (start == null
                 || (overall.getTime().getStart() != null && start.isBefore(overall.getTime().getStart()))) {

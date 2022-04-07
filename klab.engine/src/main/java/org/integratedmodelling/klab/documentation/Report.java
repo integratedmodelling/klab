@@ -202,6 +202,10 @@ public class Report implements IReport {
 
 	public void include(IContextualizable resource, Actuator actuator) {
 
+	    if (resource.isEmpty()) {
+	        return;
+	    }
+	    
 		if (resource.getUrn() != null) {
 			IResource res = Resources.INSTANCE.resolveResource(resource.getUrn());
 			resources.add(res);

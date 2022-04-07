@@ -58,7 +58,7 @@ public class ContextualizedResource extends Resource {
     public ContextualizedResource(MergedResource source, List<Pair<IResource, Map<String, String>>> ret) {
         if (ret.size() == 0) {
             empty = true;
-            copyContents(source);
+//            copyContents(source);
         } else if (ret.size() == 1) {
             IResource resource = ((Resource) ret.get(0).getFirst());
             copy(((Resource) resource).getReference());
