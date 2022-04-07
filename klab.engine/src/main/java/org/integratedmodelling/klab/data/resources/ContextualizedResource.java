@@ -43,6 +43,7 @@ public class ContextualizedResource extends Resource {
     public ContextualizedResource(Resource resource) {
         super(resource.getReference());
         resourceStructure.add(new Pair<>(resource, null));
+        runtimeData.putAll(resource.runtimeData);
     }
 
     @Override
@@ -63,6 +64,7 @@ public class ContextualizedResource extends Resource {
             IResource resource = ((Resource) ret.get(0).getFirst());
             copy(((Resource) resource).getReference());
             resourceStructure.add(new Pair<>(resource, null));
+            runtimeData.putAll(((Resource)resource).runtimeData);
         } else {
             throw new KlabUnimplementedException("multiple resources per contextualization are still unsupported");
         }

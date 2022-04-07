@@ -127,7 +127,7 @@ public class Resource implements IResource {
      * year}/{month}/3B42_Daily.{year}{month}{day}.7.nc4 year: 1998-2019 month: 01-12 day: 01-31
      */
 
-    private Map<String, Object> runtimeData = Collections.synchronizedMap(new HashMap<>());
+    protected Map<String, Object> runtimeData = Collections.synchronizedMap(new HashMap<>());
 
     // folder where all the resource files were uploaded, only for the publisher
     File uploadFolder = null;
