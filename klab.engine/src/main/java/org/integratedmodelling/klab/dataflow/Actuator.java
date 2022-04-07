@@ -344,10 +344,6 @@ public class Actuator implements IActuator {
             definition = true;
             this.computation = new ArrayList<>();
         }
-
-        if (getType().isOccurrent()) {
-            System.out.println("ZAMBURIÑA");
-        }
         
         /*
          * The contextualizer chain that implements the computation is specified by service calls,

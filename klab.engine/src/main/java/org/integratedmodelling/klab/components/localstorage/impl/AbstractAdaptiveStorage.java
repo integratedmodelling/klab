@@ -105,18 +105,18 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
         }
 
         public StateSummary getStateSummary() {
-        	StateSummary ret = new StateSummary();
-        	ret.setMean(this.statistics.getMean());
-        	ret.setNodataPercentage(((double)this.nodata)/((double)sliceSize));
-        	ret.setDegenerate(isEmpty());
-        	ret.setSingleValued(scalarValue != null);
-        	ret.setStandardDeviation(this.statistics.getStandardDeviation());
-        	ret.setVariance(this.statistics.getVariance());
-        	ret.setRange(Arrays.asList(this.statistics.getMin(), this.statistics.getMax()));
-        	ret.setSum(this.statistics.getSum());
-        	return ret;
+            StateSummary ret = new StateSummary();
+            ret.setMean(this.statistics.getMean());
+            ret.setNodataPercentage(((double) this.nodata) / ((double) sliceSize));
+            ret.setDegenerate(isEmpty());
+            ret.setSingleValued(scalarValue != null);
+            ret.setStandardDeviation(this.statistics.getStandardDeviation());
+            ret.setVariance(this.statistics.getVariance());
+            ret.setRange(Arrays.asList(this.statistics.getMin(), this.statistics.getMax()));
+            ret.setSum(this.statistics.getSum());
+            return ret;
         }
-        
+
         // TODO synchronization here voids the parallelism in most functions. The
         // newSlice thing should be
         // put in the implementation and synchronized there, so that multiple put() may
@@ -288,8 +288,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
         Offset offsets = locator.as(Offset.class);
 
         if (offsets.length != geometry.getDimensions().size()) {
-            throw new KlabInternalErrorException(
-                    "locator has different dimensionality than observation: should never happen");
+            throw new KlabInternalErrorException("locator has different dimensionality than observation: should never happen");
         }
 
         long timeOffset = trivial ? 0 : offsets.pos[0];
@@ -382,8 +381,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
         Offset offsets = locator.as(Offset.class);
 
         if (offsets.length != geometry.getDimensions().size()) {
-            throw new KlabInternalErrorException(
-                    "locator has different dimensionality than observation: should never happen");
+            throw new KlabInternalErrorException("locator has different dimensionality than observation: should never happen");
         }
 
         /*
@@ -397,8 +395,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
             time = ((IScale) locator).getTime();
         }
 
-        if (time != null && time.getTimeType() != ITime.Type.INITIALIZATION && time.getStart() != null
-                && time.getEnd() != null) {
+        if (time != null && time.getTimeType() != ITime.Type.INITIALIZATION && time.getStart() != null && time.getEnd() != null) {
             timeStart = time.getStart().getMilliseconds();
             timeEnd = time.getEnd().getMilliseconds();
         }
@@ -473,22 +470,16 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
         Slice slice = new Slice(timeOffset, timeStart, timeEnd, closest);
         slicesByEnd.put(timeEnd, slice);
         slicesByStart.put(timeStart, slice);
-        if (state != null) {
-            state.getScope().notifyInspector(IInspector.Asset.STATE_SLICE,
-                IInspector.Event.CREATION, slice, state);
-        }
+        state.getScope().notifyInspector(IInspector.Asset.STATE_SLICE, IInspector.Event.CREATION, slice, state);
         return slice;
     }
 
     private boolean equals(Object valueAt, T value) {
-        return (valueAt == null && value == null)
-                || (valueAt != null && value != null && valueAt.equals(value));
+        return (valueAt == null && value == null) || (valueAt != null && value != null && valueAt.equals(value));
     }
 
     private Slice getClosest(long timeSlice, boolean fromUpwards) {
-        Map.Entry<Long, Slice> low = fromUpwards
-                ? slicesByStart.floorEntry(timeSlice)
-                : slicesByEnd.floorEntry(timeSlice);
+        Map.Entry<Long, Slice> low = fromUpwards ? slicesByStart.floorEntry(timeSlice) : slicesByEnd.floorEntry(timeSlice);
         return low == null ? null : low.getValue();
     }
 
@@ -636,16 +627,16 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
         return state;
     }
 
-	public StateSummary getOverallSummary() {
-		StateSummary ret = null;
-		for (Slice slice : slicesByStart.values()) {
-			if (ret == null) {
-				ret = slice.getStateSummary();
-			} else {
-				ret.merge(slice.getStateSummary());
-			}
-		}
-		return ret;
-	}
+    public StateSummary getOverallSummary() {
+        StateSummary ret = null;
+        for (Slice slice : slicesByStart.values()) {
+            if (ret == null) {
+                ret = slice.getStateSummary();
+            } else {
+                ret.merge(slice.getStateSummary());
+            }
+        }
+        return ret;
+    }
 
 }
