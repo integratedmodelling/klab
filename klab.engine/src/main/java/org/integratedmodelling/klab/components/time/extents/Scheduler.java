@@ -365,6 +365,8 @@ public class Scheduler implements IScheduler {
 
                     IArtifact artifact = null;
 
+                    Set<String> interruptedTargets = new HashSet<>(); 
+                    
                     /*
                      * 3. Run all contextualizers in the context that react to transitions; check
                      * for signs of life at each step. Anything enqueued here is active so no
@@ -372,6 +374,12 @@ public class Scheduler implements IScheduler {
                      */
                     for (Actuator.Computation computation : computations) {
 
+                        String targetId = computation.targetId == null ? "self" : computation.targetId;
+                        
+                        if (interruptedTargets.contains(targetId)) {
+                            continue;
+                        }
+                        
                         if (computation.variable != null) {
                             transitionContext.getVariables().put(computation.targetId, computation.variable);
                             continue;
@@ -387,6 +395,7 @@ public class Scheduler implements IScheduler {
                         if (resource != null) {
                             resource = resource.contextualize(artifact, transitionScope);
                             if (resource.isEmpty()) {
+                                interruptedTargets.add(targetId);
                                 continue;
                             }
                             computation.contextualizer.notifyContextualizedResource(resource, target, transitionScope);

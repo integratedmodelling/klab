@@ -364,13 +364,21 @@ public class Actuator implements IActuator {
             // contextualization redefined the target, which happens in change processes
             target = ctx.getTargetArtifact();
         }
+        
+        Set<String> blockedTargets = new HashSet<>();
 
         for (Pair<IServiceCall, IContextualizable> service : computationStrategy) {
 
             if (scope.getMonitor().isInterrupted()) {
                 return Observation.empty(getObservable(), scope);
             }
-
+            
+            String targetId = service.getSecond().getTargetId() == null ? "self" : service.getSecond().getTargetId();
+            
+            if (blockedTargets.contains(targetId)) {
+                continue;
+            }
+            
             IServiceCall function = service.getFirst();
 
             if (function == null) {
@@ -410,6 +418,8 @@ public class Actuator implements IActuator {
             if (!getType().isOccurrent() && resource != null) {
                 resource = resource.contextualize(target, ctx);
                 if (resource.isEmpty()) {
+                    // block the flow for the same target
+                    blockedTargets.add(targetId);
                     continue;
                 }
                 ((IContextualizer) contextualizer).notifyContextualizedResource(resource, target, ctx);
