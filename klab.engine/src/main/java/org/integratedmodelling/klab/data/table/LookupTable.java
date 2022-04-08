@@ -280,13 +280,14 @@ public class LookupTable implements ILookupTable {
     }
 
     @Override
-    public void include(Object value) {
+    public Object include(Object value) {
         if (!(value instanceof IConcept)) {
             throw new IllegalArgumentException("a table can only serve as a datakey for concepts");
         }
         if (!this.key.containsKey((IConcept) value)) {
             this.key.put((IConcept) value, this.key.size());
         }
+        return value;
     }
 
     public boolean isTwoWay() {

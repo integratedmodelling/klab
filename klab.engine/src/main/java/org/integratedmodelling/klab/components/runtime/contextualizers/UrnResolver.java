@@ -71,39 +71,6 @@ public class UrnResolver extends AbstractContextualizer implements IExpression, 
         }
 
         Map<String, String> parameters = urnParameters;
-        // this.localized = true;
-
-//        // Should be impossible now
-//        if (this.resource instanceof MergedResource) {
-//
-//            System.out.println("PORRCOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
-//            
-//            List<Pair<IResource, Map<String, String>>> resources = ((MergedResource) this.resource)
-//                    .contextualize(scope.getScale(), observation, scope);
-//            if (resources.isEmpty()) {
-//                // it's OK if the resource was already contextualized up to the available data. TODO
-//                // distinguish the use cases.
-//                // context.getMonitor().warn("resource " + this.resource.getUrn() + " could not be
-//                // contextualized in this scale");
-//                return observation;
-//            }
-//
-//            for (Pair<IResource, Map<String, String>> pr : resources) {
-//                ((Report) scope.getReport()).addContextualizedResource(this.resource.getUrn(), pr.getFirst());
-//            }
-//
-//            // TODO must contextualize the LIST, not just the first resource. For now it can only
-//            // happen with
-//            // multiple spatial extents, but it could happen also with multiple temporal slices.
-//            if (resources.size() > 1) {
-//                scope.getMonitor()
-//                        .warn("Warning: unimplemented use of multiple resources for one timestep. Choosing only the first.");
-//            }
-//
-//            this.resource = resources.get(0).getFirst();
-//            parameters = resources.get(0).getSecond();
-//        }
-
         if (Configuration.INSTANCE.isEchoEnabled()) {
             System.err.println("GETTING DATA FROM " + this.resource.getUrn());
         }

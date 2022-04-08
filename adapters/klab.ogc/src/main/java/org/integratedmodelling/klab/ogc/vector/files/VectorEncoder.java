@@ -197,11 +197,11 @@ public class VectorEncoder implements IResourceEncoder {
 
         Rasterizer<Object> rasterizer = null;
         if (rasterize) {
-            String name = scope.getTargetName();
-            String unit = scope.getTargetSemantics() != null && scope.getTargetSemantics().getUnit() != null
-                    ? scope.getTargetSemantics().getUnit().toString()
-                    : null;
-            builder = builder.startState(name, unit, scope);
+//            String name = scope.getTargetName();
+//            String unit = scope.getTargetSemantics() != null && scope.getTargetSemantics().getUnit() != null
+//                    ? scope.getTargetSemantics().getUnit().toString()
+//                    : null;
+//            builder = builder.startState(name, unit, scope);
             rasterizer = new Rasterizer<Object>(((Space) requestScale.getSpace()).getGrid());
         }
 
@@ -303,7 +303,7 @@ public class VectorEncoder implements IResourceEncoder {
             rasterizer.finish((b, xy) -> {
                 stateBuilder.set(b, requestScale.at(ISpace.class, xy));
             });
-            builder = builder.finishState();
+//            builder = builder.finishState();
         }
 
     }

@@ -166,7 +166,7 @@ public class State extends Observation implements IState, IKeyHolder {
 			this.valuePresentation = ((IReducible) value).getValuePresentation();
 		}
 		if (dataKey != null && value != null) {
-			dataKey.include(value);
+			value = dataKey.include(value);
 		}
 		return storage.putObject(value, index);
 	}

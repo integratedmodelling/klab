@@ -49,7 +49,7 @@ public abstract class SessionMonitor extends ContextMonitor {
 			return (ObservationReference) beans.get(contextId);
 		}
 
-		public List<Object> getChildren() {
+		public synchronized List<Object> getChildren() {
 			List<Object> ret = new ArrayList<>();
 			if (dataflow != null) {
 				ret.add(dataflow);
@@ -66,7 +66,7 @@ public abstract class SessionMonitor extends ContextMonitor {
 			return observationGraph;
 		}
 
-		public List<Object> getChildren(String parentId, Level notificationLevel) {
+		public synchronized List<Object> getChildren(String parentId, Level notificationLevel) {
 			List<Object> ret = new ArrayList<>();
 			if (parentId != null) {
 				for (DefaultEdge edge : structure.incomingEdgesOf(parentId)) {
@@ -83,7 +83,7 @@ public abstract class SessionMonitor extends ContextMonitor {
 			return ret;
 		}
 
-		Object getParent(String s) {
+		synchronized Object getParent(String s) {
 			Set<DefaultEdge> edges = structure.outgoingEdgesOf(s);
 			if (edges.size() == 0) {
 				return null;
@@ -91,7 +91,7 @@ public abstract class SessionMonitor extends ContextMonitor {
 			return beans.get(structure.getEdgeTarget(edges.iterator().next()));
 		}
 
-		public Object getParent(Object element) {
+		public synchronized Object getParent(Object element) {
 			if (element instanceof DataflowReference || element instanceof ObservationReference
 					&& ((ObservationReference) element).getId().equals(contextId)) {
 				return this;

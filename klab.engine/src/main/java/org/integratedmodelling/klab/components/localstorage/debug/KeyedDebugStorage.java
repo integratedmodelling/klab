@@ -180,10 +180,11 @@ public class KeyedDebugStorage<T> implements IDataStorage<T>, IKeyHolder {
 
 		@SuppressWarnings("unchecked")
 		@Override
-		public void include(Object value) {
+		public Object include(Object value) {
 			if (!this.key.containsKey((T)value)) {
 				this.key.put((T)value, this.key.size());
 			}
+			return value;
 		}
 
 		@Override
