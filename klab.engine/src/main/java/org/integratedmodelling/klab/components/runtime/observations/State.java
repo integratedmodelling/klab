@@ -288,6 +288,10 @@ public class State extends Observation implements IState, IKeyHolder {
 		List<Long> list = new ArrayList<>();
 		if (this.timeCoverage.size() > 0) {
 			for (Pair<Long, Long> ll : timeCoverage) {
+			    if (ll.getFirst() == 0) {
+			        // skip initialization
+			        continue;
+			    }
 				long lo = ll.getSecond() > 0 ? ll.getSecond() : ll.getFirst();
 				if (lo > 0) {
 					list.add(lo);
