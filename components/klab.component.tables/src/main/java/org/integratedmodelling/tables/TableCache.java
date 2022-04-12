@@ -47,6 +47,7 @@ public class TableCache {
 	private AbstractTable<?> table;
 	
 	public TableCache(IResource resource, AbstractTable<?> table, Map<String, Attribute> attributes) {
+				
 		this.table = table;
 		this.attributes = attributes;
 		db = DBMaker.fileDB(

@@ -364,12 +364,12 @@ public class RuntimeView extends ViewPart {
         private ContextDescriptor currentDescriptor;
 
         @Override
-        public Object[] getElements(Object inputElement) {
+        public synchronized Object[] getElements(Object inputElement) {
             return getChildren(inputElement);
         }
 
         @Override
-        public Object[] getChildren(Object parentElement) {
+        public synchronized Object[] getChildren(Object parentElement) {
             if (parentElement instanceof ContextDescriptor) {
                 this.currentDescriptor = (ContextDescriptor) parentElement;
                 return ((ContextDescriptor) parentElement).getChildren().toArray();
@@ -414,7 +414,7 @@ public class RuntimeView extends ViewPart {
         }
 
         @Override
-        public boolean hasChildren(Object element) {
+        public synchronized boolean hasChildren(Object element) {
             if (element instanceof Collection) {
                 return ((Collection<?>) element).size() > 0;
             } else if (element instanceof ContextDescriptor) {
@@ -1035,7 +1035,7 @@ public class RuntimeView extends ViewPart {
         }
     }
 
-    private void refreshTrees() {
+    private synchronized void refreshTrees() {
 
         if (Activator.session() == null) {
             return;

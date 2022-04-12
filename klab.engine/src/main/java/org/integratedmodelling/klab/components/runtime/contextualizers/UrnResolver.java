@@ -74,6 +74,7 @@ public class UrnResolver extends AbstractContextualizer implements IExpression, 
         if (Configuration.INSTANCE.isEchoEnabled()) {
             System.err.println("GETTING DATA FROM " + this.resource.getUrn());
         }
+        
         IKlabData data = Resources.INSTANCE.getResourceData(this.resource, parameters, scope.getScale(), scope, observation);
         if (Configuration.INSTANCE.isEchoEnabled()) {
             System.err.println("DONE " + this.resource.getUrn());

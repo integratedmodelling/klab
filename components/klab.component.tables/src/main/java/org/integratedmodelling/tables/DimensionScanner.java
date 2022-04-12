@@ -306,6 +306,7 @@ public class DimensionScanner<T> {
 				IKlabData data = Resources.INSTANCE.getResourceData(auxiliaryResourceUrn, builder, scope.getScale(),
 						scope.getMonitor());
 				ret.spatialContextualizer = (IDataArtifact) data.getArtifact();
+				
 			} else if (columnName != null) {
 
 				ICodelist codelist = table.getCodelist(columnName);
