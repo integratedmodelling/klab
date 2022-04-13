@@ -183,6 +183,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
 	private boolean occurrent;
 	private Map<String, IKnowledgeView> views;
 	private Map<String, IKnowledgeView> viewsByUrn;
+	private Map<String, Object> contextData;
+	private Map<String, Object> globalData;
 
 	/**
 	 * This is used during <em>contextualization</em> of previously characterized
@@ -211,6 +213,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
 		ret.implicitlyChangingObservables = this.implicitlyChangingObservables;
 		ret.parent = this;
 		ret.catalog = new HashMap<>();
+		ret.globalData = new HashMap<>();
+		ret.contextData = new HashMap<>();
 		ret.behaviorBindings = new IntelligentMap<>();
 		ret.report = new Report(this, scope, monitor.getIdentity().getParentIdentity(ISession.class).getId());
 		ret.observations = new HashMap<>();
@@ -294,6 +298,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
 		this.concreteIdentities = context.concreteIdentities;
 		this.resolvedPredicates.putAll(context.resolvedPredicates);
 		this.notificationMode = context.notificationMode;
+		this.contextData = context.contextData;
+		this.globalData = context.globalData;
 	}
 
 	private RuntimeScope(ResolutionScope resolutionScope) {
@@ -931,6 +937,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
 		ret.objectMetadata = this.objectMetadata;
 		ret.directObservationName = this.directObservationName;
 		ret.currentGroup = this.currentGroup;
+		ret.globalData = this.globalData;
+		ret.contextData = new HashMap<>();
 
 		for (IActuator a : actuator.getActuators()) {
 			if (!((Actuator) a).isExported()) {
@@ -2404,4 +2412,14 @@ public class RuntimeScope extends AbstractRuntimeScope {
             inspector.trigger(this, triggerArguments);
         }
     }
+
+	@Override
+	public Map<String, Object> getContextData() {
+		return contextData;
+	}
+
+	@Override
+	public Map<String, Object> getGlobalData() {
+		return globalData;
+	}
 }

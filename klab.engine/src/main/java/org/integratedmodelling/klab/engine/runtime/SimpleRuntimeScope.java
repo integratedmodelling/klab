@@ -1003,4 +1003,16 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
         
     }
 
+	@Override
+	public Map<String, Object> getContextData() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Map<String, Object> getGlobalData() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

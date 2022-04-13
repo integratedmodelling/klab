@@ -214,13 +214,6 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 */
 	Pair<String, IArtifact> findArtifact(IObservable observable);
 
-//    /**
-//     * The contextualization strategy is a singleton within the context and is never null.
-//     * 
-//     * @return
-//     */
-//    ContextualizationStrategy getContextualizationStrategy();
-
 	// ugly but we don't have a model when we create the first dataflow.
 	void setModel(Model model);
 
@@ -522,14 +515,6 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 * @return
 	 */
 	Actuator getActuator();
-//
-//	/**
-//	 * Set the dataflow's dependency graph into the scope so it's available during
-//	 * contextualization.
-//	 * 
-//	 * @param buildDependencies
-//	 */
-//	void setDependencyGraph(Graph<IObservedConcept, DefaultEdge> buildDependencies);
 
 	/**
 	 * Return the current dataflow's dependency graph.
@@ -614,5 +599,20 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 * @return
 	 */
 	IRuntimeScope getChild(IRuntimeIdentity identity);
+
+	/**
+	 * A map of arbitrary data that follows the context subject, renewed when a new
+	 * subject becomes the context.
+	 * 
+	 * @return
+	 */
+	Map<String, Object> getContextData();
+
+	/**
+	 * A map of arbitrary data that is kept for the entire contextualization.
+	 * 
+	 * @return
+	 */
+	Map<String, Object> getGlobalData();
 
 }

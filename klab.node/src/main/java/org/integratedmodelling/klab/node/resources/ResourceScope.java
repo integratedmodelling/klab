@@ -929,4 +929,16 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
         
     }
 
+	@Override
+	public Map<String, Object> getContextData() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Map<String, Object> getGlobalData() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

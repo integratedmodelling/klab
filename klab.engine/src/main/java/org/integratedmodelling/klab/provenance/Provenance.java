@@ -9,6 +9,7 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
+import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
@@ -56,7 +57,7 @@ public class Provenance extends GroovyObjectSupport implements IProvenance {
 		return ret;
 	}
 	
-	public void add(Node node, Node previous, IScale scale) {
+	public void add(Node node, Node previous, IScale scale, IActuator actuator) {
 		graph.addVertex(node);
 		graph.addVertex(previous);
 		boolean linked = false;
@@ -70,10 +71,6 @@ public class Provenance extends GroovyObjectSupport implements IProvenance {
 			graph.addEdge(previous, node, new ProvenanceEdge(scale));
 		}
 	}
-
-//	public void addArtifact(IArtifact ret) {
-//		graph.addVertex(ret);
-//	}
 
 	@Override
 	public <T> Collection<T> collect(Class<? extends T> cls) {
