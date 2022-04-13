@@ -56,11 +56,37 @@ public class Provenance extends GroovyObjectSupport implements IProvenance {
 		}
 		return ret;
 	}
-	
+
 	public void add(Node node, Node previous, IScale scale, IActuator actuator) {
+
+		/*
+		 * if artifact, the nodes may be rescaling, mediating or layers
+		 */
+
+		/*
+		 * if resource, must extract the actual resource(s) being used, which could be
+		 * multiple
+		 */
+
+		/*
+		 * actuator contains the process that will turn x into y, not necessarily by
+		 * itself; accumulate the processes that build each node and are fed by each
+		 * precursor. Because actuator == model we can use the model as plan for the
+		 * process.
+		 */
+
+		/*
+		 * Agent may be k.LAB or the user if the artifact is main, i.e. the task
+		 * observation is the same observable.
+		 */
+
 		graph.addVertex(node);
 		graph.addVertex(previous);
 		boolean linked = false;
+		
+		/*
+		 * Should also document what is used for initialization vs. transitions
+		 */
 		for (ProvenanceEdge edge : graph.incomingEdgesOf(node)) {
 			// should never be > 1
 			edge.merge(scale);

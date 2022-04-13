@@ -691,7 +691,7 @@ public class Actuator implements IActuator {
 		/*
 		 * record the recontextualized resource in provenance
 		 */
-		if (resource.isFinal()) {
+		if (ret != null && resource.isFinal()) {
 			scope.getProvenance().add(ret, resource, scale, this);
 		}
 

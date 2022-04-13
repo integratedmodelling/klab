@@ -908,7 +908,7 @@ public class ComputableResource extends KimStatement implements IContextualizabl
             }
             return false;
         case EXPRESSION:
-            // TODO must check if there are state identifiers in the code
+            // TODO must check if there are state identifiers in the code. Usually there are, so no rush here.
             return false;
         default:
             break;
@@ -920,17 +920,17 @@ public class ComputableResource extends KimStatement implements IContextualizabl
     @Override
     public IContextualizable contextualize(IArtifact target, IContextualizationScope scope) {
 
-        DebugFile.println(getTimeLabel(scope.getScale().getTime()) + ": " + this);
+//        DebugFile.println(getTimeLabel(scope.getScale().getTime()) + ": " + this);
 
         if (getType() == Type.RESOURCE) {
+        	
             Urn urn = new Urn(getUrn());
-            
             IResourceService resourceService = Services.INSTANCE.getService(IResourceService.class);
             IResource resource = resourceService.contextualizeResource(getResource(), urn.getParameters(), scope.getScale(),
                     target, scope);
             ComputableResource ret = copy();
             ret.validatedResource = resource;
-            DebugFile.println("   " + (resource.isEmpty() ? "(empty)" : resource.getUrn()));
+//            DebugFile.println("   " + (resource.isEmpty() ? "(empty)" : resource.getUrn()));
             return ret;
         }
         return this;
