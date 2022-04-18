@@ -859,13 +859,7 @@ public class ComputableResource extends KimStatement implements IContextualizabl
     public long getTimestamp() {
         return timestamp;
     }
-
-    @Override
-    public List<IActivity> getActions() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
+    
     @Override
     public IProvenance getProvenance() {
         // TODO Auto-generated method stub

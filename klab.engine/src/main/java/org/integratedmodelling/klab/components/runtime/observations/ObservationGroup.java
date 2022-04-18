@@ -22,7 +22,6 @@ import org.integratedmodelling.klab.api.observations.ISubjectiveObservation;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
-import org.integratedmodelling.klab.engine.runtime.AbstractTask;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.rest.ObservationChange;
@@ -62,9 +61,9 @@ public class ObservationGroup extends CountableObservation implements IObservati
         super(observable.getName(), observable, scale, context);
         this.atype = type;
         IIdentity identity = context.getMonitor().getIdentity();
-        if (identity instanceof AbstractTask) {
-            setGenerator(((AbstractTask< ? >) identity).getActivity());
-        }
+//        if (identity instanceof AbstractTask) {
+//            setGenerator(((AbstractTask< ? >) identity).getActivity());
+//        }
     }
 
     @Override

@@ -10,21 +10,31 @@ package org.integratedmodelling.klab.api.provenance;
 public interface IAssociation {
 	
 	enum Type {
+
 		/**
-		 * Activity wasAssociatedWith Agent;
-		 *
-		 * Entity wasGeneratedBy Activity wasAssociatedWith Agent [if Agent = model,
-		 * then Activity = {resolution|instantiation}
+		 * Process wasTriggeredBy Process
 		 */
-		wasAssociatedWith,
+		wasTriggeredBy,
+		
 		/**
-		 * Entity wasAttributedTo Agent (implicit Activity, for remote provenance)
+		 * Process wasControlledBy Agent
 		 */
-		wasAttributedTo,
+		wasControlledBy,
+		
+		/**
+		 * Entity wasDerivedFrom Entity (not by a process)
+		 */
+		wasDerivedFrom,
+		
 		/**
 		 * Entity wasGeneratedBy Activity
 		 */
 		wasGeneratedBy,
+		
+		/**
+		 * Process uses Entity 
+		 */
+		uses,
 
 	}
 	

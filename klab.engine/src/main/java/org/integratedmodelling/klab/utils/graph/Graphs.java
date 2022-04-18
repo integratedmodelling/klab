@@ -43,46 +43,9 @@ public class Graphs {
 
 			@Override
 			public void run() {
-
+				@SuppressWarnings("unchecked")
 				GraphPanel panel = new GraphPanel(title, (Graph<Object, Object>) graph, layout);
 				panel.showGraph();
-
-//				JGraph jgraph = new JGraph(new JGraphModelAdapter<>(graph));
-//				jgraph.setPreferredSize(new Dimension(800, 800));
-//				JGraphLayout graphLayout = null;
-//				switch (layout) {
-//				case HIERARCHICAL:
-//					graphLayout = new JGraphHierarchicalLayout();
-//					break;
-//				case RADIALTREE:
-//					graphLayout = new JGraphRadialTreeLayout();
-//					break;
-//				case SIMPLE:
-//					graphLayout = new JGraphSimpleLayout(0);
-//					break;
-//				case SPRING:
-//					graphLayout = new JGraphFastOrganicLayout();
-//					break;
-//				default:
-//					break;
-//				}
-//				final JGraphFacade graphFacade = new JGraphFacade(jgraph);
-//				graphLayout.run(graphFacade);
-//				final Map<?, ?> nestedMap = graphFacade.createNestedMap(true, true);
-//				jgraph.getGraphLayoutCache().edit(nestedMap);
-//
-//				jgraph.setAutoscrolls(true);
-//				jgraph.setEditable(false);
-//				jgraph.setAutoResizeGraph(true);
-//				jgraph.setBendable(true);
-//
-//				JFrame frame = new JFrame();
-//				frame.setTitle(title);
-//				frame.setSize(800, 800);
-//				frame.getContentPane().add(new JScrollPane(jgraph));
-//				frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-//				frame.pack();
-//				frame.setVisible(true);
 			}
 
 		});

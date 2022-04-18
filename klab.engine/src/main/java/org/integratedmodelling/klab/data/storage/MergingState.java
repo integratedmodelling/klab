@@ -20,7 +20,7 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
-import org.integratedmodelling.klab.components.localstorage.impl.AbstractAdaptiveStorage;
+import org.integratedmodelling.klab.components.runtime.observations.DelegatingArtifact;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.components.time.extents.TemporalExtension;
@@ -44,7 +44,7 @@ import org.locationtech.jts.index.strtree.STRtree;
  * @author Ferd
  *
  */
-public class MergingState extends State {
+public class MergingState extends State implements DelegatingArtifact {
 
     IState delegate;
     STRtree spatialIndex;
@@ -275,6 +275,11 @@ public class MergingState extends State {
 			}
 		}
 		return ret;
+	}
+
+	@Override
+	public IArtifact getDelegate() {
+		return delegate;
 	}
 
 

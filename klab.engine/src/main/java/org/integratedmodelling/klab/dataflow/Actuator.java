@@ -54,6 +54,7 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.provenance.IAssociation;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
@@ -654,6 +655,16 @@ public class Actuator implements IActuator {
 			}
 		}
 
+		/*
+		 * complete the provenance info with the "uses" links with dependencies
+		 */
+		for (IActuator child : this.getActuators()) {
+			IArtifact input = scope.getArtifact((((Actuator) child).observable).getReferenceName());
+			if (input != null) {
+				scope.getProvenance().add(ret, input, coverage, this, ctx, IAssociation.Type.uses);
+			}
+		}
+
 		scope.getStatus(this).finish();
 
 		return ret;
@@ -670,14 +681,14 @@ public class Actuator implements IActuator {
 	 * @param contextualizer
 	 * @param observable
 	 * @param resource
-	 * @param ret
+	 * @param artifact
 	 * @param scope
 	 * @param scale
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public IArtifact runContextualizer(IContextualizer contextualizer, IObservable observable,
-			IContextualizable resource, IArtifact ret, IRuntimeScope scope, IScale scale) {
+			IContextualizable resource, IArtifact artifact, IRuntimeScope scope, IScale scale) {
 
 		if (scope.getMonitor().isInterrupted()) {
 			return Observation.empty(getObservable(), scope);
@@ -689,10 +700,11 @@ public class Actuator implements IActuator {
 		}
 
 		/*
-		 * record the recontextualized resource in provenance
+		 * record the recontextualized resource in provenance. Artifact may be null in
+		 * views or other void models.
 		 */
-		if (ret != null && resource.isFinal()) {
-			scope.getProvenance().add(ret, resource, scale, this);
+		if (resource.isFinal()) {
+			scope.getProvenance().add(artifact, resource, scale, this, scope, IAssociation.Type.wasDerivedFrom);
 		}
 
 		ISession session = scope.getMonitor().getIdentity().getParentIdentity(ISession.class);
@@ -710,16 +722,16 @@ public class Actuator implements IActuator {
 		 * INPUT for computations involving self. The contextualizer type may be null in
 		 * resources that adapt to the type requested in contextualization.
 		 */
-		IArtifact self = ret;
+		IArtifact self = artifact;
 
-		if (ret instanceof IState && contextualizer.getType() != null && contextualizer.getType().isState()) {
+		if (artifact instanceof IState && contextualizer.getType() != null && contextualizer.getType().isState()) {
 			/*
 			 * Establish the container for the output: switch the storage in the state to
 			 * the type needed in the compute chain, creating a layer if necessary. This is
 			 * the layer to WRITE INTO. If we're looking at a secondary output of a process
 			 * or other non-state contextualizer, we don't go through here.
 			 */
-			ret = ((IState) ret).as(contextualizer.getType());
+			artifact = ((IState) artifact).as(contextualizer.getType());
 		}
 
 		if (contextualizer instanceof AbstractContextualizer) {
@@ -734,36 +746,36 @@ public class Actuator implements IActuator {
 			 * parallelization instead of hard-coding a loop here.
 			 */
 			IArtifact result = Klab.INSTANCE.getRuntimeProvider().distributeComputation((IStateResolver) contextualizer,
-					(IObservation) ret, resource, addParameters(scope, self, resource), scale);
+					(IObservation) artifact, resource, addParameters(scope, self, resource), scale);
 
-			if (result != ret) {
-				scope.swapArtifact(ret, result);
+			if (result != artifact) {
+				scope.swapArtifact(artifact, result);
 			}
-			ret = result;
+			artifact = result;
 
-			if (this.model != null && ret instanceof Observation) {
+			if (this.model != null && artifact instanceof Observation) {
 				if (scale.getTime() != null && scale.getTime().is(ITime.Type.INITIALIZATION)) {
-					Actors.INSTANCE.instrument(this.model.getAnnotations(), (Observation) ret, scope);
+					Actors.INSTANCE.instrument(this.model.getAnnotations(), (Observation) artifact, scope);
 				}
 				/*
 				 * tell the scope to notify internal listeners (for actors and the like)
 				 */
-				scope.notifyListeners((IObservation) ret);
+				scope.notifyListeners((IObservation) artifact);
 			}
 
 		} else if (contextualizer instanceof IResolver) {
 
-			IArtifact result = ((IResolver<IArtifact>) contextualizer).resolve(ret,
-					addParameters(scope, ret, resource));
+			IArtifact result = ((IResolver<IArtifact>) contextualizer).resolve(artifact,
+					addParameters(scope, artifact, resource));
 
-			if (result != ret && result != null && ret instanceof IObservation) {
-				scope.swapArtifact(ret, result);
+			if (result != artifact && result != null && artifact instanceof IObservation) {
+				scope.swapArtifact(artifact, result);
 			}
-			ret = result;
+			artifact = result;
 
-			if (this.model != null && ret instanceof Observation && scale.getTime() != null
+			if (this.model != null && artifact instanceof Observation && scale.getTime() != null
 					&& scale.getTime().is(ITime.Type.INITIALIZATION)) {
-				Actors.INSTANCE.instrument(this.model.getAnnotations(), (Observation) ret, scope);
+				Actors.INSTANCE.instrument(this.model.getAnnotations(), (Observation) artifact, scope);
 			}
 
 		} else if (contextualizer instanceof IInstantiator) {
@@ -825,7 +837,7 @@ public class Actuator implements IActuator {
 					if (notificationMode == INotification.Mode.Verbose) {
 						// just notify once to allow subscription
 						if (first) {
-							scope.updateNotifications((IObservation) ret);
+							scope.updateNotifications((IObservation) artifact);
 							first = false;
 						}
 
@@ -856,7 +868,7 @@ public class Actuator implements IActuator {
 						/*
 						 * notify end of contextualization if we're subscribed to the parent
 						 */
-						if (scope.getWatchedObservationIds().contains(ret.getId())) {
+						if (scope.getWatchedObservationIds().contains(artifact.getId())) {
 
 							((Observation) object).setContextualized(true);
 
@@ -888,12 +900,12 @@ public class Actuator implements IActuator {
 			IConcept targetPredicate = ((Observable) ((ComputableResource) resource).getOriginalObservable())
 					.getTargetPredicate();
 
-			boolean ok = ((IPredicateClassifier<?>) contextualizer).initialize((IObjectArtifact) ret, abstractPredicate,
-					targetPredicate, scope);
+			boolean ok = ((IPredicateClassifier<?>) contextualizer).initialize((IObjectArtifact) artifact,
+					abstractPredicate, targetPredicate, scope);
 
 			if (ok) {
 
-				for (IArtifact target : ret) {
+				for (IArtifact target : artifact) {
 
 					@SuppressWarnings("rawtypes")
 					IConcept c = ((IPredicateClassifier) contextualizer).classify(abstractPredicate,
@@ -909,12 +921,12 @@ public class Actuator implements IActuator {
 			 * Tell the observation group to revise its situation and enqueue any
 			 * modification messages.
 			 */
-			((Observation) ret).evaluateChanges();
+			((Observation) artifact).evaluateChanges();
 
 			/*
 			 * ensure we return a view if that's necessary
 			 */
-			ret = scope.getObservationGroupView((Observable) observable, (IObservation) ret);
+			artifact = scope.getObservationGroupView((Observable) observable, (IObservation) artifact);
 
 		} else if (contextualizer instanceof IPredicateResolver) {
 
@@ -924,12 +936,12 @@ public class Actuator implements IActuator {
 			 * createTarget() has added it.
 			 */
 			IConcept predicate = Observables.INSTANCE.getBaseObservable(observable.getType());
-			if (!((IPredicateResolver<IDirectObservation>) contextualizer).resolve(predicate, (IDirectObservation) ret,
-					scope)) {
+			if (!((IPredicateResolver<IDirectObservation>) contextualizer).resolve(predicate,
+					(IDirectObservation) artifact, scope)) {
 				// strip the attribute that the classifier added
-				((DirectObservation) ret).removePredicate(predicate);
+				((DirectObservation) artifact).removePredicate(predicate);
 			}
-			((Observation) ret).evaluateChanges();
+			((Observation) artifact).evaluateChanges();
 		}
 
 		/**
@@ -943,12 +955,13 @@ public class Actuator implements IActuator {
 		}
 
 		// pre-compute before notification to speed up visualization
-		if (ret instanceof Observation && (scale.getTime() == null || scale.getTime().is(ITime.Type.INITIALIZATION))) {
+		if (artifact instanceof Observation
+				&& (scale.getTime() == null || scale.getTime().is(ITime.Type.INITIALIZATION))) {
 			/*
 			 * May be null for void contextualizers
 			 */
-			((Observation) ret).finalizeTransition(scope.getScale().initialization());
-			((Observation) ret).setContextualized(true);
+			((Observation) artifact).finalizeTransition(scope.getScale().initialization());
+			((Observation) artifact).setContextualized(true);
 		}
 
 		state.setStatus(DataflowState.Status.FINISHED);
@@ -959,7 +972,7 @@ public class Actuator implements IActuator {
 			Debug.INSTANCE.endTimer(timer);
 		}
 
-		return ret;
+		return artifact;
 	}
 
 	/**
@@ -1734,16 +1747,9 @@ public class Actuator implements IActuator {
 		// TODO Auto-generated method stub
 		return 0;
 	}
-
-	@Override
-	public List<IActivity> getActions() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
 	@Override
 	public IProvenance getProvenance() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

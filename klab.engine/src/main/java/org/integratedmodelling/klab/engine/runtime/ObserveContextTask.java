@@ -105,7 +105,7 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
             this.monitor = (session.getMonitor()).get(this);
             this.session = session;
             this.taskDescription = "Observation of " + observer.getId();
-            this.activity.setActivityDescriptor(activityDescriptor);
+//            this.activity.setActivityDescriptor(activityDescriptor);
             this.resolvable = observer;
             this.executor = executor;
             this.autostart = autostart;
@@ -160,9 +160,9 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
 
                             dataflow.setDescription(taskDescription);
 
-                            if (activity.getActivityDescriptor() != null) {
-                                activity.getActivityDescriptor().setDataflowCode(dataflow.getKdlCode());
-                            }
+//                            if (activity.getActivityDescriptor() != null) {
+//                                activity.getActivityDescriptor().setDataflowCode(dataflow.getKdlCode());
+//                            }
 
                             /*
                              * make a copy of the coverage so that we ensure it's a scale, behaving

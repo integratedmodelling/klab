@@ -39,6 +39,7 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeDuration;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.provenance.IAssociation;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.IScheduler;
@@ -391,7 +392,7 @@ public class Scheduler implements IScheduler {
 						}
 
 						if (resource.isFinal()) {
-							scope.getProvenance().add(artifact, resource, scale, actuator);
+							scope.getProvenance().add(artifact, resource, scale, actuator, transitionScope, IAssociation.Type.wasDerivedFrom);
 						}
 
 						/*

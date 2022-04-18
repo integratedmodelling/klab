@@ -574,13 +574,7 @@ public class MergedResource implements IResource {
 
         return new ContextualizedResource(this, ret);
     }
-
-    @Override
-    public List<IActivity> getActions() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
+    
     public String dump() {
         StringBuffer ret = new StringBuffer(1024);
         for (Long key : resources.keySet()) {

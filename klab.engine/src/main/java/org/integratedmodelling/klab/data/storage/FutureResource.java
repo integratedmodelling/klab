@@ -216,11 +216,6 @@ public class FutureResource implements IResource, Future<IResource> {
 	}
 
 	@Override
-	public List<IActivity> getActions() {
-		return delegate.getActions();
-	}
-
-	@Override
 	public List<String> getDependencies() {
 		// TODO Auto-generated method stub
 		return null;

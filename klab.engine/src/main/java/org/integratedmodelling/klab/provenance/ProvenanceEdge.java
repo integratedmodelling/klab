@@ -12,8 +12,9 @@ public class ProvenanceEdge extends DefaultEdge implements IAssociation {
 	private Type type;
 	private IScale scale;
 	
-	public ProvenanceEdge(IScale scale2) {
-		// TODO Auto-generated constructor stub
+	public ProvenanceEdge(IScale scale, Type association) {
+		this.scale = scale;
+		this.type = association;
 	}
 
 	@Override
@@ -32,6 +33,10 @@ public class ProvenanceEdge extends DefaultEdge implements IAssociation {
 
 	public void merge(IScale scale2) {
 		// TODO Auto-generated method stub
-		
+	}
+	
+	public String toString() {
+		// TODO improve, add boundaries
+		return type.name();
 	}
 }

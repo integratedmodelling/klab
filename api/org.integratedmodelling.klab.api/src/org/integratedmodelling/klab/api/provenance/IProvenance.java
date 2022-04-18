@@ -109,13 +109,6 @@ public interface IProvenance {
 		long getTimestamp();
 
 		/**
-		 * Return all the actions that have interested this node in chronological order.
-		 *
-		 * @return a {@link java.util.List} object.
-		 */
-		List<IActivity> getActions();
-
-		/**
 		 * Return the graph we're part of.
 		 * 
 		 * @return the provenance graph

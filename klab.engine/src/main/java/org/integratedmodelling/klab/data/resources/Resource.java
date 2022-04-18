@@ -604,13 +604,7 @@ public class Resource implements IResource {
         // TODO Auto-generated method stub
         return "";
     }
-
-    @Override
-    public List<IActivity> getActions() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
+    
     public void setGeometry(IGeometry geometry) {
         this.geometry = geometry;
     }

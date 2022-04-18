@@ -26,7 +26,6 @@ import org.integratedmodelling.klab.Types;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.data.ILocator;
-import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IStorage;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
@@ -596,22 +595,6 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
                 Mode.RESOLUTION);
 
     }
-
-//    @Override
-//    public IContextualizable getResolver(IObservable observable, IResource resource) {
-//
-//        IServiceCall ret = null;
-//
-//        if (observable.getDescriptionType() == Description.CHARACTERIZATION) {
-//            ret = UrnCharacterizer.getServiceCall(resource.getUrn());
-//        } else if (observable.getDescriptionType() == Description.INSTANTIATION) {
-//            ret = UrnInstantiator.getServiceCall(resource.getUrn());
-//        } else {
-//            ret = UrnResolver.getServiceCall(resource.getUrn());
-//        }
-//
-//        return new ComputableResource(ret, Mode.RESOLUTION);
-//    }
 
     @Override
     public IContextualizable getViewResolver(IViewModel view) {

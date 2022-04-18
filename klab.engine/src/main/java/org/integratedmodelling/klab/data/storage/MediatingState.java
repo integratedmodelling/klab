@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
+import org.integratedmodelling.klab.components.runtime.observations.DelegatingArtifact;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.owl.Observable;
@@ -28,7 +29,7 @@ import org.integratedmodelling.klab.scale.Scale;
  * rescaled. Used in base runtime contextualizers that implement value mediation and as the return
  * value of {@link IState#in(IValueMediator)} to use in contextualizer implementations.
  */
-public class MediatingState extends Observation implements IState {
+public class MediatingState extends Observation implements IState, DelegatingArtifact {
 
     IState delegate;
     IValueMediator from;
@@ -289,5 +290,10 @@ public class MediatingState extends Observation implements IState {
         // TODO Auto-generated method stub
         return null;
     }
+
+	@Override
+	public IArtifact getDelegate() {
+		return delegate;
+	}
 
 }

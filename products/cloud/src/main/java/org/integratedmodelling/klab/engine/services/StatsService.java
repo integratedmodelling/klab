@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.components.localstorage.impl.TimesliceLocator;
+import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.engine.events.GenericUserEvent;
 import org.integratedmodelling.klab.engine.events.UserEventContext;
@@ -150,7 +151,7 @@ public class StatsService {
     public void handleObservation(GenericUserEvent<HubUserProfile, Session> event) {
     	UserEventObservation observationEvent = (UserEventObservation) event;
         IObservation observation = observationEvent.getObservation();
-        String id = observation.getGenerator().getId();
+        String id = ((Observation)observation).getGenerator().getId();
         if (statsCache.containsKey(id)) {
             statsCache.computeIfPresent(id, (k,v) -> {
             	v.add(observation);

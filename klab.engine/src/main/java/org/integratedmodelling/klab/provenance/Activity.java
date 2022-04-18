@@ -28,7 +28,6 @@ public class Activity implements IActivity {
 	private String id;
 	private long start = System.currentTimeMillis();
 	private long end;
-//	private Type type = Type.Creation;
 	private ITime schedulerTime;
 	private SessionActivity activityDescriptor;
 	
@@ -84,21 +83,6 @@ public class Activity implements IActivity {
 	public void finished() {
 		this.end = System.currentTimeMillis();
 	}
-
-	@Override
-	public List<IActivity> getActions() {
-		List<IActivity> ret = new ArrayList<>();
-		return ret;
-	}
-
-//	@Override
-//	public Type getType() {
-//		return this.type;
-//	}
-//
-//	public void setType(Type type) {
-//		this.type = type;
-//	}
 
 	@Override
 	public ITime getSchedulerTime() {

@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.common.Geometry;
+import org.integratedmodelling.klab.components.runtime.observations.DelegatingArtifact;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
@@ -37,7 +38,7 @@ import org.integratedmodelling.klab.utils.Utils;
  * @author Ferd
  *
  */
-public class RescalingState extends Observation implements IState {
+public class RescalingState extends Observation implements IState, DelegatingArtifact {
 
 	IState delegate;
 	Scale newScale;
@@ -415,6 +416,11 @@ public class RescalingState extends Observation implements IState {
 	public String dump() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public IArtifact getDelegate() {
+		return delegate;
 	}
 
 }

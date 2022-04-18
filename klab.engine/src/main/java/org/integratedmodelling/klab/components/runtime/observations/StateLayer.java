@@ -16,7 +16,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
  * @author Ferd
  *
  */
-public class StateLayer extends State implements IState {
+public class StateLayer extends State implements IState, DelegatingArtifact {
 
 	State delegate;
 	IArtifact.Type layerType;
@@ -66,6 +66,11 @@ public class StateLayer extends State implements IState {
 	public void setValuePresentation(ValuePresentation vp) {
 		delegate.setValuePresentation(vp);
 		super.setValuePresentation(vp);
+	}
+
+	@Override
+	public IArtifact getDelegate() {
+		return delegate;
 	}
 
     

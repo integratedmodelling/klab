@@ -314,24 +314,12 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
         // TODO Auto-generated method stub
 
     }
-
-    // @Override
-    // public IConfigurationDetector getConfigurationDetector() {
-    // // TODO Auto-generated method stub
-    // return null;
-    // }
-
+    
     @Override
     public IRuntimeScope copy() {
         // TODO Auto-generated method stub
         return null;
     }
-
-    // @Override
-    // public void rename(String name, String alias) {
-    // // TODO Auto-generated method stub
-    //
-    // }
 
     @Override
     public void setTarget(IArtifact target) {
@@ -362,12 +350,6 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
         // TODO Auto-generated method stub
         return null;
     }
-
-    // @Override
-    // public void replaceTarget(IArtifact self) {
-    // // TODO Auto-generated method stub
-    //
-    // }
 
     @Override
     public Pair<String, IArtifact> findArtifact(IObservable observable) {
@@ -456,12 +438,6 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
         return null;
     }
 
-    // @Override
-    // public Collection<IArtifact> getAdditionalOutputs() {
-    // // TODO Auto-generated method stub
-    // return null;
-    // }
-
     class DummyArtifact implements IArtifact {
 
         @Override
@@ -516,41 +492,41 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
             return null;
         }
 
-        @Override
-        public IAgent getConsumer() {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
-        public IAgent getOwner() {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
-        public IActivity getGenerator() {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
-        public Collection<IArtifact> getAntecedents() {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
-        public Collection<IArtifact> getConsequents() {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
-        public IArtifact trace(IConcept concept) {
-            // TODO Auto-generated method stub
-            return null;
-        }
+//        @Override
+//        public IAgent getConsumer() {
+//            // TODO Auto-generated method stub
+//            return null;
+//        }
+//
+//        @Override
+//        public IAgent getOwner() {
+//            // TODO Auto-generated method stub
+//            return null;
+//        }
+//
+//        @Override
+//        public IActivity getGenerator() {
+//            // TODO Auto-generated method stub
+//            return null;
+//        }
+//
+//        @Override
+//        public Collection<IArtifact> getAntecedents() {
+//            // TODO Auto-generated method stub
+//            return null;
+//        }
+//
+//        @Override
+//        public Collection<IArtifact> getConsequents() {
+//            // TODO Auto-generated method stub
+//            return null;
+//        }
+//
+//        @Override
+//        public IArtifact trace(IConcept concept) {
+//            // TODO Auto-generated method stub
+//            return null;
+//        }
 
         @Override
         public Collection<IArtifact> collect(IConcept concept) {
@@ -617,13 +593,7 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
             // TODO Auto-generated method stub
             return false;
         }
-
-        @Override
-        public List<IActivity> getActions() {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
+        
         @Override
         public long getLastUpdate() {
             // TODO Auto-generated method stub
@@ -880,18 +850,6 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
         // TODO Auto-generated method stub
         return null;
     }
-//
-//    @Override
-//    public void setRuntimeScale(IActuator actuator, IScale scale) {
-//        // TODO Auto-generated method stub
-//        
-//    }
-//
-//    @Override
-//    public IScale getRuntimeScale(IActuator actuator) {
-//        // TODO Auto-generated method stub
-//        return null;
-//    }
 
 	@Override
 	public String getElkGraph() {
