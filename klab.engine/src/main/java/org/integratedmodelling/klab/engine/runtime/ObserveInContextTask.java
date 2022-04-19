@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.model.IModel;
+import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ITask;
@@ -30,10 +31,12 @@ import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
+import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
+import org.integratedmodelling.klab.rest.DataflowReference;
 import org.integratedmodelling.klab.rest.SessionActivity;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.graph.Graphs;
@@ -178,16 +181,10 @@ public class ObserveInContextTask extends AbstractTask<IArtifact> {
 						if (Configuration.INSTANCE.isEchoEnabled()) {
 							System.out.println(dataflow.getKdlCode());
 						}
-//						if (activity.getActivityDescriptor() != null) {
-//							activity.getActivityDescriptor().setDataflowCode(dataflow.getKdlCode());
-//						}
 
 						IRuntimeScope ctx = ((Observation) context).getScope().getChild(ObserveInContextTask.this);
 						((AbstractRuntimeScope) ctx).notifyDataflowChanges(ctx);
 
-						// make a copy of the coverage so that we ensure it's a scale, behaving
-						// properly
-						// at merge.
 						/*
 						 * pass the first actuator in the father context as the parent for this
 						 * resolution - this must be at primary level, i.e. the root is the first (and
@@ -202,9 +199,6 @@ public class ObserveInContextTask extends AbstractTask<IArtifact> {
 							ret = Observation.empty((IObservable) resolvable, ctx);
 						}
 
-//						// task is done, record for provenance
-//						getActivity().finished();
-
 						/*
 						 * The actuator has sent this already, but we send the final artifact a second
 						 * time to bring it to the foreground for the listeners
@@ -217,9 +211,15 @@ public class ObserveInContextTask extends AbstractTask<IArtifact> {
 						}
 
 						if (!Configuration.INSTANCE.getProperty("visualize", "false").equals("false")
-								&& ctx.getProvenance().getGraph().vertexSet().size() > 1) {
-							Graphs.show(ctx.getProvenance().getGraph(), "Provenance");
+								&& ctx.getProvenance().getSimplifiedGraph().vertexSet().size() > 1) {
+							Graphs.show(ctx.getProvenance().getSimplifiedGraph(), "Provenance");
 						}
+
+						// FIXME REMOVE!
+						DataflowReference pref = new DataflowReference(ctx.getRootSubject().getId(), "",
+								ctx.getProvenance().getElkGraph(false));
+						scope.getSession().getMonitor().send(Message.create(scope.getSession().getId(),
+								IMessage.MessageClass.TaskLifecycle, IMessage.Type.DataflowCompiled, dataflow));
 
 					} else {
 						monitor.warn("could not build dataflow: observation unsuccessful");

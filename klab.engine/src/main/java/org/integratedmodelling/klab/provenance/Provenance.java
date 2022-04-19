@@ -23,11 +23,13 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IAssociation;
 import org.integratedmodelling.klab.api.provenance.IPlan;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
+import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.components.runtime.observations.DelegatingArtifact;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Dataflow;
+import org.integratedmodelling.klab.dataflow.Flowchart;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.jgrapht.Graph;
@@ -38,11 +40,13 @@ import groovy.lang.GroovyObjectSupport;
 /**
  * Holds two graphs: a simplified one that only contains artifacts (resources
  * and observations) with their scaled derivation links, optimized for display,
- * and a full one that also includes processes (models), agents (k.LAB AI or
- * session user), and plans (dataflows). The simple provenance graph is most
- * useful at runtime, the other is fully OPM-compliant and is most useful for
- * archival purposes. Both should be visualizable in the Explorer along with the
- * dataflow.
+ * and a full one that also includes processes (models) and the user-triggered
+ * observation tasks (processes triggering models) with their plan (dataflow)
+ * and controlling agents (k.LAB AI or session user). The simple provenance
+ * graph is most useful at runtime, the other is fully OPM-compliant and is most
+ * useful for archival purposes. Both should be visualizable in the Explorer
+ * along with the dataflow. Both should include the relevant portions of any
+ * provenance records associated with the resources used.
  * 
  * @author Ferd
  *
@@ -53,6 +57,7 @@ public class Provenance extends GroovyObjectSupport implements IProvenance {
 	private Graph<IProvenance.Node, ProvenanceEdge> fullGraph = new DefaultDirectedGraph<>(ProvenanceEdge.class);
 	private RuntimeScope overallScope;
 	Map<Dataflow, IPlan> plans = new HashMap<>();
+	Map<ITask<?>, IActivity> task = new HashMap<>();
 	Map<IModel, ModelNode> views = new HashMap<>();
 
 	// wrapped nodes with improved UI behavior
@@ -79,11 +84,6 @@ public class Provenance extends GroovyObjectSupport implements IProvenance {
 	}
 
 	@Override
-	public IArtifact getRootArtifact() {
-		return null;
-	}
-
-	@Override
 	public Collection<IArtifact> getArtifacts() {
 		Set<IArtifact> ret = new HashSet<>();
 		for (IProvenance.Node node : simpleGraph.vertexSet()) {
@@ -98,6 +98,7 @@ public class Provenance extends GroovyObjectSupport implements IProvenance {
 			IAssociation.Type association) {
 
 		IPlan plan = getPlan(actuator, scope);
+		IActivity task = getTask(actuator, scope);
 		IActivity process = getProcess(actuator, scope);
 
 		/*
@@ -114,8 +115,8 @@ public class Provenance extends GroovyObjectSupport implements IProvenance {
 					continue;
 				}
 
-				// TODO this is only for the UI, we probably want the full graph to keep the
-				// original objects.
+				// CHECK this is mostly for the UI, we may want the full graph to keep the
+				// original objects instead.
 				node = wrap(node);
 				previous = wrap(previous);
 
@@ -152,7 +153,12 @@ public class Provenance extends GroovyObjectSupport implements IProvenance {
 		}
 		return ret;
 	}
-
+	
+	private IActivity getTask(IActuator actuator, IRuntimeScope scope) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	private IActivity getProcess(IActuator actuator, IRuntimeScope scope) {
 		// TODO Auto-generated method stub
 		return null;
@@ -218,8 +224,12 @@ public class Provenance extends GroovyObjectSupport implements IProvenance {
 		return ret;
 	}
 
-	public Graph<Node, ProvenanceEdge> getGraph() {
+	public Graph<Node, ProvenanceEdge> getSimplifiedGraph() {
 		return simpleGraph;
+	}
+
+	public Graph<Node, ProvenanceEdge> getFullGraph() {
+		return fullGraph;
 	}
 
 	@Override
@@ -273,6 +283,11 @@ public class Provenance extends GroovyObjectSupport implements IProvenance {
 			return overallScope.getSession().getParentIdentity(IEngine.class).getParentIdentity(type);
 		}
 
+		@Override
+		public String toString() {
+			return "k.LAB";
+		}
+
 	};
 
 	/**
@@ -313,6 +328,11 @@ public class Provenance extends GroovyObjectSupport implements IProvenance {
 		@Override
 		public <T extends IIdentity> T getParentIdentity(Class<T> type) {
 			return overallScope.getSession().getUser().getParentIdentity(type);
+		}
+
+		@Override
+		public String toString() {
+			return overallScope.getSession().getUser().getUsername();
 		}
 
 	};
@@ -406,6 +426,11 @@ public class Provenance extends GroovyObjectSupport implements IProvenance {
 			return delegate == null ? "Mierda, null" : delegate.toString();
 		}
 
+	}
+
+	public String getElkGraph(boolean fullGraph) {
+		Flowchart flowchart = Flowchart.create(this, overallScope, fullGraph ? getFullGraph() : getSimplifiedGraph());
+		return flowchart.getJsonLayout();
 	}
 
 }

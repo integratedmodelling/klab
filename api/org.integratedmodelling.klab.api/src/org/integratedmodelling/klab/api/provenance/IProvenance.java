@@ -138,14 +138,6 @@ public interface IProvenance {
 	List<IActivity> getPrimaryActions();
 
 	/**
-	 * There is always a root observation/artifact, with consumer = the user.
-	 *
-	 * @return a {@link org.integratedmodelling.klab.api.provenance.IArtifact}
-	 *         object.
-	 */
-	IArtifact getRootArtifact();
-
-	/**
 	 * Return all artifacts.
 	 *
 	 * @return a {@link java.util.Collection} object.

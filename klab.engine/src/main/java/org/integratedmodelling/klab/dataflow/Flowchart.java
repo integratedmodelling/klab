@@ -43,9 +43,10 @@ import org.integratedmodelling.klab.api.knowledge.ISemantic;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IObservation;
-import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.provenance.IProvenance;
+import org.integratedmodelling.klab.api.provenance.IProvenance.Node;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
@@ -54,6 +55,8 @@ import org.integratedmodelling.klab.data.table.LookupTable;
 import org.integratedmodelling.klab.documentation.DataflowDocumentation;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
+import org.integratedmodelling.klab.provenance.Provenance;
+import org.integratedmodelling.klab.provenance.ProvenanceEdge;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Path;
 import org.integratedmodelling.klab.utils.StringUtils;
@@ -62,8 +65,8 @@ import org.jgrapht.graph.DefaultEdge;
 
 /**
  * Simple bean that holds the structure of the dataflow and the documentation
- * harvested from the computations. The DataflowGraph can compile this to an Elk
- * graph.
+ * harvested from the computations. Can also handle the simple and full
+ * provenance graphs. All flowcharts can be compiled into an Elk graph.
  * 
  * @author ferdinando.villa
  *
@@ -72,11 +75,12 @@ public class Flowchart {
 
 	private Element root = new Element();
 	private Dataflow dataflow;
+	private Provenance provenance;
 	private List<Pair<String, String>> connections = new ArrayList<>();
+	private Map<Pair<String, String>, String> connectionLabels = new HashMap<>();
 	private Map<String, Element> elementsByName = new HashMap<>();
 	private Map<String, Element> elementsById = new HashMap<>();
 	private Map<String, String> externalInputs = new HashMap<>();
-	private Map<String, String> outputs = new HashMap<>();
 	public IRuntimeScope runtimeScope;
 	private Graph<IActuator, DefaultEdge> graph;
 	private KlabElkGraphFactory kelk = KlabElkGraphFactory.keINSTANCE;
@@ -87,13 +91,22 @@ public class Flowchart {
 	private Map<String, ElkConnectableShape> nodes;
 	private Map<String, String> computationToNodeId;
 	private Map<String, Element> elements;
-	// private String id;
 
 	public static enum ElementType {
-		// actor types
+		// node types: dataflow...
 		ACTUATOR, RESOURCE, INSTANTIATOR, RESOLVER, TABLE, CONDITIONAL,
-		// link types
-		FLOW, CONTEXTUALIZATION
+		// for provenance (distinguishes semantic entities, aka observations, from
+		// non-semantic resources) and the two main agents, respectively controlling
+		// tasks (user agent) and the Elephant (k.LAB agent).
+		RESOURCE_ENTITY, SEMANTIC_ENTITY, LITERAL_ENTITY, MODEL_ACTIVITY, TASK_ACTIVITY, DATAFLOW_PLAN, KLAB_AGENT,
+		USER_AGENT
+	}
+
+	public static enum LinkType {
+		// link types. Dataflow charts use a single, implicit FLOW edge type. Provenance
+		// graphs
+		// use all the others and may be differentiated by coverage.
+		FLOW, WAS_GENERATED_BY, WAS_TRIGGERED_BY, WAS_CONTROLLED_BY, WAS_DERIVED_FROM, USES
 	}
 
 	public class Element {
@@ -137,6 +150,14 @@ public class Flowchart {
 			if (root == null) {
 				root = this;
 			}
+		}
+
+		Element(IProvenance.Node node) {
+			this.id = node.getId();
+			this.name = node.toString();
+			this.label = node.toString();
+			elementsByName.put(this.name, this);
+			elementsById.put(this.id, this);
 		}
 
 		Element(IServiceCall serviceCall, IContextualizable contextualizable, Element parent) {
@@ -299,6 +320,11 @@ public class Flowchart {
 		this.graph = dgraph;
 	}
 
+	public Flowchart(Provenance provenance, IRuntimeScope scope) {
+		this.provenance = provenance;
+		this.runtimeScope = scope;
+	}
+
 	/**
 	 * Create a flowchart from a dataflow. Pull out the passed output(s) if not
 	 * null.
@@ -306,11 +332,40 @@ public class Flowchart {
 	 * @param dataflow
 	 * @return
 	 */
-	public static Flowchart create(Dataflow dataflow, IActuator rootActuator, Graph<IActuator, DefaultEdge> structure, IRuntimeScope scope) {
+	public static Flowchart create(Dataflow dataflow, IActuator rootActuator, Graph<IActuator, DefaultEdge> structure,
+			IRuntimeScope scope) {
 
 		Flowchart ret = new Flowchart(dataflow, scope, structure);
 		ret.root = ret.compile((Actuator) rootActuator, null);
 		return ret;
+	}
+
+	public static Flowchart create(Provenance provenance, IRuntimeScope scope,
+			Graph<IProvenance.Node, ProvenanceEdge> graph) {
+
+		Flowchart ret = new Flowchart(provenance, scope);
+		ret.compile(graph);
+		return ret;
+	}
+
+	/*
+	 * basic: create all elements, then all links, no hierarchy here or multiple
+	 * ports per element
+	 */
+	private void compile(Graph<IProvenance.Node, ProvenanceEdge> graph) {
+
+		Map<IProvenance.Node, Element> elements = new HashMap<>();
+		for (Node node : graph.vertexSet()) {
+			Element element = new Element(node);
+			root.children.add(element);
+		}
+		for (ProvenanceEdge edge : graph.edgeSet()) {
+			Pair<String, String> key = new Pair<String, String>(graph.getEdgeSource(edge).getId(),
+					graph.getEdgeTarget(edge).getId());
+			connections.add(key);
+			connectionLabels.put(key, edge.toString());
+		}
+
 	}
 
 	private Element compile(Actuator actuator, Element parentNode) {
@@ -680,21 +735,21 @@ public class Flowchart {
 				// not found and semantics is a predicate: check for "adoption" of role or
 				// attribute. SHIT won't work before the dataflow is completely computed.
 				if (((ISemantic) pointer).getType().is(Type.ROLE)) {
-						Map<IObservedConcept, IObservation> catalog = runtimeScope.getCatalog();
-						for (IObservedConcept key : catalog.keySet()) {
-							IObservation artifact = catalog.get(key);
-							for (IConcept role : artifact.getObservable().getContextualRoles()) {
-								if (((RuntimeScope) runtimeScope).cached_is(role, ((ISemantic) pointer).getType())) {
-									return dataflow.getActuator(key.getObservable().getReferenceName());
-								}
-							}
-						}
-						for (IConcept role : actuator.getObservable().getContextualRoles()) {
+					Map<IObservedConcept, IObservation> catalog = runtimeScope.getCatalog();
+					for (IObservedConcept key : catalog.keySet()) {
+						IObservation artifact = catalog.get(key);
+						for (IConcept role : artifact.getObservable().getContextualRoles()) {
 							if (((RuntimeScope) runtimeScope).cached_is(role, ((ISemantic) pointer).getType())) {
-								return actuator;
+								return dataflow.getActuator(key.getObservable().getReferenceName());
 							}
 						}
 					}
+					for (IConcept role : actuator.getObservable().getContextualRoles()) {
+						if (((RuntimeScope) runtimeScope).cached_is(role, ((ISemantic) pointer).getType())) {
+							return actuator;
+						}
+					}
+				}
 			}
 		}
 		return null;
@@ -996,8 +1051,13 @@ public class Flowchart {
 		for (Pair<String, String> connection : getConnections()) {
 			ElkConnectableShape source = nodes.get(connection.getFirst());
 			ElkConnectableShape target = nodes.get(connection.getSecond());
+			String label = connectionLabels.get(connection);
 			if (source != null && target != null) {
-				kelk.createSimpleEdge(source, target, null);
+				if (label == null) {
+					kelk.createSimpleEdge(source, target, null);
+				} else {
+					kelk.createSimpleEdge(source, target, label == null ? null : (source + "_" + target), label);
+				}
 			}
 		}
 
