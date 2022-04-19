@@ -63,7 +63,6 @@ import groovy.lang.GroovyObjectSupport;
  * network database.
  * 
  * @author Ferd
- *
  */
 public class Provenance extends GroovyObjectSupport implements IProvenance {
 
