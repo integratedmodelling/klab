@@ -23,15 +23,22 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IAssociation;
 import org.integratedmodelling.klab.api.provenance.IPlan;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
+import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.components.runtime.observations.DelegatingArtifact;
+import org.integratedmodelling.klab.data.resources.ContextualizedResource;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.dataflow.Flowchart;
+import org.integratedmodelling.klab.dataflow.Flowchart.ElementType;
+import org.integratedmodelling.klab.engine.runtime.AbstractTask;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
+import org.integratedmodelling.klab.model.Model;
+import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Triple;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 
@@ -57,8 +64,8 @@ public class Provenance extends GroovyObjectSupport implements IProvenance {
 	private Graph<IProvenance.Node, ProvenanceEdge> fullGraph = new DefaultDirectedGraph<>(ProvenanceEdge.class);
 	private RuntimeScope overallScope;
 	Map<Dataflow, IPlan> plans = new HashMap<>();
-	Map<ITask<?>, IActivity> task = new HashMap<>();
-	Map<IModel, ModelNode> views = new HashMap<>();
+	Map<ITask<?>, IActivity> tasks = new HashMap<>();
+	Map<IViewModel, ViewNode> views = new HashMap<>();
 
 	// wrapped nodes with improved UI behavior
 	Map<Node, Node> nodes = new HashMap<>();
@@ -115,10 +122,18 @@ public class Provenance extends GroovyObjectSupport implements IProvenance {
 					continue;
 				}
 
-				// CHECK this is mostly for the UI, we may want the full graph to keep the
-				// original objects instead.
-				node = wrap(node);
-				previous = wrap(previous);
+				/*
+				 * This separates out any partials that came out as potentially scale-restricted
+				 * wrappers from normalizeNode() and adjusts the coverage.
+				 */
+				Triple<Node, Node, IScale> unwrapped = unwrapPartials(node, previous, scale);
+
+				/*
+				 * re-wrap into the final objects with API-friendly types and labels
+				 */
+				node = wrap(unwrapped.getFirst());
+				previous = wrap(unwrapped.getSecond());
+				IScale rscale = unwrapped.getThird();
 
 				/*
 				 * Agent may be k.LAB or the user if the artifact is main, i.e. the task
@@ -132,17 +147,40 @@ public class Provenance extends GroovyObjectSupport implements IProvenance {
 				/*
 				 * Should also document what is used for initialization vs. transitions
 				 */
-				for (ProvenanceEdge edge : simpleGraph.incomingEdgesOf(node)) {
+				for (ProvenanceEdge edge : simpleGraph.outgoingEdgesOf(node)) {
 					// should never be > 1
-					edge.merge(scale);
-					linked = true;
+					if (simpleGraph.getEdgeTarget(edge) == previous) {
+						edge.merge(rscale);
+						linked = true;
+						break;
+					}
 				}
 				if (!linked) {
 					// TODO link plan and process; this just links artifacts
-					simpleGraph.addEdge(node, previous, new ProvenanceEdge(scale, IAssociation.Type.wasDerivedFrom));
+					simpleGraph.addEdge(node, previous, new ProvenanceEdge(rscale, IAssociation.Type.wasDerivedFrom));
 				}
 			}
 		}
+	}
+
+	private Triple<Node, Node, IScale> unwrapPartials(Node node, Node previous, IScale scale) {
+
+		if (node instanceof NodeWrapper) {
+			if (((NodeWrapper) node).coverage != null) {
+				scale = ((NodeWrapper) node).coverage;
+			}
+			node = ((NodeWrapper) node).delegate;
+		}
+		if (previous instanceof NodeWrapper) {
+			// should be OK to substitute the scale both times instead of merging, as there
+			// should not be a situation where both nodes are wrappers.
+			if (((NodeWrapper) previous).coverage != null) {
+				scale = ((NodeWrapper) previous).coverage;
+			}
+			previous = ((NodeWrapper) previous).delegate;
+		}
+
+		return new Triple<>(node, previous, scale);
 	}
 
 	private Node wrap(Node node) {
@@ -153,12 +191,12 @@ public class Provenance extends GroovyObjectSupport implements IProvenance {
 		}
 		return ret;
 	}
-	
+
 	private IActivity getTask(IActuator actuator, IRuntimeScope scope) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	private IActivity getProcess(IActuator actuator, IRuntimeScope scope) {
 		// TODO Auto-generated method stub
 		return null;
@@ -174,8 +212,8 @@ public class Provenance extends GroovyObjectSupport implements IProvenance {
 		 */
 		if (node == null) {
 			IModel model = ((Actuator) actuator).getModel();
-			if (model instanceof IViewModel) {
-				node = makeViewNode(model);
+			if (model instanceof Model && ((Model) model).getViewModel() != null) {
+				node = makeViewNode(((Model) model).getViewModel());
 			}
 		}
 
@@ -192,13 +230,21 @@ public class Provenance extends GroovyObjectSupport implements IProvenance {
 		 * if resource, must extract the actual contextualized resource(s) being used,
 		 * which could be multiple with complementary, possibly overlapping, coverages
 		 */
+		boolean done = false;
 		if (node instanceof ComputableResource) {
 			if (!((ComputableResource) node).isFinal()) {
 				throw new KlabInternalErrorException("non-final resource passed to provenance collector");
 			}
 			if (((ComputableResource) node).getUrn() != null) {
 				IResource resource = ((ComputableResource) node).getResource();
-				if (resource != null) {
+				if (resource instanceof ContextualizedResource) {
+					for (Pair<IResource, ICoverage> rp : ((ContextualizedResource) resource).getAtomicResources()) {
+						NodeWrapper wrapper = new NodeWrapper(rp.getFirst());
+						wrapper.coverage = rp.getSecond();
+						ret.add(wrapper);
+					}
+					done = true;
+				} else if (resource != null) {
 					node = resource;
 				}
 			}
@@ -207,18 +253,20 @@ public class Provenance extends GroovyObjectSupport implements IProvenance {
 		/*
 		 * default case, just add the node as is
 		 */
-		ret.add(node);
+		if (!done) {
+			ret.add(node);
+		}
 
 		return ret;
 	}
 
-	private Node makeViewNode(IModel model) {
+	private Node makeViewNode(IViewModel model) {
 
 		if (this.views.containsKey(model)) {
 			return this.views.get(model);
 		}
 
-		ModelNode ret = new ModelNode(model, this);
+		ViewNode ret = new ViewNode(model);
 		this.views.put(model, ret);
 
 		return ret;
@@ -337,20 +385,26 @@ public class Provenance extends GroovyObjectSupport implements IProvenance {
 
 	};
 
-	class ModelNode implements IProvenance.Node {
+	class ActivityNode implements IProvenance.Node {
 
 		IModel model;
+		ITask<?> task;
 		long timestamp = System.currentTimeMillis();
 		Provenance provenance;
 
-		public ModelNode(IModel model, Provenance provenance) {
+		public ActivityNode(IModel model, Provenance provenance) {
 			this.model = model;
+			this.provenance = provenance;
+		}
+
+		public ActivityNode(ITask<?> task, Provenance provenance) {
+			this.task = task;
 			this.provenance = provenance;
 		}
 
 		@Override
 		public String getId() {
-			return model.getId();
+			return task == null ? model.getId() : task.getId();
 		}
 
 		@Override
@@ -370,20 +424,61 @@ public class Provenance extends GroovyObjectSupport implements IProvenance {
 
 		@Override
 		public String toString() {
-			return "View " + model.getName();
+			return task == null ? model.getName() : ((AbstractTask<?>) task).getDescriptor().getDescription();
 		}
+	}
+
+	public class ViewNode implements IProvenance.Node {
+
+		IViewModel view = null;
+		long timestamp = System.currentTimeMillis();
+
+		public ViewNode(IViewModel model) {
+			this.view = model;
+		}
+
+		@Override
+		public String getId() {
+			return view.getId();
+		}
+
+		@Override
+		public long getTimestamp() {
+			return timestamp;
+		}
+
+		@Override
+		public IProvenance getProvenance() {
+			return Provenance.this;
+		}
+
+		@Override
+		public boolean isEmpty() {
+			return false;
+		}
+
+		@Override
+		public String toString() {
+			return view.getViewClass() + " " + view.getName();
+		}
+
 	}
 
 	/**
 	 * This is just to normalize the contents and provide a uniform labeling
-	 * strategy.
+	 * strategy. All nodes in the graphs are wrapped in this, and the delegate may
+	 * itself be a wrapper.
 	 * 
 	 * @author Ferd
 	 *
 	 */
-	class NodeWrapper implements IProvenance.Node {
+	public class NodeWrapper implements IProvenance.Node {
 
 		Node delegate;
+		// wrapper may contain coverage to remember resource contextualization to add to
+		// the
+		// edges in case of partials (still not happening)
+		transient ICoverage coverage;
 
 		public NodeWrapper(Node node) {
 			this.delegate = node;
@@ -412,7 +507,7 @@ public class Provenance extends GroovyObjectSupport implements IProvenance {
 		@Override
 		public String toString() {
 			if (delegate instanceof IObservation) {
-				return ((IObservation) delegate).getObservable().getDefinition();
+				return ((IObservation) delegate).getObservable().getDefinition() + " observation";
 			} else if (delegate instanceof IResource) {
 				return ((IResource) delegate).getUrn();
 			} else if (delegate instanceof IModel) {
@@ -424,6 +519,36 @@ public class Provenance extends GroovyObjectSupport implements IProvenance {
 			}
 			// TODO shouldn't be null, these are views
 			return delegate == null ? "Mierda, null" : delegate.toString();
+		}
+
+		public ElementType getType() {
+			if (delegate instanceof IObservation) {
+				return ElementType.SEMANTIC_ENTITY;
+			} else if (delegate instanceof IResource) {
+				return ElementType.RESOURCE_ENTITY;
+			} else if (delegate instanceof ActivityNode) {
+				return ((ActivityNode) delegate).task == null ? ElementType.MODEL_ACTIVITY : ElementType.TASK_ACTIVITY;
+			} else if (delegate instanceof IContextualizable) {
+				if (((IContextualizable) delegate).getLiteral() != null) {
+					return ElementType.LITERAL_ENTITY;
+				}
+			} else if (delegate instanceof IPlan) {
+				return ElementType.DATAFLOW_PLAN;
+			} else if (delegate == KLAB_AGENT) {
+				return ElementType.KLAB_AGENT;
+			} else if (delegate == USER_AGENT) {
+				return ElementType.USER_AGENT;
+			} else if (delegate instanceof ViewNode) {
+				return ElementType.VIEW_ENTITY;
+			}
+
+			// TODO shouldn't be null, these are views
+			return delegate == null ? ElementType.SEMANTIC_ENTITY : ElementType.RESOURCE_ENTITY;
+
+		}
+
+		public Node getDelegate() {
+			return delegate;
 		}
 
 	}

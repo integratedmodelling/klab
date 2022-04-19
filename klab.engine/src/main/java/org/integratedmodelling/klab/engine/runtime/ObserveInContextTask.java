@@ -212,14 +212,8 @@ public class ObserveInContextTask extends AbstractTask<IArtifact> {
 
 						if (!Configuration.INSTANCE.getProperty("visualize", "false").equals("false")
 								&& ctx.getProvenance().getSimplifiedGraph().vertexSet().size() > 1) {
-							Graphs.show(ctx.getProvenance().getSimplifiedGraph(), "Provenance");
+							Graphs.show(ctx.getProvenance().getSimplifiedGraph(), "Provenance (simplified)");
 						}
-
-						// FIXME REMOVE!
-						DataflowReference pref = new DataflowReference(ctx.getRootSubject().getId(), "",
-								ctx.getProvenance().getElkGraph(false));
-						scope.getSession().getMonitor().send(Message.create(scope.getSession().getId(),
-								IMessage.MessageClass.TaskLifecycle, IMessage.Type.DataflowCompiled, dataflow));
 
 					} else {
 						monitor.warn("could not build dataflow: observation unsuccessful");

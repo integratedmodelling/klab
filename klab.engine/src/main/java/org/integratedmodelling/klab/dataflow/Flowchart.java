@@ -56,6 +56,7 @@ import org.integratedmodelling.klab.documentation.DataflowDocumentation;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.provenance.Provenance;
+import org.integratedmodelling.klab.provenance.Provenance.NodeWrapper;
 import org.integratedmodelling.klab.provenance.ProvenanceEdge;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Path;
@@ -99,7 +100,7 @@ public class Flowchart {
 		// non-semantic resources) and the two main agents, respectively controlling
 		// tasks (user agent) and the Elephant (k.LAB agent).
 		RESOURCE_ENTITY, SEMANTIC_ENTITY, LITERAL_ENTITY, MODEL_ACTIVITY, TASK_ACTIVITY, DATAFLOW_PLAN, KLAB_AGENT,
-		USER_AGENT
+		USER_AGENT, VIEW_ENTITY
 	}
 
 	public static enum LinkType {
@@ -156,6 +157,9 @@ public class Flowchart {
 			this.id = node.getId();
 			this.name = node.toString();
 			this.label = node.toString();
+			this.type = node instanceof NodeWrapper ? ((NodeWrapper) node).getType() : ElementType.RESOURCE_ENTITY;
+			this.documentation = DataflowDocumentation.INSTANCE.getDocumentation(this,
+					node instanceof NodeWrapper ? ((NodeWrapper) node).getDelegate() : node, Flowchart.this.runtimeScope);
 			elementsByName.put(this.name, this);
 			elementsById.put(this.id, this);
 		}
