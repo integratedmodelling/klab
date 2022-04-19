@@ -55,6 +55,13 @@ import groovy.lang.GroovyObjectSupport;
  * along with the dataflow. Both should include the relevant portions of any
  * provenance records associated with the resources used.
  * 
+ * Ops on provenance should be defined. Should include backwards and upwards
+ * lineage checks for concepts and resources with or without scale filters,
+ * model inquiries, and possibly also operation inquiries (e.g. find all the
+ * artifacts that have involved normalization, possibly only in a specific time
+ * or space) and agent inquiries. At large scale this would ideally sit in a
+ * network database.
+ * 
  * @author Ferd
  *
  */
