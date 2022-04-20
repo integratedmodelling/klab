@@ -12,7 +12,8 @@ import org.integratedmodelling.contrib.jgrapht.Graph;
 import org.integratedmodelling.contrib.jgrapht.graph.DefaultDirectedGraph;
 import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
 import org.integratedmodelling.klab.api.runtime.rest.ITaskReference.Status;
-import org.integratedmodelling.klab.rest.DataflowReference;
+import org.integratedmodelling.klab.rest.ContextualizationNotification;
+import org.integratedmodelling.klab.rest.ContextualizationNotification.Target;
 import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.rest.ObservationReference;
@@ -43,7 +44,7 @@ public abstract class SessionMonitor extends ContextMonitor {
 		Graph<String, DefaultEdge> structure = new DefaultDirectedGraph<>(DefaultEdge.class);
 		// list of top-level tasks registered in order of appearance
 		List<String> observationTasks = new ArrayList<>();
-		DataflowReference dataflow;
+		ContextualizationNotification dataflow;
 
 		public ObservationReference getRoot() {
 			return (ObservationReference) beans.get(contextId);
@@ -54,7 +55,7 @@ public abstract class SessionMonitor extends ContextMonitor {
 			if (dataflow != null) {
 				ret.add(dataflow);
 			} else if (contextId != null) {
-				ret.add(new DataflowReference(contextId));
+				ret.add(new ContextualizationNotification(contextId, ContextualizationNotification.Target.DATAFLOW));
 			}
 			for (String task : observationTasks) {
 				ret.add(beans.get(task));
@@ -92,7 +93,7 @@ public abstract class SessionMonitor extends ContextMonitor {
 		}
 
 		public synchronized Object getParent(Object element) {
-			if (element instanceof DataflowReference || element instanceof ObservationReference
+			if (element instanceof ContextualizationNotification || element instanceof ObservationReference
 					&& ((ObservationReference) element).getId().equals(contextId)) {
 				return this;
 			}
@@ -140,7 +141,7 @@ public abstract class SessionMonitor extends ContextMonitor {
 		 * 
 		 * @param root
 		 */
-		void onDataflowChange(ObservationReference root, DataflowReference dataflow);
+		void onDataflowChange(ObservationReference root, ContextualizationNotification dataflow);
 	}
 
 	Map<String, ContextDescriptor> contexts = new HashMap<>();
@@ -330,14 +331,15 @@ public abstract class SessionMonitor extends ContextMonitor {
 		}
 	}
 
-	public void register(DataflowReference dataflow) {
+	public void register(ContextualizationNotification dataflow) {
 		synchronized (lock) {
-//			System.out.println("REGISTERING DATAFLOW " + dataflow);
-			ContextDescriptor context = contextsByTask.get(dataflow.getTaskId());
-			if (context != null) {
-				context.dataflow = dataflow;
-				for (Listener listener : listeners) {
-					listener.onDataflowChange(context.getRoot(), dataflow);
+			if (dataflow.getTarget() == Target.DATAFLOW) {
+				ContextDescriptor context = contextsByTask.get(dataflow.getContextId());
+				if (context != null) {
+					context.dataflow = dataflow;
+					for (Listener listener : listeners) {
+						listener.onDataflowChange(context.getRoot(), dataflow);
+					}
 				}
 			}
 		}

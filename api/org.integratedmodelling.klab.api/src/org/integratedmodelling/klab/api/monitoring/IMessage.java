@@ -366,7 +366,8 @@ public interface IMessage {
         TaskAborted,
         DataflowCompiled,
         DataflowStateChanged,
-
+        ProvenanceChanged,
+        
         /**
          * Task lifecycle F -> B
          */

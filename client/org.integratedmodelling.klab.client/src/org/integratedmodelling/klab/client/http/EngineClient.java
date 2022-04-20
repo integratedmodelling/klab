@@ -97,6 +97,7 @@ public class EngineClient extends RestTemplate {
 	String authToken;
 	String url;
 	IMonitor monitor;
+	String mediaType = "application/json";
 
 	private static ClientHttpRequestFactory factory;
 
@@ -246,11 +247,29 @@ public class EngineClient extends RestTemplate {
 		return ret;
 	}
 
+	/**
+	 * Return a client with every other argument that will also substitute the
+	 * Accept: header in regular POST and GET calls with the passed media type
+	 * instead of application/json
+	 * 
+	 * @param authorization any identity.
+	 * @return a new
+	 */
+	public EngineClient accept(String mediaType) {
+
+		EngineClient ret = new EngineClient();
+		ret.objectMapper = this.objectMapper;
+		ret.authToken = this.authToken;
+		ret.url = url;
+		ret.mediaType = mediaType;
+		return ret;
+	}
+
 	@SuppressWarnings({ "rawtypes" })
 	public <T extends Object> T post(String endpoint, Object data, Class<? extends T> cls) {
 
 		HttpHeaders headers = new HttpHeaders();
-		headers.set("Accept", "application/json");
+		headers.set("Accept", mediaType);
 		// headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
 		if (authToken != null) {
 			headers.set(HttpHeaders.AUTHORIZATION, authToken);
@@ -336,12 +355,12 @@ public class EngineClient extends RestTemplate {
 	 * complete. Blocking, so meant for small payloads or use in a thread.
 	 * 
 	 * @param url
-	 * @param method POST or PUT
+	 * @param method       POST or PUT
 	 * @param contents
 	 * @param responseType
 	 * @return
 	 */
-	public <T> T upload(String endpoint,  File contents, Class<T> responseType) {
+	public <T> T upload(String endpoint, File contents, Class<T> responseType) {
 
 		LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 		map.add("file", new FileSystemResource(contents));
@@ -379,7 +398,6 @@ public class EngineClient extends RestTemplate {
 		return false;
 	}
 
-	
 	/**
 	 * Upload contents from a URL/file with asynchronous treatment of the upload.
 	 * Will periodically recheck the upload status, invoking the passed consumer
@@ -430,7 +448,7 @@ public class EngineClient extends RestTemplate {
 	public <T> T get(String endpoint, Class<T> cls) {
 
 		HttpHeaders headers = new HttpHeaders();
-		headers.set("Accept", "application/json");
+		headers.set("Accept", mediaType);
 		// headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
 		if (authToken != null) {
 			headers.set(HttpHeaders.AUTHORIZATION, authToken);
@@ -496,14 +514,14 @@ public class EngineClient extends RestTemplate {
 		if (response.getBody() == null) {
 			return null;
 		}
-		
+
 		try {
 			return response.getBody().getInputStream();
 		} catch (IOException e) {
 			throw new KlabIOException(e);
 		}
 	}
-	
+
 	/**
 	 * Instrumented for header communication and error parsing
 	 * 

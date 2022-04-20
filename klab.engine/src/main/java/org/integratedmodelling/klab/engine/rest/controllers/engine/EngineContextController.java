@@ -13,7 +13,7 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.documentation.Report;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
-import org.integratedmodelling.klab.rest.DataflowReference;
+import org.integratedmodelling.klab.rest.ContextualizationNotification;
 import org.integratedmodelling.klab.rest.DocumentationNode;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -56,27 +56,28 @@ public class EngineContextController {
 		return ((Report) ctx.getScope().getReport()).getView(View.valueOf(view.toUpperCase()), format);
 	}
 
-	/**
-	 * Get the current dataflow graph for the observation.
-	 */
-	@RequestMapping(value = API.ENGINE.OBSERVATION.RETRIEVE_DATAFLOW, method = RequestMethod.GET)
-	public DataflowReference getDataflow(Principal principal, @PathVariable String context,
-			@RequestParam(defaultValue = "elk") String format, HttpServletResponse response) throws Exception {
-
-		ISession session = EngineSessionController.getSession(principal);
-		IObservation ctx = session.getObservation(context);
-		if (ctx == null) {
-			throw new IllegalArgumentException("context " + context + " does not exist");
-		}
-		if ("elk".equals(format)) {
-			return new DataflowReference(session.getId(), null,
-				((Observation) ctx).getScope().getElkGraph());
-		} else if ("kdl".equals(format)) {
-			return new DataflowReference(session.getId(),
-					((Observation) ctx).getScope().getKdl(), null);
-		}
-		
-		throw new KlabIllegalArgumentException("dataflow: invalid format " + format);
-			
-	}
+//	/**
+//	 * Get the current dataflow graph for the observation.
+//	 * @deprecated use the public API export function
+//	 */
+//	@RequestMapping(value = API.ENGINE.OBSERVATION.RETRIEVE_DATAFLOW, method = RequestMethod.GET)
+//	public DataflowReference getDataflow(Principal principal, @PathVariable String context,
+//			@RequestParam(defaultValue = "elk") String format, HttpServletResponse response) throws Exception {
+//
+//		ISession session = EngineSessionController.getSession(principal);
+//		IObservation ctx = session.getObservation(context);
+//		if (ctx == null) {
+//			throw new IllegalArgumentException("context " + context + " does not exist");
+//		}
+//		if ("elk".equals(format)) {
+//			return new DataflowReference(session.getId(), null,
+//				((Observation) ctx).getScope().getElkGraph());
+//		} else if ("kdl".equals(format)) {
+//			return new DataflowReference(session.getId(),
+//					((Observation) ctx).getScope().getKdl(), null);
+//		}
+//		
+//		throw new KlabIllegalArgumentException("dataflow: invalid format " + format);
+//			
+//	}
 }

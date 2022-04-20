@@ -630,9 +630,10 @@ public interface API {
 
 	/**
 	 * The <em>public</em> k.LAB engine and authentication API is the only part of
-	 * the API where a commitment to stability is made. The endpoints in this may
-	 * duplicate others in specific sub-components. All k.LAB clients should
-	 * <em>only</em> use endpoints from the public API.
+	 * the API where a commitment to stability (guaranteed from version 1.0 onwards)
+	 * will be made. The endpoints in this may duplicate others in specific
+	 * sub-components. All k.LAB clients should <em>only</em> use endpoints from the
+	 * public API.
 	 * 
 	 * @author Ferd
 	 *
@@ -640,7 +641,7 @@ public interface API {
 	public interface PUBLIC {
 
 		/**
-		 * Values for the P_EXPORT path variable (lowercase is admitted in URLs).
+		 * Values for the P_EXPORT path variable (case-insensitive when used in URLs).
 		 * Content negotiation through Accept header does the rest.
 		 */
 		public enum Export {
@@ -687,6 +688,12 @@ public interface API {
 		public static final String P_OBSERVATION = "{observation}";
 		public static final String P_TICKET = "{ticket}";
 		public static final String P_ESTIMATE = "{estimate}";
+
+		/*
+		 * options to encode URL parameters in the export call
+		 */
+		public static final String O_VIEWPORT = "viewport";
+		public static final String O_LOCATOR = "locator";
 
 		public static final String PUBLIC_BASE = HUB.API_BASE + "/public";
 
@@ -1060,10 +1067,10 @@ public interface API {
 			 */
 			public static final String RUN_CONTEXT = "/engine/session/observation/run/" + P_CONTEXT;
 
-			/**
-			 * Retrieve dataflow for passed root context.
-			 */
-			public static final String RETRIEVE_DATAFLOW = "/engine/session/observation/dataflow/" + P_CONTEXT;
+//			/**
+//			 * Retrieve dataflow for passed root context.
+//			 */
+//			public static final String RETRIEVE_DATAFLOW = "/engine/session/observation/dataflow/" + P_CONTEXT;
 
 			/**
 			 * Format contextualization report as per request and return it.
