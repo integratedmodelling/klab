@@ -287,8 +287,8 @@ Namespace:
 	';';
 
 OwlImport:
-	name=STRING ('as' prefix=LOWERCASE_ID)
-;
+	name=STRING ('as' prefix=LOWERCASE_ID) |
+	(single=PathName | imports=List) 'from' urn=UrnId;	
 
 Import:
 	((imports=List | star?='*') 'from')? name=PathName/*[Namespace|PathName]*/;	

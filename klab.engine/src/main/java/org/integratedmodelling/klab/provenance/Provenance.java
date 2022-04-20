@@ -36,6 +36,7 @@ import org.integratedmodelling.klab.dataflow.Flowchart.ElementType;
 import org.integratedmodelling.klab.engine.runtime.AbstractTask;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
+import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Triple;
@@ -524,7 +525,7 @@ public class Provenance extends GroovyObjectSupport implements IProvenance {
 				}
 			}
 			// TODO shouldn't be null, these are views
-			return delegate == null ? "Mierda, null" : delegate.toString();
+			return delegate == null ? "NULL" : delegate.toString();
 		}
 
 		public ElementType getType() {
@@ -562,6 +563,10 @@ public class Provenance extends GroovyObjectSupport implements IProvenance {
 	public String getElkGraph(boolean fullGraph) {
 		Flowchart flowchart = Flowchart.create(this, overallScope, fullGraph ? getFullGraph() : getSimplifiedGraph());
 		return flowchart.getJsonLayout();
+	}
+
+	public String getKimCode(boolean fullGraph) {
+		throw new KlabUnimplementedException("k.IM provenance export");
 	}
 
 }

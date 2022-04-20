@@ -175,4 +175,9 @@ public class ENamespace extends EKimObject implements IKimNamespace {
 	public IKimConcept getDomain() {
 		return delegate.getDomain();
 	}
+
+	@Override
+	public List<Pair<String, List<String>>> getVocabularyImports() {
+		return delegate.getVocabularyImports();
+	}
 }

@@ -51,12 +51,13 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 	private IKimLoader loader;
 	private List<IServiceCall> extents = new ArrayList<>();
 	private Map<String, IKimStatement> statementsByName = new HashMap<>();
-	private IKimConcept domain; 
-	
+	private IKimConcept domain;
+
+	private List<Pair<String, List<String>>> vocabularies = new ArrayList<>();
+
 	public KimNamespace(Namespace namespace, KimProject project) {
 		super(namespace, null);
 		this.name = this.namespaceId = Kim.getNamespaceId(namespace);
-//		this.projectKnowledge = namespace.eResource().getURI().toString().contains("META-INF/knowledge.kim");
 		if (namespace.eResource().getURI().isFile()) {
 			this.file = new File(namespace.eResource().getURI().toFileString());
 			if (file.exists()) {
@@ -80,7 +81,19 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 		this.inactive = namespace.isInactive();
 		this.scenario = namespace.isScenario();
 		for (OwlImport imp : namespace.getOwlImports()) {
-			owlImports.add(new Pair<>(imp.getName(), imp.getPrefix()));
+			if (imp.getUrn() != null) {
+				List<String> imports = new ArrayList<>();
+				if (imp.getSingle() != null) {
+					imports.add(imp.getSingle());
+				} else {
+					for (Object o : Kim.INSTANCE.parseList(imp.getImports(), this)) {
+						imports.add(o.toString());
+					}
+				}
+				vocabularies.add(new Pair<>(imp.getUrn(), imports));
+			} else {
+				owlImports.add(new Pair<>(imp.getName(), imp.getPrefix()));
+			}
 		}
 		for (Function extent : namespace.getCoverage()) {
 			extents.add(new KimServiceCall(extent, this));
@@ -212,7 +225,7 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 	public Collection<String> getImportedIds() {
 		return imported;
 	}
-	
+
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -322,18 +335,18 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 
 	@Override
 	public void addChild(IKimScope child) {
-	
+
 		if (child instanceof IKimModel) {
 			statementsByName.put(((IKimModel) child).getName(), (IKimStatement) child);
 		} else if (child instanceof IKimConceptStatement || child instanceof IKimObserver) {
 			addChildrenByName((IKimStatement) child);
 		}
 		if (child instanceof KimStatement) {
-			((KimStatement)child).setNamespace(this.name);
-			if (((IKimStatement)child).isErrors()) {
+			((KimStatement) child).setNamespace(this.name);
+			if (((IKimStatement) child).isErrors()) {
 				setErrors(true);
 			}
-			if (((IKimStatement)child).isWarnings()) {
+			if (((IKimStatement) child).isWarnings()) {
 				setWarnings(true);
 			}
 		}
@@ -344,14 +357,14 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 		statementsByName.put(child instanceof IKimConceptStatement ? ((IKimConceptStatement) child).getName()
 				: ((IKimObserver) child).getName(), (IKimStatement) child);
 		for (IKimScope ch : child.getChildren()) {
-			addChildrenByName((IKimStatement)ch);
+			addChildrenByName((IKimStatement) ch);
 		}
 	}
 
 	public void addImport(String string) {
 		imported.add(string);
 	}
-	
+
 	public IKimStatement getStatement(String id) {
 		return statementsByName.get(id);
 	}
@@ -368,5 +381,9 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 		return domain;
 	}
 
+	@Override
+	public List<Pair<String, List<String>>> getVocabularyImports() {
+		return vocabularies;
+	}
 
 }

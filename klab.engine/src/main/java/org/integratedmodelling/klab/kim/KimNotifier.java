@@ -254,7 +254,7 @@ public class KimNotifier implements Kim.Notifier {
                 try {
                     object = Model.create((IKimModel) statement, ns, monitor.contextualize(statement));
                 } catch (KlabException e) {
-                    monitor.error("error creating model " + ((IModel) object).getName() + ": " + e.getMessage(), statement);
+                    monitor.error("error creating model " + ((IKimModel) statement).getName() + ": " + e.getMessage(), statement);
                 }
                 if (object instanceof IModel) {
                     try {

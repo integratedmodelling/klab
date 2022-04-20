@@ -69,14 +69,26 @@ public interface IKimNamespace extends IKimStatement {
 	 */
 	IKimProject getProject();
 
+	/**
+	 * Imports of external OWL ontologies (probably to be phased out)
+	 * 
+	 * @return
+	 */
 	List<Pair<String, String>> getOwlImports();
+
+	/**
+	 * Import of vocabularies from resources, as resource URN -> list of
+	 * vocabularies from that resource
+	 * 
+	 * @return
+	 */
+	List<Pair<String, List<String>>> getVocabularyImports();
 
 	Map<String, Object> getSymbolTable();
 
 	boolean isInactive();
 
 	boolean isScenario();
-	
 
 	/**
 	 * The domain concept, if stated.
@@ -128,8 +140,8 @@ public interface IKimNamespace extends IKimStatement {
 	 * either explicitly or (if scanUsages == true) implicitly through referenced
 	 * worldview concepts.
 	 * 
-	 * @param scanUsages
-	 *            if true, scan all usages. May be a slightly expensive operation.
+	 * @param scanUsages if true, scan all usages. May be a slightly expensive
+	 *                   operation.
 	 * @return all the namespace IDs imported according to request.
 	 */
 	Collection<String> getImportedNamespaceIds(boolean scanUsages);
