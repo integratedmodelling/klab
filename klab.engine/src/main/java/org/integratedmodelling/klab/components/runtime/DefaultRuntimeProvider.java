@@ -477,12 +477,11 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
             } else {
                 IStorage<?> storage = Klab.INSTANCE.getStorageProvider().createStorage(observable.getArtifactType(), scale);
                 ret = new State((Observable) observable, (Scale) scale, scope, (IDataStorage<?>) storage);
-                if (observable.getValue() != null) {
-                    ((State) ret).fill(observable.getValue());
-                }
+//                if (observable.getValue() != null) {
+//                    ((State) ret).fill(observable.getValue());
+//                }
             }
         } else if (observable.is(Type.CONFIGURATION)) {
-
             ret = new org.integratedmodelling.klab.components.runtime.observations.Configuration(observable.getName(),
                     (Observable) observable, (Scale) scale, scope);
         }

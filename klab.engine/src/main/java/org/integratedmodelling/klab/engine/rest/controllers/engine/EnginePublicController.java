@@ -29,6 +29,7 @@ import org.integratedmodelling.klab.engine.runtime.Session.Estimate;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
+import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.provenance.Provenance;
 import org.integratedmodelling.klab.rest.ContextRequest;
 import org.integratedmodelling.klab.rest.ObservationReference;
@@ -159,6 +160,11 @@ public class EnginePublicController implements API.PUBLIC {
 
 		boolean done = false;
 		IObservation obs = s.getObservation(observation);
+		
+		if (obs == null) {
+			throw new KlabResourceNotFoundException("observation with ID=" + observation + " not found");
+		}
+		
 		IUserIdentity user = s.getUser();
 		Export target = Export.valueOf(export.toUpperCase());
 

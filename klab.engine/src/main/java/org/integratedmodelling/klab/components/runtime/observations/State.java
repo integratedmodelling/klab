@@ -38,7 +38,6 @@ import org.integratedmodelling.klab.data.storage.MediatingState;
 import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 import org.integratedmodelling.klab.engine.runtime.api.IKeyHolder;
-import org.integratedmodelling.klab.engine.runtime.api.IModificationListener;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.owl.Observable;
@@ -354,7 +353,7 @@ public class State extends Observation implements IState, IKeyHolder {
 
 	@Override
 	public void fill(Object value) {
-		for (ILocator locator : getScale()) {
+		for (ILocator locator : getScale().initialization()) {
 			set(locator, value);
 		}
 	}

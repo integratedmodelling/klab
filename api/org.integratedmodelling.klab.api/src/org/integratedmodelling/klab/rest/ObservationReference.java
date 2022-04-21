@@ -82,7 +82,7 @@ public class ObservationReference implements IObservationReference {
 	 *
 	 */
 	public enum ValueType {
-		VOID, NUMBER, BOOLEAN, CATEGORY, DISTRIBUTION
+		VOID, NUMBER, BOOLEAN, CATEGORY
 	}
 
 	/**
@@ -181,7 +181,8 @@ public class ObservationReference implements IObservationReference {
 	private ObservationType observationType;
 	private Set<IKimConcept.Type> semantics = new HashSet<>();
 	private Set<GeometryType> geometryTypes = new HashSet<>();
-	private String literalValue;
+	private String literalValue; // formatted for display
+	private String overallValue; // just the value if single-valued
 	private List<String> traits = new ArrayList<>();
 	private Map<String, String> metadata = new HashMap<>();
 	private String taskId;
@@ -754,6 +755,14 @@ public class ObservationReference implements IObservationReference {
 
 	public void setChildIds(Map<String, String> childIds) {
 		this.childIds = childIds;
+	}
+
+	public String getOverallValue() {
+		return overallValue;
+	}
+
+	public void setOverallValue(String overallValue) {
+		this.overallValue = overallValue;
 	}
 
 }
