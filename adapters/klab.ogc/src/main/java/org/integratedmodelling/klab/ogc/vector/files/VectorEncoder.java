@@ -168,6 +168,22 @@ public class VectorEncoder implements IResourceEncoder {
                 && (scope.getTargetSemantics().is(Type.QUALITY) || scope.getTargetSemantics().is(Type.TRAIT))))
                 && requestScale.getSpace() instanceof Space && ((Space) requestScale.getSpace()).getGrid() != null;
 
+        /*
+         * situations like urn#filter=xxxx" - can't contain an equal sign
+         */
+        if (urnParameters.containsKey("filter")) {
+            try {
+                Filter pfilter = ECQL.toFilter(urnParameters.get("filter"));
+                filter = filter == null ? pfilter : ff.and(filter, pfilter);
+            } catch (CQLException e) {
+                // shouldn't happen as filter was validated previously
+                throw new KlabValidationException(e);
+            }
+        }
+        
+        /*
+         * filters set into the resource parameters
+         */
         if (resource.getParameters().contains("filter") && !resource.getParameters().get("filter").toString().trim().isEmpty()) {
             try {
                 Filter pfilter = ECQL.toFilter(resource.getParameters().get("filter", String.class).trim());
