@@ -580,7 +580,6 @@ public class KlabSession extends KlabPeer {
 	public String getDataflow(String id) {
 		return Activator.client().with(getIdentity()).accept("text/plain")
 				.get(API.PUBLIC.EXPORT_DATA.replace(API.PUBLIC.P_OBSERVATION, id)
-						.replace(API.PUBLIC.P_SESSION, getIdentity())
 						.replace(API.PUBLIC.P_EXPORT, Export.DATAFLOW.name().toLowerCase()), String.class);
 	}
 

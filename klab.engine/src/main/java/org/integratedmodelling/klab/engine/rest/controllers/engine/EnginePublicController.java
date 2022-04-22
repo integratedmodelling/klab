@@ -58,7 +58,7 @@ public class EnginePublicController implements API.PUBLIC {
 
 	@RequestMapping(value = CREATE_CONTEXT, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public TicketResponse.Ticket contextRequest(@RequestBody ContextRequest request, @PathVariable String session) {
+	public TicketResponse.Ticket contextRequest(@RequestBody ContextRequest request, @RequestHeader(name = "Authorization") String session) {
 
 		Session s = Authentication.INSTANCE.getIdentity(session, Session.class);
 		if (s == null) {
@@ -88,7 +88,7 @@ public class EnginePublicController implements API.PUBLIC {
 	@RequestMapping(value = OBSERVE_IN_CONTEXT, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public TicketResponse.Ticket observationRequest(@RequestBody ObservationRequest request,
-			@PathVariable String session, @PathVariable String context) {
+			@RequestHeader(name = "Authorization") String session, @PathVariable String context) {
 
 		Session s = Authentication.INSTANCE.getIdentity(session, Session.class);
 
@@ -122,7 +122,7 @@ public class EnginePublicController implements API.PUBLIC {
 
 	@RequestMapping(value = SUBMIT_ESTIMATE, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public TicketResponse.Ticket submitEstimate(@PathVariable String session, @PathVariable String estimate) {
+	public TicketResponse.Ticket submitEstimate(@RequestHeader(name = "Authorization") String session, @PathVariable String estimate) {
 
 		Session s = Authentication.INSTANCE.getIdentity(session, Session.class);
 		if (s == null) {
@@ -148,8 +148,9 @@ public class EnginePublicController implements API.PUBLIC {
 	}
 
 	@RequestMapping(value = EXPORT_DATA, method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE,
-			MediaType.TEXT_PLAIN_VALUE, MediaType.APPLICATION_PDF_VALUE, MediaType.IMAGE_PNG_VALUE, "text/csv" })
-	public void exportData(@PathVariable String export, @PathVariable String session, @PathVariable String observation,
+			MediaType.TEXT_PLAIN_VALUE, MediaType.APPLICATION_PDF_VALUE, MediaType.IMAGE_PNG_VALUE, "text/csv",
+			"image/tiff", "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.wordprocessingml.document" })
+	public void exportData(@PathVariable String export, @RequestHeader(name = "Authorization") String session, @PathVariable String observation,
 			@RequestHeader(name = "Accept") String format, @RequestParam(required = false) String viewport,
 			@RequestParam(required = false) String locator, HttpServletResponse response) throws IOException {
 
@@ -160,11 +161,11 @@ public class EnginePublicController implements API.PUBLIC {
 
 		boolean done = false;
 		IObservation obs = s.getObservation(observation);
-		
+
 		if (obs == null) {
 			throw new KlabResourceNotFoundException("observation with ID=" + observation + " not found");
 		}
-		
+
 		IUserIdentity user = s.getUser();
 		Export target = Export.valueOf(export.toUpperCase());
 
@@ -202,7 +203,7 @@ public class EnginePublicController implements API.PUBLIC {
 			break;
 		case DATAFLOW:
 			if (MediaType.APPLICATION_JSON_VALUE.equals(format)) {
-				response.getWriter().write(((IRuntimeScope)obs.getScope()).getElkGraph());
+				response.getWriter().write(((IRuntimeScope) obs.getScope()).getElkGraph());
 				done = true;
 			} else if (MediaType.TEXT_PLAIN_VALUE.equals(format)) {
 				response.getWriter().write(obs.getScope().getDataflow().getKdlCode());
@@ -212,11 +213,13 @@ public class EnginePublicController implements API.PUBLIC {
 		case PROVENANCE_FULL:
 		case PROVENANCE_SIMPLIFIED:
 			if (MediaType.APPLICATION_JSON_VALUE.equals(format)) {
-				response.getWriter().write(((Provenance)obs.getScope().getProvenance()).getElkGraph(target == Export.PROVENANCE_FULL));
+				response.getWriter().write(
+						((Provenance) obs.getScope().getProvenance()).getElkGraph(target == Export.PROVENANCE_FULL));
 				done = true;
 			} else if (MediaType.TEXT_PLAIN_VALUE.equals(format)) {
 				// this will currently throw an unimplemented exception
-				response.getWriter().write(((Provenance)obs.getScope().getProvenance()).getKimCode(target == Export.PROVENANCE_FULL));
+				response.getWriter().write(
+						((Provenance) obs.getScope().getProvenance()).getKimCode(target == Export.PROVENANCE_FULL));
 				done = true;
 			}
 			break;
@@ -261,7 +264,7 @@ public class EnginePublicController implements API.PUBLIC {
 
 	@RequestMapping(value = TICKET_INFO, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public TicketResponse.Ticket getTicketInfo(@PathVariable String session, @PathVariable String ticket) {
+	public TicketResponse.Ticket getTicketInfo(@RequestHeader(name = "Authorization") String session, @PathVariable String ticket) {
 
 		Session s = Authentication.INSTANCE.getIdentity(session, Session.class);
 		if (s == null) {

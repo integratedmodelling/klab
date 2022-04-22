@@ -641,8 +641,8 @@ public interface API {
 	public interface PUBLIC {
 
 		/**
-		 * Values for the P_EXPORT path variable (case-insensitive when used in URLs).
-		 * Content negotiation through Accept header does the rest.
+		 * Values for the P_EXPORT path variable (names are case-insensitive when used
+		 * in URLs). Content negotiation through Accept header does the rest.
 		 */
 		public enum Export {
 			/**
@@ -655,6 +655,12 @@ public interface API {
 			 * tabular views.
 			 */
 			DATA,
+			/**
+			 * Views are tabular data that represent a structured view over a contextualized
+			 * observation. They can be specified with graph semantics, so they admit
+			 * image/png media type along with the basic tabular options.
+			 */
+			VIEW,
 			/**
 			 * Legend for a multiple-state observation, either in JSON or as an image. If
 			 * observation is not a state the call will fail.
@@ -682,7 +688,6 @@ public interface API {
 			PROVENANCE_SIMPLIFIED
 		}
 
-		public static final String P_SESSION = "{session}";
 		public static final String P_EXPORT = "{export}";
 		public static final String P_CONTEXT = "{context}";
 		public static final String P_OBSERVATION = "{observation}";
@@ -712,22 +717,21 @@ public interface API {
 		 * Post a {@link ContextRequest} to create a context or get an estimate for it.
 		 * Returns a ticket to poll and retrieve the outcome when done.
 		 */
-		public static final String CREATE_CONTEXT = PUBLIC_BASE + "/submit/context/" + P_SESSION;
+		public static final String CREATE_CONTEXT = PUBLIC_BASE + "/submit/context";
 
 		/**
 		 * Post a {@link ObservationRequest} to make an observation in an existing
 		 * context or get an estimate for it. Returns a a ticket to poll and retrieve
 		 * the outcome when done.
 		 */
-		public static final String OBSERVE_IN_CONTEXT = PUBLIC_BASE + "/submit/observation/" + P_SESSION + "/"
-				+ P_CONTEXT;
+		public static final String OBSERVE_IN_CONTEXT = PUBLIC_BASE + "/submit/observation/" + P_CONTEXT;
 
 		/**
 		 * Call as GET with an estimate ID to accept the estimate and start an
 		 * observation (context or observation) for which an estimation was previously
 		 * made. Returns the ticket corresponding to the running task.
 		 */
-		public static final String SUBMIT_ESTIMATE = PUBLIC_BASE + "/submit/estimate/" + P_SESSION + "/" + P_ESTIMATE;
+		public static final String SUBMIT_ESTIMATE = PUBLIC_BASE + "/submit/estimate/" + P_ESTIMATE;
 
 		/**
 		 * Retrieve any of the exportable items in the {@link Export} enum. The
@@ -739,8 +743,7 @@ public interface API {
 		 * Admits, when appropriate, a viewport URL parameter and a locator parameter:
 		 * TODO explain
 		 */
-		public static final String EXPORT_DATA = PUBLIC_BASE + "/export/" + P_EXPORT + "/" + P_SESSION + "/"
-				+ P_OBSERVATION;
+		public static final String EXPORT_DATA = PUBLIC_BASE + "/export/" + P_EXPORT + "/" + P_OBSERVATION;
 
 		/**
 		 * Check the status of the passed ticket. Same as the one in API.TICKET but only
@@ -748,7 +751,7 @@ public interface API {
 		 * session as a parameter. GET request returns the entire ticket for inspection;
 		 * asking for a ticket not created in the same session is an error.
 		 */
-		public static final String TICKET_INFO = PUBLIC_BASE + "/ticket/info/" + P_SESSION + "/" + P_TICKET;
+		public static final String TICKET_INFO = PUBLIC_BASE + "/ticket/info/" + P_TICKET;
 
 	}
 
