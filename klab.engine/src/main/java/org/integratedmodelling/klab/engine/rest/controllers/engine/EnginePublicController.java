@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.engine.rest.controllers.engine;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -58,7 +59,8 @@ public class EnginePublicController implements API.PUBLIC {
 
 	@RequestMapping(value = CREATE_CONTEXT, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public TicketResponse.Ticket contextRequest(@RequestBody ContextRequest request, @RequestHeader(name = "Authorization") String session) {
+	public TicketResponse.Ticket contextRequest(@RequestBody ContextRequest request,
+			@RequestHeader(name = "Authorization") String session) {
 
 		Session s = Authentication.INSTANCE.getIdentity(session, Session.class);
 		if (s == null) {
@@ -122,7 +124,8 @@ public class EnginePublicController implements API.PUBLIC {
 
 	@RequestMapping(value = SUBMIT_ESTIMATE, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public TicketResponse.Ticket submitEstimate(@RequestHeader(name = "Authorization") String session, @PathVariable String estimate) {
+	public TicketResponse.Ticket submitEstimate(@RequestHeader(name = "Authorization") String session,
+			@PathVariable String estimate) {
 
 		Session s = Authentication.INSTANCE.getIdentity(session, Session.class);
 		if (s == null) {
@@ -149,10 +152,12 @@ public class EnginePublicController implements API.PUBLIC {
 
 	@RequestMapping(value = EXPORT_DATA, method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.TEXT_PLAIN_VALUE, MediaType.APPLICATION_PDF_VALUE, MediaType.IMAGE_PNG_VALUE, "text/csv",
-			"image/tiff", "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.wordprocessingml.document" })
-	public void exportData(@PathVariable String export, @RequestHeader(name = "Authorization") String session, @PathVariable String observation,
-			@RequestHeader(name = "Accept") String format, @RequestParam(required = false) String viewport,
-			@RequestParam(required = false) String locator, HttpServletResponse response) throws IOException {
+			"image/tiff", "application/vnd.ms-excel",
+			"application/vnd.openxmlformats-officedocument.wordprocessingml.document" })
+	public void exportData(@PathVariable String export, @RequestHeader(name = "Authorization") String session,
+			@PathVariable String observation, @RequestHeader(name = "Accept") String format,
+			@RequestParam(required = false) String viewport, @RequestParam(required = false) String locator,
+			HttpServletResponse response) throws IOException {
 
 		Session s = Authentication.INSTANCE.getIdentity(session, Session.class);
 		if (s == null) {
@@ -248,7 +253,6 @@ public class EnginePublicController implements API.PUBLIC {
 		if (obs instanceof IState) {
 
 			if (target == Export.DATA) {
-
 				BufferedImage image = Renderer.INSTANCE.render((IState) obs, locator,
 						NumberUtils.intArrayFromString(viewport == null ? "800,800" : viewport));
 				ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -264,7 +268,8 @@ public class EnginePublicController implements API.PUBLIC {
 
 	@RequestMapping(value = TICKET_INFO, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public TicketResponse.Ticket getTicketInfo(@RequestHeader(name = "Authorization") String session, @PathVariable String ticket) {
+	public TicketResponse.Ticket getTicketInfo(@RequestHeader(name = "Authorization") String session,
+			@PathVariable String ticket) {
 
 		Session s = Authentication.INSTANCE.getIdentity(session, Session.class);
 		if (s == null) {

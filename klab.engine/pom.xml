@@ -112,14 +112,12 @@
 		<dependency>
 			<groupId>com.konghq</groupId>
 			<artifactId>unirest-java</artifactId>
-			<version>3.11.09</version>
-			<classifier>standalone</classifier>
+			<version>3.13.6</version>
 		</dependency>
 		<dependency>
 			<groupId>com.konghq</groupId>
 			<artifactId>unirest-objectmapper-jackson</artifactId>
-			<version>3.11.09</version>
-			<classifier>standalone</classifier>
+			<version>3.13.6</version>
 		</dependency>
 
 		<!-- POI for Excel -->
