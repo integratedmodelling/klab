@@ -4,31 +4,40 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.integratedmodelling.klab.Authentication;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observations;
+import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
+import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IObservationGroup;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.monitoring.TicketManager;
+import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.visualization.Renderer;
 import org.integratedmodelling.klab.engine.runtime.APIObservationTask;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.Session.Estimate;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.provenance.Provenance;
@@ -38,6 +47,7 @@ import org.integratedmodelling.klab.rest.ObservationRequest;
 import org.integratedmodelling.klab.rest.StateSummary;
 import org.integratedmodelling.klab.rest.TicketResponse;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.springframework.http.MediaType;
@@ -188,6 +198,12 @@ public class EnginePublicController implements API.PUBLIC {
 			if (MediaType.IMAGE_PNG_VALUE.equals(format) && obs instanceof IState) {
 				outputImage(obs, response, target, viewport, loc);
 				done = true;
+			} else if ("image/tiff".equals(format) && obs instanceof IState && isGrid(obs)) {
+				outputGrid(obs, response, loc);
+				done = true;
+			} else if (MediaType.APPLICATION_JSON_VALUE.equals(format) && isFeatures(obs)) {
+				outputFeatures(obs, response, target, loc);
+				done = true;
 			}
 			break;
 		case LEGEND:
@@ -240,11 +256,60 @@ public class EnginePublicController implements API.PUBLIC {
 				done = true;
 			}
 			break;
+		case VIEW:
+			break;
 		}
 
 		if (!done) {
 			throw new KlabException("export request invalid or contents not available");
 		}
+	}
+
+	private void outputFeatures(IObservation obs, HttpServletResponse response, Export target, ILocator loc) {
+		IResourceAdapter adapter = Resources.INSTANCE.getResourceAdapter("vector");
+		if (adapter != null) {
+			IResourceImporter importer = adapter.getImporter();
+			if (importer != null) {
+				try {
+					importer.write(response.getWriter(), obs, loc, Klab.INSTANCE.getRootMonitor());
+					return;
+				} catch (IOException e) {
+					throw new KlabIOException(e);
+				}
+			}
+		}
+		throw new KlabIOException("error exporting to GeoJSON");
+	}
+
+	private boolean isFeatures(IObservation obs) {
+		return obs instanceof IObservationGroup && obs.getSpace() != null;
+	}
+
+	private boolean isGrid(IObservation obs) {
+		return obs instanceof IState && obs.getSpace() instanceof Space && ((Space) obs.getSpace()).getGrid() != null;
+	}
+
+	private void outputGrid(IObservation obs, HttpServletResponse response, ILocator locator) {
+		IResourceAdapter adapter = Resources.INSTANCE.getResourceAdapter("raster");
+		if (adapter != null) {
+			IResourceImporter importer = adapter.getImporter();
+			if (importer != null) {
+				try {
+					File temp = importer.exportObservation(File.createTempFile("ob", ".zip"), obs, locator, "tiff",
+							Klab.INSTANCE.getRootMonitor());
+					if (temp.exists()) {
+						try (InputStream input = new FileInputStream(temp)) {
+							IOUtils.copy(input, response.getOutputStream());
+						}
+					}
+					FileUtils.deleteQuietly(temp);
+					return;
+				} catch (IOException e) {
+					throw new KlabIOException(e);
+				}
+			}
+		}
+		throw new KlabIOException("error exporting to GeoJSON");
 	}
 
 	private void outputImage(IObservation obs, HttpServletResponse response, Export target, String viewport,
@@ -274,8 +339,7 @@ public class EnginePublicController implements API.PUBLIC {
 		Session s = Authentication.INSTANCE.getIdentity(session, Session.class);
 		if (s == null) {
 			// FIXME not illegitimate in case of server failure or restart with persistent
-			// tickets;
-			// should send an error ticket instead
+			// tickets; should send an error ticket instead
 			throw new KlabIllegalStateException("get ticket info: invalid session ID");
 		}
 		ITicket t = s.getTicket(ticket);

@@ -16,18 +16,22 @@
 package org.integratedmodelling.klab.api.knowledge;
 
 /**
- * The Interface ISemantic.
+ * Anything that is semantic incarnates a {@link IConcept}, either directly or
+ * by representing it as an instance of it. In k.LAB, ISemantic extends to
+ * {@link IObservable} and derivatives, but not to {@link IProperty} which is
+ * only used in structuring knowledge (observed relationships are observables,
+ * hence knowledge, not properties).
  *
  * @author ferdinando.villa
  * @version $Id: $Id
  */
 public interface ISemantic {
-    
-    /**
-     * <p>getType.</p>
-     *
-     * @return a {@link org.integratedmodelling.klab.api.knowledge.IConcept} object.
-     */
-    IConcept getType();
-    
+
+	/**
+	 * The concept incarnated by this object.
+	 *
+	 * @return a {@link org.integratedmodelling.klab.api.knowledge.IConcept} object.
+	 */
+	IConcept getType();
+
 }

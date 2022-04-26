@@ -642,7 +642,7 @@ public interface IObservable extends ISemantic, IResolvable {
      * @return
      */
     boolean is(Type type);
-
+    
     /**
      * Any value operators are returned here, paired with their operands.
      * 

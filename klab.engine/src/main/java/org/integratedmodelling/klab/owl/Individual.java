@@ -6,15 +6,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Nullable;
-
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IIndividual;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
-import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.semanticweb.owlapi.model.AddAxiom;
@@ -32,7 +29,6 @@ public class Individual implements IIndividual {
     protected IOntology     ontology;
     protected IConcept      concept;
     protected Metadata      metadata;
-    protected IObservation  context;
     protected String        owlName;
 
     /*
@@ -47,11 +43,10 @@ public class Individual implements IIndividual {
      * @param semantics
      * @param context
      */
-    Individual(OWLIndividual individual, IObservation context, IOntology ontology) {
+    Individual(OWLIndividual individual, IOntology ontology) {
         this.individual = individual;
         this.owlName = individual.isNamed() ? ((OWLNamedIndividual) individual).getIRI().getFragment()
                 : NameGenerator.shortUUID();
-        this.context = context;
         this.ontology = ontology;
         this.metadata = new Metadata();
     }
@@ -64,22 +59,16 @@ public class Individual implements IIndividual {
      * @param context
      * @param ontology
      */
-    public Individual(IConcept observable, String name, @Nullable IObservation context, IOntology ontology) {
-        define(observable, name, context, ontology);
+    public Individual(IConcept observable, String name, IOntology ontology) {
+        define(observable, name, ontology);
     }
 
     public Individual(Individual individual) {
         this.individual = individual.individual;
         this.ontology = individual.ontology;
         this.concept = individual.concept;
-        this.context = individual.context;
         this.owlName = individual.owlName;
         this.metadata = individual.metadata;
-    }
-
-    public void define(IConcept observable, String name, @Nullable IObservation context, IOntology ontology) {
-        this.context = context;
-        define(observable, name, context, ontology);
     }
 
     public void define(IConcept concept, String name, IOntology ontology) {
@@ -114,7 +103,7 @@ public class Individual implements IIndividual {
         for (OWLIndividual ind : individual
                 .getObjectPropertyValues(((Property) property)._owl
                         .asOWLObjectProperty(), ((Ontology) this.ontology).getOWLOntology())) {
-            ret.add(new Individual(ind, context, ontology));
+            ret.add(new Individual(ind, ontology));
         }
         return ret;
     }
@@ -182,5 +171,10 @@ public class Individual implements IIndividual {
     public boolean is(ISemantic type) {
         return concept.is(type.getType());
     }
+
+    @Override
+	public String getName() {
+		return owlName;
+	}
 
 }

@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -64,6 +65,7 @@ import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.model.OWLImportsDeclaration;
 import org.semanticweb.owlapi.model.OWLLiteral;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyChangeException;
@@ -87,7 +89,7 @@ public class Ontology implements IOntology {
     OWLOntology                  ontology;
     private String               prefix;
     private Map<String, Concept> conceptIDs    = new HashMap<>();
-    Map<String, Individual>      individuals   = new HashMap<>();
+    Map<String, Individual>      individuals   = new LinkedHashMap<>();
 
     /*
      * all properties
@@ -157,7 +159,15 @@ public class Ontology implements IOntology {
                 this.propertyIDs.add(p.getIRI().getFragment());
             }
         }
+        for (OWLNamedIndividual i : this.ontology.getIndividualsInSignature()) {
+            if (i.getIRI().toString().contains(this.prefix)) {
+            	Individual individual = new Individual(i, this);
+            	this.individuals.put(individual.getName(), individual);
+            }
+        }
     }
+    
+    
 
     public void addDelegateConcept(String id, IKimNamespace namespace, Concept concept) {
         this.delegates.put(id, wrapDelegate(concept, id));
@@ -629,6 +639,8 @@ public class Ontology implements IOntology {
 
         }
 
+        
+        
         scan();
         return errors;
     }

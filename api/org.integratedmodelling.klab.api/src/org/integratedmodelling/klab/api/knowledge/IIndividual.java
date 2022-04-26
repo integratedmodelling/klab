@@ -17,10 +17,6 @@ package org.integratedmodelling.klab.api.knowledge;
 
 import java.util.Collection;
 
-import org.integratedmodelling.klab.api.observations.IObservation;
-import org.integratedmodelling.klab.api.observations.ISubject;
-import org.integratedmodelling.klab.api.services.IReasonerService;
-
 /**
  * The individual (instance). Individuals are <em>not</em> involved or generated
  * during the main k.LAB observation activities. They can, however, be created
@@ -47,6 +43,7 @@ public interface IIndividual extends ISemantic {
 	 *                 {@link org.integratedmodelling.klab.api.knowledge.IProperty}
 	 *                 object.
 	 * @return a {@link java.util.Collection} object.
+	 * @deprecated abandon in favor of a graph model
 	 */
 	Collection<IIndividual> getIndividuals(IProperty property);
 
@@ -59,6 +56,8 @@ public interface IIndividual extends ISemantic {
 	 *                 {@link org.integratedmodelling.klab.api.knowledge.IProperty}
 	 *                 object.
 	 * @return a {@link java.util.Collection} object.
+	 * @deprecated just use metadata - loading restrictions should be relaxed with
+	 *             validated individuals
 	 */
 	Collection<Object> getData(IProperty property);
 
@@ -68,6 +67,7 @@ public interface IIndividual extends ISemantic {
 	 * </p>
 	 *
 	 * @return a {@link java.util.Collection} object.
+	 * @deprecated RDF graph model must be explicit
 	 */
 	Collection<IProperty> getObjectRelationships();
 
@@ -77,6 +77,8 @@ public interface IIndividual extends ISemantic {
 	 * </p>
 	 *
 	 * @return a {@link java.util.Collection} object.
+	 * @deprecated just use metadata - loading restrictions should be relaxed with
+	 *             validated individuals
 	 */
 	Collection<IProperty> getDataRelationships();
 
@@ -100,4 +102,11 @@ public interface IIndividual extends ISemantic {
 	 *         object.
 	 */
 	IMetadata getMetadata();
+
+	/**
+	 * Simple name of reference, unique within the ontology
+	 * 
+	 * @return
+	 */
+	String getName();
 }

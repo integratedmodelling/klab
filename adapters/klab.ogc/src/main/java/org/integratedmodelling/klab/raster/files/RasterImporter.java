@@ -4,6 +4,7 @@ import java.awt.image.DataBuffer;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -380,5 +381,11 @@ public class RasterImporter extends AbstractFilesetImporter {
         // TODO Auto-generated method stub
         return false;
     }
+
+	@Override
+	public boolean write(Writer writer, IObservation observation, ILocator locator, IMonitor monitor) {
+		// TODO ASC format?
+		return false;
+	}
 
 }

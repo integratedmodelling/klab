@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.data.adapters.container;
 
 import java.io.File;
+import java.io.Writer;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -77,6 +78,12 @@ public class ContainerResourceImporter implements IResourceImporter {
 
 	@Override
 	public boolean exportResource(File file, IResource resource, String format) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean write(Writer writer, IObservation observation, ILocator locator, IMonitor monitor) {
 		// TODO Auto-generated method stub
 		return false;
 	}

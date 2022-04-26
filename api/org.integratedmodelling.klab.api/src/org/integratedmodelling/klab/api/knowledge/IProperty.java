@@ -28,9 +28,10 @@ import org.integratedmodelling.klab.exceptions.KlabException;
  * model.
  * <p>
  * Properties are not part of observations, but only of the underlying data
- * model. Only RDF-compatible {@link IIndividual}s instantiate properties. The
- * semantics of observed relationships is modeled using observable IConcepts and
- * has nothing to do with IProperties.
+ * model. Only RDF-compatible {@link IIndividual}s instantiate (object)
+ * properties. Data and annotation properties are accessed through metadata, not
+ * directly as axioms. The semantics of observed relationships is modeled using
+ * observable IConcepts and has nothing to do with IProperties.
  * 
  * @author Ferdinando Villa, Ecoinformatics Collaboratory, UVM
  * @version $Id: $Id
