@@ -209,10 +209,6 @@ public enum Observations implements IObservationService {
 		ret.setStateTimestamp(((Observation) state).getTimestamp());
 		double min, max;
 
-		// List<Integer> dataKey = state.getDataKey() != null
-		// ? state.getDataKey().getAllValues().stream().map(dk ->
-		// dk.getFirst()).collect(Collectors.toList())
-		// : null;
 		boolean isBoolean = state.getType() == IArtifact.Type.BOOLEAN;
 
 		if (state.getDataKey() != null || isBoolean) {
@@ -230,21 +226,37 @@ public enum Observations implements IObservationService {
 		} else {
 
 			SummaryStatistics statistics = null;
-			// if (state instanceof State && ((State) state).getStorage() instanceof
-			// AbstractAdaptiveStorage) {
-			// ((AbstractAdaptiveStorage<?>) ((State)
-			// state).getStorage()).getStatistics(locator);
-			// }
+			StateSummary summary = null;
+			if (state instanceof State) {
+				summary = ((State) state).getOverallSummary();
+			}
 
 			if (statistics == null) {
 
 				statistics = new SummaryStatistics();
-
+				Builder histogram = null;
+				if (summary != null) {
+					// histogram min/max will reflect the entire range of the data as computed this
+					// far, not just the locator
+					histogram = Histogram.builder(summary.getRange().get(0), summary.getRange().get(1),
+							isBoolean ? 2 : (state.getDataKey() == null ? 10 : state.getDataKey().size()));
+				}
 				for (ILocator ll : locator) {
 					Object o = state.get(ll);
 					if (o instanceof Number) {
 						ndata++;
 						statistics.addValue(((Number) o).doubleValue());
+						if (histogram != null) {
+							if (state.getDataKey() != null) {
+								histogram.addToIndex(state.getDataKey().reverseLookup(o));
+							} else {
+								histogram.add(((Number) o).doubleValue());
+							}
+						}
+					} else if (o instanceof Boolean && histogram != null) {
+						histogram.addToIndex((Boolean) o ? 1 : 0);
+					} else if (o != null && state.getDataKey() != null && histogram != null) {
+						histogram.addToIndex(state.getDataKey().reverseLookup(o));
 					} else {
 						nndat++;
 					}
@@ -253,6 +265,14 @@ public enum Observations implements IObservationService {
 
 			min = statistics.getMin();
 			max = statistics.getMax();
+
+			if (state.getDataKey() != null) {
+				Map<Integer, String> key = new HashMap<>();
+				for (Pair<Integer, String> pair : state.getDataKey().getAllValues()) {
+					key.put(pair.getFirst(), pair.getSecond());
+				}
+				ret.setDataKey(key);
+			}
 
 			ret.setDegenerate(
 					ndata == 0 || !Double.isFinite(statistics.getMax()) || !Double.isFinite(statistics.getMax()));
@@ -267,28 +287,6 @@ public enum Observations implements IObservationService {
 		}
 
 		ret.setRange(Arrays.asList(min, max));
-
-		if (ret.getNodataPercentage() < 1) {
-
-			Builder histogram = Histogram.builder(min, max,
-					isBoolean ? 2 : (state.getDataKey() == null ? 10 : state.getDataKey().size()));
-
-			for (ILocator ll : locator) {
-				Object o = state.get(ll);
-				if (o instanceof Number) {
-					if (state.getDataKey() != null) {
-						histogram.addToIndex(state.getDataKey().reverseLookup(o));
-					} else {
-						histogram.add(((Number) o).doubleValue());
-					}
-				} else if (o instanceof Boolean) {
-					histogram.addToIndex((Boolean) o ? 1 : 0);
-				} else if (o != null && state.getDataKey() != null) {
-					histogram.addToIndex(state.getDataKey().reverseLookup(o));
-				}
-			}
-			ret.setHistogram(histogram.build());
-		}
 
 		return ret;
 	}
@@ -586,6 +584,10 @@ public enum Observations implements IObservationService {
 				}
 			}
 
+			ret.setHistogram(summary.getHistogram());
+			ret.setColormap(summary.getColormap());
+			ret.setKey(summary.getDataKey());
+			
 			DataSummary ds = new DataSummary();
 
 			ds.setNodataProportion(summary.getNodataPercentage());
@@ -609,14 +611,12 @@ public enum Observations implements IObservationService {
 				ds.setCategorized(false);
 				double step = (summary.getRange().get(1) - summary.getRange().get(0))
 						/ (double) ds.getHistogram().size();
-
 				for (int i = 0; i < ds.getHistogram().size(); i++) {
 					// TODO use labels for categories
 					String lower = NumberFormat.getInstance().format(summary.getRange().get(0) + (step * i));
 					String upper = NumberFormat.getInstance().format(summary.getRange().get(0) + (step * (i + 1)));
 					ds.getCategories().add(lower + " to " + upper);
 				}
-
 			}
 			ret.setDataSummary(ds);
 		}

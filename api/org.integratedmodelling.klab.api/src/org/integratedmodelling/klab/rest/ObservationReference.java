@@ -198,6 +198,8 @@ public class ObservationReference implements IObservationReference {
 	private boolean main;
 	private boolean dynamic;
 	private List<Long> timeEvents;
+	private Histogram histogram;
+	private Colormap colormap;
 
 	// if requested, IDs of children created in this' context are mapped from their
 	// observable URNs here.
@@ -291,6 +293,7 @@ public class ObservationReference implements IObservationReference {
 	 * entire observation structure.
 	 */
 	private long lastUpdate;
+	private Map<Integer, String> key;
 
 	@Override
 	public String getId() {
@@ -763,6 +766,30 @@ public class ObservationReference implements IObservationReference {
 
 	public void setOverallValue(String overallValue) {
 		this.overallValue = overallValue;
+	}
+
+	public Histogram getHistogram() {
+		return histogram;
+	}
+
+	public void setHistogram(Histogram histogram) {
+		this.histogram = histogram;
+	}
+
+	public Colormap getColormap() {
+		return colormap;
+	}
+
+	public void setColormap(Colormap colormap) {
+		this.colormap = colormap;
+	}
+
+	public Map<Integer, String> getKey() {
+		return this.key;
+	}
+	
+	public void setKey(Map<Integer, String> key) {
+		this.key = key;
 	}
 
 }

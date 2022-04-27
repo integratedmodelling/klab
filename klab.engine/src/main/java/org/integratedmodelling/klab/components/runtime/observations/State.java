@@ -496,8 +496,12 @@ public class State extends Observation implements IState, IKeyHolder {
 	}
 
 	public StateSummary getOverallSummary() {
-		if (storage instanceof AbstractAdaptiveStorage) {
-			return ((AbstractAdaptiveStorage<?>)storage).getOverallSummary();
+		IStorage<?> stor = this.storage;
+		if (stor instanceof KeyedStorage) {
+			stor = ((KeyedStorage<?>)stor).getBackend();
+		}
+		if (stor instanceof AbstractAdaptiveStorage) {
+			return ((AbstractAdaptiveStorage<?>)stor).getOverallSummary();
 		}
 		return null;
 	}

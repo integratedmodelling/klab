@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
@@ -27,6 +26,8 @@ import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IObservationGroup;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.provenance.IArtifact.Structure;
 import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.monitoring.TicketManager;
@@ -248,8 +249,11 @@ public class EnginePublicController implements API.PUBLIC {
 			break;
 		case STRUCTURE:
 			ObservationReference ret = Observations.INSTANCE.createArtifactDescriptor((IObservation) obs);
-			for (IObservation child : obs.getScope().getChildrenOf(obs)) {
-				ret.getChildIds().put(child.getObservable().getName(), child.getId());
+			Structure structure = ((IRuntimeScope) obs.getScope()).getStructure();
+			for (IArtifact child : structure.getArtifactChildren(obs)) {
+				if (child instanceof IObservation) {
+					ret.getChildIds().put(((IObservation) child).getObservable().getName(), child.getId());
+				}
 			}
 			if (MediaType.APPLICATION_JSON_VALUE.equals(format)) {
 				response.getWriter().write(JsonUtils.asString(ret));

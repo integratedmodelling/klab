@@ -135,14 +135,6 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 */
 	void set(String name, Object value);
 
-	// /**
-	// * Each context that handles a temporal scale must expose a configuration
-	// * detector.
-	// *
-	// * @return the configuration detector for the context
-	// */
-	// ConfigurationDetector getConfigurationDetector();
-
 	/**
 	 * Produce a deep copy of this context so it can be used for parameters without
 	 * affecting the original. The catalog remains unchanged.
@@ -151,14 +143,6 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 *         parameters.
 	 */
 	IRuntimeScope copy();
-	//
-	// /**
-	// * Rename the passed observation data as the passed alias.
-	// *
-	// * @param name
-	// * @param alias
-	// */
-	// void rename(String name, String alias);
 
 	/**
 	 * Set the main target of the computation being carried on by the actuator. Used
