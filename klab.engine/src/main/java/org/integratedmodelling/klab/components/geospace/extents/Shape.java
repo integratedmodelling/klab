@@ -417,7 +417,7 @@ public class Shape extends AbstractExtent implements IShape {
     }
 
     @Override
-    public IExtent merge(IExtent extent) throws KlabException {
+    public ISpace merge(IExtent extent) throws KlabException {
         if (extent instanceof ISpace) {
             return Space.createMergedExtent(this, (ISpace) extent);
         }
@@ -554,7 +554,7 @@ public class Shape extends AbstractExtent implements IShape {
     }
 
     @Override
-    public IExtent merge(ITopologicallyComparable<?> other, LogicalConnector how) {
+    public ISpace merge(ITopologicallyComparable<?> other, LogicalConnector how) {
 
         Shape shape = other instanceof Shape ? (Shape) other : null;
         if (shape == null && other instanceof ISpace) {

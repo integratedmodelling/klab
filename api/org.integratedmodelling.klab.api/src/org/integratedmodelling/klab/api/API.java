@@ -64,6 +64,11 @@ import org.integratedmodelling.klab.rest.TicketRequest;
 public interface API {
 
 	/**
+	 * Base for many, but still not all, endpoints. TODO must use everywhere.
+	 */
+	public static final String API_BASE = "/api/v2";
+
+	/**
 	 * Use to simply substitute parameters in URLs:
 	 * <code>API.url(API.RESOURCE.RESOLVE_URN, API.P_URN, urn)</code>
 	 * 
@@ -641,6 +646,11 @@ public interface API {
 	public interface PUBLIC {
 
 		/**
+		 * Platform segment for User-Agent header in API requests.
+		 */
+		public static final String USER_AGENT_PLATFORM = "client:klab-api";
+
+		/**
 		 * Values for the P_EXPORT path variable (names are case-insensitive when used
 		 * in URLs). Content negotiation through Accept header does the rest.
 		 */
@@ -1147,7 +1157,6 @@ public interface API {
 	 *
 	 */
 	public interface STATS {
-		public static final String API_BASE = "/api/v2";
 
 		public static final String STATS_BASE = API_BASE + "/stats";
 
@@ -1159,6 +1168,26 @@ public interface API {
 			public static final String PAGE = "page";
 
 			public static final String LIMIT = "limit";
+
+		}
+
+	}
+
+	/**
+	 * Semantic server - suggestions, search and concept/data validation
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	public interface SEMANTICS {
+
+		public static final String SEMANTICS_BASE = API_BASE + "/semantics";
+
+		public interface VALIDATION {
+
+		}
+
+		public interface SUGGESTION {
 
 		}
 

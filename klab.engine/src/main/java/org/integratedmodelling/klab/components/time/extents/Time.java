@@ -407,7 +407,7 @@ public class Time extends Extent implements ITime {
 	}
 
 	@Override
-	public IExtent merge(IExtent extent) throws KlabException {
+	public ITime merge(IExtent extent) throws KlabException {
 		// TODO hostia
 		if (extent instanceof ITime) {
 
@@ -453,8 +453,12 @@ public class Time extends Extent implements ITime {
 	}
 
 	@Override
-	public IExtent merge(ITopologicallyComparable<?> other, LogicalConnector how) {
-		// TODO Auto-generated method stub
+	public ITime merge(ITopologicallyComparable<?> other, LogicalConnector how) {
+		if (how == LogicalConnector.UNION) {
+			ITimeInstant s = TimeInstant.create(Long.min(this.start.getMilliseconds(), ((ITime)other).getStart().getMilliseconds()));
+			ITimeInstant e = TimeInstant.create(Long.max(this.end.getMilliseconds(), ((ITime)other).getEnd().getMilliseconds()));
+			return create(s, e, this.resolution);
+		}
 		return copy();
 	}
 
@@ -1179,7 +1183,7 @@ public class Time extends Extent implements ITime {
 	}
 
 	@Override
-	public IExtent getBoundingExtent() {
+	public ITime getBoundingExtent() {
 		return collapse();
 	}
 
@@ -1380,7 +1384,7 @@ public class Time extends Extent implements ITime {
 	}
 
 	public String describe() {
-		return "[" + this.start + " - " + this.end + "]";
+		return ((TimeInstant)this.start).describe(resolution) + " - " + ((TimeInstant)this.end).describe(resolution);
 	}
 
 	private Time withScaleId(String scaleId) {

@@ -44,7 +44,7 @@ public interface IScale extends ILocator, IGeometry, ITopology<IScale> {
      * @return the time, or null
      */
     ITime getTime();
-
+    
     /**
      * True if we have time and the time topology determines more than a single state. It's also in
      * IObservation, but it's convenient to duplicate it here too.

@@ -214,11 +214,13 @@ public class ObserveInContextTask extends AbstractTask<IArtifact> {
 							Graphs.show(ctx.getProvenance().getSimplifiedGraph(), "Provenance (simplified)");
 						}
 
-						scope.getSession().getMonitor()
-								.send(Message.create(scope.getSession().getId(), IMessage.MessageClass.TaskLifecycle,
-										IMessage.Type.ProvenanceChanged,
-										new ContextualizationNotification(ctx.getRootSubject().getId(),
-												ContextualizationNotification.Target.PROVENANCE)));
+						if (!silent) {
+							scope.getSession().getMonitor()
+									.send(Message.create(scope.getSession().getId(),
+											IMessage.MessageClass.TaskLifecycle, IMessage.Type.ProvenanceChanged,
+											new ContextualizationNotification(ctx.getRootSubject().getId(),
+													ContextualizationNotification.Target.PROVENANCE)));
+						}
 						
 					} else {
 						monitor.warn("could not build dataflow: observation unsuccessful");

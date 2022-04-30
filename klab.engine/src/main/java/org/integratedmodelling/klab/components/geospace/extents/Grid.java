@@ -754,7 +754,7 @@ public class Grid extends Area implements IGrid {
 		}
 
 		@Override
-		public IExtent merge(IExtent extent) throws KlabException {
+		public ISpace merge(IExtent extent) throws KlabException {
 			return getShape().merge(extent);
 		}
 
@@ -809,7 +809,7 @@ public class Grid extends Area implements IGrid {
 		}
 
 		@Override
-		public IExtent merge(ITopologicallyComparable<?> other, LogicalConnector how) {
+		public ISpace merge(ITopologicallyComparable<?> other, LogicalConnector how) {
 			return getShape().merge(other, how);
 		}
 
@@ -943,7 +943,7 @@ public class Grid extends Area implements IGrid {
 		}
 
 		@Override
-		public IExtent getBoundingExtent() {
+		public ISpace getBoundingExtent() {
 			return getShape();
 		}
 

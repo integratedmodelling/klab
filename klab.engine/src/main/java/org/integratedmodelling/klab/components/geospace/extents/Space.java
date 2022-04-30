@@ -343,7 +343,7 @@ public class Space extends Extent implements ISpace {
     }
 
     @Override
-    public IExtent merge(IExtent extent) throws KlabException {
+    public ISpace merge(IExtent extent) throws KlabException {
         if (extent instanceof ISpace) {
             return createMergedExtent(this, (ISpace) extent);
         }
@@ -448,7 +448,7 @@ public class Space extends Extent implements ISpace {
         return 1;
     }
 
-    public IExtent intersection(ITopologicallyComparable<?> obj) throws KlabException {
+    public ISpace intersection(ITopologicallyComparable<?> obj) throws KlabException {
 
         Space ret = new Space(this);
 
@@ -470,7 +470,7 @@ public class Space extends Extent implements ISpace {
         return adaptToShape(this.shape.intersection(other), other);
     }
 
-    public IExtent difference(ITopologicallyComparable<?> obj) throws KlabException {
+    public ISpace difference(ITopologicallyComparable<?> obj) throws KlabException {
 
         Space ret = new Space(this);
 
@@ -492,7 +492,7 @@ public class Space extends Extent implements ISpace {
         return adaptToShape(this.shape.difference(other), other);
     }
 
-    private IExtent adaptToShape(Shape common, ISpace other) {
+    private ISpace adaptToShape(Shape common, ISpace other) {
 
         if (common.isEmpty()) {
             return this;
@@ -560,7 +560,7 @@ public class Space extends Extent implements ISpace {
         return other instanceof Space && ((Space) other).features != null;
     }
 
-    public IExtent union(ITopologicallyComparable<?> obj) throws KlabException {
+    public ISpace union(ITopologicallyComparable<?> obj) throws KlabException {
 
         Space ret = new Space(this);
 
@@ -751,7 +751,7 @@ public class Space extends Extent implements ISpace {
     }
 
     @Override
-    public IExtent merge(ITopologicallyComparable<?> other, LogicalConnector how) {
+    public ISpace merge(ITopologicallyComparable<?> other, LogicalConnector how) {
         if (how == LogicalConnector.UNION) {
             return union(other);
         } else if (how == LogicalConnector.INTERSECTION) {
@@ -948,7 +948,7 @@ public class Space extends Extent implements ISpace {
         return generic;
     }
 
-    public static IExtent createMergedExtent(ISpace destination, ISpace other) {
+    public static ISpace createMergedExtent(ISpace destination, ISpace other) {
 
         IShape resultShape = destination.getShape();
         IGrid resultGrid = destination instanceof Space ? ((Space) destination).getGrid() : null;
@@ -1032,7 +1032,7 @@ public class Space extends Extent implements ISpace {
     }
 
     @Override
-    public IExtent getBoundingExtent() {
+    public ISpace getBoundingExtent() {
         return getEnvelope().asShape();
     }
 

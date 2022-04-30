@@ -16,6 +16,8 @@ package org.integratedmodelling.klab.api.observations.scale.time;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
+import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
+import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 /**
@@ -422,5 +424,24 @@ public interface ITime extends IExtent {
 	 * @return
 	 */
 	boolean hasChangeDuring(ITime time);
+	
+    /**
+     * Override the result for fluency
+     * @return
+     */
+    @Override
+    ITime getBoundingExtent();
 
+    /**
+     * Override the result for fluency
+     */
+    @Override
+	ITime merge(IExtent extent);
+
+    /**
+     * Override the result for fluency
+     */
+	@Override
+	ITime merge(ITopologicallyComparable<?> other, LogicalConnector how);
+    
 }
