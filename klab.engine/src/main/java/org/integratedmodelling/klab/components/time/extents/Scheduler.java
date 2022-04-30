@@ -392,7 +392,8 @@ public class Scheduler implements IScheduler {
 						}
 
 						if (resource.isFinal()) {
-							scope.getProvenance().add(artifact, resource, scale, actuator, transitionScope, IAssociation.Type.wasDerivedFrom);
+							scope.getProvenance().add(artifact, resource, (IScale) transitionScale, actuator,
+									transitionScope, IAssociation.Type.wasDerivedFrom);
 						}
 
 						/*
