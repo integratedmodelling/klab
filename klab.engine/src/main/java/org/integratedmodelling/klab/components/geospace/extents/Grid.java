@@ -754,8 +754,8 @@ public class Grid extends Area implements IGrid {
 		}
 
 		@Override
-		public ISpace merge(IExtent extent) throws KlabException {
-			return getShape().merge(extent);
+		public ISpace mergeContext(IExtent extent) throws KlabException {
+			return getShape().mergeContext(extent);
 		}
 
 		@Override
@@ -996,11 +996,11 @@ public class Grid extends Area implements IGrid {
 			return true; // stateIndex == 0;
 		}
 
-		@Override
-		public IExtent adopt(IExtent extent, IMonitor monitor) {
-			// TODO Auto-generated method stub
-			return this;
-		}
+//		@Override
+//		public IExtent adopt(IExtent extent, IMonitor monitor) {
+//			// TODO Auto-generated method stub
+//			return this;
+//		}
 
 		@Override
 		public IExtent getExtent(long stateIndex) {

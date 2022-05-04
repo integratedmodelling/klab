@@ -46,7 +46,7 @@ public class ProvenanceEdge extends DefaultEdge implements IAssociation {
 
 	public void merge(IScale scale) {
 
-		if (scale.getTime() == null || scale.getTime().is(ITime.Type.INITIALIZATION)) {
+		if (scale == null || scale.getTime() == null || scale.getTime().is(ITime.Type.INITIALIZATION)) {
 			initialized = true;
 			return;
 		}

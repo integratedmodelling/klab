@@ -8,7 +8,6 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -23,14 +22,11 @@ import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.dataflow.Actuator.Status;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.dataflow.DataflowHandler;
-import org.integratedmodelling.klab.dataflow.Flowchart.Element;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
+import org.integratedmodelling.klab.resolution.DependencyGraph;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.scale.Scale;
-import org.jgrapht.Graph;
-import org.jgrapht.graph.DefaultDirectedGraph;
-import org.jgrapht.graph.DefaultEdge;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -186,9 +182,9 @@ public abstract class AbstractRuntimeScope extends DataflowHandler implements IR
     // }
 
     @Override
-    public Graph<IObservedConcept, DefaultEdge> getDependencyGraph() {
+    public DependencyGraph getDependencyGraph() {
         return this.dataflow == null
-                ? new DefaultDirectedGraph<>(DefaultEdge.class)
+                ? new DependencyGraph()
                 : this.dataflow.getDependencyGraph();
     }
 

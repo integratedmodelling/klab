@@ -172,7 +172,7 @@ public enum Models implements IModelService {
 	@Override
 	public List<IRankedModel> resolve(IObservable observable, IResolutionScope scope) throws KlabException {
 		List<IRankedModel> ret = kbox.query(observable, (ResolutionScope) scope);
-		((ResolutionScope)scope).notifyResolution(observable, ret, scope.getMode());
+		((ResolutionScope) scope).notifyResolution(observable, ret, scope.getMode());
 		return ret;
 	}
 
@@ -245,7 +245,7 @@ public enum Models implements IModelService {
 		return true;
 	}
 
-	/**
+	/*
 	 * Called when a candidate observable has more than one model and/or a
 	 * computation, making it a derived strategy to observe a given concepts. Must
 	 * return a list with one single model with all the candidates as dependencies
@@ -258,43 +258,55 @@ public enum Models implements IModelService {
 	 * reasoning to find more complex pathways to the observation.
 	 * 
 	 * @param candidateObservable
+	 * 
 	 * @param ret
+	 * 
 	 * @return
 	 */
 	public List<IRankedModel> createDerivedModel(Observable mainObservable, ObservationStrategy candidateObservable,
 			ResolutionScope scope) {
-	    ObservedConcept oc = new ObservedConcept(mainObservable);
-	    if (scope.getResolutions().containsKey(oc) && scope.getResolutions().get(oc).size() > 0) {
-	        return scope.getResolutions().get(oc);
-	    }
+		ObservedConcept oc = new ObservedConcept(mainObservable);
+		if (scope.getResolutions().containsKey(oc) && scope.getResolutions().get(oc).size() > 0) {
+			return scope.getResolutions().get(oc);
+		}
 		org.integratedmodelling.klab.model.Model inner = new org.integratedmodelling.klab.model.Model(mainObservable,
 				candidateObservable, scope);
 		RankedModel outer = new RankedModel(inner);
 		List<IRankedModel> ret = Collections.singletonList(outer);
-        scope.getResolutions().put(oc, ret);
-        return ret;
+		scope.getResolutions().put(oc, ret);
+		return ret;
 	}
 
-	/**
+	/*
 	 * Create a new model for the change in the passed observable, based on the
-	 * changing data resolved by the a dynamic resource. Used to pre-fill the
-	 * kbox catalog when a merged resource covering the period of occurrence has
-	 * resolved the unchanging observable.
+	 * changing data resolved by the a dynamic resource. Used to pre-fill the kbox
+	 * catalog when a merged resource covering the period of occurrence has resolved
+	 * the unchanging observable. A previously existing model will be passed in case
+	 * there are multiple partitions for this observable, which need to be dealt
+	 * with internally.
 	 * 
-	 * @param unchangedObservable
-	 * @param resource
 	 * @return
-	 * @deprecated should not be necessary
 	 */
-	public IRankedModel createChangeModel(IObservable unchangedObservable, IModel model, ResolutionScope scope) {
+	public IRankedModel createChangeModel(IObservable observable, IModel model,
+			ResolutionScope scope) {
 		MergedResource resource = ((org.integratedmodelling.klab.model.Model) model).getMergedResource();
-		if (resource == null && !model.changesIn(Dimension.Type.TIME, scope.getScale())) {
-			throw new KlabIllegalArgumentException(
-					"Cannot create a merged resource change model from a model that does not contain dynamic resources");
+		org.integratedmodelling.klab.model.Model inner = null;
+		if (resource != null) {
+			if (!model.changesIn(Dimension.Type.TIME, scope.getScale())) {
+				throw new KlabIllegalArgumentException(
+						"Cannot create a merged resource change model from a model that does not contain dynamic resources");
+			}
+			inner = new org.integratedmodelling.klab.model.Model(observable, resource, model, scope);
+		} else {
+			// basic copy of model, which will also handle change; used with transformations
+			// - UNUSED
+			inner = new org.integratedmodelling.klab.model.Model(observable, model, scope);
 		}
-		org.integratedmodelling.klab.model.Model inner = new org.integratedmodelling.klab.model.Model(
-				unchangedObservable, resource, model, scope);
-		return new RankedModel(inner);
+		int priority = -1;
+		if (model instanceof RankedModel) {
+			priority = ((RankedModel)model).getPriority();
+		}
+		return inner == null ? null : new RankedModel(inner).withPriority(priority);
 	}
 
 }

@@ -45,7 +45,7 @@ public class TimeInstant implements ITimeInstant {
 	public static ITimeInstant create() {
 		return new TimeInstant();
 	}
-	
+
 	public TimeInstant(int year) {
 		time = new DateTime(year, 1, 1, 0, 0, DateTimeZone.UTC);
 	}

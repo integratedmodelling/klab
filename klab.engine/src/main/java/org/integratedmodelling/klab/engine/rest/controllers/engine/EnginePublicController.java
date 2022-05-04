@@ -84,11 +84,12 @@ public class EnginePublicController implements API.PUBLIC {
 
 		/*
 		 * Tickets live in the sessions and disappear with it.
+		 * TODO estimation mechanism. For now everything is feasible and nothing is costed.
 		 */
 		ITicket ticket = s.openTicket(
 				request.isEstimate() ? ITicket.Type.ContextEstimate : ITicket.Type.ContextObservation, "url",
 				CREATE_CONTEXT, "user", user.getUsername(), "geometry", request.getGeometry(), "urn",
-				request.getContextType(), "email", user.getEmailAddress());
+				request.getContextType(), "email", user.getEmailAddress(), "feasible", "true");
 
 		/*
 		 * start the task and return the opened ticket
@@ -119,11 +120,12 @@ public class EnginePublicController implements API.PUBLIC {
 
 		/*
 		 * Tickets live in the sessions and disappear with it.
+		 * TODO estimation mechanism. For now everything is feasible and nothing is costed.
 		 */
 		ITicket ticket = s.openTicket(
 				request.isEstimate() ? ITicket.Type.ObservationEstimate : ITicket.Type.ObservationInContext, "url",
 				OBSERVE_IN_CONTEXT, "user", user.getUsername(), "urn", request.getUrn(), "email",
-				user.getEmailAddress());
+				user.getEmailAddress(), "feasible", "true");
 
 		/*
 		 * start the task and return the opened ticket

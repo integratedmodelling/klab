@@ -122,7 +122,6 @@ import org.integratedmodelling.klab.rest.ResourceContextualizationRequest;
 import org.integratedmodelling.klab.rest.ResourceDataRequest;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.rest.SessionActivity;
-import org.integratedmodelling.klab.rest.SessionActivity.ResourceActivity;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.rest.TicketResponse;
 import org.integratedmodelling.klab.scale.Scale;

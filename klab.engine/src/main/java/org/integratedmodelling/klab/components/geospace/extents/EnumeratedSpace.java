@@ -114,8 +114,8 @@ public class EnumeratedSpace extends EnumeratedExtent implements ISpace {
 	}
 
 	@Override
-	public ISpace merge(IExtent extent) {
-		return (ISpace)super.merge(extent);
+	public ISpace mergeContext(IExtent extent) {
+		return (ISpace)super.mergeContext(extent);
 	}
 
 	@Override

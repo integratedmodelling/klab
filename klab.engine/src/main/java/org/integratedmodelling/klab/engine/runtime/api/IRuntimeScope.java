@@ -34,9 +34,8 @@ import org.integratedmodelling.klab.dataflow.Actuator.Status;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.provenance.Provenance;
+import org.integratedmodelling.klab.resolution.DependencyGraph;
 import org.integratedmodelling.klab.utils.Pair;
-import org.jgrapht.Graph;
-import org.jgrapht.graph.DefaultEdge;
 
 /**
  * This API extends {@link IContextualizationScope} to add setters and other
@@ -505,7 +504,7 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 * 
 	 * @return
 	 */
-	Graph<IObservedConcept, DefaultEdge> getDependencyGraph();
+	DependencyGraph getDependencyGraph();
 
 	/**
 	 * Record the merged scale for an actuator that only partially covers the

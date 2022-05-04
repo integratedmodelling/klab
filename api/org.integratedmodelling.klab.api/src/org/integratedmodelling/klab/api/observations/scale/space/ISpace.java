@@ -124,7 +124,7 @@ public interface ISpace extends IExtent, ISpatial {
      * Override the result for fluency
      */
     @Override
-	ISpace merge(IExtent extent);
+	ISpace mergeContext(IExtent extent);
 
     /**
      * Override the result for fluency

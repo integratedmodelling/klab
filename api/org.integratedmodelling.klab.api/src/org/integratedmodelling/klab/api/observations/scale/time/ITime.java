@@ -436,7 +436,7 @@ public interface ITime extends IExtent {
      * Override the result for fluency
      */
     @Override
-	ITime merge(IExtent extent);
+	ITime mergeContext(IExtent extent);
 
     /**
      * Override the result for fluency

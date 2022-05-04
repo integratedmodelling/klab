@@ -35,6 +35,7 @@ import org.integratedmodelling.klab.api.documentation.IDocumentation.Trigger;
 import org.integratedmodelling.klab.api.documentation.IDocumentationProvider;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
 import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.INamespace;
@@ -86,6 +87,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.monitoring.Message;
+import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.resolution.RankedModel;
 import org.integratedmodelling.klab.rest.DataflowState;
@@ -99,11 +101,14 @@ import org.integratedmodelling.klab.utils.Triple;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 
+import jdk.internal.net.http.common.SSLFlowDelegate.Monitor;
+
 public class Actuator implements IActuator {
 
 	/**
 	 * The computation is populated with these at initialization; the computations
-	 * can be recalled at transitions.
+	 * can be recalled at transitions. When scheduled in the scheduler, the target
+	 * cannot be null.
 	 */
 	public class Computation {
 
@@ -384,7 +389,7 @@ public class Actuator implements IActuator {
 				return Observation.empty(getObservable(), scope);
 			}
 
-			String targetId = service.getSecond().getTargetId() == null ? "self" : service.getSecond().getTargetId();
+			String targetId = service.getSecond().getTargetId() == null ? getName() : service.getSecond().getTargetId();
 
 			if (blockedTargets.contains(targetId)) {
 				continue;
@@ -442,15 +447,15 @@ public class Actuator implements IActuator {
 		IArtifact ret = target;
 
 		/*
-		 * Keep the latest layer for all artifacts involved here, indexed by name (use
-		 * self_ for the actuator's target).
+		 * Keep the latest layer for all artifacts involved here, indexed by name.
 		 */
 		Map<String, IArtifact> artifactTable = new HashMap<>();
-		artifactTable.put("self_", target);
+		artifactTable.put(getName(), target);
 
 		IContextualizable latest = null;
 
 		Set<String> knownVariables = new HashSet<>();
+		Set<IArtifact> changed = new HashSet<>();
 
 		/*
 		 * run the contextualization strategy with the localized context. Each
@@ -485,7 +490,7 @@ public class Actuator implements IActuator {
 							"cannot find indirect target observation " + contextualizer.getThird().getTargetId());
 				}
 			}
-			String targetId = "self_";
+			String targetId = getName();
 			IRuntimeScope context = ctx;
 
 			if (indirectTarget != null) {
@@ -506,7 +511,7 @@ public class Actuator implements IActuator {
 				artifactTable.put(targetId,
 						runContextualizer(contextualizer.getFirst(),
 								indirectTarget == null ? this.observable : indirectTarget, contextualizer.getSecond(),
-								artifactTable.get(targetId), context, context.getScale()));
+								artifactTable.get(targetId), context, context.getScale(), changed));
 			}
 
 			/*
@@ -688,7 +693,7 @@ public class Actuator implements IActuator {
 	 */
 	@SuppressWarnings("unchecked")
 	public IArtifact runContextualizer(IContextualizer contextualizer, IObservable observable,
-			IContextualizable resource, IArtifact artifact, IRuntimeScope scope, IScale scale) {
+			IContextualizable resource, IArtifact artifact, IRuntimeScope scope, IScale scale, Set<IArtifact> changed) {
 
 		if (scope.getMonitor().isInterrupted()) {
 			return Observation.empty(getObservable(), scope);
@@ -738,6 +743,8 @@ public class Actuator implements IActuator {
 			// FIXME potential issue with parallel execution!
 			((AbstractContextualizer) contextualizer).setScope((RuntimeScope) scope);
 		}
+		
+		long lastUpdate = artifact == null ? 0 : artifact.getLastUpdate();
 
 		if (contextualizer instanceof IStateResolver) {
 
@@ -943,6 +950,13 @@ public class Actuator implements IActuator {
 			}
 			((Observation) artifact).evaluateChanges();
 		}
+		
+		/*
+		 * record any changes. This is used after initialization by the scheduler.
+		 */
+		if (artifact != null && artifact.getLastUpdate() > lastUpdate && !scope.getMonitor().isInterrupted()) {
+			changed.add(artifact);
+		}
 
 		/**
 		 * Insert any text part that the contextualizer makes available for the
@@ -995,6 +1009,8 @@ public class Actuator implements IActuator {
 		if (self != null) {
 			// ret.replaceTarget(self);
 			ret.set("self", self);
+		} else {
+			ret.remove("self");
 		}
 		ret.setModel(model);
 		ret.getVariables().putAll(ctx.getVariables());
@@ -1028,6 +1044,8 @@ public class Actuator implements IActuator {
 			mediation.add(new Pair<>((IContextualizer) contextualizer, service.getSecond()));
 		}
 
+		Set<IArtifact> changed = new HashSet<>();
+		
 		for (IActuator input : getActuators()) {
 
 			/*
@@ -1050,7 +1068,8 @@ public class Actuator implements IActuator {
 						 * through the new scale.
 						 */
 						IArtifact mediated = runContextualizer(mediator.getFirst(), this.observable,
-								mediator.getSecond(), artifact, ret, ret.getScale());
+								mediator.getSecond(), artifact, ret, ret.getScale(), changed);
+						
 						ret.setData(targetArtifactId, mediated);
 					}
 				}
@@ -1747,7 +1766,7 @@ public class Actuator implements IActuator {
 		// TODO Auto-generated method stub
 		return 0;
 	}
-	
+
 	@Override
 	public IProvenance getProvenance() {
 		return null;
@@ -1795,6 +1814,15 @@ public class Actuator implements IActuator {
 			return ((Dataflow) this.actuators.get(0)).getResolver();
 		}
 		return null;
+	}
+
+	void collectComputed(Set<IObservedConcept> ret) {
+		if (this.isComputed() && observable.getArtifactType() != IArtifact.Type.VOID) {
+			ret.add(getObservedConcept());
+		}
+		for (IActuator act : this.actuators) {
+			((Actuator)act).collectComputed(ret);
+		}
 	}
 
 }

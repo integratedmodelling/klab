@@ -343,7 +343,7 @@ public class Space extends Extent implements ISpace {
     }
 
     @Override
-    public ISpace merge(IExtent extent) throws KlabException {
+    public ISpace mergeContext(IExtent extent) throws KlabException {
         if (extent instanceof ISpace) {
             return createMergedExtent(this, (ISpace) extent);
         }
@@ -950,18 +950,24 @@ public class Space extends Extent implements ISpace {
 
     public static ISpace createMergedExtent(ISpace destination, ISpace other) {
 
-        IShape resultShape = destination.getShape();
+        IShape resultShape = other.getShape();
+        // add other's shape if destination doesn't have it
+        if (resultShape == null) {
+            resultShape = destination.getShape();
+        } else {
+        	resultShape = destination.getShape().intersection(resultShape);
+        }
+
         IGrid resultGrid = destination instanceof Space ? ((Space) destination).getGrid() : null;
+        // same for the grid
+        if (resultGrid == null && other instanceof Space) {
+        	resultGrid = ((Space)other).getGrid();
+        }
+        // this isn't used right now
         ITessellation resultFeatures = destination instanceof Space
                 ? ((Space) destination).getTessellation()
                 : null;
 
-        /*
-         * add other's shape if destination doesn't have it
-         */
-        if (resultShape == null) {
-            resultShape = other.getShape();
-        }
 
         /*
          * if destination wants a specific grid and other's is different, take the (possibly merged)
@@ -1017,6 +1023,10 @@ public class Space extends Extent implements ISpace {
                     }
                 }
 
+            } else if (resultShape != null && resultGrid != null) {
+            	
+            	return create((Shape)resultShape, (Grid)resultGrid, true);
+            	
             }
         }
 
@@ -1139,11 +1149,11 @@ public class Space extends Extent implements ISpace {
         return getShape().getCenter(true);
     }
 
-    @Override
-    public IExtent adopt(IExtent extent, IMonitor monitor) {
-        // TODO Auto-generated method stub
-        return this;
-    }
+//    @Override
+//    public IExtent adopt(IExtent extent, IMonitor monitor) {
+//        // TODO Auto-generated method stub
+//        return this;
+//    }
 
     @Override
     protected IExtent contextualizeTo(IExtent other, IAnnotation constraint) {

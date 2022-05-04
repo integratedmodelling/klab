@@ -19,7 +19,6 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.utils.Pair;
 
@@ -43,44 +42,40 @@ import org.integratedmodelling.klab.utils.Pair;
 public interface IExtent extends ILocator, ITopology<IExtent>, IGeometry.Dimension {
 
 	/**
-	 * Merge in another extent to complete what is incomplete in this one. This is
-	 * done recursively during resolution to establish the final scale for a
-	 * dataflow. Allows specifications with partially specified extents (where
-	 * {@link #isGeneric()} returns true) to inform the scale of the final
-	 * contextualization. This should build conformant extents, i.e. only offset
-	 * mediation should be necessary to address either topology.
+	 * Merge in another extent from the overall context, producing an extent that is
+	 * complete and conformant (this one may be partially specified) ready for
+	 * contextualization in it. This is called during resolution to establish the
+	 * final scale of contextualization for actuators in a dataflow. Allows
+	 * specifications with partially specified extents (where {@link #isGeneric()}
+	 * returns true) to inform the scale of the final contextualization. This should
+	 * build conformant extents, i.e. only offset mediation should be necessary to
+	 * address either topology.
 	 * <p>
-	 * When another extent is merged into this and both specify extent and/or
-	 * resolution, our extent takes over the other's while resolution is negotiated
-	 * to match the other's. The only situation when our extent changes is when it
-	 * needs to be adjusted to allow the resolution to fit.
+	 * The logic to produce the result extent should be:
+	 * <ul>
+	 * <li>Boundaries should be inherited from the passed extent, compatibly with
+	 * the receiving boundaries. The result can shrink but it cannot grow beyond the
+	 * common boundaries.</li>
+	 * <li>If this is distributed, the result should stay distributed. If the
+	 * incoming extent is distributed and this is not, the result should become
+	 * distributed. If both are distributed, choices of representation may need to
+	 * be made: the result's representation should remain the incoming one as much
+	 * as possible, to prevent costly mediations.</li>
+	 * <li>If the result is distributed, the resolution should be our resolution if
+	 * this was distributed, or the incoming resolution if not.</li>
+	 * </ul>
 	 * 
-	 * @param extent
+	 * @param extent an extent of the same dimension type as ours (not necessarily
+	 *               the same class, although usually implementing the same extent
+	 *               interface) from the prospective contextualization scale.
 	 */
-	IExtent merge(IExtent extent);
-
-	/**
-	 * A different merge operation than {@link #merge(IExtent)}. While
-	 * {@link #merge(IExtent)} builds an overall extent and emphasize conformancy,
-	 * this one needs to inherit any missing specification from the incoming extent
-	 * without changing the overall extent but possibly changing the internal
-	 * representation. It is only used before computation to ensure that a model's
-	 * extent constraints are represented in the calculations. Conflicting extents
-	 * (e.g. both the incoming and this have resolutions and they're different)
-	 * should be resolved with a warning (the resolver should not create such
-	 * pairing in the first place) in favor of the incoming specification.
-	 * 
-	 * @param extent
-	 * @return
-	 */
-	IExtent adopt(IExtent extent, IMonitor monitor);
+	IExtent mergeContext(IExtent extent);
 
 	/**
 	 * Locate the extent and return another with the original located extent and
-	 * offsets set in. Differs from {@link IGeometry#at(Object...)} because it will
-	 * return an extent and not a geometry. Can be passed another extent (e.g. a
-	 * point to locate a cell in a grid space), one or more integer locators, a
-	 * period, or anything that can be understood by the extent.
+	 * offsets set in. Can be passed another extent (e.g. a point to locate a cell
+	 * in a grid space), one or more integer locators, a time period, or anything
+	 * that can be understood by the extent.
 	 * 
 	 * @param locator
 	 * @return the extent, or null if location is impossible.
@@ -90,7 +85,9 @@ public interface IExtent extends ILocator, ITopology<IExtent>, IGeometry.Dimensi
 	/**
 	 * Each extent must be able to return a worldview-dependent integer scale rank,
 	 * usable to constrain model retrieval to specific scales. In spatial extents
-	 * this corresponds to something like a "zoom level".
+	 * this corresponds to something like a "zoom level". The worldview establishes
+	 * the scale for the ranking; otherwise, no assumptions are made on the value
+	 * except that higher values correspond to smaller extents.
 	 *
 	 * The worldview defines this using numeric restrictions on the data property
 	 * used to annotate scale constraints and establishes the range and granularity
@@ -113,22 +110,24 @@ public interface IExtent extends ILocator, ITopology<IExtent>, IGeometry.Dimensi
 	/**
 	 * Return the simplest boundary that can be compared to another coming from an
 	 * extent of the same type. This should be a "bounding box" that ignores
-	 * internal structure and shape.
+	 * internal structure and shape and behaves with optimal efficiency when merged
+	 * with others.
 	 * 
 	 * @return the boundary.
 	 */
 	IExtent getBoundingExtent();
 
 	/**
-	 * Return the dimensional coverage in the passed unit.
+	 * Return the dimensional coverage in the passed unit, which must be compatible.
 	 * 
 	 * @param unit
 	 * @return
 	 */
 	double getDimensionSize(IUnit unit);
-	
+
 	/**
-	 * Return the standardized (SI) dimension of the extent at the passed locator,
+	 * Return the standardized (SI) dimension of the extent at the passed locator
+	 * along with the unit it's in.
 	 * 
 	 * @return
 	 */
@@ -138,8 +137,9 @@ public interface IExtent extends ILocator, ITopology<IExtent>, IGeometry.Dimensi
 	 * If this extent specifies a larger portion of the topology than the modeled
 	 * world contains, return a < 1.0 coverage. This can happen when the extent
 	 * semantics constrains the representation - e.g. regular spatial grids covering
-	 * more space than there actually is. Coverage = 0 should never happen as such
-	 * extents should not be returned by any function.
+	 * more space than there actually is. Coverage = 0 should never happen as
+	 * extents with no coverage can't provide topology for an observation, and as
+	 * such should not be returned by any function.
 	 *
 	 * @return coverage in the range (0 1]
 	 */
@@ -163,8 +163,9 @@ public interface IExtent extends ILocator, ITopology<IExtent>, IGeometry.Dimensi
 	/**
 	 * Return the n-th state of the ordered topology as a new extent with one state.
 	 * 
-	 * @param stateIndex
-	 * @return a new extent with getValueCount() == 1.
+	 * @param stateIndex must be between 0 and {@link #size()}, exclusive.
+	 * @return a new extent with getValueCount() == 1, or this if it is 1-sized and
+	 *         0 is passed.
 	 */
 	IExtent getExtent(long stateIndex);
 

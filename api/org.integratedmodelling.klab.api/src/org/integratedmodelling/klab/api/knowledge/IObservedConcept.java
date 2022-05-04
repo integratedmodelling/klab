@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.api.knowledge;
 
 import java.util.Map;
 
+import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 
@@ -54,5 +55,13 @@ public interface IObservedConcept {
      * @return
      */
     IResolutionScope getScope();
+
+    /**
+     * Remove whatever plays the given role and return. For fluency in resolution.
+     * 
+     * @param role
+     * @return
+     */
+	IObservedConcept without(ObservableRole role);
 
 }

@@ -35,8 +35,6 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
-import org.integratedmodelling.klab.api.provenance.IActivity;
-import org.integratedmodelling.klab.api.provenance.IAgent;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
@@ -58,11 +56,10 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.provenance.Provenance;
+import org.integratedmodelling.klab.resolution.DependencyGraph;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
-import org.jgrapht.Graph;
-import org.jgrapht.graph.DefaultEdge;
 
 /**
  * The scope to contextualize a resource outside of a semantic environment. TODO this will need to
@@ -802,7 +799,7 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
     }
 
     @Override
-    public Graph<IObservedConcept, DefaultEdge> getDependencyGraph() {
+    public DependencyGraph getDependencyGraph() {
         // TODO Auto-generated method stub
         return null;
     }

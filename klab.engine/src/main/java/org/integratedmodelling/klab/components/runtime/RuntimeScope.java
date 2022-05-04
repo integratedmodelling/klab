@@ -789,7 +789,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
 	public IRuntimeScope createChild(IScale scale, IActuator act, IResolutionScope scope, IMonitor monitor) {
 
 		Actuator actuator = (Actuator) act;
-
+		
 		RuntimeScope ret = new RuntimeScope(this);
 		ret.parent = this;
 		ret.namespace = actuator.getNamespace();
@@ -881,14 +881,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
 				 * so the alternative would be to keep it a process and duplicate all the
 				 * computation in the process contextualizer, which is way messier.
 				 */
-				IConcept changing = Observables.INSTANCE.getDescribedType(actuator.getObservable().getType());
-				for (IArtifact artifact : catalog.values()) {
-					if (artifact instanceof IObservation
-							&& ((IObservation) artifact).getObservable().getType().equals(changing)) {
-						ret.target = artifact;
-						break;
-					}
-				}
+				IObservable tochange = actuator.getObservable().getBuilder(monitor).without(ObservableRole.UNARY_OPERATOR).buildObservable();
+				ret.target = getCatalog().get(new ObservedConcept(tochange));
 
 				// TODO see if we need to change anything else. At this point the semantics and
 				// the type are out of sync
@@ -1585,7 +1579,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
 		if (catalog == null) {
 			return null;
 		}
-		
+
 		if (!observable.getAbstractPredicates().isEmpty()
 				|| observable.getDescriptionType() == Description.CHARACTERIZATION) {
 
@@ -1932,6 +1926,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
 				boolean isTransition = computation.resource.getTrigger() == Trigger.DEFINITION;
 
 				/*
+				 * Jeez FIXME this needs review and simplification
+				 * 
 				 * null target == aux variable, occur at will.
 				 */
 				boolean targetOccurs = computation.target == null || computation.target.getType().isOccurrent()
@@ -2404,14 +2400,14 @@ public class RuntimeScope extends AbstractRuntimeScope {
 		}
 		return null;
 	}
-	
-    @Override
-    public void notifyInspector(Object... triggerArguments) {
-        IInspector inspector = getSession().getState().getInspector();
-        if (inspector != null) {
-            inspector.trigger(this, triggerArguments);
-        }
-    }
+
+	@Override
+	public void notifyInspector(Object... triggerArguments) {
+		IInspector inspector = getSession().getState().getInspector();
+		if (inspector != null) {
+			inspector.trigger(this, triggerArguments);
+		}
+	}
 
 	@Override
 	public Map<String, Object> getContextData() {

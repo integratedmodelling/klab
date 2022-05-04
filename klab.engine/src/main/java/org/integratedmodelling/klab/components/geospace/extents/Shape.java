@@ -417,7 +417,7 @@ public class Shape extends AbstractExtent implements IShape {
     }
 
     @Override
-    public ISpace merge(IExtent extent) throws KlabException {
+    public ISpace mergeContext(IExtent extent) throws KlabException {
         if (extent instanceof ISpace) {
             return Space.createMergedExtent(this, (ISpace) extent);
         }
@@ -912,11 +912,11 @@ public class Shape extends AbstractExtent implements IShape {
         return true; // stateIndex == 0;
     }
 
-    @Override
-    public IExtent adopt(IExtent extent, IMonitor monitor) {
-        // TODO Auto-generated method stub
-        return this;
-    }
+//    @Override
+//    public IExtent adopt(IExtent extent, IMonitor monitor) {
+//        // TODO Auto-generated method stub
+//        return this;
+//    }
 
     @Override
     public IExtent getExtent(long stateIndex) {

@@ -531,7 +531,7 @@ public class SemanticExpression {
         return tokens.size() - n;
     }
 
-    public Collection<? extends String> getErrors() {
+    public Collection<String> getErrors() {
         return this.error == null ? Collections.EMPTY_LIST : Collections.singleton(this.error);
     }
 

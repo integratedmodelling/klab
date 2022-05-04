@@ -5,8 +5,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.ValueOperator;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
@@ -150,6 +152,15 @@ public class ObservedConcept implements IObservedConcept {
 
 	public void setScope(IResolutionScope scope) {
 		this.scope = scope;
+	}
+
+	@Override
+	public IObservedConcept without(ObservableRole role) {
+		IObservable newObservable = ((Observable) this.getObservable()).getBuilder(Klab.INSTANCE.getRootMonitor())
+				.without(role).buildObservable();
+		ObservedConcept ret = new ObservedConcept(newObservable, this.mode);
+		ret.scope = this.scope;
+		return ret;
 	}
 
 }

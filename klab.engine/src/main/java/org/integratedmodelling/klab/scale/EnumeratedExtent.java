@@ -87,7 +87,7 @@ public class EnumeratedExtent extends Extent implements IEnumeratedExtent {
     }
 
     @Override
-    public IExtent merge(IExtent extent) {
+    public IExtent mergeContext(IExtent extent) {
         if (!(extent instanceof EnumeratedExtent)) {
             throw new KlabIllegalArgumentException(
                     "cannot merge an enumerated extent with a non-enumerated one");
@@ -96,8 +96,7 @@ public class EnumeratedExtent extends Extent implements IEnumeratedExtent {
         return new EnumeratedExtent(this, newx);
     }
 
-    @Override
-    public IExtent adopt(IExtent extent, IMonitor monitor) {
+    private IExtent adopt(IExtent extent, IMonitor monitor) {
         if (!(extent instanceof EnumeratedExtent)) {
             throw new KlabIllegalArgumentException(
                     "cannot merge an enumerated extent with a non-enumerated one");
@@ -164,7 +163,7 @@ public class EnumeratedExtent extends Extent implements IEnumeratedExtent {
         case LogicalConnector._UNION:
             return adopt((IExtent) other, Klab.INSTANCE.getRootMonitor());
         case LogicalConnector._INTERSECTION:
-            return merge((IExtent) other);
+            return mergeContext((IExtent) other);
         default:
             break;
         }
@@ -326,7 +325,7 @@ public class EnumeratedExtent extends Extent implements IEnumeratedExtent {
 
     @Override
     protected IExtent contextualizeTo(IExtent other, IAnnotation constraint) {
-        return null;
+        return this;
     }
 
     /**

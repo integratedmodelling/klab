@@ -1241,6 +1241,10 @@ public class KimConcept extends KimStatement implements IKimConcept {
 				break;
 			case TEMPORAL_INHERENT:
 				ret.temporalInherent = null;
+				break;
+			case UNARY_OPERATOR:
+				ret.observable.observationType = null;
+				break;
 			default:
 				break;
 			}
