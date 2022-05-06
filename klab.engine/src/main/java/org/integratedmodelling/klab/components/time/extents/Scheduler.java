@@ -323,7 +323,6 @@ public class Scheduler implements IScheduler {
 				public Collection<ObservedConcept> apply(IMonitor monitor) {
 
 					Set<ObservedConcept> ret = new HashSet<>();
-					List<IObservation> changed = new ArrayList<>();
 					Set<IArtifact> changedArtifacts = new HashSet<>();
 
 					/*
@@ -412,7 +411,7 @@ public class Scheduler implements IScheduler {
 
 						for (IArtifact modified : changedArtifacts) {
 							if (modified instanceof IObservation) {
-								// state layers have the same observable so this works
+								// state layers and rescalers have the same observable so this works
 								ret.add(new ObservedConcept(((IObservation) modified).getObservable()));
 							}
 						}
@@ -631,7 +630,10 @@ public class Scheduler implements IScheduler {
 		 * geometry. By now that should be entirely captured in the model coverage. View
 		 * model use the overall scale as they have none of their own.
 		 */
-		IScale modelScale = actuator.getModel() == null ? null : actuator.getModel().getCoverage(scope.getMonitor());
+		IScale modelScale = actuator.getCoverage();
+		if (modelScale == null) {
+			modelScale = actuator.getModel() == null ? null : actuator.getModel().getCoverage(scope.getMonitor());
+		}
 		if (actuator.getModel() != null && actuator.getModel().getViewModel() != null) {
 			modelScale = overall;
 		}
@@ -748,10 +750,7 @@ public class Scheduler implements IScheduler {
 			 * TODO review to choose a power of two between 2^(4-15) based on how small the
 			 * resolution is compared to the scale
 			 */
-			this.wheelSize = DEFAULT_WHEEL_SIZE; // Math.min(NumberUtils.nextPowerOf2((int) (longest
-													// /
-													// resolution)),
-													// MAX_HASH_WHEEL_SIZE);
+			this.wheelSize = DEFAULT_WHEEL_SIZE;
 			monitor.debug(
 					"created scheduler hash wheel of size " + this.wheelSize + " for resolution = " + this.resolution);
 			this.wheel = new List[this.wheelSize];
@@ -869,13 +868,25 @@ public class Scheduler implements IScheduler {
 			}
 		}
 
-		Map<ObservedConcept, Registration> index = new HashMap<>();
+		Map<ObservedConcept, List<Registration>> index = new HashMap<>();
 
 		for (Registration r : registrations) {
 			if (r.actuator != null) {
-				index.put(new ObservedConcept(r.actuator.getObservable(), r.actuator.getMode()), r);
+				ObservedConcept oob = new ObservedConcept(r.actuator.getObservable(), r.actuator.getMode());
+				List<Registration> rgs = index.get(oob);
+				if (rgs == null) {
+					rgs = new ArrayList<>();
+					index.put(oob, rgs);
+				}
+				rgs.add(r);
 			} else if (r.replayedObservation != null) {
-				index.put(new ObservedConcept(r.replayedObservation.getObservable(), Mode.RESOLUTION), r);
+				ObservedConcept oob = new ObservedConcept(r.replayedObservation.getObservable(), Mode.RESOLUTION);
+				List<Registration> rgs = index.get(oob);
+				if (rgs == null) {
+					rgs = new ArrayList<>();
+					index.put(oob, rgs);
+				}
+				rgs.add(r);
 			}
 		}
 
@@ -884,7 +895,7 @@ public class Scheduler implements IScheduler {
 				dynamicDependencies);
 
 		while (order.hasNext()) {
-			ret.add(index.get(order.next()));
+			ret.addAll(index.get(order.next()));
 		}
 
 		return ret;
@@ -1126,62 +1137,7 @@ public class Scheduler implements IScheduler {
 		}
 		return ret;
 	}
-
-//	/**
-//	 * Analyze the precursors of the tracked observable and recursively recompute
-//	 * (depth-first) it or any precursors that is in the tracked list and depends on
-//	 * any of the changed observations, unless it's in computed. Add any newly
-//	 * recomputed to the computed set for reentrancy.
-//	 * 
-//	 * @param tracked
-//	 * @param changed
-//	 * @param computed
-//	 */
-//	private void computeImplicitDependents(IObservedConcept observable, Set<IObservedConcept> changed,
-//			Set<IObservedConcept> computed, ITime time, IRuntimeScope runtimeScope,
-//			Graph<IObservedConcept, DefaultEdge> dependencies, Map<IObservedConcept, IObservation> catalog,
-//			IDataflow<?> dataflow) {
-//
-//		if (monitor.isInterrupted()) {
-//			return;
-//		}
-//
-//		/*
-//		 * previously computed in another contextualization
-//		 */
-//		if (catalog.get(observable).hasChangedDuring(time)) {
-//			return;
-//		}
-//
-//		if (!computed.contains(observable)) {
-//			boolean recompute = false;
-//			for (IObservedConcept precursor : getPrecursors(dependencies, observable)) {
-//				computed.add(observable);
-//				computeImplicitDependents(precursor, changed, computed, time, runtimeScope, dependencies, catalog,
-//						dataflow);
-//				if (changed.contains(precursor) && !changed.contains(observable)) {
-//					IObservation pre = catalog.get(precursor);
-//					IObservation post = catalog.get(observable);
-//
-//					System.out.println(post + " depends on " + pre);
-//
-//					// only recompute those that haven't changed already in previous resolutions
-//					if (pre != null && post != null && pre.hasChangedDuring(time) && !post.hasChangedDuring(time)) {
-//						recompute = true;
-//					}
-//				}
-//			}
-//			if (recompute) {
-//				if (Configuration.INSTANCE.isEchoEnabled()) {
-//					System.out.println("RECOMPUTING " + observable);
-//				}
-//				reinitializeObservation(observable.getObservable(), getActuator(observable, dependencies), time,
-//						runtimeScope, dataflow);
-//				changed.add(observable);
-//			}
-//		}
-//	}
-
+	
 	/**
 	 * ACHTUNG: the passed runtime scope is for the original dependent and must be
 	 * retargeted to the target.
@@ -1285,17 +1241,6 @@ public class Scheduler implements IScheduler {
 		}
 		return null;
 	}
-
-//	private Set<IObservedConcept> getPrecursors(Graph<IObservedConcept, DefaultEdge> dependencies,
-//			IObservedConcept observable) {
-//		Set<IObservedConcept> ret = new HashSet<>();
-//		if (dependencies.containsVertex(observable)) {
-//			for (DefaultEdge edge : dependencies.incomingEdgesOf(observable)) {
-//				ret.add(dependencies.getEdgeSource(edge));
-//			}
-//		}
-//		return ret;
-//	}
 
 	/**
 	 * Reschedule returns the time of the <b>previous</b> run so that we can reuse

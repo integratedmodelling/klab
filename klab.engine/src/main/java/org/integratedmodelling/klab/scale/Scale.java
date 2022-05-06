@@ -984,6 +984,22 @@ public class Scale implements IScale {
 			return new Scale(this, ((Number) locators[0]).longValue());
 		}
 
+		if (locators != null && locators.length == 1 && locators[0] instanceof IScale) {
+
+			List<IExtent> extents = new ArrayList<>();
+			for (IExtent extent : this.extents) {
+				IExtent e = (IExtent) ((IScale) locators[0]).getDimension(extent.getType());
+				IExtent toAdd = e == null ? extent : extent.at(e);
+				if (toAdd == null) {
+					// outside coverage
+					return null;
+				}
+				extents.add(toAdd);
+			}
+			return new Scale(extents);
+
+		}
+
 		/*
 		 * Complex cases are reinterpreted through the augmented version of
 		 * Geometry.as(locators).
@@ -1772,6 +1788,28 @@ public class Scale implements IScale {
 		for (IExtent e : getExtents()) {
 			IExtent other = ((Scale) scale).getExtent(e.getType());
 			exts.add(other == null ? e : other);
+		}
+		return create(exts.toArray(new IExtent[exts.size()]));
+	}
+
+	/**
+	 * Substitute our extents with all the correspondent ones in the passed scale;
+	 * keep those we have and the other does not; do not add other extents the other
+	 * has; keep any existing extents that have been previously located from
+	 * another.
+	 * 
+	 * @param scale
+	 * @return
+	 */
+	public IScale substituteNonLocatedExtents(IScale scale) {
+		List<IExtent> exts = new ArrayList<>();
+		for (IExtent e : getExtents()) {
+			IExtent other = ((Scale) scale).getExtent(e.getType());
+			if (((AbstractExtent)e).getLocatedOffset() >= 0) {
+				exts.add(e);
+			} else {
+				exts.add(other == null ? e : other);
+			}
 		}
 		return create(exts.toArray(new IExtent[exts.size()]));
 	}

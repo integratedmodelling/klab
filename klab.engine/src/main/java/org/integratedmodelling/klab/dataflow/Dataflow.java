@@ -352,7 +352,10 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		// TODO properly handle partials
 		graph.addVertex(observable);
 		for (IActuator child : actuator.getActuators()) {
-			graph.addEdge(buildDependencies((Actuator) child, graph, primary), observable);
+			if (!((Actuator)child).isPartition()) {
+				// TODO we should add the structure but avoid the double counting of the observable
+				graph.addEdge(buildDependencies((Actuator) child, graph, primary), observable);
+			}
 		}
 		return observable;
 	}

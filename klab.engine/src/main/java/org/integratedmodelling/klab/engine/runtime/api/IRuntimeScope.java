@@ -473,7 +473,10 @@ public interface IRuntimeScope extends IContextualizationScope {
 	/**
 	 * Set a local scale in the scope, for actuators that have merged partial
 	 * coverages. The coverage may only contain some of the extents - any missing
-	 * should be copied from the current scope scale.
+	 * should be copied from the current scope scale. Any pre-located extents in the
+	 * incoming scale should be preserved, ensuring they fit within the overall
+	 * coverage of the scope. If the incoming scale lies fully outside the
+	 * boundaries of the scope, return null to flag no-op contextualization.
 	 * 
 	 * @param scale
 	 * @return

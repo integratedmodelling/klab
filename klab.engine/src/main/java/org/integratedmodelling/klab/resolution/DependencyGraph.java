@@ -31,7 +31,12 @@ public class DependencyGraph extends DefaultDirectedGraph<IObservedConcept, Defa
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Iterator<IObservedConcept> iterator() {
-		return new TopologicalOrderIterator(this);
+		try {
+			return new TopologicalOrderIterator(this);
+		} catch (Throwable e) {
+//			show();
+			throw e;
+		}
 	}
 
 	@Override
@@ -46,6 +51,7 @@ public class DependencyGraph extends DefaultDirectedGraph<IObservedConcept, Defa
 				return "";
 			}
 		};
+		
 		if (super.addEdge(sourceVertex, targetVertex, edge)) {
 			return edge;
 		}

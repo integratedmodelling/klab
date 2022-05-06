@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.IValueMediator;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -42,8 +43,9 @@ public class RescalingState extends Observation implements IState, DelegatingArt
 
 	IState delegate;
 	Scale newScale;
+	IScale originalScale;
 	Geometry originalGeometry;
-
+	String label; // for debugging
 	List<IScaleMediator> mediators = null;
 	boolean conformant = false;
 	private IActivity.Description observationType;
@@ -59,8 +61,10 @@ public class RescalingState extends Observation implements IState, DelegatingArt
 		super(new Observable((Observable) state.getObservable()), newScale, context);
 		this.delegate = state;
 		this.newScale = newScale;
+		this.originalScale = state.getScale();
 		this.originalGeometry = ((Scale) state.getScale()).asGeometry();
 		this.observationType = state.getObservable().getDescriptionType();
+		this.label = newScale.getSpace() == null ? "" : newScale.getSpace().getEnvelope().toString();
 		// TODO check if we need to sum in aggregation. Depends on the observable and on
 		// the relationship between the extents (e.g spatially distributed vs. not)
 		// this.redistribute = ...
@@ -70,8 +74,10 @@ public class RescalingState extends Observation implements IState, DelegatingArt
 		super(new Observable((Observable) newObservable), newScale, context);
 		this.delegate = state;
 		this.newScale = newScale;
+		this.originalScale = state.getScale();
 		this.originalGeometry = ((Scale) state.getScale()).asGeometry();
 		this.observationType = newObservable.getDescriptionType();
+		this.label = newScale.getSpace() == null ? "" : newScale.getSpace().getEnvelope().toString();
 		// TODO check if we need to sum in aggregation. Depends on the observable and on
 		// the relationship between the extents (e.g spatially distributed vs. not)
 		// this.redistribute = ...
@@ -79,26 +85,26 @@ public class RescalingState extends Observation implements IState, DelegatingArt
 
 	public Object get(ILocator index) {
 
-		long offset = this.newScale.getOffset(index);
+//		long offset = this.newScale.getOffset(index);
+//
+//		if (!this.newScale.isCovered(offset)) {
+//			return null;
+//		}
 
-		if (!this.newScale.isCovered(offset)) {
-			return null;
-		}
-
+		// sets the conformant flag as a side-effect, call now
 		if (mediators == null) {
 			mediators = getMediators((Scale) this.delegate.getScale(), this.newScale);
 		}
 
 		if (conformant) {
+//
+//			long[] offsets = this.newScale.getExtentIndex(offset);
+//			for (int i = 0; i < mediators.size(); i++) {
+//				offsets[i] = mediators.get(i).mapConformant(offsets[i]);
+//			}
 
-			long[] offsets = this.newScale.getExtentIndex(offset);
-			for (int i = 0; i < mediators.size(); i++) {
-				offsets[i] = mediators.get(i).mapConformant(offsets[i]);
-			}
-
-			ILocator locator = originalGeometry.at(offsets);
-			
-			return delegate.get(locator);
+			ILocator locator = originalScale.at(index);
+			return locator == null ? null : delegate.get(locator);
 		}
 
 		return reduce(index, mediators);
@@ -127,38 +133,28 @@ public class RescalingState extends Observation implements IState, DelegatingArt
 
 	public long set(ILocator index, Object value) {
 
-		long offset = this.newScale.getOffset(index);
-
-		if (value == null) {
-			return offset;
-		}
-
-		// may be covered by another state and have been assigned already!
-		if (!this.newScale.isCovered(offset)) {
+		// this may overwrite good data set previously, so we skip it.
+		if (Observations.INSTANCE.isNodata(value)) {
 			return -1;
 		}
 
+		// sets the conformant flag as a side-effect, call now
 		if (mediators == null) {
-			mediators = getMediators((Scale) this.delegate.getScale(), this.newScale);
+			mediators = getMediators((Scale)originalScale, this.newScale);
 		}
 
 		if (conformant) {
 
-			long[] offsets = this.newScale.getExtentIndex(offset);
-			for (int i = 0; i < mediators.size(); i++) {
-				offsets[i] = mediators.get(i).mapConformant(offsets[i]);
-				if (offsets[i] < 0) {
-				    return -1;
-				}
+			IScale loc = originalScale.at(index);
+			if (loc != null) {
+				return delegate.set(loc, value);
 			}
-
-			delegate.set(originalGeometry.at(offsets), value);
 
 		} else {
 			map(index, mediators, value);
 		}
 
-		return offset;
+		return -1;
 	}
 
 	private void map(ILocator locator, List<IScaleMediator> mediators, Object value) {
@@ -422,5 +418,22 @@ public class RescalingState extends Observation implements IState, DelegatingArt
 	public IArtifact getDelegate() {
 		return delegate;
 	}
+
+	@Override
+	public long getTimestamp() {
+		return delegate.getTimestamp();
+	}
+
+	@Override
+	public long getLastUpdate() {
+		return delegate.getLastUpdate();
+	}
+
+	@Override
+	public long[] getUpdateTimestamps() {
+		return delegate.getUpdateTimestamps();
+	}
+	
+	
 
 }

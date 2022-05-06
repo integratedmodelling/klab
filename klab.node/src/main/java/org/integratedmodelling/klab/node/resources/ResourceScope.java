@@ -753,7 +753,7 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
 
     @Override
     public IRuntimeScope withCoverage(IScale scale) {
-        this.scale = ((Scale) this.scale).substituteExtents(scale);
+        this.scale = ((Scale) this.scale).substituteNonLocatedExtents(scale);
         return this;
     }
 

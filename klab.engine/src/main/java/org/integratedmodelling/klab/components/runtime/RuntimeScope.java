@@ -59,6 +59,7 @@ import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IObservationGroup;
+import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
@@ -789,7 +790,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
 	public IRuntimeScope createChild(IScale scale, IActuator act, IResolutionScope scope, IMonitor monitor) {
 
 		Actuator actuator = (Actuator) act;
-		
+
 		RuntimeScope ret = new RuntimeScope(this);
 		ret.parent = this;
 		ret.namespace = actuator.getNamespace();
@@ -860,14 +861,26 @@ public class RuntimeScope extends AbstractRuntimeScope {
 				 */
 				if (merging instanceof IState) {
 					// complete the partial scale with the overall view of the context
-					ret.target = Observations.INSTANCE.getStateView((IState) merging, getMergedScale(actuator), ret);
-					if (ret.target instanceof RescalingState) {
+					merging = Observations.INSTANCE.getStateView((IState) merging, getMergedScale(actuator), ret);
+					if (merging instanceof RescalingState) {
 						// for debugging
-						((RescalingState) ret.target).setLocalId(actuator.getName());
+						((RescalingState) merging).setLocalId(actuator.getName());
 					}
-				} else {
-					ret.target = merging;
+				} else if (merging instanceof IProcess && actuator.getObservable().is(Type.CHANGE)) {
+
+					IObservable tochange = actuator.getObservable().getBuilder(monitor)
+							.without(ObservableRole.UNARY_OPERATOR).buildObservable();
+					merging = getCatalog().get(new ObservedConcept(tochange));
+					if (merging instanceof IState) {
+						merging = Observations.INSTANCE.getStateView((IState) merging, getMergedScale(actuator), ret);
+						if (merging instanceof RescalingState) {
+							// for debugging
+							((RescalingState) merging).setLocalId(actuator.getName());
+						}
+					}
+
 				}
+				ret.target = merging;
 
 			}
 
@@ -881,7 +894,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
 				 * so the alternative would be to keep it a process and duplicate all the
 				 * computation in the process contextualizer, which is way messier.
 				 */
-				IObservable tochange = actuator.getObservable().getBuilder(monitor).without(ObservableRole.UNARY_OPERATOR).buildObservable();
+				IObservable tochange = actuator.getObservable().getBuilder(monitor)
+						.without(ObservableRole.UNARY_OPERATOR).buildObservable();
 				ret.target = getCatalog().get(new ObservedConcept(tochange));
 
 				// TODO see if we need to change anything else. At this point the semantics and
@@ -2265,7 +2279,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
 
 	@Override
 	public IRuntimeScope withCoverage(IScale scale) {
-		this.scale = ((Scale) this.scale).substituteExtents(scale);
+		this.scale = ((Scale) this.scale).substituteNonLocatedExtents(scale);
 		return this;
 	}
 

@@ -87,7 +87,6 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.monitoring.Message;
-import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.resolution.RankedModel;
 import org.integratedmodelling.klab.rest.DataflowState;
@@ -100,8 +99,6 @@ import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.klab.utils.Triple;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
-
-import jdk.internal.net.http.common.SSLFlowDelegate.Monitor;
 
 public class Actuator implements IActuator {
 
@@ -522,6 +519,9 @@ public class Actuator implements IActuator {
 				step.contextualizer = contextualizer.getFirst();
 				step.observable = indirectTarget == null ? this.observable : indirectTarget;
 				step.target = target;
+				if (step.target instanceof IProcess) {
+					System.out.println("SHITTERONI");
+				}
 				step.targetId = targetId;
 				step.resource = contextualizer.getThird();
 				this.computation.add(step);

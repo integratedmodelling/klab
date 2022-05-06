@@ -117,7 +117,8 @@ public class ObservedConcept implements IObservedConcept {
 
 		ObservedConcept other = (ObservedConcept) obj;
 		return Objects.equals(conceptDeclaration, other.conceptDeclaration)
-				&& Objects.equals(contextConceptDeclaration, other.contextConceptDeclaration) && mode == other.mode
+				&& Objects.equals(contextConceptDeclaration, other.contextConceptDeclaration) 
+				&& mode == other.mode
 				&& Objects.equals(valueOperators, other.valueOperators);
 	}
 
