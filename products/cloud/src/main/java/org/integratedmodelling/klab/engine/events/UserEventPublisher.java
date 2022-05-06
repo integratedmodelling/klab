@@ -22,8 +22,8 @@ public class UserEventPublisher {
     	applicationEventPublisher.publishEvent(event);
     }
     
-    public void logout(final HubUserProfile profile, final Session session) {
-    	final UserEventLogout event = new UserEventLogout(profile, session);
+    public void logout(final HubUserProfile profile, final Session session, final boolean forced) {
+    	final UserEventLogout event = new UserEventLogout(profile, session, forced);
     	applicationEventPublisher.publishEvent(event);
     }
     
