@@ -19,9 +19,12 @@ import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.components.localstorage.impl.TimesliceLocator;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.State;
+import org.integratedmodelling.klab.engine.api.UserActivity;
 import org.integratedmodelling.klab.engine.events.GenericUserEvent;
 import org.integratedmodelling.klab.engine.events.UserEventContext;
 import org.integratedmodelling.klab.engine.events.UserEventHistory;
+import org.integratedmodelling.klab.engine.events.UserEventLogin;
+import org.integratedmodelling.klab.engine.events.UserEventLogout;
 import org.integratedmodelling.klab.engine.events.UserEventObservation;
 import org.integratedmodelling.klab.engine.events.UserEventScale;
 import org.integratedmodelling.klab.engine.runtime.ObserveContextTask;
@@ -121,6 +124,28 @@ public class StatsService {
         }
     }
 
+    @Async
+    @EventListener(condition = "#event.type == T(org.integratedmodelling.klab.engine.events.UserEventType).LOGIN")
+    public void handleLogin(GenericUserEvent<HubUserProfile, Session> event) {
+        UserEventLogin loginEvent = (UserEventLogin) event;
+        UserActivity userActivity = new UserActivity(UserActivity.TYPES.LOGIN, loginEvent.getProfile(), loginEvent.getSession().getSessionReference().getTimeEstablished());
+        String url = getUrl(userActivity.getClass().getCanonicalName());
+        if (url != null) {
+            postToServer(url, userActivity);
+        }
+    }
+    
+    @Async
+    @EventListener(condition = "#event.type == T(org.integratedmodelling.klab.engine.events.UserEventType).LOGOUT")
+    public void handleLogout(GenericUserEvent<HubUserProfile, Session> event) {
+        UserEventLogout logoutEvent = (UserEventLogout) event;
+        UserActivity userActivity = new UserActivity(UserActivity.TYPES.LOGIN, logoutEvent.getProfile(), logoutEvent.getTime());
+        String url = getUrl(userActivity.getClass().getCanonicalName());
+        if (url != null) {
+            postToServer(url, userActivity);
+        }
+    }
+    
     @Async
     @EventListener(condition = "#event.type == T(org.integratedmodelling.klab.engine.events.UserEventType).SCALE")
     public void handleScale(GenericUserEvent<HubUserProfile, Session> event) {
