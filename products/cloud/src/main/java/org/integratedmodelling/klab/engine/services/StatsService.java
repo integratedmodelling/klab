@@ -150,8 +150,8 @@ public class StatsService {
     @EventListener(condition = "#event.type == T(org.integratedmodelling.klab.engine.events.UserEventType).OBSERVATION")
     public void handleObservation(GenericUserEvent<HubUserProfile, Session> event) {
     	UserEventObservation observationEvent = (UserEventObservation) event;
-        IObservation observation = observationEvent.getObservation();
-        String id = ((Observation)observation).getGenerator().getId();
+        Observation observation = (Observation)observationEvent.getObservation();
+        String id = observation.getGenerator() != null ? observation.getGenerator().getId() : observation.getId();
         if (statsCache.containsKey(id)) {
             statsCache.computeIfPresent(id, (k,v) -> {
             	v.add(observation);
