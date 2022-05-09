@@ -118,21 +118,6 @@ public interface IScale extends ILocator, IGeometry, ITopology<IScale> {
 	 */
 	public IScale mergeContext(IScale scale);
 
-//    /**
-//     * Return a new scale based on this and adopting any constraints set in the passed scale, which
-//     * are to be considered "authoritative" and mandatory. Called at runtime on the result of
-//     * merge() from all models during contextualization and before computation of each individual
-//     * model, to ensure that any constraints set in the model are represented in the scale it will
-//     * be computed in. Model-generated artifacts will have the resulting scale. If
-//     * {@link #merge(IScale)} builds the <i>overall</i> scale of <i>contextualization</i>, this
-//     * builds the <i>specific</i> scale of <i>computation</i> for a single model's scope.
-//     * 
-//     * @param scale
-//     * @param monitor
-//     * @return
-//     */
-//    public IScale adopt(IScale scale, IMonitor monitor);
-
 	/**
 	 * {@inheritDoc}
 	 *

@@ -91,18 +91,14 @@ public class Space extends Extent implements ISpace {
     }
 
     public static Space create(IShape shape, IQuantity resolution) {
-        return create((Shape) shape,
-                org.integratedmodelling.klab.components.geospace.services.Space.parseResolution(resolution));
+        return create((Shape) shape, org.integratedmodelling.klab.components.geospace.services.Space.parseResolution(resolution));
     }
 
     public static ISpace create(Dimension dimension, IQuantity resolution) {
 
-        String authority = dimension.getParameters().get(Geometry.PARAMETER_ENUMERATED_AUTHORITY,
-                String.class);
-        String baseidentity = dimension.getParameters().get(Geometry.PARAMETER_ENUMERATED_BASE_IDENTITY,
-                String.class);
-        String identity = dimension.getParameters().get(Geometry.PARAMETER_ENUMERATED_IDENTIFIER,
-                String.class);
+        String authority = dimension.getParameters().get(Geometry.PARAMETER_ENUMERATED_AUTHORITY, String.class);
+        String baseidentity = dimension.getParameters().get(Geometry.PARAMETER_ENUMERATED_BASE_IDENTITY, String.class);
+        String identity = dimension.getParameters().get(Geometry.PARAMETER_ENUMERATED_IDENTIFIER, String.class);
 
         if (authority != null) {
             return new EnumeratedSpace(Authorities.INSTANCE.getAuthority(authority), null);
@@ -115,8 +111,7 @@ public class Space extends Extent implements ISpace {
         double[] bbox = dimension.getParameters().get(Geometry.PARAMETER_SPACE_BOUNDINGBOX, double[].class);
         double[] llat = dimension.getParameters().get(Geometry.PARAMETER_SPACE_LONLAT, double[].class);
         String gridres = dimension.getParameters().get(Geometry.PARAMETER_SPACE_GRIDRESOLUTION, String.class);
-        String projectionSpec = dimension.getParameters().get(Geometry.PARAMETER_SPACE_PROJECTION,
-                String.class);
+        String projectionSpec = dimension.getParameters().get(Geometry.PARAMETER_SPACE_PROJECTION, String.class);
         String shapeSpec = dimension.getParameters().get(Geometry.PARAMETER_SPACE_SHAPE, String.class);
         long[] dims = dimension.shape();
         boolean generic = false;
@@ -156,9 +151,7 @@ public class Space extends Extent implements ISpace {
             }
 
             if (gridres != null) {
-                return create(shape,
-                        org.integratedmodelling.klab.components.geospace.services.Space
-                                .parseResolution(gridres));
+                return create(shape, org.integratedmodelling.klab.components.geospace.services.Space.parseResolution(gridres));
             } else if (dims.length > 1) {
                 return create(shape, dims[0], dims[1]);
             }
@@ -231,8 +224,7 @@ public class Space extends Extent implements ISpace {
             }
         }
 
-        return (ISpace) new org.integratedmodelling.klab.components.geospace.services.Space().eval(
-                spaceAnnotation,
+        return (ISpace) new org.integratedmodelling.klab.components.geospace.services.Space().eval(spaceAnnotation,
                 new Expression.SimpleScope(Klab.INSTANCE.getRootMonitor()));
     }
 
@@ -313,9 +305,8 @@ public class Space extends Extent implements ISpace {
     }
 
     public String toString() {
-        return "<SPACE " + (grid != null ? grid.toString() : "")
-                + (features != null ? features.toString() : "") + " @"
-                + shape + ">";
+        return "<SPACE " + (grid != null ? grid.toString() : "") + (features != null ? features.toString() : "") + " @" + shape
+                + ">";
     }
 
     private Space(Shape shape) {
@@ -347,9 +338,8 @@ public class Space extends Extent implements ISpace {
         if (extent instanceof ISpace) {
             return createMergedExtent(this, (ISpace) extent);
         }
-        throw new IllegalArgumentException(
-                "cannot merge spatial extent " + extent.getClass().getCanonicalName()
-                        + "  into " + getClass().getCanonicalName());
+        throw new IllegalArgumentException("cannot merge spatial extent " + extent.getClass().getCanonicalName() + "  into "
+                + getClass().getCanonicalName());
 
     }
 
@@ -377,8 +367,7 @@ public class Space extends Extent implements ISpace {
     public long getOffset(long... dimOffsets) {
         if (features != null) {
             if (dimOffsets.length != 1) {
-                throw new IllegalArgumentException(
-                        "can't address offset: tessellation space has one dimension");
+                throw new IllegalArgumentException("can't address offset: tessellation space has one dimension");
             }
             return dimOffsets[0];
         }
@@ -389,8 +378,7 @@ public class Space extends Extent implements ISpace {
             return grid.getOffset(dimOffsets[0], dimOffsets[1]);
         }
         if (dimOffsets.length != 1 || dimOffsets[0] != 0) {
-            throw new IllegalArgumentException(
-                    "can't address offset: shape space has one dimension and one extent");
+            throw new IllegalArgumentException("can't address offset: shape space has one dimension and one extent");
         }
         return 0;
     }
@@ -513,8 +501,7 @@ public class Space extends Extent implements ISpace {
                     return new Space(common, Subgrid.create(theGrid, common));
                 } else {
                     throw new KlabUnsupportedFeatureException(
-                            "Unsupported operation: non-conformant grid to grid (subsetting error = "
-                                    + error);
+                            "Unsupported operation: non-conformant grid to grid (subsetting error = " + error);
                 }
             } else if (features != null) {
                 // cut features to merged shape
@@ -586,8 +573,7 @@ public class Space extends Extent implements ISpace {
     public boolean contains(IExtent other) throws KlabException {
         if (!(other instanceof ISpace)) {
             throw new IllegalArgumentException(
-                    "cannot check containment of a space extent within a "
-                            + other.getClass().getCanonicalName());
+                    "cannot check containment of a space extent within a " + other.getClass().getCanonicalName());
         }
         Shape oShape = (Shape) ((ISpace) other).getShape();
         if (this.shape == null || oShape == null) {
@@ -600,8 +586,7 @@ public class Space extends Extent implements ISpace {
     @Override
     public boolean overlaps(IExtent other) throws KlabException {
         if (!(other instanceof Space)) {
-            throw new IllegalArgumentException(
-                    "cannot overlap a space extent with a " + other.getClass().getCanonicalName());
+            throw new IllegalArgumentException("cannot overlap a space extent with a " + other.getClass().getCanonicalName());
         }
         Shape oShape = (Shape) ((ISpace) other).getShape();
         return shape == null || oShape == null ? false : shape.shapeGeometry.overlaps(oShape.shapeGeometry);
@@ -610,8 +595,7 @@ public class Space extends Extent implements ISpace {
     @Override
     public boolean intersects(IExtent other) throws KlabException {
         if (!(other instanceof Space)) {
-            throw new IllegalArgumentException(
-                    "cannot intersect a space extent with a " + other.getClass().getCanonicalName());
+            throw new IllegalArgumentException("cannot intersect a space extent with a " + other.getClass().getCanonicalName());
         }
         Shape oShape = (Shape) ((ISpace) other).getShape();
         return shape == null || oShape == null ? false : shape.shapeGeometry.intersects(oShape.shapeGeometry);
@@ -779,18 +763,12 @@ public class Space extends Extent implements ISpace {
 
         if (grid != null) {
 
-            return "S2("
-                    + grid.getXCells() + "," + grid.getYCells() + "){" + grid.getEnvelope().encode() + (opts
-                            .contains(Encoding.SKIP_GRID_SHAPE)
-                                    ? ""
-                                    : (",shape="
-                                            + getShape().getWKB()))
-                    + ",proj=" + getProjection().getSimpleSRS() + "}";
+            return "S2(" + grid.getXCells() + "," + grid.getYCells() + "){" + grid.getEnvelope().encode()
+                    + (opts.contains(Encoding.SKIP_GRID_SHAPE) ? "" : (",shape=" + getShape().getWKB())) + ",proj="
+                    + getProjection().getSimpleSRS() + "}";
 
         } else if (features != null) {
-            return "s1(" + features.size() + "){proj=" + getProjection().getSimpleSRS() + ","
-                    + getEnvelope().encode()
-                    + "}";
+            return "s1(" + features.size() + "){proj=" + getProjection().getSimpleSRS() + "," + getEnvelope().encode() + "}";
         }
 
         if (generic) {
@@ -865,9 +843,7 @@ public class Space extends Extent implements ISpace {
             return new Space();
         }
 
-        Shape common = connector.equals(LogicalConnector.INTERSECTION)
-                ? this.shape.intersection(other)
-                : this.shape.union(other);
+        Shape common = connector.equals(LogicalConnector.INTERSECTION) ? this.shape.intersection(other) : this.shape.union(other);
 
         // inherit the grid we're most aligned with
         Grid refgrid = null;
@@ -950,24 +926,29 @@ public class Space extends Extent implements ISpace {
 
     public static ISpace createMergedExtent(ISpace destination, ISpace other) {
 
+        /*
+         * simplest first: if we have no obvious mediation and we pass a grid against a non-grid
+         * that fully contains it, we want the other extent and nothing else.
+         */
+        if (destination.contains(other) && getGrid(destination) == null && getGrid(other) != null) {
+            return other;
+        }
+
         IShape resultShape = other.getShape();
         // add other's shape if destination doesn't have it
         if (resultShape == null) {
             resultShape = destination.getShape();
         } else {
-        	resultShape = destination.getShape().intersection(resultShape);
+            resultShape = destination.getShape().intersection(resultShape);
         }
 
         IGrid resultGrid = destination instanceof Space ? ((Space) destination).getGrid() : null;
         // same for the grid
         if (resultGrid == null && other instanceof Space) {
-        	resultGrid = ((Space)other).getGrid();
+            resultGrid = ((Space) other).getGrid();
         }
         // this isn't used right now
-        ITessellation resultFeatures = destination instanceof Space
-                ? ((Space) destination).getTessellation()
-                : null;
-
+        ITessellation resultFeatures = destination instanceof Space ? ((Space) destination).getTessellation() : null;
 
         /*
          * if destination wants a specific grid and other's is different, take the (possibly merged)
@@ -984,9 +965,7 @@ public class Space extends Extent implements ISpace {
                          * destination wants any grid and other doesn't have it: make a "default"
                          * grid using the geographical extent and the configured assumptions.
                          */
-                        double resolution = ((Envelope) resultShape.getEnvelope())
-                                .getResolutionForZoomLevel(50, 2)
-                                .getFirst();
+                        double resolution = ((Envelope) resultShape.getEnvelope()).getResolutionForZoomLevel(50, 2).getFirst();
 
                         return create((Shape) resultShape, resolution);
 
@@ -1024,9 +1003,9 @@ public class Space extends Extent implements ISpace {
                 }
 
             } else if (resultShape != null && resultGrid != null) {
-            	
-            	return create((Shape)resultShape, (Grid)resultGrid, true);
-            	
+
+                return create((Shape) resultShape, (Grid) resultGrid, true);
+
             }
         }
 
@@ -1039,6 +1018,10 @@ public class Space extends Extent implements ISpace {
          */
 
         return destination;
+    }
+
+    private static IGrid getGrid(ISpace other) {
+        return other instanceof Space ? ((Space) other).getGrid() : null;
     }
 
     @Override
@@ -1105,16 +1088,12 @@ public class Space extends Extent implements ISpace {
 
             } else if (locators.length == 2) {
                 // coordinates - must be doubles
-                if (locators[0] instanceof Number && locators[1] instanceof Number
-                        && Utils.isFloatingPoint((Number) locators[0])
+                if (locators[0] instanceof Number && locators[1] instanceof Number && Utils.isFloatingPoint((Number) locators[0])
                         && Utils.isFloatingPoint((Number) locators[1])) {
-                    coordinates = new double[]{((Number) locators[0]).doubleValue(),
-                            ((Number) locators[1]).doubleValue()};
+                    coordinates = new double[]{((Number) locators[0]).doubleValue(), ((Number) locators[1]).doubleValue()};
                 } else if (locators[0] instanceof Number && locators[1] instanceof Number
-                        && !Utils.isFloatingPoint((Number) locators[0])
-                        && !Utils.isFloatingPoint((Number) locators[1])) {
-                    offsets = new long[]{((Number) locators[0]).longValue(),
-                            ((Number) locators[1]).longValue()};
+                        && !Utils.isFloatingPoint((Number) locators[0]) && !Utils.isFloatingPoint((Number) locators[1])) {
+                    offsets = new long[]{((Number) locators[0]).longValue(), ((Number) locators[1]).longValue()};
                 }
             }
         }
@@ -1149,11 +1128,11 @@ public class Space extends Extent implements ISpace {
         return getShape().getCenter(true);
     }
 
-//    @Override
-//    public IExtent adopt(IExtent extent, IMonitor monitor) {
-//        // TODO Auto-generated method stub
-//        return this;
-//    }
+    // @Override
+    // public IExtent adopt(IExtent extent, IMonitor monitor) {
+    // // TODO Auto-generated method stub
+    // return this;
+    // }
 
     @Override
     protected IExtent contextualizeTo(IExtent other, IAnnotation constraint) {
