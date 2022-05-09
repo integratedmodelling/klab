@@ -149,7 +149,7 @@ public class HubUserService implements RemoteUserService {
 				Session session = activeSessions(profile).iterator().next();
 				try {
 					session.close();
-					publisher.logout(profile, session);
+					publisher.logout(profile, session, false);
 				} catch (IOException e) {
 					throw new KlabException("Could not close the session :(");
 				}

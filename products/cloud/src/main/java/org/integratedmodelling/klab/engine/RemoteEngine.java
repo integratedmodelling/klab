@@ -83,7 +83,7 @@ public class RemoteEngine extends Engine {
                         try {
                             Logging.INSTANCE.info("Killing session " + sesh.getId());
                             sesh.close();
-                            publisher.logout(null, sesh);
+                            publisher.logout(null, sesh, true);
                         } catch (IOException e) {
                             // I do not want to throw anything because the thread would die
                             Logging.INSTANCE.info("Error closing inactive session or removing dead weight.");
