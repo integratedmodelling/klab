@@ -364,7 +364,7 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
 		INamespace ns = Namespaces.INSTANCE.getNamespace(model.getNamespaceId());
 
 		if (ns == null) {
-			Logging.INSTANCE.warn("found model " + model.getName() + " referencing unknown namespace: ignoring");
+//			Logging.INSTANCE.warn("found model " + model.getName() + " referencing unknown namespace: ignoring");
 			return 0;
 		}
 

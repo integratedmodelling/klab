@@ -469,7 +469,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 
     private Slice addSlice(long timeOffset, long timeStart, long timeEnd, Slice closest) {
 
-        System.out.println(new TimeInstant(timeStart) + " to " + new TimeInstant(timeEnd));
+//        System.out.println(new TimeInstant(timeStart) + " to " + new TimeInstant(timeEnd));
 
         Slice slice = new Slice(timeOffset, timeStart, timeEnd, closest);
         slicesByEnd.put(timeEnd, slice);

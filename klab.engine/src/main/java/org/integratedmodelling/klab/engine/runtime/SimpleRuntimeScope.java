@@ -1015,4 +1015,16 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 		return null;
 	}
 
+    @Override
+    public ActuatorData getActuatorData(IActuator observable) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public IScale getScale(IActuator actuator) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }
