@@ -108,7 +108,7 @@ public interface IScale extends ILocator, IGeometry, ITopology<IScale> {
      * distributed, or the incoming resolution if not.</li>
      * </ul>
      * 
-     * @param scale
+     * @param scale the scale to merge in
      * @param dimensions the dimension on which to perform the merge; if no dimensions are passed,
      *        merge all dimensions
      */

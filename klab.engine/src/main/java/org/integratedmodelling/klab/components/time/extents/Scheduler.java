@@ -305,8 +305,8 @@ public class Scheduler implements IScheduler {
          * @param scope
          * @param endtime
          */
-        public Registration(Actuator actuator, List<Actuator.Computation> computation, IDirectObservation target,
-                IScale scale, IRuntimeScope scope, long endtime) {
+        public Registration(Actuator actuator, List<Actuator.Computation> computation, IDirectObservation target, IScale scale,
+                IRuntimeScope scope, long endtime) {
 
             this.actuator = actuator;
             this.scale = scale;
@@ -496,7 +496,7 @@ public class Scheduler implements IScheduler {
         }
 
         public Scale getScale() {
-            return (Scale)scale;
+            return (Scale) scale;
         }
 
         public int compare(Registration o) {
@@ -621,11 +621,15 @@ public class Scheduler implements IScheduler {
         scope = scope.targetForChange();
 
         /*
-         * overall scale fills in any missing info.
+         * overall scale sets boundaries, model scale may change temporal resolution.
          */
-        final IScale overall = scope.getResolutionScale();
-        final IScale actuatorScale = scope.getScale(actuator);
-        
+        IScale overall = scope.getResolutionScale();
+        IScale modelScale = actuator.getModel().getCoverage(scope.getMonitor());
+        if (modelScale != null) {
+            overall = overall.mergeContext(modelScale, Dimension.Type.TIME);
+        }
+        IScale actuatorScale = scope.getScale(actuator);
+
         /*
          * complete the actuator's scale with the overall one, adding extent boundaries and the like
          * but keeping the resolution and representation.

@@ -1440,8 +1440,8 @@ public class Scale implements IScale {
 
     @Override
     public Scale mergeContext(IScale scale, Dimension.Type... dimensions) {
-
-        if (scale == this || scale.isEmpty() || scale.isGeneric() || hasEqualExtents(scale)) {
+        
+        if (scale == this || hasEqualExtents(scale)) {
             return this;
         }
 

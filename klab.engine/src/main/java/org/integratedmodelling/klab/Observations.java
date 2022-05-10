@@ -579,8 +579,6 @@ public enum Observations implements IObservationService {
 						ret.setLiteralValue(formatValue(observation.getObservable(), value));
 						ret.setOverallValue("" + value);
 					}
-				} else {
-					ret.setLiteralValue("NaN");
 				}
 			}
 

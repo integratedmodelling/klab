@@ -426,7 +426,7 @@ public class Time extends Extent implements ITime {
 			/*
 			 * type
 			 */
-			ITime.Type type = other.getTimeType() == ITime.Type.GRID ? ITime.Type.GRID : other.getTimeType();
+			ITime.Type type = other.getTimeType() == ITime.Type.GRID ? ITime.Type.GRID : getTimeType();
 			if (start == null || end == null) {
 				type = ITime.Type.LOGICAL;
 			}

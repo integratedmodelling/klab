@@ -516,9 +516,6 @@ public class Actuator implements IActuator {
                 step.contextualizer = contextualizer.getFirst();
                 step.observable = indirectTarget == null ? this.observable : indirectTarget;
                 step.target = target;
-                if (step.target instanceof IProcess) {
-                    System.out.println("SHITTERONI");
-                }
                 step.targetId = targetId;
                 step.resource = contextualizer.getThird();
                 this.computation.add(step);
