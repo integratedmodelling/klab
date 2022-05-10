@@ -45,12 +45,12 @@ public abstract class AbstractRuntimeScope extends DataflowHandler implements IR
     Scale resolutionScale;
     ResolutionScope resolutionScope;
     boolean autoStartTransitions = false;
-//    Map<IActuator, IScale> partialScales;
-//    Map<IActuator, Status> actuatorStatus;
-//    Map<IActuator, Set<IObservation>> actuatorProducts;
+    // Map<IActuator, IScale> partialScales;
+    // Map<IActuator, Status> actuatorStatus;
+    // Map<IActuator, Set<IObservation>> actuatorProducts;
     Map<IActuator, ActuatorDataImpl> actuatorData;
     IMonitor monitor;
-    
+
     /**
      * This is used by characterizing models to report the result of characterization during their
      * own contextualization, which happens during <em>resolution</em> of dependencies with abstract
@@ -74,7 +74,7 @@ public abstract class AbstractRuntimeScope extends DataflowHandler implements IR
         Status status = new Status();
         Set<IObservation> products = new LinkedHashSet<>();
         IObservation target;
-        
+
         @Override
         public IScale getScale() {
             return scale;
@@ -89,57 +89,55 @@ public abstract class AbstractRuntimeScope extends DataflowHandler implements IR
         public IObservation getTarget() {
             return target;
         }
-        
+
         @Override
         public Set<IObservation> getProducts() {
             return products;
         }
-        
+
         @Override
         public Status getStatus() {
             return status;
         }
     }
-    
+
     protected AbstractRuntimeScope(Dataflow dataflow, IResolutionScope resolutionScope, IMonitor monitor) {
         this.resolutionScope = (ResolutionScope) resolutionScope;
         this.dataflow = dataflow;
         this.monitor = monitor;
-//        this.partialScales = Collections.synchronizedMap(new HashMap<>());
-//        this.actuatorStatus = Collections.synchronizedMap(new HashMap<>());
-//        this.actuatorProducts = Collections.synchronizedMap(new HashMap<>());
+        // this.partialScales = Collections.synchronizedMap(new HashMap<>());
+        // this.actuatorStatus = Collections.synchronizedMap(new HashMap<>());
+        // this.actuatorProducts = Collections.synchronizedMap(new HashMap<>());
         this.actuatorData = Collections.synchronizedMap(new HashMap<>());
         this.implicitlyChangingObservables = Collections.synchronizedSet(new HashSet<>());
         this.concreteIdentities = Collections.synchronizedMap(new HashMap<>());
 
         // cache for groovy IS operator in this context
-        this.reasonerCache = CacheBuilder.newBuilder().maximumSize(2048)
-                .build(new CacheLoader<String, Boolean>(){
-                    @Override
-                    public Boolean load(String key) throws Exception {
-                        String[] split = key.split(";");
-                        IConcept a = Concepts.c(split[0]);
-                        IConcept b = Concepts.c(split[1]);
-                        return a.is(b);
-                    }
-                });
+        this.reasonerCache = CacheBuilder.newBuilder().maximumSize(2048).build(new CacheLoader<String, Boolean>(){
+            @Override
+            public Boolean load(String key) throws Exception {
+                String[] split = key.split(";");
+                IConcept a = Concepts.c(split[0]);
+                IConcept b = Concepts.c(split[1]);
+                return a.is(b);
+            }
+        });
 
-        this.relatedReasonerCache = CacheBuilder.newBuilder().maximumSize(2048)
-                .build(new CacheLoader<String, Boolean>(){
-                    @Override
-                    public Boolean load(String key) throws Exception {
-                        String[] split = key.split(";");
+        this.relatedReasonerCache = CacheBuilder.newBuilder().maximumSize(2048).build(new CacheLoader<String, Boolean>(){
+            @Override
+            public Boolean load(String key) throws Exception {
+                String[] split = key.split(";");
 
-                        IConcept a = Concepts.c(split[0]);
-                        IConcept b = Concepts.c(split[1]);
+                IConcept a = Concepts.c(split[0]);
+                IConcept b = Concepts.c(split[1]);
 
-                        boolean ret = a.is(b);
-                        if (!ret && (b.is(Type.PREDICATE))) {
-                            // TODO check for adoption
-                        }
-                        return ret;
-                    }
-                });
+                boolean ret = a.is(b);
+                if (!ret && (b.is(Type.PREDICATE))) {
+                    // TODO check for adoption
+                }
+                return ret;
+            }
+        });
     }
 
     protected AbstractRuntimeScope(AbstractRuntimeScope scope) {
@@ -148,9 +146,9 @@ public abstract class AbstractRuntimeScope extends DataflowHandler implements IR
         this.resolutionScale = scope.resolutionScale;
         this.resolutionScope = scope.resolutionScope;
         this.autoStartTransitions = scope.autoStartTransitions;
-//        this.partialScales = scope.partialScales;
-//        this.actuatorStatus = scope.actuatorStatus;
-//        this.actuatorProducts = scope.actuatorProducts;
+        // this.partialScales = scope.partialScales;
+        // this.actuatorStatus = scope.actuatorStatus;
+        // this.actuatorProducts = scope.actuatorProducts;
         this.actuatorData = scope.actuatorData;
         this.dataflow = scope.dataflow;
         this.implicitlyChangingObservables = scope.implicitlyChangingObservables;
@@ -165,18 +163,21 @@ public abstract class AbstractRuntimeScope extends DataflowHandler implements IR
 
     @Override
     public void setMergedScale(IActuator actuator, IScale scale) {
-        getActuatorData(actuator).partialScale = (Scale)scale;
+        getActuatorData(actuator).partialScale = (Scale) scale;
     }
 
     @Override
     public IScale getMergedScale(IActuator actuator) {
         return getActuatorData(actuator).partialScale;
     }
-    
+
     @Override
     public IScale getScale(IActuator actuator) {
         ActuatorDataImpl data = getActuatorData(actuator);
-        return data.partialScale == null ? data.target.getScale() : data.partialScale;
+        return data.partialScale == null
+                // target is only null for views, whose scale is the overall resolution scale
+                ? (data.target == null ? getResolutionScale() : data.target.getScale())
+                : data.partialScale;
     }
 
     @Override
@@ -196,8 +197,7 @@ public abstract class AbstractRuntimeScope extends DataflowHandler implements IR
                     /*
                      * Turn time into a 1-step grid (so size = 2). The scheduler will do the rest.
                      */
-                    this.resolutionScale = Scale.substituteExtent(this.resolutionScale,
-                            ((Time) time).upgradeForOccurrents());
+                    this.resolutionScale = Scale.substituteExtent(this.resolutionScale, ((Time) time).upgradeForOccurrents());
                 }
 
                 // set the dataflow to autostart transitions if we only have one
@@ -213,12 +213,10 @@ public abstract class AbstractRuntimeScope extends DataflowHandler implements IR
     public Status getStatus(IActuator actuator) {
         return getActuatorData(actuator).status;
     }
-    
+
     @Override
     public DependencyGraph getDependencyGraph() {
-        return this.dataflow == null
-                ? new DependencyGraph()
-                : this.dataflow.getDependencyGraph();
+        return this.dataflow == null ? new DependencyGraph() : this.dataflow.getDependencyGraph();
     }
 
     @Override
@@ -240,5 +238,5 @@ public abstract class AbstractRuntimeScope extends DataflowHandler implements IR
         }
         return ret;
     }
-    
+
 }
