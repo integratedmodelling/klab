@@ -258,9 +258,6 @@ public class Scale implements IScale {
         }
 
         this.originalScaleOffset = this.originalScale.cursor.getElementOffset(locatedOffsets);
-        //
-        // this.originalScaleOffset = offset;
-        // this.locatedOffsets = this.parentScale.cursor.getElementIndexes(offset);
         this.extents.clear();
 
         for (int i = 0; i < this.locatedOffsets.length; i++) {
@@ -275,19 +272,6 @@ public class Scale implements IScale {
                 this.time = (ITime) ext;
             }
         }
-
-        // for (int i = 0; i < this.parentScale.extents.size(); i++) {
-        // IExtent ext = this.parentScale.extents.get(i) instanceof Extent
-        // ? ((Extent)
-        // this.parentScale.extents.get(i)).getExtent(this.locatedOffsets[i])
-        // : this.parentScale.extents.get(i);
-        // this.extents.add(ext);
-        // if (ext instanceof ISpace) {
-        // this.space = (ISpace) ext;
-        // } else if (ext instanceof ITime) {
-        // this.time = (ITime) ext;
-        // }
-        // }
 
         sort();
 
@@ -462,12 +446,6 @@ public class Scale implements IScale {
     private class ScaleIterator implements Iterator<ILocator> {
 
         long offset = 0;
-
-        ScaleIterator() {
-            if (size() == 0) {
-                // System.out.println("FOCK SIZE ZERO");
-            }
-        }
 
         @Override
         public boolean hasNext() {
@@ -699,10 +677,6 @@ public class Scale implements IScale {
         }
 
         if (!merged) {
-            // if (extents.size()>2) { System.out.println("Merda"); } extents.add(i,
-            // merged);
-            // ((AbstractExtent) merged).setScaleId(getScaleId());
-            // } else {
             extents.add((AbstractExtent) extent);
             ((AbstractExtent) extent).setScaleId(getScaleId());
         }
@@ -1634,47 +1608,6 @@ public class Scale implements IScale {
         return asGeometry().hashCode();
     }
 
-    // @Override
-    // public IScale adopt(IScale scale, IMonitor monitor) {
-    //
-    // if (scale == this || scale.isEmpty() || hasEqualExtents(scale)) {
-    // return this;
-    // }
-    //
-    // if (scale instanceof Scale) {
-    //
-    // Scale other = (Scale) scale;
-    // Scale ret = new Scale();
-    // ArrayList<IExtent> common = new ArrayList<>();
-    // HashSet<Dimension.Type> commonConcepts = new HashSet<>();
-    //
-    // for (IExtent e : extents) {
-    // if (other.getDimension(e.getType()) != null) {
-    // common.add(e);
-    // commonConcepts.add(e.getType());
-    // } else {
-    // ret.mergeExtent(e);
-    // }
-    // }
-    //
-    // for (IExtent e : other.getExtents()) {
-    // if (ret.getDimension(e.getType()) == null && !commonConcepts.contains(e.getType())) {
-    // ret.mergeExtent(e);
-    // }
-    // }
-    //
-    // for (IExtent e : common) {
-    // IExtent oext = other.getDimension(e.getType());
-    // IExtent merged = (IExtent) e.adopt(oext, monitor);
-    // ret.mergeExtent(merged);
-    // }
-    //
-    // return ret;
-    // }
-    //
-    // throw new IllegalArgumentException("Scale adopt() called with a non-scale parameter");
-    // }
-
     public long[] getLocatedOffsets() {
         return locatedOffsets;
     }
@@ -1713,7 +1646,6 @@ public class Scale implements IScale {
 
             Scale other = (Scale) contextScale;
             Scale ret = new Scale();
-            // ArrayList<IExtent> common = new ArrayList<>();
             HashSet<Dimension.Type> commonConcepts = new HashSet<>();
 
             for (IExtent e : ((Scale) scale).extents) {

@@ -583,11 +583,6 @@ public class Actuator implements IActuator {
             if (scope.getTargetArtifact() == null || !scope.getTargetArtifact().equals(ret)) {
                 ((IRuntimeScope) scope).setTarget(ret);
             }
-
-            // add any artifact, including the empty artifact, to the provenance. FIXME the
-            // provenance doesn't get the indirect artifacts. This
-            // needs to store the full causal chain and any indirect observations.
-            // ctx.getProvenance().addArtifact(ret);
         }
 
         if (model != null) {
