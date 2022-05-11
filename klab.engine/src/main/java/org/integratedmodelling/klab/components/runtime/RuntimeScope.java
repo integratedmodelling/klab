@@ -2378,7 +2378,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
 
     @Override
     public IRuntimeScope withCoverage(IScale scale) {
-        this.scale = ((Scale) this.scale).substituteNonLocatedExtents(scale);
+        this.scale = ((Scale) this.scale).contextualizeTo(scale);
         return this;
     }
 

@@ -76,7 +76,7 @@ public class RescalingState extends Observation implements IState, DelegatingArt
 	public RescalingState(IState state, IObservable newObservable, Scale newScale, IRuntimeScope context) {
 		super(new Observable((Observable) newObservable), newScale, context);
 		this.delegate = state;
-		this.newScale = newScale;
+		this.newScale = newScale.mergeContext(state.getScale());;
 		this.originalScale = state.getScale();
 		this.originalGeometry = ((Scale) state.getScale()).asGeometry();
 		this.observationType = newObservable.getDescriptionType();
@@ -141,12 +141,6 @@ public class RescalingState extends Observation implements IState, DelegatingArt
 			return -1;
 		}
 		
-		Envelope env = (Envelope)((Cell)((IScale)index).getSpace()).getEnvelope();
-		double[] center = ((Cell)((IScale)index).getSpace()).getCenter();
-		if (env.getJTSEnvelope().covers(-4.72, 41.76)) {
-		    System.out.println("PORCHIDDI");
-		}
-
 		// sets the conformant flag as a side-effect, call now
 		if (mediators == null) {
 			mediators = getMediators((Scale)originalScale, this.newScale);
