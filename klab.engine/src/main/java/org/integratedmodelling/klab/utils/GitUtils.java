@@ -75,7 +75,7 @@ public class GitUtils {
 		if (pdefs.length < 2) {
 		    branch = MAIN_BRANCH;
 		} else {
-		    branch = GitUtils.branchExists(gitUrl, pdefs[1]) ? pdefs[1] : MAIN_BRANCH;
+		    branch = GitUtils.branchExists(pdefs[0], pdefs[1]) ? pdefs[1] : MAIN_BRANCH;
 		}
 		String url = pdefs[0];
 
