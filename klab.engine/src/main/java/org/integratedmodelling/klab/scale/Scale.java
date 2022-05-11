@@ -29,6 +29,7 @@ import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
+import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable.MergingOption;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
@@ -684,13 +685,13 @@ public class Scale implements IScale {
         sort();
     }
 
-    private void mergeExtent(IExtent extent, LogicalConnector how) {
+    private void mergeExtent(IExtent extent, LogicalConnector how, MergingOption...options) {
 
         IExtent merged = null;
         int i = 0;
         for (IExtent e : extents) {
             if (e.getType().equals(extent.getType())) {
-                merged = e.merge(extent, how);
+                merged = e.merge(extent, how, options);
                 break;
             }
             i++;
@@ -802,7 +803,7 @@ public class Scale implements IScale {
     }
 
     @Override
-    public Scale merge(ITopologicallyComparable<?> coverage, LogicalConnector how) {
+    public Scale merge(ITopologicallyComparable<?> coverage, LogicalConnector how, MergingOption...options) {
 
         if (coverage instanceof Scale) {
 
@@ -828,7 +829,7 @@ public class Scale implements IScale {
 
             for (IExtent e : common) {
                 IExtent oext = other.getDimension(e.getType());
-                IExtent merged = (IExtent) e.merge(oext, how);
+                IExtent merged = (IExtent) e.merge(oext, how, options);
                 ret.mergeExtent(merged);
             }
 
@@ -882,7 +883,7 @@ public class Scale implements IScale {
         }
         return create(exts.toArray(new IExtent[exts.size()]));
     };
-
+    
     /**
      * Return a new scale with the passed domains collapsed into a 1-multiplicity extent.
      * 
@@ -890,6 +891,7 @@ public class Scale implements IScale {
      * @return a new scale
      * @throws KlabException
      */
+    @Override
     public Scale collapse(Dimension.Type... domains) throws KlabException {
         ArrayList<IExtent> extents = new ArrayList<>();
         for (IExtent e : this.extents) {
@@ -1420,7 +1422,7 @@ public class Scale implements IScale {
         }
 
         Set<Dimension.Type> dims = EnumSet.noneOf(Dimension.Type.class);
-        if (dimensions != null) {
+        if (dimensions != null && dimensions.length > 0) {
             for (Dimension.Type dim : dimensions) {
                 dims.add(dim);
             }
@@ -1437,15 +1439,15 @@ public class Scale implements IScale {
             ArrayList<IExtent> common = new ArrayList<>();
             HashSet<Dimension.Type> commonConcepts = new HashSet<>();
 
-            Map<IExtent.Type, IExtent> ownGeneric = new HashMap<>();
+//            Map<IExtent.Type, IExtent> ownGeneric = new HashMap<>();
 
             for (IExtent e : extents) {
 
-                if (e.isGeneric()) {
-                    // only add the generic extents back if the incoming scale does not have them
-                    ownGeneric.put(e.getType(), e);
-                    continue;
-                }
+//                if (e.isGeneric()) {
+//                    // only add the generic extents back if the incoming scale does not have them
+//                    ownGeneric.put(e.getType(), e);
+//                    continue;
+//                }
                 if (other.getDimension(e.getType()) != null) {
                     common.add(e);
                     commonConcepts.add(e.getType());
@@ -1467,11 +1469,11 @@ public class Scale implements IScale {
             }
 
             // add back any generic extents we have lost
-            for (IExtent.Type type : ownGeneric.keySet()) {
-                if (ret.getExtent(type) == null) {
-                    ret.mergeExtent(ownGeneric.get(type));
-                }
-            }
+//            for (IExtent.Type type : ownGeneric.keySet()) {
+//                if (ret.getExtent(type) == null) {
+//                    ret.mergeExtent(ownGeneric.get(type));
+//                }
+//            }
 
             ret.scaleId = this.scaleId;
 

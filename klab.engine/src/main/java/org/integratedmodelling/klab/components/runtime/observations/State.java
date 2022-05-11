@@ -255,21 +255,6 @@ public class State extends Observation implements IState, IKeyHolder {
 	@Override
 	public long getLastUpdate() {
 
-//		if (this.replayingTime != null && this.replayingTime.getEnd() != null) {
-//			long ret = -1;
-//			for (long l : getUpdateTimestamps()) {
-//				if (l > this.replayingTime.getEnd().getMilliseconds()) {
-//					break;
-//				}
-//				if (l > ret) {
-//					ret = l;
-//				}
-//			}
-//			if (ret >= 0) {
-//				return ret;
-//			}
-//		}
-
 		if (this.timeCoverage.size() > 0) {
 			long ret = -1;
 			for (Pair<Long, Long> ll : timeCoverage) {

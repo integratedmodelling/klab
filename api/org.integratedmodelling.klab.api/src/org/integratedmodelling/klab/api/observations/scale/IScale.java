@@ -20,7 +20,6 @@ import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.LogicalConnector;
 
 /**
@@ -127,7 +126,7 @@ public interface IScale extends ILocator, IGeometry, ITopology<IScale> {
      * Must not modify the original scales.
      */
     @Override
-    IScale merge(ITopologicallyComparable<?> other, LogicalConnector how);
+    IScale merge(ITopologicallyComparable<?> other, LogicalConnector how, MergingOption... options);
 
     /**
      * Mimics {@link org.integratedmodelling.klab.api.data.IGeometry.Dimension#shape()} passing the
@@ -220,5 +219,15 @@ public interface IScale extends ILocator, IGeometry, ITopology<IScale> {
      * @throw {@link IllegalArgumentException} if the parameters cannot be understood or honored.
      */
     <T extends ILocator> Iterable<T> scan(Class<T> desiredLocatorClass, Object... dimensionIdentifiers);
+
+    /**
+     * Return the same scale but with multiplicity 1 and all extents collapsed to their containing
+     * extent.
+     * 
+     * @param dimensions select the dimensions to collapse. Pass none to collapse everything.
+     * 
+     * @return
+     */
+    IScale collapse(Dimension.Type... dimensions);
 
 }

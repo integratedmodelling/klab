@@ -22,6 +22,7 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubjectiveObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
@@ -161,10 +162,6 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	protected void reportChange(ObservationChange change) {
 		this.changeset.add(change);
 	}
-
-//	public void setReplayingTime(ITime time) {
-//		this.replayingTime = time;
-//	}
 
 	protected void touch() {
 		this.timestamp = System.currentTimeMillis();

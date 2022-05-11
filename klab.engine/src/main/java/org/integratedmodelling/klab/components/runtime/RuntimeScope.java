@@ -1913,7 +1913,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
         }
 
         for (IArtifact artifact : ret) {
-            if (cls.isAssignableFrom(artifact.getClass())) {
+            if (artifact.getClass().isAssignableFrom(cls)) {
                 if (model != null && artifact instanceof IObservation) {
                     for (IObservable obs : model.getDependencies()) {
                         if (obs.is(concept)) {
@@ -2287,6 +2287,9 @@ public class RuntimeScope extends AbstractRuntimeScope {
     public boolean cached_is(Object c1, Object c2) {
         if (c2 == null || c1 == null) {
             return false;
+        }
+        if (c1.equals(c2)) {
+            return true;
         }
         try {
             return reasonerCache

@@ -158,7 +158,7 @@ public interface IExtent extends ILocator, ITopology<IExtent>, IGeometry.Dimensi
 
 	/** {@inheritDoc} */
 	@Override
-	IExtent merge(ITopologicallyComparable<?> other, LogicalConnector how);
+	IExtent merge(ITopologicallyComparable<?> other, LogicalConnector how, MergingOption...options);
 
 	/**
 	 * Return the n-th state of the ordered topology as a new extent with one state.

@@ -31,6 +31,7 @@ import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
+import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable.MergingOption;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
@@ -554,7 +555,7 @@ public class Shape extends AbstractExtent implements IShape {
     }
 
     @Override
-    public ISpace merge(ITopologicallyComparable<?> other, LogicalConnector how) {
+    public ISpace merge(ITopologicallyComparable<?> other, LogicalConnector how, MergingOption...options) {
 
         Shape shape = other instanceof Shape ? (Shape) other : null;
         if (shape == null && other instanceof ISpace) {

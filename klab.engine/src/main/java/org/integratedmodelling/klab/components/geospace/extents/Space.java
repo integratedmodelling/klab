@@ -30,11 +30,11 @@ import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
+import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable.MergingOption;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.geospace.api.ISpatialIndex;
@@ -455,7 +455,9 @@ public class Space extends Extent implements ISpace {
             return new Space();
         }
 
-        return adaptToShape(this.shape.intersection(other), other);
+        Shape intersection = this.shape.intersection(other);
+        
+        return adaptToShape(intersection, other);
     }
 
     public ISpace difference(ITopologicallyComparable<?> obj) throws KlabException {
@@ -735,7 +737,7 @@ public class Space extends Extent implements ISpace {
     }
 
     @Override
-    public ISpace merge(ITopologicallyComparable<?> other, LogicalConnector how) {
+    public ISpace merge(ITopologicallyComparable<?> other, LogicalConnector how, MergingOption...options) {
         if (how == LogicalConnector.UNION) {
             return union(other);
         } else if (how == LogicalConnector.INTERSECTION) {

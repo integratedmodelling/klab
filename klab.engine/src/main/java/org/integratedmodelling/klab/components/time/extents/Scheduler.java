@@ -982,6 +982,10 @@ public class Scheduler implements IScheduler {
 
                             for (IObservedConcept tracked : dependencyGraph) {
 
+                                if (changed.contains(tracked)) {
+                                    continue;
+                                }
+                                
                                 if (registration.scope.getImplicitlyChangingObservables().contains(tracked)
                                         && dependencyGraph.dependsOn(tracked, changed)) {
 

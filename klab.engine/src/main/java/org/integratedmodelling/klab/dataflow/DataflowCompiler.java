@@ -541,6 +541,7 @@ public class DataflowCompiler {
 				reference = true;
 				partials = true;
 				List<String> modelIds = new ArrayList<>();
+				
 				for (ModelD modelDesc : models) {
 
 					Actuator partial = Actuator.create(dataflow, mode);
@@ -569,11 +570,11 @@ public class DataflowCompiler {
 					reference = false;
 					partial.setCoverage(modelDesc.coverage);
 					modelIds.add(name);
-
+					
 					ret.getChildren().add(partial);
 
 				}
-
+				
 				ret.getAnnotations().addAll(Annotations.INSTANCE.collectAnnotations(observable));
 
 			} else if (inlineValue != null) {

@@ -125,7 +125,7 @@ public class EnumeratedSpace extends EnumeratedExtent implements ISpace {
 	}
 
 	@Override
-	public ISpace merge(ITopologicallyComparable<?> other, LogicalConnector how) {
+	public ISpace merge(ITopologicallyComparable<?> other, LogicalConnector how, MergingOption...options) {
 		// TODO Auto-generated method stub
 		return (ISpace)super.merge(other, how);
 	}

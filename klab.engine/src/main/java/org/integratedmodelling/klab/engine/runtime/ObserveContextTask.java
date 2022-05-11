@@ -162,7 +162,7 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
                              * actuator creates its artifacts, then initialization is handled when
                              * computing.
                              */
-                            ret = (ISubject) dataflow.run(scope.getCoverage().copy(), runtimeScope);
+                            ret = (ISubject) dataflow.run(scope.getCoverage().asScale().copy(), runtimeScope);
 
                             if (ret != null) {
 

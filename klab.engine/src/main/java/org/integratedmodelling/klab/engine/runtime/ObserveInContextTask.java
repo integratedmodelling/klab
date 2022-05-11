@@ -191,7 +191,7 @@ public class ObserveInContextTask extends AbstractTask<IArtifact> {
 						 */
 						Actuator actuator = (Actuator) (ctx.getDataflow().getActuators().isEmpty() ? null
 								: ctx.getDataflow().getActuators().get(0));
-						IArtifact result = dataflow.run(scope.getCoverage(), actuator, ctx);
+						IArtifact result = dataflow.run(scope.getCoverage().asScale(), actuator, ctx);
 						if (result instanceof IObservation) {
 							ret = (IObservation) result;
 						} else {

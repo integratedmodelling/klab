@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.ILocator;
@@ -17,10 +18,12 @@ import org.integratedmodelling.klab.api.observations.ISubjectiveState;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
+import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.common.Geometry;
+import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.runtime.observations.DelegatingArtifact;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
@@ -60,7 +63,7 @@ public class RescalingState extends Observation implements IState, DelegatingArt
 	public RescalingState(IState state, Scale newScale, IRuntimeScope context) {
 		super(new Observable((Observable) state.getObservable()), newScale, context);
 		this.delegate = state;
-		this.newScale = newScale;
+		this.newScale = newScale.mergeContext(state.getScale());
 		this.originalScale = state.getScale();
 		this.originalGeometry = ((Scale) state.getScale()).asGeometry();
 		this.observationType = state.getObservable().getDescriptionType();
@@ -137,6 +140,12 @@ public class RescalingState extends Observation implements IState, DelegatingArt
 		if (Observations.INSTANCE.isNodata(value)) {
 			return -1;
 		}
+		
+		Envelope env = (Envelope)((Cell)((IScale)index).getSpace()).getEnvelope();
+		double[] center = ((Cell)((IScale)index).getSpace()).getCenter();
+		if (env.getJTSEnvelope().covers(-4.72, 41.76)) {
+		    System.out.println("PORCHIDDI");
+		}
 
 		// sets the conformant flag as a side-effect, call now
 		if (mediators == null) {
@@ -148,8 +157,8 @@ public class RescalingState extends Observation implements IState, DelegatingArt
 			IScale loc = originalScale.at(index);
 			if (loc != null) {
 				return delegate.set(loc, value);
-			}
-
+			} 
+			
 		} else {
 			map(index, mediators, value);
 		}

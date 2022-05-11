@@ -27,6 +27,7 @@ import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
+import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable.MergingOption;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeDuration;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
@@ -487,7 +488,7 @@ public class Time extends Extent implements ITime {
 	}
 
 	@Override
-	public ITime merge(ITopologicallyComparable<?> other, LogicalConnector how) {
+	public ITime merge(ITopologicallyComparable<?> other, LogicalConnector how, MergingOption...options) {
 		if (how == LogicalConnector.UNION) {
 			ITimeInstant s = TimeInstant
 					.create(Long.min(this.start.getMilliseconds(), ((ITime) other).getStart().getMilliseconds()));

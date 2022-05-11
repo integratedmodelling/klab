@@ -27,6 +27,7 @@ import org.integratedmodelling.klab.api.observations.scale.IEnumeratedExtent;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
+import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable.MergingOption;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -157,7 +158,7 @@ public class EnumeratedExtent extends Extent implements IEnumeratedExtent {
     }
 
     @Override
-    public IExtent merge(ITopologicallyComparable<?> other, LogicalConnector how) {
+    public IExtent merge(ITopologicallyComparable<?> other, LogicalConnector how, MergingOption...options) {
 
         switch(how.value) {
         case LogicalConnector._UNION:

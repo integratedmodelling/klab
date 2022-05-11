@@ -19,6 +19,7 @@ import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable.MergingOption;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
@@ -274,14 +275,14 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	}
 
 	private void definePartitions(IScale scale, IRuntimeScope scope) {
-		_definePartialScales(this, (Scale) scale, scope);
+		_definePartialScales(this, (Scale) scale.collapse(), scope);
 	}
 
 	private Scale _definePartialScales(Actuator actuator, Scale current, IRuntimeScope scope) {
 
 		if (actuator.getModel() != null) {
 
-			Scale mcoverage = actuator.getModel().getCoverage(scope.getMonitor());
+			Scale mcoverage = actuator.getModel().getCoverage(scope.getMonitor()).collapse();
 			if (!mcoverage.isEmpty() || actuator.isPartition()) {
 				Scale coverage = mcoverage;
 				if (actuator.isPartition()) {
