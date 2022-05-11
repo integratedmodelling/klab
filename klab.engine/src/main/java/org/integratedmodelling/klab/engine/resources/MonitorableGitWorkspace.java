@@ -60,9 +60,15 @@ public class MonitorableGitWorkspace extends MonitorableFileWorkspace {
                                 .contains(MiscUtilities.getURLBaseName(url))) {
                             continue;
                         }
-
+                        // add branch if necessary
+                        String gitUrl;
+                        if (!url.contains("#")) {
+                            gitUrl =  url + "#" + Configuration.INSTANCE.getProductsBranch();
+                        } else {
+                            gitUrl = url;
+                        }
                         try {
-                            GitUtils.requireUpdatedRepository(url, getRoot());
+                            GitUtils.requireUpdatedRepository(gitUrl, getRoot());
                             Set<String> groups = gitUrls.get(url);
                             if (!groups.isEmpty()) {
                                 /*
