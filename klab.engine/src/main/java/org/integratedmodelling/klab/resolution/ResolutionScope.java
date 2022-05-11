@@ -288,7 +288,7 @@ public class ResolutionScope implements IResolutionScope {
                     resolvers = new LinkedHashSet<>();
                     resolverCache.put(cchange, resolvers);
                 }
-                resolvers.add(Models.INSTANCE.createChangeModel(main, modelScope.model, this));
+                resolvers.add(Models.INSTANCE.createChangeModel(main, change, modelScope.model, this));
             }
         }
 

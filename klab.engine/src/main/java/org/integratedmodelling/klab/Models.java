@@ -287,7 +287,7 @@ public enum Models implements IModelService {
 	 * 
 	 * @return
 	 */
-	public IRankedModel createChangeModel(IObservable observable, IModel model,
+	public IRankedModel createChangeModel(IObservable observable, IObservable changeObservable, IModel model,
 			ResolutionScope scope) {
 		MergedResource resource = ((org.integratedmodelling.klab.model.Model) model).getMergedResource();
 		org.integratedmodelling.klab.model.Model inner = null;
@@ -298,9 +298,8 @@ public enum Models implements IModelService {
 			}
 			inner = new org.integratedmodelling.klab.model.Model(observable, resource, model, scope);
 		} else {
-			// basic copy of model, which will also handle change; used with transformations
-			// - UNUSED
-			inner = new org.integratedmodelling.klab.model.Model(observable, model, scope);
+			// basic copy of model, which will also handle change
+			inner = new org.integratedmodelling.klab.model.Model(changeObservable, model, scope);
 		}
 		int priority = -1;
 		if (model instanceof RankedModel) {
