@@ -1,6 +1,8 @@
 package org.integratedmodelling.klab.components.runtime.contextualizers;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IParameters;
@@ -8,6 +10,7 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.general.IExpression;
@@ -16,6 +19,8 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Urns;
+import org.integratedmodelling.klab.components.runtime.observations.DelegatingArtifact;
+import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.utils.Pair;
@@ -28,6 +33,7 @@ public class UrnResolver extends AbstractContextualizer implements IExpression, 
     private IResource originalResource;
     private IResource resource;
     private Map<String, String> urnParameters;
+    private Map<IArtifact, Set<String>> incorporated = new HashMap<>();
 
     // don't remove - only used as expression
     public UrnResolver() {
@@ -71,17 +77,38 @@ public class UrnResolver extends AbstractContextualizer implements IExpression, 
         }
 
         Map<String, String> parameters = urnParameters;
+
+        /*
+         * ensure we don't retrieve the data more than once when we use multiple resources where
+         * another one forces recontextualization. TODO this won't stop downstream mediations -
+         * should return null or empty artifact to interrupt the chain.s
+         */
+        Urn urn = new Urn(resource.getUrn(), urnParameters);
+        IArtifact destination = observation;
+        while(destination instanceof DelegatingArtifact) {
+            destination = ((DelegatingArtifact) destination).getDelegate();
+        }
+        if (destination instanceof Observation && ((Observation) destination).includesResource(urn.toString())) {
+            // TODO this should only happen if contextualizing the resource now does not add
+            // anything, which means there is one state in it.
+            // System.err.println("SKIPPING RESOURCE " + urn + ": PREVIOUSLY CONTEXTUALIZED");
+            // return null;
+        }
+
         if (Configuration.INSTANCE.isEchoEnabled()) {
             System.err.println("GETTING DATA FROM " + this.resource.getUrn());
         }
-        
+
         IKlabData data = Resources.INSTANCE.getResourceData(this.resource, parameters, scope.getScale(), scope, observation);
+
         if (Configuration.INSTANCE.isEchoEnabled()) {
             System.err.println("DONE " + this.resource.getUrn());
         }
 
         if (data == null) {
             scope.getMonitor().error("Cannot extract data from resource " + resource.getUrn());
+        } else if (destination instanceof Observation) {
+            ((Observation) destination).includeResource(urn.toString());
         }
 
         return data == null ? observation : data.getArtifact();

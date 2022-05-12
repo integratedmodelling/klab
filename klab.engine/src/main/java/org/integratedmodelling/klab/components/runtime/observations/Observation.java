@@ -3,9 +3,11 @@ package org.integratedmodelling.klab.components.runtime.observations;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.integratedmodelling.kim.api.IParameters;
@@ -22,7 +24,6 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubjectiveObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
@@ -76,6 +77,7 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	// just for clients
 	private boolean contextualized;
 	private View view;
+	private Set<String> resourcesUsed = new HashSet<>();
 
 //	/*
 //	 * If this is not null, the observation is being recontextualized by a dataflow
@@ -521,6 +523,14 @@ public abstract class Observation extends ObservedArtifact implements IObservati
             return Observations.INSTANCE.getDisplayLabel(this);
         }
         return super.getProperty(property);
+    }
+
+    public void includeResource(String string) {
+        this.resourcesUsed.add(string);
+    }
+
+    public boolean includesResource(String string) {
+        return this.resourcesUsed.contains(string);
     }
 	
 	
