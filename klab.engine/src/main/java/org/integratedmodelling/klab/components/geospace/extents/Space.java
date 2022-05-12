@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
@@ -31,6 +32,7 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable.MergingOption;
+import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
@@ -828,6 +830,7 @@ public class Space extends Extent implements ISpace {
 
     @Override
     public IExtent mergeCoverage(IExtent obj, LogicalConnector connector) {
+        
         Space ret = new Space(this);
 
         if (this.shape == null) {

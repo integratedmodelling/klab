@@ -9,7 +9,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.stream.StreamSupport;
 
 import org.apache.commons.lang3.concurrent.ConcurrentUtils;
 import org.integratedmodelling.kim.api.IContextualizable;
@@ -85,7 +84,6 @@ import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.documentation.Report;
-import org.integratedmodelling.klab.engine.debugger.Debug;
 import org.integratedmodelling.klab.engine.runtime.AbstractTask;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
@@ -120,13 +118,17 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
 	private ActorSystem rootActorSystem = null;
 	private ExecutorService executor = Executors.newFixedThreadPool(Configuration.INSTANCE.getDataflowThreadCount());
-
+//	SpatialDisplay sdisplay = null;
+	
 	@Override
 	public Future<IArtifact> compute(IDataflow<? extends IArtifact> dataflow, IScale scale,
 			IContextualizationScope contextualizationScope) throws KlabException {
 
 		final IRuntimeScope scope = (IRuntimeScope) contextualizationScope;
 
+//		sdisplay = new SpatialDisplay(scale);
+//		sdisplay.show();
+		
 		Callable<IArtifact> task = new Callable<IArtifact>() {
 
 			@Override
@@ -247,6 +249,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 						}
 					}
 				}
+				
 
 				return runtimeScope.getTargetArtifact();
 			}
@@ -389,14 +392,18 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		// " WITH " +
 		// resolver);
 
-		if (reentrant && !Debug.INSTANCE.isDebugging()) {
-			StreamSupport.stream(((Scale) scale).spliterator(context.getMonitor()), true).forEach((state) -> {
-				if (!context.getMonitor().isInterrupted()) {
-					target.set(state, resolver.resolve(target.getObservable(),
-							variables.isEmpty() ? ctx : localizeContext(ctx, state, self, variables)));
-				}
-			});
-		} else {
+//		if (reentrant && !Debug.INSTANCE.isDebugging()) {
+//			StreamSupport.stream(((Scale) scale).spliterator(context.getMonitor()), true).forEach((state) -> {
+//				if (!context.getMonitor().isInterrupted()) {
+//					target.set(state, resolver.resolve(target.getObservable(),
+//							variables.isEmpty() ? ctx : localizeContext(ctx, state, self, variables)));
+//				}
+//			});
+//		} else {
+		    
+//		    sdisplay.add(((Space)((IScale)scale).getSpace()).getGrid(), NameGenerator.shortUUID());
+//		    sdisplay.show();
+		    
 			for (ILocator state : scale) {
 				if (context.getMonitor().isInterrupted()) {
 					break;
@@ -404,7 +411,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 				target.set(state, resolver.resolve(target.getObservable(),
 						variables.isEmpty() ? ctx : localizeContext(ctx, (IScale) state, self, variables)));
 			}
-		}
+//		}
 
 		// System.err.println("DONE " + data);
 		//

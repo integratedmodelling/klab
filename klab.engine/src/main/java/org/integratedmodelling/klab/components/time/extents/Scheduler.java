@@ -634,7 +634,7 @@ public class Scheduler implements IScheduler {
          * complete the actuator's scale with the overall one, adding extent boundaries and the like
          * but keeping the resolution and representation.
          */
-        IScale scale = actuatorScale.mergeContext(overall, Dimension.Type.TIME);
+        IScale scale = overall.mergeContext(actuatorScale, Dimension.Type.TIME);
         IObservation targetObservation = scope.getActuatorData(actuator).getTarget();
         ITimeInstant end = scope.getScale(actuator).getTime().getEnd();
 

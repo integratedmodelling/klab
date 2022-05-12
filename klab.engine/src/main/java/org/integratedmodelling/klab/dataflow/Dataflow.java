@@ -295,12 +295,12 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 				 * overall extents if any are set.
 				 */
 
-				if (actuator.isPartition()) {
-					/*
-					 * remove the part we handled so that the next will not cover it.
-					 */
-					current = current.merge(coverage, LogicalConnector.EXCLUSION);
-				}
+//				if (actuator.isPartition()) {
+//					/*
+//					 * remove the part we handled so that the next will not cover it.
+//					 */
+//					current = current.merge(coverage, LogicalConnector.EXCLUSION);
+//				}
 			}
 		}
 
