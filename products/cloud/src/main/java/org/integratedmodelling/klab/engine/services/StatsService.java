@@ -123,7 +123,7 @@ public class StatsService {
             postToServer(url, activity);
         }
     }
-
+    /*
     @Async
     @EventListener(condition = "#event.type == T(org.integratedmodelling.klab.engine.events.UserEventType).LOGIN")
     public void handleLogin(GenericUserEvent<HubUserProfile, Session> event) {
@@ -139,13 +139,13 @@ public class StatsService {
     @EventListener(condition = "#event.type == T(org.integratedmodelling.klab.engine.events.UserEventType).LOGOUT")
     public void handleLogout(GenericUserEvent<HubUserProfile, Session> event) {
         UserEventLogout logoutEvent = (UserEventLogout) event;
-        UserActivity userActivity = new UserActivity(UserActivity.TYPES.LOGIN, logoutEvent.getProfile(), logoutEvent.getTime());
+        UserActivity userActivity = new UserActivity(UserActivity.TYPES.LOGOUT, logoutEvent.getProfile(), logoutEvent.getTime());
         String url = getUrl(userActivity.getClass().getCanonicalName());
         if (url != null) {
             postToServer(url, userActivity);
         }
     }
-    
+    */
     @Async
     @EventListener(condition = "#event.type == T(org.integratedmodelling.klab.engine.events.UserEventType).SCALE")
     public void handleScale(GenericUserEvent<HubUserProfile, Session> event) {
