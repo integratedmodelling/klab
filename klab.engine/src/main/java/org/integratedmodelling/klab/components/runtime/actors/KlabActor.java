@@ -1193,9 +1193,13 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
 		}
 
 		if (scope.getNotifyId() != null) {
-			// TODO don't think this is handled properly. Should catch its own fire in the
-			// behavior - right?
-			System.err.println("NOTIFY ID NON-NULL IN FIRE FROM ACTION - ENSURE IT'S HANDLED");
+			// my fire, my action
+			if (listeners.containsKey(scope.getNotifyId())) {
+				MatchActions actions = listeners.get(scope.getNotifyId());
+				if (actions != null) {
+					actions.match(code.getValue().evaluate(scope, identity, false), scope.symbolTable);
+				}
+			}
 		}
 
 		if (scope.sender != null) {
@@ -1619,7 +1623,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
 						// disable the fencing if it's there
 						scope.semaphore = null;
 					}
-					
+
 					actionCache.put(executorId, executor);
 
 					if (executor instanceof KlabActionExecutor.Actor) {
@@ -1855,12 +1859,17 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
 
 		if (message.forwardApplicationId != null) {
 
+			Behavior<KlabMessage> newActor = null;
+			if (this instanceof ObservationActor) {
+				newActor = ObservationActor.create((Observation) identity, /* message.forwardApplicationId */null);
+			} else if (this instanceof SessionActor) {
+				newActor = SessionActor.create((Session) identity, message.forwardApplicationId);
+			}
+
 			/*
 			 * spawn another actor and load the behavior in it.
 			 */
-			ActorRef<KlabMessage> child = getContext().spawn(
-					SessionActor.create((Session) identity, message.forwardApplicationId),
-					message.forwardApplicationId);
+			ActorRef<KlabMessage> child = getContext().spawn(newActor, message.forwardApplicationId);
 			this.receivers.put(message.forwardApplicationId, child);
 			child.tell(message.direct());
 
