@@ -406,6 +406,11 @@ public class Scheduler implements IScheduler {
                          */
                         artifact = actuator.runContextualizer(computation.contextualizer, computation.observable, resource,
                                 artifact, transitionScope, (IScale) transitionScale, changedArtifacts);
+                        
+                        if (artifact == null) {
+                            interruptedTargets.add(computation.targetId);
+                            continue;
+                        }
 
                         for (IArtifact modified : changedArtifacts) {
                             if (modified instanceof IObservation) {

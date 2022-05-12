@@ -11,13 +11,16 @@ import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Urn;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.components.runtime.observations.DelegatingArtifact;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
@@ -89,10 +92,16 @@ public class UrnResolver extends AbstractContextualizer implements IExpression, 
             destination = ((DelegatingArtifact) destination).getDelegate();
         }
         if (destination instanceof Observation && ((Observation) destination).includesResource(urn.toString())) {
-            // TODO this should only happen if contextualizing the resource now does not add
-            // anything, which means there is one state in it.
-            // System.err.println("SKIPPING RESOURCE " + urn + ": PREVIOUSLY CONTEXTUALIZED");
-            // return null;
+            // this should only happen if contextualizing the resource now does not add
+            // anything, which means there is one state in it (type != grid and size <= 1).
+            Dimension time = resource.getGeometry().getDimension(Dimension.Type.TIME);
+            if (time == null || isStatic(time)) {
+                // FIXME OK, this is correct but we may have to overwrite the "other" resource
+                // anyway - which could be done using previous states, but
+                // the logic is extreme
+                // System.err.println("SKIPPING RESOURCE " + urn + ": PREVIOUSLY CONTEXTUALIZED");
+                // return null;
+            }
         }
 
         if (Configuration.INSTANCE.isEchoEnabled()) {
@@ -112,6 +121,17 @@ public class UrnResolver extends AbstractContextualizer implements IExpression, 
         }
 
         return data == null ? observation : data.getArtifact();
+    }
+
+    private boolean isStatic(Dimension time) {
+        if (time.size() > 1) {
+            return false;
+        }
+        Object ttype = time.getParameters().get(Geometry.PARAMETER_TIME_REPRESENTATION);
+        if (ITime.Type.GRID.name().toLowerCase().equals(ttype)) {
+            return false;
+        }
+        return true;
     }
 
     @Override
