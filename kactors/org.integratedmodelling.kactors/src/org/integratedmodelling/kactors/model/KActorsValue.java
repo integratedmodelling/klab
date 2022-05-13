@@ -32,6 +32,7 @@ import org.integratedmodelling.klab.Services;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.services.IActorsService;
 import org.integratedmodelling.klab.api.services.IConceptService;
 import org.integratedmodelling.klab.api.services.IExtensionService;
 import org.integratedmodelling.klab.api.services.IObservableService;
@@ -509,8 +510,9 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
         }
         
         Object ret = this.value;
-        if (KActors.INSTANCE.getValueTranslator() != null) {
-            ret = KActors.INSTANCE.getValueTranslator().translate(this, identity, scope);
+        IActorsService service = Services.INSTANCE.getService(IActorsService.class);
+        if (service != null) {
+            ret = service.evaluate(this, identity, scope);
         }
 
         return ret;

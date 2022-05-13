@@ -6,10 +6,13 @@ import java.net.URL;
 import java.util.Collection;
 
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
+import org.integratedmodelling.kactors.api.IKActorsBehavior.Scope;
 import org.integratedmodelling.kactors.api.IKActorsBehavior.Type;
+import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IActorIdentity.Reference;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
+import org.integratedmodelling.klab.api.auth.IIdentity;
 
 /**
  * The actors service keeps the k.Actor language parser and administers the actor runtime subsystem.
@@ -20,12 +23,22 @@ import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 public interface IActorsService {
 
     /**
-     * Return the behavior identified by the passed string.
+     * Return the behavior identified by the passed string. Returns a pre-instantiated prototype to
+     * be used only if the behavior is run in a single instance.
      * 
      * @param id
      * @return a behavior or null
      */
     IBehavior getBehavior(String id);
+
+    /**
+     * Return a new copy of the behavior, suitable for concurrent use. Behavior must have been
+     * registered with a valid prototype in advance of the call.
+     * 
+     * @param behaviorId
+     * @return
+     */
+    IBehavior newBehavior(String behaviorId);
 
     /**
      * Read a k.Actor specification from a URL.
@@ -70,7 +83,16 @@ public interface IActorsService {
      */
     Collection<String> getBehaviorIds(Type type);
 
-	Reference createUserActor(IEngineUserIdentity user);
+    Reference createUserActor(IEngineUserIdentity user);
 
+    /**
+     * Evaluate a k.Actors value in the passed scope.
+     * 
+     * @param kActorsValue
+     * @param identity
+     * @param scope
+     * @return
+     */
+    Object evaluate(IKActorsValue kActorsValue, IIdentity identity, Scope scope);
 
 }

@@ -1834,9 +1834,6 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
 				MatchActions actions = listeners.get(message.listenerId);
 				if (actions != null) {
 					actions.match(message.value, message.scopeVars);
-					// if (message.finalize) {
-					// listeners.remove(message.listenerId);
-					// }
 				}
 			}
 
@@ -1919,7 +1916,8 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
 						// TODO modeler actor - which can create and modify projects and code
 					}
 
-					KlabActor.this.behavior = Actors.INSTANCE.getBehavior(message.behavior);
+					// create a new behavior for each actor. TODO/FIXME this is potentially expensive
+					KlabActor.this.behavior = Actors.INSTANCE.newBehavior(message.behavior);
 					KlabActor.this.listeners.clear();
 					KlabActor.this.actionBindings.clear();
 					KlabActor.this.actionCache.clear();
