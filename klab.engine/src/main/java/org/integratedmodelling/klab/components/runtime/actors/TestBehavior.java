@@ -27,6 +27,7 @@ import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
 import org.integratedmodelling.klab.api.knowledge.IProject;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IObservationGroup;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.runtime.monitoring.IInspector;
@@ -35,6 +36,7 @@ import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
 import org.integratedmodelling.klab.engine.debugger.Inspector;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.SessionState;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabActorException;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Parameters;
@@ -142,6 +144,11 @@ public class TestBehavior {
             target = KlabActor.evaluateInScope((KActorsValue) target, scope, scope.identity);
         }
 
+        IRuntimeScope runtimeScope = scope.runtimeScope;
+        if (target instanceof IObservation) {
+        	runtimeScope = (IRuntimeScope)((IObservation)target).getScope();
+        }
+        
         IKActorsValue comparison = assertion.getValue();
 
         // TODO Auto-generated method stub
@@ -168,18 +175,18 @@ public class TestBehavior {
         Descriptor selectDescriptor;
         IExpression selectExpression = null;
         Map<String, IState> states = new HashMap<>();
-
+        
         if (comparison != null) {
             if (comparison.getType() == Type.EXPRESSION) {
 
                 IKimExpression expr = comparison.as(IKimExpression.class);
                 compareDescriptor = Extensions.INSTANCE.getLanguageProcessor(expr.getLanguage())
-                        .describe(expr.getCode(), scope.runtimeScope.getExpressionContext());
+                        .describe(expr.getCode(), runtimeScope.getExpressionContext());
                 compareExpression = compareDescriptor.compile();
                 for (String input : compareDescriptor.getIdentifiers()) {
                     if (compareDescriptor.isScalar(input)
-                            && scope.runtimeScope.getArtifact(input, IState.class) != null) {
-                        IState state = scope.runtimeScope.getArtifact(input, IState.class);
+                            && runtimeScope.getArtifact(input, IState.class) != null) {
+                        IState state = runtimeScope.getArtifact(input, IState.class);
                         if (state != null) {
                             states.put(state.getObservable().getName(), state);
                         }
@@ -192,12 +199,12 @@ public class TestBehavior {
 
         if (selector != null) {
             selectDescriptor = Extensions.INSTANCE.getLanguageProcessor(selector.getLanguage())
-                    .describe(selector.getCode(), scope.runtimeScope.getExpressionContext());
+                    .describe(selector.getCode(), runtimeScope.getExpressionContext());
             selectExpression = selectDescriptor.compile();
             for (String input : selectDescriptor.getIdentifiers()) {
                 if (selectDescriptor.isScalar(input)
-                        && scope.runtimeScope.getArtifact(input, IState.class) != null) {
-                    IState state = scope.runtimeScope.getArtifact(input, IState.class);
+                        && runtimeScope.getArtifact(input, IState.class) != null) {
+                    IState state = runtimeScope.getArtifact(input, IState.class);
                     if (state != null) {
                         states.put(state.getObservable().getName(), state);
                     }
@@ -212,21 +219,21 @@ public class TestBehavior {
 
             states.put("self", (IState) target);
 
-            for (ILocator locator : scope.runtimeScope.getScale()) {
+            for (ILocator locator : runtimeScope.getScale()) {
 
                 args.clear();
                 for (String key : states.keySet()) {
                     args.put(key, states.get(key).get(locator));
                 }
                 if (selectExpression != null) {
-                    Object selectValue = selectExpression.eval(args, scope.runtimeScope);
+                    Object selectValue = selectExpression.eval(args, runtimeScope);
                     if (selectValue instanceof Boolean && !((Boolean) selectValue)) {
                         continue;
                     }
                 }
 
                 if (compareExpression == null) {
-                    compareValue = compareExpression.eval(args, scope.runtimeScope);
+                    compareValue = compareExpression.eval(args, runtimeScope);
                     ok = compareValue instanceof Boolean && (Boolean) compareValue;
                 } else {
                     ok = args.get("self") == null && compareValue == null
