@@ -23,6 +23,7 @@ import org.integratedmodelling.klab.api.auth.IActorIdentity;
 import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
+import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
@@ -199,7 +200,8 @@ public class TestBehavior {
 
         if (selector != null) {
             selectDescriptor = Extensions.INSTANCE.getLanguageProcessor(selector.getLanguage())
-                    .describe(selector.getCode(), runtimeScope.getExpressionContext());
+            		// TODO parameter only if target is a state
+                    .describe(selector.getCode(), runtimeScope.getExpressionContext(), CompilerOption.ForcedScalar);
             selectExpression = selectDescriptor.compile();
             for (String input : selectDescriptor.getIdentifiers()) {
                 if (selectDescriptor.isScalar(input)
@@ -232,7 +234,7 @@ public class TestBehavior {
                     }
                 }
 
-                if (compareExpression == null) {
+                if (compareExpression != null) {
                     compareValue = compareExpression.eval(args, runtimeScope);
                     ok = compareValue instanceof Boolean && (Boolean) compareValue;
                 } else {
