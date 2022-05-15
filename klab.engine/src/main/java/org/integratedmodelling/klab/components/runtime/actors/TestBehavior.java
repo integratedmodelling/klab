@@ -9,21 +9,26 @@ import org.integratedmodelling.kactors.api.IKActorsStatement.Assert.Assertion;
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.api.IKActorsValue.Type;
 import org.integratedmodelling.kactors.model.KActorsValue;
+import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.klab.Actors;
+import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IActorIdentity;
 import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
+import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
 import org.integratedmodelling.klab.api.knowledge.IProject;
+import org.integratedmodelling.klab.api.observations.IObservationGroup;
+import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.runtime.monitoring.IInspector;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
-import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.debugger.Inspector;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.SessionState;
@@ -126,25 +131,80 @@ public class TestBehavior {
      * @param scope
      * @param comparison
      */
-    public static void evaluateAssertion(Object returned, Assertion assertion, Scope scope) {
+    public static void evaluateAssertion(Object target, Assertion assertion, Scope scope,
+            IParameters<String> arguments) {
 
-        IKActorsValue comparison = assertion.getValue();
-        boolean ok = false;
-        if (returned instanceof IKActorsValue) {
-            returned = KlabActor.evaluateInScope((KActorsValue) returned, scope, scope.identity);
+        if (target instanceof IKActorsValue) {
+            target = KlabActor.evaluateInScope((KActorsValue) target, scope, scope.identity);
         }
-        if (comparison == null) {
-            ok = returned == null;
+        
+        IKActorsValue comparison = assertion.getValue();
+        
+        // TODO Auto-generated method stub
+        IKimExpression selector = null;
+        IObservationGroup distribute = null;
+        boolean ok = false;
+
+        if (arguments.containsKey("select")) {
+            Object sel = arguments.get("select");
+            if (sel instanceof IKimExpression) {
+                selector = (IKimExpression) sel;
+            } else if (sel instanceof IKActorsValue && ((IKActorsValue) sel).getType() == Type.EXPRESSION) {
+                selector = ((IKActorsValue) sel).as(IKimExpression.class);
+            }
+        }
+
+        if (arguments.containsKey("foreach")) {
+            
+        }
+        
+        
+        IExpression select = selector == null
+                ? null
+                : Extensions.INSTANCE.compileExpression(selector.getCode(),
+                        scope.runtimeScope.getExpressionContext(), selector.getLanguage());
+
+        Object compareValue = null;
+        IExpression compareExpression = null;
+
+        if (comparison.getType() == Type.EXPRESSION) {
+            IKimExpression expr = comparison.as(IKimExpression.class);
+            compareExpression = Extensions.INSTANCE.compileExpression(expr.getCode(),
+                    scope.runtimeScope.getExpressionContext(), expr.getLanguage());
         } else {
-            ok = Actors.INSTANCE.matches(comparison, returned, scope);
+            compareValue = comparison.evaluate(scope, scope.identity, true);
+        }
+
+        if (target instanceof IState) {
+            for (ILocator locator : scope.runtimeScope.getScale()) {
+                if (select != null) {
+                    
+                }
+                
+                Object value = ((IState)target).get(locator);
+                if (compareExpression == null) {
+                    /*
+                     * compare with comparison value
+                     */
+                } else {
+                    /*
+                     * eval expression
+                     */
+                }
+            }
+        }
+
+        if (comparison == null) {
+            ok = target == null;
+        } else {
+            ok = Actors.INSTANCE.matches(comparison, target, scope);
         }
 
         if (scope.testScope == null) {
-            throw new KlabActorException("assert failed: '" + comparison + "' and '" + returned + "' differ");
+            throw new KlabActorException(
+                    "assert failed: '" + comparison + "' and '" + target + "' differ");
         }
-
-        scope.testScope.notifyAssertion(returned, comparison, ok, assertion);
-
+        scope.testScope.notifyAssertion(target, comparison, ok, assertion);
     }
 
     public static String printPeriod(long ms) {
@@ -171,7 +231,7 @@ public class TestBehavior {
                 args.add(o);
             }
 
-            ((SessionState)scope.runtimeScope.getSession().getState()).whitelist((Object[])args.toArray());
+            ((SessionState) scope.runtimeScope.getSession().getState()).whitelist((Object[]) args.toArray());
 
         }
 
@@ -195,7 +255,7 @@ public class TestBehavior {
                 args.add(o);
             }
 
-            ((SessionState)scope.runtimeScope.getSession().getState()).whitelist((Object[])args.toArray());
+            ((SessionState) scope.runtimeScope.getSession().getState()).whitelist((Object[]) args.toArray());
         }
 
     }
@@ -245,10 +305,11 @@ public class TestBehavior {
                 ((SessionState) scope.runtimeScope.getSession().getState()).setInspector(new Inspector());
             }
 
-            ((SessionState) scope.runtimeScope.getSession().getState()).getInspector().setTrigger((trigger, sc) -> {
-                // TODO set variables in scope for expressions and assertions
-                fire(trigger.getSubject(), scope);
-            }, (Object[]) triggerArguments.toArray());
+            ((SessionState) scope.runtimeScope.getSession().getState()).getInspector()
+                    .setTrigger((trigger, sc) -> {
+                        // TODO set variables in scope for expressions and assertions
+                        fire(trigger.getSubject(), scope);
+                    }, (Object[]) triggerArguments.toArray());
         }
 
     }

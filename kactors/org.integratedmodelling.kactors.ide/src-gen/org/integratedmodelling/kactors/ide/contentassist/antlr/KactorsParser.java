@@ -169,7 +169,8 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getMethodCallWithActionsAccess().getGroup_1(), "rule__MethodCallWithActions__Group_1__0");
 			builder.put(grammarAccess.getMethodCallWithActionsAccess().getGroup_2(), "rule__MethodCallWithActions__Group_2__0");
 			builder.put(grammarAccess.getAssertStatementAccess().getGroup(), "rule__AssertStatement__Group__0");
-			builder.put(grammarAccess.getAssertStatementAccess().getGroup_2(), "rule__AssertStatement__Group_2__0");
+			builder.put(grammarAccess.getAssertStatementAccess().getGroup_1(), "rule__AssertStatement__Group_1__0");
+			builder.put(grammarAccess.getAssertStatementAccess().getGroup_3(), "rule__AssertStatement__Group_3__0");
 			builder.put(grammarAccess.getAssertionAccess().getGroup(), "rule__Assertion__Group__0");
 			builder.put(grammarAccess.getAssertionAccess().getGroup_0_1(), "rule__Assertion__Group_0_1__0");
 			builder.put(grammarAccess.getAssertionAccess().getGroup_0_1_0(), "rule__Assertion__Group_0_1_0__0");
@@ -431,8 +432,9 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getMethodCallWithActionsAccess().getNameAssignment_0(), "rule__MethodCallWithActions__NameAssignment_0");
 			builder.put(grammarAccess.getMethodCallWithActionsAccess().getParametersAssignment_1_1(), "rule__MethodCallWithActions__ParametersAssignment_1_1");
 			builder.put(grammarAccess.getMethodCallWithActionsAccess().getActionsAssignment_2_1(), "rule__MethodCallWithActions__ActionsAssignment_2_1");
-			builder.put(grammarAccess.getAssertStatementAccess().getAssertionsAssignment_1(), "rule__AssertStatement__AssertionsAssignment_1");
-			builder.put(grammarAccess.getAssertStatementAccess().getAssertionsAssignment_2_1(), "rule__AssertStatement__AssertionsAssignment_2_1");
+			builder.put(grammarAccess.getAssertStatementAccess().getParametersAssignment_1_1(), "rule__AssertStatement__ParametersAssignment_1_1");
+			builder.put(grammarAccess.getAssertStatementAccess().getAssertionsAssignment_2(), "rule__AssertStatement__AssertionsAssignment_2");
+			builder.put(grammarAccess.getAssertStatementAccess().getAssertionsAssignment_3_1(), "rule__AssertStatement__AssertionsAssignment_3_1");
 			builder.put(grammarAccess.getAssertionAccess().getExpressionAssignment_0_0(), "rule__Assertion__ExpressionAssignment_0_0");
 			builder.put(grammarAccess.getAssertionAccess().getMethodCallsAssignment_0_1_0_0(), "rule__Assertion__MethodCallsAssignment_0_1_0_0");
 			builder.put(grammarAccess.getAssertionAccess().getMethodCallsAssignment_0_1_1(), "rule__Assertion__MethodCallsAssignment_0_1_1");
