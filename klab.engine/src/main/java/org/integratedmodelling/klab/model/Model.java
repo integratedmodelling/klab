@@ -465,7 +465,8 @@ public class Model extends KimObject implements IModel {
 			for (int oo = 1; oo < observables.size(); oo++) {
 				IObservable obs = observables.get(oo);
 				if (obs != null && obs.is(Type.QUALITY) && !changed.contains(obs.getType())) {
-					if (Observables.INSTANCE.isAffectedBy(obs, getMainObservable()) || Observables.INSTANCE.isCreatedBy(obs, getMainObservable())) {
+					if (Observables.INSTANCE.isAffectedBy(obs, getMainObservable())
+							|| Observables.INSTANCE.isCreatedBy(obs, getMainObservable())) {
 						IObservable cobs = obs.getBuilder(monitor).as(UnarySemanticOperator.CHANGE).buildObservable();
 						toAdd.add(cobs);
 						this.localNames.put(cobs.getReferenceName(), cobs.getName());
@@ -683,7 +684,7 @@ public class Model extends KimObject implements IModel {
 		if (observables.size() == 0 || observables.get(0) == null) {
 			return;
 		}
-		
+
 		Map<String, IArtifact.Type> typechain = new HashMap<>();
 
 		/*
@@ -1041,13 +1042,16 @@ public class Model extends KimObject implements IModel {
 	 * @param resource
 	 * @param scope
 	 */
-	public Model(IObservable mainObservable, MergedResource resource, IModel originalModel, ResolutionScope scope) {
+	public Model(IObservable mainObservable, MergedResource resource, IModel originalModel,
+			ResolutionScope scope) {
+		
 		super(null);
 		if (originalModel instanceof RankedModel) {
 			// computables must be validated by the original model. This is pretty ugly of
 			// course.
 			originalModel = ((RankedModel) originalModel).getDelegate();
 		}
+
 		this.derived = true;
 		this.id = mainObservable.getName() + "_resolved_change";
 		IObservable changeObservable = mainObservable.getBuilder(scope.getMonitor()).as(UnarySemanticOperator.CHANGE)
@@ -1057,12 +1061,45 @@ public class Model extends KimObject implements IModel {
 		this.observables.add(changeObservable);
 		this.localNames.put(changeObservable.getReferenceName(), changeObservable.getName());
 		this.observablesByReferenceName.put(changeObservable.getReferenceName(), changeObservable);
-		this.coverage = scope.getScale();
+		this.coverage = ((Model)originalModel).coverage;
 
 		if (resource != null) {
 			this.resources.add(new ComputableResource(resource.getUrn(), Mode.RESOLUTION));
 		}
 		for (int i = (resource == null ? 0 : 1); i < ((Model) originalModel).getComputation().size(); i++) {
+			ComputableResource computation = (ComputableResource) ((Model) originalModel).getComputation().get(i);
+			this.resources.add(((Model) originalModel).validate(computation.copy(), scope.getMonitor()));
+		}
+	}
+
+	/**
+	 * Create a model for the changed values from a resolver or instantiator of the
+	 * passed observable, resolved by the merged resource that has been already
+	 * checked for coverage of the temporal scope. The resulting model will have the
+	 * resource and all the computations from the original one. If we pass a null
+	 * merged resource, we use the original one instead, as it's been established to
+	 * be able to handle time changes.
+	 * 
+	 * FIXME/CHECK: UNUSED
+	 * 
+	 * @param mainObservable
+	 * @param resource
+	 * @param scope
+	 */
+	public Model(IObservable changeObservable, IModel originalModel, ResolutionScope scope) {
+		super(null);
+		if (originalModel instanceof RankedModel) {
+			originalModel = ((RankedModel) originalModel).getDelegate();
+		}
+		this.derived = true;
+		this.id = changeObservable.getName() + "_resolved_change";
+		this.namespace = scope.getResolutionNamespace();
+		this.contextualization = new Contextualization(null, this);
+		this.observables.add(changeObservable);
+		this.localNames.put(changeObservable.getReferenceName(), changeObservable.getName());
+		this.observablesByReferenceName.put(changeObservable.getReferenceName(), changeObservable);
+		this.coverage = scope.getScale();
+		for (int i = 0; i < ((Model) originalModel).getComputation().size(); i++) {
 			ComputableResource computation = (ComputableResource) ((Model) originalModel).getComputation().get(i);
 			this.resources.add(((Model) originalModel).validate(computation.copy(), scope.getMonitor()));
 		}

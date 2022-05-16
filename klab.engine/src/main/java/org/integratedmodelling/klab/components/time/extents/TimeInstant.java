@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.components.time.extents;
 
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution.Type;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.joda.time.DateTime;
@@ -44,7 +45,7 @@ public class TimeInstant implements ITimeInstant {
 	public static ITimeInstant create() {
 		return new TimeInstant();
 	}
-	
+
 	public TimeInstant(int year) {
 		time = new DateTime(year, 1, 1, 0, 0, DateTimeZone.UTC);
 	}
@@ -77,6 +78,17 @@ public class TimeInstant implements ITimeInstant {
 
 	public DateTime asDate() {
 		return time;
+	}
+	
+	public String describe(Resolution resolution) {
+		if (resolution.getType() == Type.YEAR) {
+			return "" + getYear();
+		} else if (resolution.getType() == Type.MONTH) {
+			return getMonth() + "/" + getYear();
+		} else if (resolution.getType() == Type.DAY) {
+			return getDay() + "/" + getMonth() + "/" + getYear();
+		}
+		return toString();
 	}
 	
 	public String toString() {

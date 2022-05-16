@@ -129,7 +129,7 @@ MethodCallWithActions returns MessageCall:
 ;
 
 AssertStatement:
-	'assert' 
+	'assert' ('(' (parameters=ParameterList)? ')')?
 		assertions+=Assertion (',' assertions+=Assertion)*;
 
 Assertion:

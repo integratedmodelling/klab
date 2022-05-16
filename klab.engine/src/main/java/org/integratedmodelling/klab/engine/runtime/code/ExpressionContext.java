@@ -46,11 +46,16 @@ public class ExpressionContext implements IExpression.Scope {
 		for (Entry<String, IObservation> artifact : context.getLocalCatalog(IObservation.class).entrySet()) {
 
 			String name = artifact.getKey();
+			String fname = artifact.getValue().getObservable().getName();
 			ret.identifiers.add(name);
+			ret.identifiers.add(fname);
 			if (artifact.getValue() instanceof IState) {
 				ret.stateIdentifiers.add(name);
+				ret.stateIdentifiers.add(fname);
 			}
 			ret.identifierTypes.put(name,
+					Observables.INSTANCE.getObservableType(artifact.getValue().getObservable(), true));
+			ret.identifierTypes.put(fname,
 					Observables.INSTANCE.getObservableType(artifact.getValue().getObservable(), true));
 		}
 

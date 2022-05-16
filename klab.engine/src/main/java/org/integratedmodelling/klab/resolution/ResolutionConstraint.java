@@ -1,12 +1,16 @@
 package org.integratedmodelling.klab.resolution;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.klab.Namespaces;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
@@ -95,6 +99,7 @@ public class ResolutionConstraint implements IResolutionConstraint {
     List<IModel> modelBlacklist = new ArrayList<>();
     List<IResource> resourceBlacklist = new ArrayList<>();
     List<INamespace> namespacesBlacklist = new ArrayList<>();
+    Set<IObservedConcept> observables = new HashSet<>();
 
     private ResolutionConstraint() {
     }
@@ -182,4 +187,5 @@ public class ResolutionConstraint implements IResolutionConstraint {
         }
         return ret;
     }
+
 }

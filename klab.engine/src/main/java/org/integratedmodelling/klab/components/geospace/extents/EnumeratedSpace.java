@@ -3,10 +3,13 @@ package org.integratedmodelling.klab.components.geospace.extents;
 import org.integratedmodelling.klab.api.data.IGeometry.Encoding;
 import org.integratedmodelling.klab.api.knowledge.IAuthority;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.observations.scale.IExtent;
+import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
+import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.scale.EnumeratedExtent;
 
@@ -108,6 +111,23 @@ public class EnumeratedSpace extends EnumeratedExtent implements ISpace {
 	public double getStandardizedDistance(ISpace extent) {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	@Override
+	public ISpace mergeContext(IExtent extent) {
+		return (ISpace)super.mergeContext(extent);
+	}
+
+	@Override
+	public ISpace getBoundingExtent() {
+		// TODO Auto-generated method stub
+		return (ISpace)super.getBoundingExtent();
+	}
+
+	@Override
+	public ISpace merge(ITopologicallyComparable<?> other, LogicalConnector how, MergingOption...options) {
+		// TODO Auto-generated method stub
+		return (ISpace)super.merge(other, how);
 	}
 
 }

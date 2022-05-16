@@ -20,7 +20,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.Observable;
-import org.integratedmodelling.klab.rest.DataflowReference;
+import org.integratedmodelling.klab.rest.ContextualizationNotification;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
@@ -104,12 +104,12 @@ public class DataflowHandler extends Parameters<String> {
             root.actuators.add(dataflow);
         }
     }
-
+    
     public void notifyDataflowChanges(IRuntimeScope scope) {
 
         String code = getKdl();
         if (code.length() > dataflowCodeLength) {
-            DataflowReference dataflow = new DataflowReference(rootContextId, code, getElkGraph(scope));
+            ContextualizationNotification dataflow = new ContextualizationNotification(rootContextId, ContextualizationNotification.Target.DATAFLOW);
             scope.getSession().getMonitor().send(Message.create(scope.getSession().getId(),
                     IMessage.MessageClass.TaskLifecycle, IMessage.Type.DataflowCompiled, dataflow));
             this.dataflowCodeLength = code.length();

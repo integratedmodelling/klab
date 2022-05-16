@@ -23,6 +23,7 @@ import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
+import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable.MergingOption;
 import org.integratedmodelling.klab.api.observations.scale.space.Direction;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
@@ -754,8 +755,8 @@ public class Grid extends Area implements IGrid {
 		}
 
 		@Override
-		public IExtent merge(IExtent extent) throws KlabException {
-			return getShape().merge(extent);
+		public ISpace mergeContext(IExtent extent) throws KlabException {
+			return getShape().mergeContext(extent);
 		}
 
 		@Override
@@ -809,7 +810,7 @@ public class Grid extends Area implements IGrid {
 		}
 
 		@Override
-		public IExtent merge(ITopologicallyComparable<?> other, LogicalConnector how) {
+		public ISpace merge(ITopologicallyComparable<?> other, LogicalConnector how, MergingOption...options) {
 			return getShape().merge(other, how);
 		}
 
@@ -943,7 +944,7 @@ public class Grid extends Area implements IGrid {
 		}
 
 		@Override
-		public IExtent getBoundingExtent() {
+		public ISpace getBoundingExtent() {
 			return getShape();
 		}
 
@@ -996,11 +997,11 @@ public class Grid extends Area implements IGrid {
 			return true; // stateIndex == 0;
 		}
 
-		@Override
-		public IExtent adopt(IExtent extent, IMonitor monitor) {
-			// TODO Auto-generated method stub
-			return this;
-		}
+//		@Override
+//		public IExtent adopt(IExtent extent, IMonitor monitor) {
+//			// TODO Auto-generated method stub
+//			return this;
+//		}
 
 		@Override
 		public IExtent getExtent(long stateIndex) {

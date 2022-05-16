@@ -364,4 +364,8 @@ public enum Configuration implements IConfigurationService {
 	public int getMaxWaitTime() {
 		return Integer.parseInt(getProperty(Configuration.KLAB_ACCEPTED_WAIT_TIME_SECONDS, "10"));
 	}
+	
+	public String getProductsBranch() {
+	    return getProperty(Configuration.KLAB_PRODUCTS_BRANCH, Configuration.DEFAULT_PRODUCTS_BRANCH);
+	}
 }

@@ -28,10 +28,13 @@ import org.integratedmodelling.kactors.kactors.Observable;
 import org.integratedmodelling.kactors.kactors.Quantity;
 import org.integratedmodelling.kactors.kactors.Tree;
 import org.integratedmodelling.kactors.kactors.Value;
+import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.klab.Services;
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.services.IActorsService;
 import org.integratedmodelling.klab.api.services.IConceptService;
 import org.integratedmodelling.klab.api.services.IExtensionService;
 import org.integratedmodelling.klab.api.services.IObservableService;
@@ -51,7 +54,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
     private Object value;
     private Map<String, KActorsValue> metadata = new HashMap<>();
     private boolean deferred = false;
-    
+
     // to support costly translations from implementations
     private Object data;
     // if true when used in matching, the value matched will be any value except the
@@ -67,7 +70,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
     private KActorsValue trueCase;
     private KActorsValue falseCase;
     private List<Call> callChain;
-    
+
     /**
      * Constructors can be either for Java objects (with classname and possibly classpath not null)
      * or for components (with component != null). The value type is either OBJECT or COMPONENT and
@@ -161,7 +164,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
         this.type = Type.BOOLEAN;
         this.value = value;
     }
-    
+
     public KActorsValue(String expression, KActorCodeStatement parent) {
         super(null, parent);
         this.type = Type.EXPRESSION;
@@ -228,7 +231,8 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
                 lt = "inclusive";
             if (rt == null)
                 rt = "exclusive";
-            this.value = new Range(from.doubleValue(), to.doubleValue(), lt.equals("exclusive"), rt.equals("exclusive"));
+            this.value = new Range(from.doubleValue(), to.doubleValue(), lt.equals("exclusive"),
+                    rt.equals("exclusive"));
             type = Type.RANGE;
         } else if (value.getNodata() != null) {
             this.type = Type.NODATA;
@@ -271,7 +275,8 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
             this.value = parseLiteral(value.getLiteral());
         } else if (value.getExpression() != null) {
             this.type = Type.EXPRESSION;
-            this.value = parseExpression(value.getExpression().substring(1, value.getExpression().length() - 1));
+            this.value = parseExpression(
+                    value.getExpression().substring(1, value.getExpression().length() - 1));
         } else if (value.getQuantity() != null) {
             this.type = Type.QUANTITY;
             this.value = parseQuantity(value.getQuantity());
@@ -314,7 +319,9 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
             this.constructor = new Constructor();
             this.type = Type.COMPONENT;
             this.constructor.setArguments(
-                    value.getParameters() == null ? new KActorsArguments() : new KActorsArguments(value.getParameters()));
+                    value.getParameters() == null
+                            ? new KActorsArguments()
+                            : new KActorsArguments(value.getParameters()));
             this.constructor.setComponent(value.getBehavior());
         } else if (value.getMethodCalls() != null && value.getMethodCalls().size() > 0) {
             this.type = Type.CALLCHAIN;
@@ -348,19 +355,19 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
         }
 
     }
-    
+
     @Override
     public List<Call> getCallChain() {
         return this.callChain;
     }
 
     private Object parseExpression(String string) {
-        
+
         IExtensionService service = Services.INSTANCE.getService(IExtensionService.class);
         if (service != null) {
             return service.parse(string);
         }
-        
+
         return string;
     }
 
@@ -368,7 +375,8 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
             KActorCodeStatement parent) {
         Map<KActorsValue, KActorsValue> ret = new LinkedHashMap<>();
         for (MapEntry entry : map.getEntries()) {
-            ret.put(new KActorsValue(entry.getClassifier(), parent), new KActorsValue(entry.getValue(), parent));
+            ret.put(new KActorsValue(entry.getClassifier(), parent),
+                    new KActorsValue(entry.getValue(), parent));
         }
         return ret;
     }
@@ -465,7 +473,8 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
             if (literal.getTo() != null) {
                 high = parseNumber(literal.getTo()).doubleValue();
             }
-            return Range.create(low.doubleValue(), high == null ? Double.POSITIVE_INFINITY : high.doubleValue());
+            return Range.create(low.doubleValue(),
+                    high == null ? Double.POSITIVE_INFINITY : high.doubleValue());
         } else if (literal.getDate() != null) {
             this.type = Type.DATE;
             this.value = new KActorsDate(literal.getDate());
@@ -488,7 +497,9 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 
     @Override
     public <T> T as(Class<? extends T> cls) {
-        // TODO Auto-generated method stub
+        if (value != null && cls.isAssignableFrom(value.getClass())) {
+            return (T) value;
+        } 
         return null;
     }
 
@@ -503,19 +514,20 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
         if (this.deferred && !forceEvaluationIfDeferred) {
             return this;
         }
-        
+
         if (identity == null && scope != null) {
             identity = scope.getIdentity();
         }
-        
+
         Object ret = this.value;
-        if (KActors.INSTANCE.getValueTranslator() != null) {
-            ret = KActors.INSTANCE.getValueTranslator().translate(this, identity, scope);
+        IActorsService service = Services.INSTANCE.getService(IActorsService.class);
+        if (service != null) {
+            ret = service.evaluate(this, identity, scope);
         }
 
         return ret;
     }
-    
+
     @Override
     public Object getStatedValue() {
         return this.value;
@@ -561,7 +573,8 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
     }
 
     public Graph<KActorsValue, DefaultEdge> parseTree(Tree tree, KActorCodeStatement parent) {
-        Graph<KActorsValue, DefaultEdge> ret = new DefaultDirectedGraph<KActorsValue, DefaultEdge>(DefaultEdge.class);
+        Graph<KActorsValue, DefaultEdge> ret = new DefaultDirectedGraph<KActorsValue, DefaultEdge>(
+                DefaultEdge.class);
         addNode(tree, parent, ret);
         return ret;
     }
@@ -576,7 +589,8 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
         return null;
     }
 
-    private KActorsValue addNode(Tree treeNode, KActorCodeStatement parent, Graph<KActorsValue, DefaultEdge> ret) {
+    private KActorsValue addNode(Tree treeNode, KActorCodeStatement parent,
+            Graph<KActorsValue, DefaultEdge> ret) {
         KActorsValue value = new KActorsValue(treeNode.getRoot(), parent);
         ret.addVertex(value);
         for (EObject child : treeNode.getValue()) {
@@ -672,7 +686,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
     public Constructor getConstructor() {
         return this.constructor;
     }
-    
+
     @Override
     public String toString() {
         return "<" + type + " " + getStatedValue() + ">";
@@ -709,6 +723,5 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
     public boolean isDeferred() {
         return deferred;
     }
-
 
 }

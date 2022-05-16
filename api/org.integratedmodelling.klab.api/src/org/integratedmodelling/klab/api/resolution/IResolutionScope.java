@@ -134,6 +134,14 @@ public interface IResolutionScope {
     boolean isOccurrent();
 
     /**
+     * True if the passed observable occurs in this scope.
+     * 
+     * @param observable
+     * @return
+     */
+	boolean occursInScope(IObservedConcept observable);
+	
+    /**
      * Resolution is controlled by a task or script monitor.
      *
      * @return the monitor
@@ -215,6 +223,7 @@ public interface IResolutionScope {
      * @return
      */
     IResolvable getResolvedArtifact();
+
 
 
 }

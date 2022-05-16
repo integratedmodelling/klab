@@ -44,6 +44,17 @@ import org.integratedmodelling.klab.api.resolution.IResolvable;
 public interface ITask<T extends IArtifact> extends ITaskIdentity, Future<T> {
 
 	/**
+	 * Options to set before calling start(). Minimal for now, just controlling
+	 * client notification.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	enum Options {
+		SILENT, VERBOSE
+	}
+
+	/**
 	 * The "resolvable" unit that this task is dedicated to resolving (not
 	 * necessarily successfully). May be an observable, a concept, a model or an
 	 * observer.
@@ -87,5 +98,13 @@ public interface ITask<T extends IArtifact> extends ITaskIdentity, Future<T> {
 	 * @return
 	 */
 	boolean start();
+
+	/**
+	 * Set an option. Only useful if the task does not autostart.
+	 * 
+	 * @param option
+	 * @param value
+	 */
+	void set(Options option, Object value);
 
 }

@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.raster.wcs;
 
 import java.io.File;
+import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -148,6 +149,12 @@ public class WcsImporter implements IResourceImporter {
 	@Override
 	public boolean acceptsMultiple() {
 		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean write(Writer writer, IObservation observation, ILocator locator, IMonitor monitor) {
+		// TODO ASC?
 		return false;
 	}
 

@@ -2444,11 +2444,40 @@ ruleAssertStatement returns [EObject current=null]
 			newLeafNode(otherlv_0, grammarAccess.getAssertStatementAccess().getAssertKeyword_0());
 		}
 		(
+			otherlv_1='('
+			{
+				newLeafNode(otherlv_1, grammarAccess.getAssertStatementAccess().getLeftParenthesisKeyword_1_0());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getAssertStatementAccess().getParametersParameterListParserRuleCall_1_1_0());
+					}
+					lv_parameters_2_0=ruleParameterList
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getAssertStatementRule());
+						}
+						set(
+							$current,
+							"parameters",
+							lv_parameters_2_0,
+							"org.integratedmodelling.kactors.Kactors.ParameterList");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)?
+			otherlv_3=')'
+			{
+				newLeafNode(otherlv_3, grammarAccess.getAssertStatementAccess().getRightParenthesisKeyword_1_2());
+			}
+		)?
+		(
 			(
 				{
-					newCompositeNode(grammarAccess.getAssertStatementAccess().getAssertionsAssertionParserRuleCall_1_0());
+					newCompositeNode(grammarAccess.getAssertStatementAccess().getAssertionsAssertionParserRuleCall_2_0());
 				}
-				lv_assertions_1_0=ruleAssertion
+				lv_assertions_4_0=ruleAssertion
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getAssertStatementRule());
@@ -2456,23 +2485,23 @@ ruleAssertStatement returns [EObject current=null]
 					add(
 						$current,
 						"assertions",
-						lv_assertions_1_0,
+						lv_assertions_4_0,
 						"org.integratedmodelling.kactors.Kactors.Assertion");
 					afterParserOrEnumRuleCall();
 				}
 			)
 		)
 		(
-			otherlv_2=','
+			otherlv_5=','
 			{
-				newLeafNode(otherlv_2, grammarAccess.getAssertStatementAccess().getCommaKeyword_2_0());
+				newLeafNode(otherlv_5, grammarAccess.getAssertStatementAccess().getCommaKeyword_3_0());
 			}
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getAssertStatementAccess().getAssertionsAssertionParserRuleCall_2_1_0());
+						newCompositeNode(grammarAccess.getAssertStatementAccess().getAssertionsAssertionParserRuleCall_3_1_0());
 					}
-					lv_assertions_3_0=ruleAssertion
+					lv_assertions_6_0=ruleAssertion
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getAssertStatementRule());
@@ -2480,7 +2509,7 @@ ruleAssertStatement returns [EObject current=null]
 						add(
 							$current,
 							"assertions",
-							lv_assertions_3_0,
+							lv_assertions_6_0,
 							"org.integratedmodelling.kactors.Kactors.Assertion");
 						afterParserOrEnumRuleCall();
 					}

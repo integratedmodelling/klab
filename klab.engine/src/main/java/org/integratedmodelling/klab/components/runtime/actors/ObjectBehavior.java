@@ -66,7 +66,7 @@ public class ObjectBehavior {
 		}
 	}
 
-	@Action(id = "stop")
+	@Action(id = "stop", fires = {})
 	public static class MoveAway extends KlabActionExecutor {
 
 		public MoveAway(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
@@ -82,7 +82,7 @@ public class ObjectBehavior {
 
 	}
 
-	@Action(id = "bind")
+	@Action(id = "bind", fires = {})
 	public static class Bind extends KlabActionExecutor {
 
 		public Bind(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
@@ -110,7 +110,7 @@ public class ObjectBehavior {
 	 * @author Ferd
 	 *
 	 */
-	@Action(id = "siblings")
+	@Action(id = "siblings", fires = Type.LIST)
 	public static class Siblings extends KlabActionExecutor {
 
 		public Siblings(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
@@ -126,7 +126,7 @@ public class ObjectBehavior {
 
 	}
 
-	@Action(id = "connect")
+	@Action(id = "connect", fires = Type.OBSERVATION)
 	public static class Connect extends KlabActionExecutor {
 
 		public Connect(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,

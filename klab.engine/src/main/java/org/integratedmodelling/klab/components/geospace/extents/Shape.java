@@ -31,6 +31,7 @@ import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
+import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable.MergingOption;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
@@ -417,7 +418,7 @@ public class Shape extends AbstractExtent implements IShape {
     }
 
     @Override
-    public IExtent merge(IExtent extent) throws KlabException {
+    public ISpace mergeContext(IExtent extent) throws KlabException {
         if (extent instanceof ISpace) {
             return Space.createMergedExtent(this, (ISpace) extent);
         }
@@ -554,7 +555,7 @@ public class Shape extends AbstractExtent implements IShape {
     }
 
     @Override
-    public IExtent merge(ITopologicallyComparable<?> other, LogicalConnector how) {
+    public ISpace merge(ITopologicallyComparable<?> other, LogicalConnector how, MergingOption...options) {
 
         Shape shape = other instanceof Shape ? (Shape) other : null;
         if (shape == null && other instanceof ISpace) {
@@ -912,11 +913,11 @@ public class Shape extends AbstractExtent implements IShape {
         return true; // stateIndex == 0;
     }
 
-    @Override
-    public IExtent adopt(IExtent extent, IMonitor monitor) {
-        // TODO Auto-generated method stub
-        return this;
-    }
+//    @Override
+//    public IExtent adopt(IExtent extent, IMonitor monitor) {
+//        // TODO Auto-generated method stub
+//        return this;
+//    }
 
     @Override
     public IExtent getExtent(long stateIndex) {

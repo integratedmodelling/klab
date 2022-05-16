@@ -4,6 +4,7 @@ import java.awt.image.DataBuffer;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -13,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import org.geotools.coverage.grid.GridCoverage2D;
@@ -381,5 +381,11 @@ public class RasterImporter extends AbstractFilesetImporter {
         // TODO Auto-generated method stub
         return false;
     }
+
+	@Override
+	public boolean write(Writer writer, IObservation observation, ILocator locator, IMonitor monitor) {
+		// TODO ASC format?
+		return false;
+	}
 
 }

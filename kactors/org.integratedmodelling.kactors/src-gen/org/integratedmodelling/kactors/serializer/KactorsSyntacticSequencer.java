@@ -24,6 +24,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	protected KactorsGrammarAccess grammarAccess;
 	protected AbstractElementAlias match_ActorInstantiation___LeftParenthesisKeyword_2_0_RightParenthesisKeyword_2_2__q;
 	protected AbstractElementAlias match_Annotation___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q;
+	protected AbstractElementAlias match_AssertStatement___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q;
 	protected AbstractElementAlias match_Classifier_ExclusiveKeyword_1_1_1_q;
 	protected AbstractElementAlias match_Classifier_ExclusiveKeyword_1_4_1_q;
 	protected AbstractElementAlias match_Concept_FromKeyword_3_1_1_or_ToKeyword_3_1_0;
@@ -47,6 +48,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 		grammarAccess = (KactorsGrammarAccess) access;
 		match_ActorInstantiation___LeftParenthesisKeyword_2_0_RightParenthesisKeyword_2_2__q = new GroupAlias(false, true, new TokenAlias(false, false, grammarAccess.getActorInstantiationAccess().getLeftParenthesisKeyword_2_0()), new TokenAlias(false, false, grammarAccess.getActorInstantiationAccess().getRightParenthesisKeyword_2_2()));
 		match_Annotation___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q = new GroupAlias(false, true, new TokenAlias(false, false, grammarAccess.getAnnotationAccess().getLeftParenthesisKeyword_1_0()), new TokenAlias(false, false, grammarAccess.getAnnotationAccess().getRightParenthesisKeyword_1_2()));
+		match_AssertStatement___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q = new GroupAlias(false, true, new TokenAlias(false, false, grammarAccess.getAssertStatementAccess().getLeftParenthesisKeyword_1_0()), new TokenAlias(false, false, grammarAccess.getAssertStatementAccess().getRightParenthesisKeyword_1_2()));
 		match_Classifier_ExclusiveKeyword_1_1_1_q = new TokenAlias(false, true, grammarAccess.getClassifierAccess().getExclusiveKeyword_1_1_1());
 		match_Classifier_ExclusiveKeyword_1_4_1_q = new TokenAlias(false, true, grammarAccess.getClassifierAccess().getExclusiveKeyword_1_4_1());
 		match_Concept_FromKeyword_3_1_1_or_ToKeyword_3_1_0 = new AlternativeAlias(false, false, new TokenAlias(false, false, grammarAccess.getConceptAccess().getFromKeyword_3_1_1()), new TokenAlias(false, false, grammarAccess.getConceptAccess().getToKeyword_3_1_0()));
@@ -93,6 +95,8 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 				emit_ActorInstantiation___LeftParenthesisKeyword_2_0_RightParenthesisKeyword_2_2__q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_Annotation___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q.equals(syntax))
 				emit_Annotation___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if (match_AssertStatement___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q.equals(syntax))
+				emit_AssertStatement___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_Classifier_ExclusiveKeyword_1_1_1_q.equals(syntax))
 				emit_Classifier_ExclusiveKeyword_1_1_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_Classifier_ExclusiveKeyword_1_4_1_q.equals(syntax))
@@ -158,6 +162,20 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 * </pre>
 	 */
 	protected void emit_Annotation___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+		acceptNodes(transition, nodes);
+	}
+	
+	/**
+	 * <pre>
+	 * Ambiguous syntax:
+	 *     ('(' ')')?
+	 *
+	 * This ambiguous syntax occurs at:
+	 *     (rule start) 'assert' (ambiguity) assertions+=Assertion
+	 
+	 * </pre>
+	 */
+	protected void emit_AssertStatement___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
 	}
 	

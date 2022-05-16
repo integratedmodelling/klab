@@ -24,6 +24,7 @@ public class BehaviorAction implements IBehavior.Action {
 	private boolean function;
 	
 	public BehaviorAction(IKActorsAction action, Behavior behavior) {
+	    
 		this.statement = action;
 		this.behavior = behavior;
 		this.function = action.isFunction();

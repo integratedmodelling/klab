@@ -19,7 +19,7 @@ public class RuntimeEvent {
 	TaskReference task;
 	TaskReference parentTask;
 	ObservationReference observation;
-	DataflowReference dataflow;
+	ContextualizationNotification dataflow;
 
 	public RuntimeEvent() {
 	}
@@ -51,7 +51,7 @@ public class RuntimeEvent {
 		}
 	}
 
-	public RuntimeEvent(ObservationReference rootContext2, DataflowReference dataflow) {
+	public RuntimeEvent(ObservationReference rootContext2, ContextualizationNotification dataflow) {
 		this.type = Type.DataflowChanged;
 		this.dataflow = dataflow;
 		this.rootContext = rootContext2;
@@ -77,7 +77,7 @@ public class RuntimeEvent {
 		return observation;
 	}
 
-	public DataflowReference getDataflow() {
+	public ContextualizationNotification getDataflow() {
 		return dataflow;
 	}
 
@@ -119,7 +119,7 @@ public class RuntimeEvent {
 		this.observation = observation;
 	}
 
-	public void setDataflow(DataflowReference dataflow) {
+	public void setDataflow(ContextualizationNotification dataflow) {
 		this.dataflow = dataflow;
 	}
 

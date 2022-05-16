@@ -35,8 +35,6 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
-import org.integratedmodelling.klab.api.provenance.IActivity;
-import org.integratedmodelling.klab.api.provenance.IAgent;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
@@ -58,11 +56,10 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.provenance.Provenance;
+import org.integratedmodelling.klab.resolution.DependencyGraph;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
-import org.jgrapht.Graph;
-import org.jgrapht.graph.DefaultEdge;
 
 /**
  * The scope to contextualize a resource outside of a semantic environment. TODO this will need to
@@ -289,7 +286,6 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
         return null;
     }
 
-
     @Override
     public IRuntimeScope createChild(IScale scale, IActuator target, IResolutionScope scope,
             IMonitor monitor) {
@@ -314,7 +310,7 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
         // TODO Auto-generated method stub
 
     }
-    
+
     @Override
     public IRuntimeScope copy() {
         // TODO Auto-generated method stub
@@ -492,41 +488,41 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
             return null;
         }
 
-//        @Override
-//        public IAgent getConsumer() {
-//            // TODO Auto-generated method stub
-//            return null;
-//        }
-//
-//        @Override
-//        public IAgent getOwner() {
-//            // TODO Auto-generated method stub
-//            return null;
-//        }
-//
-//        @Override
-//        public IActivity getGenerator() {
-//            // TODO Auto-generated method stub
-//            return null;
-//        }
-//
-//        @Override
-//        public Collection<IArtifact> getAntecedents() {
-//            // TODO Auto-generated method stub
-//            return null;
-//        }
-//
-//        @Override
-//        public Collection<IArtifact> getConsequents() {
-//            // TODO Auto-generated method stub
-//            return null;
-//        }
-//
-//        @Override
-//        public IArtifact trace(IConcept concept) {
-//            // TODO Auto-generated method stub
-//            return null;
-//        }
+        // @Override
+        // public IAgent getConsumer() {
+        // // TODO Auto-generated method stub
+        // return null;
+        // }
+        //
+        // @Override
+        // public IAgent getOwner() {
+        // // TODO Auto-generated method stub
+        // return null;
+        // }
+        //
+        // @Override
+        // public IActivity getGenerator() {
+        // // TODO Auto-generated method stub
+        // return null;
+        // }
+        //
+        // @Override
+        // public Collection<IArtifact> getAntecedents() {
+        // // TODO Auto-generated method stub
+        // return null;
+        // }
+        //
+        // @Override
+        // public Collection<IArtifact> getConsequents() {
+        // // TODO Auto-generated method stub
+        // return null;
+        // }
+        //
+        // @Override
+        // public IArtifact trace(IConcept concept) {
+        // // TODO Auto-generated method stub
+        // return null;
+        // }
 
         @Override
         public Collection<IArtifact> collect(IConcept concept) {
@@ -593,18 +589,18 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
             // TODO Auto-generated method stub
             return false;
         }
-        
+
         @Override
         public long getLastUpdate() {
             // TODO Auto-generated method stub
             return 0;
         }
 
-		@Override
-		public boolean hasChangedDuring(ITime time) {
-			// TODO Auto-generated method stub
-			return false;
-		}
+        @Override
+        public boolean hasChangedDuring(ITime time) {
+            // TODO Auto-generated method stub
+            return false;
+        }
 
     }
 
@@ -756,7 +752,7 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
 
     @Override
     public IRuntimeScope withCoverage(IScale scale) {
-        this.scale = ((Scale) this.scale).substituteExtents(scale);
+        this.scale = ((Scale) this.scale).contextualizeTo(scale);
         return this;
     }
 
@@ -802,7 +798,7 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
     }
 
     @Override
-    public Graph<IObservedConcept, DefaultEdge> getDependencyGraph() {
+    public DependencyGraph getDependencyGraph() {
         // TODO Auto-generated method stub
         return null;
     }
@@ -851,52 +847,64 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
         return null;
     }
 
-	@Override
-	public String getElkGraph() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public String getElkGraph() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public String getKdl() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public String getKdl() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public void exportDataflow(String baseName, File directory) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void exportDataflow(String baseName, File directory) {
+        // TODO Auto-generated method stub
 
-	@Override
-	public Set<IObservedConcept> getImplicitlyChangingObservables() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    }
 
-	@Override
-	public IRuntimeScope getChild(IRuntimeIdentity identity) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Set<IObservedConcept> getImplicitlyChangingObservables() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public IRuntimeScope getChild(IRuntimeIdentity identity) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
     @Override
     public void notifyInspector(Object... triggerArguments) {
         // TODO Auto-generated method stub
-        
+
     }
 
-	@Override
-	public Map<String, Object> getContextData() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Map<String, Object> getContextData() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public Map<String, Object> getGlobalData() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Map<String, Object> getGlobalData() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ActuatorData getActuatorData(IActuator observable) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public IScale getScale(IActuator actuator) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

@@ -525,7 +525,7 @@ public class Geoserver {
 				}
 			}
 		}
-		System.out.println("DELETING EVERYTHING - CIÖCIA LÉ");
+		System.out.println("DELETING EVERYTHING - CIÖCIA");
 		geoserver.clear();
 	}
 

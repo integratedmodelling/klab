@@ -20,13 +20,13 @@ import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.runtime.monitoring.IInspector;
 import org.integratedmodelling.klab.common.Offset;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.components.time.extents.Time;
-import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.engine.debugger.Debugger.Watcher;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 import org.integratedmodelling.klab.engine.runtime.api.IModificationListener;
@@ -288,7 +288,10 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 
         Offset offsets = locator.as(Offset.class);
 
-        if (offsets.length != geometry.getDimensions().size()) {
+        if (offsets.length > geometry.getDimensions().size()) {
+            // pick the dimension we're in
+            offsets = offsets.reduceTo(geometry);
+        } else if (offsets.length < geometry.getDimensions().size()) {
             throw new KlabInternalErrorException("locator has different dimensionality than observation: should never happen");
         }
 
@@ -381,7 +384,10 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 
         Offset offsets = locator.as(Offset.class);
 
-        if (offsets.length != geometry.getDimensions().size()) {
+        if (offsets.length > geometry.getDimensions().size()) {
+            // pick the dimension we're in
+            offsets = offsets.reduceTo(geometry);
+        } else if (offsets.length < geometry.getDimensions().size()) {
             throw new KlabInternalErrorException("locator has different dimensionality than observation: should never happen");
         }
 
@@ -469,7 +475,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 
     private Slice addSlice(long timeOffset, long timeStart, long timeEnd, Slice closest) {
 
-        System.out.println(new TimeInstant(timeStart) + " to " + new TimeInstant(timeEnd));
+        // System.out.println(new TimeInstant(timeStart) + " to " + new TimeInstant(timeEnd));
 
         Slice slice = new Slice(timeOffset, timeStart, timeEnd, closest);
         slicesByEnd.put(timeEnd, slice);

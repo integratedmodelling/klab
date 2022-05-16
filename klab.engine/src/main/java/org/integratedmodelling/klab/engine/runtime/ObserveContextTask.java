@@ -105,7 +105,6 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
             this.monitor = (session.getMonitor()).get(this);
             this.session = session;
             this.taskDescription = "Observation of " + observer.getId();
-//            this.activity.setActivityDescriptor(activityDescriptor);
             this.resolvable = observer;
             this.executor = executor;
             this.autostart = autostart;
@@ -143,9 +142,6 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
                             }
                         }
 
-                        // TODO put all this logics in the resolver, call it from within
-                        // Observations
-                        // and use that here.
                         ResolutionScope scope = Resolver.create(null).resolve(observer, monitor, scenarios);
                         /*
                          * create the root contextualization scope for the context
@@ -160,17 +156,13 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
 
                             dataflow.setDescription(taskDescription);
 
-//                            if (activity.getActivityDescriptor() != null) {
-//                                activity.getActivityDescriptor().setDataflowCode(dataflow.getKdlCode());
-//                            }
-
                             /*
                              * make a copy of the coverage so that we ensure it's a scale, behaving
                              * properly at merge. FIXME this must be the entire scale now - each
                              * actuator creates its artifacts, then initialization is handled when
                              * computing.
                              */
-                            ret = (ISubject) dataflow.run(scope.getCoverage().copy(), runtimeScope);
+                            ret = (ISubject) dataflow.run(scope.getCoverage().asScale().copy(), runtimeScope);
 
                             if (ret != null) {
 

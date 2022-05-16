@@ -248,7 +248,7 @@ public class ContributingCell extends Expando {
 	}
 
 	public IExtent merge(IExtent extent) {
-		return delegate.merge(extent);
+		return delegate.mergeContext(extent);
 	}
 
 	public SpatialExtent getExtentDescriptor() {

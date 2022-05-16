@@ -1189,14 +1189,14 @@ public enum Resources implements IResourceService {
 
         SessionActivity.ResourceActivity descriptor = null;
         AbstractTask<?> task = scope.getMonitor().getIdentity().getParentIdentity(AbstractTask.class);
-//        if (task != null && task.getActivity().getActivityDescriptor() != null) {
-//            descriptor = task.getActivity().getActivityDescriptor().getResourceActivities().get(resource.getUrn());
-//            if (descriptor == null) {
-//                descriptor = new ResourceActivity();
-//                descriptor.setUrn(urn.toString());
-//                task.getActivity().getActivityDescriptor().getResourceActivities().put(resource.getUrn(), descriptor);
-//            }
-//        }
+        if (task != null && task.getActivity().getActivityDescriptor() != null) {
+            descriptor = task.getActivity().getActivityDescriptor().getResourceActivities().get(resource.getUrn());
+            if (descriptor == null) {
+                descriptor = new ResourceActivity();
+                descriptor.setUrn(urn.toString());
+                task.getActivity().getActivityDescriptor().getResourceActivities().put(resource.getUrn(), descriptor);
+            }
+        }
 
         long start = System.currentTimeMillis();
         if (descriptor != null) {

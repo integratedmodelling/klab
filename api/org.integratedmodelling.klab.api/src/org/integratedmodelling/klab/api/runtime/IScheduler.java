@@ -1,6 +1,5 @@
 package org.integratedmodelling.klab.api.runtime;
 
-import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
 /**

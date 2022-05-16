@@ -2,6 +2,7 @@ package org.integratedmodelling.ml.adapters;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Writer;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -204,6 +205,12 @@ public class WekaImporter implements IResourceImporter {
 
 	@Override
 	public boolean acceptsMultiple() {
+		return false;
+	}
+
+	@Override
+	public boolean write(Writer writer, IObservation observation, ILocator locator, IMonitor monitor) {
+		// TODO Auto-generated method stub
 		return false;
 	}
 

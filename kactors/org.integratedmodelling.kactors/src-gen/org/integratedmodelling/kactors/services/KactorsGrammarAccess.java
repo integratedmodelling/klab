@@ -1445,42 +1445,62 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.AssertStatement");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Keyword cAssertKeyword_0 = (Keyword)cGroup.eContents().get(0);
-		private final Assignment cAssertionsAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final RuleCall cAssertionsAssertionParserRuleCall_1_0 = (RuleCall)cAssertionsAssignment_1.eContents().get(0);
-		private final Group cGroup_2 = (Group)cGroup.eContents().get(2);
-		private final Keyword cCommaKeyword_2_0 = (Keyword)cGroup_2.eContents().get(0);
-		private final Assignment cAssertionsAssignment_2_1 = (Assignment)cGroup_2.eContents().get(1);
-		private final RuleCall cAssertionsAssertionParserRuleCall_2_1_0 = (RuleCall)cAssertionsAssignment_2_1.eContents().get(0);
+		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
+		private final Keyword cLeftParenthesisKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
+		private final Assignment cParametersAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
+		private final RuleCall cParametersParameterListParserRuleCall_1_1_0 = (RuleCall)cParametersAssignment_1_1.eContents().get(0);
+		private final Keyword cRightParenthesisKeyword_1_2 = (Keyword)cGroup_1.eContents().get(2);
+		private final Assignment cAssertionsAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final RuleCall cAssertionsAssertionParserRuleCall_2_0 = (RuleCall)cAssertionsAssignment_2.eContents().get(0);
+		private final Group cGroup_3 = (Group)cGroup.eContents().get(3);
+		private final Keyword cCommaKeyword_3_0 = (Keyword)cGroup_3.eContents().get(0);
+		private final Assignment cAssertionsAssignment_3_1 = (Assignment)cGroup_3.eContents().get(1);
+		private final RuleCall cAssertionsAssertionParserRuleCall_3_1_0 = (RuleCall)cAssertionsAssignment_3_1.eContents().get(0);
 		
 		//AssertStatement:
-		//    'assert'
+		//    'assert' ('(' (parameters=ParameterList)? ')')?
 		//        assertions+=Assertion (',' assertions+=Assertion)*;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//'assert'
+		//'assert' ('(' (parameters=ParameterList)? ')')?
 		//    assertions+=Assertion (',' assertions+=Assertion)*
 		public Group getGroup() { return cGroup; }
 		
 		//'assert'
 		public Keyword getAssertKeyword_0() { return cAssertKeyword_0; }
 		
+		//('(' (parameters=ParameterList)? ')')?
+		public Group getGroup_1() { return cGroup_1; }
+		
+		//'('
+		public Keyword getLeftParenthesisKeyword_1_0() { return cLeftParenthesisKeyword_1_0; }
+		
+		//(parameters=ParameterList)?
+		public Assignment getParametersAssignment_1_1() { return cParametersAssignment_1_1; }
+		
+		//ParameterList
+		public RuleCall getParametersParameterListParserRuleCall_1_1_0() { return cParametersParameterListParserRuleCall_1_1_0; }
+		
+		//')'
+		public Keyword getRightParenthesisKeyword_1_2() { return cRightParenthesisKeyword_1_2; }
+		
 		//assertions+=Assertion
-		public Assignment getAssertionsAssignment_1() { return cAssertionsAssignment_1; }
+		public Assignment getAssertionsAssignment_2() { return cAssertionsAssignment_2; }
 		
 		//Assertion
-		public RuleCall getAssertionsAssertionParserRuleCall_1_0() { return cAssertionsAssertionParserRuleCall_1_0; }
+		public RuleCall getAssertionsAssertionParserRuleCall_2_0() { return cAssertionsAssertionParserRuleCall_2_0; }
 		
 		//(',' assertions+=Assertion)*
-		public Group getGroup_2() { return cGroup_2; }
+		public Group getGroup_3() { return cGroup_3; }
 		
 		//','
-		public Keyword getCommaKeyword_2_0() { return cCommaKeyword_2_0; }
+		public Keyword getCommaKeyword_3_0() { return cCommaKeyword_3_0; }
 		
 		//assertions+=Assertion
-		public Assignment getAssertionsAssignment_2_1() { return cAssertionsAssignment_2_1; }
+		public Assignment getAssertionsAssignment_3_1() { return cAssertionsAssignment_3_1; }
 		
 		//Assertion
-		public RuleCall getAssertionsAssertionParserRuleCall_2_1_0() { return cAssertionsAssertionParserRuleCall_2_1_0; }
+		public RuleCall getAssertionsAssertionParserRuleCall_3_1_0() { return cAssertionsAssertionParserRuleCall_3_1_0; }
 	}
 	public class AssertionElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.Assertion");
@@ -7734,7 +7754,7 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	}
 	
 	//AssertStatement:
-	//    'assert'
+	//    'assert' ('(' (parameters=ParameterList)? ')')?
 	//        assertions+=Assertion (',' assertions+=Assertion)*;
 	public AssertStatementElements getAssertStatementAccess() {
 		return pAssertStatement;

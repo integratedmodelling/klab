@@ -71,7 +71,7 @@ public class StatsController {
 				.constructParametricType(StatsInsertRequest.class, factory.constructFromCanonical(map.get(API.STATS.PARAMETERS.TYPE).toString()));
 		
 		mapper.writeValueAsString(map);
-		logger.debug("Stats POST -> " + typeC.getTypeName());
+		logger.info("Stats POST -> " + typeC.getTypeName());
 		return service.insertRequest(mapper.readValue(mapper.writeValueAsString(map), typeC));
 		
 	}
@@ -91,7 +91,7 @@ public class StatsController {
 	            .getTypeFactory()
 	            .constructParametricType(StatsFindPageRequest.class, factory.constructFromCanonical(map.get(API.STATS.PARAMETERS.TYPE)));
 	    
-	    logger.debug("Stats GET -> " + typeC.getTypeName());
+	    logger.info("Stats GET -> " + typeC.getTypeName());
 	    return service.findRequest(mapper.readValue(mapper.writeValueAsString(map) , typeC));
 	    
 	}

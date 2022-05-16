@@ -38,6 +38,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.model.Model;
+import org.integratedmodelling.klab.utils.DebugFile;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Triple;
 import org.jgrapht.Graph;
@@ -59,9 +60,9 @@ import groovy.lang.GroovyObjectSupport;
  * Ops on provenance should be defined. Should include backwards and upwards
  * lineage checks for concepts and resources with or without scale filters,
  * model inquiries, and possibly also operation inquiries (e.g. find all the
- * artifacts that have involved normalization, possibly only in a specific time
- * or space) and agent inquiries. At large scale this would ideally sit in a
- * network database.
+ * artifacts that have involved normalization and when, possibly only in a
+ * specific time or space) and agent inquiries. At large scale this would
+ * ideally sit in a network database.
  * 
  * @author Ferd
  */
@@ -164,7 +165,8 @@ public class Provenance extends GroovyObjectSupport implements IProvenance {
 				}
 				if (!linked) {
 					// TODO link plan and process; this just links artifacts
-					simpleGraph.addEdge(node, previous, new ProvenanceEdge(rscale, IAssociation.Type.wasDerivedFrom));
+					simpleGraph.addEdge(node, previous,
+							new ProvenanceEdge(rscale, IAssociation.Type.wasDerivedFrom, this, true));
 				}
 			}
 		}

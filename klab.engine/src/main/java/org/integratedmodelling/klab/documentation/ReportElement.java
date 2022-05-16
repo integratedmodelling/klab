@@ -46,7 +46,9 @@ public class ReportElement {
     }
 
     public ReportElement append(ReportElement element) {
-        this.children.add(element);
+        if (element != null) {
+            this.children.add(element);
+        }
         return element;
     }
 

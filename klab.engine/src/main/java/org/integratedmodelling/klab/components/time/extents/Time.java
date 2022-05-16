@@ -27,10 +27,10 @@ import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
+import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable.MergingOption;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeDuration;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.common.mediation.Quantity;
@@ -407,35 +407,70 @@ public class Time extends Extent implements ITime {
 	}
 
 	@Override
-	public IExtent merge(IExtent extent) throws KlabException {
-		// TODO hostia
+	public ITime mergeContext(IExtent extent) throws KlabException {
+
 		if (extent instanceof ITime) {
 
 			ITime other = (ITime) extent;
-			Time ret = copy();
 
-			// schiaff in the unknowns
-			if (start == null && other.getStart() != null) {
-				ret.start = other.getStart();
-			}
-			if (end == null && other.getEnd() != null) {
-				ret.end = other.getEnd();
-			}
+			/*
+			 * boundaries
+			 */
+			ITimeInstant astart = start == null ? other.getStart() : start;
+			ITimeInstant ostart = other.getStart() == null ? start : other.getStart();
+			ITimeInstant start = ITimeInstant.max(astart, ostart);
 
-			// shouldn't change representation, step and the like
-			if (this.resolution == null) {
-				ret.resolution = other.getResolution();
-			}
+			ITimeInstant aend = end == null ? other.getEnd() : end;
+			ITimeInstant oend = other.getEnd() == null ? end : other.getEnd();
+			ITimeInstant end = ITimeInstant.min(aend, oend);
 
-			ret.multiplicity = 1;
-			if (ret.start != null && ret.end != null && ret.step != null) {
-				ret.multiplicity = (ret.end.getMilliseconds() - ret.start.getMilliseconds())
-						/ ret.step.getMilliseconds() + 1;
-			} else if (ret.getTimeType() == ITime.Type.GRID) {
-				ret.setupExtents();
+			/*
+			 * type
+			 */
+			ITime.Type type = other.getTimeType() == ITime.Type.GRID ? ITime.Type.GRID : getTimeType();
+			if (start == null || end == null) {
+				type = ITime.Type.LOGICAL;
 			}
 
-			return ret;
+			/*
+			 * resolution
+			 */
+			Resolution resolution = other.getResolution();
+			if (this.getTimeType() == ITime.Type.GRID && this.getResolution() != null) {
+				resolution = this.getResolution();
+			}
+
+//			public static Time create(ITime.Type type, Resolution.Type resolutionType, Double resolutionMultiplier,
+//					ITimeInstant start, ITimeInstant end, ITimeDuration period, Resolution.Type coverageUnit,
+//					Long coverageStart, Long coverageEnd) {
+
+			return create(type, resolution == null ? null : resolution.getType(),
+					resolution == null ? null : resolution.getMultiplier(), start, end, null, null, null, null);
+//
+//			Time ret = copy();
+//
+//			// schiaff in the unknowns
+//			if (start == null && other.getStart() != null) {
+//				ret.start = other.getStart();
+//			}
+//			if (end == null && other.getEnd() != null) {
+//				ret.end = other.getEnd();
+//			}
+//
+//			// shouldn't change representation, step and the like
+//			if (this.resolution == null) {
+//				ret.resolution = other.getResolution();
+//			}
+//
+//			ret.multiplicity = 1;
+//			if (ret.start != null && ret.end != null && ret.step != null) {
+//				ret.multiplicity = (ret.end.getMilliseconds() - ret.start.getMilliseconds())
+//						/ ret.step.getMilliseconds() + 1;
+//			} else if (ret.getTimeType() == ITime.Type.GRID) {
+//				ret.setupExtents();
+//			}
+//
+//			return ret;
 
 		}
 		return this;
@@ -453,8 +488,14 @@ public class Time extends Extent implements ITime {
 	}
 
 	@Override
-	public IExtent merge(ITopologicallyComparable<?> other, LogicalConnector how) {
-		// TODO Auto-generated method stub
+	public ITime merge(ITopologicallyComparable<?> other, LogicalConnector how, MergingOption...options) {
+		if (how == LogicalConnector.UNION) {
+			ITimeInstant s = TimeInstant
+					.create(Long.min(this.start.getMilliseconds(), ((ITime) other).getStart().getMilliseconds()));
+			ITimeInstant e = TimeInstant
+					.create(Long.max(this.end.getMilliseconds(), ((ITime) other).getEnd().getMilliseconds()));
+			return create(s, e, this.resolution);
+		}
 		return copy();
 	}
 
@@ -1179,7 +1220,7 @@ public class Time extends Extent implements ITime {
 	}
 
 	@Override
-	public IExtent getBoundingExtent() {
+	public ITime getBoundingExtent() {
 		return collapse();
 	}
 
@@ -1380,7 +1421,7 @@ public class Time extends Extent implements ITime {
 	}
 
 	public String describe() {
-		return "[" + this.start + " - " + this.end + "]";
+		return ((TimeInstant) this.start).describe(resolution) + " - " + ((TimeInstant) this.end).describe(resolution);
 	}
 
 	private Time withScaleId(String scaleId) {
@@ -1405,22 +1446,22 @@ public class Time extends Extent implements ITime {
 		return time.getRange() == null || intersects(time);
 	}
 
-	@Override
-	public IExtent adopt(IExtent extent, IMonitor monitor) {
-		/*
-		 * TODO for now just adopt resolution and only from incomplete extents. This
-		 * should be enough for dynamic models to work.
-		 */
-		if (extent instanceof Time) {
-			Time other = (Time) extent;
-			if (other.getStep() != null) {
-				return create(ITime.Type.GRID, other.getResolution().getType(), other.getResolution().getMultiplier(),
-						getStart() == null ? other.getStart() : getStart(),
-						getEnd() == null ? other.getEnd() : getEnd(), other.getStep());
-			}
-		}
-		return this;
-	}
+//	@Override
+//	public IExtent adopt(IExtent extent, IMonitor monitor) {
+//		/*
+//		 * TODO for now just adopt resolution and only from incomplete extents. This
+//		 * should be enough for dynamic models to work.
+//		 */
+//		if (extent instanceof Time) {
+//			Time other = (Time) extent;
+//			if (other.getStep() != null) {
+//				return create(ITime.Type.GRID, other.getResolution().getType(), other.getResolution().getMultiplier(),
+//						getStart() == null ? other.getStart() : getStart(),
+//						getEnd() == null ? other.getEnd() : getEnd(), other.getStep());
+//			}
+//		}
+//		return this;
+//	}
 
 	@Override
 	public Resolution getCoverageResolution() {

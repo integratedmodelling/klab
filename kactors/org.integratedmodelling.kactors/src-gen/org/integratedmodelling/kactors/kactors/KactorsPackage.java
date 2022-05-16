@@ -945,13 +945,22 @@ public interface KactorsPackage extends EPackage
   int ASSERT_STATEMENT = 12;
 
   /**
+   * The feature id for the '<em><b>Parameters</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ASSERT_STATEMENT__PARAMETERS = 0;
+
+  /**
    * The feature id for the '<em><b>Assertions</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ASSERT_STATEMENT__ASSERTIONS = 0;
+  int ASSERT_STATEMENT__ASSERTIONS = 1;
 
   /**
    * The number of structural features of the '<em>Assert Statement</em>' class.
@@ -960,7 +969,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ASSERT_STATEMENT_FEATURE_COUNT = 1;
+  int ASSERT_STATEMENT_FEATURE_COUNT = 2;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.AssertionImpl <em>Assertion</em>}' class.
@@ -4752,6 +4761,17 @@ public interface KactorsPackage extends EPackage
   EClass getAssertStatement();
 
   /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.AssertStatement#getParameters <em>Parameters</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Parameters</em>'.
+   * @see org.integratedmodelling.kactors.kactors.AssertStatement#getParameters()
+   * @see #getAssertStatement()
+   * @generated
+   */
+  EReference getAssertStatement_Parameters();
+
+  /**
    * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kactors.kactors.AssertStatement#getAssertions <em>Assertions</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -8475,6 +8495,14 @@ public interface KactorsPackage extends EPackage
      * @generated
      */
     EClass ASSERT_STATEMENT = eINSTANCE.getAssertStatement();
+
+    /**
+     * The meta object literal for the '<em><b>Parameters</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference ASSERT_STATEMENT__PARAMETERS = eINSTANCE.getAssertStatement_Parameters();
 
     /**
      * The meta object literal for the '<em><b>Assertions</b></em>' containment reference list feature.

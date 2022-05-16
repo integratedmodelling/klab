@@ -91,4 +91,39 @@ public interface ITimeInstant extends Comparable<ITimeInstant> {
 	int getHour();
 	
 	int getMinute();
+	
+	/**
+	 * Minimum between two instants, returning null without error if any of the operands is null.
+	 * 
+	 * @param a
+	 * @param b
+	 * @return
+	 */
+	static ITimeInstant min(ITimeInstant a, ITimeInstant b) {
+		if (a == null) {
+			return b;
+		}
+		if (b == null) {
+			return a;
+		}
+		return a.getMilliseconds() > b.getMilliseconds() ? b : a;
+	}
+
+	/**
+	 * Maximum between two instants, returning null without error if any of the operands is null.
+	 * 
+	 * @param a
+	 * @param b
+	 * @return
+	 */
+	static ITimeInstant max(ITimeInstant a, ITimeInstant b) {
+		if (a == null) {
+			return b;
+		}
+		if (b == null) {
+			return a;
+		}
+		return a.getMilliseconds() < b.getMilliseconds() ? b : a;
+	}
+	
 }

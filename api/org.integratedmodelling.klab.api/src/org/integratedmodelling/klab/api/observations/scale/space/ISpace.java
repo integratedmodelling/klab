@@ -16,6 +16,9 @@
 package org.integratedmodelling.klab.api.observations.scale.space;
 
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
+import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
+import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable.MergingOption;
+import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 
 /**
@@ -111,6 +114,24 @@ public interface ISpace extends IExtent, ISpatial {
 	 * @return the distance
 	 */
 	double getStandardizedDistance(ISpace extent);
+
+	/**
+	 * Override the result for fluency
+	 */
+	@Override
+	ISpace getBoundingExtent();
+
+	/**
+     * Override the result for fluency
+     */
+    @Override
+	ISpace mergeContext(IExtent extent);
+
+    /**
+     * Override the result for fluency
+     */
+	@Override
+	ISpace merge(ITopologicallyComparable<?> other, LogicalConnector how, MergingOption...options);
 
 	/**
 	 * Quickly check if the passed string looks like a WKT string in the k.LAB

@@ -38,6 +38,7 @@ public interface IConfigurationService {
 	public static final int DEFAULT_NODE_PORT = 8287;
 	public static final int DEFAULT_LEVER_PORT = 8761;
 	public static final int DEFAULT_SEMANTIC_SERVER_PORT = 8301;
+	public static final String DEFAULT_PRODUCTS_BRANCH = "master";
 
 	public static final String KLAB_LOG_FILE = "klab.log.file";
 	public static final String KLAB_OFFLINE = "klab.offline";
@@ -117,6 +118,12 @@ public interface IConfigurationService {
 	 * a 127.0.0.1-based URL.
 	 */
 	public static final String KLAB_DEV_NODE_URL = "klab.dev.node.url";
+	
+	/**
+	 * Branch to use for groups observables
+	 */
+	public static final String KLAB_PRODUCTS_BRANCH = "klab.products.branch";
+	
 
 	/**
 	 * The main properties, read and written by default to
@@ -259,6 +266,12 @@ public interface IConfigurationService {
 	 * @return the maximum number of live contexts
 	 */
 	int getMaxLiveObservationContextsPerSession();
+	
+	/**
+	 * The branch to use for groups observables
+	 * @return
+	 */
+	String getProductsBranch();
 
 	/**
 	 * Return an individual property. Instead of merely looking into the result of

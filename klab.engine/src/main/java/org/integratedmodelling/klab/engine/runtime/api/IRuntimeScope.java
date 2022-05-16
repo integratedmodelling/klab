@@ -34,585 +34,586 @@ import org.integratedmodelling.klab.dataflow.Actuator.Status;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.provenance.Provenance;
+import org.integratedmodelling.klab.resolution.DependencyGraph;
 import org.integratedmodelling.klab.utils.Pair;
-import org.jgrapht.Graph;
-import org.jgrapht.graph.DefaultEdge;
 
 /**
- * This API extends {@link IContextualizationScope} to add setters and other
- * functionalities that are needed at runtime. It is used within common
- * computation code so that any {@link IRuntimeProvider} may implement the
- * computation contexts as needed.
+ * This API extends {@link IContextualizationScope} to add setters and other functionalities that
+ * are needed at runtime. It is used within common computation code so that any
+ * {@link IRuntimeProvider} may implement the computation contexts as needed.
  * 
  * @author Ferd
  */
 public interface IRuntimeScope extends IContextualizationScope {
 
-	IResolutionScope getResolutionScope();
+    /**
+     * Collects all the runtime data relative to an actuator: observation (with all its layers if
+     * state), overall scale, partial scale if any, and the actuator(s) that have this as target.
+     * Indexed by observable as some actuators (e.g. change or processes) will have a different
+     * target than their own observation.
+     * 
+     * @author Ferd
+     *
+     */
+    interface ActuatorData {
 
-	/**
-	 * Return any of the observations created within the context of the root
-	 * observation. Must be fast. Relied upon by all methods that retrieve
-	 * observations.
-	 * 
-	 * @param id
-	 * @return the requested observation or null.
-	 */
-	IObservation getObservation(String observationId);
+        IScale getScale();
+        IScale getPartialScale();
+        IObservation getTarget();
+        Status getStatus();
+        Set<IObservation> getProducts();
+    }
 
-	/**
-	 * Called to create the root context for a new dataflow computed within an
-	 * existing context. Should inherit root subject, root scope, structure,
-	 * provenance etc. from this, but contain an empty artifact catalog.
-	 * 
-	 * @param scale
-	 * @param target
-	 * @param scope
-	 * @param monitor
-	 * @return
-	 */
-	IRuntimeScope createContext(IScale scale, IActuator target, IDataflow<?> dataflow,
-			IResolutionScope scope/*
-									 * , IMonitor monitor
-									 */);
+    /**
+     * Get the actuator data for this observable. Used to streamline access to all runtime info.
+     * 
+     * @param observable
+     * @return
+     */
+    ActuatorData getActuatorData(IActuator actuator);
 
-	/**
-	 * Get a child scope for the entire context. Must be called only on the root
-	 * scope.
-	 * 
-	 * @param actuator
-	 * @param scope
-	 * @param scale
-	 * @param dataflow
-	 * @param monitor
-	 * @return
-	 */
-	IRuntimeScope getContextScope(Actuator actuator, IResolutionScope scope, IScale scale, IDataflow<?> dataflow,
-			IMonitor monitor);
+    IResolutionScope getResolutionScope();
 
-	/**
-	 * Called to create the computation context for any actuator contained in a root
-	 * actuator at any level. Create a child context for the passed actuator,
-	 * containing a new target observation implementation for the artifact type and
-	 * geometry specified in the actuator. The observation is created with the
-	 * current target set as its parent.
-	 * 
-	 * @param scale   scale of the entire context. If the actuator is partial, the
-	 *                scale should be revised to the actual sub-scale of
-	 *                computation.
-	 * @param target  the main target. If the actuator is partial, the target may be
-	 *                wrapped to handle the rescaling.
-	 * @param scope
-	 * @param monitor
-	 * @param context the context for the resolution
-	 * @return the child context that will resolve the target
-	 */
-	IRuntimeScope createChild(IScale scale, IActuator target, IResolutionScope scope, IMonitor monitor);
+    /**
+     * Return any of the observations created within the context of the root observation. Must be
+     * fast. Relied upon by all methods that retrieve observations.
+     * 
+     * @param id
+     * @return the requested observation or null.
+     */
+    IObservation getObservation(String observationId);
 
-	/**
-	 * Create a child context for the passed observable within the current actuator.
-	 * Called when there is a computation involving a different observable than the
-	 * actuator's target.
-	 * 
-	 * @param indirectTarget
-	 * @return
-	 */
-	IRuntimeScope createChild(IObservable indirectTarget);
+    /**
+     * Called to create the root context for a new dataflow computed within an existing context.
+     * Should inherit root subject, root scope, structure, provenance etc. from this, but contain an
+     * empty artifact catalog.
+     * 
+     * @param scale
+     * @param target
+     * @param scope
+     * @param monitor
+     * @return
+     */
+    IRuntimeScope createContext(IScale scale, IActuator target, IDataflow<?> dataflow,
+            IResolutionScope scope/*
+                                   * , IMonitor monitor
+                                   */);
 
-	/**
-	 * Set the passed data object in the symbol table.
-	 * 
-	 * @param name
-	 * @param data
-	 */
-	void setData(String name, IArtifact data);
+    /**
+     * Get a child scope for the entire context. Must be called only on the root scope.
+     * 
+     * @param actuator
+     * @param scope
+     * @param scale
+     * @param dataflow
+     * @param monitor
+     * @return
+     */
+    IRuntimeScope getContextScope(Actuator actuator, IResolutionScope scope, IScale scale,
+            IDataflow<?> dataflow,
+            IMonitor monitor);
 
-	/**
-	 * Set POD data or parameters.
-	 * 
-	 * @param name
-	 * @param value
-	 */
-	void set(String name, Object value);
+    /**
+     * Called to create the computation context for any actuator contained in a root actuator at any
+     * level. Create a child context for the passed actuator, containing a new target observation
+     * implementation for the artifact type and geometry specified in the actuator. The observation
+     * is created with the current target set as its parent.
+     * 
+     * @param scale scale of the entire context. If the actuator is partial, the scale should be
+     *        revised to the actual sub-scale of computation.
+     * @param target the main target. If the actuator is partial, the target may be wrapped to
+     *        handle the rescaling.
+     * @param scope
+     * @param monitor
+     * @param context the context for the resolution
+     * @return the child context that will resolve the target
+     */
+    IRuntimeScope createChild(IScale scale, IActuator target, IResolutionScope scope, IMonitor monitor);
 
-	// /**
-	// * Each context that handles a temporal scale must expose a configuration
-	// * detector.
-	// *
-	// * @return the configuration detector for the context
-	// */
-	// ConfigurationDetector getConfigurationDetector();
+    /**
+     * Create a child context for the passed observable within the current actuator. Called when
+     * there is a computation involving a different observable than the actuator's target.
+     * 
+     * @param indirectTarget
+     * @return
+     */
+    IRuntimeScope createChild(IObservable indirectTarget);
 
-	/**
-	 * Produce a deep copy of this context so it can be used for parameters without
-	 * affecting the original. The catalog remains unchanged.
-	 * 
-	 * @return an identical context with a rewriteable object catalog and
-	 *         parameters.
-	 */
-	IRuntimeScope copy();
-	//
-	// /**
-	// * Rename the passed observation data as the passed alias.
-	// *
-	// * @param name
-	// * @param alias
-	// */
-	// void rename(String name, String alias);
+    /**
+     * Set the passed data object in the symbol table.
+     * 
+     * @param name
+     * @param data
+     */
+    void setData(String name, IArtifact data);
 
-	/**
-	 * Set the main target of the computation being carried on by the actuator. Used
-	 * by Actuator.compute().
-	 * 
-	 * @param target
-	 */
-	void setTarget(IArtifact target);
+    /**
+     * Set POD data or parameters.
+     * 
+     * @param name
+     * @param value
+     */
+    void set(String name, Object value);
 
-	/**
-	 * The API must be able to reset the geometry for downstream indirectAdapters.
-	 * 
-	 * @param geometry
-	 */
-	void setScale(IScale geometry);
+    /**
+     * Produce a deep copy of this context so it can be used for parameters without affecting the
+     * original. The catalog remains unchanged.
+     * 
+     * @return an identical context with a rewriteable object catalog and parameters.
+     */
+    IRuntimeScope copy();
 
-	/**
-	 * Specialize the provenance so we can use setting methods on it.
-	 */
-	@Override
-	Provenance getProvenance();
+    /**
+     * Set the main target of the computation being carried on by the actuator. Used by
+     * Actuator.compute().
+     * 
+     * @param target
+     */
+    void setTarget(IArtifact target);
 
-	/**
-	 * Return the context structure (all father-child relationships) as a graph with
-	 * separate logical (observations) and physical (artifact) hierarchies.
-	 * 
-	 * @return the structure
-	 */
-	IArtifact.Structure getStructure();
+    /**
+     * The API must be able to reset the geometry for downstream indirectAdapters.
+     * 
+     * @param geometry
+     */
+    void setScale(IScale geometry);
 
-	/**
-	 * Return all the children of an artifact in the structural graph that match a
-	 * certain class.
-	 * 
-	 * @param artifact
-	 * @param cls
-	 * @return the set of all children of class cls
-	 */
-	<T extends IArtifact> Collection<T> getChildren(IArtifact artifact, Class<T> cls);
+    /**
+     * Specialize the provenance so we can use setting methods on it.
+     */
+    @Override
+    Provenance getProvenance();
 
-	/**
-	 * If our catalog contains the artifact we're trying to resolve, return it along
-	 * with the name we have for it (which may be local to this scope and not be the
-	 * same as the observation's observable's reference name). If the passed
-	 * observable matches more than one observation, collect them in an
-	 * IObservationGroup (not added to the catalog) before returning them. Returning
-	 * more than one observation is possible when the passed observable is abstract
-	 * or it's a characterization for an abstract predicate, such as a role or an
-	 * identity.
-	 * 
-	 * @param observable
-	 * @return
-	 */
-	Pair<String, IArtifact> findArtifact(IObservable observable);
+    /**
+     * Return the context structure (all father-child relationships) as a graph with separate
+     * logical (observations) and physical (artifact) hierarchies.
+     * 
+     * @return the structure
+     */
+    IArtifact.Structure getStructure();
 
-	// ugly but we don't have a model when we create the first dataflow.
-	void setModel(Model model);
+    /**
+     * Return all the children of an artifact in the structural graph that match a certain class.
+     * 
+     * @param artifact
+     * @param cls
+     * @return the set of all children of class cls
+     */
+    <T extends IArtifact> Collection<T> getChildren(IArtifact artifact, Class<T> cls);
 
-	/**
-	 * Remove artifact from structure if it's there.
-	 * 
-	 * @param object
-	 */
-	void removeArtifact(IArtifact object);
+    /**
+     * If our catalog contains the artifact we're trying to resolve, return it along with the name
+     * we have for it (which may be local to this scope and not be the same as the observation's
+     * observable's reference name). If the passed observable matches more than one observation,
+     * collect them in an IObservationGroup (not added to the catalog) before returning them.
+     * Returning more than one observation is possible when the passed observable is abstract or
+     * it's a characterization for an abstract predicate, such as a role or an identity.
+     * 
+     * @param observable
+     * @return
+     */
+    Pair<String, IArtifact> findArtifact(IObservable observable);
 
-	/**
-	 * Create a configuration in the current context, using the passed type and the
-	 * trigger observations detected. Called by actuators, never by API users.
-	 * 
-	 * @param configurationType
-	 * @param targets
-	 */
-	IConfiguration newConfiguration(IConcept configurationType, Collection<IObservation> targets, IMetadata metadata);
+    // ugly but we don't have a model when we create the first dataflow.
+    void setModel(Model model);
 
-	/**
-	 * Get a new nonsemantic state for model usage. May be called by contextualizers
-	 * when user-relevant intermediate storage is required. If not relevant, raw
-	 * storage should be used instead.
-	 * 
-	 * @param name
-	 * @param type
-	 * @param scale
-	 * @return
-	 */
-	IState newNonsemanticState(String name, IArtifact.Type type, IScale scale);
+    /**
+     * Remove artifact from structure if it's there.
+     * 
+     * @param object
+     */
+    void removeArtifact(IArtifact object);
 
-	/**
-	 * Get the dataflow we're executing.
-	 * 
-	 * @return
-	 */
-	IDataflow<?> getDataflow();
+    /**
+     * Create a configuration in the current context, using the passed type and the trigger
+     * observations detected. Called by actuators, never by API users.
+     * 
+     * @param configurationType
+     * @param targets
+     */
+    IConfiguration newConfiguration(IConcept configurationType, Collection<IObservation> targets,
+            IMetadata metadata);
 
-	/**
-	 * @param directObservation
-	 * @return
-	 */
-	Collection<IArtifact> getChildArtifactsOf(IArtifact directObservation);
+    /**
+     * Get a new nonsemantic state for model usage. May be called by contextualizers when
+     * user-relevant intermediate storage is required. If not relevant, raw storage should be used
+     * instead.
+     * 
+     * @param name
+     * @param type
+     * @param scale
+     * @return
+     */
+    IState newNonsemanticState(String name, IArtifact.Type type, IScale scale);
 
-	/*
-	 * OK, I declare failure for now. No better way to record what has been notified
-	 * or not.
-	 */
-	Set<String> getNotifiedObservations();
+    /**
+     * Get the dataflow we're executing.
+     * 
+     * @return
+     */
+    IDataflow<?> getDataflow();
 
-	/**
-	 * Get the observation group for the main observable in the passed observable.
-	 * This will create a main group using the main observable after stripping any
-	 * attributes or predicates. If the group was created before, its 'new' flag
-	 * (TBD) will have been set to false so that the notifier knows whether to send
-	 * the full group data or a change notification. If the observable has
-	 * additional predicates, it will then return a view that filters only those.
-	 * 
-	 * @param observable
-	 * @param scale
-	 * @return
-	 */
-	IObservation getObservationGroup(IObservable observable, IScale scale);
+    /**
+     * @param directObservation
+     * @return
+     */
+    Collection<IArtifact> getChildArtifactsOf(IArtifact directObservation);
 
-	/**
-	 * Add the predicate to the passed observation. If the predicate wasn't there
-	 * already, resolve it and run the resulting dataflow.
-	 * 
-	 * @param target
-	 * @param predicate a concrete trait or role
-	 */
-	void newPredicate(IDirectObservation target, IConcept predicate);
+    /*
+     * OK, I declare failure for now. No better way to record what has been notified or not.
+     */
+    Set<String> getNotifiedObservations();
 
-	/**
-	 * Return a view if needed.
-	 * 
-	 * @param observable
-	 * @param ret
-	 * @return
-	 */
-	IObservation getObservationGroupView(Observable observable, IObservation ret);
+    /**
+     * Get the observation group for the main observable in the passed observable. This will create
+     * a main group using the main observable after stripping any attributes or predicates. If the
+     * group was created before, its 'new' flag (TBD) will have been set to false so that the
+     * notifier knows whether to send the full group data or a change notification. If the
+     * observable has additional predicates, it will then return a view that filters only those.
+     * 
+     * @param observable
+     * @param scale
+     * @return
+     */
+    IObservation getObservationGroup(IObservable observable, IScale scale);
 
-	/**
-	 * Schedule all the needed actions for this actuator. Called at initialization
-	 * after the actuator has computed its initial conditions (first thing if the
-	 * actuator observes an occurrent).
-	 * 
-	 * @param active
-	 */
-	void scheduleActions(Actuator active);
+    /**
+     * Add the predicate to the passed observation. If the predicate wasn't there already, resolve
+     * it and run the resulting dataflow.
+     * 
+     * @param target
+     * @param predicate a concrete trait or role
+     */
+    void newPredicate(IDirectObservation target, IConcept predicate);
 
-	/**
-	 * Set the scale as specified by the passed locator (which should be a scale and
-	 * represent a specific temporal transition) and, according to the target
-	 * observations and their view, wrap any context states so that appropriate
-	 * temporal mediations are in place when an actuator modifies them.
-	 * 
-	 * @param transitionScale
-	 * @return
-	 */
-	IRuntimeScope locate(ILocator transitionScale, IMonitor monitor);
+    /**
+     * Return a view if needed.
+     * 
+     * @param observable
+     * @param ret
+     * @return
+     */
+    IObservation getObservationGroupView(Observable observable, IObservation ret);
 
-	/**
-	 * Get all the artifacts known to this context indexed by their local name in
-	 * the context of execution. An actuator must have been specified for the
-	 * context.
-	 * 
-	 * @param <T>
-	 * @param cls
-	 * @return
-	 */
-	<T extends IArtifact> Map<String, T> getLocalCatalog(Class<T> cls);
+    /**
+     * Schedule all the needed actions for this actuator. Called at initialization after the
+     * actuator has computed its initial conditions (first thing if the actuator observes an
+     * occurrent).
+     * 
+     * @param active
+     */
+    void scheduleActions(Actuator active);
 
-	/**
-	 * Manually add a state to a target observation, updating structure and
-	 * notifying what needs to be notified.
-	 * 
-	 * @param target     the direct observation that will receive the state.
-	 * @param observable for the state. The scale will be the same as the target.
-	 * @param data       any kind of content for the state - either a scalar to be
-	 *                   redistributed or
-	 * @return
-	 */
-	IState addState(IDirectObservation target, IObservable observable, Object data);
+    /**
+     * Set the scale as specified by the passed locator (which should be a scale and represent a
+     * specific temporal transition) and, according to the target observations and their view, wrap
+     * any context states so that appropriate temporal mediations are in place when an actuator
+     * modifies them.
+     * 
+     * @param transitionScale
+     * @return
+     */
+    IRuntimeScope locate(ILocator transitionScale, IMonitor monitor);
 
-	/**
-	 * Resolve the passed observable in the passed scope and return the resulting
-	 * dataflow. If the observable cannot be resolved, return null without error.
-	 * Must cache dataflows by scale and retrieve them quickly as it may be called
-	 * many times at each new direct observation.
-	 * 
-	 * @param observable
-	 * @param scope
-	 * @param task       the task to register the resolution to
-	 * @return a dataflow to resolve the observable, or null if there is no coverage
-	 */
-	<T extends IArtifact> T resolve(IObservable observable, IDirectObservation scope, ITaskTree<?> task, Mode mode,
-			IActuator parentActuator);
+    /**
+     * Get all the artifacts known to this context indexed by their local name in the context of
+     * execution. An actuator must have been specified for the context.
+     * 
+     * @param <T>
+     * @param cls
+     * @return
+     */
+    <T extends IArtifact> Map<String, T> getLocalCatalog(Class<T> cls);
 
-	/**
-	 * Schedule any actions tagged as scheduled in the behavior of the passed
-	 * observation.
-	 * 
-	 * @param observation
-	 * @param behavior
-	 */
-	void scheduleActions(Observation observation, IBehavior behavior);
+    /**
+     * Manually add a state to a target observation, updating structure and notifying what needs to
+     * be notified.
+     * 
+     * @param target the direct observation that will receive the state.
+     * @param observable for the state. The scale will be the same as the target.
+     * @param data any kind of content for the state - either a scalar to be redistributed or
+     * @return
+     */
+    IState addState(IDirectObservation target, IObservable observable, Object data);
 
-	/**
-	 * Bindings between observables and behaviors can be made by actors at runtime.
-	 * If that happens, the bindings will be stored in the runtime scope. They are
-	 * returned as a map (in the default implementation, that will be an
-	 * "intelligent" map so that inference is used in attributing the behaviors.
-	 * 
-	 * @return
-	 */
-	Map<IConcept, Pair<String, IKimExpression>> getBehaviorBindings();
+    /**
+     * Resolve the passed observable in the passed scope and return the resulting dataflow. If the
+     * observable cannot be resolved, return null without error. Must cache dataflows by scale and
+     * retrieve them quickly as it may be called many times at each new direct observation.
+     * 
+     * @param observable
+     * @param scope
+     * @param task the task to register the resolution to
+     * @return a dataflow to resolve the observable, or null if there is no coverage
+     */
+    <T extends IArtifact> T resolve(IObservable observable, IDirectObservation scope, ITaskTree<?> task,
+            Mode mode,
+            IActuator parentActuator);
 
-	/**
-	 * Scopes must maintain a synchronized set of IDs for all observations that are
-	 * being watched by the view. This is subscribed to through messages sent to the
-	 * session that owns the observations.
-	 * 
-	 * @return
-	 */
-	public Set<String> getWatchedObservationIds();
+    /**
+     * Schedule any actions tagged as scheduled in the behavior of the passed observation.
+     * 
+     * @param observation
+     * @param behavior
+     */
+    void scheduleActions(Observation observation, IBehavior behavior);
 
-	/**
-	 * Send any notifications pertaining to this observation to the clients that are
-	 * watching. Should call {@link #isNotifiable(IObservation)} to ensure that the
-	 * observation is watched.
-	 * 
-	 * @param observation
-	 */
-	void updateNotifications(IObservation observation);
+    /**
+     * Bindings between observables and behaviors can be made by actors at runtime. If that happens,
+     * the bindings will be stored in the runtime scope. They are returned as a map (in the default
+     * implementation, that will be an "intelligent" map so that inference is used in attributing
+     * the behaviors.
+     * 
+     * @return
+     */
+    Map<IConcept, Pair<String, IKimExpression>> getBehaviorBindings();
 
-	/**
-	 * Swap the passed artifact in all the graphs maintained by the context
-	 * (structure, provenance). Should be only called with states.
-	 * 
-	 * @param ret
-	 * @param result
-	 */
-	void swapArtifact(IArtifact ret, IArtifact result);
+    /**
+     * Scopes must maintain a synchronized set of IDs for all observations that are being watched by
+     * the view. This is subscribed to through messages sent to the session that owns the
+     * observations.
+     * 
+     * @return
+     */
+    public Set<String> getWatchedObservationIds();
 
-	/**
-	 * Called by actuators after contextualization is complete for any observation.
-	 * 
-	 * @param object
-	 */
-	void notifyListeners(IObservation object);
+    /**
+     * Send any notifications pertaining to this observation to the clients that are watching.
+     * Should call {@link #isNotifiable(IObservation)} to ensure that the observation is watched.
+     * 
+     * @param observation
+     */
+    void updateNotifications(IObservation observation);
 
-	/**
-	 * If true, the root context has seen occurrent observations or occurrent scales
-	 * at some point, so the occurrence of anything that is resolved or computed
-	 * next will have to be consider. The occurrent status is global across a
-	 * context and cannot be revoked after setting.
-	 */
-	boolean isOccurrent();
+    /**
+     * Swap the passed artifact in all the graphs maintained by the context (structure, provenance).
+     * Should be only called with states.
+     * 
+     * @param ret
+     * @param result
+     */
+    void swapArtifact(IArtifact ret, IArtifact result);
 
-	/**
-	 * Create and return a shallow copy of the observation catalog optimized for
-	 * quick search with ObservedConcept.
-	 * 
-	 * @return
-	 */
-	Map<IObservedConcept, IObservation> getCatalog();
+    /**
+     * Called by actuators after contextualization is complete for any observation.
+     * 
+     * @param object
+     */
+    void notifyListeners(IObservation object);
 
-	/**
-	 * Add a view after it was computed. The result is typically compiled text, such
-	 * as HTML or Markdown, which can be sent or inserted in a report, but may also
-	 * be some lazy evaluator that will need to be recognizable and handled at the
-	 * scope side. The scope's action would be to make it available for insertion in
-	 * reports and/or to send to clients for quick display. More complex
-	 * functionalities may use the view to handle actions such as exporting.
-	 * 
-	 * @param view
-	 */
-	void addView(IKnowledgeView view);
+    /**
+     * If true, the root context has seen occurrent observations or occurrent scales at some point,
+     * so the occurrence of anything that is resolved or computed next will have to be consider. The
+     * occurrent status is global across a context and cannot be revoked after setting.
+     */
+    boolean isOccurrent();
 
-	/**
-	 * Get the scope to contextualize a changing resource from that used to
-	 * contextualize its change. The result will have the target artifact, semantics
-	 * and artifact name set properly according to the context.
-	 * 
-	 * @return
-	 */
-	IRuntimeScope targetForChange();
+    /**
+     * Create and return a shallow copy of the observation catalog optimized for quick search with
+     * ObservedConcept.
+     * 
+     * @return
+     */
+    Map<IObservedConcept, IObservation> getCatalog();
 
-	/**
-	 * Recontextualize the scope to a specific target observation. Used to compute
-	 * the inferred dependents of a changed observation after a temporal transition.
-	 * 
-	 * @param target
-	 * @return
-	 */
-	IRuntimeScope targetToObservation(IObservation target);
+    /**
+     * Add a view after it was computed. The result is typically compiled text, such as HTML or
+     * Markdown, which can be sent or inserted in a report, but may also be some lazy evaluator that
+     * will need to be recognizable and handled at the scope side. The scope's action would be to
+     * make it available for insertion in reports and/or to send to clients for quick display. More
+     * complex functionalities may use the view to handle actions such as exporting.
+     * 
+     * @param view
+     */
+    void addView(IKnowledgeView view);
 
-	/**
-	 * Find the name of an artifact in this context. Return null if the artifact is
-	 * not in the catalog.
-	 * 
-	 * @param previous
-	 * @return
-	 */
-	String getArtifactName(IArtifact previous);
+    /**
+     * Get the scope to contextualize a changing resource from that used to contextualize its
+     * change. The result will have the target artifact, semantics and artifact name set properly
+     * according to the context.
+     * 
+     * @return
+     */
+    IRuntimeScope targetForChange();
 
-	/**
-	 * Resolve an abstract identity with one or more concrete ones, so that abstract
-	 * dependencies can be expanded properly.
-	 * 
-	 * @param toResolve
-	 * @param traits
-	 */
-	void setConcreteIdentities(IConcept abstractIdentity, List<IConcept> concreteIdentities);
+    /**
+     * Recontextualize the scope to a specific target observation. Used to compute the inferred
+     * dependents of a changed observation after a temporal transition.
+     * 
+     * @param target
+     * @return
+     */
+    IRuntimeScope targetToObservation(IObservation target);
 
-	/**
-	 * Get the concretized identities for the passed predicates. This should be
-	 * lenient to a difference in inherency between the passed predicate and the
-	 * resolved ones.
-	 * 
-	 * @param predicate
-	 * @return
-	 */
-	Collection<IConcept> getConcreteIdentities(IConcept predicate);
+    /**
+     * Find the name of an artifact in this context. Return null if the artifact is not in the
+     * catalog.
+     * 
+     * @param previous
+     * @return
+     */
+    String getArtifactName(IArtifact previous);
 
-	/**
-	 * Return all the views produced in this scope.
-	 * 
-	 * @return
-	 */
-	Collection<IKnowledgeView> getViews();
+    /**
+     * Resolve an abstract identity with one or more concrete ones, so that abstract dependencies
+     * can be expanded properly.
+     * 
+     * @param toResolve
+     * @param traits
+     */
+    void setConcreteIdentities(IConcept abstractIdentity, List<IConcept> concreteIdentities);
 
-	/**
-	 * Set a local scale in the scope, for actuators that have merged partial
-	 * coverages. The coverage may only contain some of the extents - any missing
-	 * should be copied from the current scope scale.
-	 * 
-	 * @param scale
-	 * @return
-	 */
-	IRuntimeScope withCoverage(IScale scale);
+    /**
+     * Get the concretized identities for the passed predicates. This should be lenient to a
+     * difference in inherency between the passed predicate and the resolved ones.
+     * 
+     * @param predicate
+     * @return
+     */
+    Collection<IConcept> getConcreteIdentities(IConcept predicate);
 
-	/**
-	 * Return all artifacts of the passed class whose observable is affected or
-	 * created by the process type indicated. These are either directly affected
-	 * (stated in semantics) or describe an observable that is affected.
-	 * 
-	 * @param <T>
-	 * @param processType
-	 * @param cls
-	 * @return
-	 */
-	<T extends IArtifact> Collection<T> getAffectedArtifacts(IConcept processType, Class<T> cls);
+    /**
+     * Return all the views produced in this scope.
+     * 
+     * @return
+     */
+    Collection<IKnowledgeView> getViews();
 
-	/**
-	 * The actuator being executed in this scope. Should never be null.
-	 * 
-	 * @return
-	 */
-	Actuator getActuator();
+    /**
+     * Set a local scale in the scope, for actuators that have merged partial coverages. The
+     * coverage may only contain some of the extents - any missing should be copied from the current
+     * scope scale. Any pre-located extents in the incoming scale should be preserved, ensuring they
+     * fit within the overall coverage of the scope. If the incoming scale lies fully outside the
+     * boundaries of the scope, return null to flag no-op contextualization.
+     * 
+     * @param scale
+     * @return
+     */
+    IRuntimeScope withCoverage(IScale scale);
 
-	/**
-	 * Return the current dataflow's dependency graph.
-	 * 
-	 * @return
-	 */
-	Graph<IObservedConcept, DefaultEdge> getDependencyGraph();
+    /**
+     * Return all artifacts of the passed class whose observable is affected or created by the
+     * process type indicated. These are either directly affected (stated in semantics) or describe
+     * an observable that is affected.
+     * 
+     * @param <T>
+     * @param processType
+     * @param cls
+     * @return
+     */
+    <T extends IArtifact> Collection<T> getAffectedArtifacts(IConcept processType, Class<T> cls);
 
-	/**
-	 * Record the merged scale for an actuator that only partially covers the
-	 * overall scale.
-	 * 
-	 * @param actuator
-	 * @param merge
-	 */
-	void setMergedScale(IActuator actuator, IScale merge);
+    /**
+     * The actuator being executed in this scope. Should never be null.
+     * 
+     * @return
+     */
+    Actuator getActuator();
 
-	/**
-	 * Return the merged scale for the passed actuator, or null if the actuator has
-	 * no partial coverage.
-	 * 
-	 * @param actuator
-	 * @return
-	 */
-	IScale getMergedScale(IActuator actuator);
+    /**
+     * Return the current dataflow's dependency graph.
+     * 
+     * @return
+     */
+    DependencyGraph getDependencyGraph();
 
-	/**
-	 * Return a set of observations generated by the passed actuator. This will be
-	 * initially empty and it's the actuator's responsibility to fill it in.
-	 * 
-	 * @param actuator
-	 * @return
-	 */
-	Collection<IObservation> getActuatorProducts(IActuator actuator);
+    /**
+     * Record the merged scale for an actuator that only partially covers the overall scale.
+     * 
+     * @param actuator
+     * @param merge
+     */
+    void setMergedScale(IActuator actuator, IScale merge);
 
-	/**
-	 * Maintain the status of all actuators referenced, creating it if needed.
-	 * 
-	 * @param actuator
-	 * @return
-	 */
-	Status getStatus(IActuator actuator);
+    /**
+     * Return the merged scale for the passed actuator, or null if the actuator has no partial
+     * coverage.
+     * 
+     * @param actuator
+     * @return
+     */
+    IScale getMergedScale(IActuator actuator);
 
-	/**
-	 * Get the JSON representation of the current dataflow for ELK compilation.
-	 * 
-	 * @return
-	 */
-	String getElkGraph();
+    /**
+     * Return a set of observations generated by the passed actuator. This will be initially empty
+     * and it's the actuator's responsibility to fill it in.
+     * 
+     * @param actuator
+     * @return
+     */
+    Collection<IObservation> getActuatorProducts(IActuator actuator);
 
-	/**
-	 * Get the k.DL representation of the graph. Use
-	 * {@link #exportDataflow(String, File)} to produce a usable k.DL with sidecar
-	 * files and all needed information.
-	 * 
-	 * @return
-	 */
-	String getKdl();
+    /**
+     * Maintain the status of all actuators referenced, creating it if needed.
+     * 
+     * @param actuator
+     * @return
+     */
+    Status getStatus(IActuator actuator);
 
-	/**
-	 * 
-	 * @param baseName
-	 * @param directory
-	 */
-	void exportDataflow(String baseName, File directory);
+    /**
+     * Get the JSON representation of the current dataflow for ELK compilation.
+     * 
+     * @return
+     */
+    String getElkGraph();
 
-	/**
-	 * Observables that may change if they depend on changing values but have no
-	 * explicit change model associated. Resolutions add and remove them as models
-	 * are registered. Return a set that is intended to be modified by the resolver
-	 * and remain the same context-wide; the concepts must contain the context type.
-	 * 
-	 * @return
-	 */
+    /**
+     * Get the k.DL representation of the graph. Use {@link #exportDataflow(String, File)} to
+     * produce a usable k.DL with sidecar files and all needed information.
+     * 
+     * @return
+     */
+    String getKdl();
 
-	Set<IObservedConcept> getImplicitlyChangingObservables();
+    /**
+     * 
+     * @param baseName
+     * @param directory
+     */
+    void exportDataflow(String baseName, File directory);
 
-	/**
-	 * Return a copy of this scope operating under the passed monitor and identity.
-	 * 
-	 * @param identity
-	 * @return
-	 */
-	IRuntimeScope getChild(IRuntimeIdentity identity);
+    /**
+     * Observables that may change if they depend on changing values but have no explicit change
+     * model associated. Resolutions add and remove them as models are registered. Return a set that
+     * is intended to be modified by the resolver and remain the same context-wide; the concepts
+     * must contain the context type.
+     * 
+     * @return
+     */
 
-	/**
-	 * A map of arbitrary data that follows the context subject, renewed when a new
-	 * subject becomes the context.
-	 * 
-	 * @return
-	 */
-	Map<String, Object> getContextData();
+    Set<IObservedConcept> getImplicitlyChangingObservables();
 
-	/**
-	 * A map of arbitrary data that is kept for the entire contextualization.
-	 * 
-	 * @return
-	 */
-	Map<String, Object> getGlobalData();
+    /**
+     * Return a copy of this scope operating under the passed monitor and identity.
+     * 
+     * @param identity
+     * @return
+     */
+    IRuntimeScope getChild(IRuntimeIdentity identity);
+
+    /**
+     * A map of arbitrary data that follows the context subject, renewed when a new subject becomes
+     * the context.
+     * 
+     * @return
+     */
+    Map<String, Object> getContextData();
+
+    /**
+     * A map of arbitrary data that is kept for the entire contextualization.
+     * 
+     * @return
+     */
+    Map<String, Object> getGlobalData();
+
+    /**
+     * Scale of contextualization corresponding to the target(s) of this actuator; if actuator is a
+     * partial, the merged partial scale.
+     * 
+     * @param actuator
+     * @return
+     */
+    IScale getScale(IActuator actuator);
 
 }

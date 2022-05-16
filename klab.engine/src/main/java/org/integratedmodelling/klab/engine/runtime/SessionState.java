@@ -1205,12 +1205,24 @@ public class SessionState extends Parameters<String> implements ISessionState {
         return this.flowchart;
     }
 
+    /**
+     * TODO this must be automatically removed at the end of an action
+     * @param o
+     */
     public void whitelist(Object... o) {
         this.resolutionConstraints.add(ResolutionConstraint.whitelist(o));
     }
 
+    /**
+     * TODO this must be automatically removed at the end of an action
+     * @param o
+     */
     public void blacklist(Object... o) {
         this.resolutionConstraints.add(ResolutionConstraint.blacklist(o));
+    }
+    
+    public void resetConstraints() {
+        this.resolutionConstraints.clear();
     }
 
     public void setInspector(Inspector inspector) {

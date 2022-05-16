@@ -17,24 +17,18 @@ package org.integratedmodelling.klab.api.knowledge;
 
 import java.util.Collection;
 
-import org.integratedmodelling.klab.api.observations.IObservation;
-import org.integratedmodelling.klab.api.observations.ISubject;
-import org.integratedmodelling.klab.api.services.IReasonerService;
-
 /**
- * The individual (instance). In k.LAB, individuals do not need to be generated
- * unless the runtime context allows inconsistent observations to be produces,
- * in which case they should be requested through
- * {@link ISubject#instantiate(IOntology)} on the root context, and validated
- * using the {@link IReasonerService}. They can also be requested for RDF export
- * of contextualization results.
+ * The individual (instance). Individuals are <em>not</em> involved or generated
+ * during the main k.LAB observation activities. They can, however, be created
+ * as k.IM entities (<code>define class id as {}</code>) when a namespace uses
+ * an OWL vocabulary, and can be output as RDF export of contextualization
+ * results.
  * <p>
- * This interface exists for completeness but is not used in k.LAB at the
- * present time, and the few methods that use it are unimplemented. The main
- * product of k.LAB reasoning are {@link IObservation} which are semantic
- * {@link IArtifact}, and the semantics of provenance describes the outcomes of
- * k.LAB sessions, rather than the instantiation of the concepts.
- *
+ * Serializing provenance (into a RDF-exportable provenance.kim that can be
+ * output from a contextualization or stored along with resources) is currently
+ * the main internal activity that uses individuals, although users are free to
+ * define k.IM entities for any other purpose.
+ * 
  * @author Ferd
  * @version $Id: $Id
  */
@@ -49,6 +43,7 @@ public interface IIndividual extends ISemantic {
 	 *                 {@link org.integratedmodelling.klab.api.knowledge.IProperty}
 	 *                 object.
 	 * @return a {@link java.util.Collection} object.
+	 * @deprecated abandon in favor of a graph model
 	 */
 	Collection<IIndividual> getIndividuals(IProperty property);
 
@@ -61,6 +56,8 @@ public interface IIndividual extends ISemantic {
 	 *                 {@link org.integratedmodelling.klab.api.knowledge.IProperty}
 	 *                 object.
 	 * @return a {@link java.util.Collection} object.
+	 * @deprecated just use metadata - loading restrictions should be relaxed with
+	 *             validated individuals
 	 */
 	Collection<Object> getData(IProperty property);
 
@@ -70,6 +67,7 @@ public interface IIndividual extends ISemantic {
 	 * </p>
 	 *
 	 * @return a {@link java.util.Collection} object.
+	 * @deprecated RDF graph model must be explicit
 	 */
 	Collection<IProperty> getObjectRelationships();
 
@@ -79,6 +77,8 @@ public interface IIndividual extends ISemantic {
 	 * </p>
 	 *
 	 * @return a {@link java.util.Collection} object.
+	 * @deprecated just use metadata - loading restrictions should be relaxed with
+	 *             validated individuals
 	 */
 	Collection<IProperty> getDataRelationships();
 
@@ -102,4 +102,11 @@ public interface IIndividual extends ISemantic {
 	 *         object.
 	 */
 	IMetadata getMetadata();
+
+	/**
+	 * Simple name of reference, unique within the ontology
+	 * 
+	 * @return
+	 */
+	String getName();
 }

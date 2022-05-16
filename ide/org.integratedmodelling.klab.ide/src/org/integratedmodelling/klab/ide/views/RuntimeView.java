@@ -66,7 +66,7 @@ import org.integratedmodelling.klab.ide.navigator.model.beans.DisplayPriority;
 import org.integratedmodelling.klab.ide.navigator.model.beans.ERuntimeObject;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.rest.Capabilities;
-import org.integratedmodelling.klab.rest.DataflowReference;
+import org.integratedmodelling.klab.rest.ContextualizationNotification;
 import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.rest.ObservationReference;
@@ -194,7 +194,7 @@ public class RuntimeView extends ViewPart {
 
         @Override
         public Object[] getElements(Object inputElement) {
-            if (inputElement instanceof DataflowReference) {
+            if (inputElement instanceof ContextualizationNotification) {
                 // TODO return an array of string pairs
             } else if (inputElement instanceof ObservationReference) {
 
@@ -267,7 +267,7 @@ public class RuntimeView extends ViewPart {
                 } else if (((Notification) element).getLevel().equals(Level.FINE.getName())) {
                     return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/message_debug.gif");
                 }
-            } else if (element instanceof DataflowReference) {
+            } else if (element instanceof ContextualizationNotification) {
                 return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/dataflow.gif");
             } else if (element instanceof ObservationReference) {
                 if (((ObservationReference) element).getObservationType() == ObservationType.GROUP) {
@@ -294,7 +294,7 @@ public class RuntimeView extends ViewPart {
                 return (((TaskReference) element).getDescription());
             } else if (element instanceof Notification) {
                 return ((Notification) element).getMessage();
-            } else if (element instanceof DataflowReference) {
+            } else if (element instanceof ContextualizationNotification) {
                 return "Dataflow";
             } else if (element instanceof ObservationReference) {
                 return ((ObservationReference) element).getLabel() + (((ObservationReference) element).getChildrenCount() > 0
@@ -378,7 +378,7 @@ public class RuntimeView extends ViewPart {
                 return this.graph.getChildren(this.graph.getRootNode(), true).toArray();
             } else if (this.graph != null && parentElement instanceof ObservationReference) {
                 return this.graph.getChildren((ObservationReference) parentElement, true).toArray();
-            } else if (currentDescriptor != null && !(parentElement instanceof DataflowReference)) {
+            } else if (currentDescriptor != null && !(parentElement instanceof ContextualizationNotification)) {
                 return currentDescriptor.getChildren(getId(parentElement), currentLogLevel).toArray();
             }
             return new Object[]{};
@@ -874,7 +874,7 @@ public class RuntimeView extends ViewPart {
     }
 
     protected void handleSelection(Object o) {
-        if (o instanceof DataflowReference) {
+        if (o instanceof ContextualizationNotification) {
             Eclipse.INSTANCE.edit(Activator.session().getDataflow(currentContext.getId()), "dataflow", "kdl", false);
         } else if (o instanceof Notification) {
             switch(((Notification) o).getLevel()) {

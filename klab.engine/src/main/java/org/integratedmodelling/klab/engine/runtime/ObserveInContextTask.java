@@ -36,7 +36,7 @@ import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
-import org.integratedmodelling.klab.rest.DataflowReference;
+import org.integratedmodelling.klab.rest.ContextualizationNotification;
 import org.integratedmodelling.klab.rest.SessionActivity;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.graph.Graphs;
@@ -111,7 +111,6 @@ public class ObserveInContextTask extends AbstractTask<IArtifact> {
 		this.context = context;
 		this.monitor = context.getMonitor().get(this);
 		this.session = context.getParentIdentity(Session.class);
-//		this.activity.setActivityDescriptor(activityDescriptor);
 		this.taskDescription = "Observation of {" + urn + "} in " + context.getName();
 		this.executor = executor;
 		this.autostart = autostart;
@@ -192,7 +191,7 @@ public class ObserveInContextTask extends AbstractTask<IArtifact> {
 						 */
 						Actuator actuator = (Actuator) (ctx.getDataflow().getActuators().isEmpty() ? null
 								: ctx.getDataflow().getActuators().get(0));
-						IArtifact result = dataflow.run(scope.getCoverage(), actuator, ctx);
+						IArtifact result = dataflow.run(scope.getCoverage().asScale(), actuator, ctx);
 						if (result instanceof IObservation) {
 							ret = (IObservation) result;
 						} else {
@@ -215,6 +214,14 @@ public class ObserveInContextTask extends AbstractTask<IArtifact> {
 							Graphs.show(ctx.getProvenance().getSimplifiedGraph(), "Provenance (simplified)");
 						}
 
+						if (!silent) {
+							scope.getSession().getMonitor()
+									.send(Message.create(scope.getSession().getId(),
+											IMessage.MessageClass.TaskLifecycle, IMessage.Type.ProvenanceChanged,
+											new ContextualizationNotification(ctx.getRootSubject().getId(),
+													ContextualizationNotification.Target.PROVENANCE)));
+						}
+						
 					} else {
 						monitor.warn("could not build dataflow: observation unsuccessful");
 						ret = Observation.empty(observable, context.getScope());
