@@ -20,6 +20,7 @@ import org.eclipse.elk.core.labels.LabelManagementOptions;
 import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.EdgeLabelPlacement;
 import org.eclipse.elk.core.options.HierarchyHandling;
 import org.eclipse.elk.core.options.NodeLabelPlacement;
@@ -34,6 +35,7 @@ import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.ElkPort;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
 
+import org.integratedmodelling.klab.api.API.PUBLIC.Export;
 /**
  * k.LAB implementation of ElkFactory to centralize the detailed creation of graph elements
  * In this factory we centralize the view of graph, so a lot of options are as default
@@ -106,15 +108,29 @@ public class KlabElkGraphFactory {
 	 * 
 	 * @return
 	 */
-	public ElkNode createGraph(String identifier) {
+	public ElkNode createGraph(String identifier, Export type) {
 		ElkNode root = ElkGraphUtil.createGraph();
 		root.setIdentifier(identifier);
 		root.setProperty(LabelManagementOptions.LABEL_MANAGER, LABEL_MANAGER);
-		root.setProperty(LayeredOptions.HIERARCHY_HANDLING, HierarchyHandling.INCLUDE_CHILDREN);
+		root.setProperty(LayeredOptions.HIERARCHY_HANDLING, HierarchyHandling.INCLUDE_CHILDREN);		
 //		root.setProperty(LayeredMetaDataProvider.NORTH_OR_SOUTH_PORT, true);
 //		root.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
+		switch (type) {
+		case DATAFLOW:
+		    // special dataflow opcions
+		    break;
+		case PROVENANCE_FULL:
+		    // special provenance full options
+		    // root.setProperty(CoreOptions.DIRECTION, Direction.DOWN);
+		    break;
+		case PROVENANCE_SIMPLIFIED:
+		    // special provenance simplified options
+		    // root.setProperty(CoreOptions.DIRECTION, Direction.DOWN);
+		    break;
+		default:
+		    break;
+		}
 		root.setProperty(LayeredOptions.WRAPPING_STRATEGY, WrappingStrategy.MULTI_EDGE);
-//        root.setProperty(CoreOptions.DIRECTION, Direction.DOWN);
 		return root;
 	}
 	

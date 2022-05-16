@@ -46,6 +46,8 @@ import org.jgrapht.graph.DefaultDirectedGraph;
 
 import groovy.lang.GroovyObjectSupport;
 
+import org.integratedmodelling.klab.api.API.PUBLIC.Export;
+
 /**
  * Holds two graphs: a simplified one that only contains artifacts (resources
  * and observations) with their scaled derivation links, optimized for display,
@@ -564,7 +566,7 @@ public class Provenance extends GroovyObjectSupport implements IProvenance {
 
 	public String getElkGraph(boolean fullGraph) {
 		Flowchart flowchart = Flowchart.create(this, overallScope, fullGraph ? getFullGraph() : getSimplifiedGraph());
-		return flowchart.getJsonLayout();
+		return flowchart.getJsonLayout(fullGraph ? Export.PROVENANCE_FULL : Export.PROVENANCE_SIMPLIFIED);
 	}
 
 	public String getKimCode(boolean fullGraph) {

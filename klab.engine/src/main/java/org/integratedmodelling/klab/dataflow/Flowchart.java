@@ -32,6 +32,7 @@ import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.api.API.PUBLIC.Export;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Attribute;
 import org.integratedmodelling.klab.api.data.general.IExpression.Scope;
@@ -1043,13 +1044,13 @@ public class Flowchart {
 		return null;
 	}
 
-	public ElkNode compile() {
+	public ElkNode compile(Export type) {
 
 		this.nodes = new HashMap<>();
 		this.elements = new HashMap<>();
 		this.computationToNodeId = new HashMap<>();
 
-		ElkNode ret = kelk.createGraph(runtimeScope.getContextObservation().getId());
+		ElkNode ret = kelk.createGraph(runtimeScope.getContextObservation().getId(), type);
 		compile(getRoot(), ret);
 
 		for (Pair<String, String> connection : getConnections()) {
@@ -1116,10 +1117,10 @@ public class Flowchart {
 		return ret;
 	}
 
-	public String getJsonLayout() {
+	public String getJsonLayout(Export type) {
 
 		RecursiveGraphLayoutEngine engine = new RecursiveGraphLayoutEngine();
-		ElkNode rootNode = compile();
+		ElkNode rootNode = compile(type);
 		engine.layout(rootNode, new BasicProgressMonitor());
 		return ElkGraphJson.forGraph(rootNode).omitLayout(false).omitZeroDimension(true).omitZeroPositions(true)
 				.shortLayoutOptionKeys(true).prettyPrint(true).toJson();
