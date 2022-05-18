@@ -5,6 +5,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.integratedmodelling.klab.utils.NameGenerator;
+
 /**
  * Simple, non-sequential AsciiDoc document builder. Just a stub for now.
  * 
@@ -13,36 +15,44 @@ import java.util.List;
  */
 public class AsciiDocBuilder {
 
-    String title = null;
+    private static final String SECTION_MARKER = "_#_#_#_#_#_#_#_#_#_#";
+    
     Section rootSection;
-    Section currentSection;
     
     class Section {
+        
+        String id = NameGenerator.newName();
         Section parent;
+        String title;
         List<String> paragraphs = new ArrayList<>();
         List<Section> children = new ArrayList<>();
+
+        public Section(String title) {
+            this.title = title;
+        }
+
+        public void paragraph(String string) {
+            paragraphs.add(string);
+        }
+        
+        public Section getChild(String title) {
+            Section section = new Section(title);
+            paragraphs.add(SECTION_MARKER + section.id);
+            return section;
+        }
+
+    }
+    
+    public AsciiDocBuilder(String title) {
+        rootSection = new Section(title);
     }
     
     public AsciiDocBuilder() {
-        rootSection = currentSection = new Section();
+        rootSection = new Section(null);
     }
     
-    public void documentTitle(String string) {
-        this.title = string;
-    }
-
-    public void paragraph(String string) {
-        currentSection.paragraphs.add(string);
-    }
-
     public void writeToFile(Path path, Charset forName) {
         // TODO Auto-generated method stub
-        
-    }
-
-    public void sectionTitleLevel(int i, String string) {
-        // TODO Auto-generated method stub
-        
     }
 
     public void listingBlock(String sourceCode, String language) {

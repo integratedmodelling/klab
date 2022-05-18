@@ -269,6 +269,7 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getUnitAccess().getGroup(), "rule__Unit__Group__0");
 			builder.put(grammarAccess.getUnitAccess().getGroup_2(), "rule__Unit__Group_2__0");
 			builder.put(grammarAccess.getUnitAccess().getGroup_2_0(), "rule__Unit__Group_2_0__0");
+			builder.put(grammarAccess.getUnitAccess().getGroup_2_1(), "rule__Unit__Group_2_1__0");
 			builder.put(grammarAccess.getCurrencyAccess().getGroup(), "rule__Currency__Group__0");
 			builder.put(grammarAccess.getCurrencyAccess().getGroup_1(), "rule__Currency__Group_1__0");
 			builder.put(grammarAccess.getCurrencyAccess().getGroup_2(), "rule__Currency__Group_2__0");
@@ -666,7 +667,7 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getUnitElementAccess().getUnitAssignment_1_1(), "rule__UnitElement__UnitAssignment_1_1");
 			builder.put(grammarAccess.getUnitAccess().getRootAssignment_1(), "rule__Unit__RootAssignment_1");
 			builder.put(grammarAccess.getUnitAccess().getConnectorsAssignment_2_0_0(), "rule__Unit__ConnectorsAssignment_2_0_0");
-			builder.put(grammarAccess.getUnitAccess().getUnitsAssignment_2_1(), "rule__Unit__UnitsAssignment_2_1");
+			builder.put(grammarAccess.getUnitAccess().getUnitsAssignment_2_1_0(), "rule__Unit__UnitsAssignment_2_1_0");
 			builder.put(grammarAccess.getCurrencyAccess().getIdAssignment_0(), "rule__Currency__IdAssignment_0");
 			builder.put(grammarAccess.getCurrencyAccess().getYearAssignment_1_1(), "rule__Currency__YearAssignment_1_1");
 			builder.put(grammarAccess.getCurrencyAccess().getUnitsAssignment_2_1(), "rule__Currency__UnitsAssignment_2_1");

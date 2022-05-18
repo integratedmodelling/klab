@@ -4920,6 +4920,7 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		private final RuleCall cIdCAMELCASE_IDTerminalRuleCall_0_0_0 = (RuleCall)cIdAlternatives_0_0.eContents().get(0);
 		private final RuleCall cIdLOWERCASE_IDTerminalRuleCall_0_0_1 = (RuleCall)cIdAlternatives_0_0.eContents().get(1);
 		private final RuleCall cIdUPPERCASE_IDTerminalRuleCall_0_0_2 = (RuleCall)cIdAlternatives_0_0.eContents().get(2);
+		private final RuleCall cIdBACKCASE_IDTerminalRuleCall_0_0_3 = (RuleCall)cIdAlternatives_0_0.eContents().get(3);
 		private final Group cGroup_1 = (Group)cAlternatives.eContents().get(1);
 		private final Keyword cLeftParenthesisKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
 		private final Assignment cUnitAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
@@ -4927,18 +4928,18 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		private final Keyword cRightParenthesisKeyword_1_2 = (Keyword)cGroup_1.eContents().get(2);
 		
 		//UnitElement:
-		//    id=(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID) |
+		//    id=(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID|BACKCASE_ID) |
 		//    '(' unit=Unit ')';
 		@Override public ParserRule getRule() { return rule; }
 		
-		//id=(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID) |
+		//id=(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID|BACKCASE_ID) |
 		//'(' unit=Unit ')'
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
-		//id=(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID)
+		//id=(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID|BACKCASE_ID)
 		public Assignment getIdAssignment_0() { return cIdAssignment_0; }
 		
-		//(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID)
+		//(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID|BACKCASE_ID)
 		public Alternatives getIdAlternatives_0_0() { return cIdAlternatives_0_0; }
 		
 		//CAMELCASE_ID
@@ -4949,6 +4950,9 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		
 		//UPPERCASE_ID
 		public RuleCall getIdUPPERCASE_IDTerminalRuleCall_0_0_2() { return cIdUPPERCASE_IDTerminalRuleCall_0_0_2; }
+		
+		//BACKCASE_ID
+		public RuleCall getIdBACKCASE_IDTerminalRuleCall_0_0_3() { return cIdBACKCASE_IDTerminalRuleCall_0_0_3; }
 		
 		//'(' unit=Unit ')'
 		public Group getGroup_1() { return cGroup_1; }
@@ -4975,14 +4979,15 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		private final Group cGroup_2_0 = (Group)cGroup_2.eContents().get(0);
 		private final Assignment cConnectorsAssignment_2_0_0 = (Assignment)cGroup_2_0.eContents().get(0);
 		private final RuleCall cConnectorsUnitOpEnumRuleCall_2_0_0_0 = (RuleCall)cConnectorsAssignment_2_0_0.eContents().get(0);
-		private final Assignment cUnitsAssignment_2_1 = (Assignment)cGroup_2.eContents().get(1);
-		private final RuleCall cUnitsUnitElementParserRuleCall_2_1_0 = (RuleCall)cUnitsAssignment_2_1.eContents().get(0);
+		private final Group cGroup_2_1 = (Group)cGroup_2.eContents().get(1);
+		private final Assignment cUnitsAssignment_2_1_0 = (Assignment)cGroup_2_1.eContents().get(0);
+		private final RuleCall cUnitsUnitElementParserRuleCall_2_1_0_0 = (RuleCall)cUnitsAssignment_2_1_0.eContents().get(0);
 		
 		//Unit:
-		//    {Unit} (root=UnitElement)? (=> (connectors+=UnitOp) (units+=UnitElement))*;
+		//    {Unit} (root=UnitElement)? (=> (connectors+=UnitOp) => (units+=UnitElement))*;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//{Unit} (root=UnitElement)? (=> (connectors+=UnitOp) (units+=UnitElement))*
+		//{Unit} (root=UnitElement)? (=> (connectors+=UnitOp) => (units+=UnitElement))*
 		public Group getGroup() { return cGroup; }
 		
 		//{Unit}
@@ -4994,7 +4999,7 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//UnitElement
 		public RuleCall getRootUnitElementParserRuleCall_1_0() { return cRootUnitElementParserRuleCall_1_0; }
 		
-		//(=> (connectors+=UnitOp) (units+=UnitElement))*
+		//(=> (connectors+=UnitOp) => (units+=UnitElement))*
 		public Group getGroup_2() { return cGroup_2; }
 		
 		//=> (connectors+=UnitOp)
@@ -5006,11 +5011,14 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//UnitOp
 		public RuleCall getConnectorsUnitOpEnumRuleCall_2_0_0_0() { return cConnectorsUnitOpEnumRuleCall_2_0_0_0; }
 		
-		//(units+=UnitElement)
-		public Assignment getUnitsAssignment_2_1() { return cUnitsAssignment_2_1; }
+		//=> (units+=UnitElement)
+		public Group getGroup_2_1() { return cGroup_2_1; }
+		
+		//units+=UnitElement
+		public Assignment getUnitsAssignment_2_1_0() { return cUnitsAssignment_2_1_0; }
 		
 		//UnitElement
-		public RuleCall getUnitsUnitElementParserRuleCall_2_1_0() { return cUnitsUnitElementParserRuleCall_2_1_0; }
+		public RuleCall getUnitsUnitElementParserRuleCall_2_1_0_0() { return cUnitsUnitElementParserRuleCall_2_1_0_0; }
 	}
 	public class CurrencyElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.Currency");
@@ -7357,8 +7365,8 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	private final LiteralElements pLiteral;
 	private final ParameterListElements pParameterList;
 	private final KeyValuePairElements pKeyValuePair;
-	private final UnitElementElements pUnitElement;
 	private final UnitOpElements eUnitOp;
+	private final UnitElementElements pUnitElement;
 	private final UnitElements pUnit;
 	private final CurrencyElements pCurrency;
 	private final REL_OPERATORElements pREL_OPERATOR;
@@ -7387,6 +7395,7 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	private final VersionNumberElements pVersionNumber;
 	private final TerminalRule tLOWERCASE_ID;
 	private final TerminalRule tLOCALE;
+	private final TerminalRule tBACKCASE_ID;
 	private final TerminalRule tQUOTED_LOWERCASE_ID;
 	private final TerminalRule tLOWERCASE_ID_DASH;
 	private final TerminalRule tARGVALUE;
@@ -7456,8 +7465,8 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		this.pLiteral = new LiteralElements();
 		this.pParameterList = new ParameterListElements();
 		this.pKeyValuePair = new KeyValuePairElements();
-		this.pUnitElement = new UnitElementElements();
 		this.eUnitOp = new UnitOpElements();
+		this.pUnitElement = new UnitElementElements();
 		this.pUnit = new UnitElements();
 		this.pCurrency = new CurrencyElements();
 		this.pREL_OPERATOR = new REL_OPERATORElements();
@@ -7486,6 +7495,7 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		this.pVersionNumber = new VersionNumberElements();
 		this.tLOWERCASE_ID = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.LOWERCASE_ID");
 		this.tLOCALE = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.LOCALE");
+		this.tBACKCASE_ID = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.BACKCASE_ID");
 		this.tQUOTED_LOWERCASE_ID = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.QUOTED_LOWERCASE_ID");
 		this.tLOWERCASE_ID_DASH = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.LOWERCASE_ID_DASH");
 		this.tARGVALUE = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.ARGVALUE");
@@ -8280,17 +8290,6 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		return getKeyValuePairAccess().getRule();
 	}
 	
-	//UnitElement:
-	//    id=(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID) |
-	//    '(' unit=Unit ')';
-	public UnitElementElements getUnitElementAccess() {
-		return pUnitElement;
-	}
-	
-	public ParserRule getUnitElementRule() {
-		return getUnitElementAccess().getRule();
-	}
-	
 	//enum UnitOp:
 	//    OVER='/' | CARET='^' | STAR='*';
 	public UnitOpElements getUnitOpAccess() {
@@ -8301,8 +8300,19 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		return getUnitOpAccess().getRule();
 	}
 	
+	//UnitElement:
+	//    id=(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID|BACKCASE_ID) |
+	//    '(' unit=Unit ')';
+	public UnitElementElements getUnitElementAccess() {
+		return pUnitElement;
+	}
+	
+	public ParserRule getUnitElementRule() {
+		return getUnitElementAccess().getRule();
+	}
+	
 	//Unit:
-	//    {Unit} (root=UnitElement)? (=> (connectors+=UnitOp) (units+=UnitElement))*;
+	//    {Unit} (root=UnitElement)? (=> (connectors+=UnitOp) => (units+=UnitElement))*;
 	public UnitElements getUnitAccess() {
 		return pUnit;
 	}
@@ -8651,10 +8661,15 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	}
 	
 	//terminal LOCALE:
-	//    ('a'..'z')('a'..'z')('-' ('A'..'Z')('A'..'Z'))*
-	//;
+	//    ('a'..'z')('a'..'z')('-' ('A'..'Z')('A'..'Z'))*;
 	public TerminalRule getLOCALERule() {
 		return tLOCALE;
+	}
+	
+	//terminal BACKCASE_ID:
+	//    ('a'..'z') ('A'..'z'|'0'..'9')*;
+	public TerminalRule getBACKCASE_IDRule() {
+		return tBACKCASE_ID;
 	}
 	
 	//terminal QUOTED_LOWERCASE_ID:

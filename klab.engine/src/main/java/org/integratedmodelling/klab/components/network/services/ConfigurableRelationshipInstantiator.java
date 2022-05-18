@@ -309,6 +309,10 @@ public class ConfigurableRelationshipInstantiator extends AbstractContextualizer
             double[] xy = this.distanceCalculator.getNearestPoint(sspace.getShape().getCenter(false));
             if (xy != null) {
                 for (IObservation target : targets) {
+                    // ehm - the closest is apparently itself.
+                    if (target.equals(source)) {
+                        continue;
+                    }
                     ISpace tspace = target.getScale().getSpace();
                     if (tspace != null) {
                         if (tspace.getShape().contains(xy)) {

@@ -405,16 +405,16 @@ KeyValuePair:
     key=KEY 
 ;
 
-UnitElement:
-	id=(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID) |
-	'(' unit=Unit ')';
-
 enum UnitOp:
 	OVER='/' | CARET='^' | STAR='*';
 
-Unit:
-	{Unit} (root=UnitElement)? (=> (connectors+=UnitOp) (units+=UnitElement))*;
+UnitElement:
+	id=(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID|BACKCASE_ID) |
+	'(' unit=Unit ')';
 
+Unit:
+	{Unit} (root=UnitElement)? (=> (connectors+=UnitOp) => (units+=UnitElement))*;
+	
 Currency:
 	id=UPPERCASE_ID ('@' year=INT) (=> '/' (units+=UnitElement))*;
 		
@@ -604,8 +604,10 @@ terminal LOWERCASE_ID:
 	('a'..'z') ('a'..'z' | '0'..'9'| '_')*;
 
 terminal LOCALE:
-	('a'..'z')('a'..'z')('-' ('A'..'Z')('A'..'Z'))*
-;
+	('a'..'z')('a'..'z')('-' ('A'..'Z')('A'..'Z'))*;
+
+terminal BACKCASE_ID:
+	('a'..'z') ('A'..'z'|'0'..'9')*;
 
 terminal QUOTED_LOWERCASE_ID:
 	('`')('a'..'z')('a'..'z' | '0'..'9'| '_')*;
