@@ -1,8 +1,11 @@
 package org.integratedmodelling.klab.components.runtime.contextualizers;
 
 import org.integratedmodelling.kim.api.IContextualizable;
+import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IPrototype.Argument;
+import org.integratedmodelling.klab.Observables;
+import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
 import org.integratedmodelling.klab.api.model.contextualization.IContextualizer;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -10,7 +13,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
-import org.integratedmodelling.klab.dataflow.DataflowHandler;
+import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
@@ -44,6 +47,24 @@ public abstract class AbstractContextualizer implements IContextualizer {
     }
 
     /**
+     * Get the observation that is changing when the resolver is for a 'change in ...' process. This
+     * can be difficult as the dependency is implicit and therefore cannot be named.
+     * 
+     * @param <T>
+     * @param cls
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends IObservation> T getChangingInput(Class<T> cls) {
+        if (scope.getTargetSemantics() == null || !scope.getTargetSemantics().is(Type.CHANGE)) {
+            throw new KlabIllegalStateException(
+                    "getChangingInput() used to retrieve an observation when its change is not the target of resolution");
+        }
+        IObservedConcept obs = new ObservedConcept(Observables.INSTANCE.getDescribedType(scope.getTargetSemantics().getType()));
+        return (T) scope.getCatalog().get(obs);
+    }
+
+    /**
      * Return the observation identified in the declaration as an import, verifying the match
      * between the declaration and the scope. If units were specified, wrap it in a mediator if
      * necessary, performing any needed recontexualization.
@@ -67,8 +88,8 @@ public abstract class AbstractContextualizer implements IContextualizer {
             }
         }
         if (input == null) {
-            throw new KlabIllegalArgumentException("illegal request for undeclared input '" + stateIdentifier
-                    + "' in function " + prototype.getName());
+            throw new KlabIllegalArgumentException(
+                    "illegal request for undeclared input '" + stateIdentifier + "' in function " + prototype.getName());
         }
 
         T artifact = null;
@@ -78,18 +99,18 @@ public abstract class AbstractContextualizer implements IContextualizer {
         } else if (input.getUnit() == null) {
             artifact = scope.getArtifact(stateIdentifier, cls);
             if (artifact != null && artifact.getObservable().getArtifactType() != input.getType()) {
-                throw new KlabIllegalStateException("input '" + stateIdentifier + "' in function "
-                        + prototype.getName() + " is not of the declared " + input.getType()
-                        + " type (actual = " + artifact.getObservable().getArtifactType() + ")");
+                throw new KlabIllegalStateException(
+                        "input '" + stateIdentifier + "' in function " + prototype.getName() + " is not of the declared "
+                                + input.getType() + " type (actual = " + artifact.getObservable().getArtifactType() + ")");
             }
         } else {
-            throw new KlabIllegalStateException("illegal request for units in non-state input '"
-                    + stateIdentifier + "' in function " + prototype.getName());
+            throw new KlabIllegalStateException(
+                    "illegal request for units in non-state input '" + stateIdentifier + "' in function " + prototype.getName());
         }
 
         if (!input.isOptional() && artifact == null) {
-            throw new KlabResourceNotFoundException("mandatory input " + stateIdentifier
-                    + " is missing in contextualizer " + prototype.getName());
+            throw new KlabResourceNotFoundException(
+                    "mandatory input " + stateIdentifier + " is missing in contextualizer " + prototype.getName());
         }
 
         return artifact;
@@ -106,8 +127,8 @@ public abstract class AbstractContextualizer implements IContextualizer {
             }
         }
         if (input == null) {
-            throw new KlabIllegalArgumentException("illegal request for undeclared input '" + stateIdentifier
-                    + "' in function " + prototype.getName());
+            throw new KlabIllegalArgumentException(
+                    "illegal request for undeclared input '" + stateIdentifier + "' in function " + prototype.getName());
         }
 
         T artifact = null;
@@ -117,28 +138,25 @@ public abstract class AbstractContextualizer implements IContextualizer {
         } else if (input.getUnit() == null) {
             artifact = scope.getArtifact(stateIdentifier, cls);
             if (artifact.getObservable().getArtifactType() != input.getType()) {
-                throw new KlabIllegalStateException("input '" + stateIdentifier + "' in function "
-                        + prototype.getName() + " is not of the declared " + input.getType()
-                        + " type (actual = " + artifact.getObservable().getArtifactType() + ")");
+                throw new KlabIllegalStateException(
+                        "input '" + stateIdentifier + "' in function " + prototype.getName() + " is not of the declared "
+                                + input.getType() + " type (actual = " + artifact.getObservable().getArtifactType() + ")");
             }
         } else {
-            throw new KlabIllegalStateException("illegal request for units in non-state input '"
-                    + stateIdentifier + "' in function " + prototype.getName());
+            throw new KlabIllegalStateException(
+                    "illegal request for units in non-state input '" + stateIdentifier + "' in function " + prototype.getName());
         }
 
         if (!input.isOptional() && artifact == null) {
-            throw new KlabResourceNotFoundException("mandatory output " + stateIdentifier
-                    + " is missing in contextualizer " + prototype.getName());
+            throw new KlabResourceNotFoundException(
+                    "mandatory output " + stateIdentifier + " is missing in contextualizer " + prototype.getName());
         }
 
         return artifact;
     }
 
-	@Override
-	public void notifyContextualizedResource(IContextualizable resource, IArtifact target,
-			IContextualizationScope scope) {
-	}
-    
-    
+    @Override
+    public void notifyContextualizedResource(IContextualizable resource, IArtifact target, IContextualizationScope scope) {
+    }
 
 }

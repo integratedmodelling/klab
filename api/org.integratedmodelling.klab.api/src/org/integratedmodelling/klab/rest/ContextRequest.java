@@ -7,6 +7,7 @@ public class ContextRequest {
 
     private String geometry;
     private String contextType;
+    private String urn;
     private List<String> observables = new ArrayList<>();
     private List<String> scenarios = new ArrayList<>();
     private boolean estimate;
@@ -62,6 +63,14 @@ public class ContextRequest {
 
     public void setEstimatedCost(long estimatedCost) {
         this.estimatedCost = estimatedCost;
+    }
+
+    public String getUrn() {
+        return urn;
+    }
+
+    public void setUrn(String urn) {
+        this.urn = urn;
     }
 
 }
