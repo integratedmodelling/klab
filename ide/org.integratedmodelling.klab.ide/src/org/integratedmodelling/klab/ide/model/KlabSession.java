@@ -553,6 +553,7 @@ public class KlabSession extends KlabPeer {
 		}
 //        Eclipse.INSTANCE.refreshOpenEditors();
 		KlabNavigator.refresh();
+        send(IMessage.MessageClass.UserInterface, IMessage.Type.UserProjectModified, response);
 	}
 
 	public TicketManager getTicketManager() {

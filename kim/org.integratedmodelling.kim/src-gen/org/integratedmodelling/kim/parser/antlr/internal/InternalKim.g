@@ -5466,8 +5466,8 @@ ruleNamespace returns [EObject current=null]
 												afterParserOrEnumRuleCall();
 											}
 										)
-									)*
-								)
+									)
+								)*
 								))
 					{ 
 						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getNamespaceAccess().getUnorderedGroup_5());

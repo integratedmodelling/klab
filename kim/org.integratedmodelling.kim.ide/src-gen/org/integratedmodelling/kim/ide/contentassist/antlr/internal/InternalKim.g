@@ -15122,7 +15122,7 @@ rule__Namespace__Group_5_5__3__Impl
 :
 (
 	{ before(grammarAccess.getNamespaceAccess().getGroup_5_5_3()); }
-	(rule__Namespace__Group_5_5_3__0)
+	(rule__Namespace__Group_5_5_3__0)*
 	{ after(grammarAccess.getNamespaceAccess().getGroup_5_5_3()); }
 )
 ;
@@ -15176,7 +15176,7 @@ rule__Namespace__Group_5_5_3__1__Impl
 :
 (
 	{ before(grammarAccess.getNamespaceAccess().getDisjointNamespacesAssignment_5_5_3_1()); }
-	(rule__Namespace__DisjointNamespacesAssignment_5_5_3_1)*
+	(rule__Namespace__DisjointNamespacesAssignment_5_5_3_1)
 	{ after(grammarAccess.getNamespaceAccess().getDisjointNamespacesAssignment_5_5_3_1()); }
 )
 ;

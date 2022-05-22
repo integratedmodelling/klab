@@ -18,6 +18,9 @@ import java.util.logging.Level;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.CoreException;
+import org.integratedmodelling.contrib.jgrapht.Graph;
+import org.integratedmodelling.contrib.jgrapht.graph.DefaultDirectedGraph;
+import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.model.Kim;
@@ -71,16 +74,19 @@ public class Klab {
      * All resources read or imported, along with their status, indexed by project ID and by URN
      * within each project. Used by the navigator and the Resources view.
      */
-    private Map<String, Map<String, EResourceReference>> resourceCatalog = Collections.synchronizedMap(new HashMap<>());
+    private Map<String, Map<String, EResourceReference>> resourceCatalog = Collections
+            .synchronizedMap(new HashMap<>());
     private Map<String, AuthorityIdentity> identityCache = Collections.synchronizedMap(new HashMap<>());
     private List<ResourceAdapterReference> resourceAdapters = new ArrayList<>();
     private Map<String, NamespaceCompilationResult> namespaceStatus = new HashMap<>();
     private AtomicReference<NetworkReference> network = new AtomicReference<>();
+
     /**
      * Resources validated through the engine. TODO these should expire and be re-checked
      * periodically.
      */
-    private Map<String, EResourceReference> externalResourceCatalog = Collections.synchronizedMap(new HashMap<>());
+    private Map<String, EResourceReference> externalResourceCatalog = Collections
+            .synchronizedMap(new HashMap<>());
 
     public void synchronizeProjectResources(String projectName, File projectRoot) {
 
@@ -99,7 +105,8 @@ public class Klab {
                             // FIXME this should be removed once the local name is mandatory on
                             // creation
                             if (resource.getLocalName() == null) {
-                                resource.setLocalName(org.integratedmodelling.klab.utils.Path.getLast(resource.getUrn(), ':'));
+                                resource.setLocalName(org.integratedmodelling.klab.utils.Path
+                                        .getLast(resource.getUrn(), ':'));
                             }
                             Map<String, EResourceReference> catalog = resourceCatalog.get(projectName);
                             if (catalog == null) {
@@ -157,7 +164,8 @@ public class Klab {
             if (resourceCatalog.containsKey(project.getName())) {
                 for (LocalResourceReference resource : project.getLocalResources()) {
                     if (resourceCatalog.get(project.getName()).containsKey(resource.getUrn())) {
-                        resourceCatalog.get(project.getName()).get(resource.getUrn()).setOnline(resource.isOnline());
+                        resourceCatalog.get(project.getName()).get(resource.getUrn())
+                                .setOnline(resource.isOnline());
                     }
                 }
             }
@@ -166,6 +174,9 @@ public class Klab {
             }
         }
         Eclipse.INSTANCE.refreshOpenEditors();
+        if (Activator.session() != null) {
+            Activator.session().send(IMessage.MessageClass.UserInterface, IMessage.Type.UserProjectModified, null);
+        }
     }
 
     /**
@@ -207,8 +218,14 @@ public class Klab {
         KlabNavigator.refresh();
         Eclipse.INSTANCE.refreshOpenEditors();
         Eclipse.INSTANCE.notification("New resource imported",
-                "Resource <b>" + resource.getUrn() + "</b> is available and online.\nIt can be referenced within the <b>"
-                        + resource.getProjectName() + "</b> project as <b>" + resource.getLocalName() + "</b>.");
+                "Resource <b>" + resource.getUrn()
+                        + "</b> is available and online.\nIt can be referenced within the <b>"
+                        + resource.getProjectName() + "</b> project as <b>" + resource.getLocalName()
+                        + "</b>.");
+        if (Activator.session() != null) {
+            Activator.session().send(IMessage.MessageClass.UserInterface, IMessage.Type.ResourceImported, resource);
+        }
+
     }
 
     public void notifyResourceUpdated(ResourceReference resource) {
@@ -230,7 +247,11 @@ public class Klab {
         }
         KlabNavigator.refresh();
         Eclipse.INSTANCE.refreshOpenEditors();
-        Eclipse.INSTANCE.notification("Resource updated", "Resource <b>" + resource.getUrn() + "</b> was updated by the engine.");
+        Eclipse.INSTANCE.notification("Resource updated",
+                "Resource <b>" + resource.getUrn() + "</b> was updated by the engine.");
+        if (Activator.session() != null) {
+            Activator.session().send(IMessage.MessageClass.UserInterface, IMessage.Type.ResourceUpdated, resource);
+        }
     }
 
     public void notifyResourceDeleted(ResourceReference resource) {
@@ -248,7 +269,12 @@ public class Klab {
         Eclipse.INSTANCE.refreshOpenEditors();
         KlabNavigator.refresh();
         Eclipse.INSTANCE.notification("Resource deleted",
-                "Resource <b>" + resource.getUrn() + "</b> deleted from project <b>" + resource.getProjectName() + "</b>.");
+                "Resource <b>" + resource.getUrn() + "</b> deleted from project <b>"
+                        + resource.getProjectName() + "</b>.");
+        if (Activator.session() != null) {
+            Activator.session().send(IMessage.MessageClass.UserInterface, IMessage.Type.ResourceDeleted, resource);
+        }
+
     }
 
     /*
@@ -324,10 +350,11 @@ public class Klab {
     }
 
     /**
-     * Inquire with the engine about the status of a resource. 
+     * Inquire with the engine about the status of a resource.
+     * 
      * @param urn
-     * @return null if the resource is unknown or the engine is off, or a pair containing the resource data 
-     * (possibly null) and a boolean to specify if it's online or not.
+     * @return null if the resource is unknown or the engine is off, or a pair containing the
+     *         resource data (possibly null) and a boolean to specify if it's online or not.
      */
     public Pair<Boolean, ResourceReference> checkResource(String urn) {
 
@@ -342,7 +369,7 @@ public class Klab {
                         ret.setSecond(message.getPayload(ResourceReference.class));
                     }
                     gotit.set(true);
-                    
+
                 }, IMessage.MessageClass.Authorization, IMessage.Type.NetworkStatus, urn);
             } else {
                 return null;
@@ -363,7 +390,7 @@ public class Klab {
             }
             cnt++;
         }
-        
+
         return ret;
     }
 
@@ -372,7 +399,8 @@ public class Klab {
         if (item == null) {
             return level.equals(Level.SEVERE);
         } else if (item instanceof EProject) {
-            for (IKimNamespace namespace : Kim.INSTANCE.getProject(((EProject) item).getName()).getNamespaces()) {
+            for (IKimNamespace namespace : Kim.INSTANCE.getProject(((EProject) item).getName())
+                    .getNamespaces()) {
                 if (hasNotifications(namespace, level)) {
                     return true;
                 }
@@ -464,7 +492,8 @@ public class Klab {
 
         AuthorityIdentity ret = identityCache.get(authority + ":" + identity);
         if (ret == null) {
-            Future<IMessage> response = Activator.ask(IMessage.MessageClass.KimLifecycle, IMessage.Type.AuthorityDocumentation,
+            Future<IMessage> response = Activator.ask(IMessage.MessageClass.KimLifecycle,
+                    IMessage.Type.AuthorityDocumentation,
                     new AuthorityResolutionRequest(authority, identity));
             try {
                 ret = response.get(300, TimeUnit.MILLISECONDS).getPayload(AuthorityIdentity.class);

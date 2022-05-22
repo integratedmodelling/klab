@@ -278,7 +278,7 @@ Namespace:
 		('imports' owlImports+=OwlImport (',' owlImports+=OwlImport)*)? & 
 		('covering' coverage+=Function (=> ',' coverage+=Function)*)? &
 		('in' 'domain' (rootDomain?='root' | domainConcept=Concept))? & 
-		('disjoint' 'with' disjointNamespaces+=PathName (',' disjointNamespaces+=PathName* ))? & 
+		('disjoint' 'with' disjointNamespaces+=PathName (',' disjointNamespaces+=PathName)* )? & 
 		('version' version=VersionNumber)? & 
 		('resolve' ('from' lookupNamespace+=PathName*)? & ('outside' blacklistNamespace+=PathName*)? & ('using' weights=Map)?)?
 	)

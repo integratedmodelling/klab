@@ -44,7 +44,7 @@ public interface IKimWorkspace {
 	 * @return all project names
 	 */
 	Collection<String> getProjectNames();
-
+	
 	/**
 	 * The URL for the workspace.
 	 * 

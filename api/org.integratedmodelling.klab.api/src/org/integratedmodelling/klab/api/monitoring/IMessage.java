@@ -11,7 +11,7 @@ import org.integratedmodelling.klab.rest.UserInputResponse;
 import org.integratedmodelling.klab.rest.WatchRequest;
 
 /**
- * Messages exchanged between the engine and its web UI.
+ * Messages exchanged between the engine and its clients.
  * 
  * @author ferdinando.villa
  *
@@ -367,7 +367,7 @@ public interface IMessage {
         DataflowCompiled,
         DataflowStateChanged,
         ProvenanceChanged,
-        
+
         /**
          * Task lifecycle F -> B
          */

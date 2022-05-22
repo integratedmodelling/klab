@@ -140,6 +140,7 @@ import org.integratedmodelling.klab.rest.NodeReference.Permission;
 import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.rest.ObservableReference;
 import org.integratedmodelling.klab.rest.ObservationRequest;
+import org.integratedmodelling.klab.rest.ProjectActionResponse;
 import org.integratedmodelling.klab.rest.ProjectLoadRequest;
 import org.integratedmodelling.klab.rest.ProjectLoadResponse;
 import org.integratedmodelling.klab.rest.ProjectModificationNotification;
@@ -200,13 +201,13 @@ public class Session extends GroovyObjectSupport
     private static final long serialVersionUID = -1571090827271892549L;
 
     public static class Estimate {
-        
+
         public long estimatedCost;
         public ContextRequest contextRequest;
         public ObservationRequest observationRequest;
 
         public Estimate(long cost, ContextRequest contextRequest, ObservationRequest observationRequest) {
-        
+
             this.estimatedCost = cost;
             if (contextRequest != null) {
                 contextRequest.setEstimate(false);
@@ -219,9 +220,9 @@ public class Session extends GroovyObjectSupport
             this.contextRequest = contextRequest;
             this.observationRequest = observationRequest;
         }
-        
+
     }
-    
+
     Monitor monitor;
     String token = "s" + NameGenerator.shortUUID();
     IUserIdentity user;
@@ -1849,33 +1850,45 @@ public class Session extends GroovyObjectSupport
      * @param type
      */
     @MessageHandler
-    private void handleProjectEvent(final ProjectModificationNotification event, IMessage.Type type) {
+    private void handleProjectEvent(final ProjectModificationNotification event, IMessage.Type type,
+            IMessage message) {
+
+        ProjectActionResponse response = new ProjectActionResponse();
 
         switch(type) {
         case ProjectFileAdded:
             if (KActors.INSTANCE.isKActorsFile(event.getFile())) {
                 KActors.INSTANCE.add(event.getFile());
             } else {
-                Resources.INSTANCE.getLoader().add(event.getFile());
+                response.getNamespaces().add(Resources.INSTANCE.getLoader().add(event.getFile()).getName());
             }
             break;
         case ProjectFileDeleted:
             if (KActors.INSTANCE.isKActorsFile(event.getFile())) {
                 KActors.INSTANCE.delete(event.getFile());
             } else {
-                Resources.INSTANCE.getLoader().delete(event.getFile());
+                for (IKimNamespace ns : Resources.INSTANCE.getLoader().delete(event.getFile())) {
+                    response.getNamespaces().add(ns.getName());
+                }
             }
             break;
         case ProjectFileModified:
             if (KActors.INSTANCE.isKActorsFile(event.getFile())) {
                 KActors.INSTANCE.touch(event.getFile());
             } else {
-                Resources.INSTANCE.getLoader().touch(event.getFile());
+                for (IKimNamespace ns : Resources.INSTANCE.getLoader().touch(event.getFile())) {
+                    response.getNamespaces().add(ns.getName());
+                }
             }
             break;
         default:
             break;
         }
+
+        monitor.send(
+                Message.create(token, IMessage.MessageClass.ProjectLifecycle, type, response)
+                        .inResponseTo(message));
+
     }
 
     @MessageHandler
@@ -2205,7 +2218,7 @@ public class Session extends GroovyObjectSupport
         // TODO FIXME switch to local ticket manager
         return Klab.INSTANCE.getTicketManager().getTicket(ticketId);
     }
-    
+
     /*
      * Estimates are handled externally by the API, we only expose the catalog
      */
