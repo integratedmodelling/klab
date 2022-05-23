@@ -75,6 +75,7 @@ import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.kim.validation.KimValidator;
 import org.integratedmodelling.klab.api.data.CRUDOperation;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.common.CompileInfo;
 import org.integratedmodelling.klab.common.SemanticType;
@@ -1280,7 +1281,7 @@ public enum Kim {
             if (namespaceRegistry.containsKey(name)) {
                 return (KimNamespace) namespaceRegistry.get(name);
             }
-
+            
             KimProject project = getProjectForResource(namespace.eResource());
             if (project != null) {
                 // it will register itself

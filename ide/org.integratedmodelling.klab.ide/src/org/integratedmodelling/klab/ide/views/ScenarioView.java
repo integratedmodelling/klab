@@ -7,7 +7,8 @@ import java.util.Set;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -15,9 +16,14 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeColumn;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.ResourceManager;
 import org.integratedmodelling.contrib.jgrapht.Graph;
@@ -27,6 +33,7 @@ import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IKimWorkspace;
 import org.integratedmodelling.kim.model.Kim;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.model.KlabPeer;
@@ -34,25 +41,28 @@ import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
 import org.integratedmodelling.klab.ide.navigator.e3.TreeContentProvider;
 
 public class ScenarioView extends ViewPart {
-    private static class ViewerLabelProvider extends LabelProvider {
-        public Image getImage(Object element) {
-            return super.getImage(element);
-        }
-        public String getText(Object element) {
-            return super.getText(element);
-        }
-    }
 
     public static final String ID = "org.integratedmodelling.klab.ide.views.ScenarioView";
-    
+
+    private static class Edge extends DefaultEdge {
+
+        boolean isDependency = false;
+        private static final long serialVersionUID = 1L;
+
+        public Edge(boolean isDependency) {
+            this.isDependency = isDependency;
+        }
+
+    }
+
     KlabPeer klab;
-    private Graph<String, DefaultEdge> dependencies;
+    private Graph<String, Edge> dependencies;
     private Map<String, IKimNamespace> scenarios;
     private Set<String> checked = new HashSet<>(); // only a proxy for those in the session
     private Text text;
     boolean autoReset = true;
     boolean autoAlign = false;
-    
+
     private Action resetAction;
     private Action filterApplicableAction;
     private Action autoResetAction;
@@ -83,14 +93,77 @@ public class ScenarioView extends ViewPart {
 
         treeViewer = new TreeViewer(container, SWT.BORDER | SWT.CHECK | SWT.MULTI);
         Tree tree = treeViewer.getTree();
+        tree.setHeaderVisible(true);
         tree.setLinesVisible(true);
         tree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
-        treeViewer.setLabelProvider(new ViewerLabelProvider(){
+
+        tree.addListener(SWT.Selection, new Listener(){
+            public void handleEvent(Event event) {
+                if (event.detail == SWT.CHECK) {
+                    
+                    String scenario = event.item.getData().toString();
+                    
+                    if (((TreeItem) event.item).getChecked()) {
+                        checked.add(event.item.getData().toString());
+                    } else {
+                        checked.remove(event.item.getData().toString());
+                    }
+                    
+                    for (Edge edge : dependencies.incomingEdgesOf(scenario)) {
+                        if (edge.isDependency && !checked.contains(dependencies.getEdgeSource(edge))) {
+                            checked.add(dependencies.getEdgeSource(edge));
+                        }
+                    }
+                    
+                    for (Edge edge : dependencies.outgoingEdgesOf(scenario)) {
+                        if (!edge.isDependency && checked.contains(dependencies.getEdgeTarget(edge))) {
+                            checked.remove(dependencies.getEdgeTarget(edge));
+                        }
+                    }
+                    check();
+                    resetAction.setEnabled(checked.size() > 0);
+                }
+            }
+        });
+
+        TreeColumn trclmnScenarioId = new TreeColumn(tree, SWT.NONE);
+        trclmnScenarioId.setWidth(320);
+        trclmnScenarioId.setText("Scenario ID");
+
+        TreeColumn trclmnDescription = new TreeColumn(tree, SWT.NONE);
+        trclmnDescription.setWidth(660);
+        trclmnDescription.setText("Description");
+        treeViewer.setLabelProvider(new ITableLabelProvider(){
 
             @Override
-            public Image getImage(Object element) {
-                return ResourceManager.getPluginImage("org.integratedmodelling.klab.ide",
-                        "icons/globe.png");
+            public void addListener(ILabelProviderListener listener) {
+            }
+
+            @Override
+            public void dispose() {
+            }
+
+            @Override
+            public boolean isLabelProperty(Object element, String property) {
+                return false;
+            }
+
+            @Override
+            public void removeListener(ILabelProviderListener listener) {
+            }
+
+            @Override
+            public Image getColumnImage(Object element, int columnIndex) {
+                return columnIndex == 0
+                        ? ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/globe.png")
+                        : null;
+            }
+
+            @Override
+            public String getColumnText(Object element, int columnIndex) {
+                return columnIndex == 0
+                        ? element.toString()
+                        : scenarios.get(element).getMetadata().get(IMetadata.DC_COMMENT, "No description supplied");
             }
 
         });
@@ -101,7 +174,13 @@ public class ScenarioView extends ViewPart {
                 if (parent instanceof Graph) {
                     return dependencies.vertexSet().toArray();
                 } else if (parent instanceof String) {
-                    return dependencies.incomingEdgesOf((String) parent).toArray();
+                    Set<String> ret = new HashSet<>();
+                    for (Edge edge : dependencies.incomingEdgesOf((String) parent)) {
+                        if (edge.isDependency) {
+                            ret.add(dependencies.getEdgeSource(edge));
+                        }
+                    }
+                    return ret.toArray();
                 }
                 return null;
             }
@@ -109,10 +188,13 @@ public class ScenarioView extends ViewPart {
             @Override
             public Object getParent(Object element) {
                 if (element instanceof String) {
-                    Set<DefaultEdge> deps = dependencies.outgoingEdgesOf((String) element);
-                    if (!deps.isEmpty()) {
-                        return deps.iterator().next();
+                    Set<String> ret = new HashSet<>();
+                    for (Edge edge : dependencies.outgoingEdgesOf((String) element)) {
+                        if (edge.isDependency) {
+                            ret.add(dependencies.getEdgeTarget(edge));
+                        }
                     }
+                    return ret.isEmpty() ? dependencies : ret.iterator().next();
                 }
                 return null;
             }
@@ -120,9 +202,10 @@ public class ScenarioView extends ViewPart {
             @Override
             public boolean hasChildren(Object element) {
                 if (element instanceof Graph) {
-                    return dependencies.vertexSet().isEmpty();
+                    return !dependencies.vertexSet().isEmpty();
                 } else if (element instanceof String) {
-                    return dependencies.incomingEdgesOf((String) element).isEmpty();
+                    return dependencies.incomingEdgesOf((String) element).stream().filter(edge -> edge.isDependency)
+                            .toArray().length > 0;
                 }
                 return false;
             }
@@ -132,6 +215,18 @@ public class ScenarioView extends ViewPart {
         initializeToolBar();
         initializeMenu();
     }
+
+//    /*
+//     * runs in UI thread. Add or remove any dependent scenarios from the current set, then check the
+//     * corresponding items in the tree. The ones in this.checked are already set.
+//     */
+//    protected void processDependencies() {
+//        Set<String> toAdd = new HashSet<>();
+//        Set<String> toRemove = new HashSet<>();
+//        checked.addAll(toAdd);
+//        checked.removeAll(toRemove);
+//        check();
+//    }
 
     /**
      * Create the actions.
@@ -148,41 +243,38 @@ public class ScenarioView extends ViewPart {
             resetAction.setEnabled(false);
             // resetAction.setEnabled(Activator.engineMonitor().isRunning());
             resetAction.setImageDescriptor(
-                    ResourceManager.getPluginImageDescriptor("org.integratedmodelling.klab.ide",
-                            "icons/target_red.png"));
+                    ResourceManager.getPluginImageDescriptor("org.integratedmodelling.klab.ide", "icons/target_red.png"));
             resetAction.setToolTipText("Reset scenarios");
         }
 
         {
-            autoResetAction = new Action("Automatic reset", SWT.PUSH){
+            autoResetAction = new Action("Automatic reset", SWT.TOGGLE){
                 @Override
                 public void run() {
                     if (autoResetAction.isChecked()) {
-                        
+
                     }
                 }
             };
             autoResetAction.setChecked(true);
             // resetAction.setEnabled(Activator.engineMonitor().isRunning());
             autoResetAction.setImageDescriptor(
-                    ResourceManager.getPluginImageDescriptor("org.integratedmodelling.klab.ide",
-                            "icons/target_red.png"));
+                    ResourceManager.getPluginImageDescriptor("org.integratedmodelling.klab.ide", "icons/target_red.png"));
             autoResetAction.setToolTipText("Automatically reset scenarios at context reset");
         }
         {
-            filterApplicableAction = new Action("Show applicable", SWT.PUSH){
+            filterApplicableAction = new Action("Show applicable", SWT.TOGGLE){
                 @Override
                 public void run() {
                     if (autoResetAction.isChecked()) {
-                        
+
                     }
                 }
             };
             filterApplicableAction.setChecked(false);
             // resetAction.setEnabled(Activator.engineMonitor().isRunning());
             filterApplicableAction.setImageDescriptor(
-                    ResourceManager.getPluginImageDescriptor("org.integratedmodelling.klab.ide",
-                            "icons/target_red.png"));
+                    ResourceManager.getPluginImageDescriptor("org.integratedmodelling.klab.ide", "icons/target_red.png"));
             filterApplicableAction.setToolTipText("Only show scenarios that affect the current context");
         }
     }
@@ -227,13 +319,28 @@ public class ScenarioView extends ViewPart {
     }
 
     private void resetScenarios() {
-        
+        checked.clear();
+        check();
     }
-    
+
+    private void check() {
+        for (Item item : treeViewer.getTree().getItems()) {
+            check(item);
+        }
+    }
+
+    private void check(Item item) {
+        if (item.getData() instanceof String) {
+            ((TreeItem) item).setChecked(checked.contains(item.getData().toString()));
+        }
+        for (Item i : ((TreeItem) item).getItems()) {
+            check(i);
+        }
+    }
+
     private void refreshScenarios() {
 
-        dependencies = new DefaultDirectedGraph<String, DefaultEdge>(
-                DefaultEdge.class);
+        dependencies = new DefaultDirectedGraph<String, Edge>(Edge.class);
         scenarios = new HashMap<>();
 
         if (Activator.klab() != null) {
@@ -247,7 +354,14 @@ public class ScenarioView extends ViewPart {
                             for (IKimNamespace precursor : namespace.getImported()) {
                                 dependencies.addVertex(precursor.getName());
                                 scenarios.put(precursor.getName(), precursor);
-                                dependencies.addEdge(namespace.getName(), precursor.getName());
+                                dependencies.addEdge(precursor.getName(), namespace.getName(), new Edge(true));
+                            }
+                            for (String disjoint : namespace.getDisjointNamespaces()) {
+                                dependencies.addVertex(disjoint);
+                                if (!disjoint.equals(namespace.getName())) {
+                                    dependencies.addEdge(disjoint, namespace.getName(), new Edge(false));
+                                    dependencies.addEdge(namespace.getName(), disjoint, new Edge(false));
+                                }
                             }
                         }
                     }

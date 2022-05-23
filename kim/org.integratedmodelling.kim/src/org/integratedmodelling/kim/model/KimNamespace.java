@@ -25,6 +25,7 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.kim.Function;
 import org.integratedmodelling.kim.kim.Namespace;
 import org.integratedmodelling.kim.kim.OwlImport;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.common.SemanticType;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Pair;
@@ -52,6 +53,7 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 	private List<IServiceCall> extents = new ArrayList<>();
 	private Map<String, IKimStatement> statementsByName = new HashMap<>();
 	private IKimConcept domain;
+	private List<String> disjointNamespaces = new ArrayList<>();
 
 	private List<Pair<String, List<String>>> vocabularies = new ArrayList<>();
 
@@ -68,6 +70,11 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 			this.timestamp = namespace.eResource().getTimeStamp();
 		}
 		this.project = project;
+		if (namespace.getDisjointNamespaces() != null) {
+		    for (String s : namespace.getDisjointNamespaces()) {
+		        this.disjointNamespaces.add(s);
+		    }
+		}
 		project.addNamespace(this);
 		this.worldviewBound = namespace.isWorldviewBound();
 		this.domain = new KimConcept(namespace.getDomainConcept(), this);
@@ -95,9 +102,21 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 				owlImports.add(new Pair<>(imp.getName(), imp.getPrefix()));
 			}
 		}
+		
 		for (Function extent : namespace.getCoverage()) {
 			extents.add(new KimServiceCall(extent, this));
 		}
+		        
+        if (namespace.getMetadata() != null) {
+            metadata = new KimMetadata(namespace.getMetadata(), this);
+        }
+        if (namespace.getDocstring() != null) {
+            if (metadata == null) {
+                metadata = new KimMetadata();
+            }
+            metadata.put(IMetadata.DC_COMMENT, namespace.getDocstring());
+        }
+        
 		Kim.INSTANCE.registerNamespace(this);
 	}
 
@@ -385,5 +404,10 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
 	public List<Pair<String, List<String>>> getVocabularyImports() {
 		return vocabularies;
 	}
+
+    @Override
+    public Collection<String> getDisjointNamespaces() {
+        return this.disjointNamespaces;
+    }
 
 }
