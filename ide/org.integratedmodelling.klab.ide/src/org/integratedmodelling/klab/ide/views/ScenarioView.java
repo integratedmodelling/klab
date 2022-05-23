@@ -1,7 +1,10 @@
 package org.integratedmodelling.klab.ide.views;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -35,10 +38,12 @@ import org.integratedmodelling.kim.api.IKimWorkspace;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
+import org.integratedmodelling.klab.api.monitoring.IMessage.MessageClass;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.model.KlabPeer;
 import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
 import org.integratedmodelling.klab.ide.navigator.e3.TreeContentProvider;
+import org.integratedmodelling.klab.rest.ScenarioSelection;
 
 public class ScenarioView extends ViewPart {
 
@@ -81,6 +86,7 @@ public class ScenarioView extends ViewPart {
      */
     @Override
     public void createPartControl(Composite parent) {
+
         Composite container = new Composite(parent, SWT.NONE);
         container.setLayout(new GridLayout(2, false));
 
@@ -100,21 +106,21 @@ public class ScenarioView extends ViewPart {
         tree.addListener(SWT.Selection, new Listener(){
             public void handleEvent(Event event) {
                 if (event.detail == SWT.CHECK) {
-                    
+
                     String scenario = event.item.getData().toString();
-                    
+
                     if (((TreeItem) event.item).getChecked()) {
                         checked.add(event.item.getData().toString());
                     } else {
                         checked.remove(event.item.getData().toString());
                     }
-                    
+
                     for (Edge edge : dependencies.incomingEdgesOf(scenario)) {
                         if (edge.isDependency && !checked.contains(dependencies.getEdgeSource(edge))) {
                             checked.add(dependencies.getEdgeSource(edge));
                         }
                     }
-                    
+
                     for (Edge edge : dependencies.outgoingEdgesOf(scenario)) {
                         if (!edge.isDependency && checked.contains(dependencies.getEdgeTarget(edge))) {
                             checked.remove(dependencies.getEdgeTarget(edge));
@@ -167,12 +173,15 @@ public class ScenarioView extends ViewPart {
             }
 
         });
+
         treeViewer.setContentProvider(new TreeContentProvider(){
 
             @Override
             public Object[] getChildren(Object parent) {
                 if (parent instanceof Graph) {
-                    return dependencies.vertexSet().toArray();
+                    List<String> ret = new ArrayList<>(dependencies.vertexSet());
+                    Collections.sort(ret);
+                    return ret.toArray();
                 } else if (parent instanceof String) {
                     Set<String> ret = new HashSet<>();
                     for (Edge edge : dependencies.incomingEdgesOf((String) parent)) {
@@ -215,18 +224,6 @@ public class ScenarioView extends ViewPart {
         initializeToolBar();
         initializeMenu();
     }
-
-//    /*
-//     * runs in UI thread. Add or remove any dependent scenarios from the current set, then check the
-//     * corresponding items in the tree. The ones in this.checked are already set.
-//     */
-//    protected void processDependencies() {
-//        Set<String> toAdd = new HashSet<>();
-//        Set<String> toRemove = new HashSet<>();
-//        checked.addAll(toAdd);
-//        checked.removeAll(toRemove);
-//        check();
-//    }
 
     /**
      * Create the actions.
@@ -324,8 +321,15 @@ public class ScenarioView extends ViewPart {
     }
 
     private void check() {
+
         for (Item item : treeViewer.getTree().getItems()) {
             check(item);
+        }
+
+        if (Activator.session() != null) {
+            ScenarioSelection bean = new ScenarioSelection();
+            bean.getScenarios().addAll(checked);
+            Activator.session().send(MessageClass.UserInterface, IMessage.Type.ScenariosSelected, bean);
         }
     }
 

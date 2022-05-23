@@ -153,6 +153,7 @@ import org.integratedmodelling.klab.rest.ResourceOperationResponse;
 import org.integratedmodelling.klab.rest.ResourcePublishRequest;
 import org.integratedmodelling.klab.rest.ResourcePublishResponse;
 import org.integratedmodelling.klab.rest.ScaleReference;
+import org.integratedmodelling.klab.rest.ScenarioSelection;
 import org.integratedmodelling.klab.rest.SearchMatch;
 import org.integratedmodelling.klab.rest.SearchMatch.TokenClass;
 import org.integratedmodelling.klab.rest.SearchMatchAction;
@@ -706,6 +707,11 @@ public class Session extends GroovyObjectSupport
         monitor.send(IMessage.MessageClass.EngineLifecycle, IMessage.Type.TicketResponse, ret);
     }
 
+    @MessageHandler
+    private void handleScenarioSelection(final ScenarioSelection request) {
+        this.getState().setActiveScenarios(request.getScenarios());
+    }
+    
     @MessageHandler
     private void handleResourceOperation(final ResourceOperationRequest request, IMessage message) {
 
