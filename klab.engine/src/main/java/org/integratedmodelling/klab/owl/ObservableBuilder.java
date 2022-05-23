@@ -2161,7 +2161,16 @@ public class ObservableBuilder implements IObservable.Builder {
 
 			opId += (opId.isEmpty() ? "" : "_") + valueOperator.textForm;
 			cdId += (cdId.isEmpty() ? "" : "_") + valueOperator.textForm;
-
+			
+			/*
+			 * turn these into their parsed form so we have their properly computed reference name
+			 */
+			if (valueOperand instanceof IKimObservable) {
+			    valueOperand = Observables.INSTANCE.declare((IKimObservable)valueOperand, monitor);
+			} else if (valueOperand instanceof IKimConcept) {
+			    valueOperand = Concepts.INSTANCE.declare((IKimConcept)valueOperand);
+			}
+			
 			if (valueOperand instanceof IConcept) {
 
 				ret.setDefinition(ret.getDefinition() + " " + ((IConcept) valueOperand).getDefinition());
@@ -2178,8 +2187,6 @@ public class ObservableBuilder implements IObservable.Builder {
 			} else if (valueOperand instanceof IObservable) {
 
 				ret.setDefinition(ret.getDefinition() + " (" + ((Observable) valueOperand).getDefinition() + ")");
-
-				// FIXME substitute with getReferenceName()
 				opId += (opId.isEmpty() ? "" : "_") + ((Observable) valueOperand).getReferenceName();
 				cdId += (cdId.isEmpty() ? "" : "_") + Observables.INSTANCE.getDisplayName((Observable) valueOperand);
 

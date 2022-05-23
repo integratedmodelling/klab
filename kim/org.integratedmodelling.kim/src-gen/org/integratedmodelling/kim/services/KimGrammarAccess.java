@@ -3411,7 +3411,7 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//        ('imports' owlImports+=OwlImport (',' owlImports+=OwlImport)*)? &
 		//        ('covering' coverage+=Function (=> ',' coverage+=Function)*)? &
 		//        ('in' 'domain' (rootDomain?='root' | domainConcept=Concept))? &
-		//        ('disjoint' 'with' disjointNamespaces+=PathName (',' disjointNamespaces+=PathName* ))? &
+		//        ('disjoint' 'with' disjointNamespaces+=PathName (',' disjointNamespaces+=PathName)* )? &
 		//        ('version' version=VersionNumber)? &
 		//        ('resolve' ('from' lookupNamespace+=PathName*)? & ('outside' blacklistNamespace+=PathName*)? & ('using' weights=Map)?)?
 		//    )
@@ -3432,7 +3432,7 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//    ('imports' owlImports+=OwlImport (',' owlImports+=OwlImport)*)? &
 		//    ('covering' coverage+=Function (=> ',' coverage+=Function)*)? &
 		//    ('in' 'domain' (rootDomain?='root' | domainConcept=Concept))? &
-		//    ('disjoint' 'with' disjointNamespaces+=PathName (',' disjointNamespaces+=PathName* ))? &
+		//    ('disjoint' 'with' disjointNamespaces+=PathName (',' disjointNamespaces+=PathName)* )? &
 		//    ('version' version=VersionNumber)? &
 		//    ('resolve' ('from' lookupNamespace+=PathName*)? & ('outside' blacklistNamespace+=PathName*)? & ('using' weights=Map)?)?
 		//)
@@ -3519,7 +3519,7 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//    ('imports' owlImports+=OwlImport (',' owlImports+=OwlImport)*)? &
 		//    ('covering' coverage+=Function (=> ',' coverage+=Function)*)? &
 		//    ('in' 'domain' (rootDomain?='root' | domainConcept=Concept))? &
-		//    ('disjoint' 'with' disjointNamespaces+=PathName (',' disjointNamespaces+=PathName* ))? &
+		//    ('disjoint' 'with' disjointNamespaces+=PathName (',' disjointNamespaces+=PathName)* )? &
 		//    ('version' version=VersionNumber)? &
 		//    ('resolve' ('from' lookupNamespace+=PathName*)? & ('outside' blacklistNamespace+=PathName*)? & ('using' weights=Map)?)?
 		//)
@@ -3636,7 +3636,7 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//Concept
 		public RuleCall getDomainConceptConceptParserRuleCall_5_4_2_1_0() { return cDomainConceptConceptParserRuleCall_5_4_2_1_0; }
 		
-		//('disjoint' 'with' disjointNamespaces+=PathName (',' disjointNamespaces+=PathName* ))?
+		//('disjoint' 'with' disjointNamespaces+=PathName (',' disjointNamespaces+=PathName)* )?
 		public Group getGroup_5_5() { return cGroup_5_5; }
 		
 		//'disjoint'
@@ -3651,13 +3651,13 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//PathName
 		public RuleCall getDisjointNamespacesPathNameParserRuleCall_5_5_2_0() { return cDisjointNamespacesPathNameParserRuleCall_5_5_2_0; }
 		
-		//(',' disjointNamespaces+=PathName* )
+		//(',' disjointNamespaces+=PathName)*
 		public Group getGroup_5_5_3() { return cGroup_5_5_3; }
 		
 		//','
 		public Keyword getCommaKeyword_5_5_3_0() { return cCommaKeyword_5_5_3_0; }
 		
-		//disjointNamespaces+=PathName*
+		//disjointNamespaces+=PathName
 		public Assignment getDisjointNamespacesAssignment_5_5_3_1() { return cDisjointNamespacesAssignment_5_5_3_1; }
 		
 		//PathName
@@ -13207,7 +13207,7 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 	//        ('imports' owlImports+=OwlImport (',' owlImports+=OwlImport)*)? &
 	//        ('covering' coverage+=Function (=> ',' coverage+=Function)*)? &
 	//        ('in' 'domain' (rootDomain?='root' | domainConcept=Concept))? &
-	//        ('disjoint' 'with' disjointNamespaces+=PathName (',' disjointNamespaces+=PathName* ))? &
+	//        ('disjoint' 'with' disjointNamespaces+=PathName (',' disjointNamespaces+=PathName)* )? &
 	//        ('version' version=VersionNumber)? &
 	//        ('resolve' ('from' lookupNamespace+=PathName*)? & ('outside' blacklistNamespace+=PathName*)? & ('using' weights=Map)?)?
 	//    )

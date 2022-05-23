@@ -49,7 +49,11 @@ import org.integratedmodelling.klab.ide.navigator.model.documentation.EReference
 import org.integratedmodelling.klab.rest.NamespaceCompilationResult;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 
-public class ViewerLabelProvider extends LabelProvider implements IDescriptionProvider, IColorProvider, IFontProvider {
+public class ViewerLabelProvider extends LabelProvider
+        implements
+            IDescriptionProvider,
+            IColorProvider,
+            IFontProvider {
 
     public ViewerLabelProvider() {
     }
@@ -59,7 +63,8 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
     }
 
     Image getWarningMarker() {
-        return ResourceManager.getPluginImage("org.eclipse.ui.navigator.resources", "/icons/full/ovr16/warning_co.png");
+        return ResourceManager.getPluginImage("org.eclipse.ui.navigator.resources",
+                "/icons/full/ovr16/warning_co.png");
     }
 
     Image getRunMarker() {
@@ -131,21 +136,31 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 
         if (element instanceof EProject) {
             return ResourceManager.getPluginImage(Activator.PLUGIN_ID,
-                    ((EProject) element).isWorldview() ? "icons/worldview_project.png" : "icons/k-lab-icon-16.gif");
+                    ((EProject) element).isWorldview()
+                            ? "icons/worldview_project.png"
+                            : "icons/k-lab-icon-16.gif");
         }
         if (element instanceof ETestCase) {
             return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/test.gif");
         }
         if (element instanceof EScript) {
-            return ResourceManager.decorateImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/script.gif"),
+            return ResourceManager.decorateImage(
+                    ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/script.gif"),
                     getRunMarker(), SWTResourceManager.TOP_LEFT);
         }
         if (element instanceof ENamespace) {
-            NamespaceCompilationResult status = Activator.klab().getNamespaceStatus(((ENamespace) element).getName());
+            NamespaceCompilationResult status = Activator.klab()
+                    .getNamespaceStatus(((ENamespace) element).getName());
             boolean sonderklass = (status != null && status.isPublishable())
                     || ((ENamespace) element).getEParent(EProject.class).isWorldview();
             return ResourceManager.getPluginImage(Activator.PLUGIN_ID,
-                    sonderklass ? "icons/namespace-checked.png" : "icons/namespace-unchecked.png");
+                    sonderklass
+                            ? (((ENamespace) element).isScenario()
+                                    ? "icons/globe.png"
+                                    : "icons/namespace-checked.png")
+                            : (((ENamespace) element).isScenario()
+                                    ? "icons/globe.png"
+                                    : "icons/namespace-unchecked.png"));
         }
         if (element instanceof EConcept) {
             /*
@@ -198,10 +213,13 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
                     // TODO SCREAM (at Javier)
                     break;
                 case CONFIGURATION:
-                    return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/configuration_resolver.png");
+                    return ResourceManager.getPluginImage(Activator.PLUGIN_ID,
+                            "icons/configuration_resolver.png");
                 case EVENT:
                     return ResourceManager.getPluginImage(Activator.PLUGIN_ID,
-                            ((EModel) element).isInstantiator() ? "icons/event_instantiator.png" : "icons/event_resolver.png");
+                            ((EModel) element).isInstantiator()
+                                    ? "icons/event_instantiator.png"
+                                    : "icons/event_resolver.png");
                 case PROCESS:
                     return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/process_resolver.png");
                 case ATTRIBUTE:
@@ -231,7 +249,8 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
                     return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/model.png");
                 }
             } else {
-                return ResourceManager.decorateImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/model.png"),
+                return ResourceManager.decorateImage(
+                        ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/model.png"),
                         getErrorMarker(), SWTResourceManager.BOTTOM_LEFT);
             }
         }
@@ -256,7 +275,8 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
                     // TODO SCREAM (at Javier)
                     break;
                 case CONFIGURATION:
-                    return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/configuration_resolver.png");
+                    return ResourceManager.getPluginImage(Activator.PLUGIN_ID,
+                            "icons/configuration_resolver.png");
                 case EVENT:
                     return ResourceManager.getPluginImage(Activator.PLUGIN_ID,
                             isDependency ? "icons/event_dependency.png" : "icons/event_observable.png");
@@ -268,13 +288,17 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
                 case IDENTITY:
                 case REALM:
                     return ResourceManager.getPluginImage(Activator.PLUGIN_ID,
-                            isDependency ? "icons/attribute_dependency.png" : "icons/attribute_observable.png");
+                            isDependency
+                                    ? "icons/attribute_dependency.png"
+                                    : "icons/attribute_observable.png");
                 case QUALITY:
                     return ResourceManager.getPluginImage(Activator.PLUGIN_ID,
                             isDependency ? "icons/quality_dependency.png" : "icons/quality_observable.png");
                 case RELATIONSHIP:
                     return ResourceManager.getPluginImage(Activator.PLUGIN_ID,
-                            isDependency ? "icons/relationship_dependency.png" : "icons/relationship_observable.png");
+                            isDependency
+                                    ? "icons/relationship_dependency.png"
+                                    : "icons/relationship_observable.png");
                 case ROLE:
                     break;
                 case SUBJECT:
@@ -283,12 +307,16 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
                             isDependency ? "icons/subject_dependency.png" : "icons/subject_observable.png");
                 default:
                     return ResourceManager.getPluginImage(Activator.PLUGIN_ID,
-                            isDependency ? "icons/nonsemantic_dependency.png" : "icons/nonsemantic_observable.png");
+                            isDependency
+                                    ? "icons/nonsemantic_dependency.png"
+                                    : "icons/nonsemantic_observable.png");
                 }
             } else {
                 // TODO use grey
                 return ResourceManager.getPluginImage(Activator.PLUGIN_ID,
-                        isDependency ? "icons/nonsemantic_dependency.png" : "icons/nonsemantic_observable.png");
+                        isDependency
+                                ? "icons/nonsemantic_dependency.png"
+                                : "icons/nonsemantic_observable.png");
             }
         }
         if (element instanceof IKimObserver)
@@ -344,11 +372,13 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
         }
         if (element instanceof EScriptFolder) {
             return ResourceManager.decorateImage(
-                    ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/application_double.png"), getRunMarker(),
+                    ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/application_double.png"),
+                    getRunMarker(),
                     SWTResourceManager.TOP_LEFT);
         }
         if (element instanceof ETestFolder) {
-            return ResourceManager.decorateImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/scripts.gif"),
+            return ResourceManager.decorateImage(
+                    ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/scripts.gif"),
                     getTestMarker(), SWTResourceManager.TOP_LEFT);
         }
         if (element instanceof EResource) {

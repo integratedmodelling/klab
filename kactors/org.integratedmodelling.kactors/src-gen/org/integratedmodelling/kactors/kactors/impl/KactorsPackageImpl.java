@@ -1448,9 +1448,20 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EReference getAssertStatement_Assertions()
+  public EReference getAssertStatement_Parameters()
   {
     return (EReference)assertStatementEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getAssertStatement_Assertions()
+  {
+    return (EReference)assertStatementEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -4606,6 +4617,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     createEAttribute(statementEClass, STATEMENT__TAG);
 
     assertStatementEClass = createEClass(ASSERT_STATEMENT);
+    createEReference(assertStatementEClass, ASSERT_STATEMENT__PARAMETERS);
     createEReference(assertStatementEClass, ASSERT_STATEMENT__ASSERTIONS);
 
     assertionEClass = createEClass(ASSERTION);
@@ -5053,6 +5065,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     initEAttribute(getStatement_Tag(), ecorePackage.getEString(), "tag", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(assertStatementEClass, AssertStatement.class, "AssertStatement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getAssertStatement_Parameters(), this.getParameterList(), null, "parameters", null, 0, 1, AssertStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getAssertStatement_Assertions(), this.getAssertion(), null, "assertions", null, 0, -1, AssertStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(assertionEClass, Assertion.class, "Assertion", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);

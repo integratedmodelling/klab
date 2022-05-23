@@ -29,7 +29,7 @@ public class ENamespace extends EKimObject implements IKimNamespace {
 
 	IKimNamespace delegate;
 
-	ENamespace(IKimNamespace statement, ENavigatorItem parent) {
+    ENamespace(IKimNamespace statement, ENavigatorItem parent) {
 		super(statement.getName(), statement, parent);
 		this.delegate = statement;
 	}

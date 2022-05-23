@@ -108,6 +108,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Statement/tag"/>
     </genClasses>
     <genClasses ecoreClass="Kactors.ecore#//AssertStatement">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//AssertStatement/parameters"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//AssertStatement/assertions"/>
     </genClasses>
     <genClasses ecoreClass="Kactors.ecore#//Assertion">

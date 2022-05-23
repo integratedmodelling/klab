@@ -158,7 +158,7 @@ public class EngineViewController {
             }
 
             ret.add(Observations.INSTANCE.createArtifactDescriptor((IObservation) child/* , obs */, loc, 0,
-                    obs instanceof ObservationGroupView ? obs.getId() : null));
+                    obs instanceof ObservationGroupView ? obs.getId() : null, false));
 
             // assume this was notified
             scope.getNotifiedObservations().add(child.getId());

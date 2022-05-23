@@ -1,7 +1,9 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang3.EnumUtils;
@@ -9,26 +11,36 @@ import org.integratedmodelling.kactors.api.IKActorsStatement.Assert.Assertion;
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.api.IKActorsValue.Type;
 import org.integratedmodelling.kactors.model.KActorsValue;
+import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.klab.Actors;
+import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IActorIdentity;
 import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
+import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.general.IExpression;
+import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
+import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
 import org.integratedmodelling.klab.api.knowledge.IProject;
+import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IObservationGroup;
+import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.runtime.monitoring.IInspector;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
-import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.debugger.Inspector;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.SessionState;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabActorException;
 import org.integratedmodelling.klab.utils.MiscUtilities;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
@@ -126,25 +138,133 @@ public class TestBehavior {
      * @param scope
      * @param comparison
      */
-    public static void evaluateAssertion(Object returned, Assertion assertion, Scope scope) {
+    public static void evaluateAssertion(Object target, Assertion assertion, Scope scope,
+            IParameters<String> arguments) {
 
+        if (target instanceof IKActorsValue) {
+            target = KlabActor.evaluateInScope((KActorsValue) target, scope, scope.identity);
+        }
+
+        IRuntimeScope runtimeScope = scope.runtimeScope;
+        if (target instanceof IObservation) {
+        	runtimeScope = (IRuntimeScope)((IObservation)target).getScope();
+        }
+        
         IKActorsValue comparison = assertion.getValue();
+
+        // TODO Auto-generated method stub
+        IKimExpression selector = null;
+        IObservationGroup distribute = null;
         boolean ok = false;
-        if (returned instanceof IKActorsValue) {
-            returned = KlabActor.evaluateInScope((KActorsValue) returned, scope, scope.identity);
+
+        if (arguments.containsKey("select")) {
+            Object sel = arguments.get("select");
+            if (sel instanceof IKimExpression) {
+                selector = (IKimExpression) sel;
+            } else if (sel instanceof IKActorsValue && ((IKActorsValue) sel).getType() == Type.EXPRESSION) {
+                selector = ((IKActorsValue) sel).as(IKimExpression.class);
+            }
         }
-        if (comparison == null) {
-            ok = returned == null;
+
+        if (arguments.containsKey("foreach")) {
+
+        }
+
+        Object compareValue = null;
+        Descriptor compareDescriptor;
+        IExpression compareExpression = null;
+        Descriptor selectDescriptor;
+        IExpression selectExpression = null;
+        Map<String, IState> states = new HashMap<>();
+        
+        if (comparison != null) {
+            if (comparison.getType() == Type.EXPRESSION) {
+
+                IKimExpression expr = comparison.as(IKimExpression.class);
+                compareDescriptor = Extensions.INSTANCE.getLanguageProcessor(expr.getLanguage())
+                        .describe(expr.getCode(), runtimeScope.getExpressionContext());
+                compareExpression = compareDescriptor.compile();
+                for (String input : compareDescriptor.getIdentifiers()) {
+                    if (compareDescriptor.isScalar(input)
+                            && runtimeScope.getArtifact(input, IState.class) != null) {
+                        IState state = runtimeScope.getArtifact(input, IState.class);
+                        if (state != null) {
+                            states.put(state.getObservable().getName(), state);
+                        }
+                    }
+                }
+            } else {
+                compareValue = comparison.evaluate(scope, scope.identity, true);
+            }
+        }
+
+        if (selector != null) {
+            selectDescriptor = Extensions.INSTANCE.getLanguageProcessor(selector.getLanguage())
+            		// TODO parameter only if target is a state
+                    .describe(selector.getCode(), runtimeScope.getExpressionContext(), CompilerOption.ForcedScalar);
+            selectExpression = selectDescriptor.compile();
+            for (String input : selectDescriptor.getIdentifiers()) {
+                if (selectDescriptor.isScalar(input)
+                        && runtimeScope.getArtifact(input, IState.class) != null) {
+                    IState state = runtimeScope.getArtifact(input, IState.class);
+                    if (state != null) {
+                        states.put(state.getObservable().getName(), state);
+                    }
+                }
+            }
+        }
+
+        IParameters<String> args = Parameters.create();
+        long nErr = 0;
+
+        if (target instanceof IState) {
+
+            states.put("self", (IState) target);
+
+            for (ILocator locator : runtimeScope.getScale()) {
+
+                args.clear();
+                for (String key : states.keySet()) {
+                    args.put(key, states.get(key).get(locator));
+                }
+                if (selectExpression != null) {
+                    Object selectValue = selectExpression.eval(args, runtimeScope);
+                    if (selectValue instanceof Boolean && !((Boolean) selectValue)) {
+                        continue;
+                    }
+                }
+
+                if (compareExpression != null) {
+                    compareValue = compareExpression.eval(args, runtimeScope);
+                    ok = compareValue instanceof Boolean && (Boolean) compareValue;
+                } else {
+                    ok = args.get("self") == null && compareValue == null
+                            || (args.get("self") != null && args.get("self").equals(compareValue));
+                }
+
+                if (!ok) {
+                    nErr++;
+                }
+            }
         } else {
-            ok = Actors.INSTANCE.matches(comparison, returned, scope);
+
+            if (comparison == null) {
+                ok = target == null;
+            } else {
+                ok = Actors.INSTANCE.matches(comparison, target, scope);
+            }
+
+            if (!ok) {
+                nErr++;
+            }
         }
 
-        if (scope.testScope == null) {
-            throw new KlabActorException("assert failed: '" + comparison + "' and '" + returned + "' differ");
+        if (scope.testScope == null && nErr > 0) {
+            throw new KlabActorException(
+                    "assertion failed on '" + comparison + "' with " + nErr + " mismatches");
         }
 
-        scope.testScope.notifyAssertion(returned, comparison, ok, assertion);
-
+        scope.testScope.notifyAssertion(target, comparison, ok, assertion);
     }
 
     public static String printPeriod(long ms) {
@@ -171,7 +291,7 @@ public class TestBehavior {
                 args.add(o);
             }
 
-            ((SessionState)scope.runtimeScope.getSession().getState()).whitelist((Object[])args.toArray());
+            ((SessionState) scope.runtimeScope.getSession().getState()).whitelist((Object[]) args.toArray());
 
         }
 
@@ -195,7 +315,7 @@ public class TestBehavior {
                 args.add(o);
             }
 
-            ((SessionState)scope.runtimeScope.getSession().getState()).whitelist((Object[])args.toArray());
+            ((SessionState) scope.runtimeScope.getSession().getState()).whitelist((Object[]) args.toArray());
         }
 
     }
@@ -245,10 +365,11 @@ public class TestBehavior {
                 ((SessionState) scope.runtimeScope.getSession().getState()).setInspector(new Inspector());
             }
 
-            ((SessionState) scope.runtimeScope.getSession().getState()).getInspector().setTrigger((trigger, sc) -> {
-                // TODO set variables in scope for expressions and assertions
-                fire(trigger.getSubject(), scope);
-            }, (Object[]) triggerArguments.toArray());
+            ((SessionState) scope.runtimeScope.getSession().getState()).getInspector()
+                    .setTrigger((trigger, sc) -> {
+                        // TODO set variables in scope for expressions and assertions
+                        fire(trigger.getSubject(), scope);
+                    }, (Object[]) triggerArguments.toArray());
         }
 
     }

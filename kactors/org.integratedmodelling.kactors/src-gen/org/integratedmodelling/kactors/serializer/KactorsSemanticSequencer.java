@@ -358,7 +358,7 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *     AssertStatement returns AssertStatement
 	 *
 	 * Constraint:
-	 *     (assertions+=Assertion assertions+=Assertion*)
+	 *     (parameters=ParameterList? assertions+=Assertion assertions+=Assertion*)
 	 * </pre>
 	 */
 	protected void sequence_AssertStatement(ISerializationContext context, AssertStatement semanticObject) {
@@ -470,9 +470,9 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *                 contained=SimpleConceptDeclaration | 
 	 *                 caused=SimpleConceptDeclaration
 	 *             )? 
-	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
-	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
 	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
+	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
+	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
 	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
 	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)?
 	 *         )+ 
@@ -503,9 +503,9 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *                 contained=SimpleConceptDeclaration | 
 	 *                 caused=SimpleConceptDeclaration
 	 *             )? 
-	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
-	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
 	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
+	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
+	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
 	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
 	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)?
 	 *         )+ 
@@ -1321,7 +1321,7 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *     UnitElement returns UnitElement
 	 *
 	 * Constraint:
-	 *     (id=CAMELCASE_ID | id=LOWERCASE_ID | id=UPPERCASE_ID | unit=Unit)
+	 *     (id=CAMELCASE_ID | id=LOWERCASE_ID | id=UPPERCASE_ID | id=BACKCASE_ID | unit=Unit)
 	 * </pre>
 	 */
 	protected void sequence_UnitElement(ISerializationContext context, UnitElement semanticObject) {

@@ -76,8 +76,7 @@ public class TestScope {
     private LogFile getLog() {
         if (this.log == null) {
             this.log = new LogFile(logFile);
-            this.docBuilder = new AsciiDocBuilder();
-            this.docBuilder.documentTitle("Test report `" + behavior.getName() + "`");
+            this.docBuilder = new AsciiDocBuilder("Test report `" + behavior.getName() + "`");
         }
         return this.log;
     }
@@ -124,11 +123,11 @@ public class TestScope {
         // tabulation or ignore/notify status
 
         long duration = System.currentTimeMillis() - this.timestamp;
-        this.docBuilder.paragraph("Test completed in " + TestBehavior.printPeriod(duration) + " with "
-                + (assertions > 0
-                        ? (localStatistics.success + " successful, " + localStatistics.failure + " assertions")
-                        : "no assertions")
-                + "\n");
+//        this.docBuilder.paragraph("Test completed in " + TestBehavior.printPeriod(duration) + " with "
+//                + (assertions > 0
+//                        ? (localStatistics.success + " successful, " + localStatistics.failure + " assertions")
+//                        : "no assertions")
+//                + "\n");
 
         // TODO compute overall status and add to global statistics: assertions if any, plus any
         // test expectation, plus lack of exceptions or cross-refs.
@@ -151,8 +150,8 @@ public class TestScope {
 
     public TestScope getChild(Action action) {
         TestScope ret = new TestScope(this);
-        ret.docBuilder.sectionTitleLevel(ret.level + 1, "Test case `" + action.getName() + "`");
-        ret.docBuilder.listingBlock(action.getStatement().getSourceCode(), "kactors");
+//        ret.docBuilder.sectionTitleLevel(ret.level + 1, "Test case `" + action.getName() + "`");
+//        ret.docBuilder.listingBlock(action.getStatement().getSourceCode(), "kactors");
         ret.timestamp = System.currentTimeMillis();
         ret.action = action;
         ret.localStatistics = new Statistics();
@@ -164,7 +163,7 @@ public class TestScope {
         ret.parentBehavior = this.behavior;
         ret.behavior = behavior;
         ret.level = this.level + 1;
-        ret.docBuilder.sectionTitleLevel(ret.level, "Test namespace `" + behavior.getName() + "`");
+//        ret.docBuilder.sectionTitleLevel(ret.level, "Test namespace `" + behavior.getName() + "`");
         // TODO take the test annotation and the expectations
         // TODO log
         return ret;
@@ -174,7 +173,7 @@ public class TestScope {
 
         // TODO assertions that caused exceptions should insert a cross-reference to the stack trace
 
-        this.docBuilder.paragraph("Assertion " + (++assertions) + (ok ? " [SUCCESS]" : " [FAIL]") + ":\n");
+//        this.docBuilder.paragraph("Assertion " + (++assertions) + (ok ? " [SUCCESS]" : " [FAIL]") + ":\n");
         this.docBuilder.listingBlock(assertion.getSourceCode(), "kactors");
         if (ok) {
             this.localStatistics.success++;
