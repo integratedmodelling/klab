@@ -137,7 +137,6 @@ public class ScenarioView extends ViewPart {
                         }
                     }
                     check();
-                    resetAction.setEnabled(checked.size() > 0);
                 }
             }
         });
@@ -344,6 +343,7 @@ public class ScenarioView extends ViewPart {
             for (Item item : treeViewer.getTree().getItems()) {
                 check(item);
             }
+            resetAction.setEnabled(checked.size() > 0);
         });
 
         if (Activator.session() != null) {
