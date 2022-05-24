@@ -631,7 +631,7 @@ ConceptStatementBody:
 		 * provide more detail and allow more inferences and validation in models.
 		 */
 		// just establish a link
-		('describes' describedQuality=ConceptDeclaration)? &
+		('describes' describedQuality=ConceptDeclaration  ('as' descriptionConstraints=DescriptionConstraints)? )? &
 		// for quantity, direct and inverse proportionalities, use with orderings or qualities
 		('increases' 'with' describedProportionality=ConceptDeclaration)? &
 		('decreases' 'with' describedInverseProportionalityQuality=ConceptDeclaration)? &
@@ -729,6 +729,11 @@ ConceptStatementBody:
 		(properties+=PropertyStatement*) 
 	
 	)
+;
+
+DescriptionConstraints:
+	lower=Number ('to' higher=Number)? ('in' (currency=Currency | unit=Unit))? |
+	concept=SimpleConceptDeclaration
 ;
 
 Implication:

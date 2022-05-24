@@ -29,6 +29,7 @@ import org.integratedmodelling.kim.kim.Date;
 import org.integratedmodelling.kim.kim.DefineStatement;
 import org.integratedmodelling.kim.kim.DefinitionBody;
 import org.integratedmodelling.kim.kim.Dependency;
+import org.integratedmodelling.kim.kim.DescriptionConstraints;
 import org.integratedmodelling.kim.kim.DocSelector;
 import org.integratedmodelling.kim.kim.Function;
 import org.integratedmodelling.kim.kim.FunctionOrID;
@@ -300,6 +301,11 @@ public class KimAdapterFactory extends AdapterFactoryImpl
       public Adapter caseConceptStatementBody(ConceptStatementBody object)
       {
         return createConceptStatementBodyAdapter();
+      }
+      @Override
+      public Adapter caseDescriptionConstraints(DescriptionConstraints object)
+      {
+        return createDescriptionConstraintsAdapter();
       }
       @Override
       public Adapter caseImplication(Implication object)
@@ -939,6 +945,21 @@ public class KimAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createConceptStatementBodyAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.DescriptionConstraints <em>Description Constraints</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kim.kim.DescriptionConstraints
+   * @generated
+   */
+  public Adapter createDescriptionConstraintsAdapter()
   {
     return null;
   }

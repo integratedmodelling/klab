@@ -331,6 +331,15 @@ public interface KimFactory extends EFactory
   ConceptStatementBody createConceptStatementBody();
 
   /**
+   * Returns a new object of class '<em>Description Constraints</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Description Constraints</em>'.
+   * @generated
+   */
+  DescriptionConstraints createDescriptionConstraints();
+
+  /**
    * Returns a new object of class '<em>Implication</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

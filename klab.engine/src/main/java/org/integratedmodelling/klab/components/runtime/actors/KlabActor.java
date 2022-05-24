@@ -2035,8 +2035,12 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
                                             + action.getName());
                             // TODO arm the inspector in the runtime scope
                             KlabActor.this.run(action, testScope);
-                            // TODO remove the inspector
+                            // TODO remove the inspector, reset constraints, reset context
+                            if (identity instanceof Session) {
+                                ((Session)identity).resetAfterTest(action);
+                            }
                             testScope.testScope.finalizeTest(action, testScope.valueScope);
+                           
                         }
                         message.scope.runtimeScope.getMonitor()
                                 .info(KlabActor.this.behavior.getName() + ": done running tests");

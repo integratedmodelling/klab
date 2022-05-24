@@ -31,6 +31,7 @@ import org.integratedmodelling.kim.kim.Date;
 import org.integratedmodelling.kim.kim.DefineStatement;
 import org.integratedmodelling.kim.kim.DefinitionBody;
 import org.integratedmodelling.kim.kim.Dependency;
+import org.integratedmodelling.kim.kim.DescriptionConstraints;
 import org.integratedmodelling.kim.kim.DocSelector;
 import org.integratedmodelling.kim.kim.Function;
 import org.integratedmodelling.kim.kim.FunctionOrID;
@@ -316,6 +317,13 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   private EClass conceptStatementBodyEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass descriptionConstraintsEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -3898,7 +3906,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EReference getConceptStatementBody_DescribedProportionality()
+  public EReference getConceptStatementBody_DescriptionConstraints()
   {
     return (EReference)conceptStatementBodyEClass.getEStructuralFeatures().get(20);
   }
@@ -3909,7 +3917,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EReference getConceptStatementBody_DescribedInverseProportionalityQuality()
+  public EReference getConceptStatementBody_DescribedProportionality()
   {
     return (EReference)conceptStatementBodyEClass.getEStructuralFeatures().get(21);
   }
@@ -3920,7 +3928,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EReference getConceptStatementBody_DescribedNonzeroQuality()
+  public EReference getConceptStatementBody_DescribedInverseProportionalityQuality()
   {
     return (EReference)conceptStatementBodyEClass.getEStructuralFeatures().get(22);
   }
@@ -3931,7 +3939,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EReference getConceptStatementBody_ClassifiesQuality()
+  public EReference getConceptStatementBody_DescribedNonzeroQuality()
   {
     return (EReference)conceptStatementBodyEClass.getEStructuralFeatures().get(23);
   }
@@ -3942,7 +3950,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EReference getConceptStatementBody_DiscretizesQuality()
+  public EReference getConceptStatementBody_ClassifiesQuality()
   {
     return (EReference)conceptStatementBodyEClass.getEStructuralFeatures().get(24);
   }
@@ -3953,7 +3961,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EReference getConceptStatementBody_ActuallyInheritedTraits()
+  public EReference getConceptStatementBody_DiscretizesQuality()
   {
     return (EReference)conceptStatementBodyEClass.getEStructuralFeatures().get(25);
   }
@@ -3964,7 +3972,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EReference getConceptStatementBody_Roles()
+  public EReference getConceptStatementBody_ActuallyInheritedTraits()
   {
     return (EReference)conceptStatementBodyEClass.getEStructuralFeatures().get(26);
   }
@@ -3975,7 +3983,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EReference getConceptStatementBody_TargetObservables()
+  public EReference getConceptStatementBody_Roles()
   {
     return (EReference)conceptStatementBodyEClass.getEStructuralFeatures().get(27);
   }
@@ -3986,7 +3994,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EReference getConceptStatementBody_RestrictedObservables()
+  public EReference getConceptStatementBody_TargetObservables()
   {
     return (EReference)conceptStatementBodyEClass.getEStructuralFeatures().get(28);
   }
@@ -3997,7 +4005,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EReference getConceptStatementBody_ConferredTraits()
+  public EReference getConceptStatementBody_RestrictedObservables()
   {
     return (EReference)conceptStatementBodyEClass.getEStructuralFeatures().get(29);
   }
@@ -4008,7 +4016,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EReference getConceptStatementBody_ConferredTargets()
+  public EReference getConceptStatementBody_ConferredTraits()
   {
     return (EReference)conceptStatementBodyEClass.getEStructuralFeatures().get(30);
   }
@@ -4019,9 +4027,9 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EAttribute getConceptStatementBody_Constituent()
+  public EReference getConceptStatementBody_ConferredTargets()
   {
-    return (EAttribute)conceptStatementBodyEClass.getEStructuralFeatures().get(31);
+    return (EReference)conceptStatementBodyEClass.getEStructuralFeatures().get(31);
   }
 
   /**
@@ -4030,7 +4038,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EAttribute getConceptStatementBody_Constitutes()
+  public EAttribute getConceptStatementBody_Constituent()
   {
     return (EAttribute)conceptStatementBodyEClass.getEStructuralFeatures().get(32);
   }
@@ -4041,7 +4049,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EAttribute getConceptStatementBody_PartOf()
+  public EAttribute getConceptStatementBody_Constitutes()
   {
     return (EAttribute)conceptStatementBodyEClass.getEStructuralFeatures().get(33);
   }
@@ -4052,9 +4060,9 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EReference getConceptStatementBody_Whole()
+  public EAttribute getConceptStatementBody_PartOf()
   {
-    return (EReference)conceptStatementBodyEClass.getEStructuralFeatures().get(34);
+    return (EAttribute)conceptStatementBodyEClass.getEStructuralFeatures().get(34);
   }
 
   /**
@@ -4063,7 +4071,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EReference getConceptStatementBody_Creates()
+  public EReference getConceptStatementBody_Whole()
   {
     return (EReference)conceptStatementBodyEClass.getEStructuralFeatures().get(35);
   }
@@ -4074,7 +4082,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EReference getConceptStatementBody_TraitTargets()
+  public EReference getConceptStatementBody_Creates()
   {
     return (EReference)conceptStatementBodyEClass.getEStructuralFeatures().get(36);
   }
@@ -4085,7 +4093,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EReference getConceptStatementBody_Domains()
+  public EReference getConceptStatementBody_TraitTargets()
   {
     return (EReference)conceptStatementBodyEClass.getEStructuralFeatures().get(37);
   }
@@ -4096,7 +4104,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EReference getConceptStatementBody_Ranges()
+  public EReference getConceptStatementBody_Domains()
   {
     return (EReference)conceptStatementBodyEClass.getEStructuralFeatures().get(38);
   }
@@ -4107,7 +4115,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EReference getConceptStatementBody_Inverse()
+  public EReference getConceptStatementBody_Ranges()
   {
     return (EReference)conceptStatementBodyEClass.getEStructuralFeatures().get(39);
   }
@@ -4118,7 +4126,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EReference getConceptStatementBody_QualitiesAffected()
+  public EReference getConceptStatementBody_Inverse()
   {
     return (EReference)conceptStatementBodyEClass.getEStructuralFeatures().get(40);
   }
@@ -4129,9 +4137,20 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
+  public EReference getConceptStatementBody_QualitiesAffected()
+  {
+    return (EReference)conceptStatementBodyEClass.getEStructuralFeatures().get(41);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EAttribute getConceptStatementBody_Disjoint()
   {
-    return (EAttribute)conceptStatementBodyEClass.getEStructuralFeatures().get(41);
+    return (EAttribute)conceptStatementBodyEClass.getEStructuralFeatures().get(42);
   }
 
   /**
@@ -4142,7 +4161,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EReference getConceptStatementBody_Children()
   {
-    return (EReference)conceptStatementBodyEClass.getEStructuralFeatures().get(42);
+    return (EReference)conceptStatementBodyEClass.getEStructuralFeatures().get(43);
   }
 
   /**
@@ -4153,7 +4172,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EReference getConceptStatementBody_Implications()
   {
-    return (EReference)conceptStatementBodyEClass.getEStructuralFeatures().get(43);
+    return (EReference)conceptStatementBodyEClass.getEStructuralFeatures().get(44);
   }
 
   /**
@@ -4164,7 +4183,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EAttribute getConceptStatementBody_Authorities()
   {
-    return (EAttribute)conceptStatementBodyEClass.getEStructuralFeatures().get(44);
+    return (EAttribute)conceptStatementBodyEClass.getEStructuralFeatures().get(45);
   }
 
   /**
@@ -4175,7 +4194,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EReference getConceptStatementBody_Metadata()
   {
-    return (EReference)conceptStatementBodyEClass.getEStructuralFeatures().get(45);
+    return (EReference)conceptStatementBodyEClass.getEStructuralFeatures().get(46);
   }
 
   /**
@@ -4186,7 +4205,73 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EReference getConceptStatementBody_Properties()
   {
-    return (EReference)conceptStatementBodyEClass.getEStructuralFeatures().get(46);
+    return (EReference)conceptStatementBodyEClass.getEStructuralFeatures().get(47);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EClass getDescriptionConstraints()
+  {
+    return descriptionConstraintsEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getDescriptionConstraints_Lower()
+  {
+    return (EReference)descriptionConstraintsEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getDescriptionConstraints_Higher()
+  {
+    return (EReference)descriptionConstraintsEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getDescriptionConstraints_Currency()
+  {
+    return (EReference)descriptionConstraintsEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getDescriptionConstraints_Unit()
+  {
+    return (EReference)descriptionConstraintsEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getDescriptionConstraints_Concept()
+  {
+    return (EReference)descriptionConstraintsEClass.getEStructuralFeatures().get(4);
   }
 
   /**
@@ -5910,6 +5995,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEReference(conceptStatementBodyEClass, CONCEPT_STATEMENT_BODY__UPPER_CONCEPT);
     createEReference(conceptStatementBodyEClass, CONCEPT_STATEMENT_BODY__REQUIREMENTS);
     createEReference(conceptStatementBodyEClass, CONCEPT_STATEMENT_BODY__DESCRIBED_QUALITY);
+    createEReference(conceptStatementBodyEClass, CONCEPT_STATEMENT_BODY__DESCRIPTION_CONSTRAINTS);
     createEReference(conceptStatementBodyEClass, CONCEPT_STATEMENT_BODY__DESCRIBED_PROPORTIONALITY);
     createEReference(conceptStatementBodyEClass, CONCEPT_STATEMENT_BODY__DESCRIBED_INVERSE_PROPORTIONALITY_QUALITY);
     createEReference(conceptStatementBodyEClass, CONCEPT_STATEMENT_BODY__DESCRIBED_NONZERO_QUALITY);
@@ -5937,6 +6023,13 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEAttribute(conceptStatementBodyEClass, CONCEPT_STATEMENT_BODY__AUTHORITIES);
     createEReference(conceptStatementBodyEClass, CONCEPT_STATEMENT_BODY__METADATA);
     createEReference(conceptStatementBodyEClass, CONCEPT_STATEMENT_BODY__PROPERTIES);
+
+    descriptionConstraintsEClass = createEClass(DESCRIPTION_CONSTRAINTS);
+    createEReference(descriptionConstraintsEClass, DESCRIPTION_CONSTRAINTS__LOWER);
+    createEReference(descriptionConstraintsEClass, DESCRIPTION_CONSTRAINTS__HIGHER);
+    createEReference(descriptionConstraintsEClass, DESCRIPTION_CONSTRAINTS__CURRENCY);
+    createEReference(descriptionConstraintsEClass, DESCRIPTION_CONSTRAINTS__UNIT);
+    createEReference(descriptionConstraintsEClass, DESCRIPTION_CONSTRAINTS__CONCEPT);
 
     implicationEClass = createEClass(IMPLICATION);
     createEReference(implicationEClass, IMPLICATION__QUANTIFIER);
@@ -6455,6 +6548,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEReference(getConceptStatementBody_UpperConcept(), this.getConcept(), null, "upperConcept", null, 0, 1, ConceptStatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getConceptStatementBody_Requirements(), this.getIdentityRequirement(), null, "requirements", null, 0, -1, ConceptStatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getConceptStatementBody_DescribedQuality(), this.getConceptDeclaration(), null, "describedQuality", null, 0, 1, ConceptStatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getConceptStatementBody_DescriptionConstraints(), this.getDescriptionConstraints(), null, "descriptionConstraints", null, 0, 1, ConceptStatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getConceptStatementBody_DescribedProportionality(), this.getConceptDeclaration(), null, "describedProportionality", null, 0, 1, ConceptStatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getConceptStatementBody_DescribedInverseProportionalityQuality(), this.getConceptDeclaration(), null, "describedInverseProportionalityQuality", null, 0, 1, ConceptStatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getConceptStatementBody_DescribedNonzeroQuality(), this.getConceptDeclaration(), null, "describedNonzeroQuality", null, 0, 1, ConceptStatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -6482,6 +6576,13 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEAttribute(getConceptStatementBody_Authorities(), ecorePackage.getEString(), "authorities", null, 0, -1, ConceptStatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getConceptStatementBody_Metadata(), this.getMap(), null, "metadata", null, 0, 1, ConceptStatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getConceptStatementBody_Properties(), this.getPropertyStatement(), null, "properties", null, 0, -1, ConceptStatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(descriptionConstraintsEClass, DescriptionConstraints.class, "DescriptionConstraints", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getDescriptionConstraints_Lower(), this.getNumber(), null, "lower", null, 0, 1, DescriptionConstraints.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getDescriptionConstraints_Higher(), this.getNumber(), null, "higher", null, 0, 1, DescriptionConstraints.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getDescriptionConstraints_Currency(), this.getCurrency(), null, "currency", null, 0, 1, DescriptionConstraints.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getDescriptionConstraints_Unit(), this.getUnit(), null, "unit", null, 0, 1, DescriptionConstraints.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getDescriptionConstraints_Concept(), this.getConceptDeclaration(), null, "concept", null, 0, 1, DescriptionConstraints.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(implicationEClass, Implication.class, "Implication", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getImplication_Quantifier(), this.getQuantification(), null, "quantifier", null, 0, 1, Implication.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
