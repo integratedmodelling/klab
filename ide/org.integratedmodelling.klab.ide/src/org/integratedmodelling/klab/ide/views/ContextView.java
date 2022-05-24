@@ -344,19 +344,21 @@ public class ContextView extends ViewPart {
                     btnNewButtonSC.addSelectionListener(new SelectionAdapter(){
                         @Override
                         public void widgetSelected(SelectionEvent e) {
-                            // Environment.get().clearScenarios();
+                            if (Activator.session() != null) {
+                                Activator.session().send(MessageClass.UserInterface, IMessage.Type.ResetScenarios);
+                            }
                         }
                     });
-                    btnNewButtonSC.setToolTipText("Open scenarios view");
+                    btnNewButtonSC.setToolTipText("Reset all scenarios");
                     btnNewButtonSC.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
                     btnNewButtonSC.addMouseListener(new MouseAdapter(){
                         @Override
                         public void mouseUp(MouseEvent e) {
-//                            Eclipse.INSTANCE.openView(ScenarioView.ID, null);
+                            // Eclipse.INSTANCE.openView(ScenarioView.ID, null);
                         }
                     });
-                    btnNewButtonSC.setImage(
-                            ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/globe.png"));
+                    btnNewButtonSC
+                            .setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/globe.png"));
                     // toolkit.adapt(btnNewButtonSC, true, true);
                 }
             }
@@ -461,7 +463,7 @@ public class ContextView extends ViewPart {
             break;
         case ScenariosSelected:
             if (message.getMessageClass() == MessageClass.UserInterface) {
-                
+
                 final ScenarioSelection selection = message.getPayload(ScenarioSelection.class);
 
                 Display.getDefault().asyncExec(() -> {
@@ -471,8 +473,11 @@ public class ContextView extends ViewPart {
                         scenariosLabel.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
                         scenariosLabel.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.ITALIC));
                     } else {
-                        scenariosLabel.setText(selection.getScenarios().size() + " scenario"
-                                + (selection.getScenarios().size() == 1 ? " is " : "s are ") + "active");
+                        if (selection.getScenarios().size() == 1) {
+                            scenariosLabel.setText(selection.getScenarios().iterator().next());
+                        } else {
+                            scenariosLabel.setText(selection.getScenarios().size() + " scenarios are active");
+                        }
                         scenariosLabel.setBackground(SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN));
                         scenariosLabel.setForeground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
                         scenariosLabel.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.BOLD));

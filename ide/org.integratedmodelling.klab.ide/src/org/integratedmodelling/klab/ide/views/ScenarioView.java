@@ -44,6 +44,8 @@ import org.integratedmodelling.klab.ide.model.KlabPeer;
 import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
 import org.integratedmodelling.klab.ide.navigator.e3.TreeContentProvider;
 import org.integratedmodelling.klab.rest.ScenarioSelection;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.ModifyEvent;
 
 public class ScenarioView extends ViewPart {
 
@@ -73,6 +75,7 @@ public class ScenarioView extends ViewPart {
     private Action autoResetAction;
 
     private TreeViewer treeViewer;
+    protected String filter;
 
     public ScenarioView() {
         klab = new KlabPeer(Sender.ANY, (message) -> handleMessage(message));
@@ -95,6 +98,13 @@ public class ScenarioView extends ViewPart {
         lblSearch.setText("Filter");
 
         text = new Text(container, SWT.BORDER);
+        text.addModifyListener(new ModifyListener(){
+
+            public void modifyText(ModifyEvent e) {
+                filter = text.getText();
+                refreshScenarios();
+            }
+        });
         text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
         treeViewer = new TreeViewer(container, SWT.BORDER | SWT.CHECK | SWT.MULTI);
@@ -169,7 +179,9 @@ public class ScenarioView extends ViewPart {
             public String getColumnText(Object element, int columnIndex) {
                 return columnIndex == 0
                         ? element.toString()
-                        : scenarios.get(element).getMetadata().get(IMetadata.DC_COMMENT, "No description supplied");
+                        : scenarios.get(element) == null
+                                ? ""
+                                : scenarios.get(element).getMetadata().get(IMetadata.DC_COMMENT, "No description supplied");
             }
 
         });
@@ -248,31 +260,27 @@ public class ScenarioView extends ViewPart {
             autoResetAction = new Action("Automatic reset", SWT.TOGGLE){
                 @Override
                 public void run() {
-                    if (autoResetAction.isChecked()) {
-
-                    }
+                    autoReset = autoResetAction.isChecked();
                 }
             };
             autoResetAction.setChecked(true);
             // resetAction.setEnabled(Activator.engineMonitor().isRunning());
             autoResetAction.setImageDescriptor(
-                    ResourceManager.getPluginImageDescriptor("org.integratedmodelling.klab.ide", "icons/target_red.png"));
+                    ResourceManager.getPluginImageDescriptor("org.integratedmodelling.klab.ide", "icons/reset.png"));
             autoResetAction.setToolTipText("Automatically reset scenarios at context reset");
         }
         {
             filterApplicableAction = new Action("Show applicable", SWT.TOGGLE){
                 @Override
                 public void run() {
-                    if (autoResetAction.isChecked()) {
-
-                    }
+                    autoAlign = filterApplicableAction.isChecked();
                 }
             };
             filterApplicableAction.setChecked(false);
             // resetAction.setEnabled(Activator.engineMonitor().isRunning());
             filterApplicableAction.setImageDescriptor(
-                    ResourceManager.getPluginImageDescriptor("org.integratedmodelling.klab.ide", "icons/target_red.png"));
-            filterApplicableAction.setToolTipText("Only show scenarios that affect the current context");
+                    ResourceManager.getPluginImageDescriptor("org.integratedmodelling.klab.ide", "icons/localvariable_obj.png"));
+            filterApplicableAction.setToolTipText("Localize scenarios to current context");
         }
     }
 
@@ -303,11 +311,21 @@ public class ScenarioView extends ViewPart {
 
     private void handleMessage(IMessage message) {
         switch(message.getType()) {
+        case EngineDown:
+        case EngineUp:
+            resetScenarios();
+            break;
+        case ResetScenarios:
+            resetScenarios();
+            break;
+        case ResetContext:
+            if (autoReset) {
+                resetScenarios();
+            }
+            break;
         case ProjectFileModified:
         case ProjectFileAdded:
         case ProjectFileDeleted:
-        case EngineDown:
-        case EngineUp:
             refreshScenarios();
             break;
         default:
@@ -322,9 +340,11 @@ public class ScenarioView extends ViewPart {
 
     private void check() {
 
-        for (Item item : treeViewer.getTree().getItems()) {
-            check(item);
-        }
+        Display.getDefault().asyncExec(() -> {
+            for (Item item : treeViewer.getTree().getItems()) {
+                check(item);
+            }
+        });
 
         if (Activator.session() != null) {
             ScenarioSelection bean = new ScenarioSelection();
@@ -382,7 +402,9 @@ public class ScenarioView extends ViewPart {
     }
 
     private boolean filter(IKimNamespace namespace) {
-        // TODO Auto-generated method stub
+        if (filter != null && !filter.isEmpty()) {
+            return namespace.getName().contains(filter.toLowerCase());
+        }
         return true;
     }
 }

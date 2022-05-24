@@ -157,6 +157,11 @@ public interface IMessage {
          * F<->B
          */
         ResetContext,
+        
+        /**
+         * F->F (internal message between views)
+         */
+        ResetScenarios, 
 
         /**
          * F->B whenever the user wants to (re)contextualize to either a URN specifying one or more
