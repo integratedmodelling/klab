@@ -258,8 +258,8 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
             this.viewScope = new ViewScope(this);
             this.metadata = Parameters.create();
             this.behavior = behavior;
-            if (behavior.getDestination() == Type.UNITTEST) {
-                this.testScope = new TestScope(behavior);
+            if (behavior.getDestination() == Type.UNITTEST && identity instanceof Session) {
+                this.testScope = ((Session)identity).getRootTestScope().getChild(behavior);
             }
         }
 

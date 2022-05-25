@@ -1096,6 +1096,9 @@ public class Actuator implements IActuator {
         if (!isPartition() && getObservable() != null) {
             ret = ofs + "@semantics(type='" + getObservable().getDeclaration() + "'" + encodePredicates(observable) + ")\n";
         }
+        if (getModel() != null) {
+            ret += ofs + "@model(" + getModel().getName() + ")\n";
+        }
         return ret + ofs + (input ? "import " : "") + (exported ? "export " : "")
                 + (isPartition() ? "partition" : getKdlActorType()) + " " + getKdlName() + encodeBody(offset, ofs, children);
     }
