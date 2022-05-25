@@ -1062,7 +1062,7 @@ public enum Actors implements IActorsService {
         return new ArrayList<>();
     }
 
-    private Iterable<Object> iterateResource(String urn, IMonitor monitor) {
+    public Iterable<Object> iterateResource(String urn, IMonitor monitor) {
 
         VisitingDataBuilder builder = new VisitingDataBuilder(1);
         IKlabData data = Resources.INSTANCE.getResourceData(urn, builder, monitor);

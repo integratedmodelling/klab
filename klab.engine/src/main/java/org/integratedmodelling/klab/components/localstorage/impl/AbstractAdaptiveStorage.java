@@ -308,7 +308,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
         boolean initialization = false;
         if (locator instanceof IScale) {
             time = ((IScale) locator).getTime();
-            initialization = time.getFocus() == null && time.getTimeType() == ITime.Type.INITIALIZATION;
+            initialization = time == null || (time.getFocus() == null && time.getTimeType() == ITime.Type.INITIALIZATION);
         } else if (this.geometry instanceof IScale) {
             // redefine timeEnd based on the offset
             if (((IScale) this.geometry).getTime() != null) {

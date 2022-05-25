@@ -43,6 +43,7 @@ import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.model.KlabPeer;
 import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
 import org.integratedmodelling.klab.ide.navigator.e3.TreeContentProvider;
+import org.integratedmodelling.klab.rest.RuntimeEvent;
 import org.integratedmodelling.klab.rest.ScenarioSelection;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.ModifyEvent;
@@ -276,7 +277,7 @@ public class ScenarioView extends ViewPart {
                 }
             };
             filterApplicableAction.setChecked(false);
-            // resetAction.setEnabled(Activator.engineMonitor().isRunning());
+            filterApplicableAction.setEnabled(false);
             filterApplicableAction.setImageDescriptor(
                     ResourceManager.getPluginImageDescriptor("org.integratedmodelling.klab.ide", "icons/localvariable_obj.png"));
             filterApplicableAction.setToolTipText("Localize scenarios to current context");
@@ -310,6 +311,19 @@ public class ScenarioView extends ViewPart {
 
     private void handleMessage(IMessage message) {
         switch(message.getType()) {
+        case RuntimeEvent:
+            switch(message.getPayload(RuntimeEvent.class).getType()) {
+            case DataflowChanged:
+            case ObservationAdded:
+            case TaskAdded:
+            case TaskStatusChanged:
+                Display.getDefault().asyncExec(() -> {
+                    filterApplicableAction.setEnabled(true);
+                });
+            default:
+                break;
+            }
+            break;
         case EngineDown:
         case EngineUp:
             resetScenarios();
@@ -321,6 +335,9 @@ public class ScenarioView extends ViewPart {
             if (autoReset) {
                 resetScenarios();
             }
+            Display.getDefault().asyncExec(() -> {
+                filterApplicableAction.setEnabled(false);
+            });
             break;
         case ProjectFileModified:
         case ProjectFileAdded:
