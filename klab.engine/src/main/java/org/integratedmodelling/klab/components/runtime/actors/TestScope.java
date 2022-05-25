@@ -111,7 +111,7 @@ public class TestScope {
         this.docSection
                 .paragraph("Test **" + action.getName() + "** completed in " + TestBehavior.printPeriod(duration) + " with "
                         + (assertions > 0
-                                ? (localStatistics.success + " successful, " + localStatistics.failure + " failed assertions")
+                                ? (localStatistics.success + " successful, " + localStatistics.failure + " failed assertions, ")
                                 : "no assertions, ")
                         + (exceptions.size() + " exceptions")
                         + "\n");
