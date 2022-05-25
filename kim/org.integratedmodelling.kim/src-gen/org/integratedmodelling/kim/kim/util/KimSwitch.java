@@ -27,6 +27,7 @@ import org.integratedmodelling.kim.kim.Date;
 import org.integratedmodelling.kim.kim.DefineStatement;
 import org.integratedmodelling.kim.kim.DefinitionBody;
 import org.integratedmodelling.kim.kim.Dependency;
+import org.integratedmodelling.kim.kim.DescriptionConstraints;
 import org.integratedmodelling.kim.kim.DocSelector;
 import org.integratedmodelling.kim.kim.Function;
 import org.integratedmodelling.kim.kim.FunctionOrID;
@@ -365,6 +366,13 @@ public class KimSwitch<T> extends Switch<T>
       {
         ConceptStatementBody conceptStatementBody = (ConceptStatementBody)theEObject;
         T result = caseConceptStatementBody(conceptStatementBody);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KimPackage.DESCRIPTION_CONSTRAINTS:
+      {
+        DescriptionConstraints descriptionConstraints = (DescriptionConstraints)theEObject;
+        T result = caseDescriptionConstraints(descriptionConstraints);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -1066,6 +1074,22 @@ public class KimSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseConceptStatementBody(ConceptStatementBody object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Description Constraints</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Description Constraints</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseDescriptionConstraints(DescriptionConstraints object)
   {
     return null;
   }

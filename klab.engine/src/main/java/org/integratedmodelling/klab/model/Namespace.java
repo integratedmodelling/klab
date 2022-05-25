@@ -44,7 +44,8 @@ public class Namespace extends KimObject implements INamespace {
 	private boolean inactive = false;
 	private long timestamp = 0l;
 	private IConcept domain;
-
+	
+	List<String> disjointNamespaces = Collections.synchronizedList(new ArrayList<>());
 	List<IKimObject> objects = Collections.synchronizedList(new ArrayList<>());
 	Map<String, IKimObject> objectsByName = Collections.synchronizedMap(new HashMap<>());
 	Map<String, Object> symbolTable = Collections.synchronizedMap(new HashMap<>());
@@ -65,6 +66,7 @@ public class Namespace extends KimObject implements INamespace {
 		this.scope = namespace.getScope();
 		this.inactive = namespace.isInactive();
 		this.scenario = namespace.isScenario();
+		this.disjointNamespaces.addAll(namespace.getDisjointNamespaces());
 		if (namespace.getDomain() != null) {
 			this.domain = Concepts.INSTANCE.declare(namespace.getDomain());
 		}
@@ -203,8 +205,7 @@ public class Namespace extends KimObject implements INamespace {
 
 	@Override
 	public Collection<String> getDisjointNamespaces() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.disjointNamespaces;
 	}
 
 	@Override

@@ -37,6 +37,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getUpperConcept <em>Upper Concept</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getRequirements <em>Requirements</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getDescribedQuality <em>Described Quality</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getDescriptionConstraints <em>Description Constraints</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getDescribedProportionality <em>Described Proportionality</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getDescribedInverseProportionalityQuality <em>Described Inverse Proportionality Quality</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getDescribedNonzeroQuality <em>Described Nonzero Quality</em>}</li>
@@ -451,6 +452,28 @@ public interface ConceptStatementBody extends EObject
    * @generated
    */
   void setDescribedQuality(ConceptDeclaration value);
+
+  /**
+   * Returns the value of the '<em><b>Description Constraints</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Description Constraints</em>' containment reference.
+   * @see #setDescriptionConstraints(DescriptionConstraints)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getConceptStatementBody_DescriptionConstraints()
+   * @model containment="true"
+   * @generated
+   */
+  DescriptionConstraints getDescriptionConstraints();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getDescriptionConstraints <em>Description Constraints</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Description Constraints</em>' containment reference.
+   * @see #getDescriptionConstraints()
+   * @generated
+   */
+  void setDescriptionConstraints(DescriptionConstraints value);
 
   /**
    * Returns the value of the '<em><b>Described Proportionality</b></em>' containment reference.

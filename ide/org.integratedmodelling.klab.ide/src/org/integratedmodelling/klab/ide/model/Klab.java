@@ -26,6 +26,7 @@ import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
+import org.integratedmodelling.klab.api.monitoring.IMessage.MessageClass;
 import org.integratedmodelling.klab.client.utils.JsonUtils;
 import org.integratedmodelling.klab.common.CompileInfo;
 import org.integratedmodelling.klab.ide.Activator;
@@ -51,6 +52,7 @@ import org.integratedmodelling.klab.rest.NodeReference;
 import org.integratedmodelling.klab.rest.ProjectReference;
 import org.integratedmodelling.klab.rest.ResourceAdapterReference;
 import org.integratedmodelling.klab.rest.ResourceReference;
+import org.integratedmodelling.klab.rest.ScenarioSelection;
 import org.integratedmodelling.klab.utils.Pair;
 
 /**
@@ -300,6 +302,11 @@ public class Klab {
             KlabNavigator.refresh();
             break;
         case ProjectFileAdded:
+            break;
+        case ScenariosSelected:
+            if (message.getMessageClass() == MessageClass.UserInterface) {
+                Activator.post(MessageClass.UserInterface, IMessage.Type.ScenariosSelected, message.getPayload());
+            }
             break;
         default:
             break;

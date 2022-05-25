@@ -180,4 +180,9 @@ public class ENamespace extends EKimObject implements IKimNamespace {
 	public List<Pair<String, List<String>>> getVocabularyImports() {
 		return delegate.getVocabularyImports();
 	}
+
+    @Override
+    public Collection<String> getDisjointNamespaces() {
+        return delegate.getDisjointNamespaces();
+    }
 }

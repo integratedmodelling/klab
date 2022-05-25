@@ -1234,4 +1234,10 @@ public class SessionState extends Parameters<String> implements ISessionState {
         return inspector;
     }
 
+    public void resetInspector() {
+        if (inspector != null) {
+            inspector = null;
+        }
+    }
+
 }

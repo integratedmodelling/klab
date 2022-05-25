@@ -26,6 +26,7 @@ import org.integratedmodelling.kim.kim.ApplicableTarget;
 import org.integratedmodelling.kim.kim.Concept;
 import org.integratedmodelling.kim.kim.ConceptDeclaration;
 import org.integratedmodelling.kim.kim.ConceptStatementBody;
+import org.integratedmodelling.kim.kim.DescriptionConstraints;
 import org.integratedmodelling.kim.kim.IdentityRequirement;
 import org.integratedmodelling.kim.kim.Implication;
 import org.integratedmodelling.kim.kim.KimPackage;
@@ -61,6 +62,7 @@ import org.integratedmodelling.kim.kim.PropertyStatement;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#getUpperConcept <em>Upper Concept</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#getRequirements <em>Requirements</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#getDescribedQuality <em>Described Quality</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#getDescriptionConstraints <em>Description Constraints</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#getDescribedProportionality <em>Described Proportionality</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#getDescribedInverseProportionalityQuality <em>Described Inverse Proportionality Quality</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#getDescribedNonzeroQuality <em>Described Nonzero Quality</em>}</li>
@@ -413,6 +415,16 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
    * @ordered
    */
   protected ConceptDeclaration describedQuality;
+
+  /**
+   * The cached value of the '{@link #getDescriptionConstraints() <em>Description Constraints</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getDescriptionConstraints()
+   * @generated
+   * @ordered
+   */
+  protected DescriptionConstraints descriptionConstraints;
 
   /**
    * The cached value of the '{@link #getDescribedProportionality() <em>Described Proportionality</em>}' containment reference.
@@ -1241,6 +1253,56 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
    * @generated
    */
   @Override
+  public DescriptionConstraints getDescriptionConstraints()
+  {
+    return descriptionConstraints;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetDescriptionConstraints(DescriptionConstraints newDescriptionConstraints, NotificationChain msgs)
+  {
+    DescriptionConstraints oldDescriptionConstraints = descriptionConstraints;
+    descriptionConstraints = newDescriptionConstraints;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT_STATEMENT_BODY__DESCRIPTION_CONSTRAINTS, oldDescriptionConstraints, newDescriptionConstraints);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setDescriptionConstraints(DescriptionConstraints newDescriptionConstraints)
+  {
+    if (newDescriptionConstraints != descriptionConstraints)
+    {
+      NotificationChain msgs = null;
+      if (descriptionConstraints != null)
+        msgs = ((InternalEObject)descriptionConstraints).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.CONCEPT_STATEMENT_BODY__DESCRIPTION_CONSTRAINTS, null, msgs);
+      if (newDescriptionConstraints != null)
+        msgs = ((InternalEObject)newDescriptionConstraints).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.CONCEPT_STATEMENT_BODY__DESCRIPTION_CONSTRAINTS, null, msgs);
+      msgs = basicSetDescriptionConstraints(newDescriptionConstraints, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT_STATEMENT_BODY__DESCRIPTION_CONSTRAINTS, newDescriptionConstraints, newDescriptionConstraints));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public ConceptDeclaration getDescribedProportionality()
   {
     return describedProportionality;
@@ -1984,6 +2046,8 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
         return ((InternalEList<?>)getRequirements()).basicRemove(otherEnd, msgs);
       case KimPackage.CONCEPT_STATEMENT_BODY__DESCRIBED_QUALITY:
         return basicSetDescribedQuality(null, msgs);
+      case KimPackage.CONCEPT_STATEMENT_BODY__DESCRIPTION_CONSTRAINTS:
+        return basicSetDescriptionConstraints(null, msgs);
       case KimPackage.CONCEPT_STATEMENT_BODY__DESCRIBED_PROPORTIONALITY:
         return basicSetDescribedProportionality(null, msgs);
       case KimPackage.CONCEPT_STATEMENT_BODY__DESCRIBED_INVERSE_PROPORTIONALITY_QUALITY:
@@ -2082,6 +2146,8 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
         return getRequirements();
       case KimPackage.CONCEPT_STATEMENT_BODY__DESCRIBED_QUALITY:
         return getDescribedQuality();
+      case KimPackage.CONCEPT_STATEMENT_BODY__DESCRIPTION_CONSTRAINTS:
+        return getDescriptionConstraints();
       case KimPackage.CONCEPT_STATEMENT_BODY__DESCRIBED_PROPORTIONALITY:
         return getDescribedProportionality();
       case KimPackage.CONCEPT_STATEMENT_BODY__DESCRIBED_INVERSE_PROPORTIONALITY_QUALITY:
@@ -2216,6 +2282,9 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
         return;
       case KimPackage.CONCEPT_STATEMENT_BODY__DESCRIBED_QUALITY:
         setDescribedQuality((ConceptDeclaration)newValue);
+        return;
+      case KimPackage.CONCEPT_STATEMENT_BODY__DESCRIPTION_CONSTRAINTS:
+        setDescriptionConstraints((DescriptionConstraints)newValue);
         return;
       case KimPackage.CONCEPT_STATEMENT_BODY__DESCRIBED_PROPORTIONALITY:
         setDescribedProportionality((ConceptDeclaration)newValue);
@@ -2387,6 +2456,9 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
       case KimPackage.CONCEPT_STATEMENT_BODY__DESCRIBED_QUALITY:
         setDescribedQuality((ConceptDeclaration)null);
         return;
+      case KimPackage.CONCEPT_STATEMENT_BODY__DESCRIPTION_CONSTRAINTS:
+        setDescriptionConstraints((DescriptionConstraints)null);
+        return;
       case KimPackage.CONCEPT_STATEMENT_BODY__DESCRIBED_PROPORTIONALITY:
         setDescribedProportionality((ConceptDeclaration)null);
         return;
@@ -2522,6 +2594,8 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
         return requirements != null && !requirements.isEmpty();
       case KimPackage.CONCEPT_STATEMENT_BODY__DESCRIBED_QUALITY:
         return describedQuality != null;
+      case KimPackage.CONCEPT_STATEMENT_BODY__DESCRIPTION_CONSTRAINTS:
+        return descriptionConstraints != null;
       case KimPackage.CONCEPT_STATEMENT_BODY__DESCRIBED_PROPORTIONALITY:
         return describedProportionality != null;
       case KimPackage.CONCEPT_STATEMENT_BODY__DESCRIBED_INVERSE_PROPORTIONALITY_QUALITY:

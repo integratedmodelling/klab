@@ -32,6 +32,7 @@ import org.integratedmodelling.kim.kim.Date;
 import org.integratedmodelling.kim.kim.DefineStatement;
 import org.integratedmodelling.kim.kim.DefinitionBody;
 import org.integratedmodelling.kim.kim.Dependency;
+import org.integratedmodelling.kim.kim.DescriptionConstraints;
 import org.integratedmodelling.kim.kim.DocSelector;
 import org.integratedmodelling.kim.kim.Function;
 import org.integratedmodelling.kim.kim.FunctionOrID;
@@ -159,6 +160,7 @@ public class KimFactoryImpl extends EFactoryImpl implements KimFactory
       case KimPackage.UPPER_ONTOLOGY_DEFINITION: return createUpperOntologyDefinition();
       case KimPackage.CONCEPT_STATEMENT: return createConceptStatement();
       case KimPackage.CONCEPT_STATEMENT_BODY: return createConceptStatementBody();
+      case KimPackage.DESCRIPTION_CONSTRAINTS: return createDescriptionConstraints();
       case KimPackage.IMPLICATION: return createImplication();
       case KimPackage.QUANTIFICATION: return createQuantification();
       case KimPackage.PROPERTY_STATEMENT: return createPropertyStatement();
@@ -630,6 +632,18 @@ public class KimFactoryImpl extends EFactoryImpl implements KimFactory
   {
     ConceptStatementBodyImpl conceptStatementBody = new ConceptStatementBodyImpl();
     return conceptStatementBody;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public DescriptionConstraints createDescriptionConstraints()
+  {
+    DescriptionConstraintsImpl descriptionConstraints = new DescriptionConstraintsImpl();
+    return descriptionConstraints;
   }
 
   /**
