@@ -61,6 +61,13 @@ public interface IInspector {
         Object getTriggerValue();
 
         /**
+         * If any metric is requested, this will return it.
+         * 
+         * @return
+         */
+        Object getResult();
+
+        /**
          * Any trigger from code may add data in addition to the subject. This will report all data
          * sent to the trigger function of the inspector, INCLUDING the main subject.
          * 
@@ -74,13 +81,19 @@ public interface IInspector {
         MODEL, RESOURCE, OBSERVATION, STATE_SLICE, ACTUATOR, DATAFLOW, SCHEDULE
     }
 
-    // Metrics or extracted objects to apply to what is recorded
+    // What to record,if anything
     public enum Metric {
+        
+        /**
+         * Statistics applies to states and is a map of data statistics indexed by time slice,
+         * collected during contextualization.
+         */
+        STATISTICS
     }
 
     // when to record
     public enum Event {
-        CREATION, SELECTION, START, FIRST_ACCESS, FIRST_READ, FIRST_WRITE, FINISH
+        CREATION, SELECTION, START, FIRST_ACCESS, FIRST_READ, FIRST_WRITE, FINISH, ADD_DATA
     }
 
     // for future use: for now contextualization just continues

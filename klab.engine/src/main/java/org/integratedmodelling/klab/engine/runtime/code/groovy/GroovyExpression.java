@@ -301,7 +301,11 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
         bindings.setVariable("structure", ((IRuntimeScope) scope).getStructure());
         overridingIds.add("provenance");
         overridingIds.add("structure");
-
+        if (scope.getSession().getState().getInspector() != null) {
+            bindings.setVariable("inspector", scope.getSession().getState().getInspector());
+            overridingIds.add("inspector");
+        }
+        
         if (scope.getScale() != null && scope.getScale().getSpace() != null) {
             Wrapper.wrap(scope.getScale().getSpace(), "space", bindings);
             overridingIds.add("space");

@@ -27,8 +27,8 @@ import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
-import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable.MergingOption;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution.Type;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeDuration;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.common.Geometry;
@@ -1714,5 +1714,19 @@ public class Time extends Extent implements ITime {
 		}
 		return ret;
 	}
+
+	/**
+	 * If this represents a year, return the year it represents; otherwise return the start millisecond.
+	 * @return
+	 */
+    public long getNumericLocator() {
+        if (this.getTimeType() == ITime.Type.INITIALIZATION) {
+            return 0;
+        }
+        if (this.resolution != null && this.resolution.getType() == Resolution.Type.YEAR) {
+            return start.getYear();
+        }
+        return start.getMilliseconds();
+    }
 
 }

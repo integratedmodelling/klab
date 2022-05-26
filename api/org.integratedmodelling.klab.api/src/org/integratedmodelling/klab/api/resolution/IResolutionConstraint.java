@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.api.resolution;
 
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 
@@ -17,17 +18,18 @@ import org.integratedmodelling.klab.api.model.INamespace;
 public interface IResolutionConstraint {
 
     /**
-     * Return true if the model is part of a whitelist, is not blacklisted, comes from an accepted
-     * namespace, and uses accepted resources.
+     * Return true if the model is for a different observable or it's for the passed observable but
+     * part of a whitelist, is not blacklisted, comes from an accepted namespace, and uses accepted
+     * resources.
      * 
      * @param model
      * @return
      */
-    boolean accepts(IModel model);
+    boolean accepts(IModel model, IObservable observable);
 
     /**
-     * Check for blacklisted or whitelisted resources. Also used by {@link #accepts(IModel)} when
-     * the model passed to it contains resources.
+     * Check for blacklisted or whitelisted resources. Also used by
+     * {@link #accepts(IModel, IObservable)} when the model passed to it contains resources.
      * 
      * @param model
      * @return

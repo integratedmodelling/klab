@@ -20,7 +20,6 @@ import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.runtime.monitoring.IInspector;
 import org.integratedmodelling.klab.common.Offset;
@@ -28,6 +27,7 @@ import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.engine.debugger.Debugger.Watcher;
+import org.integratedmodelling.klab.engine.debugger.Statistics;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 import org.integratedmodelling.klab.engine.runtime.api.IModificationListener;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
@@ -37,6 +37,8 @@ import org.integratedmodelling.klab.scale.Extent;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.StringUtil;
+
+import groovy.lang.GroovyObjectSupport;
 
 /**
  * Smart storage using a configurable backend to store slices that are only created when the values
@@ -70,6 +72,10 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
     private boolean isScalar = false;
     private Object scalarValue = null;
 
+    // these get set/unset before writing by the inspectors and debuggers. Must be honored at
+    // each put() if there.
+    transient List<Statistics> debuggingStatistics = null;
+
     /*
      * If trivial, we have no time or just one time state, and can contain at most one slice.
      */
@@ -81,7 +87,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
      * generated on the backend values are different from the previous slice stored or when the
      * values for the current timestep are no longer unique.
      */
-    class Slice {
+    public class Slice extends GroovyObjectSupport {
 
         // if not using backend, < 0; otherwise the slice offset in it, 0 or <= time
         long sliceOffsetInBackend = -1l;
@@ -97,8 +103,8 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
         @Override
         public String toString() {
             return (timestart == 0 || timeend == 0)
-                    ? "Initialization slice"
-                    : ("Slice " + new Date(timestart) + " to " + new Date(timeend));
+                    ? "INIT [0/" + slicesByStart.size() + "] "
+                    : ("TIME [" + index + "/" + slicesByStart.size() + "] " + new Date(timestart) + " to " + new Date(timeend));
         }
 
         public T getAt(long sliceOffset) {
@@ -116,6 +122,10 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
             ret.setRange(Arrays.asList(this.statistics.getMin(), this.statistics.getMax()));
             ret.setSum(this.statistics.getSum());
             return ret;
+        }
+
+        public SummaryStatistics getRawStatistics() {
+            return this.statistics;
         }
 
         // TODO synchronization here voids the parallelism in most functions. The
@@ -162,6 +172,34 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 
         public boolean isInitialization() {
             return timestart == 0 && timeend == 0;
+        }
+
+        @Override
+        public Object getProperty(String propertyName) {
+
+            if ("mean".equals(propertyName)) {
+                return this.statistics.getMean();
+            } else if ("min".equals(propertyName)) {
+                return this.statistics.getMin();
+            } else if ("max".equals(propertyName)) {
+                return this.statistics.getMax();
+            } else if ("variance".equals(propertyName)) {
+                return this.statistics.getVariance();
+            } else if ("std".equals(propertyName)) {
+                return this.statistics.getStandardDeviation();
+            } else if ("count".equals(propertyName)) {
+                return this.statistics.getN();
+            } else if ("start".equals(propertyName)) {
+                return this.timestart;
+            } else if ("end".equals(propertyName)) {
+                return this.timeend;
+            } else if ("index".equals(propertyName)) {
+                return this.index;
+            } else if ("init".equals(propertyName)) {
+                return this.isInitialization();
+            }
+
+            return super.getProperty(propertyName);
         }
 
     }
@@ -377,6 +415,16 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 
     public long put(T value, ILocator locator) {
 
+        if (debuggingStatistics != null) {
+            double d = Double.NaN;
+            if (value != null && value instanceof Number) {
+                d = ((Number) value).doubleValue();
+            }
+            for (Statistics stat : debuggingStatistics) {
+                stat.addValue(d);
+            }
+        }
+        
         if (isScalar) {
             scalarValue = value;
             return 0;
@@ -653,4 +701,12 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
         return ret;
     }
 
+    public List<Slice> getSlices() {
+        return new ArrayList<>(slicesByStart.values());
+    }
+
+    public void setDebuggingStatistics(List<Statistics> stats) {
+        this.debuggingStatistics = stats;
+    }
+    
 }

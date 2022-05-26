@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.ehcache.impl.internal.events.ScopedStoreEventDispatcher;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.api.IKActorsBehavior.Type;
 import org.integratedmodelling.kactors.api.IKActorsStatement;
@@ -217,7 +216,9 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
         IActorIdentity<KlabMessage> identity;
         Object match;
         String appId;
+        // symbol table is set using 'def' and is local to an action
         public Map<String, Object> symbolTable = new HashMap<>();
+        // global symbols are set using 'set' and include the read-only state of the actor identity
         public Map<String, Object> globalSymbols;
         ViewScope viewScope;
         ActorRef<KlabMessage> sender;
@@ -304,7 +305,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
             this.parent = scope;
             this.listenerId = scope.listenerId;
             this.sender = scope.sender;
-            this.symbolTable.putAll(scope.symbolTable);
+            this.symbolTable = scope.symbolTable;
             this.identity = scope.identity;
             this.viewScope = scope.viewScope;
             this.appId = scope.appId;
@@ -483,7 +484,9 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
         }
 
         public Scope forAction(IBehavior.Action action) {
-            return action.getStatement().isFunction() ? this : functional();
+            Scope ret = action.getStatement().isFunction() ? new Scope(this) : functional();
+            ret.symbolTable = new HashMap<>(this.symbolTable);
+            return ret;
         }
 
         public Scope functional() {
@@ -920,6 +923,9 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
                 break;
             }
         } catch (Throwable t) {
+            if (scope.testScope != null) {
+                scope.testScope.onException(t);
+            }
             Logging.INSTANCE.warn("Exception thrown in k.Actors interpreter: " + t.getMessage());
         }
 

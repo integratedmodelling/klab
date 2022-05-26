@@ -629,7 +629,7 @@ public class RuntimeBehavior {
      * context list only pertains to one observation, so it will only be individual objects). Any
      * <em>compatible</em> and <em>reasonable</em> combination of extents, extent specifiers and
      * observations passed will be used to merge/override the previous ones, so that shape contexts
-     * can be adapted to resolutions and the like. 
+     * can be adapted to resolutions and the like.
      * <p>
      * The keys in the context map will be processed as "urn", "observer", "observable", "space",
      * "time", "spaceunit", "timeunit", "artifact", "observation". The returned context map may only
@@ -761,7 +761,8 @@ public class RuntimeBehavior {
                         } else {
                             throw new KlabIllegalArgumentException("cannot use argument " + o + " as a context parameter");
                         }
-                    }                } else {
+                    }
+                } else {
                     throw new KlabIllegalArgumentException("cannot use additional URN " + o + " as a context parameter");
                 }
             } else {

@@ -168,7 +168,10 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
     public KActorsValue(String expression, KActorCodeStatement parent) {
         super(null, parent);
         this.type = Type.EXPRESSION;
-        parseExpression(expression);
+        if (expression.startsWith("[") && expression.endsWith("]")) {
+            expression = expression.substring(1, expression.length() - 1);
+        }
+        this.value = parseExpression(expression);
     }
 
     public KActorsValue(Literal value, KActorCodeStatement parent) {
