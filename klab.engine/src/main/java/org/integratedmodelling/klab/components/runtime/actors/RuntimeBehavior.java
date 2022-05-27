@@ -19,6 +19,7 @@ import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Actors;
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
@@ -34,9 +35,12 @@ import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.model.IKimObject;
+import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
+import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -56,8 +60,10 @@ import org.integratedmodelling.klab.components.runtime.actors.extensions.Artifac
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.documentation.extensions.table.TableArtifact;
+import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.engine.resources.Worldview;
 import org.integratedmodelling.klab.engine.runtime.Session;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.rest.DataflowState.Status;
@@ -140,9 +146,9 @@ public class RuntimeBehavior {
 
             } else {
 
-                Pair<Map<String, Object>, List<IObservable>> args = separateObservationArguments(arguments, scope, identity);
+                Pair<Map<String, Object>, List<String>> args = separateObservationArguments(arguments, scope, identity);
                 Map<String, Object> contextDef = args.getFirst();
-                IObservation toFire = null;
+                Object toFire = null;
                 if (contextDef.containsKey("scale")) {
                     try {
                         toFire = (IObservation) ((Session) identity).getState().withScale((IScale) contextDef.get("scale"))
@@ -161,10 +167,22 @@ public class RuntimeBehavior {
                     toFire = (IObservation) contextDef.get("observation");
                 }
 
-                for (IObservable observable : args.getSecond()) {
+                for (String observable : args.getSecond()) {
                     try {
-                        Future<IArtifact> future = ((Session) identity).getState().submit(observable.getDefinition());
+                        Future<IArtifact> future = ((Session) identity).getState().submit(observable);
                         toFire = (IObservation) future.get();
+                        if (toFire != null
+                                && ((IObservation) toFire).getObservable().getType().equals(Concepts.c(NS.CORE_VOID))) {
+                            /*
+                             * return artifact is a view
+                             */
+                            for (IKnowledgeView view : ((IRuntimeScope) ((IObservation) toFire).getScope()).getViews()) {
+                                if (observable.equals(view.getUrn())) {
+                                    toFire = view;
+                                    break;
+                                }
+                            }
+                        }
                     } catch (Throwable e) {
                         fail(scope);
                     }
@@ -440,6 +458,7 @@ public class RuntimeBehavior {
 
         @Override
         void run(KlabActor.Scope scope) {
+            ISession session = scope.runtimeScope.getSession();
             scope.sender.tell(new AppReset(scope, scope.appId));
         }
     }
@@ -644,11 +663,11 @@ public class RuntimeBehavior {
      * @param identity
      * @return
      */
-    public static Pair<Map<String, Object>, List<IObservable>> separateObservationArguments(IParameters<String> arguments,
-            Scope scope, IActorIdentity<?> identity) {
+    public static Pair<Map<String, Object>, List<String>> separateObservationArguments(IParameters<String> arguments, Scope scope,
+            IActorIdentity<?> identity) {
 
         Map<String, Object> contextDefinition = new HashMap<>();
-        List<IObservable> observationArguments = new ArrayList<>();
+        List<String> observationArguments = new ArrayList<>();
 
         for (int i = 0; i < arguments.getUnnamedArguments().size(); i++) {
             Object o = arguments.getUnnamedArguments().get(i);
@@ -712,7 +731,7 @@ public class RuntimeBehavior {
                 if (!contextDefinition.containsKey(key) && ((IObservable) o).is(IKimConcept.Type.SUBJECT)) {
                     contextDefinition.put(key, o);
                 } else {
-                    observationArguments.add((IObservable) o);
+                    observationArguments.add(((IObservable) o).getDefinition());
                 }
             } else if (o instanceof IKimObservable) {
                 key = "observable";
@@ -720,7 +739,7 @@ public class RuntimeBehavior {
                 if (!contextDefinition.containsKey(key) && ((IObservable) o).is(IKimConcept.Type.SUBJECT)) {
                     contextDefinition.put(key, o);
                 } else {
-                    observationArguments.add((IObservable) o);
+                    observationArguments.add(((IObservable) o).getDefinition());
                 }
             } else if (o instanceof ISpace) {
                 if (!contextDefinition.containsKey("space")) {
@@ -758,6 +777,8 @@ public class RuntimeBehavior {
                                 throw new KlabIllegalArgumentException(
                                         "cannot use additional observer " + o + " as a context parameter");
                             }
+                        } else if (!contextDefinition.isEmpty() && (mo instanceof IModel || mo instanceof IViewModel)) {
+                            observationArguments.add(((IKimObject) mo).getName());
                         } else {
                             throw new KlabIllegalArgumentException("cannot use argument " + o + " as a context parameter");
                         }

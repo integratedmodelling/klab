@@ -244,7 +244,7 @@ public class TestBehavior {
 
             if (assertion.getExpression() != null) {
 
-                Object ook = KlabActor.evaluateInScope((KActorsValue)assertion.getExpression(), scope, scope.identity);
+                Object ook = KlabActor.evaluateInScope((KActorsValue) assertion.getExpression(), scope, scope.identity);
                 ok = ook instanceof Boolean && (Boolean) ook;
 
             } else if (comparison == null) {
@@ -293,6 +293,20 @@ public class TestBehavior {
 
         }
 
+    }
+
+    @Action(id = "require", fires = {}, description = "Checks accessibility of various elements in the k.LAB environment and disables a behavior if not. In test scope, will skip all tests and record the skipped actions.")
+    public static class Require extends KlabActionExecutor {
+
+        public Require(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, Scope scope,
+                ActorRef<KlabMessage> sender, String callId) {
+            super(identity, arguments, scope, sender, callId);
+        }
+
+        @Override
+        void run(Scope scope) {
+
+        }
     }
 
     @Action(id = "blacklist", fires = {})

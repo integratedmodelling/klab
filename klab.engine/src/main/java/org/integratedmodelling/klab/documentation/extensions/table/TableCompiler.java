@@ -2162,9 +2162,9 @@ public class TableCompiler {
 					.getExtent(targetObservation.getScale().getTime().size() < 3 ? 0 : 1));
 		}
 
-		if (targetObservation instanceof State) {
-		    ((State)targetObservation).dumpStatistics();
-		}
+//		if (targetObservation instanceof State) {
+//		    ((State)targetObservation).dumpStatistics();
+//		}
 		
 		/*
 		 * Find all observations in scope and fill in the observation map

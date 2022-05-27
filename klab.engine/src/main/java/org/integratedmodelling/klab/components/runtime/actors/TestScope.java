@@ -149,10 +149,6 @@ public class TestScope {
         ret.behavior = behavior;
         ret.level = this.level + 1;
         ret.docSection = this.docSection.getChild("Test case  " + behavior.getName() + " started " + new Date());
-        // ret.docBuilder.sectionTitleLevel(ret.level, "Test namespace `" + behavior.getName() +
-        // "`");
-        // TODO take the test annotation and the expectations
-        // TODO log
         return ret;
     }
 

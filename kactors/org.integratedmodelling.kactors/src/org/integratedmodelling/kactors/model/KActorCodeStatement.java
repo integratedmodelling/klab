@@ -10,8 +10,11 @@ import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.validation.Issue;
 import org.integratedmodelling.kactors.api.IKActorsCodeStatement;
+import org.integratedmodelling.kactors.kactors.Metadata;
+import org.integratedmodelling.kactors.kactors.MetadataPair;
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 
 public class KActorCodeStatement implements IKActorsCodeStatement {
@@ -35,7 +38,7 @@ public class KActorCodeStatement implements IKActorsCodeStatement {
     protected IParameters<String> metadata = Parameters.create();
 
     EObject eObject;
-	private URI uri;
+    private URI uri;
 
     public KActorCodeStatement() {
     }
@@ -56,18 +59,38 @@ public class KActorCodeStatement implements IKActorsCodeStatement {
         this.parent = statement.parent;
         this.uri = statement.uri;
     }
-    
+
     public KActorCodeStatement(EObject statement, KActorCodeStatement parent) {
         this.eObject = statement;
         if (statement != null) {
             setCode(statement);
         }
         this.parent = parent;
-		if (statement != null) {
-			this.uri = EcoreUtil.getURI(statement);
-		}
+        if (statement != null) {
+            this.uri = EcoreUtil.getURI(statement);
+        }
     }
-	
+
+    protected void parseMetadata(Metadata metadata) {
+        // TODO could just discover the feature in the EObject and be called in the constructor
+        // instead of relying on the caller invoking this.
+        if (metadata != null) {
+            for (MetadataPair pair : metadata.getPairs()) {
+                String key = pair.getKey();
+                Object value = pair.getValue() == null ? Boolean.TRUE : new KActorsValue(pair.getValue(), this).getStatedValue();
+                if (key.startsWith("#")) {
+                    this.tag = key.substring(1);
+                } else if (key.startsWith(":") || key.startsWith("!")) {
+                    if (key.startsWith("!") && value instanceof Boolean) {
+                        value = Boolean.FALSE;
+                    }
+                    key = key.substring(1);
+                }
+                this.metadata.put(pair.getKey(), value);
+            }
+        }
+    }
+
     private void setCode(EObject statement) {
         this.eObject = statement;
         ICompositeNode node = NodeModelUtils.findActualNodeFor(statement);
@@ -78,13 +101,13 @@ public class KActorCodeStatement implements IKActorsCodeStatement {
         this.uri = EcoreUtil.getURI(statement);
         this.resource = statement.eResource() == null ? "" : statement.eResource().getURI().path();
         sourceCode = node.getText().trim();
-	}
-    
-    EObject getEStatement() {
-    	return this.eObject;
     }
-    
-	/**
+
+    EObject getEStatement() {
+        return this.eObject;
+    }
+
+    /**
      * Create a dummy statement uniquely to carry the line numbers for a compile notification.
      * 
      * @param issue
@@ -98,88 +121,87 @@ public class KActorCodeStatement implements IKActorsCodeStatement {
         return ret;
     }
 
-	private void setLastCharOffset(int i) {
-		// TODO Auto-generated method stub
-		
-	}
+    private void setLastCharOffset(int i) {
+        // TODO Auto-generated method stub
 
-	private void setFirstCharOffset(int i) {
-		// TODO Auto-generated method stub
-		
-	}
+    }
 
-	private void setFirstLine(int i) {
-		// TODO Auto-generated method stub
-		
-	}
+    private void setFirstCharOffset(int i) {
+        // TODO Auto-generated method stub
 
-	@Override
-	public String getSourceCode() {
-		return sourceCode;
-	}
+    }
 
-	@Override
-	public int getFirstLine() {
-		return firstLine;
-	}
+    private void setFirstLine(int i) {
+        // TODO Auto-generated method stub
 
-	@Override
-	public int getLastLine() {
-		return lastLine;
-	}
+    }
 
-	@Override
-	public int getFirstCharOffset() {
-		return firstCharOffset;
-	}
+    @Override
+    public String getSourceCode() {
+        return sourceCode;
+    }
 
-	@Override
-	public int getLastCharOffset() {
-		return lastCharOffset;
-	}
+    @Override
+    public int getFirstLine() {
+        return firstLine;
+    }
 
-	@Override
-	public List<IKimAnnotation> getAnnotations() {
-		return annotations;
-	}
+    @Override
+    public int getLastLine() {
+        return lastLine;
+    }
 
-	@Override
-	public String getDeprecation() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public int getFirstCharOffset() {
+        return firstCharOffset;
+    }
 
-	@Override
-	public boolean isDeprecated() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public int getLastCharOffset() {
+        return lastCharOffset;
+    }
 
-	@Override
-	public boolean isErrors() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public List<IKimAnnotation> getAnnotations() {
+        return annotations;
+    }
 
-	@Override
-	public boolean isWarnings() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public String getDeprecation() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public IParameters<String> getMetadata() {
-		return metadata;
-	}
-	
-	@Override
-	public String getTag() {
-		return this.tag;
-	}
-	
-	protected void setTag(String tag) {
-		this.tag = tag;
-	}
+    @Override
+    public boolean isDeprecated() {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
+    @Override
+    public boolean isErrors() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isWarnings() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public IParameters<String> getMetadata() {
+        return metadata;
+    }
+
+    @Override
+    public String getTag() {
+        return this.tag;
+    }
+
+    protected void setTag(String tag) {
+        this.tag = tag;
+    }
 
 }

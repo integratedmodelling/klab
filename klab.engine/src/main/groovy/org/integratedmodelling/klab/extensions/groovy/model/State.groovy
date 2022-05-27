@@ -8,6 +8,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException
 import org.integratedmodelling.klab.exceptions.KlabValidationException
 import org.integratedmodelling.klab.rest.StateSummary
+import org.integratedmodelling.klab.engine.debugger.Statistics
 
 class State extends Observation<IState> {
 
@@ -39,6 +40,10 @@ class State extends Observation<IState> {
 		return ((org.integratedmodelling.klab.components.runtime.observations.State)unwrap()).getArea(value, unit);
 	}
 
+    public Statistics computeStatistics(Object locator) {
+        return ((org.integratedmodelling.klab.components.runtime.observations.State)unwrap()).computeStatistics(locator);
+    }
+    
 	/**
 	 * Invert the state values if the state is numeric and has values.
 	 * 

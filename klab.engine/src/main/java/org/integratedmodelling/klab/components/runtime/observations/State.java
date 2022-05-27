@@ -526,6 +526,17 @@ public class State extends Observation implements IState, IKeyHolder {
             System.out.println(slice + "\n" + StringUtil.leftIndent(slice.getRawStatistics().toString(), 3));
         }
     }
+    
+    public Statistics computeStatistics(Object locator) {
+        IStorage<?> stor = this.storage;
+        if (stor instanceof KeyedStorage) {
+            stor = ((KeyedStorage<?>) stor).getBackend();
+        }
+        if (stor instanceof AbstractAdaptiveStorage) {
+            return ((AbstractAdaptiveStorage<?>) stor).computeStatistics(locator);
+        }
+        return null;
+    }
 
     public void setStatistics(List<Statistics> stats) {
         this.debuggingStatistics = stats;

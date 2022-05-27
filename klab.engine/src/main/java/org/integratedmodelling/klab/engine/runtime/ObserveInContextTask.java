@@ -10,6 +10,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.function.BiConsumer;
 
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Resources;
@@ -28,6 +29,7 @@ import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.engine.Engine;
+import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
@@ -245,7 +247,7 @@ public class ObserveInContextTask extends AbstractTask<IArtifact> {
 
 					throw notifyAbort(e);
 				}
-
+				
 				return ret;
 			}
 		});
