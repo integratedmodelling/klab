@@ -134,6 +134,8 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
     private Map<String, Long> actionBindings = Collections.synchronizedMap(new HashMap<>());
     private Map<String, ActorRef<KlabMessage>> receivers = Collections.synchronizedMap(new HashMap<>());
     private Map<String, List<ActorRef<KlabMessage>>> childInstances = Collections.synchronizedMap(new HashMap<>());
+    // set to the environment that comes in with the Load message and never reset
+    private Map<String, Object> globalState = null;
     /*
      * Java objects created by calling a constructor in set statements. Messages will be sent using
      * reflection.
@@ -399,7 +401,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
          * @return
          */
         public Scope getChild(String appId, Action action) {
-            Scope ret = new Scope(this);
+            Scope ret = forAction(action);
             ret.viewScope = this.viewScope.getChild(action, appId, identity);
             return ret;
         }
@@ -661,6 +663,8 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
 
         KActorsMessage mes = new KActorsMessage(getContext().getSelf(), "reset", null, null, message.scope, message.scope.appId);
 
+        Scope scope = localizeScope(message.scope);
+        
         /**
          * FIXME not sure how this happens, but apparently it's only during debugging.
          */
@@ -671,10 +675,10 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
              */
             if (this.behavior.getDestination() == Type.APP || this.behavior.getDestination() == Type.COMPONENT) {
                 for (IBehavior.Action action : this.behavior.getActions("init", "@init")) {
-                    run(action, message.scope.getChild(this.appId, action));
+                    run(action, scope.getChild(this.appId, action));
                 }
                 for (IBehavior.Action action : this.behavior.getActions("reset", "@reset")) {
-                    run(action, message.scope.getChild(this.appId, action));
+                    run(action, scope.getChild(this.appId, action));
                 }
             }
         }
@@ -691,7 +695,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
          */
         for (KlabActionExecutor executor : actionCache.values()) {
             if (executor instanceof KlabWidgetActionExecutor) {
-                ((KlabWidgetActionExecutor) executor).onMessage(mes, message.scope);
+                ((KlabWidgetActionExecutor) executor).onMessage(mes, scope);
             }
         }
 
@@ -700,7 +704,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
          */
         for (Actor executor : localActionExecutors.values()) {
             if (executor instanceof GroupHandler) {
-                ((KlabWidgetActionExecutor) executor).onMessage(mes, message.scope);
+                ((KlabWidgetActionExecutor) executor).onMessage(mes, scope);
             }
         }
         // }
@@ -771,9 +775,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
             Action actionCode = behavior.getAction(actionId);
             if (actionCode != null) {
                 Scope scope = new Scope(identity, appId, message.scope, this.behavior)
-                        .withLayout(this.layout)/*
-                                                 * .withGlobalSymbols(this.symbolTable)
-                                                 */;
+                        .withLayout(this.layout);
                 run(actionCode, scope);
             }
 
@@ -1770,7 +1772,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
         List<ActorRef<KlabMessage>> actors = this.childInstances.get(appId);
 
         // TODO detach so that the components can be written to this without consequence
-        Scope scope = message.scope.withComponent(message.group);
+        Scope scope = localizeScope(message.scope).withComponent(message.group);
 
         ActorRef<KlabMessage> actor = getContext()
                 .spawn(Behaviors.supervise(child).onFailure(SupervisorStrategy.resume().withLoggingEnabled(true)), actorName);
@@ -1856,6 +1858,15 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
         return Behaviors.same();
     }
 
+    private Scope localizeScope(Scope scope) {
+        Scope ret = scope;
+        if (scope.globalSymbols != this.globalState) {
+            ret = new Scope(scope);
+            ret.globalSymbols = this.globalState;
+        }
+        return ret;
+    }
+
     protected Behavior<KlabMessage> handleFireMessage(Fire message) {
 
         if (message.appId != null) {
@@ -1920,6 +1931,8 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
 
     private void runBehavior(final Load message) {
 
+        this.globalState = message.scope.globalSymbols;
+        
         new Thread(){
 
             @Override
@@ -2119,7 +2132,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
              */
             Action action = this.behavior == null ? null : this.behavior.getAction(message.message);
             if (action != null) {
-                run(action, message.scope.withSender(message.sender, this.appId));
+                run(action, localizeScope(message.scope).withSender(message.sender, this.appId));
             } else {
                 /*
                  * unknown: send to the user actor which may implement this for logging or
