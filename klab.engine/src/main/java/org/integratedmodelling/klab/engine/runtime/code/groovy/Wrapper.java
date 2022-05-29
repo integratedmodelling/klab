@@ -40,7 +40,10 @@ public class Wrapper<T> {
         return unwrapped == null ? (T) this.binding.getVariables().get(jID) : unwrapped;
     }
     
-    public IRuntimeScope getScope() {
+    // compared with getScope(), this is the current one - not the scope of the variable but the one being
+    // computed at the time of access. Also the reason why we need a proxy at all, which hopefully will go 
+    // away later.
+    public IRuntimeScope getRuntimeScope() {
     	return (IRuntimeScope) this.binding.getVariable("_c");
     }
     

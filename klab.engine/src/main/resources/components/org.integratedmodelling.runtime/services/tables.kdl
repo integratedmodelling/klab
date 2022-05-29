@@ -13,3 +13,9 @@ value additionsreductions
 {
 	class 'org.integratedmodelling.klab.documentation.extensions.table.compilers.AdditionReductionTableCompiler'
 }
+
+value summarize
+	"Custom table compiler for generic summarization"
+{
+	class 'org.integratedmodelling.klab.documentation.extensions.table.compilers.SummarizingTableCompiler'
+}
