@@ -28,10 +28,8 @@ import org.integratedmodelling.kactors.kactors.Observable;
 import org.integratedmodelling.kactors.kactors.Quantity;
 import org.integratedmodelling.kactors.kactors.Tree;
 import org.integratedmodelling.kactors.kactors.Value;
-import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.klab.Services;
 import org.integratedmodelling.klab.api.auth.IIdentity;
-import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.services.IActorsService;
@@ -52,7 +50,6 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 
     private Type type;
     private Object value;
-    private Map<String, KActorsValue> metadata = new HashMap<>();
     private boolean deferred = false;
 
     // to support costly translations from implementations
@@ -168,7 +165,10 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
     public KActorsValue(String expression, KActorCodeStatement parent) {
         super(null, parent);
         this.type = Type.EXPRESSION;
-        parseExpression(expression);
+        if (expression.startsWith("[") && expression.endsWith("]")) {
+            expression = expression.substring(1, expression.length() - 1);
+        }
+        this.value = parseExpression(expression);
     }
 
     public KActorsValue(Literal value, KActorCodeStatement parent) {
@@ -231,8 +231,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
                 lt = "inclusive";
             if (rt == null)
                 rt = "exclusive";
-            this.value = new Range(from.doubleValue(), to.doubleValue(), lt.equals("exclusive"),
-                    rt.equals("exclusive"));
+            this.value = new Range(from.doubleValue(), to.doubleValue(), lt.equals("exclusive"), rt.equals("exclusive"));
             type = Type.RANGE;
         } else if (value.getNodata() != null) {
             this.type = Type.NODATA;
@@ -275,8 +274,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
             this.value = parseLiteral(value.getLiteral());
         } else if (value.getExpression() != null) {
             this.type = Type.EXPRESSION;
-            this.value = parseExpression(
-                    value.getExpression().substring(1, value.getExpression().length() - 1));
+            this.value = parseExpression(value.getExpression().substring(1, value.getExpression().length() - 1));
         } else if (value.getQuantity() != null) {
             this.type = Type.QUANTITY;
             this.value = parseQuantity(value.getQuantity());
@@ -319,9 +317,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
             this.constructor = new Constructor();
             this.type = Type.COMPONENT;
             this.constructor.setArguments(
-                    value.getParameters() == null
-                            ? new KActorsArguments()
-                            : new KActorsArguments(value.getParameters()));
+                    value.getParameters() == null ? new KActorsArguments() : new KActorsArguments(value.getParameters()));
             this.constructor.setComponent(value.getBehavior());
         } else if (value.getMethodCalls() != null && value.getMethodCalls().size() > 0) {
             this.type = Type.CALLCHAIN;
@@ -375,8 +371,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
             KActorCodeStatement parent) {
         Map<KActorsValue, KActorsValue> ret = new LinkedHashMap<>();
         for (MapEntry entry : map.getEntries()) {
-            ret.put(new KActorsValue(entry.getClassifier(), parent),
-                    new KActorsValue(entry.getValue(), parent));
+            ret.put(new KActorsValue(entry.getClassifier(), parent), new KActorsValue(entry.getValue(), parent));
         }
         return ret;
     }
@@ -456,7 +451,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
         return ret;
     }
 
-    private Object parseLiteral(Literal literal) {
+    Object parseLiteral(Literal literal) {
         if (literal.getBoolean() != null) {
             this.type = Type.BOOLEAN;
             return Boolean.parseBoolean(literal.getBoolean());
@@ -473,8 +468,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
             if (literal.getTo() != null) {
                 high = parseNumber(literal.getTo()).doubleValue();
             }
-            return Range.create(low.doubleValue(),
-                    high == null ? Double.POSITIVE_INFINITY : high.doubleValue());
+            return Range.create(low.doubleValue(), high == null ? Double.POSITIVE_INFINITY : high.doubleValue());
         } else if (literal.getDate() != null) {
             this.type = Type.DATE;
             this.value = new KActorsDate(literal.getDate());
@@ -499,7 +493,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
     public <T> T as(Class<? extends T> cls) {
         if (value != null && cls.isAssignableFrom(value.getClass())) {
             return (T) value;
-        } 
+        }
         return null;
     }
 
@@ -573,8 +567,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
     }
 
     public Graph<KActorsValue, DefaultEdge> parseTree(Tree tree, KActorCodeStatement parent) {
-        Graph<KActorsValue, DefaultEdge> ret = new DefaultDirectedGraph<KActorsValue, DefaultEdge>(
-                DefaultEdge.class);
+        Graph<KActorsValue, DefaultEdge> ret = new DefaultDirectedGraph<KActorsValue, DefaultEdge>(DefaultEdge.class);
         addNode(tree, parent, ret);
         return ret;
     }
@@ -589,8 +582,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
         return null;
     }
 
-    private KActorsValue addNode(Tree treeNode, KActorCodeStatement parent,
-            Graph<KActorsValue, DefaultEdge> ret) {
+    private KActorsValue addNode(Tree treeNode, KActorCodeStatement parent, Graph<KActorsValue, DefaultEdge> ret) {
         KActorsValue value = new KActorsValue(treeNode.getRoot(), parent);
         ret.addVertex(value);
         for (EObject child : treeNode.getValue()) {
@@ -668,7 +660,10 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
          * metadata may override anything
          */
         for (String key : metadata.keySet()) {
-            ret.put(key, metadata.get(key).getStatedValue().toString());
+            ret.put(key,
+                    metadata.get(key) instanceof KActorsValue
+                            ? ((KActorsValue) metadata.get(key)).getStatedValue().toString()
+                            : metadata.get(key).toString());
         }
 
         return ret;

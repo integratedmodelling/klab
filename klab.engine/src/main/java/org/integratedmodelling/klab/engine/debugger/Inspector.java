@@ -1,28 +1,33 @@
 package org.integratedmodelling.klab.engine.debugger;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.BiConsumer;
 
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IInspector;
+import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.utils.Pair;
 
-public class Inspector implements IInspector {
+import groovy.lang.GroovyObjectSupport;
 
-    class TriggerImpl implements Trigger {
+public class Inspector extends GroovyObjectSupport implements IInspector {
+
+    public class TriggerImpl implements Trigger {
 
         Asset asset;
         Metric metric;
         Event event;
         Action action = Action.CONTINUE;
         // the specific object, if any, that will trigger this - could be a model
-        // object, a URN, a state value
+        // object, a URN, a state value, an observable
         Object self;
         // condition to match for trigger: if not empty, the fields of the trigger will be
         // accessible with their names
         Object condition;
+        Object result;
         List<Pair<ValueOperator, Object>> operators = new ArrayList<>();
 
         // data for matching, used only in triggered events for ease of comparison
@@ -75,6 +80,15 @@ public class Inspector implements IInspector {
             }
             return true;
         }
+
+        @Override
+        public Object getResult() {
+            return result;
+        }
+
+        public void setResult(Object result) {
+            this.result = result;
+        }
     }
 
     List<TriggerImpl> triggers = new ArrayList<>();
@@ -108,6 +122,41 @@ public class Inspector implements IInspector {
         trigger.handler = handler;
         triggers.add(trigger);
     }
+    
+    public void reset() {
+        triggers.clear();
+    }
+
+    public Collection<TriggerImpl> getTriggers(Object... matches) {
+        List<TriggerImpl> ret = new ArrayList<>();
+        for (TriggerImpl trigger : triggers) {
+            for (Object o : matches) {
+                if (o instanceof Action) {
+                    if (trigger.action != (Action) o) {
+                        continue;
+                    }
+                } else if (o instanceof Event) {
+                    if (trigger.event != (Event) o) {
+                        continue;
+                    }
+                } else if (o instanceof Metric) {
+                    if (trigger.metric != (Metric) o) {
+                        continue;
+                    }
+                } else if (o instanceof Asset) {
+                    if (trigger.asset != (Asset) o) {
+                        continue;
+                    }
+                } else {
+                    if (trigger.self == null || !trigger.self.equals(o)) {
+                        continue;
+                    }
+                }
+            }
+            ret.add(trigger);
+        }
+        return ret;
+    }
 
     @Override
     public void trigger(IContextualizationScope scope, Object... triggerArguments) {
@@ -140,7 +189,32 @@ public class Inspector implements IInspector {
                 t.handler.accept(trigger, scope);
             }
         }
+    }
 
+    @Override
+    public Object getProperty(String propertyName) {
+        if ("result".equals(propertyName)) {
+            Object ret = null;
+            for (TriggerImpl trigger : triggers) {
+                if (trigger.getResult() != null) {
+                    if (ret != null) {
+                        throw new KlabInternalErrorException(
+                                "cannot use inspector.result when there is more than one trigger with results");
+                    }
+                    ret = trigger.getResult();
+                }
+            }
+            return ret;
+        } else if ("results".equals(propertyName)) {
+            List<Object> ret = new ArrayList<>();
+            for (TriggerImpl trigger : triggers) {
+                if (trigger.getResult() != null) {
+                    ret.add(trigger.getResult());
+                }
+            }
+            return ret;
+        }
+        return super.getProperty(propertyName);
     }
 
 }

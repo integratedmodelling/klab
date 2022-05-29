@@ -10,6 +10,7 @@ import org.apache.commons.lang3.EnumUtils;
 import org.integratedmodelling.kactors.api.IKActorsStatement.Assert.Assertion;
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.api.IKActorsValue.Type;
+import org.integratedmodelling.kactors.model.KActorsArguments;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
@@ -241,7 +242,12 @@ public class TestBehavior {
             }
         } else {
 
-            if (comparison == null) {
+            if (assertion.getExpression() != null) {
+
+                Object ook = KlabActor.evaluateInScope((KActorsValue) assertion.getExpression(), scope, scope.identity);
+                ok = ook instanceof Boolean && (Boolean) ook;
+
+            } else if (comparison == null) {
                 ok = target == null;
             } else {
                 ok = Actors.INSTANCE.matches(comparison, target, scope);
@@ -287,6 +293,20 @@ public class TestBehavior {
 
         }
 
+    }
+
+    @Action(id = "require", fires = {}, description = "Checks accessibility of various elements in the k.LAB environment and disables a behavior if not. In test scope, will skip all tests and record the skipped actions.")
+    public static class Require extends KlabActionExecutor {
+
+        public Require(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, Scope scope,
+                ActorRef<KlabMessage> sender, String callId) {
+            super(identity, arguments, scope, sender, callId);
+        }
+
+        @Override
+        void run(Scope scope) {
+
+        }
     }
 
     @Action(id = "blacklist", fires = {})
@@ -349,6 +369,7 @@ public class TestBehavior {
                         }
                     } else {
                         o = ((KActorsValue) o).evaluate(scope, identity, true);
+                        triggerArguments.add(o);
                     }
                 }
             }
@@ -357,6 +378,16 @@ public class TestBehavior {
             // inspect in a test action will pass through here
             if (scope.runtimeScope.getSession().getState().getInspector() == null) {
                 ((SessionState) scope.runtimeScope.getSession().getState()).setInspector(new Inspector());
+            }
+
+            if (arguments.get("reset") != null) {
+                Object reset = arguments.get("reset");
+                if (reset instanceof KActorsValue) {
+                    reset = ((KActorsValue) reset).evaluate(scope, scope.identity, true);
+                }
+                if (reset instanceof Boolean && (Boolean) reset) {
+                    ((Inspector) scope.runtimeScope.getSession().getState().getInspector()).reset();
+                }
             }
 
             ((SessionState) scope.runtimeScope.getSession().getState()).getInspector().setTrigger((trigger, sc) -> {

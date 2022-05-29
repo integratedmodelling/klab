@@ -62,8 +62,8 @@ import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
+import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.data.classification.Classifier;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
@@ -2162,20 +2162,14 @@ public class TableCompiler {
 					.getExtent(targetObservation.getScale().getTime().size() < 3 ? 0 : 1));
 		}
 
+//		if (targetObservation instanceof State) {
+//		    ((State)targetObservation).dumpStatistics();
+//		}
+		
 		/*
 		 * Find all observations in scope and fill in the observation map
 		 */
 		TableArtifact ret = new TableArtifact(this, sortedRows, sortedColumns, scope);
-
-//		Double fixedAreaMq = null;
-//		Double adaptedAreaMq = null;
-//		if (targetObservation.getScale().getSpace() != null
-//				&& targetObservation.getScale().getSpace() instanceof Space) {
-//			Space space = (Space) targetObservation.getScale().getSpace();
-//			if (space.getGrid() != null) {
-//				fixedAreaMq = space.getGrid().getCell(0).getStandardizedArea();
-//			}
-//		}
 
 		boolean abstractStates = isState(targetObservation) && targetObservation instanceof IObservationGroup;
 

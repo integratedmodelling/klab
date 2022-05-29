@@ -8,6 +8,8 @@ public class DataSummary {
 	private double nodataProportion;
 	private double minValue = Double.NaN;
 	private double maxValue = Double.NaN;
+	private double mean = Double.NaN;
+	
 	/**
 	 * is need on k.Explorer to know that the min and max has no sense
 	 */
@@ -101,5 +103,13 @@ public class DataSummary {
 	public void setCategories(List<String> categories) {
 		this.categories = categories;
 	}
+
+    public double getMean() {
+        return mean;
+    }
+
+    public void setMean(double mean) {
+        this.mean = mean;
+    }
 
 }

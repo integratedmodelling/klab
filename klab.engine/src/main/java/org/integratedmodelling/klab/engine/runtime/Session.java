@@ -99,6 +99,7 @@ import org.integratedmodelling.klab.components.runtime.actors.KlabActor.ActorRef
 import org.integratedmodelling.klab.components.runtime.actors.SessionActor;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Spawn;
+import org.integratedmodelling.klab.components.runtime.actors.TestScope;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.data.resources.Codelist;
 import org.integratedmodelling.klab.data.resources.Resource;
@@ -242,6 +243,7 @@ public class Session extends GroovyObjectSupport
     private Map<String, IConsole> consoles = new HashMap<>();
     // estimated costs of jobs by ticket ID
     private Map<String, Estimate> estimates = Collections.synchronizedMap(new HashMap<>());
+    private TestScope rootTestScope = null;
 
     // tracks the setting of the actor so we can avoid the ask pattern
     private AtomicBoolean actorSet = new AtomicBoolean(Boolean.FALSE);
@@ -2238,6 +2240,13 @@ public class Session extends GroovyObjectSupport
         globalState.resetRoles();
         globalState.resetInspector();
         globalState.resetContext();
+    }
+    
+    public TestScope getRootTestScope() {
+        if (rootTestScope == null) {
+            rootTestScope = new TestScope(this);
+        }
+        return rootTestScope;
     }
 
 }
