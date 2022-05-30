@@ -10363,25 +10363,27 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		private final RuleCall cLiteralLiteralParserRuleCall_4_0 = (RuleCall)cLiteralAssignment_4.eContents().get(0);
 		private final Assignment cExprAssignment_5 = (Assignment)cAlternatives.eContents().get(5);
 		private final RuleCall cExprEXPRTerminalRuleCall_5_0 = (RuleCall)cExprAssignment_5.eContents().get(0);
-		private final Assignment cIdAssignment_6 = (Assignment)cAlternatives.eContents().get(6);
-		private final Alternatives cIdAlternatives_6_0 = (Alternatives)cIdAssignment_6.eContents().get(0);
-		private final RuleCall cIdPathNameParserRuleCall_6_0_0 = (RuleCall)cIdAlternatives_6_0.eContents().get(0);
-		private final RuleCall cIdLOWERCASE_IDTerminalRuleCall_6_0_1 = (RuleCall)cIdAlternatives_6_0.eContents().get(1);
-		private final RuleCall cIdUPPERCASE_IDTerminalRuleCall_6_0_2 = (RuleCall)cIdAlternatives_6_0.eContents().get(2);
-		private final RuleCall cIdCAMELCASE_IDTerminalRuleCall_6_0_3 = (RuleCall)cIdAlternatives_6_0.eContents().get(3);
-		private final Assignment cTableAssignment_7 = (Assignment)cAlternatives.eContents().get(7);
-		private final RuleCall cTableLookupTableParserRuleCall_7_0 = (RuleCall)cTableAssignment_7.eContents().get(0);
-		private final Assignment cListAssignment_8 = (Assignment)cAlternatives.eContents().get(8);
-		private final RuleCall cListListParserRuleCall_8_0 = (RuleCall)cListAssignment_8.eContents().get(0);
-		private final Assignment cQuantityAssignment_9 = (Assignment)cAlternatives.eContents().get(9);
-		private final RuleCall cQuantityQuantityParserRuleCall_9_0 = (RuleCall)cQuantityAssignment_9.eContents().get(0);
-		private final Group cGroup_10 = (Group)cAlternatives.eContents().get(10);
-		private final Assignment cOpAssignment_10_0 = (Assignment)cGroup_10.eContents().get(0);
-		private final RuleCall cOpREL_OPERATORParserRuleCall_10_0_0 = (RuleCall)cOpAssignment_10_0.eContents().get(0);
-		private final Assignment cExpressionAssignment_10_1 = (Assignment)cGroup_10.eContents().get(1);
-		private final RuleCall cExpressionNumberParserRuleCall_10_1_0 = (RuleCall)cExpressionAssignment_10_1.eContents().get(0);
-		private final Assignment cNullAssignment_11 = (Assignment)cAlternatives.eContents().get(11);
-		private final Keyword cNullUnknownKeyword_11_0 = (Keyword)cNullAssignment_11.eContents().get(0);
+		private final Assignment cTemplatevarAssignment_6 = (Assignment)cAlternatives.eContents().get(6);
+		private final RuleCall cTemplatevarTEMPLATE_VARTerminalRuleCall_6_0 = (RuleCall)cTemplatevarAssignment_6.eContents().get(0);
+		private final Assignment cIdAssignment_7 = (Assignment)cAlternatives.eContents().get(7);
+		private final Alternatives cIdAlternatives_7_0 = (Alternatives)cIdAssignment_7.eContents().get(0);
+		private final RuleCall cIdPathNameParserRuleCall_7_0_0 = (RuleCall)cIdAlternatives_7_0.eContents().get(0);
+		private final RuleCall cIdLOWERCASE_IDTerminalRuleCall_7_0_1 = (RuleCall)cIdAlternatives_7_0.eContents().get(1);
+		private final RuleCall cIdUPPERCASE_IDTerminalRuleCall_7_0_2 = (RuleCall)cIdAlternatives_7_0.eContents().get(2);
+		private final RuleCall cIdCAMELCASE_IDTerminalRuleCall_7_0_3 = (RuleCall)cIdAlternatives_7_0.eContents().get(3);
+		private final Assignment cTableAssignment_8 = (Assignment)cAlternatives.eContents().get(8);
+		private final RuleCall cTableLookupTableParserRuleCall_8_0 = (RuleCall)cTableAssignment_8.eContents().get(0);
+		private final Assignment cListAssignment_9 = (Assignment)cAlternatives.eContents().get(9);
+		private final RuleCall cListListParserRuleCall_9_0 = (RuleCall)cListAssignment_9.eContents().get(0);
+		private final Assignment cQuantityAssignment_10 = (Assignment)cAlternatives.eContents().get(10);
+		private final RuleCall cQuantityQuantityParserRuleCall_10_0 = (RuleCall)cQuantityAssignment_10.eContents().get(0);
+		private final Group cGroup_11 = (Group)cAlternatives.eContents().get(11);
+		private final Assignment cOpAssignment_11_0 = (Assignment)cGroup_11.eContents().get(0);
+		private final RuleCall cOpREL_OPERATORParserRuleCall_11_0_0 = (RuleCall)cOpAssignment_11_0.eContents().get(0);
+		private final Assignment cExpressionAssignment_11_1 = (Assignment)cGroup_11.eContents().get(1);
+		private final RuleCall cExpressionNumberParserRuleCall_11_1_0 = (RuleCall)cExpressionAssignment_11_1.eContents().get(0);
+		private final Assignment cNullAssignment_12 = (Assignment)cAlternatives.eContents().get(12);
+		private final Keyword cNullUnknownKeyword_12_0 = (Keyword)cNullAssignment_12.eContents().get(0);
 		
 		//ValueWithIdAndConcept returns Value:
 		//    map=Map |
@@ -10390,6 +10392,7 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//    date=Date |
 		//    literal=Literal |
 		//    expr=EXPR |
+		//    templatevar=TEMPLATE_VAR |
 		//    id=(PathName|LOWERCASE_ID|UPPERCASE_ID|CAMELCASE_ID) |
 		//    table=LookupTable |
 		//    list=List |
@@ -10404,6 +10407,7 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//date=Date |
 		//literal=Literal |
 		//expr=EXPR |
+		//templatevar=TEMPLATE_VAR |
 		//id=(PathName|LOWERCASE_ID|UPPERCASE_ID|CAMELCASE_ID) |
 		//table=LookupTable |
 		//list=List |
@@ -10448,62 +10452,68 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//EXPR
 		public RuleCall getExprEXPRTerminalRuleCall_5_0() { return cExprEXPRTerminalRuleCall_5_0; }
 		
+		//templatevar=TEMPLATE_VAR
+		public Assignment getTemplatevarAssignment_6() { return cTemplatevarAssignment_6; }
+		
+		//TEMPLATE_VAR
+		public RuleCall getTemplatevarTEMPLATE_VARTerminalRuleCall_6_0() { return cTemplatevarTEMPLATE_VARTerminalRuleCall_6_0; }
+		
 		//id=(PathName|LOWERCASE_ID|UPPERCASE_ID|CAMELCASE_ID)
-		public Assignment getIdAssignment_6() { return cIdAssignment_6; }
+		public Assignment getIdAssignment_7() { return cIdAssignment_7; }
 		
 		//(PathName|LOWERCASE_ID|UPPERCASE_ID|CAMELCASE_ID)
-		public Alternatives getIdAlternatives_6_0() { return cIdAlternatives_6_0; }
+		public Alternatives getIdAlternatives_7_0() { return cIdAlternatives_7_0; }
 		
 		//PathName
-		public RuleCall getIdPathNameParserRuleCall_6_0_0() { return cIdPathNameParserRuleCall_6_0_0; }
+		public RuleCall getIdPathNameParserRuleCall_7_0_0() { return cIdPathNameParserRuleCall_7_0_0; }
 		
 		//LOWERCASE_ID
-		public RuleCall getIdLOWERCASE_IDTerminalRuleCall_6_0_1() { return cIdLOWERCASE_IDTerminalRuleCall_6_0_1; }
+		public RuleCall getIdLOWERCASE_IDTerminalRuleCall_7_0_1() { return cIdLOWERCASE_IDTerminalRuleCall_7_0_1; }
 		
 		//UPPERCASE_ID
-		public RuleCall getIdUPPERCASE_IDTerminalRuleCall_6_0_2() { return cIdUPPERCASE_IDTerminalRuleCall_6_0_2; }
+		public RuleCall getIdUPPERCASE_IDTerminalRuleCall_7_0_2() { return cIdUPPERCASE_IDTerminalRuleCall_7_0_2; }
 		
 		//CAMELCASE_ID
-		public RuleCall getIdCAMELCASE_IDTerminalRuleCall_6_0_3() { return cIdCAMELCASE_IDTerminalRuleCall_6_0_3; }
+		public RuleCall getIdCAMELCASE_IDTerminalRuleCall_7_0_3() { return cIdCAMELCASE_IDTerminalRuleCall_7_0_3; }
 		
 		//table=LookupTable
-		public Assignment getTableAssignment_7() { return cTableAssignment_7; }
+		public Assignment getTableAssignment_8() { return cTableAssignment_8; }
 		
 		//LookupTable
-		public RuleCall getTableLookupTableParserRuleCall_7_0() { return cTableLookupTableParserRuleCall_7_0; }
+		public RuleCall getTableLookupTableParserRuleCall_8_0() { return cTableLookupTableParserRuleCall_8_0; }
 		
 		//list=List
-		public Assignment getListAssignment_8() { return cListAssignment_8; }
+		public Assignment getListAssignment_9() { return cListAssignment_9; }
 		
 		//List
-		public RuleCall getListListParserRuleCall_8_0() { return cListListParserRuleCall_8_0; }
+		public RuleCall getListListParserRuleCall_9_0() { return cListListParserRuleCall_9_0; }
 		
 		//quantity=Quantity
-		public Assignment getQuantityAssignment_9() { return cQuantityAssignment_9; }
+		public Assignment getQuantityAssignment_10() { return cQuantityAssignment_10; }
 		
 		//Quantity
-		public RuleCall getQuantityQuantityParserRuleCall_9_0() { return cQuantityQuantityParserRuleCall_9_0; }
+		public RuleCall getQuantityQuantityParserRuleCall_10_0() { return cQuantityQuantityParserRuleCall_10_0; }
 		
 		//op=REL_OPERATOR expression=Number
-		public Group getGroup_10() { return cGroup_10; }
+		public Group getGroup_11() { return cGroup_11; }
 		
 		//op=REL_OPERATOR
-		public Assignment getOpAssignment_10_0() { return cOpAssignment_10_0; }
+		public Assignment getOpAssignment_11_0() { return cOpAssignment_11_0; }
 		
 		//REL_OPERATOR
-		public RuleCall getOpREL_OPERATORParserRuleCall_10_0_0() { return cOpREL_OPERATORParserRuleCall_10_0_0; }
+		public RuleCall getOpREL_OPERATORParserRuleCall_11_0_0() { return cOpREL_OPERATORParserRuleCall_11_0_0; }
 		
 		//expression=Number
-		public Assignment getExpressionAssignment_10_1() { return cExpressionAssignment_10_1; }
+		public Assignment getExpressionAssignment_11_1() { return cExpressionAssignment_11_1; }
 		
 		//Number
-		public RuleCall getExpressionNumberParserRuleCall_10_1_0() { return cExpressionNumberParserRuleCall_10_1_0; }
+		public RuleCall getExpressionNumberParserRuleCall_11_1_0() { return cExpressionNumberParserRuleCall_11_1_0; }
 		
 		//null?='unknown'
-		public Assignment getNullAssignment_11() { return cNullAssignment_11; }
+		public Assignment getNullAssignment_12() { return cNullAssignment_12; }
 		
 		//'unknown'
-		public Keyword getNullUnknownKeyword_11_0() { return cNullUnknownKeyword_11_0; }
+		public Keyword getNullUnknownKeyword_12_0() { return cNullUnknownKeyword_12_0; }
 	}
 	public class ValueElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.Value");
@@ -12657,6 +12667,7 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 	private final NumberElements pNumber;
 	private final QuantityElements pQuantity;
 	private final DateElements pDate;
+	private final TerminalRule tTEMPLATE_VAR;
 	private final TerminalRule tLOWERCASE_ID;
 	private final TerminalRule tLOWERCASE_DASHID;
 	private final PathNameElements pPathName;
@@ -12778,6 +12789,7 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		this.pNumber = new NumberElements();
 		this.pQuantity = new QuantityElements();
 		this.pDate = new DateElements();
+		this.tTEMPLATE_VAR = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.TEMPLATE_VAR");
 		this.tLOWERCASE_ID = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.LOWERCASE_ID");
 		this.tLOWERCASE_DASHID = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.LOWERCASE_DASHID");
 		this.pPathName = new PathNameElements();
@@ -14149,6 +14161,7 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 	//    date=Date |
 	//    literal=Literal |
 	//    expr=EXPR |
+	//    templatevar=TEMPLATE_VAR |
 	//    id=(PathName|LOWERCASE_ID|UPPERCASE_ID|CAMELCASE_ID) |
 	//    table=LookupTable |
 	//    list=List |
@@ -14516,6 +14529,13 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 	
 	public ParserRule getDateRule() {
 		return getDateAccess().getRule();
+	}
+	
+	//terminal TEMPLATE_VAR:
+	//    '%' ('a'..'z') ('a'..'z' | '0'..'9'| '_')* '%'
+	//;
+	public TerminalRule getTEMPLATE_VARRule() {
+		return tTEMPLATE_VAR;
 	}
 	
 	//terminal LOWERCASE_ID:

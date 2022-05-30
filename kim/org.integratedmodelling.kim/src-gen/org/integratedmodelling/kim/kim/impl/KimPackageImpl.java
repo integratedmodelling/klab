@@ -5039,7 +5039,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EAttribute getValue_Id()
+  public EAttribute getValue_Templatevar()
   {
     return (EAttribute)valueEClass.getEStructuralFeatures().get(6);
   }
@@ -5050,9 +5050,9 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EReference getValue_Table()
+  public EAttribute getValue_Id()
   {
-    return (EReference)valueEClass.getEStructuralFeatures().get(7);
+    return (EAttribute)valueEClass.getEStructuralFeatures().get(7);
   }
 
   /**
@@ -5061,7 +5061,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EReference getValue_List()
+  public EReference getValue_Table()
   {
     return (EReference)valueEClass.getEStructuralFeatures().get(8);
   }
@@ -5072,7 +5072,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EReference getValue_Quantity()
+  public EReference getValue_List()
   {
     return (EReference)valueEClass.getEStructuralFeatures().get(9);
   }
@@ -5083,7 +5083,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EReference getValue_Op()
+  public EReference getValue_Quantity()
   {
     return (EReference)valueEClass.getEStructuralFeatures().get(10);
   }
@@ -5094,7 +5094,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EReference getValue_Expression()
+  public EReference getValue_Op()
   {
     return (EReference)valueEClass.getEStructuralFeatures().get(11);
   }
@@ -5105,9 +5105,20 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
+  public EReference getValue_Expression()
+  {
+    return (EReference)valueEClass.getEStructuralFeatures().get(12);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EAttribute getValue_Null()
   {
-    return (EAttribute)valueEClass.getEStructuralFeatures().get(12);
+    return (EAttribute)valueEClass.getEStructuralFeatures().get(13);
   }
 
   /**
@@ -5118,7 +5129,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EAttribute getValue_Language()
   {
-    return (EAttribute)valueEClass.getEStructuralFeatures().get(13);
+    return (EAttribute)valueEClass.getEStructuralFeatures().get(14);
   }
 
   /**
@@ -6113,6 +6124,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEReference(valueEClass, VALUE__DATE);
     createEReference(valueEClass, VALUE__LITERAL);
     createEAttribute(valueEClass, VALUE__EXPR);
+    createEAttribute(valueEClass, VALUE__TEMPLATEVAR);
     createEAttribute(valueEClass, VALUE__ID);
     createEReference(valueEClass, VALUE__TABLE);
     createEReference(valueEClass, VALUE__LIST);
@@ -6666,6 +6678,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEReference(getValue_Date(), this.getDate(), null, "date", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getValue_Literal(), this.getLiteral(), null, "literal", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getValue_Expr(), ecorePackage.getEString(), "expr", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getValue_Templatevar(), ecorePackage.getEString(), "templatevar", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getValue_Id(), ecorePackage.getEString(), "id", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getValue_Table(), this.getLookupTable(), null, "table", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getValue_List(), this.getList(), null, "list", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

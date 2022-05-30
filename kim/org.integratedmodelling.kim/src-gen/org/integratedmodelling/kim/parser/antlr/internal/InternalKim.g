@@ -15510,11 +15510,30 @@ ruleValueWithIdAndConcept returns [EObject current=null]
 		    |
 		(
 			(
+				lv_templatevar_6_0=RULE_TEMPLATE_VAR
+				{
+					newLeafNode(lv_templatevar_6_0, grammarAccess.getValueWithIdAndConceptAccess().getTemplatevarTEMPLATE_VARTerminalRuleCall_6_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getValueWithIdAndConceptRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"templatevar",
+						lv_templatevar_6_0,
+						"org.integratedmodelling.kim.Kim.TEMPLATE_VAR");
+				}
+			)
+		)
+		    |
+		(
+			(
 				(
 					{
-						newCompositeNode(grammarAccess.getValueWithIdAndConceptAccess().getIdPathNameParserRuleCall_6_0_0());
+						newCompositeNode(grammarAccess.getValueWithIdAndConceptAccess().getIdPathNameParserRuleCall_7_0_0());
 					}
-					lv_id_6_1=rulePathName
+					lv_id_7_1=rulePathName
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getValueWithIdAndConceptRule());
@@ -15522,14 +15541,14 @@ ruleValueWithIdAndConcept returns [EObject current=null]
 						set(
 							$current,
 							"id",
-							lv_id_6_1,
+							lv_id_7_1,
 							"org.integratedmodelling.kim.Kim.PathName");
 						afterParserOrEnumRuleCall();
 					}
 					    |
-					lv_id_6_2=RULE_LOWERCASE_ID
+					lv_id_7_2=RULE_LOWERCASE_ID
 					{
-						newLeafNode(lv_id_6_2, grammarAccess.getValueWithIdAndConceptAccess().getIdLOWERCASE_IDTerminalRuleCall_6_0_1());
+						newLeafNode(lv_id_7_2, grammarAccess.getValueWithIdAndConceptAccess().getIdLOWERCASE_IDTerminalRuleCall_7_0_1());
 					}
 					{
 						if ($current==null) {
@@ -15538,13 +15557,13 @@ ruleValueWithIdAndConcept returns [EObject current=null]
 						setWithLastConsumed(
 							$current,
 							"id",
-							lv_id_6_2,
+							lv_id_7_2,
 							"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
 					}
 					    |
-					lv_id_6_3=RULE_UPPERCASE_ID
+					lv_id_7_3=RULE_UPPERCASE_ID
 					{
-						newLeafNode(lv_id_6_3, grammarAccess.getValueWithIdAndConceptAccess().getIdUPPERCASE_IDTerminalRuleCall_6_0_2());
+						newLeafNode(lv_id_7_3, grammarAccess.getValueWithIdAndConceptAccess().getIdUPPERCASE_IDTerminalRuleCall_7_0_2());
 					}
 					{
 						if ($current==null) {
@@ -15553,13 +15572,13 @@ ruleValueWithIdAndConcept returns [EObject current=null]
 						setWithLastConsumed(
 							$current,
 							"id",
-							lv_id_6_3,
+							lv_id_7_3,
 							"org.integratedmodelling.kim.Kim.UPPERCASE_ID");
 					}
 					    |
-					lv_id_6_4=RULE_CAMELCASE_ID
+					lv_id_7_4=RULE_CAMELCASE_ID
 					{
-						newLeafNode(lv_id_6_4, grammarAccess.getValueWithIdAndConceptAccess().getIdCAMELCASE_IDTerminalRuleCall_6_0_3());
+						newLeafNode(lv_id_7_4, grammarAccess.getValueWithIdAndConceptAccess().getIdCAMELCASE_IDTerminalRuleCall_7_0_3());
 					}
 					{
 						if ($current==null) {
@@ -15568,7 +15587,7 @@ ruleValueWithIdAndConcept returns [EObject current=null]
 						setWithLastConsumed(
 							$current,
 							"id",
-							lv_id_6_4,
+							lv_id_7_4,
 							"org.integratedmodelling.kim.Kim.CAMELCASE_ID");
 					}
 				)
@@ -15578,9 +15597,9 @@ ruleValueWithIdAndConcept returns [EObject current=null]
 		(
 			(
 				{
-					newCompositeNode(grammarAccess.getValueWithIdAndConceptAccess().getTableLookupTableParserRuleCall_7_0());
+					newCompositeNode(grammarAccess.getValueWithIdAndConceptAccess().getTableLookupTableParserRuleCall_8_0());
 				}
-				lv_table_7_0=ruleLookupTable
+				lv_table_8_0=ruleLookupTable
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getValueWithIdAndConceptRule());
@@ -15588,7 +15607,7 @@ ruleValueWithIdAndConcept returns [EObject current=null]
 					set(
 						$current,
 						"table",
-						lv_table_7_0,
+						lv_table_8_0,
 						"org.integratedmodelling.kim.Kim.LookupTable");
 					afterParserOrEnumRuleCall();
 				}
@@ -15598,9 +15617,9 @@ ruleValueWithIdAndConcept returns [EObject current=null]
 		(
 			(
 				{
-					newCompositeNode(grammarAccess.getValueWithIdAndConceptAccess().getListListParserRuleCall_8_0());
+					newCompositeNode(grammarAccess.getValueWithIdAndConceptAccess().getListListParserRuleCall_9_0());
 				}
-				lv_list_8_0=ruleList
+				lv_list_9_0=ruleList
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getValueWithIdAndConceptRule());
@@ -15608,7 +15627,7 @@ ruleValueWithIdAndConcept returns [EObject current=null]
 					set(
 						$current,
 						"list",
-						lv_list_8_0,
+						lv_list_9_0,
 						"org.integratedmodelling.kim.Kim.List");
 					afterParserOrEnumRuleCall();
 				}
@@ -15618,9 +15637,9 @@ ruleValueWithIdAndConcept returns [EObject current=null]
 		(
 			(
 				{
-					newCompositeNode(grammarAccess.getValueWithIdAndConceptAccess().getQuantityQuantityParserRuleCall_9_0());
+					newCompositeNode(grammarAccess.getValueWithIdAndConceptAccess().getQuantityQuantityParserRuleCall_10_0());
 				}
-				lv_quantity_9_0=ruleQuantity
+				lv_quantity_10_0=ruleQuantity
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getValueWithIdAndConceptRule());
@@ -15628,7 +15647,7 @@ ruleValueWithIdAndConcept returns [EObject current=null]
 					set(
 						$current,
 						"quantity",
-						lv_quantity_9_0,
+						lv_quantity_10_0,
 						"org.integratedmodelling.kim.Kim.Quantity");
 					afterParserOrEnumRuleCall();
 				}
@@ -15639,9 +15658,9 @@ ruleValueWithIdAndConcept returns [EObject current=null]
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getValueWithIdAndConceptAccess().getOpREL_OPERATORParserRuleCall_10_0_0());
+						newCompositeNode(grammarAccess.getValueWithIdAndConceptAccess().getOpREL_OPERATORParserRuleCall_11_0_0());
 					}
-					lv_op_10_0=ruleREL_OPERATOR
+					lv_op_11_0=ruleREL_OPERATOR
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getValueWithIdAndConceptRule());
@@ -15649,7 +15668,7 @@ ruleValueWithIdAndConcept returns [EObject current=null]
 						set(
 							$current,
 							"op",
-							lv_op_10_0,
+							lv_op_11_0,
 							"org.integratedmodelling.kim.Kim.REL_OPERATOR");
 						afterParserOrEnumRuleCall();
 					}
@@ -15658,9 +15677,9 @@ ruleValueWithIdAndConcept returns [EObject current=null]
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getValueWithIdAndConceptAccess().getExpressionNumberParserRuleCall_10_1_0());
+						newCompositeNode(grammarAccess.getValueWithIdAndConceptAccess().getExpressionNumberParserRuleCall_11_1_0());
 					}
-					lv_expression_11_0=ruleNumber
+					lv_expression_12_0=ruleNumber
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getValueWithIdAndConceptRule());
@@ -15668,7 +15687,7 @@ ruleValueWithIdAndConcept returns [EObject current=null]
 						set(
 							$current,
 							"expression",
-							lv_expression_11_0,
+							lv_expression_12_0,
 							"org.integratedmodelling.kim.Kim.Number");
 						afterParserOrEnumRuleCall();
 					}
@@ -15678,15 +15697,15 @@ ruleValueWithIdAndConcept returns [EObject current=null]
 		    |
 		(
 			(
-				lv_null_12_0='unknown'
+				lv_null_13_0='unknown'
 				{
-					newLeafNode(lv_null_12_0, grammarAccess.getValueWithIdAndConceptAccess().getNullUnknownKeyword_11_0());
+					newLeafNode(lv_null_13_0, grammarAccess.getValueWithIdAndConceptAccess().getNullUnknownKeyword_12_0());
 				}
 				{
 					if ($current==null) {
 						$current = createModelElement(grammarAccess.getValueWithIdAndConceptRule());
 					}
-					setWithLastConsumed($current, "null", lv_null_12_0 != null, "unknown");
+					setWithLastConsumed($current, "null", lv_null_13_0 != null, "unknown");
 				}
 			)
 		)
@@ -18930,6 +18949,8 @@ ruleUnitOp returns [Enumerator current=null]
 RULE_EXPR : ('['|'#[') ('\\' ('b'|'t'|'n'|'f'|'r'|'u'|']'|'\\')|~(('\\'|']')))* ']';
 
 RULE_ANNOTATION_ID : '@' RULE_LOWERCASE_ID;
+
+RULE_TEMPLATE_VAR : '%' 'a'..'z' ('a'..'z'|'0'..'9'|'_')* '%';
 
 RULE_LOWERCASE_ID : 'a'..'z' ('a'..'z'|'0'..'9'|'_')*;
 

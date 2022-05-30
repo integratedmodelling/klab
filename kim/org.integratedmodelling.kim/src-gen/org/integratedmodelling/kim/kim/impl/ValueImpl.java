@@ -39,6 +39,7 @@ import org.integratedmodelling.kim.kim.Value;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getDate <em>Date</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getLiteral <em>Literal</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getExpr <em>Expr</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getTemplatevar <em>Templatevar</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getId <em>Id</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getTable <em>Table</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getList <em>List</em>}</li>
@@ -122,6 +123,26 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * @ordered
    */
   protected String expr = EXPR_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getTemplatevar() <em>Templatevar</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getTemplatevar()
+   * @generated
+   * @ordered
+   */
+  protected static final String TEMPLATEVAR_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getTemplatevar() <em>Templatevar</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getTemplatevar()
+   * @generated
+   * @ordered
+   */
+  protected String templatevar = TEMPLATEVAR_EDEFAULT;
 
   /**
    * The default value of the '{@link #getId() <em>Id</em>}' attribute.
@@ -535,6 +556,31 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * @generated
    */
   @Override
+  public String getTemplatevar()
+  {
+    return templatevar;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setTemplatevar(String newTemplatevar)
+  {
+    String oldTemplatevar = templatevar;
+    templatevar = newTemplatevar;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.VALUE__TEMPLATEVAR, oldTemplatevar, templatevar));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public String getId()
   {
     return id;
@@ -910,6 +956,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return getLiteral();
       case KimPackage.VALUE__EXPR:
         return getExpr();
+      case KimPackage.VALUE__TEMPLATEVAR:
+        return getTemplatevar();
       case KimPackage.VALUE__ID:
         return getId();
       case KimPackage.VALUE__TABLE:
@@ -957,6 +1005,9 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return;
       case KimPackage.VALUE__EXPR:
         setExpr((String)newValue);
+        return;
+      case KimPackage.VALUE__TEMPLATEVAR:
+        setTemplatevar((String)newValue);
         return;
       case KimPackage.VALUE__ID:
         setId((String)newValue);
@@ -1014,6 +1065,9 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
       case KimPackage.VALUE__EXPR:
         setExpr(EXPR_EDEFAULT);
         return;
+      case KimPackage.VALUE__TEMPLATEVAR:
+        setTemplatevar(TEMPLATEVAR_EDEFAULT);
+        return;
       case KimPackage.VALUE__ID:
         setId(ID_EDEFAULT);
         return;
@@ -1064,6 +1118,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return literal != null;
       case KimPackage.VALUE__EXPR:
         return EXPR_EDEFAULT == null ? expr != null : !EXPR_EDEFAULT.equals(expr);
+      case KimPackage.VALUE__TEMPLATEVAR:
+        return TEMPLATEVAR_EDEFAULT == null ? templatevar != null : !TEMPLATEVAR_EDEFAULT.equals(templatevar);
       case KimPackage.VALUE__ID:
         return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
       case KimPackage.VALUE__TABLE:
@@ -1097,6 +1153,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
     StringBuilder result = new StringBuilder(super.toString());
     result.append(" (expr: ");
     result.append(expr);
+    result.append(", templatevar: ");
+    result.append(templatevar);
     result.append(", id: ");
     result.append(id);
     result.append(", null: ");

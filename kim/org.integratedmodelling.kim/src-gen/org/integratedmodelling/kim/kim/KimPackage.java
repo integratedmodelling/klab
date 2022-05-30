@@ -4213,13 +4213,22 @@ public interface KimPackage extends EPackage
   int VALUE__EXPR = 5;
 
   /**
+   * The feature id for the '<em><b>Templatevar</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE__TEMPLATEVAR = 6;
+
+  /**
    * The feature id for the '<em><b>Id</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int VALUE__ID = 6;
+  int VALUE__ID = 7;
 
   /**
    * The feature id for the '<em><b>Table</b></em>' containment reference.
@@ -4228,7 +4237,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__TABLE = 7;
+  int VALUE__TABLE = 8;
 
   /**
    * The feature id for the '<em><b>List</b></em>' containment reference.
@@ -4237,7 +4246,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__LIST = 8;
+  int VALUE__LIST = 9;
 
   /**
    * The feature id for the '<em><b>Quantity</b></em>' containment reference.
@@ -4246,7 +4255,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__QUANTITY = 9;
+  int VALUE__QUANTITY = 10;
 
   /**
    * The feature id for the '<em><b>Op</b></em>' containment reference.
@@ -4255,7 +4264,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__OP = 10;
+  int VALUE__OP = 11;
 
   /**
    * The feature id for the '<em><b>Expression</b></em>' containment reference.
@@ -4264,7 +4273,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__EXPRESSION = 11;
+  int VALUE__EXPRESSION = 12;
 
   /**
    * The feature id for the '<em><b>Null</b></em>' attribute.
@@ -4273,7 +4282,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__NULL = 12;
+  int VALUE__NULL = 13;
 
   /**
    * The feature id for the '<em><b>Language</b></em>' attribute.
@@ -4282,7 +4291,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__LANGUAGE = 13;
+  int VALUE__LANGUAGE = 14;
 
   /**
    * The number of structural features of the '<em>Value</em>' class.
@@ -4291,7 +4300,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE_FEATURE_COUNT = 14;
+  int VALUE_FEATURE_COUNT = 15;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.FunctionImpl <em>Function</em>}' class.
@@ -9219,6 +9228,17 @@ public interface KimPackage extends EPackage
   EAttribute getValue_Expr();
 
   /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Value#getTemplatevar <em>Templatevar</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Templatevar</em>'.
+   * @see org.integratedmodelling.kim.kim.Value#getTemplatevar()
+   * @see #getValue()
+   * @generated
+   */
+  EAttribute getValue_Templatevar();
+
+  /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Value#getId <em>Id</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -13178,6 +13198,14 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EAttribute VALUE__EXPR = eINSTANCE.getValue_Expr();
+
+    /**
+     * The meta object literal for the '<em><b>Templatevar</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute VALUE__TEMPLATEVAR = eINSTANCE.getValue_Templatevar();
 
     /**
      * The meta object literal for the '<em><b>Id</b></em>' attribute feature.

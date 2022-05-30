@@ -848,6 +848,7 @@ ValueWithIdAndConcept returns Value:
 	date=Date |
 	literal=Literal |
 	expr=EXPR |
+	templatevar=TEMPLATE_VAR |
 	id=(PathName|LOWERCASE_ID|UPPERCASE_ID|CAMELCASE_ID) |
 	table=LookupTable |
 	list=List |
@@ -1047,6 +1048,10 @@ Quantity:
 
 Date:
 	year=INT ('AD' | 'CE' | bc?='BC')? '-' month=INT '-' day=INT (hour=INT ':' min=INT (':' sec=INT ('.' ms=INT)?)?)?
+;
+
+terminal TEMPLATE_VAR:
+	'%' ('a'..'z') ('a'..'z' | '0'..'9'| '_')* '%'
 ;
 
 terminal LOWERCASE_ID:
