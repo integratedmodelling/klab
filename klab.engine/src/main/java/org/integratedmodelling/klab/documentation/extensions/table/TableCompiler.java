@@ -2731,7 +2731,7 @@ public class TableCompiler {
          * occurrent but 1 timestep, leave start and remove end.
          */
         if (harvestedTimeSelectors.size() > 0) {
-            System.out.println("CHECK THIS FUCKA OUT");
+//            System.out.println("CHECK THIS FUCKA OUT");
         }
 
         return ret;
