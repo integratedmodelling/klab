@@ -2908,32 +2908,66 @@ ruleAssignment returns [EObject current=null]
 }:
 	(
 		(
-			otherlv_0='set'
-			{
-				newLeafNode(otherlv_0, grammarAccess.getAssignmentAccess().getSetKeyword_0_0());
-			}
-			    |
 			(
 				(
-					lv_local_1_0='def'
-					{
-						newLeafNode(lv_local_1_0, grammarAccess.getAssignmentAccess().getLocalDefKeyword_0_1_0());
-					}
-					{
-						if ($current==null) {
-							$current = createModelElement(grammarAccess.getAssignmentRule());
+					(
+						lv_global_0_0='set'
+						{
+							newLeafNode(lv_global_0_0, grammarAccess.getAssignmentAccess().getGlobalSetKeyword_0_0_0_0());
 						}
-						setWithLastConsumed($current, "local", lv_local_1_0 != null, "def");
-					}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getAssignmentRule());
+							}
+							setWithLastConsumed($current, "global", lv_global_0_0 != null, "set");
+						}
+					)
+				)
+				    |
+				(
+					(
+						lv_local_1_0='def'
+						{
+							newLeafNode(lv_local_1_0, grammarAccess.getAssignmentAccess().getLocalDefKeyword_0_0_1_0());
+						}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getAssignmentRule());
+							}
+							setWithLastConsumed($current, "local", lv_local_1_0 != null, "def");
+						}
+					)
 				)
 			)
-		)
-		(
 			(
 				(
-					lv_recipient_2_0=RULE_LOWERCASE_ID
+					(
+						lv_recipient_2_0=RULE_LOWERCASE_ID
+						{
+							newLeafNode(lv_recipient_2_0, grammarAccess.getAssignmentAccess().getRecipientLOWERCASE_IDTerminalRuleCall_0_1_0_0());
+						}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getAssignmentRule());
+							}
+							setWithLastConsumed(
+								$current,
+								"recipient",
+								lv_recipient_2_0,
+								"org.integratedmodelling.kactors.Kactors.LOWERCASE_ID");
+						}
+					)
+				)
+				otherlv_3='.'
+				{
+					newLeafNode(otherlv_3, grammarAccess.getAssignmentAccess().getFullStopKeyword_0_1_1());
+				}
+			)?
+			(
+				(
+					lv_variable_4_0=RULE_LOWERCASE_ID
 					{
-						newLeafNode(lv_recipient_2_0, grammarAccess.getAssignmentAccess().getRecipientLOWERCASE_IDTerminalRuleCall_1_0_0());
+						newLeafNode(lv_variable_4_0, grammarAccess.getAssignmentAccess().getVariableLOWERCASE_IDTerminalRuleCall_0_2_0());
 					}
 					{
 						if ($current==null) {
@@ -2941,52 +2975,74 @@ ruleAssignment returns [EObject current=null]
 						}
 						setWithLastConsumed(
 							$current,
-							"recipient",
-							lv_recipient_2_0,
+							"variable",
+							lv_variable_4_0,
 							"org.integratedmodelling.kactors.Kactors.LOWERCASE_ID");
 					}
 				)
 			)
-			otherlv_3='.'
-			{
-				newLeafNode(otherlv_3, grammarAccess.getAssignmentAccess().getFullStopKeyword_1_1());
-			}
-		)?
-		(
 			(
-				lv_variable_4_0=RULE_LOWERCASE_ID
-				{
-					newLeafNode(lv_variable_4_0, grammarAccess.getAssignmentAccess().getVariableLOWERCASE_IDTerminalRuleCall_2_0());
-				}
-				{
-					if ($current==null) {
-						$current = createModelElement(grammarAccess.getAssignmentRule());
+				(
+					{
+						newCompositeNode(grammarAccess.getAssignmentAccess().getValueValueWithConstructorParserRuleCall_0_3_0());
 					}
-					setWithLastConsumed(
-						$current,
-						"variable",
-						lv_variable_4_0,
-						"org.integratedmodelling.kactors.Kactors.LOWERCASE_ID");
-				}
+					lv_value_5_0=ruleValueWithConstructor
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getAssignmentRule());
+						}
+						set(
+							$current,
+							"value",
+							lv_value_5_0,
+							"org.integratedmodelling.kactors.Kactors.ValueWithConstructor");
+						afterParserOrEnumRuleCall();
+					}
+				)
 			)
 		)
+		    |
 		(
 			(
-				{
-					newCompositeNode(grammarAccess.getAssignmentAccess().getValueValueWithConstructorParserRuleCall_3_0());
-				}
-				lv_value_5_0=ruleValueWithConstructor
-				{
-					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getAssignmentRule());
+				(
+					lv_variable_6_0=RULE_LOWERCASE_ID
+					{
+						newLeafNode(lv_variable_6_0, grammarAccess.getAssignmentAccess().getVariableLOWERCASE_IDTerminalRuleCall_1_0_0());
 					}
-					set(
-						$current,
-						"value",
-						lv_value_5_0,
-						"org.integratedmodelling.kactors.Kactors.ValueWithConstructor");
-					afterParserOrEnumRuleCall();
-				}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getAssignmentRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"variable",
+							lv_variable_6_0,
+							"org.integratedmodelling.kactors.Kactors.LOWERCASE_ID");
+					}
+				)
+			)
+			otherlv_7='='
+			{
+				newLeafNode(otherlv_7, grammarAccess.getAssignmentAccess().getEqualsSignKeyword_1_1());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getAssignmentAccess().getValueValueWithConstructorParserRuleCall_1_2_0());
+					}
+					lv_value_8_0=ruleValueWithConstructor
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getAssignmentRule());
+						}
+						set(
+							$current,
+							"value",
+							lv_value_8_0,
+							"org.integratedmodelling.kactors.Kactors.ValueWithConstructor");
+						afterParserOrEnumRuleCall();
+					}
+				)
 			)
 		)
 	)

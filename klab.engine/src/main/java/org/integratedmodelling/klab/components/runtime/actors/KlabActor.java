@@ -1293,18 +1293,29 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
 
             Object o = ((KActorsValue) code.getValue()).evaluate(scope, identity, false);
             this.javaReactors.put(code.getVariable(), o);
-            if (code.isLocal()) {
+            switch (code.getScope()) {
+			case ACTION:
                 scope.symbolTable.put(code.getVariable(), o);
-            } else {
+				break;
+			case ACTOR:
                 scope.globalSymbols.put(code.getVariable(), o);
+				break;
+			case FRAME:
+                scope.frameSymbols.put(code.getVariable(), o);
+				break;
             }
         } else {
-            if (code.isLocal()) {
-                // def is local to the scope
-                scope.symbolTable.put(code.getVariable(), ((KActorsValue) code.getValue()).evaluate(scope, identity, false));
-            } else {
-                // set goes into the actor's symbol table, only parameters can override it.
-                scope.globalSymbols.put(code.getVariable(), ((KActorsValue) code.getValue()).evaluate(scope, identity, false));
+        	Object o = ((KActorsValue) code.getValue()).evaluate(scope, identity, false);
+            switch (code.getScope()) {
+			case ACTION:
+                scope.symbolTable.put(code.getVariable(), o);
+				break;
+			case ACTOR:
+                scope.globalSymbols.put(code.getVariable(), o);
+				break;
+			case FRAME:
+                scope.frameSymbols.put(code.getVariable(), o);
+				break;
             }
         }
     }

@@ -83,10 +83,6 @@ public class SimpleTableArtifact extends Artifact implements IKnowledgeView {
 			if (options != null) {
 				for (int i = 0; i < options.length; i++) {
 				    
-				    if (options[i] instanceof Collection && ((Collection)options[i]).size() == 1) {
-				        options[i] = ((Collection)options[i]).iterator().next();
-				    }
-				    
 					if (options[i] instanceof Attribute) {
 						switch ((Attribute) options[i]) {
 						case HEADER:
@@ -136,6 +132,10 @@ public class SimpleTableArtifact extends Artifact implements IKnowledgeView {
 			Dimension dim = hash.get(classifier);
 			if (dim == null) {
 				dim = new Dimension("c" + hash.size(), options);
+				if (classifier instanceof Collection) {
+					// FIXME they may have >1 dims
+					classifier = ((Collection)classifier).iterator().next();
+				}
 				if (classifier instanceof ISemantic) {
 					dim.label = Concepts.INSTANCE.getDisplayLabel((ISemantic) classifier);
 				} else if (classifier instanceof String) {

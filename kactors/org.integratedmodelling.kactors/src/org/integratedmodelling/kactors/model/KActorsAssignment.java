@@ -10,7 +10,7 @@ public class KActorsAssignment extends KActorsStatement implements Assignment {
 	private String recipient;
 	private String variable;
 	private KActorsValue value;
-	private boolean local;
+	private Scope scope;
 
 	public KActorsAssignment(org.integratedmodelling.kactors.kactors.Assignment assignment,
 			KActorCodeStatement parent) {
@@ -21,7 +21,13 @@ public class KActorsAssignment extends KActorsStatement implements Assignment {
 		}
 		this.variable = assignment.getVariable();
 		this.recipient = assignment.getRecipient();
-		this.local = assignment.isLocal();
+		if (assignment.isGlobal()) {
+			this.scope = Scope.ACTOR;
+		} else if (assignment.isLocal()) {
+			this.scope = Scope.ACTION;
+		} else {
+			this.scope = Scope.FRAME;
+		}
 	}
 
 	@Override
@@ -46,8 +52,8 @@ public class KActorsAssignment extends KActorsStatement implements Assignment {
     }
 
 	@Override
-	public boolean isLocal() {
-		return this.local;
+	public Scope getScope() {
+		return this.scope;
 	}
     
 

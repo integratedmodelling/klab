@@ -1738,63 +1738,101 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	}
 	public class AssignmentElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.Assignment");
-		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Alternatives cAlternatives_0 = (Alternatives)cGroup.eContents().get(0);
-		private final Keyword cSetKeyword_0_0 = (Keyword)cAlternatives_0.eContents().get(0);
-		private final Assignment cLocalAssignment_0_1 = (Assignment)cAlternatives_0.eContents().get(1);
-		private final Keyword cLocalDefKeyword_0_1_0 = (Keyword)cLocalAssignment_0_1.eContents().get(0);
-		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
-		private final Assignment cRecipientAssignment_1_0 = (Assignment)cGroup_1.eContents().get(0);
-		private final RuleCall cRecipientLOWERCASE_IDTerminalRuleCall_1_0_0 = (RuleCall)cRecipientAssignment_1_0.eContents().get(0);
-		private final Keyword cFullStopKeyword_1_1 = (Keyword)cGroup_1.eContents().get(1);
-		private final Assignment cVariableAssignment_2 = (Assignment)cGroup.eContents().get(2);
-		private final RuleCall cVariableLOWERCASE_IDTerminalRuleCall_2_0 = (RuleCall)cVariableAssignment_2.eContents().get(0);
-		private final Assignment cValueAssignment_3 = (Assignment)cGroup.eContents().get(3);
-		private final RuleCall cValueValueWithConstructorParserRuleCall_3_0 = (RuleCall)cValueAssignment_3.eContents().get(0);
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final Group cGroup_0 = (Group)cAlternatives.eContents().get(0);
+		private final Alternatives cAlternatives_0_0 = (Alternatives)cGroup_0.eContents().get(0);
+		private final Assignment cGlobalAssignment_0_0_0 = (Assignment)cAlternatives_0_0.eContents().get(0);
+		private final Keyword cGlobalSetKeyword_0_0_0_0 = (Keyword)cGlobalAssignment_0_0_0.eContents().get(0);
+		private final Assignment cLocalAssignment_0_0_1 = (Assignment)cAlternatives_0_0.eContents().get(1);
+		private final Keyword cLocalDefKeyword_0_0_1_0 = (Keyword)cLocalAssignment_0_0_1.eContents().get(0);
+		private final Group cGroup_0_1 = (Group)cGroup_0.eContents().get(1);
+		private final Assignment cRecipientAssignment_0_1_0 = (Assignment)cGroup_0_1.eContents().get(0);
+		private final RuleCall cRecipientLOWERCASE_IDTerminalRuleCall_0_1_0_0 = (RuleCall)cRecipientAssignment_0_1_0.eContents().get(0);
+		private final Keyword cFullStopKeyword_0_1_1 = (Keyword)cGroup_0_1.eContents().get(1);
+		private final Assignment cVariableAssignment_0_2 = (Assignment)cGroup_0.eContents().get(2);
+		private final RuleCall cVariableLOWERCASE_IDTerminalRuleCall_0_2_0 = (RuleCall)cVariableAssignment_0_2.eContents().get(0);
+		private final Assignment cValueAssignment_0_3 = (Assignment)cGroup_0.eContents().get(3);
+		private final RuleCall cValueValueWithConstructorParserRuleCall_0_3_0 = (RuleCall)cValueAssignment_0_3.eContents().get(0);
+		private final Group cGroup_1 = (Group)cAlternatives.eContents().get(1);
+		private final Assignment cVariableAssignment_1_0 = (Assignment)cGroup_1.eContents().get(0);
+		private final RuleCall cVariableLOWERCASE_IDTerminalRuleCall_1_0_0 = (RuleCall)cVariableAssignment_1_0.eContents().get(0);
+		private final Keyword cEqualsSignKeyword_1_1 = (Keyword)cGroup_1.eContents().get(1);
+		private final Assignment cValueAssignment_1_2 = (Assignment)cGroup_1.eContents().get(2);
+		private final RuleCall cValueValueWithConstructorParserRuleCall_1_2_0 = (RuleCall)cValueAssignment_1_2.eContents().get(0);
 		
 		//Assignment:
-		//    ('set'|local?='def') (recipient=LOWERCASE_ID '.')? variable=LOWERCASE_ID value=ValueWithConstructor
+		//    (global?='set'|local?='def') (recipient=LOWERCASE_ID '.')? variable=LOWERCASE_ID value=ValueWithConstructor |
+		//    // block-specific
+		//    variable=LOWERCASE_ID '=' value=ValueWithConstructor
 		//;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//('set'|local?='def') (recipient=LOWERCASE_ID '.')? variable=LOWERCASE_ID value=ValueWithConstructor
-		public Group getGroup() { return cGroup; }
+		//(global?='set'|local?='def') (recipient=LOWERCASE_ID '.')? variable=LOWERCASE_ID value=ValueWithConstructor |
+		//// block-specific
+		//variable=LOWERCASE_ID '=' value=ValueWithConstructor
+		public Alternatives getAlternatives() { return cAlternatives; }
 		
-		//('set'|local?='def')
-		public Alternatives getAlternatives_0() { return cAlternatives_0; }
+		//(global?='set'|local?='def') (recipient=LOWERCASE_ID '.')? variable=LOWERCASE_ID value=ValueWithConstructor
+		public Group getGroup_0() { return cGroup_0; }
+		
+		//(global?='set'|local?='def')
+		public Alternatives getAlternatives_0_0() { return cAlternatives_0_0; }
+		
+		//global?='set'
+		public Assignment getGlobalAssignment_0_0_0() { return cGlobalAssignment_0_0_0; }
 		
 		//'set'
-		public Keyword getSetKeyword_0_0() { return cSetKeyword_0_0; }
+		public Keyword getGlobalSetKeyword_0_0_0_0() { return cGlobalSetKeyword_0_0_0_0; }
 		
 		//local?='def'
-		public Assignment getLocalAssignment_0_1() { return cLocalAssignment_0_1; }
+		public Assignment getLocalAssignment_0_0_1() { return cLocalAssignment_0_0_1; }
 		
 		//'def'
-		public Keyword getLocalDefKeyword_0_1_0() { return cLocalDefKeyword_0_1_0; }
+		public Keyword getLocalDefKeyword_0_0_1_0() { return cLocalDefKeyword_0_0_1_0; }
 		
 		//(recipient=LOWERCASE_ID '.')?
-		public Group getGroup_1() { return cGroup_1; }
+		public Group getGroup_0_1() { return cGroup_0_1; }
 		
 		//recipient=LOWERCASE_ID
-		public Assignment getRecipientAssignment_1_0() { return cRecipientAssignment_1_0; }
+		public Assignment getRecipientAssignment_0_1_0() { return cRecipientAssignment_0_1_0; }
 		
 		//LOWERCASE_ID
-		public RuleCall getRecipientLOWERCASE_IDTerminalRuleCall_1_0_0() { return cRecipientLOWERCASE_IDTerminalRuleCall_1_0_0; }
+		public RuleCall getRecipientLOWERCASE_IDTerminalRuleCall_0_1_0_0() { return cRecipientLOWERCASE_IDTerminalRuleCall_0_1_0_0; }
 		
 		//'.'
-		public Keyword getFullStopKeyword_1_1() { return cFullStopKeyword_1_1; }
+		public Keyword getFullStopKeyword_0_1_1() { return cFullStopKeyword_0_1_1; }
 		
 		//variable=LOWERCASE_ID
-		public Assignment getVariableAssignment_2() { return cVariableAssignment_2; }
+		public Assignment getVariableAssignment_0_2() { return cVariableAssignment_0_2; }
 		
 		//LOWERCASE_ID
-		public RuleCall getVariableLOWERCASE_IDTerminalRuleCall_2_0() { return cVariableLOWERCASE_IDTerminalRuleCall_2_0; }
+		public RuleCall getVariableLOWERCASE_IDTerminalRuleCall_0_2_0() { return cVariableLOWERCASE_IDTerminalRuleCall_0_2_0; }
 		
 		//value=ValueWithConstructor
-		public Assignment getValueAssignment_3() { return cValueAssignment_3; }
+		public Assignment getValueAssignment_0_3() { return cValueAssignment_0_3; }
 		
 		//ValueWithConstructor
-		public RuleCall getValueValueWithConstructorParserRuleCall_3_0() { return cValueValueWithConstructorParserRuleCall_3_0; }
+		public RuleCall getValueValueWithConstructorParserRuleCall_0_3_0() { return cValueValueWithConstructorParserRuleCall_0_3_0; }
+		
+		//// block-specific
+		//variable=LOWERCASE_ID '=' value=ValueWithConstructor
+		public Group getGroup_1() { return cGroup_1; }
+		
+		//// block-specific
+		//variable=LOWERCASE_ID
+		public Assignment getVariableAssignment_1_0() { return cVariableAssignment_1_0; }
+		
+		//LOWERCASE_ID
+		public RuleCall getVariableLOWERCASE_IDTerminalRuleCall_1_0_0() { return cVariableLOWERCASE_IDTerminalRuleCall_1_0_0; }
+		
+		//'='
+		public Keyword getEqualsSignKeyword_1_1() { return cEqualsSignKeyword_1_1; }
+		
+		//value=ValueWithConstructor
+		public Assignment getValueAssignment_1_2() { return cValueAssignment_1_2; }
+		
+		//ValueWithConstructor
+		public RuleCall getValueValueWithConstructorParserRuleCall_1_2_0() { return cValueValueWithConstructorParserRuleCall_1_2_0; }
 	}
 	public class IfStatementElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.IfStatement");
@@ -7813,7 +7851,9 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	}
 	
 	//Assignment:
-	//    ('set'|local?='def') (recipient=LOWERCASE_ID '.')? variable=LOWERCASE_ID value=ValueWithConstructor
+	//    (global?='set'|local?='def') (recipient=LOWERCASE_ID '.')? variable=LOWERCASE_ID value=ValueWithConstructor |
+	//    // block-specific
+	//    variable=LOWERCASE_ID '=' value=ValueWithConstructor
 	//;
 	public AssignmentElements getAssignmentAccess() {
 		return pAssignment;

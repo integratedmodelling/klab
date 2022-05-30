@@ -1547,7 +1547,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getAssignment_Local()
+  public EAttribute getAssignment_Global()
   {
     return (EAttribute)assignmentEClass.getEStructuralFeatures().get(0);
   }
@@ -1558,7 +1558,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getAssignment_Recipient()
+  public EAttribute getAssignment_Local()
   {
     return (EAttribute)assignmentEClass.getEStructuralFeatures().get(1);
   }
@@ -1569,7 +1569,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getAssignment_Variable()
+  public EAttribute getAssignment_Recipient()
   {
     return (EAttribute)assignmentEClass.getEStructuralFeatures().get(2);
   }
@@ -1580,9 +1580,20 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
+  public EAttribute getAssignment_Variable()
+  {
+    return (EAttribute)assignmentEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EReference getAssignment_Value()
   {
-    return (EReference)assignmentEClass.getEStructuralFeatures().get(3);
+    return (EReference)assignmentEClass.getEStructuralFeatures().get(4);
   }
 
   /**
@@ -4628,6 +4639,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     createEReference(assertionEClass, ASSERTION__METADATA);
 
     assignmentEClass = createEClass(ASSIGNMENT);
+    createEAttribute(assignmentEClass, ASSIGNMENT__GLOBAL);
     createEAttribute(assignmentEClass, ASSIGNMENT__LOCAL);
     createEAttribute(assignmentEClass, ASSIGNMENT__RECIPIENT);
     createEAttribute(assignmentEClass, ASSIGNMENT__VARIABLE);
@@ -5076,6 +5088,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     initEReference(getAssertion_Metadata(), this.getMetadata(), null, "metadata", null, 0, 1, Assertion.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(assignmentEClass, Assignment.class, "Assignment", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getAssignment_Global(), ecorePackage.getEBoolean(), "global", null, 0, 1, Assignment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getAssignment_Local(), ecorePackage.getEBoolean(), "local", null, 0, 1, Assignment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getAssignment_Recipient(), ecorePackage.getEString(), "recipient", null, 0, 1, Assignment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getAssignment_Variable(), ecorePackage.getEString(), "variable", null, 0, 1, Assignment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

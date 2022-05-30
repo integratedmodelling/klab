@@ -156,6 +156,12 @@ public interface IKActorsStatement extends IKActorsCodeStatement {
 
     public interface Assignment extends IKActorsStatement {
 
+    	public enum Scope {
+    		ACTOR,
+    		ACTION,
+    		FRAME
+    	}
+    	
         /**
          * Recipient is the part before the dot if set x.y value is issued. It may be null (local
          * variable in the internal actor's symbols), refer to the state of another actor, or be
@@ -183,12 +189,10 @@ public interface IKActorsStatement extends IKActorsCodeStatement {
         IKActorsValue getValue();
 
         /**
-         * If true, 'def' was specified, which results in assignment in the local scope. Otherwise,
-         * 'set' was used, which sets values in the actor and should only be used in init actions.
-         * 
+         * Get the scope. Actor, action or block
          * @return
          */
-        boolean isLocal();
+        Scope getScope();
     }
 
     public interface FireValue extends IKActorsStatement {

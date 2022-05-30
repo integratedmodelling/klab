@@ -157,7 +157,9 @@ NextStatement returns Statement:
 ;
 
 Assignment:
-	('set'|local?='def') (recipient=LOWERCASE_ID '.')? variable=LOWERCASE_ID value=ValueWithConstructor
+	(global?='set'|local?='def') (recipient=LOWERCASE_ID '.')? variable=LOWERCASE_ID value=ValueWithConstructor |
+	// block-specific
+	variable=LOWERCASE_ID '=' value=ValueWithConstructor
 ;
 
 IfStatement:
