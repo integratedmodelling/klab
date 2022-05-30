@@ -1,7 +1,5 @@
 package org.integratedmodelling.klab.engine.debugger;
 
-import java.util.Objects;
-
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.integratedmodelling.klab.Observations;
 
@@ -37,9 +35,8 @@ public class Statistics extends SummaryStatistics {
         } else {
             
             /*
-             * 
+             * TODO
              */
-            
             
         }
     }
@@ -59,6 +56,7 @@ public class Statistics extends SummaryStatistics {
                 "nodata: " + nodataCount +
                 "\nntotal: " + totalCount;
     }
+    
     @Override
     public int hashCode() {
         return toString().hashCode();
@@ -75,8 +73,5 @@ public class Statistics extends SummaryStatistics {
         Statistics other = (Statistics) obj;
         return toString().equals(other.toString());
     }
-    
-    
-    
 
 }

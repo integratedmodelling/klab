@@ -82,6 +82,11 @@ public class SimpleTableArtifact extends Artifact implements IKnowledgeView {
 			Set<Style> styles = EnumSet.noneOf(Style.class);
 			if (options != null) {
 				for (int i = 0; i < options.length; i++) {
+				    
+				    if (options[i] instanceof Collection && ((Collection)options[i]).size() == 1) {
+				        options[i] = ((Collection)options[i]).iterator().next();
+				    }
+				    
 					if (options[i] instanceof Attribute) {
 						switch ((Attribute) options[i]) {
 						case HEADER:
