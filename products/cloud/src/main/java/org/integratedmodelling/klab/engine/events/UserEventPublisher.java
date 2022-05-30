@@ -16,10 +16,19 @@ public class UserEventPublisher {
     @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
     
+    public void loginFailed(String username, String message) {
+        final UserEventLogin event = new UserEventLogin(username, message);
+        applicationEventPublisher.publishEvent(event);
+    }    
     
-    public void login(final HubUserProfile profile, final Session session) {
-    	final UserEventLogin event = new UserEventLogin(profile, session);
+    public void login(final HubUserProfile profile, final Session session, String message) {
+    	final UserEventLogin event = new UserEventLogin(profile, session, message);
     	applicationEventPublisher.publishEvent(event);
+    }
+    
+    public void logoutFailed(String username, String message) {
+        final UserEventLogout event = new UserEventLogout(username, message);
+        applicationEventPublisher.publishEvent(event);
     }
     
     public void logout(final HubUserProfile profile, final Session session, final boolean forced) {
