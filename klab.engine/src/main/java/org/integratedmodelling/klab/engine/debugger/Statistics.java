@@ -30,7 +30,20 @@ public class Statistics extends SummaryStatistics {
     public void setTotalCount(long totalCount) {
         this.totalCount = totalCount;
     }
-   
+
+    public void add(Object value) {
+        if (value instanceof Number) {
+            addValue(((Number)value).doubleValue());
+        } else {
+            
+            /*
+             * 
+             */
+            
+            
+        }
+    }
+
     @Override
     public void addValue(double value) {
         totalCount ++;
@@ -62,6 +75,7 @@ public class Statistics extends SummaryStatistics {
         Statistics other = (Statistics) obj;
         return toString().equals(other.toString());
     }
+    
     
     
 
