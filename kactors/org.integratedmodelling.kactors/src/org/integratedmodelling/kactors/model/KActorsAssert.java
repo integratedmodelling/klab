@@ -3,7 +3,6 @@ package org.integratedmodelling.kactors.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.emf.ecore.EObject;
 import org.integratedmodelling.kactors.api.IKActorsStatement.Assert;
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.kactors.AssertStatement;
@@ -17,8 +16,9 @@ public class KActorsAssert extends KActorsStatement implements Assert {
 
     class AssertionImpl extends KActorsStatement implements Assertion {
 
-        public AssertionImpl(EObject statement, KActorCodeStatement parent) {
+        public AssertionImpl(org.integratedmodelling.kactors.kactors.Assertion statement, KActorCodeStatement parent) {
             super(statement, parent, Type.ASSERTION);
+            parseMetadata(statement.getMetadata());
         }
 
         List<Call> calls = new ArrayList<>();

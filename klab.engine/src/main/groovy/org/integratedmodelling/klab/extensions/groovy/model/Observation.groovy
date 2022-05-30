@@ -8,10 +8,10 @@ import org.integratedmodelling.klab.api.knowledge.IConcept
 import org.integratedmodelling.klab.api.knowledge.ISemantic
 import org.integratedmodelling.klab.api.model.IModel
 import org.integratedmodelling.klab.api.observations.IObservation
-import org.integratedmodelling.klab.api.observations.IState
 import org.integratedmodelling.klab.api.observations.scale.IScale
 import org.integratedmodelling.klab.api.observations.scale.time.ITime
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor
+import org.integratedmodelling.klab.components.runtime.languagesupport.ScopeProxy
 import org.integratedmodelling.klab.engine.runtime.code.groovy.Wrapper
 
 abstract class Observation<T extends IObservation> extends Wrapper<T> {
@@ -34,7 +34,7 @@ abstract class Observation<T extends IObservation> extends Wrapper<T> {
 	}
 
 	protected IScale getTransitionScale() {
-		ITime scopeTime = getScope().getScale().getTime();
+		ITime scopeTime = getRuntimeScope().getScale().getTime();
 		org.integratedmodelling.klab.scale.Scale ret = (org.integratedmodelling.klab.scale.Scale)unwrap().getScale();
 		if (scopeTime != null && ret.getTime() != null && ret.getTime().size() > 1) {
 			return ret.at(scopeTime);
@@ -44,8 +44,8 @@ abstract class Observation<T extends IObservation> extends Wrapper<T> {
 
 	protected long getTimeIndex() {
 		long time = -1;
-		if (getScope() != null && getScope().getScale() instanceof IScale && getScope().getScale().getTime() != null) {
-			time = getScope().getScale().getTime().getStart().getMilliseconds();
+		if (getRuntimeScope() != null && getRuntimeScope().getScale() instanceof IScale && getRuntimeScope().getScale().getTime() != null) {
+			time = getRuntimeScope().getScale().getTime().getStart().getMilliseconds();
 		}
 		return time;
 	}
@@ -105,6 +105,10 @@ abstract class Observation<T extends IObservation> extends Wrapper<T> {
 	def getScale() {
 		return new Scale(unwrap().getScale(), binding);
 	}
+    
+    def getScope() {
+        return new ScopeProxy(unwrap().getScope());
+    }
 
 	def isSibling(Observation o) {
 		unwrap().context != null &&

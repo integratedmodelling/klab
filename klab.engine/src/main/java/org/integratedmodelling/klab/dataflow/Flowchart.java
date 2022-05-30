@@ -32,6 +32,7 @@ import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.api.API.PUBLIC.Export;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Attribute;
 import org.integratedmodelling.klab.api.data.general.IExpression.Scope;
@@ -1043,14 +1044,14 @@ public class Flowchart {
 		return null;
 	}
 
-	public ElkNode compile() {
+	public ElkNode compile(Export type) {
 
 		this.nodes = new HashMap<>();
 		this.elements = new HashMap<>();
 		this.computationToNodeId = new HashMap<>();
 
-		ElkNode ret = kelk.createGraph(runtimeScope.getContextObservation().getId());
-		compile(getRoot(), ret);
+		ElkNode ret = kelk.createGraph(runtimeScope.getContextObservation().getId(), type);
+		compile(getRoot(), ret, type);
 
 		for (Pair<String, String> connection : getConnections()) {
 			ElkConnectableShape source = nodes.get(connection.getFirst());
@@ -1058,9 +1059,9 @@ public class Flowchart {
 			String label = connectionLabels.get(connection);
 			if (source != null && target != null) {
 				if (label == null) {
-					kelk.createSimpleEdge(source, target, null);
+					kelk.createSimpleEdge(source, target, null, type);
 				} else {
-					kelk.createSimpleEdge(source, target, label == null ? null : (source + "_" + target), label);
+					kelk.createSimpleEdge(source, target, label == null ? null : (source + "_" + target), label, type);
 				}
 			}
 		}
@@ -1069,18 +1070,18 @@ public class Flowchart {
 			ElkConnectableShape source = getOutput(s);
 			ElkConnectableShape target = nodes.get(getExternalInputs().get(s));
 			if (source != null && target != null) {
-				kelk.createSimpleEdge(source, target, null);
+				kelk.createSimpleEdge(source, target, null, type);
 			}
 		}
 
 		return ret;
 	}
 
-	public ElkNode compile(Element element, ElkNode parentNode) {
+	public ElkNode compile(Element element, ElkNode parentNode, Export type) {
 
 		ElkNode ret = element.getType() == ElementType.ACTUATOR
-				? kelk.createActuatorNode(element.getNodeId(), parentNode)
-				: kelk.createServiceNode(element.getNodeId(), parentNode);
+				? kelk.createActuatorNode(element.getNodeId(), parentNode, type)
+				: kelk.createServiceNode(element.getNodeId(), parentNode, type);
 
 		computationToNodeId.put(element.getId(), ret.getIdentifier());
 
@@ -1100,7 +1101,7 @@ public class Flowchart {
 		}
 
 		for (Element child : element.getChildren()) {
-			compile(child, ret);
+			compile(child, ret, type);
 		}
 
 		return ret;
@@ -1116,10 +1117,10 @@ public class Flowchart {
 		return ret;
 	}
 
-	public String getJsonLayout() {
+	public String getJsonLayout(Export type) {
 
 		RecursiveGraphLayoutEngine engine = new RecursiveGraphLayoutEngine();
-		ElkNode rootNode = compile();
+		ElkNode rootNode = compile(type);
 		engine.layout(rootNode, new BasicProgressMonitor());
 		return ElkGraphJson.forGraph(rootNode).omitLayout(false).omitZeroDimension(true).omitZeroPositions(true)
 				.shortLayoutOptionKeys(true).prettyPrint(true).toJson();

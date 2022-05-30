@@ -275,7 +275,7 @@ public abstract class Observation extends ObservedArtifact
 
     @Override
     public Iterator<IArtifact> iterator() {
-        if (group == null) {
+        if (group == null || !(this instanceof ObservationGroup)) {
             List<IArtifact> list = new ArrayList<>();
             list.add(this);
             return list.iterator();

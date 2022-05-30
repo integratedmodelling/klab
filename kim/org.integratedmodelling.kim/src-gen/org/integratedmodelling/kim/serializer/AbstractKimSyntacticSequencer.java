@@ -576,7 +576,6 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *
 	 * This ambiguous syntax occurs at:
 	 *     coverage+=Function (ambiguity) blacklistNamespace+=PathName
-	 *     disjointNamespaces+=PathName ',' (ambiguity) blacklistNamespace+=PathName
 	 *     disjointNamespaces+=PathName (ambiguity) blacklistNamespace+=PathName
 	 *     docstring=STRING (ambiguity) blacklistNamespace+=PathName
 	 *     domainConcept=Concept (ambiguity) blacklistNamespace+=PathName
@@ -625,18 +624,6 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     coverage+=Function (ambiguity) 'using' imported+=Import
 	 *     coverage+=Function (ambiguity) 'using' weights=Map
 	 *     coverage+=Function (ambiguity) 'version' version=VersionNumber
-	 *     disjointNamespaces+=PathName ',' (ambiguity) ';' (rule end)
-	 *     disjointNamespaces+=PathName ',' (ambiguity) 'covering' coverage+=Function
-	 *     disjointNamespaces+=PathName ',' (ambiguity) 'disjoint' 'with' disjointNamespaces+=PathName
-	 *     disjointNamespaces+=PathName ',' (ambiguity) 'imports' owlImports+=OwlImport
-	 *     disjointNamespaces+=PathName ',' (ambiguity) 'in' 'domain' domainConcept=Concept
-	 *     disjointNamespaces+=PathName ',' (ambiguity) 'in' 'domain' rootDomain?='root'
-	 *     disjointNamespaces+=PathName ',' (ambiguity) 'metadata' metadata=Map
-	 *     disjointNamespaces+=PathName ',' (ambiguity) 'parameters' parameters=Map
-	 *     disjointNamespaces+=PathName ',' (ambiguity) 'using' 'language' language=UPPERCASE_ID
-	 *     disjointNamespaces+=PathName ',' (ambiguity) 'using' imported+=Import
-	 *     disjointNamespaces+=PathName ',' (ambiguity) 'using' weights=Map
-	 *     disjointNamespaces+=PathName ',' (ambiguity) 'version' version=VersionNumber
 	 *     disjointNamespaces+=PathName (ambiguity) ';' (rule end)
 	 *     disjointNamespaces+=PathName (ambiguity) 'covering' coverage+=Function
 	 *     disjointNamespaces+=PathName (ambiguity) 'disjoint' 'with' disjointNamespaces+=PathName
@@ -798,7 +785,6 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 * This ambiguous syntax occurs at:
 	 *     blacklistNamespace+=PathName (ambiguity) lookupNamespace+=PathName
 	 *     coverage+=Function (ambiguity) lookupNamespace+=PathName
-	 *     disjointNamespaces+=PathName ',' (ambiguity) lookupNamespace+=PathName
 	 *     disjointNamespaces+=PathName (ambiguity) lookupNamespace+=PathName
 	 *     docstring=STRING (ambiguity) lookupNamespace+=PathName
 	 *     domainConcept=Concept (ambiguity) lookupNamespace+=PathName

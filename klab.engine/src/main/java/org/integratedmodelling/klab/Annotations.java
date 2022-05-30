@@ -345,4 +345,20 @@ public enum Annotations implements IAnnotationService {
 		return false;
 	}
 
+	/**
+	 * Simple methods that are messy to keep writing explicitly
+	 * 
+	 * @param annotations
+	 * @param id
+	 * @return
+	 */
+	public IAnnotation getAnnotation(List<IAnnotation> annotations, String id) {
+        for (IAnnotation annotation : annotations) {
+            if (id.equals(annotation.getName())) {
+                return annotation;
+            }
+        }
+        return null;
+    }
+
 }

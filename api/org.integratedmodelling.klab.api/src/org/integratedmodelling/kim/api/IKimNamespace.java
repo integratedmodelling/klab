@@ -53,6 +53,15 @@ public interface IKimNamespace extends IKimStatement {
 	 */
 	List<IKimNamespace> getImported();
 
+    /**
+     * Return all the namespaces that this should not be mixed with during
+     * resolution or scenario setting.
+     *
+     * @return IDs of namespaces we do not agree with
+     */
+    Collection<String> getDisjointNamespaces();
+
+	
 	/**
 	 * The timestamp of creation of the namespace object - not the underlying file
 	 * resource (see {@link #getFile()} for that).

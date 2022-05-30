@@ -10,6 +10,7 @@ import org.apache.commons.lang3.EnumUtils;
 import org.integratedmodelling.kactors.api.IKActorsStatement.Assert.Assertion;
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.api.IKActorsValue.Type;
+import org.integratedmodelling.kactors.model.KActorsArguments;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
@@ -50,18 +51,16 @@ import akka.actor.typed.ActorRef;
 @Behavior(id = "test", version = Version.CURRENT)
 public class TestBehavior {
 
-    private static final PeriodFormatter periodFormat = new PeriodFormatterBuilder().appendDays()
-            .appendSuffix(" day", " days").appendSeparator(" ").printZeroIfSupported().minimumPrintedDigits(2)
-            .appendHours().appendSeparator(":").appendMinutes().printZeroIfSupported().minimumPrintedDigits(2)
-            .appendSeparator(":").appendSeconds().minimumPrintedDigits(2).appendSeparator(".")
-            .appendMillis3Digit().toFormatter();
+    private static final PeriodFormatter periodFormat = new PeriodFormatterBuilder().appendDays().appendSuffix(" day", " days")
+            .appendSeparator(" ").printZeroIfSupported().minimumPrintedDigits(2).appendHours().appendSeparator(":")
+            .appendMinutes().printZeroIfSupported().minimumPrintedDigits(2).appendSeparator(":").appendSeconds()
+            .minimumPrintedDigits(2).appendSeparator(".").appendMillis3Digit().toFormatter();
 
     @Action(id = "test", fires = {}, description = "Run all the test included in one or more projects, naming the project ID, "
             + "a URL or a Git URL (git:// or http....*.git")
     public static class Test extends KlabActionExecutor {
 
-        public Test(IActorIdentity<KlabMessage> identity, IParameters<String> arguments,
-                KlabActor.Scope scope,
+        public Test(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
                 ActorRef<KlabMessage> sender, String callId) {
             super(identity, arguments, scope, sender, callId);
         }
@@ -86,8 +85,7 @@ public class TestBehavior {
                 for (IBehavior testcase : project.getUnitTests()) {
 
                     if (scope.identity instanceof Session) {
-                        ((Session) scope.identity).loadScript(testcase, scope.getChild(testcase),
-                                () -> done.set(true));
+                        ((Session) scope.identity).loadScript(testcase, scope.getChild(testcase), () -> done.set(true));
                     } else {
                         scope.identity.load(testcase, scope.runtimeScope);
                     }
@@ -117,8 +115,7 @@ public class TestBehavior {
                 IProject existing = Resources.INSTANCE.getLocalWorkspace()
                         .getProject(MiscUtilities.getURLBaseName(arg.toString()));
                 if (existing != null) {
-                    monitor.warn("Project " + existing.getName()
-                            + " is present in the local workspace: using local version");
+                    monitor.warn("Project " + existing.getName() + " is present in the local workspace: using local version");
                     return existing;
                 }
                 ret = Resources.INSTANCE.retrieveAndLoadProject(arg.toString());
@@ -138,8 +135,7 @@ public class TestBehavior {
      * @param scope
      * @param comparison
      */
-    public static void evaluateAssertion(Object target, Assertion assertion, Scope scope,
-            IParameters<String> arguments) {
+    public static void evaluateAssertion(Object target, Assertion assertion, Scope scope, IParameters<String> arguments) {
 
         if (target instanceof IKActorsValue) {
             target = KlabActor.evaluateInScope((KActorsValue) target, scope, scope.identity);
@@ -147,9 +143,9 @@ public class TestBehavior {
 
         IRuntimeScope runtimeScope = scope.runtimeScope;
         if (target instanceof IObservation) {
-        	runtimeScope = (IRuntimeScope)((IObservation)target).getScope();
+            runtimeScope = (IRuntimeScope) ((IObservation) target).getScope();
         }
-        
+
         IKActorsValue comparison = assertion.getValue();
 
         // TODO Auto-generated method stub
@@ -176,17 +172,16 @@ public class TestBehavior {
         Descriptor selectDescriptor;
         IExpression selectExpression = null;
         Map<String, IState> states = new HashMap<>();
-        
+
         if (comparison != null) {
             if (comparison.getType() == Type.EXPRESSION) {
 
                 IKimExpression expr = comparison.as(IKimExpression.class);
-                compareDescriptor = Extensions.INSTANCE.getLanguageProcessor(expr.getLanguage())
-                        .describe(expr.getCode(), runtimeScope.getExpressionContext());
+                compareDescriptor = Extensions.INSTANCE.getLanguageProcessor(expr.getLanguage()).describe(expr.getCode(),
+                        runtimeScope.getExpressionContext());
                 compareExpression = compareDescriptor.compile();
                 for (String input : compareDescriptor.getIdentifiers()) {
-                    if (compareDescriptor.isScalar(input)
-                            && runtimeScope.getArtifact(input, IState.class) != null) {
+                    if (compareDescriptor.isScalar(input) && runtimeScope.getArtifact(input, IState.class) != null) {
                         IState state = runtimeScope.getArtifact(input, IState.class);
                         if (state != null) {
                             states.put(state.getObservable().getName(), state);
@@ -200,12 +195,11 @@ public class TestBehavior {
 
         if (selector != null) {
             selectDescriptor = Extensions.INSTANCE.getLanguageProcessor(selector.getLanguage())
-            		// TODO parameter only if target is a state
+                    // TODO parameter only if target is a state
                     .describe(selector.getCode(), runtimeScope.getExpressionContext(), CompilerOption.ForcedScalar);
             selectExpression = selectDescriptor.compile();
             for (String input : selectDescriptor.getIdentifiers()) {
-                if (selectDescriptor.isScalar(input)
-                        && runtimeScope.getArtifact(input, IState.class) != null) {
+                if (selectDescriptor.isScalar(input) && runtimeScope.getArtifact(input, IState.class) != null) {
                     IState state = runtimeScope.getArtifact(input, IState.class);
                     if (state != null) {
                         states.put(state.getObservable().getName(), state);
@@ -248,7 +242,12 @@ public class TestBehavior {
             }
         } else {
 
-            if (comparison == null) {
+            if (assertion.getExpression() != null) {
+
+                Object ook = KlabActor.evaluateInScope((KActorsValue) assertion.getExpression(), scope, scope.identity);
+                ok = ook instanceof Boolean && (Boolean) ook;
+
+            } else if (comparison == null) {
                 ok = target == null;
             } else {
                 ok = Actors.INSTANCE.matches(comparison, target, scope);
@@ -260,8 +259,7 @@ public class TestBehavior {
         }
 
         if (scope.testScope == null && nErr > 0) {
-            throw new KlabActorException(
-                    "assertion failed on '" + comparison + "' with " + nErr + " mismatches");
+            throw new KlabActorException("assertion failed on '" + comparison + "' with " + nErr + " mismatches");
         }
 
         scope.testScope.notifyAssertion(target, comparison, ok, assertion);
@@ -295,6 +293,20 @@ public class TestBehavior {
 
         }
 
+    }
+
+    @Action(id = "require", fires = {}, description = "Checks accessibility of various elements in the k.LAB environment and disables a behavior if not. In test scope, will skip all tests and record the skipped actions.")
+    public static class Require extends KlabActionExecutor {
+
+        public Require(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, Scope scope,
+                ActorRef<KlabMessage> sender, String callId) {
+            super(identity, arguments, scope, sender, callId);
+        }
+
+        @Override
+        void run(Scope scope) {
+
+        }
     }
 
     @Action(id = "blacklist", fires = {})
@@ -357,19 +369,31 @@ public class TestBehavior {
                         }
                     } else {
                         o = ((KActorsValue) o).evaluate(scope, identity, true);
+                        triggerArguments.add(o);
                     }
                 }
             }
 
+            // inspector is reset to null after each test, but not at regular actions, so the first
+            // inspect in a test action will pass through here
             if (scope.runtimeScope.getSession().getState().getInspector() == null) {
                 ((SessionState) scope.runtimeScope.getSession().getState()).setInspector(new Inspector());
             }
 
-            ((SessionState) scope.runtimeScope.getSession().getState()).getInspector()
-                    .setTrigger((trigger, sc) -> {
-                        // TODO set variables in scope for expressions and assertions
-                        fire(trigger.getSubject(), scope);
-                    }, (Object[]) triggerArguments.toArray());
+            if (arguments.get("reset") != null) {
+                Object reset = arguments.get("reset");
+                if (reset instanceof KActorsValue) {
+                    reset = ((KActorsValue) reset).evaluate(scope, scope.identity, true);
+                }
+                if (reset instanceof Boolean && (Boolean) reset) {
+                    ((Inspector) scope.runtimeScope.getSession().getState().getInspector()).reset();
+                }
+            }
+
+            ((SessionState) scope.runtimeScope.getSession().getState()).getInspector().setTrigger((trigger, sc) -> {
+                // TODO set variables in scope for expressions and assertions
+                fire(trigger.getSubject(), scope);
+            }, (Object[]) triggerArguments.toArray());
         }
 
     }

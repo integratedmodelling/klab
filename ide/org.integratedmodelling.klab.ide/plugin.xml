@@ -208,6 +208,12 @@
             id="org.integratedmodelling.klab.ide.views.AuthorityView"
             name="Authorities and Vocabularies">
       </view>
+      <view
+            category="org.integratedmodelling.klab.ide.category"
+            class="org.integratedmodelling.klab.ide.views.ScenarioView"
+            id="org.integratedmodelling.klab.ide.views.ScenarioView"
+            name="Scenarios">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.commands">

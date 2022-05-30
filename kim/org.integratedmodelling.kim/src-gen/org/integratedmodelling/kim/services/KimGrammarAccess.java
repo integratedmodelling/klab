@@ -3411,7 +3411,7 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//        ('imports' owlImports+=OwlImport (',' owlImports+=OwlImport)*)? &
 		//        ('covering' coverage+=Function (=> ',' coverage+=Function)*)? &
 		//        ('in' 'domain' (rootDomain?='root' | domainConcept=Concept))? &
-		//        ('disjoint' 'with' disjointNamespaces+=PathName (',' disjointNamespaces+=PathName* ))? &
+		//        ('disjoint' 'with' disjointNamespaces+=PathName (',' disjointNamespaces+=PathName)* )? &
 		//        ('version' version=VersionNumber)? &
 		//        ('resolve' ('from' lookupNamespace+=PathName*)? & ('outside' blacklistNamespace+=PathName*)? & ('using' weights=Map)?)?
 		//    )
@@ -3432,7 +3432,7 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//    ('imports' owlImports+=OwlImport (',' owlImports+=OwlImport)*)? &
 		//    ('covering' coverage+=Function (=> ',' coverage+=Function)*)? &
 		//    ('in' 'domain' (rootDomain?='root' | domainConcept=Concept))? &
-		//    ('disjoint' 'with' disjointNamespaces+=PathName (',' disjointNamespaces+=PathName* ))? &
+		//    ('disjoint' 'with' disjointNamespaces+=PathName (',' disjointNamespaces+=PathName)* )? &
 		//    ('version' version=VersionNumber)? &
 		//    ('resolve' ('from' lookupNamespace+=PathName*)? & ('outside' blacklistNamespace+=PathName*)? & ('using' weights=Map)?)?
 		//)
@@ -3519,7 +3519,7 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//    ('imports' owlImports+=OwlImport (',' owlImports+=OwlImport)*)? &
 		//    ('covering' coverage+=Function (=> ',' coverage+=Function)*)? &
 		//    ('in' 'domain' (rootDomain?='root' | domainConcept=Concept))? &
-		//    ('disjoint' 'with' disjointNamespaces+=PathName (',' disjointNamespaces+=PathName* ))? &
+		//    ('disjoint' 'with' disjointNamespaces+=PathName (',' disjointNamespaces+=PathName)* )? &
 		//    ('version' version=VersionNumber)? &
 		//    ('resolve' ('from' lookupNamespace+=PathName*)? & ('outside' blacklistNamespace+=PathName*)? & ('using' weights=Map)?)?
 		//)
@@ -3636,7 +3636,7 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//Concept
 		public RuleCall getDomainConceptConceptParserRuleCall_5_4_2_1_0() { return cDomainConceptConceptParserRuleCall_5_4_2_1_0; }
 		
-		//('disjoint' 'with' disjointNamespaces+=PathName (',' disjointNamespaces+=PathName* ))?
+		//('disjoint' 'with' disjointNamespaces+=PathName (',' disjointNamespaces+=PathName)* )?
 		public Group getGroup_5_5() { return cGroup_5_5; }
 		
 		//'disjoint'
@@ -3651,13 +3651,13 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//PathName
 		public RuleCall getDisjointNamespacesPathNameParserRuleCall_5_5_2_0() { return cDisjointNamespacesPathNameParserRuleCall_5_5_2_0; }
 		
-		//(',' disjointNamespaces+=PathName* )
+		//(',' disjointNamespaces+=PathName)*
 		public Group getGroup_5_5_3() { return cGroup_5_5_3; }
 		
 		//','
 		public Keyword getCommaKeyword_5_5_3_0() { return cCommaKeyword_5_5_3_0; }
 		
-		//disjointNamespaces+=PathName*
+		//disjointNamespaces+=PathName
 		public Assignment getDisjointNamespacesAssignment_5_5_3_1() { return cDisjointNamespacesAssignment_5_5_3_1; }
 		
 		//PathName
@@ -7761,6 +7761,10 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		private final Keyword cDescribesKeyword_3_5_0 = (Keyword)cGroup_3_5.eContents().get(0);
 		private final Assignment cDescribedQualityAssignment_3_5_1 = (Assignment)cGroup_3_5.eContents().get(1);
 		private final RuleCall cDescribedQualityConceptDeclarationParserRuleCall_3_5_1_0 = (RuleCall)cDescribedQualityAssignment_3_5_1.eContents().get(0);
+		private final Group cGroup_3_5_2 = (Group)cGroup_3_5.eContents().get(2);
+		private final Keyword cAsKeyword_3_5_2_0 = (Keyword)cGroup_3_5_2.eContents().get(0);
+		private final Assignment cDescriptionConstraintsAssignment_3_5_2_1 = (Assignment)cGroup_3_5_2.eContents().get(1);
+		private final RuleCall cDescriptionConstraintsDescriptionConstraintsParserRuleCall_3_5_2_1_0 = (RuleCall)cDescriptionConstraintsAssignment_3_5_2_1.eContents().get(0);
 		private final Group cGroup_3_6 = (Group)cUnorderedGroup_3.eContents().get(6);
 		private final Keyword cIncreasesKeyword_3_6_0 = (Keyword)cGroup_3_6.eContents().get(0);
 		private final Keyword cWithKeyword_3_6_1 = (Keyword)cGroup_3_6.eContents().get(1);
@@ -7975,7 +7979,7 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//         * provide more detail and allow more inferences and validation in models.
 		//         */
 		//        // just establish a link
-		//        ('describes' describedQuality=ConceptDeclaration)? &
+		//        ('describes' describedQuality=ConceptDeclaration  ('as' descriptionConstraints=DescriptionConstraints)? )? &
 		//        // for quantity, direct and inverse proportionalities, use with orderings or qualities
 		//        ('increases' 'with' describedProportionality=ConceptDeclaration)? &
 		//        ('decreases' 'with' describedInverseProportionalityQuality=ConceptDeclaration)? &
@@ -8100,7 +8104,7 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//     * provide more detail and allow more inferences and validation in models.
 		//     */
 		//    // just establish a link
-		//    ('describes' describedQuality=ConceptDeclaration)? &
+		//    ('describes' describedQuality=ConceptDeclaration  ('as' descriptionConstraints=DescriptionConstraints)? )? &
 		//    // for quantity, direct and inverse proportionalities, use with orderings or qualities
 		//    ('increases' 'with' describedProportionality=ConceptDeclaration)? &
 		//    ('decreases' 'with' describedInverseProportionalityQuality=ConceptDeclaration)? &
@@ -8296,7 +8300,7 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//     * provide more detail and allow more inferences and validation in models.
 		//     */
 		//    // just establish a link
-		//    ('describes' describedQuality=ConceptDeclaration)? &
+		//    ('describes' describedQuality=ConceptDeclaration  ('as' descriptionConstraints=DescriptionConstraints)? )? &
 		//    // for quantity, direct and inverse proportionalities, use with orderings or qualities
 		//    ('increases' 'with' describedProportionality=ConceptDeclaration)? &
 		//    ('decreases' 'with' describedInverseProportionalityQuality=ConceptDeclaration)? &
@@ -8593,7 +8597,7 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		// * provide more detail and allow more inferences and validation in models.
 		// */
 		//// just establish a link
-		//('describes' describedQuality=ConceptDeclaration)?
+		//('describes' describedQuality=ConceptDeclaration  ('as' descriptionConstraints=DescriptionConstraints)? )?
 		public Group getGroup_3_5() { return cGroup_3_5; }
 		
 		//'describes'
@@ -8604,6 +8608,18 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		
 		//ConceptDeclaration
 		public RuleCall getDescribedQualityConceptDeclarationParserRuleCall_3_5_1_0() { return cDescribedQualityConceptDeclarationParserRuleCall_3_5_1_0; }
+		
+		//('as' descriptionConstraints=DescriptionConstraints)?
+		public Group getGroup_3_5_2() { return cGroup_3_5_2; }
+		
+		//'as'
+		public Keyword getAsKeyword_3_5_2_0() { return cAsKeyword_3_5_2_0; }
+		
+		//descriptionConstraints=DescriptionConstraints
+		public Assignment getDescriptionConstraintsAssignment_3_5_2_1() { return cDescriptionConstraintsAssignment_3_5_2_1; }
+		
+		//DescriptionConstraints
+		public RuleCall getDescriptionConstraintsDescriptionConstraintsParserRuleCall_3_5_2_1_0() { return cDescriptionConstraintsDescriptionConstraintsParserRuleCall_3_5_2_1_0; }
 		
 		//// for quantity, direct and inverse proportionalities, use with orderings or qualities
 		//('increases' 'with' describedProportionality=ConceptDeclaration)?
@@ -9142,6 +9158,84 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		
 		//PropertyStatement
 		public RuleCall getPropertiesPropertyStatementParserRuleCall_3_24_0() { return cPropertiesPropertyStatementParserRuleCall_3_24_0; }
+	}
+	public class DescriptionConstraintsElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.DescriptionConstraints");
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final Group cGroup_0 = (Group)cAlternatives.eContents().get(0);
+		private final Assignment cLowerAssignment_0_0 = (Assignment)cGroup_0.eContents().get(0);
+		private final RuleCall cLowerNumberParserRuleCall_0_0_0 = (RuleCall)cLowerAssignment_0_0.eContents().get(0);
+		private final Group cGroup_0_1 = (Group)cGroup_0.eContents().get(1);
+		private final Keyword cToKeyword_0_1_0 = (Keyword)cGroup_0_1.eContents().get(0);
+		private final Assignment cHigherAssignment_0_1_1 = (Assignment)cGroup_0_1.eContents().get(1);
+		private final RuleCall cHigherNumberParserRuleCall_0_1_1_0 = (RuleCall)cHigherAssignment_0_1_1.eContents().get(0);
+		private final Group cGroup_0_2 = (Group)cGroup_0.eContents().get(2);
+		private final Keyword cInKeyword_0_2_0 = (Keyword)cGroup_0_2.eContents().get(0);
+		private final Alternatives cAlternatives_0_2_1 = (Alternatives)cGroup_0_2.eContents().get(1);
+		private final Assignment cCurrencyAssignment_0_2_1_0 = (Assignment)cAlternatives_0_2_1.eContents().get(0);
+		private final RuleCall cCurrencyCurrencyParserRuleCall_0_2_1_0_0 = (RuleCall)cCurrencyAssignment_0_2_1_0.eContents().get(0);
+		private final Assignment cUnitAssignment_0_2_1_1 = (Assignment)cAlternatives_0_2_1.eContents().get(1);
+		private final RuleCall cUnitUnitParserRuleCall_0_2_1_1_0 = (RuleCall)cUnitAssignment_0_2_1_1.eContents().get(0);
+		private final Assignment cConceptAssignment_1 = (Assignment)cAlternatives.eContents().get(1);
+		private final RuleCall cConceptSimpleConceptDeclarationParserRuleCall_1_0 = (RuleCall)cConceptAssignment_1.eContents().get(0);
+		
+		//DescriptionConstraints:
+		//    lower=Number ('to' higher=Number)? ('in' (currency=Currency | unit=Unit))? |
+		//    concept=SimpleConceptDeclaration
+		//;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//lower=Number ('to' higher=Number)? ('in' (currency=Currency | unit=Unit))? |
+		//concept=SimpleConceptDeclaration
+		public Alternatives getAlternatives() { return cAlternatives; }
+		
+		//lower=Number ('to' higher=Number)? ('in' (currency=Currency | unit=Unit))?
+		public Group getGroup_0() { return cGroup_0; }
+		
+		//lower=Number
+		public Assignment getLowerAssignment_0_0() { return cLowerAssignment_0_0; }
+		
+		//Number
+		public RuleCall getLowerNumberParserRuleCall_0_0_0() { return cLowerNumberParserRuleCall_0_0_0; }
+		
+		//('to' higher=Number)?
+		public Group getGroup_0_1() { return cGroup_0_1; }
+		
+		//'to'
+		public Keyword getToKeyword_0_1_0() { return cToKeyword_0_1_0; }
+		
+		//higher=Number
+		public Assignment getHigherAssignment_0_1_1() { return cHigherAssignment_0_1_1; }
+		
+		//Number
+		public RuleCall getHigherNumberParserRuleCall_0_1_1_0() { return cHigherNumberParserRuleCall_0_1_1_0; }
+		
+		//('in' (currency=Currency | unit=Unit))?
+		public Group getGroup_0_2() { return cGroup_0_2; }
+		
+		//'in'
+		public Keyword getInKeyword_0_2_0() { return cInKeyword_0_2_0; }
+		
+		//(currency=Currency | unit=Unit)
+		public Alternatives getAlternatives_0_2_1() { return cAlternatives_0_2_1; }
+		
+		//currency=Currency
+		public Assignment getCurrencyAssignment_0_2_1_0() { return cCurrencyAssignment_0_2_1_0; }
+		
+		//Currency
+		public RuleCall getCurrencyCurrencyParserRuleCall_0_2_1_0_0() { return cCurrencyCurrencyParserRuleCall_0_2_1_0_0; }
+		
+		//unit=Unit
+		public Assignment getUnitAssignment_0_2_1_1() { return cUnitAssignment_0_2_1_1; }
+		
+		//Unit
+		public RuleCall getUnitUnitParserRuleCall_0_2_1_1_0() { return cUnitUnitParserRuleCall_0_2_1_1_0; }
+		
+		//concept=SimpleConceptDeclaration
+		public Assignment getConceptAssignment_1() { return cConceptAssignment_1; }
+		
+		//SimpleConceptDeclaration
+		public RuleCall getConceptSimpleConceptDeclarationParserRuleCall_1_0() { return cConceptSimpleConceptDeclarationParserRuleCall_1_0; }
 	}
 	public class ImplicationElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.Implication");
@@ -12521,6 +12615,7 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 	private final UpperOntologyDefinitionElements pUpperOntologyDefinition;
 	private final ConceptStatementElements pConceptStatement;
 	private final ConceptStatementBodyElements pConceptStatementBody;
+	private final DescriptionConstraintsElements pDescriptionConstraints;
 	private final ImplicationElements pImplication;
 	private final QuantificationElements pQuantification;
 	private final PropertyStatementElements pPropertyStatement;
@@ -12641,6 +12736,7 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		this.pUpperOntologyDefinition = new UpperOntologyDefinitionElements();
 		this.pConceptStatement = new ConceptStatementElements();
 		this.pConceptStatementBody = new ConceptStatementBodyElements();
+		this.pDescriptionConstraints = new DescriptionConstraintsElements();
 		this.pImplication = new ImplicationElements();
 		this.pQuantification = new QuantificationElements();
 		this.pPropertyStatement = new PropertyStatementElements();
@@ -13207,7 +13303,7 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 	//        ('imports' owlImports+=OwlImport (',' owlImports+=OwlImport)*)? &
 	//        ('covering' coverage+=Function (=> ',' coverage+=Function)*)? &
 	//        ('in' 'domain' (rootDomain?='root' | domainConcept=Concept))? &
-	//        ('disjoint' 'with' disjointNamespaces+=PathName (',' disjointNamespaces+=PathName* ))? &
+	//        ('disjoint' 'with' disjointNamespaces+=PathName (',' disjointNamespaces+=PathName)* )? &
 	//        ('version' version=VersionNumber)? &
 	//        ('resolve' ('from' lookupNamespace+=PathName*)? & ('outside' blacklistNamespace+=PathName*)? & ('using' weights=Map)?)?
 	//    )
@@ -13728,7 +13824,7 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 	//         * provide more detail and allow more inferences and validation in models.
 	//         */
 	//        // just establish a link
-	//        ('describes' describedQuality=ConceptDeclaration)? &
+	//        ('describes' describedQuality=ConceptDeclaration  ('as' descriptionConstraints=DescriptionConstraints)? )? &
 	//        // for quantity, direct and inverse proportionalities, use with orderings or qualities
 	//        ('increases' 'with' describedProportionality=ConceptDeclaration)? &
 	//        ('decreases' 'with' describedInverseProportionalityQuality=ConceptDeclaration)? &
@@ -13818,6 +13914,18 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 	
 	public ParserRule getConceptStatementBodyRule() {
 		return getConceptStatementBodyAccess().getRule();
+	}
+	
+	//DescriptionConstraints:
+	//    lower=Number ('to' higher=Number)? ('in' (currency=Currency | unit=Unit))? |
+	//    concept=SimpleConceptDeclaration
+	//;
+	public DescriptionConstraintsElements getDescriptionConstraintsAccess() {
+		return pDescriptionConstraints;
+	}
+	
+	public ParserRule getDescriptionConstraintsRule() {
+		return getDescriptionConstraintsAccess().getRule();
 	}
 	
 	//Implication:

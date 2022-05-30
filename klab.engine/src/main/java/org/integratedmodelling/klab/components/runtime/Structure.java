@@ -15,6 +15,8 @@ import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 
+import groovy.lang.GroovyObjectSupport;
+
 /**
  * The structural graph is a graph containing only observations and not groups,
  * with a direct link between group members and their context observations. It
@@ -34,7 +36,7 @@ import org.jgrapht.graph.DefaultEdge;
  * @author ferdinando.villa
  *
  */
-public class Structure implements IArtifact.Structure {
+public class Structure extends GroovyObjectSupport implements IArtifact.Structure {
 
 	private Graph<IArtifact, DefaultEdge> logicalStructure = new DefaultDirectedGraph<IArtifact, DefaultEdge>(
 			DefaultEdge.class);

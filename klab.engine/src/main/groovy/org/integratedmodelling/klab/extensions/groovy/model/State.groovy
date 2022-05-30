@@ -8,6 +8,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException
 import org.integratedmodelling.klab.exceptions.KlabValidationException
 import org.integratedmodelling.klab.rest.StateSummary
+import org.integratedmodelling.klab.engine.debugger.Statistics
 
 class State extends Observation<IState> {
 
@@ -28,7 +29,7 @@ class State extends Observation<IState> {
 	}
 	
 	private StateSummary getStateSummary() {
-		return Observations.INSTANCE.getStateSummary(unwrap(), getScope().getScale());
+		return Observations.INSTANCE.getStateSummary(unwrap(), getRuntimeScope().getScale());
 	}
 
 	public Collection<IConcept> getCategories() {
@@ -39,6 +40,10 @@ class State extends Observation<IState> {
 		return ((org.integratedmodelling.klab.components.runtime.observations.State)unwrap()).getArea(value, unit);
 	}
 
+    public Statistics computeStatistics(Object locator) {
+        return ((org.integratedmodelling.klab.components.runtime.observations.State)unwrap()).computeStatistics(locator);
+    }
+    
 	/**
 	 * Invert the state values if the state is numeric and has values.
 	 * 
@@ -48,7 +53,7 @@ class State extends Observation<IState> {
 		if (unwrap().type == IArtifact.Type.NUMBER) {
 			def summary = getStateSummary();
 			if (!summary.isDegenerate()) {
-				for (ILocator locator : getScope().getScale()) {
+				for (ILocator locator : getRuntimeScope().getScale()) {
 					Double d = unwrap().get(locator, Double.class);
 					if (d != null && !Double.isNaN(d)) {
 						d = summary.getRange().get(1) - d + summary.getRange().get(0);
@@ -64,7 +69,7 @@ class State extends Observation<IState> {
 		if (unwrap().type == IArtifact.Type.NUMBER) {
 			def summary = getStateSummary();
 			if (!summary.isDegenerate()) {
-				for (ILocator locator : getScope().getScale()) {
+				for (ILocator locator : getRuntimeScope().getScale()) {
 					Double d = unwrap().get(locator, Double.class);
 					if (d != null && !Double.isNaN(d)) {
 						d = (d - summary.getRange().get(0)) / (summary.getRange().get(1) - summary.getRange().get(0));

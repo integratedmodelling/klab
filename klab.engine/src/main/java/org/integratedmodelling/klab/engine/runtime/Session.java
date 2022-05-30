@@ -48,6 +48,7 @@ import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.actors.IBehavior;
+import org.integratedmodelling.klab.api.actors.IBehavior.Action;
 import org.integratedmodelling.klab.api.auth.IActorIdentity;
 import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
@@ -98,6 +99,7 @@ import org.integratedmodelling.klab.components.runtime.actors.KlabActor.ActorRef
 import org.integratedmodelling.klab.components.runtime.actors.SessionActor;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Spawn;
+import org.integratedmodelling.klab.components.runtime.actors.TestScope;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.data.resources.Codelist;
 import org.integratedmodelling.klab.data.resources.Resource;
@@ -140,6 +142,7 @@ import org.integratedmodelling.klab.rest.NodeReference.Permission;
 import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.rest.ObservableReference;
 import org.integratedmodelling.klab.rest.ObservationRequest;
+import org.integratedmodelling.klab.rest.ProjectActionResponse;
 import org.integratedmodelling.klab.rest.ProjectLoadRequest;
 import org.integratedmodelling.klab.rest.ProjectLoadResponse;
 import org.integratedmodelling.klab.rest.ProjectModificationNotification;
@@ -152,6 +155,7 @@ import org.integratedmodelling.klab.rest.ResourceOperationResponse;
 import org.integratedmodelling.klab.rest.ResourcePublishRequest;
 import org.integratedmodelling.klab.rest.ResourcePublishResponse;
 import org.integratedmodelling.klab.rest.ScaleReference;
+import org.integratedmodelling.klab.rest.ScenarioSelection;
 import org.integratedmodelling.klab.rest.SearchMatch;
 import org.integratedmodelling.klab.rest.SearchMatch.TokenClass;
 import org.integratedmodelling.klab.rest.SearchMatchAction;
@@ -200,13 +204,13 @@ public class Session extends GroovyObjectSupport
     private static final long serialVersionUID = -1571090827271892549L;
 
     public static class Estimate {
-        
+
         public long estimatedCost;
         public ContextRequest contextRequest;
         public ObservationRequest observationRequest;
 
         public Estimate(long cost, ContextRequest contextRequest, ObservationRequest observationRequest) {
-        
+
             this.estimatedCost = cost;
             if (contextRequest != null) {
                 contextRequest.setEstimate(false);
@@ -219,9 +223,9 @@ public class Session extends GroovyObjectSupport
             this.contextRequest = contextRequest;
             this.observationRequest = observationRequest;
         }
-        
+
     }
-    
+
     Monitor monitor;
     String token = "s" + NameGenerator.shortUUID();
     IUserIdentity user;
@@ -239,6 +243,7 @@ public class Session extends GroovyObjectSupport
     private Map<String, IConsole> consoles = new HashMap<>();
     // estimated costs of jobs by ticket ID
     private Map<String, Estimate> estimates = Collections.synchronizedMap(new HashMap<>());
+    private TestScope rootTestScope = null;
 
     // tracks the setting of the actor so we can avoid the ask pattern
     private AtomicBoolean actorSet = new AtomicBoolean(Boolean.FALSE);
@@ -705,6 +710,11 @@ public class Session extends GroovyObjectSupport
         monitor.send(IMessage.MessageClass.EngineLifecycle, IMessage.Type.TicketResponse, ret);
     }
 
+    @MessageHandler
+    private void handleScenarioSelection(final ScenarioSelection request) {
+        this.getState().setActiveScenarios(request.getScenarios());
+    }
+    
     @MessageHandler
     private void handleResourceOperation(final ResourceOperationRequest request, IMessage message) {
 
@@ -1849,33 +1859,45 @@ public class Session extends GroovyObjectSupport
      * @param type
      */
     @MessageHandler
-    private void handleProjectEvent(final ProjectModificationNotification event, IMessage.Type type) {
+    private void handleProjectEvent(final ProjectModificationNotification event, IMessage.Type type,
+            IMessage message) {
+
+        ProjectActionResponse response = new ProjectActionResponse();
 
         switch(type) {
         case ProjectFileAdded:
             if (KActors.INSTANCE.isKActorsFile(event.getFile())) {
                 KActors.INSTANCE.add(event.getFile());
             } else {
-                Resources.INSTANCE.getLoader().add(event.getFile());
+                response.getNamespaces().add(Resources.INSTANCE.getLoader().add(event.getFile()).getName());
             }
             break;
         case ProjectFileDeleted:
             if (KActors.INSTANCE.isKActorsFile(event.getFile())) {
                 KActors.INSTANCE.delete(event.getFile());
             } else {
-                Resources.INSTANCE.getLoader().delete(event.getFile());
+                for (IKimNamespace ns : Resources.INSTANCE.getLoader().delete(event.getFile())) {
+                    response.getNamespaces().add(ns.getName());
+                }
             }
             break;
         case ProjectFileModified:
             if (KActors.INSTANCE.isKActorsFile(event.getFile())) {
                 KActors.INSTANCE.touch(event.getFile());
             } else {
-                Resources.INSTANCE.getLoader().touch(event.getFile());
+                for (IKimNamespace ns : Resources.INSTANCE.getLoader().touch(event.getFile())) {
+                    response.getNamespaces().add(ns.getName());
+                }
             }
             break;
         default:
             break;
         }
+
+        monitor.send(
+                Message.create(token, IMessage.MessageClass.ProjectLifecycle, type, response)
+                        .inResponseTo(message));
+
     }
 
     @MessageHandler
@@ -2205,12 +2227,26 @@ public class Session extends GroovyObjectSupport
         // TODO FIXME switch to local ticket manager
         return Klab.INSTANCE.getTicketManager().getTicket(ticketId);
     }
-    
+
     /*
      * Estimates are handled externally by the API, we only expose the catalog
      */
     public Map<String, Estimate> getEstimates() {
         return this.estimates;
+    }
+
+    public void resetAfterTest(Action action) {
+        globalState.resetConstraints();
+        globalState.resetRoles();
+        globalState.resetInspector();
+        globalState.resetContext();
+    }
+    
+    public TestScope getRootTestScope() {
+        if (rootTestScope == null) {
+            rootTestScope = new TestScope(this);
+        }
+        return rootTestScope;
     }
 
 }

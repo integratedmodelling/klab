@@ -28,9 +28,8 @@ import org.integratedmodelling.klab.api.documentation.views.IDocumentationView;
 import org.integratedmodelling.klab.api.documentation.views.ITableView;
 import org.integratedmodelling.klab.api.extensions.ILanguageExpression;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IKnowledgeView;
-import org.integratedmodelling.klab.api.observations.IKnowledgeView.ComputationType;
-import org.integratedmodelling.klab.api.observations.IKnowledgeView.Style;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.data.Aggregator;
@@ -47,7 +46,6 @@ import org.integratedmodelling.klab.rest.ObservationReference.ExportFormat;
 import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.NameGenerator;
-import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.TemplateUtils;
 
@@ -58,6 +56,8 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 
 	public static final String EXCEL_MEDIA_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 	public static final String HTML_MEDIA_TYPE = "text/html";
+    public static final String TEXT_PLAIN_MEDIA_TYPE = "text/markdown";
+    public static final String MARKDOWN_MEDIA_TYPE = "text/plain";
 
 	/**
 	 * A cell may contain a standard aggregator, a comparator, a differentiator or
@@ -748,7 +748,11 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 				ret = new TableView();
 			} else if (EXCEL_MEDIA_TYPE.equals(mediaType)) {
 				ret = new ExcelView();
-			}
+			} else if (MARKDOWN_MEDIA_TYPE.equals(mediaType)) {
+                ret = new MarkdownView(false);
+			} else if (TEXT_PLAIN_MEDIA_TYPE.equals(mediaType)) {
+                ret = new MarkdownView(true);
+            }
 
 			if (ret == null) {
 				throw new KlabValidationException("table view: media type " + mediaType + " is not supported");
@@ -758,6 +762,11 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 			this.compiledViews.put(mediaType, ret);
 		}
 		return ret;
+	}
+	
+	@Override
+	public String toString() {
+	    return getCompiledView(MARKDOWN_MEDIA_TYPE).toString();
 	}
 
 	private int checkGroups(Dimension dimension, IRuntimeScope scope, int startIndex, Map<String, Group> container) {

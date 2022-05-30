@@ -269,6 +269,11 @@ public class Geometry implements IGeometry {
 	public static final String PARAMETER_TIME_REPRESENTATION = "ttype";
 
 	/**
+	 * Irregular grid transition points, start to end.
+	 */
+	public static final String PARAMETER_TIME_TRANSITIONS = "transitions";
+
+	/**
 	 * Time scope: integer or floating point number of PARAMETER_TIME_SCOPE_UNITs.
 	 */
 	public static final String PARAMETER_TIME_SCOPE = "tscope";
@@ -1567,6 +1572,17 @@ public class Geometry implements IGeometry {
 		return this;
 	}
 
+	public Geometry withTemporalTransitions(long[] transitionPoints) {
+        Dimension time = getDimension(Type.TIME);
+        if (time == null) {
+            time = addLogicalTime(this);
+        }
+        time.getParameters().put(PARAMETER_TIME_REPRESENTATION, ITime.Type.GRID);
+        time.getParameters().put(PARAMETER_TIME_TRANSITIONS, transitionPoints);
+        return this;
+    }
+
+
 	private Dimension addLogicalTime(Geometry geometry) {
 		DimensionImpl ret = new DimensionImpl();
 		ret.type = Dimension.Type.TIME;
@@ -1588,5 +1604,6 @@ public class Geometry implements IGeometry {
 		geometry.dimensions.add(ret);
 		return ret;
 	}
+
 
 }

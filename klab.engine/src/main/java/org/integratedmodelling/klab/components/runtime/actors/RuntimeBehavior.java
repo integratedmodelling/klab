@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -18,6 +19,8 @@ import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Actors;
+import org.integratedmodelling.klab.Concepts;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
@@ -27,34 +30,47 @@ import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.auth.IActorIdentity;
 import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
 import org.integratedmodelling.klab.api.data.IQuantity;
-import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IViewModel;
+import org.integratedmodelling.klab.api.model.IKimObject;
+import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.IObserver;
+import org.integratedmodelling.klab.api.observations.IDirectObservation;
+import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
-import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.api.observations.scale.time.ITimePeriod;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
+import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.ISessionState;
+import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.common.mediation.Quantity;
 import org.integratedmodelling.klab.common.mediation.Unit;
+import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.AppReset;
 import org.integratedmodelling.klab.components.runtime.actors.extensions.Artifact;
+import org.integratedmodelling.klab.components.time.extents.Time;
+import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.documentation.extensions.table.TableArtifact;
+import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
+import org.integratedmodelling.klab.engine.resources.Worldview;
 import org.integratedmodelling.klab.engine.runtime.Session;
-import org.integratedmodelling.klab.engine.runtime.SessionState;
-import org.integratedmodelling.klab.exceptions.KlabActorException;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
+import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.rest.DataflowState.Status;
 import org.integratedmodelling.klab.rest.ScaleReference;
 import org.integratedmodelling.klab.rest.SessionActivity;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.Pair;
 
 import akka.actor.typed.ActorRef;
 
@@ -99,12 +115,14 @@ public class RuntimeBehavior {
                     scope.getMonitor().getIdentity().getParentIdentity(ISession.class).interruptAllTasks();
                 }
             }
+
             if (arguments.get("reset") instanceof IKActorsValue) {
                 KActorsValue reset = arguments.get("reset", KActorsValue.class);
                 if (Actors.INSTANCE.asBooleanValue(reset.evaluate(scope, identity, true))) {
                     scope.getMonitor().getIdentity().getParentIdentity(ISession.class).getState().resetContext();
                 }
             } else if (arguments.getUnnamedKeys().isEmpty()) {
+
                 this.listenerId = scope.getMonitor().getIdentity().getParentIdentity(ISession.class).getState()
                         .addApplicationListener(new ISessionState.Listener(){
                             @Override
@@ -125,125 +143,55 @@ public class RuntimeBehavior {
                             }
 
                         }, scope.appId);
+
             } else {
-                
-                int startFrom = 0;
-                Object arg = evaluateArgument(0, scope);
-                if (arg instanceof Urn) {
 
-                    boolean doit = arguments.getUnnamedArguments().size() == 1;
-                    if (!doit) {
-                        doit = Resources.INSTANCE.getModelObject(arg.toString()) instanceof IObserver;
+                Pair<Map<String, Object>, List<String>> args = separateObservationArguments(arguments, scope, identity);
+                Map<String, Object> contextDef = args.getFirst();
+                Object toFire = null;
+                if (contextDef.containsKey("scale")) {
+                    try {
+                        toFire = (IObservation) ((Session) identity).getState().withScale((IScale) contextDef.get("scale"))
+                                .submit(((IObservable) contextDef.get("observable")).getDefinition()).get();
+                    } catch (Throwable e) {
+                        fail(scope);
                     }
-                    if (doit) {
-                        try {
-                            Future<IArtifact> future = ((Session) identity).getState().submit(((Urn) arg).getUrn());
-                            IArtifact result = future.get();
-                            if (arguments.getUnnamedArguments().size() == 1) {
-                                fire(result, scope);
-                            }
-                            startFrom ++;
-                        } catch (Throwable e) {
-                            fail(scope);
-                        }
+                } else if (contextDef.containsKey("observer")) {
+                    try {
+                        toFire = (IObservation) ((Session) identity).getState()
+                                .submit(((IObserver) contextDef.get("observer")).getName()).get();
+                    } catch (Throwable e) {
+                        fail(scope);
                     }
-
-                    /*
-                     * TODO may have an Artifact wrapping an object artifact, a Scale, a Space
-                     * extent/shape, an Envelope, and possibly a IKimQuantity for resolution, plus
-                     * the same for time.
-                     */
-                    IObjectArtifact artifact = null;
-                    IQuantity spaceResolution = null;
-                    IQuantity timeResolution = null;
-                    ITimePeriod time = null;
-                    IObservable observable = null;
-                    List<IExtent> extents = new ArrayList<>();
-                    IResource resource = null;
-
-                    // more: shapes, time res, time spans, etc
-                    for (int i = startFrom; i < arguments.getUnnamedArguments().size(); i++) {
-                        
-                        Object o = arguments.getUnnamedArguments().get(i);
-                        
-                        if (o instanceof KActorsValue) {
-                            o = ((KActorsValue) o).evaluate(scope, identity, true);
-                        }
-
-                        if (o instanceof Artifact) {
-                            artifact = ((Artifact) o).getObjectArtifact();
-                        } else if (o instanceof IQuantity) {
-                            if (Units.INSTANCE.METERS.isCompatible(Unit.create(((IQuantity) o).getUnit()))) {
-                                spaceResolution = (IQuantity) o;
-                            } else if (Units.INSTANCE.SECONDS.isCompatible(Unit.create(((IQuantity) o).getUnit()))) {
-                                timeResolution = (IQuantity) o;
-                            } // TODO
-                        } else if (o instanceof Quantity) {
-                            if (Units.INSTANCE.METERS.isCompatible(((Quantity) o).getUnit())) {
-                                spaceResolution = ((Quantity) o).getUnitStatement();
-                            } else if (Units.INSTANCE.SECONDS.isCompatible(Unit.create(((IQuantity) o).getUnit()))) {
-                                timeResolution = ((Quantity) o).getUnitStatement();
-                            } // TODO
-                        } else if (o instanceof IObservable) {
-                            observable = (IObservable) o;
-                        } else if (o instanceof IKimObservable) {
-                            observable = Observables.INSTANCE.declare((IKimObservable) o, identity.getMonitor());
-                        } else if (o instanceof IExtent) {
-                            extents.add((IExtent) o);
-                        }
-
-                        // TODO date, year - these should be keyed values
-                    }
-
-                    IScale scale = null;
-                    if (artifact != null) {
-                        scale = spaceResolution == null
-                                ? Scale.create(artifact.getGeometry())
-                                : Scale.create(artifact.getGeometry(), spaceResolution);
-                    }
-
-                    if (!extents.isEmpty()) {
-                        if (scale == null) {
-                            scale = Scale.create(extents);
-                        } else {
-                            for (IExtent extent : extents) {
-                                ((Scale) scale).mergeExtent(extent);
-                            }
-                        }
-                    }
-
-                    if (scale != null) {
-
-                        session.getState().resetContext();
-                        if (scale.getSpace() != null) {
-                            // avoid geocoding
-                            if (!scale.getSpace().getShape().getMetadata().containsKey(IMetadata.DC_DESCRIPTION)) {
-                                scale.getSpace().getShape().getMetadata().put(IMetadata.DC_DESCRIPTION,
-                                        (artifact == null ? "Context" : artifact.getName()));
-                            }
-                            session.getState().setShape(scale.getSpace().getShape());
-                        }
-                        if (spaceResolution != null) {
-                            session.getState().put(SessionState.SPACE_RESOLUTION_KEY, spaceResolution);
-                        }
-                    }
-
-                    if (observable != null) {
-                        try {
-                            Future<IArtifact> future = ((Session) identity).getState().withScale(scale)
-                                    .submit(observable.getDefinition());
-                            IArtifact result = future.get();
-                            session.getState().withScale(null);
-                            fire(result, scope);
-                        } catch (Throwable e) {
-                            fail(scope);
-                        }
-                    } else {
-                        fire(new KlabActorException("improper observable passed to context"), scope);
-                    }
-
+                } else if (contextDef.containsKey("observation")) {
+                    toFire = (IObservation) contextDef.get("observation");
                 }
+
+                for (String observable : args.getSecond()) {
+                    try {
+                        Future<IArtifact> future = ((Session) identity).getState().submit(observable);
+                        toFire = (IObservation) future.get();
+                        if (toFire != null
+                                && ((IObservation) toFire).getObservable().getType().equals(Concepts.c(NS.CORE_VOID))) {
+                            /*
+                             * return artifact is a view
+                             */
+                            for (IKnowledgeView view : ((IRuntimeScope) ((IObservation) toFire).getScope()).getViews()) {
+                                if (observable.equals(view.getUrn())) {
+                                    toFire = view;
+                                    break;
+                                }
+                            }
+                        }
+                    } catch (Throwable e) {
+                        fail(scope);
+                    }
+                }
+
+                fire(toFire, scope);
+
             }
+
         }
 
         @Override
@@ -510,6 +458,7 @@ public class RuntimeBehavior {
 
         @Override
         void run(KlabActor.Scope scope) {
+            ISession session = scope.runtimeScope.getSession();
             scope.sender.tell(new AppReset(scope, scope.appId));
         }
     }
@@ -690,6 +639,274 @@ public class RuntimeBehavior {
         public void dispose() {
             scope.getMonitor().getIdentity().getParentIdentity(ISession.class).getState().removeGlobalListener(this.listener);
         }
+    }
+
+    /**
+     * Separate out an argument list expected to specify a context plus other optional observations
+     * into those that pertain to a context and those that pertain to further observations. Each
+     * list may contain other lists or individual arguments, according to what they pertain to (the
+     * context list only pertains to one observation, so it will only be individual objects). Any
+     * <em>compatible</em> and <em>reasonable</em> combination of extents, extent specifiers and
+     * observations passed will be used to merge/override the previous ones, so that shape contexts
+     * can be adapted to resolutions and the like.
+     * <p>
+     * The keys in the context map will be processed as "urn", "observer", "observable", "space",
+     * "time", "spaceunit", "timeunit", "artifact", "observation". The returned context map may only
+     * contain one of (observable + scale), observer, or observation. Inconsistencies and
+     * duplications cause a KlabIllegalArgumentException. The observable list can only contain
+     * observables.
+     * <p>
+     * A "slightly" painful method to write.
+     * 
+     * @param arguments
+     * @param scope
+     * @param identity
+     * @return
+     */
+    public static Pair<Map<String, Object>, List<String>> separateObservationArguments(IParameters<String> arguments, Scope scope,
+            IActorIdentity<?> identity) {
+
+        Map<String, Object> contextDefinition = new HashMap<>();
+        List<String> observationArguments = new ArrayList<>();
+
+        for (int i = 0; i < arguments.getUnnamedArguments().size(); i++) {
+            Object o = arguments.getUnnamedArguments().get(i);
+            if (o instanceof KActorsValue) {
+                o = ((KActorsValue) o).evaluate(scope, identity, true);
+            }
+
+            String key = null;
+            if (o instanceof IObservation) {
+                if (o instanceof IDirectObservation && !contextDefinition.containsKey("observation")) {
+                    key = "observation";
+                    contextDefinition.put(key, o);
+                } else {
+                    throw new KlabIllegalArgumentException("cannot use observation " + o + " as a context parameter");
+                }
+            } else if (o instanceof Artifact) {
+                if (((Artifact) o).getObjectArtifact() != null && !contextDefinition.containsKey("artifact")) {
+                    key = "artifact";
+                    contextDefinition.put(key, ((Artifact) o).getObjectArtifact());
+                } else {
+                    throw new KlabIllegalArgumentException("cannot use artifact " + o + " as a context parameter");
+                }
+            } else if (o instanceof IQuantity) {
+                if (Units.INSTANCE.METERS.isCompatible(Unit.create(((IQuantity) o).getUnit()))) {
+                    if (!contextDefinition.containsKey("spaceunit")) {
+                        key = "spaceunit";
+                        contextDefinition.put(key, o);
+                    } else {
+                        throw new KlabIllegalArgumentException(
+                                "cannot use additional space unit " + o + " as a context parameter");
+                    }
+                } else if (Units.INSTANCE.SECONDS.isCompatible(Unit.create(((IQuantity) o).getUnit()))) {
+                    if (!contextDefinition.containsKey("timeunit")) {
+                        key = "timeunit";
+                        contextDefinition.put(key, o);
+                    } else {
+                        throw new KlabIllegalArgumentException(
+                                "cannot use additional time unit " + o + " as a context parameter");
+                    }
+                }
+            } else if (o instanceof Quantity) {
+                if (Units.INSTANCE.METERS.isCompatible(((Quantity) o).getUnit())) {
+                    if (!contextDefinition.containsKey("spaceunit")) {
+                        key = "spaceunit";
+                        contextDefinition.put(key, ((Quantity) o).getUnitStatement());
+                    } else {
+                        throw new KlabIllegalArgumentException(
+                                "cannot use additional space unit " + o + " as a context parameter");
+                    }
+                } else if (Units.INSTANCE.SECONDS.isCompatible(Unit.create(((IQuantity) o).getUnit()))) {
+                    if (!contextDefinition.containsKey("timeunit")) {
+                        key = "timeunit";
+                        contextDefinition.put(key, ((Quantity) o).getUnitStatement());
+                    } else {
+                        throw new KlabIllegalArgumentException(
+                                "cannot use additional time unit " + o + " as a context parameter");
+                    }
+                } // TODO
+            } else if (o instanceof IObservable) {
+                key = "observable";
+                if (!contextDefinition.containsKey(key) && ((IObservable) o).is(IKimConcept.Type.SUBJECT)) {
+                    contextDefinition.put(key, o);
+                } else {
+                    observationArguments.add(((IObservable) o).getDefinition());
+                }
+            } else if (o instanceof IKimObservable) {
+                key = "observable";
+                o = Observables.INSTANCE.declare((IKimObservable) o, identity.getMonitor());
+                if (!contextDefinition.containsKey(key) && ((IObservable) o).is(IKimConcept.Type.SUBJECT)) {
+                    contextDefinition.put(key, o);
+                } else {
+                    observationArguments.add(((IObservable) o).getDefinition());
+                }
+            } else if (o instanceof ISpace) {
+                if (!contextDefinition.containsKey("space")) {
+                    key = "space";
+                    contextDefinition.put(key, o);
+                } else {
+                    throw new KlabIllegalArgumentException("cannot use additional space extent " + o + " as a context parameter");
+                }
+            } else if (o instanceof ITime) {
+                if (!contextDefinition.containsKey("time")) {
+                    key = "time";
+                    contextDefinition.put(key, o);
+                } else {
+                    throw new KlabIllegalArgumentException("cannot use additional time extent " + o + " as a context parameter");
+                }
+            } else if (o instanceof Urn) {
+                if (!contextDefinition.containsKey("urn")) {
+                    String urn = o.toString();
+                    if (Urns.INSTANCE.isUrn(urn)) {
+                        if (!contextDefinition.containsKey("urn")) {
+                            key = "urn";
+                            contextDefinition.put(key, urn);
+                            o = urn;
+                        } else {
+                            throw new KlabIllegalArgumentException("cannot use additional URN " + o + " as a context parameter");
+                        }
+                    } else {
+                        IKimObject mo = Resources.INSTANCE.getModelObject(urn);
+                        if (mo instanceof IObserver) {
+                            if (!contextDefinition.containsKey("observer")) {
+                                key = "observer";
+                                o = mo;
+                                contextDefinition.put(key, mo);
+                            } else {
+                                throw new KlabIllegalArgumentException(
+                                        "cannot use additional observer " + o + " as a context parameter");
+                            }
+                        } else if (!contextDefinition.isEmpty() && (mo instanceof IModel || mo instanceof IViewModel)) {
+                            observationArguments.add(((IKimObject) mo).getName());
+                        } else {
+                            throw new KlabIllegalArgumentException("cannot use argument " + o + " as a context parameter");
+                        }
+                    }
+                } else {
+                    throw new KlabIllegalArgumentException("cannot use additional URN " + o + " as a context parameter");
+                }
+            } else {
+                if (o != null) {
+                    String urn = o.toString();
+                    if (Urns.INSTANCE.isUrn(urn)) {
+                        if (!contextDefinition.containsKey("urn")) {
+                            key = "urn";
+                            contextDefinition.put(key, urn);
+                            o = urn;
+                        } else {
+                            throw new KlabIllegalArgumentException("cannot use additional URN " + o + " as a context parameter");
+                        }
+                    } else {
+                        IKimObject mo = Resources.INSTANCE.getModelObject(urn);
+                        if (mo instanceof IObserver) {
+                            if (!contextDefinition.containsKey("observer")) {
+                                key = "observer";
+                                o = mo;
+                                contextDefinition.put(key, mo);
+                            } else {
+                                throw new KlabIllegalArgumentException(
+                                        "cannot use additional observer " + o + " as a context parameter");
+                            }
+                        } else {
+                            throw new KlabIllegalArgumentException("cannot use argument " + o + " as a context parameter");
+                        }
+                    }
+                }
+            }
+        }
+
+        IObservable observable = (IObservable) contextDefinition.get("observable");
+        if (observable == null && contextDefinition.containsKey("observation")) {
+            observable = ((IDirectObservation) contextDefinition.get("observation")).getObservable();
+        }
+
+        /*
+         * simplify extents and resolutions into a scale, if any
+         */
+        ISpace space = (ISpace) contextDefinition.get("space");
+        ITime time = (ITime) contextDefinition.get("time");
+        if (contextDefinition.containsKey("urn")) {
+            if (contextDefinition.containsKey("artifact")) {
+                throw new KlabIllegalArgumentException("cannot have an artifact along with a URN in context specifications");
+            }
+            IObjectArtifact artifact = null;
+            Iterator<Object> it = Actors.INSTANCE
+                    .iterateResource(contextDefinition.get("urn").toString(), Klab.INSTANCE.getRootMonitor()).iterator();
+            while(it.hasNext()) {
+                Object o = it.next();
+                if (o instanceof IObjectArtifact) {
+                    artifact = (IObjectArtifact) o;
+                }
+                break;
+            }
+            if (artifact == null) {
+                throw new KlabIllegalArgumentException("specified URN does not resolve to one or more object artifacts");
+            }
+            contextDefinition.put("artifact", artifact);
+        }
+
+        if (contextDefinition.containsKey("artifact")) {
+            IScale scale = Scale.create(((IObjectArtifact) contextDefinition.get("artifact")).getGeometry());
+            if (scale.getSpace() != null) {
+                if (space == null) {
+                    space = scale.getSpace();
+                }
+            }
+            if (scale.getTime() != null) {
+                if (time == null) {
+                    time = scale.getTime();
+                }
+            }
+        }
+        if (contextDefinition.containsKey("spaceunit")) {
+            if (space == null) {
+                throw new KlabIllegalArgumentException(
+                        "cannot apply a spatial resolution without a spatial extent or a spatial artifact");
+            } else {
+                /*
+                 * apply or re-apply the grid to the shape
+                 */
+                space = Space.create(space.getShape(), (IQuantity) contextDefinition.get("spaceunit"));
+            }
+        }
+        if (contextDefinition.containsKey("timeunit")) {
+            if (time != null) {
+                time = Time.create(time.getStart(), time.getEnd(),
+                        Time.resolution((IQuantity) contextDefinition.get("timeunit")));
+            } else {
+                ITimeInstant start = TimeInstant.create(new TimeInstant().getYear() - 1);
+                ITimeInstant end = start.plus(1, Time.resolution(1, ITime.Resolution.Type.YEAR));
+                time = Time.create(start, end, Time.resolution((IQuantity) contextDefinition.get("timeunit")));
+            }
+        }
+
+        Map<String, Object> context = new HashMap<>();
+        if (time != null || space != null) {
+            if (observable == null) {
+                observable = Observable.promote(Worldview.getGeoregionConcept());
+            }
+            context.put("observable", observable);
+            if (time == null) {
+                time = Time.create(new TimeInstant().getYear() - 1);
+            }
+            context.put("scale", Scale.create(time, space));
+        } else if (contextDefinition.containsKey("observation")) {
+            context.put("observation", contextDefinition.get("observation"));
+        } else if (contextDefinition.containsKey("observer")) {
+            if (contextDefinition.containsKey("observation") || time != null || space != null
+                    || contextDefinition.containsKey("timeresolution") || contextDefinition.containsKey("spaceresolution")) {
+                throw new KlabIllegalArgumentException("observers cannot be specified along with other context specifiers");
+
+            }
+            context.put("observer", contextDefinition.get("observer"));
+        }
+
+        /*
+         * add the default observable if we have a single object artifact and no observable
+         */
+
+        return new Pair<>(context, observationArguments);
     }
 
 }

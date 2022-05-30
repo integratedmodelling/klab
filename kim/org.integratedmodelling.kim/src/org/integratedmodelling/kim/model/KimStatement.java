@@ -60,6 +60,7 @@ public class KimStatement extends KimScope implements IKimStatement {
         this.sourceCode = statement.sourceCode;
         this.errors = statement.errors;
         this.warnings = statement.warnings;
+        this.metadata = statement.metadata;
     }
     
     public KimStatement(EObject statement, IKimStatement parent) {
@@ -160,7 +161,7 @@ public class KimStatement extends KimScope implements IKimStatement {
 
     @Override
     public IParameters<String> getMetadata() {
-        return metadata;
+        return metadata == null ? new KimMetadata() : metadata;
     }
 
     public void setMetadata(KimMetadata metadata) {

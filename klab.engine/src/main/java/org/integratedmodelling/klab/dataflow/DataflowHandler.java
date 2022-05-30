@@ -27,6 +27,8 @@ import org.integratedmodelling.klab.utils.Parameters;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 
+import static org.integratedmodelling.klab.api.API.PUBLIC.Export.DATAFLOW;
+
 /**
  * The root contextualization scope ultimately handles a dataflow that can be incrementally defined.
  * This base class contains all dataflow bookkeeping facilities. The runtime contextualization scope
@@ -213,7 +215,7 @@ public class DataflowHandler extends Parameters<String> {
     public String getElkGraph(IRuntimeScope scope) {
         Flowchart flowchart = getFlowchart(scope);
         if (flowchart != null) {
-            return flowchart.getJsonLayout();
+            return flowchart.getJsonLayout(DATAFLOW);
         }
         return null;
     }

@@ -8367,6 +8367,21 @@ ruleUnitElement returns [EObject current=null]
 							lv_id_0_3,
 							"org.integratedmodelling.kactors.Kactors.UPPERCASE_ID");
 					}
+					    |
+					lv_id_0_4=RULE_BACKCASE_ID
+					{
+						newLeafNode(lv_id_0_4, grammarAccess.getUnitElementAccess().getIdBACKCASE_IDTerminalRuleCall_0_0_3());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getUnitElementRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"id",
+							lv_id_0_4,
+							"org.integratedmodelling.kactors.Kactors.BACKCASE_ID");
+					}
 				)
 			)
 		)
@@ -8477,22 +8492,30 @@ ruleUnit returns [EObject current=null]
 				)
 			)
 			(
+				((
+					(
+						ruleUnitElement
+					)
+				)
+				)=>
 				(
-					{
-						newCompositeNode(grammarAccess.getUnitAccess().getUnitsUnitElementParserRuleCall_2_1_0());
-					}
-					lv_units_3_0=ruleUnitElement
-					{
-						if ($current==null) {
-							$current = createModelElementForParent(grammarAccess.getUnitRule());
+					(
+						{
+							newCompositeNode(grammarAccess.getUnitAccess().getUnitsUnitElementParserRuleCall_2_1_0_0());
 						}
-						add(
-							$current,
-							"units",
-							lv_units_3_0,
-							"org.integratedmodelling.kactors.Kactors.UnitElement");
-						afterParserOrEnumRuleCall();
-					}
+						lv_units_3_0=ruleUnitElement
+						{
+							if ($current==null) {
+								$current = createModelElementForParent(grammarAccess.getUnitRule());
+							}
+							add(
+								$current,
+								"units",
+								lv_units_3_0,
+								"org.integratedmodelling.kactors.Kactors.UnitElement");
+							afterParserOrEnumRuleCall();
+						}
+					)
 				)
 			)
 		)*
@@ -12126,6 +12149,8 @@ RULE_CAMELCASE_ID : 'A'..'Z' ('A'..'z'|'0'..'9')*;
 RULE_LOWERCASE_ID : 'a'..'z' ('a'..'z'|'0'..'9'|'_')*;
 
 RULE_LOCALE : 'a'..'z' 'a'..'z' ('-' 'A'..'Z' 'A'..'Z')*;
+
+RULE_BACKCASE_ID : 'a'..'z' ('A'..'z'|'0'..'9')*;
 
 RULE_QUOTED_LOWERCASE_ID : '`' 'a'..'z' ('a'..'z'|'0'..'9'|'_')*;
 

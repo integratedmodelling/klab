@@ -121,6 +121,14 @@ public class TemporalExtension {
         return ret;
     }
 
+    public long getStart() {
+        return this.start;
+    }
+
+    public long getEnd() {
+        return this.end;
+    }
+
     public boolean hasChangeDuring(ITime time) {
         return extension.subSet(time.getStart().getMilliseconds(), time.getEnd().getMilliseconds()).size() > 0;
     }

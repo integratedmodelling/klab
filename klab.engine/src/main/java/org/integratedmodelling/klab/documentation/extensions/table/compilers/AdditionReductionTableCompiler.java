@@ -42,8 +42,6 @@ import com.google.common.collect.HashBiMap;
  * initial and final values. Optionally also contabilize changes from and to a
  * nodata category.
  * 
- * TODO this is still a copy of pairwise, to be implemented
- * 
  * @author Ferd
  *
  */

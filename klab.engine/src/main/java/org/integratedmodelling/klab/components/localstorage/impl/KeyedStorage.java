@@ -14,6 +14,7 @@ import org.integratedmodelling.klab.api.knowledge.IAuthority;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
+import org.integratedmodelling.klab.components.localstorage.impl.AbstractAdaptiveStorage.Slice;
 import org.integratedmodelling.klab.data.storage.FileMappedStorage;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 import org.integratedmodelling.klab.engine.runtime.api.IKeyHolder;
@@ -26,238 +27,240 @@ import com.google.common.collect.Maps;
 
 public class KeyedStorage<T> implements IDataStorage<T>, IKeyHolder {
 
-	private IDataStorage<Integer> keyStore;
-	private BiMap<T, Integer> conceptKey = Maps.synchronizedBiMap(HashBiMap.create());
-	private IDataKey dataKey = null;
-	private Class<? extends T> cls;
-	private IGeometry geometry;
-	private IAuthority authority;
-	boolean authorityTested = false;
+    private IDataStorage<Integer> keyStore;
+    private BiMap<T, Integer> conceptKey = Maps.synchronizedBiMap(HashBiMap.create());
+    private IDataKey dataKey = null;
+    private Class<? extends T> cls;
+    private IGeometry geometry;
+    private IAuthority authority;
+    boolean authorityTested = false;
 
-	public KeyedStorage(IGeometry geometry, Class<? extends T> cls) {
-		// TODO use a Short
-		keyStore = new FileMappedStorage<>(geometry, Integer.class);
-		this.cls = cls;
-		this.geometry = geometry;
-	}
+    public KeyedStorage(IGeometry geometry, Class<? extends T> cls) {
+        // TODO use a Short
+        keyStore = new FileMappedStorage<>(geometry, Integer.class);
+        this.cls = cls;
+        this.geometry = geometry;
+    }
 
-	public void setDataKey(IDataKey dataKey) {
-		this.dataKey = dataKey;
-	}
+    public void setDataKey(IDataKey dataKey) {
+        this.dataKey = dataKey;
+    }
 
-	@Override
-	public synchronized long put(T value, ILocator locator) {
+    public List<Slice> getSlices() {
+        return keyStore instanceof AbstractAdaptiveStorage ? ((AbstractAdaptiveStorage) keyStore).getSlices() : new ArrayList<>();
+    }
 
-		Integer cValue = null;
+    @Override
+    public synchronized long put(T value, ILocator locator) {
 
-		// proprio necessaria, sta roba? Basically, trying to keep the concept key
-		// synchronized with an externally supplied
-		// datakey, but allow for expansion, which sounds strange.
-		if (dataKey != null) {
-			cValue = dataKey.reverseLookup(value);
-			if (cValue < 0) {
-				cValue = null;
-			}
-		}
-		if (value != null) {
+        Integer cValue = null;
 
-			if (cValue == null) {
-				cValue = conceptKey.size();
-			}
+        // proprio necessaria, sta roba? Basically, trying to keep the concept key
+        // synchronized with an externally supplied
+        // datakey, but allow for expansion, which sounds strange.
+        if (dataKey != null) {
+            cValue = dataKey.reverseLookup(value);
+            if (cValue < 0) {
+                cValue = null;
+            }
+        }
+        if (value != null) {
 
-			if (!authorityTested && value instanceof IConcept) {
-				for (IConcept concept : ((IConcept) value).getOperands()) {
-					if (Authorities.INSTANCE.getAuthority((IConcept) concept) != null) {
-						this.authority = Authorities.INSTANCE.getAuthority((IConcept) concept);
-						break;
-					}
-				}
-				this.authorityTested = true;
-			}
+            if (cValue == null) {
+                cValue = conceptKey.size();
+            }
 
-			if (conceptKey.containsKey(value)) {
-				cValue = conceptKey.get(value);
-			} else {
-				conceptKey.put(value, cValue);
-			}
-		}
-		return keyStore.put(cValue, locator);
-	}
+            if (!authorityTested && value instanceof IConcept) {
+                for (IConcept concept : ((IConcept) value).getOperands()) {
+                    if (Authorities.INSTANCE.getAuthority((IConcept) concept) != null) {
+                        this.authority = Authorities.INSTANCE.getAuthority((IConcept) concept);
+                        break;
+                    }
+                }
+                this.authorityTested = true;
+            }
 
-	@Override
-	public T get(ILocator locator) {
-		Integer key = keyStore.get(locator);
-		return key == null ? null : conceptKey.inverse().get(key);
-	}
+            if (conceptKey.containsKey(value)) {
+                cValue = conceptKey.get(value);
+            } else {
+                conceptKey.put(value, cValue);
+            }
+        }
+        return keyStore.put(cValue, locator);
+    }
 
-	@Override
-	public void close() throws IOException {
-		this.keyStore.close();
-	}
+    @Override
+    public T get(ILocator locator) {
+        Integer key = keyStore.get(locator);
+        return key == null ? null : conceptKey.inverse().get(key);
+    }
 
-	@Override
-	public Type getType() {
-		return Utils.getArtifactType(cls);
-	}
+    @Override
+    public void close() throws IOException {
+        this.keyStore.close();
+    }
 
-	@Override
-	public IDataKey getDataKey() {
-		if (dataKey == null && conceptKey != null) {
-			return new MapKey<T>(conceptKey, authority);
-		}
-		return dataKey;
-	}
+    @Override
+    public Type getType() {
+        return Utils.getArtifactType(cls);
+    }
 
-	@Override
-	public Object getObject(ILocator locator) {
-		return get(locator);
-	}
+    @Override
+    public IDataKey getDataKey() {
+        if (dataKey == null && conceptKey != null) {
+            return new MapKey<T>(conceptKey, authority);
+        }
+        return dataKey;
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public long putObject(Object value, ILocator locator) {
-		return put((T) value, locator);
-	}
+    @Override
+    public Object getObject(ILocator locator) {
+        return get(locator);
+    }
 
-	public static class MapKey<T> implements IDataKey {
+    @SuppressWarnings("unchecked")
+    @Override
+    public long putObject(Object value, ILocator locator) {
+        return put((T) value, locator);
+    }
 
-		private BiMap<T, Integer> key;
-		private IAuthority authority;
+    public static class MapKey<T> implements IDataKey {
 
-		public MapKey(BiMap<T, Integer> conceptKey, IAuthority authority) {
-			this.key = conceptKey;
-			this.authority = authority;
-		}
+        private BiMap<T, Integer> key;
+        private IAuthority authority;
 
-		@Override
-		public int size() {
-			return this.key.size();
-		}
+        public MapKey(BiMap<T, Integer> conceptKey, IAuthority authority) {
+            this.key = conceptKey;
+            this.authority = authority;
+        }
 
-		@Override
-		public int reverseLookup(Object value) {
-			if (this.key.containsKey(value)) {
-				return this.key.get(value);
-			}
-			return -1;
-		}
+        @Override
+        public int size() {
+            return this.key.size();
+        }
 
-		@Override
-		public List<String> getLabels() {
-			List<String> ret = new ArrayList<>();
-			synchronized (key) {
-				for (T value : this.key.keySet()) {
-					ret.add(value instanceof IConcept ? Concepts.INSTANCE.getDisplayName((IConcept) value)
-							: value.toString());
-				}
-			}
-			return ret;
-		}
+        @Override
+        public int reverseLookup(Object value) {
+            if (this.key.containsKey(value)) {
+                return this.key.get(value);
+            }
+            return -1;
+        }
 
-		@Override
-		public Object lookup(int index) {
-			return this.key.inverse().get(index);
-		}
+        @Override
+        public List<String> getLabels() {
+            List<String> ret = new ArrayList<>();
+            synchronized (key) {
+                for (T value : this.key.keySet()) {
+                    ret.add(value instanceof IConcept ? Concepts.INSTANCE.getDisplayName((IConcept) value) : value.toString());
+                }
+            }
+            return ret;
+        }
 
-		@Override
-		public List<Pair<Integer, String>> getAllValues() {
-			List<Pair<Integer, String>> ret = new ArrayList<>();
-			synchronized (key) {
-				for (T value : this.key.keySet()) {
-					ret.add(new Pair<>(this.key.get(value),
-							value instanceof IConcept ? Concepts.INSTANCE.getDisplayName((IConcept) value)
-									: value.toString()));
-				}
-			}
-			return ret;
-		}
+        @Override
+        public Object lookup(int index) {
+            return this.key.inverse().get(index);
+        }
 
-		@Override
-		public boolean isOrdered() {
-			// TODO if ordering, check as in Classification
-			return false;
-		}
+        @Override
+        public List<Pair<Integer, String>> getAllValues() {
+            List<Pair<Integer, String>> ret = new ArrayList<>();
+            synchronized (key) {
+                for (T value : this.key.keySet()) {
+                    ret.add(new Pair<>(this.key.get(value),
+                            value instanceof IConcept ? Concepts.INSTANCE.getDisplayName((IConcept) value) : value.toString()));
+                }
+            }
+            return ret;
+        }
 
-		@Override
-		public List<String> getSerializedObjects() {
-			List<String> ret = new ArrayList<>();
-			synchronized (key) {
-				for (T value : this.key.keySet()) {
-					ret.add(value instanceof IConcept ? ((IConcept) value).getDefinition() : value.toString());
-				}
-			}
-			return ret;
-		}
+        @Override
+        public boolean isOrdered() {
+            // TODO if ordering, check as in Classification
+            return false;
+        }
 
-		@Override
-		public List<IConcept> getConcepts() {
-			List<IConcept> ret = new ArrayList<>();
-			synchronized (key) {
-				for (T value : this.key.keySet()) {
-					if (!(value instanceof IConcept)) {
-						return null;
-					}
-					ret.add((IConcept) value);
-				}
-			}
-			return ret;
-		}
+        @Override
+        public List<String> getSerializedObjects() {
+            List<String> ret = new ArrayList<>();
+            synchronized (key) {
+                for (T value : this.key.keySet()) {
+                    ret.add(value instanceof IConcept ? ((IConcept) value).getDefinition() : value.toString());
+                }
+            }
+            return ret;
+        }
 
-		@SuppressWarnings("unchecked")
-		@Override
-		public Object include(Object value) {
-			if (!this.key.containsKey((T) value)) {
-				this.key.put((T) value, this.key.size());
-			}
-			return value;
-		}
+        @Override
+        public List<IConcept> getConcepts() {
+            List<IConcept> ret = new ArrayList<>();
+            synchronized (key) {
+                for (T value : this.key.keySet()) {
+                    if (!(value instanceof IConcept)) {
+                        return null;
+                    }
+                    ret.add((IConcept) value);
+                }
+            }
+            return ret;
+        }
 
-		@Override
-		public IAuthority getAuthority() {
-			return this.authority;
-		}
+        @SuppressWarnings("unchecked")
+        @Override
+        public Object include(Object value) {
+            if (!this.key.containsKey((T) value)) {
+                this.key.put((T) value, this.key.size());
+            }
+            return value;
+        }
 
-	}
+        @Override
+        public IAuthority getAuthority() {
+            return this.authority;
+        }
 
-	public String getInfo(int indent) {
-		return ((AbstractAdaptiveStorage<?>) keyStore).getInfo(indent);
-	}
+    }
 
-	@Override
-	public IGeometry getGeometry() {
-		return geometry;
-	}
+    public String getInfo(int indent) {
+        return ((AbstractAdaptiveStorage<?>) keyStore).getInfo(indent);
+    }
 
-	@Override
-	public void touch(ITime time) {
-		// TODO Auto-generated method stub
+    @Override
+    public IGeometry getGeometry() {
+        return geometry;
+    }
 
-	}
+    @Override
+    public void touch(ITime time) {
+        // TODO Auto-generated method stub
 
-	@Override
-	public void addContextualizationListener(Consumer<ILocator> listener) {
-		((IDataStorage<?>) this.keyStore).addContextualizationListener(listener);
-	}
+    }
 
-	public Object[] getTimeseries(ILocator locator) {
-		List<Object> ret = new ArrayList<>();
-		for (Object o : ((AbstractAdaptiveStorage<?>) keyStore).getTimeseries(locator)) {
-			ret.add(o == null ? null : conceptKey.inverse().get(o));
-		}
-		return ret.toArray();
-	}
+    @Override
+    public void addContextualizationListener(Consumer<ILocator> listener) {
+        ((IDataStorage<?>) this.keyStore).addContextualizationListener(listener);
+    }
 
-	public List<ILocator> getTimesliceLocators() {
-		return ((AbstractAdaptiveStorage<?>) keyStore).getTimesliceLocators();
-	}
+    public Object[] getTimeseries(ILocator locator) {
+        List<Object> ret = new ArrayList<>();
+        for (Object o : ((AbstractAdaptiveStorage<?>) keyStore).getTimeseries(locator)) {
+            ret.add(o == null ? null : conceptKey.inverse().get(o));
+        }
+        return ret.toArray();
+    }
 
-	public AbstractAdaptiveStorage<?> getBackend() {
-		return (AbstractAdaptiveStorage<?>) keyStore;
-	}
+    public List<ILocator> getTimesliceLocators() {
+        return ((AbstractAdaptiveStorage<?>) keyStore).getTimesliceLocators();
+    }
 
-	@Override
-	public long getTemporalOffset(ILocator locator) {
-		return keyStore.getTemporalOffset(locator);
-	}
+    public AbstractAdaptiveStorage<?> getBackend() {
+        return (AbstractAdaptiveStorage<?>) keyStore;
+    }
+
+    @Override
+    public long getTemporalOffset(ILocator locator) {
+        return keyStore.getTemporalOffset(locator);
+    }
 
 }

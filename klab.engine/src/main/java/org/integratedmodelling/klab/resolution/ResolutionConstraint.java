@@ -105,10 +105,14 @@ public class ResolutionConstraint implements IResolutionConstraint {
     }
 
     @Override
-    public boolean accepts(IModel model) {
+    public boolean accepts(IModel model, IObservable observable) {
 
         boolean ret = accepts(model.getNamespace());
 
+        if (!model.getObservables().contains(observable)) {
+            return true;
+        }
+        
         if (ret) {
             if (!modelBlacklist.isEmpty()) {
                 for (IModel m : modelBlacklist) {
