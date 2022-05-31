@@ -23,8 +23,8 @@ public class RemoteUserLoginResponse {
 		return session;
 	}
 
-	public void setSession(String session) {
-		this.session = session;
+	public void setSession(String sessionId) {
+		this.session = sessionId;
 	}
 
 	public String getAuthorization() {

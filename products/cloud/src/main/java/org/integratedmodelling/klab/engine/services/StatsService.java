@@ -19,7 +19,6 @@ import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.components.localstorage.impl.TimesliceLocator;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.State;
-import org.integratedmodelling.klab.engine.api.UserActivity;
 import org.integratedmodelling.klab.engine.events.GenericUserEvent;
 import org.integratedmodelling.klab.engine.events.UserEventContext;
 import org.integratedmodelling.klab.engine.events.UserEventHistory;
@@ -34,6 +33,7 @@ import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.ScaleReference;
 import org.integratedmodelling.klab.rest.SessionActivity;
 import org.integratedmodelling.klab.rest.TaskReference;
+import org.integratedmodelling.klab.rest.UserActivity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -83,6 +83,8 @@ public class StatsService {
                             	postToServer(url, descriptor);
                             }
             			});
+            		} else {
+            		    System.out.println(obs.getClass()+ ": "+obs.getUrn());
             		}
             	});
             	return v;
@@ -123,12 +125,16 @@ public class StatsService {
             postToServer(url, activity);
         }
     }
-    /*
+    
     @Async
     @EventListener(condition = "#event.type == T(org.integratedmodelling.klab.engine.events.UserEventType).LOGIN")
     public void handleLogin(GenericUserEvent<HubUserProfile, Session> event) {
         UserEventLogin loginEvent = (UserEventLogin) event;
-        UserActivity userActivity = new UserActivity(UserActivity.TYPES.LOGIN, loginEvent.getProfile(), loginEvent.getSession().getSessionReference().getTimeEstablished());
+        HubUserProfile profile = event.getProfile();
+        List<String> groups = profile.getGroupEntries() != null ? profile.getGroupEntries().stream().map(ge -> ge.getGroup().getId()).toList() : null;
+
+        UserActivity userActivity = new UserActivity(loginEvent.getProfile().getName(), loginEvent.getProfile().getRoles(), groups,
+                loginEvent.getTime(), loginEvent.getSession() != null ? loginEvent.getSession().getId() : null, loginEvent.isFailed(), loginEvent.getMessage());
         String url = getUrl(userActivity.getClass().getCanonicalName());
         if (url != null) {
             postToServer(url, userActivity);
@@ -139,13 +145,14 @@ public class StatsService {
     @EventListener(condition = "#event.type == T(org.integratedmodelling.klab.engine.events.UserEventType).LOGOUT")
     public void handleLogout(GenericUserEvent<HubUserProfile, Session> event) {
         UserEventLogout logoutEvent = (UserEventLogout) event;
-        UserActivity userActivity = new UserActivity(UserActivity.TYPES.LOGOUT, logoutEvent.getProfile(), logoutEvent.getTime());
+        UserActivity userActivity = new UserActivity(logoutEvent.getProfile().getName(), logoutEvent.getTime(),
+                logoutEvent.getSession() != null ? logoutEvent.getSession().getId() : null, logoutEvent.isFailed(), logoutEvent.isForced(), logoutEvent.getMessage());
         String url = getUrl(userActivity.getClass().getCanonicalName());
         if (url != null) {
             postToServer(url, userActivity);
         }
     }
-    */
+    
     @Async
     @EventListener(condition = "#event.type == T(org.integratedmodelling.klab.engine.events.UserEventType).SCALE")
     public void handleScale(GenericUserEvent<HubUserProfile, Session> event) {
@@ -163,6 +170,10 @@ public class StatsService {
         UserEventContext contextEvent = (UserEventContext) event;
         ISubject context = contextEvent.getContext();
         IObservation obs = event.getSession().getObservation(context.getId());
+        if (obs == null) {
+            System.err.println("Error retrieving observation of context "+ context.getId() + ": " + context.getName() + " for stat server, skipping");
+            return;
+        }
         ObservationReference descriptor = Observations.INSTANCE
                 .createArtifactDescriptor(obs/* , getParentArtifactOf(observation) */, obs.getScale().initialization(), 0);
         String url = getUrl(descriptor.getClass().getCanonicalName());
@@ -176,7 +187,7 @@ public class StatsService {
     public void handleObservation(GenericUserEvent<HubUserProfile, Session> event) {
     	UserEventObservation observationEvent = (UserEventObservation) event;
         Observation observation = (Observation)observationEvent.getObservation();
-        String id = observation.getGenerator() != null ? observation.getGenerator().getId() : observation.getId();
+        String id =  observationEvent.getActivityId();
         if (statsCache.containsKey(id)) {
             statsCache.computeIfPresent(id, (k,v) -> {
             	v.add(observation);

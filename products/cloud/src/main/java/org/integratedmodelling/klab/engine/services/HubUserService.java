@@ -43,6 +43,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import static org.integratedmodelling.klab.engine.events.UserEventLogin.MESSAGES;
+
 /**
  * This hub service is used to authenticate a user request to login to an engine
  * that they are not the owner of. The authentication is completed via the
@@ -75,25 +77,31 @@ public class HubUserService implements RemoteUserService {
 				result = hubLogin(login);
 			} catch (HttpClientErrorException e) {
 				if (e.getRawStatusCode() == 401) {
+				    publisher.loginFailed(login.getUsername(), MESSAGES.BAD_USER.name());
 					return ResponseEntity.status(HttpStatus.FORBIDDEN)
 							.body("Failed to login user: " + login.getUsername());
 				}
+				publisher.loginFailed(login.getUsername(), e.getMessage());
+				throw new KlabAuthorizationException("Failed to login user: " + login.getUsername());
 			}
 			if (result != null && result.getStatusCode().is2xxSuccessful()) {
 
-				RemoteUserLoginResponse response;
-
 				HubUserProfile profile = result.getBody().getProfile();
+				Session session;
 				if (checkForActiveSessions(profile)) {
-					response = getActiveSessionResponse(profile);
+				    session = getActiveSessionResponse(profile);
+					publisher.login(profile, session, MESSAGES.EXISTING_SESSION.name());
 				} else {
-					response = processProfile(profile);
+				    session = processProfile(profile);
+					publisher.login(profile, session, MESSAGES.NEW_SESSION.name());
 				}
+				RemoteUserLoginResponse response = getRemoteUserLoginResponse(session);
 				response.setAuthorization(result.getBody().getAuthentication().getTokenString());
 				return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
 			} else {
+			    publisher.loginFailed(login.getUsername(), result != null ? result.getStatusCode().name() : MESSAGES.NO_RESPONSE.name());
+	            throw new KlabAuthorizationException("Failed to login user: " + login.getUsername());
 			}
-			throw new KlabAuthorizationException("Failed to login user: " + login.getUsername());
 		} else {
 			return login(login.getToken());
 		}
@@ -107,39 +115,46 @@ public class HubUserService implements RemoteUserService {
 			result = hubToken(token);
 		} catch (HttpClientErrorException e) {
 			if (e.getRawStatusCode() == 401) {
+			    publisher.loginFailed(token, MESSAGES.BAD_TOKEN.name());
 				return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Failed to login with token");
 			}
+			publisher.loginFailed(token, e.getMessage());
 			throw new KlabAuthorizationException("Failed to login with token");
 		}
 
 		if (result != null && result.getStatusCode().is2xxSuccessful()) {
-			RemoteUserLoginResponse response;
+			
 
 			HubUserProfile profile = result.getBody();
-
+			Session session;
 			if (checkForActiveSessions(profile)) {
-				response = getActiveSessionResponse(profile);
+			    session = getActiveSessionResponse(profile);
+				publisher.login(profile, session, MESSAGES.EXISTING_SESSION.name());
 			} else {
-				response = processProfile(profile);
+			    session = processProfile(profile);
+				publisher.login(profile, session, MESSAGES.NEW_SESSION.name());
 			}
+			RemoteUserLoginResponse response = getRemoteUserLoginResponse(session);
 			response.setAuthorization(token);
 			return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
 		} else {
-			throw new KlabAuthorizationException("Failed to login via token");
+		    publisher.loginFailed(token, result != null ? result.getStatusCode().name() : MESSAGES.NO_RESPONSE.name());
+	        throw new KlabAuthorizationException("Failed to login via token");
 		}
 	}
 
 	@Override
 	public ResponseEntity<?> logout(String token) {
 		ResponseEntity<HubUserProfile> result;
-
 		try {
 			result = hubToken(token);
 		} catch (HttpClientErrorException e) {
 			if (e.getRawStatusCode() == 401) {
-				return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Failed to login with token");
+			    publisher.logoutFailed(token, MESSAGES.BAD_TOKEN.name());
+				return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Failed to logout with token");
 			}
-			throw new KlabAuthorizationException("Failed to login with token");
+			publisher.logoutFailed(token, e.getMessage());
+			throw new KlabAuthorizationException("Failed to logout with token");
 		}
 
 		if (result != null && result.getStatusCode().is2xxSuccessful()) {
@@ -151,29 +166,32 @@ public class HubUserService implements RemoteUserService {
 					session.close();
 					publisher.logout(profile, session, false);
 				} catch (IOException e) {
+				    publisher.logoutFailed(token, e.getMessage());
 					throw new KlabException("Could not close the session :(");
 				}
 			}
-
 			hubLogout(token);
 			return ResponseEntity.status(HttpStatus.RESET_CONTENT).build();
 		} else {
-			throw new KlabAuthorizationException("Failed to login via token");
+		    publisher.logoutFailed(token, result.getStatusCode().name());
+			throw new KlabAuthorizationException("Failed to logout via token");
 		}
 
 	}
-
-	private RemoteUserLoginResponse getActiveSessionResponse(HubUserProfile profile) {
-		RemoteUserLoginResponse response = new RemoteUserLoginResponse();
-		Session active = activeSessions(profile).iterator().next();
-		response.setPublicApps(active.getSessionReference().getPublicApps());
-		response.setRedirect("/modeler/ui/viewer?session=" + active.getId());
-		response.setSession(active.getId());
-		return response;
+	
+	private RemoteUserLoginResponse getRemoteUserLoginResponse(Session session) {
+	    RemoteUserLoginResponse response = new RemoteUserLoginResponse();
+        response.setPublicApps(session.getSessionReference().getPublicApps());
+        response.setRedirect("/modeler/ui/viewer?session=" + session.getId());
+        response.setSession(session.getId());
+        return response;
 	}
 
-	private RemoteUserLoginResponse processProfile(HubUserProfile profile) {
-		RemoteUserLoginResponse response = new RemoteUserLoginResponse();
+	private Session getActiveSessionResponse(HubUserProfile profile) {
+		return activeSessions(profile).iterator().next();
+	}
+
+	private Session processProfile(HubUserProfile profile) {
 		List<String> roles = profile.getRoles();
 		List<GrantedAuthority> authorities = getAuthorities(roles);
 		List<Group> groups = new ArrayList<>();
@@ -226,18 +244,13 @@ public class HubUserService implements RemoteUserService {
 				ObserveInContextTask task = session.getTask(observation.getMonitor().getIdentity().getId(),
 						ObserveInContextTask.class);
 				if (task != null && !task.isChildTask()) {
-					publisher.observation(profile, session, observation, context);
+					publisher.observation(profile, session, observation.getMonitor().getIdentity().getId(), observation, context);
 				}
 			}
 
 		});
 
-		publisher.login(profile, session);
-
-		response.setPublicApps(session.getSessionReference().getPublicApps());
-		response.setRedirect("/modeler/ui/viewer?session=" + session.getId());
-		response.setSession(session.getId());
-		return response;
+		return session;
 	}
 
 	private Session getSession(KlabUser user) {
