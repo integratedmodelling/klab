@@ -83,6 +83,8 @@ public class StatsService {
                             	postToServer(url, descriptor);
                             }
             			});
+            		} else {
+            		    System.out.println(obs.getClass()+ ": "+obs.getUrn());
             		}
             	});
             	return v;
@@ -168,6 +170,10 @@ public class StatsService {
         UserEventContext contextEvent = (UserEventContext) event;
         ISubject context = contextEvent.getContext();
         IObservation obs = event.getSession().getObservation(context.getId());
+        if (obs == null) {
+            System.err.println("Error retrieving observation of context "+ context.getId() + ": " + context.getName() + " for stat server, skipping");
+            return;
+        }
         ObservationReference descriptor = Observations.INSTANCE
                 .createArtifactDescriptor(obs/* , getParentArtifactOf(observation) */, obs.getScale().initialization(), 0);
         String url = getUrl(descriptor.getClass().getCanonicalName());
@@ -181,7 +187,7 @@ public class StatsService {
     public void handleObservation(GenericUserEvent<HubUserProfile, Session> event) {
     	UserEventObservation observationEvent = (UserEventObservation) event;
         Observation observation = (Observation)observationEvent.getObservation();
-        String id = observation.getGenerator() != null ? observation.getGenerator().getId() : observation.getId();
+        String id =  observationEvent.getActivityId();
         if (statsCache.containsKey(id)) {
             statsCache.computeIfPresent(id, (k,v) -> {
             	v.add(observation);

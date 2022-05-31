@@ -52,7 +52,9 @@ public class StatsController {
         Map<String, Object> map = new HashMap<>();
         while(parameterNames.hasMoreElements()) {
             String paramName = parameterNames.nextElement();
-            map.put(paramName, request.getParameter(paramName));
+            String paramValue = request.getParameter(paramName);
+            logger.info("Stats POST -> " + paramName + ": " + (paramValue != null ? paramValue.substring(paramValue.lastIndexOf(".") + 1) : "nothing"));
+            map.put(paramName, paramValue);
         }
 
 		InputStream body = request.getInputStream();
@@ -71,7 +73,6 @@ public class StatsController {
 				.constructParametricType(StatsInsertRequest.class, factory.constructFromCanonical(map.get(API.STATS.PARAMETERS.TYPE).toString()));
 		
 		mapper.writeValueAsString(map);
-		logger.info("Stats POST -> " + typeC.getTypeName());
 		return service.insertRequest(mapper.readValue(mapper.writeValueAsString(map), typeC));
 		
 	}

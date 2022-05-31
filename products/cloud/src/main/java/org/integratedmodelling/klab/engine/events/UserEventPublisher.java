@@ -54,10 +54,11 @@ public class UserEventPublisher {
         applicationEventPublisher.publishEvent(event);
     }
 
-    public void observation(HubUserProfile profile, Session session, IObservation observation, ISubject context) {
+    public void observation(HubUserProfile profile, Session session, String activityId, IObservation observation, ISubject context) {
         final UserEventObservation event = new UserEventObservation(profile, session);
         event.setContext(context);
         event.setObservation(observation);
+        event.setActivityId(activityId);
         applicationEventPublisher.publishEvent(event);
     }
 }

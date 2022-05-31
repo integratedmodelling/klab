@@ -244,7 +244,7 @@ public class HubUserService implements RemoteUserService {
 				ObserveInContextTask task = session.getTask(observation.getMonitor().getIdentity().getId(),
 						ObserveInContextTask.class);
 				if (task != null && !task.isChildTask()) {
-					publisher.observation(profile, session, observation, context);
+					publisher.observation(profile, session, observation.getMonitor().getIdentity().getId(), observation, context);
 				}
 			}
 
