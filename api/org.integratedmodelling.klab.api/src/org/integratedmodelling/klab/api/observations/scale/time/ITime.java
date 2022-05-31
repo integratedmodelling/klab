@@ -287,6 +287,9 @@ public interface ITime extends IExtent {
 	 */
 	@Override
 	ITime collapse();
+	
+	@Override
+	ITime getExtent(long stateIndex);
 
 	/**
 	 * May be null in partially specified extents.

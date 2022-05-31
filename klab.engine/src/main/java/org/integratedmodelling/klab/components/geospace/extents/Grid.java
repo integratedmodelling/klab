@@ -1004,7 +1004,7 @@ public class Grid extends Area implements IGrid {
 //		}
 
 		@Override
-		public IExtent getExtent(long stateIndex) {
+		public ISpace getExtent(long stateIndex) {
 			if (stateIndex != 0) {
 				throw new IllegalArgumentException("cannot access state #" + stateIndex + " in a Cell");
 			}
@@ -1594,7 +1594,7 @@ public class Grid extends Area implements IGrid {
 		}
 
 		@Override
-		public IExtent getExtent(long stateIndex) {
+		public ISpace getExtent(long stateIndex) {
 
 			/*
 			 * get the cell of the original grid pointed to by the offset
@@ -1617,7 +1617,7 @@ public class Grid extends Area implements IGrid {
 			double coverage = cellHr.intersection(this.horizontalRange).getWidth() / cellHr.getWidth()
 					* cellVr.intersection(this.verticalRange).getWidth() / cellVr.getWidth();
 
-			return ((AbstractExtent) ret).withCoverage(coverage);
+			return (ISpace)((AbstractExtent) ret).withCoverage(coverage);
 		}
 
 		@Override

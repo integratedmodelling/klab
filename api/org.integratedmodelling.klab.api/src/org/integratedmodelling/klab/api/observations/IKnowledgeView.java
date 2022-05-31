@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.api.observations;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.List;
 
 import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.documentation.views.IDocumentationView;
@@ -153,6 +154,30 @@ public interface IKnowledgeView extends IArtifact {
 		 * @param noDataValue
 		 */
 		void setEmptyCells(String emptyValue, String noDataValue);
+
+		/**
+		 * Get the IDs of all columns in order of definition
+		 * 
+		 * @return
+		 */
+        List<String> getColumnIds();
+        
+        /**
+         * Get the IDs of all rows in order of definition
+         * 
+         * @return
+         */
+        List<String> getRowIds();
+        
+        /**
+         * Get the value of the passed cell, or null if the cell isn't set.
+         * 
+         * @param rowId
+         * @param colId
+         * @return
+         */
+        Object getCellValue(String rowId, String colId);
+
 	}
 
 	/**

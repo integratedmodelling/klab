@@ -33,3 +33,11 @@
 {
 	// TODO add optional labels and descriptions
 }
+
+
+annotation var for models
+	"Declares and provides defaults for template variables that can be substituted in models and data
+	 structures using data from the runtime. Template variables without a corresponding declaration will
+	 be not interpolated. Use by passing any variable name as key and provide the default as value."
+{
+}

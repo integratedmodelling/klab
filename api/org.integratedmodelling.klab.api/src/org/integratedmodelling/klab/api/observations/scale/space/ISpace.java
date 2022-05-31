@@ -34,6 +34,9 @@ public interface ISpace extends IExtent, ISpatial {
 	/** Constant <code>MAX_SCALE_RANK=21</code> */
 	int MAX_SCALE_RANK = 21;
 
+	@Override
+	ISpace getExtent(long stateIndex);
+	
 	/**
 	 * Get the envelope, providing boundaries.
 	 *

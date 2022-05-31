@@ -2,9 +2,9 @@ package org.integratedmodelling.klab.api.extensions;
 
 import java.util.Map;
 
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
-import org.integratedmodelling.klab.utils.Parameters;
 
 /**
  * These are loadable extensions with a k.DL prototype that can be use to
@@ -26,7 +26,7 @@ public interface ITableCompiler {
 	 * @param tableDefinition
 	 * @param scope
 	 */
-	void initialize(Parameters<String> parameters, Map<?,?> tableDefinition, IContextualizationScope scope);
+	void initialize(IParameters<String> parameters, Map<?,?> tableDefinition, IContextualizationScope scope);
 	
 	/**
 	 * Build the artifact using the passed builder.

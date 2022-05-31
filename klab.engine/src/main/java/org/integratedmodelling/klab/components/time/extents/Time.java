@@ -598,7 +598,7 @@ public class Time extends Extent implements ITime {
 	}
 
 	@Override
-	public IExtent getExtent(long stateIndex) {
+	public ITime getExtent(long stateIndex) {
 
 		// if (this.extension != null && stateIndex > 0) {
 		// Pair<Long, Long> ext = extension.getExtension((int)stateIndex - 1);
@@ -1551,8 +1551,8 @@ public class Time extends Extent implements ITime {
 		}
 
 		@Override
-		public IExtent getExtent(long stateIndex) {
-			return (IExtent) covered.get((int) stateIndex);
+		public ITime getExtent(long stateIndex) {
+			return (ITime) covered.get((int) stateIndex);
 		}
 
 		@Override

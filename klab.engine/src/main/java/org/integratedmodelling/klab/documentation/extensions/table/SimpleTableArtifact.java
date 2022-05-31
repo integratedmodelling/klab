@@ -171,7 +171,6 @@ public class SimpleTableArtifact extends Artifact implements IKnowledgeView {
 				cells.put(key, ret);
 			}
 			ret.value = value;
-			// TODO set style, other options
 		}
 
 		@Override
@@ -185,6 +184,31 @@ public class SimpleTableArtifact extends Artifact implements IKnowledgeView {
 			this.emptyValue = emptyValue;
 			this.noDataValue = noDataValue;
 		}
+
+        @Override
+        public List<String> getColumnIds() {
+            List<String> ret = new ArrayList<>();
+            for (Dimension column : ccols.values()) {
+                ret.add(column.id);
+            }
+            return ret;
+        }
+
+        @Override
+        public List<String> getRowIds() {
+            List<String> ret = new ArrayList<>();
+            for (Dimension row : crows.values()) {
+                ret.add(row.id);
+            }
+            return ret;
+        }
+
+        @Override
+        public Object getCellValue(String rowId, String colId) {
+            Pair<String, String> key = new Pair<>(rowId, colId);
+            Cell cell = cells.get(key);
+            return cell == null ? null : cell.value;
+        }
 
 	}
 

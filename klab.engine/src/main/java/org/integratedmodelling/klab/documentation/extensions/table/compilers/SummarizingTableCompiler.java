@@ -1,8 +1,12 @@
 package org.integratedmodelling.klab.documentation.extensions.table.compilers;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +14,7 @@ import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimClassifier;
 import org.integratedmodelling.kim.api.IKimLookupTable.Argument.Dimension;
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
@@ -28,6 +33,7 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.mediation.Unit;
@@ -40,8 +46,9 @@ import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.utils.CollectionUtils;
+import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Pair;
-import org.integratedmodelling.klab.utils.Parameters;
+import org.integratedmodelling.klab.utils.StringUtil;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -69,6 +76,8 @@ public class SummarizingTableCompiler implements ITableCompiler {
     boolean hasNulls = false;
     Map<String, Object> templateVars;
     int nextYear = 0;
+    Object rowSummary = null;
+    Object colSummary = null;
 
     public static Set<String> phaseTokens = new HashSet<>();
 
@@ -101,7 +110,7 @@ public class SummarizingTableCompiler implements ITableCompiler {
     private IContextualizationScope scope;
 
     @Override
-    public void initialize(Parameters<String> parameters, Map<?, ?> tableDefinition, IContextualizationScope scope) {
+    public void initialize(IParameters<String> parameters, Map<?, ?> tableDefinition, IContextualizationScope scope) {
 
         if (scope == null) {
             // not viable, but this instance will not be used.
@@ -168,6 +177,8 @@ public class SummarizingTableCompiler implements ITableCompiler {
         if (this.sourceState == null) {
             throw new KlabIllegalArgumentException("Summarizing table compiler called with insufficient arguments");
         }
+        this.rowSummary = parameters.get("rowsummary");
+        this.colSummary = parameters.get("colsummary");
         this.scope = scope;
 
     }
@@ -221,12 +232,15 @@ public class SummarizingTableCompiler implements ITableCompiler {
 
     private Map<String, Object> getTemplateVars(IContextualizationScope scope) {
         Map<String, Object> ret = new HashMap<>();
-        ret.put("init", "Start of " + Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getStart(),
-                scope.getRootSubject().getScale().getTime().getResolution()));
-        ret.put("start", Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getStart(),
-                scope.getRootSubject().getScale().getTime().getResolution()));
-        ret.put("end", "Start of " + Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getEnd(),
-                scope.getRootSubject().getScale().getTime().getResolution()));
+        Resolution resolution = scope.getRootSubject().getScale().getTime().getResolution();
+        ret.put("init", "Start of " + Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getStart(), resolution));
+        ret.put("start", (resolution.getType() == ITime.Resolution.Type.YEAR ? "Year " : "")
+                + Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getStart(), resolution));
+        ret.put("end",
+                (resolution.getType() == ITime.Resolution.Type.YEAR ? "" : "Start of ")
+                        + (resolution.getType() == ITime.Resolution.Type.YEAR
+                                ? ("Year " + (scope.getRootSubject().getScale().getTime().getEnd().getYear() - 1))
+                                : Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getEnd(), resolution)));
         return ret;
     }
 
@@ -283,22 +297,21 @@ public class SummarizingTableCompiler implements ITableCompiler {
         }
 
         // by row, add columns as we go
-        boolean first = true;
-        Map<Object, String> columnIds = new HashMap<>();
-        Map<Object, String> rowIds = new HashMap<>();
+        Map<Object, String> columnIds = new LinkedHashMap<>();
+        Map<Object, String> rowIds = new LinkedHashMap<>();
 
-        Set<List<Object>> flatSelectors = sort(Sets.cartesianProduct(dimensionClassifiers));
+        List<List<Object>> flatSelectors = sort(Sets.cartesianProduct(dimensionClassifiers));
         for (Object rowsel : (phaseDimension == Dimension.ROW ? phaseClassifiers : flatSelectors)) {
             for (Object colsel : (phaseDimension == Dimension.ROW ? flatSelectors : phaseClassifiers)) {
                 String columnId = columnIds.get(colsel);
                 if (columnId == null) {
                     // TODO multiple classifiers
-                    columnId = builder.getColumn(Attribute.HEADER, colsel);
+                    columnId = builder.getColumn(Attribute.HEADER, getLabel(colsel));
                     columnIds.put(colsel, columnId);
                 }
                 String rowId = rowIds.get(rowsel);
                 if (rowId == null) {
-                    rowId = builder.getRow(Attribute.HEADER, rowsel);
+                    rowId = builder.getRow(Attribute.HEADER, getLabel(rowsel));
                     rowIds.put(rowsel, rowId);
                 }
 
@@ -309,141 +322,106 @@ public class SummarizingTableCompiler implements ITableCompiler {
                 if (dat != null) {
                     builder.setCell(rowId, columnId, getCellValue(dat));
                 }
-
             }
-
-            if (first) {
-
-                /*
-                 * add columns for desired row statistics
-                 */
-
-            }
-
-            first = false;
         }
 
-        /*
-         * add rows for desired column statistics, including the added statistics for rows
-         */
+        if (colSummary != null) {
+            for (Object specifier : CollectionUtils.flatCollection(colSummary)) {
+                String directive = null;
+                String label = null;
+                if (specifier instanceof String) {
+                    directive = (String) specifier;
+                    label = StringUtil.capitalize(directive);
+                } else if (specifier instanceof List) {
+                    directive = ((List<?>) specifier).get(0).toString();
+                    label = ((List<?>) specifier).get(1).toString();
+                }
+                addSummary(Dimension.COLUMN, builder, directive, label);
+            }
+        }
 
-        /*
-         * reconstruct the table based on the specs
-         */
+        if (rowSummary != null) {
+            for (Object specifier : CollectionUtils.flatCollection(rowSummary)) {
+                String directive = null;
+                String label = null;
+                if (specifier instanceof String) {
+                    directive = (String) specifier;
+                    label = StringUtil.capitalize(directive);
+                } else if (specifier instanceof List) {
+                    directive = ((List<?>) specifier).get(0).toString();
+                    label = ((List<?>) specifier).get(1).toString();
+                }
+                addSummary(Dimension.ROW, builder, directive, label);
+            }
+        }
 
-        // bins.clear();
-        // codes.clear();
-        // nextId = 2;
-        //
-        //
-        // /*
-        // * Get the two slices to compare; use the storage directly if possible. If same slice or
-        // * non-existing, give up.
-        // */
-        // ITime first = getTime(sourceState.getScale().getTime(), this.comparedStates.get(0));
-        // ITime last = getTime(sourceState.getScale().getTime(), this.comparedStates.get(1));
-        //
-        // Map<Object, Statistics> data = new HashMap<>();
-        //
-        // /*
-        // * Create temporary storage during the first pass
-        // */
-        // try (BasicFileMappedStorage<Double> storage = new
-        // BasicFileMappedStorage<Double>(Double.class,
-        // sourceState.getSpace().size(), 1)) {
-        //
-        // /*
-        // * first pass
-        // */
-        // long ofs = 0;
-        // for (ILocator locator : sourceState.getScale().at(first)) {
-        //
-        // double value = 1;
-        // if ("area".equals(reportedValue)) {
-        // value = areaUnit
-        // .convert(((IScale) locator).getSpace().getStandardizedArea(),
-        // Units.INSTANCE.SQUARE_METERS)
-        // .doubleValue();
-        // }
-        //
-        // Object val = sourceState.get(locator);
-        // int code = getCode(val);
-        // storage.set((double) code, ofs++);
-        //
-        // if (val == null) {
-        // val = OWL.INSTANCE.getNothing();
-        // }
-        //
-        //// SData dat = data.get(val);
-        //// if (dat == null) {
-        //// dat = new SData();
-        //// data.put(val, dat);
-        //// }
-        //
-        //// dat.opening += value;
-        // }
-        //
-        //
-        // /*
-        // * build the fucka
-        // */
-        // SData unassigned = null;
-        // Map<String, Object> labels = new HashMap<>();
-        // for (Object key : data.keySet()) {
-        // if (OWL.INSTANCE.getNothing().equals(key)) {
-        //// unassigned = data.get(key);
-        // } else {
-        // labels.put(getLabel(key), key);
-        // }
-        // }
-        //
-        // List<String> labs = new ArrayList<>(labels.keySet());
-        // Collections.sort(labs);
-        // if (unassigned != null) {
-        // labs.add("Unaccounted");
-        // labels.put("Unaccounted", OWL.INSTANCE.getNothing());
-        // }
-        //
-        //// String rowIncoming = builder.getRow(Attribute.HEADER_0,
-        //// TemplateUtils.expandMatches("Opening area {start}", templateVars).get(0), Style.BOLD);
-        //// String rowAdditions = builder.getRow(Attribute.HEADER_1, "Expansions");
-        //// String rowReductions = builder.getRow(Attribute.HEADER_1, "Regressions");
-        //// String rowNetChange = builder.getRow(Attribute.HEADER_1, "Net change");
-        //// String rowOutgoing = builder.getRow(Attribute.HEADER_0,
-        //// TemplateUtils.expandMatches("Closing area {end}", templateVars).get(0), Style.BOLD);
-        //
-        //// SData totals = new SData();
-        //
-        //// for (Object label : labs) {
-        //// SData dat = data.get(labels.get(label));
-        //// String column = builder.getColumn("Unaccounted".equals(label) ? label :
-        // labels.get(label));
-        //// builder.setCell(rowIncoming, column, dat.opening);
-        //// builder.setCell(rowOutgoing, column, dat.closing);
-        //// builder.setCell(rowNetChange, column, dat.closing - dat.opening);
-        //// builder.setCell(rowAdditions, column, dat.additions);
-        //// builder.setCell(rowReductions, column, dat.reductions);
-        ////
-        //// totals.opening += dat.opening;
-        //// totals.closing += dat.closing;
-        //// totals.additions += dat.additions;
-        //// totals.reductions += dat.reductions;
-        //// }
-        ////
-        //// String colTotals = builder.getColumn("Totals", Style.BOLD);
-        //// builder.setCell(rowIncoming, colTotals, totals.opening);
-        //// builder.setCell(rowOutgoing, colTotals, totals.closing);
-        //// builder.setCell(rowNetChange, colTotals, totals.closing - totals.opening);
-        //// builder.setCell(rowAdditions, colTotals, totals.additions);
-        //// builder.setCell(rowReductions, colTotals, totals.reductions);
+    }
 
+    private void addSummary(Dimension dimension, Builder builder, String directive, String label) {
+
+        List<String> rowIds = builder.getRowIds();
+        List<String> colIds = builder.getColumnIds();
+
+        if (directive == null || label == null || (dimension == Dimension.ROW ? rowIds.size() <= 1 : colIds.size() <= 1)) {
+            return;
+        }
+
+        List<Number> results = new ArrayList<>();
+
+        String dimId = null;
+        for (String otherId : (dimension == Dimension.ROW ? colIds : rowIds)) {
+            switch(directive) {
+            case "total":
+                /*
+                 * compute the other dimensions' total
+                 */
+                double total = 0;
+                for (String myId : (dimension == Dimension.ROW ? rowIds : colIds)) {
+                    Object value = dimension == Dimension.ROW
+                            ? builder.getCellValue(myId, otherId)
+                            : builder.getCellValue(otherId, myId);
+                    if (Observations.INSTANCE.isData(value) && value instanceof Number) {
+                        total += ((Number) value).doubleValue();
+                    }
+                }
+                results.add(total);
+                break;
+            case "change":
+                label = "Net change";
+                Object first = dimension == Dimension.ROW
+                        ? builder.getCellValue(rowIds.get(0), otherId)
+                        : builder.getCellValue(otherId, colIds.get(0));
+                Object last = dimension == Dimension.ROW
+                        ? builder.getCellValue(rowIds.get(rowIds.size() - 1), otherId)
+                        : builder.getCellValue(otherId, colIds.get(colIds.size() - 1));
+
+                results.add(Observations.INSTANCE.isData(first) && Observations.INSTANCE.isData(last) && first instanceof Number
+                        && last instanceof Number ? ((Number) last).doubleValue() - ((Number) first).doubleValue() : 0.0);
+
+                break;
+            default:
+                throw new KlabIllegalStateException("summarizer: unrecognized statistic " + directive);
+            }
+        }
+
+        if (dimId == null) {
+            dimId = dimension == Dimension.ROW ? builder.getRow(label) : builder.getColumn(label);
+            int i = 0;
+            for (String otherId : (dimension == Dimension.ROW ? colIds : rowIds)) {
+                if (dimension == Dimension.ROW) {
+                    builder.setCell(dimId, otherId, results.get(i++));
+                } else {
+                    builder.setCell(otherId, dimId, results.get(i++));
+                }
+            }
+        }
     }
 
     // aggregation, sum, mean, count, nodatacount, datacount, variance, std, median, dominant
     // aggregation resolves to sum, mean or dominant according to unit and semantics
     private Object getCellValue(Statistics dat) {
         switch(this.statistic) {
-        case "aggregate":
+        case "aggregation":
             // TODO
         case "sum":
             return dat.getSum();
@@ -463,9 +441,30 @@ public class SummarizingTableCompiler implements ITableCompiler {
         return null;
     }
 
-    private Set<List<Object>> sort(Set<List<Object>> cartesianProduct) {
-        // TODO sort by first, then others, using reliable labels
-        return cartesianProduct;
+    private List<List<Object>> sort(Set<List<Object>> cartesianProduct) {
+
+        List<List<Object>> ret = new ArrayList<>();
+        boolean single = true;
+        for (List<Object> obj : cartesianProduct) {
+            ret.add(obj);
+            if (obj.size() != 1) {
+                single = false;
+            }
+        }
+
+        if (single) {
+            Collections.sort(ret, new Comparator<List<Object>>(){
+
+                @Override
+                public int compare(List<Object> o1, List<Object> o2) {
+                    String s1 = getLabel(o1.get(0));
+                    String s2 = getLabel(o2.get(0));
+                    return s1.compareTo(s2);
+                }
+            });
+        }
+
+        return ret;
     }
 
     private Object getValue(Object value, ILocator locator) {
@@ -523,10 +522,14 @@ public class SummarizingTableCompiler implements ITableCompiler {
             return sourceState.getScale().at(sourceState.getScale().getTime().earliest());
         case "end":
             return sourceState.getScale().at(sourceState.getScale().getTime().latest());
-        case "years":
-            if (nextYear < sourceState.getScale().getTime().size() - 2) {
-                nextYear++;
-                return sourceState.getScale().at(sourceState.getScale().getTime().getExtent(nextYear));
+        default:
+            if (NumberUtils.encodesInteger(phase)) {
+                for (int i = 1; i < sourceState.getScale().getTime().size(); i++) {
+                    ITime time = sourceState.getScale().getTime().getExtent(i);
+                    if (Integer.parseInt(phase) == time.getStart().getYear()) {
+                        return sourceState.getScale().at(time);
+                    }
+                }
             }
         }
 
@@ -572,7 +575,9 @@ public class SummarizingTableCompiler implements ITableCompiler {
                     if (sourceState.getScale().getTime().getResolution().getType() != Type.YEAR) {
                         throw new KlabIllegalStateException("summarizer: yearly reporting requested for a non-yearly context");
                     }
-                    ret.add("years");
+                    for (int i = 1; i < sourceState.getScale().getTime().size(); i++) {
+                        ret.add(sourceState.getScale().getTime().getExtent(i).getStart().getYear() + "");
+                    }
                 }
             }
         }
@@ -581,44 +586,54 @@ public class SummarizingTableCompiler implements ITableCompiler {
     }
 
     private String getLabel(Object object) {
+
+        if (object instanceof Collection) {
+            object = ((Collection<?>) object).iterator().next();
+        }
+
         if (OWL.INSTANCE.getNothing().equals(object)) {
             return "Unaccounted";
         }
         if (object instanceof ISemantic) {
             return Concepts.INSTANCE.getDisplayLabel(((ISemantic) object).getType());
+        } else if (phaseTokens.contains(object)) {
+            return templateVars.get(object.toString()).toString();
+        } else if (NumberUtils.encodesInteger(object.toString())) {
+            return "Year " + object;
         }
         return "";
     }
-
-    private int getCode(Object object) {
-        if (Observations.INSTANCE.isData(object)) {
-            Integer ret = codes.get(object);
-            if (ret == null) {
-                ret = nextId;
-                codes.put(object, ret);
-                nextId++;
-            }
-            return ret;
-        }
-        return 1;
-    }
-
-    private ITime getTime(ITime overall, Object object) {
-        if (object instanceof Number) {
-            return (ITime) overall.getExtent(((Number) object).longValue());
-        } else if (object instanceof String) {
-            switch((String) object) {
-            case "init":
-                return Time.initialization(overall);
-            case "start":
-                return overall.earliest();
-            case "end":
-                return overall.latest();
-            }
-        } else if (object instanceof ITime) {
-            return (ITime) object;
-        }
-        throw new KlabIllegalArgumentException("pairwise table compiler: cannot infer temporal state from " + object);
-    }
+    //
+    // private int getCode(Object object) {
+    // if (Observations.INSTANCE.isData(object)) {
+    // Integer ret = codes.get(object);
+    // if (ret == null) {
+    // ret = nextId;
+    // codes.put(object, ret);
+    // nextId++;
+    // }
+    // return ret;
+    // }
+    // return 1;
+    // }
+    //
+    // private ITime getTime(ITime overall, Object object) {
+    // if (object instanceof Number) {
+    // return (ITime) overall.getExtent(((Number) object).longValue());
+    // } else if (object instanceof String) {
+    // switch((String) object) {
+    // case "init":
+    // return Time.initialization(overall);
+    // case "start":
+    // return overall.earliest();
+    // case "end":
+    // return overall.latest();
+    // }
+    // } else if (object instanceof ITime) {
+    // return (ITime) object;
+    // }
+    // throw new KlabIllegalArgumentException("pairwise table compiler: cannot infer temporal state
+    // from " + object);
+    // }
 
 }

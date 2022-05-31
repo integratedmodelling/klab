@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
@@ -17,7 +18,6 @@ import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
 import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.observations.IKnowledgeView.Builder;
-import org.integratedmodelling.klab.api.observations.IKnowledgeView.Style;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -29,7 +29,6 @@ import org.integratedmodelling.klab.data.storage.BasicFileMappedStorage;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.utils.Pair;
-import org.integratedmodelling.klab.utils.Parameters;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -56,7 +55,7 @@ public class PairwiseTableCompiler implements ITableCompiler {
 	Map<Pair<Object, Object>, Double> bins = new HashMap<>();
 
 	@Override
-	public void initialize(Parameters<String> parameters, Map<?, ?> tableDefinition, IContextualizationScope scope) {
+	public void initialize(IParameters<String> parameters, Map<?, ?> tableDefinition, IContextualizationScope scope) {
 
 		if (scope == null) {
 			// not viable, but this instance will not be used.

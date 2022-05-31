@@ -35,8 +35,15 @@ public class EnumeratedSpace extends EnumeratedExtent implements ISpace {
 		}
 		return ret + "}";
 	}
+	
+	
 
 	@Override
+    public EnumeratedSpace getExtent(long stateIndex) {
+        return this;
+    }
+
+    @Override
 	public Type getType() {
 		return Type.SPACE;
 	}

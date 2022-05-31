@@ -920,7 +920,7 @@ public class Shape extends AbstractExtent implements IShape {
 //    }
 
     @Override
-    public IExtent getExtent(long stateIndex) {
+    public ISpace getExtent(long stateIndex) {
         if (stateIndex != 0) {
             throw new IllegalArgumentException("cannot access state #" + stateIndex + " in a Shape");
         }

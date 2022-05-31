@@ -12,6 +12,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.api.data.TemplateValue;
 
 /**
  * An order-preserving map with improved get() methods to enable simpler and more flexible use
@@ -25,6 +26,7 @@ public class Parameters<T> implements IParameters<T> {
 
     private Map<T, Object> delegate;
     private List<T> unnamedKeys = new ArrayList<>();
+    private IParameters<String> templateVariables = null;
 
     public Parameters(Map<T, Object> delegate) {
         this.delegate = delegate == null ? new LinkedHashMap<>() : delegate;
@@ -164,6 +166,11 @@ public class Parameters<T> implements IParameters<T> {
         this.delegate = new LinkedHashMap<>();
     }
 
+    public Parameters(Map<T, Object> delegate, List<T> unnamedKeys) {
+        this.delegate = delegate;
+        this.unnamedKeys = unnamedKeys;
+    }
+
     public int size() {
         return delegate.size();
     }
@@ -181,7 +188,11 @@ public class Parameters<T> implements IParameters<T> {
     }
 
     public Object get(Object key) {
-        return delegate.get(key);
+        Object ret = delegate.get(key);
+        if (this.templateVariables != null && ret instanceof TemplateValue) {
+            ret = ((TemplateValue)ret).getValue(this.templateVariables);
+        }
+        return ret;
     }
 
     public Object put(T key, Object value) {
@@ -371,6 +382,20 @@ public class Parameters<T> implements IParameters<T> {
             ret.add(get(key));
         }
         return ret;
+    }
+
+    public IParameters<T> with(IParameters<String> state) {
+        if (state != null && !state.isEmpty()) {
+            Parameters<T> ret = new Parameters(this.delegate, this.unnamedKeys);
+            ret.templateVariables = state;
+            return ret;
+        }
+        return (IParameters<T>) this;
+    }
+
+    @Override
+    public IParameters<String> getTemplateVariables() {
+        return this.templateVariables;
     }
 
 }

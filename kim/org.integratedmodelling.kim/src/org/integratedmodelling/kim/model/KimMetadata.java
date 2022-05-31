@@ -178,4 +178,14 @@ public class KimMetadata extends KimStatement implements IParameters<String> {
         return data.getUnnamedArguments();
     }
 
+    @Override
+    public IParameters<String> with(IParameters<String> templateVariables) {
+        return data.with(templateVariables);
+    }
+
+    @Override
+    public IParameters<String> getTemplateVariables() {
+        return data.getTemplateVariables();
+    }
+
 }

@@ -74,6 +74,7 @@ import org.integratedmodelling.kim.utils.ParseHelper;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.kim.validation.KimValidator;
 import org.integratedmodelling.klab.api.data.CRUDOperation;
+import org.integratedmodelling.klab.api.data.TemplateValue;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -635,6 +636,8 @@ public enum Kim {
                 // exclusive x-x range means != x
                 return new Range(op.doubleValue(), op.doubleValue(), true, true);
             }
+        } else if (value.getTemplatevar() != null) {
+            return new TemplateValue(value.getTemplatevar());
         }
 
         return null;
