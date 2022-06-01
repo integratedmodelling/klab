@@ -7,6 +7,7 @@ import org.integratedmodelling.klab.engine.services.HubUserProfile;
 public class UserEventObservation extends UserEventContext{
 
     private IObservation observation;
+    private String activityId;
 
     public UserEventObservation( HubUserProfile profile, Session session ) {
         super(profile, session);
@@ -20,5 +21,13 @@ public class UserEventObservation extends UserEventContext{
     public IObservation getObservation() {
         return observation;
     }
-        
-}
+
+    public String getActivityId() {
+        return activityId;
+    }
+    
+    public void setActivityId(String activityId) {
+        this.activityId = activityId;
+    }
+
+   }

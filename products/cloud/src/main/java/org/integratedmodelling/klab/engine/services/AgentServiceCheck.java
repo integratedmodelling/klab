@@ -8,6 +8,8 @@ import java.util.Map;
 
 import org.integratedmodelling.klab.engine.api.ComputeWeightFactor;
 import org.integratedmodelling.klab.engine.events.GenericUserEvent;
+import org.integratedmodelling.klab.engine.events.UserEventLogin;
+import org.integratedmodelling.klab.engine.events.UserEventLogout;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -88,14 +90,22 @@ public class AgentServiceCheck {
 	
 	@EventListener(condition = "#event.type == T(org.integratedmodelling.klab.engine.events.UserEventType).LOGIN")
 	void handleLogin(GenericUserEvent<HubUserProfile, Session> event) {
-		HubUserProfile profile = event.getProfile();
-		Session session = event.getSession();
+	    UserEventLogin loginEvent = (UserEventLogin) event;
+	    if (loginEvent.isFailed()) {
+	        return;
+	    }
+		HubUserProfile profile = loginEvent.getProfile();
+		Session session = loginEvent.getSession();
 		users.putIfAbsent(profile, session);
 		removeServiceWeight(profile);	
 	}
 	
 	@EventListener(condition = "#event.type == T(org.integratedmodelling.klab.engine.events.UserEventType).LOGOUT")
 	void handleLogout(GenericUserEvent<HubUserProfile, Session> event) {
+	    UserEventLogout logoutEvent = (UserEventLogout) event;
+	    if (logoutEvent.isFailed()) {
+	        return;
+	    }
 	    if(event.getProfile() != null) {
 	        addServiceWeight(event.getProfile());
 	    } else {
