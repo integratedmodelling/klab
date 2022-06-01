@@ -70,6 +70,7 @@ import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Range;
@@ -1269,9 +1270,11 @@ public class TableCompiler {
 
         if (scope != null) {
             IParameters<String> templateVars = Parameters.create();
-            templateVars.putAll(definition.getTemplateVariables());
-            for (String key : scope.getSession().getState().keySet()) {
-                if (templateVars.containsKey(key)) {
+            if (definition.getTemplateVariables() != null) {
+                templateVars.putAll(definition.getTemplateVariables());
+            }
+            for (String key : templateVars.keySet()) {
+                if (scope.getSession().getState().containsKey(key)) {
                     templateVars.put(key, scope.getSession().getState().get(key));
                 }
             }
@@ -1307,7 +1310,20 @@ public class TableCompiler {
             col.id = id.substring(col.parent == null ? 0 : col.parent.getName().length());
             this.columns.put(id, col);
         }
-        
+
+        /*
+         * additional observables, needed if some classifiers are only mentioned in function
+         * parameters where we can't find them reliably.
+         */
+        if (definition.containsKey("observables")) {
+            for (Object aob : CollectionUtils.flatCollection(definition.get("observables"))) {
+                IObservable observable = Observables.INSTANCE.asObservable(aob);
+                if (observable != null) {
+                    this.observables.add(new ObservedConcept(observable));
+                }
+            }
+        }
+
         this.title = definition.containsKey("title") ? definition.get("title").toString() : null;
         this.label = definition.containsKey("label") ? definition.get("label").toString() : null;
         this.identifier = definition.containsKey("name") ? definition.get("name").toString() : this.name;

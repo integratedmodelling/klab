@@ -382,6 +382,17 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
             return ret;
         }
 
+        public boolean hasValue(String string) {
+            if (frameSymbols.containsKey(string)) {
+                return true;
+            } else if (symbolTable.containsKey(string)) {
+                return true;
+            } else if (globalSymbols != null && globalSymbols.containsKey(string)) {
+                return true;
+            }
+            return false;
+        }
+
         public Object getValue(String string) {
             if (frameSymbols.containsKey(string)) {
                 return frameSymbols.get(string);
@@ -1293,29 +1304,29 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
 
             Object o = ((KActorsValue) code.getValue()).evaluate(scope, identity, false);
             this.javaReactors.put(code.getVariable(), o);
-            switch (code.getScope()) {
-			case ACTION:
+            switch(code.getScope()) {
+            case ACTION:
                 scope.symbolTable.put(code.getVariable(), o);
-				break;
-			case ACTOR:
+                break;
+            case ACTOR:
                 scope.globalSymbols.put(code.getVariable(), o);
-				break;
-			case FRAME:
+                break;
+            case FRAME:
                 scope.frameSymbols.put(code.getVariable(), o);
-				break;
+                break;
             }
         } else {
-        	Object o = ((KActorsValue) code.getValue()).evaluate(scope, identity, false);
-            switch (code.getScope()) {
-			case ACTION:
+            Object o = ((KActorsValue) code.getValue()).evaluate(scope, identity, false);
+            switch(code.getScope()) {
+            case ACTION:
                 scope.symbolTable.put(code.getVariable(), o);
-				break;
-			case ACTOR:
+                break;
+            case ACTOR:
                 scope.globalSymbols.put(code.getVariable(), o);
-				break;
-			case FRAME:
+                break;
+            case FRAME:
                 scope.frameSymbols.put(code.getVariable(), o);
-				break;
+                break;
             }
         }
     }
@@ -1359,7 +1370,11 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
         case IDENTIFIER:
 
             // TODO check for recipient in ID
-            ret = scope.getValue(arg.getStatedValue().toString());
+            if (scope.hasValue(arg.getStatedValue().toString())) {
+                ret = scope.getValue(arg.getStatedValue().toString());
+            } else {
+                ret = arg.getStatedValue().toString();
+            }
             break;
 
         case EXPRESSION:

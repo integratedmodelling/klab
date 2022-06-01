@@ -13,7 +13,6 @@ import java.util.Set;
 import org.integratedmodelling.klab.api.documentation.views.ITableView;
 import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
-import org.integratedmodelling.klab.utils.Escape;
 import org.integratedmodelling.klab.utils.MarkdownUtils;
 
 /**

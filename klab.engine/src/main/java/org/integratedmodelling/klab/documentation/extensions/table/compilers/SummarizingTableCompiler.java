@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimClassifier;
@@ -26,6 +28,7 @@ import org.integratedmodelling.klab.api.extensions.ITableCompiler;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
+import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.observations.IKnowledgeView.Attribute;
 import org.integratedmodelling.klab.api.observations.IKnowledgeView.Builder;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -45,7 +48,9 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.owl.OWL;
+import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.utils.CollectionUtils;
+import org.integratedmodelling.klab.utils.MapUtils;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.StringUtil;
@@ -98,16 +103,54 @@ public class SummarizingTableCompiler implements ITableCompiler {
     private Boolean extensive;
 
     // these can only appear in one dimension and determine the phase to look at
-    private List<Object> phaseSelectors = new ArrayList<>();
+    private List<DimensionConfig> phaseSelectors = new ArrayList<>();
     // these may be in multiple dimensions, although >1 isn't supported at the moment
-    private List<Object> otherSelectors = new ArrayList<>();
-    private Map<Object, List<Object>> collectedSelectors = new HashMap<>();
+    private List<DimensionConfig> otherSelectors = new ArrayList<>();
     private Object phaseDimension;
 
-    private List<Object> rowSelectors;
-    private List<Object> colSelectors;
+    private List<DimensionConfig> rowSelectors;
+    private List<DimensionConfig> colSelectors;
     private String statistic;
     private IContextualizationScope scope;
+
+    class DimensionConfig {
+
+        public Object filter;
+        public String title = "{classifier}";
+        public Set<IKnowledgeView.Style> style = EnumSet.noneOf(IKnowledgeView.Style.class);
+
+        public DimensionConfig(Object filter) {
+            this.filter = filter;
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + getEnclosingInstance().hashCode();
+            result = prime * result + Objects.hash(filter);
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            DimensionConfig other = (DimensionConfig) obj;
+            if (!getEnclosingInstance().equals(other.getEnclosingInstance()))
+                return false;
+            return Objects.equals(filter, other.filter);
+        }
+
+        private SummarizingTableCompiler getEnclosingInstance() {
+            return SummarizingTableCompiler.this;
+        }
+
+    }
 
     @Override
     public void initialize(IParameters<String> parameters, Map<?, ?> tableDefinition, IContextualizationScope scope) {
@@ -146,10 +189,10 @@ public class SummarizingTableCompiler implements ITableCompiler {
             throw new KlabIllegalStateException("table summarizer needs explicit rows and columns arguments");
         } else if (colSelectors == null && phaseSelectors == null) {
             colSelectors = phaseSelectors = new ArrayList<>();
-            colSelectors.add("start");
+            colSelectors.add(new DimensionConfig("start"));
         } else if (rowSelectors == null && phaseSelectors == null) {
             rowSelectors = phaseSelectors = new ArrayList<>();
-            rowSelectors.add("start");
+            rowSelectors.add(new DimensionConfig("start"));
         } else if (rowSelectors == null || colSelectors == null) {
             throw new KlabIllegalStateException(
                     "table summarizer needs explicit rows and columns if temporal phases are specified");
@@ -188,8 +231,31 @@ public class SummarizingTableCompiler implements ITableCompiler {
         boolean isPhase = false;
         for (Object selector : CollectionUtils.flatCollection(rowSpecs)) {
             if (isPhase(selector)) {
-                phaseSelectors.add(selector);
+                phaseSelectors.add(new DimensionConfig(selector));
                 isPhase = true;
+            } else if (selector instanceof Map) {
+                if (!((Map<?, ?>) selector).containsKey("filter")) {
+                    throw new KlabIllegalStateException("dimension selectors must contain a filter value");
+                }
+                Object filter = ((Map<?, ?>) selector).get("filter");
+                if (filter instanceof List) {
+                    for (Object f : (List<?>) filter) {
+                        processStructure(MapUtils.of("filter", f, "title", ((Map<?,?>)selector).get("filter")), dimension, scope);
+                    }
+                    return;
+                } else {
+                    filter = isPhase(filter) ? filter : Observables.INSTANCE.parseObservable(filter, scope.getMonitor());
+                    DimensionConfig sel = new DimensionConfig(filter);
+                    if (((Map<?, ?>) selector).containsKey("title")) {
+                        sel.title = ((Map<?, ?>) selector).get("title").toString();
+                    }
+                    if (isPhase(sel.filter)) {
+                        phaseSelectors.add(sel);
+                        isPhase = true;
+                    } else {
+                        otherSelectors.add(sel);
+                    }
+                }
             } else if (isPhase) {
                 throw new KlabIllegalStateException(
                         "table summarizer: a dimension containing temporal phases must be consistent and contain no other selector types");
@@ -201,20 +267,17 @@ public class SummarizingTableCompiler implements ITableCompiler {
                 IObservable observable = Observables.INSTANCE.parseObservable(selector, scope.getMonitor());
                 if (!(observable instanceof IObservable)) {
                     if (observable instanceof IKimClassifier) {
-                        otherSelectors.add(new Classifier((IKimClassifier) selector));
+                        otherSelectors.add(new DimensionConfig(new Classifier((IKimClassifier) selector)));
                     } else {
                         throw new KlabIllegalStateException("table summarizer: can't use " + selector + " as selector");
                     }
                 } else {
-                    otherSelectors.add(observable);
+                    otherSelectors.add(new DimensionConfig(observable));
                 }
             }
         }
 
         if (isPhase) {
-            if (phaseDimension != null) {
-                throw new KlabIllegalStateException("table summarizer: can't have more than one dimension for the phase");
-            }
             phaseDimension = dimension;
         }
 
@@ -227,6 +290,9 @@ public class SummarizingTableCompiler implements ITableCompiler {
     }
 
     private boolean isPhase(Object selector) {
+        if (selector instanceof DimensionConfig) {
+            selector = ((DimensionConfig) selector).filter;
+        }
         return selector instanceof String && phaseTokens.contains((String) selector);
     }
 
@@ -332,9 +398,12 @@ public class SummarizingTableCompiler implements ITableCompiler {
                 if (specifier instanceof String) {
                     directive = (String) specifier;
                     label = StringUtil.capitalize(directive);
-                } else if (specifier instanceof List) {
-                    directive = ((List<?>) specifier).get(0).toString();
-                    label = ((List<?>) specifier).get(1).toString();
+                } else if (specifier instanceof IParameters) {
+                    if (!((Map<?,?>) specifier).containsKey("filter")) {
+                        throw new KlabIllegalStateException("summarizer: summary needs a field named 'filter'");
+                    }
+                    directive = ((Map<?,?>) specifier).get("filter").toString();
+                    label = ((IParameters<String>) specifier).get("label", "{classifier}").toString();
                 }
                 addSummary(Dimension.COLUMN, builder, directive, label);
             }
@@ -347,9 +416,12 @@ public class SummarizingTableCompiler implements ITableCompiler {
                 if (specifier instanceof String) {
                     directive = (String) specifier;
                     label = StringUtil.capitalize(directive);
-                } else if (specifier instanceof List) {
-                    directive = ((List<?>) specifier).get(0).toString();
-                    label = ((List<?>) specifier).get(1).toString();
+                } else if (specifier instanceof IParameters) {
+                    if (!((Map<?,?>) specifier).containsKey("filter")) {
+                        throw new KlabIllegalStateException("summarizer: summary needs a field named 'filter'");
+                    }
+                    directive = ((Map<?,?>) specifier).get("filter").toString();
+                    label = ((IParameters<String>) specifier).get("label", "{classifier}").toString();
                 }
                 addSummary(Dimension.ROW, builder, directive, label);
             }
@@ -492,11 +564,12 @@ public class SummarizingTableCompiler implements ITableCompiler {
         }
 
         List<Object> ret = new ArrayList<>();
-        for (Object o : otherSelectors) {
+        for (DimensionConfig sel : otherSelectors) {
+            Object o = sel.filter;
             Object match = null;
             if (o instanceof IObservable) {
                 if (Observations.INSTANCE.isNodata(value)) {
-                    o = OWL.INSTANCE.getNothing();
+                    o = Observable.promote(OWL.INSTANCE.getNothing());
                 }
                 IObservation obs = catalog.get(new ObservedConcept((IObservable) o));
                 match = obs instanceof IState ? ((IState) obs).get(locator) : null;
@@ -551,8 +624,8 @@ public class SummarizingTableCompiler implements ITableCompiler {
          */
         boolean haveStart = false;
         boolean haveInit = false;
-        for (Object selector : phaseSelectors) {
-            if ("start".equals(selector)) {
+        for (DimensionConfig selector : phaseSelectors) {
+            if ("start".equals(selector.filter)) {
                 haveStart = true;
                 if (isStatic) {
                     ret.add("init");
@@ -560,15 +633,15 @@ public class SummarizingTableCompiler implements ITableCompiler {
                 } else {
                     ret.add("start");
                 }
-            } else if ("init".equals(selector)) {
+            } else if ("init".equals(selector.filter)) {
                 if (!haveInit) {
                     ret.add("init");
                 }
-            } else if ("end".equals(selector)) {
+            } else if ("end".equals(selector.filter)) {
                 if (!(haveStart && !isChanging)) {
                     ret.add("end");
                 }
-            } else if ("years".equals(selector)) {
+            } else if ("years".equals(selector.filter)) {
                 if ((isStatic || !isChanging) && !haveStart) {
                     ret.add("start");
                 } else {
@@ -587,6 +660,10 @@ public class SummarizingTableCompiler implements ITableCompiler {
 
     private String getLabel(Object object) {
 
+        /*
+         * TODO use template from definitions
+         */
+        
         if (object instanceof Collection) {
             object = ((Collection<?>) object).iterator().next();
         }
@@ -603,37 +680,4 @@ public class SummarizingTableCompiler implements ITableCompiler {
         }
         return "";
     }
-    //
-    // private int getCode(Object object) {
-    // if (Observations.INSTANCE.isData(object)) {
-    // Integer ret = codes.get(object);
-    // if (ret == null) {
-    // ret = nextId;
-    // codes.put(object, ret);
-    // nextId++;
-    // }
-    // return ret;
-    // }
-    // return 1;
-    // }
-    //
-    // private ITime getTime(ITime overall, Object object) {
-    // if (object instanceof Number) {
-    // return (ITime) overall.getExtent(((Number) object).longValue());
-    // } else if (object instanceof String) {
-    // switch((String) object) {
-    // case "init":
-    // return Time.initialization(overall);
-    // case "start":
-    // return overall.earliest();
-    // case "end":
-    // return overall.latest();
-    // }
-    // } else if (object instanceof ITime) {
-    // return (ITime) object;
-    // }
-    // throw new KlabIllegalArgumentException("pairwise table compiler: cannot infer temporal state
-    // from " + object);
-    // }
-
 }

@@ -135,13 +135,13 @@ public class Parameters<T> implements IParameters<T> {
     }
 
     @SuppressWarnings("unchecked")
-	@Override
+    @Override
     public <K> K get(T name, K defaultValue) {
         Object ret = get(name);
         if (ret == null) {
             return defaultValue;
         }
-        return defaultValue == null ? (K)ret : Utils.asType(ret, defaultValue.getClass());
+        return defaultValue == null ? (K) ret : Utils.asType(ret, defaultValue.getClass());
     }
 
     @Override
@@ -190,7 +190,11 @@ public class Parameters<T> implements IParameters<T> {
     public Object get(Object key) {
         Object ret = delegate.get(key);
         if (this.templateVariables != null && ret instanceof TemplateValue) {
-            ret = ((TemplateValue)ret).getValue(this.templateVariables);
+            ret = ((TemplateValue) ret).getValue(this.templateVariables);
+        }
+        if (ret instanceof Map) {
+            ret = new Parameters((Map<?, ?>) ret);
+            ((Parameters<?>) ret).templateVariables = this.templateVariables;
         }
         return ret;
     }
@@ -217,13 +221,13 @@ public class Parameters<T> implements IParameters<T> {
     }
 
     public Map<String, String> asStringMap() {
-    	Map<String, String> ret = new LinkedHashMap<>();
-    	for (T object : keySet()) {
-    		ret.put(object.toString(), ret.get(object) == null ? null : ret.get(object).toString());
-    	}
-    	return ret;
+        Map<String, String> ret = new LinkedHashMap<>();
+        for (T object : keySet()) {
+            ret.put(object.toString(), ret.get(object) == null ? null : ret.get(object).toString());
+        }
+        return ret;
     }
-    
+
     public void clear() {
         delegate.clear();
     }

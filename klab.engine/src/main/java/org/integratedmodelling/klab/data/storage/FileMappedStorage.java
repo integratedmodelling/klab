@@ -177,7 +177,7 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
         }
         switch(type_) {
         case BYTE:
-            page.put(((Byte) val).byteValue());
+            page.put(val instanceof Number ? ((Number)val).byteValue() : ((Byte) val).byteValue());
             break;
         case DOUBLE:
             page.putDouble(((Number) val).doubleValue());
