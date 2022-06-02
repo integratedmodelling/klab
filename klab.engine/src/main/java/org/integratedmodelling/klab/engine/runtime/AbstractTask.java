@@ -1,10 +1,19 @@
 package org.integratedmodelling.klab.engine.runtime;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.Executor;
+import java.util.function.BiConsumer;
+
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.rest.ITaskReference.Status;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
@@ -68,19 +77,29 @@ public abstract class AbstractTask<T extends IArtifact> implements ITaskTree<T> 
 		this.token = parent.getId() + "." + this.token;
 		this.activity = new Activity(token);
 		this.monitor = parent.monitor.get(this);
+		this.executor = parent.executor;
+		this.observationListeners = parent.observationListeners;
+		this.errorListeners = parent.errorListeners;
 	}
 
 	Activity activity;
 	Monitor monitor;
 	Subject context;
 	protected IResolvable resolvable;
+	protected boolean autostart = true;
+	protected boolean started = false;
+	protected boolean silent = false;
+
 	Session session;
 	String token = "t" + NameGenerator.shortUUID();
-	String[] scenarios;
+	Set<String> scenarios = new HashSet<>();
 	AbstractTask<T> parentTask = null;
 	TaskReference descriptor;
 	Long start;
 	Long end;
+	protected List<BiConsumer<ITask<?>, T>> observationListeners = new ArrayList<>();
+	protected List<BiConsumer<ITask<?>, Throwable>> errorListeners = new ArrayList<>();
+	protected Executor executor;
 
 	@Override
 	public boolean isChildTask() {
@@ -97,10 +116,12 @@ public abstract class AbstractTask<T extends IArtifact> implements ITaskTree<T> 
 	}
 
 	public void notifyStart() {
-	    this.start = System.currentTimeMillis();
+		this.start = System.currentTimeMillis();
 		session.registerTask(this);
-		session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
+		if (!silent) {
+			session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
 				IMessage.Type.TaskStarted, getReference()));
+		}
 	}
 
 	protected TaskReference getReference() {
@@ -110,8 +131,8 @@ public abstract class AbstractTask<T extends IArtifact> implements ITaskTree<T> 
 			this.descriptor.setParentId(parentTask == null ? null : parentTask.getId());
 			this.descriptor.setDescription(getTaskDescription());
 			this.descriptor.setContextId(this.context == null ? null : this.context.getId());
-			this.descriptor.setRootContextId(
-					this.context == null ? null : this.context.getScope().getRootSubject().getId());
+			this.descriptor
+					.setRootContextId(this.context == null ? null : this.context.getScope().getRootSubject().getId());
 			this.descriptor.setStart(this.start);
 			this.descriptor.setEnd(this.end);
 		}
@@ -121,12 +142,14 @@ public abstract class AbstractTask<T extends IArtifact> implements ITaskTree<T> 
 	protected abstract String getTaskDescription();
 
 	public void notifyEnd() {
-	    this.end = System.currentTimeMillis();
+		this.end = System.currentTimeMillis();
 		session.unregisterTask(this);
 		getReference().setStatus(Status.Finished);
 		getReference().setEnd(this.end);
-		session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
-				IMessage.Type.TaskFinished, getReference()));
+		if (!silent) {
+			session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
+					IMessage.Type.TaskFinished, getReference()));
+		}
 	}
 
 	/**
@@ -137,15 +160,17 @@ public abstract class AbstractTask<T extends IArtifact> implements ITaskTree<T> 
 	 * @return
 	 */
 	public KlabTaskException notifyAbort(Throwable e) {
-	    this.end = System.currentTimeMillis();
+		this.end = System.currentTimeMillis();
 		getReference().setError(e.getLocalizedMessage());
 		if (!(e instanceof KlabTaskException || e instanceof InterruptedException)) {
 			monitor.error(e);
-			session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
+			if (!silent) {
+				session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
 					IMessage.Type.TaskAborted, getReference()));
+			}
 		} else if (e instanceof InterruptedException) {
 			// you never know
-			((Monitor)monitor).interrupt();
+			((Monitor) monitor).interrupt();
 		} else {
 			((Monitor) monitor).setError(e);
 		}
@@ -168,7 +193,7 @@ public abstract class AbstractTask<T extends IArtifact> implements ITaskTree<T> 
 		return token;
 	}
 
-	public String[] getScenarios() {
+	public Collection<String> getScenarios() {
 		return scenarios;
 	}
 
@@ -194,12 +219,34 @@ public abstract class AbstractTask<T extends IArtifact> implements ITaskTree<T> 
 
 	@Override
 	public boolean stop() {
-		// TODO Auto-generated method stub
 		return false;
 	}
-	
+
 	@Override
 	public IResolvable getResolvable() {
 		return this.resolvable;
 	}
+
+	@Override
+	public void addObservationListener(BiConsumer<ITask<?>, T> listener) {
+		observationListeners.add(listener);
+	}
+
+	@Override
+	public void addErrorListener(BiConsumer<ITask<?>, Throwable> listener) {
+		errorListeners.add(listener);
+	}
+
+	@Override
+	public void addScenarios(Collection<String> scenarios) {
+		this.scenarios.addAll(scenarios);
+	}
+
+	@Override
+	public void set(Options option, Object value) {
+		if (option == Options.SILENT && value instanceof Boolean) {
+			this.silent = (Boolean) value;
+		}
+	}
+
 }

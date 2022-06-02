@@ -81,8 +81,8 @@ public class Envelope implements IEnvelope {
 	}
 
 	public Envelope copy() {
-		return create(new ReferencedEnvelope(envelope.getMinY(), envelope.getMaxY(), envelope.getMinX(),
-				envelope.getMaxX(), envelope.getCoordinateReferenceSystem()));
+		return create(new ReferencedEnvelope(envelope.getMinX(), envelope.getMaxX(), envelope.getMinY(),
+				envelope.getMaxY(), envelope.getCoordinateReferenceSystem()));
 	}
 
 	public static Envelope create(ReferencedEnvelope envelope, boolean swapXY) {
@@ -90,7 +90,8 @@ public class Envelope implements IEnvelope {
 		ret.envelope = swapXY
 				? new ReferencedEnvelope(envelope.getMinY(), envelope.getMaxY(), envelope.getMinX(), envelope.getMaxX(),
 						envelope.getCoordinateReferenceSystem())
-				: envelope;
+				: new ReferencedEnvelope(envelope.getMinX(), envelope.getMaxX(), envelope.getMinY(), envelope.getMaxY(),
+						envelope.getCoordinateReferenceSystem());
 		ret.projection = Projection.create(envelope.getCoordinateReferenceSystem());
 		return ret;
 	}

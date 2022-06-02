@@ -26,6 +26,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
+import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -34,7 +35,7 @@ import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.opengis.feature.simple.SimpleFeature;
 
-public class MaximaFinderInstantiator implements IInstantiator, IExpression {
+public class MaximaFinderInstantiator extends AbstractContextualizer implements IInstantiator, IExpression {
 
 	static enum Mode {
 		CUSTOM, MIXED_PINES_AND_DECIDUOUS_TREES, DECIDUOUS, CONIFER

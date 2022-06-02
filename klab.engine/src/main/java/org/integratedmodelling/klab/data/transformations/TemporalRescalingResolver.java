@@ -9,10 +9,11 @@ import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.rest.StateSummary;
 
-public class TemporalRescalingResolver implements IResolver<IState>, IExpression, IProcessor {
+public class TemporalRescalingResolver extends AbstractContextualizer implements IResolver<IState>, IExpression, IProcessor {
 
 
 	public TemporalRescalingResolver() {

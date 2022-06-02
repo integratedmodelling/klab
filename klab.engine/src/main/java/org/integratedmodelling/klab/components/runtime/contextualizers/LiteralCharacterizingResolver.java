@@ -19,7 +19,7 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
-public class LiteralCharacterizingResolver implements IResolver<IArtifact>, IProcessor, IExpression {
+public class LiteralCharacterizingResolver extends AbstractContextualizer implements IResolver<IArtifact>, IProcessor, IExpression {
 
 	static final public String FUNCTION_ID = "klab.runtime.resolvetrait";
 

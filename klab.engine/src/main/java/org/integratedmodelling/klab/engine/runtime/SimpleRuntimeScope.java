@@ -66,13 +66,13 @@ import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.provenance.Provenance;
+import org.integratedmodelling.klab.resolution.DependencyGraph;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.CamelCase;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
-import org.jgrapht.graph.DefaultEdge;
 
 /**
  * Trivial context that will only build simple hierarchies and observations.
@@ -860,7 +860,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 
 	@Override
 	public IRuntimeScope withCoverage(IScale scale) {
-		this.scale = ((Scale) this.scale).substituteExtents(scale);
+		this.scale = ((Scale) this.scale).contextualizeTo(scale);
 		return this;
 	}
 
@@ -906,7 +906,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
     }
 
     @Override
-    public Graph<IObservedConcept, DefaultEdge> getDependencyGraph() {
+    public DependencyGraph getDependencyGraph() {
         // TODO Auto-generated method stub
         return null;
     }
@@ -1001,6 +1001,30 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
     public void notifyInspector(Object... triggerArguments) {
         // TODO Auto-generated method stub
         
+    }
+
+	@Override
+	public Map<String, Object> getContextData() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Map<String, Object> getGlobalData() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+    @Override
+    public ActuatorData getActuatorData(IActuator observable) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public IScale getScale(IActuator actuator) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

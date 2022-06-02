@@ -16,10 +16,11 @@ import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
+import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
-public class GeomorphonResolver implements IResolver<IState>, IExpression {
+public class GeomorphonResolver extends AbstractContextualizer implements IResolver<IState>, IExpression {
 
 	double pRadius = Double.NaN;
 	double pThreshold = Double.NaN;

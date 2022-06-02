@@ -16,7 +16,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Pair;
 
-public class ConversionResolver implements IResolver<IState>, IProcessor, IExpression {
+public class ConversionResolver extends AbstractContextualizer implements IResolver<IState>, IProcessor, IExpression {
 
 	static final public String FUNCTION_ID = "klab.runtime.convert";
 

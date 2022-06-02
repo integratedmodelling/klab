@@ -210,25 +210,9 @@ public class FutureResource implements IResource, Future<IResource> {
 		return getDelegate(timeout).isDynamic();
 	}
 
-//	@Override
-//	public Map<IGeometry, IResource> getGranules() {
-//		return getDelegate(timeout).getGranules();
-//	}
-
 	@Override
 	public String getStatusMessage() {
 		return getDelegate(timeout).getStatusMessage();
-	}
-
-	@Override
-	public List<IActivity> getActions() {
-		return delegate.getActions();
-	}
-
-	@Override
-	public IResource contextualize(IScale scale, IArtifact observation, Map<String, String> urnParameters,
-			IContextualizationScope scope) {
-		return this;
 	}
 
 	@Override

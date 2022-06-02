@@ -12,8 +12,10 @@ import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.utils.Pair;
 
@@ -37,7 +39,7 @@ public class ObjectBehavior {
 				Object arg = evaluateArgument(0, scope);
 				if (arg instanceof IObservable) {
 					try {
-						Future<IArtifact> future = ((ISubject) identity)
+						Future<IObservation> future = ((Subject) identity)
 								.observe(((IObservable) arg).getDefinition());
 						fire(future.get(), scope);
 					} catch (Throwable e) {
@@ -64,7 +66,7 @@ public class ObjectBehavior {
 		}
 	}
 
-	@Action(id = "stop")
+	@Action(id = "stop", fires = {})
 	public static class MoveAway extends KlabActionExecutor {
 
 		public MoveAway(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
@@ -80,7 +82,7 @@ public class ObjectBehavior {
 
 	}
 
-	@Action(id = "bind")
+	@Action(id = "bind", fires = {})
 	public static class Bind extends KlabActionExecutor {
 
 		public Bind(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
@@ -108,7 +110,7 @@ public class ObjectBehavior {
 	 * @author Ferd
 	 *
 	 */
-	@Action(id = "siblings")
+	@Action(id = "siblings", fires = Type.LIST)
 	public static class Siblings extends KlabActionExecutor {
 
 		public Siblings(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
@@ -124,7 +126,7 @@ public class ObjectBehavior {
 
 	}
 
-	@Action(id = "connect")
+	@Action(id = "connect", fires = Type.OBSERVATION)
 	public static class Connect extends KlabActionExecutor {
 
 		public Connect(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,

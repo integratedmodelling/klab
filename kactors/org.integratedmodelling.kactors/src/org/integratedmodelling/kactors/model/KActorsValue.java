@@ -32,6 +32,7 @@ import org.integratedmodelling.klab.Services;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.services.IActorsService;
 import org.integratedmodelling.klab.api.services.IConceptService;
 import org.integratedmodelling.klab.api.services.IExtensionService;
 import org.integratedmodelling.klab.api.services.IObservableService;
@@ -49,9 +50,8 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 
     private Type type;
     private Object value;
-    private Map<String, KActorsValue> metadata = new HashMap<>();
     private boolean deferred = false;
-    
+
     // to support costly translations from implementations
     private Object data;
     // if true when used in matching, the value matched will be any value except the
@@ -67,7 +67,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
     private KActorsValue trueCase;
     private KActorsValue falseCase;
     private List<Call> callChain;
-    
+
     /**
      * Constructors can be either for Java objects (with classname and possibly classpath not null)
      * or for components (with component != null). The value type is either OBJECT or COMPONENT and
@@ -161,11 +161,14 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
         this.type = Type.BOOLEAN;
         this.value = value;
     }
-    
+
     public KActorsValue(String expression, KActorCodeStatement parent) {
         super(null, parent);
         this.type = Type.EXPRESSION;
-        parseExpression(expression);
+        if (expression.startsWith("[") && expression.endsWith("]")) {
+            expression = expression.substring(1, expression.length() - 1);
+        }
+        this.value = parseExpression(expression);
     }
 
     public KActorsValue(Literal value, KActorCodeStatement parent) {
@@ -348,19 +351,19 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
         }
 
     }
-    
+
     @Override
     public List<Call> getCallChain() {
         return this.callChain;
     }
 
     private Object parseExpression(String string) {
-        
+
         IExtensionService service = Services.INSTANCE.getService(IExtensionService.class);
         if (service != null) {
             return service.parse(string);
         }
-        
+
         return string;
     }
 
@@ -448,7 +451,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
         return ret;
     }
 
-    private Object parseLiteral(Literal literal) {
+    Object parseLiteral(Literal literal) {
         if (literal.getBoolean() != null) {
             this.type = Type.BOOLEAN;
             return Boolean.parseBoolean(literal.getBoolean());
@@ -488,7 +491,9 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 
     @Override
     public <T> T as(Class<? extends T> cls) {
-        // TODO Auto-generated method stub
+        if (value != null && cls.isAssignableFrom(value.getClass())) {
+            return (T) value;
+        }
         return null;
     }
 
@@ -503,19 +508,20 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
         if (this.deferred && !forceEvaluationIfDeferred) {
             return this;
         }
-        
+
         if (identity == null && scope != null) {
             identity = scope.getIdentity();
         }
-        
+
         Object ret = this.value;
-        if (KActors.INSTANCE.getValueTranslator() != null) {
-            ret = KActors.INSTANCE.getValueTranslator().translate(this, identity, scope);
+        IActorsService service = Services.INSTANCE.getService(IActorsService.class);
+        if (service != null) {
+            ret = service.evaluate(this, identity, scope);
         }
 
         return ret;
     }
-    
+
     @Override
     public Object getStatedValue() {
         return this.value;
@@ -654,7 +660,10 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
          * metadata may override anything
          */
         for (String key : metadata.keySet()) {
-            ret.put(key, metadata.get(key).getStatedValue().toString());
+            ret.put(key,
+                    metadata.get(key) instanceof KActorsValue
+                            ? ((KActorsValue) metadata.get(key)).getStatedValue().toString()
+                            : metadata.get(key).toString());
         }
 
         return ret;
@@ -672,7 +681,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
     public Constructor getConstructor() {
         return this.constructor;
     }
-    
+
     @Override
     public String toString() {
         return "<" + type + " " + getStatedValue() + ">";
@@ -709,6 +718,5 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
     public boolean isDeferred() {
         return deferred;
     }
-
 
 }

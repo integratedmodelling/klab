@@ -16,6 +16,9 @@
 package org.integratedmodelling.klab.api.observations.scale.space;
 
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
+import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
+import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable.MergingOption;
+import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 
 /**
@@ -31,6 +34,9 @@ public interface ISpace extends IExtent, ISpatial {
 	/** Constant <code>MAX_SCALE_RANK=21</code> */
 	int MAX_SCALE_RANK = 21;
 
+	@Override
+	ISpace getExtent(long stateIndex);
+	
 	/**
 	 * Get the envelope, providing boundaries.
 	 *
@@ -45,7 +51,7 @@ public interface ISpace extends IExtent, ISpatial {
 	 * @return coordinate reference system
 	 */
 	IProjection getProjection();
-	
+
 	/**
 	 * Build a lat/lon descriptor for the extent we represent. This shouldn't really
 	 * be API.
@@ -74,7 +80,7 @@ public interface ISpace extends IExtent, ISpatial {
 	 * @return
 	 */
 	double getStandardizedWidth();
-	
+
 	/**
 	 * Centroid in whatever standard coordinates the implementation uses.
 	 * 
@@ -110,7 +116,40 @@ public interface ISpace extends IExtent, ISpatial {
 	 * @param shape
 	 * @return the distance
 	 */
-    double getStandardizedDistance(ISpace extent);
-    
+	double getStandardizedDistance(ISpace extent);
+
+	/**
+	 * Override the result for fluency
+	 */
+	@Override
+	ISpace getBoundingExtent();
+
+	/**
+     * Override the result for fluency
+     */
+    @Override
+	ISpace mergeContext(IExtent extent);
+
+    /**
+     * Override the result for fluency
+     */
+	@Override
+	ISpace merge(ITopologicallyComparable<?> other, LogicalConnector how, MergingOption...options);
+
+	/**
+	 * Quickly check if the passed string looks like a WKT string in the k.LAB
+	 * supported format (potentially with a projection). No validation, just simple
+	 * heuristics to discriminate URNs or other obviously different strings.
+	 * 
+	 * @param urn
+	 * @return
+	 */
+	static boolean isWKT(String urn) {
+		if ((urn.contains("POLYGON") || urn.contains("POINT") || urn.contains("LINESTRING")) && urn.contains("(")
+				&& urn.contains(")")) {
+			return true;
+		}
+		return false;
+	}
 
 }

@@ -22,10 +22,12 @@ import org.integratedmodelling.klab.api.provenance.IPlan;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 
 /**
- * Each node in a dataflow is an actuator. Compared to other workflow systems
- * (e.g. Ptolemy), an actuator is a composite actor; the individual actors are
- * represented by k.LAB {@link org.integratedmodelling.kim.api.IServiceCall}s
- * that represent the entry points into the runtime.
+ * Actuators are first-class nodes in dataflows. In other workflow systems (e.g.
+ * Ptolemy), an actuator corresponds to a composite actor dedicated to an
+ * artifact and representing a k.IM model (explicit or derived by the k.LAB AI).
+ * The "atomic" actors are contextualizers, represented by k.LAB
+ * {@link org.integratedmodelling.kim.api.IServiceCall}s that serve as entry
+ * points into the runtime.
  * <p>
  * Some actuators may be references, corresponding to "input ports" in other
  * workflow systems. In a k.LAB computation, references are always resolved and
@@ -35,11 +37,12 @@ import org.integratedmodelling.klab.api.resolution.ICoverage;
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-public interface IActuator extends /* IDataflowNode, */IPlan {
+public interface IActuator extends IPlan {
 
 	/**
-	 * All actuators have a name that corresponds to the semantics it was created to
-	 * resolve. References may provide a different name for the same actuator.
+	 * All actuators have a name that corresponds 1-to-1 to the semantics it was
+	 * created to resolve (observable reference name). References may provide a
+	 * different name for the same actuator.
 	 *
 	 * @return the name
 	 */
@@ -47,7 +50,8 @@ public interface IActuator extends /* IDataflowNode, */IPlan {
 
 	/**
 	 * The local name and "user-level" name for the actuator, correspondent to the
-	 * simple name associated with the semantics or to its renaming through 'named'.
+	 * simple name associated with the semantics or to its renaming through 'named'
+	 * when used as a dependency.
 	 *
 	 * @return the alias or null
 	 */
@@ -64,10 +68,10 @@ public interface IActuator extends /* IDataflowNode, */IPlan {
 
 	/**
 	 * Each actuator reports the artifact type of the observation it produces. Pure
-	 * resolvers (e.g. the resolver for an object) report the special RESOLVE type;
-	 * VOID actuators resolve views or predicates Actuators whose type defines an
-	 * occurrent are not run at initialization but just called upon to schedule
-	 * temporal actions.
+	 * resolvers (e.g. the resolver for an object) are de facto void, but report the
+	 * special RESOLVE type; VOID actuators resolve views or predicates. Actuators
+	 * whose type defines an occurrent are not run at initialization but are just
+	 * called upon to schedule temporal actions.
 	 * 
 	 * @return
 	 */
@@ -96,18 +100,18 @@ public interface IActuator extends /* IDataflowNode, */IPlan {
 	List<IActuator> getInputs();
 
 	/**
-	 * Return all the computable actuators in the children, excluding the resolution
-	 * ones and the dataflows.
+	 * Return all the computable actuators in the children, thus excluding those
+	 * with type RESOLVE and the sub-dataflows.
 	 * 
 	 * @return
 	 */
 	List<IActuator> getActuators();
 
 	/**
-	 * Return all the dataflows in our children. These are meant to contextualize
-	 * objects instantiated by this one or to concretize predicates before the
-	 * others are computed. Dataflows loaded from serialized resolutions will not
-	 * report any dataflow.
+	 * Return all the dataflows in this actuator's children. These are meant to
+	 * contextualize objects instantiated by this one or to concretize predicates
+	 * before the others are computed. Dataflows loaded from serialized resolutions
+	 * will not report any dataflow.
 	 * 
 	 * @return
 	 */
@@ -141,8 +145,9 @@ public interface IActuator extends /* IDataflowNode, */IPlan {
 
 	/**
 	 * If true, this actuator is a filter for an artifact, modifying the same
-	 * artifact (and potentially returning a new one, or the same). It must have a
-	 * first 'import' parameter and its type will match that of the filtered input.
+	 * artifact (and potentially returning a new one, or the same, at the discretion
+	 * of the contextualizers). It must have a first 'import' parameter and its type
+	 * will match that of the filtered input.
 	 * 
 	 * @return
 	 */
@@ -158,12 +163,12 @@ public interface IActuator extends /* IDataflowNode, */IPlan {
 	boolean isComputed();
 
 	/**
-	 * If true, this actuator is a reference to another which has been encountered
-	 * before it and has produced its observation by the time this actuator is
-	 * called into a contextualization. It only serves as a placeholder with a
-	 * possibly different alias to define the local identifier of the original
-	 * observation. Reference actuators are otherwise empty, with no children and no
-	 * computation.
+	 * If true, this actuator is a reference to another which has been defined
+	 * before it in order of computation, and has produced its observation by the
+	 * time this actuator is called into a contextualization. It only serves as a
+	 * placeholder with a possibly different alias to define the local identifier of
+	 * the original observation. Reference actuators are otherwise empty, with no
+	 * children and no computation.
 	 * 
 	 * @return
 	 */

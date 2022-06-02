@@ -278,7 +278,7 @@ Namespace:
 		('imports' owlImports+=OwlImport (',' owlImports+=OwlImport)*)? & 
 		('covering' coverage+=Function (=> ',' coverage+=Function)*)? &
 		('in' 'domain' (rootDomain?='root' | domainConcept=Concept))? & 
-		('disjoint' 'with' disjointNamespaces+=PathName (',' disjointNamespaces+=PathName* ))? & 
+		('disjoint' 'with' disjointNamespaces+=PathName (',' disjointNamespaces+=PathName)* )? & 
 		('version' version=VersionNumber)? & 
 		('resolve' ('from' lookupNamespace+=PathName*)? & ('outside' blacklistNamespace+=PathName*)? & ('using' weights=Map)?)?
 	)
@@ -287,8 +287,8 @@ Namespace:
 	';';
 
 OwlImport:
-	name=STRING ('as' prefix=LOWERCASE_ID)
-;
+	name=STRING ('as' prefix=LOWERCASE_ID) |
+	(single=PathName | imports=List) 'from' urn=UrnId;	
 
 Import:
 	((imports=List | star?='*') 'from')? name=PathName/*[Namespace|PathName]*/;	
@@ -631,7 +631,7 @@ ConceptStatementBody:
 		 * provide more detail and allow more inferences and validation in models.
 		 */
 		// just establish a link
-		('describes' describedQuality=ConceptDeclaration)? &
+		('describes' describedQuality=ConceptDeclaration  ('as' descriptionConstraints=DescriptionConstraints)? )? &
 		// for quantity, direct and inverse proportionalities, use with orderings or qualities
 		('increases' 'with' describedProportionality=ConceptDeclaration)? &
 		('decreases' 'with' describedInverseProportionalityQuality=ConceptDeclaration)? &
@@ -729,6 +729,11 @@ ConceptStatementBody:
 		(properties+=PropertyStatement*) 
 	
 	)
+;
+
+DescriptionConstraints:
+	lower=Number ('to' higher=Number)? ('in' (currency=Currency | unit=Unit))? |
+	concept=SimpleConceptDeclaration
 ;
 
 Implication:
@@ -843,6 +848,7 @@ ValueWithIdAndConcept returns Value:
 	date=Date |
 	literal=Literal |
 	expr=EXPR |
+	templatevar=TEMPLATE_VAR |
 	id=(PathName|LOWERCASE_ID|UPPERCASE_ID|CAMELCASE_ID) |
 	table=LookupTable |
 	list=List |
@@ -1042,6 +1048,10 @@ Quantity:
 
 Date:
 	year=INT ('AD' | 'CE' | bc?='BC')? '-' month=INT '-' day=INT (hour=INT ':' min=INT (':' sec=INT ('.' ms=INT)?)?)?
+;
+
+terminal TEMPLATE_VAR:
+	'%' ('a'..'z') ('a'..'z' | '0'..'9'| '_')* '%'
 ;
 
 terminal LOWERCASE_ID:

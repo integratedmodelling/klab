@@ -27,6 +27,7 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -35,7 +36,7 @@ import org.integratedmodelling.klab.utils.Parameters;
 
 import org.locationtech.jts.geom.Geometry;
 
-public class PointInstantiator implements IExpression, IInstantiator {
+public class PointInstantiator extends AbstractContextualizer implements IExpression, IInstantiator {
 
 	Descriptor exprDescriptor = null;
 	private IGrid grid;

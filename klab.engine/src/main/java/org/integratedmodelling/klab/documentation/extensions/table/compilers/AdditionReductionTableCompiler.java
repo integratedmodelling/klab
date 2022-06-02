@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
@@ -31,7 +32,6 @@ import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabStorageException;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.utils.Pair;
-import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.TemplateUtils;
 
 import com.google.common.collect.BiMap;
@@ -41,8 +41,6 @@ import com.google.common.collect.HashBiMap;
  * Contabilize all changes that add or remove from each category, plus the
  * initial and final values. Optionally also contabilize changes from and to a
  * nodata category.
- * 
- * TODO this is still a copy of pairwise, to be implemented
  * 
  * @author Ferd
  *
@@ -71,7 +69,7 @@ public class AdditionReductionTableCompiler implements ITableCompiler {
 	Map<Pair<Object, Object>, Double> bins = new HashMap<>();
 
 	@Override
-	public void initialize(Parameters<String> parameters, Map<?, ?> tableDefinition, IContextualizationScope scope) {
+	public void initialize(IParameters<String> parameters, Map<?, ?> tableDefinition, IContextualizationScope scope) {
 
 		if (scope == null) {
 			// not viable, but this instance will not be used.

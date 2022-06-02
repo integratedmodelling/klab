@@ -13,7 +13,6 @@ import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
-import org.integratedmodelling.klab.api.data.general.IStructuredTable;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.model.IAnnotation;
@@ -23,7 +22,6 @@ import org.integratedmodelling.klab.api.observations.ISubjectiveState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
-import org.integratedmodelling.klab.api.provenance.IAgent;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
@@ -114,10 +112,6 @@ public class SubjectiveState extends Observation implements ISubjectiveState {
         return current.at(locator);
     }
 
-//    public IStructuredTable<Number> getTable() {
-//        return current.getTable();
-//    }
-
     public DirectObservation getContext() {
         return (DirectObservation) current.getContext();
     }
@@ -195,25 +189,25 @@ public class SubjectiveState extends Observation implements ISubjectiveState {
         return current.getParentIdentity(type);
     }
 
-    public IAgent getConsumer() {
-        return current.getConsumer();
-    }
-
-    public IAgent getOwner() {
-        return current.getOwner();
-    }
-
-    public Collection<IArtifact> getAntecedents() {
-        return current.getAntecedents();
-    }
-
-    public Collection<IArtifact> getConsequents() {
-        return current.getConsequents();
-    }
-
-    public IArtifact trace(IConcept concept) {
-        return current.trace(concept);
-    }
+//    public IAgent getConsumer() {
+//        return current.getConsumer();
+//    }
+//
+//    public IAgent getOwner() {
+//        return current.getOwner();
+//    }
+//
+//    public Collection<IArtifact> getAntecedents() {
+//        return current.getAntecedents();
+//    }
+//
+//    public Collection<IArtifact> getConsequents() {
+//        return current.getConsequents();
+//    }
+//
+//    public IArtifact trace(IConcept concept) {
+//        return current.trace(concept);
+//    }
 
     public Collection<IArtifact> collect(IConcept concept) {
         return current.collect(concept);

@@ -1,6 +1,7 @@
 package org.integratedmodelling.tables.adapter;
 
 import java.io.File;
+import java.io.Writer;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -79,6 +80,12 @@ public class TableImporter implements IResourceImporter {
 
 	@Override
 	public boolean acceptsMultiple() {
+		return false;
+	}
+
+	@Override
+	public boolean write(Writer writer, IObservation observation, ILocator locator, IMonitor monitor) {
+		// TODO CSV output
 		return false;
 	}
 

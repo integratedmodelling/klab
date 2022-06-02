@@ -87,6 +87,14 @@ MetadataPair:
 	key=KEY (value=Literal)?
 ;
 
+//MetadataWithExpr returns Metadata:
+//	pairs+=MetadataPairWithExpr+
+//;
+//
+//MetadataPairWithExpr returns MetadataPair:
+//	key=KEY (value=LiteralWithExpr)?
+//;
+
 StatementList:
 	first=Statement next+=NextStatement*
 ;
@@ -121,13 +129,14 @@ MethodCallWithActions returns MessageCall:
 ;
 
 AssertStatement:
-	'assert' 
+	'assert' ('(' (parameters=ParameterList)? ')')?
 		assertions+=Assertion (',' assertions+=Assertion)*;
 
 Assertion:
 		(expression=EXPR | 
 		(methodCalls+=MethodCall '.')* methodCalls+=MethodCallWithActions) 
 		('is' (ok='ok' | value=Value))?
+		(=> metadata=Metadata)?
 ;
 
 NextStatement returns Statement:
@@ -148,7 +157,9 @@ NextStatement returns Statement:
 ;
 
 Assignment:
-	('set'|local?='def') (recipient=LOWERCASE_ID '.')? variable=LOWERCASE_ID value=ValueWithConstructor
+	(global?='set'|local?='def') (recipient=LOWERCASE_ID '.')? variable=LOWERCASE_ID value=ValueWithConstructor |
+	// block-specific
+	variable=LOWERCASE_ID '=' value=ValueWithConstructor
 ;
 
 IfStatement:
@@ -383,6 +394,9 @@ Annotation:
 	
 Literal:
 	number=Number | from=Number 'to' to=Number | string=(STRING|LOCALIZED_STRING_REFERENCE) | date=Date | boolean=('true' | 'false');
+
+//LiteralWithExpr:
+//	number=Number | from=Number 'to' to=Number | string=(STRING|LOCALIZED_STRING_REFERENCE) | date=Date | expression=EXPR | boolean=('true' | 'false');
 	
 ParameterList:
 	pairs+=KeyValuePair (=> (',')? pairs+=KeyValuePair)*;
@@ -393,16 +407,16 @@ KeyValuePair:
     key=KEY 
 ;
 
-UnitElement:
-	id=(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID) |
-	'(' unit=Unit ')';
-
 enum UnitOp:
 	OVER='/' | CARET='^' | STAR='*';
 
-Unit:
-	{Unit} (root=UnitElement)? (=> (connectors+=UnitOp) (units+=UnitElement))*;
+UnitElement:
+	id=(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID|BACKCASE_ID) |
+	'(' unit=Unit ')';
 
+Unit:
+	{Unit} (root=UnitElement)? (=> (connectors+=UnitOp) => (units+=UnitElement))*;
+	
 Currency:
 	id=UPPERCASE_ID ('@' year=INT) (=> '/' (units+=UnitElement))*;
 		
@@ -592,8 +606,10 @@ terminal LOWERCASE_ID:
 	('a'..'z') ('a'..'z' | '0'..'9'| '_')*;
 
 terminal LOCALE:
-	('a'..'z')('a'..'z')('-' ('A'..'Z')('A'..'Z'))*
-;
+	('a'..'z')('a'..'z')('-' ('A'..'Z')('A'..'Z'))*;
+
+terminal BACKCASE_ID:
+	('a'..'z') ('A'..'z'|'0'..'9')*;
 
 terminal QUOTED_LOWERCASE_ID:
 	('`')('a'..'z')('a'..'z' | '0'..'9'| '_')*;

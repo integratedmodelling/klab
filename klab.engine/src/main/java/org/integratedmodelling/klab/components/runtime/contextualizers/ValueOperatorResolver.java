@@ -30,7 +30,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.Observable;
 
-public class ValueOperatorResolver implements IResolver<IState>, IProcessor, IExpression {
+public class ValueOperatorResolver extends AbstractContextualizer implements IResolver<IState>, IProcessor, IExpression {
 
     static final public String FUNCTION_ID = "klab.runtime.transform";
 

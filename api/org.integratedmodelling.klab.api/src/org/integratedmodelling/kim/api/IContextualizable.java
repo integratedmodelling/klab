@@ -6,10 +6,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.utils.Pair;
 
 /**
@@ -40,7 +42,9 @@ public interface IContextualizable extends IKimStatement, IProvenance.Node {
 
 	public static enum Type {
 		CLASSIFICATION, SERVICE, LOOKUP_TABLE, RESOURCE, EXPRESSION, CONVERSION, LITERAL,
-		/* conditions are currently underspecified */CONDITION
+		/*
+		 * conditions are currently underspecified
+		 */CONDITION
 	}
 
 	/**
@@ -199,6 +203,16 @@ public interface IContextualizable extends IKimStatement, IProvenance.Node {
 	String getTargetId();
 
 	/**
+	 * This should produce a resource through the resource service and host it
+	 * internally for successive calls. Called only if {@link #getType()} is
+	 * resource and {@link #getUrn()} is not null. The implementation must take care
+	 * of contextualizing resources appropriately, including merged resource sets.
+	 * 
+	 * @return
+	 */
+	IResource getResource();
+
+	/**
 	 * The target observable for this computation, correspondent to the target ID.
 	 * Accessible only during contextualization. Null if the target is the main
 	 * observable in the correspondent actuator. Otherwise the computation affects
@@ -208,6 +222,18 @@ public interface IContextualizable extends IKimStatement, IProvenance.Node {
 	 * @return the target name
 	 */
 	IObservable getTarget();
+
+	/**
+	 * Give the resource a chance to adjust itself to the passed scope and target.
+	 * If nothing is needed, return self. This is called by the runtime before every
+	 * use of the resource in an actuator, and the result is notified to the
+	 * contextualizer that will use it.
+	 * 
+	 * @param target
+	 * @param scope
+	 * @return self or a contextualized resource
+	 */
+	IContextualizable contextualize(IArtifact target, IContextualizationScope scope);
 
 	/**
 	 * The target artifact ID when this computation is a mediation. In this case the
@@ -390,5 +416,21 @@ public interface IContextualizable extends IKimStatement, IProvenance.Node {
 	 * @return
 	 */
 	boolean isVariable();
-	
+
+	/**
+	 * True if the resource needs no inputs to be contextualized.
+	 * 
+	 * @return
+	 */
+	boolean isFinal();
+
+	/**
+	 * If true, no need for this contextualization to proceed as nothing would
+	 * happen. Can be set after contextualize() if there's no temporal change for
+	 * example.
+	 * 
+	 * Overridden only to document the difference in semantics.
+	 */
+	@Override
+	boolean isEmpty();
 }

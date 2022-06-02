@@ -27,7 +27,7 @@ import org.integratedmodelling.klab.components.runtime.RuntimeScope;
  * @author Ferd
  *
  */
-public class ExpressionClassifier implements IPredicateClassifier<IDirectObservation>, IExpression {
+public class ExpressionClassifier extends AbstractContextualizer implements IPredicateClassifier<IDirectObservation>, IExpression {
 
 	public final static String ID = "klab.runtime.classifier";
 

@@ -24,6 +24,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
@@ -34,7 +35,7 @@ import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Utils;
 
-public class NeighborhoodResolver implements IResolver<IState>, IExpression {
+public class NeighborhoodResolver extends AbstractContextualizer implements IResolver<IState>, IExpression {
 
 	class UpdateDescriptor {
 		Descriptor descriptor;

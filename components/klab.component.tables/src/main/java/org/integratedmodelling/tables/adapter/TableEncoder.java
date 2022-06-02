@@ -83,7 +83,7 @@ public class TableEncoder implements IResourceEncoder {
 				}
 			}
 		}
-
+		
 		if (ignoreTime && scope.getScale().getTime() != null
 				&& scope.getScale().getTime().getTimeType() != ITime.Type.INITIALIZATION) {
 			// just don't move.

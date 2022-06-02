@@ -111,7 +111,7 @@ public class ObservableBuilder implements IObservable.Builder {
 
 	private Observable incarnatedAbstractObservable;
 
-    private Observable deferredTarget;
+	private Observable deferredTarget;
 
 	public static ObservableBuilder getBuilder(IObservable observable, IMonitor monitor) {
 		return new ObservableBuilder((Observable) observable, monitor);
@@ -166,11 +166,13 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.declaration = Concepts.INSTANCE.getDeclaration(observable.getType());
 		this.mustContextualize = observable.mustContextualizeAtResolution();
 		this.temporalInherent = observable.getTemporalInherent();
-//       NO! don't carry this around. Needs an explicit .named() call. this.statedName = observable.getStatedName();
+		// NO! don't carry this around. Needs an explicit .named() call. this.statedName
+		// =
+		// observable.getStatedName();
 		this.annotations.addAll(observable.getAnnotations());
 		this.incarnatedAbstractObservable = observable.incarnatedAbstractObservable;
 		this.deferredTarget = observable.getDeferredTarget();
-		
+
 		for (IConcept role : Roles.INSTANCE.getDirectRoles(observable.getType())) {
 			this.roles.add(role);
 		}
@@ -216,7 +218,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.incarnatedAbstractObservable = other.incarnatedAbstractObservable;
 		this.deferredTarget = other.deferredTarget;
 		this.url = other.url;
-		
+
 		checkTrivial();
 	}
 
@@ -467,18 +469,34 @@ public class ObservableBuilder implements IObservable.Builder {
 	@Override
 	public Builder without(ObservableRole... roles) {
 
+		Set<ObservableRole> r = EnumSet.noneOf(ObservableRole.class);
+		if (roles != null) {
+			for (ObservableRole role : roles) {
+				r.add(role);
+			}
+		}
+
 		KimConcept newDeclaration = this.declaration.removeComponents(roles);
 		ObservableBuilder ret = new ObservableBuilder(Concepts.INSTANCE.declare(newDeclaration), monitor);
 
 		/*
-		 * copy the rest
+		 * copy the rest unless excluded
 		 */
-		ret.unit = unit;
-		ret.currency = currency;
-		ret.valueOperators.addAll(valueOperators);
+		if (!r.contains(ObservableRole.UNIT)) {
+			ret.unit = unit;
+		}
+		if (!r.contains(ObservableRole.CURRENCY)) {
+			ret.currency = currency;
+		}
+		if (!r.contains(ObservableRole.VALUE_OPERATOR)) {
+			ret.valueOperators.addAll(valueOperators);
+		}
+
+		/*
+		 * for now these have no roles associated
+		 */
 		ret.name = name;
 		ret.targetPredicate = targetPredicate;
-		// ret.filteredObservable = filteredObservable;
 		ret.optional = this.optional;
 		ret.mustContextualize = mustContextualize;
 		ret.annotations.addAll(annotations);
@@ -2125,10 +2143,10 @@ public class ObservableBuilder implements IObservable.Builder {
 
 		if (currency != null) {
 			ret.setCurrency((Currency) currency);
-			ret.setDeclaration(ret.getDeclaration() + " in " + ret.getCurrency());
+			ret.setDefinition(ret.getDefinition() + " in " + ret.getCurrency());
 		} else if (unit != null) {
 			ret.setUnit((Unit) unit);
-			ret.setDeclaration(ret.getDeclaration() + " in " + ret.getUnit());
+			ret.setDefinition(ret.getDefinition() + " in " + ret.getUnit());
 		}
 
 		String opId = "";
@@ -2139,14 +2157,23 @@ public class ObservableBuilder implements IObservable.Builder {
 			ValueOperator valueOperator = op.getFirst();
 			Object valueOperand = op.getSecond();
 
-			ret.setDeclaration(ret.getDeclaration() + " " + valueOperator.declaration);
+			ret.setDefinition(ret.getDefinition() + " " + valueOperator.declaration);
 
 			opId += (opId.isEmpty() ? "" : "_") + valueOperator.textForm;
 			cdId += (cdId.isEmpty() ? "" : "_") + valueOperator.textForm;
-
+			
+			/*
+			 * turn these into their parsed form so we have their properly computed reference name
+			 */
+			if (valueOperand instanceof IKimObservable) {
+			    valueOperand = Observables.INSTANCE.declare((IKimObservable)valueOperand, monitor);
+			} else if (valueOperand instanceof IKimConcept) {
+			    valueOperand = Concepts.INSTANCE.declare((IKimConcept)valueOperand);
+			}
+			
 			if (valueOperand instanceof IConcept) {
 
-				ret.setDeclaration(ret.getDeclaration() + " " + ((IConcept) valueOperand).getDefinition());
+				ret.setDefinition(ret.getDefinition() + " " + ((IConcept) valueOperand).getDefinition());
 
 				opId += (opId.isEmpty() ? "" : "_") + ((Concept) valueOperand).getReferenceName();
 				cdId += (cdId.isEmpty() ? "" : "_") + Concepts.INSTANCE.getDisplayName((Concept) valueOperand)
@@ -2159,9 +2186,7 @@ public class ObservableBuilder implements IObservable.Builder {
 
 			} else if (valueOperand instanceof IObservable) {
 
-				ret.setDeclaration(ret.getDeclaration() + " (" + ((Observable) valueOperand).getDeclaration() + ")");
-
-				// FIXME substitute with getReferenceName()
+				ret.setDefinition(ret.getDefinition() + " (" + ((Observable) valueOperand).getDefinition() + ")");
 				opId += (opId.isEmpty() ? "" : "_") + ((Observable) valueOperand).getReferenceName();
 				cdId += (cdId.isEmpty() ? "" : "_") + Observables.INSTANCE.getDisplayName((Observable) valueOperand);
 
@@ -2169,7 +2194,7 @@ public class ObservableBuilder implements IObservable.Builder {
 
 				if (valueOperand != null) {
 
-					ret.setDeclaration(ret.getDeclaration() + " " + valueOperand);
+					ret.setDefinition(ret.getDefinition() + " " + valueOperand);
 
 					opId += (opId.isEmpty() ? "" : "_") + getCodeForm(valueOperand, true);
 					cdId += (cdId.isEmpty() ? "" : "_") + getCodeForm(valueOperand, false);
@@ -2209,7 +2234,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		ret.setIncarnatedAbstractObservable(this.incarnatedAbstractObservable);
 		ret.setDeferredTarget(this.deferredTarget);
 		ret.setUrl(this.url);
-		
+
 		if (unitStatement != null) {
 			/* TODO CHECK */
 			Unit unit = Unit.create(this.unitStatement);
@@ -2372,10 +2397,10 @@ public class ObservableBuilder implements IObservable.Builder {
 		return this;
 	}
 
-    @Override
-    public Builder withUrl(String uri) {
-        this.url = uri;
-        return this;
-    }
+	@Override
+	public Builder withUrl(String uri) {
+		this.url = uri;
+		return this;
+	}
 
 }

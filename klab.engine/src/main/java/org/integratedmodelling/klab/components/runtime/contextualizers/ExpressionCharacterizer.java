@@ -25,7 +25,7 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
  * @author Ferd
  *
  */
-public class ExpressionCharacterizer implements IPredicateResolver<IDirectObservation>, IExpression {
+public class ExpressionCharacterizer extends AbstractContextualizer implements IPredicateResolver<IDirectObservation>, IExpression {
 
 	public final static String ID = "klab.runtime.characterizer";
 

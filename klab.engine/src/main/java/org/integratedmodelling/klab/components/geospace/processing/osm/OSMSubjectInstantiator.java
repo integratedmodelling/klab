@@ -32,6 +32,7 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.geocoding.Geocoder;
+import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
@@ -75,7 +76,7 @@ import de.topobyte.osm4j.xml.dynsax.OsmXmlIterator;
  * @author ferdinando.villa
  *
  */
-public class OSMSubjectInstantiator implements IInstantiator, IExpression {
+public class OSMSubjectInstantiator extends AbstractContextualizer implements IInstantiator, IExpression {
 
 	List<Object> matching = null;
 	List<Object> notmatching = null;

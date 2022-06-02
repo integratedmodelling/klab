@@ -28,7 +28,6 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.Logging;
-import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Services;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -52,31 +51,25 @@ import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.rest.ResourceReference.AvailabilityReference;
 import org.integratedmodelling.klab.rest.SpatialExtent;
-import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Path;
 import org.integratedmodelling.klab.utils.Utils;
 
 /**
  * The k.LAB resource is identified by a URN. A URN is resolved (using the <code>resolve</code> API
- * call) to a IResource; the IResource can then be contextualized to a
- * {@link org.integratedmodelling.klab.api.data.IGeometry} (using the <code>get</code> API call) to
- * produce the corresponding {@link org.integratedmodelling.klab.api.data.adapters.IKlabData} that
- * will be used to build {@link IArtifact artifacts}.
+ * call) to a IResource; the IResource can then be contextualized to a {@link IGeometry} (using the
+ * <code>get</code> API call) to produce the corresponding {@link IKlabData} that will be used to
+ * build {@link IArtifact artifacts}.
  *
- * When a URN is referenced in k.IM, it is turned into a
- * {@link org.integratedmodelling.kim.api.IContextualizable} which is passed to the
- * {@link IRuntimeProvider runtime} and turned into a KDL function call or literal, which encodes
- * their computation or resolution. Executing the KDL call as part of a
- * {@link org.integratedmodelling.klab.api.runtime.dataflow.IDataflow} builds the corresponding
- * {@link org.integratedmodelling.klab.api.provenance.IArtifact}.
+ * When a URN is referenced in k.IM, it is turned into a {@link IContextualizable} which is passed
+ * to the {@link IRuntimeProvider runtime} and turned into a KDL function call or literal, which
+ * encodes their computation or resolution. Executing the KDL call as part of a {@link IDataflow}
+ * builds the corresponding {@link IArtifact}.
  *
  * @author Ferd
  * @version $Id: $Id
  */
 public class Resource implements IResource {
-
-    private static final long serialVersionUID = -923039635832182164L;
 
     // these are used during resource publication as user preferences for the final
     // URN. Namespace is taken from the "geographical area" in metadata, catalog
@@ -134,12 +127,16 @@ public class Resource implements IResource {
      * year}/{month}/3B42_Daily.{year}{month}{day}.7.nc4 year: 1998-2019 month: 01-12 day: 01-31
      */
 
-    private Map<String, Object> runtimeData = Collections.synchronizedMap(new HashMap<>());
+    protected Map<String, Object> runtimeData = Collections.synchronizedMap(new HashMap<>());
 
     // folder where all the resource files were uploaded, only for the publisher
     File uploadFolder = null;
 
     public Resource(ResourceReference reference) {
+        copy(reference);
+    }
+
+    protected void copy(ResourceReference reference) {
 
         this.urn = reference.getUrn();
         this.version = Version.create(reference.getVersion());
@@ -167,15 +164,55 @@ public class Resource implements IResource {
         for (String key : reference.getMetadata().keySet()) {
             this.metadata.put(key, Utils.asPOD(reference.getMetadata().get(key)));
         }
-        for (org.integratedmodelling.klab.api.runtime.rest.INotification notification : reference
-                .getNotifications()) {
-            this.notifications
-                    .add(new KimNotification(notification.getMessage(), Level.parse(notification.getLevel()),
-                            notification.getTimestamp()));
+        for (org.integratedmodelling.klab.api.runtime.rest.INotification notification : reference.getNotifications()) {
+            this.notifications.add(new KimNotification(notification.getMessage(), Level.parse(notification.getLevel()),
+                    notification.getTimestamp()));
         }
         if (reference.getDependencies() != null) {
             this.inputs.addAll(reference.getDependencies());
         }
+
+    }
+
+    /*
+     * copy the essential from another resource of any type. Only used in suspicious internals.
+     */
+    protected void copyContents(IResource other) {
+        this.urn = other.getUrn();
+        this.version = other.getVersion();
+        this.adapterType = other.getAdapterType();
+        this.localPath = other.getLocalPath();
+        this.type = other.getType();
+        this.resourceTimestamp = other.getResourceTimestamp();
+        this.localPaths.addAll(other.getLocalPaths());
+        this.geometry = other.getGeometry();
+        // this.projectName = other.getProjectName();
+        // this.localName = other.getLocalName();
+        // this.spatialExtent = reference.getSpatialExtent();
+        // this.attributes.addAll(reference.getAttributes());
+        // this.categorizables.addAll(reference.getCategorizables());
+        // this.exports.putAll(reference.getExportFormats());
+        // this.availability = reference.getAvailability();
+        // this.codelists.addAll(reference.getCodelists());
+
+        // for (ResourceReference ref : reference.getHistory()) {
+        // this.history.add(ref);
+        // }
+        for (String key : other.getParameters().keySet()) {
+            this.parameters.put(key, other.getParameters().get(key));
+        }
+        for (String key : other.getMetadata().keySet()) {
+            this.metadata.put(key, other.getMetadata().get(key));
+        }
+        // for (org.integratedmodelling.klab.api.runtime.rest.INotification notification :
+        // other.getNotifications()) {
+        // this.notifications.add(new KimNotification(notification.getMessage(),
+        // Level.parse(notification.getLevel()),
+        // notification.getTimestamp()));
+        // }
+        // if (other.getDependencies() != null) {
+        // this.inputs.add(other.getDependencies().get());
+        // }
     }
 
     public ResourceReference getReference() {
@@ -212,8 +249,7 @@ public class Resource implements IResource {
         }
         for (INotification notification : this.notifications) {
             ret.getNotifications()
-                    .add(new Notification(notification.getMessage(), notification.getLevel(),
-                            notification.getTimestamp()));
+                    .add(new Notification(notification.getMessage(), notification.getLevel(), notification.getTimestamp()));
         }
         for (Attribute attribute : attributes) {
             ret.getAttributes().add((AttributeReference) attribute);
@@ -372,10 +408,8 @@ public class Resource implements IResource {
 
     @Override
     public String toString() {
-        return "Resource [urn=" + urn + ", version=" + version + ", adapterType=" + adapterType
-                + ", geometry=" + geometry
-                + ", parameters=" + parameters + ", history=" + history + ", notifications=" + notifications
-                + "]";
+        return "Resource [urn=" + urn + ", version=" + version + ", adapterType=" + adapterType + ", geometry=" + geometry
+                + ", parameters=" + parameters + ", history=" + history + ", notifications=" + notifications + "]";
     }
 
     @Override
@@ -404,8 +438,7 @@ public class Resource implements IResource {
      */
     public void copyToHistory(String modificationLog) {
         ResourceReference ref = this.getReference();
-        ref.getNotifications()
-                .add(new Notification(modificationLog, Level.INFO.getName(), System.currentTimeMillis()));
+        ref.getNotifications().add(new Notification(modificationLog, Level.INFO.getName(), System.currentTimeMillis()));
         ref.getHistory().clear();
         history.add(ref);
     }
@@ -488,12 +521,10 @@ public class Resource implements IResource {
 
         if (this.parameters.containsKey(parameter)) {
             if (projectName != null) {
-                IProject project = Services.INSTANCE.getService(IResourceService.class)
-                        .getProject(projectName);
+                IProject project = Services.INSTANCE.getService(IResourceService.class).getProject(projectName);
                 if (project != null) {
-                    File folder = new File(
-                            project.getRoot() + File.separator + IKimProject.RESOURCE_FOLDER + File.separator
-                                    + Path.getLast(urn, ':'));
+                    File folder = new File(project.getRoot() + File.separator + IKimProject.RESOURCE_FOLDER + File.separator
+                            + Path.getLast(urn, ':'));
                     if (!folder.exists()) {
                         folder = new File(folder + ".v" + version);
                     }
@@ -522,8 +553,7 @@ public class Resource implements IResource {
         IProject project = Services.INSTANCE.getService(IResourceService.class).getProject(projectName);
         if (project != null) {
             ret = new File(
-                    project.getRoot() + File.separator + IKimProject.RESOURCE_FOLDER + File.separator
-                            + Path.getLast(urn, ':'));
+                    project.getRoot() + File.separator + IKimProject.RESOURCE_FOLDER + File.separator + Path.getLast(urn, ':'));
             if (!ret.exists() && version != null) {
                 ret = new File(ret + ".v" + version);
             }
@@ -574,19 +604,7 @@ public class Resource implements IResource {
         // TODO Auto-generated method stub
         return "";
     }
-
-    @Override
-    public List<IActivity> getActions() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public IResource contextualize(IScale scale, IArtifact observation, Map<String, String> urnParameters,
-            IContextualizationScope scope) {
-        return Resources.INSTANCE.contextualizeResource(this, urnParameters, scale, observation, scope);
-    }
-
+    
     public void setGeometry(IGeometry geometry) {
         this.geometry = geometry;
     }
@@ -624,8 +642,8 @@ public class Resource implements IResource {
         return this.codelists;
     }
 
-	public void touch() {
-		this.resourceTimestamp = System.currentTimeMillis();
-	}
+    public void touch() {
+        this.resourceTimestamp = System.currentTimeMillis();
+    }
 
 }

@@ -1,6 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.integratedmodelling</groupId>
@@ -11,18 +9,26 @@
 	<name>OGC and GIS data adapters for k.LAB (files, WCS and WFS) </name>
 	<repositories>
 		<repository>
-	      	<id>osgeo</id>
-	     	<name>OSGeo Release Repository</name>
-	     	<url>https://repo.osgeo.org/repository/release/</url>
-	     	<snapshots><enabled>false</enabled></snapshots>
-	    	<releases><enabled>true</enabled></releases>
-	  	</repository>
+			<id>osgeo</id>
+			<name>OSGeo Release Repository</name>
+			<url>https://repo.osgeo.org/repository/release/</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</repository>
 		<repository>
-		  	<id>osgeo-snapshot</id>
-		  	<name>OSGeo Snapshot Repository</name>
-		  	<url>https://repo.osgeo.org/repository/snapshot/</url>
-		 	 <snapshots><enabled>true</enabled></snapshots>
-		  	<releases><enabled>false</enabled></releases>
+			<id>osgeo-snapshot</id>
+			<name>OSGeo Snapshot Repository</name>
+			<url>https://repo.osgeo.org/repository/snapshot/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
 		</repository>
 	</repositories>
 	<dependencies>
@@ -60,6 +66,11 @@
 		<dependency>
 			<groupId>org.geotools</groupId>
 			<artifactId>gt-wfs-ng</artifactId>
+			<version>${geotools.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-geojson</artifactId>
 			<version>${geotools.version}</version>
 		</dependency>
 		<dependency>

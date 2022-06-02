@@ -59,6 +59,7 @@ public class SQLTableCache {
 
 	public static long createCache(String id, Table table, IMonitor monitor) {
 
+		
 		SQLTableCache cache = new SQLTableCache();
 		List<Attribute> sortedAttributes = TablesawTable.getAttributes(table);
 		for (Attribute attribute : sortedAttributes) {
@@ -79,7 +80,7 @@ public class SQLTableCache {
 	}
 
 	public SQLTableCache(IResource resource, String dbname) {
-
+		
 		this.dbname = dbname;
 		this.resource = resource;
 		this.dimensions = new int[] { Integer.parseInt(resource.getParameters().get("rows.data").toString()),
@@ -232,6 +233,7 @@ public class SQLTableCache {
 
 	public int loadData(ITable<?> table) {
 
+		
 		// this.properties.put("dimensions",
 		// NumberUtils.toString(table.getDimensions()));
 		int row = 0;

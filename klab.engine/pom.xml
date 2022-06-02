@@ -112,14 +112,12 @@
 		<dependency>
 			<groupId>com.konghq</groupId>
 			<artifactId>unirest-java</artifactId>
-			<version>3.11.09</version>
-			<classifier>standalone</classifier>
+			<version>3.13.6</version>
 		</dependency>
 		<dependency>
 			<groupId>com.konghq</groupId>
 			<artifactId>unirest-objectmapper-jackson</artifactId>
-			<version>3.11.09</version>
-			<classifier>standalone</classifier>
+			<version>3.13.6</version>
 		</dependency>
 
 		<!-- POI for Excel -->
@@ -302,7 +300,7 @@
 			<groupId>xml-apis</groupId>
 			<artifactId>xml-apis</artifactId>
 			<version>1.4.01</version>
-		</dependency>
+		</dependency> 
 
 		<!-- Elk core for dataflow diagramming -->
 		<dependency>
@@ -745,7 +743,7 @@
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-			<version>2.4</version>
+			<version>2.7</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>

@@ -1,7 +1,8 @@
 package org.integratedmodelling.klab.components.runtime.contextualizers;
 
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IParameters;
@@ -9,28 +10,33 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.Urn;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.Urns;
-import org.integratedmodelling.klab.documentation.Report;
-import org.integratedmodelling.klab.engine.resources.MergedResource;
+import org.integratedmodelling.klab.components.runtime.observations.DelegatingArtifact;
+import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.utils.Pair;
 
-public class UrnResolver implements IExpression, IResolver<IArtifact> {
+public class UrnResolver extends AbstractContextualizer implements IExpression, IResolver<IArtifact> {
 
     public final static String FUNCTION_ID = "klab.runtime.contextualize";
 
+    // only used for initial validation
+    private IResource originalResource;
     private IResource resource;
     private Map<String, String> urnParameters;
-    // private boolean localized = false;
-    // private IScale overallScale;
+    private Map<IArtifact, Set<String>> incorporated = new HashMap<>();
 
     // don't remove - only used as expression
     public UrnResolver() {
@@ -38,30 +44,29 @@ public class UrnResolver implements IExpression, IResolver<IArtifact> {
 
     public UrnResolver(String urn, IContextualizationScope overallContext) {
         Pair<String, Map<String, String>> call = Urns.INSTANCE.resolveParameters(urn);
-        this.resource = Resources.INSTANCE.resolveResource(urn);
-        if (this.resource == null || !Resources.INSTANCE.isResourceOnline(this.resource)) {
+        this.originalResource = Resources.INSTANCE.resolveResource(urn);
+        if (this.originalResource == null || !Resources.INSTANCE.isResourceOnline(this.originalResource)) {
             throw new KlabResourceNotFoundException("resource with URN " + urn + " is unavailable or offline");
         }
         this.urnParameters = call.getSecond();
-        // this.overallScale = overallContext.getContextObservation().getScale();
     }
 
-    public static IServiceCall getServiceCall(String urn, IContextualizable condition, boolean conditionNegated) {
+    public static IServiceCall getServiceCall(String urn) {
         return KimServiceCall.create(FUNCTION_ID, "urn", urn);
+    }
+
+    @Override
+    public void notifyContextualizedResource(IContextualizable resource, IArtifact target, IContextualizationScope scope) {
+        this.resource = resource.getResource();
     }
 
     @Override
     public IArtifact resolve(IArtifact observation, IContextualizationScope scope) {
 
-        /**
-         * Contextualize the resource to the passed context and parameters.
-         */
-        IResource res = this.resource.contextualize(scope.getScale(), observation, urnParameters, scope);
-
-        if (res.getAvailability() != null) {
-            switch(res.getAvailability().getAvailability()) {
+        if (this.resource.getAvailability() != null) {
+            switch(this.resource.getAvailability().getAvailability()) {
             case DELAYED:
-                scope.getMonitor().addWait(res.getAvailability().getRetryTimeSeconds());
+                scope.getMonitor().addWait(this.resource.getAvailability().getRetryTimeSeconds());
                 return observation;
             case NONE:
                 scope.getMonitor().error("resource " + resource.getUrn() + " has no data available in this context");
@@ -75,49 +80,58 @@ public class UrnResolver implements IExpression, IResolver<IArtifact> {
         }
 
         Map<String, String> parameters = urnParameters;
-        // this.localized = true;
 
-        if (this.resource instanceof MergedResource) {
-
-            List<Pair<IResource, Map<String, String>>> resources = ((MergedResource) this.resource)
-                    .contextualize(scope.getScale(), observation, scope);
-            if (resources.isEmpty()) {
-                // it's OK if the resource was already contextualized up to the available data. TODO
-                // distinguish the use cases.
-                // context.getMonitor().warn("resource " + this.resource.getUrn() + " could not be
-                // contextualized in this scale");
-                return observation;
+        /*
+         * ensure we don't retrieve the data more than once when we use multiple resources where
+         * another one forces recontextualization. TODO this won't stop downstream mediations -
+         * should return null or empty artifact to interrupt the chain.s
+         */
+        Urn urn = new Urn(resource.getUrn(), urnParameters);
+        IArtifact destination = observation;
+        while(destination instanceof DelegatingArtifact) {
+            destination = ((DelegatingArtifact) destination).getDelegate();
+        }
+        if (destination instanceof Observation && ((Observation) destination).includesResource(urn.toString())) {
+            // this should only happen if contextualizing the resource now does not add
+            // anything, which means there is one state in it (type != grid and size <= 1).
+            Dimension time = resource.getGeometry().getDimension(Dimension.Type.TIME);
+            if (time == null || isStatic(time)) {
+                // FIXME OK, this is correct but we may have to overwrite the "other" resource
+                // anyway - which could be done using previous states, but
+                // the logic is extreme
+                // System.err.println("SKIPPING RESOURCE " + urn + ": PREVIOUSLY CONTEXTUALIZED");
+                // return null;
             }
-
-            for (Pair<IResource, Map<String, String>> pr : resources) {
-                ((Report) scope.getReport()).addContextualizedResource(this.resource.getUrn(), pr.getFirst());
-            }
-
-            // TODO must contextualize the LIST, not just the first resource. For now it can only
-            // happen with
-            // multiple spatial extents, but it could happen also with multiple temporal slices.
-            if (resources.size() > 1) {
-                scope.getMonitor()
-                        .warn("Warning: unimplemented use of multiple resources for one timestep. Choosing only the first.");
-            }
-
-            res = resources.get(0).getFirst();
-            parameters = resources.get(0).getSecond();
         }
 
         if (Configuration.INSTANCE.isEchoEnabled()) {
-            System.err.println("GETTING DATA FROM " + res.getUrn());
+            System.err.println("GETTING DATA FROM " + this.resource.getUrn());
         }
-        IKlabData data = Resources.INSTANCE.getResourceData(res, parameters, scope.getScale(), scope, observation);
+
+        IKlabData data = Resources.INSTANCE.getResourceData(this.resource, parameters, scope.getScale(), scope, observation);
+
         if (Configuration.INSTANCE.isEchoEnabled()) {
-            System.err.println("DONE " + res.getUrn());
+            System.err.println("DONE " + this.resource.getUrn());
         }
 
         if (data == null) {
             scope.getMonitor().error("Cannot extract data from resource " + resource.getUrn());
+        } else if (destination instanceof Observation) {
+            ((Observation) destination).includeResource(urn.toString());
         }
 
         return data == null ? observation : data.getArtifact();
+    }
+
+    private boolean isStatic(Dimension time) {
+        if (time.size() > 1) {
+            return false;
+        }
+        Object ttype = time.getParameters().get(Geometry.PARAMETER_TIME_REPRESENTATION);
+        if (ITime.Type.GRID.name().toLowerCase().equals(ttype)) {
+            return false;
+        }
+        return true;
     }
 
     @Override

@@ -22,7 +22,7 @@ import org.integratedmodelling.klab.data.storage.MergingState;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
-public class DereifyingStateResolver implements IResolver<IArtifact>, IProcessor, IExpression {
+public class DereifyingStateResolver extends AbstractContextualizer implements IResolver<IArtifact>, IProcessor, IExpression {
 
 	static final public String FUNCTION_ID = "klab.runtime.dereifiers.merge";
 

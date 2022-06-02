@@ -39,7 +39,8 @@ public abstract interface IResolver<T extends IArtifact> extends IContextualizer
      *        <code>context.get("self", T.class)</code> and may or may not be the same object as
      *        ret. In case, its {@link IArtifact#getType() type} can be checked.
      * @return the final observation - either the same passed as ret (usual case) or a new one if
-     *         any mediation was necessary.
+     *         any mediation was necessary. Returning null signals that the resolution was not
+     *         necessary and that any further contextualization for this scope should be skipped.
      */
     T resolve(T ret, IContextualizationScope scope);
 

@@ -197,6 +197,7 @@ public class Prototype implements IPrototype {
 	protected List<ArgumentImpl> imports = new ArrayList<>();
 	protected List<ArgumentImpl> inputAnnotations = new ArrayList<>();
 	protected List<ArgumentImpl> outputAnnotations = new ArrayList<>();
+	protected boolean isConst;
 
 	public String getLabel() {
 		return label;
@@ -573,6 +574,11 @@ public class Prototype implements IPrototype {
 	@Override
 	public Collection<Argument> listExportAnnotations() {
 		return new CastUtils<ArgumentImpl, Argument>().cast(outputAnnotations);
+	}
+	
+	@Override
+	public boolean isFinal() {
+		return isConst;
 	}
 
 }

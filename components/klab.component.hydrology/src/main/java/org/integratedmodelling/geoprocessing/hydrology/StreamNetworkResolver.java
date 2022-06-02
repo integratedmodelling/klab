@@ -9,10 +9,11 @@ import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
-public class StreamNetworkResolver implements IResolver<IState>, IExpression {
+public class StreamNetworkResolver extends AbstractContextualizer implements IResolver<IState>, IExpression {
 
 	private static final double DEFAULT_TCA_THRESHOLD = 0.001;
 

@@ -321,10 +321,10 @@ public class RandomAdapter implements IUrnAdapter {
 		return Scale.create(extents).asGeometry();
 	}
 
-	private void makeData(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope scope) {
+	private void makeData(Urn urn, Builder stateBuilder, IGeometry geometry, IContextualizationScope scope) {
 
-		Builder stateBuilder = builder.startState(scope.getTargetName() == null ? "result" : scope.getTargetName(),
-				null, scope);
+//		Builder stateBuilder = builder.startState(scope.getTargetName() == null ? "result" : scope.getTargetName(),
+//				null, scope);
 
 		Object distribution = null;
 		if (!"year".equals(urn.getResourceId())) {
@@ -340,7 +340,7 @@ public class RandomAdapter implements IUrnAdapter {
 				stateBuilder.add(((IntegerDistribution) distribution).sample());
 			}
 		}
-		stateBuilder.finishState();
+//		stateBuilder.finishState();
 	}
 
 	private Object getDistribution(Urn urn) {
@@ -508,7 +508,9 @@ public class RandomAdapter implements IUrnAdapter {
 			}
 			break;
 		case POISSON:
-			if (params.size() == 1) {
+            if (params.size() == 0) {
+                ret = new PoissonDistribution(1.0);
+            } else if (params.size() == 1) {
 				ret = new PoissonDistribution(params.get(0));
 			} else if (params.size() == 2) {
 				ret = new PoissonDistribution(params.get(0), params.get(1));

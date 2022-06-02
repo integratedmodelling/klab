@@ -16,14 +16,23 @@ public class UserEventPublisher {
     @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
     
+    public void loginFailed(String username, String message) {
+        final UserEventLogin event = new UserEventLogin(username, message);
+        applicationEventPublisher.publishEvent(event);
+    }    
     
-    public void login(final HubUserProfile profile, final Session session) {
-    	final UserEventLogin event = new UserEventLogin(profile, session);
+    public void login(final HubUserProfile profile, final Session session, String message) {
+    	final UserEventLogin event = new UserEventLogin(profile, session, message);
     	applicationEventPublisher.publishEvent(event);
     }
     
-    public void logout(final HubUserProfile profile, final Session session) {
-    	final UserEventLogout event = new UserEventLogout(profile, session);
+    public void logoutFailed(String username, String message) {
+        final UserEventLogout event = new UserEventLogout(username, message);
+        applicationEventPublisher.publishEvent(event);
+    }
+    
+    public void logout(final HubUserProfile profile, final Session session, final boolean forced) {
+    	final UserEventLogout event = new UserEventLogout(profile, session, forced);
     	applicationEventPublisher.publishEvent(event);
     }
     
@@ -45,10 +54,11 @@ public class UserEventPublisher {
         applicationEventPublisher.publishEvent(event);
     }
 
-    public void observation(HubUserProfile profile, Session session, IObservation observation, ISubject context) {
+    public void observation(HubUserProfile profile, Session session, String activityId, IObservation observation, ISubject context) {
         final UserEventObservation event = new UserEventObservation(profile, session);
         event.setContext(context);
         event.setObservation(observation);
+        event.setActivityId(activityId);
         applicationEventPublisher.publishEvent(event);
     }
 }

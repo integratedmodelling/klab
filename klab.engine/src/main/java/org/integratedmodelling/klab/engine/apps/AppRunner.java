@@ -12,6 +12,7 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.runtime.Session;
 
@@ -45,7 +46,7 @@ public class AppRunner implements Annotations.Handler {
         ISubject subject = (ISubject) session.getState().submit(observer.getName()).get();
         if (subject != null) {
           for (Object o : observations) {
-            IArtifact ret = subject.observe(o.toString()).get();
+            IArtifact ret = ((Subject)subject).observe(o.toString()).get();
             if (ret == null) {
               monitor.warn("observation of " + o + " in context " + subject.getName() + " was unsuccessful");
             } else {

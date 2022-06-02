@@ -30,6 +30,7 @@ import org.integratedmodelling.kim.kim.ValueAssignment;
 import org.integratedmodelling.kim.model.Kim.UrnDescriptor;
 import org.integratedmodelling.kim.model.Kim.Validator;
 import org.integratedmodelling.klab.Services;
+import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
@@ -40,15 +41,20 @@ import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
+import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.services.IExtensionService;
 import org.integratedmodelling.klab.api.services.IResourceService;
 import org.integratedmodelling.klab.common.Geometry;
+import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
+import org.integratedmodelling.klab.utils.DebugFile;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
 
@@ -81,7 +87,7 @@ public class ComputableResource extends KimStatement implements IContextualizabl
     // later.
     private boolean variable;
     private Long timestamp = System.currentTimeMillis();
-    
+
     /**
      * Slot to save a validated resource so that it won't need to be validated twice. Shouldn't be
      * serialized.
@@ -245,14 +251,14 @@ public class ComputableResource extends KimStatement implements IContextualizabl
         this.setPostProcessor(true);
     }
 
-    public ComputableResource(Table lookupTable, List<LookupTableArgument> lookupTableArgs, boolean twoWay, IKimStatement parent) {
+    public ComputableResource(Table lookupTable, List<LookupTableArgument> lookupTableArgs, boolean twoWay,
+            IKimStatement parent) {
 
         super(lookupTable, parent);
         setCode(lookupTable);
         this.resolutionMode = Mode.RESOLUTION;
         this.type = Type.LOOKUP_TABLE;
-        this.lookupTable = new KimLookupTable(new KimTable(lookupTable, parent), lookupTableArgs,
-                twoWay, parent);
+        this.lookupTable = new KimLookupTable(new KimTable(lookupTable, parent), lookupTableArgs, twoWay, parent);
         this.setPostProcessor(true);
     }
 
@@ -279,7 +285,8 @@ public class ComputableResource extends KimStatement implements IContextualizabl
         this.resolutionMode = Mode.RESOLUTION;
     }
 
-    // public ComputableResource(List<String> mergedUrns, Mode mode, IArtifact.Type type) {
+    // public ComputableResource(List<String> mergedUrns, Mode mode, IArtifact.Type
+    // type) {
     // this.mergedUrns = mergedUrns;
     // this.mergedType = type;
     // this.resolutionMode = mode;
@@ -748,8 +755,18 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 
     @Override
     public String toString() {
-        return "<" + getType() + " -> " + (target == null ? "default" : target) + " [" + dataflowId + "]>"
-                + (serviceCall == null ? "" : (" " + serviceCall));
+        return "" + getType() + (target == null ? "" : (" -> " + target)) + " " + targetName();
+    }
+
+    private String targetName() {
+        if (urn != null) {
+            return urn;
+        } else if (serviceCall != null) {
+            return serviceCall.getName();
+        } else if (literal != null) {
+            return "" + literal;
+        }
+        return "";
     }
 
     public IObservable getOriginalObservable() {
@@ -838,27 +855,109 @@ public class ComputableResource extends KimStatement implements IContextualizabl
         return super.getSourceCode();
     }
 
-	@Override
-	public long getTimestamp() {
-		return timestamp;
-	}
+    @Override
+    public long getTimestamp() {
+        return timestamp;
+    }
+    
+    @Override
+    public IProvenance getProvenance() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public List<IActivity> getActions() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public boolean isEmpty() {
+        switch(getType()) {
+        case RESOURCE:
+            IResource resource = getResource();
+            return resource == null || resource.isEmpty();
+        default:
+            break;
+        }
+        return false;
+    }
 
-	@Override
-	public IProvenance getProvenance() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public boolean isFinal() {
 
-	@Override
-	public boolean isEmpty() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+        switch(getType()) {
+        case LITERAL:
+            return true;
+        case RESOURCE:
+            if (validatedResource == null) {
+                IResourceService resourceService = Services.INSTANCE.getService(IResourceService.class);
+                if (resourceService != null) {
+                    validatedResource = resourceService.resolveResource(this.resource);
+                }
+            }
+            return validatedResource instanceof IResource ? ((IResource) validatedResource).getInputs().isEmpty() : false;
+        case SERVICE:
+            if (getServiceCall() != null) {
+                IExtensionService extensionService = Services.INSTANCE.getService(IExtensionService.class);
+                IPrototype prototype = extensionService.getPrototype(getServiceCall().getName());
+                if (prototype != null && prototype.isFinal()) {
+                    return true;
+                }
+            }
+            return false;
+        case EXPRESSION:
+            // TODO must check if there are state identifiers in the code. Usually there are, so no rush here.
+            return false;
+        default:
+            break;
+
+        }
+        return false;
+    }
+
+    @Override
+    public IContextualizable contextualize(IArtifact target, IContextualizationScope scope) {
+
+//        DebugFile.println(getTimeLabel(scope.getScale().getTime()) + ": " + this);
+
+        if (getType() == Type.RESOURCE) {
+        	
+            Urn urn = new Urn(getUrn());
+            IResourceService resourceService = Services.INSTANCE.getService(IResourceService.class);
+            IResource resource = resourceService.contextualizeResource(getResource(), urn.getParameters(), scope.getScale(),
+                    target, scope);
+            ComputableResource ret = copy();
+            ret.validatedResource = resource;
+//            DebugFile.println("   " + (resource.isEmpty() ? "(empty)" : resource.getUrn()));
+            return ret;
+        }
+        return this;
+    }
+
+    private String getTimeLabel(ITime time) {
+        if (time == null) {
+            return "[no time]";
+        }
+        if (time.getTimeType() == ITime.Type.INITIALIZATION) {
+            return "[INITIALIZATION]";
+        }
+        if (time.getResolution().getType() == ITime.Resolution.Type.YEAR) {
+            return "[" + time.getStart().getYear() + "-" + time.getEnd().getYear() + "]";
+        }
+        return "[" + time.toString() + "]";
+    }
+
+    @Override
+    public IResource getResource() {
+        if (validatedResource instanceof IResource) {
+            return (IResource) validatedResource;
+        }
+        if (getUrn() != null && validatedResource == null) {
+            IResourceService service = Services.INSTANCE.getService(IResourceService.class);
+            if (service != null) {
+                validatedResource = service.resolveResource(getUrn());
+                if (validatedResource instanceof IResource) {
+                    return (IResource) validatedResource;
+                }
+            }
+        }
+        throw new KlabIllegalStateException("getResource() called on a non-resource contextualizable");
+    }
 
 }

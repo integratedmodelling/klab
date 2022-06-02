@@ -9,10 +9,11 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 
-public class RoutingRelationshipInstantiator implements IExpression, IInstantiator {
+public class RoutingRelationshipInstantiator extends AbstractContextualizer implements IExpression, IInstantiator {
 
 // From Unai for directed network:
 //	# %% random network directed

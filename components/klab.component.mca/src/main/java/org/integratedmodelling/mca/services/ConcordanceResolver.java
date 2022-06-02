@@ -8,6 +8,7 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubjectiveState;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -21,7 +22,7 @@ import org.integratedmodelling.mca.core.Results;
 import org.integratedmodelling.mca.model.Alternative;
 import org.integratedmodelling.mca.model.Stakeholder;
 
-public class ConcordanceResolver implements IResolver<IState>, IExpression {
+public class ConcordanceResolver extends AbstractContextualizer implements IResolver<IState>, IExpression {
 
 	int levels = 5;
 	MCAContext mcaContext;

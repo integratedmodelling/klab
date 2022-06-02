@@ -25,10 +25,10 @@ import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.processing.ContributingCell;
+import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Parameters;
-
 import org.locationtech.jts.geom.Point;
 
 /**
@@ -39,7 +39,7 @@ import org.locationtech.jts.geom.Point;
  * @author ferdinando.villa
  *
  */
-public class AccumulateFlowResolver implements IResolver<IState>, IExpression {
+public class AccumulateFlowResolver extends AbstractContextualizer implements IResolver<IState>, IExpression {
 
 	private Descriptor accumulateDescriptor;
 	private Descriptor distributeDescriptor;

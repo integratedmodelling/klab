@@ -380,6 +380,18 @@ public class ViewBehavior {
                 this.component.getAttributes().remove("error");
                 this.component.getAttributes().remove("done");
                 this.component.getAttributes().remove("computing");
+            } else if ("check".equals(message.message)) {
+                this.component.getAttributes().remove("waiting");
+                this.component.getAttributes().remove("error");
+                this.component.getAttributes().remove("done");
+                this.component.getAttributes().remove("computing");
+                this.component.getAttributes().put("checked", "true");
+            } else if ("uncheck".equals(message.message)) {
+                this.component.getAttributes().remove("waiting");
+                this.component.getAttributes().remove("error");
+                this.component.getAttributes().remove("done");
+                this.component.getAttributes().remove("computing");
+                this.component.getAttributes().remove("checked");
             }
             return this.component;
         }

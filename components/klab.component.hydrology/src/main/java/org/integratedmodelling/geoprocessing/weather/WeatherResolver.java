@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Offset;
+import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
@@ -33,7 +34,7 @@ import org.integratedmodelling.klab.utils.Pair;
  * @author Ferd
  *
  */
-public class WeatherResolver implements IResolver<IProcess>, IExpression {
+public class WeatherResolver extends AbstractContextualizer implements IResolver<IProcess>, IExpression {
 
 	/**
 	 * The station artifacts contextualized to the full distributed spatio/temporal

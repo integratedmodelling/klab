@@ -6,17 +6,18 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.api.auth.IIdentity;
-import org.integratedmodelling.klab.api.auth.ITaskIdentity;
-import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.AbstractRuntimeScope;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
@@ -27,10 +28,8 @@ import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.model.Observer;
-import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
-import org.integratedmodelling.klab.rest.DataflowReference;
 import org.integratedmodelling.klab.rest.SessionActivity;
 import org.integratedmodelling.klab.utils.Parameters;
 
@@ -45,7 +44,9 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
     FutureTask<ISubject> delegate;
     String taskDescription = "<uninitialized observation task " + token + ">";
     IParameters<String> globalState = Parameters.create();
-
+    AtomicReference<ISubject> result = new AtomicReference<>();
+    AtomicBoolean disaster = new AtomicBoolean(Boolean.FALSE);
+    
     @Override
     public IParameters<String> getState() {
         return globalState;
@@ -55,11 +56,31 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
         super(parent);
         this.delegate = parent.delegate;
         this.taskDescription = description;
+        this.autostart = parent.autostart;
+    }
+
+    /**
+     * Use to control autostart sequencing so that listeners and scenarios may be added before
+     * calling start().
+     * 
+     * @param session
+     * @param observer
+     * @param autostart
+     * @return
+     */
+    public static ObserveContextTask create(Session session, Observer observer, boolean autostart) {
+        return new ObserveContextTask(session, observer, null, autostart);
+    }
+
+    private ObserveContextTask(Session session, Observer observer, Collection<String> scenarios,
+            boolean autostart) {
+        this(session, observer, scenarios, null, null,
+                session.getParentIdentity(Engine.class).getTaskExecutor(), null, autostart);
     }
 
     public ObserveContextTask(Session session, Observer observer, Collection<String> scenarios) {
         this(session, observer, scenarios, null, null,
-                session.getParentIdentity(Engine.class).getTaskExecutor(), null);
+                session.getParentIdentity(Engine.class).getTaskExecutor(), null, true);
     }
 
     /**
@@ -74,18 +95,30 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
      * @param observationListener
      * @param errorListener
      */
-    public ObserveContextTask(Session session, Observer observer, Collection<String> scenarios,
-            Collection<BiConsumer<ITaskIdentity, IArtifact>> observationListeners,
-            Collection<BiConsumer<ITaskIdentity, Throwable>> errorListeners, Executor executor,
-            SessionActivity activityDescriptor) {
+    public ObserveContextTask(Session session, Observer observer, Collection<String> scenarioList,
+            Collection<BiConsumer<ITask<?>, IArtifact>> oListeners,
+            Collection<BiConsumer<ITask<?>, Throwable>> eListeners, Executor executor,
+            SessionActivity activityDescriptor, boolean autostart) {
 
         try {
 
             this.monitor = (session.getMonitor()).get(this);
             this.session = session;
             this.taskDescription = "Observation of " + observer.getId();
-            this.activity.setActivityDescriptor(activityDescriptor);
             this.resolvable = observer;
+            this.executor = executor;
+            this.autostart = autostart;
+
+            if (scenarioList != null && !scenarioList.isEmpty()) {
+                this.scenarios.addAll(scenarioList);
+            }
+
+            if (oListeners != null) {
+                observationListeners.addAll(oListeners);
+            }
+            if (eListeners != null) {
+                errorListeners.addAll(eListeners);
+            }
 
             session.touch();
 
@@ -104,14 +137,11 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
                         notifyStart();
 
                         if (observationListeners != null) {
-                            for (BiConsumer<ITaskIdentity, IArtifact> observationListener : observationListeners) {
-                                observationListener.accept((ITaskIdentity) this.task, null);
+                            for (BiConsumer<ITask<?>, IArtifact> observationListener : observationListeners) {
+                                observationListener.accept((ITask<?>) this.task, null);
                             }
                         }
 
-                        // TODO put all this logics in the resolver, call it from within
-                        // Observations
-                        // and use that here.
                         ResolutionScope scope = Resolver.create(null).resolve(observer, monitor, scenarios);
                         /*
                          * create the root contextualization scope for the context
@@ -126,23 +156,18 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
 
                             dataflow.setDescription(taskDescription);
 
-                            if (activity.getActivityDescriptor() != null) {
-                                activity.getActivityDescriptor().setDataflowCode(dataflow.getKdlCode());
-                            }
-
                             /*
                              * make a copy of the coverage so that we ensure it's a scale, behaving
                              * properly at merge. FIXME this must be the entire scale now - each
                              * actuator creates its artifacts, then initialization is handled when
                              * computing.
                              */
-                            ret = (ISubject) dataflow.run(scope.getCoverage().copy(), runtimeScope);
-
+                            ret = (ISubject) dataflow.run(scope.getCoverage().asScale().copy(), runtimeScope);
 
                             if (ret != null) {
 
-                            	((AbstractRuntimeScope)runtimeScope).setRootDataflow(dataflow, ret.getId());
-                                ((AbstractRuntimeScope)runtimeScope).notifyDataflowChanges(runtimeScope);
+                                ((AbstractRuntimeScope) runtimeScope).setRootDataflow(dataflow, ret.getId());
+                                ((AbstractRuntimeScope) runtimeScope).notifyDataflowChanges(runtimeScope);
 
                                 setContext((Subject) ret);
                                 getDescriptor().setContextId(ret.getId());
@@ -170,8 +195,8 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
                         }
 
                         if (observationListeners != null) {
-                            for (BiConsumer<ITaskIdentity, IArtifact> observationListener : observationListeners) {
-                                observationListener.accept((ITaskIdentity) this.task, ret);
+                            for (BiConsumer<ITask<?>, IArtifact> observationListener : observationListeners) {
+                                observationListener.accept((ITask<?>) this.task, ret);
                             }
                         }
 
@@ -180,20 +205,28 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
                     } catch (Throwable e) {
 
                         if (errorListeners != null) {
-                            for (BiConsumer<ITaskIdentity, Throwable> errorListener : errorListeners) {
-                                errorListener.accept((ITaskIdentity) this.task, e);
+                            for (BiConsumer<ITask<?>, Throwable> errorListener : errorListeners) {
+                                errorListener.accept((ITask<?>) this.task, e);
                             }
                         }
+                        
+                        disaster.set(true);
 
                         throw notifyAbort(e);
 
                     }
+                    
+                    result.set(ret);
+                    
                     return ret;
                 }
 
             });
 
-            executor.execute(delegate);
+            if (autostart) {
+                started = true;
+                executor.execute(delegate);
+            }
 
         } catch (Throwable e) {
             monitor.error("error initializing context task: " + e.getMessage());
@@ -248,12 +281,23 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
 
     @Override
     public ISubject get() throws InterruptedException, ExecutionException {
+        if (!started) {
+            start();
+        }
         return delegate.get();
+//        while (result.get() == null && !disaster.get()) {
+//            Thread.sleep(400);
+//        }
+//        return disaster.get() ? null : result.get();
     }
 
     @Override
     public ISubject get(long timeout, TimeUnit unit)
             throws InterruptedException, ExecutionException, TimeoutException {
+        if (!started) {
+            start();
+        }
+        
         return delegate.get(timeout, unit);
     }
 
@@ -265,6 +309,24 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
     @Override
     protected String getTaskDescription() {
         return taskDescription;
+    }
+
+    @Override
+    public boolean stop() {
+        if (started) {
+            cancel(true);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean start() {
+        if (autostart || monitor.isInterrupted()) {
+            return false;
+        }
+        executor.execute(delegate);
+        return true;
     }
 
 }

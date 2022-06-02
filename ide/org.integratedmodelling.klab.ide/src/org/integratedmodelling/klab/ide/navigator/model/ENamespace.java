@@ -29,7 +29,7 @@ public class ENamespace extends EKimObject implements IKimNamespace {
 
 	IKimNamespace delegate;
 
-	ENamespace(IKimNamespace statement, ENavigatorItem parent) {
+    ENamespace(IKimNamespace statement, ENavigatorItem parent) {
 		super(statement.getName(), statement, parent);
 		this.delegate = statement;
 	}
@@ -175,4 +175,14 @@ public class ENamespace extends EKimObject implements IKimNamespace {
 	public IKimConcept getDomain() {
 		return delegate.getDomain();
 	}
+
+	@Override
+	public List<Pair<String, List<String>>> getVocabularyImports() {
+		return delegate.getVocabularyImports();
+	}
+
+    @Override
+    public Collection<String> getDisjointNamespaces() {
+        return delegate.getDisjointNamespaces();
+    }
 }

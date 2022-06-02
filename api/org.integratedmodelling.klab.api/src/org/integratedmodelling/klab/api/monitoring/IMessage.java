@@ -11,7 +11,7 @@ import org.integratedmodelling.klab.rest.UserInputResponse;
 import org.integratedmodelling.klab.rest.WatchRequest;
 
 /**
- * Messages exchanged between the engine and its web UI.
+ * Messages exchanged between the engine and its clients.
  * 
  * @author ferdinando.villa
  *
@@ -133,10 +133,7 @@ public interface IMessage {
         /*
          * Console requests: new console, command received, response received
          */
-        ConsoleCreated,
-        ConsoleClosed,
-        CommandRequest,
-        CommandResponse,
+        ConsoleCreated, ConsoleClosed, CommandRequest, CommandResponse,
 
         /*
          * UserContextChange-class types.
@@ -144,8 +141,7 @@ public interface IMessage {
         /**
          * F->B.
          */
-        RegionOfInterest,
-        FeatureAdded,
+        RegionOfInterest, FeatureAdded,
 
         /**
          * F->B
@@ -161,6 +157,11 @@ public interface IMessage {
          * F<->B
          */
         ResetContext,
+        
+        /**
+         * F->F (internal message between views)
+         */
+        ResetScenarios, 
 
         /**
          * F->B whenever the user wants to (re)contextualize to either a URN specifying one or more
@@ -177,9 +178,7 @@ public interface IMessage {
          * Messages with class UserInterface, some local to the UI and not marshalled across
          * websockets, others initiated on either side when user input is provided or requested.
          */
-        HistoryChanged,
-        FocusChanged,
-        Notification,
+        HistoryChanged, FocusChanged, Notification,
 
         /**
          * B->F: notification for projects in user workspace when they are opened.UIs may not be
@@ -189,26 +188,19 @@ public interface IMessage {
          * F->B: notification for projects in IDE workspace that are opened and the engine may not
          * be aware of.
          */
-        UserProjectOpened,
-        UserProjectModified,
-        UserProjectDeleted,
+        UserProjectOpened, UserProjectModified, UserProjectDeleted,
 
         /**
          * Class UserInterface: User input requests and responses: request is B->F, response is
          * F->B. Use beans {@link UserInputRequest} and {@link UserInputResponse} respectively.
          */
-        UserInputRequested,
-        UserInputProvided,
+        UserInputRequested, UserInputProvided,
 
         /**
          * Class UserInterface: B->F when a new documentation item becomes available for display at
          * context level or at the dataflow actuator level. Uses bean {@link RuntimeDocumentation}.
          */
-        RuntimeDocumentation,
-        DataflowDocumentation,
-        TicketRequest,
-        TicketResponse,
-        AuthorityDocumentation,
+        RuntimeDocumentation, DataflowDocumentation, TicketRequest, TicketResponse, AuthorityDocumentation,
 
         /**
          * Class UserInterface: request addition of action to either context menu or global menu.
@@ -224,9 +216,7 @@ public interface IMessage {
          * {@link DropPermission} {@link #DropData}: F->B execute drop upload and communicate on
          * finish (bean {@link DropData}
          */
-        DropInitiated,
-        DropPermission,
-        DropData,
+        DropInitiated, DropPermission, DropData,
 
         /**
          * Class UserInterface: request change in setting communicating through bean
@@ -241,28 +231,12 @@ public interface IMessage {
         /*
          * F->B: ask engine to modify or delete projects or project assets
          */
-        CreateNamespace,
-        CreateScenario,
-        DeleteNamespace,
-        DeleteLocalResource,
-        CreateCodelist,
-        GetCodelist,
-        UpdateCodelist,
-        DeleteCodelist,
-        CreateProject,
-        DeleteProject,
-        CreateScript,
-        DeleteScript,
-        CreateTestCase,
-        DeleteTestCase,
-        CreateBehavior,
-        DeleteBehavior,
+        CreateNamespace, CreateScenario, DeleteNamespace, DeleteLocalResource, CreateCodelist, GetCodelist, UpdateCodelist, DeleteCodelist, CreateProject, DeleteProject, CreateScript, DeleteScript, CreateTestCase, DeleteTestCase, CreateBehavior, DeleteBehavior,
 
         /*
          * F->B: publish or update a local or public resource
          */
-        PublishLocalResource,
-        UpdatePublicResource,
+        PublishLocalResource, UpdatePublicResource,
 
         /**
          * B->F: respond to a request to publish a resource (just submit asynchronously).
@@ -278,29 +252,26 @@ public interface IMessage {
          * B->F to report the status of a resource as its ResourceReference data plus online/offline
          * status if known, or unknown + the URN if not.
          */
-        ResourceOnline,
-        ResourceOffline,
-        ResourceUnknown,
+        ResourceOnline, ResourceOffline, ResourceUnknown,
 
         /**
          * F->B: notification when files are explicitly changed, added or deleted; notify projects
          * to load and respond to project lifecycle requests
          */
-        ProjectFileAdded,
-        ProjectFileModified,
-        ProjectFileDeleted,
-        NotifyProjects,
-        DocumentationModified,
+        ProjectFileAdded, ProjectFileModified, ProjectFileDeleted, NotifyProjects, DocumentationModified,
+
+        /**
+         * F <-> B: scenario selection from user action (if class == UserInterface) and/or from
+         * engine (after selection or from API) with class == SessionLifecycle. In all cases the
+         * list of scenarios is assumed to contain and honor all interdependencies and constraints.
+         * Scenario selection with no scenarios is a reset.
+         */
+        ScenariosSelected,
 
         /*
          * --- Notification-class types ---
          */
-        Debug,
-        Info,
-        Warning,
-        Error,
-        EngineEvent,
-        RuntimeEvent,
+        Debug, Info, Warning, Error, EngineEvent, RuntimeEvent,
 
         /*
          * --- KimLifecycle: one-off compile notifications at the namespace or project level
@@ -319,8 +290,7 @@ public interface IMessage {
         /**
          * Authority-related inquiries
          */
-        AuthorityQuery,
-        AuthoritySearchResults,
+        AuthorityQuery, AuthoritySearchResults,
 
         /**
          * F->B: Start or stop watching an observation, i.e. receive messages about anything that
@@ -353,100 +323,59 @@ public interface IMessage {
          * -- Ticketing system monitoring, send around internally by UserInterface after engine
          * notification
          */
-        TicketResolved,
-        TicketStatusChanged,
-        TicketCreated,
+        TicketResolved, TicketStatusChanged, TicketCreated,
 
         /**
          * --- Task lifecycle --- B -> F
          */
-        ScriptStarted,
-        TaskStarted,
-        TaskFinished,
-        TaskAborted,
-        DataflowCompiled,
-        DataflowStateChanged,
+        ScriptStarted, TaskStarted, TaskFinished, TaskAborted, DataflowCompiled, DataflowStateChanged, ProvenanceChanged,
 
         /**
          * Task lifecycle F -> B
          */
-        TaskInterrupted,
-        DataflowNodeDetail,
-        DataflowNodeRating,
+        TaskInterrupted, DataflowNodeDetail, DataflowNodeRating,
 
         /**
          * Scheduler lifecycle F->B
          */
-        SchedulingStarted,
-        SchedulingFinished,
-        ScheduleAdvanced,
-        SchedulerReset,
+        SchedulingStarted, SchedulingFinished, ScheduleAdvanced, SchedulerReset,
 
         /*
          * --- Search-class types --- FIXME SemanticSearch is a synonym of SubmitSearch, used in IDE
          * queries to trigger experimental behavior, to be merged with SubmitSearch and removed when
          * done. Same with SemanticMatch vs. MatchAction.
          */
-        SemanticSearch,
-        SubmitSearch,
-        MatchAction,
-        SemanticMatch,
+        SemanticSearch, SubmitSearch, MatchAction, SemanticMatch,
 
         /*
          * --- Query-class types ---
          */
-        QueryResult,
-        QueryStatus,
+        QueryResult, QueryStatus,
 
         /*
          * --- EngineLifecycle ---
          */
-        EngineUp,
-        EngineDown,
+        EngineUp, EngineDown,
 
         /*
          * --- Run-class types
          */
-        RunScript,
-        RunTest,
-        RunApp,
-        RunUnitTest,
-        DebugScript,
-        DebugTest,
+        RunScript, RunTest, RunApp, RunUnitTest, DebugScript, DebugTest,
 
         /*
          * --- ResourceLifecycle-class types, F->B
          */
-        ImportResource,
-        DeleteResource,
-        UpdateResource,
-        ValidateResource,
-        PreviewResource,
-        CopyResource,
-        MoveResource,
-        CreateResource,
-        ImportIntoResource,
-        ResourceOperation,
+        ImportResource, DeleteResource, UpdateResource, ValidateResource, PreviewResource, CopyResource, MoveResource, CreateResource, ImportIntoResource, ResourceOperation,
 
         /*
          * --- ResourceLifecycle-class types, B->F
          */
-        ResourceImported,
-        ResourceDeleted,
-        ResourceUpdated,
-        ResourceValidated,
-        ResourceCreated,
-        CodelistCreated,
-        CodelistUpdated,
-        CodelistDeleted,
+        ResourceImported, ResourceDeleted, ResourceUpdated, ResourceValidated, ResourceCreated, CodelistCreated, CodelistUpdated, CodelistDeleted,
 
         /*
          * --- View actor messages
          */
-        CreateViewComponent,
-        SetupInterface,
-        CreateWindow,
-        CreateModalWindow,
+        CreateViewComponent, SetupInterface, CreateWindow, CreateModalWindow,
 
         /*
          * --- Sent F->B when a view action interacts with a component and B->F to send a response

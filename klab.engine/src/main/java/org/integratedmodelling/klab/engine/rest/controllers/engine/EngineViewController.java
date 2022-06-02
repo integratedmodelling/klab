@@ -29,11 +29,11 @@ import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.geospace.visualization.Renderer;
-import org.integratedmodelling.klab.components.localstorage.impl.TimesliceLocator;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroupView;
 import org.integratedmodelling.klab.engine.debugger.Debug;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.ObservationReference.GeometryType;
 import org.integratedmodelling.klab.rest.StateSummary;
@@ -133,7 +133,7 @@ public class EngineViewController {
         IObservation obs = session.getObservation(observation);
 
         if (obs == null) {
-            throw new IllegalArgumentException("observation " + observation + " does not exist");
+            throw new KlabIllegalArgumentException("observation " + observation + " does not exist");
         }
 
         ILocator loc = obs.getScale();
@@ -158,7 +158,7 @@ public class EngineViewController {
             }
 
             ret.add(Observations.INSTANCE.createArtifactDescriptor((IObservation) child/* , obs */, loc, 0,
-                    obs instanceof ObservationGroupView ? obs.getId() : null));
+                    obs instanceof ObservationGroupView ? obs.getId() : null, false));
 
             // assume this was notified
             scope.getNotifiedObservations().add(child.getId());

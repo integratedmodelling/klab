@@ -15,6 +15,7 @@ package org.integratedmodelling.klab.api.resolution;
 
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
+import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable.MergingOption;
 import org.integratedmodelling.klab.common.LogicalConnector;
 
 /**
@@ -72,7 +73,7 @@ public interface ICoverage extends IScale {
      * Must not modify the original scales.
      */
     @Override
-    ICoverage merge(ITopologicallyComparable<?> coverage, LogicalConnector how);
+    ICoverage merge(ITopologicallyComparable<?> coverage, LogicalConnector how, MergingOption...options);
 
     /**
      * Like {@link #merge(ITopologicallyComparable, LogicalConnector)} but only merges extents,

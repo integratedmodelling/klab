@@ -82,6 +82,7 @@ public class SimpleTableArtifact extends Artifact implements IKnowledgeView {
 			Set<Style> styles = EnumSet.noneOf(Style.class);
 			if (options != null) {
 				for (int i = 0; i < options.length; i++) {
+				    
 					if (options[i] instanceof Attribute) {
 						switch ((Attribute) options[i]) {
 						case HEADER:
@@ -131,6 +132,10 @@ public class SimpleTableArtifact extends Artifact implements IKnowledgeView {
 			Dimension dim = hash.get(classifier);
 			if (dim == null) {
 				dim = new Dimension("c" + hash.size(), options);
+				if (classifier instanceof Collection) {
+					// FIXME they may have >1 dims
+					classifier = ((Collection)classifier).iterator().next();
+				}
 				if (classifier instanceof ISemantic) {
 					dim.label = Concepts.INSTANCE.getDisplayLabel((ISemantic) classifier);
 				} else if (classifier instanceof String) {
@@ -166,7 +171,6 @@ public class SimpleTableArtifact extends Artifact implements IKnowledgeView {
 				cells.put(key, ret);
 			}
 			ret.value = value;
-			// TODO set style, other options
 		}
 
 		@Override
@@ -180,6 +184,31 @@ public class SimpleTableArtifact extends Artifact implements IKnowledgeView {
 			this.emptyValue = emptyValue;
 			this.noDataValue = noDataValue;
 		}
+
+        @Override
+        public List<String> getColumnIds() {
+            List<String> ret = new ArrayList<>();
+            for (Dimension column : ccols.values()) {
+                ret.add(column.id);
+            }
+            return ret;
+        }
+
+        @Override
+        public List<String> getRowIds() {
+            List<String> ret = new ArrayList<>();
+            for (Dimension row : crows.values()) {
+                ret.add(row.id);
+            }
+            return ret;
+        }
+
+        @Override
+        public Object getCellValue(String rowId, String colId) {
+            Pair<String, String> key = new Pair<>(rowId, colId);
+            Cell cell = cells.get(key);
+            return cell == null ? null : cell.value;
+        }
 
 	}
 

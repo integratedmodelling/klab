@@ -429,8 +429,8 @@ public interface IObservable extends ISemantic, IResolvable {
         Builder global(boolean global);
 
         /**
-         * Set the URL for the observable when it comes from a k.IM specification. Only use with full
-         * awareness.
+         * Set the URL for the observable when it comes from a k.IM specification. Only use with
+         * full awareness.
          * 
          * @param uri
          * @return
@@ -605,11 +605,26 @@ public interface IObservable extends ISemantic, IResolvable {
     List<IAnnotation> getAnnotations();
 
     /**
-     * String definition of this observable, re-parseable in a compatible one.
+     * String definition of this observable, re-parseable into a compatible one. The definition is
+     * normalized, with sorted components and parenthesized as necessary, to guarantee an
+     * unambiguous result and the equality of observable definitions with identical semantics. Only
+     * the part that affects semantics is part of the definition: name, units or currencies are not
+     * included. Use {@link #getDeclaration()} if those are desired.
      * 
      * @return
      */
     String getDefinition();
+
+    /**
+     * The declaration is the same string returned by {@link #getDefinition()}, but including all
+     * clauses that do not directly affect semantics. If a name was stated in the original
+     * declaration, the 'named' clause is added to the definition. The same applies to units or
+     * currencies. Apart from that, the definition remains normalized so it may differ from an
+     * original, user-supplied string.
+     * 
+     * @return
+     */
+    String getDeclaration();
 
     /**
      * Abstract status of an observable may be more involved than just the abstract status of the
@@ -627,7 +642,7 @@ public interface IObservable extends ISemantic, IResolvable {
      * @return
      */
     boolean is(Type type);
-
+    
     /**
      * Any value operators are returned here, paired with their operands.
      * 

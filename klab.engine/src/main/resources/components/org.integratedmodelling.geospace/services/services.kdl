@@ -2,7 +2,7 @@
 @klab 0.10.0
 @version 0.10.0
 
-export number terrain 
+const export number terrain 
 	"The terrain function generates a random fractal surface that can be parameterized to
 	 realistically mimic various patterns of the Earth surface, such as elevation or slope."
 {

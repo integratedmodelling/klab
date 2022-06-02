@@ -4,20 +4,24 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IContextualizable.InteractiveParameter;
 import org.integratedmodelling.kim.api.IKimConcept;
-import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Interaction;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
 import org.integratedmodelling.klab.api.model.IAnnotation;
+import org.integratedmodelling.klab.api.observations.IConfiguration;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable.MergingOption;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
@@ -32,6 +36,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Annotation;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.resolution.DependencyGraph;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.ResolvedArtifact;
 import org.integratedmodelling.klab.scale.Scale;
@@ -152,8 +157,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
          */
         boolean trivial = isTrivial();
 
-        if (!trivial && parentComputation != null
-                && scope.getMonitor().getIdentity() instanceof AbstractTask) {
+        if (!trivial && parentComputation != null && scope.getMonitor().getIdentity() instanceof AbstractTask) {
             ((AbstractTask<?>) scope.getMonitor().getIdentity()).notifyStart();
         }
 
@@ -183,15 +187,13 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
                             actuator.getModel().getDependencies())) {
                         List<String> parameterIds = null;
                         for (IAnnotation annotation : o.getAnnotations()) {
-                            for (InteractiveParameter parameter : Interaction.INSTANCE
-                                    .getInteractiveParameters(annotation, o)) {
+                            for (InteractiveParameter parameter : Interaction.INSTANCE.getInteractiveParameters(annotation, o)) {
                                 if (parameterIds == null) {
                                     parameterIds = new ArrayList<>();
                                 }
                                 fields.add(parameter);
                                 parameterIds.add(parameter.getId());
-                                annotationParameters.add(new AnnotationParameterValue(
-                                        ((Annotation) annotation).getId(),
+                                annotationParameters.add(new AnnotationParameterValue(((Annotation) annotation).getId(),
                                         parameter.getId(), parameter.getInitialValue(), parameter.getType()));
                             }
                             if (parameterIds != null) {
@@ -203,8 +205,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
                     // interactive computations
                     for (IContextualizable computable : actuator.getComputation()) {
                         List<String> parameterIds = null;
-                        for (InteractiveParameter parameter : Interaction.INSTANCE.getInteractiveParameters(
-                                computable,
+                        for (InteractiveParameter parameter : Interaction.INSTANCE.getInteractiveParameters(computable,
                                 actuator.getModel())) {
                             if (parameterIds == null) {
                                 parameterIds = new ArrayList<>();
@@ -223,8 +224,8 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
                  * Issue request, wait for answer and reset parameters in the computation. Method
                  * returns all interactive observable annotation parameters for recording.
                  */
-                Collection<Triple<String, String, String>> values = Interaction.INSTANCE
-                        .submitParameters(this.resources, this.fields, session);
+                Collection<Triple<String, String, String>> values = Interaction.INSTANCE.submitParameters(this.resources,
+                        this.fields, session);
 
                 if (values == null) {
                     return null;
@@ -252,15 +253,13 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
             if (scope.getMonitor().isInterrupted()) {
                 return null;
             }
-            if (!trivial && parentComputation != null
-                    && scope.getMonitor().getIdentity() instanceof AbstractTask) {
+            if (!trivial && parentComputation != null && scope.getMonitor().getIdentity() instanceof AbstractTask) {
                 ((AbstractTask<?>) scope.getMonitor().getIdentity()).notifyAbort(e);
                 return null;
             }
         }
 
-        if (!trivial && parentComputation != null
-                && scope.getMonitor().getIdentity() instanceof AbstractTask) {
+        if (!trivial && parentComputation != null && scope.getMonitor().getIdentity() instanceof AbstractTask) {
             ((AbstractTask<?>) scope.getMonitor().getIdentity()).notifyEnd();
         }
 
@@ -268,19 +267,19 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
     }
 
     private void definePartitions(IScale scale, IRuntimeScope scope) {
-        _definePartialScales(this, (Scale) scale, scope);
+        _definePartialScales(this, (Scale) scale.collapse(), scope);
     }
 
     private Scale _definePartialScales(Actuator actuator, Scale current, IRuntimeScope scope) {
 
         if (actuator.getModel() != null) {
 
-            Scale mcoverage = actuator.getModel().getCoverage(scope.getMonitor());
+            Scale mcoverage = actuator.getModel().getCoverage(scope.getMonitor()).collapse();
             if (!mcoverage.isEmpty() || actuator.isPartition()) {
                 Scale coverage = mcoverage;
                 if (actuator.isPartition()) {
                     coverage = current.merge(mcoverage, LogicalConnector.INTERSECTION);
-                    scope.setMergedScale(actuator, coverage.merge(current));
+                    scope.setMergedScale(actuator, coverage.mergeContext(current));
                 }
 
                 /*
@@ -288,9 +287,12 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
                  * overall extents if any are set.
                  */
 
-                if (actuator.isPartition()) {
+                if ("false".equals(Configuration.INSTANCE.getProperty(Configuration.KLAB_FILL_COVERED_NODATA, "true"))
+                        && actuator.isPartition()) {
                     /*
-                     * remove the part we handled so that the next will not cover it.
+                     * remove the part we handled so that the next will not cover it. This must be
+                     * explicitly enabled as it requires perfect coverage of masking polygons, or
+                     * any nodata around the edges will show.
                      */
                     current = current.merge(coverage, LogicalConnector.EXCLUSION);
                 }
@@ -323,12 +325,12 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
      * 
      * @return
      */
-    public Graph<IObservedConcept, DefaultEdge> getDependencyGraph() {
+    public DependencyGraph getDependencyGraph() {
         return buildDependencies();
     }
 
-    private Graph<IObservedConcept, DefaultEdge> buildDependencies() {
-        Graph<IObservedConcept, DefaultEdge> ret = new DefaultDirectedGraph<>(DefaultEdge.class);
+    private DependencyGraph buildDependencies() {
+        DependencyGraph ret = new DependencyGraph();
         boolean primary = true;
         // use the logical structure to only get true actuators and recurse
         // sub-dataflows
@@ -339,15 +341,17 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
         return ret;
     }
 
-    private IObservedConcept buildDependencies(Actuator actuator, Graph<IObservedConcept, DefaultEdge> graph,
-            boolean primary) {
+    private IObservedConcept buildDependencies(Actuator actuator, DependencyGraph graph, boolean primary) {
 
         ObservedConcept observable = new ObservedConcept(actuator.getObservable(), actuator.getMode());
         observable.getData().put(ACTUATOR, actuator);
-
+        // TODO properly handle partials
         graph.addVertex(observable);
         for (IActuator child : actuator.getActuators()) {
-            graph.addEdge(buildDependencies((Actuator) child, graph, primary), observable);
+            if (!((Actuator) child).isPartition()) {
+                // TODO we should add the structure but avoid the double counting of the observable
+                graph.addEdge(buildDependencies((Actuator) child, graph, primary), observable);
+            }
         }
         return observable;
     }
@@ -452,8 +456,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
             return new Pair<>(rootNodes, ret);
         }
 
-        rootNodes.add(
-                ((Actuator) structure.getFirst()).makeDataflowStructure(null, structure.getSecond(), ret));
+        rootNodes.add(((Actuator) structure.getFirst()).makeDataflowStructure(null, structure.getSecond(), ret));
 
         return new Pair<>(rootNodes, ret);
 
@@ -504,8 +507,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
      * @param scope
      * @return
      */
-    public static Dataflow empty(IObservable observable, String name, ResolutionScope scope,
-            Dataflow parent) {
+    public static Dataflow empty(IObservable observable, String name, ResolutionScope scope, Dataflow parent) {
 
         Dataflow ret = new Dataflow(parent);
 
@@ -521,9 +523,9 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
     }
 
     public boolean isTrivial() {
-        return actuators.size() < 2 && (actuators.size() == 0 || (actuators.size() == 1
-                && ((Actuator) actuators.get(0)).getObservable().is(IKimConcept.Type.COUNTABLE)
-                && ((Actuator) actuators.get(0)).isTrivial()));
+        return actuators.size() < 2 && (actuators.size() == 0
+                || (actuators.size() == 1 && ((Actuator) actuators.get(0)).getObservable().is(IKimConcept.Type.COUNTABLE)
+                        && ((Actuator) actuators.get(0)).isTrivial()));
     }
 
     /**
@@ -623,6 +625,14 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
             return new Pair<>(resolver, second);
         }
         return null;
+    }
+
+    public Set<IObservedConcept> getComputedObservables() {
+        Set<IObservedConcept> ret = new HashSet<>();
+        for (IActuator actuator : this.actuators) {
+            ((Actuator) actuator).collectComputed(ret);
+        }
+        return ret;
     }
 
 }

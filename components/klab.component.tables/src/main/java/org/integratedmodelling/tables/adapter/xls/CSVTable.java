@@ -88,10 +88,12 @@ class CSVTable extends AbstractTable<Object> {
 		super(resource, resource.getUrn().replaceAll(":", "_"), Object.class, monitor);
 		this.skipHeader = "true".equals(resource.getParameters().get("headers.columns").toString());
 		this.file = ((Resource) resource).getLocalFile("resource.file");
+		checkCache();
 	}
 
 	@Override
 	protected boolean isOutdated(IResource resource) {
+		
 	    String property = resource.getUrn().replaceAll(":", "_") + ".timestamp";
 		Long timestamp = Long.parseLong(Resources.INSTANCE.getProperty(property, "0"));
 		if (this.file.lastModified() > timestamp) {

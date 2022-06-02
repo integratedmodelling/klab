@@ -287,4 +287,12 @@ public interface IPrototype {
 	 */
 	IGeometry getGeometry();
 
+	/**
+	 * True if the entire prototype has been declared 'const', meaning it requires
+	 * no inputs to be contextualized.
+	 * 
+	 * @return
+	 */
+	boolean isFinal();
+
 }

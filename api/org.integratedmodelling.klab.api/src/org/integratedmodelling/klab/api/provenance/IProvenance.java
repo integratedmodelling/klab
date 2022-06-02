@@ -109,13 +109,6 @@ public interface IProvenance {
 		long getTimestamp();
 
 		/**
-		 * Return all the actions that have interested this node in chronological order.
-		 *
-		 * @return a {@link java.util.List} object.
-		 */
-		List<IActivity> getActions();
-
-		/**
 		 * Return the graph we're part of.
 		 * 
 		 * @return the provenance graph
@@ -143,14 +136,6 @@ public interface IProvenance {
 	 * @return a {@link java.util.List} object.
 	 */
 	List<IActivity> getPrimaryActions();
-
-	/**
-	 * There is always a root observation/artifact, with consumer = the user.
-	 *
-	 * @return a {@link org.integratedmodelling.klab.api.provenance.IArtifact}
-	 *         object.
-	 */
-	IArtifact getRootArtifact();
 
 	/**
 	 * Return all artifacts.

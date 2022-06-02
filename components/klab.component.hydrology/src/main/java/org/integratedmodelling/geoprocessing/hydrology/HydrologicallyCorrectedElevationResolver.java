@@ -13,9 +13,10 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
+import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
-public class HydrologicallyCorrectedElevationResolver implements IResolver<IState>, IExpression {
+public class HydrologicallyCorrectedElevationResolver extends AbstractContextualizer implements IResolver<IState>, IExpression {
 
 	@Override
 	public Type getType() {

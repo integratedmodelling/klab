@@ -20,7 +20,6 @@ import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.LogicalConnector;
 
 /**
@@ -87,29 +86,32 @@ public interface IScale extends ILocator, IGeometry, ITopology<IScale> {
     boolean isEmpty();
 
     /**
-     * Merge in another scale to return a new scale that represents the common traits in both. Used
-     * to build the "common" scale of a dataflow before contextualization, which will then be passed
-     * to {@link #adopt(IScale, IMonitor)} to create the scale of contextualization of each actuator
-     * resulting from a model.
+     * Merge in another scale (possibly limited to specified extents) to return a new scale that
+     * best represents the common traits in both, seeing the passed scale as a constraint. Used to
+     * build the "common" scale of a dataflow before contextualization, where the passed scale is
+     * that of the desired context and this is the scale of a model or computation used in it.
      * 
-     * @param scale
-     */
-    public IScale merge(IScale scale);
-
-    /**
-     * Return a new scale based on this and adopting any constraints set in the passed scale, which
-     * are to be considered "authoritative" and mandatory. Called at runtime on the result of
-     * merge() from all models during contextualization and before computation of each individual
-     * model, to ensure that any constraints set in the model are represented in the scale it will
-     * be computed in. Model-generated artifacts will have the resulting scale. If
-     * {@link #merge(IScale)} builds the <i>overall</i> scale of <i>contextualization</i>, this
-     * builds the <i>specific</i> scale of <i>computation</i> for a single model's scope.
+     * In detail, for each extent of the outgoing scale:
+     * <ul>
+     * <li>If this does not have an extent that the passed scale has, the result should adopt it as
+     * is.</li>
+     * <li>If this has an extent that the passed scale does not have, the result should <em>not</em>
+     * contain it.</li>
+     * <li>Boundaries should be inherited from the passed scale. The result can shrink but it cannot
+     * grow beyond the common boundaries.</li>
+     * <li>If this is distributed in the common extents, the result should stay distributed. If the
+     * incoming scale is distributed and this is not, the result should become distributed. If both
+     * are distributed, choices of representation may need to be made: the result's representation
+     * should be the incoming one as much as possible, to prevent costly mediations.</li>
+     * <li>If the result is distributed, the resolution should be our resolution if this was
+     * distributed, or the incoming resolution if not.</li>
+     * </ul>
      * 
-     * @param scale
-     * @param monitor
-     * @return
+     * @param scale the scale to merge in
+     * @param dimensions the dimension on which to perform the merge; if no dimensions are passed,
+     *        merge all dimensions
      */
-    public IScale adopt(IScale scale, IMonitor monitor);
+    public IScale mergeContext(IScale scale, Dimension.Type... dimensions);
 
     /**
      * {@inheritDoc}
@@ -124,7 +126,7 @@ public interface IScale extends ILocator, IGeometry, ITopology<IScale> {
      * Must not modify the original scales.
      */
     @Override
-    IScale merge(ITopologicallyComparable<?> other, LogicalConnector how);
+    IScale merge(ITopologicallyComparable<?> other, LogicalConnector how, MergingOption... options);
 
     /**
      * Mimics {@link org.integratedmodelling.klab.api.data.IGeometry.Dimension#shape()} passing the
@@ -165,7 +167,7 @@ public interface IScale extends ILocator, IGeometry, ITopology<IScale> {
 
     /**
      * Return whether the passed dimensions are regular, i.e. the extent in each sub-extent is the
-     * same. If no dimensions are passed, check them all. If a non-existent dimension is passed, 
+     * same. If no dimensions are passed, check them all. If a non-existent dimension is passed,
      * return true for it.
      * 
      * @param dimensions
@@ -217,5 +219,15 @@ public interface IScale extends ILocator, IGeometry, ITopology<IScale> {
      * @throw {@link IllegalArgumentException} if the parameters cannot be understood or honored.
      */
     <T extends ILocator> Iterable<T> scan(Class<T> desiredLocatorClass, Object... dimensionIdentifiers);
+
+    /**
+     * Return the same scale but with multiplicity 1 and all extents collapsed to their containing
+     * extent.
+     * 
+     * @param dimensions select the dimensions to collapse. Pass none to collapse everything.
+     * 
+     * @return
+     */
+    IScale collapse(Dimension.Type... dimensions);
 
 }

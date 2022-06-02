@@ -91,8 +91,7 @@ public enum Observables implements IObservableService {
         BinarySemanticOperator connector = BinarySemanticOperator.NONE;
     }
 
-    private Map<String, Configuration> configurations = Collections
-            .synchronizedMap(new LinkedHashMap<String, Configuration>());
+    private Map<String, Configuration> configurations = Collections.synchronizedMap(new LinkedHashMap<String, Configuration>());
 
     @Inject
     ParseHelper<Model> observableParser;
@@ -113,8 +112,7 @@ public enum Observables implements IObservableService {
         try {
             ObservableSemantics parsed = observableParser.parse(declaration).getObservable();
             KimObservable interpreted = Kim.INSTANCE.declareObservable(parsed);
-            return KimKnowledgeProcessor.INSTANCE.declare(interpreted, Reasoner.INSTANCE.getOntology(),
-                    monitor);
+            return KimKnowledgeProcessor.INSTANCE.declare(interpreted, Reasoner.INSTANCE.getOntology(), monitor);
         } catch (Exception e) {
             monitor.error(e, declaration);
         }
@@ -142,15 +140,13 @@ public enum Observables implements IObservableService {
 
     @Override
     public @Nullable IConcept getInherentType(IConcept concept) {
-        Collection<IConcept> cls = OWL.INSTANCE.getRestrictedClasses((IConcept) concept,
-                Concepts.p(NS.IS_INHERENT_TO_PROPERTY));
+        Collection<IConcept> cls = OWL.INSTANCE.getRestrictedClasses((IConcept) concept, Concepts.p(NS.IS_INHERENT_TO_PROPERTY));
         return cls.isEmpty() ? null : cls.iterator().next();
     }
 
     @Override
     public @Nullable IConcept getComparisonType(IConcept concept) {
-        Collection<IConcept> cls = OWL.INSTANCE.getRestrictedClasses((IConcept) concept,
-                Concepts.p(NS.IS_COMPARED_TO_PROPERTY));
+        Collection<IConcept> cls = OWL.INSTANCE.getRestrictedClasses((IConcept) concept, Concepts.p(NS.IS_COMPARED_TO_PROPERTY));
         return cls.isEmpty() ? null : cls.iterator().next();
     }
 
@@ -163,56 +159,48 @@ public enum Observables implements IObservableService {
 
     @Override
     public @Nullable IConcept getCompresentType(IConcept concept) {
-        Collection<IConcept> cls = OWL.INSTANCE.getRestrictedClasses((IConcept) concept,
-                Concepts.p(NS.HAS_COMPRESENT_PROPERTY));
+        Collection<IConcept> cls = OWL.INSTANCE.getRestrictedClasses((IConcept) concept, Concepts.p(NS.HAS_COMPRESENT_PROPERTY));
         return cls.isEmpty() ? null : cls.iterator().next();
     }
 
     @Override
     public @Nullable IConcept getCausantType(IConcept concept) {
-        Collection<IConcept> cls = OWL.INSTANCE.getRestrictedClasses((IConcept) concept,
-                Concepts.p(NS.HAS_CAUSANT_PROPERTY));
+        Collection<IConcept> cls = OWL.INSTANCE.getRestrictedClasses((IConcept) concept, Concepts.p(NS.HAS_CAUSANT_PROPERTY));
         return cls.isEmpty() ? null : cls.iterator().next();
     }
 
     @Override
     public @Nullable IConcept getCausedType(IConcept concept) {
-        Collection<IConcept> cls = OWL.INSTANCE.getRestrictedClasses((IConcept) concept,
-                Concepts.p(NS.HAS_CAUSED_PROPERTY));
+        Collection<IConcept> cls = OWL.INSTANCE.getRestrictedClasses((IConcept) concept, Concepts.p(NS.HAS_CAUSED_PROPERTY));
         return cls.isEmpty() ? null : cls.iterator().next();
     }
 
     @Override
     public @Nullable IConcept getGoalType(IConcept concept) {
-        Collection<IConcept> cls = OWL.INSTANCE.getRestrictedClasses((IConcept) concept,
-                Concepts.p(NS.HAS_PURPOSE_PROPERTY));
+        Collection<IConcept> cls = OWL.INSTANCE.getRestrictedClasses((IConcept) concept, Concepts.p(NS.HAS_PURPOSE_PROPERTY));
         return cls.isEmpty() ? null : cls.iterator().next();
     }
 
     @Override
     public @Nullable IConcept getAdjacentType(IConcept concept) {
-        Collection<IConcept> cls = OWL.INSTANCE.getRestrictedClasses((IConcept) concept,
-                Concepts.p(NS.IS_ADJACENT_TO_PROPERTY));
+        Collection<IConcept> cls = OWL.INSTANCE.getRestrictedClasses((IConcept) concept, Concepts.p(NS.IS_ADJACENT_TO_PROPERTY));
         return cls.isEmpty() ? null : cls.iterator().next();
     }
 
     @Override
     public @Nullable IConcept getCooccurrentType(IConcept concept) {
-        Collection<IConcept> cls = OWL.INSTANCE.getRestrictedClasses((IConcept) concept,
-                Concepts.p(NS.OCCURS_DURING_PROPERTY));
+        Collection<IConcept> cls = OWL.INSTANCE.getRestrictedClasses((IConcept) concept, Concepts.p(NS.OCCURS_DURING_PROPERTY));
         return cls.isEmpty() ? null : cls.iterator().next();
     }
 
     @Override
     public @Nullable IConcept getDirectInherentType(IConcept concept) {
-        return OWL.INSTANCE.getDirectRestrictedClass((IConcept) concept,
-                Concepts.p(NS.IS_INHERENT_TO_PROPERTY));
+        return OWL.INSTANCE.getDirectRestrictedClass((IConcept) concept, Concepts.p(NS.IS_INHERENT_TO_PROPERTY));
     }
 
     @Override
     public @Nullable IConcept getDirectCompresentType(IConcept concept) {
-        return OWL.INSTANCE.getDirectRestrictedClass((IConcept) concept,
-                Concepts.p(NS.HAS_COMPRESENT_PROPERTY));
+        return OWL.INSTANCE.getDirectRestrictedClass((IConcept) concept, Concepts.p(NS.HAS_COMPRESENT_PROPERTY));
     }
 
     @Override
@@ -232,14 +220,12 @@ public enum Observables implements IObservableService {
 
     @Override
     public @Nullable IConcept getDirectAdjacentType(IConcept concept) {
-        return OWL.INSTANCE.getDirectRestrictedClass((IConcept) concept,
-                Concepts.p(NS.IS_ADJACENT_TO_PROPERTY));
+        return OWL.INSTANCE.getDirectRestrictedClass((IConcept) concept, Concepts.p(NS.IS_ADJACENT_TO_PROPERTY));
     }
 
     @Override
     public @Nullable IConcept getDirectCooccurrentType(IConcept concept) {
-        return OWL.INSTANCE.getDirectRestrictedClass((IConcept) concept,
-                Concepts.p(NS.OCCURS_DURING_PROPERTY));
+        return OWL.INSTANCE.getDirectRestrictedClass((IConcept) concept, Concepts.p(NS.OCCURS_DURING_PROPERTY));
     }
 
     @Override
@@ -280,8 +266,7 @@ public enum Observables implements IObservableService {
         /*
          * try the kosher context first
          */
-        Collection<IConcept> cls = OWL.INSTANCE.getRestrictedClasses((IConcept) concept,
-                Concepts.p(NS.HAS_CONTEXT_PROPERTY));
+        Collection<IConcept> cls = OWL.INSTANCE.getRestrictedClasses((IConcept) concept, Concepts.p(NS.HAS_CONTEXT_PROPERTY));
         IConcept ret = cls.isEmpty() ? null : cls.iterator().next();
 
         /*
@@ -318,16 +303,11 @@ public enum Observables implements IObservableService {
 
     public Collection<IConcept> getDescribedQualities(IConcept configuration) {
         List<IConcept> ret = new ArrayList<>();
-        ret.addAll(
-                OWL.INSTANCE.getRestrictedClasses(configuration, Concepts.p(NS.DESCRIBES_QUALITY_PROPERTY)));
-        ret.addAll(OWL.INSTANCE.getRestrictedClasses(configuration,
-                Concepts.p(NS.PROPORTIONAL_QUALITY_PROPERTY)));
-        ret.addAll(OWL.INSTANCE.getRestrictedClasses(configuration,
-                Concepts.p(NS.INVERSELY_PROPORTIONAL_QUALITY_PROPERTY)));
-        ret.addAll(
-                OWL.INSTANCE.getRestrictedClasses(configuration, Concepts.p(NS.CLASSIFIES_QUALITY_PROPERTY)));
-        ret.addAll(OWL.INSTANCE.getRestrictedClasses(configuration,
-                Concepts.p(NS.DISCRETIZES_QUALITY_PROPERTY)));
+        ret.addAll(OWL.INSTANCE.getRestrictedClasses(configuration, Concepts.p(NS.DESCRIBES_QUALITY_PROPERTY)));
+        ret.addAll(OWL.INSTANCE.getRestrictedClasses(configuration, Concepts.p(NS.PROPORTIONAL_QUALITY_PROPERTY)));
+        ret.addAll(OWL.INSTANCE.getRestrictedClasses(configuration, Concepts.p(NS.INVERSELY_PROPORTIONAL_QUALITY_PROPERTY)));
+        ret.addAll(OWL.INSTANCE.getRestrictedClasses(configuration, Concepts.p(NS.CLASSIFIES_QUALITY_PROPERTY)));
+        ret.addAll(OWL.INSTANCE.getRestrictedClasses(configuration, Concepts.p(NS.DISCRETIZES_QUALITY_PROPERTY)));
         ret.addAll(OWL.INSTANCE.getRestrictedClasses(configuration, Concepts.p(NS.MARKS_QUALITY_PROPERTY)));
         return ret;
     }
@@ -338,8 +318,7 @@ public enum Observables implements IObservableService {
 
     public Collection<IConcept> getRequiredIdentities(IConcept observable) {
         Set<IConcept> ret = new HashSet<>();
-        for (IConcept c : OWL.INSTANCE.getRestrictedClasses(observable,
-                Concepts.p(NS.REQUIRES_IDENTITY_PROPERTY))) {
+        for (IConcept c : OWL.INSTANCE.getRestrictedClasses(observable, Concepts.p(NS.REQUIRES_IDENTITY_PROPERTY))) {
             if (!Concepts.INSTANCE.isInternal(c)) {
                 ret.add(c);
             }
@@ -356,14 +335,12 @@ public enum Observables implements IObservableService {
      */
     public Collection<IConcept> getAffected(ISemantic process) {
         Set<IConcept> ret = new HashSet<>();
-        for (IConcept c : OWL.INSTANCE.getRestrictedClasses(process.getType(),
-                Concepts.p(NS.AFFECTS_PROPERTY))) {
+        for (IConcept c : OWL.INSTANCE.getRestrictedClasses(process.getType(), Concepts.p(NS.AFFECTS_PROPERTY))) {
             if (!Concepts.INSTANCE.isInternal(c)) {
                 ret.add(c);
             }
         }
-        for (IConcept c : OWL.INSTANCE.getRestrictedClasses(process.getType(),
-                Concepts.p(NS.CREATES_PROPERTY))) {
+        for (IConcept c : OWL.INSTANCE.getRestrictedClasses(process.getType(), Concepts.p(NS.CREATES_PROPERTY))) {
             if (!Concepts.INSTANCE.isInternal(c)) {
                 ret.add(c);
             }
@@ -379,8 +356,7 @@ public enum Observables implements IObservableService {
      */
     public Collection<IConcept> getCreated(ISemantic process) {
         Set<IConcept> ret = new HashSet<>();
-        for (IConcept c : OWL.INSTANCE.getRestrictedClasses(process.getType(),
-                Concepts.p(NS.CREATES_PROPERTY))) {
+        for (IConcept c : OWL.INSTANCE.getRestrictedClasses(process.getType(), Concepts.p(NS.CREATES_PROPERTY))) {
             if (!Concepts.INSTANCE.isInternal(c)) {
                 ret.add(c);
             }
@@ -460,8 +436,7 @@ public enum Observables implements IObservableService {
         // TODO unsupported
         boolean useTraitParentClosure = (flags & USE_TRAIT_PARENT_CLOSURE) != 0;
 
-        if ((!o1.is(Type.OBSERVABLE) || !o2.is(Type.OBSERVABLE))
-                && !(o1.is(Type.CONFIGURATION) && o2.is(Type.CONFIGURATION))) {
+        if ((!o1.is(Type.OBSERVABLE) || !o2.is(Type.OBSERVABLE)) && !(o1.is(Type.CONFIGURATION) && o2.is(Type.CONFIGURATION))) {
             return false;
         }
 
@@ -559,8 +534,7 @@ public enum Observables implements IObservableService {
         IConcept ret = c;
         while(def != null) {
             ret = Concepts.c(def);
-            if (ret.getMetadata().get(NS.CORE_OBSERVABLE_PROPERTY) != null
-                    && !ret.getDefinition().equals(def)) {
+            if (ret.getMetadata().get(NS.CORE_OBSERVABLE_PROPERTY) != null && !ret.getDefinition().equals(def)) {
                 def = ret.getMetadata().get(NS.CORE_OBSERVABLE_PROPERTY, String.class);
             } else {
                 break;
@@ -612,8 +586,7 @@ public enum Observables implements IObservableService {
         EnumSet<Type> type = EnumSet.copyOf(((Concept) observable.getType()).getTypeSet());
         type.retainAll(IKimConcept.BASE_MODELABLE_TYPES);
         if (type.size() != 1) {
-            throw new IllegalArgumentException(
-                    "trying to extract the observable type from non-observable " + observable);
+            throw new IllegalArgumentException("trying to extract the observable type from non-observable " + observable);
         }
         return type.iterator().next();
     }
@@ -632,16 +605,14 @@ public enum Observables implements IObservableService {
 
     @Override
     public Collection<IConcept> getRelationshipSources(IConcept relationship) {
-        return CollectionUtils.join(
-                OWL.INSTANCE.getDirectRestrictedClasses(relationship, Concepts.p(NS.IMPLIES_SOURCE_PROPERTY)),
+        return CollectionUtils.join(OWL.INSTANCE.getDirectRestrictedClasses(relationship, Concepts.p(NS.IMPLIES_SOURCE_PROPERTY)),
                 OWL.INSTANCE.getRestrictedClasses(relationship, Concepts.p(NS.IMPLIES_SOURCE_PROPERTY)));
     }
 
     @Override
     public Collection<IConcept> getRelationshipTargets(IConcept relationship) {
         return CollectionUtils.join(
-                OWL.INSTANCE.getDirectRestrictedClasses(relationship,
-                        Concepts.p(NS.IMPLIES_DESTINATION_PROPERTY)),
+                OWL.INSTANCE.getDirectRestrictedClasses(relationship, Concepts.p(NS.IMPLIES_DESTINATION_PROPERTY)),
                 OWL.INSTANCE.getRestrictedClasses(relationship, Concepts.p(NS.IMPLIES_DESTINATION_PROPERTY)));
     }
 
@@ -653,18 +624,14 @@ public enum Observables implements IObservableService {
      */
     public void setApplicableObservables(IConcept type, List<IConcept> applicables, Ontology ontology) {
         // TODO validate
-        OWL.INSTANCE.restrictSome(type, Concepts.p(NS.APPLIES_TO_PROPERTY), LogicalConnector.UNION,
-                applicables, ontology);
+        OWL.INSTANCE.restrictSome(type, Concepts.p(NS.APPLIES_TO_PROPERTY), LogicalConnector.UNION, applicables, ontology);
     }
 
-    public void defineRelationship(Concept relationship, IConcept source, IConcept target,
-            Ontology ontology) {
+    public void defineRelationship(Concept relationship, IConcept source, IConcept target, Ontology ontology) {
         IProperty hasSource = Concepts.p(NS.IMPLIES_SOURCE_PROPERTY);
         IProperty hasTarget = Concepts.p(NS.IMPLIES_DESTINATION_PROPERTY);
-        OWL.INSTANCE.restrictSome(relationship, hasSource, LogicalConnector.UNION,
-                Collections.singleton(source), ontology);
-        OWL.INSTANCE.restrictSome(relationship, hasTarget, LogicalConnector.UNION,
-                Collections.singleton(target), ontology);
+        OWL.INSTANCE.restrictSome(relationship, hasSource, LogicalConnector.UNION, Collections.singleton(source), ontology);
+        OWL.INSTANCE.restrictSome(relationship, hasTarget, LogicalConnector.UNION, Collections.singleton(target), ontology);
     }
 
     // /**
@@ -827,8 +794,7 @@ public enum Observables implements IObservableService {
      * @return the matching configuration info, including the configuration concept and the
      *         observation targets in the context, or null.
      */
-    public Pair<IConcept, Set<IObservation>> detectConfigurations(IObservation instances,
-            IDirectObservation context) {
+    public Pair<IConcept, Set<IObservation>> detectConfigurations(IObservation instances, IDirectObservation context) {
 
         List<ConfigurationMatch> matches = new ArrayList<>();
         for (Configuration configuration : configurations.values()) {
@@ -878,8 +844,7 @@ public enum Observables implements IObservableService {
     }
 
     @Override
-    public Observable contextualizeTo(IObservable observable, IConcept newContext, boolean isExplicit,
-            IMonitor monitor) {
+    public Observable contextualizeTo(IObservable observable, IConcept newContext, boolean isExplicit, IMonitor monitor) {
 
         if (!OWL.INSTANCE.isSemantic(observable)) {
             return (Observable) observable;
@@ -906,9 +871,8 @@ public enum Observables implements IObservableService {
             return (Observable) observable;
         }
 
-        return (Observable) new ObservableBuilder((Observable) observable, monitor)
-                .withUrl(((Observable) observable).getUrl()).within(newContext)
-                .named(originalName, originalReferenceName).buildObservable();
+        return (Observable) new ObservableBuilder((Observable) observable, monitor).withUrl(((Observable) observable).getUrl())
+                .within(newContext).named(originalName, originalReferenceName).buildObservable();
     }
 
     public String getDisplayName(IObservable observable) {
@@ -1003,37 +967,28 @@ public enum Observables implements IObservableService {
         ret += " OWL identifier: " + concept + " (may not be unique)\n";
         ret += "k.IM definition: " + concept.getDefinition() + "\n";
         ret += "Core observable: " + Observables.INSTANCE.getCoreObservable(concept).getDefinition() + "\n";
-        ret += "Syntactic types: " + Arrays.toString(((Concept) concept.getType()).getTypeSet().toArray())
-                + "\n\n";
+        ret += "Syntactic types: " + Arrays.toString(((Concept) concept.getType()).getTypeSet().toArray()) + "\n\n";
 
         if (described != null) {
             ret += "           Describes: " + described.getDefinition()
                     + (comparison == null ? "" : (" vs. " + comparison.getDefinition())) + "\n";
         }
-        ret += "        Context type: " + decl(Observables.INSTANCE.getContextType(concept.getType()))
-                + " [direct: "
+        ret += "        Context type: " + decl(Observables.INSTANCE.getContextType(concept.getType())) + " [direct: "
                 + decl(Observables.INSTANCE.getDirectContextType(concept.getType())) + "; in resolution: "
                 + decl(Observables.INSTANCE.getContext(concept)) + "]\n";
-        ret += "       Inherent type: " + decl(Observables.INSTANCE.getInherentType(concept.getType()))
-                + " [direct: "
+        ret += "       Inherent type: " + decl(Observables.INSTANCE.getInherentType(concept.getType())) + " [direct: "
                 + decl(Observables.INSTANCE.getDirectInherentType(concept.getType())) + "]\n";
-        ret += "        Causant type: " + decl(Observables.INSTANCE.getCausantType(concept.getType()))
-                + " [direct: "
+        ret += "        Causant type: " + decl(Observables.INSTANCE.getCausantType(concept.getType())) + " [direct: "
                 + decl(Observables.INSTANCE.getDirectCausantType(concept.getType())) + "]\n";
-        ret += "         Caused type: " + decl(Observables.INSTANCE.getCausedType(concept.getType()))
-                + " [direct: "
+        ret += "         Caused type: " + decl(Observables.INSTANCE.getCausedType(concept.getType())) + " [direct: "
                 + decl(Observables.INSTANCE.getDirectCausedType(concept.getType())) + "]\n";
-        ret += "           Goal type: " + decl(Observables.INSTANCE.getGoalType(concept.getType()))
-                + " [direct: "
+        ret += "           Goal type: " + decl(Observables.INSTANCE.getGoalType(concept.getType())) + " [direct: "
                 + decl(Observables.INSTANCE.getDirectGoalType(concept.getType())) + "]\n";
-        ret += "       Adjacent type: " + decl(Observables.INSTANCE.getAdjacentType(concept.getType()))
-                + " [direct: "
+        ret += "       Adjacent type: " + decl(Observables.INSTANCE.getAdjacentType(concept.getType())) + " [direct: "
                 + decl(Observables.INSTANCE.getDirectAdjacentType(concept.getType())) + "]\n";
-        ret += "     Compresent type: " + decl(Observables.INSTANCE.getCompresentType(concept.getType()))
-                + " [direct: "
+        ret += "     Compresent type: " + decl(Observables.INSTANCE.getCompresentType(concept.getType())) + " [direct: "
                 + decl(Observables.INSTANCE.getDirectCompresentType(concept.getType())) + "]\n";
-        ret += "   Co-occurrent type: " + decl(Observables.INSTANCE.getCooccurrentType(concept.getType()))
-                + " [direct: "
+        ret += "   Co-occurrent type: " + decl(Observables.INSTANCE.getCooccurrentType(concept.getType())) + " [direct: "
                 + decl(Observables.INSTANCE.getDirectCooccurrentType(concept.getType())) + "]\n";
 
         Collection<IConcept> allTraits = Traits.INSTANCE.getTraits(concept.getType());
@@ -1041,8 +996,7 @@ public enum Observables implements IObservableService {
         if (!allTraits.isEmpty()) {
             ret += "\nTraits:\n";
             for (IConcept trait : allTraits) {
-                ret += "    " + trait.getDefinition()
-                        + (dirTraits.contains(trait) ? " [direct]" : " [indirect]") + " "
+                ret += "    " + trait.getDefinition() + (dirTraits.contains(trait) ? " [direct]" : " [indirect]") + " "
                         + ((Concept) trait).getTypeSet() + "\n";
             }
         }
@@ -1052,8 +1006,7 @@ public enum Observables implements IObservableService {
         if (!allRoles.isEmpty()) {
             ret += "\nRoles:\n";
             for (IConcept trait : allRoles) {
-                ret += "    " + trait.getDefinition()
-                        + (dirRoles.contains(trait) ? " [direct]" : " [indirect]") + "\n";
+                ret += "    " + trait.getDefinition() + (dirRoles.contains(trait) ? " [direct]" : " [indirect]") + "\n";
             }
         }
 
@@ -1147,9 +1100,7 @@ public enum Observables implements IObservableService {
             } else if (dop.is(Type.QUALITY)) {
                 spatial = scale.getSpace() == null
                         ? null
-                        : (scale.isSpatiallyDistributed()
-                                ? ExtentDimension.spatial(scale.getSpace().getDimensionality())
-                                : null);
+                        : (scale.isSpatiallyDistributed() ? ExtentDimension.spatial(scale.getSpace().getDimensionality()) : null);
                 temporal = scale.getTime() == null
                         ? null
                         : (scale.isTemporallyDistributed() ? scale.getTime().getResolution() : null);
@@ -1162,8 +1113,7 @@ public enum Observables implements IObservableService {
                     /*
                      * verify that we are not mixing classifiers with different dimensionalities.
                      */
-                    if ((dspatial != null && !dspatial.equals(spatial))
-                            || (dtemporal != null && !dtemporal.equals(temporal))) {
+                    if ((dspatial != null && !dspatial.equals(spatial)) || (dtemporal != null && !dtemporal.equals(temporal))) {
                         throw new KlabContextualizationException(
                                 "aggregation: cannot combine classifiers that imply incompatible dimensionalities");
                     }
@@ -1177,8 +1127,7 @@ public enum Observables implements IObservableService {
                     int originalTemporalDimension = Units.INSTANCE.getTemporalDimensionality(originalUnit);
 
                     if (spatial != null && originalSpatialDimension == spatial.dimensionality) {
-                        originalUnit = Units.INSTANCE.removeExtents(originalUnit,
-                                Collections.singleton(spatial));
+                        originalUnit = Units.INSTANCE.removeExtents(originalUnit, Collections.singleton(spatial));
                         changed = true;
                     }
 
@@ -1223,8 +1172,7 @@ public enum Observables implements IObservableService {
         return false;
     }
 
-    public boolean compareOperators(List<Pair<ValueOperator, Object>> ops1,
-            List<Pair<ValueOperator, Object>> ops2) {
+    public boolean compareOperators(List<Pair<ValueOperator, Object>> ops1, List<Pair<ValueOperator, Object>> ops2) {
         if (ops1 == null && ops2 == null) {
             return true;
         }
@@ -1390,8 +1338,9 @@ public enum Observables implements IObservableService {
     }
 
     /**
-     * Make an observable from either a string, a IKimConcept or a IKimObservable. Use to easily
-     * obtain an observable from a k.IM code parameter value.
+     * Make an observable from either a string, a IKimConcept or a IKimObservable. Promote a concept
+     * or return an observable unaltered. Use to easily obtain an observable from a k.IM code
+     * parameter value.
      * 
      * @param g
      * @param monitor
@@ -1406,6 +1355,10 @@ public enum Observables implements IObservableService {
             ret = Observable.promote(c);
         } else if (g instanceof IKimObservable) {
             ret = declare((IKimObservable) g, monitor);
+        } else if (g instanceof IConcept) {
+            ret = Observable.promote((IConcept) g);
+        } else if (g instanceof IObservable) {
+            ret = (IObservable) g;
         }
         return ret;
     }
@@ -1432,12 +1385,12 @@ public enum Observables implements IObservableService {
      * @return
      */
     public IObservedConcept asObservedConcept(Object object) {
-    	if (object instanceof IObservedConcept) {
-    		return (IObservedConcept)object;
-    	}
-    	return new ObservedConcept(asObservable(object));
+        if (object instanceof IObservedConcept) {
+            return (IObservedConcept) object;
+        }
+        return new ObservedConcept(asObservable(object));
     }
-    
+
     /**
      * Convert any legitimate statement or object into an observable.
      * 
@@ -1445,19 +1398,19 @@ public enum Observables implements IObservableService {
      * @return
      */
     public IObservable asObservable(Object object) {
-		if (object instanceof IObservedConcept) {
-			return ((IObservedConcept) object).getObservable();
-		} else if (object instanceof IConcept) {
-			return Observable.promote((IConcept)object);
-		} else if (object instanceof IObservable) {
-			return (IObservable)object;
-		} else if (object instanceof IKimObservable) {
-			return declare((IKimObservable)object, Klab.INSTANCE.getRootMonitor());
-		} else if (object instanceof IKimConcept) {
-			return Observable.promote(Concepts.INSTANCE.declare((IKimConcept)object));
-		} else if (object instanceof String) {
-			return declare((String)object);
-		}
-		throw new KlabIllegalArgumentException("cannot interpret " + object + " as an observable");
-	}
+        if (object instanceof IObservedConcept) {
+            return ((IObservedConcept) object).getObservable();
+        } else if (object instanceof IConcept) {
+            return Observable.promote((IConcept) object);
+        } else if (object instanceof IObservable) {
+            return (IObservable) object;
+        } else if (object instanceof IKimObservable) {
+            return declare((IKimObservable) object, Klab.INSTANCE.getRootMonitor());
+        } else if (object instanceof IKimConcept) {
+            return Observable.promote(Concepts.INSTANCE.declare((IKimConcept) object));
+        } else if (object instanceof String) {
+            return declare((String) object);
+        }
+        throw new KlabIllegalArgumentException("cannot interpret " + object + " as an observable");
+    }
 }

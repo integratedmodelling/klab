@@ -53,9 +53,8 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionConstraint;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
-import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.ISessionState;
-import org.integratedmodelling.klab.api.runtime.monitoring.IInspector;
+import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
@@ -202,10 +201,10 @@ public class SessionState extends Parameters<String> implements ISessionState {
     public Future<IArtifact> submit(BiConsumer<ITaskIdentity, IArtifact> observationListener,
             BiConsumer<ITaskIdentity, Throwable> errorListener) {
 
-    	/*
-    	 * TODO allow the urn to be null, meaning "just create the predefined context".
-    	 */
-    	
+        /*
+         * TODO allow the urn to be null, meaning "just create the predefined context".
+         */
+
         final SessionActivity activity = new SessionActivity();
 
         activity.setUser(session.getParentIdentity(IUserIdentity.class).getUsername());
@@ -223,8 +222,8 @@ public class SessionState extends Parameters<String> implements ISessionState {
          */
         Observer observer = Observations.INSTANCE.makeROIObserver(scaleOfInterest.getName(), geometry,
                 new Metadata());
-        List<BiConsumer<ITaskIdentity, IArtifact>> oListeners = new ArrayList<>();
-        List<BiConsumer<ITaskIdentity, Throwable>> eListeners = new ArrayList<>();
+        List<BiConsumer<ITask<?>, IArtifact>> oListeners = new ArrayList<>();
+        List<BiConsumer<ITask<?>, Throwable>> eListeners = new ArrayList<>();
 
         oListeners.add((task, observation) -> {
 
@@ -293,7 +292,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
          * goes into executor; next one won't exec before this is finished. Only call the obs
          * listener at the beginning of the contextualization.
          */
-        List<BiConsumer<ITaskIdentity, IArtifact>> ctxListeners = new ArrayList<>(oListeners);
+        List<BiConsumer<ITask<?>, IArtifact>> ctxListeners = new ArrayList<>(oListeners);
         ctxListeners.add((tsk, obs) -> {
             if (obs == null && observationListener != null) {
                 observationListener.accept(tsk, obs);
@@ -301,8 +300,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
         });
 
         Future<IArtifact> task = new ObserveContextTask(this.session, observer, scenarios, ctxListeners,
-                eListeners,
-                executor, activity);
+                eListeners, executor, activity, true);
         try {
             this.scaleOfInterest.setShape(null);
             this.context.push((ISubject) task.get());
@@ -315,8 +313,8 @@ public class SessionState extends Parameters<String> implements ISessionState {
     }
 
     @Override
-    public Future<IArtifact> submit(String urn, BiConsumer<ITaskIdentity, IArtifact> observationListener,
-            BiConsumer<ITaskIdentity, Throwable> errorListener) {
+    public Future<IArtifact> submit(String urn, BiConsumer<ITask<?>, IArtifact> observationListener,
+            BiConsumer<ITask<?>, Throwable> errorListener) {
 
         final SessionActivity activity = new SessionActivity();
 
@@ -341,8 +339,8 @@ public class SessionState extends Parameters<String> implements ISessionState {
             activity.setParentActivityId(this.currentActivity.getActivityId());
         }
 
-        List<BiConsumer<ITaskIdentity, IArtifact>> oListeners = new ArrayList<>();
-        List<BiConsumer<ITaskIdentity, Throwable>> eListeners = new ArrayList<>();
+        List<BiConsumer<ITask<?>, IArtifact>> oListeners = new ArrayList<>();
+        List<BiConsumer<ITask<?>, Throwable>> eListeners = new ArrayList<>();
 
         oListeners.add((task, observation) -> {
 
@@ -416,7 +414,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
         if (resolvable instanceof Observer) {
             return new ObserveContextTask(this.session, (Observer) resolvable, scenarios, oListeners,
                     eListeners,
-                    executor, activity);
+                    executor, activity, true);
         }
 
         if (this.context.isEmpty() && !(resolvable instanceof IObserver)) {
@@ -438,7 +436,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
              * goes into executor; next one won't exec before this is finished. Only call the obs
              * listener at the beginning of the contextualization.
              */
-            List<BiConsumer<ITaskIdentity, IArtifact>> ctxListeners = new ArrayList<>(oListeners);
+            List<BiConsumer<ITask<?>, IArtifact>> ctxListeners = new ArrayList<>(oListeners);
             ctxListeners.add((tsk, obs) -> {
                 if (obs == null && observationListener != null) {
                     observationListener.accept(tsk, obs);
@@ -446,8 +444,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
             });
 
             Future<IArtifact> task = new ObserveContextTask(this.session, observer, scenarios, ctxListeners,
-                    eListeners,
-                    executor, activity);
+                    eListeners, executor, activity, true);
             try {
                 this.scaleOfInterest.setShape(null);
                 this.context.push((ISubject) task.get());
@@ -460,8 +457,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
          * Submit the actual resolvable
          */
         return new ObserveInContextTask((Subject) this.getCurrentContext(), urn, this.scenarios, oListeners,
-                eListeners,
-                this.executor, activity);
+                eListeners, this.executor, activity, true);
     }
 
     @Override
@@ -1209,12 +1205,24 @@ public class SessionState extends Parameters<String> implements ISessionState {
         return this.flowchart;
     }
 
+    /**
+     * TODO this must be automatically removed at the end of an action
+     * @param o
+     */
     public void whitelist(Object... o) {
         this.resolutionConstraints.add(ResolutionConstraint.whitelist(o));
     }
 
+    /**
+     * TODO this must be automatically removed at the end of an action
+     * @param o
+     */
     public void blacklist(Object... o) {
         this.resolutionConstraints.add(ResolutionConstraint.blacklist(o));
+    }
+    
+    public void resetConstraints() {
+        this.resolutionConstraints.clear();
     }
 
     public void setInspector(Inspector inspector) {
@@ -1224,6 +1232,12 @@ public class SessionState extends Parameters<String> implements ISessionState {
     @Override
     public Inspector getInspector() {
         return inspector;
+    }
+
+    public void resetInspector() {
+        if (inspector != null) {
+            inspector = null;
+        }
     }
 
 }

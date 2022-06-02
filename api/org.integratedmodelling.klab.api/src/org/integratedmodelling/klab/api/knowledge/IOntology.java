@@ -22,9 +22,11 @@ import java.util.Set;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
- * Ontologies are not first-class objects in k.LAB. All retrieval of concepts
- * should be done through INamespace.
- *
+ * While their API is public, available and curated, ontologies are not the
+ * first-class objects in k.LAB. All operations regarding concepts and reasoning
+ * should be done through INamespace and the observation API; direct use of
+ * ontologies is made only in the internal implementation.
+ * 
  * @author ferdinando.villa
  * @version $Id: $Id
  */

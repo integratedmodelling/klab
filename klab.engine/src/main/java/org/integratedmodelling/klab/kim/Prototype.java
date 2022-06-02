@@ -1,9 +1,6 @@
 package org.integratedmodelling.klab.kim;
 
-import java.util.Collection;
-
 import org.integratedmodelling.kdl.api.IKdlActuator;
-import org.integratedmodelling.kdl.api.IKdlAnnotation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.common.Geometry;
@@ -24,7 +21,7 @@ public class Prototype extends org.integratedmodelling.klab.common.Prototype {
 
 	/**
 	 * Create a prototype from an actuator, which is expected to be a valid
-	 * parameter and not checked.
+	 * parameter and not checked.	
 	 * 
 	 * @param actuator
 	 * @param namespace
@@ -35,6 +32,7 @@ public class Prototype extends org.integratedmodelling.klab.common.Prototype {
 		this.type = IArtifact.Type.valueOf(actuator.getType().name());
 		this.contextualizer = actuator.isExport();
 		this.filter = actuator.isFilter();
+		this.isConst = actuator.isConst();
 
 		if (actuator.getDescription() != null) {
 			this.description = StringUtil.pack(actuator.getDescription());

@@ -41,7 +41,6 @@ import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.validation.Issue;
-import org.integratedmodelling.kactors.kactors.Metadata;
 import org.integratedmodelling.kim.api.IConceptDescriptor;
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimConcept;
@@ -75,6 +74,9 @@ import org.integratedmodelling.kim.utils.ParseHelper;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.kim.validation.KimValidator;
 import org.integratedmodelling.klab.api.data.CRUDOperation;
+import org.integratedmodelling.klab.api.data.TemplateValue;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.common.CompileInfo;
 import org.integratedmodelling.klab.common.SemanticType;
@@ -83,7 +85,6 @@ import org.integratedmodelling.klab.rest.CompileNotificationReference;
 import org.integratedmodelling.klab.rest.NamespaceCompilationResult;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Pair;
-import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Path;
 import org.integratedmodelling.klab.utils.Range;
 import org.integratedmodelling.klab.utils.StringUtil;
@@ -520,7 +521,7 @@ public enum Kim {
         workspaces.put("worldview", this.worldview = new KimWorkspace("worldview"));
         workspaces.put("workspace", this.userWorkspace = new KimWorkspace("workspace"));
     }
-    
+
     public KimConcept declareConcept(ConceptDeclaration declaration) {
         return declaration == null ? null : KimConcept.normalize(declaration, null, true);
     }
@@ -635,6 +636,8 @@ public enum Kim {
                 // exclusive x-x range means != x
                 return new Range(op.doubleValue(), op.doubleValue(), true, true);
             }
+        } else if (value.getTemplatevar() != null) {
+            return new TemplateValue(value.getTemplatevar());
         }
 
         return null;
@@ -1281,7 +1284,7 @@ public enum Kim {
             if (namespaceRegistry.containsKey(name)) {
                 return (KimNamespace) namespaceRegistry.get(name);
             }
-
+            
             KimProject project = getProjectForResource(namespace.eResource());
             if (project != null) {
                 // it will register itself
@@ -2134,6 +2137,23 @@ public enum Kim {
             return sbuf.toString();
         }
         return null;
+    }
+
+    /**
+     * Encode the value so that it can be understood in k.IM code.
+     * 
+     * @param value
+     * @return
+     */
+    public String encodeValue(Object value) {
+        if (value instanceof String) {
+            return "'" + ((String) value).replace("'", "\\'") + "'";
+        } else if (value instanceof IConcept) {
+            return ((IConcept)value).getDefinition();
+        } else if (value instanceof Range) {
+        	return ((Range)value).getKimCode();
+        }
+        return value == null ? "unknown" : value.toString();
     }
 
 }

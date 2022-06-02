@@ -175,7 +175,7 @@ public class Coverage extends Scale implements ICoverage {
     }
 
     @Override
-    public Coverage merge(ITopologicallyComparable<?> other, LogicalConnector how) {
+    public Coverage merge(ITopologicallyComparable<?> other, LogicalConnector how, MergingOption...options) {
 
         if (!(other instanceof Scale)) {
             throw new IllegalArgumentException("a coverage can only merge another scale");

@@ -329,65 +329,7 @@ public interface IArtifact extends IProvenance.Node, Iterable<IArtifact> {
 	 * @return k.IM annotations in the lineage of this artifact.
 	 */
 	Collection<IAnnotation> getAnnotations();
-
-	/**
-	 * <p>
-	 * getConsumer.
-	 * </p>
-	 *
-	 * @return a {@link org.integratedmodelling.klab.api.provenance.IAgent} object.
-	 */
-	IAgent getConsumer();
-
-	/**
-	 * <p>
-	 * getOwner.
-	 * </p>
-	 *
-	 * @return a {@link org.integratedmodelling.klab.api.provenance.IAgent} object.
-	 */
-	IAgent getOwner();
-
-	/**
-	 * The activity (process) that generated the artifact.
-	 * 
-	 * @return
-	 */
-	IActivity getGenerator();
-
-	/**
-	 * Antecedents are the sources of a 'derivedBy' relationship.
-	 * 
-	 * <p>
-	 * getAntecedents.
-	 * </p>
-	 *
-	 * @return a {@link java.util.Collection} object.
-	 */
-	Collection<IArtifact> getAntecedents();
-
-	/**
-	 * Consequents are the targets of a 'derivedBy' relationship.
-	 * 
-	 * <p>
-	 * getConsequents.
-	 * </p>
-	 *
-	 * @return a {@link java.util.Collection} object.
-	 */
-	Collection<IArtifact> getConsequents();
-
-	/**
-	 * Trace the nearest artifact of the passed concept (or with the passed
-	 * role/trait) up the provenance chain.
-	 *
-	 * @param concept a {@link org.integratedmodelling.klab.api.knowledge.IConcept}
-	 *                object.
-	 * @return a {@link org.integratedmodelling.klab.api.provenance.IArtifact}
-	 *         object.
-	 */
-	IArtifact trace(IConcept concept);
-
+	
 	/**
 	 * Collect all artifacts of the passed concept (or with the passed role/trait)
 	 * up the provenance chain.

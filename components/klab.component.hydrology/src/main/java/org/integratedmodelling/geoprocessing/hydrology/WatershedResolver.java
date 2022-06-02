@@ -6,9 +6,10 @@ import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
-public class WatershedResolver implements IResolver<ISubject>, IExpression {
+public class WatershedResolver extends AbstractContextualizer implements IResolver<ISubject>, IExpression {
 
 	@Override
 	public Type getType() {

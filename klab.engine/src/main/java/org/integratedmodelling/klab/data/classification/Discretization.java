@@ -123,9 +123,9 @@ public class Discretization implements IDataKey {
 	}
 
 	@Override
-	public void include(Object value) {
+	public Object include(Object value) {
 		// TODO Auto-generated method stub
-		
+		return value;
 	}
 
 	@Override

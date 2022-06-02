@@ -269,7 +269,7 @@ public class Classification implements IClassification {
 	}
 
 	@Override
-	public IConcept classify(Object object, IContextualizationScope context) {
+	public IConcept classify(Object object, IContextualizationScope scope) {
 
 		if (object instanceof Number && Double.isNaN(((Number) object).doubleValue())) {
 			object = null;
@@ -280,7 +280,7 @@ public class Classification implements IClassification {
 		}
 
 		for (Pair<IConcept, IClassifier> p : this.classifiers) {
-			if (p.getSecond().classify(object, context)) {
+			if (p.getSecond().classify(object, scope)) {
 				return p.getFirst();
 			}
 		}
@@ -423,8 +423,13 @@ public class Classification implements IClassification {
 	}
 
 	@Override
-	public void include(Object value) {
+	public Object include(Object value) {
 
+	    if (!(value instanceof IConcept)) {
+	        // try classifying the value to a concept
+	        value = classify(value, null);
+	    }
+	    
 		if (!(value instanceof IConcept)) {
 			throw new IllegalArgumentException("Invalid value for a classification: " + value);
 		}
@@ -433,6 +438,7 @@ public class Classification implements IClassification {
 			this.conceptIndexes = null;
 			this.definitionSet.add(((IConcept)value).getDefinition());
 		}
+		return value;
 	}
 
 	Set<String> definitionSet = null;

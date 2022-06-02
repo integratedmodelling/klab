@@ -1,12 +1,20 @@
 package org.integratedmodelling.klab.common;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.common.Geometry.DimensionImpl;
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 
 /**
- * Builder for geometries. Just time and space for now (numerosity later).
+ * Builder for geometries to ease defining time and space extents in forms that
+ * can be marshalled through the API and converted to scales. For now missing
+ * the object features and defining only space and time for the main extent.
  * 
  * @author ferdinando.villa
  *
@@ -36,19 +44,47 @@ public class GeometryBuilder {
 			return this;
 		}
 
-		public TimeBuilder start(ITimeInstant start) {
+		public TimeBuilder covering(ITimeInstant start, ITimeInstant end) {
 			time.getParameters().put(Geometry.PARAMETER_TIME_COVERAGE_START, start.getMilliseconds());
+			time.getParameters().put(Geometry.PARAMETER_TIME_COVERAGE_END, end.getMilliseconds());
+			return this;
+		}
+
+		public TimeBuilder covering(long startMs, long endMs) {
+			time.getParameters().put(Geometry.PARAMETER_TIME_COVERAGE_START, startMs);
+			time.getParameters().put(Geometry.PARAMETER_TIME_COVERAGE_END, endMs);
+			return this;
+		}
+
+		public TimeBuilder start(ITimeInstant start) {
+			time.getParameters().put(Geometry.PARAMETER_TIME_START, start.getMilliseconds());
+			return this;
+		}
+
+		public TimeBuilder start(long startMs) {
+			time.getParameters().put(Geometry.PARAMETER_TIME_START, startMs);
 			return this;
 		}
 
 		public TimeBuilder end(ITimeInstant start) {
-			time.getParameters().put(Geometry.PARAMETER_TIME_COVERAGE_END, start.getMilliseconds());
+			time.getParameters().put(Geometry.PARAMETER_TIME_END, start.getMilliseconds());
+			return this;
+		}
+
+		public TimeBuilder end(long endMs) {
+			time.getParameters().put(Geometry.PARAMETER_TIME_END, endMs);
 			return this;
 		}
 
 		public TimeBuilder resolution(ITime.Resolution resolution) {
 			time.getParameters().put(Geometry.PARAMETER_TIME_SCOPE, resolution.getMultiplier());
 			time.getParameters().put(Geometry.PARAMETER_TIME_SCOPE_UNIT, resolution.getType().name().toLowerCase());
+			return this;
+		}
+
+		public TimeBuilder resolution(ITime.Resolution.Type resolution, double multiplier) {
+			time.getParameters().put(Geometry.PARAMETER_TIME_SCOPE, multiplier);
+			time.getParameters().put(Geometry.PARAMETER_TIME_SCOPE_UNIT, resolution.name().toLowerCase());
 			return this;
 		}
 
@@ -99,6 +135,29 @@ public class GeometryBuilder {
 			return this;
 		}
 
+		/**
+		 * Bounding box as a double[]{minX, maxX, minY, maxY}; lat/lon use lon as x axis
+		 */
+		public SpaceBuilder boundingBox(double x1, double x2, double y1, double y2) {
+			space.getParameters().put(Geometry.PARAMETER_SPACE_BOUNDINGBOX, new double[] { x1, x2, y1, y2 });
+			return this;
+		}
+
+		public SpaceBuilder shape(String wktb) {
+			space.getParameters().put(Geometry.PARAMETER_SPACE_SHAPE, Geometry.encodeForSerialization(wktb));
+			return this;
+		}
+
+		public SpaceBuilder urn(String urn) {
+			space.getParameters().put(Geometry.PARAMETER_SPACE_RESOURCE_URN, Geometry.encodeForSerialization(urn));
+			return this;
+		}
+
+		public SpaceBuilder resolution(String gridResolution) {
+			space.getParameters().put(Geometry.PARAMETER_SPACE_GRIDRESOLUTION, gridResolution);
+			return this;
+		}
+
 		public GeometryBuilder build() {
 			return GeometryBuilder.this;
 		}
@@ -107,14 +166,29 @@ public class GeometryBuilder {
 	/**
 	 * Create a spatial region from a resource URN (specifying a polygon). The
 	 * string may also specify a WKT polygon using the k.LAB conventions (preceded
-	 * by the EPSG: projection). The resulting 
+	 * by the EPSG: projection). The resulting
 	 *
 	 * @param urn
 	 * @param resolution a string in the format "1 km"
 	 * @return
 	 */
 	public GeometryBuilder region(String urn) {
-		return this;
+		if (ISpace.isWKT(urn)) {
+			return space().shape(urn).size(1).build();
+		}
+		return space().urn(urn).size(1).build();
+	}
+
+	/**
+	 * Create a spatial polygon of multiplicity 1 from a lat/lon bounding box and a
+	 * resolution. The box is "straight" with the X axis specifying
+	 * <em>longitude</em>.
+	 *
+	 * @param resolution a string in the format "1 km"
+	 * @return
+	 */
+	public GeometryBuilder grid(double x1, double x2, double y1, double y2) {
+		return space().regular().boundingBox(x1, x2, y1, y2).build();
 	}
 
 	/**
@@ -127,7 +201,10 @@ public class GeometryBuilder {
 	 * @return
 	 */
 	public GeometryBuilder grid(String urn, String resolution) {
-		return this;
+		if (ISpace.isWKT(urn)) {
+			return space().regular().resolution(resolution).shape(urn).build();
+		}
+		return space().regular().resolution(resolution).urn(urn).build();
 	}
 
 	/**
@@ -138,8 +215,7 @@ public class GeometryBuilder {
 	 * @return
 	 */
 	public GeometryBuilder grid(double x1, double x2, double y1, double y2, String resolution) {
-		SpaceBuilder builder = space().regular();
-		return builder.build();
+		return space().regular().resolution(resolution).boundingBox(x1, x2, y1, y2).build();
 	}
 
 	/**
@@ -150,8 +226,21 @@ public class GeometryBuilder {
 	 * @return
 	 */
 	public GeometryBuilder years(int... years) {
-		TimeBuilder builder = time();
-		return builder.build();
+		if (years != null) {
+			if (years.length == 1) {
+				return time().start(startOfYear(years[0])).end(startOfYear(years[0] + 1)).size(1).build();
+			} else if (years.length == 2) {
+				return time().start(startOfYear(years[0])).end(startOfYear(years[1])).size((long) (years[1] - years[0]))
+						.resolution(ITime.Resolution.Type.YEAR, 1).build();
+			}
+			// TODO irregular coverage?
+		}
+		throw new KlabIllegalArgumentException("wrong year parameters passed to TimeBuilder.years");
+	}
+
+	private long startOfYear(int i) {
+		ZonedDateTime date = LocalDateTime.of(i, 1, 1, 0, 0).atZone(ZoneOffset.UTC);
+		return date.toInstant().toEpochMilli();
 	}
 
 	/**

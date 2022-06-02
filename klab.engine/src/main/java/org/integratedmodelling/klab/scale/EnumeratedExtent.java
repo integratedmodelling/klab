@@ -27,6 +27,7 @@ import org.integratedmodelling.klab.api.observations.scale.IEnumeratedExtent;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
+import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable.MergingOption;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -87,7 +88,7 @@ public class EnumeratedExtent extends Extent implements IEnumeratedExtent {
     }
 
     @Override
-    public IExtent merge(IExtent extent) {
+    public IExtent mergeContext(IExtent extent) {
         if (!(extent instanceof EnumeratedExtent)) {
             throw new KlabIllegalArgumentException(
                     "cannot merge an enumerated extent with a non-enumerated one");
@@ -96,8 +97,7 @@ public class EnumeratedExtent extends Extent implements IEnumeratedExtent {
         return new EnumeratedExtent(this, newx);
     }
 
-    @Override
-    public IExtent adopt(IExtent extent, IMonitor monitor) {
+    private IExtent adopt(IExtent extent, IMonitor monitor) {
         if (!(extent instanceof EnumeratedExtent)) {
             throw new KlabIllegalArgumentException(
                     "cannot merge an enumerated extent with a non-enumerated one");
@@ -158,13 +158,13 @@ public class EnumeratedExtent extends Extent implements IEnumeratedExtent {
     }
 
     @Override
-    public IExtent merge(ITopologicallyComparable<?> other, LogicalConnector how) {
+    public IExtent merge(ITopologicallyComparable<?> other, LogicalConnector how, MergingOption...options) {
 
         switch(how.value) {
         case LogicalConnector._UNION:
             return adopt((IExtent) other, Klab.INSTANCE.getRootMonitor());
         case LogicalConnector._INTERSECTION:
-            return merge((IExtent) other);
+            return mergeContext((IExtent) other);
         default:
             break;
         }
@@ -326,7 +326,7 @@ public class EnumeratedExtent extends Extent implements IEnumeratedExtent {
 
     @Override
     protected IExtent contextualizeTo(IExtent other, IAnnotation constraint) {
-        return null;
+        return this;
     }
 
     /**

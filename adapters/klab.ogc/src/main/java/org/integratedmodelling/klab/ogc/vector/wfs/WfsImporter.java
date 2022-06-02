@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.ogc.vector.wfs;
 
 import java.io.File;
+import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.ogc.WfsAdapter;
+import org.integratedmodelling.klab.ogc.vector.files.VectorImporter;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Triple;
 
@@ -154,6 +156,17 @@ public class WfsImporter implements IResourceImporter {
 	public boolean acceptsMultiple() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public boolean write(Writer writer, IObservation observation, ILocator locator, IMonitor monitor) {
+		try {
+			VectorImporter importer = new VectorImporter();
+			importer.exportGeoJSON(observation, locator, writer, monitor);
+		} catch (Throwable t) {
+			return false;
+		}
+		return true;
 	}
 
 }

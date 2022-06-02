@@ -30,6 +30,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.geospace.processing.ContributingCell;
+import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
@@ -38,7 +39,7 @@ import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Utils;
 import org.integratedmodelling.random.adapters.RandomAdapter;
 
-public class RandomProcessResolver implements IResolver<IProcess>, IExpression {
+public class RandomProcessResolver extends AbstractContextualizer implements IResolver<IProcess>, IExpression {
 
     private static RandomAdapter adapter = new RandomAdapter();
 

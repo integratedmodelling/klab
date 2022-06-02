@@ -21,11 +21,11 @@ import org.integratedmodelling.klab.stats.api.models.StatsFindPageRequest;
 import org.integratedmodelling.klab.stats.api.models.StatsFindPageResponse;
 import org.integratedmodelling.klab.stats.api.models.StatsInsertRequest;
 import org.integratedmodelling.klab.stats.services.StatsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.JavaType;
@@ -34,6 +34,8 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 
 @RestController
 public class StatsController {
+    
+    private static final Logger logger = LoggerFactory.getLogger(StatsController.class);
 	
 	@Autowired
 	StatsService service;
@@ -50,7 +52,9 @@ public class StatsController {
         Map<String, Object> map = new HashMap<>();
         while(parameterNames.hasMoreElements()) {
             String paramName = parameterNames.nextElement();
-            map.put(paramName, request.getParameter(paramName));
+            String paramValue = request.getParameter(paramName);
+            logger.info("Stats POST -> " + paramName + ": " + (paramValue != null ? paramValue.substring(paramValue.lastIndexOf(".") + 1) : "nothing"));
+            map.put(paramName, paramValue);
         }
 
 		InputStream body = request.getInputStream();
@@ -69,7 +73,6 @@ public class StatsController {
 				.constructParametricType(StatsInsertRequest.class, factory.constructFromCanonical(map.get(API.STATS.PARAMETERS.TYPE).toString()));
 		
 		mapper.writeValueAsString(map);
-		
 		return service.insertRequest(mapper.readValue(mapper.writeValueAsString(map), typeC));
 		
 	}
@@ -89,7 +92,7 @@ public class StatsController {
 	            .getTypeFactory()
 	            .constructParametricType(StatsFindPageRequest.class, factory.constructFromCanonical(map.get(API.STATS.PARAMETERS.TYPE)));
 	    
-	    
+	    logger.info("Stats GET -> " + typeC.getTypeName());
 	    return service.findRequest(mapper.readValue(mapper.writeValueAsString(map) , typeC));
 	    
 	}

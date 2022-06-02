@@ -83,9 +83,10 @@ public class RemoteEngine extends Engine {
                         try {
                             Logging.INSTANCE.info("Killing session " + sesh.getId());
                             sesh.close();
-                            publisher.logout(null, sesh);
+                            publisher.logout(null, sesh, true);
                         } catch (IOException e) {
                             // I do not want to throw anything because the thread would die
+                            publisher.logoutFailed(sesh.getUsername(), e.getMessage());
                             Logging.INSTANCE.info("Error closing inactive session or removing dead weight.");
                         }
                     }
@@ -107,6 +108,10 @@ public class RemoteEngine extends Engine {
 
     public void setDnsService(ConsulDnsService dnsService) {
         this.dnsService = dnsService;
+    }
+    
+    public ConsulDnsService getDnsService() {
+        return this.dnsService;
     }
 
     public AgentServiceCheck getCheck() {

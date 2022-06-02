@@ -7,6 +7,9 @@ import org.eclipse.ui.internal.e4.compatibility.ModeledPageLayout;
 import org.integratedmodelling.klab.ide.views.DocumentationEditor;
 import org.integratedmodelling.klab.ide.views.ReferencesEditor;
 import org.integratedmodelling.klab.ide.views.ResourceEditor;
+import org.integratedmodelling.klab.ide.views.ResourcesView;
+import org.integratedmodelling.klab.ide.views.ScenarioView;
+import org.integratedmodelling.klab.ide.views.SearchView;
 
 public class KlabPerspective implements IPerspectiveFactory {
 
@@ -34,8 +37,9 @@ public class KlabPerspective implements IPerspectiveFactory {
 		{
 			IFolderLayout folderLayout = layout.createFolder("folder", IPageLayout.BOTTOM, 0.73f,
 					IPageLayout.ID_EDITOR_AREA);
-			folderLayout.addView("org.integratedmodelling.klab.ide.views.SearchView");
-			folderLayout.addView("org.integratedmodelling.klab.ide.views.ResourcesView");
+			folderLayout.addView(SearchView.ID);
+			folderLayout.addView(ResourcesView.ID);
+            folderLayout.addView(ScenarioView.ID);
 		}
 		layout.addView("org.integratedmodelling.klab.ide.views.ContextView", IPageLayout.BOTTOM, 0.73f,
 				"org.integratedmodelling.thinkcap.ide.navigator");

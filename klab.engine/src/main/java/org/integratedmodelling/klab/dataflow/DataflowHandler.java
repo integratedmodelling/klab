@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
@@ -16,18 +15,19 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
-import org.integratedmodelling.klab.dataflow.Flowchart.Element;
 import org.integratedmodelling.klab.engine.runtime.SessionState;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.Observable;
-import org.integratedmodelling.klab.rest.DataflowReference;
+import org.integratedmodelling.klab.rest.ContextualizationNotification;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
+
+import static org.integratedmodelling.klab.api.API.PUBLIC.Export.DATAFLOW;
 
 /**
  * The root contextualization scope ultimately handles a dataflow that can be incrementally defined.
@@ -106,12 +106,12 @@ public class DataflowHandler extends Parameters<String> {
             root.actuators.add(dataflow);
         }
     }
-
+    
     public void notifyDataflowChanges(IRuntimeScope scope) {
 
         String code = getKdl();
         if (code.length() > dataflowCodeLength) {
-            DataflowReference dataflow = new DataflowReference(rootContextId, code, getElkGraph(scope));
+            ContextualizationNotification dataflow = new ContextualizationNotification(rootContextId, ContextualizationNotification.Target.DATAFLOW);
             scope.getSession().getMonitor().send(Message.create(scope.getSession().getId(),
                     IMessage.MessageClass.TaskLifecycle, IMessage.Type.DataflowCompiled, dataflow));
             this.dataflowCodeLength = code.length();
@@ -215,7 +215,7 @@ public class DataflowHandler extends Parameters<String> {
     public String getElkGraph(IRuntimeScope scope) {
         Flowchart flowchart = getFlowchart(scope);
         if (flowchart != null) {
-            return flowchart.getJsonLayout();
+            return flowchart.getJsonLayout(DATAFLOW);
         }
         return null;
     }

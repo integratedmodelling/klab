@@ -15,7 +15,7 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
-public class ClassifyingStateResolver implements IStateResolver, IProcessor, IExpression {
+public class ClassifyingStateResolver extends AbstractContextualizer implements IStateResolver, IProcessor, IExpression {
 
 	static final public String FUNCTION_ID = "klab.runtime.classify";
 

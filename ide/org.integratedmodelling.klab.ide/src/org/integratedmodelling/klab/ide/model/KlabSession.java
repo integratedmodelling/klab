@@ -21,6 +21,7 @@ import org.integratedmodelling.kactors.api.IKActorsBehavior.Platform;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.API;
+import org.integratedmodelling.klab.api.API.PUBLIC.Export;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessage.Type;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
@@ -43,7 +44,7 @@ import org.integratedmodelling.klab.ide.views.ResourcesView;
 import org.integratedmodelling.klab.ide.views.SearchView;
 import org.integratedmodelling.klab.rest.AuthorityQueryRequest;
 import org.integratedmodelling.klab.rest.AuthorityQueryResponse;
-import org.integratedmodelling.klab.rest.DataflowReference;
+import org.integratedmodelling.klab.rest.ContextualizationNotification;
 import org.integratedmodelling.klab.rest.EngineEvent;
 import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.rest.LoadApplicationRequest;
@@ -161,7 +162,7 @@ public class KlabSession extends KlabPeer {
 			}
 
 			@Override
-			public void onDataflowChange(ObservationReference rootContext, DataflowReference dataflow) {
+			public void onDataflowChange(ObservationReference rootContext, ContextualizationNotification dataflow) {
 				send(IMessage.MessageClass.UserInterface, IMessage.Type.RuntimeEvent,
 						new RuntimeEvent(rootContext, dataflow));
 			}
@@ -538,7 +539,7 @@ public class KlabSession extends KlabPeer {
 	}
 
 	@MessageHandler
-	public void handleDataflow(IMessage message, DataflowReference dataflow) {
+	public void handleDataflow(IMessage message, ContextualizationNotification dataflow) {
 		sessionMonitor.register(dataflow);
 		send(message);
 	}
@@ -552,6 +553,7 @@ public class KlabSession extends KlabPeer {
 		}
 //        Eclipse.INSTANCE.refreshOpenEditors();
 		KlabNavigator.refresh();
+        send(IMessage.MessageClass.UserInterface, IMessage.Type.UserProjectModified, response);
 	}
 
 	public TicketManager getTicketManager() {
@@ -577,10 +579,9 @@ public class KlabSession extends KlabPeer {
 	}
 
 	public String getDataflow(String id) {
-		DataflowReference dataflow = Activator.client().with(getIdentity()).get(
-				API.ENGINE.OBSERVATION.RETRIEVE_DATAFLOW.replace(API.ENGINE.OBSERVATION.P_CONTEXT, id) + "?format=kdl",
-				DataflowReference.class);
-		return dataflow.getKdlCode();
+		return Activator.client().with(getIdentity()).accept("text/plain")
+				.get(API.PUBLIC.EXPORT_DATA.replace(API.PUBLIC.P_OBSERVATION, id)
+						.replace(API.PUBLIC.P_EXPORT, Export.DATAFLOW.name().toLowerCase()), String.class);
 	}
 
 }

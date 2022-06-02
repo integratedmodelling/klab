@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.IKimSymbolDefinition;
+import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.model.INamespace;
@@ -17,6 +19,7 @@ import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.model.KimObject;
+import org.integratedmodelling.klab.utils.Parameters;
 
 public class TableViewModel extends KimObject implements IViewModel {
 
@@ -25,6 +28,7 @@ public class TableViewModel extends KimObject implements IViewModel {
 	private String name;
 	private INamespace namespace;
 	private TableCompiler spreadsheet;
+    private IParameters<String> variables;
 
 	public TableViewModel(Object definition, IKimSymbolDefinition statement, INamespace namespace, IMonitor monitor) {
 		super(statement);
@@ -35,8 +39,9 @@ public class TableViewModel extends KimObject implements IViewModel {
 		if (!(definition instanceof Map)) {
 			throw new KlabValidationException("definition is not compatible with a table view");
 		}
-		this.definition = (Map<?, ?>) definition;
-		this.spreadsheet = new TableCompiler(this.name, this.definition, null, namespace, null, monitor);
+		this.variables = Annotations.INSTANCE.collectVariables(this.getAnnotations());
+        this.definition = (Map<?, ?>) definition;
+		this.spreadsheet = new TableCompiler(this.name, new Parameters(this.definition).with(variables), null, namespace, null, monitor);
 	}
 
 	@Override

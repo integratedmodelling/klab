@@ -191,6 +191,8 @@ public interface IMetadata extends IParameters<String> {
 
 	public static String IM_GEOGRAPHIC_AREA = "im:geographic-area";
 
+	public static String IM_OBSERVATION_COST = "im:observation-cost";
+	
 	/**
 	 * ISO639-2 http://www.w3.org/TR/NOTE-datetime RFC1766
 	 * http://www.ietf.org/rfc/rfc1766.txt

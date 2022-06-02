@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
+import org.integratedmodelling.klab.components.runtime.observations.DelegatingArtifact;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.components.time.extents.TemporalExtension;
@@ -32,6 +33,7 @@ import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.rest.ObservationChange;
+import org.integratedmodelling.klab.rest.StateSummary;
 import org.integratedmodelling.klab.scale.Scale;
 import org.locationtech.jts.index.strtree.STRtree;
 
@@ -42,7 +44,7 @@ import org.locationtech.jts.index.strtree.STRtree;
  * @author Ferd
  *
  */
-public class MergingState extends State {
+public class MergingState extends State implements DelegatingArtifact {
 
     IState delegate;
     STRtree spatialIndex;
@@ -246,7 +248,7 @@ public class MergingState extends State {
 
         return aggregate ? aggregator.aggregate() : null;
     }
-
+    
     @Override
     public long[] getUpdateTimestamps() {
         if (timeExtension != null) {
@@ -262,5 +264,23 @@ public class MergingState extends State {
     public long set(ILocator index, Object value) {
         throw new KlabIllegalStateException("Merging states are read-only");
     }
+    
+	public StateSummary getOverallSummary() {
+		StateSummary ret = null;
+		for (IState state : states) {
+			if (ret == null && state instanceof State) {
+				ret = ((State)state).getOverallSummary();
+			} else {
+				ret.merge(((State)state).getOverallSummary());
+			}
+		}
+		return ret;
+	}
+
+	@Override
+	public IArtifact getDelegate() {
+		return delegate;
+	}
+
 
 }

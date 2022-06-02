@@ -81,11 +81,12 @@ public interface IDataKey {
 
 	/**
 	 * Ensure that the key includes the passed value, which should be compatible in
-	 * type with those already present.
+	 * type with those already present. If the value is compatible with the key type,
+	 * translate it to the state type and return it.
 	 * 
 	 * @param value
 	 */
-	void include(Object value);
+	Object include(Object value);
 
 	/**
 	 * The datakey may be a proxy for a codelist, which is returned here.

@@ -9,119 +9,128 @@ import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.utils.Pair;
 
 /**
- * A time line that can be broken in as many segments as needed based on
- * incoming transitions, without ever breaking the continuity of the overall
- * interval.
+ * A time line that can be broken in as many segments as needed based on incoming transitions,
+ * without ever breaking the continuity of the overall interval.
  * 
- * TODO this can be useful in different context and its generalized form belongs
- * in the API package.
+ * TODO this can be useful in different context and its generalized form belongs in the API package.
  * 
  * @author Ferd
  *
  */
 public class TemporalExtension {
 
-	private final long start;
-	private final long end;
-	private NavigableSet<Long> extension = new TreeSet<>();
+    private final long start;
+    private final long end;
+    private NavigableSet<Long> extension = new TreeSet<>();
 
-	public TemporalExtension(ITime overallTime) {
-		this.start = overallTime.getStart().getMilliseconds();
-		this.end = overallTime.getEnd().getMilliseconds();
-		extension.add(this.start);
-		extension.add(this.end);
-	}
-	
-	TemporalExtension(TemporalExtension other) {
-		this.start = other.start;
-		this.end = other.end;
-		this.extension.addAll(other.extension);
-	}
+    public TemporalExtension(ITime overallTime) {
+        this.start = overallTime.getStart().getMilliseconds();
+        this.end = overallTime.getEnd().getMilliseconds();
+        extension.add(this.start);
+        extension.add(this.end);
+    }
 
-	/**
-	 * Add a transition and redefine the size. Return true if the transition has
-	 * made any difference.
-	 * 
-	 * @param transition
-	 * @return
-	 */
-	public boolean add(ITime transition) {
+    TemporalExtension(TemporalExtension other) {
+        this.start = other.start;
+        this.end = other.end;
+        this.extension.addAll(other.extension);
+    }
 
-		if (transition.getStart().getMilliseconds() < this.start) {
-			throw new KlabIllegalArgumentException("cannot add time extension before overall start time");
-		}
-		if (transition.getEnd().getMilliseconds() > this.end) {
-			throw new KlabIllegalArgumentException("cannot add time extension after overall end time");
-		}
+    /**
+     * Add a transition and redefine the size. Return true if the transition has made any
+     * difference.
+     * 
+     * @param transition
+     * @return
+     */
+    public boolean add(ITime transition) {
 
-		boolean as = extension.add(transition.getStart().getMilliseconds());
-		boolean ae = extension.add(transition.getEnd().getMilliseconds());
+        if (transition.getStart().getMilliseconds() < this.start) {
+            throw new KlabIllegalArgumentException("cannot add time extension before overall start time");
+        }
+        if (transition.getEnd().getMilliseconds() > this.end) {
+            throw new KlabIllegalArgumentException("cannot add time extension after overall end time");
+        }
 
-		return as || ae;
-	}
+        boolean as = extension.add(transition.getStart().getMilliseconds());
+        boolean ae = extension.add(transition.getEnd().getMilliseconds());
 
-	public int size() {
-		return extension.size() - 1;
-	}
+        return as || ae;
+    }
 
-	public Pair<Long, Long> getExtension(int n) {
-		Iterator<Long> it = extension.iterator();
-		long start = it.next();
-		long end = it.next();
-		for (int i = 0; i < n; i++) {
-			start = end;
-			end = it.next();
-		}
-		return new Pair<>(start, end);
-	}
+    public int size() {
+        return extension.size() - 1;
+    }
 
-	public static void main(String[] args) {
+    public Pair<Long, Long> getExtension(int n) {
+        Iterator<Long> it = extension.iterator();
+        long start = it.next();
+        long end = it.next();
+        for (int i = 0; i < n; i++) {
+            start = end;
+            end = it.next();
+        }
+        return new Pair<>(start, end);
+    }
 
-		TemporalExtension te = new TemporalExtension(Time.create(0l, 1000l));
+    public static void main(String[] args) {
 
-		boolean shouldBeTrue = te.add(Time.create(100l, 150l));
-		boolean shouldBeFalse = te.add(Time.create(100l, 150l));
-		shouldBeTrue = te.add(Time.create(150l, 200l));
+        TemporalExtension te = new TemporalExtension(Time.create(0l, 1000l));
 
-		for (int i = 0; i < te.size(); i++) {
-			System.out.println(i + ": " + te.getExtension(i));
-		}
+        boolean shouldBeTrue = te.add(Time.create(100l, 150l));
+        boolean shouldBeFalse = te.add(Time.create(100l, 150l));
+        shouldBeTrue = te.add(Time.create(150l, 200l));
 
-		System.out.println(te.at(175));
+        for (int i = 0; i < te.size(); i++) {
+            System.out.println(i + ": " + te.getExtension(i));
+        }
 
-	}
+        System.out.println(te.at(175));
 
-	public Time at(long milliseconds) {
-//        if (milliseconds == this.end) {
-//            milliseconds --;
-//        }
-		long start = extension.floor(milliseconds);
-		Long end = extension.ceiling(start + 1);
-		if (end == null) {
-		    throw new KlabIllegalArgumentException("Invalid timestamp");
-		}
-		int i = 0;
-		Iterator<Long> it = extension.iterator();
-		while (it.hasNext()) {
-			if (it.next() == start) {
-				break;
-			}
-			i++;
-		}
-		return Time.create(start, end).withLocatedTimeslice(i);
-	}
+    }
 
-	public long[] getTimestamps() {
-		long[] ret = new long[extension.size()];
-		int i = 0;
-		for (Long l : extension) {
-			ret[i++] = l;
-		}
-		return ret;
-	}
+    public Time at(long milliseconds) {
+        // if (milliseconds == this.end) {
+        // milliseconds --;
+        // }
+        long start = extension.floor(milliseconds);
+        Long end = extension.ceiling(start + 1);
+        if (end == null) {
+            end = extension.ceiling(start);
+        }
+        if (end == null) {
+            throw new KlabIllegalArgumentException("Invalid timestamp");
+        }
+        int i = 0;
+        Iterator<Long> it = extension.iterator();
+        while(it.hasNext()) {
+            if (it.next() == start) {
+                break;
+            }
+            i++;
+        }
+        return Time.create(start, end).withLocatedTimeslice(i);
+    }
 
-	public boolean hasChangeDuring(ITime time) {
-		return extension.subSet(time.getStart().getMilliseconds(), time.getEnd().getMilliseconds()).size() > 0;
-	}
+    public long[] getTimestamps() {
+        long[] ret = new long[extension.size()];
+        int i = 0;
+        for (Long l : extension) {
+            ret[i++] = l;
+        }
+        return ret;
+    }
+
+    public long getStart() {
+        return this.start;
+    }
+
+    public long getEnd() {
+        return this.end;
+    }
+
+    public boolean hasChangeDuring(ITime time) {
+        return extension.subSet(time.getStart().getMilliseconds(), time.getEnd().getMilliseconds()).size() > 0;
+    }
 
 }

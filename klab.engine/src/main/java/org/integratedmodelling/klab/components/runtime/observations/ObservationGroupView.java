@@ -45,10 +45,10 @@ public class ObservationGroupView extends CountableObservation implements IObser
 		
 		super(observable.getName(), observable, (Scale)original.getScale(), ((Observation)original).getScope());
 		this.atype = original.getType();
-		IIdentity identity = getScope().getMonitor().getIdentity();
-		if (identity instanceof AbstractTask) {
-			setGenerator(((AbstractTask<?>) identity).getActivity());
-		}
+//		IIdentity identity = getScope().getMonitor().getIdentity();
+//		if (identity instanceof AbstractTask) {
+//			setGenerator(((AbstractTask<?>) identity).getActivity());
+//		}
 		if (original instanceof ObservationGroup) {
 			this.original = (ObservationGroup)original;
 		} else if (original instanceof ObservationGroupView) {

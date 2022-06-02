@@ -24,7 +24,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.utils.Pair;
 
-public class UrnInstantiator implements IExpression, IInstantiator {
+public class UrnInstantiator extends AbstractContextualizer implements IExpression, IInstantiator {
 
     public final static String FUNCTION_ID = "klab.runtime.instantiate";
 
@@ -44,21 +44,27 @@ public class UrnInstantiator implements IExpression, IInstantiator {
         this.urnParameters = call.getSecond();
     }
 
-    public static IServiceCall getServiceCall(String urn, IContextualizable condition, boolean conditionNegated) {
+    public static IServiceCall getServiceCall(String urn) {
         return KimServiceCall.create(FUNCTION_ID, "urn", urn);
+    }
+
+    @Override
+    public void notifyContextualizedResource(IContextualizable resource, IArtifact target, IContextualizationScope scope) {
+        this.resource = resource.getResource();
     }
 
     @Override
     public List<IObjectArtifact> instantiate(IObservable semantics, IContextualizationScope scope) throws KlabException {
 
         List<IObjectArtifact> ret = new ArrayList<>();
-        IResource res = this.resource.contextualize(scope.getScale(), scope.getTargetArtifact(), urnParameters, scope);
+        // IResource res = this.resource.contextualize(scope.getScale(), scope.getTargetArtifact(),
+        // urnParameters, scope);
         Map<String, String> parameters = urnParameters;
-        
-        if (res.getAvailability() != null) {
-            switch(res.getAvailability().getAvailability()) {
+
+        if (this.resource.getAvailability() != null) {
+            switch(this.resource.getAvailability().getAvailability()) {
             case DELAYED:
-                scope.getMonitor().addWait(res.getAvailability().getRetryTimeSeconds());
+                scope.getMonitor().addWait(this.resource.getAvailability().getRetryTimeSeconds());
                 return ret;
             case NONE:
                 scope.getMonitor().error("resource " + resource.getUrn() + " has no data available in this context");
@@ -70,35 +76,39 @@ public class UrnInstantiator implements IExpression, IInstantiator {
                 break;
             }
         }
-        
-        if (this.resource instanceof MergedResource) {
 
-            List<Pair<IResource, Map<String, String>>> resources = ((MergedResource) this.resource)
-                    .contextualize(scope.getScale(), scope.getTargetArtifact(), scope);
-            if (resources.isEmpty()) {
-                // it's OK if the resource was already contextualized up to the available data. TODO
-                // distinguish the use cases.
-                // context.getMonitor().warn("resource " + this.resource.getUrn() + " cannot be
-                // contextualized in this scale");
-                return ret;
-            }
+        // if (this.resource instanceof MergedResource) {
+        //
+        // System.out.println("PORRCOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
+        //
+        // List<Pair<IResource, Map<String, String>>> resources = ((MergedResource) this.resource)
+        // .contextualize(scope.getScale(), scope.getTargetArtifact(), scope);
+        // if (resources.isEmpty()) {
+        // // it's OK if the resource was already contextualized up to the available data. TODO
+        // // distinguish the use cases.
+        // // context.getMonitor().warn("resource " + this.resource.getUrn() + " cannot be
+        // // contextualized in this scale");
+        // return ret;
+        // }
+        //
+        // for (Pair<IResource, Map<String, String>> pr : resources) {
+        // ((Report) scope.getReport()).addContextualizedResource(this.resource.getUrn(),
+        // pr.getFirst());
+        // }
+        //
+        // // TODO must contextualize the LIST, not just the first resource
+        // if (resources.size() > 1) {
+        // scope.getMonitor()
+        // .warn("Warning: unimplemented use of multiple resources for one timestep. Choosing only
+        // the first.");
+        // }
+        //
+        // this.resource = resources.get(0).getFirst();
+        // parameters = resources.get(0).getSecond();
+        //
+        // }
 
-            for (Pair<IResource, Map<String, String>> pr : resources) {
-                ((Report) scope.getReport()).addContextualizedResource(this.resource.getUrn(), pr.getFirst());
-            }
-
-            // TODO must contextualize the LIST, not just the first resource
-            if (resources.size() > 1) {
-                scope.getMonitor()
-                        .warn("Warning: unimplemented use of multiple resources for one timestep. Choosing only the first.");
-            }
-
-            res = resources.get(0).getFirst();
-            parameters = resources.get(0).getSecond();
-
-        }
-
-        IKlabData data = Resources.INSTANCE.getResourceData(res, parameters, scope.getScale(), scope);
+        IKlabData data = Resources.INSTANCE.getResourceData(this.resource, parameters, scope.getScale(), scope);
 
         if (data != null && data.getArtifact() != null) {
             for (IArtifact artifact : data.getArtifact()) {

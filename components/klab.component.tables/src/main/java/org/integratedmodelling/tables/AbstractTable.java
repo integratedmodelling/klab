@@ -333,6 +333,12 @@ public abstract class AbstractTable<T> implements ITable<T> {
 	public boolean isEmpty() {
 		return empty || cache_.isEmpty();
 	}
+	
+	protected void checkCache() {
+		if (this.cache_.isEmpty()) {
+			this.cache_.reset(this, true);
+		}
+	}
 
 	public SQLTableCache getCache(IResource resource) {
 		/*

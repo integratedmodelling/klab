@@ -30,7 +30,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
-public class CategoryClassificationResolver
+public class CategoryClassificationResolver extends AbstractContextualizer
 		implements IResolver<IState>, IProcessor, IExpression, IDocumentationProvider {
 
 	static final public String FUNCTION_ID = "klab.runtime.categorize";

@@ -29,6 +29,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.Geospace;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -41,7 +42,7 @@ import org.locationtech.jts.algorithm.ConvexHull;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryCollection;
 
-public class ConvexHullInstantiator implements IExpression, IInstantiator {
+public class ConvexHullInstantiator extends AbstractContextualizer implements IExpression, IInstantiator {
 
 	Descriptor exprDescriptor = null;
 	private IGrid grid;

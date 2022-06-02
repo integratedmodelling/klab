@@ -55,6 +55,11 @@ public abstract class UserIdentity implements IUserIdentity, UserDetails, IActor
     }
 
     @Override
+    public String toString() {
+        return this.username + " (" + this.emailAddress + ")";
+    }
+
+    @Override
     public boolean isAnonymous() {
         return username.equals(Authentication.ANONYMOUS_USER_ID);
     }
@@ -119,9 +124,9 @@ public abstract class UserIdentity implements IUserIdentity, UserDetails, IActor
     }
 
     public void setToken(String token) {
-    	this.token = token;
+        this.token = token;
     }
-    
+
     @Override
     public int hashCode() {
         final int prime = 31;

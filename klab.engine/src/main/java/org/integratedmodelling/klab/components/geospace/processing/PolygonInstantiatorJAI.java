@@ -41,6 +41,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
+import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
@@ -57,7 +58,7 @@ import org.opengis.feature.type.Name;
  * 
  * @author ferdinando.villa
  */
-public class PolygonInstantiatorJAI implements IExpression, IInstantiator {
+public class PolygonInstantiatorJAI extends AbstractContextualizer implements IExpression, IInstantiator {
 
     Descriptor selectExprDescriptor = null;
     Descriptor categorizeExprDescriptor = null;

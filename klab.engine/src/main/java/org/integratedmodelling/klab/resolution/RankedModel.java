@@ -96,6 +96,11 @@ public class RankedModel extends Model implements IRankedModel {
         return delegate;
     }
 
+    public RankedModel withPriority(int priority) {
+    	this.priority = priority;
+    	return this;
+    }
+    
     /**
      * Return the underlying model data. These may be ranked again in a different scale.
      * 

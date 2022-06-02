@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.components.localstorage.impl;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
@@ -20,20 +21,25 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.api.runtime.monitoring.IInspector;
 import org.integratedmodelling.klab.common.Offset;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.engine.debugger.Debugger.Watcher;
+import org.integratedmodelling.klab.engine.debugger.Statistics;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 import org.integratedmodelling.klab.engine.runtime.api.IModificationListener;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
+import org.integratedmodelling.klab.rest.StateSummary;
 import org.integratedmodelling.klab.scale.Extent;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.StringUtil;
+
+import groovy.lang.GroovyObjectSupport;
 
 /**
  * Smart storage using a configurable backend to store slices that are only created when the values
@@ -67,6 +73,10 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
     private boolean isScalar = false;
     private Object scalarValue = null;
 
+    // these get set/unset before writing by the inspectors and debuggers. Must be honored at
+    // each put() if there.
+    transient List<Statistics> debuggingStatistics = null;
+
     /*
      * If trivial, we have no time or just one time state, and can contain at most one slice.
      */
@@ -78,7 +88,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
      * generated on the backend values are different from the previous slice stored or when the
      * values for the current timestep are no longer unique.
      */
-    class Slice {
+    public class Slice extends GroovyObjectSupport {
 
         // if not using backend, < 0; otherwise the slice offset in it, 0 or <= time
         long sliceOffsetInBackend = -1l;
@@ -94,12 +104,29 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
         @Override
         public String toString() {
             return (timestart == 0 || timeend == 0)
-                    ? "Initialization slice"
-                    : ("Slice " + new Date(timestart) + " to " + new Date(timeend));
+                    ? "INIT [0/" + slicesByStart.size() + "] "
+                    : ("TIME [" + index + "/" + slicesByStart.size() + "] " + new Date(timestart) + " to " + new Date(timeend));
         }
 
         public T getAt(long sliceOffset) {
             return getValueFromBackend(sliceOffset, this.sliceOffsetInBackend);
+        }
+
+        public StateSummary getStateSummary() {
+            StateSummary ret = new StateSummary();
+            ret.setMean(this.statistics.getMean());
+            ret.setNodataPercentage(((double) this.nodata) / ((double) sliceSize));
+            ret.setDegenerate(isEmpty());
+            ret.setSingleValued(scalarValue != null);
+            ret.setStandardDeviation(this.statistics.getStandardDeviation());
+            ret.setVariance(this.statistics.getVariance());
+            ret.setRange(Arrays.asList(this.statistics.getMin(), this.statistics.getMax()));
+            ret.setSum(this.statistics.getSum());
+            return ret;
+        }
+
+        public SummaryStatistics getRawStatistics() {
+            return this.statistics;
         }
 
         // TODO synchronization here voids the parallelism in most functions. The
@@ -148,6 +175,45 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
             return timestart == 0 && timeend == 0;
         }
 
+        @Override
+        public Object getProperty(String propertyName) {
+
+            if ("mean".equals(propertyName)) {
+                return this.statistics.getMean();
+            } else if ("min".equals(propertyName)) {
+                return this.statistics.getMin();
+            } else if ("max".equals(propertyName)) {
+                return this.statistics.getMax();
+            } else if ("variance".equals(propertyName)) {
+                return this.statistics.getVariance();
+            } else if ("std".equals(propertyName)) {
+                return this.statistics.getStandardDeviation();
+            } else if ("count".equals(propertyName)) {
+                return this.statistics.getN();
+            } else if ("start".equals(propertyName)) {
+                return this.timestart;
+            } else if ("end".equals(propertyName)) {
+                return this.timeend;
+            } else if ("index".equals(propertyName)) {
+                return this.index;
+            } else if ("init".equals(propertyName)) {
+                return this.isInitialization();
+            }
+
+            return super.getProperty(propertyName);
+        }
+
+        public void computeStatistics(Statistics ret) {
+            for (long i = 0; i < sliceSize; i++) {
+                Object o = getValueFromBackend(i, this.sliceOffsetInBackend);
+                if (o == null) {
+                    o = Double.NaN;
+                }
+                if (o instanceof Number) {
+                    ret.addValue(((Number) o).doubleValue());
+                }
+            }
+        }
     }
 
     /**
@@ -272,9 +338,11 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 
         Offset offsets = locator.as(Offset.class);
 
-        if (offsets.length != geometry.getDimensions().size()) {
-            throw new KlabInternalErrorException(
-                    "locator has different dimensionality than observation: should never happen");
+        if (offsets.length > geometry.getDimensions().size()) {
+            // pick the dimension we're in
+            offsets = offsets.reduceTo(geometry);
+        } else if (offsets.length < geometry.getDimensions().size()) {
+            throw new KlabInternalErrorException("locator has different dimensionality than observation: should never happen");
         }
 
         long timeOffset = trivial ? 0 : offsets.pos[0];
@@ -290,7 +358,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
         boolean initialization = false;
         if (locator instanceof IScale) {
             time = ((IScale) locator).getTime();
-            initialization = time.getFocus() == null && time.getTimeType() == ITime.Type.INITIALIZATION;
+            initialization = time == null || (time.getFocus() == null && time.getTimeType() == ITime.Type.INITIALIZATION);
         } else if (this.geometry instanceof IScale) {
             // redefine timeEnd based on the offset
             if (((IScale) this.geometry).getTime() != null) {
@@ -359,6 +427,16 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 
     public long put(T value, ILocator locator) {
 
+        if (debuggingStatistics != null) {
+            double d = Double.NaN;
+            if (value != null && value instanceof Number) {
+                d = ((Number) value).doubleValue();
+            }
+            for (Statistics stat : debuggingStatistics) {
+                stat.addValue(d);
+            }
+        }
+
         if (isScalar) {
             scalarValue = value;
             return 0;
@@ -366,9 +444,11 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 
         Offset offsets = locator.as(Offset.class);
 
-        if (offsets.length != geometry.getDimensions().size()) {
-            throw new KlabInternalErrorException(
-                    "locator has different dimensionality than observation: should never happen");
+        if (offsets.length > geometry.getDimensions().size()) {
+            // pick the dimension we're in
+            offsets = offsets.reduceTo(geometry);
+        } else if (offsets.length < geometry.getDimensions().size()) {
+            throw new KlabInternalErrorException("locator has different dimensionality than observation: should never happen");
         }
 
         /*
@@ -382,8 +462,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
             time = ((IScale) locator).getTime();
         }
 
-        if (time != null && time.getTimeType() != ITime.Type.INITIALIZATION && time.getStart() != null
-                && time.getEnd() != null) {
+        if (time != null && time.getTimeType() != ITime.Type.INITIALIZATION && time.getStart() != null && time.getEnd() != null) {
             timeStart = time.getStart().getMilliseconds();
             timeEnd = time.getEnd().getMilliseconds();
         }
@@ -455,25 +534,26 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
     }
 
     private Slice addSlice(long timeOffset, long timeStart, long timeEnd, Slice closest) {
+
+        // System.out.println(new TimeInstant(timeStart) + " to " + new TimeInstant(timeEnd));
+
         Slice slice = new Slice(timeOffset, timeStart, timeEnd, closest);
         slicesByEnd.put(timeEnd, slice);
         slicesByStart.put(timeStart, slice);
         if (state != null) {
-            state.getScope().notifyInspector(IInspector.Asset.STATE_SLICE,
-                IInspector.Event.CREATION, slice, state);
+            // may be null when this is called with a visiting data builder upstream, which only
+            // milks resources
+            state.getScope().notifyInspector(IInspector.Asset.STATE_SLICE, IInspector.Event.CREATION, slice, state);
         }
         return slice;
     }
 
     private boolean equals(Object valueAt, T value) {
-        return (valueAt == null && value == null)
-                || (valueAt != null && value != null && valueAt.equals(value));
+        return (valueAt == null && value == null) || (valueAt != null && value != null && valueAt.equals(value));
     }
 
     private Slice getClosest(long timeSlice, boolean fromUpwards) {
-        Map.Entry<Long, Slice> low = fromUpwards
-                ? slicesByStart.floorEntry(timeSlice)
-                : slicesByEnd.floorEntry(timeSlice);
+        Map.Entry<Long, Slice> low = fromUpwards ? slicesByStart.floorEntry(timeSlice) : slicesByEnd.floorEntry(timeSlice);
         return low == null ? null : low.getValue();
     }
 
@@ -552,6 +632,10 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
                 && ((Time) ((Scale) locator).getTime()).getLocatedTimeslice() >= 0) {
             // return getSlice(((Time) ((Scale) locator).getTime()).getLocatedTimeslice() + 1);
             return getClosest(((Scale) locator).getTime().getFocus().getMilliseconds(), true);
+        } else if (locator instanceof ITime) {
+            return ((Time) locator).getTimeType() == ITime.Type.INITIALIZATION
+                    ? getSlice(0)
+                    : getClosest(((Time) locator).getStart().getMilliseconds() + 1, true);
         }
 
         Offset offsets = locator.as(Offset.class);
@@ -619,6 +703,57 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 
     public IState getState() {
         return state;
+    }
+
+    public StateSummary getOverallSummary() {
+        StateSummary ret = null;
+        for (Slice slice : slicesByStart.values()) {
+            if (ret == null) {
+                ret = slice.getStateSummary();
+            } else {
+                ret.merge(slice.getStateSummary());
+            }
+        }
+        return ret;
+    }
+
+    public List<Slice> getSlices() {
+        return new ArrayList<>(slicesByStart.values());
+    }
+
+    public void setDebuggingStatistics(List<Statistics> stats) {
+        this.debuggingStatistics = stats;
+    }
+
+    public Statistics computeStatistics(Object locator) {
+
+        Statistics ret = new Statistics();
+        if (locator instanceof String) {
+
+            ITime time = state.getScale().getTime();
+            if (time == null) {
+                throw new KlabInternalErrorException("can't extract temporal slices from non-temporal states");
+            }
+
+            switch((String) locator) {
+            case "start":
+                time = time.earliest();
+                break;
+            case "end":
+                time = time.latest();
+                break;
+            case "init":
+                time = state.getScale().initialization().getTime();
+                break;
+            }
+
+            Slice slice = getSlice(time);
+            if (slice != null) {
+                slice.computeStatistics(ret);
+            }
+        }
+
+        return ret;
     }
 
 }

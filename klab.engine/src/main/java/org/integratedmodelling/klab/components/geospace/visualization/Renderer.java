@@ -125,7 +125,7 @@ public enum Renderer {
             // produces images beyond boundaries
             // GridCoverage2D coverage = GeotoolsUtils.INSTANCE.wrapStateInFloatCoverage(state,
             // locator, Float.NaN, null);
-            GridCoverage2D coverage = GeotoolsUtils.INSTANCE.stateToCoverage(state, locator, DataBuffer.TYPE_FLOAT, -Float.NaN,
+            GridCoverage2D coverage = GeotoolsUtils.INSTANCE.stateToCoverage(state, locator, DataBuffer.TYPE_FLOAT, Float.NaN,
                     false);
 
             // https://github.com/geotools/geotools/blob/master/modules/library/render/src/test/java/org/geotools/renderer/lite/GridCoverageRendererTest.java

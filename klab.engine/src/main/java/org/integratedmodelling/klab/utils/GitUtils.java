@@ -20,7 +20,9 @@ import java.io.IOException;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.CreateBranchCommand;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.LsRemoteCommand;
 import org.eclipse.jgit.api.PullCommand;
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.internal.storage.file.FileRepository;
 import org.eclipse.jgit.lib.Repository;
 import org.integratedmodelling.klab.Logging;
@@ -35,6 +37,8 @@ import org.integratedmodelling.klab.exceptions.KlabIOException;
  * @version $Id: $Id
  */
 public class GitUtils {
+    
+    public static final String MAIN_BRANCH = "master"; 
 
 	/**
 	 * Clone.
@@ -67,7 +71,12 @@ public class GitUtils {
 		}
 
 		String[] pdefs = gitUrl.split("#");
-		String branch = pdefs.length < 2 ? "master" : pdefs[1];
+		String branch;
+		if (pdefs.length < 2) {
+		    branch = MAIN_BRANCH;
+		} else {
+		    branch = GitUtils.branchExists(pdefs[0], pdefs[1]) ? pdefs[1] : MAIN_BRANCH;
+		}
 		String url = pdefs[0];
 
 		Logging.INSTANCE.info("cloning Git repository " + url + " branch " + branch + " ...");
@@ -76,7 +85,7 @@ public class GitUtils {
 
 			Logging.INSTANCE.info("cloned Git repository: " + result.getRepository());
 
-			if (!branch.equals("master")) {
+			if (!branch.equals(MAIN_BRANCH)) {
 				result.checkout().setName(branch).setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK)
 						.setStartPoint("origin/" + branch).call();
 
@@ -167,6 +176,23 @@ public class GitUtils {
 		return string.startsWith("http:") || string.startsWith("git:") || string.startsWith("https:")
 				|| string.startsWith("git@");
 	}
+	
+	/**
+	 * Check if remote branch exists
+	 * @param gitUrl the remote repository
+	 * @param branch the branch (without refs/heads/)
+	 * @return true if branch exists
+	 */
+	public static boolean branchExists(String gitUrl, String branch) {
+	    final LsRemoteCommand lsCmd = new LsRemoteCommand(null);
+	    lsCmd.setRemote(gitUrl);
+	    try {
+            return lsCmd.call().stream().filter(ref -> ref.getName().equals("refs/heads/"+branch)).count() == 1;
+        } catch (GitAPIException e) {
+            e.printStackTrace();
+            return false;
+        }
+	}
 
 	/**
 	 * The main method.
@@ -177,7 +203,7 @@ public class GitUtils {
 	 *             the exception
 	 */
 	public static void main(String[] args) throws Exception {
-		String u = requireUpdatedRepository("git@bitbucket.org:ariesteam/im.data.git#bfo",
+	    String u = requireUpdatedRepository("git@bitbucket.org:ariesteam/im.data.git#bfo",
 				new File(System.getProperty("user.home")));
 		System.out.println("Got repo " + u);
 	}

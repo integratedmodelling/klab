@@ -19,11 +19,12 @@ import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
+import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.components.runtime.observations.ObservedArtifact;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.scale.Scale;
 
-public class FeatureBufferingInstantiator implements IInstantiator, IExpression {
+public class FeatureBufferingInstantiator extends AbstractContextualizer implements IInstantiator, IExpression {
 
 	private double distance;
 	private String artifact;

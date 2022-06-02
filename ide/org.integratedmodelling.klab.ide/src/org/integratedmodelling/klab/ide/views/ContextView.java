@@ -55,6 +55,7 @@ import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
+import org.integratedmodelling.klab.api.monitoring.IMessage.MessageClass;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.client.messaging.SessionMonitor;
 import org.integratedmodelling.klab.client.messaging.SessionMonitor.ContextDescriptor;
@@ -76,6 +77,7 @@ import org.integratedmodelling.klab.rest.EngineAction;
 import org.integratedmodelling.klab.rest.EngineEvent;
 import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.RuntimeEvent;
+import org.integratedmodelling.klab.rest.ScenarioSelection;
 import org.integratedmodelling.klab.utils.BrowserUtils;
 
 public class ContextView extends ViewPart {
@@ -91,10 +93,6 @@ public class ContextView extends ViewPart {
     private TableViewer tableViewer;
     private Table queryResults;
     private CLabel scenariosLabel;
-    private CLabel spatialContext;
-    private Button btnNewButtonSp;
-    private CLabel temporalContext;
-    private Button btnNewButtonT;
 
     private KlabPeer klab;
     private Action openViewerAction;
@@ -327,7 +325,7 @@ public class ContextView extends ViewPart {
                 lblNewLabel.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
                 lblNewLabel.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.BOLD));
                 GridData gd_lblNewLabel = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-                gd_lblNewLabel.widthHint = 62;
+                gd_lblNewLabel.widthHint = 80;
                 lblNewLabel.setLayoutData(gd_lblNewLabel);
                 lblNewLabel.setBounds(0, 0, 55, 15);
                 // toolkit.adapt(lblNewLabel, true, true);
@@ -346,7 +344,9 @@ public class ContextView extends ViewPart {
                     btnNewButtonSC.addSelectionListener(new SelectionAdapter(){
                         @Override
                         public void widgetSelected(SelectionEvent e) {
-                            // Environment.get().clearScenarios();
+                            if (Activator.session() != null) {
+                                Activator.session().send(MessageClass.UserInterface, IMessage.Type.ResetScenarios);
+                            }
                         }
                     });
                     btnNewButtonSC.setToolTipText("Reset all scenarios");
@@ -354,119 +354,12 @@ public class ContextView extends ViewPart {
                     btnNewButtonSC.addMouseListener(new MouseAdapter(){
                         @Override
                         public void mouseUp(MouseEvent e) {
+                            // Eclipse.INSTANCE.openView(ScenarioView.ID, null);
                         }
                     });
-                    btnNewButtonSC.setImage(
-                            ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/Player Record.png"));
+                    btnNewButtonSC
+                            .setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/globe.png"));
                     // toolkit.adapt(btnNewButtonSC, true, true);
-                }
-                Label lblNewLabel_1 = new Label(labelContainer, SWT.NONE);
-                lblNewLabel_1.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-                lblNewLabel_1.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.BOLD));
-                GridData gd_lblNewLabel_1 = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-                gd_lblNewLabel_1.widthHint = 62;
-                lblNewLabel_1.setLayoutData(gd_lblNewLabel_1);
-                // toolkit.adapt(lblNewLabel_1, true, true);
-                lblNewLabel_1.setText("Space");
-
-                spatialContext = new CLabel(labelContainer, SWT.NONE);
-                spatialContext.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.ITALIC));
-                // spatialContext.setText(Environment.get().getSpatialForcing().toString());
-                spatialContext.setForeground(SWTResourceManager.getColor(SWT.COLOR_WIDGET_BORDER));
-                spatialContext.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-                spatialContext.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-                // toolkit.adapt(spatialContext, true, true);
-
-                Menu menu = new Menu(spatialContext);
-                spatialContext.setMenu(menu);
-
-                MenuItem mntmSetThisAs = new MenuItem(menu, SWT.NONE);
-                mntmSetThisAs.addSelectionListener(new SelectionAdapter(){
-                    @Override
-                    public void widgetSelected(SelectionEvent e) {
-                        // makeDefault(Environment.get().getSpatialForcing());
-                    }
-                });
-                mntmSetThisAs.setText("Set this as default");
-
-                MenuItem mntmResetDefaults = new MenuItem(menu, SWT.NONE);
-                mntmResetDefaults.addSelectionListener(new SelectionAdapter(){
-                    @Override
-                    public void widgetSelected(SelectionEvent e) {
-                        // makeDefault(Space.getForcing(1, "km"));
-                    }
-                });
-                mntmResetDefaults.setText("Reset defaults");
-                {
-                    btnNewButtonSp = new Button(labelContainer, SWT.NONE);
-                    btnNewButtonSp.setToolTipText("Choose default spatial representation");
-                    btnNewButtonSp.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
-                    btnNewButtonSp.addMouseListener(new MouseAdapter(){
-                        @Override
-                        public void mouseUp(MouseEvent e) {
-                            // PopupSpaceChooser ptc = new PopupSpaceChooser(Eclipse
-                            // .getShell(), SWT.BORDER, Environment.get()
-                            // .getSpatialForcing(), ContextView.this);
-                            // ptc.show(btnNewButtonSp.toDisplay(new Point(e.x, e.y - 110)));
-                        }
-                    });
-                    btnNewButtonSp
-                            .setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/Globe.png"));
-                    // toolkit.adapt(btnNewButtonSp, true, true);
-                }
-
-                Label lblNewLabel_3 = new Label(labelContainer, SWT.NONE);
-                lblNewLabel_3.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-                lblNewLabel_3.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.BOLD));
-                GridData gd_lblNewLabel_3 = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-                gd_lblNewLabel_3.widthHint = 62;
-                lblNewLabel_3.setLayoutData(gd_lblNewLabel_3);
-                // toolkit.adapt(lblNewLabel_3, true, true);
-                lblNewLabel_3.setText("Time");
-
-                temporalContext = new CLabel(labelContainer, SWT.NONE);
-                temporalContext.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.ITALIC));
-                temporalContext.setText("No temporal context");
-                temporalContext.setForeground(SWTResourceManager.getColor(SWT.COLOR_WIDGET_BORDER));
-                temporalContext.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-                temporalContext.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-                // toolkit.adapt(temporalContext, true, true);
-
-                Menu menu_1 = new Menu(temporalContext);
-                temporalContext.setMenu(menu_1);
-
-                MenuItem mntmSetThisAs_1 = new MenuItem(menu_1, SWT.NONE);
-                mntmSetThisAs_1.addSelectionListener(new SelectionAdapter(){
-                    @Override
-                    public void widgetSelected(SelectionEvent e) {
-                        // makeDefault(Environment.get().getTemporalForcing());
-                    }
-                });
-                mntmSetThisAs_1.setText("Set this as default");
-
-                MenuItem mntmResetDefaults_1 = new MenuItem(menu_1, SWT.NONE);
-                mntmResetDefaults_1.addSelectionListener(new SelectionAdapter(){
-                    @Override
-                    public void widgetSelected(SelectionEvent e) {
-                        // makeDefault(Time.getForcing(0, 0, 0));
-                    }
-                });
-                mntmResetDefaults_1.setText("Reset defaults");
-                {
-                    btnNewButtonT = new Button(labelContainer, SWT.NONE);
-                    btnNewButtonT.setToolTipText("Choose default temporal representation");
-                    btnNewButtonT.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
-                    btnNewButtonT.addMouseListener(new MouseAdapter(){
-                        @Override
-                        public void mouseUp(MouseEvent e) {
-                            // PopupTimeChooser ptc = new PopupTimeChooser(Eclipse
-                            // .getShell(), SWT.BORDER, Environment.get()
-                            // .getTemporalForcing(), ContextView.this);
-                            // ptc.show(btnNewButtonSp.toDisplay(new Point(e.x, e.y - 110)));
-                        }
-                    });
-                    btnNewButtonT.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/Clock.png"));
-                    // toolkit.adapt(btnNewButtonT, true, true);
                 }
             }
 
@@ -566,6 +459,30 @@ public class ContextView extends ViewPart {
                 break;
             default:
                 break;
+            }
+            break;
+        case ScenariosSelected:
+            if (message.getMessageClass() == MessageClass.UserInterface) {
+
+                final ScenarioSelection selection = message.getPayload(ScenarioSelection.class);
+
+                Display.getDefault().asyncExec(() -> {
+                    if (selection.getScenarios().size() == 0) {
+                        scenariosLabel.setText("No scenarios active");
+                        scenariosLabel.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+                        scenariosLabel.setForeground(SWTResourceManager.getColor(SWT.COLOR_BLACK));
+                        scenariosLabel.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.ITALIC));
+                    } else {
+                        if (selection.getScenarios().size() == 1) {
+                            scenariosLabel.setText(selection.getScenarios().iterator().next());
+                        } else {
+                            scenariosLabel.setText(selection.getScenarios().size() + " scenarios are active");
+                        }
+                        scenariosLabel.setBackground(SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN));
+                        scenariosLabel.setForeground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
+                        scenariosLabel.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.BOLD));
+                    }
+                });
             }
             break;
         default:
@@ -981,21 +898,25 @@ public class ContextView extends ViewPart {
      * Initialize the toolbar.
      */
     private void initializeToolBar() {
-        IToolBarManager tbm = getViewSite().getActionBars().getToolBarManager();
-        tbm.add(resetContextAction);
-        tbm.add(openViewerAction);
-        // tbm.add(openSessionAction);
+        if (getViewSite() != null) {
+            IToolBarManager tbm = getViewSite().getActionBars().getToolBarManager();
+            tbm.add(resetContextAction);
+            tbm.add(openViewerAction);
+            // tbm.add(openSessionAction);
+        }
     }
 
     /**
      * Initialize the menu.
      */
     private void initializeMenu() {
-        this.manager = getViewSite().getActionBars().getMenuManager();
-        // this is for hierarchical menus - add the this to the manager and the actions
-        // to this
-        // MenuManager menuManager = new MenuManager("Previous contexts");
-        // manager.add(action);
-        // menuManager.add(action);
+        if (getViewSite() != null) {
+            this.manager = getViewSite().getActionBars().getMenuManager();
+            // this is for hierarchical menus - add the this to the manager and the actions
+            // to this
+            // MenuManager menuManager = new MenuManager("Previous contexts");
+            // manager.add(action);
+            // menuManager.add(action);
+        }
     }
 }

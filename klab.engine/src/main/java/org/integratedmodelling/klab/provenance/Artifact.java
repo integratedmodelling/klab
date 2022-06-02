@@ -108,35 +108,35 @@ public abstract class Artifact extends GroovyObjectSupport implements IArtifact 
 		return null;
 	}
 
-	@Override
-	public IAgent getConsumer() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public IAgent getOwner() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Collection<IArtifact> getAntecedents() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Collection<IArtifact> getConsequents() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public IArtifact trace(IConcept concept) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+//	@Override
+//	public IAgent getConsumer() {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+//
+//	@Override
+//	public IAgent getOwner() {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+//
+//	@Override
+//	public Collection<IArtifact> getAntecedents() {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+//
+//	@Override
+//	public Collection<IArtifact> getConsequents() {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+//
+//	@Override
+//	public IArtifact trace(IConcept concept) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 
 	@Override
 	public Collection<IArtifact> collect(IConcept concept) {

@@ -23,10 +23,8 @@ import org.eclipse.xtext.validation.IResourceValidator;
 import org.eclipse.xtext.validation.Issue;
 import org.integratedmodelling.kactors.KactorsStandaloneSetup;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
-import org.integratedmodelling.kactors.api.IKActorsBehavior.Scope;
 import org.integratedmodelling.kactors.kactors.Model;
 import org.integratedmodelling.kactors.utils.KActorsResourceSorter;
-import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.errormanagement.ICompileNotification;
 import org.integratedmodelling.klab.common.CompileNotification;
 import org.integratedmodelling.klab.rest.BehaviorReference;
@@ -42,297 +40,279 @@ import com.google.inject.Injector;
  */
 public enum KActors {
 
-	INSTANCE;
+    INSTANCE;
 
-	private Map<String, BehaviorReference> behaviorManifest = Collections.synchronizedMap(new HashMap<>());
+    private Map<String, BehaviorReference> behaviorManifest = Collections.synchronizedMap(new HashMap<>());
 
-	@Inject
-	private IGrammarAccess grammarAccess;
+    @Inject
+    private IGrammarAccess grammarAccess;
 
-	public interface Notifier {
-		void notify(IKActorsBehavior behavior);
-	}
+    public interface Notifier {
+        void notify(IKActorsBehavior behavior);
+    }
 
-	/**
-	 * Call before keyword list can be obtained
-	 * 
-	 * @param injector
-	 */
-	public void setup(Injector injector) {
-		injector.injectMembers(this);
-	}
+    /**
+     * Call before keyword list can be obtained
+     * 
+     * @param injector
+     */
+    public void setup(Injector injector) {
+        injector.injectMembers(this);
+    }
 
-	public interface ValueTranslator {
+    /**
+     * Install one of these to enable in-editor documentation, highlighting and call/fire validation
+     * 
+     * @author Ferd
+     *
+     */
+    public interface CodeAssistant {
 
-		/**
-		 * Translate to whatever the type requires. If needed, the setData() function of
-		 * the container can be used to store costly objects.
-		 * 
-		 * @param container
-		 * @param value
-		 * @return
-		 */
-		Object translate(KActorsValue container, IIdentity identity, Scope scope);
-	}
+        enum BehaviorId {
+            VIEW, SESSION, LOCAL, IMPORTED, OBJECT, STATE, USER, UNKNOWN, AMBIGUOUS, EXPLORER, TEST
+        }
 
-	/**
-	 * Install one of these to enable in-editor documentation, highlighting and
-	 * call/fire validation
-	 * 
-	 * @author Ferd
-	 *
-	 */
-	public interface CodeAssistant {
+        BehaviorId classifyVerb(String call);
 
-		enum BehaviorId {
-			VIEW, SESSION, LOCAL, IMPORTED, OBJECT, STATE, USER, UNKNOWN, AMBIGUOUS, EXPLORER, TEST
-		}
+        String getLabel(String call);
 
-		BehaviorId classifyVerb(String call);
+        String getDescription(String call);
 
-		String getLabel(String call);
+        Collection<KActorsValue.Type> getFiredType(String call);
+    }
 
-		String getDescription(String call);
+    class BehaviorDescriptor {
+        String name;
+        File file;
+        List<ICompileNotification> notifications = new ArrayList<>();
+        int nInfo;
+        int nWarning;
+        int nErrors;
+        IKActorsBehavior behavior;
+        String projectName;
+    }
 
-		Collection<KActorsValue.Type> getFiredType(String call);
-	}
+    Injector injector;
+    IResourceValidator validator;
 
-	class BehaviorDescriptor {
-		String name;
-		File file;
-		List<ICompileNotification> notifications = new ArrayList<>();
-		int nInfo;
-		int nWarning;
-		int nErrors;
-		IKActorsBehavior behavior;
-		String projectName;
-	}
+    List<Notifier> notifiers = new ArrayList<>();
+    // private ValueTranslator valueTranslator = null;
+    private CodeAssistant codeAssistant = null;
+    Map<String, BehaviorDescriptor> behaviors = new HashMap<>();
 
-	Injector injector;
-	IResourceValidator validator;
+    private Injector getInjector() {
+        if (this.injector == null) {
+            this.injector = new KactorsStandaloneSetup().createInjectorAndDoEMFRegistration();
+        }
+        return this.injector;
+    }
 
-	List<Notifier> notifiers = new ArrayList<>();
-	private ValueTranslator valueTranslator = null;
-	private CodeAssistant codeAssistant = null;
-	Map<String, BehaviorDescriptor> behaviors = new HashMap<>();
+    public IKActorsBehavior declare(Model model) {
+        return new KActorsBehavior(model, null);
+    }
 
-	private Injector getInjector() {
-		if (this.injector == null) {
-			this.injector = new KactorsStandaloneSetup().createInjectorAndDoEMFRegistration();
-		}
-		return this.injector;
-	}
+    public Set<String> getKeywords() {
+        return GrammarUtil.getAllKeywords(grammarAccess.getGrammar());
+    }
 
-	public IKActorsBehavior declare(Model model) {
-		return new KActorsBehavior(model, null);
-	}
+    public boolean isKActorsFile(File file) {
+        return file.toString().endsWith(".kactor");
+    }
 
-	public Set<String> getKeywords() {
-		return GrammarUtil.getAllKeywords(grammarAccess.getGrammar());
-	}
+    private IResourceValidator getValidator() {
+        if (this.validator == null) {
+            this.validator = getInjector().getInstance(IResourceValidator.class);
+        }
+        return this.validator;
+    }
 
-	public boolean isKActorsFile(File file) {
-		return file.toString().endsWith(".kactor");
-	}
+    public void addNotifier(Notifier notifier) {
+        this.notifiers.add(notifier);
+    }
 
-	private IResourceValidator getValidator() {
-		if (this.validator == null) {
-			this.validator = getInjector().getInstance(IResourceValidator.class);
-		}
-		return this.validator;
-	}
+    public void loadResources(List<File> behaviorFiles) {
 
-	public void addNotifier(Notifier notifier) {
-		this.notifiers.add(notifier);
-	}
+        KActorsResourceSorter bsort = new KActorsResourceSorter(behaviorFiles);
+        IResourceValidator validator = getValidator();
 
-	public void loadResources(List<File> behaviorFiles) {
+        for (Resource resource : bsort.getResources()) {
 
-		KActorsResourceSorter bsort = new KActorsResourceSorter(behaviorFiles);
-		IResourceValidator validator = getValidator();
+            BehaviorDescriptor ret = new BehaviorDescriptor();
 
-		for (Resource resource : bsort.getResources()) {
+            ret.name = ((Model) resource.getContents().get(0)).getPreamble().getName();
+            ret.file = bsort.getFile(resource);
+            ret.projectName = getProjectName(resource.getURI().toString());
 
-			BehaviorDescriptor ret = new BehaviorDescriptor();
+            List<Issue> issues = validator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl);
+            for (Issue issue : issues) {
+                ICompileNotification notification = getNotification(ret.name, issue, ret);
+                if (notification != null) {
+                    ret.notifications.add(notification);
+                }
+            }
 
-			ret.name = ((Model) resource.getContents().get(0)).getPreamble().getName();
-			ret.file = bsort.getFile(resource);
-			ret.projectName = getProjectName(resource.getURI().toString());
+            ret.behavior = new KActorsBehavior(((Model) resource.getContents().get(0)), ret);
 
-			List<Issue> issues = validator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl);
-			for (Issue issue : issues) {
-				ICompileNotification notification = getNotification(ret.name, issue, ret);
-				if (notification != null) {
-					ret.notifications.add(notification);
-				}
-			}
+            behaviors.put(ret.name, ret);
 
-			ret.behavior = new KActorsBehavior(((Model) resource.getContents().get(0)), ret);
+            for (Notifier notifier : notifiers) {
+                notifier.notify(ret.behavior);
+            }
+        }
+    }
 
-			behaviors.put(ret.name, ret);
+    /**
+     * Get the prototype behavior by name. Only use this one to run a single instance of the
+     * behavior. If multiple agents can run the same behavior, each should have its own instance
+     * obtained through newBehavior().
+     * 
+     * @param id
+     * @return
+     */
+    public IKActorsBehavior getBehavior(String id) {
+        BehaviorDescriptor desc = behaviors.get(id);
+        return desc == null ? null : desc.behavior;
+    }
 
-			for (Notifier notifier : notifiers) {
-				notifier.notify(ret.behavior);
-			}
-		}
-	}
+    public IKActorsBehavior newBehavior(String id) {
+        BehaviorDescriptor desc = behaviors.get(id);
+        if (desc != null) {
+            KActorsResourceSorter bsort = new KActorsResourceSorter(Collections.singletonList(desc.file));
+            for (Resource resource : bsort.getResources()) {
+                return new KActorsBehavior(((Model) resource.getContents().get(0)), desc);
+            }
+        }
+        return null;
+    }
 
-	/**
-	 * Get a behavior by name.
-	 * 
-	 * @param id
-	 * @return
-	 */
-	public IKActorsBehavior getBehavior(String id) {
-		BehaviorDescriptor desc = behaviors.get(id);
-		return desc == null ? null : desc.behavior;
-	}
+    /**
+     * This will be filled in by the implementation, differently in the engine or the client.
+     * 
+     * @return
+     */
+    public Map<String, BehaviorReference> getBehaviorManifest() {
+        return behaviorManifest;
+    }
 
-	/**
-	 * This will be filled in by the implementation, differently in the engine or
-	 * the client.
-	 * 
-	 * @return
-	 */
-	public Map<String, BehaviorReference> getBehaviorManifest() {
-		return behaviorManifest;
-	}
+    /**
+     * Return all regular behaviors defined in the src/ directory alongside models for the project.
+     * 
+     * @param project
+     * @return
+     */
+    public List<IKActorsBehavior> getBehaviors(String project, IKActorsBehavior.Type... type) {
+        List<IKActorsBehavior> ret = new ArrayList<>();
+        for (BehaviorDescriptor bd : behaviors.values()) {
+            if (project.equals(bd.projectName)) {
+                boolean ok = true;
+                if (type != null) {
+                    ok = false;
+                    for (IKActorsBehavior.Type t : type) {
+                        if (bd.behavior.getType() == t) {
+                            ok = true;
+                            break;
+                        }
+                    }
+                }
+                if (ok) {
+                    ret.add(bd.behavior);
+                }
+            }
+        }
+        return ret;
+    }
 
-	/**
-	 * Return all regular behaviors defined in the src/ directory alongside models
-	 * for the project.
-	 * 
-	 * @param project
-	 * @return
-	 */
-	public List<IKActorsBehavior> getBehaviors(String project, IKActorsBehavior.Type... type) {
-		List<IKActorsBehavior> ret = new ArrayList<>();
-		for (BehaviorDescriptor bd : behaviors.values()) {
-			if (project.equals(bd.projectName)) {
-				boolean ok = true;
-				if (type != null) {
-					ok = false;
-					for (IKActorsBehavior.Type t : type) {
-						if (bd.behavior.getType() == t) {
-							ok = true;
-							break;
-						}
-					}
-				}
-				if (ok) {
-					ret.add(bd.behavior);
-				}
-			}
-		}
-		return ret;
-	}
+    /**
+     * Get the project name from the string form of any Xtext resource URI.
+     * 
+     * @param resourceURI
+     * @return
+     */
+    public String getProjectName(String resourceURI) {
 
-	/**
-	 * Get the project name from the string form of any Xtext resource URI.
-	 * 
-	 * @param resourceURI
-	 * @return
-	 */
-	public String getProjectName(String resourceURI) {
+        String ret = null;
+        try {
+            URL url = new URL(resourceURI);
+            String path = url.getPath();
+            Properties properties = null;
+            URL purl = null;
+            while((path = chopLastPathElement(path)) != null) {
+                purl = new URL(url.getProtocol(), url.getAuthority(), url.getPort(), path + "/META-INF/klab.properties");
+                try (InputStream is = purl.openStream()) {
+                    properties = new Properties();
+                    properties.load(is);
+                    break;
+                } catch (IOException exception) {
+                    continue;
+                }
+            }
+            if (properties != null) {
+                ret = path.substring(path.lastIndexOf('/') + 1);
+            }
 
-		String ret = null;
-		try {
-			URL url = new URL(resourceURI);
-			String path = url.getPath();
-			Properties properties = null;
-			URL purl = null;
-			while ((path = chopLastPathElement(path)) != null) {
-				purl = new URL(url.getProtocol(), url.getAuthority(), url.getPort(),
-						path + "/META-INF/klab.properties");
-				try (InputStream is = purl.openStream()) {
-					properties = new Properties();
-					properties.load(is);
-					break;
-				} catch (IOException exception) {
-					continue;
-				}
-			}
-			if (properties != null) {
-				ret = path.substring(path.lastIndexOf('/') + 1);
-			}
+        } catch (Exception e) {
+            // just return null;
+        }
 
-		} catch (Exception e) {
-			// just return null;
-		}
+        return ret;
+    }
 
-		return ret;
-	}
+    private ICompileNotification getNotification(String name, Issue issue, BehaviorDescriptor desc) {
 
-	private ICompileNotification getNotification(String name, Issue issue, BehaviorDescriptor desc) {
+        Level level = null;
+        ICompileNotification ret = null;
 
-		Level level = null;
-		ICompileNotification ret = null;
+        switch(issue.getSeverity()) {
+        case ERROR:
+            desc.nErrors++;
+            level = Level.SEVERE;
+            break;
+        case INFO:
+            desc.nInfo++;
+            level = Level.INFO;
+            break;
+        case WARNING:
+            desc.nWarning++;
+            level = Level.WARNING;
+            break;
+        default:
+            break;
+        }
 
-		switch (issue.getSeverity()) {
-		case ERROR:
-			desc.nErrors++;
-			level = Level.SEVERE;
-			break;
-		case INFO:
-			desc.nInfo++;
-			level = Level.INFO;
-			break;
-		case WARNING:
-			desc.nWarning++;
-			level = Level.WARNING;
-			break;
-		default:
-			break;
-		}
+        if (level != null) {
+            ret = CompileNotification.create(level, issue.getMessage(), name, KActorCodeStatement.createDummy(issue));
+        }
 
-		if (level != null) {
-			ret = CompileNotification.create(level, issue.getMessage(), name, KActorCodeStatement.createDummy(issue));
-		}
+        return ret;
+    }
 
-		return ret;
-	}
+    private String chopLastPathElement(String path) {
+        int idx = path.lastIndexOf('/');
+        if (idx <= 0) {
+            return null;
+        }
+        return path.substring(0, idx);
+    }
 
-	private String chopLastPathElement(String path) {
-		int idx = path.lastIndexOf('/');
-		if (idx <= 0) {
-			return null;
-		}
-		return path.substring(0, idx);
-	}
+    public void add(File file) {
+        loadResources(Collections.singletonList(file));
+    }
 
-	public ValueTranslator getValueTranslator() {
-		return valueTranslator;
-	}
+    public void delete(File file) {
+        // TODO Auto-generated method stub
 
-	/**
-	 * Installing one of these will enable translation of a value to a type suitable
-	 * for the implementation.
-	 * 
-	 * @param valueTranslator
-	 */
-	public void setValueTranslator(ValueTranslator valueTranslator) {
-		this.valueTranslator = valueTranslator;
-	}
+    }
 
-	public void add(File file) {
-		loadResources(Collections.singletonList(file));
-	}
+    public void touch(File file) {
+        loadResources(Collections.singletonList(file));
+    }
 
-	public void delete(File file) {
-		// TODO Auto-generated method stub
+    public CodeAssistant getCodeAssistant() {
+        return codeAssistant;
+    }
 
-	}
-
-	public void touch(File file) {
-		loadResources(Collections.singletonList(file));
-	}
-
-	public CodeAssistant getCodeAssistant() {
-		return codeAssistant;
-	}
-
-	public void setCodeAssistant(CodeAssistant codeAssistant) {
-		this.codeAssistant = codeAssistant;
-	}
+    public void setCodeAssistant(CodeAssistant codeAssistant) {
+        this.codeAssistant = codeAssistant;
+    }
 
 }

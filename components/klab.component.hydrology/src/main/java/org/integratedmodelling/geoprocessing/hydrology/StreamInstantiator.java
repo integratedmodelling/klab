@@ -21,6 +21,7 @@ import org.integratedmodelling.klab.components.geospace.Geospace;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.Scale;
@@ -29,7 +30,7 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
 
-public class StreamInstantiator implements IInstantiator, IExpression {
+public class StreamInstantiator extends AbstractContextualizer implements IInstantiator, IExpression {
 
 	private static final double DEFAULT_TCA_THRESHOLD = 0.006;
 

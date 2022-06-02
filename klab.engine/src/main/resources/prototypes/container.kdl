@@ -1,0 +1,8 @@
+/*
+ * Parameters accepted in a container resource
+ */
+ annotation container 
+	"A container resource provides no content but can host codelists, vocabularies and provenance entities for external reference."
+	label "Container resource for codelists, vocabularies and provenance entities."
+ {
+ }

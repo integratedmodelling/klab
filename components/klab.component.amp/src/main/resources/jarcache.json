@@ -1,0 +1,12 @@
+[
+  {
+    "Content-Location": "http://www.example.com/context",
+    "X-Classpath": "contexts/example.jsonld",
+    "Content-Type": "application/ld+json"
+  },
+  {
+    "Content-Location": "http://data.example.net/other",
+    "X-Classpath": "contexts/other.jsonld",
+    "Content-Type": "application/ld+json"
+  }
+]

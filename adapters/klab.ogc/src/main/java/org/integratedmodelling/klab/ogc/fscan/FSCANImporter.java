@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.ogc.fscan;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Writer;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -119,5 +120,11 @@ public class FSCANImporter implements IResourceImporter {
     public IResourceImporter withOption(String option, Object value) {
         return this;
     }
+
+	@Override
+	public boolean write(Writer writer, IObservation observation, ILocator locator, IMonitor monitor) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
 }

@@ -35,6 +35,7 @@ import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.kim.Prototype;
 import org.integratedmodelling.klab.model.Annotation;
 import org.integratedmodelling.klab.provenance.Artifact;
+import org.integratedmodelling.klab.utils.Parameters;
 
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -344,5 +345,33 @@ public enum Annotations implements IAnnotationService {
 		}
 		return false;
 	}
+
+	/**
+	 * Simple methods that are messy to keep writing explicitly
+	 * 
+	 * @param annotations
+	 * @param id
+	 * @return
+	 */
+	public IAnnotation getAnnotation(List<IAnnotation> annotations, String id) {
+        for (IAnnotation annotation : annotations) {
+            if (id.equals(annotation.getName())) {
+                return annotation;
+            }
+        }
+        return null;
+    }
+
+    public IParameters<String> collectVariables(List<IAnnotation> annotations) {
+        IParameters<String> ret = Parameters.create();
+        for (IAnnotation annotation : annotations) {
+            if ("var".equals(annotation.getName())) {
+                for (String key : annotation.getNamedKeys()) {
+                    ret.put(key, annotation.get(key));
+                }
+            }
+        }
+        return ret;
+    }
 
 }

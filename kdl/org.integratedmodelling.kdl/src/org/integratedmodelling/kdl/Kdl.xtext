@@ -44,7 +44,7 @@ ActorDefinition:
 	 */
 	(annotations += Annotation*
 	// abstract only allowed at root level; only exists to be extended
-	(abstract?='abstract')? (final?='final')? (optional?='optional')? 
+	(abstract?='abstract')? (const?='const')? (final?='final')? (optional?='optional')? 
 	(
 		(exported?='export' | filter?='filter' | (imported?='import') (multiple?='multiple' | arity=INT (minimum?='+')?)?)
 	)? 
