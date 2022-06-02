@@ -70,15 +70,11 @@ public class SummarizingTableCompiler implements ITableCompiler {
 
     IState sourceState;
     boolean contabilizeNulls = false;
-    List<?> comparedStates;
     IObservedConcept target;
     String reportedValue;
-    // boolean rowTotals = false;
-    // boolean colTotals = false;
     IUnit unit;
     String emptyValue = "0.0";
     String noDataValue = "0.0";
-    boolean hasNulls = false;
     Map<String, Object> templateVars;
     int nextYear = 0;
     Object rowSummary = null;
@@ -93,13 +89,6 @@ public class SummarizingTableCompiler implements ITableCompiler {
         phaseTokens.add("years");
     }
 
-    /*
-     * hashes to keep the correspondence between the original values and their numeric value and the
-     * combined values and the value for the final histogram.
-     */
-    int nextId = 2; // use 1 for nodata and start at 2 for actual data
-    BiMap<Object, Integer> codes = HashBiMap.create();
-    Map<Pair<Object, Object>, Double> bins = new HashMap<>();
     private Boolean extensive;
 
     // these can only appear in one dimension and determine the phase to look at
@@ -212,7 +201,6 @@ public class SummarizingTableCompiler implements ITableCompiler {
         // aggregation, sum, mean, count, nodatacount, datacount, variance, std, median, dominant
         // aggregation resolves to sum, mean or dominant according to unit and semantics
         this.statistic = parameters.get("statistic", "aggregation");
-        this.comparedStates = parameters.get("compare", List.class);
         this.contabilizeNulls = parameters.get("contabilize-nulls", Boolean.FALSE);
         this.emptyValue = parameters.get("empty", "0.0");
         this.noDataValue = parameters.get("no-data", "0.0");
@@ -421,12 +409,11 @@ public class SummarizingTableCompiler implements ITableCompiler {
                         throw new KlabIllegalStateException("summarizer: summary needs a field named 'filter'");
                     }
                     directive = ((Map<?,?>) specifier).get("filter").toString();
-                    label = ((IParameters<String>) specifier).get("label", "{classifier}").toString();
+                    label = ((IParameters<String>) specifier).get("title", "{classifier}").toString();
                 }
                 addSummary(Dimension.ROW, builder, directive, label);
             }
         }
-
     }
 
     private void addSummary(Dimension dimension, Builder builder, String directive, String label) {

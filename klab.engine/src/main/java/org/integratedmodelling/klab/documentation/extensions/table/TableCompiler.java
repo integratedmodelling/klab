@@ -207,7 +207,7 @@ public class TableCompiler {
                     case "end":
                         return timeSelector.end;
                     case "time":
-                        return true;
+                        return timeSelector.steps;
                     }
                 }
             }
@@ -239,10 +239,26 @@ public class TableCompiler {
         boolean steps;
         Resolution resolution;
         private String displayLabel;
-
+        
+        
         TimeSelector(Object o) {
             if (o instanceof IKimQuantity) {
                 this.resolution = Time.resolution((IKimQuantity) o);
+            } else if ("years".equals(o)) {
+                this.resolution = Time.resolution(1, Resolution.Type.YEAR);
+                this.steps = true;
+            } else if ("days".equals(o)) {
+                this.resolution = Time.resolution(1, Resolution.Type.DAY);
+                this.steps = true;
+            } else if ("months".equals(o)) {
+                this.resolution = Time.resolution(1, Resolution.Type.MONTH);
+                this.steps = true;
+            } else if ("weeks".equals(o)) {
+                this.resolution = Time.resolution(1, Resolution.Type.WEEK);
+                this.steps = true;
+            } else if ("hours".equals(o)) {
+                this.resolution = Time.resolution(1, Resolution.Type.HOUR);
+                this.steps = true;
             } else {
                 this.start = "start".equals(o);
                 this.init = "init".equals(o);
@@ -260,6 +276,32 @@ public class TableCompiler {
             }
             if (start) {
                 return "start";
+            }
+            if (resolution != null && resolution.getMultiplier() == 1) {
+                switch (resolution.getType()) {
+                case CENTURY:
+                    return "centuries";
+                case DAY:
+                    return "days";
+                case DECADE:
+                    return "decades";
+                case HOUR:
+                    return "hours";
+                case MILLENNIUM:
+                    return "millennia";
+                case MILLISECOND:
+                    return "milliseconds";
+                case MINUTE:
+                    return "minutes";
+                case MONTH:
+                    return "months";
+                case SECOND:
+                    return "seconds";
+                case WEEK:
+                    return "weeks";
+                case YEAR:
+                    return "years";                
+                }
             }
             if (steps) {
                 return "steps";
