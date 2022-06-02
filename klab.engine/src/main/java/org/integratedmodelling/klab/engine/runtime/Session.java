@@ -70,6 +70,8 @@ import org.integratedmodelling.klab.api.knowledge.ICodelist;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IProject;
+import org.integratedmodelling.klab.api.model.IKimObject;
+import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.monitoring.MessageHandler;
@@ -116,6 +118,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.exceptions.KlabActorException;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.syntax.SemanticExpression;
@@ -2209,6 +2212,16 @@ public class Session extends GroovyObjectSupport
         return (ITask<ISubject>) (ITask) ObserveContextTask.create(this, observer, false);
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @Override
+    public ITask<ISubject> observe(String observerUrn) {
+        IKimObject observer = Resources.INSTANCE.getModelObject(observerUrn);
+        if (!(observer instanceof IObserver)) {
+            throw new KlabIllegalArgumentException(observerUrn + " does not specify an observer");
+        }
+        return (ITask<ISubject>) (ITask) ObserveContextTask.create(this, (Observer)observer, false);
+    }
+    
     /**
      * Open a session-local ticket.
      * 
