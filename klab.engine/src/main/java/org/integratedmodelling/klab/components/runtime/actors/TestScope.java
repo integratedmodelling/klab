@@ -5,6 +5,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.integratedmodelling.kactors.api.IKActorsStatement.Assert.Assertion;
 import org.integratedmodelling.kactors.api.IKActorsValue;
@@ -25,28 +26,44 @@ import org.integratedmodelling.klab.utils.LogFile;
 public class TestScope {
 
     class ExceptionReport {
-        String context;
+        String id;
         String stackTrace;
     }
 
-    class Statistics {
-        public int success = 0;
-        public int failure = 0;
-        public List<ExceptionReport> exceptions = new ArrayList<>();
+    class TestStatistics {
+
+        /*
+         * each test has its list of action statistics
+         */
+        List<Map<String, List<ActionStatistics>>> data = new ArrayList<>();
+        long start;
+        long end;
+        
+        class AssertionStatistics {
+            long start;
+            long end;
+            String descriptor;
+            boolean success;
+        }
+        
+        class ActionStatistics {
+            long start;
+            long end;
+            String name;
+            String path; // unique name, testcase.action
+            public int success = 0;
+            public int failure = 0;
+            public boolean skipped = false;
+            public List<ExceptionReport> exceptions = new ArrayList<>();            
+        }
     }
 
-    /*
-     * match for the expected fire, if any
-     */
-    private Object expect = null;
+    private TestStatistics statistics;
     private LogFile log;
     private IBehavior behavior;
     private int level = 0;
     private File logFile = null;
     private IBehavior parentBehavior = null;
-    private boolean success = true;
-    private Statistics globalStatistics;
-    private Statistics localStatistics;
     private int assertions;
     private List<Throwable> exceptions = new ArrayList<>();
 
@@ -58,19 +75,20 @@ public class TestScope {
     private long timestamp;
     private Action action;
     private Section docSection;
+    private TestScope parent;
 
     /*
      * TODO constraint system for URNs to use. Must be part of runtime, not the actor system.
      */
 
     public TestScope(TestScope other) {
+        this.statistics = other.statistics;
         this.parentBehavior = other.parentBehavior;
         this.behavior = other.behavior;
         this.level = other.level;
         this.logFile = other.logFile;
         this.log = other.log;
         this.docBuilder = other.docBuilder;
-        this.globalStatistics = other.globalStatistics;
     }
 
     private LogFile getLog() {
@@ -82,7 +100,7 @@ public class TestScope {
     }
 
     public TestScope(ISession session) {
-        this.globalStatistics = new Statistics();
+        this.statistics = new TestStatistics();
         this.docBuilder = new AsciiDocBuilder(
                 "Test report " + new Date() + " (" + session.getUser() + ") [v" + Version.getCurrent() + "]");
         this.docSection = this.docBuilder.getRootSection();
@@ -95,7 +113,7 @@ public class TestScope {
     public void onException(Throwable t) {
         exceptions.add(t);
     }
-
+    
     /**
      * Called at end of each @test action
      * 
@@ -108,17 +126,18 @@ public class TestScope {
         // tabulation or ignore/notify status
 
         long duration = System.currentTimeMillis() - this.timestamp;
-        this.docSection
-                .paragraph("Test **" + action.getName() + "** completed in " + TestBehavior.printPeriod(duration) + " with "
-                        + (assertions > 0
-                                ? (localStatistics.success + " successful, " + localStatistics.failure + " failed assertions, ")
-                                : "no assertions, ")
-                        + (exceptions.size() + " exceptions")
-                        + "\n");
+//        this.docSection
+//                .paragraph("Test **" + action.getName() + "** completed in " + TestBehavior.printPeriod(duration) + " with "
+//                        + (assertions > 0
+//                                ? (localStatistics.success + " successful, " + localStatistics.failure + " failed assertions, ")
+//                                : "no assertions, ")
+//                        + (exceptions.size() + " exceptions")
+//                        + "\n");
 
         // TODO compute overall status and add to global statistics: assertions if any, plus any
         // test expectation, plus lack of exceptions or cross-refs.
 
+        // TODO inform clients 
     }
 
     /**
@@ -131,6 +150,9 @@ public class TestScope {
         // basis
         docBuilder.writeToFile(new File(System.getProperty("user.home") + File.separator + "testoutput.adoc").toPath(),
                 Charset.forName("UTF-8"));
+        
+        // TODO inform clients 
+
     }
 
     public TestScope getChild(Action action) {
@@ -139,7 +161,7 @@ public class TestScope {
         ret.docSection.listingBlock(action.getStatement().getSourceCode(), "kactors");
         ret.timestamp = System.currentTimeMillis();
         ret.action = action;
-        ret.localStatistics = new Statistics();
+        ret.parent = this;
         return ret;
     }
 
@@ -149,19 +171,29 @@ public class TestScope {
         ret.behavior = behavior;
         ret.level = this.level + 1;
         ret.docSection = this.docSection.getChild("Test case  " + behavior.getName() + " started " + new Date());
+        ret.parent = this;
         return ret;
     }
 
+    /**
+     * The root scope holds all the statistics
+     * 
+     * @return
+     */
+    public TestScope getRoot() {
+        return this.parent == null ? this : this.parent.getRoot();
+    }
+    
     public void notifyAssertion(Object result, IKActorsValue expected, boolean ok, Assertion assertion) {
 
         // TODO assertions that caused exceptions should insert a cross-reference to the stack trace
         this.docSection.paragraph("Assertion " + (++assertions) + (ok ? " [SUCCESS]" : " [FAIL]") + ":\n");
         this.docSection.listingBlock(assertion.getSourceCode(), "kactors");
-        if (ok) {
-            this.localStatistics.success++;
-        } else {
-            this.localStatistics.failure++;
-        }
+//        if (ok) {
+//            this.localStatistics.success++;
+//        } else {
+//            this.localStatistics.failure++;
+//        }
     }
 
 }
