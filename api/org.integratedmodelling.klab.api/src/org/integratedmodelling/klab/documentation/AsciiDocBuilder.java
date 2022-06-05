@@ -34,6 +34,28 @@ public class AsciiDocBuilder {
         COLLAPSIBLE
     }
 
+    public static class Table {
+    	
+    	
+    	
+    	public Table(String[] headers) {
+    		
+    	}
+    	
+    	public Table(int columns) {
+    		
+    	}
+    	
+    	public void addRow(Object...objects) {
+    		
+    	}
+    	
+    	public String toString() {
+    		StringBuffer ret = new StringBuffer();
+    		return ret.toString();
+    	}
+    }
+    
     public class Section {
 
         String id = NameGenerator.newName();
