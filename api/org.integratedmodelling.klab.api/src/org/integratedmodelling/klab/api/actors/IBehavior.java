@@ -39,7 +39,8 @@ public interface IBehavior extends IKimObject {
     IKActorsBehavior getStatement();
 
     /**
-     * Metadata, following the (forthcoming) actor-specific schema in IMetadata.Schema.
+     * Metadata, following the (forthcoming) actor-specific schema in IMetadata.Schema. For now
+     * limited to {@link IMetadata#DC_COMMENT} for the docstring.
      * 
      * @return
      */

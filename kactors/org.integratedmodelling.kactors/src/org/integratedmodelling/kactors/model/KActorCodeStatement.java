@@ -73,7 +73,7 @@ public class KActorCodeStatement implements IKActorsCodeStatement {
 
     protected void parseMetadata(Metadata metadata) {
         // TODO could just discover the feature in the EObject and be called in the constructor
-        // instead of relying on the caller invoking this.
+        // instead of relying on each caller invoking this.
         if (metadata != null) {
             for (MetadataPair pair : metadata.getPairs()) {
                 String key = pair.getKey();
@@ -86,7 +86,7 @@ public class KActorCodeStatement implements IKActorsCodeStatement {
                     }
                     key = key.substring(1);
                 }
-                this.metadata.put(pair.getKey(), value);
+                this.metadata.put(key, value);
             }
         }
     }

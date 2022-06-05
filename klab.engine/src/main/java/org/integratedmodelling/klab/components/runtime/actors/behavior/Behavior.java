@@ -102,6 +102,12 @@ public class Behavior implements IBehavior {
     public Behavior(IKActorsBehavior statement) {
         this.statement = statement;
         this.projectId = statement.getProjectId();
+        if (statement.getDescription() != null) {
+            this.metadata.put(IMetadata.DC_COMMENT, statement.getDescription());
+        }
+        if (statement.getLabel() != null) {
+            this.metadata.put(IMetadata.DC_LABEL, statement.getLabel());
+        }
         for (IKActorsAction a : statement.getActions()) {
             BehaviorAction action = new BehaviorAction(a, this);
             actions.put(action.getId(), action);

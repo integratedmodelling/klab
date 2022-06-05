@@ -1779,8 +1779,8 @@ class KimValidator extends AbstractKimValidator {
 		}
 
 		if (statement.isSubjective) {
-			if (!type.contains(Type.ATTRIBUTE)) {
-				error('Only attributes can be subjective', KimPackage.Literals.CONCEPT_STATEMENT__SUBJECTIVE)
+			if (!type.contains(Type.ATTRIBUTE) && !type.contains(Type.ROLE)) {
+				error('Only attributes and roles can be subjective', KimPackage.Literals.CONCEPT_STATEMENT__SUBJECTIVE)
 				ok = false
 			} else {
 				type.add(Type.SUBJECTIVE)

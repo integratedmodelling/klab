@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.integratedmodelling.kactors.api.IKActorsValue;
+import org.integratedmodelling.klab.api.data.classification.IClassifier;
+
 /**
  * 
  * @author ferdinando.villa
@@ -38,5 +41,26 @@ public class TemplateUtil {
 			System.out.println("  " + var);
 		}
 	}
+
+
+	   
+    public static String substitute(String target, Object...objects) {
+        String ret = target;
+        for (int i = 0; i < objects.length; i++) {
+            ret = ret.replace("{" + objects[i]+"}", toString(objects[++i]));
+        }
+        return ret;
+    }
+
+
+    private static CharSequence toString(Object object) {
+        // TODO can be smarter about arrays and the like
+        if (object instanceof IKActorsValue) {
+            object = ((IKActorsValue)object).getStatedValue();
+        } else if (object instanceof IClassifier) {
+            object = ((IClassifier)object).getSourceCode();
+        }
+        return object == null ? "null" : object.toString();
+    }
 
 }
