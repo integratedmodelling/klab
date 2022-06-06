@@ -38,7 +38,6 @@ import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
-import org.integratedmodelling.kim.model.KimObservable;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IActorIdentity;
 import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
@@ -51,6 +50,7 @@ import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Call;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IObservationGroup;
@@ -1541,5 +1541,28 @@ public enum Actors implements IActorsService {
         }
 
         return value;
+    }
+
+    public int runAllTests(String[] testCaseProjectsOrGitUrls, ISession session, File outputFile) {
+        
+        int ret = 0;
+        if (outputFile != null) {
+            // 
+        }
+        for (String project : testCaseProjectsOrGitUrls) {
+            // turn string into project, if existing call runAllTests on it and sum up the return value.
+        }
+        
+        return ret;
+    }
+    
+    /**
+     * Run all test cases in a project 
+     * 
+     * @param project
+     * @return
+     */
+    public int runAllTests(IProject project) {
+        return 0;
     }
 }

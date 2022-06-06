@@ -15,6 +15,7 @@ import org.integratedmodelling.klab.api.actors.IBehavior.Action;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.documentation.AsciiDocBuilder;
 import org.integratedmodelling.klab.documentation.AsciiDocBuilder.Option;
 import org.integratedmodelling.klab.documentation.AsciiDocBuilder.Section;
@@ -79,7 +80,8 @@ public class TestScope {
 
     public TestScope(ISession session) {
         this.statistics = new ArrayList<>();
-        this.docBuilder = new AsciiDocBuilder("Test report", "Run by " + session.getUser() + " [v" + Version.getCurrent() + "]",
+        this.docBuilder = new AsciiDocBuilder("Test report",
+                "Run by " + session.getUser() + " on " + TimeInstant.create() + " [k.LAB " + Version.getCurrent() + "]",
                 Option.NUMBER_SECTIONS);
         this.docSection = this.docBuilder.getRootSection();
         this.docSection.action(() -> getAsciidocDescription());
@@ -157,13 +159,13 @@ public class TestScope {
 
             StringBuffer buffer = new StringBuffer();
 
-            buffer.append("Test completed in "
-                    + Time.INSTANCE.printPeriod(ret.actionStatistics.getEnd() - ret.actionStatistics.getStart()) + ": result is "
-                    + (ret.actionStatistics.getFailure() == 0 ? "[lime]#SUCCESS#" : "[red]#FAIL#") + "\n\n");
-
             if (ret.actionStatistics.getDescription() != null && !ret.actionStatistics.getDescription().isEmpty()) {
                 buffer.append(ret.actionStatistics.getDescription() + "\n\n");
             }
+
+            buffer.append("Test completed in "
+                    + Time.INSTANCE.printPeriod(ret.actionStatistics.getEnd() - ret.actionStatistics.getStart()) + ": result is "
+                    + (ret.actionStatistics.getFailure() == 0 ? "[lime]#SUCCESS#" : "[red]#FAIL#") + "\n\n");
 
             buffer.append(".Source code\n");
             buffer.append(AsciiDocBuilder.listingBlock(action.getStatement().getSourceCode(), "kactors", Option.COLLAPSIBLE));
@@ -190,6 +192,7 @@ public class TestScope {
         ret.parent = this;
         ret.testStatistics = new TestStatistics(behavior);
         ret.docSection.action(() -> {
+
             StringBuffer buffer = new StringBuffer();
             int success = ret.testStatistics.getSuccessCount();
             int failed = ret.testStatistics.getFailureCount();
@@ -197,14 +200,14 @@ public class TestScope {
             for (ActionStatistics action : ret.testStatistics.getActions()) {
                 elapsed += action.getEnd() - action.getStart();
             }
-            
-            buffer.append("\nTotal tests run: " + (success + failed) + " of which [lime]#" + success + "# successful, [red]#"
-                    + failed + "# failed. Total test run time " + Time.INSTANCE.printPeriod(elapsed) + ".\n");
-            
+
             if (ret.behavior.getMetadata().containsKey(IMetadata.DC_COMMENT)) {
                 buffer.append("\n" + ret.behavior.getMetadata().get(IMetadata.DC_COMMENT) + "\n");
             }
-            
+
+            buffer.append("\nTotal tests run: " + (success + failed) + " of which [lime]#" + success + "# successful, [red]#"
+                    + failed + "# failed. Total test run time " + Time.INSTANCE.printPeriod(elapsed) + ".\n");
+
             return buffer.toString();
         });
 
