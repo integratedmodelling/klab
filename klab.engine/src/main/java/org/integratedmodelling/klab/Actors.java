@@ -51,6 +51,7 @@ import org.integratedmodelling.klab.api.extensions.actors.Call;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IProject;
+import org.integratedmodelling.klab.api.knowledge.IWorkspace;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IObservationGroup;
@@ -86,6 +87,7 @@ import org.integratedmodelling.klab.rest.BehaviorReference;
 import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.rest.ViewPanel;
+import org.integratedmodelling.klab.utils.GitUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Path;
 import org.integratedmodelling.klab.utils.Range;
@@ -1549,15 +1551,29 @@ public enum Actors implements IActorsService {
         if (outputFile != null) {
             // 
         }
-        for (String project : testCaseProjectsOrGitUrls) {
+        for (String projectUrl : testCaseProjectsOrGitUrls) {
+
+            IProject project = null;
             // turn string into project, if existing call runAllTests on it and sum up the return value.
+            if (GitUtils.isRemoteGitURL(projectUrl)) {
+                IWorkspace tempWs = Resources.INSTANCE.getServiceWorkspace();
+                String projectName = GitUtils.clone(projectUrl, tempWs.getRoot(), true);
+                project = tempWs.loadProject(projectName, Klab.INSTANCE.getRootMonitor());
+            } else {
+                project = Resources.INSTANCE.getProject(projectUrl);
+            }
+            
+            if (project != null) {
+                ret += runAllTests(project);
+            }
+            
         }
         
         return ret;
     }
     
     /**
-     * Run all test cases in a project 
+     * Run all test cases in a project. Use dependency order to follow imports.
      * 
      * @param project
      * @return
