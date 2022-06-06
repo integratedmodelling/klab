@@ -8,14 +8,19 @@ import java.util.List;
 import org.integratedmodelling.kactors.api.IKActorsStatement.Assert.Assertion;
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.klab.Annotations;
+import org.integratedmodelling.klab.Time;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.actors.IBehavior.Action;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.documentation.AsciiDocBuilder;
 import org.integratedmodelling.klab.documentation.AsciiDocBuilder.Option;
 import org.integratedmodelling.klab.documentation.AsciiDocBuilder.Section;
+import org.integratedmodelling.klab.documentation.AsciiDocBuilder.Table;
+import org.integratedmodelling.klab.documentation.AsciiDocBuilder.Table.Span;
 import org.integratedmodelling.klab.rest.TestStatistics;
 import org.integratedmodelling.klab.rest.TestStatistics.ActionStatistics;
 import org.integratedmodelling.klab.rest.TestStatistics.AssertionStatistics;
@@ -23,7 +28,6 @@ import org.integratedmodelling.klab.utils.LogFile;
 import org.integratedmodelling.klab.utils.Path;
 import org.integratedmodelling.klab.utils.StringUtils;
 import org.integratedmodelling.klab.utils.TemplateUtil;
-import org.joda.time.Period;
 
 /**
  * Additional scope for actions in test scripts.
@@ -76,8 +80,8 @@ public class TestScope {
 
     public TestScope(ISession session) {
         this.statistics = new ArrayList<>();
-        this.docBuilder = new AsciiDocBuilder(
-                "Test report", "Run by " + session.getUser() + " [v" + Version.getCurrent() + "]",
+        this.docBuilder = new AsciiDocBuilder("Test report",
+                "Run by " + session.getUser() + " on " + TimeInstant.create() + " [k.LAB " + Version.getCurrent() + "]",
                 Option.NUMBER_SECTIONS);
         this.docSection = this.docBuilder.getRootSection();
         this.docSection.action(() -> getAsciidocDescription());
@@ -112,9 +116,15 @@ public class TestScope {
         ActionStatistics ret = new ActionStatistics();
         ret.setPath(action.getName());
         ret.setName(Path.getLast(ret.getPath(), '.'));
+        ret.setLabel(ret.getName());
         IAnnotation tann = Annotations.INSTANCE.getAnnotation(action.getAnnotations(), "test");
-        if (tann != null && tann.containsKey("description")) {
-            test.setDescription(tann.get("description", String.class));
+        if (tann != null) {
+            if (tann.containsKey("comment")) {
+                ret.setDescription(tann.get("comment", String.class));
+            }
+            if (tann.containsKey("label")) {
+                ret.setLabel(tann.get("label", String.class));
+            }
         }
         ret.setSourceCode(action.getStatement().getSourceCode());
         ret.setStart(System.currentTimeMillis());
@@ -129,10 +139,9 @@ public class TestScope {
     public void finalizeTestRun() {
 
         /*
-         * TODO remove
+         * TODO remove - should be optional after everything has ended
          */
-        docBuilder.writeToFile(
-                new File(System.getProperty("user.home") + File.separator + "testoutput.adoc").toPath(),
+        docBuilder.writeToFile(new File(System.getProperty("user.home") + File.separator + "testoutput.adoc").toPath(),
                 Charset.forName("UTF-8"));
 
         // TODO inform clients
@@ -140,15 +149,35 @@ public class TestScope {
     }
 
     public TestScope getChild(Action action) {
+
         TestScope ret = new TestScope(this);
-        ret.docSection = this.docSection.getChild("Test:  " + action.getId());
+        ret.docSection = this.docSection.getChild("anchor:" + action.getId() + "[]" + "Test:  " + action.getId());
         ret.action = action;
         ret.parent = this;
         ret.actionStatistics = newAction(ret.testStatistics, action);
         ret.docSection.action(() -> {
+
             StringBuffer buffer = new StringBuffer();
-            buffer.append(AsciiDocBuilder.listingBlock(action.getStatement().getSourceCode(), "kactors",
-                    Option.COLLAPSIBLE));
+
+            if (ret.actionStatistics.getDescription() != null && !ret.actionStatistics.getDescription().isEmpty()) {
+                buffer.append(ret.actionStatistics.getDescription() + "\n\n");
+            }
+
+            buffer.append("Test completed in "
+                    + Time.INSTANCE.printPeriod(ret.actionStatistics.getEnd() - ret.actionStatistics.getStart()) + ": result is "
+                    + (ret.actionStatistics.getFailure() == 0 ? "[lime]#SUCCESS#" : "[red]#FAIL#") + "\n\n");
+
+            buffer.append(".Source code\n");
+            buffer.append(AsciiDocBuilder.listingBlock(action.getStatement().getSourceCode(), "kactors", Option.COLLAPSIBLE));
+
+            if (ret.actionStatistics.getAssertions().size() > 0) {
+                Table table = new Table("Description", "Outcome").title("Assertions").spans(7, 1);
+                for (AssertionStatistics assertion : ret.actionStatistics.getAssertions()) {
+                    table.addRow(assertion.getDescriptor(), assertion.isSuccess() ? "[lime]#SUCCESS#" : "[red]#FAIL#");
+                }
+                buffer.append("\n" + table.toString());
+            }
+
             return buffer.toString();
         });
         return ret;
@@ -159,13 +188,26 @@ public class TestScope {
         ret.parentBehavior = this.behavior;
         ret.behavior = behavior;
         ret.level = this.level + 1;
-        ret.docSection = this.docSection
-                .getChild(behavior.getName());
+        ret.docSection = this.docSection.getChild("anchor:" + behavior.getName() + "[]" + behavior.getName());
         ret.parent = this;
         ret.testStatistics = new TestStatistics(behavior);
         ret.docSection.action(() -> {
+
             StringBuffer buffer = new StringBuffer();
-            // TODO summary only
+            int success = ret.testStatistics.getSuccessCount();
+            int failed = ret.testStatistics.getFailureCount();
+            long elapsed = 0;
+            for (ActionStatistics action : ret.testStatistics.getActions()) {
+                elapsed += action.getEnd() - action.getStart();
+            }
+
+            if (ret.behavior.getMetadata().containsKey(IMetadata.DC_COMMENT)) {
+                buffer.append("\n" + ret.behavior.getMetadata().get(IMetadata.DC_COMMENT) + "\n");
+            }
+
+            buffer.append("\nTotal tests run: " + (success + failed) + " of which [lime]#" + success + "# successful, [red]#"
+                    + failed + "# failed. Total test run time " + Time.INSTANCE.printPeriod(elapsed) + ".\n");
+
             return buffer.toString();
         });
 
@@ -180,6 +222,7 @@ public class TestScope {
 
         int totalOk = 0, totalFail = 0, totalSkipped = 0;
         long start = Long.MAX_VALUE, end = Long.MIN_VALUE;
+
         for (TestStatistics child : this.statistics) {
             for (ActionStatistics action : child.getActions()) {
                 if (action.getStart() < start) {
@@ -189,17 +232,32 @@ public class TestScope {
                     end = action.getEnd();
                 }
                 if (action.isSkipped()) {
-                    totalSkipped ++;
+                    totalSkipped++;
                 } else if (action.getFailure() > 0) {
-                    totalFail ++;
+                    totalFail++;
                 } else {
-                    totalOk ++;
+                    totalOk++;
                 }
             }
         }
 
-        return (totalOk + totalFail) + " tests run in " + new Period(end - start) + " (" + totalOk + " succeeded, "
-                + totalFail + " failed, " + totalSkipped + " skipped)";
+        Table table = new Table(3).spans(1, 7, 1);
+        table.addRow(new Span(2, 1), "**Overall test results**", (totalOk + "/" + (totalOk + totalFail)));
+
+        for (TestStatistics child : this.statistics) {
+
+            table.addRow(new Span(2, 1), "<<" + child.getName() + ", Test case **" + child.getName() + "**>>",
+                    ((child.getSuccessCount() + "/" + (child.getSuccessCount() + child.getFailureCount()))));
+
+            int i = 1;
+            for (ActionStatistics action : child.getActions()) {
+                table.addRow(">Test #" + (i++), "<<" + action.getName() + ", " + action.getName() + ">>",
+                        action.isSkipped() ? "SKIP" : (action.getFailure() == 0 ? "[lime]#SUCCESS#" : "[red]#FAIL#"));
+            }
+        }
+
+        return (totalOk + totalFail) + " tests run in " + Time.INSTANCE.printPeriod(end - start) + " ([lime]#" + totalOk
+                + "# succeeded, [red]#" + totalFail + "# failed, " + totalSkipped + " skipped)\n\n" + table.toString();
     }
 
     /**
@@ -221,9 +279,8 @@ public class TestScope {
         }
         if (ok) {
             if (assertion.getMetadata().containsKey("success")) {
-                desc.setDescriptor(TemplateUtil.substitute(
-                        assertion.getMetadata().get("success", String.class), "value", result, "expected",
-                        expected));
+                desc.setDescriptor(TemplateUtil.substitute(assertion.getMetadata().get("success", String.class), "value", result,
+                        "expected", expected));
             } else {
                 if (expected != null) {
                     desc.setDescriptor("Expected value " + expected + " was returned");
@@ -231,9 +288,8 @@ public class TestScope {
             }
         } else {
             if (assertion.getMetadata().containsKey("fail")) {
-                desc.setDescriptor(TemplateUtil.substitute(
-                        assertion.getMetadata().get("fail", String.class), "value", result, "expected",
-                        expected));
+                desc.setDescriptor(TemplateUtil.substitute(assertion.getMetadata().get("fail", String.class), "value", result,
+                        "expected", expected));
             } else {
                 if (expected != null) {
                     desc.setDescriptor("Expected " + expected + ", got " + result);
@@ -242,7 +298,7 @@ public class TestScope {
         }
 
         if (desc.getDescriptor() == null) {
-            desc.setDescriptor(StringUtils.abbreviate(assertion.getSourceCode(), 60));
+            desc.setDescriptor(StringUtils.abbreviate(StringUtils.getFirstLine(assertion.getSourceCode()), 60));
         }
 
     }

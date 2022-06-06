@@ -156,7 +156,7 @@ public class Weather {
 	public Weather(Collection<WeatherStation> stations, ITime time, int maxYearsBack, String[] variables,
 			int maxAcceptableNodataPercentage, boolean interpolateNodata) throws KlabException {
 
-		int year = Time.getYear(time.getStart());
+		int year = time.getStart().getYear();
 		ArrayList<WeatherStation> rejected = new ArrayList<>();
 
 		for (WeatherStation s : stations) {

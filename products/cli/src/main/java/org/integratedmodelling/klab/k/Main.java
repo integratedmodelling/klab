@@ -7,7 +7,6 @@ import org.integratedmodelling.klab.clitool.CliStartupOptions;
 import org.integratedmodelling.klab.clitool.console.SysConsole;
 import org.integratedmodelling.klab.clitool.console.TermConsole;
 import org.integratedmodelling.klab.engine.EngineStartupOptions;
-import org.integratedmodelling.klab.engine.runtime.Session;
 
 /**
  * A CLI-driven k.LAB modeler.
@@ -32,15 +31,23 @@ public class Main {
 			options.setNetwork(true);
 			TermConsole console = new TermConsole();
 			console.start(options);
+		} else if (options.isTesting()) {
+            SysConsole console = new SysConsole();
+            ISession session = CliRuntime.INSTANCE.initialize(console, options);
+            int exitCode = 0;
+            exitCode = Actors.INSTANCE.runAllTests(options.getArguments(), session, options.getOutputFile());
+            CliRuntime.INSTANCE.shutdown();
+            System.exit(exitCode);
+		    
 		} else {
-			SysConsole console = new SysConsole();
-			ISession session = CliRuntime.INSTANCE.initialize(console, options);
-			int exitCode = 0;
-			for (String argument : options.getArguments()) {
-				exitCode += Actors.INSTANCE.run(argument, session);
-			}
-			CliRuntime.INSTANCE.shutdown();
-			System.exit(exitCode);
+            SysConsole console = new SysConsole();
+            ISession session = CliRuntime.INSTANCE.initialize(console, options);
+            int exitCode = 0;
+            for (String argument : options.getArguments()) {
+                exitCode += Actors.INSTANCE.run(argument, session);
+            }
+            CliRuntime.INSTANCE.shutdown();
+            System.exit(exitCode);
 		}
 	}
 }
