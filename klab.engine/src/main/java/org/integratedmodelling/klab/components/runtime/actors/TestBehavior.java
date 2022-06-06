@@ -43,18 +43,11 @@ import org.integratedmodelling.klab.exceptions.KlabActorException;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.joda.time.Period;
-import org.joda.time.format.PeriodFormatter;
-import org.joda.time.format.PeriodFormatterBuilder;
 
 import akka.actor.typed.ActorRef;
 
 @Behavior(id = "test", version = Version.CURRENT)
 public class TestBehavior {
-
-    private static final PeriodFormatter periodFormat = new PeriodFormatterBuilder().appendDays().appendSuffix(" day", " days")
-            .appendSeparator(" ").printZeroIfSupported().minimumPrintedDigits(2).appendHours().appendSeparator(":")
-            .appendMinutes().printZeroIfSupported().minimumPrintedDigits(2).appendSeparator(":").appendSeconds()
-            .minimumPrintedDigits(2).appendSeparator(".").appendMillis3Digit().toFormatter();
 
     @Action(id = "test", fires = {}, description = "Run all the test included in one or more projects, naming the project ID, "
             + "a URL or a Git URL (git:// or http....*.git")
@@ -263,11 +256,6 @@ public class TestBehavior {
         }
 
         scope.testScope.notifyAssertion(target, comparison, ok, assertion);
-    }
-
-    public static String printPeriod(long ms) {
-        Period period = new Period(ms);
-        return periodFormat.print(period);
     }
 
     @Action(id = "whitelist", fires = {})

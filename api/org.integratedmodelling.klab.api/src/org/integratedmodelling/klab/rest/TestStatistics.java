@@ -21,6 +21,26 @@ public class TestStatistics {
     private long start;
     private long end;
 
+    public int getFailureCount() {
+        int ret = 0;
+        for (ActionStatistics action : actions) {
+            if (!action.isSkipped() && action.getFailure() > 0) {
+                ret++;
+            }
+        }
+        return ret;
+    }
+
+    public int getSuccessCount() {
+        int ret = 0;
+        for (ActionStatistics action : actions) {
+            if (!action.isSkipped() && action.getFailure() == 0) {
+                ret++;
+            }
+        }
+        return ret;
+    }
+
     public static class ExceptionReport {
 
         private String id;
@@ -45,11 +65,11 @@ public class TestStatistics {
     }
 
     public static class AssertionStatistics {
+        
         private long start;
         private long end;
         private String descriptor;
         private boolean success;
-
         public boolean isSuccess() {
             return success;
         }
@@ -82,6 +102,7 @@ public class TestStatistics {
         private long start;
         private long end;
         private String name;
+        private String label;
         private String description;
         private String path; // unique name, testcase.action
         private int success = 0;
@@ -185,6 +206,14 @@ public class TestStatistics {
         public void setExceptions(List<ExceptionReport> exceptions) {
             this.exceptions = exceptions;
         }
+
+        public String getLabel() {
+            return label;
+        }
+
+        public void setLabel(String label) {
+            this.label = label;
+        }
     }
 
     public String getDescription() {
@@ -210,5 +239,13 @@ public class TestStatistics {
     }
     public void setStart(long start) {
         this.start = start;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
     }
 }

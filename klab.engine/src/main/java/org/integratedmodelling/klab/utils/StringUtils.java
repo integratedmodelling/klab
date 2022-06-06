@@ -651,4 +651,9 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
         return sbuf.toString();
     }
 
+    public static String getFirstLine(String string) {
+        String lines[] = string.split("\\r?\\n");
+        return lines.length >= 1 ? lines[0] : "";
+    }
+
 }
