@@ -214,6 +214,11 @@
             id="org.integratedmodelling.klab.ide.views.ScenarioView"
             name="Scenarios">
       </view>
+      <view
+            class="org.integratedmodelling.klab.ide.views.TestView"
+            id="org.integratedmodelling.klab.ide.views.TestView"
+            name="Unit Tests">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
