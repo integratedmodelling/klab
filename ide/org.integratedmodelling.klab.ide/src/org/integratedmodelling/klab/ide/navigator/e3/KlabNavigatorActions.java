@@ -31,6 +31,7 @@ import org.integratedmodelling.klab.ide.navigator.model.documentation.EDocumenta
 import org.integratedmodelling.klab.ide.navigator.model.documentation.EDocumentationItem;
 import org.integratedmodelling.klab.ide.navigator.model.documentation.EDocumentationPage;
 import org.integratedmodelling.klab.ide.navigator.model.documentation.EReference;
+import org.integratedmodelling.klab.ide.ui.LocalizationEditor;
 import org.integratedmodelling.klab.ide.ui.wizards.BulkImportResourceWizard;
 import org.integratedmodelling.klab.ide.ui.wizards.ExportResourceWizard;
 import org.integratedmodelling.klab.ide.ui.wizards.MoveResourceWizard;
@@ -44,6 +45,7 @@ import org.integratedmodelling.klab.ide.ui.wizards.NewScriptWizard;
 import org.integratedmodelling.klab.ide.ui.wizards.PublishResourceWizard;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.ide.views.DocumentationEditor;
+import org.integratedmodelling.klab.ide.views.LocalizationView;
 import org.integratedmodelling.klab.ide.views.ReferencesEditor;
 import org.integratedmodelling.klab.ide.views.ResourceEditor;
 import org.integratedmodelling.klab.rest.NodeReference;
@@ -144,22 +146,16 @@ public class KlabNavigatorActions {
 	}
 	
 	   public static void editLocalization(EActorBehavior script, IWorkbenchPage page) {
-	      // pop up alert: if new, ask to fill strings in, harvest and substitute
-	      KActorsLocalizer localizer = new KActorsLocalizer(script); 
-	      Map<String, String> toLocalize = localizer.getUnlocalizedStrings();
-	      for (String key: toLocalize.keySet()) {
-	          System.out.println(key + " = " + toLocalize.get(key));
-	      }
-//	      if (MessageDialog.openConfirm(Eclipse.INSTANCE.getShell(), "Confirm deletion",
-//	              "Delete script " + script.getName() + "? This action cannot be recovered.")) {
-//	          Activator.post((message) -> {
-//	              File file = message.getPayload(ProjectModificationNotification.class).getFile();
-//	              Activator.loader().delete(file);
-//	              Eclipse.INSTANCE.closeEditor(file, page);
-//	              KlabNavigator.refresh();
-//	          }, IMessage.MessageClass.ProjectLifecycle, IMessage.Type.DeleteScript,
-//	                  new ProjectModificationRequest(script.getProject().getName(), script.getName()));
-//	      }
+
+	       try {
+	            IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+	                    .showView(LocalizationView.ID);
+	            if (view != null) {
+	                ((LocalizationView) view).loadApplication(script);
+	            }
+	        } catch (Exception e) {
+	            Eclipse.INSTANCE.handleException(e);
+	        }
 	    }
 
 	public static void addTestCase(ETestFolder folder) {

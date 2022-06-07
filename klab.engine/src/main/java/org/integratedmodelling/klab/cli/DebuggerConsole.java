@@ -29,8 +29,8 @@ public class DebuggerConsole implements IConsole {
 
             @Override
             protected void setTitle(String string) {
-                // TODO specific message
-                println("TITLE: " + string);
+//                // TODO specific message
+//                println("TITLE: " + string);
             }
 
             @Override

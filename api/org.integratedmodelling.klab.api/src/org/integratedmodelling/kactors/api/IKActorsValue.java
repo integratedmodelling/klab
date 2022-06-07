@@ -66,12 +66,18 @@ public interface IKActorsValue extends IKActorsCodeStatement {
         /**
          * A component path and possibly arguments passed after 'new'
          */
-        COMPONENT, 
-        
+        COMPONENT,
+
         /**
          * A (chain of) function calls
          */
-        CALLCHAIN
+        CALLCHAIN,
+
+        /**
+         * A string in the form #KEY, pointing to a localized string in the companion
+         * internationalization map.
+         */
+        LOCALIZED_KEY
 
     }
 
@@ -185,6 +191,5 @@ public interface IKActorsValue extends IKActorsCodeStatement {
      * @return
      */
     Object evaluate(Scope scope, IIdentity identity, boolean forceEvaluationIfDeferred);
-
 
 }

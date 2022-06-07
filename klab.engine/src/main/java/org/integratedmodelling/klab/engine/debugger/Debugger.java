@@ -79,7 +79,8 @@ public abstract class Debugger {
             @Override
             public void historyChanged(SessionActivity rootActivity, SessionActivity currentActivity) {
                 // TODO put away for inspection
-//                System.out.println("GOT " + JsonUtils.printAsJson(currentActivity == null ? rootActivity : currentActivity));
+                // System.out.println("GOT " + JsonUtils.printAsJson(currentActivity == null ?
+                // rootActivity : currentActivity));
             }
         });
     }
@@ -216,14 +217,18 @@ public abstract class Debugger {
     }
 
     private String focusToString() {
-        return cellFocus == null ? (focus == null ? "" : focus.toString()) : (cellFocus.getX() + "," + cellFocus.getY());
+        return cellFocus == null
+                ? (focus == null ? "" : focus.toString())
+                : (cellFocus.getX() + "," + cellFocus.getY() + " [" + cellFocus.getCenter()[1] + "," + cellFocus.getCenter()[0]
+                        + "]");
     }
 
     private String locatorToString(ILocator locator) {
         if (locator instanceof IScale) {
             ISpace space = ((IScale) locator).getSpace();
             if (space instanceof Cell) {
-                return ((Cell) space).getX() + "," + ((Cell) space).getY();
+                return ((Cell) space).getX() + "," + ((Cell) space).getY() + " [" + ((Cell) space).getCenter()[1] + ","
+                        + ((Cell) space).getCenter()[0] + "]";
             }
         }
         return locator.toString();
@@ -365,7 +370,7 @@ public abstract class Debugger {
     public void close() {
         session.getState().removeListener(listenerId);
     }
-    
+
     private void help() {
     }
 

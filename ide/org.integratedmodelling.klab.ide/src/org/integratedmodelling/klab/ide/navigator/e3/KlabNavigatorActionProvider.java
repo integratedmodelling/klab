@@ -65,9 +65,9 @@ public class KlabNavigatorActionProvider extends CommonActionProvider {
 				(folder) -> KlabNavigatorActions.addScript(folder));
 		action("New test case...", "Create a new test case", "test.gif", ETestFolder.class,
 				(folder) -> KlabNavigatorActions.addTestCase(folder));
-		action("Run test suite", "Run all the scripts in this folder as a test suite", "scripts.gif", ETestFolder.class,
+		action("Run test suite", "Run all the scripts in this folder as a test suite", "ss9.png", ETestFolder.class,
 				(folder) -> KlabNavigatorActions.runTestSuite(folder));
-		action("View test reports", "View the test reports of all saved runs", "scripts.gif", ETestFolder.class,
+		action("View test reports", "View the test reports of all saved runs", "ss9.png", ETestFolder.class,
 				(folder) -> KlabNavigatorActions.viewTestReports(folder));
 		action("Run script", "Delete the selected script", "script.gif", EScript.class,
 				(namespace) -> KlabNavigatorActions.runScript(namespace));
@@ -77,8 +77,8 @@ public class KlabNavigatorActionProvider extends CommonActionProvider {
 				(namespace) -> KlabNavigatorActions.deleteScript(namespace, wSite.getPage()));
 		action("Delete behavior", "Delete the selected behavior", "cog_delete.png", EActorBehavior.class,
 				(namespace) -> KlabNavigatorActions.deleteBehavior(namespace, wSite.getPage()));
-        action("Localization...", "Edit localized strings", "cog_delete.png", EActorBehavior.class,
-                (namespace) -> KlabNavigatorActions.editLocalization(namespace, wSite.getPage()));
+        action("Internationalization...", "Edit localized strings", "browser.gif", EActorBehavior.class,
+                (namespace) -> KlabNavigatorActions.editLocalization(namespace, wSite.getPage())).activate();
 		action("Delete script", "Delete the selected script", "script.gif", EScript.class,
 				(namespace) -> KlabNavigatorActions.deleteScript(namespace, wSite.getPage()));
 		action("Delete test case", "Delete the selected test case", "test.gif", ETestCase.class,

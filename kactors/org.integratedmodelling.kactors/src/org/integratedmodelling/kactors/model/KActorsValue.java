@@ -11,6 +11,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
+import org.eclipse.xtext.xbase.controlflow.ThisReference;
 import org.integratedmodelling.contrib.jgrapht.Graph;
 import org.integratedmodelling.contrib.jgrapht.graph.DefaultDirectedGraph;
 import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
@@ -37,6 +38,7 @@ import org.integratedmodelling.klab.api.services.IConceptService;
 import org.integratedmodelling.klab.api.services.IExtensionService;
 import org.integratedmodelling.klab.api.services.IObservableService;
 import org.integratedmodelling.klab.utils.Range;
+import org.integratedmodelling.klab.utils.StringUtil;
 
 /**
  * Values. Most are reported as the object they are encoded with (strings for most non-POD objects)
@@ -185,8 +187,13 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
             this.value = parseNumber(value.getNumber());
             this.type = Type.BOOLEAN;
         } else if (value.getString() != null) {
-            this.value = value.getString();
-            this.type = Type.STRING;
+            if (value.getString().startsWith("#") && StringUtil.isUppercase(value.getString().substring(1))) {
+                this.value = value.getString().substring(1);
+                this.type = Type.LOCALIZED_KEY;
+            } else {
+                this.value = value.getString();
+                this.type = Type.STRING;
+            }
         } else if (value.getDate() != null) {
             this.value = new KActorsDate(value.getDate());
             this.type = Type.DATE;
@@ -244,8 +251,13 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
             this.type = Type.LIST;
             this.value = parseList(value.getSet(), this);
         } else if (value.getString() != null) {
-            this.value = value.getString();
-            this.type = Type.STRING;
+            if (value.getString().startsWith("#") && StringUtil.isUppercase(value.getString().substring(1))) {
+                this.value = value.getString().substring(1);
+                this.type = Type.LOCALIZED_KEY;
+            } else {
+                this.value = value.getString();
+                this.type = Type.STRING;
+            }
         } else if (value.getMap() != null) {
             this.value = parseMap(value.getMap(), this);
             this.type = Type.MAP;
@@ -459,6 +471,10 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
             this.type = Type.NUMBER;
             return parseNumber(literal.getNumber());
         } else if (literal.getString() != null) {
+            if (literal.getString().startsWith("#") && StringUtil.isUppercase(literal.getString().substring(1))) {
+                this.type = Type.LOCALIZED_KEY;
+                return literal.getString().substring(1);
+            }
             this.type = Type.STRING;
             return literal.getString();
         } else if (literal.getFrom() != null) {
@@ -471,7 +487,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
             return Range.create(low.doubleValue(), high == null ? Double.POSITIVE_INFINITY : high.doubleValue());
         } else if (literal.getDate() != null) {
             this.type = Type.DATE;
-            this.value = new KActorsDate(literal.getDate());
+            return new KActorsDate(literal.getDate());
         }
         return null;
     }
