@@ -14,6 +14,13 @@ import org.integratedmodelling.klab.client.utils.FileCatalog;
 import org.integratedmodelling.klab.ide.navigator.model.EActorBehavior;
 import org.integratedmodelling.klab.ide.ui.LocalizationEditor;
 import org.integratedmodelling.klab.utils.MiscUtilities;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.wb.swt.ResourceManager;
+import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.wb.swt.SWTResourceManager;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.custom.StackLayout;
 
 public class LocalizationView extends ViewPart {
 
@@ -35,7 +42,28 @@ public class LocalizationView extends ViewPart {
      */
     @Override
     public void createPartControl(Composite parent) {
+        parent.setLayout(new GridLayout(1, false));
+        
+        Composite composite_1_1 = new Composite(parent, SWT.NONE);
+        composite_1_1.setLayout(new GridLayout(2, false));
+        
+        Label lblNewLabel = new Label(composite_1_1, SWT.NONE);
+        lblNewLabel.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/logo_white_64.png"));
+        
+        Composite composite_2 = new Composite(composite_1_1, SWT.NONE);
+        composite_2.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        RowLayout rl_composite_2 = new RowLayout(SWT.VERTICAL);
+        rl_composite_2.fill = true;
+        composite_2.setLayout(rl_composite_2);
+        
+        Label lblNewLabel_1 = new Label(composite_2, SWT.NONE);
+        lblNewLabel_1.setText("k.LAB Internationalization Editor");
+        lblNewLabel_1.setFont(SWTResourceManager.getFont("Segoe UI", 12, SWT.BOLD));
+        
+        Label lblNewLabel_2 = new Label(composite_2, SWT.NONE);
+        lblNewLabel_2.setText("Define different language versions of all localized keys in a k.Actors behavior and add new languages. Only accepts valid ISO 2-character codes.");
         Composite container = this.editor = new LocalizationEditor(parent, SWT.NONE);
+        editor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
         createActions();
         // Uncomment if you wish to add code to initialize the toolbar
         // initializeToolBar();
