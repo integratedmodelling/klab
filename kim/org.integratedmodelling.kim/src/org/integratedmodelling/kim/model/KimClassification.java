@@ -49,6 +49,7 @@ public class KimClassification extends KimStatement implements IKimClassificatio
         for (Pair<IKimConcept, IKimClassifier> classifier : classifiers) {
             classifier.getFirst().visit(visitor);
         }
+        visitMetadata(visitor);
     }
 
 }

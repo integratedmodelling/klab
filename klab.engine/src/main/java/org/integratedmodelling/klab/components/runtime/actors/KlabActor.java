@@ -85,6 +85,7 @@ import org.integratedmodelling.klab.utils.MapUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Path;
+import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.klab.utils.Triple;
 import org.integratedmodelling.klab.utils.Utils;
 
@@ -230,6 +231,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
         IActorIdentity<KlabMessage> identity;
         Object match;
         String appId;
+        Map<String, String> localizedSymbols = null;
 
         // local symbol table, frame-specific, holds counters and matches only
         public Map<String, Object> frameSymbols = new HashMap<>();
@@ -278,6 +280,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
             this.metadata = Parameters.create();
             this.behavior = behavior;
             this.globalSymbols = new HashMap<>();
+            this.localizedSymbols = behavior.getLocalization();
             if (behavior.getDestination() == Type.UNITTEST && identity instanceof Session) {
                 this.testScope = ((Session) identity).getRootTestScope().getChild(behavior);
             }
@@ -325,6 +328,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
             this.semaphore = scope.semaphore;
             this.metadata = scope.metadata;
             this.behavior = scope.behavior;
+            this.localizedSymbols = scope.localizedSymbols;
             // TODO check if we need to make a child and pass this
             this.testScope = scope.testScope;
         }
@@ -1430,6 +1434,14 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
         case CALLCHAIN:
             ret = executeFunctionChain(arg.getCallChain(), scope);
             break;
+        case LOCALIZED_KEY:
+            if (scope.localizedSymbols != null) {
+                ret = scope.localizedSymbols.get(arg.getStatedValue());
+            }
+            if (ret == null) {
+                ret = StringUtil.capitalize(arg.getStatedValue().toString().toLowerCase().replace("__", ":").replace("_", " "));
+            }
+            break;
         default:
             ret = arg.getStatedValue();
         }
@@ -1988,7 +2000,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
                     }
 
                     // create a new behavior for each actor. TODO/FIXME this is potentially
-                    // expensive
+                    // expensive. TODO ensure the localization gets there.
                     KlabActor.this.behavior = Actors.INSTANCE.newBehavior(message.behavior);
                     KlabActor.this.listeners.clear();
                     KlabActor.this.actionBindings.clear();

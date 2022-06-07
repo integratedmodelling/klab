@@ -98,10 +98,20 @@ public class Behavior implements IBehavior {
     IMetadata metadata = new Metadata();
     List<IAnnotation> annotations = new ArrayList<>();
     String projectId;
+    Map<String, String> localizedSymbols;
+    String locale;
+    
+    public Behavior(IKActorsBehavior statement, String locale, Map<String, String> localization) {
+        this(statement);
+        this.locale = locale;
+        this.localizedSymbols = localization;
+    }
 
     public Behavior(IKActorsBehavior statement) {
+        
         this.statement = statement;
         this.projectId = statement.getProjectId();
+
         if (statement.getDescription() != null) {
             this.metadata.put(IMetadata.DC_COMMENT, statement.getDescription());
         }
@@ -126,7 +136,7 @@ public class Behavior implements IBehavior {
 
     @Override
     public String getName() {
-        return statement.getName();
+        return statement.getName() + (this.locale == null ? "" : ("." + this.locale));
     }
 
     @Override
@@ -212,6 +222,16 @@ public class Behavior implements IBehavior {
     @Override
     public String getProject() {
         return projectId;
+    }
+
+    @Override
+    public Map<String, String> getLocalization() {
+        return localizedSymbols;
+    }
+
+    @Override
+    public String getLocale() {
+        return this.locale;
     }
 
 }

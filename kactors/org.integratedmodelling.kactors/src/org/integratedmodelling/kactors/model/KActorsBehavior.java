@@ -255,6 +255,7 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
             visitor.visitAction(action);
             ((KActorsStatement) action.getCode()).visit(action, visitor);
         }
+        visitMetadata(visitor);
     }
 
     @Override

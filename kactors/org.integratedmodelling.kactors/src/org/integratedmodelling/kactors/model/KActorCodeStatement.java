@@ -9,12 +9,12 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.validation.Issue;
+import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.api.IKActorsCodeStatement;
 import org.integratedmodelling.kactors.kactors.Metadata;
 import org.integratedmodelling.kactors.kactors.MetadataPair;
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 
 public class KActorCodeStatement implements IKActorsCodeStatement {
@@ -202,6 +202,10 @@ public class KActorCodeStatement implements IKActorsCodeStatement {
 
     protected void setTag(String tag) {
         this.tag = tag;
+    }
+    
+    protected void visitMetadata(IKActorsBehavior.Visitor visitor) {
+        
     }
 
 }

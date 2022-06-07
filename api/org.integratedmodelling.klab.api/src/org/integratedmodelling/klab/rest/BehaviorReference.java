@@ -1,7 +1,9 @@
 package org.integratedmodelling.klab.rest;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.integratedmodelling.kactors.api.IKActorsBehavior.Platform;
 
@@ -38,6 +40,7 @@ public class BehaviorReference {
 	private String label;
 	private Platform platform;
 	private List<String> locales = new ArrayList<>();
+	private Map<String, Map<String, String>> localization = new HashMap<>();
 	
 	public String getName() {
 		return name;
@@ -110,5 +113,13 @@ public class BehaviorReference {
 	public void setLocales(List<String> locales) {
 		this.locales = locales;
 	}
+
+    public Map<String, Map<String, String>> getLocalization() {
+        return localization;
+    }
+
+    public void setLocalization(Map<String, Map<String, String>> localization) {
+        this.localization = localization;
+    }
 
 }

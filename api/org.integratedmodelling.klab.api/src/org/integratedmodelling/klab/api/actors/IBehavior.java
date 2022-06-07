@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.api.actors;
 
 import java.util.List;
+import java.util.Map;
 
 import org.integratedmodelling.kactors.api.IKActorsAction;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
@@ -84,5 +85,21 @@ public interface IBehavior extends IKimObject {
      * @return
      */
     String getProject();
+
+    /**
+     * If the behavior has a specified locale, return the mapping of localized symbols to their
+     * string values.
+     * 
+     * @return
+     */
+    Map<String, String> getLocalization();
+
+    /**
+     * If this is not null, {@link #getLocalization()} must also be not null, and the locale is the
+     * last part of the actor path, whose prototype is the leading path of the name.
+     * 
+     * @return
+     */
+    String getLocale();
 
 }
