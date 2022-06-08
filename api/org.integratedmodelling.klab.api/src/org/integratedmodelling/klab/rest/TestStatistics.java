@@ -7,7 +7,16 @@ import org.integratedmodelling.kactors.api.IKActorsStatement.Assert.Assertion;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 
+/**
+ * Sent at the BEGINNING of a testcase run with most fields empty.
+ * 
+ * @author Ferd
+ *
+ */
 public class TestStatistics {
+
+    public TestStatistics() {
+    }
 
     public TestStatistics(IBehavior behavior) {
         this.name = behavior.getName();
@@ -41,6 +50,39 @@ public class TestStatistics {
         return ret;
     }
 
+    /**
+     * Sent at the BEGINNING of a run with all fields empty except start. Use to collect test
+     * results as they get in.
+     * 
+     * @author Ferd
+     *
+     */
+    public static class TestRun {
+
+        private long start;
+        private long end;
+        private List<TestStatistics> testCases = new ArrayList<>();
+        public long getStart() {
+            return start;
+        }
+        public void setStart(long start) {
+            this.start = start;
+        }
+        public long getEnd() {
+            return end;
+        }
+        public void setEnd(long end) {
+            this.end = end;
+        }
+        public List<TestStatistics> getTestCases() {
+            return testCases;
+        }
+        public void setTestCases(List<TestStatistics> testCases) {
+            this.testCases = testCases;
+        }
+
+    }
+
     public static class ExceptionReport {
 
         private String id;
@@ -65,7 +107,7 @@ public class TestStatistics {
     }
 
     public static class AssertionStatistics {
-        
+
         private long start;
         private long end;
         private String descriptor;
@@ -102,6 +144,7 @@ public class TestStatistics {
         private long start;
         private long end;
         private String name;
+        private String testCaseName;
         private String label;
         private String description;
         private String path; // unique name, testcase.action
@@ -214,6 +257,14 @@ public class TestStatistics {
         public void setLabel(String label) {
             this.label = label;
         }
+
+        public String getTestCaseName() {
+            return testCaseName;
+        }
+
+        public void setTestCaseName(String testCaseName) {
+            this.testCaseName = testCaseName;
+        }
     }
 
     public String getDescription() {
@@ -244,7 +295,7 @@ public class TestStatistics {
     public String getName() {
         return this.name;
     }
-    
+
     public void setName(String name) {
         this.name = name;
     }

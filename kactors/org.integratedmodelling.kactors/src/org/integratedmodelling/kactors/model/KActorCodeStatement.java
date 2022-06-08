@@ -205,7 +205,9 @@ public class KActorCodeStatement implements IKActorsCodeStatement {
     }
     
     protected void visitMetadata(IKActorsBehavior.Visitor visitor) {
-        
+        for (Object o : metadata.values()) {
+            System.out.println("VISITING METAFUCH " + o);
+        }
     }
 
 }

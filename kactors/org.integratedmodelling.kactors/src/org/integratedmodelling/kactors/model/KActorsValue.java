@@ -15,7 +15,10 @@ import org.eclipse.xtext.xbase.controlflow.ThisReference;
 import org.integratedmodelling.contrib.jgrapht.Graph;
 import org.integratedmodelling.contrib.jgrapht.graph.DefaultDirectedGraph;
 import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
+import org.integratedmodelling.kactors.api.IKActorsAction;
 import org.integratedmodelling.kactors.api.IKActorsBehavior.Scope;
+import org.integratedmodelling.kactors.api.IKActorsBehavior.Visitor;
+import org.integratedmodelling.kactors.api.IKActorsStatement;
 import org.integratedmodelling.kactors.api.IKActorsStatement.Call;
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.kactors.Classifier;
@@ -733,6 +736,18 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
     @Override
     public boolean isDeferred() {
         return deferred;
+    }
+
+    public void visit(Visitor visitor, IKActorsStatement kActorsActionCall, IKActorsAction action) {
+        if (constructor != null) {
+            constructor.getArguments().visit(action, kActorsActionCall, visitor);
+        } else if (type == Type.TREE && value instanceof Graph) {
+           for (KActorsValue o : ((Graph<KActorsValue, ?>)value).vertexSet()) {
+               o.visit(visitor, kActorsActionCall, action);
+           }
+        }
+        visitor.visitValue(this, kActorsActionCall, action);
+        visitMetadata(visitor);
     }
 
 }

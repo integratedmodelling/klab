@@ -26,7 +26,7 @@ public class KActorsActionCall extends KActorsStatement implements Call {
 		String matchName;
 		
         public void visit(IKActorsAction action2, IKActorsStatement kActorsActionCall, Visitor visitor) {
-            visitor.visitValue(match, kActorsActionCall, action2);
+            visitValue(visitor, match, kActorsActionCall, action2);
             action.visit(action2, visitor);
         }
 	}
@@ -91,7 +91,7 @@ public class KActorsActionCall extends KActorsStatement implements Call {
 		}
 	}
 
-	public KActorsActionCall(TextBlock code) {
+    public KActorsActionCall(TextBlock code) {
 		super(((KActorsText)code).eObject, ((KActorsText)code).parent, Type.TEXT_BLOCK);
 		this.message = "text";
 		this.arguments = new KActorsArguments();

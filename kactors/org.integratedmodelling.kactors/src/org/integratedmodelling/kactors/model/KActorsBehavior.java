@@ -118,20 +118,20 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
         }
 
         if (preamble.getLocale() != null) {
-        	this.locales.add(preamble.getLocale());
+            this.locales.add(preamble.getLocale());
         }
         if (preamble.getLocales() != null) {
             for (ListElement val : preamble.getLocales().getContents()) {
                 if (val.getValue() != null) {
-                	KActorsValue value = new KActorsValue(val.getValue(), parent);
-                	this.locales.add(value.getStatedValue().toString());
+                    KActorsValue value = new KActorsValue(val.getValue(), parent);
+                    this.locales.add(value.getStatedValue().toString());
                 } else if (val.getTag() != null) {
-                	// TODO
-//                    this.setTag(val.getTag().substring(1));
+                    // TODO
+                    // this.setTag(val.getTag().substring(1));
                 }
             }
         }
-        
+
         for (String s : preamble.getImports()) {
             this.imports.add(s);
         }
@@ -248,9 +248,17 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 
     @Override
     public void visit(Visitor visitor) {
-        /*
-         * visit preamble
-         */
+
+        if (this.getLabel() != null) {
+            visitor.visitPreamble("label", this.getLabel());
+        }
+        if (this.getDescription() != null) {
+            visitor.visitPreamble("description", this.getDescription());
+        }
+        if (this.getVersion() != null) {
+            visitor.visitPreamble("version", this.getVersion());
+        }
+
         for (IKActorsAction action : getActions()) {
             visitor.visitAction(action);
             ((KActorsStatement) action.getCode()).visit(action, visitor);
@@ -263,9 +271,9 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
         return output;
     }
 
-	@Override
-	public List<String> getLocales() {
-		return this.locales;
-	}
+    @Override
+    public List<String> getLocales() {
+        return this.locales;
+    }
 
 }

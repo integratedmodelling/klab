@@ -138,10 +138,9 @@ public class KActorsLocalizer {
 
             @Override
             public void visitPreamble(String variable, Object value) {
-                // if (value instanceof KActorsValue && ((KActorsValue)value).getType() ==
-                // Type.LOCALIZED_KEY) {
-                // localized.add(((KActorsValue)value).getStatedValue().toString());
-                // }
+                if (value instanceof String) {
+                    checkKey((String)value);
+                }
             }
 
             @Override
@@ -150,6 +149,12 @@ public class KActorsLocalizer {
 
             }
         });
+    }
+
+    private void checkKey(String string) {
+        if (string != null && string.startsWith("#") && StringUtil.isUppercase(string.substring(1))) {
+            localized.add(string.substring(1));
+        }
     }
 
 }

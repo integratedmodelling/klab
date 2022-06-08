@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.integratedmodelling.kactors.api.IKActorsAction;
 import org.integratedmodelling.kactors.api.IKActorsBehavior.Visitor;
+import org.integratedmodelling.kactors.api.IKActorsStatement;
 import org.integratedmodelling.kactors.kactors.KeyValuePair;
 import org.integratedmodelling.kactors.kactors.ParameterList;
 import org.integratedmodelling.klab.utils.Pair;
@@ -73,11 +74,11 @@ public class KActorsArguments extends Parameters<String> {
         return metadataKeys;
     }
 
-    public void visit(IKActorsAction action, KActorsStatement statement, Visitor visitor) {
+    public void visit(IKActorsAction action, IKActorsStatement statement, Visitor visitor) {
         // TODO Auto-generated method stub
         for (Object value : values()) {
             if (value instanceof KActorsValue) {
-                visitor.visitValue((KActorsValue)value, statement, action);
+                KActorsStatement.visitValue(visitor, (KActorsValue)value, statement, action);
             }
         }
     }

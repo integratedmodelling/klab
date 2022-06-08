@@ -4,6 +4,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.integratedmodelling.kactors.api.IKActorsAction;
 import org.integratedmodelling.kactors.api.IKActorsBehavior.Visitor;
 import org.integratedmodelling.kactors.api.IKActorsStatement;
+import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.kactors.MetadataPair;
 import org.integratedmodelling.kactors.kactors.Statement;
 import org.integratedmodelling.kactors.kactors.StatementBody;
@@ -109,4 +110,8 @@ public abstract class KActorsStatement extends KActorCodeStatement implements IK
         visitor.visitStatement(action, this);
     }
 
+    public static void visitValue(Visitor visitor, IKActorsValue value, IKActorsStatement kActorsActionCall, IKActorsAction action) {
+        ((KActorsValue)value).visit(visitor, kActorsActionCall, action);
+    }
+    
 }
