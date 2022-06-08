@@ -292,7 +292,7 @@ public enum Actors implements IActorsService {
     public IBehavior newBehavior(String behaviorId) {
         IBehavior prototype = getBehavior(behaviorId);
         if (prototype != null) {
-            IKActorsBehavior source = KActors.INSTANCE.newBehavior(behaviorId);
+            IKActorsBehavior source = KActors.INSTANCE.newBehavior(prototype.getStatement().getName());
             if (prototype.getLocale() == null) {
                 return new org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior(source);
             } else {

@@ -286,6 +286,13 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
             }
         }
 
+        public String localize(String string) {
+            if (string != null && string.startsWith("#") && this.localizedSymbols.containsKey(string.substring(1))) {
+                string = this.localizedSymbols.get(string.substring(1));
+            }
+            return string;
+        }
+
         public Scope withMatch(Match match, Object value, Scope matchingScope) {
 
             Scope ret = new Scope(this);
@@ -457,7 +464,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
         public Scope getChild(ConcurrentGroup code) {
             Scope ret = new Scope(this);
             if (!initializing && this.viewScope != null) {
-                ret.viewScope = this.viewScope.getChild(code);
+                ret.viewScope = this.viewScope.getChild(code, ret);
             }
             return ret;
         }
@@ -523,7 +530,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
 
         public Scope forWindow(IAnnotation wspecs, String actionId) {
             Scope ret = new Scope(this);
-            ret.viewScope = ret.viewScope.createLayout(wspecs, actionId);
+            ret.viewScope = ret.viewScope.createLayout(wspecs, actionId, ret);
             return ret;
         }
 
@@ -1739,7 +1746,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
             // handler
             // after the call.
             if (viewComponent != null) {
-                scope.viewScope.setViewMetadata(viewComponent, executor.arguments);
+                scope.viewScope.setViewMetadata(viewComponent, executor.arguments, scope);
                 viewComponent.setIdentity(this.identity.getId());
                 viewComponent.setApplicationId(this.appId);
                 viewComponent.setParentId(code.getCallId()); // check - seems
@@ -2037,6 +2044,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
 
                         Scope initScope = message.scope.forInit();
                         initScope.metadata = new Parameters<>(message.metadata);
+                        initScope.localizedSymbols = behavior.getLocalization();
                         if (behavior.getDestination() == Type.SCRIPT || behavior.getDestination() == Type.UNITTEST) {
                             initScope = initScope.synchronous();
                         }
@@ -2065,6 +2073,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
                         Scope scope = message.scope.getChild(KlabActor.this.appId, action);
                         KlabActor.this.layout = scope.viewScope == null ? null : scope.viewScope.layout;
                         scope.metadata = new Parameters<>(message.metadata);
+                        scope.localizedSymbols = behavior.getLocalization();
                         if (behavior.getDestination() == Type.SCRIPT || behavior.getDestination() == Type.UNITTEST) {
                             scope = scope.synchronous();
                         }
@@ -2083,6 +2092,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
 
                                 Scope testScope = message.scope.forTest(action);
                                 testScope.metadata = new Parameters<>(message.metadata);
+                                testScope.localizedSymbols = behavior.getLocalization();
                                 testScope.runtimeScope.getMonitor()
                                         .info(KlabActor.this.behavior.getName() + ": running test " + action.getName());
                                 KlabActor.this.run(action, testScope);

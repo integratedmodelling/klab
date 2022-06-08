@@ -938,6 +938,9 @@ public class ViewBehavior {
                 if (o instanceof KActorsValue) {
                     o = ((KActorsValue) o).evaluate(scope, scope.getIdentity(), true);
                 }
+                if (o instanceof String) {
+                    o = scope.localize((String)o);
+                }
                 if (o == null) {
                     ret.put(key, "null");
                 } else {

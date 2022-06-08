@@ -48,7 +48,7 @@ class ViewScope {
         this.identityId = actorScope.identity.getId();
     }
 
-    public ViewScope getChild(ConcurrentGroup group) {
+    public ViewScope getChild(ConcurrentGroup group, Scope scope) {
 
         if (this.currentComponent == null) {
             // not an app with a view
@@ -72,7 +72,7 @@ class ViewScope {
             id = "g" + (groupCounter++);
         }
 
-        setViewMetadata(ret, group.getGroupMetadata());
+        setViewMetadata(ret, group.getGroupMetadata(), scope);
         ret.setId(parent.getId() + "/" + id);
         parent.getComponents().add(ret);
 
@@ -82,15 +82,15 @@ class ViewScope {
         return child;
     }
 
-    void setViewMetadata(ViewComponent component, Map<String, ?> parameters) {
+    void setViewMetadata(ViewComponent component, Map<String, ?> parameters, Scope scope) {
         if (parameters != null) {
             for (String key : parameters.keySet()) {
                 if (!component.getAttributes().containsKey(key) && Actors.INSTANCE.getLayoutMetadata().contains(key)) {
                     Object param = parameters.get(key);
-                    component.getAttributes().put(key,
-                            param instanceof KActorsValue
-                                    ? ((KActorsValue) param).getStatedValue().toString()
-                                    : param.toString());
+                    String value = scope.localize(param instanceof KActorsValue
+                            ? ((KActorsValue) param).getStatedValue().toString()
+                            : param.toString());
+                    component.getAttributes().put(key, value);
                 }
             }
         }
@@ -106,7 +106,6 @@ class ViewScope {
     }
 
     public ViewScope(ViewScope scope) {
-
         this.layout = scope.layout;
         this.applicationId = scope.applicationId;
         this.identityId = scope.identityId;
@@ -121,8 +120,8 @@ class ViewScope {
      * the current view component for the calls in the action to populate.
      * 
      * @param action
-     * @param identity2 
-     * @param appId 
+     * @param identity2
+     * @param appId
      * @param parentDataflow
      * @return
      */
@@ -185,15 +184,15 @@ class ViewScope {
         return panel;
     }
 
-    ViewScope createLayout(IAnnotation annotation, String actionId) {
+    ViewScope createLayout(IAnnotation annotation, String actionId, Scope scope) {
 
         ViewScope ret = new ViewScope(this);
 
         ret.layout = new Layout(actionId, this.applicationId);
         ret.layout.setStyle(this.layout.getStyle());
         ret.layout.setDestination(this.layout.getDestination());
-        ret.layout.setLabel(annotation.get("title", ""));
-        ret.layout.setDescription(StringUtils.pack(annotation.get("subtitle", "")));
+        ret.layout.setLabel(scope.localize(annotation.get("title", "")));
+        ret.layout.setDescription(StringUtils.pack(scope.localize(annotation.get("subtitle", ""))));
         ret.layout.setPlatform(this.layout.getPlatform());
         ret.layout.setLogo(annotation.get("logo", (String) null));
         ret.layout.setProjectId(this.layout.getProjectId());
