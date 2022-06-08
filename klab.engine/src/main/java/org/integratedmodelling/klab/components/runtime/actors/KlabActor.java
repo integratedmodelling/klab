@@ -1442,11 +1442,14 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
             ret = executeFunctionChain(arg.getCallChain(), scope);
             break;
         case LOCALIZED_KEY:
+            
             if (scope.localizedSymbols != null) {
                 ret = scope.localizedSymbols.get(arg.getStatedValue());
             }
             if (ret == null) {
-                ret = StringUtil.capitalize(arg.getStatedValue().toString().toLowerCase().replace("__", ":").replace("_", " "));
+                // ensure invariance in copies of the behavior
+                ret = "#" + arg.getStatedValue();
+                //  .capitalize(arg.getStatedValue().toString().toLowerCase().replace("__", ":").replace("_", " "));
             }
             break;
         default:
