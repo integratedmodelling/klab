@@ -108,6 +108,7 @@ public abstract class KActorsStatement extends KActorCodeStatement implements IK
 
     protected void visit(IKActorsAction action, Visitor visitor) {
         visitor.visitStatement(action, this);
+        visitMetadata(metadata, visitor);
     }
 
     public static void visitValue(Visitor visitor, IKActorsValue value, IKActorsStatement kActorsActionCall, IKActorsAction action) {

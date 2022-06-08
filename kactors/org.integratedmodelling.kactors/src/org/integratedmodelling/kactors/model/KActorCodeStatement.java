@@ -2,6 +2,7 @@ package org.integratedmodelling.kactors.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -204,9 +205,14 @@ public class KActorCodeStatement implements IKActorsCodeStatement {
         this.tag = tag;
     }
     
-    protected void visitMetadata(IKActorsBehavior.Visitor visitor) {
-        for (Object o : metadata.values()) {
-            System.out.println("VISITING METAFUCH " + o);
+    protected void visitMetadata(Map<String, ?> metadata, IKActorsBehavior.Visitor visitor) {
+        for (String key : metadata.keySet()) {
+            Object o = metadata.get(key);
+            if (o instanceof KActorsValue) {
+                ((KActorsValue) o).visit(visitor, null, null);
+            } else {
+                visitor.visitMetadata(this, key, o);
+            }
         }
     }
 

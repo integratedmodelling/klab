@@ -336,6 +336,11 @@ public interface IMessage {
         TaskInterrupted, DataflowNodeDetail, DataflowNodeRating,
 
         /**
+         * Test lifecycle B -> F
+         */
+        TestRunStarted, TestRunFinished, TestCaseStarted, TestCaseFinished, TestStarted, TestFinished,
+        
+        /**
          * Scheduler lifecycle F->B
          */
         SchedulingStarted, SchedulingFinished, ScheduleAdvanced, SchedulerReset,

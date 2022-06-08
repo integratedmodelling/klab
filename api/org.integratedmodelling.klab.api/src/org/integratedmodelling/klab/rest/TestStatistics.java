@@ -62,6 +62,17 @@ public class TestStatistics {
         private long start;
         private long end;
         private List<TestStatistics> testCases = new ArrayList<>();
+        private String testId;
+
+        public TestRun() {
+            
+        }
+        
+        public TestRun(String testId) {
+            this.setTestId(testId);
+            this.start = System.currentTimeMillis();
+        }
+
         public long getStart() {
             return start;
         }
@@ -79,6 +90,14 @@ public class TestStatistics {
         }
         public void setTestCases(List<TestStatistics> testCases) {
             this.testCases = testCases;
+        }
+
+        public String getTestId() {
+            return testId;
+        }
+
+        public void setTestId(String testId) {
+            this.testId = testId;
         }
 
     }

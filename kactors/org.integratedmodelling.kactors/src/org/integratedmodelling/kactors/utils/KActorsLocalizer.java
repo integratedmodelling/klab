@@ -7,6 +7,7 @@ import java.util.Set;
 import org.integratedmodelling.kactors.api.IKActorsAction;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.api.IKActorsBehavior.Visitor;
+import org.integratedmodelling.kactors.api.IKActorsCodeStatement;
 import org.integratedmodelling.kactors.api.IKActorsStatement;
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.api.IKActorsValue.Type;
@@ -139,7 +140,7 @@ public class KActorsLocalizer {
             @Override
             public void visitPreamble(String variable, Object value) {
                 if (value instanceof String) {
-                    checkKey((String)value);
+                    checkKey((String) value);
                 }
             }
 
@@ -147,6 +148,13 @@ public class KActorsLocalizer {
             public void visitAction(IKActorsAction action) {
                 // TODO Auto-generated method stub
 
+            }
+
+            @Override
+            public void visitMetadata(IKActorsCodeStatement kActorCodeStatement, String key, Object value) {
+                if (value instanceof String) {
+                    checkKey((String) value);
+                }
             }
         });
     }

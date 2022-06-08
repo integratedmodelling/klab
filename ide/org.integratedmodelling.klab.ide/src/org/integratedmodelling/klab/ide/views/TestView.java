@@ -14,12 +14,12 @@ import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.ide.model.KlabPeer;
 import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
 import org.integratedmodelling.klab.ide.ui.TestXViewerFactory;
-import org.eclipse.swt.widgets.Label;
 
 public class TestView extends ViewPart {
 
     public static final String ID = "org.integratedmodelling.klab.ide.views.TestView"; //$NON-NLS-1$
     private KlabPeer klab;
+    private XViewer treeViewer;
 
     public TestView() {
     }
@@ -34,11 +34,16 @@ public class TestView extends ViewPart {
 
         Composite container = new Composite(parent, SWT.NONE);
         container.setLayout(new GridLayout(1, false));
-        
-        TreeViewer treeViewer = new XViewer(container, SWT.BORDER, new TestXViewerFactory());
-        Tree tree = treeViewer.getTree();
-        tree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-        klab = new KlabPeer(Sender.ANY, (message) -> handleMessage(message));
+
+        try {
+            treeViewer = new XViewer(container, SWT.BORDER, new TestXViewerFactory());
+            Tree tree = treeViewer.getTree();
+            tree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+            klab = new KlabPeer(Sender.ANY, (message) -> handleMessage(message));
+        } catch (Throwable t) {
+            // ignore a resource not properly disposed error, this seems to be a Nebula bug
+            System.out.println("WARNING: Nebula bug persists on XViewer initialization");
+        }
 
         createActions();
         // Uncomment if you wish to add code to initialize the toolbar
@@ -54,6 +59,12 @@ public class TestView extends ViewPart {
      */
     private void createActions() {
         // Create the actions
+    }
+
+    @Override
+    public void dispose() {
+        treeViewer.dispose();
+        super.dispose();
     }
 
     /**

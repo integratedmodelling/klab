@@ -117,6 +117,8 @@ public interface IKActorsBehavior extends IKActorsCodeStatement {
 		void visitStatement(IKActorsAction action, IKActorsStatement statement);
 
 		void visitValue(IKActorsValue value, IKActorsStatement statement, IKActorsAction action);
+
+        void visitMetadata(IKActorsCodeStatement kActorCodeStatement, String key, Object o);
 	}
 
 	/**

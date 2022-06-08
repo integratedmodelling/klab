@@ -103,6 +103,7 @@ public class KActorsConcurrentGroup extends KActorsStatement implements Concurre
         for (ActionDescriptor a : actions) {
             a.visit(action, this, visitor);
         }
+        visitMetadata(groupMetadata, visitor);
         super.visit(action, visitor);
     }
     

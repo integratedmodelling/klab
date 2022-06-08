@@ -170,6 +170,7 @@ import org.integratedmodelling.klab.rest.SettingChangeRequest;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.rest.SpatialLocation;
 import org.integratedmodelling.klab.rest.StyledKimToken;
+import org.integratedmodelling.klab.rest.TestStatistics.TestRun;
 import org.integratedmodelling.klab.rest.TicketRequest;
 import org.integratedmodelling.klab.rest.TicketResponse;
 import org.integratedmodelling.klab.rest.ViewAction;
@@ -2258,6 +2259,8 @@ public class Session extends GroovyObjectSupport
     public TestScope getRootTestScope() {
         if (rootTestScope == null) {
             rootTestScope = new TestScope(this);
+            monitor.send(Message.create(this.token, IMessage.MessageClass.SessionLifecycle,
+                    IMessage.Type.TestRunStarted, new TestRun(rootTestScope.getTestId())));
         }
         return rootTestScope;
     }

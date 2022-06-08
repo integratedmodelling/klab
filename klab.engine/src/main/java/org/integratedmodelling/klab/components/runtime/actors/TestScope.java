@@ -25,6 +25,7 @@ import org.integratedmodelling.klab.rest.TestStatistics;
 import org.integratedmodelling.klab.rest.TestStatistics.ActionStatistics;
 import org.integratedmodelling.klab.rest.TestStatistics.AssertionStatistics;
 import org.integratedmodelling.klab.utils.LogFile;
+import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Path;
 import org.integratedmodelling.klab.utils.StringUtils;
 import org.integratedmodelling.klab.utils.TemplateUtil;
@@ -59,6 +60,8 @@ public class TestScope {
     private Action action;
     private Section docSection;
     private TestScope parent;
+    // unique, used for communication organization only
+    private String testScopeId;
 
     /*
      * TODO constraint system for URNs to use. Must be part of runtime, not the actor system.
@@ -76,6 +79,7 @@ public class TestScope {
         this.logFile = other.logFile;
         this.log = other.log;
         this.docBuilder = other.docBuilder;
+        this.testScopeId = other.testScopeId;
     }
 
     public TestScope(ISession session) {
@@ -85,10 +89,15 @@ public class TestScope {
                 Option.NUMBER_SECTIONS);
         this.docSection = this.docBuilder.getRootSection();
         this.docSection.action(() -> getAsciidocDescription());
+        this.testScopeId = NameGenerator.newName("testscope");
     }
 
     public void onException(Throwable t) {
         exceptions.add(t);
+    }
+    
+    public String getTestId() {
+        return this.testScopeId;
     }
 
     /**

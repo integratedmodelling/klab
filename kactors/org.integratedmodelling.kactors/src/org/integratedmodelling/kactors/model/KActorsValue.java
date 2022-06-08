@@ -11,7 +11,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
-import org.eclipse.xtext.xbase.controlflow.ThisReference;
 import org.integratedmodelling.contrib.jgrapht.Graph;
 import org.integratedmodelling.contrib.jgrapht.graph.DefaultDirectedGraph;
 import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
@@ -745,9 +744,21 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
            for (KActorsValue o : ((Graph<KActorsValue, ?>)value).vertexSet()) {
                o.visit(visitor, kActorsActionCall, action);
            }
+        } else if (type == Type.LIST && value instanceof List) {
+            for (Object o : ((List<?>)value)) {
+                if (o instanceof KActorsValue) {
+                    ((KActorsValue)o).visit(visitor, kActorsActionCall, action);
+                }
+            }
+        } else if (type == Type.MAP && value instanceof Map) {
+            for (Object o : ((Map<?,?>)value).values()) {
+                if (o instanceof KActorsValue) {
+                    ((KActorsValue)o).visit(visitor, kActorsActionCall, action);
+                }
+            }
         }
         visitor.visitValue(this, kActorsActionCall, action);
-        visitMetadata(visitor);
+        visitMetadata(metadata, visitor);
     }
 
 }

@@ -29,8 +29,9 @@ public class LocalizationView extends ViewPart {
     /*
      * read from the companion JSON file <appname>.localization
      */
-    FileCatalog<Map<String, String>> localization = null;
-    LocalizationEditor editor;
+    private FileCatalog<Map<String, String>> localization = null;
+    private LocalizationEditor editor;
+    private Label applicationNameLabel;
 
     public LocalizationView() {
     }
@@ -62,7 +63,13 @@ public class LocalizationView extends ViewPart {
         
         Label lblNewLabel_2 = new Label(composite_2, SWT.NONE);
         lblNewLabel_2.setText("Define different language versions of all localized keys in a k.Actors behavior and add new languages. Only accepts valid ISO 2-character codes.");
-        Composite container = this.editor = new LocalizationEditor(parent, SWT.NONE);
+        
+        applicationNameLabel = new Label(composite_2, SWT.NONE);
+        applicationNameLabel.setForeground(SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN));
+        applicationNameLabel.setFont(SWTResourceManager.getFont("Segoe UI", 10, SWT.BOLD));
+        applicationNameLabel.setText("No application");
+        
+        Composite container = this.editor = new LocalizationEditor(this, parent, SWT.NONE);
         editor.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
         createActions();
         // Uncomment if you wish to add code to initialize the toolbar
@@ -105,6 +112,9 @@ public class LocalizationView extends ViewPart {
         File file = MiscUtilities.changeExtension(script.getFile(), "localization");
         this.localization = new FileCatalog<>(file, Map.class, Map.class);
         KActorsLocalizer localizer = new KActorsLocalizer(script);
+        Display.getDefault().asyncExec(() -> {
+            this.applicationNameLabel.setText(script.getName());
+        });
         editor.initialize(script.getName(), this.localization, localizer);
     }
 
