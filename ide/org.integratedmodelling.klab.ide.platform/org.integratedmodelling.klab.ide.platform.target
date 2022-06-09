@@ -26,6 +26,7 @@
 	        <unit id="org.eclipse.nebula.widgets.opal.header.feature.feature.group" version="0.0.0"/>
 	        <unit id="org.eclipse.nebula.widgets.opal.notifier.feature.feature.group" version="0.0.0"/>
 	        <unit id="org.eclipse.nebula.widgets.richtext.feature.feature.group" version="0.0.0"/>
+	        <unit id="org.eclipse.nebula.widgets.xviewer.feature.feature.group" version="0.0.0"/>
 	        <unit id="org.eclipse.nebula.widgets.pshelf.css.feature.feature.group" version="0.0.0"/>
 	        <unit id="org.eclipse.nebula.widgets.pshelf.feature.feature.group" version="0.0.0"/>
 	    </location>
