@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -43,6 +44,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.wb.swt.SWTResourceManager;
 import org.integratedmodelling.kactors.utils.KActorsLocalizer;
 import org.integratedmodelling.klab.client.utils.FileCatalog;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
@@ -81,7 +83,9 @@ public class LocalizationEditor extends Composite {
     private Button btnCancel;
     protected IViewPart localizationView;
     int sortToggle = 0; // 0 = original order; 1 = ascending; 2 = descending
-    
+    private Composite composite;
+    private Label languageLabel;
+
     public LocalizationEditor(IViewPart localizationView, Composite parent, int style) {
         super(parent, style);
         setLayout(new GridLayout(4, false));
@@ -90,7 +94,14 @@ public class LocalizationEditor extends Composite {
         lblNewLabel_1.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
         lblNewLabel_1.setText("Locale");
 
-        combo = new Combo(this, SWT.NONE);
+        composite = new Composite(this, SWT.NONE);
+        composite.setLayout(new GridLayout(2, false));
+        composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+
+        combo = new Combo(composite, SWT.NONE);
+        GridData gd_combo = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+        gd_combo.widthHint = 32;
+        combo.setLayoutData(gd_combo);
         combo.addSelectionListener(new SelectionAdapter(){
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -106,7 +117,8 @@ public class LocalizationEditor extends Composite {
                             switchLanguage(combo.getText().trim());
                         } else {
                             if (Eclipse.INSTANCE
-                                    .confirm("Do you wish to add the new language '" + combo.getText().trim() + "'?")) {
+                                    .confirm("Do you wish to add the new language '" + combo.getText().trim()
+                                            + "'?")) {
                                 switchLanguage(combo.getText().trim());
                             } else {
                                 combo.setText(currentLocale);
@@ -121,10 +133,11 @@ public class LocalizationEditor extends Composite {
         });
 
         combo.setItems(new String[]{currentLocale});
-        GridData gd_combo = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-        gd_combo.widthHint = 24;
-        combo.setLayoutData(gd_combo);
         combo.select(0);
+
+        languageLabel = new Label(composite, SWT.NONE);
+        languageLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        languageLabel.setText("English");
         new Label(this, SWT.NONE);
         new Label(this, SWT.NONE);
 
@@ -139,14 +152,14 @@ public class LocalizationEditor extends Composite {
         tblclmnNewColumn.setWidth(400);
         tblclmnNewColumn.setText("Key");
 
-        tableViewerColumn.getColumn().addListener(SWT.Selection, new Listener() {
+        tableViewerColumn.getColumn().addListener(SWT.Selection, new Listener(){
             @Override
             public void handleEvent(Event event) {
                 sortToggle = (sortToggle + 1) % 3;
                 refreshUI();
             }
         });
-        
+
         TableViewerColumn tableViewerColumn_1 = new TableViewerColumn(tableViewer, SWT.NONE);
         TableColumn tblclmnNewColumn_1 = tableViewerColumn_1.getColumn();
         tblclmnNewColumn_1.setWidth(600);
@@ -241,26 +254,27 @@ public class LocalizationEditor extends Composite {
                 }
             }
         });
-                
-                        rescanButton = new Button(this, SWT.NONE);
-                        rescanButton.addSelectionListener(new SelectionAdapter(){
-                            @Override
-                            public void widgetSelected(SelectionEvent e) {
-                            }
-                        });
-                        rescanButton.setText("Rescan");
-        
-                unlocalizedStringsWarning = new Label(this, SWT.NONE);
-                unlocalizedStringsWarning.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-                unlocalizedStringsWarning.setText("No unlocalized strings");
-        
+
+        rescanButton = new Button(this, SWT.NONE);
+        rescanButton.addSelectionListener(new SelectionAdapter(){
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+            }
+        });
+        rescanButton.setText("Rescan");
+
+        unlocalizedStringsWarning = new Label(this, SWT.NONE);
+        unlocalizedStringsWarning.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        unlocalizedStringsWarning.setText("No unlocalized strings");
+
         btnCancel = new Button(this, SWT.NONE);
         btnCancel.setText("Cancel");
-        btnCancel.addMouseListener(new MouseAdapter() {
+        btnCancel.addMouseListener(new MouseAdapter(){
             @Override
             public void mouseDown(MouseEvent e) {
                 if (!dirty || Eclipse.INSTANCE.confirm("Abandon changes?")) {
-                    PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().hideView(localizationView);
+                    PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+                            .hideView(localizationView);
                 }
             }
         });
@@ -281,6 +295,19 @@ public class LocalizationEditor extends Composite {
     }
 
     protected void switchLanguage(String locale) {
+        Locale loc = Locale.forLanguageTag(locale);
+        if (loc != null) {
+            Display.getDefault().asyncExec(() -> {
+                languageLabel.setForeground(SWTResourceManager.getColor(SWT.COLOR_DARK_BLUE));
+                languageLabel.setText(loc.getDisplayName());
+            });
+        } else {
+            Display.getDefault().asyncExec(() -> {
+                languageLabel.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
+                languageLabel.setText("Unrecognized locale!");
+            });
+            return;
+        }
         currentLocale = locale;
         setupLanguage();
     }
@@ -340,9 +367,11 @@ public class LocalizationEditor extends Composite {
 
     private void refreshUI() {
         Display.getDefault().asyncExec(() -> {
-            this.unlocalizedStringsWarning.setText((this.localizationHelper.getUnlocalizedStrings().size() == 0
-                    ? "No"
-                    : (this.localizationHelper.getUnlocalizedStrings().size() + "")) + " unlocalized strings in behavior");
+            this.unlocalizedStringsWarning
+                    .setText((this.localizationHelper.getUnlocalizedStrings().size() == 0
+                            ? "No"
+                            : (this.localizationHelper.getUnlocalizedStrings().size() + ""))
+                            + " unlocalized strings in behavior");
             tableViewer.setInput(sort(this.localization.get(currentLocale)));
             if (this.dirty) {
                 saveButton.setEnabled(true);
@@ -355,7 +384,7 @@ public class LocalizationEditor extends Composite {
             List<String> keys = new ArrayList<>(map.keySet());
             Collections.sort(keys);
             Map<String, String> ret = new LinkedHashMap<>();
-            for (String key: keys) {
+            for (String key : keys) {
                 ret.put(key, map.get(key));
             }
             return ret;
@@ -368,7 +397,7 @@ public class LocalizationEditor extends Composite {
                 }
             });
             Map<String, String> ret = new LinkedHashMap<>();
-            for (String key: keys) {
+            for (String key : keys) {
                 ret.put(key, map.get(key));
             }
             return ret;
