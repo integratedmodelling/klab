@@ -115,23 +115,6 @@ public interface IUnit extends IValueMediator {
      */
     Map<ExtentDimension, ExtentDistribution> getAggregatedDimensions();
 
-//    /**
-//     * Pass an observable with unit to obtain a mediator that will convert a value to this unit
-//     * crossing extentual boundaries over the passed scale, i.e. aggregating to this unit over any
-//     * dimension that is in the original value (and in the scale) and is not in this unit.
-//     * 
-//     * The specialized mediator returned should have additional API to check if it is stable over
-//     * the scale or needs to be redefined at each locator (i.e., the scale is regular or not over
-//     * the aggregated extent(s)).
-//     * 
-//     * TODO hide from API
-//     * 
-//     * @param observable
-//     * @param scale
-//     * @return
-//     */
-//    IValueMediator getContextualizingUnit(IObservable observable, IScale scale, ILocator locator);
-
     /**
      * Assuming the unit is distributed over the passed extent, split the unit from the extent and
      * return them separately. This will also infer spatial unit if called on the factorized form

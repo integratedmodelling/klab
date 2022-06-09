@@ -16,6 +16,7 @@ package org.integratedmodelling.klab.common.mediation;
 
 import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.Observations;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.mediation.ICurrency;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -31,7 +32,7 @@ import org.joda.time.DateTime;
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-public class Currency implements ICurrency {
+public class Currency extends AbstractMediator implements ICurrency {
 
     private String code;
     private String currency;

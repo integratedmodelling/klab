@@ -1,6 +1,11 @@
 package org.integratedmodelling.klab.ide.ui;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -10,7 +15,6 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.osgi.storage.ContentProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.KeyAdapter;
@@ -30,18 +34,18 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.wb.swt.SWTResourceManager;
 import org.integratedmodelling.kactors.utils.KActorsLocalizer;
 import org.integratedmodelling.klab.client.utils.FileCatalog;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
-import org.integratedmodelling.klab.ide.views.ResourceEditor;
 import org.integratedmodelling.klab.utils.StringUtil;
 
 public class LocalizationEditor extends Composite {
@@ -76,6 +80,7 @@ public class LocalizationEditor extends Composite {
     private Label unlocalizedStringsWarning;
     private Button btnCancel;
     protected IViewPart localizationView;
+    int sortToggle = 0; // 0 = original order; 1 = ascending; 2 = descending
     
     public LocalizationEditor(IViewPart localizationView, Composite parent, int style) {
         super(parent, style);
@@ -134,6 +139,14 @@ public class LocalizationEditor extends Composite {
         tblclmnNewColumn.setWidth(400);
         tblclmnNewColumn.setText("Key");
 
+        tableViewerColumn.getColumn().addListener(SWT.Selection, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                sortToggle = (sortToggle + 1) % 3;
+                refreshUI();
+            }
+        });
+        
         TableViewerColumn tableViewerColumn_1 = new TableViewerColumn(tableViewer, SWT.NONE);
         TableColumn tblclmnNewColumn_1 = tableViewerColumn_1.getColumn();
         tblclmnNewColumn_1.setWidth(600);
@@ -330,11 +343,37 @@ public class LocalizationEditor extends Composite {
             this.unlocalizedStringsWarning.setText((this.localizationHelper.getUnlocalizedStrings().size() == 0
                     ? "No"
                     : (this.localizationHelper.getUnlocalizedStrings().size() + "")) + " unlocalized strings in behavior");
-            tableViewer.setInput(this.localization.get(currentLocale));
+            tableViewer.setInput(sort(this.localization.get(currentLocale)));
             if (this.dirty) {
                 saveButton.setEnabled(true);
             }
         });
+    }
+
+    private Map<String, String> sort(Map<String, String> map) {
+        if (sortToggle == 1) {
+            List<String> keys = new ArrayList<>(map.keySet());
+            Collections.sort(keys);
+            Map<String, String> ret = new LinkedHashMap<>();
+            for (String key: keys) {
+                ret.put(key, map.get(key));
+            }
+            return ret;
+        } else if (sortToggle == 2) {
+            List<String> keys = new ArrayList<>(map.keySet());
+            Collections.sort(keys, new Comparator<String>(){
+                @Override
+                public int compare(String o1, String o2) {
+                    return o2.compareTo(o1);
+                }
+            });
+            Map<String, String> ret = new LinkedHashMap<>();
+            for (String key: keys) {
+                ret.put(key, map.get(key));
+            }
+            return ret;
+        }
+        return map;
     }
 
     private String getDefaultStringValue(String s) {

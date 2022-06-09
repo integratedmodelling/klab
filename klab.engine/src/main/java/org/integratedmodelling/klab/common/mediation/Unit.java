@@ -30,6 +30,7 @@ import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
@@ -56,9 +57,10 @@ import tech.units.indriya.unit.UnitDimension;
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-public class Unit implements IUnit {
+public class Unit extends AbstractMediator implements IUnit {
 
-	javax.measure.Unit _unit;
+	@SuppressWarnings("rawtypes")
+    javax.measure.Unit _unit;
 	int _startLine;
 	int _endLine;
 	String statement;
@@ -332,7 +334,7 @@ public class Unit implements IUnit {
 	 * @return
 	 */
 	public int getPower() {
-		Map<javax.measure.Unit, Integer> bunits = _unit.getBaseUnits();
+		Map<javax.measure.Unit<?>, Integer> bunits = _unit.getBaseUnits();
 		return bunits.size() == 1 ? bunits.get(bunits.keySet().iterator().next()) : -1;
 	}
 
@@ -390,7 +392,7 @@ public class Unit implements IUnit {
 	private javax.measure.Unit<?> standardize(javax.measure.Unit<?> unit) {
 		String alternate = translations.get(unit.toString());
 		if (alternate != null) {
-			javax.measure.Unit parsed = SimpleUnitFormat.getInstance(SimpleUnitFormat.Flavor.ASCII).parse(alternate);
+			javax.measure.Unit<?> parsed = SimpleUnitFormat.getInstance(SimpleUnitFormat.Flavor.ASCII).parse(alternate);
 			if (parsed == null) {
 				throw new KlabInternalErrorException(new ParseException(unit.toString(), 0));
 			} else {
@@ -482,73 +484,6 @@ public class Unit implements IUnit {
 		return new Pair<>(new Unit(decontextualized),
 				new Unit(raiseExtentual ? extentual.pow(dimensionality) : extentual));
 	}
-
-	// @Override
-	// public IValueMediator getContextualizingUnit(IObservable observable, IScale
-	// scale, ILocator
-	// locator) {
-	//
-	// if (observable.getUnit() == null ||
-	// !Units.INSTANCE.needsUnitScaling(observable)
-	// || this.isCompatible(observable.getUnit())) {
-	// return this;
-	// }
-	//
-	// /*
-	// * Contextualize the passed unit and find the base unit that matches it
-	// */
-	// UnitContextualization contextualization =
-	// Units.INSTANCE.getContextualization(observable,
-	// scale, null);
-	//
-	// IUnit matching = null;
-	// for (IUnit unit : contextualization.getCandidateUnits()) {
-	// if (unit.isCompatible(observable.getUnit())) {
-	// matching = unit;
-	// break;
-	// }
-	// }
-	//
-	// if (matching == null) {
-	// // shouldn't happen
-	// throw new IllegalStateException("trying to recontextualize a unit in an
-	// incompatible scale");
-	// }
-	//
-	// boolean regular = true;
-	// Unit recontextualizer = this;
-	// double contextualConversion = 1.0;
-	//
-	// /**
-	// * FIXME revise!
-	// */
-	// for (ExtentDimension ed : matching.getAggregatedDimensions().keySet()) {
-	//
-	// IExtent dim = ((Scale) scale).getDimension(ed.spatial ? Type.SPACE :
-	// Type.TIME);
-	// Pair<IUnit, IUnit> split = recontextualizer.splitExtent(ed);
-	// if (split != null && split.getSecond() != null) {
-	//
-	// recontextualizer = (Unit) split.getFirst();
-	// Pair<Double, IUnit> dimsize = dim.getStandardizedDimension(locator);
-	// contextualConversion *= split.getSecond().convert(dimsize.getFirst(),
-	// dimsize.getSecond()).doubleValue();
-	//
-	// if (dim.size() > 0 || dim.isRegular()) {
-	// if (!dim.isRegular()) {
-	// regular = false;
-	// break;
-	// }
-	// }
-	//
-	// }
-	// }
-	//
-	// return new RecontextualizingUnit((Unit) observable.getUnit(),
-	// recontextualizer,
-	// contextualConversion, !regular);
-	// }
-
 	public Unit withAggregatedDimensions(Map<ExtentDimension, ExtentDistribution> set) {
 		this.aggregatedDimensions.putAll(set);
 		wasContextualized = true;
@@ -680,4 +615,5 @@ public class Unit implements IUnit {
 		ret.observable = observable;
 		return ret;
 	}
+
 }

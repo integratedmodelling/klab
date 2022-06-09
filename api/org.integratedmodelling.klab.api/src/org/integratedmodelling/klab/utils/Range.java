@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IValueMediator;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
@@ -698,5 +699,11 @@ public class Range implements IValueMediator {
 		 */
 		return getLowerBound() + " to " + getUpperBound();
 	}
+
+    @Override
+    public Number convert(Number value, ILocator locator) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }
