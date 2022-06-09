@@ -391,7 +391,7 @@ public class SummarizingTableCompiler implements ITableCompiler {
                         throw new KlabIllegalStateException("summarizer: summary needs a field named 'filter'");
                     }
                     directive = ((Map<?,?>) specifier).get("filter").toString();
-                    label = ((IParameters<String>) specifier).get("label", "{classifier}").toString();
+                    label = ((IParameters<String>) specifier).get("title", "{classifier}").toString();
                 }
                 addSummary(Dimension.COLUMN, builder, directive, label);
             }

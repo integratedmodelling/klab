@@ -797,48 +797,9 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
             Action actionCode = behavior.getAction(actionId);
             if (actionCode != null) {
                 Scope scope = new Scope(identity, appId, message.scope, this.behavior).withLayout(this.layout);
+                scope.globalSymbols.putAll(this.globalState);
                 run(actionCode, scope);
             }
-
-            // Long notifyId =
-            // this.actionBindings.get(message.action.getComponent().getId());
-            // if (notifyId != null && message.action.getComponent().getActorPath() == null)
-            // {
-            // MatchActions actions = listeners.get(notifyId);
-            // if (actions != null) {
-            // KlabActionExecutor executor =
-            // actionCache.get(message.action.getComponent().getId());
-            // actions.match(
-            // executor instanceof KlabWidgetActionExecutor
-            // ? ((KlabWidgetActionExecutor) executor).getFiredValue(message.action,
-            // new Scope(identity, appId, message.scope, this.behavior)
-            // .withGlobalSymbols(this.symbolTable))
-            // : getActionValue(message.action),
-            // message.scope);
-            // }
-            // } else if (message.action.getComponent().getActorPath() != null) {
-            //
-            // // dispatch to child actor
-            // String path = message.action.getComponent().getActorPath();
-            // String[] elements = path.split("\\.");
-            // if (elements.length > 0) {
-            //
-            // String actorId = elements[0];
-            // ActorRef<KlabMessage> receiver = receivers.get(actorId);
-            // if (receiver != null) {
-            // if (elements.length == 1) {
-            // message.action.getComponent().setActorPath(null);
-            // } else if (elements.length > 1) {
-            // message.action.getComponent().setActorPath(Path.getRemainder(path, "."));
-            // }
-            // receiver.tell(message);
-            // } else {
-            // message.scope.getMonitor()
-            // .error("unreferenced child actor " + actorId + " when handling message from
-            // UI");
-            // }
-            // }
-            // }
         }
         return Behaviors.same();
     }

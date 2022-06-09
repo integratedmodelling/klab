@@ -216,8 +216,8 @@ class ViewScope {
         ret.setVersionString(behavior.getStatement().getVersionString());
         ret.setStyle(behavior.getStatement().getStyle());
         ret.setDestination(behavior.getDestination());
-        ret.setLabel(behavior.getStatement().getLabel());
-        ret.setDescription(StringUtils.pack(behavior.getStatement().getDescription()));
+        ret.setLabel(scope.localize(behavior.getStatement().getLabel()));
+        ret.setDescription(StringUtils.pack(scope.localize(behavior.getStatement().getDescription())));
         ret.setPlatform(behavior.getPlatform());
         ret.setLogo(behavior.getStatement().getLogo());
         ret.setProjectId(behavior.getProject());
