@@ -11,6 +11,8 @@ import org.integratedmodelling.kactors.api.IKActorsCodeStatement;
 import org.integratedmodelling.kactors.api.IKActorsStatement;
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.api.IKActorsValue.Type;
+import org.integratedmodelling.kim.api.IKimAnnotation;
+import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.StringUtil;
 
@@ -146,8 +148,13 @@ public class KActorsLocalizer {
 
             @Override
             public void visitAction(IKActorsAction action) {
-                // TODO Auto-generated method stub
-
+                for (IKimAnnotation annotation : action.getAnnotations()) {
+                    for (Object o : annotation.getParameters().values()) {
+                        if (o instanceof IKActorsValue) {
+                            visitValue((IKActorsValue)o, action.getCode(), action);
+                        }
+                    }
+                }
             }
 
             @Override

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.integratedmodelling.kactors.api.IKActorsAction;
+import org.integratedmodelling.kactors.api.IKActorsValue.Type;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.klab.api.actors.IBehavior;
@@ -14,97 +15,102 @@ import org.integratedmodelling.klab.utils.StringUtils;
 
 public class BehaviorAction implements IBehavior.Action {
 
-	/**
-	 * Each action is a sequence of asynchronous call groups.
-	 */
-	private IKActorsAction statement;
-	private Behavior behavior;
-	private List<IAnnotation> annotations = new ArrayList<>();
-	private String viewId;
-	private boolean function;
-	
-	public BehaviorAction(IKActorsAction action, Behavior behavior) {
-	    
-		this.statement = action;
-		this.behavior = behavior;
-		this.function = action.isFunction();
-		
-		for (IKimAnnotation annotation : action.getAnnotations()) {
-			Annotation a = new Annotation(annotation);
-			// translate KActorsValue into actual values
-			for (String key : a.keySet()) {
-				Object value = a.get(key);
-				if (value instanceof KActorsValue) {
-					a.put(key, ((KActorsValue)value).getStatedValue());
-				}
-			}
-			this.annotations.add(a);
-			
-			if (Behavior.viewAnnotations.contains(a.getName())) {
-				this.viewId = a.containsKey("id") ? a.get("id", String.class) : action.getName();
-			}
-			
-		}
-		
-	}
+    /**
+     * Each action is a sequence of asynchronous call groups.
+     */
+    private IKActorsAction statement;
+    private Behavior behavior;
+    private List<IAnnotation> annotations = new ArrayList<>();
+    private String viewId;
+    private boolean function;
 
-	@Override
-	public String getId() {
-		return statement.getName();
-	}
+    public BehaviorAction(IKActorsAction action, Behavior behavior) {
 
-	@Override
-	public String toString() {
-		return "#(" + StringUtils.abbreviate(statement.getSourceCode(), 26) + ")";
-	}
-	
-	@Override
-	public String getName() {
-		return behavior.getName() + "." + this.getId();
-	}
+        this.statement = action;
+        this.behavior = behavior;
+        this.function = action.isFunction();
 
-	@Override
-	public IKActorsAction getStatement() {
-		return statement;
-	}
+        for (IKimAnnotation annotation : action.getAnnotations()) {
+            Annotation a = new Annotation(annotation);
+            // translate KActorsValue into actual values. If value is a localized key, preserve the
+            // # in front so we can localize it later.
+            for (String key : a.keySet()) {
+                Object value = a.get(key);
+                if (value instanceof KActorsValue) {
+                    Object aval = ((KActorsValue) value).getStatedValue();
+                    if (((KActorsValue) value).getType() == Type.LOCALIZED_KEY) {
+                        aval = aval.toString().startsWith("#") ? aval : ("#" + aval);
+                    }
+                    a.put(key, aval);
+                }
+            }
+            this.annotations.add(a);
 
-	@Override
-	public List<IKimObject> getChildren() {
-		return null;
-	}
+            if (Behavior.viewAnnotations.contains(a.getName())) {
+                this.viewId = a.containsKey("id") ? a.get("id", String.class) : action.getName();
+            }
 
-	@Override
-	public List<IAnnotation> getAnnotations() {
-		return annotations;
-	}
-	
-	@Override
-	public List<String> getFormalArguments() {
-	    return this.statement.getArgumentNames();
-	}
+        }
 
-	@Override
-	public boolean isDeprecated() {
-		return this.statement.isDeprecated();
-	}
+    }
 
-	@Override
-	public boolean isErrors() {
-		return false; // this.statement.getErrors().size() > 0;
-	}
+    @Override
+    public String getId() {
+        return statement.getName();
+    }
 
-	public String getViewId() {
-		return viewId;
-	}
+    @Override
+    public String toString() {
+        return "#(" + StringUtils.abbreviate(statement.getSourceCode(), 26) + ")";
+    }
 
-	public void setViewId(String viewId) {
-		this.viewId = viewId;
-	}
+    @Override
+    public String getName() {
+        return behavior.getName() + "." + this.getId();
+    }
 
-	@Override
-	public IBehavior getBehavior() {
-		return behavior;
-	}
+    @Override
+    public IKActorsAction getStatement() {
+        return statement;
+    }
+
+    @Override
+    public List<IKimObject> getChildren() {
+        return null;
+    }
+
+    @Override
+    public List<IAnnotation> getAnnotations() {
+        return annotations;
+    }
+
+    @Override
+    public List<String> getFormalArguments() {
+        return this.statement.getArgumentNames();
+    }
+
+    @Override
+    public boolean isDeprecated() {
+        return this.statement.isDeprecated();
+    }
+
+    @Override
+    public boolean isErrors() {
+        return false; // this.statement.getErrors().size() > 0;
+    }
+
+    public String getViewId() {
+        return viewId;
+    }
+
+    public void setViewId(String viewId) {
+        this.viewId = viewId;
+    }
+
+    @Override
+    public IBehavior getBehavior() {
+        return behavior;
+    }
 
     @Override
     public boolean isFunction() {

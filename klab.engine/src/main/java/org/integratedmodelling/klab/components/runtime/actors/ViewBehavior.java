@@ -600,7 +600,7 @@ public class ViewBehavior {
      * @param value
      * @return
      */
-    public static Triple<String, String, IKActorsValue> getItem(IKActorsValue value) {
+    public static Triple<String, String, IKActorsValue> getItem(IKActorsValue value, Scope scope) {
 
         String id = value.getTag();
         String label = null;
@@ -609,14 +609,14 @@ public class ViewBehavior {
             List<?> list = (List<?>) ((KActorsValue) value).getStatedValue();
             if (list.size() == 2) {
                 if (id == null) {
-                    id = ((KActorsValue) list.get(0)).getStatedValue().toString();
+                    id = KlabActor.evaluateInScope(((KActorsValue) list.get(0)), scope, scope.identity).toString();
                 } else {
-                    label = ((KActorsValue) list.get(0)).getStatedValue().toString();
+                    label = KlabActor.evaluateInScope(((KActorsValue) list.get(0)), scope, scope.identity).toString();
                 }
                 val = ((KActorsValue) list.get(1));
             }
         } else {
-            Map<String, String> map = ((KActorsValue) value).asMap();
+            Map<String, String> map = ((KActorsValue) value).asMap(scope);
             id = map.get("id");
             label = map.get("label");
         }
@@ -639,7 +639,7 @@ public class ViewBehavior {
             ViewComponent message = new ViewComponent();
             message.setType(Type.Combo);
             for (String argument : arguments.getUnnamedKeys()) {
-                Triple<String, String, IKActorsValue> value = getItem(arguments.get(argument, IKActorsValue.class));
+                Triple<String, String, IKActorsValue> value = getItem(arguments.get(argument, IKActorsValue.class), scope);
                 message.getChoices().add(new Pair<>(value.getFirst(), value.getSecond()));
                 this.values.put(value.getFirst(), value.getThird());
 
@@ -789,7 +789,7 @@ public class ViewBehavior {
                 this.identity.getMonitor().error("Error on component, no unnamed keys");
                 throw new KlabActorException("Error on component, no unnamed keys");
             }
-            message.setTree(getTree((KActorsValue) arguments.get(arguments.getUnnamedKeys().iterator().next()), values));
+            message.setTree(getTree((KActorsValue) arguments.get(arguments.getUnnamedKeys().iterator().next()), values, scope));
             message.getAttributes().putAll(getMetadata(arguments, scope));
             if (!message.getAttributes().containsKey("name")) {
                 // tree "name" is the root element if it's a string
@@ -870,14 +870,14 @@ public class ViewBehavior {
     /*
      * TODO use the scope!
      */
-    public static ViewComponent.Tree getTree(KActorsValue tree, Map<String, IKActorsValue> values) {
+    public static ViewComponent.Tree getTree(KActorsValue tree, Map<String, IKActorsValue> values, Scope scope) {
         @SuppressWarnings("unchecked")
         Graph<KActorsValue, DefaultEdge> graph = (Graph<KActorsValue, DefaultEdge>) tree.getStatedValue();
         ViewComponent.Tree ret = new ViewComponent.Tree();
         String rootId = "";
         Map<KActorsValue, String> ids = new HashMap<>();
         for (KActorsValue value : graph.vertexSet()) {
-            Triple<String, String, IKActorsValue> item = getItem(value);
+            Triple<String, String, IKActorsValue> item = getItem(value, scope);
             ids.put(value, item.getFirst());
             if (rootId.isEmpty() && graph.outgoingEdgesOf(value).isEmpty()) {
                 rootId = item.getFirst();
@@ -939,7 +939,7 @@ public class ViewBehavior {
                     o = ((KActorsValue) o).evaluate(scope, scope.getIdentity(), true);
                 }
                 if (o instanceof String) {
-                    o = scope.localize((String)o);
+                    o = scope == null ? (String)o : scope.localize((String) o);
                 }
                 if (o == null) {
                     ret.put(key, "null");

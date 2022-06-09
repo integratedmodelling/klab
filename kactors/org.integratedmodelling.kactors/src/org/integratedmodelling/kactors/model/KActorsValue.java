@@ -625,12 +625,19 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
      * 
      * @return
      */
-    public Map<String, String> asMap() {
+    public Map<String, String> asMap(Scope scope) {
 
         IConceptService cservice = Services.INSTANCE.getService(IConceptService.class);
 
         Map<String, String> ret = new HashMap<>();
-        ret.put("id", value == null ? "null" : value.toString());
+
+        String id = value == null ? "null" : value.toString();
+        if (type == Type.LOCALIZED_KEY) {
+            id = scope.localize(id.startsWith("#") ? id : ("#" + id));
+        }
+
+        ret.put("id", id);
+        ret.put("label", id);
         ret.put("type", type.name());
 
         switch(type) {
@@ -741,19 +748,19 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
         if (constructor != null) {
             constructor.getArguments().visit(action, kActorsActionCall, visitor);
         } else if (type == Type.TREE && value instanceof Graph) {
-           for (KActorsValue o : ((Graph<KActorsValue, ?>)value).vertexSet()) {
-               o.visit(visitor, kActorsActionCall, action);
-           }
+            for (KActorsValue o : ((Graph<KActorsValue, ?>) value).vertexSet()) {
+                o.visit(visitor, kActorsActionCall, action);
+            }
         } else if (type == Type.LIST && value instanceof List) {
-            for (Object o : ((List<?>)value)) {
+            for (Object o : ((List<?>) value)) {
                 if (o instanceof KActorsValue) {
-                    ((KActorsValue)o).visit(visitor, kActorsActionCall, action);
+                    ((KActorsValue) o).visit(visitor, kActorsActionCall, action);
                 }
             }
         } else if (type == Type.MAP && value instanceof Map) {
-            for (Object o : ((Map<?,?>)value).values()) {
+            for (Object o : ((Map<?, ?>) value).values()) {
                 if (o instanceof KActorsValue) {
-                    ((KActorsValue)o).visit(visitor, kActorsActionCall, action);
+                    ((KActorsValue) o).visit(visitor, kActorsActionCall, action);
                 }
             }
         }

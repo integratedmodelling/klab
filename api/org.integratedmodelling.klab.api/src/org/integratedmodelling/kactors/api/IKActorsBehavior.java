@@ -101,6 +101,8 @@ public interface IKActorsBehavior extends IKActorsCodeStatement {
 		boolean isSynchronous();
 
 		IIdentity getIdentity();
+		
+		String localize(String string);
 	}
 
 	/**

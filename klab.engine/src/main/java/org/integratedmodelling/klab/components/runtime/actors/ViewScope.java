@@ -62,7 +62,8 @@ class ViewScope {
         boolean isActive = group.getGroupMetadata().containsKey("inputgroup");
         ret.setType(isActive ? ViewComponent.Type.InputGroup : ViewComponent.Type.Group);
         if (group.getGroupMetadata().containsKey("name")) {
-            String name = group.getGroupMetadata().get("name").getStatedValue().toString();
+            String name = KlabActor.evaluateInScope((KActorsValue) group.getGroupMetadata().get("name"), scope, scope.identity)
+                    .toString();
             ret.setName(name);
         }
         String id = null;
@@ -88,7 +89,7 @@ class ViewScope {
                 if (!component.getAttributes().containsKey(key) && Actors.INSTANCE.getLayoutMetadata().contains(key)) {
                     Object param = parameters.get(key);
                     String value = scope.localize(param instanceof KActorsValue
-                            ? ((KActorsValue) param).getStatedValue().toString()
+                            ? KlabActor.evaluateInScope((KActorsValue) param, scope, scope.identity).toString()
                             : param.toString());
                     component.getAttributes().put(key, value);
                 }
@@ -125,7 +126,7 @@ class ViewScope {
      * @param parentDataflow
      * @return
      */
-    public ViewPanel createPanel(Action action, String appId, IActorIdentity<?> identity) {
+    public ViewPanel createPanel(Action action, String appId, IActorIdentity<?> identity, Scope scope) {
 
         ViewPanel panel = null;
         boolean hasView = action.getBehavior().getDestination() == Type.COMPONENT && "main".equals(action.getName());
@@ -137,12 +138,13 @@ class ViewScope {
 
                 if (panelLocation != null) {
 
-                    panel = new ViewPanel(annotation.containsKey("id") ? annotation.get("id", String.class) : action.getId(),
+                    panel = new ViewPanel(
+                            annotation.containsKey("id") ? scope.localize(annotation.get("id", String.class)) : action.getId(),
                             annotation.get("style", String.class));
-                    panel.getAttributes().putAll(ViewBehavior.getMetadata(annotation, null));
+                    panel.getAttributes().putAll(ViewBehavior.getMetadata(annotation, scope));
 
                     if (this.layout == null) {
-                        this.layout = createLayout(action.getBehavior());
+                        this.layout = createLayout(action.getBehavior(), scope);
                     }
 
                     switch(panelLocation) {
@@ -177,7 +179,7 @@ class ViewScope {
 
             panel = new ViewPanel(action.getBehavior().getId(), action.getBehavior().getStatement().getStyle());
             for (IAnnotation annotation : action.getAnnotations()) {
-                panel.getAttributes().putAll(ViewBehavior.getMetadata(annotation, null));
+                panel.getAttributes().putAll(ViewBehavior.getMetadata(annotation, scope));
             }
         }
 
@@ -201,13 +203,13 @@ class ViewScope {
         ret.layout.setType("modal".equals(annotation.getName()) ? ViewComponent.Type.ModalWindow : ViewComponent.Type.Window);
         ViewPanel panel = new ViewPanel(annotation.containsKey("id") ? annotation.get("id", String.class) : actionId,
                 annotation.get("style", String.class));
-        panel.getAttributes().putAll(ViewBehavior.getMetadata(annotation, null));
+        panel.getAttributes().putAll(ViewBehavior.getMetadata(annotation, scope));
         ret.layout.getPanels().add(panel);
         ret.currentComponent = panel;
         return ret;
     }
 
-    private Layout createLayout(IBehavior behavior) {
+    private Layout createLayout(IBehavior behavior, Scope scope) {
 
         Layout ret = new Layout(behavior.getName(), this.applicationId);
         ret.setIdentity(this.identityId);
@@ -225,7 +227,7 @@ class ViewScope {
             if (menu != null) {
                 Layout.MenuItem menuItem = new Layout.MenuItem();
                 menuItem.setId("menu." + action.getId());
-                menuItem.setText(menu.containsKey("title") ? menu.get("title").toString() : "Unnamed menu");
+                menuItem.setText(menu.containsKey("title") ? scope.localize(menu.get("title").toString()) : "Unnamed menu");
                 ret.getMenu().add(menuItem);
             }
         }
@@ -242,11 +244,11 @@ class ViewScope {
      * @param action
      * @return
      */
-    public ViewScope getChild(Action action, String appId, IActorIdentity<?> identity) {
+    public ViewScope getChild(Action action, String appId, IActorIdentity<?> identity, Scope scope) {
 
         // this creates the layout if needed.
         this.applicationId = appId;
-        ViewPanel panel = createPanel(action, appId, identity);
+        ViewPanel panel = createPanel(action, appId, identity, scope);
         if (panel == null) {
             return this;
         }

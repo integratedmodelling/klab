@@ -287,8 +287,10 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
         }
 
         public String localize(String string) {
-            if (string != null && string.startsWith("#") && this.localizedSymbols.containsKey(string.substring(1))) {
-                string = this.localizedSymbols.get(string.substring(1));
+            if (string != null) {
+                if (string.startsWith("#") && this.localizedSymbols.containsKey(string.substring(1))) {
+                    string = this.localizedSymbols.get(string.substring(1));
+                }
             }
             return string;
         }
@@ -425,7 +427,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
          */
         public Scope getChild(String appId, Action action) {
             Scope ret = forAction(action);
-            ret.viewScope = this.viewScope.getChild(action, appId, identity);
+            ret.viewScope = this.viewScope.getChild(action, appId, identity, ret);
             return ret;
         }
 
@@ -1442,14 +1444,15 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
             ret = executeFunctionChain(arg.getCallChain(), scope);
             break;
         case LOCALIZED_KEY:
-            
+
             if (scope.localizedSymbols != null) {
                 ret = scope.localizedSymbols.get(arg.getStatedValue());
             }
             if (ret == null) {
                 // ensure invariance in copies of the behavior
                 ret = "#" + arg.getStatedValue();
-                //  .capitalize(arg.getStatedValue().toString().toLowerCase().replace("__", ":").replace("_", " "));
+                // .capitalize(arg.getStatedValue().toString().toLowerCase().replace("__",
+                // ":").replace("_", " "));
             }
             break;
         default:
