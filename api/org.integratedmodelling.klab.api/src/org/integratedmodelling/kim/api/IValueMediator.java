@@ -21,6 +21,7 @@
  *******************************************************************************/
 package org.integratedmodelling.kim.api;
 
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -72,19 +73,41 @@ public interface IValueMediator {
 
     /**
      * Obtain a mediator that will convert quantities from the mediator of the observable (unit or
-     * currency) into what we represent, and will require the scale portion over which the
-     * observation of the value is made to account for context.
+     * currency) into what we represent, using the scale portion over which the observation of the
+     * value is made to account for any different distribution through the context.
      * <p>
      * The resulting mediator will only accept the {@link #convert(Number, ILocator)} call and throw
-     * an exception for any other situation. If the observable passed has no mediator, the
-     * conversion will be standard and non-contextual (using a simple conversion factor for speed).
-     * Otherwise, the fastest set of transformations will be encoded in the returned mediator.
+     * an exception in any other situation. If the observable passed has no mediator, the conversion
+     * will be standard and non-contextual (using a simple conversion factor for speed). Otherwise,
+     * the fastest set of transformations will be encoded in the returned mediator.
+     * <p>
+     * The resulting mediator will perform correcly <em>only</em> when used with locators coming
+     * from the same scale that was used to produce it. It will contain transformations in
+     * parametric form, so that the possible irregularity of the extents in the locators is
+     * accounted for.
+     * <p>
+     * The strategy to create the necessary transformations, consisting in parametric
+     * multiplications or divisions by an appropriately transformed extent in space and/or time, is
+     * as follows:
+     * <ol>
+     * <li>if observable is intensive, just check compatibility and return self if compatible, throw
+     * exception if not. Otherwise:
+     * <li>obtain contextualized candidate forms of both the observable's base unit and self. Both
+     * should have one compatible form in the candidates. If not, throw exception. If the compatible
+     * form is the same, proceed as in (1). Otherwise:
+     * <li>devise two strategies to mediate 1) incoming form to base form and 2) base form to this.
+     * Each strategy consists of a list of parametric operations on S/T contexts with a conversion
+     * factor for the basic representation (m^x for space, ms for time).
+     * <li>simplify the two strategies into a single set of operations to add to the contextualized
+     * unit returned, which also carries the definition of the contextual nature re: S/T and a
+     * string explaining the transformations made and why.
+     * </ol>
      * 
      * @param observable
      * @param scale
      * @return a contextualized mediator specialized for the conversion to this unit in this scale.
      */
-    IValueMediator contextualize(IObservable observable, IScale scale);
+    IValueMediator contextualize(IObservable observable, IGeometry scale);
 
     /**
      * Convert a quantity to the unit we represent from the one in the observable that was passed to

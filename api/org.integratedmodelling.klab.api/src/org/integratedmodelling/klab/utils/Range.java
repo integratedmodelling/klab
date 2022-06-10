@@ -4,9 +4,9 @@ import java.util.Date;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IValueMediator;
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 
 public class Range implements IValueMediator {
@@ -689,7 +689,7 @@ public class Range implements IValueMediator {
 	}
 
 	@Override
-	public IValueMediator contextualize(IObservable observable, IScale scale) {
+	public IValueMediator contextualize(IObservable observable, IGeometry scale) {
 		return this;
 	}
 

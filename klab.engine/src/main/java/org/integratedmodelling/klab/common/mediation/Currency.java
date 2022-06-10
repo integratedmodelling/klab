@@ -16,12 +16,11 @@ package org.integratedmodelling.klab.common.mediation;
 
 import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.Observations;
-import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.mediation.ICurrency;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.utils.Range;
 import org.joda.time.DateTime;
 
@@ -260,7 +259,7 @@ public class Currency extends AbstractMediator implements ICurrency {
     // }
 
     @Override
-    public IValueMediator contextualize(IObservable observable, IScale scale) {
+    public IValueMediator contextualize(IObservable observable, IGeometry scale) {
         return null;
     }
 

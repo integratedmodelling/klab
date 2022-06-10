@@ -18,11 +18,9 @@ import java.util.Map;
 
 import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.api.data.IGeometry;
-import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDistribution;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.services.IObservableService;
 import org.integratedmodelling.klab.utils.Pair;
 
@@ -145,7 +143,7 @@ public interface IUnit extends IValueMediator {
      * @return
      */
     @Override
-    IUnit contextualize(IObservable observable, IScale scale);
+    IUnit contextualize(IObservable observable, IGeometry scale);
 
     /**
      * True if unitless.
