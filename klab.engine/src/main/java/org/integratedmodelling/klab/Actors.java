@@ -1564,6 +1564,25 @@ public enum Actors implements IActorsService {
         return ret;
     }
 
+    @Override
+    public List<String> getLocalizations(String behavior) {
+
+        List<String> ret = new ArrayList<>();
+        IKActorsBehavior source = KActors.INSTANCE.getBehavior(behavior);
+        if (source != null) {
+            File loc = MiscUtilities.changeExtension(source.getFile(), "localization");
+            if (loc != null) {
+                FileCatalog<Map> cat = FileCatalog.create(loc, Map.class, Map.class);
+                for (String lang : cat.keySet()) {
+                    Locale locale = Locale.forLanguageTag(lang);
+                    ret.add(lang + " - " + locale.getDisplayLanguage());
+                }
+            }
+        }
+        return ret;
+    }
+
+    
     /**
      * Run all test cases in a project. Use dependency order to follow imports.
      * 

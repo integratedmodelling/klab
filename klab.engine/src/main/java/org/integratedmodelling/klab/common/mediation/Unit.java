@@ -129,16 +129,15 @@ public class Unit extends AbstractMediator implements IUnit {
 		}
 
 		try {
+		    // FIXME why every time?
 			SimpleUnitFormat formatter = SimpleUnitFormat.getInstance(SimpleUnitFormat.Flavor.ASCII);
 			formatter.label(tech.units.indriya.unit.Units.LITRE, "L");
 			formatter.label(tech.units.indriya.unit.Units.WEEK, "wk");
-			// TODO enable when the lib is updated
-			// formatter.label(tech.units.indriya.unit.Units.MONTH, "mo");
 			formatter.label(NonSI.DEGREE_ANGLE, "degree_angle");
-			unit = (javax.measure.Unit<?>) SimpleUnitFormat.getInstance(SimpleUnitFormat.Flavor.ASCII).parse(string);
+			unit = (javax.measure.Unit<?>) formatter.parse(string);
 		} catch (Throwable e) {
 			// KLAB-156: Error getting the default unit
-			// catched in org.integratedmodelling.klab.model.Model.java:488
+			// caught in org.integratedmodelling.klab.model.Model.java:488
 			throw new KlabValidationException("Invalid unit: " + string);
 		}
 		if (factor != 1.0) {

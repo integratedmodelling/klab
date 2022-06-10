@@ -14,7 +14,9 @@ import org.integratedmodelling.kactors.kactors.ListElement;
 import org.integratedmodelling.kactors.kactors.Model;
 import org.integratedmodelling.kactors.kactors.Preamble;
 import org.integratedmodelling.kactors.model.KActors.BehaviorDescriptor;
+import org.integratedmodelling.klab.Services;
 import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.api.services.IActorsService;
 import org.integratedmodelling.klab.rest.BehaviorReference;
 
 /**
@@ -237,7 +239,10 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
         ret.setProjectId(getProjectId());
         ret.setLogo(this.getLogo());
         ret.setPlatform(this.platform);
-        ret.getLocales().addAll(this.getLocales());
+        IActorsService service = Services.INSTANCE.getService(IActorsService.class); 
+        if (service != null) {
+            ret.getLocales().addAll(service.getLocalizations(this.getName()));
+        }
         return ret;
     }
 

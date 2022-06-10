@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Collection;
+import java.util.List;
 
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.api.IKActorsBehavior.Scope;
@@ -94,5 +95,13 @@ public interface IActorsService {
      * @return
      */
     Object evaluate(IKActorsValue kActorsValue, IIdentity identity, Scope scope);
+
+    /**
+     * Get the localization from the companion file, if any.
+     * 
+     * @param behavior
+     * @return
+     */
+    List<String> getLocalizations(String behavior);
 
 }

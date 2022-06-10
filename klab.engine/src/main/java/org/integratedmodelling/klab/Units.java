@@ -927,42 +927,6 @@ public enum Units implements IUnitService {
             }
         }
 
-        //// IUnit chosen = null;
-        //
-        // if (constraints == null || constraints.isEmpty()) {
-        // chosen = fullyContextualized;
-        // } else {
-        // Set<ExtentDimension> whitelist = new HashSet<>();
-        // Set<ExtentDimension> blacklist = new HashSet<>();
-        // for (ExtentDimension d : constraints.keySet()) {
-        //
-        // if (!aggregatable.contains(d)) {
-        // continue;
-        // }
-        //
-        // /**
-        // * FIXME something is wrong here - the "chosen" remains null
-        // */
-        // if (constraints.get(d) == ExtentDistribution.INTENSIVE) {
-        // whitelist.add(d);
-        // } else {
-        // blacklist.add(d);
-        // }
-        // }
-        //
-        // for (Unit punit : potentialUnits) {
-        // Set<ExtentDimension> udims = punit.getAggregatedDimensions();
-        // if (Sets.intersection(udims, whitelist).size() == whitelist.size()
-        // && Sets.intersection(udims, blacklist).size() == 0) {
-        // chosen = punit;
-        // break;
-        // }
-        // }
-        // }
-        //
-        // final Set<IUnit> candidates = new HashSet<IUnit>(potentialUnits);
-        // final IUnit correctUnit = chosen;
-
         return new UnitContextualization(){
 
             @Override
