@@ -149,23 +149,23 @@ public class Currency extends AbstractMediator implements ICurrency {
         return d;
     }
 
-    @Override
-    public Number backConvert(Number d, IValueMediator scale) {
-
-        if (Observations.INSTANCE.isNodata(d)) {
-            return d;
-        }
-
-        if (!(scale instanceof ICurrency)) {
-            throw new IllegalArgumentException("invalid conversion: " + scale + " to " + this);
-        }
-
-        if (((Currency) scale).scale != null && scale != null) {
-            return this.scale.backConvert(d, ((Currency) scale).scale);
-        }
-        // TODO
-        return d;
-    }
+//    @Override
+//    public Number backConvert(Number d, IValueMediator scale) {
+//
+//        if (Observations.INSTANCE.isNodata(d)) {
+//            return d;
+//        }
+//
+//        if (!(scale instanceof ICurrency)) {
+//            throw new IllegalArgumentException("invalid conversion: " + scale + " to " + this);
+//        }
+//
+//        if (((Currency) scale).scale != null && scale != null) {
+//            return this.scale.backConvert(d, ((Currency) scale).scale);
+//        }
+//        // TODO
+//        return d;
+//    }
 
     /** {@inheritDoc} */
     @Override

@@ -358,21 +358,21 @@ public class Range implements IValueMediator {
 
 		return this.lowerBound + (this.getWidth() * ((Range) other).normalize(d.doubleValue()));
 	}
-
-	@Override
-	public Number backConvert(Number d, IValueMediator other) {
-
-		if (!isBounded()) {
-			throw new IllegalArgumentException(
-					"range " + this + " cannot convert value " + d + " to " + other + " because it is unbound");
-		}
-		if (!(other instanceof Range || ((Range) other).isBounded())) {
-			throw new IllegalArgumentException("range " + this + " cannot convert value " + d + " to " + other
-					+ " because the target is not a range or is unbound");
-		}
-
-		return ((Range) other).convert(d, this);
-	}
+//
+//	@Override
+//	public Number backConvert(Number d, IValueMediator other) {
+//
+//		if (!isBounded()) {
+//			throw new IllegalArgumentException(
+//					"range " + this + " cannot convert value " + d + " to " + other + " because it is unbound");
+//		}
+//		if (!(other instanceof Range || ((Range) other).isBounded())) {
+//			throw new IllegalArgumentException("range " + this + " cannot convert value " + d + " to " + other
+//					+ " because the target is not a range or is unbound");
+//		}
+//
+//		return ((Range) other).convert(d, this);
+//	}
 
 	/**
 	 * Create a range from a list of doubles

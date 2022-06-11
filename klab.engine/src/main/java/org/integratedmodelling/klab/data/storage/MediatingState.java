@@ -1,25 +1,20 @@
 package org.integratedmodelling.klab.data.storage;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.integratedmodelling.kim.api.IValueMediator;
-import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubjectiveState;
-import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.components.runtime.observations.DelegatingArtifact;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
-import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.scale.Scale;
@@ -35,22 +30,23 @@ public class MediatingState extends Observation implements IState, DelegatingArt
     IValueMediator from;
     IValueMediator to;
     IValueMediator contextualized;
-    boolean contextualize = false;
-    Map<IGeometry.Dimension.Type, IExtent> irregularExtents = new HashMap<>();
+    // boolean contextualize = false;
+    // Map<IGeometry.Dimension.Type, IExtent> irregularExtents = new HashMap<>();
 
     public MediatingState(IState state, RuntimeScope context, IValueMediator from, IValueMediator to) {
-        super(new Observable((Observable) state.getObservable()), (Scale) state.getScale(), context);
+        super(new Observable((Observable) state.getObservable()).withMediator(to), (Scale) state.getScale(),
+                context);
         this.delegate = state;
-        this.from = from;
-        this.to = to;
-        if (!this.to.isCompatible(this.from)) {
-            this.contextualize = true;
-            for (IExtent extent : state.getScale().getExtents()) {
-                if (!extent.isRegular()) {
-                    irregularExtents.put(extent.getType(), null);
-                }
-            }
-        }
+        this.from = from.contextualize(state.getObservable(), getScale());
+        this.to = to.contextualize(this.getObservable(), getScale());
+        // if (!this.to.isCompatible(this.from)) {
+        // this.contextualize = true;
+        // for (IExtent extent : state.getScale().getExtents()) {
+        // if (!extent.isRegular()) {
+        // irregularExtents.put(extent.getType(), null);
+        // }
+        // }
+        // }
         // do it now that delegate isn't null
         this.setCreationTime(
                 /* context.getScheduler() != null ? context.getScheduler().getTime() : */ timestamp);
@@ -61,51 +57,51 @@ public class MediatingState extends Observation implements IState, DelegatingArt
     public Object get(ILocator index) {
         Object val = delegate.get(index);
         if (val instanceof Number) {
-            val = getContextualizedUnit(index).convert((Number) val, from).doubleValue();
+            val = this.to.convert((Number) val, index).doubleValue();
         }
         return val;
     }
 
-    IValueMediator getContextualizedUnit(ILocator locator) {
-       
-    	if (contextualize) {
-            
-        	if (!(locator instanceof IScale)) {
-                throw new KlabUnimplementedException(
-                        "cannot yet recontexualize a mediating state on anything other than a scale");
-            }
-            
-            if (contextualized == null) {
-                contextualized = to.contextualize(getObservable(), (IScale) locator);
-            } else if (irregularExtents.isEmpty()) {
-                return contextualized;
-            } else {
-                /*
-                 * check which extent has changed
-                 */
-                boolean changed = false;
-                for (IGeometry.Dimension.Type extType : irregularExtents.keySet()) {
-                    if (!((IScale) locator).getDimension(extType).equals(irregularExtents.get(extType))) {
-                        changed = true;
-                        irregularExtents.put(extType, (IExtent) ((IScale) locator).getDimension(extType));
-                    }
-                }
-                if (changed) {
-                    contextualized = to.contextualize(getObservable(), (IScale) locator);
-                }
-            }
-            
-            return contextualized == null ? to : contextualized;
-        }
-    	
-        return to;
-    }
+    // IValueMediator getContextualizedUnit(ILocator locator) {
+    //
+    // if (contextualize) {
+    //
+    // if (!(locator instanceof IScale)) {
+    // throw new KlabUnimplementedException(
+    // "cannot yet recontexualize a mediating state on anything other than a scale");
+    // }
+    //
+    // if (contextualized == null) {
+    // contextualized = to.contextualize(getObservable(), (IScale) locator);
+    // } else if (irregularExtents.isEmpty()) {
+    // return contextualized;
+    // } else {
+    // /*
+    // * check which extent has changed
+    // */
+    // boolean changed = false;
+    // for (IGeometry.Dimension.Type extType : irregularExtents.keySet()) {
+    // if (!((IScale) locator).getDimension(extType).equals(irregularExtents.get(extType))) {
+    // changed = true;
+    // irregularExtents.put(extType, (IExtent) ((IScale) locator).getDimension(extType));
+    // }
+    // }
+    // if (changed) {
+    // contextualized = to.contextualize(getObservable(), (IScale) locator);
+    // }
+    // }
+    //
+    // return contextualized == null ? to : contextualized;
+    // }
+    //
+    // return to;
+    // }
 
     @SuppressWarnings("unchecked")
     public <T> T get(ILocator index, Class<T> cls) {
         Object val = delegate.get(index, cls);
         if (val instanceof Number && (Number.class.isAssignableFrom(cls))) {
-            val = getContextualizedUnit(index).convert((Number) val, from).doubleValue();
+            val = to.convert((Number) val, index).doubleValue();
         }
         return (T) val;
     }
@@ -125,7 +121,7 @@ public class MediatingState extends Observation implements IState, DelegatingArt
 
     public long set(ILocator index, Object value) {
         Object val = value instanceof Number
-                ? getContextualizedUnit(index).backConvert(((Number) value).doubleValue(), to)
+                ? from.convert(((Number) value).doubleValue(), index)
                 : value;
         return delegate.set(index, val);
     }
@@ -193,7 +189,9 @@ public class MediatingState extends Observation implements IState, DelegatingArt
                     + (from == null ? "nothing" : from.toString()) + " and " + to.toString());
         }
 
-        return from.equals(to) ? state : new MediatingState(state, (RuntimeScope) ((Observation) state).getScope(), from, to);
+        return from.equals(to)
+                ? state
+                : new MediatingState(state, (RuntimeScope) ((Observation) state).getScope(), from, to);
     }
 
     public ISubjectiveState reinterpret(IDirectObservation observers) {
@@ -291,9 +289,9 @@ public class MediatingState extends Observation implements IState, DelegatingArt
         return null;
     }
 
-	@Override
-	public IArtifact getDelegate() {
-		return delegate;
-	}
+    @Override
+    public IArtifact getDelegate() {
+        return delegate;
+    }
 
 }

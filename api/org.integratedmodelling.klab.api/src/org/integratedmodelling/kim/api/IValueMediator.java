@@ -57,19 +57,19 @@ public interface IValueMediator {
      */
     Number convert(Number d, IValueMediator scale);
 
-    /**
-     * Convert from this unit to the passed one. This would be trivially accomplished by inverting
-     * the receiver and the argument, unless the mediator is contextualized (coming from
-     * {@link #contextualize(IObservable, IScale)}, which makes it entirely non-trivial, hence the
-     * existence of a backConvert() function.
-     * 
-     * @param d
-     * @param scale
-     * @throws KlabIllegalStateException if this mediator was produced through
-     *         {@link #contextualize(IObservable, IScale)}.
-     * @return
-     */
-    Number backConvert(Number d, IValueMediator scale);
+//    /**
+//     * Convert from this unit to the passed one. This would be trivially accomplished by inverting
+//     * the receiver and the argument, unless the mediator is contextualized (coming from
+//     * {@link #contextualize(IObservable, IScale)}, which makes it entirely non-trivial, hence the
+//     * existence of a backConvert() function.
+//     * 
+//     * @param d
+//     * @param scale
+//     * @throws KlabIllegalStateException if this mediator was produced through
+//     *         {@link #contextualize(IObservable, IScale)}.
+//     * @return
+//     */
+//    Number backConvert(Number d, IValueMediator scale);
 
     /**
      * Obtain a mediator that will convert quantities from the mediator of the observable (unit or

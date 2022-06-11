@@ -53,33 +53,6 @@ import org.integratedmodelling.klab.utils.Pair;
 public interface IUnit extends IValueMediator {
 
     /**
-     * The result of a {@link IUnit#contextualize(IGeometry, Map)} operation. TODO probably hide
-     * behind the API and normalize the contextualization interface as in IValueMediator.
-     * 
-     * @author Ferd
-     *
-     */
-    public interface UnitContextualization {
-
-        /**
-         * All the admissible units corresponding to the contextualization of another to a geometry,
-         * each one reporting the extents that have been aggregated in it and including the
-         * "original" admissible unit with no aggregations.
-         * 
-         * @return
-         */
-        Collection<IUnit> getCandidateUnits();
-
-        /**
-         * The correct unit for contextualization to the geometry, taking into account the geometry
-         * and any constraints passed to the method that produced this descriptor.
-         * 
-         * @return
-         */
-        IUnit getChosenUnit();
-    }
-
-    /**
      * Return a new unit multiplied by the passed one.
      *
      * @param unit a {@link org.integratedmodelling.klab.api.data.mediation.IUnit} object.

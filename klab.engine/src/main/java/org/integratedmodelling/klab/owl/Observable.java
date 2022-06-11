@@ -16,6 +16,7 @@ import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Concepts;
@@ -1107,4 +1108,17 @@ public class Observable extends GroovyObjectSupport implements IObservable {
 	public Collection<Observable> getDeferredObservables() {
 		return this.deferredObservables;
 	}
+
+    public Observable withMediator(IValueMediator mediator) {
+
+        if (mediator instanceof IUnit) {
+            this.unit = (Unit)mediator;
+        } else if (mediator instanceof ICurrency) {
+            this.currency = (Currency)mediator;
+        } else if (mediator instanceof Range) {
+            this.range = (Range)mediator;
+        }
+        
+        return this;
+    }
 }
