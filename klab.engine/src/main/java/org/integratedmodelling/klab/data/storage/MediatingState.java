@@ -29,9 +29,6 @@ public class MediatingState extends Observation implements IState, DelegatingArt
     IState delegate;
     IValueMediator from;
     IValueMediator to;
-    IValueMediator contextualized;
-    // boolean contextualize = false;
-    // Map<IGeometry.Dimension.Type, IExtent> irregularExtents = new HashMap<>();
 
     public MediatingState(IState state, RuntimeScope context, IValueMediator from, IValueMediator to) {
         super(new Observable((Observable) state.getObservable()).withMediator(to), (Scale) state.getScale(),
@@ -39,17 +36,7 @@ public class MediatingState extends Observation implements IState, DelegatingArt
         this.delegate = state;
         this.from = from.contextualize(state.getObservable(), getScale());
         this.to = to.contextualize(this.getObservable(), getScale());
-        // if (!this.to.isCompatible(this.from)) {
-        // this.contextualize = true;
-        // for (IExtent extent : state.getScale().getExtents()) {
-        // if (!extent.isRegular()) {
-        // irregularExtents.put(extent.getType(), null);
-        // }
-        // }
-        // }
-        // do it now that delegate isn't null
-        this.setCreationTime(
-                /* context.getScheduler() != null ? context.getScheduler().getTime() : */ timestamp);
+        this.setCreationTime(this.timestamp);
         this.setExitTime(-1);
 
     }
@@ -61,41 +48,6 @@ public class MediatingState extends Observation implements IState, DelegatingArt
         }
         return val;
     }
-
-    // IValueMediator getContextualizedUnit(ILocator locator) {
-    //
-    // if (contextualize) {
-    //
-    // if (!(locator instanceof IScale)) {
-    // throw new KlabUnimplementedException(
-    // "cannot yet recontexualize a mediating state on anything other than a scale");
-    // }
-    //
-    // if (contextualized == null) {
-    // contextualized = to.contextualize(getObservable(), (IScale) locator);
-    // } else if (irregularExtents.isEmpty()) {
-    // return contextualized;
-    // } else {
-    // /*
-    // * check which extent has changed
-    // */
-    // boolean changed = false;
-    // for (IGeometry.Dimension.Type extType : irregularExtents.keySet()) {
-    // if (!((IScale) locator).getDimension(extType).equals(irregularExtents.get(extType))) {
-    // changed = true;
-    // irregularExtents.put(extType, (IExtent) ((IScale) locator).getDimension(extType));
-    // }
-    // }
-    // if (changed) {
-    // contextualized = to.contextualize(getObservable(), (IScale) locator);
-    // }
-    // }
-    //
-    // return contextualized == null ? to : contextualized;
-    // }
-    //
-    // return to;
-    // }
 
     @SuppressWarnings("unchecked")
     public <T> T get(ILocator index, Class<T> cls) {

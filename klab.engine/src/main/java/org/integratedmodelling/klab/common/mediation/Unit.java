@@ -20,13 +20,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.measure.Dimension;
 import javax.measure.UnitConverter;
 
 import org.integratedmodelling.kim.api.IValueMediator;
-import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.Units.UnitContextualization;
@@ -36,8 +34,6 @@ import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDistribution;
-import org.integratedmodelling.klab.api.observations.scale.IExtent;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -62,24 +58,8 @@ public class Unit extends AbstractMediator implements IUnit {
 
     @SuppressWarnings("rawtypes")
     javax.measure.Unit _unit;
-    // int _startLine;
-    // int _endLine;
     String statement;
     Map<ExtentDimension, ExtentDistribution> aggregatedDimensions = new HashMap<>();
-    // double contextualizationFactor = 1.0;
-    // boolean wasContextualized = false;
-
-    // /**
-    // * if the next three are not null, the unit must apply contextualization logic
-    // */
-    // private IObservable observable;
-    // private IGeometry scale;
-    // each different source unit implies a different triple containing the
-    // decontextualized target
-    // unit (which we represent), the decontextualized source unit for conversion,
-    // and the scale
-    // factor.
-    // private Map<Unit, Triple<Unit, Unit, Double>> contextualization;
 
     /**
      * Non-SI units we can't handle directly if we need to preserve comparability with same
@@ -239,71 +219,9 @@ public class Unit extends AbstractMediator implements IUnit {
             throw new KlabIllegalArgumentException("can't convert into a unit from " + unit);
         }
 
-        // if (this.scale != null) {
-        // if (this.contextualization == null) {
-        // this.contextualization = new HashMap<>();
-        // }
-        // if (!this.contextualization.containsKey(unit)) {
-        // Pair<Unit, Double> ctx = this.getContextualizationFactor(this.observable, unit,
-        // this.scale);
-        // if (ctx == null) {
-        // /*
-        // * shouldn't happen
-        // */
-        // throw new KlabValidationException(
-        // "cannot apply unit " + unit + " to observable in " + this.observable.getUnit()
-        // + " in this context");
-        // }
-        // this.contextualization.put((Unit) unit, new Triple<>(this, ctx.getFirst(),
-        // ctx.getSecond()));
-        // }
-        //
-        // Triple<Unit, Unit, Double> data = this.contextualization.get(unit);
-        // @SuppressWarnings("unchecked")
-        // UnitConverter converter = data.getSecond()._unit.getConverterTo(data.getFirst()._unit);
-        // return converter.convert(value.doubleValue()) * data.getThird();
-        //
-        // }
-
         UnitConverter converter = ((Unit) unit).getUnit().getConverterTo(_unit);
         return converter.convert(value.doubleValue());
     }
-    //
-    // @Override
-    // public Number backConvert(Number value, IValueMediator unit) {
-    //
-    // if (mediators != null) {
-    // throw new KlabInternalErrorException(
-    // "contextual conversions must be performed using convert(value, scale)");
-    // }
-    //
-    // if (Observations.INSTANCE.isNodata(value)) {
-    // return value;
-    // }
-    //
-    // if (!(unit instanceof Unit)) {
-    // throw new KlabIllegalArgumentException("can't convert into a unit from " + unit);
-    // }
-    //
-    // if (this.scale != null) {
-    // if (this.contextualization == null) {
-    // this.contextualization = new HashMap<>();
-    // }
-    // if (!this.contextualization.containsKey(unit)) {
-    // Pair<Unit, Double> ctx = this.getContextualizationFactor(this.observable, unit, this.scale);
-    // this.contextualization.put((Unit) unit, new Triple<>(this, ctx.getFirst(), ctx.getSecond()));
-    // }
-    //
-    // Triple<Unit, Unit, Double> data = this.contextualization.get(unit);
-    // @SuppressWarnings("unchecked")
-    // UnitConverter converter = data.getFirst()._unit.getConverterTo(data.getSecond()._unit);
-    // return converter.convert(value.doubleValue()) / data.getThird();
-    //
-    // }
-    //
-    // UnitConverter converter = _unit.getConverterTo(((Unit) unit).getUnit());
-    // return converter.convert(value.doubleValue());
-    // }
 
     /**
      * Gets the unit.
@@ -554,88 +472,6 @@ public class Unit extends AbstractMediator implements IUnit {
         return ret;
     }
 
-    // @Deprecated
-    // public Unit decontextualize() {
-    // return (Unit) Units.INSTANCE.removeExtents(this, getDimensions());
-    // }
-    //
-    // @Deprecated
-    // public Unit decontextualize(IScale scale) {
-    // return (Unit) Units.INSTANCE.removeExtents(this,
-    // scale.getDimensions().stream().map(dim -> dim.getExtentDimension())
-    // .collect(Collectors.toList()));
-    // }
-
-    // /**
-    // * Return a multiplicative factor to adapt a value in the "from" unit to the passed scale,
-    // * considering the extension or intension over the context embodied in the units. If there is
-    // no
-    // * conformant match between either units or geometries, the return value should be Double.NaN.
-    // *
-    // * @param from
-    // * @param scale
-    // * @return the decontextualized target unit (this unit w/o the contexts outside of the
-    // * multiplicative factor), the decontextualized source unit (compatible with this unit)
-    // * and the multiplicative factor that will mediate the different contexts.
-    // */
-    // @Deprecated
-    // private Pair<Unit, Double> getContextualizationFactor(IObservable observable, IValueMediator
-    // from,
-    // IGeometry scale) {
-    //
-    // // e.g. for mm in <S,T> this must say: intensive in area, extensive in time
-    // Unit contextualizedTarget = contextualizeExtents(observable, scale);
-    // // e.g. for mm/day in <S,T> this must say: intensive in area, intensive in time
-    // Unit contextualizedSource = ((Unit) from).contextualizeExtents(observable, scale);
-    //
-    // // must have same dimensions as keys or result is NaN
-    // if (contextualizedSource == null || contextualizedTarget == null
-    // || !contextualizedTarget.getAggregatedDimensions()
-    // .keySet().equals(contextualizedSource.getAggregatedDimensions().keySet())) {
-    // return null;
-    // }
-    //
-    // // initialize to the conversion factor between the units after factoring out
-    // // either
-    // // dimension
-    // double ret = 1.0;
-    // if (!Observables.INSTANCE.isExtensive(observable)
-    // && contextualizedTarget.getAggregatedDimensions()
-    // .equals(contextualizedSource.getAggregatedDimensions())) {
-    // return new Pair<>((Unit) from, 1.0);
-    // }
-    //
-    // Unit sourceUnitDecontextualized = (Unit) from;
-    //
-    // // factor must disaggregate if extensive -> intensive, aggregate if
-    // // intensive->extensive
-    // for (ExtentDimension dim : contextualizedTarget.getAggregatedDimensions().keySet()) {
-    // ExtentDistribution agrTrg = contextualizedTarget.getAggregatedDimensions().get(dim);
-    // ExtentDistribution agrSrc = contextualizedSource.getAggregatedDimensions().get(dim);
-    // if (agrTrg == ExtentDistribution.EXTENSIVE && agrSrc == ExtentDistribution.INTENSIVE) {
-    // /*
-    // * intensive -> extensive: take the scale factor from the scale and multiply the
-    // * value to remove it. Scale factor units of the source dimension are represented in
-    // * the scale extent.
-    // */
-    // IExtent extent = (IExtent) scale.getDimension(dim.type);
-    // IUnit dimUnit = Units.INSTANCE.getDimensionUnit((IUnit) from, dim);
-    // sourceUnitDecontextualized = (Unit) sourceUnitDecontextualized.multiply(dimUnit);
-    // ret *= extent.getDimensionSize(dimUnit);
-    //
-    // } else if (agrTrg == ExtentDistribution.INTENSIVE && agrSrc == ExtentDistribution.EXTENSIVE)
-    // {
-    //
-    // IExtent extent = (IExtent) scale.getDimension(dim.type);
-    // IUnit dimUnit = Units.INSTANCE.getDimensionUnit(this, dim);
-    // ret /= extent.getDimensionSize(dimUnit);
-    // sourceUnitDecontextualized = (Unit) sourceUnitDecontextualized.divide(dimUnit);
-    // }
-    // }
-    //
-    // return new Pair<>(sourceUnitDecontextualized, ret);
-    // }
-
     @Override
     public IUnit contextualize(IObservable observable, IGeometry scale) {
 
@@ -654,16 +490,12 @@ public class Unit extends AbstractMediator implements IUnit {
          * In case the target is m^3: I,I -> E,E so step 2 produces two extensions:
          * op(x*Tms*1000)op(x*S)
          * 
-         * Should always WARN if extensive is output by data AS LONG AS data come with their fully
-         * specified extension (e.g. T is physical). Otherwise it's an error.
+         * Model validator should always WARN if extensive is output by data AS LONG AS data come
+         * with their fully specified extension (e.g. T is physical). Otherwise it's an error.
          */
 
         return Units.INSTANCE.contextualize(observable, this, scale);
 
-        // Unit ret = new Unit(_unit);
-        // ret.scale = scale;
-        // ret.observable = observable;
-        // return ret;
     }
 
     public String dumpStrategy() {

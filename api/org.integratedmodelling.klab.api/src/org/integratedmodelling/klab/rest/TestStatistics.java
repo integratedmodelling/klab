@@ -52,7 +52,8 @@ public class TestStatistics {
 
     /**
      * Sent at the BEGINNING of a run with all fields empty except start. Use to collect test
-     * results as they get in.
+     * results as they get in. For now the test cases (TestStatistics) do not contain the ID of the
+     * run, and collection relies on timing.
      * 
      * @author Ferd
      *
@@ -65,9 +66,9 @@ public class TestStatistics {
         private String testId;
 
         public TestRun() {
-            
+
         }
-        
+
         public TestRun(String testId) {
             this.setTestId(testId);
             this.start = System.currentTimeMillis();
