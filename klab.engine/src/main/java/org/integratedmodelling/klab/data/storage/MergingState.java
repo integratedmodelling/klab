@@ -215,7 +215,7 @@ public class MergingState extends State implements DelegatingArtifact {
 
         Aggregator aggregator = null;
         if (aggregate) {
-            aggregator = new Aggregator(delegate.getObservable(), delegate.getMonitor());
+            aggregator = new Aggregator(delegate.getObservable(), delegate.getScale());
         }
 
         if (!(index instanceof IScale)) {
@@ -239,7 +239,7 @@ public class MergingState extends State implements DelegatingArtifact {
 
                 Object value = state.get(Scale.create(exts));
                 if (aggregate) {
-                    aggregator.add(value, state.getObservable(), index);
+                    aggregator.add(value, /* state.getObservable(), */ index);
                 } else if (Observations.INSTANCE.isData(value)) {
                     return value;
                 }

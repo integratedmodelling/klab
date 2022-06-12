@@ -220,10 +220,10 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 			if (cell.phaseHash != null) {
 
 				if (!cell.phaseHash.containsKey(phase.getKey())) {
-					cell.phaseHash.put(phase.getKey(), new Aggregator(observable, scope.getMonitor(), true));
+					cell.phaseHash.put(phase.getKey(), new Aggregator(observable, scope.getScale()));
 				}
 
-				cell.phaseHash.get(phase.getKey()).add(value, observable, locator);
+				cell.phaseHash.get(phase.getKey()).add(value, locator);
 
 				/*
 				 * this is held to feed references in computations that happen at each cycle,
@@ -245,10 +245,10 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 					if (forcedAggregation != null) {
 						cell.aggregator = new Aggregator(forcedAggregation.getAggregation(), scope.getScale());
 					} else {
-						cell.aggregator = new Aggregator(observable, scope.getMonitor(), true);
+						cell.aggregator = new Aggregator(observable, scope.getScale());
 					}
 				}
-				cell.aggregator.add(value, observable, locator);
+				cell.aggregator.add(value, locator);
 			}
 
 		} else if (cells[column][row] != null) {

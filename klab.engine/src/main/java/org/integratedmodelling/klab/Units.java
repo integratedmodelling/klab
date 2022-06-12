@@ -15,6 +15,7 @@ import java.util.Set;
 import javax.measure.Dimension;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
@@ -26,7 +27,6 @@ import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDistribution;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
@@ -55,9 +55,9 @@ public enum Units implements IUnitService {
 
     /**
      * Used internally to support the {@link IUnit#contextualize(IObservable, IGeometry)} operation.
-     * Iterates all the possible units for an extensive observable in a specified scale. Must be
-     * used appropriately - the results for non-extensive observables or incomplete scales are not
-     * reliable.
+     * Iterates all the possible units for an extensive observable in a specified scale, including
+     * the "chosen" unit which is completed with its intensive extension. Must be used appropriately
+     * - the results for non-extensive observables or incomplete scales are not reliable.
      * 
      * @author Ferd
      *
@@ -67,7 +67,8 @@ public enum Units implements IUnitService {
         /**
          * All the admissible units corresponding to the contextualization of another to a geometry,
          * each one reporting the extents that have been aggregated in it and including the
-         * "original" admissible unit with no aggregations.
+         * "original" admissible unit with no aggregations. This one will not contain aggregation
+         * data, which are supposed to be all-intensive for the scale of observation.
          * 
          * @return
          */
@@ -75,25 +76,14 @@ public enum Units implements IUnitService {
 
         /**
          * The correct unit for contextualization to the geometry, taking into account the geometry
-         * and any constraints passed to the method that produced this descriptor.
+         * and any constraints passed to the method that produced this descriptor. Does not include
+         * the "chosen" unit.
          * 
          * @return
          */
         Unit getChosenUnit();
     }
-
-    /**
-     * This gets sent
-     * 
-     * @author Ferd
-     *
-     */
-    public static class AggregationData {
-        public double conversionFactor = 1.0;
-        public boolean stable = true;
-        public Aggregation aggregation = Aggregation.MEAN;
-    }
-
+    
     public IUnit METERS = getUnit("m");
     public IUnit SQUARE_METERS = getUnit("m^2");
     public IUnit SQUARE_KILOMETERS = getUnit("km^2");
@@ -300,7 +290,6 @@ public enum Units implements IUnitService {
         return null;
     }
 
-    @Override
     public IUnit getLinealExtentUnit(IUnit unit) {
 
         if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
@@ -742,6 +731,17 @@ public enum Units implements IUnitService {
         return unit == null ? null : getUnit(unit.toString());
     }
 
+    public Collection<ExtentDimension> getExtentDimensions(IScale scale) {
+        Set<ExtentDimension> ret = new HashSet<>();
+        if (scale.getSpace() != null) {
+            ret.add(getExtentDimension(scale.getSpace()));
+        }
+        if (scale.getTime() != null) {
+            ret.add(ExtentDimension.TEMPORAL);
+        }
+        return ret;
+    }
+
     public ExtentDimension getExtentDimension(ISpace space) {
         switch(space.getDimensionality()) {
         case 0:
@@ -758,88 +758,45 @@ public enum Units implements IUnitService {
     }
 
     /**
-     * Analyze an observable in a scale and return the needed transformation to aggregate the
-     * values. If the transformation isn't stable, this will need to be repeated for each locator,
-     * otherwise the result can be reused within the same contextualization.
+     * Analyze an observable in a scale and return a contextualized unit and the needed
+     * transformation to aggregate the values. If the transformation isn't stable, this will need to
+     * be repeated for each locator, otherwise the result can be reused within the same
+     * contextualization.
      * 
      * @return
      */
-    public AggregationData getAggregationData(IObservable observable, IScale locator) {
+    @Override
+    public Pair<IValueMediator, Aggregation> getAggregationStrategy(IObservable observable, IScale locator) {
 
-        AggregationData ret = new AggregationData();
+        IUnit unit = null;
+        Aggregation aggregation = null;
 
         switch(observable.getDescriptionType()) {
+
         case CATEGORIZATION:
         case VERIFICATION:
-            ret.aggregation = Aggregation.MAJORITY;
+            aggregation = Aggregation.MAJORITY;
         case QUANTIFICATION:
 
-            boolean aggregates = observable.getType().is(Type.EXTENSIVE_PROPERTY)
-                    || observable.getType().is(Type.MONEY)
-                    || observable.getType().is(Type.MONETARY_VALUE);
-            if (!aggregates || Observables.INSTANCE.getDirectInherentType(observable.getType()) != null) {
-                // do what the semantics tell us
-                ret.aggregation = aggregates ? Aggregation.SUM : Aggregation.MEAN;
-            } else if (aggregates && observable.getUnit() != null) {
-                /*
-                 * analyze the unit vs. the current locator
-                 */
-                Unit unit = (Unit) observable.getUnit();
-                ISpace space = locator == null ? null : locator.getSpace();
-                ITime time = locator == null ? null : locator.getTime();
-                int sdim = getSpatialDimensionality(unit);
-                int tdim = getTemporalDimensionality(unit);
-                if (space != null && sdim > 0) {
-                    if (space.getDimensionality() == sdim) {
-                        ret.stable = space instanceof IGrid.Cell;
-                        IUnit spaceUnit = null;
-                        IUnit standardUnit = null;
-                        double standardSize = 0;
-                        switch(sdim) {
-                        case 1:
-                            spaceUnit = getLengthExtentUnit(unit);
-                            standardUnit = Units.INSTANCE.METERS;
-                            standardSize = space.getStandardizedLength();
-                            break;
-                        case 2:
-                            spaceUnit = getArealExtentUnit(unit);
-                            standardUnit = Units.INSTANCE.SQUARE_METERS;
-                            standardSize = space.getStandardizedArea();
-                            break;
-                        case 3:
-                            spaceUnit = getVolumeExtentUnit(unit);
-                            standardUnit = Units.INSTANCE.CUBIC_METERS;
-                            standardSize = space.getStandardizedVolume();
-                            break;
-                        }
+            // } else if (aggregates && observable.getUnit() != null) {
 
-                        if (spaceUnit != null) {
-                            /*
-                             * find out how many of the standard unit the value's space is
-                             */
-                            double cfactor = spaceUnit.convert(standardSize, standardUnit).doubleValue();
-                            ret.conversionFactor *= cfactor;
-                            ret.aggregation = Aggregation.SUM;
-                        }
-                    }
-                } else if (space != null) {
-                    // we have no spatial dimension, so we sum or average depending only on
-                    // semantics
-                    ret.aggregation = aggregates ? Aggregation.SUM : Aggregation.MEAN;
+            aggregation = Aggregation.MEAN;
+            if (needsUnits(observable)) {
+                unit = observable.getUnit();
+                if (unit == null) {
+                    unit = getDefaultUnitFor(observable);
                 }
-                if (time != null && tdim > 0) {
-                    if (time.getDimensionality() == tdim) {
-                        // System.out.println("IMPLEMENTAMI, DIO ZOPPO");
-                    }
+                if (needsUnitScaling(observable)) {
+                    unit = removeExtents(unit, getExtentDimensions(locator)).contextualize(observable,
+                            locator);
+                    aggregation = Aggregation.SUM;
                 }
-            } else {
-                ret.aggregation = Aggregation.MEAN;
             }
         default:
             break;
         }
 
-        return ret;
+        return new Pair<>(unit, aggregation);
     }
 
     @Override
@@ -918,8 +875,17 @@ public enum Units implements IUnitService {
 
     @Override
     public boolean needsUnitScaling(IObservable observable) {
-        return needsUnits(observable) && !observable.is(Type.INTENSIVE_PROPERTY)
-                && !observable.getType().getMetadata().get(IMetadata.IM_RESCALES_INHERENT, Boolean.FALSE);
+
+        if (!needsUnits(observable)) {
+            return false;
+        }
+
+        boolean aggregates = observable.getType().is(Type.EXTENSIVE_PROPERTY)
+                || observable.getType().is(Type.NUMEROSITY)
+                || observable.getType().is(Type.MONEY)
+                || observable.getType().is(Type.MONETARY_VALUE);
+
+        return aggregates && (Observables.INSTANCE.getDirectInherentType(observable.getType()) == null);
     }
 
     /**
@@ -1196,7 +1162,7 @@ public enum Units implements IUnitService {
             return target;
         }
 
-        if (!observable.is(Type.EXTENSIVE_PROPERTY)) {
+        if (!needsUnitScaling(observable)) {
             if (!target.isCompatible(observable.getUnit())) {
                 throw new KlabIllegalStateException("Cannot mediate " + observable.getUnit() + " to " + target
                         + " in an non-extensive observation");
