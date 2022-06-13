@@ -1,5 +1,8 @@
 package org.integratedmodelling.klab.ide.views;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.IColorProvider;
@@ -53,6 +56,7 @@ public class TestView extends ViewPart {
     public static final String ID = "org.integratedmodelling.klab.ide.views.TestView"; //$NON-NLS-1$
     private KlabPeer klab;
     private XViewer treeViewer;
+    private Map<String, TestStatistics> testcases = new LinkedHashMap<>();
 
     TestStatistics test = null;
     private Tree tree;

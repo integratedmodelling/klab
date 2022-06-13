@@ -1565,7 +1565,7 @@ public enum Actors implements IActorsService {
     }
 
     @Override
-    public List<String> getLocalizations(String behavior) {
+    public List<String> getLocalizations(String behavior, boolean descriptive) {
 
         List<String> ret = new ArrayList<>();
         IKActorsBehavior source = KActors.INSTANCE.getBehavior(behavior);
@@ -1575,7 +1575,7 @@ public enum Actors implements IActorsService {
                 FileCatalog<Map> cat = FileCatalog.create(loc, Map.class, Map.class);
                 for (String lang : cat.keySet()) {
                     Locale locale = Locale.forLanguageTag(lang);
-                    ret.add(lang + " - " + locale.getDisplayLanguage());
+                    ret.add(lang + (descriptive ? (" - " + locale.getDisplayLanguage()) : ""));
                 }
             }
         }

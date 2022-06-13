@@ -66,7 +66,6 @@ public class TestScope {
     /*
      * TODO constraint system for URNs to use. Must be part of runtime, not the actor system.
      */
-
     public TestScope(TestScope other) {
 
         this.statistics = other.statistics;

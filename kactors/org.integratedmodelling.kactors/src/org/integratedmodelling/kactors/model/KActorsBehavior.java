@@ -241,7 +241,7 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
         ret.setPlatform(this.platform);
         IActorsService service = Services.INSTANCE.getService(IActorsService.class); 
         if (service != null) {
-            ret.getLocales().addAll(service.getLocalizations(this.getName()));
+            ret.getLocales().addAll(service.getLocalizations(this.getName(), false));
         }
         return ret;
     }

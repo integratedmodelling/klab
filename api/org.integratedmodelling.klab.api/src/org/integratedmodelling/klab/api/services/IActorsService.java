@@ -100,8 +100,9 @@ public interface IActorsService {
      * Get the localization from the companion file, if any.
      * 
      * @param behavior
+     * @param if true, send "language - description", otherwise just send the ISO2 code.
      * @return
      */
-    List<String> getLocalizations(String behavior);
+    List<String> getLocalizations(String behavior, boolean descriptive);
 
 }
