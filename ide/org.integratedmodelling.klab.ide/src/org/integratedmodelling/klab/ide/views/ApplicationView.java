@@ -246,8 +246,16 @@ public class ApplicationView extends ViewPart {
 			}
 		}
 	}
+	
+	
 
-	private void createAppLayout(Layout layout) {
+	@Override
+    public void dispose() {
+	    klab.dispose();
+        super.dispose();
+    }
+
+    private void createAppLayout(Layout layout) {
 
 		CTabItem tab = tabs.get(layout.getName());
 		if (tab == null) {

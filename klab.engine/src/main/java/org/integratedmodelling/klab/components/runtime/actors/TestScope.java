@@ -14,6 +14,7 @@ import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.actors.IBehavior.Action;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.model.IAnnotation;
+import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.documentation.AsciiDocBuilder;
@@ -21,9 +22,10 @@ import org.integratedmodelling.klab.documentation.AsciiDocBuilder.Option;
 import org.integratedmodelling.klab.documentation.AsciiDocBuilder.Section;
 import org.integratedmodelling.klab.documentation.AsciiDocBuilder.Table;
 import org.integratedmodelling.klab.documentation.AsciiDocBuilder.Table.Span;
+import org.integratedmodelling.klab.monitoring.Message;
+import org.integratedmodelling.klab.rest.ActionStatistics;
+import org.integratedmodelling.klab.rest.AssertionStatistics;
 import org.integratedmodelling.klab.rest.TestStatistics;
-import org.integratedmodelling.klab.rest.TestStatistics.ActionStatistics;
-import org.integratedmodelling.klab.rest.TestStatistics.AssertionStatistics;
 import org.integratedmodelling.klab.utils.LogFile;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Path;
@@ -42,7 +44,8 @@ public class TestScope {
     private List<TestStatistics> statistics;
 
     // test-scoped scopes make one of these and add it to statistics
-    private TestStatistics testStatistics;
+    TestStatistics testStatistics;
+    
     // action-scoped scopes make one of these through the test statistics
     private ActionStatistics actionStatistics;
     private LogFile log;
@@ -63,11 +66,14 @@ public class TestScope {
     // unique, used for communication organization only
     private String testScopeId;
 
+    private ISession session;
+
     /*
      * TODO constraint system for URNs to use. Must be part of runtime, not the actor system.
      */
     public TestScope(TestScope other) {
 
+        this.session = other.session;
         this.statistics = other.statistics;
         this.testStatistics = other.testStatistics;
         this.actionStatistics = other.actionStatistics;
@@ -82,6 +88,7 @@ public class TestScope {
     }
 
     public TestScope(ISession session) {
+        this.session = session;
         this.statistics = new ArrayList<>();
         this.docBuilder = new AsciiDocBuilder("Test report",
                 "Run by " + session.getUser() + " on " + TimeInstant.create() + " [k.LAB " + Version.getCurrent() + "]",
@@ -94,7 +101,7 @@ public class TestScope {
     public void onException(Throwable t) {
         exceptions.add(t);
     }
-    
+
     public String getTestId() {
         return this.testScopeId;
     }
@@ -116,7 +123,9 @@ public class TestScope {
             }
         }
 
-        // TODO inform clients
+        this.session.getMonitor().send(
+                Message.create(this.session.getId(), IMessage.MessageClass.SessionLifecycle, IMessage.Type.TestFinished, this.actionStatistics));
+
     }
 
     public ActionStatistics newAction(TestStatistics test, Action action) {
@@ -137,6 +146,9 @@ public class TestScope {
         ret.setSourceCode(action.getStatement().getSourceCode());
         ret.setStart(System.currentTimeMillis());
 
+        this.session.getMonitor().send(
+                Message.create(this.session.getId(), IMessage.MessageClass.SessionLifecycle, IMessage.Type.TestStarted, ret));
+
         test.getActions().add(ret);
         return ret;
     }
@@ -152,7 +164,8 @@ public class TestScope {
         docBuilder.writeToFile(new File(System.getProperty("user.home") + File.separator + "testoutput.adoc").toPath(),
                 Charset.forName("UTF-8"));
 
-        // TODO inform clients
+        this.session.getMonitor().send(
+                Message.create(this.session.getId(), IMessage.MessageClass.SessionLifecycle, IMessage.Type.TestCaseFinished, this.testStatistics));
 
     }
 
@@ -202,8 +215,8 @@ public class TestScope {
         ret.docSection.action(() -> {
 
             StringBuffer buffer = new StringBuffer();
-            int success = ret.testStatistics.getSuccessCount();
-            int failed = ret.testStatistics.getFailureCount();
+            int success = ret.testStatistics.successCount();
+            int failed = ret.testStatistics.failureCount();
             long elapsed = 0;
             for (ActionStatistics action : ret.testStatistics.getActions()) {
                 elapsed += action.getEnd() - action.getStart();
@@ -255,7 +268,7 @@ public class TestScope {
         for (TestStatistics child : this.statistics) {
 
             table.addRow(new Span(2, 1), "<<" + child.getName() + ", Test case **" + child.getName() + "**>>",
-                    ((child.getSuccessCount() + "/" + (child.getSuccessCount() + child.getFailureCount()))));
+                    ((child.successCount() + "/" + (child.successCount() + child.failureCount()))));
 
             int i = 1;
             for (ActionStatistics action : child.getActions()) {

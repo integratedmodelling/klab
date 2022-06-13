@@ -398,6 +398,7 @@ public class ContextView extends ViewPart {
                             IKActorsBehavior.Type type = ((EActorBehavior) dropped).getType();
                             if (type == IKActorsBehavior.Type.UNITTEST) {
                                 Activator.session().launchTest(behavior);
+                                Eclipse.INSTANCE.openView(TestView.ID, null);
                             } else if (type == IKActorsBehavior.Type.APP || type == IKActorsBehavior.Type.SCRIPT) {
                                 Activator.session().launchApp(behavior);
                             }

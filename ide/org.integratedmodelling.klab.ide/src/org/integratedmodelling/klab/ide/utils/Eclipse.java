@@ -48,7 +48,6 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.nebula.widgets.opal.notifier.Notifier;
 import org.eclipse.nebula.widgets.opal.notifier.NotifierColorsFactory.NotifierTheme;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -171,11 +170,6 @@ public enum Eclipse {
         Job job = new Job();
         job.setUser(false);
         job.schedule();
-        try {
-            job.join();
-        } catch (InterruptedException e) {
-            handleException(e);
-        }
     }
 
     /**

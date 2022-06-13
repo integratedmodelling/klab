@@ -170,7 +170,8 @@ import org.integratedmodelling.klab.rest.SettingChangeRequest;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.rest.SpatialLocation;
 import org.integratedmodelling.klab.rest.StyledKimToken;
-import org.integratedmodelling.klab.rest.TestStatistics.TestRun;
+import org.integratedmodelling.klab.rest.TestRun;
+import org.integratedmodelling.klab.rest.TestStatistics;
 import org.integratedmodelling.klab.rest.TicketRequest;
 import org.integratedmodelling.klab.rest.TicketResponse;
 import org.integratedmodelling.klab.rest.ViewAction;
@@ -2017,7 +2018,8 @@ public class Session extends GroovyObjectSupport
             exitListeners.put(ret, null);
         }
         getActor().tell(new SystemBehavior.Load(this,
-                behavior.getId() + (behavior.getLocale() == null ? "" : ("." + behavior.getLocale())), ret, (IRuntimeScope) scope));
+                behavior.getId() + (behavior.getLocale() == null ? "" : ("." + behavior.getLocale())), ret,
+                (IRuntimeScope) scope));
         return ret;
     }
 
@@ -2177,6 +2179,11 @@ public class Session extends GroovyObjectSupport
                     new TestRun(rootTestScope.getTestId())));
         }
         return rootTestScope;
+    }
+
+    public void notifyTestCaseStart(IBehavior behavior, TestStatistics statistics) {
+        monitor.send(
+                Message.create(this.token, IMessage.MessageClass.SessionLifecycle, IMessage.Type.TestCaseStarted, statistics));
     }
 
 }
