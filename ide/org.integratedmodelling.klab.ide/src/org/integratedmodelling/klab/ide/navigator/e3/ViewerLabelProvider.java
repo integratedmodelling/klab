@@ -363,6 +363,8 @@ public class ViewerLabelProvider extends LabelProvider
                 return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/script.gif");
             } else if (((EActorBehavior) element).getType() == IKActorsBehavior.Type.APP) {
                 return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/start_application.png");
+            } else if (((EActorBehavior) element).getType() == IKActorsBehavior.Type.UNITTEST) {
+                return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/ss9.png");
             } else {
                 return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/behavior.png");
             }

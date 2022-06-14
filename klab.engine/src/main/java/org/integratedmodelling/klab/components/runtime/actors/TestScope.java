@@ -124,7 +124,7 @@ public class TestScope {
         }
 
         this.session.getMonitor().send(
-                Message.create(this.session.getId(), IMessage.MessageClass.SessionLifecycle, IMessage.Type.TestFinished, this.actionStatistics));
+                Message.create(this.session.getId(), IMessage.MessageClass.UnitTests, IMessage.Type.TestFinished, this.actionStatistics));
 
     }
 
@@ -134,6 +134,7 @@ public class TestScope {
         ret.setPath(action.getName());
         ret.setName(Path.getLast(ret.getPath(), '.'));
         ret.setLabel(ret.getName());
+        ret.setTestCaseName(test.getName());
         IAnnotation tann = Annotations.INSTANCE.getAnnotation(action.getAnnotations(), "test");
         if (tann != null) {
             if (tann.containsKey("comment")) {
@@ -147,7 +148,7 @@ public class TestScope {
         ret.setStart(System.currentTimeMillis());
 
         this.session.getMonitor().send(
-                Message.create(this.session.getId(), IMessage.MessageClass.SessionLifecycle, IMessage.Type.TestStarted, ret));
+                Message.create(this.session.getId(), IMessage.MessageClass.UnitTests, IMessage.Type.TestStarted, ret));
 
         test.getActions().add(ret);
         return ret;
@@ -165,7 +166,7 @@ public class TestScope {
                 Charset.forName("UTF-8"));
 
         this.session.getMonitor().send(
-                Message.create(this.session.getId(), IMessage.MessageClass.SessionLifecycle, IMessage.Type.TestCaseFinished, this.testStatistics));
+                Message.create(this.session.getId(), IMessage.MessageClass.UnitTests, IMessage.Type.TestCaseFinished, this.testStatistics));
 
     }
 

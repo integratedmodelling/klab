@@ -24,6 +24,7 @@ import org.integratedmodelling.kactors.kactors.Date;
 import org.integratedmodelling.kactors.kactors.Definition;
 import org.integratedmodelling.kactors.kactors.DoStatement;
 import org.integratedmodelling.kactors.kactors.ElseIfStatementBody;
+import org.integratedmodelling.kactors.kactors.FailStatement;
 import org.integratedmodelling.kactors.kactors.ForStatement;
 import org.integratedmodelling.kactors.kactors.HeaderRow;
 import org.integratedmodelling.kactors.kactors.IfStatement;
@@ -212,6 +213,13 @@ public class KactorsSwitch<T> extends Switch<T>
       {
         AssertStatement assertStatement = (AssertStatement)theEObject;
         T result = caseAssertStatement(assertStatement);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KactorsPackage.FAIL_STATEMENT:
+      {
+        FailStatement failStatement = (FailStatement)theEObject;
+        T result = caseFailStatement(failStatement);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -696,6 +704,22 @@ public class KactorsSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseAssertStatement(AssertStatement object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Fail Statement</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Fail Statement</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseFailStatement(FailStatement object)
   {
     return null;
   }

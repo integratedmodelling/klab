@@ -28,6 +28,7 @@ import org.integratedmodelling.kactors.kactors.Date;
 import org.integratedmodelling.kactors.kactors.Definition;
 import org.integratedmodelling.kactors.kactors.DoStatement;
 import org.integratedmodelling.kactors.kactors.ElseIfStatementBody;
+import org.integratedmodelling.kactors.kactors.FailStatement;
 import org.integratedmodelling.kactors.kactors.ForStatement;
 import org.integratedmodelling.kactors.kactors.HeaderRow;
 import org.integratedmodelling.kactors.kactors.IfStatement;
@@ -132,6 +133,7 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
       case KactorsPackage.STATEMENT_LIST: return createStatementList();
       case KactorsPackage.STATEMENT: return createStatement();
       case KactorsPackage.ASSERT_STATEMENT: return createAssertStatement();
+      case KactorsPackage.FAIL_STATEMENT: return createFailStatement();
       case KactorsPackage.ASSERTION: return createAssertion();
       case KactorsPackage.ASSIGNMENT: return createAssignment();
       case KactorsPackage.IF_STATEMENT: return createIfStatement();
@@ -364,6 +366,18 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
   {
     AssertStatementImpl assertStatement = new AssertStatementImpl();
     return assertStatement;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public FailStatement createFailStatement()
+  {
+    FailStatementImpl failStatement = new FailStatementImpl();
+    return failStatement;
   }
 
   /**

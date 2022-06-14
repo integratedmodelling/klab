@@ -306,16 +306,7 @@ public class State extends Observation implements IState, IKeyHolder {
     public IState in(IValueMediator mediator) {
         return MediatingState.getMediator(this, mediator);
     }
-
-    // @Override
-    // public IStructuredTable<Number> getTable() {
-    // return table;
-    // }
-    //
-    // public void setTable(IStructuredTable<Number> table) {
-    // this.table = table;
-    // }
-
+    
     public ISubjectiveState reinterpret(IDirectObservation observer) {
         return new SubjectiveState(this, observer);
     }
@@ -350,7 +341,7 @@ public class State extends Observation implements IState, IKeyHolder {
         }
         throw new KlabUnimplementedException("aggregation of rescaled states is unimplemented - please submit a request");
     }
-
+    
     @Override
     public void fill(Object value) {
         for (ILocator locator : getScale().initialization()) {

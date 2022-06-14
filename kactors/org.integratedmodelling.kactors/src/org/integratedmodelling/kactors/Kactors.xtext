@@ -108,7 +108,9 @@ Statement:
 	 if=IfStatement |
 	 while=WhileStatement |
 	 assert=AssertStatement |
+	 fail=FailStatement |
 	 do=DoStatement |
+	 break?='break' |
 	 for=ForStatement |
 	 // this means "fire this" or "return this"
 	 value=ValueWithMetadata) 
@@ -132,6 +134,14 @@ AssertStatement:
 	'assert' ('(' (parameters=ParameterList)? ')')?
 		assertions+=Assertion (',' assertions+=Assertion)*;
 
+/*
+ * 'suca' is a direct response to 'pass' in python. It will make a test fail and exit, or just
+ * log failure and exit in non-test actions. Failure in init or main means the actor is dead. 
+ */
+FailStatement: {FailStatement}
+	('fail'|'suca') (=> reason=STRING)?
+;
+
 Assertion:
 		(expression=EXPR | 
 		(methodCalls+=MethodCall '.')* methodCalls+=MethodCallWithActions) 
@@ -148,6 +158,9 @@ NextStatement returns Statement:
 		if=IfStatement |
 		while=WhileStatement |
 		do=DoStatement |
+		assert=AssertStatement |
+		fail=FailStatement |
+		break?='break' |
 		for=ForStatement |
 		// this means "fire this" 
 		value=ValueWithMetadata

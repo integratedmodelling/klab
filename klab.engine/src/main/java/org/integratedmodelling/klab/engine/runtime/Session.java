@@ -2175,7 +2175,7 @@ public class Session extends GroovyObjectSupport
     public TestScope getRootTestScope() {
         if (rootTestScope == null) {
             rootTestScope = new TestScope(this);
-            monitor.send(Message.create(this.token, IMessage.MessageClass.SessionLifecycle, IMessage.Type.TestRunStarted,
+            monitor.send(Message.create(this.token, IMessage.MessageClass.UnitTests, IMessage.Type.TestRunStarted,
                     new TestRun(rootTestScope.getTestId())));
         }
         return rootTestScope;
@@ -2183,7 +2183,7 @@ public class Session extends GroovyObjectSupport
 
     public void notifyTestCaseStart(IBehavior behavior, TestStatistics statistics) {
         monitor.send(
-                Message.create(this.token, IMessage.MessageClass.SessionLifecycle, IMessage.Type.TestCaseStarted, statistics));
+                Message.create(this.token, IMessage.MessageClass.UnitTests, IMessage.Type.TestCaseStarted, statistics));
     }
 
 }

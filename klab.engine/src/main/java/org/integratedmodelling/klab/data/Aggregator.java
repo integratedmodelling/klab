@@ -19,6 +19,8 @@ import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.utils.Pair;
 
+import groovy.lang.GroovyObjectSupport;
+
 /**
  * Class facilitating "intelligent" aggregation across multiple scales and units of measurement,
  * handling the translation of context in case of extensive units with differently scaled inputs and
@@ -31,7 +33,7 @@ import org.integratedmodelling.klab.utils.Pair;
  * 
  * @author Ferd
  */
-public class Aggregator {
+public class Aggregator extends GroovyObjectSupport {
 
     private Aggregation aggregation;
     private IValueMediator unit; // destination unit or currency

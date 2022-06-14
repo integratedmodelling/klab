@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.ide.views;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.action.Action;
@@ -13,7 +14,6 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.nebula.widgets.xviewer.XViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
@@ -22,17 +22,16 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.ResourceManager;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.ide.model.KlabPeer;
 import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
-import org.integratedmodelling.klab.ide.ui.TestXViewerFactory;
 import org.integratedmodelling.klab.rest.ActionStatistics;
 import org.integratedmodelling.klab.rest.AssertionStatistics;
 import org.integratedmodelling.klab.rest.TestRun;
 import org.integratedmodelling.klab.rest.TestStatistics;
-import org.eclipse.swt.widgets.TreeColumn;
 
 public class TestView extends ViewPart {
 
@@ -46,11 +45,12 @@ public class TestView extends ViewPart {
         }
         public Object[] getChildren(Object parentElement) {
             if (parentElement != null) {
+                if (parentElement instanceof Map) {
+                    return ((Map<?,?>)parentElement).values().toArray();
+                } else 
                 if (parentElement instanceof TestRun) {
-                    System.out.println("ZIO TERPENE");
                     return testcases.values().toArray();
                 } else if (parentElement instanceof TestStatistics) {
-                    System.out.println("ZIO TARCULO");
                     return ((TestStatistics) parentElement).getActions().toArray();
                 } else if (parentElement instanceof ActionStatistics) {
                     return ((ActionStatistics) parentElement).getAssertions().toArray();
@@ -62,9 +62,9 @@ public class TestView extends ViewPart {
             if (element instanceof ActionStatistics) {
                 return testcases.get(((ActionStatistics) element).getTestCaseName());
             } else if (element instanceof TestStatistics) {
-                return test;
+                return testcases;
             } else if (element instanceof AssertionStatistics) {
-
+                
             }
             return null;
         }
@@ -77,8 +77,6 @@ public class TestView extends ViewPart {
     private KlabPeer klab;
     private TreeViewer treeViewer;
     private Map<String, TestStatistics> testcases = Collections.synchronizedMap(new LinkedHashMap<>());
-
-    TestRun test = null;
     private Tree tree;
     private Action resetAction;
 
@@ -101,14 +99,38 @@ public class TestView extends ViewPart {
 
         @Override
         public Image getColumnImage(Object element, int columnIndex) {
-            // TODO Auto-generated method stub
+            if (columnIndex == 0) {
+
+            } else if (columnIndex == 2) {
+
+            }
             return null;
         }
 
         @Override
         public String getColumnText(Object element, int columnIndex) {
-            // TODO Auto-generated method stub
-            return columnIndex == 0 ? element.toString() : "Ciupa";
+
+            switch(columnIndex) {
+            case 0:
+                if (element instanceof ActionStatistics) {
+                    return ((ActionStatistics) element).getName();
+                } else if (element instanceof TestStatistics) {
+                    return ((TestStatistics) element).getName();
+                } else if (element instanceof AssertionStatistics) {
+                    return "Assertion";
+                }
+                break;
+            case 1:
+                if (element instanceof ActionStatistics) {
+                    return ((ActionStatistics) element).getDescription();
+                } else if (element instanceof TestStatistics) {
+                    return ((TestStatistics) element).getDescription();
+                } else if (element instanceof AssertionStatistics) {
+                    return ((AssertionStatistics) element).getDescriptor();
+                }
+                break;
+            }
+            return "";
         }
 
     }
@@ -152,7 +174,7 @@ public class TestView extends ViewPart {
         initializeMenu();
     }
 
-    private void handleMessage(IMessage message) {
+    private synchronized void handleMessage(IMessage message) {
         switch(message.getType()) {
         case TestStarted:
         case TestFinished:
@@ -168,7 +190,6 @@ public class TestView extends ViewPart {
             break;
         case TestRunStarted:
         case TestRunFinished:
-            this.test = message.getPayload(TestRun.class);
             updateUI();
             break;
         default:
@@ -178,12 +199,12 @@ public class TestView extends ViewPart {
 
     private synchronized void updateUI() {
         Display.getDefault().asyncExec(() -> {
-            if (this.test == null) {
+            if (this.testcases.isEmpty()) {
                 resetAction.setEnabled(false);
             } else {
                 resetAction.setEnabled(true);
             }
-            treeViewer.setInput(this.test);
+            treeViewer.setInput(this.testcases);
         });
     }
 
@@ -195,7 +216,6 @@ public class TestView extends ViewPart {
             resetAction = new Action("Clear test logs"){
                 @Override
                 public void run() {
-                    test = null;
                     testcases.clear();
                     updateUI();
                 }
