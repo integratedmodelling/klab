@@ -35,13 +35,7 @@ class Scale extends Wrapper<IScale> {
     
     
     Iterator iterator() {
-
-		throw new KlabUnimplementedException("Implement me please! groovy:Scale:Iterator")		
-//        ITransition t = null;
-//        if (binding.hasVariable('_transition')) {
-//            t = (ITransition)binding.getVariable('_transition');
-//        }
-//        return this.scale.getIndex(t).iterator();
+        return unwrap().iterator();
     }
     
     def getSpace() {

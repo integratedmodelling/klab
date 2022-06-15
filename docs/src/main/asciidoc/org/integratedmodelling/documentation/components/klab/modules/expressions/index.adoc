@@ -53,9 +53,24 @@ Dependency names:: the names given to dependent observation (e.g. using a `named
 
 == Groovy API for the core types
 
+=== General-purpose functions
+
+data/nodata
+
+
 === Concepts and observables
 
 === Observations
+
+==== States
+
+==== Direct observations
+
+===== Selecting, filtering
+
+===== Connecting
+
+===== Routing along configurations
 
 === Scale and extents
 

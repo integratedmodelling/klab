@@ -29,6 +29,7 @@ import org.integratedmodelling.klab.api.observations.ISubjectiveState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.common.mediation.Currency;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.localstorage.impl.AbstractAdaptiveStorage;
 import org.integratedmodelling.klab.components.localstorage.impl.AbstractAdaptiveStorage.Slice;
@@ -302,6 +303,16 @@ public class State extends Observation implements IState, IKeyHolder {
         return Utils.toLongArray(list);
     }
 
+    public IState in(String mediator) {
+        IValueMediator unit = null;
+        if (mediator.contains("@")) {
+           unit = Currency.create(mediator);
+        } else {
+            unit = Unit.create(mediator);
+        }
+        return in(unit);
+    }
+    
     @Override
     public IState in(IValueMediator mediator) {
         return MediatingState.getMediator(this, mediator);

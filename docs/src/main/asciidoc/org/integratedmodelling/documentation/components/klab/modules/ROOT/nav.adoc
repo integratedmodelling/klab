@@ -20,6 +20,7 @@
 ** The worldview
 ** Writing models
 *** Models and observations
+**** xref:mediation:index.adoc[Mediation: units, currencies]
 *** Scoping and non-semantic models
 *** Learning models
 *** xref:expressions:index.adoc[The expression language]
