@@ -86,6 +86,7 @@ import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.rest.BehaviorReference;
 import org.integratedmodelling.klab.rest.Layout;
+import org.integratedmodelling.klab.rest.Localization;
 import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.rest.ViewPanel;
 import org.integratedmodelling.klab.utils.FileCatalog;
@@ -1565,24 +1566,45 @@ public enum Actors implements IActorsService {
     }
 
     @Override
-    public List<String> getLocalizations(String behavior, boolean descriptive) {
+    public List<Localization> getLocalizations(String behavior) {
 
-        List<String> ret = new ArrayList<>();
+        List<Localization> ret = new ArrayList<>();
         IKActorsBehavior source = KActors.INSTANCE.getBehavior(behavior);
         if (source != null) {
             File loc = MiscUtilities.changeExtension(source.getFile(), "localization");
             if (loc != null) {
                 FileCatalog<Map> cat = FileCatalog.create(loc, Map.class, Map.class);
                 for (String lang : cat.keySet()) {
+                    Localization localization = new Localization();
+                    localization.setIsoCode(lang);
                     Locale locale = Locale.forLanguageTag(lang);
-                    ret.add(lang + (descriptive ? (" - " + locale.getDisplayLanguage()) : ""));
+                    localization.setLanguageDescription(locale == null ? null : locale.getDisplayLanguage());
+                    if (source.getDescription() != null && source.getDescription().startsWith("#")
+                            && cat.get(lang).containsKey(source.getDescription().substring(1))) {
+                        localization.setLocalizedDescription(cat.get(lang).get(source.getDescription().substring(1)).toString());
+                    } else {
+                        localization.setLocalizedDescription(source.getDescription());
+                    }
+                    if (source.getLabel() != null && source.getLabel().startsWith("#")
+                            && cat.get(lang).containsKey(source.getLabel().substring(1))) {
+                        localization.setLocalizedLabel(cat.get(lang).get(source.getLabel().substring(1)).toString());
+                    } else {
+                        localization.setLocalizedLabel(source.getLabel());
+                    }
+                    ret.add(localization);
                 }
+            } else {
+                Localization localization = new Localization();
+                localization.setIsoCode("en");
+                localization.setLanguageDescription("English");
+                localization.setLocalizedDescription(source.getDescription());
+                localization.setLocalizedDescription(source.getLabel());
+                ret.add(localization);
             }
         }
         return ret;
     }
 
-    
     /**
      * Run all test cases in a project. Use dependency order to follow imports.
      * 

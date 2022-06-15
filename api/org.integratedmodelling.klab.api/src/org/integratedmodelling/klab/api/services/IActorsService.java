@@ -14,6 +14,7 @@ import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IActorIdentity.Reference;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.rest.Localization;
 
 /**
  * The actors service keeps the k.Actor language parser and administers the actor runtime subsystem.
@@ -97,12 +98,13 @@ public interface IActorsService {
     Object evaluate(IKActorsValue kActorsValue, IIdentity identity, Scope scope);
 
     /**
-     * Get the localization from the companion file, if any.
+     * Get the localization descriptors using the companion file, if any. Try to also provide app
+     * localized descriptions and labels (docstring). At least one localization should always be
+     * provided, defaulting to english with the default unlocalized docstrings.
      * 
      * @param behavior
-     * @param if true, send "language - description", otherwise just send the ISO2 code.
      * @return
      */
-    List<String> getLocalizations(String behavior, boolean descriptive);
+    List<Localization> getLocalizations(String behavior);
 
 }
