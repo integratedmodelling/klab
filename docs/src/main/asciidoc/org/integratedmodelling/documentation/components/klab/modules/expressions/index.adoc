@@ -1,0 +1,66 @@
+= Writing expressions in k.IM
+
+The default expression language in k.IM is a superset of the https://groovy-lang.org[Groovy] language, which is interoperable with the underlying Java implementation. Expressions written within square brackets are first preprocessed, then passed to the Groovy interpreter. Expressions can appear in models .... or passed as parameters to functions or other definitions. (examples)
+
+NOTE:: There is currently _no_ validation of expression syntax in the k.IM editor. Also, Groovy syntax is very permissive and besides parenthesis matching and other obvious checks, _ex-ante_ syntax validation is often ineffective in preventing errors. You are responsible for using correct syntax and as the errors resulting from invalid expressions can be difficult to debug, great care should be taken when writing expressions to avoid time-consuming debugging.
+
+== Preprocessed syntax
+
+Concept URNs:: concept syntax is preprocessed so that it can be used directly in an expression. For example...
+Dependency names:: the names given to dependent observation (e.g. using a `named` clause in the `observing` section of a model declaration)
+
+== Predefined variables
+
+[cols="1,6,1"]
+|===
+|Variable |Description | Context
+
+|**self**
+|Refers to the "natural" target of the computation. According to the context, it may refer to the current value of a quality being computed or to the entire observation being defined. When used in contexts different from a "set <x> to" instruction in a model, it may point to a different object.
+|All
+|**context**
+|Refers to the context subject that directly owns the observation being computed. If the computation is a subject resolution, `self == context`.
+|Models
+|**scale**
+|Refers to the xref:todo[scale] of computation of the current computation. In a scalar context, the space will be the immediate subdivision being computed. Time is normally the current period of time for the model. The _overall_ scale is available through `context.scale`. 
+|Models
+|**space**
+|Refers to the current xref:todo[space] of computation. Shortcut for `scale.space`. According to the context, it may be a grid cell, a polygon, a volumetric shape, a line, a point. In scalar context, the overall space can be obtained through `context.scale.space`.
+|Models
+|**time**
+|Refers to the current xref:todo[time] of computation. Shortcut for `scale.time`. Time is always a period, never a point. The current time is seen atomically within this model but may be further subdivided in other models. In scalar context, the overall time can be obtained through `context.scale.time`.
+|Models
+|**scope**
+|Refers to the xref:todo[contextualization scope], which contains the current state of the computation for the target observation and any other being defined in the context.
+|Models
+|**dataflow**
+|Refers to the xref:todo[dataflow] that the runtime is executing. It can be interrogated to find out dependencies, models and parameters being applied.
+|Models
+|**provenance**
+|Refers to the xref:todo[provenance graph] defined in the context so far. Note that provenance is built _after_ computation, so nothing will be known about observation that haven't been reached yet by the dataflow. You can interrogate the provenance to know the origin of resources, which transformations have happened so far to the data you are seeing, and which agent started the computation.
+|Models
+|**cell**
+|Refers to the current raster cell and is defined only when the space in the context is a grid. Enables xref:todo[access to the cell's neighborhood] and to the values of other dependencies within it.
+|Models
+|===
+
+== Referring to observations and values
+
+=== Scalar evaluation context
+
+=== Direct observations
+
+
+== Groovy API for the core types
+
+=== Concepts and observables
+
+=== Observations
+
+=== Scale and extents
+
+==== Grid cells
+
+=== Dataflows
+
+=== Provenance
