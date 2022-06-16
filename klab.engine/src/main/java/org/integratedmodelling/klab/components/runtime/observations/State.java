@@ -315,7 +315,7 @@ public class State extends Observation implements IState, IKeyHolder {
     
     @Override
     public IState in(IValueMediator mediator) {
-        return MediatingState.getMediator(this, mediator);
+        return MediatingState.mediateIfNecessary(this, mediator);
     }
     
     public ISubjectiveState reinterpret(IDirectObservation observer) {

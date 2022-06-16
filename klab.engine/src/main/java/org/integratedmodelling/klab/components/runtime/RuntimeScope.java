@@ -2322,7 +2322,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
 
         if (state != null) {
             if (state.getObservable().getMediator() != null) {
-                return MediatingState.create(state, unit); 
+                return MediatingState.mediateIfNecessary(state, unit); 
             } else {
                 return state;
             }

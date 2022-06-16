@@ -44,7 +44,7 @@ public class ConversionResolver extends AbstractContextualizer implements IResol
 
 	@Override
 	public IState resolve(IState ret, IContextualizationScope context) throws KlabException {
-		return MediatingState.create(ret, to);
+		return MediatingState.mediateIfNecessary(ret, to);
 	}
 
 	@Override

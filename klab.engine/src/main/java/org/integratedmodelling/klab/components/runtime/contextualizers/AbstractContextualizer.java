@@ -144,7 +144,7 @@ public abstract class AbstractContextualizer implements IContextualizer {
             IValueMediator mediator = Units.INSTANCE.getMediator(input.getUnit());
             IState target = scope.getArtifact(stateIdentifier, IState.class);
             if (!target.getObservable().getMediator().equals(mediator)) {
-                return (T)MediatingState.create(target, mediator);
+                return (T)MediatingState.mediateIfNecessary(target, mediator);
             }
             
         } else if (input.getUnit() == null) {

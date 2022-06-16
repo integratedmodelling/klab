@@ -30,13 +30,23 @@ public class MediatingState extends Observation implements IState, DelegatingArt
     IValueMediator from;
     IValueMediator to;
 
-    public static MediatingState create(IState original, IValueMediator mediator) {
-        return new MediatingState(original, mediator);
+    public static IState mediateIfNecessary(IState original, IValueMediator mediator) {
+        if (mediator == null) {
+            return original;
+        }
+        while(original instanceof MediatingState) {
+            original = (IState) ((MediatingState) original).getDelegate();
+        }
+        IValueMediator originalMediator = original.getObservable().getMediator();
+        return originalMediator.equals(mediator) ? original : new MediatingState(original, mediator);
     }
 
     private MediatingState(IState state, IValueMediator to) {
         super(new Observable((Observable) state.getObservable()).withMediator(to), (Scale) state.getScale(),
                 (RuntimeScope) state.getScope());
+        while(state instanceof MediatingState) {
+            state = (IState) ((MediatingState) state).getDelegate();
+        }
         this.delegate = state;
         this.from = state.getObservable().getMediator().contextualize(this.getObservable(), getScale());
         this.to = to.contextualize(state.getObservable(), getScale());
@@ -103,7 +113,7 @@ public class MediatingState extends Observation implements IState, DelegatingArt
         if (delegate.getType() == type) {
             return this;
         }
-        return MediatingState.create(delegate.as(type), to);
+        return MediatingState.mediateIfNecessary(delegate.as(type), to);
     }
 
     @Override
@@ -118,34 +128,14 @@ public class MediatingState extends Observation implements IState, DelegatingArt
 
     @Override
     public IState at(ILocator locator) {
-        return  MediatingState.create((IState) delegate.at(locator), to);
+        return MediatingState.mediateIfNecessary((IState) delegate.at(locator), to);
     }
 
     @Override
     public IState in(IValueMediator mediator) {
-        if (mediator.equals(from)) {
-            return delegate;
-        }
-        return getMediator(this, mediator);
+        return mediateIfNecessary(this, mediator);
     }
-
-    public static IState getMediator(IState state, IValueMediator to) {
-
-        IValueMediator from = state.getObservable().getUnit();
-        if (from == null) {
-            from = state.getObservable().getCurrency();
-        }
-        if (from == null) {
-            from = state.getObservable().getCurrency();
-        }
-        if (from == null || !from.isCompatible(to)) {
-            throw new IllegalArgumentException("cannot create a mediating state between "
-                    + (from == null ? "nothing" : from.toString()) + " and " + to.toString());
-        }
-
-        return from.equals(to) ? state : MediatingState.create(state, to);
-    }
-
+    
     public ISubjectiveState reinterpret(IDirectObservation observers) {
         return null;
     }

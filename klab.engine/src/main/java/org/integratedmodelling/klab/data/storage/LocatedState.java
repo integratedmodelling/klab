@@ -144,7 +144,7 @@ public class LocatedState extends Observation implements IState, DelegatingArtif
 
 	@Override
 	public IState in(IValueMediator mediator) {
-		return MediatingState.getMediator(this, mediator);
+		return MediatingState.mediateIfNecessary(this, mediator);
 	}
 
 //	@Override

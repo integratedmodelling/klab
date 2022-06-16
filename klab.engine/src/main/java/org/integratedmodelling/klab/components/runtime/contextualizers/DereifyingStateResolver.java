@@ -66,7 +66,7 @@ public class DereifyingStateResolver extends AbstractContextualizer implements I
 		this.state.getAnnotations().addAll(Annotations.INSTANCE.collectAnnotations(ret, ((IState)ret).getObservable()));
 		Collection<IObservation> distributing = context.getObservations(distributingArtifact);
 		if (distributing.size() > 0) {
-			for (IArtifact object : distributing.iterator().next()) {
+			for (IArtifact object : distributing) {
 				if (object instanceof IDirectObservation) {
 					for (IState state : ((IDirectObservation) object).getStates()) {
 						if (((RuntimeScope)context).cached_is(state.getObservable().getType(), distributedQuality)) {
