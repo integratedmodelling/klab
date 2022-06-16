@@ -2321,29 +2321,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
     private IState getMediatingState(IState state, IValueMediator unit) {
 
         if (state != null) {
-            if (state.getObservable().getUnit() != null) {
-                if (!(unit instanceof IUnit)) {
-                    throw new KlabIllegalArgumentException("cannot mediate state " + state + " to " + unit);
-                }
-                return ((IUnit) unit).equals(state.getObservable().getUnit())
-                        ? state
-                        : new MediatingState(state, this, state.getObservable().getUnit(), unit);
-            } else if (state.getObservable().getCurrency() != null) {
-                if (!(unit instanceof ICurrency)) {
-                    throw new KlabIllegalArgumentException("cannot mediate state " + state + " to " + unit);
-                }
-                return ((ICurrency) unit).equals(state.getObservable().getCurrency())
-                        ? state
-                        : new MediatingState(state, this, state.getObservable().getCurrency(), unit);
-            } else if (state.getObservable().getRange() != null) {
-                if (!(unit instanceof Range)) {
-                    throw new KlabIllegalArgumentException("cannot mediate state " + state + " to " + unit);
-                }
-                return ((Range) unit).equals(state.getObservable().getRange())
-                        ? state
-                        : new MediatingState(state, this, state.getObservable().getRange(), unit);
-            } else if (unit != null) {
-                throw new KlabIllegalArgumentException("cannot mediate state " + state + " to " + unit);
+            if (state.getObservable().getMediator() != null) {
+                return MediatingState.create(state, unit); 
             } else {
                 return state;
             }

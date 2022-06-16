@@ -30,12 +30,16 @@ public class MediatingState extends Observation implements IState, DelegatingArt
     IValueMediator from;
     IValueMediator to;
 
-    public MediatingState(IState state, RuntimeScope context, IValueMediator from, IValueMediator to) {
+    public static MediatingState create(IState original, IValueMediator mediator) {
+        return new MediatingState(original, mediator);
+    }
+
+    private MediatingState(IState state, IValueMediator to) {
         super(new Observable((Observable) state.getObservable()).withMediator(to), (Scale) state.getScale(),
-                context);
+                (RuntimeScope) state.getScope());
         this.delegate = state;
-        this.from = from.contextualize(state.getObservable(), getScale());
-        this.to = to.contextualize(this.getObservable(), getScale());
+        this.from = state.getObservable().getMediator().contextualize(this.getObservable(), getScale());
+        this.to = to.contextualize(state.getObservable(), getScale());
         this.setCreationTime(this.timestamp);
         this.setExitTime(-1);
 
@@ -72,9 +76,7 @@ public class MediatingState extends Observation implements IState, DelegatingArt
     }
 
     public long set(ILocator index, Object value) {
-        Object val = value instanceof Number
-                ? from.convert(((Number) value).doubleValue(), index)
-                : value;
+        Object val = value instanceof Number ? from.convert(((Number) value).doubleValue(), index) : value;
         return delegate.set(index, val);
     }
 
@@ -101,7 +103,7 @@ public class MediatingState extends Observation implements IState, DelegatingArt
         if (delegate.getType() == type) {
             return this;
         }
-        return new MediatingState(delegate.as(type), (RuntimeScope) getScope(), from, to);
+        return MediatingState.create(delegate.as(type), to);
     }
 
     @Override
@@ -116,7 +118,7 @@ public class MediatingState extends Observation implements IState, DelegatingArt
 
     @Override
     public IState at(ILocator locator) {
-        return new MediatingState((IState) delegate.at(locator), (RuntimeScope) getScope(), from, to);
+        return  MediatingState.create((IState) delegate.at(locator), to);
     }
 
     @Override
@@ -141,9 +143,7 @@ public class MediatingState extends Observation implements IState, DelegatingArt
                     + (from == null ? "nothing" : from.toString()) + " and " + to.toString());
         }
 
-        return from.equals(to)
-                ? state
-                : new MediatingState(state, (RuntimeScope) ((Observation) state).getScope(), from, to);
+        return from.equals(to) ? state : MediatingState.create(state, to);
     }
 
     public ISubjectiveState reinterpret(IDirectObservation observers) {

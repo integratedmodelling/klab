@@ -23,10 +23,7 @@ public abstract class AbstractMediator implements IValueMediator {
 
     public enum ExtentSize {
 
-        SPACE_M("a in m"),
-        SPACE_M2("area in m^2"),
-        SPACE_M3("volume in m^3"),
-        TIME_MS("time span in milliseconds");
+        SPACE_M("a in m"), SPACE_M2("area in m^2"), SPACE_M3("volume in m^3"), TIME_MS("time span in milliseconds");
 
         String description;
 
@@ -94,31 +91,28 @@ public abstract class AbstractMediator implements IValueMediator {
                 switch(mediator.extentSize) {
                 case SPACE_M:
                     val = mediator.operation == Operation.MULTIPLY
-                            ? val * getSpace(locator).getStandardizedLength()
-                            : val / getSpace(locator).getStandardizedLength();
+                            ? val * (getSpace(locator).getStandardizedLength() * (mediator.factor == null ? 1.0 : mediator.factor))
+                            : val / (getSpace(locator).getStandardizedLength() * (mediator.factor == null ? 1.0 : mediator.factor));
                     break;
                 case SPACE_M2:
                     val = mediator.operation == Operation.MULTIPLY
-                            ? val * getSpace(locator).getStandardizedArea()
-                            : val / getSpace(locator).getStandardizedArea();
+                            ? val * (getSpace(locator).getStandardizedArea() * (mediator.factor == null ? 1.0 : mediator.factor))
+                            : val / (getSpace(locator).getStandardizedArea() * (mediator.factor == null ? 1.0 : mediator.factor));
                     break;
                 case SPACE_M3:
                     val = mediator.operation == Operation.MULTIPLY
-                            ? val * getSpace(locator).getStandardizedVolume()
-                            : val / getSpace(locator).getStandardizedVolume();
+                            ? val * (getSpace(locator).getStandardizedVolume() * (mediator.factor == null ? 1.0 : mediator.factor))
+                            : val / (getSpace(locator).getStandardizedVolume() * (mediator.factor == null ? 1.0 : mediator.factor));
                     break;
                 case TIME_MS:
                     val = mediator.operation == Operation.MULTIPLY
-                            ? val * ((Time) getTime(locator)).getLength()
-                            : val / ((Time) getTime(locator)).getLength();
+                            ? val * (((Time) getTime(locator)).getLength() * (mediator.factor == null ? 1.0 : mediator.factor))
+                            : val / (((Time) getTime(locator)).getLength() * (mediator.factor == null ? 1.0 : mediator.factor));
                     break;
                 }
             }
             if (mediator.converter != null) {
                 val = mediator.converter.convert(val);
-            }
-            if (mediator.factor != null) {
-                val *= mediator.factor;
             }
         }
 
@@ -129,31 +123,31 @@ public abstract class AbstractMediator implements IValueMediator {
 
         ISpace ret = null;
         if (locator instanceof IScale) {
-            ret = ((IScale)locator).getSpace();
+            ret = ((IScale) locator).getSpace();
         } else if (locator instanceof ISpace) {
             ret = (ISpace) locator;
         }
-        
+
         if (ret == null) {
             throw new KlabInternalErrorException("cannot find space locator when mediating over space");
         }
-        
+
         return ret;
     }
 
     private ITime getTime(ILocator locator) {
-        
+
         ITime ret = null;
         if (locator instanceof IScale) {
-            ret = ((IScale)locator).getTime();
+            ret = ((IScale) locator).getTime();
         } else if (locator instanceof ITime) {
             ret = (ITime) locator;
         }
-        
+
         if (ret == null) {
             throw new KlabInternalErrorException("cannot find time locator when mediating over space");
         }
-        
+
         return ret;
     }
 

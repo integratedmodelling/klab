@@ -1109,6 +1109,19 @@ public class Observable extends GroovyObjectSupport implements IObservable {
 		return this.deferredObservables;
 	}
 
+	public IValueMediator getMediator() {
+	    if (this.unit != null) {
+	        return this.unit;
+	    }
+	    if (this.currency != null) {
+	        return this.currency;
+	    }
+	    if (this.range != null) {
+	        return this.range;
+	    }
+	    return null;
+	}
+	
     public Observable withMediator(IValueMediator mediator) {
 
         if (mediator instanceof IUnit) {

@@ -34,6 +34,7 @@ import org.integratedmodelling.klab.api.services.IUnitService;
 import org.integratedmodelling.klab.common.mediation.AbstractMediator.ExtentSize;
 import org.integratedmodelling.klab.common.mediation.AbstractMediator.Mediation;
 import org.integratedmodelling.klab.common.mediation.AbstractMediator.Operation;
+import org.integratedmodelling.klab.common.mediation.Currency;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.time.extents.Time;
@@ -43,6 +44,7 @@ import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Range;
 
 import com.google.common.collect.Sets;
 
@@ -1283,20 +1285,6 @@ public enum Units implements IUnitService {
                 }
             }
 
-            // /*
-            // * add the converter for the base unit after scale conversion, extracting the unit at
-            // the same
-            // * power it appears at in the base.
-            // */
-            // Pair<javax.measure.Unit<?>, Integer> up = getPrimaryUnitPower(destination.getUnit());
-            // javax.measure.Unit baseDestination = up.getFirst().pow(baseUnit.getPower());
-            // if (!baseDestination.equals(baseUnit.getUnit())) {
-            // Mediation mediation = new Mediation();
-            // mediation.converter = baseUnit.getUnit().getConverterTo(baseDestination);
-            // mediation.description = "CONVERT the current value from " + baseUnit + " to " +
-            // baseDestination;
-            // ret.add(mediation);
-            // }
         } else if (!source.equals(destination)) {
             Mediation mediation = new Mediation();
             mediation.converter = source.getUnit().getConverterTo((javax.measure.Unit) destination.getUnit());
@@ -1338,6 +1326,15 @@ public enum Units implements IUnitService {
             break;
         }
         return null;
+    }
+
+    public IValueMediator getMediator(String unit) {
+        if (unit.contains("@")) {
+            return Currency.create(unit);
+        } else if (unit.trim().contains(" ")) {
+            return Range.create(unit);
+        } 
+        return Unit.create(unit);
     }
 
 }

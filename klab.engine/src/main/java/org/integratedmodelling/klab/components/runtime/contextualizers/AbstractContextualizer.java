@@ -4,7 +4,9 @@ import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IPrototype.Argument;
+import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.Observables;
+import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
 import org.integratedmodelling.klab.api.model.contextualization.IContextualizer;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -13,6 +15,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
+import org.integratedmodelling.klab.data.storage.MediatingState;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
@@ -134,7 +137,16 @@ public abstract class AbstractContextualizer implements IContextualizer {
         T artifact = null;
 
         if (input.getUnit() != null && IState.class.isAssignableFrom(cls)) {
-            artifact = (T) scope.getState(stateIdentifier, Unit.create(input.getUnit()));
+            
+            /*
+             * mediate from the unit this produces to the one in the state
+             */
+            IValueMediator mediator = Units.INSTANCE.getMediator(input.getUnit());
+            IState target = scope.getArtifact(stateIdentifier, IState.class);
+            if (!target.getObservable().getMediator().equals(mediator)) {
+                return (T)MediatingState.create(target, mediator);
+            }
+            
         } else if (input.getUnit() == null) {
             artifact = scope.getArtifact(stateIdentifier, cls);
             if (artifact.getObservable().getArtifactType() != input.getType()) {

@@ -17,6 +17,7 @@ import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.klab.api.data.mediation.ICurrency;
@@ -496,6 +497,14 @@ public interface IObservable extends ISemantic, IResolvable {
      * @return the stated name of this observable.
      */
     String getStatedName();
+    
+    /**
+     * Return any mediator in the state: unit, currency or range. These are also returned
+     * separately by other methods if we need to discriminate.
+     * 
+     * @return
+     */
+    IValueMediator getMediator();
 
     /**
      * <p>
