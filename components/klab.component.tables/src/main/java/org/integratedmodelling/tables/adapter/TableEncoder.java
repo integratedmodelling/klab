@@ -299,7 +299,7 @@ public class TableEncoder implements IResourceEncoder {
 			}
 
 			Map<Filter, Object> valueCache = new HashMap<>();
-			Aggregator aggregator = new Aggregator(scope.getTargetSemantics(), scope.getMonitor(), true);
+			Aggregator aggregator = new Aggregator(scope.getTargetSemantics(), scope.getScale());
 
 			for (Filter filter : table.getFilters()) {
 				if (filter.getType() == Type.NO_RESULTS) {

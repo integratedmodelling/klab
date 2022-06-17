@@ -18,11 +18,9 @@ import java.util.Map;
 
 import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.api.data.IGeometry;
-import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDistribution;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.services.IObservableService;
 import org.integratedmodelling.klab.utils.Pair;
 
@@ -53,33 +51,6 @@ import org.integratedmodelling.klab.utils.Pair;
  * @version $Id: $Id
  */
 public interface IUnit extends IValueMediator {
-
-    /**
-     * The result of a {@link IUnit#contextualize(IGeometry, Map)} operation. TODO probably hide
-     * behind the API and normalize the contextualization interface as in IValueMediator.
-     * 
-     * @author Ferd
-     *
-     */
-    public interface UnitContextualization {
-
-        /**
-         * All the admissible units corresponding to the contextualization of another to a geometry,
-         * each one reporting the extents that have been aggregated in it and including the
-         * "original" admissible unit with no aggregations.
-         * 
-         * @return
-         */
-        Collection<IUnit> getCandidateUnits();
-
-        /**
-         * The correct unit for contextualization to the geometry, taking into account the geometry
-         * and any constraints passed to the method that produced this descriptor.
-         * 
-         * @return
-         */
-        IUnit getChosenUnit();
-    }
 
     /**
      * Return a new unit multiplied by the passed one.
@@ -145,7 +116,7 @@ public interface IUnit extends IValueMediator {
      * @return
      */
     @Override
-    IUnit contextualize(IObservable observable, IScale scale);
+    IUnit contextualize(IObservable observable, IGeometry scale);
 
     /**
      * True if unitless.

@@ -11,6 +11,10 @@ import org.integratedmodelling.klab.api.model.IKimObject;
 /**
  * The result of parsing an actor specification within the engine. Provides operational
  * configuration for all k.LAB actors.
+ * <p>
+ * Localized instances of localizable behaviors appear to the engine as independent behaviors, with
+ * the language ISO code appended to the name path (.en) returned by {@link #getName()}. The
+ * {@link #getId()} method continues to return the unlocalized name.
  * 
  * @author Ferd
  *

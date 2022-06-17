@@ -71,6 +71,7 @@ public class AuthorityView extends ViewPart {
     }
 
     public void dispose() {
+        klab.dispose();
         super.dispose();
     }
 

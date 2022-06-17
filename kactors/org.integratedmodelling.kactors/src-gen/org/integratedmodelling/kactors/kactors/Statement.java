@@ -23,7 +23,9 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getIf <em>If</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getWhile <em>While</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getAssert <em>Assert</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getFail <em>Fail</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getDo <em>Do</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#isBreak <em>Break</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getFor <em>For</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getValue <em>Value</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getTag <em>Tag</em>}</li>
@@ -234,6 +236,28 @@ public interface Statement extends EObject
   void setAssert(AssertStatement value);
 
   /**
+   * Returns the value of the '<em><b>Fail</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Fail</em>' containment reference.
+   * @see #setFail(FailStatement)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getStatement_Fail()
+   * @model containment="true"
+   * @generated
+   */
+  FailStatement getFail();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Statement#getFail <em>Fail</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Fail</em>' containment reference.
+   * @see #getFail()
+   * @generated
+   */
+  void setFail(FailStatement value);
+
+  /**
    * Returns the value of the '<em><b>Do</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -254,6 +278,28 @@ public interface Statement extends EObject
    * @generated
    */
   void setDo(DoStatement value);
+
+  /**
+   * Returns the value of the '<em><b>Break</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Break</em>' attribute.
+   * @see #setBreak(boolean)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getStatement_Break()
+   * @model
+   * @generated
+   */
+  boolean isBreak();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Statement#isBreak <em>Break</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Break</em>' attribute.
+   * @see #isBreak()
+   * @generated
+   */
+  void setBreak(boolean value);
 
   /**
    * Returns the value of the '<em><b>For</b></em>' containment reference.

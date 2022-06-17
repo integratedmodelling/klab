@@ -89,6 +89,10 @@ public interface IMessage {
         /**
          * 
          */
+        UnitTests,
+        /**
+         * 
+         */
         Notification,
         /**
          * Search-class messages are sent by the front end to initiate or continue incremental

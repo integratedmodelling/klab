@@ -6,21 +6,20 @@ import java.util.Map;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.wb.swt.ResourceManager;
+import org.eclipse.wb.swt.SWTResourceManager;
 import org.integratedmodelling.kactors.utils.KActorsLocalizer;
 import org.integratedmodelling.klab.client.utils.FileCatalog;
 import org.integratedmodelling.klab.ide.navigator.model.EActorBehavior;
 import org.integratedmodelling.klab.ide.ui.LocalizationEditor;
 import org.integratedmodelling.klab.utils.MiscUtilities;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.wb.swt.ResourceManager;
-import org.eclipse.swt.layout.RowLayout;
-import org.eclipse.wb.swt.SWTResourceManager;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.custom.StackLayout;
 
 public class LocalizationView extends ViewPart {
 

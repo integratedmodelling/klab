@@ -4,9 +4,9 @@ import java.util.Date;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IValueMediator;
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 
 public class Range implements IValueMediator {
@@ -358,21 +358,21 @@ public class Range implements IValueMediator {
 
 		return this.lowerBound + (this.getWidth() * ((Range) other).normalize(d.doubleValue()));
 	}
-
-	@Override
-	public Number backConvert(Number d, IValueMediator other) {
-
-		if (!isBounded()) {
-			throw new IllegalArgumentException(
-					"range " + this + " cannot convert value " + d + " to " + other + " because it is unbound");
-		}
-		if (!(other instanceof Range || ((Range) other).isBounded())) {
-			throw new IllegalArgumentException("range " + this + " cannot convert value " + d + " to " + other
-					+ " because the target is not a range or is unbound");
-		}
-
-		return ((Range) other).convert(d, this);
-	}
+//
+//	@Override
+//	public Number backConvert(Number d, IValueMediator other) {
+//
+//		if (!isBounded()) {
+//			throw new IllegalArgumentException(
+//					"range " + this + " cannot convert value " + d + " to " + other + " because it is unbound");
+//		}
+//		if (!(other instanceof Range || ((Range) other).isBounded())) {
+//			throw new IllegalArgumentException("range " + this + " cannot convert value " + d + " to " + other
+//					+ " because the target is not a range or is unbound");
+//		}
+//
+//		return ((Range) other).convert(d, this);
+//	}
 
 	/**
 	 * Create a range from a list of doubles
@@ -689,7 +689,7 @@ public class Range implements IValueMediator {
 	}
 
 	@Override
-	public IValueMediator contextualize(IObservable observable, IScale scale) {
+	public IValueMediator contextualize(IObservable observable, IGeometry scale) {
 		return this;
 	}
 

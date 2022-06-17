@@ -25,6 +25,7 @@ import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.API.PUBLIC.Export;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
+import org.integratedmodelling.klab.api.monitoring.IMessage.MessageClass;
 import org.integratedmodelling.klab.api.monitoring.IMessage.Type;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.monitoring.MessageHandler;
@@ -45,6 +46,7 @@ import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.ide.views.ApplicationView;
 import org.integratedmodelling.klab.ide.views.ResourcesView;
 import org.integratedmodelling.klab.ide.views.SearchView;
+import org.integratedmodelling.klab.rest.ActionStatistics;
 import org.integratedmodelling.klab.rest.AuthorityQueryRequest;
 import org.integratedmodelling.klab.rest.AuthorityQueryResponse;
 import org.integratedmodelling.klab.rest.ContextualizationNotification;
@@ -68,6 +70,8 @@ import org.integratedmodelling.klab.rest.RuntimeEvent;
 import org.integratedmodelling.klab.rest.SearchResponse;
 import org.integratedmodelling.klab.rest.SessionReference;
 import org.integratedmodelling.klab.rest.TaskReference;
+import org.integratedmodelling.klab.rest.TestRun;
+import org.integratedmodelling.klab.rest.TestStatistics;
 import org.integratedmodelling.klab.rest.TicketResponse;
 import org.integratedmodelling.klab.rest.ViewAction;
 import org.integratedmodelling.klab.rest.ViewComponent;
@@ -529,6 +533,20 @@ public class KlabSession extends KlabPeer {
 
     @MessageHandler(type = Type.QueryStatus)
     public void handleQueryStatus(IMessage message, QueryStatusResponse response) {
+        send(message);
+    }
+
+    @MessageHandler(messageClass = MessageClass.UnitTests)
+    public void handleTestCaseMessage(IMessage message, TestRun testRun) {
+        send(message);
+    }
+
+    @MessageHandler(messageClass = MessageClass.UnitTests)
+    public void handleTestCaseMessage(IMessage message, TestStatistics testStatistics) {
+        send(message);
+    }
+    @MessageHandler(messageClass = MessageClass.UnitTests)
+    public void handleTestCaseMessage(IMessage message, ActionStatistics actionStatistics) {
         send(message);
     }
 

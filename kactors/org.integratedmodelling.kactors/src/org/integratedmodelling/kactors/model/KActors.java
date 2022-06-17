@@ -316,5 +316,4 @@ public enum KActors {
         this.codeAssistant = codeAssistant;
     }
 
-
 }

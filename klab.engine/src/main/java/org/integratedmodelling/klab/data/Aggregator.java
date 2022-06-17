@@ -1,29 +1,25 @@
 package org.integratedmodelling.klab.data;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.integratedmodelling.kim.api.IKimConcept.Type;
-import org.integratedmodelling.klab.Observables;
+import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Units;
-import org.integratedmodelling.klab.Units.AggregationData;
 import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.ILocator;
-import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
-import org.integratedmodelling.klab.utils.Triple;
+import org.integratedmodelling.klab.utils.Pair;
+
+import groovy.lang.GroovyObjectSupport;
 
 /**
  * Class facilitating "intelligent" aggregation across multiple scales and units of measurement,
@@ -37,17 +33,11 @@ import org.integratedmodelling.klab.utils.Triple;
  * 
  * @author Ferd
  */
-public class Aggregator {
+public class Aggregator extends GroovyObjectSupport {
 
-    @Deprecated
-    private List<Triple<Object, IObservable, ILocator>> addenda = new ArrayList<>();
-    private IObservable observable;
     private Aggregation aggregation;
-    private IMonitor monitor;
+    private IValueMediator unit; // destination unit or currency
     boolean dataWarning = false;
-    int temporalDimensionality = 0;
-    int spatialDimensionality = 0;
-
     /*
      * these enable passing null as locator to add() as long as the space is regular. The aggregator
      * should not be used across time for time-varying extents in that case.
@@ -55,55 +45,26 @@ public class Aggregator {
     IScale scale = null;
     ILocator referenceLocator;
 
-    /**
-     * Cache stable aggregation strategies by observable definition
-     */
-    private Map<String, AggregationData> strategy = Collections.synchronizedMap(new HashMap<>());
-
     /*
-     * if true, we don't expect different observables or units, and we just accumulate values right
-     * away without mediation. Set to false by the default semantic aggregator. For now values with
-     * mediation require an enormity of RAM and GC on large extents.
-     * 
-     * TODO remove, should always be stable
-     */
-    @Deprecated
-    boolean stable = true;
-
-    /*
-     * the next three are to support stable aggregation.
+     * the next three are to support stable aggregation. TODO use summary stats
      */
     double sum = 0;
     long count = 0;
+    double min = Double.NaN;
+    double max = Double.NaN;
     Map<Object, Integer> counts = new HashMap<>();
 
-    IUnit unit; // destination unit
-
-    public Aggregator(IObservable destinationObservable, IMonitor monitor) {
-        this(destinationObservable, monitor, true);
+    public Aggregator(IObservable destinationObservable, IScale scale) {
+        Pair<IValueMediator, Aggregation> aggregationStrategy = Units.INSTANCE.getAggregationStrategy(destinationObservable, scale);
+        this.unit = aggregationStrategy.getFirst();
+        this.aggregation = aggregationStrategy.getSecond();
     }
 
-    public Aggregator(IObservable destinationObservable, IMonitor monitor, @Deprecated boolean stable) {
-        this.observable = destinationObservable;
-        this.monitor = monitor;
-        this.unit = this.observable.getUnit();
-//        this.stable = stable;
-        if (this.unit == null && this.observable.getCurrency() != null) {
-            this.unit = this.observable.getCurrency().getUnit();
-            this.temporalDimensionality = Units.INSTANCE.getTemporalDimensionality(this.unit);
-            this.spatialDimensionality = Units.INSTANCE.getSpatialDimensionality(this.unit);
-        }
-    }
-
-    public Aggregator(IScale scale) {
-        this(null, scale);
-    }
-    
     /**
      * Use this constructor when the semantics is no concern. A scale must be passed and the
      * aggregator will reject {@link #add(Object, ILocator)} if the scale is not regular and the
-     * locator is null. The aggregation can also be null, in which case the appropriate one for
-     * the observable will be used.
+     * locator is null. The aggregation can also be null, in which case the appropriate one for the
+     * observable will be used.
      * 
      * @param aggregation
      * @param scale
@@ -123,30 +84,33 @@ public class Aggregator {
      */
     public void add(Object value, ILocator locator) {
         if (locator == null && this.referenceLocator == null) {
-            if (scale == null || (scale.getSpace() != null && scale.isSpatiallyDistributed() && !scale.getSpace().isRegular())) {
+            if (scale == null || (scale.getSpace() != null && scale.isSpatiallyDistributed()
+                    && !scale.getSpace().isRegular())) {
                 throw new KlabIllegalArgumentException(
                         "internal: aggregation: cannot aggregate with a null locator if the space is irregular or the scale is unknown");
             }
             this.referenceLocator = scale.isSpatiallyDistributed() ? scale.iterator().next() : scale;
         }
-        add(value, this.observable, locator == null ? this.referenceLocator : locator);
-    }
-
-    public void add(Object value, IObservable observable, ILocator locator) {
 
         if (Observations.INSTANCE.isData(value)) {
 
             if (value instanceof Collection) {
-                for (Object o : ((Collection<?>)value)) {
-                    add(o, observable, locator);
+                for (Object o : ((Collection<?>) value)) {
+                    add(o, locator);
                 }
             } else if (value instanceof Number) {
-                AggregationData ad = getAggregationData(observable, locator);
-                if (this.aggregation == null) {
-                    this.aggregation = ad.aggregation;
-                }
-                double dval = ((Number) value).doubleValue() * (ad == null ? 1 : ad.conversionFactor);
+
+                double dval = (this.unit == null)
+                        ? ((Number) value).doubleValue()
+                        : this.unit.convert((Number) value, locator).doubleValue();
+
                 sum += dval;
+                if (Double.isNaN(min) || min > dval) {
+                    min = dval;
+                }
+                if (Double.isNaN(max) || max < dval) {
+                    max = dval;
+                }
                 count++;
             } else {
                 Integer cnt = counts.get(value);
@@ -160,24 +124,8 @@ public class Aggregator {
         }
     }
 
-    private AggregationData getAggregationData(IObservable observable, ILocator locator) {
-
-        if (observable == null) {
-            return null;
-        }
-        
-        AggregationData ret = strategy.get(observable.getDefinition());
-        if (ret == null) {
-            ret = Units.INSTANCE.getAggregationData(observable, (IScale) locator);
-            if (ret.stable) {
-                strategy.put(observable.getDefinition(), ret);
-            }
-        }
-        return ret;
-    }
-
     public void reset() {
-        addenda.clear();
+        // addenda.clear();
         sum = 0;
         count = 0;
         counts.clear();
@@ -191,30 +139,6 @@ public class Aggregator {
      */
     public Object aggregate() {
 
-        if (stable) {
-            return aggregateStable();
-        }
-
-        Object ret = null;
-        Object[] rets = null;
-        int n = 0;
-
-        for (Triple<Object, IObservable, ILocator> triple : addenda) {
-            if (ret == null) {
-                ret = triple.getFirst();
-            } else {
-                if (rets == null) {
-                    rets = new Object[addenda.size()];
-                    rets[0] = ret;
-                }
-                rets[++n] = triple.getFirst();
-            }
-        }
-        return rets != null ? aggregate(rets, this.aggregation, monitor) : ret;
-    }
-
-    private Object aggregateStable() {
-
         if (aggregation == null) {
             return null;
         }
@@ -223,15 +147,23 @@ public class Aggregator {
         case ANY_PRESENT:
             return counts.size() > 1 || count > 0;
         case COUNT:
-            throw new KlabUnimplementedException("count aggregation still unsupported on stable aggregator");
+            return (double)count;
         case MAJORITY:
-            throw new KlabUnimplementedException("majority aggregation still unsupported on stable aggregator");
+            Object ret = null;
+            int cnt = -1;
+            for (Object o : counts.keySet()) {
+               if (counts.get(o) > cnt) {
+                   cnt = counts.get(o);
+                   ret = o;
+               }
+            }
+            return ret;
         case MAX:
-            throw new KlabUnimplementedException("max aggregation still unsupported on stable aggregator");
+            return max;
         case MEAN:
             return count > 0 ? (sum / count) : null;
         case MIN:
-            throw new KlabUnimplementedException("min aggregation still unsupported on stable aggregator");
+            return min;
         case STD:
             throw new KlabUnimplementedException("std aggregation still unsupported on stable aggregator");
         case SUM:
@@ -243,19 +175,18 @@ public class Aggregator {
         return null;
     }
 
-    /**
+    /*
      * Reentrant. Use with caution.
      * 
      * @param objects
      * @return
      */
     public Object aggregate(Collection<?> objects) {
-        addenda.clear();
         counts.clear();
         sum = 0;
         count = 0;
         for (Object o : objects) {
-            add(o, this.observable, null);
+            add(o, null);
         }
         return aggregate();
     }
@@ -444,45 +375,6 @@ public class Aggregator {
             }
         }
         return n;
-    }
-
-    public Aggregation getAggregation(IObservable observable) {
-        switch(observable.getDescriptionType()) {
-        case CATEGORIZATION:
-        case VERIFICATION:
-            return Aggregation.MAJORITY;
-        case QUANTIFICATION:
-            // FIXME FIXME
-            // NO - depends on whether the unit is extensive too, and there may be a
-            // conversion factor
-            // if (observable.getType().is(Type.EXTENSIVE_PROPERTY) && this.unit)
-            /*
-             * NO this must average UNLESS the destination observable is also inherent to the same
-             * type.
-             */
-            if (Observables.INSTANCE.getDirectInherentType(observable.getType()) != null) {
-                return Aggregation.MEAN;
-            }
-            return (observable.getType().is(Type.EXTENSIVE_PROPERTY) || observable.getType().is(Type.MONEY)|| observable.getType().is(Type.MONEY))
-                    ? Aggregation.SUM
-                    : Aggregation.MEAN;
-        default:
-            break;
-        }
-        return null;
-    }
-
-    /**
-     * If the value requires a specific adjustment based on a locator, do that and return the
-     * result.
-     * 
-     * @param value
-     * @param locator
-     * @return
-     */
-    public Object adjust(Object value, ILocator locator) {
-        // TODO Auto-generated method stub
-        return value;
     }
 
 }

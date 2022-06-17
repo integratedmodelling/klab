@@ -10,7 +10,6 @@ import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
-import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.data.storage.MediatingState;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -45,7 +44,7 @@ public class ConversionResolver extends AbstractContextualizer implements IResol
 
 	@Override
 	public IState resolve(IState ret, IContextualizationScope context) throws KlabException {
-		return new MediatingState(ret, (RuntimeScope) context, from, to);
+		return MediatingState.mediateIfNecessary(ret, to);
 	}
 
 	@Override

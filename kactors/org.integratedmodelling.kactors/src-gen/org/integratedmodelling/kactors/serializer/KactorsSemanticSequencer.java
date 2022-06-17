@@ -30,6 +30,7 @@ import org.integratedmodelling.kactors.kactors.Date;
 import org.integratedmodelling.kactors.kactors.Definition;
 import org.integratedmodelling.kactors.kactors.DoStatement;
 import org.integratedmodelling.kactors.kactors.ElseIfStatementBody;
+import org.integratedmodelling.kactors.kactors.FailStatement;
 import org.integratedmodelling.kactors.kactors.ForStatement;
 import org.integratedmodelling.kactors.kactors.HeaderRow;
 import org.integratedmodelling.kactors.kactors.IfStatement;
@@ -145,6 +146,9 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 				return; 
 			case KactorsPackage.ELSE_IF_STATEMENT_BODY:
 				sequence_ElseIfStatementBody(context, (ElseIfStatementBody) semanticObject); 
+				return; 
+			case KactorsPackage.FAIL_STATEMENT:
+				sequence_FailStatement(context, (FailStatement) semanticObject); 
 				return; 
 			case KactorsPackage.FOR_STATEMENT:
 				sequence_ForStatement(context, (ForStatement) semanticObject); 
@@ -473,11 +477,11 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *                 contained=SimpleConceptDeclaration | 
 	 *                 caused=SimpleConceptDeclaration
 	 *             )? 
-	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
-	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
 	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
 	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
-	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)?
+	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
+	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
+	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)?
 	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)*
 	 *     )
@@ -506,11 +510,11 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *                 contained=SimpleConceptDeclaration | 
 	 *                 caused=SimpleConceptDeclaration
 	 *             )? 
-	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
-	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
 	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
 	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
-	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)?
+	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
+	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
+	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)?
 	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)* 
 	 *         (operators+='or' operands+=Factor)*
@@ -657,6 +661,20 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 * </pre>
 	 */
 	protected void sequence_ElseIfStatementBody(ISerializationContext context, ElseIfStatementBody semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * <pre>
+	 * Contexts:
+	 *     FailStatement returns FailStatement
+	 *
+	 * Constraint:
+	 *     reason=STRING?
+	 * </pre>
+	 */
+	protected void sequence_FailStatement(ISerializationContext context, FailStatement semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -967,6 +985,9 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *             if=IfStatement | 
 	 *             while=WhileStatement | 
 	 *             do=DoStatement | 
+	 *             assert=AssertStatement | 
+	 *             fail=FailStatement | 
+	 *             break?='break' | 
 	 *             for=ForStatement | 
 	 *             value=ValueWithMetadata
 	 *         ) 
@@ -1234,7 +1255,9 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *             if=IfStatement | 
 	 *             while=WhileStatement | 
 	 *             assert=AssertStatement | 
+	 *             fail=FailStatement | 
 	 *             do=DoStatement | 
+	 *             break?='break' | 
 	 *             for=ForStatement | 
 	 *             value=ValueWithMetadata
 	 *         ) 

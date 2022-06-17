@@ -27,6 +27,7 @@ import org.integratedmodelling.kactors.kactors.Date;
 import org.integratedmodelling.kactors.kactors.Definition;
 import org.integratedmodelling.kactors.kactors.DoStatement;
 import org.integratedmodelling.kactors.kactors.ElseIfStatementBody;
+import org.integratedmodelling.kactors.kactors.FailStatement;
 import org.integratedmodelling.kactors.kactors.ForStatement;
 import org.integratedmodelling.kactors.kactors.HeaderRow;
 import org.integratedmodelling.kactors.kactors.IfStatement;
@@ -163,6 +164,13 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   private EClass assertStatementEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass failStatementEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -1393,7 +1401,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EReference getStatement_Do()
+  public EReference getStatement_Fail()
   {
     return (EReference)statementEClass.getEStructuralFeatures().get(9);
   }
@@ -1404,7 +1412,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EReference getStatement_For()
+  public EReference getStatement_Do()
   {
     return (EReference)statementEClass.getEStructuralFeatures().get(10);
   }
@@ -1415,9 +1423,31 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
+  public EAttribute getStatement_Break()
+  {
+    return (EAttribute)statementEClass.getEStructuralFeatures().get(11);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getStatement_For()
+  {
+    return (EReference)statementEClass.getEStructuralFeatures().get(12);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EReference getStatement_Value()
   {
-    return (EReference)statementEClass.getEStructuralFeatures().get(11);
+    return (EReference)statementEClass.getEStructuralFeatures().get(13);
   }
 
   /**
@@ -1428,7 +1458,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EAttribute getStatement_Tag()
   {
-    return (EAttribute)statementEClass.getEStructuralFeatures().get(12);
+    return (EAttribute)statementEClass.getEStructuralFeatures().get(14);
   }
 
   /**
@@ -1462,6 +1492,28 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   public EReference getAssertStatement_Assertions()
   {
     return (EReference)assertStatementEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EClass getFailStatement()
+  {
+    return failStatementEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getFailStatement_Reason()
+  {
+    return (EAttribute)failStatementEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -4622,7 +4674,9 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     createEReference(statementEClass, STATEMENT__IF);
     createEReference(statementEClass, STATEMENT__WHILE);
     createEReference(statementEClass, STATEMENT__ASSERT);
+    createEReference(statementEClass, STATEMENT__FAIL);
     createEReference(statementEClass, STATEMENT__DO);
+    createEAttribute(statementEClass, STATEMENT__BREAK);
     createEReference(statementEClass, STATEMENT__FOR);
     createEReference(statementEClass, STATEMENT__VALUE);
     createEAttribute(statementEClass, STATEMENT__TAG);
@@ -4630,6 +4684,9 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     assertStatementEClass = createEClass(ASSERT_STATEMENT);
     createEReference(assertStatementEClass, ASSERT_STATEMENT__PARAMETERS);
     createEReference(assertStatementEClass, ASSERT_STATEMENT__ASSERTIONS);
+
+    failStatementEClass = createEClass(FAIL_STATEMENT);
+    createEAttribute(failStatementEClass, FAIL_STATEMENT__REASON);
 
     assertionEClass = createEClass(ASSERTION);
     createEAttribute(assertionEClass, ASSERTION__EXPRESSION);
@@ -5071,7 +5128,9 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     initEReference(getStatement_If(), this.getIfStatement(), null, "if", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getStatement_While(), this.getWhileStatement(), null, "while", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getStatement_Assert(), this.getAssertStatement(), null, "assert", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getStatement_Fail(), this.getFailStatement(), null, "fail", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getStatement_Do(), this.getDoStatement(), null, "do", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getStatement_Break(), ecorePackage.getEBoolean(), "break", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getStatement_For(), this.getForStatement(), null, "for", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getStatement_Value(), this.getValue(), null, "value", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getStatement_Tag(), ecorePackage.getEString(), "tag", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -5079,6 +5138,9 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     initEClass(assertStatementEClass, AssertStatement.class, "AssertStatement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getAssertStatement_Parameters(), this.getParameterList(), null, "parameters", null, 0, 1, AssertStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getAssertStatement_Assertions(), this.getAssertion(), null, "assertions", null, 0, -1, AssertStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(failStatementEClass, FailStatement.class, "FailStatement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getFailStatement_Reason(), ecorePackage.getEString(), "reason", null, 0, 1, FailStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(assertionEClass, Assertion.class, "Assertion", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getAssertion_Expression(), ecorePackage.getEString(), "expression", null, 0, 1, Assertion.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

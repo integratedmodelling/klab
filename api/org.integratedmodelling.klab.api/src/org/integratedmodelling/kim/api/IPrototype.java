@@ -127,7 +127,7 @@ public interface IPrototype {
 		boolean isArtifact();
 
 		/**
-		 * If a unit was specified, return the textual value here.
+		 * If a unit was specified, return the textual value here. Can also be a currency.
 		 * 
 		 * @return
 		 */

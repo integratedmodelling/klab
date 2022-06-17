@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Collection;
+import java.util.List;
 
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.api.IKActorsBehavior.Scope;
@@ -13,6 +14,7 @@ import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IActorIdentity.Reference;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.rest.Localization;
 
 /**
  * The actors service keeps the k.Actor language parser and administers the actor runtime subsystem.
@@ -94,5 +96,15 @@ public interface IActorsService {
      * @return
      */
     Object evaluate(IKActorsValue kActorsValue, IIdentity identity, Scope scope);
+
+    /**
+     * Get the localization descriptors using the companion file, if any. Try to also provide app
+     * localized descriptions and labels (docstring). At least one localization should always be
+     * provided, defaulting to english with the default unlocalized docstrings.
+     * 
+     * @param behavior
+     * @return
+     */
+    List<Localization> getLocalizations(String behavior);
 
 }

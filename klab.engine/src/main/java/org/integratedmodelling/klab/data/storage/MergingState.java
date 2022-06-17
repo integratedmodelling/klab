@@ -64,8 +64,7 @@ public class MergingState extends State implements DelegatingArtifact {
 
     public static MergingState promote(IState state, IArtifact distributingArtifact) {
         MergingState ret = new MergingState(state);
-        ret.getAnnotations()
-                .addAll(Annotations.INSTANCE.collectAnnotations(state, ((IState) state).getObservable()));
+        ret.getAnnotations().addAll(Annotations.INSTANCE.collectAnnotations(state, ((IState) state).getObservable()));
         for (IArtifact object : distributingArtifact) {
             if (object instanceof IDirectObservation) {
                 for (IState ostate : ((IDirectObservation) object).getStates()) {
@@ -80,8 +79,7 @@ public class MergingState extends State implements DelegatingArtifact {
 
     public static MergingState promote(IState state, Collection<?> distributingArtifacts) {
         MergingState ret = new MergingState(state);
-        ret.getAnnotations()
-                .addAll(Annotations.INSTANCE.collectAnnotations(state, ((IState) state).getObservable()));
+        ret.getAnnotations().addAll(Annotations.INSTANCE.collectAnnotations(state, ((IState) state).getObservable()));
         for (Object dis : distributingArtifacts) {
             if (dis instanceof ObservationGroup) {
                 IArtifact distributingArtifact = (IArtifact) dis;
@@ -111,27 +109,26 @@ public class MergingState extends State implements DelegatingArtifact {
     }
 
     public MergingState(IState delegate) {
-        super((Observable) delegate.getObservable(), (Scale) delegate.getScale(),
-                ((State) delegate).getScope(),
+        super((Observable) delegate.getObservable(), (Scale) delegate.getScale(), ((State) delegate).getScope(),
                 ((State) delegate).getStorage());
         this.delegate = delegate;
     }
 
     public void add(IState state) {
-        states.add(state);
+        
+        IState mediated = MediatingState.mediateIfNecessary(state, this.getObservable().getMediator());
+        states.add(mediated);
         if (state.getScale().getSpace() != null) {
             if (spatialIndex == null) {
                 if (this.indexBuilt) {
-                    throw new KlabIllegalStateException(
-                            "internal: spatial index for merging state is already built");
+                    throw new KlabIllegalStateException("internal: spatial index for merging state is already built");
                 }
                 spatialIndex = new STRtree();
             }
             StateLocator data = new StateLocator();
-            data.state = state;
+            data.state = mediated;
             data.shape = state.getScale().getSpace().getShape();
-            spatialIndex.insert(((Envelope) state.getScale().getSpace().getEnvelope()).getJTSEnvelope(),
-                    data);
+            spatialIndex.insert(((Envelope) state.getScale().getSpace().getEnvelope()).getJTSEnvelope(), data);
         }
 
         if (state instanceof State) {
@@ -169,12 +166,9 @@ public class MergingState extends State implements DelegatingArtifact {
             change.setId(getId());
             change.setTimestamp(time.getEnd().getMilliseconds());
             change.setType(ObservationChange.Type.ValueChange);
-            ISession session = getScope().getMonitor().getIdentity()
-                    .getParentIdentity(ISession.class);
-            session.getMonitor()
-                    .send(Message.create(session.getId(),
-                            IMessage.MessageClass.ObservationLifecycle,
-                            IMessage.Type.ModifiedObservation, change));
+            ISession session = getScope().getMonitor().getIdentity().getParentIdentity(ISession.class);
+            session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
+                    IMessage.Type.ModifiedObservation, change));
         }
     }
 
@@ -215,12 +209,11 @@ public class MergingState extends State implements DelegatingArtifact {
 
         Aggregator aggregator = null;
         if (aggregate) {
-            aggregator = new Aggregator(delegate.getObservable(), delegate.getMonitor());
+            aggregator = new Aggregator(delegate.getObservable(), delegate.getScale());
         }
 
         if (!(index instanceof IScale)) {
-            throw new KlabIllegalArgumentException(
-                    "MergingState: cannot merge states unless the locator is a scale: " + index);
+            throw new KlabIllegalArgumentException("MergingState: cannot merge states unless the locator is a scale: " + index);
         }
         IScale scale = (IScale) index;
 
@@ -239,7 +232,7 @@ public class MergingState extends State implements DelegatingArtifact {
 
                 Object value = state.get(Scale.create(exts));
                 if (aggregate) {
-                    aggregator.add(value, state.getObservable(), index);
+                    aggregator.add(value, /* state.getObservable(), */ index);
                 } else if (Observations.INSTANCE.isData(value)) {
                     return value;
                 }
@@ -248,7 +241,7 @@ public class MergingState extends State implements DelegatingArtifact {
 
         return aggregate ? aggregator.aggregate() : null;
     }
-    
+
     @Override
     public long[] getUpdateTimestamps() {
         if (timeExtension != null) {
@@ -264,23 +257,23 @@ public class MergingState extends State implements DelegatingArtifact {
     public long set(ILocator index, Object value) {
         throw new KlabIllegalStateException("Merging states are read-only");
     }
-    
-	public StateSummary getOverallSummary() {
-		StateSummary ret = null;
-		for (IState state : states) {
-			if (ret == null && state instanceof State) {
-				ret = ((State)state).getOverallSummary();
-			} else {
-				ret.merge(((State)state).getOverallSummary());
-			}
-		}
-		return ret;
-	}
 
-	@Override
-	public IArtifact getDelegate() {
-		return delegate;
-	}
+    public StateSummary getOverallSummary() {
+        StateSummary ret = null;
+        // TODO this gets messy if states are mediated
+//        for (IState state : states) {
+//            if (ret == null && state instanceof State) {
+//                ret = ((State) state).getOverallSummary();
+//            } else {
+//                ret.merge(((State)state).getOverallSummary());
+//            }
+//        }
+        return ret;
+    }
 
+    @Override
+    public IArtifact getDelegate() {
+        return delegate;
+    }
 
 }

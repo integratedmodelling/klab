@@ -78,6 +78,7 @@ import org.integratedmodelling.klab.engine.runtime.code.ObjectExpression;
 import org.integratedmodelling.klab.exceptions.KlabActorException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
+import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.rest.ViewAction;
 import org.integratedmodelling.klab.rest.ViewComponent;
@@ -2055,6 +2056,10 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
 
                             IAnnotation desc = Annotations.INSTANCE.getAnnotation(action.getAnnotations(), "test");
 
+                            if (identity instanceof Session) {
+                                ((Session) identity).notifyTestCaseStart(KlabActor.this.behavior, message.scope.testScope.testStatistics);
+                            }
+
                             if (desc.get("enabled", Boolean.TRUE) && !desc.get("disabled", Boolean.FALSE)) {
 
                                 Scope testScope = message.scope.forTest(action);
@@ -2062,6 +2067,8 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
                                 testScope.localizedSymbols = behavior.getLocalization();
                                 testScope.runtimeScope.getMonitor()
                                         .info(KlabActor.this.behavior.getName() + ": running test " + action.getName());
+                                
+                                
                                 KlabActor.this.run(action, testScope);
 
                                 if (identity instanceof Session) {

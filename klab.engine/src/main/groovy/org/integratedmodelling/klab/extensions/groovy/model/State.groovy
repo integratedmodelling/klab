@@ -81,6 +81,10 @@ class State extends Observation<IState> {
 		return this;
 	}
 
+    def mediate(String s) {
+        return unwrap().in(s);
+    }
+    
 	
 	/**
 	 * Return the state with the appropriate type, aggregating as necessary. If we

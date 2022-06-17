@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -86,6 +87,7 @@ import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.rest.BehaviorReference;
 import org.integratedmodelling.klab.rest.Layout;
+import org.integratedmodelling.klab.rest.Localization;
 import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.rest.ViewPanel;
 import org.integratedmodelling.klab.utils.FileCatalog;
@@ -564,10 +566,12 @@ public enum Actors implements IActorsService {
 
     @Override
     public Collection<String> getPublicApps() {
-        List<String> ret = new ArrayList<>();
+        Set<String> ret = new LinkedHashSet<>();
         for (String key : behaviors.keySet()) {
             if (behaviors.get(key).getDestination() == Type.APP && behaviors.get(key).getStatement().isPublic()) {
-                ret.add(key);
+                // getId() and set semantics ensure that localized instances only appear once with
+                // their original name
+                ret.add(behaviors.get(key).getId());
             }
         }
         return ret;
@@ -1561,6 +1565,46 @@ public enum Actors implements IActorsService {
 
         }
 
+        return ret;
+    }
+
+    @Override
+    public List<Localization> getLocalizations(String behavior) {
+
+        List<Localization> ret = new ArrayList<>();
+        IKActorsBehavior source = KActors.INSTANCE.getBehavior(behavior);
+        if (source != null) {
+            File loc = MiscUtilities.changeExtension(source.getFile(), "localization");
+            if (loc != null) {
+                FileCatalog<Map> cat = FileCatalog.create(loc, Map.class, Map.class);
+                for (String lang : cat.keySet()) {
+                    Localization localization = new Localization();
+                    localization.setIsoCode(lang);
+                    Locale locale = Locale.forLanguageTag(lang);
+                    localization.setLanguageDescription(locale == null ? null : locale.getDisplayLanguage());
+                    if (source.getDescription() != null && source.getDescription().startsWith("#")
+                            && cat.get(lang).containsKey(source.getDescription().substring(1))) {
+                        localization.setLocalizedDescription(cat.get(lang).get(source.getDescription().substring(1)).toString());
+                    } else {
+                        localization.setLocalizedDescription(source.getDescription());
+                    }
+                    if (source.getLabel() != null && source.getLabel().startsWith("#")
+                            && cat.get(lang).containsKey(source.getLabel().substring(1))) {
+                        localization.setLocalizedLabel(cat.get(lang).get(source.getLabel().substring(1)).toString());
+                    } else {
+                        localization.setLocalizedLabel(source.getLabel());
+                    }
+                    ret.add(localization);
+                }
+            } else {
+                Localization localization = new Localization();
+                localization.setIsoCode("en");
+                localization.setLanguageDescription("English");
+                localization.setLocalizedDescription(source.getDescription());
+                localization.setLocalizedDescription(source.getLabel());
+                ret.add(localization);
+            }
+        }
         return ret;
     }
 
