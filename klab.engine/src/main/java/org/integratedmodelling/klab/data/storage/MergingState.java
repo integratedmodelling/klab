@@ -260,7 +260,7 @@ public class MergingState extends State implements DelegatingArtifact {
 
     public StateSummary getOverallSummary() {
         StateSummary ret = null;
-        // TODO this is messy if states are mediated
+        // TODO this gets messy if states are mediated
 //        for (IState state : states) {
 //            if (ret == null && state instanceof State) {
 //                ret = ((State) state).getOverallSummary();

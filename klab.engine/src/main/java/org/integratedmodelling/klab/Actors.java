@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -565,10 +566,12 @@ public enum Actors implements IActorsService {
 
     @Override
     public Collection<String> getPublicApps() {
-        List<String> ret = new ArrayList<>();
+        Set<String> ret = new LinkedHashSet<>();
         for (String key : behaviors.keySet()) {
             if (behaviors.get(key).getDestination() == Type.APP && behaviors.get(key).getStatement().isPublic()) {
-                ret.add(key);
+                // getId() and set semantics ensure that localized instances only appear once with
+                // their original name
+                ret.add(behaviors.get(key).getId());
             }
         }
         return ret;
