@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.integratedmodelling.kactors.api.IKActorsStatement.Assert.Assertion;
+import org.integratedmodelling.kactors.api.IKActorsStatement.Fail;
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Time;
@@ -67,6 +68,9 @@ public class TestScope {
     private String testScopeId;
 
     private ISession session;
+
+    // set only by an explicit fail instruction
+    private String failureMessage;
 
     /*
      * TODO constraint system for URNs to use. Must be part of runtime, not the actor system.
@@ -323,6 +327,11 @@ public class TestScope {
             desc.setDescriptor(StringUtils.abbreviate(StringUtils.getFirstLine(assertion.getSourceCode()), 60));
         }
 
+    }
+
+    public void fail(Fail code) {
+        this.actionStatistics.setFailure(this.actionStatistics.getFailure() + 1);
+        this.failureMessage = code.getMessage();
     }
 
 }

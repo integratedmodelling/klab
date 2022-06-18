@@ -88,8 +88,12 @@ public abstract class KActorsStatement extends KActorCodeStatement implements IK
 			ret = new KActorsInstantiation(statement.getInstantiation(), statement.getTag(), parent);
 		} else if (statement.getAssert() != null) {
 			ret = new KActorsAssert(statement.getAssert(), parent);
+		} else if (statement.isBreak()) {
+		    ret = new KActorsBreak(statement, parent);
+		} else if (statement.getFail() != null) {
+            ret = new KActorsFail(statement.getFail(), parent);
 		}
-
+ 
 		if (ret != null) {
 		    // in most situation, after initialization is OK
 			if (statement.getTag() != null) {

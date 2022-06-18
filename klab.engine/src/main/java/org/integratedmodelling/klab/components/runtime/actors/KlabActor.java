@@ -17,6 +17,7 @@ import org.integratedmodelling.kactors.api.IKActorsStatement.Assignment;
 import org.integratedmodelling.kactors.api.IKActorsStatement.Call;
 import org.integratedmodelling.kactors.api.IKActorsStatement.ConcurrentGroup;
 import org.integratedmodelling.kactors.api.IKActorsStatement.Do;
+import org.integratedmodelling.kactors.api.IKActorsStatement.Fail;
 import org.integratedmodelling.kactors.api.IKActorsStatement.FireValue;
 import org.integratedmodelling.kactors.api.IKActorsStatement.For;
 import org.integratedmodelling.kactors.api.IKActorsStatement.If;
@@ -78,7 +79,6 @@ import org.integratedmodelling.klab.engine.runtime.code.ObjectExpression;
 import org.integratedmodelling.klab.exceptions.KlabActorException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
-import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.rest.ViewAction;
 import org.integratedmodelling.klab.rest.ViewComponent;
@@ -86,7 +86,6 @@ import org.integratedmodelling.klab.utils.MapUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Path;
-import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.klab.utils.Triple;
 import org.integratedmodelling.klab.utils.Utils;
 
@@ -99,7 +98,6 @@ import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
 import akka.actor.typed.javadsl.Receive;
 import akka.actor.typed.javadsl.ReceiveBuilder;
-import javassist.runtime.Desc;
 
 /**
  * The base actor implementation for k.Actors. Linked to an identity and capable of interpreting
@@ -940,6 +938,13 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
             case ASSERT_STATEMENT:
                 executeAssert((IKActorsStatement.Assert) code, scope);
                 break;
+            case FAIL_STATEMENT:
+                if (scope.testScope != null) {
+                    scope.testScope.fail((Fail)code);
+                }
+                // fall through
+            case BREAK_STATEMENT:
+                return false;
             default:
                 break;
             }

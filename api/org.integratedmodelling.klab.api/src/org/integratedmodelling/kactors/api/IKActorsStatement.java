@@ -28,7 +28,9 @@ public interface IKActorsStatement extends IKActorsCodeStatement {
         SEQUENCE,
         INSTANTIATION,
         ASSERT_STATEMENT,
-        ASSERTION
+        ASSERTION,
+        FAIL_STATEMENT,
+        BREAK_STATEMENT
     }
 
     public interface If extends IKActorsStatement {
@@ -78,6 +80,14 @@ public interface IKActorsStatement extends IKActorsCodeStatement {
         IKActorsValue getCondition();
 
         IKActorsStatement getBody();
+
+    }
+
+    public interface Fail extends IKActorsStatement {
+        String getMessage();
+    }
+
+    public interface Break extends IKActorsStatement {
 
     }
 
@@ -156,12 +166,12 @@ public interface IKActorsStatement extends IKActorsCodeStatement {
 
     public interface Assignment extends IKActorsStatement {
 
-    	public enum Scope {
-    		ACTOR,
-    		ACTION,
-    		FRAME
-    	}
-    	
+        public enum Scope {
+            ACTOR,
+            ACTION,
+            FRAME
+        }
+
         /**
          * Recipient is the part before the dot if set x.y value is issued. It may be null (local
          * variable in the internal actor's symbols), refer to the state of another actor, or be
@@ -190,6 +200,7 @@ public interface IKActorsStatement extends IKActorsCodeStatement {
 
         /**
          * Get the scope. Actor, action or block
+         * 
          * @return
          */
         Scope getScope();

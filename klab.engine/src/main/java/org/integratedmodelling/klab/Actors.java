@@ -1079,9 +1079,8 @@ public enum Actors implements IActorsService {
                 return (Iterable<Object>) o;
             } else if (o instanceof String && Urns.INSTANCE.isUrn(o.toString())) {
                 return iterateResource(o.toString(), scope.getMonitor());
-            } else {
-                return Collections.singletonList(o);
             }
+            return Collections.singletonList(o);
         case STRING:
             if (Urns.INSTANCE.isUrn(iterable.getStatedValue().toString())) {
                 return iterateResource(iterable.getStatedValue().toString(), scope.getMonitor());
