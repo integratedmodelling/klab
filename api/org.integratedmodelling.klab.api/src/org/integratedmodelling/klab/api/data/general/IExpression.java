@@ -31,14 +31,39 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
  */
 public interface IExpression {
 
+    public enum CompilerScope {
+        /**
+         * Execution is triggered by state-by-state logic, so specific subdivision of the context is
+         * located at execution, and observation IDs point to state values insteaf of the entire
+         * observation when the observation is a quality. Called very many times and concurrently.
+         * Irrelevant unless Contextual is also passed.
+         */
+        Scalar,
+        /**
+         * Execution is observation-wise, so if states of qualities are needed, the correspondent
+         * observations must be iterated within the expression. Irrelevant unless Contextual is also
+         * passed.
+         */
+        Observation,
+        /**
+         * The expression will be executed in the scope of an observation, so all the auxiliary
+         * variables are defined and the observations will be located to the space/time of
+         * contextualization. If not passed, expression is normal Groovy code with the k.LAB
+         * extensions for reasoning etc.
+         */
+        Contextual
+    }
+
     // TODO still have to support these instead of passing flags to the compiler
     public enum CompilerOption {
+
         /**
          * 
          */
         IgnoreContext,
         /**
          * Force scalar usage of all identifiers. Linked to prefixing the expression with # in k.IM.
+         * @deprecated use the scope for this.
          */
         ForcedScalar,
         /**
@@ -51,11 +76,13 @@ public interface IExpression {
          * Wrap any observations or extents passed as parameters into their Groovy peers before
          * execution. This is passed when compiling expressions outside of a contextualization
          * dataflow, which handles this automatically with caching to prevent bottlenecks.
+         * 
+         * @deprecated we don't want any Groovy peers
          */
         WrapParameters,
-        
+
         /**
-         * Skip k.LAB preprocessing altogether. 
+         * Skip k.LAB preprocessing altogether.
          */
         DoNotPreprocess
     }
@@ -130,10 +157,10 @@ public interface IExpression {
      * Execute the expression
      *
      * @param parameters from context or defined in a language call
-     * @param scope possibly empty, may be added to determine the result of the evaluation
-     *        according to the calling context. The {@link IContextualizationScope#getMonitor()
-     *        monitor in the context} will never be null and can be used to send messages or
-     *        interrupt the computation.
+     * @param scope possibly empty, may be added to determine the result of the evaluation according
+     *        to the calling context. The {@link IContextualizationScope#getMonitor() monitor in the
+     *        context} will never be null and can be used to send messages or interrupt the
+     *        computation.
      * @return the result of evaluating the expression
      * @throws org.integratedmodelling.klab.exceptions.KlabException TODO
      */
