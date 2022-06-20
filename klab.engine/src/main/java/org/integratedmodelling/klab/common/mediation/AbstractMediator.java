@@ -79,9 +79,11 @@ public abstract class AbstractMediator implements IValueMediator {
 
         /*
          * trivial cases: no context, intensive semantics, or original unit required no
-         * transformation
+         * transformation. Also no locator so no context information, although this may
+         * generate unseen errors. FIXME the locator condition should be removed once
+         * the data builders' add() accepts a locator.
          */
-        if (mediators == null) {
+        if (mediators == null || locator == null) {
             return this.convert(value, toConvert);
         }
 

@@ -96,25 +96,6 @@ public interface IUnit extends IValueMediator {
      */
     Pair<IUnit, IUnit> splitExtent(ExtentDimension dimension);
 
-    /**
-     * Obtain a target unit representing this one, pre-contextualized to the passed scale, so that
-     * it can accept contextually compatible mediators at {@link #convert(Number, IValueMediator)}
-     * and handle them appropriately. The mediator passed to convert called on the result must be
-     * compatible <em>once the context is factored in</em>; this means that, for example, mm will be
-     * compatible with m^3 if the scale is distributed in space, making "mm" nothing more than
-     * mm^3/mm^2 and generating the appropriate conversion factors automatically.
-     * <p>
-     * The scale is cached in the unit and, for extensive values, used to transform the result as
-     * needed, so the result can only be reused across scale swaps on <em>regular</em> extents. On
-     * irregular extents, the original, uncontextualized mediator <em>must</em> be contextualized at
-     * every step.
-     * <p>
-     * Overrides the return type from the original in {@link IValueMediator} for fluency.
-     * 
-     * @param observable
-     * @param scale
-     * @return
-     */
     @Override
     IUnit contextualize(IObservable observable, IGeometry scale);
 

@@ -171,18 +171,23 @@ public class GroovyExpressionPreprocessor {
     private boolean ignoreContext;
     private boolean ignored;
 
-    static final int KNOWLEDGE = 1;
-    static final int DEFINE = 2;
-    static final int KNOWN_ID = 3;
-    static final int UNKNOWN_ID = 4;
-    static final int URN = 5;
-    static final int LITERAL_NULL = 6;
-    static final int KNOWN_DOMAIN = 7;
-    static final int KNOWN_MODEL_OBJECT = 8;
-    static final int NEWLINE = 9;
-    static final int INFERENCE = 10;
+    enum TokenType {
+        KNOWLEDGE,
+        DEFINE,
+        KNOWN_ID,
+        UNKNOWN_ID,
+        URN,
+        LITERAL_NULL,
+        KNOWN_DOMAIN,
+        KNOWN_MODEL_OBJECT,
+        NEWLINE,
+        INFERENCE
+    }
+    
     private static final String DECLARATION_ID_PREFIX = "___DECL_";
-
+    private static final String CAMELCASE_PATTERN = "([A-Z][a-z0-9]+)+";
+    private static final String CONCEPT_PATTERN = "[a-z][a-z,\\.]+:([A-Z][a-z0-9]+)+";
+    
     public GroovyExpressionPreprocessor(INamespace currentNamespace, Set<String> knownIdentifiers,
             IGeometry geometry,
             IExpression.Scope context, CompilerScope scope, Set<CompilerOption> options) {
@@ -219,7 +224,7 @@ public class GroovyExpressionPreprocessor {
 
     class TokenDescriptor {
 
-        int type;
+        TokenType type;
         String token;
 
         // method in the next token - set by analyze(), used to check usage before
@@ -227,7 +232,7 @@ public class GroovyExpressionPreprocessor {
         String method;
         boolean methodCall = false;
 
-        public TokenDescriptor(int type, String token) {
+        public TokenDescriptor(TokenType type, String token) {
             this.type = type;
             this.token = token;
         }
@@ -303,8 +308,6 @@ public class GroovyExpressionPreprocessor {
          */
         code = " " + code + " ";
 
-        // this.originalCode = code;
-
         /*
          * pre-substitute any \] with ] so that we can use the Groovy lexer without error. Don't
          * laugh at the pattern.
@@ -372,7 +375,7 @@ public class GroovyExpressionPreprocessor {
                 line = tline;
             } else if (tline > line) {
                 line = tline;
-                tokens.add(new TokenDescriptor(NEWLINE, "\n"));
+                tokens.add(new TokenDescriptor(TokenType.NEWLINE, "\n"));
             }
 
             //
@@ -388,7 +391,7 @@ public class GroovyExpressionPreprocessor {
             /*
              * report on all unknown identifiers
              */
-            if (cls.type == UNKNOWN_ID) {
+            if (cls.type == TokenType.UNKNOWN_ID) {
                 for (Token t : group) {
                     if (t.getType() == GroovyLexer.IDENT) {
                         // NAH - this also flags legitimate method calls, so no joy unless
@@ -548,11 +551,11 @@ public class GroovyExpressionPreprocessor {
          */
         List<TokenDescriptor> reduced = new ArrayList<>();
         for (int i = 0; i < tokens.size(); i++) {
-            if (tokens.get(i).type == KNOWN_ID && tokens.size() - i >= 4
+            if (tokens.get(i).type == TokenType.KNOWN_ID && tokens.size() - i >= 4
                     && tokens.get(i + 1).token.trim().isEmpty()
                     && tokens.get(i + 2).token.equals("is") && tokens.get(i + 3).token.trim().isEmpty()
-                    && tokens.get(i + 4).type == KNOWLEDGE) {
-                reduced.add(new TokenDescriptor(INFERENCE,
+                    && tokens.get(i + 4).type == TokenType.KNOWLEDGE) {
+                reduced.add(new TokenDescriptor(TokenType.INFERENCE,
                         "_c.cached_is(" + tokens.get(i) + "," + tokens.get(i + 4).encode() + ")"));
                 // new TokenDescriptor(INFERENCE, tokens.get(i) + ".isa(" + tokens.get(i +
                 // 4).translate() + ")"));
@@ -563,7 +566,7 @@ public class GroovyExpressionPreprocessor {
         }
 
         for (TokenDescriptor t : reduced) {
-            ret += t.type == NEWLINE ? "\n" : t.translate();
+            ret += t.type == TokenType.NEWLINE ? "\n" : t.translate();
         }
         return ret;
     }
@@ -572,9 +575,9 @@ public class GroovyExpressionPreprocessor {
 
         TokenDescriptor current = null;
         for (TokenDescriptor t : tokens) {
-            if (t.type == KNOWN_ID) {
+            if (t.type == TokenType.KNOWN_ID) {
                 current = t;
-            } else if (t.type == UNKNOWN_ID) {
+            } else if (t.type == TokenType.UNKNOWN_ID) {
                 if (current != null && t.token.trim().startsWith(".")) {
                     current.methodCall = true;
                     current.method = t.token.trim().substring(1);
@@ -584,8 +587,8 @@ public class GroovyExpressionPreprocessor {
         }
 
         for (TokenDescriptor t : tokens) {
-            if (t.type == KNOWN_ID
-                    || (t.type == UNKNOWN_ID && context != null
+            if (t.type == TokenType.KNOWN_ID
+                    || (t.type == TokenType.UNKNOWN_ID && context != null
                             && context.getIdentifiers().contains(t.token.trim()))) {
                 identifiers.add(t.token.trim());
                 if (t.methodCall) {
@@ -606,7 +609,7 @@ public class GroovyExpressionPreprocessor {
     }
 
     private boolean isRecognized(List<Token> acc) {
-        return classify(join(acc)).type != UNKNOWN_ID;
+        return classify(join(acc)).type != TokenType.UNKNOWN_ID;
     }
 
     private String join(List<Token> group) {
@@ -638,21 +641,21 @@ public class GroovyExpressionPreprocessor {
          * do not know them.
          */
         if (currentToken.equals("unknown")) {
-            return new TokenDescriptor(LITERAL_NULL, currentToken);
+            return new TokenDescriptor(TokenType.LITERAL_NULL, currentToken);
         }
 
         if (currentToken.startsWith(DECLARATION_ID_PREFIX)) {
-            return new TokenDescriptor(KNOWLEDGE, currentToken);
+            return new TokenDescriptor(TokenType.KNOWLEDGE, currentToken);
         }
 
         if ((currentToken.equals("space") && (domains != null && domains.getDimension(Type.SPACE) != null))
                 || (currentToken.equals("time")
                         && (domains != null && domains.getDimension(Type.TIME) != null))) {
-            return new TokenDescriptor(KNOWN_DOMAIN, currentToken);
+            return new TokenDescriptor(TokenType.KNOWN_DOMAIN, currentToken);
         }
 
         if (knownIdentifiers != null && knownIdentifiers.contains(currentToken)) {
-            return new TokenDescriptor(KNOWN_ID, currentToken);
+            return new TokenDescriptor(TokenType.KNOWN_ID, currentToken);
         }
 
         IKnowledge k = null;
@@ -661,46 +664,46 @@ public class GroovyExpressionPreprocessor {
         if (currentToken.contains(":")) {
             if (StringUtils.countOccurrencesOf(currentToken, ":") == 3 && !currentToken.endsWith(":")
                     && !StringUtils.containsWhitespace(currentToken)) {
-                return new TokenDescriptor(URN, currentToken);
+                return new TokenDescriptor(TokenType.URN, currentToken);
             } else if ((k = Concepts.INSTANCE.getConcept(currentToken)) != null) {
-                return new TokenDescriptor(KNOWLEDGE, k.toString());
+                return new TokenDescriptor(TokenType.KNOWLEDGE, k.toString());
             }
         }
 
         if (namespace != null) {
             if (namespace.getSymbolTable().get(currentToken) != null) {
-                return new TokenDescriptor(DEFINE, currentToken);
+                return new TokenDescriptor(TokenType.DEFINE, currentToken);
             }
             if ((k = namespace.getOntology().getConcept(currentToken)) != null) {
-                return new TokenDescriptor(KNOWLEDGE, k.toString());
+                return new TokenDescriptor(TokenType.KNOWLEDGE, k.toString());
             }
             if (!namespace.isProjectKnowledge() && namespace.getProject() != null
                     && namespace.getProject().getUserKnowledge() != null
                     && namespace.getProject().getUserKnowledge().getOntology()
                             .getConcept(currentToken) != null) {
-                return new TokenDescriptor(KNOWLEDGE,
+                return new TokenDescriptor(TokenType.KNOWLEDGE,
                         namespace.getProject().getUserKnowledge().getOntology().getConcept(currentToken)
                                 .toString());
             }
             if ((k = namespace.getOntology().getProperty(currentToken)) != null) {
-                return new TokenDescriptor(KNOWLEDGE, k.toString());
+                return new TokenDescriptor(TokenType.KNOWLEDGE, k.toString());
             }
             if ((o = namespace.getObject(currentToken)) != null) {
-                return new TokenDescriptor(KNOWN_MODEL_OBJECT, o.getName());
+                return new TokenDescriptor(TokenType.KNOWN_MODEL_OBJECT, o.getName());
             }
         }
 
         if (currentToken.contains(".")) {
             if ((o = Resources.INSTANCE.getModelObject(currentToken)) != null) {
-                return new TokenDescriptor(KNOWN_MODEL_OBJECT, o.getName());
+                return new TokenDescriptor(TokenType.KNOWN_MODEL_OBJECT, o.getName());
             }
         }
 
         if (compilerScope != CompilerScope.Contextual && isValidIdentifier(currentToken)) {
-            return new TokenDescriptor(KNOWN_ID, currentToken);
+            return new TokenDescriptor(TokenType.KNOWN_ID, currentToken);
         }
 
-        return new TokenDescriptor(UNKNOWN_ID, currentToken);
+        return new TokenDescriptor(TokenType.UNKNOWN_ID, currentToken);
     }
 
     /*

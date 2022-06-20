@@ -75,13 +75,14 @@ public interface IKlabData {
 		/**
 		 * Add a value to the state being defined by this builder. The state is added in
 		 * the k.LAB natural order for the geometry associated with the builder, i.e.
-		 * starting at an offset of 0 and moving up by 1 at every add.
+		 * starting at an offset of 0 and moving up by 1 at every add. TODO The locator must be
+		 * passed if unit conversions are required; pass a simple offset if not.
 		 * 
 		 * @param value
 		 * @throws IllegalStateException if {@link #startState(String)} has not been
 		 *                               called.
 		 */
-		void add(Object value);
+        void add(Object value/* , ILocator locator */);
 
 		/**
 		 * Add a value to the state being defined by this builder at the passed locator.

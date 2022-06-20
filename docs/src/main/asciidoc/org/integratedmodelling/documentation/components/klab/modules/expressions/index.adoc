@@ -6,8 +6,21 @@ NOTE:: There is currently _no_ validation of expression syntax in the k.IM edito
 
 == Preprocessed syntax
 
-Concept URNs:: concept syntax is preprocessed so that it can be used directly in an expression. For example...
-Dependency names:: the names given to dependent observation (e.g. using a `named` clause in the `observing` section of a model declaration)
+[cols="2,6"]
+|===
+|Variable |Description
+
+|**#(....)**
+|A pair of parentheses prefixed by the pound sign is preprocessed into a function call producing a k.IM observable, and may include units, value operators and more parenthesized forms. 
+|_<namespace>_**:**_<Concept>_
+|All k.IM concept URNs are preprocessed into a function call producing a k.IM concept when they appear outside of an observable form. This form is only recognized if there are no spaces before or after the colon.
+|**unknown**
+|The keyword **unknown** is preprocessed into the **null** value, for uniformity with the k.LAB notion of "no data". 
+|_<dependency>_ **@** _<locator>_
+|When _dependency_ corresponds to the name of a dependent quality (e.g. using a `named` clause in the `observing` section of a model declaration) and the expression is being evaluated value-wise in a scalar context, the **@** operator can be used to intuitively _locate_ the value in different parts of the context. See xref:todo[below] for the types of locator that can be used.
+|_<concept>_ **isa** _<concept>_
+|Applied to concept values to invoke the reasoner and check for subsumption, with some extensions (see xref:todo[below]). Note that Groovy has an **is** operator that checks for object reference equality and cannot be overridden, so it is important to avoid confusion as **is** will only succeed if a concept is incarnated by exactly the same Java object (a better check for strict concept equality is *==*).
+|===
 
 == Predefined variables
 
@@ -16,7 +29,7 @@ Dependency names:: the names given to dependent observation (e.g. using a `named
 |Variable |Description | Context
 
 |**self**
-|Refers to the "natural" target of the computation. According to the context, it may refer to the current value of a quality being computed or to the entire observation being defined. When used in contexts different from a "set <x> to" instruction in a model, it may point to a different object.
+|Refers to the "natural" target of the computation. According to the context, it may refer to the current value of a quality being computed or to the entire observation being defined. When used in contexts different from a "set [_<quality observation>_] to" instruction in a model, it may point to a different object according to implementation.
 |All
 |**context**
 |Refers to the context subject that directly owns the observation being computed. If the computation is a subject resolution, `self == context`.
@@ -28,7 +41,7 @@ Dependency names:: the names given to dependent observation (e.g. using a `named
 |Refers to the current xref:todo[space] of computation. Shortcut for `scale.space`. According to the context, it may be a grid cell, a polygon, a volumetric shape, a line, a point. In scalar context, the overall space can be obtained through `context.scale.space`.
 |Models
 |**time**
-|Refers to the current xref:todo[time] of computation. Shortcut for `scale.time`. Time is always a period, never a point. The current time is seen atomically within this model but may be further subdivided in other models. In scalar context, the overall time can be obtained through `context.scale.time`.
+|Refers to the current xref:todo[time] of computation. Shortcut for `scale.time`. Time is a complex Java object which always incarnates a period, never a point. The current time is seen atomically within this model, with no further subdivisions, but may be further subdivided in other models. In scalar context, the overall time can be obtained through `context.scale.time`.
 |Models
 |**scope**
 |Refers to the xref:todo[contextualization scope], which contains the current state of the computation for the target observation and any other being defined in the context.
@@ -50,7 +63,6 @@ Dependency names:: the names given to dependent observation (e.g. using a `named
 
 === Direct observations
 
-
 == Groovy API for the core types
 
 === General-purpose functions
@@ -59,6 +71,8 @@ data/nodata
 
 
 === Concepts and observables
+
+Note the difference in use of the **is** operator when applied to conceptual values: while in Groovy it is a synonym of reference equality (two object being the same object), in k.IM it is preprocessed into the `is` operator for inferential comparison, invoking the reasoner.
 
 === Observations
 
