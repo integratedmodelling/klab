@@ -63,14 +63,21 @@ public interface IExpression {
         IgnoreContext,
         /**
          * Force scalar usage of all identifiers. Linked to prefixing the expression with # in k.IM.
+         * 
          * @deprecated use the scope for this.
          */
         ForcedScalar,
         /**
          * Translate identifiers like id@ctx into id["ctx"] instead of inserting the
-         * recontextualization hooks for states. This can be limited to
+         * recontextualization hooks for states.
          */
         RecontextualizeAsMap,
+
+        /**
+         * Ignore the recontextualizations done with @. Passed when expressions are compiled as part
+         * of documentation templates, which use @ for internal purposes.
+         */
+        IgnoreRecontextualization,
 
         /**
          * Wrap any observations or extents passed as parameters into their Groovy peers before

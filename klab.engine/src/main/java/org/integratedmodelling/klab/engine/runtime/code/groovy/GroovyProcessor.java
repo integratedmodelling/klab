@@ -146,6 +146,12 @@ public enum GroovyProcessor implements ILanguageProcessor {
 		public Map<String, Set<String>> getMapIdentifiers() {
 			return mapIdentifiers;
 		}
+
+        @Override
+        public Map<String, Object> getVariables() {
+            // TODO Auto-generated method stub
+            return null;
+        }
 	}
 
 	@Override

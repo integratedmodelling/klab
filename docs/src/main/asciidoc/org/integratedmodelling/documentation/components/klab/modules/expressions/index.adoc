@@ -1,8 +1,20 @@
 = Writing expressions in k.IM
 
-The default expression language in k.IM is a superset of the https://groovy-lang.org[Groovy] language, which is interoperable with the underlying Java implementation. Expressions written within square brackets are first preprocessed, then passed to the Groovy interpreter. Expressions can appear in models .... or passed as parameters to functions or other definitions. (examples)
+The default expression language in k.IM is a superset of the https://groovy-lang.org[Groovy] language, which is interoperable with the underlying Java implementation. Expressions written within square brackets are first preprocessed to recognize and translate forms that are specific of k.IM and its semantic underpinnings, then passed to the Groovy interpreter for compilation and execution, with a set of predefined variables giving access to the scope of the observation being made. Expressions in k.IM appear within square brackets, for example in models 
 
-NOTE:: There is currently _no_ validation of expression syntax in the k.IM editor. Also, Groovy syntax is very permissive and besides parenthesis matching and other obvious checks, _ex-ante_ syntax validation is often ineffective in preventing errors. You are responsible for using correct syntax and as the errors resulting from invalid expressions can be difficult to debug, great care should be taken when writing expressions to avoid time-consuming debugging.
+ example 
+
+or as parameters to functions or other definitions. (examples)
+
+ example
+
+Because the square bracket is also a legal Groovy character, and is used to address elements lists (by index) or maps (by key), the closing square bracket must be quoted with a backslash character when used _inside_ an expression:
+
+ example
+
+NOTE:: There is currently _no_ validation of expression syntax in the k.IM editor. Some may become available in the future but it's unlikely to ever catch all the possible errors. Groovy syntax is very permissive and besides parenthesis matching and other obvious checks, _ex-ante_ syntax validation is often ineffective in preventing errors. You are responsible for using correct syntax and as the errors resulting from invalid expressions can be obscure and difficult to debug, great care should be taken when writing expressions to avoid time-consuming debugging.
+
+Disabled Groovy syntax: **is** operator, preprocessed and usable only among semantic objects. Its normal purpose (reference equality) in Groovy is not accessible. Slashy strings are also disabled.
 
 == Preprocessed syntax
 
@@ -11,15 +23,17 @@ NOTE:: There is currently _no_ validation of expression syntax in the k.IM edito
 |Variable |Description
 
 |**#(....)**
-|A pair of parentheses prefixed by the pound sign is preprocessed into a function call producing a k.IM observable, and may include units, value operators and more parenthesized forms. 
+|A pair of parentheses prefixed by the pound sign is preprocessed into a function call producing a k.IM observable, which may include units, semantic and value operators, and more parenthesized forms. 
 |_<namespace>_**:**_<Concept>_
 |All k.IM concept URNs are preprocessed into a function call producing a k.IM concept when they appear outside of an observable form. This form is only recognized if there are no spaces before or after the colon.
 |**unknown**
-|The keyword **unknown** is preprocessed into the **null** value, for uniformity with the k.LAB notion of "no data". 
+|The k.IM keyword **unknown** is syntactic sugar for the **null** value, for uniformity with the k.LAB notion of "no data". 
 |_<dependency>_ **@** _<locator>_
-|When _dependency_ corresponds to the name of a dependent quality (e.g. using a `named` clause in the `observing` section of a model declaration) and the expression is being evaluated value-wise in a scalar context, the **@** operator can be used to intuitively _locate_ the value in different parts of the context. See xref:todo[below] for the types of locator that can be used.
-|_<concept>_ **isa** _<concept>_
-|Applied to concept values to invoke the reasoner and check for subsumption, with some extensions (see xref:todo[below]). Note that Groovy has an **is** operator that checks for object reference equality and cannot be overridden, so it is important to avoid confusion as **is** will only succeed if a concept is incarnated by exactly the same Java object (a better check for strict concept equality is *==*).
+|When _dependency_ corresponds to the name of a dependent quality (e.g. using a `named` clause in the `observing` section of a model declaration) and the expression is being evaluated value-wise in a scalar context, the **@** operator can be used to intuitively _locate_ the value in different parts of the context. See xref:todo[below] for the types of locators that can be used.
+|_<concept>_ (**is**\|**isa**) _<concept>_
+|When applied to concepts and observables, the **is** operator invokes the reasoner and checks for subsumption using logical inference, instead of triggering the default Groovy behavior of checking for object reference equality. In the **isa** form, it also enables extensions to check for trait and role inheritance (see xref:todo[below]). Results of inference are cached in the engine for speed.
+|time **<<** _<n>_, time **>>** _<n>_
+|The Groovy operators **<<** and **>>**, when applied to the *time* variable (see below) or any other variable containing a time extent, will return the _previous_ and _next_ time period according to the scale of contextualization. These can be used for any purpose, including retrieving data from previous (obviously not future) states using the **@** operator. Note that the previous time for the beginning of the contextualized time is the start time itself, and the same holds for the next after the end. The special temporal state _initialization_ is _not_ retrieved by moving the start time backwards: the only way to retrieve the initialization state is by using **time.init**.
 |===
 
 == Predefined variables

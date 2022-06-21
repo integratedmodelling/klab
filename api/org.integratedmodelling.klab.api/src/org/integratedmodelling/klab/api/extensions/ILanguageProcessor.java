@@ -141,6 +141,15 @@ public interface ILanguageProcessor {
          * @return
          */
         Collection<CompilerOption> getOptions();
+
+        /**
+         * Predefined variables that have been inserted in the code and whose value is known at the
+         * time of compilation. Typically translations of k.IM identifiers and URNs into the
+         * correspondent objects.
+         * 
+         * @return
+         */
+        Map<String, Object> getVariables();
     }
 
     /**

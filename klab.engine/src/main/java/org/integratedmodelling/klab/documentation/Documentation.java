@@ -549,7 +549,7 @@ public class Documentation implements IDocumentation {
 			parameters.putAll(scope.variables);
 			// parameters.put("_section", section);
 			IExpression compiled = Extensions.INSTANCE.compileExpression(code, context.getExpressionContext(),
-					Extensions.DEFAULT_EXPRESSION_LANGUAGE, CompilerOption.DoNotPreprocess);
+					Extensions.DEFAULT_EXPRESSION_LANGUAGE, CompilerOption.DoNotPreprocess, CompilerOption.IgnoreRecontextualization);
 			if (compiled != null) {
 				ret = compiled.eval(parameters, context);
 			}

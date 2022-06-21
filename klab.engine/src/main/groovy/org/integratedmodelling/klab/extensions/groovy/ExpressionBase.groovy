@@ -36,12 +36,12 @@ import org.integratedmodelling.klab.utils.Utils
  * @author Ferd
  *
  */
-abstract class ActionBase extends Script {
+abstract class ExpressionBase extends Script {
 
     static inited = false;
     private Random rgen = new Random();
 
-    ActionBase() {
+    ExpressionBase() {
         if (!inited) {
 
             ExpandoMetaClass.enableGlobally();
@@ -63,6 +63,7 @@ abstract class ActionBase extends Script {
 
             // allow 'is' operator to return on categories with nodata
             NullObject.metaClass.isa  = { Object n -> false }
+            NullObject.metaClass.is   = { Object n -> false }
             
             /*
              * enable arithmetics and comparisons with units:
@@ -85,7 +86,7 @@ abstract class ActionBase extends Script {
         }
     }
 
-    ActionBase(Binding binding) {
+    ExpressionBase(Binding binding) {
         
         super(binding)
         ExpandoMetaClass.enableGlobally();
@@ -106,7 +107,7 @@ abstract class ActionBase extends Script {
         NullObject.metaClass.minus = { Object n -> Double.NaN }
         // without this, null concepts are everything
         NullObject.metaClass.isa = { Object n -> false }
-
+        NullObject.metaClass.is  = { Object n -> false }
     }
     
     /**
@@ -204,23 +205,6 @@ abstract class ActionBase extends Script {
         Erf.erfcInv(d);
     }
 
-
-    String getObservationId(IObservation obs) {
-        if (obs instanceof ISubject) {
-            return "subject"
-        }
-        if (obs instanceof IEvent) {
-            return "event"
-        }
-        if (obs instanceof IProcess) {
-            return "process"
-        }
-        if (obs instanceof IRelationship) {
-            return "relationship"
-        }
-        return "nothing";
-    }
-
     def info(String text) {
         Object o = binding.getVariable("_monitor");
         if (o instanceof IMonitor) {
@@ -257,51 +241,6 @@ abstract class ActionBase extends Script {
         throw new KlabException(text);
     }
 
-    static def getArtifact(Binding binding) {
-        Object o = binding.getVariable("_provenance");
-        if (o instanceof IArtifact) {
-            return o;
-        }
-        // TODO return empty provenance - if that is at all possible - so that users can do stuff anyway.
-        return null;
-    }
-
-    /*
-     * window into the knowledge manager
-     * TODO use a wrapper that caches is() operations - also when
-     * passing to script.
-     */
-    Concept _getConcept(String string) {
-        return new Concept(Concepts.c(string), binding);
-    }
-
-    //    KlabUrn _getUrn(String string) {
-    //        return new KlabUrn(string);
-    //    }
-    //
-
-    //    def getScope() {
-    //        return getScope(binding);
-    //    }
-    //
-    //    static def getScope(Binding binding) {
-    //        Object o = binding.getVariable("_provenance");
-    //        if (o instanceof IProvenance.Artifact) {
-    //            return new Artifact(artifact: o, binding: binding);
-    //        }
-    //        // TODO return empty provenance - if that is at all possible - so that users can do stuff anyway.
-    //        return null;
-    //    }
-    //
-    //    static def getArtifact(Binding binding) {
-    //        Object o = binding.getVariable("_provenance");
-    //        if (o instanceof IProvenance.Artifact) {
-    //            return o;
-    //        }
-    //        // TODO return empty provenance - if that is at all possible - so that users can do stuff anyway.
-    //        return null;
-    //    }
-
     /**
      * Used only to break during debugging of k.IM code.
      * @return
@@ -309,29 +248,6 @@ abstract class ActionBase extends Script {
     def breakpoint(Object... args) {
         def ret =  "reached breakpoint with " + (args == null ? " no args " : args);
         println(ret);
-    }
-
-    def propertyMissing(name) {
-        def ctx = null
-        if (binding.hasVariable("_self") && binding.getVariable("_self") instanceof IDirectObservation) {
-            ctx = (IDirectObservation)binding.getVariable("_self");
-        } else if (binding.hasVariable("_c")) {
-            ctx = ((IRuntimeScope)binding.getVariable("_c")).getContextSubject();
-        }
-
-        if (ctx != null) {
-            return resolveFromContext(name, ctx);
-        }
-        null
-    }
-
-    def resolveFromContext(String name, IDirectObservation ctx) {
-        for (IState state : ctx.getStates()) {
-            if (state.getObservable().getName().equals(name)) {
-                return state.aggregate(ctx.getScale(), Utils.getClassForType(state.getObservable().getArtifactType()));
-            }
-        }
-        null
     }
 
     /**
@@ -357,17 +273,4 @@ abstract class ActionBase extends Script {
         return pu.getFirst();
     }
 
-    static def _wrapIfNecessary(Object obj, Binding binding) {
-        //        if (obj instanceof Observation) {
-        //            return obj;
-        //        }
-        //        if (obj instanceof IRelationship) {
-        //            obj = new Relationship(obj, binding);
-        //        } else if (obj instanceof IDirectObservation) {
-        //            obj = new DirectObservation(obj, binding);
-        //        } else if (obj instanceof IState) {
-        //            obj = new State((IState)obj, binding);
-        //        }
-        return obj;
-    }
 }

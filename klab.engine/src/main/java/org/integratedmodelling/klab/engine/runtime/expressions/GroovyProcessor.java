@@ -35,6 +35,7 @@ public enum GroovyProcessor implements ILanguageProcessor {
 		private boolean forcedScalar;
 		private Map<String, Set<String>> mapIdentifiers;
 		private Set<CompilerOption> options;
+		private Map<String, Object> variables;
 		private IExpression.Scope context;
 		
 		GroovyDescriptor(String expression, IExpression.Scope context, CompilerScope scope, CompilerOption... options) {
@@ -61,6 +62,7 @@ public enum GroovyProcessor implements ILanguageProcessor {
 			this.objectIds = processor.getObjectIdentifiers();
 			this.contextualizers = processor.getContextualizers();
 			this.mapIdentifiers = processor.getMapIdentifiers();
+			this.variables = processor.getVariables();
 			this.errors = processor.getErrors();
 			this.forcedScalar = this.options.contains(CompilerOption.ForcedScalar);
 		}
@@ -144,6 +146,11 @@ public enum GroovyProcessor implements ILanguageProcessor {
 		public Map<String, Set<String>> getMapIdentifiers() {
 			return mapIdentifiers;
 		}
+
+        @Override
+        public Map<String, Object> getVariables() {
+            return variables;
+        }
 	}
 
 	@Override

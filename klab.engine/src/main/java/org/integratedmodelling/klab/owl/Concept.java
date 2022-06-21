@@ -35,6 +35,7 @@ import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Observables;
+import org.integratedmodelling.klab.Reasoner;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Roles;
 import org.integratedmodelling.klab.Traits;
@@ -156,6 +157,14 @@ public class Concept extends Knowledge implements IConcept {
         // }
 
         return ret;
+    }
+    
+    public boolean leftShift(ISemantic semantics) {
+        return Reasoner.INSTANCE.is(getType(), semantics);
+    }
+
+    public boolean rightShift(ISemantic semantics) {
+        return Reasoner.INSTANCE.isRelated(getType(), semantics);
     }
 
     @Override

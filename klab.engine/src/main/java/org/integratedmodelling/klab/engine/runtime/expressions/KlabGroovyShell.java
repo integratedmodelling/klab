@@ -17,7 +17,7 @@ import groovy.lang.Script;
 
 public class KlabGroovyShell extends GroovyShell {
 
-	private static final String BASE_ACTION_CLASS = "org.integratedmodelling.klab.extensions.groovy.ActionBase";
+	private static final String BASE_ACTION_CLASS = "org.integratedmodelling.klab.extensions.groovy.ExpressionBase";
 
 	private static CompilerConfiguration getConfiguration() {
 		CompilerConfiguration compilerConfiguration = new CompilerConfiguration();

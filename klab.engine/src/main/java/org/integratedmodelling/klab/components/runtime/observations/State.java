@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import org.integratedmodelling.kim.api.IValueMediator;
+import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Units;
@@ -51,6 +52,8 @@ import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.klab.utils.Utils;
 
+import groovy.lang.GroovyObjectSupport;
+
 /**
  * A state is simply an Observation wrapper for one (or more) {@link IDataArtifact}s.
  * 
@@ -63,6 +66,30 @@ public class State extends Observation implements IState, IKeyHolder {
 
     ValuePresentation valuePresentation = ValuePresentation.VALUE;
     Set<Pair<Long, Long>> timeCoverage;
+
+    /**
+     * This is output by getProxy() which is a proxy for a get() where the locator can be modified
+     * through a << operator in Groovy, returning the state "at" the modified locator. Used to
+     * handle the preprocessed @ operator in expressions.
+     * 
+     * @author Ferd
+     *
+     */
+    public class RelocatedState extends GroovyObjectSupport {
+
+        IScale locator;
+
+        public RelocatedState(IScale locator) {
+            this.locator = locator;
+        }
+
+        /*
+         * this will be called by the 
+         */
+        public Object leftShift(Object locatorModifier) {
+            return get(Extensions.INSTANCE.relocate(locator, locatorModifier));
+        }
+    }
 
     public class StateListener implements Consumer<ILocator> {
 
@@ -101,6 +128,10 @@ public class State extends Observation implements IState, IKeyHolder {
         return new State(observable, scale, context);
     }
 
+    public RelocatedState getProxy(IScale locator) {
+        return new RelocatedState(locator);
+    }
+    
     @Override
     public ValuePresentation getValuePresentation() {
         return this.valuePresentation;
@@ -177,16 +208,16 @@ public class State extends Observation implements IState, IKeyHolder {
         if (dataKey != null && value != null) {
             value = dataKey.include(value);
         }
-        
+
         // help the inspector out
         if (debuggingStatistics != null) {
             if (storage instanceof AbstractAdaptiveStorage) {
                 ((AbstractAdaptiveStorage) storage).setDebuggingStatistics(debuggingStatistics);
             } else if (storage instanceof KeyedStorage) {
-                ((KeyedStorage)storage).getBackend().setDebuggingStatistics(debuggingStatistics);
+                ((KeyedStorage) storage).getBackend().setDebuggingStatistics(debuggingStatistics);
             }
         }
-        
+
         return storage.putObject(value, index);
     }
 
@@ -306,18 +337,18 @@ public class State extends Observation implements IState, IKeyHolder {
     public IState in(String mediator) {
         IValueMediator unit = null;
         if (mediator.contains("@")) {
-           unit = Currency.create(mediator);
+            unit = Currency.create(mediator);
         } else {
             unit = Unit.create(mediator);
         }
         return in(unit);
     }
-    
+
     @Override
     public IState in(IValueMediator mediator) {
         return MediatingState.mediateIfNecessary(this, mediator);
     }
-    
+
     public ISubjectiveState reinterpret(IDirectObservation observer) {
         return new SubjectiveState(this, observer);
     }
@@ -352,7 +383,7 @@ public class State extends Observation implements IState, IKeyHolder {
         }
         throw new KlabUnimplementedException("aggregation of rescaled states is unimplemented - please submit a request");
     }
-    
+
     @Override
     public void fill(Object value) {
         for (ILocator locator : getScale().initialization()) {
@@ -528,7 +559,7 @@ public class State extends Observation implements IState, IKeyHolder {
             System.out.println(slice + "\n" + StringUtil.leftIndent(slice.getRawStatistics().toString(), 3));
         }
     }
-    
+
     public Statistics computeStatistics(Object locator) {
         IStorage<?> stor = this.storage;
         if (stor instanceof KeyedStorage) {
