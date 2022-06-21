@@ -131,7 +131,7 @@ public class StatsService {
     public void handleLogin(GenericUserEvent<HubUserProfile, Session> event) {
         UserEventLogin loginEvent = (UserEventLogin) event;
         HubUserProfile profile = event.getProfile();
-        List<String> groups = profile.getGroupEntries() != null ? profile.getGroupEntries().stream().map(ge -> ge.getGroup().getId()).toList() : null;
+        List<String> groups = profile.getGroupEntries() != null ? profile.getGroupEntries().stream().map(ge -> ge.getGroup().getId()).collect(Collectors.toList()) : null;
 
         UserActivity userActivity = new UserActivity(loginEvent.getProfile().getName(), loginEvent.getProfile().getRoles(), groups,
                 loginEvent.getTime(), loginEvent.getSession() != null ? loginEvent.getSession().getId() : null, loginEvent.isFailed(), loginEvent.getMessage());
