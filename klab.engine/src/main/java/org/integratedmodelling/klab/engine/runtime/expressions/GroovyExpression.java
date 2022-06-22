@@ -146,13 +146,14 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
             // problems).
             if (initialized.get() == null || !initialized.get()) {
                 initialize(new HashMap<>(), new HashMap<>());
-                setupBindings(scope, parameters);
+                setupBindings(scope);
             }
 
             try {
                 Binding binding = script.get().getBinding();
 
                 if (scope != null) {
+
                     if (scope.getScale() != null) {
                         binding.setVariable("scale", scope.getScale());
                     }
@@ -172,7 +173,14 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
                     if (scope.getTargetSemantics() != null) {
                         binding.setVariable("semantics", scope.getTargetSemantics());
                     }
-                    
+
+                    /*
+                     * this will override the vars if necessary. For example it will change the
+                     * scale in local contexts.
+                     */
+                    for (String key : parameters.keySet()) {
+                        binding.setProperty(key, parameters.get(key));
+                    }
                     /*
                      * use the current scope and monitor
                      */
@@ -212,7 +220,7 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
      * @param scope
      * @param parameters
      */
-    private void setupBindings(IContextualizationScope scope, IParameters<String> parameters) {
+    private void setupBindings(IContextualizationScope scope) {
 
         Binding bindings = new Binding();
 
@@ -225,10 +233,6 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
             }
         }
 
-        for (String key : parameters.keySet()) {
-            bindings.setProperty(key, parameters.get(key));
-        }
-        
         if (scope != null) {
             bindings.setVariable("provenance", scope.getProvenance());
             bindings.setVariable("structure", ((IRuntimeScope) scope).getStructure());
@@ -252,7 +256,7 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
         if (this.preprocessed != null) {
             return this.preprocessed;
         }
-        
+
         GroovyExpressionPreprocessor processor = new GroovyExpressionPreprocessor(namespace,
                 runtimeContext.getExpressionContext(), new HashSet<>());
         this.preprocessed = processor.process(code);

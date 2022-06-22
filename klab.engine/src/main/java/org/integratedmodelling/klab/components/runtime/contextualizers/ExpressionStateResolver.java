@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.extensions.ILanguageExpression;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -31,15 +32,19 @@ public class ExpressionStateResolver extends AbstractContextualizer implements I
     }
 
     @Override
-    public Object resolve(IObservable semantics, IContextualizationScope context) throws KlabException {
+    public Object resolve(IObservable semantics, IContextualizationScope context, ILocator locator) throws KlabException {
 
+        if (additionalParameters == null) {
+            additionalParameters = new HashMap<>();
+        }
+
+        // override the context's scale
+        additionalParameters.put("scale", locator);
+        
         // if these exist, they are necessarily overridden every time.
         if (!context.getVariables().isEmpty()) {
             variables.clear();
             variables.putAll(context);
-            if (additionalParameters == null) {
-                additionalParameters = new HashMap<>();
-            }
             // override with interactive parameters
             variables.putAll(additionalParameters);
             for (String key : context.getVariables().keySet()) {
