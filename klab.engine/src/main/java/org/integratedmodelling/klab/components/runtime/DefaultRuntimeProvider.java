@@ -416,11 +416,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
              */
             StreamSupport.stream(((Scale) scale).spliterator(context.getMonitor()), true).forEach((state) -> {
                 if (!context.getMonitor().isInterrupted()) {
-                    Object value = resolver.resolve(target.getObservable(),
-                            /* variables.isEmpty() ? ctx.withCoverage(state)
-                                                             : */localizeContext(ctx, state, self/*,
-                                                             variables*/)
-                                                            );
+                    Object value = resolver.resolve(target.getObservable(), ctx, state);
                     target.set(state, value);
                 }
             });
@@ -434,8 +430,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
                 if (context.getMonitor().isInterrupted()) {
                     break;
                 }
-                Object value = resolver.resolve(target.getObservable(),/*
-                        variables.isEmpty() ?ctx : */ localizeContext(ctx, (IScale) state, self/*, variables*/));
+                Object value = resolver.resolve(target.getObservable(), ctx, state);
                 // triggers
                 if (triggers != null && target instanceof State) {
                     long timeId = ((Time) ctx.getScale().getTime()).getNumericLocator();
@@ -464,37 +459,37 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
         return data;
     }
 
-    private IContextualizationScope localizeContext(RuntimeScope context, IScale state,
-            IArtifact self/*
-                           * , Collection<Pair<String, IDataArtifact>> variables
-                           */) {
-
-        /*
-         * this may not be the same layer we're producing but reflects the current value for the
-         * computation.
-         */
-//        IArtifact targetArtifact = self == null ? context.getTargetArtifact() : self;
-//        if (targetArtifact instanceof IDataArtifact) {
-//            // this ensures that Groovy expressions are computable
-//            Object value = ((IDataArtifact) targetArtifact).get(state);
-//            if (value == null && targetArtifact.getType() == IArtifact.Type.NUMBER) {
-//                value = Double.NaN;
-//            }
-//            context.set("self", targetArtifact);
-//        }
+//    private IContextualizationScope localizeContext(RuntimeScope context, IScale state,
+//            IArtifact self/*
+//                           * , Collection<Pair<String, IDataArtifact>> variables
+//                           */) {
 //
-//        for (Pair<String, IDataArtifact> variable : variables) {
-//            // this ensures that Groovy expressions are computable
-//            Object value = variable.getSecond().get(state);
-//            if (value == null && variable.getSecond().getType() == IArtifact.Type.NUMBER) {
-//                value = Double.NaN;
-//            }
-//            context.set(variable.getFirst(), variable.getSecond());
-//        }
-
-        context.setScale(state);
-        return context;
-    }
+//        /*
+//         * this may not be the same layer we're producing but reflects the current value for the
+//         * computation.
+//         */
+////        IArtifact targetArtifact = self == null ? context.getTargetArtifact() : self;
+////        if (targetArtifact instanceof IDataArtifact) {
+////            // this ensures that Groovy expressions are computable
+////            Object value = ((IDataArtifact) targetArtifact).get(state);
+////            if (value == null && targetArtifact.getType() == IArtifact.Type.NUMBER) {
+////                value = Double.NaN;
+////            }
+////            context.set("self", targetArtifact);
+////        }
+////
+////        for (Pair<String, IDataArtifact> variable : variables) {
+////            // this ensures that Groovy expressions are computable
+////            Object value = variable.getSecond().get(state);
+////            if (value == null && variable.getSecond().getType() == IArtifact.Type.NUMBER) {
+////                value = Double.NaN;
+////            }
+////            context.set(variable.getFirst(), variable.getSecond());
+////        }
+//
+//        context.setScale(state);
+//        return context;
+//    }
 
     @Override
     public IObservation createEmptyObservation(IObservable observable, IContextualizationScope context) {

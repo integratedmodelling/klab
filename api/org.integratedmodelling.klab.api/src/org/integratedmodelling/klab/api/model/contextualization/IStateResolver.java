@@ -13,6 +13,7 @@
  */
 package org.integratedmodelling.klab.api.model.contextualization;
 
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -26,15 +27,15 @@ import org.integratedmodelling.klab.exceptions.KlabException;
  */
 public interface IStateResolver extends IContextualizer {
 
-  /**
-   * Return the individual value at the locator identified by the context's geometry. This will be
-   * called for as many times as there are subdivisions in the scale.
-   *
-   * @param observable the semantics for what is being computed and returned
-   * @param context the computation context, located at the specific state
-   * @return the computed value at the locator
-   * @throws org.integratedmodelling.klab.exceptions.KlabException
-   */
-  Object resolve(IObservable observable, IContextualizationScope scope) throws KlabException;
+    /**
+     * Return the individual value at a locator relative to the context's geometry. This will be
+     * called for as many times as there are subdivisions in the scale.
+     *
+     * @param observable the semantics for what is being computed and returned
+     * @param context the computation context, with locally named observations in its keyed values
+     * @return the computed value at the locator
+     * @throws org.integratedmodelling.klab.exceptions.KlabException
+     */
+    Object resolve(IObservable observable, IContextualizationScope scope, ILocator locator) throws KlabException;
 
 }
