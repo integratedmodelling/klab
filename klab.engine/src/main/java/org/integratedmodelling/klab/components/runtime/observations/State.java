@@ -66,6 +66,7 @@ public class State extends Observation implements IState, IKeyHolder {
 
     ValuePresentation valuePresentation = ValuePresentation.VALUE;
     Set<Pair<Long, Long>> timeCoverage;
+    boolean numeric = false;
 
     /**
      * This is output by getProxy() which is a proxy for a get() where the locator can be modified
@@ -149,6 +150,7 @@ public class State extends Observation implements IState, IKeyHolder {
     public State(Observable observable, Scale scale, IRuntimeScope context, IDataStorage<?> data) {
         super(observable, scale, context);
         this.storage = data;
+        this.numeric = observable.getArtifactType() == IArtifact.Type.NUMBER;
         if (data != null) {
             // can be null in some special-purpose mergers
             data.addContextualizationListener(new StateListener());
@@ -193,7 +195,8 @@ public class State extends Observation implements IState, IKeyHolder {
     }
 
     public Object get(ILocator index) {
-        return storage.get(index);
+        Object ret = storage.get(index);
+        return ret == null && numeric ? Double.NaN : ret;
     }
 
     public long set(ILocator index, Object value) {
