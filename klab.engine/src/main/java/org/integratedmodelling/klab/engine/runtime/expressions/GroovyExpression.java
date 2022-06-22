@@ -172,7 +172,7 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
                     if (scope.getTargetSemantics() != null) {
                         binding.setVariable("semantics", scope.getTargetSemantics());
                     }
-
+                    
                     /*
                      * use the current scope and monitor
                      */
@@ -225,6 +225,10 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
             }
         }
 
+        for (String key : parameters.keySet()) {
+            bindings.setProperty(key, parameters.get(key));
+        }
+        
         if (scope != null) {
             bindings.setVariable("provenance", scope.getProvenance());
             bindings.setVariable("structure", ((IRuntimeScope) scope).getStructure());

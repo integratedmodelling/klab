@@ -98,8 +98,9 @@ public enum Reasoner implements IReasonerService {
             return true;
         }
         try {
-            return reasonerCache.get((c1 instanceof Concept ? ((Concept) c1).getConcept().toString() : c1.toString()) + ";"
-                    + (c2 instanceof Concept ? ((Concept) c2).getConcept().toString() : c2.toString()));
+            return reasonerCache.get(/*(c1 instanceof Concept ? ((Concept) c1).getConcept().toString() : */c1.toString()/*)*/ + ";"
+                    + /* (c2 instanceof Concept ? ((Concept) c2).getConcept().toString() : */ c2
+                            .toString()/* ) */);
         } catch (ExecutionException e) {
             return false;
         }
@@ -110,8 +111,12 @@ public enum Reasoner implements IReasonerService {
             return false;
         }
         try {
-            return relatedReasonerCache.get((c1 instanceof Concept ? ((Concept) c1).getConcept().toString() : c1.toString()) + ";"
-                    + (c2 instanceof Concept ? ((Concept) c2).getConcept().toString() : c2.toString()));
+            return relatedReasonerCache
+                    .get(/* (c1 instanceof Concept ? ((Concept) c1).getConcept().toString() : */c1.toString()
+                            /* ) */ + ";"
+                            + /*
+                               * (c2 instanceof Concept ? ((Concept) c2).getConcept().toString() :
+                               */ c2.toString()/* ) */);
         } catch (ExecutionException e) {
             return false;
         }

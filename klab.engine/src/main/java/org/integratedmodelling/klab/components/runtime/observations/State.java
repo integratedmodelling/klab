@@ -463,12 +463,12 @@ public class State extends Observation implements IState, IKeyHolder {
             return ret;
         }
 
-        /*
-         * FIXME this really shouldn't be necessary
-         */
-        if (state instanceof org.integratedmodelling.klab.extensions.groovy.model.Concept) {
-            state = (IConcept) ((org.integratedmodelling.klab.extensions.groovy.model.Concept) state).getConcept();
-        }
+//        /*
+//         * FIXME this really shouldn't be necessary
+//         */
+//        if (state instanceof org.integratedmodelling.klab.extensions.groovy.model.Concept) {
+//            state = (IConcept) ((org.integratedmodelling.klab.extensions.groovy.model.Concept) state).getConcept();
+//        }
 
         for (ILocator loc : (locator == null ? getScale() : getScale().at(locator))) {
 

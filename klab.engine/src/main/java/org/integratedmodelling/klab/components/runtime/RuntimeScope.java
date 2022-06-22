@@ -260,10 +260,20 @@ public class RuntimeScope extends AbstractRuntimeScope {
         return ret;
     }
 
+    /**
+     * Creates a localized context with the passed ephemeral variables plus all the data artifacts
+     * in the value map, indexed by their local name.
+     * 
+     * @param scope
+     * @param variables
+     */
     RuntimeScope(RuntimeScope scope, Map<String, IVariable> variables) {
         this(scope);
         this.model = scope.model;
         this.getVariables().putAll(variables);
+        for (Pair<String, IDataArtifact> state : getArtifacts(IDataArtifact.class)) {
+            this.put(state.getFirst(), state.getSecond());
+        }
     }
 
     RuntimeScope(RuntimeScope context) {
@@ -969,7 +979,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
         ret.contextData = new HashMap<>();
         ret.relationshipSource = this.relationshipSource;
         ret.relationshipTarget = this.relationshipTarget;
-        
+
         for (IActuator a : actuator.getActuators()) {
             if (!((Actuator) a).isExported()) {
                 String id = a.getAlias() == null ? a.getName() : a.getAlias();
@@ -2212,8 +2222,12 @@ public class RuntimeScope extends AbstractRuntimeScope {
             return true;
         }
         try {
-            return reasonerCache.get((c1 instanceof Concept ? ((Concept) c1).getConcept().toString() : c1.toString()) + ";"
-                    + (c2 instanceof Concept ? ((Concept) c2).getConcept().toString() : c2.toString()));
+            return reasonerCache
+                    .get(/* (c1 instanceof Concept ? ((Concept) c1).getConcept().toString() : */c1.toString()
+                            /* ) */ + ";"
+                            + /*
+                               * (c2 instanceof Concept ? ((Concept) c2).getConcept().toString() :
+                               */ c2.toString()/* ) */);
         } catch (ExecutionException e) {
             return false;
         }
@@ -2224,8 +2238,12 @@ public class RuntimeScope extends AbstractRuntimeScope {
             return false;
         }
         try {
-            return relatedReasonerCache.get((c1 instanceof Concept ? ((Concept) c1).getConcept().toString() : c1.toString()) + ";"
-                    + (c2 instanceof Concept ? ((Concept) c2).getConcept().toString() : c2.toString()));
+            return relatedReasonerCache
+                    .get(/* (c1 instanceof Concept ? ((Concept) c1).getConcept().toString() : */c1.toString()
+                            /* ) */ + ";"
+                            + /*
+                               * (c2 instanceof Concept ? ((Concept) c2).getConcept().toString() :
+                               */c2.toString())/* ) */;
         } catch (ExecutionException e) {
             return false;
         }
@@ -2322,7 +2340,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
 
         if (state != null) {
             if (state.getObservable().getMediator() != null) {
-                return MediatingState.mediateIfNecessary(state, unit); 
+                return MediatingState.mediateIfNecessary(state, unit);
             } else {
                 return state;
             }

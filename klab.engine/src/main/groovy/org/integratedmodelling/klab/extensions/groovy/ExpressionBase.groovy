@@ -62,8 +62,8 @@ abstract class ExpressionBase extends Script {
             NullObject.metaClass.minus = { Object n -> Double.NaN }
 
             // allow 'is' operator to return on categories with nodata
-            NullObject.metaClass.isa  = { Object n -> false }
-            NullObject.metaClass.is   = { Object n -> false }
+            NullObject.metaClass.leftShift = { Object n -> null }
+            NullObject.metaClass.rightShift = { Object n -> null }
             
             /*
              * enable arithmetics and comparisons with units:
@@ -106,8 +106,9 @@ abstract class ExpressionBase extends Script {
         NullObject.metaClass.plus = { Object n -> Double.NaN }
         NullObject.metaClass.minus = { Object n -> Double.NaN }
         // without this, null concepts are everything
-        NullObject.metaClass.isa = { Object n -> false }
-        NullObject.metaClass.is  = { Object n -> false }
+        NullObject.metaClass.leftShift = { Object n -> null }
+        NullObject.metaClass.rightShift = { Object n -> null }
+
     }
     
     /**
