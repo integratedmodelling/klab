@@ -25,15 +25,15 @@ Disabled Groovy syntax: **is** operator, preprocessed and usable only among sema
 |**#(....)**
 |A pair of parentheses prefixed by the pound sign is preprocessed into a function call producing a k.IM observable, which may include units, semantic and value operators, and more parenthesized forms. 
 |_<namespace>_**:**_<Concept>_
-|All k.IM concept URNs are preprocessed into a function call producing a k.IM concept when they appear outside of an observable form. This form is only recognized if there are no spaces before or after the colon.
+|All k.IM concept URNs are preprocessed into a function call producing a k.IM concept when they appear outside of an observable form. This form is only recognized if there are no spaces before or after the colon. Non-existent concepts will parse into owl:Nothing and cause a "concept unknown" error at validation.
 |**unknown**
-|The k.IM keyword **unknown** is syntactic sugar for the **null** value, for uniformity with the k.LAB notion of "no data". 
+|The k.IM keyword **unknown** is syntactic sugar for the **null** value, consistent with the k.IM semantic equivalent of "no data". 
 |_<dependency>_ **@** _<locator>_
 |When _dependency_ corresponds to the name of a dependent quality (e.g. using a `named` clause in the `observing` section of a model declaration) and the expression is being evaluated value-wise in a scalar context, the **@** operator can be used to intuitively _locate_ the value in different parts of the context. See xref:todo[below] for the types of locators that can be used.
 |_<concept>_ (**is**\|**isa**) _<concept>_
-|When applied to concepts and observables, the **is** operator invokes the reasoner and checks for subsumption using logical inference, instead of triggering the default Groovy behavior of checking for object reference equality. In the **isa** form, it also enables extensions to check for trait and role inheritance (see xref:todo[below]). Results of inference are cached in the engine for speed.
+|When applied to concepts and observables, the **is** operator invokes the reasoner and checks for subsumption using logical inference, instead of triggering the default Groovy behavior of checking for object reference equality. In the **isa** form, it also enables extensions to check for trait, role and domain inheritance (see xref:todo[below]). Results of inference are cached in the engine for speed.
 |time **<<** _<n>_, time **>>** _<n>_
-|The Groovy operators **<<** and **>>**, when applied to the *time* variable (see below) or any other variable containing a time extent, will return the _previous_ and _next_ time period according to the scale of contextualization. These can be used for any purpose, including retrieving data from previous (obviously not future) states using the **@** operator. Note that the previous time for the beginning of the contextualized time is the start time itself, and the same holds for the next after the end. The special temporal state _initialization_ is _not_ retrieved by moving the start time backwards: the only way to retrieve the initialization state is by using **time.init**.
+|The Groovy operators **<<** and **>>**, when applied to the *time* variable (see below) or any other variable containing a time extent, will return the _previous_ and _next_ time period according to the scale of contextualization, assuming the time is a sub-period of the contextualization span. These can be used for any purpose, including retrieving data from previous (obviously not future) states using the **@** operator. Note that the previous time for the beginning of the contextualized time and the next after the end are null. The special temporal state _initialization_ is _not_ retrieved by moving the start time backwards: the way to retrieve the initialization state is by using **context.time.init** or **scope.time.init**. The first physical time extent is **context.time.earliest**; the last is **context.time.latest**. The result of **time.start** and **time.end** are not time extents, but time instants; the end points to the end of the period _exclusive_ of the instant represented, and may be null in "infinite" temporal contexts.
 |===
 
 == Predefined variables
@@ -43,7 +43,7 @@ Disabled Groovy syntax: **is** operator, preprocessed and usable only among sema
 |Variable |Description | Context
 
 |**self**
-|Refers to the "natural" target of the computation. According to the context, it may refer to the current value of a quality being computed or to the entire observation being defined. When used in contexts different from a "set [_<quality observation>_] to" instruction in a model, it may point to a different object according to implementation.
+|Refers to the "natural" target of the computation. According to the context, it may refer to the current value of a quality being computed or to the entire observation being defined, corresponding to the primary observable of a model. When used in contexts different from a "set [_<quality observation>_] to" instruction in a model, **self** may point to a different object, according to implementation. Such cases are documented individually.
 |All
 |**context**
 |Refers to the context subject that directly owns the observation being computed. If the computation is a subject resolution, `self == context`.
