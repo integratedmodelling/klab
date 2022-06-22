@@ -160,7 +160,7 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
                     if (scope.getScale() != null && scope.getScale().getSpace() != null) {
                         binding.setVariable("space", scope.getScale().getSpace());
                     }
-                    
+
                     if (scope.getScale() != null && scope.getScale().getTime() != null) {
                         binding.setVariable("time", scope.getScale().getTime());
                     }
@@ -248,17 +248,9 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
         if (this.preprocessed != null) {
             return this.preprocessed;
         }
-
-        Set<String> knownKeys = new HashSet<>();
-        if (inputs != null) {
-            knownKeys.addAll(inputs.keySet());
-        }
-        if (outputs != null) {
-            knownKeys.addAll(outputs.keySet());
-        }
-
-        GroovyExpressionPreprocessor processor = new GroovyExpressionPreprocessor(namespace, knownKeys, domain,
-                runtimeContext.getExpressionContext(), CompilerScope.Contextual, new HashSet<>());
+        
+        GroovyExpressionPreprocessor processor = new GroovyExpressionPreprocessor(namespace,
+                runtimeContext.getExpressionContext(), new HashSet<>());
         this.preprocessed = processor.process(code);
         this.errors.addAll(processor.getErrors());
         this.variables = processor.getVariables();

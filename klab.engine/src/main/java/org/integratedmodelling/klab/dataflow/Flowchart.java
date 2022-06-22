@@ -35,6 +35,7 @@ import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.API.PUBLIC.Export;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Attribute;
+import org.integratedmodelling.klab.api.data.general.IExpression.CompilerScope;
 import org.integratedmodelling.klab.api.data.general.IExpression.Scope;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -971,6 +972,11 @@ public class Flowchart {
 				// TODO Auto-generated method stub
 
 			}
+
+            @Override
+            public CompilerScope getCompilerScope() {
+                return CompilerScope.Contextual;
+            }
 
 		});
 

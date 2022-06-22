@@ -105,7 +105,7 @@ import org.integratedmodelling.klab.engine.runtime.SessionState;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
-import org.integratedmodelling.klab.engine.runtime.code.ExpressionContext;
+import org.integratedmodelling.klab.engine.runtime.code.ExpressionScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -1741,7 +1741,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
 
     @Override
     public Scope getExpressionContext() {
-        return ExpressionContext.create(this);
+        return ExpressionScope.create(this);
     }
 
     @Override

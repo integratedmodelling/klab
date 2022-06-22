@@ -606,6 +606,42 @@ public class Time extends Extent implements ITime {
         return step;
     }
 
+    /**
+     * For Groovy expressions: time << n
+     * 
+     * @param n
+     * @return
+     */
+    public Time leftShift(int n) {
+        return getPrevious(n);
+    }
+
+    public Time rightShift(int n) {
+        return getNext(n);
+    }
+
+    public Time getNext(int n) {
+        if (parentExtent != null && this.locatedLinearOffset > 0) {
+            return (this.locatedLinearOffset + n) < parentExtent.size()
+                    ? (Time) parentExtent.getExtent(this.locatedLinearOffset + n)
+                    : null;
+        }
+        return null;
+    }
+
+    public Time getInit() {
+        return (Time)getExtent(0);
+    }
+    
+    public Time getPrevious(int n) {
+        if (parentExtent != null && this.locatedLinearOffset > 1) {
+            return (this.locatedLinearOffset - n) >= 1 
+                    ? (Time) parentExtent.getExtent(this.locatedLinearOffset - n)
+                    : null;
+        }
+        return null;
+    }
+
     @Override
     public ITime getExtent(long stateIndex) {
 

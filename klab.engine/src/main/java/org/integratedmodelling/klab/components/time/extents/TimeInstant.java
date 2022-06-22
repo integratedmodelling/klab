@@ -18,13 +18,15 @@ import org.joda.time.Weeks;
 import org.joda.time.Years;
 import org.joda.time.format.DateTimeFormat;
 
+import groovy.lang.GroovyObjectSupport;
+
 /**
  * TODO switch to Java8 dates
  * 
  * @author Ferd
  *
  */
-public class TimeInstant implements ITimeInstant {
+public class TimeInstant extends GroovyObjectSupport implements ITimeInstant {
 
     DateTime time;
 

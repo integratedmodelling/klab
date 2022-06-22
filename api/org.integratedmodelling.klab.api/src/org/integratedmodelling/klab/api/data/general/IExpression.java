@@ -158,6 +158,14 @@ public interface IExpression {
          * @return
          */
         IMonitor getMonitor();
+
+        /**
+         * The type of compilation we desire. This should automatically be set to Contextual if a
+         * contextualization scope is passed.
+         * 
+         * @return
+         */
+        CompilerScope getCompilerScope();
     }
 
     /**

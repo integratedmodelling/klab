@@ -12,6 +12,8 @@ import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.common.LogicalConnector;
 
+import groovy.lang.GroovyObjectSupport;
+
 /**
  * Common superclass for all Extents.
  * 
@@ -27,7 +29,7 @@ import org.integratedmodelling.klab.common.LogicalConnector;
  * @author Ferd
  *
  */
-public abstract class AbstractExtent implements IExtent {
+public abstract class AbstractExtent extends GroovyObjectSupport implements IExtent {
 
 	protected static class SelfIterator implements Iterator<ILocator> {
 

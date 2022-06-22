@@ -36,23 +36,20 @@ import java.util.regex.Pattern;
 
 import org.codehaus.groovy.antlr.parser.GroovyLexer;
 import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Namespaces;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IGeometry;
-import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
 import org.integratedmodelling.klab.api.data.general.IExpression.CompilerScope;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IKnowledge;
-import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.INamespace;
-import org.integratedmodelling.klab.common.Geometry;
-import org.integratedmodelling.klab.documentation.Documentation;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.owl.OWL;
 import org.springframework.util.StringUtils;
@@ -86,14 +83,14 @@ import groovyjarjarantlr.TokenStreamException;
  */
 public class GroovyExpressionPreprocessor {
 
-    private IGeometry domains;
+    // private IGeometry domains;
     private INamespace namespace;
-    private Set<String> knownIdentifiers;
-    private Geometry inferredGeometry;
+    // private Set<String> knownIdentifiers;
+    // private Geometry inferredGeometry;
     Pattern extKnowledge = Pattern.compile("[a-z|\\.]+:[A-Za-z][A-Za-z0-9]*");
 
     final private static String opchars = "{}[]()+-*/%^&|<>~?:='\"";
-    
+
     static class Lexer extends GroovyLexer {
 
         int previous = -1;
@@ -125,7 +122,7 @@ public class GroovyExpressionPreprocessor {
         delimiters.add(":");
         delimiters.add(".");
         delimiters.add("-");
-        
+
         locators = new HashSet<>();
         locators.add("n");
         locators.add("ne");
@@ -148,8 +145,7 @@ public class GroovyExpressionPreprocessor {
     private Set<String> objectIds = new HashSet<>();
     private Set<String> scalarIds = new HashSet<>();
     private Set<String> contextualizers = new HashSet<>();
-    IExpression.Scope context;
-    private CompilerScope compilerScope;
+    IExpression.Scope expressionScope;
     private boolean recontextualizeAsMap;
     /*
      * if recontextualizeAsMap is passed, identifiers like id@ctx are translated as id["ctx"] and
@@ -157,7 +153,7 @@ public class GroovyExpressionPreprocessor {
      */
     private Map<String, Set<String>> mapIdentifiers = new HashMap<>();
     private boolean ignoreContext;
-    private boolean ignored;
+    private boolean doNotProcess;
 
     enum TokenType {
         KNOWLEDGE, DEFINE, KNOWN_ID, UNKNOWN_ID, URN, LITERAL_NULL, RECONTEXTUALIZATION, KNOWN_MODEL_OBJECT, NEWLINE, INFERENCE, WHITESPACE
@@ -167,6 +163,7 @@ public class GroovyExpressionPreprocessor {
 
     private BiMap<String, Object> inherentVariables = HashBiMap.create();
     private Pattern conceptPattern = Pattern.compile(CONCEPT_PATTERN);
+    private boolean ignoreRecontextualization = false;
 
     /*
      * ONLY for debugging! Remove at production
@@ -174,19 +171,14 @@ public class GroovyExpressionPreprocessor {
     public GroovyExpressionPreprocessor() {
     }
 
-    public GroovyExpressionPreprocessor(INamespace currentNamespace, Set<String> knownIdentifiers, IGeometry geometry,
-            IExpression.Scope context, CompilerScope scope, Set<CompilerOption> options) {
-        this.domains = geometry;
+    public GroovyExpressionPreprocessor(INamespace currentNamespace, IExpression.Scope expressionScope,
+            Set<CompilerOption> options) {
         this.namespace = currentNamespace;
-        this.knownIdentifiers = knownIdentifiers;
-        this.context = context;
+        this.expressionScope = expressionScope;
         this.recontextualizeAsMap = options.contains(CompilerOption.RecontextualizeAsMap);
         this.ignoreContext = options.contains(CompilerOption.IgnoreContext);
-        this.ignored = options.contains(CompilerOption.DoNotPreprocess);
-    }
-
-    public Geometry getInferredGeometry() {
-        return inferredGeometry;
+        this.doNotProcess = options.contains(CompilerOption.DoNotPreprocess);
+        this.ignoreRecontextualization = options.contains(CompilerOption.IgnoreRecontextualization);
     }
 
     /**
@@ -211,6 +203,8 @@ public class GroovyExpressionPreprocessor {
 
         TokenType type;
         String token;
+        int tokenIndex;
+        List<TokenDescriptor> tokens;
 
         // method in the next token - set by analyze(), used to check usage before
         // translation
@@ -225,36 +219,32 @@ public class GroovyExpressionPreprocessor {
             }
         }
 
-        public String translate() {
-            return translate(context);
-        }
-
         public String toString() {
-            return this.token;
+            return this.type + ": " + this.token + (this.methodCall ? " (method)" : "");
         }
 
-        /**
-         * Return the literal token value: only used for knowledge for now, so it should be either
-         * an identifier (left alone) or a string (wrapped in quotation marks).
-         */
-        public String encode() {
+        public String translate(int index, List<TokenDescriptor> tokens) {
+
             String ret = token;
-            switch(type) {
-            case KNOWLEDGE:
-            case URN:
-            case KNOWN_MODEL_OBJECT:
-                ret = "\"" + token + "\"";
-                break;
-            case LITERAL_NULL:
-                ret = "null";
-                break;
+
+            // next significant token
+            int next = index + 1;
+            TokenDescriptor nextToken = null;
+            while(next < tokens.size()) {
+                if (tokens.get(next).type != TokenType.WHITESPACE && tokens.get(next).type != TokenType.NEWLINE) {
+                    nextToken = tokens.get(next);
+                    break;
+                }
+                next++;
             }
-            return ret;
-        }
 
-        public String translate(IExpression.Scope context) {
-            String ret = token;
             switch(type) {
+            case RECONTEXTUALIZATION:
+                if (nextToken != null && locators.contains(nextToken.token)) {
+                    nextToken.token = "\"" + nextToken.token + "\"";
+                }
+                ret = "<<";
+                break;
             case INFERENCE:
                 ret = "is".equals(ret) ? "<<" : ">>";
                 break;
@@ -265,12 +255,20 @@ public class GroovyExpressionPreprocessor {
                 ret = translateDefine(ret);
                 break;
             case KNOWN_ID:
-                // if we are translating for a quality context and the var is used with scalar
-                // semantics, we just output the var name
-                IKimConcept.Type type = getIdentifierType(ret, context);
-                boolean canBeScalar = (type == IKimConcept.Type.QUALITY || type == IKimConcept.Type.TRAIT
-                        || type == IKimConcept.Type.CLASS) || compilerScope != CompilerScope.Contextual;
-                ret = translateParameter(ret, canBeScalar && scalarIds.contains(ret) && !this.methodCall);
+                IKimConcept.Type type = getIdentifierType(ret);
+                if (expressionScope.getCompilerScope() == CompilerScope.Contextual && type == Type.QUALITY) {
+                    if (nextToken != null && nextToken.type == TokenType.RECONTEXTUALIZATION) {
+                        ret = token + ".getProxy(scale)";
+                    } else {
+                        ret = token + ".get(scale)";
+                    }
+                } else if (type != null) {
+                    // output the ref to the observation
+                    ret = token;
+                } else {
+                    // just the variable
+                    ret = token;
+                }
                 break;
             case URN:
                 ret = translateUrn(ret);
@@ -281,14 +279,15 @@ public class GroovyExpressionPreprocessor {
             case LITERAL_NULL:
                 ret = "null";
                 break;
-            case UNKNOWN_ID:
-                // TODO see if we need anything
+            default:
+                // just add the literal content to the expression
+                break;
             }
             return ret;
         }
     }
 
-    List<TokenDescriptor> tokenize(String code) {
+    private List<TokenDescriptor> tokenize(String code) {
 
         List<TokenDescriptor> ret = new ArrayList<>();
 
@@ -378,7 +377,7 @@ public class GroovyExpressionPreprocessor {
         code = preprocessDeclarations(code);
         // ...then the remaining concepts outside of observable declarations
         code = preprocessConcepts(code);
-//        code = preprocessContextualizations(code);
+        // code = preprocessContextualizations(code);
 
         return code;
     }
@@ -387,7 +386,7 @@ public class GroovyExpressionPreprocessor {
 
         code = preprocess(code);
 
-        if (this.ignored) {
+        if (this.doNotProcess) {
             return code;
         }
 
@@ -405,7 +404,7 @@ public class GroovyExpressionPreprocessor {
 
         System.out.println("PREPROCESSED: " + code);
 
-        if (this.ignored) {
+        if (this.doNotProcess) {
             return code;
         }
 
@@ -423,7 +422,6 @@ public class GroovyExpressionPreprocessor {
 
         StringBuffer ret = new StringBuffer(code.length());
         int level = -1;
-        int ndecl = 0;
         for (int i = 0; i < code.length(); i++) {
             char c = code.charAt(i);
             StringBuffer declaration = new StringBuffer(code.length());
@@ -484,90 +482,16 @@ public class GroovyExpressionPreprocessor {
 
     }
 
-//    private String preprocessContextualizations(String code) {
-//
-//        /*
-//         * HACK -- if the expression comes from the doc template compiler, we just ignore any @
-//         * because they're probably directives. Properly parsing these means building a full parser
-//         * just for preprocessing, which is not something we have manpower to do at the moment.
-//         */
-//        if (code.contains(Documentation.COMMENT_TEXT)) {
-//            return code;
-//        }
-//
-//        /*
-//         * tokenize into op- or whitespace-separated tokens; record any two tokens separated by
-//         * one @, substitute with a contextualize call
-//         */
-//        List<String> tokens = new ArrayList<>();
-//        StringBuffer token = new StringBuffer(256);
-//        for (int i = 0; i < code.length(); i++) {
-//            char c = code.charAt(i);
-//            if (opchars.indexOf(c) >= 0 || Character.isWhitespace(c)) {
-//                if (token.length() > 0) {
-//                    tokens.add(token.toString());
-//                    token.setLength(0);
-//                }
-//                tokens.add(c + "");
-//            } else {
-//                token.append(c);
-//            }
-//        }
-//        if (token.length() > 0) {
-//            tokens.add(token.toString());
-//        }
-//
-//        token.setLength(0);
-//        for (String t : tokens) {
-//            if (t.contains("@") && !(t.startsWith("@") || t.endsWith("@"))) {
-//                t = t.trim();
-//                String[] tt = t.split("@");
-//
-//                if (recontextualizeAsMap) {
-//
-//                    // using the dot-form also classifies the identifier usage as non-scalar later.
-//                    token.append(tt[0] + "." + tt[1]);
-//
-//                    if (!this.mapIdentifiers.containsKey(tt[0])) {
-//                        this.mapIdentifiers.put(tt[0], new HashSet<>());
-//                    }
-//                    this.mapIdentifiers.get(tt[0]).add(tt[1]);
-//
-//                } else {
-//
-//                    token.append(" _recontextualize(\"" + tt[0] + "\", \"" + tt[1] + "\")");
-//
-//                    /*
-//                     * record contextualizers
-//                     */
-//                    String[] pp = tt[1].split(",");
-//                    for (String p : pp) {
-//                        while(Character.isDigit(p.charAt(p.length() - 1))) {
-//                            p = p.substring(0, p.length() - 1);
-//                        }
-//                        contextualizers.add(p);
-//                    }
-//                }
-//
-//            } else {
-//                token.append(t);
-//            }
-//        }
-//
-//        return token.toString();
-//
-//    }
+    public IKimConcept.Type getIdentifierType(String identifier) {
 
-    public IKimConcept.Type getIdentifierType(String identifier, IExpression.Scope context) {
-
-        if (context == null) {
+        if (expressionScope == null) {
             return IKimConcept.Type.PRIORITY;
         }
 
         if (identifier.equals("self")) {
-            return context.getReturnType();
+            return expressionScope.getReturnType();
         }
-        IKimConcept.Type ret = context.getIdentifierType(identifier);
+        IKimConcept.Type ret = expressionScope.getIdentifierType(identifier);
         if (ret != null) {
             return ret;
         }
@@ -585,13 +509,18 @@ public class GroovyExpressionPreprocessor {
          * leave as is. If the @ does not follow a quality var, raise an error.
          */
 
+        int i = 0;
         for (TokenDescriptor t : tokens) {
-            ret += t.type == TokenType.NEWLINE ? "\n" : t.translate();
+            ret += t.type == TokenType.NEWLINE ? "\n" : t.translate(i, tokens);
+            i++;
         }
 
         return ret;
     }
 
+    /**
+     * Recognize calls to a known identifier as non-scalar usage
+     */
     private void analyze(List<TokenDescriptor> tokens) {
 
         TokenDescriptor current = null;
@@ -609,7 +538,7 @@ public class GroovyExpressionPreprocessor {
 
         for (TokenDescriptor t : tokens) {
             if (t.type == TokenType.KNOWN_ID
-                    || (t.type == TokenType.UNKNOWN_ID && context != null && context.getIdentifiers().contains(t.token.trim()))) {
+                    || (t.type == TokenType.UNKNOWN_ID && expressionScope.getIdentifiers().contains(t.token.trim()))) {
                 identifiers.add(t.token.trim());
                 if (t.methodCall) {
                     this.objectIds.add(t.token.trim());
@@ -664,11 +593,11 @@ public class GroovyExpressionPreprocessor {
             return new TokenDescriptor(TokenType.LITERAL_NULL, currentToken);
         }
 
-        if ("@".equals(currentToken)) {
+        if ("@".equals(currentToken) && !ignoreRecontextualization) {
             return new TokenDescriptor(TokenType.RECONTEXTUALIZATION, currentToken);
         }
 
-        if (knownIdentifiers != null && knownIdentifiers.contains(currentToken)) {
+        if (expressionScope.getIdentifiers().contains(currentToken)) {
             return new TokenDescriptor(TokenType.KNOWN_ID, currentToken);
         }
 
@@ -711,7 +640,7 @@ public class GroovyExpressionPreprocessor {
             }
         }
 
-        if (compilerScope != CompilerScope.Contextual && isValidIdentifier(currentToken)) {
+        if (expressionScope.getCompilerScope() != CompilerScope.Contextual && isValidIdentifier(currentToken)) {
             return new TokenDescriptor(TokenType.KNOWN_ID, currentToken);
         }
 
@@ -743,14 +672,7 @@ public class GroovyExpressionPreprocessor {
     private String translateDefine(String currentToken) {
         return "_ns.getSymbolTable().get(\"" + currentToken + "\")";
     }
-
-    private String translateParameter(String currentToken, boolean isScalar) {
-        boolean isMapIdentifier = mapIdentifiers.containsKey(currentToken);
-        boolean includeLiterally = this.ignoreContext
-                && (this.context == null || !this.context.getStateIdentifiers().contains(currentToken));
-        return (isScalar || isMapIdentifier || includeLiterally) ? currentToken : "_p.get(\"" + currentToken + "\")";
-    }
-
+    
     private String translateKnowledge(String k) {
         return encodeValue(Concepts.INSTANCE.getConcept(k));
     }
