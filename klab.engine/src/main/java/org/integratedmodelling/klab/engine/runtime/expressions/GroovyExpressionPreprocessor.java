@@ -227,10 +227,6 @@ public class GroovyExpressionPreprocessor {
 
             String ret = token;
 
-            if ("self".equals(token)) {
-                System.out.println("AHA");
-            }
-
             // next significant token
             int next = index + 1;
             TokenDescriptor nextToken = null;

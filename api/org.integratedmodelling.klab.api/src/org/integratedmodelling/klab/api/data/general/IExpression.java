@@ -61,12 +61,7 @@ public interface IExpression {
          * 
          */
         IgnoreContext,
-        /**
-         * Force scalar usage of all identifiers. Linked to prefixing the expression with # in k.IM.
-         * 
-         * @deprecated use the scope for this.
-         */
-        ForcedScalar,
+
         /**
          * Translate identifiers like id@ctx into id["ctx"] instead of inserting the
          * recontextualization hooks for states.
@@ -78,15 +73,6 @@ public interface IExpression {
          * of documentation templates, which use @ for internal purposes.
          */
         IgnoreRecontextualization,
-
-        /**
-         * Wrap any observations or extents passed as parameters into their Groovy peers before
-         * execution. This is passed when compiling expressions outside of a contextualization
-         * dataflow, which handles this automatically with caching to prevent bottlenecks.
-         * 
-         * @deprecated we don't want any Groovy peers
-         */
-        WrapParameters,
 
         /**
          * Skip k.LAB preprocessing altogether.

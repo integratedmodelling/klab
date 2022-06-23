@@ -56,7 +56,6 @@ public enum GroovyProcessor implements ILanguageProcessor {
             this.mapIdentifiers = processor.getMapIdentifiers();
             this.variables = processor.getVariables();
             this.errors = processor.getErrors();
-            this.forcedScalar = this.options.contains(CompilerOption.ForcedScalar);
         }
 
         @Override
@@ -129,10 +128,10 @@ public enum GroovyProcessor implements ILanguageProcessor {
             return contextualizers;
         }
 
-        @Override
-        public boolean isForcedScalar() {
-            return forcedScalar;
-        }
+//        @Override
+//        public boolean isForcedScalar() {
+//            return forcedScalar;
+//        }
 
         @Override
         public Map<String, Set<String>> getMapIdentifiers() {
@@ -158,7 +157,7 @@ public enum GroovyProcessor implements ILanguageProcessor {
     }
 
     @Override
-    public Descriptor describe(String expression, CompilerOption... options) throws KlabValidationException {
+    public Descriptor describe(String expression, Object... options) throws KlabValidationException {
         return new GroovyDescriptor(expression, ExpressionScope.empty(Klab.INSTANCE.getRootMonitor()), options);
     }
 

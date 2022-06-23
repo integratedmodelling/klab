@@ -285,13 +285,6 @@ public class ComputableResource extends KimStatement implements IContextualizabl
         this.resolutionMode = Mode.RESOLUTION;
     }
 
-    // public ComputableResource(List<String> mergedUrns, Mode mode, IArtifact.Type
-    // type) {
-    // this.mergedUrns = mergedUrns;
-    // this.mergedType = type;
-    // this.resolutionMode = mode;
-    // }
-
     public ComputableResource(IValueMediator from, IValueMediator to) {
         this.conversion = new Pair<>(from, to);
         this.type = Type.CONVERSION;

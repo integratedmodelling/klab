@@ -117,13 +117,13 @@ public interface ILanguageProcessor {
          */
         Collection<String> getIdentifiersInNonscalarScope();
 
-        /**
-         * Expressions that would be non-scalar from the analysis of the code may be forced to be
-         * scalar through language constructs or API.
-         * 
-         * @return
-         */
-        boolean isForcedScalar();
+//        /**
+//         * Expressions that would be non-scalar from the analysis of the code may be forced to be
+//         * scalar through language constructs or API.
+//         * 
+//         * @return
+//         */
+//        boolean isForcedScalar();
 
         /**
          * If the expression was compiled with the {@link CompilerOption#RecontextualizeAsMap}
@@ -192,7 +192,7 @@ public interface ILanguageProcessor {
      * @throws org.integratedmodelling.klab.exceptions.KlabValidationException if the expression
      *         contains syntax of logical errors
      */
-    Descriptor describe(String expression, CompilerOption... compilerOptions) throws KlabValidationException;
+    Descriptor describe(String expression, Object... compilerOptions) throws KlabValidationException;
 
     /**
      * Assume that the passed expression evaluates to a boolean and produce the language equivalent
