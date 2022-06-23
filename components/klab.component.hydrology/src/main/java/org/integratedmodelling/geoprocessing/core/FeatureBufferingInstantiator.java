@@ -3,8 +3,6 @@ package org.integratedmodelling.geoprocessing.core;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -17,12 +15,12 @@ import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
-import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.components.runtime.observations.ObservedArtifact;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.Parameters;
 
 public class FeatureBufferingInstantiator extends AbstractContextualizer implements IInstantiator, IExpression {
 
@@ -37,8 +35,9 @@ public class FeatureBufferingInstantiator extends AbstractContextualizer impleme
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
-		FeatureBufferingInstantiator ret = new FeatureBufferingInstantiator();
+	public Object eval(IContextualizationScope context, Object...params) throws KlabException {
+	    Parameters<String> parameters = Parameters.create(params);
+	    FeatureBufferingInstantiator ret = new FeatureBufferingInstantiator();
 		ret.distance = parameters.get("radius", Double.class);
 		ret.artifact = parameters.get("artifact", String.class);
 		ret.subtract = parameters.get("subtract", Boolean.FALSE);

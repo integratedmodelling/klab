@@ -11,7 +11,6 @@ import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimExpression;
-import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Namespaces;
@@ -21,7 +20,6 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IStorage;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
-import org.integratedmodelling.klab.api.data.general.IExpression.Scope;
 import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -61,6 +59,7 @@ import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
+import org.integratedmodelling.klab.engine.runtime.code.ExpressionScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.owl.OWL;
@@ -592,12 +591,6 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	}
 
 	@Override
-	public Scope getExpressionContext() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public Collection<IArtifact> getChildArtifactsOf(IArtifact directObservation) {
 		// TODO Auto-generated method stub
 		return null;
@@ -799,11 +792,11 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 		return this;
 	}
 
-	@Override
-	public IParameters<String> localize(ILocator locator) {
-		// TODO Auto-generated method stub
-		return this;
-	}
+//	@Override
+//	public IParameters<String> localize(ILocator locator) {
+//		// TODO Auto-generated method stub
+//		return this;
+//	}
 
 	@Override
 	public String getArtifactName(IArtifact previous) {
@@ -1023,6 +1016,18 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 
     @Override
     public IScale getScale(IActuator actuator) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ExpressionScope getExpressionContext(IObservable targetObservable) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public IObservation getObservation(IObservable observable) {
         // TODO Auto-generated method stub
         return null;
     }

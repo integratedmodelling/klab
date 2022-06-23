@@ -206,7 +206,7 @@ public abstract class Expression implements IExpression {
 		}
 
 		@Override
-		public org.integratedmodelling.klab.api.data.general.IExpression.Scope getExpressionContext() {
+		public org.integratedmodelling.klab.api.data.general.IExpression.Scope getExpressionContext(IObservable targetObservable) {
 			// TODO Auto-generated method stub
 			return null;
 		}
@@ -271,11 +271,11 @@ public abstract class Expression implements IExpression {
 			return null;
 		}
 
-		@Override
-		public IParameters<String> localize(ILocator locator) {
-			// TODO Auto-generated method stub
-			return this;
-		}
+//		@Override
+//		public IParameters<String> localize(ILocator locator) {
+//			// TODO Auto-generated method stub
+//			return this;
+//		}
 
 		@Override
 		public IConcept localizePredicate(IConcept predicate) {

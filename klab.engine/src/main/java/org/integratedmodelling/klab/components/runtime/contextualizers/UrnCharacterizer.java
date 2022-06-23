@@ -6,7 +6,6 @@ import java.util.Map;
 
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimConcept;
-import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Resources;
@@ -25,6 +24,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Parameters;
 
 public class UrnCharacterizer extends AbstractContextualizer implements IResolver<IArtifact>, IProcessor, IExpression {
 
@@ -56,8 +56,8 @@ public class UrnCharacterizer extends AbstractContextualizer implements IResolve
     }
     
     @Override
-    public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
-        return new UrnCharacterizer(parameters.get("urn", String.class));
+    public Object eval(IContextualizationScope context, Object...parameters) throws KlabException {
+        return new UrnCharacterizer(Parameters.create(parameters).get("urn", String.class));
     }
 
     @Override

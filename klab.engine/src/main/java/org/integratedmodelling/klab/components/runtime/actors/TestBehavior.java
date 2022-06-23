@@ -25,6 +25,7 @@ import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
+import org.integratedmodelling.klab.api.data.general.IExpression.CompilerScope;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
@@ -171,7 +172,7 @@ public class TestBehavior {
 
                 IKimExpression expr = comparison.as(IKimExpression.class);
                 compareDescriptor = Extensions.INSTANCE.getLanguageProcessor(expr.getLanguage()).describe(expr.getCode(),
-                        runtimeScope.getExpressionContext());
+                        runtimeScope.getExpressionContext(null));
                 compareExpression = compareDescriptor.compile();
                 for (String input : compareDescriptor.getIdentifiers()) {
                     if (compareDescriptor.isScalar(input) && runtimeScope.getArtifact(input, IState.class) != null) {
@@ -189,7 +190,8 @@ public class TestBehavior {
         if (selector != null) {
             selectDescriptor = Extensions.INSTANCE.getLanguageProcessor(selector.getLanguage())
                     // TODO parameter only if target is a state
-                    .describe(selector.getCode(), runtimeScope.getExpressionContext(), CompilerOption.ForcedScalar);
+                    .describe(selector.getCode(),
+                            runtimeScope.getExpressionContext(null).withCompilerScope(CompilerScope.Scalar));
             selectExpression = selectDescriptor.compile();
             for (String input : selectDescriptor.getIdentifiers()) {
                 if (selectDescriptor.isScalar(input) && runtimeScope.getArtifact(input, IState.class) != null) {
@@ -215,14 +217,14 @@ public class TestBehavior {
                     args.put(key, states.get(key).get(locator));
                 }
                 if (selectExpression != null) {
-                    Object selectValue = selectExpression.eval(args, runtimeScope);
+                    Object selectValue = selectExpression.eval(runtimeScope, args);
                     if (selectValue instanceof Boolean && !((Boolean) selectValue)) {
                         continue;
                     }
                 }
 
                 if (compareExpression != null) {
-                    compareValue = compareExpression.eval(args, runtimeScope);
+                    compareValue = compareExpression.eval(runtimeScope, args);
                     ok = compareValue instanceof Boolean && (Boolean) compareValue;
                 } else {
                     ok = args.get("self") == null && compareValue == null

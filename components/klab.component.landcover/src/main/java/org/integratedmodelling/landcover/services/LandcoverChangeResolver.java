@@ -9,6 +9,7 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.landcover.model.LandcoverChange;
 
 public class LandcoverChangeResolver extends AbstractContextualizer implements IResolver<IProcess>, IExpression {
@@ -42,8 +43,8 @@ public class LandcoverChangeResolver extends AbstractContextualizer implements I
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IContextualizationScope context) {
-		return new LandcoverChangeResolver(parameters);
+	public Object eval(IContextualizationScope context, Object...parameters) {
+		return new LandcoverChangeResolver(Parameters.create(parameters));
 	}
 
 }

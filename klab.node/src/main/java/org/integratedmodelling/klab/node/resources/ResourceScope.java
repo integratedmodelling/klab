@@ -9,7 +9,6 @@ import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimExpression;
-import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
@@ -17,7 +16,6 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
-import org.integratedmodelling.klab.api.data.general.IExpression.Scope;
 import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -52,6 +50,7 @@ import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Actuator.Status;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
+import org.integratedmodelling.klab.engine.runtime.code.ExpressionScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.owl.Observable;
@@ -263,7 +262,7 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
     }
 
     @Override
-    public Scope getExpressionContext() {
+    public ExpressionScope getExpressionContext(IObservable targetObservable) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -708,11 +707,11 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
         return this;
     }
 
-    @Override
-    public IParameters<String> localize(ILocator locator) {
-        // TODO Auto-generated method stub
-        return this;
-    }
+//    @Override
+//    public IParameters<String> localize(ILocator locator) {
+//        // TODO Auto-generated method stub
+//        return this;
+//    }
 
     @Override
     public String getArtifactName(IArtifact previous) {
@@ -903,6 +902,12 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
 
     @Override
     public IScale getScale(IActuator actuator) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public IObservation getObservation(IObservable observable) {
         // TODO Auto-generated method stub
         return null;
     }

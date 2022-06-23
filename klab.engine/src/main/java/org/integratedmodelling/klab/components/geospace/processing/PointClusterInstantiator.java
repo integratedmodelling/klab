@@ -38,7 +38,6 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.rest.StateSummary;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Parameters;
-
 import org.locationtech.jts.algorithm.ConvexHull;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
@@ -85,7 +84,7 @@ public class PointClusterInstantiator extends AbstractContextualizer implements 
 				expression = ((IKimExpression) expression).getCode();
 			}
 			this.exprDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE)
-					.describe(expression.toString(), context.getExpressionContext());
+					.describe(expression.toString(), context.getExpressionContext(null));
 		}
 
 		if (parameters.containsKey("radius")) {
@@ -151,7 +150,7 @@ public class PointClusterInstantiator extends AbstractContextualizer implements 
 					parameters.put(stateIdentifiers.get(state), o);
 				}
 
-				o = expression.eval(parameters, context);
+				o = expression.eval(context, parameters);
 				if (o == null) {
 					o = Boolean.FALSE;
 				}
@@ -200,20 +199,15 @@ public class PointClusterInstantiator extends AbstractContextualizer implements 
 
 		return ret;
 	}
-
-//	@Override
-//	public IGeometry getGeometry() {
-//		return org.integratedmodelling.klab.common.Geometry.create("#s2");
-//	}
-
+	
 	@Override
 	public IArtifact.Type getType() {
 		return IArtifact.Type.OBJECT;
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
-		return new PointClusterInstantiator(parameters, context);
+	public Object eval(IContextualizationScope context, Object...parameters) throws KlabException {
+		return new PointClusterInstantiator(Parameters.create(parameters), context);
 	}
 
 }

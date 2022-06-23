@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IContextualizable;
-import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Configuration;
@@ -27,6 +26,7 @@ import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Parameters;
 
 public class UrnResolver extends AbstractContextualizer implements IExpression, IResolver<IArtifact> {
 
@@ -135,9 +135,9 @@ public class UrnResolver extends AbstractContextualizer implements IExpression, 
     }
 
     @Override
-    public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
+    public Object eval(IContextualizationScope context, Object...parameters) throws KlabException {
         // TODO support multiple URNs
-        return new UrnResolver(parameters.get("urn", String.class), context);
+        return new UrnResolver(Parameters.create(parameters).get("urn", String.class), context);
     }
 
     @Override

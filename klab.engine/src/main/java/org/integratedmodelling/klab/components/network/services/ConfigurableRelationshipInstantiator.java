@@ -108,7 +108,7 @@ public class ConfigurableRelationshipInstantiator extends AbstractContextualizer
                 expression = ((IKimExpression) expression).getCode();
             }
             this.selectorDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE)
-                    .describe(expression.toString(), scope.getExpressionContext());
+                    .describe(expression.toString(), scope.getExpressionContext(null));
         }
 
         if (parameters.contains("seed")) {
@@ -254,7 +254,7 @@ public class ConfigurableRelationshipInstantiator extends AbstractContextualizer
 
                     if (selector != null) {
 
-                        Object o = selector.override("source", source, "target", target).eval(parameters, context);
+                        Object o = selector.eval(context, parameters, "source", source, "target", target);
 
                         if (o == null) {
                             o = Boolean.FALSE;
@@ -271,19 +271,19 @@ public class ConfigurableRelationshipInstantiator extends AbstractContextualizer
 
                     if (probability == 1) {
                         connect((IDirectObservation) source, (IDirectObservation) target, null);
-                        connected.add((IObservation)target);
+                        connected.add((IObservation) target);
                     } else {
                         switch(method) {
                         case ErdosRenyi:
                             if (random.nextDouble() < probability) {
                                 connect((IDirectObservation) source, (IDirectObservation) target, null);
-                                connected.add((IObservation)target);
+                                connected.add((IObservation) target);
                             }
                             break;
                         case OutDegree:
                             if ((int) (random.nextDouble() + probability / (nNodes - 1)) == 1) {
                                 connect((IDirectObservation) source, (IDirectObservation) target, null);
-                                connected.add((IObservation)target);
+                                connected.add((IObservation) target);
                             }
                             break;
                         default:
@@ -444,8 +444,8 @@ public class ConfigurableRelationshipInstantiator extends AbstractContextualizer
     }
 
     @Override
-    public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
-        return new ConfigurableRelationshipInstantiator(parameters, context);
+    public Object eval(IContextualizationScope context, Object... parameters) throws KlabException {
+        return new ConfigurableRelationshipInstantiator(Parameters.create(parameters), context);
     }
 
     @Override

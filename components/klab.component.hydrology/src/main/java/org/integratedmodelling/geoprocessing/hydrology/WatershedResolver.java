@@ -17,7 +17,7 @@ public class WatershedResolver extends AbstractContextualizer implements IResolv
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IContextualizationScope context) {
+	public Object eval(IContextualizationScope context, Object...parameters) {
 		// TODO Auto-generated method stub
 		return new WatershedResolver();
 	}

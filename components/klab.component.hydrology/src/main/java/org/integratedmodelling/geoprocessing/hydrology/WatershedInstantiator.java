@@ -9,7 +9,6 @@ import java.util.List;
 import org.hortonmachine.gears.utils.features.FeatureUtilities;
 import org.hortonmachine.hmachine.modules.demmanipulation.wateroutlet.OmsExtractBasin;
 import org.integratedmodelling.geoprocessing.TaskMonitor;
-import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -30,7 +29,7 @@ import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractC
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.Scale;
-
+import org.integratedmodelling.klab.utils.Parameters;
 import org.locationtech.jts.geom.Point;
 
 public class WatershedInstantiator extends AbstractContextualizer implements IInstantiator, IExpression {
@@ -62,9 +61,9 @@ public class WatershedInstantiator extends AbstractContextualizer implements IIn
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
+	public Object eval(IContextualizationScope context, Object...parameters) throws KlabException {
 		WatershedInstantiator ret = new WatershedInstantiator();
-		ret.whole = parameters.get("threshold", Boolean.FALSE);
+		ret.whole = Parameters.create(parameters).get("threshold", Boolean.FALSE);
 		return ret;
 	}
 

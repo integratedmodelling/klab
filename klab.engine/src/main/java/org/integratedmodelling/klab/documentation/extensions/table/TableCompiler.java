@@ -852,7 +852,7 @@ public class TableCompiler {
             if (expression != null && computation == null) {
                 ILanguageProcessor processor = Extensions.INSTANCE.getLanguageProcessor(
                         expression.getLanguage() == null ? Extensions.DEFAULT_EXPRESSION_LANGUAGE : expression.getLanguage());
-                Scope context = scope.getExpressionContext();
+                Scope context = scope.getExpressionContext(null);
 
                 // register row and column names unless the rows/colums are aggregations
                 for (Dimension dimension : rows.values()) {
@@ -2536,7 +2536,7 @@ public class TableCompiler {
             // intersections, for now fuck.
         }
 
-        return rowExpression.eval(parameters, scope);
+        return rowExpression.eval(scope, parameters);
     }
 
     private List<Phase> getPhases(IRuntimeScope scope, IObservation targetObservation) {

@@ -8,7 +8,6 @@ import java.util.function.Function;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.hortonmachine.hmachine.modules.geomorphology.flow.OmsLeastCostFlowDirections;
 import org.integratedmodelling.geoprocessing.TaskMonitor;
-import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
@@ -20,6 +19,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.utils.Parameters;
 
 public class LeastCostFlowDirectionsResolver extends AbstractContextualizer implements IResolver<IState>, IExpression {
 
@@ -93,8 +93,9 @@ public class LeastCostFlowDirectionsResolver extends AbstractContextualizer impl
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
-		LeastCostFlowDirectionsResolver ret = new LeastCostFlowDirectionsResolver();
+	public Object eval(IContextualizationScope context, Object...params) throws KlabException {
+	    Parameters<String> parameters = Parameters.create(params);
+	    LeastCostFlowDirectionsResolver ret = new LeastCostFlowDirectionsResolver();
 		ret.computeAngles = parameters.get("angles", Boolean.FALSE);
 		ret.doTca = parameters.get("dotca", Boolean.FALSE);
 		ret.areas = parameters.get("areas", Boolean.FALSE);

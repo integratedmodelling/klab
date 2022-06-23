@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.components.runtime.contextualizers;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Resources;
@@ -21,6 +20,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Parameters;
 
 public class KnowledgeViewResolver extends AbstractContextualizer implements IResolver<IArtifact>, IExpression {
 
@@ -45,8 +45,8 @@ public class KnowledgeViewResolver extends AbstractContextualizer implements IRe
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
-		return new KnowledgeViewResolver(parameters.get("view", String.class));
+	public Object eval(IContextualizationScope context, Object...parameters) throws KlabException {
+		return new KnowledgeViewResolver(Parameters.create(parameters).get("view", String.class));
 	}
 
 	@Override

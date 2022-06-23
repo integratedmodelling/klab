@@ -19,6 +19,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
+import org.integratedmodelling.klab.utils.Parameters;
 
 /**
  * A classifier that defines the predicate to attribute a direct observation
@@ -75,13 +76,11 @@ public class ExpressionClassifier extends AbstractContextualizer implements IPre
 		 */
 		boolean ok = true;
 		if (condition != null) {
-			Object ret = condition.override("self", observation, "scale", observation.getScale(), "space",
-					observation.getScale().getSpace()).eval(context, context, additionalParameters);
+			Object ret = condition.eval(context, context, additionalParameters, "self", observation);
 			ok = ret instanceof Boolean && ((Boolean) ret);
 		}
 
-		Object ret = ok ? expression.override("self", observation, "scale", observation.getScale(), "space",
-				observation.getScale().getSpace()).eval(context, context, additionalParameters) : null;
+		Object ret = ok ? expression.eval(context, context, additionalParameters, "self", observation) : null;
 
 		if (ret == null) {
 			return null;
@@ -96,12 +95,13 @@ public class ExpressionClassifier extends AbstractContextualizer implements IPre
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IContextualizationScope context) {
+	public Object eval(IContextualizationScope context, Object...parms) {
 
+	    Parameters<String> parameters = Parameters.create(parms);
 		ILanguageProcessor processor = Extensions.INSTANCE
 				.getLanguageProcessor(parameters.get("language", Extensions.DEFAULT_EXPRESSION_LANGUAGE));
 
-		IExpression.Scope expressionContext = context.getExpressionContext();
+		IExpression.Scope expressionContext = context.getExpressionContext(null);
 		Descriptor selector = processor.describe(parameters.get("code", String.class), expressionContext);
 		Descriptor condition = null;
 		if (parameters.get("ifcondition") != null || parameters.get("unlesscondition") != null) {

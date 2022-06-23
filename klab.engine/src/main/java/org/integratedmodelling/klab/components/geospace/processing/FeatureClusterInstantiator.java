@@ -24,7 +24,7 @@ import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractC
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.Scale;
-
+import org.integratedmodelling.klab.utils.Parameters;
 import org.locationtech.jts.algorithm.ConvexHull;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
@@ -113,19 +113,14 @@ public class FeatureClusterInstantiator extends AbstractContextualizer implement
 		return ret;
 	}
 
-//	@Override
-//	public IGeometry getGeometry() {
-//		return org.integratedmodelling.klab.common.Geometry.create("#s2");
-//	}
-
 	@Override
 	public IArtifact.Type getType() {
 		return IArtifact.Type.OBJECT;
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
-		return new FeatureClusterInstantiator(parameters, context);
+	public Object eval(IContextualizationScope context, Object...parameters) throws KlabException {
+		return new FeatureClusterInstantiator(Parameters.create(parameters), context);
 	}
 
 }

@@ -226,8 +226,8 @@ public class Space extends Extent implements ISpace {
             }
         }
 
-        return (ISpace) new org.integratedmodelling.klab.components.geospace.services.Space().eval(spaceAnnotation,
-                new Expression.SimpleScope(Klab.INSTANCE.getRootMonitor()));
+        return (ISpace) new org.integratedmodelling.klab.components.geospace.services.Space()
+                .eval(new Expression.SimpleScope(Klab.INSTANCE.getRootMonitor()), spaceAnnotation);
     }
 
     private Space() {
@@ -458,7 +458,7 @@ public class Space extends Extent implements ISpace {
         }
 
         Shape intersection = this.shape.intersection(other);
-        
+
         return adaptToShape(intersection, other);
     }
 
@@ -739,7 +739,7 @@ public class Space extends Extent implements ISpace {
     }
 
     @Override
-    public ISpace merge(ITopologicallyComparable<?> other, LogicalConnector how, MergingOption...options) {
+    public ISpace merge(ITopologicallyComparable<?> other, LogicalConnector how, MergingOption... options) {
         if (how == LogicalConnector.UNION) {
             return union(other);
         } else if (how == LogicalConnector.INTERSECTION) {
@@ -830,7 +830,7 @@ public class Space extends Extent implements ISpace {
 
     @Override
     public IExtent mergeCoverage(IExtent obj, LogicalConnector connector) {
-        
+
         Space ret = new Space(this);
 
         if (this.shape == null) {

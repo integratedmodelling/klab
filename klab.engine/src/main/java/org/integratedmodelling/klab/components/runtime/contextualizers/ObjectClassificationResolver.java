@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
-import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.kim.model.KimServiceCall;
@@ -36,6 +35,7 @@ import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.utils.Parameters;
 
 public class ObjectClassificationResolver extends AbstractContextualizer implements IResolver<IState>, IProcessor, IExpression, IDocumentationProvider {
 
@@ -63,7 +63,8 @@ public class ObjectClassificationResolver extends AbstractContextualizer impleme
     }
 
     @Override
-    public Object eval(IParameters<String> parameters, IContextualizationScope context) {
+    public Object eval(IContextualizationScope context, Object...params) {
+        Parameters<String> parameters = Parameters.create(params);
         Map<IObservedConcept, IObservation> catalog = ((IRuntimeScope) context).getCatalog();
         return new ObjectClassificationResolver(catalog.get(parameters.get("observable", ObservedConcept.class)),
                 parameters.get("classifier", IConcept.class));

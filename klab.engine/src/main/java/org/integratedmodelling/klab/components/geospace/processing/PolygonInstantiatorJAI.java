@@ -97,7 +97,7 @@ public class PolygonInstantiatorJAI extends AbstractContextualizer implements IE
                 expression = ((IKimExpression) expression).getCode();
             }
             this.selectExprDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE)
-                    .describe(expression.toString(), context.getExpressionContext(), CompilerOption.ForcedScalar);
+                    .describe(expression.toString(), context.getExpressionContext(null).scalar(true));
         }
 
         if (parameters.containsKey("categorize")) {
@@ -106,7 +106,7 @@ public class PolygonInstantiatorJAI extends AbstractContextualizer implements IE
                 expression = ((IKimExpression) expression).getCode();
             }
             this.categorizeExprDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE)
-                    .describe(expression.toString(), context.getExpressionContext(), CompilerOption.ForcedScalar);
+                    .describe(expression.toString(), context.getExpressionContext(null).scalar(true));
         }
 
         if (parameters.contains("semantics")) {
@@ -260,7 +260,7 @@ public class PolygonInstantiatorJAI extends AbstractContextualizer implements IE
             boolean selected = true;
             Object value = null;
             if (selectExpression != null) {
-                Object val = selectExpression.eval(parameters, scope);
+                Object val = selectExpression.eval(scope, parameters);
                 if (Observations.INSTANCE.isData(val) && !(val instanceof Boolean)) {
                     throw new KlabValidationException("polygon instantiator: select expression must return a true/false value");
                 }
@@ -268,7 +268,7 @@ public class PolygonInstantiatorJAI extends AbstractContextualizer implements IE
             }
             if (selected) {
                 if (categorizeExpression != null) {
-                    value = categorizeExpression.eval(parameters, scope);
+                    value = categorizeExpression.eval(scope, parameters);
                     if (Observations.INSTANCE.isData(value) && !(value instanceof Number || value instanceof Boolean)) {
                         if (this.valueHash == null) {
                             this.valueHash = new DualHashBidiMap<>();
@@ -398,8 +398,8 @@ public class PolygonInstantiatorJAI extends AbstractContextualizer implements IE
     }
 
     @Override
-    public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
-        return new PolygonInstantiatorJAI(parameters, context);
+    public Object eval(IContextualizationScope context, Object...parameters) throws KlabException {
+        return new PolygonInstantiatorJAI(Parameters.create(parameters), context);
     }
 
     private Geometry getPolygon(Point point2d) {

@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.api.data.classification;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IStructuredTable;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
@@ -57,10 +58,11 @@ public interface ILookupTable extends IDataKey {
 	 * with the correspondent values in the passed parameters.
 	 * 
 	 * @param parameters
-	 * @param context
+	 * @param context contains the observations with the table's identifiers
+	 * @param locator to capture states when the parameter is a state
 	 * @return the first matching object from the result column, or null
 	 */
-	Object lookup(IParameters<String> parameters, IContextualizationScope context);
+	Object lookup(IParameters<String> parameters, IContextualizationScope context, ILocator locator);
 
 	/**
 	 * The artifact type for the results in the lookup column, which must be

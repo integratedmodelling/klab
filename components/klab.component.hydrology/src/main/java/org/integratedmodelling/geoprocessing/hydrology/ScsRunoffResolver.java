@@ -7,7 +7,6 @@ import java.awt.image.DataBuffer;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.hortonmachine.hmachine.modules.hydrogeomorphology.scsrunoff.OmsScsRunoff;
 import org.integratedmodelling.geoprocessing.TaskMonitor;
-import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IProcess;
@@ -73,7 +72,7 @@ public class ScsRunoffResolver extends AbstractContextualizer implements IResolv
     }
 
     @Override
-    public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
+    public Object eval(IContextualizationScope context, Object...parameters) throws KlabException {
         return new ScsRunoffResolver();
     }
 

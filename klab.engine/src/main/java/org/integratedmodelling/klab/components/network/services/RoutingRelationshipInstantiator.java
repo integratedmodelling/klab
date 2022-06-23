@@ -11,6 +11,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.utils.Parameters;
 
 
 public class RoutingRelationshipInstantiator extends AbstractContextualizer implements IExpression, IInstantiator {
@@ -55,8 +56,8 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
-		return new RoutingRelationshipInstantiator(parameters, context);
+	public Object eval(IContextualizationScope context, Object...parameters) throws KlabException {
+		return new RoutingRelationshipInstantiator(Parameters.create(parameters), context);
 	}
 
 	@Override

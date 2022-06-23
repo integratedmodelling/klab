@@ -8,7 +8,6 @@ import org.geotools.coverage.grid.GridCoverage2D;
 import org.hortonmachine.gears.modules.r.cutout.OmsCutOut;
 import org.hortonmachine.hmachine.modules.hydrogeomorphology.infiltration.OmsInfiltratedWaterVolume;
 import org.integratedmodelling.geoprocessing.TaskMonitor;
-import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IProcess;
@@ -19,6 +18,7 @@ import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.utils.NumberUtils;
+import org.integratedmodelling.klab.utils.Parameters;
 
 public class InfiltratedWaterVolumeResolver extends AbstractContextualizer
         implements
@@ -128,9 +128,10 @@ public class InfiltratedWaterVolumeResolver extends AbstractContextualizer
     }
 
     @Override
-    public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
+    public Object eval(IContextualizationScope context, Object...params) throws KlabException {
+        Parameters<String> parameters = Parameters.create(params);
         InfiltratedWaterVolumeResolver inf = new InfiltratedWaterVolumeResolver();
-        inf.alpha = parameters.get("alhpa", 1.0);
+        inf.alpha = parameters.get("alpha", 1.0);
         inf.beta = parameters.get("beta", 1.0);
         inf.gamma = parameters.get("gamma", 1.0);
         return inf;

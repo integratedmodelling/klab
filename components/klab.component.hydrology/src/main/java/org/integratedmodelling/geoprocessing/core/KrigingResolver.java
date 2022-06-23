@@ -16,7 +16,6 @@ import org.hortonmachine.gears.utils.math.matrixes.MatrixException;
 import org.hortonmachine.hmachine.modules.statistics.kriging.old.OmsKriging;
 import org.integratedmodelling.geoprocessing.TaskMonitor;
 import org.integratedmodelling.kim.api.IKimConcept;
-import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -38,6 +37,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.NumberUtils;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.locationtech.jts.geom.Point;
 import org.opengis.feature.simple.SimpleFeatureType;
 
@@ -221,8 +221,9 @@ public class KrigingResolver extends AbstractContextualizer implements IResolver
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
+	public Object eval(IContextualizationScope context, Object...params) throws KlabException {
 
+	    Parameters<String> parameters = Parameters.create(params);
 		KrigingResolver ret = new KrigingResolver();
 
 		IKimConcept observable = parameters.get("state", IKimConcept.class);

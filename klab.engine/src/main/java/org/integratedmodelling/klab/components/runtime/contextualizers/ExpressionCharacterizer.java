@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.utils.Parameters;
 
 /**
  * A classifier that defines the predicate to attribute a direct observation
@@ -67,25 +68,27 @@ public class ExpressionCharacterizer extends AbstractContextualizer implements I
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IContextualizationScope context) {
+	public Object eval(IContextualizationScope context, Object...parms) {
 
-		ILanguageProcessor processor = Extensions.INSTANCE
+	    Parameters<String> parameters = Parameters.create(parms);
+
+	    ILanguageProcessor processor = Extensions.INSTANCE
 				.getLanguageProcessor(parameters.get("language", Extensions.DEFAULT_EXPRESSION_LANGUAGE));
 
-		IExpression.Scope expressionContext = context.getExpressionContext();
+		IExpression.Scope expressionContext = context.getExpressionContext(null);
 
 		/*
 		 * compile in scalar context as this is applied to an individual object (we want
 		 * self to be a variable, not an entry in the artifact table).
 		 */
-		Descriptor selector = processor.describe(parameters.get("code", String.class), expressionContext, CompilerOption.ForcedScalar);
+		Descriptor selector = processor.describe(parameters.get("code", String.class), expressionContext.scalar(true));
 		Descriptor condition = null;
 		if (parameters.get("ifcondition") != null || parameters.get("unlesscondition") != null) {
 			String condCode = parameters.get("ifcondition", String.class);
 			if (condCode == null) {
 				condCode = processor.negate(parameters.get("unlesscondition", String.class));
 			}
-			condition = processor.describe(condCode, expressionContext, CompilerOption.ForcedScalar);
+			condition = processor.describe(condCode, expressionContext.scalar(true));
 		}
 
 		for (String key : parameters.keySet()) {
@@ -111,15 +114,13 @@ public class ExpressionCharacterizer extends AbstractContextualizer implements I
 		boolean ok = true;
 
 		if (condition != null) {
-			Object ret = condition.override("self", observation, "scale", observation.getScale(), "space",
-					observation.getScale().getSpace()).eval(context, context, additionalParameters);
+			Object ret = condition.eval(context, context, additionalParameters, "self", observation);
 			ok = ret instanceof Boolean && ((Boolean) ret);
 		}
 
 		if (ok) {
 
-			Object ret = expression.override("self", observation, "scale", observation.getScale(), "space",
-					observation.getScale().getSpace()).eval(context, context, additionalParameters);
+			Object ret = expression.eval(context, context, additionalParameters, "self", observation);
 
 			if (ret instanceof Boolean) {
 				ok = (Boolean) ret;

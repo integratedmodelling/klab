@@ -10,7 +10,6 @@ import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Observables;
-import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
@@ -20,8 +19,8 @@ import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
-import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
+import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -33,7 +32,6 @@ import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Parameters;
-
 import org.locationtech.jts.geom.Geometry;
 
 public class PointInstantiator extends AbstractContextualizer implements IExpression, IInstantiator {
@@ -72,7 +70,7 @@ public class PointInstantiator extends AbstractContextualizer implements IExpres
 				expression = ((IKimExpression) expression).getCode();
 			}
 			this.exprDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE)
-					.describe(expression.toString(), context.getExpressionContext());
+					.describe(expression.toString(), context.getExpressionContext(null));
 		}
 
 		this.grid = ((Space) scale.getSpace()).getGrid();
@@ -128,7 +126,7 @@ public class PointInstantiator extends AbstractContextualizer implements IExpres
 					parameters.put(stateIdentifiers.get(state), o);
 				}
 
-				o = expression.eval(parameters, context);
+				o = expression.eval(context, parameters);
 				if (o == null) {
 					o = Boolean.FALSE;
 				}
@@ -168,8 +166,8 @@ public class PointInstantiator extends AbstractContextualizer implements IExpres
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
-		return new PointInstantiator(parameters, context);
+	public Object eval(IContextualizationScope context, Object...parameters) throws KlabException {
+		return new PointInstantiator(Parameters.create(parameters), context);
 	}
 
 }

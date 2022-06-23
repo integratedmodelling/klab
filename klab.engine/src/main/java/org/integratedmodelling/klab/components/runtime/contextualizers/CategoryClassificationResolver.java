@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.kim.model.KimServiceCall;
@@ -28,6 +27,7 @@ import org.integratedmodelling.klab.data.Aggregator;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.utils.Parameters;
 
 public class CategoryClassificationResolver extends AbstractContextualizer
         implements
@@ -66,7 +66,8 @@ public class CategoryClassificationResolver extends AbstractContextualizer
     }
 
     @Override
-    public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
+    public Object eval(IContextualizationScope context, Object...params) throws KlabException {
+        Parameters<String> parameters = Parameters.create(params);
         return new CategoryClassificationResolver(
                 context.getArtifact(parameters.get("artifact", String.class)),
                 parameters.get("classifier", IConcept.class), parameters.get("modifiers"));

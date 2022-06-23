@@ -23,6 +23,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Parameters;
 
 /**
  * Resolve any of the observables provided by the weather component into
@@ -123,7 +124,7 @@ public class WeatherResolver extends AbstractContextualizer implements IResolver
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
-		return new WeatherResolver(parameters, context);
+	public Object eval(IContextualizationScope context, Object...parameters) throws KlabException {
+		return new WeatherResolver(Parameters.create(parameters), context);
 	}
 }

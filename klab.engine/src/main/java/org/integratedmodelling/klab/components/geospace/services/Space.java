@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.IKimConcept;
-import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Resources;
@@ -27,13 +26,14 @@ import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Parameters;
 
 public class Space implements IExpression {
 
     private static Map<String, ISpace> shapeCache = new HashMap<>();
 
     @Override
-    public Object eval(IParameters<String> parameters, IContextualizationScope scope) throws KlabException {
+    public Object eval(IContextualizationScope scope, Object...params) throws KlabException {
 
         Shape shape = null;
         Double resolution = null;
@@ -42,6 +42,7 @@ public class Space implements IExpression {
         double simplifyFactor = Double.NaN;
         boolean gridConstraint = false;
 
+        Parameters<String> parameters = Parameters.create(params);
         org.integratedmodelling.klab.components.geospace.extents.Space ret = null;
 
         if (parameters.contains("identifier") || parameters.contains("authority")

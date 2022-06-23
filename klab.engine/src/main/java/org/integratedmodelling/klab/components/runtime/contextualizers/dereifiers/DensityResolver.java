@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractC
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.Parameters;
 
 /**
  * Resolver that evaluates an expression computing a data artifact. If the
@@ -52,8 +53,8 @@ public class DensityResolver extends AbstractContextualizer implements IResolver
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
-		return new DensityResolver(parameters, context);
+	public Object eval(IContextualizationScope context, Object...parameters) throws KlabException {
+		return new DensityResolver(Parameters.create(parameters), context);
 	}
 
 	@Override

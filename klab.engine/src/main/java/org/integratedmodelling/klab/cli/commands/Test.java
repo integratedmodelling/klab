@@ -22,7 +22,7 @@ public class Test implements ICommand {
 
         return GroovyProcessor.INSTANCE
                 .compile(StringUtils.join((List<?>) call.getParameters().get("arguments"), ' ').trim(), scope)
-                .eval(Parameters.create(), null);
+                .eval(null, Parameters.create());
 
     }
 

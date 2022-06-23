@@ -12,6 +12,7 @@ import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.data.general.IExpression.CompilerScope;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -29,17 +30,26 @@ public class ExpressionScope implements IExpression.Scope {
     private IScale scale;
     private IMonitor monitor;
     private CompilerScope compilerScope;
-    
-    public static ExpressionScope create(IRuntimeScope context) {
+
+    public static ExpressionScope create(IRuntimeScope context, IObservable targetObservable) {
 
         ExpressionScope ret = new ExpressionScope();
+
+        if (targetObservable == null) {
+            targetObservable = context.getTargetSemantics();
+        }
+
+        IObservation targetArtifact = (IObservation) context.getTargetArtifact();
+        if (targetObservable != null && (targetArtifact == null || !targetObservable.is(targetArtifact.getObservable()))) {
+            targetArtifact = context.getObservation(targetObservable);
+        }
 
         ret.scale = context.getScale();
         ret.monitor = context.getMonitor();
         ret.returnType = context.getArtifactType();
-        ret.compilerScope = CompilerScope.Contextual;
-        
-        if (ret.returnType == Type.PROCESS && context.getTargetArtifact() instanceof IState) {
+        ret.compilerScope = context.getTargetArtifact() instanceof IState ? CompilerScope.Scalar : CompilerScope.Contextual;
+
+        if (ret.returnType == Type.PROCESS && targetArtifact instanceof IState) {
             ret.returnType = Type.QUALITY;
         }
 
@@ -66,13 +76,24 @@ public class ExpressionScope implements IExpression.Scope {
     private ExpressionScope() {
     }
 
+    public ExpressionScope(ExpressionScope expressionScope) {
+        this.returnType = expressionScope.returnType;
+        this.namespace = expressionScope.namespace;
+        this.identifiers.addAll(expressionScope.identifiers);
+        this.stateIdentifiers.addAll(expressionScope.stateIdentifiers);
+        this.identifierTypes.putAll(expressionScope.identifierTypes);
+        this.compilerScope = expressionScope.compilerScope;
+        this.scale = expressionScope.scale;
+        this.monitor = expressionScope.monitor;
+    }
+
     public static ExpressionScope empty(IMonitor monitor) {
         ExpressionScope ret = new ExpressionScope();
         ret.monitor = monitor;
         ret.compilerScope = CompilerScope.Scalar;
         return ret;
     }
-    
+
     @Override
     public Type getReturnType() {
         return this.returnType;
@@ -128,6 +149,17 @@ public class ExpressionScope implements IExpression.Scope {
     @Override
     public CompilerScope getCompilerScope() {
         return compilerScope;
+    }
+
+    @Override
+    public ExpressionScope scalar(boolean forceScalar) {
+        if (forceScalar) {
+            if (this.compilerScope == CompilerScope.Scalar) {
+                return this;
+            }
+            return new ExpressionScope(this).withCompilerScope(CompilerScope.Scalar);
+        }
+        return this;
     }
 
 }

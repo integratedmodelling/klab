@@ -48,7 +48,7 @@ public class ExpressionStateResolver extends AbstractContextualizer implements I
             // override with interactive parameters
             variables.putAll(additionalParameters);
             for (String key : context.getVariables().keySet()) {
-                additionalParameters.put(key, context.getVariables().get(key).getValue(variables, context));
+                additionalParameters.put(key, context.getVariables().get(key).getValue(context, variables));
             }
         }
 

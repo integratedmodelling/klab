@@ -6,6 +6,7 @@ import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.utils.Parameters;
 
 import weka.classifiers.functions.SimpleLogistic;
 
@@ -59,8 +60,8 @@ public class SimpleLogisticResolver extends AbstractWekaResolver<SimpleLogistic>
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
-		return new SimpleLogisticResolver(parameters, context);
+	public Object eval(IContextualizationScope context, Object...parameters) throws KlabException {
+		return new SimpleLogisticResolver(Parameters.create(parameters), context);
 	}
 
 }

@@ -25,7 +25,7 @@ import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractC
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.Scale;
-
+import org.integratedmodelling.klab.utils.Parameters;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
@@ -49,9 +49,9 @@ public class StreamNetworkInstantiator extends AbstractContextualizer implements
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
+	public Object eval(IContextualizationScope context, Object...parameters) throws KlabException {
 		StreamNetworkInstantiator ret = new StreamNetworkInstantiator();
-		ret.threshold = parameters.get("tca.threshold", Double.NaN);
+		ret.threshold = Parameters.create(parameters).get("tca.threshold", Double.NaN);
 		return ret;
 	}
 

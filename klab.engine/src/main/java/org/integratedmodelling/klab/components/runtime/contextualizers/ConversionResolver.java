@@ -1,6 +1,5 @@
 package org.integratedmodelling.klab.components.runtime.contextualizers;
 
-import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.kim.model.KimServiceCall;
@@ -14,6 +13,7 @@ import org.integratedmodelling.klab.data.storage.MediatingState;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Parameters;
 
 public class ConversionResolver extends AbstractContextualizer implements IResolver<IState>, IProcessor, IExpression {
 
@@ -37,8 +37,9 @@ public class ConversionResolver extends AbstractContextualizer implements IResol
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
-		return new ConversionResolver((IValueMediator) parameters.get("original"),
+	public Object eval(IContextualizationScope context, Object...params) throws KlabException {
+	    Parameters<String> parameters = Parameters.create(params);
+	    return new ConversionResolver((IValueMediator) parameters.get("original"),
 				(IValueMediator) parameters.get("target"));
 	}
 

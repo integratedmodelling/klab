@@ -19,7 +19,6 @@ import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimExpression;
-import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.Annotations;
@@ -39,9 +38,6 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IStorage;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
-import org.integratedmodelling.klab.api.data.general.IExpression.Scope;
-import org.integratedmodelling.klab.api.data.mediation.ICurrency;
-import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.documentation.IReport.View;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -107,9 +103,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.engine.runtime.code.ExpressionScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
-import org.integratedmodelling.klab.extensions.groovy.model.Concept;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.IntelligentMap;
@@ -123,7 +117,6 @@ import org.integratedmodelling.klab.rest.KnowledgeViewReference;
 import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
-import org.integratedmodelling.klab.utils.Range;
 import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.klab.utils.Triple;
 import org.jgrapht.Graph;
@@ -1750,8 +1743,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
     }
 
     @Override
-    public Scope getExpressionContext() {
-        return ExpressionScope.create(this);
+    public ExpressionScope getExpressionContext(IObservable targetObservable) {
+        return ExpressionScope.create(this, targetObservable);
     }
 
     @Override
@@ -2249,23 +2242,23 @@ public class RuntimeScope extends AbstractRuntimeScope {
         }
     }
 
-    @Override
-    public IParameters<String> localize(ILocator locator) {
-
-        RuntimeScope ret = new RuntimeScope(this);
-        Collection<Pair<String, IDataArtifact>> variables = getArtifacts(IDataArtifact.class);
-        for (Pair<String, IDataArtifact> variable : variables) {
-            // this ensures that Groovy expressions are computable
-            Object value = variable.getSecond().get(locator);
-            if (value == null && variable.getSecond().getType() == IArtifact.Type.NUMBER) {
-                value = Double.NaN;
-            }
-            ret.set(variable.getFirst(), value);
-        }
-
-        ret.setScale((IScale) locator);
-        return ret;
-    }
+//    @Override
+//    public IParameters<String> localize(ILocator locator) {
+//
+//        RuntimeScope ret = new RuntimeScope(this);
+//        Collection<Pair<String, IDataArtifact>> variables = getArtifacts(IDataArtifact.class);
+//        for (Pair<String, IDataArtifact> variable : variables) {
+//            // this ensures that Groovy expressions are computable
+//            Object value = variable.getSecond().get(locator);
+//            if (value == null && variable.getSecond().getType() == IArtifact.Type.NUMBER) {
+//                value = Double.NaN;
+//            }
+//            ret.set(variable.getFirst(), value);
+//        }
+//
+//        ret.setScale((IScale) locator);
+//        return ret;
+//    }
 
     @Override
     public String getArtifactName(IArtifact artifact) {
@@ -2441,6 +2434,11 @@ public class RuntimeScope extends AbstractRuntimeScope {
     @Override
     public Map<String, Object> getGlobalData() {
         return globalData;
+    }
+
+    @Override
+    public IObservation getObservation(IObservable observable) {
+        return getCatalog().get(new ObservedConcept(observable));
     }
 
 }

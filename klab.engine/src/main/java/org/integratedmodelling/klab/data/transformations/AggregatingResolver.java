@@ -24,6 +24,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Parameters;
 
 public class AggregatingResolver extends AbstractContextualizer implements IResolver<IState>, IExpression, IProcessor {
 
@@ -52,8 +53,8 @@ public class AggregatingResolver extends AbstractContextualizer implements IReso
     }
 
     @Override
-    public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
-        return new AggregatingResolver(parameters, context);
+    public Object eval(IContextualizationScope context, Object...parameters) throws KlabException {
+        return new AggregatingResolver(Parameters.create(parameters), context);
     }
 
     @Override

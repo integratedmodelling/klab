@@ -31,6 +31,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Actuator.Status;
+import org.integratedmodelling.klab.engine.runtime.code.ExpressionScope;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.provenance.Provenance;
@@ -73,6 +74,9 @@ public interface IRuntimeScope extends IContextualizationScope {
     ActuatorData getActuatorData(IActuator actuator);
 
     IResolutionScope getResolutionScope();
+    
+    @Override
+    ExpressionScope getExpressionContext(IObservable targetObservable);
 
     /**
      * Return any of the observations created within the context of the root observation. Must be
@@ -615,5 +619,12 @@ public interface IRuntimeScope extends IContextualizationScope {
      * @return
      */
     IScale getScale(IActuator actuator);
+
+    /**
+     * 
+     * @param observable
+     * @return
+     */
+    IObservation getObservation(IObservable observable);
 
 }

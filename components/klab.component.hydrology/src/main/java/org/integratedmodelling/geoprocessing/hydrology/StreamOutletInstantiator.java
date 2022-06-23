@@ -15,7 +15,6 @@ import javax.media.jai.iterator.RandomIterFactory;
 import org.hortonmachine.gears.libs.modules.FlowNode;
 import org.hortonmachine.hmachine.modules.demmanipulation.markoutlets.OmsMarkoutlets;
 import org.integratedmodelling.geoprocessing.TaskMonitor;
-import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -32,6 +31,7 @@ import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractC
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.StringUtil;
 
 public class StreamOutletInstantiator extends AbstractContextualizer implements IInstantiator, IExpression {
@@ -62,8 +62,9 @@ public class StreamOutletInstantiator extends AbstractContextualizer implements 
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
-		StreamOutletInstantiator ret = new StreamOutletInstantiator();
+	public Object eval(IContextualizationScope context, Object...params) throws KlabException {
+	    Parameters<String> parameters = Parameters.create(params);
+	    StreamOutletInstantiator ret = new StreamOutletInstantiator();
 		ret.threshold = parameters.get("threshold", 0.05);
 		ret.extract = parameters.get("extract", -1);
 		return ret;

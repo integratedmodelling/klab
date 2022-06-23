@@ -326,7 +326,7 @@ public class WekaInstances {
 		if (this.selector != null) {
 			this.selectorDescriptor = Extensions.INSTANCE.getLanguageProcessor(
 					selector.getLanguage() == null ? Extensions.DEFAULT_EXPRESSION_LANGUAGE : selector.getLanguage())
-					.describe(this.selector.getCode(), context.getExpressionContext());
+					.describe(this.selector.getCode(), context.getExpressionContext(null));
 		}
 
 //		this.explicitContext = Observables.INSTANCE.getDirectContextType(predicted.getType());
@@ -718,7 +718,7 @@ public class WekaInstances {
 								parameters.put(stateIdentifiers.get(state), o);
 							}
 
-							Object o = expression.eval(parameters, context);
+							Object o = expression.eval(context, parameters);
 							if (o == null) {
 								o = Boolean.FALSE;
 							}

@@ -1,10 +1,10 @@
 package org.integratedmodelling.geoprocessing.hydrology;
 
-import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.geospace.processing.ScaleChooserInstantiator;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.utils.Parameters;
 
 public class WatershedPolygonInstantiator extends ScaleChooserInstantiator implements IExpression {
 
@@ -28,8 +28,9 @@ public class WatershedPolygonInstantiator extends ScaleChooserInstantiator imple
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
+	public Object eval(IContextualizationScope context, Object...params) throws KlabException {
 		
+	    Parameters<String> parameters = Parameters.create(params);
 		boolean whole = parameters.get("whole", Boolean.FALSE);
 		boolean boundingbox = parameters.get("boundingbox", Boolean.FALSE);
 		boolean align = parameters.get("align", Boolean.FALSE);

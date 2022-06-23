@@ -166,6 +166,16 @@ public interface IExpression {
          * @return
          */
         CompilerScope getCompilerScope();
+
+        /**
+         * If forceScalar is true and the scope's compiler scope does not comply with the scalar
+         * nature indicated, return a copy with {@link #getCompilerScope()} forced to return scalar.
+         * NOTE: does not force to NOT scalar if the parameter is false.
+         * 
+         * @param forceScalar
+         * @return
+         */
+        Scope scalar(boolean forceScalar);
     }
 
     /**
@@ -176,9 +186,10 @@ public interface IExpression {
      *        to the calling context. The {@link IContextualizationScope#getMonitor() monitor in the
      *        context} will never be null and can be used to send messages or interrupt the
      *        computation.
+     * @param additionalParameters add key, value pairs for any additional parameter to add
      * @return the result of evaluating the expression
      * @throws org.integratedmodelling.klab.exceptions.KlabException TODO
      */
-    Object eval(IParameters<String> parameters, IContextualizationScope scope);
+    Object eval(IContextualizationScope scope, Object... additionalParameters);
 
 }

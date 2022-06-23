@@ -4,7 +4,6 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Units;
-import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
@@ -12,16 +11,13 @@ import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
-import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.indexing.DistanceCalculator;
-import org.integratedmodelling.klab.components.geospace.indexing.SpatialIndex;
 import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
-import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.utils.Parameters;
 
 /**
  * Resolver that evaluates an expression computing a data artifact. If the
@@ -54,11 +50,11 @@ public class DistanceResolver extends AbstractContextualizer implements IResolve
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
+	public Object eval(IContextualizationScope context, Object...parameters) throws KlabException {
 		if (context.getScale().getSpace() == null) {
 			throw new IllegalArgumentException("cannot compute distances in a non-spatial context");
 		}
-		return new DistanceResolver(parameters, context);
+		return new DistanceResolver(Parameters.create(parameters), context);
 	}
 
 	@Override

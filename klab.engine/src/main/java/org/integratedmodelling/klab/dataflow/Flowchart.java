@@ -978,6 +978,12 @@ public class Flowchart {
                 return CompilerScope.Contextual;
             }
 
+            @Override
+            public Scope scalar(boolean forceScalar) {
+                // TODO Auto-generated method stub
+                return this;
+            }
+
 		});
 
 		return descriptor.getIdentifiers();

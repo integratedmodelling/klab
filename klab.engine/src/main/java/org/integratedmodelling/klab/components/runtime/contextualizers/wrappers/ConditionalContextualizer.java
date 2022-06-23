@@ -1,13 +1,13 @@
 package org.integratedmodelling.klab.components.runtime.contextualizers.wrappers;
 
 import org.integratedmodelling.kim.api.IContextualizable;
-import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.utils.Parameters;
 
 public class ConditionalContextualizer implements IExpression {
 	
@@ -17,8 +17,9 @@ public class ConditionalContextualizer implements IExpression {
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
+	public Object eval(IContextualizationScope context, Object...params) throws KlabException {
 
+	    Parameters<String> parameters = Parameters.create(params);
 		IServiceCall call = parameters.get("call", IServiceCall.class);
 		IContextualizable condition = parameters.get("condition", IContextualizable.class);
 		boolean isConditionNegated = parameters.get("negated", Boolean.class);

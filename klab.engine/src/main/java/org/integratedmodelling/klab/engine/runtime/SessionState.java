@@ -1044,8 +1044,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
                     "year",
                     year);
 
-            return (ITime) (new org.integratedmodelling.klab.components.time.services.Time()).eval(parameters,
-                    null);
+            return (ITime) (new org.integratedmodelling.klab.components.time.services.Time()).eval(null, parameters);
         }
 
         return null;

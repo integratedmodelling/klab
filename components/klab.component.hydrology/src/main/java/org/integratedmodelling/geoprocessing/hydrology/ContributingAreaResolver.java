@@ -22,6 +22,7 @@ import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractC
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.rest.StateSummary;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Utils;
 
 public class ContributingAreaResolver extends AbstractContextualizer implements IResolver<IState>, IExpression {
@@ -84,9 +85,9 @@ public class ContributingAreaResolver extends AbstractContextualizer implements 
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
+	public Object eval(IContextualizationScope context, Object...parameters) throws KlabException {
 		ContributingAreaResolver ret = new ContributingAreaResolver();
-		ret.cells = parameters.get("cells", Boolean.FALSE);
+		ret.cells = Parameters.create(parameters).get("cells", Boolean.FALSE);
 		return ret;
 	}
 }

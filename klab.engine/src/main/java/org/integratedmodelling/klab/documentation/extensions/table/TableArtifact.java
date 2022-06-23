@@ -986,7 +986,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 				}
 			}
 
-			ret = dimension.getExpression(scope).eval(parameters, scope);
+			ret = dimension.getExpression(scope).eval(scope, parameters);
 
 		} else {
 

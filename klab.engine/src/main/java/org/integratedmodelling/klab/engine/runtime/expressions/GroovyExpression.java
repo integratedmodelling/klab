@@ -181,6 +181,7 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
                     for (String key : parameters.keySet()) {
                         binding.setProperty(key, parameters.get(key));
                     }
+                    
                     /*
                      * use the current scope and monitor
                      */
@@ -258,7 +259,7 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
         }
 
         GroovyExpressionPreprocessor processor = new GroovyExpressionPreprocessor(namespace,
-                runtimeContext.getExpressionContext(), new HashSet<>());
+                runtimeContext.getExpressionContext(null), new HashSet<>());
         this.preprocessed = processor.process(code);
         this.errors.addAll(processor.getErrors());
         this.variables = processor.getVariables();
@@ -289,19 +290,7 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
     }
 
     @Override
-    public ILanguageExpression override(Object... variables) {
-        // this.overriding = variables;
-        return this;
-    }
-
-    @Override
     public Collection<String> getIdentifiers() {
         return descriptor.getIdentifiers();
     }
-
-    @Override
-    public Object unwrap(Object object) {
-        return object;
-    }
-
 }

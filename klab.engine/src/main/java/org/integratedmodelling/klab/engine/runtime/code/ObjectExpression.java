@@ -32,7 +32,6 @@ public class ObjectExpression {
     private ILanguageProcessor.Descriptor descriptor;
     private IParameters<String> parameters = Parameters.create();
     private ILanguageExpression expression = null;
-    private boolean first = false;
     CompilerOption[] compilerOptions;
 
     public ObjectExpression(IKimExpression expression, IRuntimeScope scope, CompilerOption... options) {
@@ -45,7 +44,8 @@ public class ObjectExpression {
         this.descriptor = Extensions.INSTANCE
                 .getLanguageProcessor(
                         expression.getLanguage() == null ? Extensions.DEFAULT_EXPRESSION_LANGUAGE : expression.getLanguage())
-                .describe(expression.getCode(), overallScope.getExpressionContext(), Extensions.options(scalar, false, options));
+                .describe(expression.getCode(), overallScope.getExpressionContext(null).scalar(scalar),
+                        Extensions.options(false, options));
         this.expression = this.descriptor.compile();
     }
 
@@ -68,15 +68,6 @@ public class ObjectExpression {
             this.parameters.putAll(additionalParameters);
         }
 
-        if (!this.parameters.containsKey("self")) {
-            if (first) {
-                parameters.put("self", identity);
-                first = true;
-            } else {
-                this.expression.override("self", identity);
-            }
-        }
-
         IScale scale = identity instanceof IObservation ? ((IObservation) identity).getScale() : null;
 
         Map<String, IObservation> artifacts = scope.getLocalCatalog(IObservation.class);
@@ -89,6 +80,6 @@ public class ObjectExpression {
             }
         }
 
-        return Utils.asType(this.expression.eval(parameters, scope), cls);
+        return Utils.asType(this.expression.eval(scope, parameters, "self", identity), cls);
     }
 }

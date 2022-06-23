@@ -50,7 +50,7 @@ public class HydrologicallyCorrectedElevationResolver extends AbstractContextual
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
+	public Object eval(IContextualizationScope context, Object...objects) throws KlabException {
 		return new HydrologicallyCorrectedElevationResolver();
 	}
 

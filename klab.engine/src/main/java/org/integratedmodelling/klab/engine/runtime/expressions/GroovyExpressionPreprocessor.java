@@ -230,7 +230,7 @@ public class GroovyExpressionPreprocessor {
             if ("self".equals(token)) {
                 System.out.println("AHA");
             }
-            
+
             // next significant token
             int next = index + 1;
             TokenDescriptor nextToken = null;
@@ -259,16 +259,13 @@ public class GroovyExpressionPreprocessor {
                 ret = translateDefine(ret);
                 break;
             case KNOWN_ID:
-                IKimConcept.Type type = getIdentifierType(ret);
-                if (expressionScope.getCompilerScope() == CompilerScope.Contextual && type == Type.QUALITY) {
+                IKimConcept.Type type = getIdentifierType(token);
+                if (expressionScope.getCompilerScope() == CompilerScope.Scalar && type == Type.QUALITY && !methodCall) {
                     if (nextToken != null && nextToken.type == TokenType.RECONTEXTUALIZATION) {
                         ret = token + ".getProxy(scale)";
                     } else {
                         ret = token + ".get(scale)";
                     }
-                } else if (type != null) {
-                    // output the ref to the observation
-                    ret = token;
                 } else {
                     // just the variable
                     ret = token;
@@ -388,15 +385,19 @@ public class GroovyExpressionPreprocessor {
 
     public String process(String code) {
 
-        code = preprocess(code);
+        String ret = preprocess(code);
 
         if (this.doNotProcess) {
             return code;
         }
 
-        List<TokenDescriptor> tokens = tokenize(code);
+        List<TokenDescriptor> tokens = tokenize(ret);
         analyze(tokens);
-        return reconstruct(tokens);
+        ret = reconstruct(tokens);
+        
+        System.out.println(code + " -> " + ret);
+
+        return ret;
     }
 
     /*
@@ -676,7 +677,7 @@ public class GroovyExpressionPreprocessor {
     private String translateDefine(String currentToken) {
         return "_ns.getSymbolTable().get(\"" + currentToken + "\")";
     }
-    
+
     private String translateKnowledge(String k) {
         return encodeValue(Concepts.INSTANCE.getConcept(k));
     }

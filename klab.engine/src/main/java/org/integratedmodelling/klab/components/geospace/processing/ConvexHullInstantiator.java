@@ -70,7 +70,7 @@ public class ConvexHullInstantiator extends AbstractContextualizer implements IE
 				expression = ((IKimExpression) expression).getCode();
 			}
 			this.exprDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE)
-					.describe(expression.toString(), context.getExpressionContext());
+					.describe(expression.toString(), context.getExpressionContext(null));
 		}
 
 		IScale scale = context.getScale();
@@ -184,7 +184,7 @@ public class ConvexHullInstantiator extends AbstractContextualizer implements IE
 					parameters.put(stateIdentifiers.get(state), o);
 				}
 
-				o = expression.eval(parameters, context);
+				o = expression.eval(context, parameters);
 				if (o == null) {
 					o = Boolean.FALSE;
 				}
@@ -214,19 +214,14 @@ public class ConvexHullInstantiator extends AbstractContextualizer implements IE
 		return ret;
 	}
 
-//	@Override
-//	public IGeometry getGeometry() {
-//		return org.integratedmodelling.klab.common.Geometry.create("#s2");
-//	}
-
 	@Override
 	public IArtifact.Type getType() {
 		return IArtifact.Type.OBJECT;
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
-		return new ConvexHullInstantiator(parameters, context);
+	public Object eval(IContextualizationScope context, Object...parameters) throws KlabException {
+		return new ConvexHullInstantiator(Parameters.create(parameters), context);
 	}
 
 }

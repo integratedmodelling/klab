@@ -16,11 +16,13 @@ import org.integratedmodelling.kim.api.IKimLookupTable;
 import org.integratedmodelling.kim.api.IKimLookupTable.Argument.Dimension;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Concepts;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.classification.IClassifier;
 import org.integratedmodelling.klab.api.data.classification.ILookupTable;
 import org.integratedmodelling.klab.api.data.general.IStructuredTable;
 import org.integratedmodelling.klab.api.knowledge.IAuthority;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
@@ -160,13 +162,14 @@ public class LookupTable implements ILookupTable {
     }
 
     @Override
-    public Object lookup(IParameters<String> parameters, IContextualizationScope context) {
+    public Object lookup(IParameters<String> parameters, IContextualizationScope scope, ILocator locator) {
 
         StringBuffer s = new StringBuffer(1024);
         Object[] values = new Object[variables.size()];
         int rowDimension = -1;
 
         for (int i = 0; i < variables.size(); i++) {
+            
             if (i == searchIndex || (variables.get(i).getId() != null && variables.get(i).getId().charAt(0) == '*')) {
                 continue;
             }
@@ -175,7 +178,13 @@ public class LookupTable implements ILookupTable {
             }
             values[i] = variables.get(i).getId() != null
                     ? parameters.get(variables.get(i).getId())
-                    : context.localizePredicate(variables.get(i).getConcept());
+                    : scope.localizePredicate(variables.get(i).getConcept());
+            
+            // normal situation during contextualization
+            if (values[i] instanceof IState) {
+                values[i] = ((IState)values[i]).get(locator);
+            }
+            
             s.append("|");
             s.append(values[i] == null ? "null" : values[i].toString());
         }
@@ -196,13 +205,13 @@ public class LookupTable implements ILookupTable {
                  */
                 Object value = values[rowDimension];
                 for (int rowIndex = 0; rowIndex < rowClassifiers.size(); rowIndex++) {
-                    if (rowClassifiers.get(rowIndex).classify(value, context)) {
+                    if (rowClassifiers.get(rowIndex).classify(value, scope)) {
                         for (int colIndex = 0; colIndex < columnClassifiers.size(); colIndex++) {
-                            if (columnClassifiers.get(colIndex).classify(values[rowDimension == 0 ? 1 : 0], context)) {
+                            if (columnClassifiers.get(colIndex).classify(values[rowDimension == 0 ? 1 : 0], scope)) {
                                 if (table.getRow(rowIndex)[colIndex].isComputed()) {
                                     doNotCache = true;
                                 }
-                                ret = table.getRow(rowIndex)[colIndex].asValue(context);
+                                ret = table.getRow(rowIndex)[colIndex].asValue(scope);
                                 break;
                             }
                         }
@@ -218,7 +227,7 @@ public class LookupTable implements ILookupTable {
                         if (i == searchIndex || (variables.get(i).getId() != null && variables.get(i).getId().charAt(0) == '*')) {
                             continue;
                         }
-                        if (!row[i].classify(values[i], context)) {
+                        if (!row[i].classify(values[i], scope)) {
                             ok = false;
                             break;
                         }
@@ -227,7 +236,7 @@ public class LookupTable implements ILookupTable {
                         if (row[searchIndex].isComputed()) {
                             storeProxy = true;
                         }
-                        ret = row[searchIndex].asValue(context);
+                        ret = row[searchIndex].asValue(scope);
                         break;
                     }
                     rind++;
@@ -239,7 +248,7 @@ public class LookupTable implements ILookupTable {
             }
             
         } else if (ret instanceof RowProxy) {
-            ret = table.getRows().get(((RowProxy) ret).row)[searchIndex].asValue(context);
+            ret = table.getRows().get(((RowProxy) ret).row)[searchIndex].asValue(scope);
         } else {
             ret = ret instanceof Optional ? null : ret;
         }

@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.components.time.services;
 
 import org.integratedmodelling.kim.api.IKimQuantity;
-import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.model.KimDate;
 import org.integratedmodelling.klab.api.data.IQuantity;
 import org.integratedmodelling.klab.api.data.general.IExpression;
@@ -14,6 +13,7 @@ import org.integratedmodelling.klab.common.mediation.Quantity;
 import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Years;
@@ -21,14 +21,15 @@ import org.joda.time.Years;
 public class Time implements IExpression {
 
 	@Override
-	public Object eval(IParameters<String> parameters, IContextualizationScope scope) throws KlabException {
+	public Object eval(IContextualizationScope scope, Object...params) throws KlabException {
 
 		ITimeInstant start = null;
 		ITimeInstant end = null;
 		ITimeDuration step = null;
 		Resolution resolution = null;
 		ITime.Type type = ITime.Type.PHYSICAL;
-
+		Parameters<String> parameters = Parameters.create(params);
+		
 		if (parameters.contains("focus")) {
 
 			if (parameters.get("focus") instanceof IKimQuantity) {

@@ -72,7 +72,7 @@ public class NeighborhoodResolver extends AbstractContextualizer implements IRes
 
 	private NeighborhoodResolver(IParameters<String> parameters, IContextualizationScope context) {
 
-		IExpression.Scope expressionContext = context.getExpressionContext();
+		IExpression.Scope expressionContext = context.getExpressionContext(null);
 
 		// TODO should be artifact OBJECT type
 		expressionContext.addKnownIdentifier("cell", IKimConcept.Type.SUBJECT);
@@ -86,7 +86,7 @@ public class NeighborhoodResolver extends AbstractContextualizer implements IRes
 				expression = ((IKimExpression) expression).getCode();
 			}
 			this.selectDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE)
-					.describe(expression.toString(), expressionContext, Extensions.options(forceScalar, false));
+					.describe(expression.toString(), expressionContext.scalar(forceScalar), Extensions.options(false));
 		}
 		if (parameters.containsKey("aggregate")) {
 			Object expression = parameters.get("aggregate");
@@ -96,7 +96,7 @@ public class NeighborhoodResolver extends AbstractContextualizer implements IRes
 				expression = ((IKimExpression) expression).getCode();
 			}
 			this.valueDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE)
-					.describe(expression.toString(), expressionContext, Extensions.options(forceScalar, false));
+					.describe(expression.toString(), expressionContext.scalar(forceScalar), Extensions.options(false));
 		}
 
 		this.radius = parameters.get("radius", 0.0);
@@ -373,7 +373,7 @@ public class NeighborhoodResolver extends AbstractContextualizer implements IRes
 			Object o = state.get(where, Object.class);
 			parameters.put(stateIdentifiers.get(state), o);
 		}
-		return Utils.asType(expression.eval(parameters, context), cls);
+		return Utils.asType(expression.eval(context, parameters), cls);
 	}
 
 	private List<Cell> getNeighborhood(Cell center, Pair<Integer, Integer>[][] offsetMask) {
@@ -404,9 +404,9 @@ public class NeighborhoodResolver extends AbstractContextualizer implements IRes
 	}
 
 	@Override
-	public NeighborhoodResolver eval(IParameters<String> parameters, IContextualizationScope context)
+	public NeighborhoodResolver eval(IContextualizationScope context, Object...parameters)
 			throws KlabException {
-		return new NeighborhoodResolver(parameters, context);
+		return new NeighborhoodResolver(Parameters.create(parameters), context);
 	}
 
 	/**

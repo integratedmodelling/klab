@@ -27,29 +27,23 @@ import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
+import org.integratedmodelling.klab.api.data.general.IExpression.CompilerScope;
+import org.integratedmodelling.klab.api.data.general.IExpression.Scope;
 import org.integratedmodelling.klab.api.extensions.Component;
-import org.integratedmodelling.klab.api.extensions.ILanguageExpression;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
 import org.integratedmodelling.klab.api.extensions.ResourceAdapter;
 import org.integratedmodelling.klab.api.extensions.UrnAdapter;
 import org.integratedmodelling.klab.api.extensions.component.IComponent;
 import org.integratedmodelling.klab.api.model.INamespace;
-import org.integratedmodelling.klab.api.observations.IDirectObservation;
-import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
-import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
-import org.integratedmodelling.klab.api.observations.scale.space.Orientation;
-import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IExtensionService;
-import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.documentation.style.StyleDefinition;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.code.Expression;
+import org.integratedmodelling.klab.engine.runtime.code.ExpressionScope;
 import org.integratedmodelling.klab.engine.runtime.expressions.GroovyProcessor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
@@ -185,7 +179,7 @@ public enum Extensions implements IExtensionService {
                     IExpression expr = (IExpression) cls.getDeclaredConstructor().newInstance();
                     Parameters<String> parameters = new Parameters<String>(functionCall.getParameters());
                     parameters.put(PROTOTYPE_PARAMETER, prototype);
-                    ret = expr.eval(parameters, scope);
+                    ret = expr.eval(scope, parameters);
                 } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                         | NoSuchMethodException | SecurityException e) {
                     scope.getMonitor().error(e);
@@ -326,7 +320,13 @@ public enum Extensions implements IExtensionService {
     }
 
     public IExpression compileExpression(String expressionCode, String language, CompilerOption... compilerOptions) {
-        return getLanguageProcessor(language).compile(expressionCode, null, compilerOptions);
+        return getLanguageProcessor(language).compile(expressionCode, ExpressionScope.empty(Klab.INSTANCE.getRootMonitor()),
+                compilerOptions);
+    }
+
+    public IExpression compileExpression(IKimExpression expression, CompilerOption... compilerOptions) {
+        return getLanguageProcessor(expression.getLanguage()).compile(expression.getCode(),
+                ExpressionScope.empty(Klab.INSTANCE.getRootMonitor()).scalar(expression.isForcedScalar()), compilerOptions);
     }
 
     public IExpression compileExpression(String expressionCode, IExpression.Scope context, String language,
@@ -356,9 +356,12 @@ public enum Extensions implements IExtensionService {
                 scope.getMonitor().error("cannot use value " + condition.getLiteral() + " as a logical value");
             }
         } else if (condition.getExpression() != null) {
-            IExpression expression = getLanguageProcessor(DEFAULT_EXPRESSION_LANGUAGE).compile(
-                    condition.getExpression().getCode(), scope.getExpressionContext(),
-                    options(condition.getExpression().isForcedScalar(), false));
+            Scope escope = scope.getExpressionContext(null);
+            if (condition.getExpression().isForcedScalar()) {
+                escope = ((ExpressionScope) escope).withCompilerScope(CompilerScope.Scalar);
+            }
+            IExpression expression = getLanguageProcessor(DEFAULT_EXPRESSION_LANGUAGE)
+                    .compile(condition.getExpression().getCode(), escope, options(false));
             Object o = expression.eval(scope, scope);
             if (o instanceof Boolean) {
                 return (Boolean) o;
@@ -401,72 +404,76 @@ public enum Extensions implements IExtensionService {
         return ret;
     }
 
-    /**
-     * Called from Groovy when expressions like "id@nw" are found. Applies some memoizing to handle
-     * the context IDs quicker.
-     * 
-     * @param targetId
-     * @param contextIds
-     * @param context
-     * @return
-     */
-    public Object recontextualizeIdentifier(String targetId, String contextId, IRuntimeScope context,
-            ILanguageExpression expression, Map<?, ?> variables) {
-
-        /*
-         * must be a state
-         */
-        Object ret = null;
-        // TODO remove
-        // String dio = "boh";
-
-        IArtifact artifact = context.getArtifact(targetId);
-        if (!(artifact instanceof IState)) {
-            throw new IllegalArgumentException("cannot recontextualize " + targetId + " to " + contextId + ": not a state");
-        }
-        IState state = (IState) artifact;
-
-        switch(contextId) {
-        case "w":
-        case "n":
-        case "s":
-        case "e":
-        case "sw":
-        case "nw":
-        case "se":
-        case "ne":
-
-            // space must be a grid
-            if (state.getSpace() == null || ((Space) state.getSpace()).getGrid() == null
-                    || !(context.getScale().getSpace() instanceof IGrid.Cell)) {
-                throw new IllegalArgumentException(
-                        "cannot recontextualize " + targetId + " to " + contextId + ": not on grid space");
-            }
-
-            Cell cell = (IGrid.Cell) context.getScale().getSpace();
-            ret = state.get(cell.getNeighbor(Orientation.valueOf(contextId.toUpperCase())));
-            break;
-
-        case "previous":
-            // we must have time > start
-            break;
-        default:
-            // recontextualize to view of other object
-            Object o = expression.unwrap(variables.get(contextId));
-            if (o instanceof IDirectObservation) {
-                ret = state.at(((IDirectObservation) o).getScale()).aggregate();
-                // dio = ((IDirectObservation) o).getScale().encode();
-            } else {
-                throw new IllegalArgumentException(
-                        "cannot recontextualize " + targetId + " to " + contextId + ": new context is not a direct observation");
-            }
-            break;
-        }
-
-        // System.out.println("GOT " + ret + " for " + targetId + " @ " + dio);
-
-        return ret;
-    }
+    // /**
+    // * Called from Groovy when expressions like "id@nw" are found. Applies some memoizing to
+    // handle
+    // * the context IDs quicker.
+    // *
+    // * @param targetId
+    // * @param contextIds
+    // * @param context
+    // * @return
+    // */
+    // public Object recontextualizeIdentifier(String targetId, String contextId, IRuntimeScope
+    // context,
+    // ILanguageExpression expression, Map<?, ?> variables) {
+    //
+    // /*
+    // * must be a state
+    // */
+    // Object ret = null;
+    // // TODO remove
+    // // String dio = "boh";
+    //
+    // IArtifact artifact = context.getArtifact(targetId);
+    // if (!(artifact instanceof IState)) {
+    // throw new IllegalArgumentException("cannot recontextualize " + targetId + " to " + contextId
+    // + ": not a state");
+    // }
+    // IState state = (IState) artifact;
+    //
+    // switch(contextId) {
+    // case "w":
+    // case "n":
+    // case "s":
+    // case "e":
+    // case "sw":
+    // case "nw":
+    // case "se":
+    // case "ne":
+    //
+    // // space must be a grid
+    // if (state.getSpace() == null || ((Space) state.getSpace()).getGrid() == null
+    // || !(context.getScale().getSpace() instanceof IGrid.Cell)) {
+    // throw new IllegalArgumentException(
+    // "cannot recontextualize " + targetId + " to " + contextId + ": not on grid space");
+    // }
+    //
+    // Cell cell = (IGrid.Cell) context.getScale().getSpace();
+    // ret = state.get(cell.getNeighbor(Orientation.valueOf(contextId.toUpperCase())));
+    // break;
+    //
+    // case "previous":
+    // // we must have time > start
+    // break;
+    // default:
+    // // recontextualize to view of other object
+    // Object o = variables.get(contextId);
+    // if (o instanceof IDirectObservation) {
+    // ret = state.at(((IDirectObservation) o).getScale()).aggregate();
+    // // dio = ((IDirectObservation) o).getScale().encode();
+    // } else {
+    // throw new IllegalArgumentException(
+    // "cannot recontextualize " + targetId + " to " + contextId + ": new context is not a direct
+    // observation");
+    // }
+    // break;
+    // }
+    //
+    // // System.out.println("GOT " + ret + " for " + targetId + " @ " + dio);
+    //
+    // return ret;
+    // }
 
     @Override
     public <T> T getComponentImplementation(String componentId, Class<? extends T> requestedClass) {
@@ -508,12 +515,9 @@ public enum Extensions implements IExtensionService {
     }
 
     // facilitates calling when options are true/false flags. Not very nice.
-    public static CompilerOption[] options(boolean scalar, boolean recontextualizeAsMaps, CompilerOption... options) {
+    public static CompilerOption[] options(boolean recontextualizeAsMaps, CompilerOption... options) {
 
         List<CompilerOption> ret = new ArrayList<>();
-        if (scalar) {
-            ret.add(CompilerOption.ForcedScalar);
-        }
         if (recontextualizeAsMaps) {
             ret.add(CompilerOption.RecontextualizeAsMap);
         }

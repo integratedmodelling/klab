@@ -71,7 +71,7 @@ public class RandomProcessResolver extends AbstractContextualizer implements IRe
                 if (g instanceof IKimExpression) {
                     g = ((IKimExpression) g).getCode();
                     Descriptor descriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE)
-                            .describe(g.toString(), scope.getExpressionContext());
+                            .describe(g.toString(), scope.getExpressionContext(null));
                     generators.put(generator, descriptor.compile());
 
                 } else if (g instanceof IServiceCall) {
@@ -164,13 +164,13 @@ public class RandomProcessResolver extends AbstractContextualizer implements IRe
             Object o = st.getSecond().get(where, Object.class);
             parameters.put(st.getFirst(), o);
         }
-        return expression.eval(parameters, scope);
+        return expression.eval(scope, parameters);
     }
 
     @Override
-    public Object eval(IParameters<String> parameters, IContextualizationScope context) {
+    public Object eval(IContextualizationScope context, Object...parameters) {
         RandomProcessResolver ret = new RandomProcessResolver();
-        ret.generators.putAll(parameters);
+        ret.generators.putAll(Parameters.create(parameters));
         return ret;
     }
 
