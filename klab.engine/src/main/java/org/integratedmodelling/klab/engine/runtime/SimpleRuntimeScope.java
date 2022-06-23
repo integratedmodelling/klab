@@ -1022,8 +1022,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 
     @Override
     public ExpressionScope getExpressionContext(IObservable targetObservable) {
-        // TODO Auto-generated method stub
-        return null;
+        return ExpressionScope.empty(Klab.INSTANCE.getRootMonitor());
     }
 
     @Override

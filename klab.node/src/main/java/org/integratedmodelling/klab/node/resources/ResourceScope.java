@@ -10,6 +10,7 @@ import java.util.Set;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IValueMediator;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -263,8 +264,7 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
 
     @Override
     public ExpressionScope getExpressionContext(IObservable targetObservable) {
-        // TODO Auto-generated method stub
-        return null;
+        return ExpressionScope.empty(Klab.INSTANCE.getRootMonitor());
     }
 
     @Override

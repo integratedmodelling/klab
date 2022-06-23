@@ -7,6 +7,7 @@ import java.util.Map;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IValueMediator;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
@@ -207,8 +208,7 @@ public abstract class Expression implements IExpression {
 
 		@Override
 		public org.integratedmodelling.klab.api.data.general.IExpression.Scope getExpressionContext(IObservable targetObservable) {
-			// TODO Auto-generated method stub
-			return null;
+	        return ExpressionScope.empty(Klab.INSTANCE.getRootMonitor());
 		}
 
 		@Override
