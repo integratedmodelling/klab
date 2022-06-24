@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Attribute;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
+import org.integratedmodelling.klab.api.data.general.IExpression.CompilerScope;
 import org.integratedmodelling.klab.api.data.general.ITable;
 import org.integratedmodelling.klab.api.knowledge.ICodelist;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -581,7 +582,7 @@ public abstract class AbstractTable<T> implements ITable<T> {
 			case COLUMN_EXPRESSION:
 				// TODO store in filter to avoid recompiling each time
 				filterExpression = Extensions.INSTANCE.compileExpression(filter.getArguments().get(0).toString(),
-						Extensions.DEFAULT_EXPRESSION_LANGUAGE, CompilerOption.ForcedScalar,
+						Extensions.DEFAULT_EXPRESSION_LANGUAGE, CompilerScope.Scalar,
 						CompilerOption.IgnoreContext);
 				break;
 			case COLUMN_MATCH:

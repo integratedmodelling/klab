@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.components.runtime.observations;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -68,10 +69,15 @@ public class State extends Observation implements IState, IKeyHolder {
     Set<Pair<Long, Long>> timeCoverage;
     boolean numeric = false;
 
+    Map<Integer, RelocatedState> stateProxies = Collections.synchronizedMap(new HashMap<>());
+
     /**
-     * This is output by getProxy() which is a proxy for a get() where the locator can be modified
-     * through a << operator in Groovy, returning the state "at" the modified locator. Used to
-     * handle the preprocessed @ operator in expressions.
+     * This is output by getProxy() and getStateProxy() which return proxies for a get() where the
+     * locator can be modified through a << operator in Groovy, returning the state "at" the
+     * modified locator. Used to handle the preprocessed @ operator in expressions and to pass
+     * Groovy messages to entire state/state slices located at a particular time. In the latter
+     * case, the proxies are indexed in the state using the scale's system ID to make it as fast as
+     * possible to retrieve.
      * 
      * @author Ferd
      *
@@ -85,7 +91,7 @@ public class State extends Observation implements IState, IKeyHolder {
         }
 
         /*
-         * this will be called by the 
+         * this will be called by the
          */
         public Object leftShift(Object locatorModifier) {
             return get(Extensions.INSTANCE.relocate(locator, locatorModifier));
@@ -132,7 +138,23 @@ public class State extends Observation implements IState, IKeyHolder {
     public RelocatedState getProxy(IScale locator) {
         return new RelocatedState(locator);
     }
-    
+
+    /**
+     * For Groovy
+     * 
+     * @param scale
+     * @return
+     */
+    public RelocatedState getStateProxy(IScale scale) {
+        int id = System.identityHashCode(scale);
+        RelocatedState ret = this.stateProxies.get(id);
+        if (ret == null) {
+            ret = new RelocatedState(scale);
+            this.stateProxies.put(id, ret);
+        }
+        return ret;
+    }
+
     @Override
     public ValuePresentation getValuePresentation() {
         return this.valuePresentation;
@@ -466,12 +488,13 @@ public class State extends Observation implements IState, IKeyHolder {
             return ret;
         }
 
-//        /*
-//         * FIXME this really shouldn't be necessary
-//         */
-//        if (state instanceof org.integratedmodelling.klab.extensions.groovy.model.Concept) {
-//            state = (IConcept) ((org.integratedmodelling.klab.extensions.groovy.model.Concept) state).getConcept();
-//        }
+        // /*
+        // * FIXME this really shouldn't be necessary
+        // */
+        // if (state instanceof org.integratedmodelling.klab.extensions.groovy.model.Concept) {
+        // state = (IConcept) ((org.integratedmodelling.klab.extensions.groovy.model.Concept)
+        // state).getConcept();
+        // }
 
         for (ILocator loc : (locator == null ? getScale() : getScale().at(locator))) {
 

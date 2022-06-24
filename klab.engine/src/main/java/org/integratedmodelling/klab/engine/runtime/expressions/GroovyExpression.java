@@ -23,6 +23,7 @@ package org.integratedmodelling.klab.engine.runtime.expressions;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -40,6 +41,9 @@ import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.code.Expression;
@@ -82,6 +86,7 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
     private IRuntimeScope runtimeContext;
     private Descriptor descriptor;
     private Map<String, Object> variables;
+    private Set<CompilerOption> options = EnumSet.noneOf(CompilerOption.class);
 
     public GroovyExpression() {
         initialized.set(Boolean.FALSE);
@@ -108,6 +113,7 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
         this.descriptor = descriptor;
         this.variables = descriptor.getVariables();
         this.code = code;
+        this.options.addAll(descriptor.getOptions());
         if (preprocessed) {
             this.preprocessed = this.code;
         }
@@ -143,7 +149,7 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
             // or other code
             // where the creating thread has
             // finished. In this case we recycle them (TODO CHECK if this creates any
-            // problems).
+            // problems) - IGNORES OPTIONS
             if (initialized.get() == null || !initialized.get()) {
                 initialize(new HashMap<>(), new HashMap<>());
                 setupBindings(scope);
@@ -178,10 +184,23 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
                      * this will override the vars if necessary. For example it will change the
                      * scale in local contexts.
                      */
+                    IScale localScale = null;
                     for (String key : parameters.keySet()) {
-                        binding.setProperty(key, parameters.get(key));
+                        Object value = parameters.get(key);
+                        if ("scale".equals(key) && value instanceof IScale) {
+                            localScale = (IScale) value;
+                        }
+                        binding.setProperty(key, value);
                     }
-                    
+
+                    if (descriptor.getOptions().contains(CompilerOption.DirectQualityAccess) && localScale != null) {
+                        for (String id : descriptor.getIdentifiersInScalarScope()) {
+                            IArtifact state = scope.getArtifact(id);
+                            if (state instanceof IState) {
+                                binding.setProperty("_" + id, ((IState)state).get(localScale));
+                            }
+                        }
+                    }
                     /*
                      * use the current scope and monitor
                      */
@@ -259,7 +278,7 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
         }
 
         GroovyExpressionPreprocessor processor = new GroovyExpressionPreprocessor(namespace,
-                runtimeContext.getExpressionContext(null), new HashSet<>());
+                runtimeContext.getExpressionContext(null), this.options);
         this.preprocessed = processor.process(code);
         this.errors.addAll(processor.getErrors());
         this.variables = processor.getVariables();

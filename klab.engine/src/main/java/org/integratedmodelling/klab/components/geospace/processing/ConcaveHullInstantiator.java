@@ -70,7 +70,7 @@ public class ConcaveHullInstantiator extends AbstractContextualizer implements I
 				expression = ((IKimExpression) expression).getCode();
 			}
 			this.exprDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE)
-					.describe(expression.toString(), context.getExpressionContext(null), CompilerOption.ForcedScalar);
+					.describe(expression.toString(), context.getExpressionContext(null).scalar(true));
 		}
 
 		IScale scale = context.getScale();

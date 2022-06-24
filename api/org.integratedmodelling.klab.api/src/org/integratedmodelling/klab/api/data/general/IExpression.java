@@ -58,7 +58,8 @@ public interface IExpression {
     public enum CompilerOption {
 
         /**
-         * 
+         * Don't try to process code related to observations and just consider each variable with
+         * its own name.
          */
         IgnoreContext,
 
@@ -77,7 +78,14 @@ public interface IExpression {
         /**
          * Skip k.LAB preprocessing altogether.
          */
-        DoNotPreprocess
+        DoNotPreprocess,
+
+        /**
+         * Refer to quality values coming from states directly instead of compiling in a
+         * state.get(scale) instruction. Values must be inserted in parameters at eval(). Use when
+         * speed is critical - Groovy takes a long time dispatching the messages.
+         */
+        DirectQualityAccess
     }
 
     /**

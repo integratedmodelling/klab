@@ -319,11 +319,34 @@ public enum Extensions implements IExtensionService {
         return ret;
     }
 
-    public IExpression compileExpression(String expressionCode, String language, CompilerOption... compilerOptions) {
-        return getLanguageProcessor(language).compile(expressionCode, ExpressionScope.empty(Klab.INSTANCE.getRootMonitor()),
-                compilerOptions);
+    /**
+     * 
+     * @param expressionCode
+     * @param language
+     * @param compilerOptions
+     * @return
+     */
+    public IExpression compileExpression(String expressionCode, String language, Object... compilerOptions) {
+        List<CompilerOption> options = new ArrayList<>();
+        ExpressionScope scope = ExpressionScope.empty(Klab.INSTANCE.getRootMonitor());
+        if (compilerOptions != null) {
+            for (Object o : compilerOptions) {
+                if (o instanceof CompilerOption) {
+                    options.add((CompilerOption) o);
+                } else if (o == CompilerScope.Scalar) {
+                    scope = scope.scalar(true);
+                }
+            }
+        }
+        return getLanguageProcessor(language).compile(expressionCode, scope, options.toArray(new CompilerOption[options.size()]));
     }
 
+    /**
+     * 
+     * @param expression
+     * @param compilerOptions
+     * @return
+     */
     public IExpression compileExpression(IKimExpression expression, CompilerOption... compilerOptions) {
         return getLanguageProcessor(expression.getLanguage()).compile(expression.getCode(),
                 ExpressionScope.empty(Klab.INSTANCE.getRootMonitor()).scalar(expression.isForcedScalar()), compilerOptions);
@@ -546,6 +569,26 @@ public enum Extensions implements IExtensionService {
     public ILocator relocate(IScale locator, Object locatorModifier) {
         // TODO Auto-generated method stub
         return locator;
+    }
+
+    @Override
+    public Scope getScope(Object... options) {
+        IMonitor monitor = Klab.INSTANCE.getRootMonitor();
+        boolean scalar = false;
+        if (options != null) {
+            for (Object o : options) {
+                if (o instanceof IMonitor) {
+                    monitor = (IMonitor)o;
+                } else if (o == CompilerScope.Scalar) {
+                    scalar = true;
+                }
+            }
+        }
+        ExpressionScope ret = ExpressionScope.empty(monitor);
+        if (scalar) {
+            ret = ret.scalar(true);
+        }
+        return ret;
     }
 
 }

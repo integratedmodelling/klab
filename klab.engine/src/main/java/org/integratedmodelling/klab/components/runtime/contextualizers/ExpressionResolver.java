@@ -110,15 +110,19 @@ public class ExpressionResolver extends AbstractContextualizer implements IResol
 
         ExpressionScope expressionScope = (ExpressionScope) context.getExpressionContext(targetObservable)
                 .scalar(parameters.get("scalar", Boolean.FALSE));
-
-        Descriptor descriptor = processor.describe(parameters.get("code", String.class), expressionScope);
+        Set<CompilerOption> options = new HashSet<>();
+        if (expressionScope.getCompilerScope() == CompilerScope.Scalar) {
+            // this is for speed
+            options.add(CompilerOption.DirectQualityAccess);
+        }
+        Descriptor descriptor = processor.describe(parameters.get("code", String.class), expressionScope, options.toArray(new CompilerOption[options.size()]));
         Descriptor condition = null;
         if (parameters.get("ifcondition") != null || parameters.get("unlesscondition") != null) {
             String condCode = parameters.get("ifcondition", String.class);
             if (condCode == null) {
                 condCode = processor.negate(parameters.get("unlesscondition", String.class));
             }
-            condition = processor.describe(condCode, expressionScope);
+            condition = processor.describe(condCode, expressionScope, options.toArray(new CompilerOption[options.size()]));
         }
 
         for (String key : parameters.keySet()) {
@@ -129,22 +133,7 @@ public class ExpressionResolver extends AbstractContextualizer implements IResol
                 additionalParameters.put(key, parameters.get(key));
             }
         }
-
-        // /**
-        // * If we're computing a quality and there is any scalar usage of the known
-        // * non-scalar quantities, create a distributed state resolver. Do the analysis
-        // * even if scalar evaluation has been forced.
-        // */
-        // boolean scalar = false;
-        // if (targetType == Type.QUALITY) {
-        // Collection<String> distributedStateIds = context.getStateIdentifiers();
-        // distributedStateIds.add("self");
-        // scalar = descriptor.isScalar(distributedStateIds);
-        // if (!scalar && condition != null) {
-        // scalar = condition.isScalar(distributedStateIds);
-        // }
-        // }
-
+        
         if (expressionScope.getCompilerScope() == CompilerScope.Scalar) {
             return new ExpressionStateResolver(descriptor, condition, parameters, context, additionalParameters);
         }

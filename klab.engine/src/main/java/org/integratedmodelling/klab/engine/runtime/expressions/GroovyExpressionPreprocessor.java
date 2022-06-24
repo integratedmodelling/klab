@@ -146,6 +146,7 @@ public class GroovyExpressionPreprocessor {
     private Set<String> scalarIds = new HashSet<>();
     private Set<String> contextualizers = new HashSet<>();
     IExpression.Scope expressionScope;
+    private boolean expectDirectData;
     private boolean recontextualizeAsMap;
     /*
      * if recontextualizeAsMap is passed, identifiers like id@ctx are translated as id["ctx"] and
@@ -179,6 +180,7 @@ public class GroovyExpressionPreprocessor {
         this.ignoreContext = options.contains(CompilerOption.IgnoreContext);
         this.doNotProcess = options.contains(CompilerOption.DoNotPreprocess);
         this.ignoreRecontextualization = options.contains(CompilerOption.IgnoreRecontextualization);
+        this.expectDirectData = options.contains(CompilerOption.DirectQualityAccess);
     }
 
     /**
@@ -260,8 +262,10 @@ public class GroovyExpressionPreprocessor {
                     if (nextToken != null && nextToken.type == TokenType.RECONTEXTUALIZATION) {
                         ret = token + ".getProxy(scale)";
                     } else {
-                        ret = token + ".get(scale)";
+                        ret = expectDirectData ? ("_" + token) : (token + ".get(scale)");
                     }
+                } else if (type == Type.QUALITY && methodCall) {
+                    ret = token + ".getStateProxy(scale)";
                 } else {
                     // just the variable
                     ret = token;
@@ -390,7 +394,7 @@ public class GroovyExpressionPreprocessor {
         List<TokenDescriptor> tokens = tokenize(ret);
         analyze(tokens);
         ret = reconstruct(tokens);
-        
+
         System.out.println(code + " -> " + ret);
 
         return ret;

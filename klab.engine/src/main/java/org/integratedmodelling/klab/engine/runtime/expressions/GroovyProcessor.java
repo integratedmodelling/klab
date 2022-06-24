@@ -6,13 +6,11 @@ import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.kim.validation.KimNotification;
-import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
 import org.integratedmodelling.klab.api.extensions.ILanguageExpression;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
 import org.integratedmodelling.klab.api.model.INamespace;
-import org.integratedmodelling.klab.engine.runtime.code.ExpressionScope;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 import com.google.common.collect.Sets;
@@ -31,7 +29,6 @@ public enum GroovyProcessor implements ILanguageProcessor {
         private Set<String> objectIds;
         private Set<String> contextualizers;
         private List<KimNotification> errors;
-        private boolean forcedScalar;
         private Map<String, Set<String>> mapIdentifiers;
         private Set<CompilerOption> options;
         private Map<String, Object> variables;
@@ -127,12 +124,7 @@ public enum GroovyProcessor implements ILanguageProcessor {
         public Collection<String> getContextualizers() {
             return contextualizers;
         }
-
-//        @Override
-//        public boolean isForcedScalar() {
-//            return forcedScalar;
-//        }
-
+        
         @Override
         public Map<String, Set<String>> getMapIdentifiers() {
             return mapIdentifiers;
@@ -156,10 +148,21 @@ public enum GroovyProcessor implements ILanguageProcessor {
         return new GroovyDescriptor(expression, context, options);
     }
 
-    @Override
-    public Descriptor describe(String expression, Object... options) throws KlabValidationException {
-        return new GroovyDescriptor(expression, ExpressionScope.empty(Klab.INSTANCE.getRootMonitor()), options);
-    }
+//    @Override
+//    public Descriptor describe(String expression, Object... options) throws KlabValidationException {
+//        ExpressionScope scope = ExpressionScope.empty(Klab.INSTANCE.getRootMonitor());
+//        List<CompilerOption> opts = new ArrayList<>();
+//        if (options != null) {
+//            for (Object o : options) {
+//                if (o instanceof CompilerOption) {
+//                    opts.add((CompilerOption) o);
+//                } else if (o == CompilerScope.Scalar) {
+//                    scope = scope.scalar(true);
+//                }
+//            }
+//        }
+//        return new GroovyDescriptor(expression, scope, opts.toArray(new CompilerOption[opts.size()]));
+//    }
 
     @Override
     public String negate(String expression) {
