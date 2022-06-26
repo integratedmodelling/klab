@@ -164,7 +164,7 @@ public class RandomProcessResolver extends AbstractContextualizer implements IRe
             Object o = st.getSecond().get(where, Object.class);
             parameters.put(st.getFirst(), o);
         }
-        return expression.eval(scope, parameters);
+        return expression.eval(scope, parameters, "scale", where);
     }
 
     @Override

@@ -373,7 +373,7 @@ public class NeighborhoodResolver extends AbstractContextualizer implements IRes
 			Object o = state.get(where, Object.class);
 			parameters.put(stateIdentifiers.get(state), o);
 		}
-		return Utils.asType(expression.eval(context, parameters), cls);
+		return Utils.asType(expression.eval(context, parameters, "scale", where), cls);
 	}
 
 	private List<Cell> getNeighborhood(Cell center, Pair<Integer, Integer>[][] offsetMask) {

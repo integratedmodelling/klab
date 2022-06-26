@@ -242,7 +242,6 @@ public class PolygonInstantiatorJAI extends AbstractContextualizer implements IE
         boolean ret = false;
 
         Parameters<String> parameters = new Parameters<>();
-        parameters.clear();
         for (IState state : sourceStates) {
             parameters.put(stateIdentifiers.get(state), state);
         }
@@ -260,7 +259,7 @@ public class PolygonInstantiatorJAI extends AbstractContextualizer implements IE
             boolean selected = true;
             Object value = null;
             if (selectExpression != null) {
-                Object val = selectExpression.eval(scope, parameters);
+                Object val = selectExpression.eval(scope, parameters, "scale", locator);
                 if (Observations.INSTANCE.isData(val) && !(val instanceof Boolean)) {
                     throw new KlabValidationException("polygon instantiator: select expression must return a true/false value");
                 }

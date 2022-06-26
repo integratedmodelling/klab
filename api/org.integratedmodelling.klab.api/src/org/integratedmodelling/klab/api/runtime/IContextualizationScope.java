@@ -494,15 +494,16 @@ public interface IContextualizationScope extends IParameters<String> {
      */
     Map<String, IVariable> getVariables();
 
-//    /**
-//     * Return a context (or a simpler parameter map) with localized values of all the states at the
-//     * specified locator, suitable to evaluate point expressions. Any additional model variables
-//     * should also be added.
-//     * 
-//     * @param locator
-//     * @return
-//     */
-//    IParameters<String> localize(ILocator locator);
+    // /**
+    // * Return a context (or a simpler parameter map) with localized values of all the states at
+    // the
+    // * specified locator, suitable to evaluate point expressions. Any additional model variables
+    // * should also be added.
+    // *
+    // * @param locator
+    // * @return
+    // */
+    // IParameters<String> localize(ILocator locator);
 
     /**
      * This will return the same predicate or its localized version if the scope is contextualizing
@@ -520,7 +521,6 @@ public interface IContextualizationScope extends IParameters<String> {
      */
     IConcept localizePredicate(IConcept predicate);
 
-    
     /**
      * Create an expression context to compile an expression with all local names matched to their
      * observables.

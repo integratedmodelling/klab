@@ -86,6 +86,6 @@ public class LocatedExpression {
             }
         }
 
-        return Utils.asType(this.expression.get().eval(scope, parameters.get()), cls);
+        return Utils.asType(this.expression.get().eval(scope, parameters.get(), "scale", locator), cls);
     }
 }
