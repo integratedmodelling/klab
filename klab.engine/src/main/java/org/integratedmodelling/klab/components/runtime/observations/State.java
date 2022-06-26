@@ -89,11 +89,11 @@ public class State extends Observation implements IState, IKeyHolder {
         IScale locator;
 
         // TODO cache the stats more (in the top class)
-        
+
         public RelocatedState(IScale locator) {
             this.locator = locator;
         }
-        
+
         /*
          * this will be called by the
          */
@@ -143,6 +143,43 @@ public class State extends Observation implements IState, IKeyHolder {
                         .getVariance();
             }
             throw new KlabUnimplementedException("Groovy support for non-conventional states");
+        }
+
+        public RelocatedState invert() {
+            if (getObservable().getArtifactType() == IArtifact.Type.NUMBER
+                    && storage instanceof AbstractAdaptiveStorage) {
+                StateSummary summary = ((AbstractAdaptiveStorage<?>) storage).getSlice(locator)
+                        .getStateSummary();
+                if (!summary.isDegenerate()) {
+                    for (ILocator loc : locator) {
+                        Double d = get(loc, Double.class);
+                        if (d != null && !Double.isNaN(d)) {
+                            d = summary.getRange().get(1) - d + summary.getRange().get(0);
+                            set(loc, d);
+                        }
+                    }
+                }
+            }
+            return this;
+        }
+
+        public RelocatedState normalize() {
+            if (getObservable().getArtifactType() == IArtifact.Type.NUMBER
+                    && storage instanceof AbstractAdaptiveStorage) {
+                StateSummary summary = ((AbstractAdaptiveStorage<?>) storage).getSlice(locator)
+                        .getStateSummary();
+                if (!summary.isDegenerate()) {
+                    for (ILocator loc : locator) {
+                        Double d = get(loc, Double.class);
+                        if (d != null && !Double.isNaN(d)) {
+                            d = (d - summary.getRange().get(0)) / (summary.getRange().get(1) -
+                                    summary.getRange().get(0));
+                            set(loc, d);
+                        }
+                    }
+                }
+            }
+            return this;
         }
 
     }

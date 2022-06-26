@@ -107,7 +107,7 @@ public class ExpressionResolver extends AbstractContextualizer implements IResol
         if (parameters.containsKey(Extensions.TARGET_OBSERVABLE_PARAMETER)) {
             targetObservable = Observables.INSTANCE.asObservable(context.get(Extensions.TARGET_OBSERVABLE_PARAMETER));
         }
-
+        
         ExpressionScope expressionScope = (ExpressionScope) context.getExpressionContext(targetObservable)
                 .scalar(parameters.get("scalar", Boolean.FALSE));
         Set<CompilerOption> options = new HashSet<>();
@@ -134,7 +134,7 @@ public class ExpressionResolver extends AbstractContextualizer implements IResol
             }
         }
         
-        if (expressionScope.getCompilerScope() == CompilerScope.Scalar) {
+        if (descriptor.isScalar()) {
             return new ExpressionStateResolver(descriptor, condition, parameters, context, additionalParameters);
         }
 

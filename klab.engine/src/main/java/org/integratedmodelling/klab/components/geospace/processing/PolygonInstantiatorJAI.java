@@ -241,6 +241,12 @@ public class PolygonInstantiatorJAI extends AbstractContextualizer implements IE
         int nextValue = 1;
         boolean ret = false;
 
+        Parameters<String> parameters = new Parameters<>();
+        parameters.clear();
+        for (IState state : sourceStates) {
+            parameters.put(stateIdentifiers.get(state), state);
+        }
+
         for (ILocator locator : scope.getScale()) {
 
             Cell cell = null;
@@ -250,12 +256,6 @@ public class PolygonInstantiatorJAI extends AbstractContextualizer implements IE
                 throw new KlabValidationException("polygon instantiator: context is not a spatial grid");
             }
 
-            Parameters<String> parameters = new Parameters<>();
-
-            parameters.clear();
-            for (IState state : sourceStates) {
-                parameters.put(stateIdentifiers.get(state), state.get(locator));
-            }
 
             boolean selected = true;
             Object value = null;

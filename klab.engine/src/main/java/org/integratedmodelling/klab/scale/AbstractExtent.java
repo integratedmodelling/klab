@@ -13,213 +13,225 @@ import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.common.LogicalConnector;
 
 import groovy.lang.GroovyObjectSupport;
+import groovy.transform.CompileStatic;
 
 /**
  * Common superclass for all Extents.
  * 
- * All this is providing is the scaleId field, used to match to a corresponding
- * ID in the owning Scale to very quickly check for same-scale lineage so that
- * costly tests of conformity can be skipped when matching topologies for
- * mediation.
+ * All this is providing is the scaleId field, used to match to a corresponding ID in the owning
+ * Scale to very quickly check for same-scale lineage so that costly tests of conformity can be
+ * skipped when matching topologies for mediation.
  * 
- * The (also abstract) Extent class adds more requirements for complex and
- * composite extents. Simple ones such as Cell, Shape and Period only adopt this
- * one.
+ * The (also abstract) Extent class adds more requirements for complex and composite extents. Simple
+ * ones such as Cell, Shape and Period only adopt this one.
  * 
  * @author Ferd
  *
  */
+@CompileStatic
 public abstract class AbstractExtent extends GroovyObjectSupport implements IExtent {
 
-	protected static class SelfIterator implements Iterator<ILocator> {
+    protected static class SelfIterator implements Iterator<ILocator> {
 
-		ILocator self;
+        ILocator self;
 
-		public SelfIterator(ILocator locator) {
-			this.self = locator;
-		}
+        public SelfIterator(ILocator locator) {
+            this.self = locator;
+        }
 
-		@Override
-		public boolean hasNext() {
-			return self != null;
-		}
+        @Override
+        public boolean hasNext() {
+            return self != null;
+        }
 
-		@Override
-		public ILocator next() {
-			ILocator ret = self;
-			self = null;
-			return ret;
-		}
-	}
+        @Override
+        public ILocator next() {
+            ILocator ret = self;
+            self = null;
+            return ret;
+        }
+    }
 
-	private transient String scaleId;
-	protected transient Dimension baseDimension;
-	protected IGeometry geometry;
+    private transient String scaleId;
+    protected transient Dimension baseDimension;
+    protected IGeometry geometry;
 
-	protected Extent locatedExtent = null;
-	protected long[] locatedOffsets = null;
-	protected long locatedLinearOffset = -1;
-	private Double coverage;
-	private Function<IExtent, Double> computeCoverage = null;
+    protected Extent locatedExtent = null;
+    protected long[] locatedOffsets = null;
+    protected long locatedLinearOffset = -1;
+    private Double coverage;
+    private Function<IExtent, Double> computeCoverage = null;
 
-	@Override
-	public double getCoverage() {
-		return this.coverage == null ? (computeCoverage == null ? 1.0 : (this.coverage = computeCoverage.apply(this)))
-				: this.coverage;
-	}
+    @Override
+    public double getCoverage() {
+        return this.coverage == null
+                ? (computeCoverage == null ? 1.0 : (this.coverage = computeCoverage.apply(this)))
+                : this.coverage;
+    }
 
-	protected void copyScaleLocation(AbstractExtent other) {
-	    this.scaleId = other.scaleId;
-	    this.geometry = other.geometry;
-	    this.baseDimension = other.baseDimension;
-	    this.locatedExtent = other.locatedExtent;
-	    this.locatedLinearOffset = other.locatedLinearOffset;
-	    this.locatedOffsets = other.locatedOffsets;
-	    this.coverage = other.coverage;
-	}
-	
-	/**
-	 * If we are in a situation where coverage may need to be computed, install the
-	 * necessary logics here. Done this way to avoid expensive pre-computation when
-	 * it's not needed.
-	 * 
-	 * @param function
-	 * @return
-	 */
-	public IExtent withCoverageFunction(Function<IExtent, Double> function) {
-		this.computeCoverage = function;
-		return this;
-	}
-	
-	/**
-	 * Preset the coverage when it's economic to do so.
-	 * @param coverage
-	 * @return
-	 */
-	public IExtent withCoverage(double coverage) {
-		this.coverage = coverage;
-		return this;
-	}
+    protected void copyScaleLocation(AbstractExtent other) {
+        this.scaleId = other.scaleId;
+        this.geometry = other.geometry;
+        this.baseDimension = other.baseDimension;
+        this.locatedExtent = other.locatedExtent;
+        this.locatedLinearOffset = other.locatedLinearOffset;
+        this.locatedOffsets = other.locatedOffsets;
+        this.coverage = other.coverage;
+    }
 
-	/**
-	 * The extent this locates, if any.
-	 * 
-	 * @return
-	 */
-	public IExtent getLocatedExtent() {
-		return locatedExtent;
-	}
+    /**
+     * If we are in a situation where coverage may need to be computed, install the necessary logics
+     * here. Done this way to avoid expensive pre-computation when it's not needed.
+     * 
+     * @param function
+     * @return
+     */
+    public IExtent withCoverageFunction(Function<IExtent, Double> function) {
+        this.computeCoverage = function;
+        return this;
+    }
 
-	/**
-	 * Located offsets wrt the dimensionality of the extent, or null.
-	 * 
-	 * @return
-	 */
-	public long[] getLocatedOffsets() {
-		return locatedOffsets;
-	}
+    /**
+     * Preset the coverage when it's economic to do so.
+     * 
+     * @param coverage
+     * @return
+     */
+    public IExtent withCoverage(double coverage) {
+        this.coverage = coverage;
+        return this;
+    }
 
-	/**
-	 * Linear located offset or -1
-	 * 
-	 * @return
-	 */
-	public long getLocatedOffset() {
-		return locatedLinearOffset;
-	}
+    /**
+     * The extent this locates, if any.
+     * 
+     * @return
+     */
+    public IExtent getLocatedExtent() {
+        return locatedExtent;
+    }
 
-	protected void setScaleId(String id) {
-		this.scaleId = id;
-	}
+    /**
+     * Located offsets wrt the dimensionality of the extent, or null.
+     * 
+     * @return
+     */
+    public long[] getLocatedOffsets() {
+        return locatedOffsets;
+    }
 
-	public void setGeometry(IGeometry geometry) {
-		this.geometry = geometry;
-	}
+    /**
+     * Linear located offset or -1
+     * 
+     * @return
+     */
+    public long getLocatedOffset() {
+        return locatedLinearOffset;
+    }
 
-	protected String getScaleId() {
-		return this.scaleId;
-	}
+    protected void setScaleId(String id) {
+        this.scaleId = id;
+    }
 
-	boolean isOwnExtent(Scale scale) {
-		return scale.getScaleId().equals(scaleId);
-	}
+    public void setGeometry(IGeometry geometry) {
+        this.geometry = geometry;
+    }
 
-	/**
-	 * True if the i-th state of the topology correspond to a concrete subdivision
-	 * where observations can be made. Determines the status of "data" vs. "no-data"
-	 * for the state of an observation defined over this extent.
-	 * 
-	 * @param stateIndex
-	 * @return whether there is an observable world at the given location.
-	 */
-	public abstract boolean isCovered(long stateIndex);
+    protected String getScaleId() {
+        return this.scaleId;
+    }
 
-	public abstract boolean isEmpty();
+    boolean isOwnExtent(Scale scale) {
+        return scale.getScaleId().equals(scaleId);
+    }
 
-	@Override
-	public abstract IExtent getExtent(long stateIndex);
+    /**
+     * True if the i-th state of the topology correspond to a concrete subdivision where
+     * observations can be made. Determines the status of "data" vs. "no-data" for the state of an
+     * observation defined over this extent.
+     * 
+     * @param stateIndex
+     * @return whether there is an observable world at the given location.
+     */
+    public abstract boolean isCovered(long stateIndex);
 
-	/**
-	 * Return a double that describes the extent of this topological object. It
-	 * should only be used to compare objects of the same type. Redundant with
-	 * {@link IExtent#getStandardizedDimension()} but this is meant to compute fast.
-	 *
-	 * @return the covered extent
-	 */
-	public abstract double getCoveredExtent();
+    public abstract boolean isEmpty();
 
-	/**
-	 * Return the string rep for the {@link Dimension} this represents.
-	 * 
-	 * @return the encoded representation
-	 */
-	public abstract String encode(Encoding...options);
+    @Override
+    public abstract IExtent getExtent(long stateIndex);
 
-	/**
-	 * Merge only the extents, without regard for the grain or internal
-	 * representation but ensuring that the covered extent calculations are correct.
-	 * Used for quick coverage calculations.
-	 * 
-	 * @param other
-	 * @return the merged extent
-	 */
-	public abstract IExtent mergeCoverage(IExtent other, LogicalConnector connector);
+    /**
+     * Return a double that describes the extent of this topological object. It should only be used
+     * to compare objects of the same type. Redundant with
+     * {@link IExtent#getStandardizedDimension()} but this is meant to compute fast.
+     *
+     * @return the covered extent
+     */
+    public abstract double getCoveredExtent();
 
-	/**
-	 * Return the single-valued topological value that represents the total extent
-	 * covered, ignoring the subdivisions.
-	 * 
-	 * @return the full, 1-dim extent.
-	 */
-	public abstract IExtent getExtent();
+    /**
+     * Return the string rep for the {@link Dimension} this represents.
+     * 
+     * @return the encoded representation
+     */
+    public abstract String encode(Encoding... options);
 
-	/**
-	 * All extents must be able to produce a deep copy of themselves.
-	 * 
-	 * @return a new extent identical to this.
-	 */
-	public abstract AbstractExtent copy();
+    /**
+     * Merge only the extents, without regard for the grain or internal representation but ensuring
+     * that the covered extent calculations are correct. Used for quick coverage calculations.
+     * 
+     * @param other
+     * @return the merged extent
+     */
+    public abstract IExtent mergeCoverage(IExtent other, LogicalConnector connector);
 
-	/**
-	 * All extents must have a two-way street between k.IM code functions and
-	 * themselves.
-	 * 
-	 * @return the k.IM function call specifying this extent.
-	 */
-	public abstract IServiceCall getKimSpecification();
+    /**
+     * Return the single-valued topological value that represents the total extent covered, ignoring
+     * the subdivisions.
+     * 
+     * @return the full, 1-dim extent.
+     */
+    public abstract IExtent getExtent();
 
-	public void setDimension(Dimension dimension) {
-		this.baseDimension = dimension;
-	}
+    /**
+     * All extents must be able to produce a deep copy of themselves.
+     * 
+     * @return a new extent identical to this.
+     */
+    public abstract AbstractExtent copy();
 
-	/**
-	 * Apply the default contextualization to this extent that will make it match
-	 * the passed extent from the context observation, ensuring that any constraints
-	 * from the passed annotation (from k.IM and potentially null) are honored.
-	 * 
-	 * @param other
-	 * @param constraint
-	 */
-	protected abstract IExtent contextualizeTo(IExtent other, IAnnotation constraint);
+    /**
+     * All extents must have a two-way street between k.IM code functions and themselves.
+     * 
+     * @return the k.IM function call specifying this extent.
+     */
+    public abstract IServiceCall getKimSpecification();
+
+    public void setDimension(Dimension dimension) {
+        this.baseDimension = dimension;
+    }
+
+    @Override
+    public Object getProperty(String propertyName) {
+        switch(propertyName) {
+        case "size":
+            return size();
+        case "scale":
+            // best not to expose this with a method, the API would be confusing, but in Groovy this
+            // is appropriate
+            return getScaleRank();
+        }
+        return super.getProperty(propertyName);
+    }
+
+    /**
+     * Apply the default contextualization to this extent that will make it match the passed extent
+     * from the context observation, ensuring that any constraints from the passed annotation (from
+     * k.IM and potentially null) are honored.
+     * 
+     * @param other
+     * @param constraint
+     */
+    protected abstract IExtent contextualizeTo(IExtent other, IAnnotation constraint);
 
 }

@@ -17,13 +17,14 @@ import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.IGeometry.Encoding;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
-import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable.MergingOption;
 import org.integratedmodelling.klab.api.observations.scale.space.Direction;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
@@ -41,6 +42,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.scale.AbstractExtent;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.scale.Scale.Mediator;
 import org.integratedmodelling.klab.utils.MultidimensionalCursor;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
@@ -480,7 +482,7 @@ public class Grid extends Area implements IGrid {
 		return ret;
 	}
 
-	public class CellImpl extends AbstractExtent implements Cell {
+	public class CellImpl extends AbstractSpatialExtent implements Cell {
 
 		long x;
 		long y;
@@ -1025,6 +1027,24 @@ public class Grid extends Area implements IGrid {
         @Override
         public boolean isDistributed() {
             return false;
+        }
+
+        @Override
+        public boolean isConsistent() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public long[] getDimensionSizes() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public Mediator getMediator(IExtent extent, IObservable observable, IConcept trait) {
+            // TODO Auto-generated method stub
+            return null;
         }
 	}
 

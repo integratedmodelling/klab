@@ -134,6 +134,16 @@ public enum GroovyProcessor implements ILanguageProcessor {
         public Map<String, Object> getVariables() {
             return variables;
         }
+
+        @Override
+        public boolean isScalar() {
+            for (String id : scalarIds) {
+                if (isScalar(id)) {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 
     @Override
@@ -147,22 +157,6 @@ public enum GroovyProcessor implements ILanguageProcessor {
             throws KlabValidationException {
         return new GroovyDescriptor(expression, context, options);
     }
-
-//    @Override
-//    public Descriptor describe(String expression, Object... options) throws KlabValidationException {
-//        ExpressionScope scope = ExpressionScope.empty(Klab.INSTANCE.getRootMonitor());
-//        List<CompilerOption> opts = new ArrayList<>();
-//        if (options != null) {
-//            for (Object o : options) {
-//                if (o instanceof CompilerOption) {
-//                    opts.add((CompilerOption) o);
-//                } else if (o == CompilerScope.Scalar) {
-//                    scope = scope.scalar(true);
-//                }
-//            }
-//        }
-//        return new GroovyDescriptor(expression, scope, opts.toArray(new CompilerOption[opts.size()]));
-//    }
 
     @Override
     public String negate(String expression) {

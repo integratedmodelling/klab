@@ -53,6 +53,14 @@ public interface ILanguageProcessor {
         Collection<String> getContextualizers();
 
         /**
+         * True if the expression contains scalar usage for one or more of the identifiers used in a
+         * scalar fashion. This may be false even if the expression was compiled in scalar scope.
+         * 
+         * @return
+         */
+        boolean isScalar();
+
+        /**
          * Return true if the expression contains scalar usage for the passed identifiers within a
          * transition (i.e. used alone or with locator semantics for space or other non-temporal
          * domain).
@@ -155,7 +163,8 @@ public interface ILanguageProcessor {
      * @throws org.integratedmodelling.klab.exceptions.KlabValidationException if compilation
      *         produces any errors
      */
-    IExpression compile(String expression, IExpression.Scope scope, CompilerOption... options) throws KlabValidationException;
+    IExpression compile(String expression, IExpression.Scope scope, CompilerOption... options)
+            throws KlabValidationException;
 
     /**
      * Preprocess an expression and return the descriptor. The context may be null, but the
@@ -170,7 +179,8 @@ public interface ILanguageProcessor {
      * @throws org.integratedmodelling.klab.exceptions.KlabValidationException if the expression
      *         contains syntax of logical errors
      */
-    Descriptor describe(String expression, IExpression.Scope scope, CompilerOption... options) throws KlabValidationException;
+    Descriptor describe(String expression, IExpression.Scope scope, CompilerOption... options)
+            throws KlabValidationException;
 
     /**
      * Assume that the passed expression evaluates to a boolean and produce the language equivalent
