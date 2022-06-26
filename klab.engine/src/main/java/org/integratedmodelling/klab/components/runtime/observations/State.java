@@ -54,6 +54,7 @@ import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.klab.utils.Utils;
 
 import groovy.lang.GroovyObjectSupport;
+import groovy.transform.CompileStatic;
 
 /**
  * A state is simply an Observation wrapper for one (or more) {@link IDataArtifact}s.
@@ -82,20 +83,68 @@ public class State extends Observation implements IState, IKeyHolder {
      * @author Ferd
      *
      */
+    @CompileStatic
     public class RelocatedState extends GroovyObjectSupport {
 
         IScale locator;
 
+        // TODO cache the stats more (in the top class)
+        
         public RelocatedState(IScale locator) {
             this.locator = locator;
         }
-
+        
         /*
          * this will be called by the
          */
         public Object leftShift(Object locatorModifier) {
             return get(Extensions.INSTANCE.relocate(locator, locatorModifier));
         }
+
+        public double getMax() {
+            if (storage instanceof AbstractAdaptiveStorage) {
+                return ((AbstractAdaptiveStorage<?>) storage).getSlice(locator).getRawStatistics().getMax();
+            }
+            throw new KlabUnimplementedException("Groovy support for non-conventional states");
+        }
+
+        public double getMin() {
+            if (storage instanceof AbstractAdaptiveStorage) {
+                return ((AbstractAdaptiveStorage<?>) storage).getSlice(locator).getRawStatistics().getMin();
+            }
+            throw new KlabUnimplementedException("Groovy support for non-conventional states");
+        }
+
+        public double getMean() {
+            if (storage instanceof AbstractAdaptiveStorage) {
+                return ((AbstractAdaptiveStorage<?>) storage).getSlice(locator).getRawStatistics().getMean();
+            }
+            throw new KlabUnimplementedException("Groovy support for non-conventional states");
+        }
+
+        public double getSum() {
+            if (storage instanceof AbstractAdaptiveStorage) {
+                return ((AbstractAdaptiveStorage<?>) storage).getSlice(locator).getRawStatistics().getSum();
+            }
+            throw new KlabUnimplementedException("Groovy support for non-conventional states");
+        }
+
+        public double getStd() {
+            if (storage instanceof AbstractAdaptiveStorage) {
+                return ((AbstractAdaptiveStorage<?>) storage).getSlice(locator).getRawStatistics()
+                        .getStandardDeviation();
+            }
+            throw new KlabUnimplementedException("Groovy support for non-conventional states");
+        }
+
+        public double getVariance() {
+            if (storage instanceof AbstractAdaptiveStorage) {
+                return ((AbstractAdaptiveStorage<?>) storage).getSlice(locator).getRawStatistics()
+                        .getVariance();
+            }
+            throw new KlabUnimplementedException("Groovy support for non-conventional states");
+        }
+
     }
 
     public class StateListener implements Consumer<ILocator> {
@@ -257,7 +306,9 @@ public class State extends Observation implements IState, IKeyHolder {
 
     @Override
     public IArtifact.Type getType() {
-        return isArchetype() ? IArtifact.Type.VOID : (storage == null ? getObservable().getArtifactType() : storage.getType());
+        return isArchetype()
+                ? IArtifact.Type.VOID
+                : (storage == null ? getObservable().getArtifactType() : storage.getType());
     }
 
     @Override
@@ -404,9 +455,11 @@ public class State extends Observation implements IState, IKeyHolder {
             for (ILocator locator : getScale()) {
                 values.add(get(locator));
             }
-            AggregationUtils.aggregate(values, AggregationUtils.getAggregation(getObservable()), getScope().getMonitor());
+            AggregationUtils.aggregate(values, AggregationUtils.getAggregation(getObservable()),
+                    getScope().getMonitor());
         }
-        throw new KlabUnimplementedException("aggregation of rescaled states is unimplemented - please submit a request");
+        throw new KlabUnimplementedException(
+                "aggregation of rescaled states is unimplemented - please submit a request");
     }
 
     @Override
@@ -425,7 +478,8 @@ public class State extends Observation implements IState, IKeyHolder {
             setDynamic(true);
             if (scale.getTime().getEnd() != null) {
                 if (updateTimestamps.size() == 0
-                        || updateTimestamps.get(updateTimestamps.size() - 1) < scale.getTime().getEnd().getMilliseconds()) {
+                        || updateTimestamps.get(updateTimestamps.size() - 1) < scale.getTime().getEnd()
+                                .getMilliseconds()) {
                     updateTimestamps.add(scale.getTime().getEnd().getMilliseconds());
                 }
             }
@@ -561,7 +615,8 @@ public class State extends Observation implements IState, IKeyHolder {
                     if (unit != null) {
                         area = Unit.create(unit).convert(area, Units.INSTANCE.SQUARE_METERS).doubleValue();
                     }
-                    ret.put((IConcept) value, ret.containsKey(value) ? ret.get((IConcept) value) + area : area);
+                    ret.put((IConcept) value,
+                            ret.containsKey(value) ? ret.get((IConcept) value) + area : area);
                 }
             }
         }

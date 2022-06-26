@@ -190,14 +190,14 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
                         if ("scale".equals(key) && value instanceof IScale) {
                             localScale = (IScale) value;
                         }
-                        binding.setProperty(key, value);
+                        binding.setVariable(key, value);
                     }
 
                     if (descriptor.getOptions().contains(CompilerOption.DirectQualityAccess) && localScale != null) {
                         for (String id : descriptor.getIdentifiersInScalarScope()) {
-                            IArtifact state = scope.getArtifact(id);
+                            Object state = parameters.get(id);
                             if (state instanceof IState) {
-                                binding.setProperty("_" + id, ((IState)state).get(localScale));
+                                binding.setVariable("_" + id, ((IState)state).get(localScale));
                             }
                         }
                     }
@@ -219,7 +219,7 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
                 String property = e.getProperty();
                 if (!defineIfAbsent.contains(property)) {
                     scope.getMonitor().warn(
-                            "variable " + property + " undefined. Defining as numeric no-data (NaN) for subsequent evaluations.");
+                            "variable " + property + " undefined.  Defining as numeric no-data (NaN) for subsequent evaluations.");
                     defineIfAbsent.add(property);
                 }
             } catch (Throwable t) {
@@ -249,7 +249,7 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
          */
         if (variables != null) {
             for (String key : variables.keySet()) {
-                bindings.setProperty(key, variables.get(key));
+                bindings.setVariable(key, variables.get(key));
             }
         }
 

@@ -26,14 +26,15 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IKnowledge;
 import org.integratedmodelling.klab.api.model.INamespace;
 
-import groovy.lang.GroovyInterceptable;
 import groovy.lang.GroovyObjectSupport;
+import groovy.transform.CompileStatic;
 
 /**
  * 
  * @author ferdinando.villa
  *
  */
+@CompileStatic
 public abstract class Knowledge extends GroovyObjectSupport implements IKnowledge {
 
     @Override

@@ -14,7 +14,6 @@ import org.integratedmodelling.kactors.api.IKActorsStatement;
 import org.integratedmodelling.kactors.api.IKActorsStatement.Assert;
 import org.integratedmodelling.kactors.api.IKActorsStatement.Assert.Assertion;
 import org.integratedmodelling.kactors.api.IKActorsStatement.Assignment;
-import org.integratedmodelling.kactors.api.IKActorsStatement.Break;
 import org.integratedmodelling.kactors.api.IKActorsStatement.Call;
 import org.integratedmodelling.kactors.api.IKActorsStatement.ConcurrentGroup;
 import org.integratedmodelling.kactors.api.IKActorsStatement.Do;

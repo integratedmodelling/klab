@@ -391,7 +391,7 @@ public class Client extends RestTemplate implements IClient {
 			}
 		} catch (RestClientException e) {
 		    
-		    System.out.println("ANDATA MALE: REST  exception: " + e.getMessage());
+		    System.out.println("REST  exception: " + e.getMessage());
 		    dumpRequest(url, headers, data);
 			throw new KlabIOException(e);
 		}

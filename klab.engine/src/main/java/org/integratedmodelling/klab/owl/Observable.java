@@ -13,11 +13,11 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
-import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.kim.api.ValueOperator;
+import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Observables;
@@ -56,12 +56,14 @@ import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
 
 import groovy.lang.GroovyObjectSupport;
+import groovy.transform.CompileStatic;
 
 /**
  * Equality ignores differences of name, value, optional and generic status.
  * 
  * @author ferdinando.villa
  */
+@CompileStatic
 public class Observable extends GroovyObjectSupport implements IObservable {
 
     private IObservable incarnatedAbstract;
