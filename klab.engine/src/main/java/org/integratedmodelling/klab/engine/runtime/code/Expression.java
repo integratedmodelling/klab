@@ -229,12 +229,6 @@ public abstract class Expression implements IExpression {
 			return null;
 		}
 
-//		@Override
-//		public Collection<IArtifact> getAdditionalOutputs() {
-//			// TODO Auto-generated method stub
-//			return null;
-//		}
-
 		@Override
 		public ISubject getRootSubject() {
 			// TODO Auto-generated method stub
@@ -270,12 +264,6 @@ public abstract class Expression implements IExpression {
 			// TODO Auto-generated method stub
 			return null;
 		}
-
-//		@Override
-//		public IParameters<String> localize(ILocator locator) {
-//			// TODO Auto-generated method stub
-//			return this;
-//		}
 
 		@Override
 		public IConcept localizePredicate(IConcept predicate) {
@@ -322,6 +310,11 @@ public abstract class Expression implements IExpression {
         public void notifyInspector(Object... triggerArguments) {
             // TODO Auto-generated method stub
             
+        }
+
+        @Override
+        public Scope getExpressionContext() {
+            return ExpressionScope.empty(Klab.INSTANCE.getRootMonitor());
         }
 
 	}

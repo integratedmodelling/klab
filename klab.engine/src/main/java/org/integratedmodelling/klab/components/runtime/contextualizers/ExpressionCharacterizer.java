@@ -20,114 +20,117 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.utils.Parameters;
 
 /**
- * A classifier that defines the predicate to attribute a direct observation
- * through an expression.
+ * A classifier that defines the predicate to attribute a direct observation through an expression.
  * 
  * @author Ferd
  *
  */
-public class ExpressionCharacterizer extends AbstractContextualizer implements IPredicateResolver<IDirectObservation>, IExpression {
+public class ExpressionCharacterizer extends AbstractContextualizer
+        implements
+            IPredicateResolver<IDirectObservation>,
+            IExpression {
 
-	public final static String ID = "klab.runtime.characterizer";
+    public final static String ID = "klab.runtime.characterizer";
 
-	private static Set<String> prototypeParameters;
-	Map<String, Object> additionalParameters = null;
+    private static Set<String> prototypeParameters;
+    Map<String, Object> additionalParameters = null;
 
-	private Descriptor expressionDescriptor;
-	private ILanguageExpression expression;
-	private Descriptor conditionDescriptor;
-	private ILanguageExpression condition;
+    private Descriptor expressionDescriptor;
+    private ILanguageExpression expression;
+    private Descriptor conditionDescriptor;
+    private ILanguageExpression condition;
 
-	static {
-		prototypeParameters = new HashSet<>();
-		prototypeParameters.add("unlesscondition");
-		prototypeParameters.add("ifcondition");
-		prototypeParameters.add("code");
-	}
+    static {
+        prototypeParameters = new HashSet<>();
+        prototypeParameters.add("unlesscondition");
+        prototypeParameters.add("ifcondition");
+        prototypeParameters.add("code");
+    }
 
-	// leave for when used as expression
-	public ExpressionCharacterizer() {
-	}
+    // leave for when used as expression
+    public ExpressionCharacterizer() {
+    }
 
-	public ExpressionCharacterizer(Descriptor code, Descriptor condition, IParameters<String> parameters,
-			IContextualizationScope context, Map<String, Object> additional) {
-		this.expressionDescriptor = code;
-		this.conditionDescriptor = condition;
-		if (this.expression == null) {
-			this.expression = expressionDescriptor.compile();
-			if (conditionDescriptor != null) {
-				this.condition = conditionDescriptor.compile();
-			}
-		}
+    public ExpressionCharacterizer(Descriptor code, Descriptor condition, IParameters<String> parameters,
+            IContextualizationScope context, Map<String, Object> additional) {
+        this.expressionDescriptor = code;
+        this.conditionDescriptor = condition;
+        if (this.expression == null) {
+            this.expression = expressionDescriptor.compile();
+            if (conditionDescriptor != null) {
+                this.condition = conditionDescriptor.compile();
+            }
+        }
 
-	}
+    }
 
-	@Override
-	public Type getType() {
-		return IArtifact.Type.CONCEPT;
-	}
+    @Override
+    public Type getType() {
+        return IArtifact.Type.CONCEPT;
+    }
 
-	@Override
-	public Object eval(IContextualizationScope context, Object...parms) {
+    @Override
+    public Object eval(IContextualizationScope context, Object... parms) {
 
-	    Parameters<String> parameters = Parameters.create(parms);
+        Parameters<String> parameters = Parameters.create(parms);
 
-	    ILanguageProcessor processor = Extensions.INSTANCE
-				.getLanguageProcessor(parameters.get("language", Extensions.DEFAULT_EXPRESSION_LANGUAGE));
+        ILanguageProcessor processor = Extensions.INSTANCE
+                .getLanguageProcessor(parameters.get("language", Extensions.DEFAULT_EXPRESSION_LANGUAGE));
 
-		IExpression.Scope expressionContext = context.getExpressionContext(null);
+        IExpression.Scope expressionContext = context.getExpressionContext();
 
-		/*
-		 * compile in scalar context as this is applied to an individual object (we want
-		 * self to be a variable, not an entry in the artifact table).
-		 */
-		Descriptor selector = processor.describe(parameters.get("code", String.class), expressionContext.scalar(true));
-		Descriptor condition = null;
-		if (parameters.get("ifcondition") != null || parameters.get("unlesscondition") != null) {
-			String condCode = parameters.get("ifcondition", String.class);
-			if (condCode == null) {
-				condCode = processor.negate(parameters.get("unlesscondition", String.class));
-			}
-			condition = processor.describe(condCode, expressionContext.scalar(true));
-		}
+        /*
+         * compile in scalar context as this is applied to an individual object (we want self to be
+         * a variable, not an entry in the artifact table).
+         */
+        Descriptor selector = processor.describe(parameters.get("code", String.class),
+                expressionContext.scalar(Forcing.AsNeeded));
+        Descriptor condition = null;
+        if (parameters.get("ifcondition") != null || parameters.get("unlesscondition") != null) {
+            String condCode = parameters.get("ifcondition", String.class);
+            if (condCode == null) {
+                condCode = processor.negate(parameters.get("unlesscondition", String.class));
+            }
+            condition = processor.describe(condCode, expressionContext.scalar(Forcing.AsNeeded));
+        }
 
-		for (String key : parameters.keySet()) {
-			if (!key.startsWith("_") && !prototypeParameters.contains(key)) {
-				if (additionalParameters == null) {
-					additionalParameters = new HashMap<>();
-				}
-				additionalParameters.put(key, parameters.get(key));
-			}
-		}
+        for (String key : parameters.keySet()) {
+            if (!key.startsWith("_") && !prototypeParameters.contains(key)) {
+                if (additionalParameters == null) {
+                    additionalParameters = new HashMap<>();
+                }
+                additionalParameters.put(key, parameters.get(key));
+            }
+        }
 
-		return new ExpressionCharacterizer(selector, condition, context, context, additionalParameters);
-	}
+        return new ExpressionCharacterizer(selector, condition, context, context, additionalParameters);
+    }
 
-	@Override
-	public boolean resolve(IConcept predicate, IDirectObservation observation, IContextualizationScope context) {
+    @Override
+    public boolean resolve(IConcept predicate, IDirectObservation observation, IContextualizationScope context) {
 
-		/*
-		 * run expression for the side effects. If it returns a boolean, take it as the
-		 * return value, otherwise return true unless the condition returned false. In
-		 * all cases returning false will remove the predicate.
-		 */
-		boolean ok = true;
+        /*
+         * run expression for the side effects. If it returns a boolean, take it as the return
+         * value, otherwise return true unless the condition returned false. In all cases returning
+         * false will remove the predicate.
+         */
+        boolean ok = true;
 
-		if (condition != null) {
-			Object ret = condition.eval(context, context, additionalParameters, "self", observation);
-			ok = ret instanceof Boolean && ((Boolean) ret);
-		}
+        if (condition != null) {
+            Object ret = condition.eval(context, context, additionalParameters, "self", observation);
+            ok = ret instanceof Boolean && ((Boolean) ret);
+        }
 
-		if (ok) {
+        if (ok) {
 
-			Object ret = expression.eval(context, context, additionalParameters, "self", observation);
+            Object ret = expression.eval(context, context, additionalParameters, "self", observation);
 
-			if (ret instanceof Boolean) {
-				ok = (Boolean) ret;
-			}
-		}
+            if (ret instanceof Boolean) {
+                ok = (Boolean) ret;
+            }
+        }
 
-		return ok;
-	}
+        return ok;
+    }
 
 }

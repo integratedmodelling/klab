@@ -52,19 +52,25 @@ public class AccumulateFlowResolver extends AbstractContextualizer implements IR
         this.context = context;
         if (parameters.containsKey("evaluate")) {
             Object expression = parameters.get("evaluate");
+            boolean forceScalar = false;
             if (expression instanceof IKimExpression) {
+                forceScalar = ((IKimExpression) expression).isForcedScalar();
                 expression = ((IKimExpression) expression).getCode();
             }
-            this.accumulateDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE)
-                    .describe(expression.toString(), context.getExpressionContext(null));
+            this.accumulateDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE).describe(
+                    expression.toString(),
+                    context.getExpressionContext().scalar(forceScalar ? Forcing.Always : Forcing.AsNeeded));
         }
         if (parameters.containsKey("distribute")) {
+            boolean forceScalar = false;
             Object expression = parameters.get("distribute");
             if (expression instanceof IKimExpression) {
+                forceScalar = ((IKimExpression) expression).isForcedScalar();
                 expression = ((IKimExpression) expression).getCode();
             }
-            this.distributeDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE)
-                    .describe(expression.toString(), context.getExpressionContext(null));
+            this.distributeDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE).describe(
+                    expression.toString(),
+                    context.getExpressionContext().scalar(forceScalar ? Forcing.Always : Forcing.AsNeeded));
         }
         if (this.accumulateDescriptor == null && this.distributeDescriptor == null) {
             throw new IllegalArgumentException("flow accumulation resolver: no expression to evaluate");

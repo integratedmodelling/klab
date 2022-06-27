@@ -11,6 +11,8 @@ import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
 import org.integratedmodelling.klab.api.extensions.ILanguageExpression;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
 import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 import com.google.common.collect.Sets;
@@ -32,7 +34,8 @@ public enum GroovyProcessor implements ILanguageProcessor {
         private Map<String, Set<String>> mapIdentifiers;
         private Set<CompilerOption> options;
         private Map<String, Object> variables;
-        private IExpression.Scope context;
+        private boolean forceScalar;
+        // private IExpression.Scope context;
 
         GroovyDescriptor(String expression, IExpression.Scope context, CompilerOption... options) {
 
@@ -42,7 +45,7 @@ public enum GroovyProcessor implements ILanguageProcessor {
              * Context should most definitely be nullable
              */
             INamespace namespace = context == null ? null : context.getNamespace();
-            this.context = context;
+            // this.context = context;
             GroovyExpressionPreprocessor processor = new GroovyExpressionPreprocessor(namespace, context, this.options);
 
             this.processedCode = processor.process(expression);
@@ -53,6 +56,18 @@ public enum GroovyProcessor implements ILanguageProcessor {
             this.mapIdentifiers = processor.getMapIdentifiers();
             this.variables = processor.getVariables();
             this.errors = processor.getErrors();
+            this.forceScalar = context == null ? false : context.isForcedScalar();
+            
+            if (context.getRuntimeScope() != null && !this.options.contains(CompilerOption.IgnoreContext)) {
+                Map<String, IObservation> catalog = ((IRuntimeScope)context.getRuntimeScope()).getLocalCatalog(IObservation.class);
+                for (String key : catalog.keySet()) {
+                    IObservation obs = catalog.get(key);
+                    if (!this.variables.containsKey(key)) {
+                        variables.put(key, obs);
+                    }
+                }
+            }
+            
         }
 
         @Override
@@ -124,7 +139,7 @@ public enum GroovyProcessor implements ILanguageProcessor {
         public Collection<String> getContextualizers() {
             return contextualizers;
         }
-        
+
         @Override
         public Map<String, Set<String>> getMapIdentifiers() {
             return mapIdentifiers;
@@ -137,11 +152,17 @@ public enum GroovyProcessor implements ILanguageProcessor {
 
         @Override
         public boolean isScalar() {
+
+            if (forceScalar) {
+                return true;
+            }
+
             for (String id : scalarIds) {
                 if (isScalar(id)) {
                     return true;
                 }
             }
+
             return false;
         }
     }

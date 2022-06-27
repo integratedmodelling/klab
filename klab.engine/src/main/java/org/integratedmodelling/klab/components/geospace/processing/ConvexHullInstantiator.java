@@ -10,7 +10,9 @@ import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Observables;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
@@ -37,191 +39,191 @@ import org.integratedmodelling.klab.rest.StateSummary;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Range;
-
 import org.locationtech.jts.algorithm.ConvexHull;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryCollection;
 
 public class ConvexHullInstantiator extends AbstractContextualizer implements IExpression, IInstantiator {
 
-	Descriptor exprDescriptor = null;
-	private IGrid grid;
+    Descriptor exprDescriptor = null;
+    private IGrid grid;
 
-	public ConvexHullInstantiator() {
-	}
+    public ConvexHullInstantiator() {
+    }
 
-	/**
-	 * Use this to extract features through
-	 * {@link #extractShapes(IState, IExpression, IMonitor)} or
-	 * {@link #extractShapes(GridCoverage2D, IProjection, IExpression, IContextualizationScope)}
-	 * outside of a k.LAB contextualizer.
-	 * 
-	 * @param grid
-	 */
-	public ConvexHullInstantiator(IGrid grid) {
-		this.grid = grid;
-	}
+    /**
+     * Use this to extract features through {@link #extractShapes(IState, IExpression, IMonitor)} or
+     * {@link #extractShapes(GridCoverage2D, IProjection, IExpression, IContextualizationScope)}
+     * outside of a k.LAB contextualizer.
+     * 
+     * @param grid
+     */
+    public ConvexHullInstantiator(IGrid grid) {
+        this.grid = grid;
+    }
 
-	public ConvexHullInstantiator(IParameters<String> parameters, IContextualizationScope context)
-			throws KlabValidationException {
-		if (parameters.containsKey("select")) {
-			Object expression = parameters.get("select");
-			if (expression instanceof IKimExpression) {
-				expression = ((IKimExpression) expression).getCode();
-			}
-			this.exprDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE)
-					.describe(expression.toString(), context.getExpressionContext(null));
-		}
+    public ConvexHullInstantiator(IParameters<String> parameters, IContextualizationScope context)
+            throws KlabValidationException {
+        if (parameters.containsKey("select")) {
+            Object expression = parameters.get("select");
+            boolean forceScalar = false;
+            if (expression instanceof IKimExpression) {
+                forceScalar = ((IKimExpression) expression).isForcedScalar();
+                expression = ((IKimExpression) expression).getCode();
+            }
+            this.exprDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE).describe(
+                    expression.toString(),
+                    context.getExpressionContext().scalar(forceScalar ? Forcing.Always : Forcing.AsNeeded));
+        }
 
-		IScale scale = context.getScale();
-		if (!(scale.isSpatiallyDistributed() && scale.getDimension(Type.SPACE).size() > 1
-				&& scale.getDimension(Type.SPACE).isRegular())) {
-			throw new KlabValidationException(
-					"feature extraction only works on regular distributed spatial extents (grids)");
-		}
+        IScale scale = context.getScale();
+        if (!(scale.isSpatiallyDistributed() && scale.getDimension(Type.SPACE).size() > 1
+                && scale.getDimension(Type.SPACE).isRegular())) {
+            throw new KlabValidationException("feature extraction only works on regular distributed spatial extents (grids)");
+        }
 
-		this.grid = ((Space) scale.getSpace()).getGrid();
-	}
+        this.grid = ((Space) scale.getSpace()).getGrid();
+    }
 
-	@Override
-	public List<IObjectArtifact> instantiate(IObservable semantics, IContextualizationScope context) throws KlabException {
+    @Override
+    public List<IObjectArtifact> instantiate(IObservable semantics, IContextualizationScope context) throws KlabException {
 
-		List<IState> sourceStates = new ArrayList<>();
-		List<IState> inheritedStates = new ArrayList<>();
-		List<IObjectArtifact> ret = new ArrayList<>();
-		Map<IState, String> stateIdentifiers = new HashMap<>();
-		StateSummary stateSummary = null;
+        List<IState> sourceStates = new ArrayList<>();
+        List<IState> inheritedStates = new ArrayList<>();
+        List<IObjectArtifact> ret = new ArrayList<>();
+//        Map<IState, String> stateIdentifiers = new HashMap<>();
+        StateSummary stateSummary = null;
 
-		// TODO
-		double selectFraction = Double.NaN;
-		// TODO
-		boolean topFraction = true;
+        // TODO
+        double selectFraction = Double.NaN;
+        // TODO
+        boolean topFraction = true;
 
-		IExpression expression = null;
-		if (exprDescriptor != null) {
-			// check inputs and see if the expr is worth anything in this context
-			for (String input : exprDescriptor.getIdentifiers()) {
-				if (exprDescriptor.isScalar(input) && context.getArtifact(input, IState.class) != null) {
-					IState state = context.getArtifact(input, IState.class);
-					sourceStates.add(state);
-					stateIdentifiers.put(state, input);
-				}
-			}
-			if (sourceStates.isEmpty()) {
-				throw new KlabResourceNotFoundException(
-						"feature extractor: the selection expression does not reference any known state");
-			}
-			expression = exprDescriptor.compile();
-		}
+        IExpression expression = null;
+        if (exprDescriptor != null) {
+//            // check inputs and see if the expr is worth anything in this context
+//            for (String input : exprDescriptor.getIdentifiers()) {
+//                if (exprDescriptor.isScalar(input) && context.getArtifact(input, IState.class) != null) {
+//                    IState state = context.getArtifact(input, IState.class);
+//                    sourceStates.add(state);
+//                    stateIdentifiers.put(state, input);
+//                }
+//            }
+//            if (sourceStates.isEmpty()) {
+//                throw new KlabResourceNotFoundException(
+//                        "feature extractor: the selection expression does not reference any known state");
+//            }
+            expression = exprDescriptor.compile();
+        }
 
-		if (context.contains("source-state")) {
-			IState sourceState = context.getArtifact(context.get("source-state", String.class), IState.class);
-			if (sourceState == null) {
-				throw new KlabResourceNotFoundException("feature extractor: source state "
-						+ context.get("source-state", String.class) + " not found or not a state");
-			}
-			sourceStates.add(sourceState);
-		}
+        if (context.contains("source-state")) {
+            IState sourceState = context.getArtifact(context.get("source-state", String.class), IState.class);
+            if (sourceState == null) {
+                throw new KlabResourceNotFoundException("feature extractor: source state "
+                        + context.get("source-state", String.class) + " not found or not a state");
+            }
+            sourceStates.add(sourceState);
+        }
 
-		for (IState sourceState : sourceStates) {
-			/*
-			 * if the semantics is compatible with the quality's context, the instance
-			 * inherits a view of each state.
-			 */
-			IConcept scontext = Observables.INSTANCE.getContextType(sourceState.getObservable().getType());
-			// the first condition should never happen
-			if (scontext != null && Observables.INSTANCE.isCompatible(semantics.getType(), scontext)) {
-				inheritedStates.add(sourceState);
-				context.getMonitor().info(
-						"feature extractor: instances will inherit a rescaled view of " + sourceState.getObservable());
-			}
-		}
+        for (IState sourceState : sourceStates) {
+            /*
+             * if the semantics is compatible with the quality's context, the instance inherits a
+             * view of each state.
+             */
+            IConcept scontext = Observables.INSTANCE.getContextType(sourceState.getObservable().getType());
+            // the first condition should never happen
+            if (scontext != null && Observables.INSTANCE.isCompatible(semantics.getType(), scontext)) {
+                inheritedStates.add(sourceState);
+                context.getMonitor()
+                        .info("feature extractor: instances will inherit a rescaled view of " + sourceState.getObservable());
+            }
+        }
 
-		// TODO
-		IState fractionState = null;
-		Range limits = null;
-		if (sourceStates.size() == 1 && !Double.isNaN(selectFraction)) {
-			fractionState = sourceStates.get(0);
-			if (!(fractionState.getObservable().getDescriptionType() == IActivity.Description.QUANTIFICATION)) {
-				throw new KlabValidationException(
-						"feature extractor: state for fraction extraction " + fractionState + " must be numeric");
-			}
-			// TODO
-			// StateSummary stateSummary =
-			// Observations.INSTANCE.getStateSummary(fractionState, )
-		}
+        // TODO
+        IState fractionState = null;
+//        Range limits = null;
+        if (sourceStates.size() == 1 && !Double.isNaN(selectFraction)) {
+            fractionState = sourceStates.get(0);
+            if (!(fractionState.getObservable().getDescriptionType() == IActivity.Description.QUANTIFICATION)) {
+                throw new KlabValidationException(
+                        "feature extractor: state for fraction extraction " + fractionState + " must be numeric");
+            }
+            stateSummary = Observations.INSTANCE.getStateSummary(fractionState, context.getScale());
+        }
 
-		Parameters<String> parameters = new Parameters<>();
-		boolean warned = false;
-		List<Geometry> geometries = new ArrayList<>();
+//        Parameters<String> parameters = new Parameters<>();
+        boolean warned = false;
+        List<Geometry> geometries = new ArrayList<>();
 
-		for (Cell cell : grid) {
+        for (ILocator locator : context.getScale()) {
 
-			Object o = null;
+            Object o = null;
 
-			if (fractionState != null) {
+            Cell cell = locator.as(Cell.class);
 
-				o = Boolean.FALSE;
-				double d = fractionState.get(cell, Double.class);
-				if (!Double.isNaN(d)) {
+            if (fractionState != null) {
 
-					double perc = 0;
-					if (topFraction) {
-						perc = (stateSummary.getRange().get(1) - d)
-								/ (stateSummary.getRange().get(1) - stateSummary.getRange().get(0));
-					} else {
-						perc = (d - stateSummary.getRange().get(0))
-								/ (stateSummary.getRange().get(1) - stateSummary.getRange().get(0));
-					}
-					o = perc <= selectFraction;
-				}
+                o = Boolean.FALSE;
+                double d = fractionState.get(cell, Double.class);
+                if (!Double.isNaN(d)) {
 
-			} else if (expression != null) {
+                    double perc = 0;
+                    if (topFraction) {
+                        perc = (stateSummary.getRange().get(1) - d)
+                                / (stateSummary.getRange().get(1) - stateSummary.getRange().get(0));
+                    } else {
+                        perc = (d - stateSummary.getRange().get(0))
+                                / (stateSummary.getRange().get(1) - stateSummary.getRange().get(0));
+                    }
+                    o = perc <= selectFraction;
+                }
 
-				parameters.clear();
-				for (IState state : sourceStates) {
-					o = state.get(cell, Object.class);
-					parameters.put(stateIdentifiers.get(state), o);
-				}
+            } else if (expression != null) {
 
-				o = expression.eval(context, parameters);
-				if (o == null) {
-					o = Boolean.FALSE;
-				}
-				if (!(o instanceof Boolean)) {
-					throw new KlabValidationException(
-							"feature extractor: feature extraction selector must return true/false");
-				}
+//                parameters.clear();
+//                for (IState state : sourceStates) {
+//                    o = state.get(cell, Object.class);
+//                    parameters.put(stateIdentifiers.get(state), o);
+//                }
 
-			} else if (!warned) {
-				context.getMonitor().warn("feature extractor: no input: specify either select or select fraction");
-				warned = true;
-			}
+                o = expression.eval(context, "scale", locator);
+                if (o == null) {
+                    o = Boolean.FALSE;
+                }
+                if (!(o instanceof Boolean)) {
+                    throw new KlabValidationException("feature extractor: feature extraction selector must return true/false");
+                }
 
-			if (o instanceof Boolean && (Boolean)o) { 
-				geometries.add(((Shape) cell.getShape().getCentroid()).getJTSGeometry());
-			}
-		}
+            } else if (!warned) {
+                context.getMonitor().warn("feature extractor: no input: specify either select or select fraction");
+                warned = true;
+            }
 
-		/*
-		 * build the final geometry
-		 */
-		GeometryCollection geometryCollection = (GeometryCollection) Geospace.gFactory.buildGeometry(geometries);
-		ConvexHull hull = new ConvexHull(geometryCollection.union());
-		ret.add(context.newObservation(semantics, Observables.INSTANCE.getDisplayName(semantics) + "_0", Scale.substituteExtent(context.getScale(),
-				Shape.create(hull.getConvexHull(), grid.getProjection())), /* TODO send useful metadata */null));
+            if (o instanceof Boolean && (Boolean) o) {
+                geometries.add(((Shape) cell.getShape().getCentroid()).getJTSGeometry());
+            }
+        }
 
-		return ret;
-	}
+        /*
+         * build the final geometry
+         */
+        GeometryCollection geometryCollection = (GeometryCollection) Geospace.gFactory.buildGeometry(geometries);
+        ConvexHull hull = new ConvexHull(geometryCollection.union());
+        ret.add(context.newObservation(semantics, Observables.INSTANCE.getDisplayName(semantics) + "_0",
+                Scale.substituteExtent(context.getScale(), Shape.create(hull.getConvexHull(), grid.getProjection())),
+                /* TODO send useful metadata */null));
 
-	@Override
-	public IArtifact.Type getType() {
-		return IArtifact.Type.OBJECT;
-	}
+        return ret;
+    }
 
-	@Override
-	public Object eval(IContextualizationScope context, Object...parameters) throws KlabException {
-		return new ConvexHullInstantiator(Parameters.create(parameters), context);
-	}
+    @Override
+    public IArtifact.Type getType() {
+        return IArtifact.Type.OBJECT;
+    }
+
+    @Override
+    public Object eval(IContextualizationScope context, Object... parameters) throws KlabException {
+        return new ConvexHullInstantiator(Parameters.create(parameters), context);
+    }
 
 }

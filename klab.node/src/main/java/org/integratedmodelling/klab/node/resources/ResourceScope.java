@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
+import org.integratedmodelling.klab.api.data.general.IExpression.Scope;
 import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -908,6 +909,12 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
 
     @Override
     public IObservation getObservation(IObservable observable) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Scope getExpressionContext() {
         // TODO Auto-generated method stub
         return null;
     }

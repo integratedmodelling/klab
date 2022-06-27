@@ -189,6 +189,8 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
                         Object value = parameters.get(key);
                         if ("scale".equals(key) && value instanceof IScale) {
                             localScale = (IScale) value;
+                            binding.setVariable("space", localScale.getSpace());
+                            binding.setVariable("time", localScale.getTime());
                         }
                         binding.setVariable(key, value);
                     }

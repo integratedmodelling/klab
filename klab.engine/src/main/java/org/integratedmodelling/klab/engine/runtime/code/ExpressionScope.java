@@ -12,6 +12,7 @@ import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.data.general.IExpression.CompilerScope;
+import org.integratedmodelling.klab.api.data.general.IExpression.Forcing;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -30,28 +31,18 @@ public class ExpressionScope implements IExpression.Scope {
     private IScale scale;
     private IMonitor monitor;
     private CompilerScope compilerScope;
+    private boolean forcedScalar;
+    private IRuntimeScope runtimeScope;
 
-    public static ExpressionScope create(IRuntimeScope context, IObservable targetObservable) {
+    public static ExpressionScope create(IRuntimeScope context) {
 
         ExpressionScope ret = new ExpressionScope();
-
-        if (targetObservable == null) {
-            targetObservable = context.getTargetSemantics();
-        }
-
-        IObservation targetArtifact = (IObservation) context.getTargetArtifact();
-        if (targetObservable != null && (targetArtifact == null || !targetObservable.is(targetArtifact.getObservable()))) {
-            targetArtifact = context.getObservation(targetObservable);
-        }
 
         ret.scale = context.getScale();
         ret.monitor = context.getMonitor();
         ret.returnType = context.getArtifactType();
         ret.compilerScope = context.getTargetArtifact() instanceof IState ? CompilerScope.Scalar : CompilerScope.Contextual;
-
-        if (ret.returnType == Type.PROCESS && targetArtifact instanceof IState) {
-            ret.returnType = Type.QUALITY;
-        }
+        ret.runtimeScope = context;
 
         /*
          * use the catalog
@@ -73,6 +64,22 @@ public class ExpressionScope implements IExpression.Scope {
         return ret;
     }
 
+    public static ExpressionScope create(IRuntimeScope context, IObservable targetObservable) {
+
+        ExpressionScope ret = create(context);
+        if (targetObservable == null) {
+            targetObservable = context.getTargetSemantics();
+        }
+        IObservation targetArtifact = (IObservation) context.getTargetArtifact();
+        if (targetObservable != null && (targetArtifact == null || !targetObservable.is(targetArtifact.getObservable()))) {
+            targetArtifact = context.getObservation(targetObservable);
+        }
+        if (ret.returnType == Type.PROCESS && targetArtifact instanceof IState) {
+            ret.returnType = Type.QUALITY;
+        }
+        return ret;
+    }
+
     private ExpressionScope() {
     }
 
@@ -85,6 +92,7 @@ public class ExpressionScope implements IExpression.Scope {
         this.compilerScope = expressionScope.compilerScope;
         this.scale = expressionScope.scale;
         this.monitor = expressionScope.monitor;
+        this.runtimeScope = expressionScope.runtimeScope;
     }
 
     public static ExpressionScope empty(IMonitor monitor) {
@@ -152,14 +160,23 @@ public class ExpressionScope implements IExpression.Scope {
     }
 
     @Override
-    public ExpressionScope scalar(boolean forceScalar) {
-        if (forceScalar) {
-            if (this.compilerScope == CompilerScope.Scalar) {
-                return this;
-            }
-            return new ExpressionScope(this).withCompilerScope(CompilerScope.Scalar);
+    public ExpressionScope scalar(Forcing forcing) {
+        ExpressionScope ret = new ExpressionScope(this);
+        ret.compilerScope = CompilerScope.Scalar;
+        if (forcing == Forcing.Always) {
+            ret.forcedScalar = true;
         }
-        return this;
+        return ret;
+    }
+
+    @Override
+    public boolean isForcedScalar() {
+        return forcedScalar;
+    }
+
+    @Override
+    public IRuntimeScope getRuntimeScope() {
+        return runtimeScope;
     }
 
 }

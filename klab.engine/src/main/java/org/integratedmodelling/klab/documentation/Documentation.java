@@ -541,7 +541,7 @@ public class Documentation implements IDocumentation {
             Parameters<String> parameters = new Parameters<>();
             parameters.putAll(context);
             parameters.putAll(scope.variables);
-            IExpression compiled = Extensions.INSTANCE.compileExpression(code, context.getExpressionContext(null),
+            IExpression compiled = Extensions.INSTANCE.compileExpression(code, context.getExpressionContext(),
                     Extensions.DEFAULT_EXPRESSION_LANGUAGE, CompilerOption.DoNotPreprocess,
                     CompilerOption.IgnoreRecontextualization);
             if (compiled != null) {

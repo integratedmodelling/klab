@@ -14,6 +14,7 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
 import org.integratedmodelling.klab.api.data.general.IExpression.CompilerScope;
+import org.integratedmodelling.klab.api.data.general.IExpression.Forcing;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -278,8 +279,7 @@ public abstract class Debugger {
 
         boolean found = false;
         IExpression code = Extensions.INSTANCE.compileExpression(where,
-                transitionContext.getExpressionContext(null).withCompilerScope(CompilerScope.Scalar),
-                Extensions.DEFAULT_EXPRESSION_LANGUAGE);
+                transitionContext.getExpressionContext().scalar(Forcing.Always), Extensions.DEFAULT_EXPRESSION_LANGUAGE);
         for (ILocator locator : scale) {
             Object o = code.eval(transitionContext, transitionContext, "scale", locator);
             if (o instanceof Boolean && ((Boolean) o)) {

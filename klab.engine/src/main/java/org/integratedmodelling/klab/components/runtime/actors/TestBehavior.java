@@ -26,6 +26,7 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
 import org.integratedmodelling.klab.api.data.general.IExpression.CompilerScope;
+import org.integratedmodelling.klab.api.data.general.IExpression.Forcing;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
@@ -172,7 +173,7 @@ public class TestBehavior {
 
                 IKimExpression expr = comparison.as(IKimExpression.class);
                 compareDescriptor = Extensions.INSTANCE.getLanguageProcessor(expr.getLanguage()).describe(expr.getCode(),
-                        runtimeScope.getExpressionContext(null));
+                        runtimeScope.getExpressionContext().scalar(expr.isForcedScalar() ? Forcing.Always : Forcing.AsNeeded));
                 compareExpression = compareDescriptor.compile();
                 for (String input : compareDescriptor.getIdentifiers()) {
                     if (compareDescriptor.isScalar(input) && runtimeScope.getArtifact(input, IState.class) != null) {

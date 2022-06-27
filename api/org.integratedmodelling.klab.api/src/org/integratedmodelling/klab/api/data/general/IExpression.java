@@ -16,7 +16,6 @@ package org.integratedmodelling.klab.api.data.general;
 import java.util.Collection;
 
 import org.integratedmodelling.kim.api.IKimConcept;
-import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
@@ -30,6 +29,10 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
  * @version $Id: $Id
  */
 public interface IExpression {
+
+    public enum Forcing {
+        AsNeeded, Always
+    }
 
     public enum CompilerScope {
         /**
@@ -162,14 +165,32 @@ public interface IExpression {
         CompilerScope getCompilerScope();
 
         /**
-         * If forceScalar is true and the scope's compiler scope does not comply with the scalar
-         * nature indicated, return a copy with {@link #getCompilerScope()} forced to return scalar.
-         * NOTE: does not force to NOT scalar if the parameter is false.
+         * Return a scope that will cause the execution of the expression to be scalar, i.e.
+         * state-by-state within the context. The forcing passed defines the type of constraint: if
+         * {@link Forcing#AsNeeded}, the expression will be scalar only if it mentions quality
+         * variables in a scalar scope; if {@link Forcing#Always}, scalar behavior will be forced no
+         * matter the statement.
          * 
          * @param forceScalar
          * @return
          */
-        Scope scalar(boolean forceScalar);
+        Scope scalar(Forcing forcing);
+
+        /**
+         * If the expression scope was created during contextualization, return the scope here.
+         * 
+         * @return
+         */
+        IContextualizationScope getRuntimeScope();
+
+        /**
+         * If true, we have requested the expression to be evaluated in a scalar fashion no matter
+         * what it says.
+         * 
+         * @return
+         */
+        boolean isForcedScalar();
+
     }
 
     /**

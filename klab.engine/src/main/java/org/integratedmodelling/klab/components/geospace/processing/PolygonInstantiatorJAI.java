@@ -93,20 +93,26 @@ public class PolygonInstantiatorJAI extends AbstractContextualizer implements IE
 
         if (parameters.containsKey("select")) {
             Object expression = parameters.get("select");
+            boolean forceScalar = false;
             if (expression instanceof IKimExpression) {
+                forceScalar = ((IKimExpression) expression).isForcedScalar();
                 expression = ((IKimExpression) expression).getCode();
             }
-            this.selectExprDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE)
-                    .describe(expression.toString(), context.getExpressionContext(null).scalar(true));
+            this.selectExprDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE).describe(
+                    expression.toString(),
+                    context.getExpressionContext().scalar(forceScalar ? Forcing.Always : Forcing.AsNeeded));
         }
 
         if (parameters.containsKey("categorize")) {
             Object expression = parameters.get("categorize");
+            boolean forceScalar = false;
             if (expression instanceof IKimExpression) {
+                forceScalar = ((IKimExpression) expression).isForcedScalar();
                 expression = ((IKimExpression) expression).getCode();
             }
             this.categorizeExprDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE)
-                    .describe(expression.toString(), context.getExpressionContext(null).scalar(true));
+                    .describe(expression.toString(),
+                            context.getExpressionContext().scalar(forceScalar ? Forcing.Always : Forcing.AsNeeded));
         }
 
         if (parameters.contains("semantics")) {
@@ -194,7 +200,6 @@ public class PolygonInstantiatorJAI extends AbstractContextualizer implements IE
 
         boolean isfloat = false;
         List<Number> noDataValues = new ArrayList<>();
-        Map<IState, String> stateIdentifiers = new HashMap<>();
         Set<IState> sourceStates = new LinkedHashSet<IState>();
 
         WritableRaster raster = null;
@@ -203,25 +208,9 @@ public class PolygonInstantiatorJAI extends AbstractContextualizer implements IE
         this.valueHash = null;
 
         if (selectExprDescriptor != null) {
-            // check inputs and see if the expr is worth anything in this context
-            for (String input : selectExprDescriptor.getIdentifiers()) {
-                if (selectExprDescriptor.isScalar(input) && scope.getArtifact(input, IState.class) != null) {
-                    IState state = scope.getArtifact(input, IState.class);
-                    sourceStates.add(state);
-                    stateIdentifiers.put(state, input);
-                }
-            }
             selectExpression = selectExprDescriptor.compile();
         }
         if (categorizeExprDescriptor != null) {
-            // check inputs and see if the expr is worth anything in this context
-            for (String input : categorizeExprDescriptor.getIdentifiers()) {
-                if (categorizeExprDescriptor.isScalar(input) && scope.getArtifact(input, IState.class) != null) {
-                    IState state = scope.getArtifact(input, IState.class);
-                    sourceStates.add(state);
-                    stateIdentifiers.put(state, input);
-                }
-            }
             categorizeExpression = categorizeExprDescriptor.compile();
         }
 
@@ -240,12 +229,6 @@ public class PolygonInstantiatorJAI extends AbstractContextualizer implements IE
 
         int nextValue = 1;
         boolean ret = false;
-
-        Parameters<String> parameters = new Parameters<>();
-        for (IState state : sourceStates) {
-            parameters.put(stateIdentifiers.get(state), state);
-        }
-
         for (ILocator locator : scope.getScale()) {
 
             Cell cell = null;
@@ -255,11 +238,10 @@ public class PolygonInstantiatorJAI extends AbstractContextualizer implements IE
                 throw new KlabValidationException("polygon instantiator: context is not a spatial grid");
             }
 
-
             boolean selected = true;
             Object value = null;
             if (selectExpression != null) {
-                Object val = selectExpression.eval(scope, parameters, "scale", locator);
+                Object val = selectExpression.eval(scope, /* parameters, */ "scale", locator);
                 if (Observations.INSTANCE.isData(val) && !(val instanceof Boolean)) {
                     throw new KlabValidationException("polygon instantiator: select expression must return a true/false value");
                 }
@@ -267,7 +249,7 @@ public class PolygonInstantiatorJAI extends AbstractContextualizer implements IE
             }
             if (selected) {
                 if (categorizeExpression != null) {
-                    value = categorizeExpression.eval(scope, parameters);
+                    value = categorizeExpression.eval(scope, /* parameters */ "scale", locator);
                     if (Observations.INSTANCE.isData(value) && !(value instanceof Number || value instanceof Boolean)) {
                         if (this.valueHash == null) {
                             this.valueHash = new DualHashBidiMap<>();
@@ -397,7 +379,7 @@ public class PolygonInstantiatorJAI extends AbstractContextualizer implements IE
     }
 
     @Override
-    public Object eval(IContextualizationScope context, Object...parameters) throws KlabException {
+    public Object eval(IContextualizationScope context, Object... parameters) throws KlabException {
         return new PolygonInstantiatorJAI(Parameters.create(parameters), context);
     }
 

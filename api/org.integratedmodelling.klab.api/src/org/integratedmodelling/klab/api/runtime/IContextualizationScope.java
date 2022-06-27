@@ -522,8 +522,16 @@ public interface IContextualizationScope extends IParameters<String> {
     IConcept localizePredicate(IConcept predicate);
 
     /**
-     * Create an expression context to compile an expression with all local names matched to their
-     * observables.
+     * Create an expression context that will make available all the observations known to the
+     * current scope as variables in the code.
+     * 
+     * @return
+     */
+    IExpression.Scope getExpressionContext();
+
+    /**
+     * Create an expression context to compile an expression to compute a specific target
+     * observable.
      * 
      * @param targetObservable the target of the expression. If null, assume the scope's target
      *        semantics.

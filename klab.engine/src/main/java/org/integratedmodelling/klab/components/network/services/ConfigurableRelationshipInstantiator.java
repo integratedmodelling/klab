@@ -104,11 +104,13 @@ public class ConfigurableRelationshipInstantiator extends AbstractContextualizer
 
         if (parameters.containsKey("select")) {
             Object expression = parameters.get("select");
+            boolean forceScalar = false;
             if (expression instanceof IKimExpression) {
+                forceScalar = ((IKimExpression) expression).isForcedScalar();
                 expression = ((IKimExpression) expression).getCode();
             }
-            this.selectorDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE)
-                    .describe(expression.toString(), scope.getExpressionContext(null));
+            this.selectorDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE).describe(
+                    expression.toString(), scope.getExpressionContext().scalar(forceScalar ? Forcing.Always : Forcing.AsNeeded));
         }
 
         if (parameters.contains("seed")) {

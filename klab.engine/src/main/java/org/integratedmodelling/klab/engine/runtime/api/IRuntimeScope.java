@@ -74,7 +74,7 @@ public interface IRuntimeScope extends IContextualizationScope {
     ActuatorData getActuatorData(IActuator actuator);
 
     IResolutionScope getResolutionScope();
-    
+
     @Override
     ExpressionScope getExpressionContext(IObservable targetObservable);
 
@@ -113,8 +113,7 @@ public interface IRuntimeScope extends IContextualizationScope {
      * @param monitor
      * @return
      */
-    IRuntimeScope getContextScope(Actuator actuator, IResolutionScope scope, IScale scale,
-            IDataflow<?> dataflow,
+    IRuntimeScope getContextScope(Actuator actuator, IResolutionScope scope, IScale scale, IDataflow<?> dataflow,
             IMonitor monitor);
 
     /**
@@ -235,8 +234,7 @@ public interface IRuntimeScope extends IContextualizationScope {
      * @param configurationType
      * @param targets
      */
-    IConfiguration newConfiguration(IConcept configurationType, Collection<IObservation> targets,
-            IMetadata metadata);
+    IConfiguration newConfiguration(IConcept configurationType, Collection<IObservation> targets, IMetadata metadata);
 
     /**
      * Get a new nonsemantic state for model usage. May be called by contextualizers when
@@ -321,7 +319,8 @@ public interface IRuntimeScope extends IContextualizationScope {
 
     /**
      * Get all the artifacts known to this context indexed by their local name in the context of
-     * execution. An actuator must have been specified for the context.
+     * execution. An actuator must have been specified for the context. Only the names in the
+     * catalog that are known to the current actuator are added.
      * 
      * @param <T>
      * @param cls
@@ -350,8 +349,7 @@ public interface IRuntimeScope extends IContextualizationScope {
      * @param task the task to register the resolution to
      * @return a dataflow to resolve the observable, or null if there is no coverage
      */
-    <T extends IArtifact> T resolve(IObservable observable, IDirectObservation scope, ITaskTree<?> task,
-            Mode mode,
+    <T extends IArtifact> T resolve(IObservable observable, IDirectObservation scope, ITaskTree<?> task, Mode mode,
             IActuator parentActuator);
 
     /**

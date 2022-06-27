@@ -28,6 +28,7 @@ import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
 import org.integratedmodelling.klab.api.data.general.IExpression.CompilerScope;
+import org.integratedmodelling.klab.api.data.general.IExpression.Forcing;
 import org.integratedmodelling.klab.api.data.general.IExpression.Scope;
 import org.integratedmodelling.klab.api.extensions.Component;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
@@ -334,7 +335,7 @@ public enum Extensions implements IExtensionService {
                 if (o instanceof CompilerOption) {
                     options.add((CompilerOption) o);
                 } else if (o == CompilerScope.Scalar) {
-                    scope = scope.scalar(true);
+                    scope = scope.scalar(Forcing.AsNeeded);
                 }
             }
         }
@@ -349,7 +350,10 @@ public enum Extensions implements IExtensionService {
      */
     public IExpression compileExpression(IKimExpression expression, CompilerOption... compilerOptions) {
         return getLanguageProcessor(expression.getLanguage()).compile(expression.getCode(),
-                ExpressionScope.empty(Klab.INSTANCE.getRootMonitor()).scalar(expression.isForcedScalar()), compilerOptions);
+                expression.isForcedScalar()
+                        ? ExpressionScope.empty(Klab.INSTANCE.getRootMonitor()).scalar(Forcing.Always)
+                        : ExpressionScope.empty(Klab.INSTANCE.getRootMonitor()),
+                compilerOptions);
     }
 
     public IExpression compileExpression(String expressionCode, IExpression.Scope context, String language,
@@ -379,9 +383,9 @@ public enum Extensions implements IExtensionService {
                 scope.getMonitor().error("cannot use value " + condition.getLiteral() + " as a logical value");
             }
         } else if (condition.getExpression() != null) {
-            Scope escope = scope.getExpressionContext(null);
+            Scope escope = scope.getExpressionContext();
             if (condition.getExpression().isForcedScalar()) {
-                escope = ((ExpressionScope) escope).withCompilerScope(CompilerScope.Scalar);
+                escope = ((ExpressionScope) escope).scalar(Forcing.Always);
             }
             IExpression expression = getLanguageProcessor(DEFAULT_EXPRESSION_LANGUAGE)
                     .compile(condition.getExpression().getCode(), escope, options(false));
@@ -578,7 +582,7 @@ public enum Extensions implements IExtensionService {
         if (options != null) {
             for (Object o : options) {
                 if (o instanceof IMonitor) {
-                    monitor = (IMonitor)o;
+                    monitor = (IMonitor) o;
                 } else if (o == CompilerScope.Scalar) {
                     scalar = true;
                 }
@@ -586,7 +590,7 @@ public enum Extensions implements IExtensionService {
         }
         ExpressionScope ret = ExpressionScope.empty(monitor);
         if (scalar) {
-            ret = ret.scalar(true);
+            ret = ret.scalar(Forcing.AsNeeded);
         }
         return ret;
     }

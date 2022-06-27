@@ -107,15 +107,17 @@ public class ExpressionResolver extends AbstractContextualizer implements IResol
         if (parameters.containsKey(Extensions.TARGET_OBSERVABLE_PARAMETER)) {
             targetObservable = Observables.INSTANCE.asObservable(context.get(Extensions.TARGET_OBSERVABLE_PARAMETER));
         }
-        
+
         ExpressionScope expressionScope = (ExpressionScope) context.getExpressionContext(targetObservable)
-                .scalar(parameters.get("scalar", Boolean.FALSE));
+                .scalar(parameters.get("scalar", Boolean.FALSE) ? Forcing.Always : Forcing.AsNeeded);
         Set<CompilerOption> options = new HashSet<>();
         if (expressionScope.getCompilerScope() == CompilerScope.Scalar) {
             // this is for speed
+            // FIXME may not be necessary
             options.add(CompilerOption.DirectQualityAccess);
         }
-        Descriptor descriptor = processor.describe(parameters.get("code", String.class), expressionScope, options.toArray(new CompilerOption[options.size()]));
+        Descriptor descriptor = processor.describe(parameters.get("code", String.class), expressionScope,
+                options.toArray(new CompilerOption[options.size()]));
         Descriptor condition = null;
         if (parameters.get("ifcondition") != null || parameters.get("unlesscondition") != null) {
             String condCode = parameters.get("ifcondition", String.class);
@@ -133,7 +135,7 @@ public class ExpressionResolver extends AbstractContextualizer implements IResol
                 additionalParameters.put(key, parameters.get(key));
             }
         }
-        
+
         if (descriptor.isScalar()) {
             return new ExpressionStateResolver(descriptor, condition, parameters, context, additionalParameters);
         }

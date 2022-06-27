@@ -7,6 +7,7 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
+import org.integratedmodelling.klab.api.data.general.IExpression.Forcing;
 import org.integratedmodelling.klab.api.extensions.ILanguageExpression;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -40,11 +41,13 @@ public class ObjectExpression {
 
     public ObjectExpression(IKimExpression expression, IRuntimeScope overallScope, boolean forceScalar,
             CompilerOption... options) {
-        boolean scalar = forceScalar || expression.isForcedScalar();
         this.descriptor = Extensions.INSTANCE
                 .getLanguageProcessor(
                         expression.getLanguage() == null ? Extensions.DEFAULT_EXPRESSION_LANGUAGE : expression.getLanguage())
-                .describe(expression.getCode(), overallScope.getExpressionContext(null).scalar(scalar),
+                .describe(expression.getCode(),
+                        forceScalar
+                                ? overallScope.getExpressionContext().scalar(Forcing.AsNeeded)
+                                : overallScope.getExpressionContext(),
                         Extensions.options(false, options));
         this.expression = this.descriptor.compile();
     }

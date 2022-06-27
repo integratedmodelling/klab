@@ -852,7 +852,7 @@ public class TableCompiler {
             if (expression != null && computation == null) {
                 ILanguageProcessor processor = Extensions.INSTANCE.getLanguageProcessor(
                         expression.getLanguage() == null ? Extensions.DEFAULT_EXPRESSION_LANGUAGE : expression.getLanguage());
-                Scope context = scope.getExpressionContext(null);
+                Scope context = scope.getExpressionContext();
 
                 // register row and column names unless the rows/colums are aggregations
                 for (Dimension dimension : rows.values()) {

@@ -131,31 +131,30 @@ public class State extends Observation implements IState, IKeyHolder {
 
         public double getStd() {
             if (storage instanceof AbstractAdaptiveStorage) {
-                return ((AbstractAdaptiveStorage<?>) storage).getSlice(locator).getRawStatistics()
-                        .getStandardDeviation();
+                return ((AbstractAdaptiveStorage<?>) storage).getSlice(locator).getRawStatistics().getStandardDeviation();
             }
             throw new KlabUnimplementedException("Groovy support for non-conventional states");
         }
 
         public double getVariance() {
             if (storage instanceof AbstractAdaptiveStorage) {
-                return ((AbstractAdaptiveStorage<?>) storage).getSlice(locator).getRawStatistics()
-                        .getVariance();
+                return ((AbstractAdaptiveStorage<?>) storage).getSlice(locator).getRawStatistics().getVariance();
             }
             throw new KlabUnimplementedException("Groovy support for non-conventional states");
         }
 
         public RelocatedState invert() {
-            if (getObservable().getArtifactType() == IArtifact.Type.NUMBER
-                    && storage instanceof AbstractAdaptiveStorage) {
-                StateSummary summary = ((AbstractAdaptiveStorage<?>) storage).getSlice(locator)
-                        .getStateSummary();
-                if (!summary.isDegenerate()) {
-                    for (ILocator loc : locator) {
-                        Double d = get(loc, Double.class);
-                        if (d != null && !Double.isNaN(d)) {
-                            d = summary.getRange().get(1) - d + summary.getRange().get(0);
-                            set(loc, d);
+            if (getObservable().getArtifactType() == IArtifact.Type.NUMBER && storage instanceof AbstractAdaptiveStorage) {
+                AbstractAdaptiveStorage<?>.Slice slice = ((AbstractAdaptiveStorage<?>) storage).getSlice(locator);
+                if (slice != null) {
+                    StateSummary summary = slice.getStateSummary();
+                    if (!summary.isDegenerate()) {
+                        for (ILocator loc : locator) {
+                            Double d = get(loc, Double.class);
+                            if (d != null && !Double.isNaN(d)) {
+                                d = summary.getRange().get(1) - d + summary.getRange().get(0);
+                                set(loc, d);
+                            }
                         }
                     }
                 }
@@ -164,16 +163,13 @@ public class State extends Observation implements IState, IKeyHolder {
         }
 
         public RelocatedState normalize() {
-            if (getObservable().getArtifactType() == IArtifact.Type.NUMBER
-                    && storage instanceof AbstractAdaptiveStorage) {
-                StateSummary summary = ((AbstractAdaptiveStorage<?>) storage).getSlice(locator)
-                        .getStateSummary();
+            if (getObservable().getArtifactType() == IArtifact.Type.NUMBER && storage instanceof AbstractAdaptiveStorage) {
+                StateSummary summary = ((AbstractAdaptiveStorage<?>) storage).getSlice(locator).getStateSummary();
                 if (!summary.isDegenerate()) {
                     for (ILocator loc : locator) {
                         Double d = get(loc, Double.class);
                         if (d != null && !Double.isNaN(d)) {
-                            d = (d - summary.getRange().get(0)) / (summary.getRange().get(1) -
-                                    summary.getRange().get(0));
+                            d = (d - summary.getRange().get(0)) / (summary.getRange().get(1) - summary.getRange().get(0));
                             set(loc, d);
                         }
                     }
@@ -343,9 +339,7 @@ public class State extends Observation implements IState, IKeyHolder {
 
     @Override
     public IArtifact.Type getType() {
-        return isArchetype()
-                ? IArtifact.Type.VOID
-                : (storage == null ? getObservable().getArtifactType() : storage.getType());
+        return isArchetype() ? IArtifact.Type.VOID : (storage == null ? getObservable().getArtifactType() : storage.getType());
     }
 
     @Override
@@ -492,11 +486,9 @@ public class State extends Observation implements IState, IKeyHolder {
             for (ILocator locator : getScale()) {
                 values.add(get(locator));
             }
-            AggregationUtils.aggregate(values, AggregationUtils.getAggregation(getObservable()),
-                    getScope().getMonitor());
+            AggregationUtils.aggregate(values, AggregationUtils.getAggregation(getObservable()), getScope().getMonitor());
         }
-        throw new KlabUnimplementedException(
-                "aggregation of rescaled states is unimplemented - please submit a request");
+        throw new KlabUnimplementedException("aggregation of rescaled states is unimplemented - please submit a request");
     }
 
     @Override
@@ -515,8 +507,7 @@ public class State extends Observation implements IState, IKeyHolder {
             setDynamic(true);
             if (scale.getTime().getEnd() != null) {
                 if (updateTimestamps.size() == 0
-                        || updateTimestamps.get(updateTimestamps.size() - 1) < scale.getTime().getEnd()
-                                .getMilliseconds()) {
+                        || updateTimestamps.get(updateTimestamps.size() - 1) < scale.getTime().getEnd().getMilliseconds()) {
                     updateTimestamps.add(scale.getTime().getEnd().getMilliseconds());
                 }
             }
@@ -652,8 +643,7 @@ public class State extends Observation implements IState, IKeyHolder {
                     if (unit != null) {
                         area = Unit.create(unit).convert(area, Units.INSTANCE.SQUARE_METERS).doubleValue();
                     }
-                    ret.put((IConcept) value,
-                            ret.containsKey(value) ? ret.get((IConcept) value) + area : area);
+                    ret.put((IConcept) value, ret.containsKey(value) ? ret.get((IConcept) value) + area : area);
                 }
             }
         }

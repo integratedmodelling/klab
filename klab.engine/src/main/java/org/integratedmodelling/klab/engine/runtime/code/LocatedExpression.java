@@ -7,6 +7,7 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
+import org.integratedmodelling.klab.api.data.general.IExpression.Forcing;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -43,7 +44,8 @@ public class LocatedExpression {
         this.descriptor = Extensions.INSTANCE
                 .getLanguageProcessor(
                         expression.getLanguage() == null ? Extensions.DEFAULT_EXPRESSION_LANGUAGE : expression.getLanguage())
-                .describe(expression.getCode(), overallScope.getExpressionContext(null).scalar(scalar),
+                .describe(expression.getCode(),
+                        overallScope.getExpressionContext().scalar(scalar ? Forcing.Always : Forcing.AsNeeded),
                         Extensions.options(false));
         this.expression.set(this.descriptor.compile());
         this.parameters.set(Parameters.create());

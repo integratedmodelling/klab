@@ -36,6 +36,7 @@ import org.integratedmodelling.klab.api.API.PUBLIC.Export;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Attribute;
 import org.integratedmodelling.klab.api.data.general.IExpression.CompilerScope;
+import org.integratedmodelling.klab.api.data.general.IExpression.Forcing;
 import org.integratedmodelling.klab.api.data.general.IExpression.Scope;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -49,6 +50,7 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.provenance.IProvenance.Node;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
@@ -979,9 +981,21 @@ public class Flowchart {
             }
 
             @Override
-            public Scope scalar(boolean forceScalar) {
+            public Scope scalar(Forcing forcing) {
                 // TODO Auto-generated method stub
                 return this;
+            }
+
+            @Override
+            public IContextualizationScope getRuntimeScope() {
+                // TODO Auto-generated method stub
+                return null;
+            }
+
+            @Override
+            public boolean isForcedScalar() {
+                // TODO Auto-generated method stub
+                return false;
             }
 
 		});
