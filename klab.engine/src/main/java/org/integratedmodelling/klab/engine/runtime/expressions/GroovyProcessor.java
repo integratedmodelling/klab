@@ -62,7 +62,7 @@ public enum GroovyProcessor implements ILanguageProcessor {
                 Map<String, IObservation> catalog = ((IRuntimeScope)context.getRuntimeScope()).getLocalCatalog(IObservation.class);
                 for (String key : catalog.keySet()) {
                     IObservation obs = catalog.get(key);
-                    if (!this.variables.containsKey(key)) {
+                    if (!this.variables.containsKey(key) && !this.variables.containsValue(obs)) {
                         variables.put(key, obs);
                     }
                 }

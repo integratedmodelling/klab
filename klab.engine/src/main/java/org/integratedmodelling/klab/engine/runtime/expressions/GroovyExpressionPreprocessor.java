@@ -388,39 +388,14 @@ public class GroovyExpressionPreprocessor {
         String ret = preprocess(code);
 
         if (this.doNotProcess) {
-            return code;
+            return ret;
         }
 
         List<TokenDescriptor> tokens = tokenize(ret);
         analyze(tokens);
         ret = reconstruct(tokens);
 
-        System.out.println(code + " -> " + ret);
-
         return ret;
-    }
-
-    /*
-     * for debugging
-     */
-    public String processVerbose(String code) {
-
-        code = preprocess(code);
-
-        System.out.println("PREPROCESSED: " + code);
-
-        if (this.doNotProcess) {
-            return code;
-        }
-
-        List<TokenDescriptor> tokens = tokenize(code);
-
-        for (TokenDescriptor token : tokens) {
-            System.out.println(" " + token);
-        }
-
-        analyze(tokens);
-        return reconstruct(tokens);
     }
 
     private String preprocessDeclarations(String code) {
@@ -708,12 +683,7 @@ public class GroovyExpressionPreprocessor {
     public Set<String> getContextualizers() {
         return contextualizers;
     }
-
-    public static void main(String[] args) {
-        GroovyExpressionPreprocessor processor = new GroovyExpressionPreprocessor();
-        processor.processVerbose("elevation@nw");
-    }
-
+    
     public Map<String, Set<String>> getMapIdentifiers() {
         return mapIdentifiers;
     }

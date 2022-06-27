@@ -122,6 +122,14 @@ public class State extends Observation implements IState, IKeyHolder {
             throw new KlabUnimplementedException("Groovy support for non-conventional states");
         }
 
+        // for backwards compatibility
+        public double getAvg() {
+            if (storage instanceof AbstractAdaptiveStorage) {
+                return ((AbstractAdaptiveStorage<?>) storage).getSlice(locator).getRawStatistics().getMean();
+            }
+            throw new KlabUnimplementedException("Groovy support for non-conventional states");
+        }
+
         public double getSum() {
             if (storage instanceof AbstractAdaptiveStorage) {
                 return ((AbstractAdaptiveStorage<?>) storage).getSlice(locator).getRawStatistics().getSum();
