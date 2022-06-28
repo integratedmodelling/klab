@@ -4,12 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.integratedmodelling.klab.rest.TicketResponse.Ticket;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import com.github.jsonldjava.core.JsonLdOptions;
 import com.github.jsonldjava.core.JsonLdProcessor;
 
-@Service
+@Component
 public class AnnotationManager {
 	
 	public Ticket process(Object jsonObject) {
