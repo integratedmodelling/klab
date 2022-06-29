@@ -4,11 +4,11 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.StreamSupport;
 
 import org.integratedmodelling.klab.Configuration;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Logo;
 import org.integratedmodelling.klab.Version;
@@ -21,19 +21,12 @@ import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.node.auth.NodeAuthenticationManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.MutablePropertySources;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.error.YAMLException;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
 
 /**
  * This will start a node at http://localhost:8287/node with the default
@@ -166,6 +159,7 @@ public class Node {
 		}
 
 		bootTime = System.currentTimeMillis();
+		Klab.INSTANCE.setRootIdentity(owner);
 		
 		return true;
 	}

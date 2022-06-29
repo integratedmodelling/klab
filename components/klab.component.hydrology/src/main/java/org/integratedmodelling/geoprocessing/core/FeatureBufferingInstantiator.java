@@ -9,6 +9,7 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IObservationGroup;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
@@ -58,7 +59,7 @@ public class FeatureBufferingInstantiator extends AbstractContextualizer impleme
 			source = context.getArtifact(artifact);
 		}
 
-		if (source == null && !(source instanceof IObjectArtifact)) {
+		if (!(source instanceof IObjectArtifact)) {
 			throw new IllegalArgumentException(
 					"buffer instantiator: source artifact does not exist or is not an object artifact");
 		}

@@ -234,6 +234,8 @@ public class ResourceManager {
                     Logging.INSTANCE.error(
                             "exception when publishing " + resourceReference.getUrn() + ": " + ExceptionUtils.getStackTrace(t));
                     ret.error("Publishing failed with exception: " + t.getMessage());
+                } finally {
+                    checkResources();
                 }
             }
         }.start();

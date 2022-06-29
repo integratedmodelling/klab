@@ -13,6 +13,7 @@ import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.API;
+import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.KlabPermissions;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -151,6 +152,9 @@ public class ResourceController {
     @ResponseBody
     public List<ResourceReference> listResources(Principal principal,
             @RequestParam(required = false) String query) {
+        
+        IIdentity identity = Klab.INSTANCE.getRootMonitor().getIdentity();
+        
         List<ResourceReference> ret = new ArrayList<>();
         if (query != null) {
             for (Match match : resourceManager.queryResources(query)) {
