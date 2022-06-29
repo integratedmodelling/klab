@@ -337,4 +337,8 @@ public class KlabNavigatorActions {
 		dialog.open();
 	}
 
+    public static void deactivate(EProject project) {
+        System.out.println("FUCK THIS FUCKER " + project.getName());
+    }
+
 }

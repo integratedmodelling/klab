@@ -141,7 +141,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
             @Override
             public IArtifact call() throws Exception {
 
-                IDirectObservation context = scope.getResolutionScope().getContext();
+                IDirectObservation context = scope./* getResolutionScope(). */getContextSubject();
                 IRuntimeScope runtimeScope = null;
                 Actuator initializer = (Actuator) dataflow.getActuators().get(0);
                 boolean switchContext = context != null && initializer.getObservable().getType().is(Type.COUNTABLE)

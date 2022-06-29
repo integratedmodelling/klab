@@ -33,6 +33,7 @@ import org.integratedmodelling.klab.Roles;
 import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
+import org.integratedmodelling.klab.api.auth.ITaskIdentity;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IStorage;
@@ -448,7 +449,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
     }
 
     @Override
-    public IRuntimeScope copy() {
+    public RuntimeScope copy() {
         RuntimeScope ret = new RuntimeScope(this);
         return ret;
     }
@@ -2402,8 +2403,11 @@ public class RuntimeScope extends AbstractRuntimeScope {
 
     @Override
     public IRuntimeScope getChild(IRuntimeIdentity identity) {
-        IRuntimeScope ret = copy();
-        ((RuntimeScope) ret).monitor = identity.getMonitor();
+        RuntimeScope ret = copy();
+        ret.monitor = identity.getMonitor();
+        if (identity instanceof ITaskIdentity && ((ITaskIdentity)identity).getContext() != null) {
+           ret.contextSubject = ((ITaskIdentity)identity).getContext();
+        }
         return ret;
     }
 
