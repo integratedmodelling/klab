@@ -1304,6 +1304,7 @@ public enum Resources implements IResourceService {
                 // send toString() with all parameters!
                 request.setUrn(urn.toString());
                 request.setGeometry(encodeScale(geometry, resource));
+                
                 DecodingDataBuilder builder = new DecodingDataBuilder(
                         node.getClient().post(API.NODE.RESOURCE.GET_DATA, request, Map.class), scope);
                 IKlabData ret = builder.build();

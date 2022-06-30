@@ -208,6 +208,12 @@ public class EncodingDataBuilder implements IKlabData.Builder {
 
 	@Override
 	public void add(Object value) {
+	    
+	    if (this.stateBuilder == null) {
+	        this.stateBuilder = KlabData.State.newBuilder();
+	        this.stateBuilder.setName("result");
+	    }
+	    
 		if (this.stateBuilder != null) {
 			if (value instanceof Number) {
 				this.stateBuilder.addDoubledata(((Number) value).doubleValue());

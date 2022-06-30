@@ -145,6 +145,11 @@ public class ResourceManager {
         }
 
         EncodingDataBuilder builder = new EncodingDataBuilder();
+
+        // HERE the request should have a hint of whether it wants to build a state or what, then
+        // pre-adapt
+        // the builder
+
         IResourceAdapter adapter = Resources.INSTANCE.getResourceAdapter(resource.getAdapterType());
         if (adapter == null) {
             throw new KlabUnsupportedFeatureException(
@@ -177,7 +182,7 @@ public class ResourceManager {
         if (resource == null) {
             throw new IllegalArgumentException("URN " + urn + " cannot be resolved");
         }
-        
+
         IResourceAdapter adapter = Resources.INSTANCE.getResourceAdapter(resource.getAdapterType());
         if (adapter == null) {
             throw new KlabUnsupportedFeatureException(
@@ -360,7 +365,8 @@ public class ResourceManager {
 
     public ResourceReference contextualizeResource(ResourceReference resource, IGeometry geometry, IObservable semantics) {
         /*
-         * TODO check availability with adapter and if needed, insert availability record in metadata
+         * TODO check availability with adapter and if needed, insert availability record in
+         * metadata
          */
         return resource;
     }

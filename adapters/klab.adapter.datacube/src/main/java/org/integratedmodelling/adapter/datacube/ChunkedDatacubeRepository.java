@@ -104,8 +104,7 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
     private String statusMessage;
     protected Geoserver geoserver;
     protected Double noDataValue;
-    protected Map<String, Function<IScale, Strategy>> specialVariables = Collections
-            .synchronizedMap(new HashMap<>());
+    protected Map<String, Function<IScale, Strategy>> specialVariables = Collections.synchronizedMap(new HashMap<>());
 
     private Map<String, Strategy> beingProcessed = Collections.synchronizedMap(new HashMap<>());
 
@@ -154,8 +153,7 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 
         @Override
         public String toString() {
-            return "Granule [dataFile=" + dataFile + ", multiplier=" + multiplier + ", layerName=" + layerName
-                    + "]";
+            return "Granule [dataFile=" + dataFile + ", multiplier=" + multiplier + ", layerName=" + layerName + "]";
         }
 
     }
@@ -200,8 +198,7 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
                 ret.append("   " + ng + ": " + g.layerName + " ["
                         + (g.multiplier == 1
                                 ? "data"
-                                : ("aggregating " + g.multiplier + " est. " + g.aggregationTimeSeconds
-                                        + " sec"))
+                                : ("aggregating " + g.multiplier + " est. " + g.aggregationTimeSeconds + " sec"))
                         + "]\n");
                 ng++;
                 ttime += g.aggregationTimeSeconds;
@@ -299,26 +296,21 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
                                 if (start.isAlignedWith(aggregationPoint)) {
                                     if (checkpoints.containsKey(aggregationPoint)) {
 
-                                        File aggregatedFile = new File(
-                                                aggregationDirectory + File.separator
-                                                        + getAggregatedFilename(variable,
-                                                                checkpoints.get(aggregationPoint), tick - 1));
+                                        File aggregatedFile = new File(aggregationDirectory + File.separator
+                                                + getAggregatedFilename(variable, checkpoints.get(aggregationPoint), tick - 1));
 
                                         if (aggregatedFile.exists()) {
                                             continue;
                                         }
 
-                                        if (!createAggregatedLayer(variable,
-                                                checkpoints.get(aggregationPoint),
-                                                tick - 1, aggregationPoint, aggregatedFile)) {
+                                        if (!createAggregatedLayer(variable, checkpoints.get(aggregationPoint), tick - 1,
+                                                aggregationPoint, aggregatedFile)) {
 
-                                            Logging.INSTANCE.warn("aggregation between "
-                                                    + getTickStart(checkpoints.get(aggregationPoint))
-                                                    + " and "
-                                                    + getTickEnd(tick - 1) + " returned a failure code");
+                                            Logging.INSTANCE
+                                                    .warn("aggregation between " + getTickStart(checkpoints.get(aggregationPoint))
+                                                            + " and " + getTickEnd(tick - 1) + " returned a failure code");
                                         } else {
-                                            Logging.INSTANCE.info("Created "
-                                                    + aggregationPoint.getType().getPredicate()
+                                            Logging.INSTANCE.info("Created " + aggregationPoint.getType().getPredicate()
                                                     + " aggregation " + aggregatedFile + " ["
                                                     + (tick - checkpoints.get(aggregationPoint)) + " ticks]");
                                         }
@@ -340,10 +332,8 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
             // FIXME remove
             Logging.INSTANCE.info("entering strategy.execute()");
 
-            if (!(scope.getScale().getSpace() instanceof Space)
-                    || ((Space) scope.getScale().getSpace()).getGrid() == null) {
-                throw new KlabIllegalStateException(
-                        "Copernicus adapter only support grid geometries for now");
+            if (!(scope.getScale().getSpace() instanceof Space) || ((Space) scope.getScale().getSpace()).getGrid() == null) {
+                throw new KlabIllegalStateException("Copernicus adapter only support grid geometries for now");
             }
 
             boolean first = true;
@@ -362,8 +352,11 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
             }
 
             IUnit originalUnit = getOriginalUnit(variable);
-            Builder stateBuilder = builder.startState(stateName,
-                    originalUnit == null ? null : originalUnit.toString(), scope);
+
+            /*
+             * FIXME remove
+             */
+            Builder stateBuilder = builder.startState(stateName, originalUnit == null ? null : originalUnit.toString(), scope);
             double wsum = 0.0;
             Aggregation aggregation = getAggregation(variable);
 
@@ -378,23 +371,22 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 
                 if (!g.dataFile.exists()) {
                     if (g.multiplier == 1) {
-                        scope.getMonitor().error("repository error: " + getName() + ": missing datafile "
-                                + MiscUtilities.getFileName(g.dataFile));
+                        scope.getMonitor().error(
+                                "repository error: " + getName() + ": missing datafile " + MiscUtilities.getFileName(g.dataFile));
                     } else {
-                        scope.getMonitor()
-                                .info("repository " + getName() + ": creating missing aggregated datafile "
-                                        + MiscUtilities.getFileName(g.dataFile));
+                        scope.getMonitor().info("repository " + getName() + ": creating missing aggregated datafile "
+                                + MiscUtilities.getFileName(g.dataFile));
                         createAggregatedLayer(variable, g.startTick, g.endTick, null, g.dataFile);
                     }
                 }
 
                 GridCoverage2D coverage = getCoverage(g.layerName, scope.getScale().getSpace());
-                
+
                 if (coverage == null) {
-                	scope.getMonitor().error("coverage retrieval for " + g.layerName + " failed: geoserver may be offline");
-                	return false;
+                    scope.getMonitor().error("coverage retrieval for " + g.layerName + " failed: geoserver may be offline");
+                    return false;
                 }
-                
+
                 if (granules.size() == 1) {
 
                     geoserver.encode(coverage, scope.getScale(), stateBuilder, 0, noDataValue, null);
@@ -450,8 +442,7 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 
                     if (NumberUtils.equal(value, noDataValue)) {
                         value = Double.NaN;
-                    } else if (aggregation == Aggregation.MEAN && wsum > 1
-                            && Observations.INSTANCE.isData(value)) {
+                    } else if (aggregation == Aggregation.MEAN && wsum > 1 && Observations.INSTANCE.isData(value)) {
                         value /= wsum;
                     }
 
@@ -514,8 +505,7 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
 
         recomputeProcessingTime();
 
-        int maxConcurrentThreads = Integer
-                .parseInt(Configuration.INSTANCE.getProperty(DATACUBE_DOWNLOAD_THREADS_PROPERTY, "1"));
+        int maxConcurrentThreads = Integer.parseInt(Configuration.INSTANCE.getProperty(DATACUBE_DOWNLOAD_THREADS_PROPERTY, "1"));
         this.executor = Executors.newFixedThreadPool(maxConcurrentThreads);
 
         this.geoserver = initializeGeoserver();
@@ -605,13 +595,10 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
                     properties.setProperty(CHUNK_DOWNLOAD_TIME_MS, "" + (System.currentTimeMillis() - start));
                     start = System.currentTimeMillis();
                     if (processChunk(chunk, variable, dir)) {
-                        properties.setProperty(CHUNK_PROCESSING_TIME_MS,
-                                "" + (System.currentTimeMillis() - start));
-                        try (OutputStream out = new FileOutputStream(
-                                new File(dir + File.separator + "chunk.properties"))) {
+                        properties.setProperty(CHUNK_PROCESSING_TIME_MS, "" + (System.currentTimeMillis() - start));
+                        try (OutputStream out = new FileOutputStream(new File(dir + File.separator + "chunk.properties"))) {
                             properties.store(out,
-                                    "Chunk " + chunk + " of " + variable
-                                            + " finished downloaded and processing at "
+                                    "Chunk " + chunk + " of " + variable + " finished downloaded and processing at "
                                             + DateTime.now(DateTimeZone.UTC) + ": total processing time = "
                                             + new Period(System.currentTimeMillis() - begin));
                         } catch (IOException e) {
@@ -639,12 +626,8 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
             // let's not decrement this for now
             return this.beingProcessed.get(variable + "#" + chunk).timeToAvailabilitySeconds;
         }
-        File pfile = new File(
-                this.mainDirectory + File.separator + variable + "_" + chunk + File.separator
-                        + "chunk.properties");
-        return pfile.exists()
-                ? 0
-                : (checkRemoteAvailability(chunk, variable) ? estimatedChunkDownloadTimeSeconds : -1);
+        File pfile = new File(this.mainDirectory + File.separator + variable + "_" + chunk + File.separator + "chunk.properties");
+        return pfile.exists() ? 0 : (checkRemoteAvailability(chunk, variable) ? estimatedChunkDownloadTimeSeconds : -1);
 
     }
 
@@ -780,8 +763,7 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
             if (this.aggregationPoints != null) {
                 for (ITime.Resolution res : this.aggregationPoints) {
 
-                    if (start.plus(1, res).getMilliseconds() <= time.getEnd().getMilliseconds()
-                            && start.isAlignedWith(res)) {
+                    if (start.plus(1, res).getMilliseconds() <= time.getEnd().getMilliseconds() && start.isAlignedWith(res)) {
 
                         /*
                          * use this resolution and move forward to next period
@@ -796,8 +778,7 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
                                 : (int) (getEstimatedAggregationTime(res.getType()) * granule.multiplier);
                         granule.startTick = cp.getFirst();
                         granule.endTick = cp.getFirst() + skipping;
-                        granule.layerName = getAggregatedLayer(variable, cp.getFirst(),
-                                cp.getFirst() + skipping);
+                        granule.layerName = getAggregatedLayer(variable, cp.getFirst(), cp.getFirst() + skipping);
                         ret.granules.add(granule);
 
                         aggregated = true;
@@ -812,8 +793,7 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
                     File directory = getChunkDirectory(variable, cp.getSecond());
                     directory.mkdirs();
                     granule.dataFile = new File(
-                            directory + File.separator
-                                    + getOriginalDataFilename(variable, cp.getFirst(), directory));
+                            directory + File.separator + getOriginalDataFilename(variable, cp.getFirst(), directory));
                     granule.aggregationTimeSeconds = 0;
                     granule.layerName = getDataLayer(variable, cp.getFirst());
 
@@ -828,8 +808,7 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
          */
         for (Integer chunk : chunks) {
             ret.chunks.add(chunk);
-            if (!new File(getChunkDirectory(variable, chunk) + File.separator + "chunk.properties")
-                    .exists()) {
+            if (!new File(getChunkDirectory(variable, chunk) + File.separator + "chunk.properties").exists()) {
                 ret.timeToAvailabilitySeconds += this.estimatedChunkDownloadTimeSeconds;
             }
         }
