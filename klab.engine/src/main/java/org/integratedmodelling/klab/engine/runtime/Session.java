@@ -387,6 +387,11 @@ public class Session extends GroovyObjectSupport
     }
 
     @Override
+    public IIdentity.Type getIdentityType() {
+        return IIdentity.Type.MODEL_SESSION;
+    }
+
+    @Override
     public boolean is(Type type) {
         return type == Type.MODEL_SESSION;
     }
@@ -2182,8 +2187,7 @@ public class Session extends GroovyObjectSupport
     }
 
     public void notifyTestCaseStart(IBehavior behavior, TestStatistics statistics) {
-        monitor.send(
-                Message.create(this.token, IMessage.MessageClass.UnitTests, IMessage.Type.TestCaseStarted, statistics));
+        monitor.send(Message.create(this.token, IMessage.MessageClass.UnitTests, IMessage.Type.TestCaseStarted, statistics));
     }
 
 }

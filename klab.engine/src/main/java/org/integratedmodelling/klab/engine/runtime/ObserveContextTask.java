@@ -82,6 +82,12 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
         this(session, observer, scenarios, null, null,
                 session.getParentIdentity(Engine.class).getTaskExecutor(), null, true);
     }
+    
+
+    @Override
+    public IIdentity.Type getIdentityType() {
+        return IIdentity.Type.TASK;
+    }
 
     /**
      * Listener consumers are called as things progress. The observation listener is first called

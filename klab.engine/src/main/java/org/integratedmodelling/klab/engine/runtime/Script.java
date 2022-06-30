@@ -24,155 +24,160 @@ import org.integratedmodelling.klab.utils.Parameters;
 
 public class Script implements IScript {
 
-	URL scriptUrl;
-	FutureTask<ISubject> delegate;
-	IMonitor monitor;
-	Session session;
-	String token = NameGenerator.shortUUID();
-	IParameters<String> globalState = Parameters.create();
+    URL scriptUrl;
+    FutureTask<ISubject> delegate;
+    IMonitor monitor;
+    Session session;
+    String token = NameGenerator.shortUUID();
+    IParameters<String> globalState = Parameters.create();
 
-	@Override
-	public IParameters<String> getState() {
-		return globalState;
-	}
-	
-	public Script(Session session, URL resource) {
+    @Override
+    public IParameters<String> getState() {
+        return globalState;
+    }
 
-		this.scriptUrl = resource;
-		final Engine engine = session.getParentIdentity(Engine.class);
-		delegate = new FutureTask<ISubject>(new Callable<ISubject>() {
+    public Script(Session session, URL resource) {
 
-			@Override
-			public ISubject call() throws Exception {
+        this.scriptUrl = resource;
+        final Engine engine = session.getParentIdentity(Engine.class);
+        delegate = new FutureTask<ISubject>(new Callable<ISubject>(){
 
-				/*
-				 * Unregister the task
-				 */
-				session.unregisterTask(Script.this);
-				
-				ISubject ret = null;
-				try {
-					ListenerImpl listener = new ListenerImpl();
-					Script.this.session = session;
-					Script.this.monitor = (session.getMonitor()).get(Script.this);
-					((Monitor)Script.this.monitor).addListener(listener);
-					Models.INSTANCE.load(resource, Script.this.monitor);
-					/*
-					 * Unregister the task
-					 */
-					session.unregisterTask(Script.this);
-					ret = listener.subject;
-					
-				} catch (Exception e) {
-					throw e instanceof KlabException ? (KlabException) e : new KlabException(e);
-				}
-				return ret;
-			}
-		});
+            @Override
+            public ISubject call() throws Exception {
 
-		engine.getScriptExecutor().execute(delegate);
-	}
+                /*
+                 * Unregister the task
+                 */
+                session.unregisterTask(Script.this);
 
-	public Script(Engine engine, URL resource) {
+                ISubject ret = null;
+                try {
+                    ListenerImpl listener = new ListenerImpl();
+                    Script.this.session = session;
+                    Script.this.monitor = (session.getMonitor()).get(Script.this);
+                    ((Monitor) Script.this.monitor).addListener(listener);
+                    Models.INSTANCE.load(resource, Script.this.monitor);
+                    /*
+                     * Unregister the task
+                     */
+                    session.unregisterTask(Script.this);
+                    ret = listener.subject;
 
-		this.scriptUrl = resource;
-		delegate = new FutureTask<ISubject>(new Callable<ISubject>() {
+                } catch (Exception e) {
+                    throw e instanceof KlabException ? (KlabException) e : new KlabException(e);
+                }
+                return ret;
+            }
+        });
 
-			@Override
-			public ISubject call() throws Exception {
+        engine.getScriptExecutor().execute(delegate);
+    }
 
-				ISubject ret = null;
-				try (Session session = engine.createSession()) {
-					ListenerImpl listener = new ListenerImpl();
-					Script.this.session = session;
-					Script.this.monitor = (session.getMonitor()).get(Script.this);
-					((Monitor)Script.this.monitor).addListener(listener);
-					Models.INSTANCE.load(resource, monitor);
-					ret = listener.subject;
-				} catch (Exception e) {
-					throw e instanceof KlabException ? (KlabException) e : new KlabException(e);
-				}
-				return ret;
-			}
-		});
+    public Script(Engine engine, URL resource) {
 
-		engine.getScriptExecutor().execute(delegate);
-	}
+        this.scriptUrl = resource;
+        delegate = new FutureTask<ISubject>(new Callable<ISubject>(){
 
-	@Override
-	public String getId() {
-		return token;
-	}
+            @Override
+            public ISubject call() throws Exception {
 
-	@Override
-	public boolean is(Type type) {
-		return type == Type.SCRIPT;
-	}
+                ISubject ret = null;
+                try (Session session = engine.createSession()) {
+                    ListenerImpl listener = new ListenerImpl();
+                    Script.this.session = session;
+                    Script.this.monitor = (session.getMonitor()).get(Script.this);
+                    ((Monitor) Script.this.monitor).addListener(listener);
+                    Models.INSTANCE.load(resource, monitor);
+                    ret = listener.subject;
+                } catch (Exception e) {
+                    throw e instanceof KlabException ? (KlabException) e : new KlabException(e);
+                }
+                return ret;
+            }
+        });
 
-	@Override
-	public <T extends IIdentity> T getParentIdentity(Class<T> type) {
-		return IIdentity.findParent(this, type);
-	}
+        engine.getScriptExecutor().execute(delegate);
+    }
 
-	@Override
-	public boolean cancel(boolean mayInterruptIfRunning) {
-		return delegate.cancel(mayInterruptIfRunning);
-	}
+    @Override
+    public String getId() {
+        return token;
+    }
 
-	@Override
-	public boolean isCancelled() {
-		return delegate.isCancelled();
-	}
+    @Override
+    public IIdentity.Type getIdentityType() {
+        return IIdentity.Type.SCRIPT;
+    }
 
-	@Override
-	public boolean isDone() {
-		return delegate.isDone();
-	}
+    @Override
+    public boolean is(Type type) {
+        return type == Type.SCRIPT;
+    }
 
-	@Override
-	public ISubject get() throws InterruptedException, ExecutionException {
-		return delegate.get();
-	}
+    @Override
+    public <T extends IIdentity> T getParentIdentity(Class<T> type) {
+        return IIdentity.findParent(this, type);
+    }
 
-	@Override
-	public ISubject get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-		return delegate.get(timeout, unit);
-	}
+    @Override
+    public boolean cancel(boolean mayInterruptIfRunning) {
+        return delegate.cancel(mayInterruptIfRunning);
+    }
 
-	@Override
-	public IEngineSessionIdentity getParentIdentity() {
-		return session;
-	}
+    @Override
+    public boolean isCancelled() {
+        return delegate.isCancelled();
+    }
 
-	@Override
-	public IMonitor getMonitor() {
-		return monitor;
-	}
-	
-	class ListenerImpl implements IMonitor.Listener {
-		ISubject subject;
-		@Override
-		public void notifyRootContext(ISubject subject) {
-			this.subject = subject;
-		}
-	}
+    @Override
+    public boolean isDone() {
+        return delegate.isDone();
+    }
 
-	@Override
-	public String load(IBehavior behavior, IContextualizationScope scope) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public ISubject get() throws InterruptedException, ExecutionException {
+        return delegate.get();
+    }
 
-	@Override
-	public boolean stop(String behaviorId) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public ISubject get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+        return delegate.get(timeout, unit);
+    }
 
-	@Override
-	public boolean stop() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public IEngineSessionIdentity getParentIdentity() {
+        return session;
+    }
+
+    @Override
+    public IMonitor getMonitor() {
+        return monitor;
+    }
+
+    class ListenerImpl implements IMonitor.Listener {
+        ISubject subject;
+        @Override
+        public void notifyRootContext(ISubject subject) {
+            this.subject = subject;
+        }
+    }
+
+    @Override
+    public String load(IBehavior behavior, IContextualizationScope scope) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean stop(String behaviorId) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean stop() {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
 }

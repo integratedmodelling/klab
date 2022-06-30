@@ -21,23 +21,23 @@ import org.integratedmodelling.klab.utils.Parameters;
  * A ITask that creates a root subject within a Session.
  * 
  * FIXME this should be a secondary task following a context observation; if the URN is observer
- * without a set context, the ROI becomes the scale of the resource. That's it - just copy the logics
- * in regular observations.
+ * without a set context, the ROI becomes the scale of the resource. That's it - just copy the
+ * logics in regular observations.
  * 
  * @author ferdinando.villa
  *
  */
 public class UrnContextualizationTask extends AbstractTask<ISubject> {
 
-    FutureTask<ISubject>  delegate;
-    String                taskDescription = "<uninitialized URN preview task " + token + ">";
-	IParameters<String> globalState = Parameters.create();
+    FutureTask<ISubject> delegate;
+    String taskDescription = "<uninitialized URN preview task " + token + ">";
+    IParameters<String> globalState = Parameters.create();
 
-	@Override
-	public IParameters<String> getState() {
-		return globalState;
-	}
-	
+    @Override
+    public IParameters<String> getState() {
+        return globalState;
+    }
+
     public UrnContextualizationTask(UrnContextualizationTask parent, String description) {
         super(parent);
         this.delegate = parent.delegate;
@@ -55,7 +55,7 @@ public class UrnContextualizationTask extends AbstractTask<ISubject> {
 
             session.touch();
 
-            delegate = new FutureTask<ISubject>(new MonitoredCallable<ISubject>(this) {
+            delegate = new FutureTask<ISubject>(new MonitoredCallable<ISubject>(this){
 
                 @Override
                 public ISubject run() throws Exception {
@@ -64,35 +64,40 @@ public class UrnContextualizationTask extends AbstractTask<ISubject> {
 
                     try {
 
-                    	notifyStart();
-                    	
-                        Pair<IArtifact, IArtifact> data = Resources.INSTANCE
-                                .resolveResourceToArtifact(urn, monitor);
+                        notifyStart();
+
+                        Pair<IArtifact, IArtifact> data = Resources.INSTANCE.resolveResourceToArtifact(urn, monitor);
 
                         ret = (ISubject) data.getFirst();
 
-//                        /*
-//                         * notify context
-//                         */
-//                        session.getMonitor()
-//                                .send(Message.create(session
-//                                        .getId(), IMessage.MessageClass.ObservationLifecycle, IMessage.Type.NewObservation, Observations.INSTANCE
-//                                                .createArtifactDescriptor(ret, null, ITime.INITIALIZATION, -1, false, true)
-//                                                .withTaskId(token)));
+                        // /*
+                        // * notify context
+                        // */
+                        // session.getMonitor()
+                        // .send(Message.create(session
+                        // .getId(), IMessage.MessageClass.ObservationLifecycle,
+                        // IMessage.Type.NewObservation, Observations.INSTANCE
+                        // .createArtifactDescriptor(ret, null, ITime.INITIALIZATION, -1, false,
+                        // true)
+                        // .withTaskId(token)));
 
-                        // TODO must finish this task and start another, otherwise no context gets registered.
+                        // TODO must finish this task and start another, otherwise no context gets
+                        // registered.
 
-//                        /*
-//                         * notify result
-//                         */
-//                        IObservation notifiable = (IObservation) (data.getSecond() instanceof ObservationGroup
-//                                && data.getSecond().groupSize() > 0 ? data.getSecond().iterator().next()
-//                                        : data.getSecond());
-//
-//                        session.getMonitor().send(Message.create(session
-//                                .getId(), IMessage.MessageClass.ObservationLifecycle, IMessage.Type.NewObservation, Observations.INSTANCE
-//                                        .createArtifactDescriptor(notifiable, context, ITime.INITIALIZATION, -1, false, true)
-//                                        .withTaskId(token)));
+                        // /*
+                        // * notify result
+                        // */
+                        // IObservation notifiable = (IObservation) (data.getSecond() instanceof
+                        // ObservationGroup
+                        // && data.getSecond().groupSize() > 0 ? data.getSecond().iterator().next()
+                        // : data.getSecond());
+                        //
+                        // session.getMonitor().send(Message.create(session
+                        // .getId(), IMessage.MessageClass.ObservationLifecycle,
+                        // IMessage.Type.NewObservation, Observations.INSTANCE
+                        // .createArtifactDescriptor(notifiable, context, ITime.INITIALIZATION, -1,
+                        // false, true)
+                        // .withTaskId(token)));
 
                         /*
                          * Register the observation context with the session. It will be disposed of
@@ -104,7 +109,7 @@ public class UrnContextualizationTask extends AbstractTask<ISubject> {
 
                     } catch (Throwable e) {
 
-                    	throw notifyAbort(e);
+                        throw notifyAbort(e);
 
                     }
                     return ret;
@@ -156,6 +161,11 @@ public class UrnContextualizationTask extends AbstractTask<ISubject> {
     }
 
     @Override
+    public IIdentity.Type getIdentityType() {
+        return IIdentity.Type.TASK;
+    }
+    
+    @Override
     public boolean isCancelled() {
         return delegate.isCancelled();
     }
@@ -171,8 +181,7 @@ public class UrnContextualizationTask extends AbstractTask<ISubject> {
     }
 
     @Override
-    public ISubject get(long timeout, TimeUnit unit)
-            throws InterruptedException, ExecutionException, TimeoutException {
+    public ISubject get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
         return delegate.get(timeout, unit);
     }
 
@@ -181,10 +190,10 @@ public class UrnContextualizationTask extends AbstractTask<ISubject> {
         return new UrnContextualizationTask(this, description);
     }
 
-	@Override
-	protected String getTaskDescription() {
-		return taskDescription;
-	}
+    @Override
+    protected String getTaskDescription() {
+        return taskDescription;
+    }
 
     @Override
     public boolean start() {

@@ -143,6 +143,10 @@ public abstract class Observation extends ObservedArtifact
         return id;
     }
 
+    public IIdentity.Type getIdentityType() {
+        return IIdentity.Type.OBSERVATION;
+    }
+    
     public void removeWatch(String id) {
         this.watches.remove(id);
     }

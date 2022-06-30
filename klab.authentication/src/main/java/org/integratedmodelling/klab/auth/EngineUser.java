@@ -8,6 +8,7 @@ import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IActorIdentity;
 import org.integratedmodelling.klab.api.auth.IEngineIdentity;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
+import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -61,6 +62,11 @@ public class EngineUser extends UserIdentity implements IEngineUserIdentity {
 		return null;
 	}
 
+    @Override
+    public IIdentity.Type getIdentityType() {
+        return IIdentity.Type.ENGINE_USER;
+    }
+	
 	@Override
 	public String getFirstName() {
 		// TODO Auto-generated method stub
@@ -109,7 +115,7 @@ public class EngineUser extends UserIdentity implements IEngineUserIdentity {
 
 	@Override
 	public boolean is(Type type) {
-		return type == IEngineUserIdentity.TYPE;
+		return type == getIdentityType();
 	}
 
 	@Override

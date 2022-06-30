@@ -78,6 +78,12 @@ public class KlabUser extends UserIdentity implements IKlabUserIdentity {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+
+    @Override
+    public IIdentity.Type getIdentityType() {
+        return IIdentity.Type.IM_USER;
+    }
 
 	@Override
 	public Date getLastLogin() {
@@ -91,7 +97,7 @@ public class KlabUser extends UserIdentity implements IKlabUserIdentity {
 
 	@Override
 	public boolean is(Type type) {
-		return type == IKlabUserIdentity.TYPE;
+		return type == getIdentityType();
 	}
 
 	@Override

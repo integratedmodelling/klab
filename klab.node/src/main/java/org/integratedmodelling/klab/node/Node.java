@@ -135,6 +135,7 @@ public class Node {
 		}
 		
 		bootTime = System.currentTimeMillis();
+        Klab.INSTANCE.setRootIdentity(owner);
 		
 		return true;
 	}
