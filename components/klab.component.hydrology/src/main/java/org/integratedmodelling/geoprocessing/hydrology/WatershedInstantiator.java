@@ -78,8 +78,7 @@ public class WatershedInstantiator extends AbstractContextualizer implements IIn
 		}
 
 		IState flowDir = context.getArtifact("flow_directions_d8", IState.class);
-//		PolygonInstantiator extractor = new PolygonInstantiator(grid);
-
+		
 		for (IArtifact artifact : context.getArtifact("stream_outlet")) {
 
 			ISpace space = ((IObservation) artifact).getSpace();
@@ -98,9 +97,6 @@ public class WatershedInstantiator extends AbstractContextualizer implements IIn
 			ebasin.pNorth = point.getY();
 			ebasin.doProcess = true;
 			ebasin.doReset = false;
-
-			// again, set to false and switch to commented-out strategy iif JAI
-			// vectorization fails in spring deploy jar.
 			ebasin.doVector = true;
 
 			try {
@@ -124,17 +120,6 @@ public class WatershedInstantiator extends AbstractContextualizer implements IIn
 							+ " crosses region boundaries");
 				}
 			}
-
-			// WAY slower - using JAI now re-enabled (won't work in uberjar but will in the
-			// new distro)
-//			for (IShape shape : extractor
-//					.extractShapes(
-//							ebasin.outBasin, Extensions.INSTANCE.compileExpression("value == 1.0",
-//									context.getExpressionContext(), Extensions.DEFAULT_EXPRESSION_LANGUAGE, false),
-//							context)) {
-//				ret.add(context.newObservation(semantics, "watershed_of_" + ((IDirectObservation) artifact).getName(),
-//						Scale.substituteExtent(context.getScale(), shape), /* TODO send useful metadata */null));
-//			}
 
 			if (ebasin.outVectorBasin != null && ebasin.outVectorBasin.size() > 0) {
 

@@ -21,6 +21,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.function.Function;
+import java.util.logging.Level;
 
 import javax.annotation.Nullable;
 import javax.media.jai.iterator.RandomIter;
@@ -56,6 +57,7 @@ import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.data.storage.BasicFileMappedStorage;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.ogc.integration.Geoserver;
+import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.rest.ResourceReference.AvailabilityReference;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.MiscUtilities;
@@ -346,16 +348,13 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
              * no state for the variable: return
              */
             if (stateName == null) {
-                // FIXME remove
-                Logging.INSTANCE.info("no state for variable: return w/o result");
+                builder.addNotification(
+                        new Notification("no state for variable " + stateName + " return w/o result", Level.SEVERE.getName()));
                 return false;
             }
 
             IUnit originalUnit = getOriginalUnit(variable);
-
-            /*
-             * FIXME remove
-             */
+            // process adapter makes its own states.
             Builder stateBuilder = builder.startState(stateName, originalUnit == null ? null : originalUnit.toString(), scope);
             double wsum = 0.0;
             Aggregation aggregation = getAggregation(variable);

@@ -6,6 +6,7 @@ import org.integratedmodelling.klab.components.geospace.processing.ScaleChooserI
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.utils.Parameters;
 
+@Deprecated
 public class WatershedPolygonInstantiator extends ScaleChooserInstantiator implements IExpression {
 
 	static String[] resourceUrns = { 

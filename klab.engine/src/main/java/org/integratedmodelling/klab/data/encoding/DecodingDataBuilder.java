@@ -10,6 +10,7 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.rest.ResourceDataRequest;
 
 /**
  * A builder that encodes the data into a Protobuf object which will be sent
@@ -26,7 +27,7 @@ public class DecodingDataBuilder implements IKlabData.Builder {
 	private Map<?, ?> data;
 	IConcept semantics;
 
-	public DecodingDataBuilder(Map<?, ?> data, IContextualizationScope context) {
+	public DecodingDataBuilder(Map<?, ?> data, ResourceDataRequest request, IContextualizationScope context) {
 		this.data = data;
 		this.context = context;
 	}

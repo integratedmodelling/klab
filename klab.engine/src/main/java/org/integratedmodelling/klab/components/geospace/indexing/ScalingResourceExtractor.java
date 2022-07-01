@@ -9,6 +9,7 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
@@ -19,199 +20,198 @@ import org.integratedmodelling.klab.utils.Triple;
 
 public class ScalingResourceExtractor {
 
-	public ScalingResourceExtractor(String[] resources) {
-		this.resourceUrns = resources;
-	}
-	
-	/**
-	 * If true, always cover the context completen coverage with potentially very
-	 * large objects.
-	 */
-	private boolean whole = false;
+    public ScalingResourceExtractor(String[] resources) {
+        this.resourceUrns = resources;
+    }
 
-	/**
-	 * Strategy used to cover the context
-	 */
-	public static enum Strategy {
+    /**
+     * If true, always cover the context completen coverage with potentially very large objects.
+     */
+    private boolean whole = false;
 
-		/**
-		 * take as many smaller watersheds as it takes to compute the requested coverage
-		 */
-		COVER,
+    /**
+     * Strategy used to cover the context
+     */
+    public static enum Strategy {
 
-		/**
-		 * Switch to the largest watershed even if it's larger than the context.
-		 */
-		EXTEND
-	}
+        /**
+         * take as many smaller watersheds as it takes to compute the requested coverage
+         */
+        COVER,
 
-	/**
-	 * Minimum coverage of context to include in results, unless whole is true.
-	 */
-	private double minCoverage = 0.45;
-	private Strategy strategy = Strategy.COVER;
-	private int maxObjects = -1;
-	private boolean boundingBox;
-	private int detail = 0;
-	private String[] resourceUrns;
-	private String nameAttribute;
-	private String labelAttribute;
+        /**
+         * Switch to the largest watershed even if it's larger than the context.
+         */
+        EXTEND
+    }
 
-	public void setBoundingBox(boolean boundingBox) {
-		this.boundingBox = boundingBox;
-	}
+    /**
+     * Minimum coverage of context to include in results, unless whole is true.
+     */
+    private double minCoverage = 0.45;
+    private Strategy strategy = Strategy.COVER;
+    private int maxObjects = -1;
+    private boolean boundingBox;
+    private int detail = 0;
+    private String[] resourceUrns;
+    private String nameAttribute;
+    private String labelAttribute;
 
-	public ScalingResourceExtractor() {
-	}
-	
-	public void setNameAttribute(String name) {
-		this.nameAttribute = name;
-	}
+    public void setBoundingBox(boolean boundingBox) {
+        this.boundingBox = boundingBox;
+    }
 
-	public void setLabelAttribute(String name) {
-		this.labelAttribute = name;
-	}
+    public ScalingResourceExtractor() {
+    }
 
-	protected ScalingResourceExtractor(boolean whole) {
-		this.whole = whole;
-	}
+    public void setNameAttribute(String name) {
+        this.nameAttribute = name;
+    }
 
-	public void setWhole(boolean whole) {
-		this.whole = whole;
-	}
+    public void setLabelAttribute(String name) {
+        this.labelAttribute = name;
+    }
 
-	public void setMinCoverage(double minCoverage) {
-		this.minCoverage = minCoverage;
-	}
+    protected ScalingResourceExtractor(boolean whole) {
+        this.whole = whole;
+    }
 
-	public void setStrategy(Strategy strategy) {
-		this.strategy = strategy;
-	}
+    public void setWhole(boolean whole) {
+        this.whole = whole;
+    }
 
-	public void setMaxObjects(int maxObjects) {
-		this.maxObjects = maxObjects;
-	}
+    public void setMinCoverage(double minCoverage) {
+        this.minCoverage = minCoverage;
+    }
 
-	public List<IShape> instantiate(IEnvelope envelope, IMonitor monitor) throws KlabException {
+    public void setStrategy(Strategy strategy) {
+        this.strategy = strategy;
+    }
 
-		IShape shape = envelope.asShape();
-		Scale skale = Scale.create(shape);
-		Integer np = null;
-		int n = 0;
-		Integer chosen = null;
-		for (String urn : resourceUrns) {
+    public void setMaxObjects(int maxObjects) {
+        this.maxObjects = maxObjects;
+    }
 
-			IKlabData data = Resources.INSTANCE.getResourceData(urn, new VisitingDataBuilder(), skale, monitor);
-			monitor.debug("#" + data.getObjectCount() + " in " + urn);
-			if (np != null) {
-				if (data.getObjectCount() > np) {
-					if (chosen == null) {
-						chosen = n;
-					}
-					break;
-				}
-			}
-			np = data.getObjectCount();
-			n++;
-		}
+    public List<IShape> instantiate(IEnvelope envelope, IMonitor monitor) throws KlabException {
 
-		List<IShape> ret = new ArrayList<>();
+        IShape shape = envelope.asShape();
+        Scale skale = Scale.create(shape);
+        Integer np = null;
+        int n = 0;
+        Integer chosen = null;
+        for (String urn : resourceUrns) {
 
-		if (chosen == null) {
-			monitor.warn("scaling extractor: k.LAB resources did not respond or did not match the context");
-			return ret;
-		}
+            IKlabData data = Resources.INSTANCE.getResourceData(urn, new VisitingDataBuilder(), IArtifact.Type.OBJECT, "result",
+                    skale, monitor);
+            monitor.debug("#" + data.getObjectCount() + " in " + urn);
+            if (np != null) {
+                if (data.getObjectCount() > np) {
+                    if (chosen == null) {
+                        chosen = n;
+                    }
+                    break;
+                }
+            }
+            np = data.getObjectCount();
+            n++;
+        }
 
-		monitor.debug("chosen level " + chosen);
+        List<IShape> ret = new ArrayList<>();
 
-		/*
-		 * adjust: we have stopped BEFORE the number went up, so as a default we go to
-		 * the next level TODO: this depends on the strategy
-		 */
-		if (strategy == Strategy.COVER && chosen < (resourceUrns.length - 1)) {
-			chosen++;
-		}
+        if (chosen == null) {
+            monitor.warn("scaling extractor: k.LAB resources did not respond or did not match the context");
+            return ret;
+        }
 
-		chosen += detail;
+        monitor.debug("chosen level " + chosen);
 
-		monitor.debug("adjusted level " + chosen + ": " + resourceUrns[chosen]);
+        /*
+         * adjust: we have stopped BEFORE the number went up, so as a default we go to the next
+         * level TODO: this depends on the strategy
+         */
+        if (strategy == Strategy.COVER && chosen < (resourceUrns.length - 1)) {
+            chosen++;
+        }
 
-		// keep name, scale and metadata for later use
-		List<Triple<String, IScale, IMetadata>> tmp = new ArrayList<>();
-		List<Triple<String, IScale, IMetadata>> keep = new ArrayList<>();
+        chosen += detail;
 
-		if (chosen < resourceUrns.length) {
+        monitor.debug("adjusted level " + chosen + ": " + resourceUrns[chosen]);
 
-			IKlabData data = Resources.INSTANCE.getResourceData(resourceUrns[chosen], new VisitingDataBuilder(), skale,
-					monitor);
+        // keep name, scale and metadata for later use
+        List<Triple<String, IScale, IMetadata>> tmp = new ArrayList<>();
+        List<Triple<String, IScale, IMetadata>> keep = new ArrayList<>();
 
-			for (int i = 0; i < data.getObjectCount(); i++) {
-				tmp.add(new Triple<>(data.getObjectName(i), data.getObjectScale(i), data.getObjectMetadata(i)));
-			}
+        if (chosen < resourceUrns.length) {
 
-			monitor.debug("Object pool contains " + tmp.size() + " objects");
+            IKlabData data = Resources.INSTANCE.getResourceData(resourceUrns[chosen], new VisitingDataBuilder(),
+                    IArtifact.Type.OBJECT, "result", skale, monitor);
 
-		} else {
-			monitor.warn("Context scale is too small to select any objects with these parameters");
-		}
+            for (int i = 0; i < data.getObjectCount(); i++) {
+                tmp.add(new Triple<>(data.getObjectName(i), data.getObjectScale(i), data.getObjectMetadata(i)));
+            }
 
-		/*
-		 * choose according to criteria
-		 */
-		double ctxarea = envelope.asShape().getStandardizedArea();
+            monitor.debug("Object pool contains " + tmp.size() + " objects");
 
-		n = -1;
-		for (Triple<String, IScale, IMetadata> data : tmp) {
+        } else {
+            monitor.warn("Context scale is too small to select any objects with these parameters");
+        }
 
-			boolean ok = whole;
-			n++;
+        /*
+         * choose according to criteria
+         */
+        double ctxarea = envelope.asShape().getStandardizedArea();
 
-			if (!ok) {
+        n = -1;
+        for (Triple<String, IScale, IMetadata> data : tmp) {
 
-				/*
-				 * choose those where cover >= min coverage
-				 */
-				IShape space = data.getSecond().getSpace().getShape();
-				IShape commn = space.intersection(shape);
-				double coverage = commn.getStandardizedArea() / space.getStandardizedArea();
-				monitor.debug("object #" + n + " covers " + coverage);
-				ok = coverage >= minCoverage;
-				if (ok) {
-					keep.add(data);
-				}
+            boolean ok = whole;
+            n++;
 
-			} else {
-				keep.add(data);
-			}
+            if (!ok) {
 
-		}
+                /*
+                 * choose those where cover >= min coverage
+                 */
+                IShape space = data.getSecond().getSpace().getShape();
+                IShape commn = space.intersection(shape);
+                double coverage = commn.getStandardizedArea() / space.getStandardizedArea();
+                monitor.debug("object #" + n + " covers " + coverage);
+                ok = coverage >= minCoverage;
+                if (ok) {
+                    keep.add(data);
+                }
 
-		if (maxObjects > 0 && keep.size() > maxObjects) {
-			// sort keep by decreasing area proportion
-			// remove anything left beyond maxObjects
-		}
+            } else {
+                keep.add(data);
+            }
 
-		monitor.debug(
-				"Scaling extractor selected " + keep.size() + " objects out of a pool of " + tmp.size());
+        }
 
-		// make the objects
-		for (Triple<String, IScale, IMetadata> data : keep) {
+        if (maxObjects > 0 && keep.size() > maxObjects) {
+            // sort keep by decreasing area proportion
+            // remove anything left beyond maxObjects
+        }
 
-			IScale scorop = data.getSecond();
-			IShape sporop = scorop.getSpace().getShape();
-			if (boundingBox) {
-				sporop = Shape.create((Envelope) data.getSecond().getSpace().getShape().getEnvelope());
-			}
-			sporop.getMetadata().putAll(data.getThird());
-			// TODO name/description!
-			ret.add(sporop);
-		}
+        monitor.debug("Scaling extractor selected " + keep.size() + " objects out of a pool of " + tmp.size());
 
-		return ret;
-	}
+        // make the objects
+        for (Triple<String, IScale, IMetadata> data : keep) {
 
-	public void setDetail(int detail) {
-		this.detail = detail;
-	}
+            IScale scorop = data.getSecond();
+            IShape sporop = scorop.getSpace().getShape();
+            if (boundingBox) {
+                sporop = Shape.create((Envelope) data.getSecond().getSpace().getShape().getEnvelope());
+            }
+            sporop.getMetadata().putAll(data.getThird());
+            // TODO name/description!
+            ret.add(sporop);
+        }
+
+        return ret;
+    }
+
+    public void setDetail(int detail) {
+        this.detail = detail;
+    }
 
 }

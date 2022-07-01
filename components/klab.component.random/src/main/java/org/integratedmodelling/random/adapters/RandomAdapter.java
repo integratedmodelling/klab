@@ -322,16 +322,12 @@ public class RandomAdapter implements IUrnAdapter {
     }
 
     private void makeData(Urn urn, Builder stateBuilder, IGeometry geometry, IContextualizationScope scope) {
-
-//      Builder stateBuilder = builder.startState(scope.getTargetName() == null ? "result" : scope.getTargetName(),
-//              null, scope);
-
         Object distribution = null;
         if (!"year".equals(urn.getResourceId())) {
             distribution = getDistribution(urn);
         }
         double year = scope.getScale().getTime() == null ? 0 : scope.getScale().getTime().getStart().getYear();
-        for (ILocator locator : geometry) {
+        for (@SuppressWarnings("unused") ILocator locator : geometry) {
             if ("year".equals(urn.getResourceId())) {
                 stateBuilder.add(year);
             } else if (distribution instanceof RealDistribution) {
@@ -340,7 +336,6 @@ public class RandomAdapter implements IUrnAdapter {
                 stateBuilder.add(((IntegerDistribution) distribution).sample());
             }
         }
-//      stateBuilder.finishState();
     }
 
     private Object getDistribution(Urn urn) {

@@ -23,11 +23,6 @@ public class GeomorphonResolver extends AbstractContextualizer implements IResol
     double pRadius = Double.NaN;
     double pThreshold = Double.NaN;
 
-    // @Override
-    // public IGeometry getGeometry() {
-    // return Geometry.create("S2");
-    // }
-
     @Override
     public Type getType() {
         return Type.NUMBER;

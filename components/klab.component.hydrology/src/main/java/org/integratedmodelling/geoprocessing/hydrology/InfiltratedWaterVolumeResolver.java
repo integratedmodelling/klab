@@ -70,11 +70,6 @@ public class InfiltratedWaterVolumeResolver extends AbstractContextualizer
         TaskMonitor taskMonitor = new TaskMonitor(context.getMonitor());
         taskMonitor.setTaskName("Infiltration");
 
-        //
-        // if (petState != null && rainfallVolumeState != null && flowdirectionState != null
-        // && streamPresenceState != null
-        // && runoffVolumeState != null) {
-
         OmsInfiltratedWaterVolume v = new OmsInfiltratedWaterVolume();
         try {
             GridCoverage2D flowGC = getGridCoverage(context, flowdirectionState, null);
@@ -100,9 +95,6 @@ public class InfiltratedWaterVolumeResolver extends AbstractContextualizer
         }
         GeotoolsUtils.INSTANCE.dumpToRaster(context, "Infiltration", netInfiltratedWaterVolumeState,
                 infiltratedWaterVolumeState);
-        // } else {
-        // taskMonitor.errorMessage("Can't proceed with null input maps.");
-        // }
 
         return infiltratedProcess;
     }

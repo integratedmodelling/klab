@@ -33,7 +33,7 @@ import org.integratedmodelling.klab.utils.Parameters;
  * Requires elevation data and global (annual) temperature data for adjustment.
  * 
  * @author Ferd
- *
+ * @deprecated
  */
 public class WeatherResolver extends AbstractContextualizer implements IResolver<IProcess>, IExpression {
 

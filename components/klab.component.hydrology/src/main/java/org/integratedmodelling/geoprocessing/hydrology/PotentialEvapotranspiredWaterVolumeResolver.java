@@ -42,8 +42,6 @@ public class PotentialEvapotranspiredWaterVolumeResolver extends AbstractContext
 		TaskMonitor taskMonitor = new TaskMonitor(context.getMonitor());
 		taskMonitor.setTaskName("Potential Evapotranspiration");
 
-//        if (cropCoefficientState != null) {
-
 		OmsPotentialEvapotranspiredWaterVolume pet = new OmsPotentialEvapotranspiredWaterVolume();
 		pet.pm = taskMonitor;
 
@@ -91,7 +89,7 @@ public class PotentialEvapotranspiredWaterVolumeResolver extends AbstractContext
 
 		GeotoolsUtils.INSTANCE.dumpToRaster(context, "PET", cropCoefficientState, rainfallState, tempState,
 				maxTempState, minTempState, solarRadiationState, petState);
-		// }
+
 		return evapotranspirationProcess;
 	}
 
