@@ -29,8 +29,10 @@ Packages:
 
 ## Building the site
 
-1. If changes to the ui package are made, cd into ui/ and run `gulp bundle`.
-2. Cd into site/ and run `antora antora-playbook.yml`. 
+1. If changes to the ui package are made, cd into ui/ and run `gulp bundle`. You may need
+   'npx gulp' if gulp isn't found.
+2. Cd into site/ and run `antora antora-playbook.yml`. If using newer versions of npm, you 
+   may have to issue 'npx antora' instead of just 'antora'.
 
 The site is built in site/build/site.
 

@@ -502,19 +502,6 @@ public class MergedResource implements IResource {
 	public ContextualizedResource contextualize(IScale scale, IArtifact artifact, IContextualizationScope scope) {
 
 		long locator = -1;
-
-		/*
-		 * if (logicalTime && resolutionTime != null) {
-		 * 
-		 * // TODO anchor the locator to the resolution time switch
-		 * (this.resolution.getType()) { case CENTURY: break; case DAY: break; case
-		 * DECADE: break; case HOUR: break; case MILLENNIUM: break; case MILLISECOND:
-		 * break; case MINUTE: break; case MONTH: break; case SECOND: break; case WEEK:
-		 * break; case YEAR: break; default: break;
-		 * 
-		 * } } else
-		 */
-
 		ITime resolutionTime = scale.getTime();
 		boolean isDynamic = artifact != null && artifact.getGeometry().getDimension(Dimension.Type.TIME) != null
 				&& artifact.getGeometry().getDimension(Dimension.Type.TIME).size() > 1;
@@ -535,10 +522,7 @@ public class MergedResource implements IResource {
 			}
 		} else {
 
-			Entry<Long, ResourceSet> set = /*
-											 * scale.getTime().is(ITime.Type.INITIALIZATION) ?
-											 * resources.ceilingEntry(locator) :
-											 */resources.floorEntry(locator);
+			Entry<Long, ResourceSet> set = resources.floorEntry(locator);
 
 			/*
 			 * lenient check for unsuccessful initialization

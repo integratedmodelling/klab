@@ -19,7 +19,6 @@ import java.util.Map;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IValueMediator;
-import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.documentation.IReport;
@@ -493,17 +492,6 @@ public interface IContextualizationScope extends IParameters<String> {
      * @return the symbol table, never null.
      */
     Map<String, IVariable> getVariables();
-
-    // /**
-    // * Return a context (or a simpler parameter map) with localized values of all the states at
-    // the
-    // * specified locator, suitable to evaluate point expressions. Any additional model variables
-    // * should also be added.
-    // *
-    // * @param locator
-    // * @return
-    // */
-    // IParameters<String> localize(ILocator locator);
 
     /**
      * This will return the same predicate or its localized version if the scope is contextualizing

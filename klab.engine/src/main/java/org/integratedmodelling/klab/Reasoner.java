@@ -5,9 +5,9 @@ import java.util.concurrent.ExecutionException;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.services.IReasonerService;
-import org.integratedmodelling.klab.extensions.groovy.model.Concept;
 import org.integratedmodelling.klab.owl.KlabReasoner;
 import org.integratedmodelling.klab.owl.Ontology;
 
@@ -22,6 +22,11 @@ public enum Reasoner implements IReasonerService {
     private KlabReasoner reasoner;
     protected LoadingCache<String, Boolean> reasonerCache;
     protected LoadingCache<String, Boolean> relatedReasonerCache;
+    
+    class AttributeDescription {
+        IObservable observable;
+        Object value; // range, concept or number. Could be a complex value eventually.
+    }
 
     private Reasoner() {
         Services.INSTANCE.registerService(this, IReasonerService.class);
