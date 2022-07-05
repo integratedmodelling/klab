@@ -1625,6 +1625,7 @@ public enum Actors implements IActorsService {
 
         List<Localization> ret = new ArrayList<>();
         IKActorsBehavior source = KActors.INSTANCE.getBehavior(behavior);
+        Localization english = null;
         if (source != null) {
             File loc = MiscUtilities.changeExtension(source.getFile(), "localization");
             if (loc.exists()) {
@@ -1648,7 +1649,11 @@ public enum Actors implements IActorsService {
                     } else {
                         localization.setLocalizedLabel(source.getLabel());
                     }
-                    ret.add(localization);
+                    if ("en".equals(localization.getIsoCode())) {
+                        english = localization;
+                    } else {
+                        ret.add(localization);
+                    }
                 }
             }
 
@@ -1661,6 +1666,13 @@ public enum Actors implements IActorsService {
                 ret.add(localization);
             }
 
+            if (english != null) {
+                /*
+                 * Language discrimination! 
+                 */
+                ret.add(0, english);
+            }
+            
         }
 
         return ret;
