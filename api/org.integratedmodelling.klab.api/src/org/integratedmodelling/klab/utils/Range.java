@@ -706,4 +706,9 @@ public class Range implements IValueMediator {
         return null;
     }
 
+    @Override
+    public boolean isContextual() {
+        return false;
+    }
+
 }

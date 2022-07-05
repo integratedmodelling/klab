@@ -140,9 +140,7 @@ public class Unit extends AbstractMediator implements IUnit {
      * @return the double
      */
     public static double convert(double value, String unitFrom, String unitTo) {
-        return unitFrom.equals(unitTo)
-                ? value
-                : create(unitTo).convert(value, create(unitFrom)).doubleValue();
+        return unitFrom.equals(unitTo) ? value : create(unitTo).convert(value, create(unitFrom)).doubleValue();
     }
 
     /** {@inheritDoc} */
@@ -207,8 +205,7 @@ public class Unit extends AbstractMediator implements IUnit {
     public Number convert(Number value, IValueMediator unit) {
 
         if (mediators != null) {
-            throw new KlabInternalErrorException(
-                    "contextual conversions must be performed using convert(value, scale)");
+            throw new KlabInternalErrorException("contextual conversions must be performed using convert(value, scale)");
         }
 
         if (Observations.INSTANCE.isNodata(value)) {
@@ -324,8 +321,7 @@ public class Unit extends AbstractMediator implements IUnit {
     private javax.measure.Unit<?> standardize(javax.measure.Unit<?> unit) {
         String alternate = translations.get(unit.toString());
         if (alternate != null) {
-            javax.measure.Unit<?> parsed = SimpleUnitFormat.getInstance(SimpleUnitFormat.Flavor.ASCII)
-                    .parse(alternate);
+            javax.measure.Unit<?> parsed = SimpleUnitFormat.getInstance(SimpleUnitFormat.Flavor.ASCII).parse(alternate);
             if (parsed == null) {
                 throw new KlabInternalErrorException(new ParseException(unit.toString(), 0));
             } else {
@@ -335,8 +331,7 @@ public class Unit extends AbstractMediator implements IUnit {
         if (unit instanceof ProductUnit<?>) {
             List<Triple<javax.measure.Unit<?>, Integer, Integer>> elements = new ArrayList<>();
             for (int i = 0; i < ((ProductUnit<?>) unit).getUnitCount(); i++) {
-                elements.add(new Triple<>(standardize(((ProductUnit<?>) unit).getUnit(i)),
-                        ((ProductUnit<?>) unit).getUnitPow(i),
+                elements.add(new Triple<>(standardize(((ProductUnit<?>) unit).getUnit(i)), ((ProductUnit<?>) unit).getUnitPow(i),
                         ((ProductUnit<?>) unit).getUnitRoot(i)));
             }
 
@@ -374,9 +369,7 @@ public class Unit extends AbstractMediator implements IUnit {
         int n = _unit instanceof ProductUnit ? ((ProductUnit<?>) _unit).getUnitCount() : 1;
         for (int i = 0; i < n; i++) {
 
-            javax.measure.Unit<?> component = _unit instanceof ProductUnit
-                    ? ((ProductUnit<?>) _unit).getUnit(i)
-                    : _unit;
+            javax.measure.Unit<?> component = _unit instanceof ProductUnit ? ((ProductUnit<?>) _unit).getUnit(i) : _unit;
             int power = _unit instanceof ProductUnit ? ((ProductUnit<?>) _unit).getUnitPow(i) : 1;
 
             if (component.getDimension().equals(dim) && power == -dimensionality) {
@@ -416,8 +409,7 @@ public class Unit extends AbstractMediator implements IUnit {
             decontextualized = decontextualized.multiply(components.get(i).pow(powers.get(i)));
         }
 
-        return new Pair<>(new Unit(decontextualized),
-                new Unit(raiseExtentual ? extentual.pow(dimensionality) : extentual));
+        return new Pair<>(new Unit(decontextualized), new Unit(raiseExtentual ? extentual.pow(dimensionality) : extentual));
     }
 
     public Unit withAggregatedDimensions(Map<ExtentDimension, ExtentDistribution> set) {
@@ -439,8 +431,7 @@ public class Unit extends AbstractMediator implements IUnit {
      */
     private Unit contextualizeExtents(IObservable observable, IGeometry scale) {
 
-        UnitContextualization contextualization = Units.INSTANCE.getContextualization(observable, scale,
-                null);
+        UnitContextualization contextualization = Units.INSTANCE.getContextualization(observable, scale, null);
         Unit ret = new Unit(_unit);
         Unit matching = null;
 
@@ -510,6 +501,11 @@ public class Unit extends AbstractMediator implements IUnit {
         }
 
         return ret;
+    }
+
+    @Override
+    public boolean isContextual() {
+        return this.mediators != null;
     }
 
 }

@@ -386,7 +386,7 @@ public class TableEncoder implements IResourceEncoder {
 							 * this takes all matching values, aggregating if needed using the aggregator
 							 * that fits the semantics.
 							 */
-							value = t.get(Object.class, scope, aggregator);
+							value = t.get(Object.class, scope, aggregator, locator);
 							System.out.println("       aggregated value = " + value);
 							valueCache.put(filter, value);
 						}

@@ -245,4 +245,9 @@ public class Currency extends AbstractMediator implements ICurrency {
         return null;
     }
 
+    @Override
+    public boolean isContextual() {
+        return this.unit != null && this.unit.isContextual();
+    }
+
 }

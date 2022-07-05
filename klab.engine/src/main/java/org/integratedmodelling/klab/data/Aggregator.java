@@ -83,6 +83,7 @@ public class Aggregator extends GroovyObjectSupport {
      * @param locator
      */
     public void add(Object value, ILocator locator) {
+        
         if (locator == null && this.referenceLocator == null) {
             if (scale == null || (scale.getSpace() != null && scale.isSpatiallyDistributed()
                     && !scale.getSpace().isRegular())) {
@@ -100,7 +101,7 @@ public class Aggregator extends GroovyObjectSupport {
                 }
             } else if (value instanceof Number) {
 
-                double dval = (this.unit == null)
+                double dval = (this.unit == null || !this.unit.isContextual())
                         ? ((Number) value).doubleValue()
                         : this.unit.convert((Number) value, locator).doubleValue();
 
@@ -181,12 +182,12 @@ public class Aggregator extends GroovyObjectSupport {
      * @param objects
      * @return
      */
-    public Object aggregate(Collection<?> objects) {
+    public Object aggregate(Collection<?> objects, ILocator locator) {
         counts.clear();
         sum = 0;
         count = 0;
         for (Object o : objects) {
-            add(o, null);
+            add(o, locator);
         }
         return aggregate();
     }
