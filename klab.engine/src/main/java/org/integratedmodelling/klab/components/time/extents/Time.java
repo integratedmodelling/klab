@@ -2,9 +2,11 @@ package org.integratedmodelling.klab.components.time.extents;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.integratedmodelling.kim.api.IParameters;
@@ -28,7 +30,6 @@ import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution.Type;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeDuration;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.common.Geometry;
@@ -1088,7 +1089,14 @@ public class Time extends Extent implements ITime {
     }
 
     @Override
-    public String encode(Encoding... options) {
+    public String encode(IGeometry.Encoding... options) {
+
+        Set<Encoding> opts = EnumSet.noneOf(Encoding.class);
+        if (options != null) {
+            for (Encoding e : options) {
+                opts.add(e);
+            }
+        }
 
         String prefix = "T";
         if (getTimeType() == ITime.Type.LOGICAL) {
@@ -1100,27 +1108,33 @@ public class Time extends Extent implements ITime {
         String ret = prefix + getDimensionality() + "(" + multiplicity + ")";
         String args = Geometry.PARAMETER_TIME_REPRESENTATION + "=" + getTimeType();
 
-        if (!this.is(ITime.Type.INITIALIZATION)) {
-            if (start != null) {
-                if (end != null) {
-                    args += "," + Geometry.PARAMETER_TIME_PERIOD + "=[" + start.getMilliseconds() + " " + end.getMilliseconds()
-                            + "]";
-                } else {
-                    args += "," + Geometry.PARAMETER_TIME_LOCATOR + "=" + start.getMilliseconds();
-                }
+        Time target = this;
+        
+        if (this.is(ITime.Type.INITIALIZATION) && opts.contains(IGeometry.Encoding.CONCRETE_TIME_INTERVALS)) {
+            args = Geometry.PARAMETER_TIME_REPRESENTATION + "=" + ITime.Type.PHYSICAL;
+            if (this.size() > 1) {
+                target = getPreviousExtent(this);
             }
-            if (step != null) {
-                args += "," + Geometry.PARAMETER_TIME_GRIDRESOLUTION + "=" + step.getMilliseconds();
+        }
+        
+        if (target.start != null) {
+            if (target.end != null) {
+                args += "," + Geometry.PARAMETER_TIME_PERIOD + "=[" + target.start.getMilliseconds() + " " + target.end.getMilliseconds() + "]";
+            } else {
+                args += "," + Geometry.PARAMETER_TIME_LOCATOR + "=" + target.start.getMilliseconds();
             }
-            if (resolution != null) {
-                args += "," + Geometry.PARAMETER_TIME_SCOPE + "=" + resolution.getMultiplier();
-                args += "," + Geometry.PARAMETER_TIME_SCOPE_UNIT + "=" + resolution.getType();
-            }
-            if (coverageResolution != null) {
-                args += "," + Geometry.PARAMETER_TIME_COVERAGE_UNIT + "=" + coverageResolution.getType();
-                args += "," + Geometry.PARAMETER_TIME_COVERAGE_START + "=" + coverageStart;
-                args += "," + Geometry.PARAMETER_TIME_COVERAGE_END + "=" + coverageEnd;
-            }
+        }
+        if (target.step != null) {
+            args += "," + Geometry.PARAMETER_TIME_GRIDRESOLUTION + "=" + target.step.getMilliseconds();
+        }
+        if (target.resolution != null) {
+            args += "," + Geometry.PARAMETER_TIME_SCOPE + "=" + target.resolution.getMultiplier();
+            args += "," + Geometry.PARAMETER_TIME_SCOPE_UNIT + "=" + target.resolution.getType();
+        }
+        if (target.coverageResolution != null) {
+            args += "," + Geometry.PARAMETER_TIME_COVERAGE_UNIT + "=" + target.coverageResolution.getType();
+            args += "," + Geometry.PARAMETER_TIME_COVERAGE_START + "=" + target.coverageStart;
+            args += "," + Geometry.PARAMETER_TIME_COVERAGE_END + "=" + target.coverageEnd;
         }
 
         return ret + "{" + args + "}";

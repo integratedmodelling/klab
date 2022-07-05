@@ -2134,13 +2134,10 @@ public enum Resources implements IResourceService {
 
         Dimension space = resource.getGeometry().getDimension(Dimension.Type.SPACE);
         IGeometry.Encoding[] options = space != null && space.isRegular()
-                ? new IGeometry.Encoding[]{IGeometry.Encoding.SKIP_GRID_SHAPE}
-                : new IGeometry.Encoding[]{};
+                ? new IGeometry.Encoding[]{IGeometry.Encoding.SKIP_GRID_SHAPE, IGeometry.Encoding.CONCRETE_TIME_INTERVALS}
+                : new IGeometry.Encoding[]{IGeometry.Encoding.CONCRETE_TIME_INTERVALS};
 
         IGeometry geometry = scale instanceof Scale ? ((Scale) scale).asGeometry(options) : (IGeometry) scale;
-
-        // TODO scale of remote contextualization - for space, decide if we want to pass the shape,
-        // default is send the full bounding box only if regular
 
         return geometry.encode(options);
     }

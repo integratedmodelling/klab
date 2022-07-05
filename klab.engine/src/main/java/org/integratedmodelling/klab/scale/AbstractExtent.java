@@ -6,7 +6,6 @@ import java.util.function.Function;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
-import org.integratedmodelling.klab.api.data.IGeometry.Encoding;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
@@ -174,7 +173,7 @@ public abstract class AbstractExtent extends GroovyObjectSupport implements IExt
      * 
      * @return the encoded representation
      */
-    public abstract String encode(Encoding... options);
+    public abstract String encode(IGeometry.Encoding... options);
 
     /**
      * Merge only the extents, without regard for the grain or internal representation but ensuring
