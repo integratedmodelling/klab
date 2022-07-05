@@ -197,9 +197,7 @@ public class LocalData implements IKlabData {
                 IState target = null;
                 if ("result".equals(state.get("name"))) {
 
-                    target = context.getTargetArtifact() instanceof IState
-                            ? (IState) context.getTargetArtifact()
-                            : null;
+                    target = context.getTargetArtifact() instanceof IState ? (IState) context.getTargetArtifact() : null;
                     this.state = target;
 
                 } else {
@@ -224,10 +222,11 @@ public class LocalData implements IKlabData {
                         originalUnit = Unit.create(metadata.get("originalUnit").toString());
                     }
                 }
-                Iterator<?> doubles = state.containsKey("doubledata")
-                        ? ((Iterable<?>) state.get("doubledata")).iterator()
-                        : null;
+                Iterator<?> doubles = state.containsKey("doubledata") ? ((Iterable<?>) state.get("doubledata")).iterator() : null;
 
+                IUnit scaledUnit = null;
+                boolean scaled = false;
+                boolean needsScaling = Units.INSTANCE.needsUnitScaling(target.getObservable());
                 Object o = null;
                 long offset = 0;
                 while(doubles.hasNext()) {
@@ -238,15 +237,20 @@ public class LocalData implements IKlabData {
                         o = null;
                     }
 
+                    /*
+                     * freaking complex, but should be OK now
+                     */
                     IScale locator = context.getScale().at(offset++);
                     if (targetUnit != null && originalUnit != null && o instanceof Number) {
-
-                        IUnit scaledUnit = targetUnit;
-                        if (!targetUnit.equals(originalUnit)
-                                && Units.INSTANCE.needsUnitScaling(target.getObservable())) {
-                            scaledUnit = scaledUnit.contextualize(target.getObservable(), locator);
+                        if (scaledUnit == null && needsScaling) {
+                            scaledUnit = targetUnit;
+                            if (!targetUnit.equals(originalUnit)) {
+                                scaledUnit = scaledUnit.contextualize(
+                                        new Observable(((Observable) target.getObservable())).withUnit(originalUnit), locator);
+                                scaled = true;
+                            }
                         }
-                        o = scaledUnit.convert((Number) o, originalUnit);
+                        o = scaled ? scaledUnit.convert((Number) o, locator) : targetUnit.convert((Number) o, originalUnit);
                     }
 
                     target.set(locator, o);
@@ -267,13 +271,11 @@ public class LocalData implements IKlabData {
 
                     IDirectObservation source = null; // TODO
                     IDirectObservation target = null; // TODO
-                    output = context.newRelationship(context.getTargetSemantics(), obj.get("name").toString(),
-                            scale,
-                            source, target, extractMetadata(obj));
+                    output = context.newRelationship(context.getTargetSemantics(), obj.get("name").toString(), scale, source,
+                            target, extractMetadata(obj));
                 } else {
 
-                    output = context.newObservation(context.getTargetSemantics(), obj.get("name").toString(),
-                            scale,
+                    output = context.newObservation(context.getTargetSemantics(), obj.get("name").toString(), scale,
                             extractMetadata(obj));
                 }
 
@@ -299,9 +301,8 @@ public class LocalData implements IKlabData {
                 } else {
                     if (!(this.object instanceof IObservationGroup)) {
                         IObservation obs = (IObservation) this.object;
-                        this.object = new ObservationGroup((Observable) context.getTargetSemantics(),
-                                (Scale) context.getScale(), context,
-                                context.getTargetSemantics().getArtifactType());
+                        this.object = new ObservationGroup((Observable) context.getTargetSemantics(), (Scale) context.getScale(),
+                                context, context.getTargetSemantics().getArtifactType());
                         ((ObservationGroup) this.object).chain(obs);
                     }
                     ((Artifact) this.object).chain(output);
@@ -338,16 +339,10 @@ public class LocalData implements IKlabData {
     @SuppressWarnings("unchecked")
     private Object getData(Map<?, ?> data) {
 
-        Iterator<?> doubles = data.containsKey("doubledata")
-                ? ((Iterable<?>) data.get("doubledata")).iterator()
-                : null;
+        Iterator<?> doubles = data.containsKey("doubledata") ? ((Iterable<?>) data.get("doubledata")).iterator() : null;
         // TODO tabledata + lookup table
-        Iterator<?> floats = data.containsKey("intdata")
-                ? ((Iterable<?>) data.get("intdata")).iterator()
-                : null;
-        Iterator<?> booleans = data.containsKey("booleandata")
-                ? ((Iterable<?>) data.get("booleandata")).iterator()
-                : null;
+        Iterator<?> floats = data.containsKey("intdata") ? ((Iterable<?>) data.get("intdata")).iterator() : null;
+        Iterator<?> booleans = data.containsKey("booleandata") ? ((Iterable<?>) data.get("booleandata")).iterator() : null;
 
         List<Object> ret = new ArrayList<>();
         for (Iterator<?> it = Utils.chooseNotNull(doubles, floats, booleans); it.hasNext();) {
