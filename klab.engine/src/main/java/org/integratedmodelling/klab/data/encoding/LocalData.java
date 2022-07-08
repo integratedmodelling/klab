@@ -196,10 +196,7 @@ public class LocalData implements IKlabData {
                 Map<?, ?> state = (Map<?, ?>) s;
                 IState target = null;
                 if ("result".equals(state.get("name"))) {
-
                     target = context.getTargetArtifact() instanceof IState ? (IState) context.getTargetArtifact() : null;
-                    this.state = target;
-
                 } else {
                     IArtifact artifact = context.getArtifact(state.get("name").toString());
                     if (artifact instanceof IState) {
@@ -209,6 +206,10 @@ public class LocalData implements IKlabData {
 
                 if (target == null) {
                     throw new IllegalStateException("cannot establish state target for node resource");
+                }
+
+                if (this.state == null) {
+                    this.state = target;
                 }
 
                 IUnit originalUnit = null;

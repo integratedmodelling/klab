@@ -1363,7 +1363,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
                     val = Extensions.INSTANCE.parse((String) val);
                 }
 
-                arg.setData(new ObjectExpression((IKimExpression) val, scope.runtimeScope, CompilerOption.IgnoreContext));
+                arg.setData(new ObjectExpression((IKimExpression) val, scope.runtimeScope));
             }
 
             try {

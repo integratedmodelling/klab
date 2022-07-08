@@ -1,7 +1,5 @@
 package org.integratedmodelling.klab.components.geospace.geocoding;
 
-import org.integratedmodelling.klab.Configuration;
-import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
