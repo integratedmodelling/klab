@@ -7,6 +7,7 @@ import java.util.Map;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IValueMediator;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
@@ -206,9 +207,8 @@ public abstract class Expression implements IExpression {
 		}
 
 		@Override
-		public org.integratedmodelling.klab.api.data.general.IExpression.Scope getExpressionContext() {
-			// TODO Auto-generated method stub
-			return null;
+		public org.integratedmodelling.klab.api.data.general.IExpression.Scope getExpressionContext(IObservable targetObservable) {
+	        return ExpressionScope.empty(Klab.INSTANCE.getRootMonitor());
 		}
 
 		@Override
@@ -228,12 +228,6 @@ public abstract class Expression implements IExpression {
 			// TODO Auto-generated method stub
 			return null;
 		}
-
-//		@Override
-//		public Collection<IArtifact> getAdditionalOutputs() {
-//			// TODO Auto-generated method stub
-//			return null;
-//		}
 
 		@Override
 		public ISubject getRootSubject() {
@@ -269,12 +263,6 @@ public abstract class Expression implements IExpression {
 		public Collection<IObservable> getPrecursors(IObservable observable, Mode resolutionMode) {
 			// TODO Auto-generated method stub
 			return null;
-		}
-
-		@Override
-		public IParameters<String> localize(ILocator locator) {
-			// TODO Auto-generated method stub
-			return this;
 		}
 
 		@Override
@@ -322,6 +310,11 @@ public abstract class Expression implements IExpression {
         public void notifyInspector(Object... triggerArguments) {
             // TODO Auto-generated method stub
             
+        }
+
+        @Override
+        public Scope getExpressionContext() {
+            return ExpressionScope.empty(Klab.INSTANCE.getRootMonitor());
         }
 
 	}

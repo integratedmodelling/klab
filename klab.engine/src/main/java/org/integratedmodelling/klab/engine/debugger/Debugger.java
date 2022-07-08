@@ -13,6 +13,8 @@ import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
+import org.integratedmodelling.klab.api.data.general.IExpression.CompilerScope;
+import org.integratedmodelling.klab.api.data.general.IExpression.Forcing;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -79,7 +81,8 @@ public abstract class Debugger {
             @Override
             public void historyChanged(SessionActivity rootActivity, SessionActivity currentActivity) {
                 // TODO put away for inspection
-//                System.out.println("GOT " + JsonUtils.printAsJson(currentActivity == null ? rootActivity : currentActivity));
+                // System.out.println("GOT " + JsonUtils.printAsJson(currentActivity == null ?
+                // rootActivity : currentActivity));
             }
         });
     }
@@ -216,14 +219,18 @@ public abstract class Debugger {
     }
 
     private String focusToString() {
-        return cellFocus == null ? (focus == null ? "" : focus.toString()) : (cellFocus.getX() + "," + cellFocus.getY());
+        return cellFocus == null
+                ? (focus == null ? "" : focus.toString())
+                : (cellFocus.getX() + "," + cellFocus.getY() + " [" + cellFocus.getCenter()[1] + "," + cellFocus.getCenter()[0]
+                        + "]");
     }
 
     private String locatorToString(ILocator locator) {
         if (locator instanceof IScale) {
             ISpace space = ((IScale) locator).getSpace();
             if (space instanceof Cell) {
-                return ((Cell) space).getX() + "," + ((Cell) space).getY();
+                return ((Cell) space).getX() + "," + ((Cell) space).getY() + " [" + ((Cell) space).getCenter()[1] + ","
+                        + ((Cell) space).getCenter()[0] + "]";
             }
         }
         return locator.toString();
@@ -271,10 +278,10 @@ public abstract class Debugger {
         }
 
         boolean found = false;
-        IExpression code = Extensions.INSTANCE.compileExpression(where, transitionContext.getExpressionContext(),
-                Extensions.DEFAULT_EXPRESSION_LANGUAGE, CompilerOption.ForcedScalar);
+        IExpression code = Extensions.INSTANCE.compileExpression(where,
+                transitionContext.getExpressionContext().scalar(Forcing.Always), Extensions.DEFAULT_EXPRESSION_LANGUAGE);
         for (ILocator locator : scale) {
-            Object o = code.eval(transitionContext.localize(locator), transitionContext);
+            Object o = code.eval(transitionContext, transitionContext, "scale", locator);
             if (o instanceof Boolean && ((Boolean) o)) {
                 this.prospectiveFocus = locator;
                 setLocator(locator);
@@ -365,7 +372,7 @@ public abstract class Debugger {
     public void close() {
         session.getState().removeListener(listenerId);
     }
-    
+
     private void help() {
     }
 

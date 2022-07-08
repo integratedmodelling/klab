@@ -44,308 +44,308 @@ import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.graph.Graphs;
 
 /**
- * A ITask that creates one or more Observations within a context subject. TODO
- * add option to choose when to start the observation and implement remaining
- * task options and listeners.
+ * A ITask that creates one or more Observations within a context subject. TODO add option to choose
+ * when to start the observation and implement remaining task options and listeners.
  * 
  * @author ferdinando.villa
  *
  */
 public class ObserveInContextTask extends AbstractTask<IArtifact> {
 
-	FutureTask<IObservation> delegate;
-	String taskDescription = "<uninitialized contextual observation task " + token + ">";
-	IParameters<String> globalState = Parameters.create();
+    FutureTask<IObservation> delegate;
+    String taskDescription = "<uninitialized contextual observation task " + token + ">";
+    IParameters<String> globalState = Parameters.create();
 
-	@Override
-	public IParameters<String> getState() {
-		return globalState;
-	}
+    @Override
+    public IParameters<String> getState() {
+        return globalState;
+    }
 
-	/**
-	 * Use to control the automatic start so that listeners and scenarios may be
-	 * added before calling start().
-	 * 
-	 * @param context
-	 * @param urn
-	 * @param scenarios
-	 * @param autostart
-	 * @return
-	 */
-	public static ObserveInContextTask create(Subject context, String urn, boolean autostart) {
-		return new ObserveInContextTask(context, urn, null, autostart);
-	}
+    /**
+     * Use to control the automatic start so that listeners and scenarios may be added before
+     * calling start().
+     * 
+     * @param context
+     * @param urn
+     * @param scenarios
+     * @param autostart
+     * @return
+     */
+    public static ObserveInContextTask create(Subject context, String urn, boolean autostart) {
+        return new ObserveInContextTask(context, urn, null, autostart);
+    }
 
-	private ObserveInContextTask(Subject context, String urn, Collection<String> scenarios, boolean autostart) {
-		this(context, urn, scenarios, null, null, context.getParentIdentity(Engine.class).getTaskExecutor(), null,
-				autostart);
-	}
+    private ObserveInContextTask(Subject context, String urn, Collection<String> scenarios, boolean autostart) {
+        this(context, urn, scenarios, null, null, context.getParentIdentity(Engine.class).getTaskExecutor(), null, autostart);
+    }
 
-	public ObserveInContextTask(ObserveInContextTask parent, String description) {
-		super(parent);
-		this.delegate = parent.delegate;
-		this.taskDescription = description;
-	}
+    public ObserveInContextTask(ObserveInContextTask parent, String description) {
+        super(parent);
+        this.delegate = parent.delegate;
+        this.taskDescription = description;
+    }
 
-	public ObserveInContextTask(Subject context, String urn, Collection<String> scenarios) {
-		this(context, urn, scenarios, null, null, context.getParentIdentity(Engine.class).getTaskExecutor(), null,
-				true);
-	}
+    public ObserveInContextTask(Subject context, String urn, Collection<String> scenarios) {
+        this(context, urn, scenarios, null, null, context.getParentIdentity(Engine.class).getTaskExecutor(), null, true);
+    }
 
-	/**
-	 * Listener consumers are called as things progress. The observation listener is
-	 * first called with null as a parameter when starting, then (if no error
-	 * occurs) another time with the observation as argument. The observation may be
-	 * empty. If an exception is thrown, the error listener is called with the
-	 * exception as argument.
-	 * 
-	 * @param context
-	 * @param urn
-	 * @param scenarios
-	 * @param observationListener
-	 * @param errorListener
-	 */
-	public ObserveInContextTask(Subject context, String urn, Collection<String> scenarioList,
-			Collection<BiConsumer<ITask<?>, IArtifact>> oListeners,
-			Collection<BiConsumer<ITask<?>, Throwable>> eListeners, Executor executor,
-			SessionActivity activityDescriptor, boolean autostart) {
+    @Override
+    public IIdentity.Type getIdentityType() {
+        return IIdentity.Type.TASK;
+    }
 
-		this.context = context;
-		this.monitor = context.getMonitor().get(this);
-		this.session = context.getParentIdentity(Session.class);
-		this.taskDescription = "Observation of {" + urn + "} in " + context.getName();
-		this.executor = executor;
-		this.autostart = autostart;
+    /**
+     * Listener consumers are called as things progress. The observation listener is first called
+     * with null as a parameter when starting, then (if no error occurs) another time with the
+     * observation as argument. The observation may be empty. If an exception is thrown, the error
+     * listener is called with the exception as argument.
+     * 
+     * @param context
+     * @param urn
+     * @param scenarios
+     * @param observationListener
+     * @param errorListener
+     */
+    public ObserveInContextTask(Subject context, String urn, Collection<String> scenarioList,
+            Collection<BiConsumer<ITask<?>, IArtifact>> oListeners, Collection<BiConsumer<ITask<?>, Throwable>> eListeners,
+            Executor executor, SessionActivity activityDescriptor, boolean autostart) {
 
-		if (scenarioList != null && !scenarioList.isEmpty()) {
-			this.scenarios.addAll(scenarioList);
-		}
+        this.context = context;
+        this.monitor = context.getMonitor().get(this);
+        this.session = context.getParentIdentity(Session.class);
+        this.taskDescription = "Observation of {" + urn + "} in " + context.getName();
+        this.executor = executor;
+        this.autostart = autostart;
 
-		if (oListeners != null) {
-			observationListeners.addAll(oListeners);
-		}
-		if (eListeners != null) {
-			errorListeners.addAll(eListeners);
-		}
-		session.touch();
+        if (scenarioList != null && !scenarioList.isEmpty()) {
+            this.scenarios.addAll(scenarioList);
+        }
 
-		delegate = new FutureTask<IObservation>(new MonitoredCallable<IObservation>(this) {
+        if (oListeners != null) {
+            observationListeners.addAll(oListeners);
+        }
+        if (eListeners != null) {
+            errorListeners.addAll(eListeners);
+        }
+        session.touch();
 
-			@Override
-			public IObservation run() throws Exception {
+        delegate = new FutureTask<IObservation>(new MonitoredCallable<IObservation>(this){
 
-				IObservation ret = null;
+            @Override
+            public IObservation run() throws Exception {
 
-				try {
+                IObservation ret = null;
 
-					notifyStart();
+                try {
 
-					if (observationListeners != null) {
-						for (BiConsumer<ITask<?>, IArtifact> observationListener : observationListeners) {
-							observationListener.accept((ITask<?>) this.task, null);
-						}
-					}
+                    notifyStart();
 
-					/*
-					 * obtain the resolvable object corresponding to the URN - either a concept or a
-					 * model
-					 */
-					resolvable = Resources.INSTANCE.getResolvableResource(urn, context.getScale());
-					IObservable observable = Observable.promote(OWL.INSTANCE.getNothing());
+                    if (observationListeners != null) {
+                        for (BiConsumer<ITask<?>, IArtifact> observationListener : observationListeners) {
+                            observationListener.accept((ITask<?>) this.task, null);
+                        }
+                    }
 
-					if (resolvable instanceof IModel) {
-						resolvable = Observable.promote((IModel) resolvable);
-						observable = (IObservable) resolvable;
-					} else if (resolvable instanceof IViewModel) {
-						resolvable = Observable.promote((IViewModel) resolvable);
-						observable = (IObservable) resolvable;
-					}
+                    /*
+                     * obtain the resolvable object corresponding to the URN - either a concept or a
+                     * model
+                     */
+                    resolvable = Resources.INSTANCE.getResolvableResource(urn, context.getScale());
+                    IObservable observable = Observable.promote(OWL.INSTANCE.getNothing());
 
-					if (resolvable == null) {
-						throw new KlabIllegalArgumentException(
-								"URN " + urn + " does not represent a resolvable entity");
-					}
+                    if (resolvable instanceof IModel) {
+                        resolvable = Observable.promote((IModel) resolvable);
+                        observable = (IObservable) resolvable;
+                    } else if (resolvable instanceof IViewModel) {
+                        resolvable = Observable.promote((IViewModel) resolvable);
+                        observable = (IObservable) resolvable;
+                    }
 
-					/*
-					 * resolve and run
-					 */
-					ResolutionScope scope = Resolver.create(null).resolve(resolvable,
-							ResolutionScope.create(context, monitor, scenarios));
+                    if (resolvable == null) {
+                        throw new KlabIllegalArgumentException("URN " + urn + " does not represent a resolvable entity");
+                    }
 
-					if (scope.getCoverage().isRelevant()) {
+                    /*
+                     * resolve and run
+                     */
+                    ResolutionScope scope = Resolver.create(null).resolve(resolvable,
+                            ResolutionScope.create(context, monitor, scenarios));
 
-						Dataflow dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + token,
-								scope, context.getScope().getActuator()).setPrimary(parentTask == null);
+                    if (scope.getCoverage().isRelevant()) {
 
-						dataflow.setDescription(taskDescription);
+                        Dataflow dataflow = Dataflows.INSTANCE
+                                .compile("local:task:" + session.getId() + ":" + token, scope, context.getScope().getActuator())
+                                .setPrimary(parentTask == null);
 
-						if (Configuration.INSTANCE.isEchoEnabled()) {
-							System.out.println(dataflow.getKdlCode());
-						}
+                        dataflow.setDescription(taskDescription);
 
-						IRuntimeScope ctx = ((Observation) context).getScope().getChild(ObserveInContextTask.this);
-						((AbstractRuntimeScope) ctx).notifyDataflowChanges(ctx);
+                        if (Configuration.INSTANCE.isEchoEnabled()) {
+                            System.out.println(dataflow.getKdlCode());
+                        }
 
-						/*
-						 * pass the first actuator in the father context as the parent for this
-						 * resolution - this must be at primary level, i.e. the root is the first (and
-						 * only) actuator in the root context
-						 */
-						Actuator actuator = (Actuator) (ctx.getDataflow().getActuators().isEmpty() ? null
-								: ctx.getDataflow().getActuators().get(0));
-						IArtifact result = dataflow.run(scope.getCoverage().asScale(), actuator, ctx);
-						if (result instanceof IObservation) {
-							ret = (IObservation) result;
-						} else {
-							ret = Observation.empty((IObservable) resolvable, ctx);
-						}
+                        IRuntimeScope ctx = ((Observation) context).getScope().getChild(ObserveInContextTask.this);
+                        ((AbstractRuntimeScope) ctx).notifyDataflowChanges(ctx);
 
-						/*
-						 * The actuator has sent this already, but we send the final artifact a second
-						 * time to bring it to the foreground for the listeners
-						 */
-						if (dataflow.isPrimary()) {
+                        /*
+                         * pass the first actuator in the father context as the parent for this
+                         * resolution - this must be at primary level, i.e. the root is the first
+                         * (and only) actuator in the root context
+                         */
+                        Actuator actuator = (Actuator) (ctx.getDataflow().getActuators().isEmpty()
+                                ? null
+                                : ctx.getDataflow().getActuators().get(0));
+                        IArtifact result = dataflow.run(scope.getCoverage().asScale(), actuator, ctx);
+                        if (result instanceof IObservation) {
+                            ret = (IObservation) result;
+                        } else {
+                            ret = Observation.empty((IObservable) resolvable, ctx);
+                        }
 
-							monitor.info("observation completed with "
-									+ NumberFormat.getPercentInstance().format(scope.getCoverage().getCoverage())
-									+ " context coverage");
-						}
+                        /*
+                         * The actuator has sent this already, but we send the final artifact a
+                         * second time to bring it to the foreground for the listeners
+                         */
+                        if (dataflow.isPrimary()) {
 
-						if (!Configuration.INSTANCE.getProperty("visualize", "false").equals("false")
-								&& ctx.getProvenance().getSimplifiedGraph().vertexSet().size() > 1) {
-							Graphs.show(ctx.getProvenance().getSimplifiedGraph(), "Provenance (simplified)");
-						}
+                            monitor.info("observation completed with "
+                                    + NumberFormat.getPercentInstance().format(scope.getCoverage().getCoverage())
+                                    + " context coverage");
+                        }
 
-						if (!silent) {
-							scope.getSession().getMonitor()
-									.send(Message.create(scope.getSession().getId(),
-											IMessage.MessageClass.TaskLifecycle, IMessage.Type.ProvenanceChanged,
-											new ContextualizationNotification(ctx.getRootSubject().getId(),
-													ContextualizationNotification.Target.PROVENANCE)));
-						}
-						
-					} else {
-						monitor.warn("could not build dataflow: observation unsuccessful");
-						ret = Observation.empty(observable, context.getScope());
-					}
+                        if (!Configuration.INSTANCE.getProperty("visualize", "false").equals("false")
+                                && ctx.getProvenance().getSimplifiedGraph().vertexSet().size() > 1) {
+                            Graphs.show(ctx.getProvenance().getSimplifiedGraph(), "Provenance (simplified)");
+                        }
 
-					notifyEnd();
+                        if (!silent) {
+                            scope.getSession().getMonitor()
+                                    .send(Message.create(scope.getSession().getId(), IMessage.MessageClass.TaskLifecycle,
+                                            IMessage.Type.ProvenanceChanged,
+                                            new ContextualizationNotification(ctx.getRootSubject().getId(),
+                                                    ContextualizationNotification.Target.PROVENANCE)));
+                        }
 
-					if (observationListeners != null) {
-						for (BiConsumer<ITask<?>, IArtifact> observationListener : observationListeners) {
-							observationListener.accept((ITask<?>) this.task, ret);
-						}
-					}
+                    } else {
+                        monitor.warn("could not build dataflow: observation unsuccessful");
+                        ret = Observation.empty(observable, context.getScope());
+                    }
 
-				} catch (Throwable e) {
+                    notifyEnd();
 
-					if (errorListeners != null) {
-						for (BiConsumer<ITask<?>, Throwable> errorListener : errorListeners) {
-							errorListener.accept((ITask<?>) this.task, e);
-						}
-					}
+                    if (observationListeners != null) {
+                        for (BiConsumer<ITask<?>, IArtifact> observationListener : observationListeners) {
+                            observationListener.accept((ITask<?>) this.task, ret);
+                        }
+                    }
 
-					throw notifyAbort(e);
-				}
-				
-				return ret;
-			}
-		});
+                } catch (Throwable e) {
 
-		if (autostart) {
-			started = true;
-			executor.execute(delegate);
-		}
-	}
+                    if (errorListeners != null) {
+                        for (BiConsumer<ITask<?>, Throwable> errorListener : errorListeners) {
+                            errorListener.accept((ITask<?>) this.task, e);
+                        }
+                    }
 
-	public String toString() {
-		return taskDescription;
-	}
+                    throw notifyAbort(e);
+                }
 
-	@Override
-	public String getId() {
-		return token;
-	}
+                return ret;
+            }
+        });
 
-	@Override
-	public boolean is(Type type) {
-		return type == Type.TASK;
-	}
+        if (autostart) {
+            started = true;
+            executor.execute(delegate);
+        }
+    }
 
-	@Override
-	public <T extends IIdentity> T getParentIdentity(Class<T> type) {
-		return IIdentity.findParent(this, type);
-	}
+    public String toString() {
+        return taskDescription;
+    }
 
-	@Override
-	public IIdentity getParentIdentity() {
-		return parentTask == null ? session : parentTask;
-	}
+    @Override
+    public String getId() {
+        return token;
+    }
 
-	@Override
-	public IMonitor getMonitor() {
-		return monitor;
-	}
+    @Override
+    public boolean is(Type type) {
+        return type == Type.TASK;
+    }
 
-	@Override
-	public boolean cancel(boolean mayInterruptIfRunning) {
-		monitor.interrupt();
-		return delegate.cancel(mayInterruptIfRunning);
-	}
+    @Override
+    public <T extends IIdentity> T getParentIdentity(Class<T> type) {
+        return IIdentity.findParent(this, type);
+    }
 
-	@Override
-	public boolean isCancelled() {
-		return delegate.isCancelled();
-	}
+    @Override
+    public IIdentity getParentIdentity() {
+        return parentTask == null ? session : parentTask;
+    }
 
-	@Override
-	public boolean isDone() {
-		return delegate.isDone();
-	}
+    @Override
+    public IMonitor getMonitor() {
+        return monitor;
+    }
 
-	@Override
-	public IObservation get() throws InterruptedException, ExecutionException {
-		if (!started) {
-			start();
-		}
-		return delegate.get();
-	}
+    @Override
+    public boolean cancel(boolean mayInterruptIfRunning) {
+        monitor.interrupt();
+        return delegate.cancel(mayInterruptIfRunning);
+    }
 
-	@Override
-	public IObservation get(long timeout, TimeUnit unit)
-			throws InterruptedException, ExecutionException, TimeoutException {
-		if (!started) {
-			start();
-		}
-		return delegate.get(timeout, unit);
-	}
+    @Override
+    public boolean isCancelled() {
+        return delegate.isCancelled();
+    }
 
-	@Override
-	public ITaskTree<IArtifact> createChild(String description) {
-		return new ObserveInContextTask(this, description);
-	}
+    @Override
+    public boolean isDone() {
+        return delegate.isDone();
+    }
 
-	@Override
-	protected String getTaskDescription() {
-		return taskDescription;
-	}
+    @Override
+    public IObservation get() throws InterruptedException, ExecutionException {
+        if (!started) {
+            start();
+        }
+        return delegate.get();
+    }
 
-	@Override
-	public boolean start() {
-		if (autostart || monitor.isInterrupted()) {
-			return false;
-		}
-		started = true;
-		executor.execute(delegate);
-		return true;
-	}
+    @Override
+    public IObservation get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+        if (!started) {
+            start();
+        }
+        return delegate.get(timeout, unit);
+    }
 
-	@Override
-	public boolean stop() {
-		if (started) {
-			cancel(true);
-			return true;
-		}
-		return false;
-	}
+    @Override
+    public ITaskTree<IArtifact> createChild(String description) {
+        return new ObserveInContextTask(this, description);
+    }
+
+    @Override
+    protected String getTaskDescription() {
+        return taskDescription;
+    }
+
+    @Override
+    public boolean start() {
+        if (autostart || monitor.isInterrupted()) {
+            return false;
+        }
+        started = true;
+        executor.execute(delegate);
+        return true;
+    }
+
+    @Override
+    public boolean stop() {
+        if (started) {
+            cancel(true);
+            return true;
+        }
+        return false;
+    }
 }

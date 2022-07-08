@@ -29,6 +29,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.utils.Parameters;
 
 public class ValueOperatorResolver extends AbstractContextualizer implements IResolver<IState>, IProcessor, IExpression {
 
@@ -53,16 +54,17 @@ public class ValueOperatorResolver extends AbstractContextualizer implements IRe
 
     public static IServiceCall getServiceCall(IObservable classified, ValueOperator operator, Object operand)
             throws KlabValidationException {
-    	if (operand instanceof IKimObservable) {
-    		operand = Observables.INSTANCE.declare((IKimObservable)operand, Klab.INSTANCE.getRootMonitor());
-    	}
-        return KimServiceCall.create(FUNCTION_ID, "artifact", classified.getReferenceName(), "operator", operator.name(), "operand",
-                operand instanceof IObservable ? ((IObservable) operand).getReferenceName() : operand);
+        if (operand instanceof IKimObservable) {
+            operand = Observables.INSTANCE.declare((IKimObservable) operand, Klab.INSTANCE.getRootMonitor());
+        }
+        return KimServiceCall.create(FUNCTION_ID, "artifact", classified.getReferenceName(), "operator", operator.name(),
+                "operand", operand instanceof IObservable ? ((IObservable) operand).getReferenceName() : operand);
     }
 
     @Override
-    public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
+    public Object eval(IContextualizationScope context, Object... params) throws KlabException {
 
+        Parameters<String> parameters = Parameters.create(params);
         IArtifact classified = context.getArtifact(parameters.get("artifact", String.class));
         IArtifact stateOperand = null;
         ValueOperator operator = ValueOperator.valueOf(parameters.get("operator", String.class));
@@ -82,11 +84,11 @@ public class ValueOperatorResolver extends AbstractContextualizer implements IRe
         }
 
         Object valueOperand = parameters.get("operand");
-        
+
         if (valueOperand instanceof IKimConcept) {
-            valueOperand = Concepts.INSTANCE.declare((IKimConcept)valueOperand);
+            valueOperand = Concepts.INSTANCE.declare((IKimConcept) valueOperand);
         } else if (valueOperand instanceof IKimObservable) {
-            valueOperand = Observables.INSTANCE.declare((IKimObservable)valueOperand, context.getMonitor());
+            valueOperand = Observables.INSTANCE.declare((IKimObservable) valueOperand, context.getMonitor());
         }
 
         return new ValueOperatorResolver(classified, operator, valueOperand, stateOperand);

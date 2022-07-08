@@ -354,7 +354,7 @@ public class RescalingState extends Observation implements IState, DelegatingArt
 
 	@Override
 	public IState in(IValueMediator mediator) {
-		return MediatingState.getMediator(this, mediator);
+		return MediatingState.mediateIfNecessary(this, mediator);
 	}
 
 	public ISubjectiveState reinterpret(IDirectObservation observers) {

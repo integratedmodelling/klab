@@ -12,13 +12,13 @@ import java.util.Set;
 
 import org.apache.commons.collections4.keyvalue.MultiKey;
 import org.apache.commons.collections4.map.MultiKeyMap;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IReducible;
 import org.integratedmodelling.klab.api.documentation.views.IDocumentationView;
 import org.integratedmodelling.klab.api.documentation.views.ITableView;
 import org.integratedmodelling.klab.api.knowledge.ICodelist;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.IKnowledgeView;
-import org.integratedmodelling.klab.api.observations.IKnowledgeView.Style;
 import org.integratedmodelling.klab.api.provenance.IArtifact.ValuePresentation;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.data.Aggregator;
@@ -82,7 +82,7 @@ public class TableValue extends TableProcessor implements IReducible {
 	@SuppressWarnings("unchecked")
 	public TableValue(List<Object> data, List<String> allFields, Set<String> keyFields, String valueField,
 			Map<String, ICodelist> codelists, Aggregator aggregator, StyleDefinition style,
-			IContextualizationScope scope) {
+			IContextualizationScope scope, ILocator locator) {
 
 		super(style, valueField, aggregator, scope);
 
@@ -155,12 +155,12 @@ public class TableValue extends TableProcessor implements IReducible {
 		if (aggregator != null) {
 			if (scalar != null) {
 				if (scalar instanceof Collection) {
-					scalar = aggregator.aggregate((Collection<?>) scalar);
+					scalar = aggregator.aggregate((Collection<?>) scalar, locator);
 				}
 			} else if (this.data != null) {
 				for (Entry<MultiKey<? extends String>, Object> entry : this.data.entrySet()) {
 					if (entry.getValue() instanceof Collection) {
-						entry.setValue(aggregator.aggregate((Collection<?>) entry.getValue()));
+						entry.setValue(aggregator.aggregate((Collection<?>) entry.getValue(), locator));
 					}
 				}
 			}
@@ -187,7 +187,7 @@ public class TableValue extends TableProcessor implements IReducible {
 	}
 
 	@Override
-	public Object reduce(Class<?> cls, boolean forceReduction) {
+	public Object reduce(Class<?> cls, boolean forceReduction, ILocator locator) {
 
 		if (isEmpty()) {
 			return null;
@@ -195,12 +195,12 @@ public class TableValue extends TableProcessor implements IReducible {
 
 		if (scalar != null) {
 			return Utils.asType((scalar instanceof Collection && forceReduction && aggregator != null
-					? aggregator.aggregate((Collection<?>) scalar)
+					? aggregator.aggregate((Collection<?>) scalar, locator)
 					: scalar), cls);
 		} else if (this.data != null && this.data.size() == 1) {
 			return this.data.get(this.data.keySet().iterator().next());
 		} else if (this.data != null && forceReduction && aggregator != null) {
-			return aggregator.aggregate(this.data.values());
+			return aggregator.aggregate(this.data.values(), locator);
 		}
 
 		return this;

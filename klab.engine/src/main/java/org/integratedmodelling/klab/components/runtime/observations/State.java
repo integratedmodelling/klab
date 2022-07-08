@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.components.runtime.observations;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,6 +14,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import org.integratedmodelling.kim.api.IValueMediator;
+import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Units;
@@ -29,6 +31,7 @@ import org.integratedmodelling.klab.api.observations.ISubjectiveState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.common.mediation.Currency;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.localstorage.impl.AbstractAdaptiveStorage;
 import org.integratedmodelling.klab.components.localstorage.impl.AbstractAdaptiveStorage.Slice;
@@ -50,6 +53,9 @@ import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.klab.utils.Utils;
 
+import groovy.lang.GroovyObjectSupport;
+import groovy.transform.CompileStatic;
+
 /**
  * A state is simply an Observation wrapper for one (or more) {@link IDataArtifact}s.
  * 
@@ -62,6 +68,125 @@ public class State extends Observation implements IState, IKeyHolder {
 
     ValuePresentation valuePresentation = ValuePresentation.VALUE;
     Set<Pair<Long, Long>> timeCoverage;
+    boolean numeric = false;
+
+    Map<Integer, RelocatedState> stateProxies = Collections.synchronizedMap(new HashMap<>());
+
+    /**
+     * This is output by getProxy() and getStateProxy() which return proxies for a get() where the
+     * locator can be modified through a << operator in Groovy, returning the state "at" the
+     * modified locator. Used to handle the preprocessed @ operator in expressions and to pass
+     * Groovy messages to entire state/state slices located at a particular time. In the latter
+     * case, the proxies are indexed in the state using the scale's system ID to make it as fast as
+     * possible to retrieve.
+     * 
+     * @author Ferd
+     *
+     */
+    @CompileStatic
+    public class RelocatedState extends GroovyObjectSupport {
+
+        IScale locator;
+
+        // TODO cache the stats more (in the top class)
+
+        public RelocatedState(IScale locator) {
+            this.locator = locator;
+        }
+
+        /*
+         * this will be called by the
+         */
+        public Object leftShift(Object locatorModifier) {
+            return get(Extensions.INSTANCE.relocate(locator, locatorModifier));
+        }
+
+        public double getMax() {
+            if (storage instanceof AbstractAdaptiveStorage) {
+                return ((AbstractAdaptiveStorage<?>) storage).getSlice(locator).getRawStatistics().getMax();
+            }
+            throw new KlabUnimplementedException("Groovy support for non-conventional states");
+        }
+
+        public double getMin() {
+            if (storage instanceof AbstractAdaptiveStorage) {
+                return ((AbstractAdaptiveStorage<?>) storage).getSlice(locator).getRawStatistics().getMin();
+            }
+            throw new KlabUnimplementedException("Groovy support for non-conventional states");
+        }
+
+        public double getMean() {
+            if (storage instanceof AbstractAdaptiveStorage) {
+                return ((AbstractAdaptiveStorage<?>) storage).getSlice(locator).getRawStatistics().getMean();
+            }
+            throw new KlabUnimplementedException("Groovy support for non-conventional states");
+        }
+
+        // for backwards compatibility
+        public double getAvg() {
+            if (storage instanceof AbstractAdaptiveStorage) {
+                return ((AbstractAdaptiveStorage<?>) storage).getSlice(locator).getRawStatistics().getMean();
+            }
+            throw new KlabUnimplementedException("Groovy support for non-conventional states");
+        }
+
+        public double getSum() {
+            if (storage instanceof AbstractAdaptiveStorage) {
+                return ((AbstractAdaptiveStorage<?>) storage).getSlice(locator).getRawStatistics().getSum();
+            }
+            throw new KlabUnimplementedException("Groovy support for non-conventional states");
+        }
+
+        public double getStd() {
+            if (storage instanceof AbstractAdaptiveStorage) {
+                return ((AbstractAdaptiveStorage<?>) storage).getSlice(locator).getRawStatistics().getStandardDeviation();
+            }
+            throw new KlabUnimplementedException("Groovy support for non-conventional states");
+        }
+
+        public double getVariance() {
+            if (storage instanceof AbstractAdaptiveStorage) {
+                return ((AbstractAdaptiveStorage<?>) storage).getSlice(locator).getRawStatistics().getVariance();
+            }
+            throw new KlabUnimplementedException("Groovy support for non-conventional states");
+        }
+
+        public RelocatedState invert() {
+            if (getObservable().getArtifactType() == IArtifact.Type.NUMBER && storage instanceof AbstractAdaptiveStorage) {
+                AbstractAdaptiveStorage<?>.Slice slice = ((AbstractAdaptiveStorage<?>) storage).getSlice(locator);
+                if (slice != null) {
+                    StateSummary summary = slice.getStateSummary();
+                    if (!summary.isDegenerate()) {
+                        for (ILocator loc : locator) {
+                            Double d = get(loc, Double.class);
+                            if (d != null && !Double.isNaN(d)) {
+                                d = summary.getRange().get(1) - d + summary.getRange().get(0);
+                                set(loc, d);
+                            }
+                        }
+                    }
+                }
+            }
+            return this;
+        }
+
+        public RelocatedState normalize() {
+            if (getObservable().getArtifactType() == IArtifact.Type.NUMBER && storage instanceof AbstractAdaptiveStorage) {
+                StateSummary summary = ((AbstractAdaptiveStorage<?>) storage).getSlice(locator).getStateSummary();
+                if (!summary.isDegenerate()) {
+                    for (ILocator loc : locator) {
+                        Double d = get(loc, Double.class);
+                        if (d != null && !Double.isNaN(d)) {
+                            d = (d - summary.getRange().get(0)) / (summary.getRange().get(1) - summary.getRange().get(0));
+                            set(loc, d);
+                        }
+                    }
+                }
+            }
+            return this;
+        }
+
+    }
 
     public class StateListener implements Consumer<ILocator> {
 
@@ -100,6 +225,26 @@ public class State extends Observation implements IState, IKeyHolder {
         return new State(observable, scale, context);
     }
 
+    public RelocatedState getProxy(IScale locator) {
+        return new RelocatedState(locator);
+    }
+
+    /**
+     * For Groovy
+     * 
+     * @param scale
+     * @return
+     */
+    public RelocatedState getStateProxy(IScale scale) {
+        int id = System.identityHashCode(scale);
+        RelocatedState ret = this.stateProxies.get(id);
+        if (ret == null) {
+            ret = new RelocatedState(scale);
+            this.stateProxies.put(id, ret);
+        }
+        return ret;
+    }
+
     @Override
     public ValuePresentation getValuePresentation() {
         return this.valuePresentation;
@@ -117,6 +262,7 @@ public class State extends Observation implements IState, IKeyHolder {
     public State(Observable observable, Scale scale, IRuntimeScope context, IDataStorage<?> data) {
         super(observable, scale, context);
         this.storage = data;
+        this.numeric = observable.getArtifactType() == IArtifact.Type.NUMBER;
         if (data != null) {
             // can be null in some special-purpose mergers
             data.addContextualizationListener(new StateListener());
@@ -161,7 +307,8 @@ public class State extends Observation implements IState, IKeyHolder {
     }
 
     public Object get(ILocator index) {
-        return storage.get(index);
+        Object ret = storage.get(index);
+        return ret == null && numeric ? Double.NaN : ret;
     }
 
     public long set(ILocator index, Object value) {
@@ -176,16 +323,16 @@ public class State extends Observation implements IState, IKeyHolder {
         if (dataKey != null && value != null) {
             value = dataKey.include(value);
         }
-        
+
         // help the inspector out
         if (debuggingStatistics != null) {
             if (storage instanceof AbstractAdaptiveStorage) {
                 ((AbstractAdaptiveStorage) storage).setDebuggingStatistics(debuggingStatistics);
             } else if (storage instanceof KeyedStorage) {
-                ((KeyedStorage)storage).getBackend().setDebuggingStatistics(debuggingStatistics);
+                ((KeyedStorage) storage).getBackend().setDebuggingStatistics(debuggingStatistics);
             }
         }
-        
+
         return storage.putObject(value, index);
     }
 
@@ -302,19 +449,20 @@ public class State extends Observation implements IState, IKeyHolder {
         return Utils.toLongArray(list);
     }
 
-    @Override
-    public IState in(IValueMediator mediator) {
-        return MediatingState.getMediator(this, mediator);
+    public IState in(String mediator) {
+        IValueMediator unit = null;
+        if (mediator.contains("@")) {
+            unit = Currency.create(mediator);
+        } else {
+            unit = Unit.create(mediator);
+        }
+        return in(unit);
     }
 
-    // @Override
-    // public IStructuredTable<Number> getTable() {
-    // return table;
-    // }
-    //
-    // public void setTable(IStructuredTable<Number> table) {
-    // this.table = table;
-    // }
+    @Override
+    public IState in(IValueMediator mediator) {
+        return MediatingState.mediateIfNecessary(this, mediator);
+    }
 
     public ISubjectiveState reinterpret(IDirectObservation observer) {
         return new SubjectiveState(this, observer);
@@ -430,12 +578,13 @@ public class State extends Observation implements IState, IKeyHolder {
             return ret;
         }
 
-        /*
-         * FIXME this really shouldn't be necessary
-         */
-        if (state instanceof org.integratedmodelling.klab.extensions.groovy.model.Concept) {
-            state = (IConcept) ((org.integratedmodelling.klab.extensions.groovy.model.Concept) state).getConcept();
-        }
+        // /*
+        // * FIXME this really shouldn't be necessary
+        // */
+        // if (state instanceof org.integratedmodelling.klab.extensions.groovy.model.Concept) {
+        // state = (IConcept) ((org.integratedmodelling.klab.extensions.groovy.model.Concept)
+        // state).getConcept();
+        // }
 
         for (ILocator loc : (locator == null ? getScale() : getScale().at(locator))) {
 
@@ -526,7 +675,7 @@ public class State extends Observation implements IState, IKeyHolder {
             System.out.println(slice + "\n" + StringUtil.leftIndent(slice.getRawStatistics().toString(), 3));
         }
     }
-    
+
     public Statistics computeStatistics(Object locator) {
         IStorage<?> stor = this.storage;
         if (stor instanceof KeyedStorage) {

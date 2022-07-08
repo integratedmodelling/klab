@@ -12,7 +12,6 @@ import org.apache.commons.math3.distribution.RealDistribution;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IKimObservable;
-import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Extensions;
@@ -71,7 +70,8 @@ public class RandomProcessResolver extends AbstractContextualizer implements IRe
                 if (g instanceof IKimExpression) {
                     g = ((IKimExpression) g).getCode();
                     Descriptor descriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE)
-                            .describe(g.toString(), scope.getExpressionContext());
+                            .describe(g.toString(), scope.getExpressionContext()
+                                    .scalar(((IKimExpression) g).isForcedScalar() ? Forcing.Always : Forcing.AsNeeded));
                     generators.put(generator, descriptor.compile());
 
                 } else if (g instanceof IServiceCall) {
@@ -130,14 +130,15 @@ public class RandomProcessResolver extends AbstractContextualizer implements IRe
                 } else if (g instanceof IExpression) {
 
                     for (ILocator locator : scope.getScale()) {
-                        
+
                         Object value = evalStates((IExpression) g, (IScale) locator, scope);
-                        if (value instanceof Number && ((Number)value).doubleValue() < 0 && ((IState) artifact).getObservable().is(IKimConcept.Type.EXTENSIVE_PROPERTY)) {
+                        if (value instanceof Number && ((Number) value).doubleValue() < 0
+                                && ((IState) artifact).getObservable().is(IKimConcept.Type.EXTENSIVE_PROPERTY)) {
                             value = 0.0;
                         }
                         ((IState) artifact).set(locator, value);
                     }
-                    
+
                 } else if (g instanceof IConcept || g instanceof Number || g instanceof Boolean) {
                     for (ILocator locator : scope.getScale()) {
                         ((IState) artifact).set(locator, g);
@@ -155,22 +156,24 @@ public class RandomProcessResolver extends AbstractContextualizer implements IRe
 
     private Object evalStates(IExpression expression, IScale where, IContextualizationScope scope) {
 
-        Parameters<String> parameters = Parameters.create();
-        parameters.put("space", where.getSpace());
-        if (where.getSpace() instanceof Cell) {
-            parameters.put("cell", new ContributingCell((Cell) where.getSpace()));
-        }
-        for (Pair<String, IState> st : scope.getArtifacts(IState.class)) {
-            Object o = st.getSecond().get(where, Object.class);
-            parameters.put(st.getFirst(), o);
-        }
-        return expression.eval(parameters, scope);
+        // Parameters<String> parameters = Parameters.create();
+        // parameters.put("space", where.getSpace());
+//        if (where.getSpace() instanceof Cell) {
+//            parameters.put("cell", new ContributingCell((Cell) where.getSpace()));
+//        }
+        // for (Pair<String, IState> st : scope.getArtifacts(IState.class)) {
+        // Object o = st.getSecond().get(where, Object.class);
+        // parameters.put(st.getFirst(), o);
+        // }
+        return where.getSpace() instanceof Cell
+                ? expression.eval(scope, /* parameters, */ "scale", where, "cell", new ContributingCell((Cell) where.getSpace()))
+                : expression.eval(scope, /* parameters, */ "scale", where);
     }
 
     @Override
-    public Object eval(IParameters<String> parameters, IContextualizationScope context) {
+    public Object eval(IContextualizationScope context, Object... parameters) {
         RandomProcessResolver ret = new RandomProcessResolver();
-        ret.generators.putAll(parameters);
+        ret.generators.putAll(Parameters.create(parameters));
         return ret;
     }
 

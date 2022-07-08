@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
-import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.kim.model.KimServiceCall;
@@ -36,6 +35,7 @@ import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.utils.Parameters;
 
 public class ObjectClassificationResolver extends AbstractContextualizer implements IResolver<IState>, IProcessor, IExpression, IDocumentationProvider {
 
@@ -63,7 +63,8 @@ public class ObjectClassificationResolver extends AbstractContextualizer impleme
     }
 
     @Override
-    public Object eval(IParameters<String> parameters, IContextualizationScope context) {
+    public Object eval(IContextualizationScope context, Object...params) {
+        Parameters<String> parameters = Parameters.create(params);
         Map<IObservedConcept, IObservation> catalog = ((IRuntimeScope) context).getCatalog();
         return new ObjectClassificationResolver(catalog.get(parameters.get("observable", ObservedConcept.class)),
                 parameters.get("classifier", IConcept.class));
@@ -93,7 +94,7 @@ public class ObjectClassificationResolver extends AbstractContextualizer impleme
              */
             this.glocator = new GridLocator(ret.getScale(), classf);
             for (IArtifact a : classf) {
-                aggregators.put(a, new Aggregator(ret.getObservable(), context.getMonitor()));
+                aggregators.put(a, new Aggregator(ret.getObservable(), context.getScale()));
             }
         }
 
@@ -102,9 +103,14 @@ public class ObjectClassificationResolver extends AbstractContextualizer impleme
             for (IArtifact a : glocator.getObservations(locator)) {
 
                 // set the artifact's value wherever it's covering the locator
+                // FIXMEDIOCANE use separate aggregators per observable
                 Aggregator aggregator = aggregators.get(a);
                 if (aggregator != null) {
-                    aggregator.add(((IState) classified).get(locator), ((IState) classified).getObservable(), locator);
+                    aggregator.add(((IState) classified).get(locator), /*
+                                                                        * ((IState)
+                                                                        * classified).getObservable(
+                                                                        * ),
+                                                                        */ locator);
                 }
             }
 

@@ -5,6 +5,7 @@ import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.utils.Parameters;
 
 import weka.classifiers.bayes.BayesNet;
 
@@ -68,8 +69,8 @@ public class BayesNetResolver extends AbstractWekaResolver<BayesNet> implements 
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
-		return new BayesNetResolver(parameters, context);
+	public Object eval(IContextualizationScope context, Object...parameters) throws KlabException {
+		return new BayesNetResolver(Parameters.create(parameters), context);
 	}
 
 }

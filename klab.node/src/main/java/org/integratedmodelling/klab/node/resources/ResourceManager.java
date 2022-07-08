@@ -22,10 +22,12 @@ import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.auth.KlabPermissions;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IIndexingService.Match;
@@ -117,7 +119,7 @@ public class ResourceManager {
      * @param groups
      * @return
      */
-    public KlabData getResourceData(String urn, IGeometry geometry) {
+    public KlabData getResourceData(String urn, IGeometry geometry, IArtifact.Type resultType, String resultName) {
 
         Urn kurn = new Urn(urn);
 
@@ -132,10 +134,22 @@ public class ResourceManager {
                 return null;
             }
 
-            EncodingDataBuilder builder = new EncodingDataBuilder();
+            EncodingDataBuilder overallBuilder = new EncodingDataBuilder();
+            IKlabData.Builder builder = overallBuilder;
+            boolean startState = false;
+            if (resultType != null && resultType.isState()) {
+                builder = overallBuilder.startState(resultName, null, null);
+                startState = true;
+            }
+
             adapter.encodeData(kurn, builder, geometry,
-                    new ResourceScope(adapter.getResource(urn), geometry, builder.getMonitor()));
-            return builder.buildEncoded();
+                    new ResourceScope(adapter.getResource(urn), geometry, ((EncodingDataBuilder) builder).getMonitor()));
+
+            if (startState) {
+                builder.finishState();
+            }
+
+            return overallBuilder.buildEncoded();
 
         }
 
@@ -144,7 +158,14 @@ public class ResourceManager {
             throw new IllegalArgumentException("URN " + urn + " cannot be resolved");
         }
 
-        EncodingDataBuilder builder = new EncodingDataBuilder();
+        EncodingDataBuilder overallBuilder = new EncodingDataBuilder();
+        IKlabData.Builder builder = overallBuilder;
+        boolean startState = false;
+        if (resultType != null && resultType.isState()) {
+            builder = overallBuilder.startState(resultName, null, null);
+            startState = true;
+        }
+
         IResourceAdapter adapter = Resources.INSTANCE.getResourceAdapter(resource.getAdapterType());
         if (adapter == null) {
             throw new KlabUnsupportedFeatureException(
@@ -152,9 +173,13 @@ public class ResourceManager {
         }
 
         adapter.getEncoder().getEncodedData(resource, kurn.getParameters(), geometry, builder,
-                new ResourceScope(resource, geometry, builder.getMonitor()));
+                new ResourceScope(resource, geometry, ((EncodingDataBuilder) builder).getMonitor()));
 
-        return builder.buildEncoded();
+        if (startState) {
+            builder.finishState();
+        }
+
+        return overallBuilder.buildEncoded();
 
     }
 
@@ -177,7 +202,7 @@ public class ResourceManager {
         if (resource == null) {
             throw new IllegalArgumentException("URN " + urn + " cannot be resolved");
         }
-        
+
         IResourceAdapter adapter = Resources.INSTANCE.getResourceAdapter(resource.getAdapterType());
         if (adapter == null) {
             throw new KlabUnsupportedFeatureException(
@@ -234,6 +259,8 @@ public class ResourceManager {
                     Logging.INSTANCE.error(
                             "exception when publishing " + resourceReference.getUrn() + ": " + ExceptionUtils.getStackTrace(t));
                     ret.error("Publishing failed with exception: " + t.getMessage());
+                } finally {
+                    checkResources();
                 }
             }
         }.start();
@@ -358,7 +385,8 @@ public class ResourceManager {
 
     public ResourceReference contextualizeResource(ResourceReference resource, IGeometry geometry, IObservable semantics) {
         /*
-         * TODO check availability with adapter and if needed, insert availability record in metadata
+         * TODO check availability with adapter and if needed, insert availability record in
+         * metadata
          */
         return resource;
     }

@@ -214,6 +214,20 @@
             id="org.integratedmodelling.klab.ide.views.ScenarioView"
             name="Scenarios">
       </view>
+      <view
+            category="org.integratedmodelling.klab.ide.category"
+            class="org.integratedmodelling.klab.ide.views.TestView"
+            icon="icons/ss9.png"
+            id="org.integratedmodelling.klab.ide.views.TestView"
+            name="Unit Tests">
+      </view>
+      <view
+            category="org.integratedmodelling.klab.ide.category"
+            class="org.integratedmodelling.klab.ide.views.LocalizationView"
+            icon="icons/browser.gif"
+            id="org.integratedmodelling.klab.ide.views.LocalizationView"
+            name="Internationalization">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.commands">

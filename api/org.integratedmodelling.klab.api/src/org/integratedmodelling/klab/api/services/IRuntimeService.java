@@ -104,4 +104,12 @@ public interface IRuntimeService {
      */
     ITicketManager getTicketManager();
 
+    /**
+     * The root identity (also available through the root monitor) is guaranteed to be of different
+     * types in nodes and engines and is enough to discriminate which service is being run.
+     * 
+     * @return
+     */
+    IIdentity getRootIdentity();
+
 }

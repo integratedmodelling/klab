@@ -16,6 +16,7 @@ import org.integratedmodelling.kactors.kactors.ActorInstantiation;
 import org.integratedmodelling.kactors.kactors.AssertStatement;
 import org.integratedmodelling.kactors.kactors.Assignment;
 import org.integratedmodelling.kactors.kactors.DoStatement;
+import org.integratedmodelling.kactors.kactors.FailStatement;
 import org.integratedmodelling.kactors.kactors.ForStatement;
 import org.integratedmodelling.kactors.kactors.IfStatement;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
@@ -43,7 +44,9 @@ import org.integratedmodelling.kactors.kactors.WhileStatement;
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getIf <em>If</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getWhile <em>While</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getAssert <em>Assert</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getFail <em>Fail</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getDo <em>Do</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#isBreak <em>Break</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getFor <em>For</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getValue <em>Value</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getTag <em>Tag</em>}</li>
@@ -154,6 +157,16 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
   protected AssertStatement assert_;
 
   /**
+   * The cached value of the '{@link #getFail() <em>Fail</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getFail()
+   * @generated
+   * @ordered
+   */
+  protected FailStatement fail;
+
+  /**
    * The cached value of the '{@link #getDo() <em>Do</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -162,6 +175,26 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
    * @ordered
    */
   protected DoStatement do_;
+
+  /**
+   * The default value of the '{@link #isBreak() <em>Break</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isBreak()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean BREAK_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isBreak() <em>Break</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isBreak()
+   * @generated
+   * @ordered
+   */
+  protected boolean break_ = BREAK_EDEFAULT;
 
   /**
    * The cached value of the '{@link #getFor() <em>For</em>}' containment reference.
@@ -655,6 +688,56 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
    * @generated
    */
   @Override
+  public FailStatement getFail()
+  {
+    return fail;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetFail(FailStatement newFail, NotificationChain msgs)
+  {
+    FailStatement oldFail = fail;
+    fail = newFail;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.STATEMENT__FAIL, oldFail, newFail);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setFail(FailStatement newFail)
+  {
+    if (newFail != fail)
+    {
+      NotificationChain msgs = null;
+      if (fail != null)
+        msgs = ((InternalEObject)fail).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.STATEMENT__FAIL, null, msgs);
+      if (newFail != null)
+        msgs = ((InternalEObject)newFail).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.STATEMENT__FAIL, null, msgs);
+      msgs = basicSetFail(newFail, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.STATEMENT__FAIL, newFail, newFail));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public DoStatement getDo()
   {
     return do_;
@@ -697,6 +780,31 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
     }
     else if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.STATEMENT__DO, newDo, newDo));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public boolean isBreak()
+  {
+    return break_;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setBreak(boolean newBreak)
+  {
+    boolean oldBreak = break_;
+    break_ = newBreak;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.STATEMENT__BREAK, oldBreak, break_));
   }
 
   /**
@@ -850,6 +958,8 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
         return basicSetWhile(null, msgs);
       case KactorsPackage.STATEMENT__ASSERT:
         return basicSetAssert(null, msgs);
+      case KactorsPackage.STATEMENT__FAIL:
+        return basicSetFail(null, msgs);
       case KactorsPackage.STATEMENT__DO:
         return basicSetDo(null, msgs);
       case KactorsPackage.STATEMENT__FOR:
@@ -888,8 +998,12 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
         return getWhile();
       case KactorsPackage.STATEMENT__ASSERT:
         return getAssert();
+      case KactorsPackage.STATEMENT__FAIL:
+        return getFail();
       case KactorsPackage.STATEMENT__DO:
         return getDo();
+      case KactorsPackage.STATEMENT__BREAK:
+        return isBreak();
       case KactorsPackage.STATEMENT__FOR:
         return getFor();
       case KactorsPackage.STATEMENT__VALUE:
@@ -937,8 +1051,14 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
       case KactorsPackage.STATEMENT__ASSERT:
         setAssert((AssertStatement)newValue);
         return;
+      case KactorsPackage.STATEMENT__FAIL:
+        setFail((FailStatement)newValue);
+        return;
       case KactorsPackage.STATEMENT__DO:
         setDo((DoStatement)newValue);
+        return;
+      case KactorsPackage.STATEMENT__BREAK:
+        setBreak((Boolean)newValue);
         return;
       case KactorsPackage.STATEMENT__FOR:
         setFor((ForStatement)newValue);
@@ -990,8 +1110,14 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
       case KactorsPackage.STATEMENT__ASSERT:
         setAssert((AssertStatement)null);
         return;
+      case KactorsPackage.STATEMENT__FAIL:
+        setFail((FailStatement)null);
+        return;
       case KactorsPackage.STATEMENT__DO:
         setDo((DoStatement)null);
+        return;
+      case KactorsPackage.STATEMENT__BREAK:
+        setBreak(BREAK_EDEFAULT);
         return;
       case KactorsPackage.STATEMENT__FOR:
         setFor((ForStatement)null);
@@ -1034,8 +1160,12 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
         return while_ != null;
       case KactorsPackage.STATEMENT__ASSERT:
         return assert_ != null;
+      case KactorsPackage.STATEMENT__FAIL:
+        return fail != null;
       case KactorsPackage.STATEMENT__DO:
         return do_ != null;
+      case KactorsPackage.STATEMENT__BREAK:
+        return break_ != BREAK_EDEFAULT;
       case KactorsPackage.STATEMENT__FOR:
         return for_ != null;
       case KactorsPackage.STATEMENT__VALUE:
@@ -1059,6 +1189,8 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
     StringBuilder result = new StringBuilder(super.toString());
     result.append(" (text: ");
     result.append(text);
+    result.append(", break: ");
+    result.append(break_);
     result.append(", tag: ");
     result.append(tag);
     result.append(')');

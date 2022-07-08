@@ -146,6 +146,13 @@ public class RuntimeBehavior {
 
             } else {
 
+                /*
+                 * context instruction with parameters will reset the context mandatorily if one is active.
+                 */
+                if (scope.getMonitor().getIdentity().getParentIdentity(ISession.class).getState().getCurrentContext() != null) {
+                    scope.getMonitor().getIdentity().getParentIdentity(ISession.class).getState().resetContext();
+                }
+                
                 Pair<Map<String, Object>, List<String>> args = separateObservationArguments(arguments, scope, identity);
                 Map<String, Object> contextDef = args.getFirst();
                 Object toFire = null;

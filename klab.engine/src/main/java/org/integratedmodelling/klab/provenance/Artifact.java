@@ -16,7 +16,6 @@ import org.integratedmodelling.klab.api.observations.INetwork;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IActivity;
-import org.integratedmodelling.klab.api.provenance.IAgent;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.common.Geometry;
@@ -25,6 +24,7 @@ import org.integratedmodelling.klab.data.Metadata;
 import com.google.common.collect.Lists;
 
 import groovy.lang.GroovyObjectSupport;
+import groovy.transform.CompileStatic;
 
 /**
  * All the provenance-related functions of IArtifact. Can be used as delegate
@@ -37,6 +37,7 @@ import groovy.lang.GroovyObjectSupport;
  * @author ferdinando.villa
  *
  */
+@CompileStatic
 public abstract class Artifact extends GroovyObjectSupport implements IArtifact {
 
 	List<IAnnotation> annotations = new ArrayList<>();
@@ -70,7 +71,6 @@ public abstract class Artifact extends GroovyObjectSupport implements IArtifact 
 		this.generatorActivityId = other.generatorActivityId;
 		this.timestamp = other.timestamp;
 	}
-	
 	
 	public void chain(IArtifact data) {
 		throw new IllegalStateException("chain() should only be called on a group");

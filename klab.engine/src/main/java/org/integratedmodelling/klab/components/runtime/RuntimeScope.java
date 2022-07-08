@@ -19,7 +19,6 @@ import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimExpression;
-import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.Annotations;
@@ -34,14 +33,13 @@ import org.integratedmodelling.klab.Roles;
 import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
+import org.integratedmodelling.klab.api.auth.ITaskIdentity;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IStorage;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression.Scope;
-import org.integratedmodelling.klab.api.data.mediation.ICurrency;
-import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.documentation.IReport.View;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -105,11 +103,9 @@ import org.integratedmodelling.klab.engine.runtime.SessionState;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
-import org.integratedmodelling.klab.engine.runtime.code.ExpressionContext;
+import org.integratedmodelling.klab.engine.runtime.code.ExpressionScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
-import org.integratedmodelling.klab.extensions.groovy.model.Concept;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.IntelligentMap;
@@ -123,7 +119,6 @@ import org.integratedmodelling.klab.rest.KnowledgeViewReference;
 import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
-import org.integratedmodelling.klab.utils.Range;
 import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.klab.utils.Triple;
 import org.jgrapht.Graph;
@@ -260,10 +255,20 @@ public class RuntimeScope extends AbstractRuntimeScope {
         return ret;
     }
 
+    /**
+     * Creates a localized context with the passed ephemeral variables plus all the data artifacts
+     * in the value map, indexed by their local name.
+     * 
+     * @param scope
+     * @param variables
+     */
     RuntimeScope(RuntimeScope scope, Map<String, IVariable> variables) {
         this(scope);
         this.model = scope.model;
         this.getVariables().putAll(variables);
+        for (Pair<String, IDataArtifact> state : getArtifacts(IDataArtifact.class)) {
+            this.put(state.getFirst(), state.getSecond());
+        }
     }
 
     RuntimeScope(RuntimeScope context) {
@@ -444,7 +449,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
     }
 
     @Override
-    public IRuntimeScope copy() {
+    public RuntimeScope copy() {
         RuntimeScope ret = new RuntimeScope(this);
         return ret;
     }
@@ -969,7 +974,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
         ret.contextData = new HashMap<>();
         ret.relationshipSource = this.relationshipSource;
         ret.relationshipTarget = this.relationshipTarget;
-        
+
         for (IActuator a : actuator.getActuators()) {
             if (!((Actuator) a).isExported()) {
                 String id = a.getAlias() == null ? a.getName() : a.getAlias();
@@ -1741,7 +1746,12 @@ public class RuntimeScope extends AbstractRuntimeScope {
 
     @Override
     public Scope getExpressionContext() {
-        return ExpressionContext.create(this);
+        return ExpressionScope.create(this);
+    }
+
+    @Override
+    public ExpressionScope getExpressionContext(IObservable targetObservable) {
+        return ExpressionScope.create(this, targetObservable);
     }
 
     @Override
@@ -2212,8 +2222,12 @@ public class RuntimeScope extends AbstractRuntimeScope {
             return true;
         }
         try {
-            return reasonerCache.get((c1 instanceof Concept ? ((Concept) c1).getConcept().toString() : c1.toString()) + ";"
-                    + (c2 instanceof Concept ? ((Concept) c2).getConcept().toString() : c2.toString()));
+            return reasonerCache
+                    .get(/* (c1 instanceof Concept ? ((Concept) c1).getConcept().toString() : */c1.toString()
+                            /* ) */ + ";"
+                            + /*
+                               * (c2 instanceof Concept ? ((Concept) c2).getConcept().toString() :
+                               */ c2.toString()/* ) */);
         } catch (ExecutionException e) {
             return false;
         }
@@ -2224,30 +2238,34 @@ public class RuntimeScope extends AbstractRuntimeScope {
             return false;
         }
         try {
-            return relatedReasonerCache.get((c1 instanceof Concept ? ((Concept) c1).getConcept().toString() : c1.toString()) + ";"
-                    + (c2 instanceof Concept ? ((Concept) c2).getConcept().toString() : c2.toString()));
+            return relatedReasonerCache
+                    .get(/* (c1 instanceof Concept ? ((Concept) c1).getConcept().toString() : */c1.toString()
+                            /* ) */ + ";"
+                            + /*
+                               * (c2 instanceof Concept ? ((Concept) c2).getConcept().toString() :
+                               */c2.toString())/* ) */;
         } catch (ExecutionException e) {
             return false;
         }
     }
 
-    @Override
-    public IParameters<String> localize(ILocator locator) {
-
-        RuntimeScope ret = new RuntimeScope(this);
-        Collection<Pair<String, IDataArtifact>> variables = getArtifacts(IDataArtifact.class);
-        for (Pair<String, IDataArtifact> variable : variables) {
-            // this ensures that Groovy expressions are computable
-            Object value = variable.getSecond().get(locator);
-            if (value == null && variable.getSecond().getType() == IArtifact.Type.NUMBER) {
-                value = Double.NaN;
-            }
-            ret.set(variable.getFirst(), value);
-        }
-
-        ret.setScale((IScale) locator);
-        return ret;
-    }
+    // @Override
+    // public IParameters<String> localize(ILocator locator) {
+    //
+    // RuntimeScope ret = new RuntimeScope(this);
+    // Collection<Pair<String, IDataArtifact>> variables = getArtifacts(IDataArtifact.class);
+    // for (Pair<String, IDataArtifact> variable : variables) {
+    // // this ensures that Groovy expressions are computable
+    // Object value = variable.getSecond().get(locator);
+    // if (value == null && variable.getSecond().getType() == IArtifact.Type.NUMBER) {
+    // value = Double.NaN;
+    // }
+    // ret.set(variable.getFirst(), value);
+    // }
+    //
+    // ret.setScale((IScale) locator);
+    // return ret;
+    // }
 
     @Override
     public String getArtifactName(IArtifact artifact) {
@@ -2321,29 +2339,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
     private IState getMediatingState(IState state, IValueMediator unit) {
 
         if (state != null) {
-            if (state.getObservable().getUnit() != null) {
-                if (!(unit instanceof IUnit)) {
-                    throw new KlabIllegalArgumentException("cannot mediate state " + state + " to " + unit);
-                }
-                return ((IUnit) unit).equals(state.getObservable().getUnit())
-                        ? state
-                        : new MediatingState(state, this, state.getObservable().getUnit(), unit);
-            } else if (state.getObservable().getCurrency() != null) {
-                if (!(unit instanceof ICurrency)) {
-                    throw new KlabIllegalArgumentException("cannot mediate state " + state + " to " + unit);
-                }
-                return ((ICurrency) unit).equals(state.getObservable().getCurrency())
-                        ? state
-                        : new MediatingState(state, this, state.getObservable().getCurrency(), unit);
-            } else if (state.getObservable().getRange() != null) {
-                if (!(unit instanceof Range)) {
-                    throw new KlabIllegalArgumentException("cannot mediate state " + state + " to " + unit);
-                }
-                return ((Range) unit).equals(state.getObservable().getRange())
-                        ? state
-                        : new MediatingState(state, this, state.getObservable().getRange(), unit);
-            } else if (unit != null) {
-                throw new KlabIllegalArgumentException("cannot mediate state " + state + " to " + unit);
+            if (state.getObservable().getMediator() != null) {
+                return MediatingState.mediateIfNecessary(state, unit);
             } else {
                 return state;
             }
@@ -2406,8 +2403,11 @@ public class RuntimeScope extends AbstractRuntimeScope {
 
     @Override
     public IRuntimeScope getChild(IRuntimeIdentity identity) {
-        IRuntimeScope ret = copy();
-        ((RuntimeScope) ret).monitor = identity.getMonitor();
+        RuntimeScope ret = copy();
+        ret.monitor = identity.getMonitor();
+        if (identity instanceof ITaskIdentity && ((ITaskIdentity)identity).getContext() != null) {
+           ret.contextSubject = ((ITaskIdentity)identity).getContext();
+        }
         return ret;
     }
 
@@ -2444,6 +2444,11 @@ public class RuntimeScope extends AbstractRuntimeScope {
     @Override
     public Map<String, Object> getGlobalData() {
         return globalData;
+    }
+
+    @Override
+    public IObservation getObservation(IObservable observable) {
+        return getCatalog().get(new ObservedConcept(observable));
     }
 
 }

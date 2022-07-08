@@ -1,10 +1,14 @@
 server:
    port: 8287
    servlet:
-      contextPath: "/node"
-      multipart:
-         maxFile: 1280MB
-         maxRequest: 1280MB
+     contextPath: "/node"
+
+spring:
+  servlet:
+     multipart:
+       enabled: true
+       max-file-size: -1
+       max-request-size: -1
       
 klab:
    node:

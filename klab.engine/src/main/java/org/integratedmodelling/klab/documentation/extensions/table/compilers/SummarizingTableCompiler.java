@@ -191,13 +191,25 @@ public class SummarizingTableCompiler implements ITableCompiler {
             // later. Could use concepts, classifiers or metadata fields
         }
 
+        if (this.sourceState == null) {
+            throw new KlabIllegalArgumentException(
+                    "Summarizing table compiler called with insufficient arguments. Target state missing.");
+        }
+
         // area, time, count, value [default]
         this.reportedValue = parameters.get("report", "value");
         if ("area".equals(this.reportedValue) && this.unit == null) {
             this.unit = Units.INSTANCE.SQUARE_KILOMETERS;
         }
-        // true, false -> if true, force extensive measurement and must be value
+        // true, false -> if true, force extensive measurement and must be value. Ignored if a unit
+        // is passed.
         this.extensive = parameters.get("extensive", false);
+        if (this.extensive && this.unit == null) {
+            this.unit = sourceState.getObservable().getUnit();
+            if (this.unit != null) {
+                //
+            }
+        }
         // aggregation, sum, mean, count, nodatacount, datacount, variance, std, median, dominant
         // aggregation resolves to sum, mean or dominant according to unit and semantics
         this.statistic = parameters.get("statistic", "aggregation");
@@ -205,9 +217,6 @@ public class SummarizingTableCompiler implements ITableCompiler {
         this.emptyValue = parameters.get("empty", "0.0");
         this.noDataValue = parameters.get("no-data", "0.0");
         this.templateVars = getTemplateVars(scope);
-        if (this.sourceState == null) {
-            throw new KlabIllegalArgumentException("Summarizing table compiler called with insufficient arguments");
-        }
         this.rowSummary = parameters.get("rowsummary");
         this.colSummary = parameters.get("colsummary");
         this.scope = scope;
@@ -228,7 +237,8 @@ public class SummarizingTableCompiler implements ITableCompiler {
                 Object filter = ((Map<?, ?>) selector).get("filter");
                 if (filter instanceof List) {
                     for (Object f : (List<?>) filter) {
-                        processStructure(MapUtils.of("filter", f, "title", ((Map<?,?>)selector).get("filter")), dimension, scope);
+                        processStructure(MapUtils.of("filter", f, "title", ((Map<?, ?>) selector).get("filter")), dimension,
+                                scope);
                     }
                     return;
                 } else {
@@ -324,7 +334,7 @@ public class SummarizingTableCompiler implements ITableCompiler {
                 /*
                  * categorize re: all the other locators
                  */
-                Object value = sourceState.get(locator);
+                Object value = processValue(sourceState.get(locator));
                 List<Object> classifiers = getClassifiers(value, locator, catalog, scope);
                 if (classifiers != null) {
 
@@ -387,11 +397,11 @@ public class SummarizingTableCompiler implements ITableCompiler {
                     directive = (String) specifier;
                     label = StringUtil.capitalize(directive);
                 } else if (specifier instanceof IParameters) {
-                    if (!((Map<?,?>) specifier).containsKey("filter")) {
+                    if (!((Map<?, ?>) specifier).containsKey("filter")) {
                         throw new KlabIllegalStateException("summarizer: summary needs a field named 'filter'");
                     }
-                    directive = ((Map<?,?>) specifier).get("filter").toString();
-                    label = ((IParameters<String>) specifier).get("label", "{classifier}").toString();
+                    directive = ((Map<?, ?>) specifier).get("filter").toString();
+                    label = ((IParameters<String>) specifier).get("title", "{classifier}").toString();
                 }
                 addSummary(Dimension.COLUMN, builder, directive, label);
             }
@@ -405,15 +415,23 @@ public class SummarizingTableCompiler implements ITableCompiler {
                     directive = (String) specifier;
                     label = StringUtil.capitalize(directive);
                 } else if (specifier instanceof IParameters) {
-                    if (!((Map<?,?>) specifier).containsKey("filter")) {
+                    if (!((Map<?, ?>) specifier).containsKey("filter")) {
                         throw new KlabIllegalStateException("summarizer: summary needs a field named 'filter'");
                     }
-                    directive = ((Map<?,?>) specifier).get("filter").toString();
+                    directive = ((Map<?, ?>) specifier).get("filter").toString();
                     label = ((IParameters<String>) specifier).get("title", "{classifier}").toString();
                 }
                 addSummary(Dimension.ROW, builder, directive, label);
             }
         }
+    }
+
+    private Object processValue(Object object) {
+        if (Observations.INSTANCE.isData(object)) {
+            if (this.unit != null && object instanceof Number) {
+            }
+        }
+        return object;
     }
 
     private void addSummary(Dimension dimension, Builder builder, String directive, String label) {
@@ -650,7 +668,7 @@ public class SummarizingTableCompiler implements ITableCompiler {
         /*
          * TODO use template from definitions
          */
-        
+
         if (object instanceof Collection) {
             object = ((Collection<?>) object).iterator().next();
         }

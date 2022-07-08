@@ -24,6 +24,7 @@ import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractC
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.utils.Parameters;
 
 /**
  * Compute a variety of euclidean distance-based indicators. TODO figure out if
@@ -52,8 +53,8 @@ public class EuclideanDistanceResolver extends AbstractContextualizer implements
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
-		return new EuclideanDistanceResolver(parameters, context);
+	public Object eval(IContextualizationScope context, Object...parameters) throws KlabException {
+		return new EuclideanDistanceResolver(Parameters.create(parameters), context);
 	}
 
 	@Override

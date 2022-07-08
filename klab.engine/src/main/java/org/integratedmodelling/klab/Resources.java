@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
+import javax.validation.metadata.Scope;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -1102,7 +1103,8 @@ public enum Resources implements IResourceService {
      * @param monitor
      * @return
      */
-    public IKlabData getResourceData(String urn, IKlabData.Builder builder, IGeometry geometry, IMonitor monitor) {
+    public IKlabData getResourceData(String urn, IKlabData.Builder builder, IArtifact.Type requestType, String resultId,
+            IGeometry geometry, IMonitor monitor) {
 
         Urn kurn = new Urn(urn);
         IResource resource = resolveResource(urn);
@@ -1137,10 +1139,14 @@ public enum Resources implements IResourceService {
         } else {
             INodeIdentity node = Network.INSTANCE.getNodeForResource(kurn);
             if (node != null) {
+                
                 ResourceDataRequest request = new ResourceDataRequest();
                 request.setUrn(urn.toString());
                 request.setGeometry(encodeScale(geometry, resource));
-                builder = new DecodingDataBuilder(node.getClient().post(API.NODE.RESOURCE.GET_DATA, request, Map.class),
+                request.setArtifactName(resultId);
+                request.setArtifactType(requestType);
+                
+                builder = new DecodingDataBuilder(node.getClient().post(API.NODE.RESOURCE.GET_DATA, request, Map.class), request,
                         Expression.emptyContext(geometry, monitor));
             }
         }
@@ -1304,8 +1310,11 @@ public enum Resources implements IResourceService {
                 // send toString() with all parameters!
                 request.setUrn(urn.toString());
                 request.setGeometry(encodeScale(geometry, resource));
+                request.setArtifactType(scope.getTargetArtifact() == null ? Type.VALUE : scope.getTargetArtifact().getType());
+                request.setArtifactName(scope.getTargetArtifact() == null ? "result" : scope.getTargetName());
+
                 DecodingDataBuilder builder = new DecodingDataBuilder(
-                        node.getClient().post(API.NODE.RESOURCE.GET_DATA, request, Map.class), scope);
+                        node.getClient().post(API.NODE.RESOURCE.GET_DATA, request, Map.class), request, scope);
                 IKlabData ret = builder.build();
 
                 if (descriptor != null) {
@@ -2115,7 +2124,7 @@ public enum Resources implements IResourceService {
                 }
             }
         }
-        
+
         return resource instanceof ContextualizedResource
                 ? (ContextualizedResource) resource
                 : new ContextualizedResource((Resource) resource);
@@ -2125,13 +2134,10 @@ public enum Resources implements IResourceService {
 
         Dimension space = resource.getGeometry().getDimension(Dimension.Type.SPACE);
         IGeometry.Encoding[] options = space != null && space.isRegular()
-                ? new IGeometry.Encoding[]{IGeometry.Encoding.SKIP_GRID_SHAPE}
-                : new IGeometry.Encoding[]{};
+                ? new IGeometry.Encoding[]{IGeometry.Encoding.SKIP_GRID_SHAPE, IGeometry.Encoding.CONCRETE_TIME_INTERVALS}
+                : new IGeometry.Encoding[]{IGeometry.Encoding.CONCRETE_TIME_INTERVALS};
 
         IGeometry geometry = scale instanceof Scale ? ((Scale) scale).asGeometry(options) : (IGeometry) scale;
-
-        // TODO scale of remote contextualization - for space, decide if we want to pass the shape,
-        // default is send the full bounding box only if regular
 
         return geometry.encode(options);
     }

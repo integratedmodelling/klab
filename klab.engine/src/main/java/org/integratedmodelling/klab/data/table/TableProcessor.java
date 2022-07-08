@@ -677,7 +677,7 @@ public class TableProcessor {
                 } else if (value.size() == 1) {
                     val = value.get(0);
                 } else {
-                    val = aggregator.aggregate(value);
+                    val = aggregator.aggregate(value, null);
                 }
                 rowData.put(col.getPath(), /* TODO number format etc */ val.toString());
             }

@@ -17,7 +17,6 @@ import org.integratedmodelling.klab.components.localstorage.impl.AbstractAdaptiv
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.utils.NameGenerator;
-import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Utils;
 
 public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements AutoCloseable {

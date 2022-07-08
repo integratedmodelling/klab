@@ -516,6 +516,11 @@ public enum Klab implements IRuntimeService {
 		return rootMonitor;
 	}
 
+	@Override
+	public IIdentity getRootIdentity() {
+	    return rootIdentity;
+	}
+	
 	/**
 	 * Resolve a file name to a file using the work directory if the path is not
 	 * found as is.

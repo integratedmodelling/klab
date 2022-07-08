@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -20,6 +19,7 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.mca.MCAComponent;
 import org.integratedmodelling.mca.MCAComponent.Method;
 import org.integratedmodelling.mca.api.IAlternative;
@@ -38,10 +38,10 @@ public class RankingInstantiator extends AbstractContextualizer implements IInst
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
+	public Object eval(IContextualizationScope context, Object...parameters) throws KlabException {
 		RankingInstantiator ret = new RankingInstantiator();
 		// TODO method
-		ret.normalize = parameters.get("normalize", Boolean.TRUE);
+		ret.normalize = Parameters.create(parameters).get("normalize", Boolean.TRUE);
 		return ret;
 	}
 

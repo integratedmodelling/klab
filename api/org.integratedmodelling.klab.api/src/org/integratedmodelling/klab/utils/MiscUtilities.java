@@ -1441,6 +1441,10 @@ public class MiscUtilities {
 
     public static File changeExtension(File file, String extensionWithoutDot) {
 
+        if (file == null) {
+            return null;
+        }
+        
         String ret = null;
         String string = file.toString();
         int sl = string.lastIndexOf(".");

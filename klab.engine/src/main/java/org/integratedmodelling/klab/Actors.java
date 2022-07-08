@@ -14,7 +14,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
@@ -38,7 +40,6 @@ import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
-import org.integratedmodelling.kim.model.KimObservable;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IActorIdentity;
 import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
@@ -51,6 +52,8 @@ import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Call;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IProject;
+import org.integratedmodelling.klab.api.knowledge.IWorkspace;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IObservationGroup;
@@ -84,8 +87,12 @@ import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.rest.BehaviorReference;
 import org.integratedmodelling.klab.rest.Layout;
+import org.integratedmodelling.klab.rest.Localization;
 import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.rest.ViewPanel;
+import org.integratedmodelling.klab.utils.FileCatalog;
+import org.integratedmodelling.klab.utils.GitUtils;
+import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Path;
 import org.integratedmodelling.klab.utils.Range;
@@ -131,6 +138,8 @@ public enum Actors implements IActorsService {
 
     private ActorSystem<Void> supervisor;
     private Map<String, IBehavior> behaviors = Collections.synchronizedMap(new HashMap<>());
+    private Map<String, Map<String, Map<String, String>>> localizations = Collections
+            .synchronizedMap(new HashMap<>());
     private Map<String, BehaviorReference> behaviorDescriptors = Collections.synchronizedMap(new HashMap<>());
     private Map<String, Pair<String, Class<? extends KlabActionExecutor>>> actionClasses = Collections
             .synchronizedMap(new HashMap<>());
@@ -142,6 +151,7 @@ public enum Actors implements IActorsService {
     Map<Semaphore.Type, Set<Long>> semaphores = Collections.synchronizedMap(new HashMap<>());
     static Set<String> layoutMetadata = null;
     private Map<String, Library> libraries = Collections.synchronizedMap(new HashMap<>());
+    static Set<String> isoLanguages;
 
     public class CallDescriptor {
 
@@ -256,17 +266,47 @@ public enum Actors implements IActorsService {
         layoutMetadata.add("type");
         layoutMetadata.add("active");
         layoutMetadata.add("timeout");
+
+        isoLanguages = new HashSet<>();
+        for (String isoLanguage : Locale.getISOLanguages()) {
+            isoLanguages.add(isoLanguage);
+        }
     }
 
     @Override
     public IBehavior getBehavior(String behaviorId) {
-        return behaviors.get(behaviorId);
+        IBehavior ret = behaviors.get(behaviorId);
+        if (ret == null && behaviorId.contains(".")) {
+            String lang = Path.getLast(behaviorId, '.');
+            if (isoLanguages.contains(lang)) {
+                Map<String, Map<String, String>> localization = this.localizations
+                        .get(Path.getLeading(behaviorId, '.'));
+                if (localization != null && localization.containsKey(lang)) {
+                    IKActorsBehavior source = KActors.INSTANCE.newBehavior(Path.getLeading(behaviorId, '.'));
+                    ret = new org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior(source,
+                            lang,
+                            localization.get(lang));
+                    behaviors.put(behaviorId, ret);
+                }
+            }
+        }
+        return ret;
     }
 
     @Override
     public IBehavior newBehavior(String behaviorId) {
-        return new org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior(
-                KActors.INSTANCE.newBehavior(behaviorId));
+        IBehavior prototype = getBehavior(behaviorId);
+        if (prototype != null) {
+            IKActorsBehavior source = KActors.INSTANCE.newBehavior(prototype.getStatement().getName());
+            if (prototype.getLocale() == null) {
+                return new org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior(source);
+            } else {
+                return new org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior(source,
+                        prototype.getLocale(),
+                        prototype.getLocalization());
+            }
+        }
+        return null;
     }
 
     /**
@@ -342,6 +382,14 @@ public enum Actors implements IActorsService {
                 behaviors.put(behavior.getName(),
                         new org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior(
                                 behavior));
+                File file = behavior.getFile();
+                if (file != null) {
+                    File localizationFile = MiscUtilities.changeExtension(file, "localization");
+                    if (localizationFile.exists()) {
+                        localizations.put(behavior.getName(),
+                                new FileCatalog<>(localizationFile, Map.class, Map.class));
+                    }
+                }
             }
         });
     }
@@ -532,11 +580,13 @@ public enum Actors implements IActorsService {
 
     @Override
     public Collection<String> getPublicApps() {
-        List<String> ret = new ArrayList<>();
+        Set<String> ret = new LinkedHashSet<>();
         for (String key : behaviors.keySet()) {
             if (behaviors.get(key).getDestination() == Type.APP
                     && behaviors.get(key).getStatement().isPublic()) {
-                ret.add(key);
+                // getId() and set semantics ensure that localized instances only appear once with
+                // their original name
+                ret.add(behaviors.get(key).getId());
             }
         }
         return ret;
@@ -1029,9 +1079,8 @@ public enum Actors implements IActorsService {
                 return (Iterable<Object>) o;
             } else if (o instanceof String && Urns.INSTANCE.isUrn(o.toString())) {
                 return iterateResource(o.toString(), scope.getMonitor());
-            } else {
-                return Collections.singletonList(o);
             }
+            return Collections.singletonList(o);
         case STRING:
             if (Urns.INSTANCE.isUrn(iterable.getStatedValue().toString())) {
                 return iterateResource(iterable.getStatedValue().toString(), scope.getMonitor());
@@ -1541,5 +1590,101 @@ public enum Actors implements IActorsService {
         }
 
         return value;
+    }
+
+    public int runAllTests(String[] testCaseProjectsOrGitUrls, ISession session, File outputFile) {
+
+        int ret = 0;
+        if (outputFile != null) {
+            //
+        }
+        for (String projectUrl : testCaseProjectsOrGitUrls) {
+
+            IProject project = null;
+            // turn string into project, if existing call runAllTests on it and sum up the return
+            // value.
+            if (GitUtils.isRemoteGitURL(projectUrl)) {
+                IWorkspace tempWs = Resources.INSTANCE.getServiceWorkspace();
+                String projectName = GitUtils.clone(projectUrl, tempWs.getRoot(), true);
+                project = tempWs.loadProject(projectName, Klab.INSTANCE.getRootMonitor());
+            } else {
+                project = Resources.INSTANCE.getProject(projectUrl);
+            }
+
+            if (project != null) {
+                ret += runAllTests(project);
+            }
+
+        }
+
+        return ret;
+    }
+
+    @Override
+    public List<Localization> getLocalizations(String behavior) {
+
+        List<Localization> ret = new ArrayList<>();
+        IKActorsBehavior source = KActors.INSTANCE.getBehavior(behavior);
+        Localization english = null;
+        if (source != null) {
+            File loc = MiscUtilities.changeExtension(source.getFile(), "localization");
+            if (loc.exists()) {
+                FileCatalog<Map> cat = FileCatalog.create(loc, Map.class, Map.class);
+                for (String lang : cat.keySet()) {
+                    Localization localization = new Localization();
+                    localization.setIsoCode(lang);
+                    Locale locale = Locale.forLanguageTag(lang);
+                    localization.setLanguageDescription(locale == null ? null : locale.getDisplayLanguage());
+                    if (source.getDescription() != null && source.getDescription().startsWith("#")
+                            && cat.get(lang).containsKey(source.getDescription().substring(1))) {
+                        localization.setLocalizedDescription(
+                                cat.get(lang).get(source.getDescription().substring(1)).toString());
+                    } else {
+                        localization.setLocalizedDescription(source.getDescription());
+                    }
+                    if (source.getLabel() != null && source.getLabel().startsWith("#")
+                            && cat.get(lang).containsKey(source.getLabel().substring(1))) {
+                        localization.setLocalizedLabel(
+                                cat.get(lang).get(source.getLabel().substring(1)).toString());
+                    } else {
+                        localization.setLocalizedLabel(source.getLabel());
+                    }
+                    if ("en".equals(localization.getIsoCode())) {
+                        english = localization;
+                    } else {
+                        ret.add(localization);
+                    }
+                }
+            }
+
+            if (ret.isEmpty()) {
+                Localization localization = new Localization();
+                localization.setIsoCode("en");
+                localization.setLanguageDescription("English");
+                localization.setLocalizedDescription(source.getDescription());
+                localization.setLocalizedDescription(source.getLabel());
+                ret.add(localization);
+            }
+
+            if (english != null) {
+                /*
+                 * Language discrimination! 
+                 */
+                ret.add(0, english);
+            }
+            
+        }
+
+        return ret;
+    }
+
+    /**
+     * Run all test cases in a project. Use dependency order to follow imports.
+     * 
+     * @param project
+     * @return
+     */
+    public int runAllTests(IProject project) {
+        return 0;
     }
 }

@@ -130,8 +130,11 @@
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="assert" eType="#//AssertStatement"
         containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="fail" eType="#//FailStatement"
+        containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="do" eType="#//DoStatement"
         containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="break" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="for" eType="#//ForStatement"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="#//Value"
@@ -143,6 +146,9 @@
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="assertions" upperBound="-1"
         eType="#//Assertion" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="FailStatement">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="reason" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Assertion">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="expression" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>

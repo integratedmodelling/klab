@@ -47,7 +47,7 @@ public class KActorsAssignment extends KActorsStatement implements Assignment {
 
     @Override
     protected void visit(IKActorsAction action, Visitor visitor) {
-        visitor.visitValue(value, this, action);
+        visitValue(visitor, value, this, action);
         super.visit(action, visitor);
     }
 

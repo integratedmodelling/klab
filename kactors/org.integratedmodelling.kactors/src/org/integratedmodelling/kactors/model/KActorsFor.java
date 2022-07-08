@@ -37,7 +37,7 @@ public class KActorsFor extends KActorsStatement implements For {
 
     @Override
     protected void visit(IKActorsAction action, Visitor visitor) {
-        visitor.visitValue(iterable, this, action);
+        visitValue(visitor, iterable, this, action);
         ((KActorsStatement)body).visit(action, visitor);
         super.visit(action, visitor);
     }

@@ -12,6 +12,7 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
+@Deprecated
 public class AggregationUtils {
     
     public static Object aggregate(List<Object> values, Aggregation aggregation, IMonitor monitor) {

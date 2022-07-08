@@ -2536,7 +2536,7 @@ public class TableCompiler {
             // intersections, for now fuck.
         }
 
-        return rowExpression.eval(parameters, scope);
+        return rowExpression.eval(scope, parameters);
     }
 
     private List<Phase> getPhases(IRuntimeScope scope, IObservation targetObservation) {

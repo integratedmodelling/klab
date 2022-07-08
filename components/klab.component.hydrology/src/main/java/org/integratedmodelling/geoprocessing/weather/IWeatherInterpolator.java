@@ -5,6 +5,7 @@ import java.util.function.Function;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 
+@Deprecated
 public interface IWeatherInterpolator {
 
 	/**

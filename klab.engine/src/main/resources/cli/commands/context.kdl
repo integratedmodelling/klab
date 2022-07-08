@@ -8,7 +8,7 @@
 @namespace context
 
 void info
-	"Print the structure of the current context with detail about data and time slices currently in states."
+	"Print the structure of the current context or an observer, with detail about data and time slices currently in states."
 {	
 	class org.integratedmodelling.klab.cli.commands.context.Info
 }

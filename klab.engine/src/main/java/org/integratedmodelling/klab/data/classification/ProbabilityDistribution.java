@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.data.classification;
 
 import org.apache.commons.math3.distribution.EnumeratedRealDistribution;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IReducible;
 import org.integratedmodelling.klab.api.provenance.IArtifact.ValuePresentation;
 
@@ -24,7 +25,7 @@ public class ProbabilityDistribution extends EnumeratedRealDistribution implemen
 	}
 
 	@Override
-	public Object reduce(Class<?> cls, boolean forceReduction) {
+	public Object reduce(Class<?> cls, boolean forceReduction, ILocator locator) {
 		// TODO
 		return getNumericalMean();
 	}

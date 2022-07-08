@@ -1,52 +1,55 @@
 package org.integratedmodelling.klab.components.runtime.contextualizers;
 
 import org.integratedmodelling.kim.api.IContextualizable;
-import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IProcessor;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
+import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.utils.Parameters;
 
 public class ClassifyingStateResolver extends AbstractContextualizer implements IStateResolver, IProcessor, IExpression {
 
-	static final public String FUNCTION_ID = "klab.runtime.classify";
+    static final public String FUNCTION_ID = "klab.runtime.classify";
 
-	private IClassification classification;
+    private IClassification classification;
 
-	// don't remove - only used as expression
-	public ClassifyingStateResolver() {
-	}
+    // don't remove - only used as expression
+    public ClassifyingStateResolver() {
+    }
 
-	public ClassifyingStateResolver(IClassification classification) {
-		this.classification = classification;
-	}
+    public ClassifyingStateResolver(IClassification classification) {
+        this.classification = classification;
+    }
 
-	public static IServiceCall getServiceCall(IClassification classification, IContextualizable condition, boolean conditionNegated)
-			throws KlabValidationException {
-		// TODO handle condition
-		return KimServiceCall.create(FUNCTION_ID, "classification", classification);
-	}
+    public static IServiceCall getServiceCall(IClassification classification, IContextualizable condition,
+            boolean conditionNegated) throws KlabValidationException {
+        // TODO handle condition
+        return KimServiceCall.create(FUNCTION_ID, "classification", classification);
+    }
 
-	@Override
-	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
-		return new ClassifyingStateResolver(parameters.get("classification", IClassification.class));
-	}
+    @Override
+    public Object eval(IContextualizationScope context, Object...parameters) throws KlabException {
+        return new ClassifyingStateResolver(Parameters.create(parameters).get("classification", IClassification.class));
+    }
 
-	@Override
-	public Object resolve(IObservable observable, IContextualizationScope context) throws KlabException {
-		return classification.classify(context.get("self"), context);
-	}
+    @Override
+    public Object resolve(IObservable observable, IContextualizationScope context, ILocator locator) throws KlabException {
+        Object value = context.get("self") instanceof IState ? ((IState) context.get("self")).get(locator) : context.get("self");
+        return classification.classify(value, context);
+    }
 
-	@Override
-	public IArtifact.Type getType() {
-		return Type.CONCEPT;
-	}
+    @Override
+    public IArtifact.Type getType() {
+        return Type.CONCEPT;
+    }
 }

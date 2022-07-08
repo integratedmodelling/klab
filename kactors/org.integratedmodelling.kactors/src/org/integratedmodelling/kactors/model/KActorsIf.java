@@ -76,10 +76,10 @@ public class KActorsIf extends KActorsStatement implements If {
 
     @Override
     protected void visit(IKActorsAction action, Visitor visitor) {
-        visitor.visitValue(condition, this, action);
+        visitValue(visitor, condition, this, action);
         ((KActorsStatement)body).visit(action, visitor);
         for (Pair<IKActorsValue, IKActorsStatement> ei : elseifs) {
-            visitor.visitValue(ei.getFirst(), this, action);
+            visitValue(visitor, ei.getFirst(), this, action);
             ((KActorsStatement)ei.getSecond()).visit(action, visitor);
         }
         if (otherwise != null) {

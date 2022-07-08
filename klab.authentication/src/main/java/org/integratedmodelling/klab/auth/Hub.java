@@ -94,6 +94,12 @@ public class Hub implements IServerIdentity {
         return null;
     }
 
+
+    @Override
+    public IIdentity.Type getIdentityType() {
+        return IIdentity.Type.IM_PARTNER;
+    }
+    
     @Override
     public String getId() {
         // TODO Auto-generated method stub
@@ -102,7 +108,7 @@ public class Hub implements IServerIdentity {
 
     @Override
     public boolean is(Type type) {
-        return type == INodeIdentity.TYPE;
+        return type == getIdentityType();
     }
 
     @Override

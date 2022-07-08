@@ -66,7 +66,7 @@ public class Space extends GroovyObjectSupport implements IValueProxy {
 
     @Override
     public Object getValue() {
-        return new org.integratedmodelling.klab.components.geospace.services.Space().eval(parameters, null);
+        return new org.integratedmodelling.klab.components.geospace.services.Space().eval(null, parameters);
     }
 
 }

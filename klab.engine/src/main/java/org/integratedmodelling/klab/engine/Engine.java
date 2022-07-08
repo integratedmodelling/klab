@@ -52,7 +52,6 @@ import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.IScript;
-import org.integratedmodelling.klab.api.runtime.monitoring.IInspector;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.runtime.rest.IClient;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
@@ -62,7 +61,6 @@ import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.auth.UserIdentity;
 import org.integratedmodelling.klab.documentation.DataflowDocumentation;
-import org.integratedmodelling.klab.engine.debugger.Inspector;
 import org.integratedmodelling.klab.engine.indexing.Indexer;
 import org.integratedmodelling.klab.engine.rest.SchemaExtractor;
 import org.integratedmodelling.klab.engine.runtime.Script;
@@ -284,7 +282,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 //				((Monitor)((IRuntimeIdentity)id).getMonitor()).interrupt();
 //			}
 		}
-
+		
 		@Override
 		public boolean isInterrupted() {
 			return isInterrupted.get();
@@ -318,6 +316,11 @@ public class Engine extends Server implements IEngine, UserDetails {
 	public String getId() {
 		return token;
 	}
+
+	@Override
+	public IIdentity.Type getIdentityType() {
+        return IIdentity.Type.ENGINE;
+    }
 
 	@Override
 	public <T extends IIdentity> T getParentIdentity(Class<T> type) {
@@ -764,7 +767,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 
 	@Override
 	public boolean is(Type type) {
-		return TYPE == type;
+		return getIdentityType() == type;
 	}
 
 	@Override

@@ -1,6 +1,5 @@
 package org.integratedmodelling.klab.components.geospace.services;
 
-import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
@@ -18,7 +17,7 @@ public class TerrainService extends AbstractContextualizer implements IResolver<
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
+	public Object eval(IContextualizationScope context, Object...parameters) throws KlabException {
 		return new TerrainService();
 	}
 

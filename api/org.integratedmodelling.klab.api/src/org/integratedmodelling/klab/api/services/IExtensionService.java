@@ -21,6 +21,8 @@ import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IKimSymbolDefinition;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.klab.api.data.general.IExpression.CompilerScope;
+import org.integratedmodelling.klab.api.data.general.IExpression.Scope;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
 import org.integratedmodelling.klab.api.extensions.component.IComponent;
 import org.integratedmodelling.klab.api.knowledge.IViewModel;
@@ -114,5 +116,13 @@ public interface IExtensionService {
 	 * @return
 	 */
 	Object processDefinition(IKimSymbolDefinition statement, Object definition, INamespace namespace, IMonitor monitor);
+
+	/**
+	 * An empty scope for any need
+	 * 
+	 * @param scalar
+	 * @return
+	 */
+    Scope getScope(Object... options);
 
 }

@@ -30,23 +30,6 @@ filter number standardize
 	class org.integratedmodelling.klab.data.transformations.StandardizingResolver
 }
 
-//filter object merge 
-//	"Merges two or more object observations into one. For states, the aggregation strategy will be chosen based on the 
-//	 target semantics unless an aggregation is explicitly specified. Objects will simply be merged into one observation
-//	 and recast to the passed semantics, adding attributes or roles if compatible, or reidentifying them anew. The 
-//	 original objects will remain in the source observation groups unless remove=true." 
-//	label "Aggregate"
-//{
-//	optional import concept semantics 
-//		"The semantics that identifies the states to aggregate. Can be abstract or general: all observations that resolve it will be aggregated"
-//		
-//	optional boolean remove
-//		"If passed and the contextualizer is aggregating objects, the original observations will be deactivated."	
-//		
-//	class org.integratedmodelling.klab.data.transformations.MergingInstantiator
-//}
-
-
 filter value aggregate 
 	"Aggregates two or more observations into one. The aggregation strategy will be chosen based on the 
 	 target semantics unless an aggregation is explicitly specified. Objects will simply be merged into one observation

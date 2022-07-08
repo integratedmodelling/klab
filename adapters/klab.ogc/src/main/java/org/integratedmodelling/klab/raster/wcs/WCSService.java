@@ -500,7 +500,8 @@ public class WCSService {
 
         if (db == null) {
 
-            File dpath = Configuration.INSTANCE.getDataPath("ogc/wcs");
+            File dpath = Configuration.INSTANCE
+                    .getDataPath("ogc/wcs/" + Klab.INSTANCE.getRootIdentity().getIdentityType().name().toLowerCase());
             dpath.mkdirs();
 
             db = DBMaker.fileDB(new File(dpath + File.separator + "wcscache.dat")).closeOnJvmShutdown().transactionEnable()

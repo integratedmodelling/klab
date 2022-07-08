@@ -102,7 +102,9 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Statement/if"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Statement/while"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Statement/assert"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Statement/fail"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Statement/do"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Statement/break"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Statement/for"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Statement/value"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Statement/tag"/>
@@ -110,6 +112,9 @@
     <genClasses ecoreClass="Kactors.ecore#//AssertStatement">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//AssertStatement/parameters"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//AssertStatement/assertions"/>
+    </genClasses>
+    <genClasses ecoreClass="Kactors.ecore#//FailStatement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//FailStatement/reason"/>
     </genClasses>
     <genClasses ecoreClass="Kactors.ecore#//Assertion">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Assertion/expression"/>

@@ -711,9 +711,12 @@ public enum Concepts implements IConceptService {
 
         if (predicate instanceof IConcept) {
             return (IConcept) predicate;
-        } else if (predicate instanceof org.integratedmodelling.klab.extensions.groovy.model.Concept) {
-            return (IConcept) ((org.integratedmodelling.klab.extensions.groovy.model.Concept) predicate).getConcept();
-        } else if (predicate instanceof String) {
+        } /*
+           * else if (predicate instanceof
+           * org.integratedmodelling.klab.extensions.groovy.model.Concept) { return (IConcept)
+           * ((org.integratedmodelling.klab.extensions.groovy.model.Concept)
+           * predicate).getConcept(); }
+           */else if (predicate instanceof String) {
             return declare(declare(predicate.toString()));
         }
 

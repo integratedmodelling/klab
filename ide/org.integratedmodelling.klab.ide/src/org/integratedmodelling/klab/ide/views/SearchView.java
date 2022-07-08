@@ -201,6 +201,14 @@ public class SearchView extends ViewPart {
         topContainer = new Composite(parent, SWT.NONE);
         // toolkit.paintBordersFor(container);
         topContainer.setLayout(new GridLayout(1, false));
+        Composite resultSet = new Composite(topContainer, SWT.EMBEDDED);
+        GridData gd_resultSet = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+        gd_resultSet.heightHint = 38;
+        resultSet.setLayoutData(gd_resultSet);
+        resultSet.setLayout(new FillLayout(SWT.HORIZONTAL));
+        resultText = new StyledConceptDisplay(resultSet, SWT.NONE);
+        resultText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
         text = new Text(topContainer, SWT.BORDER);
         text.addKeyListener(new KeyAdapter(){
             @Override
@@ -245,13 +253,6 @@ public class SearchView extends ViewPart {
         });
 
         text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-        Composite resultSet = new Composite(topContainer, SWT.EMBEDDED);
-        GridData gd_resultSet = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
-        gd_resultSet.heightHint = 38;
-        resultSet.setLayoutData(gd_resultSet);
-        resultSet.setLayout(new FillLayout(SWT.HORIZONTAL));
-        resultText = new StyledConceptDisplay(resultSet, SWT.NONE);
-        resultText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
         actionArea = new Composite(topContainer, SWT.NONE);
         GridLayout gl_actionArea = new GridLayout(1, false);

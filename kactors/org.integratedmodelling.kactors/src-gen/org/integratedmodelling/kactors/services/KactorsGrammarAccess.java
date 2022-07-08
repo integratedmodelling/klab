@@ -1169,12 +1169,16 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		private final RuleCall cWhileWhileStatementParserRuleCall_0_6_0 = (RuleCall)cWhileAssignment_0_6.eContents().get(0);
 		private final Assignment cAssertAssignment_0_7 = (Assignment)cAlternatives_0.eContents().get(7);
 		private final RuleCall cAssertAssertStatementParserRuleCall_0_7_0 = (RuleCall)cAssertAssignment_0_7.eContents().get(0);
-		private final Assignment cDoAssignment_0_8 = (Assignment)cAlternatives_0.eContents().get(8);
-		private final RuleCall cDoDoStatementParserRuleCall_0_8_0 = (RuleCall)cDoAssignment_0_8.eContents().get(0);
-		private final Assignment cForAssignment_0_9 = (Assignment)cAlternatives_0.eContents().get(9);
-		private final RuleCall cForForStatementParserRuleCall_0_9_0 = (RuleCall)cForAssignment_0_9.eContents().get(0);
-		private final Assignment cValueAssignment_0_10 = (Assignment)cAlternatives_0.eContents().get(10);
-		private final RuleCall cValueValueWithMetadataParserRuleCall_0_10_0 = (RuleCall)cValueAssignment_0_10.eContents().get(0);
+		private final Assignment cFailAssignment_0_8 = (Assignment)cAlternatives_0.eContents().get(8);
+		private final RuleCall cFailFailStatementParserRuleCall_0_8_0 = (RuleCall)cFailAssignment_0_8.eContents().get(0);
+		private final Assignment cDoAssignment_0_9 = (Assignment)cAlternatives_0.eContents().get(9);
+		private final RuleCall cDoDoStatementParserRuleCall_0_9_0 = (RuleCall)cDoAssignment_0_9.eContents().get(0);
+		private final Assignment cBreakAssignment_0_10 = (Assignment)cAlternatives_0.eContents().get(10);
+		private final Keyword cBreakBreakKeyword_0_10_0 = (Keyword)cBreakAssignment_0_10.eContents().get(0);
+		private final Assignment cForAssignment_0_11 = (Assignment)cAlternatives_0.eContents().get(11);
+		private final RuleCall cForForStatementParserRuleCall_0_11_0 = (RuleCall)cForAssignment_0_11.eContents().get(0);
+		private final Assignment cValueAssignment_0_12 = (Assignment)cAlternatives_0.eContents().get(12);
+		private final RuleCall cValueValueWithMetadataParserRuleCall_0_12_0 = (RuleCall)cValueAssignment_0_12.eContents().get(0);
 		private final Assignment cTagAssignment_1 = (Assignment)cGroup.eContents().get(1);
 		private final RuleCall cTagTAGTerminalRuleCall_1_0 = (RuleCall)cTagAssignment_1.eContents().get(0);
 		
@@ -1187,7 +1191,9 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//     if=IfStatement |
 		//     while=WhileStatement |
 		//     assert=AssertStatement |
+		//     fail=FailStatement |
 		//     do=DoStatement |
+		//     break?='break' |
 		//     for=ForStatement |
 		//     // this means "fire this" or "return this"
 		//     value=ValueWithMetadata)
@@ -1204,7 +1210,9 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		// if=IfStatement |
 		// while=WhileStatement |
 		// assert=AssertStatement |
+		// fail=FailStatement |
 		// do=DoStatement |
+		// break?='break' |
 		// for=ForStatement |
 		// // this means "fire this" or "return this"
 		// value=ValueWithMetadata)
@@ -1220,7 +1228,9 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		// if=IfStatement |
 		// while=WhileStatement |
 		// assert=AssertStatement |
+		// fail=FailStatement |
 		// do=DoStatement |
+		// break?='break' |
 		// for=ForStatement |
 		// // this means "fire this" or "return this"
 		// value=ValueWithMetadata)
@@ -1283,24 +1293,36 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//AssertStatement
 		public RuleCall getAssertAssertStatementParserRuleCall_0_7_0() { return cAssertAssertStatementParserRuleCall_0_7_0; }
 		
+		//fail=FailStatement
+		public Assignment getFailAssignment_0_8() { return cFailAssignment_0_8; }
+		
+		//FailStatement
+		public RuleCall getFailFailStatementParserRuleCall_0_8_0() { return cFailFailStatementParserRuleCall_0_8_0; }
+		
 		//do=DoStatement
-		public Assignment getDoAssignment_0_8() { return cDoAssignment_0_8; }
+		public Assignment getDoAssignment_0_9() { return cDoAssignment_0_9; }
 		
 		//DoStatement
-		public RuleCall getDoDoStatementParserRuleCall_0_8_0() { return cDoDoStatementParserRuleCall_0_8_0; }
+		public RuleCall getDoDoStatementParserRuleCall_0_9_0() { return cDoDoStatementParserRuleCall_0_9_0; }
+		
+		//break?='break'
+		public Assignment getBreakAssignment_0_10() { return cBreakAssignment_0_10; }
+		
+		//'break'
+		public Keyword getBreakBreakKeyword_0_10_0() { return cBreakBreakKeyword_0_10_0; }
 		
 		//for=ForStatement
-		public Assignment getForAssignment_0_9() { return cForAssignment_0_9; }
+		public Assignment getForAssignment_0_11() { return cForAssignment_0_11; }
 		
 		//ForStatement
-		public RuleCall getForForStatementParserRuleCall_0_9_0() { return cForForStatementParserRuleCall_0_9_0; }
+		public RuleCall getForForStatementParserRuleCall_0_11_0() { return cForForStatementParserRuleCall_0_11_0; }
 		
 		//// this means "fire this" or "return this"
 		//value=ValueWithMetadata
-		public Assignment getValueAssignment_0_10() { return cValueAssignment_0_10; }
+		public Assignment getValueAssignment_0_12() { return cValueAssignment_0_12; }
 		
 		//ValueWithMetadata
-		public RuleCall getValueValueWithMetadataParserRuleCall_0_10_0() { return cValueValueWithMetadataParserRuleCall_0_10_0; }
+		public RuleCall getValueValueWithMetadataParserRuleCall_0_12_0() { return cValueValueWithMetadataParserRuleCall_0_12_0; }
 		
 		//// all statement may be tagged for reference
 		//(tag=TAG)?
@@ -1502,6 +1524,47 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//Assertion
 		public RuleCall getAssertionsAssertionParserRuleCall_3_1_0() { return cAssertionsAssertionParserRuleCall_3_1_0; }
 	}
+	public class FailStatementElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.FailStatement");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Action cFailStatementAction_0 = (Action)cGroup.eContents().get(0);
+		private final Alternatives cAlternatives_1 = (Alternatives)cGroup.eContents().get(1);
+		private final Keyword cFailKeyword_1_0 = (Keyword)cAlternatives_1.eContents().get(0);
+		private final Keyword cSucaKeyword_1_1 = (Keyword)cAlternatives_1.eContents().get(1);
+		private final Assignment cReasonAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final RuleCall cReasonSTRINGTerminalRuleCall_2_0 = (RuleCall)cReasonAssignment_2.eContents().get(0);
+		
+		///*
+		// * 'suca' is a direct response to 'pass' in python. It will make a test fail and exit, or just
+		// * log failure and exit in non-test actions. Failure in init or main means the actor is dead.
+		// */
+		//FailStatement: {FailStatement}
+		//    ('fail'|'suca') (=> reason=STRING)?
+		//;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//{FailStatement}
+		//   ('fail'|'suca') (=> reason=STRING)?
+		public Group getGroup() { return cGroup; }
+		
+		//{FailStatement}
+		public Action getFailStatementAction_0() { return cFailStatementAction_0; }
+		
+		//('fail'|'suca')
+		public Alternatives getAlternatives_1() { return cAlternatives_1; }
+		
+		//'fail'
+		public Keyword getFailKeyword_1_0() { return cFailKeyword_1_0; }
+		
+		//'suca'
+		public Keyword getSucaKeyword_1_1() { return cSucaKeyword_1_1; }
+		
+		//(=> reason=STRING)?
+		public Assignment getReasonAssignment_2() { return cReasonAssignment_2; }
+		
+		//STRING
+		public RuleCall getReasonSTRINGTerminalRuleCall_2_0() { return cReasonSTRINGTerminalRuleCall_2_0; }
+	}
 	public class AssertionElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.Assertion");
 		private final Group cGroup = (Group)rule.eContents().get(1);
@@ -1616,10 +1679,16 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		private final RuleCall cWhileWhileStatementParserRuleCall_1_5_0 = (RuleCall)cWhileAssignment_1_5.eContents().get(0);
 		private final Assignment cDoAssignment_1_6 = (Assignment)cAlternatives_1.eContents().get(6);
 		private final RuleCall cDoDoStatementParserRuleCall_1_6_0 = (RuleCall)cDoAssignment_1_6.eContents().get(0);
-		private final Assignment cForAssignment_1_7 = (Assignment)cAlternatives_1.eContents().get(7);
-		private final RuleCall cForForStatementParserRuleCall_1_7_0 = (RuleCall)cForAssignment_1_7.eContents().get(0);
-		private final Assignment cValueAssignment_1_8 = (Assignment)cAlternatives_1.eContents().get(8);
-		private final RuleCall cValueValueWithMetadataParserRuleCall_1_8_0 = (RuleCall)cValueAssignment_1_8.eContents().get(0);
+		private final Assignment cAssertAssignment_1_7 = (Assignment)cAlternatives_1.eContents().get(7);
+		private final RuleCall cAssertAssertStatementParserRuleCall_1_7_0 = (RuleCall)cAssertAssignment_1_7.eContents().get(0);
+		private final Assignment cFailAssignment_1_8 = (Assignment)cAlternatives_1.eContents().get(8);
+		private final RuleCall cFailFailStatementParserRuleCall_1_8_0 = (RuleCall)cFailAssignment_1_8.eContents().get(0);
+		private final Assignment cBreakAssignment_1_9 = (Assignment)cAlternatives_1.eContents().get(9);
+		private final Keyword cBreakBreakKeyword_1_9_0 = (Keyword)cBreakAssignment_1_9.eContents().get(0);
+		private final Assignment cForAssignment_1_10 = (Assignment)cAlternatives_1.eContents().get(10);
+		private final RuleCall cForForStatementParserRuleCall_1_10_0 = (RuleCall)cForAssignment_1_10.eContents().get(0);
+		private final Assignment cValueAssignment_1_11 = (Assignment)cAlternatives_1.eContents().get(11);
+		private final RuleCall cValueValueWithMetadataParserRuleCall_1_11_0 = (RuleCall)cValueAssignment_1_11.eContents().get(0);
 		private final Assignment cTagAssignment_2 = (Assignment)cGroup.eContents().get(2);
 		private final RuleCall cTagTAGTerminalRuleCall_2_0 = (RuleCall)cTagAssignment_2.eContents().get(0);
 		
@@ -1632,6 +1701,9 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//        if=IfStatement |
 		//        while=WhileStatement |
 		//        do=DoStatement |
+		//        assert=AssertStatement |
+		//        fail=FailStatement |
+		//        break?='break' |
 		//        for=ForStatement |
 		//        // this means "fire this"
 		//        value=ValueWithMetadata
@@ -1649,6 +1721,9 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//    if=IfStatement |
 		//    while=WhileStatement |
 		//    do=DoStatement |
+		//    assert=AssertStatement |
+		//    fail=FailStatement |
+		//    break?='break' |
 		//    for=ForStatement |
 		//    // this means "fire this"
 		//    value=ValueWithMetadata
@@ -1668,6 +1743,9 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//       if=IfStatement |
 		//       while=WhileStatement |
 		//       do=DoStatement |
+		//       assert=AssertStatement |
+		//       fail=FailStatement |
+		//       break?='break' |
 		//       for=ForStatement |
 		//       // this means "fire this"
 		//       value=ValueWithMetadata
@@ -1716,18 +1794,36 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//DoStatement
 		public RuleCall getDoDoStatementParserRuleCall_1_6_0() { return cDoDoStatementParserRuleCall_1_6_0; }
 		
+		//assert=AssertStatement
+		public Assignment getAssertAssignment_1_7() { return cAssertAssignment_1_7; }
+		
+		//AssertStatement
+		public RuleCall getAssertAssertStatementParserRuleCall_1_7_0() { return cAssertAssertStatementParserRuleCall_1_7_0; }
+		
+		//fail=FailStatement
+		public Assignment getFailAssignment_1_8() { return cFailAssignment_1_8; }
+		
+		//FailStatement
+		public RuleCall getFailFailStatementParserRuleCall_1_8_0() { return cFailFailStatementParserRuleCall_1_8_0; }
+		
+		//break?='break'
+		public Assignment getBreakAssignment_1_9() { return cBreakAssignment_1_9; }
+		
+		//'break'
+		public Keyword getBreakBreakKeyword_1_9_0() { return cBreakBreakKeyword_1_9_0; }
+		
 		//for=ForStatement
-		public Assignment getForAssignment_1_7() { return cForAssignment_1_7; }
+		public Assignment getForAssignment_1_10() { return cForAssignment_1_10; }
 		
 		//ForStatement
-		public RuleCall getForForStatementParserRuleCall_1_7_0() { return cForForStatementParserRuleCall_1_7_0; }
+		public RuleCall getForForStatementParserRuleCall_1_10_0() { return cForForStatementParserRuleCall_1_10_0; }
 		
 		//// this means "fire this"
 		//value=ValueWithMetadata
-		public Assignment getValueAssignment_1_8() { return cValueAssignment_1_8; }
+		public Assignment getValueAssignment_1_11() { return cValueAssignment_1_11; }
 		
 		//ValueWithMetadata
-		public RuleCall getValueValueWithMetadataParserRuleCall_1_8_0() { return cValueValueWithMetadataParserRuleCall_1_8_0; }
+		public RuleCall getValueValueWithMetadataParserRuleCall_1_11_0() { return cValueValueWithMetadataParserRuleCall_1_11_0; }
 		
 		//// all statement may be tagged for reference
 		//(tag=TAG)?
@@ -7368,6 +7464,7 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	private final ParenthesizedMethodCallElements pParenthesizedMethodCall;
 	private final MethodCallWithActionsElements pMethodCallWithActions;
 	private final AssertStatementElements pAssertStatement;
+	private final FailStatementElements pFailStatement;
 	private final AssertionElements pAssertion;
 	private final NextStatementElements pNextStatement;
 	private final AssignmentElements pAssignment;
@@ -7468,6 +7565,7 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		this.pParenthesizedMethodCall = new ParenthesizedMethodCallElements();
 		this.pMethodCallWithActions = new MethodCallWithActionsElements();
 		this.pAssertStatement = new AssertStatementElements();
+		this.pFailStatement = new FailStatementElements();
 		this.pAssertion = new AssertionElements();
 		this.pNextStatement = new NextStatementElements();
 		this.pAssignment = new AssignmentElements();
@@ -7753,7 +7851,9 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	//     if=IfStatement |
 	//     while=WhileStatement |
 	//     assert=AssertStatement |
+	//     fail=FailStatement |
 	//     do=DoStatement |
+	//     break?='break' |
 	//     for=ForStatement |
 	//     // this means "fire this" or "return this"
 	//     value=ValueWithMetadata)
@@ -7812,6 +7912,21 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		return getAssertStatementAccess().getRule();
 	}
 	
+	///*
+	// * 'suca' is a direct response to 'pass' in python. It will make a test fail and exit, or just
+	// * log failure and exit in non-test actions. Failure in init or main means the actor is dead.
+	// */
+	//FailStatement: {FailStatement}
+	//    ('fail'|'suca') (=> reason=STRING)?
+	//;
+	public FailStatementElements getFailStatementAccess() {
+		return pFailStatement;
+	}
+	
+	public ParserRule getFailStatementRule() {
+		return getFailStatementAccess().getRule();
+	}
+	
 	//Assertion:
 	//        (expression=EXPR |
 	//        (methodCalls+=MethodCall '.')* methodCalls+=MethodCallWithActions)
@@ -7835,6 +7950,9 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	//        if=IfStatement |
 	//        while=WhileStatement |
 	//        do=DoStatement |
+	//        assert=AssertStatement |
+	//        fail=FailStatement |
+	//        break?='break' |
 	//        for=ForStatement |
 	//        // this means "fire this"
 	//        value=ValueWithMetadata

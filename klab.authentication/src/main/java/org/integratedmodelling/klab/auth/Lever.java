@@ -59,6 +59,11 @@ public class Lever implements ILeverIdentity{
 	public boolean isOnline() {
 		return online;
 	}
+	
+    @Override
+    public IIdentity.Type getIdentityType() {
+        return IIdentity.Type.IM_PARTNER;
+    }
 
 	@Override
 	public IClient getClient() {

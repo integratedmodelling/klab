@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -25,7 +24,7 @@ import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractC
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.Scale;
-
+import org.integratedmodelling.klab.utils.Parameters;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
@@ -44,9 +43,9 @@ public class StreamInstantiator extends AbstractContextualizer implements IInsta
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
+	public Object eval(IContextualizationScope context, Object...parameters) throws KlabException {
 		StreamInstantiator ret = new StreamInstantiator();
-		ret.threshold = parameters.get("tca.threshold", Double.NaN);
+		ret.threshold = Parameters.create(parameters).get("tca.threshold", Double.NaN);
 		return ret;
 	}
 

@@ -18,7 +18,7 @@ public class Time extends GroovyObjectSupport implements IValueProxy {
 
 	@Override
 	public Object getValue() {
-		return new org.integratedmodelling.klab.components.time.services.Time().eval(parameters, null);
+		return new org.integratedmodelling.klab.components.time.services.Time().eval(null, parameters);
 	}
 	
     

@@ -299,7 +299,7 @@ public class TableEncoder implements IResourceEncoder {
 			}
 
 			Map<Filter, Object> valueCache = new HashMap<>();
-			Aggregator aggregator = new Aggregator(scope.getTargetSemantics(), scope.getMonitor(), true);
+			Aggregator aggregator = new Aggregator(scope.getTargetSemantics(), scope.getScale());
 
 			for (Filter filter : table.getFilters()) {
 				if (filter.getType() == Type.NO_RESULTS) {
@@ -386,7 +386,7 @@ public class TableEncoder implements IResourceEncoder {
 							 * this takes all matching values, aggregating if needed using the aggregator
 							 * that fits the semantics.
 							 */
-							value = t.get(Object.class, scope, aggregator);
+							value = t.get(Object.class, scope, aggregator, locator);
 							System.out.println("       aggregated value = " + value);
 							valueCache.put(filter, value);
 						}

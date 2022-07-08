@@ -141,7 +141,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
             @Override
             public IArtifact call() throws Exception {
 
-                IDirectObservation context = scope.getResolutionScope().getContext();
+                IDirectObservation context = scope./* getResolutionScope(). */getContextSubject();
                 IRuntimeScope runtimeScope = null;
                 Actuator initializer = (Actuator) dataflow.getActuators().get(0);
                 boolean switchContext = context != null && initializer.getObservable().getType().is(Type.COUNTABLE)
@@ -383,9 +383,10 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
         }
 
         final IState target = trg;
-        // this preserves the model in the context
+        // this preserves the model in the context and sets the usable quality artifacts as
+        // variables with their local names
         RuntimeScope ctx = new RuntimeScope((RuntimeScope) context, context.getVariables());
-        Collection<Pair<String, IDataArtifact>> variables = context.getArtifacts(IDataArtifact.class);
+//        Collection<Pair<String, IDataArtifact>> variables = context.getArtifacts(IDataArtifact.class);
 
         ISession session = ctx.getSession();
         Inspector inspector = (Inspector) session.getState().getInspector();
@@ -404,15 +405,23 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
         }
 
         if (reentrant && !Debug.INSTANCE.isDebugging() && triggers == null) {
+
+            /*
+             * TODO split the context and iterate it instead of the scale. Each individual iterator
+             * can have its preset context with all the values with no need to pre-extract them.
+             * Just substitute the scale before producing the next.
+             * 
+             * OR simply pass scale and variables + the unlocalized context? Localize is setting a lot of stuff that
+             * we no longer need.
+             */
             StreamSupport.stream(((Scale) scale).spliterator(context.getMonitor()), true).forEach((state) -> {
                 if (!context.getMonitor().isInterrupted()) {
-                    Object value = resolver.resolve(target.getObservable(),
-                            variables.isEmpty() ? ctx : localizeContext(ctx, state, self, variables));
+                    Object value = resolver.resolve(target.getObservable(), ctx, state);
                     target.set(state, value);
                 }
             });
         } else {
-            
+
             // sdisplay.add(((Space)((IScale)scale).getSpace()).getGrid(),
             // NameGenerator.shortUUID());
             // sdisplay.show();
@@ -421,24 +430,23 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
                 if (context.getMonitor().isInterrupted()) {
                     break;
                 }
-                Object value = resolver.resolve(target.getObservable(),
-                        variables.isEmpty() ? ctx : localizeContext(ctx, (IScale) state, self, variables));
+                Object value = resolver.resolve(target.getObservable(), ctx, state);
                 // triggers
                 if (triggers != null && target instanceof State) {
-                    long timeId = ((Time)ctx.getScale().getTime()).getNumericLocator();
+                    long timeId = ((Time) ctx.getScale().getTime()).getNumericLocator();
                     List<Statistics> stats = new ArrayList<>();
                     for (TriggerImpl trigger : triggers) {
                         if (trigger.getResult() == null) {
                             trigger.setResult(new LinkedHashMap<Long, Statistics>());
                         }
-                        Statistics stat = ((Map<Long,Statistics>)trigger.getResult()).get(timeId);
+                        Statistics stat = ((Map<Long, Statistics>) trigger.getResult()).get(timeId);
                         if (stat == null) {
                             stat = new Statistics();
-                            ((Map<Long,Statistics>)trigger.getResult()).put(timeId, stat);
+                            ((Map<Long, Statistics>) trigger.getResult()).put(timeId, stat);
                         }
                         stats.add(stat);
                     }
-                    ((State)target).setStatistics(stats);
+                    ((State) target).setStatistics(stats);
                 }
                 target.set(state, value);
             }
@@ -451,35 +459,37 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
         return data;
     }
 
-    private IContextualizationScope localizeContext(RuntimeScope context, IScale state, IArtifact self,
-            Collection<Pair<String, IDataArtifact>> variables) {
-
-        /*
-         * this may not be the same layer we're producing but reflects the current value for the
-         * computation.
-         */
-        IArtifact targetArtifact = self == null ? context.getTargetArtifact() : self;
-        if (targetArtifact instanceof IDataArtifact) {
-            // this ensures that Groovy expressions are computable
-            Object value = ((IDataArtifact) targetArtifact).get(state);
-            if (value == null && targetArtifact.getType() == IArtifact.Type.NUMBER) {
-                value = Double.NaN;
-            }
-            context.set("self", value);
-        }
-
-        for (Pair<String, IDataArtifact> variable : variables) {
-            // this ensures that Groovy expressions are computable
-            Object value = variable.getSecond().get(state);
-            if (value == null && variable.getSecond().getType() == IArtifact.Type.NUMBER) {
-                value = Double.NaN;
-            }
-            context.set(variable.getFirst(), value);
-        }
-
-        context.setScale(state);
-        return context;
-    }
+//    private IContextualizationScope localizeContext(RuntimeScope context, IScale state,
+//            IArtifact self/*
+//                           * , Collection<Pair<String, IDataArtifact>> variables
+//                           */) {
+//
+//        /*
+//         * this may not be the same layer we're producing but reflects the current value for the
+//         * computation.
+//         */
+////        IArtifact targetArtifact = self == null ? context.getTargetArtifact() : self;
+////        if (targetArtifact instanceof IDataArtifact) {
+////            // this ensures that Groovy expressions are computable
+////            Object value = ((IDataArtifact) targetArtifact).get(state);
+////            if (value == null && targetArtifact.getType() == IArtifact.Type.NUMBER) {
+////                value = Double.NaN;
+////            }
+////            context.set("self", targetArtifact);
+////        }
+////
+////        for (Pair<String, IDataArtifact> variable : variables) {
+////            // this ensures that Groovy expressions are computable
+////            Object value = variable.getSecond().get(state);
+////            if (value == null && variable.getSecond().getType() == IArtifact.Type.NUMBER) {
+////                value = Double.NaN;
+////            }
+////            context.set(variable.getFirst(), variable.getSecond());
+////        }
+//
+//        context.setScale(state);
+//        return context;
+//    }
 
     @Override
     public IObservation createEmptyObservation(IObservable observable, IContextualizationScope context) {

@@ -1,0 +1,349 @@
+= Tutorial: How to implement a Resolver
+v1.0, 2022-05
+:doctype: article
+:description: Hydrologic k.LAB tutorial
+:kl: k.LAB
+:kdl: k.DL
+:gt: geotools
+:kmod: k.Modeler
+:kact: k.Actors
+:keng: k.LAB Engine
+:knod: k.LAB Node
+:kim: k.IM
+:ked: k.LAB Resource Editor
+:kex: k.LAB Explorer
+:pex: Project Explorer
+:kim_manual: k.IM manual
+:encoding: utf-8
+:lang: en
+:title-page:
+:toc: left
+:toclevels: 5
+:sectnums:
+:sectnumlevels: 5
+:numbered:
+:experimental:
+:reproducible:
+:icons: font
+:listing-caption: Listing
+:sectnums:
+:autofit-option: true
+:mdash: &#8212;
+:language: asciidoc
+:source-highlighter: highlightjs
+:highlightjs-languages: kim, java, json
+:highlightjs-theme: klab
+ifdef::backend-pdf[]
+endif::[]
+:stem:
+
+<<<
+
+
+// TODO: some introduction
+
+
+== The different Types of Resolvers
+
+Three different types of resolver can be used, depending on the type of 
+observation we need to resolve. The **Instantiator**, which can instantiate subjects, the **state resolver** and the **process resolver**.
+
+=== Instantiator
+
+WARNING: to be done
+
+=== State Resolver
+
+To implement a state resolver, the simplest way is to create a class that implements
+__ IResolver<IState>__ and extends the __AbstractContextualizer__. It is also necessary
+to implement the execution interface __IExpression__ in order to allow the proper evaluation 
+mechanism.
+
+
+[source,java,linenums]
+----
+public class ExampleQualityResolver 
+        extends AbstractContextualizer 
+        implements IResolver<IState>, IExpression {
+
+
+}
+----
+
+The main methods that need to be implemented are:
+
+* __public IState resolve(IState target, IContextualizationScope context) throws KlabException__ 
+* __public Type getType()__
+* __public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException__
+
+Let's assume for the sake of this example that the class lives in the following namespace:
+
+[source,java]
+----
+package org.integratedmodelling.geoprocessing.examples;
+----
+
+Other two assumtions will be made in the following implementation:
+
+1. to keep things simple from the modelling point of view, we will write a simple module that applies a thresholding to the incoming observation
+2. we will assume that the incoming observation is a regular grid raster observation. For this reason the input state from {kl} will be converted into its {gt} gridcoverage counterpart for processing. After the processing part, the gridcoverage is mapped into the {kl} state again and sent on its way through the dataflow. It should be noted that this a limitation, since {kl}'s state object could be of any geomatry and shape. 
+
+
+==== resolve
+
+The resolve method is called once per temporal transition for the scale and geometry 
+of the observation being resolved.
+
+The parameters are:
+
+* the target state (the observation being resolved) that will hold the output
+* the contextualization scope of the computation
+
+The method returns the final observation. This is usually the same as the 
+input target state.
+
+
+Inside the resolve method the actual computation occurrs. In the following example
+we will imagine a scenario in which one input observation is adapted to a {gt}
+regular grid and processed pixel by pixel (a simple threshold operation is applied).
+Therefore conversion between {kl} states and {gt} gridcoverages is described in the example.
+
+The first step is the gathering of the input artifacts. This can be done using the contextualizer's
+__getArtifact__ method:
+
+[source,java]
+----
+IState inputDep = context.getArtifact("obs_to_threshold", IState.class);
+----
+
+**obs_to_threshold** refers to the definition of the input observation described in the partner {kdl} file of the resolver (see next chapter).
+
+Once the state is retireved, it can be converted to gridcoverage using {kl}'s utilities:
+
+[source,java]
+----
+GridCoverage2D inputCoverage = GeotoolsUtils.INSTANCE.stateToCoverage(inputDep, context.getScale(), DataBuffer.TYPE_FLOAT,
+        floatNovalue, false);
+----
+
+An iterator is created from the coverage in order to be able to loop over
+all the grid cells of the state:
+
+[source,java]
+----
+RandomIter inputIter = CoverageUtilities.getRandomIterator(inputCoverage);
+----
+
+To properly handle novalues, it is also necessary to extract the information about it
+from the coverage.
+
+[source,java]
+----
+double nv = HMConstants.getNovalue(inputCoverage);
+----
+
+Before processing is started, it is necessary to create an output coverage and iterator that 
+allows us to insert the processed output. This obviously needs to be done using the same 
+spatial properties of the input raster:
+
+[source,java]
+----
+RegionMap regionMap = CoverageUtilities.getRegionParamsFromGridCoverage(inputCoverage);
+int rows = regionMap.getRows();
+int cols = regionMap.getCols();
+
+WritableRaster outWR = CoverageUtilities.createWritableRaster(cols, rows, null, null, nv);
+WritableRandomIter outIter = CoverageUtilities.getWritableRandomIterator(outWR);
+----
+
+It is then very simple to process the input raster to save the result first in the output iterator:
+
+[source,java]
+----
+try {
+    for(int r = 0; r < rows; r++) {
+        for(int c = 0; c < cols; c++) {
+            double value = inputIter.getSampleDouble(c, r, 0);
+            if (!HMConstants.isNovalue(value, nv)) {
+                if (value > threshold) {
+                    value = threshold;
+                }
+            }
+            outIter.setSample(c, r, 0, value);
+        }
+    }
+} finally {
+    outIter.done();
+    inputIter.done();
+}
+----
+
+and finally in the target state:
+
+[source,java]
+----
+if (!context.getMonitor().isInterrupted()) {
+    GridCoverage2D outCoverage = CoverageUtilities.buildCoverageWithNovalue("raster", outWR, regionMap,
+            inputCoverage.getCoordinateReferenceSystem(), nv);
+    GeotoolsUtils.INSTANCE.coverageToState(outCoverage, target, context.getScale(), null, null);
+}
+----
+
+WARNING: It is mandatory to close all the iterators that have been instantiated using the __done()__ method. 
+Forgetting to do so results into huge memory leaks. Using the __try{} finally{}__ construct is usually the 
+best practice for that.
+
+==== eval
+
+The eval method should contain the code for the execution of the resolver. This is done by instantiating 
+the resolver and set the right incoming parameters:
+
+[source,java,linenums]
+----
+ExampleQualityResolver ret = new ExampleQualityResolver();
+ret.threshold = parameters.get("upper_threshold", Double.class);
+return ret;
+----
+
+
+==== getType
+
+The getType method returns the type expected for the  resolved observation. In this case we can use:
+
+[source,java]
+----
+@Override
+public Type getType() {
+    return Type.NUMBER;
+}
+----
+
+
+=== The State Resolver {kdl} file
+
+The {kdl} is created in the resources service folder of the plugin in which the resolver is contained,
+following the same namespace as the resolver. In our example that means:
+
+----
+src/main/resources
+        |
+        `-- components
+                |
+                `-- org.integratedmodelling.geoprocessing
+                        |
+                        `-- services
+                                |
+                                `-- examples.kdl
+----
+
+The {kdl} file starts with some information about versions and the namespace definition:
+
+----
+@klab 0.10.0
+@version 0.10.0
+@namespace im.examples
+----
+
+After that the resolver description is handled. It starts with the definition 
+ot the name of the function and the type of the return value:
+
+----
+export number threshold
+	"Threshold a raster using an upper threshold parameter."
+	 label 'Thresholder'
+{
+----
+
+Then the input is described. It is very important to propely choose the 
+name, since that name connects the semantics from {kim} to the resolver (it is used
+as parameter to the getArtifact method explained in the previous chapter). The same applies
+to the input parameter of the upper threshold:
+
+----
+	import number obs_to_threshold
+		"The raster to threshold"
+
+	optional double upper_threshold
+		"The upper threshold to apply"
+		default 100000
+----
+
+The final part sees the definition of the geometry type, which in this case 
+represents a regular bidimensional grid:
+
+----
+	geometry S2
+----
+
+The last line closes the circle by connecting to the actual resolver java class used 
+for the resolution process:
+
+----
+	class org.integratedmodelling.geoprocessing.examples.ExampleQualityResolver
+}
+----
+
+
+TIP: In {kim} this can then be referenced through the ```using im.examples.threshold``` syntax.
+
+
+=== Process resolver
+
+The process resolver is similar to the State resolver and is defined on class creation implementing 
+the __IResolver<IProcess>__ instead of the __IResolver<IState>__. This leads the __resolve__ method
+to have a Process object as target instead of the State. Also the method returns a process.
+
+[source,java]
+----
+public IProcess resolve(IProcess process, IContextualizationScope context) throws KlabException
+----
+
+Processes can produce more than one observation. The observation of the previous timestep 
+can be accessed through the output state via __getOutput__:
+
+[source,java]
+----
+IState outputState = getOutput("output_obs", IState.class);
+----
+
+In the case of processes it is the same output state that is used to set the 
+result of the prodcessing. Setting the output state works the same way as seen in the 
+state resolver.
+
+
+TIP: an example of process resolver with multiple outputs produced is the ```org.integratedmodelling.geoprocessing.hydrology.InfiltratedWaterVolumeResolver```.
+
+
+=== The Process Resolver {kdl} file
+
+The process resolver {kdl} file is different from the state resolver {kdl} in that 
+it needs to consider the output observations that are created and exported to
+the state.
+
+The resolver exports the process as main observation:
+
+----
+export process myprocess
+----
+
+For the additional observations produced it is necessary to add the proper export definitions (example taken from the infiltration process resolver):
+
+----
+export number net_infiltrated_water_volume
+    "The available infiltrated water volume produced in each cell of the basin."
+    unit mm
+    
+export number infiltrated_water_volume
+    "The infiltrated water volume produced in each cell of the basin."
+    unit mm
+----
+
+Also, the geometry now also considers time and is defined as:
+
+----
+geometry T1S2
+----
+
+
+
+

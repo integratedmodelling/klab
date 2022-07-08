@@ -89,6 +89,10 @@ public interface IMessage {
         /**
          * 
          */
+        UnitTests,
+        /**
+         * 
+         */
         Notification,
         /**
          * Search-class messages are sent by the front end to initiate or continue incremental
@@ -335,6 +339,11 @@ public interface IMessage {
          */
         TaskInterrupted, DataflowNodeDetail, DataflowNodeRating,
 
+        /**
+         * Test lifecycle B -> F
+         */
+        TestRunStarted, TestRunFinished, TestCaseStarted, TestCaseFinished, TestStarted, TestFinished,
+        
         /**
          * Scheduler lifecycle F->B
          */

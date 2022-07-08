@@ -1,21 +1,25 @@
 package org.integratedmodelling.klab;
 
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.measure.Dimension;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
-import org.integratedmodelling.klab.api.data.mediation.IUnit.UnitContextualization;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -23,18 +27,24 @@ import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDistribution;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.api.services.IUnitService;
+import org.integratedmodelling.klab.common.mediation.AbstractMediator.ExtentSize;
+import org.integratedmodelling.klab.common.mediation.AbstractMediator.Mediation;
+import org.integratedmodelling.klab.common.mediation.AbstractMediator.Operation;
+import org.integratedmodelling.klab.common.mediation.Currency;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
+import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Range;
 
 import com.google.common.collect.Sets;
 
@@ -46,17 +56,36 @@ public enum Units implements IUnitService {
     INSTANCE;
 
     /**
-     * This gets sent
+     * Used internally to support the {@link IUnit#contextualize(IObservable, IGeometry)} operation.
+     * Iterates all the possible units for an extensive observable in a specified scale, including
+     * the "chosen" unit which is completed with its intensive extension. Must be used appropriately
+     * - the results for non-extensive observables or incomplete scales are not reliable.
      * 
      * @author Ferd
      *
      */
-    public static class AggregationData {
-        public double conversionFactor = 1.0;
-        public boolean stable = true;
-        public Aggregation aggregation = Aggregation.MEAN;
-    }
+    public interface UnitContextualization extends Iterable<Unit> {
 
+        /**
+         * All the admissible units corresponding to the contextualization of another to a geometry,
+         * each one reporting the extents that have been aggregated in it and including the
+         * "original" admissible unit with no aggregations. This one will not contain aggregation
+         * data, which are supposed to be all-intensive for the scale of observation.
+         * 
+         * @return
+         */
+        Collection<Unit> getCandidateUnits();
+
+        /**
+         * The correct unit for contextualization to the geometry, taking into account the geometry
+         * and any constraints passed to the method that produced this descriptor. Does not include
+         * the "chosen" unit.
+         * 
+         * @return
+         */
+        Unit getChosenUnit();
+    }
+    
     public IUnit METERS = getUnit("m");
     public IUnit SQUARE_METERS = getUnit("m^2");
     public IUnit SQUARE_KILOMETERS = getUnit("km^2");
@@ -188,6 +217,15 @@ public enum Units implements IUnitService {
         return uu;
     }
 
+    private Pair<javax.measure.Unit<?>, Integer> getPrimaryUnitPower(javax.measure.Unit<?> uu) {
+
+        if (uu instanceof ProductUnit<?>) {
+            ProductUnit<?> pu = (ProductUnit<?>) uu;
+            return new Pair<>(pu.getUnit(0), pu.getUnitPow(0));
+        }
+        return new Pair<>(uu, 1);
+    }
+
     public javax.measure.Unit<?> getPrimaryUnit(IUnit unit) {
         return getPrimaryUnit(((Unit) unit).getUnit());
     }
@@ -254,7 +292,6 @@ public enum Units implements IUnitService {
         return null;
     }
 
-    @Override
     public IUnit getLinealExtentUnit(IUnit unit) {
 
         if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
@@ -438,6 +475,37 @@ public enum Units implements IUnitService {
         return unit;
     }
 
+    public IUnit addExtents(IUnit refUnit, Collection<ExtentDimension> extentDimensions, IUnit extentUnit) {
+
+        Unit unit = (Unit) refUnit;
+
+        for (ExtentDimension dim : extentDimensions) {
+            switch(dim) {
+            case AREAL:
+                unit = new Unit(((Unit) unit).getUnit().divide(((Unit) extentUnit).getUnit()));
+                break;
+            case CONCEPTUAL:
+                break;
+            case LINEAL:
+                unit = new Unit(((Unit) unit).getUnit().divide(((Unit) extentUnit).getUnit()));
+                break;
+            case PUNTAL:
+                break;
+            case TEMPORAL:
+                unit = new Unit(((Unit) unit).getUnit().divide(((Unit) extentUnit).getUnit()));
+                break;
+            case VOLUMETRIC:
+                unit = new Unit(((Unit) unit).getUnit().divide(((Unit) extentUnit).getUnit()));
+                break;
+            default:
+                break;
+
+            }
+        }
+
+        return unit;
+    }
+
     @Override
     public IUnit removeExtents(IUnit refUnit, Collection<ExtentDimension> extentDimensions) {
 
@@ -451,26 +519,30 @@ public enum Units implements IUnitService {
             switch(dim) {
             case AREAL:
                 if (spatial >= 2) {
-                    unit = new Unit(((Unit) unit).getUnit().multiply(((Unit) getArealExtentUnit(unit)).getUnit()));
+                    unit = new Unit(
+                            ((Unit) unit).getUnit().multiply(((Unit) getArealExtentUnit(unit)).getUnit()));
                 }
                 break;
             case CONCEPTUAL:
                 break;
             case LINEAL:
                 if (spatial >= 1) {
-                    unit = new Unit(((Unit) unit).getUnit().multiply(((Unit) getLinealExtentUnit(unit)).getUnit()));
+                    unit = new Unit(
+                            ((Unit) unit).getUnit().multiply(((Unit) getLinealExtentUnit(unit)).getUnit()));
                 }
                 break;
             case PUNTAL:
                 break;
             case TEMPORAL:
                 if (temporal >= 1) {
-                    unit = new Unit(((Unit) unit).getUnit().multiply(((Unit) getTimeExtentUnit(unit)).getUnit()));
+                    unit = new Unit(
+                            ((Unit) unit).getUnit().multiply(((Unit) getTimeExtentUnit(unit)).getUnit()));
                 }
                 break;
             case VOLUMETRIC:
                 if (spatial >= 3) {
-                    unit = new Unit(((Unit) unit).getUnit().multiply(((Unit) getVolumeExtentUnit(unit)).getUnit()));
+                    unit = new Unit(
+                            ((Unit) unit).getUnit().multiply(((Unit) getVolumeExtentUnit(unit)).getUnit()));
                 }
                 break;
             default:
@@ -490,7 +562,7 @@ public enum Units implements IUnitService {
      * @param aggregatable
      */
     @Override
-    public IUnit contextualize(IUnit refUnit, Set<ExtentDimension> aggregatable) {
+    public Unit contextualize(IUnit refUnit, Set<ExtentDimension> aggregatable) {
 
         Unit unit = (Unit) refUnit;
 
@@ -578,7 +650,8 @@ public enum Units implements IUnitService {
     @Override
     public Unit getDefaultUnitFor(IObservable observable) {
 
-        if (observable.is(Type.MONEY) || observable.is(Type.MONETARY_VALUE) || observable.is(Type.NUMEROSITY)) {
+        if (observable.is(Type.MONEY) || observable.is(Type.MONETARY_VALUE)
+                || observable.is(Type.NUMEROSITY)) {
             return Unit.unitless();
         }
 
@@ -602,13 +675,15 @@ public enum Units implements IUnitService {
 
         Unit ret = null;
 
-        boolean assignUnits = observable.is(Type.EXTENSIVE_PROPERTY) || observable.is(Type.INTENSIVE_PROPERTY);
+        boolean assignUnits = observable.is(Type.EXTENSIVE_PROPERTY)
+                || observable.is(Type.INTENSIVE_PROPERTY);
 
         if (assignUnits) {
             /*
              * OK only if not transformed
              */
-            Boolean rescaled = observable.getType().getMetadata().get(IMetadata.IM_IS_RESCALED, Boolean.class);
+            Boolean rescaled = observable.getType().getMetadata().get(IMetadata.IM_IS_RESCALED,
+                    Boolean.class);
             if (rescaled == null) {
                 for (IConcept trait : Traits.INSTANCE.getTraits(observable.getType())) {
                     if (trait.is(Type.RESCALING)) {
@@ -626,7 +701,8 @@ public enum Units implements IUnitService {
         }
 
         if (/* still */ assignUnits) {
-            Object unit = Concepts.INSTANCE.getMetadata(Observables.INSTANCE.getBaseObservable(observable.getType()),
+            Object unit = Concepts.INSTANCE.getMetadata(
+                    Observables.INSTANCE.getBaseObservable(observable.getType()),
                     NS.SI_UNIT_PROPERTY);
             ret = unit == null ? null : getUnit(unit.toString());
 
@@ -652,8 +728,20 @@ public enum Units implements IUnitService {
                 }
             }
         }
-        Object unit = Concepts.INSTANCE.getMetadata(Observables.INSTANCE.getBaseObservable(concept), NS.SI_UNIT_PROPERTY);
+        Object unit = Concepts.INSTANCE.getMetadata(Observables.INSTANCE.getBaseObservable(concept),
+                NS.SI_UNIT_PROPERTY);
         return unit == null ? null : getUnit(unit.toString());
+    }
+
+    public Collection<ExtentDimension> getExtentDimensions(IScale scale) {
+        Set<ExtentDimension> ret = new HashSet<>();
+        if (scale.getSpace() != null) {
+            ret.add(getExtentDimension(scale.getSpace()));
+        }
+        if (scale.getTime() != null) {
+            ret.add(ExtentDimension.TEMPORAL);
+        }
+        return ret;
     }
 
     public ExtentDimension getExtentDimension(ISpace space) {
@@ -667,91 +755,50 @@ public enum Units implements IUnitService {
         case 3:
             return ExtentDimension.VOLUMETRIC;
         }
-        throw new IllegalArgumentException("cannot attribute dimensional extent to spatial representation " + space);
+        throw new IllegalArgumentException(
+                "cannot attribute dimensional extent to spatial representation " + space);
     }
 
     /**
-     * Analyze an observable in a scale and return the needed transformation to aggregate the
-     * values. If the transformation isn't stable, this will need to be repeated for each locator,
-     * otherwise the result can be reused within the same contextualization.
+     * Analyze an observable in a scale and return a contextualized unit and the needed
+     * transformation to aggregate the values. If the transformation isn't stable, this will need to
+     * be repeated for each locator, otherwise the result can be reused within the same
+     * contextualization.
      * 
      * @return
      */
-    public AggregationData getAggregationData(IObservable observable, IScale locator) {
+    @Override
+    public Pair<IValueMediator, Aggregation> getAggregationStrategy(IObservable observable, IScale locator) {
 
-        AggregationData ret = new AggregationData();
+        IUnit unit = null;
+        Aggregation aggregation = null;
 
         switch(observable.getDescriptionType()) {
+
         case CATEGORIZATION:
         case VERIFICATION:
-            ret.aggregation = Aggregation.MAJORITY;
+            aggregation = Aggregation.MAJORITY;
         case QUANTIFICATION:
 
-            boolean aggregates = observable.getType().is(Type.EXTENSIVE_PROPERTY) || observable.getType().is(Type.MONEY)
-                    || observable.getType().is(Type.MONETARY_VALUE);
-            if (!aggregates || Observables.INSTANCE.getDirectInherentType(observable.getType()) != null) {
-                // do what the semantics tell us
-                ret.aggregation = aggregates ? Aggregation.SUM : Aggregation.MEAN;
-            } else if (aggregates && observable.getUnit() != null) {
-                /*
-                 * analyze the unit vs. the current locator
-                 */
-                Unit unit = (Unit) observable.getUnit();
-                ISpace space = locator == null ? null : locator.getSpace();
-                ITime time = locator == null ? null : locator.getTime();
-                int sdim = getSpatialDimensionality(unit);
-                int tdim = getTemporalDimensionality(unit);
-                if (space != null && sdim > 0) {
-                    if (space.getDimensionality() == sdim) {
-                        ret.stable = space instanceof IGrid.Cell;
-                        IUnit spaceUnit = null;
-                        IUnit standardUnit = null;
-                        double standardSize = 0;
-                        switch(sdim) {
-                        case 1:
-                            spaceUnit = getLengthExtentUnit(unit);
-                            standardUnit = Units.INSTANCE.METERS;
-                            standardSize = space.getStandardizedLength();
-                            break;
-                        case 2:
-                            spaceUnit = getArealExtentUnit(unit);
-                            standardUnit = Units.INSTANCE.SQUARE_METERS;
-                            standardSize = space.getStandardizedArea();
-                            break;
-                        case 3:
-                            spaceUnit = getVolumeExtentUnit(unit);
-                            standardUnit = Units.INSTANCE.CUBIC_METERS;
-                            standardSize = space.getStandardizedVolume();
-                            break;
-                        }
+            // } else if (aggregates && observable.getUnit() != null) {
 
-                        if (spaceUnit != null) {
-                            /*
-                             * find out how many of the standard unit the value's space is
-                             */
-                            double cfactor = spaceUnit.convert(standardSize, standardUnit).doubleValue();
-                            ret.conversionFactor *= cfactor;
-                            ret.aggregation = Aggregation.SUM;
-                        }
-                    }
-                } else if (space != null) {
-                    // we have no spatial dimension, so we sum or average depending only on
-                    // semantics
-                    ret.aggregation = aggregates ? Aggregation.SUM : Aggregation.MEAN;
+            aggregation = Aggregation.MEAN;
+            if (needsUnits(observable)) {
+                unit = observable.getUnit();
+                if (unit == null) {
+                    unit = getDefaultUnitFor(observable);
                 }
-                if (time != null && tdim > 0) {
-                    if (time.getDimensionality() == tdim) {
-                        // System.out.println("IMPLEMENTAMI, DIO ZOPPO");
-                    }
+                if (needsUnitScaling(observable)) {
+                    unit = removeExtents(unit, getExtentDimensions(locator)).contextualize(observable,
+                            locator);
+                    aggregation = Aggregation.SUM;
                 }
-            } else {
-                ret.aggregation = Aggregation.MEAN;
             }
         default:
             break;
         }
 
-        return ret;
+        return new Pair<>(unit, aggregation);
     }
 
     @Override
@@ -772,10 +819,12 @@ public enum Units implements IUnitService {
         }
 
         boolean checkMetadata = false;
-        if (observable.is(Type.MONEY) || observable.is(Type.MONETARY_VALUE) || observable.is(Type.EXTENSIVE_PROPERTY)
+        if (observable.is(Type.MONEY) || observable.is(Type.MONETARY_VALUE)
+                || observable.is(Type.EXTENSIVE_PROPERTY)
                 || observable.is(Type.INTENSIVE_PROPERTY) || observable.is(Type.NUMEROSITY)) {
             boolean assignUnits = true;
-            Boolean rescaled = observable.getType().getMetadata().get(IMetadata.IM_IS_RESCALED, Boolean.class);
+            Boolean rescaled = observable.getType().getMetadata().get(IMetadata.IM_IS_RESCALED,
+                    Boolean.class);
             if (rescaled == null) {
                 // move on with further checks later
                 checkMetadata = true;
@@ -808,7 +857,8 @@ public enum Units implements IUnitService {
              * qualities with operators.
              */
             if (checkMetadata && !observable.is(Type.NUMEROSITY) && !observable.is(Type.INTENSIVE_PROPERTY)) {
-                Boolean rescalesInherent = observable.getType().getMetadata().get(IMetadata.IM_RESCALES_INHERENT, Boolean.class);
+                Boolean rescalesInherent = observable.getType().getMetadata()
+                        .get(IMetadata.IM_RESCALES_INHERENT, Boolean.class);
                 if (rescalesInherent == null) {
                     if (Observables.INSTANCE.getDirectInherentType(observable.getType()) != null
                             || Observables.INSTANCE.getDescribedType(observable.getType()) != null) {
@@ -827,8 +877,17 @@ public enum Units implements IUnitService {
 
     @Override
     public boolean needsUnitScaling(IObservable observable) {
-        return needsUnits(observable) && !observable.is(Type.INTENSIVE_PROPERTY)
-                && !observable.getType().getMetadata().get(IMetadata.IM_RESCALES_INHERENT, Boolean.FALSE);
+
+        if (!needsUnits(observable)) {
+            return false;
+        }
+
+        boolean aggregates = observable.getType().is(Type.EXTENSIVE_PROPERTY)
+                || observable.getType().is(Type.NUMEROSITY)
+                || observable.getType().is(Type.MONEY)
+                || observable.getType().is(Type.MONETARY_VALUE);
+
+        return aggregates && (Observables.INSTANCE.getDirectInherentType(observable.getType()) == null);
     }
 
     /**
@@ -881,9 +940,10 @@ public enum Units implements IUnitService {
         }
 
         /**
-         * "Correct" unit given the geometry and the constraints
+         * "Correct" unit given the geometry and the constraints. This must be intensive for all
+         * dimensions if no constraints are passed.
          */
-        IUnit chosen = contextualize(baseUnit, implied);
+        Unit chosen = contextualize(baseUnit, implied);
 
         /**
          * all possible other transformations of the base unit vs. the stated dimensions
@@ -892,7 +952,7 @@ public enum Units implements IUnitService {
 
         // all intensive
         Unit fullyContextualized = (Unit) contextualize(baseUnit, aggregatable);
-        Set<IUnit> potentialUnits = new LinkedHashSet<>();
+        Set<Unit> potentialUnits = new LinkedHashSet<>();
         if (fullyContextualized != null && !chosen.equals(fullyContextualized)) {
             for (ExtentDimension ed : aggregatable) {
                 context.put(ed, ExtentDistribution.INTENSIVE);
@@ -927,52 +987,34 @@ public enum Units implements IUnitService {
             }
         }
 
-        //// IUnit chosen = null;
-        //
-        // if (constraints == null || constraints.isEmpty()) {
-        // chosen = fullyContextualized;
-        // } else {
-        // Set<ExtentDimension> whitelist = new HashSet<>();
-        // Set<ExtentDimension> blacklist = new HashSet<>();
-        // for (ExtentDimension d : constraints.keySet()) {
-        //
-        // if (!aggregatable.contains(d)) {
-        // continue;
-        // }
-        //
-        // /**
-        // * FIXME something is wrong here - the "chosen" remains null
-        // */
-        // if (constraints.get(d) == ExtentDistribution.INTENSIVE) {
-        // whitelist.add(d);
-        // } else {
-        // blacklist.add(d);
-        // }
-        // }
-        //
-        // for (Unit punit : potentialUnits) {
-        // Set<ExtentDimension> udims = punit.getAggregatedDimensions();
-        // if (Sets.intersection(udims, whitelist).size() == whitelist.size()
-        // && Sets.intersection(udims, blacklist).size() == 0) {
-        // chosen = punit;
-        // break;
-        // }
-        // }
-        // }
-        //
-        // final Set<IUnit> candidates = new HashSet<IUnit>(potentialUnits);
-        // final IUnit correctUnit = chosen;
-
         return new UnitContextualization(){
 
             @Override
-            public IUnit getChosenUnit() {
+            public Unit getChosenUnit() {
                 return chosen;
             }
 
             @Override
-            public Collection<IUnit> getCandidateUnits() {
+            public Collection<Unit> getCandidateUnits() {
                 return potentialUnits;
+            }
+
+            @Override
+            public Iterator<Unit> iterator() {
+
+                List<Unit> ret = new ArrayList<>();
+                // add all-intensive if possible and needed
+                if (chosen.getAggregatedDimensions().isEmpty() && !potentialUnits.isEmpty()) {
+                    for (ExtentDimension dim : potentialUnits.iterator().next().getAggregatedDimensions()
+                            .keySet()) {
+                        chosen.getAggregatedDimensions().put(dim, ExtentDistribution.INTENSIVE);
+                    }
+                }
+
+                ret.add(chosen);
+                ret.addAll(potentialUnits);
+
+                return ret.iterator();
             }
         };
     }
@@ -1003,8 +1045,9 @@ public enum Units implements IUnitService {
                  */
                 javax.measure.Unit<?> length = findUnitFor(((Unit) unit).getUnit(), UnitDimension.LENGTH);
                 if (length == null) {
-                    throw new KlabIllegalArgumentException("cannot find length dimension in unit " + unit + " being scanned for "
-                            + dimension + " dimensionality");
+                    throw new KlabIllegalArgumentException(
+                            "cannot find length dimension in unit " + unit + " being scanned for "
+                                    + dimension + " dimensionality");
                 }
                 return new Unit(length.pow(1).pow(dimension.dimensionality));
             }
@@ -1081,6 +1124,217 @@ public enum Units implements IUnitService {
             return Time.resolution(1, Resolution.Type.MILLISECOND);
         }
         return null;
+    }
+
+    /**
+     * Obtain a mediator that will convert quantities from the mediator of the observable (unit or
+     * currency) into what we represent, using the scale portion over which the observation of the
+     * value is made to account for any different distribution through the context.
+     * <p>
+     * The resulting mediator will only accept the {@link #convert(Number, ILocator)} call and throw
+     * an exception in any other situation. If the observable passed has no mediator, the conversion
+     * will be standard and non-contextual (using a simple conversion factor for speed). Otherwise,
+     * the fastest set of transformations will be encoded in the returned mediator.
+     * <p>
+     * The resulting mediator will perform correcly <em>only</em> when used with locators coming
+     * from the same scale that was used to produce it. It will contain transformations in
+     * parametric form, so that the possible irregularity of the extents in the locators is
+     * accounted for.
+     * <p>
+     * The strategy to create the necessary transformations, consisting in parametric
+     * multiplications or divisions by an appropriately transformed extent in space and/or time, is
+     * as follows:
+     * <ol>
+     * <li>if observable is intensive, just check compatibility and return self if compatible, throw
+     * exception if not. Otherwise:
+     * <li>obtain contextualized candidate forms of both the observable's base unit and self. Both
+     * should have one compatible form in the candidates. If not, throw exception. If the compatible
+     * form is the same, proceed as in (1). Otherwise:
+     * <li>devise two strategies to mediate 1) incoming form to base form and 2) base form to this.
+     * Each strategy consists of a list of parametric operations on S/T contexts with a conversion
+     * factor for the basic representation (m^x for space, ms for time).
+     * <li>simplify the two strategies into a single set of operations to add to the contextualized
+     * unit returned, which also carries the definition of the contextual nature re: S/T and a
+     * string explaining the transformations made and why.
+     * </ol>
+     */
+    public IUnit contextualize(IObservable observable, IUnit target, IGeometry scale) {
+
+        if (observable.getUnit() == null) {
+            return target;
+        }
+
+        if (!needsUnitScaling(observable)) {
+            if (!target.isCompatible(observable.getUnit())) {
+                throw new KlabIllegalStateException("Cannot mediate " + observable.getUnit() + " to " + target
+                        + " in an non-extensive observation");
+            }
+        }
+
+        IUnit source = observable.getUnit();
+
+        Unit sourceModel = null;
+        Unit targetModel = null;
+
+        /*
+         * contextualization uses the base unit. Retrieve the contextual extension of both units,
+         * which must be compatible with exactly one of the possible candidates.
+         */
+        for (Unit candidate : getContextualization(observable, scale, null)) {
+            if (candidate.isCompatible(source)) {
+                sourceModel = candidate;
+            }
+            if (candidate.isCompatible(target)) {
+                targetModel = candidate;
+            }
+        }
+
+        if (sourceModel == null || targetModel == null) {
+            // sorry
+            throw new KlabIllegalStateException(
+                    "Cannot mediate unit " + observable.getUnit() + " to " + target
+                            + " in the chosen scale");
+        }
+
+        /*
+         * this will be the output unit, to which we add the scaling operators and the precompiled
+         * converters so that standard conversion is skipped
+         */
+        Unit ret = new Unit(((Unit) target).getUnit());
+
+        if (sourceModel == targetModel) {
+
+            /*
+             * scaling is compatible, so just use straight mediation. We do it this way because it's
+             * faster to store a precomputed converter in repeated calls.
+             */
+            Mediation mediation = new Mediation();
+            mediation.converter = ((Unit) source).getUnit()
+                    .getConverterTo((javax.measure.Unit) ((Unit) target).getUnit());
+            mediation.description = "CONVERT the current value from " + source + " to " + target;
+            ret.setMediation(source, Collections.singletonList(mediation));
+            return ret;
+        }
+
+        List<Mediation> mediations = new ArrayList<>();
+
+        /*
+         * first mediation requires no recontextualization: source has no extension and that's fine
+         */
+        mediations.addAll(mediate((Unit) source, sourceModel));
+
+        /*
+         * mediate from the current unit and extension to the target model
+         */
+        mediations.addAll(mediate(sourceModel, targetModel));
+
+        /*
+         * finally mediate from the target model to the target, no extension needed
+         */
+        mediations.addAll(mediate(targetModel, (Unit) target));
+
+        /*
+         * TODO simplify the strategy if necessary. Unsure how much efficiency this would gain, but
+         * these do get executed potentially millions of times. Should make some test.
+         */
+
+        ret.setMediation(source, mediations);
+
+        return ret;
+    }
+
+    private List<Mediation> mediate(Unit source, Unit destination) {
+
+        List<Mediation> ret = new ArrayList<>();
+
+        if (!source.getAggregatedDimensions().isEmpty() && !destination.getAggregatedDimensions().isEmpty()) {
+
+            Unit baseUnit = source;
+
+            for (ExtentDimension dim : source.getAggregatedDimensions().keySet()) {
+                ExtentDistribution sourceExtension = source.getAggregatedDimensions().get(dim);
+                ExtentDistribution targetExtension = destination.getAggregatedDimensions().get(dim);
+                if (sourceExtension != targetExtension) {
+
+                    Mediation mediation = new Mediation();
+                    if (targetExtension == ExtentDistribution.EXTENSIVE) {
+                        // intensive -> extensive: remove the dimension from target
+                        IUnit dimensionalUnit = getDimensionUnit(source, dim);
+                        mediation.extentSize = getExtentSize(dim);
+                        mediation.factor = getExtentMultiplier(dimensionalUnit, mediation.extentSize);
+                        mediation.operation = Operation.MULTIPLY;
+                        baseUnit = (Unit) removeExtents(baseUnit, Collections.singleton(dim));
+                    } else {
+                        // extensive -> add the same dimension to target
+                        IUnit dimensionalUnit = getDimensionUnit(destination, dim);
+                        mediation.extentSize = getExtentSize(dim);
+                        mediation.factor = getExtentMultiplier(dimensionalUnit, mediation.extentSize);
+                        mediation.operation = Operation.DIVIDE;
+                        baseUnit = (Unit) addExtents(baseUnit, Collections.singleton(dim), dimensionalUnit);
+                    }
+
+                    mediation.description = mediation.operation + " the current value by "
+                            + mediation.extentSize.getDescription()
+                            + (mediation.factor == 1
+                                    ? ""
+                                    : " multiplied by "
+                                            + mediation.factor)
+                            + " to obtain " + destination;
+
+                    ret.add(mediation);
+                }
+            }
+
+        } else if (!source.equals(destination)) {
+            Mediation mediation = new Mediation();
+            mediation.converter = source.getUnit().getConverterTo((javax.measure.Unit) destination.getUnit());
+            mediation.description = "CONVERT the current value from " + source + " to " + destination;
+            ret.add(mediation);
+        }
+
+        return ret;
+    }
+
+    double getExtentMultiplier(IUnit dimensionalUnit, ExtentSize extentSize) {
+        switch(extentSize) {
+        case SPACE_M:
+            return 1.0 / METERS.convert(1, dimensionalUnit).doubleValue();
+        case SPACE_M2:
+            return 1.0 / SQUARE_METERS.convert(1, dimensionalUnit).doubleValue();
+        case SPACE_M3:
+            return 1.0 / CUBIC_METERS.convert(1, dimensionalUnit).doubleValue();
+        case TIME_MS:
+            return 1.0 / MILLISECONDS.convert(1, dimensionalUnit).doubleValue();
+        default:
+            break;
+
+        }
+        return 1;
+    }
+
+    private ExtentSize getExtentSize(ExtentDimension dim) {
+        switch(dim) {
+        case AREAL:
+            return ExtentSize.SPACE_M2;
+        case LINEAL:
+            return ExtentSize.SPACE_M;
+        case TEMPORAL:
+            return ExtentSize.TIME_MS;
+        case VOLUMETRIC:
+            return ExtentSize.SPACE_M3;
+        default:
+            break;
+        }
+        return null;
+    }
+
+    public IValueMediator getMediator(String unit) {
+        if (unit.contains("@")) {
+            return Currency.create(unit);
+        } else if (unit.trim().contains(" ")) {
+            return Range.create(unit);
+        } 
+        return Unit.create(unit);
     }
 
 }

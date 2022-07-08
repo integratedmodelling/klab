@@ -1,11 +1,10 @@
 package org.integratedmodelling.ml.contextualizers;
 
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.api.data.general.IExpression;
-import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.utils.Parameters;
 
 import weka.classifiers.lazy.IBk;
 
@@ -69,8 +68,8 @@ public class KnnResolver extends AbstractWekaResolver<IBk> implements IExpressio
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
-		return new KnnResolver(parameters, context);
+	public Object eval(IContextualizationScope context, Object...parameters) throws KlabException {
+		return new KnnResolver(Parameters.create(parameters), context);
 	}
 
 }

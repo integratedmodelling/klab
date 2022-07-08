@@ -1,6 +1,5 @@
 package org.integratedmodelling.geoprocessing.hydrology;
 
-import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
@@ -12,6 +11,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.utils.Parameters;
 
 public class StreamNetworkResolver extends AbstractContextualizer implements IResolver<IState>, IExpression {
 
@@ -52,9 +52,9 @@ public class StreamNetworkResolver extends AbstractContextualizer implements IRe
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
+	public Object eval(IContextualizationScope context, Object...parameters) throws KlabException {
 		StreamNetworkResolver ret = new StreamNetworkResolver();
-		ret.threshold = parameters.get("tca.threshold", Double.NaN);
+		ret.threshold = Parameters.create(parameters).get("tca.threshold", Double.NaN);
 		return ret;
 	}
 }

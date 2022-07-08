@@ -29,7 +29,7 @@ public class KActorsFire extends KActorsStatement implements FireValue {
     @Override
     protected void visit(IKActorsAction action, Visitor visitor) {
         if (this.value != null) {
-            visitor.visitValue(value, this, action);
+            visitValue(visitor, value, this, action);
         }
         super.visit(action, visitor);
     }

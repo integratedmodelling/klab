@@ -101,6 +101,8 @@ public interface IKActorsBehavior extends IKActorsCodeStatement {
 		boolean isSynchronous();
 
 		IIdentity getIdentity();
+		
+		String localize(String string);
 	}
 
 	/**
@@ -117,6 +119,8 @@ public interface IKActorsBehavior extends IKActorsCodeStatement {
 		void visitStatement(IKActorsAction action, IKActorsStatement statement);
 
 		void visitValue(IKActorsValue value, IKActorsStatement statement, IKActorsAction action);
+
+        void visitMetadata(IKActorsCodeStatement kActorCodeStatement, String key, Object o);
 	}
 
 	/**

@@ -18,11 +18,9 @@ import java.util.Map;
 
 import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.api.data.IGeometry;
-import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDistribution;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.services.IObservableService;
 import org.integratedmodelling.klab.utils.Pair;
 
@@ -53,33 +51,6 @@ import org.integratedmodelling.klab.utils.Pair;
  * @version $Id: $Id
  */
 public interface IUnit extends IValueMediator {
-
-    /**
-     * The result of a {@link IUnit#contextualize(IGeometry, Map)} operation. TODO probably hide
-     * behind the API and normalize the contextualization interface as in IValueMediator.
-     * 
-     * @author Ferd
-     *
-     */
-    public interface UnitContextualization {
-
-        /**
-         * All the admissible units corresponding to the contextualization of another to a geometry,
-         * each one reporting the extents that have been aggregated in it and including the
-         * "original" admissible unit with no aggregations.
-         * 
-         * @return
-         */
-        Collection<IUnit> getCandidateUnits();
-
-        /**
-         * The correct unit for contextualization to the geometry, taking into account the geometry
-         * and any constraints passed to the method that produced this descriptor.
-         * 
-         * @return
-         */
-        IUnit getChosenUnit();
-    }
 
     /**
      * Return a new unit multiplied by the passed one.
@@ -115,23 +86,6 @@ public interface IUnit extends IValueMediator {
      */
     Map<ExtentDimension, ExtentDistribution> getAggregatedDimensions();
 
-//    /**
-//     * Pass an observable with unit to obtain a mediator that will convert a value to this unit
-//     * crossing extentual boundaries over the passed scale, i.e. aggregating to this unit over any
-//     * dimension that is in the original value (and in the scale) and is not in this unit.
-//     * 
-//     * The specialized mediator returned should have additional API to check if it is stable over
-//     * the scale or needs to be redefined at each locator (i.e., the scale is regular or not over
-//     * the aggregated extent(s)).
-//     * 
-//     * TODO hide from API
-//     * 
-//     * @param observable
-//     * @param scale
-//     * @return
-//     */
-//    IValueMediator getContextualizingUnit(IObservable observable, IScale scale, ILocator locator);
-
     /**
      * Assuming the unit is distributed over the passed extent, split the unit from the extent and
      * return them separately. This will also infer spatial unit if called on the factorized form
@@ -142,27 +96,8 @@ public interface IUnit extends IValueMediator {
      */
     Pair<IUnit, IUnit> splitExtent(ExtentDimension dimension);
 
-    /**
-     * Obtain a target unit representing this one, pre-contextualized to the passed scale, so that
-     * it can accept contextually compatible mediators at {@link #convert(Number, IValueMediator)}
-     * and handle them appropriately. The mediator passed to convert called on the result must be
-     * compatible <em>once the context is factored in</em>; this means that, for example, mm will be
-     * compatible with m^3 if the scale is distributed in space, making "mm" nothing more than
-     * mm^3/mm^2 and generating the appropriate conversion factors automatically.
-     * <p>
-     * The scale is cached in the unit and, for extensive values, used to transform the result as
-     * needed, so the result can only be reused across scale swaps on <em>regular</em> extents. On
-     * irregular extents, the original, uncontextualized mediator <em>must</em> be contextualized at
-     * every step.
-     * <p>
-     * Overrides the return type from the original in {@link IValueMediator} for fluency.
-     * 
-     * @param observable
-     * @param scale
-     * @return
-     */
     @Override
-    IUnit contextualize(IObservable observable, IScale scale);
+    IUnit contextualize(IObservable observable, IGeometry scale);
 
     /**
      * True if unitless.

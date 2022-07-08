@@ -25,7 +25,7 @@
  *     The license is also available at: https://www.gnu.org/licenses/agpl.html
  *******************************************************************************/
 
-package org.integratedmodelling.klab.utils.image;
+package org.integratedmodelling.klab.utils;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -231,13 +231,29 @@ public class ImageUtil {
         ColorModel cm = pg.getColorModel();
         return cm == null ? false : cm.hasAlpha();
     }
-    
+
+    public static void show(File image, String title) {
+        try {
+            show(ImageIO.read(image), title);
+        } catch (IOException e) {
+            throw new KlabIOException(e);
+        }
+    }
+
+    public static void show(File image) {
+        show(image, "Image display");
+    }
+
     public static void show(BufferedImage image) {
+        show(image, "Image display");
+    }
+    
+    public static void show(BufferedImage image, String title) {
     	
     	Icon icon = new ImageIcon(image);
         JLabel label = new JLabel(icon);
 
-        final JFrame f = new JFrame("Image display");
+        final JFrame f = new JFrame(title);
         f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         f.getContentPane().add(label);
         f.pack();

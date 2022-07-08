@@ -14,7 +14,9 @@ import org.integratedmodelling.kactors.kactors.ListElement;
 import org.integratedmodelling.kactors.kactors.Model;
 import org.integratedmodelling.kactors.kactors.Preamble;
 import org.integratedmodelling.kactors.model.KActors.BehaviorDescriptor;
+import org.integratedmodelling.klab.Services;
 import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.api.services.IActorsService;
 import org.integratedmodelling.klab.rest.BehaviorReference;
 
 /**
@@ -118,20 +120,20 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
         }
 
         if (preamble.getLocale() != null) {
-        	this.locales.add(preamble.getLocale());
+            this.locales.add(preamble.getLocale());
         }
         if (preamble.getLocales() != null) {
             for (ListElement val : preamble.getLocales().getContents()) {
                 if (val.getValue() != null) {
-                	KActorsValue value = new KActorsValue(val.getValue(), parent);
-                	this.locales.add(value.getStatedValue().toString());
+                    KActorsValue value = new KActorsValue(val.getValue(), parent);
+                    this.locales.add(value.getStatedValue().toString());
                 } else if (val.getTag() != null) {
-                	// TODO
-//                    this.setTag(val.getTag().substring(1));
+                    // TODO
+                    // this.setTag(val.getTag().substring(1));
                 }
             }
         }
-        
+
         for (String s : preamble.getImports()) {
             this.imports.add(s);
         }
@@ -237,7 +239,10 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
         ret.setProjectId(getProjectId());
         ret.setLogo(this.getLogo());
         ret.setPlatform(this.platform);
-        ret.getLocales().addAll(this.getLocales());
+        IActorsService service = Services.INSTANCE.getService(IActorsService.class); 
+        if (service != null) {
+            ret.getLocalizations().addAll(service.getLocalizations(this.getName()));
+        }
         return ret;
     }
 
@@ -248,13 +253,22 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 
     @Override
     public void visit(Visitor visitor) {
-        /*
-         * visit preamble
-         */
+
+        if (this.getLabel() != null) {
+            visitor.visitPreamble("label", this.getLabel());
+        }
+        if (this.getDescription() != null) {
+            visitor.visitPreamble("description", this.getDescription());
+        }
+        if (this.getVersion() != null) {
+            visitor.visitPreamble("version", this.getVersion());
+        }
+
         for (IKActorsAction action : getActions()) {
             visitor.visitAction(action);
             ((KActorsStatement) action.getCode()).visit(action, visitor);
         }
+        visitMetadata(metadata, visitor);
     }
 
     @Override
@@ -262,9 +276,9 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
         return output;
     }
 
-	@Override
-	public List<String> getLocales() {
-		return this.locales;
-	}
+    @Override
+    public List<String> getLocales() {
+        return this.locales;
+    }
 
 }

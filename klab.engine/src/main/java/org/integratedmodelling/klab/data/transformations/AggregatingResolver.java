@@ -24,12 +24,17 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Parameters;
 
 public class AggregatingResolver extends AbstractContextualizer implements IResolver<IState>, IExpression, IProcessor {
 
     IConcept semantics;
     boolean ignoreNodata;
 
+    /*
+     * FIXME use a map of aggregators per observable; remove the observable from the add() call
+     */
+    
     public AggregatingResolver() {
     }
 
@@ -48,8 +53,8 @@ public class AggregatingResolver extends AbstractContextualizer implements IReso
     }
 
     @Override
-    public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
-        return new AggregatingResolver(parameters, context);
+    public Object eval(IContextualizationScope context, Object...parameters) throws KlabException {
+        return new AggregatingResolver(Parameters.create(parameters), context);
     }
 
     @Override
@@ -82,13 +87,13 @@ public class AggregatingResolver extends AbstractContextualizer implements IReso
         }
 
         if (!states.isEmpty()) {
-            Aggregator aggregator = new Aggregator(ret.getObservable(), context.getMonitor());
+            Aggregator aggregator = new Aggregator(ret.getObservable(), context.getScale());
             for (ILocator locator : context.getScale()) {
                 aggregator.reset();
                 for (IState s : states) {
                     Object value = s.get(locator);
                     if (!ignoreNodata || Observations.INSTANCE.isData(value)) {
-                        aggregator.add(value, ret.getObservable(), locator);
+                        aggregator.add(value, locator);
                     }
                 }
                 ret.set(locator, aggregator.aggregate());

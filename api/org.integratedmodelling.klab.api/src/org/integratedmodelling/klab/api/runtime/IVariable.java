@@ -19,6 +19,6 @@ public interface IVariable {
 	 * Return or compute the value.
 	 * @return
 	 */
-	Object getValue(IParameters<String> parameters, IContextualizationScope scope);
+	Object getValue(IContextualizationScope scope, IParameters<String> parameters);
 	
 }

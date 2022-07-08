@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractC
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.Parameters;
 
 public class PresenceResolver extends AbstractContextualizer implements IResolver<IDataArtifact>, IExpression {
 
@@ -42,8 +43,8 @@ public class PresenceResolver extends AbstractContextualizer implements IResolve
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
-		return new PresenceResolver(parameters, context);
+	public Object eval(IContextualizationScope context, Object...parameters) throws KlabException {
+		return new PresenceResolver(Parameters.create(parameters), context);
 	}
 
 	@Override

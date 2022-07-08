@@ -2,113 +2,115 @@ package org.integratedmodelling.klab.rest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.integratedmodelling.kactors.api.IKActorsBehavior.Platform;
 
 public class BehaviorReference {
 
-	public static class Action {
-		private String name;
-		private String description;
+    public static class Action {
+        private String name;
+        private String description;
 
-		public String getName() {
-			return name;
-		}
+        public String getName() {
+            return name;
+        }
 
-		public void setName(String name) {
-			this.name = name;
-		}
+        public void setName(String name) {
+            this.name = name;
+        }
 
-		public String getDescription() {
-			return description;
-		}
+        public String getDescription() {
+            return description;
+        }
 
-		public void setDescription(String description) {
-			this.description = description;
-		}
+        public void setDescription(String description) {
+            this.description = description;
+        }
 
-	}
+    }
 
-	private String name;
-	private String description;
-	private List<Action> actions = new ArrayList<>();
-	private String color;
-	private String projectId;
-	private String logo;
-	private String label;
-	private Platform platform;
-	private List<String> locales = new ArrayList<>();
-	
-	public String getName() {
-		return name;
-	}
+    private String name;
+    private String description;
+    private List<Action> actions = new ArrayList<>();
+    private String color;
+    private String projectId;
+    private String logo;
+    private String label;
+    private Platform platform;
+    private List<Localization> localizations = new ArrayList<>();
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public List<Action> getActions() {
-		return actions;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public void setActions(List<Action> actions) {
-		this.actions = actions;
-	}
+    public List<Action> getActions() {
+        return actions;
+    }
 
-	public String getColor() {
-		return color;
-	}
+    public void setActions(List<Action> actions) {
+        this.actions = actions;
+    }
 
-	public void setColor(String color) {
-		this.color = color;
-	}
+    public String getColor() {
+        return color;
+    }
 
-	public String getLogo() {
-		return logo;
-	}
+    public void setColor(String color) {
+        this.color = color;
+    }
 
-	public void setLogo(String logo) {
-		this.logo = logo;
-	}
+    public String getLogo() {
+        return logo;
+    }
 
-	public String getLabel() {
-		return label;
-	}
+    public void setLogo(String logo) {
+        this.logo = logo;
+    }
 
-	public void setLabel(String label) {
-		this.label = label;
-	}
+    public String getLabel() {
+        return label;
+    }
 
-	public Platform getPlatform() {
-		return platform;
-	}
+    public void setLabel(String label) {
+        this.label = label;
+    }
 
-	public void setPlatform(Platform platform) {
-		this.platform = platform;
-	}
+    public Platform getPlatform() {
+        return platform;
+    }
 
-	public void setProjectId(String projectId) {
-		this.projectId = projectId;
-	}
-	
-	public String getProjectId() {
-		return this.projectId;
-	}
+    public void setPlatform(Platform platform) {
+        this.platform = platform;
+    }
 
-	public List<String> getLocales() {
-		return locales;
-	}
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
+    }
 
-	public void setLocales(List<String> locales) {
-		this.locales = locales;
-	}
+    public String getProjectId() {
+        return this.projectId;
+    }
+
+    public List<Localization> getLocalizations() {
+        return localizations;
+    }
+
+    public void setLocalizations(List<Localization> localizations) {
+        this.localizations = localizations;
+    }
+
 
 }

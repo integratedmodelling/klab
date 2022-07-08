@@ -111,9 +111,14 @@ public class Node implements INodeIdentity {
 
 	@Override
 	public boolean is(Type type) {
-		return type == INodeIdentity.TYPE;
+		return type == getIdentityType();
 	}
 
+    @Override
+    public IIdentity.Type getIdentityType() {
+        return IIdentity.Type.NODE;
+    }
+    
 	@Override
 	public <T extends IIdentity> T getParentIdentity(Class<T> type) {
 		return IIdentity.findParent(this, type);

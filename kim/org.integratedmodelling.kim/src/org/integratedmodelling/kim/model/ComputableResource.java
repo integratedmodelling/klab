@@ -10,6 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.xtext.xbase.typesystem.internal.ExpressionScope;
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimAction;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
@@ -35,15 +36,13 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.classification.ILookupTable;
-import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
+import org.integratedmodelling.klab.api.data.general.IExpression.CompilerScope;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
-import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
-import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
@@ -54,7 +53,6 @@ import org.integratedmodelling.klab.api.services.IResourceService;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
-import org.integratedmodelling.klab.utils.DebugFile;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
 
@@ -285,13 +283,6 @@ public class ComputableResource extends KimStatement implements IContextualizabl
         this.resolutionMode = Mode.RESOLUTION;
     }
 
-    // public ComputableResource(List<String> mergedUrns, Mode mode, IArtifact.Type
-    // type) {
-    // this.mergedUrns = mergedUrns;
-    // this.mergedType = type;
-    // this.resolutionMode = mode;
-    // }
-
     public ComputableResource(IValueMediator from, IValueMediator to) {
         this.conversion = new Pair<>(from, to);
         this.type = Type.CONVERSION;
@@ -442,8 +433,8 @@ public class ComputableResource extends KimStatement implements IContextualizabl
                     ILanguageProcessor processor = ext
                             .getLanguageProcessor(language == null ? IExtensionService.DEFAULT_EXPRESSION_LANGUAGE : language);
                     Descriptor descriptor = getExpression().isForcedScalar()
-                            ? processor.describe(expression.getCode(), CompilerOption.ForcedScalar)
-                            : processor.describe(expression.getCode());
+                            ? processor.describe(expression.getCode(), ext.getScope(CompilerScope.Scalar))
+                            : processor.describe(expression.getCode(), ext.getScope());
                     for (String var : descriptor.getIdentifiers()) {
                         requiredResourceNames.add(new Pair<>(var, IArtifact.Type.VALUE));
                     }

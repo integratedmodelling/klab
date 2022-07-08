@@ -2,6 +2,7 @@ package org.integratedmodelling.kactors.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -9,12 +10,12 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.validation.Issue;
+import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.api.IKActorsCodeStatement;
 import org.integratedmodelling.kactors.kactors.Metadata;
 import org.integratedmodelling.kactors.kactors.MetadataPair;
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 
 public class KActorCodeStatement implements IKActorsCodeStatement {
@@ -73,7 +74,7 @@ public class KActorCodeStatement implements IKActorsCodeStatement {
 
     protected void parseMetadata(Metadata metadata) {
         // TODO could just discover the feature in the EObject and be called in the constructor
-        // instead of relying on the caller invoking this.
+        // instead of relying on each caller invoking this.
         if (metadata != null) {
             for (MetadataPair pair : metadata.getPairs()) {
                 String key = pair.getKey();
@@ -86,7 +87,7 @@ public class KActorCodeStatement implements IKActorsCodeStatement {
                     }
                     key = key.substring(1);
                 }
-                this.metadata.put(pair.getKey(), value);
+                this.metadata.put(key, value);
             }
         }
     }
@@ -202,6 +203,17 @@ public class KActorCodeStatement implements IKActorsCodeStatement {
 
     protected void setTag(String tag) {
         this.tag = tag;
+    }
+    
+    protected void visitMetadata(Map<String, ?> metadata, IKActorsBehavior.Visitor visitor) {
+        for (String key : metadata.keySet()) {
+            Object o = metadata.get(key);
+            if (o instanceof KActorsValue) {
+                ((KActorsValue) o).visit(visitor, null, null);
+            } else {
+                visitor.visitMetadata(this, key, o);
+            }
+        }
     }
 
 }

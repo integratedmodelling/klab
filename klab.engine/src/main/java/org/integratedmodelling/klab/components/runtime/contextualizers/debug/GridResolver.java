@@ -13,6 +13,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.utils.Parameters;
 
 public class GridResolver extends AbstractContextualizer implements IResolver<IState>, IExpression {
 
@@ -80,8 +81,8 @@ public class GridResolver extends AbstractContextualizer implements IResolver<IS
 	}
 
 	@Override
-	public GridResolver eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
-		return new GridResolver(parameters, context);
+	public GridResolver eval(IContextualizationScope context, Object...parameters) throws KlabException {
+		return new GridResolver(Parameters.create(parameters), context);
 	}
 
 	@Override

@@ -6,8 +6,6 @@ import java.awt.image.DataBuffer;
 
 import org.hortonmachine.hmachine.modules.geomorphology.flow.OmsFlowDirections;
 import org.integratedmodelling.geoprocessing.TaskMonitor;
-import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -17,7 +15,7 @@ import org.integratedmodelling.klab.components.geospace.Geospace;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.utils.NumberUtils;
+import org.integratedmodelling.klab.utils.Parameters;
 
 public class FlowDirectionsResolver extends AbstractContextualizer implements IResolver<IState>, IExpression {
 
@@ -46,16 +44,7 @@ public class FlowDirectionsResolver extends AbstractContextualizer implements IR
             throw new KlabException(e);
         }
         if (!context.getMonitor().isInterrupted()) {
-            
-            for (ILocator locator : context.getScale()) {
-                Object val = target.get(locator);
-                if (val instanceof Number && !Double.isNaN(((Number)val).doubleValue())) {
-                    if (NumberUtils.equal(((Number)val).doubleValue(), 0)) {
-                        System.out.println("ZOPPODIO");
-                    }
-                }
-            }
-            
+                        
             GeotoolsUtils.INSTANCE.coverageToState(algorithm.outFlow, target, context.getScale(), (a) -> {
                 if (a == (double) floatNovalue) {
                     return Double.NaN;
@@ -77,9 +66,9 @@ public class FlowDirectionsResolver extends AbstractContextualizer implements IR
     }
 
     @Override
-    public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
+    public Object eval(IContextualizationScope context, Object...parameters) throws KlabException {
         FlowDirectionsResolver ret = new FlowDirectionsResolver();
-        ret.computeAngles = parameters.get("angles", Boolean.FALSE);
+        ret.computeAngles = Parameters.create(parameters).get("angles", Boolean.FALSE);
         return ret;
     }
 }

@@ -38,25 +38,21 @@ import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
-import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.engine.runtime.SimpleRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabStorageException;
-import org.integratedmodelling.klab.ogc.FSCANAdapter;
 import org.integratedmodelling.klab.ogc.fscan.FSCANEncoder;
 import org.integratedmodelling.klab.ogc.integration.Postgis.PublishedResource.Attribute;
 import org.integratedmodelling.klab.ogc.vector.files.VectorValidator;
 import org.integratedmodelling.klab.raster.files.RasterValidator;
-import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Escape;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Parameters;
+import  org.locationtech.jts.geom.Geometry;
+import  org.locationtech.jts.io.WKBReader;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.postgresql.util.PGobject;
-
-import  org.locationtech.jts.geom.Geometry;
-import  org.locationtech.jts.io.WKBReader;
 
 public class Postgis {
 
@@ -693,7 +689,7 @@ public class Postgis {
 
                     Object name = null;
                     try {
-                        name = nameCalculator.eval(parameters, scope);
+                        name = nameCalculator.eval(scope, parameters);
                     } catch (Throwable e) {
                         // TODO just say it
 

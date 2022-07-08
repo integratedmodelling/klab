@@ -16,10 +16,12 @@ import java.util.regex.Pattern;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Attribute;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
+import org.integratedmodelling.klab.api.data.general.IExpression.CompilerScope;
 import org.integratedmodelling.klab.api.data.general.ITable;
 import org.integratedmodelling.klab.api.knowledge.ICodelist;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -563,7 +565,7 @@ public abstract class AbstractTable<T> implements ITable<T> {
 	 *                   concept matches. Can be null.
 	 * @return
 	 */
-	public Object get(Aggregator aggregator, IContextualizationScope scope) {
+	public Object get(Aggregator aggregator, IContextualizationScope scope, ILocator locator) {
 
 		/*
 		 * TODO if all dimensions are 1, just return the only element we have.
@@ -581,7 +583,7 @@ public abstract class AbstractTable<T> implements ITable<T> {
 			case COLUMN_EXPRESSION:
 				// TODO store in filter to avoid recompiling each time
 				filterExpression = Extensions.INSTANCE.compileExpression(filter.getArguments().get(0).toString(),
-						Extensions.DEFAULT_EXPRESSION_LANGUAGE, CompilerOption.ForcedScalar,
+						Extensions.DEFAULT_EXPRESSION_LANGUAGE, CompilerScope.Scalar,
 						CompilerOption.IgnoreContext);
 				break;
 			case COLUMN_MATCH:
@@ -638,7 +640,7 @@ public abstract class AbstractTable<T> implements ITable<T> {
 
 			// System.out.println("GOT " + ret);
 
-			return ret.isEmpty() ? null : (ret.size() == 1 ? ret.get(0) : (aggregator.aggregate(ret)));
+			return ret.isEmpty() ? null : (ret.size() == 1 ? ret.get(0) : (aggregator.aggregate(ret, locator)));
 		}
 
 		return null;
@@ -763,6 +765,7 @@ public abstract class AbstractTable<T> implements ITable<T> {
 
 		// if set, aggregate everything before return unless it's just one value
 		Aggregator aggregator = null;
+		ILocator loc = null;
 
 		/*
 		 * TODO support indexing by row name/attribute too, with same mechanism as for
@@ -785,6 +788,8 @@ public abstract class AbstractTable<T> implements ITable<T> {
 						scanRows = true;
 						row = (Integer) locator;
 					}
+				} else if (locator instanceof ILocator) {
+				    loc = (ILocator) locator;
 				}
 			}
 		}
@@ -798,7 +803,7 @@ public abstract class AbstractTable<T> implements ITable<T> {
 		}
 
 		TableValue ret = getCache(resource).scan(this, CollectionUtils.join(this.filters, located), scope,
-				aggregator);
+				aggregator, loc);
 		if (ret == null) {
 			return aggregator == null ? Utils.emptyValue(cls) : null;
 		}
@@ -807,7 +812,7 @@ public abstract class AbstractTable<T> implements ITable<T> {
 		 * This will return the table if keyed values remain, or a single (potentially
 		 * aggregated) value if not
 		 */
-		return (E) ret.reduce(cls, false);
+		return (E) ret.reduce(cls, false, loc);
 	}
 
 	/**

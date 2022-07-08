@@ -80,7 +80,7 @@ import org.integratedmodelling.klab.utils.MultidimensionalCursor;
  */
 public interface IGeometry extends Serializable, ILocator {
 
-    enum Granularity {
+    public enum Granularity {
         /**
          * 
          */
@@ -97,8 +97,14 @@ public interface IGeometry extends Serializable, ILocator {
      * @author Ferd
      *
      */
-    enum Encoding {
-        SKIP_GRID_SHAPE
+    public enum Encoding {
+        SKIP_GRID_SHAPE,
+        /*
+         * if passed, time intervals will be encoded, including the "previous" time (according to
+         * resolution) if time is initialization of a time grid; no INITIALIZATION type will be
+         * compiled in the interval.
+         */
+        CONCRETE_TIME_INTERVALS
     }
 
     /**

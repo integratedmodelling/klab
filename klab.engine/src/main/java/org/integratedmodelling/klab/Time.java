@@ -19,14 +19,35 @@ import org.joda.time.Hours;
 import org.joda.time.LocalDate;
 import org.joda.time.Minutes;
 import org.joda.time.Months;
+import org.joda.time.Period;
 import org.joda.time.Seconds;
 import org.joda.time.Years;
 import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.PeriodFormatter;
+import org.joda.time.format.PeriodFormatterBuilder;
 
 public enum Time implements ITimeService {
 
     INSTANCE;
 
+    private static final PeriodFormatter periodFormat = new PeriodFormatterBuilder().appendDays().appendSuffix(" day", " days")
+            .appendSeparator(" ").printZeroIfSupported().minimumPrintedDigits(2).appendHours().appendSeparator(":")
+            .appendMinutes().printZeroIfSupported().minimumPrintedDigits(2).appendSeparator(":").appendSeconds()
+            .minimumPrintedDigits(2).appendSeparator(".").appendMillis3Digit().toFormatter();
+
+    private static final PeriodFormatter durationFormatter = new PeriodFormatterBuilder()
+            .printZeroRarelyFirst()
+            .appendHours()
+            .appendSuffix("hr", " hrs")
+            .appendSeparator(", ")
+            .printZeroRarelyLast()
+            .appendMinutes()
+            .appendSuffix("min", " mins")
+            .appendSeparator(", ")
+            .appendSeconds()
+            .appendSuffix("sec", " secs")
+            .toFormatter();
+    
     private Time() {
         // all dates in UTC
         DateTimeZone.setDefault(DateTimeZone.UTC);
@@ -83,7 +104,8 @@ public enum Time implements ITimeService {
             break;
         case YEAR:
             begin = new DateTime(now.getYear() - 1, 1, 1, 0, 0, 0, 0, DateTimeZone.UTC);
-//            begin = new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), 0, 0, 0, 0, DateTimeZone.UTC);
+            // begin = new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), 0, 0,
+            // 0, 0, DateTimeZone.UTC);
             end = begin.plus(Years.ONE);
             break;
         default:
@@ -259,8 +281,7 @@ public enum Time implements ITimeService {
                     ITime.Resolution.Type.MILLISECOND);
         } else if (NumberUtils.encodesInteger(specification)) {
             start = TimeInstant.create(Integer.parseInt(specification));
-            resolution = org.integratedmodelling.klab.components.time.extents.Time.resolution(1,
-                    ITime.Resolution.Type.YEAR);
+            resolution = org.integratedmodelling.klab.components.time.extents.Time.resolution(1, ITime.Resolution.Type.YEAR);
             end = start.plus(1, resolution);
         } else {
             // nah for now
@@ -273,14 +294,19 @@ public enum Time implements ITimeService {
         return null;
     }
 
-    public static int getYear(ITimeInstant time) {
+    public int getYear(ITimeInstant time) {
         DateTime ds = new DateTime(time.getMilliseconds(), DateTimeZone.UTC);
         return ds.getYear();
     }
 
-    public static int getYear(long start) {
+    public int getYear(long start) {
         DateTime ds = new DateTime(start, DateTimeZone.UTC);
         return ds.getYear();
+    }
+
+    public String printPeriod(long ms) {
+        Period period = new Period(ms);
+        return durationFormatter.print(period);
     }
 
 }

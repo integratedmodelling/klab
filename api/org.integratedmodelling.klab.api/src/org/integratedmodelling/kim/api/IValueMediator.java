@@ -21,11 +21,15 @@
  *******************************************************************************/
 package org.integratedmodelling.kim.api;
 
+import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 
 /**
- * Describes any object that can mediate a value to another.
+ * Describes any object that can mediate a value to another. In k.LAB mediations are allowed to
+ * bypass geometries, aggregating or propagating as needed.
  * 
  * @author Ferd
  *
@@ -36,6 +40,8 @@ public interface IValueMediator {
      * true if this can be converted into other. Do not throw exceptions.
      * 
      * @param other
+     * @throws KlabIllegalStateException if this mediator was produced through
+     *         {@link #contextualize(IObservable, IScale)}.
      * @return true if other is compatible
      */
     boolean isCompatible(IValueMediator other);
@@ -46,39 +52,81 @@ public interface IValueMediator {
      * @param d
      * @param scale
      * @return the converted number
+     * @throws KlabIllegalStateException if this mediator was produced through
+     *         {@link #contextualize(IObservable, IScale)}.
      */
     Number convert(Number d, IValueMediator scale);
 
-    /**
-     * Convert from this unit to the passed one. This would be trivially accomplished by inverting
-     * the receiver and the argument, unless the mediator is contextualized (coming from
-     * {@link #contextualize(IObservable, IScale)}, which makes it entirely non-trivial, hence the
-     * existence of a backConvert() function.
-     * 
-     * @param d
-     * @param scale
-     * @return
-     */
-    Number backConvert(Number d, IValueMediator scale);
+    // /**
+    // * Convert from this unit to the passed one. This would be trivially accomplished by inverting
+    // * the receiver and the argument, unless the mediator is contextualized (coming from
+    // * {@link #contextualize(IObservable, IScale)}, which makes it entirely non-trivial, hence the
+    // * existence of a backConvert() function.
+    // *
+    // * @param d
+    // * @param scale
+    // * @throws KlabIllegalStateException if this mediator was produced through
+    // * {@link #contextualize(IObservable, IScale)}.
+    // * @return
+    // */
+    // Number backConvert(Number d, IValueMediator scale);
 
     /**
-     * Obtain a target mediator representing this one, pre-contextualized to the passed scale, so
-     * that it can accept contextually compatible mediators at
-     * {@link #convert(Number, IValueMediator)} and handle them appropriately. The mediator passed
-     * to convert called on the result must be compatible <em>once the context is factored in</em>;
-     * this means that, for example, mm will be compatible with m^3 if the scale is distributed in
-     * space, making "mm" nothing more than mm^3/mm^2 and generating the appropriate conversion
-     * factors automatically.
+     * Obtain a mediator that will convert quantities from the mediator of the observable (unit or
+     * currency) into what we represent, using the scale portion over which the observation of the
+     * value is made to account for any different distribution through the context.
      * <p>
-     * The scale is cached in the mediator and, for extensive values, used to transform the result
-     * as needed, so the result can only be reused across scale swaps on <em>regular</em> extents.
-     * On irregular extents, the original, uncontextualized mediator <em>must</em> be saved and
-     * contextualized at every step.
+     * The resulting mediator will only accept the {@link #convert(Number, ILocator)} call and throw
+     * an exception in any other situation. If the observable passed has no mediator, the conversion
+     * will be standard and non-contextual (using a simple conversion factor for speed). Otherwise,
+     * the fastest set of transformations will be encoded in the returned mediator.
+     * <p>
+     * The resulting mediator will perform correcly <em>only</em> when used with locators coming
+     * from the same scale that was used to produce it. It will contain transformations in
+     * parametric form, so that the possible irregularity of the extents in the locators is
+     * accounted for.
+     * <p>
+     * The strategy to create the necessary transformations, consisting in parametric
+     * multiplications or divisions by an appropriately transformed extent in space and/or time, is
+     * as follows:
+     * <ol>
+     * <li>if observable is intensive, just check compatibility and return self if compatible, throw
+     * exception if not. Otherwise:
+     * <li>obtain contextualized candidate forms of both the observable's base unit and self. Both
+     * should have one compatible form in the candidates. If not, throw exception. If the compatible
+     * form is the same, proceed as in (1). Otherwise:
+     * <li>devise two strategies to mediate 1) incoming form to base form and 2) base form to this.
+     * Each strategy consists of a list of parametric operations on S/T contexts with a conversion
+     * factor for the basic representation (m^x for space, ms for time).
+     * <li>simplify the two strategies into a single set of operations to add to the contextualized
+     * unit returned, which also carries the definition of the contextual nature re: S/T and a
+     * string explaining the transformations made and why.
+     * </ol>
      * 
      * @param observable
      * @param scale
+     * @return a contextualized mediator specialized for the conversion to this unit in this scale.
+     */
+    IValueMediator contextualize(IObservable observable, IGeometry scale);
+
+    /**
+     * Convert a quantity to the unit we represent from the one in the observable that was passed to
+     * the {@link #contextualize(IObservable, IScale)} call that originated this one.
+     * 
+     * @param value
+     * @param locator
+     * @throws KlabIllegalStateException if this is called on a mediator that was not produced
+     *         through {@link #contextualize(IObservable, IScale)}.
      * @return
      */
-    IValueMediator contextualize(IObservable observable, IScale scale);
+    Number convert(Number value, ILocator locator);
+
+    /**
+     * If true, this mediator is meant to be used across scales using
+     * {@link #convert(Number, ILocator)}, otherwise it's a pure non-contextual mediator.
+     * 
+     * @return
+     */
+    boolean isContextual();
 
 }

@@ -16,7 +16,6 @@ package org.integratedmodelling.klab.api.data.general;
 import java.util.Collection;
 
 import org.integratedmodelling.kim.api.IKimConcept;
-import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
@@ -31,33 +30,65 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
  */
 public interface IExpression {
 
+    public enum Forcing {
+        AsNeeded, Always
+    }
+
+    public enum CompilerScope {
+        /**
+         * Execution is triggered by state-by-state logic, so specific subdivision of the context is
+         * located at execution, and observation IDs point to state values insteaf of the entire
+         * observation when the observation is a quality. Called very many times and concurrently.
+         * Irrelevant unless Contextual is also passed.
+         */
+        Scalar,
+        /**
+         * Execution is observation-wise, so if states of qualities are needed, the correspondent
+         * observations must be iterated within the expression. Irrelevant unless Contextual is also
+         * passed.
+         */
+        Observation,
+        /**
+         * The expression will be executed in the scope of an observation, so all the auxiliary
+         * variables are defined and the observations will be located to the space/time of
+         * contextualization. If not passed, expression is normal Groovy code with the k.LAB
+         * extensions for reasoning etc.
+         */
+        Contextual
+    }
+
     // TODO still have to support these instead of passing flags to the compiler
     public enum CompilerOption {
+
         /**
-         * 
+         * Don't try to process code related to observations and just consider each variable with
+         * its own name.
          */
         IgnoreContext,
-        /**
-         * Force scalar usage of all identifiers. Linked to prefixing the expression with # in k.IM.
-         */
-        ForcedScalar,
+
         /**
          * Translate identifiers like id@ctx into id["ctx"] instead of inserting the
-         * recontextualization hooks for states. This can be limited to
+         * recontextualization hooks for states.
          */
         RecontextualizeAsMap,
 
         /**
-         * Wrap any observations or extents passed as parameters into their Groovy peers before
-         * execution. This is passed when compiling expressions outside of a contextualization
-         * dataflow, which handles this automatically with caching to prevent bottlenecks.
+         * Ignore the recontextualizations done with @. Passed when expressions are compiled as part
+         * of documentation templates, which use @ for internal purposes.
          */
-        WrapParameters,
-        
+        IgnoreRecontextualization,
+
         /**
-         * Skip k.LAB preprocessing altogether. 
+         * Skip k.LAB preprocessing altogether.
          */
-        DoNotPreprocess
+        DoNotPreprocess,
+
+        /**
+         * Refer to quality values coming from states directly instead of compiling in a
+         * state.get(scale) instruction. Values must be inserted in parameters at eval(). Use when
+         * speed is critical - Groovy takes a long time dispatching the messages.
+         */
+        DirectQualityAccess
     }
 
     /**
@@ -124,19 +155,56 @@ public interface IExpression {
          * @return
          */
         IMonitor getMonitor();
+
+        /**
+         * The type of compilation we desire. This should automatically be set to Contextual if a
+         * contextualization scope is passed.
+         * 
+         * @return
+         */
+        CompilerScope getCompilerScope();
+
+        /**
+         * Return a scope that will cause the execution of the expression to be scalar, i.e.
+         * state-by-state within the context. The forcing passed defines the type of constraint: if
+         * {@link Forcing#AsNeeded}, the expression will be scalar only if it mentions quality
+         * variables in a scalar scope; if {@link Forcing#Always}, scalar behavior will be forced no
+         * matter the statement.
+         * 
+         * @param forceScalar
+         * @return
+         */
+        Scope scalar(Forcing forcing);
+
+        /**
+         * If the expression scope was created during contextualization, return the scope here.
+         * 
+         * @return
+         */
+        IContextualizationScope getRuntimeScope();
+
+        /**
+         * If true, we have requested the expression to be evaluated in a scalar fashion no matter
+         * what it says.
+         * 
+         * @return
+         */
+        boolean isForcedScalar();
+
     }
 
     /**
      * Execute the expression
      *
      * @param parameters from context or defined in a language call
-     * @param scope possibly empty, may be added to determine the result of the evaluation
-     *        according to the calling context. The {@link IContextualizationScope#getMonitor()
-     *        monitor in the context} will never be null and can be used to send messages or
-     *        interrupt the computation.
+     * @param scope possibly empty, may be added to determine the result of the evaluation according
+     *        to the calling context. The {@link IContextualizationScope#getMonitor() monitor in the
+     *        context} will never be null and can be used to send messages or interrupt the
+     *        computation.
+     * @param additionalParameters add key, value pairs for any additional parameter to add
      * @return the result of evaluating the expression
      * @throws org.integratedmodelling.klab.exceptions.KlabException TODO
      */
-    Object eval(IParameters<String> parameters, IContextualizationScope scope);
+    Object eval(IContextualizationScope scope, Object... additionalParameters);
 
 }

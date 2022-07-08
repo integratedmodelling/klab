@@ -28,6 +28,7 @@ import org.integratedmodelling.kactors.utils.KActorsResourceSorter;
 import org.integratedmodelling.klab.api.errormanagement.ICompileNotification;
 import org.integratedmodelling.klab.common.CompileNotification;
 import org.integratedmodelling.klab.rest.BehaviorReference;
+import org.integratedmodelling.klab.utils.MiscUtilities;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;

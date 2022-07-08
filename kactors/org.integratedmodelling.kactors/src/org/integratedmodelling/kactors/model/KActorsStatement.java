@@ -4,6 +4,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.integratedmodelling.kactors.api.IKActorsAction;
 import org.integratedmodelling.kactors.api.IKActorsBehavior.Visitor;
 import org.integratedmodelling.kactors.api.IKActorsStatement;
+import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.kactors.MetadataPair;
 import org.integratedmodelling.kactors.kactors.Statement;
 import org.integratedmodelling.kactors.kactors.StatementBody;
@@ -87,8 +88,12 @@ public abstract class KActorsStatement extends KActorCodeStatement implements IK
 			ret = new KActorsInstantiation(statement.getInstantiation(), statement.getTag(), parent);
 		} else if (statement.getAssert() != null) {
 			ret = new KActorsAssert(statement.getAssert(), parent);
+		} else if (statement.isBreak()) {
+		    ret = new KActorsBreak(statement, parent);
+		} else if (statement.getFail() != null) {
+            ret = new KActorsFail(statement.getFail(), parent);
 		}
-
+ 
 		if (ret != null) {
 		    // in most situation, after initialization is OK
 			if (statement.getTag() != null) {
@@ -107,6 +112,11 @@ public abstract class KActorsStatement extends KActorCodeStatement implements IK
 
     protected void visit(IKActorsAction action, Visitor visitor) {
         visitor.visitStatement(action, this);
+        visitMetadata(metadata, visitor);
     }
 
+    public static void visitValue(Visitor visitor, IKActorsValue value, IKActorsStatement kActorsActionCall, IKActorsAction action) {
+        ((KActorsValue)value).visit(visitor, kActorsActionCall, action);
+    }
+    
 }

@@ -297,6 +297,14 @@ public class ScenarioView extends ViewPart {
         }
     }
 
+    
+    
+    @Override
+    public void dispose() {
+        klab.dispose();
+        super.dispose();
+    }
+
     /**
      * Initialize the menu.
      */

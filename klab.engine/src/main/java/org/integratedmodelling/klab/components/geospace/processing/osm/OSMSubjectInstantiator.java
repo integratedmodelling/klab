@@ -12,10 +12,8 @@ import java.util.Set;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Observables;
-import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
@@ -40,7 +38,7 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.CamelCase;
 import org.integratedmodelling.klab.utils.Escape;
-
+import org.integratedmodelling.klab.utils.Parameters;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.MultiPolygon;
@@ -272,8 +270,8 @@ public class OSMSubjectInstantiator extends AbstractContextualizer implements II
 	}
 
 	@Override
-	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
-		return new OSMSubjectInstantiator(parameters, context);
+	public Object eval(IContextualizationScope context, Object...parameters) throws KlabException {
+		return new OSMSubjectInstantiator(Parameters.create(parameters), context);
 	}
 
 	private String buildQuery() throws KlabValidationException {

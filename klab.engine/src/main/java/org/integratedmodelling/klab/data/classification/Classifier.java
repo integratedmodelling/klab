@@ -206,7 +206,7 @@ public class Classifier implements IClassifier {
                     parms.putAll(scope);
                 }
                 parms.put("self", o);
-                return negated ? !(Boolean) expressionMatch.eval(parms, scope) : (Boolean) expressionMatch.eval(parms, scope);
+                return negated ? !(Boolean) expressionMatch.eval(scope, parms) : (Boolean) expressionMatch.eval(scope, parms);
 
             } catch (Exception e) {
                 throw new KlabValidationException(e);

@@ -25,6 +25,8 @@ import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
+import org.integratedmodelling.klab.api.data.general.IExpression.CompilerScope;
+import org.integratedmodelling.klab.api.data.general.IExpression.Forcing;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
@@ -43,18 +45,11 @@ import org.integratedmodelling.klab.exceptions.KlabActorException;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.joda.time.Period;
-import org.joda.time.format.PeriodFormatter;
-import org.joda.time.format.PeriodFormatterBuilder;
 
 import akka.actor.typed.ActorRef;
 
 @Behavior(id = "test", version = Version.CURRENT)
 public class TestBehavior {
-
-    private static final PeriodFormatter periodFormat = new PeriodFormatterBuilder().appendDays().appendSuffix(" day", " days")
-            .appendSeparator(" ").printZeroIfSupported().minimumPrintedDigits(2).appendHours().appendSeparator(":")
-            .appendMinutes().printZeroIfSupported().minimumPrintedDigits(2).appendSeparator(":").appendSeconds()
-            .minimumPrintedDigits(2).appendSeparator(".").appendMillis3Digit().toFormatter();
 
     @Action(id = "test", fires = {}, description = "Run all the test included in one or more projects, naming the project ID, "
             + "a URL or a Git URL (git:// or http....*.git")
@@ -178,7 +173,7 @@ public class TestBehavior {
 
                 IKimExpression expr = comparison.as(IKimExpression.class);
                 compareDescriptor = Extensions.INSTANCE.getLanguageProcessor(expr.getLanguage()).describe(expr.getCode(),
-                        runtimeScope.getExpressionContext());
+                        runtimeScope.getExpressionContext().scalar(expr.isForcedScalar() ? Forcing.Always : Forcing.AsNeeded));
                 compareExpression = compareDescriptor.compile();
                 for (String input : compareDescriptor.getIdentifiers()) {
                     if (compareDescriptor.isScalar(input) && runtimeScope.getArtifact(input, IState.class) != null) {
@@ -196,7 +191,8 @@ public class TestBehavior {
         if (selector != null) {
             selectDescriptor = Extensions.INSTANCE.getLanguageProcessor(selector.getLanguage())
                     // TODO parameter only if target is a state
-                    .describe(selector.getCode(), runtimeScope.getExpressionContext(), CompilerOption.ForcedScalar);
+                    .describe(selector.getCode(),
+                            runtimeScope.getExpressionContext(null).withCompilerScope(CompilerScope.Scalar));
             selectExpression = selectDescriptor.compile();
             for (String input : selectDescriptor.getIdentifiers()) {
                 if (selectDescriptor.isScalar(input) && runtimeScope.getArtifact(input, IState.class) != null) {
@@ -222,14 +218,14 @@ public class TestBehavior {
                     args.put(key, states.get(key).get(locator));
                 }
                 if (selectExpression != null) {
-                    Object selectValue = selectExpression.eval(args, runtimeScope);
+                    Object selectValue = selectExpression.eval(runtimeScope, args);
                     if (selectValue instanceof Boolean && !((Boolean) selectValue)) {
                         continue;
                     }
                 }
 
                 if (compareExpression != null) {
-                    compareValue = compareExpression.eval(args, runtimeScope);
+                    compareValue = compareExpression.eval(runtimeScope, args);
                     ok = compareValue instanceof Boolean && (Boolean) compareValue;
                 } else {
                     ok = args.get("self") == null && compareValue == null
@@ -263,11 +259,6 @@ public class TestBehavior {
         }
 
         scope.testScope.notifyAssertion(target, comparison, ok, assertion);
-    }
-
-    public static String printPeriod(long ms) {
-        Period period = new Period(ms);
-        return periodFormat.print(period);
     }
 
     @Action(id = "whitelist", fires = {})

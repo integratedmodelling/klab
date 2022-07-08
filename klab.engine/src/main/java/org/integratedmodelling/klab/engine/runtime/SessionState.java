@@ -220,8 +220,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
          * Submit all we know about the context. TODO metadata should contain provenance info about
          * the choices made to get here.
          */
-        Observer observer = Observations.INSTANCE.makeROIObserver(scaleOfInterest.getName(), geometry,
-                new Metadata());
+        Observer observer = Observations.INSTANCE.makeROIObserver(scaleOfInterest.getName(), geometry, new Metadata());
         List<BiConsumer<ITask<?>, IArtifact>> oListeners = new ArrayList<>();
         List<BiConsumer<ITask<?>, Throwable>> eListeners = new ArrayList<>();
 
@@ -238,8 +237,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
                  */
                 IGeometry geom = getGeometry();
                 activity.setStart(System.currentTimeMillis());
-                if (this.currentActivity != null
-                        && this.currentActivity.getGeometrySet() == null && geom != null) {
+                if (this.currentActivity != null && this.currentActivity.getGeometrySet() == null && geom != null) {
                     this.currentActivity.setGeometrySet(geom.encode());
                 }
                 activity.setActivityId(task.getId());
@@ -251,8 +249,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
                 activity.setEnd(System.currentTimeMillis());
                 activity.setStatus(DataflowState.Status.FINISHED);
 
-                if (this.currentActivity != null
-                        && activity.getActivityId().equals(this.currentActivity.getActivityId())) {
+                if (this.currentActivity != null && activity.getActivityId().equals(this.currentActivity.getActivityId())) {
                     this.currentActivity.setContextId(observation.getId());
                     this.historyByContext.put(observation.getId(), activity);
                 }
@@ -260,9 +257,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
                 for (ListenerWrapper listener : listeners.values()) {
                     if (this.currentActivity != null) {
                         listener.listener.historyChanged(this.currentActivity,
-                                activity.getActivityId().equals(this.currentActivity.getActivityId())
-                                        ? null
-                                        : activity);
+                                activity.getActivityId().equals(this.currentActivity.getActivityId()) ? null : activity);
                     }
                 }
             }
@@ -280,9 +275,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
             for (ListenerWrapper listener : listeners.values()) {
                 if (this.currentActivity != null) {
                     listener.listener.historyChanged(this.currentActivity,
-                            activity.getActivityId().equals(this.currentActivity.getActivityId())
-                                    ? null
-                                    : activity);
+                            activity.getActivityId().equals(this.currentActivity.getActivityId()) ? null : activity);
                 }
             }
 
@@ -299,8 +292,8 @@ public class SessionState extends Parameters<String> implements ISessionState {
             }
         });
 
-        Future<IArtifact> task = new ObserveContextTask(this.session, observer, scenarios, ctxListeners,
-                eListeners, executor, activity, true);
+        Future<IArtifact> task = new ObserveContextTask(this.session, observer, scenarios, ctxListeners, eListeners, executor,
+                activity, true);
         try {
             this.scaleOfInterest.setShape(null);
             this.context.push((ISubject) task.get());
@@ -367,8 +360,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
                 activity.setEnd(System.currentTimeMillis());
                 activity.setStatus(DataflowState.Status.FINISHED);
 
-                if (this.currentActivity != null
-                        && activity.getActivityId().equals(this.currentActivity.getActivityId())) {
+                if (this.currentActivity != null && activity.getActivityId().equals(this.currentActivity.getActivityId())) {
                     this.currentActivity.setContextId(observation.getId());
                     this.historyByContext.put(observation.getId(), activity);
                 }
@@ -376,9 +368,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
                 for (ListenerWrapper listener : listeners.values()) {
                     if (this.currentActivity != null) {
                         listener.listener.historyChanged(this.currentActivity,
-                                activity.getActivityId().equals(this.currentActivity.getActivityId())
-                                        ? null
-                                        : activity);
+                                activity.getActivityId().equals(this.currentActivity.getActivityId()) ? null : activity);
                     }
                 }
             }
@@ -396,9 +386,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
             for (ListenerWrapper listener : listeners.values()) {
                 if (this.currentActivity != null) {
                     listener.listener.historyChanged(this.currentActivity,
-                            activity.getActivityId().equals(this.currentActivity.getActivityId())
-                                    ? null
-                                    : activity);
+                            activity.getActivityId().equals(this.currentActivity.getActivityId()) ? null : activity);
                 }
             }
 
@@ -412,9 +400,8 @@ public class SessionState extends Parameters<String> implements ISessionState {
         }
 
         if (resolvable instanceof Observer) {
-            return new ObserveContextTask(this.session, (Observer) resolvable, scenarios, oListeners,
-                    eListeners,
-                    executor, activity, true);
+            return new ObserveContextTask(this.session, (Observer) resolvable, scenarios, oListeners, eListeners, executor,
+                    activity, true);
         }
 
         if (this.context.isEmpty() && !(resolvable instanceof IObserver)) {
@@ -422,16 +409,14 @@ public class SessionState extends Parameters<String> implements ISessionState {
             IGeometry geometry = getGeometry();
 
             if (geometry == null) {
-                throw new KlabContextualizationException(
-                        "Cannot contextualize URN " + urn + " in an unspecified context");
+                throw new KlabContextualizationException("Cannot contextualize URN " + urn + " in an unspecified context");
             }
 
             /**
              * Submit all we know about the context. TODO metadata should contain provenance info
              * about the choices made to get here.
              */
-            Observer observer = Observations.INSTANCE.makeROIObserver(scaleOfInterest.getName(), geometry,
-                    new Metadata());
+            Observer observer = Observations.INSTANCE.makeROIObserver(scaleOfInterest.getName(), geometry, new Metadata());
             /*
              * goes into executor; next one won't exec before this is finished. Only call the obs
              * listener at the beginning of the contextualization.
@@ -443,8 +428,8 @@ public class SessionState extends Parameters<String> implements ISessionState {
                 }
             });
 
-            Future<IArtifact> task = new ObserveContextTask(this.session, observer, scenarios, ctxListeners,
-                    eListeners, executor, activity, true);
+            Future<IArtifact> task = new ObserveContextTask(this.session, observer, scenarios, ctxListeners, eListeners, executor,
+                    activity, true);
             try {
                 this.scaleOfInterest.setShape(null);
                 this.context.push((ISubject) task.get());
@@ -456,8 +441,8 @@ public class SessionState extends Parameters<String> implements ISessionState {
         /**
          * Submit the actual resolvable
          */
-        return new ObserveInContextTask((Subject) this.getCurrentContext(), urn, this.scenarios, oListeners,
-                eListeners, this.executor, activity, true);
+        return new ObserveInContextTask((Subject) this.getCurrentContext(), urn, this.scenarios, oListeners, eListeners,
+                this.executor, activity, true);
     }
 
     @Override
@@ -507,35 +492,33 @@ public class SessionState extends Parameters<String> implements ISessionState {
             }
             break;
         case SPACE_RESOLUTION_KEY:
-            IQuantity q = value instanceof IQuantity
-                    ? (IQuantity) value
-                    : KimQuantity.parse(value.toString());
+            IQuantity q = value instanceof IQuantity ? (IQuantity) value : KimQuantity.parse(value.toString());
             this.scaleOfInterest.setSpaceResolution(q.getValue().doubleValue());
             this.scaleOfInterest.setSpaceUnit(q.getUnit());
-            this.scaleOfInterest.setSpaceResolutionConverted(
-                    Units.INSTANCE.METERS.convert(this.scaleOfInterest.getSpaceResolution(),
-                            Unit.create(this.scaleOfInterest.getSpaceUnit())).doubleValue());
-            this.scaleOfInterest.setSpaceResolutionDescription(
-                    NumberFormat.getInstance().format(this.scaleOfInterest.getSpaceResolution()) + " "
-                            + this.scaleOfInterest.getSpaceUnit());
+            this.scaleOfInterest.setSpaceResolutionConverted(Units.INSTANCE.METERS
+                    .convert(this.scaleOfInterest.getSpaceResolution(), Unit.create(this.scaleOfInterest.getSpaceUnit()))
+                    .doubleValue());
+            this.scaleOfInterest
+                    .setSpaceResolutionDescription(NumberFormat.getInstance().format(this.scaleOfInterest.getSpaceResolution())
+                            + " " + this.scaleOfInterest.getSpaceUnit());
             break;
         case SPACE_RESOLUTION_MULTIPLIER_KEY:
             this.scaleOfInterest.setSpaceResolution(check(value, Number.class).doubleValue());
-            this.scaleOfInterest.setSpaceResolutionConverted(
-                    Units.INSTANCE.METERS.convert(this.scaleOfInterest.getSpaceResolution(),
-                            Unit.create(this.scaleOfInterest.getSpaceUnit())).doubleValue());
-            this.scaleOfInterest.setSpaceResolutionDescription(
-                    NumberFormat.getInstance().format(this.scaleOfInterest.getSpaceResolution()) + " "
-                            + this.scaleOfInterest.getSpaceUnit());
+            this.scaleOfInterest.setSpaceResolutionConverted(Units.INSTANCE.METERS
+                    .convert(this.scaleOfInterest.getSpaceResolution(), Unit.create(this.scaleOfInterest.getSpaceUnit()))
+                    .doubleValue());
+            this.scaleOfInterest
+                    .setSpaceResolutionDescription(NumberFormat.getInstance().format(this.scaleOfInterest.getSpaceResolution())
+                            + " " + this.scaleOfInterest.getSpaceUnit());
             break;
         case SPACE_RESOLUTION_UNIT_KEY:
             this.scaleOfInterest.setSpaceUnit(value.toString());
-            this.scaleOfInterest.setSpaceResolutionConverted(
-                    Units.INSTANCE.METERS.convert(this.scaleOfInterest.getSpaceResolution(),
-                            Unit.create(this.scaleOfInterest.getSpaceUnit())).doubleValue());
-            this.scaleOfInterest.setSpaceResolutionDescription(
-                    NumberFormat.getInstance().format(this.scaleOfInterest.getSpaceResolution()) + " "
-                            + this.scaleOfInterest.getSpaceUnit());
+            this.scaleOfInterest.setSpaceResolutionConverted(Units.INSTANCE.METERS
+                    .convert(this.scaleOfInterest.getSpaceResolution(), Unit.create(this.scaleOfInterest.getSpaceUnit()))
+                    .doubleValue());
+            this.scaleOfInterest
+                    .setSpaceResolutionDescription(NumberFormat.getInstance().format(this.scaleOfInterest.getSpaceResolution())
+                            + " " + this.scaleOfInterest.getSpaceUnit());
             break;
         case LOCK_SPACE_KEY:
             this.lockSpace.set(check(value, Boolean.class));
@@ -556,8 +539,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
             this.scaleOfInterest.setTimeResolutionMultiplier(check(value, Number.class).doubleValue());
             break;
         case TIME_RESOLUTION_UNIT_KEY:
-            Resolution res = org.integratedmodelling.klab.components.time.extents.Time
-                    .resolution("1." + value.toString());
+            Resolution res = org.integratedmodelling.klab.components.time.extents.Time.resolution("1." + value.toString());
             this.scaleOfInterest.setTimeUnit(res.getType());
             break;
         case TIME_RESOLUTION_KEY:
@@ -569,14 +551,10 @@ public class SessionState extends Parameters<String> implements ISessionState {
             this.scaleOfInterest.setYear(check(value, Integer.class));
             break;
         case TIME_START_YEAR_KEY:
-            this.scaleOfInterest
-                    .setStart(new DateTime(check(value, Integer.class), 1, 1, 0, 0, 0, DateTimeZone.UTC)
-                            .getMillis());
+            this.scaleOfInterest.setStart(new DateTime(check(value, Integer.class), 1, 1, 0, 0, 0, DateTimeZone.UTC).getMillis());
             break;
         case TIME_END_YEAR_KEY:
-            this.scaleOfInterest
-                    .setEnd(new DateTime(check(value, Integer.class), 1, 1, 0, 0, 0, DateTimeZone.UTC)
-                            .getMillis());
+            this.scaleOfInterest.setEnd(new DateTime(check(value, Integer.class), 1, 1, 0, 0, 0, DateTimeZone.UTC).getMillis());
             break;
         }
         return super.put(key, value);
@@ -601,9 +579,8 @@ public class SessionState extends Parameters<String> implements ISessionState {
             value = Utils.asPOD((String) value);
         }
         if (!cls.isAssignableFrom(value.getClass())) {
-            this.session.getMonitor()
-                    .warn("internal error: session state assigned value " + value + " where a "
-                            + cls.getCanonicalName() + " was expected");
+            this.session.getMonitor().warn("internal error: session state assigned value " + value + " where a "
+                    + cls.getCanonicalName() + " was expected");
         }
 
         return Utils.asType(value, cls);
@@ -680,27 +657,23 @@ public class SessionState extends Parameters<String> implements ISessionState {
     public void register(ViewAction action) {
 
         @SuppressWarnings("unchecked")
-        IActorIdentity<KlabMessage> receiver = Authentication.INSTANCE.getIdentity(
-                action.getComponent().getIdentity(),
+        IActorIdentity<KlabMessage> receiver = Authentication.INSTANCE.getIdentity(action.getComponent().getIdentity(),
                 IActorIdentity.class);
         if (receiver != null) {
             receiver.getActor().tell(
                     // TODO consider having a scope in the state
-                    new UserAction(action, action.getComponent().getApplicationId(),
-                            new SimpleRuntimeScope(this.session)));
+                    new UserAction(action, action.getComponent().getApplicationId(), new SimpleRuntimeScope(this.session)));
         }
     }
 
     public void register(MenuAction action) {
 
         @SuppressWarnings("unchecked")
-        IActorIdentity<KlabMessage> receiver = Authentication.INSTANCE.getIdentity(action.getIdentity(),
-                IActorIdentity.class);
+        IActorIdentity<KlabMessage> receiver = Authentication.INSTANCE.getIdentity(action.getIdentity(), IActorIdentity.class);
         if (receiver != null) {
             receiver.getActor().tell(
                     // TODO consider having a scope in the state
-                    new UserMenuAction(action, action.getApplicationId(),
-                            new SimpleRuntimeScope(this.session)));
+                    new UserMenuAction(action, action.getApplicationId(), new SimpleRuntimeScope(this.session)));
         }
     }
 
@@ -722,9 +695,8 @@ public class SessionState extends Parameters<String> implements ISessionState {
 
         Envelope envelope = Envelope.create(this.scaleOfInterest.getEast(), this.scaleOfInterest.getWest(),
                 this.scaleOfInterest.getSouth(), this.scaleOfInterest.getNorth(), Projection.getLatLon());
-        IKlabData data = Resources.INSTANCE.getResourceData(urn, new VisitingDataBuilder(), Scale.create(
-                envelope.asGrid(this.scaleOfInterest.getSpaceResolution(),
-                        this.scaleOfInterest.getSpaceUnit())),
+        IKlabData data = Resources.INSTANCE.getResourceData(urn, new VisitingDataBuilder(), IArtifact.Type.OBJECT, "result",
+                Scale.create(envelope.asGrid(this.scaleOfInterest.getSpaceResolution(), this.scaleOfInterest.getSpaceUnit())),
                 session.getMonitor());
         if (data.getArtifact() != null) {
             IGeometry geometry = data.getArtifact().getGeometry();
@@ -733,8 +705,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
                         ? ((IScale) geometry).getSpace().getShape()
                         : Scale.create(geometry).getSpace().getShape();
                 if (ret != null) {
-                    ret.getMetadata().put(IMetadata.DC_DESCRIPTION,
-                            ((IObjectArtifact) data.getArtifact()).getName());
+                    ret.getMetadata().put(IMetadata.DC_DESCRIPTION, ((IObjectArtifact) data.getArtifact()).getName());
                     setShape(ret);
                 }
             }
@@ -751,8 +722,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
             }
 
             if (!OWL.INSTANCE.isSemantic(subject.getObservable())) {
-                throw new IllegalArgumentException(
-                        "context has no semantics and cannot support further observations");
+                throw new IllegalArgumentException("context has no semantics and cannot support further observations");
             }
 
             setContext(((Subject) subject).getScope());
@@ -774,8 +744,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
         this.scaleOfInterest.setEnd(extent.getEnd());
 
         this.scaleOfInterest.setSpaceResolutionConverted(Units.INSTANCE.METERS
-                .convert(this.scaleOfInterest.getSpaceResolution(),
-                        Unit.create(this.scaleOfInterest.getSpaceUnit()))
+                .convert(this.scaleOfInterest.getSpaceResolution(), Unit.create(this.scaleOfInterest.getSpaceUnit()))
                 .doubleValue());
 
         for (ListenerWrapper listener : listeners.values()) {
@@ -789,13 +758,11 @@ public class SessionState extends Parameters<String> implements ISessionState {
 
         if (shape == null) {
 
-            Envelope envelope = Envelope.create(this.scaleOfInterest.getEast(),
-                    this.scaleOfInterest.getWest(),
+            Envelope envelope = Envelope.create(this.scaleOfInterest.getEast(), this.scaleOfInterest.getWest(),
                     this.scaleOfInterest.getSouth(), this.scaleOfInterest.getNorth(), Projection.getLatLon());
             this.scaleOfInterest.setShape(null);
-            this.scaleOfInterest
-                    .setName(Geocoder.INSTANCE.geocode(envelope, Geocoder.DEFAULT_GEOCODING_STRATEGY,
-                            "Region of interest", session.getMonitor()));
+            this.scaleOfInterest.setName(Geocoder.INSTANCE.geocode(envelope, Geocoder.DEFAULT_GEOCODING_STRATEGY,
+                    "Region of interest", session.getMonitor()));
         } else {
 
             IEnvelope envelope = shape.getEnvelope();
@@ -810,9 +777,9 @@ public class SessionState extends Parameters<String> implements ISessionState {
                 this.scaleOfInterest.setSpaceResolution((double) rres.getFirst());
                 this.scaleOfInterest.setSpaceUnit(rres.getSecond());
                 this.scaleOfInterest.setSpaceScale(envelope.getScaleRank());
-                this.scaleOfInterest.setSpaceResolutionConverted(
-                        Units.INSTANCE.METERS.convert(this.scaleOfInterest.getSpaceResolution(),
-                                Unit.create(this.scaleOfInterest.getSpaceUnit())).doubleValue());
+                this.scaleOfInterest.setSpaceResolutionConverted(Units.INSTANCE.METERS
+                        .convert(this.scaleOfInterest.getSpaceResolution(), Unit.create(this.scaleOfInterest.getSpaceUnit()))
+                        .doubleValue());
             }
 
             String name = shape.getMetadata().get(IMetadata.DC_DESCRIPTION, String.class);
@@ -820,25 +787,24 @@ public class SessionState extends Parameters<String> implements ISessionState {
                 /*
                  * geocode using the standard geocoder
                  */
-                name = Geocoder.INSTANCE.geocode(shape.getEnvelope(), Geocoder.DEFAULT_GEOCODING_STRATEGY,
-                        "Region of interest", session.getMonitor());
+                name = Geocoder.INSTANCE.geocode(shape.getEnvelope(), Geocoder.DEFAULT_GEOCODING_STRATEGY, "Region of interest",
+                        session.getMonitor());
             }
             this.scaleOfInterest.setName(name);
             if (!(shape.getMetadata().containsKey(IMetadata.IM_GEOGRAPHIC_AREA)
                     && !shape.getMetadata().get(IMetadata.IM_GEOGRAPHIC_AREA, Boolean.FALSE))) {
                 this.scaleOfInterest.setShape(((Shape) shape).getJTSGeometry().toString());
             }
-            this.scaleOfInterest.setSpaceResolutionDescription(
-                    NumberFormat.getInstance().format(this.scaleOfInterest.getSpaceResolution()) + " "
-                            + this.scaleOfInterest.getSpaceUnit());
-            this.scaleOfInterest.setResolutionDescription(
-                    NumberFormat.getInstance().format(this.scaleOfInterest.getSpaceResolution()) + " "
+            this.scaleOfInterest
+                    .setSpaceResolutionDescription(NumberFormat.getInstance().format(this.scaleOfInterest.getSpaceResolution())
+                            + " " + this.scaleOfInterest.getSpaceUnit());
+            this.scaleOfInterest
+                    .setResolutionDescription(NumberFormat.getInstance().format(this.scaleOfInterest.getSpaceResolution()) + " "
                             + this.scaleOfInterest.getSpaceUnit());
 
         }
 
-        session.getMonitor().send(IMessage.MessageClass.UserContextDefinition, IMessage.Type.ScaleDefined,
-                scaleOfInterest);
+        session.getMonitor().send(IMessage.MessageClass.UserContextDefinition, IMessage.Type.ScaleDefined, scaleOfInterest);
 
         for (ListenerWrapper listener : listeners.values()) {
             if (listener.applicationId == null || listener.applicationId.equals(this.currentApplicationId)) {
@@ -871,8 +837,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
         this.scaleOfInterest.setSouth(extent.getSouth());
         this.scaleOfInterest.setWest(extent.getWest());
 
-        Envelope envelope = Envelope.create(extent.getEast(), extent.getWest(), extent.getSouth(),
-                extent.getNorth(),
+        Envelope envelope = Envelope.create(extent.getEast(), extent.getWest(), extent.getSouth(), extent.getNorth(),
                 Projection.getLatLon());
 
         if (!lockSpace.get() || this.scaleOfInterest.getSpaceUnit() == null) {
@@ -880,19 +845,17 @@ public class SessionState extends Parameters<String> implements ISessionState {
             this.scaleOfInterest.setSpaceResolution((double) rres.getFirst());
             this.scaleOfInterest.setSpaceUnit(rres.getSecond());
             this.scaleOfInterest.setSpaceScale(envelope.getScaleRank());
-            this.scaleOfInterest.setSpaceResolutionConverted(
-                    Units.INSTANCE.METERS.convert(this.scaleOfInterest.getSpaceResolution(),
-                            Unit.create(this.scaleOfInterest.getSpaceUnit())).doubleValue());
+            this.scaleOfInterest.setSpaceResolutionConverted(Units.INSTANCE.METERS
+                    .convert(this.scaleOfInterest.getSpaceResolution(), Unit.create(this.scaleOfInterest.getSpaceUnit()))
+                    .doubleValue());
         }
 
         if (this.geocodingStrategy != null) {
-            IShape shape = Geocoder.INSTANCE.geocodeToShape(extent, this.geocodingStrategy,
-                    session.getMonitor());
+            IShape shape = Geocoder.INSTANCE.geocodeToShape(extent, this.geocodingStrategy, session.getMonitor());
             if (shape != null) {
                 this.scaleOfInterest.setName(shape.getMetadata().get(IMetadata.DC_DESCRIPTION, String.class));
                 if (shape.getMetadata().containsKey(IMetadata.IM_FEATURE_URN)) {
-                    this.scaleOfInterest
-                            .setFeatureUrn(shape.getMetadata().get(IMetadata.IM_FEATURE_URN, String.class));
+                    this.scaleOfInterest.setFeatureUrn(shape.getMetadata().get(IMetadata.IM_FEATURE_URN, String.class));
                 }
                 if (!(shape.getMetadata().containsKey(IMetadata.IM_GEOGRAPHIC_AREA)
                         && !shape.getMetadata().get(IMetadata.IM_GEOGRAPHIC_AREA, Boolean.FALSE))) {
@@ -901,16 +864,13 @@ public class SessionState extends Parameters<String> implements ISessionState {
             }
         }
 
-        this.scaleOfInterest.setSpaceResolutionDescription(
-                NumberFormat.getInstance().format(this.scaleOfInterest.getSpaceResolution()) + " "
-                        + this.scaleOfInterest.getSpaceUnit());
         this.scaleOfInterest
-                .setResolutionDescription(
-                        NumberFormat.getInstance().format(this.scaleOfInterest.getSpaceResolution())
-                                + " " + this.scaleOfInterest.getSpaceUnit());
+                .setSpaceResolutionDescription(NumberFormat.getInstance().format(this.scaleOfInterest.getSpaceResolution()) + " "
+                        + this.scaleOfInterest.getSpaceUnit());
+        this.scaleOfInterest.setResolutionDescription(NumberFormat.getInstance().format(this.scaleOfInterest.getSpaceResolution())
+                + " " + this.scaleOfInterest.getSpaceUnit());
 
-        session.getMonitor().send(IMessage.MessageClass.UserContextDefinition, IMessage.Type.ScaleDefined,
-                scaleOfInterest);
+        session.getMonitor().send(IMessage.MessageClass.UserContextDefinition, IMessage.Type.ScaleDefined, scaleOfInterest);
 
         for (ListenerWrapper listener : listeners.values()) {
             if (listener.applicationId == null || listener.applicationId.equals(this.currentApplicationId)) {
@@ -924,8 +884,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
             this.context.clear();
             this.context.push(runtimeContext.getRootSubject());
             for (ListenerWrapper listener : listeners.values()) {
-                if (listener.applicationId == null
-                        || listener.applicationId.equals(this.currentApplicationId)) {
+                if (listener.applicationId == null || listener.applicationId.equals(this.currentApplicationId)) {
                     listener.listener.newContext(this.getCurrentContext());
                 }
             }
@@ -981,16 +940,12 @@ public class SessionState extends Parameters<String> implements ISessionState {
             this.scaleOfInterest.setShape(null);
             if (this.geocodingStrategy != null) {
 
-                Envelope envelope = Envelope.create(this.scaleOfInterest.getEast(),
-                        this.scaleOfInterest.getWest(),
-                        this.scaleOfInterest.getSouth(), this.scaleOfInterest.getNorth(),
-                        Projection.getLatLon());
+                Envelope envelope = Envelope.create(this.scaleOfInterest.getEast(), this.scaleOfInterest.getWest(),
+                        this.scaleOfInterest.getSouth(), this.scaleOfInterest.getNorth(), Projection.getLatLon());
 
-                IShape shape = Geocoder.INSTANCE.geocodeToShape(envelope, this.geocodingStrategy,
-                        session.getMonitor());
+                IShape shape = Geocoder.INSTANCE.geocodeToShape(envelope, this.geocodingStrategy, session.getMonitor());
                 if (shape != null) {
-                    this.scaleOfInterest
-                            .setName(shape.getMetadata().get(IMetadata.DC_DESCRIPTION, String.class));
+                    this.scaleOfInterest.setName(shape.getMetadata().get(IMetadata.DC_DESCRIPTION, String.class));
                     if (!(shape.getMetadata().containsKey(IMetadata.IM_GEOGRAPHIC_AREA)
                             && !shape.getMetadata().get(IMetadata.IM_GEOGRAPHIC_AREA, Boolean.FALSE))) {
                         this.scaleOfInterest.setShape(((Shape) shape).getJTSGeometry().toString());
@@ -998,12 +953,10 @@ public class SessionState extends Parameters<String> implements ISessionState {
                 }
             }
 
-            session.getMonitor().send(IMessage.MessageClass.UserContextDefinition, IMessage.Type.ScaleDefined,
-                    scaleOfInterest);
+            session.getMonitor().send(IMessage.MessageClass.UserContextDefinition, IMessage.Type.ScaleDefined, scaleOfInterest);
 
             for (ListenerWrapper listener : listeners.values()) {
-                if (listener.applicationId == null
-                        || listener.applicationId.equals(this.currentApplicationId)) {
+                if (listener.applicationId == null || listener.applicationId.equals(this.currentApplicationId)) {
                     listener.listener.scaleChanged(scaleOfInterest);
                 }
             }
@@ -1040,12 +993,9 @@ public class SessionState extends Parameters<String> implements ISessionState {
             Object step = this.getAny("timestep", "step");
             Object year = Utils.asType(this.get("year"), Integer.class);
 
-            Parameters<String> parameters = Parameters.createNotNull("start", start, "end", end, "step", step,
-                    "year",
-                    year);
+            Parameters<String> parameters = Parameters.createNotNull("start", start, "end", end, "step", step, "year", year);
 
-            return (ITime) (new org.integratedmodelling.klab.components.time.services.Time()).eval(parameters,
-                    null);
+            return (ITime) (new org.integratedmodelling.klab.components.time.services.Time()).eval(null, parameters);
         }
 
         return null;
@@ -1152,8 +1102,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
     public Collection<TableArtifact> getTables() {
         List<TableArtifact> ret = new ArrayList<>();
         if (!this.context.isEmpty()) {
-            for (IKnowledgeView view : ((IRuntimeScope) ((Subject) getCurrentContext()).getScope())
-                    .getViews()) {
+            for (IKnowledgeView view : ((IRuntimeScope) ((Subject) getCurrentContext()).getScope()).getViews()) {
                 if (view instanceof TableArtifact) {
                     ret.add((TableArtifact) view);
                 }
@@ -1207,6 +1156,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
 
     /**
      * TODO this must be automatically removed at the end of an action
+     * 
      * @param o
      */
     public void whitelist(Object... o) {
@@ -1215,12 +1165,13 @@ public class SessionState extends Parameters<String> implements ISessionState {
 
     /**
      * TODO this must be automatically removed at the end of an action
+     * 
      * @param o
      */
     public void blacklist(Object... o) {
         this.resolutionConstraints.add(ResolutionConstraint.blacklist(o));
     }
-    
+
     public void resetConstraints() {
         this.resolutionConstraints.clear();
     }

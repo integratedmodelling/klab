@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.components.testing.assertions;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
@@ -17,7 +16,7 @@ public class AssertExists implements Assertion, IExpression {
 	List<String> details = new ArrayList<>();
 
 	@Override
-	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
+	public Object eval(IContextualizationScope context, Object...parameters) throws KlabException {
 		return new AssertExists();
 	}
 

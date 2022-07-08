@@ -40,6 +40,10 @@ public class NetworkSession implements INetworkSessionIdentity, UserDetails {
         return token;
     }
 
+    public IIdentity.Type getIdentityType() {
+        return IIdentity.Type.NETWORK_SESSION;
+    }
+    
     @Override
     public boolean is(Type type) {
         return type == Type.NETWORK_SESSION;

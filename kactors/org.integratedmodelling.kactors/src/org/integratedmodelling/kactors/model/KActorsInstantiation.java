@@ -102,6 +102,9 @@ public class KActorsInstantiation extends KActorsStatement implements Instantiat
 
     @Override
     protected void visit(IKActorsAction action, Visitor visitor) {
+        if (arguments != null) {
+            arguments.visit(action, this, visitor);
+        }
         for (ActionDescriptor ad : actions) {
             ad.visit(action, this, visitor);
         }

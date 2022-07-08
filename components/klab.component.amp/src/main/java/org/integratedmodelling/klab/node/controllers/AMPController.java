@@ -23,14 +23,15 @@ import com.github.jsonldjava.utils.JsonUtils;
 @Secured(Roles.ENGINE)
 public class AMPController implements AMP {
 
-	@Autowired
-	AnnotationManager annotationManager;
+//	@Autowired
+//	AnnotationManager annotationManager;
 
 	@PostMapping(value = SUBMIT_ANNOTATION, consumes = "application/ld+json", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public TicketResponse.Ticket submitAnnotation(HttpServletRequest request) throws IOException {
 		Object jsonObject = JsonUtils.fromInputStream(request.getInputStream());
-		return annotationManager.process(jsonObject);
+//		return annotationManager.process(jsonObject);
+		return null;
 	}
 
 }

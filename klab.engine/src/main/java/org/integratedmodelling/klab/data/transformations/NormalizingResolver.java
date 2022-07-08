@@ -7,12 +7,12 @@ import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IProcessor;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
-import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.rest.StateSummary;
+import org.integratedmodelling.klab.utils.Parameters;
 
 public class NormalizingResolver extends AbstractContextualizer implements IResolver<IState>, IExpression, IProcessor {
 
@@ -31,8 +31,8 @@ public class NormalizingResolver extends AbstractContextualizer implements IReso
     }
 
     @Override
-    public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
-        return new NormalizingResolver(parameters, context);
+    public Object eval(IContextualizationScope context, Object...parameters) throws KlabException {
+        return new NormalizingResolver(Parameters.create(parameters), context);
     }
 
     @Override

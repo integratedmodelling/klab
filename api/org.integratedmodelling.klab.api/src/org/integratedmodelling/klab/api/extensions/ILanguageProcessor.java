@@ -19,6 +19,7 @@ import java.util.Set;
 
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
+import org.integratedmodelling.klab.api.data.general.IExpression.CompilerScope;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 /**
@@ -50,6 +51,14 @@ public interface ILanguageProcessor {
          * @return set of contextualizers
          */
         Collection<String> getContextualizers();
+
+        /**
+         * True if the expression contains scalar usage for one or more of the identifiers used in a
+         * scalar fashion. This may be false even if the expression was compiled in scalar scope.
+         * 
+         * @return
+         */
+        boolean isScalar();
 
         /**
          * Return true if the expression contains scalar usage for the passed identifiers within a
@@ -118,14 +127,6 @@ public interface ILanguageProcessor {
         Collection<String> getIdentifiersInNonscalarScope();
 
         /**
-         * Expressions that would be non-scalar from the analysis of the code may be forced to be
-         * scalar through language constructs or API.
-         * 
-         * @return
-         */
-        boolean isForcedScalar();
-
-        /**
          * If the expression was compiled with the {@link CompilerOption#RecontextualizeAsMap}
          * option, any identifier seen as id@ctx will have been turned into id["ctx"] and the id
          * plus all the keys will be available here.
@@ -141,6 +142,15 @@ public interface ILanguageProcessor {
          * @return
          */
         Collection<CompilerOption> getOptions();
+
+        /**
+         * Predefined variables that have been inserted in the code and whose value is known at the
+         * time of compilation. Typically translations of k.IM identifiers and URNs into the
+         * correspondent objects.
+         * 
+         * @return
+         */
+        Map<String, Object> getVariables();
     }
 
     /**
@@ -153,7 +163,8 @@ public interface ILanguageProcessor {
      * @throws org.integratedmodelling.klab.exceptions.KlabValidationException if compilation
      *         produces any errors
      */
-    IExpression compile(String expression, IExpression.Scope context, CompilerOption... options) throws KlabValidationException;
+    IExpression compile(String expression, IExpression.Scope scope, CompilerOption... options)
+            throws KlabValidationException;
 
     /**
      * Preprocess an expression and return the descriptor. The context may be null, but the
@@ -161,29 +172,15 @@ public interface ILanguageProcessor {
      * be recognized as known if the context is null.
      *
      * @param expression a {@link java.lang.String} object.
-     * @param context a {@link org.integratedmodelling.klab.api.runtime.IContextualizationScope}
-     *        object.
+     * @param context a scope for the compilation
      * @param options Options for the compiler.
      * 
      * @return a preprocessed descriptor, which must be enough to produce an IExpression on request.
      * @throws org.integratedmodelling.klab.exceptions.KlabValidationException if the expression
      *         contains syntax of logical errors
      */
-    Descriptor describe(String expression, IExpression.Scope context, CompilerOption... options) throws KlabValidationException;
-
-    /**
-     * Preprocess an expression and return the descriptor. Not passing a context means the
-     * expression will be preprocessed outside of contextualization scope; all identifiers in the
-     * expression will be recognized as "known", assuming values will be supplied at evaluation.
-     *
-     * @param expression a {@link java.lang.String} object.
-     * @param compilerOptions options for the compiler.
-     *
-     * @return a preprocessed descriptor, which must be enough to produce an IExpression on request.
-     * @throws org.integratedmodelling.klab.exceptions.KlabValidationException if the expression
-     *         contains syntax of logical errors
-     */
-    Descriptor describe(String expression, CompilerOption... compilerOptions) throws KlabValidationException;
+    Descriptor describe(String expression, IExpression.Scope scope, CompilerOption... options)
+            throws KlabValidationException;
 
     /**
      * Assume that the passed expression evaluates to a boolean and produce the language equivalent

@@ -88,6 +88,6 @@ Export-Package: org.integratedmodelling.klab.client,
  org.joda.time,
  org.joda.time.base
 Require-Bundle: org.eclipse.core.runtime;bundle-version="3.13.0",
- org.integratedmodelling.klab.api;bundle-version="0.10.0"
+ org.integratedmodelling.klab.api;bundle-version="0.11.0"
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.integratedmodelling.klab.client.Activator

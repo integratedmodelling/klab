@@ -261,6 +261,10 @@ public class KimStatement extends KimScope implements IKimStatement {
     	this.namespaceId = namespace;
     }
     
+    protected void visitMetadata(Visitor visitor) {
+        
+    }
+    
     /**
      * Create a dummy statement uniquely to carry the line numbers for a compile notification.
      * 

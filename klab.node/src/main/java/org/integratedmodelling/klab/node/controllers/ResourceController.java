@@ -13,6 +13,7 @@ import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.API;
+import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.KlabPermissions;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -61,12 +62,9 @@ public class ResourceController {
 
     @PostMapping(value = API.NODE.RESOURCE.CONTEXTUALIZE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResourceReference contextualizeResource(@RequestBody ResourceContextualizationRequest request,
-            Principal principal) {
+    public ResourceReference contextualizeResource(@RequestBody ResourceContextualizationRequest request, Principal principal) {
         IGeometry geometry = Geometry.create(request.getGeometry());
-        IObservable semantics = request.getSemantics() == null
-                ? null
-                : Observables.INSTANCE.declare(request.getSemantics());
+        IObservable semantics = request.getSemantics() == null ? null : Observables.INSTANCE.declare(request.getSemantics());
 
         /*
          * TODO should add the content length header to the response, otherwise long messages may
@@ -117,7 +115,7 @@ public class ResourceController {
         Logging.INSTANCE.info("authorized access to " + request.getUrn() + " by "
                 + ((EngineAuthorization) principal).getFullyQualifiedUsername());
 
-        return resourceManager.getResourceData(request.getUrn(), geometry);
+        return resourceManager.getResourceData(request.getUrn(), geometry, request.getArtifactType(), request.getArtifactName());
     }
 
     /**
@@ -149,8 +147,10 @@ public class ResourceController {
      */
     @GetMapping(value = API.NODE.RESOURCE.LIST, produces = "application/json")
     @ResponseBody
-    public List<ResourceReference> listResources(Principal principal,
-            @RequestParam(required = false) String query) {
+    public List<ResourceReference> listResources(Principal principal, @RequestParam(required = false) String query) {
+
+        IIdentity identity = Klab.INSTANCE.getRootMonitor().getIdentity();
+
         List<ResourceReference> ret = new ArrayList<>();
         if (query != null) {
             for (Match match : resourceManager.queryResources(query)) {
@@ -167,8 +167,7 @@ public class ResourceController {
         } else {
             for (String urn : resourceManager.getOnlineResources()) {
                 if (resourceManager.canAccess(urn, (EngineAuthorization) principal)) {
-                    IResource resource = resourceManager.getResource(urn,
-                            ((EngineAuthorization) principal).getGroups());
+                    IResource resource = resourceManager.getResource(urn, ((EngineAuthorization) principal).getGroups());
                     if (resource != null) {
                         ret.add(((Resource) resource).getReference());
                     }
@@ -203,11 +202,9 @@ public class ResourceController {
      */
     @PostMapping(API.NODE.RESOURCE.SUBMIT_FILES)
     @ResponseBody
-    public TicketResponse.Ticket submitResource(@RequestParam("file") MultipartFile file,
-            Principal principal) {
+    public TicketResponse.Ticket submitResource(@RequestParam("file") MultipartFile file, Principal principal) {
         String fileName = fileStorageService.storeFile(file);
-        ITicket ticket = resourceManager.publishResource(null, new File(fileName),
-                (EngineAuthorization) principal,
+        ITicket ticket = resourceManager.publishResource(null, new File(fileName), (EngineAuthorization) principal,
                 Klab.INSTANCE.getRootMonitor());
         return TicketManager.encode(ticket);
     }
@@ -222,8 +219,7 @@ public class ResourceController {
      */
     @PostMapping(value = API.NODE.RESOURCE.SUBMIT_DESCRIPTOR, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public TicketResponse.Ticket submitResource(@RequestBody ResourceReference resource,
-            Principal principal) {
+    public TicketResponse.Ticket submitResource(@RequestBody ResourceReference resource, Principal principal) {
         ITicket ticket = resourceManager.publishResource(resource, null, (EngineAuthorization) principal,
                 Klab.INSTANCE.getRootMonitor());
         return TicketManager.encode(ticket);
@@ -264,8 +260,7 @@ public class ResourceController {
      */
     @DeleteMapping(value = API.NODE.RESOURCE.DELETE_URN)
     public boolean deleteResource(@PathVariable String urn, Principal principal) {
-        return resourceManager.deleteResource(urn, (EngineAuthorization) principal,
-                Klab.INSTANCE.getRootMonitor());
+        return resourceManager.deleteResource(urn, (EngineAuthorization) principal, Klab.INSTANCE.getRootMonitor());
     }
 
     /**
@@ -281,10 +276,8 @@ public class ResourceController {
      * @return a ticket for
      */
     @PutMapping(value = API.NODE.RESOURCE.UPDATE_URN, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void updateResource(@PathVariable String urn, @RequestBody ResourceReference resource,
-            Principal principal) {
-        resourceManager.updateResource(urn, resource, (EngineAuthorization) principal,
-                Klab.INSTANCE.getRootMonitor());
+    public void updateResource(@PathVariable String urn, @RequestBody ResourceReference resource, Principal principal) {
+        resourceManager.updateResource(urn, resource, (EngineAuthorization) principal, Klab.INSTANCE.getRootMonitor());
     }
 
     /**
@@ -300,11 +293,9 @@ public class ResourceController {
      * @return a ticket for
      */
     @PostMapping(value = API.NODE.RESOURCE.UPDATE_URN, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public TicketResponse.Ticket updateResource(@PathVariable String urn,
-            @RequestBody ResourceOperationRequest resource,
+    public TicketResponse.Ticket updateResource(@PathVariable String urn, @RequestBody ResourceOperationRequest resource,
             Principal principal) {
-        return resourceManager.updateResource(urn, resource, (EngineAuthorization) principal,
-                Klab.INSTANCE.getRootMonitor());
+        return resourceManager.updateResource(urn, resource, (EngineAuthorization) principal, Klab.INSTANCE.getRootMonitor());
     }
 
 }
