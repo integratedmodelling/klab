@@ -745,7 +745,7 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
     }
 
     @Override
-    public <T extends IArtifact> Collection<T> getAnyArtifact(IConcept concept, Class<T> cls) {
+    public <T extends IArtifact> Collection<T> getArtifacts(IConcept concept, Class<T> cls) {
         // TODO Auto-generated method stub
         return null;
     }

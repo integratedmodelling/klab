@@ -822,7 +822,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T extends IArtifact> Collection<T> getAnyArtifact(IConcept concept, Class<T> cls) {
+    public <T extends IArtifact> Collection<T> getArtifacts(IConcept concept, Class<T> cls) {
 
         Set<T> ret = new HashSet<>();
         for (IArtifact artifact : artifacts.values()) {
