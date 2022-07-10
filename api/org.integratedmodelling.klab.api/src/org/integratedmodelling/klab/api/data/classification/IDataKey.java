@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.integratedmodelling.klab.api.knowledge.IAuthority;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.rest.Histogram;
 import org.integratedmodelling.klab.utils.Pair;
 
 /**
@@ -94,5 +95,6 @@ public interface IDataKey {
 	 * @return
 	 */
 	IAuthority getAuthority();
+
 
 }
