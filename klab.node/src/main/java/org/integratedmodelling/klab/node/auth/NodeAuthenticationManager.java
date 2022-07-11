@@ -237,10 +237,10 @@ public enum NodeAuthenticationManager {
         } catch (MalformedClaimException | InvalidJwtException e) {
             // TODO see if we should reauthenticate and if so, try that before throwing an
             // authorization exception
-            Logging.INSTANCE.error("WTF", e);
+            // Logging.INSTANCE.error("WTF", e);
         } catch (Exception e) {
             // it was a JWT token, but some other exception happened.
-            Logging.INSTANCE.error("WTF", e);
+            // Logging.INSTANCE.error("WTF", e);
         }
 
         return result;
