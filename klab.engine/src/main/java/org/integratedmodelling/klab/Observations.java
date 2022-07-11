@@ -291,8 +291,9 @@ public enum Observations implements IObservationService {
                         nndat++;
                     }
                 }
-
-                ret.setHistogram(histogram.build());
+                if (histogram != null) {
+                    ret.setHistogram(histogram.build());
+                }
             }
 
             min = statistics.getMin();
