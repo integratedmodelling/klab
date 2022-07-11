@@ -14531,6 +14531,13 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		return getDateAccess().getRule();
 	}
 	
+	////terminal UNIT_ID:
+	////    '℃' | '°' | 'Ω' | 'm²' | '㎥' | '°F' | '°C'
+	////;
+	////
+	////terminal UNIT_NAME:
+	////    ('μ')? (CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID|BACKCASE_ID|UNIT_ID)
+	////;
 	//terminal TEMPLATE_VAR:
 	//    '%' ('a'..'z') ('a'..'z' | '0'..'9'| '_')* '%'
 	//;

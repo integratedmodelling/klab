@@ -268,7 +268,7 @@ public interface IContextualizationScope extends IParameters<String> {
      * @param cls
      * @return a collection of artifacts, possibly empty, never null.
      */
-    <T extends IArtifact> Collection<T> getAnyArtifact(IConcept concept, Class<T> cls);
+    <T extends IArtifact> Collection<T> getArtifacts(IConcept concept, Class<T> cls);
 
     /**
      * Return all known artifacts of the passed class along with their ID in this context. For

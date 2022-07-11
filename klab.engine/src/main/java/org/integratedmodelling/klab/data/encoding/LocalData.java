@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.data.encoding;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -33,6 +34,7 @@ import org.integratedmodelling.klab.components.runtime.artifacts.ObjectArtifact;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.provenance.Artifact;
@@ -196,10 +198,7 @@ public class LocalData implements IKlabData {
                 Map<?, ?> state = (Map<?, ?>) s;
                 IState target = null;
                 if ("result".equals(state.get("name"))) {
-
                     target = context.getTargetArtifact() instanceof IState ? (IState) context.getTargetArtifact() : null;
-                    this.state = target;
-
                 } else {
                     IArtifact artifact = context.getArtifact(state.get("name").toString());
                     if (artifact instanceof IState) {
@@ -207,8 +206,24 @@ public class LocalData implements IKlabData {
                     }
                 }
 
+                /*
+                 * FIXME this is necessary if names come from mandatorily named deps needed to match
+                 * with resources and they've been named differently in dependencies. The name is
+                 * disconnected when derived models are used (e.g. change) but there is no chance of
+                 * error. Should find a way to use the name nevertheless (the observable is the
+                 * changing one so no memory of the original name is kept).
+                 */
+                if (target == null && context.getTargetArtifact() instanceof IState
+                        && ((Collection<?>) data.get("states")).size() == 1) {
+                    target = (IState) context.getTargetArtifact();
+                }
+
                 if (target == null) {
-                    throw new IllegalStateException("cannot establish state target for node resource");
+                    throw new KlabIllegalStateException("cannot establish state target for node resource");
+                }
+
+                if (this.state == null) {
+                    this.state = target;
                 }
 
                 IUnit originalUnit = null;

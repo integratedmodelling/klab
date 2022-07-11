@@ -197,7 +197,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
      * @return
      */
     @Override
-    public RuntimeScope getContextScope(Actuator actuator, IResolutionScope scope, IScale scale, IDataflow<?> dataflow,
+    public RuntimeScope getContextScope(Actuator actuator, IResolutionScope scope, IScale scale,
+            IDataflow<?> dataflow,
             IMonitor monitor) {
 
         RuntimeScope ret = new RuntimeScope((ResolutionScope) scope);
@@ -421,7 +422,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
              * was null
              */
             for (IArtifact artifact : catalog.values()) {
-                if (artifact instanceof IObservation && name.equals(((IObservation) artifact).getObservable().getName())) {
+                if (artifact instanceof IObservation
+                        && name.equals(((IObservation) artifact).getObservable().getName())) {
                     ret = artifact;
                     break;
                 }
@@ -476,10 +478,12 @@ public class RuntimeScope extends AbstractRuntimeScope {
     }
 
     @Override
-    public IConfiguration newConfiguration(IConcept configurationType, Collection<IObservation> targets, IMetadata metadata) {
+    public IConfiguration newConfiguration(IConcept configurationType, Collection<IObservation> targets,
+            IMetadata metadata) {
 
         if (!configurationType.is(Type.CONFIGURATION)) {
-            throw new IllegalArgumentException("RuntimeContext: cannot create a non-configuration with newConfiguration()");
+            throw new IllegalArgumentException(
+                    "RuntimeContext: cannot create a non-configuration with newConfiguration()");
         }
 
         Observable observable = Observable.promote(configurationType);
@@ -490,15 +494,19 @@ public class RuntimeScope extends AbstractRuntimeScope {
         IConfiguration ret = null;
         ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
         ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity())
-                .createChild("Resolution of configuration " + Concepts.INSTANCE.getDisplayName(configurationType));
-        ResolutionScope scope = Resolver.create(this.dataflow).resolve(observable, this.resolutionScope, Mode.RESOLUTION, scale,
+                .createChild(
+                        "Resolution of configuration " + Concepts.INSTANCE.getDisplayName(configurationType));
+        ResolutionScope scope = Resolver.create(this.dataflow).resolve(observable, this.resolutionScope,
+                Mode.RESOLUTION, scale,
                 model);
         if (scope.getCoverage().isRelevant()) {
-            Dataflow dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + subtask.getId(), scope,
+            Dataflow dataflow = Dataflows.INSTANCE.compile(
+                    "local:task:" + session.getId() + ":" + subtask.getId(), scope,
                     this.actuator);
             dataflow.setModel((Model) model);
 
-            RuntimeScope runtimeScope = new RuntimeScope(this).withMetadata(metadata).withConfigurationTargets(targets);
+            RuntimeScope runtimeScope = new RuntimeScope(this).withMetadata(metadata)
+                    .withConfigurationTargets(targets);
 
             ret = (IConfiguration) dataflow.run(scale, (Actuator) this.actuator, runtimeScope);
 
@@ -514,7 +522,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T extends IArtifact> T resolve(IObservable observable, IDirectObservation observation, ITaskTree<?> task, Mode mode,
+    public <T extends IArtifact> T resolve(IObservable observable, IDirectObservation observation,
+            ITaskTree<?> task, Mode mode,
             IActuator parentDataflow) {
 
         ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
@@ -523,10 +532,12 @@ public class RuntimeScope extends AbstractRuntimeScope {
             Dataflow df = null;
 
             ResolutionScope scope = Resolver.create(this.dataflow).resolve((Observable) observable,
-                    this.resolutionScope.getDeferredChildScope(observation, mode), mode, observation.getScale(), model);
+                    this.resolutionScope.getDeferredChildScope(observation, mode), mode,
+                    observation.getScale(), model);
 
             if (scope.getCoverage().isRelevant()) {
-                df = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + task.getId(), scope, parentDataflow);
+                df = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + task.getId(), scope,
+                        parentDataflow);
             }
 
             return df;
@@ -535,9 +546,11 @@ public class RuntimeScope extends AbstractRuntimeScope {
         IArtifact ret = null;
         if (dataflow == null) {
             if (observable.isOptional()) {
-                monitor.warn("cannot resolve optional observable " + observable.getDefinition() + " in " + observation);
+                monitor.warn("cannot resolve optional observable " + observable.getDefinition() + " in "
+                        + observation);
             } else {
-                monitor.error("cannot resolve mandatory observable " + observable.getDefinition() + " in " + observation);
+                monitor.error("cannot resolve mandatory observable " + observable.getDefinition() + " in "
+                        + observation);
                 // don't stop so we know which objects don't resolve, although >1 may be
                 // annoying.
             }
@@ -578,11 +591,13 @@ public class RuntimeScope extends AbstractRuntimeScope {
             Dataflow df = null;
 
             ResolutionScope scope = Resolver.create(this.dataflow).resolve((Observable) observable,
-                    this.resolutionScope.getChildScope(observable, geometry, name), Mode.RESOLUTION, scale, model);
+                    this.resolutionScope.getChildScope(observable, geometry, name), Mode.RESOLUTION, scale,
+                    model);
 
             if (scope.getCoverage().isRelevant()) {
 
-                df = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + subtask.getId(), scope,
+                df = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + subtask.getId(),
+                        scope,
                         this.actuator)/*
                                        * .setPrimary(false)
                                        */;
@@ -611,11 +626,13 @@ public class RuntimeScope extends AbstractRuntimeScope {
      * object or something like that.
      */
     @Override
-    public IDirectObservation newObservation(IObservable observable, String name, IScale scale, IMetadata metadata)
+    public IDirectObservation newObservation(IObservable observable, String name, IScale scale,
+            IMetadata metadata)
             throws KlabException {
 
         if (!observable.is(Type.COUNTABLE)) {
-            throw new IllegalArgumentException("RuntimeContext: cannot create a non-countable observation with newObservation()");
+            throw new IllegalArgumentException(
+                    "RuntimeContext: cannot create a non-countable observation with newObservation()");
         }
 
         IDirectObservation ret = null;
@@ -633,13 +650,15 @@ public class RuntimeScope extends AbstractRuntimeScope {
         /*
          * harmonize the scale according to what the model wants and the context's
          */
-        scale = Scale.contextualize(scale, contextSubject.getScale(), model == null ? null : model.getAnnotations(), monitor);
+        scale = Scale.contextualize(scale, contextSubject.getScale(),
+                model == null ? null : model.getAnnotations(), monitor);
 
         ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity()).createChild("Resolution of " + name);
         Dataflow dataflow = resolve(obs, name, scale, subtask);
 
         RuntimeScope runtimeScope = new RuntimeScope(this)
-                .withScope(this.resolutionScope.getChildScope(observable, contextSubject, scale)).withMetadata(metadata)
+                .withScope(this.resolutionScope.getChildScope(observable, contextSubject, scale))
+                .withMetadata(metadata)
                 .withDirectObservationName(name).withNotificationMode(notificationMode)
                 .withinGroup(this.target instanceof ObservationGroup ? (ObservationGroup) this.target : null);
 
@@ -688,10 +707,12 @@ public class RuntimeScope extends AbstractRuntimeScope {
 
         if (predicate.isAbstract() || (!predicate.is(Type.TRAIT) && !predicate.is(Type.ROLE))) {
             throw new IllegalArgumentException(
-                    "RuntimeContext: cannot attribute predicate " + predicate + ": must be a concrete trait or role");
+                    "RuntimeContext: cannot attribute predicate " + predicate
+                            + ": must be a concrete trait or role");
         }
 
-        IObservable observable = new ObservableBuilder(predicate, monitor).of(target.getObservable().getType()).buildObservable();
+        IObservable observable = new ObservableBuilder(predicate, monitor)
+                .of(target.getObservable().getType()).buildObservable();
 
         // /*
         // * preload all the possible resolvers in the wider scope before specializing
@@ -704,36 +725,41 @@ public class RuntimeScope extends AbstractRuntimeScope {
 
         ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
         ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity()).createChild(
-                "Resolution of predicate " + Concepts.INSTANCE.getDisplayName(predicate) + " within " + target.getName());
+                "Resolution of predicate " + Concepts.INSTANCE.getDisplayName(predicate) + " within "
+                        + target.getName());
         ResolutionScope scope = this.resolutionScope.getChildScope(target, Mode.RESOLUTION);
 
-        Dataflow dataflow = getDataflow(observable, Mode.RESOLUTION, target.getScale(), contextSubject, (geometry) -> {
+        Dataflow dataflow = getDataflow(observable, Mode.RESOLUTION, target.getScale(), contextSubject,
+                (geometry) -> {
 
-            Dataflow df = null;
-            ResolutionScope scp = Resolver.create(this.dataflow).resolve((Observable) observable, scope, Mode.RESOLUTION,
-                    geometry, model);
+                    Dataflow df = null;
+                    ResolutionScope scp = Resolver.create(this.dataflow).resolve((Observable) observable,
+                            scope, Mode.RESOLUTION,
+                            geometry, model);
 
-            if (scp.getCoverage().isRelevant()) {
+                    if (scp.getCoverage().isRelevant()) {
 
-                df = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + subtask.getId(), scp, this.actuator);
-                df.setModel((Model) model);
+                        df = Dataflows.INSTANCE.compile(
+                                "local:task:" + session.getId() + ":" + subtask.getId(), scp, this.actuator);
+                        df.setModel((Model) model);
 
-            } else if (resolutionScope.getPreresolvedModels(observable) == null
-                    || resolutionScope.getPreresolvedModels(observable).getSecond().size() == 0) {
+                    } else if (resolutionScope.getPreresolvedModels(observable) == null
+                            || resolutionScope.getPreresolvedModels(observable).getSecond().size() == 0) {
 
-                /*
-                 * Add an empty dataflow to create the predicate without further consequences. This
-                 * is only done if there are no preloaded resolvers in this scale, so we are certain
-                 * that other subjects will encounter the same conditions.
-                 */
-                df = Dataflow.empty(observable, null, scp, this.dataflow);
-            }
+                        /*
+                         * Add an empty dataflow to create the predicate without further
+                         * consequences. This is only done if there are no preloaded resolvers in
+                         * this scale, so we are certain that other subjects will encounter the same
+                         * conditions.
+                         */
+                        df = Dataflow.empty(observable, null, scp, this.dataflow);
+                    }
 
-            notifyDataflowChanges(this);
+                    notifyDataflowChanges(this);
 
-            return df;
+                    return df;
 
-        });
+                });
 
         if (dataflow != null) {
             dataflow.run(target.getScale(), (Actuator) this.actuator, this);
@@ -742,11 +768,13 @@ public class RuntimeScope extends AbstractRuntimeScope {
     }
 
     @Override
-    public IRelationship newRelationship(IObservable observable, String name, IScale scale, IObjectArtifact source,
+    public IRelationship newRelationship(IObservable observable, String name, IScale scale,
+            IObjectArtifact source,
             IObjectArtifact target, IMetadata metadata) {
 
         if (!observable.is(Type.RELATIONSHIP)) {
-            throw new IllegalArgumentException("RuntimeContext: cannot create a relationship of type " + observable.getType());
+            throw new IllegalArgumentException(
+                    "RuntimeContext: cannot create a relationship of type " + observable.getType());
         }
 
         INotification.Mode notificationMode = INotification.Mode.Normal;
@@ -760,14 +788,18 @@ public class RuntimeScope extends AbstractRuntimeScope {
 
         Observable obs = new Observable((Observable) observable).withoutModel();
         obs.setName(name);
-        scale = Scale.contextualize(scale, contextSubject.getScale(), model == null ? null : model.getAnnotations(), monitor);
-        ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity()).createChild("Resolution of relationship " + name);
+        scale = Scale.contextualize(scale, contextSubject.getScale(),
+                model == null ? null : model.getAnnotations(), monitor);
+        ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity())
+                .createChild("Resolution of relationship " + name);
         Dataflow dataflow = resolve(obs, name, scale, subtask);
 
         RuntimeScope runtimeScope = new RuntimeScope(this).withDirectObservationName(name)
                 .withinGroup(this.target instanceof ObservationGroup ? (ObservationGroup) this.target : null)
-                .withNotificationMode(notificationMode).connecting((IDirectObservation) source, (IDirectObservation) target)
-                .withMetadata(metadata).withScope(this.resolutionScope.getChildScope(observable, contextSubject, scale));
+                .withNotificationMode(notificationMode)
+                .connecting((IDirectObservation) source, (IDirectObservation) target)
+                .withMetadata(metadata)
+                .withScope(this.resolutionScope.getChildScope(observable, contextSubject, scale));
 
         return (IRelationship) dataflow.run(scale, (Actuator) this.actuator, runtimeScope);
     }
@@ -841,10 +873,12 @@ public class RuntimeScope extends AbstractRuntimeScope {
                  * observation in the catalog but letting its actuator notify it later after the
                  * merging is done.
                  */
-                Actuator mergingActuator = actuator.getDataflow().getActuator(actuator.getPartitionedTarget());
+                Actuator mergingActuator = actuator.getDataflow()
+                        .getActuator(actuator.getPartitionedTarget());
                 if (mergingActuator == null) {
                     throw new IllegalStateException(
-                            "internal: cannot find merging actuator named " + actuator.getPartitionedTarget());
+                            "internal: cannot find merging actuator named "
+                                    + actuator.getPartitionedTarget());
                 }
 
                 IArtifact merging = createTarget(mergingActuator, getResolutionScale(), scope, rootSubject);
@@ -854,7 +888,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
                  */
                 if (merging instanceof IState) {
                     // complete the partial scale with the overall view of the context
-                    merging = Observations.INSTANCE.getStateView((IState) merging, getMergedScale(actuator), ret);
+                    merging = Observations.INSTANCE.getStateView((IState) merging, getMergedScale(actuator),
+                            ret);
                     if (merging instanceof RescalingState) {
                         // for debugging
                         ((RescalingState) merging).setLocalId(actuator.getName());
@@ -863,7 +898,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
 
                 } else if (merging instanceof IProcess && actuator.getObservable().is(Type.CHANGE)) {
 
-                    IObservable tochange = actuator.getObservable().getBuilder(monitor).without(ObservableRole.UNARY_OPERATOR)
+                    IObservable tochange = actuator.getObservable().getBuilder(monitor)
+                            .without(ObservableRole.UNARY_OPERATOR)
                             .buildObservable();
 
                     // avoid multiple rescaling states on the same object
@@ -879,7 +915,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
                         merging = getCatalog().get(new ObservedConcept(tochange));
                         if (merging instanceof IState) {
 
-                            merging = Observations.INSTANCE.getStateView((IState) merging, getMergedScale(actuator), ret);
+                            merging = Observations.INSTANCE.getStateView((IState) merging,
+                                    getMergedScale(actuator), ret);
                             if (merging instanceof RescalingState) {
                                 // for debugging
                                 ((RescalingState) merging).setLocalId(actuator.getName());
@@ -893,14 +930,16 @@ public class RuntimeScope extends AbstractRuntimeScope {
 
         } else if (!actuator.isInput()) {
 
-            if (actuator.getObservable().is(Type.CHANGE) && actuator.getModel() != null && actuator.getModel().isDerived()) {
+            if (actuator.getObservable().is(Type.CHANGE) && actuator.getModel() != null
+                    && actuator.getModel().isDerived()) {
                 /*
                  * Find the changing target and set that as the target. This is confusing but the
                  * derived model copies any computation that affects the original quality, so the
                  * alternative would be to keep it a process and duplicate all the computation in
                  * the process contextualizer, which is way messier.
                  */
-                IObservable tochange = actuator.getObservable().getBuilder(monitor).without(ObservableRole.UNARY_OPERATOR)
+                IObservable tochange = actuator.getObservable().getBuilder(monitor)
+                        .without(ObservableRole.UNARY_OPERATOR)
                         .buildObservable();
                 ret.target = getCatalog().get(new ObservedConcept(tochange));
                 getActuatorData(actuator).target = (IObservation) ret.target;
@@ -948,14 +987,18 @@ public class RuntimeScope extends AbstractRuntimeScope {
      * Used in sub-resolution with switched context.
      */
     @Override
-    public IRuntimeScope createContext(IScale scale, IActuator actuator, IDataflow<?> dataflow, IResolutionScope scope) {
+    public IRuntimeScope createContext(IScale scale, IActuator actuator, IDataflow<?> dataflow,
+            IResolutionScope scope) {
 
         RuntimeScope ret = new RuntimeScope(this);
         ret.parent = this;
         ret.namespace = ((Actuator) actuator).getNamespace();
-        ret.targetName = ((Actuator) actuator).isPartition() ? ((Actuator) actuator).getPartitionedTarget() : actuator.getName();
+        ret.targetName = ((Actuator) actuator).isPartition()
+                ? ((Actuator) actuator).getPartitionedTarget()
+                : actuator.getName();
         ret.resolutionScope = (ResolutionScope) scope;
-        ret.artifactType = Observables.INSTANCE.getObservableType(((Actuator) actuator).getObservable(), true);
+        ret.artifactType = Observables.INSTANCE.getObservableType(((Actuator) actuator).getObservable(),
+                true);
         ret.scale = scale;
         ret.semantics = new HashMap<>();
         ret.catalog = new HashMap<>();
@@ -991,7 +1034,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
         ret.target = ret.createTarget((Actuator) actuator, scale, scope, rootSubject);
         if (ret.target != null && this.target != null) {
             ret.semantics.put(actuator.getName(), ((Actuator) actuator).getObservable());
-            ret.artifactType = Observables.INSTANCE.getObservableType(((Actuator) actuator).getObservable(), true);
+            ret.artifactType = Observables.INSTANCE.getObservableType(((Actuator) actuator).getObservable(),
+                    true);
         }
 
         return ret;
@@ -1087,9 +1131,11 @@ public class RuntimeScope extends AbstractRuntimeScope {
     public IState addState(IDirectObservation target, IObservable observable, Object data) {
 
         if (!observable.is(Type.QUALITY)) {
-            throw new KlabValidationException("klab: API usage: adding a state with a non-quality observable");
+            throw new KlabValidationException(
+                    "klab: API usage: adding a state with a non-quality observable");
         }
-        IObservation ret = DefaultRuntimeProvider.createObservation(observable, Scale.copyForObservation(target.getScale()), this,
+        IObservation ret = DefaultRuntimeProvider.createObservation(observable,
+                Scale.copyForObservation(target.getScale()), this,
                 false);
         if (data != null) {
             ((IState) ret).fill(data);
@@ -1107,7 +1153,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
      * @param actuator
      * @param scope
      */
-    public IArtifact createTarget(Actuator actuator, IScale scale, IResolutionScope scope, IDirectObservation rootSubject) {
+    public IArtifact createTarget(Actuator actuator, IScale scale, IResolutionScope scope,
+            IDirectObservation rootSubject) {
 
         /*
          * support map: the fields are observable, mode, and a boolean that is true if the actuator
@@ -1123,16 +1170,19 @@ public class RuntimeScope extends AbstractRuntimeScope {
 
         if (!actuator.isPartition()) {
             targetObservables.put(actuator.getName(),
-                    new Triple<>(actuator.getObservable(), actuator.getMode(), actuator.getType() == IArtifact.Type.VOID));
+                    new Triple<>(actuator.getObservable(), actuator.getMode(),
+                            actuator.getType() == IArtifact.Type.VOID));
         }
 
         /*
          * add any target of indirect computations
          */
         for (IContextualizable computation : actuator.getComputation()) {
-            if (computation.getTarget() != null && this.catalog.get(computation.getTarget().getName()) == null) {
+            if (computation.getTarget() != null
+                    && this.catalog.get(computation.getTarget().getName()) == null) {
                 targetObservables.put(computation.getTarget().getReferenceName(),
-                        new Triple<>((Observable) computation.getTarget(), computation.getComputationMode(), false));
+                        new Triple<>((Observable) computation.getTarget(), computation.getComputationMode(),
+                                false));
             }
         }
 
@@ -1177,7 +1227,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
             } else if ((observable.is(Type.TRAIT) || observable.is(Type.ROLE)) && mode == Mode.RESOLUTION) {
                 // get the target from the scope, add the predicate to it, return that
                 if (this.target instanceof IDirectObservation) {
-                    ((DirectObservation) this.target).addPredicate(Observables.INSTANCE.getBaseObservable(observable.getType()));
+                    ((DirectObservation) this.target)
+                            .addPredicate(Observables.INSTANCE.getBaseObservable(observable.getType()));
                 }
                 preexisting = (IObservation) this.target;
             } else {
@@ -1185,17 +1236,20 @@ public class RuntimeScope extends AbstractRuntimeScope {
                 Observable obs = observable;
 
                 // attribute the name if any
-                if (directObservationName != null && ((Actuator) actuator).getMode() == Mode.RESOLUTION && currentGroup != null
+                if (directObservationName != null && ((Actuator) actuator).getMode() == Mode.RESOLUTION
+                        && currentGroup != null
                         && observable.is(currentGroup.getObservable())) {
                     obs = new Observable(obs);
                     obs.setName(directObservationName);
                 }
 
                 if (obs.is(Type.RELATIONSHIP)) {
-                    observation = DefaultRuntimeProvider.createRelationship(obs, Scale.copyForObservation(scale),
+                    observation = DefaultRuntimeProvider.createRelationship(obs,
+                            Scale.copyForObservation(scale),
                             relationshipSource, relationshipTarget, this);
                 } else {
-                    observation = DefaultRuntimeProvider.createObservation(obs, Scale.copyForObservation(scale), this,
+                    observation = DefaultRuntimeProvider.createObservation(obs,
+                            Scale.copyForObservation(scale), this,
                             op.getThird());
                 }
 
@@ -1245,13 +1299,15 @@ public class RuntimeScope extends AbstractRuntimeScope {
                             IArtifact artifact = p.findArtifactByObservableName(attr);
                             if (artifact == null) {
                                 Pair<String, IArtifact> art = p
-                                        .findArtifact(actuator.getDataflow().getModel().getAttributeObservables().get(attr));
+                                        .findArtifact(actuator.getDataflow().getModel()
+                                                .getAttributeObservables().get(attr));
                                 artifact = art == null ? null : art.getSecond();
                             }
                             if (artifact instanceof IState) {
                                 // observable may be different or use data reduction traits
                                 IState stateView = Observations.INSTANCE.getStateViewAs(
-                                        actuator.getDataflow().getModel().getAttributeObservables().get(attr), (IState) artifact,
+                                        actuator.getDataflow().getModel().getAttributeObservables().get(attr),
+                                        (IState) artifact,
                                         scale, this);
                                 predefinedStates.add(stateView);
                             }
@@ -1299,7 +1355,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
                 if (wasRoot && this.resolutionScope.getObserver() != null) {
                     for (IObservable state : this.resolutionScope.getObserver().getStates()) {
                         if (state.getValue() != null) {
-                            IObservation ostate = DefaultRuntimeProvider.createObservation(state, scale, this, false);
+                            IObservation ostate = DefaultRuntimeProvider.createObservation(state, scale, this,
+                                    false);
                             actuator.notifyNewObservation(ostate);
                             this.observations.put(ostate.getId(), ostate);
                             this.catalog.put(state.getName(), ostate);
@@ -1421,8 +1478,10 @@ public class RuntimeScope extends AbstractRuntimeScope {
                             if (table instanceof TableValue) {
 
                                 KnowledgeViewReference descriptor = new KnowledgeViewReference();
-                                descriptor.setContextId(monitor.getIdentity().getParentIdentity(ITaskTree.class).getContextId());
-                                descriptor.setBody(((TableValue) table).getCompiledView("text/html").getText());
+                                descriptor.setContextId(monitor.getIdentity()
+                                        .getParentIdentity(ITaskTree.class).getContextId());
+                                descriptor
+                                        .setBody(((TableValue) table).getCompiledView("text/html").getText());
                                 descriptor.setViewClass(View.TABLES);
                                 descriptor.setTitle(((TableValue) table).getTitle());
                                 descriptor.setViewId(((TableValue) table).getId());
@@ -1430,8 +1489,10 @@ public class RuntimeScope extends AbstractRuntimeScope {
                                 descriptor.setLabel(((TableValue) table).getLabel());
 
                                 report.addView((TableValue) table, descriptor);
-                                session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.UserInterface,
-                                        IMessage.Type.ViewAvailable, descriptor));
+                                session.getMonitor()
+                                        .send(Message.create(session.getId(),
+                                                IMessage.MessageClass.UserInterface,
+                                                IMessage.Type.ViewAvailable, descriptor));
                             }
                         }
                     }
@@ -1442,10 +1503,12 @@ public class RuntimeScope extends AbstractRuntimeScope {
                                                 * , getParentArtifactOf(observation)
                                                 */, observation.getScale().initialization(), 0)
                             .withTaskId(monitor.getIdentity().getId())
-                            .withContextId(monitor.getIdentity().getParentIdentity(ITaskTree.class).getContextId());
+                            .withContextId(
+                                    monitor.getIdentity().getParentIdentity(ITaskTree.class).getContextId());
 
-                    session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
-                            IMessage.Type.NewObservation, descriptor));
+                    session.getMonitor()
+                            .send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
+                                    IMessage.Type.NewObservation, descriptor));
 
                     report.include(descriptor, observation);
 
@@ -1454,20 +1517,24 @@ public class RuntimeScope extends AbstractRuntimeScope {
                 }
 
                 for (ObservationChange change : ((Observation) observation).getChangesAndReset()) {
-                    change.setExportFormats(Observations.INSTANCE.getExportFormats((IObservation) observation));
-                    session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
-                            IMessage.Type.ModifiedObservation, change));
+                    change.setExportFormats(
+                            Observations.INSTANCE.getExportFormats((IObservation) observation));
+                    session.getMonitor()
+                            .send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
+                                    IMessage.Type.ModifiedObservation, change));
                 }
 
             } else if (notificationMode == INotification.Mode.Verbose
                     || (grandpa != null && watchedObservations.contains(parent.getId()))) {
 
                 // subscribed to grandparent and parent is closed: send change
-                ObservationChange change = ((Observation) parent).createChangeEvent(ObservationChange.Type.StructureChange);
+                ObservationChange change = ((Observation) parent)
+                        .createChangeEvent(ObservationChange.Type.StructureChange);
                 change.setNewSize(getChildArtifactsOf(parent).size());
                 change.setExportFormats(Observations.INSTANCE.getExportFormats((IObservation) parent));
-                session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
-                        IMessage.Type.ModifiedObservation, change));
+                session.getMonitor()
+                        .send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
+                                IMessage.Type.ModifiedObservation, change));
             }
         }
     }
@@ -1515,7 +1582,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
         IConcept mainObservable = Observables.INSTANCE.getBaseObservable(observable.getType());
         IObservation ret = groups.get(mainObservable);
         if (ret == null) {
-            ret = new ObservationGroup(Observable.promote(mainObservable), (Scale) scale, this, observable.getArtifactType());
+            ret = new ObservationGroup(Observable.promote(mainObservable), (Scale) scale, this,
+                    observable.getArtifactType());
             groups.put(mainObservable, (ObservationGroup) ret);
         }
         return ret;
@@ -1535,7 +1603,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
              */
             Logging.INSTANCE.warn("unexpected call to createTarget: check logics");
         } else {
-            observation = DefaultRuntimeProvider.createObservation(observable, Scale.copyForObservation(getResolutionScale()),
+            observation = DefaultRuntimeProvider.createObservation(observable,
+                    Scale.copyForObservation(getResolutionScale()),
                     this);
         }
 
@@ -1616,7 +1685,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
             return null;
         }
 
-        if (!observable.getAbstractPredicates().isEmpty() || observable.getDescriptionType() == Description.CHARACTERIZATION) {
+        if (!observable.getAbstractPredicates().isEmpty()
+                || observable.getDescriptionType() == Description.CHARACTERIZATION) {
 
             /*
              * create a folder of all artifacts that resolve the observable, if any, or return null.
@@ -1627,7 +1697,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
                 if (artifact != null && artifact instanceof IObservation) {
 
                     boolean resolves = false;
-                    if (observable.getDescriptionType() == Description.CHARACTERIZATION && observable.getType().isAbstract()) {
+                    if (observable.getDescriptionType() == Description.CHARACTERIZATION
+                            && observable.getType().isAbstract()) {
                         for (IConcept predicate : Traits.INSTANCE
                                 .getTraits(((IObservation) artifact).getObservable().getType())) {
                             if (cached_is(predicate, observable.getType())) {
@@ -1644,7 +1715,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
                     }
 
                     if (ret == null) {
-                        ret = new ObservationGroup((Observable) observable, (Scale) ((IObservation) artifact).getScale(), this,
+                        ret = new ObservationGroup((Observable) observable,
+                                (Scale) ((IObservation) artifact).getScale(), this,
                                 ((IObservation) artifact).getType());
                     }
                     ret.chain(artifact);
@@ -1657,7 +1729,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
         for (String key : catalog.keySet()) {
             IArtifact artifact = catalog.get(key);
             if (artifact != null && artifact instanceof IObservation
-                    && ((Observable) ((IObservation) artifact).getObservable()).resolvesStrictly((Observable) observable)) {
+                    && ((Observable) ((IObservation) artifact).getObservable())
+                            .resolvesStrictly((Observable) observable)) {
                 return new Pair<>(key, artifact);
             }
         }
@@ -1705,7 +1778,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
     public Collection<IArtifact> getArtifact(IConcept observable) {
         List<IArtifact> ret = new ArrayList<>();
         for (IArtifact artifact : catalog.values()) {
-            if (artifact instanceof IObservation && ((IObservation) artifact).getObservable().getType().equals(observable)) {
+            if (artifact instanceof IObservation
+                    && ((IObservation) artifact).getObservable().getType().equals(observable)) {
                 ret.add(artifact);
             }
         }
@@ -1773,12 +1847,15 @@ public class RuntimeScope extends AbstractRuntimeScope {
             /*
              * must search base subject class and filter by predicates if any.
              */
-            Builder builder = Observable.promote(concept).getBuilder(monitor).without(ObservableRole.TRAIT, ObservableRole.ROLE);
-            Pair<IConcept, Collection<IConcept>> query = new Pair<>(builder.buildConcept(), builder.getRemoved());
+            Builder builder = Observable.promote(concept).getBuilder(monitor).without(ObservableRole.TRAIT,
+                    ObservableRole.ROLE);
+            Pair<IConcept, Collection<IConcept>> query = new Pair<>(builder.buildConcept(),
+                    builder.getRemoved());
 
             for (IArtifact artifact : catalog.values()) {
                 if (artifact instanceof ObservationGroup
-                        && (cached_is(((ObservationGroup) artifact).getObservable().getType(), query.getFirst()))) {
+                        && (cached_is(((ObservationGroup) artifact).getObservable().getType(),
+                                query.getFirst()))) {
                     return (T) ((ObservationGroup) artifact).queryPredicates(query.getSecond());
                 }
             }
@@ -1786,7 +1863,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
 
         Set<IArtifact> ret = new HashSet<>();
         for (IArtifact artifact : catalog.values()) {
-            if (artifact instanceof IObservation && (cached_is(((IObservation) artifact).getObservable().getType(), concept))) {
+            if (artifact instanceof IObservation
+                    && (cached_is(((IObservation) artifact).getObservable().getType(), concept))) {
                 ret.add(artifact);
             }
         }
@@ -1818,7 +1896,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T extends IArtifact> Collection<T> getAnyArtifact(IConcept concept, Class<T> cls) {
+    public <T extends IArtifact> Collection<T> getArtifacts(IConcept concept, Class<T> cls) {
 
         Set<T> chosen = new HashSet<>();
 
@@ -1827,12 +1905,15 @@ public class RuntimeScope extends AbstractRuntimeScope {
             /*
              * must search base subject class and filter by predicates if any.
              */
-            Builder builder = Observable.promote(concept).getBuilder(monitor).without(ObservableRole.TRAIT, ObservableRole.ROLE);
-            Pair<IConcept, Collection<IConcept>> query = new Pair<>(builder.buildConcept(), builder.getRemoved());
+            Builder builder = Observable.promote(concept).getBuilder(monitor).without(ObservableRole.TRAIT,
+                    ObservableRole.ROLE);
+            Pair<IConcept, Collection<IConcept>> query = new Pair<>(builder.buildConcept(),
+                    builder.getRemoved());
 
             for (IArtifact artifact : catalog.values()) {
                 if (artifact instanceof ObservationGroup
-                        && (cached_is(((ObservationGroup) artifact).getObservable().getType(), query.getFirst()))) {
+                        && (cached_is(((ObservationGroup) artifact).getObservable().getType(),
+                                query.getFirst()))) {
                     chosen.add((T) ((ObservationGroup) artifact).queryPredicates(query.getSecond()));
                 }
             }
@@ -1840,16 +1921,22 @@ public class RuntimeScope extends AbstractRuntimeScope {
 
         Set<IArtifact> ret = new HashSet<>();
         for (IArtifact artifact : catalog.values()) {
-            if (artifact instanceof IObservation && (cached_is(((IObservation) artifact).getObservable().getType(), concept))) {
-                ret.add(artifact);
+            if (artifact instanceof IObservation
+                    && (cached_is(((IObservation) artifact).getObservable().getType(), concept))) {
+                ret.add((T)artifact);
             }
         }
 
         for (IArtifact artifact : ret) {
-            if (artifact.getClass().isAssignableFrom(cls)) {
+            if (cls.isAssignableFrom(artifact.getClass())) {
                 if (model != null && artifact instanceof IObservation) {
                     for (IObservable obs : model.getDependencies()) {
-                        if (obs.is(concept)) {
+                        if (cached_is(obs.getType(), concept)) {
+                            chosen.add((T) artifact);
+                        }
+                    }
+                    for (IObservable obs : model.getObservables()) {
+                        if (cached_is(obs.getType(), concept)) {
                             chosen.add((T) artifact);
                         }
                     }
@@ -1878,7 +1965,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
 
                     RuntimeScope root = getRootScope();
                     if (root.scheduler == null) {
-                        root.scheduler = new Scheduler(this, this.rootSubject.getId(), resolutionScope, monitor);
+                        root.scheduler = new Scheduler(this, this.rootSubject.getId(), resolutionScope,
+                                monitor);
                     }
                     root.occurrent = true;
                     ((Scheduler) root.scheduler).schedule(action, observation, Time.create(aa), this);
@@ -1961,10 +2049,13 @@ public class RuntimeScope extends AbstractRuntimeScope {
                  * 
                  * null target == aux variable, occur at will.
                  */
-                boolean targetOccurs = computation.target == null || computation.target.getType().isOccurrent()
-                        || (isOccurrent && Observables.INSTANCE.isAffectedBy(computation.observable, actuator.getObservable()))
+                boolean targetOccurs = computation.target == null
+                        || computation.target.getType().isOccurrent()
+                        || (isOccurrent && Observables.INSTANCE.isAffectedBy(computation.observable,
+                                actuator.getObservable()))
                         || (computation.target != null
-                                && computation.resource.getGeometry().getDimension(Dimension.Type.TIME) != null)
+                                && computation.resource.getGeometry()
+                                        .getDimension(Dimension.Type.TIME) != null)
                         // if model is derived, it was put here on purpose to represent change so we
                         // schedule it.
                         || (actuator.getModel() != null && actuator.getModel().isDerived());
@@ -2057,7 +2148,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
     }
 
     public String toString() {
-        return "{Scope of " + contextSubject + " [" + catalog.size() + " obs, " + network.edgeSet().size() + " links]}";
+        return "{Scope of " + contextSubject + " [" + catalog.size() + " obs, " + network.edgeSet().size()
+                + " links]}";
     }
 
     @Override
@@ -2094,12 +2186,14 @@ public class RuntimeScope extends AbstractRuntimeScope {
         IObservation artifact = getArtifact(artifactType, IObservation.class);
         if (artifact instanceof ObservationGroup) {
             for (IArtifact grouped : artifact) {
-                if (cached_is(((IObservation) grouped).getObservable().getType(), observable) || cached_is_related(
-                        ((IObservation) grouped).getObservable().getType(),
-                        observable)/*
-                                    * ((IObservation)
-                                    * grouped).getObservable().getType().resolves(observable, null)
-                                    */) {
+                if (cached_is(((IObservation) grouped).getObservable().getType(), observable)
+                        || cached_is_related(
+                                ((IObservation) grouped).getObservable().getType(),
+                                observable)/*
+                                            * ((IObservation)
+                                            * grouped).getObservable().getType().resolves(
+                                            * observable, null)
+                                            */) {
                     ret.add((IObservation) grouped);
                 }
             }
@@ -2134,7 +2228,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
         for (IArtifact artifact : catalog.values()) {
             if (artifact instanceof IObservation) {
                 ret.put(new ObservedConcept(((IObservation) artifact).getObservable(),
-                        artifact instanceof ObservationGroup ? Mode.INSTANTIATION : Mode.RESOLUTION), (IObservation) artifact);
+                        artifact instanceof ObservationGroup ? Mode.INSTANTIATION : Mode.RESOLUTION),
+                        (IObservation) artifact);
             }
         }
         return ret;
@@ -2171,7 +2266,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
 
         ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
         session.getMonitor().send(
-                Message.create(session.getId(), IMessage.MessageClass.UserInterface, IMessage.Type.ViewAvailable, descriptor));
+                Message.create(session.getId(), IMessage.MessageClass.UserInterface,
+                        IMessage.Type.ViewAvailable, descriptor));
 
     }
 
@@ -2318,7 +2414,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
         List<T> ret = new ArrayList<>();
         for (IArtifact artifact : catalog.values()) {
             if (artifact instanceof IObservation && cls.isAssignableFrom(artifact.getClass())) {
-                if (Observables.INSTANCE.isAffectedBy(((IObservation) artifact).getObservable(), processType)) {
+                if (Observables.INSTANCE.isAffectedBy(((IObservation) artifact).getObservable(),
+                        processType)) {
                     ret.add((T) artifact);
                 }
             }
@@ -2354,9 +2451,11 @@ public class RuntimeScope extends AbstractRuntimeScope {
      */
     public StyleDefinition getOutputStyle() {
         if (((Actuator) this.actuator).getModel() != null) {
-            IAnnotation astyle = Annotations.INSTANCE.getAnnotation(((Actuator) this.actuator).getModel(), "style");
+            IAnnotation astyle = Annotations.INSTANCE.getAnnotation(((Actuator) this.actuator).getModel(),
+                    "style");
             if (astyle != null) {
-                Object o = Resources.INSTANCE.getNamespaceObject(astyle.get(IServiceCall.DEFAULT_PARAMETER_NAME, String.class));
+                Object o = Resources.INSTANCE
+                        .getNamespaceObject(astyle.get(IServiceCall.DEFAULT_PARAMETER_NAME, String.class));
                 if (o instanceof StyleDefinition) {
                     return (StyleDefinition) o;
                 }
@@ -2405,8 +2504,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
     public IRuntimeScope getChild(IRuntimeIdentity identity) {
         RuntimeScope ret = copy();
         ret.monitor = identity.getMonitor();
-        if (identity instanceof ITaskIdentity && ((ITaskIdentity)identity).getContext() != null) {
-           ret.contextSubject = ((ITaskIdentity)identity).getContext();
+        if (identity instanceof ITaskIdentity && ((ITaskIdentity) identity).getContext() != null) {
+            ret.contextSubject = ((ITaskIdentity) identity).getContext();
         }
         return ret;
     }
