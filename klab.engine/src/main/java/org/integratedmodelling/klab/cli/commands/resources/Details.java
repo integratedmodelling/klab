@@ -1,7 +1,5 @@
 package org.integratedmodelling.klab.cli.commands.resources;
 
-import java.io.ByteArrayOutputStream;
-
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Network;
 import org.integratedmodelling.klab.Resources;
@@ -10,8 +8,6 @@ import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.cli.ICommand;
 import org.integratedmodelling.klab.api.data.IResource;
-import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
-import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;

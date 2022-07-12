@@ -130,14 +130,6 @@
 			<artifactId>klab.component.landcover</artifactId>
 			<version>${klab.version}</version>
 		</dependency>
-
-		<!-- TODO REMOVE! We don't want this to be available locally.  -->
-		<dependency>
-			<groupId>org.integratedmodelling</groupId>
-			<artifactId>klab.adapter.copernicus</artifactId>
-			<version>${klab.version}</version>
-		</dependency>
-
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.component.tables</artifactId>
