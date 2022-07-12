@@ -17,7 +17,6 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptReference#getName <em>Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptReference#getTemplateType <em>Template Type</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.ConceptReference#getType <em>Type</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptReference#getExtends <em>Extends</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptReference#isTemplate <em>Template</em>}</li>
  * </ul>
@@ -71,28 +70,6 @@ public interface ConceptReference extends EObject
    * @generated
    */
   void setTemplateType(String value);
-
-  /**
-   * Returns the value of the '<em><b>Type</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Type</em>' attribute.
-   * @see #setType(String)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getConceptReference_Type()
-   * @model
-   * @generated
-   */
-  String getType();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ConceptReference#getType <em>Type</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Type</em>' attribute.
-   * @see #getType()
-   * @generated
-   */
-  void setType(String value);
 
   /**
    * Returns the value of the '<em><b>Extends</b></em>' containment reference.

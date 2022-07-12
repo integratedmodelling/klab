@@ -94,8 +94,8 @@ public class LocalData implements IKlabData {
      */
     public LocalData(Map<?, ?> data, IMonitor monitor) {
 
-        if (data.containsKey("states")) {
-            for (Object s : (Iterable<?>) data.get("states")) {
+        if (data.get("states") instanceof Collection) {
+            for (Object s : (Collection<?>) data.get("states")) {
 
                 Map<?, ?> state = (Map<?, ?>) s;
                 IScale scale = Scale.create(Geometry.create(state.get("geometry").toString()));
@@ -192,10 +192,22 @@ public class LocalData implements IKlabData {
             throw new KlabResourceAccessException(errorMessage);
         }
 
-        if (data.containsKey("states")) {
-            for (Object s : (Iterable<?>) data.get("states")) {
+        if (data.get("states") instanceof Collection) {
 
-                Map<?, ?> state = (Map<?, ?>) s;
+            /**
+             * FIXME this is necessary because some requests (come with an added map without content.
+             * Only keep the meaningful states and handle the naming issue as below. All this should
+             * be revised.
+             */
+            List<Map<?, ?>> stateData = new ArrayList<>();
+            for (Object o : (Collection<?>) data.get("states")) {
+                if (o instanceof Map && ((Map<?, ?>) o).containsKey("doubledata")) {
+                    stateData.add((Map<?, ?>) o);
+                }
+            }
+
+            for (Map<?, ?> state : stateData) {
+
                 IState target = null;
                 if ("result".equals(state.get("name"))) {
                     target = context.getTargetArtifact() instanceof IState ? (IState) context.getTargetArtifact() : null;
@@ -208,13 +220,13 @@ public class LocalData implements IKlabData {
 
                 /*
                  * FIXME this is necessary if names come from mandatorily named deps needed to match
-                 * with resources and they've been named differently in dependencies. The name is
-                 * disconnected when derived models are used (e.g. change) but there is no chance of
-                 * error. Should find a way to use the name nevertheless (the observable is the
-                 * changing one so no memory of the original name is kept).
+                 * with resources and they've been named differently in dependencies. In that case
+                 * the name is disconnected from the resource's tag when derived models are used
+                 * (e.g. change) but there is no chance of error if the target is a single state.
+                 * Should find a way to use the name nevertheless (the observable is the changing
+                 * one so no memory of the original name is kept).
                  */
-                if (target == null && context.getTargetArtifact() instanceof IState
-                        && ((Collection<?>) data.get("states")).size() == 1) {
+                if (target == null && context.getTargetArtifact() instanceof IState && stateData.size() == 1) {
                     target = (IState) context.getTargetArtifact();
                 }
 
@@ -237,38 +249,43 @@ public class LocalData implements IKlabData {
                         originalUnit = Unit.create(metadata.get("originalUnit").toString());
                     }
                 }
-                Iterator<?> doubles = state.containsKey("doubledata") ? ((Iterable<?>) state.get("doubledata")).iterator() : null;
+                Collection<?> doubles = state.get("doubledata") instanceof Collection
+                        ? (Collection<?>) state.get("doubledata")
+                        : null;
 
                 IUnit scaledUnit = null;
                 boolean scaled = false;
                 boolean needsScaling = Units.INSTANCE.needsUnitScaling(target.getObservable());
-                Object o = null;
                 long offset = 0;
-                while(doubles.hasNext()) {
+                if (doubles != null) {
+                    for (Object o : doubles) {
 
-                    o = doubles.next();
-                    // yes, they do this, mixed in with actual doubles.
-                    if ("NaN".equals(o)) {
-                        o = null;
-                    }
-
-                    /*
-                     * freaking complex, but should be OK now
-                     */
-                    IScale locator = context.getScale().at(offset++);
-                    if (targetUnit != null && originalUnit != null && o instanceof Number) {
-                        if (scaledUnit == null && needsScaling) {
-                            scaledUnit = targetUnit;
-                            if (!targetUnit.equals(originalUnit)) {
-                                scaledUnit = scaledUnit.contextualize(
-                                        new Observable(((Observable) target.getObservable())).withUnit(originalUnit), locator);
-                                scaled = true;
-                            }
+                        // yes, they do this, mixed in with actual doubles.
+                        if ("NaN".equals(o)) {
+                            o = null;
                         }
-                        o = scaled ? scaledUnit.convert((Number) o, locator) : targetUnit.convert((Number) o, originalUnit);
-                    }
 
-                    target.set(locator, o);
+                        /*
+                         * freaking complex, but should be OK now
+                         */
+                        IScale locator = context.getScale().at(offset++);
+                        if (targetUnit != null && originalUnit != null && o instanceof Number) {
+                            if (scaledUnit == null && needsScaling) {
+                                scaledUnit = targetUnit;
+                                if (!targetUnit.equals(originalUnit)) {
+                                    scaledUnit = scaledUnit.contextualize(
+                                            new Observable(((Observable) target.getObservable())).withUnit(originalUnit),
+                                            locator);
+                                    scaled = true;
+                                }
+                            }
+                            o = scaled ? scaledUnit.convert((Number) o, locator) : targetUnit.convert((Number) o, originalUnit);
+                        }
+
+                        target.set(locator, o);
+                    }
+                } else {
+
                 }
 
             }

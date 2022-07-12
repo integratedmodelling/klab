@@ -31,7 +31,7 @@ import org.integratedmodelling.klab.api.resolution.IResolvable;
  * @author Ferd
  * @version $Id: $Id
  */
-public interface IObserver extends IActiveKimObject, INamespaceQualified, IResolvable, IComputationProvider {
+public interface IAcknowledgement extends IActiveKimObject, INamespaceQualified, IResolvable, IComputationProvider {
 
     /**
      * The concept this observes, a direct observable.

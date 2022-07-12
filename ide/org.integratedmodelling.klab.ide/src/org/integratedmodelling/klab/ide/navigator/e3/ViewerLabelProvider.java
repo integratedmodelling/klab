@@ -16,7 +16,7 @@ import org.eclipse.wb.swt.SWTResourceManager;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimObservable;
-import org.integratedmodelling.kim.api.IKimObserver;
+import org.integratedmodelling.kim.api.IKimAcknowledgement;
 import org.integratedmodelling.kim.api.IKimStatement.Scope;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.ide.Activator;
@@ -31,7 +31,7 @@ import org.integratedmodelling.klab.ide.navigator.model.EModel;
 import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
 import org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem;
 import org.integratedmodelling.klab.ide.navigator.model.EObservable;
-import org.integratedmodelling.klab.ide.navigator.model.EObserver;
+import org.integratedmodelling.klab.ide.navigator.model.EAcknowledgement;
 import org.integratedmodelling.klab.ide.navigator.model.EProject;
 import org.integratedmodelling.klab.ide.navigator.model.EResource;
 import org.integratedmodelling.klab.ide.navigator.model.EResourceFolder;
@@ -319,10 +319,10 @@ public class ViewerLabelProvider extends LabelProvider
                                 : "icons/nonsemantic_observable.png");
             }
         }
-        if (element instanceof IKimObserver)
+        if (element instanceof IKimAcknowledgement)
 
         {
-            if (Type.EVENT == ((EObserver) element).getCoreObservableType()) {
+            if (Type.EVENT == ((EAcknowledgement) element).getCoreObservableType()) {
                 return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/eventObservation.gif");
             } else {
                 return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/subjectObservation.gif");
@@ -426,8 +426,8 @@ public class ViewerLabelProvider extends LabelProvider
         if (element instanceof EModel) {
             return ((EModel) element).getName();
         }
-        if (element instanceof EObserver) {
-            return ((EObserver) element).getName();
+        if (element instanceof EAcknowledgement) {
+            return ((EAcknowledgement) element).getName();
         }
         if (element instanceof EProject) {
             return ((EProject) element).getName();

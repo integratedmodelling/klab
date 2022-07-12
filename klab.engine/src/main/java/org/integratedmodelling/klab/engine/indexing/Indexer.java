@@ -37,7 +37,7 @@ import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimNamespace;
-import org.integratedmodelling.kim.api.IKimObserver;
+import org.integratedmodelling.kim.api.IKimAcknowledgement;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.SemanticModifier;
@@ -169,13 +169,13 @@ public enum Indexer {
             ret.setId(((IKimModel) object).getName());
             semanticType = (((IKimModel) object).getObservables().get(0).getMain().getType());
 
-        } else if (object instanceof IKimObserver) {
+        } else if (object instanceof IKimAcknowledgement) {
 
-            ret = new SearchMatch(Match.Type.OBSERVATION, ((IKimObserver) object).getObservable().getMain().getType());
-            ret.setDescription(((IKimObserver) object).getDocstring());
-            ret.setName(((IKimObserver) object).getName());
-            ret.setId(((IKimObserver) object).getName());
-            semanticType = (((IKimObserver) object).getObservable().getMain().getType());
+            ret = new SearchMatch(Match.Type.OBSERVATION, ((IKimAcknowledgement) object).getObservable().getMain().getType());
+            ret.setDescription(((IKimAcknowledgement) object).getDocstring());
+            ret.setName(((IKimAcknowledgement) object).getName());
+            ret.setId(((IKimAcknowledgement) object).getName());
+            semanticType = (((IKimAcknowledgement) object).getObservable().getMain().getType());
         }
 
         if (ret != null) {

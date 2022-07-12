@@ -25,7 +25,7 @@ import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IConceptDefinition;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
-import org.integratedmodelling.klab.api.model.IObserver;
+import org.integratedmodelling.klab.api.model.IAcknowledgement;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IAnnotationService;
@@ -225,7 +225,7 @@ public enum Annotations implements IAnnotationService {
 
 		if (object instanceof IModel) {
 			collectAnnotations(((IModel) object).getObservables().get(0), collection);
-		} else if (object instanceof IObserver) {
+		} else if (object instanceof IAcknowledgement) {
 			collectAnnotations(((IModel) object).getObservables().get(0), collection);
 		} else if (object instanceof IConceptDefinition) {
 			collectAnnotations(((IConceptDefinition) object).getStatement(), collection);

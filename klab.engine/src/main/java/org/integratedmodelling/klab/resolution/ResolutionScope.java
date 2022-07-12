@@ -44,7 +44,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.model.Namespace;
-import org.integratedmodelling.klab.model.Observer;
+import org.integratedmodelling.klab.model.Acknowledgement;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.scale.Coverage;
 import org.integratedmodelling.klab.scale.Scale;
@@ -120,7 +120,7 @@ public class ResolutionScope implements IResolutionScope {
      */
     private Observable observable;
     private Model model;
-    private Observer observer;
+    private Acknowledgement observer;
     private Map<IConcept, Collection<IConcept>> roles = new HashMap<>();
 
     /*
@@ -335,7 +335,7 @@ public class ResolutionScope implements IResolutionScope {
      * @return a root scope
      * @throws KlabException
      */
-    public static ResolutionScope create(Observer observer, IMonitor monitor, Collection<String> scenarios) throws KlabException {
+    public static ResolutionScope create(Acknowledgement observer, IMonitor monitor, Collection<String> scenarios) throws KlabException {
         return new ResolutionScope(observer, monitor, scenarios);
     }
 
@@ -406,7 +406,7 @@ public class ResolutionScope implements IResolutionScope {
         this.rootContextualizationScope = ((RuntimeScope) contextSubject.getScope()).getRootScope();
     }
 
-    private ResolutionScope(Observer observer, IMonitor monitor, Collection<String> scenarios) throws KlabException {
+    private ResolutionScope(Acknowledgement observer, IMonitor monitor, Collection<String> scenarios) throws KlabException {
         this.coverage = Coverage.full(Scale.create(observer.getContextualization().getExtents(monitor)));
         this.scenarios.addAll(scenarios);
         this.roles.putAll(monitor.getIdentity().getParentIdentity(ISession.class).getState().getRoles());
@@ -619,7 +619,7 @@ public class ResolutionScope implements IResolutionScope {
      * @return a scope to resolve the passed observer
      * @throws KlabException
      */
-    public ResolutionScope getChildScope(Observer observer) throws KlabException {
+    public ResolutionScope getChildScope(Acknowledgement observer) throws KlabException {
 
         ResolutionScope ret = new ResolutionScope(this);
         ret.observer = observer;
@@ -854,7 +854,7 @@ public class ResolutionScope implements IResolutionScope {
         return ret;
     }
 
-    public Observer getObserver() {
+    public Acknowledgement getObserver() {
         return observer;
     }
 

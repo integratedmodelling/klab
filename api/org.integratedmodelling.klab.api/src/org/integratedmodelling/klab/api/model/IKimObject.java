@@ -24,7 +24,7 @@ import org.integratedmodelling.klab.api.IStatement;
  * produce the k.IM statement that corresponds to it. Some concrete subclasses
  * of IKimObject (at the moment
  * {@link org.integratedmodelling.klab.api.model.IConceptDefinition} and
- * {@link org.integratedmodelling.klab.api.model.IObserver} an have children of
+ * {@link org.integratedmodelling.klab.api.model.IAcknowledgement} an have children of
  * the same type. The {@link org.integratedmodelling.klab.api.model.INamespace}
  * will list the top-level objects through
  * {@link org.integratedmodelling.klab.api.model.INamespace#getObjects()} or the
@@ -66,7 +66,7 @@ public interface IKimObject {
 	 * If the object has child objects of the same kind, these will be returned
 	 * here. For now only
 	 * {@link org.integratedmodelling.klab.api.model.IConceptDefinition} and
-	 * {@link org.integratedmodelling.klab.api.model.IObserver} have children.
+	 * {@link org.integratedmodelling.klab.api.model.IAcknowledgement} have children.
 	 *
 	 * @return the list of children in order of declaration. Never null.
 	 */

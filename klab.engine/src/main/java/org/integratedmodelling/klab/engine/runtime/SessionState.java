@@ -40,7 +40,7 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IKimObject;
-import org.integratedmodelling.klab.api.model.IObserver;
+import org.integratedmodelling.klab.api.model.IAcknowledgement;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -71,7 +71,7 @@ import org.integratedmodelling.klab.documentation.extensions.table.TableArtifact
 import org.integratedmodelling.klab.engine.debugger.Inspector;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
-import org.integratedmodelling.klab.model.Observer;
+import org.integratedmodelling.klab.model.Acknowledgement;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.resolution.ResolutionConstraint;
 import org.integratedmodelling.klab.rest.ContextualizationRequest;
@@ -220,7 +220,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
          * Submit all we know about the context. TODO metadata should contain provenance info about
          * the choices made to get here.
          */
-        Observer observer = Observations.INSTANCE.makeROIObserver(scaleOfInterest.getName(), geometry, new Metadata());
+        Acknowledgement observer = Observations.INSTANCE.makeROIObserver(scaleOfInterest.getName(), geometry, new Metadata());
         List<BiConsumer<ITask<?>, IArtifact>> oListeners = new ArrayList<>();
         List<BiConsumer<ITask<?>, Throwable>> eListeners = new ArrayList<>();
 
@@ -325,7 +325,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
             }
         }
 
-        if (this.currentActivity == null || resolvable instanceof Observer) {
+        if (this.currentActivity == null || resolvable instanceof Acknowledgement) {
             this.currentActivity = activity;
             history.add(activity);
         } else if (this.currentActivity != null) {
@@ -399,12 +399,12 @@ public class SessionState extends Parameters<String> implements ISessionState {
             eListeners.add(errorListener);
         }
 
-        if (resolvable instanceof Observer) {
-            return new ObserveContextTask(this.session, (Observer) resolvable, scenarios, oListeners, eListeners, executor,
+        if (resolvable instanceof Acknowledgement) {
+            return new ObserveContextTask(this.session, (Acknowledgement) resolvable, scenarios, oListeners, eListeners, executor,
                     activity, true);
         }
 
-        if (this.context.isEmpty() && !(resolvable instanceof IObserver)) {
+        if (this.context.isEmpty() && !(resolvable instanceof IAcknowledgement)) {
 
             IGeometry geometry = getGeometry();
 
@@ -416,7 +416,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
              * Submit all we know about the context. TODO metadata should contain provenance info
              * about the choices made to get here.
              */
-            Observer observer = Observations.INSTANCE.makeROIObserver(scaleOfInterest.getName(), geometry, new Metadata());
+            Acknowledgement observer = Observations.INSTANCE.makeROIObserver(scaleOfInterest.getName(), geometry, new Metadata());
             /*
              * goes into executor; next one won't exec before this is finished. Only call the obs
              * listener at the beginning of the contextualization.

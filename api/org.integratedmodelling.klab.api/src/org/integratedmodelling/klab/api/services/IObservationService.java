@@ -17,7 +17,7 @@ import java.io.File;
 
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.model.IObserver;
+import org.integratedmodelling.klab.api.model.IAcknowledgement;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
@@ -99,11 +99,11 @@ public interface IObservationService {
     /**
      * Index passed observation definition for retrieval.
      *
-     * @param observer a {@link org.integratedmodelling.klab.api.model.IObserver} object.
+     * @param observer a {@link org.integratedmodelling.klab.api.model.IAcknowledgement} object.
      * @param monitor a {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
      * @throws org.integratedmodelling.klab.exceptions.KlabException
      */
-    void index(IObserver observer, IMonitor monitor) throws KlabException;
+    void index(IAcknowledgement observer, IMonitor monitor) throws KlabException;
 
     /**
      * Get a state that represents a view of another state seen through a different scale. The

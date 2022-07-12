@@ -71,7 +71,7 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.model.IKimObject;
-import org.integratedmodelling.klab.api.model.IObserver;
+import org.integratedmodelling.klab.api.model.IAcknowledgement;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.monitoring.MessageHandler;
@@ -119,7 +119,7 @@ import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.exceptions.KlabActorException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
-import org.integratedmodelling.klab.model.Observer;
+import org.integratedmodelling.klab.model.Acknowledgement;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.syntax.SemanticExpression;
 import org.integratedmodelling.klab.rest.AuthorityIdentity;
@@ -2225,7 +2225,7 @@ public class Session extends GroovyObjectSupport
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public ITask<ISubject> observe(IObservable observable, IGeometry geometry) {
-        Observer observer = Observations.INSTANCE.makeObserver(observable, geometry, new Metadata());
+        Acknowledgement observer = Observations.INSTANCE.makeObserver(observable, geometry, new Metadata());
         return (ITask<ISubject>) (ITask) ObserveContextTask.create(this, observer, false);
     }
 
@@ -2233,10 +2233,10 @@ public class Session extends GroovyObjectSupport
     @Override
     public ITask<ISubject> observe(String observerUrn) {
         IKimObject observer = Resources.INSTANCE.getModelObject(observerUrn);
-        if (!(observer instanceof IObserver)) {
+        if (!(observer instanceof IAcknowledgement)) {
             throw new KlabIllegalArgumentException(observerUrn + " does not specify an observer");
         }
-        return (ITask<ISubject>) (ITask) ObserveContextTask.create(this, (Observer) observer, false);
+        return (ITask<ISubject>) (ITask) ObserveContextTask.create(this, (Acknowledgement) observer, false);
     }
 
     /**

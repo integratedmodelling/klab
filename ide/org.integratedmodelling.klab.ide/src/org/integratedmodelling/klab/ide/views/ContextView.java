@@ -67,7 +67,7 @@ import org.integratedmodelling.klab.ide.navigator.model.EConcept;
 import org.integratedmodelling.klab.ide.navigator.model.EDefinition;
 import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
 import org.integratedmodelling.klab.ide.navigator.model.EModel;
-import org.integratedmodelling.klab.ide.navigator.model.EObserver;
+import org.integratedmodelling.klab.ide.navigator.model.EAcknowledgement;
 import org.integratedmodelling.klab.ide.navigator.model.EResource;
 import org.integratedmodelling.klab.ide.navigator.model.EScript;
 import org.integratedmodelling.klab.ide.navigator.model.ETestCase;
@@ -405,8 +405,8 @@ public class ContextView extends ViewPart {
 
                         } else if (dropped instanceof EModel || dropped instanceof EConcept) {
                             Activator.session().observe((EKimObject) dropped);
-                        } else if (dropped instanceof EObserver) {
-                            Activator.session().observe((EObserver) dropped, addToContext);
+                        } else if (dropped instanceof EAcknowledgement) {
+                            Activator.session().observe((EAcknowledgement) dropped, addToContext);
                         } else if (dropped instanceof EResource) {
                             Activator.session().previewResource(((EResource) dropped).getResource());
                         } else if (dropped instanceof String) {

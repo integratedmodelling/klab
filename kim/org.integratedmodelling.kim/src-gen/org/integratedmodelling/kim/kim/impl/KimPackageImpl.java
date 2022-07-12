@@ -3125,20 +3125,9 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EAttribute getConceptReference_Type()
-  {
-    return (EAttribute)conceptReferenceEClass.getEStructuralFeatures().get(2);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
   public EReference getConceptReference_Extends()
   {
-    return (EReference)conceptReferenceEClass.getEStructuralFeatures().get(3);
+    return (EReference)conceptReferenceEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -3149,7 +3138,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EAttribute getConceptReference_Template()
   {
-    return (EAttribute)conceptReferenceEClass.getEStructuralFeatures().get(4);
+    return (EAttribute)conceptReferenceEClass.getEStructuralFeatures().get(3);
   }
 
   /**
@@ -5931,7 +5920,6 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     conceptReferenceEClass = createEClass(CONCEPT_REFERENCE);
     createEAttribute(conceptReferenceEClass, CONCEPT_REFERENCE__NAME);
     createEAttribute(conceptReferenceEClass, CONCEPT_REFERENCE__TEMPLATE_TYPE);
-    createEAttribute(conceptReferenceEClass, CONCEPT_REFERENCE__TYPE);
     createEReference(conceptReferenceEClass, CONCEPT_REFERENCE__EXTENDS);
     createEAttribute(conceptReferenceEClass, CONCEPT_REFERENCE__TEMPLATE);
 
@@ -6485,7 +6473,6 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEClass(conceptReferenceEClass, ConceptReference.class, "ConceptReference", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getConceptReference_Name(), ecorePackage.getEString(), "name", null, 0, 1, ConceptReference.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getConceptReference_TemplateType(), ecorePackage.getEString(), "templateType", null, 0, 1, ConceptReference.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getConceptReference_Type(), ecorePackage.getEString(), "type", null, 0, 1, ConceptReference.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getConceptReference_Extends(), this.getConcept(), null, "extends", null, 0, 1, ConceptReference.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getConceptReference_Template(), ecorePackage.getEBoolean(), "template", null, 0, 1, ConceptReference.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 

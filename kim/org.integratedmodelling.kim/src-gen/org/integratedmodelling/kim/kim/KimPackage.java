@@ -2457,22 +2457,13 @@ public interface KimPackage extends EPackage
   int CONCEPT_REFERENCE__TEMPLATE_TYPE = 1;
 
   /**
-   * The feature id for the '<em><b>Type</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONCEPT_REFERENCE__TYPE = 2;
-
-  /**
    * The feature id for the '<em><b>Extends</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CONCEPT_REFERENCE__EXTENDS = 3;
+  int CONCEPT_REFERENCE__EXTENDS = 2;
 
   /**
    * The feature id for the '<em><b>Template</b></em>' attribute.
@@ -2481,7 +2472,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_REFERENCE__TEMPLATE = 4;
+  int CONCEPT_REFERENCE__TEMPLATE = 3;
 
   /**
    * The number of structural features of the '<em>Concept Reference</em>' class.
@@ -2490,7 +2481,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_REFERENCE_FEATURE_COUNT = 5;
+  int CONCEPT_REFERENCE_FEATURE_COUNT = 4;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.ConceptImpl <em>Concept</em>}' class.
@@ -7333,17 +7324,6 @@ public interface KimPackage extends EPackage
   EAttribute getConceptReference_TemplateType();
 
   /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ConceptReference#getType <em>Type</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Type</em>'.
-   * @see org.integratedmodelling.kim.kim.ConceptReference#getType()
-   * @see #getConceptReference()
-   * @generated
-   */
-  EAttribute getConceptReference_Type();
-
-  /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ConceptReference#getExtends <em>Extends</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -11768,14 +11748,6 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EAttribute CONCEPT_REFERENCE__TEMPLATE_TYPE = eINSTANCE.getConceptReference_TemplateType();
-
-    /**
-     * The meta object literal for the '<em><b>Type</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute CONCEPT_REFERENCE__TYPE = eINSTANCE.getConceptReference_Type();
 
     /**
      * The meta object literal for the '<em><b>Extends</b></em>' containment reference feature.

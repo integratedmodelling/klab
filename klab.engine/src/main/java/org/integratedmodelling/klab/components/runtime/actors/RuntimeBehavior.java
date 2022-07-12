@@ -38,7 +38,7 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
-import org.integratedmodelling.klab.api.model.IObserver;
+import org.integratedmodelling.klab.api.model.IAcknowledgement;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -166,7 +166,7 @@ public class RuntimeBehavior {
                 } else if (contextDef.containsKey("observer")) {
                     try {
                         toFire = (IObservation) ((Session) identity).getState()
-                                .submit(((IObserver) contextDef.get("observer")).getName()).get();
+                                .submit(((IAcknowledgement) contextDef.get("observer")).getName()).get();
                     } catch (Throwable e) {
                         fail(scope);
                     }
@@ -775,7 +775,7 @@ public class RuntimeBehavior {
                         }
                     } else {
                         IKimObject mo = Resources.INSTANCE.getModelObject(urn);
-                        if (mo instanceof IObserver) {
+                        if (mo instanceof IAcknowledgement) {
                             if (!contextDefinition.containsKey("observer")) {
                                 key = "observer";
                                 o = mo;
@@ -806,7 +806,7 @@ public class RuntimeBehavior {
                         }
                     } else {
                         IKimObject mo = Resources.INSTANCE.getModelObject(urn);
-                        if (mo instanceof IObserver) {
+                        if (mo instanceof IAcknowledgement) {
                             if (!contextDefinition.containsKey("observer")) {
                                 key = "observer";
                                 o = mo;

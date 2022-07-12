@@ -34,7 +34,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
  * A Model is a statement that produces a computed observation. It has at least one observable. The
  * k.LAB runtime looks for models when resolving a concept that has been requested to be observed
  * within a context (the root context is always acknowledged through an
- * {@link org.integratedmodelling.klab.api.model.IObserver}).
+ * {@link org.integratedmodelling.klab.api.model.IAcknowledgement}).
  *
  * Models may be unresolved (extensional, i.e. they leave their observable specified only at a
  * semantic level) or resolved (intensional, i.e. they can build their observations as they are and

@@ -46,7 +46,7 @@ import org.integratedmodelling.klab.components.runtime.observations.DirectObserv
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.model.Model;
-import org.integratedmodelling.klab.model.Observer;
+import org.integratedmodelling.klab.model.Acknowledgement;
 import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Observable;
@@ -331,7 +331,7 @@ public class DataflowCompiler {
 
 		boolean root;
 		Observable observable;
-		Observer observer;
+		Acknowledgement observer;
 		IResolutionScope.Mode mode;
 		// it's vital that the order of inclusion of the models is preserved.
 		Set<ModelD> models = new LinkedHashSet<>();
@@ -367,9 +367,9 @@ public class DataflowCompiler {
 				this.observable = (Observable) resolvable;
 				this.inlineValue = observable.getValue();
 
-			} else if (resolvable instanceof Observer) {
+			} else if (resolvable instanceof Acknowledgement) {
 
-				this.observer = (Observer) resolvable;
+				this.observer = (Acknowledgement) resolvable;
 				this.observable = this.observer.getObservable();
 
 			} else if (resolvable instanceof ResolvedArtifact) {
@@ -989,8 +989,8 @@ public class DataflowCompiler {
 
 		Node ret = new Node(resolvable, mode);
 
-		if (scale == null && resolvable instanceof Observer) {
-			scale = (Scale.create(((Observer) resolvable).getContextualization().getExtents(monitor)));
+		if (scale == null && resolvable instanceof Acknowledgement) {
+			scale = (Scale.create(((Acknowledgement) resolvable).getContextualization().getExtents(monitor)));
 		}
 
 		ret.scale = scale;

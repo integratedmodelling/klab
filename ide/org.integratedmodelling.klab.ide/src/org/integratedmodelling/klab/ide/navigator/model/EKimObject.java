@@ -13,7 +13,7 @@ import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimNamespace;
-import org.integratedmodelling.kim.api.IKimObserver;
+import org.integratedmodelling.kim.api.IKimAcknowledgement;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
@@ -166,9 +166,9 @@ public abstract class EKimObject extends ENavigatorItem implements IKimStatement
 		} else if (focus instanceof IKimModel) {
 			return new EModel(((IKimModel) focus).getNamespace() + "." + ((IKimModel) focus).getName(),
 					((IKimModel) focus), null);
-		} else if (focus instanceof IKimObserver) {
-			return new EObserver(((IKimObserver) focus).getNamespace() + "." + ((IKimObserver) focus).getName(),
-					((IKimObserver) focus), null, null);
+		} else if (focus instanceof IKimAcknowledgement) {
+			return new EAcknowledgement(((IKimAcknowledgement) focus).getNamespace() + "." + ((IKimAcknowledgement) focus).getName(),
+					((IKimAcknowledgement) focus), null, null);
 		} else if (focus instanceof IKimNamespace) {
 			return new ENamespace((IKimNamespace) focus, null);
 		} else if (focus instanceof IKimProject) {

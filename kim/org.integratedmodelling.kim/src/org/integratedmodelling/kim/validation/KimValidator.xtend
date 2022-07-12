@@ -58,7 +58,6 @@ import org.integratedmodelling.kim.model.KimMetadata
 import org.integratedmodelling.kim.model.KimModel
 import org.integratedmodelling.kim.model.KimNamespace
 import org.integratedmodelling.kim.model.KimObservable
-import org.integratedmodelling.kim.model.KimObserver
 import org.integratedmodelling.kim.model.KimProject
 import org.integratedmodelling.kim.model.KimSymbolDefinition
 import org.integratedmodelling.kim.model.KimTable
@@ -66,6 +65,7 @@ import org.integratedmodelling.kim.model.KimWorkspace
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode
 import org.integratedmodelling.klab.rest.CompileNotificationReference
 import org.integratedmodelling.klab.utils.Pair
+import org.integratedmodelling.kim.model.KimAcknowledgement
 
 /**
  * This class contains custom validation rules. 
@@ -896,9 +896,9 @@ class KimValidator extends AbstractKimValidator {
 		}
 	}
 
-	def KimObserver checkObservation(ObserveStatementBody observation, KimObserver parent) {
+	def KimAcknowledgement checkObservation(ObserveStatementBody observation, KimAcknowledgement parent) {
 
-		var KimObserver ret = null
+		var KimAcknowledgement ret = null
 		var ok = true
 
 		if (observation === null) {
@@ -912,8 +912,8 @@ class KimValidator extends AbstractKimValidator {
 					KimPackage.Literals.OBSERVE_STATEMENT_BODY__CONCEPT, BAD_OBSERVATION)
 				ok = false
 			} else {
-				ret = new KimObserver(observation, semantics, parent)
-				ret.docstring = observation.docstring
+				ret = new KimAcknowledgement(observation, semantics, parent)
+				ret.setDocstring = observation.docstring
 			}
 		} else {
 			ok = false
@@ -935,14 +935,14 @@ class KimValidator extends AbstractKimValidator {
 					observation, KimPackage.Literals.OBSERVE_STATEMENT_BODY__STATES, i)
 				ok = false
 			} else {
-				ret.states.add(stateSemantics)
+				ret.getStates.add(stateSemantics)
 			}
 			i++
 		}
 
 		i = 0;
 		for (action : observation.actions) {
-			for (notification : (ret.behavior as KimBehavior).addAction(action, ret)) {
+			for (notification : (ret.getBehavior as KimBehavior).addAction(action, ret)) {
 				notify(notification, observation, KimPackage.Literals.OBSERVE_STATEMENT_BODY__ACTIONS, i)
 				if (notification.level == Level.SEVERE) {
 					ok = false
@@ -1547,7 +1547,7 @@ class KimValidator extends AbstractKimValidator {
 			if (concept.name.isTemplate) {
 
 				ret.add(Type.MACRO)
-				if (concept.name.extends !== null) {
+//				if (concept.name.extends !== null) {
 					// add type for extended concept if any
 					val ext = checkConcept(concept.name.extends, declaration, macro)
 					if (ext.isEmpty) {
@@ -1555,9 +1555,9 @@ class KimValidator extends AbstractKimValidator {
 					} else {
 						ret.addAll(ext)
 					}
-				} else if (concept.name.type !== null) {
-					ret.addAll(Kim.INSTANCE.getType(concept.name.type, null))
-				}
+//				} else if (concept.name.type !== null) {
+//					ret.addAll(Kim.INSTANCE.getType(concept.name.type, null))
+//				}
 
 			} else {
 

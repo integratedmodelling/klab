@@ -35,7 +35,7 @@ import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
 import org.integratedmodelling.klab.api.model.IModel;
-import org.integratedmodelling.klab.api.model.IObserver;
+import org.integratedmodelling.klab.api.model.IAcknowledgement;
 import org.integratedmodelling.klab.api.observations.IConfiguration;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IEvent;
@@ -570,8 +570,8 @@ public enum Observables implements IObservableService {
     public Class<? extends IObservation> getObservationClass(IResolvable resolvable) {
         if (resolvable instanceof IObservable) {
             return getObservationClass((IObservable) resolvable);
-        } else if (resolvable instanceof IObserver) {
-            return getObservationClass(((IObserver) resolvable).getObservable());
+        } else if (resolvable instanceof IAcknowledgement) {
+            return getObservationClass(((IAcknowledgement) resolvable).getObservable());
         } else if (resolvable instanceof IModel) {
             return getObservationClass(((IModel) resolvable).getObservables().get(0));
         }
