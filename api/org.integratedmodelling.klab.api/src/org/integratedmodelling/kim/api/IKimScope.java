@@ -5,6 +5,7 @@ import java.util.EnumSet;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.api.IKimMacro.Field;
 
 public interface IKimScope extends Serializable {
 
@@ -24,9 +25,11 @@ public interface IKimScope extends Serializable {
 
 		void visitModel(IKimModel kimNamespace);
 
-		void visitObserver(IKimObserver kimNamespace);
+		void visitObserver(IKimAcknowledgement kimNamespace);
 
 		void visitConceptStatement(IKimConceptStatement kimNamespace);
+
+        void visitTemplate(Field valueOf, IKimConcept validParent, boolean mandatory);
 
 	}
 

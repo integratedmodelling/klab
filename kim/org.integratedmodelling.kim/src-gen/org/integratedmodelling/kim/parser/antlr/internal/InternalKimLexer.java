@@ -5371,10 +5371,10 @@ public class InternalKimLexer extends Lexer {
         try {
             int _type = RULE_EXPR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKim.g:18949:11: ( ( '[' | '#[' ) ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | ']' | '\\\\' ) | ~ ( ( '\\\\' | ']' ) ) )* ']' )
-            // InternalKim.g:18949:13: ( '[' | '#[' ) ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | ']' | '\\\\' ) | ~ ( ( '\\\\' | ']' ) ) )* ']'
+            // InternalKim.g:18709:11: ( ( '[' | '#[' ) ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | ']' | '\\\\' ) | ~ ( ( '\\\\' | ']' ) ) )* ']' )
+            // InternalKim.g:18709:13: ( '[' | '#[' ) ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | ']' | '\\\\' ) | ~ ( ( '\\\\' | ']' ) ) )* ']'
             {
-            // InternalKim.g:18949:13: ( '[' | '#[' )
+            // InternalKim.g:18709:13: ( '[' | '#[' )
             int alt1=2;
             int LA1_0 = input.LA(1);
 
@@ -5392,14 +5392,14 @@ public class InternalKimLexer extends Lexer {
             }
             switch (alt1) {
                 case 1 :
-                    // InternalKim.g:18949:14: '['
+                    // InternalKim.g:18709:14: '['
                     {
                     match('['); 
 
                     }
                     break;
                 case 2 :
-                    // InternalKim.g:18949:18: '#['
+                    // InternalKim.g:18709:18: '#['
                     {
                     match("#["); 
 
@@ -5409,7 +5409,7 @@ public class InternalKimLexer extends Lexer {
 
             }
 
-            // InternalKim.g:18949:24: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | ']' | '\\\\' ) | ~ ( ( '\\\\' | ']' ) ) )*
+            // InternalKim.g:18709:24: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | ']' | '\\\\' ) | ~ ( ( '\\\\' | ']' ) ) )*
             loop2:
             do {
                 int alt2=3;
@@ -5425,7 +5425,7 @@ public class InternalKimLexer extends Lexer {
 
                 switch (alt2) {
             	case 1 :
-            	    // InternalKim.g:18949:25: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | ']' | '\\\\' )
+            	    // InternalKim.g:18709:25: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | ']' | '\\\\' )
             	    {
             	    match('\\'); 
             	    if ( (input.LA(1)>='\\' && input.LA(1)<=']')||input.LA(1)=='b'||input.LA(1)=='f'||input.LA(1)=='n'||input.LA(1)=='r'||(input.LA(1)>='t' && input.LA(1)<='u') ) {
@@ -5441,7 +5441,7 @@ public class InternalKimLexer extends Lexer {
             	    }
             	    break;
             	case 2 :
-            	    // InternalKim.g:18949:65: ~ ( ( '\\\\' | ']' ) )
+            	    // InternalKim.g:18709:65: ~ ( ( '\\\\' | ']' ) )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='[')||(input.LA(1)>='^' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -5478,8 +5478,8 @@ public class InternalKimLexer extends Lexer {
         try {
             int _type = RULE_ANNOTATION_ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKim.g:18951:20: ( '@' RULE_LOWERCASE_ID )
-            // InternalKim.g:18951:22: '@' RULE_LOWERCASE_ID
+            // InternalKim.g:18711:20: ( '@' RULE_LOWERCASE_ID )
+            // InternalKim.g:18711:22: '@' RULE_LOWERCASE_ID
             {
             match('@'); 
             mRULE_LOWERCASE_ID(); 
@@ -5499,12 +5499,12 @@ public class InternalKimLexer extends Lexer {
         try {
             int _type = RULE_TEMPLATE_VAR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKim.g:18953:19: ( '%' 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '_' )* '%' )
-            // InternalKim.g:18953:21: '%' 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '_' )* '%'
+            // InternalKim.g:18713:19: ( '%' 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '_' )* '%' )
+            // InternalKim.g:18713:21: '%' 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '_' )* '%'
             {
             match('%'); 
             matchRange('a','z'); 
-            // InternalKim.g:18953:34: ( 'a' .. 'z' | '0' .. '9' | '_' )*
+            // InternalKim.g:18713:34: ( 'a' .. 'z' | '0' .. '9' | '_' )*
             loop3:
             do {
                 int alt3=2;
@@ -5554,11 +5554,11 @@ public class InternalKimLexer extends Lexer {
         try {
             int _type = RULE_LOWERCASE_ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKim.g:18955:19: ( 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '_' )* )
-            // InternalKim.g:18955:21: 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '_' )*
+            // InternalKim.g:18715:19: ( 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '_' )* )
+            // InternalKim.g:18715:21: 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '_' )*
             {
             matchRange('a','z'); 
-            // InternalKim.g:18955:30: ( 'a' .. 'z' | '0' .. '9' | '_' )*
+            // InternalKim.g:18715:30: ( 'a' .. 'z' | '0' .. '9' | '_' )*
             loop4:
             do {
                 int alt4=2;
@@ -5607,11 +5607,11 @@ public class InternalKimLexer extends Lexer {
         try {
             int _type = RULE_LOWERCASE_DASHID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKim.g:18957:23: ( 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '-' )* )
-            // InternalKim.g:18957:25: 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '-' )*
+            // InternalKim.g:18717:23: ( 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '-' )* )
+            // InternalKim.g:18717:25: 'a' .. 'z' ( 'a' .. 'z' | '0' .. '9' | '-' )*
             {
             matchRange('a','z'); 
-            // InternalKim.g:18957:34: ( 'a' .. 'z' | '0' .. '9' | '-' )*
+            // InternalKim.g:18717:34: ( 'a' .. 'z' | '0' .. '9' | '-' )*
             loop5:
             do {
                 int alt5=2;
@@ -5660,12 +5660,12 @@ public class InternalKimLexer extends Lexer {
         try {
             int _type = RULE_SEPARATOR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKim.g:18959:16: ( '---' ( '-' )* )
-            // InternalKim.g:18959:18: '---' ( '-' )*
+            // InternalKim.g:18719:16: ( '---' ( '-' )* )
+            // InternalKim.g:18719:18: '---' ( '-' )*
             {
             match("---"); 
 
-            // InternalKim.g:18959:24: ( '-' )*
+            // InternalKim.g:18719:24: ( '-' )*
             loop6:
             do {
                 int alt6=2;
@@ -5678,7 +5678,7 @@ public class InternalKimLexer extends Lexer {
 
                 switch (alt6) {
             	case 1 :
-            	    // InternalKim.g:18959:24: '-'
+            	    // InternalKim.g:18719:24: '-'
             	    {
             	    match('-'); 
 
@@ -5706,11 +5706,11 @@ public class InternalKimLexer extends Lexer {
         try {
             int _type = RULE_UPPERCASE_ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKim.g:18961:19: ( 'A' .. 'Z' ( 'A' .. 'Z' | '0' .. '9' | '_' )+ )
-            // InternalKim.g:18961:21: 'A' .. 'Z' ( 'A' .. 'Z' | '0' .. '9' | '_' )+
+            // InternalKim.g:18721:19: ( 'A' .. 'Z' ( 'A' .. 'Z' | '0' .. '9' | '_' )+ )
+            // InternalKim.g:18721:21: 'A' .. 'Z' ( 'A' .. 'Z' | '0' .. '9' | '_' )+
             {
             matchRange('A','Z'); 
-            // InternalKim.g:18961:30: ( 'A' .. 'Z' | '0' .. '9' | '_' )+
+            // InternalKim.g:18721:30: ( 'A' .. 'Z' | '0' .. '9' | '_' )+
             int cnt7=0;
             loop7:
             do {
@@ -5764,11 +5764,11 @@ public class InternalKimLexer extends Lexer {
         try {
             int _type = RULE_UPPERCASE_PATH;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKim.g:18963:21: ( RULE_UPPERCASE_ID ( '.' ( RULE_UPPERCASE_ID | RULE_INT ) )* )
-            // InternalKim.g:18963:23: RULE_UPPERCASE_ID ( '.' ( RULE_UPPERCASE_ID | RULE_INT ) )*
+            // InternalKim.g:18723:21: ( RULE_UPPERCASE_ID ( '.' ( RULE_UPPERCASE_ID | RULE_INT ) )* )
+            // InternalKim.g:18723:23: RULE_UPPERCASE_ID ( '.' ( RULE_UPPERCASE_ID | RULE_INT ) )*
             {
             mRULE_UPPERCASE_ID(); 
-            // InternalKim.g:18963:41: ( '.' ( RULE_UPPERCASE_ID | RULE_INT ) )*
+            // InternalKim.g:18723:41: ( '.' ( RULE_UPPERCASE_ID | RULE_INT ) )*
             loop9:
             do {
                 int alt9=2;
@@ -5781,10 +5781,10 @@ public class InternalKimLexer extends Lexer {
 
                 switch (alt9) {
             	case 1 :
-            	    // InternalKim.g:18963:42: '.' ( RULE_UPPERCASE_ID | RULE_INT )
+            	    // InternalKim.g:18723:42: '.' ( RULE_UPPERCASE_ID | RULE_INT )
             	    {
             	    match('.'); 
-            	    // InternalKim.g:18963:46: ( RULE_UPPERCASE_ID | RULE_INT )
+            	    // InternalKim.g:18723:46: ( RULE_UPPERCASE_ID | RULE_INT )
             	    int alt8=2;
             	    int LA8_0 = input.LA(1);
 
@@ -5802,14 +5802,14 @@ public class InternalKimLexer extends Lexer {
             	    }
             	    switch (alt8) {
             	        case 1 :
-            	            // InternalKim.g:18963:47: RULE_UPPERCASE_ID
+            	            // InternalKim.g:18723:47: RULE_UPPERCASE_ID
             	            {
             	            mRULE_UPPERCASE_ID(); 
 
             	            }
             	            break;
             	        case 2 :
-            	            // InternalKim.g:18963:65: RULE_INT
+            	            // InternalKim.g:18723:65: RULE_INT
             	            {
             	            mRULE_INT(); 
 
@@ -5843,11 +5843,11 @@ public class InternalKimLexer extends Lexer {
         try {
             int _type = RULE_CAMELCASE_ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKim.g:18965:19: ( 'A' .. 'Z' ( 'A' .. 'z' | '0' .. '9' )* )
-            // InternalKim.g:18965:21: 'A' .. 'Z' ( 'A' .. 'z' | '0' .. '9' )*
+            // InternalKim.g:18725:19: ( 'A' .. 'Z' ( 'A' .. 'z' | '0' .. '9' )* )
+            // InternalKim.g:18725:21: 'A' .. 'Z' ( 'A' .. 'z' | '0' .. '9' )*
             {
             matchRange('A','Z'); 
-            // InternalKim.g:18965:30: ( 'A' .. 'z' | '0' .. '9' )*
+            // InternalKim.g:18725:30: ( 'A' .. 'z' | '0' .. '9' )*
             loop10:
             do {
                 int alt10=2;
@@ -5896,11 +5896,11 @@ public class InternalKimLexer extends Lexer {
         try {
             int _type = RULE_BACKCASE_ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKim.g:18967:18: ( 'a' .. 'z' ( 'A' .. 'z' | '0' .. '9' )* )
-            // InternalKim.g:18967:20: 'a' .. 'z' ( 'A' .. 'z' | '0' .. '9' )*
+            // InternalKim.g:18727:18: ( 'a' .. 'z' ( 'A' .. 'z' | '0' .. '9' )* )
+            // InternalKim.g:18727:20: 'a' .. 'z' ( 'A' .. 'z' | '0' .. '9' )*
             {
             matchRange('a','z'); 
-            // InternalKim.g:18967:29: ( 'A' .. 'z' | '0' .. '9' )*
+            // InternalKim.g:18727:29: ( 'A' .. 'z' | '0' .. '9' )*
             loop11:
             do {
                 int alt11=2;
@@ -5949,10 +5949,10 @@ public class InternalKimLexer extends Lexer {
         try {
             int _type = RULE_ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKim.g:18969:9: ( ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
-            // InternalKim.g:18969:11: ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // InternalKim.g:18729:9: ( ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
+            // InternalKim.g:18729:11: ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             {
-            // InternalKim.g:18969:11: ( '^' )?
+            // InternalKim.g:18729:11: ( '^' )?
             int alt12=2;
             int LA12_0 = input.LA(1);
 
@@ -5961,7 +5961,7 @@ public class InternalKimLexer extends Lexer {
             }
             switch (alt12) {
                 case 1 :
-                    // InternalKim.g:18969:11: '^'
+                    // InternalKim.g:18729:11: '^'
                     {
                     match('^'); 
 
@@ -5979,7 +5979,7 @@ public class InternalKimLexer extends Lexer {
                 recover(mse);
                 throw mse;}
 
-            // InternalKim.g:18969:40: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // InternalKim.g:18729:40: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             loop13:
             do {
                 int alt13=2;
@@ -6028,10 +6028,10 @@ public class InternalKimLexer extends Lexer {
         try {
             int _type = RULE_INT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKim.g:18971:10: ( ( '0' .. '9' )+ )
-            // InternalKim.g:18971:12: ( '0' .. '9' )+
+            // InternalKim.g:18731:10: ( ( '0' .. '9' )+ )
+            // InternalKim.g:18731:12: ( '0' .. '9' )+
             {
-            // InternalKim.g:18971:12: ( '0' .. '9' )+
+            // InternalKim.g:18731:12: ( '0' .. '9' )+
             int cnt14=0;
             loop14:
             do {
@@ -6045,7 +6045,7 @@ public class InternalKimLexer extends Lexer {
 
                 switch (alt14) {
             	case 1 :
-            	    // InternalKim.g:18971:13: '0' .. '9'
+            	    // InternalKim.g:18731:13: '0' .. '9'
             	    {
             	    matchRange('0','9'); 
 
@@ -6077,10 +6077,10 @@ public class InternalKimLexer extends Lexer {
         try {
             int _type = RULE_STRING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKim.g:18973:13: ( ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' ) )
-            // InternalKim.g:18973:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
+            // InternalKim.g:18733:13: ( ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' ) )
+            // InternalKim.g:18733:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
             {
-            // InternalKim.g:18973:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
+            // InternalKim.g:18733:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
             int alt17=2;
             int LA17_0 = input.LA(1);
 
@@ -6098,10 +6098,10 @@ public class InternalKimLexer extends Lexer {
             }
             switch (alt17) {
                 case 1 :
-                    // InternalKim.g:18973:16: '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"'
+                    // InternalKim.g:18733:16: '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"'
                     {
                     match('\"'); 
-                    // InternalKim.g:18973:20: ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )*
+                    // InternalKim.g:18733:20: ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )*
                     loop15:
                     do {
                         int alt15=3;
@@ -6117,7 +6117,7 @@ public class InternalKimLexer extends Lexer {
 
                         switch (alt15) {
                     	case 1 :
-                    	    // InternalKim.g:18973:21: '\\\\' .
+                    	    // InternalKim.g:18733:21: '\\\\' .
                     	    {
                     	    match('\\'); 
                     	    matchAny(); 
@@ -6125,7 +6125,7 @@ public class InternalKimLexer extends Lexer {
                     	    }
                     	    break;
                     	case 2 :
-                    	    // InternalKim.g:18973:28: ~ ( ( '\\\\' | '\"' ) )
+                    	    // InternalKim.g:18733:28: ~ ( ( '\\\\' | '\"' ) )
                     	    {
                     	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='!')||(input.LA(1)>='#' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
                     	        input.consume();
@@ -6150,10 +6150,10 @@ public class InternalKimLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // InternalKim.g:18973:48: '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\''
+                    // InternalKim.g:18733:48: '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\''
                     {
                     match('\''); 
-                    // InternalKim.g:18973:53: ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )*
+                    // InternalKim.g:18733:53: ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )*
                     loop16:
                     do {
                         int alt16=3;
@@ -6169,7 +6169,7 @@ public class InternalKimLexer extends Lexer {
 
                         switch (alt16) {
                     	case 1 :
-                    	    // InternalKim.g:18973:54: '\\\\' .
+                    	    // InternalKim.g:18733:54: '\\\\' .
                     	    {
                     	    match('\\'); 
                     	    matchAny(); 
@@ -6177,7 +6177,7 @@ public class InternalKimLexer extends Lexer {
                     	    }
                     	    break;
                     	case 2 :
-                    	    // InternalKim.g:18973:61: ~ ( ( '\\\\' | '\\'' ) )
+                    	    // InternalKim.g:18733:61: ~ ( ( '\\\\' | '\\'' ) )
                     	    {
                     	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='&')||(input.LA(1)>='(' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
                     	        input.consume();
@@ -6220,12 +6220,12 @@ public class InternalKimLexer extends Lexer {
         try {
             int _type = RULE_ML_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKim.g:18975:17: ( '/*' ( options {greedy=false; } : . )* '*/' )
-            // InternalKim.g:18975:19: '/*' ( options {greedy=false; } : . )* '*/'
+            // InternalKim.g:18735:17: ( '/*' ( options {greedy=false; } : . )* '*/' )
+            // InternalKim.g:18735:19: '/*' ( options {greedy=false; } : . )* '*/'
             {
             match("/*"); 
 
-            // InternalKim.g:18975:24: ( options {greedy=false; } : . )*
+            // InternalKim.g:18735:24: ( options {greedy=false; } : . )*
             loop18:
             do {
                 int alt18=2;
@@ -6250,7 +6250,7 @@ public class InternalKimLexer extends Lexer {
 
                 switch (alt18) {
             	case 1 :
-            	    // InternalKim.g:18975:52: .
+            	    // InternalKim.g:18735:52: .
             	    {
             	    matchAny(); 
 
@@ -6280,12 +6280,12 @@ public class InternalKimLexer extends Lexer {
         try {
             int _type = RULE_SL_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKim.g:18977:17: ( '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
-            // InternalKim.g:18977:19: '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
+            // InternalKim.g:18737:17: ( '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
+            // InternalKim.g:18737:19: '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
             {
             match("//"); 
 
-            // InternalKim.g:18977:24: (~ ( ( '\\n' | '\\r' ) ) )*
+            // InternalKim.g:18737:24: (~ ( ( '\\n' | '\\r' ) ) )*
             loop19:
             do {
                 int alt19=2;
@@ -6298,7 +6298,7 @@ public class InternalKimLexer extends Lexer {
 
                 switch (alt19) {
             	case 1 :
-            	    // InternalKim.g:18977:24: ~ ( ( '\\n' | '\\r' ) )
+            	    // InternalKim.g:18737:24: ~ ( ( '\\n' | '\\r' ) )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -6318,7 +6318,7 @@ public class InternalKimLexer extends Lexer {
                 }
             } while (true);
 
-            // InternalKim.g:18977:40: ( ( '\\r' )? '\\n' )?
+            // InternalKim.g:18737:40: ( ( '\\r' )? '\\n' )?
             int alt21=2;
             int LA21_0 = input.LA(1);
 
@@ -6327,9 +6327,9 @@ public class InternalKimLexer extends Lexer {
             }
             switch (alt21) {
                 case 1 :
-                    // InternalKim.g:18977:41: ( '\\r' )? '\\n'
+                    // InternalKim.g:18737:41: ( '\\r' )? '\\n'
                     {
-                    // InternalKim.g:18977:41: ( '\\r' )?
+                    // InternalKim.g:18737:41: ( '\\r' )?
                     int alt20=2;
                     int LA20_0 = input.LA(1);
 
@@ -6338,7 +6338,7 @@ public class InternalKimLexer extends Lexer {
                     }
                     switch (alt20) {
                         case 1 :
-                            // InternalKim.g:18977:41: '\\r'
+                            // InternalKim.g:18737:41: '\\r'
                             {
                             match('\r'); 
 
@@ -6370,10 +6370,10 @@ public class InternalKimLexer extends Lexer {
         try {
             int _type = RULE_WS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKim.g:18979:9: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
-            // InternalKim.g:18979:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            // InternalKim.g:18739:9: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
+            // InternalKim.g:18739:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
             {
-            // InternalKim.g:18979:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            // InternalKim.g:18739:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
             int cnt22=0;
             loop22:
             do {
@@ -6427,8 +6427,8 @@ public class InternalKimLexer extends Lexer {
         try {
             int _type = RULE_ANY_OTHER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalKim.g:18981:16: ( . )
-            // InternalKim.g:18981:18: .
+            // InternalKim.g:18741:16: ( . )
+            // InternalKim.g:18741:18: .
             {
             matchAny(); 
 

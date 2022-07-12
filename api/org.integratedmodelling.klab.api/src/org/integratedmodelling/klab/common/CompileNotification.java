@@ -4,7 +4,7 @@ import java.util.logging.Level;
 
 import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimModel;
-import org.integratedmodelling.kim.api.IKimObserver;
+import org.integratedmodelling.kim.api.IKimAcknowledgement;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IKimSymbolDefinition;
@@ -86,8 +86,8 @@ public class CompileNotification implements ICompileNotification {
         ret.setNamespaceId(namespaceId);
         if (mainScope instanceof IKimModel) {
             ret.setScopeName(((IKimModel) mainScope).getName());
-        } else if (mainScope instanceof IKimObserver) {
-            ret.setScopeName(((IKimObserver) mainScope).getName());
+        } else if (mainScope instanceof IKimAcknowledgement) {
+            ret.setScopeName(((IKimAcknowledgement) mainScope).getName());
         } else if (mainScope instanceof IKimConceptStatement) {
             ret.setScopeName(((IKimConceptStatement) mainScope).getName());
         } else if (mainScope instanceof IKimSymbolDefinition) {

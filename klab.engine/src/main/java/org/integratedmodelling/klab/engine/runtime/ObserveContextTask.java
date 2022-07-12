@@ -27,7 +27,7 @@ import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
-import org.integratedmodelling.klab.model.Observer;
+import org.integratedmodelling.klab.model.Acknowledgement;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
 import org.integratedmodelling.klab.rest.SessionActivity;
@@ -68,17 +68,17 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
      * @param autostart
      * @return
      */
-    public static ObserveContextTask create(Session session, Observer observer, boolean autostart) {
+    public static ObserveContextTask create(Session session, Acknowledgement observer, boolean autostart) {
         return new ObserveContextTask(session, observer, null, autostart);
     }
 
-    private ObserveContextTask(Session session, Observer observer, Collection<String> scenarios,
+    private ObserveContextTask(Session session, Acknowledgement observer, Collection<String> scenarios,
             boolean autostart) {
         this(session, observer, scenarios, null, null,
                 session.getParentIdentity(Engine.class).getTaskExecutor(), null, autostart);
     }
 
-    public ObserveContextTask(Session session, Observer observer, Collection<String> scenarios) {
+    public ObserveContextTask(Session session, Acknowledgement observer, Collection<String> scenarios) {
         this(session, observer, scenarios, null, null,
                 session.getParentIdentity(Engine.class).getTaskExecutor(), null, true);
     }
@@ -101,7 +101,7 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
      * @param observationListener
      * @param errorListener
      */
-    public ObserveContextTask(Session session, Observer observer, Collection<String> scenarioList,
+    public ObserveContextTask(Session session, Acknowledgement observer, Collection<String> scenarioList,
             Collection<BiConsumer<ITask<?>, IArtifact>> oListeners,
             Collection<BiConsumer<ITask<?>, Throwable>> eListeners, Executor executor,
             SessionActivity activityDescriptor, boolean autostart) {

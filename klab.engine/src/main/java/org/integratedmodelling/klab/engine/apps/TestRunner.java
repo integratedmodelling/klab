@@ -22,7 +22,7 @@ import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.model.IKimObject;
-import org.integratedmodelling.klab.api.model.IObserver;
+import org.integratedmodelling.klab.api.model.IAcknowledgement;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -161,7 +161,7 @@ public class TestRunner implements Annotations.Handler {
 					Logging.INSTANCE.info("----------------------------------------------------------------------");
 
 					// safe cast as the annotation is limited to observers
-					IObserver observer = (IObserver) target;
+					IAcknowledgement observer = (IAcknowledgement) target;
 					Session session = monitor.getIdentity().getParentIdentity(Session.class);
 
 					session.getState().resetContext();

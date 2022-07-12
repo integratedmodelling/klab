@@ -7,13 +7,13 @@ import java.util.List;
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimObservable;
-import org.integratedmodelling.kim.api.IKimObserver;
+import org.integratedmodelling.kim.api.IKimAcknowledgement;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAction;
-import org.integratedmodelling.klab.api.model.IObserver;
+import org.integratedmodelling.klab.api.model.IAcknowledgement;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
@@ -31,7 +31,7 @@ import org.integratedmodelling.klab.rest.SpatialExtent;
 
 import com.google.common.collect.Lists;
 
-public class Observer extends KimObject implements IObserver {
+public class Acknowledgement extends KimObject implements IAcknowledgement {
 
 	private Observable observable;
 	private String name;
@@ -40,7 +40,7 @@ public class Observer extends KimObject implements IObserver {
 	private List<IObservable> states = new ArrayList<>();
 	private String urn = null;
 
-	public Observer(IKimObserver statement, Namespace namespace, Monitor monitor) {
+	public Acknowledgement(IKimAcknowledgement statement, Namespace namespace, Monitor monitor) {
 
 		super(statement);
 		this.observable = Observables.INSTANCE.declare(statement.getObservable(), monitor);
@@ -60,7 +60,7 @@ public class Observer extends KimObject implements IObserver {
 		}
 	}
 
-	public Observer(SpatialExtent regionOfInterest, ITime time, Observable observable, Namespace namespace) {
+	public Acknowledgement(SpatialExtent regionOfInterest, ITime time, Observable observable, Namespace namespace) {
 		super(null);
 
 		this.namespace = namespace;
@@ -95,7 +95,7 @@ public class Observer extends KimObject implements IObserver {
 		};
 	}
 
-	public Observer(String name, IScale scale, Observable observable, Namespace namespace) {
+	public Acknowledgement(String name, IScale scale, Observable observable, Namespace namespace) {
 
 		super(null);
 
@@ -116,7 +116,7 @@ public class Observer extends KimObject implements IObserver {
 		};
 	}
 
-	public Observer(Shape shape, ITime time, Observable observable, Namespace namespace) {
+	public Acknowledgement(Shape shape, ITime time, Observable observable, Namespace namespace) {
 
 		super(null);
 
@@ -189,7 +189,7 @@ public class Observer extends KimObject implements IObserver {
 
 	@Override
 	public boolean equals(Object obj) {
-		return obj instanceof Observer && ((Observer) obj).getName().equals(getName());
+		return obj instanceof Acknowledgement && ((Acknowledgement) obj).getName().equals(getName());
 	}
 
 	@Override

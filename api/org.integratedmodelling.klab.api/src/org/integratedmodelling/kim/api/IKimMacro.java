@@ -31,6 +31,7 @@ public interface IKimMacro extends IKimConceptStatement {
 		Field(String name) {
 			this.declaredName = name;
 		}
+				
 	}
 	
 	interface FieldType {
@@ -64,13 +65,5 @@ public interface IKimMacro extends IKimConceptStatement {
 	 * @return the field type
 	 */
 	FieldType getType(Field field);
-	
-	/**
-	 * Get the parsed declaration for the passed field, which must be one of those returned
-	 * by {@link #getFields()}.
-	 * 
-	 * @param field
-	 * @return the parsed declaration
-	 */
-//	ConceptDeclaration getDeclaration(Field field);
+
 }

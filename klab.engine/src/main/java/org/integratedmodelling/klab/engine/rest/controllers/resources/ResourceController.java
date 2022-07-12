@@ -34,7 +34,7 @@ import org.integratedmodelling.klab.engine.runtime.ObserveContextTask;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
-import org.integratedmodelling.klab.model.Observer;
+import org.integratedmodelling.klab.model.Acknowledgement;
 import org.integratedmodelling.klab.rest.CodelistReference;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.JsonUtils;
@@ -130,7 +130,7 @@ public class ResourceController {
 							: (ISubject) data.getFirst();
 
 			IScale scale = Scale.create(session.getState().getGeometry());
-			Observer observer = Observations.INSTANCE.makeROIObserver((Shape) ret.getScale().getSpace().getShape(),
+			Acknowledgement observer = Observations.INSTANCE.makeROIObserver((Shape) ret.getScale().getSpace().getShape(),
 					scale.getTime(), null, session.getState().getRegionOfInterestName(), session.getMonitor());
 			try {
 				new ObserveContextTask((Session) session, observer, new ArrayList<>()).get();

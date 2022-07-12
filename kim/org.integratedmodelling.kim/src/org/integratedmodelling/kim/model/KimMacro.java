@@ -24,16 +24,16 @@ import org.integratedmodelling.klab.utils.Pair;
 public class KimMacro implements IKimMacro {
 
     class FieldTypeImpl implements FieldType {
-        EnumSet<Type>     type     = EnumSet.noneOf(Type.class);
+        EnumSet<Type> type = EnumSet.noneOf(Type.class);
         ConceptDescriptor descriptor;
-        boolean           optional = false;
+        boolean optional = false;
 
         @Override
         public EnumSet<Type> getType() {
             return type;
         }
 
-//        @Override
+        // @Override
         public ConceptDescriptor getDescriptor() {
             return descriptor;
         }
@@ -48,14 +48,15 @@ public class KimMacro implements IKimMacro {
             this.descriptor = descriptor;
             this.optional = optional;
         }
-        
-        FieldTypeImpl() {}
+
+        FieldTypeImpl() {
+        }
     }
 
-    private static final long              serialVersionUID = 5951202536527381160L;
-    private EnumSet<Field>                 fields           = EnumSet.noneOf(Field.class);
-    private Map<Field, FieldType>          fieldTypes       = new HashMap<>();
-    private Map<Field, ConceptDeclaration> declarations     = new HashMap<>();
+    private static final long serialVersionUID = 5951202536527381160L;
+    private EnumSet<Field> fields = EnumSet.noneOf(Field.class);
+    private Map<Field, FieldType> fieldTypes = new HashMap<>();
+    private Map<Field, ConceptDeclaration> declarations = new HashMap<>();
 
     public KimMacro() {
     }
@@ -76,17 +77,12 @@ public class KimMacro implements IKimMacro {
             Visitor visitor = new DefaultVisitor() {
 
                 @Override
-                public void visitReference(String conceptName, EnumSet<Type> type, IKimConcept validParent) {
-                    if (conceptName.startsWith("$") || conceptName.startsWith("#")) {
-                        Field field = Field.valueOf(Field.class, conceptName.substring(1).toUpperCase());
-                        if (field != null) {
-                            fields.add(field);
-                            fieldTypes.put(field, new FieldTypeImpl(type, validParent == null ? null
-                                    : Kim.INSTANCE.getConceptDescriptor(validParent.getName()), conceptName
-                                            .startsWith("#")));
-                        }
-                    }
+                public void visitTemplate(Field field, IKimConcept validParent, boolean mandatory) {
+                    fields.add(field);
+                    fieldTypes.put(field, new FieldTypeImpl(((KimConcept) validParent).getType(),
+                            Kim.INSTANCE.getConceptDescriptor(validParent.getName()), !mandatory));
                 }
+
             };
 
             statement.visit(visitor);
@@ -112,7 +108,7 @@ public class KimMacro implements IKimMacro {
         declarations.put(field, declaration);
     }
 
-//    @Override
+    // @Override
     public ConceptDeclaration getDeclaration(Field field) {
         return declarations.get(field);
     }
@@ -168,7 +164,7 @@ public class KimMacro implements IKimMacro {
     }
 
     public List<ApplicableConcept> getAppliesTo() {
-        return ((KimConceptStatement)delegate).getAppliesTo();
+        return ((KimConceptStatement) delegate).getAppliesTo();
     }
 
     public IParameters<String> getDocumentationMetadata() {
@@ -212,7 +208,7 @@ public class KimMacro implements IKimMacro {
     }
 
     public List<ParentConcept> getParents() {
-        return ((KimConceptStatement)delegate).getParents();
+        return ((KimConceptStatement) delegate).getParents();
     }
 
     public List<IKimRestriction> getRestrictions() {
@@ -264,7 +260,7 @@ public class KimMacro implements IKimMacro {
     }
 
     public List<ApplicableConcept> getSubjectsLinked() {
-        return ((KimConceptStatement)delegate).getSubjectsLinked();
+        return ((KimConceptStatement) delegate).getSubjectsLinked();
     }
 
     public List<IKimConcept> getQualitiesAffected() {
@@ -274,7 +270,7 @@ public class KimMacro implements IKimMacro {
     public void set(IKimConceptStatement statement) {
         setDelegate(statement);
     }
-    
+
     @Override
     public String getAuthority() {
         return delegate.getAuthority();
@@ -312,7 +308,7 @@ public class KimMacro implements IKimMacro {
 
     @Override
     public String getSourceCode() {
-      return delegate.getSourceCode();
+        return delegate.getSourceCode();
     }
 
     @Override
@@ -320,33 +316,33 @@ public class KimMacro implements IKimMacro {
         return delegate.getParent();
     }
 
-	@Override
-	public String getURI() {
-		return delegate.getURI();
-	}
+    @Override
+    public String getURI() {
+        return delegate.getURI();
+    }
 
-	@Override
-	public String getDocstring() {
-		return delegate.getDocstring();
-	}
+    @Override
+    public String getDocstring() {
+        return delegate.getDocstring();
+    }
 
     @Override
     public String getResourceId() {
         return delegate.getResourceId();
     }
 
-	@Override
-	public boolean isErrors() {
-		return delegate.isErrors();
-	}
+    @Override
+    public boolean isErrors() {
+        return delegate.isErrors();
+    }
 
-	@Override
-	public boolean isWarnings() {
-		return delegate.isWarnings();
-	}
+    @Override
+    public boolean isWarnings() {
+        return delegate.isWarnings();
+    }
 
-	@Override
-	public void visit(Visitor visitor) {
-		delegate.visit(visitor);
-	}
+    @Override
+    public void visit(Visitor visitor) {
+        delegate.visit(visitor);
+    }
 }

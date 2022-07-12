@@ -5,9 +5,10 @@ import java.util.EnumSet;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
+import org.integratedmodelling.kim.api.IKimMacro.Field;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimNamespace;
-import org.integratedmodelling.kim.api.IKimObserver;
+import org.integratedmodelling.kim.api.IKimAcknowledgement;
 import org.integratedmodelling.kim.api.IKimScope;
 
 /**
@@ -40,11 +41,15 @@ public class DefaultVisitor implements IKimScope.Visitor {
 	}
 
 	@Override
-	public void visitObserver(IKimObserver kimNamespace) {
+	public void visitObserver(IKimAcknowledgement kimNamespace) {
 	}
 
 	@Override
 	public void visitConceptStatement(IKimConceptStatement kimNamespace) {
 	}
+
+    @Override
+    public void visitTemplate(Field valueOf, IKimConcept validParent, boolean mandatory) {
+    }
 
 }

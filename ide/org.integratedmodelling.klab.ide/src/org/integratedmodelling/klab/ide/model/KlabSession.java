@@ -40,7 +40,7 @@ import org.integratedmodelling.klab.client.utils.FileCatalog;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigator;
 import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
-import org.integratedmodelling.klab.ide.navigator.model.EObserver;
+import org.integratedmodelling.klab.ide.navigator.model.EAcknowledgement;
 import org.integratedmodelling.klab.ide.navigator.model.EResource;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.ide.views.ApplicationView;
@@ -403,7 +403,7 @@ public class KlabSession extends KlabPeer {
                 new ObservationRequest(urn, currentRootContextId, null));
     }
 
-    public void observe(EObserver dropped, boolean addToContext) {
+    public void observe(EAcknowledgement dropped, boolean addToContext) {
         Activator.post(IMessage.MessageClass.ObservationLifecycle, IMessage.Type.RequestObservation,
                 new ObservationRequest(dropped.getId(), addToContext ? currentRootContextId : null, null));
     }

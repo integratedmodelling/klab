@@ -208,10 +208,11 @@ public class LocalData implements IKlabData {
 
                 /*
                  * FIXME this is necessary if names come from mandatorily named deps needed to match
-                 * with resources and they've been named differently in dependencies. The name is
-                 * disconnected when derived models are used (e.g. change) but there is no chance of
-                 * error. Should find a way to use the name nevertheless (the observable is the
-                 * changing one so no memory of the original name is kept).
+                 * with resources and they've been named differently in dependencies. In that case
+                 * the name is disconnected from the resource's tag when derived models are used
+                 * (e.g. change) but there is no chance of error if the target is a single state.
+                 * Should find a way to use the name nevertheless (the observable is the changing
+                 * one so no memory of the original name is kept).
                  */
                 if (target == null && context.getTargetArtifact() instanceof IState
                         && ((Collection<?>) data.get("states")).size() == 1) {

@@ -9,18 +9,18 @@ import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimBehavior;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimObservable;
-import org.integratedmodelling.kim.api.IKimObserver;
+import org.integratedmodelling.kim.api.IKimAcknowledgement;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.model.Kim;
 
-public class EObserver extends EKimObject implements IKimObserver {
+public class EAcknowledgement extends EKimObject implements IKimAcknowledgement {
 
 	private static final long serialVersionUID = -5755690442793814545L;
 
-	IKimObserver delegate;
+	IKimAcknowledgement delegate;
 	ENamespace namespace;
 
-	public EObserver(String id, IKimObserver statement, ENavigatorItem parent, ENamespace namespace) {
+	public EAcknowledgement(String id, IKimAcknowledgement statement, ENavigatorItem parent, ENamespace namespace) {
 		super(id, statement, parent);
 		this.delegate = statement;
 		this.namespace = namespace;
@@ -63,7 +63,7 @@ public class EObserver extends EKimObject implements IKimObserver {
 	public ENavigatorItem[] getEChildren() {
 		List<ENavigatorItem> ret = new ArrayList<>(delegate.getChildren().size());
 		for (IKimScope child : delegate.getChildren()) {
-			ret.add(new EObserver(namespace.getName() + "." + ((IKimObserver) child).getName(), (IKimObserver) child,
+			ret.add(new EAcknowledgement(namespace.getName() + "." + ((IKimAcknowledgement) child).getName(), (IKimAcknowledgement) child,
 					this, namespace));
 		}
 		return ret.toArray(new ENavigatorItem[ret.size()]);

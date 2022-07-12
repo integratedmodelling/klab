@@ -5,12 +5,12 @@ import java.util.List;
 
 import org.integratedmodelling.kim.api.IKimBehavior;
 import org.integratedmodelling.kim.api.IKimObservable;
-import org.integratedmodelling.kim.api.IKimObserver;
+import org.integratedmodelling.kim.api.IKimAcknowledgement;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.kim.ObserveStatementBody;
 
-public class KimObserver extends KimStatement implements IKimObserver {
+public class KimAcknowledgement extends KimStatement implements IKimAcknowledgement {
 
     private static final long serialVersionUID = -4175718293425086114L;
 
@@ -23,7 +23,7 @@ public class KimObserver extends KimStatement implements IKimObserver {
     private String docstring;
     private String urn;
     
-    public KimObserver(ObserveStatementBody statement, IKimObservable observable, IKimStatement parent) {
+    public KimAcknowledgement(ObserveStatementBody statement, IKimObservable observable, IKimStatement parent) {
         super(statement, parent);
         this.observable = observable;
         this.name = observable.getFormalName();

@@ -28,7 +28,7 @@ import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.model.IObserver;
+import org.integratedmodelling.klab.api.model.IAcknowledgement;
 import org.integratedmodelling.klab.api.observations.IConfiguration;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IEvent;
@@ -75,7 +75,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.model.Namespace;
-import org.integratedmodelling.klab.model.Observer;
+import org.integratedmodelling.klab.model.Acknowledgement;
 import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.provenance.Artifact;
@@ -128,7 +128,7 @@ public enum Observations implements IObservationService {
     }
 
     @Override
-    public void index(IObserver observer, IMonitor monitor) throws KlabException {
+    public void index(IAcknowledgement observer, IMonitor monitor) throws KlabException {
         if (monitor.getIdentity().getParentIdentity(IScript.class) == null) {
             Indexer.INSTANCE.index(observer.getStatement(), observer.getNamespace().getName());
         }
@@ -791,7 +791,7 @@ public enum Observations implements IObservationService {
         return ret;
     }
 
-    public Observer makeROIObserver(final Shape shape, ITime time, Namespace namespace, String currentName,
+    public Acknowledgement makeROIObserver(final Shape shape, ITime time, Namespace namespace, String currentName,
             IMonitor monitor) {
         final Observable observable = Observable.promote(Worldview.getGeoregionConcept());
         Session session = monitor.getIdentity().getParentIdentity(Session.class);
@@ -801,32 +801,32 @@ public enum Observations implements IObservationService {
         if (namespace == null) {
             namespace = Namespaces.INSTANCE.getNamespace(observable.getNamespace());
         }
-        return new Observer(shape, time, observable, (Namespace) namespace);
+        return new Acknowledgement(shape, time, observable, (Namespace) namespace);
     }
 
-    public Observer makeROIObserver(String name, IShape shape, ITime time, IMetadata metadata) {
+    public Acknowledgement makeROIObserver(String name, IShape shape, ITime time, IMetadata metadata) {
         final Observable observable = Observable.promote(Worldview.getGeoregionConcept());
         observable.setName(name);
         observable.setOptional(true);
-        Observer ret = new Observer((Shape) shape, time, observable,
+        Acknowledgement ret = new Acknowledgement((Shape) shape, time, observable,
                 Namespaces.INSTANCE.getNamespace(observable.getNamespace()));
         ret.getMetadata().putAll(metadata);
         return ret;
     }
 
-    public Observer makeROIObserver(String name, IGeometry geometry, IMetadata metadata) {
+    public Acknowledgement makeROIObserver(String name, IGeometry geometry, IMetadata metadata) {
         final Observable observable = Observable.promote(Worldview.getGeoregionConcept());
         observable.setName(name);
         observable.setOptional(true);
-        Observer ret = new Observer(name, Scale.create(geometry), observable,
+        Acknowledgement ret = new Acknowledgement(name, Scale.create(geometry), observable,
                 Namespaces.INSTANCE.getNamespace(observable.getNamespace()));
         ret.getMetadata().putAll(metadata);
         return ret;
     }
 
-    public Observer makeObserver(IObservable observable, IGeometry geometry, IMetadata metadata) {
+    public Acknowledgement makeObserver(IObservable observable, IGeometry geometry, IMetadata metadata) {
         ((Observable) observable).setOptional(true);
-        Observer ret = new Observer(observable.getName(), Scale.create(geometry), (Observable) observable,
+        Acknowledgement ret = new Acknowledgement(observable.getName(), Scale.create(geometry), (Observable) observable,
                 Namespaces.INSTANCE.getNamespace(observable.getType().getNamespace()));
         ret.getMetadata().putAll(metadata);
         return ret;

@@ -17,7 +17,7 @@ import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimLoader;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimNamespace;
-import org.integratedmodelling.kim.api.IKimObserver;
+import org.integratedmodelling.kim.api.IKimAcknowledgement;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
@@ -32,81 +32,81 @@ import org.integratedmodelling.klab.utils.Pair;
 
 public class KimNamespace extends KimStatement implements IKimNamespace {
 
-	private static final long serialVersionUID = 7273137353905996543L;
+    private static final long serialVersionUID = 7273137353905996543L;
 
-	private String name;
-	private IKimProject project;
-	private long timestamp = System.currentTimeMillis();
-	private List<String> imported = new ArrayList<>();
-	private boolean inactive = false;
-	private boolean scenario = false;
-	private List<Pair<String, String>> owlImports = new ArrayList<>();
-	private Map<String, Object> symbolTable = new HashMap<>();
-	private String scriptId;
-	private String testCaseId;
-	private boolean worldviewBound = false;
-	private File file;
-	private Scope scope = Scope.PUBLIC;
-	private boolean annotationsScanned = false;
-	private Set<String> importsScanned = null;
-	private IKimLoader loader;
-	private List<IServiceCall> extents = new ArrayList<>();
-	private Map<String, IKimStatement> statementsByName = new HashMap<>();
-	private IKimConcept domain;
-	private List<String> disjointNamespaces = new ArrayList<>();
+    private String name;
+    private IKimProject project;
+    private long timestamp = System.currentTimeMillis();
+    private List<String> imported = new ArrayList<>();
+    private boolean inactive = false;
+    private boolean scenario = false;
+    private List<Pair<String, String>> owlImports = new ArrayList<>();
+    private Map<String, Object> symbolTable = new HashMap<>();
+    private String scriptId;
+    private String testCaseId;
+    private boolean worldviewBound = false;
+    private File file;
+    private Scope scope = Scope.PUBLIC;
+    private boolean annotationsScanned = false;
+    private Set<String> importsScanned = null;
+    private IKimLoader loader;
+    private List<IServiceCall> extents = new ArrayList<>();
+    private Map<String, IKimStatement> statementsByName = new HashMap<>();
+    private IKimConcept domain;
+    private List<String> disjointNamespaces = new ArrayList<>();
 
-	private List<Pair<String, List<String>>> vocabularies = new ArrayList<>();
+    private List<Pair<String, List<String>>> vocabularies = new ArrayList<>();
 
-	public KimNamespace(Namespace namespace, KimProject project) {
-		super(namespace, null);
-		this.name = this.namespaceId = Kim.getNamespaceId(namespace);
-		if (namespace.eResource().getURI().isFile()) {
-			this.file = new File(namespace.eResource().getURI().toFileString());
-			if (file.exists()) {
-				this.timestamp = file.lastModified();
-			}
-		}
-		if (this.timestamp /* still */ == 0) {
-			this.timestamp = namespace.eResource().getTimeStamp();
-		}
-		this.project = project;
-		if (namespace.getDisjointNamespaces() != null) {
-		    for (String s : namespace.getDisjointNamespaces()) {
-		        this.disjointNamespaces.add(s);
-		    }
-		}
-		project.addNamespace(this);
-		this.worldviewBound = namespace.isWorldviewBound();
-		this.domain = new KimConcept(namespace.getDomainConcept(), this);
-		// worldview-bound anonymous namespaces are private by design.
-		if (namespace.isPrivate()) {
-			scope = namespace.isProjectPrivate() ? Scope.PROJECT : Scope.NAMESPACE;
-		}
-		if (namespace.isWorldviewBound()) {
-			this.scope = Scope.NAMESPACE;
-		}
-		this.inactive = namespace.isInactive();
-		this.scenario = namespace.isScenario();
-		for (OwlImport imp : namespace.getOwlImports()) {
-			if (imp.getUrn() != null) {
-				List<String> imports = new ArrayList<>();
-				if (imp.getSingle() != null) {
-					imports.add(imp.getSingle());
-				} else {
-					for (Object o : Kim.INSTANCE.parseList(imp.getImports(), this)) {
-						imports.add(o.toString());
-					}
-				}
-				vocabularies.add(new Pair<>(imp.getUrn(), imports));
-			} else {
-				owlImports.add(new Pair<>(imp.getName(), imp.getPrefix()));
-			}
-		}
-		
-		for (Function extent : namespace.getCoverage()) {
-			extents.add(new KimServiceCall(extent, this));
-		}
-		        
+    public KimNamespace(Namespace namespace, KimProject project) {
+        super(namespace, null);
+        this.name = this.namespaceId = Kim.getNamespaceId(namespace);
+        if (namespace.eResource().getURI().isFile()) {
+            this.file = new File(namespace.eResource().getURI().toFileString());
+            if (file.exists()) {
+                this.timestamp = file.lastModified();
+            }
+        }
+        if (this.timestamp /* still */ == 0) {
+            this.timestamp = namespace.eResource().getTimeStamp();
+        }
+        this.project = project;
+        if (namespace.getDisjointNamespaces() != null) {
+            for (String s : namespace.getDisjointNamespaces()) {
+                this.disjointNamespaces.add(s);
+            }
+        }
+        project.addNamespace(this);
+        this.worldviewBound = namespace.isWorldviewBound();
+        this.domain = new KimConcept(namespace.getDomainConcept(), this);
+        // worldview-bound anonymous namespaces are private by design.
+        if (namespace.isPrivate()) {
+            scope = namespace.isProjectPrivate() ? Scope.PROJECT : Scope.NAMESPACE;
+        }
+        if (namespace.isWorldviewBound()) {
+            this.scope = Scope.NAMESPACE;
+        }
+        this.inactive = namespace.isInactive();
+        this.scenario = namespace.isScenario();
+        for (OwlImport imp : namespace.getOwlImports()) {
+            if (imp.getUrn() != null) {
+                List<String> imports = new ArrayList<>();
+                if (imp.getSingle() != null) {
+                    imports.add(imp.getSingle());
+                } else {
+                    for (Object o : Kim.INSTANCE.parseList(imp.getImports(), this)) {
+                        imports.add(o.toString());
+                    }
+                }
+                vocabularies.add(new Pair<>(imp.getUrn(), imports));
+            } else {
+                owlImports.add(new Pair<>(imp.getName(), imp.getPrefix()));
+            }
+        }
+
+        for (Function extent : namespace.getCoverage()) {
+            extents.add(new KimServiceCall(extent, this));
+        }
+
         if (namespace.getMetadata() != null) {
             metadata = new KimMetadata(namespace.getMetadata(), this);
         }
@@ -116,298 +116,319 @@ public class KimNamespace extends KimStatement implements IKimNamespace {
             }
             metadata.put(IMetadata.DC_COMMENT, namespace.getDocstring());
         }
-        
-		Kim.INSTANCE.registerNamespace(this);
-	}
 
-	@Override
-	public Set<String> getImportedNamespaceIds(boolean scanUsages) {
+        Kim.INSTANCE.registerNamespace(this);
+    }
 
-		Set<String> ret = new HashSet<>();
-		for (IKimNamespace imported : getImported()) {
-			ret.add(imported.getName());
-		}
-		if (scanUsages) {
-			if (importsScanned == null) {
-				scanImports();
-			}
-			ret.addAll(importsScanned);
-		}
-		return ret;
-	}
+    @Override
+    public Set<String> getImportedNamespaceIds(boolean scanUsages) {
 
-	private void scanImports() {
+        Set<String> ret = new HashSet<>();
+        for (IKimNamespace imported : getImported()) {
+            ret.add(imported.getName());
+        }
+        if (scanUsages) {
+            if (importsScanned == null) {
+                scanImports();
+            }
+            ret.addAll(importsScanned);
+        }
+        return ret;
+    }
 
-		importsScanned = new HashSet<>();
+    private void scanImports() {
 
-		visit(new DefaultVisitor() {
+        importsScanned = new HashSet<>();
 
-			@Override
-			public void visitReference(String conceptName, EnumSet<Type> type, IKimConcept validParent) {
-				SemanticType st = SemanticType.create(conceptName);
-				if (st.isCorrect()) {
-					importsScanned.add(st.getNamespace());
-				}
-			}
+        visit(new DefaultVisitor(){
 
-		});
-	}
+            @Override
+            public void visitReference(String conceptName, EnumSet<Type> type, IKimConcept validParent) {
+                SemanticType st = SemanticType.create(conceptName);
+                if (st.isCorrect()) {
+                    importsScanned.add(st.getNamespace());
+                }
+            }
 
-	@Override
-	public boolean isWorldviewBound() {
-		return worldviewBound;
-	}
+        });
+    }
 
-	@Override
-	public File getFile() {
-		return this.file;
-	}
+    @Override
+    public boolean isWorldviewBound() {
+        return worldviewBound;
+    }
 
-	public void setWorldviewBound(boolean isWorldviewBound) {
-		this.worldviewBound = isWorldviewBound;
-	}
+    @Override
+    public File getFile() {
+        return this.file;
+    }
 
-	public KimNamespace(String id, File file) {
-		this.name = this.namespaceId = id;
-		this.file = file;
-		// TODO resource URI from file
-	}
+    public void setWorldviewBound(boolean isWorldviewBound) {
+        this.worldviewBound = isWorldviewBound;
+    }
 
-	@Override
-	public List<IKimStatement> getAllStatements() {
-		List<IKimStatement> ret = new ArrayList<>();
-		getAllStatements_(this, ret);
-		return ret;
-	}
+    public KimNamespace(String id, File file) {
+        this.name = this.namespaceId = id;
+        this.file = file;
+        // TODO resource URI from file
+    }
 
-	private void getAllStatements_(KimStatement statement, List<IKimStatement> ret) {
-		if (!(statement instanceof IKimNamespace)) {
-			ret.add(statement);
-		}
-		for (IKimScope scope : statement.getChildren()) {
-			if (scope instanceof KimStatement) {
-				getAllStatements_((KimStatement) scope, ret);
-			}
-		}
-	}
+    @Override
+    public List<IKimStatement> getAllStatements() {
+        List<IKimStatement> ret = new ArrayList<>();
+        getAllStatements_(this, ret);
+        return ret;
+    }
 
-	@Override
-	protected String getStringRepresentation(int offset) {
-		String ret = offset(offset) + "[namespace " + name + "]";
-		for (IKimScope child : children) {
-			ret += "\n" + ((KimScope) child).getStringRepresentation(offset + 3);
-		}
-		return ret;
-	}
+    private void getAllStatements_(KimStatement statement, List<IKimStatement> ret) {
+        if (!(statement instanceof IKimNamespace)) {
+            ret.add(statement);
+        }
+        for (IKimScope scope : statement.getChildren()) {
+            if (scope instanceof KimStatement) {
+                getAllStatements_((KimStatement) scope, ret);
+            }
+        }
+    }
 
-	public boolean isWorldviewRoot() {
-		String wv = project.getDefinedWorldview();
-		return wv != null && wv.equals(name);
-	}
+    @Override
+    protected String getStringRepresentation(int offset) {
+        String ret = offset(offset) + "[namespace " + name + "]";
+        for (IKimScope child : children) {
+            ret += "\n" + ((KimScope) child).getStringRepresentation(offset + 3);
+        }
+        return ret;
+    }
 
-	@Override
-	public String getName() {
-		return name;
-	}
+    public boolean isWorldviewRoot() {
+        String wv = project.getDefinedWorldview();
+        return wv != null && wv.equals(name);
+    }
 
-	@Override
-	public IKimProject getProject() {
-		return project;
-	}
+    @Override
+    public String getName() {
+        return name;
+    }
 
-	public void setProject(IKimProject project) {
-		this.project = project;
-	}
+    @Override
+    public IKimProject getProject() {
+        return project;
+    }
 
-	@Override
-	public long getTimestamp() {
-		return timestamp;
-	}
+    public void setProject(IKimProject project) {
+        this.project = project;
+    }
 
-	public void setTimestamp(long timestamp) {
-		this.timestamp = timestamp;
-	}
+    @Override
+    public long getTimestamp() {
+        return timestamp;
+    }
 
-	@Override
-	public List<IKimNamespace> getImported() {
-		List<IKimNamespace> ret = new ArrayList<>();
-		for (String s : imported) {
-			IKimNamespace ns = Kim.INSTANCE.getNamespace(s);
-			if (ns != null) {
-				ret.add(ns);
-			}
-		}
-		return ret;
-	}
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
 
-	@Override
-	public Collection<String> getImportedIds() {
-		return imported;
-	}
+    @Override
+    public List<IKimNamespace> getImported() {
+        List<IKimNamespace> ret = new ArrayList<>();
+        for (String s : imported) {
+            IKimNamespace ns = Kim.INSTANCE.getNamespace(s);
+            if (ns != null) {
+                ret.add(ns);
+            }
+        }
+        return ret;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    @Override
+    public Collection<String> getImportedIds() {
+        return imported;
+    }
 
-	@Override
-	public List<Pair<String, String>> getOwlImports() {
-		return owlImports;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	@Override
-	public Map<String, Object> getSymbolTable() {
-		return symbolTable;
-	}
+    @Override
+    public List<Pair<String, String>> getOwlImports() {
+        return owlImports;
+    }
 
-	public void setOwlImports(List<Pair<String, String>> owlImports) {
-		this.owlImports = owlImports;
-	}
+    @Override
+    public Map<String, Object> getSymbolTable() {
+        return symbolTable;
+    }
 
-	public void setSymbolTable(Map<String, Object> symbolTable) {
-		this.symbolTable = symbolTable;
-	}
+    public void setOwlImports(List<Pair<String, String>> owlImports) {
+        this.owlImports = owlImports;
+    }
 
-	@Override
-	public boolean isInactive() {
-		return inactive;
-	}
+    public void setSymbolTable(Map<String, Object> symbolTable) {
+        this.symbolTable = symbolTable;
+    }
 
-	@Override
-	public boolean isScenario() {
-		return scenario;
-	}
+    @Override
+    public boolean isInactive() {
+        return inactive;
+    }
 
-	public void setInactive(boolean inactive) {
-		this.inactive = inactive;
-	}
+    @Override
+    public boolean isScenario() {
+        return scenario;
+    }
 
-	public void setScenario(boolean scenario) {
-		this.scenario = scenario;
-	}
+    public void setInactive(boolean inactive) {
+        this.inactive = inactive;
+    }
 
-	@Override
-	public String getScriptId() {
-		if (!annotationsScanned) {
-			scanAnnotations();
-		}
-		return scriptId;
-	}
+    public void setScenario(boolean scenario) {
+        this.scenario = scenario;
+    }
 
-	@Override
-	public String getTestCaseId() {
-		if (!annotationsScanned) {
-			scanAnnotations();
-		}
-		return testCaseId;
-	}
+    @Override
+    public String getScriptId() {
+        if (!annotationsScanned) {
+            scanAnnotations();
+        }
+        return scriptId;
+    }
 
-	public void visit(Visitor visitor) {
-		visitor.visitNamespace(this);
-		for (IKimScope scope : getChildren()) {
-			scope.visit(visitor);
-		}
-	}
+    @Override
+    public String getTestCaseId() {
+        if (!annotationsScanned) {
+            scanAnnotations();
+        }
+        return testCaseId;
+    }
 
-	private void scanAnnotations() {
-		annotationsScanned = true;
-		for (IKimScope child : getChildren()) {
-			if (child instanceof IKimObserver) {
-				for (IKimAnnotation annotation : ((IKimObserver) child).getAnnotations()) {
-					if (annotation.getName().equals("run")) {
-						this.scriptId = annotation.getParameters().get("name", String.class);
-						if (this.scriptId == null) {
-							this.scriptId = MiscUtilities.getFileBaseName(this.resource);
-						}
-					} else if (annotation.getName().equals("test")) {
-						this.testCaseId = annotation.getParameters().get("name", String.class);
-						if (this.testCaseId == null) {
-							this.scriptId = MiscUtilities.getFileBaseName(this.resource);
-						}
-					}
-				}
-			}
-		}
-	}
+    public void visit(Visitor visitor) {
+        visitor.visitNamespace(this);
+        for (IKimScope scope : getChildren()) {
+            scope.visit(visitor);
+        }
+    }
 
-//	@Override
-//	public boolean isProjectKnowledge() {
-//		return projectKnowledge;
-//	}
+    private void scanAnnotations() {
+        annotationsScanned = true;
+        for (IKimScope child : getChildren()) {
+            if (child instanceof IKimAcknowledgement) {
+                for (IKimAnnotation annotation : ((IKimAcknowledgement) child).getAnnotations()) {
+                    if (annotation.getName().equals("run")) {
+                        this.scriptId = annotation.getParameters().get("name", String.class);
+                        if (this.scriptId == null) {
+                            this.scriptId = MiscUtilities.getFileBaseName(this.resource);
+                        }
+                    } else if (annotation.getName().equals("test")) {
+                        this.testCaseId = annotation.getParameters().get("name", String.class);
+                        if (this.testCaseId == null) {
+                            this.scriptId = MiscUtilities.getFileBaseName(this.resource);
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-	public void setFile(File file) {
-		this.file = file;
-	}
+    // @Override
+    // public boolean isProjectKnowledge() {
+    // return projectKnowledge;
+    // }
 
-	@Override
-	public IKimLoader getLoader() {
-		return loader;
-	}
+    public void setFile(File file) {
+        this.file = file;
+    }
 
-	public void setLoader(IKimLoader loader) {
-		this.loader = loader;
-	}
+    @Override
+    public IKimLoader getLoader() {
+        return loader;
+    }
 
-	@Override
-	public List<IServiceCall> getExtents() {
-		return extents;
-	}
+    public void setLoader(IKimLoader loader) {
+        this.loader = loader;
+    }
 
-	@Override
-	public void addChild(IKimScope child) {
+    @Override
+    public List<IServiceCall> getExtents() {
+        return extents;
+    }
 
-		if (child instanceof IKimModel) {
-			statementsByName.put(((IKimModel) child).getName(), (IKimStatement) child);
-		} else if (child instanceof IKimConceptStatement || child instanceof IKimObserver) {
-			addChildrenByName((IKimStatement) child);
-		}
-		if (child instanceof KimStatement) {
-			((KimStatement) child).setNamespace(this.name);
-			if (((IKimStatement) child).isErrors()) {
-				setErrors(true);
-			}
-			if (((IKimStatement) child).isWarnings()) {
-				setWarnings(true);
-			}
-		}
-		super.addChild(child);
-	}
+    @Override
+    public void addChild(IKimScope child) {
 
-	private void addChildrenByName(IKimStatement child) {
-		statementsByName.put(child instanceof IKimConceptStatement ? ((IKimConceptStatement) child).getName()
-				: ((IKimObserver) child).getName(), (IKimStatement) child);
-		for (IKimScope ch : child.getChildren()) {
-			addChildrenByName((IKimStatement) ch);
-		}
-	}
+        if (child instanceof IKimModel) {
+            statementsByName.put(((IKimModel) child).getName(), (IKimStatement) child);
+        } else if (child instanceof IKimConceptStatement || child instanceof IKimAcknowledgement) {
+            addChildrenByName((IKimStatement) child);
+        }
+        if (child instanceof KimStatement) {
+            ((KimStatement) child).setNamespace(this.name);
+            if (((IKimStatement) child).isErrors()) {
+                setErrors(true);
+            }
+            if (((IKimStatement) child).isWarnings()) {
+                setWarnings(true);
+            }
+        }
+        super.addChild(child);
+    }
 
-	public void addImport(String string) {
-		imported.add(string);
-	}
+    private void addChildrenByName(IKimStatement child) {
+        statementsByName.put(child instanceof IKimConceptStatement
+                ? ((IKimConceptStatement) child).getName()
+                : ((IKimAcknowledgement) child).getName(), (IKimStatement) child);
+        for (IKimScope ch : child.getChildren()) {
+            addChildrenByName((IKimStatement) ch);
+        }
+    }
 
-	public IKimStatement getStatement(String id) {
-		return statementsByName.get(id);
-	}
+    public void addImport(String string) {
+        imported.add(string);
+    }
 
-	public Scope getScope() {
-		return scope;
-	}
+    public IKimStatement getStatement(String id) {
+        return statementsByName.get(id);
+    }
 
-	public void setScope(Scope scope) {
-		this.scope = scope;
-	}
+    public Scope getScope() {
+        return scope;
+    }
 
-	public IKimConcept getDomain() {
-		return domain;
-	}
+    public void setScope(Scope scope) {
+        this.scope = scope;
+    }
 
-	@Override
-	public List<Pair<String, List<String>>> getVocabularyImports() {
-		return vocabularies;
-	}
+    public IKimConcept getDomain() {
+        return domain;
+    }
+
+    @Override
+    public List<Pair<String, List<String>>> getVocabularyImports() {
+        return vocabularies;
+    }
 
     @Override
     public Collection<String> getDisjointNamespaces() {
         return this.disjointNamespaces;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T extends IKimStatement> T getStatement(String name, Class<T> cls) {
+        // only "named" first-class objects are concept and model statements or defines
+        for (IKimScope statement : getChildren()) {
+            if (IKimConceptStatement.class.isAssignableFrom(cls) && statement instanceof IKimConceptStatement) {
+                if (name.equals(((IKimConceptStatement) statement).getName())) {
+                    return (T) statement;
+                }
+            } else if (IKimModel.class.isAssignableFrom(cls) && statement instanceof IKimModel) {
+                if (name.equals(((IKimModel) statement).getName())) {
+                    return (T) statement;
+                }
+            } else if (getSymbolTable().containsKey(name) && getSymbolTable().get(name).getClass().isAssignableFrom(cls)) {
+                return (T) getSymbolTable().get(name);
+            }
+        }
+        return null;
     }
 
 }

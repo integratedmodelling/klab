@@ -71,6 +71,7 @@ import org.integratedmodelling.kim.kim.Urn;
 import org.integratedmodelling.kim.kim.ValueAssignment;
 import org.integratedmodelling.kim.model.ComputableResource;
 import org.integratedmodelling.kim.model.Kim;
+import org.integratedmodelling.kim.model.KimAcknowledgement;
 import org.integratedmodelling.kim.model.KimAnnotation;
 import org.integratedmodelling.kim.model.KimBehavior;
 import org.integratedmodelling.kim.model.KimConcept;
@@ -82,7 +83,6 @@ import org.integratedmodelling.kim.model.KimMetadata;
 import org.integratedmodelling.kim.model.KimModel;
 import org.integratedmodelling.kim.model.KimNamespace;
 import org.integratedmodelling.kim.model.KimObservable;
-import org.integratedmodelling.kim.model.KimObserver;
 import org.integratedmodelling.kim.model.KimProject;
 import org.integratedmodelling.kim.model.KimStatement;
 import org.integratedmodelling.kim.model.KimSymbolDefinition;
@@ -1143,7 +1143,7 @@ public class KimValidator extends AbstractKimValidator {
   
   @Check
   public void checkObservation(final ObserveStatement observation) {
-    KimObserver obs = this.checkObservation(observation.getBody(), null);
+    KimAcknowledgement obs = this.checkObservation(observation.getBody(), null);
     if ((obs != null)) {
       KimNamespace ns = Kim.INSTANCE.getNamespace(observation);
       int i = 0;
@@ -1163,8 +1163,8 @@ public class KimValidator extends AbstractKimValidator {
     }
   }
   
-  public KimObserver checkObservation(final ObserveStatementBody observation, final KimObserver parent) {
-    KimObserver ret = null;
+  public KimAcknowledgement checkObservation(final ObserveStatementBody observation, final KimAcknowledgement parent) {
+    KimAcknowledgement ret = null;
     boolean ok = true;
     if ((observation == null)) {
       return null;
@@ -1176,8 +1176,8 @@ public class KimValidator extends AbstractKimValidator {
           KimPackage.Literals.OBSERVE_STATEMENT_BODY__CONCEPT, KimValidator.BAD_OBSERVATION);
         ok = false;
       } else {
-        KimObserver _kimObserver = new KimObserver(observation, semantics, parent);
-        ret = _kimObserver;
+        KimAcknowledgement _kimAcknowledgement = new KimAcknowledgement(observation, semantics, parent);
+        ret = _kimAcknowledgement;
         ret.setDocstring(observation.getDocstring());
       }
     } else {
@@ -1916,22 +1916,12 @@ public class KimValidator extends AbstractKimValidator {
         boolean _isTemplate = concept.getName().isTemplate();
         if (_isTemplate) {
           ret.add(IKimConcept.Type.MACRO);
-          Concept _extends = concept.getName().getExtends();
-          boolean _tripleNotEquals_2 = (_extends != null);
-          if (_tripleNotEquals_2) {
-            final EnumSet<IKimConcept.Type> ext = this.checkConcept(concept.getName().getExtends(), declaration, macro);
-            boolean _isEmpty = ext.isEmpty();
-            if (_isEmpty) {
-              ret.clear();
-            } else {
-              ret.addAll(ext);
-            }
+          final EnumSet<IKimConcept.Type> ext = this.checkConcept(concept.getName().getExtends(), declaration, macro);
+          boolean _isEmpty = ext.isEmpty();
+          if (_isEmpty) {
+            ret.clear();
           } else {
-            String _type = concept.getName().getType();
-            boolean _tripleNotEquals_3 = (_type != null);
-            if (_tripleNotEquals_3) {
-              ret.addAll(Kim.INSTANCE.getType(concept.getName().getType(), null));
-            }
+            ret.addAll(ext);
           }
         } else {
           boolean _contains = concept.getName().getName().contains(":");
@@ -1979,8 +1969,8 @@ public class KimValidator extends AbstractKimValidator {
         }
       } else {
         ConceptDeclaration _concept = concept.getConcept();
-        boolean _tripleNotEquals_4 = (_concept != null);
-        if (_tripleNotEquals_4) {
+        boolean _tripleNotEquals_2 = (_concept != null);
+        if (_tripleNotEquals_2) {
           EnumSet<IKimConcept.Type> flags = this.checkDeclaration(concept.getConcept());
           boolean _isEmpty_1 = flags.isEmpty();
           boolean _not_1 = (!_isEmpty_1);

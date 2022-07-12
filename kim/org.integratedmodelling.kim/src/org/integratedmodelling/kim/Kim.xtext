@@ -467,16 +467,16 @@ ConceptReference:
 	name=NamespaceId  |
 	templateType=('${' | '#{') (
 			// identifiers for target of semantic ops; also used to connect to UO with 'model' statements
-			name='context'     (type=CONCEPT_TYPE | 'extends' extends=Concept) |
-			name='inherent'    (type=CONCEPT_TYPE | 'extends' extends=Concept) |
-			name='compresent'  (type=CONCEPT_TYPE | 'extends' extends=Concept) |
-			name='adjacent'    (type=CONCEPT_TYPE | 'extends' extends=Concept) |
-			name='container'   (type=CONCEPT_TYPE | 'extends' extends=Concept) |
-			name='contained'   (type=CONCEPT_TYPE | 'extends' extends=Concept) |
-			name='purpose'     (type=CONCEPT_TYPE | 'extends' extends=Concept) |
-			name='causant'     (type=CONCEPT_TYPE | 'extends' extends=Concept) |
-			name='caused'      (type=CONCEPT_TYPE | 'extends' extends=Concept) |
-			name='cooccurrent' (type=CONCEPT_TYPE | 'extends' extends=Concept) 
+			extends=Concept ':' name='context'     |
+			extends=Concept ':' name='inherent'    |
+			extends=Concept ':' name='compresent'  |
+			extends=Concept ':' name='adjacent'    |
+			extends=Concept ':' name='container'   |
+			extends=Concept ':' name='contained'   |
+			extends=Concept ':' name='purpose'     |
+			extends=Concept ':' name='causant'     |
+			extends=Concept ':' name='caused'      |
+			extends=Concept ':' name='cooccurrent' 
 		) template?='}'
 ;
 

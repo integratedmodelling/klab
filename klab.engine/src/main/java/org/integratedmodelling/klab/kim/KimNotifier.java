@@ -9,7 +9,7 @@ import java.util.logging.Level;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimNamespace;
-import org.integratedmodelling.kim.api.IKimObserver;
+import org.integratedmodelling.kim.api.IKimAcknowledgement;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IKimSymbolDefinition;
@@ -30,7 +30,7 @@ import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
-import org.integratedmodelling.klab.api.model.IObserver;
+import org.integratedmodelling.klab.api.model.IAcknowledgement;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
@@ -269,15 +269,15 @@ public class KimNotifier implements Kim.Notifier {
                         monitor.error("error storing valid model " + ((IModel) object).getName() + ": " + e.getMessage());
                     }
                 }
-            } else if (statement instanceof IKimObserver) {
-                object = ObservationBuilder.INSTANCE.build((IKimObserver) statement, ns,
+            } else if (statement instanceof IKimAcknowledgement) {
+                object = ObservationBuilder.INSTANCE.build((IKimAcknowledgement) statement, ns,
                         (Monitor) monitor.contextualize(statement));
-                if (object instanceof IObserver) {
+                if (object instanceof IAcknowledgement) {
                     try {
-                        Observations.INSTANCE.index((IObserver) object, monitor);
+                        Observations.INSTANCE.index((IAcknowledgement) object, monitor);
                     } catch (KlabException e) {
                         monitor.error(
-                                "error storing valid observation " + ((IObserver) object).getName() + ": " + e.getMessage());
+                                "error storing valid observation " + ((IAcknowledgement) object).getName() + ": " + e.getMessage());
                     }
                 }
             }

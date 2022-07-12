@@ -9,7 +9,7 @@ import java.util.List;
  * @author fvilla
  *
  */
-public interface IKimObserver extends IKimActiveStatement {
+public interface IKimAcknowledgement extends IKimActiveStatement {
     
 	/**
 	 * Optional URN to retrieve the observer from.

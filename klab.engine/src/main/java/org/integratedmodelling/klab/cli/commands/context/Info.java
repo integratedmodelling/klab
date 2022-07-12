@@ -7,7 +7,7 @@ import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.cli.ICommand;
 import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
 import org.integratedmodelling.klab.api.model.IKimObject;
-import org.integratedmodelling.klab.api.model.IObserver;
+import org.integratedmodelling.klab.api.model.IAcknowledgement;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -28,11 +28,11 @@ public class Info implements ICommand {
         if (call.getParameters().containsKey("arguments")) { 
 	        for (Object urn : call.getParameters().get("arguments", java.util.List.class)) { 
 	            IKimObject o = Resources.INSTANCE.getModelObject(urn.toString());
-	            if (o instanceof IObserver) {
+	            if (o instanceof IAcknowledgement) {
 	                /*
 	                 * build a scale and report it as a geometry
 	                 */
-	                IScale scale = Scale.create(((IObserver)o).getContextualization().getExtents(session.getMonitor()));
+	                IScale scale = Scale.create(((IAcknowledgement)o).getContextualization().getExtents(session.getMonitor()));
 	                ret += (ret.isEmpty() ? "" : "\n") + ((Scale)scale).asGeometry();
 	            } else {
 	                ret = "Unsupported parameters. Exiting.";

@@ -50,7 +50,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.model.Namespace;
-import org.integratedmodelling.klab.model.Observer;
+import org.integratedmodelling.klab.model.Acknowledgement;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.owl.ObservableBuilder;
@@ -99,12 +99,12 @@ public class Resolver {
     public IDataflow<IArtifact> resolve(String urn, ISession session, String[] scenarios) throws KlabException {
 
         IKimObject object = Resources.INSTANCE.getModelObject(urn);
-        if (!(object instanceof Observer)) {
+        if (!(object instanceof Acknowledgement)) {
             throw new IllegalArgumentException("URN " + urn + " does not specify an observation");
         }
         IMonitor monitor = session.getMonitor();
         String taskId = "local:task:" + session.getId() + ":" + object.getId();
-        ResolutionScope scope = resolve((Observer) object, monitor, Arrays.asList(scenarios));
+        ResolutionScope scope = resolve((Acknowledgement) object, monitor, Arrays.asList(scenarios));
         if (scope.getCoverage().isRelevant()) {
             return Dataflows.INSTANCE.compile(taskId, scope, parentDataflow);
         }
@@ -170,9 +170,9 @@ public class Resolver {
         } else if (resolvable instanceof Model) {
             parentScope.setOriginalScope(Scope.MODEL);
             ret = resolve((Model) resolvable, parentScope);
-        } else if (resolvable instanceof Observer) {
+        } else if (resolvable instanceof Acknowledgement) {
             parentScope.setOriginalScope(Scope.OBSERVER);
-            ret = resolve((Observer) resolvable, parentScope);
+            ret = resolve((Acknowledgement) resolvable, parentScope);
         }
 
         if (ret != null) {
@@ -403,7 +403,7 @@ public class Resolver {
      * @return the scope, with the new subject in it.
      * @throws KlabException
      */
-    public ResolutionScope resolve(Observer observer, IMonitor monitor, Collection<String> scenarios) throws KlabException {
+    public ResolutionScope resolve(Acknowledgement observer, IMonitor monitor, Collection<String> scenarios) throws KlabException {
 
         ResolutionScope ret = ResolutionScope.create(observer, monitor, scenarios);
         if (resolve(observer.getObservable(), ret, Mode.RESOLUTION).getCoverage().isRelevant()) {
@@ -454,7 +454,7 @@ public class Resolver {
      * @return the merged scope
      * @throws KlabException
      */
-    private ResolutionScope resolve(Observer observer, ResolutionScope parentScope) throws KlabException {
+    private ResolutionScope resolve(Acknowledgement observer, ResolutionScope parentScope) throws KlabException {
 
         ResolutionScope ret = resolve(observer.getObservable(), parentScope.getChildScope(observer), Mode.RESOLUTION);
         if (ret.getCoverage().isRelevant()) {

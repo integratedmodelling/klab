@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.cli.commands.resources;
 
 import java.io.ByteArrayOutputStream;
-import java.util.Map;
 
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Network;
@@ -13,57 +12,65 @@ import org.integratedmodelling.klab.api.cli.ICommand;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
+import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.data.resources.Resource;
+import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.utils.JsonUtils;
 
 public class Details implements ICommand {
 
-	@Override
-	public Object execute(IServiceCall call, ISession session) {
+    @Override
+    public Object execute(IServiceCall call, ISession session) {
 
-		String ret = "";
-		String nodeId = (String) call.getParameters().get("node");
-		boolean verbose = call.getParameters().get("verbose", false);
+        String ret = "";
+        boolean verbose = call.getParameters().get("verbose", false);
 
-		for (Object urn : call.getParameters().get("arguments", java.util.List.class)) {
-			Urn u = new Urn(urn.toString());
-			String node = nodeId;
-			if (node == null && !(u.isLocal() || u.isUniversal())) {
-				node = u.getNodeName();
-			}
-			ret += (node == null
-					? resourceDetails(Resources.INSTANCE.getLocalResourceCatalog().get(urn), verbose,
-							session.getMonitor())
-					: remoteResourceDetails(node, urn)) + "\n";
-		}
-		return ret;
-	}
+        for (Object urn : call.getParameters().get("arguments", java.util.List.class)) {
+            ret += resourceDetails(urn.toString(), verbose, session.getMonitor());
+        }
+        return ret;
+    }
 
-	/**
-	 * FIXME TODO this is a copy of Info
-	 * 
-	 * @param nodeId
-	 * @param urn
-	 * @return
-	 */
-	private String remoteResourceDetails(String nodeId, Object urn) {
-		StringBuffer ret = new StringBuffer(10000);
-		INodeIdentity node = Network.INSTANCE.getNode(nodeId);
-		if (node != null && node.isOnline()) {
-			Map<?, ?> info = node.getClient().get(API.NODE.RESOURCE.INFO, Map.class, "urn", urn);
-			ret.append(JsonUtils.printAsJson(info));
-		} else {
-			return "Node " + nodeId + " is " + (node == null ? "unknown" : "offline");
-		}
-		return ret.toString();
-	}
+    private String resourceDetails(String urns, boolean verbose, IMonitor monitor) {
 
-	private String resourceDetails(IResource resource, boolean verbose, IMonitor monitor) {
-		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		IResourceAdapter adapter = Resources.INSTANCE.getResourceAdapter(resource.getAdapterType());
-		IResourceEncoder encoder = adapter.getEncoder();
-		encoder.listDetail(resource, output, verbose, monitor);
-		return output.toString();
-	}
+        Urn urn = new Urn(urns);
+        String ret = urns + ":\n";
+        IResource resource = null;
+        
+        if (urn.isLocal()) {
+            resource = Resources.INSTANCE.getLocalResourceCatalog().get(urn.getUrn());
+            ret += "  Local resource " + (resource == null ? "NOT available" : "available") + "\n";
+            ret += "  Status: " + (Resources.INSTANCE.isResourceOnline(resource) ? "ONLINE" : "OFFLINE") + "\n";
+        } else if (urn.isUniversal()) {
+
+            IUrnAdapter adapter = Resources.INSTANCE.getUrnAdapter(urn.getCatalog());
+            if (adapter != null) {
+                resource = adapter.getResource(urns);
+                ret += "  Generic resource served locally: " + (resource == null ? "NOT available" : "available") + "\n";
+                ret += "  Status: " + (Resources.INSTANCE.isResourceOnline(resource) ? "ONLINE" : "OFFLINE") + "\n";
+            } else {
+                INodeIdentity node = Network.INSTANCE.getNodeForResource(urn);
+                if (node != null) {
+
+                    ret += "  Available through node " + node.getName() + "\n";
+                    
+                    ResourceReference reference = node.getClient().get(API.NODE.RESOURCE.RESOLVE_URN, ResourceReference.class,
+                            "urn", urn.getUrn());
+                    resource = new Resource(reference);
+                    ret += "  Remote resource " + (resource == null ? "NOT available" : "available") + "\n";
+                    ret += "  Status: " + (Resources.INSTANCE.isResourceOnline(resource) ? "ONLINE" : "OFFLINE") + "\n";
+                } else {
+                    ret += "  Status: UNRESOLVED (not served by any node)\n";
+                }
+            }
+        }
+        
+        if (verbose) {
+            ret += "----\n" + JsonUtils.printAsJson(((Resource)resource).getReference()) + "\n----\n";
+        }
+
+        return ret;
+    }
 }

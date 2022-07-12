@@ -27,7 +27,6 @@ import org.integratedmodelling.kim.kim.KimPackage;
  * <ul>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptReferenceImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptReferenceImpl#getTemplateType <em>Template Type</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptReferenceImpl#getType <em>Type</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptReferenceImpl#getExtends <em>Extends</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptReferenceImpl#isTemplate <em>Template</em>}</li>
  * </ul>
@@ -75,26 +74,6 @@ public class ConceptReferenceImpl extends MinimalEObjectImpl.Container implement
    * @ordered
    */
   protected String templateType = TEMPLATE_TYPE_EDEFAULT;
-
-  /**
-   * The default value of the '{@link #getType() <em>Type</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getType()
-   * @generated
-   * @ordered
-   */
-  protected static final String TYPE_EDEFAULT = null;
-
-  /**
-   * The cached value of the '{@link #getType() <em>Type</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getType()
-   * @generated
-   * @ordered
-   */
-  protected String type = TYPE_EDEFAULT;
 
   /**
    * The cached value of the '{@link #getExtends() <em>Extends</em>}' containment reference.
@@ -203,31 +182,6 @@ public class ConceptReferenceImpl extends MinimalEObjectImpl.Container implement
    * @generated
    */
   @Override
-  public String getType()
-  {
-    return type;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setType(String newType)
-  {
-    String oldType = type;
-    type = newType;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT_REFERENCE__TYPE, oldType, type));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
   public Concept getExtends()
   {
     return extends_;
@@ -327,8 +281,6 @@ public class ConceptReferenceImpl extends MinimalEObjectImpl.Container implement
         return getName();
       case KimPackage.CONCEPT_REFERENCE__TEMPLATE_TYPE:
         return getTemplateType();
-      case KimPackage.CONCEPT_REFERENCE__TYPE:
-        return getType();
       case KimPackage.CONCEPT_REFERENCE__EXTENDS:
         return getExtends();
       case KimPackage.CONCEPT_REFERENCE__TEMPLATE:
@@ -352,9 +304,6 @@ public class ConceptReferenceImpl extends MinimalEObjectImpl.Container implement
         return;
       case KimPackage.CONCEPT_REFERENCE__TEMPLATE_TYPE:
         setTemplateType((String)newValue);
-        return;
-      case KimPackage.CONCEPT_REFERENCE__TYPE:
-        setType((String)newValue);
         return;
       case KimPackage.CONCEPT_REFERENCE__EXTENDS:
         setExtends((Concept)newValue);
@@ -382,9 +331,6 @@ public class ConceptReferenceImpl extends MinimalEObjectImpl.Container implement
       case KimPackage.CONCEPT_REFERENCE__TEMPLATE_TYPE:
         setTemplateType(TEMPLATE_TYPE_EDEFAULT);
         return;
-      case KimPackage.CONCEPT_REFERENCE__TYPE:
-        setType(TYPE_EDEFAULT);
-        return;
       case KimPackage.CONCEPT_REFERENCE__EXTENDS:
         setExtends((Concept)null);
         return;
@@ -409,8 +355,6 @@ public class ConceptReferenceImpl extends MinimalEObjectImpl.Container implement
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
       case KimPackage.CONCEPT_REFERENCE__TEMPLATE_TYPE:
         return TEMPLATE_TYPE_EDEFAULT == null ? templateType != null : !TEMPLATE_TYPE_EDEFAULT.equals(templateType);
-      case KimPackage.CONCEPT_REFERENCE__TYPE:
-        return TYPE_EDEFAULT == null ? type != null : !TYPE_EDEFAULT.equals(type);
       case KimPackage.CONCEPT_REFERENCE__EXTENDS:
         return extends_ != null;
       case KimPackage.CONCEPT_REFERENCE__TEMPLATE:
@@ -434,8 +378,6 @@ public class ConceptReferenceImpl extends MinimalEObjectImpl.Container implement
     result.append(name);
     result.append(", templateType: ");
     result.append(templateType);
-    result.append(", type: ");
-    result.append(type);
     result.append(", template: ");
     result.append(template);
     result.append(')');

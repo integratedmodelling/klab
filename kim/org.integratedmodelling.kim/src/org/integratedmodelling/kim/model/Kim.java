@@ -76,7 +76,6 @@ import org.integratedmodelling.kim.validation.KimValidator;
 import org.integratedmodelling.klab.api.data.CRUDOperation;
 import org.integratedmodelling.klab.api.data.TemplateValue;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.common.CompileInfo;
 import org.integratedmodelling.klab.common.SemanticType;
@@ -2154,6 +2153,15 @@ public enum Kim {
         	return ((Range)value).getKimCode();
         }
         return value == null ? "unknown" : value.toString();
+    }
+
+    public IKimConceptStatement getConceptStatement(IKimConcept observable) {
+        IKimNamespace ns = getNamespace(observable.getNamespace());
+        if (ns != null) {
+            String name = observable.getName().contains(":") ? Path.getLast(observable.getName(), ':') : observable.getName();
+            return ns.getStatement(name, IKimConceptStatement.class);
+        }
+        return null;
     }
 
 }

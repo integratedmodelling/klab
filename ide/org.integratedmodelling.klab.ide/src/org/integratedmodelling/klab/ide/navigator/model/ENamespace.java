@@ -14,7 +14,7 @@ import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimLoader;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimNamespace;
-import org.integratedmodelling.kim.api.IKimObserver;
+import org.integratedmodelling.kim.api.IKimAcknowledgement;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
@@ -84,8 +84,8 @@ public class ENamespace extends EKimObject implements IKimNamespace {
 						(IKimConceptStatement) child, this, this));
 			} else if (child instanceof IKimModel) {
 				ret.add(new EModel(delegate.getName() + "." + ((IKimModel) child).getName(), (IKimModel) child, this));
-			} else if (child instanceof IKimObserver) {
-				ret.add(new EObserver(delegate.getName() + "." + ((IKimObserver) child).getName(), (IKimObserver) child,
+			} else if (child instanceof IKimAcknowledgement) {
+				ret.add(new EAcknowledgement(delegate.getName() + "." + ((IKimAcknowledgement) child).getName(), (IKimAcknowledgement) child,
 						this, this));
 			} else if (child instanceof IKimSymbolDefinition) {
 				ret.add(new EDefinition((IKimSymbolDefinition) child, this));
@@ -184,5 +184,10 @@ public class ENamespace extends EKimObject implements IKimNamespace {
     @Override
     public Collection<String> getDisjointNamespaces() {
         return delegate.getDisjointNamespaces();
+    }
+
+    @Override
+    public <T extends IKimStatement> T getStatement(String name, Class<T> cls) {
+        return delegate.getStatement(name, cls);
     }
 }

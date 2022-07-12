@@ -7,7 +7,7 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.api.auth.IIdentity.Type;
 import org.integratedmodelling.klab.api.model.IKimObject;
-import org.integratedmodelling.klab.api.model.IObserver;
+import org.integratedmodelling.klab.api.model.IAcknowledgement;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -39,7 +39,7 @@ public class AppRunner implements Annotations.Handler {
     if (monitor.getIdentity().is(Type.SCRIPT)) {
 
       // safe cast as the annotation is limited to observers
-      IObserver observer = (IObserver) target;
+      IAcknowledgement observer = (IAcknowledgement) target;
       Session session = monitor.getIdentity().getParentIdentity(Session.class);
 
       if (session != null && observer != null) {
