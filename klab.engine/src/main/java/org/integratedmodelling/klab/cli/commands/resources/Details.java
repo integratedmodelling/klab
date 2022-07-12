@@ -50,7 +50,7 @@ public class Details implements ICommand {
                 INodeIdentity node = Network.INSTANCE.getNodeForResource(urn);
                 if (node != null) {
 
-                    ret += "  Available through node " + node.getName() + "\n";
+                    ret += "  Generic resource available through node " + node.getName() + "\n";
                     
                     ResourceReference reference = node.getClient().get(API.NODE.RESOURCE.RESOLVE_URN, ResourceReference.class,
                             "urn", urn.getUrn());
@@ -61,9 +61,25 @@ public class Details implements ICommand {
                     ret += "  Status: UNRESOLVED (not served by any node)\n";
                 }
             }
+        } else {
+
+            INodeIdentity node = Network.INSTANCE.getNodeForResource(urn);
+            if (node != null) {
+
+                ret += "  Remote resource available through node " + node.getName() + "\n";
+                
+                ResourceReference reference = node.getClient().get(API.NODE.RESOURCE.RESOLVE_URN, ResourceReference.class,
+                        "urn", urn.getUrn());
+                resource = new Resource(reference);
+                ret += "  Remote resource " + (resource == null ? "NOT available" : "available") + "\n";
+                ret += "  Status: " + (Resources.INSTANCE.isResourceOnline(resource) ? "ONLINE" : "OFFLINE") + "\n";
+            } else {
+                ret += "  Status: UNRESOLVED (not served by any node)\n";
+            }
         }
+    
         
-        if (verbose) {
+        if (verbose && resource != null) {
             ret += "----\n" + JsonUtils.printAsJson(((Resource)resource).getReference()) + "\n----\n";
         }
 
