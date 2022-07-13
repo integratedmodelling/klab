@@ -66,16 +66,16 @@ public interface IUnitService {
      */
     IUnit removeExtents(IUnit refUnit, Collection<ExtentDimension> extentDimensions);
 
-    /**
-     * <p>
-     * isDensity.
-     * </p>
-     *
-     * @param unit a {@link org.integratedmodelling.klab.api.data.mediation.IUnit} object.
-     * @param extent a {@link org.integratedmodelling.klab.api.knowledge.IConcept} object.
-     * @return a boolean.
-     */
-    boolean isDensity(IUnit unit, IConcept extent);
+//    /**
+//     * <p>
+//     * isDensity.
+//     * </p>
+//     *
+//     * @param unit a {@link org.integratedmodelling.klab.api.data.mediation.IUnit} object.
+//     * @param extent a {@link org.integratedmodelling.klab.api.knowledge.IConcept} object.
+//     * @return a boolean.
+//     */
+//    boolean isDensity(IUnit unit, IConcept extent);
 
     /**
      * <p>

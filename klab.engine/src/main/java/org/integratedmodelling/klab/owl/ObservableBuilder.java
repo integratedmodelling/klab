@@ -412,9 +412,9 @@ public class ObservableBuilder implements IObservable.Builder {
 			case MONETARY_VALUE:
 				reset(makeValue(argument, this.comparison, true, type == UnarySemanticOperator.MONETARY_VALUE), type);
 				break;
-			case OBSERVABILITY:
-				reset(makeObservability(argument, true), type);
-				break;
+//			case OBSERVABILITY:
+//				reset(makeObservability(argument, true), type);
+//				break;
 			case MAGNITUDE:
 				reset(makeMagnitude(argument, true), type);
 				break;
@@ -1110,58 +1110,58 @@ public class ObservableBuilder implements IObservable.Builder {
 		return ontology.getConcept(conceptId);
 	}
 
-	/**
-	 * Turn a concept into its observability (a deniable trait) if it's not already
-	 * one, implementing the corresponding semantic operator. Also makes the
-	 * original concept the numerosity's inherent.
-	 * 
-	 * @param concept       the untransformed concept. Must be any observable.
-	 * @param addDefinition add the {@link NS#CONCEPT_DEFINITION_PROPERTY}
-	 *                      annotation; pass true if used from outside the builder
-	 * @return the transformed concept
-	 */
-	public Concept makeObservability(IConcept concept, boolean addDefinition) {
-
-		if (!concept.is(Type.OBSERVABLE)) {
-			monitor.error("observabilities can only be defined for observables", declaration);
-		}
-
-		this.hasUnaryOp = true;
-
-		String cName = getCleanId(concept) + "Observability";
-		String definition = UnarySemanticOperator.OBSERVABILITY.declaration[0] + " " + concept.getDefinition();
-		Ontology ontology = (Ontology) concept.getOntology();
-		String conceptId = ontology.getIdForDefinition(definition);
-
-		if (conceptId == null) {
-
-			conceptId = ontology.createIdForDefinition(definition);
-
-			String reference = UnarySemanticOperator.OBSERVABILITY.getReferenceName(concept.getReferenceName(), null);
-
-			EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.OBSERVABILITY.name(),
-					((Concept) concept).getTypeSet());
-
-			ArrayList<IAxiom> ax = new ArrayList<>();
-			ax.add(Axiom.ClassAssertion(conceptId, newType));
-			ax.add(Axiom.SubClass(NS.CORE_OBSERVABILITY_TRAIT, conceptId));
-			ax.add(Axiom.AnnotationAssertion(conceptId, NS.REFERENCE_NAME_PROPERTY, reference));
-			ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
-			ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
-			if (addDefinition) {
-				ax.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
-			}
-			ontology.define(ax);
-
-			IConcept ret = ontology.getConcept(conceptId);
-			/*
-			 * observability is inherent to the thing that's present.
-			 */
-			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.DESCRIBES_OBSERVABLE_PROPERTY), (IConcept) concept, ontology);
-		}
-
-		return ontology.getConcept(conceptId);
-	}
+//	/**
+//	 * Turn a concept into its observability (a deniable trait) if it's not already
+//	 * one, implementing the corresponding semantic operator. Also makes the
+//	 * original concept the numerosity's inherent.
+//	 * 
+//	 * @param concept       the untransformed concept. Must be any observable.
+//	 * @param addDefinition add the {@link NS#CONCEPT_DEFINITION_PROPERTY}
+//	 *                      annotation; pass true if used from outside the builder
+//	 * @return the transformed concept
+//	 */
+//	public Concept makeObservability(IConcept concept, boolean addDefinition) {
+//
+//		if (!concept.is(Type.OBSERVABLE)) {
+//			monitor.error("observabilities can only be defined for observables", declaration);
+//		}
+//
+//		this.hasUnaryOp = true;
+//
+//		String cName = getCleanId(concept) + "Observability";
+//		String definition = UnarySemanticOperator.OBSERVABILITY.declaration[0] + " " + concept.getDefinition();
+//		Ontology ontology = (Ontology) concept.getOntology();
+//		String conceptId = ontology.getIdForDefinition(definition);
+//
+//		if (conceptId == null) {
+//
+//			conceptId = ontology.createIdForDefinition(definition);
+//
+//			String reference = UnarySemanticOperator.OBSERVABILITY.getReferenceName(concept.getReferenceName(), null);
+//
+//			EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.OBSERVABILITY.name(),
+//					((Concept) concept).getTypeSet());
+//
+//			ArrayList<IAxiom> ax = new ArrayList<>();
+//			ax.add(Axiom.ClassAssertion(conceptId, newType));
+//			ax.add(Axiom.SubClass(NS.CORE_OBSERVABILITY_TRAIT, conceptId));
+//			ax.add(Axiom.AnnotationAssertion(conceptId, NS.REFERENCE_NAME_PROPERTY, reference));
+//			ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
+//			ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
+//			if (addDefinition) {
+//				ax.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
+//			}
+//			ontology.define(ax);
+//
+//			IConcept ret = ontology.getConcept(conceptId);
+//			/*
+//			 * observability is inherent to the thing that's present.
+//			 */
+//			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.DESCRIBES_OBSERVABLE_PROPERTY), (IConcept) concept, ontology);
+//		}
+//
+//		return ontology.getConcept(conceptId);
+//	}
 
 	/**
 	 * Turn a concept into its probability if it's not already one, implementing the

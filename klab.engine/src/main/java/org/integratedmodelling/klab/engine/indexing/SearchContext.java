@@ -650,10 +650,10 @@ public class SearchContext implements IIndexingService.Context {
 				ret.allow(Constraint.allTraits(false).applyingTo(IKimConcept.Type.ATTRIBUTE)
 						.applyingTo(IKimConcept.Type.DENIABLE));
 				break;
-			case OBSERVABILITY:
-				ret.allow(Constraint.with(IKimConcept.Type.COUNTABLE));
-				ret.allow(Constraint.allTraits(false).applyingTo(IKimConcept.Type.COUNTABLE));
-				break;
+//			case OBSERVABILITY:
+//				ret.allow(Constraint.with(IKimConcept.Type.COUNTABLE));
+//				ret.allow(Constraint.allTraits(false).applyingTo(IKimConcept.Type.COUNTABLE));
+//				break;
 			case OCCURRENCE:
 				ret.allow(Constraint.with(IKimConcept.Type.COUNTABLE));
 				ret.allow(Constraint.allTraits(false).applyingTo(IKimConcept.Type.COUNTABLE));

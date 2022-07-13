@@ -318,9 +318,9 @@ public class SemanticScope {
         case NOT:
             ret.logicalRealm.add(Constraint.of(Type.DENIABLE));
             break;
-        case OBSERVABILITY:
-            ret.logicalRealm.add(Constraint.of(Type.OBSERVABLE));
-            break;
+//        case OBSERVABILITY:
+//            ret.logicalRealm.add(Constraint.of(Type.OBSERVABLE));
+//            break;
         case OCCURRENCE:
             ret.logicalRealm.add(Constraint.of(Type.COUNTABLE));
             ret.logicalRealm.add(Constraint.of(Type.QUALITY));

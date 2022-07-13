@@ -16,8 +16,8 @@ package org.integratedmodelling.kim.api;
  */
 public enum BinarySemanticOperator {
 
-    @Deprecated
-    NONE(null),
+//    @Deprecated
+//    NONE(null),
 
     /**
      * A UNION B creates a concept that is either A or B.

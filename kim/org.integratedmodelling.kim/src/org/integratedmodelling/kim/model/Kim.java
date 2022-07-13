@@ -1037,8 +1037,8 @@ public enum Kim {
             return getType("change", original);
         case MONETARY_VALUE:
             return getType("money", original);
-        case OBSERVABILITY:
-            return getType("observability", original);
+//        case OBSERVABILITY:
+//            return getType("observability", original);
         case OCCURRENCE:
             return getType("occurrence", original);
         case PERCENTAGE:

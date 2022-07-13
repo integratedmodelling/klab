@@ -1959,7 +1959,7 @@ class KimValidator extends AbstractKimValidator {
 										concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__PARENTS, i)
 									error = true
 								}
-								if (group.connector !== BinarySemanticOperator.NONE && group.connector != connector) {
+								if (group.connector !== null && group.connector != connector) {
 									error(
 										"Cannot mix union ('or'), intersection ('and') and consequentiality ('follows') operators",
 										concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__PARENTS, i)

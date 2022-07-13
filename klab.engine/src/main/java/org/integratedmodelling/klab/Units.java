@@ -431,17 +431,17 @@ public enum Units implements IUnitService {
         return 0;
     }
 
-    @Override
-    public boolean isDensity(IUnit unit, IConcept extent) {
-
-        if (extent.is(Concepts.c(NS.SPACE_DOMAIN))) {
-            return isArealDensity(unit) || isLengthDensity(unit) || isVolumeDensity(unit);
-        }
-        if (extent.is(Concepts.c(NS.TIME_DOMAIN))) {
-            return isRate(unit);
-        }
-        return false;
-    }
+//    @Override
+//    public boolean isDensity(IUnit unit, IConcept extent) {
+//
+//        if (extent.is(Concepts.c(NS.SPACE_DOMAIN))) {
+//            return isArealDensity(unit) || isLengthDensity(unit) || isVolumeDensity(unit);
+//        }
+//        if (extent.is(Concepts.c(NS.TIME_DOMAIN))) {
+//            return isRate(unit);
+//        }
+//        return false;
+//    }
 
     @Override
     public IUnit addExtents(IUnit refUnit, Collection<ExtentDimension> extentDimensions) {

@@ -65,7 +65,7 @@ public class KimConceptStatement extends KimStatement implements IKimConceptStat
 	public static class ParentConcept {
 
 		private List<KimConcept> concepts = new ArrayList<>();
-		private BinarySemanticOperator connector = BinarySemanticOperator.NONE;
+		private BinarySemanticOperator connector = null;
 
 		public List<KimConcept> getConcepts() {
 			return concepts;

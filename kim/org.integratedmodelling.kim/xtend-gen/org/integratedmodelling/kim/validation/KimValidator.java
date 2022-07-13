@@ -2463,7 +2463,7 @@ public class KimValidator extends AbstractKimValidator {
                           this.error("The consequentiality (\'follows\') operator is only allowed between events", concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__PARENTS, i);
                           error = true;
                         }
-                        if (((group_1.getConnector() != BinarySemanticOperator.NONE) && (!Objects.equal(group_1.getConnector(), connector)))) {
+                        if (((group_1.getConnector() != null) && (!Objects.equal(group_1.getConnector(), connector)))) {
                           this.error(
                             "Cannot mix union (\'or\'), intersection (\'and\') and consequentiality (\'follows\') operators", concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__PARENTS, i);
                           error = true;

@@ -88,7 +88,7 @@ public enum Observables implements IObservableService {
     static class Configuration {
         Set<IConcept> targets = new HashSet<>();
         IConcept configuration;
-        BinarySemanticOperator connector = BinarySemanticOperator.NONE;
+        BinarySemanticOperator connector = null;
     }
 
     private Map<String, Configuration> configurations = Collections.synchronizedMap(new LinkedHashMap<String, Configuration>());
