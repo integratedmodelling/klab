@@ -43,7 +43,6 @@ public class Aggregator extends GroovyObjectSupport {
      * should not be used across time for time-varying extents in that case.
      */
     IScale scale = null;
-    ILocator referenceLocator;
 
     /*
      * the next three are to support stable aggregation. TODO use summary stats
@@ -84,15 +83,6 @@ public class Aggregator extends GroovyObjectSupport {
      */
     public void add(Object value, ILocator locator) {
         
-        if (locator == null && this.referenceLocator == null) {
-            if (scale == null || (scale.getSpace() != null && scale.isSpatiallyDistributed()
-                    && !scale.getSpace().isRegular())) {
-                throw new KlabIllegalArgumentException(
-                        "internal: aggregation: cannot aggregate with a null locator if the space is irregular or the scale is unknown");
-            }
-            this.referenceLocator = scale.isSpatiallyDistributed() ? scale.iterator().next() : scale;
-        }
-
         if (Observations.INSTANCE.isData(value)) {
 
             if (value instanceof Collection) {
@@ -101,7 +91,7 @@ public class Aggregator extends GroovyObjectSupport {
                 }
             } else if (value instanceof Number) {
 
-                double dval = (this.unit == null || !this.unit.isContextual())
+                double dval = (this.unit == null || (!this.unit.isContextual() || locator == null))
                         ? ((Number) value).doubleValue()
                         : this.unit.convert((Number) value, locator).doubleValue();
 
