@@ -1,11 +1,13 @@
 package org.integratedmodelling.kim.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.integratedmodelling.kim.api.BinarySemanticOperator;
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
@@ -19,6 +21,7 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.kim.ConceptDeclaration;
 import org.integratedmodelling.kim.model.Kim.ConceptDescriptor;
 import org.integratedmodelling.kim.model.KimConceptStatement.ParentConcept;
+import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.utils.Pair;
 
 public class KimMacro implements IKimMacro {
@@ -74,7 +77,7 @@ public class KimMacro implements IKimMacro {
          */
         if (statement != null) {
 
-            Visitor visitor = new DefaultVisitor() {
+            Visitor visitor = new DefaultVisitor(){
 
                 @Override
                 public void visitTemplate(Field field, IKimConcept validParent, boolean mandatory) {
@@ -345,4 +348,32 @@ public class KimMacro implements IKimMacro {
     public void visit(Visitor visitor) {
         delegate.visit(visitor);
     }
+
+    /**
+     * Return the Xtext objects for the parent statement in the original definition, which is the
+     * template for our incarnations. It is typically a single concept declaration but can also be
+     * one or more with a connector.
+     * 
+     * @return
+     */
+    public Pair<List<ConceptDeclaration>, BinarySemanticOperator> getMacroDefinition() {
+        if (!((KimConceptStatement)delegate).getParents().isEmpty()) {
+            
+            if (((KimConceptStatement)delegate).getParents().size() > 1) {
+                // TODO move to validation
+                throw new KlabIllegalStateException("Macros cannot specify more than one parent");
+            }
+            
+            ParentConcept parent = ((KimConceptStatement)delegate).getParents().get(0);
+            
+            List<ConceptDeclaration> declarations = new ArrayList<>();
+            BinarySemanticOperator operator = parent.getConnector();
+            for (KimConcept c : parent.getConcepts()) {
+                declarations.add((ConceptDeclaration)c.getEObject());
+            }
+            return new Pair<>(declarations, operator);
+        }
+        return null;
+    }
+
 }

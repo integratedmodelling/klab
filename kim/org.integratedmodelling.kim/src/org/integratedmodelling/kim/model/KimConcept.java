@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
 
+import org.integratedmodelling.kim.api.BinarySemanticOperator;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimMacro;
 import org.integratedmodelling.kim.api.IKimStatement;
@@ -16,6 +17,7 @@ import org.integratedmodelling.kim.model.Kim.ConceptDescriptor;
 import org.integratedmodelling.kim.validation.KimValidator;
 import org.integratedmodelling.klab.utils.CamelCase;
 import org.integratedmodelling.klab.utils.CollectionUtils;
+import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Path;
 import org.integratedmodelling.klab.utils.SemanticType;
 
@@ -199,6 +201,13 @@ public class KimConcept extends KimStatement implements IKimConcept {
 
     private static KimConcept normalize(ConceptDeclaration declaration, IKimMacro macro, IKimStatement parent, boolean root) {
 
+        if (macro != null) {
+            /*
+             * the template to follow is the parent concept in the macro
+             */
+            System.out.println("EHILA'");
+        }
+        
         if (Kim.INSTANCE.hasErrors(declaration)) {
             return null;
         }
@@ -250,8 +259,18 @@ public class KimConcept extends KimStatement implements IKimConcept {
         /*
          * if the main observable is a macro, gather the mappings to remap into the final concept.
          */
-        if (macro == null && observable.is(Type.MACRO)) {
-            macro = observable instanceof IKimMacro ? (IKimMacro)observable : new KimMacro(Kim.INSTANCE.getConceptStatement(observable));
+        if (observable.is(Type.MACRO)) {
+            KimMacro mac = new KimMacro(Kim.INSTANCE.getConceptStatement(observable));
+            Pair<List<ConceptDeclaration>, BinarySemanticOperator> declarations = ((KimMacro)macro).getMacroDefinition();
+            List<KimConcept> ccs = new ArrayList<>();
+            for (ConceptDeclaration cd : declarations.getFirst()) {
+                ccs.add(normalize(cd, mac, parent, root));
+            }
+            if (declaration.getOperators() != null) {
+                
+            } else {
+                return ccs.isEmpty() ? null : ccs.get(0);
+            }
         }
         
         // boolean hasConcretizingTrait = false;
