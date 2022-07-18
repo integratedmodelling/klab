@@ -1634,7 +1634,7 @@ public enum Actors implements IActorsService {
                     Localization localization = new Localization();
                     localization.setIsoCode(lang);
                     Locale locale = Locale.forLanguageTag(lang);
-                    localization.setLanguageDescription(locale == null ? null : locale.getDisplayLanguage());
+                    localization.setLanguageDescription(locale == null ? null : locale.getDisplayLanguage(locale));
                     if (source.getDescription() != null && source.getDescription().startsWith("#")
                             && cat.get(lang).containsKey(source.getDescription().substring(1))) {
                         localization.setLocalizedDescription(
