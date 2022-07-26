@@ -94,7 +94,7 @@ public enum Renderer {
 		ResourcePatternResolver patternResolver = new PathMatchingResourcePatternResolver();
 		try {
 			for (Resource res : patternResolver.getResources("colors/*.json")) {
-	            ColorScheme scheme = JsonUtils.load(res.getFile(), ColorScheme.class);
+	            ColorScheme scheme = JsonUtils.load(res.getInputStream(), ColorScheme.class);
 	            colorSchemata.put(scheme.getName(), scheme);
 			}
 		} catch (Exception e) {

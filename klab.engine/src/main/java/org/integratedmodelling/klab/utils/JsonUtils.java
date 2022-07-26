@@ -15,6 +15,7 @@ package org.integratedmodelling.klab.utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -133,6 +134,22 @@ public class JsonUtils {
     @SuppressWarnings("unchecked")
     public static <T> T cloneObject(T object) {
         return (T) parseObject(printAsJson(object), object.getClass());
+    }
+    
+    /**
+     * Load an object from an input stream.
+     * 
+     * @param is the input stream
+     * @param cls the class
+     * @return the object
+     * @throws KlabIOException
+     */
+    public static <T> T load(InputStream url, Class<T> cls) throws KlabIOException {
+        try {
+            return defaultMapper.readValue(url, cls);
+        } catch (Exception e) {
+            throw new KlabIOException(e);
+        }
     }
 
     /**
