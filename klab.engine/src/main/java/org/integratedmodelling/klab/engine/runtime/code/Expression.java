@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IObserver;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
@@ -315,6 +316,12 @@ public abstract class Expression implements IExpression {
         @Override
         public Scope getExpressionContext() {
             return ExpressionScope.empty(Klab.INSTANCE.getRootMonitor());
+        }
+
+        @Override
+        public IObserver<?> getObserver() {
+            // TODO Auto-generated method stub
+            return null;
         }
 
 	}

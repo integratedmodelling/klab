@@ -57,6 +57,7 @@ import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IObservationGroup;
+import org.integratedmodelling.klab.api.observations.IObserver;
 import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -159,7 +160,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
     Map<String, IVariable> symbolTable = new HashMap<>();
     IntelligentMap<Pair<String, IKimExpression>> behaviorBindings;
     Set<String> watchedObservations = null;
-
+    IObserver<?> observer = null;
+    
     /*
      * info that may be filled in when contextualizing particular objects
      */
@@ -206,6 +208,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
         ret.setRootDataflow((Dataflow) dataflow, null);
         ret.implicitlyChangingObservables = this.implicitlyChangingObservables;
         ret.parent = this;
+        ret.observer = this.observer;
         ret.catalog = new HashMap<>();
         ret.actuatorData = new HashMap<>();
         ret.globalData = new HashMap<>();
@@ -307,6 +310,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
         this.notificationMode = context.notificationMode;
         this.contextData = context.contextData;
         this.globalData = context.globalData;
+        this.observer = context.observer;
     }
 
     private RuntimeScope(ResolutionScope resolutionScope) {
@@ -2485,7 +2489,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
         return ret;
     }
 
-    public static IRuntimeScope rootScope(ResolutionScope resolutionScope) {
+    public static IRuntimeScope rootScope(ResolutionScope resolutionScope, IObserver<?> observer) {
         RuntimeScope ret = new RuntimeScope(resolutionScope);
         resolutionScope.setRootContextualizationScope(ret);
         return ret;
@@ -2548,6 +2552,11 @@ public class RuntimeScope extends AbstractRuntimeScope {
     @Override
     public IObservation getObservation(IObservable observable) {
         return getCatalog().get(new ObservedConcept(observable));
+    }
+
+    @Override
+    public IObserver<?> getObserver() {
+        return this.observer;
     }
 
 }

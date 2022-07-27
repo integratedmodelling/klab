@@ -6,7 +6,6 @@ import java.util.Map;
 
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.mca.api.IAlternative;
@@ -19,7 +18,7 @@ public class Stakeholder implements IStakeholder {
     private String              name;
     private Map<String, Double> weights = new HashMap<>();
     private IObservable         observable;
-    private IDirectObservation  subject;
+    private ISubject  subject;
 
     public Stakeholder(String name) {
         this.name = name;
@@ -29,13 +28,13 @@ public class Stakeholder implements IStakeholder {
         this.observable = observable;
     }
 
-    public Stakeholder(IDirectObservation subject) {
+    public Stakeholder(ISubject subject) {
         this.subject = subject;
         this.name = subject.getName();
     }
 
     @Override
-    public IDirectObservation getSubject() {
+    public ISubject getSubject() {
         return subject;
     }
 

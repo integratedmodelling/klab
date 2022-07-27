@@ -31,6 +31,7 @@ import org.integratedmodelling.klab.api.observations.IConfiguration;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IObserver;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
@@ -1023,6 +1024,12 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 
     @Override
     public IObservation getObservation(IObservable observable) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public IObserver<?> getObserver() {
         // TODO Auto-generated method stub
         return null;
     }

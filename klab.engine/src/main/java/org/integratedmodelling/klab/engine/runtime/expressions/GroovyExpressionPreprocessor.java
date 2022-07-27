@@ -565,6 +565,10 @@ public class GroovyExpressionPreprocessor {
 
     private TokenDescriptor classify(String currentToken) {
 
+        if ("cell".equals(currentToken)) {
+            System.out.println("ZIO PETO");
+        }
+        
         /*
          * known ones. Also ensure that "space" and "time" go through unmodified unless the domains
          * do not know them.

@@ -18,7 +18,6 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
-import org.integratedmodelling.klab.api.observations.ISubjectiveObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
@@ -139,10 +138,10 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 //    	Logging.INSTANCE.warn("RELOCATION OF DIRECT OBSERVATION IS UNIMPLEMENTED!");
 		return this;
 	}
-
-	public void addSubjectiveObservation(ISubjectiveObservation subjectiveObservation) {
-		subjectivelyObserved.add(subjectiveObservation.getId());
-	}
+//
+//	public void addSubjectiveObservation(ISubjectiveObservation subjectiveObservation) {
+//		subjectivelyObserved.add(subjectiveObservation.getId());
+//	}
 
 	/**
 	 * Add a predicate, adjust the observable as needed and enqueue a modification

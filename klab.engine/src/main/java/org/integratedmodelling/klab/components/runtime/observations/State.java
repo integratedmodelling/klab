@@ -25,9 +25,7 @@ import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.data.general.IReducible;
 import org.integratedmodelling.klab.api.data.general.IStructuredTable;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
-import org.integratedmodelling.klab.api.observations.ISubjectiveState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -464,9 +462,9 @@ public class State extends Observation implements IState, IKeyHolder {
         return MediatingState.mediateIfNecessary(this, mediator);
     }
 
-    public ISubjectiveState reinterpret(IDirectObservation observer) {
-        return new SubjectiveState(this, observer);
-    }
+//    public ISubjectiveState reinterpret(IDirectObservation observer) {
+//        return new SubjectiveState(this, observer);
+//    }
 
     public void distributeScalar(Object pod) {
         for (ILocator locator : getScale()) {

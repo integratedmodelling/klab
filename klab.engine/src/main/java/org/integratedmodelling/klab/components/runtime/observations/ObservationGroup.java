@@ -14,11 +14,10 @@ import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IEvent;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IObservationGroup;
-import org.integratedmodelling.klab.api.observations.ISubjectiveObservation;
+import org.integratedmodelling.klab.api.observations.IObserver;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
@@ -35,7 +34,7 @@ import org.integratedmodelling.klab.utils.Range;
  * 
  * @author ferdinando.villa
  */
-public class ObservationGroup extends CountableObservation implements IObservationGroup, ISubjectiveObservation {
+public class ObservationGroup extends CountableObservation implements IObservationGroup {
 
     private IArtifact.Type atype;
     private List<IArtifact> artifacts = new ArrayList<>();
@@ -153,22 +152,21 @@ public class ObservationGroup extends CountableObservation implements IObservati
         this.comparator = comparator;
     }
 
-    @Override
-    public void setObserver(IDirectObservation observer) {
-        // TODO Auto-generated method stub
-
+//    @Override
+    public void setObserver(IObserver observer) {
+        this.observer = observer;
     }
 
-    @Override
-    public ISubjectiveObservation reinterpret(IDirectObservation observer) {
-        throw new IllegalStateException("reinterpret() was called on an illegal or unsupported type");
-    }
+//    @Override
+//    public ISubjectiveObservation reinterpret(IDirectObservation observer) {
+//        throw new IllegalStateException("reinterpret() was called on an illegal or unsupported type");
+//    }
 
-    @Override
-    public IDirectObservation getObserver() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+//    @Override
+//    public IDirectObservation getObserver() {
+//        // TODO Auto-generated method stub
+//        return null;
+//    }
 
     /**
      * Return a group view that checks the type of every observation for having all the passed

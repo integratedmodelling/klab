@@ -5,15 +5,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
 
-import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.data.ILocator;
-import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IObservationGroup;
-import org.integratedmodelling.klab.api.observations.ISubjectiveObservation;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.engine.runtime.AbstractTask;
 import org.integratedmodelling.klab.engine.runtime.api.IModificationListener;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.scale.Scale;
@@ -26,7 +22,7 @@ import org.integratedmodelling.klab.scale.Scale;
  * @author ferdinando.villa
  *
  */
-public class ObservationGroupView extends CountableObservation implements IObservationGroup, ISubjectiveObservation {
+public class ObservationGroupView extends CountableObservation implements IObservationGroup {
 	
 	private IArtifact.Type atype;
 	private ObservationGroup original;
@@ -146,22 +142,22 @@ public class ObservationGroupView extends CountableObservation implements IObser
 		filtered = null;
 	}
 
-	@Override
-	public void setObserver(IDirectObservation observer) {
-		original.setObserver(observer);
-		filtered = null;
-	}
+//	@Override
+//	public void setObserver(IDirectObservation observer) {
+//		original.setObserver(observer);
+//		filtered = null;
+//	}
 
-	@Override
-	public ISubjectiveObservation reinterpret(IDirectObservation observer) {
-		filtered = null;
-		original = (ObservationGroup) original.reinterpret(observer);
-		return this;
-	}
+//	@Override
+//	public ISubjectiveObservation reinterpret(IDirectObservation observer) {
+//		filtered = null;
+//		original = (ObservationGroup) original.reinterpret(observer);
+//		return this;
+//	}
 
-	@Override
-	public IDirectObservation getObserver() {
-		return original.getObserver();
-	}
+//	@Override
+//	public IDirectObservation getObserver() {
+//		return original.getObserver();
+//	}
 
 }
