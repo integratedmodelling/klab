@@ -2906,8 +2906,8 @@ public class KimValidator extends AbstractKimValidator {
     int _size_10 = concept.getCreates().size();
     boolean _greaterThan_6 = (_size_10 > 0);
     if (_greaterThan_6) {
-      if (((!type.contains(IKimConcept.Type.PROCESS)) && (!type.contains(IKimConcept.Type.EVENT)))) {
-        this.error("only processes can use the \'creates\' clause", concept, 
+      if ((((!type.contains(IKimConcept.Type.PROCESS)) && (!type.contains(IKimConcept.Type.EVENT))) && (!type.contains(IKimConcept.Type.RELATIONSHIP)))) {
+        this.error("only processes, events and relationships can use the \'creates\' clause", concept, 
           KimPackage.Literals.CONCEPT_STATEMENT_BODY__CREATES);
         ok = false;
       } else {
@@ -2916,13 +2916,29 @@ public class KimValidator extends AbstractKimValidator {
         for (final ConceptDeclaration decl_1 : _creates) {
           {
             KimConcept countable_1 = Kim.INSTANCE.declareConcept(decl_1);
-            boolean _is = countable_1.is(IKimConcept.Type.OBSERVABLE);
-            boolean _not_7 = (!_is);
-            if (_not_7) {
-              this.error("only observable types can be created by processes or events", concept, 
-                KimPackage.Literals.CONCEPT_STATEMENT_BODY__CREATES, i_3);
+            boolean _contains_6 = type.contains(IKimConcept.Type.RELATIONSHIP);
+            if (_contains_6) {
+              if ((type.contains(IKimConcept.Type.STRUCTURAL) && ((!countable_1.is(IKimConcept.Type.SUBJECT)) && (!countable_1.is(IKimConcept.Type.AGENT))))) {
+                this.error("structural relationships can only create subjects or agents", concept, 
+                  KimPackage.Literals.CONCEPT_STATEMENT_BODY__CREATES);
+                ok = false;
+              } else {
+                if ((type.contains(IKimConcept.Type.FUNCTIONAL) && ((!countable_1.is(IKimConcept.Type.PROCESS)) && (!countable_1.is(IKimConcept.Type.EVENT))))) {
+                  this.error("functiona relationships can only create processes or events", concept, 
+                    KimPackage.Literals.CONCEPT_STATEMENT_BODY__CREATES);
+                  ok = false;
+                }
+              }
             } else {
-              ret.getObservablesCreated().add(countable_1);
+              boolean _is = countable_1.is(IKimConcept.Type.OBSERVABLE);
+              boolean _not_7 = (!_is);
+              if (_not_7) {
+                this.error("only observable types can be created by processes or events", concept, 
+                  KimPackage.Literals.CONCEPT_STATEMENT_BODY__CREATES, i_3);
+                ok = false;
+              } else {
+                ret.getObservablesCreated().add(countable_1);
+              }
             }
             i_3++;
           }

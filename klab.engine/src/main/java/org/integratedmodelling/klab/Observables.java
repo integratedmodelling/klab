@@ -34,8 +34,8 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
-import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.IAcknowledgement;
+import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.observations.IConfiguration;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IEvent;
@@ -60,7 +60,6 @@ import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.owl.Concept;
-import org.integratedmodelling.klab.owl.ConfigurationDetector;
 import org.integratedmodelling.klab.owl.KimKnowledgeProcessor;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Observable;
@@ -77,7 +76,7 @@ public enum Observables implements IObservableService {
 
     INSTANCE;
 
-    ConfigurationDetector configurationDetector = new ConfigurationDetector();
+//    ConfigurationDetector configurationDetector = new ConfigurationDetector();
 
     /**
      * Describes a configuration for the configuration detector.
@@ -1375,7 +1374,7 @@ public enum Observables implements IObservableService {
     }
 
     public void registerConfiguration(IKimConceptStatement statement, IConcept concept) {
-        this.configurationDetector.registerConfiguration(statement, concept);
+        Reasoner.INSTANCE.registerConfiguration(statement, concept);
     }
 
     /**

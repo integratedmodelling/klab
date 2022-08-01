@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimExpression;
+import org.integratedmodelling.klab.Reasoner.Configuration;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
 import org.integratedmodelling.klab.api.data.ILocator;
@@ -625,5 +626,7 @@ public interface IRuntimeScope extends IContextualizationScope {
      * @return
      */
     IObservation getObservation(IObservable observable);
+
+    Map<String, Configuration> getConfigurationCache();
 
 }

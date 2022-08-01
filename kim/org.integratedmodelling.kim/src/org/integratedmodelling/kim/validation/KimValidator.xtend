@@ -1547,17 +1547,12 @@ class KimValidator extends AbstractKimValidator {
 			if (concept.name.isTemplate) {
 
 				ret.add(Type.MACRO)
-//				if (concept.name.extends !== null) {
-					// add type for extended concept if any
 					val ext = checkConcept(concept.name.extends, declaration, macro)
 					if (ext.isEmpty) {
 						ret.clear
 					} else {
 						ret.addAll(ext)
 					}
-//				} else if (concept.name.type !== null) {
-//					ret.addAll(Kim.INSTANCE.getType(concept.name.type, null))
-//				}
 
 			} else {
 
@@ -1575,10 +1570,6 @@ class KimValidator extends AbstractKimValidator {
 					var namespace = Kim.INSTANCE.getNamespace(concept)
 					if (!namespace.worldviewBound &&
 						(namespace.project.workspace as KimWorkspace).namespaceIds.contains(ns)) {
-						/* if (namespace.name.equals(ns)) {
-						 * 	warning("Concept " + concept.name + " is in this same namespace and should be referred to by ID only", concept, null,
-						 * 		KimPackage.CONCEPT__CONCEPT)
-						 } else */
 						if (!namespace.name.equals(ns) && !(namespace as KimNamespace).importedIds.contains(ns)) {
 							error("Namespace " + ns +
 								" is in the same workspace and must be explicitly imported for its concepts to be used",
@@ -2330,17 +2321,32 @@ class KimValidator extends AbstractKimValidator {
 
 		if (concept.creates.size > 0) {
 			// process or event creates countable in context
-			if (!type.contains(Type.PROCESS) && !type.contains(Type.EVENT)) {
-				error("only processes can use the 'creates' clause", concept,
+			if (!type.contains(Type.PROCESS) && !type.contains(Type.EVENT) && !type.contains(Type.RELATIONSHIP)) {
+				error("only processes, events and relationships can use the 'creates' clause", concept,
 					KimPackage.Literals.CONCEPT_STATEMENT_BODY__CREATES)
 				ok = false
 			} else {
 				i = 0
 				for (decl : concept.creates) {
+					
 					var countable = Kim.INSTANCE.declareConcept(decl)
-					if (!countable.is(Type.OBSERVABLE)) {
+
+					if (type.contains(Type.RELATIONSHIP)) {
+						if (type.contains(Type.STRUCTURAL) && (!countable.is(Type.SUBJECT) && !countable.is(Type.AGENT))) {
+							// must be a subject
+							error("structural relationships can only create subjects or agents", concept,
+								KimPackage.Literals.CONCEPT_STATEMENT_BODY__CREATES)
+							ok = false
+						} else if (type.contains(Type.FUNCTIONAL) && (!countable.is(Type.PROCESS) && !countable.is(Type.EVENT))) {
+							// must be a process/event
+							error("functiona relationships can only create processes or events", concept,
+								KimPackage.Literals.CONCEPT_STATEMENT_BODY__CREATES)
+							ok = false
+						}
+					} else if (!countable.is(Type.OBSERVABLE)) {
 						error("only observable types can be created by processes or events", concept,
 							KimPackage.Literals.CONCEPT_STATEMENT_BODY__CREATES, i)
+						ok = false
 					} else {
 						ret.observablesCreated.add(countable)
 					}
