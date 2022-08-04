@@ -559,9 +559,9 @@ UpperOntologyDefinition:
 ConceptStatement:
 	annotations += Annotation*
 	((abstract?='abstract')? &
-	(deniable?='deniable')? &
-	(subjective?='subjective')? &
-	(agentSpecifier=('deliberative' | 'interactive' | 'reactive') |
+	 (deniable?='deniable')? &
+	 (subjective?='subjective')? &
+	 (agentSpecifier=('deliberative' | 'interactive' | 'reactive') |
 		(propertySpecifiers+=PROPERTY_TYPE (propertySpecifiers+=PROPERTY_TYPE)*) |
 		attributeSpecifier='rescaling')?)
 	concept=CONCEPT_TYPE body=ConceptStatementBody

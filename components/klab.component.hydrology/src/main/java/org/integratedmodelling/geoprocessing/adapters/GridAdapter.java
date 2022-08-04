@@ -23,6 +23,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
+import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
@@ -59,7 +60,8 @@ public class GridAdapter implements IUrnAdapter {
 
     @Override
     public void encodeData(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope context) {
-        switch(urn.getNamespace()) {
+        String[] unam = urn.getNamespace().split("\\.");
+        switch(unam[0]) {
         case NAMESPACE_TILES:
             makeTiles(urn, builder, geometry, context);
             break;
@@ -85,6 +87,7 @@ public class GridAdapter implements IUrnAdapter {
         }
 
         IEnvelope envelope = scale.getSpace().getEnvelope();
+
         double width = 1;
         String[] resPath = urn.getResourceId().split("\\.");
         if (resPath.length > 1 && NumberUtils.encodesInteger(resPath[1].substring(1))) {
@@ -95,7 +98,14 @@ public class GridAdapter implements IUrnAdapter {
             }
             width = Double.parseDouble(nn);
         }
-        
+
+        String[] unam = urn.getNamespace().split("\\.");
+        if (unam.length > 1) {
+            if ("overlap".equals(unam[1])) {
+                envelope = Grid.snapOutside(envelope, width);
+            }
+        }
+
         switch(resPath[0]) {
         case "square":
             source = Grids.createSquareGrid(((Envelope) envelope).getJTSEnvelope(), width);
@@ -143,7 +153,8 @@ public class GridAdapter implements IUrnAdapter {
 
     @Override
     public Type getType(Urn urn) {
-        switch(urn.getNamespace()) {
+        String[] unam = urn.getNamespace().split("\\.");
+        switch(unam[0]) {
         case NAMESPACE_TILES:
             return Type.OBJECT;
         }
@@ -152,7 +163,8 @@ public class GridAdapter implements IUrnAdapter {
 
     @Override
     public IGeometry getGeometry(Urn urn) {
-        switch(urn.getNamespace()) {
+        String[] unam = urn.getNamespace().split("\\.");
+        switch(unam[0]) {
         case NAMESPACE_TILES:
             // TODO use parameters
             return Geometry.create("#S2");
@@ -181,7 +193,8 @@ public class GridAdapter implements IUrnAdapter {
         ref.setAdapterType(getName());
         ref.setLocalName(kurn.getResourceId());
 
-        switch(kurn.getNamespace()) {
+        String[] unam = kurn.getNamespace().split("\\.");
+        switch(unam[0]) {
         case NAMESPACE_TILES:
             // TODO use parameters
             ref.setGeometry("#S2");
