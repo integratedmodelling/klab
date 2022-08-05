@@ -18,10 +18,13 @@ import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigator;
 import org.integratedmodelling.klab.rest.ProjectModificationNotification;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class KlabBuilder extends IncrementalProjectBuilder {
 
     public static final String BUILDER_ID = "org.integratedmodelling.klab.ide.klabBuilder";
+    private static Logger logger = LoggerFactory.getLogger(KlabBuilder.class);
 
     /**
      * This keeps the Xtext internal model in sync with the loader and ensures that dependencies,
@@ -44,7 +47,7 @@ public class KlabBuilder extends IncrementalProjectBuilder {
             case IResourceDelta.ADDED:
                 if (resource instanceof IProject
                         && Kim.INSTANCE.isKimProject(((IProject) resource).getLocation().toFile())) {
-                    System.out.println("ADDED PROJECT: " + delta);
+                    logger.info("ADDED PROJECT: " + delta);
                 }
                 // if (resource instanceof IFile && isRelevant((IFile) resource)) {
                 // Activator.loader().add(((IFile) resource).getLocation().toFile());
@@ -57,7 +60,7 @@ public class KlabBuilder extends IncrementalProjectBuilder {
                 KlabNavigator.refresh();
                 break;
             case IResourceDelta.REMOVED:
-                System.out.println("REMOVED: " + delta);
+                logger.info("REMOVED: " + delta);
                 // just close the editor; everything else is dealt with by the loader and
                 // callback
                 KlabNavigator.refresh();
@@ -86,7 +89,7 @@ public class KlabBuilder extends IncrementalProjectBuilder {
                     /**
                      * 
                      */
-                    System.out.println("OPEN/CLOSE/ADD k.IM PROJECT: " + delta);
+                    logger.info("OPEN/CLOSE/ADD k.IM PROJECT: " + delta);
                     KlabNavigator.refresh();
                 }
             }

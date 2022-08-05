@@ -29,8 +29,12 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Type;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.utils.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TimeEditor extends Composite {
+    
+    private static Logger logger = LoggerFactory.getLogger(TimeEditor.class);
 
 	private Text time_scope_multiplier;
 	private Text time_start;
@@ -132,7 +136,7 @@ public class TimeEditor extends Composite {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				scopeResolution = setResolution(time_scope.getText().toUpperCase());
-				System.out.println("scopeResolution is " + scopeResolution);
+				logger.debug("scopeResolution is " + scopeResolution);
 				modified();
 			}
 		});

@@ -87,10 +87,14 @@ import org.integratedmodelling.klab.ide.ui.ChooseOptionDialog;
 import org.integratedmodelling.klab.rest.CompileNotificationReference;
 import org.integratedmodelling.klab.rest.NamespaceCompilationResult;
 import org.integratedmodelling.klab.rest.ResourceReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public enum Eclipse {
 
     INSTANCE;
+    
+    private static Logger logger = LoggerFactory.getLogger(Eclipse.class);
 
     public static final String KLAB_CONSOLE_ID = "klab.console";
 
@@ -375,7 +379,7 @@ public enum Eclipse {
 
     private void error(Exception e) {
         // TODO Auto-generated method stub
-        System.out.println("HANDLE ME: " + e);
+        logger.debug("HANDLE ME: " + e);
     }
 
     public void openFile(String filename) throws KlabException {
@@ -446,7 +450,7 @@ public enum Eclipse {
             MessageDialog.openError(shell, "Error", message);
         } catch (Throwable e) {
             // last resort
-            System.out.println("ALERT: " + message);
+            logger.warn("ALERT: " + message);
         }
     }
 
@@ -457,7 +461,7 @@ public enum Eclipse {
             return MessageDialog.openQuestion(shell, "Confirmation", message);
         } catch (Throwable e) {
             // last resort
-            System.out.println("ERROR in Eclipse.confirm(): " + message);
+           logger.warn("ERROR in Eclipse.confirm(): " + message);
         }
         return false;
     }
@@ -469,7 +473,7 @@ public enum Eclipse {
             MessageDialog.openWarning(shell, "Warning", message);
         } catch (Throwable e) {
             // last resort
-            System.out.println("WARNING: " + message);
+            logger.warn("WARNING: " + message);
         }
     }
 
@@ -480,7 +484,7 @@ public enum Eclipse {
             MessageDialog.openInformation(shell, "Information", message);
         } catch (Throwable e) {
             // last resort
-            System.out.println("INFO: " + message);
+            logger.warn("INFO: " + message);
         }
     }
 
@@ -492,7 +496,7 @@ public enum Eclipse {
             return dialog.run();
         } catch (Throwable e) {
             // last resort
-            System.out.println("INFO: " + e.getLocalizedMessage());
+            logger.warn("INFO: " + e.getLocalizedMessage());
         }
 
         return null;
@@ -685,7 +689,7 @@ public enum Eclipse {
         }
 
         if (ret == null) {
-            System.out.println("IFILE IS NULL " + file);
+            logger.warn("IFILE IS NULL " + file);
         }
         return ret;
     }
@@ -715,7 +719,7 @@ public enum Eclipse {
 
         try {
 
-            System.out.println("Adding xtext marker: " + file + ":" + lineNumber + ":" + message);
+            logger.debug("Adding xtext marker: " + file + ":" + lineNumber + ":" + message);
 
             IMarker marker = file.createMarker(XTEXT_MARKER_TYPE);
             marker.setAttribute(IMarker.MESSAGE, message);
@@ -762,7 +766,7 @@ public enum Eclipse {
 
                 for (CompileNotificationReference inot : report.getNotifications()) {
 
-                    System.out.println("COMPILE NOTIFICATION: " + inot);
+                    logger.debug("COMPILE NOTIFICATION: " + inot);
 
                     // Activator.klab().recordCompileNotification(inot);
 

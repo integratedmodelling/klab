@@ -74,6 +74,8 @@ import org.integratedmodelling.klab.rest.ObservationReference.ObservationType;
 import org.integratedmodelling.klab.rest.RuntimeEvent;
 import org.integratedmodelling.klab.rest.TaskReference;
 import org.integratedmodelling.klab.utils.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RuntimeView extends ViewPart {
 
@@ -88,6 +90,8 @@ public class RuntimeView extends ViewPart {
     // public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
     // }
     // }
+    
+    private static Logger logger = LoggerFactory.getLogger(RuntimeView.class);
 
     public static final String ID = "org.integratedmodelling.klab.ide.views.RuntimeView"; //$NON-NLS-1$
 
@@ -870,7 +874,7 @@ public class RuntimeView extends ViewPart {
 
     private void exportDataflow() {
         // TODO Auto-generated method stub
-        System.out.println("EXPORT DATAFLOW ZIOCA");
+        logger.debug("EXPORT DATAFLOW");
     }
 
     protected void handleSelection(Object o) {

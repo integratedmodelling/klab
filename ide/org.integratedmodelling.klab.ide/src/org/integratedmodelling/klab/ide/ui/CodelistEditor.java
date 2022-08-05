@@ -43,23 +43,24 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.integratedmodelling.klab.api.API;
-import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.client.utils.JsonUtils;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.rest.CodelistReference;
-import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Triple;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
 
 public class CodelistEditor extends Composite {
+    
+    private static Logger logger = LoggerFactory.getLogger(CodelistEditor.class);
 
 	private final FormToolkit toolkit = new FormToolkit(Display.getCurrent());
 	private Table directMappingsTable;
@@ -376,7 +377,7 @@ public class CodelistEditor extends Composite {
 									if (changed) {
 
 										if (columnIndex == 1) {
-											System.out.println("VALIDATE THIS FUCKA " + current);
+											logger.debug("VALIDATE THIS FUCKA " + current);
 										}
 
 										// setMessage(null, Level.INFO);
