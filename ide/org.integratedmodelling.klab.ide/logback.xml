@@ -12,6 +12,9 @@
     <logger name="org.integratedmodelling.klab.ide" level="debug" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
+    <logger name="org.eclipse.wb.swt" level="debug" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
 	<!--  <logger  name="org.eclipse.jgit.util" level="OFF"/> -->
     
     <root level="info">
