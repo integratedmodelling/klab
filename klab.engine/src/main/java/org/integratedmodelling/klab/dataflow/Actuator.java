@@ -479,7 +479,7 @@ public class Actuator implements IActuator {
                                     + contextualizer.getThird().getTargetId());
                 }
             }
-            String targetId = getName();
+            String targetId = /* partitionedTarget == null ? */getName() /* : partitionedTarget */;
             IRuntimeScope context = ctx;
 
             if (indirectTarget != null) {
