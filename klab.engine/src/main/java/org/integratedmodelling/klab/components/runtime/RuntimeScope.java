@@ -138,7 +138,6 @@ public class RuntimeScope extends AbstractRuntimeScope {
     INamespace namespace;
     Provenance provenance;
     EventBus eventBus;
-    // ConfigurationDetector configurationDetector;
     Graph<IDirectObservation, IRelationship> network;
     Structure structure;
     Map<String, IArtifact> catalog;
@@ -176,9 +175,6 @@ public class RuntimeScope extends AbstractRuntimeScope {
     // // cache for the configuration detector
     private Map<String, Reasoner.Configuration> configurationCache = new HashMap<>();
 
-    // // cache for repeated dataflow resolutions
-    // Map<ObservedConcept, List<Pair<ICoverage, Dataflow>>> dataflowCache = new
-    // HashMap<>();
     private Actuator actuator;
     private boolean occurrent;
     private Map<String, IKnowledgeView> views;
@@ -212,7 +208,6 @@ public class RuntimeScope extends AbstractRuntimeScope {
         ret.parent = this;
         ret.observer = this.observer;
         ret.catalog = new HashMap<>();
-        ret.actuatorData = new HashMap<>();
         ret.globalData = new HashMap<>();
         ret.contextData = new HashMap<>();
         ret.behaviorBindings = new IntelligentMap<>();
@@ -967,7 +962,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
         ret.scale = scale;
         ret.semantics = new HashMap<>();
         ret.catalog = new HashMap<>();
-        ret.actuatorData = new HashMap<>();
+//        ret.actuatorData = new HashMap<>();
         ret.groups = new HashMap<>();
         ret.targetSemantics = ((Actuator) actuator).getObservable();
         ret.monitor = monitor;

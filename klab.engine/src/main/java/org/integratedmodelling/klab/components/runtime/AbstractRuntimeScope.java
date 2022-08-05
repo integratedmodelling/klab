@@ -75,6 +75,10 @@ public abstract class AbstractRuntimeScope extends DataflowHandler implements IR
         Set<IObservation> products = new LinkedHashSet<>();
         IObservation target;
 
+        public ActuatorDataImpl() {
+            System.out.println("ZOZ");
+        }
+        
         @Override
         public IScale getScale() {
             return scale;
