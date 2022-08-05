@@ -9,7 +9,7 @@
 	      <pattern>%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</pattern>
 	    </encoder>
   	</appender>
-    <logger name="org.integratedmodelling.klab.ide" level="debug">
+    <logger name="org.integratedmodelling.klab.ide" level="debug" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
 	<!--  <logger  name="org.eclipse.jgit.util" level="OFF"/> -->
