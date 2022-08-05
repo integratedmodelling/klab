@@ -379,7 +379,8 @@ public class Activator extends AbstractUIPlugin {
         JoranConfigurator configurator = new JoranConfigurator();  
         configurator.setContext(loggerContext);  
         try {  
-          configurator.doConfigure(getClass().getResourceAsStream("/logback.xml"));  
+          configurator.doConfigure(getClass().getResourceAsStream("/logback.xml"));
+          logger.info("Logback configured");
         } catch (JoranException e) {
             // log will not work, but we continue
             System.err.println(e);  
