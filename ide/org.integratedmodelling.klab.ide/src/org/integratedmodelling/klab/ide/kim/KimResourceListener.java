@@ -55,9 +55,7 @@ public class KimResourceListener implements IResourceChangeListener {
 				// TODO call the engine?
 				break;
 			case IResourceChangeEvent.PRE_DELETE:
-				System.out.print("Project ");
-				System.out.print(res.getFullPath());
-				logger.debug(" is about to be deleted.");
+				logger.debug("Project "+res.getFullPath()+" is about to be deleted.");
 //                Kim.INSTANCE.closeProject(res.getProject().getName());
 				break;
 			case IResourceChangeEvent.POST_CHANGE:
