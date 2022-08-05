@@ -33,7 +33,6 @@ import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.events.TreeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -472,16 +471,6 @@ public class RuntimeView extends ViewPart {
         GridLayout gl_grpServers = new GridLayout(2, false);
         gl_grpServers.marginWidth = 0;
         {
-            GC gc = new GC(parent);
-            gc.setFont(parent.getFont());
-            // FontMetrics fm = gc.getFontMetrics();
-            // Point extent = gc.textExtent("M");
-            //
-            // int hb = extent.y + 8;
-            // int hm = extent.y + 2;
-            // int wm = extent.x + 2;
-            // int ht = extent.y + 6;
-
             composite = new Composite(parent, SWT.NONE);
             composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
             composite.setBackground(org.eclipse.wb.swt.SWTResourceManager.getColor(SWT.COLOR_WHITE));
