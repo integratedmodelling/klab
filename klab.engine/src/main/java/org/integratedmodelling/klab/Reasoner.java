@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -12,6 +13,7 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.services.IReasonerService;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
@@ -31,6 +33,19 @@ public enum Reasoner implements IReasonerService {
     protected LoadingCache<String, Boolean> reasonerCache;
     protected LoadingCache<String, Boolean> relatedReasonerCache;
     Map<IConcept, ConfigurationDescriptor> configurations = new HashMap<>();
+
+    /**
+     * An emergence is the appearance of an observation triggered by another, under the assumptions
+     * stated in the worldview. It applies to processes and relationships and its emergent
+     * observable can be a configuration, subject or process.
+     * 
+     * @author Ferd
+     *
+     */
+    public class Emergence {
+        public IObservable triggerObservable;
+        public IObservable emergentObservable;
+    }
 
     /**
      * These get recorded in context observations and updated by runtime scopes, which should call
@@ -105,6 +120,11 @@ public enum Reasoner implements IReasonerService {
     }
 
     @Override
+    public Collection<IObservation> getEmergentObservations(IObservation observation, IContextualizationScope scope) {
+        return null;
+    }
+
+    @Override
     public boolean isSatisfiable(IConcept concept) {
         return reasoner.isSatisfiable(concept);
     }
@@ -123,7 +143,7 @@ public enum Reasoner implements IReasonerService {
     public IConcept getEmergentResolvable(IConcept relationship) {
         return null;
     }
-    
+
     @Override
     public boolean implies(IConcept target, IConcept implied) {
         // TODO - and CACHED

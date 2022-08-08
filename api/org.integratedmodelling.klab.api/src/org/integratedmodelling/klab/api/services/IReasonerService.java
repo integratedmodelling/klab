@@ -13,10 +13,12 @@
  */
 package org.integratedmodelling.klab.api.services;
 
+import java.util.Collection;
 import java.util.Set;
 
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 
 /**
  * The reasoning service holds the OWL reasoner of choice and exposes a number of cached is()
@@ -88,5 +90,21 @@ public interface IReasonerService {
      * @return the type of observable that emerges from the existence of the relationship.
      */
     IConcept getEmergentResolvable(IConcept relationship);
+
+    /**
+     * Emergence is the incarnation of an observation triggered by another. It happens when certain
+     * observations trigger patterns or create other observations through structural or functional
+     * composition. The observables that emerge can be configurations, processes or subjects and
+     * they are defined through the worldview, using the inherency of the configurations or the
+     * 'creates' clause with relationships.
+     * <p>
+     * The implementation should determine which observations emerge and, when not already
+     * contextualized in the scope, use the scope to create and resolve all of them before returning
+     * them.
+     * 
+     * @param observation
+     * @return
+     */
+    Collection<IObservation> getEmergentObservations(IObservation observation, IContextualizationScope scope);
 
 }
