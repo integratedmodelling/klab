@@ -32,7 +32,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.integratedmodelling.klab.Reasoner;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 
 /**
@@ -101,6 +100,10 @@ public class IntelligentMap<T> implements Map<IConcept, T> {
 
 		return ret == null ? defaultValue : ret;
 
+	}
+	
+	public T getValue(IConcept key) {
+	    return original.get(key);
 	}
 
 	@Override

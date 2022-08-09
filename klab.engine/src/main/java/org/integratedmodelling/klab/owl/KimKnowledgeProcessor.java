@@ -148,8 +148,13 @@ public enum KimKnowledgeProcessor {
                 createProperties(ret, ns);
                 ns.define();
                 
+                /*
+                 * register any emergence info with the reasoner
+                 */
                 if (ret.is(Type.CONFIGURATION)) {
-                    Observables.INSTANCE.registerConfiguration(concept, ret);
+                    Reasoner.INSTANCE.registerConfiguration(concept, ret);
+                } else if (ret.is(Type.RELATIONSHIP)) {
+                    Reasoner.INSTANCE.registerRelationship(concept, ret);
                 }
 
                 if (coreConceptPeers.containsKey(ret.toString()) && upperConceptDefined != null

@@ -1372,10 +1372,10 @@ public enum Observables implements IObservableService {
         return ret;
 
     }
-
-    public void registerConfiguration(IKimConceptStatement statement, IConcept concept) {
-        Reasoner.INSTANCE.registerConfiguration(statement, concept);
-    }
+//
+//    public void registerConfiguration(IKimConceptStatement statement, IConcept concept) {
+//        Reasoner.INSTANCE.registerConfiguration(statement, concept);
+//    }
 
     /**
      * Convert any legitimate statement or object into an observed concept.

@@ -18,6 +18,8 @@ import org.integratedmodelling.klab.api.services.IReasonerService;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.owl.IntelligentMap;
 import org.integratedmodelling.klab.owl.KlabReasoner;
 import org.integratedmodelling.klab.owl.Ontology;
 
@@ -33,6 +35,7 @@ public enum Reasoner implements IReasonerService {
     protected LoadingCache<String, Boolean> reasonerCache;
     protected LoadingCache<String, Boolean> relatedReasonerCache;
     Map<IConcept, ConfigurationDescriptor> configurations = new HashMap<>();
+    IntelligentMap<Emergence> emergence = new IntelligentMap<>();
 
     /**
      * An emergence is the appearance of an observation triggered by another, under the assumptions
@@ -43,8 +46,10 @@ public enum Reasoner implements IReasonerService {
      *
      */
     public class Emergence {
-        public IObservable triggerObservable;
+        public Set<IObservable> triggerObservable;
+        public LogicalConnector connector = null;
         public IObservable emergentObservable;
+        public String namespaceId;
     }
 
     /**
@@ -182,6 +187,28 @@ public enum Reasoner implements IReasonerService {
         }
     }
 
+    public void registerRelationship(IKimConceptStatement statement, IConcept relationship) {
+        if (!relationship.isAbstract()) {
+            for (IConcept created : Observables.INSTANCE.getCreated(relationship)) {
+                if (relationship.is(Type.STRUCTURAL)) {
+                    if (created.is(Type.SUBJECT) || created.is(Type.CONFIGURATION)) {
+
+                    } else {
+                        throw new KlabValidationException("structural relationships can only create subjects or configurations");
+                    }
+                } else if (relationship.is(Type.FUNCTIONAL)) {
+                    if (created.is(Type.PROCESS) || created.is(Type.CONFIGURATION)) {
+
+                    } else {
+                        throw new KlabValidationException("functional relationships can only create processes or configurations");
+                    }
+                } else {
+
+                }
+            }
+        }
+    }
+
     public void registerConfiguration(IKimConceptStatement statement, IConcept configuration) {
 
         if (!configuration.isAbstract()) {
@@ -229,6 +256,15 @@ public enum Reasoner implements IReasonerService {
             cache = scope.getConfigurationCache();
         }
         return null;
+    }
+
+    void releaseNamespace(String namespaceId) {
+        for (IConcept c : emergence.keySet()) {
+            Emergence e = emergence.getValue(c);
+            if (e.namespaceId.equals(namespaceId)) {
+                emergence.remove(c);
+            }
+        }
     }
 
 }
