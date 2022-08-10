@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimExpression;
-import org.integratedmodelling.klab.Reasoner.Configuration;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
 import org.integratedmodelling.klab.api.data.ILocator;
@@ -19,7 +18,6 @@ import org.integratedmodelling.klab.api.observations.IConfiguration;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.observations.IObservation;
-import org.integratedmodelling.klab.api.observations.IObserver;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -627,6 +625,6 @@ public interface IRuntimeScope extends IContextualizationScope {
      */
     IObservation getObservation(IObservable observable);
 
-    Map<String, Configuration> getConfigurationCache();
+//    Map<String, Configuration> getConfigurationCache();
 
 }

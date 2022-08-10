@@ -2906,8 +2906,8 @@ public class KimValidator extends AbstractKimValidator {
     int _size_10 = concept.getCreates().size();
     boolean _greaterThan_6 = (_size_10 > 0);
     if (_greaterThan_6) {
-      if ((((!type.contains(IKimConcept.Type.PROCESS)) && (!type.contains(IKimConcept.Type.EVENT))) && (!type.contains(IKimConcept.Type.RELATIONSHIP)))) {
-        this.error("only processes, events and relationships can use the \'creates\' clause", concept, 
+      if (((((!type.contains(IKimConcept.Type.PROCESS)) && (!type.contains(IKimConcept.Type.EVENT))) && (!type.contains(IKimConcept.Type.RELATIONSHIP))) && (!type.contains(IKimConcept.Type.QUALITY)))) {
+        this.error("only processes, events, qualities and relationships can use the \'creates\' clause", concept, 
           KimPackage.Literals.CONCEPT_STATEMENT_BODY__CREATES);
         ok = false;
       } else {
@@ -2930,9 +2930,7 @@ public class KimValidator extends AbstractKimValidator {
                 }
               }
             } else {
-              boolean _is = countable_1.is(IKimConcept.Type.OBSERVABLE);
-              boolean _not_7 = (!_is);
-              if (_not_7) {
+              if (((!countable_1.is(IKimConcept.Type.OBSERVABLE)) && (!countable_1.is(IKimConcept.Type.CONFIGURATION)))) {
                 this.error("only observable types can be created by processes or events", concept, 
                   KimPackage.Literals.CONCEPT_STATEMENT_BODY__CREATES, i_3);
                 ok = false;

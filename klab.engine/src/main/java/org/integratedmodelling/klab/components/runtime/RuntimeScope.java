@@ -172,8 +172,8 @@ public class RuntimeScope extends AbstractRuntimeScope {
     IMetadata objectMetadata;
     INotification.Mode notificationMode;
     Collection<IObservation> configurationTargets;
-    // // cache for the configuration detector
-    private Map<String, Reasoner.Configuration> configurationCache = new HashMap<>();
+//    // // cache for the configuration detector
+//    private Map<String, Reasoner.Configuration> configurationCache = new HashMap<>();
 
     private Actuator actuator;
     private boolean occurrent;
@@ -308,7 +308,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
         this.contextData = context.contextData;
         this.globalData = context.globalData;
         this.observer = context.observer;
-        this.configurationCache = context.configurationCache;
+//        this.configurationCache = context.configurationCache;
     }
 
     private RuntimeScope(ResolutionScope resolutionScope) {
@@ -2464,9 +2464,9 @@ public class RuntimeScope extends AbstractRuntimeScope {
         return this.observer;
     }
 
-    @Override
-    public Map<String, Reasoner.Configuration> getConfigurationCache() {
-        return configurationCache;
-    }
+//    @Override
+//    public Map<String, Reasoner.Configuration> getConfigurationCache() {
+//        return configurationCache;
+//    }
 
 }

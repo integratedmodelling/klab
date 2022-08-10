@@ -11,14 +11,12 @@ import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.services.IReasonerService;
 import org.integratedmodelling.klab.common.LogicalConnector;
-import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.IntelligentMap;
 import org.integratedmodelling.klab.owl.KlabReasoner;
 import org.integratedmodelling.klab.owl.Ontology;
@@ -34,7 +32,7 @@ public enum Reasoner implements IReasonerService {
     private KlabReasoner reasoner;
     protected LoadingCache<String, Boolean> reasonerCache;
     protected LoadingCache<String, Boolean> relatedReasonerCache;
-    Map<IConcept, ConfigurationDescriptor> configurations = new HashMap<>();
+    Map<IConcept, Emergence> configurations = new HashMap<>();
     IntelligentMap<Emergence> emergence = new IntelligentMap<>();
 
     /**
@@ -46,37 +44,12 @@ public enum Reasoner implements IReasonerService {
      *
      */
     public class Emergence {
-        public Set<IObservable> triggerObservable;
-        public LogicalConnector connector = null;
-        public IObservable emergentObservable;
+        public Set<IConcept> triggerObservables = new HashSet<>();
+        // TODO unclear how to specify the connector if all the trigger specs are in the trigger
+        // concepts.
+        public LogicalConnector connector = LogicalConnector.UNION;
+        public IConcept emergentObservable;
         public String namespaceId;
-    }
-
-    /**
-     * These get recorded in context observations and updated by runtime scopes, which should call
-     * update() on each of the notified configurations at each new observation in each context.
-     * 
-     * @author Ferd
-     *
-     */
-    public class Configuration {
-
-        Configuration configuration;
-        Map<IConcept, IObservation> matched = new HashMap<>();
-        boolean covered = false;
-    }
-
-    /**
-     * These describe the configuration from the worldview, and get notified of all the triggers and
-     * enablements connected to it by models.
-     * 
-     * @author Ferd
-     *
-     */
-    class ConfigurationDescriptor {
-        Set<IConcept> triggers = new HashSet<>();
-        LogicalConnector connector = null;
-        IConcept configuration;
     }
 
     class AttributeDescription {
@@ -209,53 +182,57 @@ public enum Reasoner implements IReasonerService {
         }
     }
 
+    /*
+     * this just registers the configuration; at this stage no triggers can exist so only the
+     * configuration record is stored.
+     */
     public void registerConfiguration(IKimConceptStatement statement, IConcept configuration) {
 
         if (!configuration.isAbstract()) {
-
-            IConcept inherent = Observables.INSTANCE.getInherency(configuration);
-            if (inherent != null) {
-
-                ConfigurationDescriptor descriptor = new ConfigurationDescriptor();
-                descriptor.configuration = configuration;
-
-                if (inherent.is(Type.UNION)) {
-                    descriptor.connector = LogicalConnector.UNION;
-                    for (IConcept component : inherent.getOperands()) {
-                        descriptor.triggers.add(component);
-                    }
-                } else if (inherent.is(Type.INTERSECTION)) {
-                    descriptor.connector = LogicalConnector.INTERSECTION;
-                    for (IConcept component : inherent.getOperands()) {
-                        descriptor.triggers.add(component);
-                    }
-                } else {
-                    descriptor.triggers.add(inherent);
-                }
-
-                this.configurations.put(configuration, descriptor);
-            }
+            Emergence descriptor = new Emergence();
+            descriptor.emergentObservable = configuration;
+            this.configurations.put(configuration, descriptor);
         }
     }
 
     /**
-     * Call at each new observation (groups for instantiators). If a DirectObservation is passed,
-     * this will use the cache in it to store partial matches and resolve them. If non-null is
-     * returned, there is a new configuration and nothing is done in the observation except removing
-     * any partial cache entries and avoiding multiple notifications.
+     * Called when a quality 'creates' a configuration: ensures that the configuration record is
+     * updated and the triggers are registered. 
      * 
-     * @param context
-     * @param newObservation
-     * @param scope
-     * @return
+     * @param concept
+     * @param configuration
      */
-    public Configuration detectConfiguration(IDirectObservation context, IObservation newObservation, IRuntimeScope scope) {
+    private void notifyConfigurationContribution(IConcept quality, IConcept configuration) {
 
-        Map<String, Configuration> cache = null;
-        if (context instanceof DirectObservation) {
-            cache = scope.getConfigurationCache();
+        /*
+         * find the record; if not found, exit
+         */
+        Emergence descriptor = configurations.get(configuration);
+        if (descriptor == null) {
+            return;
         }
-        return null;
+        /*
+         * update any triggers
+         */
+        analyzeEmergence(descriptor);
+    }
+
+    /**
+     * Update the records that allow us to quickly know what emergent resolution to trigger as
+     * observations are made.
+     * 
+     * @param descriptor
+     */
+    void analyzeEmergence(Emergence descriptor) {
+
+        /*
+         * go through the parents to inherit any missing trigger
+         */
+
+        /*
+         * install missing triggers for detection
+         */
+
     }
 
     void releaseNamespace(String namespaceId) {
@@ -265,6 +242,17 @@ public enum Reasoner implements IReasonerService {
                 emergence.remove(c);
             }
         }
+    }
+
+    public void registerQuality(IKimConceptStatement concept, Concept ret) {
+
+        for (IConcept created : Observables.INSTANCE.getCreated(ret)) {
+            if (!created.is(Type.CONFIGURATION)) {
+                throw new KlabValidationException("qualities can only create configurations");
+            }
+            notifyConfigurationContribution(ret, created);
+        }
+
     }
 
 }

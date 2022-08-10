@@ -155,6 +155,8 @@ public enum KimKnowledgeProcessor {
                     Reasoner.INSTANCE.registerConfiguration(concept, ret);
                 } else if (ret.is(Type.RELATIONSHIP)) {
                     Reasoner.INSTANCE.registerRelationship(concept, ret);
+                } else if (ret.is(Type.QUALITY)) {
+                    Reasoner.INSTANCE.registerQuality(concept, ret);
                 }
 
                 if (coreConceptPeers.containsKey(ret.toString()) && upperConceptDefined != null

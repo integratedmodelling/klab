@@ -2321,8 +2321,8 @@ class KimValidator extends AbstractKimValidator {
 
 		if (concept.creates.size > 0) {
 			// process or event creates countable in context
-			if (!type.contains(Type.PROCESS) && !type.contains(Type.EVENT) && !type.contains(Type.RELATIONSHIP)) {
-				error("only processes, events and relationships can use the 'creates' clause", concept,
+			if (!type.contains(Type.PROCESS) && !type.contains(Type.EVENT) && !type.contains(Type.RELATIONSHIP) && !type.contains(Type.QUALITY)) {
+				error("only processes, events, qualities and relationships can use the 'creates' clause", concept,
 					KimPackage.Literals.CONCEPT_STATEMENT_BODY__CREATES)
 				ok = false
 			} else {
@@ -2343,7 +2343,7 @@ class KimValidator extends AbstractKimValidator {
 								KimPackage.Literals.CONCEPT_STATEMENT_BODY__CREATES)
 							ok = false
 						}
-					} else if (!countable.is(Type.OBSERVABLE)) {
+					} else if (!countable.is(Type.OBSERVABLE) && !countable.is(Type.CONFIGURATION)) {
 						error("only observable types can be created by processes or events", concept,
 							KimPackage.Literals.CONCEPT_STATEMENT_BODY__CREATES, i)
 						ok = false

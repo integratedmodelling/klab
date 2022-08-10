@@ -14,7 +14,6 @@ import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Namespaces;
-import org.integratedmodelling.klab.Reasoner.Configuration;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
 import org.integratedmodelling.klab.api.data.ILocator;
@@ -1035,10 +1034,10 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
         return null;
     }
 
-    @Override
-    public Map<String, Configuration> getConfigurationCache() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+//    @Override
+//    public Map<String, Configuration> getConfigurationCache() {
+//        // TODO Auto-generated method stub
+//        return null;
+//    }
 
 }
