@@ -32,7 +32,7 @@ public enum Reasoner implements IReasonerService {
     private KlabReasoner reasoner;
     protected LoadingCache<String, Boolean> reasonerCache;
     protected LoadingCache<String, Boolean> relatedReasonerCache;
-    Map<IConcept, Emergence> configurations = new HashMap<>();
+    Map<IConcept, Emergence> emergent = new HashMap<>();
     IntelligentMap<Emergence> emergence = new IntelligentMap<>();
 
     /**
@@ -165,13 +165,17 @@ public enum Reasoner implements IReasonerService {
             for (IConcept created : Observables.INSTANCE.getCreated(relationship)) {
                 if (relationship.is(Type.STRUCTURAL)) {
                     if (created.is(Type.SUBJECT) || created.is(Type.CONFIGURATION)) {
-
+                        if (registerEmergent(created)) {
+                            notifyEmergenceTrigger(relationship, created);
+                        }
                     } else {
                         throw new KlabValidationException("structural relationships can only create subjects or configurations");
                     }
                 } else if (relationship.is(Type.FUNCTIONAL)) {
                     if (created.is(Type.PROCESS) || created.is(Type.CONFIGURATION)) {
-
+                        if (registerEmergent(created)) {
+                            notifyEmergenceTrigger(relationship, created);
+                        }
                     } else {
                         throw new KlabValidationException("functional relationships can only create processes or configurations");
                     }
@@ -186,13 +190,21 @@ public enum Reasoner implements IReasonerService {
      * this just registers the configuration; at this stage no triggers can exist so only the
      * configuration record is stored.
      */
-    public void registerConfiguration(IKimConceptStatement statement, IConcept configuration) {
+    public boolean registerEmergent(IConcept configuration) {
 
         if (!configuration.isAbstract()) {
+
+            if (this.emergent.containsKey(configuration)) {
+                return true;
+            }
+            
             Emergence descriptor = new Emergence();
             descriptor.emergentObservable = configuration;
-            this.configurations.put(configuration, descriptor);
+            this.emergent.put(configuration, descriptor);
+            return true;
         }
+        
+        return false;
     }
 
     /**
@@ -200,21 +212,21 @@ public enum Reasoner implements IReasonerService {
      * updated and the triggers are registered. 
      * 
      * @param concept
-     * @param configuration
+     * @param emergent
      */
-    private void notifyConfigurationContribution(IConcept quality, IConcept configuration) {
+    private void notifyEmergenceTrigger(IConcept trigger, IConcept emergent) {
 
         /*
          * find the record; if not found, exit
          */
-        Emergence descriptor = configurations.get(configuration);
+        Emergence descriptor = this.emergent.get(emergent);
         if (descriptor == null) {
             return;
         }
         /*
          * update any triggers
          */
-        analyzeEmergence(descriptor);
+        analyzeEmergence(descriptor, trigger);
     }
 
     /**
@@ -223,7 +235,7 @@ public enum Reasoner implements IReasonerService {
      * 
      * @param descriptor
      */
-    void analyzeEmergence(Emergence descriptor) {
+    void analyzeEmergence(Emergence descriptor, IConcept trigger) {
 
         /*
          * go through the parents to inherit any missing trigger
@@ -250,7 +262,7 @@ public enum Reasoner implements IReasonerService {
             if (!created.is(Type.CONFIGURATION)) {
                 throw new KlabValidationException("qualities can only create configurations");
             }
-            notifyConfigurationContribution(ret, created);
+            notifyEmergenceTrigger(ret, created);
         }
 
     }

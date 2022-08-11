@@ -152,7 +152,7 @@ public enum KimKnowledgeProcessor {
                  * register any emergence info with the reasoner
                  */
                 if (ret.is(Type.CONFIGURATION)) {
-                    Reasoner.INSTANCE.registerConfiguration(concept, ret);
+                    Reasoner.INSTANCE.registerEmergent(ret);
                 } else if (ret.is(Type.RELATIONSHIP)) {
                     Reasoner.INSTANCE.registerRelationship(concept, ret);
                 } else if (ret.is(Type.QUALITY)) {
