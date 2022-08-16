@@ -36,9 +36,10 @@ import org.integratedmodelling.klab.api.extensions.actors.Behavior;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IViewModel;
+import org.integratedmodelling.klab.api.model.IAcknowledgement;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
-import org.integratedmodelling.klab.api.model.IAcknowledgement;
+import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -147,12 +148,13 @@ public class RuntimeBehavior {
             } else {
 
                 /*
-                 * context instruction with parameters will reset the context mandatorily if one is active.
+                 * context instruction with parameters will reset the context mandatorily if one is
+                 * active.
                  */
                 if (scope.getMonitor().getIdentity().getParentIdentity(ISession.class).getState().getCurrentContext() != null) {
                     scope.getMonitor().getIdentity().getParentIdentity(ISession.class).getState().resetContext();
                 }
-                
+
                 Pair<Map<String, Object>, List<String>> args = separateObservationArguments(arguments, scope, identity);
                 Map<String, Object> contextDef = args.getFirst();
                 Object toFire = null;
@@ -338,6 +340,8 @@ public class RuntimeBehavior {
     /**
      * Make an observation, setting the context according to current preferences and session state,
      * or set the context itself if the observation is a subject and the current context is not set.
+     * 
+     * TODO needs fleshing out - also call with :on, :off, :reset
      */
     @Action(id = "scenarios", fires = Type.EMPTY, description = "Apply a session-specific role to one or more observables or observations.")
     public static class SetScenarios extends KlabActionExecutor {
@@ -815,6 +819,12 @@ public class RuntimeBehavior {
                                 throw new KlabIllegalArgumentException(
                                         "cannot use additional observer " + o + " as a context parameter");
                             }
+                        } else if (mo instanceof INamespace) {
+                            
+                            /*
+                             * TODO if regular namespace, should set the namespace of resolution; if scenario, set the scenario.
+                             */
+                            
                         } else {
                             throw new KlabIllegalArgumentException("cannot use argument " + o + " as a context parameter");
                         }
