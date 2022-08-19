@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/org.integratedmodelling.klab.feature_0.10.0.qualifier.jar" id="org.integratedmodelling.klab.feature">
+   <feature url="features/org.integratedmodelling.klab.feature_0.11.0.qualifier.jar" id="org.integratedmodelling.klab.feature">
       <category name="main"/>
    </feature>
    <category-def name="main" label="Klab"/>
