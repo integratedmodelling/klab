@@ -248,7 +248,7 @@ You should also get your employer (if you work as a programmer) or school, if an
    </license>
 
    <url>
-      <update label="k.IM update site" url="http://www.integratedmodelling.org/updates/kim/0.10.0"/>
+      <update label="k.IM update site" url="http://www.integratedmodelling.org/updates/kim/0.11.0"/>
    </url>
 
    <requires>
