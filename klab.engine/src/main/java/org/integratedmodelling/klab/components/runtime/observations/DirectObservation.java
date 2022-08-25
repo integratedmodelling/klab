@@ -15,6 +15,7 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IPattern;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
@@ -28,6 +29,7 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 
 	String name;
 	private boolean active = true;
+	private IPattern originatingPattern;
 
 	// contains the IDs of any subjective observations that we have made.
 	private Set<String> subjectivelyObserved = new HashSet<>();
@@ -55,6 +57,16 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 	@Override
 	public String getName() {
 		return name;
+	}
+	
+	public void setOriginatingPattern(IPattern pattern) {
+		// only implemented where patterns can originate the observation
+		this.originatingPattern = pattern;
+	}
+	
+	public IPattern getOriginatingPattern() {
+		// only implemented where patterns can originate the observation
+		return this.originatingPattern;
 	}
 
 	@Override

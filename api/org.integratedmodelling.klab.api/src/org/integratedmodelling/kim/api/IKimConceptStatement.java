@@ -84,9 +84,9 @@ public interface IKimConceptStatement extends IKimStatement {
 
     List<IKimConcept> getObservablesCreated();
 
-    List<IKimConcept> getConstituentParticipants();
-
-    List<IKimConcept> getPartParticipants();
+//    List<IKimConcept> getConstituentParticipants();
+//
+//    List<IKimConcept> getPartParticipants();
 
     List<IKimConcept> getTraitsConferred();
 
@@ -100,7 +100,9 @@ public interface IKimConceptStatement extends IKimStatement {
 
     List<IKimConcept> getRequiredIdentities();
 
-    List<IKimConcept> getExposedTraits();
+    List<IKimConcept> getEmergenceTriggers();
+
+//    List<IKimConcept> getExposedTraits();
 
     List<IKimRestriction> getRestrictions();
 
@@ -116,16 +118,16 @@ public interface IKimConceptStatement extends IKimStatement {
 
     List<Pair<IKimConcept, DescriptionType>> getObservablesDescribed();
 
-    List<IKimObservable> getTraitsExposed();
+//    List<IKimObservable> getTraitsExposed();
+//
+//    boolean isDefiningExposedTraits();
 
-    boolean isDefiningExposedTraits();
-
-    /**
-     * Whatever concept this configuration 'consists of'.
-     * 
-     * @return consists of
-     */
-    List<IKimConcept> getConfigurationParticipants();
+//    /**
+//     * Whatever concept this configuration 'consists of'.
+//     * 
+//     * @return consists of
+//     */
+//    List<IKimConcept> getConfigurationParticipants();
 
 	List<ApplicableConcept> getSubjectsLinked();
 

@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.components.runtime.observations;
 
+import org.integratedmodelling.klab.api.observations.IPattern;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.owl.Observable;

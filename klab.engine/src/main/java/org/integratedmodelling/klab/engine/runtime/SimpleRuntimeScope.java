@@ -32,6 +32,7 @@ import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IObserver;
+import org.integratedmodelling.klab.api.observations.IPattern;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
@@ -358,7 +359,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
     }
 
     @Override
-    public IRuntimeScope createChild(IScale scale, IActuator target, IResolutionScope scope, IMonitor monitor) {
+    public IRuntimeScope createChild(IScale scale, IActuator target, IResolutionScope scope, IMonitor monitor, IPattern pattern) {
         throw new IllegalStateException(
                 "Context is meant for testing of individual resources and cannot support child observations");
     }
@@ -375,23 +376,11 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 
     }
 
-    // @Override
-    // public IConfigurationDetector getConfigurationDetector() {
-    // // TODO Auto-generated method stub
-    // return null;
-    // }
-
     @Override
     public IRuntimeScope copy() {
         // TODO Auto-generated method stub
         return null;
     }
-
-    // @Override
-    // public void rename(String name, String alias) {
-    // // TODO Auto-generated method stub
-    //
-    // }
 
     @Override
     public void setTarget(IArtifact target) {
@@ -402,12 +391,6 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
     public void setScale(IScale geometry) {
         this.scale = geometry;
     }
-
-    // @Override
-    // public void processAnnotation(IAnnotation annotation) {
-    // // TODO Auto-generated method stub
-    //
-    // }
 
     @Override
     public Provenance getProvenance() {
@@ -431,12 +414,6 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
         }
         return ret;
     }
-
-    // @Override
-    // public void link(IArtifact parent, IArtifact child) {
-    // this.structure.add(child);
-    // this.structure.link(child, parent);
-    // }
 
     /**
      * Return a child context that can be used to build the observation of the passed resource in
@@ -483,15 +460,6 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
     public IObservation getObservation(String observationId) {
         return observations.get(observationId);
     }
-
-    // @Override
-    // public void replaceTarget(IArtifact self) {
-    // // should never be called
-    // throw new IllegalStateException(
-    // "replaceTarget called on a simple context: this context should never be used
-    // in
-    // computations");
-    // }
 
     /**
      * This must be called explicitly before the builder is called upon.
@@ -555,11 +523,6 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
         return null;
     }
 
-    // @Override
-    // public ILocator getCurrentTimeLocator() {
-    // return scale.getTime() == null ? Time.INITIALIZATION : scale.getTime();
-    // }
-
     @Override
     public Collection<IArtifact> getArtifact(IConcept observable) {
         List<IArtifact> ret = new ArrayList<>();
@@ -572,7 +535,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
     }
 
     @Override
-    public IConfiguration newConfiguration(IConcept configurationType, Collection<IObservation> targets, IMetadata metadata) {
+    public IConfiguration newConfiguration(IConcept configurationType, IPattern pattern, IMetadata metadata) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -1034,10 +997,17 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
         return null;
     }
 
-//    @Override
-//    public Map<String, Configuration> getConfigurationCache() {
-//        // TODO Auto-generated method stub
-//        return null;
-//    }
+	@Override
+	public IObservation incarnatePattern(IConcept concept, IPattern pattern) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IPattern getPattern() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 }

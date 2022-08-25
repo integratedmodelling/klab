@@ -9,6 +9,7 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IConfiguration;
 import org.integratedmodelling.klab.api.observations.IEvent;
+import org.integratedmodelling.klab.api.observations.INetwork;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.IRelationship;
@@ -90,4 +91,9 @@ public class Subject extends CountableObservation implements ISubject {
         // TODO Auto-generated method stub
         return null;
     }
+
+	@Override
+	public INetwork getOriginatingPattern() {
+		return (INetwork)super.getOriginatingPattern();
+	}
 }

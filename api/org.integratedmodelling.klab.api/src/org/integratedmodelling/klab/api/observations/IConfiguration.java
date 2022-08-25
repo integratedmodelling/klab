@@ -15,8 +15,6 @@
  */
 package org.integratedmodelling.klab.api.observations;
 
-import java.util.Collection;
-
 /**
  * The Interface IConfiguration.
  *
@@ -24,13 +22,5 @@ import java.util.Collection;
  * @version $Id: $Id
  */
 public interface IConfiguration extends IDirectObservation {
-
-	/**
-	 * A configuration is a detected pattern based on a set of observations. This
-	 * returns the observation that have made the configuration emerge.
-	 * 
-	 * @return the observations that define the configuration.
-	 */
-	Collection<IObservation> getTargetObservations();
 
 }

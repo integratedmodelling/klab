@@ -109,6 +109,8 @@ public class IntelligentMap<T> implements Map<IConcept, T> {
 	@Override
 	public T put(IConcept concept, T data) {
 
+		cache.remove(concept.getDefinition());
+		
 		if (!closure.containsKey(concept.getDefinition())) {
 			Set<String> clss = new HashSet<>();
 			for (IConcept c : concept.getSemanticClosure()) {

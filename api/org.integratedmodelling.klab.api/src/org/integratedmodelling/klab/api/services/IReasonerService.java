@@ -14,6 +14,7 @@
 package org.integratedmodelling.klab.api.services;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -21,90 +22,103 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 
 /**
- * The reasoning service holds the OWL reasoner of choice and exposes a number of cached is()
- * methods that enable very fast subsumption checking. It also manages conceptual quality spaces and
- * configurations, as well as implications and observable detection due to extant relationships.
+ * The reasoning service holds the OWL reasoner of choice and exposes a number
+ * of cached is() methods that enable very fast subsumption checking. It also
+ * manages conceptual quality spaces and configurations, as well as implications
+ * and observable detection due to extant relationships.
  *
  * @author ferdinando.villa
  * @version $Id: $Id
  */
 public interface IReasonerService {
 
-    /**
-     * <p>
-     * getSemanticClosure.
-     * </p>
-     *
-     * @param main a {@link org.integratedmodelling.klab.api.knowledge.IConcept} object.
-     * @return a {@link java.util.Set} object.
-     */
-    Set<IConcept> getSemanticClosure(IConcept main);
+	/**
+	 * <p>
+	 * getSemanticClosure.
+	 * </p>
+	 *
+	 * @param main a {@link org.integratedmodelling.klab.api.knowledge.IConcept}
+	 *             object.
+	 * @return a {@link java.util.Set} object.
+	 */
+	Set<IConcept> getSemanticClosure(IConcept main);
 
-    /**
-     * <p>
-     * getParentClosure.
-     * </p>
-     *
-     * @param main a {@link org.integratedmodelling.klab.api.knowledge.IConcept} object.
-     * @return a {@link java.util.Set} object.
-     */
-    Set<IConcept> getParentClosure(IConcept main);
+	/**
+	 * <p>
+	 * getParentClosure.
+	 * </p>
+	 *
+	 * @param main a {@link org.integratedmodelling.klab.api.knowledge.IConcept}
+	 *             object.
+	 * @return a {@link java.util.Set} object.
+	 */
+	Set<IConcept> getParentClosure(IConcept main);
 
-    /**
-     * <p>
-     * isSatisfiable.
-     * </p>
-     *
-     * @param concept a {@link org.integratedmodelling.klab.api.knowledge.IConcept} object.
-     * @return a boolean.
-     */
-    boolean isSatisfiable(IConcept concept);
+	/**
+	 * <p>
+	 * isSatisfiable.
+	 * </p>
+	 *
+	 * @param concept a {@link org.integratedmodelling.klab.api.knowledge.IConcept}
+	 *                object.
+	 * @return a boolean.
+	 */
+	boolean isSatisfiable(IConcept concept);
 
-    /**
-     * Target.implies(implied) means target.is(implied) or target has a predicate that is(implied).
-     * The implementation should cache results so that it can be called many times without penalty.
-     * 
-     * @param target
-     * @param implied
-     * @return
-     */
-    boolean implies(IConcept target, IConcept implied);
+	/**
+	 * Target.implies(implied) means target.is(implied) or target has a predicate
+	 * that is(implied). The implementation should cache results so that it can be
+	 * called many times without penalty.
+	 * 
+	 * @param target
+	 * @param implied
+	 * @return
+	 */
+	boolean implies(IConcept target, IConcept implied);
 
-    /**
-     * The contextual version of implies() is for roles (the only predicates for which inference is
-     * contextual) and takes an observation as context, where the role may be implied for the
-     * target.
-     * 
-     * @param target
-     * @param implied
-     * @return
-     */
-    boolean implies(IConcept target, IConcept role, IObservation context);
+	/**
+	 * The contextual version of implies() is for roles (the only predicates for
+	 * which inference is contextual) and takes an observation as context, where the
+	 * role may be implied for the target.
+	 * 
+	 * @param target
+	 * @param implied
+	 * @return
+	 */
+	boolean implies(IConcept target, IConcept role, IObservation context);
 
-    /**
-     * The existence of a relationship between two or more subjects may create new subjects (if
-     * structural) or a process (if functional), which are instantiated after the relationship is
-     * instantiated and resolved and automatically resolved.
-     * 
-     * @param relationship
-     * @return the type of observable that emerges from the existence of the relationship.
-     */
-    IConcept getEmergentResolvable(IConcept relationship);
+	/**
+	 * The existence of a relationship between two or more subjects may create new
+	 * subjects (if structural) or a process (if functional), which are instantiated
+	 * after the relationship is instantiated and resolved and automatically
+	 * resolved.
+	 * 
+	 * @param triggerObservation the new observation that may trigger emergent
+	 *                           behavior
+	 * @param scope              the scope of resolution, where all missing triggers
+	 *                           will be looked for
+	 * @return pairs containing the type of observable that emerges from the
+	 *         observation and the triggering observations themselves.
+	 * 
+	 */
+	Map<IConcept, Collection<IObservation>> getEmergentResolvables(IObservation triggerObservation,
+			IContextualizationScope scope);
 
-    /**
-     * Emergence is the incarnation of an observation triggered by another. It happens when certain
-     * observations trigger patterns or create other observations through structural or functional
-     * composition. The observables that emerge can be configurations, processes or subjects and
-     * they are defined through the worldview, using the inherency of the configurations or the
-     * 'creates' clause with relationships.
-     * <p>
-     * The implementation should determine which observations emerge and, when not already
-     * contextualized in the scope, use the scope to create and resolve all of them before returning
-     * them.
-     * 
-     * @param observation
-     * @return
-     */
-    Collection<IObservation> getEmergentObservations(IObservation observation, IContextualizationScope scope);
+	/**
+	 * Emergence is the incarnation of an observation triggered by another. It
+	 * happens when certain observations trigger patterns or create other
+	 * observations through structural or functional composition. The observables
+	 * that emerge can be configurations, processes or subjects and they are defined
+	 * through the worldview, using the inherency of the configurations or the
+	 * 'creates' clause with relationships.
+	 * <p>
+	 * The implementation should determine which observations emerge and, when not
+	 * already contextualized in the scope, use the scope to create and resolve all
+	 * of them before returning them.
+	 * 
+	 * @param observation
+	 * @return
+	 */
+	Collection<IObservation> getEmergentObservations(IObservation observation, IContextualizationScope scope);
 
 }

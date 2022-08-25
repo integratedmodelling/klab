@@ -674,9 +674,7 @@ public class Model extends KimObject implements IModel {
 				monitor.error(err, this.getStatement());
 				addError(err);
 			}
-
 		}
-
 	}
 
 	private void validateTypechain(IMonitor monitor) {

@@ -8,6 +8,7 @@ import java.util.function.Function;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IObservationGroup;
+import org.integratedmodelling.klab.api.observations.IPattern;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.engine.runtime.api.IModificationListener;
@@ -141,23 +142,5 @@ public class ObservationGroupView extends CountableObservation implements IObser
 		original.chain(data);
 		filtered = null;
 	}
-
-//	@Override
-//	public void setObserver(IDirectObservation observer) {
-//		original.setObserver(observer);
-//		filtered = null;
-//	}
-
-//	@Override
-//	public ISubjectiveObservation reinterpret(IDirectObservation observer) {
-//		filtered = null;
-//		original = (ObservationGroup) original.reinterpret(observer);
-//		return this;
-//	}
-
-//	@Override
-//	public IDirectObservation getObserver() {
-//		return original.getObserver();
-//	}
 
 }

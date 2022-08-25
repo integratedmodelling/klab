@@ -602,15 +602,15 @@ ConceptStatementBody:
 			   */
 		((('is' | alias?='equals') (coreConcept?='core')?) (nothing?='nothing' | parents+=ConceptDeclaration (connectors+=(',' | 'or' | 'and') parents+=ConceptDeclaration)*))? &
 
-	/*
-     * traits contextualized. Only applicable to
-     * classes. Abstract class must declare exposed traits; concrete class must
-     * provide matching values using 'exposing'
-     */
-		(
-			('exposes' contextualizedTraits+=ObservableSemantics (','  contextualizedTraits+=ObservableSemantics)*) |
-			(specific?='exposing' contextualizesTraits+=ConceptDeclaration (','  contextualizesTraits+=ConceptDeclaration)*)
-		)? &
+//	/*
+//     * traits contextualized. Only applicable to
+//     * classes. Abstract class must declare exposed traits; concrete class must
+//     * provide matching values using 'exposing'
+//     */
+//		(
+//			('exposes' contextualizedTraits+=ObservableSemantics (','  contextualizedTraits+=ObservableSemantics)*) |
+//			(specific?='exposing' contextualizesTraits+=ConceptDeclaration (','  contextualizesTraits+=ConceptDeclaration)*)
+//		)? &
 
 	/*
      * identifies main concepts for authority
@@ -678,11 +678,16 @@ ConceptStatementBody:
 		('confers' conferredTraits+=ConceptDeclaration (',' conferredTraits+=ConceptDeclaration)*
 			('to' conferredTargets+=ConceptDeclaration (',' conferredTargets+=ConceptDeclaration)*)?
 		)? &
+		
+		/*
+		 * explicit declaration of triggers for emergent observables (subjects, processes and configuration)
+		 */
+		('emerges' 'from' emergenceTriggers+=ConceptDeclaration (',' emergenceTriggers+=ConceptDeclaration)*)? &
 
 	/**
 	 * Shorthand for common 'part of' restriction. TODO deprecate? Part-of should be left to the worldview.
 	 */
-	(('part' | constituent?='constituent' | constitutes?='consists') partOf?='of' whole=ConceptDeclaration)? &
+//	(('part' | constituent?='constituent' | constitutes?='consists') partOf?='of' whole=ConceptDeclaration)? &
 
 	/*
      * for processes: creates quality. Also for structural relationships (creates subject) and functional relationships\
@@ -708,7 +713,7 @@ ConceptStatementBody:
 	 * only for relationships - set the inverse of the associated property (through the
 	 * relationship concept).
 	 */
-	('inverse' 'of' inverse=ConceptDeclaration)? &
+//	('inverse' 'of' inverse=ConceptDeclaration)? &
 
 	/*
      * for processes; lists qualities affected;

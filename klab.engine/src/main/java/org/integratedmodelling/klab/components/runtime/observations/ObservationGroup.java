@@ -18,6 +18,7 @@ import org.integratedmodelling.klab.api.observations.IEvent;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IObservationGroup;
 import org.integratedmodelling.klab.api.observations.IObserver;
+import org.integratedmodelling.klab.api.observations.IPattern;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
@@ -156,18 +157,7 @@ public class ObservationGroup extends CountableObservation implements IObservati
     public void setObserver(IObserver observer) {
         this.observer = observer;
     }
-
-//    @Override
-//    public ISubjectiveObservation reinterpret(IDirectObservation observer) {
-//        throw new IllegalStateException("reinterpret() was called on an illegal or unsupported type");
-//    }
-
-//    @Override
-//    public IDirectObservation getObserver() {
-//        // TODO Auto-generated method stub
-//        return null;
-//    }
-
+    
     /**
      * Return a group view that checks the type of every observation for having all the passed
      * predicates. Heavily cached for speed. Cache is kept in the main group so more views can reuse
@@ -207,5 +197,4 @@ public class ObservationGroup extends CountableObservation implements IObservati
             return ret;
         });
     }
-
 }

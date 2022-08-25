@@ -148,15 +148,12 @@ public enum KimKnowledgeProcessor {
                 createProperties(ret, ns);
                 ns.define();
                 
-                /*
-                 * register any emergence info with the reasoner
-                 */
-                if (ret.is(Type.CONFIGURATION)) {
-                    Reasoner.INSTANCE.registerEmergent(ret);
-                } else if (ret.is(Type.RELATIONSHIP)) {
-                    Reasoner.INSTANCE.registerRelationship(concept, ret);
-                } else if (ret.is(Type.QUALITY)) {
-                    Reasoner.INSTANCE.registerQuality(concept, ret);
+                if (!concept.getEmergenceTriggers().isEmpty()) {
+                	List<IConcept> triggers = new ArrayList<>();
+                	for (IKimConcept trigger : concept.getEmergenceTriggers()) {
+                		triggers.add(declare(trigger, namespace.getOntology(), monitor));
+                	}
+                    Reasoner.INSTANCE.registerEmergent(ret, triggers);
                 }
 
                 if (coreConceptPeers.containsKey(ret.toString()) && upperConceptDefined != null

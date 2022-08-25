@@ -3,7 +3,7 @@ package org.integratedmodelling.kim.api;
 /**
  * All the possible value operators. Duplicated in Modifier for fixable reasons.
  * 
- * Only operator that admits suffix use without an operand is "total".
+ * Only operators that admit suffix use without an operand are "total", "averaged" and "summed".
  * 
  * @author ferdinando.villa
  *
