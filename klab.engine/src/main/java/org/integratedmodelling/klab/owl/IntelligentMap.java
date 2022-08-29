@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.utils.DebugFile;
 
 /**
  * A map indexed by concepts, whose get() method will select the entry that best
@@ -109,6 +110,8 @@ public class IntelligentMap<T> implements Map<IConcept, T> {
 	@Override
 	public T put(IConcept concept, T data) {
 
+		DebugFile.println("STORING " + concept + ": " + data);
+		
 		cache.remove(concept.getDefinition());
 		
 		if (!closure.containsKey(concept.getDefinition())) {

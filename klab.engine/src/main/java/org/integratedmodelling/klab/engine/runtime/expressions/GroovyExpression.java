@@ -196,7 +196,7 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
 						} else if ("self".equals(key) && value instanceof DirectObservation) {
 
 							/*
-							 * if self is an objecty, check if we have a pattern or network
+							 * if self is an object, check if we have a pattern or network
 							 */
 							IPattern pattern = ((DirectObservation) value).getOriginatingPattern();
 							if (pattern instanceof INetwork) {

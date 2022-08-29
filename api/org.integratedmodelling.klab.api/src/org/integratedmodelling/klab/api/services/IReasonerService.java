@@ -104,21 +104,5 @@ public interface IReasonerService {
 	Map<IConcept, Collection<IObservation>> getEmergentResolvables(IObservation triggerObservation,
 			IContextualizationScope scope);
 
-	/**
-	 * Emergence is the incarnation of an observation triggered by another. It
-	 * happens when certain observations trigger patterns or create other
-	 * observations through structural or functional composition. The observables
-	 * that emerge can be configurations, processes or subjects and they are defined
-	 * through the worldview, using the inherency of the configurations or the
-	 * 'creates' clause with relationships.
-	 * <p>
-	 * The implementation should determine which observations emerge and, when not
-	 * already contextualized in the scope, use the scope to create and resolve all
-	 * of them before returning them.
-	 * 
-	 * @param observation
-	 * @return
-	 */
-	Collection<IObservation> getEmergentObservations(IObservation observation, IContextualizationScope scope);
 
 }

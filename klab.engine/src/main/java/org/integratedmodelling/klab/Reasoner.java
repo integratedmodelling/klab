@@ -64,7 +64,7 @@ public enum Reasoner implements IReasonerService {
 				}
 			}
 
-			return Collections.EMPTY_SET;
+			return Collections.emptySet();
 		}
 
 		@Override
@@ -170,11 +170,6 @@ public enum Reasoner implements IReasonerService {
 	}
 
 	@Override
-	public Collection<IObservation> getEmergentObservations(IObservation observation, IContextualizationScope scope) {
-		return null;
-	}
-
-	@Override
 	public boolean isSatisfiable(IConcept concept) {
 		return reasoner.isSatisfiable(concept);
 	}
@@ -193,16 +188,17 @@ public enum Reasoner implements IReasonerService {
 	public Map<IConcept, Collection<IObservation>> getEmergentResolvables(IObservation trigger,
 			IContextualizationScope scope) {
 
-		if (!(scope instanceof IRuntimeScope) || ((IRuntimeScope)scope).getActuator() == null) {
+		if (!(scope instanceof IRuntimeScope) || ((IRuntimeScope) scope).getActuator() == null) {
 			return Collections.emptyMap();
 		}
-		
-		Mode mode = ((IRuntimeScope)scope).getActuator().getMode();
-		
+
+		Mode mode = ((IRuntimeScope) scope).getActuator().getMode();
+
 		/*
 		 * Skip a search in the map if we can't trigger anything.
 		 */
-		if (!trigger.getObservable().is(Type.QUALITY) && !(trigger.getObservable().is(Type.RELATIONSHIP) && mode == Mode.INSTANTIATION)) {
+		if (!trigger.getObservable().is(Type.QUALITY)
+				&& !(trigger.getObservable().is(Type.RELATIONSHIP) && mode == Mode.INSTANTIATION)) {
 			return Collections.emptyMap();
 		}
 
@@ -323,7 +319,9 @@ public enum Reasoner implements IReasonerService {
 					nes.add(e);
 				}
 			}
-			emergence.put(c, nes);
+			if (es.size() != nes.size()) {
+				emergence.put(c, nes);
+			}
 		}
 		for (IConcept c : emergent.keySet()) {
 			if (c.getNamespace().equals(namespaceId)) {
