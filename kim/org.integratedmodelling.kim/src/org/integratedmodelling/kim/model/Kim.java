@@ -1011,9 +1011,9 @@ public enum Kim {
 	public EnumSet<Type> getType(UnarySemanticOperator operator, Set<Type> original) {
 
         switch(operator) {
-        case ASSESSMENT:
-            // won't happen
-            break;
+//        case ASSESSMENT:
+//            // won't happen
+//            break;
         case COUNT:
             return getType("count", original);
         case DISTANCE:

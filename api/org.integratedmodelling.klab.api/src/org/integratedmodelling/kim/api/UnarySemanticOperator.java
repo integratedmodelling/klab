@@ -34,8 +34,8 @@ public enum UnarySemanticOperator {
     MONETARY_VALUE(new Type[]{Type.OBSERVABLE, Type.CONFIGURATION}, Type.QUALITY, "monetary value of"),
     OCCURRENCE(
             new Type[]{Type.COUNTABLE}, Type.QUALITY, "occurrence of"),
-    ASSESSMENT(new Type[]{Type.QUALITY}, Type.PROCESS, 
-            "assessment of"),
+//    ASSESSMENT(new Type[]{Type.QUALITY}, Type.PROCESS, 
+//            "assessment of"),
     CHANGE(new Type[]{Type.QUALITY}, Type.PROCESS, "change in"),
     CHANGED(new Type[]{Type.QUALITY}, Type.EVENT, 
             "changed"),
