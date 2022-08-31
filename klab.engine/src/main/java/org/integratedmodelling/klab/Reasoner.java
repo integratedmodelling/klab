@@ -284,13 +284,13 @@ public enum Reasoner implements IReasonerService {
 
 		if (!configuration.isAbstract()) {
 
-			DebugFile.println("CHECK for storage of " + configuration + " based on " + triggers);
+//			DebugFile.println("CHECK for storage of " + configuration + " based on " + triggers);
 			
 			if (this.emergent.containsKey(configuration)) {
 				return true;
 			}
 
-			DebugFile.println("   STORED " + configuration);
+//			DebugFile.println("   STORED " + configuration);
 
 			Emergence descriptor = new Emergence();
 			descriptor.emergentObservable = configuration;
