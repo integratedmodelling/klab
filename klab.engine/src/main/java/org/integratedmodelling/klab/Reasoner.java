@@ -1,10 +1,12 @@
 package org.integratedmodelling.klab;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -24,6 +26,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.owl.IntelligentMap;
 import org.integratedmodelling.klab.owl.KlabReasoner;
 import org.integratedmodelling.klab.owl.Ontology;
+import org.integratedmodelling.klab.utils.DebugFile;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -281,9 +284,13 @@ public enum Reasoner implements IReasonerService {
 
 		if (!configuration.isAbstract()) {
 
+			DebugFile.println("CHECK for storage of " + configuration + " based on " + triggers);
+			
 			if (this.emergent.containsKey(configuration)) {
 				return true;
 			}
+
+			DebugFile.println("   STORED " + configuration);
 
 			Emergence descriptor = new Emergence();
 			descriptor.emergentObservable = configuration;
@@ -323,10 +330,14 @@ public enum Reasoner implements IReasonerService {
 				emergence.put(c, nes);
 			}
 		}
+		List<IConcept> toRemove = new ArrayList<>();
 		for (IConcept c : emergent.keySet()) {
 			if (c.getNamespace().equals(namespaceId)) {
-				emergent.remove(c);
+				toRemove.add(c);
 			}
+		}
+		for (IConcept c : toRemove) {
+			emergent.remove(c);
 		}
 	}
 

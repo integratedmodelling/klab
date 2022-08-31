@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.rest;
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -229,4 +231,31 @@ public class StateSummary {
 		this.dataKey = dataKey;
 	}
 
+	@Override
+	public String toString() {
+		final int maxLen = 10;
+		return "StateSummary [dataKey=" + (dataKey != null ? toString(dataKey.entrySet(), maxLen) : null)
+				+ ", stateTimestamp=" + stateTimestamp + ", dataUrl=" + dataUrl + ", displayType=" + displayType
+				+ ", detailUrl=" + detailUrl + ", histogram=" + histogram + ", colormap=" + colormap + ", range="
+				+ (range != null ? toString(range, maxLen) : null) + ", mean=" + mean + ", standardDeviation="
+				+ standardDeviation + ", variance=" + variance + ", singleValued=" + singleValued + ", sum=" + sum
+				+ ", valueCount=" + valueCount + ", degenerate=" + degenerate + ", nodataPercentage=" + nodataPercentage
+				+ "]";
+	}
+
+	private String toString(Collection<?> collection, int maxLen) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("[");
+		int i = 0;
+		for (Iterator<?> iterator = collection.iterator(); iterator.hasNext() && i < maxLen; i++) {
+			if (i > 0)
+				builder.append(", ");
+			builder.append(" " + iterator.next() + "\n");
+		}
+		builder.append("]");
+		return builder.toString();
+	}
+
+	
+	
 }

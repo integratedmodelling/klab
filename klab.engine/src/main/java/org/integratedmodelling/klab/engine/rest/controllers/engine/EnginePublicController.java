@@ -250,7 +250,7 @@ public class EnginePublicController implements API.PUBLIC {
 		case REPORT:
 			break;
 		case STRUCTURE:
-			ObservationReference ret = Observations.INSTANCE.createArtifactDescriptor((IObservation) obs);
+			ObservationReference ret = Observations.INSTANCE.createArtifactDescriptor((IObservation) obs, loc, 0);
 			Structure structure = ((IRuntimeScope) obs.getScope()).getStructure();
 			for (IArtifact child : structure.getArtifactChildren(obs)) {
 				if (child instanceof IObservation) {

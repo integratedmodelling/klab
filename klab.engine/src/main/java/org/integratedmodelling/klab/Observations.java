@@ -157,7 +157,7 @@ public enum Observations implements IObservationService {
     public StateSummary getStateSummary(IState state, ILocator locator) {
 
         long time = -1;
-
+        
         if (locator == null) {
             if (state instanceof State) {
                 return ((State) state).getOverallSummary();
@@ -201,6 +201,7 @@ public enum Observations implements IObservationService {
             }
             cached.put(state.getId(), ret);
         }
+
         return ret;
     }
 
@@ -275,7 +276,9 @@ public enum Observations implements IObservationService {
                     Object o = state.get(ll);
                     if (o instanceof Number) {
                         ndata++;
-                        statistics.addValue(((Number) o).doubleValue());
+                        if (isData(o)) {
+                        	statistics.addValue(((Number) o).doubleValue());
+                        }
                         if (histogram != null) {
                             if (state.getDataKey() != null) {
                                 histogram.addToIndex(state.getDataKey().reverseLookup(o));
