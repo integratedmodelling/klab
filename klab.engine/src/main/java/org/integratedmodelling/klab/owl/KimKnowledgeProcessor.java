@@ -148,10 +148,6 @@ public enum KimKnowledgeProcessor {
                 createProperties(ret, ns);
                 ns.define();
                 
-                if (ret.is(Type.CONFIGURATION)) {
-                    Observables.INSTANCE.registerConfiguration(concept, ret);
-                }
-
                 if (coreConceptPeers.containsKey(ret.toString()) && upperConceptDefined != null
                         && "true".equals(upperConceptDefined.getMetadata().get(NS.IS_CORE_KIM_TYPE, "false"))) {
                     Resources.INSTANCE.getUpperOntology().setAsCoreType(ret);
@@ -299,6 +295,14 @@ public enum KimKnowledgeProcessor {
             } else {
                 // TODO
             }
+        }
+        
+        if (!concept.getEmergenceTriggers().isEmpty()) {
+        	List<IConcept> triggers = new ArrayList<>();
+        	for (IKimConcept trigger : concept.getEmergenceTriggers()) {
+        		triggers.add(declare(trigger, namespace.getOntology(), monitor));
+        	}
+            Reasoner.INSTANCE.registerEmergent(main, triggers);
         }
 
         if (kimObject != null) {

@@ -78,6 +78,8 @@ import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.rest.WatchRequest;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Front-end session proxy and receiver for session messages. Maintains and manages state for the
@@ -98,6 +100,8 @@ public class KlabSession extends KlabPeer {
     // private AtomicLong queryCounter = new AtomicLong();
     private Map<EngineEvent.Type, Set<Long>> engineEvents = Collections.synchronizedMap(new HashMap<>());
     private SessionReference sessionReference;
+    
+    private static Logger logger = LoggerFactory.getLogger(KlabSession.class);
 
     SessionMonitor sessionMonitor = new SessionMonitor(){
 
@@ -210,7 +214,7 @@ public class KlabSession extends KlabPeer {
                 }
             } catch (Throwable t) {
                 // shut up
-                System.out.println("Error while checking network: " + t.getMessage());
+                logger.warn("Error while checking network: " + t.getMessage());
             }
             schedule(NETWORK_CHECK_INTERVAL_SECONDS * 1000);
             return Status.OK_STATUS;
@@ -231,7 +235,7 @@ public class KlabSession extends KlabPeer {
             for (ITicket ticket : ticketManager.get()) {
                 if (isStale(ticket)) {
                     // TODO use logging!
-                    System.out.println("Removing stale ticket " + ticket);
+                    logger.warn("Removing stale ticket " + ticket);
                     toRemove.add(ticket);
                 } else {
                     /*

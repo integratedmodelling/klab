@@ -1,12 +1,12 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: org.integratedmodelling.kim.ui
-Bundle-Vendor: org.integratedmodelling
+Bundle-Vendor: Integrated Modelling Partnership
 Bundle-Version: 0.11.0.qualifier
 Bundle-SymbolicName: org.integratedmodelling.kim.ui; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.integratedmodelling.kim,
- org.integratedmodelling.klab.api;bundle-version="0.10.0",
+ org.integratedmodelling.klab.api;bundle-version="0.11.0",
  org.integratedmodelling.kim.ide,
  org.eclipse.xtext.ui,
  org.eclipse.xtext.ui.shared,

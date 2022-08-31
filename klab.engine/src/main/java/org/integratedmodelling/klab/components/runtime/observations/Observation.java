@@ -19,9 +19,8 @@ import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
-import org.integratedmodelling.klab.api.observations.ISubjectiveObservation;
+import org.integratedmodelling.klab.api.observations.IObserver;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -56,10 +55,7 @@ import akka.actor.typed.ActorRef;
  * @author ferdinando.villa
  *
  */
-public abstract class Observation extends ObservedArtifact
-        implements
-            IObservation,
-            IActorIdentity<KlabMessage> {
+public abstract class Observation extends ObservedArtifact implements IObservation, IActorIdentity<KlabMessage> {
 
     private Observable observable;
     private ObservationGroup group = null;
@@ -104,6 +100,7 @@ public abstract class Observation extends ObservedArtifact
 
     // tracks the setting of the actor so we can avoid the ask pattern
     private AtomicBoolean actorSet = new AtomicBoolean(Boolean.FALSE);
+    protected IObserver observer = null;
 
     /*
      * these are for debugging. Watches in the root observation monitor the entire context.
@@ -127,10 +124,19 @@ public abstract class Observation extends ObservedArtifact
         this.actor = other.actor;
         this.globalState.putAll(other.globalState);
         this.actorSet = other.actorSet;
+        this.observer = other.observer;
     }
 
     public String getUrn() {
         return "local:observation:" + getParentIdentity(Session.class).getId() + ":" + getId();
+    }
+
+    public IObserver getObserver() {
+        return this.observer;
+    }
+    
+    public void setObserver(IObserver observer) {
+        this.observer = observer;
     }
 
     public Collection<Watcher> getWatches() {
@@ -146,7 +152,7 @@ public abstract class Observation extends ObservedArtifact
     public IIdentity.Type getIdentityType() {
         return IIdentity.Type.OBSERVATION;
     }
-    
+
     public void removeWatch(String id) {
         this.watches.remove(id);
     }
@@ -158,6 +164,7 @@ public abstract class Observation extends ObservedArtifact
     protected Observation(Observable observable, Scale scale, IRuntimeScope scope) {
         super(scale, scope);
         this.observable = observable;
+        this.observer = scope.getObserver();
         ITaskTree<?> creator = scope.getMonitor().getIdentity().getParentIdentity(ITaskTree.class);
         if (creator != null) {
             this.observationContextId = creator.getContextId();
@@ -254,9 +261,7 @@ public abstract class Observation extends ObservedArtifact
     }
 
     public String toString() {
-        return "{" + Path.getLast(this.getClass().getCanonicalName(), '.') + " " + getId() + ": "
-                + getObservable()
-                + "}";
+        return "{" + Path.getLast(this.getClass().getCanonicalName(), '.') + " " + getId() + ": " + getObservable() + "}";
     }
 
     void setGroup(ObservationGroup group) {
@@ -314,10 +319,11 @@ public abstract class Observation extends ObservedArtifact
         this.lastUpdate = lastUpdate;
     }
 
-    @Override
-    public ISubjectiveObservation reinterpret(IDirectObservation observer) {
-        throw new IllegalStateException("reinterpret() was called on an illegal or unsupported type");
-    }
+    // @Override
+    // public ISubjectiveObservation reinterpret(IDirectObservation observer) {
+    // throw new IllegalStateException("reinterpret() was called on an illegal or unsupported
+    // type");
+    // }
 
     @Override
     public long getCreationTime() {
@@ -389,8 +395,7 @@ public abstract class Observation extends ObservedArtifact
                 try {
                     Thread.sleep(50);
                     if ((System.currentTimeMillis() - time) > timeout) {
-                        throw new KlabActorException(
-                                "internal error in actor system: timeout obtaining peer actor for " + this);
+                        throw new KlabActorException("internal error in actor system: timeout obtaining peer actor for " + this);
                     }
                 } catch (InterruptedException e) {
                     break;

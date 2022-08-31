@@ -658,9 +658,9 @@ public class Space extends AbstractSpatialExtent implements ISpace {
 
         Space ret = new Space();
 
-        ret.shape = this.shape.copy();
-        ret.grid = this.grid.copy();
-        ret.envelope = this.envelope.copy();
+        ret.shape = this.shape == null ? null : this.shape.copy();
+        ret.grid = this.grid == null ? null : this.grid.copy();
+        ret.envelope = this.envelope == null ? null : this.envelope.copy();
         ret.projection = this.projection;
         ret.gridSpecs = this.gridSpecs;
         // TODO really?

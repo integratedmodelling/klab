@@ -56,15 +56,9 @@ public interface IObservationReference {
 
 	String getSpatialProjection();
 
-//	String getFolderId();
-//
-//	String getFolderLabel();
-
 	List<ObservationReference> getChildren();
 
 	Map<String, String> getMetadata();
-
-//	List<ObservationReference> getSiblings();
 
 	Set<IKimConcept.Type> getSemantics();
 

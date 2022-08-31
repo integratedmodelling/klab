@@ -45,7 +45,8 @@ public enum Namespaces implements INamespaceService {
         Models.INSTANCE.releaseNamespace(namespaceId, monitor);
         Observations.INSTANCE.releaseNamespace(namespaceId, monitor);
         Indexing.INSTANCE.releaseNamespace(namespaceId, monitor);
-
+        Reasoner.INSTANCE.releaseNamespace(namespaceId);
+        
         INamespace ns = namespaces.remove(namespaceId);
         if (ns != null && ns.getOntology() != null) {
             Ontologies.INSTANCE.release(ns.getOntology());

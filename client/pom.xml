@@ -2,8 +2,6 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.integratedmodelling</groupId>
-	<version>0.11.0-SNAPSHOT</version>
 	<artifactId>client</artifactId>
 	<packaging>pom</packaging>
 	<parent>
@@ -12,7 +10,7 @@
 		<version>0.11.0-SNAPSHOT</version>
 	</parent>
 	<properties>
-		<project.build.sourceEncoding>windows-1252</project.build.sourceEncoding>
+		<project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
 	</properties>
@@ -38,18 +36,11 @@
 							<goal>plugin-source</goal>
 						</goals>
 					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.eclipse.tycho.extras</groupId>
-				<artifactId>tycho-source-feature-plugin</artifactId>
-				<version>${tycho-version}</version>
-				<executions>
 					<execution>
-						<id>source-feature</id>
+						<id>feature-source</id>
 						<phase>package</phase>
 						<goals>
-							<goal>source-feature</goal>
+							<goal>feature-source</goal>
 						</goals>
 					</execution>
 				</executions>

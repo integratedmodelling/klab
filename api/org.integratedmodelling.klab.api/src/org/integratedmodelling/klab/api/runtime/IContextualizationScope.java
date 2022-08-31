@@ -31,6 +31,7 @@ import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IObservationGroup;
+import org.integratedmodelling.klab.api.observations.IObserver;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
@@ -58,6 +59,13 @@ import org.integratedmodelling.klab.utils.Pair;
  * @author Ferd
  */
 public interface IContextualizationScope extends IParameters<String> {
+
+    /**
+     * Each contextualization happens upon decision of an observer agent.
+     * 
+     * @return
+     */
+    IObserver<?> getObserver();
 
     /**
      * A context is created for the root observation, and this information never changes within a

@@ -30,9 +30,6 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#isNothing <em>Nothing</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getParents <em>Parents</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getConnectors <em>Connectors</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getContextualizedTraits <em>Contextualized Traits</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#isSpecific <em>Specific</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getContextualizesTraits <em>Contextualizes Traits</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getDefinedAuthority <em>Defined Authority</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getUpperConcept <em>Upper Concept</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getRequirements <em>Requirements</em>}</li>
@@ -49,15 +46,11 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getRestrictedObservables <em>Restricted Observables</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getConferredTraits <em>Conferred Traits</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getConferredTargets <em>Conferred Targets</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#isConstituent <em>Constituent</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#isConstitutes <em>Constitutes</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#isPartOf <em>Part Of</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getWhole <em>Whole</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getEmergenceTriggers <em>Emergence Triggers</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getCreates <em>Creates</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getTraitTargets <em>Trait Targets</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getDomains <em>Domains</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getRanges <em>Ranges</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getInverse <em>Inverse</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getQualitiesAffected <em>Qualities Affected</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#isDisjoint <em>Disjoint</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getChildren <em>Children</em>}</li>
@@ -328,52 +321,6 @@ public interface ConceptStatementBody extends EObject
    * @generated
    */
   EList<String> getConnectors();
-
-  /**
-   * Returns the value of the '<em><b>Contextualized Traits</b></em>' containment reference list.
-   * The list contents are of type {@link org.integratedmodelling.kim.kim.ObservableSemantics}.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Contextualized Traits</em>' containment reference list.
-   * @see org.integratedmodelling.kim.kim.KimPackage#getConceptStatementBody_ContextualizedTraits()
-   * @model containment="true"
-   * @generated
-   */
-  EList<ObservableSemantics> getContextualizedTraits();
-
-  /**
-   * Returns the value of the '<em><b>Specific</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Specific</em>' attribute.
-   * @see #setSpecific(boolean)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getConceptStatementBody_Specific()
-   * @model
-   * @generated
-   */
-  boolean isSpecific();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ConceptStatementBody#isSpecific <em>Specific</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Specific</em>' attribute.
-   * @see #isSpecific()
-   * @generated
-   */
-  void setSpecific(boolean value);
-
-  /**
-   * Returns the value of the '<em><b>Contextualizes Traits</b></em>' containment reference list.
-   * The list contents are of type {@link org.integratedmodelling.kim.kim.ConceptDeclaration}.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Contextualizes Traits</em>' containment reference list.
-   * @see org.integratedmodelling.kim.kim.KimPackage#getConceptStatementBody_ContextualizesTraits()
-   * @model containment="true"
-   * @generated
-   */
-  EList<ConceptDeclaration> getContextualizesTraits();
 
   /**
    * Returns the value of the '<em><b>Defined Authority</b></em>' attribute.
@@ -658,92 +605,16 @@ public interface ConceptStatementBody extends EObject
   EList<ConceptDeclaration> getConferredTargets();
 
   /**
-   * Returns the value of the '<em><b>Constituent</b></em>' attribute.
+   * Returns the value of the '<em><b>Emergence Triggers</b></em>' containment reference list.
+   * The list contents are of type {@link org.integratedmodelling.kim.kim.ConceptDeclaration}.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Constituent</em>' attribute.
-   * @see #setConstituent(boolean)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getConceptStatementBody_Constituent()
-   * @model
-   * @generated
-   */
-  boolean isConstituent();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ConceptStatementBody#isConstituent <em>Constituent</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Constituent</em>' attribute.
-   * @see #isConstituent()
-   * @generated
-   */
-  void setConstituent(boolean value);
-
-  /**
-   * Returns the value of the '<em><b>Constitutes</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Constitutes</em>' attribute.
-   * @see #setConstitutes(boolean)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getConceptStatementBody_Constitutes()
-   * @model
-   * @generated
-   */
-  boolean isConstitutes();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ConceptStatementBody#isConstitutes <em>Constitutes</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Constitutes</em>' attribute.
-   * @see #isConstitutes()
-   * @generated
-   */
-  void setConstitutes(boolean value);
-
-  /**
-   * Returns the value of the '<em><b>Part Of</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Part Of</em>' attribute.
-   * @see #setPartOf(boolean)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getConceptStatementBody_PartOf()
-   * @model
-   * @generated
-   */
-  boolean isPartOf();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ConceptStatementBody#isPartOf <em>Part Of</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Part Of</em>' attribute.
-   * @see #isPartOf()
-   * @generated
-   */
-  void setPartOf(boolean value);
-
-  /**
-   * Returns the value of the '<em><b>Whole</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Whole</em>' containment reference.
-   * @see #setWhole(ConceptDeclaration)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getConceptStatementBody_Whole()
+   * @return the value of the '<em>Emergence Triggers</em>' containment reference list.
+   * @see org.integratedmodelling.kim.kim.KimPackage#getConceptStatementBody_EmergenceTriggers()
    * @model containment="true"
    * @generated
    */
-  ConceptDeclaration getWhole();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getWhole <em>Whole</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Whole</em>' containment reference.
-   * @see #getWhole()
-   * @generated
-   */
-  void setWhole(ConceptDeclaration value);
+  EList<ConceptDeclaration> getEmergenceTriggers();
 
   /**
    * Returns the value of the '<em><b>Creates</b></em>' containment reference list.
@@ -792,28 +663,6 @@ public interface ConceptStatementBody extends EObject
    * @generated
    */
   EList<ConceptDeclaration> getRanges();
-
-  /**
-   * Returns the value of the '<em><b>Inverse</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Inverse</em>' containment reference.
-   * @see #setInverse(ConceptDeclaration)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getConceptStatementBody_Inverse()
-   * @model containment="true"
-   * @generated
-   */
-  ConceptDeclaration getInverse();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getInverse <em>Inverse</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Inverse</em>' containment reference.
-   * @see #getInverse()
-   * @generated
-   */
-  void setInverse(ConceptDeclaration value);
 
   /**
    * Returns the value of the '<em><b>Qualities Affected</b></em>' containment reference list.

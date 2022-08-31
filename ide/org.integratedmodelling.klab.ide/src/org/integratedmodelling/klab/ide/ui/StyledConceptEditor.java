@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.integratedmodelling.klab.api.kim.KimStyle;
@@ -30,11 +31,9 @@ import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.rest.QueryStatusResponse;
 import org.integratedmodelling.klab.rest.SearchMatch;
 import org.integratedmodelling.klab.rest.SearchRequest;
+import org.integratedmodelling.klab.rest.SearchRequest.Mode;
 import org.integratedmodelling.klab.rest.SearchResponse;
 import org.integratedmodelling.klab.rest.StyledKimToken;
-import org.integratedmodelling.klab.rest.SearchRequest.Mode;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Label;
 
 /**
  * Shows a set of k.IM concepts with appropriate coloring and spacing, with the option of hiding

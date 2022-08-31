@@ -33,7 +33,6 @@ import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.events.TreeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -74,6 +73,8 @@ import org.integratedmodelling.klab.rest.ObservationReference.ObservationType;
 import org.integratedmodelling.klab.rest.RuntimeEvent;
 import org.integratedmodelling.klab.rest.TaskReference;
 import org.integratedmodelling.klab.utils.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RuntimeView extends ViewPart {
 
@@ -88,6 +89,8 @@ public class RuntimeView extends ViewPart {
     // public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
     // }
     // }
+    
+    private static Logger logger = LoggerFactory.getLogger(RuntimeView.class);
 
     public static final String ID = "org.integratedmodelling.klab.ide.views.RuntimeView"; //$NON-NLS-1$
 
@@ -468,16 +471,6 @@ public class RuntimeView extends ViewPart {
         GridLayout gl_grpServers = new GridLayout(2, false);
         gl_grpServers.marginWidth = 0;
         {
-            GC gc = new GC(parent);
-            gc.setFont(parent.getFont());
-            // FontMetrics fm = gc.getFontMetrics();
-            // Point extent = gc.textExtent("M");
-            //
-            // int hb = extent.y + 8;
-            // int hm = extent.y + 2;
-            // int wm = extent.x + 2;
-            // int ht = extent.y + 6;
-
             composite = new Composite(parent, SWT.NONE);
             composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
             composite.setBackground(org.eclipse.wb.swt.SWTResourceManager.getColor(SWT.COLOR_WHITE));
@@ -870,7 +863,7 @@ public class RuntimeView extends ViewPart {
 
     private void exportDataflow() {
         // TODO Auto-generated method stub
-        System.out.println("EXPORT DATAFLOW ZIOCA");
+        logger.debug("EXPORT DATAFLOW");
     }
 
     protected void handleSelection(Object o) {

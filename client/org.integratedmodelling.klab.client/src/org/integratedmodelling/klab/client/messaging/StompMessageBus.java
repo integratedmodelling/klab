@@ -21,6 +21,8 @@ import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.client.utils.JsonUtils;
 import org.integratedmodelling.klab.monitoring.Message;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.ConnectionLostException;
 import org.springframework.messaging.simp.stomp.StompCommand;
@@ -55,6 +57,7 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 
 	// private static final String URL = "ws://localhost:8283/modeler/message";
 	private static final Set<Object> emptySet = new HashSet<Object>();
+	private static final Logger logger = LoggerFactory.getLogger(StompMessageBus.class);
 
 	private ObjectMapper objectMapper = new ObjectMapper()
 			// I'll never understand why this shit isn't enabled by default
@@ -104,10 +107,10 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 		if (throwable instanceof ConnectionLostException) {
 			// if connection lost, call this
 			// error("Connection lost.");
-			System.out.println("Connection lost: " + throwable);
+			logger.warn("Connection lost: " + throwable);
 		} else {
 			// error("Unknown message transport error. Please report the error.");
-			System.out.println("Unknown message transport error.");
+			logger.warn("Unknown message transport error: "+ throwable.getMessage());
 		}
 		super.handleTransportError(session, throwable);
 	}
@@ -116,7 +119,7 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 	 * Override for error handling.
 	 */
 	protected void error(String string) {
-		System.out.println("ERROR: " + string);
+		logger.error("ERROR: " + string);
 	}
 
 	@Override
@@ -127,7 +130,7 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 	@Override
 	public synchronized void handleFrame(StompHeaders headers, Object payload) {
 		// won't happen
-		System.out.println("stomp message bus: what won't happen happened");
+	    logger.warn("stomp message bus: what won't happen happened");
 	}
 
 	@Override

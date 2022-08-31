@@ -389,7 +389,7 @@ public class SQLTableCache {
             }
         }
 
-        if (valueField != null && !keyFields.contains(valueField)) {
+        if (valueField != null && !valueField.trim().isEmpty() && !keyFields.contains(valueField)) {
             fields += (fields.isEmpty() ? "" : ", ") + valueField;
             allFields.add(valueField);
         }

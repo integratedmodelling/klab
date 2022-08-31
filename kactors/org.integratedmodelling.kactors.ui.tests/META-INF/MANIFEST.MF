@@ -3,7 +3,7 @@ Automatic-Module-Name: org.integratedmodelling.kactors.ui.tests
 Bundle-ManifestVersion: 2
 Bundle-Name: org.integratedmodelling.kactors.ui.tests
 Bundle-Vendor: Integrated Modelling Partnership
-Bundle-Version: 0.10.0.qualifier
+Bundle-Version: 0.11.0.qualifier
 Bundle-SymbolicName: org.integratedmodelling.kactors.ui.tests; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.integratedmodelling.kactors.ui,

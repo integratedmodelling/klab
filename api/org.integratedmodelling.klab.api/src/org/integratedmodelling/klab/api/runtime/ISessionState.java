@@ -9,7 +9,6 @@ import java.util.concurrent.Future;
 import java.util.function.BiConsumer;
 
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.klab.api.auth.ITaskIdentity;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;

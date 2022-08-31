@@ -559,9 +559,9 @@ UpperOntologyDefinition:
 ConceptStatement:
 	annotations += Annotation*
 	((abstract?='abstract')? &
-	(deniable?='deniable')? &
-	(subjective?='subjective')? &
-	(agentSpecifier=('deliberative' | 'interactive' | 'reactive') |
+	 (deniable?='deniable')? &
+	 (subjective?='subjective')? &
+	 (agentSpecifier=('deliberative' | 'interactive' | 'reactive') |
 		(propertySpecifiers+=PROPERTY_TYPE (propertySpecifiers+=PROPERTY_TYPE)*) |
 		attributeSpecifier='rescaling')?)
 	concept=CONCEPT_TYPE body=ConceptStatementBody
@@ -602,15 +602,15 @@ ConceptStatementBody:
 			   */
 		((('is' | alias?='equals') (coreConcept?='core')?) (nothing?='nothing' | parents+=ConceptDeclaration (connectors+=(',' | 'or' | 'and') parents+=ConceptDeclaration)*))? &
 
-	/*
-     * traits contextualized. Only applicable to
-     * classes. Abstract class must declare exposed traits; concrete class must
-     * provide matching values using 'exposing'
-     */
-		(
-			('exposes' contextualizedTraits+=ObservableSemantics (','  contextualizedTraits+=ObservableSemantics)*) |
-			(specific?='exposing' contextualizesTraits+=ConceptDeclaration (','  contextualizesTraits+=ConceptDeclaration)*)
-		)? &
+//	/*
+//     * traits contextualized. Only applicable to
+//     * classes. Abstract class must declare exposed traits; concrete class must
+//     * provide matching values using 'exposing'
+//     */
+//		(
+//			('exposes' contextualizedTraits+=ObservableSemantics (','  contextualizedTraits+=ObservableSemantics)*) |
+//			(specific?='exposing' contextualizesTraits+=ConceptDeclaration (','  contextualizesTraits+=ConceptDeclaration)*)
+//		)? &
 
 	/*
      * identifies main concepts for authority
@@ -678,16 +678,22 @@ ConceptStatementBody:
 		('confers' conferredTraits+=ConceptDeclaration (',' conferredTraits+=ConceptDeclaration)*
 			('to' conferredTargets+=ConceptDeclaration (',' conferredTargets+=ConceptDeclaration)*)?
 		)? &
+		
+		/*
+		 * explicit declaration of triggers for emergent observables (subjects, processes and configuration)
+		 */
+		('emerges' 'from' emergenceTriggers+=ConceptDeclaration (',' emergenceTriggers+=ConceptDeclaration)*)? &
 
 	/**
-	 * Shorthand for common 'part of' restriction
+	 * Shorthand for common 'part of' restriction. TODO deprecate? Part-of should be left to the worldview.
 	 */
-		(('part' | constituent?='constituent' | constitutes?='consists') partOf?='of' whole=ConceptDeclaration)? &
+//	(('part' | constituent?='constituent' | constitutes?='consists') partOf?='of' whole=ConceptDeclaration)? &
 
 	/*
-     * for processes: creates countable in context.
+     * for processes: creates quality. Also for structural relationships (creates subject) and functional relationships\
+     * (creates process). Paired with "affects" for process -> quality.
      */
-		('creates' creates+=ConceptDeclaration (',' creates+=ConceptDeclaration)*)? &
+	('creates' creates+=ConceptDeclaration (',' creates+=ConceptDeclaration)*)? &
 
 	/*
      * traits can specify the set of allowed targets here. Also allows qualities and
@@ -695,38 +701,38 @@ ConceptStatementBody:
      * 
      * If applying concept is a role and it applies to a relationship, this can also restrict the source and destination.
      */
-		('applies' 'to' traitTargets+=ApplicableTarget (',' traitTargets+=ApplicableTarget)*)? &
+	('applies' 'to' traitTargets+=ApplicableTarget (',' traitTargets+=ApplicableTarget)*)? &
 
 	/*
 	 * only for relationships: set domain and range of the associated property.
 	 */
-		('links' domains+=SimpleConceptDeclaration => 'to' ranges+=SimpleConceptDeclaration 
+	('links' domains+=SimpleConceptDeclaration => 'to' ranges+=SimpleConceptDeclaration 
 			(',' domains+=SimpleConceptDeclaration => 'to' ranges+=SimpleConceptDeclaration)*)? &
 
 	/*
 	 * only for relationships - set the inverse of the associated property (through the
 	 * relationship concept).
 	 */
-		('inverse' 'of' inverse=ConceptDeclaration)? &
+//	('inverse' 'of' inverse=ConceptDeclaration)? &
 
 	/*
      * for processes; lists qualities affected;
      * for deliberative agents: lists the subject types whose states this can
      * modify.
      */
-		('affects' qualitiesAffected+=ConceptDeclaration (',' qualitiesAffected+=ConceptDeclaration)*)? &
+	('affects' qualitiesAffected+=ConceptDeclaration (',' qualitiesAffected+=ConceptDeclaration)*)? &
 
-		('has' (disjoint?='disjoint')? 'children' children+=ChildConcept (',' children+=ChildConcept)*)? &
-
-		('implies' implications+=Implication (',' implications+=Implication)*)? &
+	('has' (disjoint?='disjoint')? 'children' children+=ChildConcept (',' children+=ChildConcept)*)? &
 	
-		('uses' 'authority' authorities+=(UPPERCASE_ID|UPPERCASE_PATH))? &
+	('implies' implications+=Implication (',' implications+=Implication)*)? &
+	
+	('uses' 'authority' authorities+=(UPPERCASE_ID|UPPERCASE_PATH))? &
 
-		('metadata' metadata=Map)? &
+	('metadata' metadata=Map)? &
 
-		// properties are only object properties and are declared on appearance. This makes typos
-		// problematic, of course, but the alternative is a load of ugly syntax.
-		(properties+=PropertyStatement*) 
+	// properties are only object properties and are declared on appearance. This makes typos
+	// problematic, of course, but the alternative is a load of ugly syntax.
+	(properties+=PropertyStatement*) 
 	
 	)
 ;

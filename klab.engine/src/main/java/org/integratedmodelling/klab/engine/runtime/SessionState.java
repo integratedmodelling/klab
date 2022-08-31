@@ -39,8 +39,8 @@ import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IAcknowledgement;
+import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -292,7 +292,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
             }
         });
 
-        Future<IArtifact> task = new ObserveContextTask(this.session, observer, scenarios, ctxListeners, eListeners, executor,
+        Future<IArtifact> task = new ObserveContextTask(this.session, observer, session, scenarios, ctxListeners, eListeners, executor,
                 activity, true);
         try {
             this.scaleOfInterest.setShape(null);
@@ -400,7 +400,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
         }
 
         if (resolvable instanceof Acknowledgement) {
-            return new ObserveContextTask(this.session, (Acknowledgement) resolvable, scenarios, oListeners, eListeners, executor,
+            return new ObserveContextTask(this.session, (Acknowledgement) resolvable, session, scenarios, oListeners, eListeners, executor,
                     activity, true);
         }
 
@@ -428,7 +428,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
                 }
             });
 
-            Future<IArtifact> task = new ObserveContextTask(this.session, observer, scenarios, ctxListeners, eListeners, executor,
+            Future<IArtifact> task = new ObserveContextTask(this.session, observer, session, scenarios, ctxListeners, eListeners, executor,
                     activity, true);
             try {
                 this.scaleOfInterest.setShape(null);
