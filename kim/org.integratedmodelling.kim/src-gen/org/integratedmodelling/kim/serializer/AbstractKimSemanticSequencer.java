@@ -550,28 +550,28 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                         metadata=Map | 
 	 *                         properties+=PropertyStatement
 	 *                     )? 
-	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
-	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
+	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
+	 *                     (implications+=Implication implications+=Implication*)? 
+	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
+	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
 	 *                     (describedQuality=ConceptDeclaration descriptionConstraints=DescriptionConstraints?)? 
 	 *                     (emergenceTriggers+=ConceptDeclaration emergenceTriggers+=ConceptDeclaration*)? 
-	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
-	 *                     (implications+=Implication implications+=Implication*)? 
-	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
+	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
 	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
-	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
+	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
 	 *                     (domains+=SimpleConceptDeclaration ranges+=SimpleConceptDeclaration)? 
 	 *                     (disjoint?='disjoint'? children+=ChildConcept children+=ChildConcept*)? 
+	 *                     (
+	 *                         alias?='equals'? 
+	 *                         coreConcept?='core'? 
+	 *                         (nothing?='nothing' | (parents+=ConceptDeclaration ((connectors+=',' | connectors+='or' | connectors+='and') parents+=ConceptDeclaration)*))
+	 *                     )? 
 	 *                     (
 	 *                         roles+=ConceptDeclaration 
 	 *                         roles+=ConceptDeclaration* 
 	 *                         (targetObservables+=ConceptDeclaration targetObservables+=ConceptDeclaration*)? 
 	 *                         restrictedObservables+=ConceptDeclaration 
 	 *                         restrictedObservables+=ConceptDeclaration*
-	 *                     )? 
-	 *                     (
-	 *                         alias?='equals'? 
-	 *                         coreConcept?='core'? 
-	 *                         (nothing?='nothing' | (parents+=ConceptDeclaration ((connectors+=',' | connectors+='or' | connectors+='and') parents+=ConceptDeclaration)*))
 	 *                     )?
 	 *                 )+
 	 *             ) | 
@@ -763,11 +763,11 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                 contained=SimpleConceptDeclaration | 
 	 *                 caused=SimpleConceptDeclaration
 	 *             )? 
-	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
-	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
-	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
 	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
-	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)?
+	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
+	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
+	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
+	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)?
 	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)*
 	 *     )
@@ -796,11 +796,11 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                 contained=SimpleConceptDeclaration | 
 	 *                 caused=SimpleConceptDeclaration
 	 *             )? 
-	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
-	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
-	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
 	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
-	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)?
+	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
+	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
+	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
+	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)?
 	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)* 
 	 *         (operators+='or' operands+=Factor)*
@@ -919,13 +919,11 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *         (count?='count' concept=SimpleConceptDeclaration) | 
 	 *         (distance?='distance' concept=SimpleConceptDeclaration) | 
 	 *         (probability?='probability' concept=SimpleConceptDeclaration) | 
-	 *         (assessment?='assessment' concept=SimpleConceptDeclaration) | 
 	 *         ((change?='in' | rate?='rate' | changed?='changed') concept=SimpleConceptDeclaration) | 
 	 *         (uncertainty?='uncertainty' concept=SimpleConceptDeclaration) | 
 	 *         (magnitude?='magnitude' concept=SimpleConceptDeclaration) | 
 	 *         (level?='level' concept=SimpleConceptDeclaration) | 
 	 *         (type?='type' concept=SimpleConceptDeclaration) | 
-	 *         (observability?='observability' concept=SimpleConceptDeclaration) | 
 	 *         (proportion?='proportion' concept=SimpleConceptDeclaration other=SimpleConceptDeclaration?) | 
 	 *         (percentage?='percentage' concept=SimpleConceptDeclaration other=SimpleConceptDeclaration?) | 
 	 *         (ratio?='ratio' concept=SimpleConceptDeclaration other=SimpleConceptDeclaration) | 

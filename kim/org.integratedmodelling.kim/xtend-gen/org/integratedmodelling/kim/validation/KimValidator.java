@@ -2060,81 +2060,76 @@ public class KimValidator extends AbstractKimValidator {
                           }
                           operator.add(IKimConcept.Type.CLASS);
                         } else {
-                          boolean _isObservability = concept.isObservability();
-                          if (_isObservability) {
-                            operator.add(IKimConcept.Type.OBSERVABILITY);
+                          if ((concept.isOccurrence() || concept.isPresence())) {
+                            boolean _contains_9 = flags.contains(IKimConcept.Type.DIRECT_OBSERVABLE);
+                            boolean _not_8 = (!_contains_9);
+                            if (_not_8) {
+                              String _xifexpression_1 = null;
+                              boolean _isOccurrence = concept.isOccurrence();
+                              if (_isOccurrence) {
+                                _xifexpression_1 = "Occurrence";
+                              } else {
+                                _xifexpression_1 = "Presence";
+                              }
+                              String _plus_5 = (_xifexpression_1 + 
+                                " can only be assessed for direct observables (subjects, events, processes and relationships)");
+                              this.error(_plus_5, 
+                                concept.getConcept(), null, KimPackage.CONCEPT__CONCEPT);
+                            }
+                            boolean _isOccurrence_1 = concept.isOccurrence();
+                            if (_isOccurrence_1) {
+                              operator.add(IKimConcept.Type.OCCURRENCE);
+                              operator.add(IKimConcept.Type.PROBABILITY);
+                            } else {
+                              operator.add(IKimConcept.Type.PRESENCE);
+                            }
                           } else {
-                            if ((concept.isOccurrence() || concept.isPresence())) {
-                              boolean _contains_9 = flags.contains(IKimConcept.Type.DIRECT_OBSERVABLE);
-                              boolean _not_8 = (!_contains_9);
-                              if (_not_8) {
-                                String _xifexpression_1 = null;
-                                boolean _isOccurrence = concept.isOccurrence();
-                                if (_isOccurrence) {
-                                  _xifexpression_1 = "Occurrence";
+                            boolean _isProbability = concept.isProbability();
+                            if (_isProbability) {
+                              boolean _contains_10 = flags.contains(IKimConcept.Type.EVENT);
+                              boolean _not_9 = (!_contains_10);
+                              if (_not_9) {
+                                String _xifexpression_2 = null;
+                                boolean _contains_11 = flags.contains(
+                                  IKimConcept.Type.DIRECT_OBSERVABLE);
+                                if (_contains_11) {
+                                  _xifexpression_2 = "; use occurrence for probability of presence";
                                 } else {
-                                  _xifexpression_1 = "Presence";
+                                  _xifexpression_2 = "";
                                 }
-                                String _plus_5 = (_xifexpression_1 + 
-                                  " can only be assessed for direct observables (subjects, events, processes and relationships)");
-                                this.error(_plus_5, 
+                                String _plus_6 = ("Probability only applies to events" + _xifexpression_2);
+                                this.error(_plus_6, 
                                   concept.getConcept(), null, KimPackage.CONCEPT__CONCEPT);
                               }
-                              boolean _isOccurrence_1 = concept.isOccurrence();
-                              if (_isOccurrence_1) {
-                                operator.add(IKimConcept.Type.OCCURRENCE);
-                                operator.add(IKimConcept.Type.PROBABILITY);
-                              } else {
-                                operator.add(IKimConcept.Type.PRESENCE);
-                              }
+                              operator.add(IKimConcept.Type.PROBABILITY);
                             } else {
-                              boolean _isProbability = concept.isProbability();
-                              if (_isProbability) {
-                                boolean _contains_10 = flags.contains(IKimConcept.Type.EVENT);
-                                boolean _not_9 = (!_contains_10);
-                                if (_not_9) {
-                                  String _xifexpression_2 = null;
-                                  boolean _contains_11 = flags.contains(
-                                    IKimConcept.Type.DIRECT_OBSERVABLE);
-                                  if (_contains_11) {
-                                    _xifexpression_2 = "; use occurrence for probability of presence";
-                                  } else {
-                                    _xifexpression_2 = "";
-                                  }
-                                  String _plus_6 = ("Probability only applies to events" + _xifexpression_2);
-                                  this.error(_plus_6, 
-                                    concept.getConcept(), null, KimPackage.CONCEPT__CONCEPT);
-                                }
-                                operator.add(IKimConcept.Type.PROBABILITY);
+                              boolean _isProportion = concept.isProportion();
+                              if (_isProportion) {
+                                operator.add(IKimConcept.Type.PROPORTION);
                               } else {
-                                boolean _isProportion = concept.isProportion();
-                                if (_isProportion) {
-                                  operator.add(IKimConcept.Type.PROPORTION);
+                                boolean _isRatio = concept.isRatio();
+                                if (_isRatio) {
+                                  operator.add(IKimConcept.Type.RATIO);
                                 } else {
-                                  boolean _isRatio = concept.isRatio();
-                                  if (_isRatio) {
-                                    operator.add(IKimConcept.Type.RATIO);
-                                  } else {
-                                    boolean _isValue = concept.isValue();
-                                    if (_isValue) {
-                                      boolean _isMonetary = concept.isMonetary();
-                                      if (_isMonetary) {
-                                        operator.add(IKimConcept.Type.MONETARY_VALUE);
-                                      } else {
-                                        operator.add(IKimConcept.Type.VALUE);
-                                      }
+                                  boolean _isValue = concept.isValue();
+                                  if (_isValue) {
+                                    boolean _isMonetary = concept.isMonetary();
+                                    if (_isMonetary) {
+                                      operator.add(IKimConcept.Type.MONETARY_VALUE);
                                     } else {
-                                      boolean _isUncertainty = concept.isUncertainty();
-                                      if (_isUncertainty) {
-                                        boolean _contains_12 = flags.contains(IKimConcept.Type.QUALITY);
-                                        boolean _not_10 = (!_contains_12);
-                                        if (_not_10) {
-                                          this.error(
-                                            "Uncertainty is associated to qualities. Use probability or occurrence for other observables", 
-                                            concept.getConcept(), null, KimPackage.CONCEPT__CONCEPT);
-                                        }
-                                        operator.add(IKimConcept.Type.UNCERTAINTY);
+                                      operator.add(IKimConcept.Type.VALUE);
+                                    }
+                                  } else {
+                                    boolean _isUncertainty = concept.isUncertainty();
+                                    if (_isUncertainty) {
+                                      boolean _contains_12 = flags.contains(IKimConcept.Type.QUALITY);
+                                      boolean _not_10 = (!_contains_12);
+                                      if (_not_10) {
+                                        this.error(
+                                          "Uncertainty is associated to qualities. Use probability or occurrence for other observables", 
+                                          concept.getConcept(), null, KimPackage.CONCEPT__CONCEPT);
                                       }
+                                      operator.add(IKimConcept.Type.UNCERTAINTY);
                                     }
                                   }
                                 }

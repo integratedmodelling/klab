@@ -502,7 +502,7 @@ Concept:
 	count?='count' 'of' concept=SimpleConceptDeclaration |
 	distance?='distance' ('to' | 'from') concept=SimpleConceptDeclaration |
 	probability?='probability' 'of' concept=SimpleConceptDeclaration |
-	assessment?='assessment' 'of' concept=SimpleConceptDeclaration |
+//	assessment?='assessment' 'of' concept=SimpleConceptDeclaration |
 	('change' (change?='in' | (rate?='rate' 'of')) | changed?='changed') concept=SimpleConceptDeclaration |
 	uncertainty?='uncertainty' 'of' concept=SimpleConceptDeclaration |
 	magnitude?='magnitude' 'of' concept=SimpleConceptDeclaration |

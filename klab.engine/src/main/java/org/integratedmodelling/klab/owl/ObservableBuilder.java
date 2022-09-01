@@ -375,9 +375,9 @@ public class ObservableBuilder implements IObservable.Builder {
 		if (argument != null) {
 
 			switch (type) {
-			case ASSESSMENT:
-				reset(makeAssessment(argument, true), type);
-				break;
+//			case ASSESSMENT:
+//				reset(makeAssessment(argument, true), type);
+//				break;
 			case CHANGE:
 				reset(makeChange(argument, true), type);
 				break;
@@ -841,54 +841,54 @@ public class ObservableBuilder implements IObservable.Builder {
 		return ontology.getConcept(conceptId);
 	}
 
-	/**
-	 * Turn a concept into its assessment if it's not already one, implementing the
-	 * corresponding semantic operator (legacy and eventually, probably, deprecated)
-	 * 
-	 * @param concept       the untransformed concept
-	 * @param addDefinition add the {@link NS#CONCEPT_DEFINITION_PROPERTY}
-	 *                      annotation; pass true if used from outside the builder
-	 * @return the transformed concept
-	 */
-	public Concept makeAssessment(IConcept concept, boolean addDefinition) {
-
-		String cName = getCleanId(concept) + "Assessment";
-
-		this.hasUnaryOp = true;
-
-		if (!concept.is(Type.QUALITY)) {
-			return null;
-		}
-
-		String definition = UnarySemanticOperator.ASSESSMENT.declaration[0] + " " + concept.getDefinition();
-		String reference = UnarySemanticOperator.ASSESSMENT.getReferenceName(concept.getReferenceName(), null);
-		Ontology ontology = (Ontology) concept.getOntology();
-		String conceptId = ontology.getIdForDefinition(definition);
-
-		if (conceptId == null) {
-
-			conceptId = ontology.createIdForDefinition(definition);
-
-			EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.ASSESSMENT.name(),
-					((Concept) concept).getTypeSet());
-
-			ArrayList<IAxiom> ax = new ArrayList<>();
-			ax.add(Axiom.ClassAssertion(conceptId, newType));
-			ax.add(Axiom.SubClass(NS.CORE_ASSESSMENT, conceptId));
-			ax.add(Axiom.AnnotationAssertion(conceptId, NS.REFERENCE_NAME_PROPERTY, reference));
-			ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
-			ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
-
-			if (addDefinition) {
-				ax.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
-			}
-			ontology.define(ax);
-			IConcept ret = ontology.getConcept(conceptId);
-			OWL.INSTANCE.restrictSome(ret, Concepts.p(CoreOntology.NS.OBSERVES_PROPERTY), concept, ontology);
-		}
-
-		return ontology.getConcept(conceptId);
-	}
+//	/**
+//	 * Turn a concept into its assessment if it's not already one, implementing the
+//	 * corresponding semantic operator (legacy and eventually, probably, deprecated)
+//	 * 
+//	 * @param concept       the untransformed concept
+//	 * @param addDefinition add the {@link NS#CONCEPT_DEFINITION_PROPERTY}
+//	 *                      annotation; pass true if used from outside the builder
+//	 * @return the transformed concept
+//	 */
+//	public Concept makeAssessment(IConcept concept, boolean addDefinition) {
+//
+//		String cName = getCleanId(concept) + "Assessment";
+//
+//		this.hasUnaryOp = true;
+//
+//		if (!concept.is(Type.QUALITY)) {
+//			return null;
+//		}
+//
+//		String definition = UnarySemanticOperator.ASSESSMENT.declaration[0] + " " + concept.getDefinition();
+//		String reference = UnarySemanticOperator.ASSESSMENT.getReferenceName(concept.getReferenceName(), null);
+//		Ontology ontology = (Ontology) concept.getOntology();
+//		String conceptId = ontology.getIdForDefinition(definition);
+//
+//		if (conceptId == null) {
+//
+//			conceptId = ontology.createIdForDefinition(definition);
+//
+//			EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.ASSESSMENT.name(),
+//					((Concept) concept).getTypeSet());
+//
+//			ArrayList<IAxiom> ax = new ArrayList<>();
+//			ax.add(Axiom.ClassAssertion(conceptId, newType));
+//			ax.add(Axiom.SubClass(NS.CORE_ASSESSMENT, conceptId));
+//			ax.add(Axiom.AnnotationAssertion(conceptId, NS.REFERENCE_NAME_PROPERTY, reference));
+//			ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
+//			ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
+//
+//			if (addDefinition) {
+//				ax.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
+//			}
+//			ontology.define(ax);
+//			IConcept ret = ontology.getConcept(conceptId);
+//			OWL.INSTANCE.restrictSome(ret, Concepts.p(CoreOntology.NS.OBSERVES_PROPERTY), concept, ontology);
+//		}
+//
+//		return ontology.getConcept(conceptId);
+//	}
 
 	/**
 	 * Turn a concept into its count/numerosity if it's not already one,

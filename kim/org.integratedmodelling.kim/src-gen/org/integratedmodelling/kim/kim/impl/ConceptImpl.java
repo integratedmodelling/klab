@@ -37,7 +37,6 @@ import org.integratedmodelling.kim.kim.KimPackage;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isCount <em>Count</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isDistance <em>Distance</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isProbability <em>Probability</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isAssessment <em>Assessment</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isChange <em>Change</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isRate <em>Rate</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isChanged <em>Changed</em>}</li>
@@ -45,7 +44,6 @@ import org.integratedmodelling.kim.kim.KimPackage;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isMagnitude <em>Magnitude</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isLevel <em>Level</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isType <em>Type</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isObservability <em>Observability</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isProportion <em>Proportion</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#getOther <em>Other</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isPercentage <em>Percentage</em>}</li>
@@ -261,26 +259,6 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
   protected boolean probability = PROBABILITY_EDEFAULT;
 
   /**
-   * The default value of the '{@link #isAssessment() <em>Assessment</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isAssessment()
-   * @generated
-   * @ordered
-   */
-  protected static final boolean ASSESSMENT_EDEFAULT = false;
-
-  /**
-   * The cached value of the '{@link #isAssessment() <em>Assessment</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isAssessment()
-   * @generated
-   * @ordered
-   */
-  protected boolean assessment = ASSESSMENT_EDEFAULT;
-
-  /**
    * The default value of the '{@link #isChange() <em>Change</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -419,26 +397,6 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
    * @ordered
    */
   protected boolean type = TYPE_EDEFAULT;
-
-  /**
-   * The default value of the '{@link #isObservability() <em>Observability</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isObservability()
-   * @generated
-   * @ordered
-   */
-  protected static final boolean OBSERVABILITY_EDEFAULT = false;
-
-  /**
-   * The cached value of the '{@link #isObservability() <em>Observability</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isObservability()
-   * @generated
-   * @ordered
-   */
-  protected boolean observability = OBSERVABILITY_EDEFAULT;
 
   /**
    * The default value of the '{@link #isProportion() <em>Proportion</em>}' attribute.
@@ -932,31 +890,6 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
    * @generated
    */
   @Override
-  public boolean isAssessment()
-  {
-    return assessment;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setAssessment(boolean newAssessment)
-  {
-    boolean oldAssessment = assessment;
-    assessment = newAssessment;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT__ASSESSMENT, oldAssessment, assessment));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
   public boolean isChange()
   {
     return change;
@@ -1124,31 +1057,6 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
     type = newType;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT__TYPE, oldType, type));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public boolean isObservability()
-  {
-    return observability;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setObservability(boolean newObservability)
-  {
-    boolean oldObservability = observability;
-    observability = newObservability;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT__OBSERVABILITY, oldObservability, observability));
   }
 
   /**
@@ -1455,8 +1363,6 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
         return isDistance();
       case KimPackage.CONCEPT__PROBABILITY:
         return isProbability();
-      case KimPackage.CONCEPT__ASSESSMENT:
-        return isAssessment();
       case KimPackage.CONCEPT__CHANGE:
         return isChange();
       case KimPackage.CONCEPT__RATE:
@@ -1471,8 +1377,6 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
         return isLevel();
       case KimPackage.CONCEPT__TYPE:
         return isType();
-      case KimPackage.CONCEPT__OBSERVABILITY:
-        return isObservability();
       case KimPackage.CONCEPT__PROPORTION:
         return isProportion();
       case KimPackage.CONCEPT__OTHER:
@@ -1536,9 +1440,6 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
       case KimPackage.CONCEPT__PROBABILITY:
         setProbability((Boolean)newValue);
         return;
-      case KimPackage.CONCEPT__ASSESSMENT:
-        setAssessment((Boolean)newValue);
-        return;
       case KimPackage.CONCEPT__CHANGE:
         setChange((Boolean)newValue);
         return;
@@ -1559,9 +1460,6 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
         return;
       case KimPackage.CONCEPT__TYPE:
         setType((Boolean)newValue);
-        return;
-      case KimPackage.CONCEPT__OBSERVABILITY:
-        setObservability((Boolean)newValue);
         return;
       case KimPackage.CONCEPT__PROPORTION:
         setProportion((Boolean)newValue);
@@ -1634,9 +1532,6 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
       case KimPackage.CONCEPT__PROBABILITY:
         setProbability(PROBABILITY_EDEFAULT);
         return;
-      case KimPackage.CONCEPT__ASSESSMENT:
-        setAssessment(ASSESSMENT_EDEFAULT);
-        return;
       case KimPackage.CONCEPT__CHANGE:
         setChange(CHANGE_EDEFAULT);
         return;
@@ -1657,9 +1552,6 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
         return;
       case KimPackage.CONCEPT__TYPE:
         setType(TYPE_EDEFAULT);
-        return;
-      case KimPackage.CONCEPT__OBSERVABILITY:
-        setObservability(OBSERVABILITY_EDEFAULT);
         return;
       case KimPackage.CONCEPT__PROPORTION:
         setProportion(PROPORTION_EDEFAULT);
@@ -1721,8 +1613,6 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
         return distance != DISTANCE_EDEFAULT;
       case KimPackage.CONCEPT__PROBABILITY:
         return probability != PROBABILITY_EDEFAULT;
-      case KimPackage.CONCEPT__ASSESSMENT:
-        return assessment != ASSESSMENT_EDEFAULT;
       case KimPackage.CONCEPT__CHANGE:
         return change != CHANGE_EDEFAULT;
       case KimPackage.CONCEPT__RATE:
@@ -1737,8 +1627,6 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
         return level != LEVEL_EDEFAULT;
       case KimPackage.CONCEPT__TYPE:
         return type != TYPE_EDEFAULT;
-      case KimPackage.CONCEPT__OBSERVABILITY:
-        return observability != OBSERVABILITY_EDEFAULT;
       case KimPackage.CONCEPT__PROPORTION:
         return proportion != PROPORTION_EDEFAULT;
       case KimPackage.CONCEPT__OTHER:
@@ -1788,8 +1676,6 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
     result.append(distance);
     result.append(", probability: ");
     result.append(probability);
-    result.append(", assessment: ");
-    result.append(assessment);
     result.append(", change: ");
     result.append(change);
     result.append(", rate: ");
@@ -1804,8 +1690,6 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
     result.append(level);
     result.append(", type: ");
     result.append(type);
-    result.append(", observability: ");
-    result.append(observability);
     result.append(", proportion: ");
     result.append(proportion);
     result.append(", percentage: ");

@@ -254,7 +254,7 @@ public class CoreOntology extends AbstractWorkspace {
         public static final String CORE_RESISTIVITY = "observation:Resistivity";
         public static final String CORE_PRESSURE = "observation:Pressure";
         public static final String CORE_ANGLE = "observation:Angle";
-        public static final String CORE_ASSESSMENT = "observation:Assessment";
+//        public static final String CORE_ASSESSMENT = "observation:Assessment";
         public static final String CORE_CHANGE = "observation:Change";
         public static final String CORE_CHANGED_EVENT = "observation:ChangeEvent";
         public static final String CORE_CHANGE_RATE = "observation:ChangeRate";
