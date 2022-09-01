@@ -93,7 +93,6 @@ public class CoreOntology extends AbstractWorkspace {
 		coreConceptIds.put(Type.OCCURRENCE, NS.CORE_OCCURRENCE);
 		coreConceptIds.put(Type.PRESENCE, NS.CORE_PRESENCE);
 		coreConceptIds.put(Type.EXTENT, NS.CORE_EXTENT);
-		// coreConceptIds.put(Type.ASSESSMENT, NS.CORE_ASSESSMENT);
 	}
 
 	public static interface NS {
