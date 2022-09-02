@@ -565,7 +565,8 @@ public class KimValidator extends AbstractKimValidator {
             this.error("Physical properties linked to attributes require measurement units", 
               KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, KimValidator.REASONING_PROBLEM);
           }
-          if ((((observable.getMain() != null) && (observable.getMain().is(IKimConcept.Type.TRAIT) || observable.getMain().is(IKimConcept.Type.ROLE))) && (observable.getMain().getContext() == null))) {
+          if ((((observable.getMain() != null) && (observable.getMain().is(IKimConcept.Type.TRAIT) || 
+            observable.getMain().is(IKimConcept.Type.ROLE))) && (observable.getMain().getContext() == null))) {
             this.error(("Lone predicates are not valid observables. Use classifying observables to attribute " + 
               " or resolve predicates, or use \'type of\' to observe them over a context."), 
               KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, KimValidator.REASONING_PROBLEM);
@@ -2540,6 +2541,10 @@ public class KimValidator extends AbstractKimValidator {
     String _authority = concept.getAuthority();
     boolean _tripleNotEquals_1 = (_authority != null);
     if (_tripleNotEquals_1) {
+      this.warning(
+        ("The \'identified as\' syntax is deprecated: use <AUTHORITY>:<IDENTIFIER> as a normal identity concept instead." + 
+          " The \'inherits\' clause can substitute \'identified as\' ... \'by\' ... in definitions when needed."), concept, 
+        KimPackage.Literals.CONCEPT_STATEMENT_BODY__STRING_IDENTIFIER);
       ret.setAuthority(concept.getAuthority());
       String _stringIdentifier = concept.getStringIdentifier();
       boolean _tripleNotEquals_2 = (_stringIdentifier != null);
@@ -2871,8 +2876,8 @@ public class KimValidator extends AbstractKimValidator {
     if (_greaterThan_6) {
       EList<ConceptDeclaration> _emergenceTriggers = concept.getEmergenceTriggers();
       for (final ConceptDeclaration target : _emergenceTriggers) {
-        if ((((((!type.contains(IKimConcept.Type.PROCESS)) && (!type.contains(IKimConcept.Type.CONFIGURATION))) && (!type.contains(IKimConcept.Type.SUBJECT))) && 
-          (!type.contains(IKimConcept.Type.EVENT))) && (!type.contains(IKimConcept.Type.AGENT)))) {
+        if ((((((!type.contains(IKimConcept.Type.PROCESS)) && (!type.contains(IKimConcept.Type.CONFIGURATION))) && 
+          (!type.contains(IKimConcept.Type.SUBJECT))) && (!type.contains(IKimConcept.Type.EVENT))) && (!type.contains(IKimConcept.Type.AGENT)))) {
           this.error("only processes, events, subjects and configurations can show emergence", concept, 
             KimPackage.Literals.CONCEPT_STATEMENT_BODY__EMERGENCE_TRIGGERS);
           ok = false;

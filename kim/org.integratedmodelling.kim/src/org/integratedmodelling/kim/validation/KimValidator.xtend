@@ -409,8 +409,10 @@ class KimValidator extends AbstractKimValidator {
 						KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, REASONING_PROBLEM)
 				}
 
-				if (observable.main !== null && (observable.main.is(Type.TRAIT) || observable.main.is(Type.ROLE)) && /* observable.main.inherent === null && */ observable.
-					main.context === null) {
+				if (observable.main !== null &&
+					(observable.main.is(Type.TRAIT) ||
+						observable.main.is(Type.ROLE)) && /* observable.main.inherent === null && */ observable.main.
+						context === null) {
 					error("Lone predicates are not valid observables. Use classifying observables to attribute " +
 						" or resolve predicates, or use 'type of' to observe them over a context.",
 						KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, REASONING_PROBLEM)
@@ -2019,6 +2021,10 @@ class KimValidator extends AbstractKimValidator {
 		}
 
 		if (concept.authority !== null) {
+			warning(
+				"The 'identified as' syntax is deprecated: use <AUTHORITY>:<IDENTIFIER> as a normal identity concept instead." +
+					" The 'inherits' clause can substitute 'identified as' ... 'by' ... in definitions when needed.", concept,
+				KimPackage.Literals.CONCEPT_STATEMENT_BODY__STRING_IDENTIFIER)
 			ret.setAuthority(concept.authority);
 			if (concept.stringIdentifier !== null) {
 				ret.setAuthorityTerm(concept.stringIdentifier)
@@ -2344,9 +2350,9 @@ class KimValidator extends AbstractKimValidator {
 		if (concept.emergenceTriggers.size > 0) {
 			// TODO applies to; can also restrict source and destination for relationships
 			for (target : concept.emergenceTriggers) {
-				
-				if (!type.contains(Type.PROCESS) && !type.contains(Type.CONFIGURATION) && !type.contains(Type.SUBJECT) &&
-					!type.contains(Type.EVENT) && !type.contains(Type.AGENT)) {
+
+				if (!type.contains(Type.PROCESS) && !type.contains(Type.CONFIGURATION) &&
+					!type.contains(Type.SUBJECT) && !type.contains(Type.EVENT) && !type.contains(Type.AGENT)) {
 					error("only processes, events, subjects and configurations can show emergence", concept,
 						KimPackage.Literals.CONCEPT_STATEMENT_BODY__EMERGENCE_TRIGGERS)
 					ok = false
@@ -2357,7 +2363,7 @@ class KimValidator extends AbstractKimValidator {
 						var countable = Kim.INSTANCE.declareConcept(decl)
 
 						var fits = false;
-						
+
 						/*
 						 * valid cases are: configurations can emerge from qualities and relationships; everything else,
 						 * only from relationships
@@ -2369,12 +2375,12 @@ class KimValidator extends AbstractKimValidator {
 						} else {
 							fits = countable.is(Type.STRUCTURAL);
 						}
-						
+
 						if (fits) {
 							ret.emergenceTriggers.add(countable)
 						} else {
 							error("inconsistent use of the 'emerges from' clause", concept,
-									KimPackage.Literals.CONCEPT_STATEMENT_BODY__EMERGENCE_TRIGGERS)
+								KimPackage.Literals.CONCEPT_STATEMENT_BODY__EMERGENCE_TRIGGERS)
 							ok = false
 						}
 						i++
