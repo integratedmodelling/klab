@@ -166,8 +166,8 @@ public class GridAdapter implements IUrnAdapter {
         String[] unam = urn.getNamespace().split("\\.");
         switch(unam[0]) {
         case NAMESPACE_TILES:
-            // TODO use parameters
-            return Geometry.create("#S2");
+        	// bounding box is the planet - this determines coverage and results when used as a source
+            return Geometry.create("#S2{" + Geometry.WORLD_BBOX_PARAMETERS + "}");
         }
         return null;
     }

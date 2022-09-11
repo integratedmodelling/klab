@@ -22,6 +22,7 @@ public class ResourceQueryResponse {
 		private Set<String> nodes = new HashSet<>();
 		private String description;
 		private IArtifact.Type type;
+		private double matchScore;
 
 		public String getUrn() {
 			return urn;
@@ -53,6 +54,14 @@ public class ResourceQueryResponse {
 
 		public void setType(IArtifact.Type type) {
 			this.type = type;
+		}
+
+		public double getMatchScore() {
+			return matchScore;
+		}
+
+		public void setMatchScore(double matchScore) {
+			this.matchScore = matchScore;
 		}
 
 	}

@@ -2543,7 +2543,7 @@ public class KimValidator extends AbstractKimValidator {
     if (_tripleNotEquals_1) {
       this.warning(
         ("The \'identified as\' syntax is deprecated: use <AUTHORITY>:<IDENTIFIER> as a normal identity concept instead." + 
-          " The \'inherits\' clause can substitute \'identified as\' ... \'by\' ... in definitions when needed."), concept, 
+          " In root-level definition, \'inherits <AUTH>:<ID>\' can substitute \'identified as\' ... \'by\' ...."), concept, 
         KimPackage.Literals.CONCEPT_STATEMENT_BODY__STRING_IDENTIFIER);
       ret.setAuthority(concept.getAuthority());
       String _stringIdentifier = concept.getStringIdentifier();

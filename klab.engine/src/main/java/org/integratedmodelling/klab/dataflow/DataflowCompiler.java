@@ -203,7 +203,7 @@ public class DataflowCompiler {
 		 * order of dependency.
 		 */
 		ret.computeLocalNames();
-		
+
 		monitor.debug((scope.isOccurrent() ? "Occurrent" : "Continuant") + " dataflow compiled");
 
 		return ret;
@@ -541,7 +541,7 @@ public class DataflowCompiler {
 				reference = true;
 				partials = true;
 				List<String> modelIds = new ArrayList<>();
-				
+
 				for (ModelD modelDesc : models) {
 
 					Actuator partial = Actuator.create(dataflow, mode);
@@ -570,11 +570,11 @@ public class DataflowCompiler {
 					reference = false;
 					partial.setCoverage(modelDesc.coverage);
 					modelIds.add(name);
-					
+
 					ret.getChildren().add(partial);
 
 				}
-				
+
 				ret.getAnnotations().addAll(Annotations.INSTANCE.collectAnnotations(observable));
 
 			} else if (inlineValue != null) {
@@ -1262,9 +1262,9 @@ public class DataflowCompiler {
 		}
 
 		if (Units.INSTANCE.needsUnits(from) && from.getUnit() == null /* && to.getUnit() == null */) {
-			if (!from.is(IKimConcept.Type.NUMEROSITY)) {
+			if (!from.is(IKimConcept.Type.NUMEROSITY) && to.getUnit() != null) {
 				// FIXME fine for counts to have no units, although this should depend on
-				// context
+				// context. If none has units, we just let defaults do their job.
 				throw new IllegalStateException(
 						"Observables need units but have none: " + from + " mediating to " + to);
 			}

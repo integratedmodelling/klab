@@ -27,8 +27,6 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Utility class for managing OS resources associated with SWT controls such as colors, fonts, images, etc.
@@ -43,8 +41,6 @@ import org.slf4j.LoggerFactory;
  * @author Dan Rubel
  */
 public class SWTResourceManager {
-    
-    private static Logger logger = LoggerFactory.getLogger(SWTResourceManager.class);
 	////////////////////////////////////////////////////////////////////////////
 	//
 	// Color
@@ -365,7 +361,7 @@ public class SWTResourceManager {
 						}
 					}
 				} catch (Throwable e) {
-					logger.error("Unable to set underline or strikeout" + " (probably on a non-Windows platform). " + e); //$NON-NLS-1$ //$NON-NLS-2$
+					System.err.println("Unable to set underline or strikeout" + " (probably on a non-Windows platform). " + e); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 			font = new Font(Display.getCurrent(), fontData);
