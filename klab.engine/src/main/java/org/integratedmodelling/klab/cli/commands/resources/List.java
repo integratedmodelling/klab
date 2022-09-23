@@ -49,7 +49,7 @@ public class List implements ICommand {
 	}
 
 	private String describeRemote(String nodeId, boolean verbose, java.util.List<String> resourceIds) {
-		StringBuffer ret = new StringBuffer(10000);
+		StringBuilder ret = new StringBuilder(10000);
 		INodeIdentity node = Network.INSTANCE.getNode(nodeId);
 		if (node != null && node.isOnline()) {
 
@@ -59,7 +59,7 @@ public class List implements ICommand {
 						ResourceReference[].class)) {
 					ret.append(resource.getUrn() + (verbose ? ":\n" : "\n"));
 					if (verbose) {
-						ret.append(StringUtils.indent(JsonUtils.printAsJson(resource)));
+						StringUtils.indent(ret, JsonUtils.printAsJson(resource), 4, true);
 					}
 					n++;
 				}
@@ -69,7 +69,7 @@ public class List implements ICommand {
 					ResourceReference resource = node.getClient().get(API.NODE.RESOURCE.RESOLVE_URN, ResourceReference.class, "urn", urn);
 					ret.append(resource.getUrn() + (verbose ? ":\n" : "\n"));
 					if (verbose) {
-						ret.append(StringUtils.indent(JsonUtils.printAsJson(resource)));
+						StringUtils.indent(ret, JsonUtils.printAsJson(resource), 4, true);
 					}
 				}
 			}

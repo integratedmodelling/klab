@@ -7,8 +7,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.h2gis.api.ProgressVisitor;
+import org.h2gis.utilities.GeometryTableUtilities;
 import org.h2gis.utilities.JDBCUtilities;
-import org.h2gis.utilities.SFSUtilities;
 import org.h2gis.utilities.SpatialResultSet;
 import org.h2gis.utilities.TableLocation;
 import org.noise_planet.noisemodelling.propagation.GeoWithSoilType;
@@ -111,7 +111,7 @@ public abstract class JdbcNoiseMap {
 
     protected void fetchCellDem(Connection connection, Envelope fetchEnvelope, MeshBuilder mesh) throws SQLException {
         if(!demTable.isEmpty()) {
-            List<String> geomFields = SFSUtilities.getGeometryFields(connection,
+            List<String> geomFields = GeometryTableUtilities.getGeometryColumnNames(connection,
                     TableLocation.parse(demTable));
             if(geomFields.isEmpty()) {
                 throw new SQLException("Digital elevation model table \""+demTable+"\" must exist and contain a POINT field");
@@ -139,7 +139,7 @@ public abstract class JdbcNoiseMap {
         if(!soilTableName.isEmpty()){
             double startX = Math.floor(fetchEnvelope.getMinX() / groundSurfaceSplitSideLength) * groundSurfaceSplitSideLength;
             double startY = Math.floor(fetchEnvelope.getMinY() / groundSurfaceSplitSideLength) * groundSurfaceSplitSideLength;
-            String soilGeomName = SFSUtilities.getGeometryFields(connection,
+            String soilGeomName = GeometryTableUtilities.getGeometryColumnNames(connection,
                     TableLocation.parse(soilTableName)).get(0);
             try (PreparedStatement st = connection.prepareStatement(
                     "SELECT " + TableLocation.quoteIdentifier(soilGeomName) + ", G FROM " +
@@ -193,13 +193,14 @@ public abstract class JdbcNoiseMap {
             additionalQuery += ", " + alphaFieldName;
         }
         String pkBuilding = "";
-        final int indexPk = JDBCUtilities.getIntegerPrimaryKey(connection, buildingsTableName);
+        TableLocation buildingsTableLocation =  TableLocation.parse(buildingsTableName);
+        final int indexPk = JDBCUtilities.getIntegerPrimaryKey(connection, buildingsTableLocation);
         if(indexPk > 0) {
-            pkBuilding = JDBCUtilities.getFieldName(connection.getMetaData(), buildingsTableName, indexPk);
+            pkBuilding = JDBCUtilities.getColumnName(connection, buildingsTableName, indexPk);
             additionalQuery += ", " + pkBuilding;
         }
-        String buildingGeomName = SFSUtilities.getGeometryFields(connection,
-                TableLocation.parse(buildingsTableName)).get(0);
+        String buildingGeomName = GeometryTableUtilities.getGeometryColumnNames(connection,
+                buildingsTableLocation).get(0);
         try (PreparedStatement st = connection.prepareStatement(
                 "SELECT " + TableLocation.quoteIdentifier(buildingGeomName) + additionalQuery + " FROM " +
                         buildingsTableName + " WHERE " +
@@ -240,13 +241,13 @@ public abstract class JdbcNoiseMap {
     protected void fetchCellSource(Connection connection,Envelope fetchEnvelope, PropagationProcessData propagationProcessData)
             throws SQLException {
         TableLocation sourceTableIdentifier = TableLocation.parse(sourcesTableName);
-        List<String> geomFields = SFSUtilities.getGeometryFields(connection, sourceTableIdentifier);
+        List<String> geomFields = GeometryTableUtilities.getGeometryColumnNames(connection, sourceTableIdentifier);
         if(geomFields.isEmpty()) {
             throw new SQLException(String.format("The table %s does not exists or does not contain a geometry field", sourceTableIdentifier));
         }
         String sourceGeomName =  geomFields.get(0);
         Geometry domainConstraint = geometryFactory.toGeometry(fetchEnvelope);
-        int pkIndex = JDBCUtilities.getIntegerPrimaryKey(connection, sourcesTableName);
+        int pkIndex = JDBCUtilities.getIntegerPrimaryKey(connection, sourceTableIdentifier);
         if(pkIndex < 1) {
             throw new IllegalArgumentException(String.format("Source table %s does not contain a primary key", sourceTableIdentifier));
         }

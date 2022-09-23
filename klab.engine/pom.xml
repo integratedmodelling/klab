@@ -17,11 +17,6 @@
 		</repository>
 		<!-- Another old library hosting its news builds on its own repo -->
 		<repository>
-			<id>integratedmodelling-nexus</id>
-			<name>Integratedmodelling repository</name>
-			<url>https://integratedmodelling.org/nexus/repository/maven-snapshots/</url>
-		</repository>
-		<repository>
 			<id>topobyte</id>
 			<url>https://mvn.topobyte.de</url>
 		</repository>
@@ -565,13 +560,7 @@
 		<dependency>
 			<groupId>org.orbisgis</groupId>
 			<artifactId>h2gis</artifactId>
-			<version>1.5.1-20211021.111326-1</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.locationtech.jts</groupId>
-					<artifactId>jts-core</artifactId>
-				</exclusion>
-			</exclusions>
+			<version>2.1.0</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/args4j/args4j startup options parser -->

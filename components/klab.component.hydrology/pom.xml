@@ -28,10 +28,6 @@
 					<groupId>org.mongodb</groupId>
 					<artifactId>mongo-java-driver</artifactId>
 				</exclusion>
-				<exclusion>
-					<groupId>org.orbisgis</groupId>
-					<artifactId>h2gis</artifactId>
-				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -44,10 +40,6 @@
 				<exclusion>
 					<groupId>javax.measure</groupId>
 					<artifactId>jsr-275</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.orbisgis</groupId>
-					<artifactId>h2gis</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>

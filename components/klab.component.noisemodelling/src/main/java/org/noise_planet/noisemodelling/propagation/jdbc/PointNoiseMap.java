@@ -6,8 +6,8 @@ import java.sql.SQLException;
 import java.util.Set;
 
 import org.h2gis.api.ProgressVisitor;
+import org.h2gis.utilities.GeometryTableUtilities;
 import org.h2gis.utilities.JDBCUtilities;
-import org.h2gis.utilities.SFSUtilities;
 import org.h2gis.utilities.SpatialResultSet;
 import org.h2gis.utilities.TableLocation;
 import org.noise_planet.noisemodelling.propagation.ComputeRays;
@@ -140,12 +140,13 @@ public class PointNoiseMap extends JdbcNoiseMap {
          * FV: these are simply points.
          */
 
-        String receiverGeomName = SFSUtilities.getGeometryFields(connection,
+        TableLocation receiverTableLocation= TableLocation.parse(receiverTableName);
+        String receiverGeomName = GeometryTableUtilities.getGeometryColumnNames(connection,
                 TableLocation.parse(receiverTableName)).get(0);
-        int intPk = JDBCUtilities.getIntegerPrimaryKey(connection, receiverTableName);
+        int intPk = JDBCUtilities.getIntegerPrimaryKey(connection, receiverTableLocation);
         String pkSelect = "";
         if(intPk >= 1) {
-            pkSelect = ", " + JDBCUtilities.getFieldName(connection.getMetaData(), receiverTableName, intPk);
+            pkSelect = ", " + JDBCUtilities.getColumnName(connection, receiverTableLocation, intPk);
         } else {
             throw new SQLException(String.format("Table %s missing primary key for receiver identification", receiverTableName));
         }
@@ -177,7 +178,7 @@ public class PointNoiseMap extends JdbcNoiseMap {
 
     @Override
     protected Envelope getComputationEnvelope(Connection connection) throws SQLException {
-        return SFSUtilities.getTableEnvelope(connection, TableLocation.parse(receiverTableName), "");
+        return GeometryTableUtilities.getEnvelope(connection, TableLocation.parse(receiverTableName), "").getEnvelopeInternal();
     }
 
     /**

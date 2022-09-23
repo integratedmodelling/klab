@@ -48,7 +48,7 @@ import javax.sql.PooledConnection;
 import org.h2.engine.Constants;
 import org.h2.jdbcx.JdbcDataSource;
 import org.h2gis.functions.factory.H2GISFunctions;
-import org.h2gis.utilities.SFSUtilities;
+import org.h2gis.utilities.JDBCUtilities;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.data.general.IStructuredTable;
@@ -213,7 +213,7 @@ public class H2Database {
 	public void preallocateConnection() {
 		if (connection == null) {
 			try {
-				connection = SFSUtilities.wrapConnection(pooledConnection.getConnection());
+				connection = JDBCUtilities.wrapConnection(pooledConnection.getConnection());
 			} catch (SQLException e) {
 				// just leave null
 			}
@@ -322,7 +322,7 @@ public class H2Database {
 
 		try {
 			// FIXME must close the pooledconnection, not the wrapped connection
-			return SFSUtilities.wrapConnection(pooledConnection.getConnection());
+			return JDBCUtilities.wrapConnection(pooledConnection.getConnection());
 		} catch (SQLException e) {
 			throw new KlabStorageException(e);
 		}
@@ -510,11 +510,11 @@ public class H2Database {
 			}
 			refresh = knownVersion == null;
 			if (!refresh) {
-				refresh = !knownVersion.equals(Constants.getFullVersion());
+				refresh = !knownVersion.equals(Constants.FULL_VERSION);
 			}
 
 			if (refresh) {
-				properties.setProperty(kboxName + ".h2.version", Constants.getFullVersion());
+				properties.setProperty(kboxName + ".h2.version", Constants.FULL_VERSION);
 				try (OutputStream output = new FileOutputStream(propfile)) {
 					properties.store(output, null);
 				} catch (IOException e) {
