@@ -449,6 +449,8 @@ public abstract class ChunkedDatacubeRepository implements IDatacube {
                 }
 
                 stateBuilder.finishState();
+                
+                data.close();
 
                 return true;
             }
