@@ -32,7 +32,6 @@ import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.NumberUtils;
-import org.integratedmodelling.klab.utils.Path;
 import org.opengis.feature.simple.SimpleFeature;
 
 @UrnAdapter(type = GridAdapter.NAME, version = Version.CURRENT)
