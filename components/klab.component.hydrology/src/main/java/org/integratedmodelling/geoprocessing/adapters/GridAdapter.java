@@ -191,14 +191,7 @@ public class GridAdapter implements IUrnAdapter {
         ref.setUrn(urn.toString());
         ref.setAdapterType(getName());
         ref.setLocalName(kurn.getResourceId());
-
-        String[] unam = kurn.getNamespace().split("\\.");
-        switch(unam[0]) {
-        case NAMESPACE_TILES:
-            // TODO use parameters
-            ref.setGeometry("#S2");
-            break;
-        }
+        ref.setGeometry(getGeometry(kurn).encode());
 
         /**
          * any parameters not understood become attributes

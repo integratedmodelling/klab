@@ -22,7 +22,6 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
-import javax.validation.metadata.Scope;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -101,9 +100,9 @@ import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
-import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
+import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.kim.Prototype;
@@ -1088,8 +1087,25 @@ public enum Resources implements IResourceService {
             }
             adapter.getEncoder().getEncodedData(resource, kurn.getParameters(), resource.getGeometry(), builder,
                     Expression.emptyContext(resource.getGeometry(), monitor));
+            
+        } else if (kurn.isUniversal() && getUrnAdapter(kurn.getCatalog()) != null) {
+
+            IUrnAdapter adapter = getUrnAdapter(kurn.getCatalog());
+            if (adapter == null) {
+                throw new KlabUnsupportedFeatureException("adapter for resource of type " + kurn.getCatalog() + " not available");
+            }
+
+            IResource resource = resolveResource(urn);
+            IContextualizationScope scope = Expression.emptyContext(resource.getGeometry(), monitor);
+            try {
+                adapter.encodeData(kurn, builder, resource.getGeometry(), scope);
+            } catch (Throwable e) {
+                // just return null later
+                scope.getMonitor().error("could not extract data from " + urn + ": " + e.getMessage());
+            }
+
         } else {
-            throw new KlabInternalErrorException("getResourceData(): this call can only be used to access local resources");
+            throw new KlabUnimplementedException("getResourceData(): this call can only be used to access locally supported resources");
         }
         return builder.build();
     }
