@@ -141,8 +141,9 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
             if (value instanceof Number) {
                 if (Double.isNaN(((Number) value).doubleValue())) {
                     nodata++;
+                } else {
+                    statistics.addValue(((Number) value).doubleValue());
                 }
-                statistics.addValue(((Number) value).doubleValue());
             }
 
             setValueIntoBackend(value, sliceOffset, this.sliceOffsetInBackend);
