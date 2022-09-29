@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.components.runtime.observations;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -14,6 +15,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import org.integratedmodelling.kim.api.IValueMediator;
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observations;
@@ -47,6 +49,7 @@ import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.rest.StateSummary;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.AggregationUtils;
+import org.integratedmodelling.klab.utils.MapUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.klab.utils.Utils;
@@ -183,7 +186,7 @@ public class State extends Observation implements IState, IKeyHolder {
             }
             return this;
         }
-        
+
     }
 
     public class StateListener implements Consumer<ILocator> {
@@ -462,10 +465,6 @@ public class State extends Observation implements IState, IKeyHolder {
         return MediatingState.mediateIfNecessary(this, mediator);
     }
 
-//    public ISubjectiveState reinterpret(IDirectObservation observer) {
-//        return new SubjectiveState(this, observer);
-//    }
-
     public void distributeScalar(Object pod) {
         for (ILocator locator : getScale()) {
             set(locator, pod);
@@ -476,6 +475,15 @@ public class State extends Observation implements IState, IKeyHolder {
         return storage;
     }
 
+    /*
+     * Used through k.Actors reactor
+     */
+    public File export(String fileName, Map<?,?> options) {
+        File file = Configuration.INSTANCE.getExportFile(fileName);
+        Observations.INSTANCE.export(this, file, getMonitor(), MapUtils.unfold(options));
+        return file;
+    }
+    
     @Override
     public <T> T aggregate(ILocator geometry, Class<? extends T> cls) {
         Object o = aggregate(geometry);

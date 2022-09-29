@@ -58,6 +58,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.AppReset;
 import org.integratedmodelling.klab.components.runtime.actors.extensions.Artifact;
+import org.integratedmodelling.klab.components.runtime.actors.extensions.Grid;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.documentation.extensions.table.TableArtifact;
@@ -736,7 +737,14 @@ public class RuntimeBehavior {
                         throw new KlabIllegalArgumentException(
                                 "cannot use additional time unit " + o + " as a context parameter");
                     }
-                } // TODO
+                }
+            } else if (o instanceof Grid) {
+                if (!contextDefinition.containsKey("gridspecs")) {
+                    key = "gridspecs";
+                    contextDefinition.put(key, o);
+                } else {
+                    throw new KlabIllegalArgumentException("cannot use more than one grid specification as a context parameter");
+                }
             } else if (o instanceof IObservable) {
                 key = "observable";
                 if (!contextDefinition.containsKey(key) && ((IObservable) o).is(IKimConcept.Type.SUBJECT)) {
@@ -820,11 +828,12 @@ public class RuntimeBehavior {
                                         "cannot use additional observer " + o + " as a context parameter");
                             }
                         } else if (mo instanceof INamespace) {
-                            
+
                             /*
-                             * TODO if regular namespace, should set the namespace of resolution; if scenario, set the scenario.
+                             * TODO if regular namespace, should set the namespace of resolution; if
+                             * scenario, set the scenario.
                              */
-                            
+
                         } else {
                             throw new KlabIllegalArgumentException("cannot use argument " + o + " as a context parameter");
                         }
@@ -876,7 +885,17 @@ public class RuntimeBehavior {
                 }
             }
         }
-        if (contextDefinition.containsKey("spaceunit")) {
+        if (contextDefinition.containsKey("gridspecs")) {
+            if (space == null) {
+                throw new KlabIllegalArgumentException(
+                        "cannot apply a spatial grid without a spatial extent or a spatial artifact");
+            } else {
+                /*
+                 * apply or re-apply the grid to the shape
+                 */
+                space = Space.create(space.getShape(), (Grid)contextDefinition.get("gridspecs"));
+            }
+        } else if (contextDefinition.containsKey("spaceunit")) {
             if (space == null) {
                 throw new KlabIllegalArgumentException(
                         "cannot apply a spatial resolution without a spatial extent or a spatial artifact");

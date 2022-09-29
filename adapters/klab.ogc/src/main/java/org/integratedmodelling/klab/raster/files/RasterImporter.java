@@ -61,6 +61,25 @@ public class RasterImporter extends AbstractFilesetImporter {
 
     @Override
     public IResourceImporter withOption(String option, Object value) {
+
+        /*
+         * translate short options if any
+         */
+        if ("zip".equals(option)) {
+            option = OPTION_DO_NOT_ZIP_MULTIPLE_FILES;
+            value = (value instanceof Boolean) ? !((Boolean)value) : Boolean.FALSE;
+        } else if ("remove".equals(option)) {
+            option = OPTION_REMOVE_FILES_AFTER_ZIPPING;
+        } else if ("folders".equals(option)) {
+            value = (value instanceof Boolean) ? !((Boolean)value) : Boolean.FALSE;
+            option = OPTION_DO_NOT_CREATE_INDIVIDUAL_FOLDERS;
+            if (Boolean.TRUE.equals(value)) {
+                this.options.put(OPTION_REMOVE_FILES_AFTER_ZIPPING, false);
+                this.options.put(OPTION_DO_NOT_ZIP_MULTIPLE_FILES, true);
+            }
+        }
+        
+        this.options.put(option, value);
         return this;
     }
 
@@ -110,12 +129,19 @@ public class RasterImporter extends AbstractFilesetImporter {
     @Override
     public File exportObservation(File file, IObservation observation, ILocator locator, String format, IMonitor monitor) {
 
+        boolean samefolder = options.get(OPTION_DO_NOT_CREATE_INDIVIDUAL_FOLDERS, Boolean.FALSE);
+        
         if (observation instanceof IState && observation.getGeometry().getDimension(Type.SPACE) != null) {
 
             if (observation.getScale().isSpatiallyDistributed() && observation.getScale().getSpace().isRegular()) {
                 File dir = new File(MiscUtilities.changeExtension(file.toString(), "dir"));
-                dir.mkdirs();
                 File out = new File(dir + File.separator + MiscUtilities.getFileName(file));
+                if (!samefolder) {
+                    dir.mkdirs();
+                } else {
+                    dir.getAbsoluteFile().getParentFile().mkdirs();
+                    out = new File(dir.getAbsoluteFile().getParentFile() + File.separator + MiscUtilities.getFileName(file));
+                }
                 GridCoverage2D coverage;
                 IState state = (IState) observation;
                 IDataKey dataKey = state.getDataKey();

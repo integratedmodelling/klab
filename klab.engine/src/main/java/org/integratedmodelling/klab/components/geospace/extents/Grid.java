@@ -400,12 +400,12 @@ public class Grid extends Area implements IGrid {
                 this.cellHeight = squareRes;
             } else {
                 GeodeticCalculator gc = new GeodeticCalculator(crs);
-                gc.setStartingGeographicPoint(minX, minY);
-                gc.setDestinationGeographicPoint(maxX, minY);
+                gc.setStartingGeographicPoint(minX, (maxY-minY)/2.0);
+                gc.setDestinationGeographicPoint(maxX, (maxY-minY)/2.0);
                 double width = (minX == -180 && maxX == 180) ? EQUATOR_LENGTH_METERS : gc.getOrthodromicDistance();
                 gc = new GeodeticCalculator(crs);
-                gc.setStartingGeographicPoint(minX, minY);
-                gc.setDestinationGeographicPoint(minX, maxY);
+                gc.setStartingGeographicPoint((maxX-minX)/2.0, minY);
+                gc.setDestinationGeographicPoint((maxX-minX)/2.0, maxY);
                 double height = gc.getOrthodromicDistance();
 
                 double restX = width % squareRes;
@@ -442,13 +442,13 @@ public class Grid extends Area implements IGrid {
                 y = (long) Math.ceil(height / squareRes);
             } else {
                 GeodeticCalculator gc = new GeodeticCalculator(crs);
-                gc.setStartingGeographicPoint(minX, minY);
-                gc.setDestinationGeographicPoint(maxX, minY);
+                gc.setStartingGeographicPoint(minX, (maxY-minY)/2.0);
+                gc.setDestinationGeographicPoint(maxX, (maxY-minY)/2.0);
                 // yes, we mean the other way around
                 double width = (minX == -180 && maxX == 180) ? EQUATOR_LENGTH_METERS : gc.getOrthodromicDistance();
                 gc = new GeodeticCalculator(crs);
-                gc.setStartingGeographicPoint(minX, minY);
-                gc.setDestinationGeographicPoint(minX, maxY);
+                gc.setStartingGeographicPoint((maxX-minX)/2.0, minY);
+                gc.setDestinationGeographicPoint((maxX-minX)/2.0, maxY);
                 double height = gc.getOrthodromicDistance();
                 x = (long) Math.ceil(width / squareRes);
                 y = (long) Math.ceil(height / squareRes);

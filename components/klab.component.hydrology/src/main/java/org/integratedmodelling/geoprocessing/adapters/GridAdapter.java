@@ -89,8 +89,8 @@ public class GridAdapter implements IUrnAdapter {
 
         double width = 1;
         String[] resPath = urn.getResourceId().split("\\.");
-        if (resPath.length > 1 && NumberUtils.encodesInteger(resPath[1].substring(1))) {
-            String nn = resPath[1].substring(1);
+        if (resPath.length > 1 && NumberUtils.encodesInteger(resPath[1])) {
+            String nn = resPath[1];
             if (nn.charAt(0) == '0') {
                 // ignore the first zero
                 nn = "0." + nn.substring(1);
