@@ -323,4 +323,13 @@ public class Envelope implements IEnvelope {
         return this;
     }
 
+    @Override
+    public boolean overlaps(IEnvelope other) {
+        try {
+            return this.envelope.intersects(((Envelope)other).getJTSEnvelope().toBounds(this.projection.getCRS()));
+        } catch (TransformException e) {
+            return false;
+        }
+    }
+
 }

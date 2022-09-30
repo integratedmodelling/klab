@@ -24,6 +24,7 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
+import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
@@ -120,6 +121,17 @@ public class GridAdapter implements IUrnAdapter {
         if (source == null) {
             return;
         }
+        
+        IEnvelope within = null;
+        double[] containing = null;
+        
+        if (urn.getParameters().containsKey("within")) {
+            double[] coords = NumberUtils.doubleArrayFromString(urn.getParameters().get("within"), ",");
+            within = Envelope.create(coords[0], coords[1], coords[2], coords[3], Projection.getLatLon());
+        }
+        if (urn.getParameters().containsKey("containing")) {
+            containing = NumberUtils.doubleArrayFromString(urn.getParameters().get("containing"), ",");
+        }
 
         int n = 1;
         try {
@@ -133,8 +145,17 @@ public class GridAdapter implements IUrnAdapter {
                     if (((org.locationtech.jts.geom.Geometry) shape).isEmpty()) {
                         continue;
                     }
-
+                    
                     IShape objectShape = Shape.create((org.locationtech.jts.geom.Geometry) shape, envelope.getProjection());
+
+                    if (within != null && !objectShape.getEnvelope().overlaps(within)) {
+                        continue;
+                    }
+                    
+                    if (containing != null && !objectShape.contains(containing)) {
+                        continue;
+                    }
+                    
                     IScale objectScale = Scale.createLike(scale, objectShape);
                     builder = builder.startObject(nameAttribute + "_" + n, nameAttribute + "_" + n, objectScale).finishObject();
                 }
