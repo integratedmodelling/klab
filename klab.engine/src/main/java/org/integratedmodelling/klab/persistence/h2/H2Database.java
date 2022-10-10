@@ -102,6 +102,7 @@ public class H2Database {
 	private Set<Class<?>> initializedSchemata = new HashSet<>();
 
 	public List<Map<String, String>> dump(String table) throws KlabStorageException {
+	    
 		List<Map<String, String>> ret = new ArrayList<>();
 
 		try {
@@ -133,11 +134,19 @@ public class H2Database {
 
 		return ret;
 	}
+	
+	static public Map<String, H2Database> getDatastores() {
+	    return datastores;
+	}
 
 	private H2Database(String kboxName) {
 		this(kboxName, Configuration.INSTANCE.useInMemoryDatabase());
 	}
 
+	public String toString() {
+	    return "H2: " + url;
+	}
+	
 	private H2Database(String kboxName, boolean inMemory) {
 
 		this.name = kboxName;
@@ -609,4 +618,8 @@ public class H2Database {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+    public String getUrl() {
+        return this.url;
+    }
 }
