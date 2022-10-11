@@ -1,13 +1,16 @@
 package org.integratedmodelling.geoprocessing.adapters;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.grid.Grids;
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -26,6 +29,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
+import org.integratedmodelling.klab.components.geospace.geocoding.Geocoder;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
@@ -33,6 +37,9 @@ import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.NumberUtils;
+import org.mapdb.DB;
+import org.mapdb.DBMaker;
+import org.mapdb.Serializer;
 import org.opengis.feature.simple.SimpleFeature;
 
 @UrnAdapter(type = GridAdapter.NAME, version = Version.CURRENT)
@@ -40,6 +47,8 @@ public class GridAdapter implements IUrnAdapter {
 
     public static final String NAME = "grid";
 
+//    static DB db = null;
+    
     public static final String NAMESPACE_TILES = "tiles";
     public static final String NAMESPACE_ROWS = "rows";
     public static final String NAMESPACE_COLS = "columns";
@@ -67,6 +76,32 @@ public class GridAdapter implements IUrnAdapter {
             break;
         }
         // return builder.build();
+    }
+
+    
+//    public Map<String, Boolean> getBooleanCache(Urn urn, String cacheName) {
+//
+//        if (db == null) {
+//
+//            File dpath = Configuration.INSTANCE.getDataPath(NAME + "_cache");
+//            dpath.mkdirs();
+//
+//            /**
+//             * Use transactions. Memory mapping for now disabled as f'ing Win makes it
+//             * almost impossible to use correctly.
+//             */
+//            db = DBMaker.fileDB(new File(dpath + File.separator + "gridadapter.dat")).transactionEnable()
+//                    /* .fileMmapEnable() */.closeOnJvmShutdown().make();
+//        }
+//        
+//
+//        return db.treeMap(sanitize(urn.getUrn() + "_" + cacheName), Serializer.STRING, Serializer.BOOLEAN).createOrOpen();
+//
+//        
+//    }
+
+    private String sanitize(String urn) {
+        return urn.replaceAll(":", "__").replaceAll(".", "_");
     }
 
     private void makeTiles(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope context) {
@@ -121,10 +156,11 @@ public class GridAdapter implements IUrnAdapter {
         if (source == null) {
             return;
         }
-        
+
         IEnvelope within = null;
         double[] containing = null;
-        
+        Boolean terrestrial = null;
+
         if (urn.getParameters().containsKey("within")) {
             double[] coords = NumberUtils.doubleArrayFromString(urn.getParameters().get("within"), ",");
             within = Envelope.create(coords[0], coords[1], coords[2], coords[3], Projection.getLatLon());
@@ -132,12 +168,25 @@ public class GridAdapter implements IUrnAdapter {
         if (urn.getParameters().containsKey("containing")) {
             containing = NumberUtils.doubleArrayFromString(urn.getParameters().get("containing"), ",");
         }
+        if (urn.getParameters().containsKey("terrestrial")) {
+            terrestrial = Boolean.parseBoolean(urn.getParameters().get("terrestrial"));
+        }
 
+//        boolean commit = false;
+//        Map<String, Boolean> terrestrialCache = null;
+//        if (terrestrial != null) {
+//            terrestrialCache = getBooleanCache(urn, "terrestrial");
+//        }
+        
         int n = 1;
         try {
             FeatureIterator<SimpleFeature> it = source.getFeatures().features();
             while(it.hasNext()) {
 
+                if ((n % 100) == 0) {
+                    System.out.println("Done " + n + " tiles");
+                }
+                
                 SimpleFeature feature = it.next();
                 Object shape = feature.getDefaultGeometryProperty().getValue();
                 if (shape instanceof org.locationtech.jts.geom.Geometry) {
@@ -145,19 +194,46 @@ public class GridAdapter implements IUrnAdapter {
                     if (((org.locationtech.jts.geom.Geometry) shape).isEmpty()) {
                         continue;
                     }
-                    
+
                     IShape objectShape = Shape.create((org.locationtech.jts.geom.Geometry) shape, envelope.getProjection());
 
                     if (within != null && !objectShape.getEnvelope().overlaps(within)) {
                         continue;
                     }
-                    
+
                     if (containing != null && !objectShape.contains(containing)) {
                         continue;
                     }
-                    
+
+                    /*
+                     * cached terrestrial status to a persistent map of booleans tied to the URN
+                     */
+                    if (terrestrial != null) {
+                        if (terrestrial) {
+                            
+//                            Boolean isTerrestrial = terrestrialCache.get("tile_" + n);
+//                            if (isTerrestrial == null) {
+                                boolean isTerrestrial = Geocoder.INSTANCE.isTerrestrial(objectShape.getEnvelope());
+//                                terrestrialCache.put("tile_" + n, isTerrestrial);
+//                                commit = true;
+//                            }
+                            
+                            if (!isTerrestrial) {
+                                // keep numbering
+                                n++;
+                                continue;
+                            }
+                            
+                        } else {
+                            
+                            // TODO default should be to accept only tiles that have NO ocean, so
+                            // 1+ shapes but also intersection == envelope. Should use a differently
+                            // named cache and ensure that any skipped tile doesn't alter the numbering.
+                        }
+                    }
+
                     IScale objectScale = Scale.createLike(scale, objectShape);
-                    builder = builder.startObject(nameAttribute + "_" + n, nameAttribute + "_" + n, objectScale).finishObject();
+                    builder.startObject(nameAttribute + "_" + n, nameAttribute + "_" + n, objectScale).finishObject();
                 }
 
                 n++;
@@ -165,6 +241,10 @@ public class GridAdapter implements IUrnAdapter {
 
             it.close();
 
+//            if (commit) {
+//                db.commit();
+//            }
+            
         } catch (IOException e) {
             throw new KlabIOException("cannot create features from grid adapter URN parameters");
         }
@@ -186,7 +266,8 @@ public class GridAdapter implements IUrnAdapter {
         String[] unam = urn.getNamespace().split("\\.");
         switch(unam[0]) {
         case NAMESPACE_TILES:
-        	// bounding box is the planet - this determines coverage and results when used as a source
+            // bounding box is the planet - this determines coverage and results when used as a
+            // source
             return Geometry.create("#S2{" + Geometry.WORLD_BBOX_PARAMETERS + "}");
         }
         return null;

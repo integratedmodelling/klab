@@ -113,7 +113,20 @@ public class VectorEncoder implements IResourceEncoder {
 
     }
 
-    // TODO use URN parameters
+    /**
+     * URN parameters: for now
+     * 
+     *  intersect=[true|false]  -> return shapes intersected with the bounding box
+     *  filter=[CQL filter]     -> use filter in extraction
+     *  presence=[true]         -> only return metadata, with present={true|false} if at least one shape intersects the bounding box.
+     * 
+     * @param source
+     * @param resource
+     * @param urnParameters
+     * @param geometry
+     * @param builder
+     * @param scope
+     */
     private void encodeFromFeatures(FeatureSource<SimpleFeatureType, SimpleFeature> source, IResource resource,
             Map<String, String> urnParameters, IGeometry geometry, Builder builder, IContextualizationScope scope) {
 
@@ -128,10 +141,11 @@ public class VectorEncoder implements IResourceEncoder {
         String idRequested = urnParameters.containsKey(Urn.SINGLE_PARAMETER_KEY) && urnParameters.size() == 1
                 ? urnParameters.get(Urn.SINGLE_PARAMETER_KEY)
                 : null;
-
+        
         String geomName = source.getSchema().getGeometryDescriptor().getName().toString();
-        boolean intersect = urnParameters.containsKey("intersect") ? Boolean.getBoolean(urnParameters.get("intersect")) : true;
-
+        boolean intersect = urnParameters.containsKey("intersect") ? Boolean.parseBoolean(urnParameters.get("intersect")) : true;
+        boolean presence = urnParameters.containsKey("presence") ? Boolean.parseBoolean(urnParameters.get("presence")) : false;
+        
         Map<String, Class<?>> attributes = new HashMap<>();
         Map<String, String> attributeNames = new HashMap<>();
 
@@ -230,6 +244,12 @@ public class VectorEncoder implements IResourceEncoder {
         FeatureIterator<SimpleFeature> it = fc.subCollection(bbfilter).features();
         while(it.hasNext()) {
 
+            if (presence) {
+                builder = builder.withMetadata("presence", Boolean.TRUE);
+                it.close();
+                return;
+            }
+            
             SimpleFeature feature = it.next();
             Object shape = feature.getDefaultGeometryProperty().getValue();
             if (shape instanceof org.locationtech.jts.geom.Geometry) {
@@ -272,7 +292,7 @@ public class VectorEncoder implements IResourceEncoder {
                     final Object vval = value;
                     rasterizer.add(objectShape, (s) -> vval);
 
-                } else {
+                } else if (!presence) {
 
                     IScale objectScale = Scale.createLike(scope.getScale(), objectShape);
                     String objectName = null;
@@ -314,6 +334,10 @@ public class VectorEncoder implements IResourceEncoder {
 
         it.close();
 
+        if (presence) {
+            builder = builder.withMetadata("presence", Boolean.FALSE);
+        }
+        
         if (rasterize) {
             final Builder stateBuilder = builder;
             rasterizer.finish((b, xy) -> {

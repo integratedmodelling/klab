@@ -245,9 +245,9 @@ public class ModelKbox extends ObservableKbox {
                     + (ret.getOfflineModels().size() < 2 ? " was" : "s were") + " chosen but found offline: ";
 
             for (ModelReference m : ret.getOfflineModels()) {
-            	message += "\n   " + m.getName();
+                message += "\n   " + m.getName();
             }
-            
+
             if (ret.size() > 0) {
                 resolutionScope.getMonitor().info(message);
             } else {

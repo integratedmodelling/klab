@@ -1981,7 +1981,7 @@ public enum Resources implements IResourceService {
             return null;
         }
         Urn kurn = new Urn(urn);
-        return getResourceData(resource, kurn.getParameters(), geometry, Expression.emptyContext(monitor));
+        return getResourceData(resource, kurn.getParameters(), geometry, Expression.emptyContext(geometry, monitor));
     }
 
     /**

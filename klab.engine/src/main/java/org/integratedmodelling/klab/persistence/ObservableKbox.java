@@ -314,10 +314,6 @@ public abstract class ObservableKbox extends H2Kbox {
             return ret;
         }
 
-        if ("presence_of_chemistry__burned_earth__region".equals(observable.getReferenceName())) {
-            System.out.println("PPOPOPOPOP");
-        }
-        
         /*
          * We lookup all models whose observable incarnates the core type, adding all possible
          * specific models if the observable is abstract or the context requires generic matching

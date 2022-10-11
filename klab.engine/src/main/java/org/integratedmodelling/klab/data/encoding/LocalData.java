@@ -53,6 +53,7 @@ public class LocalData implements IKlabData {
     IDataArtifact state;
     IArtifact object;
     List<INotification> notifications = new ArrayList<>();
+    Metadata metadata = new Metadata();
     boolean error = false;
     IConcept semantics = null;
     IUnit originalUnit = null;
@@ -83,6 +84,9 @@ public class LocalData implements IKlabData {
         }
         if (builder.semantics != null) {
             this.semantics = builder.semantics;
+        }
+        if (builder.metadata != null) {
+            this.metadata.putAll(builder.metadata);
         }
     }
 
@@ -164,7 +168,12 @@ public class LocalData implements IKlabData {
                 // System.out.println("GOT NOTIFICATION " + o);
             }
         }
-
+        
+        if (data.containsKey("metadata")) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> metadata = (Map<String, Object>) data.get("metadata");
+            this.metadata.putAll(metadata);
+        }
     }
 
     private IArtifact.Type getDataType(Map<?, ?> data) {
@@ -343,6 +352,12 @@ public class LocalData implements IKlabData {
             }
 
         }
+        
+        if (data.containsKey("metadata")) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> metadata = (Map<String, Object>) data.get("metadata");
+            this.metadata.putAll(metadata);
+        }
 
         if (data.containsKey("notifications")) {
             for (Object o : (List<?>) data.get("notifications")) {
@@ -463,6 +478,11 @@ public class LocalData implements IKlabData {
     @Override
     public IConcept getSemantics() {
         return semantics;
+    }
+
+    @Override
+    public IMetadata getMetadata() {
+        return metadata;
     }
 
 }
