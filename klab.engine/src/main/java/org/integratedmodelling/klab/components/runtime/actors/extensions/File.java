@@ -7,13 +7,15 @@ import java.util.Map;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.exceptions.KlabActorException;
 
+import groovy.lang.GroovyObjectSupport;
+
 /**
  * Filestream proxy for k.Actors.
  * 
  * @author Ferd
  *
  */
-public class File {
+public class File extends GroovyObjectSupport {
 
     java.io.File file = null;
     String filename = null;
@@ -41,6 +43,10 @@ public class File {
 
     public boolean exists() {
         return this.file.exists();
+    }
+    
+    public String getName() {
+        return filename;
     }
 
     public void setProperty(String key, Object value) {
