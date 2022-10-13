@@ -160,7 +160,8 @@ public class GridAdapter implements IUrnAdapter {
         IEnvelope within = null;
         double[] containing = null;
         Boolean terrestrial = null;
-
+        int skip = -1;
+        
         if (urn.getParameters().containsKey("within")) {
             double[] coords = NumberUtils.doubleArrayFromString(urn.getParameters().get("within"), ",");
             within = Envelope.create(coords[0], coords[1], coords[2], coords[3], Projection.getLatLon());
@@ -171,7 +172,9 @@ public class GridAdapter implements IUrnAdapter {
         if (urn.getParameters().containsKey("terrestrial")) {
             terrestrial = Boolean.parseBoolean(urn.getParameters().get("terrestrial"));
         }
-
+        if (urn.getParameters().containsKey("skip")) {
+            skip = Integer.parseInt(urn.getParameters().get("skip"));
+        }
 //        boolean commit = false;
 //        Map<String, Boolean> terrestrialCache = null;
 //        if (terrestrial != null) {
@@ -188,6 +191,12 @@ public class GridAdapter implements IUrnAdapter {
                 }
                 
                 SimpleFeature feature = it.next();
+
+                if (skip >= 0 && n < skip) {
+                    n ++;
+                    continue;
+                }
+                
                 Object shape = feature.getDefaultGeometryProperty().getValue();
                 if (shape instanceof org.locationtech.jts.geom.Geometry) {
 
