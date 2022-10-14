@@ -171,13 +171,7 @@ public class H2Database {
 			 * h2 is created and the mv only exists after the db contains anything.
 			 */
 			this.isNew = !f1.exists() && !f2.exists();
-			try {
-				String fileUrl = directory.toURI().toURL().toString();
-				this.url = "jdbc:h2:" + fileUrl + kboxName + ";AUTO_SERVER=true;NON_KEYWORDS=KEY,VALUE,SECOND,MINUTE,HOUR,DAY,MONTH,YEAR"; //;MVCC=true"; - Not supported from h2 1.4.200
-			} catch (MalformedURLException e1) {
-				throw new KlabValidationException(e1);
-			}
-
+			this.url = "jdbc:h2:" + directory + "/" + kboxName + ";AUTO_SERVER=true;NON_KEYWORDS=KEY,VALUE,SECOND,MINUTE,HOUR,DAY,MONTH,YEAR"; //;MVCC=true"; - Not supported from h2 1.4.200
 		}
 
 		this.ds.setURL(url);
