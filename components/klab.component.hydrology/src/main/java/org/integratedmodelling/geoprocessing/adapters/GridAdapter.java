@@ -4,8 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.feature.FeatureIterator;
@@ -37,6 +40,7 @@ import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.NumberUtils;
+import org.integratedmodelling.klab.utils.Pair;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.Serializer;
@@ -47,8 +51,9 @@ public class GridAdapter implements IUrnAdapter {
 
     public static final String NAME = "grid";
 
-//    static DB db = null;
-    
+    static DB db = null;
+    static Map<String, Map<String, Boolean>> caches = new HashMap<>();
+
     public static final String NAMESPACE_TILES = "tiles";
     public static final String NAMESPACE_ROWS = "rows";
     public static final String NAMESPACE_COLS = "columns";
@@ -78,27 +83,34 @@ public class GridAdapter implements IUrnAdapter {
         // return builder.build();
     }
 
-    
-//    public Map<String, Boolean> getBooleanCache(Urn urn, String cacheName) {
-//
-//        if (db == null) {
-//
-//            File dpath = Configuration.INSTANCE.getDataPath(NAME + "_cache");
-//            dpath.mkdirs();
-//
-//            /**
-//             * Use transactions. Memory mapping for now disabled as f'ing Win makes it
-//             * almost impossible to use correctly.
-//             */
-//            db = DBMaker.fileDB(new File(dpath + File.separator + "gridadapter.dat")).transactionEnable()
-//                    /* .fileMmapEnable() */.closeOnJvmShutdown().make();
-//        }
-//        
-//
-//        return db.treeMap(sanitize(urn.getUrn() + "_" + cacheName), Serializer.STRING, Serializer.BOOLEAN).createOrOpen();
-//
-//        
-//    }
+    public Pair<Map<String, Boolean>, Boolean> getBooleanCache(Urn urn, String cacheName) {
+
+        String cname = sanitize(urn.getUrn() + "_" + cacheName);
+        
+        if (db == null) {
+
+            File dpath = Configuration.INSTANCE.getDataPath(NAME + "_cache");
+            dpath.mkdirs();
+
+            /**
+             * Use transactions. Memory mapping for now disabled as f'ing Win makes it
+             * almost impossible to use correctly.
+             */
+            db = DBMaker.fileDB(new File(dpath + File.separator + "gridadapter.dat")).transactionEnable()
+                    /* .fileMmapEnable() */.closeOnJvmShutdown().make();
+        }
+        Map<String, Boolean> ret = caches.get(cname);
+        if (ret != null) {
+            return new Pair<>(ret, false);
+        }
+        
+
+        ret = db.treeMap(cname, Serializer.STRING, Serializer.BOOLEAN).createOrOpen();
+        caches.put(cname, ret);
+        
+        return new Pair<>(ret, ret.isEmpty());
+
+    }
 
     private String sanitize(String urn) {
         return urn.replaceAll(":", "__").replaceAll(".", "_");
@@ -161,7 +173,9 @@ public class GridAdapter implements IUrnAdapter {
         double[] containing = null;
         Boolean terrestrial = null;
         int skip = -1;
-        
+        int stop = -1;
+        Set<Integer> select = null;
+
         if (urn.getParameters().containsKey("within")) {
             double[] coords = NumberUtils.doubleArrayFromString(urn.getParameters().get("within"), ",");
             within = Envelope.create(coords[0], coords[1], coords[2], coords[3], Projection.getLatLon());
@@ -175,12 +189,25 @@ public class GridAdapter implements IUrnAdapter {
         if (urn.getParameters().containsKey("skip")) {
             skip = Integer.parseInt(urn.getParameters().get("skip"));
         }
-//        boolean commit = false;
-//        Map<String, Boolean> terrestrialCache = null;
+        if (urn.getParameters().containsKey("stop")) {
+            stop = Integer.parseInt(urn.getParameters().get("stop"));
+        }
+        if (urn.getParameters().containsKey("select")) {
+            int[] sel = NumberUtils.intArrayFromString(urn.getParameters().get("select"));
+            select = new HashSet<>();
+            for (int n : sel) {
+                select.add(n);
+            }
+        }
+
+        boolean commit = false;
+        Map<String, Boolean> terrestrialCache = null;
 //        if (terrestrial != null) {
-//            terrestrialCache = getBooleanCache(urn, "terrestrial");
+//            Pair<Map<String, Boolean>, Boolean> cache = getBooleanCache(urn, "terrestrial");
+//            terrestrialCache = cache.getFirst();
+//            commit = cache.getSecond();
 //        }
-        
+
         int n = 1;
         try {
             FeatureIterator<SimpleFeature> it = source.getFeatures().features();
@@ -189,14 +216,23 @@ public class GridAdapter implements IUrnAdapter {
                 if ((n % 100) == 0) {
                     System.out.println("Done " + n + " tiles");
                 }
-                
+
                 SimpleFeature feature = it.next();
 
                 if (skip >= 0 && n < skip) {
-                    n ++;
+                    n++;
                     continue;
                 }
-                
+
+                if (stop >= 0 && n > stop) {
+                    break;
+                }
+
+                if (select != null && !select.contains(n)) {
+                    n++;
+                    continue;
+                }
+
                 Object shape = feature.getDefaultGeometryProperty().getValue();
                 if (shape instanceof org.locationtech.jts.geom.Geometry) {
 
@@ -219,25 +255,26 @@ public class GridAdapter implements IUrnAdapter {
                      */
                     if (terrestrial != null) {
                         if (terrestrial) {
-                            
-//                            Boolean isTerrestrial = terrestrialCache.get("tile_" + n);
-//                            if (isTerrestrial == null) {
-                                boolean isTerrestrial = Geocoder.INSTANCE.isTerrestrial(objectShape.getEnvelope());
-//                                terrestrialCache.put("tile_" + n, isTerrestrial);
-//                                commit = true;
-//                            }
-                            
+
+                            // Boolean isTerrestrial = terrestrialCache.get("tile_" + n);
+                            // if (isTerrestrial == null) {
+                            boolean isTerrestrial = Geocoder.INSTANCE.isTerrestrial(objectShape.getEnvelope());
+                            // terrestrialCache.put("tile_" + n, isTerrestrial);
+                            // commit = true;
+                            // }
+
                             if (!isTerrestrial) {
                                 // keep numbering
                                 n++;
                                 continue;
                             }
-                            
+
                         } else {
-                            
+
                             // TODO default should be to accept only tiles that have NO ocean, so
                             // 1+ shapes but also intersection == envelope. Should use a differently
-                            // named cache and ensure that any skipped tile doesn't alter the numbering.
+                            // named cache and ensure that any skipped tile doesn't alter the
+                            // numbering.
                         }
                     }
 
@@ -250,10 +287,10 @@ public class GridAdapter implements IUrnAdapter {
 
             it.close();
 
-//            if (commit) {
-//                db.commit();
-//            }
-            
+            // if (commit) {
+            // db.commit();
+            // }
+
         } catch (IOException e) {
             throw new KlabIOException("cannot create features from grid adapter URN parameters");
         }
