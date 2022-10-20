@@ -20,6 +20,7 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedA
 
 
 public class TokenAuthenticationFilter implements Filter {
+    public static final String AUTHENTICATION_TOKEN_HEADER_NAME = "Authentication";
 
     
     @Autowired
@@ -31,7 +32,7 @@ public class TokenAuthenticationFilter implements Filter {
         try {
             
         	String tokenString = ((HttpServletRequest) request)
-                    .getHeader(WebSecurityConfig.AUTHENTICATION_TOKEN_HEADER_NAME);
+                    .getHeader(AUTHENTICATION_TOKEN_HEADER_NAME);
             if (tokenString != null) {
             	Optional<TokenAuthentication> token = tokenRepository.findByTokenString(tokenString);
             	if(token.isPresent()) {

@@ -50,7 +50,8 @@ public class DevMongoModelsConfig implements ApplicationListener<ContextRefreshe
 				groupRepo,
 				userRepository,
 				ldapUserDetailsManager,
-				passwordEncoder).execute();
+				passwordEncoder
+				).execute();
 		
 		new CreateInitialLevers(leverRepo).execute();
 		new CreateIntialNodes(nodeRepo, groupRepo).execute();

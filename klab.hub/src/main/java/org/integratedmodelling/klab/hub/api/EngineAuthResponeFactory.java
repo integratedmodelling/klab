@@ -15,7 +15,7 @@ import org.integratedmodelling.klab.hub.exception.UserDoesNotExistException;
 import org.integratedmodelling.klab.hub.licenses.services.LicenseConfigService;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.hub.network.NodeNetworkManager;
-import org.integratedmodelling.klab.hub.tokens.services.UserAuthTokenService;
+//import org.integratedmodelling.klab.hub.tokens.services.UserAuthTokenService;
 import org.integratedmodelling.klab.hub.users.services.UserProfileService;
 import org.integratedmodelling.klab.rest.AuthenticatedIdentity;
 import org.integratedmodelling.klab.rest.EngineAuthenticationRequest;
@@ -37,16 +37,16 @@ public class EngineAuthResponeFactory {
     
     private LicenseConfigService configService;
     
-    private UserAuthTokenService tokenService;
+//    private UserAuthTokenService tokenService;
 	
     public EngineAuthResponeFactory(UserProfileService profileService,
             MongoGroupRepository groupRepository,
-            LicenseConfigService configService,
-            UserAuthTokenService tokenService) {
+            LicenseConfigService configService/*,
+            UserAuthTokenService tokenService*/) {
         this.profileService = profileService;
         this.groupRepository = groupRepository;
         this.configService = configService;
-        this.tokenService = tokenService;
+//        this.tokenService = tokenService;
     }
     
 	public EngineAuthenticationResponse getRespone(EngineAuthenticationRequest request, String remoteAddr) 
@@ -76,8 +76,8 @@ public class EngineAuthResponeFactory {
 		            config = null;
 		        }
 				EngineAuthenticationResponse response = remoteEngine(profile, request.getCertificate(), config);
-				TokenAuthentication token = tokenService.createToken(profile.getUsername(), TokenType.auth);
-				response.setAuthentication(token.getTokenString());
+//				TokenAuthentication token = tokenService.createToken(profile.getUsername(), TokenType.auth);
+//				response.setAuthentication(token.getTokenString());
 	    		profile.setLastConnection(DateTime.now());
 	    		profileService.updateUserByProfile(profile);
 	    		return response;

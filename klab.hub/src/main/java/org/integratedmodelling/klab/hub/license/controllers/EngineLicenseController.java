@@ -21,7 +21,7 @@ import org.integratedmodelling.klab.hub.exception.LicenseExpiredException;
 import org.integratedmodelling.klab.hub.exception.LicenseGenerationError;
 import org.integratedmodelling.klab.hub.licenses.services.LicenseConfigService;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
-import org.integratedmodelling.klab.hub.tokens.services.UserAuthTokenService;
+//import org.integratedmodelling.klab.hub.tokens.services.UserAuthTokenService;
 import org.integratedmodelling.klab.hub.users.services.UserProfileService;
 import org.integratedmodelling.klab.rest.EngineAuthenticationRequest;
 import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
@@ -53,9 +53,9 @@ public class EngineLicenseController extends LicenseController<EngineAuthenticat
 	EngineLicenseController(UserProfileService userProfileService,
 			LicenseConfigService configService,
 			MongoGroupRepository groupRepository,
-		    EmailManager emailManager,
-		    UserAuthTokenService authTokenService) {
-	    this.authFactory = new EngineAuthResponeFactory(userProfileService, groupRepository, configService, authTokenService);
+		    EmailManager emailManager/*,
+		    UserAuthTokenService authTokenService*/) {
+	    this.authFactory = new EngineAuthResponeFactory(userProfileService, groupRepository, configService/*, authTokenService*/);
 	    this.licenseGenerator = new LicenseGenerator(configService);
 		this.userProfileService = userProfileService;
 		this.emailManager = emailManager;
