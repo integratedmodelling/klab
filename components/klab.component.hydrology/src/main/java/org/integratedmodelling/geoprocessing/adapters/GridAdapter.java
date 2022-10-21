@@ -86,15 +86,15 @@ public class GridAdapter implements IUrnAdapter {
     public Pair<Map<String, Boolean>, Boolean> getBooleanCache(Urn urn, String cacheName) {
 
         String cname = sanitize(urn.getUrn() + "_" + cacheName);
-        
+
         if (db == null) {
 
             File dpath = Configuration.INSTANCE.getDataPath(NAME + "_cache");
             dpath.mkdirs();
 
             /**
-             * Use transactions. Memory mapping for now disabled as f'ing Win makes it
-             * almost impossible to use correctly.
+             * Use transactions. Memory mapping for now disabled as f'ing Win makes it almost
+             * impossible to use correctly.
              */
             db = DBMaker.fileDB(new File(dpath + File.separator + "gridadapter.dat")).transactionEnable()
                     /* .fileMmapEnable() */.closeOnJvmShutdown().make();
@@ -103,11 +103,10 @@ public class GridAdapter implements IUrnAdapter {
         if (ret != null) {
             return new Pair<>(ret, false);
         }
-        
 
         ret = db.treeMap(cname, Serializer.STRING, Serializer.BOOLEAN).createOrOpen();
         caches.put(cname, ret);
-        
+
         return new Pair<>(ret, ret.isEmpty());
 
     }
@@ -202,11 +201,11 @@ public class GridAdapter implements IUrnAdapter {
 
         boolean commit = false;
         Map<String, Boolean> terrestrialCache = null;
-//        if (terrestrial != null) {
-//            Pair<Map<String, Boolean>, Boolean> cache = getBooleanCache(urn, "terrestrial");
-//            terrestrialCache = cache.getFirst();
-//            commit = cache.getSecond();
-//        }
+        // if (terrestrial != null) {
+        // Pair<Map<String, Boolean>, Boolean> cache = getBooleanCache(urn, "terrestrial");
+        // terrestrialCache = cache.getFirst();
+        // commit = cache.getSecond();
+        // }
 
         int n = 1;
         try {
@@ -279,7 +278,9 @@ public class GridAdapter implements IUrnAdapter {
                     }
 
                     IScale objectScale = Scale.createLike(scale, objectShape);
-                    builder.startObject(nameAttribute + "_" + n, nameAttribute + "_" + n, objectScale).finishObject();
+                    builder.startObject(nameAttribute + "_" + n, nameAttribute + "_" + n, objectScale)
+                            .withMetadata("index", n)
+                            .finishObject();
                 }
 
                 n++;
