@@ -664,6 +664,11 @@
 			<artifactId>gt-process-raster</artifactId>
 			<version>${geotools.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-process-feature</artifactId>
+			<version>${geotools.version}</version>
+		</dependency>
 		<!-- <dependency> <groupId>org.geotools</groupId> <artifactId>gt-netcdf</artifactId> 
 			<version>${geotools.version}</version> </dependency> -->
 		<!-- GEOTOOLS mess ends -->

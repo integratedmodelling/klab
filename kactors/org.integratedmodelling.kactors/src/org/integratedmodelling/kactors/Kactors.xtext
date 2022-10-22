@@ -46,6 +46,16 @@ Preamble: {Preamble}
 	)
 ;
 
+TYPE:
+	'int' |
+	'concept' |
+	'list' |
+	'map' |
+	'number' |
+	'text' |
+	'boolean'
+;
+
 /*
  *  Action defines an action in the behavior;
  *  Actor is an action that creates a "peer" actor, which remains alive until stopped 
