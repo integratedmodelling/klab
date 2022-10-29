@@ -2,19 +2,19 @@ package org.integratedmodelling.opencpu.adapters;
 
 import java.util.Collection;
 
-import org.integratedmodelling.klab.Urn;
+import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.Version;
-import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
-import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
-import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
-import org.integratedmodelling.klab.api.extensions.UrnAdapter;
-import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
-import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.api.data.IResourceCalculator;
+import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
+import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
+import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
+import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
+import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
+import org.integratedmodelling.klab.api.extensions.ResourceAdapter;
 
-@UrnAdapter(type = OpenCPUAdapter.ID, version = Version.CURRENT)
-public class OpenCPUAdapter implements IUrnAdapter {
+@ResourceAdapter(version = Version.CURRENT, canCreateEmpty = true, handlesFiles = false, type = OpenCPUAdapter.ID)
+public class OpenCPUAdapter implements IResourceAdapter {
 
     public static final String ID = "opencpu";
     
@@ -24,52 +24,40 @@ public class OpenCPUAdapter implements IUrnAdapter {
     }
 
     @Override
-    public IResource getResource(String urn) {
+    public IResourceValidator getValidator() {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public IResource contextualize(IResource resource, IGeometry scale, IGeometry overallScale,
-            IObservable semantics) {
+    public IResourcePublisher getPublisher() {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public boolean isOnline(Urn urn) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public void encodeData(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope scope) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public Type getType(Urn urn) {
+    public IResourceEncoder getEncoder() {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public IGeometry getGeometry(Urn urn) {
+    public IResourceImporter getImporter() {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public String getDescription() {
+    public IResourceCalculator getCalculator(IResource resource) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public Collection<String> getResourceUrns() {
+    public Collection<IPrototype> getResourceConfiguration() {
         // TODO Auto-generated method stub
         return null;
     }
+
 
 }
