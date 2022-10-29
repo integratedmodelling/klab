@@ -199,7 +199,7 @@ public class GridAdapter implements IUrnAdapter {
             }
         }
 
-        boolean commit = false;
+        boolean commit = false; 
         Map<String, Boolean> terrestrialCache = null;
         // if (terrestrial != null) {
         // Pair<Map<String, Boolean>, Boolean> cache = getBooleanCache(urn, "terrestrial");
@@ -278,8 +278,7 @@ public class GridAdapter implements IUrnAdapter {
                     }
 
                     IScale objectScale = Scale.createLike(scale, objectShape);
-                    builder.startObject(nameAttribute + "_" + n, nameAttribute + "_" + n, objectScale)
-                            .withMetadata("index", n)
+                    builder.startObject(nameAttribute + "_" + n, nameAttribute + "_" + n, objectScale).withMetadata("index", n)
                             .finishObject();
                 }
 
