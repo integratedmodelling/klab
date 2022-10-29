@@ -1,15 +1,13 @@
 package org.integratedmodelling.klab.components.geospace.utils;
 
-import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
-import javax.media.jai.iterator.RandomIter;
-import javax.media.jai.iterator.RandomIterFactory;
-
-import org.geotools.coverage.GridSampleDimension;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.io.AbstractGridFormat;
 import org.geotools.coverage.grid.io.GridCoverage2DReader;
@@ -34,15 +32,15 @@ import org.integratedmodelling.klab.utils.MiscUtilities;
  */
 public class FindEmptyRasters {
 
-    private void findEmptyRasters(File directory, Map<File, String> result) {
+    private void findEmptyRasters(File directory, Map<File, List<File>> result) {
 
-        StringBuffer files = new StringBuffer(1024);
+        List<File> files = new ArrayList<>();
 
         for (File f : directory.listFiles()) {
             if (f.isDirectory()) {
                 findEmptyRasters(f, result);
             } else if (f.toString().endsWith(".tif") || f.toString().endsWith(".tiff")) {
-                
+
                 boolean ok = false;
                 try {
                     GridCoverage2D tiff = readCoverage(f);
@@ -57,26 +55,38 @@ public class FindEmptyRasters {
                 }
                 
                 if (!ok) {
-                    files.append((files.length() == 0 ? "" : ",") + MiscUtilities.getFileBaseName(f));
+                    files.add(f);
                 }
             }
         }
 
         if (!files.isEmpty()) {
-            result.put(directory, files.toString());
+            System.out.println(directory + ": " + files.toString());
+            result.put(directory, files);
         }
 
     }
 
-    public Map<File, String> scan(File directory) {
-        Map<File, String> ret = new LinkedHashMap<>();
+    public Map<File, List<File>> scan(File directory) {
+        Map<File, List<File>> ret = new LinkedHashMap<>();
         findEmptyRasters(directory, ret);
         return ret;
+    }
+    
+    public void process(File directory) {
+        processResult(scan(directory));
     }
 
     public static void main(String[] args) {
         FindEmptyRasters scanner = new FindEmptyRasters();
-        Map<File, String> result = scanner.scan(Configuration.INSTANCE.getDefaultExportDirectory());
+        scanner.process(Configuration.INSTANCE.getDefaultExportDirectory());
+    }
+
+    /**
+     * Override for goodies
+     * @param result
+     */
+    protected void processResult(Map<File, List<File>> result) {
         for (File dir : result.keySet()) {
             System.out.println(dir + ":\t" + result.get(dir));
         }
@@ -84,7 +94,6 @@ public class FindEmptyRasters {
 
     public GridCoverage2D readCoverage(File mainFile) throws IOException {
 
-        GridCoverage2D ret = null;
         AbstractGridFormat format = GridFormatFinder.findFormat(mainFile);
         // this is a bit hackey but does make more geotiffs work
         Hints hints = new Hints();
