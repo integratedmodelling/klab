@@ -71,6 +71,19 @@ public interface IObservable extends ISemantic, IResolvable {
     }
 
     /**
+     * Conditions stated in the observable that control the use of the default value. Only
+     * meaningful if a default value is given.
+     * 
+     * @author Ferd
+     *
+     */
+    enum ResolutionException {
+        Missing,
+        Nodata,
+        Error
+    }
+
+    /**
      * The observable builder provides a uniform interface to create and declare concepts that
      * incarnate all the possible features for an observable. The builder is smart and fast when
      * concepts that already exist due to previous declarations are requested.
@@ -382,6 +395,20 @@ public interface IObservable extends ISemantic, IResolvable {
         Builder withInlineValue(Object value);
 
         /**
+         * 
+         * @param defaultValue
+         * @return
+         */
+        Builder withDefaultValue(Object defaultValue);
+        
+        /**
+         * 
+         * @param resolutionException
+         * @return
+         */
+        Builder withResolutionException(ResolutionException resolutionException);
+        
+        /**
          * Add a numeric range (check that the artifact type is numeric at build)
          * 
          * @param range
@@ -405,13 +432,13 @@ public interface IObservable extends ISemantic, IResolvable {
          */
         Builder withResolution(Resolution only);
 
-        /**
-         * Give or remove the fluid units trait
-         * 
-         * @param b
-         * @return
-         */
-        Builder fluidUnits(boolean b);
+//        /**
+//         * Give or remove the fluid units trait
+//         * 
+//         * @param b
+//         * @return
+//         */
+//        Builder fluidUnits(boolean b);
 
         /**
          * Add an annotation to the result observable.
@@ -497,10 +524,10 @@ public interface IObservable extends ISemantic, IResolvable {
      * @return the stated name of this observable.
      */
     String getStatedName();
-    
+
     /**
-     * Return any mediator in the state: unit, currency or range. These are also returned
-     * separately by other methods if we need to discriminate.
+     * Return any mediator in the state: unit, currency or range. These are also returned separately
+     * by other methods if we need to discriminate.
      * 
      * @return
      */
@@ -567,6 +594,21 @@ public interface IObservable extends ISemantic, IResolvable {
      *         which this happens.)
      */
     Object getValue();
+
+    /**
+     * If a default value was defined for a quality observable, it is returned here. It will be
+     * applied according to the stated resolution exceptions and the optional status.
+     * 
+     * @return
+     */
+    Object getDefaultValue();
+
+    /**
+     * Resolution exceptions linked to the use of a stated default value.
+     * 
+     * @return
+     */
+    Collection<ResolutionException> getResolutionExceptions();
 
     /**
      * A generic observable expects to be resolved extensively - i.e., all the subtypes, leaving the
@@ -651,7 +693,7 @@ public interface IObservable extends ISemantic, IResolvable {
      * @return
      */
     boolean is(Type type);
-    
+
     /**
      * Any value operators are returned here, paired with their operands.
      * 

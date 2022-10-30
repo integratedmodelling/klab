@@ -365,7 +365,8 @@ ObservableSemantics:
 			(=> 'per' unit=Unit)
 		)? &
 		(=> valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
-		(optional?='optional' | 'required')? &
+		(optional?='optional'| 'required')? &
+		(default?='default' 'to' (defaultLiteral=Literal | defaultConcept=ConceptDeclaration) ('when' causes+=RESOLUTION_EXCEPTION (',' causes+=RESOLUTION_EXCEPTION)*)? )? &
 		(from=Number 'to' to=Number)? &
 		('named' name=(LOWERCASE_ID|STRING))?
 	);
@@ -410,7 +411,8 @@ AnnotatedObservableSemantics returns ObservableSemantics:
 			('per' unit=Unit)
 		)? &
 		(valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
-		(optional?='optional' | 'required')? &
+		(optional?='optional'| 'required')? &
+		(default?='default' 'to' (defaultLiteral=Literal | defaultConcept=ConceptDeclaration) ('when' causes+=RESOLUTION_EXCEPTION (',' causes+=RESOLUTION_EXCEPTION)*)? )? &
 		(from=Number 'to' to=Number)? &
 		('named' name=(LOWERCASE_ID|STRING))?
 	);
@@ -425,8 +427,9 @@ Dependency:
 		'(' 
 			alternativeObservables+=AlternativeDependencyObservableSemantics (',' alternativeObservables+=AlternativeDependencyObservableSemantics)*
 		')' 
-			(optional?='optional' | 'required')? & 
-			'named' name=(LOWERCASE_ID|STRING)
+		(optional?='optional'| 'required')? &
+		(default?='default' 'to' (defaultLiteral=Literal | defaultConcept=ConceptDeclaration) ('when' causes+=RESOLUTION_EXCEPTION (',' causes+=RESOLUTION_EXCEPTION)*)? )? &
+		'named' name=(LOWERCASE_ID|STRING)
 	))
 ;
 
@@ -901,6 +904,12 @@ enum DataType:
 	BOOLEAN='boolean' |
 	DATE='date';
 
+RESOLUTION_EXCEPTION:
+	'error' |
+	'nodata' |
+	'missing'
+;
+
 /**
  * Carefully selected keywords to define a concept, which enable automatic definition of
  * fairly complex semantics and validation against upper ontologies. For now implement
@@ -988,7 +997,8 @@ DependencyObservableSemantics returns ObservableSemantics:
 		)? &
 		(from=Number 'to' to=Number)? &
 		(valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
-		(optional?='optional' | 'required')? &
+		(optional?='optional'| 'required')? &
+		(default?='default' 'to' (defaultLiteral=Literal | defaultConcept=ConceptDeclaration) ('when' causes+=RESOLUTION_EXCEPTION (',' causes+=RESOLUTION_EXCEPTION)*)? )? &
 		('named' name=(LOWERCASE_ID|STRING))?
 	);
 

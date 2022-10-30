@@ -25,6 +25,10 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getCurrency <em>Currency</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getValueOperators <em>Value Operators</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#isOptional <em>Optional</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#isDefault <em>Default</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getDefaultLiteral <em>Default Literal</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getDefaultConcept <em>Default Concept</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getCauses <em>Causes</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getFrom <em>From</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getTo <em>To</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getName <em>Name</em>}</li>
@@ -205,6 +209,84 @@ public interface ObservableSemantics extends EObject
    * @generated
    */
   void setOptional(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Default</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Default</em>' attribute.
+   * @see #setDefault(boolean)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getObservableSemantics_Default()
+   * @model
+   * @generated
+   */
+  boolean isDefault();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ObservableSemantics#isDefault <em>Default</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Default</em>' attribute.
+   * @see #isDefault()
+   * @generated
+   */
+  void setDefault(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Default Literal</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Default Literal</em>' containment reference.
+   * @see #setDefaultLiteral(Literal)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getObservableSemantics_DefaultLiteral()
+   * @model containment="true"
+   * @generated
+   */
+  Literal getDefaultLiteral();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getDefaultLiteral <em>Default Literal</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Default Literal</em>' containment reference.
+   * @see #getDefaultLiteral()
+   * @generated
+   */
+  void setDefaultLiteral(Literal value);
+
+  /**
+   * Returns the value of the '<em><b>Default Concept</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Default Concept</em>' containment reference.
+   * @see #setDefaultConcept(ConceptDeclaration)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getObservableSemantics_DefaultConcept()
+   * @model containment="true"
+   * @generated
+   */
+  ConceptDeclaration getDefaultConcept();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getDefaultConcept <em>Default Concept</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Default Concept</em>' containment reference.
+   * @see #getDefaultConcept()
+   * @generated
+   */
+  void setDefaultConcept(ConceptDeclaration value);
+
+  /**
+   * Returns the value of the '<em><b>Causes</b></em>' attribute list.
+   * The list contents are of type {@link java.lang.String}.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Causes</em>' attribute list.
+   * @see org.integratedmodelling.kim.kim.KimPackage#getObservableSemantics_Causes()
+   * @model unique="false"
+   * @generated
+   */
+  EList<String> getCauses();
 
   /**
    * Returns the value of the '<em><b>From</b></em>' containment reference.

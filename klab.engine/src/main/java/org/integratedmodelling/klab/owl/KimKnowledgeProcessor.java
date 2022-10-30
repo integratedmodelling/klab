@@ -30,6 +30,7 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IObservable.Builder;
 import org.integratedmodelling.klab.api.knowledge.IObservable.Resolution;
+import org.integratedmodelling.klab.api.knowledge.IObservable.ResolutionException;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -64,7 +65,8 @@ public enum KimKnowledgeProcessor {
         coreConceptPeers.put(worldviewConcept, coreConcept);
     }
 
-    public @Nullable Concept build(final IKimConceptStatement concept, final INamespace namespace, ConceptStatement kimObject,
+    public @Nullable Concept build(final IKimConceptStatement concept, final INamespace namespace,
+            ConceptStatement kimObject,
             final IMonitor monitor) {
 
         if (concept.isMacro()) {
@@ -83,7 +85,8 @@ public enum KimKnowledgeProcessor {
                 if (concept.getUpperConceptDefined() != null) {
                     parent = Concepts.INSTANCE.getConcept(concept.getUpperConceptDefined());
                     if (parent == null) {
-                        monitor.error("Core concept " + concept.getUpperConceptDefined() + " is unknown", concept);
+                        monitor.error("Core concept " + concept.getUpperConceptDefined() + " is unknown",
+                                concept);
                     } else {
                         ((Concept) parent).getTypeSet().addAll(concept.getType());
                     }
@@ -94,13 +97,17 @@ public enum KimKnowledgeProcessor {
                     for (ParentConcept p : ((KimConceptStatement) concept).getParents()) {
 
                         if (i > 0) {
-                            monitor.error("concepts defining aliases with 'equals' cannot have more than one parent", p);
+                            monitor.error(
+                                    "concepts defining aliases with 'equals' cannot have more than one parent",
+                                    p);
                         }
 
                         for (IKimConcept pdecl : p.getConcepts()) {
                             IConcept declared = declare(pdecl, namespace.getOntology(), monitor);
                             if (declared == null) {
-                                monitor.error("parent declaration " + pdecl + " does not identify known concepts", pdecl);
+                                monitor.error(
+                                        "parent declaration " + pdecl + " does not identify known concepts",
+                                        pdecl);
                                 return null;
                             }
                             concepts.add(declared);
@@ -114,7 +121,8 @@ public enum KimKnowledgeProcessor {
                 }
 
                 if (parent != null) {
-                    ((Ontology) namespace.getOntology()).addDelegateConcept(concept.getName(), namespace.getStatement(),
+                    ((Ontology) namespace.getOntology()).addDelegateConcept(concept.getName(),
+                            namespace.getStatement(),
                             (Concept) parent);
                 }
 
@@ -126,9 +134,11 @@ public enum KimKnowledgeProcessor {
             if (((KimConceptStatement) concept).getParents().isEmpty()) {
                 IConcept parent = null;
                 if (concept.getUpperConceptDefined() != null) {
-                    upperConceptDefined = parent = Concepts.INSTANCE.getConcept(concept.getUpperConceptDefined());
+                    upperConceptDefined = parent = Concepts.INSTANCE
+                            .getConcept(concept.getUpperConceptDefined());
                     if (parent == null) {
-                        monitor.error("Core concept " + concept.getUpperConceptDefined() + " is unknown", concept);
+                        monitor.error("Core concept " + concept.getUpperConceptDefined() + " is unknown",
+                                concept);
                     }
                 } else {
                     parent = Resources.INSTANCE.getUpperOntology().getCoreType(concept.getType());
@@ -147,9 +157,10 @@ public enum KimKnowledgeProcessor {
                 ns.addAxiom(Axiom.AnnotationAssertion(ret.getName(), NS.BASE_DECLARATION, "true"));
                 createProperties(ret, ns);
                 ns.define();
-                
+
                 if (coreConceptPeers.containsKey(ret.toString()) && upperConceptDefined != null
-                        && "true".equals(upperConceptDefined.getMetadata().get(NS.IS_CORE_KIM_TYPE, "false"))) {
+                        && "true".equals(
+                                upperConceptDefined.getMetadata().get(NS.IS_CORE_KIM_TYPE, "false"))) {
                     Resources.INSTANCE.getUpperOntology().setAsCoreType(ret);
                 }
 
@@ -168,12 +179,13 @@ public enum KimKnowledgeProcessor {
 
         Concept main = null;
         String mainId = concept.getName();
-        
+
         namespace.addAxiom(Axiom.ClassAssertion(mainId, concept.getType()));
 
         // set the k.IM definition
         namespace.addAxiom(
-                Axiom.AnnotationAssertion(mainId, NS.CONCEPT_DEFINITION_PROPERTY, namespace.getName() + ":" + concept.getName()));
+                Axiom.AnnotationAssertion(mainId, NS.CONCEPT_DEFINITION_PROPERTY,
+                        namespace.getName() + ":" + concept.getName()));
 
         // and the reference name
         namespace.addAxiom(Axiom.AnnotationAssertion(mainId, NS.REFERENCE_NAME_PROPERTY,
@@ -211,7 +223,8 @@ public enum KimKnowledgeProcessor {
                             ((Concept) concepts.get(0)).getTypeSet());
                     break;
                 case UNION:
-                    expr = OWL.INSTANCE.getUnion(concepts, namespace.getOntology(), ((Concept) concepts.get(0)).getTypeSet());
+                    expr = OWL.INSTANCE.getUnion(concepts, namespace.getOntology(),
+                            ((Concept) concepts.get(0)).getTypeSet());
                     break;
                 case FOLLOWS:
                     expr = OWL.INSTANCE.getConsequentialityEvent(concepts, namespace.getOntology());
@@ -221,7 +234,8 @@ public enum KimKnowledgeProcessor {
                     break;
                 }
                 if (concept.isAlias()) {
-                    namespace.getOntology().addDelegateConcept(mainId, namespace.getStatement(), (Concept) expr);
+                    namespace.getOntology().addDelegateConcept(mainId, namespace.getStatement(),
+                            (Concept) expr);
                 } else {
                     namespace.addAxiom(Axiom.SubClass(expr.getUrn(), mainId));
                 }
@@ -232,7 +246,9 @@ public enum KimKnowledgeProcessor {
         for (IKimScope child : concept.getChildren()) {
             if (child instanceof IKimConceptStatement) {
                 try {
-                    ConceptStatement chobj = kimObject == null ? null : new ConceptStatement((IKimConceptStatement) child);
+                    ConceptStatement chobj = kimObject == null
+                            ? null
+                            : new ConceptStatement((IKimConceptStatement) child);
                     IConcept childConcept = buildInternal((IKimConceptStatement) child, namespace, chobj,
                             monitor instanceof ErrorNotifyingMonitor
                                     ? ((ErrorNotifyingMonitor) monitor).contextualize(child)
@@ -249,7 +265,8 @@ public enum KimKnowledgeProcessor {
         for (IKimConcept inherited : ((KimConceptStatement) concept).getTraitsInherited()) {
             IConcept trait = declare(inherited, namespace.getOntology(), monitor);
             if (trait == null) {
-                monitor.error("inherited " + inherited.getName() + " does not identify known concepts", inherited);
+                monitor.error("inherited " + inherited.getName() + " does not identify known concepts",
+                        inherited);
                 return null;
             }
             try {
@@ -263,45 +280,52 @@ public enum KimKnowledgeProcessor {
         for (IKimConcept affected : ((KimConceptStatement) concept).getQualitiesAffected()) {
             IConcept quality = declare(affected, namespace.getOntology(), monitor);
             if (quality == null) {
-                monitor.error("affected " + affected.getName() + " does not identify known concepts", affected);
+                monitor.error("affected " + affected.getName() + " does not identify known concepts",
+                        affected);
                 return null;
             }
-            OWL.INSTANCE.restrictSome(main, Concepts.p(NS.AFFECTS_PROPERTY), quality, namespace.getOntology());
+            OWL.INSTANCE.restrictSome(main, Concepts.p(NS.AFFECTS_PROPERTY), quality,
+                    namespace.getOntology());
         }
 
         for (IKimConcept required : ((KimConceptStatement) concept).getRequiredIdentities()) {
             IConcept quality = declare(required, namespace.getOntology(), monitor);
             if (quality == null) {
-                monitor.error("required " + required.getName() + " does not identify known concepts", required);
+                monitor.error("required " + required.getName() + " does not identify known concepts",
+                        required);
                 return null;
             }
-            OWL.INSTANCE.restrictSome(main, Concepts.p(NS.REQUIRES_IDENTITY_PROPERTY), quality, namespace.getOntology());
+            OWL.INSTANCE.restrictSome(main, Concepts.p(NS.REQUIRES_IDENTITY_PROPERTY), quality,
+                    namespace.getOntology());
         }
 
         for (IKimConcept affected : ((KimConceptStatement) concept).getObservablesCreated()) {
             IConcept quality = declare(affected, namespace.getOntology(), monitor);
             if (quality == null) {
-                monitor.error("created " + affected.getName() + " does not identify known concepts", affected);
+                monitor.error("created " + affected.getName() + " does not identify known concepts",
+                        affected);
                 return null;
             }
-            OWL.INSTANCE.restrictSome(main, Concepts.p(NS.CREATES_PROPERTY), quality, namespace.getOntology());
+            OWL.INSTANCE.restrictSome(main, Concepts.p(NS.CREATES_PROPERTY), quality,
+                    namespace.getOntology());
         }
 
         for (ApplicableConcept link : concept.getSubjectsLinked()) {
             if (link.getOriginalObservable() == null && link.getSource() != null) {
                 // relationship source->target
-                Observables.INSTANCE.defineRelationship(main, declare(link.getSource(), namespace.getOntology(), monitor),
+                Observables.INSTANCE.defineRelationship(main,
+                        declare(link.getSource(), namespace.getOntology(), monitor),
                         declare(link.getTarget(), namespace.getOntology(), monitor), namespace.getOntology());
             } else {
                 // TODO
             }
         }
-        
+
         if (!concept.getEmergenceTriggers().isEmpty()) {
-        	List<IConcept> triggers = new ArrayList<>();
-        	for (IKimConcept trigger : concept.getEmergenceTriggers()) {
-        		triggers.add(declare(trigger, namespace.getOntology(), monitor));
-        	}
+            List<IConcept> triggers = new ArrayList<>();
+            for (IKimConcept trigger : concept.getEmergenceTriggers()) {
+                triggers.add(declare(trigger, namespace.getOntology(), monitor));
+            }
             Reasoner.INSTANCE.registerEmergent(main, triggers);
         }
 
@@ -312,11 +336,13 @@ public enum KimKnowledgeProcessor {
         return main;
     }
 
-    public synchronized @Nullable Observable declare(final IKimObservable concept, IOntology declarationOntology,
+    public synchronized @Nullable Observable declare(final IKimObservable concept,
+            IOntology declarationOntology,
             final IMonitor monitor) {
 
         if (concept.getNonSemanticType() != null) {
-            Concept nsmain = OWL.INSTANCE.getNonsemanticPeer(concept.getModelReference(), concept.getNonSemanticType());
+            Concept nsmain = OWL.INSTANCE.getNonsemanticPeer(concept.getModelReference(),
+                    concept.getNonSemanticType());
             Observable observable = new Observable(nsmain);
             observable.setModelReference(concept.getModelReference());
             observable.setName(concept.getFormalName());
@@ -333,22 +359,22 @@ public enum KimKnowledgeProcessor {
 
         Concept observable = main;
 
-        Observable ret = new Observable(observable);
+        // Observable ret = new Observable(observable);
 
         IObservable.Builder builder = ObservableBuilder.getBuilder(main, monitor);
 
-        ret.setUrl(concept.getURI());
+        // ret.setUrl(concept.getURI());
         builder.withUrl(concept.getURI());
-        
-        boolean unitsSet = false;
-        
+
+//        boolean unitsSet = false;
+
         if (concept.getUnit() != null) {
-            unitsSet = true;
+//            unitsSet = true;
             builder = builder.withUnit(concept.getUnit());
         }
 
         if (concept.getCurrency() != null) {
-            unitsSet = true;
+//            unitsSet = true;
             builder = builder.withCurrency(concept.getCurrency());
         }
 
@@ -358,15 +384,31 @@ public enum KimKnowledgeProcessor {
                 value = Concepts.INSTANCE.declare((IKimConcept) value);
             }
             builder = builder.withInlineValue(value);
-            ret.setValue(concept.getValue());
+            // ret.setValue(concept.getValue());
         }
 
+        if (concept.getDefaultValue() != null) {
+            Object value = concept.getValue();
+            if (value instanceof IKimConcept) {
+                value = Concepts.INSTANCE.declare((IKimConcept) value);
+            }
+            builder = builder.withDefaultValue(value);
+            /*
+             * ret.setDefaultValue(concept.getValue());
+             */
+        }
+
+        for (ResolutionException exc : concept.getResolutionExceptions()) {
+            builder = builder.withResolutionException(exc);
+        }
+        
         if (concept.getRange() != null) {
             builder = builder.withRange(concept.getRange());
-            ret.setRange(concept.getRange());
+            // ret.setRange(concept.getRange());
         }
 
-        builder = builder.optional(concept.isOptional()).generic(concept.isGeneric()).global(concept.isGlobal())
+        builder = builder.optional(concept.isOptional()).generic(concept.isGeneric())
+                .global(concept.isGlobal())
                 .named(concept.getFormalName());
 
         if (concept.isExclusive()) {
@@ -379,10 +421,6 @@ public enum KimKnowledgeProcessor {
 
         for (Pair<ValueOperator, Object> operator : concept.getValueOperators()) {
             builder = builder.withValueOperator(operator.getFirst(), operator.getSecond());
-        }
-
-        if (Units.INSTANCE.needsUnits(ret) && !unitsSet) {
-            builder = builder.fluidUnits(true);
         }
 
         for (IKimAnnotation annotation : concept.getAnnotations()) {
@@ -400,11 +438,13 @@ public enum KimKnowledgeProcessor {
      * @param monitor
      * @return
      */
-    public @Nullable IConcept declare(final IKimConcept concept, IOntology declarationOntology, final IMonitor monitor) {
+    public @Nullable IConcept declare(final IKimConcept concept, IOntology declarationOntology,
+            final IMonitor monitor) {
         return declareInternal(concept, (Ontology) declarationOntology, monitor);
     }
 
-    private synchronized @Nullable Concept declareInternal(final IKimConcept concept, Ontology ontology, final IMonitor monitor) {
+    private synchronized @Nullable Concept declareInternal(final IKimConcept concept, Ontology ontology,
+            final IMonitor monitor) {
 
         Concept main = null;
 
@@ -506,14 +546,15 @@ public enum KimKnowledgeProcessor {
                 builder.withRole(role);
             }
         }
- 
+
         if (concept.getSemanticModifier() != null) {
             IConcept other = null;
             if (concept.getComparisonConcept() != null) {
                 other = declareInternal(concept.getComparisonConcept(), ontology, monitor);
             }
             try {
-                builder.as(concept.getSemanticModifier(), other == null ? (IConcept[]) null : new IConcept[]{other});
+                builder.as(concept.getSemanticModifier(),
+                        other == null ? (IConcept[]) null : new IConcept[]{other});
             } catch (KlabValidationException e) {
                 monitor.error(e, concept);
             }
@@ -534,7 +575,8 @@ public enum KimKnowledgeProcessor {
                     concepts.add(declareInternal(op, ontology, monitor));
                 }
                 ret = concept.getExpressionType() == Expression.INTERSECTION
-                        ? OWL.INSTANCE.getIntersection(concepts, ontology, concept.getOperands().get(0).getType())
+                        ? OWL.INSTANCE.getIntersection(concepts, ontology,
+                                concept.getOperands().get(0).getType())
                         : OWL.INSTANCE.getUnion(concepts, ontology, concept.getOperands().get(0).getType());
             }
 
@@ -543,12 +585,14 @@ public enum KimKnowledgeProcessor {
             if (builder.axiomsAdded()) {
 
                 ret.getOntology().define(Collections.singletonList(
-                        Axiom.AnnotationAssertion(ret.getName(), NS.CONCEPT_DEFINITION_PROPERTY, concept.getDefinition())));
+                        Axiom.AnnotationAssertion(ret.getName(), NS.CONCEPT_DEFINITION_PROPERTY,
+                                concept.getDefinition())));
 
                 // consistency check
                 if (!Reasoner.INSTANCE.isSatisfiable(ret)) {
                     ((Concept) ret).getTypeSet().add(Type.NOTHING);
-                    monitor.error("the definition of this concept has logical errors and is inconsistent", concept);
+                    monitor.error("the definition of this concept has logical errors and is inconsistent",
+                            concept);
                 }
             }
 
@@ -594,7 +638,8 @@ public enum KimKnowledgeProcessor {
             ns.addAxiom(Axiom.ObjectPropertyAssertion(pName));
             ns.addAxiom(Axiom.ObjectPropertyRange(pName, ret.getName()));
             ns.addAxiom(Axiom.SubObjectProperty(pProp, pName));
-            ns.addAxiom(Axiom.AnnotationAssertion(ret.getName(), NS.TRAIT_RESTRICTING_PROPERTY, ns.getName() + ":" + pName));
+            ns.addAxiom(Axiom.AnnotationAssertion(ret.getName(), NS.TRAIT_RESTRICTING_PROPERTY,
+                    ns.getName() + ":" + pName));
         }
     }
 }

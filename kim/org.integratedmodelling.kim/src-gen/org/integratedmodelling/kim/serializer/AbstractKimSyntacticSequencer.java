@@ -190,9 +190,21 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     accordingTo=PropertyId (ambiguity) 'named' name=STRING
 	 *     accordingTo=PropertyId (ambiguity) 'per' unit=Unit
 	 *     accordingTo=PropertyId (ambiguity) (rule end)
+	 *     accordingTo=PropertyId (ambiguity) default?='default'
 	 *     accordingTo=PropertyId (ambiguity) from=Number
 	 *     accordingTo=PropertyId (ambiguity) optional?='optional'
 	 *     accordingTo=PropertyId (ambiguity) valueOperators+=ValueOperator
+	 *     causes+=RESOLUTION_EXCEPTION (ambiguity) 'according' 'to' accordingTo=PropertyId
+	 *     causes+=RESOLUTION_EXCEPTION (ambiguity) 'in' currency=Currency
+	 *     causes+=RESOLUTION_EXCEPTION (ambiguity) 'in' unit=Unit
+	 *     causes+=RESOLUTION_EXCEPTION (ambiguity) 'named' name=LOWERCASE_ID
+	 *     causes+=RESOLUTION_EXCEPTION (ambiguity) 'named' name=STRING
+	 *     causes+=RESOLUTION_EXCEPTION (ambiguity) 'per' unit=Unit
+	 *     causes+=RESOLUTION_EXCEPTION (ambiguity) (rule end)
+	 *     causes+=RESOLUTION_EXCEPTION (ambiguity) default?='default'
+	 *     causes+=RESOLUTION_EXCEPTION (ambiguity) from=Number
+	 *     causes+=RESOLUTION_EXCEPTION (ambiguity) optional?='optional'
+	 *     causes+=RESOLUTION_EXCEPTION (ambiguity) valueOperators+=ValueOperator
 	 *     currency=Currency (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     currency=Currency (ambiguity) 'in' currency=Currency
 	 *     currency=Currency (ambiguity) 'in' unit=Unit
@@ -200,6 +212,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     currency=Currency (ambiguity) 'named' name=STRING
 	 *     currency=Currency (ambiguity) 'per' unit=Unit
 	 *     currency=Currency (ambiguity) (rule end)
+	 *     currency=Currency (ambiguity) default?='default'
 	 *     currency=Currency (ambiguity) from=Number
 	 *     currency=Currency (ambiguity) optional?='optional'
 	 *     currency=Currency (ambiguity) valueOperators+=ValueOperator
@@ -210,9 +223,32 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     declaration=ConceptDeclaration (ambiguity) 'named' name=STRING
 	 *     declaration=ConceptDeclaration (ambiguity) 'per' unit=Unit
 	 *     declaration=ConceptDeclaration (ambiguity) (rule end)
+	 *     declaration=ConceptDeclaration (ambiguity) default?='default'
 	 *     declaration=ConceptDeclaration (ambiguity) from=Number
 	 *     declaration=ConceptDeclaration (ambiguity) optional?='optional'
 	 *     declaration=ConceptDeclaration (ambiguity) valueOperators+=ValueOperator
+	 *     defaultConcept=ConceptDeclaration (ambiguity) 'according' 'to' accordingTo=PropertyId
+	 *     defaultConcept=ConceptDeclaration (ambiguity) 'in' currency=Currency
+	 *     defaultConcept=ConceptDeclaration (ambiguity) 'in' unit=Unit
+	 *     defaultConcept=ConceptDeclaration (ambiguity) 'named' name=LOWERCASE_ID
+	 *     defaultConcept=ConceptDeclaration (ambiguity) 'named' name=STRING
+	 *     defaultConcept=ConceptDeclaration (ambiguity) 'per' unit=Unit
+	 *     defaultConcept=ConceptDeclaration (ambiguity) (rule end)
+	 *     defaultConcept=ConceptDeclaration (ambiguity) default?='default'
+	 *     defaultConcept=ConceptDeclaration (ambiguity) from=Number
+	 *     defaultConcept=ConceptDeclaration (ambiguity) optional?='optional'
+	 *     defaultConcept=ConceptDeclaration (ambiguity) valueOperators+=ValueOperator
+	 *     defaultLiteral=Literal (ambiguity) 'according' 'to' accordingTo=PropertyId
+	 *     defaultLiteral=Literal (ambiguity) 'in' currency=Currency
+	 *     defaultLiteral=Literal (ambiguity) 'in' unit=Unit
+	 *     defaultLiteral=Literal (ambiguity) 'named' name=LOWERCASE_ID
+	 *     defaultLiteral=Literal (ambiguity) 'named' name=STRING
+	 *     defaultLiteral=Literal (ambiguity) 'per' unit=Unit
+	 *     defaultLiteral=Literal (ambiguity) (rule end)
+	 *     defaultLiteral=Literal (ambiguity) default?='default'
+	 *     defaultLiteral=Literal (ambiguity) from=Number
+	 *     defaultLiteral=Literal (ambiguity) optional?='optional'
+	 *     defaultLiteral=Literal (ambiguity) valueOperators+=ValueOperator
 	 *     name=LOWERCASE_ID (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     name=LOWERCASE_ID (ambiguity) 'in' currency=Currency
 	 *     name=LOWERCASE_ID (ambiguity) 'in' unit=Unit
@@ -220,6 +256,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     name=LOWERCASE_ID (ambiguity) 'named' name=STRING
 	 *     name=LOWERCASE_ID (ambiguity) 'per' unit=Unit
 	 *     name=LOWERCASE_ID (ambiguity) (rule end)
+	 *     name=LOWERCASE_ID (ambiguity) default?='default'
 	 *     name=LOWERCASE_ID (ambiguity) from=Number
 	 *     name=LOWERCASE_ID (ambiguity) optional?='optional'
 	 *     name=LOWERCASE_ID (ambiguity) valueOperators+=ValueOperator
@@ -230,6 +267,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     name=STRING (ambiguity) 'named' name=STRING
 	 *     name=STRING (ambiguity) 'per' unit=Unit
 	 *     name=STRING (ambiguity) (rule end)
+	 *     name=STRING (ambiguity) default?='default'
 	 *     name=STRING (ambiguity) from=Number
 	 *     name=STRING (ambiguity) optional?='optional'
 	 *     name=STRING (ambiguity) valueOperators+=ValueOperator
@@ -240,6 +278,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     optional?='optional' (ambiguity) 'named' name=STRING
 	 *     optional?='optional' (ambiguity) 'per' unit=Unit
 	 *     optional?='optional' (ambiguity) (rule end)
+	 *     optional?='optional' (ambiguity) default?='default'
 	 *     optional?='optional' (ambiguity) from=Number
 	 *     optional?='optional' (ambiguity) optional?='optional'
 	 *     optional?='optional' (ambiguity) valueOperators+=ValueOperator
@@ -250,6 +289,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     to=Number (ambiguity) 'named' name=STRING
 	 *     to=Number (ambiguity) 'per' unit=Unit
 	 *     to=Number (ambiguity) (rule end)
+	 *     to=Number (ambiguity) default?='default'
 	 *     to=Number (ambiguity) from=Number
 	 *     to=Number (ambiguity) optional?='optional'
 	 *     to=Number (ambiguity) valueOperators+=ValueOperator
@@ -260,6 +300,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     unit=Unit (ambiguity) 'named' name=STRING
 	 *     unit=Unit (ambiguity) 'per' unit=Unit
 	 *     unit=Unit (ambiguity) (rule end)
+	 *     unit=Unit (ambiguity) default?='default'
 	 *     unit=Unit (ambiguity) from=Number
 	 *     unit=Unit (ambiguity) optional?='optional'
 	 *     unit=Unit (ambiguity) valueOperators+=ValueOperator
@@ -270,6 +311,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     valueOperators+=ValueOperator (ambiguity) 'named' name=STRING
 	 *     valueOperators+=ValueOperator (ambiguity) 'per' unit=Unit
 	 *     valueOperators+=ValueOperator (ambiguity) (rule end)
+	 *     valueOperators+=ValueOperator (ambiguity) default?='default'
 	 *     valueOperators+=ValueOperator (ambiguity) from=Number
 	 *     valueOperators+=ValueOperator (ambiguity) optional?='optional'
 	 *     valueOperators+=ValueOperator (ambiguity) valueOperators+=ValueOperator
@@ -419,9 +461,21 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     accordingTo=PropertyId (ambiguity) 'named' name=STRING
 	 *     accordingTo=PropertyId (ambiguity) 'per' unit=Unit
 	 *     accordingTo=PropertyId (ambiguity) (rule end)
+	 *     accordingTo=PropertyId (ambiguity) default?='default'
 	 *     accordingTo=PropertyId (ambiguity) from=Number
 	 *     accordingTo=PropertyId (ambiguity) optional?='optional'
 	 *     accordingTo=PropertyId (ambiguity) valueOperators+=ValueOperator
+	 *     causes+=RESOLUTION_EXCEPTION (ambiguity) 'according' 'to' accordingTo=PropertyId
+	 *     causes+=RESOLUTION_EXCEPTION (ambiguity) 'in' currency=Currency
+	 *     causes+=RESOLUTION_EXCEPTION (ambiguity) 'in' unit=Unit
+	 *     causes+=RESOLUTION_EXCEPTION (ambiguity) 'named' name=LOWERCASE_ID
+	 *     causes+=RESOLUTION_EXCEPTION (ambiguity) 'named' name=STRING
+	 *     causes+=RESOLUTION_EXCEPTION (ambiguity) 'per' unit=Unit
+	 *     causes+=RESOLUTION_EXCEPTION (ambiguity) (rule end)
+	 *     causes+=RESOLUTION_EXCEPTION (ambiguity) default?='default'
+	 *     causes+=RESOLUTION_EXCEPTION (ambiguity) from=Number
+	 *     causes+=RESOLUTION_EXCEPTION (ambiguity) optional?='optional'
+	 *     causes+=RESOLUTION_EXCEPTION (ambiguity) valueOperators+=ValueOperator
 	 *     currency=Currency (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     currency=Currency (ambiguity) 'in' currency=Currency
 	 *     currency=Currency (ambiguity) 'in' unit=Unit
@@ -429,6 +483,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     currency=Currency (ambiguity) 'named' name=STRING
 	 *     currency=Currency (ambiguity) 'per' unit=Unit
 	 *     currency=Currency (ambiguity) (rule end)
+	 *     currency=Currency (ambiguity) default?='default'
 	 *     currency=Currency (ambiguity) from=Number
 	 *     currency=Currency (ambiguity) optional?='optional'
 	 *     currency=Currency (ambiguity) valueOperators+=ValueOperator
@@ -439,9 +494,32 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     declaration=ConceptDeclaration (ambiguity) 'named' name=STRING
 	 *     declaration=ConceptDeclaration (ambiguity) 'per' unit=Unit
 	 *     declaration=ConceptDeclaration (ambiguity) (rule end)
+	 *     declaration=ConceptDeclaration (ambiguity) default?='default'
 	 *     declaration=ConceptDeclaration (ambiguity) from=Number
 	 *     declaration=ConceptDeclaration (ambiguity) optional?='optional'
 	 *     declaration=ConceptDeclaration (ambiguity) valueOperators+=ValueOperator
+	 *     defaultConcept=ConceptDeclaration (ambiguity) 'according' 'to' accordingTo=PropertyId
+	 *     defaultConcept=ConceptDeclaration (ambiguity) 'in' currency=Currency
+	 *     defaultConcept=ConceptDeclaration (ambiguity) 'in' unit=Unit
+	 *     defaultConcept=ConceptDeclaration (ambiguity) 'named' name=LOWERCASE_ID
+	 *     defaultConcept=ConceptDeclaration (ambiguity) 'named' name=STRING
+	 *     defaultConcept=ConceptDeclaration (ambiguity) 'per' unit=Unit
+	 *     defaultConcept=ConceptDeclaration (ambiguity) (rule end)
+	 *     defaultConcept=ConceptDeclaration (ambiguity) default?='default'
+	 *     defaultConcept=ConceptDeclaration (ambiguity) from=Number
+	 *     defaultConcept=ConceptDeclaration (ambiguity) optional?='optional'
+	 *     defaultConcept=ConceptDeclaration (ambiguity) valueOperators+=ValueOperator
+	 *     defaultLiteral=Literal (ambiguity) 'according' 'to' accordingTo=PropertyId
+	 *     defaultLiteral=Literal (ambiguity) 'in' currency=Currency
+	 *     defaultLiteral=Literal (ambiguity) 'in' unit=Unit
+	 *     defaultLiteral=Literal (ambiguity) 'named' name=LOWERCASE_ID
+	 *     defaultLiteral=Literal (ambiguity) 'named' name=STRING
+	 *     defaultLiteral=Literal (ambiguity) 'per' unit=Unit
+	 *     defaultLiteral=Literal (ambiguity) (rule end)
+	 *     defaultLiteral=Literal (ambiguity) default?='default'
+	 *     defaultLiteral=Literal (ambiguity) from=Number
+	 *     defaultLiteral=Literal (ambiguity) optional?='optional'
+	 *     defaultLiteral=Literal (ambiguity) valueOperators+=ValueOperator
 	 *     name=LOWERCASE_ID (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     name=LOWERCASE_ID (ambiguity) 'in' currency=Currency
 	 *     name=LOWERCASE_ID (ambiguity) 'in' unit=Unit
@@ -449,6 +527,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     name=LOWERCASE_ID (ambiguity) 'named' name=STRING
 	 *     name=LOWERCASE_ID (ambiguity) 'per' unit=Unit
 	 *     name=LOWERCASE_ID (ambiguity) (rule end)
+	 *     name=LOWERCASE_ID (ambiguity) default?='default'
 	 *     name=LOWERCASE_ID (ambiguity) from=Number
 	 *     name=LOWERCASE_ID (ambiguity) optional?='optional'
 	 *     name=LOWERCASE_ID (ambiguity) valueOperators+=ValueOperator
@@ -459,6 +538,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     name=STRING (ambiguity) 'named' name=STRING
 	 *     name=STRING (ambiguity) 'per' unit=Unit
 	 *     name=STRING (ambiguity) (rule end)
+	 *     name=STRING (ambiguity) default?='default'
 	 *     name=STRING (ambiguity) from=Number
 	 *     name=STRING (ambiguity) optional?='optional'
 	 *     name=STRING (ambiguity) valueOperators+=ValueOperator
@@ -469,6 +549,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     optional?='optional' (ambiguity) 'named' name=STRING
 	 *     optional?='optional' (ambiguity) 'per' unit=Unit
 	 *     optional?='optional' (ambiguity) (rule end)
+	 *     optional?='optional' (ambiguity) default?='default'
 	 *     optional?='optional' (ambiguity) from=Number
 	 *     optional?='optional' (ambiguity) optional?='optional'
 	 *     optional?='optional' (ambiguity) valueOperators+=ValueOperator
@@ -479,6 +560,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     to=Number (ambiguity) 'named' name=STRING
 	 *     to=Number (ambiguity) 'per' unit=Unit
 	 *     to=Number (ambiguity) (rule end)
+	 *     to=Number (ambiguity) default?='default'
 	 *     to=Number (ambiguity) from=Number
 	 *     to=Number (ambiguity) optional?='optional'
 	 *     to=Number (ambiguity) valueOperators+=ValueOperator
@@ -489,6 +571,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     unit=Unit (ambiguity) 'named' name=STRING
 	 *     unit=Unit (ambiguity) 'per' unit=Unit
 	 *     unit=Unit (ambiguity) (rule end)
+	 *     unit=Unit (ambiguity) default?='default'
 	 *     unit=Unit (ambiguity) from=Number
 	 *     unit=Unit (ambiguity) optional?='optional'
 	 *     unit=Unit (ambiguity) valueOperators+=ValueOperator
@@ -499,6 +582,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     valueOperators+=ValueOperator (ambiguity) 'named' name=STRING
 	 *     valueOperators+=ValueOperator (ambiguity) 'per' unit=Unit
 	 *     valueOperators+=ValueOperator (ambiguity) (rule end)
+	 *     valueOperators+=ValueOperator (ambiguity) default?='default'
 	 *     valueOperators+=ValueOperator (ambiguity) from=Number
 	 *     valueOperators+=ValueOperator (ambiguity) optional?='optional'
 	 *     valueOperators+=ValueOperator (ambiguity) valueOperators+=ValueOperator
@@ -519,6 +603,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     alternativeObservables+=AlternativeDependencyObservableSemantics ')' (ambiguity) 'named' name=LOWERCASE_ID
 	 *     alternativeObservables+=AlternativeDependencyObservableSemantics ')' (ambiguity) 'named' name=STRING
 	 *     alternativeObservables+=AlternativeDependencyObservableSemantics ')' (ambiguity) (rule end)
+	 *     alternativeObservables+=AlternativeDependencyObservableSemantics ')' (ambiguity) default?='default'
 	 
 	 * </pre>
 	 */
@@ -844,9 +929,21 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     accordingTo=PropertyId (ambiguity) 'named' name=STRING
 	 *     accordingTo=PropertyId (ambiguity) 'per' unit=Unit
 	 *     accordingTo=PropertyId (ambiguity) (rule end)
+	 *     accordingTo=PropertyId (ambiguity) default?='default'
 	 *     accordingTo=PropertyId (ambiguity) from=Number
 	 *     accordingTo=PropertyId (ambiguity) optional?='optional'
 	 *     accordingTo=PropertyId (ambiguity) valueOperators+=ValueOperator
+	 *     causes+=RESOLUTION_EXCEPTION (ambiguity) 'according' 'to' accordingTo=PropertyId
+	 *     causes+=RESOLUTION_EXCEPTION (ambiguity) 'in' currency=Currency
+	 *     causes+=RESOLUTION_EXCEPTION (ambiguity) 'in' unit=Unit
+	 *     causes+=RESOLUTION_EXCEPTION (ambiguity) 'named' name=LOWERCASE_ID
+	 *     causes+=RESOLUTION_EXCEPTION (ambiguity) 'named' name=STRING
+	 *     causes+=RESOLUTION_EXCEPTION (ambiguity) 'per' unit=Unit
+	 *     causes+=RESOLUTION_EXCEPTION (ambiguity) (rule end)
+	 *     causes+=RESOLUTION_EXCEPTION (ambiguity) default?='default'
+	 *     causes+=RESOLUTION_EXCEPTION (ambiguity) from=Number
+	 *     causes+=RESOLUTION_EXCEPTION (ambiguity) optional?='optional'
+	 *     causes+=RESOLUTION_EXCEPTION (ambiguity) valueOperators+=ValueOperator
 	 *     currency=Currency (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     currency=Currency (ambiguity) 'in' currency=Currency
 	 *     currency=Currency (ambiguity) 'in' unit=Unit
@@ -854,6 +951,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     currency=Currency (ambiguity) 'named' name=STRING
 	 *     currency=Currency (ambiguity) 'per' unit=Unit
 	 *     currency=Currency (ambiguity) (rule end)
+	 *     currency=Currency (ambiguity) default?='default'
 	 *     currency=Currency (ambiguity) from=Number
 	 *     currency=Currency (ambiguity) optional?='optional'
 	 *     currency=Currency (ambiguity) valueOperators+=ValueOperator
@@ -864,9 +962,32 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     declaration=ConceptDeclaration (ambiguity) 'named' name=STRING
 	 *     declaration=ConceptDeclaration (ambiguity) 'per' unit=Unit
 	 *     declaration=ConceptDeclaration (ambiguity) (rule end)
+	 *     declaration=ConceptDeclaration (ambiguity) default?='default'
 	 *     declaration=ConceptDeclaration (ambiguity) from=Number
 	 *     declaration=ConceptDeclaration (ambiguity) optional?='optional'
 	 *     declaration=ConceptDeclaration (ambiguity) valueOperators+=ValueOperator
+	 *     defaultConcept=ConceptDeclaration (ambiguity) 'according' 'to' accordingTo=PropertyId
+	 *     defaultConcept=ConceptDeclaration (ambiguity) 'in' currency=Currency
+	 *     defaultConcept=ConceptDeclaration (ambiguity) 'in' unit=Unit
+	 *     defaultConcept=ConceptDeclaration (ambiguity) 'named' name=LOWERCASE_ID
+	 *     defaultConcept=ConceptDeclaration (ambiguity) 'named' name=STRING
+	 *     defaultConcept=ConceptDeclaration (ambiguity) 'per' unit=Unit
+	 *     defaultConcept=ConceptDeclaration (ambiguity) (rule end)
+	 *     defaultConcept=ConceptDeclaration (ambiguity) default?='default'
+	 *     defaultConcept=ConceptDeclaration (ambiguity) from=Number
+	 *     defaultConcept=ConceptDeclaration (ambiguity) optional?='optional'
+	 *     defaultConcept=ConceptDeclaration (ambiguity) valueOperators+=ValueOperator
+	 *     defaultLiteral=Literal (ambiguity) 'according' 'to' accordingTo=PropertyId
+	 *     defaultLiteral=Literal (ambiguity) 'in' currency=Currency
+	 *     defaultLiteral=Literal (ambiguity) 'in' unit=Unit
+	 *     defaultLiteral=Literal (ambiguity) 'named' name=LOWERCASE_ID
+	 *     defaultLiteral=Literal (ambiguity) 'named' name=STRING
+	 *     defaultLiteral=Literal (ambiguity) 'per' unit=Unit
+	 *     defaultLiteral=Literal (ambiguity) (rule end)
+	 *     defaultLiteral=Literal (ambiguity) default?='default'
+	 *     defaultLiteral=Literal (ambiguity) from=Number
+	 *     defaultLiteral=Literal (ambiguity) optional?='optional'
+	 *     defaultLiteral=Literal (ambiguity) valueOperators+=ValueOperator
 	 *     name=LOWERCASE_ID (ambiguity) 'according' 'to' accordingTo=PropertyId
 	 *     name=LOWERCASE_ID (ambiguity) 'in' currency=Currency
 	 *     name=LOWERCASE_ID (ambiguity) 'in' unit=Unit
@@ -874,6 +995,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     name=LOWERCASE_ID (ambiguity) 'named' name=STRING
 	 *     name=LOWERCASE_ID (ambiguity) 'per' unit=Unit
 	 *     name=LOWERCASE_ID (ambiguity) (rule end)
+	 *     name=LOWERCASE_ID (ambiguity) default?='default'
 	 *     name=LOWERCASE_ID (ambiguity) from=Number
 	 *     name=LOWERCASE_ID (ambiguity) optional?='optional'
 	 *     name=LOWERCASE_ID (ambiguity) valueOperators+=ValueOperator
@@ -884,6 +1006,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     name=STRING (ambiguity) 'named' name=STRING
 	 *     name=STRING (ambiguity) 'per' unit=Unit
 	 *     name=STRING (ambiguity) (rule end)
+	 *     name=STRING (ambiguity) default?='default'
 	 *     name=STRING (ambiguity) from=Number
 	 *     name=STRING (ambiguity) optional?='optional'
 	 *     name=STRING (ambiguity) valueOperators+=ValueOperator
@@ -894,6 +1017,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     optional?='optional' (ambiguity) 'named' name=STRING
 	 *     optional?='optional' (ambiguity) 'per' unit=Unit
 	 *     optional?='optional' (ambiguity) (rule end)
+	 *     optional?='optional' (ambiguity) default?='default'
 	 *     optional?='optional' (ambiguity) from=Number
 	 *     optional?='optional' (ambiguity) optional?='optional'
 	 *     optional?='optional' (ambiguity) valueOperators+=ValueOperator
@@ -904,6 +1028,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     to=Number (ambiguity) 'named' name=STRING
 	 *     to=Number (ambiguity) 'per' unit=Unit
 	 *     to=Number (ambiguity) (rule end)
+	 *     to=Number (ambiguity) default?='default'
 	 *     to=Number (ambiguity) from=Number
 	 *     to=Number (ambiguity) optional?='optional'
 	 *     to=Number (ambiguity) valueOperators+=ValueOperator
@@ -914,6 +1039,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     unit=Unit (ambiguity) 'named' name=STRING
 	 *     unit=Unit (ambiguity) 'per' unit=Unit
 	 *     unit=Unit (ambiguity) (rule end)
+	 *     unit=Unit (ambiguity) default?='default'
 	 *     unit=Unit (ambiguity) from=Number
 	 *     unit=Unit (ambiguity) optional?='optional'
 	 *     unit=Unit (ambiguity) valueOperators+=ValueOperator
@@ -924,6 +1050,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     valueOperators+=ValueOperator (ambiguity) 'named' name=STRING
 	 *     valueOperators+=ValueOperator (ambiguity) 'per' unit=Unit
 	 *     valueOperators+=ValueOperator (ambiguity) (rule end)
+	 *     valueOperators+=ValueOperator (ambiguity) default?='default'
 	 *     valueOperators+=ValueOperator (ambiguity) from=Number
 	 *     valueOperators+=ValueOperator (ambiguity) optional?='optional'
 	 *     valueOperators+=ValueOperator (ambiguity) valueOperators+=ValueOperator
