@@ -22,6 +22,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getArgvalue <em>Argvalue</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getUrn <em>Urn</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getLiteral <em>Literal</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getCast <em>Cast</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getId <em>Id</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getList <em>List</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getMap <em>Map</em>}</li>
@@ -177,6 +178,28 @@ public interface Value extends EObject
    * @generated
    */
   void setLiteral(Literal value);
+
+  /**
+   * Returns the value of the '<em><b>Cast</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Cast</em>' attribute.
+   * @see #setCast(String)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getValue_Cast()
+   * @model
+   * @generated
+   */
+  String getCast();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Value#getCast <em>Cast</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Cast</em>' attribute.
+   * @see #getCast()
+   * @generated
+   */
+  void setCast(String value);
 
   /**
    * Returns the value of the '<em><b>Id</b></em>' attribute.

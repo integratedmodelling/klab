@@ -229,13 +229,13 @@ Value:
 	empty?='empty' |
 	argvalue=ARGVALUE |
 	urn=UrnId | 
-	literal=Literal |
-	id=PathName |
+	literal=Literal ('as' cast=DATA_TYPE)? |
+	id=PathName ('as' cast=DATA_TYPE)?  |
 	list=List |
 	map=Map |
 	constant=UPPERCASE_ID |
 	observable=Observable | 
-	expression=EXPR |
+	expression=EXPR ('as' cast=DATA_TYPE)? |
 	table=LookupTable |
 	quantity=Quantity) ('?' then=Value ':' else=Value)?
 ;
@@ -246,14 +246,14 @@ ValueWithConstructor returns Value:
 	tree=Tree |
 	empty?='empty' |
 	argvalue=ARGVALUE |
-	literal=Literal |
+	literal=Literal ('as' cast=DATA_TYPE)? |
 	urn=UrnId | 
-	id=PathName |
+	id=PathName ('as' cast=DATA_TYPE)? |
 	list=List |
 	map=Map |
 	constant=UPPERCASE_ID |
 	observable=Observable | 
-	expression=EXPR |
+	expression=EXPR ('as' cast=DATA_TYPE)? |
 	table=LookupTable |
 	quantity=Quantity  |
 	component?='new' behavior=PathName ('(' (parameters=ParameterList)? ')')? )
@@ -267,14 +267,14 @@ Constructor:
 ValueWithMetadata returns Value:
 	(deferred?='`')? (tree=Tree |
 	 argvalue=ARGVALUE |
-	 literal=Literal |
+	 literal=Literal ('as' cast=DATA_TYPE)? |
 	 urn=UrnId | 
-	 constant=UPPERCASE_ID |
+	 constant=UPPERCASE_ID ('as' cast=DATA_TYPE)? |
 	 id=PathName |
 	 list=List |
 	 map=Map |
 	 observable=Observable | 
-	 expression=EXPR |
+	 expression=EXPR ('as' cast=DATA_TYPE)? |
 	 table=LookupTable |
 	 quantity=Quantity) 
 	 (metadata=Metadata)?
@@ -295,13 +295,13 @@ ValueWithMetadata returns Value:
 //	
 ValueWithMetadataWithoutTree returns Value:
 	(deferred?='`')? ((argvalue=ARGVALUE |
-	literal=Literal |
-	id=PathName |
+	literal=Literal ('as' cast=DATA_TYPE)? |
+	id=PathName ('as' cast=DATA_TYPE)? |
 	urn=UrnId | 
 	list=List |
 	map=Map |
 	observable=Observable | 
-	expression=EXPR |
+	expression=EXPR ('as' cast=DATA_TYPE)? |
 	table=LookupTable |
 	quantity=Quantity)) ('?' then=Value ':' else=Value)? 
 	(metadata=Metadata)?
@@ -417,6 +417,14 @@ Annotation:
 	
 Literal:
 	number=Number | from=Number 'to' to=Number | string=(STRING|LOCALIZED_STRING_REFERENCE) | date=Date | boolean=('true' | 'false');
+
+DATA_TYPE:
+	'int' |
+	'number' |
+	'text' |
+	'boolean' |
+	'concept' 
+;
 
 //LiteralWithExpr:
 //	number=Number | from=Number 'to' to=Number | string=(STRING|LOCALIZED_STRING_REFERENCE) | date=Date | expression=EXPR | boolean=('true' | 'false');

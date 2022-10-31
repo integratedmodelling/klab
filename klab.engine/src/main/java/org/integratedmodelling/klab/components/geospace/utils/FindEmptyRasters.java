@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.components.geospace.utils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,7 +60,20 @@ public class FindEmptyRasters {
         }
 
         if (!files.isEmpty()) {
-            System.out.println(directory + ": " + files.toString());
+            String bname = MiscUtilities.getFileBaseName(directory);
+            if (bname.startsWith("cstorage_")) {
+                String year = bname.substring("cstorage_".length());
+                StringBuffer tiles = new StringBuffer(512);
+                for (File file : files) {
+                    String fname = MiscUtilities.getFileBaseName(file);
+                    if (fname.startsWith("tile_")) {
+                        tiles.append((tiles.isEmpty() ? "" : ",") + fname.substring(5));
+                    }
+                }
+                
+                System.out.println(year + ": " + tiles.toString());
+                
+            }
             result.put(directory, files);
         }
 
@@ -79,7 +91,7 @@ public class FindEmptyRasters {
 
     public static void main(String[] args) {
         FindEmptyRasters scanner = new FindEmptyRasters();
-        scanner.process(Configuration.INSTANCE.getDefaultExportDirectory());
+        scanner.process(new File("E:\\tiles")/* Configuration.INSTANCE.getDefaultExportDirectory() */);
     }
 
     /**
@@ -87,9 +99,9 @@ public class FindEmptyRasters {
      * @param result
      */
     protected void processResult(Map<File, List<File>> result) {
-        for (File dir : result.keySet()) {
-            System.out.println(dir + ":\t" + result.get(dir));
-        }
+//        for (File dir : result.keySet()) {
+//            System.out.println(dir + ":\t" + result.get(dir));
+//        }
     }
 
     public GridCoverage2D readCoverage(File mainFile) throws IOException {
