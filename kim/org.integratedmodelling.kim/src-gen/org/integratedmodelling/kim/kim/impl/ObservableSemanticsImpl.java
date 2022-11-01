@@ -17,7 +17,6 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
-import org.eclipse.emf.ecore.util.EDataTypeEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
@@ -25,7 +24,6 @@ import org.integratedmodelling.kim.kim.Annotation;
 import org.integratedmodelling.kim.kim.ConceptDeclaration;
 import org.integratedmodelling.kim.kim.Currency;
 import org.integratedmodelling.kim.kim.KimPackage;
-import org.integratedmodelling.kim.kim.Literal;
 import org.integratedmodelling.kim.kim.ObservableSemantics;
 import org.integratedmodelling.kim.kim.Unit;
 import org.integratedmodelling.kim.kim.Value;
@@ -47,10 +45,6 @@ import org.integratedmodelling.kim.kim.ValueOperator;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getCurrency <em>Currency</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getValueOperators <em>Value Operators</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#isOptional <em>Optional</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#isDefault <em>Default</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getDefaultLiteral <em>Default Literal</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getDefaultConcept <em>Default Concept</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getCauses <em>Causes</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getFrom <em>From</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getTo <em>To</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getName <em>Name</em>}</li>
@@ -173,56 +167,6 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
    * @ordered
    */
   protected boolean optional = OPTIONAL_EDEFAULT;
-
-  /**
-   * The default value of the '{@link #isDefault() <em>Default</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isDefault()
-   * @generated
-   * @ordered
-   */
-  protected static final boolean DEFAULT_EDEFAULT = false;
-
-  /**
-   * The cached value of the '{@link #isDefault() <em>Default</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isDefault()
-   * @generated
-   * @ordered
-   */
-  protected boolean default_ = DEFAULT_EDEFAULT;
-
-  /**
-   * The cached value of the '{@link #getDefaultLiteral() <em>Default Literal</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getDefaultLiteral()
-   * @generated
-   * @ordered
-   */
-  protected Literal defaultLiteral;
-
-  /**
-   * The cached value of the '{@link #getDefaultConcept() <em>Default Concept</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getDefaultConcept()
-   * @generated
-   * @ordered
-   */
-  protected ConceptDeclaration defaultConcept;
-
-  /**
-   * The cached value of the '{@link #getCauses() <em>Causes</em>}' attribute list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getCauses()
-   * @generated
-   * @ordered
-   */
-  protected EList<String> causes;
 
   /**
    * The cached value of the '{@link #getFrom() <em>From</em>}' containment reference.
@@ -651,146 +595,6 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
    * @generated
    */
   @Override
-  public boolean isDefault()
-  {
-    return default_;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setDefault(boolean newDefault)
-  {
-    boolean oldDefault = default_;
-    default_ = newDefault;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.OBSERVABLE_SEMANTICS__DEFAULT, oldDefault, default_));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public Literal getDefaultLiteral()
-  {
-    return defaultLiteral;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetDefaultLiteral(Literal newDefaultLiteral, NotificationChain msgs)
-  {
-    Literal oldDefaultLiteral = defaultLiteral;
-    defaultLiteral = newDefaultLiteral;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.OBSERVABLE_SEMANTICS__DEFAULT_LITERAL, oldDefaultLiteral, newDefaultLiteral);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setDefaultLiteral(Literal newDefaultLiteral)
-  {
-    if (newDefaultLiteral != defaultLiteral)
-    {
-      NotificationChain msgs = null;
-      if (defaultLiteral != null)
-        msgs = ((InternalEObject)defaultLiteral).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.OBSERVABLE_SEMANTICS__DEFAULT_LITERAL, null, msgs);
-      if (newDefaultLiteral != null)
-        msgs = ((InternalEObject)newDefaultLiteral).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.OBSERVABLE_SEMANTICS__DEFAULT_LITERAL, null, msgs);
-      msgs = basicSetDefaultLiteral(newDefaultLiteral, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.OBSERVABLE_SEMANTICS__DEFAULT_LITERAL, newDefaultLiteral, newDefaultLiteral));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public ConceptDeclaration getDefaultConcept()
-  {
-    return defaultConcept;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetDefaultConcept(ConceptDeclaration newDefaultConcept, NotificationChain msgs)
-  {
-    ConceptDeclaration oldDefaultConcept = defaultConcept;
-    defaultConcept = newDefaultConcept;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.OBSERVABLE_SEMANTICS__DEFAULT_CONCEPT, oldDefaultConcept, newDefaultConcept);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setDefaultConcept(ConceptDeclaration newDefaultConcept)
-  {
-    if (newDefaultConcept != defaultConcept)
-    {
-      NotificationChain msgs = null;
-      if (defaultConcept != null)
-        msgs = ((InternalEObject)defaultConcept).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.OBSERVABLE_SEMANTICS__DEFAULT_CONCEPT, null, msgs);
-      if (newDefaultConcept != null)
-        msgs = ((InternalEObject)newDefaultConcept).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.OBSERVABLE_SEMANTICS__DEFAULT_CONCEPT, null, msgs);
-      msgs = basicSetDefaultConcept(newDefaultConcept, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.OBSERVABLE_SEMANTICS__DEFAULT_CONCEPT, newDefaultConcept, newDefaultConcept));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EList<String> getCauses()
-  {
-    if (causes == null)
-    {
-      causes = new EDataTypeEList<String>(String.class, this, KimPackage.OBSERVABLE_SEMANTICS__CAUSES);
-    }
-    return causes;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
   public org.integratedmodelling.kim.kim.Number getFrom()
   {
     return from;
@@ -1020,10 +824,6 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
         return basicSetCurrency(null, msgs);
       case KimPackage.OBSERVABLE_SEMANTICS__VALUE_OPERATORS:
         return ((InternalEList<?>)getValueOperators()).basicRemove(otherEnd, msgs);
-      case KimPackage.OBSERVABLE_SEMANTICS__DEFAULT_LITERAL:
-        return basicSetDefaultLiteral(null, msgs);
-      case KimPackage.OBSERVABLE_SEMANTICS__DEFAULT_CONCEPT:
-        return basicSetDefaultConcept(null, msgs);
       case KimPackage.OBSERVABLE_SEMANTICS__FROM:
         return basicSetFrom(null, msgs);
       case KimPackage.OBSERVABLE_SEMANTICS__TO:
@@ -1060,14 +860,6 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
         return getValueOperators();
       case KimPackage.OBSERVABLE_SEMANTICS__OPTIONAL:
         return isOptional();
-      case KimPackage.OBSERVABLE_SEMANTICS__DEFAULT:
-        return isDefault();
-      case KimPackage.OBSERVABLE_SEMANTICS__DEFAULT_LITERAL:
-        return getDefaultLiteral();
-      case KimPackage.OBSERVABLE_SEMANTICS__DEFAULT_CONCEPT:
-        return getDefaultConcept();
-      case KimPackage.OBSERVABLE_SEMANTICS__CAUSES:
-        return getCauses();
       case KimPackage.OBSERVABLE_SEMANTICS__FROM:
         return getFrom();
       case KimPackage.OBSERVABLE_SEMANTICS__TO:
@@ -1121,19 +913,6 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
         return;
       case KimPackage.OBSERVABLE_SEMANTICS__OPTIONAL:
         setOptional((Boolean)newValue);
-        return;
-      case KimPackage.OBSERVABLE_SEMANTICS__DEFAULT:
-        setDefault((Boolean)newValue);
-        return;
-      case KimPackage.OBSERVABLE_SEMANTICS__DEFAULT_LITERAL:
-        setDefaultLiteral((Literal)newValue);
-        return;
-      case KimPackage.OBSERVABLE_SEMANTICS__DEFAULT_CONCEPT:
-        setDefaultConcept((ConceptDeclaration)newValue);
-        return;
-      case KimPackage.OBSERVABLE_SEMANTICS__CAUSES:
-        getCauses().clear();
-        getCauses().addAll((Collection<? extends String>)newValue);
         return;
       case KimPackage.OBSERVABLE_SEMANTICS__FROM:
         setFrom((org.integratedmodelling.kim.kim.Number)newValue);
@@ -1195,18 +974,6 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
       case KimPackage.OBSERVABLE_SEMANTICS__OPTIONAL:
         setOptional(OPTIONAL_EDEFAULT);
         return;
-      case KimPackage.OBSERVABLE_SEMANTICS__DEFAULT:
-        setDefault(DEFAULT_EDEFAULT);
-        return;
-      case KimPackage.OBSERVABLE_SEMANTICS__DEFAULT_LITERAL:
-        setDefaultLiteral((Literal)null);
-        return;
-      case KimPackage.OBSERVABLE_SEMANTICS__DEFAULT_CONCEPT:
-        setDefaultConcept((ConceptDeclaration)null);
-        return;
-      case KimPackage.OBSERVABLE_SEMANTICS__CAUSES:
-        getCauses().clear();
-        return;
       case KimPackage.OBSERVABLE_SEMANTICS__FROM:
         setFrom((org.integratedmodelling.kim.kim.Number)null);
         return;
@@ -1258,14 +1025,6 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
         return valueOperators != null && !valueOperators.isEmpty();
       case KimPackage.OBSERVABLE_SEMANTICS__OPTIONAL:
         return optional != OPTIONAL_EDEFAULT;
-      case KimPackage.OBSERVABLE_SEMANTICS__DEFAULT:
-        return default_ != DEFAULT_EDEFAULT;
-      case KimPackage.OBSERVABLE_SEMANTICS__DEFAULT_LITERAL:
-        return defaultLiteral != null;
-      case KimPackage.OBSERVABLE_SEMANTICS__DEFAULT_CONCEPT:
-        return defaultConcept != null;
-      case KimPackage.OBSERVABLE_SEMANTICS__CAUSES:
-        return causes != null && !causes.isEmpty();
       case KimPackage.OBSERVABLE_SEMANTICS__FROM:
         return from != null;
       case KimPackage.OBSERVABLE_SEMANTICS__TO:
@@ -1301,10 +1060,6 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
     result.append(accordingTo);
     result.append(", optional: ");
     result.append(optional);
-    result.append(", default: ");
-    result.append(default_);
-    result.append(", causes: ");
-    result.append(causes);
     result.append(", name: ");
     result.append(name);
     result.append(", global: ");

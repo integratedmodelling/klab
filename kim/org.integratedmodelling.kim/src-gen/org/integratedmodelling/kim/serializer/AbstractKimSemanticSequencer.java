@@ -480,8 +480,7 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                 name=STRING
 	 *             )? 
 	 *             (valueOperators+=ValueOperator valueOperators+=ValueOperator*)? 
-	 *             (from=Number to=Number)? 
-	 *             (default?='default' (defaultLiteral=Literal | defaultConcept=ConceptDeclaration) (causes+=RESOLUTION_EXCEPTION causes+=RESOLUTION_EXCEPTION*)?)?
+	 *             (from=Number to=Number)?
 	 *         )+
 	 *     )
 	 * </pre>
@@ -553,26 +552,26 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                     )? 
 	 *                     (describedQuality=ConceptDeclaration descriptionConstraints=DescriptionConstraints?)? 
 	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
-	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
+	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
+	 *                     (implications+=Implication implications+=Implication*)? 
+	 *                     (emergenceTriggers+=ConceptDeclaration emergenceTriggers+=ConceptDeclaration*)? 
 	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
 	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
 	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
-	 *                     (emergenceTriggers+=ConceptDeclaration emergenceTriggers+=ConceptDeclaration*)? 
-	 *                     (implications+=Implication implications+=Implication*)? 
-	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
+	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
 	 *                     (domains+=SimpleConceptDeclaration ranges+=SimpleConceptDeclaration)? 
 	 *                     (disjoint?='disjoint'? children+=ChildConcept children+=ChildConcept*)? 
+	 *                     (
+	 *                         alias?='equals'? 
+	 *                         coreConcept?='core'? 
+	 *                         (nothing?='nothing' | (parents+=ConceptDeclaration ((connectors+=',' | connectors+='or' | connectors+='and') parents+=ConceptDeclaration)*))
+	 *                     )? 
 	 *                     (
 	 *                         roles+=ConceptDeclaration 
 	 *                         roles+=ConceptDeclaration* 
 	 *                         (targetObservables+=ConceptDeclaration targetObservables+=ConceptDeclaration*)? 
 	 *                         restrictedObservables+=ConceptDeclaration 
 	 *                         restrictedObservables+=ConceptDeclaration*
-	 *                     )? 
-	 *                     (
-	 *                         alias?='equals'? 
-	 *                         coreConcept?='core'? 
-	 *                         (nothing?='nothing' | (parents+=ConceptDeclaration ((connectors+=',' | connectors+='or' | connectors+='and') parents+=ConceptDeclaration)*))
 	 *                     )?
 	 *                 )+
 	 *             ) | 
@@ -764,11 +763,11 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                 contained=SimpleConceptDeclaration | 
 	 *                 caused=SimpleConceptDeclaration
 	 *             )? 
-	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
-	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
 	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
 	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
-	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)?
+	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
+	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
+	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)?
 	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)*
 	 *     )
@@ -797,11 +796,11 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                 contained=SimpleConceptDeclaration | 
 	 *                 caused=SimpleConceptDeclaration
 	 *             )? 
-	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
-	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
 	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
 	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
-	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)?
+	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
+	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
+	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)?
 	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)* 
 	 *         (operators+='or' operands+=Factor)*
@@ -1018,8 +1017,7 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                 name=STRING
 	 *             )? 
 	 *             (valueOperators+=ValueOperator valueOperators+=ValueOperator*)? 
-	 *             (from=Number to=Number)? 
-	 *             (default?='default' (defaultLiteral=Literal | defaultConcept=ConceptDeclaration) (causes+=RESOLUTION_EXCEPTION causes+=RESOLUTION_EXCEPTION*)?)?
+	 *             (from=Number to=Number)?
 	 *         )+
 	 *     )
 	 * </pre>
@@ -1036,28 +1034,24 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *
 	 * Constraint:
 	 *     (
-	 *         annotations+=Annotation+ | 
+	 *         annotations+=Annotation* 
 	 *         (
-	 *             annotations+=Annotation+ 
+	 *             modelReference=LOWERCASE_ID | 
+	 *             modelReference=PathName | 
+	 *             modelReference=UrnId | 
+	 *             modelReference=STRING | 
+	 *             observable=DependencyObservableSemantics | 
 	 *             (
-	 *                 modelReference=LOWERCASE_ID | 
-	 *                 modelReference=PathName | 
-	 *                 modelReference=UrnId | 
-	 *                 modelReference=STRING | 
-	 *                 observable=DependencyObservableSemantics | 
 	 *                 (
-	 *                     (
-	 *                         alternativeObservables+=AlternativeDependencyObservableSemantics 
-	 *                         alternativeObservables+=AlternativeDependencyObservableSemantics* 
-	 *                         optional?='optional'?
-	 *                     ) | 
-	 *                     (default?='default' (defaultLiteral=Literal | defaultConcept=ConceptDeclaration) (causes+=RESOLUTION_EXCEPTION causes+=RESOLUTION_EXCEPTION*)?) | 
-	 *                     name=LOWERCASE_ID | 
-	 *                     name=STRING
-	 *                 )+
-	 *             )
+	 *                     alternativeObservables+=AlternativeDependencyObservableSemantics 
+	 *                     alternativeObservables+=AlternativeDependencyObservableSemantics* 
+	 *                     optional?='optional'?
+	 *                 ) | 
+	 *                 name=LOWERCASE_ID | 
+	 *                 name=STRING
+	 *             )+
 	 *         )
-	 *     )?
+	 *     )
 	 * </pre>
 	 */
 	protected void sequence_Dependency(ISerializationContext context, Dependency semanticObject) {
@@ -1530,8 +1524,7 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                 name=STRING
 	 *             )? 
 	 *             (valueOperators+=ValueOperator valueOperators+=ValueOperator*)? 
-	 *             (from=Number to=Number)? 
-	 *             (default?='default' (defaultLiteral=Literal | defaultConcept=ConceptDeclaration) (causes+=RESOLUTION_EXCEPTION causes+=RESOLUTION_EXCEPTION*)?)?
+	 *             (from=Number to=Number)?
 	 *         )+
 	 *     )
 	 * </pre>
