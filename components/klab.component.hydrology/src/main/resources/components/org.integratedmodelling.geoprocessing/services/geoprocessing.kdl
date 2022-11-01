@@ -74,3 +74,24 @@ export number kriging
 	
 	class org.integratedmodelling.geoprocessing.core.KrigingResolver
 }
+
+export number viewshed 
+    "Create a raster map of viewshed, based on multiple view source points."
+    label 'Viewshed'
+{
+    import object artifact
+        "The name of the artifact containing the viewpoint features. If the features are not points, the
+         centroid will be used."
+         
+    import number elevation
+        "A DEM observation."
+    
+    optional number height
+        "The height of the source view points over the terrain."
+        default 100.0
+    
+    geometry S2
+    
+    class org.integratedmodelling.geoprocessing.viewshed.ViewshedInstantiator
+
+}

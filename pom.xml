@@ -101,7 +101,7 @@
 		<!-- Careful here: geotools must be right for hortonmachine to work; JTS 
 			should be the same one that geotools and HM needs. -->
 		<geotools.version>25.0</geotools.version>
-		<hortonmachine.version>0.10.5-SNAPSHOT</hortonmachine.version>
+		<hortonmachine.version>0.10.8-SNAPSHOT</hortonmachine.version>
 		<jts.version>1.18.1</jts.version>
 		<h2gis.version>1.5.0</h2gis.version>
 		<maven.compiler.source>1.8</maven.compiler.source>
