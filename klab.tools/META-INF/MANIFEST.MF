@@ -10,3 +10,4 @@ Export-Package: org.integratedmodelling.klab.clitool,
  org.integratedmodelling.klab.clitool.contrib.console.file,
  org.integratedmodelling.klab.clitool.contrib.console.util,
  org.integratedmodelling.klab.clitool.utils
+Bundle-RequiredExecutionEnvironment: JavaSE-11

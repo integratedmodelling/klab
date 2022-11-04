@@ -6,7 +6,7 @@
       provider-name="www.integratedmodelling.org">
 
    <url>
-      <update label="k.LAB update site" url="http://www.integratedmodelling.org/updates/klab/0.11.0"/>
+      <update label="k.LAB update site"/>
    </url>
 
    <plugin

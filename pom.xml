@@ -147,6 +147,11 @@
 					<artifactId>jib-maven-plugin</artifactId>
 					<version>${googleJibVersion}</version>
 				</plugin>
+				<plugin>
+				  <groupId>org.eclipse.tycho</groupId>  
+				  <artifactId>tycho-versions-plugin</artifactId>  
+				  <version>${tycho-version}</version>  
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
@@ -191,9 +196,8 @@
 						<artifactId>maven-javadoc-plugin</artifactId>
 						<version>3.0.0</version>
 						<configuration>
-							<additionalparam>-Xdoclint:none</additionalparam>
-							<!-- <excludePackageNames>com.elet.dragonconsole.*:org.integratedmodelling.common.utils.jtopas.*</excludePackageNames> -->
-						</configuration>
+					        <doclint>none</doclint>
+					    </configuration>
 						<executions>
 							<execution>
 								<id>attach-javadocs</id>
