@@ -79,8 +79,8 @@ export number viewshed
     "Create a raster map of viewshed, based on multiple view source points."
     label 'Viewshed'
 {
-    import object artifact
-        "The name of the artifact containing the viewpoint features. If the features are not points, the
+    import object viewpoints
+        "The viewpoint observations. If the features are not points, the
          centroid will be used."
          
     import number elevation
@@ -93,5 +93,4 @@ export number viewshed
     geometry S2
     
     class org.integratedmodelling.geoprocessing.viewshed.ViewshedResolver
-
 }

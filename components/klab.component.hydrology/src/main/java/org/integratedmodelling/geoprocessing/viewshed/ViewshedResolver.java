@@ -19,8 +19,8 @@ import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
-import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -57,8 +57,8 @@ public class ViewshedResolver extends AbstractContextualizer implements IResolve
 
         OmsViewshed algorithm = new OmsViewshed();
 
-        if (context.getArtifact("artifact") instanceof IObjectArtifact) {
-            IObjectArtifact artifacts = (IObjectArtifact) context.getArtifact("artifact");
+        if (context.getArtifact("viewpoints") instanceof IObjectArtifact) {
+            IObjectArtifact artifacts = (IObjectArtifact) context.getArtifact("viewpoints");
             List<Geometry> viewPoints = new ArrayList<>();
             CoordinateReferenceSystem crs = null;
             for(IArtifact artifact : artifacts) {
@@ -70,7 +70,7 @@ public class ViewshedResolver extends AbstractContextualizer implements IResolve
                 point.setUserData(height);
                 viewPoints.add(point);
                 if (crs == null) {
-                    crs = ((Space) space).getShape().getJTSEnvelope().getCoordinateReferenceSystem();
+                    crs = ((Projection) space.getProjection()).getCoordinateReferenceSystem();
                 }
             }
             SimpleFeatureCollection viewPointsCollection = FeatureUtilities.featureCollectionFromGeometry(crs,
