@@ -25,6 +25,7 @@ import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
@@ -61,7 +62,7 @@ public class ViewshedResolver extends AbstractContextualizer implements IResolve
             IObjectArtifact artifacts = (IObjectArtifact) context.getArtifact("viewpoints");
             List<Geometry> viewPoints = new ArrayList<>();
             CoordinateReferenceSystem crs = null;
-            for(IArtifact artifact : artifacts) {
+            for (IArtifact artifact : artifacts) {
                 ISpace space = ((IObservation) artifact).getSpace();
                 if (space == null) {
                     continue;
@@ -84,7 +85,8 @@ public class ViewshedResolver extends AbstractContextualizer implements IResolve
 
         IState dem = context.getArtifact("elevation", IState.class);
         if (dem != null) {
-            algorithm.inRaster = GeotoolsUtils.INSTANCE.stateToCoverage(dem, context.getScale(), DataBuffer.TYPE_FLOAT,
+            algorithm.inRaster = GeotoolsUtils.INSTANCE.stateToCoverage(dem, context.getScale(),
+                    DataBuffer.TYPE_FLOAT,
                     floatNovalue, false);
         } else {
             throw new KlabValidationException("The viewshed algorithm needs an input elevation grid.");
@@ -96,7 +98,8 @@ public class ViewshedResolver extends AbstractContextualizer implements IResolve
             throw new KlabException(e);
         }
         if (!context.getMonitor().isInterrupted()) {
-            GeotoolsUtils.INSTANCE.coverageToState(algorithm.outViewshed, target, context.getScale(), null);
+            GeotoolsUtils.INSTANCE.coverageToState(algorithm.outViewshed, target, context.getScale(),
+                    (d) -> NumberUtils.equal(d, -9.999) ? Double.NaN : d);
         }
 
         return target;
