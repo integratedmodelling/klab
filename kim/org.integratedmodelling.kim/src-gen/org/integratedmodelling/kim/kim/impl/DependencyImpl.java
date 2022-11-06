@@ -24,6 +24,7 @@ import org.integratedmodelling.kim.kim.Annotation;
 import org.integratedmodelling.kim.kim.Dependency;
 import org.integratedmodelling.kim.kim.KimPackage;
 import org.integratedmodelling.kim.kim.ObservableSemantics;
+import org.integratedmodelling.kim.kim.Option;
 
 /**
  * <!-- begin-user-doc -->
@@ -36,6 +37,7 @@ import org.integratedmodelling.kim.kim.ObservableSemantics;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.DependencyImpl#getAnnotations <em>Annotations</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.DependencyImpl#getModelReference <em>Model Reference</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.DependencyImpl#getObservable <em>Observable</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.DependencyImpl#getOptions <em>Options</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.DependencyImpl#getAlternativeObservables <em>Alternative Observables</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.DependencyImpl#isOptional <em>Optional</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.DependencyImpl#getName <em>Name</em>}</li>
@@ -84,6 +86,16 @@ public class DependencyImpl extends MinimalEObjectImpl.Container implements Depe
    * @ordered
    */
   protected ObservableSemantics observable;
+
+  /**
+   * The cached value of the '{@link #getOptions() <em>Options</em>}' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getOptions()
+   * @generated
+   * @ordered
+   */
+  protected EList<Option> options;
 
   /**
    * The cached value of the '{@link #getAlternativeObservables() <em>Alternative Observables</em>}' containment reference list.
@@ -252,6 +264,21 @@ public class DependencyImpl extends MinimalEObjectImpl.Container implements Depe
    * @generated
    */
   @Override
+  public EList<Option> getOptions()
+  {
+    if (options == null)
+    {
+      options = new EObjectContainmentEList<Option>(Option.class, this, KimPackage.DEPENDENCY__OPTIONS);
+    }
+    return options;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EList<ObservableSemantics> getAlternativeObservables()
   {
     if (alternativeObservables == null)
@@ -325,6 +352,8 @@ public class DependencyImpl extends MinimalEObjectImpl.Container implements Depe
         return ((InternalEList<?>)getAnnotations()).basicRemove(otherEnd, msgs);
       case KimPackage.DEPENDENCY__OBSERVABLE:
         return basicSetObservable(null, msgs);
+      case KimPackage.DEPENDENCY__OPTIONS:
+        return ((InternalEList<?>)getOptions()).basicRemove(otherEnd, msgs);
       case KimPackage.DEPENDENCY__ALTERNATIVE_OBSERVABLES:
         return ((InternalEList<?>)getAlternativeObservables()).basicRemove(otherEnd, msgs);
     }
@@ -347,6 +376,8 @@ public class DependencyImpl extends MinimalEObjectImpl.Container implements Depe
         return getModelReference();
       case KimPackage.DEPENDENCY__OBSERVABLE:
         return getObservable();
+      case KimPackage.DEPENDENCY__OPTIONS:
+        return getOptions();
       case KimPackage.DEPENDENCY__ALTERNATIVE_OBSERVABLES:
         return getAlternativeObservables();
       case KimPackage.DEPENDENCY__OPTIONAL:
@@ -377,6 +408,10 @@ public class DependencyImpl extends MinimalEObjectImpl.Container implements Depe
         return;
       case KimPackage.DEPENDENCY__OBSERVABLE:
         setObservable((ObservableSemantics)newValue);
+        return;
+      case KimPackage.DEPENDENCY__OPTIONS:
+        getOptions().clear();
+        getOptions().addAll((Collection<? extends Option>)newValue);
         return;
       case KimPackage.DEPENDENCY__ALTERNATIVE_OBSERVABLES:
         getAlternativeObservables().clear();
@@ -411,6 +446,9 @@ public class DependencyImpl extends MinimalEObjectImpl.Container implements Depe
       case KimPackage.DEPENDENCY__OBSERVABLE:
         setObservable((ObservableSemantics)null);
         return;
+      case KimPackage.DEPENDENCY__OPTIONS:
+        getOptions().clear();
+        return;
       case KimPackage.DEPENDENCY__ALTERNATIVE_OBSERVABLES:
         getAlternativeObservables().clear();
         return;
@@ -440,6 +478,8 @@ public class DependencyImpl extends MinimalEObjectImpl.Container implements Depe
         return MODEL_REFERENCE_EDEFAULT == null ? modelReference != null : !MODEL_REFERENCE_EDEFAULT.equals(modelReference);
       case KimPackage.DEPENDENCY__OBSERVABLE:
         return observable != null;
+      case KimPackage.DEPENDENCY__OPTIONS:
+        return options != null && !options.isEmpty();
       case KimPackage.DEPENDENCY__ALTERNATIVE_OBSERVABLES:
         return alternativeObservables != null && !alternativeObservables.isEmpty();
       case KimPackage.DEPENDENCY__OPTIONAL:
