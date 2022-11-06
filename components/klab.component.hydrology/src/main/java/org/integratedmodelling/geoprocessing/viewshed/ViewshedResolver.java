@@ -99,7 +99,7 @@ public class ViewshedResolver extends AbstractContextualizer implements IResolve
         }
         if (!context.getMonitor().isInterrupted()) {
             GeotoolsUtils.INSTANCE.coverageToState(algorithm.outViewshed, target, context.getScale(),
-                    (d) -> NumberUtils.equal(d, -9.999) ? Double.NaN : d);
+                    (d) -> d > 0 ? d : 0);
         }
 
         return target;
