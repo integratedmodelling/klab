@@ -87,11 +87,11 @@ export number viewshed
         "A DEM observation."
     
     optional number height
-        "The height of the source view points over the terrain."
+        "The height of the source view points in meters over the terrain."
         default 100.0
     
     geometry S2
     
-    class org.integratedmodelling.geoprocessing.viewshed.ViewshedInstantiator
+    class org.integratedmodelling.geoprocessing.viewshed.ViewshedResolver
 
 }
