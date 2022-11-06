@@ -432,13 +432,13 @@ public interface IObservable extends ISemantic, IResolvable {
          */
         Builder withResolution(Resolution only);
 
-//        /**
-//         * Give or remove the fluid units trait
-//         * 
-//         * @param b
-//         * @return
-//         */
-//        Builder fluidUnits(boolean b);
+        /**
+         * Give or remove the fluid units trait
+         * 
+         * @param b
+         * @return
+         */
+        Builder fluidUnits(boolean b);
 
         /**
          * Add an annotation to the result observable.

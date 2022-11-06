@@ -95,35 +95,35 @@ public class KimObservable extends KimStatement implements IKimObservable {
         ret.optional = declaration.isOptional();
         ret.exclusive = declaration.isExclusive();
         
-        if (declaration.isDefault()) {
-            
-            if (declaration.getDefaultLiteral() != null) {
-                ret.defaultValue = Kim.INSTANCE.parseLiteral(declaration.getDefaultLiteral(),
-                        Kim.INSTANCE.getNamespace(KimValidator.getNamespace(declaration)));
-            } else if (declaration.getDefaultConcept() != null) {
-                ret.defaultValue = Kim.INSTANCE.declareConcept(declaration.getDefaultConcept());
-            }
-
-            if (declaration.getCauses() != null) {
-                for (String resEx : declaration.getCauses()) {
-                    switch(resEx) {
-                    case "error":
-                        ret.resolutionExceptions.add(ResolutionException.Error);
-                        break;
-                    case "missing":
-                        ret.resolutionExceptions.add(ResolutionException.Missing);
-                        break;
-                    case "nodata":
-                        ret.resolutionExceptions.add(ResolutionException.Nodata);
-                        break;
-                    }
-                }
-            }
-            
-            if (ret.resolutionExceptions.contains(ResolutionException.Missing)) {
-                ret.optional = true;
-            }
-        }
+//        if (declaration.isDefault()) {
+//            
+//            if (declaration.getDefaultLiteral() != null) {
+//                ret.defaultValue = Kim.INSTANCE.parseLiteral(declaration.getDefaultLiteral(),
+//                        Kim.INSTANCE.getNamespace(KimValidator.getNamespace(declaration)));
+//            } else if (declaration.getDefaultConcept() != null) {
+//                ret.defaultValue = Kim.INSTANCE.declareConcept(declaration.getDefaultConcept());
+//            }
+//
+//            if (declaration.getCauses() != null) {
+//                for (String resEx : declaration.getCauses()) {
+//                    switch(resEx) {
+//                    case "error":
+//                        ret.resolutionExceptions.add(ResolutionException.Error);
+//                        break;
+//                    case "missing":
+//                        ret.resolutionExceptions.add(ResolutionException.Missing);
+//                        break;
+//                    case "nodata":
+//                        ret.resolutionExceptions.add(ResolutionException.Nodata);
+//                        break;
+//                    }
+//                }
+//            }
+//            
+//            if (ret.resolutionExceptions.contains(ResolutionException.Missing)) {
+//                ret.optional = true;
+//            }
+//        }
         
         if (declaration.getValue() != null) {
             String id = declaration.getValue().getId();

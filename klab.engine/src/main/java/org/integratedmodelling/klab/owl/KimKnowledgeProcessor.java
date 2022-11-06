@@ -359,22 +359,22 @@ public enum KimKnowledgeProcessor {
 
         Concept observable = main;
 
-        // Observable ret = new Observable(observable);
+        Observable ret = new Observable(observable);
 
         IObservable.Builder builder = ObservableBuilder.getBuilder(main, monitor);
 
         // ret.setUrl(concept.getURI());
         builder.withUrl(concept.getURI());
 
-//        boolean unitsSet = false;
+        boolean unitsSet = false;
 
         if (concept.getUnit() != null) {
-//            unitsSet = true;
+            unitsSet = true;
             builder = builder.withUnit(concept.getUnit());
         }
 
         if (concept.getCurrency() != null) {
-//            unitsSet = true;
+            unitsSet = true;
             builder = builder.withCurrency(concept.getCurrency());
         }
 
@@ -401,7 +401,7 @@ public enum KimKnowledgeProcessor {
         for (ResolutionException exc : concept.getResolutionExceptions()) {
             builder = builder.withResolutionException(exc);
         }
-        
+
         if (concept.getRange() != null) {
             builder = builder.withRange(concept.getRange());
             // ret.setRange(concept.getRange());
@@ -421,6 +421,10 @@ public enum KimKnowledgeProcessor {
 
         for (Pair<ValueOperator, Object> operator : concept.getValueOperators()) {
             builder = builder.withValueOperator(operator.getFirst(), operator.getSecond());
+        }
+
+        if (Units.INSTANCE.needsUnits(ret) && !unitsSet) {
+            builder = builder.fluidUnits(true);
         }
 
         for (IKimAnnotation annotation : concept.getAnnotations()) {
