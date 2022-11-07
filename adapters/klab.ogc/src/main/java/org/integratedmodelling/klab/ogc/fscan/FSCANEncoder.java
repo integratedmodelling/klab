@@ -23,7 +23,6 @@ import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
@@ -76,6 +75,7 @@ public class FSCANEncoder implements IResourceEncoder {
 		 * 
 		 * #level=n[&simplify=false] -> return all in bounding box at given level,
 		 * resolution-dependent simplification or none
+		 * 
 		 */
 
 		boolean intersect = urnParameters.containsKey("intersect") ? Boolean.getBoolean(urnParameters.get("intersect"))

@@ -1,45 +1,61 @@
 = Semantic modeling
 
-== The basics: provenance
 
-Science can be https://en.wikipedia.org/wiki/Science[defined] as a process that "builds and organizes knowledge in the form of testable explanations and predictions about the universe". Much scientific activity is aimed at producing informational artifacts that describe the structure and/or the function of the world around us. Two main types of artifacts are _data_, embodying an "observed" view of the world obtained through measurements and categorizations, and _models_, embodying a causal hypothesis about how a particular aspect of the world changes and evolves. All of these, no matter how accurate, are _descriptions_ of the world around us: the job of science is to constantly improve these descriptions so that they can best serve the needs of humanity. 
+Science has been https://en.wikipedia.org/wiki/Science[defined] as a process that "builds and organizes knowledge in the form of testable explanations and predictions about the universe". Much scientific activity is aimed at producing informational artifacts that describe the structure and the function of the world around us. Two main types of artifacts are _data_, embodying an "observed" view of the world obtained through measurements or categorizations, and _models_, embodying a causal hypothesis about how an aspect of the world changes and evolves. All of these describe, with varying accuracy, the world around us for human perusal, in conformity with one or more, stated or implicit purposes. The job of science is to provide, extend, update and improve these descriptions so that they can best serve the needs of humanity.
 
-Often... bending our most successful representational strategies (e.g. raster maps, differential equations) around reality so that they can be put to effective use throughout the scientific process. This often results in distorsions of meaning, to which scientists are vulnerable: "variables", "equations", round horses and the like are often part of the narrative as if the world was actually represented that way. Semantic modeling suggest a pathway for scientists to realign the _meaning_ of the observed world with the artifacts that describe it. Turns out that in the process, it can also effectively address one of the worst problems of modern science: the "ivory tower" problem of incompatible representations, languages, jargons, methods across disciplines, scales and communities. 
+Semantic modeling enforces the precise alignment of the _meaning_ of the observed world with the artifacts that science produces to describe it. Often the day-to-day products of science ("variables", "data" such as maps and tables, "models" such as differential equations or computational algorithms) become first-class objects in the scientific narrative, building barriers around the intelligibility and communicability of scientific results. By making semantics the starting and the ending point of a scientific investigation, semantic modeling can help address one of the worst shortcomings of modern science: the "ivory tower" problem of incompatible representations, languages, jargons, methods, scales and, ultimately, communities. 
 
-Provenance, a science that addresses the tracking and documentation of the life cycle of scientific artifacts through all transformations, analyses, and interpretation, provides a useful starting point to understand the rationale of semantic modeling. 
+The science that addresses the life cycle of scientific artifacts through their transformation, analysis, and interpretation is named **provenance**, and provides a useful starting point to clarify the rationale of semantic modeling. The provenance conceptual model (our reference is the http://openprovenance.org[Open Provenance Model - OPM]) provides terminology to refer to this process, such as _entity_ for any scientific artifact that can be stored and communicated, and _activity_ for any process that produces an entity from zero or more others. Semantic modeling builds on provenance to enable a scientific process that hinges on the _meaning_ associated with every scientific entity and activity. We argue that the re-elaboration of the scientific process made in semantic modeling meets, _by design_, all the http://go-fair.org[FAIR] (Findable, Accessible, Interoperable and Reusable) principles, and can greatly enhance the return of investment of science by easing communication across disciplines and societal sectors, and ensuring the longest useful life for its products, much beyond the original rationale for their production.
 
-====
-Before we begin
+As described more formally in the https://github.com/integratedmodelling/odo-im[k.LAB core ontology (ODO-IM)] and its xref:semantic_modeling:odo.adoc[documentation], semantic modeling extends the terms of the Open Provenance Model as follows:
 
-Existing literature, initiatives and conversations regarding integration, provenance, scientific artifacts and their curation, etc., are usually entirely about _data_, as "the" scientific product of interest. While data, however defined, are definitely valuable artifacts in science, the approach we take is necessarily more radical: we consider as scientific artifacts _any_ scientific product that offers a scientifically valid _description_ of some phenomenon. This assumption is key to continuing our path towards semantic modeling and semantic integration towards its more useful end goals. For this reason
+* *Resource* is the semantic equivalent of the OPM _entity_, representing any communicable, storeable artifact that embodies scientific knowledge - such as a dataset, report or
+equation. Resources are always semantically characterized by the concept
+they describe (the _observable_) and are intended as directly
+_actionable_, i.e. machine-readable in all of their parts and
+implications with no need for human intervention. Resources are stored online with their metadata and identified by an unmodifiable Uniform Resource Name (URN).
+* *Contextualization* is the semantic equivalent of the OPM _activity_,
+representing the production of a Resource (using zero or more other
+Resources) and recognizing that a Resource that serves as _context_ must
+be provided (_acknowledged_) by the observing agent to bootstrap the
+process.
+* *Description* is the semantic equivalent of the OPM _plan_, linking a
+semantic statement (the _observable_) to a computational strategy to
+build a Resource that represents it. Descriptions can be stored online and perused by a machine-driven process to produce resources based on a semantic query for their observable in a chosen context.
 
-. You should feel free to substitute _data_ in common literature with something broader in our conceptualization, including any other artifact (i.e. an equation, a machine-learned tensor, etc.) that represents the "serialization" of a scientific observation of the world. We like to use the term _scientific knowledge_ when possible.
-. We do not necessarily hold the view that data are automatically "evidence" and models are hypotheses. as .... (scale, assumptions etc). 
+Based on these definitions, semantic modeling proceeds by enabling
 
-====
+. the definition of _observable expressions_, which carry the meaning of observable concepts and allow modelers to capture complex meanings and linguistic distinctions
+commonly adopted in day-to-day scientific practice;
+. the definition of _models_, statements that embody methodological "recipes" (corresponding to Descriptions, or semantically-enabled OPM Plans) that have observable expressions as inputs and outputs, representing synthetic statements of scientific methods that are normally only expressed as non directly actionable artifacts, such as equations in scientific articles or complex computer code.
 
-As a start, we define the process of modeling as the production and curation of scientific artifacts. Provenance model gives us all the (few) words we need to refer to this process (interested users can refer to the http://openprovenance.org[Open Provenance Model] for details). the concepts we need from it are
+The k.LAB software stack enables an AI-driven process (AI-assisted contextualization) that finds, connects and uses models from a networked, distributed repository to respond to logical queries of the form "observe _observable_ in _context_". In the k.LAB approach documented here, a semantic modeler writes statements in the **k.IM language**, which defines observables and models using syntactic rules and conventions closely modeled on the English language. These models become part of a curated, shared commons that can be perused as an online service. The use of k.IM facilitates semantic annotation and makes the building of integrated Semantic Web applications accessible to the largest possible set of practitioners.
 
-...
+== Semantic modeling in k.IM
 
-=== Semantic modeling in a nutshell
+k.IM (from Knowledge-Integrated Modelling) is a declarative language designed to accomplish two main tasks:
 
-Semantic modeling takes the provenance model briefly discussed above and adds _meaning_ to it. We call artifacts paired with meaning _observations_. It is intuitive to see, for example, a temperature map for a region as an "observation of temperature" - meaning, a scientific artifact containing numbers that describe the measurement of the temperature concept in a given region and at a given unit of measurement and observational extent/resolution. 
+* Facilitate the definition of worldviews: shared, consistent ontological declarations (interoperable with OWL2 axioms) articulating the semantics of observables in terms of the ODO-IM core ontology and covering significant interdisciplinary realms;
+* Enable semantic modeling and interoperability through the semantic annotation of resources, i.e. data, data services, algorithms and other conventional data assets, using the terms from a chosen worldview.
+ 
+k.IM is one of the languages supported by the k.LAB toolchain and is the primary instrument to define the xref:technote[semantic layer] in k.LAB.
 
-Quick and effective, hostia.
+Modeling with k.IM facilitates the composition of models and the annotation of resources that share the same semantics, promoting models and data integration. This semantic integration is in the terms of a set worldview, which consists of a coherent set of ontologies of broad phenomenological and disciplinary coverage, organized by domain and articulated in tiers of increasing specificity and detail. The worldview defines a logical perspective to which k.IM assets are synchronized. A worldview is associated with every k.LAB user and project, and is automatically synchronized across all users and applications. All annotations made in terms of the same worldview are FAIR by design.
 
-== Observables and observations
+Using k.IM, meaning can be represented in an intuitive near-natural language, while the k.IM syntax rules automatically enforce compliance with a common observation ontology. A specific subset of k.IM syntax is used to express semantics and meaning as logical expressions, which can assemble observable concepts, predicates and semantic operators into observable expressions (in short _observables_) used to semantically annotate resources. This subset of syntax is closely modeled on the English language and implements what is known as a controlled natural language. Other constructs in k.IM enable the definition of the concepts themselves, producing OWL2 axioms from k.IM specification, and the annotation of external data and algorithms (resources) specified as URNs, URLs or inline code or service calls. 
 
-== Subjects and qualities
+This document introduces observable expressions first, then describes the k.IM constructs that allow ontologists to develop coherent conceptualizations in k.IM (worldviews).
 
-== Predicates
+=== Describing scientific knowledge: observable expressions
 
-== Occurrence: when time changes
+A scientific investigation, rephrased according to the workflow of semantic modeling, involves first of all the acknowledgement of an “overall” observation, which sets the spatial and temporal context for the investigation. When that is done, investigations proceed by intentionally observing concepts in this context, using field measurements and/or computed models, to produce scientific resources such as data which represent the result of this observation process. In standard scientific practice, meaning is carried through this process in the form of unstructured and unformalized metadata. In k.LAB, the formal statement of meaning is always the starting point of a scientific investigation: a context is acknowledged as a semantically explicit “subject”, then observable expressions are used to define the strategy to create any further observations in it. Semantic consistency of the observables and of their logical fit to the context is validated throughout the entire process. Observable expressions in the k.IM language provide a convenient and self-validating way to express these statements, both when annotating existing scientific products with semantics and when querying a networked repository of such annotations to produce new observations.
 
-=== Processes and change
+==== Observable expressions by example
 
-=== Events
+The examples in this section use concepts from the im worldview, curated by the Integrated Modeling Partnership, and illustrate, through use cases of increasing complexity, how a data scientist, modeler or data curator may build observable expressions to use in describing data sets or algorithms.  Familiarity with the xref:technote[k.LAB architecture] is assumed. In these situations, the most common use case is the annotation of a resource, for example a data file or service. In k.LAB, different types of resources are represented by Uniform Resource Names (URNs) which are resolved to metadata hosted on networked servers. The metadata associated with each URN identify an adapter, which in turn provides the functionalities required to create a data stream suitable for computation in the context of observation. Such details are not discussed here: the following example is only meant to show one usage of observable expressions in context.
 
-== Relationships
+Annotation is performed in k.IM using the model keyword as in 
 
-== Configurations
+[…]
+
+(FOOT?)NOTE: while the observable expression may be included in the resource metadata, as commonly done in other applications, the k.LAB approach prefers complete separation between the resource layer and the semantic layer, seeing semantics as one interpretation among many possible for the same dataset. See the k.LAB architectural description for details.

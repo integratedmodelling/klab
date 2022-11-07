@@ -9,7 +9,6 @@ import java.util.stream.StreamSupport;
 
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
-import org.integratedmodelling.klab.Logo;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.auth.IPartnerIdentity;

@@ -138,8 +138,7 @@ public enum Actors implements IActorsService {
 
     private ActorSystem<Void> supervisor;
     private Map<String, IBehavior> behaviors = Collections.synchronizedMap(new HashMap<>());
-    private Map<String, Map<String, Map<String, String>>> localizations = Collections
-            .synchronizedMap(new HashMap<>());
+    private Map<String, Map<String, Map<String, String>>> localizations = Collections.synchronizedMap(new HashMap<>());
     private Map<String, BehaviorReference> behaviorDescriptors = Collections.synchronizedMap(new HashMap<>());
     private Map<String, Pair<String, Class<? extends KlabActionExecutor>>> actionClasses = Collections
             .synchronizedMap(new HashMap<>());
@@ -279,12 +278,10 @@ public enum Actors implements IActorsService {
         if (ret == null && behaviorId.contains(".")) {
             String lang = Path.getLast(behaviorId, '.');
             if (isoLanguages.contains(lang)) {
-                Map<String, Map<String, String>> localization = this.localizations
-                        .get(Path.getLeading(behaviorId, '.'));
+                Map<String, Map<String, String>> localization = this.localizations.get(Path.getLeading(behaviorId, '.'));
                 if (localization != null && localization.containsKey(lang)) {
                     IKActorsBehavior source = KActors.INSTANCE.newBehavior(Path.getLeading(behaviorId, '.'));
-                    ret = new org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior(source,
-                            lang,
+                    ret = new org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior(source, lang,
                             localization.get(lang));
                     behaviors.put(behaviorId, ret);
                 }
@@ -301,8 +298,7 @@ public enum Actors implements IActorsService {
             if (prototype.getLocale() == null) {
                 return new org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior(source);
             } else {
-                return new org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior(source,
-                        prototype.getLocale(),
+                return new org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior(source, prototype.getLocale(),
                         prototype.getLocalization());
             }
         }
@@ -380,14 +376,12 @@ public enum Actors implements IActorsService {
             @Override
             public void notify(IKActorsBehavior behavior) {
                 behaviors.put(behavior.getName(),
-                        new org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior(
-                                behavior));
+                        new org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior(behavior));
                 File file = behavior.getFile();
                 if (file != null) {
                     File localizationFile = MiscUtilities.changeExtension(file, "localization");
                     if (localizationFile.exists()) {
-                        localizations.put(behavior.getName(),
-                                new FileCatalog<>(localizationFile, Map.class, Map.class));
+                        localizations.put(behavior.getName(), new FileCatalog<>(localizationFile, Map.class, Map.class));
                     }
                 }
             }
@@ -447,11 +441,8 @@ public enum Actors implements IActorsService {
      * @return
      */
     public <T> ActorRef<T> createActor(Behavior<T> create, IIdentity identity) {
-        return ActorSystem.create(
-                Behaviors.supervise(create).onFailure(SupervisorStrategy.resume().withLoggingEnabled(true)),
-                identity instanceof IUserIdentity
-                        ? sanitize(((IUserIdentity) identity).getUsername())
-                        : identity.getId());
+        return ActorSystem.create(Behaviors.supervise(create).onFailure(SupervisorStrategy.resume().withLoggingEnabled(true)),
+                identity instanceof IUserIdentity ? sanitize(((IUserIdentity) identity).getUsername()) : identity.getId());
     }
 
     private String sanitize(String username) {
@@ -466,8 +457,7 @@ public enum Actors implements IActorsService {
      * @param cls
      */
     @SuppressWarnings("unchecked")
-    public void registerBehavior(org.integratedmodelling.klab.api.extensions.actors.Behavior annotation,
-            Class<?> cls) {
+    public void registerBehavior(org.integratedmodelling.klab.api.extensions.actors.Behavior annotation, Class<?> cls) {
 
         BehaviorReference descriptor = behaviorDescriptors.get(annotation.id());
         if (descriptor == null) {
@@ -490,8 +480,7 @@ public enum Actors implements IActorsService {
                 ad.setName(message.id());
                 ad.setDescription(message.description());
                 descriptor.getActions().add(ad);
-                this.actionClasses.put(message.id(),
-                        new Pair<>(annotation.id(), (Class<? extends KlabActionExecutor>) cl));
+                this.actionClasses.put(message.id(), new Pair<>(annotation.id(), (Class<? extends KlabActionExecutor>) cl));
                 this.actionDefinitions.put(cl, message);
                 if (KlabActionExecutor.class.isAssignableFrom(cl)) {
                     this.viewActionClasses.put(message.id(),
@@ -513,8 +502,7 @@ public enum Actors implements IActorsService {
             ObjectMapper mapper = new ObjectMapper();
             mapper.enable(SerializationFeature.INDENT_OUTPUT); // pretty print
             mapper.setSerializationInclusion(Include.NON_NULL);
-            JavaType type = mapper.getTypeFactory().constructMapLikeType(Map.class, String.class,
-                    BehaviorReference.class);
+            JavaType type = mapper.getTypeFactory().constructMapLikeType(Map.class, String.class, BehaviorReference.class);
             mapper.writerFor(type).writeValue(file, this.behaviorDescriptors);
         } catch (IOException e) {
             Logging.INSTANCE.error(e);
@@ -532,15 +520,13 @@ public enum Actors implements IActorsService {
      * @param scope
      * @return
      */
-    public KlabActionExecutor getSystemAction(String id, IActorIdentity<KlabMessage> identity,
-            IParameters<String> arguments,
+    public KlabActionExecutor getSystemAction(String id, IActorIdentity<KlabMessage> identity, IParameters<String> arguments,
             KlabActor.Scope scope, ActorRef<KlabMessage> sender, String callId) {
 
         Pair<String, Class<? extends KlabActionExecutor>> cls = actionClasses.get(id);
         if (cls != null) {
             try {
-                Constructor<? extends KlabActionExecutor> constructor = cls.getSecond().getConstructor(
-                        IActorIdentity.class,
+                Constructor<? extends KlabActionExecutor> constructor = cls.getSecond().getConstructor(IActorIdentity.class,
                         IParameters.class, KlabActor.Scope.class, ActorRef.class, String.class);
                 KlabActionExecutor ret = constructor.newInstance(identity, arguments, scope, sender, callId);
                 ret.notifyDefinition(this.actionDefinitions.get(cls.getSecond()));
@@ -582,8 +568,7 @@ public enum Actors implements IActorsService {
     public Collection<String> getPublicApps() {
         Set<String> ret = new LinkedHashSet<>();
         for (String key : behaviors.keySet()) {
-            if (behaviors.get(key).getDestination() == Type.APP
-                    && behaviors.get(key).getStatement().isPublic()) {
+            if (behaviors.get(key).getDestination() == Type.APP && behaviors.get(key).getStatement().isPublic()) {
                 // getId() and set semantics ensure that localized instances only appear once with
                 // their original name
                 ret.add(behaviors.get(key).getId());
@@ -601,8 +586,7 @@ public enum Actors implements IActorsService {
         /*
          * find any bindings made at runtime
          */
-        Pair<String, IKimExpression> rb = observation.getScope().getBehaviorBindings()
-                .get(observation.getObservable().getType());
+        Pair<String, IKimExpression> rb = observation.getScope().getBehaviorBindings().get(observation.getObservable().getType());
         if (rb != null) {
             IBehavior b = getBehavior(rb.getFirst());
             if (b != null) {
@@ -735,10 +719,8 @@ public enum Actors implements IActorsService {
         } else {
             String spacer = StringUtil.spaces(offset);
             String name = component.getName() == null ? component.getTitle() : component.getName();
-            ret.append(spacer + component.getType() + " " + (name == null ? "<unnamed>" : name) + " ["
-                    + component.getId() + "]"
-                    + dumpAttributes(component)
-                    + (component.getActorPath() == null ? "" : (" -> " + component.getActorPath()))
+            ret.append(spacer + component.getType() + " " + (name == null ? "<unnamed>" : name) + " [" + component.getId() + "]"
+                    + dumpAttributes(component) + (component.getActorPath() == null ? "" : (" -> " + component.getActorPath()))
                     + "\n");
             for (ViewComponent c : component.getComponents()) {
                 dumpComponent(c, ret, offset + 3);
@@ -773,8 +755,7 @@ public enum Actors implements IActorsService {
 
     public ViewPanel findPanel(Layout view, String id) {
         ViewPanel ret = null;
-        for (Collection<?> panels : new Collection[]{view.getPanels(), view.getLeftPanels(),
-                view.getRightPanels(),
+        for (Collection<?> panels : new Collection[]{view.getPanels(), view.getLeftPanels(), view.getRightPanels(),
                 Collections.singleton(view.getFooter()), Collections.singleton(view.getHeader())}) {
             for (Object panel : panels) {
                 ret = findPanel((ViewPanel) panel, id);
@@ -908,8 +889,7 @@ public enum Actors implements IActorsService {
      * @param identity
      * @return
      */
-    public Object createJavaObject(KActorsValue.Constructor constructor, Scope scope,
-            IActorIdentity<?> identity) {
+    public Object createJavaObject(KActorsValue.Constructor constructor, Scope scope, IActorIdentity<?> identity) {
 
         Class<?> cls = null;
         String className = constructor.getClassname();
@@ -947,10 +927,7 @@ public enum Actors implements IActorsService {
                         continue;
                     }
                     Object arg = constructor.getArguments().get(key);
-                    settings.put(key,
-                            arg instanceof KActorsValue
-                                    ? ((KActorsValue) arg).evaluate(scope, identity, true)
-                                    : arg);
+                    settings.put(key, arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, identity, true) : arg);
                 }
 
                 Constructor<?> constr = null;
@@ -968,8 +945,7 @@ public enum Actors implements IActorsService {
 
                 if (constr == null) {
                     throw new KlabValidationException(
-                            "k.Actors: cannot find a constructor for the arguments specified for "
-                                    + className);
+                            "k.Actors: cannot find a constructor for the arguments specified for " + className);
                 }
 
                 ret = constr.newInstance(arguments.toArray());
@@ -977,14 +953,11 @@ public enum Actors implements IActorsService {
                 // shouldn't happen w/o exception
                 if (ret != null) {
                     for (String setting : settings.keySet()) {
-                        String methodName = setting.startsWith("set")
-                                ? setting
-                                : ("set" + StringUtil.capitalize(setting));
+                        String methodName = setting.startsWith("set") ? setting : ("set" + StringUtil.capitalize(setting));
                         Object argument = settings.get(setting);
                         Method method = null;
                         try {
-                            method = cls.getMethod(methodName,
-                                    argument == null ? Object.class : argument.getClass());
+                            method = cls.getMethod(methodName, argument == null ? Object.class : argument.getClass());
                         } catch (NoSuchMethodException e) {
                             // ok, we dont'have it.
                         }
@@ -1006,12 +979,10 @@ public enum Actors implements IActorsService {
                         } else {
                             if (scope != null) {
                                 scope.getMonitor().warn(
-                                        "k.Actors: cannot find a " + methodName
-                                                + " method to invoke on constructed object");
+                                        "k.Actors: cannot find a " + methodName + " method to invoke on constructed object");
                             } else {
                                 Logging.INSTANCE.warn(
-                                        "k.Actors: cannot find a " + methodName
-                                                + " method to invoke on constructed object");
+                                        "k.Actors: cannot find a " + methodName + " method to invoke on constructed object");
                             }
                         }
                     }
@@ -1033,11 +1004,9 @@ public enum Actors implements IActorsService {
 
         } catch (Throwable e) {
             if (scope != null) {
-                scope.getMonitor().error(
-                        "error creating k.Actors object of class " + className + ": " + e.getMessage());
+                scope.getMonitor().error("error creating k.Actors object of class " + className + ": " + e.getMessage());
             } else {
-                Logging.INSTANCE.error(
-                        "error creating k.Actors object of class " + className + ": " + e.getMessage());
+                Logging.INSTANCE.error("error creating k.Actors object of class " + className + ": " + e.getMessage());
             }
         }
 
@@ -1133,8 +1102,7 @@ public enum Actors implements IActorsService {
                     public Object next() {
                         // wrap into an Artifact wrapper for reference inside k.Actors
                         Object ret = new Artifact(
-                                new ObjectArtifact(data.getObjectName(n), data.getObjectScale(n),
-                                        data.getObjectMetadata(n)));
+                                new ObjectArtifact(data.getObjectName(n), data.getObjectScale(n), data.getObjectMetadata(n)));
                         n++;
                         return ret;
                     }
@@ -1151,8 +1119,7 @@ public enum Actors implements IActorsService {
      * @param arguments
      * @param scope
      */
-    public Object invokeReactorMethod(Object reactor, String methodName, IParameters<String> arguments,
-            Scope scope,
+    public Object invokeReactorMethod(Object reactor, String methodName, IParameters<String> arguments, Scope scope,
             IActorIdentity<?> identity) {
 
         Object ret = null;
@@ -1225,6 +1192,33 @@ public enum Actors implements IActorsService {
                 }
             }
 
+            if (method == null && kargs == null) {
+                /*
+                 * see if we have a method with the same args + a map of options and pass an empty
+                 * option map if so.
+                 */
+                clss = new Class[jargs.size() + 1];
+
+                i = 0;
+                for (Object jarg : jargs) {
+                    clss[i++] = jarg == null ? Object.class : jarg.getClass();
+                }
+                clss[i] = Map.class;
+
+                try {
+                    method = MethodUtils.getMatchingAccessibleMethod(reactor.getClass(), methodName, clss);
+                    if (method != null) {
+                        jargs.add(new HashMap<Object, Object>());
+                        ret = method.invoke(reactor, jargs.toArray());
+                    }
+
+                } catch (Throwable t) {
+                    Logging.INSTANCE.error("invokeReactorMethod threw exception: " + t.getMessage());
+                    // leave method = null
+                }
+
+            }
+
             if (method == null) {
 
                 /*
@@ -1249,14 +1243,11 @@ public enum Actors implements IActorsService {
             }
 
             if (scope != null) {
-                scope.getMonitor()
-                        .warn("k.Actors: cannot find a '" + methodName
-                                + "' method to invoke on object of class "
-                                + reactor.getClass().getCanonicalName());
+                scope.getMonitor().warn("k.Actors: cannot find a '" + methodName + "' method to invoke on object of class "
+                        + reactor.getClass().getCanonicalName());
             } else {
-                Logging.INSTANCE.warn(
-                        "k.Actors: cannot find a '" + methodName + "' method to invoke on object of class "
-                                + reactor.getClass().getCanonicalName());
+                Logging.INSTANCE.warn("k.Actors: cannot find a '" + methodName + "' method to invoke on object of class "
+                        + reactor.getClass().getCanonicalName());
             }
         }
 
@@ -1272,8 +1263,7 @@ public enum Actors implements IActorsService {
      */
     public boolean asBooleanValue(Object ret) {
         if (ret == null || (ret instanceof String && ((String) ret).trim().isEmpty())
-                || (ret instanceof Boolean && !((Boolean) ret)
-                        || (ret instanceof Number && ((Number) ret).longValue() == 0))) {
+                || (ret instanceof Boolean && !((Boolean) ret) || (ret instanceof Number && ((Number) ret).longValue() == 0))) {
             return false;
         }
         return true;
@@ -1299,10 +1289,7 @@ public enum Actors implements IActorsService {
         if (behaviors.containsKey(argument)) {
             IBehavior behavior = behaviors.get(argument);
             Logging.INSTANCE
-                    .info("Running "
-                            + (behavior.getStatement().getType() == Type.SCRIPT
-                                    ? "k.Actors script "
-                                    : "unit test ")
+                    .info("Running " + (behavior.getStatement().getType() == Type.SCRIPT ? "k.Actors script " : "unit test ")
                             + behavior.getName() + " [ID=" + behavior.getName() + "]");
             app = session.load(behavior, new SimpleRuntimeScope(session));
         } else {
@@ -1310,15 +1297,13 @@ public enum Actors implements IActorsService {
             if (file != null) {
                 IKActorsBehavior behavior = declare(file);
                 if (!(behavior.getType() == Type.SCRIPT || behavior.getType() == Type.UNITTEST)) {
-                    Logging.INSTANCE
-                            .error("cannot run " + behavior.getName() + ": not a script or a unit test");
+                    Logging.INSTANCE.error("cannot run " + behavior.getName() + ": not a script or a unit test");
                 }
                 org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior b = new org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior(
                         behavior);
                 behaviors.put(behavior.getName(), b);
-                Logging.INSTANCE.info(
-                        "Running " + (behavior.getType() == Type.SCRIPT ? "k.Actors script " : "unit test ")
-                                + behavior.getName() + " [ID=" + behavior.getName() + "]");
+                Logging.INSTANCE.info("Running " + (behavior.getType() == Type.SCRIPT ? "k.Actors script " : "unit test ")
+                        + behavior.getName() + " [ID=" + behavior.getName() + "]");
                 app = session.load(b, new SimpleRuntimeScope(session));
             } else {
                 URL resource = this.getClass().getClassLoader().getResource(argument);
@@ -1326,14 +1311,12 @@ public enum Actors implements IActorsService {
                     try (InputStream input = resource.openStream()) {
                         IKActorsBehavior behavior = declare(input);
                         if (!(behavior.getType() == Type.SCRIPT || behavior.getType() == Type.UNITTEST)) {
-                            Logging.INSTANCE.error(
-                                    "cannot run " + behavior.getName() + ": not a script or a unit test");
+                            Logging.INSTANCE.error("cannot run " + behavior.getName() + ": not a script or a unit test");
                         }
                         org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior b = new org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior(
                                 behavior);
                         behaviors.put(behavior.getName(), b);
-                        Logging.INSTANCE.info("Running "
-                                + (behavior.getType() == Type.SCRIPT ? "k.Actors script " : "unit test ")
+                        Logging.INSTANCE.info("Running " + (behavior.getType() == Type.SCRIPT ? "k.Actors script " : "unit test ")
                                 + behavior.getName() + " [ID=" + behavior.getName() + "]");
                         app = session.load(b, new SimpleRuntimeScope(session));
                     } catch (Throwable t) {
@@ -1359,8 +1342,7 @@ public enum Actors implements IActorsService {
 
     }
 
-    public void registerLibrary(org.integratedmodelling.klab.api.extensions.actors.Library annotation,
-            Class<?> cls) {
+    public void registerLibrary(org.integratedmodelling.klab.api.extensions.actors.Library annotation, Class<?> cls) {
 
         /**
          * Parse methods, create indices, set defaults
@@ -1420,8 +1402,7 @@ public enum Actors implements IActorsService {
         case ANYVALUE:
             return value != null && !(value instanceof Throwable);
         case ANYTRUE:
-            boolean ret = value != null && !(value instanceof Throwable)
-                    && !(value instanceof Boolean && !((Boolean) value));
+            boolean ret = value != null && !(value instanceof Throwable) && !(value instanceof Boolean && !((Boolean) value));
             // if (ret) {
             // scope.symbolTable.put("$", value);
             // if (value instanceof Collection) {
@@ -1476,8 +1457,7 @@ public enum Actors implements IActorsService {
         case QUANTITY:
             break;
         case RANGE:
-            return value instanceof Number
-                    && ((Range) (kvalue.getStatedValue())).contains(((Number) value).doubleValue());
+            return value instanceof Number && ((Range) (kvalue.getStatedValue())).contains(((Number) value).doubleValue());
         case REGEXP:
             break;
         case STRING:
@@ -1486,8 +1466,7 @@ public enum Actors implements IActorsService {
             break;
         case TYPE:
             return value != null && (kvalue.getStatedValue().equals(value.getClass().getCanonicalName())
-                    || kvalue.getStatedValue()
-                            .equals(Path.getLast(value.getClass().getCanonicalName(), '.')));
+                    || kvalue.getStatedValue().equals(Path.getLast(value.getClass().getCanonicalName(), '.')));
         case URN:
             break;
         case ERROR:
@@ -1499,18 +1478,15 @@ public enum Actors implements IActorsService {
         case TREE:
             break;
         case CONSTANT:
-            return (value instanceof Enum
-                    && ((Enum<?>) value).name().toUpperCase().equals(kvalue.getStatedValue()))
+            return (value instanceof Enum && ((Enum<?>) value).name().toUpperCase().equals(kvalue.getStatedValue()))
                     || (value instanceof String && ((String) value).equals(kvalue.getStatedValue()));
         case EMPTY:
             return value == null || (value instanceof Collection && ((Collection<?>) value).isEmpty())
                     || (value instanceof String && ((String) value).isEmpty())
                     || (value instanceof IConcept && ((IConcept) value).is(IKimConcept.Type.NOTHING))
                     || (value instanceof IObservable && ((IObservable) value).is(IKimConcept.Type.NOTHING))
-                    || (value instanceof IArtifact && !(value instanceof IObservationGroup)
-                            && ((IArtifact) value).isEmpty())
-                    || (value instanceof IObservation
-                            && ((Observation) value).getObservable().is(IKimConcept.Type.NOTHING));
+                    || (value instanceof IArtifact && !(value instanceof IObservationGroup) && ((IArtifact) value).isEmpty())
+                    || (value instanceof IObservation && ((Observation) value).getObservable().is(IKimConcept.Type.NOTHING));
         case OBJECT:
             break;
         default:
@@ -1520,8 +1496,7 @@ public enum Actors implements IActorsService {
     }
 
     private boolean notMatch(Object value) {
-        return value == null || value instanceof Throwable
-                || (value instanceof Boolean && !((Boolean) value));
+        return value == null || value instanceof Throwable || (value instanceof Boolean && !((Boolean) value));
     }
 
     @Override
@@ -1580,8 +1555,7 @@ public enum Actors implements IActorsService {
         if (scope != null) {
             value = container;
             while(value instanceof KActorsValue) {
-                value = KlabActor.evaluateInScope((KActorsValue) value, (Scope) scope,
-                        (IActorIdentity<?>) identity);
+                value = KlabActor.evaluateInScope((KActorsValue) value, (Scope) scope, (IActorIdentity<?>) identity);
             }
         }
 
@@ -1634,18 +1608,16 @@ public enum Actors implements IActorsService {
                     Localization localization = new Localization();
                     localization.setIsoCode(lang);
                     Locale locale = Locale.forLanguageTag(lang);
-                    localization.setLanguageDescription(locale == null ? null : locale.getDisplayLanguage());
+                    localization.setLanguageDescription(locale == null ? null : locale.getDisplayLanguage(locale));
                     if (source.getDescription() != null && source.getDescription().startsWith("#")
                             && cat.get(lang).containsKey(source.getDescription().substring(1))) {
-                        localization.setLocalizedDescription(
-                                cat.get(lang).get(source.getDescription().substring(1)).toString());
+                        localization.setLocalizedDescription(cat.get(lang).get(source.getDescription().substring(1)).toString());
                     } else {
                         localization.setLocalizedDescription(source.getDescription());
                     }
                     if (source.getLabel() != null && source.getLabel().startsWith("#")
                             && cat.get(lang).containsKey(source.getLabel().substring(1))) {
-                        localization.setLocalizedLabel(
-                                cat.get(lang).get(source.getLabel().substring(1)).toString());
+                        localization.setLocalizedLabel(cat.get(lang).get(source.getLabel().substring(1)).toString());
                     } else {
                         localization.setLocalizedLabel(source.getLabel());
                     }
@@ -1668,11 +1640,11 @@ public enum Actors implements IActorsService {
 
             if (english != null) {
                 /*
-                 * Language discrimination! 
+                 * Language discrimination!
                  */
                 ret.add(0, english);
             }
-            
+
         }
 
         return ret;

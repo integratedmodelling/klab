@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: org.integratedmodelling.kim.ui.tests
 Bundle-Vendor: org.integratedmodelling
-Bundle-Version: 0.10.0.qualifier
+Bundle-Version: 0.11.0.qualifier
 Bundle-SymbolicName: org.integratedmodelling.kim.ui.tests; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.integratedmodelling.kim.ui,

@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: org.integratedmodelling.kdl.tests
-Bundle-Vendor: My Company
-Bundle-Version: 0.10.0.qualifier
+Bundle-Vendor: Integrated Modelling Partnership
+Bundle-Version: 0.11.0.qualifier
 Bundle-SymbolicName: org.integratedmodelling.kdl.tests; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.integratedmodelling.kdl,

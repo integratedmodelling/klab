@@ -56,6 +56,8 @@ import org.integratedmodelling.klab.rest.ViewComponent.Tree;
 import org.integratedmodelling.klab.rest.ViewPanel;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * SO there should be one of these in the knowledge search view to provide the
@@ -72,6 +74,8 @@ import org.integratedmodelling.klab.utils.StringUtil;
  */
 public class AppView extends Composite {
 
+    private static Logger logger = LoggerFactory.getLogger(AppView.class);
+    
 	private Composite parent;
 	private Map<String, Composite> containers = new HashMap<>();
 	private Layout currentLayout;
@@ -478,7 +482,7 @@ public class AppView extends Composite {
 				
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					System.out.println("Selection " + e);
+					logger.debug("Selection " + e);
 				}
 				
 				@Override
@@ -911,7 +915,7 @@ public class AppView extends Composite {
 			});
 
 		} else {
-			System.err.println("INTERNAL: got widget outside of known container");
+			logger.error("INTERNAL: got widget outside of known container");
 		}
 
 		// TODO parent must be a known container

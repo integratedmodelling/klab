@@ -6,9 +6,7 @@ import java.util.List;
 import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
-import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
-import org.integratedmodelling.klab.api.observations.ISubjectiveState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -136,9 +134,9 @@ public class MediatingState extends Observation implements IState, DelegatingArt
         return mediateIfNecessary(this, mediator);
     }
     
-    public ISubjectiveState reinterpret(IDirectObservation observers) {
-        return null;
-    }
+//    public ISubjectiveState reinterpret(IDirectObservation observers) {
+//        return null;
+//    }
 
     @Override
     public void fill(Object value) {

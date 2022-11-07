@@ -1,7 +1,5 @@
 package org.integratedmodelling.klab.engine.runtime.code;
 
-import java.util.Map;
-
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Extensions;
@@ -9,8 +7,6 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.data.general.IExpression.Forcing;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
-import org.integratedmodelling.klab.api.observations.IObservation;
-import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
@@ -47,7 +43,7 @@ public class LocatedExpression {
                 .describe(expression.getCode(),
                         overallScope.getExpressionContext().scalar(scalar ? Forcing.Always : Forcing.AsNeeded),
                         Extensions.options(false));
-        this.expression.set(this.descriptor.compile());
+        this.expression.set(this.descriptor.compile()); 
         this.parameters.set(Parameters.create());
     }
 
@@ -80,13 +76,13 @@ public class LocatedExpression {
 
         }
 
-        Map<String, IObservation> artifacts = scope.getLocalCatalog(IObservation.class);
-        for (String id : descriptor.getIdentifiersInScalarScope()) {
-            IObservation artifact = artifacts.get(id);
-            if (artifact instanceof IState) {
-                parameters.get().put(id, ((IState) artifact).get(locator));
-            }
-        }
+//        Map<String, IObservation> artifacts = scope.getLocalCatalog(IObservation.class);
+//        for (String id : descriptor.getIdentifiersInScalarScope()) {
+//            IObservation artifact = artifacts.get(id);
+//            if (artifact instanceof IState) {
+//                parameters.get().put(id, ((IState) artifact).get(locator));
+//            }
+//        }
 
         return Utils.asType(this.expression.get().eval(scope, parameters.get(), "scale", locator), cls);
     }

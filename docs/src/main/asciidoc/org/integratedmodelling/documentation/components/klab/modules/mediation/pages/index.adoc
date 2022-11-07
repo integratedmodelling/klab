@@ -2,7 +2,6 @@
 
 Modeling with qualities means specifiying what we call _indirect observations_: those whose result, consisting of one or more _values_ that describe the observable through quantifications or categorizations, can only be expressed relatively to another known value. In the case of physical properties, these values are the standard units of measurement. In the case of monetary values, we need a currency system that expresses value through the price of certain items, and changes greatly and unpredictably in time and in geographical context. In the case of categorization, the value is one of a set of possible concepts. In the case of countable "objects", such as subjects or events, we can simply acknowledge the object to make an observation of it: for this reason we call these observations _direct_.
 
-
 == Units of measurement and the unit vocabulary
 
 == Units in context: scaling and mediation

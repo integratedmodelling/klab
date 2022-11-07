@@ -9,10 +9,13 @@ import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IWorkspace;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigator;
-import org.integratedmodelling.klab.ide.utils.Eclipse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class KimResourceListener implements IResourceChangeListener {
 
+    private static Logger logger = LoggerFactory.getLogger(KimResourceListener.class);
+    
 	class DeltaPrinter implements IResourceDeltaVisitor {
 		public boolean visit(IResourceDelta delta) {
 //            IResource res = delta.getResource();
@@ -21,13 +24,13 @@ public class KimResourceListener implements IResourceChangeListener {
 //				break;
 //			case IResourceDelta.REMOVED:
 //				if (delta.getResource() instanceof IProject) {
-//					System.out.println("PROJECT REMOVED: " + delta.getResource());
+//					logger.debug("PROJECT REMOVED: " + delta.getResource());
 //				}
 //				break;
 			case IResourceDelta.CHANGED:
 				if (delta.getResource() instanceof IProject) {
 					// TODO may be already there
-					System.out.println("PROJECT ADDED: " + delta.getResource());
+					logger.debug("PROJECT ADDED: " + delta.getResource());
 					return false;
 				}
 				break;
@@ -45,30 +48,28 @@ public class KimResourceListener implements IResourceChangeListener {
 			case IResourceChangeEvent.PRE_CLOSE:
 //				System.out.print("Project ");
 //				System.out.print(res.getFullPath());
-//				System.out.println(" is about to close.");
+//				logger.debug(" is about to close.");
 				Kim.INSTANCE.closeProject(res.getProject().getName());
-				System.out.println("PROJECT CLOSED: " + res.getProject().getName());
+				logger.debug("PROJECT CLOSED: " + res.getProject().getName());
 				KlabNavigator.refresh();
 				// TODO call the engine?
 				break;
 			case IResourceChangeEvent.PRE_DELETE:
-				System.out.print("Project ");
-				System.out.print(res.getFullPath());
-				System.out.println(" is about to be deleted.");
+				logger.debug("Project "+res.getFullPath()+" is about to be deleted.");
 //                Kim.INSTANCE.closeProject(res.getProject().getName());
 				break;
 			case IResourceChangeEvent.POST_CHANGE:
-//                System.out.println("Resources have changed.");
+//                logger.debug("Resources have changed.");
 				if (event.getSource() instanceof IWorkspace) {
 					event.getDelta().accept(new DeltaPrinter());
 				}
 				break;
 			case IResourceChangeEvent.PRE_BUILD:
-//                System.out.println("Build about to run.");
+//                logger.debug("Build about to run.");
 				event.getDelta().accept(new DeltaPrinter());
 				break;
 			case IResourceChangeEvent.POST_BUILD:
-//                System.out.println("Build complete.");
+//                logger.debug("Build complete.");
 				event.getDelta().accept(new DeltaPrinter());
 				break;
 			default:

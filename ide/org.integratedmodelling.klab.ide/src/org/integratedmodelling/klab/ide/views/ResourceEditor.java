@@ -827,11 +827,27 @@ public class ResourceEditor extends ViewPart {
 			Label lblNewLabel_4 = new Label(composite_3, SWT.NONE);
 			lblNewLabel_4
 					.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/help.gif"));
+			
+			Composite composite_1 = new Composite(grpGeometry, SWT.NONE);
+			composite_1.setLayout(new GridLayout(3, false));
+			composite_1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 2, 1));
+			
+			Button copyGeometryButton = new Button(composite_1, SWT.NONE);
+			copyGeometryButton.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseDown(MouseEvent e) {
+					if (geometryDefinition != null) {
+						Eclipse.INSTANCE.copyToClipboard(geometryDefinition.getText());
+					}
+				}
+			});
+			copyGeometryButton.setToolTipText("Copy geometry definition to the clipboard");
+			copyGeometryButton.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/copy.gif"));
 			{
-				geometryDefinition = new Label(grpGeometry, SWT.NONE);
+				geometryDefinition = new Label(composite_1, SWT.NONE);
+				geometryDefinition.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 				geometryDefinition.setForeground(SWTResourceManager.getColor(SWT.COLOR_DARK_GRAY));
 				geometryDefinition.setFont(SWTResourceManager.getFont("Segoe UI", 8, SWT.ITALIC));
-				geometryDefinition.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 			}
 		}
 

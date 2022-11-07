@@ -146,6 +146,14 @@ public interface IEnvelope extends IReferenced {
     int getScaleRank();
     
     /**
+     * Basic 2D operations
+     * 
+     * @param other
+     * @return
+     */
+    boolean overlaps(IEnvelope other);
+    
+    /**
      * Return a larger envelope containing the previous.
      * 
      * @param factor

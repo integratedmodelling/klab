@@ -32,8 +32,10 @@ import org.integratedmodelling.klab.api.model.IAcknowledgement;
 import org.integratedmodelling.klab.api.observations.IConfiguration;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IEvent;
+import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.observations.INetwork;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IObservationGroup;
 import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -91,11 +93,14 @@ import org.integratedmodelling.klab.rest.ObservationReference.ValueType;
 import org.integratedmodelling.klab.rest.ScaleReference;
 import org.integratedmodelling.klab.rest.StateSummary;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
 import org.integratedmodelling.klab.utils.Triple;
 import org.integratedmodelling.klab.utils.Utils;
 import org.integratedmodelling.klab.utils.ZipUtils;
+
+import com.google.common.io.Files;
 
 public enum Observations implements IObservationService {
 
@@ -111,14 +116,12 @@ public enum Observations implements IObservationService {
     }
 
     @Override
-    public IDataflow<IArtifact> resolve(String urn, ISession session, String[] scenarios)
-            throws KlabException {
+    public IDataflow<IArtifact> resolve(String urn, ISession session, String[] scenarios) throws KlabException {
         return Resolver.create(null).resolve(urn, session, scenarios);
     }
 
     @Override
-    public IDataflow<IArtifact> resolve(String urn, ISubject context, String[] scenarios)
-            throws KlabException {
+    public IDataflow<IArtifact> resolve(String urn, ISubject context, String[] scenarios) throws KlabException {
         return Resolver.create(null).resolve(urn, context, scenarios);
     }
 
@@ -140,8 +143,7 @@ public enum Observations implements IObservationService {
     }
 
     @Override
-    public IState getStateViewAs(IObservable observable, IState state, IScale scale,
-            IContextualizationScope scope) {
+    public IState getStateViewAs(IObservable observable, IState state, IScale scale, IContextualizationScope scope) {
         return new RescalingState(state, observable, (Scale) scale, (IRuntimeScope) scope);
     }
 
@@ -172,16 +174,14 @@ public enum Observations implements IObservationService {
                 ITime timeExtent = ((IScale) locator).getTime();
                 time = timeExtent.getStart().getMilliseconds();
                 if (timeExtent.getFocus() != null && timeExtent.getFocus().isAfter(timeExtent.getStart())) {
-                    time += (timeExtent.getEnd().getMilliseconds() - timeExtent.getStart().getMilliseconds())
-                            / 2;
+                    time += (timeExtent.getEnd().getMilliseconds() - timeExtent.getStart().getMilliseconds()) / 2;
                 }
             } else if (locator instanceof ITime) {
                 ITime timeExtent = (ITime) locator;
                 time = timeExtent.getStart().getMilliseconds();
                 time = ((ITime) locator).getStart().getMilliseconds();
                 if (timeExtent.getFocus() != null && timeExtent.getFocus().isAfter(timeExtent.getStart())) {
-                    time += (timeExtent.getEnd().getMilliseconds() - timeExtent.getStart().getMilliseconds())
-                            / 2;
+                    time += (timeExtent.getEnd().getMilliseconds() - timeExtent.getStart().getMilliseconds()) / 2;
                 }
             }
         }
@@ -193,14 +193,14 @@ public enum Observations implements IObservationService {
             ret = cached.get(state.getId());
         } else {
             ret = computeStateSummary(state,
-                    getTemporalLocator(state,
-                            locator instanceof UniversalLocator ? state.getScale() : locator));
+                    getTemporalLocator(state, locator instanceof UniversalLocator ? state.getScale() : locator));
             if (cached == null) {
                 cached = new HashMap<>();
                 summaryCache.put(time, cached);
             }
             cached.put(state.getId(), ret);
         }
+
         return ret;
     }
 
@@ -229,13 +229,13 @@ public enum Observations implements IObservationService {
             if (state instanceof State) {
                 summary = ((State) state).getOverallSummary();
             }
-            
+
             if (summary != null) {
-                
+
                 Builder histogram = Histogram.builder(summary.getRange().get(0), summary.getRange().get(1),
                         isBoolean ? 2 : state.getDataKey().size());
                 for (ILocator ll : locator) {
-                    ndata ++;
+                    ndata++;
                     Object o = state.get(ll);
                     if (o instanceof Boolean && histogram != null) {
                         histogram.addToIndex((Boolean) o ? 1 : 0);
@@ -275,7 +275,9 @@ public enum Observations implements IObservationService {
                     Object o = state.get(ll);
                     if (o instanceof Number) {
                         ndata++;
-                        statistics.addValue(((Number) o).doubleValue());
+                        if (isData(o)) {
+                            statistics.addValue(((Number) o).doubleValue());
+                        }
                         if (histogram != null) {
                             if (state.getDataKey() != null) {
                                 histogram.addToIndex(state.getDataKey().reverseLookup(o));
@@ -307,8 +309,7 @@ public enum Observations implements IObservationService {
                 ret.setDataKey(key);
             }
 
-            ret.setDegenerate(ndata == 0 || !Double.isFinite(statistics.getMax())
-                    || !Double.isFinite(statistics.getMax()));
+            ret.setDegenerate(ndata == 0 || !Double.isFinite(statistics.getMax()) || !Double.isFinite(statistics.getMax()));
             ret.setNodataPercentage((double) nndat / (double) (ndata + nndat));
             ret.setRange(Arrays.asList(statistics.getMin(), statistics.getMax()));
             ret.setValueCount(ndata + nndat);
@@ -351,13 +352,11 @@ public enum Observations implements IObservationService {
         return createArtifactDescriptor(observation, null, 0, null, true);
     }
 
-    public ObservationReference createArtifactDescriptor(IObservation observation, ILocator locator,
-            int childLevel) {
+    public ObservationReference createArtifactDescriptor(IObservation observation, ILocator locator, int childLevel) {
         return createArtifactDescriptor(observation, locator, childLevel, null, false);
     }
 
-    public ObservationReference createArtifactDescriptor(IObservation observation, ILocator locator,
-            int childLevel,
+    public ObservationReference createArtifactDescriptor(IObservation observation, ILocator locator, int childLevel,
             String viewId, boolean finalized) {
 
         ObservationReference ret = new ObservationReference();
@@ -416,9 +415,7 @@ public enum Observations implements IObservationService {
         }
 
         ret.setChildrenCount(
-                observation instanceof IDirectObservation && !observation.isEmpty()
-                        ? observation.getChildArtifacts().size()
-                        : 0);
+                observation instanceof IDirectObservation && !observation.isEmpty() ? observation.getChildArtifacts().size() : 0);
         ret.getSemantics().addAll(((Concept) observation.getObservable().getType()).getTypeSet());
 
         ISpace space = ((IScale) observation.getGeometry()).getSpace();
@@ -462,25 +459,20 @@ public enum Observations implements IObservationService {
                     scaleReference.setSpaceResolutionConverted(
                             sunit.convert(resolution.getFirst(), Units.INSTANCE.METERS).doubleValue());
                     scaleReference.setSpaceResolutionDescription(
-                            sunit.convert(resolution.getFirst(), Units.INSTANCE.METERS) + " "
-                                    + resolution.getSecond());
+                            sunit.convert(resolution.getFirst(), Units.INSTANCE.METERS) + " " + resolution.getSecond());
                     scaleReference.setResolutionDescription(
-                            sunit.convert(resolution.getFirst(), Units.INSTANCE.METERS) + " "
-                                    + resolution.getSecond());
+                            sunit.convert(resolution.getFirst(), Units.INSTANCE.METERS) + " " + resolution.getSecond());
 
                 } else {
 
                     // use the grid.
                     Unit unit = Unit.create(resolution.getSecond());
-                    double cw = unit.convert(grid.getCell(0).getStandardizedWidth(), Units.INSTANCE.METERS)
-                            .doubleValue();
+                    double cw = unit.convert(grid.getCell(0).getStandardizedWidth(), Units.INSTANCE.METERS).doubleValue();
                     scaleReference.setSpaceUnit(unit.toString());
                     scaleReference.setSpaceResolution(grid.getCellWidth());
                     scaleReference.setSpaceResolutionConverted(cw);
-                    scaleReference.setSpaceResolutionDescription(
-                            String.format("%.1f", cw) + " " + resolution.getSecond());
-                    scaleReference.setResolutionDescription(
-                            String.format("%.1f", cw) + " " + resolution.getSecond());
+                    scaleReference.setSpaceResolutionDescription(String.format("%.1f", cw) + " " + resolution.getSecond());
+                    scaleReference.setResolutionDescription(String.format("%.1f", cw) + " " + resolution.getSecond());
 
                 }
                 scaleReference.setSpaceScale(scaleRank);
@@ -522,8 +514,7 @@ public enum Observations implements IObservationService {
         } else if (space != null) {
 
             ret.getMetadata().put("Total area",
-                    NumberFormat.getInstance()
-                            .format(space.getShape().getArea(Units.INSTANCE.SQUARE_KILOMETERS)) + " km2");
+                    NumberFormat.getInstance().format(space.getShape().getArea(Units.INSTANCE.SQUARE_KILOMETERS)) + " km2");
 
             /*
              * shapes can be huge and only make sense for direct observations, as states get the
@@ -532,10 +523,8 @@ public enum Observations implements IObservationService {
              * settings.
              */
             if (observation instanceof IDirectObservation
-                    && !(observation instanceof ObservationGroup
-                            || observation instanceof ObservationGroupView)) {
-                String shape = ((Shape) space.getShape()).simplifyIfNecessary(1000, 2000).getJTSGeometry()
-                        .toString();
+                    && !(observation instanceof ObservationGroup || observation instanceof ObservationGroupView)) {
+                String shape = ((Shape) space.getShape()).simplifyIfNecessary(1000, 2000).getJTSGeometry().toString();
                 ret.setEncodedShape(shape);
                 ret.setSpatialProjection(space.getProjection().getSimpleSRS());
                 ret.setShapeType(space.getShape().getGeometryType());
@@ -550,11 +539,8 @@ public enum Observations implements IObservationService {
 
                 ret.getMetadata().put("Grid size",
                         grid.getCellCount() + " (" + grid.getXCells() + " x " + grid.getYCells() + ") cells");
-                ret.getMetadata().put("Cell size",
-                        NumberFormat.getInstance().format(grid.getCell(0).getStandardizedWidth())
-                                + " x "
-                                + NumberFormat.getInstance().format(grid.getCell(0).getStandardizedHeight())
-                                + " m");
+                ret.getMetadata().put("Cell size", NumberFormat.getInstance().format(grid.getCell(0).getStandardizedWidth())
+                        + " x " + NumberFormat.getInstance().format(grid.getCell(0).getStandardizedHeight()) + " m");
             }
 
             /*
@@ -576,16 +562,14 @@ public enum Observations implements IObservationService {
             // TODO
         }
 
-        if (observation instanceof IDirectObservation && !observation.isEmpty()
-                && (childLevel < 0 || childLevel > 0)) {
+        if (observation instanceof IDirectObservation && !observation.isEmpty() && (childLevel < 0 || childLevel > 0)) {
 
             for (IArtifact child : observation.getChildArtifacts()) {
                 if (child instanceof IObservation) {
                     ret.getChildren()
                             .add(createArtifactDescriptor((IObservation) child/* , observation */, locator,
                                     childLevel > 0 ? (childLevel - 1) : childLevel,
-                                    observation instanceof ObservationGroupView ? observation.getId() : null,
-                                    finalized));
+                                    observation instanceof ObservationGroupView ? observation.getId() : null, finalized));
                 }
             }
         }
@@ -617,12 +601,10 @@ public enum Observations implements IObservationService {
                 Object value = ((IState) observation).get(observation.getScale().at(0));
                 ret.setLiteralValue(formatValue(observation.getObservable(), value));
                 ret.setOverallValue("" + value);
-            } else if (observation.getScale().getSpace().size() > 1
-                    && observation.getScale().getSpace().isRegular()) {
+            } else if (observation.getScale().getSpace().size() > 1 && observation.getScale().getSpace().isRegular()) {
                 if (!summary.isDegenerate()) {
                     ret.getGeometryTypes().add(GeometryType.COLORMAP);
-                    if (observation.getType() == IArtifact.Type.NUMBER && summary.getVariance() == 0
-                            && finalized) {
+                    if (observation.getType() == IArtifact.Type.NUMBER && summary.getVariance() == 0 && finalized) {
                         Object value = summary.getMean();
                         ret.setLiteralValue(formatValue(observation.getObservable(), value));
                         ret.setOverallValue("" + value);
@@ -653,17 +635,14 @@ public enum Observations implements IObservationService {
             } else if (dataKey != null) {
                 ds.setCategorized(true);
                 ds.getCategories()
-                        .addAll(dataKey.getAllValues().stream().map(key -> key.getSecond())
-                                .collect(Collectors.toList()));
+                        .addAll(dataKey.getAllValues().stream().map(key -> key.getSecond()).collect(Collectors.toList()));
             } else {
                 ds.setCategorized(false);
-                double step = (summary.getRange().get(1) - summary.getRange().get(0))
-                        / (double) ds.getHistogram().size();
+                double step = (summary.getRange().get(1) - summary.getRange().get(0)) / (double) ds.getHistogram().size();
                 for (int i = 0; i < ds.getHistogram().size(); i++) {
                     // TODO use labels for categories
                     String lower = NumberFormat.getInstance().format(summary.getRange().get(0) + (step * i));
-                    String upper = NumberFormat.getInstance()
-                            .format(summary.getRange().get(0) + (step * (i + 1)));
+                    String upper = NumberFormat.getInstance().format(summary.getRange().get(0) + (step * (i + 1)));
                     ds.getCategories().add(lower + " to " + upper);
                 }
             }
@@ -687,8 +666,7 @@ public enum Observations implements IObservationService {
         List<ExportFormat> ret = new ArrayList<>();
 
         for (IResourceAdapter adapter : Resources.INSTANCE.getResourceAdapters()) {
-            for (Triple<String, String, String> capabilities : adapter.getImporter()
-                    .getExportCapabilities(observation)) {
+            for (Triple<String, String, String> capabilities : adapter.getImporter().getExportCapabilities(observation)) {
                 formats.put(capabilities.getFirst(), new Pair<>(capabilities, adapter.getName()));
             }
         }
@@ -700,8 +678,7 @@ public enum Observations implements IObservationService {
             INetwork network = ((IConfiguration) observation).as(INetwork.class);
             for (Triple<String, String, String> capabilities : network.getExportCapabilities(observation)) {
                 formats.put(capabilities.getFirst(),
-                        new Pair<>(capabilities,
-                                org.integratedmodelling.klab.components.network.model.Network.ADAPTER_ID));
+                        new Pair<>(capabilities, org.integratedmodelling.klab.components.network.model.Network.ADAPTER_ID));
             }
         }
 
@@ -711,8 +688,7 @@ public enum Observations implements IObservationService {
          */
         for (String format : formats.keySet()) {
             Pair<Triple<String, String, String>, String> data = formats.get(format);
-            ret.add(new ExportFormat(data.getFirst().getSecond(), format, data.getSecond(),
-                    data.getFirst().getThird()));
+            ret.add(new ExportFormat(data.getFirst().getSecond(), format, data.getSecond(), data.getFirst().getThird()));
         }
 
         return ret;
@@ -859,16 +835,56 @@ public enum Observations implements IObservationService {
         return new Discretization(Range.create(summary.getRange()), maxBins);
     }
 
+    /**
+     * Try to infer the adapter and most likely format to export an observation.
+     * 
+     * @param observation
+     * @param file
+     * @param monitor
+     * @param options
+     * @return
+     */
+    public File export(IObservation observation, File file, IMonitor monitor, Object... options) {
+
+        String outputFormat = Files.getFileExtension(file.toString());
+        if (outputFormat.isEmpty()) {
+            outputFormat = null;
+        }
+        
+        if (outputFormat == null) {
+            if (observation instanceof IState) {
+
+                if (((IScale) observation.getGeometry()).isSpatiallyDistributed()
+                        && ((IScale) observation.getGeometry()).getSpace().isRegular()) {
+                    outputFormat = "tiff";
+                }
+
+            } else if (observation instanceof IObservationGroup) {
+                if (((IScale) observation.getGeometry()).isSpatiallyDistributed()) {
+                    outputFormat = "shp";
+                }
+            } else if (observation instanceof IKnowledgeView) {
+                outputFormat = "csv";
+            }
+            
+            if (outputFormat != null) {
+                file = new File(file + "." + outputFormat);
+            }
+        }
+
+        return outputFormat == null
+                ? null
+                : export(observation, observation.getGeometry(), file, outputFormat, null, monitor, options);
+    }
+
     @Override
-    public File export(IObservation observation, ILocator locator, File file, String outputFormat,
-            @Nullable String adapterId,
+    public File export(IObservation observation, ILocator locator, File file, String outputFormat, @Nullable String adapterId,
             IMonitor monitor, Object... options) {
 
         IResourceAdapter adapter = null;
         if (adapterId == null) {
             for (IResourceAdapter a : Resources.INSTANCE.getResourceAdapters()) {
-                for (Triple<String, String, String> capabilities : a.getImporter()
-                        .getExportCapabilities(observation)) {
+                for (Triple<String, String, String> capabilities : a.getImporter().getExportCapabilities(observation)) {
                     if (capabilities.getFirst().equals(outputFormat)) {
                         adapter = a;
                         break;
@@ -885,8 +901,7 @@ public enum Observations implements IObservationService {
         } else {
             adapter = Resources.INSTANCE.getResourceAdapter(adapterId);
             if (adapter == null) {
-                throw new IllegalArgumentException(
-                        "unknown adapter " + adapterId + " to export output format " + outputFormat);
+                throw new IllegalArgumentException("unknown adapter " + adapterId + " to export output format " + outputFormat);
             }
         }
 
@@ -950,8 +965,7 @@ public enum Observations implements IObservationService {
     public boolean occurs(IObservation observation) {
         return observation instanceof IProcess || observation instanceof IEvent
                 || observation.getScope().getParentOf(observation) instanceof IEvent
-                || ((IRuntimeScope) observation.getScope()).getStructure()
-                        .getOwningProcess(observation) != null;
+                || ((IRuntimeScope) observation.getScope()).getStructure().getOwningProcess(observation) != null;
     }
 
     public String describeValue(Object value) {
@@ -960,9 +974,7 @@ public enum Observations implements IObservationService {
                 : (value instanceof IConcept
                         ? Concepts.INSTANCE.getDisplayLabel(((IConcept) value))
                         : (value instanceof Boolean
-                                ? ((Boolean) value
-                                        ? Observations.PRESENT_LABEL
-                                        : Observations.NOT_PRESENT_LABEL)
+                                ? ((Boolean) value ? Observations.PRESENT_LABEL : Observations.NOT_PRESENT_LABEL)
                                 : "No data"));
     }
 
@@ -1000,8 +1012,7 @@ public enum Observations implements IObservationService {
                     String outfile = Concepts.INSTANCE.getCodeName(artifact.getObservable().getType()) + "."
                             + format.getExtension();
                     if (locator instanceof TimesliceLocator) {
-                        String timedir = ((TimesliceLocator) locator).getLabel().replaceAll("\\s+", "_")
-                                .replaceAll(":", "-")
+                        String timedir = ((TimesliceLocator) locator).getLabel().replaceAll("\\s+", "_").replaceAll(":", "-")
                                 .replaceAll("/", "-").toLowerCase();
                         File dir = new File(stagingArea + File.separator + timedir);
                         dir.mkdir();
@@ -1009,11 +1020,9 @@ public enum Observations implements IObservationService {
                     }
                     File output = new File(stagingArea + File.separator + outfile);
                     if (states.size() == 1) {
-                        output = export(artifact, locator, output, format.getValue(), format.getAdapter(),
-                                monitor);
+                        output = export(artifact, locator, output, format.getValue(), format.getAdapter(), monitor);
                     } else {
-                        output = export(artifact, locator, output, format.getValue(), format.getAdapter(),
-                                monitor,
+                        output = export(artifact, locator, output, format.getValue(), format.getAdapter(), monitor,
                                 IResourceImporter.OPTION_DO_NOT_ZIP_MULTIPLE_FILES, true);
                     }
                     output.deleteOnExit();

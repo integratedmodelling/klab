@@ -3983,42 +3983,96 @@ ruleValue returns [EObject current=null]
 			    |
 			(
 				(
-					{
-						newCompositeNode(grammarAccess.getValueAccess().getLiteralLiteralParserRuleCall_1_4_0());
-					}
-					lv_literal_5_0=ruleLiteral
-					{
-						if ($current==null) {
-							$current = createModelElementForParent(grammarAccess.getValueRule());
+					(
+						{
+							newCompositeNode(grammarAccess.getValueAccess().getLiteralLiteralParserRuleCall_1_4_0_0());
 						}
-						set(
-							$current,
-							"literal",
-							lv_literal_5_0,
-							"org.integratedmodelling.kactors.Kactors.Literal");
-						afterParserOrEnumRuleCall();
-					}
+						lv_literal_5_0=ruleLiteral
+						{
+							if ($current==null) {
+								$current = createModelElementForParent(grammarAccess.getValueRule());
+							}
+							set(
+								$current,
+								"literal",
+								lv_literal_5_0,
+								"org.integratedmodelling.kactors.Kactors.Literal");
+							afterParserOrEnumRuleCall();
+						}
+					)
 				)
+				(
+					otherlv_6='as'
+					{
+						newLeafNode(otherlv_6, grammarAccess.getValueAccess().getAsKeyword_1_4_1_0());
+					}
+					(
+						(
+							{
+								newCompositeNode(grammarAccess.getValueAccess().getCastDATA_TYPEParserRuleCall_1_4_1_1_0());
+							}
+							lv_cast_7_0=ruleDATA_TYPE
+							{
+								if ($current==null) {
+									$current = createModelElementForParent(grammarAccess.getValueRule());
+								}
+								set(
+									$current,
+									"cast",
+									lv_cast_7_0,
+									"org.integratedmodelling.kactors.Kactors.DATA_TYPE");
+								afterParserOrEnumRuleCall();
+							}
+						)
+					)
+				)?
 			)
 			    |
 			(
 				(
-					{
-						newCompositeNode(grammarAccess.getValueAccess().getIdPathNameParserRuleCall_1_5_0());
-					}
-					lv_id_6_0=rulePathName
-					{
-						if ($current==null) {
-							$current = createModelElementForParent(grammarAccess.getValueRule());
+					(
+						{
+							newCompositeNode(grammarAccess.getValueAccess().getIdPathNameParserRuleCall_1_5_0_0());
 						}
-						set(
-							$current,
-							"id",
-							lv_id_6_0,
-							"org.integratedmodelling.kactors.Kactors.PathName");
-						afterParserOrEnumRuleCall();
-					}
+						lv_id_8_0=rulePathName
+						{
+							if ($current==null) {
+								$current = createModelElementForParent(grammarAccess.getValueRule());
+							}
+							set(
+								$current,
+								"id",
+								lv_id_8_0,
+								"org.integratedmodelling.kactors.Kactors.PathName");
+							afterParserOrEnumRuleCall();
+						}
+					)
 				)
+				(
+					otherlv_9='as'
+					{
+						newLeafNode(otherlv_9, grammarAccess.getValueAccess().getAsKeyword_1_5_1_0());
+					}
+					(
+						(
+							{
+								newCompositeNode(grammarAccess.getValueAccess().getCastDATA_TYPEParserRuleCall_1_5_1_1_0());
+							}
+							lv_cast_10_0=ruleDATA_TYPE
+							{
+								if ($current==null) {
+									$current = createModelElementForParent(grammarAccess.getValueRule());
+								}
+								set(
+									$current,
+									"cast",
+									lv_cast_10_0,
+									"org.integratedmodelling.kactors.Kactors.DATA_TYPE");
+								afterParserOrEnumRuleCall();
+							}
+						)
+					)
+				)?
 			)
 			    |
 			(
@@ -4026,7 +4080,7 @@ ruleValue returns [EObject current=null]
 					{
 						newCompositeNode(grammarAccess.getValueAccess().getListListParserRuleCall_1_6_0());
 					}
-					lv_list_7_0=ruleList
+					lv_list_11_0=ruleList
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getValueRule());
@@ -4034,7 +4088,7 @@ ruleValue returns [EObject current=null]
 						set(
 							$current,
 							"list",
-							lv_list_7_0,
+							lv_list_11_0,
 							"org.integratedmodelling.kactors.Kactors.List");
 						afterParserOrEnumRuleCall();
 					}
@@ -4046,7 +4100,7 @@ ruleValue returns [EObject current=null]
 					{
 						newCompositeNode(grammarAccess.getValueAccess().getMapMapParserRuleCall_1_7_0());
 					}
-					lv_map_8_0=ruleMap
+					lv_map_12_0=ruleMap
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getValueRule());
@@ -4054,7 +4108,7 @@ ruleValue returns [EObject current=null]
 						set(
 							$current,
 							"map",
-							lv_map_8_0,
+							lv_map_12_0,
 							"org.integratedmodelling.kactors.Kactors.Map");
 						afterParserOrEnumRuleCall();
 					}
@@ -4063,9 +4117,9 @@ ruleValue returns [EObject current=null]
 			    |
 			(
 				(
-					lv_constant_9_0=RULE_UPPERCASE_ID
+					lv_constant_13_0=RULE_UPPERCASE_ID
 					{
-						newLeafNode(lv_constant_9_0, grammarAccess.getValueAccess().getConstantUPPERCASE_IDTerminalRuleCall_1_8_0());
+						newLeafNode(lv_constant_13_0, grammarAccess.getValueAccess().getConstantUPPERCASE_IDTerminalRuleCall_1_8_0());
 					}
 					{
 						if ($current==null) {
@@ -4074,7 +4128,7 @@ ruleValue returns [EObject current=null]
 						setWithLastConsumed(
 							$current,
 							"constant",
-							lv_constant_9_0,
+							lv_constant_13_0,
 							"org.integratedmodelling.kactors.Kactors.UPPERCASE_ID");
 					}
 				)
@@ -4085,7 +4139,7 @@ ruleValue returns [EObject current=null]
 					{
 						newCompositeNode(grammarAccess.getValueAccess().getObservableObservableParserRuleCall_1_9_0());
 					}
-					lv_observable_10_0=ruleObservable
+					lv_observable_14_0=ruleObservable
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getValueRule());
@@ -4093,7 +4147,7 @@ ruleValue returns [EObject current=null]
 						set(
 							$current,
 							"observable",
-							lv_observable_10_0,
+							lv_observable_14_0,
 							"org.integratedmodelling.kactors.Kactors.Observable");
 						afterParserOrEnumRuleCall();
 					}
@@ -4102,21 +4156,48 @@ ruleValue returns [EObject current=null]
 			    |
 			(
 				(
-					lv_expression_11_0=RULE_EXPR
-					{
-						newLeafNode(lv_expression_11_0, grammarAccess.getValueAccess().getExpressionEXPRTerminalRuleCall_1_10_0());
-					}
-					{
-						if ($current==null) {
-							$current = createModelElement(grammarAccess.getValueRule());
+					(
+						lv_expression_15_0=RULE_EXPR
+						{
+							newLeafNode(lv_expression_15_0, grammarAccess.getValueAccess().getExpressionEXPRTerminalRuleCall_1_10_0_0());
 						}
-						setWithLastConsumed(
-							$current,
-							"expression",
-							lv_expression_11_0,
-							"org.integratedmodelling.kactors.Kactors.EXPR");
-					}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getValueRule());
+							}
+							setWithLastConsumed(
+								$current,
+								"expression",
+								lv_expression_15_0,
+								"org.integratedmodelling.kactors.Kactors.EXPR");
+						}
+					)
 				)
+				(
+					otherlv_16='as'
+					{
+						newLeafNode(otherlv_16, grammarAccess.getValueAccess().getAsKeyword_1_10_1_0());
+					}
+					(
+						(
+							{
+								newCompositeNode(grammarAccess.getValueAccess().getCastDATA_TYPEParserRuleCall_1_10_1_1_0());
+							}
+							lv_cast_17_0=ruleDATA_TYPE
+							{
+								if ($current==null) {
+									$current = createModelElementForParent(grammarAccess.getValueRule());
+								}
+								set(
+									$current,
+									"cast",
+									lv_cast_17_0,
+									"org.integratedmodelling.kactors.Kactors.DATA_TYPE");
+								afterParserOrEnumRuleCall();
+							}
+						)
+					)
+				)?
 			)
 			    |
 			(
@@ -4124,7 +4205,7 @@ ruleValue returns [EObject current=null]
 					{
 						newCompositeNode(grammarAccess.getValueAccess().getTableLookupTableParserRuleCall_1_11_0());
 					}
-					lv_table_12_0=ruleLookupTable
+					lv_table_18_0=ruleLookupTable
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getValueRule());
@@ -4132,7 +4213,7 @@ ruleValue returns [EObject current=null]
 						set(
 							$current,
 							"table",
-							lv_table_12_0,
+							lv_table_18_0,
 							"org.integratedmodelling.kactors.Kactors.LookupTable");
 						afterParserOrEnumRuleCall();
 					}
@@ -4144,7 +4225,7 @@ ruleValue returns [EObject current=null]
 					{
 						newCompositeNode(grammarAccess.getValueAccess().getQuantityQuantityParserRuleCall_1_12_0());
 					}
-					lv_quantity_13_0=ruleQuantity
+					lv_quantity_19_0=ruleQuantity
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getValueRule());
@@ -4152,7 +4233,7 @@ ruleValue returns [EObject current=null]
 						set(
 							$current,
 							"quantity",
-							lv_quantity_13_0,
+							lv_quantity_19_0,
 							"org.integratedmodelling.kactors.Kactors.Quantity");
 						afterParserOrEnumRuleCall();
 					}
@@ -4160,16 +4241,16 @@ ruleValue returns [EObject current=null]
 			)
 		)
 		(
-			otherlv_14='?'
+			otherlv_20='?'
 			{
-				newLeafNode(otherlv_14, grammarAccess.getValueAccess().getQuestionMarkKeyword_2_0());
+				newLeafNode(otherlv_20, grammarAccess.getValueAccess().getQuestionMarkKeyword_2_0());
 			}
 			(
 				(
 					{
 						newCompositeNode(grammarAccess.getValueAccess().getThenValueParserRuleCall_2_1_0());
 					}
-					lv_then_15_0=ruleValue
+					lv_then_21_0=ruleValue
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getValueRule());
@@ -4177,22 +4258,22 @@ ruleValue returns [EObject current=null]
 						set(
 							$current,
 							"then",
-							lv_then_15_0,
+							lv_then_21_0,
 							"org.integratedmodelling.kactors.Kactors.Value");
 						afterParserOrEnumRuleCall();
 					}
 				)
 			)
-			otherlv_16=':'
+			otherlv_22=':'
 			{
-				newLeafNode(otherlv_16, grammarAccess.getValueAccess().getColonKeyword_2_2());
+				newLeafNode(otherlv_22, grammarAccess.getValueAccess().getColonKeyword_2_2());
 			}
 			(
 				(
 					{
 						newCompositeNode(grammarAccess.getValueAccess().getElseValueParserRuleCall_2_3_0());
 					}
-					lv_else_17_0=ruleValue
+					lv_else_23_0=ruleValue
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getValueRule());
@@ -4200,7 +4281,7 @@ ruleValue returns [EObject current=null]
 						set(
 							$current,
 							"else",
-							lv_else_17_0,
+							lv_else_23_0,
 							"org.integratedmodelling.kactors.Kactors.Value");
 						afterParserOrEnumRuleCall();
 					}
@@ -4364,22 +4445,49 @@ ruleValueWithConstructor returns [EObject current=null]
 			    |
 			(
 				(
-					{
-						newCompositeNode(grammarAccess.getValueWithConstructorAccess().getLiteralLiteralParserRuleCall_1_5_0());
-					}
-					lv_literal_8_0=ruleLiteral
-					{
-						if ($current==null) {
-							$current = createModelElementForParent(grammarAccess.getValueWithConstructorRule());
+					(
+						{
+							newCompositeNode(grammarAccess.getValueWithConstructorAccess().getLiteralLiteralParserRuleCall_1_5_0_0());
 						}
-						set(
-							$current,
-							"literal",
-							lv_literal_8_0,
-							"org.integratedmodelling.kactors.Kactors.Literal");
-						afterParserOrEnumRuleCall();
-					}
+						lv_literal_8_0=ruleLiteral
+						{
+							if ($current==null) {
+								$current = createModelElementForParent(grammarAccess.getValueWithConstructorRule());
+							}
+							set(
+								$current,
+								"literal",
+								lv_literal_8_0,
+								"org.integratedmodelling.kactors.Kactors.Literal");
+							afterParserOrEnumRuleCall();
+						}
+					)
 				)
+				(
+					otherlv_9='as'
+					{
+						newLeafNode(otherlv_9, grammarAccess.getValueWithConstructorAccess().getAsKeyword_1_5_1_0());
+					}
+					(
+						(
+							{
+								newCompositeNode(grammarAccess.getValueWithConstructorAccess().getCastDATA_TYPEParserRuleCall_1_5_1_1_0());
+							}
+							lv_cast_10_0=ruleDATA_TYPE
+							{
+								if ($current==null) {
+									$current = createModelElementForParent(grammarAccess.getValueWithConstructorRule());
+								}
+								set(
+									$current,
+									"cast",
+									lv_cast_10_0,
+									"org.integratedmodelling.kactors.Kactors.DATA_TYPE");
+								afterParserOrEnumRuleCall();
+							}
+						)
+					)
+				)?
 			)
 			    |
 			(
@@ -4387,7 +4495,7 @@ ruleValueWithConstructor returns [EObject current=null]
 					{
 						newCompositeNode(grammarAccess.getValueWithConstructorAccess().getUrnUrnIdParserRuleCall_1_6_0());
 					}
-					lv_urn_9_0=ruleUrnId
+					lv_urn_11_0=ruleUrnId
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getValueWithConstructorRule());
@@ -4395,7 +4503,7 @@ ruleValueWithConstructor returns [EObject current=null]
 						set(
 							$current,
 							"urn",
-							lv_urn_9_0,
+							lv_urn_11_0,
 							"org.integratedmodelling.kactors.Kactors.UrnId");
 						afterParserOrEnumRuleCall();
 					}
@@ -4404,22 +4512,49 @@ ruleValueWithConstructor returns [EObject current=null]
 			    |
 			(
 				(
-					{
-						newCompositeNode(grammarAccess.getValueWithConstructorAccess().getIdPathNameParserRuleCall_1_7_0());
-					}
-					lv_id_10_0=rulePathName
-					{
-						if ($current==null) {
-							$current = createModelElementForParent(grammarAccess.getValueWithConstructorRule());
+					(
+						{
+							newCompositeNode(grammarAccess.getValueWithConstructorAccess().getIdPathNameParserRuleCall_1_7_0_0());
 						}
-						set(
-							$current,
-							"id",
-							lv_id_10_0,
-							"org.integratedmodelling.kactors.Kactors.PathName");
-						afterParserOrEnumRuleCall();
-					}
+						lv_id_12_0=rulePathName
+						{
+							if ($current==null) {
+								$current = createModelElementForParent(grammarAccess.getValueWithConstructorRule());
+							}
+							set(
+								$current,
+								"id",
+								lv_id_12_0,
+								"org.integratedmodelling.kactors.Kactors.PathName");
+							afterParserOrEnumRuleCall();
+						}
+					)
 				)
+				(
+					otherlv_13='as'
+					{
+						newLeafNode(otherlv_13, grammarAccess.getValueWithConstructorAccess().getAsKeyword_1_7_1_0());
+					}
+					(
+						(
+							{
+								newCompositeNode(grammarAccess.getValueWithConstructorAccess().getCastDATA_TYPEParserRuleCall_1_7_1_1_0());
+							}
+							lv_cast_14_0=ruleDATA_TYPE
+							{
+								if ($current==null) {
+									$current = createModelElementForParent(grammarAccess.getValueWithConstructorRule());
+								}
+								set(
+									$current,
+									"cast",
+									lv_cast_14_0,
+									"org.integratedmodelling.kactors.Kactors.DATA_TYPE");
+								afterParserOrEnumRuleCall();
+							}
+						)
+					)
+				)?
 			)
 			    |
 			(
@@ -4427,7 +4562,7 @@ ruleValueWithConstructor returns [EObject current=null]
 					{
 						newCompositeNode(grammarAccess.getValueWithConstructorAccess().getListListParserRuleCall_1_8_0());
 					}
-					lv_list_11_0=ruleList
+					lv_list_15_0=ruleList
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getValueWithConstructorRule());
@@ -4435,7 +4570,7 @@ ruleValueWithConstructor returns [EObject current=null]
 						set(
 							$current,
 							"list",
-							lv_list_11_0,
+							lv_list_15_0,
 							"org.integratedmodelling.kactors.Kactors.List");
 						afterParserOrEnumRuleCall();
 					}
@@ -4447,7 +4582,7 @@ ruleValueWithConstructor returns [EObject current=null]
 					{
 						newCompositeNode(grammarAccess.getValueWithConstructorAccess().getMapMapParserRuleCall_1_9_0());
 					}
-					lv_map_12_0=ruleMap
+					lv_map_16_0=ruleMap
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getValueWithConstructorRule());
@@ -4455,7 +4590,7 @@ ruleValueWithConstructor returns [EObject current=null]
 						set(
 							$current,
 							"map",
-							lv_map_12_0,
+							lv_map_16_0,
 							"org.integratedmodelling.kactors.Kactors.Map");
 						afterParserOrEnumRuleCall();
 					}
@@ -4464,9 +4599,9 @@ ruleValueWithConstructor returns [EObject current=null]
 			    |
 			(
 				(
-					lv_constant_13_0=RULE_UPPERCASE_ID
+					lv_constant_17_0=RULE_UPPERCASE_ID
 					{
-						newLeafNode(lv_constant_13_0, grammarAccess.getValueWithConstructorAccess().getConstantUPPERCASE_IDTerminalRuleCall_1_10_0());
+						newLeafNode(lv_constant_17_0, grammarAccess.getValueWithConstructorAccess().getConstantUPPERCASE_IDTerminalRuleCall_1_10_0());
 					}
 					{
 						if ($current==null) {
@@ -4475,7 +4610,7 @@ ruleValueWithConstructor returns [EObject current=null]
 						setWithLastConsumed(
 							$current,
 							"constant",
-							lv_constant_13_0,
+							lv_constant_17_0,
 							"org.integratedmodelling.kactors.Kactors.UPPERCASE_ID");
 					}
 				)
@@ -4486,7 +4621,7 @@ ruleValueWithConstructor returns [EObject current=null]
 					{
 						newCompositeNode(grammarAccess.getValueWithConstructorAccess().getObservableObservableParserRuleCall_1_11_0());
 					}
-					lv_observable_14_0=ruleObservable
+					lv_observable_18_0=ruleObservable
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getValueWithConstructorRule());
@@ -4494,7 +4629,7 @@ ruleValueWithConstructor returns [EObject current=null]
 						set(
 							$current,
 							"observable",
-							lv_observable_14_0,
+							lv_observable_18_0,
 							"org.integratedmodelling.kactors.Kactors.Observable");
 						afterParserOrEnumRuleCall();
 					}
@@ -4503,21 +4638,48 @@ ruleValueWithConstructor returns [EObject current=null]
 			    |
 			(
 				(
-					lv_expression_15_0=RULE_EXPR
-					{
-						newLeafNode(lv_expression_15_0, grammarAccess.getValueWithConstructorAccess().getExpressionEXPRTerminalRuleCall_1_12_0());
-					}
-					{
-						if ($current==null) {
-							$current = createModelElement(grammarAccess.getValueWithConstructorRule());
+					(
+						lv_expression_19_0=RULE_EXPR
+						{
+							newLeafNode(lv_expression_19_0, grammarAccess.getValueWithConstructorAccess().getExpressionEXPRTerminalRuleCall_1_12_0_0());
 						}
-						setWithLastConsumed(
-							$current,
-							"expression",
-							lv_expression_15_0,
-							"org.integratedmodelling.kactors.Kactors.EXPR");
-					}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getValueWithConstructorRule());
+							}
+							setWithLastConsumed(
+								$current,
+								"expression",
+								lv_expression_19_0,
+								"org.integratedmodelling.kactors.Kactors.EXPR");
+						}
+					)
 				)
+				(
+					otherlv_20='as'
+					{
+						newLeafNode(otherlv_20, grammarAccess.getValueWithConstructorAccess().getAsKeyword_1_12_1_0());
+					}
+					(
+						(
+							{
+								newCompositeNode(grammarAccess.getValueWithConstructorAccess().getCastDATA_TYPEParserRuleCall_1_12_1_1_0());
+							}
+							lv_cast_21_0=ruleDATA_TYPE
+							{
+								if ($current==null) {
+									$current = createModelElementForParent(grammarAccess.getValueWithConstructorRule());
+								}
+								set(
+									$current,
+									"cast",
+									lv_cast_21_0,
+									"org.integratedmodelling.kactors.Kactors.DATA_TYPE");
+								afterParserOrEnumRuleCall();
+							}
+						)
+					)
+				)?
 			)
 			    |
 			(
@@ -4525,7 +4687,7 @@ ruleValueWithConstructor returns [EObject current=null]
 					{
 						newCompositeNode(grammarAccess.getValueWithConstructorAccess().getTableLookupTableParserRuleCall_1_13_0());
 					}
-					lv_table_16_0=ruleLookupTable
+					lv_table_22_0=ruleLookupTable
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getValueWithConstructorRule());
@@ -4533,7 +4695,7 @@ ruleValueWithConstructor returns [EObject current=null]
 						set(
 							$current,
 							"table",
-							lv_table_16_0,
+							lv_table_22_0,
 							"org.integratedmodelling.kactors.Kactors.LookupTable");
 						afterParserOrEnumRuleCall();
 					}
@@ -4545,7 +4707,7 @@ ruleValueWithConstructor returns [EObject current=null]
 					{
 						newCompositeNode(grammarAccess.getValueWithConstructorAccess().getQuantityQuantityParserRuleCall_1_14_0());
 					}
-					lv_quantity_17_0=ruleQuantity
+					lv_quantity_23_0=ruleQuantity
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getValueWithConstructorRule());
@@ -4553,7 +4715,7 @@ ruleValueWithConstructor returns [EObject current=null]
 						set(
 							$current,
 							"quantity",
-							lv_quantity_17_0,
+							lv_quantity_23_0,
 							"org.integratedmodelling.kactors.Kactors.Quantity");
 						afterParserOrEnumRuleCall();
 					}
@@ -4563,15 +4725,15 @@ ruleValueWithConstructor returns [EObject current=null]
 			(
 				(
 					(
-						lv_component_18_0='new'
+						lv_component_24_0='new'
 						{
-							newLeafNode(lv_component_18_0, grammarAccess.getValueWithConstructorAccess().getComponentNewKeyword_1_15_0_0());
+							newLeafNode(lv_component_24_0, grammarAccess.getValueWithConstructorAccess().getComponentNewKeyword_1_15_0_0());
 						}
 						{
 							if ($current==null) {
 								$current = createModelElement(grammarAccess.getValueWithConstructorRule());
 							}
-							setWithLastConsumed($current, "component", lv_component_18_0 != null, "new");
+							setWithLastConsumed($current, "component", lv_component_24_0 != null, "new");
 						}
 					)
 				)
@@ -4580,7 +4742,7 @@ ruleValueWithConstructor returns [EObject current=null]
 						{
 							newCompositeNode(grammarAccess.getValueWithConstructorAccess().getBehaviorPathNameParserRuleCall_1_15_1_0());
 						}
-						lv_behavior_19_0=rulePathName
+						lv_behavior_25_0=rulePathName
 						{
 							if ($current==null) {
 								$current = createModelElementForParent(grammarAccess.getValueWithConstructorRule());
@@ -4588,23 +4750,23 @@ ruleValueWithConstructor returns [EObject current=null]
 							set(
 								$current,
 								"behavior",
-								lv_behavior_19_0,
+								lv_behavior_25_0,
 								"org.integratedmodelling.kactors.Kactors.PathName");
 							afterParserOrEnumRuleCall();
 						}
 					)
 				)
 				(
-					otherlv_20='('
+					otherlv_26='('
 					{
-						newLeafNode(otherlv_20, grammarAccess.getValueWithConstructorAccess().getLeftParenthesisKeyword_1_15_2_0());
+						newLeafNode(otherlv_26, grammarAccess.getValueWithConstructorAccess().getLeftParenthesisKeyword_1_15_2_0());
 					}
 					(
 						(
 							{
 								newCompositeNode(grammarAccess.getValueWithConstructorAccess().getParametersParameterListParserRuleCall_1_15_2_1_0());
 							}
-							lv_parameters_21_0=ruleParameterList
+							lv_parameters_27_0=ruleParameterList
 							{
 								if ($current==null) {
 									$current = createModelElementForParent(grammarAccess.getValueWithConstructorRule());
@@ -4612,30 +4774,30 @@ ruleValueWithConstructor returns [EObject current=null]
 								set(
 									$current,
 									"parameters",
-									lv_parameters_21_0,
+									lv_parameters_27_0,
 									"org.integratedmodelling.kactors.Kactors.ParameterList");
 								afterParserOrEnumRuleCall();
 							}
 						)
 					)?
-					otherlv_22=')'
+					otherlv_28=')'
 					{
-						newLeafNode(otherlv_22, grammarAccess.getValueWithConstructorAccess().getRightParenthesisKeyword_1_15_2_2());
+						newLeafNode(otherlv_28, grammarAccess.getValueWithConstructorAccess().getRightParenthesisKeyword_1_15_2_2());
 					}
 				)?
 			)
 		)
 		(
-			otherlv_23='?'
+			otherlv_29='?'
 			{
-				newLeafNode(otherlv_23, grammarAccess.getValueWithConstructorAccess().getQuestionMarkKeyword_2_0());
+				newLeafNode(otherlv_29, grammarAccess.getValueWithConstructorAccess().getQuestionMarkKeyword_2_0());
 			}
 			(
 				(
 					{
 						newCompositeNode(grammarAccess.getValueWithConstructorAccess().getThenValueWithConstructorParserRuleCall_2_1_0());
 					}
-					lv_then_24_0=ruleValueWithConstructor
+					lv_then_30_0=ruleValueWithConstructor
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getValueWithConstructorRule());
@@ -4643,22 +4805,22 @@ ruleValueWithConstructor returns [EObject current=null]
 						set(
 							$current,
 							"then",
-							lv_then_24_0,
+							lv_then_30_0,
 							"org.integratedmodelling.kactors.Kactors.ValueWithConstructor");
 						afterParserOrEnumRuleCall();
 					}
 				)
 			)
-			otherlv_25=':'
+			otherlv_31=':'
 			{
-				newLeafNode(otherlv_25, grammarAccess.getValueWithConstructorAccess().getColonKeyword_2_2());
+				newLeafNode(otherlv_31, grammarAccess.getValueWithConstructorAccess().getColonKeyword_2_2());
 			}
 			(
 				(
 					{
 						newCompositeNode(grammarAccess.getValueWithConstructorAccess().getElseValueWithConstructorParserRuleCall_2_3_0());
 					}
-					lv_else_26_0=ruleValueWithConstructor
+					lv_else_32_0=ruleValueWithConstructor
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getValueWithConstructorRule());
@@ -4666,7 +4828,7 @@ ruleValueWithConstructor returns [EObject current=null]
 						set(
 							$current,
 							"else",
-							lv_else_26_0,
+							lv_else_32_0,
 							"org.integratedmodelling.kactors.Kactors.ValueWithConstructor");
 						afterParserOrEnumRuleCall();
 					}
@@ -4839,22 +5001,49 @@ ruleValueWithMetadata returns [EObject current=null]
 			    |
 			(
 				(
-					{
-						newCompositeNode(grammarAccess.getValueWithMetadataAccess().getLiteralLiteralParserRuleCall_1_2_0());
-					}
-					lv_literal_3_0=ruleLiteral
-					{
-						if ($current==null) {
-							$current = createModelElementForParent(grammarAccess.getValueWithMetadataRule());
+					(
+						{
+							newCompositeNode(grammarAccess.getValueWithMetadataAccess().getLiteralLiteralParserRuleCall_1_2_0_0());
 						}
-						set(
-							$current,
-							"literal",
-							lv_literal_3_0,
-							"org.integratedmodelling.kactors.Kactors.Literal");
-						afterParserOrEnumRuleCall();
-					}
+						lv_literal_3_0=ruleLiteral
+						{
+							if ($current==null) {
+								$current = createModelElementForParent(grammarAccess.getValueWithMetadataRule());
+							}
+							set(
+								$current,
+								"literal",
+								lv_literal_3_0,
+								"org.integratedmodelling.kactors.Kactors.Literal");
+							afterParserOrEnumRuleCall();
+						}
+					)
 				)
+				(
+					otherlv_4='as'
+					{
+						newLeafNode(otherlv_4, grammarAccess.getValueWithMetadataAccess().getAsKeyword_1_2_1_0());
+					}
+					(
+						(
+							{
+								newCompositeNode(grammarAccess.getValueWithMetadataAccess().getCastDATA_TYPEParserRuleCall_1_2_1_1_0());
+							}
+							lv_cast_5_0=ruleDATA_TYPE
+							{
+								if ($current==null) {
+									$current = createModelElementForParent(grammarAccess.getValueWithMetadataRule());
+								}
+								set(
+									$current,
+									"cast",
+									lv_cast_5_0,
+									"org.integratedmodelling.kactors.Kactors.DATA_TYPE");
+								afterParserOrEnumRuleCall();
+							}
+						)
+					)
+				)?
 			)
 			    |
 			(
@@ -4862,7 +5051,7 @@ ruleValueWithMetadata returns [EObject current=null]
 					{
 						newCompositeNode(grammarAccess.getValueWithMetadataAccess().getUrnUrnIdParserRuleCall_1_3_0());
 					}
-					lv_urn_4_0=ruleUrnId
+					lv_urn_6_0=ruleUrnId
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getValueWithMetadataRule());
@@ -4870,7 +5059,7 @@ ruleValueWithMetadata returns [EObject current=null]
 						set(
 							$current,
 							"urn",
-							lv_urn_4_0,
+							lv_urn_6_0,
 							"org.integratedmodelling.kactors.Kactors.UrnId");
 						afterParserOrEnumRuleCall();
 					}
@@ -4879,21 +5068,48 @@ ruleValueWithMetadata returns [EObject current=null]
 			    |
 			(
 				(
-					lv_constant_5_0=RULE_UPPERCASE_ID
-					{
-						newLeafNode(lv_constant_5_0, grammarAccess.getValueWithMetadataAccess().getConstantUPPERCASE_IDTerminalRuleCall_1_4_0());
-					}
-					{
-						if ($current==null) {
-							$current = createModelElement(grammarAccess.getValueWithMetadataRule());
+					(
+						lv_constant_7_0=RULE_UPPERCASE_ID
+						{
+							newLeafNode(lv_constant_7_0, grammarAccess.getValueWithMetadataAccess().getConstantUPPERCASE_IDTerminalRuleCall_1_4_0_0());
 						}
-						setWithLastConsumed(
-							$current,
-							"constant",
-							lv_constant_5_0,
-							"org.integratedmodelling.kactors.Kactors.UPPERCASE_ID");
-					}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getValueWithMetadataRule());
+							}
+							setWithLastConsumed(
+								$current,
+								"constant",
+								lv_constant_7_0,
+								"org.integratedmodelling.kactors.Kactors.UPPERCASE_ID");
+						}
+					)
 				)
+				(
+					otherlv_8='as'
+					{
+						newLeafNode(otherlv_8, grammarAccess.getValueWithMetadataAccess().getAsKeyword_1_4_1_0());
+					}
+					(
+						(
+							{
+								newCompositeNode(grammarAccess.getValueWithMetadataAccess().getCastDATA_TYPEParserRuleCall_1_4_1_1_0());
+							}
+							lv_cast_9_0=ruleDATA_TYPE
+							{
+								if ($current==null) {
+									$current = createModelElementForParent(grammarAccess.getValueWithMetadataRule());
+								}
+								set(
+									$current,
+									"cast",
+									lv_cast_9_0,
+									"org.integratedmodelling.kactors.Kactors.DATA_TYPE");
+								afterParserOrEnumRuleCall();
+							}
+						)
+					)
+				)?
 			)
 			    |
 			(
@@ -4901,7 +5117,7 @@ ruleValueWithMetadata returns [EObject current=null]
 					{
 						newCompositeNode(grammarAccess.getValueWithMetadataAccess().getIdPathNameParserRuleCall_1_5_0());
 					}
-					lv_id_6_0=rulePathName
+					lv_id_10_0=rulePathName
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getValueWithMetadataRule());
@@ -4909,7 +5125,7 @@ ruleValueWithMetadata returns [EObject current=null]
 						set(
 							$current,
 							"id",
-							lv_id_6_0,
+							lv_id_10_0,
 							"org.integratedmodelling.kactors.Kactors.PathName");
 						afterParserOrEnumRuleCall();
 					}
@@ -4921,7 +5137,7 @@ ruleValueWithMetadata returns [EObject current=null]
 					{
 						newCompositeNode(grammarAccess.getValueWithMetadataAccess().getListListParserRuleCall_1_6_0());
 					}
-					lv_list_7_0=ruleList
+					lv_list_11_0=ruleList
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getValueWithMetadataRule());
@@ -4929,7 +5145,7 @@ ruleValueWithMetadata returns [EObject current=null]
 						set(
 							$current,
 							"list",
-							lv_list_7_0,
+							lv_list_11_0,
 							"org.integratedmodelling.kactors.Kactors.List");
 						afterParserOrEnumRuleCall();
 					}
@@ -4941,7 +5157,7 @@ ruleValueWithMetadata returns [EObject current=null]
 					{
 						newCompositeNode(grammarAccess.getValueWithMetadataAccess().getMapMapParserRuleCall_1_7_0());
 					}
-					lv_map_8_0=ruleMap
+					lv_map_12_0=ruleMap
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getValueWithMetadataRule());
@@ -4949,7 +5165,7 @@ ruleValueWithMetadata returns [EObject current=null]
 						set(
 							$current,
 							"map",
-							lv_map_8_0,
+							lv_map_12_0,
 							"org.integratedmodelling.kactors.Kactors.Map");
 						afterParserOrEnumRuleCall();
 					}
@@ -4961,7 +5177,7 @@ ruleValueWithMetadata returns [EObject current=null]
 					{
 						newCompositeNode(grammarAccess.getValueWithMetadataAccess().getObservableObservableParserRuleCall_1_8_0());
 					}
-					lv_observable_9_0=ruleObservable
+					lv_observable_13_0=ruleObservable
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getValueWithMetadataRule());
@@ -4969,7 +5185,7 @@ ruleValueWithMetadata returns [EObject current=null]
 						set(
 							$current,
 							"observable",
-							lv_observable_9_0,
+							lv_observable_13_0,
 							"org.integratedmodelling.kactors.Kactors.Observable");
 						afterParserOrEnumRuleCall();
 					}
@@ -4978,21 +5194,48 @@ ruleValueWithMetadata returns [EObject current=null]
 			    |
 			(
 				(
-					lv_expression_10_0=RULE_EXPR
-					{
-						newLeafNode(lv_expression_10_0, grammarAccess.getValueWithMetadataAccess().getExpressionEXPRTerminalRuleCall_1_9_0());
-					}
-					{
-						if ($current==null) {
-							$current = createModelElement(grammarAccess.getValueWithMetadataRule());
+					(
+						lv_expression_14_0=RULE_EXPR
+						{
+							newLeafNode(lv_expression_14_0, grammarAccess.getValueWithMetadataAccess().getExpressionEXPRTerminalRuleCall_1_9_0_0());
 						}
-						setWithLastConsumed(
-							$current,
-							"expression",
-							lv_expression_10_0,
-							"org.integratedmodelling.kactors.Kactors.EXPR");
-					}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getValueWithMetadataRule());
+							}
+							setWithLastConsumed(
+								$current,
+								"expression",
+								lv_expression_14_0,
+								"org.integratedmodelling.kactors.Kactors.EXPR");
+						}
+					)
 				)
+				(
+					otherlv_15='as'
+					{
+						newLeafNode(otherlv_15, grammarAccess.getValueWithMetadataAccess().getAsKeyword_1_9_1_0());
+					}
+					(
+						(
+							{
+								newCompositeNode(grammarAccess.getValueWithMetadataAccess().getCastDATA_TYPEParserRuleCall_1_9_1_1_0());
+							}
+							lv_cast_16_0=ruleDATA_TYPE
+							{
+								if ($current==null) {
+									$current = createModelElementForParent(grammarAccess.getValueWithMetadataRule());
+								}
+								set(
+									$current,
+									"cast",
+									lv_cast_16_0,
+									"org.integratedmodelling.kactors.Kactors.DATA_TYPE");
+								afterParserOrEnumRuleCall();
+							}
+						)
+					)
+				)?
 			)
 			    |
 			(
@@ -5000,7 +5243,7 @@ ruleValueWithMetadata returns [EObject current=null]
 					{
 						newCompositeNode(grammarAccess.getValueWithMetadataAccess().getTableLookupTableParserRuleCall_1_10_0());
 					}
-					lv_table_11_0=ruleLookupTable
+					lv_table_17_0=ruleLookupTable
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getValueWithMetadataRule());
@@ -5008,7 +5251,7 @@ ruleValueWithMetadata returns [EObject current=null]
 						set(
 							$current,
 							"table",
-							lv_table_11_0,
+							lv_table_17_0,
 							"org.integratedmodelling.kactors.Kactors.LookupTable");
 						afterParserOrEnumRuleCall();
 					}
@@ -5020,7 +5263,7 @@ ruleValueWithMetadata returns [EObject current=null]
 					{
 						newCompositeNode(grammarAccess.getValueWithMetadataAccess().getQuantityQuantityParserRuleCall_1_11_0());
 					}
-					lv_quantity_12_0=ruleQuantity
+					lv_quantity_18_0=ruleQuantity
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getValueWithMetadataRule());
@@ -5028,7 +5271,7 @@ ruleValueWithMetadata returns [EObject current=null]
 						set(
 							$current,
 							"quantity",
-							lv_quantity_12_0,
+							lv_quantity_18_0,
 							"org.integratedmodelling.kactors.Kactors.Quantity");
 						afterParserOrEnumRuleCall();
 					}
@@ -5040,7 +5283,7 @@ ruleValueWithMetadata returns [EObject current=null]
 				{
 					newCompositeNode(grammarAccess.getValueWithMetadataAccess().getMetadataMetadataParserRuleCall_2_0());
 				}
-				lv_metadata_13_0=ruleMetadata
+				lv_metadata_19_0=ruleMetadata
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getValueWithMetadataRule());
@@ -5048,7 +5291,7 @@ ruleValueWithMetadata returns [EObject current=null]
 					set(
 						$current,
 						"metadata",
-						lv_metadata_13_0,
+						lv_metadata_19_0,
 						"org.integratedmodelling.kactors.Kactors.Metadata");
 					afterParserOrEnumRuleCall();
 				}
@@ -5109,42 +5352,96 @@ ruleValueWithMetadataWithoutTree returns [EObject current=null]
 			    |
 			(
 				(
-					{
-						newCompositeNode(grammarAccess.getValueWithMetadataWithoutTreeAccess().getLiteralLiteralParserRuleCall_1_1_0());
-					}
-					lv_literal_2_0=ruleLiteral
-					{
-						if ($current==null) {
-							$current = createModelElementForParent(grammarAccess.getValueWithMetadataWithoutTreeRule());
+					(
+						{
+							newCompositeNode(grammarAccess.getValueWithMetadataWithoutTreeAccess().getLiteralLiteralParserRuleCall_1_1_0_0());
 						}
-						set(
-							$current,
-							"literal",
-							lv_literal_2_0,
-							"org.integratedmodelling.kactors.Kactors.Literal");
-						afterParserOrEnumRuleCall();
-					}
+						lv_literal_2_0=ruleLiteral
+						{
+							if ($current==null) {
+								$current = createModelElementForParent(grammarAccess.getValueWithMetadataWithoutTreeRule());
+							}
+							set(
+								$current,
+								"literal",
+								lv_literal_2_0,
+								"org.integratedmodelling.kactors.Kactors.Literal");
+							afterParserOrEnumRuleCall();
+						}
+					)
 				)
+				(
+					otherlv_3='as'
+					{
+						newLeafNode(otherlv_3, grammarAccess.getValueWithMetadataWithoutTreeAccess().getAsKeyword_1_1_1_0());
+					}
+					(
+						(
+							{
+								newCompositeNode(grammarAccess.getValueWithMetadataWithoutTreeAccess().getCastDATA_TYPEParserRuleCall_1_1_1_1_0());
+							}
+							lv_cast_4_0=ruleDATA_TYPE
+							{
+								if ($current==null) {
+									$current = createModelElementForParent(grammarAccess.getValueWithMetadataWithoutTreeRule());
+								}
+								set(
+									$current,
+									"cast",
+									lv_cast_4_0,
+									"org.integratedmodelling.kactors.Kactors.DATA_TYPE");
+								afterParserOrEnumRuleCall();
+							}
+						)
+					)
+				)?
 			)
 			    |
 			(
 				(
-					{
-						newCompositeNode(grammarAccess.getValueWithMetadataWithoutTreeAccess().getIdPathNameParserRuleCall_1_2_0());
-					}
-					lv_id_3_0=rulePathName
-					{
-						if ($current==null) {
-							$current = createModelElementForParent(grammarAccess.getValueWithMetadataWithoutTreeRule());
+					(
+						{
+							newCompositeNode(grammarAccess.getValueWithMetadataWithoutTreeAccess().getIdPathNameParserRuleCall_1_2_0_0());
 						}
-						set(
-							$current,
-							"id",
-							lv_id_3_0,
-							"org.integratedmodelling.kactors.Kactors.PathName");
-						afterParserOrEnumRuleCall();
-					}
+						lv_id_5_0=rulePathName
+						{
+							if ($current==null) {
+								$current = createModelElementForParent(grammarAccess.getValueWithMetadataWithoutTreeRule());
+							}
+							set(
+								$current,
+								"id",
+								lv_id_5_0,
+								"org.integratedmodelling.kactors.Kactors.PathName");
+							afterParserOrEnumRuleCall();
+						}
+					)
 				)
+				(
+					otherlv_6='as'
+					{
+						newLeafNode(otherlv_6, grammarAccess.getValueWithMetadataWithoutTreeAccess().getAsKeyword_1_2_1_0());
+					}
+					(
+						(
+							{
+								newCompositeNode(grammarAccess.getValueWithMetadataWithoutTreeAccess().getCastDATA_TYPEParserRuleCall_1_2_1_1_0());
+							}
+							lv_cast_7_0=ruleDATA_TYPE
+							{
+								if ($current==null) {
+									$current = createModelElementForParent(grammarAccess.getValueWithMetadataWithoutTreeRule());
+								}
+								set(
+									$current,
+									"cast",
+									lv_cast_7_0,
+									"org.integratedmodelling.kactors.Kactors.DATA_TYPE");
+								afterParserOrEnumRuleCall();
+							}
+						)
+					)
+				)?
 			)
 			    |
 			(
@@ -5152,7 +5449,7 @@ ruleValueWithMetadataWithoutTree returns [EObject current=null]
 					{
 						newCompositeNode(grammarAccess.getValueWithMetadataWithoutTreeAccess().getUrnUrnIdParserRuleCall_1_3_0());
 					}
-					lv_urn_4_0=ruleUrnId
+					lv_urn_8_0=ruleUrnId
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getValueWithMetadataWithoutTreeRule());
@@ -5160,7 +5457,7 @@ ruleValueWithMetadataWithoutTree returns [EObject current=null]
 						set(
 							$current,
 							"urn",
-							lv_urn_4_0,
+							lv_urn_8_0,
 							"org.integratedmodelling.kactors.Kactors.UrnId");
 						afterParserOrEnumRuleCall();
 					}
@@ -5172,7 +5469,7 @@ ruleValueWithMetadataWithoutTree returns [EObject current=null]
 					{
 						newCompositeNode(grammarAccess.getValueWithMetadataWithoutTreeAccess().getListListParserRuleCall_1_4_0());
 					}
-					lv_list_5_0=ruleList
+					lv_list_9_0=ruleList
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getValueWithMetadataWithoutTreeRule());
@@ -5180,7 +5477,7 @@ ruleValueWithMetadataWithoutTree returns [EObject current=null]
 						set(
 							$current,
 							"list",
-							lv_list_5_0,
+							lv_list_9_0,
 							"org.integratedmodelling.kactors.Kactors.List");
 						afterParserOrEnumRuleCall();
 					}
@@ -5192,7 +5489,7 @@ ruleValueWithMetadataWithoutTree returns [EObject current=null]
 					{
 						newCompositeNode(grammarAccess.getValueWithMetadataWithoutTreeAccess().getMapMapParserRuleCall_1_5_0());
 					}
-					lv_map_6_0=ruleMap
+					lv_map_10_0=ruleMap
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getValueWithMetadataWithoutTreeRule());
@@ -5200,7 +5497,7 @@ ruleValueWithMetadataWithoutTree returns [EObject current=null]
 						set(
 							$current,
 							"map",
-							lv_map_6_0,
+							lv_map_10_0,
 							"org.integratedmodelling.kactors.Kactors.Map");
 						afterParserOrEnumRuleCall();
 					}
@@ -5212,7 +5509,7 @@ ruleValueWithMetadataWithoutTree returns [EObject current=null]
 					{
 						newCompositeNode(grammarAccess.getValueWithMetadataWithoutTreeAccess().getObservableObservableParserRuleCall_1_6_0());
 					}
-					lv_observable_7_0=ruleObservable
+					lv_observable_11_0=ruleObservable
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getValueWithMetadataWithoutTreeRule());
@@ -5220,7 +5517,7 @@ ruleValueWithMetadataWithoutTree returns [EObject current=null]
 						set(
 							$current,
 							"observable",
-							lv_observable_7_0,
+							lv_observable_11_0,
 							"org.integratedmodelling.kactors.Kactors.Observable");
 						afterParserOrEnumRuleCall();
 					}
@@ -5229,21 +5526,48 @@ ruleValueWithMetadataWithoutTree returns [EObject current=null]
 			    |
 			(
 				(
-					lv_expression_8_0=RULE_EXPR
-					{
-						newLeafNode(lv_expression_8_0, grammarAccess.getValueWithMetadataWithoutTreeAccess().getExpressionEXPRTerminalRuleCall_1_7_0());
-					}
-					{
-						if ($current==null) {
-							$current = createModelElement(grammarAccess.getValueWithMetadataWithoutTreeRule());
+					(
+						lv_expression_12_0=RULE_EXPR
+						{
+							newLeafNode(lv_expression_12_0, grammarAccess.getValueWithMetadataWithoutTreeAccess().getExpressionEXPRTerminalRuleCall_1_7_0_0());
 						}
-						setWithLastConsumed(
-							$current,
-							"expression",
-							lv_expression_8_0,
-							"org.integratedmodelling.kactors.Kactors.EXPR");
-					}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getValueWithMetadataWithoutTreeRule());
+							}
+							setWithLastConsumed(
+								$current,
+								"expression",
+								lv_expression_12_0,
+								"org.integratedmodelling.kactors.Kactors.EXPR");
+						}
+					)
 				)
+				(
+					otherlv_13='as'
+					{
+						newLeafNode(otherlv_13, grammarAccess.getValueWithMetadataWithoutTreeAccess().getAsKeyword_1_7_1_0());
+					}
+					(
+						(
+							{
+								newCompositeNode(grammarAccess.getValueWithMetadataWithoutTreeAccess().getCastDATA_TYPEParserRuleCall_1_7_1_1_0());
+							}
+							lv_cast_14_0=ruleDATA_TYPE
+							{
+								if ($current==null) {
+									$current = createModelElementForParent(grammarAccess.getValueWithMetadataWithoutTreeRule());
+								}
+								set(
+									$current,
+									"cast",
+									lv_cast_14_0,
+									"org.integratedmodelling.kactors.Kactors.DATA_TYPE");
+								afterParserOrEnumRuleCall();
+							}
+						)
+					)
+				)?
 			)
 			    |
 			(
@@ -5251,7 +5575,7 @@ ruleValueWithMetadataWithoutTree returns [EObject current=null]
 					{
 						newCompositeNode(grammarAccess.getValueWithMetadataWithoutTreeAccess().getTableLookupTableParserRuleCall_1_8_0());
 					}
-					lv_table_9_0=ruleLookupTable
+					lv_table_15_0=ruleLookupTable
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getValueWithMetadataWithoutTreeRule());
@@ -5259,7 +5583,7 @@ ruleValueWithMetadataWithoutTree returns [EObject current=null]
 						set(
 							$current,
 							"table",
-							lv_table_9_0,
+							lv_table_15_0,
 							"org.integratedmodelling.kactors.Kactors.LookupTable");
 						afterParserOrEnumRuleCall();
 					}
@@ -5271,7 +5595,7 @@ ruleValueWithMetadataWithoutTree returns [EObject current=null]
 					{
 						newCompositeNode(grammarAccess.getValueWithMetadataWithoutTreeAccess().getQuantityQuantityParserRuleCall_1_9_0());
 					}
-					lv_quantity_10_0=ruleQuantity
+					lv_quantity_16_0=ruleQuantity
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getValueWithMetadataWithoutTreeRule());
@@ -5279,7 +5603,7 @@ ruleValueWithMetadataWithoutTree returns [EObject current=null]
 						set(
 							$current,
 							"quantity",
-							lv_quantity_10_0,
+							lv_quantity_16_0,
 							"org.integratedmodelling.kactors.Kactors.Quantity");
 						afterParserOrEnumRuleCall();
 					}
@@ -5287,16 +5611,16 @@ ruleValueWithMetadataWithoutTree returns [EObject current=null]
 			)
 		)
 		(
-			otherlv_11='?'
+			otherlv_17='?'
 			{
-				newLeafNode(otherlv_11, grammarAccess.getValueWithMetadataWithoutTreeAccess().getQuestionMarkKeyword_2_0());
+				newLeafNode(otherlv_17, grammarAccess.getValueWithMetadataWithoutTreeAccess().getQuestionMarkKeyword_2_0());
 			}
 			(
 				(
 					{
 						newCompositeNode(grammarAccess.getValueWithMetadataWithoutTreeAccess().getThenValueParserRuleCall_2_1_0());
 					}
-					lv_then_12_0=ruleValue
+					lv_then_18_0=ruleValue
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getValueWithMetadataWithoutTreeRule());
@@ -5304,22 +5628,22 @@ ruleValueWithMetadataWithoutTree returns [EObject current=null]
 						set(
 							$current,
 							"then",
-							lv_then_12_0,
+							lv_then_18_0,
 							"org.integratedmodelling.kactors.Kactors.Value");
 						afterParserOrEnumRuleCall();
 					}
 				)
 			)
-			otherlv_13=':'
+			otherlv_19=':'
 			{
-				newLeafNode(otherlv_13, grammarAccess.getValueWithMetadataWithoutTreeAccess().getColonKeyword_2_2());
+				newLeafNode(otherlv_19, grammarAccess.getValueWithMetadataWithoutTreeAccess().getColonKeyword_2_2());
 			}
 			(
 				(
 					{
 						newCompositeNode(grammarAccess.getValueWithMetadataWithoutTreeAccess().getElseValueParserRuleCall_2_3_0());
 					}
-					lv_else_14_0=ruleValue
+					lv_else_20_0=ruleValue
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getValueWithMetadataWithoutTreeRule());
@@ -5327,7 +5651,7 @@ ruleValueWithMetadataWithoutTree returns [EObject current=null]
 						set(
 							$current,
 							"else",
-							lv_else_14_0,
+							lv_else_20_0,
 							"org.integratedmodelling.kactors.Kactors.Value");
 						afterParserOrEnumRuleCall();
 					}
@@ -5339,7 +5663,7 @@ ruleValueWithMetadataWithoutTree returns [EObject current=null]
 				{
 					newCompositeNode(grammarAccess.getValueWithMetadataWithoutTreeAccess().getMetadataMetadataParserRuleCall_3_0());
 				}
-				lv_metadata_15_0=ruleMetadata
+				lv_metadata_21_0=ruleMetadata
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getValueWithMetadataWithoutTreeRule());
@@ -5347,7 +5671,7 @@ ruleValueWithMetadataWithoutTree returns [EObject current=null]
 					set(
 						$current,
 						"metadata",
-						lv_metadata_15_0,
+						lv_metadata_21_0,
 						"org.integratedmodelling.kactors.Kactors.Metadata");
 					afterParserOrEnumRuleCall();
 				}
@@ -8323,6 +8647,54 @@ ruleLiteral returns [EObject current=null]
 				)
 			)
 		)
+	)
+;
+
+// Entry rule entryRuleDATA_TYPE
+entryRuleDATA_TYPE returns [String current=null]:
+	{ newCompositeNode(grammarAccess.getDATA_TYPERule()); }
+	iv_ruleDATA_TYPE=ruleDATA_TYPE
+	{ $current=$iv_ruleDATA_TYPE.current.getText(); }
+	EOF;
+
+// Rule DATA_TYPE
+ruleDATA_TYPE returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		kw='int'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getDATA_TYPEAccess().getIntKeyword_0());
+		}
+		    |
+		kw='number'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getDATA_TYPEAccess().getNumberKeyword_1());
+		}
+		    |
+		kw='text'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getDATA_TYPEAccess().getTextKeyword_2());
+		}
+		    |
+		kw='boolean'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getDATA_TYPEAccess().getBooleanKeyword_3());
+		}
+		    |
+		kw='concept'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getDATA_TYPEAccess().getConceptKeyword_4());
+		}
 	)
 ;
 

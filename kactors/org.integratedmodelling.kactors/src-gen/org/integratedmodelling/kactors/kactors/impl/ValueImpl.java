@@ -47,6 +47,7 @@ import org.integratedmodelling.kactors.kactors.Value;
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getArgvalue <em>Argvalue</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getUrn <em>Urn</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getLiteral <em>Literal</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getCast <em>Cast</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getId <em>Id</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getList <em>List</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getMap <em>Map</em>}</li>
@@ -168,6 +169,26 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * @ordered
    */
   protected Literal literal;
+
+  /**
+   * The default value of the '{@link #getCast() <em>Cast</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getCast()
+   * @generated
+   * @ordered
+   */
+  protected static final String CAST_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getCast() <em>Cast</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getCast()
+   * @generated
+   * @ordered
+   */
+  protected String cast = CAST_EDEFAULT;
 
   /**
    * The default value of the '{@link #getId() <em>Id</em>}' attribute.
@@ -598,6 +619,31 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
     }
     else if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__LITERAL, newLiteral, newLiteral));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public String getCast()
+  {
+    return cast;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setCast(String newCast)
+  {
+    String oldCast = cast;
+    cast = newCast;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__CAST, oldCast, cast));
   }
 
   /**
@@ -1302,6 +1348,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return getUrn();
       case KactorsPackage.VALUE__LITERAL:
         return getLiteral();
+      case KactorsPackage.VALUE__CAST:
+        return getCast();
       case KactorsPackage.VALUE__ID:
         return getId();
       case KactorsPackage.VALUE__LIST:
@@ -1366,6 +1414,9 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return;
       case KactorsPackage.VALUE__LITERAL:
         setLiteral((Literal)newValue);
+        return;
+      case KactorsPackage.VALUE__CAST:
+        setCast((String)newValue);
         return;
       case KactorsPackage.VALUE__ID:
         setId((String)newValue);
@@ -1448,6 +1499,9 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
       case KactorsPackage.VALUE__LITERAL:
         setLiteral((Literal)null);
         return;
+      case KactorsPackage.VALUE__CAST:
+        setCast(CAST_EDEFAULT);
+        return;
       case KactorsPackage.VALUE__ID:
         setId(ID_EDEFAULT);
         return;
@@ -1522,6 +1576,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return URN_EDEFAULT == null ? urn != null : !URN_EDEFAULT.equals(urn);
       case KactorsPackage.VALUE__LITERAL:
         return literal != null;
+      case KactorsPackage.VALUE__CAST:
+        return CAST_EDEFAULT == null ? cast != null : !CAST_EDEFAULT.equals(cast);
       case KactorsPackage.VALUE__ID:
         return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
       case KactorsPackage.VALUE__LIST:
@@ -1577,6 +1633,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
     result.append(argvalue);
     result.append(", urn: ");
     result.append(urn);
+    result.append(", cast: ");
+    result.append(cast);
     result.append(", id: ");
     result.append(id);
     result.append(", constant: ");

@@ -100,7 +100,7 @@ public class ModelKbox extends ObservableKbox {
                             + "dereifyingattribute VARCHAR(256), " + "minspatialscale INTEGER, " + "maxspatialscale INTEGER, "
                             + "mintimescale INTEGER, " + "maxtimescale INTEGER, " + "space GEOMETRY, "
                             + "observationtype VARCHAR(256), " + "enumeratedspacedomain VARCHAR(256), "
-                            + "enumeratedspacelocation VARCHAR(1024), " + "specializedObservable BOOLEAN, " + "); "
+                            + "enumeratedspacelocation VARCHAR(1024), " + "specializedObservable BOOLEAN " + "); "
                             + "CREATE INDEX model_oid_index ON model(oid); "
                     // + "CREATE SPATIAL INDEX model_space ON model(space);"
                     ;
@@ -242,7 +242,11 @@ public class ModelKbox extends ObservableKbox {
         if (ret.getOfflineModels().size() > 0) {
 
             String message = "warning: " + ret.getOfflineModels().size() + " model"
-                    + (ret.getOfflineModels().size() < 2 ? " was" : "s were") + " chosen but found offline";
+                    + (ret.getOfflineModels().size() < 2 ? " was" : "s were") + " chosen but found offline: ";
+
+            for (ModelReference m : ret.getOfflineModels()) {
+                message += "\n   " + m.getName();
+            }
 
             if (ret.size() > 0) {
                 resolutionScope.getMonitor().info(message);

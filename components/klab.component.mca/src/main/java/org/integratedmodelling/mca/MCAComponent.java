@@ -18,10 +18,11 @@ import org.integratedmodelling.klab.api.extensions.Component;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
-import org.integratedmodelling.klab.api.observations.IObservationGroup;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IObservationGroup;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -315,8 +316,8 @@ public class MCAComponent {
 			}
 
 			for (IArtifact stakeholder : stakeholdersArtifact) {
-				if (stakeholder instanceof IDirectObservation) {
-					Stakeholder st = new Stakeholder((IDirectObservation) stakeholder);
+				if (stakeholder instanceof ISubject) {
+					Stakeholder st = new Stakeholder((ISubject) stakeholder);
 					// TODO make observations of criterion values
 					for (CriterionDescriptor cd : criterionDescriptors) {
 						for (IState state : ((IDirectObservation) stakeholder).getStates()) {

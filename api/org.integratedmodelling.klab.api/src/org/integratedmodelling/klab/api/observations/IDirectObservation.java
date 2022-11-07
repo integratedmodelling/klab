@@ -43,14 +43,14 @@ public abstract interface IDirectObservation extends IObservation, IObjectArtifa
 	String getName();
 
 	/**
-	 * Direct observations may have children. This is a convenience method to find a particular
-	 * child artifact.
+	 * Direct observations may have children. This is a convenience method to find a
+	 * particular child artifact.
 	 * 
 	 * @param observable
 	 * @return
 	 */
-	public IObservation getChildObservation(IObservable observable);
-	
+	IObservation getChildObservation(IObservable observable);
+
 	/**
 	 * <p>
 	 * Direct observations may have states of their own.
@@ -62,6 +62,13 @@ public abstract interface IDirectObservation extends IObservation, IObjectArtifa
 
 	@Override
 	IDirectObservation at(ILocator locator);
+
+	/**
+	 * If the observation derives from an emerging pattern, return it here.
+	 * 
+	 * @return
+	 */
+	IPattern getOriginatingPattern();
 
 	/**
 	 * Direct observations may die in action.

@@ -1,7 +1,9 @@
 package org.integratedmodelling.kim.api;
 
+import java.util.Collection;
 import java.util.List;
 
+import org.integratedmodelling.klab.api.knowledge.IObservable.ResolutionException;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
@@ -41,6 +43,20 @@ public interface IKimObservable extends IKimStatement {
      * @return the literal value
      */
     Object getValue();
+
+    /**
+     * The default value if one is given. The optional state and resolution triggers are affected.
+     * 
+     * @return
+     */
+    Object getDefaultValue();
+
+    /**
+     * Resolution exceptions linked to the use of a stated default value.
+     * 
+     * @return
+     */
+    Collection<ResolutionException> getResolutionExceptions();
 
     /**
      * Value operators with their operands.

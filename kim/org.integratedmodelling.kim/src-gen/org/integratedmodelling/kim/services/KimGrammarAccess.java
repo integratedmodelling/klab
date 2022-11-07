@@ -4626,28 +4626,30 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//            (=> 'per' unit=Unit)
 		//        )? &
 		//        (=> valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
-		//        (optional?='optional' | 'required')? &
+		//        (optional?='optional'| 'required')? &
+		////        (default?='default' 'to' (defaultLiteral=Literal | defaultConcept=ConceptDeclaration) ('when' causes+=RESOLUTION_EXCEPTION (',' causes+=RESOLUTION_EXCEPTION)*)? )? &
 		//        (from=Number 'to' to=Number)? &
 		//        ('named' name=(LOWERCASE_ID|STRING))?
 		//    );
 		@Override public ParserRule getRule() { return rule; }
 		
-		//// value may be an ID and in that case it can be used in models as an attribute for the URN as long
-		//// as the ID is not defined in the namespace.
-		//(value=LiteralValueWithConcept 'as')?
-		//(generic?='any')?
-		//declaration=ConceptDeclaration
-		//(
-		//    ('according' 'to' accordingTo=PropertyId)? &
+		//    // value may be an ID and in that case it can be used in models as an attribute for the URN as long
+		//    // as the ID is not defined in the namespace.
+		//    (value=LiteralValueWithConcept 'as')?
+		//    (generic?='any')?
+		//    declaration=ConceptDeclaration
 		//    (
-		//        (=> 'in' (unit=Unit | currency=Currency)) |
-		//        (=> 'per' unit=Unit)
-		//    )? &
-		//    (=> valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
-		//    (optional?='optional' | 'required')? &
-		//    (from=Number 'to' to=Number)? &
-		//    ('named' name=(LOWERCASE_ID|STRING))?
-		//)
+		//        ('according' 'to' accordingTo=PropertyId)? &
+		//        (
+		//            (=> 'in' (unit=Unit | currency=Currency)) |
+		//            (=> 'per' unit=Unit)
+		//        )? &
+		//        (=> valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
+		//        (optional?='optional'| 'required')? &
+		////        (default?='default' 'to' (defaultLiteral=Literal | defaultConcept=ConceptDeclaration) ('when' causes+=RESOLUTION_EXCEPTION (',' causes+=RESOLUTION_EXCEPTION)*)? )? &
+		//        (from=Number 'to' to=Number)? &
+		//        ('named' name=(LOWERCASE_ID|STRING))?
+		//    )
 		public Group getGroup() { return cGroup; }
 		
 		//// value may be an ID and in that case it can be used in models as an attribute for the URN as long
@@ -4676,17 +4678,18 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//ConceptDeclaration
 		public RuleCall getDeclarationConceptDeclarationParserRuleCall_2_0() { return cDeclarationConceptDeclarationParserRuleCall_2_0; }
 		
-		//(
-		//    ('according' 'to' accordingTo=PropertyId)? &
 		//    (
-		//        (=> 'in' (unit=Unit | currency=Currency)) |
-		//        (=> 'per' unit=Unit)
-		//    )? &
-		//    (=> valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
-		//    (optional?='optional' | 'required')? &
-		//    (from=Number 'to' to=Number)? &
-		//    ('named' name=(LOWERCASE_ID|STRING))?
-		//)
+		//        ('according' 'to' accordingTo=PropertyId)? &
+		//        (
+		//            (=> 'in' (unit=Unit | currency=Currency)) |
+		//            (=> 'per' unit=Unit)
+		//        )? &
+		//        (=> valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
+		//        (optional?='optional'| 'required')? &
+		////        (default?='default' 'to' (defaultLiteral=Literal | defaultConcept=ConceptDeclaration) ('when' causes+=RESOLUTION_EXCEPTION (',' causes+=RESOLUTION_EXCEPTION)*)? )? &
+		//        (from=Number 'to' to=Number)? &
+		//        ('named' name=(LOWERCASE_ID|STRING))?
+		//    )
 		public UnorderedGroup getUnorderedGroup_3() { return cUnorderedGroup_3; }
 		
 		//('according' 'to' accordingTo=PropertyId)?
@@ -4758,7 +4761,7 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//ValueOperator
 		public RuleCall getValueOperatorsValueOperatorParserRuleCall_3_2_1_0() { return cValueOperatorsValueOperatorParserRuleCall_3_2_1_0; }
 		
-		//(optional?='optional' | 'required')?
+		//(optional?='optional'| 'required')?
 		public Alternatives getAlternatives_3_3() { return cAlternatives_3_3; }
 		
 		//optional?='optional'
@@ -4770,7 +4773,8 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//'required'
 		public Keyword getRequiredKeyword_3_3_1() { return cRequiredKeyword_3_3_1; }
 		
-		//(from=Number 'to' to=Number)?
+		////        (default?='default' 'to' (defaultLiteral=Literal | defaultConcept=ConceptDeclaration) ('when' causes+=RESOLUTION_EXCEPTION (',' causes+=RESOLUTION_EXCEPTION)*)? )? &
+		//        (from=Number 'to' to=Number)?
 		public Group getGroup_3_4() { return cGroup_3_4; }
 		
 		//from=Number
@@ -5187,27 +5191,29 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//            ('per' unit=Unit)
 		//        )? &
 		//        (valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
-		//        (optional?='optional' | 'required')? &
+		//        (optional?='optional'| 'required')? &
+		////        (default?='default' 'to' (defaultLiteral=Literal | defaultConcept=ConceptDeclaration) ('when' causes+=RESOLUTION_EXCEPTION (',' causes+=RESOLUTION_EXCEPTION)*)? )? &
 		//        (from=Number 'to' to=Number)? &
 		//        ('named' name=(LOWERCASE_ID|STRING))?
 		//    );
 		@Override public ParserRule getRule() { return rule; }
 		
-		//annotations += Annotation*
-		//(value=Value 'as')?
-		//(generic?='any')?
-		//declaration=ConceptDeclaration
-		//(
-		//    ('according' 'to' accordingTo=PropertyId)? &
+		//    annotations += Annotation*
+		//    (value=Value 'as')?
+		//    (generic?='any')?
+		//    declaration=ConceptDeclaration
 		//    (
-		//        ('in' (unit=Unit | currency=Currency)) |
-		//        ('per' unit=Unit)
-		//    )? &
-		//    (valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
-		//    (optional?='optional' | 'required')? &
-		//    (from=Number 'to' to=Number)? &
-		//    ('named' name=(LOWERCASE_ID|STRING))?
-		//)
+		//        ('according' 'to' accordingTo=PropertyId)? &
+		//        (
+		//            ('in' (unit=Unit | currency=Currency)) |
+		//            ('per' unit=Unit)
+		//        )? &
+		//        (valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
+		//        (optional?='optional'| 'required')? &
+		////        (default?='default' 'to' (defaultLiteral=Literal | defaultConcept=ConceptDeclaration) ('when' causes+=RESOLUTION_EXCEPTION (',' causes+=RESOLUTION_EXCEPTION)*)? )? &
+		//        (from=Number 'to' to=Number)? &
+		//        ('named' name=(LOWERCASE_ID|STRING))?
+		//    )
 		public Group getGroup() { return cGroup; }
 		
 		//annotations += Annotation*
@@ -5240,17 +5246,18 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//ConceptDeclaration
 		public RuleCall getDeclarationConceptDeclarationParserRuleCall_3_0() { return cDeclarationConceptDeclarationParserRuleCall_3_0; }
 		
-		//(
-		//    ('according' 'to' accordingTo=PropertyId)? &
 		//    (
-		//        ('in' (unit=Unit | currency=Currency)) |
-		//        ('per' unit=Unit)
-		//    )? &
-		//    (valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
-		//    (optional?='optional' | 'required')? &
-		//    (from=Number 'to' to=Number)? &
-		//    ('named' name=(LOWERCASE_ID|STRING))?
-		//)
+		//        ('according' 'to' accordingTo=PropertyId)? &
+		//        (
+		//            ('in' (unit=Unit | currency=Currency)) |
+		//            ('per' unit=Unit)
+		//        )? &
+		//        (valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
+		//        (optional?='optional'| 'required')? &
+		////        (default?='default' 'to' (defaultLiteral=Literal | defaultConcept=ConceptDeclaration) ('when' causes+=RESOLUTION_EXCEPTION (',' causes+=RESOLUTION_EXCEPTION)*)? )? &
+		//        (from=Number 'to' to=Number)? &
+		//        ('named' name=(LOWERCASE_ID|STRING))?
+		//    )
 		public UnorderedGroup getUnorderedGroup_4() { return cUnorderedGroup_4; }
 		
 		//('according' 'to' accordingTo=PropertyId)?
@@ -5322,7 +5329,7 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//ValueOperator
 		public RuleCall getValueOperatorsValueOperatorParserRuleCall_4_2_1_0() { return cValueOperatorsValueOperatorParserRuleCall_4_2_1_0; }
 		
-		//(optional?='optional' | 'required')?
+		//(optional?='optional'| 'required')?
 		public Alternatives getAlternatives_4_3() { return cAlternatives_4_3; }
 		
 		//optional?='optional'
@@ -5334,7 +5341,8 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//'required'
 		public Keyword getRequiredKeyword_4_3_1() { return cRequiredKeyword_4_3_1; }
 		
-		//(from=Number 'to' to=Number)?
+		////        (default?='default' 'to' (defaultLiteral=Literal | defaultConcept=ConceptDeclaration) ('when' causes+=RESOLUTION_EXCEPTION (',' causes+=RESOLUTION_EXCEPTION)*)? )? &
+		//        (from=Number 'to' to=Number)?
 		public Group getGroup_4_4() { return cGroup_4_4; }
 		
 		//from=Number
@@ -5383,8 +5391,14 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		private final RuleCall cModelReferencePathNameParserRuleCall_1_0_0_0_1 = (RuleCall)cModelReferenceAlternatives_1_0_0_0.eContents().get(1);
 		private final RuleCall cModelReferenceUrnIdParserRuleCall_1_0_0_0_2 = (RuleCall)cModelReferenceAlternatives_1_0_0_0.eContents().get(2);
 		private final RuleCall cModelReferenceSTRINGTerminalRuleCall_1_0_0_0_3 = (RuleCall)cModelReferenceAlternatives_1_0_0_0.eContents().get(3);
-		private final Assignment cObservableAssignment_1_0_1 = (Assignment)cAlternatives_1_0.eContents().get(1);
-		private final RuleCall cObservableDependencyObservableSemanticsParserRuleCall_1_0_1_0 = (RuleCall)cObservableAssignment_1_0_1.eContents().get(0);
+		private final Group cGroup_1_0_1 = (Group)cAlternatives_1_0.eContents().get(1);
+		private final Assignment cObservableAssignment_1_0_1_0 = (Assignment)cGroup_1_0_1.eContents().get(0);
+		private final RuleCall cObservableDependencyObservableSemanticsParserRuleCall_1_0_1_0_0 = (RuleCall)cObservableAssignment_1_0_1_0.eContents().get(0);
+		private final Group cGroup_1_0_1_1 = (Group)cGroup_1_0_1.eContents().get(1);
+		private final Assignment cOptionsAssignment_1_0_1_1_0 = (Assignment)cGroup_1_0_1_1.eContents().get(0);
+		private final RuleCall cOptionsOptionParserRuleCall_1_0_1_1_0_0 = (RuleCall)cOptionsAssignment_1_0_1_1_0.eContents().get(0);
+		private final Assignment cOptionsAssignment_1_0_1_1_1 = (Assignment)cGroup_1_0_1_1.eContents().get(1);
+		private final RuleCall cOptionsOptionParserRuleCall_1_0_1_1_1_0 = (RuleCall)cOptionsAssignment_1_0_1_1_1.eContents().get(0);
 		private final UnorderedGroup cUnorderedGroup_1_1 = (UnorderedGroup)cAlternatives_1.eContents().get(1);
 		private final Group cGroup_1_1_0 = (Group)cUnorderedGroup_1_1.eContents().get(0);
 		private final Keyword cLeftParenthesisKeyword_1_1_0_0 = (Keyword)cGroup_1_1_0.eContents().get(0);
@@ -5410,30 +5424,32 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//    annotations += Annotation*
 		//    ((
 		//        modelReference=(LOWERCASE_ID|PathName|UrnId|STRING) |
-		//        observable=DependencyObservableSemantics
+		//        observable=DependencyObservableSemantics (options+=Option (options+=Option)*)?
 		//    ) |
 		//    (
 		//        '('
 		//            alternativeObservables+=AlternativeDependencyObservableSemantics (',' alternativeObservables+=AlternativeDependencyObservableSemantics)*
 		//        ')'
-		//            (optional?='optional' | 'required')? &
-		//            'named' name=(LOWERCASE_ID|STRING)
+		//        (optional?='optional'| 'required')? &
+		////        (default?='default' 'to' (defaultLiteral=Literal | defaultConcept=ConceptDeclaration) ('when' causes+=RESOLUTION_EXCEPTION (',' causes+=RESOLUTION_EXCEPTION)*)? )? &
+		//        'named' name=(LOWERCASE_ID|STRING)
 		//    ))
 		//;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//annotations += Annotation*
-		//((
-		//    modelReference=(LOWERCASE_ID|PathName|UrnId|STRING) |
-		//    observable=DependencyObservableSemantics
-		//) |
-		//(
-		//    '('
-		//        alternativeObservables+=AlternativeDependencyObservableSemantics (',' alternativeObservables+=AlternativeDependencyObservableSemantics)*
-		//    ')'
-		//        (optional?='optional' | 'required')? &
+		//    annotations += Annotation*
+		//    ((
+		//        modelReference=(LOWERCASE_ID|PathName|UrnId|STRING) |
+		//        observable=DependencyObservableSemantics (options+=Option (options+=Option)*)?
+		//    ) |
+		//    (
+		//        '('
+		//            alternativeObservables+=AlternativeDependencyObservableSemantics (',' alternativeObservables+=AlternativeDependencyObservableSemantics)*
+		//        ')'
+		//        (optional?='optional'| 'required')? &
+		////        (default?='default' 'to' (defaultLiteral=Literal | defaultConcept=ConceptDeclaration) ('when' causes+=RESOLUTION_EXCEPTION (',' causes+=RESOLUTION_EXCEPTION)*)? )? &
 		//        'named' name=(LOWERCASE_ID|STRING)
-		//))
+		//    ))
 		public Group getGroup() { return cGroup; }
 		
 		//annotations += Annotation*
@@ -5442,22 +5458,23 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//Annotation
 		public RuleCall getAnnotationsAnnotationParserRuleCall_0_0() { return cAnnotationsAnnotationParserRuleCall_0_0; }
 		
-		//((
-		//    modelReference=(LOWERCASE_ID|PathName|UrnId|STRING) |
-		//    observable=DependencyObservableSemantics
-		//) |
-		//(
-		//    '('
-		//        alternativeObservables+=AlternativeDependencyObservableSemantics (',' alternativeObservables+=AlternativeDependencyObservableSemantics)*
-		//    ')'
-		//        (optional?='optional' | 'required')? &
+		//    ((
+		//        modelReference=(LOWERCASE_ID|PathName|UrnId|STRING) |
+		//        observable=DependencyObservableSemantics (options+=Option (options+=Option)*)?
+		//    ) |
+		//    (
+		//        '('
+		//            alternativeObservables+=AlternativeDependencyObservableSemantics (',' alternativeObservables+=AlternativeDependencyObservableSemantics)*
+		//        ')'
+		//        (optional?='optional'| 'required')? &
+		////        (default?='default' 'to' (defaultLiteral=Literal | defaultConcept=ConceptDeclaration) ('when' causes+=RESOLUTION_EXCEPTION (',' causes+=RESOLUTION_EXCEPTION)*)? )? &
 		//        'named' name=(LOWERCASE_ID|STRING)
-		//))
+		//    ))
 		public Alternatives getAlternatives_1() { return cAlternatives_1; }
 		
 		//(
 		//        modelReference=(LOWERCASE_ID|PathName|UrnId|STRING) |
-		//        observable=DependencyObservableSemantics
+		//        observable=DependencyObservableSemantics (options+=Option (options+=Option)*)?
 		//    )
 		public Alternatives getAlternatives_1_0() { return cAlternatives_1_0; }
 		
@@ -5479,25 +5496,44 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//STRING
 		public RuleCall getModelReferenceSTRINGTerminalRuleCall_1_0_0_0_3() { return cModelReferenceSTRINGTerminalRuleCall_1_0_0_0_3; }
 		
+		//observable=DependencyObservableSemantics (options+=Option (options+=Option)*)?
+		public Group getGroup_1_0_1() { return cGroup_1_0_1; }
+		
 		//observable=DependencyObservableSemantics
-		public Assignment getObservableAssignment_1_0_1() { return cObservableAssignment_1_0_1; }
+		public Assignment getObservableAssignment_1_0_1_0() { return cObservableAssignment_1_0_1_0; }
 		
 		//DependencyObservableSemantics
-		public RuleCall getObservableDependencyObservableSemanticsParserRuleCall_1_0_1_0() { return cObservableDependencyObservableSemanticsParserRuleCall_1_0_1_0; }
+		public RuleCall getObservableDependencyObservableSemanticsParserRuleCall_1_0_1_0_0() { return cObservableDependencyObservableSemanticsParserRuleCall_1_0_1_0_0; }
 		
-		//(
-		//    '('
-		//        alternativeObservables+=AlternativeDependencyObservableSemantics (',' alternativeObservables+=AlternativeDependencyObservableSemantics)*
-		//    ')'
-		//        (optional?='optional' | 'required')? &
+		//(options+=Option (options+=Option)*)?
+		public Group getGroup_1_0_1_1() { return cGroup_1_0_1_1; }
+		
+		//options+=Option
+		public Assignment getOptionsAssignment_1_0_1_1_0() { return cOptionsAssignment_1_0_1_1_0; }
+		
+		//Option
+		public RuleCall getOptionsOptionParserRuleCall_1_0_1_1_0_0() { return cOptionsOptionParserRuleCall_1_0_1_1_0_0; }
+		
+		//(options+=Option)*
+		public Assignment getOptionsAssignment_1_0_1_1_1() { return cOptionsAssignment_1_0_1_1_1; }
+		
+		//Option
+		public RuleCall getOptionsOptionParserRuleCall_1_0_1_1_1_0() { return cOptionsOptionParserRuleCall_1_0_1_1_1_0; }
+		
+		//    (
+		//        '('
+		//            alternativeObservables+=AlternativeDependencyObservableSemantics (',' alternativeObservables+=AlternativeDependencyObservableSemantics)*
+		//        ')'
+		//        (optional?='optional'| 'required')? &
+		////        (default?='default' 'to' (defaultLiteral=Literal | defaultConcept=ConceptDeclaration) ('when' causes+=RESOLUTION_EXCEPTION (',' causes+=RESOLUTION_EXCEPTION)*)? )? &
 		//        'named' name=(LOWERCASE_ID|STRING)
-		//)
+		//    )
 		public UnorderedGroup getUnorderedGroup_1_1() { return cUnorderedGroup_1_1; }
 		
 		//'('
 		//    alternativeObservables+=AlternativeDependencyObservableSemantics (',' alternativeObservables+=AlternativeDependencyObservableSemantics)*
 		//')'
-		//    (optional?='optional' | 'required')?
+		//(optional?='optional'| 'required')?
 		public Group getGroup_1_1_0() { return cGroup_1_1_0; }
 		
 		//'('
@@ -5524,7 +5560,7 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//')'
 		public Keyword getRightParenthesisKeyword_1_1_0_3() { return cRightParenthesisKeyword_1_1_0_3; }
 		
-		//(optional?='optional' | 'required')?
+		//(optional?='optional'| 'required')?
 		public Alternatives getAlternatives_1_1_0_4() { return cAlternatives_1_1_0_4; }
 		
 		//optional?='optional'
@@ -5536,10 +5572,12 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//'required'
 		public Keyword getRequiredKeyword_1_1_0_4_1() { return cRequiredKeyword_1_1_0_4_1; }
 		
-		//'named' name=(LOWERCASE_ID|STRING)
+		////        (default?='default' 'to' (defaultLiteral=Literal | defaultConcept=ConceptDeclaration) ('when' causes+=RESOLUTION_EXCEPTION (',' causes+=RESOLUTION_EXCEPTION)*)? )? &
+		//        'named' name=(LOWERCASE_ID|STRING)
 		public Group getGroup_1_1_1() { return cGroup_1_1_1; }
 		
-		//'named'
+		////        (default?='default' 'to' (defaultLiteral=Literal | defaultConcept=ConceptDeclaration) ('when' causes+=RESOLUTION_EXCEPTION (',' causes+=RESOLUTION_EXCEPTION)*)? )? &
+		//        'named'
 		public Keyword getNamedKeyword_1_1_1_0() { return cNamedKeyword_1_1_1_0; }
 		
 		//name=(LOWERCASE_ID|STRING)
@@ -7381,9 +7419,9 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//ConceptStatement:
 		//    annotations += Annotation*
 		//    ((abstract?='abstract')? &
-		//    (deniable?='deniable')? &
-		//    (subjective?='subjective')? &
-		//    (agentSpecifier=('deliberative' | 'interactive' | 'reactive') |
+		//     (deniable?='deniable')? &
+		//     (subjective?='subjective')? &
+		//     (agentSpecifier=('deliberative' | 'interactive' | 'reactive') |
 		//        (propertySpecifiers+=PROPERTY_TYPE (propertySpecifiers+=PROPERTY_TYPE)*) |
 		//        attributeSpecifier='rescaling')?)
 		//    concept=CONCEPT_TYPE body=ConceptStatementBody
@@ -7395,9 +7433,9 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		
 		//annotations += Annotation*
 		//((abstract?='abstract')? &
-		//(deniable?='deniable')? &
-		//(subjective?='subjective')? &
-		//(agentSpecifier=('deliberative' | 'interactive' | 'reactive') |
+		// (deniable?='deniable')? &
+		// (subjective?='subjective')? &
+		// (agentSpecifier=('deliberative' | 'interactive' | 'reactive') |
 		//    (propertySpecifiers+=PROPERTY_TYPE (propertySpecifiers+=PROPERTY_TYPE)*) |
 		//    attributeSpecifier='rescaling')?)
 		//concept=CONCEPT_TYPE body=ConceptStatementBody
@@ -7414,9 +7452,9 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		public RuleCall getAnnotationsAnnotationParserRuleCall_0_0() { return cAnnotationsAnnotationParserRuleCall_0_0; }
 		
 		//((abstract?='abstract')? &
-		//(deniable?='deniable')? &
-		//(subjective?='subjective')? &
-		//(agentSpecifier=('deliberative' | 'interactive' | 'reactive') |
+		// (deniable?='deniable')? &
+		// (subjective?='subjective')? &
+		// (agentSpecifier=('deliberative' | 'interactive' | 'reactive') |
 		//    (propertySpecifiers+=PROPERTY_TYPE (propertySpecifiers+=PROPERTY_TYPE)*) |
 		//    attributeSpecifier='rescaling')?)
 		public UnorderedGroup getUnorderedGroup_1() { return cUnorderedGroup_1; }
@@ -7440,8 +7478,8 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		public Keyword getSubjectiveSubjectiveKeyword_1_2_0() { return cSubjectiveSubjectiveKeyword_1_2_0; }
 		
 		//(agentSpecifier=('deliberative' | 'interactive' | 'reactive') |
-		//    (propertySpecifiers+=PROPERTY_TYPE (propertySpecifiers+=PROPERTY_TYPE)*) |
-		//    attributeSpecifier='rescaling')?
+		//   (propertySpecifiers+=PROPERTY_TYPE (propertySpecifiers+=PROPERTY_TYPE)*) |
+		//   attributeSpecifier='rescaling')?
 		public Alternatives getAlternatives_1_3() { return cAlternatives_1_3; }
 		
 		//agentSpecifier=('deliberative' | 'interactive' | 'reactive')
@@ -7560,209 +7598,184 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		private final Keyword cConnectorsAndKeyword_3_1_1_1_1_0_0_2 = (Keyword)cConnectorsAlternatives_3_1_1_1_1_0_0.eContents().get(2);
 		private final Assignment cParentsAssignment_3_1_1_1_1_1 = (Assignment)cGroup_3_1_1_1_1.eContents().get(1);
 		private final RuleCall cParentsConceptDeclarationParserRuleCall_3_1_1_1_1_1_0 = (RuleCall)cParentsAssignment_3_1_1_1_1_1.eContents().get(0);
-		private final Alternatives cAlternatives_3_2 = (Alternatives)cUnorderedGroup_3.eContents().get(2);
-		private final Group cGroup_3_2_0 = (Group)cAlternatives_3_2.eContents().get(0);
-		private final Keyword cExposesKeyword_3_2_0_0 = (Keyword)cGroup_3_2_0.eContents().get(0);
-		private final Assignment cContextualizedTraitsAssignment_3_2_0_1 = (Assignment)cGroup_3_2_0.eContents().get(1);
-		private final RuleCall cContextualizedTraitsObservableSemanticsParserRuleCall_3_2_0_1_0 = (RuleCall)cContextualizedTraitsAssignment_3_2_0_1.eContents().get(0);
-		private final Group cGroup_3_2_0_2 = (Group)cGroup_3_2_0.eContents().get(2);
-		private final Keyword cCommaKeyword_3_2_0_2_0 = (Keyword)cGroup_3_2_0_2.eContents().get(0);
-		private final Assignment cContextualizedTraitsAssignment_3_2_0_2_1 = (Assignment)cGroup_3_2_0_2.eContents().get(1);
-		private final RuleCall cContextualizedTraitsObservableSemanticsParserRuleCall_3_2_0_2_1_0 = (RuleCall)cContextualizedTraitsAssignment_3_2_0_2_1.eContents().get(0);
-		private final Group cGroup_3_2_1 = (Group)cAlternatives_3_2.eContents().get(1);
-		private final Assignment cSpecificAssignment_3_2_1_0 = (Assignment)cGroup_3_2_1.eContents().get(0);
-		private final Keyword cSpecificExposingKeyword_3_2_1_0_0 = (Keyword)cSpecificAssignment_3_2_1_0.eContents().get(0);
-		private final Assignment cContextualizesTraitsAssignment_3_2_1_1 = (Assignment)cGroup_3_2_1.eContents().get(1);
-		private final RuleCall cContextualizesTraitsConceptDeclarationParserRuleCall_3_2_1_1_0 = (RuleCall)cContextualizesTraitsAssignment_3_2_1_1.eContents().get(0);
-		private final Group cGroup_3_2_1_2 = (Group)cGroup_3_2_1.eContents().get(2);
-		private final Keyword cCommaKeyword_3_2_1_2_0 = (Keyword)cGroup_3_2_1_2.eContents().get(0);
-		private final Assignment cContextualizesTraitsAssignment_3_2_1_2_1 = (Assignment)cGroup_3_2_1_2.eContents().get(1);
-		private final RuleCall cContextualizesTraitsConceptDeclarationParserRuleCall_3_2_1_2_1_0 = (RuleCall)cContextualizesTraitsAssignment_3_2_1_2_1.eContents().get(0);
+		private final Group cGroup_3_2 = (Group)cUnorderedGroup_3.eContents().get(2);
+		private final Keyword cDefinesKeyword_3_2_0 = (Keyword)cGroup_3_2.eContents().get(0);
+		private final Alternatives cAlternatives_3_2_1 = (Alternatives)cGroup_3_2.eContents().get(1);
+		private final Group cGroup_3_2_1_0 = (Group)cAlternatives_3_2_1.eContents().get(0);
+		private final Keyword cAuthorityKeyword_3_2_1_0_0 = (Keyword)cGroup_3_2_1_0.eContents().get(0);
+		private final Assignment cDefinedAuthorityAssignment_3_2_1_0_1 = (Assignment)cGroup_3_2_1_0.eContents().get(1);
+		private final Alternatives cDefinedAuthorityAlternatives_3_2_1_0_1_0 = (Alternatives)cDefinedAuthorityAssignment_3_2_1_0_1.eContents().get(0);
+		private final RuleCall cDefinedAuthorityUPPERCASE_IDTerminalRuleCall_3_2_1_0_1_0_0 = (RuleCall)cDefinedAuthorityAlternatives_3_2_1_0_1_0.eContents().get(0);
+		private final RuleCall cDefinedAuthorityUPPERCASE_PATHTerminalRuleCall_3_2_1_0_1_0_1 = (RuleCall)cDefinedAuthorityAlternatives_3_2_1_0_1_0.eContents().get(1);
+		private final Assignment cUpperConceptAssignment_3_2_1_1 = (Assignment)cAlternatives_3_2_1.eContents().get(1);
+		private final RuleCall cUpperConceptConceptParserRuleCall_3_2_1_1_0 = (RuleCall)cUpperConceptAssignment_3_2_1_1.eContents().get(0);
 		private final Group cGroup_3_3 = (Group)cUnorderedGroup_3.eContents().get(3);
-		private final Keyword cDefinesKeyword_3_3_0 = (Keyword)cGroup_3_3.eContents().get(0);
-		private final Alternatives cAlternatives_3_3_1 = (Alternatives)cGroup_3_3.eContents().get(1);
-		private final Group cGroup_3_3_1_0 = (Group)cAlternatives_3_3_1.eContents().get(0);
-		private final Keyword cAuthorityKeyword_3_3_1_0_0 = (Keyword)cGroup_3_3_1_0.eContents().get(0);
-		private final Assignment cDefinedAuthorityAssignment_3_3_1_0_1 = (Assignment)cGroup_3_3_1_0.eContents().get(1);
-		private final Alternatives cDefinedAuthorityAlternatives_3_3_1_0_1_0 = (Alternatives)cDefinedAuthorityAssignment_3_3_1_0_1.eContents().get(0);
-		private final RuleCall cDefinedAuthorityUPPERCASE_IDTerminalRuleCall_3_3_1_0_1_0_0 = (RuleCall)cDefinedAuthorityAlternatives_3_3_1_0_1_0.eContents().get(0);
-		private final RuleCall cDefinedAuthorityUPPERCASE_PATHTerminalRuleCall_3_3_1_0_1_0_1 = (RuleCall)cDefinedAuthorityAlternatives_3_3_1_0_1_0.eContents().get(1);
-		private final Assignment cUpperConceptAssignment_3_3_1_1 = (Assignment)cAlternatives_3_3_1.eContents().get(1);
-		private final RuleCall cUpperConceptConceptParserRuleCall_3_3_1_1_0 = (RuleCall)cUpperConceptAssignment_3_3_1_1.eContents().get(0);
+		private final Keyword cRequiresKeyword_3_3_0 = (Keyword)cGroup_3_3.eContents().get(0);
+		private final Assignment cRequirementsAssignment_3_3_1 = (Assignment)cGroup_3_3.eContents().get(1);
+		private final RuleCall cRequirementsIdentityRequirementParserRuleCall_3_3_1_0 = (RuleCall)cRequirementsAssignment_3_3_1.eContents().get(0);
+		private final Group cGroup_3_3_2 = (Group)cGroup_3_3.eContents().get(2);
+		private final Keyword cCommaKeyword_3_3_2_0 = (Keyword)cGroup_3_3_2.eContents().get(0);
+		private final Assignment cRequirementsAssignment_3_3_2_1 = (Assignment)cGroup_3_3_2.eContents().get(1);
+		private final RuleCall cRequirementsIdentityRequirementParserRuleCall_3_3_2_1_0 = (RuleCall)cRequirementsAssignment_3_3_2_1.eContents().get(0);
 		private final Group cGroup_3_4 = (Group)cUnorderedGroup_3.eContents().get(4);
-		private final Keyword cRequiresKeyword_3_4_0 = (Keyword)cGroup_3_4.eContents().get(0);
-		private final Assignment cRequirementsAssignment_3_4_1 = (Assignment)cGroup_3_4.eContents().get(1);
-		private final RuleCall cRequirementsIdentityRequirementParserRuleCall_3_4_1_0 = (RuleCall)cRequirementsAssignment_3_4_1.eContents().get(0);
+		private final Keyword cDescribesKeyword_3_4_0 = (Keyword)cGroup_3_4.eContents().get(0);
+		private final Assignment cDescribedQualityAssignment_3_4_1 = (Assignment)cGroup_3_4.eContents().get(1);
+		private final RuleCall cDescribedQualityConceptDeclarationParserRuleCall_3_4_1_0 = (RuleCall)cDescribedQualityAssignment_3_4_1.eContents().get(0);
 		private final Group cGroup_3_4_2 = (Group)cGroup_3_4.eContents().get(2);
-		private final Keyword cCommaKeyword_3_4_2_0 = (Keyword)cGroup_3_4_2.eContents().get(0);
-		private final Assignment cRequirementsAssignment_3_4_2_1 = (Assignment)cGroup_3_4_2.eContents().get(1);
-		private final RuleCall cRequirementsIdentityRequirementParserRuleCall_3_4_2_1_0 = (RuleCall)cRequirementsAssignment_3_4_2_1.eContents().get(0);
+		private final Keyword cAsKeyword_3_4_2_0 = (Keyword)cGroup_3_4_2.eContents().get(0);
+		private final Assignment cDescriptionConstraintsAssignment_3_4_2_1 = (Assignment)cGroup_3_4_2.eContents().get(1);
+		private final RuleCall cDescriptionConstraintsDescriptionConstraintsParserRuleCall_3_4_2_1_0 = (RuleCall)cDescriptionConstraintsAssignment_3_4_2_1.eContents().get(0);
 		private final Group cGroup_3_5 = (Group)cUnorderedGroup_3.eContents().get(5);
-		private final Keyword cDescribesKeyword_3_5_0 = (Keyword)cGroup_3_5.eContents().get(0);
-		private final Assignment cDescribedQualityAssignment_3_5_1 = (Assignment)cGroup_3_5.eContents().get(1);
-		private final RuleCall cDescribedQualityConceptDeclarationParserRuleCall_3_5_1_0 = (RuleCall)cDescribedQualityAssignment_3_5_1.eContents().get(0);
-		private final Group cGroup_3_5_2 = (Group)cGroup_3_5.eContents().get(2);
-		private final Keyword cAsKeyword_3_5_2_0 = (Keyword)cGroup_3_5_2.eContents().get(0);
-		private final Assignment cDescriptionConstraintsAssignment_3_5_2_1 = (Assignment)cGroup_3_5_2.eContents().get(1);
-		private final RuleCall cDescriptionConstraintsDescriptionConstraintsParserRuleCall_3_5_2_1_0 = (RuleCall)cDescriptionConstraintsAssignment_3_5_2_1.eContents().get(0);
+		private final Keyword cIncreasesKeyword_3_5_0 = (Keyword)cGroup_3_5.eContents().get(0);
+		private final Keyword cWithKeyword_3_5_1 = (Keyword)cGroup_3_5.eContents().get(1);
+		private final Assignment cDescribedProportionalityAssignment_3_5_2 = (Assignment)cGroup_3_5.eContents().get(2);
+		private final RuleCall cDescribedProportionalityConceptDeclarationParserRuleCall_3_5_2_0 = (RuleCall)cDescribedProportionalityAssignment_3_5_2.eContents().get(0);
 		private final Group cGroup_3_6 = (Group)cUnorderedGroup_3.eContents().get(6);
-		private final Keyword cIncreasesKeyword_3_6_0 = (Keyword)cGroup_3_6.eContents().get(0);
+		private final Keyword cDecreasesKeyword_3_6_0 = (Keyword)cGroup_3_6.eContents().get(0);
 		private final Keyword cWithKeyword_3_6_1 = (Keyword)cGroup_3_6.eContents().get(1);
-		private final Assignment cDescribedProportionalityAssignment_3_6_2 = (Assignment)cGroup_3_6.eContents().get(2);
-		private final RuleCall cDescribedProportionalityConceptDeclarationParserRuleCall_3_6_2_0 = (RuleCall)cDescribedProportionalityAssignment_3_6_2.eContents().get(0);
+		private final Assignment cDescribedInverseProportionalityQualityAssignment_3_6_2 = (Assignment)cGroup_3_6.eContents().get(2);
+		private final RuleCall cDescribedInverseProportionalityQualityConceptDeclarationParserRuleCall_3_6_2_0 = (RuleCall)cDescribedInverseProportionalityQualityAssignment_3_6_2.eContents().get(0);
 		private final Group cGroup_3_7 = (Group)cUnorderedGroup_3.eContents().get(7);
-		private final Keyword cDecreasesKeyword_3_7_0 = (Keyword)cGroup_3_7.eContents().get(0);
-		private final Keyword cWithKeyword_3_7_1 = (Keyword)cGroup_3_7.eContents().get(1);
-		private final Assignment cDescribedInverseProportionalityQualityAssignment_3_7_2 = (Assignment)cGroup_3_7.eContents().get(2);
-		private final RuleCall cDescribedInverseProportionalityQualityConceptDeclarationParserRuleCall_3_7_2_0 = (RuleCall)cDescribedInverseProportionalityQualityAssignment_3_7_2.eContents().get(0);
+		private final Keyword cMarksKeyword_3_7_0 = (Keyword)cGroup_3_7.eContents().get(0);
+		private final Assignment cDescribedNonzeroQualityAssignment_3_7_1 = (Assignment)cGroup_3_7.eContents().get(1);
+		private final RuleCall cDescribedNonzeroQualityConceptDeclarationParserRuleCall_3_7_1_0 = (RuleCall)cDescribedNonzeroQualityAssignment_3_7_1.eContents().get(0);
 		private final Group cGroup_3_8 = (Group)cUnorderedGroup_3.eContents().get(8);
-		private final Keyword cMarksKeyword_3_8_0 = (Keyword)cGroup_3_8.eContents().get(0);
-		private final Assignment cDescribedNonzeroQualityAssignment_3_8_1 = (Assignment)cGroup_3_8.eContents().get(1);
-		private final RuleCall cDescribedNonzeroQualityConceptDeclarationParserRuleCall_3_8_1_0 = (RuleCall)cDescribedNonzeroQualityAssignment_3_8_1.eContents().get(0);
+		private final Keyword cClassifiesKeyword_3_8_0 = (Keyword)cGroup_3_8.eContents().get(0);
+		private final Assignment cClassifiesQualityAssignment_3_8_1 = (Assignment)cGroup_3_8.eContents().get(1);
+		private final RuleCall cClassifiesQualityConceptDeclarationParserRuleCall_3_8_1_0 = (RuleCall)cClassifiesQualityAssignment_3_8_1.eContents().get(0);
 		private final Group cGroup_3_9 = (Group)cUnorderedGroup_3.eContents().get(9);
-		private final Keyword cClassifiesKeyword_3_9_0 = (Keyword)cGroup_3_9.eContents().get(0);
-		private final Assignment cClassifiesQualityAssignment_3_9_1 = (Assignment)cGroup_3_9.eContents().get(1);
-		private final RuleCall cClassifiesQualityConceptDeclarationParserRuleCall_3_9_1_0 = (RuleCall)cClassifiesQualityAssignment_3_9_1.eContents().get(0);
+		private final Keyword cDiscretizesKeyword_3_9_0 = (Keyword)cGroup_3_9.eContents().get(0);
+		private final Assignment cDiscretizesQualityAssignment_3_9_1 = (Assignment)cGroup_3_9.eContents().get(1);
+		private final RuleCall cDiscretizesQualityConceptDeclarationParserRuleCall_3_9_1_0 = (RuleCall)cDiscretizesQualityAssignment_3_9_1.eContents().get(0);
 		private final Group cGroup_3_10 = (Group)cUnorderedGroup_3.eContents().get(10);
-		private final Keyword cDiscretizesKeyword_3_10_0 = (Keyword)cGroup_3_10.eContents().get(0);
-		private final Assignment cDiscretizesQualityAssignment_3_10_1 = (Assignment)cGroup_3_10.eContents().get(1);
-		private final RuleCall cDiscretizesQualityConceptDeclarationParserRuleCall_3_10_1_0 = (RuleCall)cDiscretizesQualityAssignment_3_10_1.eContents().get(0);
+		private final Keyword cInheritsKeyword_3_10_0 = (Keyword)cGroup_3_10.eContents().get(0);
+		private final Assignment cActuallyInheritedTraitsAssignment_3_10_1 = (Assignment)cGroup_3_10.eContents().get(1);
+		private final RuleCall cActuallyInheritedTraitsConceptDeclarationParserRuleCall_3_10_1_0 = (RuleCall)cActuallyInheritedTraitsAssignment_3_10_1.eContents().get(0);
+		private final Group cGroup_3_10_2 = (Group)cGroup_3_10.eContents().get(2);
+		private final Keyword cCommaKeyword_3_10_2_0 = (Keyword)cGroup_3_10_2.eContents().get(0);
+		private final Assignment cActuallyInheritedTraitsAssignment_3_10_2_1 = (Assignment)cGroup_3_10_2.eContents().get(1);
+		private final RuleCall cActuallyInheritedTraitsConceptDeclarationParserRuleCall_3_10_2_1_0 = (RuleCall)cActuallyInheritedTraitsAssignment_3_10_2_1.eContents().get(0);
 		private final Group cGroup_3_11 = (Group)cUnorderedGroup_3.eContents().get(11);
-		private final Keyword cInheritsKeyword_3_11_0 = (Keyword)cGroup_3_11.eContents().get(0);
-		private final Assignment cActuallyInheritedTraitsAssignment_3_11_1 = (Assignment)cGroup_3_11.eContents().get(1);
-		private final RuleCall cActuallyInheritedTraitsConceptDeclarationParserRuleCall_3_11_1_0 = (RuleCall)cActuallyInheritedTraitsAssignment_3_11_1.eContents().get(0);
-		private final Group cGroup_3_11_2 = (Group)cGroup_3_11.eContents().get(2);
-		private final Keyword cCommaKeyword_3_11_2_0 = (Keyword)cGroup_3_11_2.eContents().get(0);
-		private final Assignment cActuallyInheritedTraitsAssignment_3_11_2_1 = (Assignment)cGroup_3_11_2.eContents().get(1);
-		private final RuleCall cActuallyInheritedTraitsConceptDeclarationParserRuleCall_3_11_2_1_0 = (RuleCall)cActuallyInheritedTraitsAssignment_3_11_2_1.eContents().get(0);
+		private final Keyword cHasKeyword_3_11_0 = (Keyword)cGroup_3_11.eContents().get(0);
+		private final Keyword cRoleKeyword_3_11_1 = (Keyword)cGroup_3_11.eContents().get(1);
+		private final Assignment cRolesAssignment_3_11_2 = (Assignment)cGroup_3_11.eContents().get(2);
+		private final RuleCall cRolesConceptDeclarationParserRuleCall_3_11_2_0 = (RuleCall)cRolesAssignment_3_11_2.eContents().get(0);
+		private final Group cGroup_3_11_3 = (Group)cGroup_3_11.eContents().get(3);
+		private final Keyword cCommaKeyword_3_11_3_0 = (Keyword)cGroup_3_11_3.eContents().get(0);
+		private final Assignment cRolesAssignment_3_11_3_1 = (Assignment)cGroup_3_11_3.eContents().get(1);
+		private final RuleCall cRolesConceptDeclarationParserRuleCall_3_11_3_1_0 = (RuleCall)cRolesAssignment_3_11_3_1.eContents().get(0);
+		private final Group cGroup_3_11_4 = (Group)cGroup_3_11.eContents().get(4);
+		private final Keyword cTargetingKeyword_3_11_4_0 = (Keyword)cGroup_3_11_4.eContents().get(0);
+		private final Assignment cTargetObservablesAssignment_3_11_4_1 = (Assignment)cGroup_3_11_4.eContents().get(1);
+		private final RuleCall cTargetObservablesConceptDeclarationParserRuleCall_3_11_4_1_0 = (RuleCall)cTargetObservablesAssignment_3_11_4_1.eContents().get(0);
+		private final Group cGroup_3_11_4_2 = (Group)cGroup_3_11_4.eContents().get(2);
+		private final Keyword cCommaKeyword_3_11_4_2_0 = (Keyword)cGroup_3_11_4_2.eContents().get(0);
+		private final Assignment cTargetObservablesAssignment_3_11_4_2_1 = (Assignment)cGroup_3_11_4_2.eContents().get(1);
+		private final RuleCall cTargetObservablesConceptDeclarationParserRuleCall_3_11_4_2_1_0 = (RuleCall)cTargetObservablesAssignment_3_11_4_2_1.eContents().get(0);
+		private final Group cGroup_3_11_5 = (Group)cGroup_3_11.eContents().get(5);
+		private final Keyword cInKeyword_3_11_5_0 = (Keyword)cGroup_3_11_5.eContents().get(0);
+		private final Assignment cRestrictedObservablesAssignment_3_11_5_1 = (Assignment)cGroup_3_11_5.eContents().get(1);
+		private final RuleCall cRestrictedObservablesConceptDeclarationParserRuleCall_3_11_5_1_0 = (RuleCall)cRestrictedObservablesAssignment_3_11_5_1.eContents().get(0);
+		private final Group cGroup_3_11_5_2 = (Group)cGroup_3_11_5.eContents().get(2);
+		private final Keyword cCommaKeyword_3_11_5_2_0 = (Keyword)cGroup_3_11_5_2.eContents().get(0);
+		private final Assignment cRestrictedObservablesAssignment_3_11_5_2_1 = (Assignment)cGroup_3_11_5_2.eContents().get(1);
+		private final RuleCall cRestrictedObservablesConceptDeclarationParserRuleCall_3_11_5_2_1_0 = (RuleCall)cRestrictedObservablesAssignment_3_11_5_2_1.eContents().get(0);
 		private final Group cGroup_3_12 = (Group)cUnorderedGroup_3.eContents().get(12);
-		private final Keyword cHasKeyword_3_12_0 = (Keyword)cGroup_3_12.eContents().get(0);
-		private final Keyword cRoleKeyword_3_12_1 = (Keyword)cGroup_3_12.eContents().get(1);
-		private final Assignment cRolesAssignment_3_12_2 = (Assignment)cGroup_3_12.eContents().get(2);
-		private final RuleCall cRolesConceptDeclarationParserRuleCall_3_12_2_0 = (RuleCall)cRolesAssignment_3_12_2.eContents().get(0);
+		private final Keyword cConfersKeyword_3_12_0 = (Keyword)cGroup_3_12.eContents().get(0);
+		private final Assignment cConferredTraitsAssignment_3_12_1 = (Assignment)cGroup_3_12.eContents().get(1);
+		private final RuleCall cConferredTraitsConceptDeclarationParserRuleCall_3_12_1_0 = (RuleCall)cConferredTraitsAssignment_3_12_1.eContents().get(0);
+		private final Group cGroup_3_12_2 = (Group)cGroup_3_12.eContents().get(2);
+		private final Keyword cCommaKeyword_3_12_2_0 = (Keyword)cGroup_3_12_2.eContents().get(0);
+		private final Assignment cConferredTraitsAssignment_3_12_2_1 = (Assignment)cGroup_3_12_2.eContents().get(1);
+		private final RuleCall cConferredTraitsConceptDeclarationParserRuleCall_3_12_2_1_0 = (RuleCall)cConferredTraitsAssignment_3_12_2_1.eContents().get(0);
 		private final Group cGroup_3_12_3 = (Group)cGroup_3_12.eContents().get(3);
-		private final Keyword cCommaKeyword_3_12_3_0 = (Keyword)cGroup_3_12_3.eContents().get(0);
-		private final Assignment cRolesAssignment_3_12_3_1 = (Assignment)cGroup_3_12_3.eContents().get(1);
-		private final RuleCall cRolesConceptDeclarationParserRuleCall_3_12_3_1_0 = (RuleCall)cRolesAssignment_3_12_3_1.eContents().get(0);
-		private final Group cGroup_3_12_4 = (Group)cGroup_3_12.eContents().get(4);
-		private final Keyword cTargetingKeyword_3_12_4_0 = (Keyword)cGroup_3_12_4.eContents().get(0);
-		private final Assignment cTargetObservablesAssignment_3_12_4_1 = (Assignment)cGroup_3_12_4.eContents().get(1);
-		private final RuleCall cTargetObservablesConceptDeclarationParserRuleCall_3_12_4_1_0 = (RuleCall)cTargetObservablesAssignment_3_12_4_1.eContents().get(0);
-		private final Group cGroup_3_12_4_2 = (Group)cGroup_3_12_4.eContents().get(2);
-		private final Keyword cCommaKeyword_3_12_4_2_0 = (Keyword)cGroup_3_12_4_2.eContents().get(0);
-		private final Assignment cTargetObservablesAssignment_3_12_4_2_1 = (Assignment)cGroup_3_12_4_2.eContents().get(1);
-		private final RuleCall cTargetObservablesConceptDeclarationParserRuleCall_3_12_4_2_1_0 = (RuleCall)cTargetObservablesAssignment_3_12_4_2_1.eContents().get(0);
-		private final Group cGroup_3_12_5 = (Group)cGroup_3_12.eContents().get(5);
-		private final Keyword cInKeyword_3_12_5_0 = (Keyword)cGroup_3_12_5.eContents().get(0);
-		private final Assignment cRestrictedObservablesAssignment_3_12_5_1 = (Assignment)cGroup_3_12_5.eContents().get(1);
-		private final RuleCall cRestrictedObservablesConceptDeclarationParserRuleCall_3_12_5_1_0 = (RuleCall)cRestrictedObservablesAssignment_3_12_5_1.eContents().get(0);
-		private final Group cGroup_3_12_5_2 = (Group)cGroup_3_12_5.eContents().get(2);
-		private final Keyword cCommaKeyword_3_12_5_2_0 = (Keyword)cGroup_3_12_5_2.eContents().get(0);
-		private final Assignment cRestrictedObservablesAssignment_3_12_5_2_1 = (Assignment)cGroup_3_12_5_2.eContents().get(1);
-		private final RuleCall cRestrictedObservablesConceptDeclarationParserRuleCall_3_12_5_2_1_0 = (RuleCall)cRestrictedObservablesAssignment_3_12_5_2_1.eContents().get(0);
+		private final Keyword cToKeyword_3_12_3_0 = (Keyword)cGroup_3_12_3.eContents().get(0);
+		private final Assignment cConferredTargetsAssignment_3_12_3_1 = (Assignment)cGroup_3_12_3.eContents().get(1);
+		private final RuleCall cConferredTargetsConceptDeclarationParserRuleCall_3_12_3_1_0 = (RuleCall)cConferredTargetsAssignment_3_12_3_1.eContents().get(0);
+		private final Group cGroup_3_12_3_2 = (Group)cGroup_3_12_3.eContents().get(2);
+		private final Keyword cCommaKeyword_3_12_3_2_0 = (Keyword)cGroup_3_12_3_2.eContents().get(0);
+		private final Assignment cConferredTargetsAssignment_3_12_3_2_1 = (Assignment)cGroup_3_12_3_2.eContents().get(1);
+		private final RuleCall cConferredTargetsConceptDeclarationParserRuleCall_3_12_3_2_1_0 = (RuleCall)cConferredTargetsAssignment_3_12_3_2_1.eContents().get(0);
 		private final Group cGroup_3_13 = (Group)cUnorderedGroup_3.eContents().get(13);
-		private final Keyword cConfersKeyword_3_13_0 = (Keyword)cGroup_3_13.eContents().get(0);
-		private final Assignment cConferredTraitsAssignment_3_13_1 = (Assignment)cGroup_3_13.eContents().get(1);
-		private final RuleCall cConferredTraitsConceptDeclarationParserRuleCall_3_13_1_0 = (RuleCall)cConferredTraitsAssignment_3_13_1.eContents().get(0);
-		private final Group cGroup_3_13_2 = (Group)cGroup_3_13.eContents().get(2);
-		private final Keyword cCommaKeyword_3_13_2_0 = (Keyword)cGroup_3_13_2.eContents().get(0);
-		private final Assignment cConferredTraitsAssignment_3_13_2_1 = (Assignment)cGroup_3_13_2.eContents().get(1);
-		private final RuleCall cConferredTraitsConceptDeclarationParserRuleCall_3_13_2_1_0 = (RuleCall)cConferredTraitsAssignment_3_13_2_1.eContents().get(0);
+		private final Keyword cEmergesKeyword_3_13_0 = (Keyword)cGroup_3_13.eContents().get(0);
+		private final Keyword cFromKeyword_3_13_1 = (Keyword)cGroup_3_13.eContents().get(1);
+		private final Assignment cEmergenceTriggersAssignment_3_13_2 = (Assignment)cGroup_3_13.eContents().get(2);
+		private final RuleCall cEmergenceTriggersConceptDeclarationParserRuleCall_3_13_2_0 = (RuleCall)cEmergenceTriggersAssignment_3_13_2.eContents().get(0);
 		private final Group cGroup_3_13_3 = (Group)cGroup_3_13.eContents().get(3);
-		private final Keyword cToKeyword_3_13_3_0 = (Keyword)cGroup_3_13_3.eContents().get(0);
-		private final Assignment cConferredTargetsAssignment_3_13_3_1 = (Assignment)cGroup_3_13_3.eContents().get(1);
-		private final RuleCall cConferredTargetsConceptDeclarationParserRuleCall_3_13_3_1_0 = (RuleCall)cConferredTargetsAssignment_3_13_3_1.eContents().get(0);
-		private final Group cGroup_3_13_3_2 = (Group)cGroup_3_13_3.eContents().get(2);
-		private final Keyword cCommaKeyword_3_13_3_2_0 = (Keyword)cGroup_3_13_3_2.eContents().get(0);
-		private final Assignment cConferredTargetsAssignment_3_13_3_2_1 = (Assignment)cGroup_3_13_3_2.eContents().get(1);
-		private final RuleCall cConferredTargetsConceptDeclarationParserRuleCall_3_13_3_2_1_0 = (RuleCall)cConferredTargetsAssignment_3_13_3_2_1.eContents().get(0);
+		private final Keyword cCommaKeyword_3_13_3_0 = (Keyword)cGroup_3_13_3.eContents().get(0);
+		private final Assignment cEmergenceTriggersAssignment_3_13_3_1 = (Assignment)cGroup_3_13_3.eContents().get(1);
+		private final RuleCall cEmergenceTriggersConceptDeclarationParserRuleCall_3_13_3_1_0 = (RuleCall)cEmergenceTriggersAssignment_3_13_3_1.eContents().get(0);
 		private final Group cGroup_3_14 = (Group)cUnorderedGroup_3.eContents().get(14);
-		private final Alternatives cAlternatives_3_14_0 = (Alternatives)cGroup_3_14.eContents().get(0);
-		private final Keyword cPartKeyword_3_14_0_0 = (Keyword)cAlternatives_3_14_0.eContents().get(0);
-		private final Assignment cConstituentAssignment_3_14_0_1 = (Assignment)cAlternatives_3_14_0.eContents().get(1);
-		private final Keyword cConstituentConstituentKeyword_3_14_0_1_0 = (Keyword)cConstituentAssignment_3_14_0_1.eContents().get(0);
-		private final Assignment cConstitutesAssignment_3_14_0_2 = (Assignment)cAlternatives_3_14_0.eContents().get(2);
-		private final Keyword cConstitutesConsistsKeyword_3_14_0_2_0 = (Keyword)cConstitutesAssignment_3_14_0_2.eContents().get(0);
-		private final Assignment cPartOfAssignment_3_14_1 = (Assignment)cGroup_3_14.eContents().get(1);
-		private final Keyword cPartOfOfKeyword_3_14_1_0 = (Keyword)cPartOfAssignment_3_14_1.eContents().get(0);
-		private final Assignment cWholeAssignment_3_14_2 = (Assignment)cGroup_3_14.eContents().get(2);
-		private final RuleCall cWholeConceptDeclarationParserRuleCall_3_14_2_0 = (RuleCall)cWholeAssignment_3_14_2.eContents().get(0);
+		private final Keyword cCreatesKeyword_3_14_0 = (Keyword)cGroup_3_14.eContents().get(0);
+		private final Assignment cCreatesAssignment_3_14_1 = (Assignment)cGroup_3_14.eContents().get(1);
+		private final RuleCall cCreatesConceptDeclarationParserRuleCall_3_14_1_0 = (RuleCall)cCreatesAssignment_3_14_1.eContents().get(0);
+		private final Group cGroup_3_14_2 = (Group)cGroup_3_14.eContents().get(2);
+		private final Keyword cCommaKeyword_3_14_2_0 = (Keyword)cGroup_3_14_2.eContents().get(0);
+		private final Assignment cCreatesAssignment_3_14_2_1 = (Assignment)cGroup_3_14_2.eContents().get(1);
+		private final RuleCall cCreatesConceptDeclarationParserRuleCall_3_14_2_1_0 = (RuleCall)cCreatesAssignment_3_14_2_1.eContents().get(0);
 		private final Group cGroup_3_15 = (Group)cUnorderedGroup_3.eContents().get(15);
-		private final Keyword cCreatesKeyword_3_15_0 = (Keyword)cGroup_3_15.eContents().get(0);
-		private final Assignment cCreatesAssignment_3_15_1 = (Assignment)cGroup_3_15.eContents().get(1);
-		private final RuleCall cCreatesConceptDeclarationParserRuleCall_3_15_1_0 = (RuleCall)cCreatesAssignment_3_15_1.eContents().get(0);
-		private final Group cGroup_3_15_2 = (Group)cGroup_3_15.eContents().get(2);
-		private final Keyword cCommaKeyword_3_15_2_0 = (Keyword)cGroup_3_15_2.eContents().get(0);
-		private final Assignment cCreatesAssignment_3_15_2_1 = (Assignment)cGroup_3_15_2.eContents().get(1);
-		private final RuleCall cCreatesConceptDeclarationParserRuleCall_3_15_2_1_0 = (RuleCall)cCreatesAssignment_3_15_2_1.eContents().get(0);
+		private final Keyword cAppliesKeyword_3_15_0 = (Keyword)cGroup_3_15.eContents().get(0);
+		private final Keyword cToKeyword_3_15_1 = (Keyword)cGroup_3_15.eContents().get(1);
+		private final Assignment cTraitTargetsAssignment_3_15_2 = (Assignment)cGroup_3_15.eContents().get(2);
+		private final RuleCall cTraitTargetsApplicableTargetParserRuleCall_3_15_2_0 = (RuleCall)cTraitTargetsAssignment_3_15_2.eContents().get(0);
+		private final Group cGroup_3_15_3 = (Group)cGroup_3_15.eContents().get(3);
+		private final Keyword cCommaKeyword_3_15_3_0 = (Keyword)cGroup_3_15_3.eContents().get(0);
+		private final Assignment cTraitTargetsAssignment_3_15_3_1 = (Assignment)cGroup_3_15_3.eContents().get(1);
+		private final RuleCall cTraitTargetsApplicableTargetParserRuleCall_3_15_3_1_0 = (RuleCall)cTraitTargetsAssignment_3_15_3_1.eContents().get(0);
 		private final Group cGroup_3_16 = (Group)cUnorderedGroup_3.eContents().get(16);
-		private final Keyword cAppliesKeyword_3_16_0 = (Keyword)cGroup_3_16.eContents().get(0);
-		private final Keyword cToKeyword_3_16_1 = (Keyword)cGroup_3_16.eContents().get(1);
-		private final Assignment cTraitTargetsAssignment_3_16_2 = (Assignment)cGroup_3_16.eContents().get(2);
-		private final RuleCall cTraitTargetsApplicableTargetParserRuleCall_3_16_2_0 = (RuleCall)cTraitTargetsAssignment_3_16_2.eContents().get(0);
-		private final Group cGroup_3_16_3 = (Group)cGroup_3_16.eContents().get(3);
-		private final Keyword cCommaKeyword_3_16_3_0 = (Keyword)cGroup_3_16_3.eContents().get(0);
-		private final Assignment cTraitTargetsAssignment_3_16_3_1 = (Assignment)cGroup_3_16_3.eContents().get(1);
-		private final RuleCall cTraitTargetsApplicableTargetParserRuleCall_3_16_3_1_0 = (RuleCall)cTraitTargetsAssignment_3_16_3_1.eContents().get(0);
+		private final Keyword cLinksKeyword_3_16_0 = (Keyword)cGroup_3_16.eContents().get(0);
+		private final Assignment cDomainsAssignment_3_16_1 = (Assignment)cGroup_3_16.eContents().get(1);
+		private final RuleCall cDomainsSimpleConceptDeclarationParserRuleCall_3_16_1_0 = (RuleCall)cDomainsAssignment_3_16_1.eContents().get(0);
+		private final Keyword cToKeyword_3_16_2 = (Keyword)cGroup_3_16.eContents().get(2);
+		private final Assignment cRangesAssignment_3_16_3 = (Assignment)cGroup_3_16.eContents().get(3);
+		private final RuleCall cRangesSimpleConceptDeclarationParserRuleCall_3_16_3_0 = (RuleCall)cRangesAssignment_3_16_3.eContents().get(0);
+		private final Group cGroup_3_16_4 = (Group)cGroup_3_16.eContents().get(4);
+		private final Keyword cCommaKeyword_3_16_4_0 = (Keyword)cGroup_3_16_4.eContents().get(0);
+		private final Assignment cDomainsAssignment_3_16_4_1 = (Assignment)cGroup_3_16_4.eContents().get(1);
+		private final RuleCall cDomainsSimpleConceptDeclarationParserRuleCall_3_16_4_1_0 = (RuleCall)cDomainsAssignment_3_16_4_1.eContents().get(0);
+		private final Keyword cToKeyword_3_16_4_2 = (Keyword)cGroup_3_16_4.eContents().get(2);
+		private final Assignment cRangesAssignment_3_16_4_3 = (Assignment)cGroup_3_16_4.eContents().get(3);
+		private final RuleCall cRangesSimpleConceptDeclarationParserRuleCall_3_16_4_3_0 = (RuleCall)cRangesAssignment_3_16_4_3.eContents().get(0);
 		private final Group cGroup_3_17 = (Group)cUnorderedGroup_3.eContents().get(17);
-		private final Keyword cLinksKeyword_3_17_0 = (Keyword)cGroup_3_17.eContents().get(0);
-		private final Assignment cDomainsAssignment_3_17_1 = (Assignment)cGroup_3_17.eContents().get(1);
-		private final RuleCall cDomainsSimpleConceptDeclarationParserRuleCall_3_17_1_0 = (RuleCall)cDomainsAssignment_3_17_1.eContents().get(0);
-		private final Keyword cToKeyword_3_17_2 = (Keyword)cGroup_3_17.eContents().get(2);
-		private final Assignment cRangesAssignment_3_17_3 = (Assignment)cGroup_3_17.eContents().get(3);
-		private final RuleCall cRangesSimpleConceptDeclarationParserRuleCall_3_17_3_0 = (RuleCall)cRangesAssignment_3_17_3.eContents().get(0);
-		private final Group cGroup_3_17_4 = (Group)cGroup_3_17.eContents().get(4);
-		private final Keyword cCommaKeyword_3_17_4_0 = (Keyword)cGroup_3_17_4.eContents().get(0);
-		private final Assignment cDomainsAssignment_3_17_4_1 = (Assignment)cGroup_3_17_4.eContents().get(1);
-		private final RuleCall cDomainsSimpleConceptDeclarationParserRuleCall_3_17_4_1_0 = (RuleCall)cDomainsAssignment_3_17_4_1.eContents().get(0);
-		private final Keyword cToKeyword_3_17_4_2 = (Keyword)cGroup_3_17_4.eContents().get(2);
-		private final Assignment cRangesAssignment_3_17_4_3 = (Assignment)cGroup_3_17_4.eContents().get(3);
-		private final RuleCall cRangesSimpleConceptDeclarationParserRuleCall_3_17_4_3_0 = (RuleCall)cRangesAssignment_3_17_4_3.eContents().get(0);
+		private final Keyword cAffectsKeyword_3_17_0 = (Keyword)cGroup_3_17.eContents().get(0);
+		private final Assignment cQualitiesAffectedAssignment_3_17_1 = (Assignment)cGroup_3_17.eContents().get(1);
+		private final RuleCall cQualitiesAffectedConceptDeclarationParserRuleCall_3_17_1_0 = (RuleCall)cQualitiesAffectedAssignment_3_17_1.eContents().get(0);
+		private final Group cGroup_3_17_2 = (Group)cGroup_3_17.eContents().get(2);
+		private final Keyword cCommaKeyword_3_17_2_0 = (Keyword)cGroup_3_17_2.eContents().get(0);
+		private final Assignment cQualitiesAffectedAssignment_3_17_2_1 = (Assignment)cGroup_3_17_2.eContents().get(1);
+		private final RuleCall cQualitiesAffectedConceptDeclarationParserRuleCall_3_17_2_1_0 = (RuleCall)cQualitiesAffectedAssignment_3_17_2_1.eContents().get(0);
 		private final Group cGroup_3_18 = (Group)cUnorderedGroup_3.eContents().get(18);
-		private final Keyword cInverseKeyword_3_18_0 = (Keyword)cGroup_3_18.eContents().get(0);
-		private final Keyword cOfKeyword_3_18_1 = (Keyword)cGroup_3_18.eContents().get(1);
-		private final Assignment cInverseAssignment_3_18_2 = (Assignment)cGroup_3_18.eContents().get(2);
-		private final RuleCall cInverseConceptDeclarationParserRuleCall_3_18_2_0 = (RuleCall)cInverseAssignment_3_18_2.eContents().get(0);
+		private final Keyword cHasKeyword_3_18_0 = (Keyword)cGroup_3_18.eContents().get(0);
+		private final Assignment cDisjointAssignment_3_18_1 = (Assignment)cGroup_3_18.eContents().get(1);
+		private final Keyword cDisjointDisjointKeyword_3_18_1_0 = (Keyword)cDisjointAssignment_3_18_1.eContents().get(0);
+		private final Keyword cChildrenKeyword_3_18_2 = (Keyword)cGroup_3_18.eContents().get(2);
+		private final Assignment cChildrenAssignment_3_18_3 = (Assignment)cGroup_3_18.eContents().get(3);
+		private final RuleCall cChildrenChildConceptParserRuleCall_3_18_3_0 = (RuleCall)cChildrenAssignment_3_18_3.eContents().get(0);
+		private final Group cGroup_3_18_4 = (Group)cGroup_3_18.eContents().get(4);
+		private final Keyword cCommaKeyword_3_18_4_0 = (Keyword)cGroup_3_18_4.eContents().get(0);
+		private final Assignment cChildrenAssignment_3_18_4_1 = (Assignment)cGroup_3_18_4.eContents().get(1);
+		private final RuleCall cChildrenChildConceptParserRuleCall_3_18_4_1_0 = (RuleCall)cChildrenAssignment_3_18_4_1.eContents().get(0);
 		private final Group cGroup_3_19 = (Group)cUnorderedGroup_3.eContents().get(19);
-		private final Keyword cAffectsKeyword_3_19_0 = (Keyword)cGroup_3_19.eContents().get(0);
-		private final Assignment cQualitiesAffectedAssignment_3_19_1 = (Assignment)cGroup_3_19.eContents().get(1);
-		private final RuleCall cQualitiesAffectedConceptDeclarationParserRuleCall_3_19_1_0 = (RuleCall)cQualitiesAffectedAssignment_3_19_1.eContents().get(0);
+		private final Keyword cImpliesKeyword_3_19_0 = (Keyword)cGroup_3_19.eContents().get(0);
+		private final Assignment cImplicationsAssignment_3_19_1 = (Assignment)cGroup_3_19.eContents().get(1);
+		private final RuleCall cImplicationsImplicationParserRuleCall_3_19_1_0 = (RuleCall)cImplicationsAssignment_3_19_1.eContents().get(0);
 		private final Group cGroup_3_19_2 = (Group)cGroup_3_19.eContents().get(2);
 		private final Keyword cCommaKeyword_3_19_2_0 = (Keyword)cGroup_3_19_2.eContents().get(0);
-		private final Assignment cQualitiesAffectedAssignment_3_19_2_1 = (Assignment)cGroup_3_19_2.eContents().get(1);
-		private final RuleCall cQualitiesAffectedConceptDeclarationParserRuleCall_3_19_2_1_0 = (RuleCall)cQualitiesAffectedAssignment_3_19_2_1.eContents().get(0);
+		private final Assignment cImplicationsAssignment_3_19_2_1 = (Assignment)cGroup_3_19_2.eContents().get(1);
+		private final RuleCall cImplicationsImplicationParserRuleCall_3_19_2_1_0 = (RuleCall)cImplicationsAssignment_3_19_2_1.eContents().get(0);
 		private final Group cGroup_3_20 = (Group)cUnorderedGroup_3.eContents().get(20);
-		private final Keyword cHasKeyword_3_20_0 = (Keyword)cGroup_3_20.eContents().get(0);
-		private final Assignment cDisjointAssignment_3_20_1 = (Assignment)cGroup_3_20.eContents().get(1);
-		private final Keyword cDisjointDisjointKeyword_3_20_1_0 = (Keyword)cDisjointAssignment_3_20_1.eContents().get(0);
-		private final Keyword cChildrenKeyword_3_20_2 = (Keyword)cGroup_3_20.eContents().get(2);
-		private final Assignment cChildrenAssignment_3_20_3 = (Assignment)cGroup_3_20.eContents().get(3);
-		private final RuleCall cChildrenChildConceptParserRuleCall_3_20_3_0 = (RuleCall)cChildrenAssignment_3_20_3.eContents().get(0);
-		private final Group cGroup_3_20_4 = (Group)cGroup_3_20.eContents().get(4);
-		private final Keyword cCommaKeyword_3_20_4_0 = (Keyword)cGroup_3_20_4.eContents().get(0);
-		private final Assignment cChildrenAssignment_3_20_4_1 = (Assignment)cGroup_3_20_4.eContents().get(1);
-		private final RuleCall cChildrenChildConceptParserRuleCall_3_20_4_1_0 = (RuleCall)cChildrenAssignment_3_20_4_1.eContents().get(0);
+		private final Keyword cUsesKeyword_3_20_0 = (Keyword)cGroup_3_20.eContents().get(0);
+		private final Keyword cAuthorityKeyword_3_20_1 = (Keyword)cGroup_3_20.eContents().get(1);
+		private final Assignment cAuthoritiesAssignment_3_20_2 = (Assignment)cGroup_3_20.eContents().get(2);
+		private final Alternatives cAuthoritiesAlternatives_3_20_2_0 = (Alternatives)cAuthoritiesAssignment_3_20_2.eContents().get(0);
+		private final RuleCall cAuthoritiesUPPERCASE_IDTerminalRuleCall_3_20_2_0_0 = (RuleCall)cAuthoritiesAlternatives_3_20_2_0.eContents().get(0);
+		private final RuleCall cAuthoritiesUPPERCASE_PATHTerminalRuleCall_3_20_2_0_1 = (RuleCall)cAuthoritiesAlternatives_3_20_2_0.eContents().get(1);
 		private final Group cGroup_3_21 = (Group)cUnorderedGroup_3.eContents().get(21);
-		private final Keyword cImpliesKeyword_3_21_0 = (Keyword)cGroup_3_21.eContents().get(0);
-		private final Assignment cImplicationsAssignment_3_21_1 = (Assignment)cGroup_3_21.eContents().get(1);
-		private final RuleCall cImplicationsImplicationParserRuleCall_3_21_1_0 = (RuleCall)cImplicationsAssignment_3_21_1.eContents().get(0);
-		private final Group cGroup_3_21_2 = (Group)cGroup_3_21.eContents().get(2);
-		private final Keyword cCommaKeyword_3_21_2_0 = (Keyword)cGroup_3_21_2.eContents().get(0);
-		private final Assignment cImplicationsAssignment_3_21_2_1 = (Assignment)cGroup_3_21_2.eContents().get(1);
-		private final RuleCall cImplicationsImplicationParserRuleCall_3_21_2_1_0 = (RuleCall)cImplicationsAssignment_3_21_2_1.eContents().get(0);
-		private final Group cGroup_3_22 = (Group)cUnorderedGroup_3.eContents().get(22);
-		private final Keyword cUsesKeyword_3_22_0 = (Keyword)cGroup_3_22.eContents().get(0);
-		private final Keyword cAuthorityKeyword_3_22_1 = (Keyword)cGroup_3_22.eContents().get(1);
-		private final Assignment cAuthoritiesAssignment_3_22_2 = (Assignment)cGroup_3_22.eContents().get(2);
-		private final Alternatives cAuthoritiesAlternatives_3_22_2_0 = (Alternatives)cAuthoritiesAssignment_3_22_2.eContents().get(0);
-		private final RuleCall cAuthoritiesUPPERCASE_IDTerminalRuleCall_3_22_2_0_0 = (RuleCall)cAuthoritiesAlternatives_3_22_2_0.eContents().get(0);
-		private final RuleCall cAuthoritiesUPPERCASE_PATHTerminalRuleCall_3_22_2_0_1 = (RuleCall)cAuthoritiesAlternatives_3_22_2_0.eContents().get(1);
-		private final Group cGroup_3_23 = (Group)cUnorderedGroup_3.eContents().get(23);
-		private final Keyword cMetadataKeyword_3_23_0 = (Keyword)cGroup_3_23.eContents().get(0);
-		private final Assignment cMetadataAssignment_3_23_1 = (Assignment)cGroup_3_23.eContents().get(1);
-		private final RuleCall cMetadataMapParserRuleCall_3_23_1_0 = (RuleCall)cMetadataAssignment_3_23_1.eContents().get(0);
-		private final Assignment cPropertiesAssignment_3_24 = (Assignment)cUnorderedGroup_3.eContents().get(24);
-		private final RuleCall cPropertiesPropertyStatementParserRuleCall_3_24_0 = (RuleCall)cPropertiesAssignment_3_24.eContents().get(0);
+		private final Keyword cMetadataKeyword_3_21_0 = (Keyword)cGroup_3_21.eContents().get(0);
+		private final Assignment cMetadataAssignment_3_21_1 = (Assignment)cGroup_3_21.eContents().get(1);
+		private final RuleCall cMetadataMapParserRuleCall_3_21_1_0 = (RuleCall)cMetadataAssignment_3_21_1.eContents().get(0);
+		private final Assignment cPropertiesAssignment_3_22 = (Assignment)cUnorderedGroup_3.eContents().get(22);
+		private final RuleCall cPropertiesPropertyStatementParserRuleCall_3_22_0 = (RuleCall)cPropertiesAssignment_3_22.eContents().get(0);
 		
 		///*
 		// * ------------------------------------------------------------------------------------------
@@ -7793,15 +7806,15 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//               * subjective orderings.
 		//               */
 		//        ((('is' | alias?='equals') (coreConcept?='core')?) (nothing?='nothing' | parents+=ConceptDeclaration (connectors+=(',' | 'or' | 'and') parents+=ConceptDeclaration)*))? &
-		//    /*
-		//     * traits contextualized. Only applicable to
-		//     * classes. Abstract class must declare exposed traits; concrete class must
-		//     * provide matching values using 'exposing'
-		//     */
-		//        (
-		//            ('exposes' contextualizedTraits+=ObservableSemantics (','  contextualizedTraits+=ObservableSemantics)*) |
-		//            (specific?='exposing' contextualizesTraits+=ConceptDeclaration (','  contextualizesTraits+=ConceptDeclaration)*)
-		//        )? &
+		////    /*
+		////     * traits contextualized. Only applicable to
+		////     * classes. Abstract class must declare exposed traits; concrete class must
+		////     * provide matching values using 'exposing'
+		////     */
+		////        (
+		////            ('exposes' contextualizedTraits+=ObservableSemantics (','  contextualizedTraits+=ObservableSemantics)*) |
+		////            (specific?='exposing' contextualizesTraits+=ConceptDeclaration (','  contextualizesTraits+=ConceptDeclaration)*)
+		////        )? &
 		//    /*
 		//     * identifies main concepts for authority
 		//     *
@@ -7863,161 +7876,41 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//        ('confers' conferredTraits+=ConceptDeclaration (',' conferredTraits+=ConceptDeclaration)*
 		//            ('to' conferredTargets+=ConceptDeclaration (',' conferredTargets+=ConceptDeclaration)*)?
 		//        )? &
+		//        /*
+		//         * explicit declaration of triggers for emergent observables (subjects, processes and configuration)
+		//         */
+		//        ('emerges' 'from' emergenceTriggers+=ConceptDeclaration (',' emergenceTriggers+=ConceptDeclaration)*)? &
 		//    /**
-		//     * Shorthand for common 'part of' restriction
+		//     * Shorthand for common 'part of' restriction. TODO deprecate? Part-of should be left to the worldview.
 		//     */
-		//        (('part' | constituent?='constituent' | constitutes?='consists') partOf?='of' whole=ConceptDeclaration)? &
+		////    (('part' | constituent?='constituent' | constitutes?='consists') partOf?='of' whole=ConceptDeclaration)? &
 		//    /*
-		//     * for processes: creates countable in context.
+		//     * for processes: creates quality. Also for structural relationships (creates subject) and functional relationships\
+		//     * (creates process). Paired with "affects" for process -> quality.
 		//     */
-		//        ('creates' creates+=ConceptDeclaration (',' creates+=ConceptDeclaration)*)? &
+		//    ('creates' creates+=ConceptDeclaration (',' creates+=ConceptDeclaration)*)? &
 		//    /*
 		//     * traits can specify the set of allowed targets here. Also allows qualities and
 		//     * processes to specify their inherent target.
 		//     *
 		//     * If applying concept is a role and it applies to a relationship, this can also restrict the source and destination.
 		//     */
-		//        ('applies' 'to' traitTargets+=ApplicableTarget (',' traitTargets+=ApplicableTarget)*)? &
+		//    ('applies' 'to' traitTargets+=ApplicableTarget (',' traitTargets+=ApplicableTarget)*)? &
 		//    /*
 		//     * only for relationships: set domain and range of the associated property.
 		//     */
-		//        ('links' domains+=SimpleConceptDeclaration => 'to' ranges+=SimpleConceptDeclaration
+		//    ('links' domains+=SimpleConceptDeclaration => 'to' ranges+=SimpleConceptDeclaration
 		//            (',' domains+=SimpleConceptDeclaration => 'to' ranges+=SimpleConceptDeclaration)*)? &
 		//    /*
 		//     * only for relationships - set the inverse of the associated property (through the
 		//     * relationship concept).
 		//     */
-		//        ('inverse' 'of' inverse=ConceptDeclaration)? &
+		////    ('inverse' 'of' inverse=ConceptDeclaration)? &
 		//    /*
 		//     * for processes; lists qualities affected;
 		//     * for deliberative agents: lists the subject types whose states this can
 		//     * modify.
 		//     */
-		//        ('affects' qualitiesAffected+=ConceptDeclaration (',' qualitiesAffected+=ConceptDeclaration)*)? &
-		//        ('has' (disjoint?='disjoint')? 'children' children+=ChildConcept (',' children+=ChildConcept)*)? &
-		//        ('implies' implications+=Implication (',' implications+=Implication)*)? &
-		//        ('uses' 'authority' authorities+=(UPPERCASE_ID|UPPERCASE_PATH))? &
-		//        ('metadata' metadata=Map)? &
-		//        // properties are only object properties and are declared on appearance. This makes typos
-		//        // problematic, of course, but the alternative is a load of ugly syntax.
-		//        (properties+=PropertyStatement*)
-		//    )
-		//;
-		@Override public ParserRule getRule() { return rule; }
-		
-		//// FIXME shouldn't have to repeat these two. Mostly to keep the underlying ECore neat at the children.
-		//annotations += Annotation*
-		//(abstract?='abstract')?
-		//(root?='root' | name=CAMELCASE_ID ('identified' 'as' (stringIdentifier=(ID | STRING) | intIdentifier=INT) 'by' authority=(UPPERCASE_ID|UPPERCASE_PATH))?)
-		//(
-		//    (docstring=STRING)? &
-		///*
-		//           * child of. Allows "nothing" as the only root-level parent for very special purposes.
-		//           * Using 'extends' allows to reuse the subclasses of the extended concept and prevents
-		//           * adding children of its own (a 'foster parent' of sorts). It should only be permitted for
-		//           * subjective orderings.
-		//           */
-		//    ((('is' | alias?='equals') (coreConcept?='core')?) (nothing?='nothing' | parents+=ConceptDeclaration (connectors+=(',' | 'or' | 'and') parents+=ConceptDeclaration)*))? &
-		///*
-		// * traits contextualized. Only applicable to
-		// * classes. Abstract class must declare exposed traits; concrete class must
-		// * provide matching values using 'exposing'
-		// */
-		//    (
-		//        ('exposes' contextualizedTraits+=ObservableSemantics (','  contextualizedTraits+=ObservableSemantics)*) |
-		//        (specific?='exposing' contextualizesTraits+=ConceptDeclaration (','  contextualizesTraits+=ConceptDeclaration)*)
-		//    )? &
-		///*
-		// * identifies main concepts for authority
-		// *
-		// * First-class concepts in the root domain can also rebase the
-		// * foundational concepts in the observation ontology.
-		// */
-		//    ('defines' (('authority' definedAuthority=(UPPERCASE_ID|UPPERCASE_PATH)) | upperConcept=Concept))? &
-		///*
-		//           * requires identity, context or realm.
-		//           */
-		//    ('requires' requirements+=IdentityRequirement (',' requirements+=IdentityRequirement)*)? &
-		//    /*
-		//     * Various forms of link between an attribute (or quality) and a quality. Describes is the least
-		//     * specific: others, such as direct and inverse proportionality, flagging and classifications
-		//     * provide more detail and allow more inferences and validation in models.
-		//     */
-		//    // just establish a link
-		//    ('describes' describedQuality=ConceptDeclaration  ('as' descriptionConstraints=DescriptionConstraints)? )? &
-		//    // for quantity, direct and inverse proportionalities, use with orderings or qualities
-		//    ('increases' 'with' describedProportionality=ConceptDeclaration)? &
-		//    ('decreases' 'with' describedInverseProportionalityQuality=ConceptDeclaration)? &
-		//    // must be deniable and relate to a quantity
-		//    ('marks' describedNonzeroQuality=ConceptDeclaration)? &
-		//    // any quality
-		//    ('classifies' classifiesQuality=ConceptDeclaration)? &
-		//    // only for quantities
-		//    ('discretizes' discretizesQuality=ConceptDeclaration)? &
-		///*
-		//           * Traits that ARE inherited by this concept. Long version of <trait> <concept> for
-		//           * reading clarity if no 'within' part is given.
-		//           *
-		//           * If the 'within' part is given, the concept is not given any traits but the specified
-		//           * traits are inherited by the observables of any observation of this concept made within
-		//           * those contexts. This will add a restriction to the restrictedObservable rather than
-		//           * modify this concept.
-		//           *
-		//           * Not allowed for class (types) which should use 'contextualizes'.
-		//           */
-		//    ('inherits' actuallyInheritedTraits+=ConceptDeclaration (',' actuallyInheritedTraits+=ConceptDeclaration)*)? &
-		///*
-		//           * Roles within a context. The concept is not given any traits but the specified
-		//           * traits are inherited by the observables of any observation of this concept made within
-		//           * those contexts. This will add a restriction to the restrictedObservable rather than
-		//           * modify this concept, and Thinklab will use the restrictions to attribute traits
-		//           * after resolution.
-		//           *
-		//           * 'in' specifies a context (often a process if role is dynamic but can be a subject or event)
-		//           * 'for' (optional) specifies a target subject/event type within the context; the context itself
-		//           *       is used if not specified.
-		//           */
-		//    ('has' 'role' roles+=ConceptDeclaration (',' roles+=ConceptDeclaration)*
-		//        /* FIXME 'for' here causes unexplained issues when 'for' in concept declarations is used, although there should be
-		//         * complete independence between the declarations. */
-		//        ('targeting' targetObservables+=ConceptDeclaration (',' targetObservables+=ConceptDeclaration)*)?
-		//        ('in' restrictedObservables+=ConceptDeclaration (',' restrictedObservables+=ConceptDeclaration)*))? &
-		///*
-		//           * for processes: confer given trait(s) [or role(s)] to (participant subjects).
-		//           */
-		//    ('confers' conferredTraits+=ConceptDeclaration (',' conferredTraits+=ConceptDeclaration)*
-		//        ('to' conferredTargets+=ConceptDeclaration (',' conferredTargets+=ConceptDeclaration)*)?
-		//    )? &
-		///**
-		// * Shorthand for common 'part of' restriction
-		// */
-		//    (('part' | constituent?='constituent' | constitutes?='consists') partOf?='of' whole=ConceptDeclaration)? &
-		///*
-		// * for processes: creates countable in context.
-		// */
-		//    ('creates' creates+=ConceptDeclaration (',' creates+=ConceptDeclaration)*)? &
-		///*
-		// * traits can specify the set of allowed targets here. Also allows qualities and
-		// * processes to specify their inherent target.
-		// *
-		// * If applying concept is a role and it applies to a relationship, this can also restrict the source and destination.
-		// */
-		//    ('applies' 'to' traitTargets+=ApplicableTarget (',' traitTargets+=ApplicableTarget)*)? &
-		///*
-		// * only for relationships: set domain and range of the associated property.
-		// */
-		//    ('links' domains+=SimpleConceptDeclaration => 'to' ranges+=SimpleConceptDeclaration
-		//        (',' domains+=SimpleConceptDeclaration => 'to' ranges+=SimpleConceptDeclaration)*)? &
-		///*
-		// * only for relationships - set the inverse of the associated property (through the
-		// * relationship concept).
-		// */
-		//    ('inverse' 'of' inverse=ConceptDeclaration)? &
-		///*
-		// * for processes; lists qualities affected;
-		// * for deliberative agents: lists the subject types whose states this can
-		// * modify.
-		// */
 		//    ('affects' qualitiesAffected+=ConceptDeclaration (',' qualitiesAffected+=ConceptDeclaration)*)? &
 		//    ('has' (disjoint?='disjoint')? 'children' children+=ChildConcept (',' children+=ChildConcept)*)? &
 		//    ('implies' implications+=Implication (',' implications+=Implication)*)? &
@@ -8026,7 +7919,137 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//    // properties are only object properties and are declared on appearance. This makes typos
 		//    // problematic, of course, but the alternative is a load of ugly syntax.
 		//    (properties+=PropertyStatement*)
-		//)
+		//    )
+		//;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//    // FIXME shouldn't have to repeat these two. Mostly to keep the underlying ECore neat at the children.
+		//    annotations += Annotation*
+		//    (abstract?='abstract')?
+		//    (root?='root' | name=CAMELCASE_ID ('identified' 'as' (stringIdentifier=(ID | STRING) | intIdentifier=INT) 'by' authority=(UPPERCASE_ID|UPPERCASE_PATH))?)
+		//    (
+		//        (docstring=STRING)? &
+		//    /*
+		//               * child of. Allows "nothing" as the only root-level parent for very special purposes.
+		//               * Using 'extends' allows to reuse the subclasses of the extended concept and prevents
+		//               * adding children of its own (a 'foster parent' of sorts). It should only be permitted for
+		//               * subjective orderings.
+		//               */
+		//        ((('is' | alias?='equals') (coreConcept?='core')?) (nothing?='nothing' | parents+=ConceptDeclaration (connectors+=(',' | 'or' | 'and') parents+=ConceptDeclaration)*))? &
+		////    /*
+		////     * traits contextualized. Only applicable to
+		////     * classes. Abstract class must declare exposed traits; concrete class must
+		////     * provide matching values using 'exposing'
+		////     */
+		////        (
+		////            ('exposes' contextualizedTraits+=ObservableSemantics (','  contextualizedTraits+=ObservableSemantics)*) |
+		////            (specific?='exposing' contextualizesTraits+=ConceptDeclaration (','  contextualizesTraits+=ConceptDeclaration)*)
+		////        )? &
+		//    /*
+		//     * identifies main concepts for authority
+		//     *
+		//     * First-class concepts in the root domain can also rebase the
+		//     * foundational concepts in the observation ontology.
+		//     */
+		//        ('defines' (('authority' definedAuthority=(UPPERCASE_ID|UPPERCASE_PATH)) | upperConcept=Concept))? &
+		//    /*
+		//               * requires identity, context or realm.
+		//               */
+		//        ('requires' requirements+=IdentityRequirement (',' requirements+=IdentityRequirement)*)? &
+		//        /*
+		//         * Various forms of link between an attribute (or quality) and a quality. Describes is the least
+		//         * specific: others, such as direct and inverse proportionality, flagging and classifications
+		//         * provide more detail and allow more inferences and validation in models.
+		//         */
+		//        // just establish a link
+		//        ('describes' describedQuality=ConceptDeclaration  ('as' descriptionConstraints=DescriptionConstraints)? )? &
+		//        // for quantity, direct and inverse proportionalities, use with orderings or qualities
+		//        ('increases' 'with' describedProportionality=ConceptDeclaration)? &
+		//        ('decreases' 'with' describedInverseProportionalityQuality=ConceptDeclaration)? &
+		//        // must be deniable and relate to a quantity
+		//        ('marks' describedNonzeroQuality=ConceptDeclaration)? &
+		//        // any quality
+		//        ('classifies' classifiesQuality=ConceptDeclaration)? &
+		//        // only for quantities
+		//        ('discretizes' discretizesQuality=ConceptDeclaration)? &
+		//    /*
+		//               * Traits that ARE inherited by this concept. Long version of <trait> <concept> for
+		//               * reading clarity if no 'within' part is given.
+		//               *
+		//               * If the 'within' part is given, the concept is not given any traits but the specified
+		//               * traits are inherited by the observables of any observation of this concept made within
+		//               * those contexts. This will add a restriction to the restrictedObservable rather than
+		//               * modify this concept.
+		//               *
+		//               * Not allowed for class (types) which should use 'contextualizes'.
+		//               */
+		//        ('inherits' actuallyInheritedTraits+=ConceptDeclaration (',' actuallyInheritedTraits+=ConceptDeclaration)*)? &
+		//    /*
+		//               * Roles within a context. The concept is not given any traits but the specified
+		//               * traits are inherited by the observables of any observation of this concept made within
+		//               * those contexts. This will add a restriction to the restrictedObservable rather than
+		//               * modify this concept, and Thinklab will use the restrictions to attribute traits
+		//               * after resolution.
+		//               *
+		//               * 'in' specifies a context (often a process if role is dynamic but can be a subject or event)
+		//               * 'for' (optional) specifies a target subject/event type within the context; the context itself
+		//               *       is used if not specified.
+		//               */
+		//        ('has' 'role' roles+=ConceptDeclaration (',' roles+=ConceptDeclaration)*
+		//            /* FIXME 'for' here causes unexplained issues when 'for' in concept declarations is used, although there should be
+		//             * complete independence between the declarations. */
+		//            ('targeting' targetObservables+=ConceptDeclaration (',' targetObservables+=ConceptDeclaration)*)?
+		//            ('in' restrictedObservables+=ConceptDeclaration (',' restrictedObservables+=ConceptDeclaration)*))? &
+		//    /*
+		//               * for processes: confer given trait(s) [or role(s)] to (participant subjects).
+		//               */
+		//        ('confers' conferredTraits+=ConceptDeclaration (',' conferredTraits+=ConceptDeclaration)*
+		//            ('to' conferredTargets+=ConceptDeclaration (',' conferredTargets+=ConceptDeclaration)*)?
+		//        )? &
+		//        /*
+		//         * explicit declaration of triggers for emergent observables (subjects, processes and configuration)
+		//         */
+		//        ('emerges' 'from' emergenceTriggers+=ConceptDeclaration (',' emergenceTriggers+=ConceptDeclaration)*)? &
+		//    /**
+		//     * Shorthand for common 'part of' restriction. TODO deprecate? Part-of should be left to the worldview.
+		//     */
+		////    (('part' | constituent?='constituent' | constitutes?='consists') partOf?='of' whole=ConceptDeclaration)? &
+		//    /*
+		//     * for processes: creates quality. Also for structural relationships (creates subject) and functional relationships\
+		//     * (creates process). Paired with "affects" for process -> quality.
+		//     */
+		//    ('creates' creates+=ConceptDeclaration (',' creates+=ConceptDeclaration)*)? &
+		//    /*
+		//     * traits can specify the set of allowed targets here. Also allows qualities and
+		//     * processes to specify their inherent target.
+		//     *
+		//     * If applying concept is a role and it applies to a relationship, this can also restrict the source and destination.
+		//     */
+		//    ('applies' 'to' traitTargets+=ApplicableTarget (',' traitTargets+=ApplicableTarget)*)? &
+		//    /*
+		//     * only for relationships: set domain and range of the associated property.
+		//     */
+		//    ('links' domains+=SimpleConceptDeclaration => 'to' ranges+=SimpleConceptDeclaration
+		//            (',' domains+=SimpleConceptDeclaration => 'to' ranges+=SimpleConceptDeclaration)*)? &
+		//    /*
+		//     * only for relationships - set the inverse of the associated property (through the
+		//     * relationship concept).
+		//     */
+		////    ('inverse' 'of' inverse=ConceptDeclaration)? &
+		//    /*
+		//     * for processes; lists qualities affected;
+		//     * for deliberative agents: lists the subject types whose states this can
+		//     * modify.
+		//     */
+		//    ('affects' qualitiesAffected+=ConceptDeclaration (',' qualitiesAffected+=ConceptDeclaration)*)? &
+		//    ('has' (disjoint?='disjoint')? 'children' children+=ChildConcept (',' children+=ChildConcept)*)? &
+		//    ('implies' implications+=Implication (',' implications+=Implication)*)? &
+		//    ('uses' 'authority' authorities+=(UPPERCASE_ID|UPPERCASE_PATH))? &
+		//    ('metadata' metadata=Map)? &
+		//    // properties are only object properties and are declared on appearance. This makes typos
+		//    // problematic, of course, but the alternative is a load of ugly syntax.
+		//    (properties+=PropertyStatement*)
+		//    )
 		public Group getGroup() { return cGroup; }
 		
 		//// FIXME shouldn't have to repeat these two. Mostly to keep the underlying ECore neat at the children.
@@ -8105,115 +8128,120 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//UPPERCASE_PATH
 		public RuleCall getAuthorityUPPERCASE_PATHTerminalRuleCall_2_1_1_4_0_1() { return cAuthorityUPPERCASE_PATHTerminalRuleCall_2_1_1_4_0_1; }
 		
-		//(
-		//    (docstring=STRING)? &
-		///*
-		//           * child of. Allows "nothing" as the only root-level parent for very special purposes.
-		//           * Using 'extends' allows to reuse the subclasses of the extended concept and prevents
-		//           * adding children of its own (a 'foster parent' of sorts). It should only be permitted for
-		//           * subjective orderings.
-		//           */
-		//    ((('is' | alias?='equals') (coreConcept?='core')?) (nothing?='nothing' | parents+=ConceptDeclaration (connectors+=(',' | 'or' | 'and') parents+=ConceptDeclaration)*))? &
-		///*
-		// * traits contextualized. Only applicable to
-		// * classes. Abstract class must declare exposed traits; concrete class must
-		// * provide matching values using 'exposing'
-		// */
 		//    (
-		//        ('exposes' contextualizedTraits+=ObservableSemantics (','  contextualizedTraits+=ObservableSemantics)*) |
-		//        (specific?='exposing' contextualizesTraits+=ConceptDeclaration (','  contextualizesTraits+=ConceptDeclaration)*)
-		//    )? &
-		///*
-		// * identifies main concepts for authority
-		// *
-		// * First-class concepts in the root domain can also rebase the
-		// * foundational concepts in the observation ontology.
-		// */
-		//    ('defines' (('authority' definedAuthority=(UPPERCASE_ID|UPPERCASE_PATH)) | upperConcept=Concept))? &
-		///*
-		//           * requires identity, context or realm.
-		//           */
-		//    ('requires' requirements+=IdentityRequirement (',' requirements+=IdentityRequirement)*)? &
+		//        (docstring=STRING)? &
 		//    /*
-		//     * Various forms of link between an attribute (or quality) and a quality. Describes is the least
-		//     * specific: others, such as direct and inverse proportionality, flagging and classifications
-		//     * provide more detail and allow more inferences and validation in models.
+		//               * child of. Allows "nothing" as the only root-level parent for very special purposes.
+		//               * Using 'extends' allows to reuse the subclasses of the extended concept and prevents
+		//               * adding children of its own (a 'foster parent' of sorts). It should only be permitted for
+		//               * subjective orderings.
+		//               */
+		//        ((('is' | alias?='equals') (coreConcept?='core')?) (nothing?='nothing' | parents+=ConceptDeclaration (connectors+=(',' | 'or' | 'and') parents+=ConceptDeclaration)*))? &
+		////    /*
+		////     * traits contextualized. Only applicable to
+		////     * classes. Abstract class must declare exposed traits; concrete class must
+		////     * provide matching values using 'exposing'
+		////     */
+		////        (
+		////            ('exposes' contextualizedTraits+=ObservableSemantics (','  contextualizedTraits+=ObservableSemantics)*) |
+		////            (specific?='exposing' contextualizesTraits+=ConceptDeclaration (','  contextualizesTraits+=ConceptDeclaration)*)
+		////        )? &
+		//    /*
+		//     * identifies main concepts for authority
+		//     *
+		//     * First-class concepts in the root domain can also rebase the
+		//     * foundational concepts in the observation ontology.
 		//     */
-		//    // just establish a link
-		//    ('describes' describedQuality=ConceptDeclaration  ('as' descriptionConstraints=DescriptionConstraints)? )? &
-		//    // for quantity, direct and inverse proportionalities, use with orderings or qualities
-		//    ('increases' 'with' describedProportionality=ConceptDeclaration)? &
-		//    ('decreases' 'with' describedInverseProportionalityQuality=ConceptDeclaration)? &
-		//    // must be deniable and relate to a quantity
-		//    ('marks' describedNonzeroQuality=ConceptDeclaration)? &
-		//    // any quality
-		//    ('classifies' classifiesQuality=ConceptDeclaration)? &
-		//    // only for quantities
-		//    ('discretizes' discretizesQuality=ConceptDeclaration)? &
-		///*
-		//           * Traits that ARE inherited by this concept. Long version of <trait> <concept> for
-		//           * reading clarity if no 'within' part is given.
-		//           *
-		//           * If the 'within' part is given, the concept is not given any traits but the specified
-		//           * traits are inherited by the observables of any observation of this concept made within
-		//           * those contexts. This will add a restriction to the restrictedObservable rather than
-		//           * modify this concept.
-		//           *
-		//           * Not allowed for class (types) which should use 'contextualizes'.
-		//           */
-		//    ('inherits' actuallyInheritedTraits+=ConceptDeclaration (',' actuallyInheritedTraits+=ConceptDeclaration)*)? &
-		///*
-		//           * Roles within a context. The concept is not given any traits but the specified
-		//           * traits are inherited by the observables of any observation of this concept made within
-		//           * those contexts. This will add a restriction to the restrictedObservable rather than
-		//           * modify this concept, and Thinklab will use the restrictions to attribute traits
-		//           * after resolution.
-		//           *
-		//           * 'in' specifies a context (often a process if role is dynamic but can be a subject or event)
-		//           * 'for' (optional) specifies a target subject/event type within the context; the context itself
-		//           *       is used if not specified.
-		//           */
-		//    ('has' 'role' roles+=ConceptDeclaration (',' roles+=ConceptDeclaration)*
-		//        /* FIXME 'for' here causes unexplained issues when 'for' in concept declarations is used, although there should be
-		//         * complete independence between the declarations. */
-		//        ('targeting' targetObservables+=ConceptDeclaration (',' targetObservables+=ConceptDeclaration)*)?
-		//        ('in' restrictedObservables+=ConceptDeclaration (',' restrictedObservables+=ConceptDeclaration)*))? &
-		///*
-		//           * for processes: confer given trait(s) [or role(s)] to (participant subjects).
-		//           */
-		//    ('confers' conferredTraits+=ConceptDeclaration (',' conferredTraits+=ConceptDeclaration)*
-		//        ('to' conferredTargets+=ConceptDeclaration (',' conferredTargets+=ConceptDeclaration)*)?
-		//    )? &
-		///**
-		// * Shorthand for common 'part of' restriction
-		// */
-		//    (('part' | constituent?='constituent' | constitutes?='consists') partOf?='of' whole=ConceptDeclaration)? &
-		///*
-		// * for processes: creates countable in context.
-		// */
+		//        ('defines' (('authority' definedAuthority=(UPPERCASE_ID|UPPERCASE_PATH)) | upperConcept=Concept))? &
+		//    /*
+		//               * requires identity, context or realm.
+		//               */
+		//        ('requires' requirements+=IdentityRequirement (',' requirements+=IdentityRequirement)*)? &
+		//        /*
+		//         * Various forms of link between an attribute (or quality) and a quality. Describes is the least
+		//         * specific: others, such as direct and inverse proportionality, flagging and classifications
+		//         * provide more detail and allow more inferences and validation in models.
+		//         */
+		//        // just establish a link
+		//        ('describes' describedQuality=ConceptDeclaration  ('as' descriptionConstraints=DescriptionConstraints)? )? &
+		//        // for quantity, direct and inverse proportionalities, use with orderings or qualities
+		//        ('increases' 'with' describedProportionality=ConceptDeclaration)? &
+		//        ('decreases' 'with' describedInverseProportionalityQuality=ConceptDeclaration)? &
+		//        // must be deniable and relate to a quantity
+		//        ('marks' describedNonzeroQuality=ConceptDeclaration)? &
+		//        // any quality
+		//        ('classifies' classifiesQuality=ConceptDeclaration)? &
+		//        // only for quantities
+		//        ('discretizes' discretizesQuality=ConceptDeclaration)? &
+		//    /*
+		//               * Traits that ARE inherited by this concept. Long version of <trait> <concept> for
+		//               * reading clarity if no 'within' part is given.
+		//               *
+		//               * If the 'within' part is given, the concept is not given any traits but the specified
+		//               * traits are inherited by the observables of any observation of this concept made within
+		//               * those contexts. This will add a restriction to the restrictedObservable rather than
+		//               * modify this concept.
+		//               *
+		//               * Not allowed for class (types) which should use 'contextualizes'.
+		//               */
+		//        ('inherits' actuallyInheritedTraits+=ConceptDeclaration (',' actuallyInheritedTraits+=ConceptDeclaration)*)? &
+		//    /*
+		//               * Roles within a context. The concept is not given any traits but the specified
+		//               * traits are inherited by the observables of any observation of this concept made within
+		//               * those contexts. This will add a restriction to the restrictedObservable rather than
+		//               * modify this concept, and Thinklab will use the restrictions to attribute traits
+		//               * after resolution.
+		//               *
+		//               * 'in' specifies a context (often a process if role is dynamic but can be a subject or event)
+		//               * 'for' (optional) specifies a target subject/event type within the context; the context itself
+		//               *       is used if not specified.
+		//               */
+		//        ('has' 'role' roles+=ConceptDeclaration (',' roles+=ConceptDeclaration)*
+		//            /* FIXME 'for' here causes unexplained issues when 'for' in concept declarations is used, although there should be
+		//             * complete independence between the declarations. */
+		//            ('targeting' targetObservables+=ConceptDeclaration (',' targetObservables+=ConceptDeclaration)*)?
+		//            ('in' restrictedObservables+=ConceptDeclaration (',' restrictedObservables+=ConceptDeclaration)*))? &
+		//    /*
+		//               * for processes: confer given trait(s) [or role(s)] to (participant subjects).
+		//               */
+		//        ('confers' conferredTraits+=ConceptDeclaration (',' conferredTraits+=ConceptDeclaration)*
+		//            ('to' conferredTargets+=ConceptDeclaration (',' conferredTargets+=ConceptDeclaration)*)?
+		//        )? &
+		//        /*
+		//         * explicit declaration of triggers for emergent observables (subjects, processes and configuration)
+		//         */
+		//        ('emerges' 'from' emergenceTriggers+=ConceptDeclaration (',' emergenceTriggers+=ConceptDeclaration)*)? &
+		//    /**
+		//     * Shorthand for common 'part of' restriction. TODO deprecate? Part-of should be left to the worldview.
+		//     */
+		////    (('part' | constituent?='constituent' | constitutes?='consists') partOf?='of' whole=ConceptDeclaration)? &
+		//    /*
+		//     * for processes: creates quality. Also for structural relationships (creates subject) and functional relationships\
+		//     * (creates process). Paired with "affects" for process -> quality.
+		//     */
 		//    ('creates' creates+=ConceptDeclaration (',' creates+=ConceptDeclaration)*)? &
-		///*
-		// * traits can specify the set of allowed targets here. Also allows qualities and
-		// * processes to specify their inherent target.
-		// *
-		// * If applying concept is a role and it applies to a relationship, this can also restrict the source and destination.
-		// */
+		//    /*
+		//     * traits can specify the set of allowed targets here. Also allows qualities and
+		//     * processes to specify their inherent target.
+		//     *
+		//     * If applying concept is a role and it applies to a relationship, this can also restrict the source and destination.
+		//     */
 		//    ('applies' 'to' traitTargets+=ApplicableTarget (',' traitTargets+=ApplicableTarget)*)? &
-		///*
-		// * only for relationships: set domain and range of the associated property.
-		// */
+		//    /*
+		//     * only for relationships: set domain and range of the associated property.
+		//     */
 		//    ('links' domains+=SimpleConceptDeclaration => 'to' ranges+=SimpleConceptDeclaration
-		//        (',' domains+=SimpleConceptDeclaration => 'to' ranges+=SimpleConceptDeclaration)*)? &
-		///*
-		// * only for relationships - set the inverse of the associated property (through the
-		// * relationship concept).
-		// */
-		//    ('inverse' 'of' inverse=ConceptDeclaration)? &
-		///*
-		// * for processes; lists qualities affected;
-		// * for deliberative agents: lists the subject types whose states this can
-		// * modify.
-		// */
+		//            (',' domains+=SimpleConceptDeclaration => 'to' ranges+=SimpleConceptDeclaration)*)? &
+		//    /*
+		//     * only for relationships - set the inverse of the associated property (through the
+		//     * relationship concept).
+		//     */
+		////    ('inverse' 'of' inverse=ConceptDeclaration)? &
+		//    /*
+		//     * for processes; lists qualities affected;
+		//     * for deliberative agents: lists the subject types whose states this can
+		//     * modify.
+		//     */
 		//    ('affects' qualitiesAffected+=ConceptDeclaration (',' qualitiesAffected+=ConceptDeclaration)*)? &
 		//    ('has' (disjoint?='disjoint')? 'children' children+=ChildConcept (',' children+=ChildConcept)*)? &
 		//    ('implies' implications+=Implication (',' implications+=Implication)*)? &
@@ -8222,7 +8250,7 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//    // properties are only object properties and are declared on appearance. This makes typos
 		//    // problematic, of course, but the alternative is a load of ugly syntax.
 		//    (properties+=PropertyStatement*)
-		//)
+		//    )
 		public UnorderedGroup getUnorderedGroup_3() { return cUnorderedGroup_3; }
 		
 		//(docstring=STRING)?
@@ -8303,133 +8331,80 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//ConceptDeclaration
 		public RuleCall getParentsConceptDeclarationParserRuleCall_3_1_1_1_1_1_0() { return cParentsConceptDeclarationParserRuleCall_3_1_1_1_1_1_0; }
 		
-		///*
-		// * traits contextualized. Only applicable to
-		// * classes. Abstract class must declare exposed traits; concrete class must
-		// * provide matching values using 'exposing'
-		// */
-		//    (
-		//        ('exposes' contextualizedTraits+=ObservableSemantics (','  contextualizedTraits+=ObservableSemantics)*) |
-		//        (specific?='exposing' contextualizesTraits+=ConceptDeclaration (','  contextualizesTraits+=ConceptDeclaration)*)
-		//    )?
-		public Alternatives getAlternatives_3_2() { return cAlternatives_3_2; }
-		
-		//('exposes' contextualizedTraits+=ObservableSemantics (','  contextualizedTraits+=ObservableSemantics)*)
-		public Group getGroup_3_2_0() { return cGroup_3_2_0; }
-		
-		//'exposes'
-		public Keyword getExposesKeyword_3_2_0_0() { return cExposesKeyword_3_2_0_0; }
-		
-		//contextualizedTraits+=ObservableSemantics
-		public Assignment getContextualizedTraitsAssignment_3_2_0_1() { return cContextualizedTraitsAssignment_3_2_0_1; }
-		
-		//ObservableSemantics
-		public RuleCall getContextualizedTraitsObservableSemanticsParserRuleCall_3_2_0_1_0() { return cContextualizedTraitsObservableSemanticsParserRuleCall_3_2_0_1_0; }
-		
-		//(','  contextualizedTraits+=ObservableSemantics)*
-		public Group getGroup_3_2_0_2() { return cGroup_3_2_0_2; }
-		
-		//','
-		public Keyword getCommaKeyword_3_2_0_2_0() { return cCommaKeyword_3_2_0_2_0; }
-		
-		//contextualizedTraits+=ObservableSemantics
-		public Assignment getContextualizedTraitsAssignment_3_2_0_2_1() { return cContextualizedTraitsAssignment_3_2_0_2_1; }
-		
-		//ObservableSemantics
-		public RuleCall getContextualizedTraitsObservableSemanticsParserRuleCall_3_2_0_2_1_0() { return cContextualizedTraitsObservableSemanticsParserRuleCall_3_2_0_2_1_0; }
-		
-		//(specific?='exposing' contextualizesTraits+=ConceptDeclaration (','  contextualizesTraits+=ConceptDeclaration)*)
-		public Group getGroup_3_2_1() { return cGroup_3_2_1; }
-		
-		//specific?='exposing'
-		public Assignment getSpecificAssignment_3_2_1_0() { return cSpecificAssignment_3_2_1_0; }
-		
-		//'exposing'
-		public Keyword getSpecificExposingKeyword_3_2_1_0_0() { return cSpecificExposingKeyword_3_2_1_0_0; }
-		
-		//contextualizesTraits+=ConceptDeclaration
-		public Assignment getContextualizesTraitsAssignment_3_2_1_1() { return cContextualizesTraitsAssignment_3_2_1_1; }
-		
-		//ConceptDeclaration
-		public RuleCall getContextualizesTraitsConceptDeclarationParserRuleCall_3_2_1_1_0() { return cContextualizesTraitsConceptDeclarationParserRuleCall_3_2_1_1_0; }
-		
-		//(','  contextualizesTraits+=ConceptDeclaration)*
-		public Group getGroup_3_2_1_2() { return cGroup_3_2_1_2; }
-		
-		//','
-		public Keyword getCommaKeyword_3_2_1_2_0() { return cCommaKeyword_3_2_1_2_0; }
-		
-		//contextualizesTraits+=ConceptDeclaration
-		public Assignment getContextualizesTraitsAssignment_3_2_1_2_1() { return cContextualizesTraitsAssignment_3_2_1_2_1; }
-		
-		//ConceptDeclaration
-		public RuleCall getContextualizesTraitsConceptDeclarationParserRuleCall_3_2_1_2_1_0() { return cContextualizesTraitsConceptDeclarationParserRuleCall_3_2_1_2_1_0; }
-		
-		///*
-		// * identifies main concepts for authority
-		// *
-		// * First-class concepts in the root domain can also rebase the
-		// * foundational concepts in the observation ontology.
-		// */
-		//    ('defines' (('authority' definedAuthority=(UPPERCASE_ID|UPPERCASE_PATH)) | upperConcept=Concept))?
-		public Group getGroup_3_3() { return cGroup_3_3; }
+		////    /*
+		////     * traits contextualized. Only applicable to
+		////     * classes. Abstract class must declare exposed traits; concrete class must
+		////     * provide matching values using 'exposing'
+		////     */
+		////        (
+		////            ('exposes' contextualizedTraits+=ObservableSemantics (','  contextualizedTraits+=ObservableSemantics)*) |
+		////            (specific?='exposing' contextualizesTraits+=ConceptDeclaration (','  contextualizesTraits+=ConceptDeclaration)*)
+		////        )? &
+		//    /*
+		//     * identifies main concepts for authority
+		//     *
+		//     * First-class concepts in the root domain can also rebase the
+		//     * foundational concepts in the observation ontology.
+		//     */
+		//        ('defines' (('authority' definedAuthority=(UPPERCASE_ID|UPPERCASE_PATH)) | upperConcept=Concept))?
+		public Group getGroup_3_2() { return cGroup_3_2; }
 		
 		//'defines'
-		public Keyword getDefinesKeyword_3_3_0() { return cDefinesKeyword_3_3_0; }
+		public Keyword getDefinesKeyword_3_2_0() { return cDefinesKeyword_3_2_0; }
 		
 		//(('authority' definedAuthority=(UPPERCASE_ID|UPPERCASE_PATH)) | upperConcept=Concept)
-		public Alternatives getAlternatives_3_3_1() { return cAlternatives_3_3_1; }
+		public Alternatives getAlternatives_3_2_1() { return cAlternatives_3_2_1; }
 		
 		//('authority' definedAuthority=(UPPERCASE_ID|UPPERCASE_PATH))
-		public Group getGroup_3_3_1_0() { return cGroup_3_3_1_0; }
+		public Group getGroup_3_2_1_0() { return cGroup_3_2_1_0; }
 		
 		//'authority'
-		public Keyword getAuthorityKeyword_3_3_1_0_0() { return cAuthorityKeyword_3_3_1_0_0; }
+		public Keyword getAuthorityKeyword_3_2_1_0_0() { return cAuthorityKeyword_3_2_1_0_0; }
 		
 		//definedAuthority=(UPPERCASE_ID|UPPERCASE_PATH)
-		public Assignment getDefinedAuthorityAssignment_3_3_1_0_1() { return cDefinedAuthorityAssignment_3_3_1_0_1; }
+		public Assignment getDefinedAuthorityAssignment_3_2_1_0_1() { return cDefinedAuthorityAssignment_3_2_1_0_1; }
 		
 		//(UPPERCASE_ID|UPPERCASE_PATH)
-		public Alternatives getDefinedAuthorityAlternatives_3_3_1_0_1_0() { return cDefinedAuthorityAlternatives_3_3_1_0_1_0; }
+		public Alternatives getDefinedAuthorityAlternatives_3_2_1_0_1_0() { return cDefinedAuthorityAlternatives_3_2_1_0_1_0; }
 		
 		//UPPERCASE_ID
-		public RuleCall getDefinedAuthorityUPPERCASE_IDTerminalRuleCall_3_3_1_0_1_0_0() { return cDefinedAuthorityUPPERCASE_IDTerminalRuleCall_3_3_1_0_1_0_0; }
+		public RuleCall getDefinedAuthorityUPPERCASE_IDTerminalRuleCall_3_2_1_0_1_0_0() { return cDefinedAuthorityUPPERCASE_IDTerminalRuleCall_3_2_1_0_1_0_0; }
 		
 		//UPPERCASE_PATH
-		public RuleCall getDefinedAuthorityUPPERCASE_PATHTerminalRuleCall_3_3_1_0_1_0_1() { return cDefinedAuthorityUPPERCASE_PATHTerminalRuleCall_3_3_1_0_1_0_1; }
+		public RuleCall getDefinedAuthorityUPPERCASE_PATHTerminalRuleCall_3_2_1_0_1_0_1() { return cDefinedAuthorityUPPERCASE_PATHTerminalRuleCall_3_2_1_0_1_0_1; }
 		
 		//upperConcept=Concept
-		public Assignment getUpperConceptAssignment_3_3_1_1() { return cUpperConceptAssignment_3_3_1_1; }
+		public Assignment getUpperConceptAssignment_3_2_1_1() { return cUpperConceptAssignment_3_2_1_1; }
 		
 		//Concept
-		public RuleCall getUpperConceptConceptParserRuleCall_3_3_1_1_0() { return cUpperConceptConceptParserRuleCall_3_3_1_1_0; }
+		public RuleCall getUpperConceptConceptParserRuleCall_3_2_1_1_0() { return cUpperConceptConceptParserRuleCall_3_2_1_1_0; }
 		
 		///*
 		//           * requires identity, context or realm.
 		//           */
 		//    ('requires' requirements+=IdentityRequirement (',' requirements+=IdentityRequirement)*)?
-		public Group getGroup_3_4() { return cGroup_3_4; }
+		public Group getGroup_3_3() { return cGroup_3_3; }
 		
 		//'requires'
-		public Keyword getRequiresKeyword_3_4_0() { return cRequiresKeyword_3_4_0; }
+		public Keyword getRequiresKeyword_3_3_0() { return cRequiresKeyword_3_3_0; }
 		
 		//requirements+=IdentityRequirement
-		public Assignment getRequirementsAssignment_3_4_1() { return cRequirementsAssignment_3_4_1; }
+		public Assignment getRequirementsAssignment_3_3_1() { return cRequirementsAssignment_3_3_1; }
 		
 		//IdentityRequirement
-		public RuleCall getRequirementsIdentityRequirementParserRuleCall_3_4_1_0() { return cRequirementsIdentityRequirementParserRuleCall_3_4_1_0; }
+		public RuleCall getRequirementsIdentityRequirementParserRuleCall_3_3_1_0() { return cRequirementsIdentityRequirementParserRuleCall_3_3_1_0; }
 		
 		//(',' requirements+=IdentityRequirement)*
-		public Group getGroup_3_4_2() { return cGroup_3_4_2; }
+		public Group getGroup_3_3_2() { return cGroup_3_3_2; }
 		
 		//','
-		public Keyword getCommaKeyword_3_4_2_0() { return cCommaKeyword_3_4_2_0; }
+		public Keyword getCommaKeyword_3_3_2_0() { return cCommaKeyword_3_3_2_0; }
 		
 		//requirements+=IdentityRequirement
-		public Assignment getRequirementsAssignment_3_4_2_1() { return cRequirementsAssignment_3_4_2_1; }
+		public Assignment getRequirementsAssignment_3_3_2_1() { return cRequirementsAssignment_3_3_2_1; }
 		
 		//IdentityRequirement
-		public RuleCall getRequirementsIdentityRequirementParserRuleCall_3_4_2_1_0() { return cRequirementsIdentityRequirementParserRuleCall_3_4_2_1_0; }
+		public RuleCall getRequirementsIdentityRequirementParserRuleCall_3_3_2_1_0() { return cRequirementsIdentityRequirementParserRuleCall_3_3_2_1_0; }
 		
 		///*
 		// * Various forms of link between an attribute (or quality) and a quality. Describes is the least
@@ -8438,98 +8413,98 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		// */
 		//// just establish a link
 		//('describes' describedQuality=ConceptDeclaration  ('as' descriptionConstraints=DescriptionConstraints)? )?
-		public Group getGroup_3_5() { return cGroup_3_5; }
+		public Group getGroup_3_4() { return cGroup_3_4; }
 		
 		//'describes'
-		public Keyword getDescribesKeyword_3_5_0() { return cDescribesKeyword_3_5_0; }
+		public Keyword getDescribesKeyword_3_4_0() { return cDescribesKeyword_3_4_0; }
 		
 		//describedQuality=ConceptDeclaration
-		public Assignment getDescribedQualityAssignment_3_5_1() { return cDescribedQualityAssignment_3_5_1; }
+		public Assignment getDescribedQualityAssignment_3_4_1() { return cDescribedQualityAssignment_3_4_1; }
 		
 		//ConceptDeclaration
-		public RuleCall getDescribedQualityConceptDeclarationParserRuleCall_3_5_1_0() { return cDescribedQualityConceptDeclarationParserRuleCall_3_5_1_0; }
+		public RuleCall getDescribedQualityConceptDeclarationParserRuleCall_3_4_1_0() { return cDescribedQualityConceptDeclarationParserRuleCall_3_4_1_0; }
 		
 		//('as' descriptionConstraints=DescriptionConstraints)?
-		public Group getGroup_3_5_2() { return cGroup_3_5_2; }
+		public Group getGroup_3_4_2() { return cGroup_3_4_2; }
 		
 		//'as'
-		public Keyword getAsKeyword_3_5_2_0() { return cAsKeyword_3_5_2_0; }
+		public Keyword getAsKeyword_3_4_2_0() { return cAsKeyword_3_4_2_0; }
 		
 		//descriptionConstraints=DescriptionConstraints
-		public Assignment getDescriptionConstraintsAssignment_3_5_2_1() { return cDescriptionConstraintsAssignment_3_5_2_1; }
+		public Assignment getDescriptionConstraintsAssignment_3_4_2_1() { return cDescriptionConstraintsAssignment_3_4_2_1; }
 		
 		//DescriptionConstraints
-		public RuleCall getDescriptionConstraintsDescriptionConstraintsParserRuleCall_3_5_2_1_0() { return cDescriptionConstraintsDescriptionConstraintsParserRuleCall_3_5_2_1_0; }
+		public RuleCall getDescriptionConstraintsDescriptionConstraintsParserRuleCall_3_4_2_1_0() { return cDescriptionConstraintsDescriptionConstraintsParserRuleCall_3_4_2_1_0; }
 		
 		//// for quantity, direct and inverse proportionalities, use with orderings or qualities
 		//('increases' 'with' describedProportionality=ConceptDeclaration)?
-		public Group getGroup_3_6() { return cGroup_3_6; }
+		public Group getGroup_3_5() { return cGroup_3_5; }
 		
 		//'increases'
-		public Keyword getIncreasesKeyword_3_6_0() { return cIncreasesKeyword_3_6_0; }
+		public Keyword getIncreasesKeyword_3_5_0() { return cIncreasesKeyword_3_5_0; }
+		
+		//'with'
+		public Keyword getWithKeyword_3_5_1() { return cWithKeyword_3_5_1; }
+		
+		//describedProportionality=ConceptDeclaration
+		public Assignment getDescribedProportionalityAssignment_3_5_2() { return cDescribedProportionalityAssignment_3_5_2; }
+		
+		//ConceptDeclaration
+		public RuleCall getDescribedProportionalityConceptDeclarationParserRuleCall_3_5_2_0() { return cDescribedProportionalityConceptDeclarationParserRuleCall_3_5_2_0; }
+		
+		//('decreases' 'with' describedInverseProportionalityQuality=ConceptDeclaration)?
+		public Group getGroup_3_6() { return cGroup_3_6; }
+		
+		//'decreases'
+		public Keyword getDecreasesKeyword_3_6_0() { return cDecreasesKeyword_3_6_0; }
 		
 		//'with'
 		public Keyword getWithKeyword_3_6_1() { return cWithKeyword_3_6_1; }
 		
-		//describedProportionality=ConceptDeclaration
-		public Assignment getDescribedProportionalityAssignment_3_6_2() { return cDescribedProportionalityAssignment_3_6_2; }
-		
-		//ConceptDeclaration
-		public RuleCall getDescribedProportionalityConceptDeclarationParserRuleCall_3_6_2_0() { return cDescribedProportionalityConceptDeclarationParserRuleCall_3_6_2_0; }
-		
-		//('decreases' 'with' describedInverseProportionalityQuality=ConceptDeclaration)?
-		public Group getGroup_3_7() { return cGroup_3_7; }
-		
-		//'decreases'
-		public Keyword getDecreasesKeyword_3_7_0() { return cDecreasesKeyword_3_7_0; }
-		
-		//'with'
-		public Keyword getWithKeyword_3_7_1() { return cWithKeyword_3_7_1; }
-		
 		//describedInverseProportionalityQuality=ConceptDeclaration
-		public Assignment getDescribedInverseProportionalityQualityAssignment_3_7_2() { return cDescribedInverseProportionalityQualityAssignment_3_7_2; }
+		public Assignment getDescribedInverseProportionalityQualityAssignment_3_6_2() { return cDescribedInverseProportionalityQualityAssignment_3_6_2; }
 		
 		//ConceptDeclaration
-		public RuleCall getDescribedInverseProportionalityQualityConceptDeclarationParserRuleCall_3_7_2_0() { return cDescribedInverseProportionalityQualityConceptDeclarationParserRuleCall_3_7_2_0; }
+		public RuleCall getDescribedInverseProportionalityQualityConceptDeclarationParserRuleCall_3_6_2_0() { return cDescribedInverseProportionalityQualityConceptDeclarationParserRuleCall_3_6_2_0; }
 		
 		//// must be deniable and relate to a quantity
 		//('marks' describedNonzeroQuality=ConceptDeclaration)?
-		public Group getGroup_3_8() { return cGroup_3_8; }
+		public Group getGroup_3_7() { return cGroup_3_7; }
 		
 		//'marks'
-		public Keyword getMarksKeyword_3_8_0() { return cMarksKeyword_3_8_0; }
+		public Keyword getMarksKeyword_3_7_0() { return cMarksKeyword_3_7_0; }
 		
 		//describedNonzeroQuality=ConceptDeclaration
-		public Assignment getDescribedNonzeroQualityAssignment_3_8_1() { return cDescribedNonzeroQualityAssignment_3_8_1; }
+		public Assignment getDescribedNonzeroQualityAssignment_3_7_1() { return cDescribedNonzeroQualityAssignment_3_7_1; }
 		
 		//ConceptDeclaration
-		public RuleCall getDescribedNonzeroQualityConceptDeclarationParserRuleCall_3_8_1_0() { return cDescribedNonzeroQualityConceptDeclarationParserRuleCall_3_8_1_0; }
+		public RuleCall getDescribedNonzeroQualityConceptDeclarationParserRuleCall_3_7_1_0() { return cDescribedNonzeroQualityConceptDeclarationParserRuleCall_3_7_1_0; }
 		
 		//// any quality
 		//('classifies' classifiesQuality=ConceptDeclaration)?
-		public Group getGroup_3_9() { return cGroup_3_9; }
+		public Group getGroup_3_8() { return cGroup_3_8; }
 		
 		//'classifies'
-		public Keyword getClassifiesKeyword_3_9_0() { return cClassifiesKeyword_3_9_0; }
+		public Keyword getClassifiesKeyword_3_8_0() { return cClassifiesKeyword_3_8_0; }
 		
 		//classifiesQuality=ConceptDeclaration
-		public Assignment getClassifiesQualityAssignment_3_9_1() { return cClassifiesQualityAssignment_3_9_1; }
+		public Assignment getClassifiesQualityAssignment_3_8_1() { return cClassifiesQualityAssignment_3_8_1; }
 		
 		//ConceptDeclaration
-		public RuleCall getClassifiesQualityConceptDeclarationParserRuleCall_3_9_1_0() { return cClassifiesQualityConceptDeclarationParserRuleCall_3_9_1_0; }
+		public RuleCall getClassifiesQualityConceptDeclarationParserRuleCall_3_8_1_0() { return cClassifiesQualityConceptDeclarationParserRuleCall_3_8_1_0; }
 		
 		//// only for quantities
 		//('discretizes' discretizesQuality=ConceptDeclaration)?
-		public Group getGroup_3_10() { return cGroup_3_10; }
+		public Group getGroup_3_9() { return cGroup_3_9; }
 		
 		//'discretizes'
-		public Keyword getDiscretizesKeyword_3_10_0() { return cDiscretizesKeyword_3_10_0; }
+		public Keyword getDiscretizesKeyword_3_9_0() { return cDiscretizesKeyword_3_9_0; }
 		
 		//discretizesQuality=ConceptDeclaration
-		public Assignment getDiscretizesQualityAssignment_3_10_1() { return cDiscretizesQualityAssignment_3_10_1; }
+		public Assignment getDiscretizesQualityAssignment_3_9_1() { return cDiscretizesQualityAssignment_3_9_1; }
 		
 		//ConceptDeclaration
-		public RuleCall getDiscretizesQualityConceptDeclarationParserRuleCall_3_10_1_0() { return cDiscretizesQualityConceptDeclarationParserRuleCall_3_10_1_0; }
+		public RuleCall getDiscretizesQualityConceptDeclarationParserRuleCall_3_9_1_0() { return cDiscretizesQualityConceptDeclarationParserRuleCall_3_9_1_0; }
 		
 		///*
 		//           * Traits that ARE inherited by this concept. Long version of <trait> <concept> for
@@ -8543,28 +8518,28 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//           * Not allowed for class (types) which should use 'contextualizes'.
 		//           */
 		//    ('inherits' actuallyInheritedTraits+=ConceptDeclaration (',' actuallyInheritedTraits+=ConceptDeclaration)*)?
-		public Group getGroup_3_11() { return cGroup_3_11; }
+		public Group getGroup_3_10() { return cGroup_3_10; }
 		
 		//'inherits'
-		public Keyword getInheritsKeyword_3_11_0() { return cInheritsKeyword_3_11_0; }
+		public Keyword getInheritsKeyword_3_10_0() { return cInheritsKeyword_3_10_0; }
 		
 		//actuallyInheritedTraits+=ConceptDeclaration
-		public Assignment getActuallyInheritedTraitsAssignment_3_11_1() { return cActuallyInheritedTraitsAssignment_3_11_1; }
+		public Assignment getActuallyInheritedTraitsAssignment_3_10_1() { return cActuallyInheritedTraitsAssignment_3_10_1; }
 		
 		//ConceptDeclaration
-		public RuleCall getActuallyInheritedTraitsConceptDeclarationParserRuleCall_3_11_1_0() { return cActuallyInheritedTraitsConceptDeclarationParserRuleCall_3_11_1_0; }
+		public RuleCall getActuallyInheritedTraitsConceptDeclarationParserRuleCall_3_10_1_0() { return cActuallyInheritedTraitsConceptDeclarationParserRuleCall_3_10_1_0; }
 		
 		//(',' actuallyInheritedTraits+=ConceptDeclaration)*
-		public Group getGroup_3_11_2() { return cGroup_3_11_2; }
+		public Group getGroup_3_10_2() { return cGroup_3_10_2; }
 		
 		//','
-		public Keyword getCommaKeyword_3_11_2_0() { return cCommaKeyword_3_11_2_0; }
+		public Keyword getCommaKeyword_3_10_2_0() { return cCommaKeyword_3_10_2_0; }
 		
 		//actuallyInheritedTraits+=ConceptDeclaration
-		public Assignment getActuallyInheritedTraitsAssignment_3_11_2_1() { return cActuallyInheritedTraitsAssignment_3_11_2_1; }
+		public Assignment getActuallyInheritedTraitsAssignment_3_10_2_1() { return cActuallyInheritedTraitsAssignment_3_10_2_1; }
 		
 		//ConceptDeclaration
-		public RuleCall getActuallyInheritedTraitsConceptDeclarationParserRuleCall_3_11_2_1_0() { return cActuallyInheritedTraitsConceptDeclarationParserRuleCall_3_11_2_1_0; }
+		public RuleCall getActuallyInheritedTraitsConceptDeclarationParserRuleCall_3_10_2_1_0() { return cActuallyInheritedTraitsConceptDeclarationParserRuleCall_3_10_2_1_0; }
 		
 		///*
 		//           * Roles within a context. The concept is not given any traits but the specified
@@ -8582,81 +8557,81 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//         * complete independence between the declarations. */
 		//        ('targeting' targetObservables+=ConceptDeclaration (',' targetObservables+=ConceptDeclaration)*)?
 		//        ('in' restrictedObservables+=ConceptDeclaration (',' restrictedObservables+=ConceptDeclaration)*))?
-		public Group getGroup_3_12() { return cGroup_3_12; }
+		public Group getGroup_3_11() { return cGroup_3_11; }
 		
 		//'has'
-		public Keyword getHasKeyword_3_12_0() { return cHasKeyword_3_12_0; }
+		public Keyword getHasKeyword_3_11_0() { return cHasKeyword_3_11_0; }
 		
 		//'role'
-		public Keyword getRoleKeyword_3_12_1() { return cRoleKeyword_3_12_1; }
+		public Keyword getRoleKeyword_3_11_1() { return cRoleKeyword_3_11_1; }
 		
 		//roles+=ConceptDeclaration
-		public Assignment getRolesAssignment_3_12_2() { return cRolesAssignment_3_12_2; }
+		public Assignment getRolesAssignment_3_11_2() { return cRolesAssignment_3_11_2; }
 		
 		//ConceptDeclaration
-		public RuleCall getRolesConceptDeclarationParserRuleCall_3_12_2_0() { return cRolesConceptDeclarationParserRuleCall_3_12_2_0; }
+		public RuleCall getRolesConceptDeclarationParserRuleCall_3_11_2_0() { return cRolesConceptDeclarationParserRuleCall_3_11_2_0; }
 		
 		//(',' roles+=ConceptDeclaration)*
-		public Group getGroup_3_12_3() { return cGroup_3_12_3; }
+		public Group getGroup_3_11_3() { return cGroup_3_11_3; }
 		
 		//','
-		public Keyword getCommaKeyword_3_12_3_0() { return cCommaKeyword_3_12_3_0; }
+		public Keyword getCommaKeyword_3_11_3_0() { return cCommaKeyword_3_11_3_0; }
 		
 		//roles+=ConceptDeclaration
-		public Assignment getRolesAssignment_3_12_3_1() { return cRolesAssignment_3_12_3_1; }
+		public Assignment getRolesAssignment_3_11_3_1() { return cRolesAssignment_3_11_3_1; }
 		
 		//ConceptDeclaration
-		public RuleCall getRolesConceptDeclarationParserRuleCall_3_12_3_1_0() { return cRolesConceptDeclarationParserRuleCall_3_12_3_1_0; }
+		public RuleCall getRolesConceptDeclarationParserRuleCall_3_11_3_1_0() { return cRolesConceptDeclarationParserRuleCall_3_11_3_1_0; }
 		
 		///* FIXME 'for' here causes unexplained issues when 'for' in concept declarations is used, although there should be
 		// * complete independence between the declarations. */
 		//('targeting' targetObservables+=ConceptDeclaration (',' targetObservables+=ConceptDeclaration)*)?
-		public Group getGroup_3_12_4() { return cGroup_3_12_4; }
+		public Group getGroup_3_11_4() { return cGroup_3_11_4; }
 		
 		//'targeting'
-		public Keyword getTargetingKeyword_3_12_4_0() { return cTargetingKeyword_3_12_4_0; }
+		public Keyword getTargetingKeyword_3_11_4_0() { return cTargetingKeyword_3_11_4_0; }
 		
 		//targetObservables+=ConceptDeclaration
-		public Assignment getTargetObservablesAssignment_3_12_4_1() { return cTargetObservablesAssignment_3_12_4_1; }
+		public Assignment getTargetObservablesAssignment_3_11_4_1() { return cTargetObservablesAssignment_3_11_4_1; }
 		
 		//ConceptDeclaration
-		public RuleCall getTargetObservablesConceptDeclarationParserRuleCall_3_12_4_1_0() { return cTargetObservablesConceptDeclarationParserRuleCall_3_12_4_1_0; }
+		public RuleCall getTargetObservablesConceptDeclarationParserRuleCall_3_11_4_1_0() { return cTargetObservablesConceptDeclarationParserRuleCall_3_11_4_1_0; }
 		
 		//(',' targetObservables+=ConceptDeclaration)*
-		public Group getGroup_3_12_4_2() { return cGroup_3_12_4_2; }
+		public Group getGroup_3_11_4_2() { return cGroup_3_11_4_2; }
 		
 		//','
-		public Keyword getCommaKeyword_3_12_4_2_0() { return cCommaKeyword_3_12_4_2_0; }
+		public Keyword getCommaKeyword_3_11_4_2_0() { return cCommaKeyword_3_11_4_2_0; }
 		
 		//targetObservables+=ConceptDeclaration
-		public Assignment getTargetObservablesAssignment_3_12_4_2_1() { return cTargetObservablesAssignment_3_12_4_2_1; }
+		public Assignment getTargetObservablesAssignment_3_11_4_2_1() { return cTargetObservablesAssignment_3_11_4_2_1; }
 		
 		//ConceptDeclaration
-		public RuleCall getTargetObservablesConceptDeclarationParserRuleCall_3_12_4_2_1_0() { return cTargetObservablesConceptDeclarationParserRuleCall_3_12_4_2_1_0; }
+		public RuleCall getTargetObservablesConceptDeclarationParserRuleCall_3_11_4_2_1_0() { return cTargetObservablesConceptDeclarationParserRuleCall_3_11_4_2_1_0; }
 		
 		//('in' restrictedObservables+=ConceptDeclaration (',' restrictedObservables+=ConceptDeclaration)*)
-		public Group getGroup_3_12_5() { return cGroup_3_12_5; }
+		public Group getGroup_3_11_5() { return cGroup_3_11_5; }
 		
 		//'in'
-		public Keyword getInKeyword_3_12_5_0() { return cInKeyword_3_12_5_0; }
+		public Keyword getInKeyword_3_11_5_0() { return cInKeyword_3_11_5_0; }
 		
 		//restrictedObservables+=ConceptDeclaration
-		public Assignment getRestrictedObservablesAssignment_3_12_5_1() { return cRestrictedObservablesAssignment_3_12_5_1; }
+		public Assignment getRestrictedObservablesAssignment_3_11_5_1() { return cRestrictedObservablesAssignment_3_11_5_1; }
 		
 		//ConceptDeclaration
-		public RuleCall getRestrictedObservablesConceptDeclarationParserRuleCall_3_12_5_1_0() { return cRestrictedObservablesConceptDeclarationParserRuleCall_3_12_5_1_0; }
+		public RuleCall getRestrictedObservablesConceptDeclarationParserRuleCall_3_11_5_1_0() { return cRestrictedObservablesConceptDeclarationParserRuleCall_3_11_5_1_0; }
 		
 		//(',' restrictedObservables+=ConceptDeclaration)*
-		public Group getGroup_3_12_5_2() { return cGroup_3_12_5_2; }
+		public Group getGroup_3_11_5_2() { return cGroup_3_11_5_2; }
 		
 		//','
-		public Keyword getCommaKeyword_3_12_5_2_0() { return cCommaKeyword_3_12_5_2_0; }
+		public Keyword getCommaKeyword_3_11_5_2_0() { return cCommaKeyword_3_11_5_2_0; }
 		
 		//restrictedObservables+=ConceptDeclaration
-		public Assignment getRestrictedObservablesAssignment_3_12_5_2_1() { return cRestrictedObservablesAssignment_3_12_5_2_1; }
+		public Assignment getRestrictedObservablesAssignment_3_11_5_2_1() { return cRestrictedObservablesAssignment_3_11_5_2_1; }
 		
 		//ConceptDeclaration
-		public RuleCall getRestrictedObservablesConceptDeclarationParserRuleCall_3_12_5_2_1_0() { return cRestrictedObservablesConceptDeclarationParserRuleCall_3_12_5_2_1_0; }
+		public RuleCall getRestrictedObservablesConceptDeclarationParserRuleCall_3_11_5_2_1_0() { return cRestrictedObservablesConceptDeclarationParserRuleCall_3_11_5_2_1_0; }
 		
 		///*
 		//           * for processes: confer given trait(s) [or role(s)] to (participant subjects).
@@ -8664,115 +8639,114 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//    ('confers' conferredTraits+=ConceptDeclaration (',' conferredTraits+=ConceptDeclaration)*
 		//        ('to' conferredTargets+=ConceptDeclaration (',' conferredTargets+=ConceptDeclaration)*)?
 		//    )?
-		public Group getGroup_3_13() { return cGroup_3_13; }
+		public Group getGroup_3_12() { return cGroup_3_12; }
 		
 		//'confers'
-		public Keyword getConfersKeyword_3_13_0() { return cConfersKeyword_3_13_0; }
+		public Keyword getConfersKeyword_3_12_0() { return cConfersKeyword_3_12_0; }
 		
 		//conferredTraits+=ConceptDeclaration
-		public Assignment getConferredTraitsAssignment_3_13_1() { return cConferredTraitsAssignment_3_13_1; }
+		public Assignment getConferredTraitsAssignment_3_12_1() { return cConferredTraitsAssignment_3_12_1; }
 		
 		//ConceptDeclaration
-		public RuleCall getConferredTraitsConceptDeclarationParserRuleCall_3_13_1_0() { return cConferredTraitsConceptDeclarationParserRuleCall_3_13_1_0; }
+		public RuleCall getConferredTraitsConceptDeclarationParserRuleCall_3_12_1_0() { return cConferredTraitsConceptDeclarationParserRuleCall_3_12_1_0; }
 		
 		//(',' conferredTraits+=ConceptDeclaration)*
-		public Group getGroup_3_13_2() { return cGroup_3_13_2; }
+		public Group getGroup_3_12_2() { return cGroup_3_12_2; }
 		
 		//','
-		public Keyword getCommaKeyword_3_13_2_0() { return cCommaKeyword_3_13_2_0; }
+		public Keyword getCommaKeyword_3_12_2_0() { return cCommaKeyword_3_12_2_0; }
 		
 		//conferredTraits+=ConceptDeclaration
-		public Assignment getConferredTraitsAssignment_3_13_2_1() { return cConferredTraitsAssignment_3_13_2_1; }
+		public Assignment getConferredTraitsAssignment_3_12_2_1() { return cConferredTraitsAssignment_3_12_2_1; }
 		
 		//ConceptDeclaration
-		public RuleCall getConferredTraitsConceptDeclarationParserRuleCall_3_13_2_1_0() { return cConferredTraitsConceptDeclarationParserRuleCall_3_13_2_1_0; }
+		public RuleCall getConferredTraitsConceptDeclarationParserRuleCall_3_12_2_1_0() { return cConferredTraitsConceptDeclarationParserRuleCall_3_12_2_1_0; }
 		
 		//('to' conferredTargets+=ConceptDeclaration (',' conferredTargets+=ConceptDeclaration)*)?
-		public Group getGroup_3_13_3() { return cGroup_3_13_3; }
+		public Group getGroup_3_12_3() { return cGroup_3_12_3; }
 		
 		//'to'
-		public Keyword getToKeyword_3_13_3_0() { return cToKeyword_3_13_3_0; }
+		public Keyword getToKeyword_3_12_3_0() { return cToKeyword_3_12_3_0; }
 		
 		//conferredTargets+=ConceptDeclaration
-		public Assignment getConferredTargetsAssignment_3_13_3_1() { return cConferredTargetsAssignment_3_13_3_1; }
+		public Assignment getConferredTargetsAssignment_3_12_3_1() { return cConferredTargetsAssignment_3_12_3_1; }
 		
 		//ConceptDeclaration
-		public RuleCall getConferredTargetsConceptDeclarationParserRuleCall_3_13_3_1_0() { return cConferredTargetsConceptDeclarationParserRuleCall_3_13_3_1_0; }
+		public RuleCall getConferredTargetsConceptDeclarationParserRuleCall_3_12_3_1_0() { return cConferredTargetsConceptDeclarationParserRuleCall_3_12_3_1_0; }
 		
 		//(',' conferredTargets+=ConceptDeclaration)*
-		public Group getGroup_3_13_3_2() { return cGroup_3_13_3_2; }
+		public Group getGroup_3_12_3_2() { return cGroup_3_12_3_2; }
 		
 		//','
-		public Keyword getCommaKeyword_3_13_3_2_0() { return cCommaKeyword_3_13_3_2_0; }
+		public Keyword getCommaKeyword_3_12_3_2_0() { return cCommaKeyword_3_12_3_2_0; }
 		
 		//conferredTargets+=ConceptDeclaration
-		public Assignment getConferredTargetsAssignment_3_13_3_2_1() { return cConferredTargetsAssignment_3_13_3_2_1; }
+		public Assignment getConferredTargetsAssignment_3_12_3_2_1() { return cConferredTargetsAssignment_3_12_3_2_1; }
 		
 		//ConceptDeclaration
-		public RuleCall getConferredTargetsConceptDeclarationParserRuleCall_3_13_3_2_1_0() { return cConferredTargetsConceptDeclarationParserRuleCall_3_13_3_2_1_0; }
-		
-		///**
-		// * Shorthand for common 'part of' restriction
-		// */
-		//    (('part' | constituent?='constituent' | constitutes?='consists') partOf?='of' whole=ConceptDeclaration)?
-		public Group getGroup_3_14() { return cGroup_3_14; }
-		
-		//('part' | constituent?='constituent' | constitutes?='consists')
-		public Alternatives getAlternatives_3_14_0() { return cAlternatives_3_14_0; }
-		
-		//'part'
-		public Keyword getPartKeyword_3_14_0_0() { return cPartKeyword_3_14_0_0; }
-		
-		//constituent?='constituent'
-		public Assignment getConstituentAssignment_3_14_0_1() { return cConstituentAssignment_3_14_0_1; }
-		
-		//'constituent'
-		public Keyword getConstituentConstituentKeyword_3_14_0_1_0() { return cConstituentConstituentKeyword_3_14_0_1_0; }
-		
-		//constitutes?='consists'
-		public Assignment getConstitutesAssignment_3_14_0_2() { return cConstitutesAssignment_3_14_0_2; }
-		
-		//'consists'
-		public Keyword getConstitutesConsistsKeyword_3_14_0_2_0() { return cConstitutesConsistsKeyword_3_14_0_2_0; }
-		
-		//partOf?='of'
-		public Assignment getPartOfAssignment_3_14_1() { return cPartOfAssignment_3_14_1; }
-		
-		//'of'
-		public Keyword getPartOfOfKeyword_3_14_1_0() { return cPartOfOfKeyword_3_14_1_0; }
-		
-		//whole=ConceptDeclaration
-		public Assignment getWholeAssignment_3_14_2() { return cWholeAssignment_3_14_2; }
-		
-		//ConceptDeclaration
-		public RuleCall getWholeConceptDeclarationParserRuleCall_3_14_2_0() { return cWholeConceptDeclarationParserRuleCall_3_14_2_0; }
+		public RuleCall getConferredTargetsConceptDeclarationParserRuleCall_3_12_3_2_1_0() { return cConferredTargetsConceptDeclarationParserRuleCall_3_12_3_2_1_0; }
 		
 		///*
-		// * for processes: creates countable in context.
+		// * explicit declaration of triggers for emergent observables (subjects, processes and configuration)
 		// */
-		//    ('creates' creates+=ConceptDeclaration (',' creates+=ConceptDeclaration)*)?
-		public Group getGroup_3_15() { return cGroup_3_15; }
+		//('emerges' 'from' emergenceTriggers+=ConceptDeclaration (',' emergenceTriggers+=ConceptDeclaration)*)?
+		public Group getGroup_3_13() { return cGroup_3_13; }
 		
-		//'creates'
-		public Keyword getCreatesKeyword_3_15_0() { return cCreatesKeyword_3_15_0; }
+		//'emerges'
+		public Keyword getEmergesKeyword_3_13_0() { return cEmergesKeyword_3_13_0; }
 		
-		//creates+=ConceptDeclaration
-		public Assignment getCreatesAssignment_3_15_1() { return cCreatesAssignment_3_15_1; }
+		//'from'
+		public Keyword getFromKeyword_3_13_1() { return cFromKeyword_3_13_1; }
+		
+		//emergenceTriggers+=ConceptDeclaration
+		public Assignment getEmergenceTriggersAssignment_3_13_2() { return cEmergenceTriggersAssignment_3_13_2; }
 		
 		//ConceptDeclaration
-		public RuleCall getCreatesConceptDeclarationParserRuleCall_3_15_1_0() { return cCreatesConceptDeclarationParserRuleCall_3_15_1_0; }
+		public RuleCall getEmergenceTriggersConceptDeclarationParserRuleCall_3_13_2_0() { return cEmergenceTriggersConceptDeclarationParserRuleCall_3_13_2_0; }
 		
-		//(',' creates+=ConceptDeclaration)*
-		public Group getGroup_3_15_2() { return cGroup_3_15_2; }
+		//(',' emergenceTriggers+=ConceptDeclaration)*
+		public Group getGroup_3_13_3() { return cGroup_3_13_3; }
 		
 		//','
-		public Keyword getCommaKeyword_3_15_2_0() { return cCommaKeyword_3_15_2_0; }
+		public Keyword getCommaKeyword_3_13_3_0() { return cCommaKeyword_3_13_3_0; }
 		
-		//creates+=ConceptDeclaration
-		public Assignment getCreatesAssignment_3_15_2_1() { return cCreatesAssignment_3_15_2_1; }
+		//emergenceTriggers+=ConceptDeclaration
+		public Assignment getEmergenceTriggersAssignment_3_13_3_1() { return cEmergenceTriggersAssignment_3_13_3_1; }
 		
 		//ConceptDeclaration
-		public RuleCall getCreatesConceptDeclarationParserRuleCall_3_15_2_1_0() { return cCreatesConceptDeclarationParserRuleCall_3_15_2_1_0; }
+		public RuleCall getEmergenceTriggersConceptDeclarationParserRuleCall_3_13_3_1_0() { return cEmergenceTriggersConceptDeclarationParserRuleCall_3_13_3_1_0; }
+		
+		//    /**
+		//     * Shorthand for common 'part of' restriction. TODO deprecate? Part-of should be left to the worldview.
+		//     */
+		////    (('part' | constituent?='constituent' | constitutes?='consists') partOf?='of' whole=ConceptDeclaration)? &
+		//    /*
+		//     * for processes: creates quality. Also for structural relationships (creates subject) and functional relationships\
+		//     * (creates process). Paired with "affects" for process -> quality.
+		//     */
+		//    ('creates' creates+=ConceptDeclaration (',' creates+=ConceptDeclaration)*)?
+		public Group getGroup_3_14() { return cGroup_3_14; }
+		
+		//'creates'
+		public Keyword getCreatesKeyword_3_14_0() { return cCreatesKeyword_3_14_0; }
+		
+		//creates+=ConceptDeclaration
+		public Assignment getCreatesAssignment_3_14_1() { return cCreatesAssignment_3_14_1; }
+		
+		//ConceptDeclaration
+		public RuleCall getCreatesConceptDeclarationParserRuleCall_3_14_1_0() { return cCreatesConceptDeclarationParserRuleCall_3_14_1_0; }
+		
+		//(',' creates+=ConceptDeclaration)*
+		public Group getGroup_3_14_2() { return cGroup_3_14_2; }
+		
+		//','
+		public Keyword getCommaKeyword_3_14_2_0() { return cCommaKeyword_3_14_2_0; }
+		
+		//creates+=ConceptDeclaration
+		public Assignment getCreatesAssignment_3_14_2_1() { return cCreatesAssignment_3_14_2_1; }
+		
+		//ConceptDeclaration
+		public RuleCall getCreatesConceptDeclarationParserRuleCall_3_14_2_1_0() { return cCreatesConceptDeclarationParserRuleCall_3_14_2_1_0; }
 		
 		///*
 		// * traits can specify the set of allowed targets here. Also allows qualities and
@@ -8780,224 +8754,210 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		// *
 		// * If applying concept is a role and it applies to a relationship, this can also restrict the source and destination.
 		// */
-		//    ('applies' 'to' traitTargets+=ApplicableTarget (',' traitTargets+=ApplicableTarget)*)?
-		public Group getGroup_3_16() { return cGroup_3_16; }
+		//('applies' 'to' traitTargets+=ApplicableTarget (',' traitTargets+=ApplicableTarget)*)?
+		public Group getGroup_3_15() { return cGroup_3_15; }
 		
 		//'applies'
-		public Keyword getAppliesKeyword_3_16_0() { return cAppliesKeyword_3_16_0; }
+		public Keyword getAppliesKeyword_3_15_0() { return cAppliesKeyword_3_15_0; }
 		
 		//'to'
-		public Keyword getToKeyword_3_16_1() { return cToKeyword_3_16_1; }
+		public Keyword getToKeyword_3_15_1() { return cToKeyword_3_15_1; }
 		
 		//traitTargets+=ApplicableTarget
-		public Assignment getTraitTargetsAssignment_3_16_2() { return cTraitTargetsAssignment_3_16_2; }
+		public Assignment getTraitTargetsAssignment_3_15_2() { return cTraitTargetsAssignment_3_15_2; }
 		
 		//ApplicableTarget
-		public RuleCall getTraitTargetsApplicableTargetParserRuleCall_3_16_2_0() { return cTraitTargetsApplicableTargetParserRuleCall_3_16_2_0; }
+		public RuleCall getTraitTargetsApplicableTargetParserRuleCall_3_15_2_0() { return cTraitTargetsApplicableTargetParserRuleCall_3_15_2_0; }
 		
 		//(',' traitTargets+=ApplicableTarget)*
-		public Group getGroup_3_16_3() { return cGroup_3_16_3; }
+		public Group getGroup_3_15_3() { return cGroup_3_15_3; }
 		
 		//','
-		public Keyword getCommaKeyword_3_16_3_0() { return cCommaKeyword_3_16_3_0; }
+		public Keyword getCommaKeyword_3_15_3_0() { return cCommaKeyword_3_15_3_0; }
 		
 		//traitTargets+=ApplicableTarget
-		public Assignment getTraitTargetsAssignment_3_16_3_1() { return cTraitTargetsAssignment_3_16_3_1; }
+		public Assignment getTraitTargetsAssignment_3_15_3_1() { return cTraitTargetsAssignment_3_15_3_1; }
 		
 		//ApplicableTarget
-		public RuleCall getTraitTargetsApplicableTargetParserRuleCall_3_16_3_1_0() { return cTraitTargetsApplicableTargetParserRuleCall_3_16_3_1_0; }
+		public RuleCall getTraitTargetsApplicableTargetParserRuleCall_3_15_3_1_0() { return cTraitTargetsApplicableTargetParserRuleCall_3_15_3_1_0; }
 		
 		///*
 		// * only for relationships: set domain and range of the associated property.
 		// */
-		//    ('links' domains+=SimpleConceptDeclaration => 'to' ranges+=SimpleConceptDeclaration
+		//('links' domains+=SimpleConceptDeclaration => 'to' ranges+=SimpleConceptDeclaration
 		//        (',' domains+=SimpleConceptDeclaration => 'to' ranges+=SimpleConceptDeclaration)*)?
-		public Group getGroup_3_17() { return cGroup_3_17; }
+		public Group getGroup_3_16() { return cGroup_3_16; }
 		
 		//'links'
-		public Keyword getLinksKeyword_3_17_0() { return cLinksKeyword_3_17_0; }
+		public Keyword getLinksKeyword_3_16_0() { return cLinksKeyword_3_16_0; }
 		
 		//domains+=SimpleConceptDeclaration
-		public Assignment getDomainsAssignment_3_17_1() { return cDomainsAssignment_3_17_1; }
+		public Assignment getDomainsAssignment_3_16_1() { return cDomainsAssignment_3_16_1; }
 		
 		//SimpleConceptDeclaration
-		public RuleCall getDomainsSimpleConceptDeclarationParserRuleCall_3_17_1_0() { return cDomainsSimpleConceptDeclarationParserRuleCall_3_17_1_0; }
+		public RuleCall getDomainsSimpleConceptDeclarationParserRuleCall_3_16_1_0() { return cDomainsSimpleConceptDeclarationParserRuleCall_3_16_1_0; }
 		
 		//=> 'to'
-		public Keyword getToKeyword_3_17_2() { return cToKeyword_3_17_2; }
+		public Keyword getToKeyword_3_16_2() { return cToKeyword_3_16_2; }
 		
 		//ranges+=SimpleConceptDeclaration
-		public Assignment getRangesAssignment_3_17_3() { return cRangesAssignment_3_17_3; }
+		public Assignment getRangesAssignment_3_16_3() { return cRangesAssignment_3_16_3; }
 		
 		//SimpleConceptDeclaration
-		public RuleCall getRangesSimpleConceptDeclarationParserRuleCall_3_17_3_0() { return cRangesSimpleConceptDeclarationParserRuleCall_3_17_3_0; }
+		public RuleCall getRangesSimpleConceptDeclarationParserRuleCall_3_16_3_0() { return cRangesSimpleConceptDeclarationParserRuleCall_3_16_3_0; }
 		
 		//(',' domains+=SimpleConceptDeclaration => 'to' ranges+=SimpleConceptDeclaration)*
-		public Group getGroup_3_17_4() { return cGroup_3_17_4; }
+		public Group getGroup_3_16_4() { return cGroup_3_16_4; }
 		
 		//','
-		public Keyword getCommaKeyword_3_17_4_0() { return cCommaKeyword_3_17_4_0; }
+		public Keyword getCommaKeyword_3_16_4_0() { return cCommaKeyword_3_16_4_0; }
 		
 		//domains+=SimpleConceptDeclaration
-		public Assignment getDomainsAssignment_3_17_4_1() { return cDomainsAssignment_3_17_4_1; }
+		public Assignment getDomainsAssignment_3_16_4_1() { return cDomainsAssignment_3_16_4_1; }
 		
 		//SimpleConceptDeclaration
-		public RuleCall getDomainsSimpleConceptDeclarationParserRuleCall_3_17_4_1_0() { return cDomainsSimpleConceptDeclarationParserRuleCall_3_17_4_1_0; }
+		public RuleCall getDomainsSimpleConceptDeclarationParserRuleCall_3_16_4_1_0() { return cDomainsSimpleConceptDeclarationParserRuleCall_3_16_4_1_0; }
 		
 		//=> 'to'
-		public Keyword getToKeyword_3_17_4_2() { return cToKeyword_3_17_4_2; }
+		public Keyword getToKeyword_3_16_4_2() { return cToKeyword_3_16_4_2; }
 		
 		//ranges+=SimpleConceptDeclaration
-		public Assignment getRangesAssignment_3_17_4_3() { return cRangesAssignment_3_17_4_3; }
+		public Assignment getRangesAssignment_3_16_4_3() { return cRangesAssignment_3_16_4_3; }
 		
 		//SimpleConceptDeclaration
-		public RuleCall getRangesSimpleConceptDeclarationParserRuleCall_3_17_4_3_0() { return cRangesSimpleConceptDeclarationParserRuleCall_3_17_4_3_0; }
+		public RuleCall getRangesSimpleConceptDeclarationParserRuleCall_3_16_4_3_0() { return cRangesSimpleConceptDeclarationParserRuleCall_3_16_4_3_0; }
 		
-		///*
-		// * only for relationships - set the inverse of the associated property (through the
-		// * relationship concept).
-		// */
-		//    ('inverse' 'of' inverse=ConceptDeclaration)?
-		public Group getGroup_3_18() { return cGroup_3_18; }
-		
-		//'inverse'
-		public Keyword getInverseKeyword_3_18_0() { return cInverseKeyword_3_18_0; }
-		
-		//'of'
-		public Keyword getOfKeyword_3_18_1() { return cOfKeyword_3_18_1; }
-		
-		//inverse=ConceptDeclaration
-		public Assignment getInverseAssignment_3_18_2() { return cInverseAssignment_3_18_2; }
-		
-		//ConceptDeclaration
-		public RuleCall getInverseConceptDeclarationParserRuleCall_3_18_2_0() { return cInverseConceptDeclarationParserRuleCall_3_18_2_0; }
-		
-		///*
-		// * for processes; lists qualities affected;
-		// * for deliberative agents: lists the subject types whose states this can
-		// * modify.
-		// */
+		//    /*
+		//     * only for relationships - set the inverse of the associated property (through the
+		//     * relationship concept).
+		//     */
+		////    ('inverse' 'of' inverse=ConceptDeclaration)? &
+		//    /*
+		//     * for processes; lists qualities affected;
+		//     * for deliberative agents: lists the subject types whose states this can
+		//     * modify.
+		//     */
 		//    ('affects' qualitiesAffected+=ConceptDeclaration (',' qualitiesAffected+=ConceptDeclaration)*)?
-		public Group getGroup_3_19() { return cGroup_3_19; }
+		public Group getGroup_3_17() { return cGroup_3_17; }
 		
 		//'affects'
-		public Keyword getAffectsKeyword_3_19_0() { return cAffectsKeyword_3_19_0; }
+		public Keyword getAffectsKeyword_3_17_0() { return cAffectsKeyword_3_17_0; }
 		
 		//qualitiesAffected+=ConceptDeclaration
-		public Assignment getQualitiesAffectedAssignment_3_19_1() { return cQualitiesAffectedAssignment_3_19_1; }
+		public Assignment getQualitiesAffectedAssignment_3_17_1() { return cQualitiesAffectedAssignment_3_17_1; }
 		
 		//ConceptDeclaration
-		public RuleCall getQualitiesAffectedConceptDeclarationParserRuleCall_3_19_1_0() { return cQualitiesAffectedConceptDeclarationParserRuleCall_3_19_1_0; }
+		public RuleCall getQualitiesAffectedConceptDeclarationParserRuleCall_3_17_1_0() { return cQualitiesAffectedConceptDeclarationParserRuleCall_3_17_1_0; }
 		
 		//(',' qualitiesAffected+=ConceptDeclaration)*
+		public Group getGroup_3_17_2() { return cGroup_3_17_2; }
+		
+		//','
+		public Keyword getCommaKeyword_3_17_2_0() { return cCommaKeyword_3_17_2_0; }
+		
+		//qualitiesAffected+=ConceptDeclaration
+		public Assignment getQualitiesAffectedAssignment_3_17_2_1() { return cQualitiesAffectedAssignment_3_17_2_1; }
+		
+		//ConceptDeclaration
+		public RuleCall getQualitiesAffectedConceptDeclarationParserRuleCall_3_17_2_1_0() { return cQualitiesAffectedConceptDeclarationParserRuleCall_3_17_2_1_0; }
+		
+		//('has' (disjoint?='disjoint')? 'children' children+=ChildConcept (',' children+=ChildConcept)*)?
+		public Group getGroup_3_18() { return cGroup_3_18; }
+		
+		//'has'
+		public Keyword getHasKeyword_3_18_0() { return cHasKeyword_3_18_0; }
+		
+		//(disjoint?='disjoint')?
+		public Assignment getDisjointAssignment_3_18_1() { return cDisjointAssignment_3_18_1; }
+		
+		//'disjoint'
+		public Keyword getDisjointDisjointKeyword_3_18_1_0() { return cDisjointDisjointKeyword_3_18_1_0; }
+		
+		//'children'
+		public Keyword getChildrenKeyword_3_18_2() { return cChildrenKeyword_3_18_2; }
+		
+		//children+=ChildConcept
+		public Assignment getChildrenAssignment_3_18_3() { return cChildrenAssignment_3_18_3; }
+		
+		//ChildConcept
+		public RuleCall getChildrenChildConceptParserRuleCall_3_18_3_0() { return cChildrenChildConceptParserRuleCall_3_18_3_0; }
+		
+		//(',' children+=ChildConcept)*
+		public Group getGroup_3_18_4() { return cGroup_3_18_4; }
+		
+		//','
+		public Keyword getCommaKeyword_3_18_4_0() { return cCommaKeyword_3_18_4_0; }
+		
+		//children+=ChildConcept
+		public Assignment getChildrenAssignment_3_18_4_1() { return cChildrenAssignment_3_18_4_1; }
+		
+		//ChildConcept
+		public RuleCall getChildrenChildConceptParserRuleCall_3_18_4_1_0() { return cChildrenChildConceptParserRuleCall_3_18_4_1_0; }
+		
+		//('implies' implications+=Implication (',' implications+=Implication)*)?
+		public Group getGroup_3_19() { return cGroup_3_19; }
+		
+		//'implies'
+		public Keyword getImpliesKeyword_3_19_0() { return cImpliesKeyword_3_19_0; }
+		
+		//implications+=Implication
+		public Assignment getImplicationsAssignment_3_19_1() { return cImplicationsAssignment_3_19_1; }
+		
+		//Implication
+		public RuleCall getImplicationsImplicationParserRuleCall_3_19_1_0() { return cImplicationsImplicationParserRuleCall_3_19_1_0; }
+		
+		//(',' implications+=Implication)*
 		public Group getGroup_3_19_2() { return cGroup_3_19_2; }
 		
 		//','
 		public Keyword getCommaKeyword_3_19_2_0() { return cCommaKeyword_3_19_2_0; }
 		
-		//qualitiesAffected+=ConceptDeclaration
-		public Assignment getQualitiesAffectedAssignment_3_19_2_1() { return cQualitiesAffectedAssignment_3_19_2_1; }
-		
-		//ConceptDeclaration
-		public RuleCall getQualitiesAffectedConceptDeclarationParserRuleCall_3_19_2_1_0() { return cQualitiesAffectedConceptDeclarationParserRuleCall_3_19_2_1_0; }
-		
-		//('has' (disjoint?='disjoint')? 'children' children+=ChildConcept (',' children+=ChildConcept)*)?
-		public Group getGroup_3_20() { return cGroup_3_20; }
-		
-		//'has'
-		public Keyword getHasKeyword_3_20_0() { return cHasKeyword_3_20_0; }
-		
-		//(disjoint?='disjoint')?
-		public Assignment getDisjointAssignment_3_20_1() { return cDisjointAssignment_3_20_1; }
-		
-		//'disjoint'
-		public Keyword getDisjointDisjointKeyword_3_20_1_0() { return cDisjointDisjointKeyword_3_20_1_0; }
-		
-		//'children'
-		public Keyword getChildrenKeyword_3_20_2() { return cChildrenKeyword_3_20_2; }
-		
-		//children+=ChildConcept
-		public Assignment getChildrenAssignment_3_20_3() { return cChildrenAssignment_3_20_3; }
-		
-		//ChildConcept
-		public RuleCall getChildrenChildConceptParserRuleCall_3_20_3_0() { return cChildrenChildConceptParserRuleCall_3_20_3_0; }
-		
-		//(',' children+=ChildConcept)*
-		public Group getGroup_3_20_4() { return cGroup_3_20_4; }
-		
-		//','
-		public Keyword getCommaKeyword_3_20_4_0() { return cCommaKeyword_3_20_4_0; }
-		
-		//children+=ChildConcept
-		public Assignment getChildrenAssignment_3_20_4_1() { return cChildrenAssignment_3_20_4_1; }
-		
-		//ChildConcept
-		public RuleCall getChildrenChildConceptParserRuleCall_3_20_4_1_0() { return cChildrenChildConceptParserRuleCall_3_20_4_1_0; }
-		
-		//('implies' implications+=Implication (',' implications+=Implication)*)?
-		public Group getGroup_3_21() { return cGroup_3_21; }
-		
-		//'implies'
-		public Keyword getImpliesKeyword_3_21_0() { return cImpliesKeyword_3_21_0; }
-		
 		//implications+=Implication
-		public Assignment getImplicationsAssignment_3_21_1() { return cImplicationsAssignment_3_21_1; }
+		public Assignment getImplicationsAssignment_3_19_2_1() { return cImplicationsAssignment_3_19_2_1; }
 		
 		//Implication
-		public RuleCall getImplicationsImplicationParserRuleCall_3_21_1_0() { return cImplicationsImplicationParserRuleCall_3_21_1_0; }
-		
-		//(',' implications+=Implication)*
-		public Group getGroup_3_21_2() { return cGroup_3_21_2; }
-		
-		//','
-		public Keyword getCommaKeyword_3_21_2_0() { return cCommaKeyword_3_21_2_0; }
-		
-		//implications+=Implication
-		public Assignment getImplicationsAssignment_3_21_2_1() { return cImplicationsAssignment_3_21_2_1; }
-		
-		//Implication
-		public RuleCall getImplicationsImplicationParserRuleCall_3_21_2_1_0() { return cImplicationsImplicationParserRuleCall_3_21_2_1_0; }
+		public RuleCall getImplicationsImplicationParserRuleCall_3_19_2_1_0() { return cImplicationsImplicationParserRuleCall_3_19_2_1_0; }
 		
 		//('uses' 'authority' authorities+=(UPPERCASE_ID|UPPERCASE_PATH))?
-		public Group getGroup_3_22() { return cGroup_3_22; }
+		public Group getGroup_3_20() { return cGroup_3_20; }
 		
 		//'uses'
-		public Keyword getUsesKeyword_3_22_0() { return cUsesKeyword_3_22_0; }
+		public Keyword getUsesKeyword_3_20_0() { return cUsesKeyword_3_20_0; }
 		
 		//'authority'
-		public Keyword getAuthorityKeyword_3_22_1() { return cAuthorityKeyword_3_22_1; }
+		public Keyword getAuthorityKeyword_3_20_1() { return cAuthorityKeyword_3_20_1; }
 		
 		//authorities+=(UPPERCASE_ID|UPPERCASE_PATH)
-		public Assignment getAuthoritiesAssignment_3_22_2() { return cAuthoritiesAssignment_3_22_2; }
+		public Assignment getAuthoritiesAssignment_3_20_2() { return cAuthoritiesAssignment_3_20_2; }
 		
 		//(UPPERCASE_ID|UPPERCASE_PATH)
-		public Alternatives getAuthoritiesAlternatives_3_22_2_0() { return cAuthoritiesAlternatives_3_22_2_0; }
+		public Alternatives getAuthoritiesAlternatives_3_20_2_0() { return cAuthoritiesAlternatives_3_20_2_0; }
 		
 		//UPPERCASE_ID
-		public RuleCall getAuthoritiesUPPERCASE_IDTerminalRuleCall_3_22_2_0_0() { return cAuthoritiesUPPERCASE_IDTerminalRuleCall_3_22_2_0_0; }
+		public RuleCall getAuthoritiesUPPERCASE_IDTerminalRuleCall_3_20_2_0_0() { return cAuthoritiesUPPERCASE_IDTerminalRuleCall_3_20_2_0_0; }
 		
 		//UPPERCASE_PATH
-		public RuleCall getAuthoritiesUPPERCASE_PATHTerminalRuleCall_3_22_2_0_1() { return cAuthoritiesUPPERCASE_PATHTerminalRuleCall_3_22_2_0_1; }
+		public RuleCall getAuthoritiesUPPERCASE_PATHTerminalRuleCall_3_20_2_0_1() { return cAuthoritiesUPPERCASE_PATHTerminalRuleCall_3_20_2_0_1; }
 		
 		//('metadata' metadata=Map)?
-		public Group getGroup_3_23() { return cGroup_3_23; }
+		public Group getGroup_3_21() { return cGroup_3_21; }
 		
 		//'metadata'
-		public Keyword getMetadataKeyword_3_23_0() { return cMetadataKeyword_3_23_0; }
+		public Keyword getMetadataKeyword_3_21_0() { return cMetadataKeyword_3_21_0; }
 		
 		//metadata=Map
-		public Assignment getMetadataAssignment_3_23_1() { return cMetadataAssignment_3_23_1; }
+		public Assignment getMetadataAssignment_3_21_1() { return cMetadataAssignment_3_21_1; }
 		
 		//Map
-		public RuleCall getMetadataMapParserRuleCall_3_23_1_0() { return cMetadataMapParserRuleCall_3_23_1_0; }
+		public RuleCall getMetadataMapParserRuleCall_3_21_1_0() { return cMetadataMapParserRuleCall_3_21_1_0; }
 		
 		//// properties are only object properties and are declared on appearance. This makes typos
 		//// problematic, of course, but the alternative is a load of ugly syntax.
 		//(properties+=PropertyStatement*)
-		public Assignment getPropertiesAssignment_3_24() { return cPropertiesAssignment_3_24; }
+		public Assignment getPropertiesAssignment_3_22() { return cPropertiesAssignment_3_22; }
 		
 		//PropertyStatement
-		public RuleCall getPropertiesPropertyStatementParserRuleCall_3_24_0() { return cPropertiesPropertyStatementParserRuleCall_3_24_0; }
+		public RuleCall getPropertiesPropertyStatementParserRuleCall_3_22_0() { return cPropertiesPropertyStatementParserRuleCall_3_22_0; }
 	}
 	public class DescriptionConstraintsElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.DescriptionConstraints");
@@ -9885,10 +9845,6 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		private final RuleCall cEntriesMapEntryParserRuleCall_2_1_1_0 = (RuleCall)cEntriesAssignment_2_1_1.eContents().get(0);
 		private final Keyword cRightCurlyBracketKeyword_3 = (Keyword)cGroup.eContents().get(3);
 		
-		////Metadata:
-		////    {Metadata} '{' (ids+=(PathName | LOWERCASE_ID | PropertyId | STRING) values+=(LiteralOrID | Metadata | List))* '}';
-		////Documentation:
-		////    {Metadata} '{' (selectors+=DocSelector values+=LiteralOrID)* '}';
 		//Map:
 		//    {Map} '{' (entries+=MapEntry (=> (',')? entries+=MapEntry)*)? '}'
 		//;
@@ -10626,12 +10582,51 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//')'
 		public Keyword getRightParenthesisKeyword_3() { return cRightParenthesisKeyword_3; }
 	}
+	public class OptionElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.Option");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Assignment cKeyAssignment_0 = (Assignment)cGroup.eContents().get(0);
+		private final RuleCall cKeyOPTION_KEYTerminalRuleCall_0_0 = (RuleCall)cKeyAssignment_0.eContents().get(0);
+		private final Assignment cValueAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cValueValueWithIdAndConceptParserRuleCall_1_0 = (RuleCall)cValueAssignment_1.eContents().get(0);
+		
+		////enum DataType:
+		////    TEXT='text' |
+		////    INTEGER='integer' |
+		////    FLOAT='float' |
+		////    BOOLEAN='boolean' |
+		////    DATE='date';
+		//Option:
+		//    key=OPTION_KEY value=ValueWithIdAndConcept
+		//;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//key=OPTION_KEY value=ValueWithIdAndConcept
+		public Group getGroup() { return cGroup; }
+		
+		//key=OPTION_KEY
+		public Assignment getKeyAssignment_0() { return cKeyAssignment_0; }
+		
+		//OPTION_KEY
+		public RuleCall getKeyOPTION_KEYTerminalRuleCall_0_0() { return cKeyOPTION_KEYTerminalRuleCall_0_0; }
+		
+		//value=ValueWithIdAndConcept
+		public Assignment getValueAssignment_1() { return cValueAssignment_1; }
+		
+		//ValueWithIdAndConcept
+		public RuleCall getValueValueWithIdAndConceptParserRuleCall_1_0() { return cValueValueWithIdAndConceptParserRuleCall_1_0; }
+	}
 	public class CONCEPT_TYPEElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.CONCEPT_TYPE");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final Keyword cQualityKeyword_0 = (Keyword)cAlternatives.eContents().get(0);
 		private final RuleCall cDECLARABLE_TYPEParserRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
 		
+		////RESOLUTION_EXCEPTION:
+		////    'error' |
+		////    'nodata' |
+		////    'missing'
+		////;
 		///**
 		// * Carefully selected keywords to define a concept, which enable automatic definition of
 		// * fairly complex semantics and validation against upper ontologies. For now implement
@@ -11037,25 +11032,27 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//        )? &
 		//        (from=Number 'to' to=Number)? &
 		//        (valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
-		//        (optional?='optional' | 'required')? &
+		//        (optional?='optional'| 'required')? &
+		////        (default?='default' 'to' (defaultLiteral=Literal | defaultConcept=ConceptDeclaration) ('when' causes+=RESOLUTION_EXCEPTION (',' causes+=RESOLUTION_EXCEPTION)*)? )? &
 		//        ('named' name=(LOWERCASE_ID|STRING))?
 		//    );
 		@Override public ParserRule getRule() { return rule; }
 		
-		//(value=LiteralValueWithConcept 'as')?
-		//(generic?='any')?
-		//declaration=ConceptDeclaration
-		//(
-		//    ('according' 'to' accordingTo=PropertyId)? &
+		//    (value=LiteralValueWithConcept 'as')?
+		//    (generic?='any')?
+		//    declaration=ConceptDeclaration
 		//    (
-		//        ('in' (unit=Unit | currency=Currency)) |
-		//        ('per' unit=Unit)
-		//    )? &
-		//    (from=Number 'to' to=Number)? &
-		//    (valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
-		//    (optional?='optional' | 'required')? &
-		//    ('named' name=(LOWERCASE_ID|STRING))?
-		//)
+		//        ('according' 'to' accordingTo=PropertyId)? &
+		//        (
+		//            ('in' (unit=Unit | currency=Currency)) |
+		//            ('per' unit=Unit)
+		//        )? &
+		//        (from=Number 'to' to=Number)? &
+		//        (valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
+		//        (optional?='optional'| 'required')? &
+		////        (default?='default' 'to' (defaultLiteral=Literal | defaultConcept=ConceptDeclaration) ('when' causes+=RESOLUTION_EXCEPTION (',' causes+=RESOLUTION_EXCEPTION)*)? )? &
+		//        ('named' name=(LOWERCASE_ID|STRING))?
+		//    )
 		public Group getGroup() { return cGroup; }
 		
 		//(value=LiteralValueWithConcept 'as')?
@@ -11082,17 +11079,18 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//ConceptDeclaration
 		public RuleCall getDeclarationConceptDeclarationParserRuleCall_2_0() { return cDeclarationConceptDeclarationParserRuleCall_2_0; }
 		
-		//(
-		//    ('according' 'to' accordingTo=PropertyId)? &
 		//    (
-		//        ('in' (unit=Unit | currency=Currency)) |
-		//        ('per' unit=Unit)
-		//    )? &
-		//    (from=Number 'to' to=Number)? &
-		//    (valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
-		//    (optional?='optional' | 'required')? &
-		//    ('named' name=(LOWERCASE_ID|STRING))?
-		//)
+		//        ('according' 'to' accordingTo=PropertyId)? &
+		//        (
+		//            ('in' (unit=Unit | currency=Currency)) |
+		//            ('per' unit=Unit)
+		//        )? &
+		//        (from=Number 'to' to=Number)? &
+		//        (valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
+		//        (optional?='optional'| 'required')? &
+		////        (default?='default' 'to' (defaultLiteral=Literal | defaultConcept=ConceptDeclaration) ('when' causes+=RESOLUTION_EXCEPTION (',' causes+=RESOLUTION_EXCEPTION)*)? )? &
+		//        ('named' name=(LOWERCASE_ID|STRING))?
+		//    )
 		public UnorderedGroup getUnorderedGroup_3() { return cUnorderedGroup_3; }
 		
 		//('according' 'to' accordingTo=PropertyId)?
@@ -11182,7 +11180,7 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//ValueOperator
 		public RuleCall getValueOperatorsValueOperatorParserRuleCall_3_3_1_0() { return cValueOperatorsValueOperatorParserRuleCall_3_3_1_0; }
 		
-		//(optional?='optional' | 'required')?
+		//(optional?='optional'| 'required')?
 		public Alternatives getAlternatives_3_4() { return cAlternatives_3_4; }
 		
 		//optional?='optional'
@@ -11194,7 +11192,8 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//'required'
 		public Keyword getRequiredKeyword_3_4_1() { return cRequiredKeyword_3_4_1; }
 		
-		//('named' name=(LOWERCASE_ID|STRING))?
+		////        (default?='default' 'to' (defaultLiteral=Literal | defaultConcept=ConceptDeclaration) ('when' causes+=RESOLUTION_EXCEPTION (',' causes+=RESOLUTION_EXCEPTION)*)? )? &
+		//        ('named' name=(LOWERCASE_ID|STRING))?
 		public Group getGroup_3_5() { return cGroup_3_5; }
 		
 		//'named'
@@ -12314,65 +12313,6 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		public RuleCall getUPPERCASE_IDTerminalRuleCall_3_1() { return cUPPERCASE_IDTerminalRuleCall_3_1; }
 	}
 	
-	public class DataTypeElements extends AbstractElementFinder.AbstractEnumRuleElementFinder {
-		private final EnumRule rule = (EnumRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.DataType");
-		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final EnumLiteralDeclaration cTEXTEnumLiteralDeclaration_0 = (EnumLiteralDeclaration)cAlternatives.eContents().get(0);
-		private final Keyword cTEXTTextKeyword_0_0 = (Keyword)cTEXTEnumLiteralDeclaration_0.eContents().get(0);
-		private final EnumLiteralDeclaration cINTEGEREnumLiteralDeclaration_1 = (EnumLiteralDeclaration)cAlternatives.eContents().get(1);
-		private final Keyword cINTEGERIntegerKeyword_1_0 = (Keyword)cINTEGEREnumLiteralDeclaration_1.eContents().get(0);
-		private final EnumLiteralDeclaration cFLOATEnumLiteralDeclaration_2 = (EnumLiteralDeclaration)cAlternatives.eContents().get(2);
-		private final Keyword cFLOATFloatKeyword_2_0 = (Keyword)cFLOATEnumLiteralDeclaration_2.eContents().get(0);
-		private final EnumLiteralDeclaration cBOOLEANEnumLiteralDeclaration_3 = (EnumLiteralDeclaration)cAlternatives.eContents().get(3);
-		private final Keyword cBOOLEANBooleanKeyword_3_0 = (Keyword)cBOOLEANEnumLiteralDeclaration_3.eContents().get(0);
-		private final EnumLiteralDeclaration cDATEEnumLiteralDeclaration_4 = (EnumLiteralDeclaration)cAlternatives.eContents().get(4);
-		private final Keyword cDATEDateKeyword_4_0 = (Keyword)cDATEEnumLiteralDeclaration_4.eContents().get(0);
-		
-		//enum DataType:
-		//    TEXT='text' |
-		//    INTEGER='integer' |
-		//    FLOAT='float' |
-		//    BOOLEAN='boolean' |
-		//    DATE='date';
-		public EnumRule getRule() { return rule; }
-		
-		//TEXT='text' |
-		//INTEGER='integer' |
-		//FLOAT='float' |
-		//BOOLEAN='boolean' |
-		//DATE='date'
-		public Alternatives getAlternatives() { return cAlternatives; }
-		
-		//TEXT='text'
-		public EnumLiteralDeclaration getTEXTEnumLiteralDeclaration_0() { return cTEXTEnumLiteralDeclaration_0; }
-		
-		//'text'
-		public Keyword getTEXTTextKeyword_0_0() { return cTEXTTextKeyword_0_0; }
-		
-		//INTEGER='integer'
-		public EnumLiteralDeclaration getINTEGEREnumLiteralDeclaration_1() { return cINTEGEREnumLiteralDeclaration_1; }
-		
-		//'integer'
-		public Keyword getINTEGERIntegerKeyword_1_0() { return cINTEGERIntegerKeyword_1_0; }
-		
-		//FLOAT='float'
-		public EnumLiteralDeclaration getFLOATEnumLiteralDeclaration_2() { return cFLOATEnumLiteralDeclaration_2; }
-		
-		//'float'
-		public Keyword getFLOATFloatKeyword_2_0() { return cFLOATFloatKeyword_2_0; }
-		
-		//BOOLEAN='boolean'
-		public EnumLiteralDeclaration getBOOLEANEnumLiteralDeclaration_3() { return cBOOLEANEnumLiteralDeclaration_3; }
-		
-		//'boolean'
-		public Keyword getBOOLEANBooleanKeyword_3_0() { return cBOOLEANBooleanKeyword_3_0; }
-		
-		//DATE='date'
-		public EnumLiteralDeclaration getDATEEnumLiteralDeclaration_4() { return cDATEEnumLiteralDeclaration_4; }
-		
-		//'date'
-		public Keyword getDATEDateKeyword_4_0() { return cDATEDateKeyword_4_0; }
-	}
 	public class UnitOpElements extends AbstractElementFinder.AbstractEnumRuleElementFinder {
 		private final EnumRule rule = (EnumRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.UnitOp");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
@@ -12487,7 +12427,8 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 	private final LiteralValueWithConceptElements pLiteralValueWithConcept;
 	private final FunctionElements pFunction;
 	private final TerminalRule tEXPR;
-	private final DataTypeElements eDataType;
+	private final OptionElements pOption;
+	private final TerminalRule tOPTION_KEY;
 	private final CONCEPT_TYPEElements pCONCEPT_TYPE;
 	private final DECLARABLE_TYPEElements pDECLARABLE_TYPE;
 	private final TRAITElements pTRAIT;
@@ -12609,7 +12550,8 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		this.pLiteralValueWithConcept = new LiteralValueWithConceptElements();
 		this.pFunction = new FunctionElements();
 		this.tEXPR = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.EXPR");
-		this.eDataType = new DataTypeElements();
+		this.pOption = new OptionElements();
+		this.tOPTION_KEY = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.OPTION_KEY");
 		this.pCONCEPT_TYPE = new CONCEPT_TYPEElements();
 		this.pDECLARABLE_TYPE = new DECLARABLE_TYPEElements();
 		this.pTRAIT = new TRAITElements();
@@ -13311,7 +13253,8 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 	//            (=> 'per' unit=Unit)
 	//        )? &
 	//        (=> valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
-	//        (optional?='optional' | 'required')? &
+	//        (optional?='optional'| 'required')? &
+	////        (default?='default' 'to' (defaultLiteral=Literal | defaultConcept=ConceptDeclaration) ('when' causes+=RESOLUTION_EXCEPTION (',' causes+=RESOLUTION_EXCEPTION)*)? )? &
 	//        (from=Number 'to' to=Number)? &
 	//        ('named' name=(LOWERCASE_ID|STRING))?
 	//    );
@@ -13377,7 +13320,8 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 	//            ('per' unit=Unit)
 	//        )? &
 	//        (valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
-	//        (optional?='optional' | 'required')? &
+	//        (optional?='optional'| 'required')? &
+	////        (default?='default' 'to' (defaultLiteral=Literal | defaultConcept=ConceptDeclaration) ('when' causes+=RESOLUTION_EXCEPTION (',' causes+=RESOLUTION_EXCEPTION)*)? )? &
 	//        (from=Number 'to' to=Number)? &
 	//        ('named' name=(LOWERCASE_ID|STRING))?
 	//    );
@@ -13393,14 +13337,15 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 	//    annotations += Annotation*
 	//    ((
 	//        modelReference=(LOWERCASE_ID|PathName|UrnId|STRING) |
-	//        observable=DependencyObservableSemantics
+	//        observable=DependencyObservableSemantics (options+=Option (options+=Option)*)?
 	//    ) |
 	//    (
 	//        '('
 	//            alternativeObservables+=AlternativeDependencyObservableSemantics (',' alternativeObservables+=AlternativeDependencyObservableSemantics)*
 	//        ')'
-	//            (optional?='optional' | 'required')? &
-	//            'named' name=(LOWERCASE_ID|STRING)
+	//        (optional?='optional'| 'required')? &
+	////        (default?='default' 'to' (defaultLiteral=Literal | defaultConcept=ConceptDeclaration) ('when' causes+=RESOLUTION_EXCEPTION (',' causes+=RESOLUTION_EXCEPTION)*)? )? &
+	//        'named' name=(LOWERCASE_ID|STRING)
 	//    ))
 	//;
 	public DependencyElements getDependencyAccess() {
@@ -13603,9 +13548,9 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 	//ConceptStatement:
 	//    annotations += Annotation*
 	//    ((abstract?='abstract')? &
-	//    (deniable?='deniable')? &
-	//    (subjective?='subjective')? &
-	//    (agentSpecifier=('deliberative' | 'interactive' | 'reactive') |
+	//     (deniable?='deniable')? &
+	//     (subjective?='subjective')? &
+	//     (agentSpecifier=('deliberative' | 'interactive' | 'reactive') |
 	//        (propertySpecifiers+=PROPERTY_TYPE (propertySpecifiers+=PROPERTY_TYPE)*) |
 	//        attributeSpecifier='rescaling')?)
 	//    concept=CONCEPT_TYPE body=ConceptStatementBody
@@ -13650,15 +13595,15 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 	//               * subjective orderings.
 	//               */
 	//        ((('is' | alias?='equals') (coreConcept?='core')?) (nothing?='nothing' | parents+=ConceptDeclaration (connectors+=(',' | 'or' | 'and') parents+=ConceptDeclaration)*))? &
-	//    /*
-	//     * traits contextualized. Only applicable to
-	//     * classes. Abstract class must declare exposed traits; concrete class must
-	//     * provide matching values using 'exposing'
-	//     */
-	//        (
-	//            ('exposes' contextualizedTraits+=ObservableSemantics (','  contextualizedTraits+=ObservableSemantics)*) |
-	//            (specific?='exposing' contextualizesTraits+=ConceptDeclaration (','  contextualizesTraits+=ConceptDeclaration)*)
-	//        )? &
+	////    /*
+	////     * traits contextualized. Only applicable to
+	////     * classes. Abstract class must declare exposed traits; concrete class must
+	////     * provide matching values using 'exposing'
+	////     */
+	////        (
+	////            ('exposes' contextualizedTraits+=ObservableSemantics (','  contextualizedTraits+=ObservableSemantics)*) |
+	////            (specific?='exposing' contextualizesTraits+=ConceptDeclaration (','  contextualizesTraits+=ConceptDeclaration)*)
+	////        )? &
 	//    /*
 	//     * identifies main concepts for authority
 	//     *
@@ -13720,44 +13665,49 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 	//        ('confers' conferredTraits+=ConceptDeclaration (',' conferredTraits+=ConceptDeclaration)*
 	//            ('to' conferredTargets+=ConceptDeclaration (',' conferredTargets+=ConceptDeclaration)*)?
 	//        )? &
+	//        /*
+	//         * explicit declaration of triggers for emergent observables (subjects, processes and configuration)
+	//         */
+	//        ('emerges' 'from' emergenceTriggers+=ConceptDeclaration (',' emergenceTriggers+=ConceptDeclaration)*)? &
 	//    /**
-	//     * Shorthand for common 'part of' restriction
+	//     * Shorthand for common 'part of' restriction. TODO deprecate? Part-of should be left to the worldview.
 	//     */
-	//        (('part' | constituent?='constituent' | constitutes?='consists') partOf?='of' whole=ConceptDeclaration)? &
+	////    (('part' | constituent?='constituent' | constitutes?='consists') partOf?='of' whole=ConceptDeclaration)? &
 	//    /*
-	//     * for processes: creates countable in context.
+	//     * for processes: creates quality. Also for structural relationships (creates subject) and functional relationships\
+	//     * (creates process). Paired with "affects" for process -> quality.
 	//     */
-	//        ('creates' creates+=ConceptDeclaration (',' creates+=ConceptDeclaration)*)? &
+	//    ('creates' creates+=ConceptDeclaration (',' creates+=ConceptDeclaration)*)? &
 	//    /*
 	//     * traits can specify the set of allowed targets here. Also allows qualities and
 	//     * processes to specify their inherent target.
 	//     *
 	//     * If applying concept is a role and it applies to a relationship, this can also restrict the source and destination.
 	//     */
-	//        ('applies' 'to' traitTargets+=ApplicableTarget (',' traitTargets+=ApplicableTarget)*)? &
+	//    ('applies' 'to' traitTargets+=ApplicableTarget (',' traitTargets+=ApplicableTarget)*)? &
 	//    /*
 	//     * only for relationships: set domain and range of the associated property.
 	//     */
-	//        ('links' domains+=SimpleConceptDeclaration => 'to' ranges+=SimpleConceptDeclaration
+	//    ('links' domains+=SimpleConceptDeclaration => 'to' ranges+=SimpleConceptDeclaration
 	//            (',' domains+=SimpleConceptDeclaration => 'to' ranges+=SimpleConceptDeclaration)*)? &
 	//    /*
 	//     * only for relationships - set the inverse of the associated property (through the
 	//     * relationship concept).
 	//     */
-	//        ('inverse' 'of' inverse=ConceptDeclaration)? &
+	////    ('inverse' 'of' inverse=ConceptDeclaration)? &
 	//    /*
 	//     * for processes; lists qualities affected;
 	//     * for deliberative agents: lists the subject types whose states this can
 	//     * modify.
 	//     */
-	//        ('affects' qualitiesAffected+=ConceptDeclaration (',' qualitiesAffected+=ConceptDeclaration)*)? &
-	//        ('has' (disjoint?='disjoint')? 'children' children+=ChildConcept (',' children+=ChildConcept)*)? &
-	//        ('implies' implications+=Implication (',' implications+=Implication)*)? &
-	//        ('uses' 'authority' authorities+=(UPPERCASE_ID|UPPERCASE_PATH))? &
-	//        ('metadata' metadata=Map)? &
-	//        // properties are only object properties and are declared on appearance. This makes typos
-	//        // problematic, of course, but the alternative is a load of ugly syntax.
-	//        (properties+=PropertyStatement*)
+	//    ('affects' qualitiesAffected+=ConceptDeclaration (',' qualitiesAffected+=ConceptDeclaration)*)? &
+	//    ('has' (disjoint?='disjoint')? 'children' children+=ChildConcept (',' children+=ChildConcept)*)? &
+	//    ('implies' implications+=Implication (',' implications+=Implication)*)? &
+	//    ('uses' 'authority' authorities+=(UPPERCASE_ID|UPPERCASE_PATH))? &
+	//    ('metadata' metadata=Map)? &
+	//    // properties are only object properties and are declared on appearance. This makes typos
+	//    // problematic, of course, but the alternative is a load of ugly syntax.
+	//    (properties+=PropertyStatement*)
 	//    )
 	//;
 	public ConceptStatementBodyElements getConceptStatementBodyAccess() {
@@ -13928,10 +13878,6 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		return getLiteralOrIdOrCommaAccess().getRule();
 	}
 	
-	////Metadata:
-	////    {Metadata} '{' (ids+=(PathName | LOWERCASE_ID | PropertyId | STRING) values+=(LiteralOrID | Metadata | List))* '}';
-	////Documentation:
-	////    {Metadata} '{' (selectors+=DocSelector values+=LiteralOrID)* '}';
 	//Map:
 	//    {Map} '{' (entries+=MapEntry (=> (',')? entries+=MapEntry)*)? '}'
 	//;
@@ -14072,20 +14018,34 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		return tEXPR;
 	}
 	
-	//enum DataType:
-	//    TEXT='text' |
-	//    INTEGER='integer' |
-	//    FLOAT='float' |
-	//    BOOLEAN='boolean' |
-	//    DATE='date';
-	public DataTypeElements getDataTypeAccess() {
-		return eDataType;
+	////enum DataType:
+	////    TEXT='text' |
+	////    INTEGER='integer' |
+	////    FLOAT='float' |
+	////    BOOLEAN='boolean' |
+	////    DATE='date';
+	//Option:
+	//    key=OPTION_KEY value=ValueWithIdAndConcept
+	//;
+	public OptionElements getOptionAccess() {
+		return pOption;
 	}
 	
-	public EnumRule getDataTypeRule() {
-		return getDataTypeAccess().getRule();
+	public ParserRule getOptionRule() {
+		return getOptionAccess().getRule();
 	}
 	
+	//terminal OPTION_KEY:
+	//    '?'('a'..'z') ('a'..'z' | '0'..'9')*;
+	public TerminalRule getOPTION_KEYRule() {
+		return tOPTION_KEY;
+	}
+	
+	////RESOLUTION_EXCEPTION:
+	////    'error' |
+	////    'nodata' |
+	////    'missing'
+	////;
 	///**
 	// * Carefully selected keywords to define a concept, which enable automatic definition of
 	// * fairly complex semantics and validation against upper ontologies. For now implement
@@ -14227,7 +14187,8 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 	//        )? &
 	//        (from=Number 'to' to=Number)? &
 	//        (valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
-	//        (optional?='optional' | 'required')? &
+	//        (optional?='optional'| 'required')? &
+	////        (default?='default' 'to' (defaultLiteral=Literal | defaultConcept=ConceptDeclaration) ('when' causes+=RESOLUTION_EXCEPTION (',' causes+=RESOLUTION_EXCEPTION)*)? )? &
 	//        ('named' name=(LOWERCASE_ID|STRING))?
 	//    );
 	public DependencyObservableSemanticsElements getDependencyObservableSemanticsAccess() {

@@ -41,7 +41,9 @@ public enum ResourceIndexer {
 	private StandardAnalyzer analyzer;
 	private ReferenceManager<IndexSearcher> searcherManager;
 	private ControlledRealTimeReopenThread<IndexSearcher> nrtReopenThread;
-
+	
+	
+	
 	public static final int MAX_RESULT_COUNT = 9;
 
 	private ResourceIndexer() {

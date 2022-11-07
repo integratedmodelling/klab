@@ -15,6 +15,7 @@ import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IObserver;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ITask;
@@ -46,7 +47,7 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
     IParameters<String> globalState = Parameters.create();
     AtomicReference<ISubject> result = new AtomicReference<>();
     AtomicBoolean disaster = new AtomicBoolean(Boolean.FALSE);
-    
+
     @Override
     public IParameters<String> getState() {
         return globalState;
@@ -72,17 +73,15 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
         return new ObserveContextTask(session, observer, null, autostart);
     }
 
-    private ObserveContextTask(Session session, Acknowledgement observer, Collection<String> scenarios,
-            boolean autostart) {
-        this(session, observer, scenarios, null, null,
-                session.getParentIdentity(Engine.class).getTaskExecutor(), null, autostart);
+    private ObserveContextTask(Session session, Acknowledgement observer, Collection<String> scenarios, boolean autostart) {
+        this(session, observer, session, scenarios, null, null, session.getParentIdentity(Engine.class).getTaskExecutor(), null,
+                autostart);
     }
 
     public ObserveContextTask(Session session, Acknowledgement observer, Collection<String> scenarios) {
-        this(session, observer, scenarios, null, null,
-                session.getParentIdentity(Engine.class).getTaskExecutor(), null, true);
+        this(session, observer, session, scenarios, null, null, session.getParentIdentity(Engine.class).getTaskExecutor(), null,
+                true);
     }
-    
 
     @Override
     public IIdentity.Type getIdentityType() {
@@ -101,10 +100,10 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
      * @param observationListener
      * @param errorListener
      */
-    public ObserveContextTask(Session session, Acknowledgement observer, Collection<String> scenarioList,
-            Collection<BiConsumer<ITask<?>, IArtifact>> oListeners,
-            Collection<BiConsumer<ITask<?>, Throwable>> eListeners, Executor executor,
-            SessionActivity activityDescriptor, boolean autostart) {
+    public ObserveContextTask(Session session, Acknowledgement observer, IObserver<?> observingAgent,
+            Collection<String> scenarioList, Collection<BiConsumer<ITask<?>, IArtifact>> oListeners,
+            Collection<BiConsumer<ITask<?>, Throwable>> eListeners, Executor executor, SessionActivity activityDescriptor,
+            boolean autostart) {
 
         try {
 
@@ -152,13 +151,12 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
                         /*
                          * create the root contextualization scope for the context
                          */
-                        IRuntimeScope runtimeScope = RuntimeScope.rootScope(scope);
+                        IRuntimeScope runtimeScope = RuntimeScope.rootScope(scope, observingAgent);
 
                         if (scope.getCoverage().isRelevant()) {
 
                             Dataflow dataflow = Dataflows.INSTANCE
-                                    .compile("local:task:" + session.getId() + ":" + token, scope, null)
-                                    .setPrimary(true);
+                                    .compile("local:task:" + session.getId() + ":" + token, scope, null).setPrimary(true);
 
                             dataflow.setDescription(taskDescription);
 
@@ -215,15 +213,15 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
                                 errorListener.accept((ITask<?>) this.task, e);
                             }
                         }
-                        
+
                         disaster.set(true);
 
                         throw notifyAbort(e);
 
                     }
-                    
+
                     result.set(ret);
-                    
+
                     return ret;
                 }
 
@@ -291,19 +289,18 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
             start();
         }
         return delegate.get();
-//        while (result.get() == null && !disaster.get()) {
-//            Thread.sleep(400);
-//        }
-//        return disaster.get() ? null : result.get();
+        // while (result.get() == null && !disaster.get()) {
+        // Thread.sleep(400);
+        // }
+        // return disaster.get() ? null : result.get();
     }
 
     @Override
-    public ISubject get(long timeout, TimeUnit unit)
-            throws InterruptedException, ExecutionException, TimeoutException {
+    public ISubject get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
         if (!started) {
             start();
         }
-        
+
         return delegate.get(timeout, unit);
     }
 

@@ -16,12 +16,8 @@ package org.integratedmodelling.klab.api.observations;
 import java.util.Collection;
 import java.util.Map;
 
-import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.knowledge.IIndividual;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.knowledge.IOntology;
-import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISessionState;
 import org.integratedmodelling.klab.api.runtime.ITask;
 
@@ -37,7 +33,7 @@ import org.integratedmodelling.klab.api.runtime.ITask;
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-public interface ISubject extends IDirectObservation {
+public interface ISubject extends IDirectObservation, IObserver<IObservation> {
 
     /**
      * <p>
@@ -118,32 +114,20 @@ public interface ISubject extends IDirectObservation {
      */
     ITask<IObservation> observe(IObservable observable);
 
-    /**
-     * Observe the resolvable correspondent to the passed URN in this context, returning an
-     * asynchronous future that will produce an observation. Equivalent to
-     * {@link #observe(IObservable)} but will permit calling model URNs as well as semantic
-     * observables. This is available in code usage but is not exposed through the public API.
-     * 
-     * @param observable a URN that resolves to a resolvable object - a concept, observable,
-     *        observer or model (semantic or non-semantic).
-     * @return a paused task to optionally configure and use by calling get() or start().
-     */
-    ITask<IObservation> observe(String resolvableUrn);
-
     /*
      * ----------------------------------------------------------------------------- ---------
      * Runtime functions below
      * ----------------------------------------------------------------------------- ---------
      */
 
-    /**
-     * Call this on the root observation to create the logical peers of an observation tree in the
-     * passed ontology.
-     *
-     * @param ontology an ontology, usually empty (may be created with
-     *        {@link org.integratedmodelling.klab.api.services.IOntologyService#require(String)}).
-     * @return the individual corresponding to this subject.
-     */
-    IIndividual instantiate(IOntology ontology);
+//    /**
+//     * Call this on the root observation to create the logical peers of an observation tree in the
+//     * passed ontology.
+//     *
+//     * @param ontology an ontology, usually empty (may be created with
+//     *        {@link org.integratedmodelling.klab.api.services.IOntologyService#require(String)}).
+//     * @return the individual corresponding to this subject.
+//     */
+//    IIndividual instantiate(IOntology ontology);
 
 }

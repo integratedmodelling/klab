@@ -210,8 +210,12 @@ public class ConfigurableRelationshipInstantiator extends AbstractContextualizer
 
         for (IObservation source : allSources) {
 
-            if (context.getMonitor().isInterrupted() || connected.contains(source)) {
+            if (context.getMonitor().isInterrupted()) {
                 break;
+            }
+            
+            if (connected.contains(source)) {
+                continue;
             }
 
             if (method == Method.Closest) {
@@ -317,7 +321,7 @@ public class ConfigurableRelationshipInstantiator extends AbstractContextualizer
                     }
                     ISpace tspace = target.getScale().getSpace();
                     if (tspace != null) {
-                        if (tspace.getShape().contains(xy)) {
+                        if (tspace.getDimensionality() < 2 || tspace.getShape().contains(xy)) {
                             return new Pair<Shape, IDirectObservation>(
                                     Shape.create(xy[0], xy[1], (Projection) tspace.getShape().getProjection()),
                                     (IDirectObservation) target);
@@ -406,7 +410,7 @@ public class ConfigurableRelationshipInstantiator extends AbstractContextualizer
         // add to graph for bookkeeping unless we don't need it
         graph.addVertex(source);
         graph.addVertex(target);
-        graph.addEdge(source, target, new SpatialEdge(null, spatialConnection.getShape()));
+        graph.addEdge(source, target, new SpatialEdge(null, spatialConnection == null ? null : spatialConnection.getShape()));
     }
 
     /*

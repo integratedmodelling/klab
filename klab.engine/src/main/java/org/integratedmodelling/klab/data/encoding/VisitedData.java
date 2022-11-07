@@ -14,6 +14,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.components.runtime.artifacts.ObjectArtifact;
 import org.integratedmodelling.klab.components.runtime.artifacts.StorageDataArtifact;
+import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.data.encoding.VisitingDataBuilder.Descriptor;
 import org.integratedmodelling.klab.scale.Scale;
 
@@ -21,6 +22,7 @@ public class VisitedData implements IKlabData {
 
 	IDataArtifact state = null;
 	ObjectArtifact object = null;
+	Metadata metadata = new Metadata();
 	List<INotification> notifications = new ArrayList<>();
 	boolean errors = false;
 	IConcept semantics;
@@ -103,5 +105,10 @@ public class VisitedData implements IKlabData {
 	public IConcept getSemantics() {
 		return semantics;
 	}
+
+    @Override
+    public IMetadata getMetadata() {
+        return metadata;
+    }
 
 }

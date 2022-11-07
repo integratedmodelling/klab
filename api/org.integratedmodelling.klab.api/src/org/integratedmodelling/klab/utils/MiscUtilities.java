@@ -52,6 +52,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -179,21 +180,6 @@ public class MiscUtilities {
      * 0xEFBBBF.
      */
     public static final String UTF_8_Y = "UTF-8Y";
-
-    // static public boolean deleteDirectory(File path) {
-    //
-    // if (path.exists()) {
-    // File[] files = path.listFiles();
-    // for (int i = 0; i < files.length; i++) {
-    // if (files[i].isDirectory()) {
-    // deleteDirectory(files[i]);
-    // } else {
-    // files[i].delete();
-    // }
-    // }
-    // }
-    // return (path.delete());
-    // }
 
     /**
      * Extract the file extension from a file name.
@@ -1846,6 +1832,7 @@ public class MiscUtilities {
     }
 
     public static boolean isRelativePath(String export) {
-        return !export.contains("/") && !export.contains("\\") && !export.contains(":");
+        Path path = Path.of(export);
+        return !path.isAbsolute();
     }
 }

@@ -33,6 +33,13 @@ void cd
 	class org.integratedmodelling.klab.cli.commands.Cd
 }
 
+void db
+	"Commands to inspect and interact with the kbox."
+{
+	class org.integratedmodelling.klab.cli.commands.Db
+}
+
+
 void log
 	"Tail the logfile of this engine or any node. Pass the number of lines, defaults at 100."
 {

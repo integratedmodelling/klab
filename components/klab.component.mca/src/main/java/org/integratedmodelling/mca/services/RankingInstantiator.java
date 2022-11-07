@@ -12,7 +12,6 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.model.contextualization.IProcessor;
 import org.integratedmodelling.klab.api.observations.IObservationGroup;
-import org.integratedmodelling.klab.api.observations.ISubjectiveObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
@@ -82,10 +81,10 @@ public class RankingInstantiator extends AbstractContextualizer implements IInst
              * if they are also subjective.
              */
             if (observers.size() > 1) {
-                // if state is not an observed set, wrap it into one
-                if (!(target instanceof ISubjectiveObservation)) {
-                    target = ((ObservationGroup)target).reinterpret(/* TODO */ null);
-                }
+//                // if state is not an observed set, wrap it into one
+//                if (!(target instanceof ISubjectiveObservation)) {
+//                    target = ((ObservationGroup)target).reinterpret(/* TODO */ null);
+//                }
                 // set the observer in the stakeholder in the set so that all further assignments reflect
                 // its perspective
                 ((ObservationGroup) target).setObserver(observer.getSubject());

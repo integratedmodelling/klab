@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.ide;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
@@ -62,12 +63,20 @@ import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.StringUtil;
 import org.osgi.framework.BundleContext;
+import org.slf4j.ILoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.joran.JoranConfigurator;
+import ch.qos.logback.core.joran.spi.JoranException;
 
 /**
  * The activator class controls the plug-in life cycle
  */
 public class Activator extends AbstractUIPlugin {
 
+    private static Logger logger = LoggerFactory.getLogger(Activator.class);
 	public static final String PLUGIN_ID = "org.integratedmodelling.klab.ide";
 	private static Activator plugin;
 	private EngineMonitor engineStatusMonitor;
@@ -92,12 +101,12 @@ public class Activator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 
 		super.start(context);
+		configureLogback();
 
 		/*
 		 * TODO retrieve from preferences if so configured.
 		 */
 		String initialSessionId = null;
-
 		/**
 		 * Install k.Actors code assistant
 		 */
@@ -362,6 +371,21 @@ public class Activator extends AbstractUIPlugin {
 		this.engineStatusMonitor.start(relayId);
 
 	}
+	
+	private void configureLogback() {
+	    ILoggerFactory iLoggerFactory = LoggerFactory.getILoggerFactory();  
+        LoggerContext loggerContext = (LoggerContext) iLoggerFactory;  
+        loggerContext.reset();  
+        JoranConfigurator configurator = new JoranConfigurator();  
+        configurator.setContext(loggerContext);  
+        try {  
+          configurator.doConfigure(getClass().getResourceAsStream("/logback.xml"));
+          logger.info("Logback configured");
+        } catch (JoranException e) {
+            // log will not work, but we continue
+            System.err.println(e);  
+        }  
+	}
 
 	/**
 	 * Call this after adding or removing projects
@@ -407,7 +431,7 @@ public class Activator extends AbstractUIPlugin {
 		this.engine.send(Message.create(this.engineStatusMonitor.getEngineId(), IMessage.MessageClass.EngineLifecycle,
 				IMessage.Type.EngineDown, this.engineStatusMonitor.getCapabilities()));
 		this.user = new KlabUser();
-		System.out.println("--------------\nEngine went off\n----------------");
+		logger.info("--------------\nEngine went off\n----------------");
 	}
 
 	private void engineOn() {

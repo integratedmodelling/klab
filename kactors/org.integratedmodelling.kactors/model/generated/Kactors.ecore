@@ -231,6 +231,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="urn" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="literal" eType="#//Literal"
         containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="cast" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="list" eType="#//List" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="map" eType="#//Map" containment="true"/>

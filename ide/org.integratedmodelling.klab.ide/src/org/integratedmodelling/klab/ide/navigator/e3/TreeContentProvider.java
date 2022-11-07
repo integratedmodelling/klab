@@ -9,34 +9,33 @@ import org.integratedmodelling.klab.ide.navigator.model.EWorkspace;
 
 public class TreeContentProvider extends WorkbenchContentProvider {
 
-    @Override
-    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-        if (KlabNavigator._viewer == null) {
-            KlabNavigator._viewer = viewer;
-        }
-        super.inputChanged(viewer, oldInput, newInput);
-    }
+	@Override
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		if (KlabNavigator._viewer == null) {
+			KlabNavigator._viewer = viewer;
+		}
+		super.inputChanged(viewer, oldInput, newInput);
+	}
 
-    public void dispose() {
-        super.dispose();
-    }
+	public void dispose() {
+		super.dispose();
+	}
 
-    public Object[] getElements(Object inputElement) {
-        return getChildren(inputElement);
-    }
+	public Object[] getElements(Object inputElement) {
+		return getChildren(inputElement);
+	}
 
-    public Object[] getChildren(Object parent) {
-        return parent instanceof EWorkspace ? EWorkspace.INSTANCE.getEChildren()
-                : ((ENavigatorItem) parent).getEChildren();
-    }
+	public Object[] getChildren(Object parent) {
+		return parent instanceof EWorkspace ? EWorkspace.INSTANCE.getEChildren()
+				: ((ENavigatorItem) parent).getEChildren();
+	}
 
-    public Object getParent(Object element) {
-        return element instanceof EProject ? EWorkspace.INSTANCE
-                : ((ENavigatorItem) element).getEParent();
-    }
+	public Object getParent(Object element) {
+		return element instanceof EProject ? EWorkspace.INSTANCE : ((ENavigatorItem) element).getEParent();
+	}
 
-    public boolean hasChildren(Object element) {
-        return element instanceof IWorkspaceRoot ? EWorkspace.INSTANCE.hasEChildren()
-                : ((ENavigatorItem) element).hasEChildren();
-    }
+	public boolean hasChildren(Object element) {
+		return element instanceof IWorkspaceRoot ? EWorkspace.INSTANCE.hasEChildren()
+				: (element instanceof ENavigatorItem ? ((ENavigatorItem) element).hasEChildren() : false);
+	}
 }

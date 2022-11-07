@@ -15,12 +15,12 @@
  */
 package org.integratedmodelling.klab.api.data;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
-import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
+import org.integratedmodelling.klab.utils.Pair;
 
 /**
  * The Interface IResourceCatalog.
@@ -73,7 +73,7 @@ public interface IResourceCatalog extends Map<String, IResource> {
 	 * incorporated in the passed resource.
 	 * 
 	 * @param resource
-	 * @param a string describing the update
+	 * @param a        string describing the update
 	 * @return the updated resource
 	 * @throws KlabResourceNotFoundException if a resource with the same URN is not
 	 *                                       in the catalog.

@@ -7,7 +7,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import groovy.lang.GroovyObjectSupport;
 
 /**
- * Wrapper for artifacts 
+ * Wrapper for artifacts
  * 
  * @author Ferd
  *
@@ -15,7 +15,7 @@ import groovy.lang.GroovyObjectSupport;
 public class Artifact extends GroovyObjectSupport {
 
     IArtifact artifact;
-    
+
     public Artifact(IArtifact artifact) {
         this.artifact = artifact;
     }
@@ -27,19 +27,21 @@ public class Artifact extends GroovyObjectSupport {
 
     @Override
     public Object getProperty(String key) {
-       switch (key) {
-           default:
-               break;
-       }
-       return artifact.getMetadata().get(key);
+        switch(key) {
+        case "name":
+            return artifact instanceof IObjectArtifact ? ((IObjectArtifact) artifact).getName() : artifact.getId();
+        default:
+            break;
+        }
+        return artifact.getMetadata().get(key);
     }
 
     public IObjectArtifact getObjectArtifact() {
-        return artifact instanceof IObjectArtifact ? (IObjectArtifact)artifact : null;
+        return artifact instanceof IObjectArtifact ? (IObjectArtifact) artifact : null;
     }
 
     public IDataArtifact getDataArtifact() {
-        return artifact instanceof IDataArtifact ? (IDataArtifact)artifact : null;
+        return artifact instanceof IDataArtifact ? (IDataArtifact) artifact : null;
     }
 
 }

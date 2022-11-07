@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.resolution.IResolutionConstraint;
 import org.integratedmodelling.klab.common.Urns;
+import org.integratedmodelling.klab.model.Model;
 
 /**
  * Resolution constraints can be added through k.Actors or options to affect the resolution. They
@@ -122,8 +123,11 @@ public class ResolutionConstraint implements IResolutionConstraint {
                     }
                 }
             } else if (!modelWhitelist.isEmpty()) {
-                ret = false;
                 for (IModel m : modelWhitelist) {
+                    if (((Model)m).findOutput(observable) == null) {
+                        continue;
+                    }
+                    ret = false;
                     if (m.getName().equals(model.getName())) {
                         ret = true;
                         break;

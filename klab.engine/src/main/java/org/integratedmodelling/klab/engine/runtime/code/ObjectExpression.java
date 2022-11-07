@@ -1,7 +1,5 @@
 package org.integratedmodelling.klab.engine.runtime.code;
 
-import java.util.Map;
-
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Extensions;
@@ -10,9 +8,6 @@ import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
 import org.integratedmodelling.klab.api.data.general.IExpression.Forcing;
 import org.integratedmodelling.klab.api.extensions.ILanguageExpression;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
-import org.integratedmodelling.klab.api.observations.IObservation;
-import org.integratedmodelling.klab.api.observations.IState;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Utils;
@@ -71,17 +66,17 @@ public class ObjectExpression {
             this.parameters.putAll(additionalParameters);
         }
 
-        IScale scale = identity instanceof IObservation ? ((IObservation) identity).getScale() : null;
-
-        Map<String, IObservation> artifacts = scope.getLocalCatalog(IObservation.class);
-        if (artifacts != null) {
-            for (String id : descriptor.getIdentifiersInScalarScope()) {
-                IObservation artifact = artifacts.get(id);
-                if (artifact instanceof IState && scale != null) {
-                    parameters.put(id, ((IState) artifact).get(scale));
-                }
-            }
-        }
+//        IScale scale = identity instanceof IObservation ? ((IObservation) identity).getScale() : null;
+//
+//        Map<String, IObservation> artifacts = scope.getLocalCatalog(IObservation.class);
+//        if (artifacts != null) {
+//            for (String id : descriptor.getIdentifiersInScalarScope()) {
+//                IObservation artifact = artifacts.get(id);
+//                if (artifact instanceof IState && scale != null) {
+//                    parameters.put(id, ((IState) artifact).get(scale));
+//                }
+//            }
+//        }
 
         return Utils.asType(this.expression.eval(scope, parameters, "self", identity), cls);
     }

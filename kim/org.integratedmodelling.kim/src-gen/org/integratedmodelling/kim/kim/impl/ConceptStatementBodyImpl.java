@@ -31,7 +31,6 @@ import org.integratedmodelling.kim.kim.IdentityRequirement;
 import org.integratedmodelling.kim.kim.Implication;
 import org.integratedmodelling.kim.kim.KimPackage;
 import org.integratedmodelling.kim.kim.Map;
-import org.integratedmodelling.kim.kim.ObservableSemantics;
 import org.integratedmodelling.kim.kim.PropertyStatement;
 
 /**
@@ -55,9 +54,6 @@ import org.integratedmodelling.kim.kim.PropertyStatement;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#isNothing <em>Nothing</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#getParents <em>Parents</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#getConnectors <em>Connectors</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#getContextualizedTraits <em>Contextualized Traits</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#isSpecific <em>Specific</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#getContextualizesTraits <em>Contextualizes Traits</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#getDefinedAuthority <em>Defined Authority</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#getUpperConcept <em>Upper Concept</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#getRequirements <em>Requirements</em>}</li>
@@ -74,15 +70,11 @@ import org.integratedmodelling.kim.kim.PropertyStatement;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#getRestrictedObservables <em>Restricted Observables</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#getConferredTraits <em>Conferred Traits</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#getConferredTargets <em>Conferred Targets</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#isConstituent <em>Constituent</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#isConstitutes <em>Constitutes</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#isPartOf <em>Part Of</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#getWhole <em>Whole</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#getEmergenceTriggers <em>Emergence Triggers</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#getCreates <em>Creates</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#getTraitTargets <em>Trait Targets</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#getDomains <em>Domains</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#getRanges <em>Ranges</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#getInverse <em>Inverse</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#getQualitiesAffected <em>Qualities Affected</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#isDisjoint <em>Disjoint</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptStatementBodyImpl#getChildren <em>Children</em>}</li>
@@ -327,46 +319,6 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
   protected EList<String> connectors;
 
   /**
-   * The cached value of the '{@link #getContextualizedTraits() <em>Contextualized Traits</em>}' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getContextualizedTraits()
-   * @generated
-   * @ordered
-   */
-  protected EList<ObservableSemantics> contextualizedTraits;
-
-  /**
-   * The default value of the '{@link #isSpecific() <em>Specific</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isSpecific()
-   * @generated
-   * @ordered
-   */
-  protected static final boolean SPECIFIC_EDEFAULT = false;
-
-  /**
-   * The cached value of the '{@link #isSpecific() <em>Specific</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isSpecific()
-   * @generated
-   * @ordered
-   */
-  protected boolean specific = SPECIFIC_EDEFAULT;
-
-  /**
-   * The cached value of the '{@link #getContextualizesTraits() <em>Contextualizes Traits</em>}' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getContextualizesTraits()
-   * @generated
-   * @ordered
-   */
-  protected EList<ConceptDeclaration> contextualizesTraits;
-
-  /**
    * The default value of the '{@link #getDefinedAuthority() <em>Defined Authority</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -537,74 +489,14 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
   protected EList<ConceptDeclaration> conferredTargets;
 
   /**
-   * The default value of the '{@link #isConstituent() <em>Constituent</em>}' attribute.
+   * The cached value of the '{@link #getEmergenceTriggers() <em>Emergence Triggers</em>}' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #isConstituent()
+   * @see #getEmergenceTriggers()
    * @generated
    * @ordered
    */
-  protected static final boolean CONSTITUENT_EDEFAULT = false;
-
-  /**
-   * The cached value of the '{@link #isConstituent() <em>Constituent</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isConstituent()
-   * @generated
-   * @ordered
-   */
-  protected boolean constituent = CONSTITUENT_EDEFAULT;
-
-  /**
-   * The default value of the '{@link #isConstitutes() <em>Constitutes</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isConstitutes()
-   * @generated
-   * @ordered
-   */
-  protected static final boolean CONSTITUTES_EDEFAULT = false;
-
-  /**
-   * The cached value of the '{@link #isConstitutes() <em>Constitutes</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isConstitutes()
-   * @generated
-   * @ordered
-   */
-  protected boolean constitutes = CONSTITUTES_EDEFAULT;
-
-  /**
-   * The default value of the '{@link #isPartOf() <em>Part Of</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isPartOf()
-   * @generated
-   * @ordered
-   */
-  protected static final boolean PART_OF_EDEFAULT = false;
-
-  /**
-   * The cached value of the '{@link #isPartOf() <em>Part Of</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isPartOf()
-   * @generated
-   * @ordered
-   */
-  protected boolean partOf = PART_OF_EDEFAULT;
-
-  /**
-   * The cached value of the '{@link #getWhole() <em>Whole</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getWhole()
-   * @generated
-   * @ordered
-   */
-  protected ConceptDeclaration whole;
+  protected EList<ConceptDeclaration> emergenceTriggers;
 
   /**
    * The cached value of the '{@link #getCreates() <em>Creates</em>}' containment reference list.
@@ -645,16 +537,6 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
    * @ordered
    */
   protected EList<ConceptDeclaration> ranges;
-
-  /**
-   * The cached value of the '{@link #getInverse() <em>Inverse</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getInverse()
-   * @generated
-   * @ordered
-   */
-  protected ConceptDeclaration inverse;
 
   /**
    * The cached value of the '{@link #getQualitiesAffected() <em>Qualities Affected</em>}' containment reference list.
@@ -1050,61 +932,6 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
       connectors = new EDataTypeEList<String>(String.class, this, KimPackage.CONCEPT_STATEMENT_BODY__CONNECTORS);
     }
     return connectors;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EList<ObservableSemantics> getContextualizedTraits()
-  {
-    if (contextualizedTraits == null)
-    {
-      contextualizedTraits = new EObjectContainmentEList<ObservableSemantics>(ObservableSemantics.class, this, KimPackage.CONCEPT_STATEMENT_BODY__CONTEXTUALIZED_TRAITS);
-    }
-    return contextualizedTraits;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public boolean isSpecific()
-  {
-    return specific;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setSpecific(boolean newSpecific)
-  {
-    boolean oldSpecific = specific;
-    specific = newSpecific;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT_STATEMENT_BODY__SPECIFIC, oldSpecific, specific));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EList<ConceptDeclaration> getContextualizesTraits()
-  {
-    if (contextualizesTraits == null)
-    {
-      contextualizesTraits = new EObjectContainmentEList<ConceptDeclaration>(ConceptDeclaration.class, this, KimPackage.CONCEPT_STATEMENT_BODY__CONTEXTUALIZES_TRAITS);
-    }
-    return contextualizesTraits;
   }
 
   /**
@@ -1643,123 +1470,13 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
    * @generated
    */
   @Override
-  public boolean isConstituent()
+  public EList<ConceptDeclaration> getEmergenceTriggers()
   {
-    return constituent;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setConstituent(boolean newConstituent)
-  {
-    boolean oldConstituent = constituent;
-    constituent = newConstituent;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT_STATEMENT_BODY__CONSTITUENT, oldConstituent, constituent));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public boolean isConstitutes()
-  {
-    return constitutes;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setConstitutes(boolean newConstitutes)
-  {
-    boolean oldConstitutes = constitutes;
-    constitutes = newConstitutes;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT_STATEMENT_BODY__CONSTITUTES, oldConstitutes, constitutes));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public boolean isPartOf()
-  {
-    return partOf;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setPartOf(boolean newPartOf)
-  {
-    boolean oldPartOf = partOf;
-    partOf = newPartOf;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT_STATEMENT_BODY__PART_OF, oldPartOf, partOf));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public ConceptDeclaration getWhole()
-  {
-    return whole;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetWhole(ConceptDeclaration newWhole, NotificationChain msgs)
-  {
-    ConceptDeclaration oldWhole = whole;
-    whole = newWhole;
-    if (eNotificationRequired())
+    if (emergenceTriggers == null)
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT_STATEMENT_BODY__WHOLE, oldWhole, newWhole);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
+      emergenceTriggers = new EObjectContainmentEList<ConceptDeclaration>(ConceptDeclaration.class, this, KimPackage.CONCEPT_STATEMENT_BODY__EMERGENCE_TRIGGERS);
     }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setWhole(ConceptDeclaration newWhole)
-  {
-    if (newWhole != whole)
-    {
-      NotificationChain msgs = null;
-      if (whole != null)
-        msgs = ((InternalEObject)whole).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.CONCEPT_STATEMENT_BODY__WHOLE, null, msgs);
-      if (newWhole != null)
-        msgs = ((InternalEObject)newWhole).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.CONCEPT_STATEMENT_BODY__WHOLE, null, msgs);
-      msgs = basicSetWhole(newWhole, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT_STATEMENT_BODY__WHOLE, newWhole, newWhole));
+    return emergenceTriggers;
   }
 
   /**
@@ -1820,56 +1537,6 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
       ranges = new EObjectContainmentEList<ConceptDeclaration>(ConceptDeclaration.class, this, KimPackage.CONCEPT_STATEMENT_BODY__RANGES);
     }
     return ranges;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public ConceptDeclaration getInverse()
-  {
-    return inverse;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetInverse(ConceptDeclaration newInverse, NotificationChain msgs)
-  {
-    ConceptDeclaration oldInverse = inverse;
-    inverse = newInverse;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT_STATEMENT_BODY__INVERSE, oldInverse, newInverse);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setInverse(ConceptDeclaration newInverse)
-  {
-    if (newInverse != inverse)
-    {
-      NotificationChain msgs = null;
-      if (inverse != null)
-        msgs = ((InternalEObject)inverse).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.CONCEPT_STATEMENT_BODY__INVERSE, null, msgs);
-      if (newInverse != null)
-        msgs = ((InternalEObject)newInverse).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.CONCEPT_STATEMENT_BODY__INVERSE, null, msgs);
-      msgs = basicSetInverse(newInverse, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT_STATEMENT_BODY__INVERSE, newInverse, newInverse));
   }
 
   /**
@@ -2036,10 +1703,6 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
         return ((InternalEList<?>)getAnnotations()).basicRemove(otherEnd, msgs);
       case KimPackage.CONCEPT_STATEMENT_BODY__PARENTS:
         return ((InternalEList<?>)getParents()).basicRemove(otherEnd, msgs);
-      case KimPackage.CONCEPT_STATEMENT_BODY__CONTEXTUALIZED_TRAITS:
-        return ((InternalEList<?>)getContextualizedTraits()).basicRemove(otherEnd, msgs);
-      case KimPackage.CONCEPT_STATEMENT_BODY__CONTEXTUALIZES_TRAITS:
-        return ((InternalEList<?>)getContextualizesTraits()).basicRemove(otherEnd, msgs);
       case KimPackage.CONCEPT_STATEMENT_BODY__UPPER_CONCEPT:
         return basicSetUpperConcept(null, msgs);
       case KimPackage.CONCEPT_STATEMENT_BODY__REQUIREMENTS:
@@ -2070,8 +1733,8 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
         return ((InternalEList<?>)getConferredTraits()).basicRemove(otherEnd, msgs);
       case KimPackage.CONCEPT_STATEMENT_BODY__CONFERRED_TARGETS:
         return ((InternalEList<?>)getConferredTargets()).basicRemove(otherEnd, msgs);
-      case KimPackage.CONCEPT_STATEMENT_BODY__WHOLE:
-        return basicSetWhole(null, msgs);
+      case KimPackage.CONCEPT_STATEMENT_BODY__EMERGENCE_TRIGGERS:
+        return ((InternalEList<?>)getEmergenceTriggers()).basicRemove(otherEnd, msgs);
       case KimPackage.CONCEPT_STATEMENT_BODY__CREATES:
         return ((InternalEList<?>)getCreates()).basicRemove(otherEnd, msgs);
       case KimPackage.CONCEPT_STATEMENT_BODY__TRAIT_TARGETS:
@@ -2080,8 +1743,6 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
         return ((InternalEList<?>)getDomains()).basicRemove(otherEnd, msgs);
       case KimPackage.CONCEPT_STATEMENT_BODY__RANGES:
         return ((InternalEList<?>)getRanges()).basicRemove(otherEnd, msgs);
-      case KimPackage.CONCEPT_STATEMENT_BODY__INVERSE:
-        return basicSetInverse(null, msgs);
       case KimPackage.CONCEPT_STATEMENT_BODY__QUALITIES_AFFECTED:
         return ((InternalEList<?>)getQualitiesAffected()).basicRemove(otherEnd, msgs);
       case KimPackage.CONCEPT_STATEMENT_BODY__CHILDREN:
@@ -2132,12 +1793,6 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
         return getParents();
       case KimPackage.CONCEPT_STATEMENT_BODY__CONNECTORS:
         return getConnectors();
-      case KimPackage.CONCEPT_STATEMENT_BODY__CONTEXTUALIZED_TRAITS:
-        return getContextualizedTraits();
-      case KimPackage.CONCEPT_STATEMENT_BODY__SPECIFIC:
-        return isSpecific();
-      case KimPackage.CONCEPT_STATEMENT_BODY__CONTEXTUALIZES_TRAITS:
-        return getContextualizesTraits();
       case KimPackage.CONCEPT_STATEMENT_BODY__DEFINED_AUTHORITY:
         return getDefinedAuthority();
       case KimPackage.CONCEPT_STATEMENT_BODY__UPPER_CONCEPT:
@@ -2170,14 +1825,8 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
         return getConferredTraits();
       case KimPackage.CONCEPT_STATEMENT_BODY__CONFERRED_TARGETS:
         return getConferredTargets();
-      case KimPackage.CONCEPT_STATEMENT_BODY__CONSTITUENT:
-        return isConstituent();
-      case KimPackage.CONCEPT_STATEMENT_BODY__CONSTITUTES:
-        return isConstitutes();
-      case KimPackage.CONCEPT_STATEMENT_BODY__PART_OF:
-        return isPartOf();
-      case KimPackage.CONCEPT_STATEMENT_BODY__WHOLE:
-        return getWhole();
+      case KimPackage.CONCEPT_STATEMENT_BODY__EMERGENCE_TRIGGERS:
+        return getEmergenceTriggers();
       case KimPackage.CONCEPT_STATEMENT_BODY__CREATES:
         return getCreates();
       case KimPackage.CONCEPT_STATEMENT_BODY__TRAIT_TARGETS:
@@ -2186,8 +1835,6 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
         return getDomains();
       case KimPackage.CONCEPT_STATEMENT_BODY__RANGES:
         return getRanges();
-      case KimPackage.CONCEPT_STATEMENT_BODY__INVERSE:
-        return getInverse();
       case KimPackage.CONCEPT_STATEMENT_BODY__QUALITIES_AFFECTED:
         return getQualitiesAffected();
       case KimPackage.CONCEPT_STATEMENT_BODY__DISJOINT:
@@ -2259,17 +1906,6 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
         getConnectors().clear();
         getConnectors().addAll((Collection<? extends String>)newValue);
         return;
-      case KimPackage.CONCEPT_STATEMENT_BODY__CONTEXTUALIZED_TRAITS:
-        getContextualizedTraits().clear();
-        getContextualizedTraits().addAll((Collection<? extends ObservableSemantics>)newValue);
-        return;
-      case KimPackage.CONCEPT_STATEMENT_BODY__SPECIFIC:
-        setSpecific((Boolean)newValue);
-        return;
-      case KimPackage.CONCEPT_STATEMENT_BODY__CONTEXTUALIZES_TRAITS:
-        getContextualizesTraits().clear();
-        getContextualizesTraits().addAll((Collection<? extends ConceptDeclaration>)newValue);
-        return;
       case KimPackage.CONCEPT_STATEMENT_BODY__DEFINED_AUTHORITY:
         setDefinedAuthority((String)newValue);
         return;
@@ -2325,17 +1961,9 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
         getConferredTargets().clear();
         getConferredTargets().addAll((Collection<? extends ConceptDeclaration>)newValue);
         return;
-      case KimPackage.CONCEPT_STATEMENT_BODY__CONSTITUENT:
-        setConstituent((Boolean)newValue);
-        return;
-      case KimPackage.CONCEPT_STATEMENT_BODY__CONSTITUTES:
-        setConstitutes((Boolean)newValue);
-        return;
-      case KimPackage.CONCEPT_STATEMENT_BODY__PART_OF:
-        setPartOf((Boolean)newValue);
-        return;
-      case KimPackage.CONCEPT_STATEMENT_BODY__WHOLE:
-        setWhole((ConceptDeclaration)newValue);
+      case KimPackage.CONCEPT_STATEMENT_BODY__EMERGENCE_TRIGGERS:
+        getEmergenceTriggers().clear();
+        getEmergenceTriggers().addAll((Collection<? extends ConceptDeclaration>)newValue);
         return;
       case KimPackage.CONCEPT_STATEMENT_BODY__CREATES:
         getCreates().clear();
@@ -2352,9 +1980,6 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
       case KimPackage.CONCEPT_STATEMENT_BODY__RANGES:
         getRanges().clear();
         getRanges().addAll((Collection<? extends ConceptDeclaration>)newValue);
-        return;
-      case KimPackage.CONCEPT_STATEMENT_BODY__INVERSE:
-        setInverse((ConceptDeclaration)newValue);
         return;
       case KimPackage.CONCEPT_STATEMENT_BODY__QUALITIES_AFFECTED:
         getQualitiesAffected().clear();
@@ -2435,15 +2060,6 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
       case KimPackage.CONCEPT_STATEMENT_BODY__CONNECTORS:
         getConnectors().clear();
         return;
-      case KimPackage.CONCEPT_STATEMENT_BODY__CONTEXTUALIZED_TRAITS:
-        getContextualizedTraits().clear();
-        return;
-      case KimPackage.CONCEPT_STATEMENT_BODY__SPECIFIC:
-        setSpecific(SPECIFIC_EDEFAULT);
-        return;
-      case KimPackage.CONCEPT_STATEMENT_BODY__CONTEXTUALIZES_TRAITS:
-        getContextualizesTraits().clear();
-        return;
       case KimPackage.CONCEPT_STATEMENT_BODY__DEFINED_AUTHORITY:
         setDefinedAuthority(DEFINED_AUTHORITY_EDEFAULT);
         return;
@@ -2492,17 +2108,8 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
       case KimPackage.CONCEPT_STATEMENT_BODY__CONFERRED_TARGETS:
         getConferredTargets().clear();
         return;
-      case KimPackage.CONCEPT_STATEMENT_BODY__CONSTITUENT:
-        setConstituent(CONSTITUENT_EDEFAULT);
-        return;
-      case KimPackage.CONCEPT_STATEMENT_BODY__CONSTITUTES:
-        setConstitutes(CONSTITUTES_EDEFAULT);
-        return;
-      case KimPackage.CONCEPT_STATEMENT_BODY__PART_OF:
-        setPartOf(PART_OF_EDEFAULT);
-        return;
-      case KimPackage.CONCEPT_STATEMENT_BODY__WHOLE:
-        setWhole((ConceptDeclaration)null);
+      case KimPackage.CONCEPT_STATEMENT_BODY__EMERGENCE_TRIGGERS:
+        getEmergenceTriggers().clear();
         return;
       case KimPackage.CONCEPT_STATEMENT_BODY__CREATES:
         getCreates().clear();
@@ -2515,9 +2122,6 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
         return;
       case KimPackage.CONCEPT_STATEMENT_BODY__RANGES:
         getRanges().clear();
-        return;
-      case KimPackage.CONCEPT_STATEMENT_BODY__INVERSE:
-        setInverse((ConceptDeclaration)null);
         return;
       case KimPackage.CONCEPT_STATEMENT_BODY__QUALITIES_AFFECTED:
         getQualitiesAffected().clear();
@@ -2580,12 +2184,6 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
         return parents != null && !parents.isEmpty();
       case KimPackage.CONCEPT_STATEMENT_BODY__CONNECTORS:
         return connectors != null && !connectors.isEmpty();
-      case KimPackage.CONCEPT_STATEMENT_BODY__CONTEXTUALIZED_TRAITS:
-        return contextualizedTraits != null && !contextualizedTraits.isEmpty();
-      case KimPackage.CONCEPT_STATEMENT_BODY__SPECIFIC:
-        return specific != SPECIFIC_EDEFAULT;
-      case KimPackage.CONCEPT_STATEMENT_BODY__CONTEXTUALIZES_TRAITS:
-        return contextualizesTraits != null && !contextualizesTraits.isEmpty();
       case KimPackage.CONCEPT_STATEMENT_BODY__DEFINED_AUTHORITY:
         return DEFINED_AUTHORITY_EDEFAULT == null ? definedAuthority != null : !DEFINED_AUTHORITY_EDEFAULT.equals(definedAuthority);
       case KimPackage.CONCEPT_STATEMENT_BODY__UPPER_CONCEPT:
@@ -2618,14 +2216,8 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
         return conferredTraits != null && !conferredTraits.isEmpty();
       case KimPackage.CONCEPT_STATEMENT_BODY__CONFERRED_TARGETS:
         return conferredTargets != null && !conferredTargets.isEmpty();
-      case KimPackage.CONCEPT_STATEMENT_BODY__CONSTITUENT:
-        return constituent != CONSTITUENT_EDEFAULT;
-      case KimPackage.CONCEPT_STATEMENT_BODY__CONSTITUTES:
-        return constitutes != CONSTITUTES_EDEFAULT;
-      case KimPackage.CONCEPT_STATEMENT_BODY__PART_OF:
-        return partOf != PART_OF_EDEFAULT;
-      case KimPackage.CONCEPT_STATEMENT_BODY__WHOLE:
-        return whole != null;
+      case KimPackage.CONCEPT_STATEMENT_BODY__EMERGENCE_TRIGGERS:
+        return emergenceTriggers != null && !emergenceTriggers.isEmpty();
       case KimPackage.CONCEPT_STATEMENT_BODY__CREATES:
         return creates != null && !creates.isEmpty();
       case KimPackage.CONCEPT_STATEMENT_BODY__TRAIT_TARGETS:
@@ -2634,8 +2226,6 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
         return domains != null && !domains.isEmpty();
       case KimPackage.CONCEPT_STATEMENT_BODY__RANGES:
         return ranges != null && !ranges.isEmpty();
-      case KimPackage.CONCEPT_STATEMENT_BODY__INVERSE:
-        return inverse != null;
       case KimPackage.CONCEPT_STATEMENT_BODY__QUALITIES_AFFECTED:
         return qualitiesAffected != null && !qualitiesAffected.isEmpty();
       case KimPackage.CONCEPT_STATEMENT_BODY__DISJOINT:
@@ -2687,16 +2277,8 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
     result.append(nothing);
     result.append(", connectors: ");
     result.append(connectors);
-    result.append(", specific: ");
-    result.append(specific);
     result.append(", definedAuthority: ");
     result.append(definedAuthority);
-    result.append(", constituent: ");
-    result.append(constituent);
-    result.append(", constitutes: ");
-    result.append(constitutes);
-    result.append(", partOf: ");
-    result.append(partOf);
     result.append(", disjoint: ");
     result.append(disjoint);
     result.append(", authorities: ");

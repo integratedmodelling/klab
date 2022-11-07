@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.hub.license.controllers;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.security.NoSuchProviderException;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
@@ -112,7 +113,7 @@ public class EngineLicenseController extends LicenseController<EngineAuthenticat
 	
 	@PostMapping(value= API.HUB.LEGACY_AUTHENTICATE_ENGINE)
 	public ResponseEntity<EngineAuthenticationResponse> processLegacyEndpoint(HttpServletRequest request) throws IOException, MessagingException {
-	    final String str = IOUtils.toString(request.getInputStream());
+	    final String str = IOUtils.toString(request.getInputStream(), Charset.defaultCharset());
 	    JsonObject translate = new Gson().fromJson(str, JsonObject.class);
 	    EngineAuthenticationRequest newRequest = new EngineAuthenticationRequest();
 	    newRequest.setCertificate(translate.get("certificate").getAsString());

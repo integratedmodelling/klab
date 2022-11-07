@@ -23,6 +23,7 @@ import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.data.resources.Resource;
+import org.integratedmodelling.klab.engine.indexing.ResourceIndexer;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.rest.ResourceReference;
@@ -160,7 +161,12 @@ public class ResourceCatalog implements IResourceCatalog {
 
 		IResource ret = get(value.getUrn());
 		ResourceReference ref = ((Resource) value).getReference();
-		resources.put(value.getUrn(), ref);
+		
+		if (resources.put(value.getUrn(), ref) != null) {
+//			ResourceIndexer.INSTANCE.delete(value);
+		}
+//		ResourceIndexer.INSTANCE.index(value);
+		
 		File resourcePath = getResourcePath(value);
 		if (resourcePath != null) {
 			try {
@@ -351,10 +357,6 @@ public class ResourceCatalog implements IResourceCatalog {
 		return null;
 	}
 
-//	public IResource update(ResourceReference reference) {
-//		
-//	}
-
 	@Override
 	public IResource update(IResource resource, String message) {
 
@@ -378,5 +380,6 @@ public class ResourceCatalog implements IResourceCatalog {
 		
 		return get(resource.getUrn());
 	}
+
 
 }

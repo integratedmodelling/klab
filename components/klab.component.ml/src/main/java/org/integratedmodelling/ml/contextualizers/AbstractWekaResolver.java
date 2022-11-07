@@ -54,388 +54,403 @@ import weka.core.Attribute;
 import weka.core.Instance;
 
 public abstract class AbstractWekaResolver<T extends Classifier> extends AbstractContextualizer
-		implements IResolver<IState>, IDocumentationProvider {
+        implements
+            IResolver<IState>,
+            IDocumentationProvider {
 
-	protected WekaClassifier classifier = null;
-	protected WekaOptions options;
-	private IServiceCall classDiscretizer;
-	String instancesExport = null;
-	String rawInstancesExport = null;
-	protected int MIN_INSTANCES_FOR_TRAINING = 5;
-	protected boolean predictionIsProbabilistic;
-	private boolean admitsNodata;
-	private String resourceId = null;
-	private String learnedGeometry = null;
-	private List<IDocumentationProvider.Item> documentation = new ArrayList<>();
+    protected WekaClassifier classifier = null;
+    protected WekaOptions options;
+    private IServiceCall classDiscretizer;
+    String instancesExport = null;
+    String rawInstancesExport = null;
+    protected int MIN_INSTANCES_FOR_TRAINING = 5;
+    protected boolean predictionIsProbabilistic;
+    private boolean admitsNodata;
+    private String resourceId = null;
+    private String learnedGeometry = null;
+    private List<IDocumentationProvider.Item> documentation = new ArrayList<>();
 
-	private IKimExpression selector;
-	private double selectFraction = Double.NaN;
-	protected IObservable targetObservable;
+    private IKimExpression selector;
+    private double selectFraction = Double.NaN;
+    protected IObservable targetObservable;
 
-	protected AbstractWekaResolver() {
-	}
+    // private Bagging bagging = null;
 
-	public IArtifact.Type getType() {
-		return targetObservable.getArtifactType();
-	}
+    protected AbstractWekaResolver() {
+    }
 
-	protected AbstractWekaResolver(Class<T> cls, IParameters<String> parameters, IObservable observable,
-			boolean requiresDiscretization, boolean predictionIsProbabilistic, boolean admitsNodata) {
-		this.options = new WekaOptions(cls, parameters);
-		this.targetObservable = observable;
-		this.classifier = new WekaClassifier(cls, this.options, predictionIsProbabilistic);
-		this.classDiscretizer = parameters.get("discretization", IServiceCall.class);
-		this.instancesExport = parameters.get("instances", String.class);
-		this.rawInstancesExport = parameters.get("rawinstances", String.class);
-		this.admitsNodata = admitsNodata;
-		this.resourceId = parameters.get("resource", String.class);
-		this.learnedGeometry = parameters.get("geometry", String.class);
-		this.selector = parameters.get("select", IKimExpression.class);
-		this.selectFraction = parameters.get("sample", this.selector == null ? Double.NaN : 1.0);
-	}
+    public IArtifact.Type getType() {
+        return targetObservable.getArtifactType();
+    }
 
-	@Override
-	public IState resolve(IState ret, IContextualizationScope context) throws KlabException {
+    protected AbstractWekaResolver(Class<T> cls, IParameters<String> parameters, IObservable observable,
+            boolean requiresDiscretization, boolean predictionIsProbabilistic, boolean admitsNodata) {
+        this.options = new WekaOptions(cls, parameters);
+        this.targetObservable = observable;
+        this.classifier = new WekaClassifier(cls, this.options, predictionIsProbabilistic);
+        this.classDiscretizer = parameters.get("discretization", IServiceCall.class);
+        this.instancesExport = parameters.get("instances", String.class);
+        this.rawInstancesExport = parameters.get("rawinstances", String.class);
+        this.admitsNodata = admitsNodata;
+        this.resourceId = parameters.get("resource", String.class);
+        this.learnedGeometry = parameters.get("geometry", String.class);
+        this.selector = parameters.get("select", IKimExpression.class);
+        this.selectFraction = parameters.get("sample", this.selector == null ? Double.NaN : 1.0);
+    }
 
-		/*
-		 * check if we're asking for uncertainty
-		 */
-		IState uncertainty = null;
-		for (int i = 1; i < context.getModel().getObservables().size(); i++) {
-			IObservable obs = context.getModel().getObservables().get(i);
-			if (obs.getType().is(Type.UNCERTAINTY)
-					&& ret.getObservable().getType().is(Observables.INSTANCE.getDescribedType(obs.getType()))) {
-				uncertainty = context.getArtifact(obs.getName(), IState.class);
-			}
-		}
+    protected AbstractWekaResolver(Classifier cls, IParameters<String> parameters, IObservable observable,
+            boolean requiresDiscretization, boolean predictionIsProbabilistic, boolean admitsNodata) {
+        // this.bagging = cls;
+        this.options = new WekaOptions(cls./* getClassifier(). */getClass(), parameters);
+        this.targetObservable = observable;
+        this.classifier = new WekaClassifier(cls, this.options, predictionIsProbabilistic);
+        this.classDiscretizer = parameters.get("discretization", IServiceCall.class);
+        this.instancesExport = parameters.get("instances", String.class);
+        this.rawInstancesExport = parameters.get("rawinstances", String.class);
+        this.admitsNodata = admitsNodata;
+        this.resourceId = parameters.get("resource", String.class);
+        this.learnedGeometry = parameters.get("geometry", String.class);
+        this.selector = parameters.get("select", IKimExpression.class);
+        this.selectFraction = parameters.get("sample", this.selector == null ? Double.NaN : 1.0);
+    }
 
-		WekaInstances instances = new WekaInstances(ret, context.getModel(), (IRuntimeScope) context, true,
-				admitsNodata, classDiscretizer, selector, selectFraction);
+    @Override
+    public IState resolve(IState ret, IContextualizationScope context) throws KlabException {
 
-		if (instances.getInstances().isEmpty()) {
-			context.getMonitor().warn("No instances in training set: cannot train Weka classifier");
-			return ret;
-		}
+        /*
+         * check if we're asking for uncertainty
+         */
+        IState uncertainty = null;
+        for (int i = 1; i < context.getModel().getObservables().size(); i++) {
+            IObservable obs = context.getModel().getObservables().get(i);
+            if (obs.getType().is(Type.UNCERTAINTY)
+                    && ret.getObservable().getType().is(Observables.INSTANCE.getDescribedType(obs.getType()))) {
+                uncertainty = context.getArtifact(obs.getName(), IState.class);
+            }
+        }
 
-		if (instances.getInstances().size() < MIN_INSTANCES_FOR_TRAINING) {
-			context.getMonitor().warn("Not enough instances in training set: cannot train Weka classifier");
-			return ret;
-		}
+        WekaInstances instances = new WekaInstances(ret, context.getModel(), (IRuntimeScope) context, true, admitsNodata,
+                classDiscretizer, selector, selectFraction);
 
-		/*
-		 * Any exports requested
-		 */
-		if (instancesExport != null) {
-			File export = Configuration.INSTANCE.getExportFile(instancesExport);
-			instances.export(export, false);
-			context.getMonitor().info("Weka: training set exported to " + export);
-		}
-		if (rawInstancesExport != null) {
-			File export = Configuration.INSTANCE.getExportFile(rawInstancesExport);
-			instances.export(export, true);
-			context.getMonitor().info("Weka: untransformed training set exported to " + export);
-		}
+        if (instances.getInstances().isEmpty()) {
+            context.getMonitor().warn("No instances in training set: cannot train Weka classifier");
+            return ret;
+        }
 
-		/*
-		 * Do the training
-		 */
-		context.getMonitor().info("Start training " + classifier + " classifier on " + instances.size() + " instances");
-		documentation.addAll(classifier.train(instances));
-		context.getMonitor().info("Training completed successfully.");
+        if (instances.getInstances().size() < MIN_INSTANCES_FOR_TRAINING) {
+            context.getMonitor().warn("Not enough instances in training set: cannot train Weka classifier");
+            return ret;
+        }
 
-		if (!ret.isArchetype()) {
-			/*
-			 * if it's distributed w/o @distribute it should create a merging state to
-			 * substitute ret.
-			 */
-			if (((Model) context.getModel()).learnsWithinArchetype()
-					&& !((Model) context.getModel()).distributesLearning()) {
-				ret = MergingState.promote(ret,
-						context.getObservations(((Model) context.getModel()).getArchetype().getType()));
-			} else {
-				for (ILocator locator : ret.getScale()) {
-					Instance instance = instances.getInstance(locator);
-					if (instance != null) {
-						setValue(instances, locator, classifier.predict(instance, context.getMonitor()), ret,
-								uncertainty);
-					}
-				}
-			}
-		}
+        /*
+         * Any exports requested
+         */
+        if (instancesExport != null) {
+            File export = Configuration.INSTANCE.getExportFile(instancesExport);
+            instances.export(export, false);
+            context.getMonitor().info("Weka: training set exported to " + export);
+        }
+        if (rawInstancesExport != null) {
+            File export = Configuration.INSTANCE.getExportFile(rawInstancesExport);
+            instances.export(export, true);
+            context.getMonitor().info("Weka: untransformed training set exported to " + export);
+        }
 
-		/*
-		 * Export the resource if requested, including all discretization parameters to
-		 * reconstruct the filters.
-		 */
-		IResource resource = null;
-		if (context.getModel().isLearning() || resourceId != null) {
-			resource = buildResource(instances, context);
-			context.getMonitor().info("local resource '" + resource.getUrn() + "' contains the learned model");
-		}
+        /*
+         * Do the training
+         */
+        context.getMonitor().info("Start training " + classifier + " classifier on " + instances.size() + " instances");
+        documentation.addAll(classifier.train(instances));
+        context.getMonitor().info("Training completed successfully.");
 
-		return ret;
-	}
+        if (!ret.isArchetype()) {
+            /*
+             * if it's distributed w/o @distribute it should create a merging state to substitute
+             * ret.
+             */
+            if (((Model) context.getModel()).learnsWithinArchetype() && !((Model) context.getModel()).distributesLearning()) {
+                ret = MergingState.promote(ret, context.getObservations(((Model) context.getModel()).getArchetype().getType()));
+            } else {
+                for (ILocator locator : ret.getScale()) {
+                    Instance instance = instances.getInstance(locator);
+                    if (instance != null) {
+                        setValue(instances, locator, classifier.predict(instance, context.getMonitor()), ret, uncertainty);
+                    }
+                }
+            }
+        }
 
-	private void setValue(WekaInstances instances, ILocator locator, Object prediction, IState target,
-			@Nullable IState uncertainty) {
+        /*
+         * Export the resource if requested, including all discretization parameters to reconstruct
+         * the filters.
+         */
+        IResource resource = null;
+        if (context.getModel().isLearning() || resourceId != null) {
+            resource = buildResource(instances, context);
+            context.getMonitor().info("local resource '" + resource.getUrn() + "' contains the learned model");
+        }
 
-		if (prediction instanceof double[]) {
+        return ret;
+    }
 
-			// predicted state must be discretized unless it's not numeric
-			EnumeratedRealDistribution distribution = null;
-			if (target.getObservable().getArtifactType().isNumeric()) {
-				distribution = new EnumeratedRealDistribution(instances.getPredictedDiscretization().getMidpoints(),
-						(double[]) prediction);
-			}
+    private void setValue(WekaInstances instances, ILocator locator, Object prediction, IState target,
+            @Nullable IState uncertainty) {
 
-			if (target.getObservable().getArtifactType() == IArtifact.Type.NUMBER) {
-				target.set(locator, distribution.getNumericalMean());
-			} else {
-				// find the most likely class
-				int val = NumberUtils.indexOfLargest((double[]) prediction);
-				if (target.getObservable().getArtifactType() == IArtifact.Type.BOOLEAN) {
-					target.set(locator, val == 0 ? Boolean.FALSE : Boolean.TRUE);
-				} else if (target.getObservable().getArtifactType() == IArtifact.Type.CONCEPT) {
-					target.set(locator, target.getDataKey().lookup(val));
-				}
-			}
+        if (prediction instanceof double[]) {
 
-			if (uncertainty != null) {
-				// TODO categorical distribution should use Shannon - redo with original
-				// distribution
-				uncertainty.set(locator,
-						Math.sqrt(distribution.getNumericalVariance()) / distribution.getNumericalMean());
-			}
+            // predicted state must be discretized unless it's not numeric
+            EnumeratedRealDistribution distribution = null;
+            if (target.getObservable().getArtifactType().isNumeric()) {
+                distribution = new EnumeratedRealDistribution(instances.getPredictedDiscretization().getMidpoints(),
+                        (double[]) prediction);
+            }
 
-		} else {
-			if (target.getObservable().getArtifactType() == IArtifact.Type.NUMBER) {
-				target.set(locator, prediction);
-			} else if (target.getObservable().getArtifactType() == IArtifact.Type.BOOLEAN) {
-				target.set(locator, ((Number) prediction).intValue() == 0 ? Boolean.FALSE : Boolean.TRUE);
-			} else if (target.getObservable().getArtifactType() == IArtifact.Type.CONCEPT) {
-				target.set(locator, target.getDataKey().lookup(((Number) prediction).intValue()));
-			}
+            if (target.getObservable().getArtifactType() == IArtifact.Type.NUMBER) {
+                target.set(locator, distribution.getNumericalMean());
+            } else {
+                // find the most likely class
+                int val = NumberUtils.indexOfLargest((double[]) prediction);
+                if (target.getObservable().getArtifactType() == IArtifact.Type.BOOLEAN) {
+                    target.set(locator, val == 0 ? Boolean.FALSE : Boolean.TRUE);
+                } else if (target.getObservable().getArtifactType() == IArtifact.Type.CONCEPT) {
+                    target.set(locator, target.getDataKey().lookup(val));
+                }
+            }
 
-		}
-	}
+            if (uncertainty != null) {
+                // TODO categorical distribution should use Shannon - redo with original
+                // distribution
+                uncertainty.set(locator, Math.sqrt(distribution.getNumericalVariance()) / distribution.getNumericalMean());
+            }
 
-	private IResource buildResource(WekaInstances instances, IContextualizationScope context) {
+        } else {
+            if (target.getObservable().getArtifactType() == IArtifact.Type.NUMBER) {
+                target.set(locator, prediction);
+            } else if (target.getObservable().getArtifactType() == IArtifact.Type.BOOLEAN) {
+                target.set(locator, ((Number) prediction).intValue() == 0 ? Boolean.FALSE : Boolean.TRUE);
+            } else if (target.getObservable().getArtifactType() == IArtifact.Type.CONCEPT) {
+                target.set(locator, target.getDataKey().lookup(((Number) prediction).intValue()));
+            }
 
-		if (resourceId == null) {
-			resourceId = "weka" + NameGenerator.shortUUID();
-		}
+        }
+    }
 
-		IProject project = context.getModel().getNamespace().getProject();
-		if (project == null) {
-			throw new IllegalStateException("Weka: cannot write a resource from a model that is not part of a project");
-		}
+    private IResource buildResource(WekaInstances instances, IContextualizationScope context) {
 
-		/*
-		 * Geometry will be the coverage of the dataflow or, if global, S2T1 reflecting
-		 * the extents in the training context.
-		 */
-		Scale scale = ((Scale) ((IRuntimeScope) context).getDataflow().getCoverage());
-		Geometry geometry = null;
-		if (learnedGeometry != null) {
-			if ("coverage".equals(learnedGeometry)) {
-				if (scale != null) {
-					geometry = scale.asGeometry();
-				} else {
-					GeometryBuilder gb = Geometry.builder();
-					if (context.getScale().getSpace() != null) {
-						gb.space().generic();
-					}
-					if (context.getScale().getTime() != null) {
-						gb.time().generic();
-					}
-					geometry = gb.build();
-				}
-			} else {
-				geometry = Geometry.create(learnedGeometry);
-			}
-		} else {
-			/*
-			 * default: cover the learning context, using same geometry minus resolution and
-			 * shape if any.
-			 */
-			geometry = ((Scale) context.getScale())
-					.asGeometry()/*
-									 * .withGridResolution(null).withTemporalResolution(null) .withShape(null)
-									 */;
-		}
+        if (resourceId == null) {
+            resourceId = "weka" + NameGenerator.shortUUID();
+        }
 
-		/*
-		 * FIXME NB: removing time for now.
-		 */
-//        geometry = geometry.without(Dimension.Type.TIME);
+        IProject project = context.getModel().getNamespace().getProject();
+        if (project == null) {
+            throw new IllegalStateException("Weka: cannot write a resource from a model that is not part of a project");
+        }
 
-		StandaloneResourceBuilder builder = new StandaloneResourceBuilder(project, resourceId);
-		builder.withResourceVersion(Version.create("0.0.1")).withGeometry(geometry).withAdapterType("weka")
-				.withType(instances.getPredictedObservable().getArtifactType())
-				.withParameter("wekaVersion", weka.core.Version.VERSION)
-				.withParameter("model", context.getModel().getName()).withParameter("submitNodata", "true")
-				.withParameter("classifier", classifier.getClassifier().getClass().getCanonicalName())
-				.withParameter("classifier.options", classifier.getOptions().toString())
-				.withParameter("classifier.probabilistic", classifier.isPredictionProbabilistic() ? "true" : "false");
+        /*
+         * Geometry will be the coverage of the dataflow or, if global, S2T1 reflecting the extents
+         * in the training context.
+         */
+        Scale scale = ((Scale) ((IRuntimeScope) context).getDataflow().getCoverage());
+        Geometry geometry = null;
+        if (learnedGeometry != null) {
+            if ("coverage".equals(learnedGeometry)) {
+                if (scale != null) {
+                    geometry = scale.asGeometry();
+                } else {
+                    GeometryBuilder gb = Geometry.builder();
+                    if (context.getScale().getSpace() != null) {
+                        gb.space().generic();
+                    }
+                    if (context.getScale().getTime() != null) {
+                        gb.time().generic();
+                    }
+                    geometry = gb.build();
+                }
+            } else {
+                geometry = Geometry.create(learnedGeometry);
+            }
+        } else {
+            /*
+             * default: cover the learning context, using same geometry minus resolution and shape
+             * if any.
+             */
+            geometry = ((Scale) context.getScale())
+                    .asGeometry()/*
+                                  * .withGridResolution(null).withTemporalResolution(null)
+                                  * .withShape(null)
+                                  */;
+        }
 
-		int i = 1;
-		for (Attribute attribute : instances.getAttributes()) {
+        /*
+         * FIXME NB: removing time for now.
+         */
+        // geometry = geometry.without(Dimension.Type.TIME);
 
-			boolean predicted = false;
+        StandaloneResourceBuilder builder = new StandaloneResourceBuilder(project, resourceId);
+        builder.withResourceVersion(Version.create("0.0.1")).withGeometry(geometry).withAdapterType("weka")
+                .withType(instances.getPredictedObservable().getArtifactType())
+                .withParameter("wekaVersion", weka.core.Version.VERSION).withParameter("model", context.getModel().getName())
+                .withParameter("submitNodata", "true")
+                .withParameter("classifier", classifier.getClassifier().getClass().getCanonicalName())
+                .withParameter("classifier.options", classifier.getOptions().toString())
+                .withParameter("classifier.probabilistic", classifier.isPredictionProbabilistic() ? "true" : "false");
 
-			if (attribute.name().equals(instances.getPredictedObservable().getName())) {
-				predicted = true;
-			}
+        int i = 1;
+        for (Attribute attribute : instances.getAttributes()) {
 
-			IState state = predicted ? instances.getPredictedState() : instances.getPredictor(attribute.name());
-			if (state != null && !state.isArchetype()) {
+            boolean predicted = false;
 
-				// goes through here even when training on objects....
-				StateSummary summary = Observations.INSTANCE.getStateSummary(state, context.getScale());
-				if (!predicted) {
-					builder.withParameter("predictor." + attribute.name() + ".index", i)
-							.withDependency(attribute.name(), state.getType(), true, true);
-				} else {
-					builder.withParameter("predicted.index", i);
-				}
+            if (attribute.name().equals(instances.getPredictedObservable().getName())) {
+                predicted = true;
+            }
 
-				// ...hence this:
-				Range range = instances.getDataRange(attribute.name());
-				if (!range.isInfinite()) {
-					// trained on objects
-					builder.withParameter(predicted ? "predicted.range" : ("predictor." + attribute.name() + ".range"),
-							"[" + range.getLowerBound() + "," + range.getUpperBound() + "]");
-				} else {
-					// trained on state
-					builder.withParameter(predicted ? "predicted.range" : ("predictor." + attribute.name() + ".range"),
-							"[" + summary.getRange().get(0) + "," + summary.getRange().get(1) + "]");
-				}
-			} else {
+            IState state = predicted ? instances.getPredictedState() : instances.getPredictor(attribute.name());
+            if (state != null && !state.isArchetype()) {
 
-				IObservable observable = predicted ? instances.getPredictedObservable()
-						: instances.getPredictorObservable(attribute.name());
-				if (!predicted) {
-					builder.withParameter("predictor." + attribute.name() + ".index", i)
-							.withDependency(attribute.name(), observable.getArtifactType(), true, true);
-				} else {
-					builder.withParameter("predicted.index", i);
-				}
+                // goes through here even when training on objects....
+                StateSummary summary = Observations.INSTANCE.getStateSummary(state, context.getScale());
+                if (!predicted) {
+                    builder.withParameter("predictor." + attribute.name() + ".index", i).withDependency(attribute.name(),
+                            state.getType(), true, true);
+                } else {
+                    builder.withParameter("predicted.index", i);
+                }
 
-				Range range = instances.getDataRange(observable.getName());
-				if (!range.isInfinite()) {
-					builder.withParameter(predicted ? "predicted.range" : ("predictor." + attribute.name() + ".range"),
-							"[" + range.getLowerBound() + "," + range.getUpperBound() + "]");
-				}
-			}
+                // ...hence this:
+                Range range = instances.getDataRange(attribute.name());
+                if (!range.isInfinite()) {
+                    // trained on objects
+                    builder.withParameter(predicted ? "predicted.range" : ("predictor." + attribute.name() + ".range"),
+                            "[" + range.getLowerBound() + "," + range.getUpperBound() + "]");
+                } else {
+                    // trained on state
+                    builder.withParameter(predicted ? "predicted.range" : ("predictor." + attribute.name() + ".range"),
+                            "[" + summary.getRange().get(0) + "," + summary.getRange().get(1) + "]");
+                }
+            } else {
 
-			/*
-			 * if we have a key, serialize it to reconstruct it in inference. The output is
-			 * identified as "predicted" as we do not know which specific type it will be
-			 * used to predict. The predictor keys should be used to filter out input
-			 * concepts that have not been seen by the classifier.
-			 */
-			List<String> key = instances.getDatakeyDefinitions(attribute.name());
-			if (key != null) {
-				try {
-					File keyfile = File.createTempFile("key_" + (predicted ? "predicted" : attribute.name()), ".dat");
-					FileUtils.writeLines(keyfile, key);
-					builder.addFile(keyfile);
-					builder.withParameter("key." + (predicted ? "predicted" : attribute.name()),
-							MiscUtilities.getFileName(keyfile));
-				} catch (IOException e) {
-					throw new KlabIOException(e);
-				}
-			}
+                IObservable observable = predicted
+                        ? instances.getPredictedObservable()
+                        : instances.getPredictorObservable(attribute.name());
+                if (!predicted) {
+                    builder.withParameter("predictor." + attribute.name() + ".index", i).withDependency(attribute.name(),
+                            observable.getArtifactType(), true, true);
+                } else {
+                    builder.withParameter("predicted.index", i);
+                }
 
-			DiscretizerDescriptor descriptor = instances.getDiscretization(attribute.name());
-			if (descriptor != null) {
-				try {
+                Range range = instances.getDataRange(observable.getName());
+                if (!range.isInfinite()) {
+                    builder.withParameter(predicted ? "predicted.range" : ("predictor." + attribute.name() + ".range"),
+                            "[" + range.getLowerBound() + "," + range.getUpperBound() + "]");
+                }
+            }
 
-					File discretizer = File.createTempFile("d_" + attribute.name(), ".bin");
-					descriptor.export(discretizer);
-					builder.addFile(discretizer);
-					double[] cutpoints = descriptor.getDiscretizationBreakpoints();
+            /*
+             * if we have a key, serialize it to reconstruct it in inference. The output is
+             * identified as "predicted" as we do not know which specific type it will be used to
+             * predict. The predictor keys should be used to filter out input concepts that have not
+             * been seen by the classifier.
+             */
+            List<String> key = instances.getDatakeyDefinitions(attribute.name());
+            if (key != null) {
+                try {
+                    File keyfile = File.createTempFile("key_" + (predicted ? "predicted" : attribute.name()), ".dat");
+                    FileUtils.writeLines(keyfile, key);
+                    builder.addFile(keyfile);
+                    builder.withParameter("key." + (predicted ? "predicted" : attribute.name()),
+                            MiscUtilities.getFileName(keyfile));
+                } catch (IOException e) {
+                    throw new KlabIOException(e);
+                }
+            }
 
-					if (predicted) {
-						builder.withParameter("predicted.discretizer", descriptor.getJavaClass())
-								.withParameter("predicted.discretizer.file", MiscUtilities.getFileName(discretizer))
-								.withParameter("predicted.name", attribute.name())
-								.withParameter("predicted.discretizer.options", descriptor.getOptions());
+            DiscretizerDescriptor descriptor = instances.getDiscretization(attribute.name());
+            if (descriptor != null) {
+                try {
 
-						if (cutpoints != null) {
-							builder.withParameter("predicted.discretizer.cutpoints", Arrays.toString(cutpoints));
-						}
+                    File discretizer = File.createTempFile("d_" + attribute.name(), ".bin");
+                    descriptor.export(discretizer);
+                    builder.addFile(discretizer);
+                    double[] cutpoints = descriptor.getDiscretizationBreakpoints();
 
-						if (classifier.isPredictionProbabilistic()) {
-							builder.withOutput("uncertainty", IArtifact.Type.NUMBER);
-						}
+                    if (predicted) {
+                        builder.withParameter("predicted.discretizer", descriptor.getJavaClass())
+                                .withParameter("predicted.discretizer.file", MiscUtilities.getFileName(discretizer))
+                                .withParameter("predicted.name", attribute.name())
+                                .withParameter("predicted.discretizer.options", descriptor.getOptions());
 
-					} else {
+                        if (cutpoints != null) {
+                            builder.withParameter("predicted.discretizer.cutpoints", Arrays.toString(cutpoints));
+                        }
 
-						builder.withParameter("predictor." + attribute.name() + ".discretizer",
-								descriptor.getJavaClass())
-								.withParameter("predictor." + attribute.name() + ".discretizer.file",
-										MiscUtilities.getFileName(discretizer))
-								.withParameter("predictor." + attribute.name() + ".discretizer.options",
-										descriptor.getOptions());
+                        if (classifier.isPredictionProbabilistic()) {
+                            builder.withOutput("uncertainty", IArtifact.Type.NUMBER);
+                        }
 
-						if (cutpoints != null) {
-							builder.withParameter("predictor." + attribute.name() + ".discretizer.cutpoints",
-									Arrays.toString(cutpoints));
-						}
+                    } else {
 
-						// TODO encode data key
+                        builder.withParameter("predictor." + attribute.name() + ".discretizer", descriptor.getJavaClass())
+                                .withParameter("predictor." + attribute.name() + ".discretizer.file",
+                                        MiscUtilities.getFileName(discretizer))
+                                .withParameter("predictor." + attribute.name() + ".discretizer.options", descriptor.getOptions());
 
-					}
+                        if (cutpoints != null) {
+                            builder.withParameter("predictor." + attribute.name() + ".discretizer.cutpoints",
+                                    Arrays.toString(cutpoints));
+                        }
 
-				} catch (IOException e) {
-					throw new KlabIOException(e);
-				}
-			}
+                        // TODO encode data key
 
-			i++;
-		}
+                    }
 
-		try
+                } catch (IOException e) {
+                    throw new KlabIOException(e);
+                }
+            }
 
-		{
+            i++;
+        }
 
-			context.getMonitor().info("exporting " + resourceId + " resource in project " + project.getName());
+        try
 
-			File dataset = File.createTempFile("instances", ".arff");
-			File dataraw = File.createTempFile("rawinstances", ".arff");
-			File clmodel = File.createTempFile("classifier", ".bin");
+        {
 
-			instances.export(dataset, false);
-			instances.export(dataraw, true);
-			classifier.export(clmodel);
+            context.getMonitor().info("exporting " + resourceId + " resource in project " + project.getName());
 
-			builder.addFile(dataset).addFile(dataraw).addFile(clmodel)
-					.withParameter("classifier.file", MiscUtilities.getFileName(clmodel))
-					.withParameter("instances.file", MiscUtilities.getFileName(dataset))
-					.withParameter("instances.file.raw", MiscUtilities.getFileName(dataraw));
+            File dataset = File.createTempFile("instances", ".arff");
+            File dataraw = File.createTempFile("rawinstances", ".arff");
+            File clmodel = File.createTempFile("classifier", ".bin");
 
-			/*
-			 * TODO add all metadata including those about the training, execution,
-			 * validation etc.
-			 * 
-			 * TODO include source code of learned model in resources. Needs to predict the
-			 * URN in the wrong place - ask it to the StandaloneBuilder so it's consistent.
-			 */
+            instances.export(dataset, false);
+            instances.export(dataraw, true);
+            classifier.export(clmodel);
 
-		} catch (IOException e) {
-			throw new KlabIOException(e);
-		}
+            builder.addFile(dataset).addFile(dataraw).addFile(clmodel)
+                    .withParameter("classifier.file", MiscUtilities.getFileName(clmodel))
+                    .withParameter("instances.file", MiscUtilities.getFileName(dataset))
+                    .withParameter("instances.file.raw", MiscUtilities.getFileName(dataraw));
 
-		/*
-		 * build the resource using the session to notify clients.
-		 */
-		return builder.build(context.getMonitor().getIdentity().getParentIdentity(ISession.class));
-	}
+            /*
+             * TODO add all metadata including those about the training, execution, validation etc.
+             * 
+             * TODO include source code of learned model in resources. Needs to predict the URN in
+             * the wrong place - ask it to the StandaloneBuilder so it's consistent.
+             */
 
-	@Override
-	public Collection<Item> getDocumentation() {
-		return documentation;
-	}
+        } catch (IOException e) {
+            throw new KlabIOException(e);
+        }
+
+        /*
+         * build the resource using the session to notify clients.
+         */
+        return builder.build(context.getMonitor().getIdentity().getParentIdentity(ISession.class));
+    }
+
+    @Override
+    public Collection<Item> getDocumentation() {
+        return documentation;
+    }
 
 }

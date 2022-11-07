@@ -34,6 +34,14 @@ export object extract
 	optional boolean points
 		"If true, single points will be extracted as cell polygons."
 		default false
+		
+	optional value min_area
+		"Minimum area in m^2 for the generated polygons, or specify unit as in 100.km^2"
+		default 0
+
+	optional value max_area
+		"Maximum area in m^2 for the generated polygons, or specify unit as in 100.km^2"
+		default 0
 	
 	/*
 	 * produces multiple 2d shapes

@@ -18,7 +18,7 @@ import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.api.data.ILocator;
-import org.integratedmodelling.klab.api.observations.IConfiguration;
+import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.observations.INetwork;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -52,7 +52,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * The controller implementing the
- * {@link org.integratedmodelling.klab.api.API.ENGINE.OBSERVATION.VIEW view API}.
+ * {@link org.integratedmodelling.klab.api.API.ENGINE.OBSERVATION.VIEW view
+ * API}.
  * 
  * @author ferdinando.villa
  *
@@ -62,114 +63,116 @@ import org.springframework.web.bind.annotation.RestController;
 @Secured(Roles.SESSION)
 public class EngineViewController {
 
-    /**
-     * Get the observation structure and description. This allows retrieving children at arbitrary
-     * levels. Default child level is "all children". The parent will be an observation group if the
-     * observation is part of one.
-     */
-    @RequestMapping(value = API.ENGINE.OBSERVATION.VIEW.DESCRIBE_OBSERVATION, method = RequestMethod.GET, produces = "application/json")
-    @ResponseBody
-    public IObservationReference describeObservation(Principal principal, @PathVariable String observation,
-            @RequestParam(required = false) Integer childLevel, @RequestParam(required = false) String locator) {
+	/**
+	 * Get the observation structure and description. This allows retrieving
+	 * children at arbitrary levels. Default child level is "all children". The
+	 * parent will be an observation group if the observation is part of one.
+	 */
+	@RequestMapping(value = API.ENGINE.OBSERVATION.VIEW.DESCRIBE_OBSERVATION, method = RequestMethod.GET, produces = "application/json")
+	@ResponseBody
+	public IObservationReference describeObservation(Principal principal, @PathVariable String observation,
+			@RequestParam(required = false) Integer childLevel, @RequestParam(required = false) String locator) {
 
-        ISession session = EngineSessionController.getSession(principal);
-        IObservation obs = session.getObservation(observation);
+		ISession session = EngineSessionController.getSession(principal);
+		IObservation obs = session.getObservation(observation);
 
-        if (obs == null) {
-            throw new IllegalArgumentException("observation " + observation + " does not exist");
-        }
+		if (obs == null) {
+			throw new IllegalArgumentException("observation " + observation + " does not exist");
+		}
 
-        ILocator loc = obs.getScale().initialization();
-        if (locator != null) {
-            loc = Geometry.create(locator);
-            loc = obs.getScale().at(loc);
-        }
+		ILocator loc = obs.getScale().initialization();
+		if (locator != null) {
+			loc = Geometry.create(locator);
+			loc = obs.getScale().at(loc);
+		}
 
-        return Observations.INSTANCE.createArtifactDescriptor(obs, loc, childLevel == null ? -1 : childLevel);
-    }
+		return Observations.INSTANCE.createArtifactDescriptor(obs, loc, childLevel == null ? -1 : childLevel);
+	}
 
-    /**
-     * Get a summary of the observation state, either globally or at location through an optional
-     * locator parameter.
-     */
-    @RequestMapping(value = API.ENGINE.OBSERVATION.VIEW.SUMMARIZE_OBSERVATION, method = RequestMethod.GET, produces = "application/json")
-    @ResponseBody
-    public StateSummary summarizeObservation(Principal principal, @PathVariable String observation,
-            @RequestParam(required = false) String locator) {
+	/**
+	 * Get a summary of the observation state, either globally or at location
+	 * through an optional locator parameter.
+	 */
+	@RequestMapping(value = API.ENGINE.OBSERVATION.VIEW.SUMMARIZE_OBSERVATION, method = RequestMethod.GET, produces = "application/json")
+	@ResponseBody
+	public StateSummary summarizeObservation(Principal principal, @PathVariable String observation,
+			@RequestParam(required = false) String locator) {
 
-        ISession session = EngineSessionController.getSession(principal);
-        IObservation obs = session.getObservation(observation);
-        if (obs == null) {
-            throw new IllegalArgumentException("observation " + observation + " does not exist");
-        }
+		ISession session = EngineSessionController.getSession(principal);
+		IObservation obs = session.getObservation(observation);
+		if (obs == null) {
+			throw new IllegalArgumentException("observation " + observation + " does not exist");
+		}
 
-        if (!(obs instanceof IState)) {
-            throw new IllegalArgumentException("cannot summarize an observation that is not a state");
-        }
+		if (!(obs instanceof IState)) {
+			throw new IllegalArgumentException("cannot summarize an observation that is not a state");
+		}
 
-        ILocator loc = obs.getScale();
-        if (locator != null) {
-            loc = Geometry.create(locator);
-            loc = obs.getScale().at(loc);
-        }
+		ILocator loc = obs.getScale();
+		if (locator != null) {
+			loc = Geometry.create(locator);
+			loc = obs.getScale().at(loc);
+		}
 
-        return Observations.INSTANCE.getStateSummary((IState) obs, loc);
-    }
+		return Observations.INSTANCE.getStateSummary((IState) obs, loc);
+	}
 
-    /**
-     * Get one or more siblings of an artifact, potentially with offsets and number. The response
-     * will contain the first sibling requested containing all the others as siblings. The optional
-     * childLevel parameter defines the level of the children representation in each sibling. If the
-     * sibling count is 1 (default) the observation will return either the original observation or
-     * its sibling at the offset.
-     */
-    @RequestMapping(value = API.ENGINE.OBSERVATION.VIEW.GET_CHILDREN_OBSERVATION, method = RequestMethod.GET, produces = "application/json")
-    @ResponseBody
-    public List<IObservationReference> getObservationChildren(Principal principal, @PathVariable String observation,
-            @RequestParam(required = false) Boolean artifacts, @RequestParam(required = false) Integer offset,
-            @RequestParam(required = false) Integer count, @RequestParam(required = false) String locator) {
+	/**
+	 * Get one or more siblings of an artifact, potentially with offsets and number.
+	 * The response will contain the first sibling requested containing all the
+	 * others as siblings. The optional childLevel parameter defines the level of
+	 * the children representation in each sibling. If the sibling count is 1
+	 * (default) the observation will return either the original observation or its
+	 * sibling at the offset.
+	 */
+	@RequestMapping(value = API.ENGINE.OBSERVATION.VIEW.GET_CHILDREN_OBSERVATION, method = RequestMethod.GET, produces = "application/json")
+	@ResponseBody
+	public List<IObservationReference> getObservationChildren(Principal principal, @PathVariable String observation,
+			@RequestParam(required = false) Boolean artifacts, @RequestParam(required = false) Integer offset,
+			@RequestParam(required = false) Integer count, @RequestParam(required = false) String locator) {
 
-        ISession session = EngineSessionController.getSession(principal);
-        IObservation obs = session.getObservation(observation);
+		ISession session = EngineSessionController.getSession(principal);
+		IObservation obs = session.getObservation(observation);
 
-        if (obs == null) {
-            throw new KlabIllegalArgumentException("observation " + observation + " does not exist");
-        }
+		if (obs == null) {
+			throw new KlabIllegalArgumentException("observation " + observation + " does not exist");
+		}
 
-        ILocator loc = obs.getScale();
-        if (locator != null) {
-            loc = Geometry.create(locator);
-            loc = obs.getScale().at(loc);
-        }
+		ILocator loc = obs.getScale();
+		if (locator != null) {
+			loc = Geometry.create(locator);
+			loc = obs.getScale().at(loc);
+		}
 
-        List<IObservationReference> ret = new ArrayList<>();
-        IRuntimeScope scope = ((Observation) obs).getScope();
+		List<IObservationReference> ret = new ArrayList<>();
+		IRuntimeScope scope = ((Observation) obs).getScope();
 
-        int i = -1;
-        int n = 0;
-        for (IArtifact child : ((artifacts == null || artifacts) ? scope.getChildArtifactsOf(obs) : scope.getChildrenOf(obs))) {
+		int i = -1;
+		int n = 0;
+		for (IArtifact child : ((artifacts == null || artifacts) ? scope.getChildArtifactsOf(obs)
+				: scope.getChildrenOf(obs))) {
 
-            i++;
-            if (offset != null && i < offset) {
-                continue;
-            }
-            if (count != null && count >= 0 && n >= count) {
-                break;
-            }
+			i++;
+			if (offset != null && i < offset) {
+				continue;
+			}
+			if (count != null && count >= 0 && n >= count) {
+				break;
+			}
 
-            ret.add(Observations.INSTANCE.createArtifactDescriptor((IObservation) child/* , obs */, loc, 0,
-                    obs instanceof ObservationGroupView ? obs.getId() : null, false));
+			ret.add(Observations.INSTANCE.createArtifactDescriptor((IObservation) child/* , obs */, loc, 0,
+					obs instanceof ObservationGroupView ? obs.getId() : null, false));
 
-            // assume this was notified
-            scope.getNotifiedObservations().add(child.getId());
+			// assume this was notified
+			scope.getNotifiedObservations().add(child.getId());
 
-            n++;
-        }
+			n++;
+		}
 
-        return ret;
-    }
+		return ret;
+	}
 
-    /**
+	/**
      * Get the data for an observation in directly usable form, as values or images
      * 
      * If outputformat = staged, the observation must be the ID of a previously staged download
@@ -330,14 +333,14 @@ public class EngineViewController {
             }
         }
 
-        if (obs instanceof IConfiguration) {
+        if (obs instanceof IDirectObservation) {
 
-            if (obs.is(INetwork.class)) {
-                INetwork network = obs.as(INetwork.class);
+            if (format == GeometryType.NETWORK  && ((IDirectObservation)obs).getOriginatingPattern() instanceof INetwork) {
+                INetwork network = (INetwork)((IDirectObservation)obs).getOriginatingPattern();
                 network.export(outputFormat, response.getOutputStream());
+                done = true;
             }
 
-            done = true;
         }
 
         if (!done && format == GeometryType.RAW) {

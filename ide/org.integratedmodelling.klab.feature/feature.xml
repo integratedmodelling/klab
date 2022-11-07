@@ -6,7 +6,7 @@
       provider-name="www.integratedmodelling.org">
 
    <url>
-      <update label="k.LAB update site" url="http://www.integratedmodelling.org/updates/klab/0.10.0"/>
+      <update label="k.LAB update site" url="http://www.integratedmodelling.org/updates/klab/0.11.0"/>
    </url>
 
    <plugin
@@ -21,6 +21,14 @@
          download-size="0"
          install-size="0"
          version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="ch.qos.logback.slf4j"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"
          unpack="false"/>
 
 </feature>

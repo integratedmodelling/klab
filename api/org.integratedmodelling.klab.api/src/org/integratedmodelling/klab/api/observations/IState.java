@@ -70,8 +70,8 @@ public interface IState extends IObservation, IDataArtifact {
     @Override
     IState at(ILocator locator);
 
-    @Override
-    ISubjectiveState reinterpret(IDirectObservation observer);
+//    @Override
+//    ISubjectiveState reinterpret(IDirectObservation observer);
 
     /**
      * Return the state value aggregated over entire state or a subset defined by a set of locators.

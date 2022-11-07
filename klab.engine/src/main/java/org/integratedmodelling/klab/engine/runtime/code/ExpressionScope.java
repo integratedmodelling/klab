@@ -27,6 +27,7 @@ public class ExpressionScope implements IExpression.Scope {
     private INamespace namespace;
     private Set<String> identifiers = new HashSet<>();
     private Set<String> stateIdentifiers = new HashSet<>();
+    // FIXME switch to ARTIFACT TYPES!
     private Map<String, Type> identifierTypes = new HashMap<>();
     private IScale scale;
     private IMonitor monitor;
@@ -140,14 +141,14 @@ public class ExpressionScope implements IExpression.Scope {
     @Override
     public void addKnownIdentifier(String id, IKimConcept.Type type) {
         this.identifiers.add(id);
-        this.identifierTypes.put(id, Type.QUALITY);
+        this.identifierTypes.put(id, type);
     }
 
-    public ExpressionScope withKnownIdentifier(String id, IKimConcept.Type type) {
-        this.identifiers.add(id);
-        this.identifierTypes.put(id, Type.QUALITY);
-        return this;
-    }
+//    public ExpressionScope withKnownIdentifier(String id, IKimConcept.Type type) {
+//        this.identifiers.add(id);
+//        this.identifierTypes.put(id, type);
+//        return this;
+//    }
 
     public ExpressionScope withCompilerScope(CompilerScope scope) {
         this.compilerScope = scope;

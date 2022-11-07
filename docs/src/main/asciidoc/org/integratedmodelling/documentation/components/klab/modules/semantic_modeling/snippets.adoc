@@ -1,0 +1,9 @@
+====
+Before we begin
+
+Existing literature, initiatives and conversations regarding integration, provenance, scientific artifacts and their curation, etc., are usually entirely about _data_, as "the" scientific product of interest. While data, however defined, are definitely valuable artifacts in science, the approach we take is necessarily more radical: we consider as scientific artifacts _any_ scientific product that offers a scientifically valid _description_ of some phenomenon. This assumption is key to continuing our path towards semantic modeling and semantic integration towards its more useful end goals. For this reason
+
+. You should feel free to substitute _data_ in common literature with something broader in our conceptualization, including any other artifact (i.e. an equation, a machine-learned tensor, etc.) that represents the "serialization" of a scientific observation of the world. We like to use the term _scientific knowledge_ when possible.
+. We do not necessarily hold the view that data are automatically "evidence" and models are hypotheses. as .... (scale, assumptions etc). 
+
+====

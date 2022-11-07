@@ -18,6 +18,8 @@ import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.PingResponse;
 import org.integratedmodelling.klab.rest.ProjectReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Engine monitor that checks the engine status at regular intervals, notifying of down or up events
@@ -31,6 +33,7 @@ import org.integratedmodelling.klab.rest.ProjectReference;
  */
 public class EngineMonitor {
 
+    private static final Logger logger = LoggerFactory.getLogger(EngineMonitor.class);
     public static final String ENGINE_DEFAULT_URL = "http://127.0.0.1:8283/modeler";
 
     String engineUrl = ENGINE_DEFAULT_URL;
@@ -180,7 +183,7 @@ public class EngineMonitor {
      * @param string
      */
     protected void error(String string) {
-        System.err.println(string);
+        logger.error(string);
     }
 
     public String getEngineId() {
