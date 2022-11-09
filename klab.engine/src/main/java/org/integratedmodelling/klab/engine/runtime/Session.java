@@ -77,6 +77,7 @@ import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.monitoring.MessageHandler;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.ISession;
@@ -231,7 +232,6 @@ public class Session extends GroovyObjectSupport
             this.contextRequest = contextRequest;
             this.observationRequest = observationRequest;
         }
-
     }
 
     Monitor monitor;
@@ -2285,6 +2285,23 @@ public class Session extends GroovyObjectSupport
     public void notifyTestCaseStart(IBehavior behavior, TestStatistics statistics) {
         monitor.send(Message.create(this.token, IMessage.MessageClass.UnitTests,
                 IMessage.Type.TestCaseStarted, statistics));
+    }
+
+    @Override
+    public long getTimestamp() {
+        return this.creation;
+    }
+
+    @Override
+    public IProvenance getProvenance() {
+        // TODO this is an agent which may be implied in multiple provenance graphs
+        return null;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        // TODO Auto-generated method stub
+        return false;
     }
 
 }

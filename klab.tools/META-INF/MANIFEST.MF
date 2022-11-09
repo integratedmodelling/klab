@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: k.LAB Tools
 Bundle-SymbolicName: klab.tools
-Bundle-Version: 0.10.0.qualifier
+Bundle-Version: 0.11.0.qualifier
 Export-Package: org.integratedmodelling.klab.clitool,
  org.integratedmodelling.klab.clitool.api,
  org.integratedmodelling.klab.clitool.console,

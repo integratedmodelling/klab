@@ -31,6 +31,7 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
 import org.integratedmodelling.klab.api.knowledge.IViewModel;
+import org.integratedmodelling.klab.api.knowledge.IObservable.ResolutionException;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IConceptDefinition;
 import org.integratedmodelling.klab.api.model.IKimObject;
@@ -87,6 +88,8 @@ public class Observable extends GroovyObjectSupport implements IObservable {
     private Resolution resolution;
     private boolean specialized = false;
     private Set<IConcept> contextualRoles = new HashSet<>();
+    private Object defaultValue = null;
+    private Set<ResolutionException> resolutionExceptions = EnumSet.noneOf(ResolutionException.class);
 
     /**
      * The "kosher" name of the observable, possibly ambiguous w.r.t. the semantics and possibly
@@ -202,7 +205,8 @@ public class Observable extends GroovyObjectSupport implements IObservable {
         ret.name = Concepts.INSTANCE.getCodeName(concept);
         if (ret.referenceName == null) {
             // only happens with non-standard observables from system ontologies
-            ret.referenceName = KimKnowledgeProcessor.getCleanFullId(concept.getNamespace(), concept.getName());
+            ret.referenceName = KimKnowledgeProcessor.getCleanFullId(concept.getNamespace(),
+                    concept.getName());
         }
 
         return ret;
@@ -234,7 +238,8 @@ public class Observable extends GroovyObjectSupport implements IObservable {
         for (IConcept key : resolved.keySet()) {
             if (abs.contains(key)) {
                 ((Observable) ret).resolvedPredicates.put(key, resolved.get(key));
-                ((Observable) ret).resolvedPredicatesContext.put(key, new LinkedHashSet<>(incarnated.get(key)));
+                ((Observable) ret).resolvedPredicatesContext.put(key,
+                        new LinkedHashSet<>(incarnated.get(key)));
                 ((Observable) ret).incarnatedAbstractObservable = (Observable) observable;
             }
             if (key.is(Type.ROLE)) {
@@ -286,6 +291,8 @@ public class Observable extends GroovyObjectSupport implements IObservable {
         this.dereified = observable.dereified;
         this.specialized = observable.specialized;
         this.deferredTarget = observable.deferredTarget;
+        this.defaultValue = observable.defaultValue;
+        this.resolutionExceptions = observable.resolutionExceptions;
     }
 
     public static IObservable replaceComponent(Observable original, Map<IConcept, IConcept> replacements) {
@@ -432,7 +439,9 @@ public class Observable extends GroovyObjectSupport implements IObservable {
                 observationType = IActivity.Description.SIMULATION;
             } else if (observable.is(Type.TRAIT) || observable.is(Type.ROLE)) {
                 boolean distributed = Observables.INSTANCE.hasDistributedInherency(observable);
-                observationType = distributed ? IActivity.Description.CLASSIFICATION : IActivity.Description.CHARACTERIZATION;
+                observationType = distributed
+                        ? IActivity.Description.CLASSIFICATION
+                        : IActivity.Description.CHARACTERIZATION;
             } else {
                 // void observable: just do it, no semantics.
                 observationType = IActivity.Description.COMPILATION;
@@ -560,7 +569,8 @@ public class Observable extends GroovyObjectSupport implements IObservable {
                 model = scope.findResolvedModel(modelReference);
             }
             if (!(model instanceof IModel)) {
-                throw new KlabValidationException("referenced object " + modelReference + " does not exist or is not a model");
+                throw new KlabValidationException(
+                        "referenced object " + modelReference + " does not exist or is not a model");
             }
             this.resolvedModel = (IModel) model;
         }
@@ -686,7 +696,8 @@ public class Observable extends GroovyObjectSupport implements IObservable {
     }
 
     public boolean isResolved() {
-        return value instanceof Number || value instanceof Boolean || value instanceof IConcept || value instanceof IKimExpression
+        return value instanceof Number || value instanceof Boolean || value instanceof IConcept
+                || value instanceof IKimExpression
                 || value instanceof IServiceCall;
     }
 
@@ -822,7 +833,8 @@ public class Observable extends GroovyObjectSupport implements IObservable {
 
         return resolvable == null
                 ? null
-                : new Pair<>(resolvable, (Observable) getBuilder(monitor).without(resolvable).buildObservable());
+                : new Pair<>(resolvable,
+                        (Observable) getBuilder(monitor).without(resolvable).buildObservable());
     }
 
     /*
@@ -972,8 +984,10 @@ public class Observable extends GroovyObjectSupport implements IObservable {
 
     @Override
     public boolean resolves(IObservable other, IConcept context) {
-        return ((Concept) getType()).resolves(other.getType(), context, ((Observable) other).resolvedPredicates)
-                && CollectionUtils.isEqualCollection(this.valueOperators, ((Observable) other).valueOperators);
+        return ((Concept) getType()).resolves(other.getType(), context,
+                ((Observable) other).resolvedPredicates)
+                && CollectionUtils.isEqualCollection(this.valueOperators,
+                        ((Observable) other).valueOperators);
     }
 
     @Override
@@ -994,7 +1008,8 @@ public class Observable extends GroovyObjectSupport implements IObservable {
                     target = defined;
                 }
 
-                for (IConcept c : Concepts.INSTANCE.collectComponents(target, EnumSet.of(IKimConcept.Type.ABSTRACT))) {
+                for (IConcept c : Concepts.INSTANCE.collectComponents(target,
+                        EnumSet.of(IKimConcept.Type.ABSTRACT))) {
                     if (c.is(IKimConcept.Type.ROLE)) {
                         this.abstractPredicates_.add(c);
                     } else if (c.is(IKimConcept.Type.IDENTITY)) {
@@ -1054,7 +1069,8 @@ public class Observable extends GroovyObjectSupport implements IObservable {
      * @return
      */
     public boolean incarnatesSame(IObservable obs) {
-        return this.incarnatedAbstractObservable != null && ((Observable) obs).incarnatedAbstractObservable != null
+        return this.incarnatedAbstractObservable != null
+                && ((Observable) obs).incarnatedAbstractObservable != null
                 && this.incarnatedAbstractObservable.equals(((Observable) obs).incarnatedAbstractObservable);
     }
 
@@ -1132,4 +1148,15 @@ public class Observable extends GroovyObjectSupport implements IObservable {
 
         return this;
     }
+
+    @Override
+    public Object getDefaultValue() {
+        return defaultValue;
+    }
+
+    @Override
+    public Collection<ResolutionException> getResolutionExceptions() {
+        return resolutionExceptions;
+    }
+
 }

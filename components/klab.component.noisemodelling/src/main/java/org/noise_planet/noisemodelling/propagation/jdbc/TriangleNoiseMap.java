@@ -10,8 +10,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.h2gis.utilities.GeometryTableUtilities;
 import org.h2gis.utilities.JDBCUtilities;
-import org.h2gis.utilities.SFSUtilities;
 import org.h2gis.utilities.TableLocation;
 import org.noise_planet.noisemodelling.propagation.FastObstructionTest;
 import org.noise_planet.noisemodelling.propagation.LayerDelaunayError;
@@ -240,7 +240,7 @@ public class TriangleNoiseMap extends JdbcNoiseMap {
 
     @Override
     protected Envelope getComputationEnvelope(Connection connection) throws SQLException {
-        return SFSUtilities.getTableEnvelope(connection, TableLocation.parse(sourcesTableName), "");
+        return GeometryTableUtilities.getEnvelope(connection, TableLocation.parse(sourcesTableName), "").getEnvelopeInternal();
     }
 
     public void generateReceivers(Connection connection, int cellI, int cellJ, String receiverTableName, String trianglesTableName, AtomicInteger receiverPK) throws SQLException, LayerDelaunayError {

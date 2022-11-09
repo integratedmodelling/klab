@@ -27,7 +27,6 @@ import org.integratedmodelling.kim.kim.ConceptReference;
 import org.integratedmodelling.kim.kim.ConceptStatement;
 import org.integratedmodelling.kim.kim.ConceptStatementBody;
 import org.integratedmodelling.kim.kim.Currency;
-import org.integratedmodelling.kim.kim.DataType;
 import org.integratedmodelling.kim.kim.Date;
 import org.integratedmodelling.kim.kim.DefineStatement;
 import org.integratedmodelling.kim.kim.DefinitionBody;
@@ -56,6 +55,7 @@ import org.integratedmodelling.kim.kim.Namespace;
 import org.integratedmodelling.kim.kim.ObservableSemantics;
 import org.integratedmodelling.kim.kim.ObserveStatement;
 import org.integratedmodelling.kim.kim.ObserveStatementBody;
+import org.integratedmodelling.kim.kim.Option;
 import org.integratedmodelling.kim.kim.OwlImport;
 import org.integratedmodelling.kim.kim.ParameterList;
 import org.integratedmodelling.kim.kim.PropertyStatement;
@@ -176,6 +176,7 @@ public class KimFactoryImpl extends EFactoryImpl implements KimFactory
       case KimPackage.PARAMETER_LIST: return createParameterList();
       case KimPackage.VALUE: return createValue();
       case KimPackage.FUNCTION: return createFunction();
+      case KimPackage.OPTION: return createOption();
       case KimPackage.REL_OPERATOR: return createREL_OPERATOR();
       case KimPackage.UNIT_ELEMENT: return createUnitElement();
       case KimPackage.UNIT: return createUnit();
@@ -198,8 +199,6 @@ public class KimFactoryImpl extends EFactoryImpl implements KimFactory
   {
     switch (eDataType.getClassifierID())
     {
-      case KimPackage.DATA_TYPE:
-        return createDataTypeFromString(eDataType, initialValue);
       case KimPackage.UNIT_OP:
         return createUnitOpFromString(eDataType, initialValue);
       default:
@@ -217,8 +216,6 @@ public class KimFactoryImpl extends EFactoryImpl implements KimFactory
   {
     switch (eDataType.getClassifierID())
     {
-      case KimPackage.DATA_TYPE:
-        return convertDataTypeToString(eDataType, instanceValue);
       case KimPackage.UNIT_OP:
         return convertUnitOpToString(eDataType, instanceValue);
       default:
@@ -832,6 +829,18 @@ public class KimFactoryImpl extends EFactoryImpl implements KimFactory
    * @generated
    */
   @Override
+  public Option createOption()
+  {
+    OptionImpl option = new OptionImpl();
+    return option;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public REL_OPERATOR createREL_OPERATOR()
   {
     REL_OPERATORImpl reL_OPERATOR = new REL_OPERATORImpl();
@@ -908,28 +917,6 @@ public class KimFactoryImpl extends EFactoryImpl implements KimFactory
   {
     DateImpl date = new DateImpl();
     return date;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public DataType createDataTypeFromString(EDataType eDataType, String initialValue)
-  {
-    DataType result = DataType.get(initialValue);
-    if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
-    return result;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public String convertDataTypeToString(EDataType eDataType, Object instanceValue)
-  {
-    return instanceValue == null ? null : instanceValue.toString();
   }
 
   /**

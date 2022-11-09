@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: org.integratedmodelling.kim
-Bundle-Vendor: org.integratedmodelling
+Bundle-Vendor: Integrated Modelling Partnership
 Bundle-Version: 0.11.0.qualifier
 Bundle-SymbolicName: org.integratedmodelling.kim; singleton:=true
 Bundle-ActivationPolicy: lazy
@@ -16,8 +16,8 @@ Require-Bundle: org.eclipse.xtext,
  org.eclipse.emf.common,
  com.ibm.icu,
  org.eclipse.xtext.generator,
- org.integratedmodelling.klab.api;bundle-version="0.10.0",
- org.integratedmodelling.kactors;bundle-version="0.10.0"
+ org.integratedmodelling.klab.api;bundle-version="0.11.0",
+ org.integratedmodelling.kactors;bundle-version="0.11.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: org.integratedmodelling.kim,
  org.integratedmodelling.kim.formatting2,

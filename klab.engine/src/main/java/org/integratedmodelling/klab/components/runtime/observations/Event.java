@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.components.runtime.observations;
 
 import org.integratedmodelling.klab.api.observations.IEvent;
+import org.integratedmodelling.klab.api.observations.IPattern;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.owl.Observable;
@@ -21,4 +22,5 @@ public class Event extends CountableObservation implements IEvent {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 }

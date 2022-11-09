@@ -6,24 +6,19 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
-import org.integratedmodelling.klab.api.observations.ISubjectiveState;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
-import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.common.Geometry;
-import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.runtime.observations.DelegatingArtifact;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
@@ -357,9 +352,9 @@ public class RescalingState extends Observation implements IState, DelegatingArt
 		return MediatingState.mediateIfNecessary(this, mediator);
 	}
 
-	public ISubjectiveState reinterpret(IDirectObservation observers) {
-		return null;
-	}
+//	public ISubjectiveState reinterpret(IDirectObservation observers) {
+//		return null;
+//	}
 
 	@Override
 	public <T> T aggregate(ILocator geometry, Class<? extends T> cls) {

@@ -1,6 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.integratedmodelling</groupId>
@@ -16,11 +14,6 @@
 			<url>https://mvn.slimjars.com</url>
 		</repository>
 		<!-- Another old library hosting its news builds on its own repo -->
-		<repository>
-			<id>integratedmodelling-nexus</id>
-			<name>Integratedmodelling repository</name>
-			<url>https://integratedmodelling.org/nexus/repository/maven-snapshots/</url>
-		</repository>
 		<repository>
 			<id>topobyte</id>
 			<url>https://mvn.topobyte.de</url>
@@ -92,6 +85,12 @@
 		</pluginManagement>
 	</build>
 	<dependencies>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-text</artifactId>
+			<version>1.10.0</version>
+		</dependency>
 
 		<!-- for debugging: visualize jgrapht graphs -->
 		<dependency>
@@ -300,7 +299,7 @@
 			<groupId>xml-apis</groupId>
 			<artifactId>xml-apis</artifactId>
 			<version>1.4.01</version>
-		</dependency> 
+		</dependency>
 
 		<!-- Elk core for dataflow diagramming -->
 		<dependency>
@@ -311,6 +310,14 @@
 				<exclusion>
 					<groupId>com.google.guava</groupId>
 					<artifactId>guava</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.xtext</groupId>
+					<artifactId>org.eclipse.xtext.xbase.lib</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.xtext</groupId>
+					<artifactId>org.eclipse.xtext.xbase</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -323,6 +330,14 @@
 					<groupId>com.google.guava</groupId>
 					<artifactId>guava</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.xtext</groupId>
+					<artifactId>org.eclipse.xtext.xbase.lib</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.xtext</groupId>
+					<artifactId>org.eclipse.xtext.xbase</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -334,6 +349,14 @@
 					<groupId>com.google.guava</groupId>
 					<artifactId>guava</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.xtext</groupId>
+					<artifactId>org.eclipse.xtext.xbase.lib</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.xtext</groupId>
+					<artifactId>org.eclipse.xtext.xbase</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -344,6 +367,14 @@
 				<exclusion>
 					<groupId>com.google.guava</groupId>
 					<artifactId>guava</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.xtext</groupId>
+					<artifactId>org.eclipse.xtext.xbase.lib</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.xtext</groupId>
+					<artifactId>org.eclipse.xtext.xbase</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -565,13 +596,7 @@
 		<dependency>
 			<groupId>org.orbisgis</groupId>
 			<artifactId>h2gis</artifactId>
-			<version>1.5.1-20211021.111326-1</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.locationtech.jts</groupId>
-					<artifactId>jts-core</artifactId>
-				</exclusion>
-			</exclusions>
+			<version>2.1.0</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/args4j/args4j startup options parser -->
@@ -641,6 +666,11 @@
 		<dependency>
 			<groupId>org.geotools</groupId>
 			<artifactId>gt-process-raster</artifactId>
+			<version>${geotools.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-process-feature</artifactId>
 			<version>${geotools.version}</version>
 		</dependency>
 		<!-- <dependency> <groupId>org.geotools</groupId> <artifactId>gt-netcdf</artifactId> 

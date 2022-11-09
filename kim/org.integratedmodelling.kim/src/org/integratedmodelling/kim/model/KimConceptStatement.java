@@ -146,7 +146,7 @@ public class KimConceptStatement extends KimStatement implements IKimConceptStat
 	 */
 	private List<ParentConcept> parents = new ArrayList<>();
 	private List<IKimRestriction> restrictions = new ArrayList<>();
-	private List<IKimConcept> exposedTraits = new ArrayList<>();
+//	private List<IKimConcept> exposedTraits = new ArrayList<>();
 	private List<IKimConcept> requiredIdentities = new ArrayList<>();
 	private List<IKimConcept> requiredAttributes = new ArrayList<>();
 	private List<IKimConcept> requiredRealms = new ArrayList<>();
@@ -154,25 +154,26 @@ public class KimConceptStatement extends KimStatement implements IKimConceptStat
 	private List<Pair<IKimConcept, DescriptionType>> observablesDescribed = new ArrayList<>();
 	private List<IKimConcept> traitsInherited = new ArrayList<>();
 	private List<IKimConcept> traitsConferred = new ArrayList<>();
-	private List<IKimConcept> partParticipants = new ArrayList<>();
-	private List<IKimConcept> configurationParticipants = new ArrayList<>();
-	private List<IKimConcept> constituentParticipants = new ArrayList<>();
+//	private List<IKimConcept> partParticipants = new ArrayList<>();
+//	private List<IKimConcept> configurationParticipants = new ArrayList<>();
+//	private List<IKimConcept> constituentParticipants = new ArrayList<>();
 	private List<IKimConcept> observablesCreated = new ArrayList<>();
 	private List<ApplicableConcept> appliesTo = new ArrayList<>();
 	private List<ApplicableConcept> subjectsLinked = new ArrayList<>();
 	private List<IKimConcept> qualitiesAffected = new ArrayList<>();
+	private List<IKimConcept> emergenceTriggers = new ArrayList<>();
 	private List<RoleDescriptor> roles = new ArrayList<>();
 
-	/**
-	 * Classes expose traits with their observable semantics
-	 */
-	private List<IKimObservable> traitsExposed = new ArrayList<>();
-
-	/**
-	 * If there are exposed traits, this defines whether the class is exposing
-	 * (abstract) or adopting (concrete)
-	 */
-	private boolean definingExposedTraits;
+//	/**
+//	 * Classes expose traits with their observable semantics
+//	 */
+//	private List<IKimObservable> traitsExposed = new ArrayList<>();
+//
+//	/**
+//	 * If there are exposed traits, this defines whether the class is exposing
+//	 * (abstract) or adopting (concrete)
+//	 */
+//	private boolean definingExposedTraits;
 
 	@Override
 	public String getNamespace() {
@@ -300,14 +301,14 @@ public class KimConceptStatement extends KimStatement implements IKimConceptStat
 		this.restrictions = restrictions;
 	}
 
-	@Override
-	public List<IKimConcept> getExposedTraits() {
-		return exposedTraits;
-	}
-
-	public void setExposedTraits(List<IKimConcept> exposedTraits) {
-		this.exposedTraits = exposedTraits;
-	}
+//	@Override
+//	public List<IKimConcept> getExposedTraits() {
+//		return exposedTraits;
+//	}
+//
+//	public void setExposedTraits(List<IKimConcept> exposedTraits) {
+//		this.exposedTraits = exposedTraits;
+//	}
 
 	@Override
 	public List<IKimConcept> getRequiredIdentities() {
@@ -363,28 +364,28 @@ public class KimConceptStatement extends KimStatement implements IKimConceptStat
 		this.traitsConferred = traitsConferred;
 	}
 
-	@Override
-	public List<IKimConcept> getPartParticipants() {
-		return partParticipants;
-	}
-
-	@Override
-	public List<IKimConcept> getConfigurationParticipants() {
-		return configurationParticipants;
-	}
-
-	public void setPartParticipants(List<IKimConcept> partParticipants) {
-		this.partParticipants = partParticipants;
-	}
-
-	@Override
-	public List<IKimConcept> getConstituentParticipants() {
-		return constituentParticipants;
-	}
-
-	public void setConstituentParticipants(List<IKimConcept> constituentParticipants) {
-		this.constituentParticipants = constituentParticipants;
-	}
+//	@Override
+//	public List<IKimConcept> getPartParticipants() {
+//		return partParticipants;
+//	}
+//
+//	@Override
+//	public List<IKimConcept> getConfigurationParticipants() {
+//		return configurationParticipants;
+//	}
+//
+//	public void setPartParticipants(List<IKimConcept> partParticipants) {
+//		this.partParticipants = partParticipants;
+//	}
+//
+//	@Override
+//	public List<IKimConcept> getConstituentParticipants() {
+//		return constituentParticipants;
+//	}
+//
+//	public void setConstituentParticipants(List<IKimConcept> constituentParticipants) {
+//		this.constituentParticipants = constituentParticipants;
+//	}
 
 	@Override
 	public List<IKimConcept> getObservablesCreated() {
@@ -420,15 +421,15 @@ public class KimConceptStatement extends KimStatement implements IKimConceptStat
 			((ApplicableConceptImpl) applicable).visit(visitor);
 		}
 
-		for (IKimConcept c : constituentParticipants) {
-			c.visit(visitor);
-		}
+//		for (IKimConcept c : constituentParticipants) {
+//			c.visit(visitor);
+//		}
 		for (IKimConcept c : observablesCreated) {
 			c.visit(visitor);
 		}
-		for (IKimConcept c : exposedTraits) {
-			c.visit(visitor);
-		}
+//		for (IKimConcept c : exposedTraits) {
+//			c.visit(visitor);
+//		}
 		for (Pair<IKimConcept, DescriptionType> c : observablesDescribed) {
 			c.getFirst().visit(visitor);
 		}
@@ -437,7 +438,10 @@ public class KimConceptStatement extends KimStatement implements IKimConceptStat
 				concept.visit(visitor);
 			}
 		}
-		for (IKimConcept c : partParticipants) {
+//		for (IKimConcept c : partParticipants) {
+//			c.visit(visitor);
+//		}
+		for (IKimConcept c : emergenceTriggers) {
 			c.visit(visitor);
 		}
 		for (IKimConcept c : qualitiesAffected) {
@@ -490,23 +494,23 @@ public class KimConceptStatement extends KimStatement implements IKimConceptStat
 		this.authorityTerm = string;
 	}
 
-	@Override
-	public List<IKimObservable> getTraitsExposed() {
-		return traitsExposed;
-	}
+//	@Override
+//	public List<IKimObservable> getTraitsExposed() {
+//		return traitsExposed;
+//	}
+//
+//	public void setTraitsExposed(List<IKimObservable> traitsExposed) {
+//		this.traitsExposed = traitsExposed;
+//	}
 
-	public void setTraitsExposed(List<IKimObservable> traitsExposed) {
-		this.traitsExposed = traitsExposed;
-	}
-
-	@Override
-	public boolean isDefiningExposedTraits() {
-		return definingExposedTraits;
-	}
-
-	public void setDefiningExposedTraits(boolean definingExposedTraits) {
-		this.definingExposedTraits = definingExposedTraits;
-	}
+//	@Override
+//	public boolean isDefiningExposedTraits() {
+//		return definingExposedTraits;
+//	}
+//
+//	public void setDefiningExposedTraits(boolean definingExposedTraits) {
+//		this.definingExposedTraits = definingExposedTraits;
+//	}
 
 	public void addRole(IKimConcept role, IKimConcept target, IKimConcept restricted) {
 		RoleDescriptor rd = new RoleDescriptor();
@@ -531,6 +535,11 @@ public class KimConceptStatement extends KimStatement implements IKimConceptStat
 
 	public void setDocstring(String docstring) {
 		this.docstring = docstring;
+	}
+
+	@Override
+	public List<IKimConcept> getEmergenceTriggers() {
+		return this.emergenceTriggers;
 	}
 
 }

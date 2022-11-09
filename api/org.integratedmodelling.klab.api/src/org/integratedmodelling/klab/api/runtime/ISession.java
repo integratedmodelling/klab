@@ -20,10 +20,9 @@ import java.util.concurrent.Future;
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
-import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.engine.IEngine;
-import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IObserver;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
@@ -54,7 +53,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-public interface ISession extends IEngineSessionIdentity, Closeable {
+public interface ISession extends IEngineSessionIdentity, Closeable, IObserver<ISubject> {
 
     // TODO flesh out
     public interface Listener {
@@ -62,18 +61,6 @@ public interface ISession extends IEngineSessionIdentity, Closeable {
         void onClose(ISession session);
     }
 
-    /**
-     * Observe a new context of the passed type, returning an asynchronous future. This is the
-     * primary, asynchronous context observation method for the k.LAB modeling API. Interactive
-     * sessions and applications use the ISessionState to organize and schedule observations. When
-     * this method is used, the task should not have started, so the user has a chance to apply
-     * listeners, scenarios and other options.
-     * 
-     * @param observable
-     * @param geometry
-     * @return
-     */
-    ITask<ISubject> observe(IObservable observable, IGeometry geometry);
 
     /**
      * Observe a new context of the passed type, returning an asynchronous future. This is the

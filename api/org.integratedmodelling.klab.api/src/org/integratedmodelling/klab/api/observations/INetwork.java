@@ -6,13 +6,13 @@ import java.util.Collection;
 import org.integratedmodelling.klab.utils.Triple;
 
 /**
- * A network is, for the time being, a possible view of a configuration. If they are networks 
- * configurations will return a network using the as() method. 
+ * A network is a pattern resulting from multiple "connections", observed as relationships. 
+ * 
  * 
  * @author Ferd
  *
  */
-public interface INetwork {
+public interface INetwork extends IPattern {
 
     /**
      * Return a list of triples ID/Description/FileExtension for all the formats of file export that

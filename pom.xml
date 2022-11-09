@@ -89,6 +89,7 @@
 		<!-- <module>docs</module> -->
 		<module>authorities</module>
 		<module>klab.authentication</module>
+		<module>klab.activity</module>
 	</modules>
 
 	<properties>
@@ -120,6 +121,7 @@
 		<spring-cloud.version>2020.0.3</spring-cloud.version>
 		<junit-version>5.6.3</junit-version>
 		<jackson-version>2.12.4</jackson-version>
+		<jsonld-java-version>0.13.4</jsonld-java-version>
 		<!-- end versions that need to be in lock-step to avoid multiple Spring 
 			issues -->
 

@@ -409,8 +409,10 @@ class KimValidator extends AbstractKimValidator {
 						KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, REASONING_PROBLEM)
 				}
 
-				if (observable.main !== null && (observable.main.is(Type.TRAIT) || observable.main.is(Type.ROLE)) &&
-					/* observable.main.inherent === null && */ observable.main.context === null) {
+				if (observable.main !== null &&
+					(observable.main.is(Type.TRAIT) ||
+						observable.main.is(Type.ROLE)) && /* observable.main.inherent === null && */ observable.main.
+						context === null) {
 					error("Lone predicates are not valid observables. Use classifying observables to attribute " +
 						" or resolve predicates, or use 'type of' to observe them over a context.",
 						KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, REASONING_PROBLEM)
@@ -1547,17 +1549,12 @@ class KimValidator extends AbstractKimValidator {
 			if (concept.name.isTemplate) {
 
 				ret.add(Type.MACRO)
-//				if (concept.name.extends !== null) {
-					// add type for extended concept if any
-					val ext = checkConcept(concept.name.extends, declaration, macro)
-					if (ext.isEmpty) {
-						ret.clear
-					} else {
-						ret.addAll(ext)
-					}
-//				} else if (concept.name.type !== null) {
-//					ret.addAll(Kim.INSTANCE.getType(concept.name.type, null))
-//				}
+				val ext = checkConcept(concept.name.extends, declaration, macro)
+				if (ext.isEmpty) {
+					ret.clear
+				} else {
+					ret.addAll(ext)
+				}
 
 			} else {
 
@@ -1575,10 +1572,6 @@ class KimValidator extends AbstractKimValidator {
 					var namespace = Kim.INSTANCE.getNamespace(concept)
 					if (!namespace.worldviewBound &&
 						(namespace.project.workspace as KimWorkspace).namespaceIds.contains(ns)) {
-						/* if (namespace.name.equals(ns)) {
-						 * 	warning("Concept " + concept.name + " is in this same namespace and should be referred to by ID only", concept, null,
-						 * 		KimPackage.CONCEPT__CONCEPT)
-						 } else */
 						if (!namespace.name.equals(ns) && !(namespace as KimNamespace).importedIds.contains(ns)) {
 							error("Namespace " + ns +
 								" is in the same workspace and must be explicitly imported for its concepts to be used",
@@ -1671,8 +1664,6 @@ class KimValidator extends AbstractKimValidator {
 							KimPackage.CONCEPT__CONCEPT)
 					}
 					operator.add(Type.CLASS)
-				} else if (concept.isObservability) {
-					operator.add(Type.OBSERVABILITY)
 				} else if (concept.isOccurrence || concept.isPresence) {
 					if (!flags.contains(Type.DIRECT_OBSERVABLE)) {
 						error((if(concept.isOccurrence) 'Occurrence' else 'Presence') +
@@ -2028,6 +2019,10 @@ class KimValidator extends AbstractKimValidator {
 		}
 
 		if (concept.authority !== null) {
+			warning(
+				"The 'identified as' syntax is deprecated: use <AUTHORITY>:<IDENTIFIER> as a normal identity concept instead." +
+					" In root-level definition, 'inherits <AUTH>:<ID>' can substitute 'identified as' ... 'by' ....", concept,
+				KimPackage.Literals.CONCEPT_STATEMENT_BODY__STRING_IDENTIFIER)
 			ret.setAuthority(concept.authority);
 			if (concept.stringIdentifier !== null) {
 				ret.setAuthorityTerm(concept.stringIdentifier)
@@ -2051,32 +2046,31 @@ class KimValidator extends AbstractKimValidator {
 			}
 		}
 
-		if (concept.contextualizedTraits.size > 0) {
-
-			if (!type.contains(Type.CLASS)) {
-				error("Only a class can expose traits", concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__CHILDREN)
-				ok = false
-
-			} else {
-
-				// TODO exposes or exposing, use concept.specific to distinguish
-				var i = 0
-				for (ObservableSemantics trait : concept.contextualizedTraits) {
-					var ttype = checkDeclaration(trait.declaration)
-					if (!ttype.contains(Type.TRAIT)) {
-						error("Only traits can be exposed by classes", concept, KimPackage.Literals.
-							CONCEPT_STATEMENT_BODY__ACTUALLY_INHERITED_TRAITS, i)
-						ok = false
-					} else {
-						ret.traitsExposed.add(Kim.INSTANCE.declareObservable(trait));
-					}
-					i++
-				}
-
-				ret.definingExposedTraits = !concept.specific
-			}
-		}
-
+//		if (concept.contextualizedTraits.size > 0) {
+//
+//			if (!type.contains(Type.CLASS)) {
+//				error("Only a class can expose traits", concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__CHILDREN)
+//				ok = false
+//
+//			} else {
+//
+//				// TODO exposes or exposing, use concept.specific to distinguish
+//				var i = 0
+//				for (ObservableSemantics trait : concept.contextualizedTraits) {
+//					var ttype = checkDeclaration(trait.declaration)
+//					if (!ttype.contains(Type.TRAIT)) {
+//						error("Only traits can be exposed by classes", concept, KimPackage.Literals.
+//							CONCEPT_STATEMENT_BODY__ACTUALLY_INHERITED_TRAITS, i)
+//						ok = false
+//					} else {
+//						ret.traitsExposed.add(Kim.INSTANCE.declareObservable(trait));
+//					}
+//					i++
+//				}
+//
+//				ret.definingExposedTraits = !concept.specific
+//			}
+//		}
 		if (concept.definedAuthority !== null) {
 //			ret.authorityDefined
 //			concept.definedAuthority
@@ -2300,51 +2294,95 @@ class KimValidator extends AbstractKimValidator {
 			}
 		}
 
-		if (concept.whole !== null) {
-			// use concept.isConstituent to check part vs. constituent and concept.isPartOf to check 
-			// for the use of 'of' which inverts the relationship.
-			if (!type.contains(Type.SUBJECT) && !type.contains(Type.AGENT) && !(type.contains(Type.CONFIGURATION) &&
-				concept.isConstitutes)) {
-				error("only subjects can use mereological relationships", concept,
-					KimPackage.Literals.CONCEPT_STATEMENT_BODY__WHOLE)
-				ok = false
-			} else {
-				var countable = Kim.INSTANCE.declareConcept(concept.whole)
-				if (!type.contains(Type.CONFIGURATION) && !countable.is(Type.SUBJECT) && !countable.is(Type.AGENT)) {
-					error("only subjects can be parts of other subjects", concept,
-						KimPackage.Literals.CONCEPT_STATEMENT_BODY__WHOLE)
-				} else {
-					if (concept.isConstituent) {
-						ret.constituentParticipants.add(countable)
-					} else if (concept.isPartOf) {
-						ret.partParticipants.add(countable)
-					} else if (concept.isConstitutes) {
-						ret.configurationParticipants.add(countable)
-					} else {
-						// TODO
-						throw new IllegalArgumentException("inverse mereology still unsupported")
-					}
-				}
-			}
-		}
-
+//		if (concept.whole !== null) {
+//			// use concept.isConstituent to check part vs. constituent and concept.isPartOf to check 
+//			// for the use of 'of' which inverts the relationship.
+//			if (!type.contains(Type.SUBJECT) && !type.contains(Type.AGENT) && !(type.contains(Type.CONFIGURATION) &&
+//				concept.isConstitutes)) {
+//				error("only subjects can use mereological relationships", concept,
+//					KimPackage.Literals.CONCEPT_STATEMENT_BODY__WHOLE)
+//				ok = false
+//			} else {
+//				var countable = Kim.INSTANCE.declareConcept(concept.whole)
+//				if (!type.contains(Type.CONFIGURATION) && !countable.is(Type.SUBJECT) && !countable.is(Type.AGENT)) {
+//					error("only subjects can be parts of other subjects", concept,
+//						KimPackage.Literals.CONCEPT_STATEMENT_BODY__WHOLE)
+//				} else {
+//					if (concept.isConstituent) {
+//						ret.constituentParticipants.add(countable)
+//					} else if (concept.isPartOf) {
+//						ret.partParticipants.add(countable)
+//					} else if (concept.isConstitutes) {
+//						ret.configurationParticipants.add(countable)
+//					} else {
+//						// TODO
+//						throw new IllegalArgumentException("inverse mereology still unsupported")
+//					}
+//				}
+//			}
+//		}
 		if (concept.creates.size > 0) {
 			// process or event creates countable in context
-			if (!type.contains(Type.PROCESS) && !type.contains(Type.EVENT)) {
+			if (!type.contains(Type.PROCESS)) {
 				error("only processes can use the 'creates' clause", concept,
 					KimPackage.Literals.CONCEPT_STATEMENT_BODY__CREATES)
 				ok = false
 			} else {
 				i = 0
 				for (decl : concept.creates) {
+
 					var countable = Kim.INSTANCE.declareConcept(decl)
-					if (!countable.is(Type.OBSERVABLE)) {
-						error("only observable types can be created by processes or events", concept,
-							KimPackage.Literals.CONCEPT_STATEMENT_BODY__CREATES, i)
-					} else {
+
+					if (countable.type.contains(Type.QUALITY) || countable.type.contains(Type.EVENT)) {
 						ret.observablesCreated.add(countable)
+					} else {
+						error("processes can only create qualities or events", decl,
+							KimPackage.Literals.CONCEPT_STATEMENT_BODY__CREATES)
+						ok = false
 					}
 					i++
+				}
+			}
+		}
+
+		if (concept.emergenceTriggers.size > 0) {
+			// TODO applies to; can also restrict source and destination for relationships
+			for (target : concept.emergenceTriggers) {
+
+				if (!type.contains(Type.PROCESS) && !type.contains(Type.CONFIGURATION) &&
+					!type.contains(Type.SUBJECT) && !type.contains(Type.EVENT) && !type.contains(Type.AGENT)) {
+					error("only processes, events, subjects and configurations can show emergence", concept,
+						KimPackage.Literals.CONCEPT_STATEMENT_BODY__EMERGENCE_TRIGGERS)
+					ok = false
+				} else {
+					i = 0
+					for (decl : concept.emergenceTriggers) {
+
+						var countable = Kim.INSTANCE.declareConcept(decl)
+
+						var fits = false;
+
+						/*
+						 * valid cases are: configurations can emerge from qualities and relationships; everything else,
+						 * only from relationships
+						 */
+						if (type.contains(Type.CONFIGURATION)) {
+							fits = countable.is(Type.QUALITY) || countable.is(Type.RELATIONSHIP);
+						} else if (type.contains(Type.PROCESS) || type.contains(Type.EVENT)) {
+							fits = countable.is(Type.FUNCTIONAL);
+						} else {
+							fits = countable.is(Type.STRUCTURAL);
+						}
+
+						if (fits) {
+							ret.emergenceTriggers.add(countable)
+						} else {
+							error("inconsistent use of the 'emerges from' clause", concept,
+								KimPackage.Literals.CONCEPT_STATEMENT_BODY__EMERGENCE_TRIGGERS)
+							ok = false
+						}
+						i++
+					}
 				}
 			}
 		}
@@ -2383,16 +2421,15 @@ class KimValidator extends AbstractKimValidator {
 			}
 		}
 
-		if (concept.inverse !== null) {
-			if (!type.contains(Type.RELATIONSHIP)) {
-				error("only relationships can use the 'inverse of' clause", concept,
-					KimPackage.Literals.CONCEPT_STATEMENT_BODY__INVERSE)
-				ok = false
-			} else {
-				// TODO inverse of relationship	
-			}
-		}
-
+//		if (concept.inverse !== null) {
+//			if (!type.contains(Type.RELATIONSHIP)) {
+//				error("only relationships can use the 'inverse of' clause", concept,
+//					KimPackage.Literals.CONCEPT_STATEMENT_BODY__INVERSE)
+//				ok = false
+//			} else {
+//				// TODO inverse of relationship	
+//			}
+//		}
 		if (concept.qualitiesAffected.size > 0) {
 			if (!type.contains(Type.PROCESS)) {
 				error("only processes can use the 'affects' clause", concept,

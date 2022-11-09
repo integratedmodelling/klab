@@ -41,34 +41,31 @@ java weka.classifiers.bayes.BayesNet -t iris.arff -D \
  */
 public class RandomForestResolver extends AbstractWekaResolver<RandomForest> implements IExpression {
 
-//	private IContextualizationScope context;
+    public RandomForestResolver() {
+    }
 
-	public RandomForestResolver() {}
-	
-	public RandomForestResolver(IParameters<String> parameters,IContextualizationScope context) {
-		// TODO check parameters!
-		super(RandomForest.class, fixDefaults(parameters), context.getTargetSemantics(), true, true, false);
-//		this.context = context;
-	}
+    public RandomForestResolver(IParameters<String> parameters, IContextualizationScope context) {
+        super(new RandomForest(), fixDefaults(parameters), context.getTargetSemantics(), true, true, false);
+    }
 
-	private static IParameters<String> fixDefaults(IParameters<String> parameters) {
+    private static IParameters<String> fixDefaults(IParameters<String> parameters) {
 
-		/*
-		 * search and estimator parameters are mandatory. This way we enable defaults.
-		 */
-		/*
-		 * if (!parameters.containsKey("search")) { parameters.put("search",
-		 * KimServiceCall.create("weka.bayes.k2", "maxparents", 3)); } if
-		 * (!parameters.containsKey("estimator")) { parameters.put("estimator",
-		 * KimServiceCall.create("weka.bayes.simpleestimator", "alpha", 1.0)); }
-		 */
-		
-		return parameters;
-	}
+        /*
+         * search and estimator parameters are mandatory. This way we enable defaults.
+         */
+        /*
+         * if (!parameters.containsKey("search")) { parameters.put("search",
+         * KimServiceCall.create("weka.bayes.k2", "maxparents", 3)); } if
+         * (!parameters.containsKey("estimator")) { parameters.put("estimator",
+         * KimServiceCall.create("weka.bayes.simpleestimator", "alpha", 1.0)); }
+         */
 
-	@Override
-	public Object eval(IContextualizationScope context, Object...parameters) throws KlabException {
-		return new RandomForestResolver(Parameters.create(parameters), context);
-	}
+        return parameters;
+    }
+
+    @Override
+    public Object eval(IContextualizationScope context, Object... parameters) throws KlabException {
+        return new RandomForestResolver(Parameters.create(parameters), context);
+    }
 
 }

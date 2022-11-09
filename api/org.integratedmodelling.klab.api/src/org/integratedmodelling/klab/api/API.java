@@ -89,6 +89,9 @@ public interface API {
 	/** Parameter: the URN being resolved in any endpoints that access resources. */
 	public static final String P_URN = "{urn}";
 
+	/** Parameter: query for any GET call used to search **/
+	public static final String P_QUERY = "{query}";
+
 	/**
 	 * Parameter: a codelist name for GET requests.
 	 */
@@ -253,23 +256,6 @@ public interface API {
 
 	public static interface HUB {
 
-		/**
-		 * Returns authenticated user details and network status with all nodes
-		 * (including offline if applicable) with refresh rate and unique network access
-		 * token. Should be the only authentication call necessary in this API.
-		 * 
-		 * <p>
-		 * <b>Protocol:</b> POST <br/>
-		 * <b>Response type:</b> Json <br/>
-		 * <b>Request:</b>
-		 * {@code org.integratedmodelling.klab.rest.resources.requests.AuthenticationRequest}
-		 * <br/>
-		 * <b>Response:</b>
-		 * {@code org.integratedmodelling.klab.rest.resources.responses.AuthenticationResponse}
-		 * <br/>
-		 * <b>Authentication:</b> open
-		 */
-
 		public static final String API_BASE = "/api/v2";
 		/**
 		 * Base URL path for node on the hub.
@@ -304,6 +290,22 @@ public interface API {
 		 */
 		public static final String AUTH_BASE = "/auth-cert";
 
+		/**
+		 * Returns authenticated user details and network status with all nodes
+		 * (including offline if applicable) with refresh rate and unique network access
+		 * token.
+		 * 
+		 * <p>
+		 * <b>Protocol:</b> POST <br/>
+		 * <b>Response type:</b> Json <br/>
+		 * <b>Request:</b>
+		 * {@code org.integratedmodelling.klab.rest.resources.requests.AuthenticationRequest}
+		 * <br/>
+		 * <b>Response:</b>
+		 * {@code org.integratedmodelling.klab.rest.resources.responses.AuthenticationResponse}
+		 * <br/>
+		 * <b>Authentication:</b> open
+		 */
 		public static final String AUTHENTICATE_ENGINE = ENGINE_BASE + AUTH_BASE;
 
 		public static final String LEGACY_AUTHENTICATE_ENGINE = "/api/auth-cert/engine";
@@ -371,11 +373,7 @@ public interface API {
 			 * URL PARAMETER for user activation tokens.
 			 */
 			public static final String USER_ACTIVATION = "activate";
-			/**
-			 * URL PARAMETER for user requesting groups. Should be deprecated tokens.
-			 */
-			@Deprecated
-			public static final String USER_GROUPS = "groups";
+
 			/**
 			 * URL PARAMETER for user requesting a lost password email.
 			 */
@@ -497,11 +495,19 @@ public interface API {
 			/**
 			 * 
 			 */
-			public static final String GET_LOG = "logs/get/" + P_LINES;
+			public static final String GET_LOG = "/logs/get/" + P_LINES;
 
 		}
 
 		public static interface RESOURCE {
+
+			/**
+			 * Return resources matching a query string. Admits the "maxResults", "bbox",
+			 * "timespan" and "verbose" arguments.
+			 * 
+			 * GET
+			 */
+			public static final String SEARCH = "/resource/search/" + P_QUERY;
 
 			/**
 			 * Add a resource to the public catalog by uploading zipped contents from a

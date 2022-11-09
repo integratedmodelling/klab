@@ -2194,13 +2194,22 @@ public interface KimPackage extends EPackage
   int DEPENDENCY__OBSERVABLE = 2;
 
   /**
+   * The feature id for the '<em><b>Options</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DEPENDENCY__OPTIONS = 3;
+
+  /**
    * The feature id for the '<em><b>Alternative Observables</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int DEPENDENCY__ALTERNATIVE_OBSERVABLES = 3;
+  int DEPENDENCY__ALTERNATIVE_OBSERVABLES = 4;
 
   /**
    * The feature id for the '<em><b>Optional</b></em>' attribute.
@@ -2209,7 +2218,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int DEPENDENCY__OPTIONAL = 4;
+  int DEPENDENCY__OPTIONAL = 5;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -2218,7 +2227,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int DEPENDENCY__NAME = 5;
+  int DEPENDENCY__NAME = 6;
 
   /**
    * The number of structural features of the '<em>Dependency</em>' class.
@@ -2227,7 +2236,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int DEPENDENCY_FEATURE_COUNT = 6;
+  int DEPENDENCY_FEATURE_COUNT = 7;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl <em>Concept Declaration</em>}' class.
@@ -2665,22 +2674,13 @@ public interface KimPackage extends EPackage
   int CONCEPT__TYPE = 18;
 
   /**
-   * The feature id for the '<em><b>Observability</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONCEPT__OBSERVABILITY = 19;
-
-  /**
    * The feature id for the '<em><b>Proportion</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CONCEPT__PROPORTION = 20;
+  int CONCEPT__PROPORTION = 19;
 
   /**
    * The feature id for the '<em><b>Other</b></em>' containment reference.
@@ -2689,7 +2689,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__OTHER = 21;
+  int CONCEPT__OTHER = 20;
 
   /**
    * The feature id for the '<em><b>Percentage</b></em>' attribute.
@@ -2698,7 +2698,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__PERCENTAGE = 22;
+  int CONCEPT__PERCENTAGE = 21;
 
   /**
    * The feature id for the '<em><b>Ratio</b></em>' attribute.
@@ -2707,7 +2707,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__RATIO = 23;
+  int CONCEPT__RATIO = 22;
 
   /**
    * The feature id for the '<em><b>Monetary</b></em>' attribute.
@@ -2716,7 +2716,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__MONETARY = 24;
+  int CONCEPT__MONETARY = 23;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -2725,7 +2725,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__VALUE = 25;
+  int CONCEPT__VALUE = 24;
 
   /**
    * The feature id for the '<em><b>Occurrence</b></em>' attribute.
@@ -2734,7 +2734,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__OCCURRENCE = 26;
+  int CONCEPT__OCCURRENCE = 25;
 
   /**
    * The feature id for the '<em><b>Declaration</b></em>' containment reference.
@@ -2743,7 +2743,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__DECLARATION = 27;
+  int CONCEPT__DECLARATION = 26;
 
   /**
    * The number of structural features of the '<em>Concept</em>' class.
@@ -2752,7 +2752,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_FEATURE_COUNT = 28;
+  int CONCEPT_FEATURE_COUNT = 27;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.UpperOntologyDefinitionImpl <em>Upper Ontology Definition</em>}' class.
@@ -3064,40 +3064,13 @@ public interface KimPackage extends EPackage
   int CONCEPT_STATEMENT_BODY__CONNECTORS = 12;
 
   /**
-   * The feature id for the '<em><b>Contextualized Traits</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONCEPT_STATEMENT_BODY__CONTEXTUALIZED_TRAITS = 13;
-
-  /**
-   * The feature id for the '<em><b>Specific</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONCEPT_STATEMENT_BODY__SPECIFIC = 14;
-
-  /**
-   * The feature id for the '<em><b>Contextualizes Traits</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONCEPT_STATEMENT_BODY__CONTEXTUALIZES_TRAITS = 15;
-
-  /**
    * The feature id for the '<em><b>Defined Authority</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CONCEPT_STATEMENT_BODY__DEFINED_AUTHORITY = 16;
+  int CONCEPT_STATEMENT_BODY__DEFINED_AUTHORITY = 13;
 
   /**
    * The feature id for the '<em><b>Upper Concept</b></em>' containment reference.
@@ -3106,7 +3079,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_STATEMENT_BODY__UPPER_CONCEPT = 17;
+  int CONCEPT_STATEMENT_BODY__UPPER_CONCEPT = 14;
 
   /**
    * The feature id for the '<em><b>Requirements</b></em>' containment reference list.
@@ -3115,7 +3088,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_STATEMENT_BODY__REQUIREMENTS = 18;
+  int CONCEPT_STATEMENT_BODY__REQUIREMENTS = 15;
 
   /**
    * The feature id for the '<em><b>Described Quality</b></em>' containment reference.
@@ -3124,7 +3097,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_STATEMENT_BODY__DESCRIBED_QUALITY = 19;
+  int CONCEPT_STATEMENT_BODY__DESCRIBED_QUALITY = 16;
 
   /**
    * The feature id for the '<em><b>Description Constraints</b></em>' containment reference.
@@ -3133,7 +3106,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_STATEMENT_BODY__DESCRIPTION_CONSTRAINTS = 20;
+  int CONCEPT_STATEMENT_BODY__DESCRIPTION_CONSTRAINTS = 17;
 
   /**
    * The feature id for the '<em><b>Described Proportionality</b></em>' containment reference.
@@ -3142,7 +3115,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_STATEMENT_BODY__DESCRIBED_PROPORTIONALITY = 21;
+  int CONCEPT_STATEMENT_BODY__DESCRIBED_PROPORTIONALITY = 18;
 
   /**
    * The feature id for the '<em><b>Described Inverse Proportionality Quality</b></em>' containment reference.
@@ -3151,7 +3124,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_STATEMENT_BODY__DESCRIBED_INVERSE_PROPORTIONALITY_QUALITY = 22;
+  int CONCEPT_STATEMENT_BODY__DESCRIBED_INVERSE_PROPORTIONALITY_QUALITY = 19;
 
   /**
    * The feature id for the '<em><b>Described Nonzero Quality</b></em>' containment reference.
@@ -3160,7 +3133,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_STATEMENT_BODY__DESCRIBED_NONZERO_QUALITY = 23;
+  int CONCEPT_STATEMENT_BODY__DESCRIBED_NONZERO_QUALITY = 20;
 
   /**
    * The feature id for the '<em><b>Classifies Quality</b></em>' containment reference.
@@ -3169,7 +3142,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_STATEMENT_BODY__CLASSIFIES_QUALITY = 24;
+  int CONCEPT_STATEMENT_BODY__CLASSIFIES_QUALITY = 21;
 
   /**
    * The feature id for the '<em><b>Discretizes Quality</b></em>' containment reference.
@@ -3178,7 +3151,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_STATEMENT_BODY__DISCRETIZES_QUALITY = 25;
+  int CONCEPT_STATEMENT_BODY__DISCRETIZES_QUALITY = 22;
 
   /**
    * The feature id for the '<em><b>Actually Inherited Traits</b></em>' containment reference list.
@@ -3187,7 +3160,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_STATEMENT_BODY__ACTUALLY_INHERITED_TRAITS = 26;
+  int CONCEPT_STATEMENT_BODY__ACTUALLY_INHERITED_TRAITS = 23;
 
   /**
    * The feature id for the '<em><b>Roles</b></em>' containment reference list.
@@ -3196,7 +3169,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_STATEMENT_BODY__ROLES = 27;
+  int CONCEPT_STATEMENT_BODY__ROLES = 24;
 
   /**
    * The feature id for the '<em><b>Target Observables</b></em>' containment reference list.
@@ -3205,7 +3178,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_STATEMENT_BODY__TARGET_OBSERVABLES = 28;
+  int CONCEPT_STATEMENT_BODY__TARGET_OBSERVABLES = 25;
 
   /**
    * The feature id for the '<em><b>Restricted Observables</b></em>' containment reference list.
@@ -3214,7 +3187,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_STATEMENT_BODY__RESTRICTED_OBSERVABLES = 29;
+  int CONCEPT_STATEMENT_BODY__RESTRICTED_OBSERVABLES = 26;
 
   /**
    * The feature id for the '<em><b>Conferred Traits</b></em>' containment reference list.
@@ -3223,7 +3196,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_STATEMENT_BODY__CONFERRED_TRAITS = 30;
+  int CONCEPT_STATEMENT_BODY__CONFERRED_TRAITS = 27;
 
   /**
    * The feature id for the '<em><b>Conferred Targets</b></em>' containment reference list.
@@ -3232,43 +3205,16 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_STATEMENT_BODY__CONFERRED_TARGETS = 31;
+  int CONCEPT_STATEMENT_BODY__CONFERRED_TARGETS = 28;
 
   /**
-   * The feature id for the '<em><b>Constituent</b></em>' attribute.
+   * The feature id for the '<em><b>Emergence Triggers</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CONCEPT_STATEMENT_BODY__CONSTITUENT = 32;
-
-  /**
-   * The feature id for the '<em><b>Constitutes</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONCEPT_STATEMENT_BODY__CONSTITUTES = 33;
-
-  /**
-   * The feature id for the '<em><b>Part Of</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONCEPT_STATEMENT_BODY__PART_OF = 34;
-
-  /**
-   * The feature id for the '<em><b>Whole</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONCEPT_STATEMENT_BODY__WHOLE = 35;
+  int CONCEPT_STATEMENT_BODY__EMERGENCE_TRIGGERS = 29;
 
   /**
    * The feature id for the '<em><b>Creates</b></em>' containment reference list.
@@ -3277,7 +3223,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_STATEMENT_BODY__CREATES = 36;
+  int CONCEPT_STATEMENT_BODY__CREATES = 30;
 
   /**
    * The feature id for the '<em><b>Trait Targets</b></em>' containment reference list.
@@ -3286,7 +3232,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_STATEMENT_BODY__TRAIT_TARGETS = 37;
+  int CONCEPT_STATEMENT_BODY__TRAIT_TARGETS = 31;
 
   /**
    * The feature id for the '<em><b>Domains</b></em>' containment reference list.
@@ -3295,7 +3241,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_STATEMENT_BODY__DOMAINS = 38;
+  int CONCEPT_STATEMENT_BODY__DOMAINS = 32;
 
   /**
    * The feature id for the '<em><b>Ranges</b></em>' containment reference list.
@@ -3304,16 +3250,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_STATEMENT_BODY__RANGES = 39;
-
-  /**
-   * The feature id for the '<em><b>Inverse</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONCEPT_STATEMENT_BODY__INVERSE = 40;
+  int CONCEPT_STATEMENT_BODY__RANGES = 33;
 
   /**
    * The feature id for the '<em><b>Qualities Affected</b></em>' containment reference list.
@@ -3322,7 +3259,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_STATEMENT_BODY__QUALITIES_AFFECTED = 41;
+  int CONCEPT_STATEMENT_BODY__QUALITIES_AFFECTED = 34;
 
   /**
    * The feature id for the '<em><b>Disjoint</b></em>' attribute.
@@ -3331,7 +3268,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_STATEMENT_BODY__DISJOINT = 42;
+  int CONCEPT_STATEMENT_BODY__DISJOINT = 35;
 
   /**
    * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -3340,7 +3277,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_STATEMENT_BODY__CHILDREN = 43;
+  int CONCEPT_STATEMENT_BODY__CHILDREN = 36;
 
   /**
    * The feature id for the '<em><b>Implications</b></em>' containment reference list.
@@ -3349,7 +3286,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_STATEMENT_BODY__IMPLICATIONS = 44;
+  int CONCEPT_STATEMENT_BODY__IMPLICATIONS = 37;
 
   /**
    * The feature id for the '<em><b>Authorities</b></em>' attribute list.
@@ -3358,7 +3295,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_STATEMENT_BODY__AUTHORITIES = 45;
+  int CONCEPT_STATEMENT_BODY__AUTHORITIES = 38;
 
   /**
    * The feature id for the '<em><b>Metadata</b></em>' containment reference.
@@ -3367,7 +3304,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_STATEMENT_BODY__METADATA = 46;
+  int CONCEPT_STATEMENT_BODY__METADATA = 39;
 
   /**
    * The feature id for the '<em><b>Properties</b></em>' containment reference list.
@@ -3376,7 +3313,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_STATEMENT_BODY__PROPERTIES = 47;
+  int CONCEPT_STATEMENT_BODY__PROPERTIES = 40;
 
   /**
    * The number of structural features of the '<em>Concept Statement Body</em>' class.
@@ -3385,7 +3322,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_STATEMENT_BODY_FEATURE_COUNT = 48;
+  int CONCEPT_STATEMENT_BODY_FEATURE_COUNT = 41;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.DescriptionConstraintsImpl <em>Description Constraints</em>}' class.
@@ -4331,6 +4268,43 @@ public interface KimPackage extends EPackage
   int FUNCTION_FEATURE_COUNT = 2;
 
   /**
+   * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.OptionImpl <em>Option</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kim.kim.impl.OptionImpl
+   * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getOption()
+   * @generated
+   */
+  int OPTION = 50;
+
+  /**
+   * The feature id for the '<em><b>Key</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int OPTION__KEY = 0;
+
+  /**
+   * The feature id for the '<em><b>Value</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int OPTION__VALUE = 1;
+
+  /**
+   * The number of structural features of the '<em>Option</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int OPTION_FEATURE_COUNT = 2;
+
+  /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.REL_OPERATORImpl <em>REL OPERATOR</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -4338,7 +4312,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getREL_OPERATOR()
    * @generated
    */
-  int REL_OPERATOR = 50;
+  int REL_OPERATOR = 51;
 
   /**
    * The feature id for the '<em><b>Gt</b></em>' attribute.
@@ -4411,7 +4385,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getUnitElement()
    * @generated
    */
-  int UNIT_ELEMENT = 51;
+  int UNIT_ELEMENT = 52;
 
   /**
    * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -4448,7 +4422,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getUnit()
    * @generated
    */
-  int UNIT = 52;
+  int UNIT = 53;
 
   /**
    * The feature id for the '<em><b>Root</b></em>' containment reference.
@@ -4494,7 +4468,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getCurrency()
    * @generated
    */
-  int CURRENCY = 53;
+  int CURRENCY = 54;
 
   /**
    * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -4540,7 +4514,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getNumber()
    * @generated
    */
-  int NUMBER = 54;
+  int NUMBER = 55;
 
   /**
    * The feature id for the '<em><b>Negative</b></em>' attribute.
@@ -4631,7 +4605,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getQuantity()
    * @generated
    */
-  int QUANTITY = 55;
+  int QUANTITY = 56;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' containment reference.
@@ -4686,7 +4660,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getDate()
    * @generated
    */
-  int DATE = 56;
+  int DATE = 57;
 
   /**
    * The feature id for the '<em><b>Year</b></em>' attribute.
@@ -4768,16 +4742,6 @@ public interface KimPackage extends EPackage
    * @ordered
    */
   int DATE_FEATURE_COUNT = 8;
-
-  /**
-   * The meta object id for the '{@link org.integratedmodelling.kim.kim.DataType <em>Data Type</em>}' enum.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see org.integratedmodelling.kim.kim.DataType
-   * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getDataType()
-   * @generated
-   */
-  int DATA_TYPE = 57;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.UnitOp <em>Unit Op</em>}' enum.
@@ -7029,6 +6993,17 @@ public interface KimPackage extends EPackage
   EReference getDependency_Observable();
 
   /**
+   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kim.kim.Dependency#getOptions <em>Options</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Options</em>'.
+   * @see org.integratedmodelling.kim.kim.Dependency#getOptions()
+   * @see #getDependency()
+   * @generated
+   */
+  EReference getDependency_Options();
+
+  /**
    * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kim.kim.Dependency#getAlternativeObservables <em>Alternative Observables</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -7565,17 +7540,6 @@ public interface KimPackage extends EPackage
   EAttribute getConcept_Type();
 
   /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Concept#isObservability <em>Observability</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Observability</em>'.
-   * @see org.integratedmodelling.kim.kim.Concept#isObservability()
-   * @see #getConcept()
-   * @generated
-   */
-  EAttribute getConcept_Observability();
-
-  /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Concept#isProportion <em>Proportion</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -8013,39 +7977,6 @@ public interface KimPackage extends EPackage
   EAttribute getConceptStatementBody_Connectors();
 
   /**
-   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getContextualizedTraits <em>Contextualized Traits</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference list '<em>Contextualized Traits</em>'.
-   * @see org.integratedmodelling.kim.kim.ConceptStatementBody#getContextualizedTraits()
-   * @see #getConceptStatementBody()
-   * @generated
-   */
-  EReference getConceptStatementBody_ContextualizedTraits();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ConceptStatementBody#isSpecific <em>Specific</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Specific</em>'.
-   * @see org.integratedmodelling.kim.kim.ConceptStatementBody#isSpecific()
-   * @see #getConceptStatementBody()
-   * @generated
-   */
-  EAttribute getConceptStatementBody_Specific();
-
-  /**
-   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getContextualizesTraits <em>Contextualizes Traits</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference list '<em>Contextualizes Traits</em>'.
-   * @see org.integratedmodelling.kim.kim.ConceptStatementBody#getContextualizesTraits()
-   * @see #getConceptStatementBody()
-   * @generated
-   */
-  EReference getConceptStatementBody_ContextualizesTraits();
-
-  /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getDefinedAuthority <em>Defined Authority</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -8222,48 +8153,15 @@ public interface KimPackage extends EPackage
   EReference getConceptStatementBody_ConferredTargets();
 
   /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ConceptStatementBody#isConstituent <em>Constituent</em>}'.
+   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getEmergenceTriggers <em>Emergence Triggers</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Constituent</em>'.
-   * @see org.integratedmodelling.kim.kim.ConceptStatementBody#isConstituent()
+   * @return the meta object for the containment reference list '<em>Emergence Triggers</em>'.
+   * @see org.integratedmodelling.kim.kim.ConceptStatementBody#getEmergenceTriggers()
    * @see #getConceptStatementBody()
    * @generated
    */
-  EAttribute getConceptStatementBody_Constituent();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ConceptStatementBody#isConstitutes <em>Constitutes</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Constitutes</em>'.
-   * @see org.integratedmodelling.kim.kim.ConceptStatementBody#isConstitutes()
-   * @see #getConceptStatementBody()
-   * @generated
-   */
-  EAttribute getConceptStatementBody_Constitutes();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ConceptStatementBody#isPartOf <em>Part Of</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Part Of</em>'.
-   * @see org.integratedmodelling.kim.kim.ConceptStatementBody#isPartOf()
-   * @see #getConceptStatementBody()
-   * @generated
-   */
-  EAttribute getConceptStatementBody_PartOf();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getWhole <em>Whole</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Whole</em>'.
-   * @see org.integratedmodelling.kim.kim.ConceptStatementBody#getWhole()
-   * @see #getConceptStatementBody()
-   * @generated
-   */
-  EReference getConceptStatementBody_Whole();
+  EReference getConceptStatementBody_EmergenceTriggers();
 
   /**
    * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getCreates <em>Creates</em>}'.
@@ -8308,17 +8206,6 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EReference getConceptStatementBody_Ranges();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getInverse <em>Inverse</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Inverse</em>'.
-   * @see org.integratedmodelling.kim.kim.ConceptStatementBody#getInverse()
-   * @see #getConceptStatementBody()
-   * @generated
-   */
-  EReference getConceptStatementBody_Inverse();
 
   /**
    * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getQualitiesAffected <em>Qualities Affected</em>}'.
@@ -9339,6 +9226,38 @@ public interface KimPackage extends EPackage
   EReference getFunction_Parameters();
 
   /**
+   * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.Option <em>Option</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Option</em>'.
+   * @see org.integratedmodelling.kim.kim.Option
+   * @generated
+   */
+  EClass getOption();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Option#getKey <em>Key</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Key</em>'.
+   * @see org.integratedmodelling.kim.kim.Option#getKey()
+   * @see #getOption()
+   * @generated
+   */
+  EAttribute getOption_Key();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.Option#getValue <em>Value</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Value</em>'.
+   * @see org.integratedmodelling.kim.kim.Option#getValue()
+   * @see #getOption()
+   * @generated
+   */
+  EReference getOption_Value();
+
+  /**
    * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.REL_OPERATOR <em>REL OPERATOR</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -9781,16 +9700,6 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EAttribute getDate_Ms();
-
-  /**
-   * Returns the meta object for enum '{@link org.integratedmodelling.kim.kim.DataType <em>Data Type</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for enum '<em>Data Type</em>'.
-   * @see org.integratedmodelling.kim.kim.DataType
-   * @generated
-   */
-  EEnum getDataType();
 
   /**
    * Returns the meta object for enum '{@link org.integratedmodelling.kim.kim.UnitOp <em>Unit Op</em>}'.
@@ -11530,6 +11439,14 @@ public interface KimPackage extends EPackage
     EReference DEPENDENCY__OBSERVABLE = eINSTANCE.getDependency_Observable();
 
     /**
+     * The meta object literal for the '<em><b>Options</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference DEPENDENCY__OPTIONS = eINSTANCE.getDependency_Options();
+
+    /**
      * The meta object literal for the '<em><b>Alternative Observables</b></em>' containment reference list feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -11928,14 +11845,6 @@ public interface KimPackage extends EPackage
     EAttribute CONCEPT__TYPE = eINSTANCE.getConcept_Type();
 
     /**
-     * The meta object literal for the '<em><b>Observability</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute CONCEPT__OBSERVABILITY = eINSTANCE.getConcept_Observability();
-
-    /**
      * The meta object literal for the '<em><b>Proportion</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -12262,30 +12171,6 @@ public interface KimPackage extends EPackage
     EAttribute CONCEPT_STATEMENT_BODY__CONNECTORS = eINSTANCE.getConceptStatementBody_Connectors();
 
     /**
-     * The meta object literal for the '<em><b>Contextualized Traits</b></em>' containment reference list feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference CONCEPT_STATEMENT_BODY__CONTEXTUALIZED_TRAITS = eINSTANCE.getConceptStatementBody_ContextualizedTraits();
-
-    /**
-     * The meta object literal for the '<em><b>Specific</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute CONCEPT_STATEMENT_BODY__SPECIFIC = eINSTANCE.getConceptStatementBody_Specific();
-
-    /**
-     * The meta object literal for the '<em><b>Contextualizes Traits</b></em>' containment reference list feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference CONCEPT_STATEMENT_BODY__CONTEXTUALIZES_TRAITS = eINSTANCE.getConceptStatementBody_ContextualizesTraits();
-
-    /**
      * The meta object literal for the '<em><b>Defined Authority</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -12414,36 +12299,12 @@ public interface KimPackage extends EPackage
     EReference CONCEPT_STATEMENT_BODY__CONFERRED_TARGETS = eINSTANCE.getConceptStatementBody_ConferredTargets();
 
     /**
-     * The meta object literal for the '<em><b>Constituent</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Emergence Triggers</b></em>' containment reference list feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute CONCEPT_STATEMENT_BODY__CONSTITUENT = eINSTANCE.getConceptStatementBody_Constituent();
-
-    /**
-     * The meta object literal for the '<em><b>Constitutes</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute CONCEPT_STATEMENT_BODY__CONSTITUTES = eINSTANCE.getConceptStatementBody_Constitutes();
-
-    /**
-     * The meta object literal for the '<em><b>Part Of</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute CONCEPT_STATEMENT_BODY__PART_OF = eINSTANCE.getConceptStatementBody_PartOf();
-
-    /**
-     * The meta object literal for the '<em><b>Whole</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference CONCEPT_STATEMENT_BODY__WHOLE = eINSTANCE.getConceptStatementBody_Whole();
+    EReference CONCEPT_STATEMENT_BODY__EMERGENCE_TRIGGERS = eINSTANCE.getConceptStatementBody_EmergenceTriggers();
 
     /**
      * The meta object literal for the '<em><b>Creates</b></em>' containment reference list feature.
@@ -12476,14 +12337,6 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EReference CONCEPT_STATEMENT_BODY__RANGES = eINSTANCE.getConceptStatementBody_Ranges();
-
-    /**
-     * The meta object literal for the '<em><b>Inverse</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference CONCEPT_STATEMENT_BODY__INVERSE = eINSTANCE.getConceptStatementBody_Inverse();
 
     /**
      * The meta object literal for the '<em><b>Qualities Affected</b></em>' containment reference list feature.
@@ -13270,6 +13123,32 @@ public interface KimPackage extends EPackage
     EReference FUNCTION__PARAMETERS = eINSTANCE.getFunction_Parameters();
 
     /**
+     * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.OptionImpl <em>Option</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kim.kim.impl.OptionImpl
+     * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getOption()
+     * @generated
+     */
+    EClass OPTION = eINSTANCE.getOption();
+
+    /**
+     * The meta object literal for the '<em><b>Key</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute OPTION__KEY = eINSTANCE.getOption_Key();
+
+    /**
+     * The meta object literal for the '<em><b>Value</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference OPTION__VALUE = eINSTANCE.getOption_Value();
+
+    /**
      * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.REL_OPERATORImpl <em>REL OPERATOR</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -13610,16 +13489,6 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EAttribute DATE__MS = eINSTANCE.getDate_Ms();
-
-    /**
-     * The meta object literal for the '{@link org.integratedmodelling.kim.kim.DataType <em>Data Type</em>}' enum.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see org.integratedmodelling.kim.kim.DataType
-     * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getDataType()
-     * @generated
-     */
-    EEnum DATA_TYPE = eINSTANCE.getDataType();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kim.kim.UnitOp <em>Unit Op</em>}' enum.

@@ -41,10 +41,12 @@ import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.klab.api.observations.INetwork;
+import org.integratedmodelling.klab.api.observations.IPattern;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.code.Expression;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -57,261 +59,274 @@ import groovy.lang.Script;
 
 public class GroovyExpression extends Expression implements ILanguageExpression {
 
-    protected String code;
-    protected boolean negated = false;
-    protected Object object;
-    protected IServiceCall functionCall;
-    protected IModel model;
-    protected boolean isNull = false;
-    protected boolean isTrue = false;
-    protected boolean fubar = false;
+	protected String code;
+	protected boolean negated = false;
+	protected Object object;
+	protected IServiceCall functionCall;
+	protected IModel model;
+	protected boolean isNull = false;
+	protected boolean isTrue = false;
+	protected boolean fubar = false;
 
-    private Set<String> defineIfAbsent = new HashSet<>();
-    // each thread gets its own instance of the script with bindings
-    private ThreadLocal<Boolean> initialized = new ThreadLocal<>();
-    private ThreadLocal<Script> script = new ThreadLocal<>();
+	private Set<String> defineIfAbsent = new HashSet<>();
+	// each thread gets its own instance of the script with bindings
+	private ThreadLocal<Boolean> initialized = new ThreadLocal<>();
+	private ThreadLocal<Script> script = new ThreadLocal<>();
 
-    /*
-     * either the Script or the compiled class are saved according to whether we want a thread-safe
-     * expression or not.
-     */
-    private Class<?> sclass = null;
+	/*
+	 * either the Script or the compiled class are saved according to whether we
+	 * want a thread-safe expression or not.
+	 */
+	private Class<?> sclass = null;
 
-    IGeometry domain;
-    INamespace namespace;
+	IGeometry domain;
+	INamespace namespace;
 
-    private List<KimNotification> errors = new ArrayList<>();
-    private KlabGroovyShell shell = new KlabGroovyShell();
-    private String preprocessed = null;
-    private IRuntimeScope runtimeContext;
-    private Descriptor descriptor;
-    private Map<String, Object> variables;
-    private Set<CompilerOption> options = EnumSet.noneOf(CompilerOption.class);
+	private List<KimNotification> errors = new ArrayList<>();
+	private KlabGroovyShell shell = new KlabGroovyShell();
+	private String preprocessed = null;
+	private IRuntimeScope runtimeContext;
+	private Descriptor descriptor;
+	private Map<String, Object> variables;
+	private Set<CompilerOption> options = EnumSet.noneOf(CompilerOption.class);
 
-    public GroovyExpression() {
-        initialized.set(Boolean.FALSE);
-    }
+	public GroovyExpression() {
+		initialized.set(Boolean.FALSE);
+	}
 
-    public boolean hasErrors() {
-        return errors.size() > 0;
-    }
+	public boolean hasErrors() {
+		return errors.size() > 0;
+	}
 
-    public List<KimNotification> getErrors() {
-        return errors;
-    }
+	public List<KimNotification> getErrors() {
+		return errors;
+	}
 
-    /*
-     * MUST be called in all situations.
-     */
-    public void initialize(Map<String, IObservable> inputs, Map<String, IObservable> outputs) {
-        compile(preprocess(code, inputs, outputs));
-        initialized.set(Boolean.TRUE);
-    }
+	/*
+	 * MUST be called in all situations.
+	 */
+	public void initialize(Map<String, IObservable> inputs, Map<String, IObservable> outputs) {
+		compile(preprocess(code, inputs, outputs));
+		initialized.set(Boolean.TRUE);
+	}
 
-    GroovyExpression(String code, boolean preprocessed, ILanguageProcessor.Descriptor descriptor) {
-        initialized.set(Boolean.FALSE);
-        this.descriptor = descriptor;
-        this.variables = descriptor.getVariables();
-        this.code = code;
-        this.options.addAll(descriptor.getOptions());
-        if (preprocessed) {
-            this.preprocessed = this.code;
-        }
+	GroovyExpression(String code, boolean preprocessed, ILanguageProcessor.Descriptor descriptor) {
+		initialized.set(Boolean.FALSE);
+		this.descriptor = descriptor;
+		this.variables = descriptor.getVariables();
+		this.code = code;
+		this.options.addAll(descriptor.getOptions());
+		if (preprocessed) {
+			this.preprocessed = this.code;
+		}
 
-    }
+	}
 
-    private void compile(String code) {
-        try {
-            this.sclass = shell.parseToClass(code);
-        } catch (Throwable t) {
-            System.err.println("Groovy code won't parse: " + code);
-            this.fubar = true;
-        }
-    }
+	private void compile(String code) {
+		try {
+			this.sclass = shell.parseToClass(code);
+		} catch (Throwable t) {
+			System.err.println("Groovy code won't parse: " + code);
+			this.fubar = true;
+		}
+	}
 
-    public Object eval(IParameters<String> parameters, IContextualizationScope scope) {
+	public Object eval(IParameters<String> parameters, IContextualizationScope scope) {
 
-        if (fubar) {
-            return null;
-        }
+		if (fubar) {
+			return null;
+		}
 
-        if (isTrue) {
-            return true;
-        }
+		if (isTrue) {
+			return true;
+		}
 
-        if (isNull) {
-            return null;
-        }
+		if (isNull) {
+			return null;
+		}
 
-        if (code != null) {
+		if (code != null) {
 
-            // initialized.get() == null happens when expressions are used in lookup tables
-            // or other code
-            // where the creating thread has
-            // finished. In this case we recycle them (TODO CHECK if this creates any
-            // problems) - IGNORES OPTIONS
-            if (initialized.get() == null || !initialized.get()) {
-                initialize(new HashMap<>(), new HashMap<>());
-                setupBindings(scope);
-            }
+			// initialized.get() == null happens when expressions are used in lookup tables
+			// or other code
+			// where the creating thread has
+			// finished. In this case we recycle them (TODO CHECK if this creates any
+			// problems) - IGNORES OPTIONS
+			if (initialized.get() == null || !initialized.get()) {
+				initialize(new HashMap<>(), new HashMap<>());
+				setupBindings(scope);
+			}
 
-            try {
-                Binding binding = script.get().getBinding();
+			try {
+				Binding binding = script.get().getBinding();
 
-                if (scope != null) {
+				if (scope != null) {
 
-                    if (scope.getScale() != null) {
-                        binding.setVariable("scale", scope.getScale());
-                    }
+					if (scope.getScale() != null) {
+						binding.setVariable("scale", scope.getScale());
+					}
 
-                    if (scope.getScale() != null && scope.getScale().getSpace() != null) {
-                        binding.setVariable("space", scope.getScale().getSpace());
-                    }
+					if (scope.getScale() != null && scope.getScale().getSpace() != null) {
+						binding.setVariable("space", scope.getScale().getSpace());
+					}
 
-                    if (scope.getScale() != null && scope.getScale().getTime() != null) {
-                        binding.setVariable("time", scope.getScale().getTime());
-                    }
+					if (scope.getScale() != null && scope.getScale().getTime() != null) {
+						binding.setVariable("time", scope.getScale().getTime());
+					}
 
-                    if (scope.getContextObservation() != null) {
-                        binding.setVariable("context", scope.getContextObservation());
-                    }
+					if (scope.getContextObservation() != null) {
+						binding.setVariable("context", scope.getContextObservation());
+					}
 
-                    if (scope.getTargetSemantics() != null) {
-                        binding.setVariable("semantics", scope.getTargetSemantics());
-                    }
+					if (scope.getTargetSemantics() != null) {
+						binding.setVariable("semantics", scope.getTargetSemantics());
+					}
 
-                    /*
-                     * this will override the vars if necessary. For example it will change the
-                     * scale in local contexts.
-                     */
-                    IScale localScale = null;
-                    for (String key : parameters.keySet()) {
-                        Object value = parameters.get(key);
-                        if ("scale".equals(key) && value instanceof IScale) {
-                            localScale = (IScale) value;
-                            binding.setVariable("space", localScale.getSpace());
-                            binding.setVariable("time", localScale.getTime());
-                        }
-                        binding.setVariable(key, value);
-                    }
+					/*
+					 * this will override the vars if necessary. For example it will change the
+					 * scale in local contexts.
+					 */
+					IScale localScale = null;
+					for (String key : parameters.keySet()) {
+						Object value = parameters.get(key);
+						if ("scale".equals(key) && value instanceof IScale) {
+							localScale = (IScale) value;
+							binding.setVariable("space", localScale.getSpace());
+							binding.setVariable("time", localScale.getTime());
+						} else if ("self".equals(key) && value instanceof DirectObservation) {
 
-                    if (descriptor.getOptions().contains(CompilerOption.DirectQualityAccess) && localScale != null) {
-                        for (String id : descriptor.getIdentifiersInScalarScope()) {
-                            Object state = parameters.get(id);
-                            if (state instanceof IState) {
-                                binding.setVariable("_" + id, ((IState)state).get(localScale));
-                            }
-                        }
-                    }
-                    /*
-                     * use the current scope and monitor
-                     */
-                    binding.setVariable("_c", scope);
-                    binding.setVariable("_monitor", scope.getMonitor());
-                }
+							/*
+							 * if self is an object, check if we have a pattern or network
+							 */
+							IPattern pattern = ((DirectObservation) value).getOriginatingPattern();
+							if (pattern instanceof INetwork) {
+								binding.setVariable("network", pattern);
+							} else if (pattern != null) {
+								binding.setVariable("pattern", pattern);
+							}
+						}
+						binding.setVariable(key, value);
+					}
 
-                for (String v : defineIfAbsent) {
-                    if (!binding.hasVariable(v)) {
-                        binding.setVariable(v, Double.NaN);
-                    }
-                }
-                return script.get().run();
+					if (descriptor.getOptions().contains(CompilerOption.DirectQualityAccess) && localScale != null) {
+						for (String id : descriptor.getIdentifiersInScalarScope()) {
+							Object state = parameters.get(id);
+							if (state instanceof IState) {
+								binding.setVariable("_" + id, ((IState) state).get(localScale));
+							}
+						}
+					}
+					/*
+					 * use the current scope and monitor
+					 */
+					binding.setVariable("_c", scope);
+					binding.setVariable("_monitor", scope.getMonitor());
+				}
 
-            } catch (MissingPropertyException e) {
-                String property = e.getProperty();
-                if (!defineIfAbsent.contains(property)) {
-                    scope.getMonitor().warn(
-                            "variable " + property + " undefined.  Defining as numeric no-data (NaN) for subsequent evaluations.");
-                    defineIfAbsent.add(property);
-                }
-            } catch (Throwable t) {
-                throw new KlabException(t);
-            }
-        } else if (object != null) {
-            return object;
-        } else if (functionCall != null) {
-            return Extensions.INSTANCE.callFunction(functionCall, scope);
-        }
-        return null;
-    }
+				for (String v : defineIfAbsent) {
+					if (!binding.hasVariable(v)) {
+						binding.setVariable(v, Double.NaN);
+					}
+				}
+				return script.get().run();
 
-    /**
-     * This only gets done once per thread. Uses a new compiled class per thread and sets up the
-     * bindings with any invariant objects. The remaining variables are set before each call.
-     * 
-     * @param scope
-     * @param parameters
-     */
-    private void setupBindings(IContextualizationScope scope) {
+			} catch (MissingPropertyException e) {
+				String property = e.getProperty();
+				if (!defineIfAbsent.contains(property)) {
+					scope.getMonitor().warn("variable " + property
+							+ " undefined.  Defining as numeric no-data (NaN) for subsequent evaluations.");
+					defineIfAbsent.add(property);
+				}
+			} catch (Throwable t) {
+				throw new KlabException(t);
+			}
+		} else if (object != null) {
+			return object;
+		} else if (functionCall != null) {
+			return Extensions.INSTANCE.callFunction(functionCall, scope);
+		}
+		return null;
+	}
 
-        Binding bindings = new Binding();
+	/**
+	 * This only gets done once per thread. Uses a new compiled class per thread and
+	 * sets up the bindings with any invariant objects. The remaining variables are
+	 * set before each call.
+	 * 
+	 * @param scope
+	 * @param parameters
+	 */
+	private void setupBindings(IContextualizationScope scope) {
 
-        /*
-         * inherent variables have known values at the time of compilation.
-         */
-        if (variables != null) {
-            for (String key : variables.keySet()) {
-                bindings.setVariable(key, variables.get(key));
-            }
-        }
+		Binding bindings = new Binding();
 
-        if (scope != null) {
-            bindings.setVariable("provenance", scope.getProvenance());
-            bindings.setVariable("structure", ((IRuntimeScope) scope).getStructure());
-            bindings.setVariable("_ns", scope.getNamespace());
-            bindings.setVariable("_monitor", scope.getMonitor());
-            if (scope.getSession().getState().getInspector() != null) {
-                bindings.setVariable("inspector", scope.getSession().getState().getInspector());
-            }
-        }
+		/*
+		 * inherent variables have known values at the time of compilation.
+		 */
+		if (variables != null) {
+			for (String key : variables.keySet()) {
+				Object value = variables.get(key);
+				bindings.setVariable(key, value);
+			}
+		}
 
-        try {
-            script.set(shell.createFromClass(sclass, bindings));
-        } catch (Exception e) {
-            throw new KlabInternalErrorException(e);
-        }
+		if (scope != null) {
+			bindings.setVariable("provenance", scope.getProvenance());
+			bindings.setVariable("structure", ((IRuntimeScope) scope).getStructure());
+			bindings.setVariable("_ns", scope.getNamespace());
+			bindings.setVariable("_monitor", scope.getMonitor());
+			if (scope.getSession().getState().getInspector() != null) {
+				bindings.setVariable("inspector", scope.getSession().getState().getInspector());
+			}
+		}
 
-    }
+		try {
+			script.set(shell.createFromClass(sclass, bindings));
+		} catch (Exception e) {
+			throw new KlabInternalErrorException(e);
+		}
 
-    private String preprocess(String code, Map<String, IObservable> inputs, Map<String, IObservable> outputs) {
+	}
 
-        if (this.preprocessed != null) {
-            return this.preprocessed;
-        }
+	private String preprocess(String code, Map<String, IObservable> inputs, Map<String, IObservable> outputs) {
 
-        GroovyExpressionPreprocessor processor = new GroovyExpressionPreprocessor(namespace,
-                runtimeContext.getExpressionContext(null), this.options);
-        this.preprocessed = processor.process(code);
-        this.errors.addAll(processor.getErrors());
-        this.variables = processor.getVariables();
+		if (this.preprocessed != null) {
+			return this.preprocessed;
+		}
 
-        return this.preprocessed;
-    }
+		GroovyExpressionPreprocessor processor = new GroovyExpressionPreprocessor(namespace,
+				runtimeContext.getExpressionContext(null), this.options);
+		this.preprocessed = processor.process(code);
+		this.errors.addAll(processor.getErrors());
+		this.variables = processor.getVariables();
 
-    public String toString() {
-        return code;
-    }
+		return this.preprocessed;
+	}
 
-    public void setNegated(boolean negate) {
-        negated = negate;
-    }
+	public String toString() {
+		return code;
+	}
 
-    public boolean isNegated() {
-        return negated;
-    }
+	public void setNegated(boolean negate) {
+		negated = negate;
+	}
 
-    @Override
-    public Object eval(IContextualizationScope scope, Object... parameters) {
-        return eval(Parameters.create(parameters), scope);
-    }
+	public boolean isNegated() {
+		return negated;
+	}
 
-    @Override
-    public String getLanguage() {
-        return GroovyProcessor.ID;
-    }
+	@Override
+	public Object eval(IContextualizationScope scope, Object... parameters) {
+		return eval(Parameters.create(parameters), scope);
+	}
 
-    @Override
-    public Collection<String> getIdentifiers() {
-        return descriptor.getIdentifiers();
-    }
+	@Override
+	public String getLanguage() {
+		return GroovyProcessor.ID;
+	}
+
+	@Override
+	public Collection<String> getIdentifiers() {
+		return descriptor.getIdentifiers();
+	}
 }

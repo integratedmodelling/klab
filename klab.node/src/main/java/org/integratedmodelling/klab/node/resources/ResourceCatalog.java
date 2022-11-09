@@ -184,7 +184,7 @@ public class ResourceCatalog implements IResourceCatalog {
 				importSettings.load(in);
 				Logging.INSTANCE.info("resource metadata imported from publish.properties:\n"
 						+ Utils.propertiesToString(importSettings));
-				
+
 			} catch (Throwable t) {
 				throw new KlabIOException(t);
 			}
@@ -327,7 +327,7 @@ public class ResourceCatalog implements IResourceCatalog {
 		if (published == null) {
 			remove(ret.getUrn());
 		}
-		
+
 		return published;
 	}
 

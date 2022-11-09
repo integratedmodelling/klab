@@ -8,9 +8,7 @@ import java.util.List;
 import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
-import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
-import org.integratedmodelling.klab.api.observations.ISubjectiveState;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
@@ -153,9 +151,9 @@ public class LocatedState extends Observation implements IState, DelegatingArtif
 //		return null;
 //	}
 
-	public ISubjectiveState reinterpret(IDirectObservation observers) {
-		return null;
-	}
+//	public ISubjectiveState reinterpret(IDirectObservation observers) {
+//		return null;
+//	}
 
 	@Override
 	public <T> T aggregate(ILocator geometry, Class<? extends T> cls) {

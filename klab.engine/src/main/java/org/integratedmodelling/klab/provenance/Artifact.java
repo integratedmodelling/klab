@@ -42,6 +42,7 @@ public abstract class Artifact extends GroovyObjectSupport implements IArtifact 
 
 	List<IAnnotation> annotations = new ArrayList<>();
 	private List<IActivity> activities = new ArrayList<>();
+	@Deprecated
 	private Map<Class<?>, Object> peers = new HashMap<>();
 	private boolean archetype;
 	protected Metadata metadata = new Metadata();
@@ -262,9 +263,9 @@ public abstract class Artifact extends GroovyObjectSupport implements IArtifact 
 	/*
 	 * basic method to support the two above
 	 */
-	public void addPeer(Object peer, Class<INetwork> class1) {
-		peers.put(class1, peer);
-	}
+//	public void addPeer(Object peer, Class<INetwork> class1) {
+//		peers.put(class1, peer);
+//	}
 	
 	public Collection<IArtifact> getChildArtifacts() {
 		List<IArtifact> ret = new ArrayList<>();

@@ -11,7 +11,6 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.integratedmodelling.kactors.utils.KActorsLocalizer;
 import org.integratedmodelling.kim.api.IKimNamespace.Role;
 import org.integratedmodelling.klab.api.data.CRUDOperation;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
@@ -31,7 +30,6 @@ import org.integratedmodelling.klab.ide.navigator.model.documentation.EDocumenta
 import org.integratedmodelling.klab.ide.navigator.model.documentation.EDocumentationItem;
 import org.integratedmodelling.klab.ide.navigator.model.documentation.EDocumentationPage;
 import org.integratedmodelling.klab.ide.navigator.model.documentation.EReference;
-import org.integratedmodelling.klab.ide.ui.LocalizationEditor;
 import org.integratedmodelling.klab.ide.ui.wizards.BulkImportResourceWizard;
 import org.integratedmodelling.klab.ide.ui.wizards.ExportResourceWizard;
 import org.integratedmodelling.klab.ide.ui.wizards.MoveResourceWizard;
@@ -53,9 +51,13 @@ import org.integratedmodelling.klab.rest.ProjectModificationNotification;
 import org.integratedmodelling.klab.rest.ProjectModificationRequest;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 import org.integratedmodelling.klab.rest.ResourceReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class KlabNavigatorActions {
 
+    public static Logger logger = LoggerFactory.getLogger(KlabNavigatorActions.class);
+    
 	public static void createProject() {
 		WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(), new NewProjectWizard());
 		dialog.create();
@@ -324,7 +326,7 @@ public class KlabNavigatorActions {
 	public static void addDocumentationItem(EDocumentationFolder page) {
 		// show wizard - choose ID (path pre-fixed, single word, path allowed) + initial
 		// section/trigger
-		System.out.println("OHO " + page.getPath());
+		// logger.debug("OHO " + page.getPath());
 		WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(), new NewDocumentationSectionWizard(page));
 		dialog.create();
 		dialog.open();
@@ -338,7 +340,7 @@ public class KlabNavigatorActions {
 	}
 
     public static void deactivate(EProject project) {
-        System.out.println("FUCK THIS FUCKER " + project.getName());
+        logger.debug("Project deactivated: " + project.getName());
     }
 
 }

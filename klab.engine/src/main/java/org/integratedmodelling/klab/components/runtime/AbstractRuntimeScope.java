@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
+import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.time.extents.Time;
@@ -74,7 +75,7 @@ public abstract class AbstractRuntimeScope extends DataflowHandler implements IR
         Status status = new Status();
         Set<IObservation> products = new LinkedHashSet<>();
         IObservation target;
-
+        
         @Override
         public IScale getScale() {
             return scale;

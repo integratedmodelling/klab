@@ -2,6 +2,6 @@
 JAVA="~/.klab/jre16/bin/java"
 KLAB_RELEASE="develop" 
 KLAB_VERSION="0.11.0-SNAPSHOT"
-CLI_PRODUCT="~/.klab/releases/$KLAB_RELEASE}/cli/cli-${KLAB_VERSION}.jar"
+CLI_PRODUCT="~/.klab/releases/${KLAB_RELEASE}/cli/cli-${KLAB_VERSION}.jar"
 CLASSPATH="~/.klab/releases/${KLAB_RELEASE}/cli/lib"
 ${JAVA} -cp "${CLASSPATH}/*.jar:${CLI_PRODUCT}" -Xmx4096M org.integratedmodelling.klab.k.Main - "$@"

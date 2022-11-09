@@ -901,6 +901,10 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
 
     private boolean execute(IKActorsStatement code, Scope scope) {
 
+        if (scope.getMonitor().isInterrupted()) {
+            return false;
+        }
+        
         try {
             switch(code.getType()) {
             case ACTION_CALL:
@@ -1112,7 +1116,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
                     new GroupHandler(this.identity, appId, groupScope, this.getContext().getSelf(), null));
         }
         for (IKActorsStatement statement : code.getStatements()) {
-            if (!execute(statement, groupScope)) {
+            if (!execute(statement, groupScope) || scope.getMonitor().isInterrupted()) {
                 break;
             }
         }
@@ -1142,7 +1146,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
 
     private void executeFor(For code, Scope scope) {
         for (Object o : Actors.INSTANCE.getIterable(code.getIterable(), scope, identity)) {
-            if (!execute(code.getBody(), scope.withValue(code.getVariable(), o))) {
+            if (!execute(code.getBody(), scope.withValue(code.getVariable(), o)) || scope.getMonitor().isInterrupted()) {
                 break;
             }
         }
@@ -1163,6 +1167,9 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
     private static Object executeFunctionChain(List<Call> functions, Scope scope) {
         Object contextReceiver = null;
         for (int i = 0; i < functions.size(); i++) {
+            if (scope.getMonitor().isInterrupted()) {
+                break;
+            }
             boolean last = (i == functions.size() - 1);
             Scope fscope = last ? scope.withReceiver(contextReceiver) : scope.functional(contextReceiver);
             callFunctionOrMethod(functions.get(i), fscope);
@@ -1197,6 +1204,9 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
         Object contextReceiver = null;
         for (int i = 0; i < calls.size(); i++) {
             boolean last = (i == calls.size() - 1);
+            if (scope.getMonitor().isInterrupted()) {
+                break;
+            }
             Scope fscope = last ? scope.withReceiver(contextReceiver) : scope.functional(contextReceiver);
             executeCall(calls.get(i), fscope);
             contextReceiver = fscope.valueScope;

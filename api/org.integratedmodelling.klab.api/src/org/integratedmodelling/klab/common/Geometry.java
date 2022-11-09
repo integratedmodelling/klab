@@ -13,7 +13,6 @@ import java.util.Map;
 import org.integratedmodelling.kim.api.IKimQuantity;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IGeometry;
-import org.integratedmodelling.klab.api.data.IGeometry.Encoding;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
@@ -32,6 +31,12 @@ import org.integratedmodelling.klab.utils.Utils;
 public class Geometry implements IGeometry {
 
 	private static final long serialVersionUID = 8430057200107796568L;
+
+	/**
+	 * These are useful for common geometry creation from programs. Append to a
+	 * space definition within curly brackets.
+	 */
+	public static final String WORLD_BBOX_PARAMETERS = "bbox=[-180.0 180.0 -90.0 90.0],proj=EPSG:4326";
 
 	/**
 	 * An internal descriptor for a locator. The API requires using this to
@@ -1573,15 +1578,14 @@ public class Geometry implements IGeometry {
 	}
 
 	public Geometry withTemporalTransitions(long[] transitionPoints) {
-        Dimension time = getDimension(Type.TIME);
-        if (time == null) {
-            time = addLogicalTime(this);
-        }
-        time.getParameters().put(PARAMETER_TIME_REPRESENTATION, ITime.Type.GRID);
-        time.getParameters().put(PARAMETER_TIME_TRANSITIONS, transitionPoints);
-        return this;
-    }
-
+		Dimension time = getDimension(Type.TIME);
+		if (time == null) {
+			time = addLogicalTime(this);
+		}
+		time.getParameters().put(PARAMETER_TIME_REPRESENTATION, ITime.Type.GRID);
+		time.getParameters().put(PARAMETER_TIME_TRANSITIONS, transitionPoints);
+		return this;
+	}
 
 	private Dimension addLogicalTime(Geometry geometry) {
 		DimensionImpl ret = new DimensionImpl();
@@ -1604,6 +1608,5 @@ public class Geometry implements IGeometry {
 		geometry.dimensions.add(ret);
 		return ret;
 	}
-
 
 }

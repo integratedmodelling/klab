@@ -4,10 +4,10 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
-import org.integratedmodelling.klab.api.observations.ISubjectiveState;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
+import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.utils.Parameters;
@@ -72,13 +72,13 @@ public class ConcordanceResolver extends AbstractContextualizer implements IReso
                  */
                 if (!(mcaContext.getSpecification() == Specification.InlineSingle)) {
                     // if state is not an observed set, wrap it into one
-                    if (!(ret instanceof ISubjectiveState)) {
-                        ret = ret.reinterpret(stakeholder.getSubject());
-                    }
+//                    if (!(ret instanceof ISubjectiveState)) {
+//                        ret = ret.reinterpret(stakeholder.getSubject());
+//                    }
                     // set the observer in the stakeholder in the set so that all further
                     // assignments reflect
                     // its perspective
-                    ((ISubjectiveState) ret).setObserver(stakeholder.getSubject());
+                    ((Observation) ret).setObserver(stakeholder.getSubject());
                 }
 
                 mCAAssessment.resetWeights();

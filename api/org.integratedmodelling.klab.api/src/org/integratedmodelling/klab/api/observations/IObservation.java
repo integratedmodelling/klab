@@ -20,7 +20,6 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IScheduler;
 
@@ -44,6 +43,13 @@ public interface IObservation extends IContextualizedIdentity, IArtifact {
 	 * @return the observation's observable
 	 */
 	IObservable getObservable();
+	
+	/**
+	 * The observer that/who made the observation. Never null. 
+	 * 
+	 * @return
+	 */
+	IObserver getObserver();
 
 	/**
 	 * Return the scale seen by this object, merging all the extents declared for
@@ -127,16 +133,16 @@ public interface IObservation extends IContextualizedIdentity, IArtifact {
 	 */
 	boolean isDynamic();
 
-	/**
-	 * Reinterpret this artifact as a collection of artifacts reflecting the view of
-	 * each of the passed observers. The result will behave exactly like the
-	 * original artifact but each observer can set itself as the viewpoint,
-	 * selecting different content.
-	 * 
-	 * @param observers
-	 * @return
-	 */
-	ISubjectiveObservation reinterpret(IDirectObservation observer);
+//	/**
+//	 * Reinterpret this artifact as a collection of artifacts reflecting the view of
+//	 * each of the passed observers. The result will behave exactly like the
+//	 * original artifact but each observer can set itself as the viewpoint,
+//	 * selecting different content.
+//	 * 
+//	 * @param observers
+//	 * @return
+//	 */
+//	ISubjectiveObservation reinterpret(IDirectObservation observer);
 
 	/**
 	 * Time of creation. If the context has no time, this is equal to the

@@ -10,11 +10,15 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.klab.ide.Activator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ETestFolder extends ENavigatorItem {
 
     EProject project;
     File folder;
+    
+    private static Logger logger = LoggerFactory.getLogger(ETestFolder.class);
 
     public ETestFolder(EProject project, ENavigatorItem parent, File folder) {
         super(parent.id + folder, parent);
@@ -46,7 +50,7 @@ public class ETestFolder extends ENavigatorItem {
                     if (ns != null) {
                         ret.add(new ETestCase(ns, this));
                     } else {
-                        System.out.println("ACHTUNG: SCREWED-UP NS: " + script);
+                        logger.warn("ACHTUNG: SCREWED-UP NS: " + script);
                     }
                 }
             }

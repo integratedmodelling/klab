@@ -4,14 +4,14 @@ import java.util.List;
 
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.observations.IDirectObservation;
+import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 public interface IStakeholder {
 
 	IObservable getObservable();
 	
-	IDirectObservation getSubject();
+	ISubject getSubject();
 
 	/**
 	 * Return all alternatives retained, making sure everything is initialized.

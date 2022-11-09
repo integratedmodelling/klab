@@ -48,7 +48,7 @@ import javax.sql.PooledConnection;
 import org.h2.engine.Constants;
 import org.h2.jdbcx.JdbcDataSource;
 import org.h2gis.functions.factory.H2GISFunctions;
-import org.h2gis.utilities.SFSUtilities;
+import org.h2gis.utilities.JDBCUtilities;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.data.general.IStructuredTable;
@@ -102,6 +102,7 @@ public class H2Database {
 	private Set<Class<?>> initializedSchemata = new HashSet<>();
 
 	public List<Map<String, String>> dump(String table) throws KlabStorageException {
+	    
 		List<Map<String, String>> ret = new ArrayList<>();
 
 		try {
@@ -133,11 +134,19 @@ public class H2Database {
 
 		return ret;
 	}
+	
+	static public Map<String, H2Database> getDatastores() {
+	    return datastores;
+	}
 
 	private H2Database(String kboxName) {
 		this(kboxName, Configuration.INSTANCE.useInMemoryDatabase());
 	}
 
+	public String toString() {
+	    return "H2: " + url;
+	}
+	
 	private H2Database(String kboxName, boolean inMemory) {
 
 		this.name = kboxName;
@@ -162,13 +171,7 @@ public class H2Database {
 			 * h2 is created and the mv only exists after the db contains anything.
 			 */
 			this.isNew = !f1.exists() && !f2.exists();
-			try {
-				String fileUrl = directory.toURI().toURL().toString();
-				this.url = "jdbc:h2:" + fileUrl + kboxName + ";AUTO_SERVER=true;MVCC=true";
-			} catch (MalformedURLException e1) {
-				throw new KlabValidationException(e1);
-			}
-
+			this.url = "jdbc:h2:" + directory + "/" + kboxName + ";AUTO_SERVER=true;NON_KEYWORDS=KEY,VALUE,SECOND,MINUTE,HOUR,DAY,MONTH,YEAR"; //;MVCC=true"; - Not supported from h2 1.4.200
 		}
 
 		this.ds.setURL(url);
@@ -213,7 +216,7 @@ public class H2Database {
 	public void preallocateConnection() {
 		if (connection == null) {
 			try {
-				connection = SFSUtilities.wrapConnection(pooledConnection.getConnection());
+				connection = JDBCUtilities.wrapConnection(pooledConnection.getConnection());
 			} catch (SQLException e) {
 				// just leave null
 			}
@@ -322,7 +325,7 @@ public class H2Database {
 
 		try {
 			// FIXME must close the pooledconnection, not the wrapped connection
-			return SFSUtilities.wrapConnection(pooledConnection.getConnection());
+			return JDBCUtilities.wrapConnection(pooledConnection.getConnection());
 		} catch (SQLException e) {
 			throw new KlabStorageException(e);
 		}
@@ -510,11 +513,11 @@ public class H2Database {
 			}
 			refresh = knownVersion == null;
 			if (!refresh) {
-				refresh = !knownVersion.equals(Constants.getFullVersion());
+				refresh = !knownVersion.equals(Constants.FULL_VERSION);
 			}
 
 			if (refresh) {
-				properties.setProperty(kboxName + ".h2.version", Constants.getFullVersion());
+				properties.setProperty(kboxName + ".h2.version", Constants.FULL_VERSION);
 				try (OutputStream output = new FileOutputStream(propfile)) {
 					properties.store(output, null);
 				} catch (IOException e) {
@@ -609,4 +612,8 @@ public class H2Database {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+    public String getUrl() {
+        return this.url;
+    }
 }

@@ -75,8 +75,8 @@ public class NeighborhoodResolver extends AbstractContextualizer implements IRes
         IExpression.Scope expressionContext = context.getExpressionContext();
 
         // TODO should be artifact OBJECT type
-        expressionContext.addKnownIdentifier("cell", IKimConcept.Type.SUBJECT);
-        expressionContext.addKnownIdentifier("origin", IKimConcept.Type.SUBJECT);
+        expressionContext.addKnownIdentifier("cell", IKimConcept.Type.COUNTABLE);
+        expressionContext.addKnownIdentifier("origin", IKimConcept.Type.COUNTABLE);
 
         if (parameters.containsKey("select")) {
             Object expression = parameters.get("select");
@@ -363,10 +363,10 @@ public class NeighborhoodResolver extends AbstractContextualizer implements IRes
         if (where.getSpace() instanceof Cell) {
             parameters.put("cell", new ContributingCell((Cell) where.getSpace()));
         }
-        for (IState state : states) {
-            Object o = state.get(where, Object.class);
-            parameters.put(stateIdentifiers.get(state), o);
-        }
+//        for (IState state : states) {
+//            Object o = state.get(where, Object.class);
+//            parameters.put(stateIdentifiers.get(state), o);
+//        }
         return Utils.asType(expression.eval(context, parameters, "scale", where), cls);
     }
 

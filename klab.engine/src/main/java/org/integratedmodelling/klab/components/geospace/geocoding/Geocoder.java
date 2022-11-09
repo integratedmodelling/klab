@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
-import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
@@ -24,16 +24,18 @@ import org.integratedmodelling.klab.communication.client.Client;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
+import org.integratedmodelling.klab.components.time.extents.Time;
+import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.data.encoding.VisitingDataBuilder;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.rest.ScaleReference;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Escape;
 import org.integratedmodelling.klab.utils.Parameters;
+import org.locationtech.jts.geom.Geometry;
 
 import com.google.common.util.concurrent.RateLimiter;
-
-import org.locationtech.jts.geom.Geometry;
 
 import de.topobyte.osm4j.core.access.OsmIterator;
 import de.topobyte.osm4j.core.dataset.InMemoryMapDataSet;
@@ -73,6 +75,9 @@ public enum Geocoder {
     // TODO add ours
     public String[] OSM_API_URLS = {"https://www.openstreetmap.org/api/0.6"};
 
+    // TODO add/fix/check. Other like this could be used for major features, protected areas etc
+    public String[] TERRESTRIAL_REGIONS_URNS = {"local:ferdinando.villa:im.data.global:admin.countries.un.split#presence=true"};
+
     public static final String DEFAULT_GEOCODING_STRATEGY = "Map boundaries";
     public static final String WATERSHED_GEOCODING_STRATEGY = "River basin";
     public static final String ADMIN_GEOCODING_STRATEGY = "Administrative region";
@@ -95,6 +100,25 @@ public enum Geocoder {
     // a remote resource using its own OSM mirror.
     public static final String[] OVERPASS_URLS = {"https://knowledge.integratedmodelling.org/overpass/api/interpreter",
             "http://overpass-api.de/api/interpreter"};
+
+    /**
+     * True if the passed envelope intersects at least one shape in any of the resources set in
+     * {@link #TERRESTRIAL_REGIONS_URNS}.
+     * 
+     * @param envelope
+     * @return
+     */
+    public boolean isTerrestrial(IEnvelope envelope) {
+        IScale geometry = Scale.create(envelope.asShape(), Time.create(TimeInstant.create().getYear() - 1));
+        for (String urn : TERRESTRIAL_REGIONS_URNS) {
+            IKlabData data = Resources.INSTANCE.getResourceData(urn, geometry, Klab.INSTANCE.getRootMonitor());
+            if (data == null || data.hasErrors()) {
+                continue;
+            }
+            return data.getMetadata().get("presence") instanceof Boolean && ((Boolean)data.getMetadata().get("presence"));
+        }
+        throw new KlabIOException("cannot establish terrestrial nature of envelope " + envelope);
+    }
 
     public List<Location> lookup(String query) {
 

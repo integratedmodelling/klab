@@ -92,6 +92,10 @@ public class Space extends AbstractSpatialExtent implements ISpace {
         return create((Shape) shape, org.integratedmodelling.klab.components.geospace.services.Space.parseResolution(resolution));
     }
 
+    public static Space create(IShape shape, org.integratedmodelling.klab.components.runtime.actors.extensions.Grid gridspecs) {
+        return create((Shape) shape, gridspecs);
+    }
+
     public static ISpace create(Dimension dimension, IQuantity resolution) {
 
         String authority = dimension.getParameters().get(Geometry.PARAMETER_ENUMERATED_AUTHORITY, String.class);
@@ -188,6 +192,17 @@ public class Space extends AbstractSpatialExtent implements ISpace {
         }
         return new Space(shape);
     }
+    
+
+    public static Space create(Shape shape, org.integratedmodelling.klab.components.runtime.actors.extensions.Grid gridspecs) {
+        if (gridspecs.getLinearCells() > 0) {
+            return create(shape, gridspecs.getLinearCells(), gridspecs.getLinearCells());
+        } else if (gridspecs.getXCells() > 0 && gridspecs.getYCells() > 0) {
+            return create(shape, gridspecs.getXCells(), gridspecs.getYCells());
+        }
+        throw new KlabUnimplementedException("cannot create grid with unsupported grid specifications " + gridspecs);
+    }
+
 
     private static Space create(Shape shape, long xCells, long yCells) {
         Grid grid = null;
@@ -658,9 +673,9 @@ public class Space extends AbstractSpatialExtent implements ISpace {
 
         Space ret = new Space();
 
-        ret.shape = this.shape.copy();
-        ret.grid = this.grid.copy();
-        ret.envelope = this.envelope.copy();
+        ret.shape = this.shape == null ? null : this.shape.copy();
+        ret.grid = this.grid == null ? null : this.grid.copy();
+        ret.envelope = this.envelope == null ? null : this.envelope.copy();
         ret.projection = this.projection;
         ret.gridSpecs = this.gridSpecs;
         // TODO really?

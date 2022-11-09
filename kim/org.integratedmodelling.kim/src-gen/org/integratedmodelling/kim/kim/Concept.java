@@ -34,7 +34,6 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isMagnitude <em>Magnitude</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isLevel <em>Level</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isType <em>Type</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.Concept#isObservability <em>Observability</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isProportion <em>Proportion</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#getOther <em>Other</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isPercentage <em>Percentage</em>}</li>
@@ -468,28 +467,6 @@ public interface Concept extends EObject
    * @generated
    */
   void setType(boolean value);
-
-  /**
-   * Returns the value of the '<em><b>Observability</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Observability</em>' attribute.
-   * @see #setObservability(boolean)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getConcept_Observability()
-   * @model
-   * @generated
-   */
-  boolean isObservability();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.Concept#isObservability <em>Observability</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Observability</em>' attribute.
-   * @see #isObservability()
-   * @generated
-   */
-  void setObservability(boolean value);
 
   /**
    * Returns the value of the '<em><b>Proportion</b></em>' attribute.

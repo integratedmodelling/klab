@@ -1242,7 +1242,7 @@ public class ResolutionScope implements IResolutionScope {
                 }
             }
 
-            monitor.info("Context of " + observable2.getType().getDefinition() + " (" + context.getDefinition()
+            monitor.info("Context of " + observable2.getType().getDefinition() + "  (" + context.getDefinition()
                     + ") is incompatible with current context (" + getContextObservable().getType().getDefinition()
                     + "): resolving " + context.getDefinition() + " and deferring resolution");
 

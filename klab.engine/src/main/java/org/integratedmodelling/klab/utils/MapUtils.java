@@ -168,11 +168,15 @@ public class MapUtils extends org.apache.commons.collections.MapUtils {
 	 * @param vars
 	 * @return
 	 */
-	public static Object[] unfold(Map<String, ?> vars) {
+	public static Object[] unfold(Map<?, ?> vars) {
 
-		Object[] ret = new Object[vars.size() * 2];
+	    if (vars == null) {
+	        return new Object[0];
+	    }
+		
+	    Object[] ret = new Object[vars.size() * 2];
 		int i = 0;
-		for (String key : vars.keySet()) {
+		for (Object key : vars.keySet()) {
 			ret[i] = key;
 			ret[++i] = vars.get(key);
 		}

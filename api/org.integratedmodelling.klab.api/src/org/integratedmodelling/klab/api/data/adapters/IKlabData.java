@@ -244,5 +244,12 @@ public interface IKlabData {
 	 * @return
 	 */
 	IConcept getSemantics();
+	
+	/**
+	 * Get overall metadata for the resource extraction operation. 
+	 * 
+	 * @return
+	 */
+	IMetadata getMetadata();
 
 }

@@ -14,16 +14,13 @@ import java.util.Map;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
-import org.integratedmodelling.klab.api.observations.IConfiguration;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.INetwork;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
-import org.integratedmodelling.klab.provenance.Artifact;
 import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.Triple;
 
@@ -46,7 +43,7 @@ import it.uniroma1.dis.wsngroup.gexf4j.core.impl.SpellImpl;
 import it.uniroma1.dis.wsngroup.gexf4j.core.impl.StaxGraphWriter;
 import it.uniroma1.dis.wsngroup.gexf4j.core.impl.data.AttributeListImpl;
 
-public class Network implements INetwork {
+public class Network extends Pattern implements INetwork {
 
 	/*
 	 * export functions use the adapter interface; we redirect to the network
@@ -55,47 +52,33 @@ public class Network implements INetwork {
 	public static final String ADAPTER_ID = "NETWORK_ADAPTER";
 
 	DirectedSparseMultigraph<IDirectObservation, IRelationship> network = new DirectedSparseMultigraph<>();
-	IConfiguration configuration;
 
-	/**
-	 * True if the passed configuration is a network, based on the presence of
-	 * relationships.
-	 * 
-	 * @param configuration
-	 * @return
-	 */
-	public static boolean isNetwork(IConfiguration configuration) {
-		boolean ret = true;
-		for (IObservation obs : configuration.getTargetObservations()) {
-			if (obs.getObservable().is(Type.RELATIONSHIP)) {
-				ret = false;
-				break;
-			}
-		}
-		return ret;
-	}
+//	public static boolean isNetwork(IConfiguration configuration) {
+//		boolean ret = true;
+//		for (IObservation obs : configuration.getTargetObservations()) {
+//			if (obs.getObservable().is(Type.RELATIONSHIP)) {
+//				ret = false;
+//				break;
+//			}
+//		}
+//		return ret;
+//	}
 
-	public Network(IConfiguration configuration) {
+	public Network(Collection<IObservation> observations, IRuntimeScope scope) {
 
-		this.configuration = configuration;
+		super(observations, scope);
 
-		/*
-		 * Build network
-		 */
-		for (IObservation observation : configuration.getTargetObservations()) {
-			IRuntimeScope context = ((Observation) observation).getScope();
+		for (IObservation observation : observations) {
 			for (IArtifact artifact : observation) {
 				if (artifact instanceof IRelationship) {
-					IDirectObservation source = context.getSourceSubject((IRelationship) artifact);
-					IDirectObservation target = context.getTargetSubject((IRelationship) artifact);
+					IDirectObservation source = scope.getSourceSubject((IRelationship) artifact);
+					IDirectObservation target = scope.getTargetSubject((IRelationship) artifact);
 					network.addEdge((IRelationship) artifact, Lists.newArrayList(source, target),
 							((IRelationship) artifact).getObservable().is(Type.UNIDIRECTIONAL) ? EdgeType.DIRECTED
 									: EdgeType.UNDIRECTED);
 				}
 			}
 		}
-
-		((Artifact) configuration).addPeer(this, INetwork.class);
 	}
 
 	@Override
@@ -151,7 +134,7 @@ public class Network implements INetwork {
 		Attribute longitude = null;
 
 		gexf.getMetadata().setLastModified(new Date()).setCreator("k.LAB " + Version.CURRENT)
-				.setDescription(configuration.getMetadata().get(IMetadata.DC_COMMENT, "GEXF network export"));
+				.setDescription(emergentObservation.getMetadata().get(IMetadata.DC_COMMENT, "GEXF network export"));
 
 		boolean graphSet = false;
 
@@ -180,7 +163,7 @@ public class Network implements INetwork {
 			/*
 			 * temporal attributes
 			 */
-			if (configuration.isTemporallyDistributed()) {
+			if (emergentObservation.isTemporallyDistributed()) {
 				Spell spell = new SpellImpl();
 				spell.setStartValue(new Date(o.getTimestamp()));
 				if (o.getExitTime() > 0) {
@@ -202,7 +185,7 @@ public class Network implements INetwork {
 			/*
 			 * temporal attributes
 			 */
-			if (configuration.isTemporallyDistributed()) {
+			if (emergentObservation.isTemporallyDistributed()) {
 				Spell spell = new SpellImpl();
 				spell.setStartValue(new Date(r.getCreationTime()));
 				if (r.getExitTime() > 0) {
@@ -338,6 +321,13 @@ public class Network implements INetwork {
 			this.edges = edges;
 		}
 
+	}
+
+
+	@Override
+	public void update(IObservation trigger) {
+		// NAH if the emergent is a subject, this can't work, we need to rebuild the
+		// connected components
 	}
 
 }

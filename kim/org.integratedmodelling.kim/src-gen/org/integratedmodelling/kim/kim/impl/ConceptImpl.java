@@ -45,7 +45,6 @@ import org.integratedmodelling.kim.kim.KimPackage;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isMagnitude <em>Magnitude</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isLevel <em>Level</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isType <em>Type</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isObservability <em>Observability</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isProportion <em>Proportion</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#getOther <em>Other</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isPercentage <em>Percentage</em>}</li>
@@ -419,26 +418,6 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
    * @ordered
    */
   protected boolean type = TYPE_EDEFAULT;
-
-  /**
-   * The default value of the '{@link #isObservability() <em>Observability</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isObservability()
-   * @generated
-   * @ordered
-   */
-  protected static final boolean OBSERVABILITY_EDEFAULT = false;
-
-  /**
-   * The cached value of the '{@link #isObservability() <em>Observability</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isObservability()
-   * @generated
-   * @ordered
-   */
-  protected boolean observability = OBSERVABILITY_EDEFAULT;
 
   /**
    * The default value of the '{@link #isProportion() <em>Proportion</em>}' attribute.
@@ -1132,31 +1111,6 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
    * @generated
    */
   @Override
-  public boolean isObservability()
-  {
-    return observability;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setObservability(boolean newObservability)
-  {
-    boolean oldObservability = observability;
-    observability = newObservability;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT__OBSERVABILITY, oldObservability, observability));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
   public boolean isProportion()
   {
     return proportion;
@@ -1471,8 +1425,6 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
         return isLevel();
       case KimPackage.CONCEPT__TYPE:
         return isType();
-      case KimPackage.CONCEPT__OBSERVABILITY:
-        return isObservability();
       case KimPackage.CONCEPT__PROPORTION:
         return isProportion();
       case KimPackage.CONCEPT__OTHER:
@@ -1559,9 +1511,6 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
         return;
       case KimPackage.CONCEPT__TYPE:
         setType((Boolean)newValue);
-        return;
-      case KimPackage.CONCEPT__OBSERVABILITY:
-        setObservability((Boolean)newValue);
         return;
       case KimPackage.CONCEPT__PROPORTION:
         setProportion((Boolean)newValue);
@@ -1658,9 +1607,6 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
       case KimPackage.CONCEPT__TYPE:
         setType(TYPE_EDEFAULT);
         return;
-      case KimPackage.CONCEPT__OBSERVABILITY:
-        setObservability(OBSERVABILITY_EDEFAULT);
-        return;
       case KimPackage.CONCEPT__PROPORTION:
         setProportion(PROPORTION_EDEFAULT);
         return;
@@ -1737,8 +1683,6 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
         return level != LEVEL_EDEFAULT;
       case KimPackage.CONCEPT__TYPE:
         return type != TYPE_EDEFAULT;
-      case KimPackage.CONCEPT__OBSERVABILITY:
-        return observability != OBSERVABILITY_EDEFAULT;
       case KimPackage.CONCEPT__PROPORTION:
         return proportion != PROPORTION_EDEFAULT;
       case KimPackage.CONCEPT__OTHER:
@@ -1804,8 +1748,6 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
     result.append(level);
     result.append(", type: ");
     result.append(type);
-    result.append(", observability: ");
-    result.append(observability);
     result.append(", proportion: ");
     result.append(proportion);
     result.append(", percentage: ");

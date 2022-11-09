@@ -14,6 +14,8 @@ import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
 import org.integratedmodelling.klab.api.runtime.rest.ITaskReference.Status;
 import org.integratedmodelling.klab.rest.ContextualizationNotification;
 import org.integratedmodelling.klab.rest.ContextualizationNotification.Target;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.rest.ObservationReference;
@@ -27,6 +29,8 @@ import org.integratedmodelling.klab.rest.TaskReference;
  */
 public abstract class SessionMonitor extends ContextMonitor {
 
+    private static final Logger logger = LoggerFactory.getLogger(SessionMonitor.class);
+    
     static private Object lock = new Object();
     AtomicLong notificationCounter = new AtomicLong(0);
 
@@ -222,7 +226,7 @@ public abstract class SessionMonitor extends ContextMonitor {
                 } else {
                     // internal error, shouldn't happen but might during debugging, just leaving
                     // this to triple-check it doesn't happen at production
-                    System.out.println("INTERNAL ERROR - ORPHAN TASK MISSING on " + observation);
+                    logger.error("INTERNAL ERROR - ORPHAN TASK MISSING on " + observation);
                 }
 
             } else {
@@ -238,7 +242,7 @@ public abstract class SessionMonitor extends ContextMonitor {
                 } else {
                     // internal error, shouldn't happen but might during debugging, just leaving
                     // this to triple-check it doesn't happen at production
-                    System.out.println("INTERNAL ERROR - CONTEXT MISSING on " + observation);
+                    logger.error("INTERNAL ERROR - CONTEXT MISSING on " + observation);
                 }
             }
         }
@@ -269,7 +273,7 @@ public abstract class SessionMonitor extends ContextMonitor {
                 }
             } else if (notification.getIdentity().startsWith("o")) {
                 // Ehm. Shouldn't happen but I don't feel like storing all observation IDs
-                System.out.println("MIERDA GOT OBSERVATION NOTIFICATION " + notification);
+                logger.error("GOT OBSERVATION NOTIFICATION " + notification);
             } else {
                 systemNotifications.add(notification);
                 for (Listener listener : listeners) {

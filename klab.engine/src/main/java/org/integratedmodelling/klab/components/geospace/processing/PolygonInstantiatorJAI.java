@@ -17,14 +17,17 @@ import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.feature.NameImpl;
 import org.geotools.process.Processors;
 import org.integratedmodelling.kim.api.IKimExpression;
+import org.integratedmodelling.kim.api.IKimQuantity;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
+import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
+import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
@@ -37,6 +40,7 @@ import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
@@ -65,7 +69,8 @@ public class PolygonInstantiatorJAI extends AbstractContextualizer implements IE
     private IGrid grid;
     private Shape boundingBox;
     GeometryFactory gfact = new GeometryFactory();
-
+    double min_area_m = Double.NaN;
+    double max_area_m = Double.NaN;
     boolean intersect = false;
     private boolean createPointFeatures;
     private boolean computeConvexHull;
@@ -101,6 +106,26 @@ public class PolygonInstantiatorJAI extends AbstractContextualizer implements IE
             this.selectExprDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE).describe(
                     expression.toString(),
                     context.getExpressionContext().scalar(forceScalar ? Forcing.Always : Forcing.AsNeeded));
+        }
+
+        if (parameters.containsKey("min_area")) {
+            Object a = parameters.get("min_area");
+            if (a instanceof Number) {
+                this.min_area_m = ((Number)a).doubleValue();
+            } else if (a instanceof IKimQuantity) {
+                IUnit unit = Unit.create(((IKimQuantity)a).getUnit());
+                this.min_area_m = Units.INSTANCE.SQUARE_METERS.convert(((IKimQuantity)a).getValue(), unit).doubleValue();
+            }
+        }
+
+        if (parameters.containsKey("max_area")) {
+            Object a = parameters.get("max_area");
+            if (a instanceof Number) {
+                this.max_area_m = ((Number)a).doubleValue();
+            } else if (a instanceof IKimQuantity) {
+                IUnit unit = Unit.create(((IKimQuantity)a).getUnit());
+                this.max_area_m = Units.INSTANCE.SQUARE_METERS.convert(((IKimQuantity)a).getValue(), unit).doubleValue();
+            }
         }
 
         if (parameters.containsKey("categorize")) {
@@ -160,6 +185,18 @@ public class PolygonInstantiatorJAI extends AbstractContextualizer implements IE
                     // process feature
                     Shape shape = getShape(feature);
                     if (shape != null) {
+
+                        if (!Double.isNaN(this.min_area_m) && this.min_area_m != 0) {
+                            if (shape.getStandardizedArea() < this.min_area_m) {
+                                continue;
+                            }
+                        }
+
+                        if (!Double.isNaN(this.max_area_m) && this.max_area_m != 0) {
+                            if (shape.getStandardizedArea() > this.max_area_m) {
+                                continue;
+                            }
+                        }
 
                         Scale instanceScale = Scale.createLike(scope.getScale(), shape);
                         IObjectArtifact object = scope.newObservation(semantics, baseName + "_" + (created + 1), instanceScale,

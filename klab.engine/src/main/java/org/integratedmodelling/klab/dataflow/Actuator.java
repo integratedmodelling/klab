@@ -20,7 +20,6 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.ComputableResource;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Actors;
-import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Klab;
@@ -46,7 +45,6 @@ import org.integratedmodelling.klab.api.model.contextualization.IPredicateResolv
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
-import org.integratedmodelling.klab.api.observations.IConfiguration;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IProcess;
@@ -72,7 +70,6 @@ import org.integratedmodelling.klab.components.runtime.observations.DirectObserv
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservedArtifact;
 import org.integratedmodelling.klab.components.runtime.observations.StateLayer;
-import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.data.table.LookupTable;
 import org.integratedmodelling.klab.documentation.DocumentationItem;
@@ -479,7 +476,7 @@ public class Actuator implements IActuator {
                                     + contextualizer.getThird().getTargetId());
                 }
             }
-            String targetId = getName();
+            String targetId = /* partitionedTarget == null ? */getName() /* : partitionedTarget */;
             IRuntimeScope context = ctx;
 
             if (indirectTarget != null) {
@@ -620,30 +617,30 @@ public class Actuator implements IActuator {
                 scope.getActuatorProducts(this).addAll(primary);
             }
 
-            IConfiguration configuration = null;
-            if (ret != null && !ret.isEmpty() && (mode == Mode.INSTANTIATION || ret instanceof IState)) {
-                /*
-                 * check for configuration triggered, only if we just resolved a state or
-                 * instantiated 1+ objects
-                 */
-                Pair<IConcept, Set<IObservation>> confdesc = Observables.INSTANCE.detectConfigurations(
-                        (IObservation) ret,
-                        ctx.getContextObservation());
-
-                if (confdesc != null) {
-
-                    ctx.getMonitor().info(
-                            "emergent configuration " + Concepts.INSTANCE.getDisplayName(confdesc.getFirst())
-                                    + " detected");
-
-                    configuration = ctx.newConfiguration(confdesc.getFirst(), confdesc.getSecond(),
-                            /* TODO metadata */ new Metadata());
-
-                    if (configuration != null) {
-                        scope.getActuatorProducts(this).add(configuration);
-                    }
-                }
-            }
+//            IConfiguration configuration = null;
+//            if (ret != null && !ret.isEmpty() && (mode == Mode.INSTANTIATION || ret instanceof IState)) {
+//                /*
+//                 * check for configuration triggered, only if we just resolved a state or
+//                 * instantiated 1+ objects
+//                 */
+//                Pair<IConcept, Set<IObservation>> confdesc = Observables.INSTANCE.detectConfigurations(
+//                        (IObservation) ret,
+//                        ctx.getContextObservation());
+//
+//                if (confdesc != null) {
+//
+//                    ctx.getMonitor().info(
+//                            "emergent configuration " + Concepts.INSTANCE.getDisplayName(confdesc.getFirst())
+//                                    + " detected");
+//
+//                    configuration = ctx.newConfiguration(confdesc.getFirst(), confdesc.getSecond(),
+//                            /* TODO metadata */ new Metadata());
+//
+//                    if (configuration != null) {
+//                        scope.getActuatorProducts(this).add(configuration);
+//                    }
+//                }
+//            }
         }
 
         /*
