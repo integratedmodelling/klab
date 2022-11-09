@@ -97,12 +97,8 @@ public class CoreOntology extends AbstractWorkspace {
 
     public static interface NS {
 
-        // domain concepts for known extents
-        // public static final String SPACE_DOMAIN = "observation:Space";
-        // public static final String TIME_DOMAIN = "observation:Time";
-
         // core properties
-        public static final String IS_ABSTRACT = "observation:isAbstract";
+        public static final String IS_ABSTRACT = "odo:isAbstract";
         // TODO move to k.LAB
         public static final String BASE_DECLARATION = "observation:baseDeclaration";
         public static final String ORDER_PROPERTY = "observation:orderingRank";
@@ -126,9 +122,7 @@ public class CoreOntology extends AbstractWorkspace {
 
         public static final String IS_COMPARED_TO_PROPERTY = "observation:isComparedTo";
         public static final String HAS_ROLE_PROPERTY = "observation:hasRole";
-        // public static final String INCARNATES_TRAIT_PROPERTY = "observation:exposesTrait";
         public static final String DENIABILITY_PROPERTY = "observation:isDeniable";
-        // public static final String IMPLIES_OBSERVABLE_PROPERTY = "observation:impliesObservable";
         public static final String IMPLIES_ROLE_PROPERTY = "observation:impliesRole";
         public static final String APPLIES_TO_PROPERTY = "observation:appliesTo";
         public static final String IMPLIES_SOURCE_PROPERTY = "observation:impliesSource";
@@ -140,8 +134,6 @@ public class CoreOntology extends AbstractWorkspace {
         public static final String REQUIRES_IDENTITY_PROPERTY = "observation:requiresIdentity";
         public static final String DISCRETIZES_QUALITY_PROPERTY = "observation:discretizesQuality";
         public static final String MARKS_QUALITY_PROPERTY = "observation:marksQuality";
-        // public static final String LIMITED_BY_PROPERTY = "observation:limitedBy";
-        // public static final String REPRESENTED_BY_PROPERTY = "observation:representedBy";
         public static final String IS_TYPE_DELEGATE = "observation:isTypeDelegate";
         public static final String IS_NEGATION_OF = "observation:isNegationOf";
         public static final String INHERENCY_IS_DISTRIBUTED = "observation:inherencyIsDistributed";
@@ -151,24 +143,6 @@ public class CoreOntology extends AbstractWorkspace {
 
         // TODO move to klab
         public static final String IS_CORE_KIM_TYPE = "observation:isCoreKimType";
-
-        // core observation ontology
-//        public static final String OBSERVATION = "observation:Observation";
-//        public static final String DIRECT_OBSERVATION = "observation:DirectObservation";
-//        public static final String INDIRECT_OBSERVATION = "observation:IndirectObservation";
-//        public static final String CLASSIFICATION = "observation:Classification";
-//        public static final String MEASUREMENT = "observation:Measurement";
-//        public static final String QUANTIFICATION = "observation:Quantification";
-//        public static final String RANKING = "observation:Ranking";
-//        public static final String COUNT_OBSERVATION = "observation:CountObservation";
-//        public static final String PERCENTAGE_OBSERVATION = "observation:PercentageObservation";
-//        public static final String PROPORTION_OBSERVATION = "observation:ProportionObservation";
-//        public static final String RATIO_OBSERVATION = "observation:RatioObservation";
-//        public static final String DISTANCE_OBSERVATION = "observation:DistanceMeasurement";
-//        public static final String VALUE_OBSERVATION = "observation:Valuation";
-//        public static final String PROBABILITY_OBSERVATION = "observation:ProbabilityObservation";
-//        public static final String UNCERTAINTY_OBSERVATION = "observation:UncertaintyObservation";
-//        public static final String PRESENCE_OBSERVATION = "observation:PresenceObservation";
 
         // contextual identities: FIXME revise, if possible remove, at worst move away
         public static final String TEMPORAL_IDENTITY = "observation:TemporalIdentity";
@@ -239,40 +213,8 @@ public class CoreOntology extends AbstractWorkspace {
         /*
          * the core properties we use internally to establish observation semantics
          */
-        /**
-         * The property that links an observation to its observable.
-         */
-        // public static final String CONTEXTUALIZES = "observation:contextualizes";
-        // public static final String INHERENT_IN = "observation:isInherentTo";
-        // public static final String OBSERVED_INTO = "observation:hasContext";
-        // public static final String PART_OF = "observation:isPartOf";
-        // public static final String CONSTITUENT_OF = "observation:isConstituentOf";
-        // public static final String STRUCTURING_PROPERTY =
-        // "observation:structuringObjectProperty";
-        // public static final String DEPENDS_ON_PROPERTY = "observation:dependsOn";
-        // public static final String RELATES_TO_PROPERTY = "observation:relatesTo";
-        // public static final String CONTAINS_PART_PROPERTY = "observation:containsPart";
-        // public static final String CONTAINS_PART_SPATIALLY_PROPERTY =
-        // "observation:containsPartSpatially";
         // TODO used to reconstruct the "subject" after mod with unary operator. Modify name, move to klab (?)
         public static final String OBSERVES_PROPERTY = "observation:observes";
-
-        // /**
-        // * The ontology for all the core concepts
-        // */
-        // public static final String CORE_ONTOLOGY = "observation";
-
-        // /**
-        // * Only class that subsumes both observables and observations. It's bfo:entity
-        // * in label.
-        // */
-        // public static final String CORE_PARTICULAR = "bfo:BFO_0000001";
-
-        // /**
-        // * Subsumes traits, domains and configurations. BFO does not still address
-        // * universals, so we provide it in observation.
-        // */
-        // public static final String CORE_UNIVERSAL = "observation:universal";
 
         /**
          * the root domain for the ontologies.
@@ -280,7 +222,6 @@ public class CoreOntology extends AbstractWorkspace {
         public static final String CORE_DOMAIN = "observation:Domain";
         public static final String CORE_VOID = "observation:Void";
         public static final String CORE_OBSERVABLE = "observation:Observable";
-//        public static final String CORE_OBSERVATION = "observation:Observation";
         public static final String CORE_OBJECT = "observation:DirectObservable";
         public static final String CORE_PROCESS = "observation:Process";
         public static final String CORE_QUALITY = "observation:Quality";
@@ -290,7 +231,6 @@ public class CoreOntology extends AbstractWorkspace {
         public static final String CORE_QUANTITY = "observation:ContinuousNumericallyQuantifiableQuality";
         public static final String CORE_ASSERTED_QUALITY = "observation:AssertedQuality";
         public static final String CORE_SUBJECT = "observation:Subject";
-        // public static final String CORE_PHYSICAL_OBJECT = "observation:PhysicalObject";
         public static final String CORE_PHYSICAL_PROPERTY = "observation:PhysicalProperty";
         public static final String CORE_EXTENSIVE_PHYSICAL_PROPERTY = "observation:ExtensivePhysicalProperty";
         public static final String CORE_INTENSIVE_PHYSICAL_PROPERTY = "observation:IntensivePhysicalProperty";
@@ -301,7 +241,6 @@ public class CoreOntology extends AbstractWorkspace {
         public static final String CORE_PROBABILITY = "observation:Probability";
         public static final String CORE_MAGNITUDE = "observation:Magnitude";
         public static final String CORE_LEVEL = "observation:Level";
-        // public static final String CORE_RELATIVE_QUANTITY = "observation:RelativeQuantity";
         public static final String CORE_VOLUME = "observation:Volume";
         public static final String CORE_WEIGHT = "observation:Weight";
         public static final String CORE_DURATION = "observation:Duration";
@@ -309,14 +248,13 @@ public class CoreOntology extends AbstractWorkspace {
         public static final String CORE_PREFERENCE_VALUE = "observation:PreferenceValue";
         public static final String CORE_ACCELERATION = "observation:Acceleration";
         public static final String CORE_AREA = "observation:Area";
-//        public static final String CORE_DENSITY = "observation:Density";
         public static final String CORE_ELECTRIC_POTENTIAL = "observation:ElectricPotential";
         public static final String CORE_CHARGE = "observation:Charge";
         public static final String CORE_RESISTANCE = "observation:Resistance";
         public static final String CORE_RESISTIVITY = "observation:Resistivity";
         public static final String CORE_PRESSURE = "observation:Pressure";
         public static final String CORE_ANGLE = "observation:Angle";
-        public static final String CORE_ASSESSMENT = "observation:Assessment";
+//        public static final String CORE_ASSESSMENT = "observation:Assessment";
         public static final String CORE_CHANGE = "observation:Change";
         public static final String CORE_CHANGED_EVENT = "observation:ChangeEvent";
         public static final String CORE_CHANGE_RATE = "observation:ChangeRate";
@@ -346,13 +284,7 @@ public class CoreOntology extends AbstractWorkspace {
         public static final String CORE_DELIBERATIVE_AGENT = "observation:DeliberativeAgent";
         public static final String CORE_INTERACTIVE_AGENT = "observation:InteractiveAgent";
         public static final String CORE_UNCERTAINTY = "observation:Uncertainty";
-        // public static final String CORE_OBSERVABILITY_TRAIT = "observation:Observability";
-        // public static final String CORE_ABSENCE_TRAIT = "observation:Absence";
         public static final String CORE_EXTENT = "observation:Extent";
-        // public static final String CORE_OBSERVATION_TRANSFORMATION =
-        // "observation:ObservationTransformation";
-        // public static final String CORE_MULTIPLICITY_REDUCTION =
-        // "observation:ObservationMultiplicityReduction";
 
         // TODO move to klab
         public static final String CORE_PREDICTED_ATTRIBUTE = "observation:Predicted";

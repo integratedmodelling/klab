@@ -37,7 +37,6 @@ import org.integratedmodelling.kim.kim.KimPackage;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isCount <em>Count</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isDistance <em>Distance</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isProbability <em>Probability</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isAssessment <em>Assessment</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isChange <em>Change</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isRate <em>Rate</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isChanged <em>Changed</em>}</li>
@@ -258,26 +257,6 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
    * @ordered
    */
   protected boolean probability = PROBABILITY_EDEFAULT;
-
-  /**
-   * The default value of the '{@link #isAssessment() <em>Assessment</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isAssessment()
-   * @generated
-   * @ordered
-   */
-  protected static final boolean ASSESSMENT_EDEFAULT = false;
-
-  /**
-   * The cached value of the '{@link #isAssessment() <em>Assessment</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isAssessment()
-   * @generated
-   * @ordered
-   */
-  protected boolean assessment = ASSESSMENT_EDEFAULT;
 
   /**
    * The default value of the '{@link #isChange() <em>Change</em>}' attribute.
@@ -911,31 +890,6 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
    * @generated
    */
   @Override
-  public boolean isAssessment()
-  {
-    return assessment;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setAssessment(boolean newAssessment)
-  {
-    boolean oldAssessment = assessment;
-    assessment = newAssessment;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT__ASSESSMENT, oldAssessment, assessment));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
   public boolean isChange()
   {
     return change;
@@ -1409,8 +1363,6 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
         return isDistance();
       case KimPackage.CONCEPT__PROBABILITY:
         return isProbability();
-      case KimPackage.CONCEPT__ASSESSMENT:
-        return isAssessment();
       case KimPackage.CONCEPT__CHANGE:
         return isChange();
       case KimPackage.CONCEPT__RATE:
@@ -1487,9 +1439,6 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
         return;
       case KimPackage.CONCEPT__PROBABILITY:
         setProbability((Boolean)newValue);
-        return;
-      case KimPackage.CONCEPT__ASSESSMENT:
-        setAssessment((Boolean)newValue);
         return;
       case KimPackage.CONCEPT__CHANGE:
         setChange((Boolean)newValue);
@@ -1583,9 +1532,6 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
       case KimPackage.CONCEPT__PROBABILITY:
         setProbability(PROBABILITY_EDEFAULT);
         return;
-      case KimPackage.CONCEPT__ASSESSMENT:
-        setAssessment(ASSESSMENT_EDEFAULT);
-        return;
       case KimPackage.CONCEPT__CHANGE:
         setChange(CHANGE_EDEFAULT);
         return;
@@ -1667,8 +1613,6 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
         return distance != DISTANCE_EDEFAULT;
       case KimPackage.CONCEPT__PROBABILITY:
         return probability != PROBABILITY_EDEFAULT;
-      case KimPackage.CONCEPT__ASSESSMENT:
-        return assessment != ASSESSMENT_EDEFAULT;
       case KimPackage.CONCEPT__CHANGE:
         return change != CHANGE_EDEFAULT;
       case KimPackage.CONCEPT__RATE:
@@ -1732,8 +1676,6 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
     result.append(distance);
     result.append(", probability: ");
     result.append(probability);
-    result.append(", assessment: ");
-    result.append(assessment);
     result.append(", change: ");
     result.append(change);
     result.append(", rate: ");

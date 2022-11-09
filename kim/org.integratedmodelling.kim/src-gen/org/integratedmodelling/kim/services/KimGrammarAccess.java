@@ -6447,53 +6447,57 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		private final Assignment cConceptAssignment_4_2 = (Assignment)cGroup_4.eContents().get(2);
 		private final RuleCall cConceptSimpleConceptDeclarationParserRuleCall_4_2_0 = (RuleCall)cConceptAssignment_4_2.eContents().get(0);
 		private final Group cGroup_5 = (Group)cAlternatives.eContents().get(5);
-		private final Assignment cAssessmentAssignment_5_0 = (Assignment)cGroup_5.eContents().get(0);
-		private final Keyword cAssessmentAssessmentKeyword_5_0_0 = (Keyword)cAssessmentAssignment_5_0.eContents().get(0);
-		private final Keyword cOfKeyword_5_1 = (Keyword)cGroup_5.eContents().get(1);
-		private final Assignment cConceptAssignment_5_2 = (Assignment)cGroup_5.eContents().get(2);
-		private final RuleCall cConceptSimpleConceptDeclarationParserRuleCall_5_2_0 = (RuleCall)cConceptAssignment_5_2.eContents().get(0);
+		private final Alternatives cAlternatives_5_0 = (Alternatives)cGroup_5.eContents().get(0);
+		private final Group cGroup_5_0_0 = (Group)cAlternatives_5_0.eContents().get(0);
+		private final Keyword cChangeKeyword_5_0_0_0 = (Keyword)cGroup_5_0_0.eContents().get(0);
+		private final Alternatives cAlternatives_5_0_0_1 = (Alternatives)cGroup_5_0_0.eContents().get(1);
+		private final Assignment cChangeAssignment_5_0_0_1_0 = (Assignment)cAlternatives_5_0_0_1.eContents().get(0);
+		private final Keyword cChangeInKeyword_5_0_0_1_0_0 = (Keyword)cChangeAssignment_5_0_0_1_0.eContents().get(0);
+		private final Group cGroup_5_0_0_1_1 = (Group)cAlternatives_5_0_0_1.eContents().get(1);
+		private final Assignment cRateAssignment_5_0_0_1_1_0 = (Assignment)cGroup_5_0_0_1_1.eContents().get(0);
+		private final Keyword cRateRateKeyword_5_0_0_1_1_0_0 = (Keyword)cRateAssignment_5_0_0_1_1_0.eContents().get(0);
+		private final Keyword cOfKeyword_5_0_0_1_1_1 = (Keyword)cGroup_5_0_0_1_1.eContents().get(1);
+		private final Assignment cChangedAssignment_5_0_1 = (Assignment)cAlternatives_5_0.eContents().get(1);
+		private final Keyword cChangedChangedKeyword_5_0_1_0 = (Keyword)cChangedAssignment_5_0_1.eContents().get(0);
+		private final Assignment cConceptAssignment_5_1 = (Assignment)cGroup_5.eContents().get(1);
+		private final RuleCall cConceptSimpleConceptDeclarationParserRuleCall_5_1_0 = (RuleCall)cConceptAssignment_5_1.eContents().get(0);
 		private final Group cGroup_6 = (Group)cAlternatives.eContents().get(6);
-		private final Alternatives cAlternatives_6_0 = (Alternatives)cGroup_6.eContents().get(0);
-		private final Group cGroup_6_0_0 = (Group)cAlternatives_6_0.eContents().get(0);
-		private final Keyword cChangeKeyword_6_0_0_0 = (Keyword)cGroup_6_0_0.eContents().get(0);
-		private final Alternatives cAlternatives_6_0_0_1 = (Alternatives)cGroup_6_0_0.eContents().get(1);
-		private final Assignment cChangeAssignment_6_0_0_1_0 = (Assignment)cAlternatives_6_0_0_1.eContents().get(0);
-		private final Keyword cChangeInKeyword_6_0_0_1_0_0 = (Keyword)cChangeAssignment_6_0_0_1_0.eContents().get(0);
-		private final Group cGroup_6_0_0_1_1 = (Group)cAlternatives_6_0_0_1.eContents().get(1);
-		private final Assignment cRateAssignment_6_0_0_1_1_0 = (Assignment)cGroup_6_0_0_1_1.eContents().get(0);
-		private final Keyword cRateRateKeyword_6_0_0_1_1_0_0 = (Keyword)cRateAssignment_6_0_0_1_1_0.eContents().get(0);
-		private final Keyword cOfKeyword_6_0_0_1_1_1 = (Keyword)cGroup_6_0_0_1_1.eContents().get(1);
-		private final Assignment cChangedAssignment_6_0_1 = (Assignment)cAlternatives_6_0.eContents().get(1);
-		private final Keyword cChangedChangedKeyword_6_0_1_0 = (Keyword)cChangedAssignment_6_0_1.eContents().get(0);
-		private final Assignment cConceptAssignment_6_1 = (Assignment)cGroup_6.eContents().get(1);
-		private final RuleCall cConceptSimpleConceptDeclarationParserRuleCall_6_1_0 = (RuleCall)cConceptAssignment_6_1.eContents().get(0);
+		private final Assignment cUncertaintyAssignment_6_0 = (Assignment)cGroup_6.eContents().get(0);
+		private final Keyword cUncertaintyUncertaintyKeyword_6_0_0 = (Keyword)cUncertaintyAssignment_6_0.eContents().get(0);
+		private final Keyword cOfKeyword_6_1 = (Keyword)cGroup_6.eContents().get(1);
+		private final Assignment cConceptAssignment_6_2 = (Assignment)cGroup_6.eContents().get(2);
+		private final RuleCall cConceptSimpleConceptDeclarationParserRuleCall_6_2_0 = (RuleCall)cConceptAssignment_6_2.eContents().get(0);
 		private final Group cGroup_7 = (Group)cAlternatives.eContents().get(7);
-		private final Assignment cUncertaintyAssignment_7_0 = (Assignment)cGroup_7.eContents().get(0);
-		private final Keyword cUncertaintyUncertaintyKeyword_7_0_0 = (Keyword)cUncertaintyAssignment_7_0.eContents().get(0);
+		private final Assignment cMagnitudeAssignment_7_0 = (Assignment)cGroup_7.eContents().get(0);
+		private final Keyword cMagnitudeMagnitudeKeyword_7_0_0 = (Keyword)cMagnitudeAssignment_7_0.eContents().get(0);
 		private final Keyword cOfKeyword_7_1 = (Keyword)cGroup_7.eContents().get(1);
 		private final Assignment cConceptAssignment_7_2 = (Assignment)cGroup_7.eContents().get(2);
 		private final RuleCall cConceptSimpleConceptDeclarationParserRuleCall_7_2_0 = (RuleCall)cConceptAssignment_7_2.eContents().get(0);
 		private final Group cGroup_8 = (Group)cAlternatives.eContents().get(8);
-		private final Assignment cMagnitudeAssignment_8_0 = (Assignment)cGroup_8.eContents().get(0);
-		private final Keyword cMagnitudeMagnitudeKeyword_8_0_0 = (Keyword)cMagnitudeAssignment_8_0.eContents().get(0);
+		private final Assignment cLevelAssignment_8_0 = (Assignment)cGroup_8.eContents().get(0);
+		private final Keyword cLevelLevelKeyword_8_0_0 = (Keyword)cLevelAssignment_8_0.eContents().get(0);
 		private final Keyword cOfKeyword_8_1 = (Keyword)cGroup_8.eContents().get(1);
 		private final Assignment cConceptAssignment_8_2 = (Assignment)cGroup_8.eContents().get(2);
 		private final RuleCall cConceptSimpleConceptDeclarationParserRuleCall_8_2_0 = (RuleCall)cConceptAssignment_8_2.eContents().get(0);
 		private final Group cGroup_9 = (Group)cAlternatives.eContents().get(9);
-		private final Assignment cLevelAssignment_9_0 = (Assignment)cGroup_9.eContents().get(0);
-		private final Keyword cLevelLevelKeyword_9_0_0 = (Keyword)cLevelAssignment_9_0.eContents().get(0);
+		private final Assignment cTypeAssignment_9_0 = (Assignment)cGroup_9.eContents().get(0);
+		private final Keyword cTypeTypeKeyword_9_0_0 = (Keyword)cTypeAssignment_9_0.eContents().get(0);
 		private final Keyword cOfKeyword_9_1 = (Keyword)cGroup_9.eContents().get(1);
 		private final Assignment cConceptAssignment_9_2 = (Assignment)cGroup_9.eContents().get(2);
 		private final RuleCall cConceptSimpleConceptDeclarationParserRuleCall_9_2_0 = (RuleCall)cConceptAssignment_9_2.eContents().get(0);
 		private final Group cGroup_10 = (Group)cAlternatives.eContents().get(10);
-		private final Assignment cTypeAssignment_10_0 = (Assignment)cGroup_10.eContents().get(0);
-		private final Keyword cTypeTypeKeyword_10_0_0 = (Keyword)cTypeAssignment_10_0.eContents().get(0);
+		private final Assignment cProportionAssignment_10_0 = (Assignment)cGroup_10.eContents().get(0);
+		private final Keyword cProportionProportionKeyword_10_0_0 = (Keyword)cProportionAssignment_10_0.eContents().get(0);
 		private final Keyword cOfKeyword_10_1 = (Keyword)cGroup_10.eContents().get(1);
 		private final Assignment cConceptAssignment_10_2 = (Assignment)cGroup_10.eContents().get(2);
 		private final RuleCall cConceptSimpleConceptDeclarationParserRuleCall_10_2_0 = (RuleCall)cConceptAssignment_10_2.eContents().get(0);
+		private final Group cGroup_10_3 = (Group)cGroup_10.eContents().get(3);
+		private final Keyword cInKeyword_10_3_0 = (Keyword)cGroup_10_3.eContents().get(0);
+		private final Assignment cOtherAssignment_10_3_1 = (Assignment)cGroup_10_3.eContents().get(1);
+		private final RuleCall cOtherSimpleConceptDeclarationParserRuleCall_10_3_1_0 = (RuleCall)cOtherAssignment_10_3_1.eContents().get(0);
 		private final Group cGroup_11 = (Group)cAlternatives.eContents().get(11);
-		private final Assignment cProportionAssignment_11_0 = (Assignment)cGroup_11.eContents().get(0);
-		private final Keyword cProportionProportionKeyword_11_0_0 = (Keyword)cProportionAssignment_11_0.eContents().get(0);
+		private final Assignment cPercentageAssignment_11_0 = (Assignment)cGroup_11.eContents().get(0);
+		private final Keyword cPercentagePercentageKeyword_11_0_0 = (Keyword)cPercentageAssignment_11_0.eContents().get(0);
 		private final Keyword cOfKeyword_11_1 = (Keyword)cGroup_11.eContents().get(1);
 		private final Assignment cConceptAssignment_11_2 = (Assignment)cGroup_11.eContents().get(2);
 		private final RuleCall cConceptSimpleConceptDeclarationParserRuleCall_11_2_0 = (RuleCall)cConceptAssignment_11_2.eContents().get(0);
@@ -6502,47 +6506,37 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		private final Assignment cOtherAssignment_11_3_1 = (Assignment)cGroup_11_3.eContents().get(1);
 		private final RuleCall cOtherSimpleConceptDeclarationParserRuleCall_11_3_1_0 = (RuleCall)cOtherAssignment_11_3_1.eContents().get(0);
 		private final Group cGroup_12 = (Group)cAlternatives.eContents().get(12);
-		private final Assignment cPercentageAssignment_12_0 = (Assignment)cGroup_12.eContents().get(0);
-		private final Keyword cPercentagePercentageKeyword_12_0_0 = (Keyword)cPercentageAssignment_12_0.eContents().get(0);
+		private final Assignment cRatioAssignment_12_0 = (Assignment)cGroup_12.eContents().get(0);
+		private final Keyword cRatioRatioKeyword_12_0_0 = (Keyword)cRatioAssignment_12_0.eContents().get(0);
 		private final Keyword cOfKeyword_12_1 = (Keyword)cGroup_12.eContents().get(1);
 		private final Assignment cConceptAssignment_12_2 = (Assignment)cGroup_12.eContents().get(2);
 		private final RuleCall cConceptSimpleConceptDeclarationParserRuleCall_12_2_0 = (RuleCall)cConceptAssignment_12_2.eContents().get(0);
-		private final Group cGroup_12_3 = (Group)cGroup_12.eContents().get(3);
-		private final Keyword cInKeyword_12_3_0 = (Keyword)cGroup_12_3.eContents().get(0);
-		private final Assignment cOtherAssignment_12_3_1 = (Assignment)cGroup_12_3.eContents().get(1);
-		private final RuleCall cOtherSimpleConceptDeclarationParserRuleCall_12_3_1_0 = (RuleCall)cOtherAssignment_12_3_1.eContents().get(0);
+		private final Keyword cToKeyword_12_3 = (Keyword)cGroup_12.eContents().get(3);
+		private final Assignment cOtherAssignment_12_4 = (Assignment)cGroup_12.eContents().get(4);
+		private final RuleCall cOtherSimpleConceptDeclarationParserRuleCall_12_4_0 = (RuleCall)cOtherAssignment_12_4.eContents().get(0);
 		private final Group cGroup_13 = (Group)cAlternatives.eContents().get(13);
-		private final Assignment cRatioAssignment_13_0 = (Assignment)cGroup_13.eContents().get(0);
-		private final Keyword cRatioRatioKeyword_13_0_0 = (Keyword)cRatioAssignment_13_0.eContents().get(0);
-		private final Keyword cOfKeyword_13_1 = (Keyword)cGroup_13.eContents().get(1);
-		private final Assignment cConceptAssignment_13_2 = (Assignment)cGroup_13.eContents().get(2);
-		private final RuleCall cConceptSimpleConceptDeclarationParserRuleCall_13_2_0 = (RuleCall)cConceptAssignment_13_2.eContents().get(0);
-		private final Keyword cToKeyword_13_3 = (Keyword)cGroup_13.eContents().get(3);
-		private final Assignment cOtherAssignment_13_4 = (Assignment)cGroup_13.eContents().get(4);
-		private final RuleCall cOtherSimpleConceptDeclarationParserRuleCall_13_4_0 = (RuleCall)cOtherAssignment_13_4.eContents().get(0);
+		private final Assignment cMonetaryAssignment_13_0 = (Assignment)cGroup_13.eContents().get(0);
+		private final Keyword cMonetaryMonetaryKeyword_13_0_0 = (Keyword)cMonetaryAssignment_13_0.eContents().get(0);
+		private final Assignment cValueAssignment_13_1 = (Assignment)cGroup_13.eContents().get(1);
+		private final Keyword cValueValueKeyword_13_1_0 = (Keyword)cValueAssignment_13_1.eContents().get(0);
+		private final Keyword cOfKeyword_13_2 = (Keyword)cGroup_13.eContents().get(2);
+		private final Assignment cConceptAssignment_13_3 = (Assignment)cGroup_13.eContents().get(3);
+		private final RuleCall cConceptSimpleConceptDeclarationParserRuleCall_13_3_0 = (RuleCall)cConceptAssignment_13_3.eContents().get(0);
+		private final Group cGroup_13_4 = (Group)cGroup_13.eContents().get(4);
+		private final Keyword cOverKeyword_13_4_0 = (Keyword)cGroup_13_4.eContents().get(0);
+		private final Assignment cOtherAssignment_13_4_1 = (Assignment)cGroup_13_4.eContents().get(1);
+		private final RuleCall cOtherSimpleConceptDeclarationParserRuleCall_13_4_1_0 = (RuleCall)cOtherAssignment_13_4_1.eContents().get(0);
 		private final Group cGroup_14 = (Group)cAlternatives.eContents().get(14);
-		private final Assignment cMonetaryAssignment_14_0 = (Assignment)cGroup_14.eContents().get(0);
-		private final Keyword cMonetaryMonetaryKeyword_14_0_0 = (Keyword)cMonetaryAssignment_14_0.eContents().get(0);
-		private final Assignment cValueAssignment_14_1 = (Assignment)cGroup_14.eContents().get(1);
-		private final Keyword cValueValueKeyword_14_1_0 = (Keyword)cValueAssignment_14_1.eContents().get(0);
-		private final Keyword cOfKeyword_14_2 = (Keyword)cGroup_14.eContents().get(2);
-		private final Assignment cConceptAssignment_14_3 = (Assignment)cGroup_14.eContents().get(3);
-		private final RuleCall cConceptSimpleConceptDeclarationParserRuleCall_14_3_0 = (RuleCall)cConceptAssignment_14_3.eContents().get(0);
-		private final Group cGroup_14_4 = (Group)cGroup_14.eContents().get(4);
-		private final Keyword cOverKeyword_14_4_0 = (Keyword)cGroup_14_4.eContents().get(0);
-		private final Assignment cOtherAssignment_14_4_1 = (Assignment)cGroup_14_4.eContents().get(1);
-		private final RuleCall cOtherSimpleConceptDeclarationParserRuleCall_14_4_1_0 = (RuleCall)cOtherAssignment_14_4_1.eContents().get(0);
+		private final Assignment cOccurrenceAssignment_14_0 = (Assignment)cGroup_14.eContents().get(0);
+		private final Keyword cOccurrenceOccurrenceKeyword_14_0_0 = (Keyword)cOccurrenceAssignment_14_0.eContents().get(0);
+		private final Keyword cOfKeyword_14_1 = (Keyword)cGroup_14.eContents().get(1);
+		private final Assignment cConceptAssignment_14_2 = (Assignment)cGroup_14.eContents().get(2);
+		private final RuleCall cConceptSimpleConceptDeclarationParserRuleCall_14_2_0 = (RuleCall)cConceptAssignment_14_2.eContents().get(0);
 		private final Group cGroup_15 = (Group)cAlternatives.eContents().get(15);
-		private final Assignment cOccurrenceAssignment_15_0 = (Assignment)cGroup_15.eContents().get(0);
-		private final Keyword cOccurrenceOccurrenceKeyword_15_0_0 = (Keyword)cOccurrenceAssignment_15_0.eContents().get(0);
-		private final Keyword cOfKeyword_15_1 = (Keyword)cGroup_15.eContents().get(1);
-		private final Assignment cConceptAssignment_15_2 = (Assignment)cGroup_15.eContents().get(2);
-		private final RuleCall cConceptSimpleConceptDeclarationParserRuleCall_15_2_0 = (RuleCall)cConceptAssignment_15_2.eContents().get(0);
-		private final Group cGroup_16 = (Group)cAlternatives.eContents().get(16);
-		private final Keyword cLeftParenthesisKeyword_16_0 = (Keyword)cGroup_16.eContents().get(0);
-		private final Assignment cDeclarationAssignment_16_1 = (Assignment)cGroup_16.eContents().get(1);
-		private final RuleCall cDeclarationExpressionParserRuleCall_16_1_0 = (RuleCall)cDeclarationAssignment_16_1.eContents().get(0);
-		private final Keyword cRightParenthesisKeyword_16_2 = (Keyword)cGroup_16.eContents().get(2);
+		private final Keyword cLeftParenthesisKeyword_15_0 = (Keyword)cGroup_15.eContents().get(0);
+		private final Assignment cDeclarationAssignment_15_1 = (Assignment)cGroup_15.eContents().get(1);
+		private final RuleCall cDeclarationExpressionParserRuleCall_15_1_0 = (RuleCall)cDeclarationAssignment_15_1.eContents().get(0);
+		private final Keyword cRightParenthesisKeyword_15_2 = (Keyword)cGroup_15.eContents().get(2);
 		
 		//Concept:
 		//    (negated?=('not'|'no'))? name=ConceptReference
@@ -6553,7 +6547,7 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//    count?='count' 'of' concept=SimpleConceptDeclaration |
 		//    distance?='distance' ('to' | 'from') concept=SimpleConceptDeclaration |
 		//    probability?='probability' 'of' concept=SimpleConceptDeclaration |
-		//    assessment?='assessment' 'of' concept=SimpleConceptDeclaration |
+		////    assessment?='assessment' 'of' concept=SimpleConceptDeclaration |
 		//    ('change' (change?='in' | (rate?='rate' 'of')) | changed?='changed') concept=SimpleConceptDeclaration |
 		//    uncertainty?='uncertainty' 'of' concept=SimpleConceptDeclaration |
 		//    magnitude?='magnitude' 'of' concept=SimpleConceptDeclaration |
@@ -6579,7 +6573,7 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//    count?='count' 'of' concept=SimpleConceptDeclaration |
 		//    distance?='distance' ('to' | 'from') concept=SimpleConceptDeclaration |
 		//    probability?='probability' 'of' concept=SimpleConceptDeclaration |
-		//    assessment?='assessment' 'of' concept=SimpleConceptDeclaration |
+		////    assessment?='assessment' 'of' concept=SimpleConceptDeclaration |
 		//    ('change' (change?='in' | (rate?='rate' 'of')) | changed?='changed') concept=SimpleConceptDeclaration |
 		//    uncertainty?='uncertainty' 'of' concept=SimpleConceptDeclaration |
 		//    magnitude?='magnitude' 'of' concept=SimpleConceptDeclaration |
@@ -6755,77 +6749,79 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//SimpleConceptDeclaration
 		public RuleCall getConceptSimpleConceptDeclarationParserRuleCall_4_2_0() { return cConceptSimpleConceptDeclarationParserRuleCall_4_2_0; }
 		
-		//assessment?='assessment' 'of' concept=SimpleConceptDeclaration
+		////    assessment?='assessment' 'of' concept=SimpleConceptDeclaration |
+		//    ('change' (change?='in' | (rate?='rate' 'of')) | changed?='changed') concept=SimpleConceptDeclaration
 		public Group getGroup_5() { return cGroup_5; }
 		
-		//assessment?='assessment'
-		public Assignment getAssessmentAssignment_5_0() { return cAssessmentAssignment_5_0; }
-		
-		//'assessment'
-		public Keyword getAssessmentAssessmentKeyword_5_0_0() { return cAssessmentAssessmentKeyword_5_0_0; }
-		
-		//'of'
-		public Keyword getOfKeyword_5_1() { return cOfKeyword_5_1; }
-		
-		//concept=SimpleConceptDeclaration
-		public Assignment getConceptAssignment_5_2() { return cConceptAssignment_5_2; }
-		
-		//SimpleConceptDeclaration
-		public RuleCall getConceptSimpleConceptDeclarationParserRuleCall_5_2_0() { return cConceptSimpleConceptDeclarationParserRuleCall_5_2_0; }
-		
-		//('change' (change?='in' | (rate?='rate' 'of')) | changed?='changed') concept=SimpleConceptDeclaration
-		public Group getGroup_6() { return cGroup_6; }
-		
-		//('change' (change?='in' | (rate?='rate' 'of')) | changed?='changed')
-		public Alternatives getAlternatives_6_0() { return cAlternatives_6_0; }
+		////    assessment?='assessment' 'of' concept=SimpleConceptDeclaration |
+		//    ('change' (change?='in' | (rate?='rate' 'of')) | changed?='changed')
+		public Alternatives getAlternatives_5_0() { return cAlternatives_5_0; }
 		
 		//'change' (change?='in' | (rate?='rate' 'of'))
-		public Group getGroup_6_0_0() { return cGroup_6_0_0; }
+		public Group getGroup_5_0_0() { return cGroup_5_0_0; }
 		
 		//'change'
-		public Keyword getChangeKeyword_6_0_0_0() { return cChangeKeyword_6_0_0_0; }
+		public Keyword getChangeKeyword_5_0_0_0() { return cChangeKeyword_5_0_0_0; }
 		
 		//(change?='in' | (rate?='rate' 'of'))
-		public Alternatives getAlternatives_6_0_0_1() { return cAlternatives_6_0_0_1; }
+		public Alternatives getAlternatives_5_0_0_1() { return cAlternatives_5_0_0_1; }
 		
 		//change?='in'
-		public Assignment getChangeAssignment_6_0_0_1_0() { return cChangeAssignment_6_0_0_1_0; }
+		public Assignment getChangeAssignment_5_0_0_1_0() { return cChangeAssignment_5_0_0_1_0; }
 		
 		//'in'
-		public Keyword getChangeInKeyword_6_0_0_1_0_0() { return cChangeInKeyword_6_0_0_1_0_0; }
+		public Keyword getChangeInKeyword_5_0_0_1_0_0() { return cChangeInKeyword_5_0_0_1_0_0; }
 		
 		//(rate?='rate' 'of')
-		public Group getGroup_6_0_0_1_1() { return cGroup_6_0_0_1_1; }
+		public Group getGroup_5_0_0_1_1() { return cGroup_5_0_0_1_1; }
 		
 		//rate?='rate'
-		public Assignment getRateAssignment_6_0_0_1_1_0() { return cRateAssignment_6_0_0_1_1_0; }
+		public Assignment getRateAssignment_5_0_0_1_1_0() { return cRateAssignment_5_0_0_1_1_0; }
 		
 		//'rate'
-		public Keyword getRateRateKeyword_6_0_0_1_1_0_0() { return cRateRateKeyword_6_0_0_1_1_0_0; }
+		public Keyword getRateRateKeyword_5_0_0_1_1_0_0() { return cRateRateKeyword_5_0_0_1_1_0_0; }
 		
 		//'of'
-		public Keyword getOfKeyword_6_0_0_1_1_1() { return cOfKeyword_6_0_0_1_1_1; }
+		public Keyword getOfKeyword_5_0_0_1_1_1() { return cOfKeyword_5_0_0_1_1_1; }
 		
 		//changed?='changed'
-		public Assignment getChangedAssignment_6_0_1() { return cChangedAssignment_6_0_1; }
+		public Assignment getChangedAssignment_5_0_1() { return cChangedAssignment_5_0_1; }
 		
 		//'changed'
-		public Keyword getChangedChangedKeyword_6_0_1_0() { return cChangedChangedKeyword_6_0_1_0; }
+		public Keyword getChangedChangedKeyword_5_0_1_0() { return cChangedChangedKeyword_5_0_1_0; }
 		
 		//concept=SimpleConceptDeclaration
-		public Assignment getConceptAssignment_6_1() { return cConceptAssignment_6_1; }
+		public Assignment getConceptAssignment_5_1() { return cConceptAssignment_5_1; }
 		
 		//SimpleConceptDeclaration
-		public RuleCall getConceptSimpleConceptDeclarationParserRuleCall_6_1_0() { return cConceptSimpleConceptDeclarationParserRuleCall_6_1_0; }
+		public RuleCall getConceptSimpleConceptDeclarationParserRuleCall_5_1_0() { return cConceptSimpleConceptDeclarationParserRuleCall_5_1_0; }
 		
 		//uncertainty?='uncertainty' 'of' concept=SimpleConceptDeclaration
-		public Group getGroup_7() { return cGroup_7; }
+		public Group getGroup_6() { return cGroup_6; }
 		
 		//uncertainty?='uncertainty'
-		public Assignment getUncertaintyAssignment_7_0() { return cUncertaintyAssignment_7_0; }
+		public Assignment getUncertaintyAssignment_6_0() { return cUncertaintyAssignment_6_0; }
 		
 		//'uncertainty'
-		public Keyword getUncertaintyUncertaintyKeyword_7_0_0() { return cUncertaintyUncertaintyKeyword_7_0_0; }
+		public Keyword getUncertaintyUncertaintyKeyword_6_0_0() { return cUncertaintyUncertaintyKeyword_6_0_0; }
+		
+		//'of'
+		public Keyword getOfKeyword_6_1() { return cOfKeyword_6_1; }
+		
+		//concept=SimpleConceptDeclaration
+		public Assignment getConceptAssignment_6_2() { return cConceptAssignment_6_2; }
+		
+		//SimpleConceptDeclaration
+		public RuleCall getConceptSimpleConceptDeclarationParserRuleCall_6_2_0() { return cConceptSimpleConceptDeclarationParserRuleCall_6_2_0; }
+		
+		//magnitude?='magnitude' 'of' concept=SimpleConceptDeclaration
+		public Group getGroup_7() { return cGroup_7; }
+		
+		//magnitude?='magnitude'
+		public Assignment getMagnitudeAssignment_7_0() { return cMagnitudeAssignment_7_0; }
+		
+		//'magnitude'
+		public Keyword getMagnitudeMagnitudeKeyword_7_0_0() { return cMagnitudeMagnitudeKeyword_7_0_0; }
 		
 		//'of'
 		public Keyword getOfKeyword_7_1() { return cOfKeyword_7_1; }
@@ -6836,14 +6832,14 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//SimpleConceptDeclaration
 		public RuleCall getConceptSimpleConceptDeclarationParserRuleCall_7_2_0() { return cConceptSimpleConceptDeclarationParserRuleCall_7_2_0; }
 		
-		//magnitude?='magnitude' 'of' concept=SimpleConceptDeclaration
+		//level?='level' 'of' concept=SimpleConceptDeclaration
 		public Group getGroup_8() { return cGroup_8; }
 		
-		//magnitude?='magnitude'
-		public Assignment getMagnitudeAssignment_8_0() { return cMagnitudeAssignment_8_0; }
+		//level?='level'
+		public Assignment getLevelAssignment_8_0() { return cLevelAssignment_8_0; }
 		
-		//'magnitude'
-		public Keyword getMagnitudeMagnitudeKeyword_8_0_0() { return cMagnitudeMagnitudeKeyword_8_0_0; }
+		//'level'
+		public Keyword getLevelLevelKeyword_8_0_0() { return cLevelLevelKeyword_8_0_0; }
 		
 		//'of'
 		public Keyword getOfKeyword_8_1() { return cOfKeyword_8_1; }
@@ -6854,14 +6850,14 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//SimpleConceptDeclaration
 		public RuleCall getConceptSimpleConceptDeclarationParserRuleCall_8_2_0() { return cConceptSimpleConceptDeclarationParserRuleCall_8_2_0; }
 		
-		//level?='level' 'of' concept=SimpleConceptDeclaration
+		//type?='type' 'of' concept=SimpleConceptDeclaration
 		public Group getGroup_9() { return cGroup_9; }
 		
-		//level?='level'
-		public Assignment getLevelAssignment_9_0() { return cLevelAssignment_9_0; }
+		//type?='type'
+		public Assignment getTypeAssignment_9_0() { return cTypeAssignment_9_0; }
 		
-		//'level'
-		public Keyword getLevelLevelKeyword_9_0_0() { return cLevelLevelKeyword_9_0_0; }
+		//'type'
+		public Keyword getTypeTypeKeyword_9_0_0() { return cTypeTypeKeyword_9_0_0; }
 		
 		//'of'
 		public Keyword getOfKeyword_9_1() { return cOfKeyword_9_1; }
@@ -6872,14 +6868,16 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//SimpleConceptDeclaration
 		public RuleCall getConceptSimpleConceptDeclarationParserRuleCall_9_2_0() { return cConceptSimpleConceptDeclarationParserRuleCall_9_2_0; }
 		
-		//type?='type' 'of' concept=SimpleConceptDeclaration
+		////    observability?='observability' 'of' concept=SimpleConceptDeclaration |
+		//    proportion?='proportion' 'of' concept=SimpleConceptDeclaration (=> 'in' other=SimpleConceptDeclaration)?
 		public Group getGroup_10() { return cGroup_10; }
 		
-		//type?='type'
-		public Assignment getTypeAssignment_10_0() { return cTypeAssignment_10_0; }
+		////    observability?='observability' 'of' concept=SimpleConceptDeclaration |
+		//    proportion?='proportion'
+		public Assignment getProportionAssignment_10_0() { return cProportionAssignment_10_0; }
 		
-		//'type'
-		public Keyword getTypeTypeKeyword_10_0_0() { return cTypeTypeKeyword_10_0_0; }
+		//'proportion'
+		public Keyword getProportionProportionKeyword_10_0_0() { return cProportionProportionKeyword_10_0_0; }
 		
 		//'of'
 		public Keyword getOfKeyword_10_1() { return cOfKeyword_10_1; }
@@ -6890,16 +6888,26 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//SimpleConceptDeclaration
 		public RuleCall getConceptSimpleConceptDeclarationParserRuleCall_10_2_0() { return cConceptSimpleConceptDeclarationParserRuleCall_10_2_0; }
 		
-		////    observability?='observability' 'of' concept=SimpleConceptDeclaration |
-		//    proportion?='proportion' 'of' concept=SimpleConceptDeclaration (=> 'in' other=SimpleConceptDeclaration)?
+		//(=> 'in' other=SimpleConceptDeclaration)?
+		public Group getGroup_10_3() { return cGroup_10_3; }
+		
+		//=> 'in'
+		public Keyword getInKeyword_10_3_0() { return cInKeyword_10_3_0; }
+		
+		//other=SimpleConceptDeclaration
+		public Assignment getOtherAssignment_10_3_1() { return cOtherAssignment_10_3_1; }
+		
+		//SimpleConceptDeclaration
+		public RuleCall getOtherSimpleConceptDeclarationParserRuleCall_10_3_1_0() { return cOtherSimpleConceptDeclarationParserRuleCall_10_3_1_0; }
+		
+		//percentage?='percentage' 'of' concept=SimpleConceptDeclaration (=> 'in' other=SimpleConceptDeclaration)?
 		public Group getGroup_11() { return cGroup_11; }
 		
-		////    observability?='observability' 'of' concept=SimpleConceptDeclaration |
-		//    proportion?='proportion'
-		public Assignment getProportionAssignment_11_0() { return cProportionAssignment_11_0; }
+		//percentage?='percentage'
+		public Assignment getPercentageAssignment_11_0() { return cPercentageAssignment_11_0; }
 		
-		//'proportion'
-		public Keyword getProportionProportionKeyword_11_0_0() { return cProportionProportionKeyword_11_0_0; }
+		//'percentage'
+		public Keyword getPercentagePercentageKeyword_11_0_0() { return cPercentagePercentageKeyword_11_0_0; }
 		
 		//'of'
 		public Keyword getOfKeyword_11_1() { return cOfKeyword_11_1; }
@@ -6922,14 +6930,14 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//SimpleConceptDeclaration
 		public RuleCall getOtherSimpleConceptDeclarationParserRuleCall_11_3_1_0() { return cOtherSimpleConceptDeclarationParserRuleCall_11_3_1_0; }
 		
-		//percentage?='percentage' 'of' concept=SimpleConceptDeclaration (=> 'in' other=SimpleConceptDeclaration)?
+		//ratio?='ratio' 'of' concept=SimpleConceptDeclaration => 'to' other=SimpleConceptDeclaration
 		public Group getGroup_12() { return cGroup_12; }
 		
-		//percentage?='percentage'
-		public Assignment getPercentageAssignment_12_0() { return cPercentageAssignment_12_0; }
+		//ratio?='ratio'
+		public Assignment getRatioAssignment_12_0() { return cRatioAssignment_12_0; }
 		
-		//'percentage'
-		public Keyword getPercentagePercentageKeyword_12_0_0() { return cPercentagePercentageKeyword_12_0_0; }
+		//'ratio'
+		public Keyword getRatioRatioKeyword_12_0_0() { return cRatioRatioKeyword_12_0_0; }
 		
 		//'of'
 		public Keyword getOfKeyword_12_1() { return cOfKeyword_12_1; }
@@ -6940,119 +6948,89 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//SimpleConceptDeclaration
 		public RuleCall getConceptSimpleConceptDeclarationParserRuleCall_12_2_0() { return cConceptSimpleConceptDeclarationParserRuleCall_12_2_0; }
 		
-		//(=> 'in' other=SimpleConceptDeclaration)?
-		public Group getGroup_12_3() { return cGroup_12_3; }
-		
-		//=> 'in'
-		public Keyword getInKeyword_12_3_0() { return cInKeyword_12_3_0; }
-		
-		//other=SimpleConceptDeclaration
-		public Assignment getOtherAssignment_12_3_1() { return cOtherAssignment_12_3_1; }
-		
-		//SimpleConceptDeclaration
-		public RuleCall getOtherSimpleConceptDeclarationParserRuleCall_12_3_1_0() { return cOtherSimpleConceptDeclarationParserRuleCall_12_3_1_0; }
-		
-		//ratio?='ratio' 'of' concept=SimpleConceptDeclaration => 'to' other=SimpleConceptDeclaration
-		public Group getGroup_13() { return cGroup_13; }
-		
-		//ratio?='ratio'
-		public Assignment getRatioAssignment_13_0() { return cRatioAssignment_13_0; }
-		
-		//'ratio'
-		public Keyword getRatioRatioKeyword_13_0_0() { return cRatioRatioKeyword_13_0_0; }
-		
-		//'of'
-		public Keyword getOfKeyword_13_1() { return cOfKeyword_13_1; }
-		
-		//concept=SimpleConceptDeclaration
-		public Assignment getConceptAssignment_13_2() { return cConceptAssignment_13_2; }
-		
-		//SimpleConceptDeclaration
-		public RuleCall getConceptSimpleConceptDeclarationParserRuleCall_13_2_0() { return cConceptSimpleConceptDeclarationParserRuleCall_13_2_0; }
-		
 		//=> 'to'
-		public Keyword getToKeyword_13_3() { return cToKeyword_13_3; }
+		public Keyword getToKeyword_12_3() { return cToKeyword_12_3; }
 		
 		//other=SimpleConceptDeclaration
-		public Assignment getOtherAssignment_13_4() { return cOtherAssignment_13_4; }
+		public Assignment getOtherAssignment_12_4() { return cOtherAssignment_12_4; }
 		
 		//SimpleConceptDeclaration
-		public RuleCall getOtherSimpleConceptDeclarationParserRuleCall_13_4_0() { return cOtherSimpleConceptDeclarationParserRuleCall_13_4_0; }
+		public RuleCall getOtherSimpleConceptDeclarationParserRuleCall_12_4_0() { return cOtherSimpleConceptDeclarationParserRuleCall_12_4_0; }
 		
 		//(monetary?='monetary')? value?='value' 'of' concept=SimpleConceptDeclaration (=> 'over' other=SimpleConceptDeclaration)?
-		public Group getGroup_14() { return cGroup_14; }
+		public Group getGroup_13() { return cGroup_13; }
 		
 		//(monetary?='monetary')?
-		public Assignment getMonetaryAssignment_14_0() { return cMonetaryAssignment_14_0; }
+		public Assignment getMonetaryAssignment_13_0() { return cMonetaryAssignment_13_0; }
 		
 		//'monetary'
-		public Keyword getMonetaryMonetaryKeyword_14_0_0() { return cMonetaryMonetaryKeyword_14_0_0; }
+		public Keyword getMonetaryMonetaryKeyword_13_0_0() { return cMonetaryMonetaryKeyword_13_0_0; }
 		
 		//value?='value'
-		public Assignment getValueAssignment_14_1() { return cValueAssignment_14_1; }
+		public Assignment getValueAssignment_13_1() { return cValueAssignment_13_1; }
 		
 		//'value'
-		public Keyword getValueValueKeyword_14_1_0() { return cValueValueKeyword_14_1_0; }
+		public Keyword getValueValueKeyword_13_1_0() { return cValueValueKeyword_13_1_0; }
 		
 		//'of'
-		public Keyword getOfKeyword_14_2() { return cOfKeyword_14_2; }
+		public Keyword getOfKeyword_13_2() { return cOfKeyword_13_2; }
 		
 		//concept=SimpleConceptDeclaration
-		public Assignment getConceptAssignment_14_3() { return cConceptAssignment_14_3; }
+		public Assignment getConceptAssignment_13_3() { return cConceptAssignment_13_3; }
 		
 		//SimpleConceptDeclaration
-		public RuleCall getConceptSimpleConceptDeclarationParserRuleCall_14_3_0() { return cConceptSimpleConceptDeclarationParserRuleCall_14_3_0; }
+		public RuleCall getConceptSimpleConceptDeclarationParserRuleCall_13_3_0() { return cConceptSimpleConceptDeclarationParserRuleCall_13_3_0; }
 		
 		//(=> 'over' other=SimpleConceptDeclaration)?
-		public Group getGroup_14_4() { return cGroup_14_4; }
+		public Group getGroup_13_4() { return cGroup_13_4; }
 		
 		//=> 'over'
-		public Keyword getOverKeyword_14_4_0() { return cOverKeyword_14_4_0; }
+		public Keyword getOverKeyword_13_4_0() { return cOverKeyword_13_4_0; }
 		
 		//other=SimpleConceptDeclaration
-		public Assignment getOtherAssignment_14_4_1() { return cOtherAssignment_14_4_1; }
+		public Assignment getOtherAssignment_13_4_1() { return cOtherAssignment_13_4_1; }
 		
 		//SimpleConceptDeclaration
-		public RuleCall getOtherSimpleConceptDeclarationParserRuleCall_14_4_1_0() { return cOtherSimpleConceptDeclarationParserRuleCall_14_4_1_0; }
+		public RuleCall getOtherSimpleConceptDeclarationParserRuleCall_13_4_1_0() { return cOtherSimpleConceptDeclarationParserRuleCall_13_4_1_0; }
 		
 		//occurrence?='occurrence' 'of' concept=SimpleConceptDeclaration
-		public Group getGroup_15() { return cGroup_15; }
+		public Group getGroup_14() { return cGroup_14; }
 		
 		//occurrence?='occurrence'
-		public Assignment getOccurrenceAssignment_15_0() { return cOccurrenceAssignment_15_0; }
+		public Assignment getOccurrenceAssignment_14_0() { return cOccurrenceAssignment_14_0; }
 		
 		//'occurrence'
-		public Keyword getOccurrenceOccurrenceKeyword_15_0_0() { return cOccurrenceOccurrenceKeyword_15_0_0; }
+		public Keyword getOccurrenceOccurrenceKeyword_14_0_0() { return cOccurrenceOccurrenceKeyword_14_0_0; }
 		
 		//'of'
-		public Keyword getOfKeyword_15_1() { return cOfKeyword_15_1; }
+		public Keyword getOfKeyword_14_1() { return cOfKeyword_14_1; }
 		
 		//concept=SimpleConceptDeclaration
-		public Assignment getConceptAssignment_15_2() { return cConceptAssignment_15_2; }
+		public Assignment getConceptAssignment_14_2() { return cConceptAssignment_14_2; }
 		
 		//SimpleConceptDeclaration
-		public RuleCall getConceptSimpleConceptDeclarationParserRuleCall_15_2_0() { return cConceptSimpleConceptDeclarationParserRuleCall_15_2_0; }
+		public RuleCall getConceptSimpleConceptDeclarationParserRuleCall_14_2_0() { return cConceptSimpleConceptDeclarationParserRuleCall_14_2_0; }
 		
 		////    authorityId=AuthorityId |
 		////    // this form specifies an authority concept with no alias (the authority may provide a default label)
 		////    authConcept?='identity' (stringIdentifier=(ID|STRING|UPPERCASE_ID|CAMELCASE_ID) | intIdentifier=INT) 'by' authority=(UPPERCASE_ID|UPPERCASE_PATH) |
 		//    '(' declaration=Expression ')'
-		public Group getGroup_16() { return cGroup_16; }
+		public Group getGroup_15() { return cGroup_15; }
 		
 		////    authorityId=AuthorityId |
 		////    // this form specifies an authority concept with no alias (the authority may provide a default label)
 		////    authConcept?='identity' (stringIdentifier=(ID|STRING|UPPERCASE_ID|CAMELCASE_ID) | intIdentifier=INT) 'by' authority=(UPPERCASE_ID|UPPERCASE_PATH) |
 		//    '('
-		public Keyword getLeftParenthesisKeyword_16_0() { return cLeftParenthesisKeyword_16_0; }
+		public Keyword getLeftParenthesisKeyword_15_0() { return cLeftParenthesisKeyword_15_0; }
 		
 		//declaration=Expression
-		public Assignment getDeclarationAssignment_16_1() { return cDeclarationAssignment_16_1; }
+		public Assignment getDeclarationAssignment_15_1() { return cDeclarationAssignment_15_1; }
 		
 		//Expression
-		public RuleCall getDeclarationExpressionParserRuleCall_16_1_0() { return cDeclarationExpressionParserRuleCall_16_1_0; }
+		public RuleCall getDeclarationExpressionParserRuleCall_15_1_0() { return cDeclarationExpressionParserRuleCall_15_1_0; }
 		
 		//')'
-		public Keyword getRightParenthesisKeyword_16_2() { return cRightParenthesisKeyword_16_2; }
+		public Keyword getRightParenthesisKeyword_15_2() { return cRightParenthesisKeyword_15_2; }
 	}
 	public class ExpressionElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.Expression");
@@ -13426,7 +13404,7 @@ public class KimGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 	//    count?='count' 'of' concept=SimpleConceptDeclaration |
 	//    distance?='distance' ('to' | 'from') concept=SimpleConceptDeclaration |
 	//    probability?='probability' 'of' concept=SimpleConceptDeclaration |
-	//    assessment?='assessment' 'of' concept=SimpleConceptDeclaration |
+	////    assessment?='assessment' 'of' concept=SimpleConceptDeclaration |
 	//    ('change' (change?='in' | (rate?='rate' 'of')) | changed?='changed') concept=SimpleConceptDeclaration |
 	//    uncertainty?='uncertainty' 'of' concept=SimpleConceptDeclaration |
 	//    magnitude?='magnitude' 'of' concept=SimpleConceptDeclaration |

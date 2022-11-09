@@ -292,8 +292,8 @@ public class SemanticScope {
         ret.lexicalRealm.add(ObservableRole.GROUP_OPEN);
 
         switch(role) {
-        case ASSESSMENT:
-            break;
+//        case ASSESSMENT:
+//            break;
         case CHANGE:
             ret.logicalRealm.add(Constraint.of(Type.QUALITY));
             break;

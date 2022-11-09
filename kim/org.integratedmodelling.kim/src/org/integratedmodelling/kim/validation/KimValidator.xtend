@@ -1664,7 +1664,9 @@ class KimValidator extends AbstractKimValidator {
 							KimPackage.CONCEPT__CONCEPT)
 					}
 					operator.add(Type.CLASS)
-				} else if (concept.isOccurrence || concept.isPresence) {
+				} /* else if (concept.isObservability) {
+					operator.add(Type.OBSERVABILITY)
+				} */ else if (concept.isOccurrence || concept.isPresence) {
 					if (!flags.contains(Type.DIRECT_OBSERVABLE)) {
 						error((if(concept.isOccurrence) 'Occurrence' else 'Presence') +
 							" can only be assessed for direct observables (subjects, events, processes and relationships)",

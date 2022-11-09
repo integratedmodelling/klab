@@ -2602,22 +2602,13 @@ public interface KimPackage extends EPackage
   int CONCEPT__PROBABILITY = 10;
 
   /**
-   * The feature id for the '<em><b>Assessment</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int CONCEPT__ASSESSMENT = 11;
-
-  /**
    * The feature id for the '<em><b>Change</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CONCEPT__CHANGE = 12;
+  int CONCEPT__CHANGE = 11;
 
   /**
    * The feature id for the '<em><b>Rate</b></em>' attribute.
@@ -2626,7 +2617,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__RATE = 13;
+  int CONCEPT__RATE = 12;
 
   /**
    * The feature id for the '<em><b>Changed</b></em>' attribute.
@@ -2635,7 +2626,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__CHANGED = 14;
+  int CONCEPT__CHANGED = 13;
 
   /**
    * The feature id for the '<em><b>Uncertainty</b></em>' attribute.
@@ -2644,7 +2635,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__UNCERTAINTY = 15;
+  int CONCEPT__UNCERTAINTY = 14;
 
   /**
    * The feature id for the '<em><b>Magnitude</b></em>' attribute.
@@ -2653,7 +2644,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__MAGNITUDE = 16;
+  int CONCEPT__MAGNITUDE = 15;
 
   /**
    * The feature id for the '<em><b>Level</b></em>' attribute.
@@ -2662,7 +2653,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__LEVEL = 17;
+  int CONCEPT__LEVEL = 16;
 
   /**
    * The feature id for the '<em><b>Type</b></em>' attribute.
@@ -2671,7 +2662,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__TYPE = 18;
+  int CONCEPT__TYPE = 17;
 
   /**
    * The feature id for the '<em><b>Proportion</b></em>' attribute.
@@ -2680,7 +2671,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__PROPORTION = 19;
+  int CONCEPT__PROPORTION = 18;
 
   /**
    * The feature id for the '<em><b>Other</b></em>' containment reference.
@@ -2689,7 +2680,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__OTHER = 20;
+  int CONCEPT__OTHER = 19;
 
   /**
    * The feature id for the '<em><b>Percentage</b></em>' attribute.
@@ -2698,7 +2689,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__PERCENTAGE = 21;
+  int CONCEPT__PERCENTAGE = 20;
 
   /**
    * The feature id for the '<em><b>Ratio</b></em>' attribute.
@@ -2707,7 +2698,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__RATIO = 22;
+  int CONCEPT__RATIO = 21;
 
   /**
    * The feature id for the '<em><b>Monetary</b></em>' attribute.
@@ -2716,7 +2707,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__MONETARY = 23;
+  int CONCEPT__MONETARY = 22;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -2725,7 +2716,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__VALUE = 24;
+  int CONCEPT__VALUE = 23;
 
   /**
    * The feature id for the '<em><b>Occurrence</b></em>' attribute.
@@ -2734,7 +2725,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__OCCURRENCE = 25;
+  int CONCEPT__OCCURRENCE = 24;
 
   /**
    * The feature id for the '<em><b>Declaration</b></em>' containment reference.
@@ -2743,7 +2734,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__DECLARATION = 26;
+  int CONCEPT__DECLARATION = 25;
 
   /**
    * The number of structural features of the '<em>Concept</em>' class.
@@ -2752,7 +2743,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_FEATURE_COUNT = 27;
+  int CONCEPT_FEATURE_COUNT = 26;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.UpperOntologyDefinitionImpl <em>Upper Ontology Definition</em>}' class.
@@ -7452,17 +7443,6 @@ public interface KimPackage extends EPackage
   EAttribute getConcept_Probability();
 
   /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Concept#isAssessment <em>Assessment</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Assessment</em>'.
-   * @see org.integratedmodelling.kim.kim.Concept#isAssessment()
-   * @see #getConcept()
-   * @generated
-   */
-  EAttribute getConcept_Assessment();
-
-  /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Concept#isChange <em>Change</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -11779,14 +11759,6 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EAttribute CONCEPT__PROBABILITY = eINSTANCE.getConcept_Probability();
-
-    /**
-     * The meta object literal for the '<em><b>Assessment</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute CONCEPT__ASSESSMENT = eINSTANCE.getConcept_Assessment();
 
     /**
      * The meta object literal for the '<em><b>Change</b></em>' attribute feature.

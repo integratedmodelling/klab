@@ -63,7 +63,7 @@ public class MCAComponent {
 	/**
 	 * Build the value concept for a criterion that will be looked for in each
 	 * stakeholder to rank the criterion's importance. It will be a "value of
-	 * <i>criterion</i> for assessment of <i>finalTarget</i>".
+	 * <i>criterion</i> for <i>finalTarget</i>".
 	 * 
 	 * @param criterionObservable
 	 * @param targetObservable    may be null for simple object alternative ranking
@@ -74,11 +74,11 @@ public class MCAComponent {
 
 		IObservable.Builder builder = ((Observable) criterionObservable).getBuilder(monitor)
 				.as(UnarySemanticOperator.VALUE);
+		
 		if (targetObservable != null) {
-			builder = builder.withGoal(((Observable) targetObservable).getBuilder(monitor)
-					.as(UnarySemanticOperator.ASSESSMENT).buildConcept());
-
+			builder = builder.withGoal(((Observable) targetObservable).getBuilder(monitor).buildConcept());
 		}
+		
 		return builder.buildObservable();
 
 	}

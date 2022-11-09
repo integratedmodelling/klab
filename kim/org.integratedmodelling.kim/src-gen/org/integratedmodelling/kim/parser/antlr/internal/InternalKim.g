@@ -10090,28 +10090,70 @@ ruleConcept returns [EObject current=null]
 		(
 			(
 				(
-					lv_assessment_21_0='assessment'
+					otherlv_21='change'
 					{
-						newLeafNode(lv_assessment_21_0, grammarAccess.getConceptAccess().getAssessmentAssessmentKeyword_5_0_0());
+						newLeafNode(otherlv_21, grammarAccess.getConceptAccess().getChangeKeyword_5_0_0_0());
 					}
-					{
-						if ($current==null) {
-							$current = createModelElement(grammarAccess.getConceptRule());
+					(
+						(
+							(
+								lv_change_22_0='in'
+								{
+									newLeafNode(lv_change_22_0, grammarAccess.getConceptAccess().getChangeInKeyword_5_0_0_1_0_0());
+								}
+								{
+									if ($current==null) {
+										$current = createModelElement(grammarAccess.getConceptRule());
+									}
+									setWithLastConsumed($current, "change", lv_change_22_0 != null, "in");
+								}
+							)
+						)
+						    |
+						(
+							(
+								(
+									lv_rate_23_0='rate'
+									{
+										newLeafNode(lv_rate_23_0, grammarAccess.getConceptAccess().getRateRateKeyword_5_0_0_1_1_0_0());
+									}
+									{
+										if ($current==null) {
+											$current = createModelElement(grammarAccess.getConceptRule());
+										}
+										setWithLastConsumed($current, "rate", lv_rate_23_0 != null, "rate");
+									}
+								)
+							)
+							otherlv_24='of'
+							{
+								newLeafNode(otherlv_24, grammarAccess.getConceptAccess().getOfKeyword_5_0_0_1_1_1());
+							}
+						)
+					)
+				)
+				    |
+				(
+					(
+						lv_changed_25_0='changed'
+						{
+							newLeafNode(lv_changed_25_0, grammarAccess.getConceptAccess().getChangedChangedKeyword_5_0_1_0());
 						}
-						setWithLastConsumed($current, "assessment", lv_assessment_21_0 != null, "assessment");
-					}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getConceptRule());
+							}
+							setWithLastConsumed($current, "changed", lv_changed_25_0 != null, "changed");
+						}
+					)
 				)
 			)
-			otherlv_22='of'
-			{
-				newLeafNode(otherlv_22, grammarAccess.getConceptAccess().getOfKeyword_5_1());
-			}
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getConceptAccess().getConceptSimpleConceptDeclarationParserRuleCall_5_2_0());
+						newCompositeNode(grammarAccess.getConceptAccess().getConceptSimpleConceptDeclarationParserRuleCall_5_1_0());
 					}
-					lv_concept_23_0=ruleSimpleConceptDeclaration
+					lv_concept_26_0=ruleSimpleConceptDeclaration
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getConceptRule());
@@ -10119,7 +10161,7 @@ ruleConcept returns [EObject current=null]
 						set(
 							$current,
 							"concept",
-							lv_concept_23_0,
+							lv_concept_26_0,
 							"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 						afterParserOrEnumRuleCall();
 					}
@@ -10130,68 +10172,26 @@ ruleConcept returns [EObject current=null]
 		(
 			(
 				(
-					otherlv_24='change'
+					lv_uncertainty_27_0='uncertainty'
 					{
-						newLeafNode(otherlv_24, grammarAccess.getConceptAccess().getChangeKeyword_6_0_0_0());
+						newLeafNode(lv_uncertainty_27_0, grammarAccess.getConceptAccess().getUncertaintyUncertaintyKeyword_6_0_0());
 					}
-					(
-						(
-							(
-								lv_change_25_0='in'
-								{
-									newLeafNode(lv_change_25_0, grammarAccess.getConceptAccess().getChangeInKeyword_6_0_0_1_0_0());
-								}
-								{
-									if ($current==null) {
-										$current = createModelElement(grammarAccess.getConceptRule());
-									}
-									setWithLastConsumed($current, "change", lv_change_25_0 != null, "in");
-								}
-							)
-						)
-						    |
-						(
-							(
-								(
-									lv_rate_26_0='rate'
-									{
-										newLeafNode(lv_rate_26_0, grammarAccess.getConceptAccess().getRateRateKeyword_6_0_0_1_1_0_0());
-									}
-									{
-										if ($current==null) {
-											$current = createModelElement(grammarAccess.getConceptRule());
-										}
-										setWithLastConsumed($current, "rate", lv_rate_26_0 != null, "rate");
-									}
-								)
-							)
-							otherlv_27='of'
-							{
-								newLeafNode(otherlv_27, grammarAccess.getConceptAccess().getOfKeyword_6_0_0_1_1_1());
-							}
-						)
-					)
-				)
-				    |
-				(
-					(
-						lv_changed_28_0='changed'
-						{
-							newLeafNode(lv_changed_28_0, grammarAccess.getConceptAccess().getChangedChangedKeyword_6_0_1_0());
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getConceptRule());
 						}
-						{
-							if ($current==null) {
-								$current = createModelElement(grammarAccess.getConceptRule());
-							}
-							setWithLastConsumed($current, "changed", lv_changed_28_0 != null, "changed");
-						}
-					)
+						setWithLastConsumed($current, "uncertainty", lv_uncertainty_27_0 != null, "uncertainty");
+					}
 				)
 			)
+			otherlv_28='of'
+			{
+				newLeafNode(otherlv_28, grammarAccess.getConceptAccess().getOfKeyword_6_1());
+			}
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getConceptAccess().getConceptSimpleConceptDeclarationParserRuleCall_6_1_0());
+						newCompositeNode(grammarAccess.getConceptAccess().getConceptSimpleConceptDeclarationParserRuleCall_6_2_0());
 					}
 					lv_concept_29_0=ruleSimpleConceptDeclaration
 					{
@@ -10212,15 +10212,15 @@ ruleConcept returns [EObject current=null]
 		(
 			(
 				(
-					lv_uncertainty_30_0='uncertainty'
+					lv_magnitude_30_0='magnitude'
 					{
-						newLeafNode(lv_uncertainty_30_0, grammarAccess.getConceptAccess().getUncertaintyUncertaintyKeyword_7_0_0());
+						newLeafNode(lv_magnitude_30_0, grammarAccess.getConceptAccess().getMagnitudeMagnitudeKeyword_7_0_0());
 					}
 					{
 						if ($current==null) {
 							$current = createModelElement(grammarAccess.getConceptRule());
 						}
-						setWithLastConsumed($current, "uncertainty", lv_uncertainty_30_0 != null, "uncertainty");
+						setWithLastConsumed($current, "magnitude", lv_magnitude_30_0 != null, "magnitude");
 					}
 				)
 			)
@@ -10252,15 +10252,15 @@ ruleConcept returns [EObject current=null]
 		(
 			(
 				(
-					lv_magnitude_33_0='magnitude'
+					lv_level_33_0='level'
 					{
-						newLeafNode(lv_magnitude_33_0, grammarAccess.getConceptAccess().getMagnitudeMagnitudeKeyword_8_0_0());
+						newLeafNode(lv_level_33_0, grammarAccess.getConceptAccess().getLevelLevelKeyword_8_0_0());
 					}
 					{
 						if ($current==null) {
 							$current = createModelElement(grammarAccess.getConceptRule());
 						}
-						setWithLastConsumed($current, "magnitude", lv_magnitude_33_0 != null, "magnitude");
+						setWithLastConsumed($current, "level", lv_level_33_0 != null, "level");
 					}
 				)
 			)
@@ -10292,15 +10292,15 @@ ruleConcept returns [EObject current=null]
 		(
 			(
 				(
-					lv_level_36_0='level'
+					lv_type_36_0='type'
 					{
-						newLeafNode(lv_level_36_0, grammarAccess.getConceptAccess().getLevelLevelKeyword_9_0_0());
+						newLeafNode(lv_type_36_0, grammarAccess.getConceptAccess().getTypeTypeKeyword_9_0_0());
 					}
 					{
 						if ($current==null) {
 							$current = createModelElement(grammarAccess.getConceptRule());
 						}
-						setWithLastConsumed($current, "level", lv_level_36_0 != null, "level");
+						setWithLastConsumed($current, "type", lv_type_36_0 != null, "type");
 					}
 				)
 			)
@@ -10332,15 +10332,15 @@ ruleConcept returns [EObject current=null]
 		(
 			(
 				(
-					lv_type_39_0='type'
+					lv_proportion_39_0='proportion'
 					{
-						newLeafNode(lv_type_39_0, grammarAccess.getConceptAccess().getTypeTypeKeyword_10_0_0());
+						newLeafNode(lv_proportion_39_0, grammarAccess.getConceptAccess().getProportionProportionKeyword_10_0_0());
 					}
 					{
 						if ($current==null) {
 							$current = createModelElement(grammarAccess.getConceptRule());
 						}
-						setWithLastConsumed($current, "type", lv_type_39_0 != null, "type");
+						setWithLastConsumed($current, "proportion", lv_proportion_39_0 != null, "proportion");
 					}
 				)
 			)
@@ -10367,33 +10367,61 @@ ruleConcept returns [EObject current=null]
 					}
 				)
 			)
+			(
+				(
+					('in')=>
+					otherlv_42='in'
+					{
+						newLeafNode(otherlv_42, grammarAccess.getConceptAccess().getInKeyword_10_3_0());
+					}
+				)
+				(
+					(
+						{
+							newCompositeNode(grammarAccess.getConceptAccess().getOtherSimpleConceptDeclarationParserRuleCall_10_3_1_0());
+						}
+						lv_other_43_0=ruleSimpleConceptDeclaration
+						{
+							if ($current==null) {
+								$current = createModelElementForParent(grammarAccess.getConceptRule());
+							}
+							set(
+								$current,
+								"other",
+								lv_other_43_0,
+								"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
+							afterParserOrEnumRuleCall();
+						}
+					)
+				)
+			)?
 		)
 		    |
 		(
 			(
 				(
-					lv_proportion_42_0='proportion'
+					lv_percentage_44_0='percentage'
 					{
-						newLeafNode(lv_proportion_42_0, grammarAccess.getConceptAccess().getProportionProportionKeyword_11_0_0());
+						newLeafNode(lv_percentage_44_0, grammarAccess.getConceptAccess().getPercentagePercentageKeyword_11_0_0());
 					}
 					{
 						if ($current==null) {
 							$current = createModelElement(grammarAccess.getConceptRule());
 						}
-						setWithLastConsumed($current, "proportion", lv_proportion_42_0 != null, "proportion");
+						setWithLastConsumed($current, "percentage", lv_percentage_44_0 != null, "percentage");
 					}
 				)
 			)
-			otherlv_43='of'
+			otherlv_45='of'
 			{
-				newLeafNode(otherlv_43, grammarAccess.getConceptAccess().getOfKeyword_11_1());
+				newLeafNode(otherlv_45, grammarAccess.getConceptAccess().getOfKeyword_11_1());
 			}
 			(
 				(
 					{
 						newCompositeNode(grammarAccess.getConceptAccess().getConceptSimpleConceptDeclarationParserRuleCall_11_2_0());
 					}
-					lv_concept_44_0=ruleSimpleConceptDeclaration
+					lv_concept_46_0=ruleSimpleConceptDeclaration
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getConceptRule());
@@ -10401,7 +10429,7 @@ ruleConcept returns [EObject current=null]
 						set(
 							$current,
 							"concept",
-							lv_concept_44_0,
+							lv_concept_46_0,
 							"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 						afterParserOrEnumRuleCall();
 					}
@@ -10410,9 +10438,9 @@ ruleConcept returns [EObject current=null]
 			(
 				(
 					('in')=>
-					otherlv_45='in'
+					otherlv_47='in'
 					{
-						newLeafNode(otherlv_45, grammarAccess.getConceptAccess().getInKeyword_11_3_0());
+						newLeafNode(otherlv_47, grammarAccess.getConceptAccess().getInKeyword_11_3_0());
 					}
 				)
 				(
@@ -10420,7 +10448,7 @@ ruleConcept returns [EObject current=null]
 						{
 							newCompositeNode(grammarAccess.getConceptAccess().getOtherSimpleConceptDeclarationParserRuleCall_11_3_1_0());
 						}
-						lv_other_46_0=ruleSimpleConceptDeclaration
+						lv_other_48_0=ruleSimpleConceptDeclaration
 						{
 							if ($current==null) {
 								$current = createModelElementForParent(grammarAccess.getConceptRule());
@@ -10428,7 +10456,7 @@ ruleConcept returns [EObject current=null]
 							set(
 								$current,
 								"other",
-								lv_other_46_0,
+								lv_other_48_0,
 								"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 							afterParserOrEnumRuleCall();
 						}
@@ -10440,28 +10468,28 @@ ruleConcept returns [EObject current=null]
 		(
 			(
 				(
-					lv_percentage_47_0='percentage'
+					lv_ratio_49_0='ratio'
 					{
-						newLeafNode(lv_percentage_47_0, grammarAccess.getConceptAccess().getPercentagePercentageKeyword_12_0_0());
+						newLeafNode(lv_ratio_49_0, grammarAccess.getConceptAccess().getRatioRatioKeyword_12_0_0());
 					}
 					{
 						if ($current==null) {
 							$current = createModelElement(grammarAccess.getConceptRule());
 						}
-						setWithLastConsumed($current, "percentage", lv_percentage_47_0 != null, "percentage");
+						setWithLastConsumed($current, "ratio", lv_ratio_49_0 != null, "ratio");
 					}
 				)
 			)
-			otherlv_48='of'
+			otherlv_50='of'
 			{
-				newLeafNode(otherlv_48, grammarAccess.getConceptAccess().getOfKeyword_12_1());
+				newLeafNode(otherlv_50, grammarAccess.getConceptAccess().getOfKeyword_12_1());
 			}
 			(
 				(
 					{
 						newCompositeNode(grammarAccess.getConceptAccess().getConceptSimpleConceptDeclarationParserRuleCall_12_2_0());
 					}
-					lv_concept_49_0=ruleSimpleConceptDeclaration
+					lv_concept_51_0=ruleSimpleConceptDeclaration
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getConceptRule());
@@ -10469,75 +10497,7 @@ ruleConcept returns [EObject current=null]
 						set(
 							$current,
 							"concept",
-							lv_concept_49_0,
-							"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
-						afterParserOrEnumRuleCall();
-					}
-				)
-			)
-			(
-				(
-					('in')=>
-					otherlv_50='in'
-					{
-						newLeafNode(otherlv_50, grammarAccess.getConceptAccess().getInKeyword_12_3_0());
-					}
-				)
-				(
-					(
-						{
-							newCompositeNode(grammarAccess.getConceptAccess().getOtherSimpleConceptDeclarationParserRuleCall_12_3_1_0());
-						}
-						lv_other_51_0=ruleSimpleConceptDeclaration
-						{
-							if ($current==null) {
-								$current = createModelElementForParent(grammarAccess.getConceptRule());
-							}
-							set(
-								$current,
-								"other",
-								lv_other_51_0,
-								"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
-							afterParserOrEnumRuleCall();
-						}
-					)
-				)
-			)?
-		)
-		    |
-		(
-			(
-				(
-					lv_ratio_52_0='ratio'
-					{
-						newLeafNode(lv_ratio_52_0, grammarAccess.getConceptAccess().getRatioRatioKeyword_13_0_0());
-					}
-					{
-						if ($current==null) {
-							$current = createModelElement(grammarAccess.getConceptRule());
-						}
-						setWithLastConsumed($current, "ratio", lv_ratio_52_0 != null, "ratio");
-					}
-				)
-			)
-			otherlv_53='of'
-			{
-				newLeafNode(otherlv_53, grammarAccess.getConceptAccess().getOfKeyword_13_1());
-			}
-			(
-				(
-					{
-						newCompositeNode(grammarAccess.getConceptAccess().getConceptSimpleConceptDeclarationParserRuleCall_13_2_0());
-					}
-					lv_concept_54_0=ruleSimpleConceptDeclaration
-					{
-						if ($current==null) {
-							$current = createModelElementForParent(grammarAccess.getConceptRule());
-						}
-						set(
-							$current,
-							"concept",
-							lv_concept_54_0,
+							lv_concept_51_0,
 							"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 						afterParserOrEnumRuleCall();
 					}
@@ -10545,17 +10505,17 @@ ruleConcept returns [EObject current=null]
 			)
 			(
 				('to')=>
-				otherlv_55='to'
+				otherlv_52='to'
 				{
-					newLeafNode(otherlv_55, grammarAccess.getConceptAccess().getToKeyword_13_3());
+					newLeafNode(otherlv_52, grammarAccess.getConceptAccess().getToKeyword_12_3());
 				}
 			)
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getConceptAccess().getOtherSimpleConceptDeclarationParserRuleCall_13_4_0());
+						newCompositeNode(grammarAccess.getConceptAccess().getOtherSimpleConceptDeclarationParserRuleCall_12_4_0());
 					}
-					lv_other_56_0=ruleSimpleConceptDeclaration
+					lv_other_53_0=ruleSimpleConceptDeclaration
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getConceptRule());
@@ -10563,7 +10523,7 @@ ruleConcept returns [EObject current=null]
 						set(
 							$current,
 							"other",
-							lv_other_56_0,
+							lv_other_53_0,
 							"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 						afterParserOrEnumRuleCall();
 					}
@@ -10574,42 +10534,42 @@ ruleConcept returns [EObject current=null]
 		(
 			(
 				(
-					lv_monetary_57_0='monetary'
+					lv_monetary_54_0='monetary'
 					{
-						newLeafNode(lv_monetary_57_0, grammarAccess.getConceptAccess().getMonetaryMonetaryKeyword_14_0_0());
+						newLeafNode(lv_monetary_54_0, grammarAccess.getConceptAccess().getMonetaryMonetaryKeyword_13_0_0());
 					}
 					{
 						if ($current==null) {
 							$current = createModelElement(grammarAccess.getConceptRule());
 						}
-						setWithLastConsumed($current, "monetary", lv_monetary_57_0 != null, "monetary");
+						setWithLastConsumed($current, "monetary", lv_monetary_54_0 != null, "monetary");
 					}
 				)
 			)?
 			(
 				(
-					lv_value_58_0='value'
+					lv_value_55_0='value'
 					{
-						newLeafNode(lv_value_58_0, grammarAccess.getConceptAccess().getValueValueKeyword_14_1_0());
+						newLeafNode(lv_value_55_0, grammarAccess.getConceptAccess().getValueValueKeyword_13_1_0());
 					}
 					{
 						if ($current==null) {
 							$current = createModelElement(grammarAccess.getConceptRule());
 						}
-						setWithLastConsumed($current, "value", lv_value_58_0 != null, "value");
+						setWithLastConsumed($current, "value", lv_value_55_0 != null, "value");
 					}
 				)
 			)
-			otherlv_59='of'
+			otherlv_56='of'
 			{
-				newLeafNode(otherlv_59, grammarAccess.getConceptAccess().getOfKeyword_14_2());
+				newLeafNode(otherlv_56, grammarAccess.getConceptAccess().getOfKeyword_13_2());
 			}
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getConceptAccess().getConceptSimpleConceptDeclarationParserRuleCall_14_3_0());
+						newCompositeNode(grammarAccess.getConceptAccess().getConceptSimpleConceptDeclarationParserRuleCall_13_3_0());
 					}
-					lv_concept_60_0=ruleSimpleConceptDeclaration
+					lv_concept_57_0=ruleSimpleConceptDeclaration
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getConceptRule());
@@ -10617,7 +10577,7 @@ ruleConcept returns [EObject current=null]
 						set(
 							$current,
 							"concept",
-							lv_concept_60_0,
+							lv_concept_57_0,
 							"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 						afterParserOrEnumRuleCall();
 					}
@@ -10626,17 +10586,17 @@ ruleConcept returns [EObject current=null]
 			(
 				(
 					('over')=>
-					otherlv_61='over'
+					otherlv_58='over'
 					{
-						newLeafNode(otherlv_61, grammarAccess.getConceptAccess().getOverKeyword_14_4_0());
+						newLeafNode(otherlv_58, grammarAccess.getConceptAccess().getOverKeyword_13_4_0());
 					}
 				)
 				(
 					(
 						{
-							newCompositeNode(grammarAccess.getConceptAccess().getOtherSimpleConceptDeclarationParserRuleCall_14_4_1_0());
+							newCompositeNode(grammarAccess.getConceptAccess().getOtherSimpleConceptDeclarationParserRuleCall_13_4_1_0());
 						}
-						lv_other_62_0=ruleSimpleConceptDeclaration
+						lv_other_59_0=ruleSimpleConceptDeclaration
 						{
 							if ($current==null) {
 								$current = createModelElementForParent(grammarAccess.getConceptRule());
@@ -10644,7 +10604,7 @@ ruleConcept returns [EObject current=null]
 							set(
 								$current,
 								"other",
-								lv_other_62_0,
+								lv_other_59_0,
 								"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 							afterParserOrEnumRuleCall();
 						}
@@ -10656,28 +10616,28 @@ ruleConcept returns [EObject current=null]
 		(
 			(
 				(
-					lv_occurrence_63_0='occurrence'
+					lv_occurrence_60_0='occurrence'
 					{
-						newLeafNode(lv_occurrence_63_0, grammarAccess.getConceptAccess().getOccurrenceOccurrenceKeyword_15_0_0());
+						newLeafNode(lv_occurrence_60_0, grammarAccess.getConceptAccess().getOccurrenceOccurrenceKeyword_14_0_0());
 					}
 					{
 						if ($current==null) {
 							$current = createModelElement(grammarAccess.getConceptRule());
 						}
-						setWithLastConsumed($current, "occurrence", lv_occurrence_63_0 != null, "occurrence");
+						setWithLastConsumed($current, "occurrence", lv_occurrence_60_0 != null, "occurrence");
 					}
 				)
 			)
-			otherlv_64='of'
+			otherlv_61='of'
 			{
-				newLeafNode(otherlv_64, grammarAccess.getConceptAccess().getOfKeyword_15_1());
+				newLeafNode(otherlv_61, grammarAccess.getConceptAccess().getOfKeyword_14_1());
 			}
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getConceptAccess().getConceptSimpleConceptDeclarationParserRuleCall_15_2_0());
+						newCompositeNode(grammarAccess.getConceptAccess().getConceptSimpleConceptDeclarationParserRuleCall_14_2_0());
 					}
-					lv_concept_65_0=ruleSimpleConceptDeclaration
+					lv_concept_62_0=ruleSimpleConceptDeclaration
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getConceptRule());
@@ -10685,7 +10645,7 @@ ruleConcept returns [EObject current=null]
 						set(
 							$current,
 							"concept",
-							lv_concept_65_0,
+							lv_concept_62_0,
 							"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
 						afterParserOrEnumRuleCall();
 					}
@@ -10694,16 +10654,16 @@ ruleConcept returns [EObject current=null]
 		)
 		    |
 		(
-			otherlv_66='('
+			otherlv_63='('
 			{
-				newLeafNode(otherlv_66, grammarAccess.getConceptAccess().getLeftParenthesisKeyword_16_0());
+				newLeafNode(otherlv_63, grammarAccess.getConceptAccess().getLeftParenthesisKeyword_15_0());
 			}
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getConceptAccess().getDeclarationExpressionParserRuleCall_16_1_0());
+						newCompositeNode(grammarAccess.getConceptAccess().getDeclarationExpressionParserRuleCall_15_1_0());
 					}
-					lv_declaration_67_0=ruleExpression
+					lv_declaration_64_0=ruleExpression
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getConceptRule());
@@ -10711,15 +10671,15 @@ ruleConcept returns [EObject current=null]
 						set(
 							$current,
 							"declaration",
-							lv_declaration_67_0,
+							lv_declaration_64_0,
 							"org.integratedmodelling.kim.Kim.Expression");
 						afterParserOrEnumRuleCall();
 					}
 				)
 			)
-			otherlv_68=')'
+			otherlv_65=')'
 			{
-				newLeafNode(otherlv_68, grammarAccess.getConceptAccess().getRightParenthesisKeyword_16_2());
+				newLeafNode(otherlv_65, grammarAccess.getConceptAccess().getRightParenthesisKeyword_15_2());
 			}
 		)
 	)
