@@ -82,6 +82,10 @@ public class OpenCPUAdapter implements IResourceAdapter {
          */
         ScalarExport,
         /**
+         * Output scalars to object metadata for k.LAB.
+         */
+        MetadataExport,
+        /**
          * Evaluate the constraint and if false, stop contextualization
          */
         Assertion
