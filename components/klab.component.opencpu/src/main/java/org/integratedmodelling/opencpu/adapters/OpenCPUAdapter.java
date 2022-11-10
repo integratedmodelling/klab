@@ -43,6 +43,50 @@ public class OpenCPUAdapter implements IResourceAdapter {
 
     public static final String ID = "opencpu";
 
+    /**
+     * Operations for I/O or other "primitives" that are handled specially by k.LAB, usually to
+     * interface complex input data types to R or back to k.LAB.
+     * 
+     * @author Ferd
+     *
+     */
+    public static enum InternalOperation {
+        /**
+         * Import a raster state from k.LAB input into the specified variable in R. If >1 input
+         * (comma-separated variable name list) or the input is specified through an annotation
+         * (variable name starts with @), a raster stack is created.
+         */
+        RasterImport,
+        /**
+         * Export a R raster into an output state for k.LAB
+         */
+        RasterExport,
+        /**
+         * k.LAB -> R simple features. If input is a raster grid, treat each cell as a feature.
+         */
+        FeatureImport,
+        /**
+         * R simple features -> k.LAB
+         */
+        FeatureExport,
+        /**
+         * k.LAB tabular -> R data frame
+         */
+        TableImport,
+        /**
+         * R data frame -> k.LAB tabular
+         */
+        TableExport,
+        /**
+         * Output a scalar to k.LAB, automatically promoting to the state geometry required.
+         */
+        ScalarExport,
+        /**
+         * Evaluate the constraint and if false, stop contextualization
+         */
+        Assertion
+    }
+
     @Override
     public String getName() {
         return ID;
@@ -50,26 +94,22 @@ public class OpenCPUAdapter implements IResourceAdapter {
 
     @Override
     public IResourceValidator getValidator() {
-        // TODO Auto-generated method stub
-        return null;
+        return new OpenCPUValidator();
     }
 
     @Override
     public IResourcePublisher getPublisher() {
-        // TODO Auto-generated method stub
-        return null;
+        return new OpenCPUPublisher();
     }
 
     @Override
     public IResourceEncoder getEncoder() {
-        // TODO Auto-generated method stub
-        return null;
+        return new OpenCPUEncoder();
     }
 
     @Override
     public IResourceImporter getImporter() {
-        // TODO Auto-generated method stub
-        return null;
+        return new OpenCPUImporter();
     }
 
     @Override

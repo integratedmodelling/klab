@@ -14,5 +14,26 @@ import java.util.List;
 public class OperationConfiguration {
 
     private String name;
+    private String description;
     private List<StatementConfiguration> statements = new ArrayList<>();
+    
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public String getDescription() {
+        return description;
+    }
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    public List<StatementConfiguration> getStatements() {
+        return statements;
+    }
+    public void setStatements(List<StatementConfiguration> statements) {
+        this.statements = statements;
+    }
+
 }
