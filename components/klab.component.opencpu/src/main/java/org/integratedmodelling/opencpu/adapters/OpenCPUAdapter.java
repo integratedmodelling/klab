@@ -13,11 +13,36 @@ import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.extensions.ResourceAdapter;
 
+/**
+ * URNs using this adapter must specify
+ * <i>node</i>:<i>functionality</i>:<i>method</i>:<i>operation</i> where:
+ * 
+ * <ul>
+ * <li><b>functionality</b> is an arbitrary name identifying the kind of methodology, e.g.
+ * "optimization" - can be multiple. e.g. optimization.mips;</li>
+ * <li><b>method</b> is a class of methods corresponding to a specific R package or function, e.g.
+ * "prioritizr" or "raster". This must correspond to a <i>method</i>.json file available in the
+ * config area of the adapter, defining the various submethods and their input/output contract;</li>
+ * <li><b>operation</b> specifies an atomic operation for the method, defined in the
+ * <i>method</i>.json adapter configuration, and ultimately selects the R algorithm that will be
+ * run.</li>
+ * </ul>
+ * 
+ * The <i>operation</i> specification defines:
+ * <ul>
+ * <li>how to map inputs, resource parameters and URN parameters to the R side;</li>
+ * <li>what R computations to execute once a session is opened and the mapping has been done;</li>
+ * <li>how to remap the result of the last R computation to the k.LAB side.</li>
+ * </ul>
+ * 
+ * @author Ferd
+ *
+ */
 @ResourceAdapter(version = Version.CURRENT, canCreateEmpty = true, handlesFiles = false, type = OpenCPUAdapter.ID)
 public class OpenCPUAdapter implements IResourceAdapter {
 
     public static final String ID = "opencpu";
-    
+
     @Override
     public String getName() {
         return ID;
@@ -58,6 +83,5 @@ public class OpenCPUAdapter implements IResourceAdapter {
         // TODO Auto-generated method stub
         return null;
     }
-
 
 }
