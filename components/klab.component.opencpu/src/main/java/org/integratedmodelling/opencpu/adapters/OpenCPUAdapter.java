@@ -1,8 +1,10 @@
 package org.integratedmodelling.opencpu.adapters;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import org.integratedmodelling.kim.api.IPrototype;
+import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResourceCalculator;
@@ -12,6 +14,7 @@ import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
 import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.extensions.ResourceAdapter;
+import org.integratedmodelling.klab.kim.Prototype;
 
 /**
  * URNs using this adapter must specify
@@ -124,8 +127,10 @@ public class OpenCPUAdapter implements IResourceAdapter {
 
     @Override
     public Collection<IPrototype> getResourceConfiguration() {
-        // TODO Auto-generated method stub
-        return null;
+        return Collections.singleton(new Prototype(
+                Dataflows.INSTANCE.declare(getClass().getClassLoader().getResource("opencpu/prototypes/opencpu.kdl"))
+                        .getActuators().iterator().next(),
+                null));
     }
 
 }
