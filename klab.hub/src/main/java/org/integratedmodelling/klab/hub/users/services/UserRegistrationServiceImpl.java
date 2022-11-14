@@ -75,7 +75,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService{
 		if (pendingUser.isPresent()) {
 			return pendingUser.get();
 		} else {
-			User newUser = new CreateUserWithRolesAndStatus(user, userRepository, ldapUserDetailsManager).execute();
+			User newUser = new CreateUserWithRolesAndStatus(user, userRepository/*, ldapUserDetailsManager*/).execute();
 			return newUser;
 		}
 		

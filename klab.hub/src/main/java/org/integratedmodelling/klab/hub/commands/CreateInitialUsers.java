@@ -23,14 +23,14 @@ public class CreateInitialUsers {
 
     private MongoGroupRepository groupRepository;
     private UserRepository userRepository;
-    private LdapUserDetailsManager ldapUserDetailsManager;
+//    private LdapUserDetailsManager ldapUserDetailsManager;
     private PasswordEncoder passwordEncoder;
 
     public CreateInitialUsers(MongoGroupRepository groupRepository, UserRepository userRepository,
-            LdapUserDetailsManager ldapUserDetailsManager, PasswordEncoder passwordEncoder) {
+            /*LdapUserDetailsManager ldapUserDetailsManager,*/ PasswordEncoder passwordEncoder) {
         this.groupRepository = groupRepository;
         this.userRepository = userRepository;
-        this.ldapUserDetailsManager = ldapUserDetailsManager;
+//        this.ldapUserDetailsManager = ldapUserDetailsManager;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -172,7 +172,7 @@ public class CreateInitialUsers {
             try {
                 // This is our legacy password encoding
                 user = new SetUserPasswordHash(user, user.getPasswordHash(), this.passwordEncoder).execute();
-                User newUser = new CreateUserWithRolesAndStatus(user, userRepository, ldapUserDetailsManager).execute();
+                User newUser = new CreateUserWithRolesAndStatus(user, userRepository/*, ldapUserDetailsManager*/).execute();
                 if (newUser.getLastLogin() != null) {
                     int x = (int) (Math.random() * 100 + 1);
                     if (x >= 5) // less than 5% not connected

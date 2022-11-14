@@ -20,7 +20,7 @@ public class DevMongoModelsConfig implements ApplicationListener<ContextRefreshe
 	
 	private MongoGroupRepository groupRepo;
 	private UserRepository userRepository;
-	private LdapUserDetailsManager ldapUserDetailsManager;
+//	private LdapUserDetailsManager ldapUserDetailsManager;
 	private PasswordEncoder passwordEncoder;
 	private MongoLeverRepository leverRepo;
 	private MongoNodeRepository nodeRepo;
@@ -28,14 +28,14 @@ public class DevMongoModelsConfig implements ApplicationListener<ContextRefreshe
 	@Autowired
 	public DevMongoModelsConfig(MongoGroupRepository groupRepo,
 			UserRepository userRepository,
-			LdapUserDetailsManager ldapUserDetailsManager,
+//			LdapUserDetailsManager ldapUserDetailsManager,
 			PasswordEncoder passwordEncoder,
 			MongoLeverRepository leverRepo,
 			MongoNodeRepository nodeRepo) {
 		super();
 		this.groupRepo = groupRepo;
 		this.userRepository = userRepository;
-		this.ldapUserDetailsManager = ldapUserDetailsManager;
+//		this.ldapUserDetailsManager = ldapUserDetailsManager;
 		this.passwordEncoder = passwordEncoder;
 		this.leverRepo = leverRepo;
 		this.nodeRepo = nodeRepo;
@@ -49,7 +49,7 @@ public class DevMongoModelsConfig implements ApplicationListener<ContextRefreshe
 		new CreateInitialUsers(
 				groupRepo,
 				userRepository,
-				ldapUserDetailsManager,
+//				ldapUserDetailsManager,
 				passwordEncoder
 				).execute();
 		

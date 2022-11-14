@@ -9,14 +9,14 @@ public class CreateUserWithRolesAndStatus implements UserCommand {
 	
 	private UserRepository userRepository;
 	private User user;
-	private LdapUserDetailsManager ldapUserDetailsManager;
+//	private LdapUserDetailsManager ldapUserDetailsManager;
 
 	public CreateUserWithRolesAndStatus(User user, 
-			UserRepository userRepository, LdapUserDetailsManager ldapUserDetailsManager) {
+			UserRepository userRepository/*, LdapUserDetailsManager ldapUserDetailsManager*/) {
 		super();
 		this.userRepository = userRepository;
 		this.user = user;
-		this.ldapUserDetailsManager = ldapUserDetailsManager;
+//		this.ldapUserDetailsManager = ldapUserDetailsManager;
 	}
 
 	@Override
@@ -25,7 +25,7 @@ public class CreateUserWithRolesAndStatus implements UserCommand {
 		if (newUser.getProvider() != null && newUser.getProvider() != AuthProvider.local) {
 			return newUser;
 		}
-		new CreateLdapUser(newUser, ldapUserDetailsManager).execute();
+//		new CreateLdapUser(newUser, ldapUserDetailsManager).execute();
 		return newUser;
 		
 	}
