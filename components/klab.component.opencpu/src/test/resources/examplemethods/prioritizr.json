@@ -1,0 +1,21 @@
+{ 
+	"name": "prioritizr",
+	"catalog": "optimization",
+	"documentation": "",
+	"requiredPackages": {
+		"prioritizr": "7.2.2"
+	 },
+	"requiredVersion": "4.2.2",
+	"allowedGroups": [ ],
+	"operations": {
+		"raster": { 
+			"name": "raster",
+			"description": "",
+			"statements": [ 
+				{ 
+				},
+				{ }
+			]
+		}
+	}
+}

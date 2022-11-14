@@ -365,7 +365,8 @@ ObservableSemantics:
 			(=> 'per' unit=Unit)
 		)? &
 		(=> valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
-		(optional?='optional' | 'required')? &
+		(optional?='optional'| 'required')? &
+//		(default?='default' 'to' (defaultLiteral=Literal | defaultConcept=ConceptDeclaration) ('when' causes+=RESOLUTION_EXCEPTION (',' causes+=RESOLUTION_EXCEPTION)*)? )? &
 		(from=Number 'to' to=Number)? &
 		('named' name=(LOWERCASE_ID|STRING))?
 	);
@@ -410,7 +411,8 @@ AnnotatedObservableSemantics returns ObservableSemantics:
 			('per' unit=Unit)
 		)? &
 		(valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
-		(optional?='optional' | 'required')? &
+		(optional?='optional'| 'required')? &
+//		(default?='default' 'to' (defaultLiteral=Literal | defaultConcept=ConceptDeclaration) ('when' causes+=RESOLUTION_EXCEPTION (',' causes+=RESOLUTION_EXCEPTION)*)? )? &
 		(from=Number 'to' to=Number)? &
 		('named' name=(LOWERCASE_ID|STRING))?
 	);
@@ -419,14 +421,16 @@ Dependency:
 	annotations += Annotation*
 	((
 		modelReference=(LOWERCASE_ID|PathName|UrnId|STRING) |
-		observable=DependencyObservableSemantics
+		observable=DependencyObservableSemantics (options+=Option (options+=Option)*)?
+		
 	) |
 	(
 		'(' 
 			alternativeObservables+=AlternativeDependencyObservableSemantics (',' alternativeObservables+=AlternativeDependencyObservableSemantics)*
 		')' 
-			(optional?='optional' | 'required')? & 
-			'named' name=(LOWERCASE_ID|STRING)
+		(optional?='optional'| 'required')? &
+//		(default?='default' 'to' (defaultLiteral=Literal | defaultConcept=ConceptDeclaration) ('when' causes+=RESOLUTION_EXCEPTION (',' causes+=RESOLUTION_EXCEPTION)*)? )? &
+		'named' name=(LOWERCASE_ID|STRING)
 	))
 ;
 
@@ -814,12 +818,6 @@ LiteralOrID returns Literal:
 LiteralOrIdOrComma returns Literal:
 	 from=Number => 'to' => to=Number | number=Number | string=STRING | boolean=('true' | 'false') | id=ID | comma?=',';
 
-//Metadata:
-//	{Metadata} '{' (ids+=(PathName | LOWERCASE_ID | PropertyId | STRING) values+=(LiteralOrID | Metadata | List))* '}';
-
-//Documentation:
-//	{Metadata} '{' (selectors+=DocSelector values+=LiteralOrID)* '}';
-
 Map:
 	{Map} '{' (entries+=MapEntry (=> (',')? entries+=MapEntry)*)? '}'
 ;
@@ -894,12 +892,25 @@ Function:
 terminal EXPR:
 	('['|'#[') ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | ']' | '\\') | !('\\' | ']'))* ']';
 	
-enum DataType:
-	TEXT='text' |
-	INTEGER='integer' |
-	FLOAT='float' |
-	BOOLEAN='boolean' |
-	DATE='date';
+//enum DataType:
+//	TEXT='text' |
+//	INTEGER='integer' |
+//	FLOAT='float' |
+//	BOOLEAN='boolean' |
+//	DATE='date';
+
+Option:
+	key=OPTION_KEY value=ValueWithIdAndConcept
+;
+
+terminal OPTION_KEY:
+	'?'('a'..'z') ('a'..'z' | '0'..'9')*;
+
+//RESOLUTION_EXCEPTION:
+//	'error' |
+//	'nodata' |
+//	'missing'
+//;
 
 /**
  * Carefully selected keywords to define a concept, which enable automatic definition of
@@ -988,7 +999,8 @@ DependencyObservableSemantics returns ObservableSemantics:
 		)? &
 		(from=Number 'to' to=Number)? &
 		(valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
-		(optional?='optional' | 'required')? &
+		(optional?='optional'| 'required')? &
+//		(default?='default' 'to' (defaultLiteral=Literal | defaultConcept=ConceptDeclaration) ('when' causes+=RESOLUTION_EXCEPTION (',' causes+=RESOLUTION_EXCEPTION)*)? )? &
 		('named' name=(LOWERCASE_ID|STRING))?
 	);
 

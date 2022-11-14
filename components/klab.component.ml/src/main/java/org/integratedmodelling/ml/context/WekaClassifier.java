@@ -39,6 +39,20 @@ public class WekaClassifier {
     private boolean errorWarning = false;
     private boolean imported = false;
 
+    public WekaClassifier(Classifier cls, WekaOptions options, boolean predictionIsProbabilistic) {
+        this.classifier = cls;
+        this.options = options;
+        this.predictionIsProbabilistic = predictionIsProbabilistic;
+        if (this.classifier instanceof OptionHandler) {
+            try {
+                ((OptionHandler) this.classifier).setOptions(options.getWekaOptions());
+            } catch (Exception e) {
+                throw new IllegalStateException(
+                        "Weka: error setting options for " + cls + ": '" + options + "': " + e.getMessage());
+            }
+        }
+    }
+    
     public WekaClassifier(Class<? extends Classifier> cls, WekaOptions options, boolean predictionIsProbabilistic) {
         this.classifier = Extensions.INSTANCE.createDefaultInstance(cls, Classifier.class);
         this.options = options;

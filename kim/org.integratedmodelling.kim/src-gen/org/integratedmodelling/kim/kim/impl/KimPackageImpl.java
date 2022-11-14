@@ -26,7 +26,6 @@ import org.integratedmodelling.kim.kim.ConceptReference;
 import org.integratedmodelling.kim.kim.ConceptStatement;
 import org.integratedmodelling.kim.kim.ConceptStatementBody;
 import org.integratedmodelling.kim.kim.Currency;
-import org.integratedmodelling.kim.kim.DataType;
 import org.integratedmodelling.kim.kim.Date;
 import org.integratedmodelling.kim.kim.DefineStatement;
 import org.integratedmodelling.kim.kim.DefinitionBody;
@@ -55,6 +54,7 @@ import org.integratedmodelling.kim.kim.Namespace;
 import org.integratedmodelling.kim.kim.ObservableSemantics;
 import org.integratedmodelling.kim.kim.ObserveStatement;
 import org.integratedmodelling.kim.kim.ObserveStatementBody;
+import org.integratedmodelling.kim.kim.Option;
 import org.integratedmodelling.kim.kim.OwlImport;
 import org.integratedmodelling.kim.kim.ParameterList;
 import org.integratedmodelling.kim.kim.PropertyStatement;
@@ -435,6 +435,13 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  private EClass optionEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   private EClass reL_OPERATOREClass = null;
 
   /**
@@ -478,13 +485,6 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   private EClass dateEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  private EEnum dataTypeEEnum = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -2828,7 +2828,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EReference getDependency_AlternativeObservables()
+  public EReference getDependency_Options()
   {
     return (EReference)dependencyEClass.getEStructuralFeatures().get(3);
   }
@@ -2839,9 +2839,20 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
+  public EReference getDependency_AlternativeObservables()
+  {
+    return (EReference)dependencyEClass.getEStructuralFeatures().get(4);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EAttribute getDependency_Optional()
   {
-    return (EAttribute)dependencyEClass.getEStructuralFeatures().get(4);
+    return (EAttribute)dependencyEClass.getEStructuralFeatures().get(5);
   }
 
   /**
@@ -2852,7 +2863,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EAttribute getDependency_Name()
   {
-    return (EAttribute)dependencyEClass.getEStructuralFeatures().get(5);
+    return (EAttribute)dependencyEClass.getEStructuralFeatures().get(6);
   }
 
   /**
@@ -5083,6 +5094,39 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
+  public EClass getOption()
+  {
+    return optionEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getOption_Key()
+  {
+    return (EAttribute)optionEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getOption_Value()
+  {
+    return (EReference)optionEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EClass getREL_OPERATOR()
   {
     return reL_OPERATOREClass;
@@ -5534,17 +5578,6 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EEnum getDataType()
-  {
-    return dataTypeEEnum;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
   public EEnum getUnitOp()
   {
     return unitOpEEnum;
@@ -5814,6 +5847,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEReference(dependencyEClass, DEPENDENCY__ANNOTATIONS);
     createEAttribute(dependencyEClass, DEPENDENCY__MODEL_REFERENCE);
     createEReference(dependencyEClass, DEPENDENCY__OBSERVABLE);
+    createEReference(dependencyEClass, DEPENDENCY__OPTIONS);
     createEReference(dependencyEClass, DEPENDENCY__ALTERNATIVE_OBSERVABLES);
     createEAttribute(dependencyEClass, DEPENDENCY__OPTIONAL);
     createEAttribute(dependencyEClass, DEPENDENCY__NAME);
@@ -6042,6 +6076,10 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEAttribute(functionEClass, FUNCTION__NAME);
     createEReference(functionEClass, FUNCTION__PARAMETERS);
 
+    optionEClass = createEClass(OPTION);
+    createEAttribute(optionEClass, OPTION__KEY);
+    createEReference(optionEClass, OPTION__VALUE);
+
     reL_OPERATOREClass = createEClass(REL_OPERATOR);
     createEAttribute(reL_OPERATOREClass, REL_OPERATOR__GT);
     createEAttribute(reL_OPERATOREClass, REL_OPERATOR__LT);
@@ -6091,7 +6129,6 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEAttribute(dateEClass, DATE__MS);
 
     // Create enums
-    dataTypeEEnum = createEEnum(DATA_TYPE);
     unitOpEEnum = createEEnum(UNIT_OP);
   }
 
@@ -6360,6 +6397,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEReference(getDependency_Annotations(), this.getAnnotation(), null, "annotations", null, 0, -1, Dependency.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getDependency_ModelReference(), ecorePackage.getEString(), "modelReference", null, 0, 1, Dependency.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getDependency_Observable(), this.getObservableSemantics(), null, "observable", null, 0, 1, Dependency.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getDependency_Options(), this.getOption(), null, "options", null, 0, -1, Dependency.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getDependency_AlternativeObservables(), this.getObservableSemantics(), null, "alternativeObservables", null, 0, -1, Dependency.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getDependency_Optional(), ecorePackage.getEBoolean(), "optional", null, 0, 1, Dependency.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getDependency_Name(), ecorePackage.getEString(), "name", null, 0, 1, Dependency.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -6588,6 +6626,10 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEAttribute(getFunction_Name(), ecorePackage.getEString(), "name", null, 0, 1, Function.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getFunction_Parameters(), this.getParameterList(), null, "parameters", null, 0, 1, Function.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
+    initEClass(optionEClass, Option.class, "Option", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getOption_Key(), ecorePackage.getEString(), "key", null, 0, 1, Option.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getOption_Value(), this.getValue(), null, "value", null, 0, 1, Option.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
     initEClass(reL_OPERATOREClass, org.integratedmodelling.kim.kim.REL_OPERATOR.class, "REL_OPERATOR", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getREL_OPERATOR_Gt(), ecorePackage.getEBoolean(), "gt", null, 0, 1, org.integratedmodelling.kim.kim.REL_OPERATOR.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getREL_OPERATOR_Lt(), ecorePackage.getEBoolean(), "lt", null, 0, 1, org.integratedmodelling.kim.kim.REL_OPERATOR.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -6637,13 +6679,6 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEAttribute(getDate_Ms(), ecorePackage.getEInt(), "ms", null, 0, 1, Date.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     // Initialize enums and add enum literals
-    initEEnum(dataTypeEEnum, DataType.class, "DataType");
-    addEEnumLiteral(dataTypeEEnum, DataType.TEXT);
-    addEEnumLiteral(dataTypeEEnum, DataType.INTEGER);
-    addEEnumLiteral(dataTypeEEnum, DataType.FLOAT);
-    addEEnumLiteral(dataTypeEEnum, DataType.BOOLEAN);
-    addEEnumLiteral(dataTypeEEnum, DataType.DATE);
-
     initEEnum(unitOpEEnum, UnitOp.class, "UnitOp");
     addEEnumLiteral(unitOpEEnum, UnitOp.OVER);
     addEEnumLiteral(unitOpEEnum, UnitOp.CARET);

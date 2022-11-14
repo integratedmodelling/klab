@@ -82,6 +82,16 @@ public interface IKActorsValue extends IKActorsCodeStatement {
     }
 
     /**
+     * Only used in cast expression (value as <type>)
+     * 
+     * @author Ferd
+     *
+     */
+    public enum DataType {
+        INTEGER, NUMBER, TEXT, CONCEPT, BOOLEAN
+    }
+
+    /**
      * If the value subsumes others in an expression, it will have an expression type other than
      * VALUE. For now only supporting ternary operators, eventually we can build expression trees
      * with operators, assuming the parenthesization can be dealt with in the parser (probably not
@@ -191,5 +201,13 @@ public interface IKActorsValue extends IKActorsCodeStatement {
      * @return
      */
     Object evaluate(Scope scope, IIdentity identity, boolean forceEvaluationIfDeferred);
+
+    /**
+     * If a cast was assigned using <code>as</code>, report the type to cast to after evaluation.
+     * Otherwise null.
+     * 
+     * @return
+     */
+    DataType getCast();
 
 }

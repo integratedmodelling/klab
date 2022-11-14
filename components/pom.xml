@@ -25,6 +25,7 @@
   	<module>klab.component.sdmx</module>
   	<module>klab.component.amp</module>
   	<module>klab.component.stats</module>
+  	<module>klab.component.opencpu</module>
   </modules>
   
   <build>

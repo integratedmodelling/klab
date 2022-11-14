@@ -20,6 +20,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.Dependency#getAnnotations <em>Annotations</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Dependency#getModelReference <em>Model Reference</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Dependency#getObservable <em>Observable</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.Dependency#getOptions <em>Options</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Dependency#getAlternativeObservables <em>Alternative Observables</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Dependency#isOptional <em>Optional</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Dependency#getName <em>Name</em>}</li>
@@ -86,6 +87,18 @@ public interface Dependency extends EObject
    * @generated
    */
   void setObservable(ObservableSemantics value);
+
+  /**
+   * Returns the value of the '<em><b>Options</b></em>' containment reference list.
+   * The list contents are of type {@link org.integratedmodelling.kim.kim.Option}.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Options</em>' containment reference list.
+   * @see org.integratedmodelling.kim.kim.KimPackage#getDependency_Options()
+   * @model containment="true"
+   * @generated
+   */
+  EList<Option> getOptions();
 
   /**
    * Returns the value of the '<em><b>Alternative Observables</b></em>' containment reference list.

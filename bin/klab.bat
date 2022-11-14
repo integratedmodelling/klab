@@ -9,7 +9,7 @@ set JAVA_OPTS=-Xmx4096M
 
 IF NOT "%1"=="" (
     IF "%1"=="-dev" (
-    	set GIT_DIR %userprofile%\git
+    	set GIT_DIR=%userprofile%\git16
     	IF EXIST "%GIT_DIR%\klab\cli\target\NUL" (
     		echo "Using distribution from local source tree in %GIT_DIR%"
 			set JAVA_OPTS="%JAVA_OPTS% -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=8000"

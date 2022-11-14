@@ -53,6 +53,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.processing.Rasterizer;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
+import org.integratedmodelling.klab.components.geospace.utils.SpatialDisplay;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -240,6 +241,8 @@ public class VectorEncoder implements IResourceEncoder {
             nameAttribute = "NAME";
         }
 
+//        SpatialDisplay display = new SpatialDisplay(requestScale);
+        
         int n = 1;
         FeatureIterator<SimpleFeature> it = fc.subCollection(bbfilter).features();
         while(it.hasNext()) {
@@ -271,6 +274,9 @@ public class VectorEncoder implements IResourceEncoder {
                 if (intersect) {
                     objectShape = objectShape.intersection(requestScale.getSpace().getShape());
                 }
+
+//                display.add(objectShape);
+                
 
                 if (objectShape.isEmpty()) {
                     continue;
@@ -334,6 +340,8 @@ public class VectorEncoder implements IResourceEncoder {
 
         it.close();
 
+//        display.show();
+        
         if (presence) {
             builder = builder.withMetadata("presence", Boolean.FALSE);
         }
