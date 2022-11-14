@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.hub.users.services;
 
+import java.security.Principal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,6 +11,11 @@ import org.integratedmodelling.klab.hub.commands.UpdateUser;
 import org.integratedmodelling.klab.hub.exception.UserByEmailDoesNotExistException;
 import org.integratedmodelling.klab.hub.exception.UserDoesNotExistException;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
+import org.keycloak.KeycloakPrincipal;
+import org.keycloak.KeycloakSecurityContext;
+import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
+import org.keycloak.representations.AccessToken;
+import org.keycloak.representations.IDToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -59,8 +65,19 @@ public class UserProfileServiceImpl implements UserProfileService {
 
 	@Override
 	public ProfileResource getCurrentUserProfile() {
-		String username = SecurityContextHolder.getContext().getAuthentication().getName();
-		User user = userRepository.findByNameIgnoreCase(username)
+	    KeycloakAuthenticationToken authentication = 
+	            (KeycloakAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+		
+		 Principal principal = (Principal) authentication.getPrincipal();
+
+		    String preferredUsername = "";
+
+		    if (principal instanceof KeycloakPrincipal) {
+		        KeycloakPrincipal<KeycloakSecurityContext> kPrincipal = (KeycloakPrincipal<KeycloakSecurityContext>) principal;
+		        AccessToken token = kPrincipal.getKeycloakSecurityContext().getToken();
+		        preferredUsername = token.getPreferredUsername();
+		    }
+		User user = userRepository.findByNameIgnoreCase(preferredUsername)
 				.orElseThrow(() ->  
 					new UserDoesNotExistException());
 		ProfileResource profile = objectMapper.convertValue(user, ProfileResource.class);

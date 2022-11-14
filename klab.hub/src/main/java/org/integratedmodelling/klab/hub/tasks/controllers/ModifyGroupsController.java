@@ -36,7 +36,7 @@ public class ModifyGroupsController {
 	TaskService service;
 	
 	@PostMapping(value= API.HUB.TASK_BASE, produces = "application/json", params=API.HUB.PARAMETERS.USER_REQUEST_GROUPS)
-	@PreAuthorize("authentication.principal == #username or hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_SYSTEM')")
+	@PreAuthorize("@securityService.isUser(#username) or hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_SYSTEM')")
 	public ResponseEntity<?> requestGroupsResponse(
 			@RequestParam(API.HUB.PARAMETERS.USER_REQUEST_GROUPS) String username,
 			@RequestBody List<String> groupNames,
@@ -49,7 +49,7 @@ public class ModifyGroupsController {
 	}
 	
 	@PostMapping(value= API.HUB.TASK_BASE, produces = "application/json", params=API.HUB.PARAMETERS.USER_REMOVE_GROUPS)
-	@PreAuthorize("authentication.principal == #username or hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_SYSTEM')")
+	@PreAuthorize("@securityService.isUser(#username) or hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_SYSTEM')")
 	public ResponseEntity<?> removeGroupsResponse(
 			@RequestParam(API.HUB.PARAMETERS.USER_REMOVE_GROUPS) String username,
 			@RequestBody List<String> groupNames,

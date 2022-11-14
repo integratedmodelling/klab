@@ -3,7 +3,10 @@ server:
   servlet:
     contextPath: /hub
 
+
 spring:
+  main:
+    allow-bean-definition-overriding: true
   cloud:
     bus:
       enabled: false
