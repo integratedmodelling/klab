@@ -362,12 +362,13 @@ public class KlabSession extends KlabPeer {
         List<String> localizations = getLocalizations(behavior);
         if (localizations.size() == 1) {
             loc = localizations.get(0);
+            
         } else if (localizations.size() > 1) {
             // returns null if canceled
             loc = Eclipse.INSTANCE.chooseOne("Choose a locale", localizations);
-            if (loc != null && loc.contains(" - ")) {
-                loc = loc.substring(0, loc.indexOf(" - "));
-            }
+        }
+        if (loc != null && loc.contains(" - ")) {
+            loc = loc.substring(0, loc.indexOf(" - "));
         }
 
         if (loc != null) {
