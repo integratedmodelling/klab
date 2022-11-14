@@ -6,6 +6,9 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.joda.time.DateTime;
+import org.keycloak.KeycloakPrincipal;
+import org.keycloak.KeycloakSecurityContext;
+import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Reference;
 import org.springframework.data.annotation.Transient;
@@ -69,7 +72,7 @@ public abstract class Task {
     	this(null, parentStatus);
     }
     protected Task(Role roleRequirement, TaskStatus parentStatus) {
-    	this.setUser(SecurityContextHolder.getContext().getAuthentication().getName());
+    	this.setUser(((KeycloakPrincipal<KeycloakSecurityContext>) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getKeycloakSecurityContext().getToken().getPreferredUsername());
     	this.setRoleRequirement(roleRequirement);;
     	this.setIssued();
 		this.setStatus(TaskStatus.pending);

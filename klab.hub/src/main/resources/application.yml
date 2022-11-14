@@ -65,10 +65,10 @@ engine:
 
 email:
    server:
-      hostname: localhost
-      port: 3025
-      username: system
-      password: password
+      hostname: mail.privateemail.com
+      port: 587
+      username: noreply@integratedmodelling.org
+      password: huntalloyhuggingtoes
    replyable:
       replyable:
       general:
