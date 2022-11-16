@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -61,9 +62,13 @@ public class EngineLicenseController extends LicenseController<EngineAuthenticat
 		this.emailManager = emailManager;
 	}
 	
+	
+
+	@CrossOrigin("*")
 	@GetMapping(value= API.HUB.USER_BASE_ID, params = "certificate")
-	@PreAuthorize("authentication.getPrincipal() == #id")
-	public void generateCertFile(@PathVariable("id") String id, HttpServletResponse response) throws IOException {
+	@PreAuthorize("@securityService.isUser(#username)")
+//	@PreAuthorize("authentication.getPrincipal() == #id")
+	public void generateCertFile(@PathVariable("username") String username, HttpServletResponse response) throws IOException {
 	    
 		ProfileResource profile = userProfileService.getCurrentUserProfile();
 		byte[] certFileContent = licenseGenerator.generate(profile, null);
