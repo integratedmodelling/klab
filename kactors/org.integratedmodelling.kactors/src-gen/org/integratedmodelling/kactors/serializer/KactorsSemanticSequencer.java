@@ -477,10 +477,10 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *                 contained=SimpleConceptDeclaration | 
 	 *                 caused=SimpleConceptDeclaration
 	 *             )? 
+	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
+	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
 	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
 	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
-	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
-	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
 	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)?
 	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)*
@@ -510,10 +510,10 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *                 contained=SimpleConceptDeclaration | 
 	 *                 caused=SimpleConceptDeclaration
 	 *             )? 
+	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
+	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
 	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
 	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
-	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
-	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
 	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)?
 	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)* 
@@ -1410,14 +1410,14 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *             tree=Tree | 
 	 *             empty?='empty' | 
 	 *             argvalue=ARGVALUE | 
-	 *             literal=Literal | 
+	 *             (literal=Literal cast=DATA_TYPE?) | 
 	 *             urn=UrnId | 
-	 *             id=PathName | 
+	 *             (id=PathName cast=DATA_TYPE?) | 
 	 *             list=List | 
 	 *             map=Map | 
 	 *             constant=UPPERCASE_ID | 
 	 *             observable=Observable | 
-	 *             expression=EXPR | 
+	 *             (expression=EXPR cast=DATA_TYPE?) | 
 	 *             table=LookupTable | 
 	 *             quantity=Quantity | 
 	 *             (component?='new' behavior=PathName parameters=ParameterList?)
@@ -1441,13 +1441,13 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *         deferred?='`'? 
 	 *         (
 	 *             argvalue=ARGVALUE | 
-	 *             literal=Literal | 
-	 *             id=PathName | 
+	 *             (literal=Literal cast=DATA_TYPE?) | 
+	 *             (id=PathName cast=DATA_TYPE?) | 
 	 *             urn=UrnId | 
 	 *             list=List | 
 	 *             map=Map | 
 	 *             observable=Observable | 
-	 *             expression=EXPR | 
+	 *             (expression=EXPR cast=DATA_TYPE?) | 
 	 *             table=LookupTable | 
 	 *             quantity=Quantity
 	 *         ) 
@@ -1472,14 +1472,14 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *         (
 	 *             tree=Tree | 
 	 *             argvalue=ARGVALUE | 
-	 *             literal=Literal | 
+	 *             (literal=Literal cast=DATA_TYPE?) | 
 	 *             urn=UrnId | 
-	 *             constant=UPPERCASE_ID | 
+	 *             (constant=UPPERCASE_ID cast=DATA_TYPE?) | 
 	 *             id=PathName | 
 	 *             list=List | 
 	 *             map=Map | 
 	 *             observable=Observable | 
-	 *             expression=EXPR | 
+	 *             (expression=EXPR cast=DATA_TYPE?) | 
 	 *             table=LookupTable | 
 	 *             quantity=Quantity
 	 *         ) 
@@ -1505,13 +1505,13 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *             empty?='empty' | 
 	 *             argvalue=ARGVALUE | 
 	 *             urn=UrnId | 
-	 *             literal=Literal | 
-	 *             id=PathName | 
+	 *             (literal=Literal cast=DATA_TYPE?) | 
+	 *             (id=PathName cast=DATA_TYPE?) | 
 	 *             list=List | 
 	 *             map=Map | 
 	 *             constant=UPPERCASE_ID | 
 	 *             observable=Observable | 
-	 *             expression=EXPR | 
+	 *             (expression=EXPR cast=DATA_TYPE?) | 
 	 *             table=LookupTable | 
 	 *             quantity=Quantity
 	 *         ) 

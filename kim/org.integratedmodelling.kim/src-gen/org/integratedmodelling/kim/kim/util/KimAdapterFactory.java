@@ -52,6 +52,7 @@ import org.integratedmodelling.kim.kim.Namespace;
 import org.integratedmodelling.kim.kim.ObservableSemantics;
 import org.integratedmodelling.kim.kim.ObserveStatement;
 import org.integratedmodelling.kim.kim.ObserveStatementBody;
+import org.integratedmodelling.kim.kim.Option;
 import org.integratedmodelling.kim.kim.OwlImport;
 import org.integratedmodelling.kim.kim.ParameterList;
 import org.integratedmodelling.kim.kim.PropertyStatement;
@@ -381,6 +382,11 @@ public class KimAdapterFactory extends AdapterFactoryImpl
       public Adapter caseFunction(Function object)
       {
         return createFunctionAdapter();
+      }
+      @Override
+      public Adapter caseOption(Option object)
+      {
+        return createOptionAdapter();
       }
       @Override
       public Adapter caseREL_OPERATOR(REL_OPERATOR object)
@@ -1185,6 +1191,21 @@ public class KimAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createFunctionAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.Option <em>Option</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kim.kim.Option
+   * @generated
+   */
+  public Adapter createOptionAdapter()
   {
     return null;
   }

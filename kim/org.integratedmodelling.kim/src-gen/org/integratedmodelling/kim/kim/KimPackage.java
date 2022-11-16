@@ -1985,49 +1985,13 @@ public interface KimPackage extends EPackage
   int OBSERVABLE_SEMANTICS__OPTIONAL = 7;
 
   /**
-   * The feature id for the '<em><b>Default</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int OBSERVABLE_SEMANTICS__DEFAULT = 8;
-
-  /**
-   * The feature id for the '<em><b>Default Literal</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int OBSERVABLE_SEMANTICS__DEFAULT_LITERAL = 9;
-
-  /**
-   * The feature id for the '<em><b>Default Concept</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int OBSERVABLE_SEMANTICS__DEFAULT_CONCEPT = 10;
-
-  /**
-   * The feature id for the '<em><b>Causes</b></em>' attribute list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int OBSERVABLE_SEMANTICS__CAUSES = 11;
-
-  /**
    * The feature id for the '<em><b>From</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__FROM = 12;
+  int OBSERVABLE_SEMANTICS__FROM = 8;
 
   /**
    * The feature id for the '<em><b>To</b></em>' containment reference.
@@ -2036,7 +2000,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__TO = 13;
+  int OBSERVABLE_SEMANTICS__TO = 9;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -2045,7 +2009,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__NAME = 14;
+  int OBSERVABLE_SEMANTICS__NAME = 10;
 
   /**
    * The feature id for the '<em><b>Global</b></em>' attribute.
@@ -2054,7 +2018,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__GLOBAL = 15;
+  int OBSERVABLE_SEMANTICS__GLOBAL = 11;
 
   /**
    * The feature id for the '<em><b>Exclusive</b></em>' attribute.
@@ -2063,7 +2027,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__EXCLUSIVE = 16;
+  int OBSERVABLE_SEMANTICS__EXCLUSIVE = 12;
 
   /**
    * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
@@ -2072,7 +2036,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__ANNOTATIONS = 17;
+  int OBSERVABLE_SEMANTICS__ANNOTATIONS = 13;
 
   /**
    * The feature id for the '<em><b>Condition</b></em>' attribute.
@@ -2081,7 +2045,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__CONDITION = 18;
+  int OBSERVABLE_SEMANTICS__CONDITION = 14;
 
   /**
    * The number of structural features of the '<em>Observable Semantics</em>' class.
@@ -2090,7 +2054,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS_FEATURE_COUNT = 19;
+  int OBSERVABLE_SEMANTICS_FEATURE_COUNT = 15;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.ValueOperatorImpl <em>Value Operator</em>}' class.
@@ -2230,13 +2194,22 @@ public interface KimPackage extends EPackage
   int DEPENDENCY__OBSERVABLE = 2;
 
   /**
+   * The feature id for the '<em><b>Options</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DEPENDENCY__OPTIONS = 3;
+
+  /**
    * The feature id for the '<em><b>Alternative Observables</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int DEPENDENCY__ALTERNATIVE_OBSERVABLES = 3;
+  int DEPENDENCY__ALTERNATIVE_OBSERVABLES = 4;
 
   /**
    * The feature id for the '<em><b>Optional</b></em>' attribute.
@@ -2245,43 +2218,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int DEPENDENCY__OPTIONAL = 4;
-
-  /**
-   * The feature id for the '<em><b>Default</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int DEPENDENCY__DEFAULT = 5;
-
-  /**
-   * The feature id for the '<em><b>Default Literal</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int DEPENDENCY__DEFAULT_LITERAL = 6;
-
-  /**
-   * The feature id for the '<em><b>Default Concept</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int DEPENDENCY__DEFAULT_CONCEPT = 7;
-
-  /**
-   * The feature id for the '<em><b>Causes</b></em>' attribute list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int DEPENDENCY__CAUSES = 8;
+  int DEPENDENCY__OPTIONAL = 5;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -2290,7 +2227,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int DEPENDENCY__NAME = 9;
+  int DEPENDENCY__NAME = 6;
 
   /**
    * The number of structural features of the '<em>Dependency</em>' class.
@@ -2299,7 +2236,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int DEPENDENCY_FEATURE_COUNT = 10;
+  int DEPENDENCY_FEATURE_COUNT = 7;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl <em>Concept Declaration</em>}' class.
@@ -4340,6 +4277,43 @@ public interface KimPackage extends EPackage
   int FUNCTION_FEATURE_COUNT = 2;
 
   /**
+   * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.OptionImpl <em>Option</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kim.kim.impl.OptionImpl
+   * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getOption()
+   * @generated
+   */
+  int OPTION = 50;
+
+  /**
+   * The feature id for the '<em><b>Key</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int OPTION__KEY = 0;
+
+  /**
+   * The feature id for the '<em><b>Value</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int OPTION__VALUE = 1;
+
+  /**
+   * The number of structural features of the '<em>Option</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int OPTION_FEATURE_COUNT = 2;
+
+  /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.REL_OPERATORImpl <em>REL OPERATOR</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -4347,7 +4321,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getREL_OPERATOR()
    * @generated
    */
-  int REL_OPERATOR = 50;
+  int REL_OPERATOR = 51;
 
   /**
    * The feature id for the '<em><b>Gt</b></em>' attribute.
@@ -4420,7 +4394,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getUnitElement()
    * @generated
    */
-  int UNIT_ELEMENT = 51;
+  int UNIT_ELEMENT = 52;
 
   /**
    * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -4457,7 +4431,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getUnit()
    * @generated
    */
-  int UNIT = 52;
+  int UNIT = 53;
 
   /**
    * The feature id for the '<em><b>Root</b></em>' containment reference.
@@ -4503,7 +4477,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getCurrency()
    * @generated
    */
-  int CURRENCY = 53;
+  int CURRENCY = 54;
 
   /**
    * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -4549,7 +4523,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getNumber()
    * @generated
    */
-  int NUMBER = 54;
+  int NUMBER = 55;
 
   /**
    * The feature id for the '<em><b>Negative</b></em>' attribute.
@@ -4640,7 +4614,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getQuantity()
    * @generated
    */
-  int QUANTITY = 55;
+  int QUANTITY = 56;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' containment reference.
@@ -4695,7 +4669,7 @@ public interface KimPackage extends EPackage
    * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getDate()
    * @generated
    */
-  int DATE = 56;
+  int DATE = 57;
 
   /**
    * The feature id for the '<em><b>Year</b></em>' attribute.
@@ -4777,16 +4751,6 @@ public interface KimPackage extends EPackage
    * @ordered
    */
   int DATE_FEATURE_COUNT = 8;
-
-  /**
-   * The meta object id for the '{@link org.integratedmodelling.kim.kim.DataType <em>Data Type</em>}' enum.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see org.integratedmodelling.kim.kim.DataType
-   * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getDataType()
-   * @generated
-   */
-  int DATA_TYPE = 57;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.UnitOp <em>Unit Op</em>}' enum.
@@ -6809,50 +6773,6 @@ public interface KimPackage extends EPackage
   EAttribute getObservableSemantics_Optional();
 
   /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ObservableSemantics#isDefault <em>Default</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Default</em>'.
-   * @see org.integratedmodelling.kim.kim.ObservableSemantics#isDefault()
-   * @see #getObservableSemantics()
-   * @generated
-   */
-  EAttribute getObservableSemantics_Default();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getDefaultLiteral <em>Default Literal</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Default Literal</em>'.
-   * @see org.integratedmodelling.kim.kim.ObservableSemantics#getDefaultLiteral()
-   * @see #getObservableSemantics()
-   * @generated
-   */
-  EReference getObservableSemantics_DefaultLiteral();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getDefaultConcept <em>Default Concept</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Default Concept</em>'.
-   * @see org.integratedmodelling.kim.kim.ObservableSemantics#getDefaultConcept()
-   * @see #getObservableSemantics()
-   * @generated
-   */
-  EReference getObservableSemantics_DefaultConcept();
-
-  /**
-   * Returns the meta object for the attribute list '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getCauses <em>Causes</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute list '<em>Causes</em>'.
-   * @see org.integratedmodelling.kim.kim.ObservableSemantics#getCauses()
-   * @see #getObservableSemantics()
-   * @generated
-   */
-  EAttribute getObservableSemantics_Causes();
-
-  /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getFrom <em>From</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -7082,6 +7002,17 @@ public interface KimPackage extends EPackage
   EReference getDependency_Observable();
 
   /**
+   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kim.kim.Dependency#getOptions <em>Options</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Options</em>'.
+   * @see org.integratedmodelling.kim.kim.Dependency#getOptions()
+   * @see #getDependency()
+   * @generated
+   */
+  EReference getDependency_Options();
+
+  /**
    * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kim.kim.Dependency#getAlternativeObservables <em>Alternative Observables</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -7102,50 +7033,6 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EAttribute getDependency_Optional();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Dependency#isDefault <em>Default</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Default</em>'.
-   * @see org.integratedmodelling.kim.kim.Dependency#isDefault()
-   * @see #getDependency()
-   * @generated
-   */
-  EAttribute getDependency_Default();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.Dependency#getDefaultLiteral <em>Default Literal</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Default Literal</em>'.
-   * @see org.integratedmodelling.kim.kim.Dependency#getDefaultLiteral()
-   * @see #getDependency()
-   * @generated
-   */
-  EReference getDependency_DefaultLiteral();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.Dependency#getDefaultConcept <em>Default Concept</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Default Concept</em>'.
-   * @see org.integratedmodelling.kim.kim.Dependency#getDefaultConcept()
-   * @see #getDependency()
-   * @generated
-   */
-  EReference getDependency_DefaultConcept();
-
-  /**
-   * Returns the meta object for the attribute list '{@link org.integratedmodelling.kim.kim.Dependency#getCauses <em>Causes</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute list '<em>Causes</em>'.
-   * @see org.integratedmodelling.kim.kim.Dependency#getCauses()
-   * @see #getDependency()
-   * @generated
-   */
-  EAttribute getDependency_Causes();
 
   /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Dependency#getName <em>Name</em>}'.
@@ -9359,6 +9246,38 @@ public interface KimPackage extends EPackage
   EReference getFunction_Parameters();
 
   /**
+   * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.Option <em>Option</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Option</em>'.
+   * @see org.integratedmodelling.kim.kim.Option
+   * @generated
+   */
+  EClass getOption();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Option#getKey <em>Key</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Key</em>'.
+   * @see org.integratedmodelling.kim.kim.Option#getKey()
+   * @see #getOption()
+   * @generated
+   */
+  EAttribute getOption_Key();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.Option#getValue <em>Value</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Value</em>'.
+   * @see org.integratedmodelling.kim.kim.Option#getValue()
+   * @see #getOption()
+   * @generated
+   */
+  EReference getOption_Value();
+
+  /**
    * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.REL_OPERATOR <em>REL OPERATOR</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -9801,16 +9720,6 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EAttribute getDate_Ms();
-
-  /**
-   * Returns the meta object for enum '{@link org.integratedmodelling.kim.kim.DataType <em>Data Type</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for enum '<em>Data Type</em>'.
-   * @see org.integratedmodelling.kim.kim.DataType
-   * @generated
-   */
-  EEnum getDataType();
 
   /**
    * Returns the meta object for enum '{@link org.integratedmodelling.kim.kim.UnitOp <em>Unit Op</em>}'.
@@ -11378,38 +11287,6 @@ public interface KimPackage extends EPackage
     EAttribute OBSERVABLE_SEMANTICS__OPTIONAL = eINSTANCE.getObservableSemantics_Optional();
 
     /**
-     * The meta object literal for the '<em><b>Default</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute OBSERVABLE_SEMANTICS__DEFAULT = eINSTANCE.getObservableSemantics_Default();
-
-    /**
-     * The meta object literal for the '<em><b>Default Literal</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference OBSERVABLE_SEMANTICS__DEFAULT_LITERAL = eINSTANCE.getObservableSemantics_DefaultLiteral();
-
-    /**
-     * The meta object literal for the '<em><b>Default Concept</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference OBSERVABLE_SEMANTICS__DEFAULT_CONCEPT = eINSTANCE.getObservableSemantics_DefaultConcept();
-
-    /**
-     * The meta object literal for the '<em><b>Causes</b></em>' attribute list feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute OBSERVABLE_SEMANTICS__CAUSES = eINSTANCE.getObservableSemantics_Causes();
-
-    /**
      * The meta object literal for the '<em><b>From</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -11582,6 +11459,14 @@ public interface KimPackage extends EPackage
     EReference DEPENDENCY__OBSERVABLE = eINSTANCE.getDependency_Observable();
 
     /**
+     * The meta object literal for the '<em><b>Options</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference DEPENDENCY__OPTIONS = eINSTANCE.getDependency_Options();
+
+    /**
      * The meta object literal for the '<em><b>Alternative Observables</b></em>' containment reference list feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -11596,38 +11481,6 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EAttribute DEPENDENCY__OPTIONAL = eINSTANCE.getDependency_Optional();
-
-    /**
-     * The meta object literal for the '<em><b>Default</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute DEPENDENCY__DEFAULT = eINSTANCE.getDependency_Default();
-
-    /**
-     * The meta object literal for the '<em><b>Default Literal</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference DEPENDENCY__DEFAULT_LITERAL = eINSTANCE.getDependency_DefaultLiteral();
-
-    /**
-     * The meta object literal for the '<em><b>Default Concept</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference DEPENDENCY__DEFAULT_CONCEPT = eINSTANCE.getDependency_DefaultConcept();
-
-    /**
-     * The meta object literal for the '<em><b>Causes</b></em>' attribute list feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute DEPENDENCY__CAUSES = eINSTANCE.getDependency_Causes();
 
     /**
      * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
@@ -13298,6 +13151,32 @@ public interface KimPackage extends EPackage
     EReference FUNCTION__PARAMETERS = eINSTANCE.getFunction_Parameters();
 
     /**
+     * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.OptionImpl <em>Option</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kim.kim.impl.OptionImpl
+     * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getOption()
+     * @generated
+     */
+    EClass OPTION = eINSTANCE.getOption();
+
+    /**
+     * The meta object literal for the '<em><b>Key</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute OPTION__KEY = eINSTANCE.getOption_Key();
+
+    /**
+     * The meta object literal for the '<em><b>Value</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference OPTION__VALUE = eINSTANCE.getOption_Value();
+
+    /**
      * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.REL_OPERATORImpl <em>REL OPERATOR</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -13638,16 +13517,6 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EAttribute DATE__MS = eINSTANCE.getDate_Ms();
-
-    /**
-     * The meta object literal for the '{@link org.integratedmodelling.kim.kim.DataType <em>Data Type</em>}' enum.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see org.integratedmodelling.kim.kim.DataType
-     * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getDataType()
-     * @generated
-     */
-    EEnum DATA_TYPE = eINSTANCE.getDataType();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kim.kim.UnitOp <em>Unit Op</em>}' enum.

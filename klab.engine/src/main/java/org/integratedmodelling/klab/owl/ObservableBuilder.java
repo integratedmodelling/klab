@@ -97,7 +97,7 @@ public class ObservableBuilder implements IObservable.Builder {
     Range range;
     boolean generic;
     Resolution resolution;
-//    boolean fluidUnits;
+    boolean fluidUnits;
     private Object defaultValue = null;
     private Set<ResolutionException> resolutionExceptions = EnumSet.noneOf(ResolutionException.class);
 
@@ -2306,9 +2306,9 @@ public class ObservableBuilder implements IObservable.Builder {
         ret.setDeferredTarget(this.deferredTarget);
         ret.setUrl(this.url);
 
-        if (Units.INSTANCE.needsUnits(ret) && this.unit == null && this.currency == null) {
-            ret.setFluidUnits(true);
-        }
+//        if (Units.INSTANCE.needsUnits(ret) && this.unit == null && this.currency == null) {
+//            ret.setFluidUnits(true);
+//        }
 
         if (unitStatement != null) {
             /* TODO CHECK */
@@ -2458,11 +2458,11 @@ public class ObservableBuilder implements IObservable.Builder {
         return this;
     }
 
-//    @Override
-//    public Builder fluidUnits(boolean b) {
-//        this.fluidUnits = b;
-//        return this;
-//    }
+    @Override
+    public Builder fluidUnits(boolean b) {
+        this.fluidUnits = b;
+        return this;
+    }
 
     @Override
     public Builder withAnnotation(IAnnotation annotation) {

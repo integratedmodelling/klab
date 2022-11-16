@@ -1,0 +1,10 @@
+/*
+ * Parameters accepted in a raster resource
+ */
+ annotation opencpu
+	"Run a configured R external computation through the OpenCPU API."
+	 label "Run R {algorithm}"
+ {
+ 	 enum algorithm
+ 	 	"The path to the algorithm to run. Each adapter may configure different values."
+ }

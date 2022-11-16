@@ -55,6 +55,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
     private Type type;
     private Object value;
     private boolean deferred = false;
+    private DataType cast = null;
 
     // to support costly translations from implementations
     private Object data;
@@ -363,6 +364,26 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
                 metadata.put(key, v);
             }
         }
+        
+        if (value.getCast() != null) {
+            switch (value.getCast()) {
+            case "int":
+                this.cast = DataType.INTEGER;
+                break;
+            case "number":
+                this.cast = DataType.NUMBER;
+                break;
+            case "concept":
+                this.cast = DataType.CONCEPT;
+                break;
+            case "boolean":
+                this.cast = DataType.BOOLEAN;
+                break;
+            case "text":
+                this.cast = DataType.TEXT;
+                break;
+            }
+        }
 
     }
 
@@ -573,6 +594,11 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
     @Override
     public KActorsValue getFalseCase() {
         return falseCase;
+    }
+    
+    @Override
+    public DataType getCast() {
+        return this.cast;
     }
 
     /**

@@ -50,7 +50,6 @@ import org.integratedmodelling.ml.context.WekaInstances.DiscretizerDescriptor;
 import org.integratedmodelling.ml.context.WekaOptions;
 
 import weka.classifiers.Classifier;
-import weka.classifiers.meta.Bagging;
 import weka.core.Attribute;
 import weka.core.Instance;
 
@@ -74,8 +73,8 @@ public abstract class AbstractWekaResolver<T extends Classifier> extends Abstrac
     private IKimExpression selector;
     private double selectFraction = Double.NaN;
     protected IObservable targetObservable;
-    
-    private Bagging bagging = null;
+
+    // private Bagging bagging = null;
 
     protected AbstractWekaResolver() {
     }
@@ -99,10 +98,10 @@ public abstract class AbstractWekaResolver<T extends Classifier> extends Abstrac
         this.selectFraction = parameters.get("sample", this.selector == null ? Double.NaN : 1.0);
     }
 
-    protected AbstractWekaResolver(Bagging cls, IParameters<String> parameters, IObservable observable,
+    protected AbstractWekaResolver(Classifier cls, IParameters<String> parameters, IObservable observable,
             boolean requiresDiscretization, boolean predictionIsProbabilistic, boolean admitsNodata) {
-        this.bagging = cls;
-        this.options = new WekaOptions(cls.getClassifier().getClass(), parameters);
+        // this.bagging = cls;
+        this.options = new WekaOptions(cls./* getClassifier(). */getClass(), parameters);
         this.targetObservable = observable;
         this.classifier = new WekaClassifier(cls, this.options, predictionIsProbabilistic);
         this.classDiscretizer = parameters.get("discretization", IServiceCall.class);

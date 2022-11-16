@@ -17,16 +17,14 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
-import org.eclipse.emf.ecore.util.EDataTypeEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.integratedmodelling.kim.kim.Annotation;
-import org.integratedmodelling.kim.kim.ConceptDeclaration;
 import org.integratedmodelling.kim.kim.Dependency;
 import org.integratedmodelling.kim.kim.KimPackage;
-import org.integratedmodelling.kim.kim.Literal;
 import org.integratedmodelling.kim.kim.ObservableSemantics;
+import org.integratedmodelling.kim.kim.Option;
 
 /**
  * <!-- begin-user-doc -->
@@ -39,12 +37,9 @@ import org.integratedmodelling.kim.kim.ObservableSemantics;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.DependencyImpl#getAnnotations <em>Annotations</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.DependencyImpl#getModelReference <em>Model Reference</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.DependencyImpl#getObservable <em>Observable</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.DependencyImpl#getOptions <em>Options</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.DependencyImpl#getAlternativeObservables <em>Alternative Observables</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.DependencyImpl#isOptional <em>Optional</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.DependencyImpl#isDefault <em>Default</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.DependencyImpl#getDefaultLiteral <em>Default Literal</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.DependencyImpl#getDefaultConcept <em>Default Concept</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.DependencyImpl#getCauses <em>Causes</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.DependencyImpl#getName <em>Name</em>}</li>
  * </ul>
  *
@@ -93,6 +88,16 @@ public class DependencyImpl extends MinimalEObjectImpl.Container implements Depe
   protected ObservableSemantics observable;
 
   /**
+   * The cached value of the '{@link #getOptions() <em>Options</em>}' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getOptions()
+   * @generated
+   * @ordered
+   */
+  protected EList<Option> options;
+
+  /**
    * The cached value of the '{@link #getAlternativeObservables() <em>Alternative Observables</em>}' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -121,56 +126,6 @@ public class DependencyImpl extends MinimalEObjectImpl.Container implements Depe
    * @ordered
    */
   protected boolean optional = OPTIONAL_EDEFAULT;
-
-  /**
-   * The default value of the '{@link #isDefault() <em>Default</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isDefault()
-   * @generated
-   * @ordered
-   */
-  protected static final boolean DEFAULT_EDEFAULT = false;
-
-  /**
-   * The cached value of the '{@link #isDefault() <em>Default</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isDefault()
-   * @generated
-   * @ordered
-   */
-  protected boolean default_ = DEFAULT_EDEFAULT;
-
-  /**
-   * The cached value of the '{@link #getDefaultLiteral() <em>Default Literal</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getDefaultLiteral()
-   * @generated
-   * @ordered
-   */
-  protected Literal defaultLiteral;
-
-  /**
-   * The cached value of the '{@link #getDefaultConcept() <em>Default Concept</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getDefaultConcept()
-   * @generated
-   * @ordered
-   */
-  protected ConceptDeclaration defaultConcept;
-
-  /**
-   * The cached value of the '{@link #getCauses() <em>Causes</em>}' attribute list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getCauses()
-   * @generated
-   * @ordered
-   */
-  protected EList<String> causes;
 
   /**
    * The default value of the '{@link #getName() <em>Name</em>}' attribute.
@@ -309,6 +264,21 @@ public class DependencyImpl extends MinimalEObjectImpl.Container implements Depe
    * @generated
    */
   @Override
+  public EList<Option> getOptions()
+  {
+    if (options == null)
+    {
+      options = new EObjectContainmentEList<Option>(Option.class, this, KimPackage.DEPENDENCY__OPTIONS);
+    }
+    return options;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EList<ObservableSemantics> getAlternativeObservables()
   {
     if (alternativeObservables == null)
@@ -341,146 +311,6 @@ public class DependencyImpl extends MinimalEObjectImpl.Container implements Depe
     optional = newOptional;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.DEPENDENCY__OPTIONAL, oldOptional, optional));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public boolean isDefault()
-  {
-    return default_;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setDefault(boolean newDefault)
-  {
-    boolean oldDefault = default_;
-    default_ = newDefault;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.DEPENDENCY__DEFAULT, oldDefault, default_));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public Literal getDefaultLiteral()
-  {
-    return defaultLiteral;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetDefaultLiteral(Literal newDefaultLiteral, NotificationChain msgs)
-  {
-    Literal oldDefaultLiteral = defaultLiteral;
-    defaultLiteral = newDefaultLiteral;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.DEPENDENCY__DEFAULT_LITERAL, oldDefaultLiteral, newDefaultLiteral);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setDefaultLiteral(Literal newDefaultLiteral)
-  {
-    if (newDefaultLiteral != defaultLiteral)
-    {
-      NotificationChain msgs = null;
-      if (defaultLiteral != null)
-        msgs = ((InternalEObject)defaultLiteral).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.DEPENDENCY__DEFAULT_LITERAL, null, msgs);
-      if (newDefaultLiteral != null)
-        msgs = ((InternalEObject)newDefaultLiteral).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.DEPENDENCY__DEFAULT_LITERAL, null, msgs);
-      msgs = basicSetDefaultLiteral(newDefaultLiteral, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.DEPENDENCY__DEFAULT_LITERAL, newDefaultLiteral, newDefaultLiteral));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public ConceptDeclaration getDefaultConcept()
-  {
-    return defaultConcept;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetDefaultConcept(ConceptDeclaration newDefaultConcept, NotificationChain msgs)
-  {
-    ConceptDeclaration oldDefaultConcept = defaultConcept;
-    defaultConcept = newDefaultConcept;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.DEPENDENCY__DEFAULT_CONCEPT, oldDefaultConcept, newDefaultConcept);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setDefaultConcept(ConceptDeclaration newDefaultConcept)
-  {
-    if (newDefaultConcept != defaultConcept)
-    {
-      NotificationChain msgs = null;
-      if (defaultConcept != null)
-        msgs = ((InternalEObject)defaultConcept).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.DEPENDENCY__DEFAULT_CONCEPT, null, msgs);
-      if (newDefaultConcept != null)
-        msgs = ((InternalEObject)newDefaultConcept).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.DEPENDENCY__DEFAULT_CONCEPT, null, msgs);
-      msgs = basicSetDefaultConcept(newDefaultConcept, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.DEPENDENCY__DEFAULT_CONCEPT, newDefaultConcept, newDefaultConcept));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EList<String> getCauses()
-  {
-    if (causes == null)
-    {
-      causes = new EDataTypeEList<String>(String.class, this, KimPackage.DEPENDENCY__CAUSES);
-    }
-    return causes;
   }
 
   /**
@@ -522,12 +352,10 @@ public class DependencyImpl extends MinimalEObjectImpl.Container implements Depe
         return ((InternalEList<?>)getAnnotations()).basicRemove(otherEnd, msgs);
       case KimPackage.DEPENDENCY__OBSERVABLE:
         return basicSetObservable(null, msgs);
+      case KimPackage.DEPENDENCY__OPTIONS:
+        return ((InternalEList<?>)getOptions()).basicRemove(otherEnd, msgs);
       case KimPackage.DEPENDENCY__ALTERNATIVE_OBSERVABLES:
         return ((InternalEList<?>)getAlternativeObservables()).basicRemove(otherEnd, msgs);
-      case KimPackage.DEPENDENCY__DEFAULT_LITERAL:
-        return basicSetDefaultLiteral(null, msgs);
-      case KimPackage.DEPENDENCY__DEFAULT_CONCEPT:
-        return basicSetDefaultConcept(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -548,18 +376,12 @@ public class DependencyImpl extends MinimalEObjectImpl.Container implements Depe
         return getModelReference();
       case KimPackage.DEPENDENCY__OBSERVABLE:
         return getObservable();
+      case KimPackage.DEPENDENCY__OPTIONS:
+        return getOptions();
       case KimPackage.DEPENDENCY__ALTERNATIVE_OBSERVABLES:
         return getAlternativeObservables();
       case KimPackage.DEPENDENCY__OPTIONAL:
         return isOptional();
-      case KimPackage.DEPENDENCY__DEFAULT:
-        return isDefault();
-      case KimPackage.DEPENDENCY__DEFAULT_LITERAL:
-        return getDefaultLiteral();
-      case KimPackage.DEPENDENCY__DEFAULT_CONCEPT:
-        return getDefaultConcept();
-      case KimPackage.DEPENDENCY__CAUSES:
-        return getCauses();
       case KimPackage.DEPENDENCY__NAME:
         return getName();
     }
@@ -587,25 +409,16 @@ public class DependencyImpl extends MinimalEObjectImpl.Container implements Depe
       case KimPackage.DEPENDENCY__OBSERVABLE:
         setObservable((ObservableSemantics)newValue);
         return;
+      case KimPackage.DEPENDENCY__OPTIONS:
+        getOptions().clear();
+        getOptions().addAll((Collection<? extends Option>)newValue);
+        return;
       case KimPackage.DEPENDENCY__ALTERNATIVE_OBSERVABLES:
         getAlternativeObservables().clear();
         getAlternativeObservables().addAll((Collection<? extends ObservableSemantics>)newValue);
         return;
       case KimPackage.DEPENDENCY__OPTIONAL:
         setOptional((Boolean)newValue);
-        return;
-      case KimPackage.DEPENDENCY__DEFAULT:
-        setDefault((Boolean)newValue);
-        return;
-      case KimPackage.DEPENDENCY__DEFAULT_LITERAL:
-        setDefaultLiteral((Literal)newValue);
-        return;
-      case KimPackage.DEPENDENCY__DEFAULT_CONCEPT:
-        setDefaultConcept((ConceptDeclaration)newValue);
-        return;
-      case KimPackage.DEPENDENCY__CAUSES:
-        getCauses().clear();
-        getCauses().addAll((Collection<? extends String>)newValue);
         return;
       case KimPackage.DEPENDENCY__NAME:
         setName((String)newValue);
@@ -633,23 +446,14 @@ public class DependencyImpl extends MinimalEObjectImpl.Container implements Depe
       case KimPackage.DEPENDENCY__OBSERVABLE:
         setObservable((ObservableSemantics)null);
         return;
+      case KimPackage.DEPENDENCY__OPTIONS:
+        getOptions().clear();
+        return;
       case KimPackage.DEPENDENCY__ALTERNATIVE_OBSERVABLES:
         getAlternativeObservables().clear();
         return;
       case KimPackage.DEPENDENCY__OPTIONAL:
         setOptional(OPTIONAL_EDEFAULT);
-        return;
-      case KimPackage.DEPENDENCY__DEFAULT:
-        setDefault(DEFAULT_EDEFAULT);
-        return;
-      case KimPackage.DEPENDENCY__DEFAULT_LITERAL:
-        setDefaultLiteral((Literal)null);
-        return;
-      case KimPackage.DEPENDENCY__DEFAULT_CONCEPT:
-        setDefaultConcept((ConceptDeclaration)null);
-        return;
-      case KimPackage.DEPENDENCY__CAUSES:
-        getCauses().clear();
         return;
       case KimPackage.DEPENDENCY__NAME:
         setName(NAME_EDEFAULT);
@@ -674,18 +478,12 @@ public class DependencyImpl extends MinimalEObjectImpl.Container implements Depe
         return MODEL_REFERENCE_EDEFAULT == null ? modelReference != null : !MODEL_REFERENCE_EDEFAULT.equals(modelReference);
       case KimPackage.DEPENDENCY__OBSERVABLE:
         return observable != null;
+      case KimPackage.DEPENDENCY__OPTIONS:
+        return options != null && !options.isEmpty();
       case KimPackage.DEPENDENCY__ALTERNATIVE_OBSERVABLES:
         return alternativeObservables != null && !alternativeObservables.isEmpty();
       case KimPackage.DEPENDENCY__OPTIONAL:
         return optional != OPTIONAL_EDEFAULT;
-      case KimPackage.DEPENDENCY__DEFAULT:
-        return default_ != DEFAULT_EDEFAULT;
-      case KimPackage.DEPENDENCY__DEFAULT_LITERAL:
-        return defaultLiteral != null;
-      case KimPackage.DEPENDENCY__DEFAULT_CONCEPT:
-        return defaultConcept != null;
-      case KimPackage.DEPENDENCY__CAUSES:
-        return causes != null && !causes.isEmpty();
       case KimPackage.DEPENDENCY__NAME:
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
     }
@@ -707,10 +505,6 @@ public class DependencyImpl extends MinimalEObjectImpl.Container implements Depe
     result.append(modelReference);
     result.append(", optional: ");
     result.append(optional);
-    result.append(", default: ");
-    result.append(default_);
-    result.append(", causes: ");
-    result.append(causes);
     result.append(", name: ");
     result.append(name);
     result.append(')');
