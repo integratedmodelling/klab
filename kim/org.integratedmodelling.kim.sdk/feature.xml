@@ -247,10 +247,6 @@ If your software can interact with users remotely through a computer network, yo
 You should also get your employer (if you work as a programmer) or school, if any, to sign a &quot;copyright disclaimer&quot; for the program, if necessary. For more information on this, and how to apply and follow the GNU AGPL, see &lt;http://www.gnu.org/licenses/&gt;.
    </license>
 
-   <url>
-      <update label="k.IM update site" url="http://www.integratedmodelling.org/updates/kim/0.11.0"/>
-   </url>
-
    <requires>
       <import plugin="org.integratedmodelling.klab.api"/>
    </requires>

@@ -17,10 +17,6 @@
       [Enter License Description here.]
    </license>
 
-   <url>
-      <update label="k.Modeler update site"/>
-   </url>
-
    <includes
          id="org.integratedmodelling.kim.sdk"
          version="0.0.0"/>
