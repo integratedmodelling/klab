@@ -7,6 +7,18 @@
 	</parent>
 	<artifactId>klab.activity</artifactId>
 	<description>ActivityPub core elements and endpoints for the k.LAB hub and node</description>
+	<build>
+	  	<plugins>
+	  		<plugin>
+	  			<groupId>com.google.cloud.tools</groupId>
+	  			<artifactId>jib-maven-plugin</artifactId>
+	  			<configuration>
+	  				<!-- we don't want jib to execute on this module -->
+	  				<skip>true</skip>
+	  			</configuration>
+	      	</plugin>
+    	</plugins>
+  	</build>
 	<dependencies>
 
 		<dependency>
