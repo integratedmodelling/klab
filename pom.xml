@@ -94,7 +94,7 @@
 
 	<properties>
 
-		<klab.version>0.11.0-SNAPSHOT</klab.version>
+		<klab.version>${project.version}</klab.version>
 
 		<project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>utf-8</project.reporting.outputEncoding>

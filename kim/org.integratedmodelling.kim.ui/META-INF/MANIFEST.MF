@@ -6,7 +6,7 @@ Bundle-Version: 0.11.0.qualifier
 Bundle-SymbolicName: org.integratedmodelling.kim.ui; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.integratedmodelling.kim,
- org.integratedmodelling.klab.api;bundle-version="0.11.0",
+ org.integratedmodelling.klab.api,
  org.integratedmodelling.kim.ide,
  org.eclipse.xtext.ui,
  org.eclipse.xtext.ui.shared,

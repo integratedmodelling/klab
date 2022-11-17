@@ -15,7 +15,7 @@ Require-Bundle: org.eclipse.xtext,
  org.eclipse.emf.common,
  org.eclipse.xtend.lib;bundle-version="2.14.0",
  org.antlr.runtime;bundle-version="[3.2.0,3.2.1)",
- org.integratedmodelling.klab.api;bundle-version="0.11.0"
+ org.integratedmodelling.klab.api
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: org.integratedmodelling.kactors,
  org.integratedmodelling.kactors.generator,
