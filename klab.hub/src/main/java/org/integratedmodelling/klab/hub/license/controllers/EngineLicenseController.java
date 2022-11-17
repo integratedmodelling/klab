@@ -64,11 +64,9 @@ public class EngineLicenseController extends LicenseController<EngineAuthenticat
 	
 	
 
-	@CrossOrigin("*")
 	@GetMapping(value= API.HUB.USER_BASE_ID, params = "certificate")
-	@PreAuthorize("@securityService.isUser(#username)")
-//	@PreAuthorize("authentication.getPrincipal() == #id")
-	public void generateCertFile(@PathVariable("username") String username, HttpServletResponse response) throws IOException {
+	@PreAuthorize("@securityService.isUser(#id)")
+	public void generateCertFile(@PathVariable("id") String id, HttpServletResponse response) throws IOException {
 	    
 		ProfileResource profile = userProfileService.getCurrentUserProfile();
 		byte[] certFileContent = licenseGenerator.generate(profile, null);

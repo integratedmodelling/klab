@@ -79,9 +79,7 @@ public class WebSecurityConfiguration extends KeycloakWebSecurityConfigurerAdapt
                 "http://localhost:8081",
                 "https://localhost:8081",
                 "http://localhost:8284",
-                "https://localhost:8284",
-                "http://127.0.0.1:8284",
-                "https://127.0.0.1:8284"));
+                "https://localhost:8284"));
         config.setAllowedHeaders(Collections.singletonList("*"));
         config.addExposedHeader("Content-disposition");
         config.addExposedHeader(HttpHeaders.LOCATION);
