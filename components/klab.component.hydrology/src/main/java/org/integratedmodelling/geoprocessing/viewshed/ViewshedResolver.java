@@ -9,6 +9,7 @@ import java.util.List;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.hortonmachine.gears.utils.features.FeatureUtilities;
 import org.hortonmachine.hmachine.modules.geomorphology.viewshed.OmsViewshed;
+import org.hortonmachine.hmachine.modules.geomorphology.viewshed.OmsViewshed.ViewpointProcessingListener;
 import org.integratedmodelling.geoprocessing.TaskMonitor;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
@@ -25,7 +26,6 @@ import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
-import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Point;
@@ -33,7 +33,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 public class ViewshedResolver extends AbstractContextualizer implements IResolver<IState>, IExpression {
 
-    Double height = 100.0;
+    Double height = 2.0;
 
     @Override
     public Type getType() {
@@ -57,6 +57,14 @@ public class ViewshedResolver extends AbstractContextualizer implements IResolve
         taskMonitor.setTaskName("Viewshed");
 
         OmsViewshed algorithm = new OmsViewshed();
+        
+        ViewpointProcessingListener listener = ( viewpoint3D, reusableViewshed ) -> {
+                /*
+                 * Here every viewshed raster per viewpoint is passed right after processing it.
+                 * 
+                 * Once exiting the method, the raster is cleansed and used for the following viewpoint. 
+                 */
+        };
 
         if (context.getArtifact("viewpoints") instanceof IObjectArtifact) {
             IObjectArtifact artifacts = (IObjectArtifact) context.getArtifact("viewpoints");
@@ -78,6 +86,8 @@ public class ViewshedResolver extends AbstractContextualizer implements IResolve
                     viewPoints.toArray(new Geometry[0]));
             algorithm.inViewPoints = viewPointsCollection;
             algorithm.pField = "userdata";
+            algorithm.pHeight = height; // this is used only if no pField is passed in 
+            algorithm.singleViewpointProcessListener = listener;
             algorithm.pm = taskMonitor;
         } else {
             throw new KlabValidationException("The viewshed algorithm needs at least one input view point.");
