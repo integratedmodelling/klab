@@ -3,7 +3,7 @@
    <description name="k.IM language update site">
       This update site provides the Eclipse components that enable parsing and editing the k.IM language, part of the k.LAB semantic modeling platform.
    </description>
-   <feature id="org.integratedmodelling.kim.sdk" version="0.11.0.qualifier">
+   <feature url="features/org.integratedmodelling.kim.sdk_0.11.0.jar" id="org.integratedmodelling.kim.sdk" version="0.11.0.qualifier">
       <category name="org.integratedmodelling.klab.kim"/>
    </feature>
    <category-def name="org.integratedmodelling.klab.kim" label="k.IM language artifacts"/>
