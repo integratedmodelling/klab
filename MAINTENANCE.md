@@ -1,6 +1,7 @@
 # UPDATING THE VERSION NUMBER
 
 - mvn org.eclipse.tycho:tycho-versions-plugin:set-version -DnewVersion=x.y.z-SNAPSHOT
+- change version manually in `klab.tools`, for some reason is not modified by the command
 - (optional) change the versions in those pom.xml not listed as current modules (those won't have a modification tag)
 - change the CURRENT string in Version.java
 - change the k.Modeler splash image:
