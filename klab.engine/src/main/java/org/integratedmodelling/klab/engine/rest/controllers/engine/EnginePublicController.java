@@ -171,7 +171,7 @@ public class EnginePublicController implements API.PUBLIC {
 			@PathVariable String observation, @RequestHeader(name = "Accept") String format,
 			@RequestParam(required = false) String viewport, @RequestParam(required = false) String locator,
 			HttpServletResponse response) throws IOException {
-
+	    try {
 		Session s = Authentication.INSTANCE.getIdentity(session, Session.class);
 		if (s == null) {
 			throw new KlabIllegalStateException("observe in context: invalid session ID");
@@ -250,7 +250,9 @@ public class EnginePublicController implements API.PUBLIC {
 		case REPORT:
 			break;
 		case STRUCTURE:
+		    System.out.println(">>>>> Before create artifact\n"+obs);
 			ObservationReference ret = Observations.INSTANCE.createArtifactDescriptor((IObservation) obs, loc, 0);
+			System.out.println(">>>>> After create artifact\n"+ret);
 			Structure structure = ((IRuntimeScope) obs.getScope()).getStructure();
 			for (IArtifact child : structure.getArtifactChildren(obs)) {
 				if (child instanceof IObservation) {
@@ -269,6 +271,9 @@ public class EnginePublicController implements API.PUBLIC {
 		if (!done) {
 			throw new KlabException("export request invalid or contents not available");
 		}
+	    } catch (Throwable t) {
+	        System.out.println(">>>>>> ERROR -> " + t);
+	    }
 	}
 
 	private void outputFeatures(IObservation obs, HttpServletResponse response, Export target, ILocator loc) {
