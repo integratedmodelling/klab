@@ -1087,7 +1087,7 @@ public enum Resources implements IResourceService {
             }
             adapter.getEncoder().getEncodedData(resource, kurn.getParameters(), resource.getGeometry(), builder,
                     Expression.emptyContext(resource.getGeometry(), monitor));
-            
+
         } else if (kurn.isUniversal() && getUrnAdapter(kurn.getCatalog()) != null) {
 
             IUrnAdapter adapter = getUrnAdapter(kurn.getCatalog());
@@ -1105,7 +1105,8 @@ public enum Resources implements IResourceService {
             }
 
         } else {
-            throw new KlabUnimplementedException("getResourceData(): this call can only be used to access locally supported resources");
+            throw new KlabUnimplementedException(
+                    "getResourceData(): this call can only be used to access locally supported resources");
         }
         return builder.build();
     }
@@ -1155,13 +1156,13 @@ public enum Resources implements IResourceService {
         } else {
             INodeIdentity node = Network.INSTANCE.getNodeForResource(kurn);
             if (node != null) {
-                
+
                 ResourceDataRequest request = new ResourceDataRequest();
                 request.setUrn(urn.toString());
                 request.setGeometry(encodeScale(geometry, resource));
                 request.setArtifactName(resultId);
                 request.setArtifactType(requestType);
-                
+
                 builder = new DecodingDataBuilder(node.getClient().post(API.NODE.RESOURCE.GET_DATA, request, Map.class), request,
                         Expression.emptyContext(geometry, monitor));
             }
@@ -2334,5 +2335,11 @@ public enum Resources implements IResourceService {
 
     public synchronized void setProperty(String property, String string) {
         this.properties.setProperty(property, string);
+    }
+
+    public void unregisterProjectResources(IProject project) {
+        for (String urn : project.getLocalResourceUrns()) {
+            localResourceCatalog.remove(urn);
+        }
     }
 }

@@ -1969,7 +1969,9 @@ public enum Kim {
 	}
 
 	public void unregisterProject(IKimProject project) {
-		this.projectFiles.remove(project.getRoot());
+	    if (this.projectFiles != null) {
+	        this.projectFiles.remove(project.getRoot());
+	    }
 		this.projectWorkspaces.remove(project.getName());
 	}
 

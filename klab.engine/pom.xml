@@ -85,6 +85,13 @@
 		</pluginManagement>
 	</build>
 	<dependencies>
+	
+		<!-- testing a possible GraphQL interface for the runtime system 
+		<dependency>
+			<groupId>io.leangen.graphql</groupId>
+			<artifactId>spqr</artifactId>
+			<version>0.11.2</version>
+		</dependency>-->
 
 		<dependency>
 			<groupId>org.apache.commons</groupId>

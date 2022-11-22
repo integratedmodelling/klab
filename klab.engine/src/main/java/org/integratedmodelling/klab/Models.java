@@ -26,6 +26,7 @@ import org.integratedmodelling.kim.model.Kim.Notifier;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
@@ -137,12 +138,8 @@ public enum Models implements IModelService {
 		return ret;
 	}
 
-	// @Override
 	public void releaseNamespace(String namespaceId, IMonitor monitor) throws KlabException {
-		/* int cmodel = */kbox.remove(namespaceId, monitor);
-		// if (cmodel > 0) {
-		// recheckModelNS.put(namespace.getName(), cmodel);
-		// }
+		kbox.remove(namespaceId, monitor);
 	}
 
 	// @Override
@@ -307,5 +304,11 @@ public enum Models implements IModelService {
 		}
 		return inner == null ? null : new RankedModel(inner).withPriority(priority);
 	}
+
+    public void releaseProject(IProject project) {
+        for (INamespace namespace : project.getNamespaces()) {
+            releaseNamespace(namespace.getId(), Klab.INSTANCE.getRootMonitor());
+        }
+    }
 
 }

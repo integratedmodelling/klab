@@ -329,7 +329,12 @@ public class KimLoader implements IKimLoader {
 
 	@Override
 	public IKimNamespace add(Object namespaceResource) {
-		
+	    
+	    if (namespaceResource instanceof KimProject) {
+	        loadProjectFiles(Collections.singletonList(((KimProject)namespaceResource).getRoot()));
+	        return null;
+	    }
+	    
 		File file = getFile(namespaceResource);
 		
 		if (file.toString().endsWith(".kactor")) {

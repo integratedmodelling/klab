@@ -42,6 +42,7 @@ import org.integratedmodelling.klab.Documentation;
 import org.integratedmodelling.klab.Indexing;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.Models;
 import org.integratedmodelling.klab.Network;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
@@ -1793,7 +1794,8 @@ public class Session extends GroovyObjectSupport
                             new ProjectModificationNotification(ProjectModificationNotification.Type.ADDITION,
                                     project.getRoot()))
                     .inResponseTo(message));
-            // Resources.INSTANCE.getLoader().add(project.getStatement());
+            Resources.INSTANCE.getLoader().add(project.getStatement());
+            
             break;
 
         case CreateScenario:
@@ -1817,6 +1819,7 @@ public class Session extends GroovyObjectSupport
 
             IKimNamespace ns = Kim.INSTANCE.getNamespace(request.getAssetId());
             if (ns != null) {
+                Models.INSTANCE.releaseNamespace(ns.getName(), monitor);
                 Resources.INSTANCE.getLoader().delete(ns.getFile());
                 FileUtils.deleteQuietly(ns.getFile());
                 monitor.send(Message
