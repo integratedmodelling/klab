@@ -32,11 +32,12 @@ public class MediatingState extends Observation implements IState, DelegatingArt
         if (mediator == null) {
             return original;
         }
-        while(original instanceof MediatingState) {
-            original = (IState) ((MediatingState) original).getDelegate();
+        IState toMediate = original;
+        while(toMediate instanceof MediatingState) {
+            toMediate = (IState) ((MediatingState) toMediate).getDelegate();
         }
-        IValueMediator originalMediator = original.getObservable().getMediator();
-        return originalMediator.equals(mediator) ? original : new MediatingState(original, mediator);
+        IValueMediator originalMediator = toMediate.getObservable().getMediator();
+        return originalMediator.equals(mediator) ? toMediate : new MediatingState(toMediate, mediator);
     }
 
     private MediatingState(IState state, IValueMediator to) {

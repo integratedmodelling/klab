@@ -94,20 +94,21 @@ export number viewshed
     
     class org.integratedmodelling.geoprocessing.viewshed.ViewshedResolver
 }
-
-export number rastermissingvaluesfiller 
+ 
+export number fillvalues
     "Fill the missing values of a raster by interpolation of nearby valid cells."
     label 'RasterMissingValuesFiller'
 {
     import number raster
         "The raster containing novalue holes that need tobe filled."
          
-    optional parameter number validcellsbuffer
+    optional number validcellsbuffer
         "The maximum buffer in cells, within which valid cells are used to contribute to the interpolation of the missing value."
         default 10.0
     
-    optional parameter string interpolationmode
+    optional enum interpolationmode
         "The interpolation mode to use. Valid options are: IDW, TPS, AVERAGING, CATEGORIES"
+        default IDW
     
     geometry S2
     

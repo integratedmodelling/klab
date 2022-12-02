@@ -85,7 +85,7 @@ public enum Units implements IUnitService {
          */
         Unit getChosenUnit();
     }
-    
+
     public IUnit METERS = getUnit("m");
     public IUnit SQUARE_METERS = getUnit("m^2");
     public IUnit SQUARE_KILOMETERS = getUnit("km^2");
@@ -519,30 +519,26 @@ public enum Units implements IUnitService {
             switch(dim) {
             case AREAL:
                 if (spatial >= 2) {
-                    unit = new Unit(
-                            ((Unit) unit).getUnit().multiply(((Unit) getArealExtentUnit(unit)).getUnit()));
+                    unit = new Unit(((Unit) unit).getUnit().multiply(((Unit) getArealExtentUnit(unit)).getUnit()));
                 }
                 break;
             case CONCEPTUAL:
                 break;
             case LINEAL:
                 if (spatial >= 1) {
-                    unit = new Unit(
-                            ((Unit) unit).getUnit().multiply(((Unit) getLinealExtentUnit(unit)).getUnit()));
+                    unit = new Unit(((Unit) unit).getUnit().multiply(((Unit) getLinealExtentUnit(unit)).getUnit()));
                 }
                 break;
             case PUNTAL:
                 break;
             case TEMPORAL:
                 if (temporal >= 1) {
-                    unit = new Unit(
-                            ((Unit) unit).getUnit().multiply(((Unit) getTimeExtentUnit(unit)).getUnit()));
+                    unit = new Unit(((Unit) unit).getUnit().multiply(((Unit) getTimeExtentUnit(unit)).getUnit()));
                 }
                 break;
             case VOLUMETRIC:
                 if (spatial >= 3) {
-                    unit = new Unit(
-                            ((Unit) unit).getUnit().multiply(((Unit) getVolumeExtentUnit(unit)).getUnit()));
+                    unit = new Unit(((Unit) unit).getUnit().multiply(((Unit) getVolumeExtentUnit(unit)).getUnit()));
                 }
                 break;
             default:
@@ -650,8 +646,7 @@ public enum Units implements IUnitService {
     @Override
     public Unit getDefaultUnitFor(IObservable observable) {
 
-        if (observable.is(Type.MONEY) || observable.is(Type.MONETARY_VALUE)
-                || observable.is(Type.NUMEROSITY)) {
+        if (observable.is(Type.MONEY) || observable.is(Type.MONETARY_VALUE) || observable.is(Type.NUMEROSITY)) {
             return Unit.unitless();
         }
 
@@ -675,15 +670,13 @@ public enum Units implements IUnitService {
 
         Unit ret = null;
 
-        boolean assignUnits = observable.is(Type.EXTENSIVE_PROPERTY)
-                || observable.is(Type.INTENSIVE_PROPERTY);
+        boolean assignUnits = observable.is(Type.EXTENSIVE_PROPERTY) || observable.is(Type.INTENSIVE_PROPERTY);
 
         if (assignUnits) {
             /*
              * OK only if not transformed
              */
-            Boolean rescaled = observable.getType().getMetadata().get(IMetadata.IM_IS_RESCALED,
-                    Boolean.class);
+            Boolean rescaled = observable.getType().getMetadata().get(IMetadata.IM_IS_RESCALED, Boolean.class);
             if (rescaled == null) {
                 for (IConcept trait : Traits.INSTANCE.getTraits(observable.getType())) {
                     if (trait.is(Type.RESCALING)) {
@@ -701,8 +694,7 @@ public enum Units implements IUnitService {
         }
 
         if (/* still */ assignUnits) {
-            Object unit = Concepts.INSTANCE.getMetadata(
-                    Observables.INSTANCE.getBaseObservable(observable.getType()),
+            Object unit = Concepts.INSTANCE.getMetadata(Observables.INSTANCE.getBaseObservable(observable.getType()),
                     NS.SI_UNIT_PROPERTY);
             ret = unit == null ? null : getUnit(unit.toString());
 
@@ -728,8 +720,7 @@ public enum Units implements IUnitService {
                 }
             }
         }
-        Object unit = Concepts.INSTANCE.getMetadata(Observables.INSTANCE.getBaseObservable(concept),
-                NS.SI_UNIT_PROPERTY);
+        Object unit = Concepts.INSTANCE.getMetadata(Observables.INSTANCE.getBaseObservable(concept), NS.SI_UNIT_PROPERTY);
         return unit == null ? null : getUnit(unit.toString());
     }
 
@@ -755,8 +746,7 @@ public enum Units implements IUnitService {
         case 3:
             return ExtentDimension.VOLUMETRIC;
         }
-        throw new IllegalArgumentException(
-                "cannot attribute dimensional extent to spatial representation " + space);
+        throw new IllegalArgumentException("cannot attribute dimensional extent to spatial representation " + space);
     }
 
     /**
@@ -789,8 +779,7 @@ public enum Units implements IUnitService {
                     unit = getDefaultUnitFor(observable);
                 }
                 if (needsUnitScaling(observable)) {
-                    unit = removeExtents(unit, getExtentDimensions(locator)).contextualize(observable,
-                            locator);
+                    unit = removeExtents(unit, getExtentDimensions(locator)).contextualize(observable, locator);
                     aggregation = Aggregation.SUM;
                 }
             }
@@ -819,12 +808,10 @@ public enum Units implements IUnitService {
         }
 
         boolean checkMetadata = false;
-        if (observable.is(Type.MONEY) || observable.is(Type.MONETARY_VALUE)
-                || observable.is(Type.EXTENSIVE_PROPERTY)
+        if (observable.is(Type.MONEY) || observable.is(Type.MONETARY_VALUE) || observable.is(Type.EXTENSIVE_PROPERTY)
                 || observable.is(Type.INTENSIVE_PROPERTY) || observable.is(Type.NUMEROSITY)) {
             boolean assignUnits = true;
-            Boolean rescaled = observable.getType().getMetadata().get(IMetadata.IM_IS_RESCALED,
-                    Boolean.class);
+            Boolean rescaled = observable.getType().getMetadata().get(IMetadata.IM_IS_RESCALED, Boolean.class);
             if (rescaled == null) {
                 // move on with further checks later
                 checkMetadata = true;
@@ -857,8 +844,7 @@ public enum Units implements IUnitService {
              * qualities with operators.
              */
             if (checkMetadata && !observable.is(Type.NUMEROSITY) && !observable.is(Type.INTENSIVE_PROPERTY)) {
-                Boolean rescalesInherent = observable.getType().getMetadata()
-                        .get(IMetadata.IM_RESCALES_INHERENT, Boolean.class);
+                Boolean rescalesInherent = observable.getType().getMetadata().get(IMetadata.IM_RESCALES_INHERENT, Boolean.class);
                 if (rescalesInherent == null) {
                     if (Observables.INSTANCE.getDirectInherentType(observable.getType()) != null
                             || Observables.INSTANCE.getDescribedType(observable.getType()) != null) {
@@ -882,10 +868,8 @@ public enum Units implements IUnitService {
             return false;
         }
 
-        boolean aggregates = observable.getType().is(Type.EXTENSIVE_PROPERTY)
-                || observable.getType().is(Type.NUMEROSITY)
-                || observable.getType().is(Type.MONEY)
-                || observable.getType().is(Type.MONETARY_VALUE);
+        boolean aggregates = observable.getType().is(Type.EXTENSIVE_PROPERTY) || observable.getType().is(Type.NUMEROSITY)
+                || observable.getType().is(Type.MONEY) || observable.getType().is(Type.MONETARY_VALUE);
 
         return aggregates && (Observables.INSTANCE.getDirectInherentType(observable.getType()) == null);
     }
@@ -922,9 +906,13 @@ public enum Units implements IUnitService {
          */
         Set<ExtentDimension> aggregatable = new HashSet<>();
         for (IGeometry.Dimension dimension : geometry.getDimensions()) {
-            if (dimension.isDistributed()) {
+            /*
+             * ACHTUNG - this prevents a temporal period from mediating from a grid. Must promote
+             * the time or change the logics.
+             */
+//            if (dimension.isDistributed()) {
                 aggregatable.add(dimension.getExtentDimension());
-            }
+//            }
         }
 
         Set<ExtentDimension> implied = new HashSet<>(aggregatable);
@@ -1005,8 +993,7 @@ public enum Units implements IUnitService {
                 List<Unit> ret = new ArrayList<>();
                 // add all-intensive if possible and needed
                 if (chosen.getAggregatedDimensions().isEmpty() && !potentialUnits.isEmpty()) {
-                    for (ExtentDimension dim : potentialUnits.iterator().next().getAggregatedDimensions()
-                            .keySet()) {
+                    for (ExtentDimension dim : potentialUnits.iterator().next().getAggregatedDimensions().keySet()) {
                         chosen.getAggregatedDimensions().put(dim, ExtentDistribution.INTENSIVE);
                     }
                 }
@@ -1045,9 +1032,8 @@ public enum Units implements IUnitService {
                  */
                 javax.measure.Unit<?> length = findUnitFor(((Unit) unit).getUnit(), UnitDimension.LENGTH);
                 if (length == null) {
-                    throw new KlabIllegalArgumentException(
-                            "cannot find length dimension in unit " + unit + " being scanned for "
-                                    + dimension + " dimensionality");
+                    throw new KlabIllegalArgumentException("cannot find length dimension in unit " + unit + " being scanned for "
+                            + dimension + " dimensionality");
                 }
                 return new Unit(length.pow(1).pow(dimension.dimensionality));
             }
@@ -1166,8 +1152,8 @@ public enum Units implements IUnitService {
 
         if (!needsUnitScaling(observable)) {
             if (!target.isCompatible(observable.getUnit())) {
-                throw new KlabIllegalStateException("Cannot mediate " + observable.getUnit() + " to " + target
-                        + " in an non-extensive observation");
+                throw new KlabIllegalStateException(
+                        "Cannot mediate " + observable.getUnit() + " to " + target + " in an non-extensive observation");
             }
         }
 
@@ -1192,8 +1178,7 @@ public enum Units implements IUnitService {
         if (sourceModel == null || targetModel == null) {
             // sorry
             throw new KlabIllegalStateException(
-                    "Cannot mediate unit " + observable.getUnit() + " to " + target
-                            + " in the chosen scale");
+                    "Cannot mediate unit " + observable.getUnit() + " to " + target + " in the chosen scale");
         }
 
         /*
@@ -1209,8 +1194,7 @@ public enum Units implements IUnitService {
              * faster to store a precomputed converter in repeated calls.
              */
             Mediation mediation = new Mediation();
-            mediation.converter = ((Unit) source).getUnit()
-                    .getConverterTo((javax.measure.Unit) ((Unit) target).getUnit());
+            mediation.converter = ((Unit) source).getUnit().getConverterTo((javax.measure.Unit) ((Unit) target).getUnit());
             mediation.description = "CONVERT the current value from " + source + " to " + target;
             ret.setMediation(source, Collections.singletonList(mediation));
             return ret;
@@ -1273,13 +1257,8 @@ public enum Units implements IUnitService {
                         baseUnit = (Unit) addExtents(baseUnit, Collections.singleton(dim), dimensionalUnit);
                     }
 
-                    mediation.description = mediation.operation + " the current value by "
-                            + mediation.extentSize.getDescription()
-                            + (mediation.factor == 1
-                                    ? ""
-                                    : " multiplied by "
-                                            + mediation.factor)
-                            + " to obtain " + destination;
+                    mediation.description = mediation.operation + " the current value by " + mediation.extentSize.getDescription()
+                            + (mediation.factor == 1 ? "" : " multiplied by " + mediation.factor) + " to obtain " + destination;
 
                     ret.add(mediation);
                 }
@@ -1333,7 +1312,7 @@ public enum Units implements IUnitService {
             return Currency.create(unit);
         } else if (unit.trim().contains(" ")) {
             return Range.create(unit);
-        } 
+        }
         return Unit.create(unit);
     }
 

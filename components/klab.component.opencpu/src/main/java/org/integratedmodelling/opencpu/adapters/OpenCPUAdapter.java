@@ -5,7 +5,6 @@ import java.util.Collections;
 
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.Dataflows;
-import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResourceCalculator;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
@@ -13,7 +12,6 @@ import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
 import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
-import org.integratedmodelling.klab.api.extensions.ResourceAdapter;
 import org.integratedmodelling.klab.kim.Prototype;
 
 /**
@@ -39,9 +37,9 @@ import org.integratedmodelling.klab.kim.Prototype;
  * </ul>
  * 
  * @author Ferd
- *
+ * @deprecated should use the klab: version but offer local customization through resource content
  */
-@ResourceAdapter(version = Version.CURRENT, canCreateEmpty = true, handlesFiles = false, type = OpenCPUAdapter.ID)
+//@ResourceAdapter(version = Version.CURRENT, canCreateEmpty = true, handlesFiles = false, type = OpenCPUAdapter.ID)
 public class OpenCPUAdapter implements IResourceAdapter {
 
     public static final String ID = "opencpu";

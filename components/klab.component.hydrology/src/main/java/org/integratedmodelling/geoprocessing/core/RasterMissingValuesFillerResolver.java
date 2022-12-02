@@ -6,7 +6,6 @@ import java.awt.image.DataBuffer;
 
 import org.hortonmachine.gears.libs.modules.Variables;
 import org.hortonmachine.gears.modules.r.rasternull.OmsRasterMissingValuesFiller;
-import org.hortonmachine.hmachine.modules.geomorphology.geomorphon.OmsGeomorphon;
 import org.integratedmodelling.geoprocessing.TaskMonitor;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
