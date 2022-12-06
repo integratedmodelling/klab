@@ -1345,7 +1345,9 @@ public enum Resources implements IResourceService {
                     }
                     descriptor.setTotalTimeMs(descriptor.getTotalTimeMs() + elapsed);
                 }
+                
                 return ret;
+
             } else {
                 error = new KlabResourceAccessException("cannot find a node to resolve URN " + urn);
                 descriptor.setnErrors(descriptor.getnErrors() + 1);

@@ -36,6 +36,7 @@ import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.api.runtime.monitoring.IActivity;
 import org.integratedmodelling.klab.api.runtime.monitoring.IInspector;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
@@ -159,6 +160,12 @@ public class TermConsole implements IConsole {
         public int getWaitTime() {
             // TODO Auto-generated method stub
             return this.waitTime;
+        }
+
+        @Override
+        public void addActivity(IActivity activity) {
+            // TODO Auto-generated method stub
+            
         }
 	}
 

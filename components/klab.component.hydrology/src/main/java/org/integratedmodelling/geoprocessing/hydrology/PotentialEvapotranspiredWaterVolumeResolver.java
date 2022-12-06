@@ -86,7 +86,7 @@ public class PotentialEvapotranspiredWaterVolumeResolver extends AbstractContext
         }
 
         // REMOVE
-//        GeotoolsUtils.INSTANCE.dumpToRaster(context, "PETRAW", pet.outputPet);
+        GeotoolsUtils.INSTANCE.dumpToRaster(context, "PETRAW", pet.outputPet);
 
         if (!context.getMonitor().isInterrupted()) {
             GeotoolsUtils.INSTANCE.coverageToState(pet.outputPet, petState, context.getScale(),

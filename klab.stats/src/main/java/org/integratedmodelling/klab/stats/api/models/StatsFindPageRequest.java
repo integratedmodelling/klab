@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.stats.api.models;
 
+@Deprecated
 public class StatsFindPageRequest<M> extends StatsBaseRequest<M>{
 
 	public StatsFindPageRequest() {

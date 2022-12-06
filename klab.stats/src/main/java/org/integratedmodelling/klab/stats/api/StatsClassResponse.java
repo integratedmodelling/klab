@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.stats.api;
 
 import java.util.HashMap;
 
+@Deprecated
 public class StatsClassResponse {
 	
 	HashMap<String, Integer> classCounts;

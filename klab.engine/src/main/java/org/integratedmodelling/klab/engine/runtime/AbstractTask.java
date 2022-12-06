@@ -14,6 +14,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.ITask;
+import org.integratedmodelling.klab.api.runtime.monitoring.IActivity;
 import org.integratedmodelling.klab.api.runtime.rest.ITaskReference.Status;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
@@ -80,6 +81,8 @@ public abstract class AbstractTask<T extends IArtifact> implements ITaskTree<T> 
 		this.executor = parent.executor;
 		this.observationListeners = parent.observationListeners;
 		this.errorListeners = parent.errorListeners;
+        this.activityBuilder = org.integratedmodelling.klab.rest.Activity.builder();
+
 	}
 
 	Activity activity;
@@ -89,6 +92,7 @@ public abstract class AbstractTask<T extends IArtifact> implements ITaskTree<T> 
 	protected boolean autostart = true;
 	protected boolean started = false;
 	protected boolean silent = false;
+	protected IActivity.Builder activityBuilder;
 
 	Session session;
 	String token = "t" + NameGenerator.shortUUID();

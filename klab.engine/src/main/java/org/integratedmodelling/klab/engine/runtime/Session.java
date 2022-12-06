@@ -71,8 +71,8 @@ import org.integratedmodelling.klab.api.knowledge.ICodelist;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IProject;
-import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IAcknowledgement;
+import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.monitoring.MessageHandler;
@@ -84,6 +84,7 @@ import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.ITicket;
+import org.integratedmodelling.klab.api.runtime.monitoring.IActivity;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.api.services.IIndexingService;
@@ -369,6 +370,11 @@ public class Session extends GroovyObjectSupport
         public int getWaitTime() {
             // TODO Auto-generated method stub
             return 0;
+        }
+
+        @Override
+        public void addActivity(IActivity activity) {
+           Klab.INSTANCE.addActivity(getIdentity(), activity);
         }
 
     }
@@ -800,8 +806,9 @@ public class Session extends GroovyObjectSupport
             if (resource != null) {
                 monitor.send(Message
                         .create(token, IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceCreated,
-                                ((Resource) resource).getReference())
-                        .inResponseTo(message));
+                                ((Resource) resource).getReference())/*
+                                                                      * .inResponseTo(message)
+                                                                      */);
             }
 
         } else if (message.getType() == IMessage.Type.CreateCodelist) {
@@ -818,8 +825,9 @@ public class Session extends GroovyObjectSupport
             if (codelist != null) {
                 monitor.send(Message
                         .create(token, IMessage.MessageClass.ResourceLifecycle, IMessage.Type.CodelistCreated,
-                                ((Codelist) codelist).getReference())
-                        .inResponseTo(message));
+                                ((Codelist) codelist).getReference())/*
+                                                                      * .inResponseTo(message)
+                                                                      */);
             }
 
         } else if (message.getType() == IMessage.Type.GetCodelist) {
@@ -836,8 +844,9 @@ public class Session extends GroovyObjectSupport
             if (codelist != null) {
                 monitor.send(Message
                         .create(token, IMessage.MessageClass.ResourceLifecycle, IMessage.Type.CodelistCreated,
-                                ((Codelist) codelist).getReference())
-                        .inResponseTo(message));
+                                ((Codelist) codelist).getReference())/*
+                                                                      * .inResponseTo(message)
+                                                                      */);
             }
 
         } else if (message.getType() == IMessage.Type.UpdateCodelist) {
@@ -887,12 +896,14 @@ public class Session extends GroovyObjectSupport
                         monitor.error("resource target is an unknown project: canceling operation");
                         return;
                     }
-                    monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceDeleted,
-                            ((Resource) resource).getReference());
+                    monitor.send(Message.create(token, IMessage.MessageClass.ResourceLifecycle,
+                            IMessage.Type.ResourceDeleted,
+                            ((Resource) resource).getReference())/* .inResponseTo(message) */);
                     resource = Resources.INSTANCE.getLocalResourceCatalog().move(resource,
                             destinationProject);
-                    monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceImported,
-                            ((Resource) resource).getReference());
+                    monitor.send(Message.create(token, IMessage.MessageClass.ResourceLifecycle,
+                            IMessage.Type.ResourceImported,
+                            ((Resource) resource).getReference())/* .inResponseTo(message) */);
                 } else if (request.getOperation() == CRUDOperation.COPY) {
 
                     IProject destinationProject = Resources.INSTANCE
@@ -904,19 +915,22 @@ public class Session extends GroovyObjectSupport
 
                     resource = Resources.INSTANCE.getLocalResourceCatalog().copy(resource,
                             destinationProject);
-                    monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceImported,
-                            ((Resource) resource).getReference());
+                    monitor.send(Message.create(token, IMessage.MessageClass.ResourceLifecycle,
+                            IMessage.Type.ResourceImported,
+                            ((Resource) resource).getReference())/* .inResponseTo(message) */);
                 } else if (request.getOperation() == CRUDOperation.DELETE) {
 
                     resource = Resources.INSTANCE.getLocalResourceCatalog().remove(urn);
-                    monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceDeleted,
-                            ((Resource) resource).getReference());
+                    monitor.send(Message.create(token, IMessage.MessageClass.ResourceLifecycle,
+                            IMessage.Type.ResourceDeleted,
+                            ((Resource) resource).getReference())/* .inResponseTo(message) */);
 
                 } else if (request.getOperation() == CRUDOperation.UPDATE) {
 
                     resource = Resources.INSTANCE.updateResource(urn, request);
-                    monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceUpdated,
-                            ((Resource) resource).getReference());
+                    monitor.send(Message.create(token, IMessage.MessageClass.ResourceLifecycle,
+                            IMessage.Type.ResourceUpdated,
+                            ((Resource) resource).getReference()).inResponseTo(message));
 
                 }
             }
@@ -1795,7 +1809,7 @@ public class Session extends GroovyObjectSupport
                                     project.getRoot()))
                     .inResponseTo(message));
             Resources.INSTANCE.getLoader().add(project.getStatement());
-            
+
             break;
 
         case CreateScenario:

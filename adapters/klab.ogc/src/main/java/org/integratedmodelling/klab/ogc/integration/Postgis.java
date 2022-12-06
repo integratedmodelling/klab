@@ -57,17 +57,18 @@ import org.postgresql.util.PGobject;
 public class Postgis {
 
     private static String DEFAULT_POSTGRES_DATABASE = "klab";
-    private boolean useCatalogNames = false;
     private String database = DEFAULT_POSTGRES_DATABASE;
     private String pgurl;
     private boolean active;
 
-    private Postgis(Urn urn) {
+    private Postgis(Urn urn, boolean useCatalogNames) {
+        this(urn != null && useCatalogNames ? urn.getCatalog().replaceAll("\\.", "_") : "klab");
+    }
 
-        if (urn != null && useCatalogNames) {
-            this.database = urn.getCatalog().replaceAll("\\.", "_");
-        }
-
+    protected Postgis(String database) {
+    
+        this.database = database;
+        
         this.pgurl = "jdbc:postgresql://" + Configuration.INSTANCE.getServiceProperty("postgres", "host");
         this.pgurl += ":" + Configuration.INSTANCE.getServiceProperty("postgres", "port");
         this.pgurl += "/" + this.database;
@@ -165,9 +166,20 @@ public class Postgis {
      * @param urn
      */
     public static Postgis create(Urn urn) {
-        return new Postgis(urn);
+        return new Postgis(urn, false);
     }
 
+    /**
+     * Return a postgis instance tuned to the passed database name, i.e. with a database already created
+     * (either for the catalog or a single one for all tables). Only call after checking for
+     * isEnabled().
+     * 
+     * @param urn
+     */
+    public static Postgis create(String databaseId) {
+        return new Postgis(databaseId);
+    }
+    
     /**
      * Create an instance of postgis connected to the default 'klab' database.
      * 
