@@ -77,6 +77,7 @@ import org.integratedmodelling.klab.documentation.Report;
 import org.integratedmodelling.klab.documentation.extensions.DocumentationExtensions;
 import org.integratedmodelling.klab.documentation.extensions.DocumentationExtensions.Annotation;
 import org.integratedmodelling.klab.engine.debugger.Debug;
+import org.integratedmodelling.klab.engine.runtime.ActivityBuilder;
 import org.integratedmodelling.klab.engine.runtime.api.IKeyHolder;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
@@ -337,6 +338,8 @@ public class Actuator implements IActuator {
         // this.currentContext = scope;
         scope.getStatus(this).start();
 
+        ActivityBuilder statistics = scope.getStatistics().forTarget(this);
+        
         /*
          * poor-man attempt at reentrancy in case this has to get called more than once for any
          * reason later.
@@ -360,7 +363,7 @@ public class Actuator implements IActuator {
          * this localizes the names in the context to those understood by this actuator and applies
          * any requested mediation to the inputs. Target may be swapped for a mediator.
          */
-        IRuntimeScope ctx = setupScope(target, scope);
+        IRuntimeScope ctx = setupScope(target, scope, statistics);
 
         if (target == null && ctx.getTargetArtifact() != null) {
             // contextualization redefined the target, which happens in change processes
@@ -498,7 +501,7 @@ public class Actuator implements IActuator {
                         runContextualizer(contextualizer.getFirst(),
                                 indirectTarget == null ? this.observable : indirectTarget,
                                 contextualizer.getSecond(), artifactTable.get(targetId), context,
-                                context.getScale(), changed));
+                                context.getScale(), changed, statistics));
             }
 
             /*
@@ -677,11 +680,13 @@ public class Actuator implements IActuator {
     @SuppressWarnings("unchecked")
     public IArtifact runContextualizer(IContextualizer contextualizer, IObservable observable,
             IContextualizable resource,
-            IArtifact artifact, IRuntimeScope scope, IScale scale, Set<IArtifact> changed) {
+            IArtifact artifact, IRuntimeScope scope, IScale scale, Set<IArtifact> changed, ActivityBuilder statistics) {
 
         if (scope.getMonitor().isInterrupted()) {
             return Observation.empty(getObservable(), scope);
         }
+        
+        ActivityBuilder stats = statistics.forTarget(contextualizer); 
 
         long timer = 0;
         if (Configuration.INSTANCE.getProperty(IConfigurationService.KLAB_SHOWTIMES_PROPERTY, null) != null) {
@@ -1042,7 +1047,7 @@ public class Actuator implements IActuator {
         return ret;
     }
 
-    public IRuntimeScope setupScope(IArtifact target, final IRuntimeScope scope) throws KlabException {
+    public IRuntimeScope setupScope(IArtifact target, final IRuntimeScope scope, ActivityBuilder statistics) throws KlabException {
 
         IRuntimeScope ret = scope.copy();
         IScale coverage = scope.getMergedScale(this);
@@ -1092,7 +1097,7 @@ public class Actuator implements IActuator {
                          */
                         IArtifact mediated = runContextualizer(mediator.getFirst(), this.observable,
                                 mediator.getSecond(),
-                                artifact, ret, ret.getScale(), changed);
+                                artifact, ret, ret.getScale(), changed, statistics);
 
                         ret.setData(targetArtifactId, mediated);
                     }

@@ -371,12 +371,6 @@ public class Session extends GroovyObjectSupport
             // TODO Auto-generated method stub
             return 0;
         }
-
-        @Override
-        public void addActivity(IActivity activity) {
-           Klab.INSTANCE.addActivity(getIdentity(), activity);
-        }
-
     }
 
     public Session(Engine engine, IUserIdentity user) {

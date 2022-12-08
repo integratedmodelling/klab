@@ -52,6 +52,7 @@ import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.data.encoding.Encoding.KlabData;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Actuator.Status;
+import org.integratedmodelling.klab.engine.runtime.ActivityBuilder;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.engine.runtime.code.ExpressionScope;
@@ -934,10 +935,9 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
 		return null;
 	}
 
-//    @Override
-//    public Map<String, Configuration> getConfigurationCache() {
-//        // TODO Auto-generated method stub
-//        return null;
-//    }
+    @Override
+    public ActivityBuilder getStatistics() {
+        return null;
+    }
 
 }

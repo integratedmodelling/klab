@@ -299,12 +299,6 @@ public class Engine extends Server implements IEngine, UserDetails {
         public int getWaitTime() {
             return this.waitTime;
         }
-        
-        @Override
-        public void addActivity(IActivity activity) {
-           Klab.INSTANCE.addActivity(getIdentity(), activity);
-        }
-
 	}
 
 	public Engine(ICertificate certificate) {

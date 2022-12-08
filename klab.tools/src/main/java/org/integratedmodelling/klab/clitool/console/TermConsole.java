@@ -162,11 +162,6 @@ public class TermConsole implements IConsole {
             return this.waitTime;
         }
 
-        @Override
-        public void addActivity(IActivity activity) {
-            // TODO Auto-generated method stub
-            
-        }
 	}
 
 	public void start(CliStartupOptions options) throws Exception {

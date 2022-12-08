@@ -152,13 +152,6 @@ public interface IMonitor {
     int getWaitTime();
 
     /**
-     * Add an observation activity.
-     * 
-     * @param activity
-     */
-    void addActivity(IActivity activity);
-
-    /**
      * A monitor always operates and reports on behalf of some runtime identity, usually with an
      * {@link org.integratedmodelling.klab.api.auth.IServerIdentity} for the top-level monitors.
      *

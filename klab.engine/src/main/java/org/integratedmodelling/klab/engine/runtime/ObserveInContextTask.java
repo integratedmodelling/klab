@@ -10,9 +10,9 @@ import java.util.concurrent.TimeoutException;
 import java.util.function.BiConsumer;
 
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Dataflows;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -24,13 +24,12 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.AbstractRuntimeScope;
+import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.engine.Engine;
-import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.monitoring.Message;
@@ -183,7 +182,7 @@ public class ObserveInContextTask extends AbstractTask<IArtifact> {
                             System.out.println(dataflow.getKdlCode());
                         }
 
-                        IRuntimeScope ctx = ((Observation) context).getScope().getChild(ObserveInContextTask.this);
+                        RuntimeScope ctx = (RuntimeScope)((Observation) context).getScope().getChild(ObserveInContextTask.this);
                         ((AbstractRuntimeScope) ctx).notifyDataflowChanges(ctx);
 
                         /*
@@ -210,6 +209,12 @@ public class ObserveInContextTask extends AbstractTask<IArtifact> {
                             monitor.info("observation completed with "
                                     + NumberFormat.getPercentInstance().format(scope.getCoverage().getCoverage())
                                     + " context coverage");
+                            
+                            notifyEnd();
+                            ctx.getStatistics().success();
+                            
+                            Klab.INSTANCE.addActivity(scope.getSession(), ctx.getStatistics());
+                            
                         }
 
                         if (!Configuration.INSTANCE.getProperty("visualize", "false").equals("false")
@@ -230,13 +235,13 @@ public class ObserveInContextTask extends AbstractTask<IArtifact> {
                         ret = Observation.empty(observable, context.getScope());
                     }
 
-                    notifyEnd();
 
                     if (observationListeners != null) {
                         for (BiConsumer<ITask<?>, IArtifact> observationListener : observationListeners) {
                             observationListener.accept((ITask<?>) this.task, ret);
                         }
                     }
+
 
                 } catch (Throwable e) {
 

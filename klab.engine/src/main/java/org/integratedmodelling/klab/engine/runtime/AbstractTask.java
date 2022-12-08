@@ -81,8 +81,6 @@ public abstract class AbstractTask<T extends IArtifact> implements ITaskTree<T> 
 		this.executor = parent.executor;
 		this.observationListeners = parent.observationListeners;
 		this.errorListeners = parent.errorListeners;
-        this.activityBuilder = org.integratedmodelling.klab.rest.Activity.builder();
-
 	}
 
 	Activity activity;
@@ -92,7 +90,6 @@ public abstract class AbstractTask<T extends IArtifact> implements ITaskTree<T> 
 	protected boolean autostart = true;
 	protected boolean started = false;
 	protected boolean silent = false;
-	protected IActivity.Builder activityBuilder;
 
 	Session session;
 	String token = "t" + NameGenerator.shortUUID();

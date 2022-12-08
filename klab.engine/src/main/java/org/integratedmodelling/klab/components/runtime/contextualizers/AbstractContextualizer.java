@@ -33,7 +33,7 @@ public abstract class AbstractContextualizer implements IContextualizer {
     private IPrototype prototype;
     private RuntimeScope scope;
 
-    protected IPrototype getPrototype() {
+    public IPrototype getPrototype() {
         return prototype;
     }
 

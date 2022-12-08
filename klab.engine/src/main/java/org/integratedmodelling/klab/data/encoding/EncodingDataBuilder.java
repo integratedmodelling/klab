@@ -126,12 +126,7 @@ public class EncodingDataBuilder implements IKlabData.Builder {
             // TODO Auto-generated method stub
             return this.waitTime;
         }
-
-        @Override
-        public void addActivity(IActivity activity) {
-            Klab.INSTANCE.addActivity(getIdentity(), activity);
-        }
-
+        
     }
 
     /**

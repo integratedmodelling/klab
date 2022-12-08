@@ -13,6 +13,7 @@ import java.util.function.BiConsumer;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Dataflows;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IObserver;
@@ -195,6 +196,10 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
 
                             }
 
+                            runtimeScope.getStatistics().success();
+                            
+                            Klab.INSTANCE.addActivity(scope.getSession(), runtimeScope.getStatistics());
+                            
                             getActivity().finished();
 
                         }

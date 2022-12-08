@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.integratedmodelling.klab.api.runtime.monitoring.IActivity;
 import org.integratedmodelling.klab.api.runtime.rest.ITaskReference.Status;
-import org.integratedmodelling.klab.monitoring.ActivityBuilder;
 
 /**
  * Basic anonymous packet of info for each observation made, sent to statistical services as wished.
@@ -24,10 +23,6 @@ public class Activity implements IActivity {
     private String observable;
     private List<String> models = new ArrayList<>();
     private List<String> resources = new ArrayList<>();
-
-    public static Builder builder() {
-        return new ActivityBuilder();
-    }
 
     @Override
     public String getContextId() {
