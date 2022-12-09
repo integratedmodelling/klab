@@ -185,6 +185,8 @@ public class ObserveInContextTask extends AbstractTask<IArtifact> {
                         RuntimeScope ctx = (RuntimeScope)((Observation) context).getScope().getChild(ObserveInContextTask.this);
                         ((AbstractRuntimeScope) ctx).notifyDataflowChanges(ctx);
 
+                        ctx.getStatistics().defineTarget(urn, context);
+                        
                         /*
                          * pass the first actuator in the father context as the parent for this
                          * resolution - this must be at primary level, i.e. the root is the first

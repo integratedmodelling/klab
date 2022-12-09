@@ -229,7 +229,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
         ret.views = new LinkedHashMap<>();
         ret.viewsByUrn = new LinkedHashMap<>();
         ret.concreteIdentities = this.concreteIdentities;
-        ret.statistics = this.statistics.forTarget(dataflow);
+        ret.statistics = this.statistics.forTarget(dataflow, scale, actuator.getObservable());
 
         // store and set up for further resolutions
         ret.resolutionScope = (ResolutionScope) scope;

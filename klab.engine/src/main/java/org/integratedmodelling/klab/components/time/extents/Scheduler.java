@@ -1146,7 +1146,7 @@ public class Scheduler implements IScheduler {
             // transitionContext = actuator.localizeNames(transitionContext);
             IArtifact artifact = null;
 
-            ActivityBuilder statistics = runtimeScope.getStatistics().forTarget(actuator);
+            ActivityBuilder statistics = runtimeScope.getStatistics().forTarget(actuator).schedulerStep();
             
             // we re-run the entire initialization sequence.
             for (Actuator.Computation computation : actuator.getContextualizers()) {

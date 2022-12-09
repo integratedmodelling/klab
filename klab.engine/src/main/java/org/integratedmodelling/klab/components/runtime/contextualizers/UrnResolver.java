@@ -23,6 +23,7 @@ import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.components.runtime.observations.DelegatingArtifact;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
+import org.integratedmodelling.klab.engine.runtime.ActivityBuilder;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.utils.Pair;
@@ -81,6 +82,8 @@ public class UrnResolver extends AbstractContextualizer implements IExpression, 
 
         Map<String, String> parameters = urnParameters;
 
+        ActivityBuilder stats = getStatistics() == null ? null : getStatistics().forTarget(resource);
+
         /*
          * ensure we don't retrieve the data more than once when we use multiple resources where
          * another one forces recontextualization. TODO this won't stop downstream mediations -
@@ -108,19 +111,35 @@ public class UrnResolver extends AbstractContextualizer implements IExpression, 
             System.err.println("GETTING DATA FROM " + this.resource.getUrn());
         }
 
-        IKlabData data = Resources.INSTANCE.getResourceData(this.resource, parameters, scope.getScale(), scope, observation);
+        try {
+            IKlabData data = Resources.INSTANCE.getResourceData(this.resource, parameters, scope.getScale(), scope, observation);
 
-        if (Configuration.INSTANCE.isEchoEnabled()) {
-            System.err.println("DONE " + this.resource.getUrn());
+            if (Configuration.INSTANCE.isEchoEnabled()) {
+                System.err.println("DONE " + this.resource.getUrn());
+            }
+
+            if (data == null) {
+                scope.getMonitor().error("Cannot extract data from resource " + resource.getUrn());
+                if (stats != null) {
+                    stats.error();
+                }
+            } else if (destination instanceof Observation) {
+                ((Observation) destination).includeResource(urn.toString());
+                if (stats != null) {
+                    stats.success();
+                }
+
+            }
+
+            return data == null ? observation : data.getArtifact();
+        
+        } catch (Throwable t) {
+            if (stats != null) {
+                stats.exception(t);
+            }
+            throw t;
         }
-
-        if (data == null) {
-            scope.getMonitor().error("Cannot extract data from resource " + resource.getUrn());
-        } else if (destination instanceof Observation) {
-            ((Observation) destination).includeResource(urn.toString());
-        }
-
-        return data == null ? observation : data.getArtifact();
+        
     }
 
     private boolean isStatic(Dimension time) {
@@ -135,7 +154,7 @@ public class UrnResolver extends AbstractContextualizer implements IExpression, 
     }
 
     @Override
-    public Object eval(IContextualizationScope context, Object...parameters) throws KlabException {
+    public Object eval(IContextualizationScope context, Object... parameters) throws KlabException {
         // TODO support multiple URNs
         return new UrnResolver(Parameters.create(parameters).get("urn", String.class), context);
     }

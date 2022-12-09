@@ -784,7 +784,7 @@ public enum Klab implements IRuntimeService {
 
     public void addActivity(IIdentity identity, ActivityBuilder activity) {
         // TODO Auto-generated method stub
-        System.out.println("ZOP");
+        System.out.println(activity);
     }
 
 }

@@ -1,15 +1,20 @@
 package org.integratedmodelling.klab.engine.runtime;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.groovy.parser.antlr4.GroovyParser.ThisFormalParameterContext;
 import org.integratedmodelling.klab.api.auth.IActorIdentity;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.model.IAcknowledgement;
 import org.integratedmodelling.klab.api.model.contextualization.IContextualizer;
+import org.integratedmodelling.klab.api.observations.IDirectObservation;
+import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IActivity;
@@ -17,15 +22,13 @@ import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractC
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
+import org.integratedmodelling.klab.rest.DataflowState.Status;
+import org.integratedmodelling.klab.utils.StringUtils;
 
 public class ActivityBuilder {
 
     enum TargetIdentity {
-        Agent,
-        Dataflow,
-        Actuator,
-        Contextualizer,
-        Resource
+        Agent, Dataflow, Actuator, Contextualizer, Resource
     }
 
     /**
@@ -39,11 +42,19 @@ public class ActivityBuilder {
     String observable;
     long startTime = System.currentTimeMillis();
     long endTime;
-    long totalTime;
+    double totalTime;
     long totalContextTime;
+    long scaleSize;
     List<ActivityBuilder> children = new ArrayList<>();
     Map<ObservedConcept, ActivityBuilder> actuators = new HashMap<>();
     Map<String, ActivityBuilder> contextualizers = new HashMap<>();
+    Map<String, ActivityBuilder> resources = new HashMap<>();
+    Status status = Status.WAITING;
+    String contextId;
+    String contextName;
+    long scheduledSteps;
+
+    private String contextCreated;
 
     public static ActivityBuilder root(IActorIdentity<?> actorIdentity) {
         return new ActivityBuilder(actorIdentity.getId(), TargetIdentity.Agent);
@@ -62,52 +73,111 @@ public class ActivityBuilder {
      * @param target
      * @return
      */
-    public ActivityBuilder forTarget(Object target) {
+    public ActivityBuilder forTarget(Object... targets) {
 
         ActivityBuilder ret = null;
+        IGeometry geometry = null;
+        IObservable observable = null;
+        IDirectObservation context = null;
+
+        Object target = targets[0];
+        for (int i = 1; i < targets.length; i++) {
+            if (targets[i] instanceof IGeometry) {
+                geometry = (IGeometry) targets[i];
+            } else if (targets[i] instanceof IObservable) {
+                observable = (IObservable) targets[i];
+            } else if (targets[i] instanceof IDirectObservation) {
+                context = (IDirectObservation) targets[i];
+            }
+        }
 
         if (target instanceof IActorIdentity) {
             ret = new ActivityBuilder(((IActorIdentity<?>) target).getId(), TargetIdentity.Agent);
         } else if (target instanceof IDataflow) {
-            ret = new ActivityBuilder(((IDataflow<?>) target).getId(), TargetIdentity.Dataflow);
+
+            String name = observable == null ? ((IDataflow<?>) target).getId() : observable.getDefinition();
+            ret = new ActivityBuilder(name, TargetIdentity.Dataflow);
+
         } else if (target instanceof IActuator) {
 
-            ObservedConcept obs = new ObservedConcept(((Actuator) target).getObservable(),
-                    ((Actuator) target).getMode());
+            ObservedConcept obs = new ObservedConcept(((Actuator) target).getObservable(), ((Actuator) target).getMode());
             if (this.actuators.containsKey(obs)) {
                 ret = this.actuators.get(obs);
-                ret.totalContextTime += (ret.endTime - ret.startTime);
+                if (ret.endTime > 0) {
+                    ret.totalTime += (ret.endTime - ret.startTime);
+                }
+                ret.startTime = System.currentTimeMillis();
+                ret.endTime = 0;
                 return ret;
             }
             ret = new ActivityBuilder(((Actuator) target).getModel().getName(), TargetIdentity.Actuator);
             ret.observable = ((Actuator) target).getObservable().getDefinition();
             this.actuators.put(obs, ret);
-            return ret;
 
         } else if (target instanceof AbstractContextualizer) {
 
             String ctxId = ((AbstractContextualizer) target).getPrototype().getName();
             if (this.contextualizers.containsKey(ctxId)) {
                 ret = this.contextualizers.get(ctxId);
-                ret.totalContextTime += (ret.endTime - ret.startTime);
+                if (ret.endTime > 0) {
+                    ret.totalTime += (ret.endTime - ret.startTime);
+                }
+                ret.startTime = System.currentTimeMillis();
+                ret.endTime = 0;
                 return ret;
             }
-            ret = new ActivityBuilder(((IContextualizer) target).getClass().getCanonicalName(),
-                    TargetIdentity.Contextualizer);
+            ret = new ActivityBuilder(((IContextualizer) target).getClass().getCanonicalName(), TargetIdentity.Contextualizer);
             this.contextualizers.put(ctxId, ret);
-            return ret;
 
         } else if (target instanceof IResource) {
+
+            String ctxId = ((IResource) target).getUrn();
+            if (this.resources.containsKey(ctxId)) {
+                ret = this.resources.get(ctxId);
+                if (ret.endTime > 0) {
+                    ret.totalTime += (ret.endTime - ret.startTime);
+                }
+                ret.startTime = System.currentTimeMillis();
+                ret.endTime = 0;
+                return ret;
+            }
             ret = new ActivityBuilder(((IResource) target).getUrn(), TargetIdentity.Resource);
+            this.resources.put(ctxId, ret);
         }
 
         if (ret == null) {
             throw new KlabIllegalArgumentException("internal: cannot create activity for target " + target);
         }
 
+        if (observable != null) {
+            ret.observable = observable.getDefinition();
+        }
+        if (geometry != null) {
+            collectGeometryStatistics(geometry);
+        }
+        if (context != null) {
+            ret.contextId = context.getId();
+            ret.contextName = context.getName();
+        } else {
+            ret.contextId = this.contextId;
+        }
+        
         this.children.add(ret);
 
         return ret;
+    }
+
+    private void collectGeometryStatistics(IGeometry geometry) {
+        scaleSize = geometry.size();
+        if (geometry instanceof IScale) {
+
+            // space statistics
+
+            // time statistics
+
+            // complexity of spatial shape
+
+        }
     }
 
     /**
@@ -117,6 +187,7 @@ public class ActivityBuilder {
      */
     ActivityBuilder start() {
         this.startTime = System.currentTimeMillis();
+        this.status = Status.STARTED;
         return this;
     }
 
@@ -125,9 +196,14 @@ public class ActivityBuilder {
      * 
      * @return
      */
-    ActivityBuilder success() {
+    public ActivityBuilder success() {
         this.endTime = System.currentTimeMillis();
+        this.status = Status.FINISHED;
         return this;
+    }
+
+    public Status getStatus() {
+        return status;
     }
 
     /**
@@ -135,8 +211,9 @@ public class ActivityBuilder {
      * 
      * @return
      */
-    ActivityBuilder interrupt() {
+    public ActivityBuilder interrupt() {
         this.endTime = System.currentTimeMillis();
+        this.status = Status.INTERRUPTED;
         return this;
     }
 
@@ -146,8 +223,9 @@ public class ActivityBuilder {
      * 
      * @return
      */
-    ActivityBuilder error() {
+    public ActivityBuilder error() {
         this.endTime = System.currentTimeMillis();
+        this.status = Status.ABORTED;
         return this;
     }
 
@@ -156,13 +234,35 @@ public class ActivityBuilder {
      * 
      * @return
      */
-    ActivityBuilder exception(Throwable e) {
+    public ActivityBuilder exception(Throwable e) {
         this.endTime = System.currentTimeMillis();
         return this;
     }
 
     ActivityBuilder withGeometry(IGeometry geometry) {
         return this;
+    }
+
+    double getTotalTimeSeconds() {
+        return endTime == 0 ? Double.NaN : ((double) (endTime - startTime) + totalTime) / 1000.0;
+    }
+
+    @Override
+    public String toString() {
+        StringBuffer ret = new StringBuffer(512);
+        dump(ret, 0);
+        return ret.toString();
+    }
+
+    private void dump(StringBuffer buffer, int offset) {
+        buffer.append(StringUtils.spaces(offset) + type + ": " + targetId);
+        if (endTime > 0) {
+            buffer.append(" (" + NumberFormat.getInstance().format(getTotalTimeSeconds()) + " s)");
+        }
+        buffer.append(" " + status + "\n");
+        for (ActivityBuilder child : children) {
+            child.dump(buffer, offset + 2);
+        }
     }
 
     /**
@@ -180,5 +280,32 @@ public class ActivityBuilder {
 
     public void setAccounted(boolean accounted) {
         this.accounted = accounted;
+    }
+
+    public ActivityBuilder schedulerStep() {
+        scheduledSteps++;
+        return this;
+    }
+
+    /**
+     * Further specify the target for logging; called on root dataflow stats only.
+     * 
+     * @param observer
+     */
+    public void defineTarget(Object... target) {
+        for (Object o : target) {
+            if (o instanceof IAcknowledgement) {
+                this.targetId = ((IAcknowledgement) o).getName() + " (" + ((IAcknowledgement) o).getObservable().getDefinition()
+                        + ")";
+            } else if (o instanceof String) {
+                this.targetId = (String) o;
+            } else if (o instanceof IDirectObservation) {
+                this.contextId = ((IDirectObservation)o).getId();
+            }
+        }
+    }
+
+    public void notifyContextCreated(ISubject ret) {
+        this.contextCreated = ret.getId();
     }
 }

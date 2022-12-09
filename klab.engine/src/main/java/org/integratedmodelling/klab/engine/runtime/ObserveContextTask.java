@@ -155,6 +155,8 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
                          */
                         IRuntimeScope runtimeScope = RuntimeScope.rootScope(scope, observingAgent);
 
+                        runtimeScope.getStatistics().defineTarget(observer);
+                        
                         if (scope.getCoverage().isRelevant()) {
 
                             Dataflow dataflow = Dataflows.INSTANCE
@@ -194,6 +196,8 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
                                  */
                                 ((Observation) ret).getScope().notifyListeners((IObservation) ret);
 
+                                runtimeScope.getStatistics().notifyContextCreated(ret);
+                                
                             }
 
                             runtimeScope.getStatistics().success();
