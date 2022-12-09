@@ -160,8 +160,6 @@ public class ResourceEditor extends ViewPart {
     private TabFolder mainViewTabFolder;
     private CodelistEditor codelistEditor;
 
-    private TreeEditor editor;
-
     public static class AttributeContentProvider implements IStructuredContentProvider {
 
         @Override
@@ -434,11 +432,6 @@ public class ResourceEditor extends ViewPart {
 
         this.isLocal = Urns.INSTANCE.isLocal(resource.getUrn());
 
-        this.editor.dispose();
-        this.editor = new TreeEditor(propertyTable);
-        editor.horizontalAlignment = SWT.LEFT;
-        editor.grabHorizontal = true;
-        this.propertyTable.removeAll();
         this.resource = resource;
         this.adapter = Activator.klab().getResourceAdapter(resource.getAdapterType());
         this.values.clear();
@@ -900,20 +893,21 @@ public class ResourceEditor extends ViewPart {
         propertyTable = adapterPropertyViewer.getTree();
         propertyTable.setLinesVisible(true);
         propertyTable.setHeaderVisible(true);
-        
-        this.editor = new TreeEditor(propertyTable);
-        editor.horizontalAlignment = SWT.LEFT;
-        editor.grabHorizontal = true;
+
 
         propertyTable.addMouseListener(new MouseAdapter(){
 
             @Override
             public void mouseUp(final MouseEvent e) {
 
-                Control oldEditor = editor.getEditor();
-                if (oldEditor != null) {
-                    oldEditor.dispose();
-                }
+                TreeEditor editor = new TreeEditor(propertyTable);
+                editor.horizontalAlignment = SWT.LEFT;
+                editor.grabHorizontal = true;
+
+//                Control oldEditor = editor.getEditor();
+//                if (oldEditor != null) {
+//                    oldEditor.dispose();
+//                }
 
                 // Get the Point from the MouseEvent
                 final Point p = new Point(e.x, e.y);
@@ -922,7 +916,6 @@ public class ResourceEditor extends ViewPart {
                 if (item == null) {
                     return;
                 }
-                
                 // Now that we know the TreeItem, we can use the getBounds() method
                 // to locate the corresponding column
                 for (int i = 0; i < propertyTable.getColumnCount(); ++i) {
@@ -987,7 +980,6 @@ public class ResourceEditor extends ViewPart {
                             newEditor.setFocus();
                             // Set the editor for the matching column
                             editor.setEditor(newEditor, item, columnIndex);
-                            break;
                         }
                     }
                 }

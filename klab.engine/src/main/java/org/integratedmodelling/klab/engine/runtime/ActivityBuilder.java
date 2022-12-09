@@ -23,6 +23,7 @@ import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.rest.DataflowState.Status;
+import org.integratedmodelling.klab.rest.ObservationResultStatistics;
 import org.integratedmodelling.klab.utils.StringUtils;
 
 public class ActivityBuilder {
@@ -307,5 +308,9 @@ public class ActivityBuilder {
 
     public void notifyContextCreated(ISubject ret) {
         this.contextCreated = ret.getId();
+    }
+    
+    public ObservationResultStatistics encode() {
+        return null;
     }
 }
