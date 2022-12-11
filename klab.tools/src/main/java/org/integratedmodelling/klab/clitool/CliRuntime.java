@@ -4,7 +4,9 @@ import java.io.IOException;
 
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Logo;
+import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
 import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.api.services.IRuntimeService;
 import org.integratedmodelling.klab.clitool.api.IConsole;
 import org.integratedmodelling.klab.clitool.console.CommandProcessor;
 import org.integratedmodelling.klab.engine.Engine;
@@ -14,7 +16,7 @@ import org.integratedmodelling.klab.engines.modeler.base.Modeler;
 public enum CliRuntime {
 
     INSTANCE;
-
+    
     Engine engine;
     Session session;
     CommandProcessor commandProcessor;
@@ -40,6 +42,7 @@ public enum CliRuntime {
     public ISession initialize(IConsole console, CliStartupOptions options) {
         console.disableInput();
         this.engine = Engine.start(options);
+        this.engine.setName(IRuntimeService.LOCAL_ENGINE_NAME);
         this.session = engine.createSession().setDefault();
         this.console = console;
         this.commandProcessor = new CommandProcessor(console, session.getMonitor());

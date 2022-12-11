@@ -17,7 +17,6 @@ import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
-import org.integratedmodelling.klab.api.runtime.monitoring.IActivity;
 import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
@@ -54,8 +53,8 @@ public class ActivityBuilder {
     String contextId;
     String contextName;
     long scheduledSteps;
-
     private String contextCreated;
+    private int passes;
 
     public static ActivityBuilder root(IActorIdentity<?> actorIdentity) {
         return new ActivityBuilder(actorIdentity.getId(), TargetIdentity.Agent);
@@ -106,6 +105,7 @@ public class ActivityBuilder {
                 ret = this.actuators.get(obs);
                 if (ret.endTime > 0) {
                     ret.totalTime += (ret.endTime - ret.startTime);
+                    ret.passes ++;
                 }
                 ret.startTime = System.currentTimeMillis();
                 ret.endTime = 0;
@@ -122,12 +122,13 @@ public class ActivityBuilder {
                 ret = this.contextualizers.get(ctxId);
                 if (ret.endTime > 0) {
                     ret.totalTime += (ret.endTime - ret.startTime);
+                    ret.passes ++;
                 }
                 ret.startTime = System.currentTimeMillis();
                 ret.endTime = 0;
                 return ret;
             }
-            ret = new ActivityBuilder(((IContextualizer) target).getClass().getCanonicalName(), TargetIdentity.Contextualizer);
+            ret = new ActivityBuilder(ctxId, TargetIdentity.Contextualizer);
             this.contextualizers.put(ctxId, ret);
 
         } else if (target instanceof IResource) {
@@ -137,6 +138,7 @@ public class ActivityBuilder {
                 ret = this.resources.get(ctxId);
                 if (ret.endTime > 0) {
                     ret.totalTime += (ret.endTime - ret.startTime);
+                    ret.passes ++;
                 }
                 ret.startTime = System.currentTimeMillis();
                 ret.endTime = 0;
@@ -266,21 +268,8 @@ public class ActivityBuilder {
         }
     }
 
-    /**
-     * Should throw an exception if none of the finish methods was called.
-     * 
-     * @return
-     */
-    IActivity build() {
-        return null;
-    }
-
     public boolean isAccounted() {
         return accounted;
-    }
-
-    public void setAccounted(boolean accounted) {
-        this.accounted = accounted;
     }
 
     public ActivityBuilder schedulerStep() {
@@ -311,6 +300,16 @@ public class ActivityBuilder {
     }
     
     public ObservationResultStatistics encode() {
-        return null;
+        ObservationResultStatistics ret = new ObservationResultStatistics();
+        return ret;
     }
+
+    public String getContextCreated() {
+        return contextCreated;
+    }
+
+    public int getPasses() {
+        return passes;
+    }
+    
 }

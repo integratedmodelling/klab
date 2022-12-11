@@ -1142,6 +1142,8 @@ public interface API {
 
         public static final String STATS_CLASSES = STATS_BASE + "/classes";
 
+        public static final String STATS_ADD = STATS_BASE + "/add";
+
         public interface PARAMETERS {
             public static final String TYPE = "type";
 

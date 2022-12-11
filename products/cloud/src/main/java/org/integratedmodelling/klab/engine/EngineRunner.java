@@ -99,7 +99,6 @@ public class EngineRunner implements ApplicationListener<ApplicationPreparedEven
 		        } else {
 		            engine = RemoteEngine.start(null, new EngineStartupOptions());
 		        }
-		        
 		    }
 			
 		} catch (Throwable e) {

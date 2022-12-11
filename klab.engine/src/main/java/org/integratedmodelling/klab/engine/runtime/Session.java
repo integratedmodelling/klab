@@ -84,7 +84,6 @@ import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.ITicket;
-import org.integratedmodelling.klab.api.runtime.monitoring.IActivity;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.api.services.IIndexingService;
@@ -2120,6 +2119,7 @@ public class Session extends GroovyObjectSupport
         String ret = "app" + NameGenerator.shortUUID();
         if (behavior.getDestination() == IKActorsBehavior.Type.APP) {
             globalState.setApplicationId(ret);
+            globalState.setApplicationName(behavior.getName());
         } else if (behavior.getDestination() != IKActorsBehavior.Type.SCRIPT
                 && behavior.getDestination() != IKActorsBehavior.Type.UNITTEST) {
             throw new KlabActorException("internal: sessions can only load apps, scripts and unit tests");

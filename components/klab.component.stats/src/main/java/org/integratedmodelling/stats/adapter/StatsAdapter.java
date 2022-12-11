@@ -23,6 +23,10 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 @UrnAdapter(type = StatsAdapter.ID, version = Version.CURRENT)
 public class StatsAdapter implements IUrnAdapter {
 
+    /**
+     * ACTHUNG - if this is changed, the STATS_SERVICE_ADAPTER_ID constant in the Klab service also
+     * must reflect the change or the service won't be updated.
+     */
     public final static String ID = "stats";
 
     @Override

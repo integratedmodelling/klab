@@ -328,7 +328,7 @@ public enum Network implements INetworkService {
 		return nodesWithAdapter.isEmpty() ? null : nodesWithAdapter.iterator().next();
 	}
 
-	private Collection<INodeIdentity> getNodesWithAdapter(String adapter) {
+	public Collection<INodeIdentity> getNodesWithAdapter(String adapter) {
 		List<INodeIdentity> ret = new ArrayList<>();
 		for (INodeIdentity node : onlineNodes.values()) {
 			if (node.getAdapters().contains(adapter)) {
@@ -338,7 +338,7 @@ public enum Network implements INetworkService {
 		return ret;
 	}
 
-	private Collection<INodeIdentity> getNodesWithAuthority(String authority) {
+	public Collection<INodeIdentity> getNodesWithAuthority(String authority) {
 		List<INodeIdentity> ret = new ArrayList<>();
 		for (INodeIdentity node : onlineNodes.values()) {
 			if (node.getAuthorities().containsKey(authority)) {

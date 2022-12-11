@@ -32,7 +32,6 @@ import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.model.Acknowledgement;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
-import org.integratedmodelling.klab.rest.Activity;
 import org.integratedmodelling.klab.rest.SessionActivity;
 import org.integratedmodelling.klab.utils.Parameters;
 
