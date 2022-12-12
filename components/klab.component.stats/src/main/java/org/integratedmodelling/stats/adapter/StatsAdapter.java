@@ -31,8 +31,7 @@ public class StatsAdapter implements IUrnAdapter {
 
     @Override
     public String getName() {
-        // TODO Auto-generated method stub
-        return null;
+        return ID;
     }
 
     @Override

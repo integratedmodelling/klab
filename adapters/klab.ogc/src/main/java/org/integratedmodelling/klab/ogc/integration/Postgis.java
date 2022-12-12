@@ -98,7 +98,25 @@ public class Postgis {
         this.active = ok;
     }
 
-    private boolean createDatabase() {
+    protected boolean execute(String sql) {
+
+        boolean ok = true;
+        String gurl = "jdbc:postgresql://" + Configuration.INSTANCE.getServiceProperty("postgres", "host");
+        try (Connection con = DriverManager.getConnection(gurl, Configuration.INSTANCE.getServiceProperty("postgres", "user"),
+                Configuration.INSTANCE.getServiceProperty("postgres", "password")); Statement st = con.createStatement()) {
+
+            st.execute("CREATE DATABASE " + this.database + " ENCODING 'UTF-8';");
+            ok = true;
+
+        } catch (SQLException ex) {
+            ok = false;
+        }
+        
+        return ok;
+    }
+    
+    
+    protected boolean createDatabase() {
 
         boolean ok = false;
 
