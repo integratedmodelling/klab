@@ -114,3 +114,16 @@ export number fillvalues
     
     class org.integratedmodelling.geoprocessing.core.RasterMissingValuesFillerResolver
 }
+
+export number sentinel
+    "Download sentinel data."
+    label 'SentinelDownloader'
+{
+    optional enum band
+        "The band to extract. Valid options are: red, green, blue, nir1, nir2, nir3, swir1, swir2"
+        default red
+    
+    geometry S2
+    
+    class org.integratedmodelling.geoprocessing.remotesensing.SentinelResolver
+}
