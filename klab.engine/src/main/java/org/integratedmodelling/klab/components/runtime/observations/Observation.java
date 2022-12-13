@@ -131,11 +131,11 @@ public abstract class Observation extends ObservedArtifact implements IObservati
         return "local:observation:" + getParentIdentity(Session.class).getId() + ":" + getId();
     }
 
-    public IObserver getObserver() {
+    public IObserver<?> getObserver() {
         return this.observer;
     }
     
-    public void setObserver(IObserver observer) {
+    public void setObserver(IObserver<?> observer) {
         this.observer = observer;
     }
 

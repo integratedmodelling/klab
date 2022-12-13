@@ -190,9 +190,11 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
 					for (String key : parameters.keySet()) {
 						Object value = parameters.get(key);
 						if ("scale".equals(key) && value instanceof IScale) {
-							localScale = (IScale) value;
+							
+						    localScale = (IScale) value;
 							binding.setVariable("space", localScale.getSpace());
 							binding.setVariable("time", localScale.getTime());
+							
 						} else if ("self".equals(key) && value instanceof DirectObservation) {
 
 							/*
@@ -204,6 +206,9 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
 							} else if (pattern != null) {
 								binding.setVariable("pattern", pattern);
 							}
+							
+							binding.setVariable("observer", ((DirectObservation) value).getObserver());
+							
 						}
 						binding.setVariable(key, value);
 					}

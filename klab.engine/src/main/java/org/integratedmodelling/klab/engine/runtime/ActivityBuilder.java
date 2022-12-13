@@ -11,7 +11,6 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAcknowledgement;
-import org.integratedmodelling.klab.api.model.contextualization.IContextualizer;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -37,22 +36,23 @@ public class ActivityBuilder {
      */
     private boolean accounted = false;
 
-    String targetId;
-    TargetIdentity type;
-    String observable;
-    long startTime = System.currentTimeMillis();
-    long endTime;
-    double totalTime;
-    long totalContextTime;
-    long scaleSize;
-    List<ActivityBuilder> children = new ArrayList<>();
-    Map<ObservedConcept, ActivityBuilder> actuators = new HashMap<>();
-    Map<String, ActivityBuilder> contextualizers = new HashMap<>();
-    Map<String, ActivityBuilder> resources = new HashMap<>();
-    Status status = Status.WAITING;
-    String contextId;
-    String contextName;
-    long scheduledSteps;
+    private String targetId;
+    private TargetIdentity type;
+    private String observable;
+    private long startTime = System.currentTimeMillis();
+    private long endTime;
+    private double totalTime;
+    private long totalContextTime;
+    private long scaleSize;
+    private long scaleComplexity;
+    private List<ActivityBuilder> children = new ArrayList<>();
+    private Map<ObservedConcept, ActivityBuilder> actuators = new HashMap<>();
+    private Map<String, ActivityBuilder> contextualizers = new HashMap<>();
+    private Map<String, ActivityBuilder> resources = new HashMap<>();
+    private Status status = Status.WAITING;
+    private String contextId;
+    private String contextName;
+    private long scheduledSteps;
     private String contextCreated;
     private int passes;
 
@@ -63,6 +63,58 @@ public class ActivityBuilder {
     private ActivityBuilder(String targetId, TargetIdentity targetIdentity) {
         this.targetId = targetId;
         this.type = targetIdentity;
+    }
+
+    public String getTargetId() {
+        return targetId;
+    }
+
+    public TargetIdentity getType() {
+        return type;
+    }
+
+    public String getObservable() {
+        return observable;
+    }
+
+    public long getStartTime() {
+        return startTime;
+    }
+
+    public long getEndTime() {
+        return endTime;
+    }
+
+    public double getTotalTime() {
+        return totalTime;
+    }
+
+    public long getTotalContextTime() {
+        return totalContextTime;
+    }
+
+    public long getScaleSize() {
+        return scaleSize;
+    }
+
+    public long getScaleComplexity() {
+        return scaleComplexity;
+    }
+
+    public List<ActivityBuilder> getChildren() {
+        return children;
+    }
+
+    public String getContextId() {
+        return contextId;
+    }
+
+    public String getContextName() {
+        return contextName;
+    }
+
+    public long getScheduledSteps() {
+        return scheduledSteps;
     }
 
     /**
@@ -105,7 +157,7 @@ public class ActivityBuilder {
                 ret = this.actuators.get(obs);
                 if (ret.endTime > 0) {
                     ret.totalTime += (ret.endTime - ret.startTime);
-                    ret.passes ++;
+                    ret.passes++;
                 }
                 ret.startTime = System.currentTimeMillis();
                 ret.endTime = 0;
@@ -122,7 +174,7 @@ public class ActivityBuilder {
                 ret = this.contextualizers.get(ctxId);
                 if (ret.endTime > 0) {
                     ret.totalTime += (ret.endTime - ret.startTime);
-                    ret.passes ++;
+                    ret.passes++;
                 }
                 ret.startTime = System.currentTimeMillis();
                 ret.endTime = 0;
@@ -138,7 +190,7 @@ public class ActivityBuilder {
                 ret = this.resources.get(ctxId);
                 if (ret.endTime > 0) {
                     ret.totalTime += (ret.endTime - ret.startTime);
-                    ret.passes ++;
+                    ret.passes++;
                 }
                 ret.startTime = System.currentTimeMillis();
                 ret.endTime = 0;
@@ -164,7 +216,7 @@ public class ActivityBuilder {
         } else {
             ret.contextId = this.contextId;
         }
-        
+
         this.children.add(ret);
 
         return ret;
@@ -242,8 +294,14 @@ public class ActivityBuilder {
         return this;
     }
 
-    ActivityBuilder withGeometry(IGeometry geometry) {
+    public ActivityBuilder withGeometry(IGeometry geometry) {
+        analyzeGeometry();
         return this;
+    }
+
+    private void analyzeGeometry() {
+        // TODO Auto-generated method stub
+        
     }
 
     double getTotalTimeSeconds() {
@@ -290,7 +348,7 @@ public class ActivityBuilder {
             } else if (o instanceof String) {
                 this.targetId = (String) o;
             } else if (o instanceof IDirectObservation) {
-                this.contextId = ((IDirectObservation)o).getId();
+                this.contextId = ((IDirectObservation) o).getId();
             }
         }
     }
@@ -298,7 +356,7 @@ public class ActivityBuilder {
     public void notifyContextCreated(ISubject ret) {
         this.contextCreated = ret.getId();
     }
-    
+
     public ObservationResultStatistics encode() {
         ObservationResultStatistics ret = new ObservationResultStatistics();
         return ret;
@@ -311,5 +369,5 @@ public class ActivityBuilder {
     public int getPasses() {
         return passes;
     }
-    
+
 }

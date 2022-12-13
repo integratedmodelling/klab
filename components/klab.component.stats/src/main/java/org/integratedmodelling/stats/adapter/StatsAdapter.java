@@ -7,11 +7,12 @@ import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
-import org.integratedmodelling.klab.api.extensions.UrnAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
+import org.integratedmodelling.klab.api.extensions.UrnAdapter;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.stats.database.StatsDatabase;
 
 /**
  * Provides a URN pattern to access usage/observation events, heatmaps, and other queries to the
@@ -28,6 +29,13 @@ public class StatsAdapter implements IUrnAdapter {
      * must reflect the change or the service won't be updated.
      */
     public final static String ID = "stats";
+    public static StatsDatabase database;
+
+    public StatsAdapter() {
+        if (database == null && StatsDatabase.isEnabled()) {
+            database = new StatsDatabase();
+        }
+    }
 
     @Override
     public String getName() {
@@ -41,16 +49,14 @@ public class StatsAdapter implements IUrnAdapter {
     }
 
     @Override
-    public IResource contextualize(IResource resource, IGeometry scale, IGeometry overallScale,
-            IObservable semantics) {
+    public IResource contextualize(IResource resource, IGeometry scale, IGeometry overallScale, IObservable semantics) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public boolean isOnline(Urn urn) {
-        // TODO Auto-generated method stub
-        return false;
+        return database != null && database.isOnline();
     }
 
     @Override
