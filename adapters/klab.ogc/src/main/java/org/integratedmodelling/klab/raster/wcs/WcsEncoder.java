@@ -19,9 +19,21 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.util.Map;
 
+import org.geotools.coverage.grid.GridCoverage2D;
+import org.geotools.coverage.grid.io.AbstractGridCoverage2DReader;
+import org.geotools.coverage.grid.io.AbstractGridFormat;
+import org.geotools.coverage.grid.io.GridFormatFinder;
+import org.geotools.coverage.processing.Operations;
+import org.geotools.util.factory.Hints;
+import org.hortonmachine.gears.io.rasterreader.OmsRasterReader;
+import org.hortonmachine.gears.io.rasterwriter.OmsRasterWriter;
+import org.hortonmachine.gears.libs.modules.HMRaster;
+import org.hortonmachine.gears.utils.RegionMap;
+import org.hortonmachine.gears.utils.coverage.CoverageUtilities;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
@@ -30,12 +42,16 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.common.Geometry;
+import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.ogc.WcsAdapter;
 import org.integratedmodelling.klab.raster.files.RasterEncoder;
 import org.integratedmodelling.klab.raster.wcs.WCSService.WCSLayer;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.opengis.coverage.grid.GridCoverage;
+import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.Envelope;
 
 /**
  * The Class WcsEncoder.
@@ -50,15 +66,15 @@ public class WcsEncoder implements IResourceEncoder {
     @Override
     public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry, Builder builder,
             IContextualizationScope scope) {
-    	
-    	String interpolation = urnParameters.get("interpolation");
-    	
+
+        String interpolation = urnParameters.get("interpolation");
+
         WCSService service = WcsAdapter.getService(resource.getParameters().get("serviceUrl", String.class),
                 Version.create(resource.getParameters().get("wcsVersion", String.class)));
         WCSLayer layer = service.getLayer(resource.getParameters().get("wcsIdentifier", String.class));
         if (layer != null) {
-            encoder.encodeFromCoverage(resource, urnParameters, getCoverage(layer, resource, geometry, interpolation), geometry, builder,
-                    scope);
+            encoder.encodeFromCoverage(resource, urnParameters, getCoverage(layer, resource, geometry, interpolation), geometry,
+                    builder, scope);
         } else {
             scope.getMonitor()
                     .warn("Problems accessing WCS layer " + resource.getParameters().get("wcsIdentifier", String.class));
@@ -93,6 +109,40 @@ public class WcsEncoder implements IResourceEncoder {
             try (InputStream input = getCov.openStream()) {
                 coverageFile = File.createTempFile("geo", ".tiff");
                 FileUtils.copyInputStreamToFile(input, coverageFile);
+
+                Dimension space = geometry.getDimension(IGeometry.Dimension.Type.SPACE);
+                String rcrs = space.getParameters().get(Geometry.PARAMETER_SPACE_PROJECTION, String.class);
+                Projection crs = Projection.create(rcrs);
+                int cols = (int) space.shape()[0];
+                int rows = (int) space.shape()[1];
+                double[] extent = space.getParameters().get(Geometry.PARAMETER_SPACE_BOUNDINGBOX, double[].class);
+
+                GridCoverage2D coverage = OmsRasterReader.readRaster(coverageFile.getAbsolutePath());
+                Envelope envelope = coverage.getEnvelope();
+                DirectPosition lowerCorner = envelope.getLowerCorner();
+                double[] westSouth = lowerCorner.getCoordinate();
+                DirectPosition upperCorner = envelope.getUpperCorner();
+                double[] eastNorth = upperCorner.getCoordinate();
+
+                org.locationtech.jts.geom.Envelope requestedExtend = new org.locationtech.jts.geom.Envelope(extent[0], extent[1],
+                        extent[2], extent[3]);
+                org.locationtech.jts.geom.Envelope recievedExtend = new org.locationtech.jts.geom.Envelope(westSouth[0],
+                        eastNorth[0], westSouth[1], eastNorth[1]);
+
+                double recievedArea = recievedExtend.getArea();
+                double requestedArea = requestedExtend.getArea();
+                double diff = Math.abs(requestedArea - recievedArea);
+                if (diff > 0.01) {
+                    // need to pad
+                    HMRaster raster = HMRaster.fromGridCoverage(coverage);
+                    RegionMap region = RegionMap.fromEnvelopeAndGrid(requestedExtend, cols, rows);
+                    HMRaster paddedRaster = HMRaster.writableFromRegionMap("padded", region, crs.getCoordinateReferenceSystem(),
+                            raster.getNovalue());
+                    paddedRaster.mapRaster(null, raster);
+                    coverage = paddedRaster.buildCoverage();
+                    OmsRasterWriter.writeRaster(coverageFile.getAbsolutePath(), coverage);
+                }
+
                 FileUtils.forceDeleteOnExit(coverageFile);
                 if (Configuration.INSTANCE.isEchoEnabled()) {
                     System.out.println("Data have arrived in " + coverageFile);
@@ -133,7 +183,6 @@ public class WcsEncoder implements IResourceEncoder {
         return layer != null && !layer.isError();
     }
 
-    
     @Override
     public IResource contextualize(IResource resource, IScale scale, IArtifact targetObservation,
             Map<String, String> urnParameters, IContextualizationScope scope) {
@@ -147,10 +196,10 @@ public class WcsEncoder implements IResourceEncoder {
         return null;
     }
 
-	@Override
-	public void listDetail(IResource resource, OutputStream stream, boolean verbose, IMonitor monitor) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void listDetail(IResource resource, OutputStream stream, boolean verbose, IMonitor monitor) {
+        // TODO Auto-generated method stub
+
+    }
 
 }
