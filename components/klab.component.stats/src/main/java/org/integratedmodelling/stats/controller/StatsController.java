@@ -3,9 +3,7 @@ package org.integratedmodelling.stats.controller;
 import java.security.Principal;
 
 import org.integratedmodelling.klab.api.API;
-import org.integratedmodelling.klab.node.auth.Role;
 import org.integratedmodelling.klab.rest.ObservationResultStatistics;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
  *
  */
 @RestController
-@Secured(Role.ENGINE)
+//@Secured(Role.ENGINE)
 public class StatsController {
 
     /*

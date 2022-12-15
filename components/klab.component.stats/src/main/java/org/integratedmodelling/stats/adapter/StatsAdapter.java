@@ -12,7 +12,6 @@ import org.integratedmodelling.klab.api.extensions.UrnAdapter;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
-import org.integratedmodelling.stats.database.StatsDatabase;
 
 /**
  * Provides a URN pattern to access usage/observation events, heatmaps, and other queries to the
@@ -29,12 +28,12 @@ public class StatsAdapter implements IUrnAdapter {
      * must reflect the change or the service won't be updated.
      */
     public final static String ID = "stats";
-    public static StatsDatabase database;
+//    public static StatsDatabase database;
 
     public StatsAdapter() {
-        if (database == null && StatsDatabase.isEnabled()) {
-            database = new StatsDatabase();
-        }
+//        if (database == null && StatsDatabase.isEnabled()) {
+//            database = new StatsDatabase();
+//        }
     }
 
     @Override
@@ -56,7 +55,8 @@ public class StatsAdapter implements IUrnAdapter {
 
     @Override
     public boolean isOnline(Urn urn) {
-        return database != null && database.isOnline();
+        return false;
+//        return database != null && database.isOnline();
     }
 
     @Override

@@ -13,11 +13,11 @@
 			<artifactId>klab.engine</artifactId>
 			<version>${klab.version}</version>
 		</dependency>
-		<dependency>
+<!-- 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.node</artifactId>
 			<version>${klab.version}</version>
-		</dependency>
+		</dependency>-->
   		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>org.integratedmodelling.klab.api</artifactId>
