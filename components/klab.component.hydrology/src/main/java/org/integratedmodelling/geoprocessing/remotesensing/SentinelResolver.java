@@ -2,13 +2,14 @@ package org.integratedmodelling.geoprocessing.remotesensing;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.List;
 
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.processing.Operations;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
+import org.hortonmachine.gears.io.stac.EarthAwsElement84Sentinel2Bands;
 import org.hortonmachine.gears.io.stac.HMStacCollection;
 import org.hortonmachine.gears.io.stac.HMStacItem;
 import org.hortonmachine.gears.io.stac.HMStacManager;
@@ -22,6 +23,8 @@ import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
@@ -38,18 +41,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public class SentinelResolver extends AbstractContextualizer implements IResolver<IState>, IExpression {
 
     String band;
-    final static HashMap<String, String> BANDS = new HashMap<>();
-    static {
-        BANDS.put("red", "Red (band 4) - 10m");
-        BANDS.put("blue", "Blue (band 2) - 10m");
-        BANDS.put("green", "Green (band 3) - 10m");
-        BANDS.put("nir1", "NIR 1 (band 8) - 10m");
-        BANDS.put("nir2", "NIR 2 (band 8A) - 20m");
-        BANDS.put("nir3", "NIR 3 (band 9) - 60m");
-        BANDS.put("swir1", "SWIR 1 (band 11) - 20m");
-        BANDS.put("swir2", "SWIR 2 (band 12) - 20m");
-    }
-
+     
+    
     @Override
     public Type getType() {
         return Type.NUMBER;
@@ -69,7 +62,14 @@ public class SentinelResolver extends AbstractContextualizer implements IResolve
             throw new KlabValidationException("Sentinel data can be retrieved only on a grid extent");
         }
 
-        String stacBand = BANDS.get(band);
+        
+        String stacBand = null;
+        for(EarthAwsElement84Sentinel2Bands sentinelBand: EarthAwsElement84Sentinel2Bands.values()) {
+            if(sentinelBand.name().equals(band)) {
+                stacBand = sentinelBand.getRealName();
+            }
+        }
+         
         if (stacBand == null) {
             throw new IllegalArgumentException(band + " is not an available band.");
         }
@@ -88,14 +88,20 @@ public class SentinelResolver extends AbstractContextualizer implements IResolve
 
         NumberFormat f = new DecimalFormat("00");
         ITimeInstant start = context.getScale().getTime().getStart();
-        String day = start.getYear() + "-" + f.format(start.getMonth()) + "-" + f.format(start.getDay());
+        
+        // Sentinel will take max 5 days to cover the whole world
+        Resolution resolution = org.integratedmodelling.klab.components.time.extents.Time.resolution(1,
+                ITime.Resolution.Type.DAY);
+        ITimeInstant end = start.plus(5, resolution);
 
         try (HMStacManager stacManager = new HMStacManager(repoUrl, taskMonitor)) {
             stacManager.open();
 
             HMStacCollection collection = stacManager.getCollectionById(collectionId);
 
-            List<HMStacItem> items = collection.setDayFilter(day, null).setGeometryFilter(intersectionGeometry).searchItems();
+            List<HMStacItem> items = collection
+                    .setTimestampFilter(new Date(start.getMilliseconds()), new Date(end.getMilliseconds()))
+                    .setGeometryFilter(intersectionGeometry).searchItems();
             int size = items.size();
             taskMonitor.message("Found " + size + " items matching the query.");
 
@@ -114,6 +120,10 @@ public class SentinelResolver extends AbstractContextualizer implements IResolve
                 RegionMap regionTransformed = RegionMap.fromEnvelopeAndGrid(regionEnvelopeTransformed, (int) cols, (int) rows);
 
                 HMRaster outRaster = HMStacCollection.readRasterBandOnRegion(regionTransformed, stacBand, items, taskMonitor);
+                
+                // apply averaging based on the amount of times the cell has been assigned a value
+                outRaster.applyCountAverage(taskMonitor);
+                
                 GridCoverage2D outCoverage = outRaster.buildCoverage();
 
                 if (!context.getMonitor().isInterrupted()) {
@@ -133,7 +143,7 @@ public class SentinelResolver extends AbstractContextualizer implements IResolve
     public Object eval(IContextualizationScope context, Object... params) throws KlabException {
         Parameters<String> parameters = Parameters.create(params);
         SentinelResolver ret = new SentinelResolver();
-        ret.band = parameters.get("band", "nir1");
+        ret.band = EarthAwsElement84Sentinel2Bands.red.name();
         return ret;
     }
 
