@@ -193,7 +193,7 @@ public class KlabNavigatorActions {
 		dialog.open();
 	}
 
-	public static void editResource(EResourceReference resource) {
+	public static void editResource(ResourceReference resource) {
 		try {
 			IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
 					.showView(ResourceEditor.ID);
@@ -204,6 +204,16 @@ public class KlabNavigatorActions {
 			Eclipse.INSTANCE.handleException(e);
 		}
 	}
+	
+	   public static void editResource(ResourceReference resource, IViewPart view) {
+	        try {
+	            if (view != null) {
+	                ((ResourceEditor) view).loadResource(resource);
+	            }
+	        } catch (Exception e) {
+	            Eclipse.INSTANCE.handleException(e);
+	        }
+	    }
 
 	public static void deleteResource(EResource resource) {
 		if (MessageDialog.openConfirm(Eclipse.INSTANCE.getShell(), "Confirm deletion",

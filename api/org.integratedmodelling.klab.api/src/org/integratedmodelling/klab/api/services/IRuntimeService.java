@@ -31,6 +31,11 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 public interface IRuntimeService {
 
     /**
+     * IEngineIdentity::getName will return this in local engines.
+     */
+    public static final String LOCAL_ENGINE_NAME = "local";
+
+    /**
      * Storage for states is provided by a component found in the classpath. If more storage
      * components are available, configuration must have been defined to choose it. This allows
      *

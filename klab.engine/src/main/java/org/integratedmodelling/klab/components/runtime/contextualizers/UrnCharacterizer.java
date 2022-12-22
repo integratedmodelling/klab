@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Urns;
+import org.integratedmodelling.klab.engine.runtime.ActivityBuilder;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
@@ -54,9 +55,9 @@ public class UrnCharacterizer extends AbstractContextualizer implements IResolve
     public void notifyContextualizedResource(IContextualizable resource, IArtifact target, IContextualizationScope scope) {
         this.resource = resource.getResource();
     }
-    
+
     @Override
-    public Object eval(IContextualizationScope context, Object...parameters) throws KlabException {
+    public Object eval(IContextualizationScope context, Object... parameters) throws KlabException {
         return new UrnCharacterizer(Parameters.create(parameters).get("urn", String.class));
     }
 
@@ -68,8 +69,9 @@ public class UrnCharacterizer extends AbstractContextualizer implements IResolve
     @Override
     public IArtifact resolve(IArtifact ret, IContextualizationScope context) throws KlabException {
 
-//        IResource res = this.resource.contextualize(context.getScale(), context.getTargetArtifact(), urnParameters, context);
-        
+        // IResource res = this.resource.contextualize(context.getScale(),
+        // context.getTargetArtifact(), urnParameters, context);
+
         if (this.resource.getAvailability() != null) {
             switch(this.resource.getAvailability().getAvailability()) {
             case DELAYED:
@@ -85,24 +87,42 @@ public class UrnCharacterizer extends AbstractContextualizer implements IResolve
                 break;
             }
         }
-        
-        IKlabData data = Resources.INSTANCE.getResourceData(this.resource, urnParameters, context.getScale(), context, ret);
-        if (data != null) {
-            IConcept concept = data.getSemantics();
-            if (concept != null) {
-                IConcept toResolve = context.getTargetSemantics().getType();
-                List<IConcept> traits = concept.is(IKimConcept.Type.INTERSECTION)
-                        ? Collections.singletonList(concept)
-                        : concept.getOperands();
-                if (ret instanceof IDirectObservation) {
-                    for (IConcept predicate : traits) {
-                        ((IRuntimeScope) context).newPredicate((IDirectObservation) ret, predicate);
+
+        ActivityBuilder stats = getStatistics() == null ? null : getStatistics().forTarget(resource);
+
+        try {
+
+            IKlabData data = Resources.INSTANCE.getResourceData(this.resource, urnParameters, context.getScale(), context, ret);
+            if (data != null) {
+                IConcept concept = data.getSemantics();
+                if (concept != null) {
+                    IConcept toResolve = context.getTargetSemantics().getType();
+                    List<IConcept> traits = concept.is(IKimConcept.Type.INTERSECTION)
+                            ? Collections.singletonList(concept)
+                            : concept.getOperands();
+                    if (ret instanceof IDirectObservation) {
+                        for (IConcept predicate : traits) {
+                            ((IRuntimeScope) context).newPredicate((IDirectObservation) ret, predicate);
+                        }
+                    } else {
+                        ((IRuntimeScope) context).setConcreteIdentities(toResolve, traits);
                     }
-                } else {
-                    ((IRuntimeScope) context).setConcreteIdentities(toResolve, traits);
+                }
+                if (stats != null) {
+                    stats.success();
+                }
+            } else {
+                if (stats != null) {
+                    stats.error();
                 }
             }
+        } catch (Throwable t) {
+            if (stats != null) {
+                stats.exception(t);
+            }
+            throw t;
         }
+
         return ret;
     }
 }

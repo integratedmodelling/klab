@@ -53,6 +53,7 @@ public interface IConfigurationService {
     public static final String KLAB_CONNECTION_TIMEOUT = "klab.connection.timeout";
     public static final String KLAB_PROJECT_BLACKLIST_PROPERTY = "klab.project.blacklist";
     public static final String KLAB_STATS_SERVER_URL_PROPERTY = "stats.server.url";
+    public static final String KLAB_LENIENT_GRID_INTERSECTION = "klab.grid.intersection.lenient";
 
     /**
      * If false, coverage of merged spatial layers is interpreted strictly, i.e. if a covered

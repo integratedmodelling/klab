@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.stats.api.models;
 
 import java.util.List;
 
+@Deprecated
 public class StatsFindPageResponse<M> extends StatsBaseRequest<M>{
     
     private List<M> results;

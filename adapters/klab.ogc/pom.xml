@@ -50,6 +50,22 @@
 			<artifactId>underscore</artifactId>
 			<version>1.68</version>
 		</dependency>
+		
+       <dependency>
+            <groupId>org.hortonmachine</groupId>
+            <artifactId>hm-gears</artifactId>
+            <version>${hortonmachine.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.measure</groupId>
+                    <artifactId>jsr-275</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.mongodb</groupId>
+                    <artifactId>mongo-java-driver</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
 		<dependency>
 			<groupId>org.geotools.jdbc</groupId>

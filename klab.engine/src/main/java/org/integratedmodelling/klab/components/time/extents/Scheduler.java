@@ -55,6 +55,7 @@ import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.engine.debugger.Debug;
 import org.integratedmodelling.klab.engine.debugger.Debugger.Watcher;
+import org.integratedmodelling.klab.engine.runtime.ActivityBuilder;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.monitoring.Message;
@@ -330,6 +331,8 @@ public class Scheduler implements IScheduler {
                         return ret;
                     }
 
+                    ActivityBuilder statistics = scope.getStatistics().forTarget(actuator);
+                    
                     /*
                      * 2. Set the context at() the current time. This will also need to expose any
                      * affected outputs that move at a different (context) speed through a rescaling
@@ -383,7 +386,7 @@ public class Scheduler implements IScheduler {
                             artifact = computation.target;
                         }
 
-                        IRuntimeScope transitionScope = actuator.setupScope(artifact, transitionContext);
+                        IRuntimeScope transitionScope = actuator.setupScope(artifact, transitionContext, statistics);
 
                         IContextualizable resource = computation.resource;
                         if (resource != null) {
@@ -405,7 +408,7 @@ public class Scheduler implements IScheduler {
                          * Whatever changes is reported by the actuator.
                          */
                         artifact = actuator.runContextualizer(computation.contextualizer, computation.observable, resource,
-                                artifact, transitionScope, (IScale) transitionScale, changedArtifacts);
+                                artifact, transitionScope, (IScale) transitionScale, changedArtifacts, statistics);
                         
                         if (artifact == null) {
                             interruptedTargets.add(computation.targetId);
@@ -1143,6 +1146,8 @@ public class Scheduler implements IScheduler {
             // transitionContext = actuator.localizeNames(transitionContext);
             IArtifact artifact = null;
 
+            ActivityBuilder statistics = runtimeScope.getStatistics().forTarget(actuator).schedulerStep();
+            
             // we re-run the entire initialization sequence.
             for (Actuator.Computation computation : actuator.getContextualizers()) {
 
@@ -1159,7 +1164,7 @@ public class Scheduler implements IScheduler {
                  * substitute the target for the next computation if we're using layers
                  */
                 artifact = actuator.runContextualizer(computation.contextualizer, computation.observable, computation.resource,
-                        artifact, transitionContext, (IScale) transitionScale, changedArtifacts);
+                        artifact, transitionContext, (IScale) transitionScale, changedArtifacts, statistics);
 
                 if (monitor.isInterrupted()) {
                     return;

@@ -93,6 +93,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
     IMonitor monitor;
     SimpleRuntimeScope parent;
     String targetName;
+    ActivityBuilder statistics;
 
     // these are shared among all children, created in root only and passed around
     Map<String, IArtifact> artifacts;
@@ -132,7 +133,8 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
         this.monitor = monitor;
         if (observable != null) {
             this.namespace = Namespaces.INSTANCE.getNamespace(observable.getType().getNamespace());
-            this.target = this.rootSubject = new Subject(observable.getName(), (Observable) observable, (Scale) scale, this);
+            this.target = this.rootSubject = new Subject(observable.getName(), (Observable) observable,
+                    (Scale) scale, this);
             this.structure.add(this.target);
             this.artifacts.put(this.getTargetName(), this.target);
             this.observations.put(this.target.getId(), this.target);
@@ -253,7 +255,8 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
     }
 
     @Override
-    public IObjectArtifact newObservation(IObservable observable, String name, IScale scale, IMetadata metadata)
+    public IObjectArtifact newObservation(IObservable observable, String name, IScale scale,
+            IMetadata metadata)
             throws KlabException {
 
         IDirectObservation ret = null;
@@ -281,7 +284,8 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
     }
 
     @Override
-    public IObjectArtifact newRelationship(IObservable observable, String name, IScale scale, IObjectArtifact source,
+    public IObjectArtifact newRelationship(IObservable observable, String name, IScale scale,
+            IObjectArtifact source,
             IObjectArtifact target, IMetadata metadata) {
 
         Relationship ret = new Relationship(name, (Observable) observable, (Scale) scale, this);
@@ -322,7 +326,9 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
         if (target == null) {
             return null;
         }
-        return target instanceof IDirectObservation ? ((IDirectObservation) target).getName() : target.getObservable().getName();
+        return target instanceof IDirectObservation
+                ? ((IDirectObservation) target).getName()
+                : target.getObservable().getName();
     }
 
     @Override
@@ -359,7 +365,8 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
     }
 
     @Override
-    public IRuntimeScope createChild(IScale scale, IActuator target, IResolutionScope scope, IMonitor monitor, IPattern pattern) {
+    public IRuntimeScope createChild(IScale scale, IActuator target, IResolutionScope scope, IMonitor monitor,
+            IPattern pattern) {
         throw new IllegalStateException(
                 "Context is meant for testing of individual resources and cannot support child observations");
     }
@@ -426,16 +433,19 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 
         if (observable == null) {
             IConcept concept = OWL.INSTANCE.getNonsemanticPeer(
-                    CamelCase.toUpperCamelCase(resource.getLocalName().replaceAll("\\-", "_"), '_'), resource.getType());
+                    CamelCase.toUpperCamelCase(resource.getLocalName().replaceAll("\\-", "_"), '_'),
+                    resource.getType());
             observable = Observable.promote(concept);
         }
 
         SimpleRuntimeScope ret = new SimpleRuntimeScope(this);
         if (!resource.getType().isCountable()) {
-            IStorage<?> data = Klab.INSTANCE.getStorageProvider().createStorage(resource.getType(), getScale());
+            IStorage<?> data = Klab.INSTANCE.getStorageProvider().createStorage(resource.getType(),
+                    getScale());
             ret.target = new State((Observable) observable, (Scale) scale, this, (IDataStorage<?>) data);
         } else {
-            ret.target = new ObservationGroup((Observable) observable, (Scale) scale, this, resource.getType());
+            ret.target = new ObservationGroup((Observable) observable, (Scale) scale, this,
+                    resource.getType());
         }
 
         this.observable = observable;
@@ -486,7 +496,8 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
         for (String key : artifacts.keySet()) {
             IArtifact artifact = artifacts.get(key);
             if (artifact != null && artifact instanceof IObservation
-                    && ((Observable) ((IObservation) artifact).getObservable()).resolvesStrictly((Observable) observable)) {
+                    && ((Observable) ((IObservation) artifact).getObservable())
+                            .resolvesStrictly((Observable) observable)) {
                 return new Pair<>(key, artifact);
             }
         }
@@ -527,7 +538,8 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
     public Collection<IArtifact> getArtifact(IConcept observable) {
         List<IArtifact> ret = new ArrayList<>();
         for (IArtifact artifact : artifacts.values()) {
-            if (artifact instanceof IObservation && ((IObservation) artifact).getObservable().getType().is(observable)) {
+            if (artifact instanceof IObservation
+                    && ((IObservation) artifact).getObservable().getType().is(observable)) {
                 ret.add(artifact);
             }
         }
@@ -564,7 +576,8 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 
         Set<IArtifact> ret = new HashSet<>();
         for (IArtifact artifact : artifacts.values()) {
-            if (artifact instanceof IObservation && ((IObservation) artifact).getObservable().getType().is(concept)) {
+            if (artifact instanceof IObservation
+                    && ((IObservation) artifact).getObservable().getType().is(concept)) {
                 ret.add(artifact);
             }
         }
@@ -584,7 +597,8 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
     @Override
     public ObservationGroup getObservationGroup(IObservable observable, IScale scale) {
         // TODO implement the same mechanism as RuntimeContext
-        return new ObservationGroup((Observable) observable, (Scale) scale, this, observable.getArtifactType());
+        return new ObservationGroup((Observable) observable, (Scale) scale, this,
+                observable.getArtifactType());
     }
 
     @Override
@@ -653,7 +667,8 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
     }
 
     @Override
-    public <T extends IArtifact> T resolve(IObservable observable, IDirectObservation context, ITaskTree<?> task, Mode mode,
+    public <T extends IArtifact> T resolve(IObservable observable, IDirectObservation context,
+            ITaskTree<?> task, Mode mode,
             IActuator parentDataflow) {
         // TODO Auto-generated method stub
         return null;
@@ -790,7 +805,8 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 
         Set<T> ret = new HashSet<>();
         for (IArtifact artifact : artifacts.values()) {
-            if (artifact instanceof IObservation && ((IObservation) artifact).getObservable().getType().is(concept)) {
+            if (artifact instanceof IObservation
+                    && ((IObservation) artifact).getObservable().getType().is(concept)) {
                 ret.add((T) artifact);
             }
         }
@@ -891,13 +907,15 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
     }
 
     @Override
-    public IRuntimeScope createContext(IScale scale, IActuator target, IDataflow<?> dataflow, IResolutionScope scope) {
+    public IRuntimeScope createContext(IScale scale, IActuator target, IDataflow<?> dataflow,
+            IResolutionScope scope) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public IRuntimeScope getContextScope(Actuator actuator, IResolutionScope scope, IScale scale, IDataflow<?> dataflow,
+    public IRuntimeScope getContextScope(Actuator actuator, IResolutionScope scope, IScale scale,
+            IDataflow<?> dataflow,
             IMonitor monitor) {
         // TODO Auto-generated method stub
         return null;
@@ -997,17 +1015,21 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
         return null;
     }
 
-	@Override
-	public IObservation incarnatePattern(IConcept concept, IPattern pattern) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public IObservation incarnatePattern(IConcept concept, IPattern pattern) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public IPattern getPattern() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public IPattern getPattern() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
+    @Override
+    public ActivityBuilder getStatistics() {
+        return statistics;
+    }
 
 }

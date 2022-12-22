@@ -648,7 +648,9 @@ public class WCSService {
 
                 s = serviceUrl + "?service=WCS&version=" + version + "&request=GetCoverage&coverage="
                         + layer.getRequestIdentifier() + "&bbox=" + west + "," + south + "," + east + "," + north + "&crs="
-                        + crs.getSimpleSRS() + "&responseCRS=" + crs.getSimpleSRS() + "&width=" + xc + "&height=" + yc
+                        + crs.getSimpleSRS() 
+                        + "&responseCRS=" + crs.getSimpleSRS()
+                        + "&width=" + xc + "&height=" + yc
                         + "&format=" + "GeoTIFF";
 
             } else {

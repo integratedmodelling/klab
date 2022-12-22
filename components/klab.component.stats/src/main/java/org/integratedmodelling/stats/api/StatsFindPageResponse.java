@@ -2,6 +2,7 @@ package org.integratedmodelling.stats.api;
 
 import java.util.List;
 
+@Deprecated
 public class StatsFindPageResponse<M> extends StatsBaseRequest<M>{
     
     private List<M> results;

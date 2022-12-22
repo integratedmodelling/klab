@@ -241,6 +241,18 @@ public class MergingState extends State implements DelegatingArtifact {
 
         return aggregate ? aggregator.aggregate() : null;
     }
+    
+    
+    @Override
+    public long getTimestamp() {
+        long ret = 0l;
+        for (IState s : states) {
+            if (s.getTimestamp() > ret) {
+                ret = s.getTimestamp();
+            }
+        }
+        return ret;
+    }
 
     @Override
     public long[] getUpdateTimestamps() {

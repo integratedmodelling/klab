@@ -695,5 +695,11 @@ public class Client extends RestTemplate implements IClient {
             throw new IllegalArgumentException("serialization failed: " + e.getMessage());
         }
     }
+
+    @Override
+    public boolean put(String url, Object data) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 	
 }

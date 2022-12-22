@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.data.storage.MediatingState;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
+import org.integratedmodelling.klab.engine.runtime.ActivityBuilder;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
@@ -32,8 +33,9 @@ public abstract class AbstractContextualizer implements IContextualizer {
 
     private IPrototype prototype;
     private RuntimeScope scope;
+    private ActivityBuilder statistics;
 
-    protected IPrototype getPrototype() {
+    public IPrototype getPrototype() {
         return prototype;
     }
 
@@ -43,6 +45,10 @@ public abstract class AbstractContextualizer implements IContextualizer {
 
     protected RuntimeScope getScope() {
         return scope;
+    }
+
+    protected ActivityBuilder getStatistics() {
+        return statistics;
     }
 
     public void setScope(RuntimeScope scope) {
@@ -137,16 +143,16 @@ public abstract class AbstractContextualizer implements IContextualizer {
         T artifact = null;
 
         if (input.getUnit() != null && IState.class.isAssignableFrom(cls)) {
-            
+
             /*
              * mediate from the unit this produces to the one in the state
              */
             IValueMediator mediator = Units.INSTANCE.getMediator(input.getUnit());
             IState target = scope.getArtifact(stateIdentifier, IState.class);
             if (!target.getObservable().getMediator().equals(mediator)) {
-                return (T)MediatingState.mediateIfNecessary(target, mediator);
+                return (T) MediatingState.mediateIfNecessary(target, mediator);
             }
-            
+
         } else if (input.getUnit() == null) {
             artifact = scope.getArtifact(stateIdentifier, cls);
             if (artifact.getObservable().getArtifactType() != input.getType()) {
@@ -169,6 +175,10 @@ public abstract class AbstractContextualizer implements IContextualizer {
 
     @Override
     public void notifyContextualizedResource(IContextualizable resource, IArtifact target, IContextualizationScope scope) {
+    }
+
+    public void setStatistics(ActivityBuilder stats) {
+        this.statistics = stats;
     }
 
 }

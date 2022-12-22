@@ -223,4 +223,11 @@ public interface ISessionState extends IParameters<String> {
 	 */
 	IInspector getInspector();
 
+	/**
+	 * If an application is running in the session, return its name.
+	 * 
+	 * @return
+	 */
+    String getCurrentApplicationName();
+
 }

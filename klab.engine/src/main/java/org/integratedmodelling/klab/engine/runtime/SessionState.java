@@ -172,7 +172,8 @@ public class SessionState extends Parameters<String> implements ISessionState {
      * through.
      */
     Timer extentTimer = new Timer();
-    private Object currentApplicationId;
+    private String currentApplicationName;
+    private String currentApplicationId;
     private SessionActivity currentActivity;
 
     public SessionState(Session session) {
@@ -458,6 +459,11 @@ public class SessionState extends Parameters<String> implements ISessionState {
     @Override
     public ISubject getCurrentContext() {
         return context.isEmpty() ? null : context.peek();
+    }
+    
+    @Override
+    public String getCurrentApplicationName() {
+        return this.currentApplicationName;
     }
 
     @Override
@@ -1053,6 +1059,10 @@ public class SessionState extends Parameters<String> implements ISessionState {
         this.currentApplicationId = ret;
     }
 
+    public void setApplicationName(String appName) {
+        this.currentApplicationName = appName;
+    }
+    
     public void notifyNewObservation(IObservation observation, ISubject context) {
         for (ListenerWrapper listener : listeners.values()) {
             if (listener.applicationId == null || listener.applicationId.equals(this.currentApplicationId)) {

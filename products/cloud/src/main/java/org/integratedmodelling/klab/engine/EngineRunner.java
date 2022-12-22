@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.stream.StreamSupport;
 
 import javax.annotation.PreDestroy;
+
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.auth.KlabCertificate;
@@ -17,7 +18,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 
 //@ComponentScan(basePackages = { "org.integratedmodelling.klab.engine"})
@@ -73,7 +73,7 @@ public class EngineRunner implements ApplicationListener<ApplicationPreparedEven
 		EngineRunner ret = new EngineRunner(args);
 		if(!ret.boot()){
 			throw new KlabException("Engine failed to start");
-		};
+		}
 		
 		return ret;	
 	}
@@ -83,7 +83,6 @@ public class EngineRunner implements ApplicationListener<ApplicationPreparedEven
 	public void shutdown() {
 		engine.stop();
 	}
-	
 	
 	private boolean boot() {
 		try {
@@ -99,9 +98,12 @@ public class EngineRunner implements ApplicationListener<ApplicationPreparedEven
 		        } else {
 		            engine = RemoteEngine.start(null, new EngineStartupOptions());
 		        }
-		        
 		    }
-			
+		    
+		    if (engine != null) {
+		        engine.setName(environment.getProperty("ENGINE_SERVICE"));
+		    }
+		    
 		} catch (Throwable e) {
 			return false;
 		}
@@ -113,7 +115,7 @@ public class EngineRunner implements ApplicationListener<ApplicationPreparedEven
 		MutablePropertySources propSrcs =  ((ConfigurableEnvironment) environment).getPropertySources();
 		StreamSupport.stream(propSrcs.spliterator(), false)
 		        .filter(ps -> ps instanceof EnumerablePropertySource)
-		        .map(ps -> ((EnumerablePropertySource) ps).getPropertyNames())
+		        .map(ps -> ((EnumerablePropertySource<?>) ps).getPropertyNames())
 		        .flatMap(Arrays::<String>stream)
 		        .forEach(propName -> Configuration.INSTANCE.getProperties().setProperty(propName, environment.getProperty(propName)));
 		Configuration.INSTANCE.save();

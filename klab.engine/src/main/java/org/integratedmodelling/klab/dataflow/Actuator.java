@@ -77,6 +77,7 @@ import org.integratedmodelling.klab.documentation.Report;
 import org.integratedmodelling.klab.documentation.extensions.DocumentationExtensions;
 import org.integratedmodelling.klab.documentation.extensions.DocumentationExtensions.Annotation;
 import org.integratedmodelling.klab.engine.debugger.Debug;
+import org.integratedmodelling.klab.engine.runtime.ActivityBuilder;
 import org.integratedmodelling.klab.engine.runtime.api.IKeyHolder;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
@@ -243,12 +244,10 @@ public class Actuator implements IActuator {
     }
 
     public void addMediation(IContextualizable resource, Actuator target, ISession session) {
-        ((ComputableResource) resource)
-                .setTargetId(target.getAlias() == null ? target.getName() : target.getAlias());
+        ((ComputableResource) resource).setTargetId(target.getAlias() == null ? target.getName() : target.getAlias());
         ((ComputableResource) resource).setMediation(true);
         computedResources.add(resource);
-        IServiceCall serviceCall = Klab.INSTANCE.getRuntimeProvider().getServiceCall(resource,
-                target.observable, session);
+        IServiceCall serviceCall = Klab.INSTANCE.getRuntimeProvider().getServiceCall(resource, target.observable, session);
         mediationStrategy.add(new Pair<>(serviceCall, resource));
     }
 
@@ -337,6 +336,8 @@ public class Actuator implements IActuator {
         // this.currentContext = scope;
         scope.getStatus(this).start();
 
+        ActivityBuilder statistics = scope.getStatistics().forTarget(this);
+
         /*
          * poor-man attempt at reentrancy in case this has to get called more than once for any
          * reason later.
@@ -360,7 +361,7 @@ public class Actuator implements IActuator {
          * this localizes the names in the context to those understood by this actuator and applies
          * any requested mediation to the inputs. Target may be swapped for a mediator.
          */
-        IRuntimeScope ctx = setupScope(target, scope);
+        IRuntimeScope ctx = setupScope(target, scope, statistics);
 
         if (target == null && ctx.getTargetArtifact() != null) {
             // contextualization redefined the target, which happens in change processes
@@ -375,9 +376,7 @@ public class Actuator implements IActuator {
                 return Observation.empty(getObservable(), scope);
             }
 
-            String targetId = service.getSecond().getTargetId() == null
-                    ? getName()
-                    : service.getSecond().getTargetId();
+            String targetId = service.getSecond().getTargetId() == null ? getName() : service.getSecond().getTargetId();
 
             if (blockedTargets.contains(targetId)) {
                 continue;
@@ -392,8 +391,7 @@ public class Actuator implements IActuator {
             }
 
             if (((ComputableResource) service.getSecond()).getModifiedParameters() != null) {
-                function.getParameters()
-                        .putAll(((ComputableResource) service.getSecond()).getModifiedParameters());
+                function.getParameters().putAll(((ComputableResource) service.getSecond()).getModifiedParameters());
             }
 
             if (service.getSecond().getTargetId() != null) {
@@ -472,8 +470,7 @@ public class Actuator implements IActuator {
                     indirectTarget = ((IObservation) indirect).getObservable();
                 } else {
                     throw new IllegalStateException(
-                            "cannot find indirect target observation "
-                                    + contextualizer.getThird().getTargetId());
+                            "cannot find indirect target observation " + contextualizer.getThird().getTargetId());
                 }
             }
             String targetId = /* partitionedTarget == null ? */getName() /* : partitionedTarget */;
@@ -495,10 +492,9 @@ public class Actuator implements IActuator {
              */
             if (!getType().isOccurrent()) {
                 artifactTable.put(targetId,
-                        runContextualizer(contextualizer.getFirst(),
-                                indirectTarget == null ? this.observable : indirectTarget,
-                                contextualizer.getSecond(), artifactTable.get(targetId), context,
-                                context.getScale(), changed));
+                        runContextualizer(contextualizer.getFirst(), indirectTarget == null ? this.observable : indirectTarget,
+                                contextualizer.getSecond(), artifactTable.get(targetId), context, context.getScale(), changed,
+                                statistics));
             }
 
             /*
@@ -530,8 +526,7 @@ public class Actuator implements IActuator {
                     int i = 0;
                     int toRemove = -1;
                     for (IObservation o : scope.getActuatorProducts(this)) {
-                        if (o.getObservable().getName()
-                                .equals(((IObservation) ret).getObservable().getName())) {
+                        if (o.getObservable().getName().equals(((IObservation) ret).getObservable().getName())) {
                             // added before: can only happen if this computation transformed it, so
                             // remove
                             // it.
@@ -557,6 +552,7 @@ public class Actuator implements IActuator {
 
         if (scope.getMonitor().isInterrupted()) {
             scope.getStatus(this).interrupt();
+            statistics.interrupt();
             return ret;
         }
 
@@ -585,8 +581,7 @@ public class Actuator implements IActuator {
             for (IAnnotation annotation : model.getAnnotations()) {
                 Annotation ctype = DocumentationExtensions.INSTANCE.validate(annotation, scope);
                 if (ctype != null) {
-                    ((Report) scope.getReport())
-                            .addTaggedText(new DocumentationItem(ctype, annotation, scope, this.observable));
+                    ((Report) scope.getReport()).addTaggedText(new DocumentationItem(ctype, annotation, scope, this.observable));
                 }
             }
         }
@@ -617,30 +612,34 @@ public class Actuator implements IActuator {
                 scope.getActuatorProducts(this).addAll(primary);
             }
 
-//            IConfiguration configuration = null;
-//            if (ret != null && !ret.isEmpty() && (mode == Mode.INSTANTIATION || ret instanceof IState)) {
-//                /*
-//                 * check for configuration triggered, only if we just resolved a state or
-//                 * instantiated 1+ objects
-//                 */
-//                Pair<IConcept, Set<IObservation>> confdesc = Observables.INSTANCE.detectConfigurations(
-//                        (IObservation) ret,
-//                        ctx.getContextObservation());
-//
-//                if (confdesc != null) {
-//
-//                    ctx.getMonitor().info(
-//                            "emergent configuration " + Concepts.INSTANCE.getDisplayName(confdesc.getFirst())
-//                                    + " detected");
-//
-//                    configuration = ctx.newConfiguration(confdesc.getFirst(), confdesc.getSecond(),
-//                            /* TODO metadata */ new Metadata());
-//
-//                    if (configuration != null) {
-//                        scope.getActuatorProducts(this).add(configuration);
-//                    }
-//                }
-//            }
+            statistics.success();
+
+            // IConfiguration configuration = null;
+            // if (ret != null && !ret.isEmpty() && (mode == Mode.INSTANTIATION || ret instanceof
+            // IState)) {
+            // /*
+            // * check for configuration triggered, only if we just resolved a state or
+            // * instantiated 1+ objects
+            // */
+            // Pair<IConcept, Set<IObservation>> confdesc =
+            // Observables.INSTANCE.detectConfigurations(
+            // (IObservation) ret,
+            // ctx.getContextObservation());
+            //
+            // if (confdesc != null) {
+            //
+            // ctx.getMonitor().info(
+            // "emergent configuration " + Concepts.INSTANCE.getDisplayName(confdesc.getFirst())
+            // + " detected");
+            //
+            // configuration = ctx.newConfiguration(confdesc.getFirst(), confdesc.getSecond(),
+            // /* TODO metadata */ new Metadata());
+            //
+            // if (configuration != null) {
+            // scope.getActuatorProducts(this).add(configuration);
+            // }
+            // }
+            // }
         }
 
         /*
@@ -675,337 +674,338 @@ public class Actuator implements IActuator {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public IArtifact runContextualizer(IContextualizer contextualizer, IObservable observable,
-            IContextualizable resource,
-            IArtifact artifact, IRuntimeScope scope, IScale scale, Set<IArtifact> changed) {
+    public IArtifact runContextualizer(IContextualizer contextualizer, IObservable observable, IContextualizable resource,
+            IArtifact artifact, IRuntimeScope scope, IScale scale, Set<IArtifact> changed, ActivityBuilder statistics) {
 
         if (scope.getMonitor().isInterrupted()) {
             return Observation.empty(getObservable(), scope);
         }
 
-        long timer = 0;
-        if (Configuration.INSTANCE.getProperty(IConfigurationService.KLAB_SHOWTIMES_PROPERTY, null) != null) {
-            Debug.INSTANCE.startTimer("Contextualizing " + getObservable(), null);
-        }
-
-        /*
-         * record the recontextualized resource in provenance. Artifact may be null in views or
-         * other void models.
-         */
-        if (resource.isFinal()) {
-            scope.getProvenance().add(artifact, resource, scale, this, scope,
-                    IAssociation.Type.wasDerivedFrom);
-        }
-
-        /*
-         * candidates for change: if this is a process, we add all the linked suspects to check
-         * later.
-         */
-        Map<IObservation, Long> lastUpdates = new HashMap<>();
-        if (artifact instanceof IObservation) {
-            lastUpdates.put((IObservation) artifact, ((IObservation) artifact).getLastUpdate());
-        }
-
-        if (artifact instanceof IProcess) {
-            for (IConcept affected : Observables.INSTANCE.getAffected(observable)) {
-                for (IObservation candidate : scope.getArtifacts(affected, IObservation.class))
-                    lastUpdates.put(candidate, candidate.getLastUpdate());
-            }
-        }
-
-        ISession session = scope.getMonitor().getIdentity().getParentIdentity(ISession.class);
-        DataflowState state = new DataflowState();
-        state.setNodeId(((RuntimeScope) scope).getNodeId(resource));
-        state.setStatus(DataflowState.Status.STARTED);
-        state.setMonitorable(false); // for now
-        session.getMonitor().send(
-                Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
-                        IMessage.Type.DataflowStateChanged, state));
-
-        /*
-         * This is what we get as the original content of self, which may be null or an empty state,
-         * or contain the result of the previous computation, including those that create state
-         * layers of a different type. This is the one to use as INPUT for computations involving
-         * self. The contextualizer type may be null in resources that adapt to the type requested
-         * in contextualization.
-         */
-        IArtifact self = artifact;
-
-        if (artifact instanceof IState && contextualizer.getType() != null
-                && contextualizer.getType().isState()) {
-            /*
-             * Establish the container for the output: switch the storage in the state to the type
-             * needed in the compute chain, creating a layer if necessary. This is the layer to
-             * WRITE INTO. If we're looking at a secondary output of a process or other non-state
-             * contextualizer, we don't go through here.
-             */
-            artifact = ((IState) artifact).as(contextualizer.getType());
-        }
+        ActivityBuilder stats = statistics.forTarget(contextualizer);
 
         if (contextualizer instanceof AbstractContextualizer) {
-            // FIXME potential issue with parallel execution!
-            ((AbstractContextualizer) contextualizer).setScope((RuntimeScope) scope);
+            ((AbstractContextualizer) contextualizer).setStatistics(stats);
         }
 
-        if (contextualizer instanceof IStateResolver) {
+        try {
+
+            long timer = 0;
+            if (Configuration.INSTANCE.getProperty(IConfigurationService.KLAB_SHOWTIMES_PROPERTY, null) != null) {
+                Debug.INSTANCE.startTimer("Contextualizing " + getObservable(), null);
+            }
 
             /*
-             * pass the distributed computation to the runtime provider for possible parallelization
-             * instead of hard-coding a loop here.
+             * record the recontextualized resource in provenance. Artifact may be null in views or
+             * other void models.
              */
-            IArtifact result = Klab.INSTANCE.getRuntimeProvider().distributeComputation(
-                    (IStateResolver) contextualizer,
-                    (IObservation) artifact, resource, addParameters(scope, self, resource), scale);
-
-            if (result != artifact) {
-                scope.swapArtifact(artifact, result);
+            if (resource.isFinal()) {
+                scope.getProvenance().add(artifact, resource, scale, this, scope, IAssociation.Type.wasDerivedFrom);
             }
-            artifact = result;
 
-            if (this.model != null && artifact instanceof Observation) {
-                if (scale.getTime() != null && scale.getTime().is(ITime.Type.INITIALIZATION)) {
+            /*
+             * candidates for change: if this is a process, we add all the linked suspects to check
+             * later.
+             */
+            Map<IObservation, Long> lastUpdates = new HashMap<>();
+            if (artifact instanceof IObservation) {
+                lastUpdates.put((IObservation) artifact, ((IObservation) artifact).getLastUpdate());
+            }
+
+            if (artifact instanceof IProcess) {
+                for (IConcept affected : Observables.INSTANCE.getAffected(observable)) {
+                    for (IObservation candidate : scope.getArtifacts(affected, IObservation.class))
+                        lastUpdates.put(candidate, candidate.getLastUpdate());
+                }
+            }
+
+            ISession session = scope.getMonitor().getIdentity().getParentIdentity(ISession.class);
+            DataflowState state = new DataflowState();
+            state.setNodeId(((RuntimeScope) scope).getNodeId(resource));
+            state.setStatus(DataflowState.Status.STARTED);
+            state.setMonitorable(false); // for now
+            session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
+                    IMessage.Type.DataflowStateChanged, state));
+
+            /*
+             * This is what we get as the original content of self, which may be null or an empty
+             * state, or contain the result of the previous computation, including those that create
+             * state layers of a different type. This is the one to use as INPUT for computations
+             * involving self. The contextualizer type may be null in resources that adapt to the
+             * type requested in contextualization.
+             */
+            IArtifact self = artifact;
+
+            if (artifact instanceof IState && contextualizer.getType() != null && contextualizer.getType().isState()) {
+                /*
+                 * Establish the container for the output: switch the storage in the state to the
+                 * type needed in the compute chain, creating a layer if necessary. This is the
+                 * layer to WRITE INTO. If we're looking at a secondary output of a process or other
+                 * non-state contextualizer, we don't go through here.
+                 */
+                artifact = ((IState) artifact).as(contextualizer.getType());
+            }
+
+            if (contextualizer instanceof AbstractContextualizer) {
+                // FIXME potential issue with parallel execution!
+                ((AbstractContextualizer) contextualizer).setScope((RuntimeScope) scope);
+            }
+
+            if (contextualizer instanceof IStateResolver) {
+
+                /*
+                 * pass the distributed computation to the runtime provider for possible
+                 * parallelization instead of hard-coding a loop here.
+                 */
+                IArtifact result = Klab.INSTANCE.getRuntimeProvider().distributeComputation((IStateResolver) contextualizer,
+                        (IObservation) artifact, resource, addParameters(scope, self, resource), scale);
+
+                if (result != artifact) {
+                    scope.swapArtifact(artifact, result);
+                }
+                artifact = result;
+
+                if (this.model != null && artifact instanceof Observation) {
+                    if (scale.getTime() != null && scale.getTime().is(ITime.Type.INITIALIZATION)) {
+                        Actors.INSTANCE.instrument(this.model.getAnnotations(), (Observation) artifact, scope);
+                    }
+                    /*
+                     * tell the scope to notify internal listeners (for actors and the like)
+                     */
+                    scope.notifyListeners((IObservation) artifact);
+                }
+
+            } else if (contextualizer instanceof IResolver) {
+
+                IArtifact result = ((IResolver<IArtifact>) contextualizer).resolve(artifact,
+                        addParameters(scope, artifact, resource));
+
+                if (result == null) {
+                    return result;
+                }
+
+                if (result != artifact && result != null && artifact instanceof IObservation) {
+                    scope.swapArtifact(artifact, result);
+                }
+                artifact = result;
+
+                if (this.model != null && artifact instanceof Observation && scale.getTime() != null
+                        && scale.getTime().is(ITime.Type.INITIALIZATION)) {
                     Actors.INSTANCE.instrument(this.model.getAnnotations(), (Observation) artifact, scope);
                 }
+
+            } else if (contextualizer instanceof IInstantiator) {
+
+                List<IObjectArtifact> objects = ((IInstantiator) contextualizer).instantiate(observable,
+                        addParameters(scope, self, resource));
+
                 /*
-                 * tell the scope to notify internal listeners (for actors and the like)
+                 * Instantiators that act as sorters or filters will return a legitimate null,
+                 * meaning "I've done my job, just ignore my output".
                  */
-                scope.notifyListeners((IObservation) artifact);
-            }
+                if (objects != null) {
 
-        } else if (contextualizer instanceof IResolver) {
-
-            IArtifact result = ((IResolver<IArtifact>) contextualizer).resolve(artifact,
-                    addParameters(scope, artifact, resource));
-
-            if (result == null) {
-                return result;
-            }
-
-            if (result != artifact && result != null && artifact instanceof IObservation) {
-                scope.swapArtifact(artifact, result);
-            }
-            artifact = result;
-
-            if (this.model != null && artifact instanceof Observation && scale.getTime() != null
-                    && scale.getTime().is(ITime.Type.INITIALIZATION)) {
-                Actors.INSTANCE.instrument(this.model.getAnnotations(), (Observation) artifact, scope);
-            }
-
-        } else if (contextualizer instanceof IInstantiator) {
-
-            List<IObjectArtifact> objects = ((IInstantiator) contextualizer).instantiate(observable,
-                    addParameters(scope, self, resource));
-
-            /*
-             * Instantiators that act as sorters or filters will return a legitimate null, meaning
-             * "I've done my job, just ignore my output".
-             */
-            if (objects != null) {
-
-                INotification.Mode notificationMode = INotification.Mode.Normal;
-                for (IAnnotation annotation : getAnnotations()) {
-                    if ("verbose".equals(annotation.getName())) {
-                        notificationMode = INotification.Mode.Verbose;
-                    } else if ("silent".equals(annotation.getName())) {
-                        notificationMode = INotification.Mode.Silent;
-                    }
-                }
-
-                boolean first = true;
-                for (IObjectArtifact object : objects) {
-
-                    /*
-                     * if artifact has been filtered out, remove from structure (if there) and
-                     * continue
-                     */
-                    if (object instanceof ObservedArtifact
-                            && ((ObservedArtifact) object).isMarkedForDeletion()) {
-                        scope.removeArtifact(object);
-                        continue;
+                    INotification.Mode notificationMode = INotification.Mode.Normal;
+                    for (IAnnotation annotation : getAnnotations()) {
+                        if ("verbose".equals(annotation.getName())) {
+                            notificationMode = INotification.Mode.Verbose;
+                        } else if ("silent".equals(annotation.getName())) {
+                            notificationMode = INotification.Mode.Silent;
+                        }
                     }
 
-                    /*
-                     * resolve and compute any distributed observables
-                     */
-                    ITaskTree<?> task = null;
-                    for (Observable deferred : this.observable.getDeferredObservables()) {
+                    boolean first = true;
+                    for (IObjectArtifact object : objects) {
 
-                        if (task == null) {
-                            task = ((ITaskTree<?>) scope.getMonitor().getIdentity())
-                                    .createChild("Resolution of "
-                                            + Observables.INSTANCE.getDisplayName(deferred) + " within "
-                                            + object.getName());
+                        /*
+                         * if artifact has been filtered out, remove from structure (if there) and
+                         * continue
+                         */
+                        if (object instanceof ObservedArtifact && ((ObservedArtifact) object).isMarkedForDeletion()) {
+                            scope.removeArtifact(object);
+                            continue;
                         }
 
                         /*
-                         * choose the resolver linked to this actuator as parent for the resolution
-                         * dataflow
+                         * resolve and compute any distributed observables
                          */
-                        IActuator resolver = this.getResolver();
-                        if (resolver == null) {
-                            resolver = this;
+                        ITaskTree<?> task = null;
+                        for (Observable deferred : this.observable.getDeferredObservables()) {
+
+                            if (task == null) {
+                                task = ((ITaskTree<?>) scope.getMonitor().getIdentity()).createChild("Resolution of "
+                                        + Observables.INSTANCE.getDisplayName(deferred) + " within " + object.getName());
+                            }
+
+                            /*
+                             * choose the resolver linked to this actuator as parent for the
+                             * resolution dataflow
+                             */
+                            IActuator resolver = this.getResolver();
+                            if (resolver == null) {
+                                resolver = this;
+                            }
+
+                            scope.resolve(deferred, (IDirectObservation) object, task,
+                                    deferred.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION, resolver);
                         }
 
-                        scope.resolve(deferred, (IDirectObservation) object, task,
-                                deferred.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION, resolver);
-                    }
+                        if (notificationMode == INotification.Mode.Verbose) {
+                            // just notify once to allow subscription
+                            if (first) {
+                                scope.updateNotifications((IObservation) artifact);
+                                first = false;
+                            }
 
-                    if (notificationMode == INotification.Mode.Verbose) {
-                        // just notify once to allow subscription
-                        if (first) {
-                            scope.updateNotifications((IObservation) artifact);
-                            first = false;
+                            // if it was expanded its children were asked for, presumably equivalent
+                            // to
+                            // notification
+                            if (scope.getNotifiedObservations().contains(object.getId())
+                                    && !scope.getWatchedObservationIds().contains(object.getId())) {
+
+                                ObservationChange change = ((Observation) object)
+                                        .createChangeEvent(ObservationChange.Type.StructureChange);
+                                change.setExportFormats(Observations.INSTANCE.getExportFormats((IObservation) object));
+                                change.setNewSize(scope.getChildArtifactsOf(object).size());
+                                session.getMonitor().send(Message.create(session.getId(),
+                                        IMessage.MessageClass.ObservationLifecycle, IMessage.Type.ModifiedObservation, change));
+                            }
                         }
-
-                        // if it was expanded its children were asked for, presumably equivalent to
-                        // notification
-                        if (scope.getNotifiedObservations().contains(object.getId())
-                                && !scope.getWatchedObservationIds().contains(object.getId())) {
-
-                            ObservationChange change = ((Observation) object)
-                                    .createChangeEvent(ObservationChange.Type.StructureChange);
-                            change.setExportFormats(
-                                    Observations.INSTANCE.getExportFormats((IObservation) object));
-                            change.setNewSize(scope.getChildArtifactsOf(object).size());
-                            session.getMonitor()
-                                    .send(Message.create(session.getId(),
-                                            IMessage.MessageClass.ObservationLifecycle,
-                                            IMessage.Type.ModifiedObservation, change));
-                        }
-                    }
-
-                    /*
-                     * tell the scope to notify internal listeners (for actors and the like). Null
-                     * object happens when contextualization wasn't successful because of resource
-                     * error or other runtime condition.
-                     */
-                    if (object != null) {
-
-                        scope.notifyListeners((IObservation) object);
 
                         /*
-                         * notify end of contextualization if we're subscribed to the parent
+                         * tell the scope to notify internal listeners (for actors and the like).
+                         * Null object happens when contextualization wasn't successful because of
+                         * resource error or other runtime condition.
                          */
-                        if (scope.getWatchedObservationIds().contains(artifact.getId())) {
+                        if (object != null) {
 
-                            ((Observation) object).setContextualized(true);
+                            scope.notifyListeners((IObservation) object);
 
-                            ObservationChange change = ((Observation) object)
-                                    .createChangeEvent(ObservationChange.Type.ContextualizationCompleted);
-                            change.setNewSize(scope.getChildArtifactsOf(object).size());
-                            change.setExportFormats(
-                                    Observations.INSTANCE.getExportFormats((IObservation) object));
-                            session.getMonitor()
-                                    .send(Message.create(session.getId(),
-                                            IMessage.MessageClass.ObservationLifecycle,
-                                            IMessage.Type.ModifiedObservation, change));
+                            /*
+                             * notify end of contextualization if we're subscribed to the parent
+                             */
+                            if (scope.getWatchedObservationIds().contains(artifact.getId())) {
+
+                                ((Observation) object).setContextualized(true);
+
+                                ObservationChange change = ((Observation) object)
+                                        .createChangeEvent(ObservationChange.Type.ContextualizationCompleted);
+                                change.setNewSize(scope.getChildArtifactsOf(object).size());
+                                change.setExportFormats(Observations.INSTANCE.getExportFormats((IObservation) object));
+                                session.getMonitor().send(Message.create(session.getId(),
+                                        IMessage.MessageClass.ObservationLifecycle, IMessage.Type.ModifiedObservation, change));
+                            }
+                        }
+
+                        /*
+                         * everything is resolved, now add any behaviors specified in annotations
+                         */
+                        if (object instanceof Observation) {
+                            Actors.INSTANCE.instrument(getAnnotations(), (Observation) object, scope);
                         }
                     }
+                }
+            } else if (contextualizer instanceof IPredicateClassifier) {
 
-                    /*
-                     * everything is resolved, now add any behaviors specified in annotations
-                     */
-                    if (object instanceof Observation) {
-                        Actors.INSTANCE.instrument(getAnnotations(), (Observation) object, scope);
+                /*
+                 * these are filters, so ret must be filled in already
+                 */
+                IConcept abstractPredicate = Observables.INSTANCE
+                        .getBaseObservable(((ComputableResource) resource).getOriginalObservable().getType());
+                IConcept targetPredicate = ((Observable) ((ComputableResource) resource).getOriginalObservable())
+                        .getTargetPredicate();
+
+                boolean ok = ((IPredicateClassifier<?>) contextualizer).initialize((IObjectArtifact) artifact, abstractPredicate,
+                        targetPredicate, scope);
+
+                if (ok) {
+
+                    for (IArtifact target : artifact) {
+
+                        @SuppressWarnings("rawtypes")
+                        IConcept c = ((IPredicateClassifier) contextualizer).classify(abstractPredicate,
+                                (IDirectObservation) target, scope);
+                        if (c != null) {
+                            // attribute and resolve
+                            scope.newPredicate((IDirectObservation) target, c);
+                        }
+                    }
+                }
+
+                /*
+                 * Tell the observation group to revise its situation and enqueue any modification
+                 * messages.
+                 */
+                ((Observation) artifact).evaluateChanges();
+
+                /*
+                 * ensure we return a view if that's necessary
+                 */
+                artifact = scope.getObservationGroupView((Observable) observable, (IObservation) artifact);
+
+            } else if (contextualizer instanceof IPredicateResolver) {
+
+                /*
+                 * This is called from a dataflow meant to resolve the attribute, so ret is the
+                 * observation being characterized and the attribute is there because createTarget()
+                 * has added it.
+                 */
+                IConcept predicate = Observables.INSTANCE.getBaseObservable(observable.getType());
+                if (!((IPredicateResolver<IDirectObservation>) contextualizer).resolve(predicate, (IDirectObservation) artifact,
+                        scope)) {
+                    // strip the attribute that the classifier added
+                    ((DirectObservation) artifact).removePredicate(predicate);
+                }
+                ((Observation) artifact).evaluateChanges();
+            }
+
+            /*
+             * record any changes. This is used after initialization by the scheduler.
+             */
+
+            if (!scope.getMonitor().isInterrupted()) {
+                for (IObservation candidate : lastUpdates.keySet()) {
+                    if (candidate.getLastUpdate() > lastUpdates.get(candidate)) {
+                        changed.add(candidate);
                     }
                 }
             }
-        } else if (contextualizer instanceof IPredicateClassifier) {
 
-            /*
-             * these are filters, so ret must be filled in already
+            /**
+             * Insert any text part that the contextualizer makes available for the documentation.
              */
-            IConcept abstractPredicate = Observables.INSTANCE
-                    .getBaseObservable(((ComputableResource) resource).getOriginalObservable().getType());
-            IConcept targetPredicate = ((Observable) ((ComputableResource) resource).getOriginalObservable())
-                    .getTargetPredicate();
-
-            boolean ok = ((IPredicateClassifier<?>) contextualizer).initialize((IObjectArtifact) artifact,
-                    abstractPredicate,
-                    targetPredicate, scope);
-
-            if (ok) {
-
-                for (IArtifact target : artifact) {
-
-                    @SuppressWarnings("rawtypes")
-                    IConcept c = ((IPredicateClassifier) contextualizer).classify(abstractPredicate,
-                            (IDirectObservation) target,
-                            scope);
-                    if (c != null) {
-                        // attribute and resolve
-                        scope.newPredicate((IDirectObservation) target, c);
-                    }
+            if (contextualizer instanceof IDocumentationProvider) {
+                for (IDocumentationProvider.Item item : ((IDocumentationProvider) contextualizer).getDocumentation()) {
+                    ((Report) scope.getReport()).addTaggedText(item);
                 }
             }
 
-            /*
-             * Tell the observation group to revise its situation and enqueue any modification
-             * messages.
-             */
-            ((Observation) artifact).evaluateChanges();
-
-            /*
-             * ensure we return a view if that's necessary
-             */
-            artifact = scope.getObservationGroupView((Observable) observable, (IObservation) artifact);
-
-        } else if (contextualizer instanceof IPredicateResolver) {
-
-            /*
-             * This is called from a dataflow meant to resolve the attribute, so ret is the
-             * observation being characterized and the attribute is there because createTarget() has
-             * added it.
-             */
-            IConcept predicate = Observables.INSTANCE.getBaseObservable(observable.getType());
-            if (!((IPredicateResolver<IDirectObservation>) contextualizer).resolve(predicate,
-                    (IDirectObservation) artifact,
-                    scope)) {
-                // strip the attribute that the classifier added
-                ((DirectObservation) artifact).removePredicate(predicate);
+            // pre-compute before notification to speed up visualization
+            if (artifact instanceof Observation && (scale.getTime() == null || scale.getTime().is(ITime.Type.INITIALIZATION))) {
+                /*
+                 * May be null for void contextualizers
+                 */
+                ((Observation) artifact).finalizeTransition(scope.getScale().initialization());
+                ((Observation) artifact).setContextualized(true);
             }
-            ((Observation) artifact).evaluateChanges();
-        }
 
-        /*
-         * record any changes. This is used after initialization by the scheduler.
-         */
-
-        if (!scope.getMonitor().isInterrupted()) {
-            for (IObservation candidate : lastUpdates.keySet()) {
-                if (candidate.getLastUpdate() > lastUpdates.get(candidate)) {
-                    changed.add(candidate);
-                }
+            if (!scope.getMonitor().isInterrupted()) {
+                stats.success();
+                state.setStatus(DataflowState.Status.FINISHED);
+            } else {
+                state.setStatus(DataflowState.Status.INTERRUPTED);
+                stats.interrupt();
             }
-        }
 
-        /**
-         * Insert any text part that the contextualizer makes available for the documentation.
-         */
-        if (contextualizer instanceof IDocumentationProvider) {
-            for (IDocumentationProvider.Item item : ((IDocumentationProvider) contextualizer)
-                    .getDocumentation()) {
-                ((Report) scope.getReport()).addTaggedText(item);
+            session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
+                    IMessage.Type.DataflowStateChanged, state));
+
+            if (Configuration.INSTANCE.getProperty(IConfigurationService.KLAB_SHOWTIMES_PROPERTY, null) != null) {
+                Debug.INSTANCE.endTimer(timer);
             }
-        }
 
-        // pre-compute before notification to speed up visualization
-        if (artifact instanceof Observation
-                && (scale.getTime() == null || scale.getTime().is(ITime.Type.INITIALIZATION))) {
-            /*
-             * May be null for void contextualizers
-             */
-            ((Observation) artifact).finalizeTransition(scope.getScale().initialization());
-            ((Observation) artifact).setContextualized(true);
-        }
-
-        state.setStatus(DataflowState.Status.FINISHED);
-        session.getMonitor().send(
-                Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
-                        IMessage.Type.DataflowStateChanged, state));
-
-        if (Configuration.INSTANCE.getProperty(IConfigurationService.KLAB_SHOWTIMES_PROPERTY, null) != null) {
-            Debug.INSTANCE.endTimer(timer);
+        } catch (Throwable t) {
+            stats.exception(t);
+            throw t;
         }
 
         return artifact;
@@ -1024,8 +1024,7 @@ public class Actuator implements IActuator {
     private IRuntimeScope addParameters(IRuntimeScope ctx, IArtifact self, IContextualizable resource) {
 
         IRuntimeScope ret = ctx.copy();
-        if (self instanceof IProcess && resource.getTargetId() != null
-                && ctx.getArtifact(resource.getTargetId()) != null) {
+        if (self instanceof IProcess && resource.getTargetId() != null && ctx.getArtifact(resource.getTargetId()) != null) {
             self = ctx.getArtifact(resource.getTargetId());
         }
         if (self != null) {
@@ -1042,7 +1041,8 @@ public class Actuator implements IActuator {
         return ret;
     }
 
-    public IRuntimeScope setupScope(IArtifact target, final IRuntimeScope scope) throws KlabException {
+    public IRuntimeScope setupScope(IArtifact target, final IRuntimeScope scope, ActivityBuilder statistics)
+            throws KlabException {
 
         IRuntimeScope ret = scope.copy();
         IScale coverage = scope.getMergedScale(this);
@@ -1090,9 +1090,8 @@ public class Actuator implements IActuator {
                          * TODO (I think): if we have own coverage, must reinterpret the artifact
                          * through the new scale.
                          */
-                        IArtifact mediated = runContextualizer(mediator.getFirst(), this.observable,
-                                mediator.getSecond(),
-                                artifact, ret, ret.getScale(), changed);
+                        IArtifact mediated = runContextualizer(mediator.getFirst(), this.observable, mediator.getSecond(),
+                                artifact, ret, ret.getScale(), changed, statistics);
 
                         ret.setData(targetArtifactId, mediated);
                     }
@@ -1108,8 +1107,7 @@ public class Actuator implements IActuator {
     }
 
     public String toString() {
-        return "<" + getName()
-                + ((getAlias() != null && !getAlias().equals(getName())) ? " as " + getAlias() : "") + " ["
+        return "<" + getName() + ((getAlias() != null && !getAlias().equals(getName())) ? " as " + getAlias() : "") + " ["
                 + (computationStrategy.size() + mediationStrategy.size()) + "]>";
     }
 
@@ -1123,15 +1121,13 @@ public class Actuator implements IActuator {
         String ofs = StringUtils.repeat(" ", offset);
         String ret = "";
         if (!isPartition() && getObservable() != null) {
-            ret = ofs + "@semantics(type='" + getObservable().getDeclaration() + "'"
-                    + encodePredicates(observable) + ")\n";
+            ret = ofs + "@semantics(type='" + getObservable().getDeclaration() + "'" + encodePredicates(observable) + ")\n";
         }
         if (getModel() != null) {
             ret += ofs + "@model(" + getModel().getName() + ")\n";
         }
         return ret + ofs + (input ? "import " : "") + (exported ? "export " : "")
-                + (isPartition() ? "partition" : getKdlActorType()) + " " + getKdlName()
-                + encodeBody(offset, ofs, children);
+                + (isPartition() ? "partition" : getKdlActorType()) + " " + getKdlName() + encodeBody(offset, ofs, children);
     }
 
     private String getKdlName() {
@@ -1177,13 +1173,10 @@ public class Actuator implements IActuator {
         return computationStrategy;
     }
 
-    protected Actuator makeDataflowStructure(IActuator parent, List<IActuator> children,
-            Graph<IActuator, DefaultEdge> graph) {
+    protected Actuator makeDataflowStructure(IActuator parent, List<IActuator> children, Graph<IActuator, DefaultEdge> graph) {
 
         graph.addVertex(this);
-        for (IActuator actuator : (children == null || children.isEmpty())
-                ? getSortedChildren(this, false)
-                : children) {
+        for (IActuator actuator : (children == null || children.isEmpty()) ? getSortedChildren(this, false) : children) {
             if (actuator instanceof Dataflow) {
                 Pair<IActuator, List<IActuator>> structure = ((Dataflow) actuator).getResolutionStructure();
                 if (structure == null) {
@@ -1191,8 +1184,7 @@ public class Actuator implements IActuator {
                         ((Actuator) act).makeDataflowStructure(this, null, graph);
                     }
                 } else {
-                    ((Actuator) structure.getFirst()).makeDataflowStructure(this, structure.getSecond(),
-                            graph);
+                    ((Actuator) structure.getFirst()).makeDataflowStructure(this, structure.getSecond(), graph);
                 }
             } else {
                 ((Actuator) actuator).makeDataflowStructure(this, null, graph);
@@ -1208,8 +1200,7 @@ public class Actuator implements IActuator {
 
     protected String encodeBody(int offset, String ofs, List<IActuator> children) {
 
-        boolean hasBody = actuators.size() > 0 || computationStrategy.size() > 0
-                || mediationStrategy.size() > 0
+        boolean hasBody = actuators.size() > 0 || computationStrategy.size() > 0 || mediationStrategy.size() > 0
                 || mode == Mode.RESOLUTION;
 
         String ret = "";
@@ -1218,20 +1209,16 @@ public class Actuator implements IActuator {
 
             ret = " {\n";
 
-            for (IActuator actuator : (children == null || children.isEmpty())
-                    ? getSortedChildren(this, false)
-                    : children) {
+            for (IActuator actuator : (children == null || children.isEmpty()) ? getSortedChildren(this, false) : children) {
 
                 if (actuator instanceof Dataflow) {
-                    Pair<IActuator, List<IActuator>> structure = ((Dataflow) actuator)
-                            .getResolutionStructure();
+                    Pair<IActuator, List<IActuator>> structure = ((Dataflow) actuator).getResolutionStructure();
                     if (structure == null) {
                         for (IActuator act : actuator.getChildren()) {
                             ret += ((Actuator) act).encode(offset + 3, null) + "\n";
                         }
                     } else {
-                        ret += ((Actuator) structure.getFirst()).encode(offset + 3, structure.getSecond())
-                                + "\n";
+                        ret += ((Actuator) structure.getFirst()).encode(offset + 3, structure.getSecond()) + "\n";
                     }
                 } else {
                     ret += ((Actuator) actuator).encode(offset + 3, null) + "\n";
@@ -1241,22 +1228,17 @@ public class Actuator implements IActuator {
             int cout = mediationStrategy.size() + computationStrategy.size();
             int nout = 0;
             for (int i = 0; i < mediationStrategy.size(); i++) {
-                ret += (nout == 0
-                        ? (ofs + "   compute" + (cout < 2 ? " " : ("\n" + ofs + "     ")))
-                        : ofs + "     ")
+                ret += (nout == 0 ? (ofs + "   compute" + (cout < 2 ? " " : ("\n" + ofs + "     "))) : ofs + "     ")
                         + (mediationStrategy.get(i).getSecond().getMediationTargetId() == null
                                 ? ""
                                 : (mediationStrategy.get(i).getSecond().getMediationTargetId() + " >> "))
                         + mediationStrategy.get(i).getFirst().getSourceCode()
-                        + (nout < mediationStrategy.size() - 1 || computationStrategy.size() > 0 ? "," : "")
-                        + "\n";
+                        + (nout < mediationStrategy.size() - 1 || computationStrategy.size() > 0 ? "," : "") + "\n";
                 nout++;
             }
 
             for (int i = 0; i < computationStrategy.size(); i++) {
-                ret += (nout == 0
-                        ? (ofs + "   compute" + (cout < 2 ? " " : ("\n" + ofs + "     ")))
-                        : ofs + "     ")
+                ret += (nout == 0 ? (ofs + "   compute" + (cout < 2 ? " " : ("\n" + ofs + "     "))) : ofs + "     ")
                         + (computationStrategy.get(i).getSecond().isVariable()
                                 ? (computationStrategy.get(i).getSecond().getTargetId() + " <- ")
                                 : "")
@@ -1267,8 +1249,7 @@ public class Actuator implements IActuator {
                                 || computationStrategy.get(i).getSecond().isVariable()
                                 || computationStrategy.get(i).getSecond().getTarget().equals(observable))
                                         ? ""
-                                        : (" >> " + computationStrategy.get(i).getSecond().getTarget()
-                                                .getName()))
+                                        : (" >> " + computationStrategy.get(i).getSecond().getTarget().getName()))
                         + (nout < computationStrategy.size() - 1 ? "," : "") + "\n";
                 nout++;
             }
@@ -1306,14 +1287,9 @@ public class Actuator implements IActuator {
         String spacer = StringUtil.repeat('.', offset);
         String ofs = StringUtil.repeat('.', offset + 3);
 
-        ret += spacer + ((actuator instanceof Dataflow) ? "DATAFLOW " : "ACTUATOR ")
-                + (actuator.getType() + " ")
-                + ((actuator instanceof Dataflow)
-                        ? ((Dataflow) actuator).getDataflowSubjectName()
-                        : actuator.getName())
-                + ((actuator instanceof Dataflow)
-                        ? (" (" + ((Dataflow) actuator).getDescription() + ")")
-                        : "")
+        ret += spacer + ((actuator instanceof Dataflow) ? "DATAFLOW " : "ACTUATOR ") + (actuator.getType() + " ")
+                + ((actuator instanceof Dataflow) ? ((Dataflow) actuator).getDataflowSubjectName() : actuator.getName())
+                + ((actuator instanceof Dataflow) ? (" (" + ((Dataflow) actuator).getDescription() + ")") : "")
                 + (actuator.getAlias() == null ? "" : (" as " + actuator.getAlias())) + "\n";
 
         for (IActuator act : actuator.actuators) {
@@ -1329,10 +1305,7 @@ public class Actuator implements IActuator {
                             ? ""
                             : (actuator.mediationStrategy.get(i).getSecond().getMediationTargetId() + " >> "))
                     + actuator.mediationStrategy.get(i).getFirst().getSourceCode()
-                    + (nout < actuator.mediationStrategy.size() - 1 || actuator.computationStrategy.size() > 0
-                            ? ","
-                            : "")
-                    + "\n";
+                    + (nout < actuator.mediationStrategy.size() - 1 || actuator.computationStrategy.size() > 0 ? "," : "") + "\n";
             nout++;
         }
 
@@ -1346,11 +1319,9 @@ public class Actuator implements IActuator {
                             : actuator.computationStrategy.get(i).getFirst().getSourceCode())
                     + ((actuator.computationStrategy.get(i).getSecond().getTarget() == null
                             || actuator.computationStrategy.get(i).getSecond().isVariable()
-                            || actuator.computationStrategy.get(i).getSecond().getTarget()
-                                    .equals(actuator.getObservable()))
-                                            ? ""
-                                            : (" >> " + actuator.computationStrategy.get(i).getSecond()
-                                                    .getTarget().getName()))
+                            || actuator.computationStrategy.get(i).getSecond().getTarget().equals(actuator.getObservable()))
+                                    ? ""
+                                    : (" >> " + actuator.computationStrategy.get(i).getSecond().getTarget().getName()))
                     + (nout < actuator.computationStrategy.size() - 1 ? "," : "") + "\n";
             nout++;
         }
@@ -1489,8 +1460,7 @@ public class Actuator implements IActuator {
     private IDataKey findDataKey() {
 
         if (computationStrategy.size() > 0) {
-            IContextualizable lastResource = computationStrategy.get(computationStrategy.size() - 1)
-                    .getSecond();
+            IContextualizable lastResource = computationStrategy.get(computationStrategy.size() - 1).getSecond();
             if (lastResource.getClassification() != null || lastResource.getAccordingTo() != null) {
                 return ((ComputableResource) lastResource).getValidatedResource(IClassification.class);
             } else if (lastResource.getLookupTable() != null) {
@@ -1579,8 +1549,7 @@ public class Actuator implements IActuator {
         }
     }
 
-    private void _dependencyOrder(Actuator actuator, List<Actuator> ret, Set<Actuator> added,
-            Map<String, Actuator> catalog) {
+    private void _dependencyOrder(Actuator actuator, List<Actuator> ret, Set<Actuator> added, Map<String, Actuator> catalog) {
 
         if (actuator.isReference()) {
             actuator = catalog.get(actuator.getName());
@@ -1623,11 +1592,9 @@ public class Actuator implements IActuator {
                 continue;
             }
 
-            if (!(act instanceof Dataflow)
-                    && ((Actuator) act).observable.getDeferredObservables().size() > 0) {
+            if (!(act instanceof Dataflow) && ((Actuator) act).observable.getDeferredObservables().size() > 0) {
                 deferred.add(act);
-            } else if (!(act instanceof Dataflow)
-                    && ((Actuator) act).observable.equals(actuator.observable)) {
+            } else if (!(act instanceof Dataflow) && ((Actuator) act).observable.equals(actuator.observable)) {
                 partitions.add(act);
             } else {
                 ret.add(act);
@@ -1749,8 +1716,7 @@ public class Actuator implements IActuator {
     IContextualizable setFilteredArgument(IContextualizable resource, String filteredArgument) {
         if (resource.getServiceCall() != null) {
             resource = ((ComputableResource) resource).copy();
-            ((ComputableResource) resource)
-                    .setServiceCall(setFilteredArgument(resource.getServiceCall(), filteredArgument));
+            ((ComputableResource) resource).setServiceCall(setFilteredArgument(resource.getServiceCall(), filteredArgument));
         }
         return resource;
     }
