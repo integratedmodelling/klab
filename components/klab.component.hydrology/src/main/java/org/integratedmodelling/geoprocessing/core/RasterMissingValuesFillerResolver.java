@@ -56,7 +56,7 @@ public class RasterMissingValuesFillerResolver extends AbstractContextualizer im
         OmsRasterMissingValuesFiller mv = new OmsRasterMissingValuesFiller();
         mv.pm = taskMonitor;
         mv.pMode = pInterpolationMode;
-        mv.pValidCellsBuffer = pValidCellsBuffer;
+        mv.pMaxDistance = pValidCellsBuffer;
 
         mv.inRaster = GeotoolsUtils.INSTANCE.stateToCoverage(inputRaster, context.getScale(), DataBuffer.TYPE_FLOAT, floatNovalue,
                 false);
