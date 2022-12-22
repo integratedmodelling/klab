@@ -86,7 +86,6 @@ public class SentinelResolver extends AbstractContextualizer implements IResolve
         RegionMap region = RegionMap.fromBoundsAndGrid(west, east, south, north, (int) cols, (int) rows);
         Polygon intersectionGeometry = GeometryUtilities.createPolygonFromEnvelope(region.toEnvelope());
 
-        NumberFormat f = new DecimalFormat("00");
         ITimeInstant start = context.getScale().getTime().getStart();
         
         // Sentinel will take max 5 days to cover the whole world
