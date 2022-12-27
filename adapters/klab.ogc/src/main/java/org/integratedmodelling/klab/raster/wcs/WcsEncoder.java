@@ -28,6 +28,7 @@ import org.geotools.util.factory.Hints;
 import org.hortonmachine.gears.io.rasterreader.OmsRasterReader;
 import org.hortonmachine.gears.io.rasterwriter.OmsRasterWriter;
 import org.hortonmachine.gears.libs.modules.HMRaster;
+import org.hortonmachine.gears.libs.modules.HMRaster.HMRasterWritableBuilder;
 import org.hortonmachine.gears.utils.RegionMap;
 import org.hortonmachine.gears.utils.coverage.CoverageUtilities;
 import org.integratedmodelling.klab.Configuration;
@@ -136,8 +137,8 @@ public class WcsEncoder implements IResourceEncoder {
                     // need to pad
                     HMRaster raster = HMRaster.fromGridCoverage(coverage);
                     RegionMap region = RegionMap.fromEnvelopeAndGrid(requestedExtend, cols, rows);
-                    HMRaster paddedRaster = HMRaster.writableFromRegionMap("padded", region, crs.getCoordinateReferenceSystem(),
-                            raster.getNovalue());
+                    HMRaster paddedRaster = new HMRasterWritableBuilder().setName("padded").setRegion(region).setCrs(crs.getCoordinateReferenceSystem())
+                            .setNoValue(raster.getNovalue()).build();
                     paddedRaster.mapRaster(null, raster);
                     coverage = paddedRaster.buildCoverage();
                     OmsRasterWriter.writeRaster(coverageFile.getAbsolutePath(), coverage);
