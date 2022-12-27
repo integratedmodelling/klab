@@ -3,6 +3,8 @@ package org.integratedmodelling.klab.rest;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.integratedmodelling.klab.rest.DataflowState.Status;
+
 /**
  * Package sent to a stats service to document the result of an observation query. Each "user-level"
  * query (including those for models) can produce one of these.
@@ -30,6 +32,12 @@ public class ObservationResultStatistics {
      */
     private ScaleStatistics scaleStatistics;
     
+    private String nodeVersion;
+    private String engineVersion;
+    private String statsVersion;
+    private List<String> scenarios = new ArrayList<>();
+    private Status status;
+    
     /**
      * Start and end time are in milliseconds from epoch, zulu time
      */
@@ -56,5 +64,119 @@ public class ObservationResultStatistics {
      */
     private String observationName;
 
+	public List<ObservationAssetStatistics> getAssets() {
+		return assets;
+	}
+
+	public void setAssets(List<ObservationAssetStatistics> assets) {
+		this.assets = assets;
+	}
+
+	public String getContextId() {
+		return contextId;
+	}
+
+	public void setContextId(String contextId) {
+		this.contextId = contextId;
+	}
+
+	public ScaleStatistics getScaleStatistics() {
+		return scaleStatistics;
+	}
+
+	public void setScaleStatistics(ScaleStatistics scaleStatistics) {
+		this.scaleStatistics = scaleStatistics;
+	}
+
+	public String getNodeVersion() {
+		return nodeVersion;
+	}
+
+	public void setNodeVersion(String nodeVersion) {
+		this.nodeVersion = nodeVersion;
+	}
+
+	public String getEngineVersion() {
+		return engineVersion;
+	}
+
+	public void setEngineVersion(String engineVersion) {
+		this.engineVersion = engineVersion;
+	}
+
+	public String getStatsVersion() {
+		return statsVersion;
+	}
+
+	public void setStatsVersion(String statsVersion) {
+		this.statsVersion = statsVersion;
+	}
+
+	public List<String> getScenarios() {
+		return scenarios;
+	}
+
+	public void setScenarios(List<String> scenarios) {
+		this.scenarios = scenarios;
+	}
+
+	public Status getStatus() {
+		return status;
+	}
+
+	public void setStatus(Status status) {
+		this.status = status;
+	}
+
+	public long getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(long startTime) {
+		this.startTime = startTime;
+	}
+
+	public long getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(long endTime) {
+		this.endTime = endTime;
+	}
+
+	public double getDurationSeconds() {
+		return durationSeconds;
+	}
+
+	public void setDurationSeconds(double durationSeconds) {
+		this.durationSeconds = durationSeconds;
+	}
+
+	public String getEngineName() {
+		return engineName;
+	}
+
+	public void setEngineName(String engineName) {
+		this.engineName = engineName;
+	}
+
+	public String getObservable() {
+		return observable;
+	}
+
+	public void setObservable(String observable) {
+		this.observable = observable;
+	}
+
+	public String getObservationName() {
+		return observationName;
+	}
+
+	public void setObservationName(String observationName) {
+		this.observationName = observationName;
+	}
+
+    
+    
     
 }

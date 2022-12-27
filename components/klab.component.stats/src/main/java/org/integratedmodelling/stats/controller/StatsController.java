@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Stats ingestion and reporting endpoints.
+ * Stats ingestion and reporting endpoints. Add security back when testing is done.
  * 
  * @author Ferd
  *

@@ -29,16 +29,16 @@ import org.mapdb.DBMaker;
 import org.mapdb.Serializer;
 import org.springframework.web.client.RestTemplate;
 
-@Authority(id = GBIFAuthority.ID, description = GBIFAuthority.DESCRIPTION, catalogs = { "KINGDOM", "PHYLUM", "CLASS", "ORDER", "FAMILY",
-		"GENUS", "SPECIES" }, version = Version.CURRENT)
+@Authority(id = GBIFAuthority.ID, description = GBIFAuthority.DESCRIPTION, catalogs = { "KINGDOM", "PHYLUM", "CLASS",
+		"ORDER", "FAMILY", "GENUS", "SPECIES" }, version = Version.CURRENT)
 public class GBIFAuthority implements IAuthority {
 
 	static final int pageSize = 100;
 	static final public String ID = "GBIF";
 	static final public String DESCRIPTION = "Global Biodiversity Information Facility (GBIF)\n\n"
-            + "GBIF provides stable identities for taxonomic entities. The available catalogs "
-            + " authority provides k.LAB identities at different taxonomic ranks.\n\n"
-            + "For more details, see the GBIF project at http://gbif.org";
+			+ "GBIF provides stable identities for taxonomic entities. The available catalogs "
+			+ " authority provides k.LAB identities at different taxonomic ranks.\n\n"
+			+ "For more details, see the GBIF project at http://gbif.org";
 
 	public static final String KINGDOM_RANK = "kingdom";
 	public static final String PHYLUM_RANK = "phlyum";
@@ -98,10 +98,14 @@ public class GBIFAuthority implements IAuthority {
 			}
 
 			// if not in there, use network
-			source = parseResult(client.getForObject(getDescribeURL(identityId), Map.class));
-			// TODO check that the catalog is what we expect
-			cache.put(identityId, JsonUtils.asString(source));
-			db.commit();
+			try {
+				source = parseResult(client.getForObject(getDescribeURL(identityId), Map.class));
+				// TODO check that the catalog is what we expect
+				cache.put(identityId, JsonUtils.asString(source));
+				db.commit();
+			} catch (Throwable t) {
+				// just return null
+			}
 		}
 
 		if (rank != null) {
@@ -221,7 +225,7 @@ public class GBIFAuthority implements IAuthority {
 		ref.getDocumentationFormats().add("text/plain");
 		ref.getSubAuthorities().add(new Pair<>("", "Any rank"));
 		for (String rank : ranks) {
-	        ref.getSubAuthorities().add(new Pair<>(rank.toUpperCase(), StringUtil.capitalize(rank) + " rank"));
+			ref.getSubAuthorities().add(new Pair<>(rank.toUpperCase(), StringUtil.capitalize(rank) + " rank"));
 		}
 		ref.setName(ID);
 		return ref;

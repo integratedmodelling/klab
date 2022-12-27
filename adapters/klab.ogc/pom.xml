@@ -39,11 +39,7 @@
 
 		<!-- Postgis for publishing -->
 		<!-- https://mvnrepository.com/artifact/net.postgis/postgis-geometry -->
-		<dependency>
-			<groupId>net.postgis</groupId>
-			<artifactId>postgis-geometry</artifactId>
-			<version>2.5.0</version>
-		</dependency>
+
 
 		<dependency>
 			<groupId>com.github.javadev</groupId>
@@ -66,12 +62,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
-		<dependency>
-			<groupId>org.geotools.jdbc</groupId>
-			<artifactId>gt-jdbc-postgis</artifactId>
-			<version>${geotools.version}</version>
-		</dependency>
 		<!-- <dependency> <groupId>org.geotools.xsd</groupId> <artifactId>gt-xsd-core</artifactId> 
 			<version>${geotools.version}</version> </dependency>
 		<dependency>

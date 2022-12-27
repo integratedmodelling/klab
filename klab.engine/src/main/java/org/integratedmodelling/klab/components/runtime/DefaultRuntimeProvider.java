@@ -198,7 +198,8 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 						IRuntimeScope ctx = runtimeScope;
 						if (active != firstActuator) {
 							ctx = runtimeScope
-									.createChild(scale, active, scope.getResolutionScope(), runtimeScope.getMonitor(), runtimeScope.getPattern())
+									.createChild(scale, active, scope.getResolutionScope(), runtimeScope.getMonitor(),
+											runtimeScope.getPattern())
 									.locate(initializationScale, runtimeScope.getMonitor());
 						}
 
@@ -208,26 +209,31 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 						 */
 						if (active.isComputed() || ((Actuator) active).isMerging()) {
 
-							IArtifact artifact = active.compute(ctx.getTargetArtifact(), ctx);
+							try {
+								IArtifact artifact = active.compute(ctx.getTargetArtifact(), ctx);
 
-							/*
-							 * if potential trigger for emergence, test with reasoner and if needed, create
-							 * emergent observation
-							 */
-							if (isEmergenceTrigger(artifact, (Actuator) actuator)) {
-								Map<IConcept, Collection<IObservation>> emergents = Reasoner.INSTANCE
-										.getEmergentResolvables((IObservation) artifact, runtimeScope);
-								for (IConcept emergent : emergents.keySet()) {
-									Collection<Pattern> pats = Pattern.create(emergents.get(emergent), emergent,
-											runtimeScope);
-									if (pats.size() > 0) {
-										scope.getMonitor().info("resolving " + pats.size()
-												+ " emergent observations of " + emergent.getDefinition());
-									}
-									for (Pattern pattern : pats) {
-										scope.incarnatePattern(emergent, pattern);
+								/*
+								 * if potential trigger for emergence, test with reasoner and if needed, create
+								 * emergent observation
+								 */
+								if (isEmergenceTrigger(artifact, (Actuator) actuator)) {
+									Map<IConcept, Collection<IObservation>> emergents = Reasoner.INSTANCE
+											.getEmergentResolvables((IObservation) artifact, runtimeScope);
+									for (IConcept emergent : emergents.keySet()) {
+										Collection<Pattern> pats = Pattern.create(emergents.get(emergent), emergent,
+												runtimeScope);
+										if (pats.size() > 0) {
+											scope.getMonitor().info("resolving " + pats.size()
+													+ " emergent observations of " + emergent.getDefinition());
+										}
+										for (Pattern pattern : pats) {
+											scope.incarnatePattern(emergent, pattern);
+										}
 									}
 								}
+							} catch (Throwable t) {
+								runtimeScope.getStatistics().exception(t);
+								throw t;
 							}
 
 						}
@@ -238,6 +244,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 						}
 
 						if (runtimeScope.getMonitor().isInterrupted()) {
+							runtimeScope.getStatistics().interrupt();
 							return null;
 						}
 
@@ -246,6 +253,8 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 						i++;
 					}
 				}
+
+				runtimeScope.getStatistics().success();
 
 				/*
 				 * auto-start the scheduler if transitions have been registered.

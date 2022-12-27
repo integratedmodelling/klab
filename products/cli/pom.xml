@@ -53,6 +53,13 @@
 
 	<dependencies>
 
+		<!-- TODO REMOVE when local testing of stats component is finished -->
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>klab.component.stats</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
+
 		<!-- added to ensure it ends up in lib/ -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

@@ -163,18 +163,20 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
 
                             dataflow.setDescription(taskDescription);
 
+                            IRuntimeScope ctx = runtimeScope.getChild(ObserveContextTask.this);
+                            
                             /*
                              * make a copy of the coverage so that we ensure it's a scale, behaving
                              * properly at merge. FIXME this must be the entire scale now - each
                              * actuator creates its artifacts, then initialization is handled when
                              * computing.
                              */
-                            ret = (ISubject) dataflow.run(scope.getCoverage().asScale().copy(), runtimeScope);
+                            ret = (ISubject) dataflow.run(scope.getCoverage().asScale().copy(), ctx);
 
                             if (ret != null) {
 
                                 ((AbstractRuntimeScope) runtimeScope).setRootDataflow(dataflow, ret.getId());
-                                ((AbstractRuntimeScope) runtimeScope).notifyDataflowChanges(runtimeScope);
+                                ((AbstractRuntimeScope) runtimeScope).notifyDataflowChanges(ctx);
 
                                 setContext((Subject) ret);
                                 getDescriptor().setContextId(ret.getId());
@@ -196,9 +198,11 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
                                 ((Observation) ret).getScope().notifyListeners((IObservation) ret);
 
                                 runtimeScope.getStatistics().notifyContextCreated(ret);
-                                
                             }
 
+
+                            ctx.getStatistics().success();
+                            
                             runtimeScope.getStatistics().success();
                             
                             Klab.INSTANCE.addActivity(scope.getSession(), runtimeScope.getStatistics());
