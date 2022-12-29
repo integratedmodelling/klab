@@ -1,10 +1,19 @@
 package org.integratedmodelling.stats.database;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
 import org.integratedmodelling.klab.persistence.postgis.Postgis;
 import org.integratedmodelling.klab.rest.ObservationResultStatistics;
 
 public class StatsDatabase extends Postgis {
 
+	/*
+	 * one submission at a time to ensure referential integrity of
+	 * context IDs
+	 */
+	private Executor executor = Executors.newSingleThreadExecutor();
+	
     public static final String[] structuralStatsStatements = {
     		
             "DROP TYPE IF EXISTS status CASCADE;", // shouldn't be necessary
@@ -39,7 +48,7 @@ public class StatsDatabase extends Postgis {
             + "   scenarios VARCHAR(2048),\n"
             + "   total_time_sec FLOAT,\n"
             + "   dataflow_complexity BIGINT,\n"
-            + "   total_coverage FLOAT,\n"
+            + "   resolved_coverage FLOAT,\n"
             + "   outcome status,\n"
             + "   dataflow_id VARCHAR(512),\n"              // only collected for special cases
             + "   PRIMARY KEY(id, context_id)\n"
@@ -93,8 +102,16 @@ public class StatsDatabase extends Postgis {
     }
 
     public void add(ObservationResultStatistics[] stats) {
-        // TODO check referential integrity and add a queue of observations in case we get orphan
-        // context IDs.
+    	for (ObservationResultStatistics stat: stats) {
+        	executor.execute(() -> {
+        		store(stat);
+        	});
+    	}
     }
+
+	private void store(ObservationResultStatistics stat) {
+		// TODO Auto-generated method stub
+		System.out.println("STAT " + stat);
+	}
 
 }

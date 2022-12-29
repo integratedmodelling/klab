@@ -8,7 +8,7 @@ import org.integratedmodelling.klab.rest.DataflowState.Status;
 public class ObservationAssetStatistics {
 
 	public enum Type {
-		ResolvedObservable, Model, Resource, Export
+		ResolvedObservable, Model, Resource, Export, Operation
 	}
 
 	private Type type;
@@ -44,6 +44,11 @@ public class ObservationAssetStatistics {
 	 */
 	private int schedules;
 
+	/**
+	 * If type is resolved observable, whether the resolution was an instantiation.
+	 */
+	private boolean instantiation;
+	
 	/**
 	 * Only filled in when relevant, currently only the bytes downloaded for
 	 * exports.
@@ -120,6 +125,23 @@ public class ObservationAssetStatistics {
 
 	public void setSize(long size) {
 		this.size = size;
+	}
+
+	@Override
+	public String toString() {
+		final int maxLen = 10;
+		return "ObservationAssetStatistics [type=" + type + ", name=" + name + ", source=" + source + ", scenarios="
+				+ (scenarios != null ? scenarios.subList(0, Math.min(scenarios.size(), maxLen)) : null) + ", status="
+				+ status + ", computationTime=" + computationTime + ", computations=" + computations + ", schedules="
+				+ schedules + ", size=" + size + "]";
+	}
+
+	public boolean isInstantiation() {
+		return instantiation;
+	}
+
+	public void setInstantiation(boolean instantiation) {
+		this.instantiation = instantiation;
 	}
 
 }

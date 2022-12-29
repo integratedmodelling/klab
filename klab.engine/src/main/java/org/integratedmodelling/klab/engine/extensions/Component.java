@@ -429,6 +429,7 @@ public class Component implements IComponent {
 	 * 
 	 * @return the implementation
 	 */
+	@Override
 	public Object getImplementation() {
 		if (implementation == null && implementingClass != null) {
 			try {

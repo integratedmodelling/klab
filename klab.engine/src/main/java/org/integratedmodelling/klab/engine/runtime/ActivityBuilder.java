@@ -1,7 +1,9 @@
 package org.integratedmodelling.klab.engine.runtime;
 
+import java.io.File;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,20 +18,28 @@ import org.integratedmodelling.klab.api.model.IAcknowledgement;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
+import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
+import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
+import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.rest.DataflowState.Status;
+import org.integratedmodelling.klab.rest.ObservationAssetStatistics;
+import org.integratedmodelling.klab.rest.ObservationAssetStatistics.Type;
 import org.integratedmodelling.klab.rest.ObservationResultStatistics;
+import org.integratedmodelling.klab.rest.ScaleStatistics;
 import org.integratedmodelling.klab.utils.StringUtils;
 
 public class ActivityBuilder {
 
 	enum TargetIdentity {
-		Agent, Dataflow, Actuator, Contextualizer, Resource
+		Agent, Dataflow, Actuator, Contextualizer, Resource, Download
 	}
 
 	/**
@@ -45,8 +55,6 @@ public class ActivityBuilder {
 	private long endTime;
 	private double totalTime;
 	private long totalContextTime;
-	private long scaleSize;
-	private long scaleComplexity;
 	private List<ActivityBuilder> children = new ArrayList<>();
 	private Map<ObservedConcept, ActivityBuilder> actuators = new HashMap<>();
 	private Map<String, ActivityBuilder> contextualizers = new HashMap<>();
@@ -54,14 +62,23 @@ public class ActivityBuilder {
 	private Status status = Status.WAITING;
 	private String contextId;
 	private String contextName;
-	private long scheduledSteps;
+	private int scheduledSteps;
 	private String contextCreated;
 	private int passes;
+	private long byteSize;
 	private String engineName;
+	private boolean instantiation;
+	private Collection<String> scenarios;
+	private ScaleStatistics scaleStatistics;
 
-	public static ActivityBuilder root(IActorIdentity<?> actorIdentity) {
-		return new ActivityBuilder(actorIdentity.getId(), TargetIdentity.Agent,
-				actorIdentity.getParentIdentity(IEngineIdentity.class).getName());
+	public static ActivityBuilder root(ResolutionScope resolutionScope) {
+		Session session = resolutionScope.getMonitor().getIdentity().getParentIdentity(Session.class);
+		ActivityBuilder ret = new ActivityBuilder(session.getId(), TargetIdentity.Agent,
+				session.getParentIdentity(IEngineIdentity.class).getName());
+		ret.scenarios = resolutionScope.getScenarios();
+		ret.contextName = resolutionScope.getObserver().getName();
+		ret.collectGeometryStatistics(resolutionScope.getScale());
+		return ret;
 	}
 
 	private ActivityBuilder(String targetId, TargetIdentity targetIdentity, String engineName) {
@@ -98,14 +115,6 @@ public class ActivityBuilder {
 		return totalContextTime;
 	}
 
-	public long getScaleSize() {
-		return scaleSize;
-	}
-
-	public long getScaleComplexity() {
-		return scaleComplexity;
-	}
-
 	public List<ActivityBuilder> getChildren() {
 		return children;
 	}
@@ -118,7 +127,7 @@ public class ActivityBuilder {
 		return contextName;
 	}
 
-	public long getScheduledSteps() {
+	public int getScheduledSteps() {
 		return scheduledSteps;
 	}
 
@@ -137,6 +146,7 @@ public class ActivityBuilder {
 		IGeometry geometry = null;
 		IObservable observable = null;
 		IDirectObservation context = null;
+		String obsname = null;
 
 		Object target = targets[0];
 		for (int i = 1; i < targets.length; i++) {
@@ -146,6 +156,8 @@ public class ActivityBuilder {
 				observable = (IObservable) targets[i];
 			} else if (targets[i] instanceof IDirectObservation) {
 				context = (IDirectObservation) targets[i];
+			} else if (targets[i] instanceof String) {
+				obsname = (String)targets[i];
 			}
 		}
 
@@ -172,6 +184,11 @@ public class ActivityBuilder {
 			}
 			ret = new ActivityBuilder(((Actuator) target).getModel().getName(), TargetIdentity.Actuator, engineName);
 			ret.observable = ((Actuator) target).getObservable().getDefinition();
+			ret.instantiation = ((Actuator) target).getMode() == Mode.INSTANTIATION;
+			if (((Actuator)target).getCoverage() != null) {
+				// specialized scale
+				geometry = ((Actuator)target).getCoverage();
+			}
 			this.actuators.put(obs, ret);
 
 		} else if (target instanceof AbstractContextualizer) {
@@ -205,6 +222,10 @@ public class ActivityBuilder {
 			}
 			ret = new ActivityBuilder(((IResource) target).getUrn(), TargetIdentity.Resource, engineName);
 			this.resources.put(ctxId, ret);
+		} else if (target instanceof File) {
+			ret =  new ActivityBuilder(obsname, TargetIdentity.Download, engineName);
+			ret.byteSize = ((File)target).length();
+			return ret;
 		}
 
 		if (ret == null) {
@@ -230,14 +251,31 @@ public class ActivityBuilder {
 	}
 
 	private void collectGeometryStatistics(IGeometry geometry) {
-		scaleSize = geometry.size();
+
 		if (geometry instanceof IScale) {
 
-			// space statistics
+			this.scaleStatistics = new ScaleStatistics();
+			
+			// space statistics + bounding box
+			if (((IScale)geometry).getSpace() != null) {
+				
+				ISpace space = ((IScale)geometry).getSpace();
+				
+				// complexity of spatial shape = number of coordinates
+				this.scaleStatistics.setSpaceComplexity(space.getShape().getComplexity());
+				this.scaleStatistics.setSpaceSize(space.size());
+				this.scaleStatistics.setBboxWkt(((Shape)space.getShape()).getStandardizedEnvelopeWKT());
+
+			}
 
 			// time statistics
-
-			// complexity of spatial shape
+			if (((IScale)geometry).getTime() != null) {
+				ITime time = ((IScale)geometry).getTime();
+				this.scaleStatistics.setTimeResolution(time.getResolution().toString());
+				this.scaleStatistics.setTimeSize(time.size());
+				this.scaleStatistics.setTimeStart(time.getStart().getMilliseconds());
+				this.scaleStatistics.setTimeEnd(time.getEnd().getMilliseconds());
+			}
 
 		}
 	}
@@ -367,19 +405,111 @@ public class ActivityBuilder {
 	public ObservationResultStatistics encode() {
 
 		ObservationResultStatistics ret = new ObservationResultStatistics();
+		boolean first = true;
+		boolean success = true;
+		String contextId = this.contextId;
 		
-		ret.setEngineName(engineName);
-		ret.setEngineVersion(Version.CURRENT);
-		ret.setStartTime(startTime);
-		ret.setEndTime(endTime);
-		ret.setDurationSeconds(getTotalTimeSeconds());
-		
-		for (ActivityBuilder child : children) {
-			
+		for (ActivityBuilder child : unwrapChildren()) {
+
+			if (first) {
+				ret.setEngineName(engineName);
+				ret.setEngineVersion(Version.CURRENT);
+				ret.setStartTime(startTime);
+				ret.setEndTime(endTime);
+				ret.setDurationSeconds(getTotalTimeSeconds());
+				ret.setObservable(getObservable());
+				ret.setObservationName(contextName);
+				ret.setScaleStatistics(getScaleStatistics(child));
+				if (contextId == null) {
+					ret.setRoot(true);
+					contextId = child.contextCreated;
+				}
+			}
+
+			ret.setContextId(contextId);
+			ret.setScaleStatistics(scaleStatistics);
+						
+			switch (child.getType()) {
+			case Dataflow:
+			case Agent:
+				if (child.observable != null && ret.getObservable() == null) {
+					ret.setObservable(child.observable);
+				}
+				break;
+			case Actuator:
+				ret.getAssets().add(encodeResolvedObservable(child));
+			case Contextualizer:
+			case Resource:
+			case Download:
+				ObservationAssetStatistics asset = encodeAsset(child);
+				success = success && asset.getStatus() == Status.FINISHED;
+				ret.getAssets().add(asset);
+				break;
+			}
+
 		}
 		
+		if (!success && ret.getStatus() == Status.FINISHED) {
+			ret.setStatus(Status.ABORTED);
+		}
+
 		return ret;
 
+	}
+
+	private ObservationAssetStatistics encodeResolvedObservable(ActivityBuilder child) {
+		ObservationAssetStatistics ret = encodeAsset(child);
+		ret.setType(Type.ResolvedObservable);
+		ret.setName(child.getObservable());
+		ret.setInstantiation(child.instantiation);
+		return null;
+	}
+
+	private ScaleStatistics getScaleStatistics(ActivityBuilder child) {
+		return scaleStatistics;
+	}
+
+	private ObservationAssetStatistics encodeAsset(ActivityBuilder child) {
+
+		ObservationAssetStatistics ret = new ObservationAssetStatistics();
+		
+		ret.setComputationTime(child.getTotalTimeSeconds());
+		ret.setName(child.getTargetId());
+		ret.setStatus(child.getStatus());
+		ret.setComputations(child.getPasses());
+		ret.setSchedules(child.getScheduledSteps());
+		
+		switch (child.getType()) {
+		case Actuator:
+			ret.setType(Type.Model);
+			break;
+		case Contextualizer:
+			ret.setType(Type.Operation);
+			break;
+		case Resource:
+			ret.setType(Type.Resource);
+			break;
+		case Download:
+			ret.setType(Type.Export);
+			ret.setSize(byteSize);
+			break;
+		default:
+			break;
+		}
+		return ret ;
+	}
+
+	List<ActivityBuilder> unwrapChildren() {
+		List<ActivityBuilder> ret = new ArrayList<>();
+		_unwrapChildren(this, ret);
+		return ret;
+	}
+
+	private void _unwrapChildren(ActivityBuilder activityBuilder, List<ActivityBuilder> ret) {
+		ret.add(activityBuilder);
+		for (ActivityBuilder child : activityBuilder.children) {
+			_unwrapChildren(child, ret);
+		}
 	}
 
 	public String getContextCreated() {
@@ -388,6 +518,14 @@ public class ActivityBuilder {
 
 	public int getPasses() {
 		return passes;
+	}
+
+	public boolean isInstantiation() {
+		return instantiation;
+	}
+
+	public Collection<String> getScenarios() {
+		return scenarios;
 	}
 
 }

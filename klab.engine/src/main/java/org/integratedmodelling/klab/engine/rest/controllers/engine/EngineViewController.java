@@ -32,11 +32,13 @@ import org.integratedmodelling.klab.components.geospace.visualization.Renderer;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroupView;
 import org.integratedmodelling.klab.engine.debugger.Debug;
+import org.integratedmodelling.klab.engine.runtime.ActivityBuilder;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.ObservationReference.GeometryType;
 import org.integratedmodelling.klab.rest.StateSummary;
+import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.ZipUtils;
@@ -203,6 +205,7 @@ public class EngineViewController {
 
             File file = session.getState().getStagedFile(observation);
             if (file.exists() && file.canRead()) {
+            	
                 if (file.isDirectory()) {
                     /*
                      * zip it and set file to the zipped dir
@@ -212,11 +215,19 @@ public class EngineViewController {
                     file = zipFile;
                 }
 
+                IObservation context = session.getObservation(observation);
+            	ActivityBuilder stats = ((IRuntimeScope)context.getScope()).getStatistics().forTarget(file, context.getObservable().getDefinition());
                 try (InputStream input = new FileInputStream(file)) {
                     response.setContentType(outputFormat);
                     IOUtils.copy(input, response.getOutputStream());
+                    stats.success();
+                } catch (Throwable t) {
+                	stats.exception(t);
+                	throw t;
+                } finally {
+                    FileUtils.deleteQuietly(file);
                 }
-                
+
                 return;
             }
 
@@ -287,6 +298,7 @@ public class EngineViewController {
                 IOUtils.copy(in, response.getOutputStream());
                 done = true;
 
+
             } else if (format == GeometryType.COLORMAP) {
 
                 StateSummary summary = Observations.INSTANCE.getStateSummary((IState) obs, loc);
@@ -347,14 +359,16 @@ public class EngineViewController {
 
             // should have a format field
             File out = File.createTempFile("klab", "." + outputFormat);
-            out.deleteOnExit();
             // TODO support explicit adapter
             out = Observations.INSTANCE.export(obs, loc, out, outputFormat, null, session.getMonitor());
-            if (out != null) {
+            if (out != null) {	
+            	ActivityBuilder stats = ((IRuntimeScope)obs.getScope()).getStatistics().forTarget(out, obs.getObservable().getDefinition());
                 response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
                 try (InputStream in = new FileInputStream(out)) {
                     IOUtils.copy(in, response.getOutputStream());
                 }
+            	stats.success();
+            	FileUtils.deleteQuietly(out);
             }
 
         }

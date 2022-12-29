@@ -141,7 +141,7 @@ public interface IShape extends IReferenced, ISpace {
 	 * @return
 	 */
 	double[] getCenter(boolean standardized);
-	
+
 	/**
 	 * True if the passed coordinate is on or in the shape.
 	 * 
@@ -149,5 +149,13 @@ public interface IShape extends IReferenced, ISpace {
 	 * @return
 	 */
 	boolean contains(double[] coordinates);
+
+	/**
+	 * Only for statistics. Some metric of complexity, which should take into
+	 * account the number of coordinates, inner rings etc.
+	 * 
+	 * @return
+	 */
+	double getComplexity();
 
 }

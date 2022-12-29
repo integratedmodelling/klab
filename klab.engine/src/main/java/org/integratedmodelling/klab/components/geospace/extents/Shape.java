@@ -974,4 +974,14 @@ public class Shape extends AbstractSpatialAbstractExtent implements IShape {
     public boolean isDistributed() {
         return false;
     }
+
+    public String getStandardizedEnvelopeWKT() {
+    	return ((Shape)getBoundingExtent().transform(Projection.getLatLon())).shapeGeometry.toString();
+    }
+    
+	@Override
+	public double getComplexity() {
+		// TODO improve
+		return shapeGeometry.getNumPoints();
+	}
 }

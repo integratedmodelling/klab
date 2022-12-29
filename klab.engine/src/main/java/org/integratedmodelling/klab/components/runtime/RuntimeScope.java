@@ -314,7 +314,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
     private RuntimeScope(ResolutionScope resolutionScope) {
         super(null, resolutionScope, resolutionScope.getMonitor());
         this.statistics = ActivityBuilder
-                .root(resolutionScope.getMonitor().getIdentity().getParentIdentity(Session.class));
+                .root(resolutionScope);
     }
 
     @Override
