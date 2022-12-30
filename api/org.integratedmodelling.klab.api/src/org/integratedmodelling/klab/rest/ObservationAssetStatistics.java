@@ -24,7 +24,7 @@ public class ObservationAssetStatistics {
 	private String source;
 
 	private List<String> scenarios = new ArrayList<>();
-
+	private ScaleStatistics scaleStatistics;
 	private Status status;
 
 	/**
@@ -142,6 +142,14 @@ public class ObservationAssetStatistics {
 
 	public void setInstantiation(boolean instantiation) {
 		this.instantiation = instantiation;
+	}
+
+	public ScaleStatistics getScaleStatistics() {
+		return scaleStatistics;
+	}
+
+	public void setScaleStatistics(ScaleStatistics scaleStatistics) {
+		this.scaleStatistics = scaleStatistics;
 	}
 
 }

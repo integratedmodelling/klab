@@ -13,6 +13,7 @@ public class ScaleStatistics {
 	private long spaceSize;
 	private long timeSize;
 	private double spaceComplexity;
+	private double spaceCoverage;
 	private String spaceResolution;
 	private String timeResolution;
 	private String bboxWkt;
@@ -96,6 +97,14 @@ public class ScaleStatistics {
 		return "ScaleStatistics [size=" + size + ", spaceSize=" + spaceSize + ", timeSize=" + timeSize
 				+ ", spaceComplexity=" + spaceComplexity + ", spaceResolution=" + spaceResolution + ", timeResolution="
 				+ timeResolution + ", bboxWkt=" + bboxWkt + "]";
+	}
+
+	public double getSpaceCoverage() {
+		return spaceCoverage;
+	}
+
+	public void setSpaceCoverage(double spaceCoverage) {
+		this.spaceCoverage = spaceCoverage;
 	}
 
 }

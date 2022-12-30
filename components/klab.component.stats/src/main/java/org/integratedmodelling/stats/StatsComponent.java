@@ -21,9 +21,9 @@ public class StatsComponent {
 		return database.isOnline();
 	}
 
-	public void submit(ObservationResultStatistics obs) {
+	public void submit(ObservationResultStatistics obs, String user, String groups) {
 		if (database.isOnline()) {
-			database.add(new ObservationResultStatistics[] { obs });
+			database.add(new ObservationResultStatistics[] { obs }, user, groups);
 		} else {
 			Logging.INSTANCE.error("Stats DB offline: lost " + obs);
 		}

@@ -40,6 +40,10 @@ public class ObservationResultStatistics {
 	private String statsVersion;
 	private List<String> scenarios = new ArrayList<>();
 	private Status status;
+	private String application;
+	private String dataflow;
+	private double dataflowComplexity;
+	private double resolvedCoverage;
 
 	/**
 	 * Start and end time are in milliseconds from epoch, zulu time
@@ -204,6 +208,38 @@ public class ObservationResultStatistics {
 				+ status + ", startTime=" + startTime + ", endTime=" + endTime + ", durationSeconds=" + durationSeconds
 				+ ", engineName=" + engineName + ", observable=" + observable + ", root=" + root + ", observationName="
 				+ observationName + "]";
+	}
+
+	public String getApplication() {
+		return application;
+	}
+
+	public void setApplication(String application) {
+		this.application = application;
+	}
+
+	public String getDataflow() {
+		return dataflow;
+	}
+
+	public void setDataflow(String dataflow) {
+		this.dataflow = dataflow;
+	}
+
+	public double getDataflowComplexity() {
+		return dataflowComplexity;
+	}
+
+	public void setDataflowComplexity(double dataflowComplexity) {
+		this.dataflowComplexity = dataflowComplexity;
+	}
+
+	public double getResolvedCoverage() {
+		return resolvedCoverage;
+	}
+
+	public void setResolvedCoverage(double resolvedCoverage) {
+		this.resolvedCoverage = resolvedCoverage;
 	}
 
 }

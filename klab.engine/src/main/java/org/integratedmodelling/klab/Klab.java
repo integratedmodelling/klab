@@ -175,8 +175,7 @@ public enum Klab implements IRuntimeService {
 					for (int i = payload.size() - 1; i >= 0; i--) {
 						if (statisticsConsumer != null) {
 							statisticsConsumer.accept(payload.get(i));
-						} /* else? */
-						if (node != null && !node.getClient().put(API.STATS.STATS_ADD, payload)) {
+						} else if (node != null && !node.getClient().put(API.STATS.STATS_ADD, payload)) {
 							/*
 							 * put the payload back. May need to stop if things become big.
 							 */
@@ -275,84 +274,9 @@ public enum Klab implements IRuntimeService {
 	 */
 	private static void setupExtensions() {
 
-		// if an external admin did not set it up otherwise, force X/Y axis
-		// ordering. Must be initialized before any other opeation can trigger the
-		// initialization of the CRS
-		// subsystem.
-
-		// TODO move this in the setup() method of the spatial component.
-		// We need to initialize this
-		// property
-		//
 		if (System.getProperty("org.geotools.referencing.forceXY") == null) {
 			System.setProperty("org.geotools.referencing.forceXY", "true");
 		}
-		// if (Boolean.TRUE
-		// .equals(Hints.getSystemDefault(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER))) {
-		// Hints.putSystemDefault(Hints.FORCE_AXIS_ORDER_HONORING, "http");
-		// }
-		// Hints.putSystemDefault(Hints.LENIENT_DATUM_SHIFT, true);
-		//
-		// // setup the referencing tolerance to make it more tolerant to tiny
-		// // differences
-		// // between projections (increases the chance of matching a random prj
-		// // file content
-		// // to an actual EPSG code
-		// double comparisonTolerance = DEFAULT_COMPARISON_TOLERANCE;
-		//
-		// // Register logging, and bridge to JAI logging
-		// GeoTools.init((Hints) null);
-		//
-		// /*
-		// * TODO make this a property and implement if it ever becomes necessary
-		// */
-		// // if (comparisonToleranceProperty != null) {
-		// // try {
-		// // comparisonTolerance =
-		// // Double.parseDouble(comparisonToleranceProperty);
-		// // } catch (NumberFormatException nfe) {
-		// // KLAB.warn("Unable to parse the specified COMPARISON_TOLERANCE "
-		// // + "system property: " + comparisonToleranceProperty +
-		// // " which should be a number. Using Default: " +
-		// // DEFAULT_COMPARISON_TOLERANCE);
-		// // }
-		// // }
-		// Hints.putSystemDefault(Hints.COMPARISON_TOLERANCE, comparisonTolerance);
-		//
-		// /*
-		// * avoid expiration of EPSG data. FIXME: does not seem to avoid anything.
-		// */
-		// System.setProperty("org.geotools.epsg.factory.timeout", "-1");
-		//
-		// /*
-		// * Prevents leak ()
-		// */
-		// ImageIO.scanForPlugins();
-		//
-		// // in any case, the native png reader is worse than the pure java ones,
-		// // so
-		// // let's disable it (the native png writer is on the other side
-		// // faster)...
-		// ImageIOExt.allowNativeCodec("png", ImageReaderSpi.class, false);
-		// ImageIOExt.allowNativeCodec("png", ImageWriterSpi.class, true);
-		//
-		// // initialize GeoTools factories so that we don't make a SPI lookup
-		// // every time a
-		// // factory is needed
-		// Hints.putSystemDefault(Hints.FILTER_FACTORY, CommonFactoryFinder
-		// .getFilterFactory2(null));
-		// Hints.putSystemDefault(Hints.STYLE_FACTORY, CommonFactoryFinder
-		// .getStyleFactory(null));
-		// Hints.putSystemDefault(Hints.FEATURE_FACTORY, CommonFactoryFinder
-		// .getFeatureFactory(null));
-		//
-		// final Hints defHints = GeoTools.getDefaultHints();
-		//
-		// // Initialize GridCoverageFactory so that we don't make a lookup every
-		// // time a
-		// // factory is needed
-		// Hints.putSystemDefault(Hints.GRID_COVERAGE_FACTORY, CoverageFactoryFinder
-		// .getGridCoverageFactory(defHints));
 	}
 
 	/**

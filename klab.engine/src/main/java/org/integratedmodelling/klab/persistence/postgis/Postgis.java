@@ -18,197 +18,200 @@ import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.exceptions.KlabStorageException;
-import  org.locationtech.jts.geom.Geometry;
-import  org.locationtech.jts.io.WKBReader;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.io.WKBReader;
 
 public class Postgis {
 
-    private static String DEFAULT_POSTGRES_DATABASE = "klab";
-    private String database = DEFAULT_POSTGRES_DATABASE;
-    private String databaseUrl;
-    private String pgadminUrl;
-    private boolean active;
+	private static String DEFAULT_POSTGRES_DATABASE = "klab";
+	private String database = DEFAULT_POSTGRES_DATABASE;
+	private String databaseUrl;
+	private String pgadminUrl;
+	private boolean active;
 
-    protected Postgis(Urn urn, boolean useCatalogNames) {
-        this(urn != null && useCatalogNames ? urn.getCatalog().replaceAll("\\.", "_") : "klab");
-    }
+	protected Postgis(Urn urn, boolean useCatalogNames) {
+		this(urn != null && useCatalogNames ? urn.getCatalog().replaceAll("\\.", "_") : "klab");
+	}
 
-    protected Postgis(String database) {
-    
-        this.database = database;
-        
-        this.pgadminUrl = "jdbc:postgresql://" + Configuration.INSTANCE.getServiceProperty("postgres", "host");
-        this.pgadminUrl += ":" + Configuration.INSTANCE.getServiceProperty("postgres", "port");
-        this.pgadminUrl += "/";
-        this.databaseUrl = this.pgadminUrl + this.database;
+	protected Postgis(String database) {
 
-        boolean hasDatabase = false;
+		this.database = database;
 
-        try (Connection con = DriverManager.getConnection(this.databaseUrl,
-                Configuration.INSTANCE.getServiceProperty("postgres", "user"),
-                Configuration.INSTANCE.getServiceProperty("postgres", "password"));
-                Statement st = con.createStatement();
-                ResultSet rs = st.executeQuery("SELECT VERSION()")) {
+		this.pgadminUrl = "jdbc:postgresql://" + Configuration.INSTANCE.getServiceProperty("postgres", "host");
+		this.pgadminUrl += ":" + Configuration.INSTANCE.getServiceProperty("postgres", "port");
+		this.pgadminUrl += "/";
+		this.databaseUrl = this.pgadminUrl + this.database;
 
-            if (rs.next()) {
-                hasDatabase = true;
-            }
+		boolean hasDatabase = false;
 
-        } catch (SQLException e) {
-            // no database
-        }
+		try (Connection con = DriverManager.getConnection(this.databaseUrl,
+				Configuration.INSTANCE.getServiceProperty("postgres", "user"),
+				Configuration.INSTANCE.getServiceProperty("postgres", "password"));
+				Statement st = con.createStatement();
+				ResultSet rs = st.executeQuery("SELECT VERSION()")) {
 
-        boolean ok = hasDatabase;
+			if (rs.next()) {
+				hasDatabase = true;
+			}
 
-        if (!ok) {
-            ok = createDatabase();
-        }
+		} catch (SQLException e) {
+			// no database
+		}
 
-        this.active = ok;
-    }
+		boolean ok = hasDatabase;
 
-    protected boolean execute(String sql) {
+		if (!ok) {
+			ok = createDatabase();
+		}
 
-        boolean ok = true;
-        try (Connection con = DriverManager.getConnection(this.databaseUrl, Configuration.INSTANCE.getServiceProperty("postgres", "user"),
-                Configuration.INSTANCE.getServiceProperty("postgres", "password")); Statement st = con.createStatement()) {
+		this.active = ok;
+	}
 
-            st.execute(sql);
-            ok = true;
+	protected boolean execute(String sql) {
 
-        } catch (SQLException ex) {
-        	System.err.println(ex.getMessage());
-            ok = false;
-        }
-        
-        return ok;
-    }
-    
-    
-    protected boolean createDatabase() {
+		boolean ok = true;
+		try (Connection con = DriverManager.getConnection(this.databaseUrl,
+				Configuration.INSTANCE.getServiceProperty("postgres", "user"),
+				Configuration.INSTANCE.getServiceProperty("postgres", "password"));
+				Statement st = con.createStatement()) {
 
-        boolean ok = false;
+			st.execute(sql);
+			ok = true;
 
-        try (Connection con = DriverManager.getConnection(this.pgadminUrl, Configuration.INSTANCE.getServiceProperty("postgres", "user"),
-                Configuration.INSTANCE.getServiceProperty("postgres", "password")); Statement st = con.createStatement()) {
+		} catch (SQLException ex) {
+			System.err.println(ex.getMessage());
+			ok = false;
+		}
 
-            st.execute("CREATE DATABASE " + this.database + " ENCODING 'UTF-8';");
-            ok = true;
+		return ok;
+	}
 
-        } catch (SQLException ex) {
-            ok = false;
-        }
-        if (ok) {
-            try (Connection con = DriverManager.getConnection(this.databaseUrl,
-                    Configuration.INSTANCE.getServiceProperty("postgres", "user"),
-                    Configuration.INSTANCE.getServiceProperty("postgres", "password")); Statement st = con.createStatement()) {
+	protected boolean createDatabase() {
 
-                st.execute("CREATE EXTENSION postgis;");
-                st.execute("CREATE EXTENSION postgis_topology;");
-                st.execute("CREATE EXTENSION fuzzystrmatch;");
-                st.execute("CREATE EXTENSION pointcloud;");
-                st.execute("CREATE EXTENSION pointcloud_postgis;");
-                st.execute("CREATE EXTENSION pgrouting;");
-                st.execute("CREATE EXTENSION postgis_raster;");
-                st.execute("CREATE EXTENSION postgis_sfcgal;");
-                st.execute("CREATE EXTENSION postgis_tiger_geocoder;");
-                st.execute("CREATE EXTENSION ogr_fdw;");
-                st.execute("CREATE EXTENSION address_standardizer;");
+		boolean ok = false;
 
-            } catch (SQLException ex) {
-                ok = false;
-            }
-        }
+		try (Connection con = DriverManager.getConnection(this.pgadminUrl,
+				Configuration.INSTANCE.getServiceProperty("postgres", "user"),
+				Configuration.INSTANCE.getServiceProperty("postgres", "password"));
+				Statement st = con.createStatement()) {
 
-        return ok;
-    }
+			st.execute("CREATE DATABASE " + this.database + " ENCODING 'UTF-8';");
+			ok = true;
 
-    public boolean isOnline() {
-        return this.active;
-    }
+		} catch (SQLException ex) {
+			ok = false;
+		}
+		if (ok) {
+			try (Connection con = DriverManager.getConnection(this.databaseUrl,
+					Configuration.INSTANCE.getServiceProperty("postgres", "user"),
+					Configuration.INSTANCE.getServiceProperty("postgres", "password"));
+					Statement st = con.createStatement()) {
 
-    /**
-     * Doesn't mean it's online, it means there is enough configuration for it to try and get
-     * online.
-     * 
-     * @return true if DB operations can be attempted.
-     */
-    public static boolean isEnabled() {
-        return Configuration.INSTANCE.getServiceProperty("postgres", "host") != null
-                && Configuration.INSTANCE.getServiceProperty("postgres", "port") != null
-                && Configuration.INSTANCE.getServiceProperty("postgres", "user") != null
-                && Configuration.INSTANCE.getServiceProperty("postgres", "password") != null;
-    }
+				st.execute("CREATE EXTENSION postgis;");
+				st.execute("CREATE EXTENSION postgis_topology;");
+				st.execute("CREATE EXTENSION fuzzystrmatch;");
+				st.execute("CREATE EXTENSION pointcloud;");
+				st.execute("CREATE EXTENSION pointcloud_postgis;");
+				st.execute("CREATE EXTENSION pgrouting;");
+				st.execute("CREATE EXTENSION postgis_raster;");
+				st.execute("CREATE EXTENSION postgis_sfcgal;");
+				st.execute("CREATE EXTENSION postgis_tiger_geocoder;");
+				st.execute("CREATE EXTENSION ogr_fdw;");
+				st.execute("CREATE EXTENSION address_standardizer;");
 
-    /**
-     * Return a postgis instance tuned to the passed URN, i.e. with a database already created
-     * (either for the catalog or a single one for all tables). Only call after checking for
-     * isEnabled().
-     * 
-     * @param urn
-     */
-    public static Postgis create(Urn urn) {
-        return new Postgis(urn, false);
-    }
+			} catch (SQLException ex) {
+				ok = false;
+			}
+		}
 
-    /**
-     * Return a postgis instance tuned to the passed database name, i.e. with a database already created
-     * (either for the catalog or a single one for all tables). Only call after checking for
-     * isEnabled().
-     * 
-     * @param urn
-     */
-    public static Postgis create(String databaseId) {
-        return new Postgis(databaseId);
-    }
-    
-    /**
-     * Create an instance of postgis connected to the default 'klab' database.
-     * 
-     * @return
-     */
-    public static Postgis create() {
-        return new Postgis(null);
-    }
+		return ok;
+	}
 
-    /**
-     * Return the database that we have chosen for the passed URN.
-     * 
-     * @return
-     */
-    public String getDatabase() {
-        return database;
-    }
+	public boolean isOnline() {
+		return this.active;
+	}
 
-    public static class PublishedResource {
+	/**
+	 * Doesn't mean it's online, it means there is enough configuration for it to
+	 * try and get online.
+	 * 
+	 * @return true if DB operations can be attempted.
+	 */
+	public static boolean isEnabled() {
+		return Configuration.INSTANCE.getServiceProperty("postgres", "host") != null
+				&& Configuration.INSTANCE.getServiceProperty("postgres", "port") != null
+				&& Configuration.INSTANCE.getServiceProperty("postgres", "user") != null
+				&& Configuration.INSTANCE.getServiceProperty("postgres", "password") != null;
+	}
 
-        public static class Attribute {
-            public String name;
-            Class<?> binding;
-        }
+	/**
+	 * Return a postgis instance tuned to the passed URN, i.e. with a database
+	 * already created (either for the catalog or a single one for all tables). Only
+	 * call after checking for isEnabled().
+	 * 
+	 * @param urn
+	 */
+	public static Postgis create(Urn urn) {
+		return new Postgis(urn, false);
+	}
 
-        /**
-         * Name of table or coverage
-         */
-        public String name;
-        /**
-         * Projection in EPSG:xxxx format
-         */
-        public String srs;
+	/**
+	 * Return a postgis instance tuned to the passed database name, i.e. with a
+	 * database already created (either for the catalog or a single one for all
+	 * tables). Only call after checking for isEnabled().
+	 * 
+	 * @param urn
+	 */
+	public static Postgis create(String databaseId) {
+		return new Postgis(databaseId);
+	}
 
-        /**
-         * Attributes with their Java binding
-         */
-        public List<Attribute> attributes = new ArrayList<>();
+	/**
+	 * Create an instance of postgis connected to the default 'klab' database.
+	 * 
+	 * @return
+	 */
+	public static Postgis create() {
+		return new Postgis(null);
+	}
 
-        /**
-         * The geometry type in the resource
-         */
-        public String geometryType;
-        
-        
-        public String geometryAttribute;
-    }
+	/**
+	 * Return the database that we have chosen for the passed URN.
+	 * 
+	 * @return
+	 */
+	public String getDatabase() {
+		return database;
+	}
+
+	public static class PublishedResource {
+
+		public static class Attribute {
+			public String name;
+			Class<?> binding;
+		}
+
+		/**
+		 * Name of table or coverage
+		 */
+		public String name;
+		/**
+		 * Projection in EPSG:xxxx format
+		 */
+		public String srs;
+
+		/**
+		 * Attributes with their Java binding
+		 */
+		public List<Attribute> attributes = new ArrayList<>();
+
+		/**
+		 * The geometry type in the resource
+		 */
+		public String geometryType;
+
+		public String geometryAttribute;
+	}
 
 //    /**
 //     * Publish a resource to a table; return the table name.
@@ -234,35 +237,55 @@ public class Postgis {
 //        return null;
 //    }
 
-    /**
-     * Report on the number of stored shapes associated with this resource.
-     * 
-     * @param urn
-     * @return
-     */
-    public Map<String, Object> describeContents(Urn urn) {
+	/**
+	 * Report on the number of stored shapes associated with this resource.
+	 * 
+	 * @param urn
+	 * @return
+	 */
+	public Map<String, Object> describeContents(Urn urn) {
 
-        Map<String, Object> ret = new LinkedHashMap<>();
-        String table = urn.getNamespace() + "_" + urn.getResourceId();
-        table = table.replaceAll("\\.", "_").toLowerCase();
-        String smTableName = table + "_sm";
+		Map<String, Object> ret = new LinkedHashMap<>();
+		String table = urn.getNamespace() + "_" + urn.getResourceId();
+		table = table.replaceAll("\\.", "_").toLowerCase();
+		String smTableName = table + "_sm";
 
-        ret.put("simplified_table_name", smTableName);
+		ret.put("simplified_table_name", smTableName);
 
+		try (Connection con = DriverManager.getConnection(this.databaseUrl,
+				Configuration.INSTANCE.getServiceProperty("postgres", "user"),
+				Configuration.INSTANCE.getServiceProperty("postgres", "password"));
+				Statement st = con.createStatement()) {
+
+			ResultSet rs = st.executeQuery("SELECT COUNT('gid'), level FROM " + smTableName + " GROUP BY level");
+			long n = 0;
+			while (rs.next()) {
+				ret.put("simplified_count_level_" + rs.getObject(2), rs.getLong(1));
+				n += rs.getLong(1);
+			}
+			ret.put("total_shapes", n);
+
+		} catch (Throwable t) {
+			ret.put("error during query", ExceptionUtils.getStackTrace(t));
+		}
+
+		return ret;
+	}
+
+	public long count(String table, String where) {
+		
+		long ret = 0;
         try (Connection con = DriverManager.getConnection(this.databaseUrl,
                 Configuration.INSTANCE.getServiceProperty("postgres", "user"),
                 Configuration.INSTANCE.getServiceProperty("postgres", "password")); Statement st = con.createStatement()) {
 
-            ResultSet rs = st.executeQuery("SELECT COUNT('gid'), level FROM " + smTableName + " GROUP BY level");
-            long n = 0;
+            ResultSet rs = st.executeQuery("SELECT COUNT(*) FROM " + table + (where == null ? "" : (" WHERE " + where)) + ";");
             while(rs.next()) {
-                ret.put("simplified_count_level_" + rs.getObject(2), rs.getLong(1));
-                n += rs.getLong(1);
+            	ret = rs.getLong(1);
+            	break;
             }
-            ret.put("total_shapes", n);
-
         } catch (Throwable t) {
-            ret.put("error during query", ExceptionUtils.getStackTrace(t));
+        	Logging.INSTANCE.error("Postgis: " + table +  ": error during COUNT execution");
         }
 
         return ret;
@@ -299,38 +322,40 @@ public class Postgis {
 //        return ret;
 //    }
 
-    /**
-     * Get the full shape
-     * 
-     * @param tableName
-     * @param featureId
-     * @return
-     */
-    public IShape getShape(String tableName, long featureId) {
+	/**
+	 * Get the full shape
+	 * 
+	 * @param tableName
+	 * @param featureId
+	 * @return
+	 */
+	public IShape getShape(String tableName, long featureId) {
 
-        try (Connection con = DriverManager.getConnection(this.databaseUrl,
-                Configuration.INSTANCE.getServiceProperty("postgres", "user"),
-                Configuration.INSTANCE.getServiceProperty("postgres", "password")); Statement st = con.createStatement()) {
+		try (Connection con = DriverManager.getConnection(this.databaseUrl,
+				Configuration.INSTANCE.getServiceProperty("postgres", "user"),
+				Configuration.INSTANCE.getServiceProperty("postgres", "password"));
+				Statement st = con.createStatement()) {
 
-            // add the data and compute names. We don't need the name in the main table.
-            con.setAutoCommit(false);
-            st.setFetchSize(50);
-            ResultSet rs = st.executeQuery("SELECT fid, ST_AsBinary(the_geom) as the_geom FROM \"" + tableName + "\" WHERE fid = " + featureId + ";");
+			// add the data and compute names. We don't need the name in the main table.
+			con.setAutoCommit(false);
+			st.setFetchSize(50);
+			ResultSet rs = st.executeQuery("SELECT fid, ST_AsBinary(the_geom) as the_geom FROM \"" + tableName
+					+ "\" WHERE fid = " + featureId + ";");
 
-            if (rs.next()) {
+			if (rs.next()) {
 
-                WKBReader wkb = new WKBReader();
+				WKBReader wkb = new WKBReader();
 
-                Geometry geometry = wkb.read(rs.getBytes("the_geom"));
-                return Shape.create(geometry, Projection.getLatLon());
-            }
+				Geometry geometry = wkb.read(rs.getBytes("the_geom"));
+				return Shape.create(geometry, Projection.getLatLon());
+			}
 
-        } catch (Throwable t) {
-            Logging.INSTANCE.error(t);
-        }
+		} catch (Throwable t) {
+			Logging.INSTANCE.error(t);
+		}
 
-        return null;
-    }
+		return null;
+	}
 
 //    /**
 //     * Use {@link #getCoveringShapes(Urn, IEnvelope)} on the shape's envelope and discard any shapes
@@ -550,36 +575,37 @@ public class Postgis {
 //
 //    }
 
-    public void removeFeatures(Urn urn) {
+	public void removeFeatures(Urn urn) {
 
-        String table = urn.getNamespace() + "_" + urn.getResourceId();
-        table = table.replaceAll("\\.", "_").toLowerCase();
-        // String table_boundaries = table + "_bb";
-        String table_simplified = table + "_sm";
+		String table = urn.getNamespace() + "_" + urn.getResourceId();
+		table = table.replaceAll("\\.", "_").toLowerCase();
+		// String table_boundaries = table + "_bb";
+		String table_simplified = table + "_sm";
 
-        try (Connection con = DriverManager.getConnection(this.databaseUrl,
-                Configuration.INSTANCE.getServiceProperty("postgres", "user"),
-                Configuration.INSTANCE.getServiceProperty("postgres", "password")); Statement st = con.createStatement()) {
+		try (Connection con = DriverManager.getConnection(this.databaseUrl,
+				Configuration.INSTANCE.getServiceProperty("postgres", "user"),
+				Configuration.INSTANCE.getServiceProperty("postgres", "password"));
+				Statement st = con.createStatement()) {
 
-            // remove all individual pieces
-            List<String> tables = new ArrayList<>();
-            ResultSet rs = st.executeQuery("SELECT DISTINCT table_name from  \"" + table_simplified + "\";");
-            while(rs.next()) {
-                tables.add(rs.getString(1));
-            }
+			// remove all individual pieces
+			List<String> tables = new ArrayList<>();
+			ResultSet rs = st.executeQuery("SELECT DISTINCT table_name from  \"" + table_simplified + "\";");
+			while (rs.next()) {
+				tables.add(rs.getString(1));
+			}
 
-            for (String t : tables) {
-                st.execute("DROP TABLE IF EXISTS \"" + t + "\";");
-            }
+			for (String t : tables) {
+				st.execute("DROP TABLE IF EXISTS \"" + t + "\";");
+			}
 
-            for (String tablename : new String[]{ /* table_boundaries, */ table_simplified}) {
-                st.execute("DROP TABLE IF EXIST \"" + tablename + ";");
-                st.execute("COMMIT;");
-            }
-        } catch (Throwable t) {
-            throw new KlabStorageException(t.getMessage());
-        }
-    }
+			for (String tablename : new String[] { /* table_boundaries, */ table_simplified }) {
+				st.execute("DROP TABLE IF EXIST \"" + tablename + ";");
+				st.execute("COMMIT;");
+			}
+		} catch (Throwable t) {
+			throw new KlabStorageException(t.getMessage());
+		}
+	}
 
 //    public void reindexBoundaries(Urn urn) {
 //
@@ -854,49 +880,52 @@ public class Postgis {
 //        // }
 //    }
 
-    public String getPort() {
-        return Configuration.INSTANCE.getServiceProperty("postgres", "port");
-    }
+	public String getPort() {
+		return Configuration.INSTANCE.getServiceProperty("postgres", "port");
+	}
 
-    public String getHost() {
-        return Configuration.INSTANCE.getServiceProperty("postgres", "host");
-    }
+	public String getHost() {
+		return Configuration.INSTANCE.getServiceProperty("postgres", "host");
+	}
 
-    public String getUsername() {
-        return Configuration.INSTANCE.getServiceProperty("postgres", "user");
-    }
+	public String getUsername() {
+		return Configuration.INSTANCE.getServiceProperty("postgres", "user");
+	}
 
-    public String getPassword() {
-        return Configuration.INSTANCE.getServiceProperty("postgres", "password");
-    }
-    
-    public String getUrl() {
-    	return this.databaseUrl;
-    }
+	public String getPassword() {
+		return Configuration.INSTANCE.getServiceProperty("postgres", "password");
+	}
 
-    public boolean clear() {
+	public String getUrl() {
+		return this.databaseUrl;
+	}
 
-        boolean ok = false;
-        try (Connection con = DriverManager.getConnection(this.pgadminUrl, Configuration.INSTANCE.getServiceProperty("postgres", "user"),
-                Configuration.INSTANCE.getServiceProperty("postgres", "password")); Statement st = con.createStatement()) {
+	public boolean clear() {
 
-            /**
-             * Force disconnection of any user
-             */
-            st.execute("UPDATE pg_database SET datallowconn = 'false' WHERE datname = '" + this.database + "';");
-            st.execute("SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '" + this.database + "';");
-            st.execute("DROP DATABASE " + this.database + ";");
+		boolean ok = false;
+		try (Connection con = DriverManager.getConnection(this.pgadminUrl,
+				Configuration.INSTANCE.getServiceProperty("postgres", "user"),
+				Configuration.INSTANCE.getServiceProperty("postgres", "password"));
+				Statement st = con.createStatement()) {
 
-            ok = true;
+			/**
+			 * Force disconnection of any user
+			 */
+			st.execute("UPDATE pg_database SET datallowconn = 'false' WHERE datname = '" + this.database + "';");
+			st.execute(
+					"SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '" + this.database + "';");
+			st.execute("DROP DATABASE " + this.database + ";");
 
-        } catch (SQLException ex) {
-            Logging.INSTANCE.error(ex);
-        }
-        if (ok) {
-            createDatabase();
-        }
+			ok = true;
 
-        return ok;
-    }
+		} catch (SQLException ex) {
+			Logging.INSTANCE.error(ex);
+		}
+		if (ok) {
+			createDatabase();
+		}
+
+		return ok;
+	}
 
 }
