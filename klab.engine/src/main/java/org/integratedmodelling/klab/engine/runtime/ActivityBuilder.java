@@ -188,7 +188,9 @@ public class ActivityBuilder {
 				ret.endTime = 0;
 				return ret;
 			}
-			ret = new ActivityBuilder(((Actuator) target).getModel().getName(), TargetIdentity.Actuator, engineName);
+			String actuatorName = ((Actuator) target).getModel() != null ? ((Actuator) target).getModel().getName()
+					: ((Actuator) target).getName();
+			ret = new ActivityBuilder(actuatorName, TargetIdentity.Actuator, engineName);
 			ret.observable = ((Actuator) target).getObservable().getDefinition();
 			ret.instantiation = ((Actuator) target).getMode() == Mode.INSTANTIATION;
 			if (((Actuator) target).getCoverage() != null) {
@@ -262,7 +264,7 @@ public class ActivityBuilder {
 
 			this.scaleStatistics = new ScaleStatistics();
 			this.scaleStatistics.setSize(geometry.size());
-			
+
 			// space statistics + bounding box
 			if (((IScale) geometry).getSpace() != null) {
 
@@ -404,7 +406,7 @@ public class ActivityBuilder {
 				this.contextId = ((IDirectObservation) o).getId();
 			}
 		}
-		
+
 		this.startTime = System.currentTimeMillis();
 		this.endTime = 0;
 	}

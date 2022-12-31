@@ -978,6 +978,9 @@ public enum Kim {
 		if (quality.length == 1 && quality[0] == Type.CHANGE) {
 			// not a quality, just ignore everything
 			return getType(UnarySemanticOperator.CHANGE, original);
+		} else if (quality.length == 1 && quality[0] == Type.CHANGED) {
+			// not a quality, just ignore everything
+			return getType(UnarySemanticOperator.CHANGED, original);
 		}
 
 		// remove any direct observable flags, add the one specified and quality
@@ -1174,7 +1177,7 @@ public enum Kim {
 		case "change":
 			return EnumSet.of(Type.CHANGE, Type.PROCESS, Type.DIRECT_OBSERVABLE, Type.OBSERVABLE);
 		case "changed":
-			return EnumSet.of(Type.CHANGED, Type.EVENT, Type.DIRECT_OBSERVABLE, Type.OBSERVABLE);
+			return EnumSet.of(Type.CHANGED, Type.EVENT, Type.COUNTABLE, Type.DIRECT_OBSERVABLE, Type.OBSERVABLE);
 		case "agent":
 			return EnumSet.of(Type.AGENT, Type.DIRECT_OBSERVABLE, Type.COUNTABLE, Type.OBSERVABLE);
 		case "event":
@@ -1969,9 +1972,9 @@ public enum Kim {
 	}
 
 	public void unregisterProject(IKimProject project) {
-	    if (this.projectFiles != null) {
-	        this.projectFiles.remove(project.getRoot());
-	    }
+		if (this.projectFiles != null) {
+			this.projectFiles.remove(project.getRoot());
+		}
 		this.projectWorkspaces.remove(project.getName());
 	}
 

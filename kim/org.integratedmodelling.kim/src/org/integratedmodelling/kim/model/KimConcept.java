@@ -200,13 +200,6 @@ public class KimConcept extends KimStatement implements IKimConcept {
     }
 
     private static KimConcept normalize(ConceptDeclaration declaration, IKimMacro macro, IKimStatement parent, boolean root) {
-
-        if (macro != null) {
-            /*
-             * the template to follow is the parent concept in the macro
-             */
-            System.out.println("EHILA'");
-        }
         
         if (Kim.INSTANCE.hasErrors(declaration)) {
             return null;
