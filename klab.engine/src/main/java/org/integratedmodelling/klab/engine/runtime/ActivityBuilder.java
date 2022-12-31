@@ -404,6 +404,9 @@ public class ActivityBuilder {
 				this.contextId = ((IDirectObservation) o).getId();
 			}
 		}
+		
+		this.startTime = System.currentTimeMillis();
+		this.endTime = 0;
 	}
 
 	public void notifyContextCreated(ISubject ret) {

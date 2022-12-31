@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.persistence.postgis.Postgis;
 import org.integratedmodelling.klab.rest.DataflowState.Status;
@@ -242,6 +243,8 @@ public class StatsDatabase extends Postgis {
     @Override
     protected boolean createDatabase() {
         if (super.createDatabase()) {
+        	
+        	Logging.INSTANCE.info("Creating statistics database");
             for (String sql : structuralStatsStatements) {
                 if (!execute(sql)) {
                     return false;

@@ -2585,4 +2585,9 @@ public class RuntimeScope extends AbstractRuntimeScope {
         return statistics;
     }
 
+	public void defineStatisticsTarget(String urn, Subject context, Dataflow dataflow) {
+        this.statistics = this.statistics.forTarget(dataflow, scale, actuator.getObservable());
+        this.statistics.defineTarget(urn, context);
+	}
+
 }

@@ -1174,31 +1174,44 @@ public class Scheduler implements IScheduler {
 
 			ActivityBuilder statistics = runtimeScope.getStatistics().forTarget(actuator).schedulerStep();
 
-			// we re-run the entire initialization sequence.
-			for (Actuator.Computation computation : actuator.getContextualizers()) {
+			try {
 
-				if (computation.variable != null) {
-					transitionContext.getVariables().put(computation.targetId, computation.variable);
-					continue;
+				// we re-run the entire initialization sequence.
+				for (Actuator.Computation computation : actuator.getContextualizers()) {
+
+					if (computation.variable != null) {
+						transitionContext.getVariables().put(computation.targetId, computation.variable);
+						continue;
+					}
+
+					if (artifact == null) {
+						artifact = computation.target;
+					}
+
+					/*
+					 * substitute the target for the next computation if we're using layers
+					 */
+					artifact = actuator.runContextualizer(computation.contextualizer, computation.observable,
+							computation.resource, artifact, transitionContext, (IScale) transitionScale,
+							changedArtifacts, statistics);
+
+					if (monitor.isInterrupted()) {
+						return;
+					}
+
+					((Observation) artifact).finalizeTransition((IScale) transitionScale);
+
 				}
-
-				if (artifact == null) {
-					artifact = computation.target;
-				}
-
-				/*
-				 * substitute the target for the next computation if we're using layers
-				 */
-				artifact = actuator.runContextualizer(computation.contextualizer, computation.observable,
-						computation.resource, artifact, transitionContext, (IScale) transitionScale, changedArtifacts,
-						statistics);
 
 				if (monitor.isInterrupted()) {
-					return;
+					statistics.interrupt();
+				} else {
+					statistics.success();
 				}
 
-				((Observation) artifact).finalizeTransition((IScale) transitionScale);
-
+			} catch (Throwable t) {
+				statistics.exception(t);
+				throw t;
 			}
 
 			if (target.getLastUpdate() > lastUpdate && !monitor.isInterrupted()) {
