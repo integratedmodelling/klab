@@ -1,0 +1,27 @@
+/**
+ * This file defines the contract for functions compiled by the runtime into dataflow calls. These
+ * are normally not seen by users.
+ */
+@klab 0.11.0
+@version 0.11.0
+@namespace klab.runtime.reifiers
+
+export object change
+	"Return a reifying instantiator of change events based on successive quality states"
+	label 'Detect change events'
+{
+	import object artifact
+		"The artifact being reified"
+	
+	class org.integratedmodelling.klab.components.runtime.contextualizers.reifiers.ChangeEventInstantiator
+}
+
+export process integrate
+	"Return a process resolver that implements change of a quality by integrating a change rate"
+	label 'Integrate change rate'
+{
+	import object artifact
+		"The artifact being reified"
+	
+	class org.integratedmodelling.klab.components.runtime.contextualizers.reifiers.RateIntegrator
+}

@@ -30,6 +30,8 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isChange <em>Change</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isRate <em>Rate</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isChanged <em>Changed</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.Concept#getChangedFrom <em>Changed From</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.Concept#getChangedTo <em>Changed To</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isUncertainty <em>Uncertainty</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isMagnitude <em>Magnitude</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Concept#isLevel <em>Level</em>}</li>
@@ -380,6 +382,50 @@ public interface Concept extends EObject
    * @generated
    */
   void setChanged(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Changed From</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Changed From</em>' containment reference.
+   * @see #setChangedFrom(ConceptDeclaration)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getConcept_ChangedFrom()
+   * @model containment="true"
+   * @generated
+   */
+  ConceptDeclaration getChangedFrom();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.Concept#getChangedFrom <em>Changed From</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Changed From</em>' containment reference.
+   * @see #getChangedFrom()
+   * @generated
+   */
+  void setChangedFrom(ConceptDeclaration value);
+
+  /**
+   * Returns the value of the '<em><b>Changed To</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Changed To</em>' containment reference.
+   * @see #setChangedTo(ConceptDeclaration)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getConcept_ChangedTo()
+   * @model containment="true"
+   * @generated
+   */
+  ConceptDeclaration getChangedTo();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.Concept#getChangedTo <em>Changed To</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Changed To</em>' containment reference.
+   * @see #getChangedTo()
+   * @generated
+   */
+  void setChangedTo(ConceptDeclaration value);
 
   /**
    * Returns the value of the '<em><b>Uncertainty</b></em>' attribute.

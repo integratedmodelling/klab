@@ -611,13 +611,13 @@
 			<artifactId>protobuf-java-util</artifactId>
 			<version>3.11.1</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>net.postgis</groupId>
 			<artifactId>postgis-geometry</artifactId>
 			<version>2.5.0</version>
 		</dependency>
-		
+
 		<!-- GEOTOOLS mess starts -->
 		<!-- <dependency> <groupId>org.geotools</groupId> <artifactId>gt-metadata</artifactId> 
 			<version>${geotools.version}</version> </dependency> -->

@@ -77,6 +77,8 @@ import org.integratedmodelling.klab.components.runtime.contextualizers.ValueOper
 import org.integratedmodelling.klab.components.runtime.contextualizers.dereifiers.DensityResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.dereifiers.DistanceResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.dereifiers.PresenceResolver;
+import org.integratedmodelling.klab.components.runtime.contextualizers.reifiers.ChangeEventInstantiator;
+import org.integratedmodelling.klab.components.runtime.contextualizers.reifiers.RateIntegrator;
 import org.integratedmodelling.klab.components.runtime.contextualizers.wrappers.ConditionalContextualizer;
 import org.integratedmodelling.klab.components.runtime.observations.Event;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
@@ -636,6 +638,12 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 				return Collections.singletonList(new ComputableResource(
 						DensityResolver.getServiceCall(availableType, desiredObservation), resolutionMode));
 			}
+		} else if (availableType.is(Type.QUALITY) && desiredObservation.is(Type.CHANGED)) {
+			return Collections.singletonList(new ComputableResource(
+					ChangeEventInstantiator.getServiceCall(availableType, desiredObservation), resolutionMode));
+		} else if (availableType.is(Type.RATE) && desiredObservation.is(Type.CHANGE)) {
+			return Collections.singletonList(new ComputableResource(
+					RateIntegrator.getServiceCall(availableType, desiredObservation), resolutionMode));
 		}
 
 		return null;

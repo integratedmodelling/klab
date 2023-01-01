@@ -2638,13 +2638,31 @@ public interface KimPackage extends EPackage
   int CONCEPT__CHANGED = 14;
 
   /**
+   * The feature id for the '<em><b>Changed From</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT__CHANGED_FROM = 15;
+
+  /**
+   * The feature id for the '<em><b>Changed To</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT__CHANGED_TO = 16;
+
+  /**
    * The feature id for the '<em><b>Uncertainty</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CONCEPT__UNCERTAINTY = 15;
+  int CONCEPT__UNCERTAINTY = 17;
 
   /**
    * The feature id for the '<em><b>Magnitude</b></em>' attribute.
@@ -2653,7 +2671,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__MAGNITUDE = 16;
+  int CONCEPT__MAGNITUDE = 18;
 
   /**
    * The feature id for the '<em><b>Level</b></em>' attribute.
@@ -2662,7 +2680,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__LEVEL = 17;
+  int CONCEPT__LEVEL = 19;
 
   /**
    * The feature id for the '<em><b>Type</b></em>' attribute.
@@ -2671,7 +2689,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__TYPE = 18;
+  int CONCEPT__TYPE = 20;
 
   /**
    * The feature id for the '<em><b>Observability</b></em>' attribute.
@@ -2680,7 +2698,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__OBSERVABILITY = 19;
+  int CONCEPT__OBSERVABILITY = 21;
 
   /**
    * The feature id for the '<em><b>Proportion</b></em>' attribute.
@@ -2689,7 +2707,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__PROPORTION = 20;
+  int CONCEPT__PROPORTION = 22;
 
   /**
    * The feature id for the '<em><b>Other</b></em>' containment reference.
@@ -2698,7 +2716,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__OTHER = 21;
+  int CONCEPT__OTHER = 23;
 
   /**
    * The feature id for the '<em><b>Percentage</b></em>' attribute.
@@ -2707,7 +2725,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__PERCENTAGE = 22;
+  int CONCEPT__PERCENTAGE = 24;
 
   /**
    * The feature id for the '<em><b>Ratio</b></em>' attribute.
@@ -2716,7 +2734,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__RATIO = 23;
+  int CONCEPT__RATIO = 25;
 
   /**
    * The feature id for the '<em><b>Monetary</b></em>' attribute.
@@ -2725,7 +2743,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__MONETARY = 24;
+  int CONCEPT__MONETARY = 26;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -2734,7 +2752,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__VALUE = 25;
+  int CONCEPT__VALUE = 27;
 
   /**
    * The feature id for the '<em><b>Occurrence</b></em>' attribute.
@@ -2743,7 +2761,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__OCCURRENCE = 26;
+  int CONCEPT__OCCURRENCE = 28;
 
   /**
    * The feature id for the '<em><b>Declaration</b></em>' containment reference.
@@ -2752,7 +2770,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__DECLARATION = 27;
+  int CONCEPT__DECLARATION = 29;
 
   /**
    * The number of structural features of the '<em>Concept</em>' class.
@@ -2761,7 +2779,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_FEATURE_COUNT = 28;
+  int CONCEPT_FEATURE_COUNT = 30;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.UpperOntologyDefinitionImpl <em>Upper Ontology Definition</em>}' class.
@@ -7505,6 +7523,28 @@ public interface KimPackage extends EPackage
   EAttribute getConcept_Changed();
 
   /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.Concept#getChangedFrom <em>Changed From</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Changed From</em>'.
+   * @see org.integratedmodelling.kim.kim.Concept#getChangedFrom()
+   * @see #getConcept()
+   * @generated
+   */
+  EReference getConcept_ChangedFrom();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.Concept#getChangedTo <em>Changed To</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Changed To</em>'.
+   * @see org.integratedmodelling.kim.kim.Concept#getChangedTo()
+   * @see #getConcept()
+   * @generated
+   */
+  EReference getConcept_ChangedTo();
+
+  /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Concept#isUncertainty <em>Uncertainty</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -11831,6 +11871,22 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EAttribute CONCEPT__CHANGED = eINSTANCE.getConcept_Changed();
+
+    /**
+     * The meta object literal for the '<em><b>Changed From</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference CONCEPT__CHANGED_FROM = eINSTANCE.getConcept_ChangedFrom();
+
+    /**
+     * The meta object literal for the '<em><b>Changed To</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference CONCEPT__CHANGED_TO = eINSTANCE.getConcept_ChangedTo();
 
     /**
      * The meta object literal for the '<em><b>Uncertainty</b></em>' attribute feature.

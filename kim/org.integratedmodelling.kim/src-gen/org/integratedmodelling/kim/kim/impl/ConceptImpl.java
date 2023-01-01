@@ -41,6 +41,8 @@ import org.integratedmodelling.kim.kim.KimPackage;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isChange <em>Change</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isRate <em>Rate</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isChanged <em>Changed</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#getChangedFrom <em>Changed From</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#getChangedTo <em>Changed To</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isUncertainty <em>Uncertainty</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isMagnitude <em>Magnitude</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptImpl#isLevel <em>Level</em>}</li>
@@ -339,6 +341,26 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
    * @ordered
    */
   protected boolean changed = CHANGED_EDEFAULT;
+
+  /**
+   * The cached value of the '{@link #getChangedFrom() <em>Changed From</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getChangedFrom()
+   * @generated
+   * @ordered
+   */
+  protected ConceptDeclaration changedFrom;
+
+  /**
+   * The cached value of the '{@link #getChangedTo() <em>Changed To</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getChangedTo()
+   * @generated
+   * @ordered
+   */
+  protected ConceptDeclaration changedTo;
 
   /**
    * The default value of the '{@link #isUncertainty() <em>Uncertainty</em>}' attribute.
@@ -1032,6 +1054,106 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
    * @generated
    */
   @Override
+  public ConceptDeclaration getChangedFrom()
+  {
+    return changedFrom;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetChangedFrom(ConceptDeclaration newChangedFrom, NotificationChain msgs)
+  {
+    ConceptDeclaration oldChangedFrom = changedFrom;
+    changedFrom = newChangedFrom;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT__CHANGED_FROM, oldChangedFrom, newChangedFrom);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setChangedFrom(ConceptDeclaration newChangedFrom)
+  {
+    if (newChangedFrom != changedFrom)
+    {
+      NotificationChain msgs = null;
+      if (changedFrom != null)
+        msgs = ((InternalEObject)changedFrom).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.CONCEPT__CHANGED_FROM, null, msgs);
+      if (newChangedFrom != null)
+        msgs = ((InternalEObject)newChangedFrom).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.CONCEPT__CHANGED_FROM, null, msgs);
+      msgs = basicSetChangedFrom(newChangedFrom, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT__CHANGED_FROM, newChangedFrom, newChangedFrom));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public ConceptDeclaration getChangedTo()
+  {
+    return changedTo;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetChangedTo(ConceptDeclaration newChangedTo, NotificationChain msgs)
+  {
+    ConceptDeclaration oldChangedTo = changedTo;
+    changedTo = newChangedTo;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT__CHANGED_TO, oldChangedTo, newChangedTo);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setChangedTo(ConceptDeclaration newChangedTo)
+  {
+    if (newChangedTo != changedTo)
+    {
+      NotificationChain msgs = null;
+      if (changedTo != null)
+        msgs = ((InternalEObject)changedTo).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.CONCEPT__CHANGED_TO, null, msgs);
+      if (newChangedTo != null)
+        msgs = ((InternalEObject)newChangedTo).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.CONCEPT__CHANGED_TO, null, msgs);
+      msgs = basicSetChangedTo(newChangedTo, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT__CHANGED_TO, newChangedTo, newChangedTo));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public boolean isUncertainty()
   {
     return uncertainty;
@@ -1415,6 +1537,10 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
         return basicSetName(null, msgs);
       case KimPackage.CONCEPT__CONCEPT:
         return basicSetConcept(null, msgs);
+      case KimPackage.CONCEPT__CHANGED_FROM:
+        return basicSetChangedFrom(null, msgs);
+      case KimPackage.CONCEPT__CHANGED_TO:
+        return basicSetChangedTo(null, msgs);
       case KimPackage.CONCEPT__OTHER:
         return basicSetOther(null, msgs);
       case KimPackage.CONCEPT__DECLARATION:
@@ -1463,6 +1589,10 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
         return isRate();
       case KimPackage.CONCEPT__CHANGED:
         return isChanged();
+      case KimPackage.CONCEPT__CHANGED_FROM:
+        return getChangedFrom();
+      case KimPackage.CONCEPT__CHANGED_TO:
+        return getChangedTo();
       case KimPackage.CONCEPT__UNCERTAINTY:
         return isUncertainty();
       case KimPackage.CONCEPT__MAGNITUDE:
@@ -1547,6 +1677,12 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
         return;
       case KimPackage.CONCEPT__CHANGED:
         setChanged((Boolean)newValue);
+        return;
+      case KimPackage.CONCEPT__CHANGED_FROM:
+        setChangedFrom((ConceptDeclaration)newValue);
+        return;
+      case KimPackage.CONCEPT__CHANGED_TO:
+        setChangedTo((ConceptDeclaration)newValue);
         return;
       case KimPackage.CONCEPT__UNCERTAINTY:
         setUncertainty((Boolean)newValue);
@@ -1646,6 +1782,12 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
       case KimPackage.CONCEPT__CHANGED:
         setChanged(CHANGED_EDEFAULT);
         return;
+      case KimPackage.CONCEPT__CHANGED_FROM:
+        setChangedFrom((ConceptDeclaration)null);
+        return;
+      case KimPackage.CONCEPT__CHANGED_TO:
+        setChangedTo((ConceptDeclaration)null);
+        return;
       case KimPackage.CONCEPT__UNCERTAINTY:
         setUncertainty(UNCERTAINTY_EDEFAULT);
         return;
@@ -1729,6 +1871,10 @@ public class ConceptImpl extends MinimalEObjectImpl.Container implements Concept
         return rate != RATE_EDEFAULT;
       case KimPackage.CONCEPT__CHANGED:
         return changed != CHANGED_EDEFAULT;
+      case KimPackage.CONCEPT__CHANGED_FROM:
+        return changedFrom != null;
+      case KimPackage.CONCEPT__CHANGED_TO:
+        return changedTo != null;
       case KimPackage.CONCEPT__UNCERTAINTY:
         return uncertainty != UNCERTAINTY_EDEFAULT;
       case KimPackage.CONCEPT__MAGNITUDE:
