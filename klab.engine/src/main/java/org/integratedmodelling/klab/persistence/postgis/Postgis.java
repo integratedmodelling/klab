@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.integratedmodelling.klab.Configuration;
@@ -86,6 +87,29 @@ public class Postgis {
 		return ok;
 	}
 
+	public long scan(String query, Consumer<ResultSet> handler) {
+
+		try (Connection con = DriverManager.getConnection(this.databaseUrl,
+				Configuration.INSTANCE.getServiceProperty("postgres", "user"),
+				Configuration.INSTANCE.getServiceProperty("postgres", "password"));
+				Statement st = con.createStatement()) {
+
+			ResultSet rs = st.executeQuery(query);
+			long n = 0;
+			while (rs.next()) {
+				handler.accept(rs);
+				n ++;
+			}
+			return n;
+
+		} catch (SQLException ex) {
+			System.err.println(ex.getMessage());
+		}
+
+		return -1;
+	}
+
+	
 	protected boolean createDatabase() {
 
 		boolean ok = false;

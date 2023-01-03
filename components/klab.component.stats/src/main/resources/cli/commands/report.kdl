@@ -1,0 +1,21 @@
+/**
+ * This file defines the contract for all commands recognized in k.IM. Those with a
+ * 'class' specification also have handlers that perform specific tasks when the annotations
+ * are encountered.
+ */
+@klab 0.11.0
+@version 0.11.0
+@namespace report
+
+void print
+	"Print a report with the specified options."
+{
+	optional boolean html 
+		"Output HTML instead of the default Markdown. If the output file is not specified, launch the local browser."
+
+	optional text output
+		"File to write the output to (output on console by default for Markdown, in local browser if html)"
+
+	class org.integratedmodelling.stats.commands.PrintReport
+}
+

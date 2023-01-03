@@ -1,12 +1,13 @@
 package org.integratedmodelling.stats;
 
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.extensions.Component;
 import org.integratedmodelling.klab.api.extensions.component.Initialize;
 import org.integratedmodelling.klab.rest.ObservationResultStatistics;
 import org.integratedmodelling.stats.database.StatsDatabase;
-
-import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.stats.reporting.StatsReport;
+import org.integratedmodelling.stats.reporting.StatsReport.Target;
 
 @Component(id = StatsComponent.ID, version = Version.CURRENT)
 public class StatsComponent {
@@ -27,6 +28,40 @@ public class StatsComponent {
 		} else {
 			Logging.INSTANCE.error("Stats DB offline: lost " + obs);
 		}
+	}
+
+    public StatsDatabase getDatabase() {
+    	return database;
+    }
+    
+	/**
+	 * TODO list option keys and types
+	 * 
+	 * @param target
+	 * @param options
+	 * @return
+	 */
+	public StatsReport createReport(StatsReport.Target target, Object... options) {
+
+		if (!database.isOnline()) {
+			return null;
+		}
+
+		StatsReport ret = new StatsReport(target);
+
+		if (options != null) {
+			for (int i = 0; i < options.length; i++) {
+				if ("start".equals(options[i])) {
+					ret.setReportingStart((Long) options[++i]);
+				} else if ("end".equals(options[i])) {
+					ret.setReportingEnd((Long) options[++i]);
+				} else if (options[i] instanceof Target) {
+					ret.setTarget((Target)options[i]);
+				}
+			}
+		}
+
+		return ret;
 	}
 
 }
