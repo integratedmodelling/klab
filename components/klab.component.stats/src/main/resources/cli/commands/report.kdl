@@ -8,8 +8,31 @@
 @namespace report
 
 void print
-	"Print a report with the specified options."
+	"Print a usage report with the specified options. Use the optional keywords
+	 {daily|monthly|weekly|yearly}, users, {models|resources|observables|observations}
+	 to define the aggregation type and order. Use {year|day|month|week} to specify the
+	 temporal arc of the report."
 {
+
+	optional text user 
+		"Select a specific user or comma-separated list thereof. Use !user to exclude the user" 
+
+	optional text group 
+		"Select a specific group or comma-separated list thereof. Use !group to exclude the group" 
+
+	optional text app
+		"Select a specific app or comma-separated list thereof. Use !app to exclude it"
+
+	optional text model
+		"Select a specific model URN or comma-separated list thereof. Use !model to exclude it"
+
+	optional text resource
+		"Select a specific resource URN or comma-separated list thereof. Use !urn to exclude it"
+
+	optional text observable
+		"Select a specific observable or comma-separated list thereof. The string will match the concept definition. 
+		 Use !concept to exclude it"
+	
 	optional boolean html 
 		"Output HTML instead of the default Markdown. If the output file is not specified, launch the local browser."
 

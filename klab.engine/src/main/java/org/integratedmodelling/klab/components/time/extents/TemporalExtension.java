@@ -52,12 +52,21 @@ public class TemporalExtension {
 		ITimeInstant time = new TimeInstant(start);
 		ITimeInstant fine = new TimeInstant(end);
 		for (;;) {
-			time = time.plus(1, Time.resolution(multiplier, Type.WEEK));
+			time = time.plus(1, Time.resolution(multiplier, resolution));
 			if (!time.isBefore(fine)) {
 				break;
 			}
 			this.extension.add(time.getMilliseconds());
 		}
+	}
+	
+	@Override
+	public String toString() {
+		String ret = "Timeline: " + TimeInstant.create(start) + " to " + TimeInstant.create(end) + "\n";
+		for (long n : extension) {
+			ret += "  " + TimeInstant.create(n);
+		}
+		return ret;
 	}
 	
 	public static TemporalExtension weekly(long start, long end, int multiplier) {
@@ -113,6 +122,19 @@ public class TemporalExtension {
 		return new Pair<>(start, end);
 	}
 
+	public long[] getExtensionAt(long milliseconds) {
+		long start = extension.floor(milliseconds);
+		Long end = extension.ceiling(start + 1);
+		if (end == null) {
+			end = extension.ceiling(start);
+		}
+		if (end == null) {
+			throw new KlabIllegalArgumentException("Invalid timestamp");
+		}
+		return new long[] {start, end};
+	}
+
+	
 	public static void main(String[] args) {
 
 		TemporalExtension te = new TemporalExtension(Time.create(0l, 1000l));

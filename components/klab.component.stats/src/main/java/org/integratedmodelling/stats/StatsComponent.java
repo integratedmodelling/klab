@@ -1,5 +1,7 @@
 package org.integratedmodelling.stats;
 
+import java.util.Collection;
+
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.extensions.Component;
@@ -7,6 +9,7 @@ import org.integratedmodelling.klab.api.extensions.component.Initialize;
 import org.integratedmodelling.klab.rest.ObservationResultStatistics;
 import org.integratedmodelling.stats.database.StatsDatabase;
 import org.integratedmodelling.stats.reporting.StatsReport;
+import org.integratedmodelling.stats.reporting.StatsReport.Frequency;
 import org.integratedmodelling.stats.reporting.StatsReport.Target;
 
 @Component(id = StatsComponent.ID, version = Version.CURRENT)
@@ -30,10 +33,10 @@ public class StatsComponent {
 		}
 	}
 
-    public StatsDatabase getDatabase() {
-    	return database;
-    }
-    
+	public StatsDatabase getDatabase() {
+		return database;
+	}
+
 	/**
 	 * TODO list option keys and types
 	 * 
@@ -41,13 +44,13 @@ public class StatsComponent {
 	 * @param options
 	 * @return
 	 */
-	public StatsReport createReport(StatsReport.Target target, Object... options) {
+	public StatsReport createReport(Object... options) {
 
 		if (!database.isOnline()) {
 			return null;
 		}
 
-		StatsReport ret = new StatsReport(target);
+		StatsReport ret = new StatsReport();
 
 		if (options != null) {
 			for (int i = 0; i < options.length; i++) {
@@ -56,8 +59,10 @@ public class StatsComponent {
 				} else if ("end".equals(options[i])) {
 					ret.setReportingEnd((Long) options[++i]);
 				} else if (options[i] instanceof Target) {
-					ret.setTarget((Target)options[i]);
-				}
+					ret.setTargetClassifier((Target) options[i]);
+				} else if (options[i] instanceof Frequency) {
+					ret.setAggregationInterval((Frequency) options[i], 1);
+				} // TODO handle white/blacklists
 			}
 		}
 

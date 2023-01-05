@@ -2,6 +2,7 @@ package org.integratedmodelling.stats.commands;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -25,56 +26,58 @@ public class PrintReport implements ICommand {
 	@Override
 	public Object execute(IServiceCall call, ISession session) {
 
-		Target target = Target.Users;
-		Frequency frequency = null;
 		Resolution lag = null;
 		String whitelist = "";
 		String blacklist = "";
-		Set<Target> aggregation = new HashSet<>();
 		boolean html = call.getParameters().get("html", false);
-		
+
 		Component stc = Extensions.INSTANCE.getComponent(StatsComponent.ID);
 		if (stc != null) {
 			StatsComponent stats = stc.getImplementation(StatsComponent.class);
 			if (stats != null) {
-				
+
+				List<Object> options = new ArrayList<>();
+
 				for (Object option : (List<?>) call.getParameters().get("arguments")) {
-					
+
 					String o = option.toString().toLowerCase();
-					
+
 					switch (o) {
 					case "observations":
-						target = Target.Observations;
+						options.add(Target.Observations);
 						break;
 					case "models":
-						target = Target.Models;
+						options.add(Target.Models);
+						break;
+					case "contexts":
+						options.add(Target.Contexts);
 						break;
 					case "observables":
-						target = Target.Observables;
+						options.add(Target.Observables);
 						break;
 					case "resources":
-						target = Target.Resources;
+						options.add(Target.Resources);
 						break;
 					case "downloads":
-						target = Target.Downloads;
+						options.add(Target.Downloads);
 						break;
 					case "users":
-						target = Target.Users;
+						options.add(Target.Users);
 						break;
-					case "groups":
-						target = Target.Groups;
+					case "applications":
+						options.add(Target.Applications);
 						break;
 					case "yearly":
-						frequency = Frequency.Yearly;
+						options.add(Frequency.Yearly);
 						break;
 					case "monthly":
-						frequency = Frequency.Monthly;
+						options.add(Frequency.Monthly);
 						break;
 					case "weekly":
-						frequency = Frequency.Weekly;
+						options.add(Frequency.Weekly);
 						break;
 					case "daily":
-						frequency = Frequency.Daily;
+						options.add(Frequency.Daily);
 						break;
 					case "year":
 						lag = Time.resolution(1, Type.YEAR);
@@ -88,37 +91,22 @@ public class PrintReport implements ICommand {
 					case "week":
 						lag = Time.resolution(1, Type.WEEK);
 						break;
-					case "user":
-						aggregation.add(Target.Users);
-						break;
-					case "resource":
-						aggregation.add(Target.Resources);
-						break;
-					case "model":
-						aggregation.add(Target.Models);
-						break;
-					case "observable":
-						aggregation.add(Target.Observables);
-						break;
-					case "observation":
-						aggregation.add(Target.Observations);
-						break;
+
 					default:
-						
-						// include/exclude user, URN, observable or group - all should be recognizable based on target
-						if (o.startsWith("+") /* or not - just mention something that's not the above*/) {
+
+						// include/exclude user, URN, observable or group - all should be recognizable
+						// based on target
+						if (o.startsWith("+") /* or not - just mention something that's not the above */) {
 							whitelist += (whitelist.isEmpty() ? "" : ",") + o.substring(1);
 						} else if (o.startsWith("!")) {
-							blacklist += (blacklist.isEmpty() ? "" : ",") +o.substring(1);
+							blacklist += (blacklist.isEmpty() ? "" : ",") + o.substring(1);
 						} else {
-							whitelist += (whitelist.isEmpty() ? "" : ",") +o;
+							whitelist += (whitelist.isEmpty() ? "" : ",") + o;
 						}
 						break;
 					}
 				}
-				
-				List<Object> options = new ArrayList<>(); 
-				
+
 				if (!whitelist.isEmpty()) {
 					options.add("whitelist");
 					options.add(whitelist);
@@ -127,7 +115,7 @@ public class PrintReport implements ICommand {
 					options.add("blacklist");
 					options.add(blacklist);
 				}
-				
+
 				if (lag != null) {
 					ITimeInstant end = TimeInstant.create();
 					ITimeInstant start = end.minus(1, lag);
@@ -136,23 +124,18 @@ public class PrintReport implements ICommand {
 					options.add("end");
 					options.add(end.getMilliseconds());
 				}
-				
-				if (frequency != null) {
-					options.add("frequency");
-					options.add(frequency.name());
-				}
-				
-				StatsReport report = stats.createReport(target, options.toArray());
-				
+
+				StatsReport report = stats.createReport(options.toArray());
+
 				if (report != null) {
-					String ret = report.extract();
+					String ret = report.compile();
 					if (html) {
 						// TODO translate and launch in browser
 						return "Browser launched";
-					} 
+					}
 					return ret;
 				}
-				
+
 			}
 		}
 
