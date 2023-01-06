@@ -5,40 +5,15 @@
  */
 @klab 0.11.0
 @version 0.11.0
-@namespace report
+@namespace refdata
 
-void print
-	"Print a usage report with the specified options. Use the optional keywords
-	 {daily|monthly|weekly|yearly}, users, {models|resources|observables|observations}
-	 to define the aggregation type and order. Use {year|day|month|week} to specify the
-	 temporal arc of the report."
+void update
+	"Update the reference database from the content of the local database. This is a destructive
+	 operation which runs with no confirmation."
 {
+	optional boolean clear
+		"Clear the reference database before starting."
 
-	optional text user 
-		"Select a specific user or comma-separated list thereof. Use !user to exclude the user" 
-
-	optional text group 
-		"Select a specific group or comma-separated list thereof. Use !group to exclude the group" 
-
-	optional text app
-		"Select a specific app or comma-separated list thereof. Use !app to exclude it"
-
-	optional text model
-		"Select a specific model URN or comma-separated list thereof. Use !model to exclude it"
-
-	optional text resource
-		"Select a specific resource URN or comma-separated list thereof. Use !urn to exclude it"
-
-	optional text observable
-		"Select a specific observable or comma-separated list thereof. The string will match the concept definition. 
-		 Use !concept to exclude it"
-	
-	optional boolean html 
-		"Output HTML instead of the default Markdown. If the output file is not specified, launch the local browser."
-
-	optional text output
-		"File to write the output to (output on console by default for Markdown, in local browser if html)"
-
-	class org.integratedmodelling.stats.commands.PrintReport
+	class org.integratedmodelling.stats.commands.UpdateRefDb
 }
 

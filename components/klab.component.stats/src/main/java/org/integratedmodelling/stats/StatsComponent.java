@@ -68,5 +68,9 @@ public class StatsComponent {
 
 		return ret;
 	}
+	
+	public void updateReferenceDatabase(boolean clear) {
+		
+	}
 
 }

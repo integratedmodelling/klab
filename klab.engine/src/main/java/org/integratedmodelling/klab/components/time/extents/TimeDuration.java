@@ -7,6 +7,7 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITimeDuration;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.utils.Range;
 import org.joda.time.Duration;
+import org.springframework.util.StringUtils;
 
 public class TimeDuration implements ITimeDuration {
 
@@ -19,6 +20,12 @@ public class TimeDuration implements ITimeDuration {
 	private TimeDuration(Duration period, ITimeInstant start) {
 		this.period = period;
 		this.start = start;
+	}
+
+	private TimeDuration(Duration period, ITimeInstant start, Resolution.Type resolution) {
+		this.period = period;
+		this.start = start;
+		this.resolution = resolution;
 	}
 
 	private TimeDuration() {
@@ -64,6 +71,16 @@ public class TimeDuration implements ITimeDuration {
 		return new TimeDuration(period, anchor ? start : null);
 	}
 
+	public static TimeDuration create(ITimeInstant start, ITimeInstant end, Resolution.Type resolution) {
+		Duration period = new Duration(end.getMilliseconds() - start.getMilliseconds());
+		return new TimeDuration(period, start, resolution);
+	}
+
+	public static TimeDuration create(long start, long end, Resolution.Type resolution) {
+		Duration period = new Duration(end - start);
+		return new TimeDuration(period, TimeInstant.create(start), resolution);
+	}
+
 	@Override
 	public int compareTo(ITimeDuration o) {
 		return Long.compare(getMilliseconds(), o.getMilliseconds());
@@ -90,6 +107,10 @@ public class TimeDuration implements ITimeDuration {
 
 	public Duration asDuration() {
 		return period;
+	}
+
+	public String getDescription() {
+		return StringUtils.capitalize(resolution.name().toLowerCase()) + " " + period.toString();
 	}
 
 	@Override

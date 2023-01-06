@@ -16,6 +16,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.Time;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.components.time.extents.TemporalExtension;
 import org.integratedmodelling.klab.components.time.extents.TimeInstant;
@@ -23,11 +24,11 @@ import org.integratedmodelling.klab.engine.extensions.Component;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.stats.StatsComponent;
 import org.integratedmodelling.stats.database.StatsDatabase;
-
-import com.ibm.icu.text.NumberFormat;
+import org.springframework.util.StringUtils;
 
 /**
  * A report, including definition, generation and encoding to Markdown.
@@ -56,7 +57,7 @@ public class StatsReport {
 	}
 
 	boolean adjustInterval = true;
-	
+
 	// filters
 	long start = -1;
 	long end = -1;
@@ -65,10 +66,29 @@ public class StatsReport {
 	 * we aggregate either by period or by target. We keep a list of these and use
 	 * it to build the report in the order of aggregation specified.
 	 */
-	class Aggregator {
+	static class Aggregator {
+
 		Frequency aggregationInterval = null;
 		int aggregationMultiplier = 1;
 		Target target = null;
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(aggregationInterval, aggregationMultiplier, target);
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Aggregator other = (Aggregator) obj;
+			return aggregationInterval == other.aggregationInterval
+					&& aggregationMultiplier == other.aggregationMultiplier && target == other.target;
+		}
 
 		@Override
 		public String toString() {
@@ -83,8 +103,7 @@ public class StatsReport {
 	 * second element (true = whitelist).
 	 */
 	Map<Target, List<Pair<Collection<String>, Boolean>>> filterTargets = new HashMap<>();
-
-	Set<Metric> metrics = EnumSet.of(Metric.Time, Metric.Size, Metric.Credits);
+//	Set<Metric> metrics = EnumSet.of(Metric.Time, Metric.Size, Metric.Credits);
 	List<Aggregator> aggregators = new ArrayList<>();
 
 	boolean anonymized = true;
@@ -361,7 +380,9 @@ public class StatsReport {
 		 */
 		public Pair<String, String> getTitle(Aggregator aggregator) {
 			if (aggregator.aggregationInterval != null && start > 0 && end > 0) {
-				String ret = TimeInstant.create(start) + " to " + TimeInstant.create(end);
+				String ret = StringUtils.capitalize(getResolution(aggregator.aggregationInterval).name().toLowerCase())
+						+ " (" + Time.INSTANCE.printPeriod(end - start) + ") " + TimeInstant.create(start) + " to "
+						+ TimeInstant.create(end);
 				return new Pair<>(ret, ret);
 			} else if (aggregator.target != null) {
 				switch (aggregator.target) {
@@ -396,74 +417,72 @@ public class StatsReport {
 		boolean error = false;
 		boolean done = false;
 		int count = 0;
+		// this becomes true at the first asset that is "priced" externally; at that
+		// point the computation mode switches to that and everything not priced is
+		// priced zero.
+		boolean setCredits = false;
 
 		/**
-		 * If the aggregation set isn't selecting a specified asset, accumulate time
-		 * instead of asset time only for the first asset, and use the others just to
-		 * scan for errors.
-		 * 
+		 * Each data bag will see all assets connected to a particular key, i.e. an
+		 * asset bag will see a single asset (with N passes), an observation bag will
+		 * see all assets pertaining to that observation, etc.
 		 * 
 		 * @param result
 		 * @param set
 		 */
-		public void accumulate(IParameters<String> result, AggregationSet set) {
+		public void accumulate(IParameters<String> result, Aggregator aggregator) {
 
 			if (!error && !"Success".equals(result.get("outcome"))) {
 				error = true;
 			}
 
-			boolean useQuery = !set.isAsset();
-			if (useQuery && done) {
-				return;
-			}
-
 			count++;
-
-			for (Metric metric : metrics) {
-				Double val = data.get(metric);
-				if (val == null) {
-					data.put(metric, 0.0);
-				}
-				data.put(metric, data.get(metric).doubleValue() + getValue(result, metric, useQuery));
-				done = true;
-			}
 		}
 
 		@Override
 		public String toString() {
-			String ret = "";
-			for (Metric metric : metrics) {
-				ret += (ret.isEmpty() ? "" : "\t") + NumberFormat.getInstance().format(data.get(metric));
-			}
-			return "[" + count + "] " + ret;
+//			String ret = "";
+//			for (Metric metric : metrics) {
+//				ret += (ret.isEmpty() ? "" : "\t") + NumberFormat.getInstance().format(data.get(metric));
+//			}
+			return "[" + count + " assets] ";// + ret;
 		}
 
-		private double getValue(IParameters<String> result, Metric metric, boolean useQueryTime) {
-			switch (metric) {
-			case Cost:
-				break;
-			case Count:
-				return 1.0;
-			case Credits:
-				break;
-			case Size:
-				return result.get("scale_size", Number.class).doubleValue();
-			case Time:
-				return result.get(useQueryTime ? "query_time" : "time", Number.class).doubleValue();
-			default:
-				break;
-			}
-			return 0;
-		}
+//		private double getValue(IParameters<String> result, Metric metric, boolean useQueryTime) {
+//			switch (metric) {
+//			case Cost:
+//				break;
+//			case Count:
+//				return 1.0;
+//			case Credits:
+//				break;
+//			case Size:
+//				return result.get("scale_size", Number.class).doubleValue();
+//			case Time:
+//				return result.get(useQueryTime ? "query_time" : "time", Number.class).doubleValue();
+//			default:
+//				break;
+//			}
+//			return 0;
+//		}
 
 	}
 
 	/*
-	 * this holds the computed report. The sets are sorted after computation.
+	 * this holds the keys for the computed report. The sets are sorted after
+	 * computation.
 	 */
-	Map<AggregationSet, Data> report = new HashMap<>();
+	Set<AggregationSet> report = new HashSet<>();
+
+	/*
+	 * As we accumulate each asset, the relative data are accumulated at each of the
+	 * aggregation levels stored in the aggregators list.
+	 */
+	Map<Aggregator, Map<String, Data>> accountingData = new HashMap<>();
+
 	TemporalExtension timeline = null;
 	private boolean errorLogged;
+	private Resolution.Type temporalAggregation;
 
 	public void setReportingStart(long start) {
 		this.start = start;
@@ -486,6 +505,7 @@ public class StatsReport {
 		aggregation.aggregationInterval = frequency;
 		aggregation.aggregationMultiplier = multiplier;
 		aggregators.add(aggregation);
+		this.temporalAggregation = getResolution(frequency);
 	}
 
 	public void filter(Target target, boolean include, String... strings) {
@@ -523,6 +543,7 @@ public class StatsReport {
 		 * if start and/or end isn't specified, retrieve it from the database and set
 		 * it.
 		 */
+
 		AtomicLong st = new AtomicLong(this.start);
 		AtomicLong en = new AtomicLong(this.end);
 		if (st.get() < 0 || en.get() < 0) {
@@ -541,16 +562,17 @@ public class StatsReport {
 			return true;
 		}
 
+		if (adjustInterval && this.temporalAggregation != null) {
+			st.set(TimeInstant.create(st.get()).beginOf(temporalAggregation).getMilliseconds());
+			en.set(TimeInstant.create(en.get()).endOf(temporalAggregation).getMilliseconds());
+		}
+
 		db.scan(getQuery(st.get(), en.get()), (result) -> {
 			try {
 				AggregationSet set = getAggregationSet(result, st.get(), en.get());
 				if (set != null) {
-					Data data = report.get(set);
-					if (data == null) {
-						data = new Data();
-						report.put(set, data);
-					}
-					data.accumulate(result, set);
+					report.add(set);
+					accumulateData(result, set);
 				}
 			} catch (SQLException e) {
 				if (!errorLogged) {
@@ -607,6 +629,7 @@ public class StatsReport {
 				}
 			}
 		}
+		
 		return ret;
 	}
 
@@ -701,19 +724,18 @@ public class StatsReport {
 		if (!isComputed) {
 			compute();
 		}
+		
+		List<AggregationSet> classifiers = new ArrayList<>(report);
+		Collections.sort(classifiers);
 
 		// TODO preamble
 		StringBuffer ret = new StringBuffer(1024);
-
-		List<AggregationSet> classifiers = new ArrayList<>(this.report.keySet());
-		Collections.sort(classifiers);
 		List<Pair<String, String>> headers = new ArrayList<>();
 		for (int i = 0; i < aggregators.size() - 1; i++) {
 			headers.add(new Pair<>("-_-_-_", "-_-_-_"));
 		}
 
 		for (AggregationSet classifier : classifiers) {
-			Data data = this.report.get(classifier);
 			for (int level = 0; level < aggregators.size() - 1; level++) {
 				Pair<String, String> title = classifier.getTitle(aggregators.get(level));
 				if (!headers.get(level).getFirst().equals(title.getFirst())) {
@@ -722,14 +744,44 @@ public class StatsReport {
 						// force redefinition of lower headers
 						headers.set(i, new Pair<>("-_-_-", "-_-_-"));
 					}
-					ret.append(StringUtil.spaces(level * 3) + title.getSecond() + "\n");
+					ret.append(StringUtil.spaces(level * 3) + title.getSecond() + " "
+							+ getData(classifier, aggregators.get(level)) + "\n");
 				}
 			}
 			ret.append(StringUtil.spaces((aggregators.size() - 1) * 3)
-					+ classifier.getTitle(aggregators.get(aggregators.size() - 1)).getSecond() + " " + data + "\n");
+					+ classifier.getTitle(aggregators.get(aggregators.size() - 1)).getSecond() + " "
+					+ getData(classifier, aggregators.get(aggregators.size() - 1)) + "\n");
 		}
 
 		return ret.toString();
+	}
+
+	private void accumulateData(Parameters<String> result, AggregationSet set) {
+		
+		for (Aggregator aggregator : aggregators) {
+			String key = set.getTitle(aggregator).getFirst();
+			Map<String, Data> data = accountingData.get(aggregator);
+			if (data == null) {
+				data = new HashMap<>();
+				accountingData.put(aggregator, data);
+			}
+
+			Data bag = data.get(key);
+			if (bag == null) {
+				bag = new Data();
+				data.put(key, bag);
+			}
+
+			bag.accumulate(result, aggregator);
+
+		}
+	}
+
+	private String getData(AggregationSet classifier, Aggregator aggregator) {
+		String key = classifier.getTitle(aggregator).getFirst();
+		Map<String, Data> data = accountingData.get(aggregator);
+		Data ret = data.get(key);
+		return ret == null ? "" : ret.toString();
 	}
 
 	public void setTargetClassifier(Target target) {

@@ -16,6 +16,7 @@
 package org.integratedmodelling.klab.api.observations.scale.time;
 
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution.Type;
 
 /**
  * The Interface ITimeInstant.
@@ -125,5 +126,20 @@ public interface ITimeInstant extends Comparable<ITimeInstant> {
 		}
 		return a.getMilliseconds() < b.getMilliseconds() ? b : a;
 	}
-	
+
+	/**
+	 * Adjust to beginning of nearest period
+	 * 
+	 * @param temporalAggregation
+	 * @return
+	 */
+	ITimeInstant beginOf(Type temporalAggregation);
+
+	/**
+	 * Adjust to beginning of next nearest period
+	 * @param temporalAggregation
+	 * @return
+	 */
+	ITimeInstant endOf(Type temporalAggregation);
+
 }
