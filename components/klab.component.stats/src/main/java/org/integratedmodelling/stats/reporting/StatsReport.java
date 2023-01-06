@@ -30,6 +30,8 @@ import org.integratedmodelling.stats.StatsComponent;
 import org.integratedmodelling.stats.database.StatsDatabase;
 import org.springframework.util.StringUtils;
 
+import com.ibm.icu.text.NumberFormat;
+
 /**
  * A report, including definition, generation and encoding to Markdown.
  * 
@@ -41,7 +43,12 @@ public class StatsReport {
 	boolean isComputed = false;
 
 	public enum Target {
-		Resources, Models, Operations, Contexts, Observations, Observables, Users, Downloads, Applications
+		Resources, Models, Operations, Contexts, Observations, Observables, Users, Downloads, Applications;
+
+		public boolean isAsset() {
+			return this == Resources || this == Models || this == Downloads || this == Operations
+					|| this == Observables;
+		}
 	}
 
 	public enum Frequency {
@@ -413,19 +420,29 @@ public class StatsReport {
 
 	class Data {
 
-		Map<Metric, Double> data = new HashMap<>();
 		boolean error = false;
-		boolean done = false;
 		int count = 0;
-		// this becomes true at the first asset that is "priced" externally; at that
-		// point the computation mode switches to that and everything not priced is
-		// priced zero.
 		boolean setCredits = false;
+		double totalTime;
+		double totalSize;
+		double downloadSize;
+		long totalAccesses;
+		int totalAssets;
+		int totalObservations;
+		Aggregator aggregator;
 
 		/**
 		 * Each data bag will see all assets connected to a particular key, i.e. an
 		 * asset bag will see a single asset (with N passes), an observation bag will
-		 * see all assets pertaining to that observation, etc.
+		 * see all assets pertaining to that observation, etc. If there is an asset
+		 * aggregator, only assets of that type (and all of them) will come through
+		 * here, no matter the level of aggregation.
+		 * 
+		 * If we want to compute costs, we do that on a context base, and we need to see
+		 * every asset, so it should be forbidden to use an asset classifier. If assets
+		 * for a given context have individual "pricing", only those prices should be
+		 * computed; otherwise use the reference database and compute the k.LAB credits
+		 * based on the averages.
 		 * 
 		 * @param result
 		 * @param set
@@ -436,35 +453,53 @@ public class StatsReport {
 				error = true;
 			}
 
+			// substituted every time but the type will be consistent
+			this.aggregator = aggregator;
+
+			if (aggregator.target != null) {
+				if (aggregator.target.isAsset()) {
+					totalTime += result.get("time", Number.class).doubleValue();
+					totalAccesses += result.get("passes", Number.class).longValue();
+				}
+				if (aggregator.target == Target.Downloads) {
+					downloadSize += result.get("byte_size", Number.class).doubleValue();
+				} else if (aggregator.target == Target.Observations) {
+					// =, not +=! - redefine (with same value) every time.
+					totalTime = result.get("query_time", Number.class).doubleValue();
+				} else if (aggregator.target == Target.Contexts) {
+					/*
+					 * TODO sum up values for each query
+					 */
+				}
+			}
+
+			if (aggregator.target != Target.Downloads) {
+				totalSize += result.get("scale_size", Number.class).doubleValue();
+			}
+
 			count++;
 		}
 
 		@Override
 		public String toString() {
-//			String ret = "";
-//			for (Metric metric : metrics) {
-//				ret += (ret.isEmpty() ? "" : "\t") + NumberFormat.getInstance().format(data.get(metric));
-//			}
-			return "[" + count + " assets] ";// + ret;
-		}
 
-//		private double getValue(IParameters<String> result, Metric metric, boolean useQueryTime) {
-//			switch (metric) {
-//			case Cost:
-//				break;
-//			case Count:
-//				return 1.0;
-//			case Credits:
-//				break;
-//			case Size:
-//				return result.get("scale_size", Number.class).doubleValue();
-//			case Time:
-//				return result.get(useQueryTime ? "query_time" : "time", Number.class).doubleValue();
-//			default:
-//				break;
-//			}
-//			return 0;
-//		}
+			if (aggregator.target != null) {
+				if (aggregator.target == Target.Contexts) {
+					double contextSize = totalSize / (double) count;
+					return "[" + count + " assets; size = " + NumberFormat.getInstance().format(contextSize)
+							+ "; total time = " + NumberFormat.getInstance().format(totalTime) + "s]";
+				} else if (aggregator.target.isAsset()) {
+					return "[accessed " + (totalAccesses == 0 ? 1 : totalAccesses) + " times; total time = "
+							+ NumberFormat.getInstance().format(totalTime) + "s] ";// + ret;
+				} else if (aggregator.target == Target.Downloads) {
+					return "[bytes downloaded = " + NumberFormat.getIntegerInstance().format(downloadSize) + "] ";
+				} else if (aggregator.target == Target.Observations) {
+					return "[" + count + " assets; total time = " + NumberFormat.getInstance().format(totalTime) + "] ";
+				}
+			}
+
+			return "";
+		}
 
 	}
 
@@ -629,7 +664,7 @@ public class StatsReport {
 				}
 			}
 		}
-		
+
 		return ret;
 	}
 
@@ -668,7 +703,8 @@ public class StatsReport {
 				+ "	contexts.principal, contexts.scale_size, contexts.space_resolution, contexts.groups, \n"
 				+ "	contexts.space_complexity, contexts.context_name,\n"
 				+ "	queries.observable as query_observable, queries.total_time_sec as query_time,\n"
-				+ "	assets.total_time_sec as time, assets.total_passes as passes, assets.name as asset, \n"
+				+ "	assets.total_time_sec as time, assets.total_passes as passes, assets.name as asset,"
+				+ " assets.total_byte_size as byte_size, \n"
 				+ "	assets.outcome as outcome, assets.asset_type as asset_type, queries.id as query_id, \n"
 				+ " contexts.id as context_id\n" + "FROM contexts, queries, assets\n"
 				+ "		WHERE assets.context_id = contexts.id AND assets.query_id = queries.id \n"
@@ -724,7 +760,7 @@ public class StatsReport {
 		if (!isComputed) {
 			compute();
 		}
-		
+
 		List<AggregationSet> classifiers = new ArrayList<>(report);
 		Collections.sort(classifiers);
 
@@ -757,7 +793,7 @@ public class StatsReport {
 	}
 
 	private void accumulateData(Parameters<String> result, AggregationSet set) {
-		
+
 		for (Aggregator aggregator : aggregators) {
 			String key = set.getTitle(aggregator).getFirst();
 			Map<String, Data> data = accountingData.get(aggregator);

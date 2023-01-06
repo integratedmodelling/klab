@@ -1,7 +1,5 @@
 package org.integratedmodelling.stats.database;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -14,14 +12,15 @@ import org.integratedmodelling.klab.rest.ObservationAssetStatistics.Type;
 import org.integratedmodelling.klab.rest.ObservationResultStatistics;
 import org.integratedmodelling.klab.rest.ScaleStatistics;
 import org.integratedmodelling.klab.utils.Escape;
-import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.StringUtil;
 
 public class StatsDatabase extends Postgis {
 
 	/* @formatter:off */
 	/*
-	 * For some assets it makes sense to compute unit costs as a function of size as well, as it could
+	 * For some assets it makes sense to compute unit costs as a function of size as well
+	 * 
+	 * TODO use SQRT(scale_size)?
 	 */
 	private static final String ASSET_UNIT_COST_CALCULATOR = 
 			"SELECT assets.name, assets.asset_type, avg(assets.total_time_sec/((assets.total_passes + 1) * contexts.scale_size)) as unit_cost, count(assets)\n"
@@ -166,7 +165,6 @@ public class StatsDatabase extends Postgis {
 		
 		execute(sql);
 
-//		Set<Pair<String, String>> assets = new HashSet<>();
 		for (ObservationAssetStatistics asset : stat.getAssets()) {
 			
 			ScaleStatistics scale = asset.getScaleStatistics();
@@ -185,8 +183,6 @@ public class StatsDatabase extends Postgis {
 					+ boundingBox(scale) // "   geom \n"
 			+ ");";
 		
-//			assets.add(new Pair<>(asset.getType().name(), asset.getName()));
-			
 			execute(sql);
 		}
 		
