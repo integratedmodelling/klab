@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.auth.IActorIdentity;
 import org.integratedmodelling.klab.api.auth.IEngineIdentity;
@@ -22,7 +21,6 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
-import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
@@ -31,7 +29,6 @@ import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
-import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.rest.DataflowState.Status;
 import org.integratedmodelling.klab.rest.ObservationAssetStatistics;
@@ -83,6 +80,10 @@ public class ActivityBuilder {
 		ret.scenarios = resolutionScope.getScenarios();
 		ret.application = session.getState().getCurrentApplicationName();
 		ret.contextName = resolutionScope.getObserver().getName();
+		if (ret.contextName.startsWith(resolutionScope.getObserver().getNamespace().getId() + ".")) {
+			ret.contextName = ret.contextName
+					.substring(resolutionScope.getObserver().getNamespace().getId().length() + 1);
+		}
 		ret.collectGeometryStatistics(resolutionScope.getScale());
 		return ret;
 	}

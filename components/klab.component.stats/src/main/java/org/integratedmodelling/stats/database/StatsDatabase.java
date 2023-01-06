@@ -19,6 +19,17 @@ import org.integratedmodelling.klab.utils.StringUtil;
 
 public class StatsDatabase extends Postgis {
 
+	/* @formatter:off */
+	/*
+	 * For some assets it makes sense to compute unit costs as a function of size as well, as it could
+	 */
+	private static final String ASSET_UNIT_COST_CALCULATOR = 
+			"SELECT assets.name, assets.asset_type, avg(assets.total_time_sec/((assets.total_passes + 1) * contexts.scale_size)) as unit_cost, count(assets)\n"
+			+ "	FROM assets, contexts \n"
+			+ "	WHERE assets.outcome = 'Success' AND contexts.id = assets.context_id \n"
+			+ "	GROUP BY assets.name, assets.asset_type\n"
+			+ "	ORDER BY assets.asset_type, unit_cost;";
+	
 	/*
 	 * one submission at a time to ensure referential integrity of
 	 * context IDs
@@ -50,6 +61,7 @@ public class StatsDatabase extends Postgis {
             + "   context_end BIGINT,\n"
             + "   time_resolution VARCHAR(48),\n"
             + "   space_resolution VARCHAR(48),\n"
+            + "   context_name VARCHAR(512),\n"
             + "   outcome status\n"
             + ");",
             "CREATE TABLE queries(\n"
@@ -86,6 +98,7 @@ public class StatsDatabase extends Postgis {
             "CREATE TABLE asset_value(\n"
             + "   name VARCHAR(512),\n"
             + "   asset_type asset_type,\n"
+            + "   unit_cost FLOAT,\n"
             + "   cost_formula VARCHAR(1024),\n"
             + "   PRIMARY KEY(name, asset_type)\n"
             + ");",
@@ -126,6 +139,7 @@ public class StatsDatabase extends Postgis {
             + scale.getTimeEnd() + ", " // "   context_end DATE,\n"
             + cn(scale.getTimeResolution()) + ", " // "   time_resolution VARCHAR(48),\n"
             + cn(scale.getSpaceResolution()) + ", " // "   space_resolution VARCHAR(48),\n"
+            + cn(stat.getObservationName()) + ", "  // context_name VARCHAR(512),
             + status(stat.getStatus()) + ", " // "   outcome status\n"
             + boundingBox(scale) // "   geom \n"
 			+ ");";
@@ -152,7 +166,7 @@ public class StatsDatabase extends Postgis {
 		
 		execute(sql);
 
-		Set<Pair<String, String>> assets = new HashSet<>();
+//		Set<Pair<String, String>> assets = new HashSet<>();
 		for (ObservationAssetStatistics asset : stat.getAssets()) {
 			
 			ScaleStatistics scale = asset.getScaleStatistics();
@@ -171,25 +185,30 @@ public class StatsDatabase extends Postgis {
 					+ boundingBox(scale) // "   geom \n"
 			+ ");";
 		
-			assets.add(new Pair<>(asset.getType().name(), asset.getName()));
+//			assets.add(new Pair<>(asset.getType().name(), asset.getName()));
 			
 			execute(sql);
 		}
 		
-		/*
-		 * fill in the asset price table for all yet unencountered assets
-		 */
-		for (Pair<String, String> asset : assets) {
-			sql = "INSERT INTO asset_value VALUES ("
-				+ cn(asset.getSecond()) + ", "// "   name VARCHAR(512),\n"
-				+ cn(asset.getFirst()) + ", "   // "   asset_type asset_type,\n"
-				+ "'0'"    // "   cost_formula VARCHAR(1024),\n"
-			+ ") ON CONFLICT DO NOTHING;";
-			
-			execute(sql);
-		}
+//		/*
+//		 * fill in the asset price table for all yet unencountered assets
+//		 * NO - this is done explicitly in an update operation along with the computation of the 
+//		 * unit costs.
+//		 */
+//		for (Pair<String, String> asset : assets) {
+//			sql = "INSERT INTO asset_value VALUES ("
+//				+ cn(asset.getSecond()) + ", "// "   name VARCHAR(512),\n"
+//				+ cn(asset.getFirst()) + ", "   // "   asset_type asset_type,\n"
+//				+ "0.0" + ", "     // "   unit_cost FLOAT,\n"
+//				+ "'0'"    // "   cost_formula VARCHAR(1024),\n"
+//			+ ") ON CONFLICT DO NOTHING;";
+//			
+//			execute(sql);
+//		}
 		
 	}
+
+	/* @formatter:on */
 
 	private String cnan(double x) {
 		return Double.isNaN(x) ? "'NaN'" : ("" + x);
@@ -203,8 +222,8 @@ public class StatsDatabase extends Postgis {
 	}
 
 	private String asset(Type type) {
-		
-		switch(type) {
+
+		switch (type) {
 		case Export:
 		case Model:
 		case Operation:
@@ -237,31 +256,30 @@ public class StatsDatabase extends Postgis {
 	}
 
 	public StatsDatabase() {
-        super("klab_stats");
-    }
+		super("klab_stats");
+	}
 
-    @Override
-    protected boolean createDatabase() {
-        if (super.createDatabase()) {
-        	
-        	Logging.INSTANCE.info("Creating statistics database");
-            for (String sql : structuralStatsStatements) {
-                if (!execute(sql)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        return false;
-    }
+	@Override
+	protected boolean createDatabase() {
+		if (super.createDatabase()) {
 
-    public void add(ObservationResultStatistics[] stats, String user, String groups) {
-    	for (ObservationResultStatistics stat: stats) {
-        	executor.execute(() -> {
-        		store(stat, user, groups);
-        	});
-    	}
-    }
+			Logging.INSTANCE.info("Creating statistics database");
+			for (String sql : structuralStatsStatements) {
+				if (!execute(sql)) {
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	}
 
-    
+	public void add(ObservationResultStatistics[] stats, String user, String groups) {
+		for (ObservationResultStatistics stat : stats) {
+			executor.execute(() -> {
+				store(stat, user, groups);
+			});
+		}
+	}
+
 }

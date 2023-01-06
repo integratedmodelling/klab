@@ -55,6 +55,9 @@ public class PrintReport implements ICommand {
 					case "observables":
 						options.add(Target.Observables);
 						break;
+					case "operations":
+						options.add(Target.Operations);
+						break;
 					case "resources":
 						options.add(Target.Resources);
 						break;
@@ -79,6 +82,9 @@ public class PrintReport implements ICommand {
 					case "daily":
 						options.add(Frequency.Daily);
 						break;
+					case "hourly":
+						options.add(Frequency.Hourly);
+						break;
 					case "year":
 						lag = Time.resolution(1, Type.YEAR);
 						break;
@@ -90,6 +96,9 @@ public class PrintReport implements ICommand {
 						break;
 					case "week":
 						lag = Time.resolution(1, Type.WEEK);
+						break;
+					case "hour":
+						lag = Time.resolution(1, Type.HOUR);
 						break;
 
 					default:

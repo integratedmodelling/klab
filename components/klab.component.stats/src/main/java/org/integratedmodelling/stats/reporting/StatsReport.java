@@ -44,7 +44,7 @@ public class StatsReport {
 	}
 
 	public enum Frequency {
-		Monthly, Daily, Yearly, Weekly
+		Monthly, Daily, Yearly, Weekly, Hourly
 	}
 
 	public enum Type {
@@ -55,6 +55,8 @@ public class StatsReport {
 		Credits, Time, Size, Cost, Count;
 	}
 
+	boolean adjustInterval = true;
+	
 	// filters
 	long start = -1;
 	long end = -1;
@@ -102,24 +104,25 @@ public class StatsReport {
 		long start;
 		long end;
 		String context_id;
-		String query_id;
+		String query_id; // contains context + id
 		String user;
 		String group;
 		String resource;
 		String operation;
 		String observable;
-		String observation;
 		String model;
 		String download;
 		String application;
-		String title;
 
+		// not a key
+		String observation;
+		String context_name;
 		boolean sequential = true;
 
 		@Override
 		public int hashCode() {
-			return Objects.hash(end, group, model, observable, operation, resource, start, user, download,
-					application, context_id, query_id);
+			return Objects.hash(end, group, model, observable, operation, resource, start, user, download, application,
+					context_id, query_id);
 		}
 
 		@Override
@@ -134,9 +137,9 @@ public class StatsReport {
 			return end == other.end && Objects.equals(query_id, other.query_id) && Objects.equals(group, other.group)
 					&& Objects.equals(model, other.model) && Objects.equals(application, other.application)
 					&& Objects.equals(download, other.download) && Objects.equals(observable, other.observable)
-					&& Objects.equals(operation, other.operation)
-					&& Objects.equals(resource, other.resource) && start == other.start
-					&& Objects.equals(user, other.user) && Objects.equals(context_id, other.context_id);
+					&& Objects.equals(operation, other.operation) && Objects.equals(resource, other.resource)
+					&& start == other.start && Objects.equals(user, other.user)
+					&& Objects.equals(context_id, other.context_id);
 		}
 
 		@Override
@@ -165,9 +168,6 @@ public class StatsReport {
 			}
 			if (observable != null) {
 				ret += (ret.isEmpty() ? "" : " ") + "obs=" + observable;
-			}
-			if (observation != null) {
-				ret += (ret.isEmpty() ? "" : " ") + "qry=" + observation;
 			}
 			if (model != null) {
 				ret += (ret.isEmpty() ? "" : " ") + "mod=" + model;
@@ -262,6 +262,14 @@ public class StatsReport {
 							return ret;
 						}
 					}
+				} else if (aggregator.target == Target.Contexts) {
+
+					if (context_id != null && o.context_id != null) {
+						int ret = context_id.compareTo(o.context_id);
+						if (ret != 0) {
+							return ret;
+						}
+					}
 				}
 			}
 
@@ -338,43 +346,46 @@ public class StatsReport {
 				}
 				break;
 			case Contexts:
-				s = result.get("context_id", String.class);
-				if (s != null) {
-					this.application = s;
-				}
-				break;
-			default:
+				this.context_id = result.get("context_id", String.class);
+				String cname = result.get("context_name", String.class);
+				this.context_name = (cname == null ? "" : (cname + " ")) + "["
+						+ result.get("context_observable", String.class) + "]";
 				break;
 			}
 
 			return true;
 		}
 
-		public String getTitle(Aggregator aggregator) {
+		/*
+		 * return a pair key, string
+		 */
+		public Pair<String, String> getTitle(Aggregator aggregator) {
 			if (aggregator.aggregationInterval != null && start > 0 && end > 0) {
-				return TimeInstant.create(start) + " to " + TimeInstant.create(end);
+				String ret = TimeInstant.create(start) + " to " + TimeInstant.create(end);
+				return new Pair<>(ret, ret);
 			} else if (aggregator.target != null) {
 				switch (aggregator.target) {
 				case Applications:
-					return application;
+					return new Pair<>(application, application);
 				case Downloads:
-					return download;
+					return new Pair<>(download, download);
 				case Models:
-					return model;
+					return new Pair<>(model, model);
 				case Observables:
-					return observable;
+					return new Pair<>(observable, observable);
 				case Contexts:
+					return new Pair<>(context_id, context_name);
 				case Observations:
-					return observation;
+					return new Pair<>(query_id, observation);
 				case Operations:
-					return operation;
+					return new Pair<>(operation, operation);
 				case Resources:
-					return resource;
+					return new Pair<>(resource, resource);
 				case Users:
-					return user;
+					return new Pair<>(user, user);
 				}
 			}
-			return "";
+			return new Pair<>("", "");
 		}
 
 	}
@@ -401,7 +412,8 @@ public class StatsReport {
 				error = true;
 			}
 
-			if (!set.isAsset() && done) {
+			boolean useQuery = !set.isAsset();
+			if (useQuery && done) {
 				return;
 			}
 
@@ -412,7 +424,7 @@ public class StatsReport {
 				if (val == null) {
 					data.put(metric, 0.0);
 				}
-				data.put(metric, data.get(metric).doubleValue() + getValue(result, metric, set.isAsset()));
+				data.put(metric, data.get(metric).doubleValue() + getValue(result, metric, useQuery));
 				done = true;
 			}
 		}
@@ -437,7 +449,7 @@ public class StatsReport {
 			case Size:
 				return result.get("scale_size", Number.class).doubleValue();
 			case Time:
-				return result.get("time", Number.class).doubleValue();
+				return result.get(useQueryTime ? "query_time" : "time", Number.class).doubleValue();
 			default:
 				break;
 			}
@@ -605,6 +617,8 @@ public class StatsReport {
 
 	private Resolution.Type getResolution(Frequency f) {
 		switch (f) {
+		case Hourly:
+			return Resolution.Type.HOUR;
 		case Daily:
 			return Resolution.Type.DAY;
 		case Monthly:
@@ -629,7 +643,7 @@ public class StatsReport {
 		String ret = "SELECT \n" + "	contexts.observable as context_observable, \n"
 				+ "	contexts.created, contexts.scenarios, contexts.engine_type, contexts.application,\n"
 				+ "	contexts.principal, contexts.scale_size, contexts.space_resolution, contexts.groups, \n"
-				+ "	contexts.space_complexity,\n"
+				+ "	contexts.space_complexity, contexts.context_name,\n"
 				+ "	queries.observable as query_observable, queries.total_time_sec as query_time,\n"
 				+ "	assets.total_time_sec as time, assets.total_passes as passes, assets.name as asset, \n"
 				+ "	assets.outcome as outcome, assets.asset_type as asset_type, queries.id as query_id, \n"
@@ -693,26 +707,26 @@ public class StatsReport {
 
 		List<AggregationSet> classifiers = new ArrayList<>(this.report.keySet());
 		Collections.sort(classifiers);
-		List<String> headers = new ArrayList<>();
+		List<Pair<String, String>> headers = new ArrayList<>();
 		for (int i = 0; i < aggregators.size() - 1; i++) {
-			headers.add("-_-_-_");
+			headers.add(new Pair<>("-_-_-_", "-_-_-_"));
 		}
 
 		for (AggregationSet classifier : classifiers) {
 			Data data = this.report.get(classifier);
 			for (int level = 0; level < aggregators.size() - 1; level++) {
-				String title = classifier.getTitle(aggregators.get(level));
-				if (!headers.get(level).equals(title)) {
+				Pair<String, String> title = classifier.getTitle(aggregators.get(level));
+				if (!headers.get(level).getFirst().equals(title.getFirst())) {
 					headers.set(level, title);
 					for (int i = level + 1; i < headers.size(); i++) {
 						// force redefinition of lower headers
-						headers.set(i, "-_-_-");
+						headers.set(i, new Pair<>("-_-_-", "-_-_-"));
 					}
-					ret.append(StringUtil.spaces(level * 3) + title + "\n");
+					ret.append(StringUtil.spaces(level * 3) + title.getSecond() + "\n");
 				}
 			}
 			ret.append(StringUtil.spaces((aggregators.size() - 1) * 3)
-					+ classifier.getTitle(aggregators.get(aggregators.size() - 1)) + " " + data + "\n");
+					+ classifier.getTitle(aggregators.get(aggregators.size() - 1)).getSecond() + " " + data + "\n");
 		}
 
 		return ret.toString();
