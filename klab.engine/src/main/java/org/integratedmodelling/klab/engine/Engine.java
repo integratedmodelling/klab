@@ -52,6 +52,7 @@ import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.IScript;
+import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.runtime.rest.IClient;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
@@ -360,7 +361,11 @@ public class Engine extends Server implements IEngine, UserDetails {
 
     @Override
     public Session createSession(IUserIdentity user) {
-        return new Session(this, user);
+        Session session = new Session(this, user);
+        for (Consumer<ISession> callback : Klab.INSTANCE.getSessionInitializers()) {
+        	callback.accept(session);
+        }
+        return session;
     }
 
     /**

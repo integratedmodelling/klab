@@ -1,10 +1,7 @@
 package org.integratedmodelling.stats.commands;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Extensions;
@@ -52,6 +49,9 @@ public class PrintReport implements ICommand {
 					case "contexts":
 						options.add(Target.Contexts);
 						break;
+					case "engines":
+						options.add(Target.Engines);
+						break;
 					case "observables":
 						options.add(Target.Observables);
 						break;
@@ -67,7 +67,7 @@ public class PrintReport implements ICommand {
 					case "users":
 						options.add(Target.Users);
 						break;
-					case "applications":
+					case "apps":
 						options.add(Target.Applications);
 						break;
 					case "yearly":

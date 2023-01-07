@@ -32,6 +32,7 @@ import org.integratedmodelling.klab.api.monitoring.IMessage.MessageClass;
 import org.integratedmodelling.klab.api.monitoring.IMessage.Type;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
+import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.api.runtime.ITicket.Status;
 import org.integratedmodelling.klab.api.runtime.ITicketManager;
@@ -89,6 +90,7 @@ public enum Klab implements IRuntimeService {
 
 	Queue<ObservationResultStatistics> statisticsQueue = new ConcurrentLinkedQueue<>();
 	Consumer<ObservationResultStatistics> statisticsConsumer;
+	List<Consumer<ISession>> sessionInitializers = new ArrayList<>();
 
 	/*
 	 * Counter for event IDs.
@@ -189,6 +191,10 @@ public enum Klab implements IRuntimeService {
 
 	public void setStatisticsLocalHandler(Consumer<ObservationResultStatistics> handler) {
 		this.statisticsConsumer = handler;
+	}
+
+	public Consumer<ObservationResultStatistics> getStatisticsLocalHandler() {
+		return this.statisticsConsumer;
 	}
 
 	public void setNetworkServiceApplication(Runnable runnable) {
@@ -780,6 +786,14 @@ public enum Klab implements IRuntimeService {
 			}
 		}
 		return this.statisticsServer;
+	}
+	
+	public void addSessionInitializer(Consumer<ISession> initializer) {
+		this.sessionInitializers.add(initializer);
+	}
+
+	public List<Consumer<ISession>> getSessionInitializers() {
+		return sessionInitializers;
 	}
 
 }

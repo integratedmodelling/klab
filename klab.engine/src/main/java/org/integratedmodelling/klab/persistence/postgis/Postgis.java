@@ -395,6 +395,30 @@ public class Postgis {
 		return this.databaseUrl;
 	}
 
+	public boolean clearDatabase() {
+		boolean ok = false;
+		try (Connection con = DriverManager.getConnection(this.pgadminUrl,
+				Configuration.INSTANCE.getServiceProperty("postgres", "user"),
+				Configuration.INSTANCE.getServiceProperty("postgres", "password"));
+				Statement st = con.createStatement()) {
+
+			st.execute("DROP DATABASE " + this.database + ";");
+
+			ok = true;
+
+		} catch (SQLException ex) {
+			Logging.INSTANCE.error(ex);
+		}
+		if (ok) {
+			createDatabase();
+		}
+		return ok;
+	}
+	
+	/**
+	 * Same as clearDatabase but also disconnect any users and terminate backend.
+	 * @return
+	 */
 	public boolean clear() {
 
 		boolean ok = false;

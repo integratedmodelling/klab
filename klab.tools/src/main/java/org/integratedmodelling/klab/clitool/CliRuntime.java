@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Logo;
-import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.services.IRuntimeService;
 import org.integratedmodelling.klab.clitool.api.IConsole;
@@ -55,7 +54,7 @@ public enum CliRuntime {
             console.echo("Starting network services....\n");
             startNetwork(() -> console.scream("Network services started."));
         }
-
+        
         return this.session;
 
     }

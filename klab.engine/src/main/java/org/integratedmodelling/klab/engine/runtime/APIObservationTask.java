@@ -80,6 +80,8 @@ public class APIObservationTask extends Thread {
     @Override
     public void run() {
 
+    	((SessionState)session.getState()).setApplicationName("API");
+
         if ((contextRequest != null && contextRequest.isEstimate())
                 || (observationRequest != null && observationRequest.isEstimate())) {
             estimate();

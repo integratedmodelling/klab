@@ -1,18 +1,12 @@
 package org.integratedmodelling.klab.k;
 
 import org.integratedmodelling.klab.Actors;
-import org.integratedmodelling.klab.Authentication;
-import org.integratedmodelling.klab.Extensions;
-import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.clitool.CliRuntime;
 import org.integratedmodelling.klab.clitool.CliStartupOptions;
 import org.integratedmodelling.klab.clitool.console.SysConsole;
 import org.integratedmodelling.klab.clitool.console.TermConsole;
 import org.integratedmodelling.klab.engine.EngineStartupOptions;
-import org.integratedmodelling.klab.engine.extensions.Component;
-import org.integratedmodelling.klab.utils.StringUtil;
-import org.integratedmodelling.stats.StatsComponent;
 
 /**
  * A CLI-driven k.LAB modeler.
@@ -26,18 +20,6 @@ public class Main {
 
 		CliStartupOptions options = new CliStartupOptions();
 		options.initialize(args);
-
-		Klab.INSTANCE.setStatisticsLocalHandler((obs) -> {
-			Component stc = Extensions.INSTANCE.getComponent(StatsComponent.ID);
-			if (stc != null) {
-				StatsComponent stats = stc.getImplementation(StatsComponent.class);
-				if (stats != null) {
-					stats.submit(obs, CliRuntime.INSTANCE.getSession().getUser().getUsername(),
-							StringUtil.join(CliRuntime.INSTANCE.getSession().getUser().getGroups().stream()
-									.map((d) -> d.getId()).toList(), ","));
-				}
-			}
-		});
 
 		if (options.isHelp()) {
 			System.out.println(new EngineStartupOptions().usage());

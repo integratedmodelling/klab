@@ -43,7 +43,7 @@ public class StatsReport {
 	boolean isComputed = false;
 
 	public enum Target {
-		Resources, Models, Operations, Contexts, Observations, Observables, Users, Downloads, Applications;
+		Resources, Models, Operations, Contexts, Observations, Observables, Users, Downloads, Applications, Engines;
 
 		public boolean isAsset() {
 			return this == Resources || this == Models || this == Downloads || this == Operations
@@ -64,6 +64,12 @@ public class StatsReport {
 	}
 
 	boolean adjustInterval = true;
+
+	/*
+	 * costs are associated only with contexts, and their computation must see all
+	 * assets.
+	 */
+	boolean computeCosts = false;
 
 	// filters
 	long start = -1;
@@ -139,7 +145,8 @@ public class StatsReport {
 		String model;
 		String download;
 		String application;
-
+		String engine;
+		
 		// not a key
 		String observation;
 		String context_name;
@@ -148,7 +155,7 @@ public class StatsReport {
 		@Override
 		public int hashCode() {
 			return Objects.hash(end, group, model, observable, operation, resource, start, user, download, application,
-					context_id, query_id);
+					context_id, query_id, engine);
 		}
 
 		@Override
@@ -165,7 +172,7 @@ public class StatsReport {
 					&& Objects.equals(download, other.download) && Objects.equals(observable, other.observable)
 					&& Objects.equals(operation, other.operation) && Objects.equals(resource, other.resource)
 					&& start == other.start && Objects.equals(user, other.user)
-					&& Objects.equals(context_id, other.context_id);
+					&& Objects.equals(context_id, other.context_id) && Objects.equals(engine, other.engine);
 		}
 
 		@Override
@@ -203,6 +210,9 @@ public class StatsReport {
 			}
 			if (application != null) {
 				ret += (ret.isEmpty() ? "" : " ") + "app=" + application;
+			}
+			if (engine != null) {
+				ret += (ret.isEmpty() ? "" : " ") + "eng=" + engine;
 			}
 
 			return ret;
@@ -288,6 +298,14 @@ public class StatsReport {
 							return ret;
 						}
 					}
+				}  else if (aggregator.target == Target.Engines) {
+
+					if (engine != null && o.engine != null) {
+						int ret = engine.compareTo(o.engine);
+						if (ret != 0) {
+							return ret;
+						}
+					}
 				} else if (aggregator.target == Target.Contexts) {
 
 					if (context_id != null && o.context_id != null) {
@@ -367,8 +385,15 @@ public class StatsReport {
 				break;
 			case Applications:
 				s = result.get("application", String.class);
+				if (s == null) {
+					s = "k.Explorer";
+				}
+				this.application = s;
+				break;
+			case Engines:
+				s = result.get("engine_type", String.class);
 				if (s != null) {
-					this.application = s;
+					this.engine = s;
 				}
 				break;
 			case Contexts:
@@ -411,6 +436,8 @@ public class StatsReport {
 					return new Pair<>(resource, resource);
 				case Users:
 					return new Pair<>(user, user);
+				case Engines:
+					return new Pair<>(engine, engine);
 				}
 			}
 			return new Pair<>("", "");
@@ -723,8 +750,11 @@ public class StatsReport {
 			ret += "		      AND assets.outcome = 'Success'" + "\n";
 		}
 
+		/*
+		 * this is only for speed, non-applying assets are still weeded out by the logics
+		 */
 		String assetType = getAssetType();
-		if (assetType != null) {
+		if (assetType != null && !computeCosts /* TODO && costs are not computed and aggregators do not include applications */) {
 			// query is for specific type of asset
 			ret += "		      AND assets.asset_type = '" + assetType + "'";
 		}

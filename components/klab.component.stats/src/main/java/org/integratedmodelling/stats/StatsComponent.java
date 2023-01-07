@@ -1,12 +1,14 @@
 package org.integratedmodelling.stats;
 
-import java.util.Collection;
-
+import org.integratedmodelling.klab.Configuration;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.extensions.Component;
 import org.integratedmodelling.klab.api.extensions.component.Initialize;
+import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.rest.ObservationResultStatistics;
+import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.stats.database.StatsDatabase;
 import org.integratedmodelling.stats.reporting.StatsReport;
 import org.integratedmodelling.stats.reporting.StatsReport.Frequency;
@@ -17,11 +19,21 @@ public class StatsComponent {
 
 	public static final String ID = "org.integratedmodelling.statistics";
 
+	public static final String LOCAL_STATS_ACTIVE_PROPERTY = "org.integratedmodelling.stats.active";
+	public static final String LOCAL_STATS_PRIVATE_PROPERTY = "org.integratedmodelling.stats.private";
+
 	StatsDatabase database;
 
 	@Initialize
 	public boolean initialize() {
 		database = new StatsDatabase();
+		if (database.isOnline()) {
+			final boolean isActive = Boolean.parseBoolean(Configuration.INSTANCE.getProperties()
+					.getProperty(StatsComponent.LOCAL_STATS_ACTIVE_PROPERTY, "false"));
+			if (isActive) {
+				Klab.INSTANCE.addSessionInitializer((session) -> activateLocalReporting(session));
+			}
+		}
 		return database.isOnline();
 	}
 
@@ -68,9 +80,28 @@ public class StatsComponent {
 
 		return ret;
 	}
-	
+
 	public void updateReferenceDatabase(boolean clear) {
-		
+
+	}
+
+	public void clearDatabase() {
+		database.clearDatabase();
+	}
+
+	public boolean isOnline() {
+		return database != null && database.isOnline();
+	}
+
+	public void activateLocalReporting(ISession session) {
+
+		final boolean isPrivate = Boolean.parseBoolean(Configuration.INSTANCE.getProperties()
+				.getProperty(StatsComponent.LOCAL_STATS_PRIVATE_PROPERTY, "false"));
+
+		Klab.INSTANCE.setStatisticsLocalHandler((obs) -> {
+			submit(obs, session.getUser().getUsername(),
+					StringUtil.join(session.getUser().getGroups().stream().map((d) -> d.getId()).toList(), ","));
+		});
 	}
 
 }

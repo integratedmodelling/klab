@@ -10,8 +10,11 @@ import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.runtime.Session;
+import org.integratedmodelling.klab.engine.runtime.SessionState;
 import org.integratedmodelling.klab.rest.AuthorizeSessionResponse;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,7 +37,8 @@ public class EngineController {
 			"relay" }, method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public AuthorizeSessionResponse openSession(@RequestParam(name = "join") String previousToJoin,
-			@RequestParam(name = "relay", required = false) String relayId, Principal principal) {
+			@RequestParam(name = "relay", required = false) String relayId, Principal principal,
+			@RequestHeader(HttpHeaders.USER_AGENT) String agent) {
 
 		IIdentity user = Authentication.INSTANCE.getIdentity(principal);
 		Engine engine = Authentication.INSTANCE.getAuthenticatedIdentity(Engine.class);
@@ -53,6 +57,10 @@ public class EngineController {
 			((Session) session).addRelayId(relayId);
 		}
 
+		if (agent != null && agent.startsWith("k.LAB/")) {
+			((SessionState)session.getState()).setApplicationName("k.Modeler");
+		}
+
 		AuthorizeSessionResponse ret = new AuthorizeSessionResponse();
 		ret.setInfo(info);
 		ret.setSessionId(session.getId());
@@ -61,7 +69,8 @@ public class EngineController {
 
 	@RequestMapping(value = API.ENGINE.SESSION.AUTHORIZE, method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
-	public AuthorizeSessionResponse createSession(Principal principal) {
+	public AuthorizeSessionResponse createSession(Principal principal,
+			@RequestHeader(HttpHeaders.USER_AGENT) String agent) {
 
 		ISession session = null;
 		Engine engine = Authentication.INSTANCE.getAuthenticatedIdentity(Engine.class);
@@ -72,7 +81,11 @@ public class EngineController {
 		}
 
 		session = user instanceof IUserIdentity ? engine.createSession((IUserIdentity) user) : engine.createSession();
-
+		
+		if (agent != null && agent.startsWith("k.LAB/")) {
+			((SessionState)session.getState()).setApplicationName("k.Modeler");
+		}
+		
 		AuthorizeSessionResponse ret = new AuthorizeSessionResponse();
 
 		ret.setSessionId(session.getId());
