@@ -146,7 +146,7 @@ public class StatsReport {
 		String download;
 		String application;
 		String engine;
-		
+
 		// not a key
 		String observation;
 		String context_name;
@@ -298,7 +298,7 @@ public class StatsReport {
 							return ret;
 						}
 					}
-				}  else if (aggregator.target == Target.Engines) {
+				} else if (aggregator.target == Target.Engines) {
 
 					if (engine != null && o.engine != null) {
 						int ret = engine.compareTo(o.engine);
@@ -456,6 +456,8 @@ public class StatsReport {
 		long totalAccesses;
 		int totalAssets;
 		int totalObservations;
+		double totalComplexity;
+		String created;
 		Aggregator aggregator;
 
 		/**
@@ -494,9 +496,18 @@ public class StatsReport {
 					// =, not +=! - redefine (with same value) every time.
 					totalTime = result.get("query_time", Number.class).doubleValue();
 				} else if (aggregator.target == Target.Contexts) {
+					
+					created = TimeInstant.create(result.get("created", Number.class).longValue()).toString();
+					
 					/*
 					 * TODO sum up values for each query
 					 */
+					double complexity = result.get("space_complexity", Number.class).doubleValue();
+					complexity /= 5.0;
+					if (complexity == 1) {
+						complexity = 0;
+					}
+					totalComplexity += complexity;
 				}
 			}
 
@@ -513,8 +524,10 @@ public class StatsReport {
 			if (aggregator.target != null) {
 				if (aggregator.target == Target.Contexts) {
 					double contextSize = totalSize / (double) count;
+					double complexity = (double) totalComplexity / (double) count;
 					return "[" + count + " assets; size = " + NumberFormat.getInstance().format(contextSize)
-							+ "; total time = " + NumberFormat.getInstance().format(totalTime) + "s]";
+							+ "; complexity = " + NumberFormat.getInstance().format(complexity) + "; total time = "
+							+ NumberFormat.getInstance().format(totalTime) + "s]" + " created " + created;
 				} else if (aggregator.target.isAsset()) {
 					return "[accessed " + (totalAccesses == 0 ? 1 : totalAccesses) + " times; total time = "
 							+ NumberFormat.getInstance().format(totalTime) + "s] ";// + ret;
@@ -751,10 +764,12 @@ public class StatsReport {
 		}
 
 		/*
-		 * this is only for speed, non-applying assets are still weeded out by the logics
+		 * this is only for speed, non-applying assets are still weeded out by the
+		 * logics
 		 */
 		String assetType = getAssetType();
-		if (assetType != null && !computeCosts /* TODO && costs are not computed and aggregators do not include applications */) {
+		if (assetType != null
+				&& !computeCosts /* TODO && costs are not computed and aggregators do not include applications */) {
 			// query is for specific type of asset
 			ret += "		      AND assets.asset_type = '" + assetType + "'";
 		}
