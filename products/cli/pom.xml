@@ -53,7 +53,7 @@
 
 	<dependencies>
 
-		<!-- TODO REMOVE when local testing of stats component is finished -->
+		<!-- allow optional local stats gathering if postgres is active and configured -->
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.component.stats</artifactId>
