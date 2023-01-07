@@ -7,6 +7,7 @@ import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.extensions.Component;
 import org.integratedmodelling.klab.api.extensions.component.Initialize;
 import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.rest.ObservationResultStatistics;
 import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.stats.database.StatsDatabase;
@@ -19,9 +20,6 @@ public class StatsComponent {
 
 	public static final String ID = "org.integratedmodelling.statistics";
 
-	public static final String LOCAL_STATS_ACTIVE_PROPERTY = "org.integratedmodelling.stats.active";
-	public static final String LOCAL_STATS_PRIVATE_PROPERTY = "org.integratedmodelling.stats.private";
-
 	StatsDatabase database;
 
 	@Initialize
@@ -29,7 +27,7 @@ public class StatsComponent {
 		database = new StatsDatabase();
 		if (database.isOnline()) {
 			final boolean isActive = Boolean.parseBoolean(Configuration.INSTANCE.getProperties()
-					.getProperty(StatsComponent.LOCAL_STATS_ACTIVE_PROPERTY, "false"));
+					.getProperty(IConfigurationService.LOCAL_STATS_ACTIVE_PROPERTY, "false"));
 			if (isActive) {
 				Klab.INSTANCE.addSessionInitializer((session) -> activateLocalReporting(session));
 			}
@@ -94,9 +92,6 @@ public class StatsComponent {
 	}
 
 	public void activateLocalReporting(ISession session) {
-
-		final boolean isPrivate = Boolean.parseBoolean(Configuration.INSTANCE.getProperties()
-				.getProperty(StatsComponent.LOCAL_STATS_PRIVATE_PROPERTY, "false"));
 
 		Klab.INSTANCE.setStatisticsLocalHandler((obs) -> {
 			submit(obs, session.getUser().getUsername(),
