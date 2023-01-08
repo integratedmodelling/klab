@@ -698,8 +698,30 @@ public class Client extends RestTemplate implements IClient {
 
     @Override
     public boolean put(String url, Object data) {
-        // TODO Auto-generated method stub
-        return false;
+
+		url = checkEndpoint(url);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Accept", "application/json");
+		if (data != null) {
+			headers.setContentType(MediaType.APPLICATION_JSON);
+		}
+		headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
+		if (authToken != null) {
+			headers.set(HttpHeaders.AUTHORIZATION, authToken);
+		}
+
+		try {
+
+			super.put(url, data);
+			return true;
+			
+		} catch (RestClientException e) {
+			System.out.println("REST  exception: " + e.getMessage());
+		    dumpRequest(url, headers, data);
+		    return false;
+		}
+
     }
 	
 }

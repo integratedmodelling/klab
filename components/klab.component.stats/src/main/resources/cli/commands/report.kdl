@@ -37,6 +37,9 @@ void print
 		"Select a specific observable or comma-separated list thereof. The string will match the concept definition. 
 		 Use !concept to exclude it"
 	
+	optional boolean errors
+		"If true, report errors, otherwise report successful observations."
+	
 	optional boolean html 
 		"Output HTML instead of the default Markdown. If the output file is not specified, launch the local browser."
 

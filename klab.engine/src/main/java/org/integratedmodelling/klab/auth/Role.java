@@ -22,7 +22,7 @@
  *
  * - END LICENSE -
  */
-package org.integratedmodelling.klab.node.auth;
+package org.integratedmodelling.klab.auth;
 
 import org.springframework.security.core.GrantedAuthority;
 

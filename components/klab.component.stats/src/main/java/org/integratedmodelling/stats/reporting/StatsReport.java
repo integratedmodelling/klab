@@ -33,7 +33,7 @@ import org.springframework.util.StringUtils;
 import com.ibm.icu.text.NumberFormat;
 
 /**
- * A report, including definition, generation and encoding to Markdown.
+ * A report, including definition, generation and encoding to text/Markdown/html/csv.
  * 
  * @author Ferd
  *
@@ -63,6 +63,10 @@ public class StatsReport {
 		Credits, Time, Size, Cost, Count;
 	}
 
+	public enum Format {
+		Text, Html, Csv, Markdown
+	}
+	
 	boolean adjustInterval = true;
 
 	/*
@@ -74,6 +78,7 @@ public class StatsReport {
 	// filters
 	long start = -1;
 	long end = -1;
+	Format format = Format.Text;
 
 	/*
 	 * we aggregate either by period or by target. We keep a list of these and use
@@ -567,6 +572,10 @@ public class StatsReport {
 		this.end = end;
 	}
 
+	public void setFormat(Format format) {
+		this.format = format;
+	}
+	
 	public void includeErrors() {
 		includeErrors = true;
 	}
@@ -885,5 +894,15 @@ public class StatsReport {
 			}
 		}
 		return true;
+	}
+
+	public void reportErrors(boolean doit) {
+		if (doit) {
+			this.includeErrors = true;
+			this.includeSuccess = false;
+		} else {
+			this.includeErrors = false;
+			this.includeSuccess = true;
+		}
 	}
 }

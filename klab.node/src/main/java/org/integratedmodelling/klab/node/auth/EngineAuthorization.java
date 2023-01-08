@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.integratedmodelling.klab.auth.Role;
 import org.integratedmodelling.klab.node.utils.DateTimeUtil;
 import org.integratedmodelling.klab.rest.Group;
 import org.springframework.security.authentication.AbstractAuthenticationToken;

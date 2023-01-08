@@ -776,7 +776,7 @@ public enum Klab implements IRuntimeService {
 
 	}
 
-	INodeIdentity getStatisticsServer() {
+	public INodeIdentity getStatisticsServer() {
 		if (this.statisticsServer == null) {
 			for (INodeIdentity node : Network.INSTANCE.getNodesWithAdapter(STATS_SERVICE_ADAPTER_ID)) {
 				// TODO there should be just one, or we should be able to pick the one in our

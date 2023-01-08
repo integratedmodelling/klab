@@ -12,14 +12,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.auth.ICertificate;
+import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.auth.IPartnerIdentity;
 import org.integratedmodelling.klab.api.node.INodeStartupOptions;
 import org.integratedmodelling.klab.auth.KlabCertificate;
+import org.integratedmodelling.klab.auth.KlabUser;
 import org.integratedmodelling.klab.auth.Node;
 import org.integratedmodelling.klab.auth.Partner;
+import org.integratedmodelling.klab.auth.Role;
+import org.integratedmodelling.klab.auth.UserIdentity;
 import org.integratedmodelling.klab.communication.client.Client;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.node.utils.DateTimeUtil;
@@ -64,7 +69,23 @@ public enum NodeAuthenticationManager {
     private JwtConsumer preValidationExtractor;
     private String nodeName;
 	private String hubName;
+	private INodeIdentity node;
 
+	NodeAuthenticationManager() {
+		Authentication.INSTANCE.setPrincipalTranslator((principal) -> {
+			EngineAuthorization u = (EngineAuthorization) principal;
+
+			UserIdentity ret = new KlabUser(u.getName(), node);
+			for (Role role : u.getRoles()) {
+				ret.getRoles().add(role.name());
+			}
+			for (Group group : u.getGroups()) {
+				ret.getGroups().add(new Group(group.getId()));
+			}
+			return ret;
+		});
+	}
+	
     protected HttpsJwks buildJwksClient(String url) {
         return new HttpsJwks(url);
     }

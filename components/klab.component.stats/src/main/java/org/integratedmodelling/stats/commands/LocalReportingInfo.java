@@ -3,6 +3,7 @@ package org.integratedmodelling.stats.commands;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.cli.ICommand;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.services.IConfigurationService;
@@ -17,7 +18,11 @@ public class LocalReportingInfo implements ICommand {
 					.getProperty(IConfigurationService.LOCAL_STATS_ACTIVE_PROPERTY, "false"));
 			return "Statistic reporting is active (persisted: " + (persisted ? "YES" : "NO") + ")";
 		}
-		return "Statistic reporting is inactive";
+
+		INodeIdentity snode = Klab.INSTANCE.getStatisticsServer();
+
+		return "Statistic reporting is inactive. Remote statistics "
+				+ (snode == null ? "not gathered" : ("gathered through node " + snode.getName()));
 
 	}
 

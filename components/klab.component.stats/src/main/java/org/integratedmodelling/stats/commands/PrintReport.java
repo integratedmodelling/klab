@@ -15,6 +15,7 @@ import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.engine.extensions.Component;
 import org.integratedmodelling.stats.StatsComponent;
 import org.integratedmodelling.stats.reporting.StatsReport;
+import org.integratedmodelling.stats.reporting.StatsReport.Format;
 import org.integratedmodelling.stats.reporting.StatsReport.Frequency;
 import org.integratedmodelling.stats.reporting.StatsReport.Target;
 
@@ -27,6 +28,7 @@ public class PrintReport implements ICommand {
 		String whitelist = "";
 		String blacklist = "";
 		boolean html = call.getParameters().get("html", false);
+		boolean errors = call.getParameters().get("errors", false);
 
 		Component stc = Extensions.INSTANCE.getComponent(StatsComponent.ID);
 		if (stc != null) {
@@ -135,6 +137,14 @@ public class PrintReport implements ICommand {
 				}
 
 				StatsReport report = stats.createReport(options.toArray());
+
+				if (errors) {
+					report.reportErrors(true);
+				}
+				if (html) {
+					report.setFormat(Format.Html);
+				}
+				
 
 				if (report != null) {
 					String ret = report.compile();

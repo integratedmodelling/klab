@@ -25,6 +25,7 @@ public abstract class UserIdentity implements IUserIdentity, UserDetails, IActor
     protected DateTime lastLogin = DateTime.now();
     protected DateTime expiryDate;
     protected Set<Group> groups = new HashSet<>();
+    protected Set<String> roles = new HashSet<>();
     protected Set<GrantedAuthority> authorities = new HashSet<>();
 
     public UserIdentity(String username) {
@@ -69,6 +70,10 @@ public abstract class UserIdentity implements IUserIdentity, UserDetails, IActor
         return authorities;
     }
 
+    public Set<String> getRoles() {
+    	return this.roles;
+    }
+    
     @Override
     public String getPassword() {
         return getId();
