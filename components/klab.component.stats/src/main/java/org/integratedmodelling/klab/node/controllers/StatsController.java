@@ -1,6 +1,8 @@
 package org.integratedmodelling.klab.node.controllers;
 
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Extensions;
@@ -8,9 +10,17 @@ import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.auth.Role;
 import org.integratedmodelling.klab.engine.extensions.Component;
+import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
+import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
+import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.rest.ObservationResultStatistics;
 import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.stats.StatsComponent;
+import org.integratedmodelling.stats.reporting.StatsReport;
+import org.integratedmodelling.stats.reporting.StatsReport.Format;
+import org.integratedmodelling.stats.reporting.StatsReport.Frequency;
+import org.integratedmodelling.stats.reporting.StatsReport.Target;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -68,7 +78,10 @@ public class StatsController {
 	 * the reporting period, specified in milliseconds since epoch (UTC). Default is
 	 * the entire span of the available statistics, only available to
 	 * administrators. If only one number is given, it is interpreted as the
-	 * starting time.</dd>
+	 * starting time. Alternatively, the span can be given as one of
+	 * {hour|day|week|month|year}, potentially preceded by an integer multiplier
+	 * such as in "2,week" to select events in one or more specific spans before the
+	 * current date.</dd>
 	 * <dt>errors</dt>
 	 * <dd>Set to true to report on errors and to false (default) to report on
 	 * successful observations.</dd>
@@ -108,120 +121,125 @@ public class StatsController {
 			@PathVariable(required = false) String users, @PathVariable(required = false) String groups,
 			@PathVariable(required = false) String apps, @PathVariable(required = false) String engines,
 			@PathVariable(required = false) String resources, @PathVariable(required = false) String models,
-			@PathVariable(required = false) String observables) {
+			@PathVariable(required = false) String observables, @PathVariable(required = false) String operations) {
 
 		IUserIdentity user = Authentication.INSTANCE.getUserIdentity(principal);
-		
-		
-//		for (Object option : (List<?>) call.getParameters().get("arguments")) {
-//
-//			String o = option.toString().toLowerCase();
-//
-//			switch (o) {
-//			case "observations":
-//				options.add(Target.Observations);
-//				break;
-//			case "models":
-//				options.add(Target.Models);
-//				break;
-//			case "contexts":
-//				options.add(Target.Contexts);
-//				break;
-//			case "engines":
-//				options.add(Target.Engines);
-//				break;
-//			case "observables":
-//				options.add(Target.Observables);
-//				break;
-//			case "operations":
-//				options.add(Target.Operations);
-//				break;
-//			case "resources":
-//				options.add(Target.Resources);
-//				break;
-//			case "downloads":
-//				options.add(Target.Downloads);
-//				break;
-//			case "users":
-//				options.add(Target.Users);
-//				break;
-//			case "apps":
-//				options.add(Target.Applications);
-//				break;
-//			case "yearly":
-//				options.add(Frequency.Yearly);
-//				break;
-//			case "monthly":
-//				options.add(Frequency.Monthly);
-//				break;
-//			case "weekly":
-//				options.add(Frequency.Weekly);
-//				break;
-//			case "daily":
-//				options.add(Frequency.Daily);
-//				break;
-//			case "hourly":
-//				options.add(Frequency.Hourly);
-//				break;
-//			case "year":
-//				lag = Time.resolution(1, Type.YEAR);
-//				break;
-//			case "day":
-//				lag = Time.resolution(1, Type.DAY);
-//				break;
-//			case "month":
-//				lag = Time.resolution(1, Type.MONTH);
-//				break;
-//			case "week":
-//				lag = Time.resolution(1, Type.WEEK);
-//				break;
-//			case "hour":
-//				lag = Time.resolution(1, Type.HOUR);
-//				break;
-//
-//			default:
-//
-//				// include/exclude user, URN, observable or group - all should be recognizable
-//				// based on target
-//				if (o.startsWith("+") /* or not - just mention something that's not the above */) {
-//					whitelist += (whitelist.isEmpty() ? "" : ",") + o.substring(1);
-//				} else if (o.startsWith("!")) {
-//					blacklist += (blacklist.isEmpty() ? "" : ",") + o.substring(1);
-//				} else {
-//					whitelist += (whitelist.isEmpty() ? "" : ",") + o;
-//				}
-//				break;
-//			}
-//		}
-//
-//		if (!whitelist.isEmpty()) {
-//			options.add("whitelist");
-//			options.add(whitelist);
-//		}
-//		if (!blacklist.isEmpty()) {
-//			options.add("blacklist");
-//			options.add(blacklist);
-//		}
-//
-//		if (lag != null) {
-//			ITimeInstant end = TimeInstant.create();
-//			ITimeInstant start = end.minus(1, lag);
-//			options.add("start");
-//			options.add(start.getMilliseconds());
-//			options.add("end");
-//			options.add(end.getMilliseconds());
-//		}
-//
-//		StatsReport report = stats.createReport(options.toArray());
-//
-//		if (errors) {
-//			report.reportErrors(true);
-//		}
-//		if (html) {
-//			report.setFormat(Format.Html);
-//		}
+		boolean adminOrAuditor = true; // TODO Authentication.INSTANCE.hasEitherGroup("ADMIN", "AUDITOR");
+		Component stc = Extensions.INSTANCE.getComponent(StatsComponent.ID);
+		if (stc == null || !stc.isActive()) {
+			throw new KlabIllegalStateException("statistics component is not configured or not installed");
+		}
 
-		return "<p>Unimplemented</p>";
+		StatsComponent stats = stc.getImplementation(StatsComponent.class);
+		List<Object> options = new ArrayList<>();
+
+		for (String target : targets.split(",")) {
+			switch (target.toLowerCase()) {
+			case "observations":
+				options.add(Target.Observations);
+				break;
+			case "models":
+				options.add(Target.Models);
+				break;
+			case "contexts":
+				options.add(Target.Contexts);
+				break;
+			case "engines":
+				options.add(Target.Engines);
+				break;
+			case "observables":
+				options.add(Target.Observables);
+				break;
+			case "operations":
+				options.add(Target.Operations);
+				break;
+			case "resources":
+				options.add(Target.Resources);
+				break;
+			case "downloads":
+				options.add(Target.Downloads);
+				break;
+			case "users":
+				if (!adminOrAuditor) {
+					// FIXME use proper auth response and exception handling
+					throw new KlabAuthorizationException("illegal non-anonymous access request");
+				}
+				options.add(Target.Users);
+				break;
+			case "apps":
+				options.add(Target.Applications);
+				break;
+			case "yearly":
+				options.add(Frequency.Yearly);
+				break;
+			case "monthly":
+				options.add(Frequency.Monthly);
+				break;
+			case "weekly":
+				options.add(Frequency.Weekly);
+				break;
+			case "daily":
+				options.add(Frequency.Daily);
+				break;
+			case "hourly":
+				options.add(Frequency.Hourly);
+				break;
+			default:
+				throw new KlabIllegalArgumentException("unrecognized target " + target);
+			}
+		}
+
+		StatsReport report = stats.createReport(options.toArray());
+
+		if (report == null) {
+			throw new KlabInternalErrorException("report generation error");
+		}
+		
+		if (errors) {
+			report.reportErrors(true);
+		}
+
+		if (span != null) {
+			report.setSpan(span.split(","));
+		} else if (!adminOrAuditor) {
+			// FIXME use proper auth response and exception handling
+			throw new KlabAuthorizationException("non-admins or auditors must specify a temporal span for reporting");
+		}
+
+		if (operations != null) {
+			report.filterFor(Target.Operations, operations.split(","));
+		}
+		if (users != null) {
+			if (!adminOrAuditor) {
+				// FIXME use proper auth response and exception handling
+				throw new KlabAuthorizationException("illegal non-anonymous access request");
+			}
+			report.filterFor(Target.Users, users.split(","));
+		}
+		if (models != null) {
+			report.filterFor(Target.Models, models.split(","));
+		}
+		if (observables != null) {
+			report.filterFor(Target.Observables, observables.split(","));
+		}
+		if (groups != null) {
+			if (!adminOrAuditor) {
+				// FIXME use proper auth response and exception handling
+				throw new KlabAuthorizationException("illegal non-anonymous access request");
+			}
+			report.filterFor(Target.Groups, groups.split(","));
+		}
+		if (resources != null) {
+			report.filterFor(Target.Resources, resources.split(","));
+		}
+		if (apps != null) {
+			report.filterFor(Target.Applications, apps.split(","));
+		}
+		if (engines != null) {
+			report.filterFor(Target.Engines, engines.split(","));
+		}
+
+		return report.compile();
 	}
 
 }

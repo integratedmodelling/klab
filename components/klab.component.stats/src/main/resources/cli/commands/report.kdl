@@ -9,31 +9,41 @@
 
 void print
 	"Print a usage report with the specified options. Use the optional keywords
-	 {hourly|daily|monthly|weekly|yearly}, users, {models|resources|observables|observations|contexts|apps|engines}
-	 to define the aggregation type and order. Use {year|day|month|week} to specify the
-	 temporal arc of the report."
+	 {hourly|daily|monthly|weekly|yearly}, users, {models|resources|observables|operations|observations|downloads|contexts|apps|engines}
+	 to define the aggregation type and order. Only one of the asset types 
+	 (models|resources|observables|operations|downloads) can be specified in a request."
 {
 
-	optional text user 
+	optional text users
 		"Select a specific user or comma-separated list thereof. Use !user to exclude the user" 
 
-	optional text group 
+	optional text groups
 		"Select a specific group or comma-separated list thereof. Use !group to exclude the group" 
 
-	optional text app
+	optional text span 
+		"Two comma-separated long integers referring to the beginning and end of
+	     the reporting period, specified in milliseconds since epoch (UTC). Default is
+	     the entire span of the available statistics, only available to
+	     administrators. If only one number is given, it is interpreted as the
+	     starting time. Alternatively, the span can be given as one of
+	     {hour|day|week|month|year}, potentially preceded by an integer multiplier
+	     such as in '2,week' to select events in one or more specific spans ending 
+	     at the one containing the current date." 
+
+	optional text apps
 		"Select a specific app or comma-separated list thereof. Use !app to exclude it"
 
-	optional text model
+	optional text 'models'
 		"Select a specific model URN or comma-separated list thereof. Use !model to exclude it"
 
-	optional text resource
+	optional text 'resources'
 		"Select a specific resource URN or comma-separated list thereof. Use !urn to exclude it"
 
-	optional text engine
+	optional text engines
 		"Select a specific engine id (use 'local' for a local engine) or comma-separated list thereof.
 		 Use !engine to exclude it"
 
-	optional text observable
+	optional text 'observables'
 		"Select a specific observable or comma-separated list thereof. The string will match the concept definition. 
 		 Use !concept to exclude it"
 	

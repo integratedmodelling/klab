@@ -32,23 +32,23 @@ public class TimeInstant extends GroovyObjectSupport implements ITimeInstant {
 
     DateTime time;
 
-    public static ITimeInstant create(int year, int month, int day) {
+    public static TimeInstant create(int year, int month, int day) {
         return new TimeInstant(year, month, day);
     }
 
-    public static ITimeInstant create(int year) {
+    public static TimeInstant create(int year) {
         return new TimeInstant(year);
     }
 
-    public static ITimeInstant create(DateTime time) {
+    public static TimeInstant create(DateTime time) {
         return new TimeInstant(time);
     }
 
-    public static ITimeInstant create(long milliseconds) {
+    public static TimeInstant create(long milliseconds) {
         return new TimeInstant(milliseconds);
     }
 
-    public static ITimeInstant create() {
+    public static TimeInstant create() {
         return new TimeInstant();
     }
 

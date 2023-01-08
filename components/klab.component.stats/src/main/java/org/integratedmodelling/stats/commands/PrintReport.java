@@ -6,12 +6,7 @@ import java.util.List;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.api.cli.ICommand;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution.Type;
-import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.api.runtime.ISession;
-import org.integratedmodelling.klab.components.time.extents.Time;
-import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.engine.extensions.Component;
 import org.integratedmodelling.stats.StatsComponent;
 import org.integratedmodelling.stats.reporting.StatsReport;
@@ -24,11 +19,19 @@ public class PrintReport implements ICommand {
 	@Override
 	public Object execute(IServiceCall call, ISession session) {
 
-		Resolution lag = null;
 		String whitelist = "";
 		String blacklist = "";
 		boolean html = call.getParameters().get("html", false);
 		boolean errors = call.getParameters().get("errors", false);
+		String span = call.getParameters().get("span", String.class);
+		String users = call.getParameters().get("users", String.class);
+		String engines = call.getParameters().get("engines", String.class);
+		String observables = call.getParameters().get("observables", String.class);
+		String apps = call.getParameters().get("apps", String.class);
+		String models = call.getParameters().get("models", String.class);
+		String groups = call.getParameters().get("groups", String.class);
+		String operations = call.getParameters().get("operations", String.class);
+		String resources = call.getParameters().get("resources", String.class);
 
 		Component stc = Extensions.INSTANCE.getComponent(StatsComponent.ID);
 		if (stc != null) {
@@ -87,21 +90,6 @@ public class PrintReport implements ICommand {
 					case "hourly":
 						options.add(Frequency.Hourly);
 						break;
-					case "year":
-						lag = Time.resolution(1, Type.YEAR);
-						break;
-					case "day":
-						lag = Time.resolution(1, Type.DAY);
-						break;
-					case "month":
-						lag = Time.resolution(1, Type.MONTH);
-						break;
-					case "week":
-						lag = Time.resolution(1, Type.WEEK);
-						break;
-					case "hour":
-						lag = Time.resolution(1, Type.HOUR);
-						break;
 
 					default:
 
@@ -127,15 +115,6 @@ public class PrintReport implements ICommand {
 					options.add(blacklist);
 				}
 
-				if (lag != null) {
-					ITimeInstant end = TimeInstant.create();
-					ITimeInstant start = end.minus(1, lag);
-					options.add("start");
-					options.add(start.getMilliseconds());
-					options.add("end");
-					options.add(end.getMilliseconds());
-				}
-
 				StatsReport report = stats.createReport(options.toArray());
 
 				if (errors) {
@@ -144,7 +123,34 @@ public class PrintReport implements ICommand {
 				if (html) {
 					report.setFormat(Format.Html);
 				}
+				if (span != null) {
+					report.setSpan(span.split(","));
+				}
 				
+				if (operations != null) {
+					report.filterFor(Target.Operations, operations.split(","));
+				}
+				if (users != null) {
+					report.filterFor(Target.Users, users.split(","));
+				}
+				if (models != null) {
+					report.filterFor(Target.Models, models.split(","));
+				}
+				if (observables != null) {
+					report.filterFor(Target.Observables, observables.split(","));
+				}
+				if (groups != null) {
+					report.filterFor(Target.Groups, groups.split(","));
+				}
+				if (resources != null) {
+					report.filterFor(Target.Resources, resources.split(","));
+				}
+				if (apps != null) {
+					report.filterFor(Target.Applications, apps.split(","));
+				}
+				if (engines != null) {
+					report.filterFor(Target.Engines, engines.split(","));
+				}
 
 				if (report != null) {
 					String ret = report.compile();

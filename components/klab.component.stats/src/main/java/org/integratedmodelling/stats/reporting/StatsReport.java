@@ -17,12 +17,15 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Time;
+import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution.Type;
 import org.integratedmodelling.klab.components.time.extents.TemporalExtension;
 import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.engine.extensions.Component;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
+import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.StringUtil;
@@ -32,8 +35,11 @@ import org.springframework.util.StringUtils;
 
 import com.ibm.icu.text.NumberFormat;
 
+import static org.integratedmodelling.klab.components.time.extents.Time.resolution;
+
 /**
- * A report, including definition, generation and encoding to text/Markdown/html/csv.
+ * A report, including definition, generation and encoding to
+ * text/Markdown/html/csv.
  * 
  * @author Ferd
  *
@@ -43,7 +49,11 @@ public class StatsReport {
 	boolean isComputed = false;
 
 	public enum Target {
-		Resources, Models, Operations, Contexts, Observations, Observables, Users, Downloads, Applications, Engines;
+		Resources, Models, Operations, Contexts, Observations, Observables, Users, Downloads, Applications, Engines,
+		/*
+		 * This one only for filtering
+		 */
+		Groups;
 
 		public boolean isAsset() {
 			return this == Resources || this == Models || this == Downloads || this == Operations
@@ -66,7 +76,7 @@ public class StatsReport {
 	public enum Format {
 		Text, Html, Csv, Markdown
 	}
-	
+
 	boolean adjustInterval = true;
 
 	/*
@@ -120,8 +130,7 @@ public class StatsReport {
 	 * blacklist or a whitelist of strings to match the target to, based on the
 	 * second element (true = whitelist).
 	 */
-	Map<Target, List<Pair<Collection<String>, Boolean>>> filterTargets = new HashMap<>();
-//	Set<Metric> metrics = EnumSet.of(Metric.Time, Metric.Size, Metric.Credits);
+	Map<Target, List<Pair<String, Boolean>>> filterTargets = new HashMap<>();
 	List<Aggregator> aggregators = new ArrayList<>();
 
 	boolean anonymized = true;
@@ -501,9 +510,9 @@ public class StatsReport {
 					// =, not +=! - redefine (with same value) every time.
 					totalTime = result.get("query_time", Number.class).doubleValue();
 				} else if (aggregator.target == Target.Contexts) {
-					
+
 					created = TimeInstant.create(result.get("created", Number.class).longValue()).toString();
-					
+
 					/*
 					 * TODO sum up values for each query
 					 */
@@ -575,7 +584,7 @@ public class StatsReport {
 	public void setFormat(Format format) {
 		this.format = format;
 	}
-	
+
 	public void includeErrors() {
 		includeErrors = true;
 	}
@@ -592,18 +601,18 @@ public class StatsReport {
 		this.temporalAggregation = getResolution(frequency);
 	}
 
-	public void filter(Target target, boolean include, String... strings) {
-		Set<String> filters = new HashSet<>();
-		for (String s : strings) {
-			filters.add(s);
-		}
-		List<Pair<Collection<String>, Boolean>> constraints = this.filterTargets.get(target);
-		if (constraints == null) {
-			constraints = new ArrayList<>();
-			this.filterTargets.put(target, constraints);
-		}
-		constraints.add(new Pair<>(filters, include));
-	}
+//	public void filter(Target target, boolean include, String... strings) {
+//		Set<String> filters = new HashSet<>();
+//		for (String s : strings) {
+//			filters.add(s);
+//		}
+//		List<Pair<Collection<String>, Boolean>> constraints = this.filterTargets.get(target);
+//		if (constraints == null) {
+//			constraints = new ArrayList<>();
+//			this.filterTargets.put(target, constraints);
+//		}
+//		constraints.add(new Pair<>(filters, include));
+//	}
 
 	public boolean compute() {
 
@@ -681,8 +690,8 @@ public class StatsReport {
 	private AggregationSet getAggregationSet(IParameters<String> result, long st, long en) throws SQLException {
 
 		for (Target filterTarget : filterTargets.keySet()) {
-			for (Pair<Collection<String>, Boolean> filter : filterTargets.get(filterTarget)) {
-				if (!matchFilter(filterTarget, filter.getFirst(), filter.getSecond())) {
+			for (Pair<String, Boolean> filter : filterTargets.get(filterTarget)) {
+				if (!matchFilter(result, filterTarget, filter.getFirst(), filter.getSecond())) {
 					return null;
 				}
 			}
@@ -717,9 +726,9 @@ public class StatsReport {
 		return ret;
 	}
 
-	private boolean matchFilter(Target filterTarget, Collection<String> first, Boolean second) {
-		// TODO handle blacklists and whitelists for all filters
-		return true;
+	private boolean matchFilter(IParameters<String> result, Target filterTarget, String match, Boolean exclude) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	private Resolution.Type getResolution(Frequency f) {
@@ -894,6 +903,80 @@ public class StatsReport {
 			}
 		}
 		return true;
+	}
+
+	public void setSpan(String[] span) {
+
+		Resolution lag = null;
+
+		ITimeInstant s = null;
+		ITimeInstant e = null;
+		long lastLong = -1;
+
+		for (int i = 0; i < span.length; i++) {
+			if (NumberUtils.encodesLong(span[i])) {
+				lastLong = Long.parseLong(span[i]);
+				if (lastLong > 10000) {
+					if (s == null) {
+						s = TimeInstant.create(lastLong);
+					} else if (e == null) {
+						e = TimeInstant.create(lastLong);
+					} else {
+						throw new KlabIllegalArgumentException("bad span specification " + span);
+					}
+				}
+			} else {
+				switch (span[i]) {
+				case "year":
+				case "years":
+					lag = resolution(1, Resolution.Type.YEAR);
+					break;
+				case "day":
+				case "days":
+					lag = resolution(1, Resolution.Type.DAY);
+					break;
+				case "month":
+				case "months":
+					lag = resolution(1, Resolution.Type.MONTH);
+					break;
+				case "week":
+				case "weeks":
+					lag = resolution(1, Resolution.Type.WEEK);
+					break;
+				case "hour":
+				case "hours":
+					lag = resolution(1, Resolution.Type.HOUR);
+					break;
+				default:
+					throw new KlabIllegalArgumentException("bad span specification " + span);
+				}
+			}
+		}
+
+		int multiplier = 1;
+		if (lag != null) {
+			if (lastLong > 0 && lastLong < 10000) {
+				multiplier = (int) lastLong;
+			}
+			e = TimeInstant.create().endOf(lag.getType());
+			s = e.minus(multiplier, lag);
+		}
+
+		if (e == null || s == null) {
+			throw new KlabIllegalArgumentException("bad span specification " + span);
+		}
+
+		this.start = s.getMilliseconds();
+		this.end = e.getMilliseconds();
+
+	}
+
+	public void filterFor(Target target, String[] targets) {
+		List<Pair<String, Boolean>> filter = new ArrayList<>();
+		for (String t : targets) {
+			filter.add(new Pair<>(t.startsWith("!") ? t.substring(1) : t, t.startsWith("!")));
+		}
+		filterTargets.put(target, filter);
 	}
 
 	public void reportErrors(boolean doit) {
