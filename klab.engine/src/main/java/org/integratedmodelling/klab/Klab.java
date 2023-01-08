@@ -177,11 +177,12 @@ public enum Klab implements IRuntimeService {
 					for (int i = payload.size() - 1; i >= 0; i--) {
 						if (statisticsConsumer != null) {
 							statisticsConsumer.accept(payload.get(i));
-						} else if (node != null && !node.getClient().put(API.STATS.STATS_ADD, payload)) {
-							/*
-							 * put the payload back. May need to stop if things become big.
-							 */
-							statisticsQueue.offer(payload.get(i));
+						}
+					}
+					if (node != null && !node.getClient().put(API.STATS.STATS_ADD, payload)) {
+						/* put this back in the queue - TODO verify if this is smart or not */
+						for (ObservationResultStatistics obs : payload) {
+							statisticsQueue.offer(obs);
 						}
 					}
 				}
@@ -787,7 +788,7 @@ public enum Klab implements IRuntimeService {
 		}
 		return this.statisticsServer;
 	}
-	
+
 	public void addSessionInitializer(Consumer<ISession> initializer) {
 		this.sessionInitializers.add(initializer);
 	}
