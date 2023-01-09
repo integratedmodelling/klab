@@ -14,6 +14,7 @@ import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.h2.util.geometry.GeoJsonUtils;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.API;
@@ -345,7 +346,7 @@ public class EngineViewController {
 
             }
         }
-
+        
         if (obs instanceof IDirectObservation) {
 
             if (format == GeometryType.NETWORK  && ((IDirectObservation)obs).getOriginatingPattern() instanceof INetwork) {
