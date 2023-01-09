@@ -56,8 +56,7 @@ public class StatsReport {
 		Groups;
 
 		public boolean isAsset() {
-			return this == Resources || this == Models || this == Operations
-					|| this == Observables;
+			return this == Resources || this == Models || this == Operations || this == Observables;
 		}
 	}
 
@@ -481,6 +480,7 @@ public class StatsReport {
 
 		boolean error = false;
 		int count = 0;
+		boolean export = false;
 		boolean setCredits = false;
 		double totalTime;
 		double totalSize;
@@ -526,7 +526,11 @@ public class StatsReport {
 					downloadSize += result.get("byte_size", Number.class).doubleValue();
 				} else if (aggregator.target == Target.Observations) {
 					// =, not +=! - redefine (with same value) every time.
-					totalTime = result.get("query_time", Number.class).doubleValue();
+					if (result.get("is_download", Boolean.class)) {
+						export = true;
+					} else {
+						totalTime = result.get("query_time", Number.class).doubleValue();
+					}
 				} else if (aggregator.target == Target.Contexts) {
 
 					created = TimeInstant.create(result.get("created", Number.class).longValue()).toString();
@@ -566,7 +570,10 @@ public class StatsReport {
 				} else if (aggregator.target == Target.Downloads) {
 					return "[bytes downloaded = " + NumberFormat.getIntegerInstance().format(downloadSize) + "] ";
 				} else if (aggregator.target == Target.Observations) {
-					return "[" + count + " assets; total time = " + NumberFormat.getInstance().format(totalTime) + "] ";
+					return "["
+							+ (export ? " export "
+									: (count + " assets; total time = " + NumberFormat.getInstance().format(totalTime)))
+							+ "] ";
 				}
 			}
 
@@ -723,12 +730,6 @@ public class StatsReport {
 		return ret;
 	}
 
-	// private boolean matchFilter(IParameters<String> result, Target filterTarget,
-	// String match, Boolean exclude) {
-//		// TODO Auto-generated method stub
-//		return false;
-//	}
-
 	private Resolution.Type getResolution(Frequency f) {
 		switch (f) {
 		case Hourly:
@@ -759,7 +760,7 @@ public class StatsReport {
 				+ "	contexts.principal, contexts.scale_size, contexts.space_resolution, contexts.groups, \n"
 				+ "	contexts.space_complexity, contexts.context_name,\n"
 				+ "	queries.observable as query_observable, queries.total_time_sec as query_time,\n"
-				+ " queries.start_time as query_start_time, "
+				+ " queries.start_time as query_start_time, queries.is_download, "
 				+ "	assets.total_time_sec as time, assets.total_passes as passes, assets.name as asset,"
 				+ " assets.total_byte_size as byte_size, \n"
 				+ "	assets.outcome as outcome, assets.asset_type as asset_type, queries.id as query_id, \n"

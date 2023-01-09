@@ -367,7 +367,6 @@ public class EngineViewController {
                 try (InputStream in = new FileInputStream(out)) {
                     IOUtils.copy(in, response.getOutputStream());
                 }
-                Klab.INSTANCE.addDownload(session, obs, out);
             	FileUtils.deleteQuietly(out);
             }
 
