@@ -1,8 +1,9 @@
 package org.integratedmodelling.stats.reporting;
 
+import static org.integratedmodelling.klab.components.time.extents.Time.resolution;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -17,14 +18,14 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Time;
-import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution.Type;
+import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.components.time.extents.TemporalExtension;
 import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.engine.extensions.Component;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
+import org.integratedmodelling.klab.utils.Escape;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
@@ -34,8 +35,6 @@ import org.integratedmodelling.stats.database.StatsDatabase;
 import org.springframework.util.StringUtils;
 
 import com.ibm.icu.text.NumberFormat;
-
-import static org.integratedmodelling.klab.components.time.extents.Time.resolution;
 
 /**
  * A report, including definition, generation and encoding to
@@ -85,8 +84,77 @@ public class StatsReport {
 		List<String> blacklist = new ArrayList<>();
 
 		public String asSQLRestriction() {
-			// TODO Auto-generated method stub
+
+			String field = null;
+			boolean partialMatch = false;
+			Target mustHave = null;
+
+			switch (target) {
+			case Applications:
+				field = "application";
+				break;
+			case Engines:
+				field = "engine_type";
+				break;
+			case Groups:
+				field = "groups";
+				partialMatch = true;
+				break;
+			case Models:
+				field = "asset";
+				mustHave = Target.Models;
+				break;
+			case Observables:
+				field = "asset";
+				mustHave = Target.Observables;
+				break;
+			case Observations:
+				field = "query_observable";
+				break;
+			case Contexts:
+				field = "context_name";
+				break;
+			case Operations:
+				field = "asset";
+				mustHave = Target.Operations;
+				break;
+			case Resources:
+				field = "asset";
+				mustHave = Target.Resources;
+				break;
+			case Users:
+				field = "principal";
+				break;
+			default:
+				break;
+			}
+
+			if (mustHave != null && !hasTarget(mustHave)) {
+				throw new KlabIllegalArgumentException(
+						"cannot filter on " + target + " without reporting the same asset");
+			}
+
+			if (field != null) {
+				StringBuffer ret = new StringBuffer(512);
+				for (String s : whitelist) {
+					ret.append(ret.length() == 0 ? "" : " OR ");
+					ret.append(field + " LIKE " + makePattern(s, partialMatch));
+				}
+				for (String s : blacklist) {
+					ret.append(ret.length() == 0 ? "" : " ");
+					ret.append("OR " + field + " NOT LIKE " + makePattern(s, partialMatch));
+				}
+				if (ret.length() > 0) {
+					return "AND (" + ret + ")";
+				}
+			}
+
 			return "";
+		}
+
+		private String makePattern(String s, boolean partialMatch) {
+			String ret = s.replace("_", "#_").replace("$", "_").replace("*", "%");
+			return "'" + Escape.forSQL(ret) + "' ESCAPE '#'";
 		}
 	}
 
@@ -600,6 +668,15 @@ public class StatsReport {
 
 	public void setReportingStart(long start) {
 		this.start = start;
+	}
+
+	public boolean hasTarget(Target mustHave) {
+		for (Aggregator aggregator : aggregators) {
+			if (mustHave == aggregator.target) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public void setReportingEnd(long end) {
