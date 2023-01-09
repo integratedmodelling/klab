@@ -561,7 +561,13 @@ public class Client extends RestTemplate implements IClient {
 			for (int i = 0; i < parameters.length; i++) {
 				String key = parameters[i].toString();
 				String nakedKey = key;
-				String val = parameters[++i].toString();
+				Object nextPar = parameters[++i];
+				String val = nextPar == null ? null : nextPar.toString();
+
+				if (val == null) {
+					continue;
+				}
+				
 				if (!(key.startsWith("{") && key.endsWith("}"))) {
 					key = "{" + key + "}";
 				} else {
@@ -570,7 +576,7 @@ public class Client extends RestTemplate implements IClient {
 				if (url.contains(key)) {
 					url = url.replace(key, val);
 				} else {
-					params += (params.isEmpty() ? "" : "&") + nakedKey + "=" + Escape.forURL(val);
+					params += (params.isEmpty() ? "" : "&") + nakedKey + "=" + /* Escape.forURL( */val/* ) */;
 				}
 			}
 			if (!params.isEmpty()) {

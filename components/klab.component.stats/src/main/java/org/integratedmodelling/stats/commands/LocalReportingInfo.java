@@ -20,9 +20,8 @@ public class LocalReportingInfo implements ICommand {
 		}
 
 		INodeIdentity snode = Klab.INSTANCE.getStatisticsServer();
-
 		return "Statistic reporting is inactive. Remote statistics "
-				+ (snode == null ? "not gathered" : ("gathered through node " + snode.getName()));
+				+ (snode == null ? "not available" : ("served by " + snode.getName()));
 
 	}
 
