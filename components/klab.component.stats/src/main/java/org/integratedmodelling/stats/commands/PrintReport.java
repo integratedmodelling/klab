@@ -8,6 +8,7 @@ import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.api.cli.ICommand;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.engine.extensions.Component;
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.stats.StatsComponent;
 import org.integratedmodelling.stats.reporting.StatsReport;
 import org.integratedmodelling.stats.reporting.StatsReport.Format;
@@ -22,7 +23,10 @@ public class PrintReport implements ICommand {
 		String whitelist = "";
 		String blacklist = "";
 		boolean html = call.getParameters().get("html", false);
+		boolean markdown = call.getParameters().get("markdown", false);
 		boolean errors = call.getParameters().get("errors", false);
+		boolean cost = call.getParameters().get("cost", false);
+
 		String span = call.getParameters().get("span", String.class);
 		String users = call.getParameters().get("users", String.class);
 		String engines = call.getParameters().get("engines", String.class);
@@ -90,29 +94,9 @@ public class PrintReport implements ICommand {
 					case "hourly":
 						options.add(Frequency.Hourly);
 						break;
-
 					default:
-
-						// include/exclude user, URN, observable or group - all should be recognizable
-						// based on target
-						if (o.startsWith("+") /* or not - just mention something that's not the above */) {
-							whitelist += (whitelist.isEmpty() ? "" : ",") + o.substring(1);
-						} else if (o.startsWith("!")) {
-							blacklist += (blacklist.isEmpty() ? "" : ",") + o.substring(1);
-						} else {
-							whitelist += (whitelist.isEmpty() ? "" : ",") + o;
-						}
-						break;
+						throw new KlabIllegalArgumentException("unknown target " + o);
 					}
-				}
-
-				if (!whitelist.isEmpty()) {
-					options.add("whitelist");
-					options.add(whitelist);
-				}
-				if (!blacklist.isEmpty()) {
-					options.add("blacklist");
-					options.add(blacklist);
 				}
 
 				StatsReport report = stats.createReport(options.toArray());
@@ -120,8 +104,11 @@ public class PrintReport implements ICommand {
 				if (errors) {
 					report.reportErrors(true);
 				}
+				
 				if (html) {
 					report.setFormat(Format.Html);
+				} else if (markdown) {
+					report.setFormat(Format.Markdown);	
 				}
 				if (span != null) {
 					report.setSpan(span.split(","));

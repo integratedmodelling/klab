@@ -63,6 +63,11 @@ public class StatsDatabase extends Postgis {
             + "   context_name VARCHAR(512),\n"
             + "   outcome status\n"
             + ");",
+            
+            /*
+             * the query table also hosts downloads of previously computed observations, with 
+             * is_download = true and dataflow_complexity = download size in bytes
+             */
             "CREATE TABLE queries(\n"
             + "   id INTEGER NOT NULL,\n"
             + "   context_id CHAR(64) NOT NULL,\n"
@@ -73,10 +78,12 @@ public class StatsDatabase extends Postgis {
             + "   resolved_coverage FLOAT,\n"
             + "   outcome status,\n"
             + "   dataflow_id VARCHAR(512),\n"              // only collected for special cases
+            + "   start_time BIGINT,\n" 
+            + "   is_download BOOLEAN,\n" 
             + "   PRIMARY KEY(id, context_id)\n"
             + ");",
             "DROP TYPE IF EXISTS asset_type CASCADE;", // shouldn't be necessary
-            "CREATE TYPE asset_type AS ENUM ('ResolvedObservable', 'Model', 'Resource', 'Export', 'Operation');",
+            "CREATE TYPE asset_type AS ENUM ('ResolvedObservable', 'Model', 'Resource', 'Operation', 'Export');",
             "CREATE TABLE assets(\n"
             + "   name VARCHAR(512),\n"
             + "   query_id INTEGER NOT NULL,\n"
@@ -160,7 +167,9 @@ public class StatsDatabase extends Postgis {
 				+ stat.getDataflowComplexity() + ", " // "   dataflow_complexity BIGINT,\n"
 				+ cnan(stat.getResolvedCoverage()) + ", " // "   resolved_coverage FLOAT,\n"
 				+ status(stat.getStatus()) + ", " // "   outcome status,\n"
-				+ cn(dataflowId) // "   dataflow_id VARCHAR(512),\n"              // only collected for special cases
+				+ cn(dataflowId) + "," // "   dataflow_id VARCHAR(512),\n"              // only collected for special cases
+				+ stat.getStartTime() + "," // start time
+				+ (stat.isExport() ? "TRUE" : "FALSE")
 				+ ");";
 		
 		execute(sql);

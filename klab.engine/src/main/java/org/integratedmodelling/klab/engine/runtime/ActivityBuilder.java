@@ -16,17 +16,20 @@ import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAcknowledgement;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
+import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
+import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
@@ -35,6 +38,7 @@ import org.integratedmodelling.klab.rest.ObservationAssetStatistics;
 import org.integratedmodelling.klab.rest.ObservationAssetStatistics.Type;
 import org.integratedmodelling.klab.rest.ObservationResultStatistics;
 import org.integratedmodelling.klab.rest.ScaleStatistics;
+import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.StringUtils;
 
 public class ActivityBuilder {
@@ -234,7 +238,6 @@ public class ActivityBuilder {
 		} else if (target instanceof File) {
 			ret = new ActivityBuilder(obsname, TargetIdentity.Download, engineName);
 			ret.byteSize = ((File) target).length();
-			return ret;
 		}
 
 		if (ret == null) {
@@ -414,6 +417,35 @@ public class ActivityBuilder {
 
 	public void notifyContextCreated(ISubject ret) {
 		this.contextCreated = ret.getId();
+	}
+
+	/**
+	 * Create a single query result containing a single download asset for the
+	 * passed parameters.
+	 * 
+	 * @param session
+	 * @param obs
+	 * @param out
+	 * @return
+	 */
+	public static ObservationResultStatistics encodeDownload(ISession session, IObservation obs, File out) {
+		ObservationResultStatistics ret = new ObservationResultStatistics();
+		ret.setContextId(obs.getRootContext().getId());
+		ret.setApplication(session.getState().getCurrentApplicationName());
+		ret.setStartTime(System.currentTimeMillis());
+		ret.setEndTime(System.currentTimeMillis());
+		ret.setEngineName(session.getParentIdentity(Engine.class).getName());
+		ret.setEngineVersion(Version.CURRENT);
+		ret.setExport(true);
+		ret.setObservable(obs.getObservable().getDefinition());
+		ret.setStatus(Status.FINISHED);
+		ObservationAssetStatistics asset = new ObservationAssetStatistics();
+		asset.setName(MiscUtilities.getFileName(out));
+		asset.setSize(out.length());
+		asset.setType(Type.Export);
+		asset.setStatus(Status.FINISHED);
+		ret.getAssets().add(asset);
+		return ret;
 	}
 
 	public ObservationResultStatistics encode() {

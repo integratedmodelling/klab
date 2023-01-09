@@ -77,6 +77,12 @@ public class ObservationResultStatistics {
 	 */
 	private String observationName;
 
+	/**
+	 * If this is true, the query is an export and it will contain a single asset
+	 * corresponding to the export itself.
+	 */
+	private boolean export;
+
 	public List<ObservationAssetStatistics> getAssets() {
 		return assets;
 	}
@@ -240,6 +246,14 @@ public class ObservationResultStatistics {
 
 	public void setResolvedCoverage(double resolvedCoverage) {
 		this.resolvedCoverage = resolvedCoverage;
+	}
+
+	public boolean isExport() {
+		return export;
+	}
+
+	public void setExport(boolean export) {
+		this.export = export;
 	}
 
 }

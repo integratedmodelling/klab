@@ -11,7 +11,6 @@ import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.rest.ObservationResultStatistics;
 import org.integratedmodelling.klab.utils.StringUtil;
-import org.integratedmodelling.stats.commands.PrintReport;
 import org.integratedmodelling.stats.database.StatsDatabase;
 import org.integratedmodelling.stats.reporting.StatsReport;
 import org.integratedmodelling.stats.reporting.StatsReport.Frequency;
@@ -68,7 +67,7 @@ public class StatsComponent {
 		if (targets != null) {
 			for (int i = 0; i < targets.length; i++) {
 				if (targets[i] instanceof Target) {
-					ret.setTargetClassifier((Target) targets[i]);
+					ret.addTargetClassifier((Target) targets[i]);
 				} else if (targets[i] instanceof Frequency) {
 					ret.setAggregationInterval((Frequency) targets[i], 1);
 				} else {

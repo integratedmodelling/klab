@@ -18,7 +18,6 @@ import org.integratedmodelling.klab.rest.ObservationResultStatistics;
 import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.stats.StatsComponent;
 import org.integratedmodelling.stats.reporting.StatsReport;
-import org.integratedmodelling.stats.reporting.StatsReport.Format;
 import org.integratedmodelling.stats.reporting.StatsReport.Frequency;
 import org.integratedmodelling.stats.reporting.StatsReport.Target;
 import org.springframework.security.access.annotation.Secured;
@@ -79,12 +78,16 @@ public class StatsController {
 	 * the entire span of the available statistics, only available to
 	 * administrators. If only one number is given, it is interpreted as the
 	 * starting time. Alternatively, the span can be given as one of
-	 * {hour|day|week|month|year}, potentially preceded by an integer multiplier
-	 * such as in "2,week" to select events in one or more specific spans before the
-	 * current date.</dd>
+	 * {<b>hour(s)</b>|<b>day(s)</b>|<b>week(s)</b>|<b>month(s)</b>|<b>year(s)</b>},
+	 * optionally preceded by an integer multiplier such as in "2,week" to select
+	 * events in the given current span (multiplier = 1 or default) or more spans
+	 * before the one including the current date.</dd>
 	 * <dt>errors</dt>
 	 * <dd>Set to true to report on errors and to false (default) to report on
 	 * successful observations.</dd>
+	 * <dt>cost</dt>
+	 * <dd>Set to true to compute costs for contexts. Must be administrator or
+	 * auditor, and the targets must include "contexts".</dd>
 	 * </dl>
 	 * The following filters can be used. All will match names that may contain
 	 * wildcards.
@@ -113,18 +116,19 @@ public class StatsController {
 	 * </dl>
 	 * 
 	 * @param principal
-	 * @return
+	 * @return the report
 	 */
-	@GetMapping(value = API.STATS.STATS_REPORT, produces = { "text/html", "text/plain" })
+	@GetMapping(value = API.STATS.STATS_REPORT, produces = { "text/html", "text/plain", "text/markdown" })
 	public String createReport(Principal principal, @PathVariable String targets,
 			@PathVariable(required = false) String span, @PathVariable(required = false) boolean errors,
 			@PathVariable(required = false) String users, @PathVariable(required = false) String groups,
 			@PathVariable(required = false) String apps, @PathVariable(required = false) String engines,
 			@PathVariable(required = false) String resources, @PathVariable(required = false) String models,
-			@PathVariable(required = false) String observables, @PathVariable(required = false) String operations) {
+			@PathVariable(required = false) String observables, @PathVariable(required = false) String operations,
+			@PathVariable(required = false) boolean cost) {
 
 		IUserIdentity user = Authentication.INSTANCE.getUserIdentity(principal);
-		boolean adminOrAuditor = true; // TODO Authentication.INSTANCE.hasEitherGroup("ADMIN", "AUDITOR");
+		boolean adminOrAuditor = true; // TODO Authentication.INSTANCE.hasEitherGroup(user, "ADMIN", "AUDITOR");
 		Component stc = Extensions.INSTANCE.getComponent(StatsComponent.ID);
 		if (stc == null || !stc.isActive()) {
 			throw new KlabIllegalStateException("statistics component is not configured or not installed");
@@ -194,10 +198,15 @@ public class StatsController {
 		if (report == null) {
 			throw new KlabInternalErrorException("report generation error");
 		}
-		
-		if (errors) {
-			report.reportErrors(true);
+
+		report.reportErrors(errors);
+
+		if (cost && !adminOrAuditor) {
+			// FIXME use proper auth response and exception handling
+			throw new KlabAuthorizationException("cost computation is only accessible to administrators and auditors");
 		}
+
+		report.reportCosts(cost);
 
 		if (span != null) {
 			report.setSpan(span.split(","));

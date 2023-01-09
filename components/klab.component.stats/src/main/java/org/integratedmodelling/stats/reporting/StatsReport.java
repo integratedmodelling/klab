@@ -56,7 +56,7 @@ public class StatsReport {
 		Groups;
 
 		public boolean isAsset() {
-			return this == Resources || this == Models || this == Downloads || this == Operations
+			return this == Resources || this == Models || this == Operations
 					|| this == Observables;
 		}
 	}
@@ -77,6 +77,20 @@ public class StatsReport {
 		Text, Html, Csv, Markdown
 	}
 
+	/*
+	 * these are all handled directly as SQL constraints in the query
+	 */
+	class Filter {
+		Target target;
+		List<String> whitelist = new ArrayList<>();
+		List<String> blacklist = new ArrayList<>();
+
+		public String asSQLRestriction() {
+			// TODO Auto-generated method stub
+			return "";
+		}
+	}
+
 	boolean adjustInterval = true;
 
 	/*
@@ -85,9 +99,6 @@ public class StatsReport {
 	 */
 	boolean computeCosts = false;
 
-	// filters
-	long start = -1;
-	long end = -1;
 	Format format = Format.Text;
 
 	/*
@@ -125,13 +136,13 @@ public class StatsReport {
 		}
 	}
 
-	/**
-	 * Data per target is a list of constraints; each constraint contains either a
-	 * blacklist or a whitelist of strings to match the target to, based on the
-	 * second element (true = whitelist).
-	 */
-	Map<Target, List<Pair<String, Boolean>>> filterTargets = new HashMap<>();
+	// the main targets, either a target type or a temporal span
 	List<Aggregator> aggregators = new ArrayList<>();
+
+	// filters
+	long start = -1;
+	long end = -1;
+	List<Filter> filters = new ArrayList<>();
 
 	boolean anonymized = true;
 	boolean includeErrors = false;
@@ -141,6 +152,10 @@ public class StatsReport {
 	 * Indexable aggregation set that serves as a key for the "chapters" in the
 	 * report. Contains all keys used to group the data and sorts intelligently
 	 * based on the order of aggregation.
+	 * 
+	 * Asset types use the asset name as key, i.e. different uses of the same asset
+	 * aggregate. Contexts and queries use the observation ID as key so they only
+	 * aggregate within the same observation.
 	 * 
 	 * @author Ferd
 	 *
@@ -165,6 +180,7 @@ public class StatsReport {
 		String observation;
 		String context_name;
 		boolean sequential = true;
+		boolean isDownloadQuery = false;
 
 		@Override
 		public int hashCode() {
@@ -452,6 +468,8 @@ public class StatsReport {
 					return new Pair<>(user, user);
 				case Engines:
 					return new Pair<>(engine, engine);
+				case Groups:
+					throw new KlabIllegalArgumentException("groups can only be used as filters");
 				}
 			}
 			return new Pair<>("", "");
@@ -601,19 +619,6 @@ public class StatsReport {
 		this.temporalAggregation = getResolution(frequency);
 	}
 
-//	public void filter(Target target, boolean include, String... strings) {
-//		Set<String> filters = new HashSet<>();
-//		for (String s : strings) {
-//			filters.add(s);
-//		}
-//		List<Pair<Collection<String>, Boolean>> constraints = this.filterTargets.get(target);
-//		if (constraints == null) {
-//			constraints = new ArrayList<>();
-//			this.filterTargets.put(target, constraints);
-//		}
-//		constraints.add(new Pair<>(filters, include));
-//	}
-
 	public boolean compute() {
 
 		report.clear();
@@ -689,14 +694,6 @@ public class StatsReport {
 	 */
 	private AggregationSet getAggregationSet(IParameters<String> result, long st, long en) throws SQLException {
 
-		for (Target filterTarget : filterTargets.keySet()) {
-			for (Pair<String, Boolean> filter : filterTargets.get(filterTarget)) {
-				if (!matchFilter(result, filterTarget, filter.getFirst(), filter.getSecond())) {
-					return null;
-				}
-			}
-		}
-
 		long created = result.get("created", Long.class);
 		if (created < st || created >= en) {
 			// shouldn't happen as the limits are usually in the query
@@ -726,10 +723,11 @@ public class StatsReport {
 		return ret;
 	}
 
-	private boolean matchFilter(IParameters<String> result, Target filterTarget, String match, Boolean exclude) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+	// private boolean matchFilter(IParameters<String> result, Target filterTarget,
+	// String match, Boolean exclude) {
+//		// TODO Auto-generated method stub
+//		return false;
+//	}
 
 	private Resolution.Type getResolution(Frequency f) {
 		switch (f) {
@@ -761,6 +759,7 @@ public class StatsReport {
 				+ "	contexts.principal, contexts.scale_size, contexts.space_resolution, contexts.groups, \n"
 				+ "	contexts.space_complexity, contexts.context_name,\n"
 				+ "	queries.observable as query_observable, queries.total_time_sec as query_time,\n"
+				+ " queries.start_time as query_start_time, "
 				+ "	assets.total_time_sec as time, assets.total_passes as passes, assets.name as asset,"
 				+ " assets.total_byte_size as byte_size, \n"
 				+ "	assets.outcome as outcome, assets.asset_type as asset_type, queries.id as query_id, \n"
@@ -779,6 +778,10 @@ public class StatsReport {
 			ret += "		      AND assets.outcome != 'Success'" + "\n";
 		} else if (includeSuccess && !includeErrors) {
 			ret += "		      AND assets.outcome = 'Success'" + "\n";
+		}
+
+		for (Filter filter : filters) {
+			ret += "		      " + filter.asSQLRestriction() + "\n";
 		}
 
 		/*
@@ -883,12 +886,15 @@ public class StatsReport {
 		return ret == null ? "" : ret.toString();
 	}
 
-	public void setTargetClassifier(Target target) {
-		Aggregator a = new Aggregator();
-		a.target = target;
+	public void addTargetClassifier(Target target) {
+		if (target == Target.Groups) {
+			throw new KlabIllegalArgumentException("groups can only be used as filters");
+		}
 		if (!checkAssets(target)) {
 			throw new KlabIllegalArgumentException("only one asset target can be used in a report");
 		}
+		Aggregator a = new Aggregator();
+		a.target = target;
 		this.aggregators.add(a);
 	}
 
@@ -972,11 +978,21 @@ public class StatsReport {
 	}
 
 	public void filterFor(Target target, String[] targets) {
-		List<Pair<String, Boolean>> filter = new ArrayList<>();
+		Filter filter = new Filter();
+		filter.target = target;
 		for (String t : targets) {
-			filter.add(new Pair<>(t.startsWith("!") ? t.substring(1) : t, t.startsWith("!")));
+			if (t.startsWith("!")) {
+				filter.blacklist.add(t.substring(1));
+			} else {
+				filter.whitelist.add(t.startsWith("+") ? t.substring(1) : t);
+			}
 		}
-		filterTargets.put(target, filter);
+
+		filters.add(filter);
+	}
+
+	public void reportCosts(boolean doit) {
+		this.computeCosts = doit;
 	}
 
 	public void reportErrors(boolean doit) {

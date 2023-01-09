@@ -31,6 +31,7 @@ import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessage.MessageClass;
 import org.integratedmodelling.klab.api.monitoring.IMessage.Type;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.ITicket;
@@ -774,8 +775,19 @@ public enum Klab implements IRuntimeService {
 				statisticsQueue.add(stats);
 			}
 		}
-
 	}
+	
+	public void addDownload(ISession session, IObservation obs, File out) {
+
+		INodeIdentity node = getStatisticsServer();
+		if (node != null || statisticsConsumer != null) {
+			ObservationResultStatistics stats = ActivityBuilder.encodeDownload(session, obs, out);
+			if (stats != null) {
+				statisticsQueue.add(stats);
+			}
+		}
+	}
+
 
 	public INodeIdentity getStatisticsServer() {
 		if (this.statisticsServer == null) {
@@ -796,5 +808,6 @@ public enum Klab implements IRuntimeService {
 	public List<Consumer<ISession>> getSessionInitializers() {
 		return sessionInitializers;
 	}
+
 
 }
