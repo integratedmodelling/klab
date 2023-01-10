@@ -1,18 +1,15 @@
 package org.integratedmodelling.stats.commands;
 
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IServiceCall;
-import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.cli.ICommand;
 import org.integratedmodelling.klab.api.runtime.ISession;
-import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.engine.extensions.Component;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.stats.StatsComponent;
@@ -20,15 +17,12 @@ import org.integratedmodelling.stats.reporting.StatsReport;
 import org.integratedmodelling.stats.reporting.StatsReport.Format;
 import org.integratedmodelling.stats.reporting.StatsReport.Frequency;
 import org.integratedmodelling.stats.reporting.StatsReport.Target;
-import org.springframework.web.bind.annotation.PathVariable;
 
 public class PrintReport implements ICommand {
 
 	@Override
 	public Object execute(IServiceCall call, ISession session) {
 
-		String whitelist = "";
-		String blacklist = "";
 		boolean html = call.getParameters().get("html", false);
 		boolean markdown = call.getParameters().get("markdown", false);
 		boolean errors = call.getParameters().get("errors", false);

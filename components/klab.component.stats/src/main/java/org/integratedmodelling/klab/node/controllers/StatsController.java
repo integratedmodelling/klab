@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Extensions;
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.auth.Role;
@@ -47,7 +48,9 @@ public class StatsController {
 	public void addActivity(@RequestBody ObservationResultStatistics[] activities, Principal principal) {
 		IUserIdentity user = Authentication.INSTANCE.getUserIdentity(principal);
 		Component stc = Extensions.INSTANCE.getComponent(StatsComponent.ID);
-		if (stc != null && stc.isActive()) {
+		if (stc != null && stc.isActive() && activities.length > 0) {
+			Logging.INSTANCE
+					.info("received " + activities.length + " new activities from " + activities[0].getEngineName());
 			for (ObservationResultStatistics activity : activities) {
 				stc.getImplementation(StatsComponent.class).submit(activity, user.getUsername(),
 						StringUtil.join(user.getGroups().stream().map((d) -> d.getId()).toList(), ","));
@@ -59,7 +62,6 @@ public class StatsController {
 	 * TODO provide an endpoint to obtain GeoJSON data from the database, for splash
 	 * pages and the like.
 	 */
-	
 
 	/**
 	 * Report generation endpoint. All data are also available through k.LAB

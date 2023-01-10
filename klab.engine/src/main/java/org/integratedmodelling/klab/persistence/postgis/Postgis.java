@@ -82,7 +82,7 @@ public class Postgis {
 			ok = true;
 
 		} catch (SQLException ex) {
-			System.err.println(ex.getMessage());
+			Logging.INSTANCE.error(ex);
 			ok = false;
 		}
 
@@ -138,6 +138,7 @@ public class Postgis {
 			ok = true;
 
 		} catch (SQLException ex) {
+			Logging.INSTANCE.error(ex);
 			ok = false;
 		}
 		if (ok) {
@@ -159,6 +160,7 @@ public class Postgis {
 				st.execute("CREATE EXTENSION address_standardizer;");
 
 			} catch (SQLException ex) {
+				Logging.INSTANCE.error(ex);
 				ok = false;
 			}
 		}
