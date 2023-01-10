@@ -321,7 +321,6 @@ public class StatsDatabase extends Postgis {
 	@Override
 	protected boolean createDatabase() {
 		if (super.createDatabase()) {
-
 			Logging.INSTANCE.info("Creating statistics database");
 			for (String sql : structuralStatsStatements) {
 				if (!execute(sql)) {
