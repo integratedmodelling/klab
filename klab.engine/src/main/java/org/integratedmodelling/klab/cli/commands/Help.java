@@ -50,10 +50,10 @@ public class Help implements ICommand {
 				}
 				
 				String synopsis = prototype.getSynopsis();
-				if (!pack.equals("main")) {
-					synopsis = StringUtil.leftIndent(synopsis, 3);
-				}
-				output += prototype.getName() + ":\n\n" + synopsis + "\n";
+//				if (!pack.equals("main")) {
+//					synopsis = StringUtil.leftIndent(synopsis, 3);
+//				}
+				output += prototype.getName() + ":\n" + synopsis + "\n";
 			}
 		}
 		return output;
