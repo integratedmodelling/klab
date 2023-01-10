@@ -46,7 +46,7 @@ public class Postgis {
 		this.databaseUrl = this.pgadminUrl + this.database;
 
 		boolean hasDatabase = false;
-
+		
 		try (Connection con = DriverManager.getConnection(this.databaseUrl,
 				Configuration.INSTANCE.getServiceProperty("postgres", "user"),
 				Configuration.INSTANCE.getServiceProperty("postgres", "password"));
@@ -59,6 +59,7 @@ public class Postgis {
 
 		} catch (SQLException e) {
 			// no database
+			Logging.INSTANCE.info("Database " + database + " does not exist: creating....");
 		}
 
 		boolean ok = hasDatabase;

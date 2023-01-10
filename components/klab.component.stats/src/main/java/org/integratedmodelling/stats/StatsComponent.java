@@ -25,13 +25,17 @@ public class StatsComponent {
 
 	@Initialize
 	public boolean initialize() {
+		Logging.INSTANCE.info("Initializing " + ID + " component: checking for database");
 		database = new StatsDatabase();
 		if (database.isOnline()) {
+			Logging.INSTANCE.info("Database is online");
 			final boolean isActive = Boolean.parseBoolean(Configuration.INSTANCE.getProperties()
 					.getProperty(IConfigurationService.LOCAL_STATS_ACTIVE_PROPERTY, "false"));
 			if (isActive) {
 				Klab.INSTANCE.addSessionInitializer((session) -> activateLocalReporting(session));
 			}
+		} else {
+			Logging.INSTANCE.info("Database is offline");
 		}
 		return database.isOnline();
 	}
