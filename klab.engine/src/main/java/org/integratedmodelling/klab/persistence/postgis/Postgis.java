@@ -134,10 +134,6 @@ public class Postgis {
 				Configuration.INSTANCE.getServiceProperty("postgres", "user"),
 				Configuration.INSTANCE.getServiceProperty("postgres", "password"));
 				Statement st = con.createStatement()) {
-
-			if ("klab_stats".equals(database)) {
-				st.execute("DROP DATABASE " + this.database + ";");
-			}
 			st.execute("CREATE DATABASE " + this.database + " ENCODING 'UTF-8';");
 			ok = true;
 
