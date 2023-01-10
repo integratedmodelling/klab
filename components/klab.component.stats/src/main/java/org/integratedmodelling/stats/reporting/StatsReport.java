@@ -154,7 +154,7 @@ public class StatsReport {
 
 		private String makePattern(String s, boolean partialMatch) {
 			String ret = s.replace("_", "#_").replace("$", "_").replace("*", "%");
-			return "'" + Escape.forSQL(ret) + "' ESCAPE '#'";
+			return "'" + (partialMatch ? "%" : "") + Escape.forSQL(ret) + (partialMatch ? "%" : "") + "' ESCAPE '#'";
 		}
 	}
 
