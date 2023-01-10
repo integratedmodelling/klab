@@ -990,6 +990,19 @@ public class StatsReport {
 	}
 
 	public void setSpan(String[] span) {
+		Pair<Long, Long> s = parseSpan(span);
+		this.start = s.getFirst();
+		this.end = s.getSecond();
+	}
+
+	/**
+	 * Parse a span specification for the report. Used also in other places, so
+	 * static and public.
+	 * 
+	 * @param span
+	 * @return
+	 */
+	public static Pair<Long, Long> parseSpan(String[] span) {
 
 		Resolution lag = null;
 
@@ -1050,9 +1063,7 @@ public class StatsReport {
 			throw new KlabIllegalArgumentException("bad span specification " + span);
 		}
 
-		this.start = s.getMilliseconds();
-		this.end = e.getMilliseconds();
-
+		return new Pair<>(s.getMilliseconds(), e.getMilliseconds());
 	}
 
 	public void filterFor(Target target, String[] targets) {

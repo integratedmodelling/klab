@@ -1,8 +1,6 @@
 package org.integratedmodelling.klab.node.controllers;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.nio.charset.Charset;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +23,6 @@ import org.integratedmodelling.stats.reporting.StatsReport.Frequency;
 import org.integratedmodelling.stats.reporting.StatsReport.Target;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -57,6 +54,12 @@ public class StatsController {
 			}
 		}
 	}
+
+	/*
+	 * TODO provide an endpoint to obtain GeoJSON data from the database, for splash
+	 * pages and the like.
+	 */
+	
 
 	/**
 	 * Report generation endpoint. All data are also available through k.LAB
@@ -121,12 +124,11 @@ public class StatsController {
 	 * 
 	 * @param principal
 	 * @return the report
-	 * @throws UnsupportedEncodingException 
+	 * @throws UnsupportedEncodingException
 	 */
 	@GetMapping(value = API.STATS.STATS_REPORT, produces = { "text/html", "text/plain", "text/markdown" })
 	public String createReport(Principal principal, @RequestParam String targets,
-			@RequestParam(required = false) String span,
-			@RequestParam(required = false) boolean errors,
+			@RequestParam(required = false) String span, @RequestParam(required = false) boolean errors,
 			@RequestParam(required = false) String users, @RequestParam(required = false) String groups,
 			@RequestParam(required = false) String apps, @RequestParam(required = false) String engines,
 			@RequestParam(required = false) String resources, @RequestParam(required = false) String models,
@@ -138,7 +140,7 @@ public class StatsController {
 		Component stc = Extensions.INSTANCE.getComponent(StatsComponent.ID);
 		if (stc == null || !stc.isActive()) {
 			throw new KlabIllegalStateException("statistics component is not configured or not installed");
-		}	
+		}
 		StatsComponent stats = stc.getImplementation(StatsComponent.class);
 		List<Object> options = new ArrayList<>();
 		for (String target : targets.split(",")) {

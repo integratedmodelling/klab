@@ -23,8 +23,18 @@ import org.integratedmodelling.stats.StatsComponent;
  * Provides a URN pattern to access usage/observation events, heatmaps, contexts
  * and other queries to the stats system.
  * 
+ * Catalog names (type of output) can be:
+ * <dl>
+ * <dt>events[.{regions|sites}</dt><dd>can</dd>
+ * <dt>objects[.{regions|sites}</dt><dd>can</dd>
+ * <dt>heatmap</dt><dd>can</dd>
+ * </dl>
  * 
- * 
+ * Resource ID (statistic to use to create the outputs) can be:
+ * <dl>
+ * <dt>zzz</dt><dd>yyy</dd>
+ * </dl>
+
  * @author Ferd
  *
  */
@@ -80,7 +90,6 @@ public class StatsAdapter implements IUrnAdapter {
 	@Override
 	public void encodeData(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope scope) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override

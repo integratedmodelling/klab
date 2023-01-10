@@ -1146,6 +1146,11 @@ public interface API {
 
         public static final String STATS_REPORT = STATS_BASE + "/report";
 
+        /*
+         * public anonymous endpoints for web sites or quick monitoring
+         */
+        public static final String GEOJSON_EVENTS = "/public/stats/geojson/events";
+        
         public interface PARAMETERS {
             public static final String TYPE = "type";
 
