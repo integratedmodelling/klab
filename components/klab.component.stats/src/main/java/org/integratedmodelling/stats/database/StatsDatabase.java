@@ -256,7 +256,7 @@ public class StatsDatabase extends Postgis {
 	public String getGeoJSONObservations(String span, boolean polygons, boolean errors) {
 
 		String restrictions = "";
-		if (span == null || span.isEmpty()) {
+		if (span != null && !span.isEmpty()) {
 			Pair<Long, Long> s = StatsReport.parseSpan(span.split(","));
 			restrictions += "AND contexts.created >= " + s.getFirst() + " AND context.created < " + s.getSecond();
 		}
@@ -269,7 +269,7 @@ public class StatsDatabase extends Postgis {
 
 		String query = GEOJSON_OBSERVATION_COLLECTION.replace("{RESTRICTIONS}", restrictions);
 		if (polygons) {
-			query.replace("ST_Centroid(contexts.geom)", "context.geom");
+			query.replace("ST_Centroid(contexts.geom)", "contexts.geom");
 		}
 
 		AtomicReference<String> ret = new AtomicReference<>(null);

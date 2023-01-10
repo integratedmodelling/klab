@@ -483,4 +483,15 @@ public enum Authentication implements IAuthenticationService {
 				"no adapter for the principal identity has been installed in the Authentication instance");
 	}
 
+	public boolean hasEitherGroup(IUserIdentity user, String... groups) {
+		for (Group g : user.getGroups()) {
+			for (String grp : groups) {
+				if (g.getId().equals(grp)) {
+					return true;
+				}
+			}
+		}
+		return false;	
+	}
+
 }
