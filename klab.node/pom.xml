@@ -24,6 +24,7 @@
 						<image>${env.REGISTRY}/${env.NODE_CONTAINER}</image>
 						<tags>
 							<tag>${env.TAG}</tag>
+							<tag>${env.CURRENT_COMMIT}</tag>
 						</tags>
 						<auth>
 							<username>${env.USERNAME}</username>

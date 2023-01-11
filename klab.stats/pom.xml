@@ -32,6 +32,7 @@
 						<image>${env.REGISTRY}/${env.STAT_CONTAINER}</image>
 						<tags>
 							<tag>${env.TAG}</tag>
+							<tag>${env.CURRENT_COMMIT}</tag>
 						</tags>
 						<auth>
 							<username>${env.USERNAME}</username>
