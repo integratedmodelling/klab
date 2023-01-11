@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.klab.Authentication;
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.auth.IPartnerIdentity;
@@ -69,6 +70,7 @@ public enum NodeAuthenticationManager {
 	private String nodeName;
 	private String hubName;
 	private INodeIdentity node;
+	long wtfErrors = 0;
 
 	NodeAuthenticationManager() {
 		Authentication.INSTANCE.setPrincipalTranslator((principal) -> {
@@ -257,11 +259,18 @@ public enum NodeAuthenticationManager {
 		} catch (MalformedClaimException | InvalidJwtException e) {
 			// TODO see if we should reauthenticate and if so, try that before throwing an
 			// authorization exception
-			// Logging.INSTANCE.error("WTF", e);
+			if ((wtfErrors % 100) == 0) {
+				Logging.INSTANCE.error("WTF (" + wtfErrors + " errors)", e);
+			}
+			wtfErrors++;
 		} catch (Exception e) {
 			// it was a JWT token, but some other exception happened.
-			// Logging.INSTANCE.error("WTF", e);
+			if ((wtfErrors % 100) == 0) {
+				Logging.INSTANCE.error("WTF (" + wtfErrors + " errors)", e);
+			}
+			wtfErrors++;
 		}
+		
 		return result;
 	}
 
