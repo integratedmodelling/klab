@@ -110,7 +110,7 @@
 		<tycho-version>2.3.0</tycho-version>
 		<xtextVersion>2.25.0</xtextVersion>
 		<mweVersion>2.12.1</mweVersion>
-		<googleJibVersion>3.1.4</googleJibVersion>
+		<googleJibVersion>3.3.1</googleJibVersion>
 
 		<!-- the five below go together. Never change one without checking the
 			others. Spring security latest is currently requiring 5.0.4, implying boot
