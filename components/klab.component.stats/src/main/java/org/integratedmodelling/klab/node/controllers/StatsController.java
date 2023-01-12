@@ -49,8 +49,8 @@ public class StatsController {
 		IUserIdentity user = Authentication.INSTANCE.getUserIdentity(principal);
 		Component stc = Extensions.INSTANCE.getComponent(StatsComponent.ID);
 		if (stc != null && stc.isActive() && activities.length > 0) {
-			Logging.INSTANCE
-					.info("received " + activities.length + " new activities from " + activities[0].getEngineName());
+			Logging.INSTANCE.info("received " + activities.length + " new activities from " + user.getUsername()
+					+ " at " + activities[0].getEngineName());
 			for (ObservationResultStatistics activity : activities) {
 				stc.getImplementation(StatsComponent.class).submit(activity, user.getUsername(),
 						StringUtil.join(user.getGroups().stream().map((d) -> d.getId()).toList(), ","));
