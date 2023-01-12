@@ -546,6 +546,7 @@ public class StatsReport {
 
 	class Data {
 
+		long start = 0, end = 0;
 		boolean error = false;
 		int count = 0;
 		boolean export = false;
@@ -559,9 +560,14 @@ public class StatsReport {
 		double totalComplexity;
 		String created;
 		Aggregator aggregator;
-		
+
 		// to compute aggregated observation time avoiding double counting
 		Set<String> observations = new HashSet<>();
+
+		public Data(long start, long end) {
+			this.start = start;
+			this.end = end;
+		}
 
 		/**
 		 * Each data bag will see all assets connected to a particular key, i.e. an
@@ -585,11 +591,9 @@ public class StatsReport {
 				error = true;
 			}
 
-			
 			// substituted every time but the type will be consistent
 			this.aggregator = aggregator;
-			boolean accumulateObservations = false;
-			
+
 			if (aggregator.target != null) {
 				if (aggregator.target.isAsset()) {
 					totalTime += result.get("time", Number.class).doubleValue();
@@ -606,11 +610,19 @@ public class StatsReport {
 					}
 				} else if (aggregator.target == Target.Contexts) {
 
-					accumulateObservations = true;
 					created = TimeInstant.create(result.get("created", Number.class).longValue()).toString();
 
 					/*
-					 * TODO sum up values for each query
+					 * sum up values for each query.
+					 */
+					String qid = result.get("context_id", String.class) + "_" + result.get("query_id", Long.class);
+					if (!observations.contains(qid)) {
+						totalTime += result.get("query_time", Number.class).doubleValue();
+						observations.add(qid);
+					}
+
+					/*
+					 * complexity 
 					 */
 					double complexity = result.get("space_complexity", Number.class).doubleValue();
 					complexity /= 5.0;
@@ -618,21 +630,9 @@ public class StatsReport {
 						complexity = 0;
 					}
 					totalComplexity += complexity;
-				} else if (aggregator.target == Target.Users) {
-					accumulateObservations = true;
-				} else if (aggregator.target == Target.Engines) {
-					accumulateObservations = true;
-				}
+				} 
 			}
 
-			if (accumulateObservations) {
-				String qid = result.get("context_id", String.class) + "_" + result.get("query_id", Long.class);
-				if (!observations.contains(qid)) {
-					totalTime += result.get("query_time", Number.class).doubleValue();
-					observations.add(qid);
-				}
-			}
-			
 			if (aggregator.target != Target.Downloads) {
 				totalSize += result.get("scale_size", Number.class).doubleValue();
 			}
@@ -968,7 +968,7 @@ public class StatsReport {
 
 			Data bag = data.get(key);
 			if (bag == null) {
-				bag = new Data();
+				bag = new Data(set.start, set.end);
 				data.put(key, bag);
 			}
 
