@@ -141,8 +141,8 @@ public class StatsReport {
 					ret.append(field + " LIKE " + makePattern(s, partialMatch));
 				}
 				for (String s : blacklist) {
-					ret.append(ret.length() == 0 ? "" : " ");
-					ret.append("OR " + field + " NOT LIKE " + makePattern(s, partialMatch));
+					ret.append(ret.length() == 0 ? "" : " OR ");
+					ret.append(field + " NOT LIKE " + makePattern(s, partialMatch));
 				}
 				if (ret.length() > 0) {
 					return "AND (" + ret + ")";
