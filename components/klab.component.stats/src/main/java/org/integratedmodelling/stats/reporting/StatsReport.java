@@ -559,6 +559,9 @@ public class StatsReport {
 		double totalComplexity;
 		String created;
 		Aggregator aggregator;
+		
+		// to compute aggregated observation time avoiding double counting
+		Set<String> observations = new HashSet<>();
 
 		/**
 		 * Each data bag will see all assets connected to a particular key, i.e. an
@@ -582,9 +585,11 @@ public class StatsReport {
 				error = true;
 			}
 
+			
 			// substituted every time but the type will be consistent
 			this.aggregator = aggregator;
-
+			boolean accumulateObservations = false;
+			
 			if (aggregator.target != null) {
 				if (aggregator.target.isAsset()) {
 					totalTime += result.get("time", Number.class).doubleValue();
@@ -601,6 +606,7 @@ public class StatsReport {
 					}
 				} else if (aggregator.target == Target.Contexts) {
 
+					accumulateObservations = true;
 					created = TimeInstant.create(result.get("created", Number.class).longValue()).toString();
 
 					/*
@@ -612,9 +618,21 @@ public class StatsReport {
 						complexity = 0;
 					}
 					totalComplexity += complexity;
+				} else if (aggregator.target == Target.Users) {
+					accumulateObservations = true;
+				} else if (aggregator.target == Target.Engines) {
+					accumulateObservations = true;
 				}
 			}
 
+			if (accumulateObservations) {
+				String qid = result.get("context_id", String.class) + "_" + result.get("query_id", Long.class);
+				if (!observations.contains(qid)) {
+					totalTime += result.get("query_time", Number.class).doubleValue();
+					observations.add(qid);
+				}
+			}
+			
 			if (aggregator.target != Target.Downloads) {
 				totalSize += result.get("scale_size", Number.class).doubleValue();
 			}
@@ -642,6 +660,8 @@ public class StatsReport {
 							+ (export ? " export "
 									: (count + " assets; total time = " + NumberFormat.getInstance().format(totalTime)))
 							+ "] ";
+				} else if (aggregator.target == Target.Users) {
+					return "[total observation time = " + NumberFormat.getInstance().format(totalTime) + "]";
 				}
 			}
 
