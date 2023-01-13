@@ -138,7 +138,10 @@ public class StatsController {
 			@RequestParam(required = false) boolean cost) throws UnsupportedEncodingException {
 
 		IUserIdentity user = Authentication.INSTANCE.getUserIdentity(principal);
-		boolean adminOrAuditor = Authentication.INSTANCE.hasEitherGroup(user, "ADMIN", "AUDITOR");
+		// remove after testing
+		Logging.INSTANCE.info("Report requested by " + user.getUsername());
+		boolean adminOrAuditor = true;// FIXME temporarily disabled. Should check for ROLE_ADMIN, not groups. Maybe leave AUDITORS which must\
+				// also be added to the node certificate. Authentication.INSTANCE.hasEitherGroup(user, "ADMIN", "AUDITOR");
 		Component stc = Extensions.INSTANCE.getComponent(StatsComponent.ID);
 		if (stc == null || !stc.isActive()) {
 			throw new KlabIllegalStateException("statistics component is not configured or not installed");
