@@ -770,6 +770,12 @@ public class StatsReport {
 		}
 
 		db.scan(getQuery(st.get(), en.get()), (result) -> {
+		    
+		    // patch for misconfiguration
+		    if (result.get("engine_name") == null) {
+		        result.put("engine_name", "unknown");
+		    }
+		    
 			try {
 				AggregationSet set = getAggregationSet(result, st.get(), en.get());
 				if (set != null) {

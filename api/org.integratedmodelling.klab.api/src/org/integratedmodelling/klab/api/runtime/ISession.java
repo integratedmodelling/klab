@@ -19,11 +19,13 @@ import java.util.concurrent.Future;
 
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
+import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.engine.IEngine;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IObserver;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.runtime.rest.IClient;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
@@ -60,7 +62,6 @@ public interface ISession extends IEngineSessionIdentity, Closeable, IObserver<I
 
         void onClose(ISession session);
     }
-
 
     /**
      * Observe a new context of the passed type, returning an asynchronous future. This is the
@@ -133,6 +134,15 @@ public interface ISession extends IEngineSessionIdentity, Closeable, IObserver<I
      * Interrupt all observation tasks that are running at the moment of calling.
      */
     void interruptAllTasks();
+
+    /**
+     * Get a client for the passed node that will communicate with the node using our user's
+     * credentials.
+     * 
+     * @param node
+     * @return
+     */
+    IClient getNodeClient(INodeIdentity node);
 
     /**
      * 
