@@ -771,7 +771,7 @@ public class StatsReport {
 
 		db.scan(getQuery(st.get(), en.get()), (result) -> {
 		    
-		    // patch for misconfiguration
+		    // patch for misconfiguration in test engines
 		    if (result.get("engine_type") == null) {
 		        result.put("engine_type", "unknown");
 		    }
