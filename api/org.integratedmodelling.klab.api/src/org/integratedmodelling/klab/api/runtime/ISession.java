@@ -136,15 +136,6 @@ public interface ISession extends IEngineSessionIdentity, Closeable, IObserver<I
     void interruptAllTasks();
 
     /**
-     * Get a client for the passed node that will communicate with the node using our user's
-     * credentials.
-     * 
-     * @param node
-     * @return
-     */
-    IClient getNodeClient(INodeIdentity node);
-
-    /**
      * 
      * @return
      */

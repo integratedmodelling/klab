@@ -82,7 +82,7 @@ public class Hub implements IServerIdentity {
     @Override
     public Client getClient() {
 		if (this.client == null) {
-			this.client = Client.create().with(this);
+			this.client = Client.create().onBehalfOf(this);
 			this.client.setUrl(this.urls.toArray(new String[this.urls.size()]));
 		}
 		return this.client;
