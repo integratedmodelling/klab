@@ -215,7 +215,7 @@ public class ObserveInContextTask extends AbstractTask<IArtifact> {
                             notifyEnd();
                             ctx.getStatistics().success();
                             
-                            Klab.INSTANCE.addActivity(scope.getSession(), ctx.getStatistics());
+                            Klab.INSTANCE.addActivity(scope.getSession().getUser(), ctx.getStatistics());
                             
                         }
 
