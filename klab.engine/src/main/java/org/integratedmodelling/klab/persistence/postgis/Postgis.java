@@ -38,6 +38,10 @@ public class Postgis {
 
 	protected Postgis(String database) {
 
+	    if (database == null) {
+	        database = "klab";
+	    }
+	    
 		this.database = database;
 
 		this.pgadminUrl = "jdbc:postgresql://" + Configuration.INSTANCE.getServiceProperty("postgres", "host");
@@ -59,6 +63,7 @@ public class Postgis {
 
 		} catch (SQLException e) {
 			// no database
+			Logging.INSTANCE.info("Database " + database + " does not exist: creating....");
 		}
 
 		boolean ok = hasDatabase;
@@ -82,7 +87,7 @@ public class Postgis {
 			ok = true;
 
 		} catch (SQLException ex) {
-			System.err.println(ex.getMessage());
+			Logging.INSTANCE.error(ex);
 			ok = false;
 		}
 
@@ -133,11 +138,11 @@ public class Postgis {
 				Configuration.INSTANCE.getServiceProperty("postgres", "user"),
 				Configuration.INSTANCE.getServiceProperty("postgres", "password"));
 				Statement st = con.createStatement()) {
-
 			st.execute("CREATE DATABASE " + this.database + " ENCODING 'UTF-8';");
 			ok = true;
 
 		} catch (SQLException ex) {
+			Logging.INSTANCE.error(ex);
 			ok = false;
 		}
 		if (ok) {
@@ -149,16 +154,18 @@ public class Postgis {
 				st.execute("CREATE EXTENSION postgis;");
 				st.execute("CREATE EXTENSION postgis_topology;");
 				st.execute("CREATE EXTENSION fuzzystrmatch;");
-				st.execute("CREATE EXTENSION pointcloud;");
-				st.execute("CREATE EXTENSION pointcloud_postgis;");
+//				st.execute("CREATE EXTENSION pointcloud;");
+//				st.execute("CREATE EXTENSION pointcloud_postgis;");
 				st.execute("CREATE EXTENSION pgrouting;");
 				st.execute("CREATE EXTENSION postgis_raster;");
 				st.execute("CREATE EXTENSION postgis_sfcgal;");
-				st.execute("CREATE EXTENSION postgis_tiger_geocoder;");
+//				st.execute("CREATE EXTENSION postgis_tiger_geocoder;");
 				st.execute("CREATE EXTENSION ogr_fdw;");
-				st.execute("CREATE EXTENSION address_standardizer;");
+//				st.execute("CREATE EXTENSION address_standardizer;");
 
 			} catch (SQLException ex) {
+				Logging.INSTANCE.error(ex);
+				removeDatabase();
 				ok = false;
 			}
 		}
@@ -343,7 +350,6 @@ public class Postgis {
 		return null;
 	}
 
-
 	public void removeFeatures(Urn urn) {
 
 		String table = urn.getNamespace() + "_" + urn.getResourceId();
@@ -375,6 +381,7 @@ public class Postgis {
 			throw new KlabStorageException(t.getMessage());
 		}
 	}
+
 	public String getPort() {
 		return Configuration.INSTANCE.getServiceProperty("postgres", "port");
 	}
@@ -393,6 +400,23 @@ public class Postgis {
 
 	public String getUrl() {
 		return this.databaseUrl;
+	}
+
+	public boolean removeDatabase() {
+		boolean ok = false;
+		try (Connection con = DriverManager.getConnection(this.pgadminUrl,
+				Configuration.INSTANCE.getServiceProperty("postgres", "user"),
+				Configuration.INSTANCE.getServiceProperty("postgres", "password"));
+				Statement st = con.createStatement()) {
+
+			st.execute("DROP DATABASE " + this.database + ";");
+
+			ok = true;
+
+		} catch (SQLException ex) {
+			Logging.INSTANCE.error(ex);
+		}
+		return ok;
 	}
 
 	public boolean clearDatabase() {
@@ -414,9 +438,10 @@ public class Postgis {
 		}
 		return ok;
 	}
-	
+
 	/**
 	 * Same as clearDatabase but also disconnect any users and terminate backend.
+	 * 
 	 * @return
 	 */
 	public boolean clear() {

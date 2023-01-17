@@ -31,6 +31,7 @@ import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessage.MessageClass;
 import org.integratedmodelling.klab.api.monitoring.IMessage.Type;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.ITicket;
@@ -177,11 +178,12 @@ public enum Klab implements IRuntimeService {
 					for (int i = payload.size() - 1; i >= 0; i--) {
 						if (statisticsConsumer != null) {
 							statisticsConsumer.accept(payload.get(i));
-						} else if (node != null && !node.getClient().put(API.STATS.STATS_ADD, payload)) {
-							/*
-							 * put the payload back. May need to stop if things become big.
-							 */
-							statisticsQueue.offer(payload.get(i));
+						}
+					}
+					if (node != null && !node.getClient().put(API.STATS.STATS_ADD, payload)) {
+						/* put this back in the queue - TODO verify if this is smart or not */
+						for (ObservationResultStatistics obs : payload) {
+							statisticsQueue.offer(obs);
 						}
 					}
 				}
@@ -773,10 +775,21 @@ public enum Klab implements IRuntimeService {
 				statisticsQueue.add(stats);
 			}
 		}
+	}
+	
+	public void addDownload(ISession session, IObservation obs, File out) {
 
+		INodeIdentity node = getStatisticsServer();
+		if (node != null || statisticsConsumer != null) {
+			ObservationResultStatistics stats = ActivityBuilder.encodeDownload(session, obs, out);
+			if (stats != null) {
+				statisticsQueue.add(stats);
+			}
+		}
 	}
 
-	INodeIdentity getStatisticsServer() {
+
+	public INodeIdentity getStatisticsServer() {
 		if (this.statisticsServer == null) {
 			for (INodeIdentity node : Network.INSTANCE.getNodesWithAdapter(STATS_SERVICE_ADAPTER_ID)) {
 				// TODO there should be just one, or we should be able to pick the one in our
@@ -787,7 +800,7 @@ public enum Klab implements IRuntimeService {
 		}
 		return this.statisticsServer;
 	}
-	
+
 	public void addSessionInitializer(Consumer<ISession> initializer) {
 		this.sessionInitializers.add(initializer);
 	}
@@ -795,5 +808,6 @@ public enum Klab implements IRuntimeService {
 	public List<Consumer<ISession>> getSessionInitializers() {
 		return sessionInitializers;
 	}
+
 
 }

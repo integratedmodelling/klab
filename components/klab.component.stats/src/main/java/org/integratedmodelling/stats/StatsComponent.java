@@ -7,6 +7,8 @@ import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.extensions.Component;
 import org.integratedmodelling.klab.api.extensions.component.Initialize;
 import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.api.services.IConfigurationService;
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.rest.ObservationResultStatistics;
 import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.stats.database.StatsDatabase;
@@ -19,20 +21,21 @@ public class StatsComponent {
 
 	public static final String ID = "org.integratedmodelling.statistics";
 
-	public static final String LOCAL_STATS_ACTIVE_PROPERTY = "org.integratedmodelling.stats.active";
-	public static final String LOCAL_STATS_PRIVATE_PROPERTY = "org.integratedmodelling.stats.private";
-
 	StatsDatabase database;
 
 	@Initialize
 	public boolean initialize() {
+		Logging.INSTANCE.info("Initializing " + ID + " component: checking for database");
 		database = new StatsDatabase();
 		if (database.isOnline()) {
+			Logging.INSTANCE.info("Database is online");
 			final boolean isActive = Boolean.parseBoolean(Configuration.INSTANCE.getProperties()
-					.getProperty(StatsComponent.LOCAL_STATS_ACTIVE_PROPERTY, "false"));
+					.getProperty(IConfigurationService.LOCAL_STATS_ACTIVE_PROPERTY, "false"));
 			if (isActive) {
 				Klab.INSTANCE.addSessionInitializer((session) -> activateLocalReporting(session));
 			}
+		} else {
+			Logging.INSTANCE.info("Database is offline");
 		}
 		return database.isOnline();
 	}
@@ -50,13 +53,14 @@ public class StatsComponent {
 	}
 
 	/**
-	 * TODO list option keys and types
+	 * Targets are either {@link Target} or {@link Frequency}. All other options are
+	 * set on the resulting report before {@link StatsReport#compile()} is called.
 	 * 
 	 * @param target
-	 * @param options
+	 * @param targets
 	 * @return
 	 */
-	public StatsReport createReport(Object... options) {
+	public StatsReport createReport(Object... targets) {
 
 		if (!database.isOnline()) {
 			return null;
@@ -64,17 +68,15 @@ public class StatsComponent {
 
 		StatsReport ret = new StatsReport();
 
-		if (options != null) {
-			for (int i = 0; i < options.length; i++) {
-				if ("start".equals(options[i])) {
-					ret.setReportingStart((Long) options[++i]);
-				} else if ("end".equals(options[i])) {
-					ret.setReportingEnd((Long) options[++i]);
-				} else if (options[i] instanceof Target) {
-					ret.setTargetClassifier((Target) options[i]);
-				} else if (options[i] instanceof Frequency) {
-					ret.setAggregationInterval((Frequency) options[i], 1);
-				} // TODO handle white/blacklists
+		if (targets != null) {
+			for (int i = 0; i < targets.length; i++) {
+				if (targets[i] instanceof Target) {
+					ret.addTargetClassifier((Target) targets[i]);
+				} else if (targets[i] instanceof Frequency) {
+					ret.setAggregationInterval((Frequency) targets[i], 1);
+				} else {
+					throw new KlabIllegalArgumentException("illegal report target " + targets[i]);
+				}
 			}
 		}
 
@@ -94,9 +96,6 @@ public class StatsComponent {
 	}
 
 	public void activateLocalReporting(ISession session) {
-
-		final boolean isPrivate = Boolean.parseBoolean(Configuration.INSTANCE.getProperties()
-				.getProperty(StatsComponent.LOCAL_STATS_PRIVATE_PROPERTY, "false"));
 
 		Klab.INSTANCE.setStatisticsLocalHandler((obs) -> {
 			submit(obs, session.getUser().getUsername(),

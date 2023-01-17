@@ -14,6 +14,8 @@ import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.h2.util.geometry.GeoJsonUtils;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.Roles;
@@ -344,7 +346,7 @@ public class EngineViewController {
 
             }
         }
-
+        
         if (obs instanceof IDirectObservation) {
 
             if (format == GeometryType.NETWORK  && ((IDirectObservation)obs).getOriginatingPattern() instanceof INetwork) {
@@ -362,12 +364,10 @@ public class EngineViewController {
             // TODO support explicit adapter
             out = Observations.INSTANCE.export(obs, loc, out, outputFormat, null, session.getMonitor());
             if (out != null) {	
-            	ActivityBuilder stats = ((IRuntimeScope)obs.getScope()).getStatistics().forTarget(out, obs.getObservable().getDefinition());
                 response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
                 try (InputStream in = new FileInputStream(out)) {
                     IOUtils.copy(in, response.getOutputStream());
                 }
-            	stats.success();
             	FileUtils.deleteQuietly(out);
             }
 

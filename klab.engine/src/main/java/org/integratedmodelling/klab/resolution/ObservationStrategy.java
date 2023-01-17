@@ -438,21 +438,24 @@ public class ObservationStrategy {
 				ret.add(alternative);
 			}
 
-		} else if (target.is(Type.CHANGE)) {
-
-			/*
+		} /* TODO reintegrate - the 'else' is wrong because it will exclude other basic situations handled later
+		
+			 * else if (target.is(Type.CHANGE)) {
+			 * 
+			 * 
 			 * if the change is a quantifiable, we could compute it also by integrating the
 			 * change rate of the same.
-			 */
-
-		} else if (target.is(Type.CHANGED)) {
-
-			/*
+			 * 
+			 * 
+			 * } else if (target.is(Type.CHANGED)) {
+			 * 
+			 * 
 			 * change events for a quality can be built using an internal contextualizer if
 			 * the change is resolved.
+			 * 
+			 * 
+			 * }
 			 */
-
-		}
 		/**
 		 * else if (target.getType().is(Type.PREDICATE) && directInherent == null &&
 		 * scope.getContext() != null) {

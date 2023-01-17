@@ -8,36 +8,65 @@
 @namespace report
 
 void print
-	"Print a usage report with the specified options. Use the optional keywords
-	 {daily|monthly|weekly|yearly}, users, {models|resources|observables|observations}
-	 to define the aggregation type and order. Use {year|day|month|week} to specify the
-	 temporal arc of the report."
+
+	"Print a usage report with the specified options. Use one or more of the target keywords
+	 [{hourly|daily|monthly|weekly|yearly}, users, contexts, apps, engines, observations,
+	 {models|resources|observables|operations|downloads}] as arguments to define the order 
+	 of aggregation."
 {
 
-	optional text user 
+	optional text users
 		"Select a specific user or comma-separated list thereof. Use !user to exclude the user" 
 
-	optional text group 
+	optional text groups
 		"Select a specific group or comma-separated list thereof. Use !group to exclude the group" 
 
-	optional text app
-		"Select a specific app or comma-separated list thereof. Use !app to exclude it"
+	optional text span 
+		"Two comma-separated long integers referring to the beginning and end of
+	     the reporting period, specified in milliseconds since epoch (UTC). Default is
+	     the entire span of the available statistics, only available to
+	     administrators. If only one number is given, it is interpreted as the
+	     starting time. Alternatively, the span can be given as one of
+	     {hour(s)|day(s)|week(s)|month(s)|year(s)}, potentially preceded by an integer multiplier
+	     such as in '2,weeks' to select events in one or more specific periods ending 
+	     with the period containing the current date." 
 
-	optional text model
-		"Select a specific model URN or comma-separated list thereof. Use !model to exclude it"
+	optional text apps
+		"Select a specific app or comma-separated list thereof. Use !app to exclude it. Wildcard
+		 characters * (0 or more characters) and $ (one character) are accepted."
 
-	optional text resource
-		"Select a specific resource URN or comma-separated list thereof. Use !urn to exclude it"
+	optional text 'models'
+		"Select a specific model URN or comma-separated list thereof. Use !model to exclude it. Wildcard
+		 characters * (0 or more characters) and $ (one character) are accepted."
 
-	optional text observable
+	optional text 'resources'
+		"Select a specific resource URN or comma-separated list thereof. Use !urn to exclude it. Wildcard
+		 characters * (0 or more characters) and $ (one character) are accepted."
+
+	optional text engines
+		"Select a specific engine id (use 'local' for a local engine) or comma-separated list thereof.
+		 Use !engine to exclude it. Wildcard
+		 characters * (0 or more characters) and $ (one character) are accepted."
+
+	optional text 'observables'
 		"Select a specific observable or comma-separated list thereof. The string will match the concept definition. 
-		 Use !concept to exclude it"
+		 Use !concept to exclude it. Wildcard
+		 characters * (0 or more characters) and $ (one character) are accepted."
+	
+	optional boolean errors
+		"If true, report errors, otherwise report successful observations."
+
+	optional boolean cost
+		"If true, report costs associated with contexts. Must be administrator and only works on remote servers."
 	
 	optional boolean html 
-		"Output HTML instead of the default Markdown. If the output file is not specified, launch the local browser."
+		"Output HTML instead of the default text. If the output file is not specified, launch the local browser."
+
+	optional boolean markdown 
+		"Output Markdown instead of the default text."
 
 	optional text output
-		"File to write the output to (output on console by default for Markdown, in local browser if html)"
+		"File to write the output to (default output is console for text/Markdown, local browser if html)"
 
 	class org.integratedmodelling.stats.commands.PrintReport
 }

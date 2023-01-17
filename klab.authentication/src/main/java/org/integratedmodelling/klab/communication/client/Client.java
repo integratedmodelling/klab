@@ -561,7 +561,13 @@ public class Client extends RestTemplate implements IClient {
 			for (int i = 0; i < parameters.length; i++) {
 				String key = parameters[i].toString();
 				String nakedKey = key;
-				String val = parameters[++i].toString();
+				Object nextPar = parameters[++i];
+				String val = nextPar == null ? null : nextPar.toString();
+
+				if (val == null) {
+					continue;
+				}
+				
 				if (!(key.startsWith("{") && key.endsWith("}"))) {
 					key = "{" + key + "}";
 				} else {
@@ -570,7 +576,7 @@ public class Client extends RestTemplate implements IClient {
 				if (url.contains(key)) {
 					url = url.replace(key, val);
 				} else {
-					params += (params.isEmpty() ? "" : "&") + nakedKey + "=" + Escape.forURL(val);
+					params += (params.isEmpty() ? "" : "&") + nakedKey + "=" + /* Escape.forURL( */val/* ) */;
 				}
 			}
 			if (!params.isEmpty()) {
@@ -698,8 +704,30 @@ public class Client extends RestTemplate implements IClient {
 
     @Override
     public boolean put(String url, Object data) {
-        // TODO Auto-generated method stub
-        return false;
+
+		url = checkEndpoint(url);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Accept", "application/json");
+		if (data != null) {
+			headers.setContentType(MediaType.APPLICATION_JSON);
+		}
+		headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
+		if (authToken != null) {
+			headers.set(HttpHeaders.AUTHORIZATION, authToken);
+		}
+
+		try {
+
+			super.put(url, data);
+			return true;
+			
+		} catch (RestClientException e) {
+			System.out.println("REST  exception: " + e.getMessage());
+		    dumpRequest(url, headers, data);
+		    return false;
+		}
+
     }
 	
 }

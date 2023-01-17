@@ -2,6 +2,7 @@ package org.integratedmodelling.stats.database;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Version;
@@ -12,7 +13,9 @@ import org.integratedmodelling.klab.rest.ObservationAssetStatistics.Type;
 import org.integratedmodelling.klab.rest.ObservationResultStatistics;
 import org.integratedmodelling.klab.rest.ScaleStatistics;
 import org.integratedmodelling.klab.utils.Escape;
+import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.StringUtil;
+import org.integratedmodelling.stats.reporting.StatsReport;
 
 public class StatsDatabase extends Postgis {
 
@@ -28,6 +31,30 @@ public class StatsDatabase extends Postgis {
 			+ "	WHERE assets.outcome = 'Success' AND contexts.id = assets.context_id \n"
 			+ "	GROUP BY assets.name, assets.asset_type\n"
 			+ "	ORDER BY assets.asset_type, unit_cost;";
+	
+	/*
+	 * This one outputs a beautiful GeoJSON feature collection of all observations - add a template for 
+	 * other conditions and possibly another for assets. Remove the ST_Centroid to obtain bounding boxes.
+	 */
+	private static final String GEOJSON_OBSERVATION_COLLECTION = 
+			"SELECT\n"
+			+ "  json_build_object(\n"
+			+ "    'type', 'FeatureCollection',\n"
+			+ "    'features', json_agg(ST_AsGeoJSON(t.*)::json)\n"
+			+ "  ) as json\n"
+			+ "FROM (\n"
+			+ "  SELECT\n"
+			+ "	   queries.observable as observation,\n"
+			+ "    coalesce(contexts.application, 'k.Explorer') as application,\n"
+			+ "    contexts.scale_size,\n"
+			+ "	   queries.outcome,\n"
+			+ "	   ST_Centroid(contexts.geom)\n"
+			+ "  FROM\n"
+			+ "    contexts, queries\n"
+			+ "  WHERE \n"
+			+ "	    contexts.id = queries.context_id\n"
+			+ "     {RESTRICTIONS}" // AND template here
+			+ ") AS t";
 	
 	/*
 	 * one submission at a time to ensure referential integrity of
@@ -63,6 +90,11 @@ public class StatsDatabase extends Postgis {
             + "   context_name VARCHAR(512),\n"
             + "   outcome status\n"
             + ");",
+            
+            /*
+             * the query table also hosts downloads of previously computed observations, with 
+             * is_download = true and dataflow_complexity = download size in bytes
+             */
             "CREATE TABLE queries(\n"
             + "   id INTEGER NOT NULL,\n"
             + "   context_id CHAR(64) NOT NULL,\n"
@@ -73,10 +105,12 @@ public class StatsDatabase extends Postgis {
             + "   resolved_coverage FLOAT,\n"
             + "   outcome status,\n"
             + "   dataflow_id VARCHAR(512),\n"              // only collected for special cases
+            + "   start_time BIGINT,\n" 
+            + "   is_download BOOLEAN,\n" 
             + "   PRIMARY KEY(id, context_id)\n"
             + ");",
             "DROP TYPE IF EXISTS asset_type CASCADE;", // shouldn't be necessary
-            "CREATE TYPE asset_type AS ENUM ('ResolvedObservable', 'Model', 'Resource', 'Export', 'Operation');",
+            "CREATE TYPE asset_type AS ENUM ('ResolvedObservable', 'Model', 'Resource', 'Operation', 'Export');",
             "CREATE TABLE assets(\n"
             + "   name VARCHAR(512),\n"
             + "   query_id INTEGER NOT NULL,\n"
@@ -160,7 +194,9 @@ public class StatsDatabase extends Postgis {
 				+ stat.getDataflowComplexity() + ", " // "   dataflow_complexity BIGINT,\n"
 				+ cnan(stat.getResolvedCoverage()) + ", " // "   resolved_coverage FLOAT,\n"
 				+ status(stat.getStatus()) + ", " // "   outcome status,\n"
-				+ cn(dataflowId) // "   dataflow_id VARCHAR(512),\n"              // only collected for special cases
+				+ cn(dataflowId) + "," // "   dataflow_id VARCHAR(512),\n"              // only collected for special cases
+				+ stat.getStartTime() + "," // start time
+				+ (stat.isExport() ? "TRUE" : "FALSE")
 				+ ");";
 		
 		execute(sql);
@@ -217,6 +253,33 @@ public class StatsDatabase extends Postgis {
 		return "ST_GeomFromText('" + scale.getBboxWkt() + "', 4326)";
 	}
 
+	public String getGeoJSONObservations(String span, boolean polygons, boolean errors) {
+
+		String restrictions = "";
+		if (span != null && !span.isEmpty()) {
+			Pair<Long, Long> s = StatsReport.parseSpan(span.split(","));
+			restrictions += "AND contexts.created >= " + s.getFirst() + " AND contexts.created < " + s.getSecond();
+		}
+		if (errors) {
+			restrictions += (restrictions.isEmpty() ? "" : " ")
+					+ "AND (queries.outcome = 'Error' || queries.outcome = 'Exception')";
+		} else {
+			restrictions += (restrictions.isEmpty() ? "" : " ") + "AND queries.outcome = 'Success'";
+		}
+
+		String query = GEOJSON_OBSERVATION_COLLECTION.replace("{RESTRICTIONS}", restrictions);
+		if (polygons) {
+			query.replace("ST_Centroid(contexts.geom)", "contexts.geom");
+		}
+
+		AtomicReference<String> ret = new AtomicReference<>(null);
+		scan(query, (result) -> {
+			ret.set(result.get("json", String.class));
+		});
+
+		return ret.get();
+	}
+
 	private String asset(Type type) {
 
 		switch (type) {
@@ -258,7 +321,6 @@ public class StatsDatabase extends Postgis {
 	@Override
 	protected boolean createDatabase() {
 		if (super.createDatabase()) {
-
 			Logging.INSTANCE.info("Creating statistics database");
 			for (String sql : structuralStatsStatements) {
 				if (!execute(sql)) {

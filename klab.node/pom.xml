@@ -1,6 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.integratedmodelling</groupId>
@@ -26,6 +24,7 @@
 						<image>${env.REGISTRY}/${env.NODE_CONTAINER}</image>
 						<tags>
 							<tag>${env.TAG}</tag>
+							<tag>${env.CURRENT_COMMIT}</tag>
 						</tags>
 						<auth>
 							<username>${env.USERNAME}</username>
@@ -35,16 +34,13 @@
 					<container>
 						<expandClasspathDependencies>true</expandClasspathDependencies>
 						<user>klab:klab</user>
-						<jvmFlags>
-						</jvmFlags>
+						<jvmFlags></jvmFlags>
 						<mainClass>org.integratedmodelling.klab.node.NodeApplication</mainClass>
-						<args>
-						</args>
+						<args></args>
 						<ports>
 							<port>8287</port>
 						</ports>
-						<labels>
-						</labels>
+						<labels></labels>
 					</container>
 				</configuration>
 			</plugin>
@@ -78,13 +74,20 @@
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
-	
+
+		<!-- allow remote stats gathering and inquiry if stats component is active and configured -->
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>klab.component.stats</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
+
 		<dependency>
 			<groupId>io.dekorate</groupId>
 			<artifactId>kubernetes-annotations</artifactId>
 			<version>1.0.1</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.fasterxml.jackson.datatype</groupId>
 			<artifactId>jackson-datatype-joda</artifactId>
@@ -139,8 +142,8 @@
 			<artifactId>jose4j</artifactId>
 			<version>0.6.3</version>
 		</dependency>
- 
- 		<dependency>
+
+		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.adapter.copernicus</artifactId>
 			<version>${klab.version}</version>
@@ -210,20 +213,20 @@
 			<artifactId>org.integratedmodelling.klab.api</artifactId>
 			<version>${klab.version}</version>
 		</dependency>
- 		<dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 			<version>${spring-boot.version}</version>
 			<exclusions>
-		        <exclusion>
-		            <groupId>ch.qos.logback</groupId>
-		            <artifactId>logback-classic</artifactId>
-		        </exclusion>
-		    </exclusions>
+				<exclusion>
+					<groupId>ch.qos.logback</groupId>
+					<artifactId>logback-classic</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
- 		<dependency>
-		    <groupId>org.springframework.cloud</groupId>
-		    <artifactId>spring-cloud-starter-bootstrap</artifactId>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-bootstrap</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -233,10 +236,10 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-consul-config</artifactId>
 		</dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.springframework.cloud</groupId> -->
-<!-- 			<artifactId>spring-cloud-starter-kubernetes-all</artifactId> -->
-<!-- 			<version>1.1.10.RELEASE</version> -->
-<!-- 		</dependency> -->
+		<!-- 		<dependency> -->
+		<!-- 			<groupId>org.springframework.cloud</groupId> -->
+		<!-- 			<artifactId>spring-cloud-starter-kubernetes-all</artifactId> -->
+		<!-- 			<version>1.1.10.RELEASE</version> -->
+		<!-- 		</dependency> -->
 	</dependencies>
 </project>

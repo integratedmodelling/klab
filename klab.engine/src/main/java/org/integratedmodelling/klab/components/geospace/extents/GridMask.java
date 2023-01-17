@@ -32,7 +32,7 @@ public class GridMask extends BitSet implements IGrid.Mask {
         } else {
             useShape = true;
             if (Boolean.parseBoolean(
-                    Configuration.INSTANCE.getProperty(IConfigurationService.KLAB_LENIENT_GRID_INTERSECTION, "false"))) {
+                    Configuration.INSTANCE.getProperty(IConfigurationService.KLAB_LENIENT_GRID_INTERSECTION, "true"))) {
                 this.shape = shape.buffer(Math.max(grid.getCellWidth(), grid.getCellHeight())/2.0);
             }
         }

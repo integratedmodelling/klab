@@ -1,8 +1,9 @@
 package org.integratedmodelling.stats.reporting;
 
+import static org.integratedmodelling.klab.components.time.extents.Time.resolution;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -18,11 +19,14 @@ import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Time;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
+import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.components.time.extents.TemporalExtension;
 import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.engine.extensions.Component;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
+import org.integratedmodelling.klab.utils.Escape;
+import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.StringUtil;
@@ -33,7 +37,8 @@ import org.springframework.util.StringUtils;
 import com.ibm.icu.text.NumberFormat;
 
 /**
- * A report, including definition, generation and encoding to Markdown.
+ * A report, including definition, generation and encoding to
+ * text/Markdown/html/csv.
  * 
  * @author Ferd
  *
@@ -43,11 +48,14 @@ public class StatsReport {
 	boolean isComputed = false;
 
 	public enum Target {
-		Resources, Models, Operations, Contexts, Observations, Observables, Users, Downloads, Applications, Engines;
+		Resources, Models, Operations, Contexts, Observations, Observables, Users, Downloads, Applications, Engines,
+		/*
+		 * This one only for filtering
+		 */
+		Groups;
 
 		public boolean isAsset() {
-			return this == Resources || this == Models || this == Downloads || this == Operations
-					|| this == Observables;
+			return this == Resources || this == Models || this == Operations || this == Observables;
 		}
 	}
 
@@ -63,6 +71,93 @@ public class StatsReport {
 		Credits, Time, Size, Cost, Count;
 	}
 
+	public enum Format {
+		Text, Html, Csv, Markdown
+	}
+
+	/*
+	 * these are all handled directly as SQL constraints in the query
+	 */
+	class Filter {
+		Target target;
+		List<String> whitelist = new ArrayList<>();
+		List<String> blacklist = new ArrayList<>();
+
+		public String asSQLRestriction() {
+
+			String field = null;
+			boolean partialMatch = false;
+			Target mustHave = null;
+
+			switch (target) {
+			case Applications:
+				field = "application";
+				break;
+			case Engines:
+				field = "engine_type";
+				break;
+			case Groups:
+				field = "groups";
+				partialMatch = true;
+				break;
+			case Models:
+				field = "asset";
+				mustHave = Target.Models;
+				break;
+			case Observables:
+				field = "asset";
+				mustHave = Target.Observables;
+				break;
+			case Observations:
+				field = "query_observable";
+				break;
+			case Contexts:
+				field = "context_name";
+				break;
+			case Operations:
+				field = "asset";
+				mustHave = Target.Operations;
+				break;
+			case Resources:
+				field = "asset";
+				mustHave = Target.Resources;
+				break;
+			case Users:
+				field = "principal";
+				break;
+			default:
+				break;
+			}
+
+			if (mustHave != null && !hasTarget(mustHave)) {
+				throw new KlabIllegalArgumentException(
+						"cannot filter on " + target + " without reporting the same asset");
+			}
+
+			if (field != null) {
+				StringBuffer ret = new StringBuffer(512);
+				for (String s : whitelist) {
+					ret.append(ret.length() == 0 ? "" : " OR ");
+					ret.append(field + " LIKE " + makePattern(s, partialMatch));
+				}
+				for (String s : blacklist) {
+					ret.append(ret.length() == 0 ? "" : " OR ");
+					ret.append(field + " NOT LIKE " + makePattern(s, partialMatch));
+				}
+				if (ret.length() > 0) {
+					return "AND (" + ret + ")";
+				}
+			}
+
+			return "";
+		}
+
+		private String makePattern(String s, boolean partialMatch) {
+			String ret = s.replace("_", "#_").replace("$", "_").replace("*", "%");
+			return "'" + (partialMatch ? "%" : "") + Escape.forSQL(ret) + (partialMatch ? "%" : "") + "' ESCAPE '#'";
+		}
+	}
+
 	boolean adjustInterval = true;
 
 	/*
@@ -71,9 +166,7 @@ public class StatsReport {
 	 */
 	boolean computeCosts = false;
 
-	// filters
-	long start = -1;
-	long end = -1;
+	Format format = Format.Text;
 
 	/*
 	 * we aggregate either by period or by target. We keep a list of these and use
@@ -110,14 +203,13 @@ public class StatsReport {
 		}
 	}
 
-	/**
-	 * Data per target is a list of constraints; each constraint contains either a
-	 * blacklist or a whitelist of strings to match the target to, based on the
-	 * second element (true = whitelist).
-	 */
-	Map<Target, List<Pair<Collection<String>, Boolean>>> filterTargets = new HashMap<>();
-//	Set<Metric> metrics = EnumSet.of(Metric.Time, Metric.Size, Metric.Credits);
+	// the main targets, either a target type or a temporal span
 	List<Aggregator> aggregators = new ArrayList<>();
+
+	// filters
+	long start = -1;
+	long end = -1;
+	List<Filter> filters = new ArrayList<>();
 
 	boolean anonymized = true;
 	boolean includeErrors = false;
@@ -127,6 +219,10 @@ public class StatsReport {
 	 * Indexable aggregation set that serves as a key for the "chapters" in the
 	 * report. Contains all keys used to group the data and sorts intelligently
 	 * based on the order of aggregation.
+	 * 
+	 * Asset types use the asset name as key, i.e. different uses of the same asset
+	 * aggregate. Contexts and queries use the observation ID as key so they only
+	 * aggregate within the same observation.
 	 * 
 	 * @author Ferd
 	 *
@@ -146,11 +242,12 @@ public class StatsReport {
 		String download;
 		String application;
 		String engine;
-		
+
 		// not a key
 		String observation;
 		String context_name;
 		boolean sequential = true;
+		boolean isDownloadQuery = false;
 
 		@Override
 		public int hashCode() {
@@ -298,7 +395,7 @@ public class StatsReport {
 							return ret;
 						}
 					}
-				}  else if (aggregator.target == Target.Engines) {
+				} else if (aggregator.target == Target.Engines) {
 
 					if (engine != null && o.engine != null) {
 						int ret = engine.compareTo(o.engine);
@@ -438,6 +535,8 @@ public class StatsReport {
 					return new Pair<>(user, user);
 				case Engines:
 					return new Pair<>(engine, engine);
+				case Groups:
+					throw new KlabIllegalArgumentException("groups can only be used as filters");
 				}
 			}
 			return new Pair<>("", "");
@@ -447,8 +546,10 @@ public class StatsReport {
 
 	class Data {
 
+		long start = 0, end = 0;
 		boolean error = false;
 		int count = 0;
+		boolean export = false;
 		boolean setCredits = false;
 		double totalTime;
 		double totalSize;
@@ -456,7 +557,17 @@ public class StatsReport {
 		long totalAccesses;
 		int totalAssets;
 		int totalObservations;
+		double totalComplexity;
+		String created;
 		Aggregator aggregator;
+
+		// to compute aggregated observation time avoiding double counting
+		Set<String> observations = new HashSet<>();
+
+		public Data(long start, long end) {
+			this.start = start;
+			this.end = end;
+		}
 
 		/**
 		 * Each data bag will see all assets connected to a particular key, i.e. an
@@ -492,12 +603,34 @@ public class StatsReport {
 					downloadSize += result.get("byte_size", Number.class).doubleValue();
 				} else if (aggregator.target == Target.Observations) {
 					// =, not +=! - redefine (with same value) every time.
-					totalTime = result.get("query_time", Number.class).doubleValue();
+					if (result.get("is_download", Boolean.class)) {
+						export = true;
+					} else {
+						totalTime = result.get("query_time", Number.class).doubleValue();
+					}
 				} else if (aggregator.target == Target.Contexts) {
+
+					created = TimeInstant.create(result.get("created", Number.class).longValue()).toString();
+
 					/*
-					 * TODO sum up values for each query
+					 * sum up values for each query.
 					 */
-				}
+					String qid = result.get("context_id", String.class) + "_" + result.get("query_id", Long.class);
+					if (!observations.contains(qid)) {
+						totalTime += result.get("query_time", Number.class).doubleValue();
+						observations.add(qid);
+					}
+
+					/*
+					 * complexity 
+					 */
+					double complexity = result.get("space_complexity", Number.class).doubleValue();
+					complexity /= 5.0;
+					if (complexity == 1) {
+						complexity = 0;
+					}
+					totalComplexity += complexity;
+				} 
 			}
 
 			if (aggregator.target != Target.Downloads) {
@@ -513,15 +646,22 @@ public class StatsReport {
 			if (aggregator.target != null) {
 				if (aggregator.target == Target.Contexts) {
 					double contextSize = totalSize / (double) count;
+					double complexity = (double) totalComplexity / (double) count;
 					return "[" + count + " assets; size = " + NumberFormat.getInstance().format(contextSize)
-							+ "; total time = " + NumberFormat.getInstance().format(totalTime) + "s]";
+							+ "; complexity = " + NumberFormat.getInstance().format(complexity) + "; total time = "
+							+ NumberFormat.getInstance().format(totalTime) + "s]" + " created " + created;
 				} else if (aggregator.target.isAsset()) {
 					return "[accessed " + (totalAccesses == 0 ? 1 : totalAccesses) + " times; total time = "
 							+ NumberFormat.getInstance().format(totalTime) + "s] ";// + ret;
 				} else if (aggregator.target == Target.Downloads) {
 					return "[bytes downloaded = " + NumberFormat.getIntegerInstance().format(downloadSize) + "] ";
 				} else if (aggregator.target == Target.Observations) {
-					return "[" + count + " assets; total time = " + NumberFormat.getInstance().format(totalTime) + "] ";
+					return "["
+							+ (export ? " export "
+									: (count + " assets; total time = " + NumberFormat.getInstance().format(totalTime)))
+							+ "] ";
+				} else if (aggregator.target == Target.Users) {
+					return "[total observation time = " + NumberFormat.getInstance().format(totalTime) + "]";
 				}
 			}
 
@@ -550,8 +690,21 @@ public class StatsReport {
 		this.start = start;
 	}
 
+	public boolean hasTarget(Target mustHave) {
+		for (Aggregator aggregator : aggregators) {
+			if (mustHave == aggregator.target) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public void setReportingEnd(long end) {
 		this.end = end;
+	}
+
+	public void setFormat(Format format) {
+		this.format = format;
 	}
 
 	public void includeErrors() {
@@ -568,19 +721,6 @@ public class StatsReport {
 		aggregation.aggregationMultiplier = multiplier;
 		aggregators.add(aggregation);
 		this.temporalAggregation = getResolution(frequency);
-	}
-
-	public void filter(Target target, boolean include, String... strings) {
-		Set<String> filters = new HashSet<>();
-		for (String s : strings) {
-			filters.add(s);
-		}
-		List<Pair<Collection<String>, Boolean>> constraints = this.filterTargets.get(target);
-		if (constraints == null) {
-			constraints = new ArrayList<>();
-			this.filterTargets.put(target, constraints);
-		}
-		constraints.add(new Pair<>(filters, include));
 	}
 
 	public boolean compute() {
@@ -630,6 +770,12 @@ public class StatsReport {
 		}
 
 		db.scan(getQuery(st.get(), en.get()), (result) -> {
+		    
+		    // patch for misconfiguration in test engines
+		    if (result.get("engine_type") == null) {
+		        result.put("engine_type", "unknown");
+		    }
+		    
 			try {
 				AggregationSet set = getAggregationSet(result, st.get(), en.get());
 				if (set != null) {
@@ -658,14 +804,6 @@ public class StatsReport {
 	 */
 	private AggregationSet getAggregationSet(IParameters<String> result, long st, long en) throws SQLException {
 
-		for (Target filterTarget : filterTargets.keySet()) {
-			for (Pair<Collection<String>, Boolean> filter : filterTargets.get(filterTarget)) {
-				if (!matchFilter(filterTarget, filter.getFirst(), filter.getSecond())) {
-					return null;
-				}
-			}
-		}
-
 		long created = result.get("created", Long.class);
 		if (created < st || created >= en) {
 			// shouldn't happen as the limits are usually in the query
@@ -693,11 +831,6 @@ public class StatsReport {
 		}
 
 		return ret;
-	}
-
-	private boolean matchFilter(Target filterTarget, Collection<String> first, Boolean second) {
-		// TODO handle blacklists and whitelists for all filters
-		return true;
 	}
 
 	private Resolution.Type getResolution(Frequency f) {
@@ -730,6 +863,7 @@ public class StatsReport {
 				+ "	contexts.principal, contexts.scale_size, contexts.space_resolution, contexts.groups, \n"
 				+ "	contexts.space_complexity, contexts.context_name,\n"
 				+ "	queries.observable as query_observable, queries.total_time_sec as query_time,\n"
+				+ " queries.start_time as query_start_time, queries.is_download, "
 				+ "	assets.total_time_sec as time, assets.total_passes as passes, assets.name as asset,"
 				+ " assets.total_byte_size as byte_size, \n"
 				+ "	assets.outcome as outcome, assets.asset_type as asset_type, queries.id as query_id, \n"
@@ -750,11 +884,17 @@ public class StatsReport {
 			ret += "		      AND assets.outcome = 'Success'" + "\n";
 		}
 
+		for (Filter filter : filters) {
+			ret += "		      " + filter.asSQLRestriction() + "\n";
+		}
+
 		/*
-		 * this is only for speed, non-applying assets are still weeded out by the logics
+		 * this is only for speed, non-applying assets are still weeded out by the
+		 * logics
 		 */
 		String assetType = getAssetType();
-		if (assetType != null && !computeCosts /* TODO && costs are not computed and aggregators do not include applications */) {
+		if (assetType != null
+				&& !computeCosts /* TODO && costs are not computed and aggregators do not include applications */) {
 			// query is for specific type of asset
 			ret += "		      AND assets.asset_type = '" + assetType + "'";
 		}
@@ -834,7 +974,7 @@ public class StatsReport {
 
 			Data bag = data.get(key);
 			if (bag == null) {
-				bag = new Data();
+				bag = new Data(set.start, set.end);
 				data.put(key, bag);
 			}
 
@@ -850,12 +990,15 @@ public class StatsReport {
 		return ret == null ? "" : ret.toString();
 	}
 
-	public void setTargetClassifier(Target target) {
-		Aggregator a = new Aggregator();
-		a.target = target;
+	public void addTargetClassifier(Target target) {
+		if (target == Target.Groups) {
+			throw new KlabIllegalArgumentException("groups can only be used as filters");
+		}
 		if (!checkAssets(target)) {
 			throw new KlabIllegalArgumentException("only one asset target can be used in a report");
 		}
+		Aggregator a = new Aggregator();
+		a.target = target;
 		this.aggregators.add(a);
 	}
 
@@ -870,5 +1013,110 @@ public class StatsReport {
 			}
 		}
 		return true;
+	}
+
+	public void setSpan(String[] span) {
+		Pair<Long, Long> s = parseSpan(span);
+		this.start = s.getFirst();
+		this.end = s.getSecond();
+	}
+
+	/**
+	 * Parse a span specification for the report. Used also in other places, so
+	 * static and public.
+	 * 
+	 * @param span
+	 * @return
+	 */
+	public static Pair<Long, Long> parseSpan(String[] span) {
+
+		Resolution lag = null;
+
+		ITimeInstant s = null;
+		ITimeInstant e = null;
+		long lastLong = -1;
+
+		for (int i = 0; i < span.length; i++) {
+			if (NumberUtils.encodesLong(span[i])) {
+				lastLong = Long.parseLong(span[i]);
+				if (lastLong > 10000) {
+					if (s == null) {
+						s = TimeInstant.create(lastLong);
+					} else if (e == null) {
+						e = TimeInstant.create(lastLong);
+					} else {
+						throw new KlabIllegalArgumentException("bad span specification " + span);
+					}
+				}
+			} else {
+				switch (span[i]) {
+				case "year":
+				case "years":
+					lag = resolution(1, Resolution.Type.YEAR);
+					break;
+				case "day":
+				case "days":
+					lag = resolution(1, Resolution.Type.DAY);
+					break;
+				case "month":
+				case "months":
+					lag = resolution(1, Resolution.Type.MONTH);
+					break;
+				case "week":
+				case "weeks":
+					lag = resolution(1, Resolution.Type.WEEK);
+					break;
+				case "hour":
+				case "hours":
+					lag = resolution(1, Resolution.Type.HOUR);
+					break;
+				default:
+					throw new KlabIllegalArgumentException("bad span specification " + span);
+				}
+			}
+		}
+
+		int multiplier = 1;
+		if (lag != null) {
+			if (lastLong > 0 && lastLong < 10000) {
+				multiplier = (int) lastLong;
+			}
+			e = TimeInstant.create().endOf(lag.getType());
+			s = e.minus(multiplier, lag);
+		}
+
+		if (e == null || s == null) {
+			throw new KlabIllegalArgumentException("bad span specification " + span);
+		}
+
+		return new Pair<>(s.getMilliseconds(), e.getMilliseconds());
+	}
+
+	public void filterFor(Target target, String[] targets) {
+		Filter filter = new Filter();
+		filter.target = target;
+		for (String t : targets) {
+			if (t.startsWith("!")) {
+				filter.blacklist.add(t.substring(1));
+			} else {
+				filter.whitelist.add(t.startsWith("+") ? t.substring(1) : t);
+			}
+		}
+
+		filters.add(filter);
+	}
+
+	public void reportCosts(boolean doit) {
+		this.computeCosts = doit;
+	}
+
+	public void reportErrors(boolean doit) {
+		if (doit) {
+			this.includeErrors = true;
+			this.includeSuccess = false;
+		} else {
+			this.includeErrors = false;
+			this.includeSuccess = true;
+		}
 	}
 }

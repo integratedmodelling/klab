@@ -677,6 +677,12 @@
 			<artifactId>gt-jdbc-postgis</artifactId>
 			<version>${geotools.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-geojson-core</artifactId>
+			<version>${geotools.version}</version>
+		</dependency>
+
 		<!-- <dependency> <groupId>org.geotools</groupId> <artifactId>gt-netcdf</artifactId> 
 			<version>${geotools.version}</version> </dependency> -->
 		<!-- GEOTOOLS mess ends -->

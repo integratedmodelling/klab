@@ -85,6 +85,7 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.api.runtime.rest.IClient;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.api.services.IIndexingService;
 import org.integratedmodelling.klab.api.services.IIndexingService.Context;
@@ -2313,6 +2314,14 @@ public class Session extends GroovyObjectSupport
     public boolean isEmpty() {
         // TODO Auto-generated method stub
         return false;
+    }
+
+    @Override
+    public IClient getNodeClient(INodeIdentity node) {
+        /*
+         * TODO FIXME use a node replica with the appropriate token when the JWT is available.
+         */
+        return node.getClient();
     }
 
 }
