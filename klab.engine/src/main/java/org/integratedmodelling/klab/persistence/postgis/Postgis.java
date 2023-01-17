@@ -38,6 +38,10 @@ public class Postgis {
 
 	protected Postgis(String database) {
 
+	    if (database == null) {
+	        database = "klab";
+	    }
+	    
 		this.database = database;
 
 		this.pgadminUrl = "jdbc:postgresql://" + Configuration.INSTANCE.getServiceProperty("postgres", "host");
