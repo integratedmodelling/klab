@@ -5,7 +5,9 @@ import java.util.List;
 import org.integratedmodelling.klab.rest.ObservableReference;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 
 /**
@@ -24,7 +26,10 @@ public class HubUserProfile {
 	private String name;
 	private String email;
 	private List<String> roles;
+	
 	private List<GroupEntry> groupEntries;
+	@JsonInclude(Include.NON_NULL)
+	private String jwtToken;
 
 	public List<String> getRoles() {
 		return roles;
@@ -147,5 +152,13 @@ public class HubUserProfile {
 			this.group = group;
 		}
 	}
+
+    public String getJwtToken() {
+        return jwtToken;
+    }
+
+    public void setJwtToken(String jwtToken) {
+        this.jwtToken = jwtToken;
+    }
 
 }

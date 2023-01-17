@@ -73,6 +73,7 @@ public class HubUserService implements RemoteUserService {
 	public ResponseEntity<?> login(RemoteUserAuthenticationRequest login) {
 		ResponseEntity<HubLoginResponse> result = null;
 		if (!"".equals(login.getUsername()) && !"".equals(login.getPassword())) {
+		    login.setJwtToken(true);
 			try {
 				result = hubLogin(login);
 			} catch (HttpClientErrorException e) {
@@ -85,14 +86,14 @@ public class HubUserService implements RemoteUserService {
 				throw new KlabAuthorizationException("Failed to login user: " + login.getUsername());
 			}
 			if (result != null && result.getStatusCode().is2xxSuccessful()) {
-
 				HubUserProfile profile = result.getBody().getProfile();
+				String jwtToken = result.getBody().getJwtToken();
 				Session session;
 				if (checkForActiveSessions(profile)) {
 				    session = getActiveSessionResponse(profile);
 					publisher.login(profile, session, MESSAGES.EXISTING_SESSION.name());
 				} else {
-				    session = processProfile(profile);
+				    session = processProfile(profile, jwtToken);
 					publisher.login(profile, session, MESSAGES.NEW_SESSION.name());
 				}
 				RemoteUserLoginResponse response = getRemoteUserLoginResponse(session);
@@ -131,7 +132,7 @@ public class HubUserService implements RemoteUserService {
 			    session = getActiveSessionResponse(profile);
 				publisher.login(profile, session, MESSAGES.EXISTING_SESSION.name());
 			} else {
-			    session = processProfile(profile);
+			    session = processProfile(profile, profile.getJwtToken());
 				publisher.login(profile, session, MESSAGES.NEW_SESSION.name());
 			}
 			RemoteUserLoginResponse response = getRemoteUserLoginResponse(session);
@@ -191,7 +192,7 @@ public class HubUserService implements RemoteUserService {
 		return activeSessions(profile).iterator().next();
 	}
 
-	private Session processProfile(HubUserProfile profile) {
+	private Session processProfile(HubUserProfile profile, String jwtToken) {
 		List<String> roles = profile.getRoles();
 		List<GrantedAuthority> authorities = getAuthorities(roles);
 		List<Group> groups = new ArrayList<>();
@@ -205,7 +206,7 @@ public class HubUserService implements RemoteUserService {
 			groups.add(group);
 		});
 
-		String token = NameGenerator.newName();
+		String token = jwtToken;
 		KlabUser user = new KlabUser(profile.getName(), token, authorities);
 		user.setEmailAddress(profile.getEmail());
 		user.getGroups().addAll(groups);
@@ -255,9 +256,10 @@ public class HubUserService implements RemoteUserService {
 
 	private Session getSession(KlabUser user) {
 		Engine engine = Authentication.INSTANCE.getAuthenticatedIdentity(Engine.class);
-		user.getGroups().clear();
+		// TODO: Check why this
+		// user.getGroups().clear();
 		// this is only so we can get observables right now;
-		user.getGroups().addAll(engine.getDefaultEngineUser().getGroups());
+		// user.getGroups().addAll(engine.getDefaultEngineUser().getGroups());
 		Authentication.INSTANCE.registerIdentity(user);
 		EngineUser remoteEngine = new EngineUser(user, engine);
 		return engine.createSession(remoteEngine);
