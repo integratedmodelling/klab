@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.integratedmodelling.klab.auth.Role;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.groups.services.GroupService;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;

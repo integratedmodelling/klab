@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.hub.api;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.integratedmodelling.klab.auth.Role;
 import org.integratedmodelling.klab.rest.ObservableReference;
 import org.springframework.data.annotation.Reference;
 import org.springframework.data.annotation.TypeAlias;

@@ -3,7 +3,7 @@ package org.integratedmodelling.klab.hub.users.services;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.integratedmodelling.klab.hub.api.Role;
+import org.integratedmodelling.klab.auth.Role;
 import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.springframework.context.annotation.Primary;
