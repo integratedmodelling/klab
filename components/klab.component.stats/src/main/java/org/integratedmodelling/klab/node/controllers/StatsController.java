@@ -129,9 +129,7 @@ public class StatsController {
             throws UnsupportedEncodingException {
 
         IUserIdentity user = Authentication.INSTANCE.getUserIdentity(principal);
-        // remove after testing
-        Logging.INSTANCE.info("Report requested by " + user.getUsername());
-        boolean adminOrAuditor = Authentication.INSTANCE.hasRole(user, Role.ROLE_ADMINISTRATOR);
+        boolean adminOrAuditor = Authentication.INSTANCE.hasRole(principal, Role.ROLE_ADMINISTRATOR);
         Component stc = Extensions.INSTANCE.getComponent(StatsComponent.ID);
         if (stc == null || !stc.isActive()) {
             throw new KlabIllegalStateException("statistics component is not configured or not installed");

@@ -485,7 +485,7 @@ public enum Authentication implements IAuthenticationService {
         return false;
     }
     
-   public boolean hasRole(IUserIdentity user, Role role) {
+   public boolean hasRole(Object user, Role role) {
         if (user instanceof IAuthenticatedIdentity) {
             return ((IAuthenticatedIdentity)user).getRoles().contains(role);
         }
