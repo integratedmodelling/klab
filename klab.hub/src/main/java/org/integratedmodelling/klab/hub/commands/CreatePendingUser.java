@@ -2,7 +2,7 @@ package org.integratedmodelling.klab.hub.commands;
 
 import java.util.Arrays;
 
-import org.integratedmodelling.klab.hub.api.Role;
+import org.integratedmodelling.klab.auth.Role;
 import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.api.User.AccountStatus;
 import org.integratedmodelling.klab.hub.repository.UserRepository;

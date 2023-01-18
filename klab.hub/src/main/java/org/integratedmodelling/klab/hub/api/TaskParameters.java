@@ -5,6 +5,8 @@ package org.integratedmodelling.klab.hub.api;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.integratedmodelling.klab.auth.Role;
+
 /**
  * @author Enrico Girotto
  * Neede to permit strategy pattern with multiple parameters

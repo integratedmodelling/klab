@@ -6,6 +6,7 @@ import java.util.List;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.auth.Hub;
+import org.integratedmodelling.klab.auth.Role;
 import org.integratedmodelling.klab.hub.security.NetworkKeyManager;
 import org.integratedmodelling.klab.rest.Group;
 import org.jose4j.jws.AlgorithmIdentifiers;
