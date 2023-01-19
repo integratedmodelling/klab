@@ -11,12 +11,10 @@ public class LoginResponse {
 	
 	private TokenAuthentication token;
 	private ProfileResource profile;
-	private String jwtToken;
 	
-	public LoginResponse(TokenAuthentication token, ProfileResource profile, String jwtToken) {
+	public LoginResponse(TokenAuthentication token, ProfileResource profile) {
 		this.token = token;
 		this.profile = profile;
-		this.jwtToken = jwtToken;
 	}
 	
     public LoginResponse() {
@@ -27,7 +25,6 @@ public class LoginResponse {
 		JSONObject resp = new JSONObject();
 		resp.appendField("Profile", profile.getSafeProfile());
 		resp.appendField("Authentication", token);
-		resp.appendField("JwtToken", jwtToken);
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Authentication", token.getTokenString());
 		return new ResponseEntity<JSONObject>(resp, headers, HttpStatus.OK);

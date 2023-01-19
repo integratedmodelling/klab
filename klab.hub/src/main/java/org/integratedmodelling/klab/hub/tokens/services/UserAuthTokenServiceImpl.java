@@ -40,6 +40,8 @@ public class UserAuthTokenServiceImpl implements UserAuthTokenService{
 	
 	private ObjectMapper objectMapper;
 	
+	private static final JwtToken JWT_TOKEN_FACTORY = new JwtToken();
+	
 	public UserAuthTokenServiceImpl(AuthenticationManager authenticationManager, UserRepository userRepository,
 			TokenRepository tokenRepository, ObjectMapper objectMapper) {
 		super();
@@ -102,11 +104,10 @@ public class UserAuthTokenServiceImpl implements UserAuthTokenService{
 	public LoginResponse getAuthResponse(String username, String password, boolean jwtToken) {
 		TokenAuthentication token = getUserAuthenticationToken(username, password);
 		ProfileResource profile = new GetUserProfile(userRepository, username, objectMapper).execute();
-		String retJwtToken = null;
 		if (jwtToken) {
-		    retJwtToken = new JwtToken().createEngineJwtToken(profile);
+		    profile.setJwtToken(JWT_TOKEN_FACTORY.createEngineJwtToken(profile));
 		}
-		LoginResponse response = new LoginResponse(token, profile.getSafeProfile(), retJwtToken);
+		LoginResponse response = new LoginResponse(token, profile.getSafeProfile());
 		return response;
 	}
 

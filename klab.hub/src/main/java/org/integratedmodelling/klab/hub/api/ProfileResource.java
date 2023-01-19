@@ -66,11 +66,16 @@ public class ProfileResource implements OAuth2User{
 
     public AccountStatus accountStatus;
     
-    public String Token;
+    // public String Token;
 
     private Collection<? extends GrantedAuthority> authorities;
     
     private Map<String, Object> attributes;
+    
+    /**
+     * Use to store the jwt token in case of needs
+     */
+    private String jwtToken;
     
     @Override
     public int hashCode() {
@@ -120,9 +125,17 @@ public class ProfileResource implements OAuth2User{
 		return roles;
 	}
 
-	public void setToken(String token) {
-		this.Token = token;
-	}
+//	public void setToken(String token) {
+//		this.Token = token;
+//	}
+
+    public String getJwtToken() {
+        return jwtToken;
+    }
+
+    public void setJwtToken(String jwtToken) {
+        this.jwtToken = jwtToken;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -174,6 +187,16 @@ public class ProfileResource implements OAuth2User{
 		this.lastConnection = lastConnection;
 	}
 
+	public List<String> getGroupsIds() {
+	    List<String> groupsIds = new ArrayList<>();
+	    for (GroupEntry grp : this.getGroups()) {
+            if(grp != null && grp.getExperation().isAfter(DateTime.now())) {
+                groupsIds.add(grp.getGroup().getName());
+            }
+        }
+	    return groupsIds;
+	}
+	
 	public List<Group> getGroupsList() {
 		List<Group> listOfGroups = new ArrayList<>();
 		for (GroupEntry grp : this.getGroups()) {
@@ -214,7 +237,8 @@ public class ProfileResource implements OAuth2User{
 		cleanedProfile.roles = roles;
 		cleanedProfile.sendUpdates = sendUpdates;
 		cleanedProfile.serverUrl = serverUrl;
-		cleanedProfile.Token = Token;
+		//cleanedProfile.Token = Token;
+		cleanedProfile.jwtToken = jwtToken;
 		cleanedProfile.name = name;
 		
 		List<GroupEntry> safeGroups = new ArrayList<>();

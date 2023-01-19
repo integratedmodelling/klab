@@ -3,8 +3,10 @@ package org.integratedmodelling.klab.engine.services;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.klab.Authentication;
@@ -39,6 +41,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * This hub service is used to authenticate a user request to login to an engine
@@ -77,12 +80,11 @@ public class HubUserService implements RemoteUserService {
 			}
 			if (result != null && result.getStatusCode().is2xxSuccessful()) {
 				HubUserProfile profile = result.getBody().getProfile();
-				String jwtToken = result.getBody().getJwtToken();
 				Session session;
 				if (checkForActiveSessions(profile)) {
 				    session = getActiveSessionResponse(profile);
 				} else {
-				    session = processProfile(profile, jwtToken);
+				    session = processProfile(profile);
 				}
 				RemoteUserLoginResponse response = getRemoteUserLoginResponse(session);
 				response.setAuthorization(result.getBody().getAuthentication().getTokenString());
@@ -116,7 +118,7 @@ public class HubUserService implements RemoteUserService {
 			if (checkForActiveSessions(profile)) {
 			    session = getActiveSessionResponse(profile);
 			} else {
-			    session = processProfile(profile, profile.getJwtToken());
+			    session = processProfile(profile);
 			}
 			RemoteUserLoginResponse response = getRemoteUserLoginResponse(session);
 			response.setAuthorization(token);
@@ -169,7 +171,7 @@ public class HubUserService implements RemoteUserService {
 		return activeSessions(profile).iterator().next();
 	}
 
-	private Session processProfile(HubUserProfile profile, String jwtToken) {
+	private Session processProfile(HubUserProfile profile) {
 		List<String> roles = profile.getRoles();
 		List<GrantedAuthority> authorities = getAuthorities(roles);
 		List<Group> groups = new ArrayList<>();
@@ -183,8 +185,7 @@ public class HubUserService implements RemoteUserService {
 			groups.add(group);
 		});
 
-		String token = jwtToken;
-		KlabUser user = new KlabUser(profile.getName(), token, authorities);
+		KlabUser user = new KlabUser(profile.getName(), profile.getJwtToken(), authorities);
 		user.setEmailAddress(profile.getEmail());
 		user.getGroups().addAll(groups);
 
@@ -285,7 +286,7 @@ public class HubUserService implements RemoteUserService {
 		headers.add("Authentication", token);
 		HttpEntity<?> request = new HttpEntity<>(headers);
 		ResponseEntity<HubUserProfile> response = restTemplate.exchange(getProfileUrl(), HttpMethod.GET, request,
-				HubUserProfile.class);
+				HubUserProfile.class, true);
 		return response;
 	}
 
@@ -298,7 +299,7 @@ public class HubUserService implements RemoteUserService {
 	}
 
 	private String getProfileUrl() {
-		return Network.INSTANCE.getHub().getUrls().iterator().next() + API.HUB.CURRENT_PROFILE;
+		return Network.INSTANCE.getHub().getUrls().iterator().next() + API.HUB.CURRENT_PROFILE + "?jwt={jwt}";
 	}
 
 }

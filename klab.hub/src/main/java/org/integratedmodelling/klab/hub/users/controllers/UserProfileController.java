@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.hub.users.controllers;
 
 import org.integratedmodelling.klab.api.API;
+import org.integratedmodelling.klab.hub.api.JwtToken;
 import org.integratedmodelling.klab.hub.api.ProfileResource;
 import org.integratedmodelling.klab.hub.payload.UpdateUserRequest;
 import org.integratedmodelling.klab.hub.users.services.UserProfileService;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import net.minidev.json.JSONObject;
@@ -20,6 +22,8 @@ import net.minidev.json.JSONObject;
 public class UserProfileController {
 	
 	private UserProfileService userService;
+	
+	private static final JwtToken JWT_TOKEN_FACTORY = new JwtToken();
 	
 	@Autowired
 	UserProfileController(UserProfileService userService) {
@@ -44,8 +48,11 @@ public class UserProfileController {
 	// TODO this is call from single user, not need PreAuthorize
 	// @PreAuthorize("authentication.getPrincipal() == #username or hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_SYSTEM')")
 	//correct the auth should be caught on the token filter side.
-	public ResponseEntity<?> getCurrentUserProfile() {
+	public ResponseEntity<?> getCurrentUserProfile(@RequestParam(required = false) boolean jwt) {
 		ProfileResource profile = userService.getCurrentUserProfile();
+		if (jwt) {
+            profile.setJwtToken(JWT_TOKEN_FACTORY.createEngineJwtToken(profile));
+        }
 		return new ResponseEntity<>(profile,HttpStatus.ACCEPTED);
 	}
 

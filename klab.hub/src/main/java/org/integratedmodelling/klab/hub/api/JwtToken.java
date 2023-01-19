@@ -40,13 +40,7 @@ public class JwtToken {
 		}
 		
 		claims.setStringListClaim(JWT_CLAIM_KEY_ROLES, roleStrings);
-		
-		List<String> groupStrings = new ArrayList<>();
-		for(Group group: profile.getGroupsList()) {
-		    groupStrings.add(group.getId());
-		}
-		
-		claims.setStringListClaim(JWT_CLAIM_KEY_PERMISSIONS, groupStrings);
+		claims.setStringListClaim(JWT_CLAIM_KEY_PERMISSIONS, profile.getGroupsIds());
 		JsonWebSignature jws = new JsonWebSignature();
 		jws.setPayload(claims.toJson());
 		jws.setKey(NetworkKeyManager.INSTANCE.getPrivateKey());
