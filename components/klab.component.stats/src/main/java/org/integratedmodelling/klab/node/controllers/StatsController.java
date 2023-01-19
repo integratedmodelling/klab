@@ -11,7 +11,6 @@ import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.auth.Role;
-import org.integratedmodelling.klab.auth.api.IAuthenticatedIdentity;
 import org.integratedmodelling.klab.engine.extensions.Component;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
