@@ -204,11 +204,16 @@ public class ProfileResource implements OAuth2User{
 				Group group = new Group();
 				MongoGroup mGroup = grp.getGroup();
 				group.setId(mGroup.getName());
+				group.setDescription(mGroup.getDescription());
+				group.setIconUrl(mGroup.getIconUrl());
+				group.setMaxUpload(mGroup.getMaxUpload());
+				group.setObservables(mGroup.getObservableReferences());
 				group.setProjectUrls(mGroup.getProjectUrls());
 				group.setSshKey(mGroup.getSshKey());
-				group.setObservables(mGroup.getObservableReferences());
+				group.setMaxUpload(mGroup.getMaxUpload());
 				group.setWorldview(mGroup.isWorldview());
-				group.setIconUrl(mGroup.getIconUrl());
+				
+				
 				listOfGroups.add(group);
 			}
 		}
@@ -216,7 +221,10 @@ public class ProfileResource implements OAuth2User{
 	}
 	
 	public ProfileResource getSafeProfile() {
-		ProfileResource cleanedProfile = new ProfileResource();
+	    // TODO check if we need this
+	    return this;
+		/*
+	    ProfileResource cleanedProfile = new ProfileResource();
 		cleanedProfile.accountStatus = accountStatus;
 		cleanedProfile.address = address;
 		cleanedProfile.affiliation = affiliation;
@@ -240,7 +248,6 @@ public class ProfileResource implements OAuth2User{
 		//cleanedProfile.Token = Token;
 		cleanedProfile.jwtToken = jwtToken;
 		cleanedProfile.name = name;
-		
 		List<GroupEntry> safeGroups = new ArrayList<>();
 		for (GroupEntry entry : cleanedProfile.getGroups()) {
 			if(entry != null) {
@@ -254,8 +261,9 @@ public class ProfileResource implements OAuth2User{
 				safeGroups.add(entry);
 			}
 		}
-		cleanedProfile.groupEntries = safeGroups;
+		cleanedProfile.groupEntries = cleanedProfile.getGroups();
 		return cleanedProfile;
+		*/
 	}
 
 
