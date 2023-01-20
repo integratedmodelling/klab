@@ -321,6 +321,7 @@ public class Client extends RestTemplate implements IClient {
      * @param authorizer any identity.
      * @return a new
      */
+    @Override
     public Client onBehalfOf(IIdentity authorizer) {
 
         Client ret = new Client(this);
