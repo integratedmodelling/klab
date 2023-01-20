@@ -721,18 +721,24 @@ public class StatsReport {
                     return "[bytes downloaded = " + NumberFormat.getIntegerInstance().format(downloadSize) + "] ";
                 } else if (aggregator.target == Target.Observations) {
                     return "[" + (export
-                            ? " export "
+                            ? "export"
                             : (count + " assets; total time = " + NumberFormat.getInstance().format(totalTime))) + "] ";
                 } else if (aggregator.target == Target.Users || aggregator.target == Target.Engines
                         || aggregator.target == Target.Applications || aggregator.aggregationInterval != null) {
-                    return "[total observation time = " + NumberFormat.getInstance().format(totalTime)
-                            + "; total context size = " + NumberFormat.getInstance().format(totalSize) 
-                            + "; total downloaded = " + NumberFormat.getInstance().format(downloadSize) 
-                            + "]";
+                    return summary();
                 }
+            } else if (aggregator.aggregationInterval != null) {
+                return summary();
             }
 
             return "";
+        }
+
+        private String summary() {
+            return "[T: " + NumberFormat.getInstance().format(totalTime)
+                    + "; avg S:" + NumberFormat.getInstance().format((double)totalSize/(double)contexts.size()) 
+                    + "; # Obs:" + this.observations.size() + " in " + this.contexts.size() + " Ctxs"
+                    + "; D: " + NumberFormat.getInstance().format(downloadSize) + "]";
         }
 
         /*
@@ -775,7 +781,7 @@ public class StatsReport {
                 this.totalTime += result.get("query_time", Number.class).doubleValue();
             }
             if (!this.contexts.contains(result.get("context_id", String.class))) {
-                this.observations.add(result.get("context_id", String.class));
+                this.contexts.add(result.get("context_id", String.class));
                 this.totalSize += result.get("scale_size", Number.class).doubleValue();
             }
             this.downloadSize += result.get("byte_size", Number.class).doubleValue();
