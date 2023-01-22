@@ -48,8 +48,9 @@ public class StatsController {
         IUserIdentity user = Authentication.INSTANCE.getUserIdentity(principal);
         Component stc = Extensions.INSTANCE.getComponent(StatsComponent.ID);
         if (stc != null && stc.isActive() && activities.length > 0) {
-            Logging.INSTANCE.info("received " + activities.length + " new activities from " + user.getUsername() + " at "
-                    + activities[0].getEngineName());
+            Logging.INSTANCE.info(
+                    "received " + activities.length + " new activities from " + user.getUsername() + " at "
+                            + activities[0].getEngineName());
             for (ObservationResultStatistics activity : activities) {
                 stc.getImplementation(StatsComponent.class).submit(activity, user.getUsername(),
                         StringUtil.join(user.getGroups().stream().map((d) -> d.getId()).toList(), ","));
@@ -63,7 +64,8 @@ public class StatsController {
      */
 
     /**
-     * Report generation endpoint. All data are also available through k.LAB resources.
+     * Report generation endpoint. All data are also available through k.LAB resources. Non-admins
+     * can only report on their own usage.
      * <p>
      * Query parameters:
      * <p>
@@ -119,7 +121,8 @@ public class StatsController {
      * @throws UnsupportedEncodingException
      */
     @GetMapping(value = API.STATS.STATS_REPORT, produces = {"text/html", "text/plain", "text/markdown"})
-    public String createReport(Principal principal, @RequestParam String targets, @RequestParam(required = false) String span,
+    public String createReport(Principal principal, @RequestParam String targets,
+            @RequestParam(required = false) String span,
             @RequestParam(required = false) boolean errors, @RequestParam(required = false) String users,
             @RequestParam(required = false) String groups, @RequestParam(required = false) String apps,
             @RequestParam(required = false) String engines, @RequestParam(required = false) String resources,
@@ -162,10 +165,6 @@ public class StatsController {
                 options.add(Target.Downloads);
                 break;
             case "users":
-                if (!adminOrAuditor) {
-                    // FIXME use proper auth response and exception handling
-                    throw new KlabAuthorizationException("illegal non-anonymous access request");
-                }
                 options.add(Target.Users);
                 break;
             case "apps":
@@ -201,26 +200,22 @@ public class StatsController {
 
         if (cost && !adminOrAuditor) {
             // FIXME use proper auth response and exception handling
-            throw new KlabAuthorizationException("cost computation is only accessible to administrators and auditors");
+            throw new KlabAuthorizationException(
+                    "cost computation is only accessible to administrators and auditors");
         }
 
         report.reportCosts(cost);
 
         if (span != null) {
             report.setSpan(span.split(","));
-        } else if (!adminOrAuditor) {
-            // FIXME use proper auth response and exception handling
-            throw new KlabAuthorizationException("non-admins or auditors must specify a temporal span for reporting");
         }
 
         if (operations != null) {
             report.filterFor(Target.Operations, operations.split(","));
         }
-        if (users != null) {
-            if (!adminOrAuditor) {
-                // FIXME use proper auth response and exception handling
-                throw new KlabAuthorizationException("illegal non-anonymous access request");
-            }
+        if (!adminOrAuditor) {
+            report.filterFor(Target.Users, new String[]{user.getUsername()});
+        } else if (users != null) {
             report.filterFor(Target.Users, users.split(","));
         }
         if (models != null) {
@@ -230,10 +225,6 @@ public class StatsController {
             report.filterFor(Target.Observables, observables.split(","));
         }
         if (groups != null) {
-            if (!adminOrAuditor) {
-                // FIXME use proper auth response and exception handling
-                throw new KlabAuthorizationException("illegal non-anonymous access request");
-            }
             report.filterFor(Target.Groups, groups.split(","));
         }
         if (resources != null) {

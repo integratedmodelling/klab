@@ -541,7 +541,7 @@ public class StatsReport {
                 this.context_id = result.get("context_id", String.class);
                 String cname = result.get("context_name", String.class);
                 this.context_name = (cname == null ? "" : (cname + " ")) + "[" + result.get("context_observable", String.class)
-                        + "]";
+                        + "] (" + this.context_id + ")";
                 break;
             }
 

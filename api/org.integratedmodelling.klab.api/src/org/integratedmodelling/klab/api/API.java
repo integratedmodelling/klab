@@ -1140,8 +1140,6 @@ public interface API {
 
         public static final String STATS_BASE = API_BASE + "/stats";
 
-        public static final String STATS_CLASSES = STATS_BASE + "/classes";
-
         public static final String STATS_ADD = STATS_BASE + "/add";
 
         public static final String STATS_REPORT = STATS_BASE + "/report";

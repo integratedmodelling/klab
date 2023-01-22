@@ -369,7 +369,7 @@ public class TimeInstant extends GroovyObjectSupport implements ITimeInstant {
             return new TimeInstant(new DateTime(
             		time.getYear(),
                     time.getMonthOfYear(),
-                    0,
+                    1,
                     0,
                     0,
                     0,

@@ -77,6 +77,7 @@ import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.monitoring.MessageHandler;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IObserver;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
@@ -85,7 +86,6 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.api.runtime.rest.IClient;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.api.services.IIndexingService;
 import org.integratedmodelling.klab.api.services.IIndexingService.Context;
@@ -95,7 +95,6 @@ import org.integratedmodelling.klab.cli.CommandConsole;
 import org.integratedmodelling.klab.cli.DebuggerConsole;
 import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.common.monitoring.TicketManager;
-import org.integratedmodelling.klab.communication.client.Client;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.geocoding.Geocoder;
 import org.integratedmodelling.klab.components.geospace.geocoding.Geocoder.Location;
@@ -1987,6 +1986,11 @@ public class Session extends GroovyObjectSupport
             monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceCreated, ((Resource) ret).getReference());
         }
         return ret;
+    }
+    
+    @Override
+    public IObserver<?> getObserver() {
+        return null;
     }
 
     @Override
