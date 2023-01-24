@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.integratedmodelling.klab.api.observations.IObserver;
 import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
@@ -232,5 +233,11 @@ public class Structure extends GroovyObjectSupport implements IArtifact.Structur
 	public IProcess getOwningProcess(IArtifact artifact) {
 		return derivedOccurrents.get(artifact.getId());
 	}
+
+    @Override
+    public IObserver<?> getObserver(IArtifact artifact) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }
