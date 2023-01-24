@@ -101,10 +101,11 @@ public class UserAuthTokenServiceImpl implements UserAuthTokenService{
 	}
 
 	@Override
-	public LoginResponse getAuthResponse(String username, String password, boolean jwtToken) {
+	public LoginResponse getAuthResponse(String username, String password, boolean remote) {
 		TokenAuthentication token = getUserAuthenticationToken(username, password);
 		ProfileResource profile = new GetUserProfile(userRepository, username, objectMapper).execute();
 		if (jwtToken) {
+		if (remote) {
 		    profile.setJwtToken(JWT_TOKEN_FACTORY.createEngineJwtToken(profile));
 		}
 		LoginResponse response = new LoginResponse(token, profile.getSafeProfile());

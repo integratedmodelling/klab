@@ -6,7 +6,7 @@ public class UserAuthenticationRequest {
 
 	private String username;
 	private String password;
-	private boolean jwtToken = false;
+	private boolean remote = false;
 
 	public String getUsername() {
 		return username;
@@ -24,17 +24,17 @@ public class UserAuthenticationRequest {
 		this.password = password;
 	}
 
-	public boolean isJwtToken() {
-        return jwtToken;
+	public boolean isRemote() {
+        return remote;
     }
 
-    public void setJwtToken(boolean jwtToken) {
-        this.jwtToken = jwtToken;
+    public void setRemote(boolean jwtToken) {
+        this.remote = jwtToken;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(jwtToken, password, username);
+        return Objects.hash(remote, password, username);
     }
 
     @Override
@@ -46,12 +46,12 @@ public class UserAuthenticationRequest {
             return false;
         }
         UserAuthenticationRequest other = (UserAuthenticationRequest) obj;
-        return jwtToken == other.jwtToken && Objects.equals(password, other.password) && Objects.equals(username, other.username);
+        return remote == other.remote && Objects.equals(password, other.password) && Objects.equals(username, other.username);
     }
 
     @Override
     public String toString() {
-        return "UserAuthenticationRequest [username=" + username + ", password=" + password + ", jwtToken=" + jwtToken + "]";
+        return "UserAuthenticationRequest [username=" + username + ", password=" + password + ", remote=" + remote + "]";
     }
 
 }

@@ -3,10 +3,8 @@ package org.integratedmodelling.klab.engine.services;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.klab.Authentication;
@@ -41,7 +39,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * This hub service is used to authenticate a user request to login to an engine
@@ -68,7 +65,7 @@ public class HubUserService implements RemoteUserService {
 	public ResponseEntity<?> login(RemoteUserAuthenticationRequest login) {
 		ResponseEntity<HubLoginResponse> result = null;
 		if (!"".equals(login.getUsername()) && !"".equals(login.getPassword())) {
-		    login.setJwtToken(true);
+		    login.setRemote(true);
 			try {
 				result = hubLogin(login);
 			} catch (HttpClientErrorException e) {
@@ -299,7 +296,7 @@ public class HubUserService implements RemoteUserService {
 	}
 
 	private String getProfileUrl() {
-		return Network.INSTANCE.getHub().getUrls().iterator().next() + API.HUB.CURRENT_PROFILE + "?jwt={jwt}";
+		return Network.INSTANCE.getHub().getUrls().iterator().next() + API.HUB.CURRENT_PROFILE + "?remote={remote}";
 	}
 
 }
