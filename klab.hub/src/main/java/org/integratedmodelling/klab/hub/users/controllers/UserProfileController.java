@@ -49,7 +49,7 @@ public class UserProfileController {
 	// @PreAuthorize("authentication.getPrincipal() == #username or hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_SYSTEM')")
 	//correct the auth should be caught on the token filter side.
 	public ResponseEntity<?> getCurrentUserProfile(@RequestParam(required = false) boolean remote) {
-		ProfileResource profile = userService.getCurrentUserProfile(remote);
+		ProfileResource profile = userService.getCurrentUserProfile();
 		if (remote) {
             profile.setJwtToken(JWT_TOKEN_FACTORY.createEngineJwtToken(profile));
         }
