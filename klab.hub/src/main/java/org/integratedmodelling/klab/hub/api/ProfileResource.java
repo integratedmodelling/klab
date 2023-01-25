@@ -9,8 +9,10 @@ import java.util.Map;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.integratedmodelling.klab.auth.Role;
 import org.integratedmodelling.klab.hub.api.User.AccountStatus;
 import org.integratedmodelling.klab.rest.Group;
 import org.joda.time.DateTime;
@@ -64,11 +66,16 @@ public class ProfileResource implements OAuth2User{
 
     public AccountStatus accountStatus;
     
-    public String Token;
+    // public String Token;
 
     private Collection<? extends GrantedAuthority> authorities;
     
     private Map<String, Object> attributes;
+    
+    /**
+     * Use to store the jwt token in case of needs
+     */
+    private String jwtToken;
     
     @Override
     public int hashCode() {
@@ -118,9 +125,17 @@ public class ProfileResource implements OAuth2User{
 		return roles;
 	}
 
-	public void setToken(String token) {
-		this.Token = token;
-	}
+//	public void setToken(String token) {
+//		this.Token = token;
+//	}
+
+    public String getJwtToken() {
+        return jwtToken;
+    }
+
+    public void setJwtToken(String jwtToken) {
+        this.jwtToken = jwtToken;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -172,6 +187,16 @@ public class ProfileResource implements OAuth2User{
 		this.lastConnection = lastConnection;
 	}
 
+	public List<String> getGroupsIds() {
+	    List<String> groupsIds = new ArrayList<>();
+	    for (GroupEntry grp : this.getGroups()) {
+            if(grp != null && grp.getExperation().isAfter(DateTime.now())) {
+                groupsIds.add(grp.getGroup().getName());
+            }
+        }
+	    return groupsIds;
+	}
+	
 	public List<Group> getGroupsList() {
 		List<Group> listOfGroups = new ArrayList<>();
 		for (GroupEntry grp : this.getGroups()) {
@@ -179,11 +204,16 @@ public class ProfileResource implements OAuth2User{
 				Group group = new Group();
 				MongoGroup mGroup = grp.getGroup();
 				group.setId(mGroup.getName());
+				group.setDescription(mGroup.getDescription());
+				group.setIconUrl(mGroup.getIconUrl());
+				group.setMaxUpload(mGroup.getMaxUpload());
+				group.setObservables(mGroup.getObservableReferences());
 				group.setProjectUrls(mGroup.getProjectUrls());
 				group.setSshKey(mGroup.getSshKey());
-				group.setObservables(mGroup.getObservableReferences());
+				group.setMaxUpload(mGroup.getMaxUpload());
 				group.setWorldview(mGroup.isWorldview());
-				group.setIconUrl(mGroup.getIconUrl());
+				
+				
 				listOfGroups.add(group);
 			}
 		}
@@ -191,7 +221,10 @@ public class ProfileResource implements OAuth2User{
 	}
 	
 	public ProfileResource getSafeProfile() {
-		ProfileResource cleanedProfile = new ProfileResource();
+	    // TODO check if we need this
+	    return this;
+		/*
+	    ProfileResource cleanedProfile = new ProfileResource();
 		cleanedProfile.accountStatus = accountStatus;
 		cleanedProfile.address = address;
 		cleanedProfile.affiliation = affiliation;
@@ -212,9 +245,9 @@ public class ProfileResource implements OAuth2User{
 		cleanedProfile.roles = roles;
 		cleanedProfile.sendUpdates = sendUpdates;
 		cleanedProfile.serverUrl = serverUrl;
-		cleanedProfile.Token = Token;
+		//cleanedProfile.Token = Token;
+		cleanedProfile.jwtToken = jwtToken;
 		cleanedProfile.name = name;
-		
 		List<GroupEntry> safeGroups = new ArrayList<>();
 		for (GroupEntry entry : cleanedProfile.getGroups()) {
 			if(entry != null) {
@@ -228,8 +261,9 @@ public class ProfileResource implements OAuth2User{
 				safeGroups.add(entry);
 			}
 		}
-		cleanedProfile.groupEntries = safeGroups;
+		cleanedProfile.groupEntries = cleanedProfile.getGroups();
 		return cleanedProfile;
+		*/
 	}
 
 

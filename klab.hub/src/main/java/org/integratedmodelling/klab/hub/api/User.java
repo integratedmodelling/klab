@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.integratedmodelling.klab.auth.Role;
 import org.joda.time.DateTime;
 import org.springframework.data.annotation.Reference;
 import org.springframework.data.annotation.Transient;

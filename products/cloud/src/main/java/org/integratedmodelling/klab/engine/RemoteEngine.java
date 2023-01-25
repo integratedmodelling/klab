@@ -14,7 +14,6 @@ import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.engine.IEngineStartupOptions;
 import org.integratedmodelling.klab.auth.AnonymousEngineCertificate;
 import org.integratedmodelling.klab.auth.KlabCertificate;
-import org.integratedmodelling.klab.engine.events.UserEventPublisher;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.services.AgentServiceCheck;
 import org.integratedmodelling.klab.engine.services.ConsulDnsService;
@@ -27,7 +26,6 @@ public class RemoteEngine extends Engine {
 
     private Long sessionDeadBand = 8L;
     private ConsulDnsService dnsService;
-    private UserEventPublisher publisher;
     private AgentServiceCheck check;
 
     public RemoteEngine( ICertificate certificate ) {
@@ -83,10 +81,8 @@ public class RemoteEngine extends Engine {
                         try {
                             Logging.INSTANCE.info("Killing session " + sesh.getId());
                             sesh.close();
-                            publisher.logout(null, sesh, true);
                         } catch (IOException e) {
                             // I do not want to throw anything because the thread would die
-                            publisher.logoutFailed(sesh.getUsername(), e.getMessage());
                             Logging.INSTANCE.info("Error closing inactive session or removing dead weight.");
                         }
                     }
@@ -123,10 +119,6 @@ public class RemoteEngine extends Engine {
         check.start();
     }
 
-    public void setPublisher(UserEventPublisher publisher) {
-        this.publisher = publisher;
-    }
-    
     public void setSessionDeadBand(Long value) {
         this.sessionDeadBand = value;
     }

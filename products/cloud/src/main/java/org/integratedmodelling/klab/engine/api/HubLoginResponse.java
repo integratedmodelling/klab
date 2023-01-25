@@ -21,5 +21,5 @@ public class HubLoginResponse {
 	public AuthenticationToken getAuthentication() {
 		return authentication;
 	}
-	
+
 }

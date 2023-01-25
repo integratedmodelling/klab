@@ -29,8 +29,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 // FIXME this must be admin, at the moment it won't let my admin user in
-// @Secured({ Role.ADMINISTRATOR, Role.SYSTEM })
-@Secured(Role.ENGINE)
+@Secured({ Role.ADMINISTRATOR, Role.SYSTEM })
+// @Secured(Role.ENGINE)
 public class AdminController {
 
     @GetMapping(value = API.NODE.ADMIN.COMPONENT_SETUP, produces = "application/json")

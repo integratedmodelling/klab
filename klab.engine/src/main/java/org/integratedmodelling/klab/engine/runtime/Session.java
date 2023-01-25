@@ -77,6 +77,7 @@ import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.monitoring.MessageHandler;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IObserver;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
@@ -305,30 +306,26 @@ public class Session extends GroovyObjectSupport
         @Override
         public void info(Object... info) {
             Pair<String, INotification.Type> message = NotificationUtils.getMessage(info);
-            notifications.add(
-                    new Notification(message.getFirst(), Level.INFO.getName(), System.currentTimeMillis()));
+            notifications.add(new Notification(message.getFirst(), Level.INFO.getName(), System.currentTimeMillis()));
         }
 
         @Override
         public void warn(Object... o) {
             Pair<String, INotification.Type> message = NotificationUtils.getMessage(o);
-            notifications.add(new Notification(message.getFirst(), Level.WARNING.getName(),
-                    System.currentTimeMillis()));
+            notifications.add(new Notification(message.getFirst(), Level.WARNING.getName(), System.currentTimeMillis()));
         }
 
         @Override
         public void error(Object... o) {
             errors++;
             Pair<String, INotification.Type> message = NotificationUtils.getMessage(o);
-            notifications.add(
-                    new Notification(message.getFirst(), Level.SEVERE.getName(), System.currentTimeMillis()));
+            notifications.add(new Notification(message.getFirst(), Level.SEVERE.getName(), System.currentTimeMillis()));
         }
 
         @Override
         public void debug(Object... o) {
             Pair<String, INotification.Type> message = NotificationUtils.getMessage(o);
-            notifications.add(
-                    new Notification(message.getFirst(), Level.FINE.getName(), System.currentTimeMillis()));
+            notifications.add(new Notification(message.getFirst(), Level.FINE.getName(), System.currentTimeMillis()));
         }
 
         @Override
@@ -617,13 +614,11 @@ public class Session extends GroovyObjectSupport
             if (ref != null) {
                 boolean online = Resources.INSTANCE.isResourceOnline(ref);
                 monitor.send(Message.create(this.token, IMessage.MessageClass.ResourceLifecycle,
-                        online ? IMessage.Type.ResourceOnline : IMessage.Type.ResourceOffline,
-                        ((Resource) ref).getReference())
+                        online ? IMessage.Type.ResourceOnline : IMessage.Type.ResourceOffline, ((Resource) ref).getReference())
                         .inResponseTo(message));
             } else {
                 monitor.send(Message
-                        .create(this.token, IMessage.MessageClass.ResourceLifecycle,
-                                IMessage.Type.ResourceUnknown, urnOrDummy)
+                        .create(this.token, IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceUnknown, urnOrDummy)
                         .inResponseTo(message));
             }
             return;
@@ -697,8 +692,7 @@ public class Session extends GroovyObjectSupport
                 response.setError("Resource has errors or is unknown to the engine");
             } else {
                 try {
-                    String ticketId = Resources.INSTANCE
-                            .submitResource(resource, request.getNode().getId(), publicationData)
+                    String ticketId = Resources.INSTANCE.submitResource(resource, request.getNode().getId(), publicationData)
                             .getId();
                     response.setTicketId(ticketId);
                 } catch (Throwable e) {
@@ -766,11 +760,9 @@ public class Session extends GroovyObjectSupport
                         break;
                     }
                 } else {
-                    IResourceAdapter adapter = Resources.INSTANCE
-                            .getResourceAdapter(resource.getAdapterType());
+                    IResourceAdapter adapter = Resources.INSTANCE.getResourceAdapter(resource.getAdapterType());
                     res = adapter.getValidator().performOperation(resource, request.getOperation(),
-                            Parameters.create(request.getParameters()),
-                            Resources.INSTANCE.getCatalog(resource), rmonitor);
+                            Parameters.create(request.getParameters()), Resources.INSTANCE.getCatalog(resource), rmonitor);
                 }
 
                 response.setUrn(resource.getUrn());
@@ -797,55 +789,47 @@ public class Session extends GroovyObjectSupport
 
             IResource resource = Resources.INSTANCE.createLocalResource(request, monitor);
             if (resource != null) {
-                monitor.send(Message
-                        .create(token, IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceCreated,
-                                ((Resource) resource).getReference())/*
-                                                                      * .inResponseTo(message)
-                                                                      */);
+                monitor.send(Message.create(token, IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceCreated,
+                        ((Resource) resource).getReference())/*
+                                                              * .inResponseTo(message)
+                                                              */);
             }
 
         } else if (message.getType() == IMessage.Type.CreateCodelist) {
 
-            IResource resource = Resources.INSTANCE
-                    .resolveResource(request.getResourceUrns().iterator().next());
+            IResource resource = Resources.INSTANCE.resolveResource(request.getResourceUrns().iterator().next());
             if (resource == null) {
                 monitor.error("requested resource not found: " + request.getResourceUrns().iterator().next());
                 return;
             }
 
-            ICodelist codelist = Resources.INSTANCE.createCodelist(resource, request.getCodelistAttribute(),
-                    monitor);
+            ICodelist codelist = Resources.INSTANCE.createCodelist(resource, request.getCodelistAttribute(), monitor);
             if (codelist != null) {
-                monitor.send(Message
-                        .create(token, IMessage.MessageClass.ResourceLifecycle, IMessage.Type.CodelistCreated,
-                                ((Codelist) codelist).getReference())/*
-                                                                      * .inResponseTo(message)
-                                                                      */);
+                monitor.send(Message.create(token, IMessage.MessageClass.ResourceLifecycle, IMessage.Type.CodelistCreated,
+                        ((Codelist) codelist).getReference())/*
+                                                              * .inResponseTo(message)
+                                                              */);
             }
 
         } else if (message.getType() == IMessage.Type.GetCodelist) {
 
-            IResource resource = Resources.INSTANCE
-                    .resolveResource(request.getResourceUrns().iterator().next());
+            IResource resource = Resources.INSTANCE.resolveResource(request.getResourceUrns().iterator().next());
             if (resource == null) {
                 monitor.error("requested resource not found: " + request.getResourceUrns().iterator().next());
                 return;
             }
 
-            ICodelist codelist = Resources.INSTANCE.getCodelist(resource, request.getCodelistAttribute(),
-                    monitor);
+            ICodelist codelist = Resources.INSTANCE.getCodelist(resource, request.getCodelistAttribute(), monitor);
             if (codelist != null) {
-                monitor.send(Message
-                        .create(token, IMessage.MessageClass.ResourceLifecycle, IMessage.Type.CodelistCreated,
-                                ((Codelist) codelist).getReference())/*
-                                                                      * .inResponseTo(message)
-                                                                      */);
+                monitor.send(Message.create(token, IMessage.MessageClass.ResourceLifecycle, IMessage.Type.CodelistCreated,
+                        ((Codelist) codelist).getReference())/*
+                                                              * .inResponseTo(message)
+                                                              */);
             }
 
         } else if (message.getType() == IMessage.Type.UpdateCodelist) {
 
-            IResource resource = Resources.INSTANCE
-                    .resolveResource(request.getResourceUrns().iterator().next());
+            IResource resource = Resources.INSTANCE.resolveResource(request.getResourceUrns().iterator().next());
             if (resource == null) {
                 monitor.error("requested resource not found: " + request.getResourceUrns().iterator().next());
                 return;
@@ -855,8 +839,7 @@ public class Session extends GroovyObjectSupport
 
         } else if (message.getType() == IMessage.Type.DeleteCodelist) {
 
-            IResource resource = Resources.INSTANCE
-                    .resolveResource(request.getResourceUrns().iterator().next());
+            IResource resource = Resources.INSTANCE.resolveResource(request.getResourceUrns().iterator().next());
             if (resource == null) {
                 monitor.error("requested resource not found: " + request.getResourceUrns().iterator().next());
                 return;
@@ -883,46 +866,37 @@ public class Session extends GroovyObjectSupport
 
                 if (request.getOperation() == CRUDOperation.MOVE) {
 
-                    IProject destinationProject = Resources.INSTANCE
-                            .getProject(request.getDestinationProject());
+                    IProject destinationProject = Resources.INSTANCE.getProject(request.getDestinationProject());
                     if (destinationProject == null) {
                         monitor.error("resource target is an unknown project: canceling operation");
                         return;
                     }
-                    monitor.send(Message.create(token, IMessage.MessageClass.ResourceLifecycle,
-                            IMessage.Type.ResourceDeleted,
+                    monitor.send(Message.create(token, IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceDeleted,
                             ((Resource) resource).getReference())/* .inResponseTo(message) */);
-                    resource = Resources.INSTANCE.getLocalResourceCatalog().move(resource,
-                            destinationProject);
-                    monitor.send(Message.create(token, IMessage.MessageClass.ResourceLifecycle,
-                            IMessage.Type.ResourceImported,
+                    resource = Resources.INSTANCE.getLocalResourceCatalog().move(resource, destinationProject);
+                    monitor.send(Message.create(token, IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceImported,
                             ((Resource) resource).getReference())/* .inResponseTo(message) */);
                 } else if (request.getOperation() == CRUDOperation.COPY) {
 
-                    IProject destinationProject = Resources.INSTANCE
-                            .getProject(request.getDestinationProject());
+                    IProject destinationProject = Resources.INSTANCE.getProject(request.getDestinationProject());
                     if (destinationProject == null) {
                         monitor.error("resource target is an unknown project: canceling operation");
                         return;
                     }
 
-                    resource = Resources.INSTANCE.getLocalResourceCatalog().copy(resource,
-                            destinationProject);
-                    monitor.send(Message.create(token, IMessage.MessageClass.ResourceLifecycle,
-                            IMessage.Type.ResourceImported,
+                    resource = Resources.INSTANCE.getLocalResourceCatalog().copy(resource, destinationProject);
+                    monitor.send(Message.create(token, IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceImported,
                             ((Resource) resource).getReference())/* .inResponseTo(message) */);
                 } else if (request.getOperation() == CRUDOperation.DELETE) {
 
                     resource = Resources.INSTANCE.getLocalResourceCatalog().remove(urn);
-                    monitor.send(Message.create(token, IMessage.MessageClass.ResourceLifecycle,
-                            IMessage.Type.ResourceDeleted,
+                    monitor.send(Message.create(token, IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceDeleted,
                             ((Resource) resource).getReference())/* .inResponseTo(message) */);
 
                 } else if (request.getOperation() == CRUDOperation.UPDATE) {
 
                     resource = Resources.INSTANCE.updateResource(urn, request);
-                    monitor.send(Message.create(token, IMessage.MessageClass.ResourceLifecycle,
-                            IMessage.Type.ResourceUpdated,
+                    monitor.send(Message.create(token, IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceUpdated,
                             ((Resource) resource).getReference()).inResponseTo(message));
 
                 }
@@ -937,16 +911,13 @@ public class Session extends GroovyObjectSupport
         if (ret == null) {
             ret = new AuthorityIdentity();
             ret.getNotifications().add(new Notification(
-                    "Authority identity " + request.getAuthority() + ":" + request.getIdentity()
-                            + " could not be resolved",
+                    "Authority identity " + request.getAuthority() + ":" + request.getIdentity() + " could not be resolved",
                     Level.SEVERE.getName()));
         } else if (ret.getDescription() != null) {
             // reformat the documentation as HTML
             ((AuthorityIdentity) ret).setDescription(MarkdownUtils.INSTANCE.format(ret.getDescription()));
         }
-        monitor.send(Message
-                .create(this.token, IMessage.MessageClass.KimLifecycle, IMessage.Type.AuthorityDocumentation,
-                        ret)
+        monitor.send(Message.create(this.token, IMessage.MessageClass.KimLifecycle, IMessage.Type.AuthorityDocumentation, ret)
                 .inResponseTo(message));
     }
 
@@ -959,15 +930,13 @@ public class Session extends GroovyObjectSupport
         if (authority == null) {
             ret.setError("Authority " + request.getAuthorityId() + " is inaccessible or non-existent");
         } else if (authority.getCapabilities().isSearchable()) {
-            for (IAuthority.Identity identity : authority.search(request.getQueryString(),
-                    request.getAuthorityCatalog())) {
+            for (IAuthority.Identity identity : authority.search(request.getQueryString(), request.getAuthorityCatalog())) {
                 if (identity instanceof AuthorityIdentity) {
                     ret.getMatches().add((AuthorityIdentity) identity);
                 }
             }
         } else {
-            Identity identity = authority.getIdentity(request.getQueryString(),
-                    request.getAuthorityCatalog());
+            Identity identity = authority.getIdentity(request.getQueryString(), request.getAuthorityCatalog());
             if (identity instanceof AuthorityIdentity) {
                 ret.getMatches().add((AuthorityIdentity) identity);
             } else {
@@ -975,9 +944,7 @@ public class Session extends GroovyObjectSupport
             }
         }
 
-        monitor.send(Message
-                .create(this.token, IMessage.MessageClass.UserInterface, IMessage.Type.AuthoritySearchResults,
-                        ret)
+        monitor.send(Message.create(this.token, IMessage.MessageClass.UserInterface, IMessage.Type.AuthoritySearchResults, ret)
                 .inResponseTo(message));
     }
 
@@ -995,19 +962,15 @@ public class Session extends GroovyObjectSupport
                     @Override
                     public void run() {
                         if (request.isBulkImport()) {
-                            for (IResource resource : Resources.INSTANCE.importResources(
-                                    request.getImportUrl(), project,
+                            for (IResource resource : Resources.INSTANCE.importResources(request.getImportUrl(), project,
                                     request.getAdapter(), request.getRegex())) {
-                                monitor.send(IMessage.MessageClass.ResourceLifecycle,
-                                        IMessage.Type.ResourceImported,
+                                monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceImported,
                                         ((Resource) resource).getReference());
                             }
                         } else {
-                            IResource resource = Resources.INSTANCE.importResource(request.getImportUrl(),
-                                    project);
+                            IResource resource = Resources.INSTANCE.importResource(request.getImportUrl(), project);
                             if (resource != null) {
-                                monitor.send(IMessage.MessageClass.ResourceLifecycle,
-                                        IMessage.Type.ResourceImported,
+                                monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceImported,
                                         ((Resource) resource).getReference());
                             }
                         }
@@ -1019,17 +982,14 @@ public class Session extends GroovyObjectSupport
 
             IResource resource = Resources.INSTANCE.resolveResource(request.getTargetResourceUrn());
             if (resource == null) {
-                monitor.error(
-                        "cannot import into resource: URN " + request.getTargetResourceUrn() + " is unknown");
+                monitor.error("cannot import into resource: URN " + request.getTargetResourceUrn() + " is unknown");
             } else {
                 new Thread(){
 
                     @Override
                     public void run() {
-                        if (Resources.INSTANCE.importIntoResource(request.getImportUrl(), resource,
-                                getMonitor())) {
-                            monitor.send(IMessage.MessageClass.ResourceLifecycle,
-                                    IMessage.Type.ResourceUpdated,
+                        if (Resources.INSTANCE.importIntoResource(request.getImportUrl(), resource, getMonitor())) {
+                            monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceUpdated,
                                     ((Resource) resource).getReference());
                         } else {
                             // TODO complain to client
@@ -1066,8 +1026,7 @@ public class Session extends GroovyObjectSupport
                     && matches.getMatches().size() > action.getMatchIndex()/*
                                                                             * which would be weird
                                                                             */) {
-                acceptChoice(expression, matches.getMatches().get(action.getMatchIndex()),
-                        action.getContextId());
+                acceptChoice(expression, matches.getMatches().get(action.getMatchIndex()), action.getContextId());
             }
             return;
         }
@@ -1157,8 +1116,7 @@ public class Session extends GroovyObjectSupport
                     }
                     monitor.send(IMessage.MessageClass.UserInterface, IMessage.Type.DataflowDocumentation,
                             new DataflowDetail(state.getNodeId(), documentation,
-                                    element.getType() == ElementType.RESOURCE
-                                            || element.getType() == ElementType.TABLE));
+                                    element.getType() == ElementType.RESOURCE || element.getType() == ElementType.TABLE));
                 }
             } else {
                 if (Configuration.INSTANCE.isEchoEnabled()) {
@@ -1182,8 +1140,7 @@ public class Session extends GroovyObjectSupport
             response.setConsoleType(message.getConsoleType());
             if (consoles.containsKey(message.getConsoleId())) {
                 // set payload to
-                response.setPayload(
-                        consoles.get(message.getConsoleId()).executeCommand(message.getPayload()));
+                response.setPayload(consoles.get(message.getConsoleId()).executeCommand(message.getPayload()));
             } else {
                 response.setPayload("ERROR: console ID not recognized");
             }
@@ -1255,8 +1212,7 @@ public class Session extends GroovyObjectSupport
                     case UNDO:
 
                         // client may be stupid, as mine is
-                        if (request.getContextId() != null
-                                && semanticExpressions.containsKey(request.getContextId())) {
+                        if (request.getContextId() != null && semanticExpressions.containsKey(request.getContextId())) {
 
                             SemanticExpression expression = semanticExpressions.get(request.getContextId());
                             boolean ok = true;
@@ -1284,8 +1240,7 @@ public class Session extends GroovyObjectSupport
                         qr.setContextId(request.getContextId());
                         qr.getErrors().addAll(semanticExpressions.get(response.getContextId()).getErrors());
                         qr.getCode().addAll(semanticExpressions.get(response.getContextId()).getStyledCode());
-                        qr.setCurrentType(
-                                semanticExpressions.get(response.getContextId()).getObservableType());
+                        qr.setCurrentType(semanticExpressions.get(response.getContextId()).getObservableType());
                         monitor.send(IMessage.MessageClass.UserInterface, IMessage.Type.QueryStatus, qr);
                         break;
 
@@ -1296,8 +1251,7 @@ public class Session extends GroovyObjectSupport
                         qr.setContextId(request.getContextId());
                         qr.getErrors().addAll(semanticExpressions.get(response.getContextId()).getErrors());
                         qr.getCode().addAll(semanticExpressions.get(response.getContextId()).getStyledCode());
-                        qr.setCurrentType(
-                                semanticExpressions.get(response.getContextId()).getObservableType());
+                        qr.setCurrentType(semanticExpressions.get(response.getContextId()).getObservableType());
                         monitor.send(IMessage.MessageClass.UserInterface, IMessage.Type.QueryStatus, qr);
                         break;
 
@@ -1319,8 +1273,7 @@ public class Session extends GroovyObjectSupport
 
                     response.setElapsedTimeMs(System.currentTimeMillis() - response.getElapsedTimeMs());
                     monitor.send(Message
-                            .create(token, IMessage.MessageClass.Query, IMessage.Type.QueryResult,
-                                    response.signalEndTime())
+                            .create(token, IMessage.MessageClass.Query, IMessage.Type.QueryResult, response.signalEndTime())
                             .inResponseTo(message));
                 }
             }.run();
@@ -1330,17 +1283,13 @@ public class Session extends GroovyObjectSupport
 
     protected SearchResponse setupResponse(SearchRequest request) {
 
-        final String contextId = request.getContextId() == null
-                ? NameGenerator.shortUUID()
-                : request.getContextId();
+        final String contextId = request.getContextId() == null ? NameGenerator.shortUUID() : request.getContextId();
 
         if ((request.getSearchMode() == Mode.FREETEXT || request.isDefaultResults())) {
             if ((request.getContextId() == null)
-                    || searchContexts.get(contextId) == null
-                            && searchContexts.get(contextId).getFirst() == null) {
+                    || searchContexts.get(contextId) == null && searchContexts.get(contextId).getFirst() == null) {
                 searchContexts.put(contextId, new Pair<>(
-                        Indexing.INSTANCE.createContext(request.getMatchTypes(), request.getSemanticTypes()),
-                        new ArrayList<>()));
+                        Indexing.INSTANCE.createContext(request.getMatchTypes(), request.getSemanticTypes()), new ArrayList<>()));
             }
         }
 
@@ -1358,14 +1307,11 @@ public class Session extends GroovyObjectSupport
      * @param request
      * @param response
      */
-    protected void runSemanticSearch(SemanticExpression expression, SearchRequest request,
-            SearchResponse response) {
+    protected void runSemanticSearch(SemanticExpression expression, SearchRequest request, SearchResponse response) {
 
-        for (Match match : Indexer.INSTANCE.query(request.getQueryString(),
-                expression.getCurrent().getScope(),
+        for (Match match : Indexer.INSTANCE.query(request.getQueryString(), expression.getCurrent().getScope(),
                 request.getMaxResults())) {
-            response.getMatches()
-                    .add(((org.integratedmodelling.klab.engine.indexing.SearchMatch) match).getReference());
+            response.getMatches().add(((org.integratedmodelling.klab.engine.indexing.SearchMatch) match).getReference());
         }
 
         // save the matches in the expression so that we recognize a choice
@@ -1385,16 +1331,14 @@ public class Session extends GroovyObjectSupport
         List<Match> matches = new ArrayList<>();
         int i = 0;
         for (ObservableReference observable : Authentication.INSTANCE.getDefaultObservables(Session.this)) {
-            SearchMatch match = new SearchMatch(observable.getObservable(), observable.getLabel(),
-                    observable.getDescription(),
+            SearchMatch match = new SearchMatch(observable.getObservable(), observable.getLabel(), observable.getDescription(),
                     observable.getSemantics(), observable.getState(), observable.getExtendedDescription());
             match.setIndex(i++);
             response.getMatches().add(match);
             matches.add(new org.integratedmodelling.klab.engine.indexing.SearchMatch(match));
         }
         searchContexts.put(contextId, new Pair<Context, List<Match>>(
-                Indexing.INSTANCE.createContext(request.getMatchTypes(), request.getSemanticTypes()),
-                matches));
+                Indexing.INSTANCE.createContext(request.getMatchTypes(), request.getSemanticTypes()), matches));
     }
 
     /**
@@ -1411,8 +1355,7 @@ public class Session extends GroovyObjectSupport
         for (Location location : Geocoder.INSTANCE.lookup(request.getQueryString())) {
             if ("relation".equals(location.getOsm_type())) {
 
-                SearchMatch match = new SearchMatch(location.getURN(), location.getName(),
-                        location.getDescription(),
+                SearchMatch match = new SearchMatch(location.getURN(), location.getName(), location.getDescription(),
                         IKimConcept.Type.SUBJECT);
                 match.setIndex(i++);
                 response.getMatches().add(match);
@@ -1430,15 +1373,11 @@ public class Session extends GroovyObjectSupport
             return;
         }
 
-        final String contextId = request.getContextId() == null
-                ? NameGenerator.shortUUID()
-                : request.getContextId();
+        final String contextId = request.getContextId() == null ? NameGenerator.shortUUID() : request.getContextId();
         if (request.getContextId() == null
-                || searchContexts.get(contextId) == null
-                        && searchContexts.get(contextId).getFirst() == null) {
+                || searchContexts.get(contextId) == null && searchContexts.get(contextId).getFirst() == null) {
             searchContexts.put(contextId, new Pair<>(
-                    Indexing.INSTANCE.createContext(request.getMatchTypes(), request.getSemanticTypes()),
-                    new ArrayList<>()));
+                    Indexing.INSTANCE.createContext(request.getMatchTypes(), request.getSemanticTypes()), new ArrayList<>()));
         }
 
         if (request.isCancelSearch()) {
@@ -1484,8 +1423,7 @@ public class Session extends GroovyObjectSupport
                                         location.getDescription(), IKimConcept.Type.SUBJECT);
                                 match.setIndex(i++);
                                 response.getMatches().add(match);
-                                matches.add(
-                                        new org.integratedmodelling.klab.engine.indexing.SearchMatch(match));
+                                matches.add(new org.integratedmodelling.klab.engine.indexing.SearchMatch(match));
                             }
                         }
 
@@ -1497,19 +1435,15 @@ public class Session extends GroovyObjectSupport
                          */
                         List<Match> matches = new ArrayList<>();
                         int i = 0;
-                        for (ObservableReference observable : Authentication.INSTANCE
-                                .getDefaultObservables(Session.this)) {
-                            SearchMatch match = new SearchMatch(observable.getObservable(),
-                                    observable.getLabel(),
-                                    observable.getDescription(), observable.getSemantics(),
-                                    observable.getState(),
+                        for (ObservableReference observable : Authentication.INSTANCE.getDefaultObservables(Session.this)) {
+                            SearchMatch match = new SearchMatch(observable.getObservable(), observable.getLabel(),
+                                    observable.getDescription(), observable.getSemantics(), observable.getState(),
                                     observable.getExtendedDescription());
                             match.setIndex(i++);
                             response.getMatches().add(match);
                             matches.add(new org.integratedmodelling.klab.engine.indexing.SearchMatch(match));
                         }
-                        searchContexts.put(contextId,
-                                new Pair<Context, List<Match>>(context.getFirst(), matches));
+                        searchContexts.put(contextId, new Pair<Context, List<Match>>(context.getFirst(), matches));
 
                     } else {
 
@@ -1535,15 +1469,13 @@ public class Session extends GroovyObjectSupport
                                 /*
                                  * proceed to querying next tokens
                                  */
-                                List<Match> matches = Indexing.INSTANCE.query(request.getQueryString(),
-                                        context.getFirst());
+                                List<Match> matches = Indexing.INSTANCE.query(request.getQueryString(), context.getFirst());
 
                                 int i = 0;
                                 for (Match match : matches) {
                                     SearchMatch m = new SearchMatch();
                                     m.getSemanticType().addAll(match.getConceptType());
-                                    m.setMainSemanticType(
-                                            Kim.INSTANCE.getFundamentalType(match.getConceptType()));
+                                    m.setMainSemanticType(Kim.INSTANCE.getFundamentalType(match.getConceptType()));
                                     m.setMatchType(match.getMatchType());
                                     m.setName(match.getName());
                                     m.setId(match.getId());
@@ -1553,8 +1485,7 @@ public class Session extends GroovyObjectSupport
                                     response.getMatches().add(m);
                                 }
 
-                                searchContexts.put(contextId,
-                                        new Pair<Context, List<Match>>(context.getFirst(), matches));
+                                searchContexts.put(contextId, new Pair<Context, List<Match>>(context.getFirst(), matches));
 
                             }
 
@@ -1564,8 +1495,7 @@ public class Session extends GroovyObjectSupport
                                 Double.parseDouble(request.getQueryString());
                             } catch (Throwable t) {
                                 response.setError(true);
-                                response.setErrorMessage(
-                                        "invalid floating point number: " + request.getQueryString());
+                                response.setErrorMessage("invalid floating point number: " + request.getQueryString());
                             }
 
                             literalMatch = true;
@@ -1576,8 +1506,7 @@ public class Session extends GroovyObjectSupport
                                 Integer.parseInt(request.getQueryString());
                             } catch (Throwable t) {
                                 response.setError(true);
-                                response.setErrorMessage(
-                                        "invalid integer number: " + request.getQueryString());
+                                response.setErrorMessage("invalid integer number: " + request.getQueryString());
                             }
                             literalMatch = true;
 
@@ -1609,8 +1538,7 @@ public class Session extends GroovyObjectSupport
                             List<Match> matches = new ArrayList<>();
                             SearchMatch m = new SearchMatch();
                             m.getSemanticType().addAll(lastMatch.getConceptType());
-                            m.setMainSemanticType(
-                                    Kim.INSTANCE.getFundamentalType(lastMatch.getConceptType()));
+                            m.setMainSemanticType(Kim.INSTANCE.getFundamentalType(lastMatch.getConceptType()));
                             m.setMatchType(lastMatch.getMatchType());
                             m.setName(request.getQueryString());
                             m.setId(request.getQueryString());
@@ -1619,14 +1547,12 @@ public class Session extends GroovyObjectSupport
                             m.setNextTokenClass(TokenClass.TOKEN);
                             response.getMatches().add(m);
                             matches.add(new org.integratedmodelling.klab.engine.indexing.SearchMatch(m));
-                            searchContexts.put(contextId,
-                                    new Pair<Context, List<Match>>(context.getFirst(), matches));
+                            searchContexts.put(contextId, new Pair<Context, List<Match>>(context.getFirst(), matches));
                         }
                     }
 
                     monitor.send(Message
-                            .create(token, IMessage.MessageClass.Query, IMessage.Type.QueryResult,
-                                    response.signalEndTime())
+                            .create(token, IMessage.MessageClass.Query, IMessage.Type.QueryResult, response.signalEndTime())
                             .inResponseTo(message));
                 }
 
@@ -1646,8 +1572,7 @@ public class Session extends GroovyObjectSupport
     }
 
     @MessageHandler
-    private void handleLoadApplicationRequest(final LoadApplicationRequest request,
-            final IMessage.Type type) {
+    private void handleLoadApplicationRequest(final LoadApplicationRequest request, final IMessage.Type type) {
 
         this.globalState.register(request);
 
@@ -1723,8 +1648,7 @@ public class Session extends GroovyObjectSupport
      * @param request
      */
     @MessageHandler(messageClass = IMessage.MessageClass.ProjectLifecycle)
-    private void handleProjectModificationRequest(IMessage message,
-            final ProjectModificationRequest request) {
+    private void handleProjectModificationRequest(IMessage message, final ProjectModificationRequest request) {
 
         Project project = Resources.INSTANCE.getProject(request.getProjectId());
 
@@ -1740,19 +1664,16 @@ public class Session extends GroovyObjectSupport
             File file = null;
             switch(message.getType()) {
             case CreateTestCase:
-                file = project.createTestCase(request.getAssetId(), request.getScriptName(),
-                        request.getScriptPath(),
+                file = project.createTestCase(request.getAssetId(), request.getScriptName(), request.getScriptPath(),
                         request.getScriptType());
                 break;
             case CreateScript:
-                file = project.createScript(request.getAssetId(), request.getScriptName(),
-                        request.getScriptPath(),
+                file = project.createScript(request.getAssetId(), request.getScriptName(), request.getScriptPath(),
                         request.getScriptType());
                 break;
             case CreateNamespace:
                 file = project.createNamespace(request.getAssetId(), false, request.getParameters() != null
-                        && "true".equals(
-                                request.getParameters().get(ProjectModificationRequest.PRIVATE_OPTION)));
+                        && "true".equals(request.getParameters().get(ProjectModificationRequest.PRIVATE_OPTION)));
                 break;
             default:
                 // shut up
@@ -1761,8 +1682,7 @@ public class Session extends GroovyObjectSupport
 
             monitor.send(Message
                     .create(token, IMessage.MessageClass.ProjectLifecycle, IMessage.Type.QueryResult,
-                            new ProjectModificationNotification(ProjectModificationNotification.Type.ADDITION,
-                                    file))
+                            new ProjectModificationNotification(ProjectModificationNotification.Type.ADDITION, file))
                     .inResponseTo(message));
             // send the message before adding, as the addition will trigger a modification
             // message which would cause
@@ -1784,8 +1704,7 @@ public class Session extends GroovyObjectSupport
                     false);
             monitor.send(Message
                     .create(token, IMessage.MessageClass.ProjectLifecycle, IMessage.Type.CreateBehavior,
-                            new ProjectModificationNotification(ProjectModificationNotification.Type.ADDITION,
-                                    file))
+                            new ProjectModificationNotification(ProjectModificationNotification.Type.ADDITION, file))
                     .inResponseTo(message));
 
             Resources.INSTANCE.getLoader().add(file);
@@ -1794,12 +1713,10 @@ public class Session extends GroovyObjectSupport
 
         case CreateProject:
 
-            project = (Project) Resources.INSTANCE.getLocalWorkspace().createProject(request.getProjectId(),
-                    monitor);
+            project = (Project) Resources.INSTANCE.getLocalWorkspace().createProject(request.getProjectId(), monitor);
             monitor.send(Message
                     .create(token, IMessage.MessageClass.ProjectLifecycle, IMessage.Type.CreateProject,
-                            new ProjectModificationNotification(ProjectModificationNotification.Type.ADDITION,
-                                    project.getRoot()))
+                            new ProjectModificationNotification(ProjectModificationNotification.Type.ADDITION, project.getRoot()))
                     .inResponseTo(message));
             Resources.INSTANCE.getLoader().add(project.getStatement());
 
@@ -1811,8 +1728,7 @@ public class Session extends GroovyObjectSupport
                     && "true".equals(request.getParameters().get(ProjectModificationRequest.PRIVATE_OPTION)));
             monitor.send(Message
                     .create(token, IMessage.MessageClass.ProjectLifecycle, IMessage.Type.CreateScenario,
-                            new ProjectModificationNotification(ProjectModificationNotification.Type.ADDITION,
-                                    file))
+                            new ProjectModificationNotification(ProjectModificationNotification.Type.ADDITION, file))
                     .inResponseTo(message));
             Resources.INSTANCE.getLoader().add(file);
             break;
@@ -1831,8 +1747,7 @@ public class Session extends GroovyObjectSupport
                 FileUtils.deleteQuietly(ns.getFile());
                 monitor.send(Message
                         .create(token, IMessage.MessageClass.ProjectLifecycle, IMessage.Type.DeleteNamespace,
-                                new ProjectModificationNotification(
-                                        ProjectModificationNotification.Type.DELETION, ns.getFile()))
+                                new ProjectModificationNotification(ProjectModificationNotification.Type.DELETION, ns.getFile()))
                         .inResponseTo(message));
             }
             break;
@@ -1886,8 +1801,7 @@ public class Session extends GroovyObjectSupport
      * @param type
      */
     @MessageHandler
-    private void handleProjectEvent(final ProjectModificationNotification event, IMessage.Type type,
-            IMessage message) {
+    private void handleProjectEvent(final ProjectModificationNotification event, IMessage.Type type, IMessage message) {
 
         ProjectActionResponse response = new ProjectActionResponse();
 
@@ -1921,8 +1835,7 @@ public class Session extends GroovyObjectSupport
             break;
         }
 
-        monitor.send(Message.create(token, IMessage.MessageClass.ProjectLifecycle, type, response)
-                .inResponseTo(message));
+        monitor.send(Message.create(token, IMessage.MessageClass.ProjectLifecycle, type, response).inResponseTo(message));
 
     }
 
@@ -1937,8 +1850,7 @@ public class Session extends GroovyObjectSupport
         if (project != null) {
             if (type == IMessage.Type.DocumentationModified) {
                 Documentation.INSTANCE
-                        .resetDocumentation(IDocumentation.getDocumentationFile(documentation.getDocId(),
-                                project.getRoot()));
+                        .resetDocumentation(IDocumentation.getDocumentationFile(documentation.getDocId(), project.getRoot()));
             }
         }
     }
@@ -1982,8 +1894,7 @@ public class Session extends GroovyObjectSupport
                     }
                 }
 
-                monitor.send(Message.create(token, IMessage.MessageClass.ProjectLifecycle,
-                        IMessage.Type.UserProjectOpened,
+                monitor.send(Message.create(token, IMessage.MessageClass.ProjectLifecycle, IMessage.Type.UserProjectOpened,
                         response)/* .inResponseTo(message) */);
             }
 
@@ -2003,8 +1914,7 @@ public class Session extends GroovyObjectSupport
         ret.setTimeRetrieved(System.currentTimeMillis());
         ret.setTimeLastActivity(lastActivity);
         for (String app : Actors.INSTANCE.getPublicApps()) {
-            ret.getPublicApps()
-                    .add(((KActorsBehavior) Actors.INSTANCE.getBehavior(app).getStatement()).getReference());
+            ret.getPublicApps().add(((KActorsBehavior) Actors.INSTANCE.getBehavior(app).getStatement()).getReference());
         }
         // FIXME remove
         ret.getAppUrns().addAll(Actors.INSTANCE.getPublicApps());
@@ -2028,8 +1938,7 @@ public class Session extends GroovyObjectSupport
 
         for (IRuntimeScope ctx : observationContexts) {
             ret.getRootObservations().put(ctx.getRootSubject().getId(), Observations.INSTANCE
-                    .createArtifactDescriptor(ctx.getRootSubject()/* , null */,
-                            ctx.getScale().initialization(), 0));
+                    .createArtifactDescriptor(ctx.getRootSubject()/* , null */, ctx.getScale().initialization(), 0));
         }
 
         return ret;
@@ -2074,10 +1983,14 @@ public class Session extends GroovyObjectSupport
         // invoke the service to validate, register and notify
         ret = Resources.INSTANCE.registerResource(ret);
         if (ret != null) {
-            monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceCreated,
-                    ((Resource) ret).getReference());
+            monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceCreated, ((Resource) ret).getReference());
         }
         return ret;
+    }
+    
+    @Override
+    public IObserver<?> getObserver() {
+        return null;
     }
 
     @Override
@@ -2137,8 +2050,7 @@ public class Session extends GroovyObjectSupport
         String ret = "script" + NameGenerator.shortUUID();
         if (behavior.getDestination() != IKActorsBehavior.Type.SCRIPT
                 && behavior.getDestination() != IKActorsBehavior.Type.UNITTEST) {
-            throw new KlabActorException(
-                    "internal: loadScript() can only be used with scripts and unit tests");
+            throw new KlabActorException("internal: loadScript() can only be used with scripts and unit tests");
         }
         this.exitListeners.put(ret, onExit);
         getActor().tell(new SystemBehavior.Load(this, behavior.getId(), ret, scope));
@@ -2286,16 +2198,14 @@ public class Session extends GroovyObjectSupport
     public TestScope getRootTestScope() {
         if (rootTestScope == null) {
             rootTestScope = new TestScope(this);
-            monitor.send(
-                    Message.create(this.token, IMessage.MessageClass.UnitTests, IMessage.Type.TestRunStarted,
-                            new TestRun(rootTestScope.getTestId())));
+            monitor.send(Message.create(this.token, IMessage.MessageClass.UnitTests, IMessage.Type.TestRunStarted,
+                    new TestRun(rootTestScope.getTestId())));
         }
         return rootTestScope;
     }
 
     public void notifyTestCaseStart(IBehavior behavior, TestStatistics statistics) {
-        monitor.send(Message.create(this.token, IMessage.MessageClass.UnitTests,
-                IMessage.Type.TestCaseStarted, statistics));
+        monitor.send(Message.create(this.token, IMessage.MessageClass.UnitTests, IMessage.Type.TestCaseStarted, statistics));
     }
 
     @Override

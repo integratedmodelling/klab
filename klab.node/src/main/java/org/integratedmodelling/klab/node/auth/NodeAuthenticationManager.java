@@ -304,7 +304,7 @@ public enum NodeAuthenticationManager {
 			}
 		}
 		
-		Logging.INSTANCE.info("Received groups " + groupStrings + "; authenticated " + authenticated);
+//		Logging.INSTANCE.info("Received groups " + groupStrings + "; authenticated " + authenticated);
 		
 		return ret;
 	}

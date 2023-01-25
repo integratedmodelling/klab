@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.integratedmodelling.klab.auth.Role;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.security.core.GrantedAuthority;
 

@@ -97,7 +97,7 @@ public class StatsComponent {
 
 	public void activateLocalReporting(ISession session) {
 
-		Klab.INSTANCE.setStatisticsLocalHandler((obs) -> {
+		Klab.INSTANCE.setStatisticsLocalHandler((obs, user) -> {
 			submit(obs, session.getUser().getUsername(),
 					StringUtil.join(session.getUser().getGroups().stream().map((d) -> d.getId()).toList(), ","));
 		});

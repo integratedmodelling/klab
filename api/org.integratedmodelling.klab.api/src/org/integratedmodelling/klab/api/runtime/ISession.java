@@ -61,7 +61,6 @@ public interface ISession extends IEngineSessionIdentity, Closeable, IObserver<I
         void onClose(ISession session);
     }
 
-
     /**
      * Observe a new context of the passed type, returning an asynchronous future. This is the
      * primary, asynchronous context observation method for the k.LAB modeling API using the URN of
@@ -135,6 +134,8 @@ public interface ISession extends IEngineSessionIdentity, Closeable, IObserver<I
     void interruptAllTasks();
 
     /**
+     * The authenticated user that owns the session. The observer returned by {@link #getObserver()}
+     * is an actor identity that represents it. TODO we should merge these two eventually.
      * 
      * @return
      */
@@ -143,5 +144,15 @@ public interface ISession extends IEngineSessionIdentity, Closeable, IObserver<I
     void addListener(Listener listener);
 
     boolean isDefault();
+
+    /**
+     * All session have an observer, representing the user owning the session. This is the default
+     * observer for all observations made directly through the API or a client. Observation actions
+     * come from the observer, not the session (TODO this is not how the current API is designed).
+     * The observer's behavior may be defined using the ~/.klab/user.kactors file.
+     * 
+     * @return
+     */
+    IObserver<?> getObserver();
 
 }
