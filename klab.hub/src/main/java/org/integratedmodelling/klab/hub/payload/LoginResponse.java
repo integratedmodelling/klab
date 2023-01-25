@@ -11,10 +11,12 @@ public class LoginResponse {
 	
 	private TokenAuthentication token;
 	private ProfileResource profile;
+	private boolean remote;
 	
-	public LoginResponse(TokenAuthentication token, ProfileResource profile) {
+	public LoginResponse(TokenAuthentication token, ProfileResource profile, boolean remote) {
 		this.token = token;
 		this.profile = profile;
+		this.remote = remote;
 	}
 	
     public LoginResponse() {
@@ -23,7 +25,11 @@ public class LoginResponse {
     
 	public ResponseEntity<JSONObject> success() {
 		JSONObject resp = new JSONObject();
-		resp.appendField("Profile", profile.getSafeProfile());
+		if (remote) {
+		    resp.appendField("Profile", profile);
+		} else {
+		    resp.appendField("Profile", profile.getSafeProfile());
+		}
 		resp.appendField("Authentication", token);
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Authentication", token.getTokenString());

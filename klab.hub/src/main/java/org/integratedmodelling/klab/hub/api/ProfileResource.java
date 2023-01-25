@@ -221,9 +221,7 @@ public class ProfileResource implements OAuth2User{
 	}
 	
 	public ProfileResource getSafeProfile() {
-	    // TODO check if we need this
-	    return this;
-		/*
+	   
 	    ProfileResource cleanedProfile = new ProfileResource();
 		cleanedProfile.accountStatus = accountStatus;
 		cleanedProfile.address = address;
@@ -263,7 +261,6 @@ public class ProfileResource implements OAuth2User{
 		}
 		cleanedProfile.groupEntries = cleanedProfile.getGroups();
 		return cleanedProfile;
-		*/
 	}
 
 
