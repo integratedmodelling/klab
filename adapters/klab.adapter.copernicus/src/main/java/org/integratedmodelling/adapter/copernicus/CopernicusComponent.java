@@ -56,8 +56,11 @@ public class CopernicusComponent {
 
     @GetStatus
     public void getStatus(IMetadata metadata) {
-        // metadata.put("stations.count", "" + WeatherFactory.INSTANCE.getStationsCount());
-        // metadata.put("events.count", "" + WeatherEvents.INSTANCE.getEventsCount());
+        for (String repository : repositories.keySet()) {
+            ChunkedDatacubeRepository datacube = repositories.get(repository);
+            metadata.put("datacube." + repository + ".status",
+                    (datacube.isOnline() ? "ONLINE" : "OFFLINE") + " (" + datacube.getStatusMessage() + ")");
+        }
     }
 
     /**
