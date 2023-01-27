@@ -77,14 +77,9 @@ public class HubUserService implements RemoteUserService {
 			}
 			if (result != null && result.getStatusCode().is2xxSuccessful()) {
 				HubUserProfile profile = result.getBody().getProfile();
-				Session session;
-				if (checkForActiveSessions(profile)) {
-				    session = getActiveSessionResponse(profile);
-				} else {
-				    session = processProfile(profile);
-				}
-				RemoteUserLoginResponse response = getRemoteUserLoginResponse(session);
-				response.setAuthorization(result.getBody().getAuthentication().getTokenString());
+				RemoteUserLoginResponse response = getLoginResponse(profile, null);
+				String token = result.getBody().getAuthentication().getTokenString();
+				response.setAuthorization(token);
 				return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
 			} else {
 	            throw new KlabAuthorizationException("Failed to login user: " + login.getUsername());
@@ -108,16 +103,8 @@ public class HubUserService implements RemoteUserService {
 		}
 
 		if (result != null && result.getStatusCode().is2xxSuccessful()) {
-			
-
 			HubUserProfile profile = result.getBody();
-			Session session;
-			if (checkForActiveSessions(profile)) {
-			    session = getActiveSessionResponse(profile);
-			} else {
-			    session = processProfile(profile);
-			}
-			RemoteUserLoginResponse response = getRemoteUserLoginResponse(session);
+			RemoteUserLoginResponse response = getLoginResponse(profile, token);
 			response.setAuthorization(token);
 			return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
 		} else {
@@ -139,9 +126,8 @@ public class HubUserService implements RemoteUserService {
 
 		if (result != null && result.getStatusCode().is2xxSuccessful()) {
 			HubUserProfile profile = result.getBody();
-
-			if (checkForActiveSessions(profile)) {
-				Session session = activeSessions(profile).iterator().next();
+			Session session = activeSession(profile, null);
+			if (session != null) {
 				try {
 					session.close();
 				} catch (IOException e) {
@@ -155,17 +141,17 @@ public class HubUserService implements RemoteUserService {
 		}
 
 	}
-	
-	private RemoteUserLoginResponse getRemoteUserLoginResponse(Session session) {
-	    RemoteUserLoginResponse response = new RemoteUserLoginResponse();
+
+	private RemoteUserLoginResponse getLoginResponse(HubUserProfile profile, String token) {
+	    Session session = activeSession(profile, token);
+        if (session == null) {
+            session = processProfile(profile);
+        }
+        RemoteUserLoginResponse response = new RemoteUserLoginResponse();
         response.setPublicApps(session.getSessionReference().getPublicApps());
         response.setRedirect("/modeler/ui/viewer?session=" + session.getId());
         response.setSession(session.getId());
         return response;
-	}
-
-	private Session getActiveSessionResponse(HubUserProfile profile) {
-		return activeSessions(profile).iterator().next();
 	}
 
 	private Session processProfile(HubUserProfile profile) {
@@ -248,21 +234,33 @@ public class HubUserService implements RemoteUserService {
 		return authorities;
 	}
 
-	private boolean checkForActiveSessions(HubUserProfile profile) {
-		return !activeSessions(profile).isEmpty();
-	}
-
-	private Set<Session> activeSessions(HubUserProfile profile) {
+	private Session activeSession(HubUserProfile profile, String token) {
 		Set<Session> sessions = new HashSet<>();
+		Set<String> userRoles = Set.copyOf(profile.getRoles());
+		Set<String> userGroupsIds = Set.copyOf(profile.getGroupEntries().stream().map(ge -> ge.getGroup().getId()).toList());
 		Authentication.INSTANCE.getSessions().forEach(s -> {
 			if (s.getParentIdentity().getUsername().equals(profile.getName())) {
-				Session sesh = Authentication.INSTANCE.getIdentity(s.getId(), Session.class);
-				if (sesh.isEnabled()) {
-					sessions.add(sesh);
-				}
+			    Set<String> roles = Set.copyOf(profile.getRoles());
+			    Set<String> groupsId = Set.copyOf(s.getParentIdentity().getGroups().stream().map(Group::getId).toList());
+			    Session sesh = Authentication.INSTANCE.getIdentity(s.getId(), Session.class);
+			    // check if there are changes in user
+			    if (groupsId.equals(userGroupsIds) && roles.equals(userRoles)) {
+	                if (sesh.isEnabled()) {
+	                    sessions.add(sesh);
+	                }
+			    } else {
+			        try {
+	                    sesh.close();
+	                } catch (IOException e) {
+	                    throw new KlabException("Could not close the session :(");
+	                }
+			        if (token != null) {
+			            hubLogout(token);
+			        }
+			    }
 			}
 		});
-		return sessions;
+		return sessions.isEmpty() ? null : sessions.iterator().next();
 	}
 
 	private ResponseEntity<HubLoginResponse> hubLogin(UserAuthenticationRequest login) {
