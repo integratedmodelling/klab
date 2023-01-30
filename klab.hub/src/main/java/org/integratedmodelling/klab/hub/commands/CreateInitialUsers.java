@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.auth.Role;
 import org.integratedmodelling.klab.hub.api.GroupEntry;
-import org.integratedmodelling.klab.hub.api.Role;
 import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.api.User.AccountStatus;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;

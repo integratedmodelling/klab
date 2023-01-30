@@ -30,7 +30,7 @@ public class MongoNodeController {
 	}
 	
 	@GetMapping(value = "", produces = "application/json")
-	@PreAuthorize("hasRole('ROLE_SYSTEM') or hasRole('ROLE_ADMINSTRATOR')")
+	@PreAuthorize("hasRole('ROLE_SYSTEM') or hasRole('ROLE_ADMINISTRATOR')")
 	public ResponseEntity<?> getNodes() {
 		JSONObject resp = new JSONObject();
 		resp.appendField("nodes", nodeService.getAll());

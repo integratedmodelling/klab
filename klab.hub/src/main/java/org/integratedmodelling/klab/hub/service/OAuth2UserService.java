@@ -1,5 +1,18 @@
 package org.integratedmodelling.klab.hub.service;
 
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+
+import org.apache.commons.lang3.StringUtils;
+import org.integratedmodelling.klab.auth.Role;
+import org.integratedmodelling.klab.hub.api.AuthProvider;
+import org.integratedmodelling.klab.hub.api.ProfileResource;
+import org.integratedmodelling.klab.hub.api.User;
+import org.integratedmodelling.klab.hub.api.User.AccountStatus;
+import org.integratedmodelling.klab.hub.commands.CreateUserWithRolesAndStatus;
+import org.integratedmodelling.klab.hub.exception.OAuth2AuthenticationProcessingException;
+import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.integratedmodelling.klab.hub.security.oauth2.OAuth2UserInfo;
 import org.integratedmodelling.klab.hub.security.oauth2.OAuth2UserInfoFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,19 +25,6 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-
-import org.apache.commons.lang3.StringUtils;
-import org.integratedmodelling.klab.hub.api.AuthProvider;
-import org.integratedmodelling.klab.hub.api.ProfileResource;
-import org.integratedmodelling.klab.hub.api.Role;
-import org.integratedmodelling.klab.hub.api.User;
-import org.integratedmodelling.klab.hub.api.User.AccountStatus;
-import org.integratedmodelling.klab.hub.commands.CreateUserWithRolesAndStatus;
-import org.integratedmodelling.klab.hub.exception.OAuth2AuthenticationProcessingException;
-import org.integratedmodelling.klab.hub.repository.UserRepository;
 
 @Service
 public class OAuth2UserService extends DefaultOAuth2UserService {

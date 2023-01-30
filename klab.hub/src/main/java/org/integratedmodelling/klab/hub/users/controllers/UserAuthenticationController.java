@@ -24,7 +24,7 @@ public class UserAuthenticationController {
 	
 	@PostMapping(API.HUB.AUTHENTICATE_USER)
 	public ResponseEntity<?> loginResponse(@RequestBody UserAuthenticationRequest request) {
-		LoginResponse response = userAuthService.getAuthResponse(request.getUsername(), request.getPassword());
+		LoginResponse response = userAuthService.getAuthResponse(request.getUsername(), request.getPassword(), request.isRemote());
 		return response.getResponse();
 	}
 	

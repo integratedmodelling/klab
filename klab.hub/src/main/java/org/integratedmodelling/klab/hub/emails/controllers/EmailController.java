@@ -136,7 +136,7 @@ public class EmailController {
 	
 	private void checkUserName(EmailTemplate emailTemplate) {
 		if (emailTemplate.getAuthorUsername() == null) {
-			emailTemplate.setAuthorUsername(profileService.getCurrentUserProfile().getUsername());
+			emailTemplate.setAuthorUsername(profileService.getCurrentUserProfile(false).getUsername());
 		} else {
 			Optional<User> user = userRepository.findByName(emailTemplate.getAuthorUsername());
 			if (!user.isPresent()) {

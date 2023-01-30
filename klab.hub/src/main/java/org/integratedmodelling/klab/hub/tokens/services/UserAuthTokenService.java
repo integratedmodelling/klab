@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 public interface UserAuthTokenService extends TokenBaseService<TokenAuthentication> {
 	public TokenAuthentication getUserAuthenticationToken(String username, String password);
 
-	public LoginResponse getAuthResponse(String username, String password);
+	public LoginResponse getAuthResponse(String username, String password, boolean jwtToken);
 	
 	public LogoutResponse getLogoutResponse(String token);
 

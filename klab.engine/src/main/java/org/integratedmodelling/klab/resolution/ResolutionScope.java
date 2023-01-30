@@ -657,7 +657,7 @@ public class ResolutionScope implements IResolutionScope {
     /**
      * Scope for a pre-resolved observation, to use in dataflows that will create it
      * 
-     * @param observer
+     * @param observable
      * @param mode
      * @return
      */

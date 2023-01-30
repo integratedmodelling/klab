@@ -258,7 +258,7 @@ public class StatsDatabase extends Postgis {
 		String restrictions = "";
 		if (span != null && !span.isEmpty()) {
 			Pair<Long, Long> s = StatsReport.parseSpan(span.split(","));
-			restrictions += "AND contexts.created >= " + s.getFirst() + " AND context.created < " + s.getSecond();
+			restrictions += "AND contexts.created >= " + s.getFirst() + " AND contexts.created < " + s.getSecond();
 		}
 		if (errors) {
 			restrictions += (restrictions.isEmpty() ? "" : " ")

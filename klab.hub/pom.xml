@@ -28,6 +28,7 @@
 						<image>${env.REGISTRY}/${env.HUB_CONTAINER}</image>
 						<tags>
 							<tag>${env.TAG}</tag>
+							<tag>${env.CURRENT_COMMIT}</tag>
 						</tags>
 						<auth>
 							<username>${env.USERNAME}</username>
@@ -36,8 +37,7 @@
 					</to>
 					<container>
 						<user>klab:klab</user>
-						<jvmFlags>
-						</jvmFlags>
+						<jvmFlags>${jib.jvmFlags}</jvmFlags>
 						<mainClass>org.integratedmodelling.klab.hub.HubApplication</mainClass>
 						<args>
 						</args>

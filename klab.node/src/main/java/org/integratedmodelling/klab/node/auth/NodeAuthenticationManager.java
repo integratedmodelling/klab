@@ -295,12 +295,17 @@ public enum NodeAuthenticationManager {
 
 	private Set<Group> filterGroups(List<String> groupStrings) {
 		Set<Group> ret = new HashSet<>();
+		List<String> authenticated = new ArrayList<>();
 		for (String groupId : groupStrings) {
 			Group group = groups.get(groupId);
 			if (group != null) {
+				authenticated.add(groupId);
 				ret.add(group);
 			}
 		}
+		
+//		Logging.INSTANCE.info("Received groups " + groupStrings + "; authenticated " + authenticated);
+		
 		return ret;
 	}
 }

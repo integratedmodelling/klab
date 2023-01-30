@@ -24,6 +24,7 @@
 						<image>${env.REGISTRY}/${env.NODE_CONTAINER}</image>
 						<tags>
 							<tag>${env.TAG}</tag>
+							<tag>${env.CURRENT_COMMIT}</tag>
 						</tags>
 						<auth>
 							<username>${env.USERNAME}</username>
@@ -33,7 +34,7 @@
 					<container>
 						<expandClasspathDependencies>true</expandClasspathDependencies>
 						<user>klab:klab</user>
-						<jvmFlags></jvmFlags>
+						<jvmFlags>${jib.jvmFlags}</jvmFlags>
 						<mainClass>org.integratedmodelling.klab.node.NodeApplication</mainClass>
 						<args></args>
 						<ports>
@@ -93,12 +94,12 @@
 			<version>${jackson-version}</version>
 		</dependency>
 
-		<!-- for the embedded Git server <dependency> <groupId>org.eclipse.jetty</groupId> 
-			<artifactId>jetty-server</artifactId> <version>9.3.0.M1</version> </dependency> 
-			<dependency> <groupId>org.eclipse.jetty</groupId> <artifactId>jetty-webapp</artifactId> 
-			<version>9.3.0.M1</version> </dependency> <dependency> <groupId>org.eclipse.jetty</groupId> 
-			<artifactId>jetty-plus</artifactId> <version>9.3.0.M1</version> </dependency> 
-			<dependency> <groupId>org.eclipse.jetty</groupId> <artifactId>jetty-jsp</artifactId> 
+		<!-- for the embedded Git server <dependency> <groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-server</artifactId> <version>9.3.0.M1</version> </dependency>
+			<dependency> <groupId>org.eclipse.jetty</groupId> <artifactId>jetty-webapp</artifactId>
+			<version>9.3.0.M1</version> </dependency> <dependency> <groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-plus</artifactId> <version>9.3.0.M1</version> </dependency>
+			<dependency> <groupId>org.eclipse.jetty</groupId> <artifactId>jetty-jsp</artifactId>
 			<version>9.3.0.M1</version> </dependency> -->
 
 		<!-- for SafeUrl to help sanitize imported resource names -->

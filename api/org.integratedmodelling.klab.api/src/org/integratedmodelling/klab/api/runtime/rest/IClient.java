@@ -2,6 +2,8 @@ package org.integratedmodelling.klab.api.runtime.rest;
 
 import java.io.File;
 
+import org.integratedmodelling.klab.api.auth.IIdentity;
+
 /**
  * Bare-bones http client API, exposed by network identities for ease of interaction. The calls
  * accept full URLs or just the API endpoint without the URL.
@@ -73,5 +75,14 @@ public interface IClient {
      * @return
      */
     boolean getDownload(String url, File output);
+
+    /**
+     * Return a client with authorization set to the passed identity.
+     * 
+     * @param authorizer any identity.
+     * @return a new
+     */
+    IClient onBehalfOf(IIdentity authorizer);
+
 
 }

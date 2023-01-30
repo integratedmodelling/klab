@@ -64,6 +64,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IResourceService;
@@ -1125,6 +1126,7 @@ public enum Resources implements IResourceService {
 
         Urn kurn = new Urn(urn);
         IResource resource = resolveResource(urn);
+        ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
 
         if (kurn.isLocal()) {
             if (resource == null) {
@@ -1163,8 +1165,9 @@ public enum Resources implements IResourceService {
                 request.setArtifactName(resultId);
                 request.setArtifactType(requestType);
 
-                builder = new DecodingDataBuilder(node.getClient().post(API.NODE.RESOURCE.GET_DATA, request, Map.class), request,
-                        Expression.emptyContext(geometry, monitor));
+                builder = new DecodingDataBuilder(
+                        node.getClient().onBehalfOf(session.getUser()).post(API.NODE.RESOURCE.GET_DATA, request, Map.class),
+                        request, Expression.emptyContext(geometry, monitor));
             }
         }
         return builder.build();
@@ -1330,8 +1333,8 @@ public enum Resources implements IResourceService {
                 request.setArtifactType(scope.getTargetArtifact() == null ? Type.VALUE : scope.getTargetArtifact().getType());
                 request.setArtifactName(scope.getTargetArtifact() == null ? "result" : scope.getTargetName());
 
-                DecodingDataBuilder builder = new DecodingDataBuilder(
-                        node.getClient().post(API.NODE.RESOURCE.GET_DATA, request, Map.class), request, scope);
+                DecodingDataBuilder builder = new DecodingDataBuilder(node.getClient().onBehalfOf(scope.getSession().getUser())
+                        .post(API.NODE.RESOURCE.GET_DATA, request, Map.class), request, scope);
                 IKlabData ret = builder.build();
 
                 if (descriptor != null) {
@@ -1345,7 +1348,7 @@ public enum Resources implements IResourceService {
                     }
                     descriptor.setTotalTimeMs(descriptor.getTotalTimeMs() + elapsed);
                 }
-                
+
                 return ret;
 
             } else {
@@ -2135,8 +2138,8 @@ public enum Resources implements IResourceService {
                 request.setGeometry(encodeScale(scale, resource));
                 request.setOverallGeometry(encodeScale(((IObservation) observation).getScale(), resource));
                 try {
-                    ResourceReference reference = node.getClient().post(API.NODE.RESOURCE.CONTEXTUALIZE, request,
-                            ResourceReference.class);
+                    ResourceReference reference = node.getClient().onBehalfOf(scope.getSession().getUser())
+                            .post(API.NODE.RESOURCE.CONTEXTUALIZE, request, ResourceReference.class);
                     return new ContextualizedResource(reference);
                 } catch (Throwable e) {
                     scope.getMonitor().warn("Remote resource contextualization call failed. Availability info missing.");

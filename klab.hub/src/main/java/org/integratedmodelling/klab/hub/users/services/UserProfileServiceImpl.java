@@ -58,12 +58,15 @@ public class UserProfileServiceImpl implements UserProfileService {
 	}
 
 	@Override
-	public ProfileResource getCurrentUserProfile() {
+	public ProfileResource getCurrentUserProfile(boolean remote) {
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
 		User user = userRepository.findByNameIgnoreCase(username)
 				.orElseThrow(() ->  
 					new UserDoesNotExistException());
 		ProfileResource profile = objectMapper.convertValue(user, ProfileResource.class);
+		if (remote) {
+		    return profile;
+		}
 		return profile.getSafeProfile();
 	}
 
