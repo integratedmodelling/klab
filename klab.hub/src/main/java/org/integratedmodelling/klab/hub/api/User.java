@@ -145,6 +145,10 @@ public class User extends IdentityModel implements UserDetails{
         return isRole(Role.ROLE_ADMINISTRATOR);
     }
 
+    public boolean isManager() {
+        return isRole(Role.ROLE_MANAGER);
+    }
+
     public boolean isRole(Role role) {
         return roles.contains(role);
     }
