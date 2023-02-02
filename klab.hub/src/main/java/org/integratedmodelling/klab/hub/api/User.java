@@ -81,6 +81,7 @@ public class User extends IdentityModel implements UserDetails{
         expired,
         pendingActivation,
         verified,
+        suspended
     };
 
     // @Transient prevents the password from being stored in Mongo.
