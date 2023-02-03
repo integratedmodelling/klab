@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.hub.payload;
 
 import org.integratedmodelling.klab.hub.api.TokenAuthentication;
+import org.integratedmodelling.klab.hub.api.User.AccountStatus;
 import org.integratedmodelling.klab.hub.api.ProfileResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,11 @@ public class LoginResponse {
 	private TokenAuthentication token;
 	private ProfileResource profile;
 	private boolean remote;
+	
+	enum FailureReason {
+		USERNAME_OR_PASSWORD_NOT_FOUND,
+		USER_STATUS_IS_SUSPENDED
+	}
 	
 	public LoginResponse(TokenAuthentication token, ProfileResource profile, boolean remote) {
 		this.token = token;
@@ -36,17 +42,27 @@ public class LoginResponse {
 		return new ResponseEntity<JSONObject>(resp, headers, HttpStatus.OK);
     }
 	
-	public ResponseEntity<JSONObject> failure() {
+	public ResponseEntity<JSONObject> failure(FailureReason reason) {
 		JSONObject resp = new JSONObject();
-		resp.appendField("Message", "Username or password not found");
+		switch(reason) {
+		case USERNAME_OR_PASSWORD_NOT_FOUND:
+			resp.appendField("Message", "Username or password not found");
+			break;
+		case USER_STATUS_IS_SUSPENDED:
+			resp.appendField("Message", "Username account is suspended");
+			break;
+		}
 		return new ResponseEntity<JSONObject>(resp, HttpStatus.FORBIDDEN);
     }
 	
 	public ResponseEntity<JSONObject> getResponse() {
-		if(this.token != null & this.profile != null) {
+		if (this.profile != null && this.profile.accountStatus == AccountStatus.suspended) {
+			return failure(FailureReason.USER_STATUS_IS_SUSPENDED);
+		}			
+		if(this.profile != null && this.token != null) {
 			return success();
-		} else {
-			return failure();
-		}
+		}		
+		return failure(FailureReason.USERNAME_OR_PASSWORD_NOT_FOUND);
+
 	}
 }
