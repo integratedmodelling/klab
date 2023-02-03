@@ -178,12 +178,6 @@
 			<groupId>org.eclipse.xtext</groupId>
 			<artifactId>org.eclipse.xtext</artifactId>
 			<version>${xtextVersion}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>log4j</groupId>
-					<artifactId>log4j</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.xtext</groupId>
@@ -201,29 +195,12 @@
 			<artifactId>org.eclipse.emf.mwe2.launch</artifactId>
 			<version>${mweVersion}</version>
 			<optional>true</optional>
-			<exclusions>
-				<exclusion>
-					<groupId>log4j</groupId>
-					<artifactId>log4j</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.xtext</groupId>
 			<artifactId>xtext-antlr-generator</artifactId>
 			<version>2.1.1</version>
 			<optional>true</optional>
-			<exclusions>
-				<exclusion>
-					<groupId>log4j</groupId>
-					<artifactId>log4j</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-		    <groupId>ch.qos.reload4j</groupId>
-    		<artifactId>reload4j</artifactId>
-		    <version>${reload4j.version}</version>
 		</dependency>
 	</dependencies>
 	<dependencyManagement>
