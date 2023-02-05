@@ -17,7 +17,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 public class KactorsParsingTest {
   @Inject
   private ParseHelper<Model> parseHelper;
-  
+
   @Test
   public void loadModel() {
   }
