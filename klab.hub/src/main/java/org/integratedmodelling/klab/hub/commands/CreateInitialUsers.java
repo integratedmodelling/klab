@@ -97,6 +97,7 @@ public class CreateInitialUsers {
 		GroupEntry aries = new GroupEntry(new GetMongoGroupByName("ARIES", groupRepository).execute(), DateTime.now().minusDays(20));
 		GroupEntry alice = new GroupEntry(new GetMongoGroupByName("ALICE", groupRepository).execute());
 		GroupEntry seea = new GroupEntry(new GetMongoGroupByName("SEEA", groupRepository).execute(), DateTime.now().plusDays(10));
+		GroupEntry leticia = new GroupEntry(new GetMongoGroupByName("LETICIA", groupRepository).execute(), DateTime.now().plusDays(10));
 		Set<GroupEntry> entries = new HashSet<GroupEntry>();
 		entries.add(im);
 		entries.add(aries);
@@ -153,6 +154,7 @@ public class CreateInitialUsers {
         developerE.addGroupEntries(aries);
         developerE.addGroupEntries(im);
         developerE.addGroupEntries(seea);
+        developerE.addGroupEntries(leticia);
         achilles_activeMissingLdap.addGroupEntries(im);
         triton_pendingMissingLdap.addGroupEntries(aries);
         triton_pendingMissingLdap.setAccountStatus(AccountStatus.pendingActivation);

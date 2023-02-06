@@ -37,6 +37,18 @@
 		"roleRequirement" : "ROLE_ADMINISTRATOR",
 		"dependsOn": ["IM","ARIES"]
 	},
+	"LETICIA" : {
+        "name": "LETICIA",
+        "description": "Improving the management of Atlantic Landscapes: accounting for biodiversity and ecosystem services",
+		"projectUrls": [
+			"https://bitbucket.org/integratedmodelling/aries.heco.git"
+		],
+        "iconUrl": "",
+		"observables": [],
+		"worldview": false,
+		"roleRequirement" : "ROLE_ADMINISTRATOR",
+		"dependsOn": ["IM","ARIES"]
+	},
 	"ARIES": {
 		"name": "ARIES",
 		"description": "ARIES (ARtificial Intelligence for Ecosystem Services)",
