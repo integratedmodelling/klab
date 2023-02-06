@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.api.engine;
 
+import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IObserver;
@@ -26,11 +27,6 @@ public interface IEngineService {
      */
     interface ObservationScope {
 
-        /**
-         * 
-         * @return
-         */
-        ISession getSession();
         /**
          * 
          * @return
@@ -64,5 +60,13 @@ public interface IEngineService {
         <T extends IArtifact> T run(IDataflow<T> dataflow, ObservationScope scope);
 
     }
+
+    /**
+     * Login through an authenticated user identity and return the root scope.
+     * 
+     * @param user
+     * @return
+     */
+    ObservationScope login(IUserIdentity user);
 
 }
