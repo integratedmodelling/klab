@@ -348,6 +348,10 @@ public interface API {
          * URL path for current user profile, based on Authentication Token parsing.
          */
         public static final String CURRENT_PROFILE = USER_BASE + "/me";
+        /**
+         * URL path for suspending users.
+         */
+        public static final String SUSPEND_USER = API.HUB.USER_BASE_ID + "/suspend";
 
         public static interface PARAMETERS {
             /**
