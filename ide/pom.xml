@@ -200,7 +200,7 @@
 	</build>
 	<repositories>
 		<repository>
-			<id>eclipse-oxygen</id>
+			<id>eclipse-2022-06</id>
 			<url>https://download.eclipse.org/releases/2022-06/</url>
 			<layout>p2</layout>
 		</repository>
