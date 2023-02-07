@@ -101,25 +101,25 @@ import org.integratedmodelling.klab.utils.Pair;
 @SuppressWarnings("all")
 public class KimValidator extends AbstractKimValidator {
   public static final String NONPRIVATE_SUBJECTIVE_MODEL = "nonPrivateSubjectiveModel";
-  
+
   public static final String BAD_OBSERVABLE = "badObservable";
-  
+
   public static final String BAD_OBSERVATION = "badObservation";
-  
+
   public static final String INVALID_NONSEMANTIC_MODEL = "invalidNonSemanticModel";
-  
+
   public static final String PROBLEMATIC_URN = "problematicURN";
-  
+
   public static final String NO_NAMESPACE = "noNamespace";
-  
+
   public static final String BAD_NAMESPACE_ID = "badNamespaceId";
-  
+
   public static final String BAD_TABLE_FORMAT = "badTableFormat";
-  
+
   public static final String REASONING_PROBLEM = "reasoningProblem";
-  
+
   private static final Set<String> nonSemanticModels = Collections.<String>unmodifiableSet(CollectionLiterals.<String>newHashSet("number", "text", "boolean"));
-  
+
   @Check
   public void initializeRegisters(final Model model) {
     Namespace namespace = KimValidator.getNamespace(model);
@@ -129,7 +129,7 @@ public class KimValidator extends AbstractKimValidator {
       Kim.INSTANCE.removeNamespace(namespace);
     }
   }
-  
+
   @Check
   public void checkDate(final Date date) {
     final KimDate dt = new KimDate(date);
@@ -139,7 +139,7 @@ public class KimValidator extends AbstractKimValidator {
       this.error("invalid date", date.eContainer(), KimPackage.Literals.VALUE__DATE);
     }
   }
-  
+
   @Check
   public void checkNamespace(final Namespace namespace) {
     KimNamespace ns = Kim.INSTANCE.getNamespace(namespace);
@@ -288,12 +288,12 @@ public class KimValidator extends AbstractKimValidator {
         KimPackage.Literals.NAMESPACE__PARAMETERS);
     }
   }
-  
+
   @Check
   public Object checkFunction(final Function function) {
     return null;
   }
-  
+
   @Check
   public Object checkDefine(final DefineStatement statement) {
     Object _xblockexpression = null;
@@ -320,7 +320,7 @@ public class KimValidator extends AbstractKimValidator {
     }
     return _xblockexpression;
   }
-  
+
   @Check
   public void checkStatement(final Statement statement) {
     EObject _eContainer = statement.eContainer();
@@ -333,7 +333,7 @@ public class KimValidator extends AbstractKimValidator {
       }
     }
   }
-  
+
   @Check
   public void checkUrn(final Urn urn) {
     EObject _eContainer = urn.eContainer();
@@ -393,7 +393,7 @@ public class KimValidator extends AbstractKimValidator {
       }
     }
   }
-  
+
   @Check
   public void checkTable(final Table table) {
     int ncols = (-1);
@@ -420,7 +420,7 @@ public class KimValidator extends AbstractKimValidator {
       }
     }
   }
-  
+
   @Check
   public void checkModelStatement(final ModelStatement model) {
     Namespace _xifexpression = null;
@@ -463,7 +463,7 @@ public class KimValidator extends AbstractKimValidator {
       }
     }
   }
-  
+
   @Check
   public void checkModelDefinition(final ModelBodyStatement model) {
     ModelStatement statement = null;
@@ -1114,7 +1114,7 @@ public class KimValidator extends AbstractKimValidator {
       }
     }
   }
-  
+
   public void notify(final KimNotification notification, final EObject object, final EStructuralFeature cls) {
     final Level _switchValue = notification.level;
     boolean _matched = false;
@@ -1135,12 +1135,12 @@ public class KimValidator extends AbstractKimValidator {
       }
     }
   }
-  
+
   @Check
   public Object checkActionSpecification(final ActionSpecification action) {
     return null;
   }
-  
+
   @Check
   public void checkObservation(final ObserveStatement observation) {
     KimAcknowledgement obs = this.checkObservation(observation.getBody(), null);
@@ -1162,7 +1162,7 @@ public class KimValidator extends AbstractKimValidator {
       ns.addChild(obs);
     }
   }
-  
+
   public KimAcknowledgement checkObservation(final ObserveStatementBody observation, final KimAcknowledgement parent) {
     KimAcknowledgement ret = null;
     boolean ok = true;
@@ -1222,7 +1222,7 @@ public class KimValidator extends AbstractKimValidator {
     }
     return ret;
   }
-  
+
   /**
    * get the namespace object, assuming we are not one
    */
@@ -1246,7 +1246,7 @@ public class KimValidator extends AbstractKimValidator {
     }
     return _xifexpression;
   }
-  
+
   @Check
   public Object checkConceptDeclaration(final ConceptDeclaration concept) {
     Object _xblockexpression = null;
@@ -1261,7 +1261,7 @@ public class KimValidator extends AbstractKimValidator {
     }
     return _xblockexpression;
   }
-  
+
   @Check
   public void checkObservableSemantics(final ObservableSemantics semantics) {
     KimConcept declaration = Kim.INSTANCE.declareConcept(semantics.getDeclaration());
@@ -1301,7 +1301,7 @@ public class KimValidator extends AbstractKimValidator {
       }
     }
   }
-  
+
   public EnumSet<IKimConcept.Type> checkDeclaration(final ConceptDeclaration declaration) {
     EnumSet<IKimConcept.Type> type = EnumSet.<IKimConcept.Type>noneOf(IKimConcept.Type.class);
     boolean error = false;
@@ -1882,7 +1882,7 @@ public class KimValidator extends AbstractKimValidator {
     }
     return type;
   }
-  
+
   public boolean copyInheritableFlags(final EnumSet<IKimConcept.Type> from, final EnumSet<IKimConcept.Type> to) {
     boolean _xblockexpression = false;
     {
@@ -1899,7 +1899,7 @@ public class KimValidator extends AbstractKimValidator {
     }
     return _xblockexpression;
   }
-  
+
   /**
    * Return the flags for the declaration; 0 = undefined
    */
@@ -2170,7 +2170,7 @@ public class KimValidator extends AbstractKimValidator {
     }
     return ret;
   }
-  
+
   @Check
   public void checkConceptDefinition(final ConceptStatement statement) {
     boolean ok = true;
@@ -2306,7 +2306,7 @@ public class KimValidator extends AbstractKimValidator {
       }
     }
   }
-  
+
   public KimConceptStatement validateConceptBody(final ConceptStatementBody concept, final KimNamespace namespace, final KimConceptStatement parent, final EnumSet<IKimConcept.Type> type) {
     KimStatement _xifexpression = null;
     if ((parent == null)) {
@@ -3026,7 +3026,7 @@ public class KimValidator extends AbstractKimValidator {
     }
     return ret;
   }
-  
+
   public void notify(final KimNotification notification, final EObject object, final EStructuralFeature cls, final int index) {
     final Level _switchValue = notification.level;
     boolean _matched = false;
