@@ -14,11 +14,6 @@ public class LoginResponse {
 	private ProfileResource profile;
 	private boolean remote;
 	
-	enum FailureReason {
-		USERNAME_OR_PASSWORD_NOT_FOUND,
-		USER_STATUS_IS_SUSPENDED
-	}
-	
 	public LoginResponse(TokenAuthentication token, ProfileResource profile, boolean remote) {
 		this.token = token;
 		this.profile = profile;
@@ -42,28 +37,17 @@ public class LoginResponse {
 		return new ResponseEntity<JSONObject>(resp, headers, HttpStatus.OK);
     }
 	
-	public ResponseEntity<JSONObject> failure(FailureReason reason) {
+	public ResponseEntity<JSONObject> failure() {
 		JSONObject resp = new JSONObject();
-		switch(reason) {
-		case USERNAME_OR_PASSWORD_NOT_FOUND:
-			resp.appendField("Message", "Username or password not found");
-			return new ResponseEntity<JSONObject>(resp, HttpStatus.FORBIDDEN);
-		case USER_STATUS_IS_SUSPENDED:
-			resp.appendField("Message", "Account is suspended");
-			return new ResponseEntity<JSONObject>(resp, HttpStatus.UNAUTHORIZED);
-		default:
-			return new ResponseEntity<JSONObject>(resp, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		resp.appendField("Message", "Username or password not found");
+		return new ResponseEntity<JSONObject>(resp, HttpStatus.FORBIDDEN);
     }
 	
 	public ResponseEntity<JSONObject> getResponse() {
-		if (this.profile.accountStatus == AccountStatus.suspended) {
-			return failure(FailureReason.USER_STATUS_IS_SUSPENDED);
-		}			
-		if(this.profile != null && this.token != null) {
+		if(this.token != null & this.profile != null) {
 			return success();
-		}		
-		return failure(FailureReason.USERNAME_OR_PASSWORD_NOT_FOUND);
-
+		} else {
+			return failure();
+		}
 	}
 }

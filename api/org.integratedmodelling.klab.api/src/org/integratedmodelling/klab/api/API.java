@@ -349,13 +349,13 @@ public interface API {
          */
         public static final String CURRENT_PROFILE = USER_BASE + "/me";
         /**
-         * URL path for suspending users.
+         * URL path for locking users.
          */
-        public static final String SUSPEND_USER = API.HUB.USER_BASE_ID + "/suspend";
+        public static final String LOCK_USER = API.HUB.USER_BASE_ID + "/lock";
         /**
-         * Base URL path for suspended users.
+         * Base URL path for locked users.
          */
-        public static final String SUSPENDED_USERS = USER_BASE + "/suspended-users";
+        public static final String LOCKED_USERS = USER_BASE + "/locked-users";
 
 
         public static interface PARAMETERS {

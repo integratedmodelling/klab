@@ -108,8 +108,8 @@ public class UserAuthTokenServiceImpl implements UserAuthTokenService{
 		ProfileResource profile = new GetUserProfile(userRepository, username, objectMapper).execute();
 		
 		LoginResponse response;
-		if (profile.accountStatus == AccountStatus.suspended) {
-			// suspended will have error responses
+		// TODO check if needed
+		if (profile.accountStatus == AccountStatus.locked) {
 			return new LoginResponse(token, profile, remote);
 		}
 		if (remote) {

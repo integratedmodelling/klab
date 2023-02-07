@@ -12,7 +12,7 @@ import org.integratedmodelling.klab.hub.api.User.AccountStatus;
 import org.integratedmodelling.klab.hub.commands.GenerateHubReference;
 import org.integratedmodelling.klab.hub.exception.LicenseConfigDoestNotExists;
 import org.integratedmodelling.klab.hub.exception.LicenseExpiredException;
-import org.integratedmodelling.klab.hub.exception.SuspendedUserException;
+import org.integratedmodelling.klab.hub.exception.LockedUserException;
 import org.integratedmodelling.klab.hub.exception.UserDoesNotExistException;
 import org.integratedmodelling.klab.hub.licenses.services.LicenseConfigService;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
@@ -97,8 +97,8 @@ public class EngineAuthResponeFactory {
 		Properties cipherProperties = new CipherProperties().getCipherProperties(config, cipher);
 		ArrayList<HubNotificationMessage> messages = new ArrayList<HubNotificationMessage>();
 		
-		if(profile.accountStatus == AccountStatus.suspended) {
-			throw new SuspendedUserException(profile.getUsername());
+		if(profile.accountStatus == AccountStatus.locked) {
+			throw new LockedUserException(profile.getUsername());
 		}
 		
 		DateTime expires = DateTime.parse(cipherProperties.getProperty(KlabCertificate.KEY_EXPIRATION), 

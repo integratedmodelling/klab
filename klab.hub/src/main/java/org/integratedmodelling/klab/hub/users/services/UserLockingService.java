@@ -6,10 +6,10 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 @Service
-public interface UserSuspensionService {
+public interface UserLockingService {
 
-	abstract void suspendUser(String username);
+	abstract void lockUser(String username);
 
-	abstract List<User> getSuspendedUsers();
+	abstract List<User> getLockedUsers();
 	
 }
