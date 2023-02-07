@@ -12,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import net.minidev.json.JSONObject;
@@ -26,16 +27,24 @@ public class UserLockingController {
 		this.userService = userService;
 	}
 	
-	@PostMapping(value= API.HUB.LOCK_USER, produces = "application/json")
+	@PostMapping(value=API.HUB.USER_BASE_ID, params = API.HUB.PARAMETERS.USER_ACCOUNT_STATUS)
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_SYSTEM')")
-	public ResponseEntity<?> lockedUser(@PathVariable("id") String username) {
-		userService.lockUser(username);
+	public ResponseEntity<?> changeUserStatus(@PathVariable("id") String username, @RequestParam(API.HUB.PARAMETERS.USER_ACCOUNT_STATUS) String accountStatus) {
     	JSONObject resp = new JSONObject();
-    	resp.appendField("User", username);
-    	resp.appendField("Message", String.format("%s is locked", username));
-    	return ResponseEntity
-  			  .status(HttpStatus.ACCEPTED)
-  			  .body(resp);
+		switch (accountStatus) {
+		case "locked":
+			userService.lockUser(username);
+	    	resp.appendField("User", username);
+	    	resp.appendField("Message", String.format("%s is locked", username));
+	    	return ResponseEntity
+	  			  .status(HttpStatus.ACCEPTED)
+	  			  .body(resp);
+    	// TODO this method will be used to manage more than locked, so it should be moved somewhere else in the future
+		default:
+	    	return ResponseEntity
+	    			  .status(HttpStatus.INTERNAL_SERVER_ERROR)
+	    			  .body(resp);
+		}
 	}
 
 	@GetMapping(value= API.HUB.LOCKED_USERS, produces = "application/json")

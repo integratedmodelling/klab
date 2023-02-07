@@ -349,10 +349,6 @@ public interface API {
          */
         public static final String CURRENT_PROFILE = USER_BASE + "/me";
         /**
-         * URL path for locking users.
-         */
-        public static final String LOCK_USER = API.HUB.USER_BASE_ID + "/lock";
-        /**
          * Base URL path for locked users.
          */
         public static final String LOCKED_USERS = USER_BASE + "/locked-users";
@@ -362,7 +358,7 @@ public interface API {
             /**
              * URL PARAMETER for user activation tokens.
              */
-            public static final String USER_ACTIVATION = "activate";
+			public static final String USER_ACTIVATION = "activate";
 
             /**
              * URL PARAMETER for user requesting a lost password email.
@@ -424,6 +420,10 @@ public interface API {
              * URL PARAMETER for user group entry service, find users with a particular group
              */
             public static final String HAS_GROUP = "has-group";
+            /** TODO
+             * URL PARAMETER for changing the account status of a user
+             */
+            public static final String USER_ACCOUNT_STATUS = "accountStatus";
         }
 
     }
