@@ -352,6 +352,11 @@ public interface API {
          * URL path for suspending users.
          */
         public static final String SUSPEND_USER = API.HUB.USER_BASE_ID + "/suspend";
+        /**
+         * Base URL path for suspended users.
+         */
+        public static final String SUSPENDED_USERS = USER_BASE + "/suspended-users";
+
 
         public static interface PARAMETERS {
             /**

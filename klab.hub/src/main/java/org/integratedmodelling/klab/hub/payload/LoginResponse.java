@@ -47,16 +47,17 @@ public class LoginResponse {
 		switch(reason) {
 		case USERNAME_OR_PASSWORD_NOT_FOUND:
 			resp.appendField("Message", "Username or password not found");
-			break;
+			return new ResponseEntity<JSONObject>(resp, HttpStatus.FORBIDDEN);
 		case USER_STATUS_IS_SUSPENDED:
-			resp.appendField("Message", "Username account is suspended");
-			break;
+			resp.appendField("Message", "Account is suspended");
+			return new ResponseEntity<JSONObject>(resp, HttpStatus.UNAUTHORIZED);
+		default:
+			return new ResponseEntity<JSONObject>(resp, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		return new ResponseEntity<JSONObject>(resp, HttpStatus.FORBIDDEN);
     }
 	
 	public ResponseEntity<JSONObject> getResponse() {
-		if (this.profile != null && this.profile.accountStatus == AccountStatus.suspended) {
+		if (this.profile.accountStatus == AccountStatus.suspended) {
 			return failure(FailureReason.USER_STATUS_IS_SUSPENDED);
 		}			
 		if(this.profile != null && this.token != null) {

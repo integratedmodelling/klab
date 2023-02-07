@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.hub.users.services;
 
+import java.util.List;
+
 import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.api.User.AccountStatus;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
@@ -25,6 +27,16 @@ public class UserSuspensionServiceImpl implements UserSuspensionService {
 		
 		user.setAccountStatus(AccountStatus.suspended);
 		userRepository.save(user);
+	}
+
+	@Override
+	public List<User> getSuspendedUsers() {
+		return userRepository.getUsersByAccountStatus(AccountStatus.suspended);
+	}
+
+	@Override
+	public List<User> getPendingUsers() {
+		return userRepository.getUsersByAccountStatus(AccountStatus.pendingActivation);
 	}
 
 }
