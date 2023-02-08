@@ -1,11 +1,11 @@
 package org.integratedmodelling.klab.api.engine;
 
-import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
+import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IObserver;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 
 /**
@@ -27,6 +27,16 @@ public interface IEngineService {
      */
     interface ObservationScope {
 
+        Reasoner getReasoner();
+        
+        Resolver getResolver();
+        
+        Runtime getRuntime();
+        
+        Resources getResources();
+
+        IEngineService getEngine();
+        
         /**
          * 
          * @return
@@ -37,6 +47,35 @@ public interface IEngineService {
          * @return
          */
         IObserver<?> getObserver();
+
+        /**
+         * Never null. User scopes have empty geometry; context scopes have the geometry of the
+         * context or the union of the contexts if >1 acknowledgements have been set.
+         * 
+         * @return
+         */
+        IGeometry getGeometry();
+
+        /**
+         * 
+         * @param scenarios
+         * @return
+         */
+        ObservationScope withScenarios(String... scenarios);
+
+        /**
+         * 
+         * @param scenarios
+         * @return
+         */
+        ObservationScope withObserver(IObserver<?> observer);
+
+        /**
+         * 
+         * @param scenarios
+         * @return
+         */
+        ObservationScope withContext(IDirectObservation context);
     }
 
     interface Resources {
