@@ -16,7 +16,6 @@ package org.integratedmodelling.klab.api;
 import org.integratedmodelling.klab.api.auth.INetworkSessionIdentity;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.rest.ContextRequest;
-import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.ObservationRequest;
 import org.integratedmodelling.klab.rest.PingResponse;
 import org.integratedmodelling.klab.rest.TicketRequest;
@@ -420,10 +419,10 @@ public interface API {
              * URL PARAMETER for user group entry service, find users with a particular group
              */
             public static final String HAS_GROUP = "has-group";
-            /** TODO
+            /**
              * URL PARAMETER for changing the account status of a user
              */
-            public static final String USER_ACCOUNT_STATUS = "accountStatus";
+            public static final String USER_SET_ACCOUNT_STATUS = "account-status";
         }
 
     }

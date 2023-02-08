@@ -26,10 +26,10 @@ public class UserLockingController {
 	UserLockingController(UserLockingService userService) {
 		this.userService = userService;
 	}
-	
-	@PostMapping(value=API.HUB.USER_BASE_ID, params = API.HUB.PARAMETERS.USER_ACCOUNT_STATUS)
+	/* TODO re-think (maybe remove) this whole controller
+	@PostMapping(value=API.HUB.USER_BASE_ID, params = API.HUB.PARAMETERS.USER_MODIFY_ACCOUNT_STATUS)
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_SYSTEM')")
-	public ResponseEntity<?> changeUserStatus(@PathVariable("id") String username, @RequestParam(API.HUB.PARAMETERS.USER_ACCOUNT_STATUS) String accountStatus) {
+	public ResponseEntity<?> changeUserStatus(@PathVariable("id") String username, @RequestParam(API.HUB.PARAMETERS.USER_MODIFY_ACCOUNT_STATUS) String accountStatus) {
     	JSONObject resp = new JSONObject();
 		switch (accountStatus) {
 		case "locked":
@@ -46,6 +46,7 @@ public class UserLockingController {
 	    			  .body(resp);
 		}
 	}
+	*/
 
 	@GetMapping(value= API.HUB.LOCKED_USERS, produces = "application/json")
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_SYSTEM')")
