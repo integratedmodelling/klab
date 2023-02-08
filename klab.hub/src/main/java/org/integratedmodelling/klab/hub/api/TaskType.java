@@ -6,7 +6,9 @@ public enum TaskType {
 	createGroup(
 			CreateGroupTask.class),
 	removeGroupRequest(
-			RemoveGroupTask.class);
+			RemoveGroupTask.class),
+	modifyUserAccountStatus(
+			ModifyUserAccountStatusTask.class);
 	
 	private final Class<? extends Task> clazz;
 	

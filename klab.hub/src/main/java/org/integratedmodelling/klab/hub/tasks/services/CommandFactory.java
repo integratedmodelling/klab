@@ -8,6 +8,7 @@ import javax.annotation.PostConstruct;
 
 import org.integratedmodelling.klab.hub.api.CreateGroupTask;
 import org.integratedmodelling.klab.hub.api.GroupRequestTask;
+import org.integratedmodelling.klab.hub.api.ModifyUserAccountStatusTask;
 import org.integratedmodelling.klab.hub.api.RemoveGroupTask;
 import org.integratedmodelling.klab.hub.api.Task;
 import org.integratedmodelling.klab.hub.api.TaskCommand;
@@ -35,9 +36,12 @@ public class CommandFactory {
 			commandClazz = CreateGroupTask.Command.class;
 		} else if (GroupRequestTask.class.equals(clazz)) {
 			commandClazz = GroupRequestTask.Command.class;
-		} if (RemoveGroupTask.class.equals(clazz)) {
+		} else if (RemoveGroupTask.class.equals(clazz)) {
 			commandClazz = RemoveGroupTask.Command.class;
-		} 
+		} else if (ModifyUserAccountStatusTask.class.equals(clazz)) {
+			commandClazz = ModifyUserAccountStatusTask.Command.class;
+		}
+		
 		if (commandClazz == null) {
 			throw new RuntimeException("No commands for type " + clazz);
 		}
