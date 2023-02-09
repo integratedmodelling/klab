@@ -13,26 +13,38 @@
  */
 package org.integratedmodelling.klab.api.auth;
 
+import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
+import org.integratedmodelling.klab.api.engine.IEngineService;
+
 /**
- * The Interface IEngineUserIdentity.
+ * The Interface IEngineUserIdentity. TODO must become a IActorIdentity
  *
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-public interface IEngineUserIdentity extends IUserIdentity {
+public interface IEngineUserIdentity extends IUserIdentity, IActorIdentity<KlabMessage> {
 
-	/** Constant <code>type</code> */
-	Type type = Type.ENGINE_USER;
+    /** Constant <code>type</code> */
+    Type type = Type.ENGINE_USER;
 
-	/** {@inheritDoc} */
-	@Override
-	IEngineIdentity getParentIdentity();
+    /** {@inheritDoc} */
+    @Override
+    IEngineIdentity getParentIdentity();
 
-	/**
-	 * True if this engine user is also the one who owns the engine. Shortcut for
-	 * <code>getParentIdentity(INodeUserIdentity.class).getId().equals(this.getId())</code>.
-	 * 
-	 * @return true if owner
-	 */
-	boolean isEngineOwner();
+    /**
+     * True if this engine user is also the one who owns the engine. Shortcut for
+     * <code>getParentIdentity(INodeUserIdentity.class).getId().equals(this.getId())</code>.
+     * 
+     * @return true if owner
+     */
+    boolean isEngineOwner();
+
+    /**
+     * Get the root scope to operate the engine as a user. Also triggers the construction of the
+     * user agent with potential k.Actors behavior.
+     * 
+     * @return
+     */
+    IEngineService.ObservationScope getScope();
+
 }

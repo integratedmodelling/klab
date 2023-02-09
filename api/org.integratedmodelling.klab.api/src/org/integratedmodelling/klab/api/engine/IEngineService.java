@@ -1,10 +1,10 @@
 package org.integratedmodelling.klab.api.engine;
 
+import org.integratedmodelling.klab.api.auth.IActorIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
-import org.integratedmodelling.klab.api.observations.IObserver;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 
@@ -46,7 +46,7 @@ public interface IEngineService {
          * 
          * @return
          */
-        IObserver<?> getObserver();
+        IActorIdentity<?> getObserver();
 
         /**
          * Never null. User scopes have empty geometry; context scopes have the geometry of the
@@ -68,7 +68,7 @@ public interface IEngineService {
          * @param scenarios
          * @return
          */
-        ObservationScope withObserver(IObserver<?> observer);
+        ObservationScope withObserver(IActorIdentity<?> observer);
 
         /**
          * 

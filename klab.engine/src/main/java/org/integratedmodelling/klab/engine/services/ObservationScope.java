@@ -1,8 +1,6 @@
 package org.integratedmodelling.klab.engine.services;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.integratedmodelling.klab.api.auth.IActorIdentity;
@@ -10,9 +8,6 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.engine.IEngineService;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
-import org.integratedmodelling.klab.api.observations.IObserver;
-
-import com.google.protobuf.compiler.PluginProtos.CodeGeneratorResponse.File;
 
 public class ObservationScope implements IEngineService.ObservationScope {
 
@@ -25,7 +20,7 @@ public class ObservationScope implements IEngineService.ObservationScope {
         CONTEXT // context, on which observe() can be called
     }
 
-    IObserver<?> observer;
+    IActorIdentity<?> observer;
     IDirectObservation context;
     Set<String> scenarios;
     ObservationScope parent;
@@ -51,12 +46,6 @@ public class ObservationScope implements IEngineService.ObservationScope {
         return null;
     }
     
-    /**
-     * The agent we talk to. Can be a user agent, a session agent (of any kind) or a context agent,
-     * nested in this order.
-     */
-    IActorIdentity<?> identity;
-
     private ObservationScope(ObservationScope parent) {
         this.parent = parent;
         this.observer = parent.observer;
@@ -69,7 +58,7 @@ public class ObservationScope implements IEngineService.ObservationScope {
     }
 
     @Override
-    public IObserver<?> getObserver() {
+    public IActorIdentity<?> getObserver() {
         return this.observer;
     }
 
@@ -92,7 +81,7 @@ public class ObservationScope implements IEngineService.ObservationScope {
     }
 
     @Override
-    public ObservationScope withObserver(IObserver<?> observer) {
+    public ObservationScope withObserver(IActorIdentity<?> observer) {
         ObservationScope ret = new ObservationScope(this);
         ret.observer = observer;
         return ret;
