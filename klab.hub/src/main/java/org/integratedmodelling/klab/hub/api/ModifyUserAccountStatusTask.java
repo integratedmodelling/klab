@@ -123,13 +123,16 @@ public class ModifyUserAccountStatusTask extends Task {
 		super();
 		this.username = username;
 		this.requestedAccountStatus = requestedAccountStatus;
+		this.setAutoAccepted(true);
+		this.setRoleRequirement(Role.ROLE_ADMINISTRATOR);
 	}
 
 	@Override
 	public void acceptTaskAction(HttpServletRequest request) {
 		if (request.isUserInRole(this.getRoleRequirement())) {
 			getCommand().executeAccept(this);
-		}	}
+		}
+	}
 
 	@Override
 	public void denyTaskAction(HttpServletRequest request, String deniedMessage) {
