@@ -28,25 +28,27 @@ public class ModifyUserAccountStatusTask extends Task {
 			ModifyUserAccountStatusTask modifyUserAccountStatusTask = (ModifyUserAccountStatusTask)task;
 			
 			User user = userRepository.findByNameIgnoreCase(modifyUserAccountStatusTask.getUsername()).get();
+			modifyUserAccountStatusTask.previousAccountStatus = user.getAccountStatus();
+			
 			AccountStatus accountStatus = modifyUserAccountStatusTask.getRequestedAccountStatus();
 			
 			// Check if the status modification is allowed
 			switch(accountStatus) {
 			case active:
-				if(user.accountStatus == AccountStatus.locked) {
-					// TODO unlock the user
-					user.setAccountStatus(accountStatus);
-					userRepository.save(user);
-					task.setStatus(TaskStatus.accepted);
+				if(modifyUserAccountStatusTask.previousAccountStatus != AccountStatus.locked) {
+					break;
 				}
+				user.setAccountStatus(accountStatus);
+				userRepository.save(user);
+				task.setStatus(TaskStatus.accepted);
 				return;
 			case locked:
-				if(user.accountStatus == AccountStatus.active) {
-					// TODO deactivate the user
-					user.setAccountStatus(accountStatus);
-					userRepository.save(user);
-					task.setStatus(TaskStatus.accepted);
+				if(modifyUserAccountStatusTask.previousAccountStatus != AccountStatus.active) {
+					break;
 				}
+				user.setAccountStatus(accountStatus);
+				userRepository.save(user);
+				task.setStatus(TaskStatus.accepted);
 				return;
 			case deleted:
 				// TODO delete the user
@@ -55,11 +57,10 @@ public class ModifyUserAccountStatusTask extends Task {
 				task.setStatus(TaskStatus.accepted);
 				return;
 			default:
-				// nothing needed
+				// nothing to do here
 			}
-			task.setStatus(TaskStatus.error);
+			task.setStatus(TaskStatus.denied);
 		}
-
 	}
 
 	public static class Parameters extends TaskParametersWithRoleRequirement {
@@ -109,6 +110,7 @@ public class ModifyUserAccountStatusTask extends Task {
 	}
 	
 	private String username;
+	private AccountStatus previousAccountStatus;
 	private AccountStatus requestedAccountStatus;
 	
 	public String getUsername() {
