@@ -210,6 +210,10 @@ public class User extends IdentityModel implements UserDetails{
     	return this.roles;
     }
     
+    public void removeRoles(Collection<Role> rolesToRemove) {
+    	this.roles.removeAll(rolesToRemove);
+    }
+    
     public void addGroupEntries(GroupEntry... groups) {
         this.groupEntries.addAll(Arrays.asList(groups));
     }

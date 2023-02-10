@@ -15,17 +15,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.stereotype.Component;
 
-@TypeAlias("RoleSetTask")
-public class RoleSetTask extends Task {
+@TypeAlias("SetRoleTask")
+public class SetRoleTask extends Task {
 
-	private static RoleSetTask.Command command = (RoleSetTask.Command)CommandFactory.getCommand(RoleSetTask.class);
+	private static SetRoleTask.Command command = (SetRoleTask.Command)CommandFactory.getCommand(SetRoleTask.class);
 
 	public static class Parameters extends TaskParameters.TaskParametersWithRoleRequirement {
 		private String username;
 		private Set<Role> rolesToSet;
-		Class<? extends RoleSetTask> clazz;
+		Class<? extends SetRoleTask> clazz;
 		
-		public Parameters(HttpServletRequest request, String username, Set<Role> rolesToSet, Class<? extends RoleSetTask> clazz) {
+		public Parameters(HttpServletRequest request, String username, Set<Role> rolesToSet, Class<? extends SetRoleTask> clazz) {
 			super(request, Role.ROLE_ADMINISTRATOR);
 			this.username = username;
 			this.rolesToSet = rolesToSet;
@@ -33,7 +33,7 @@ public class RoleSetTask extends Task {
 		}
 
 		public Set<Role> getRolesToSet() {
-			return rolesToSet;
+			return this.rolesToSet;
 		}
 	}
 	
@@ -41,16 +41,16 @@ public class RoleSetTask extends Task {
 	public static class Builder extends TaskBuilder {
 		@Override
 		public List<Task> build(TaskParameters parameters) {
-			RoleSetTask.Parameters param;
-			if (parameters instanceof RoleSetTask.Parameters) {
-				param = (RoleSetTask.Parameters)parameters;
+			SetRoleTask.Parameters param;
+			if (parameters instanceof SetRoleTask.Parameters) {
+				param = (SetRoleTask.Parameters)parameters;
 			} else {
 				throw new ClassCastException();
 			}
 			
 			ArrayList<Task> ret = new ArrayList<Task>(1);
 			
-			Constructor<? extends RoleSetTask> constructor = null;
+			Constructor<? extends SetRoleTask> constructor = null;
 			try {
 				constructor = param.clazz.getConstructor(String.class, Set.class);
 			} catch (IllegalArgumentException
@@ -70,6 +70,7 @@ public class RoleSetTask extends Task {
 			return ret;
 		}
 	}
+	
 	@Component
 	public static class Command extends TaskCommand {
 		@Autowired
@@ -77,17 +78,15 @@ public class RoleSetTask extends Task {
 		
 		@Override
 		public void executeAccept(Task task) {
-			RoleSetTask roleSetTask = (RoleSetTask)task;
+			SetRoleTask setRoleTask = (SetRoleTask)task;
 			
-			User user = userRepository.findByNameIgnoreCase(roleSetTask.getUsername()).get();
-			Set<Role> rolesToSet = roleSetTask.getRolesToSet();
+			User user = userRepository.findByNameIgnoreCase(setRoleTask.getUsername()).get();
+			Set<Role> rolesToSet = setRoleTask.getRolesToSet();
 			user.addRoles(rolesToSet.toArray(new Role[rolesToSet.size()]));
 			userRepository.save(user);
 			
 			task.setStatus(TaskStatus.accepted);
 		}
-		
-
 	}
 	
 	private String username;
@@ -101,8 +100,7 @@ public class RoleSetTask extends Task {
 		return this.rolesToSet;
 	}
 	
-	
-	public RoleSetTask(String username, Set<Role> rolesToSet) {
+	public SetRoleTask(String username, Set<Role> rolesToSet) {
 		super();
 		this.username = username;
 		this.rolesToSet = rolesToSet;

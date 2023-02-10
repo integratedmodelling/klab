@@ -9,7 +9,8 @@ import javax.annotation.PostConstruct;
 import org.integratedmodelling.klab.hub.api.CreateGroupTask;
 import org.integratedmodelling.klab.hub.api.GroupRequestTask;
 import org.integratedmodelling.klab.hub.api.RemoveGroupTask;
-import org.integratedmodelling.klab.hub.api.RoleSetTask;
+import org.integratedmodelling.klab.hub.api.RemoveRoleTask;
+import org.integratedmodelling.klab.hub.api.SetRoleTask;
 import org.integratedmodelling.klab.hub.api.Task;
 import org.integratedmodelling.klab.hub.api.TaskBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +39,10 @@ public class TaskFactory {
 			builderClazz = GroupRequestTask.Builder.class;
 		} if (RemoveGroupTask.class.equals(clazz)) {
 			builderClazz = RemoveGroupTask.Builder.class;
-		} else if (RoleSetTask.class.equals(clazz)) {
-			builderClazz = RoleSetTask.Builder.class;
+		} else if (SetRoleTask.class.equals(clazz)) {
+			builderClazz = SetRoleTask.Builder.class;
+		} else if (RemoveRoleTask.class.equals(clazz)) {
+			builderClazz = RemoveRoleTask.Builder.class;
 		}
 		if (builderClazz == null) {
 			throw new RuntimeException("No builder for type " + clazz);
