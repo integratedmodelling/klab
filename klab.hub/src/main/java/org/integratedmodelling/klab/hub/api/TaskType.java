@@ -8,7 +8,9 @@ public enum TaskType {
 	removeGroupRequest(
 			RemoveGroupTask.class),
 	setRoles(
-			SetRoleTask.class);
+			SetRoleTask.class),
+	removeRoles(
+			RemoveRoleTask.class);
 	
 	private final Class<? extends Task> clazz;
 	

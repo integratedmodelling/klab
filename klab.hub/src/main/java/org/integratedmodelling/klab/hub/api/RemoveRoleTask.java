@@ -124,7 +124,7 @@ public class RemoveRoleTask extends Task {
 
 	@Override
 	public void setType() {
-		setType(TaskType.setRoles);
+		setType(TaskType.removeRoles);
 	}
 	
 	private TaskCommand getCommand() {
