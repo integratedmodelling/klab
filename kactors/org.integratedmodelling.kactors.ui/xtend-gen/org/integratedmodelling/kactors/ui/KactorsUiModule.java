@@ -21,16 +21,16 @@ public class KactorsUiModule extends AbstractKactorsUiModule {
   public Class<? extends ISemanticHighlightingCalculator> bindISemanticHighlightingCalculator() {
     return KactorsHighlightingCalculator.class;
   }
-
+  
   public Class<? extends AbstractAntlrTokenToAttributeIdMapper> bindAbstractAntlrTokenToAttributeIdMapper() {
     return KactorsSyntaxHighlighter.class;
   }
-
+  
   public Class<? extends IHighlightingConfiguration> bindIHighlightingConfiguration() {
     return KactorsHighlightingConfiguration.class;
   }
-
-  public KactorsUiModule(final AbstractUIPlugin arg0) {
-    super(arg0);
+  
+  public KactorsUiModule(final AbstractUIPlugin plugin) {
+    super(plugin);
   }
 }

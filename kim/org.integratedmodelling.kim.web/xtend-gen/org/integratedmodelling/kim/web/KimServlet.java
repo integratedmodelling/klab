@@ -16,7 +16,7 @@ import org.eclipse.xtext.xbase.lib.Exceptions;
 @SuppressWarnings("all")
 public class KimServlet extends XtextServlet {
   private DisposableRegistry disposableRegistry;
-
+  
   @Override
   public void init() {
     try {
@@ -27,7 +27,7 @@ public class KimServlet extends XtextServlet {
       throw Exceptions.sneakyThrow(_e);
     }
   }
-
+  
   @Override
   public void destroy() {
     if ((this.disposableRegistry != null)) {

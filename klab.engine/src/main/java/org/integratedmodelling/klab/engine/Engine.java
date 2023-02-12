@@ -46,7 +46,9 @@ import org.integratedmodelling.klab.api.auth.IUserCredentials;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.api.engine.IEngine;
+import org.integratedmodelling.klab.api.engine.IEngineService;
 import org.integratedmodelling.klab.api.engine.IEngineStartupOptions;
+import org.integratedmodelling.klab.api.engine.IObservationScope;
 import org.integratedmodelling.klab.api.extensions.KimToolkit;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
@@ -87,7 +89,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.google.inject.Injector;
 
-public class Engine extends Server implements IEngine, UserDetails {
+public class Engine extends Server implements IEngine, UserDetails, IEngineService {
 
     private static final long serialVersionUID = 5797834155173805536L;
 
@@ -882,6 +884,12 @@ public class Engine extends Server implements IEngine, UserDetails {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public IObservationScope login(IUserIdentity user) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

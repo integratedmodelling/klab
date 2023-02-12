@@ -246,9 +246,9 @@ public enum Authentication implements IAuthenticationService {
     }
 
     @Override
-    public IIdentity authenticate(ICertificate certificate) throws KlabAuthorizationException {
+    public IUserIdentity authenticate(ICertificate certificate) throws KlabAuthorizationException {
 
-        IIdentity ret = null;
+        IUserIdentity ret = null;
         EngineAuthenticationResponse authentication = null;
 
         if (certificate instanceof AnonymousEngineCertificate) {

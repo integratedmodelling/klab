@@ -18,7 +18,7 @@ import org.junit.runner.RunWith;
 public class KimParsingTest {
   @Inject
   private ParseHelper<Model> parseHelper;
-
+  
   @Test
   public void loadModel() {
   }

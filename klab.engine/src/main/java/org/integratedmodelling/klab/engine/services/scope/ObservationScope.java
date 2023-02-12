@@ -1,31 +1,27 @@
-package org.integratedmodelling.klab.engine.services;
+package org.integratedmodelling.klab.engine.services.scope;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.Future;
 
+import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IActorIdentity;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.engine.IEngineService;
+import org.integratedmodelling.klab.api.engine.IEngineService.ResourceManager;
+import org.integratedmodelling.klab.api.engine.IObservationScope;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 
-public class ObservationScope implements IEngineService.ObservationScope {
-
-    enum Type {
-        USER, // root-level scope
-        SCRIPT, // session-level scope
-        API, // session for the REST API through a client
-        APPLICATION, // session for an application, including the Explorer
-        SESSION, // raw session for direct use within Java code
-        CONTEXT // context, on which observe() can be called
-    }
+public class ObservationScope implements IObservationScope {
 
     IActorIdentity<?> observer;
     IDirectObservation context;
     Set<String> scenarios;
     ObservationScope parent;
     IGeometry geometry;
-    
+    String token;
+        
     public IEngineService.Reasoner getReasoner() {
         return null;
     }
@@ -38,7 +34,7 @@ public class ObservationScope implements IEngineService.ObservationScope {
         return null;
     }
     
-    public IEngineService.Resources getResources() {
+    public ResourceManager getResources() {
         return null;
     }
     
@@ -88,10 +84,28 @@ public class ObservationScope implements IEngineService.ObservationScope {
     }
 
     @Override
-    public ObservationScope withContext(IDirectObservation context) {
+    public ObservationScope within(IDirectObservation context) {
         ObservationScope ret = new ObservationScope(this);
         ret.context = context;
         return ret;
+    }
+
+    @Override
+    public String getToken() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public IObservationScope run(IBehavior behavior) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Future<IObservation> observe(Object... observables) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

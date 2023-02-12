@@ -10,7 +10,7 @@ import org.integratedmodelling.klab.api.auth.IEngineIdentity;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.Roles;
-import org.integratedmodelling.klab.api.engine.IEngineService;
+import org.integratedmodelling.klab.api.engine.IObservationScope;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IActorsService;
@@ -25,7 +25,7 @@ public class EngineUser extends UserIdentity implements IEngineUserIdentity {
     private IActorIdentity.Reference actor;
     private IParameters<String> globalState = Parameters.createSynchronized();
     private IActorIdentity.View view;
-    private IEngineService.ObservationScope scope;
+    private IObservationScope scope;
 
     public EngineUser(String username, IEngineIdentity parent) {
         super(username);
@@ -183,7 +183,7 @@ public class EngineUser extends UserIdentity implements IEngineUserIdentity {
     }
 
     @Override
-    public IEngineService.ObservationScope getScope() {
+    public IObservationScope getScope() {
         return this.scope;
     }
 
@@ -192,7 +192,7 @@ public class EngineUser extends UserIdentity implements IEngineUserIdentity {
      * 
      * @param scope
      */
-    public void setObservationScope(IEngineService.ObservationScope scope) {
+    public void setObservationScope(IObservationScope scope) {
         this.scope = scope;
     }
 

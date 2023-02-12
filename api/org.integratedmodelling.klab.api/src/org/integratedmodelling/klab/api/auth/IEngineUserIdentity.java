@@ -14,7 +14,7 @@
 package org.integratedmodelling.klab.api.auth;
 
 import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
-import org.integratedmodelling.klab.api.engine.IEngineService;
+import org.integratedmodelling.klab.api.engine.IObservationScope;
 
 /**
  * The Interface IEngineUserIdentity. TODO must become a IActorIdentity
@@ -45,6 +45,6 @@ public interface IEngineUserIdentity extends IUserIdentity, IActorIdentity<KlabM
      * 
      * @return
      */
-    IEngineService.ObservationScope getScope();
+    IObservationScope getScope();
 
 }

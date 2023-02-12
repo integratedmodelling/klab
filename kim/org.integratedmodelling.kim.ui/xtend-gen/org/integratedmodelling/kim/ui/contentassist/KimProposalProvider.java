@@ -20,17 +20,17 @@ import org.integratedmodelling.kim.ui.elink.FunctionParameterHelper;
 @SuppressWarnings("all")
 public class KimProposalProvider extends AbstractKimProposalProvider {
   private static FunctionParameterHelper functionHelper;
-
+  
   private static ConceptHelper conceptHelper;
-
+  
   public static void setFunctionParameterHelper(final FunctionParameterHelper functionHelper) {
     KimProposalProvider.functionHelper = functionHelper;
   }
-
+  
   public static void setConceptHelper(final ConceptHelper functionHelper) {
     KimProposalProvider.conceptHelper = functionHelper;
   }
-
+  
   @Override
   public void complete_Function(final EObject model, final RuleCall ruleCall, final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
     if ((model instanceof Function)) {
