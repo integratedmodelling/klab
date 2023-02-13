@@ -441,8 +441,10 @@ public enum Actors implements IActorsService {
      * @return
      */
     public <T> ActorRef<T> createActor(Behavior<T> create, IIdentity identity) {
-        return ActorSystem.create(Behaviors.supervise(create).onFailure(SupervisorStrategy.resume().withLoggingEnabled(true)),
-                identity instanceof IUserIdentity ? sanitize(((IUserIdentity) identity).getUsername()) : identity.getId());
+        return ActorSystem.create(
+                    Behaviors.supervise(create)
+                        .onFailure(SupervisorStrategy.resume().withLoggingEnabled(true)),
+                        identity instanceof IUserIdentity ? sanitize(((IUserIdentity) identity).getUsername()) : identity.getId());
     }
 
     private String sanitize(String username) {

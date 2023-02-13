@@ -5,13 +5,13 @@ package org.integratedmodelling.klab.test;
 
 import java.util.function.Consumer;
 
-import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Logging;
-import org.integratedmodelling.klab.api.auth.IUserIdentity;
-import org.integratedmodelling.klab.api.engine.IObservationScope;
+import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
+import org.integratedmodelling.klab.api.engine.IScope;
+import org.integratedmodelling.klab.api.engine.ISessionScope;
 import org.integratedmodelling.klab.auth.KlabCertificate;
-import org.integratedmodelling.klab.engine.Engine;
+import org.integratedmodelling.klab.engine.services.engine.EngineService;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -25,11 +25,11 @@ import org.junit.Test;
  */
 public class ObservationTests {
 
-    static Engine engine;
+    static EngineService engine;
 
     @BeforeClass
     public static void setUp() throws Exception {
-        engine = Engine.start();
+        engine = EngineService.start();
         // ensure errors cause exc
         Logging.INSTANCE.setErrorWriter(new Consumer<String>(){
 
@@ -49,26 +49,27 @@ public class ObservationTests {
 
     @Test
     public void basicObservationWorkflow() throws Exception {
-        
+
         /*
          * get an authenticated user from the default certificate
          */
-        IUserIdentity user = Authentication.INSTANCE.authenticate(KlabCertificate.createDefault());
+        IEngineUserIdentity user = (IEngineUserIdentity) Authentication.INSTANCE.authenticate(KlabCertificate.createDefault());
 
         /*
          * obtain a root scope for this user in the engine. This creates the user actor and
          * potentially runs any associated k.Actors code.
          */
-        IObservationScope scope = engine.login(user);
+        IScope scope = engine.login(user);
 
-        // run an application if wanted. If we run a script, we only need to wait until the script is done.
-        scope = scope.run(Actors.INSTANCE.getBehavior(""));
-        
+        // run an application if wanted. If we run a script, we only need to wait until the script
+        // is done.
+        ISessionScope sessionScope = scope.run("test session");
+
         /*
-         * Scope is now user-wide. We need a context to start  geometry automatically maintained. If a specific application or script is
-         * requested, use run() to obtain a different scope.
+         * Scope is now user-wide. We need a context to start geometry automatically maintained. If
+         * a specific application or script is requested, use run() to obtain a different scope.
          */
-//        IObservationScope context = scope.newContext();
-//        IObservation france = context.observe();
+        // IObservationScope context = scope.newContext();
+        // IObservation france = context.observe();
     }
 }

@@ -2,9 +2,8 @@ package org.integratedmodelling.klab.engine.services.scope.actors;
 
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
-import org.integratedmodelling.klab.auth.EngineUser;
+import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor;
-import org.integratedmodelling.klab.components.runtime.actors.UserBehavior;
 import org.integratedmodelling.klab.components.runtime.actors.UserBehavior.UnknownMessage;
 
 import akka.actor.typed.Behavior;
@@ -14,11 +13,11 @@ import akka.actor.typed.javadsl.ReceiveBuilder;
 
 public class UserActor extends KlabActor {
 
-	public static Behavior<KlabMessage> create(EngineUser session) {
-		return Behaviors.setup(ctx -> new UserActor(ctx, session, null));
+	public static Behavior<KlabMessage> create(IEngineUserIdentity user) {
+		return Behaviors.setup(ctx -> new UserActor(ctx, user, null));
 	}
 
-	public UserActor(ActorContext<KlabMessage> context, EngineUser identity, String appId) {
+	public UserActor(ActorContext<KlabMessage> context, IEngineUserIdentity identity, String appId) {
 		super(context, identity, appId);
 	}
 

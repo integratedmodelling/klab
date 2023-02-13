@@ -1,6 +1,9 @@
 package org.integratedmodelling.klab.api.engine;
 
-import org.integratedmodelling.klab.api.auth.IUserIdentity;
+import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.model.IAcknowledgement;
+import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 
@@ -23,15 +26,32 @@ public interface IEngineService {
 
     interface Resolver {
 
-        IDataflow<?> resolve(Object observable, IObservationScope scope);
+        /**
+         * Resolve an observable in the passed scope, producing the dataflow that will make the
+         * observation.
+         * 
+         * @param observable an {@link IObservable}, {@link IAcknowledgement}, {@link IModel} or a
+         *        string resolving to one of those.
+         * @param scope if not an {@link IAcknowledgement}, must have a specified geometry. If the
+         *        {@link IObservable} is not a subject, must have a set context observation.
+         * @return the dataflow that will create the observation once run by a runtime.
+         */
+        IDataflow<?> resolve(Object observable, IContextScope scope);
 
     }
 
     interface Runtime {
 
-        // ObservationScope createContextScope(IUserIdentity user, ObservationScope scope);
-
-        <T extends IArtifact> T run(IDataflow<T> dataflow, IObservationScope scope);
+        /**
+         * Run the passed dataflow in the scale of the observer represented in the scope; return the
+         * primary artifact.
+         * 
+         * @param <T>
+         * @param dataflow
+         * @param scope must be or procede from a context scope
+         * @return
+         */
+        <T extends IArtifact> T run(IDataflow<T> dataflow, IContextScope scope);
 
     }
 
@@ -43,6 +63,6 @@ public interface IEngineService {
      * @param user
      * @return
      */
-    IObservationScope login(IUserIdentity user);
+    IScope login(IEngineUserIdentity user);
 
 }
