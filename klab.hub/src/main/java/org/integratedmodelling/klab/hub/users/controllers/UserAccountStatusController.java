@@ -19,28 +19,26 @@ import net.minidev.json.JSONObject;
 @RestController
 public class UserAccountStatusController {
 
-	private UserAccountStatusService userService;
-	
-	@Autowired
-	UserAccountStatusController(UserAccountStatusService userService) {
-		this.userService = userService;
-	}
+    private UserAccountStatusService userService;
 
-	@GetMapping(value= API.HUB.USER_BASE, produces = "application/json", params = API.HUB.PARAMETERS.USER_SET_ACCOUNT_STATUS)
-	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_SYSTEM')")
-	public ResponseEntity<?> getUsersByAccountStatus (
-			@RequestParam(API.HUB.PARAMETERS.USER_SET_ACCOUNT_STATUS) String accountStatus) {
-		JSONObject resp = new JSONObject();
-		try {
-			List<User> lockedUsers = userService.getUsersByStatus(AccountStatus.valueOf(accountStatus));
-			resp.appendField(accountStatus, lockedUsers);
-	    	return ResponseEntity
-	    			  .status(HttpStatus.OK)
-	    			  .body(resp);
-		} catch (IllegalArgumentException e) {
-	    	resp.appendField("Message", String.format("Account status %s is not valid", accountStatus));
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resp);
-		}
-	}
-	
+    @Autowired
+    UserAccountStatusController(UserAccountStatusService userService) {
+        this.userService = userService;
+    }
+
+    @GetMapping(value = API.HUB.USER_BASE, produces = "application/json", params = API.HUB.PARAMETERS.USER_SET_ACCOUNT_STATUS)
+    @PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_SYSTEM')")
+    public ResponseEntity< ? > getUsersByAccountStatus(
+            @RequestParam(API.HUB.PARAMETERS.USER_SET_ACCOUNT_STATUS) String accountStatus) {
+        JSONObject resp = new JSONObject();
+        try {
+            List<String> lockedUsers = userService.getUsersByStatus(AccountStatus.valueOf(accountStatus));
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(lockedUsers);
+        } catch (IllegalArgumentException e) {
+            resp.appendField("Message", String.format("Account status %s is not valid", accountStatus));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resp);
+        }
+    }
 }
