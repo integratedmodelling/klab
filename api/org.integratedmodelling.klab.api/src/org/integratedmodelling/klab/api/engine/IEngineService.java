@@ -1,6 +1,8 @@
 package org.integratedmodelling.klab.api.engine;
 
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
+import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAcknowledgement;
 import org.integratedmodelling.klab.api.model.IModel;
@@ -16,8 +18,37 @@ import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
  */
 public interface IEngineService {
 
+    /**
+     * 
+     * @author Ferd
+     *
+     */
     interface ResourceManager {
 
+        /**
+         * 
+         * @param urn
+         * @param scope
+         * @return
+         */
+        IResource resolve(String urn, IScope scope);
+        
+        /**
+         * 
+         * @param originalResource
+         * @param scope
+         * @return
+         */
+        IResource contextualize(IResource originalResource, IContextScope scope);
+        
+        /**
+         * 
+         * @param contextualizedResource
+         * @param scope
+         * @return
+         */
+        IKlabData getData(IResource contextualizedResource, IScope scope);
+        
     }
 
     interface Reasoner {
