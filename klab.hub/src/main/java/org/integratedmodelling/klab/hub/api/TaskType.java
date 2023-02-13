@@ -7,6 +7,10 @@ public enum TaskType {
 			CreateGroupTask.class),
 	removeGroupRequest(
 			RemoveGroupTask.class),
+	setRoles(
+			SetRoleTask.class),
+	removeRoles(
+			RemoveRoleTask.class),
 	modifyUserAccountStatus(
 			ModifyUserAccountStatusTask.class);
 	

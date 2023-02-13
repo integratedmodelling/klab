@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.hub.repository;
 import java.util.List;
 import java.util.Optional;
 import org.bson.types.ObjectId;
+import org.integratedmodelling.klab.auth.Role;
 import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.api.User.AccountStatus;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -28,6 +29,9 @@ public interface UserRepository extends MongoRepository<User, ObjectId>{
     
     @Query("{'groupEntries.group.$id' : ?0}")
 	List<User> getUsersByGroupEntriesWithGroupId(ObjectId id);
+    
+    @Query("{'roles' : ?0}")
+    List<User> getUsersByRole(Role role);
     
     @Query("{'accountStatus' : ?0}")
 	List<User> getUsersByAccountStatus(AccountStatus accountStatus);

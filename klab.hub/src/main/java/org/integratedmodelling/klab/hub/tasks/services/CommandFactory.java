@@ -10,6 +10,8 @@ import org.integratedmodelling.klab.hub.api.CreateGroupTask;
 import org.integratedmodelling.klab.hub.api.GroupRequestTask;
 import org.integratedmodelling.klab.hub.api.ModifyUserAccountStatusTask;
 import org.integratedmodelling.klab.hub.api.RemoveGroupTask;
+import org.integratedmodelling.klab.hub.api.RemoveRoleTask;
+import org.integratedmodelling.klab.hub.api.SetRoleTask;
 import org.integratedmodelling.klab.hub.api.Task;
 import org.integratedmodelling.klab.hub.api.TaskCommand;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +42,11 @@ public class CommandFactory {
 			commandClazz = RemoveGroupTask.Command.class;
 		} else if (ModifyUserAccountStatusTask.class.equals(clazz)) {
 			commandClazz = ModifyUserAccountStatusTask.Command.class;
+		} else if (SetRoleTask.class.equals(clazz)) {
+			commandClazz = SetRoleTask.Command.class;
+		} else if (RemoveRoleTask.class.equals(clazz)) {
+			commandClazz = RemoveRoleTask.Command.class;
 		}
-		
 		if (commandClazz == null) {
 			throw new RuntimeException("No commands for type " + clazz);
 		}

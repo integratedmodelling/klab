@@ -423,6 +423,18 @@ public interface API {
              * URL PARAMETER for changing the account status of a user
              */
             public static final String USER_SET_ACCOUNT_STATUS = "account-status";
+            /**
+             * URL PARAMETER for user role entry service, sets a role for a given user
+             */
+            public static final String SET_ROLES = "set-roles";
+            /**
+             * URL PARAMETER for user role entry service, removes a role for a given user
+             */
+            public static final String REMOVE_ROLES = "remove-roles";
+            /**
+             * URL PARAMETER for user role entry service, lists all the users with a particular role
+             */
+            public static final String HAS_ROLES = "has-roles";
         }
 
     }
