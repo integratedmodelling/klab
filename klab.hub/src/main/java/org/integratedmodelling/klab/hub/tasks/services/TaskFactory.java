@@ -8,6 +8,7 @@ import javax.annotation.PostConstruct;
 
 import org.integratedmodelling.klab.hub.api.CreateGroupTask;
 import org.integratedmodelling.klab.hub.api.GroupRequestTask;
+import org.integratedmodelling.klab.hub.api.ModifyUserAccountStatusTask;
 import org.integratedmodelling.klab.hub.api.RemoveGroupTask;
 import org.integratedmodelling.klab.hub.api.Task;
 import org.integratedmodelling.klab.hub.api.TaskBuilder;
@@ -35,9 +36,12 @@ public class TaskFactory {
 			builderClazz = CreateGroupTask.Builder.class;
 		} else if (GroupRequestTask.class.equals(clazz)) {
 			builderClazz = GroupRequestTask.Builder.class;
-		} if (RemoveGroupTask.class.equals(clazz)) {
+		} else if (RemoveGroupTask.class.equals(clazz)) {
 			builderClazz = RemoveGroupTask.Builder.class;
-		} 
+		} else if (ModifyUserAccountStatusTask.class.equals(clazz)) {
+			builderClazz = ModifyUserAccountStatusTask.Builder.class;
+		}
+		
 		if (builderClazz == null) {
 			throw new RuntimeException("No builder for type " + clazz);
 		}
