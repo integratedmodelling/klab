@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.auth.Role;
-import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.users.services.UserRoleEntryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,9 +30,8 @@ public class UserRoleEntryController {
     public ResponseEntity< ? > usersWithRole(@RequestParam(API.HUB.PARAMETERS.HAS_ROLES) String role) {
         JSONObject resp = new JSONObject();
         try {
-            List<User> usersWithRole = userService.getUsersWithRole(Role.valueOf(role));
-            resp.appendField(role, usersWithRole);
-            return ResponseEntity.status(HttpStatus.OK).body(resp);
+            List<String> usersWithRole = userService.getUsersWithRole(Role.valueOf(role));
+            return ResponseEntity.status(HttpStatus.OK).body(usersWithRole);
         } catch (IllegalArgumentException e) {
             resp.appendField("Message", String.format("Role %s is not valid", role));
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(resp);
