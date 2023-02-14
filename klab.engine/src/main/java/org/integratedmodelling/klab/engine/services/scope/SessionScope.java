@@ -4,6 +4,8 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.engine.IContextScope;
 import org.integratedmodelling.klab.api.engine.ISessionScope;
 
+import akka.actor.ActorRef;
+
 public class SessionScope extends Scope implements ISessionScope {
 
     private Status status = Status.STARTED;
@@ -33,6 +35,10 @@ public class SessionScope extends Scope implements ISessionScope {
     @Override
     public Status getStatus() {
         return this.status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
 }

@@ -2,7 +2,7 @@ package org.integratedmodelling.klab.api.engine;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.actors.IBehavior;
-import org.integratedmodelling.klab.api.auth.IUserIdentity;
+import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.engine.IEngineService.Reasoner;
 import org.integratedmodelling.klab.api.engine.IEngineService.Resolver;
 import org.integratedmodelling.klab.api.engine.IEngineService.ResourceManager;
@@ -48,18 +48,11 @@ public interface IScope {
     ResourceManager getResources();
 
     /**
-     * Return the engine service that generated this scope.
-     * 
-     * @return
-     */
-    IEngineService getEngine();
-
-    /**
      * The scope is created for an authenticated user by the engine.
      * 
      * @return
      */
-    IUserIdentity getUser();
+    IEngineUserIdentity getUser();
 
     /**
      * The token is needed to communicate with the scope. It can represent the user, an application
@@ -79,19 +72,19 @@ public interface IScope {
     IParameters<String> getData();
 
     /**
-     * Run a raw session with a given identifier.
+     * Start a raw session with a given identifier and return the scope that controls it.
      * 
      * @param sessionName
      * @return
      */
-    ISessionScope run(String sessionName);
+    ISessionScope runSession(String sessionName);
 
     /**
-     * Run an application or script and return the scope for it.
+     * Run an application or script and return the scope that controls it.
      * 
      * @param behavior
      * @return
      */
-    ISessionScope run(IBehavior behavior);
+    ISessionScope runApplication(String behaviorName);
 
 }

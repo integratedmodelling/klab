@@ -7,14 +7,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
 import org.integratedmodelling.klab.api.auth.IEngineIdentity;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.engine.IEngineService;
 import org.integratedmodelling.klab.api.engine.IScope;
-import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.runtime.rest.IClient;
 import org.integratedmodelling.klab.engine.services.engine.reasoner.ReasonerDefaultService;
@@ -37,8 +35,10 @@ import akka.actor.typed.javadsl.Behaviors;
  * @author Ferd
  *
  */
-public class EngineService implements IEngineService, IEngineIdentity {
+public enum EngineService implements IEngineService, IEngineIdentity {
 
+    INSTANCE;
+    
     private Reasoner reasonerService;
     private ResourceManager resourceService;
     private Resolver resolverService;
@@ -46,6 +46,7 @@ public class EngineService implements IEngineService, IEngineIdentity {
     private ActorSystem<Void> supervisorAgent;
     private Map<String, IScope> userScopes = Collections.synchronizedMap(new HashMap<>());
     private Monitor monitor = new Monitor(this);
+    private String name = "modular-klab-engine";
     
     protected Reasoner createReasonerService() {
         return new ReasonerDefaultService();
@@ -83,16 +84,22 @@ public class EngineService implements IEngineService, IEngineIdentity {
         return ret;
     }
 
+    public void registerScope(IScope scope) {
+        userScopes.put(scope.getToken(), scope);
+    }
+    
+    public void deregisterScope(String token) {
+        userScopes.remove(token);
+    }
+    
     public static EngineService start() {
-        EngineService ret = new EngineService();
-        ret.boot();
-        return ret;
+        INSTANCE.boot();
+        return INSTANCE;
     }
 
     @Override
     public String getName() {
-        // TODO Auto-generated method stub
-        return null;
+        return name;
     }
 
     @Override
@@ -113,6 +120,10 @@ public class EngineService implements IEngineService, IEngineIdentity {
         return false;
     }
 
+    public ActorSystem<Void> getActorSystem() {
+        return this.supervisorAgent;
+    }
+    
     @Override
     public IClient getClient() {
         // TODO Auto-generated method stub
@@ -160,6 +171,11 @@ public class EngineService implements IEngineService, IEngineIdentity {
 
     @Override
     public <T extends IIdentity> T getParentIdentity(Class<T> type) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public Object getSystemRef() {
         // TODO Auto-generated method stub
         return null;
     }

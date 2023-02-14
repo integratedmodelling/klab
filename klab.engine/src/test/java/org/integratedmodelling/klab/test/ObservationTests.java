@@ -61,9 +61,9 @@ public class ObservationTests {
          */
         IScope scope = engine.login(user);
 
-        // run an application if wanted. If we run a script, we only need to wait until the script
-        // is done.
-        ISessionScope sessionScope = scope.run("test session");
+        // run an application, script or raw session. If we run a script, we only need to wait until
+        // the script is done.
+        ISessionScope sessionScope = scope.runSession("test session");
 
         /*
          * Scope is now user-wide. We need a context to start geometry automatically maintained. If

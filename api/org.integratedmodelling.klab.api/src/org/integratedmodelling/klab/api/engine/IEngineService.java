@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.api.engine;
 
+import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
@@ -31,7 +32,15 @@ public interface IEngineService {
          * @param scope
          * @return
          */
-        IResource resolve(String urn, IScope scope);
+        IBehavior resolveBehavior(String urn, IScope scope);
+        
+        /**
+         * 
+         * @param urn
+         * @param scope
+         * @return
+         */
+        IResource resolveResource(String urn, IScope scope);
         
         /**
          * 
@@ -83,7 +92,8 @@ public interface IEngineService {
          * @return
          */
         <T extends IArtifact> T run(IDataflow<T> dataflow, IContextScope scope);
-
+        
+        
     }
 
     /**
