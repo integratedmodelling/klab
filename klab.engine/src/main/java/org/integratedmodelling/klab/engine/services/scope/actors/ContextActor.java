@@ -39,7 +39,6 @@ public class ContextActor extends AbstractBehavior<Void> {
     }
 
     private ContextActor onPostStop() {
-        getContext().getLog().info("k.LAB actor system stopped");
         return this;
     }
 

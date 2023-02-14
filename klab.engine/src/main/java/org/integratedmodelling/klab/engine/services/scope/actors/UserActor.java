@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.engine.services.scope.actors;
 
+import javax.annotation.processing.Messager;
+
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
@@ -11,6 +13,7 @@ import org.integratedmodelling.klab.components.runtime.actors.UserBehavior.Unkno
 
 import akka.actor.typed.ActorRef;
 import akka.actor.typed.Behavior;
+import akka.actor.typed.SupervisorStrategy;
 import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
 import akka.actor.typed.javadsl.ReceiveBuilder;
@@ -25,7 +28,7 @@ public class UserActor extends KlabActor {
 
         String id;
         ActorRef<SessionCreated> replyTo;
-        
+
         public CreateSession(String id, ISessionScope scope, ActorRef<SessionCreated> replyTo) {
             this.id = id;
             this.replyTo = replyTo;
@@ -43,6 +46,9 @@ public class UserActor extends KlabActor {
 
     public static class SessionCreated extends EmptyKlabMessage {
         public ActorRef<KlabMessage> sessionAgent;
+        public SessionCreated(ActorRef<KlabMessage> agent) {
+            this.sessionAgent = agent;
+        }
     }
 
     /*
@@ -80,12 +86,15 @@ public class UserActor extends KlabActor {
     }
 
     private Behavior<KlabMessage> handleCreateApplication(CreateApplication message) {
-        message.replyTo.tell(new SessionCreated(/* TODO */));
+        message.replyTo.tell(new SessionCreated(null /* TODO */));
         return Behaviors.same();
     }
 
     private Behavior<KlabMessage> handleCreateSession(CreateSession message) {
-        message.replyTo.tell(new SessionCreated(/* TODO */));
+
+//        ActorRef<KlabMessage> actor = getContext().spawn(Behaviors.supervise(SessionActor.create(message.id))
+//                .onFailure(SupervisorStrategy.resume().withLoggingEnabled(true)), actorName);
+        message.replyTo.tell(new SessionCreated(null /* TODO */));
         return Behaviors.same();
     }
 

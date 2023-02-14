@@ -29,9 +29,6 @@ import akka.actor.typed.javadsl.ReceiveBuilder;
 public class SessionActor extends KlabActor {
 
     
-    Map<String, ActorRef> contexts = new HashMap<>();
-    
-
     /*
      * --------- messages --------------------
      */
