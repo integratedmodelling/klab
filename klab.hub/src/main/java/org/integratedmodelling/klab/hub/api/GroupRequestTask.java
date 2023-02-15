@@ -26,7 +26,7 @@ public class GroupRequestTask extends ModifyGroupsTask{
 			GroupRequestTask grt = (GroupRequestTask)task;
 			User user = userRepository.findByNameIgnoreCase(grt.getUsername()).get();
 			Set<GroupEntry> newGroupEntries = grt.getRequestGroups();
-			Set<GroupEntry> currentGroupEntries = user.getGroupEntries();
+			Set<GroupEntry> currentGroupEntries = user.getAgreements().stream().findFirst().get().getGroupEntries();
 			
 			Set<String> currentGroupNameList = currentGroupEntries.stream()
 					.map(GroupEntry::getGroupName)
@@ -69,7 +69,7 @@ public class GroupRequestTask extends ModifyGroupsTask{
 				}
 			}
 			if (added) {
-				user.setGroupEntries(currentGroupEntries);
+				user.getAgreements().stream().findFirst().get().setGroupEntries(currentGroupEntries);
 				userRepository.save(user);
 			} else {
 				task.addToLog("No group(s) added");

@@ -113,12 +113,12 @@ public class CreateInitialUsers {
     			u.addRoles(Role.ROLE_DATA_MANAGER); // less than 7% are data manager
     		x = (int)(Math.random()*100+1);
     		if (x <= 80) {
-    			u.addGroupEntries(im); // 80% has IM and ARIES. If no IM and ARIES, no groups for now
-    			u.addGroupEntries(aries);
+    			u.getAgreements().stream().findFirst().get().addGroupEntries(im); // 80% has IM and ARIES. If no IM and ARIES, no groups for now
+    			u.getAgreements().stream().findFirst().get().addGroupEntries(aries);
         		x = (int)(Math.random()*100+1);
         		if (x < 22) {
         			for (int j = 0; j<=x; j++) {
-        				u.addGroupEntries(alice); // multiple groups
+        				u.getAgreements().stream().findFirst().get().addGroupEntries(alice); // multiple groups
         			}
         		}
     		}
@@ -143,20 +143,20 @@ public class CreateInitialUsers {
     		}
     		initialUsers.add(u);
     	}
-        system.addGroupEntries(aries);
-        system.addGroupEntries(im);
-        system.addGroupEntries(alice);
-        system.addGroupEntries(seea);
-        hades.addGroupEntries(aries);
-        hades.addGroupEntries(im);
-        developerS.addGroupEntries(aries);
-        developerS.addGroupEntries(im);
-        developerE.addGroupEntries(aries);
-        developerE.addGroupEntries(im);
-        developerE.addGroupEntries(seea);
-        developerE.addGroupEntries(leticia);
-        achilles_activeMissingLdap.addGroupEntries(im);
-        triton_pendingMissingLdap.addGroupEntries(aries);
+        system.getAgreements().stream().findFirst().get().addGroupEntries(aries);
+        system.getAgreements().stream().findFirst().get().addGroupEntries(im);
+        system.getAgreements().stream().findFirst().get().addGroupEntries(alice);
+        system.getAgreements().stream().findFirst().get().addGroupEntries(seea);
+        hades.getAgreements().stream().findFirst().get().addGroupEntries(aries);
+        hades.getAgreements().stream().findFirst().get().addGroupEntries(im);
+        developerS.getAgreements().stream().findFirst().get().addGroupEntries(aries);
+        developerS.getAgreements().stream().findFirst().get().addGroupEntries(im);
+        developerE.getAgreements().stream().findFirst().get().addGroupEntries(aries);
+        developerE.getAgreements().stream().findFirst().get().addGroupEntries(im);
+        developerE.getAgreements().stream().findFirst().get().addGroupEntries(seea);
+        developerE.getAgreements().stream().findFirst().get().addGroupEntries(leticia);
+        achilles_activeMissingLdap.getAgreements().stream().findFirst().get().addGroupEntries(im);
+        triton_pendingMissingLdap.getAgreements().stream().findFirst().get().addGroupEntries(aries);
         triton_pendingMissingLdap.setAccountStatus(AccountStatus.pendingActivation);
         initialUsers.add(system);
         initialUsers.add(hades);

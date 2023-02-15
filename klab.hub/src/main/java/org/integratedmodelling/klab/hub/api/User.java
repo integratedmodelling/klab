@@ -67,8 +67,11 @@ public class User extends IdentityModel implements UserDetails{
 
     private Set<Role> roles = new HashSet<>();;
 
+    //@Reference
+    //private Set<GroupEntry> groupEntries =  new HashSet<>(); // research groups, etc. in web tool
+    
     @Reference
-    private Set<GroupEntry> groupEntries =  new HashSet<>(); // research groups, etc. in web tool
+    private Set<Agreement> agreements = new HashSet<>();
 
     private Set<String> applications = new HashSet<>();
 
@@ -206,7 +209,7 @@ public class User extends IdentityModel implements UserDetails{
     	return this.roles;
     }
     
-    public void addGroupEntries(GroupEntry... groups) {
+    /*public void addGroupEntries(GroupEntry... groups) {
         this.groupEntries.addAll(Arrays.asList(groups));
     }
 
@@ -239,7 +242,7 @@ public class User extends IdentityModel implements UserDetails{
 
     public Set<GroupEntry> getGroupEntries() {
         return groupEntries;
-    }
+    }*/
 
     public Set<String> getApplications() {
         return applications;
@@ -314,24 +317,24 @@ public class User extends IdentityModel implements UserDetails{
     }
 
 
-	public boolean userGroupsOverlapWith(HashSet<GroupEntry> groups) {
-        if (groups == null) {
-            // force this to be checked by set intersection, rather than instantly failing (preserves logic)
-            groups = new HashSet<>();
-        }
-
-        if (groups.contains(User.GLOBAL_GROUP)) {
-            return true;
-        }
-
-        Set<GroupEntry> list = getGroupEntries(); // returns a copy
-        list.retainAll(groups);
-        if (list.size() > 0) {
-            return true;
-        }
-
-        return false;
-    }
+//	public boolean userGroupsOverlapWith(HashSet<GroupEntry> groups) {
+//        if (groups == null) {
+//            // force this to be checked by set intersection, rather than instantly failing (preserves logic)
+//            groups = new HashSet<>();
+//        }
+//
+//        if (groups.contains(User.GLOBAL_GROUP)) {
+//            return true;
+//        }
+//
+//        Set<GroupEntry> list = getGroupEntries(); // returns a copy
+//        list.retainAll(groups);
+//        if (list.size() > 0) {
+//            return true;
+//        }
+//
+//        return false;
+//    }
 
     /**
      * return full name (if available) or some sensible constructed value so that LDAP/Crowd doesn't choke on
@@ -385,5 +388,15 @@ public class User extends IdentityModel implements UserDetails{
 	public void setEmail(String email) {
 		this.email = email;
 	}
+
+    public Set<Agreement> getAgreements() {
+        return agreements;
+    }
+
+    public void setAgreements(Set<Agreement> agreements) {
+        this.agreements = agreements;
+    }
+	
+	
 
 }
