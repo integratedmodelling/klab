@@ -92,6 +92,7 @@ public class SystemBehavior {
             this.scope = load.scope;
         }
 
+        @Deprecated
         public String getForwardApplicationId() {
             return forwardApplicationId;
         }
