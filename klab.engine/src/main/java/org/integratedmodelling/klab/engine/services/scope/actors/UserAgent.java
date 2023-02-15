@@ -25,9 +25,11 @@ public class UserAgent extends KlabAgent {
 
         String id;
         ActorRef<SessionCreated> replyTo;
+		ISessionScope scope;
 
         public CreateSession(String id, ISessionScope scope, ActorRef<SessionCreated> replyTo) {
             this.id = id;
+            this.scope = scope;
             this.replyTo = replyTo;
         }
     }
@@ -52,21 +54,21 @@ public class UserAgent extends KlabAgent {
      * --------- methods --------------------
      */
 
-    public static Behavior<KlabMessage> create(IEngineUserIdentity user) {
-        return Behaviors.setup(ctx -> new UserAgent(ctx, user, user.getUsername()));
-    }
+//    private static Behavior<KlabMessage> create(IEngineUserIdentity user) {
+//        return Behaviors.setup(ctx -> new UserAgent(ctx, user, user.getUsername()));
+//    }
 
     public static Behavior<KlabMessage> create(IScope scope) {
-        return Behaviors.setup(ctx -> new UserAgent(ctx, scope, scope.getUser().getUsername()));
+        return Behaviors.setup(ctx -> new UserAgent(ctx, scope));
     }
 
-    public UserAgent(ActorContext<KlabMessage> context, IEngineUserIdentity user, String id) {
-        super(context, user, id);
+    public UserAgent(ActorContext<KlabMessage> context, IScope scope) {
+        super(context, scope);
     }
 
-    public UserAgent(ActorContext<KlabMessage> context, IScope scope, String id) {
-        super(context, scope.getUser(), id);
-    }
+//    public UserAgent(ActorContext<KlabMessage> context, IScope scope, String id) {
+//        super(context, scope.getUser(), id);
+//    }
 
     @Override
     protected ReceiveBuilder<KlabMessage> configure() {
@@ -88,10 +90,8 @@ public class UserAgent extends KlabAgent {
     }
 
     private Behavior<KlabMessage> handleCreateSession(CreateSession message) {
-
-//        ActorRef<KlabMessage> actor = getContext().spawn(Behaviors.supervise(SessionActor.create(message.id))
-//                .onFailure(SupervisorStrategy.resume().withLoggingEnabled(true)), actorName);
-        message.replyTo.tell(new SessionCreated(null /* TODO */));
+    	ActorRef<KlabMessage> actor = getContext().spawn(SessionAgent.create(message.scope), message.id);
+        message.replyTo.tell(new SessionCreated(actor));
         return Behaviors.same();
     }
 

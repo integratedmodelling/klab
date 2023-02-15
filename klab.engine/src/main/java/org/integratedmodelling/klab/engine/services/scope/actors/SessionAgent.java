@@ -1,10 +1,11 @@
 package org.integratedmodelling.klab.engine.services.scope.actors;
 
 import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
+import org.integratedmodelling.klab.api.engine.IScope;
+import org.integratedmodelling.klab.api.engine.ISessionScope;
 import org.integratedmodelling.klab.components.runtime.actors.EmptyKlabMessage;
 import org.integratedmodelling.klab.components.runtime.actors.KlabAgent;
 import org.integratedmodelling.klab.components.runtime.actors.RuntimeBehavior;
-import org.integratedmodelling.klab.engine.runtime.Session;
 
 import akka.actor.typed.Behavior;
 import akka.actor.typed.javadsl.ActorContext;
@@ -37,12 +38,12 @@ public class SessionAgent extends KlabAgent {
      * --------- methods  --------------------
      */
 
-	public static Behavior<KlabMessage> create(Session session, String sessionName) {
-		return Behaviors.setup(ctx -> new SessionAgent(ctx, session, sessionName));
+	public static Behavior<KlabMessage> create(ISessionScope session) {
+		return Behaviors.setup(ctx -> new SessionAgent(ctx, session));
 	}
 
-	public SessionAgent(ActorContext<KlabMessage> context, Session identity, String sessionName) {
-		super(context, identity, sessionName);
+	public SessionAgent(ActorContext<KlabMessage> context, ISessionScope scope) {
+		super(context, scope);
 	}
 
 	@Override

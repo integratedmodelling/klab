@@ -33,10 +33,9 @@ public class Scope implements IScope {
     private ActorRef<KlabMessage> agent;
     private String token;
 
-    public Scope(IEngineUserIdentity user, ActorRef<KlabMessage> userAgent, EngineService engineService, Reasoner reasonerService,
+    public Scope(IEngineUserIdentity user, EngineService engineService, Reasoner reasonerService,
             ResourceManager resourceService, Resolver resolverService, Runtime runtimeService) {
         this.user = user;
-        this.agent = userAgent;
         this.engineService = engineService;
         this.reasonerService = reasonerService;
         this.resourceService = resourceService;

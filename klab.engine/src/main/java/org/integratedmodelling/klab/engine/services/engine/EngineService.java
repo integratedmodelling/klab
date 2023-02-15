@@ -29,155 +29,158 @@ import akka.actor.typed.SupervisorStrategy;
 import akka.actor.typed.javadsl.Behaviors;
 
 /**
- * Reference implementation for the new modular engine. Should eventually allow substituting
- * external RPC services for the default ones, based on configuration and a dedicated API.
+ * Reference implementation for the new modular engine. Should eventually allow
+ * substituting external RPC services for the default ones, based on
+ * configuration and a dedicated API.
  * 
  * @author Ferd
  *
  */
 public enum EngineService implements IEngineService, IEngineIdentity {
 
-    INSTANCE;
-    
-    private Reasoner reasonerService;
-    private ResourceManager resourceService;
-    private Resolver resolverService;
-    private Runtime runtimeService;
-    private ActorSystem<Void> supervisorAgent;
-    private Map<String, IScope> userScopes = Collections.synchronizedMap(new HashMap<>());
-    private Monitor monitor = new Monitor(this);
-    private String name = "modular-klab-engine";
-    
-    protected Reasoner createReasonerService() {
-        return new ReasonerDefaultService();
-    }
+	INSTANCE;
 
-    protected ResourceManager createResourceService() {
-        return new ResourceDefaultService();
-    }
+	private Reasoner reasonerService;
+	private ResourceManager resourceService;
+	private Resolver resolverService;
+	private Runtime runtimeService;
+	private ActorSystem<Void> supervisorAgent;
+	private Map<String, Scope> userScopes = Collections.synchronizedMap(new HashMap<>());
+	private Monitor monitor = new Monitor(this);
+	private String name = "modular-klab-engine";
 
-    protected Resolver createResolverService() {
-        return new ResolverDefaultService();
-    }
+	protected Reasoner createReasonerService() {
+		return new ReasonerDefaultService();
+	}
 
-    protected Runtime createRuntimeService() {
-        return new RuntimeDefaultService();
-    }
+	protected ResourceManager createResourceService() {
+		return new ResourceDefaultService();
+	}
 
-    public void boot() {
+	protected Resolver createResolverService() {
+		return new ResolverDefaultService();
+	}
 
-        this.supervisorAgent = ActorSystem.create(Supervisor.create(), "klab");
-        this.reasonerService = createReasonerService();
+	protected Runtime createRuntimeService() {
+		return new RuntimeDefaultService();
+	}
 
-    }
+	public void boot() {
 
-    @Override
-    public IScope login(IEngineUserIdentity user) {
-        IScope ret = userScopes.get(user.getUsername());
-        if (ret == null) {
-            ActorRef<KlabMessage> userAgent = ActorSystem.create(
-                    Behaviors.supervise(UserAgent.create(user)).onFailure(SupervisorStrategy.resume().withLoggingEnabled(true)),
-                    user.getUsername().replace('.', '_'));
-            ret = new Scope(user, userAgent, this, reasonerService, resourceService, resolverService, runtimeService);
-            userScopes.put(user.getUsername(), ret);
-        }
-        return ret;
-    }
+		this.supervisorAgent = ActorSystem.create(Supervisor.create(), "klab");
+		this.reasonerService = createReasonerService();
 
-    public void registerScope(IScope scope) {
-        userScopes.put(scope.getToken(), scope);
-    }
-    
-    public void deregisterScope(String token) {
-        userScopes.remove(token);
-    }
-    
-    public static EngineService start() {
-        INSTANCE.boot();
-        return INSTANCE;
-    }
+	}
 
-    @Override
-    public String getName() {
-        return name;
-    }
+	@Override
+	public IScope login(IEngineUserIdentity user) {
+		Scope ret = userScopes.get(user.getUsername());
+		if (ret == null) {
+			ret = new Scope(user, this, reasonerService, resourceService, resolverService, runtimeService);
+			ActorRef<KlabMessage> userAgent = ActorSystem.create(
+					Behaviors.supervise(UserAgent.create(ret))
+							.onFailure(SupervisorStrategy.resume().withLoggingEnabled(true)),
+					user.getUsername().replace('.', '_'));
+			ret.setAgent(userAgent);
+			userScopes.put(user.getUsername(), ret);
+		}
+		return ret;
+	}
 
-    @Override
-    public Date getBootTime() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	public void registerScope(Scope scope) {
+		userScopes.put(scope.getToken(), scope);
+	}
 
-    @Override
-    public Collection<String> getUrls() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	public void deregisterScope(String token) {
+		userScopes.remove(token);
+	}
 
-    @Override
-    public boolean isOnline() {
-        // TODO Auto-generated method stub
-        return false;
-    }
+	public static EngineService start() {
+		INSTANCE.boot();
+		return INSTANCE;
+	}
 
-    public ActorSystem<Void> getActorSystem() {
-        return this.supervisorAgent;
-    }
-    
-    @Override
-    public IClient getClient() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public String getName() {
+		return name;
+	}
 
-    @Override
-    public boolean stop() {
-        // TODO Auto-generated method stub
-        return false;
-    }
+	@Override
+	public Date getBootTime() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public IMonitor getMonitor() {
-        return monitor;
-    }
+	@Override
+	public Collection<String> getUrls() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public IParameters<String> getState() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public boolean isOnline() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
-    @Override
-    public Type getIdentityType() {
-        return Type.ENGINE;
-    }
+	public ActorSystem<Void> getActorSystem() {
+		return this.supervisorAgent;
+	}
 
-    @Override
-    public String getId() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public IClient getClient() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public IIdentity getParentIdentity() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public boolean stop() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
-    @Override
-    public boolean is(Type type) {
-        return getIdentityType() == type;
-    }
+	@Override
+	public IMonitor getMonitor() {
+		return monitor;
+	}
 
-    @Override
-    public <T extends IIdentity> T getParentIdentity(Class<T> type) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public IParameters<String> getState() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    public Object getSystemRef() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public Type getIdentityType() {
+		return Type.ENGINE;
+	}
+
+	@Override
+	public String getId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IIdentity getParentIdentity() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean is(Type type) {
+		return getIdentityType() == type;
+	}
+
+	@Override
+	public <T extends IIdentity> T getParentIdentity(Class<T> type) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Object getSystemRef() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

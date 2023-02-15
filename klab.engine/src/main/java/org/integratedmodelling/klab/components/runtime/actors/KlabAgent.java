@@ -47,6 +47,7 @@ import org.integratedmodelling.klab.api.auth.IActorIdentity;
 import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
 import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage.Semaphore;
 import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
+import org.integratedmodelling.klab.api.engine.IScope;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
@@ -73,7 +74,6 @@ import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.ViewImpl;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.code.ObjectExpression;
-import org.integratedmodelling.klab.engine.services.scope.actors.SessionAgent;
 import org.integratedmodelling.klab.exceptions.KlabActorException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
@@ -121,6 +121,8 @@ public class KlabAgent extends AbstractBehavior<KlabMessage> {
         }
     }
 
+    protected IScope scope;
+    
     protected IBehavior behavior;
     /*
      * this is set when a behavior is loaded and used to create proper actor paths for application
@@ -128,8 +130,8 @@ public class KlabAgent extends AbstractBehavior<KlabMessage> {
      * the actor that implements them.
      */
     private String childActorPath = null;
-    protected String appId;
-    protected IActorIdentity<KlabMessage> identity;
+    @Deprecated  String appId;
+    @Deprecated  protected IActorIdentity<KlabMessage> identity;
     protected Map<Long, MatchActions> listeners = Collections.synchronizedMap(new HashMap<>());
     protected Map<String, MatchActions> componentFireListeners = Collections.synchronizedMap(new HashMap<>());
     private AtomicLong nextId = new AtomicLong(0);
@@ -220,10 +222,9 @@ public class KlabAgent extends AbstractBehavior<KlabMessage> {
         return this.identity;
     }
 
-    protected KlabAgent(ActorContext<KlabMessage> context, IActorIdentity<KlabMessage> identity, String appId) {
+    protected KlabAgent(ActorContext<KlabMessage> context, IScope scope) {
         super(context);
-        this.identity = identity;
-        this.appId = appId;
+        this.scope = scope;
     }
 
     /**
@@ -554,17 +555,17 @@ public class KlabAgent extends AbstractBehavior<KlabMessage> {
     private void executeInstantiation(Instantiation code, IKActorsBehavior.Scope scope) {
 
         Behavior<KlabMessage> child = null;
-        if (this.identity instanceof Observation) {
-            child = ObservationActor.create((Observation) this.identity, null);
-        } else if (this.identity instanceof Session) {
-            /**
-             * TODO if the actor has a view, use a behavior can address enable/disable/hide messages
-             * and the like.
-             */
-            child = SessionAgent.create((Session) this.identity, null);
-        } else if (this.identity instanceof EngineUser) {
-            child = UserActor.create((EngineUser) this.identity);
-        }
+//        if (this.identity instanceof Observation) {
+//            child = ObservationActor.create((Observation) this.identity, null);
+//        } else if (this.identity instanceof Session) {
+//            /**
+//             * TODO if the actor has a view, use a behavior can address enable/disable/hide messages
+//             * and the like.
+//             */
+//            child = SessionAgent.create((Session) this.identity, null);
+//        } else if (this.identity instanceof EngineUser) {
+//            child = UserActor.create((EngineUser) this.identity);
+//        }
 
         // existing actors for this behavior
         List<ActorRef<KlabMessage>> actors = this.childInstances.get(code.getActorBaseName());
@@ -1377,7 +1378,7 @@ public class KlabAgent extends AbstractBehavior<KlabMessage> {
             return Behaviors.same();
         }
 
-        Behavior<KlabMessage> child = SessionAgent.create((Session) this.identity, null);
+        Behavior<KlabMessage> child = null; // sessionAgent.create((Session) this.identity, null);
         String actorName = message.getGroup().getId().replaceAll("/", "_") + "_" + message.getId();
 
         // existing actors for this behavior
@@ -1797,7 +1798,7 @@ public class KlabAgent extends AbstractBehavior<KlabMessage> {
             if (message.getIdentity() instanceof Observation) {
                 behavior = ObservationActor.create((Observation) message.getIdentity(), message.getAppId());
             } else if (message.getIdentity() instanceof Session) {
-                behavior = SessionAgent.create((Session) message.getIdentity(), message.getAppId());
+//                behavior = SessionAgent.create((Session) message.getIdentity(), message.getAppId());
             }
             ActorRef<KlabMessage> actor = getContext().spawn(
                     /*
