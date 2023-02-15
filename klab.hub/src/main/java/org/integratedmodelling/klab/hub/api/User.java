@@ -1,9 +1,12 @@
 package org.integratedmodelling.klab.hub.api;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.integratedmodelling.klab.auth.Role;
 import org.joda.time.DateTime;
@@ -66,6 +69,8 @@ public class User extends IdentityModel implements UserDetails{
     boolean sendUpdates = true;
 
     private Set<Role> roles = new HashSet<>();;
+
+    private List<Tag> tags = new ArrayList<>();
 
     @Reference
     private Set<GroupEntry> groupEntries =  new HashSet<>(); // research groups, etc. in web tool
@@ -385,5 +390,29 @@ public class User extends IdentityModel implements UserDetails{
 	public void setEmail(String email) {
 		this.email = email;
 	}
+
+    public void addNewTag(Tag tag) {
+        this.tags.add(tag);
+    }
+
+    public void addNewTags(Collection<Tag> tags) {
+        this.tags.addAll(tags);
+    }
+
+    public List<Tag> getTags() {
+        return tags;
+    }
+
+    public List<Tag> getTagsWithDescription(String description) {
+        return tags.stream()
+                .filter(t -> t.getDescription().equals(description))
+                .collect(Collectors.toList());
+    }
+
+    public List<Tag> getUnsentTags() {
+        return tags.stream()
+                .filter(t -> !t.isSent())
+                .collect(Collectors.toList());
+    }
 
 }

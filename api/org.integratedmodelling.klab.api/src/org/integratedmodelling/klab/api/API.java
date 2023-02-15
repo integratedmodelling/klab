@@ -348,6 +348,14 @@ public interface API {
          * URL path for current user profile, based on Authentication Token parsing.
          */
         public static final String CURRENT_PROFILE = USER_BASE + "/me";
+        /**
+         * Base URL path for tag resources on the hub.
+         */
+        public static final String TAG_BASE = API_BASE + "/tags";
+        /**
+         * Base URL path for adding a tag to a user.
+         */
+        public static final String TAG_SET_USER = TAG_BASE + "/{username}";
 
         public static interface PARAMETERS {
             /**

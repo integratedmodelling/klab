@@ -73,6 +73,12 @@ public class HubNotificationMessage {
                 return new HubNotificationMessage(this, Type.INFO, msg, info);
             }
 
+        },
+        TAG_NOTIFICATION { // TODO -> Tag notifications should be more flexible
+            @Override
+            public HubNotificationMessage build(String msg, Pair<ExtendedInfo, Object>[] info) {
+                return new HubNotificationMessage(this, Type.INFO, msg, info);
+            }
         }
         
     }
