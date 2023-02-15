@@ -696,6 +696,7 @@
 		<dependency>
 			<groupId>com.typesafe.akka</groupId>
 			<artifactId>akka-actor-typed_2.12</artifactId>
+			<!-- ACHTUNG 2.7.0 throws "Unsupported access to ActorContext" exceptions when spawning UI component actors, which do not seem right -->
 			<version>2.6.3</version>
 		</dependency>
 

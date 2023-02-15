@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.kactors.api.IKActorsStatement.Assert.Assertion;
+import org.integratedmodelling.kactors.api.IKActorsStatement.ConcurrentGroup;
 import org.integratedmodelling.kactors.api.IKActorsStatement.Fail;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.actors.IBehavior.Action;
+import org.integratedmodelling.klab.api.actors.IBehavior.ActionMatch;
 import org.integratedmodelling.klab.api.auth.IActorIdentity;
 import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
 import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage.Semaphore;
@@ -102,8 +104,6 @@ public interface IKActorsBehavior extends IKActorsCodeStatement {
 
         IMonitor getMonitor();
 
-        Map<String, Object> getSymbolTable();
-
         boolean isSynchronous();
 
         IActorIdentity<?> getIdentity();
@@ -116,8 +116,6 @@ public interface IKActorsBehavior extends IKActorsCodeStatement {
 
         IContextualizationScope getRuntimeScope();
 
-        Map<String, Object> getSymbols(IActorIdentity<?> identity);
-
         Map<String, Object> getMetadata();
 
         Scope functional(Object contextReceiver);
@@ -125,6 +123,8 @@ public interface IKActorsBehavior extends IKActorsCodeStatement {
         Scope withReceiver(Object contextReceiver);
 
         Object getValueScope();
+
+        Object getMatchValue();
 
         Long getListenerId();
 
@@ -137,6 +137,12 @@ public interface IKActorsBehavior extends IKActorsCodeStatement {
         Long getNotifyId();
 
         Scope fence(boolean synchronize);
+
+        Map<String, Object> getSymbols(IActorIdentity<?> identity);
+
+        Map<String, Object> getSymbolTable();
+
+        Map<String, Object> getFrameSymbols();
 
         Map<String, Object> getGlobalSymbols();
 
@@ -153,6 +159,19 @@ public interface IKActorsBehavior extends IKActorsCodeStatement {
         void tellSender(KlabMessage message);
 
         Scope getChild(IBehavior testcase);
+
+        Scope getChild(ConcurrentGroup group);
+        
+        Scope getChild(String applicationId, Action action);
+        
+        Scope withMatch(ActionMatch first, Object value, Scope withValues);
+
+        Scope withValue(String variable, Object o);
+
+        Scope synchronous();
+
+        Scope forComponent();
+
 
     }
 
@@ -203,7 +222,7 @@ public interface IKActorsBehavior extends IKActorsCodeStatement {
      *
      */
     interface Visitor {
-        
+
         void visitPreamble(String variable, Object value);
 
         void visitAction(IKActorsAction action);

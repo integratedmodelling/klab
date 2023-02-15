@@ -50,8 +50,6 @@ import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
-import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActionExecutor.Actor;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.AddComponentToGroup;
@@ -192,7 +190,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
             for (Pair<Match, IKActorsStatement> match : matches) {
 
                 if (match.getFirst().matches(value, scope)) {
-                    Scope s = ((Scope) scope).withMatch(match.getFirst(), value, scope.withValues(scopeVars));
+                    IKActorsBehavior.Scope s = scope.withMatch(match.getFirst(), value, scope.withValues(scopeVars));
                     execute(match.getSecond(), s);
                     break;
                 }
@@ -204,7 +202,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
             for (Pair<Match, IKActorsStatement> match : matches) {
 
                 if (match.getFirst().matches(value, scope)) {
-                    Scope s = ((Scope) scope).withMatch(match.getFirst(), value, matchingScope);
+                    ActorScope s = ((ActorScope) scope).withMatch(match.getFirst(), value, matchingScope);
                     execute(match.getSecond(), s);
                     break;
                 }
@@ -214,478 +212,6 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
         public MatchActions(IKActorsBehavior.Scope scope) {
             this.scope = scope;
         }
-    }
-
-    /**
-     * Runtime scope for all k.Actors statements. Root scopes are for each action. Local class so
-     * that the identity is accessible.
-     * 
-     * @author Ferd
-     */
-    public static class Scope /* extends Parameters<String> */ implements IKActorsBehavior.Scope {
-
-        boolean synchronous = false;
-        Scope parent = null;
-        IRuntimeScope runtimeScope;
-        Long listenerId;
-        IActorIdentity<KlabMessage> identity;
-        Object match;
-        String appId;
-        Map<String, String> localizedSymbols = null;
-
-        // local symbol table, frame-specific, holds counters and matches only
-        public Map<String, Object> frameSymbols = new HashMap<>();
-        // symbol table is set using 'def' and is local to an action
-        public Map<String, Object> symbolTable = new HashMap<>();
-        // global symbols are set using 'set' and include the read-only state of the actor identity
-        public Map<String, Object> globalSymbols;
-
-        ViewScope viewScope;
-        ActorRef<KlabMessage> sender;
-        private boolean initializing;
-        Semaphore semaphore = null;
-        // metadata come with the actor specification if created through instantiation
-        // and don't
-        // change.
-        Parameters<String> metadata;
-        IBehavior behavior;
-
-        /**
-         * The scope is functional if an action that is declared as 'function' is called, or if the
-         * executing action is part of a contextual chain (a1().a2().a3: ...). In this case any
-         * "fire" statement does not fire a value but "returns" it, setting it in the scope and
-         * breaking the execution.
-         */
-        boolean functional = false;
-
-        /*
-         * the following two support chaining of actions, with the ones before the last "returning"
-         * values (may be defined using 'function' or be system actions) which end up in the scope
-         * passed to the next. Because null is a legitimate value scope, we also use a boolean to
-         * check if the scope contains a "context" value from a previous function.
-         */
-        boolean hasValueScope = false;
-        Object valueScope = null;
-
-        /**
-         * Only instantiated in tests.
-         */
-        IKActorsBehavior.TestScope testScope;
-
-        public Scope(IActorIdentity<KlabMessage> identity, String appId, IRuntimeScope scope, IBehavior behavior) {
-            this.runtimeScope = scope;
-            this.identity = identity;
-            this.appId = appId;
-            this.viewScope = new ViewScope(this);
-            this.metadata = Parameters.create();
-            this.behavior = behavior;
-            this.globalSymbols = new HashMap<>();
-            this.localizedSymbols = behavior.getLocalization();
-            if (behavior.getDestination() == Type.UNITTEST && identity instanceof Session) {
-                this.testScope = ((Session) identity).getRootTestScope().getChild(behavior);
-            }
-        }
-
-        public String localize(String string) {
-            if (string != null) {
-                if (string.startsWith("#") && this.localizedSymbols.containsKey(string.substring(1))) {
-                    string = this.localizedSymbols.get(string.substring(1));
-                }
-            }
-            return string;
-        }
-
-        public Scope withMatch(Match match, Object value, IKActorsBehavior.Scope matchingScope) {
-
-            Scope ret = new Scope(this);
-
-            ret.symbolTable.putAll(matchingScope.getSymbolTable());
-            ret.globalSymbols.putAll(matchingScope.getGlobalSymbols());
-
-            /*
-             * if we have identifiers either as key or in list key, match them to the values.
-             * Otherwise match to $, $1, ... #n
-             */
-            if (match.isIdentifier(ret)) {
-                ret.frameSymbols.put(match.getIdentifier(), value);
-            } else if (match.isImplicit()) {
-                String matchId = match.getMatchName() == null ? "$" : match.getMatchName();
-                ret.frameSymbols.put(matchId, value);
-                if (value instanceof Collection) {
-                    int n = 1;
-                    for (Object o : ((Collection<?>) value)) {
-                        ret.frameSymbols.put(matchId + (n++), o);
-                    }
-                }
-            }
-            ret.match = value;
-            return ret;
-        }
-
-        public Scope(Scope scope) {
-            this.globalSymbols = scope.globalSymbols;
-            this.synchronous = scope.synchronous;
-            this.runtimeScope = scope.runtimeScope;
-            this.parent = scope;
-            this.listenerId = scope.listenerId;
-            this.sender = scope.sender;
-            this.symbolTable = scope.symbolTable;
-            this.frameSymbols.putAll(scope.frameSymbols);
-            this.identity = scope.identity;
-            this.viewScope = scope.viewScope;
-            this.appId = scope.appId;
-            this.semaphore = scope.semaphore;
-            this.metadata = scope.metadata;
-            this.behavior = scope.behavior;
-            this.localizedSymbols = scope.localizedSymbols;
-            // TODO check if we need to make a child and pass this
-            this.testScope = scope.testScope;
-        }
-
-        public String toString() {
-            return "{S " + listenerId + "}";
-        }
-
-        public Scope synchronous() {
-            Scope ret = new Scope(this);
-            ret.synchronous = true;
-            return ret;
-        }
-
-        public Scope concurrent() {
-            Scope ret = new Scope(this);
-            ret.synchronous = false;
-            return ret;
-        }
-
-        public Scope withNotifyId(Long id) {
-            Scope ret = new Scope(this);
-            ret.listenerId = id;
-            return ret;
-        }
-
-        @Override
-        public IActorIdentity<KlabMessage> getIdentity() {
-            return identity;
-        }
-
-        public Long getNotifyId() {
-            return listenerId;
-        }
-
-        @Override
-        public boolean isSynchronous() {
-            return this.synchronous;
-        }
-
-        @Override
-        public Map<String, Object> getSymbolTable() {
-            return this.symbolTable;
-        }
-
-        @Override
-        public IMonitor getMonitor() {
-            return this.runtimeScope == null ? null : this.runtimeScope.getMonitor();
-        }
-
-        public Scope withSender(ActorRef<KlabMessage> sender, String appId) {
-            Scope ret = new Scope(this);
-            ret.sender = sender;
-            ret.appId = appId;
-            return ret;
-        }
-
-        public boolean hasValue(String string) {
-            if (frameSymbols.containsKey(string)) {
-                return true;
-            } else if (symbolTable.containsKey(string)) {
-                return true;
-            } else if (globalSymbols != null && globalSymbols.containsKey(string)) {
-                return true;
-            }
-            return false;
-        }
-
-        public Object getValue(String string) {
-            if (frameSymbols.containsKey(string)) {
-                return frameSymbols.get(string);
-            } else if (symbolTable.containsKey(string)) {
-                return symbolTable.get(string);
-            } else if (globalSymbols != null && globalSymbols.containsKey(string)) {
-                return globalSymbols.get(string);
-            }
-            return identity.getState().get(string, Object.class);
-        }
-
-        /**
-         * Get a child scope for this action, which will create a panel viewscope if the action has
-         * a view.
-         * 
-         * @param appId
-         * @param action
-         * @return
-         */
-        public Scope getChild(String appId, Action action) {
-            Scope ret = forAction(action);
-            ret.viewScope = this.viewScope.getChild(action, appId, identity, ret);
-            return ret;
-        }
-
-        /**
-         * Copy of scope with specialized variable values in frame table.
-         * 
-         * @param variable
-         * @param value
-         * @return
-         */
-        public Scope withValues(Map<String, Object> variables) {
-            Scope ret = new Scope(this);
-            ret.frameSymbols.putAll(variables);
-            return ret;
-        }
-
-        /**
-         * Same, one value at a time.
-         * 
-         * @param variable
-         * @param value
-         * @return
-         */
-        public Scope withValue(String variable, Object value) {
-            Scope ret = new Scope(this);
-            ret.frameSymbols.put(variable, value);
-            return ret;
-        }
-
-        public Scope withComponent(ViewComponent component) {
-            Scope ret = new Scope(this);
-            ret.viewScope.setCurrentComponent(component);
-            return ret;
-        }
-
-        public Scope getChild(ConcurrentGroup code) {
-            Scope ret = new Scope(this);
-            if (!initializing && this.viewScope != null) {
-                ret.viewScope = this.viewScope.getChild(code, ret);
-            }
-            return ret;
-        }
-
-        public Map<String, Object> getSymbols(IActorIdentity<?> identity) {
-            Map<String, Object> ret = new HashMap<>();
-            ret.putAll(identity.getState());
-            if (globalSymbols != null) {
-                ret.putAll(globalSymbols);
-            }
-            ret.putAll(symbolTable);
-            ret.putAll(frameSymbols);
-            return ret;
-        }
-
-        public Scope forInit() {
-            Scope ret = new Scope(this);
-            ret.initializing = true;
-            return ret;
-        }
-
-        public Scope forTest(Action action) {
-            Scope ret = new Scope(this);
-            ret.initializing = true;
-            ret.synchronous = true;
-            ret.testScope = ret.testScope.getChild(action);
-            return ret;
-        }
-
-        public void waitForGreen(final int linenumber) {
-
-            if (semaphore != null) {
-                int cnt = 0;
-                while(!Actors.INSTANCE.expired(semaphore)) {
-
-                    if (this.getMonitor().isInterrupted()) {
-                        break;
-                    }
-
-                    try {
-                        Thread.sleep(60);
-                        cnt++;
-                        if (cnt % 1000 == 0 && !semaphore.isWarned()) {
-                            identity.getMonitor().warn("Blocking action is taking longer than 1 minute at "
-                                    + getBehavior().getName() + ":" + linenumber);
-                            semaphore.setWarned();
-                        }
-                    } catch (InterruptedException e) {
-                        return;
-                    }
-                }
-            }
-        }
-
-        public Scope fence(boolean synchronize) {
-            Scope ret = this;
-            if (synchronize) {
-                ret = new Scope(this);
-                ret.semaphore = Actors.INSTANCE.createSemaphore(Semaphore.Type.FIRE);
-            }
-            return ret;
-        }
-
-        public Scope forWindow(IAnnotation wspecs, String actionId) {
-            Scope ret = new Scope(this);
-            ret.viewScope = ret.viewScope.createLayout(wspecs, actionId, ret);
-            return ret;
-        }
-
-        public Scope forAction(IBehavior.Action action) {
-            Scope ret = action.getStatement().isFunction() ? new Scope(this) : functional();
-            ret.symbolTable = new HashMap<>(this.symbolTable);
-            return ret;
-        }
-
-        public Scope functional() {
-            Scope ret = new Scope(this);
-            ret.functional = true;
-            return ret;
-        }
-
-        public Scope functional(Object valueScope) {
-            Scope ret = new Scope(this);
-            ret.functional = true;
-            ret.valueScope = valueScope;
-            return ret;
-        }
-
-        public Scope withReceiver(Object valueScope) {
-            Scope ret = new Scope(this);
-            ret.valueScope = valueScope;
-            return ret;
-        }
-
-        public IBehavior getBehavior() {
-            return this.behavior;
-        }
-
-        public Scope matchFormalArguments(Call code, Action actionCode) {
-
-            Scope ret = this;
-
-            if (!actionCode.getFormalArguments().isEmpty()) {
-                ret = new Scope(this);
-                int i = 0;
-                for (String farg : actionCode.getFormalArguments()) {
-                    Object value = null;
-                    if (code.getArguments().getUnnamedArguments().size() > i) {
-                        Object argument = code.getArguments().getUnnamedArguments().get(i);
-                        value = argument instanceof KActorsValue
-                                ? ((KActorsValue) argument).evaluate(this, identity, false)
-                                : argument;
-                    }
-                    ret.symbolTable.put(farg, value);
-                    i++;
-                }
-            }
-
-            return ret;
-        }
-
-        public Scope withLayout(Layout layout) {
-            if (this.viewScope != null) {
-                this.viewScope.setLayout(layout);
-            }
-            return this;
-        }
-
-        public void onException(Throwable e, String message) {
-
-            runtimeScope.getMonitor().error("actor exception: " + (message == null ? "" : message) + e.getMessage());
-
-            if (testScope != null) {
-                testScope.onException(e);
-            }
-
-        }
-
-        public Scope getChild(IBehavior behavior) {
-            Scope ret = new Scope(this);
-            ret.behavior = behavior;
-            if (this.testScope != null) {
-                ret.testScope = ret.testScope.getChild(behavior);
-            }
-            return ret;
-        }
-
-        /**
-         * The scope for a child component detaches both local and global symbols to keep them local
-         * to the child.
-         * 
-         * @return
-         */
-        public Scope forComponent() {
-            Scope ret = new Scope(this);
-            ret.globalSymbols = new HashMap<>(globalSymbols);
-            ret.symbolTable = new HashMap<>();
-            ret.frameSymbols.clear();
-            return ret;
-        }
-
-        @Override
-        public IContextualizationScope getRuntimeScope() {
-            return runtimeScope;
-        }
-
-        @Override
-        public Map<String, Object> getMetadata() {
-            return metadata;
-        }
-
-        @Override
-        public Object getValueScope() {
-            return valueScope;
-        }
-
-        @Override
-        public Long getListenerId() {
-            return listenerId;
-        }
-
-        @Override
-        public boolean isFunctional() {
-            return functional;
-        }
-
-        @Override
-        public Map<String, Object> getGlobalSymbols() {
-            return globalSymbols;
-        }
-
-        @Override
-        public Semaphore getSemaphore() {
-            return this.semaphore;
-        }
-
-        @Override
-        public IKActorsBehavior.ViewScope getViewScope() {
-            return this.viewScope;
-        }
-
-        @Override
-        public String getAppId() {
-            return appId;
-        }
-
-        @Override
-        public IKActorsBehavior.TestScope getTestScope() {
-            return testScope;
-        }
-
-        public void tellSender(KlabMessage message) {
-            if (this.sender != null) {
-                this.sender.tell(message);
-            } else {
-                throw new KlabActorException("message has no sender: " + message);
-            }
-        }
-
     }
 
     protected IActorIdentity<KlabMessage> getIdentity() {
@@ -747,7 +273,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
         KActorsMessage mes = new KActorsMessage(getContext().getSelf(), "reset", null, null, message.getScope(),
                 message.getScope().getAppId());
 
-        Scope scope = localizeScope(message.getScope());
+        ActorScope scope = localizeScope(message.getScope());
 
         /**
          * FIXME not sure how this happens, but apparently it's only during debugging.
@@ -810,7 +336,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
                     KlabActionExecutor executor = actionCache.get(message.getAction().getComponent().getId());
                     actions.match(executor instanceof KlabWidgetActionExecutor
                             ? ((KlabWidgetActionExecutor) executor).getFiredValue(message.getAction(),
-                                    new Scope(identity, appId, message.getScope(), this.behavior))
+                                    new ActorScope(identity, appId, message.getScope(), this.behavior))
                             : getActionValue(message.getAction()), message.getScope());
                 }
             } else if (message.getAction().getComponent().getActorPath() != null) {
@@ -855,7 +381,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
 
             Action actionCode = behavior.getAction(actionId);
             if (actionCode != null) {
-                Scope scope = new Scope(identity, appId, message.getScope(), this.behavior).withLayout(this.layout);
+                ActorScope scope = new ActorScope(identity, appId, message.getScope(), this.behavior).withLayout(this.layout);
                 scope.globalSymbols.putAll(this.globalState);
                 run(actionCode, scope);
             }
@@ -910,23 +436,23 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
         }
 
         if (wspecs != null) {
-            scope = ((Scope) scope).forWindow(wspecs, action.getName());
+            scope = ((ActorScope) scope).forWindow(wspecs, action.getName());
         }
 
         if (action.isFunction()) {
-            scope = ((Scope) scope).functional();
+            scope = ((ActorScope) scope).functional();
         }
 
         try {
 
-            execute(action.getStatement().getCode(), ((Scope) scope).forAction(action));
+            execute(action.getStatement().getCode(), ((ActorScope) scope).forAction(action));
 
         } catch (Throwable t) {
 
-            ((Scope) scope).onException(t, "action " + action.getBehavior() + " " + action.getName());
+            ((ActorScope) scope).onException(t, "action " + action.getBehavior() + " " + action.getName());
 
-            if (((Scope) scope).sender != null) {
-                ((Scope) scope).sender.tell(new Fire(scope.getListenerId(), t, scope.getAppId(), scope.getSemaphore(),
+            if (((ActorScope) scope).sender != null) {
+                ((ActorScope) scope).sender.tell(new Fire(scope.getListenerId(), t, scope.getAppId(), scope.getSemaphore(),
                         scope.getSymbols(this.identity)));
             } else if (parentActor != null) {
 
@@ -960,7 +486,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
         }
     }
 
-    private boolean execute(IKActorsStatement code, Scope scope) {
+    private boolean execute(IKActorsStatement code, IKActorsBehavior.Scope scope) {
 
         if (scope.getMonitor().isInterrupted()) {
             return false;
@@ -1004,8 +530,8 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
                 executeAssert((IKActorsStatement.Assert) code, scope);
                 break;
             case FAIL_STATEMENT:
-                if (scope.testScope != null) {
-                    scope.testScope.fail((Fail) code);
+                if (scope.getTestScope() != null) {
+                    scope.getTestScope().fail((Fail) code);
                 }
                 // fall through
             case BREAK_STATEMENT:
@@ -1014,8 +540,8 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
                 break;
             }
         } catch (Throwable t) {
-            if (scope.testScope != null) {
-                scope.testScope.onException(t);
+            if (scope.getTestScope() != null) {
+                scope.getTestScope().onException(t);
             }
             Logging.INSTANCE.warn("Exception thrown in k.Actors interpreter: " + t.getMessage());
         }
@@ -1023,7 +549,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
         return true;
     }
 
-    private void executeInstantiation(Instantiation code, Scope scope) {
+    private void executeInstantiation(Instantiation code, IKActorsBehavior.Scope scope) {
 
         Behavior<KlabMessage> child = null;
         if (this.identity instanceof Observation) {
@@ -1144,16 +670,16 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
         }
     }
 
-    private void executeWhile(While code, Scope scope) {
+    private void executeWhile(While code, IKActorsBehavior.Scope scope) {
         // TODO Auto-generated method stub
 
     }
 
-    private void executeText(TextBlock code, Scope scope) {
+    private void executeText(TextBlock code, IKActorsBehavior.Scope scope) {
         executeCall(new KActorsActionCall(code), scope);
     }
 
-    private void executeSequence(Sequence code, Scope scope) {
+    private void executeSequence(Sequence code, IKActorsBehavior.Scope scope) {
         if (code.getStatements().size() == 1) {
             execute(code.getStatements().get(0), scope);
         } else {
@@ -1166,8 +692,8 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
         }
     }
 
-    private void executeGroup(ConcurrentGroup code, Scope scope) {
-        Scope groupScope = scope.getChild(code);
+    private void executeGroup(ConcurrentGroup code, IKActorsBehavior.Scope scope) {
+        IKActorsBehavior.Scope groupScope = scope.getChild(code);
         if (code.getTag() != null) {
             /*
              * install executor for group actions
@@ -1182,7 +708,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
         }
     }
 
-    private void executeIf(If code, Scope scope) {
+    private void executeIf(If code, IKActorsBehavior.Scope scope) {
 
         Object check = ((KActorsValue) code.getCondition()).evaluate(scope, identity, true);
         if (KActorsValue.isTrue(check)) {
@@ -1204,7 +730,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
 
     }
 
-    private void executeFor(For code, Scope scope) {
+    private void executeFor(For code, IKActorsBehavior.Scope scope) {
         for (Object o : Actors.INSTANCE.getIterable(code.getIterable(), scope, identity)) {
             if (!execute(code.getBody(), scope.withValue(code.getVariable(), o)) || scope.getMonitor().isInterrupted()) {
                 break;
@@ -1212,13 +738,13 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
         }
     }
 
-    private void executeAssert(Assert code, Scope scope) {
+    private void executeAssert(Assert code, IKActorsBehavior.Scope scope) {
 
         for (Assertion assertion : code.getAssertions()) {
             executeCallChain(assertion.getCalls(), scope);
             if (assertion.getValue() != null || assertion.getExpression() != null) {
                 // target is the match if we come from a trigger, or the value scope.
-                TestBehavior.evaluateAssertion(scope.match == null ? scope.valueScope : scope.match, assertion, scope,
+                TestBehavior.evaluateAssertion(scope.getMatchValue() == null ? scope.getValueScope() : scope.getMatchValue(), assertion, scope,
                         code.getArguments());
             }
         }
@@ -1271,7 +797,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
             executeCall(calls.get(i), fscope);
             contextReceiver = fscope.getValueScope();
         }
-        ((Scope) scope).valueScope = contextReceiver;
+        ((ActorScope) scope).valueScope = contextReceiver;
     }
 
     /**
@@ -1284,8 +810,8 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
     private boolean executeFire(FireValue code, IKActorsBehavior.Scope scope) {
 
         if (scope.isFunctional()) {
-            ((Scope) scope).hasValueScope = true;
-            ((Scope) scope).valueScope = code.getValue().evaluate(scope, identity, false);
+            ((ActorScope) scope).hasValueScope = true;
+            ((ActorScope) scope).valueScope = code.getValue().evaluate(scope, identity, false);
             return false;
         }
 
@@ -1299,14 +825,14 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
             }
         }
 
-        if (((Scope) scope).sender != null) {
+        if (((ActorScope) scope).sender != null) {
 
             /*
              * this should happen when a non-main action executes the fire. Must be checked first.
              * Fire may happen if the action firing is called again, so don't remove the listener.
              */
-            ((Scope) scope).sender.tell(new Fire(scope.getListenerId(), code.getValue().evaluate(scope, identity, false),
-                    ((Scope) scope).appId, ((Scope) scope).semaphore, scope.getSymbols(this.identity)));
+            ((ActorScope) scope).sender.tell(new Fire(scope.getListenerId(), code.getValue().evaluate(scope, identity, false),
+                    ((ActorScope) scope).appId, ((ActorScope) scope).semaphore, scope.getSymbols(this.identity)));
 
         } else if (parentActor != null) {
 
@@ -1332,12 +858,12 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
         return true;
     }
 
-    private void executeDo(Do code, Scope scope) {
+    private void executeDo(Do code, IKActorsBehavior.Scope scope) {
         // TODO Auto-generated method stub
 
     }
 
-    private void executeAssignment(Assignment code, Scope scope) {
+    private void executeAssignment(Assignment code, IKActorsBehavior.Scope scope) {
         if (code.getRecipient() != null) {
             if ("self".equals(code.getRecipient())) {
                 this.identity.getState().put(code.getVariable(),
@@ -1353,26 +879,26 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
             this.javaReactors.put(code.getVariable(), o);
             switch(code.getScope()) {
             case ACTION:
-                scope.symbolTable.put(code.getVariable(), o);
+                scope.getSymbolTable().put(code.getVariable(), o);
                 break;
             case ACTOR:
-                scope.globalSymbols.put(code.getVariable(), o);
+                scope.getGlobalSymbols().put(code.getVariable(), o);
                 break;
             case FRAME:
-                scope.frameSymbols.put(code.getVariable(), o);
+                scope.getFrameSymbols().put(code.getVariable(), o);
                 break;
             }
         } else {
             Object o = ((KActorsValue) code.getValue()).evaluate(scope, identity, false);
             switch(code.getScope()) {
             case ACTION:
-                scope.symbolTable.put(code.getVariable(), o);
+                scope.getSymbolTable().put(code.getVariable(), o);
                 break;
             case ACTOR:
-                scope.globalSymbols.put(code.getVariable(), o);
+                scope.getGlobalSymbols().put(code.getVariable(), o);
                 break;
             case FRAME:
-                scope.frameSymbols.put(code.getVariable(), o);
+                scope.getFrameSymbols().put(code.getVariable(), o);
                 break;
             }
         }
@@ -1478,8 +1004,8 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
             break;
         case LOCALIZED_KEY:
 
-            if (((Scope) scope).localizedSymbols != null) {
-                ret = ((Scope) scope).localizedSymbols.get(arg.getStatedValue());
+            if (((ActorScope) scope).localizedSymbols != null) {
+                ret = ((ActorScope) scope).localizedSymbols.get(arg.getStatedValue());
             }
             if (ret == null) {
                 // ensure invariance in copies of the behavior
@@ -1535,7 +1061,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
 
         if (code.getGroup() != null) {
             // TODO finish handling group actions
-            execute(code.getGroup(), ((Scope) scope).withNotifyId(notifyId));
+            execute(code.getGroup(), ((ActorScope) scope).withNotifyId(notifyId));
             return;
         }
 
@@ -1553,22 +1079,22 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
              * it the message and return.
              */
             if (this.javaReactors.containsKey(receiverName)
-                    || (((Scope) scope).frameSymbols.containsKey(receiverName)
-                            && !Utils.isPOD(((Scope) scope).symbolTable.get(receiverName)))
-                    || (((Scope) scope).symbolTable.containsKey(receiverName)
-                            && !Utils.isPOD(((Scope) scope).symbolTable.get(receiverName)))
-                    || (((Scope) scope).globalSymbols.containsKey(receiverName)
-                            && !Utils.isPOD(((Scope) scope).globalSymbols.get(receiverName)))) {
+                    || (((ActorScope) scope).frameSymbols.containsKey(receiverName)
+                            && !Utils.isPOD(((ActorScope) scope).symbolTable.get(receiverName)))
+                    || (((ActorScope) scope).symbolTable.containsKey(receiverName)
+                            && !Utils.isPOD(((ActorScope) scope).symbolTable.get(receiverName)))
+                    || (((ActorScope) scope).globalSymbols.containsKey(receiverName)
+                            && !Utils.isPOD(((ActorScope) scope).globalSymbols.get(receiverName)))) {
 
                 Object reactor = this.javaReactors.get(receiverName);
                 if (reactor == null) {
-                    reactor = ((Scope) scope).frameSymbols.get(receiverName);
+                    reactor = ((ActorScope) scope).frameSymbols.get(receiverName);
                 }
                 if (reactor == null) {
-                    reactor = ((Scope) scope).symbolTable.get(receiverName);
+                    reactor = ((ActorScope) scope).symbolTable.get(receiverName);
                 }
                 if (reactor == null) {
-                    reactor = ((Scope) scope).globalSymbols.get(receiverName);
+                    reactor = ((ActorScope) scope).globalSymbols.get(receiverName);
                 }
                 if (reactor != null) {
                     Actors.INSTANCE.invokeReactorMethod(reactor, messageName, code.getArguments(), scope, this.identity);
@@ -1584,9 +1110,9 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
              */
             if (this.localActionExecutors.containsKey(receiverName)) {
                 KActorsMessage m = new KActorsMessage(getContext().getSelf(), messageName, code.getCallId(), code.getArguments(),
-                        ((Scope) scope).withNotifyId(notifyId), appId);
+                        ((ActorScope) scope).withNotifyId(notifyId), appId);
                 this.localActionExecutors.get(receiverName).onMessage(m, scope);
-                ((Scope) scope).waitForGreen(code.getFirstLine());
+                ((ActorScope) scope).waitForGreen(code.getFirstLine());
                 return;
             }
 
@@ -1595,7 +1121,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
              * parameter or otherwise set in the symbol table as a variable.
              */
             ActorRef<KlabMessage> recipient = null;
-            Object potentialRecipient = ((Scope) scope).frameSymbols.get(receiverName);
+            Object potentialRecipient = ((ActorScope) scope).frameSymbols.get(receiverName);
             if (!(potentialRecipient instanceof IActorIdentity)) {
                 potentialRecipient = scope.getSymbolTable().get(receiverName);
             }
@@ -1633,7 +1159,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
             }
 
             recipient.tell(new KActorsMessage(getContext().getSelf(), messageName, code.getCallId(), code.getArguments(),
-                    ((Scope) scope).withNotifyId(notifyId), appId));
+                    ((ActorScope) scope).withNotifyId(notifyId), appId));
 
             return;
 
@@ -1674,7 +1200,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
                         args.add(arg instanceof KActorsValue ? evaluateInScope((KActorsValue) arg, scope, identity) : arg);
                     }
                     try {
-                        ((Scope) scope).valueScope = method.method.invoke(nativeLibraryInstances.get(library.name),
+                        ((ActorScope) scope).valueScope = method.method.invoke(nativeLibraryInstances.get(library.name),
                                 args.toArray());
                         return;
                     } catch (Throwable e) {
@@ -1695,7 +1221,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
          * at this point if we have a valueScope, we are calling a method on it.
          */
         if (scope.getValueScope() != null) {
-            ((Scope) scope).valueScope = Actors.INSTANCE.invokeReactorMethod(scope.getValueScope(), messageName,
+            ((ActorScope) scope).valueScope = Actors.INSTANCE.invokeReactorMethod(scope.getValueScope(), messageName,
                     code.getArguments(), scope, identity);
             return;
         }
@@ -1719,7 +1245,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
             /*
              * local action overrides a library action
              */
-            run(actionCode, ((Scope) scope).matchFormalArguments(code, (actionCode == null ? libraryActionCode : actionCode))
+            run(actionCode, ((ActorScope) scope).matchFormalArguments(code, (actionCode == null ? libraryActionCode : actionCode))
                     .withNotifyId(notifyId));
             return;
         }
@@ -1739,13 +1265,13 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
             if (actionClass != null) {
 
                 executor = Actors.INSTANCE.getSystemAction(messageName, this.getIdentity(), code.getArguments(),
-                        ((Scope) scope).withNotifyId(notifyId), getContext().getSelf(), executorId);
+                        ((ActorScope) scope).withNotifyId(notifyId), getContext().getSelf(), executorId);
 
                 if (executor != null) {
 
                     if (!executor.isSynchronized()) {
                         // disable the fencing if it's there
-                        ((Scope) scope).semaphore = null;
+                        ((ActorScope) scope).semaphore = null;
                     }
 
                     actionCache.put(executorId, executor);
@@ -1789,7 +1315,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
             // handler
             // after the call.
             if (viewComponent != null) {
-                ((Scope) scope).viewScope.setViewMetadata(viewComponent, executor.arguments, scope);
+                ((ActorScope) scope).viewScope.setViewMetadata(viewComponent, executor.arguments, scope);
                 viewComponent.setIdentity(this.identity.getId());
                 viewComponent.setApplicationId(this.appId);
                 viewComponent.setParentId(code.getCallId()); // check - seems
@@ -1797,11 +1323,11 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
                 viewComponent.setId(executorId);
                 viewComponent.setActorPath(this.childActorPath);
                 ((KlabWidgetActionExecutor) executor).setInitializedComponent(viewComponent);
-                ((Scope) scope).viewScope.getCurrentComponent().getComponents().add(viewComponent);
+                ((ActorScope) scope).viewScope.getCurrentComponent().getComponents().add(viewComponent);
             }
 
         } else if (executor != null) {
-            executor.run(((Scope) scope).withNotifyId(notifyId).withSender(getContext().getSelf(), appId));
+            executor.run(((ActorScope) scope).withNotifyId(notifyId).withSender(getContext().getSelf(), appId));
         }
 
         /*
@@ -1809,7 +1335,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
          * nothing. TODO In case of errors causing no fire, though, it will wait forever, so there
          * should be a way to break the wait.
          */
-        ((Scope) scope).waitForGreen(code.getFirstLine());
+        ((ActorScope) scope).waitForGreen(code.getFirstLine());
 
     }
 
@@ -1857,7 +1383,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
         List<ActorRef<KlabMessage>> actors = this.childInstances.get(appId);
 
         // TODO detach so that the components can be written to this without consequence
-        Scope scope = localizeScope(message.getScope()).withComponent(message.getGroup());
+        ActorScope scope = localizeScope(message.getScope()).withComponent(message.getGroup());
 
         ActorRef<KlabMessage> actor = getContext()
                 .spawn(Behaviors.supervise(child).onFailure(SupervisorStrategy.resume().withLoggingEnabled(true)), actorName);
@@ -1943,11 +1469,11 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
         return Behaviors.same();
     }
 
-    private Scope localizeScope(IKActorsBehavior.Scope scope) {
-        Scope ret = (Scope) scope;
+    private ActorScope localizeScope(IKActorsBehavior.Scope scope) {
+        ActorScope ret = (ActorScope) scope;
         if (scope.getGlobalSymbols() != this.globalState) {
-            ret = new Scope((Scope) scope);
-            ((Scope) ret).globalSymbols = this.globalState;
+            ret = new ActorScope((ActorScope) scope);
+            ((ActorScope) ret).globalSymbols = this.globalState;
         }
         return ret;
     }
@@ -2087,7 +1613,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
                      */
                     for (IBehavior.Action action : KlabActor.this.behavior.getActions("init", "@init")) {
 
-                        Scope initScope = ((Scope) message.getScope()).forInit();
+                        ActorScope initScope = ((ActorScope) message.getScope()).forInit();
                         initScope.metadata = new Parameters<>(message.getMetadata());
                         initScope.localizedSymbols = behavior.getLocalization();
                         if (behavior.getDestination() == Type.SCRIPT || behavior.getDestination() == Type.UNITTEST) {
@@ -2115,7 +1641,7 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
                      * run any main actions. This is the only action that may create a UI.
                      */
                     for (IBehavior.Action action : KlabActor.this.behavior.getActions("main", "@main")) {
-                        Scope scope = ((Scope) message.getScope()).getChild(KlabActor.this.appId, action);
+                        ActorScope scope = ((ActorScope) message.getScope()).getChild(KlabActor.this.appId, action);
                         KlabActor.this.layout = scope.viewScope == null ? null : scope.viewScope.getLayout();
                         scope.metadata = new Parameters<>(message.getMetadata());
                         scope.localizedSymbols = behavior.getLocalization();
@@ -2135,12 +1661,12 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
 
                             if (identity instanceof Session) {
                                 ((Session) identity).notifyTestCaseStart(KlabActor.this.behavior,
-                                        ((Scope) message.getScope()).testScope.getTestStatistics());
+                                        ((ActorScope) message.getScope()).testScope.getTestStatistics());
                             }
 
                             if (desc.get("enabled", Boolean.TRUE) && !desc.get("disabled", Boolean.FALSE)) {
 
-                                Scope testScope = ((Scope) message.getScope()).forTest(action);
+                                ActorScope testScope = ((ActorScope) message.getScope()).forTest(action);
                                 testScope.metadata = new Parameters<>(message.getMetadata());
                                 testScope.localizedSymbols = behavior.getLocalization();
                                 testScope.runtimeScope.getMonitor()
@@ -2183,12 +1709,12 @@ public class KlabActor extends AbstractBehavior<KlabMessage> {
 
                 } catch (Throwable e) {
 
-                    ((Scope) message.getScope()).onException(e, null);
+                    ((ActorScope) message.getScope()).onException(e, null);
 
                 } finally {
 
-                    if (((Scope) message.getScope()).testScope != null) {
-                        ((Scope) message.getScope()).testScope.finalizeTestRun();
+                    if (((ActorScope) message.getScope()).testScope != null) {
+                        ((ActorScope) message.getScope()).testScope.finalizeTestRun();
                     }
 
                     if (message.getScope().getIdentity() instanceof Session) {

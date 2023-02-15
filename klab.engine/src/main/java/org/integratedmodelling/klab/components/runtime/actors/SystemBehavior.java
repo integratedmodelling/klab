@@ -67,7 +67,7 @@ public class SystemBehavior {
             this.behavior = behavior;
             this.forwardApplicationId = appId;
             this.identity = identity;
-            this.scope = new KlabActor.Scope(identity, appId, scope, Actors.INSTANCE.getBehavior(behavior));
+            this.scope = new ActorScope(identity, appId, scope, Actors.INSTANCE.getBehavior(behavior));
         }
 
         /**

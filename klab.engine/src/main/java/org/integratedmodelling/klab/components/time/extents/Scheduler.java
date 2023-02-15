@@ -46,8 +46,8 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
-import org.integratedmodelling.klab.components.runtime.actors.KlabActor;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.ActorReference;
+import org.integratedmodelling.klab.components.runtime.actors.ActorScope;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.KActorsMessage;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.dataflow.Actuator;
@@ -204,7 +204,7 @@ public class Scheduler implements IScheduler {
 					 */
 					String appId = null /* TODO! */;
 					recipient.getActor().tell(new KActorsMessage(sender, scheduled.getId(), null, null,
-							new KlabActor.Scope(observation, appId, transitionContext, null), appId));
+							new ActorScope(observation, appId, transitionContext, null), appId));
 
 					recipient.finalizeTransition((IScale) transitionScale);
 
