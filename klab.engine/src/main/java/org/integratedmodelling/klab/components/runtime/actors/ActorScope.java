@@ -19,6 +19,7 @@ import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage.Semaphor
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.runtime.actors.KlabActor.ActorReference;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabActorException;
@@ -30,53 +31,53 @@ import akka.actor.typed.ActorRef;
 
 public class ActorScope implements IKActorsBehavior.Scope {
 
-    boolean synchronous = false;
-    ActorScope parent = null;
-    IRuntimeScope runtimeScope;
-    Long listenerId;
-    IActorIdentity<KlabMessage> identity;
-    Object match;
-    String appId;
-    Map<String, String> localizedSymbols = null;
+    private boolean synchronous = false;
+    private ActorScope parent = null;
+    private IRuntimeScope runtimeScope;
+    private Long listenerId;
+    private IActorIdentity<KlabMessage> identity;
+    private Object match;
+    private String appId;
+    private Map<String, String> localizedSymbols = null;
 
     // local symbol table, frame-specific, holds counters and matches only
-    public Map<String, Object> frameSymbols = new HashMap<>();
+    private Map<String, Object> frameSymbols = new HashMap<>();
     // symbol table is set using 'def' and is local to an action
-    public Map<String, Object> symbolTable = new HashMap<>();
+    private Map<String, Object> symbolTable = new HashMap<>();
     // global symbols are set using 'set' and include the read-only state of the actor identity
-    public Map<String, Object> globalSymbols;
+    private Map<String, Object> globalSymbols;
 
-    ViewScope viewScope;
-    ActorRef<KlabMessage> sender;
+    private ViewScope viewScope;
+    private ActorRef<KlabMessage> sender;
     private boolean initializing;
-    Semaphore semaphore = null;
+    private Semaphore semaphore = null;
     // metadata come with the actor specification if created through instantiation
     // and don't
     // change.
-    Parameters<String> metadata;
-    IBehavior behavior;
+    private Parameters<String> metadata;
+    private IBehavior behavior;
 
     /**
      * The scope is functional if an action that is declared as 'function' is called, or if the
-     * executing action is part of a contextual chain (a1().a2().a3: ...). In this case any
-     * "fire" statement does not fire a value but "returns" it, setting it in the scope and
-     * breaking the execution.
+     * executing action is part of a contextual chain (a1().a2().a3: ...). In this case any "fire"
+     * statement does not fire a value but "returns" it, setting it in the scope and breaking the
+     * execution.
      */
-    boolean functional = false;
+    private boolean functional = false;
 
     /*
      * the following two support chaining of actions, with the ones before the last "returning"
      * values (may be defined using 'function' or be system actions) which end up in the scope
-     * passed to the next. Because null is a legitimate value scope, we also use a boolean to
-     * check if the scope contains a "context" value from a previous function.
+     * passed to the next. Because null is a legitimate value scope, we also use a boolean to check
+     * if the scope contains a "context" value from a previous function.
      */
-    boolean hasValueScope = false;
-    Object valueScope = null;
+    // private boolean hasValueScope = false;
+    private Object valueScope = null;
 
     /**
      * Only instantiated in tests.
      */
-    IKActorsBehavior.TestScope testScope;
+    private IKActorsBehavior.TestScope testScope;
 
     public ActorScope(IActorIdentity<KlabMessage> identity, String appId, IRuntimeScope scope, IBehavior behavior) {
         this.runtimeScope = scope;
@@ -109,8 +110,8 @@ public class ActorScope implements IKActorsBehavior.Scope {
         ret.globalSymbols.putAll(matchingScope.getGlobalSymbols());
 
         /*
-         * if we have identifiers either as key or in list key, match them to the values.
-         * Otherwise match to $, $1, ... #n
+         * if we have identifiers either as key or in list key, match them to the values. Otherwise
+         * match to $, $1, ... #n
          */
         if (match.isIdentifier(ret)) {
             ret.frameSymbols.put(match.getIdentifier(), value);
@@ -224,8 +225,8 @@ public class ActorScope implements IKActorsBehavior.Scope {
     }
 
     /**
-     * Get a child scope for this action, which will create a panel viewscope if the action has
-     * a view.
+     * Get a child scope for this action, which will create a panel viewscope if the action has a
+     * view.
      * 
      * @param appId
      * @param action
@@ -316,8 +317,8 @@ public class ActorScope implements IKActorsBehavior.Scope {
                     Thread.sleep(60);
                     cnt++;
                     if (cnt % 1000 == 0 && !semaphore.isWarned()) {
-                        identity.getMonitor().warn("Blocking action is taking longer than 1 minute at "
-                                + getBehavior().getName() + ":" + linenumber);
+                        identity.getMonitor().warn("Blocking action is taking longer than 1 minute at " + getBehavior().getName()
+                                + ":" + linenumber);
                         semaphore.setWarned();
                     }
                 } catch (InterruptedException e) {
@@ -421,8 +422,8 @@ public class ActorScope implements IKActorsBehavior.Scope {
     }
 
     /**
-     * The scope for a child component detaches both local and global symbols to keep them local
-     * to the child.
+     * The scope for a child component detaches both local and global symbols to keep them local to
+     * the child.
      * 
      * @return
      */
@@ -500,6 +501,35 @@ public class ActorScope implements IKActorsBehavior.Scope {
     @Override
     public Map<String, Object> getFrameSymbols() {
         return frameSymbols;
+    }
+    
+    @Override
+    public Map<String, String> getLocalizedSymbols() {
+        return localizedSymbols;
+    }
+
+    public void setMetadata(Parameters<String> parameters) {
+        this.metadata = parameters;
+    }
+
+    public void setLocalizedSymbols(Map<String, String> localization) {
+        this.localizedSymbols = localization;
+    }
+
+    public void setValueScope(Object value) {
+        this.valueScope = value;
+    }
+
+    public void setSemaphore(Semaphore semaphore) {
+        this.semaphore = semaphore;
+    }
+
+    public void setGlobalSymbols(Map<String, Object> globalState) {
+        this.globalSymbols = globalState;
+    }
+
+    public ActorRef<KlabMessage> getSender() {
+        return sender;
     }
 
 }

@@ -7,6 +7,7 @@ import java.util.Map;
 import org.integratedmodelling.kactors.api.IKActorsStatement.Assert.Assertion;
 import org.integratedmodelling.kactors.api.IKActorsStatement.ConcurrentGroup;
 import org.integratedmodelling.kactors.api.IKActorsStatement.Fail;
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.actors.IBehavior.Action;
 import org.integratedmodelling.klab.api.actors.IBehavior.ActionMatch;
@@ -172,6 +173,10 @@ public interface IKActorsBehavior extends IKActorsCodeStatement {
 
         Scope forComponent();
 
+        void onException(Throwable e, String message);
+
+        Map<String, String> getLocalizedSymbols();
+
 
     }
 
@@ -186,6 +191,8 @@ public interface IKActorsBehavior extends IKActorsCodeStatement {
         ViewComponent getCurrentComponent();
 
         Layout getLayout();
+
+        void setViewMetadata(ViewComponent viewComponent, IParameters<String> arguments, Scope scope);
 
     }
 

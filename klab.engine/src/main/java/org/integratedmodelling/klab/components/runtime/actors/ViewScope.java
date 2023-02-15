@@ -1,11 +1,10 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
-import java.util.Map;
-
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.api.IKActorsBehavior.Type;
 import org.integratedmodelling.kactors.api.IKActorsStatement.ConcurrentGroup;
 import org.integratedmodelling.kactors.model.KActorsValue;
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Actors.PanelLocation;
 import org.integratedmodelling.klab.Annotations;
@@ -18,6 +17,7 @@ import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.rest.ViewPanel;
 import org.integratedmodelling.klab.utils.JsonUtils;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.StringUtils;
 import org.integratedmodelling.klab.utils.Utils;
 
@@ -73,7 +73,7 @@ public class ViewScope implements IKActorsBehavior.ViewScope {
             id = "g" + (groupCounter++);
         }
 
-        setViewMetadata(ret, group.getGroupMetadata(), scope);
+        setViewMetadata(ret, Parameters.create(group.getGroupMetadata()), scope);
         ret.setId(parent.getId() + "/" + id);
         parent.getComponents().add(ret);
 
@@ -84,7 +84,8 @@ public class ViewScope implements IKActorsBehavior.ViewScope {
     }
 
 
-    void setViewMetadata(ViewComponent component, Map<String, ?> parameters, IKActorsBehavior.Scope scope) {
+    @Override
+    public void setViewMetadata(ViewComponent component, IParameters<String> parameters, IKActorsBehavior.Scope scope) {
         if (parameters != null) {
             for (String key : parameters.keySet()) {
                 if (!component.getAttributes().containsKey(key) && Actors.INSTANCE.getLayoutMetadata().contains(key)) {
