@@ -2046,7 +2046,7 @@ public class Session extends GroovyObjectSupport
         return ret;
     }
 
-    public String loadScript(IBehavior behavior, KlabActor.Scope scope, Runnable onExit) {
+    public String loadScript(IBehavior behavior, IKActorsBehavior.Scope scope, Runnable onExit) {
         String ret = "script" + NameGenerator.shortUUID();
         if (behavior.getDestination() != IKActorsBehavior.Type.SCRIPT
                 && behavior.getDestination() != IKActorsBehavior.Type.UNITTEST) {

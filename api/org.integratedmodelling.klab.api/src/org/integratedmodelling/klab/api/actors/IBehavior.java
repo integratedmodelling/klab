@@ -39,6 +39,16 @@ public interface IBehavior extends IKimObject {
         boolean isFunction();
 
     }
+    
+    /**
+     * Match data for action listeners.
+     * 
+     * @author Ferd
+     *
+     */
+    public interface ActionMatch {
+        
+    }
 
     @Override
     IKActorsBehavior getStatement();

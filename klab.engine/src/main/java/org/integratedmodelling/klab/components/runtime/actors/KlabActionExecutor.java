@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.components.runtime.actors;
 import java.util.EnumSet;
 import java.util.Set;
 
+import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IParameters;
@@ -10,7 +11,6 @@ import org.integratedmodelling.klab.api.auth.IActorIdentity;
 import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
-import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Fire;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.code.ObjectExpression;
@@ -59,7 +59,7 @@ public abstract class KlabActionExecutor {
 		 * @param message
 		 * @param scope
 		 */
-		void onMessage(KlabMessage message, Scope scope);
+		void onMessage(KlabMessage message, IKActorsBehavior.Scope scope);
 
 	}
 
@@ -86,7 +86,7 @@ public abstract class KlabActionExecutor {
 	@Deprecated // REMOVE! just leave the appId and the monitor, take the rest by passing the
 				// scope
 				// in context
-	protected KlabActor.Scope scope;
+	protected IKActorsBehavior.Scope scope;
 	protected IActorIdentity<KlabMessage> identity;
 	protected Session session;
 	// the ID of the call that generated this action in the k.Actors code. May be
@@ -100,7 +100,7 @@ public abstract class KlabActionExecutor {
 	protected final Boolean DEFAULT_FIRE = Boolean.TRUE;
 
 	public KlabActionExecutor(IActorIdentity<KlabMessage> identity, IParameters<String> arguments,
-			KlabActor.Scope scope, ActorRef<KlabMessage> sender, String callId) {
+	        IKActorsBehavior.Scope scope, ActorRef<KlabMessage> sender, String callId) {
 		this.sender = sender;
 		this.session = identity == null ? null : identity.getParentIdentity(Session.class);
 		this.arguments = arguments;
@@ -116,20 +116,20 @@ public abstract class KlabActionExecutor {
 
 	}
 
-	public void fire(Object value, Scope scope) {
-		if (scope.listenerId != null) {
-			this.sender.tell(new Fire(scope.listenerId, value/* , isFinal */,
+	public void fire(Object value, IKActorsBehavior.Scope scope) {
+		if (scope.getListenerId() != null) {
+			this.sender.tell(new Fire(scope.getListenerId(), value/* , isFinal */,
 					/**
 					 * FIXME passing a non-null appId loses messages even if there is one app (shows
 					 * in components created using modal windows). Eventually try to understand all
 					 * this and if appId is necessary at all.
 					 */
-					null /* this.scope.appId */, scope.semaphore, scope.getSymbols(identity)));
+					null /* this.scope.appId */, scope.getSemaphore(), scope.getSymbols(identity)));
 		}
 	}
 
 	// @SuppressWarnings("unchecked")
-	public void fail(Scope scope, Object... args) {
+	public void fail(IKActorsBehavior.Scope scope, Object... args) {
 		// Semaphore semaphore = null;
 		// if (args != null) {
 		// for (Object arg : args) {
@@ -146,14 +146,14 @@ public abstract class KlabActionExecutor {
 		fire(args != null && args.length > 0 ? args[0] : false, scope);
 	}
 
-	protected Object evaluate(Object argument, Scope scope) {
+	protected Object evaluate(Object argument, IKActorsBehavior.Scope scope) {
 		if (argument instanceof KActorsValue) {
 			argument = ((KActorsValue) argument).evaluate(scope, identity, false);
 		}
 		return argument;
 	}
 
-	protected Object evaluateArgument(String argument, Scope scope) {
+	protected Object evaluateArgument(String argument, IKActorsBehavior.Scope scope) {
 		Object arg = arguments.get(argument);
 		if (arg instanceof KActorsValue) {
 			arg = ((KActorsValue) arg).evaluate(scope, identity, false);
@@ -171,22 +171,22 @@ public abstract class KlabActionExecutor {
 	
 	protected void error(String message) {
 		// TODO actor-specific error management
-		scope.runtimeScope.getMonitor().error(message);
+		scope.getRuntimeScope().getMonitor().error(message);
 	}
 	
-	protected <T> T evaluateArgument(String argument, Scope scope, T defaultValue) {
+	protected <T> T evaluateArgument(String argument, IKActorsBehavior.Scope scope, T defaultValue) {
 		Object arg = evaluateArgument(argument, scope);
 		return arg == null ? defaultValue
 				: Utils.asType(arg, defaultValue == null ? Object.class : defaultValue.getClass());
 	}
 
-	protected <T> T evaluateArgument(int argumentIndex, Scope scope, T defaultValue) {
+	protected <T> T evaluateArgument(int argumentIndex, IKActorsBehavior.Scope scope, T defaultValue) {
 		Object arg = evaluateArgument(argumentIndex, scope);
 		return arg == null ? defaultValue
 				: Utils.asType(arg, defaultValue == null ? Object.class : defaultValue.getClass());
 	}
 
-	protected Object evaluateArgument(int argumentIndex, Scope scope) {
+	protected Object evaluateArgument(int argumentIndex, IKActorsBehavior.Scope scope) {
 		Object arg = null;
 		if (arguments != null && arguments.getUnnamedKeys().size() > argumentIndex) {
 			arg = arguments.get(arguments.getUnnamedKeys().get(argumentIndex));
@@ -206,7 +206,7 @@ public abstract class KlabActionExecutor {
 	 * 
 	 * @param scope
 	 */
-	abstract void run(KlabActor.Scope scope);
+	abstract void run(IKActorsBehavior.Scope scope);
 
 	/**
 	 * Notify the class definition from the annotation, so that the object can be

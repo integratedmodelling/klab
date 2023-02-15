@@ -46,7 +46,7 @@ public class ObservationActor extends KlabActor {
 		}
 		
 		if (transitionAction != null) {
-			run(transitionAction, message.scope);
+			run(transitionAction, message.getScope());
 		}
 		
 		return Behaviors.same();

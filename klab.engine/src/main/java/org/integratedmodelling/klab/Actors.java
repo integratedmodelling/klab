@@ -69,7 +69,6 @@ import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActionExecutor;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.ActorReference;
-import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
 import org.integratedmodelling.klab.components.runtime.actors.ViewBehavior.KlabWidgetActionExecutor;
 import org.integratedmodelling.klab.components.runtime.actors.extensions.Artifact;
 import org.integratedmodelling.klab.components.runtime.actors.extensions.IValueProxy;
@@ -523,13 +522,13 @@ public enum Actors implements IActorsService {
      * @return
      */
     public KlabActionExecutor getSystemAction(String id, IActorIdentity<KlabMessage> identity, IParameters<String> arguments,
-            KlabActor.Scope scope, ActorRef<KlabMessage> sender, String callId) {
+            IKActorsBehavior.Scope scope, ActorRef<KlabMessage> sender, String callId) {
 
         Pair<String, Class<? extends KlabActionExecutor>> cls = actionClasses.get(id);
         if (cls != null) {
             try {
                 Constructor<? extends KlabActionExecutor> constructor = cls.getSecond().getConstructor(IActorIdentity.class,
-                        IParameters.class, KlabActor.Scope.class, ActorRef.class, String.class);
+                        IParameters.class, IKActorsBehavior.Scope.class, ActorRef.class, String.class);
                 KlabActionExecutor ret = constructor.newInstance(identity, arguments, scope, sender, callId);
                 ret.notifyDefinition(this.actionDefinitions.get(cls.getSecond()));
                 return ret;
@@ -639,7 +638,7 @@ public enum Actors implements IActorsService {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public <T> T getArgument(IParameters<String> arguments, Scope scope, IIdentity identity, Class<T> cls) {
+    public <T> T getArgument(IParameters<String> arguments, IKActorsBehavior.Scope scope, IIdentity identity, Class<T> cls) {
         for (String key : arguments.getUnnamedKeys()) {
             Object ret = arguments.get(key);
             if (ret instanceof KActorsValue) {
@@ -891,7 +890,7 @@ public enum Actors implements IActorsService {
      * @param identity
      * @return
      */
-    public Object createJavaObject(KActorsValue.Constructor constructor, Scope scope, IActorIdentity<?> identity) {
+    public Object createJavaObject(KActorsValue.Constructor constructor, IKActorsBehavior.Scope scope, IActorIdentity<?> identity) {
 
         Class<?> cls = null;
         String className = constructor.getClassname();
@@ -1023,7 +1022,7 @@ public enum Actors implements IActorsService {
     }
 
     @SuppressWarnings("unchecked")
-    public Iterable<Object> getIterable(IKActorsValue iterable, Scope scope, IActorIdentity<?> identity) {
+    public Iterable<Object> getIterable(IKActorsValue iterable, IKActorsBehavior.Scope scope, IActorIdentity<?> identity) {
         switch(iterable.getType()) {
         case ANYTHING:
             break;
@@ -1121,7 +1120,7 @@ public enum Actors implements IActorsService {
      * @param arguments
      * @param scope
      */
-    public Object invokeReactorMethod(Object reactor, String methodName, IParameters<String> arguments, Scope scope,
+    public Object invokeReactorMethod(Object reactor, String methodName, IParameters<String> arguments, IKActorsBehavior.Scope scope,
             IActorIdentity<?> identity) {
 
         Object ret = null;
@@ -1389,12 +1388,12 @@ public enum Actors implements IActorsService {
         return ret;
     }
 
-    public boolean matches(IKActorsValue kvalue, Object value, KlabActor.Scope scope) {
+    public boolean matches(IKActorsValue kvalue, Object value, IKActorsBehavior.Scope scope) {
         switch(kvalue.getType()) {
         case ANNOTATION:
             for (IAnnotation annotation : Annotations.INSTANCE.collectAnnotations(value)) {
                 if (annotation.getName().equals(kvalue.getStatedValue())) {
-                    scope.symbolTable.put(annotation.getName(), annotation);
+                    scope.getSymbolTable().put(annotation.getName(), annotation);
                     return true;
                 }
             }
@@ -1425,8 +1424,8 @@ public enum Actors implements IActorsService {
             System.out.println("ACH AN EXPRESSION");
             break;
         case IDENTIFIER:
-            if (scope.symbolTable.containsKey(kvalue.getStatedValue())) {
-                return kvalue.getStatedValue().equals(scope.symbolTable.get(value));
+            if (scope.getSymbolTable().containsKey(kvalue.getStatedValue())) {
+                return kvalue.getStatedValue().equals(scope.getSymbolTable().get(value));
             }
             if (!notMatch(value)) {
                 // NO - if defined in scope, match to its value, else just return true.
@@ -1557,7 +1556,7 @@ public enum Actors implements IActorsService {
         if (scope != null) {
             value = container;
             while(value instanceof KActorsValue) {
-                value = KlabActor.evaluateInScope((KActorsValue) value, (Scope) scope, (IActorIdentity<?>) identity);
+                value = KlabActor.evaluateInScope((KActorsValue) value, scope, (IActorIdentity<?>) identity);
             }
         }
 

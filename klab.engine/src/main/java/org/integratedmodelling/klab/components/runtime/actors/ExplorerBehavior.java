@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.components.runtime.actors;
 
 import java.io.File;
 
+import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.api.IKActorsValue.Type;
 import org.integratedmodelling.kactors.model.KActorsValue;
@@ -50,13 +51,13 @@ public class ExplorerBehavior {
 
         String listenerId = null;
 
-        public SetUi(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+        public SetUi(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, IKActorsBehavior.Scope scope,
                 ActorRef<KlabMessage> sender, String callId) {
             super(identity, arguments, scope, sender, callId);
         }
 
         @Override
-        void run(KlabActor.Scope scope) {
+        void run(IKActorsBehavior.Scope scope) {
 
             if (!arguments.getUnnamedKeys().isEmpty()) {
 
@@ -84,13 +85,13 @@ public class ExplorerBehavior {
     @Action(id = "download", fires = IKActorsValue.Type.EMPTY, description = "Send the message to the explorer to download a URL")
     public static class Download extends KlabActionExecutor {
 
-        public Download(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+        public Download(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, IKActorsBehavior.Scope scope,
                 ActorRef<KlabMessage> sender, String callId) {
             super(identity, arguments, scope, sender, callId);
         }
 
         @Override
-        void run(KlabActor.Scope scope) {
+        void run(IKActorsBehavior.Scope scope) {
 
             Object suggestedFilename = arguments.get("filename");
             if (suggestedFilename instanceof KActorsValue) {
@@ -171,13 +172,13 @@ public class ExplorerBehavior {
 
         String listenerId = null;
 
-        public Show(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+        public Show(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, IKActorsBehavior.Scope scope,
                 ActorRef<KlabMessage> sender, String callId) {
             super(identity, arguments, scope, sender, callId);
         }
 
         @Override
-        void run(KlabActor.Scope scope) {
+        void run(IKActorsBehavior.Scope scope) {
 
             if (!arguments.getUnnamedKeys().isEmpty()) {
 
@@ -185,15 +186,15 @@ public class ExplorerBehavior {
 
                 ViewSetting message = new ViewSetting();
                 message.setOperation(Operation.Show);
-                Object what = arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, scope.identity, true) : arg;
+                Object what = arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, scope.getIdentity(), true) : arg;
                 if (what instanceof IObservation) {
                     message.setTarget(Target.Observation);
                     message.setTargetId(((IObservation) what).getId());
                 } else if (what instanceof IKnowledgeView) {
                     message.setTarget(Target.View);
                     message.setTargetId(((IKnowledgeView) what).getId());
-                } else if (what instanceof IObservable && scope.identity instanceof ISession) {
-                    IObservation observation = ((ISession) scope.identity).getState().getObservation((IObservable) what);
+                } else if (what instanceof IObservable && scope.getIdentity() instanceof ISession) {
+                    IObservation observation = ((ISession) scope.getIdentity()).getState().getObservation((IObservable) what);
                     if (observation != null) {
                         message.setTarget(Target.Observation);
                         message.setTargetId(observation.getId());
@@ -212,7 +213,7 @@ public class ExplorerBehavior {
                             break;
                         }
                     } else if (what != null) {
-                        IArtifact artifact = ((ISession) scope.identity).getState().getArtifact(what.toString());
+                        IArtifact artifact = ((ISession) scope.getIdentity()).getState().getArtifact(what.toString());
                         if (artifact instanceof IObservation) {
                             message.setTarget(Target.Observation);
                             message.setTargetId(((IObservation) artifact).getId());
@@ -238,13 +239,13 @@ public class ExplorerBehavior {
 
         String listenerId = null;
 
-        public Hide(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+        public Hide(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, IKActorsBehavior.Scope scope,
                 ActorRef<KlabMessage> sender, String callId) {
             super(identity, arguments, scope, sender, callId);
         }
 
         @Override
-        void run(KlabActor.Scope scope) {
+        void run(IKActorsBehavior.Scope scope) {
 
             if (!arguments.getUnnamedKeys().isEmpty()) {
                 Object arg = arguments.get(arguments.getUnnamedKeys().get(0));
@@ -258,8 +259,8 @@ public class ExplorerBehavior {
                 } else if (what instanceof IKnowledgeView) {
                     message.setTarget(Target.View);
                     message.setTargetId(((IKnowledgeView) what).getId());
-                } else if (what instanceof IObservable && scope.identity instanceof ISession) {
-                    IObservation observation = ((ISession) scope.identity).getState().getObservation((IObservable) what);
+                } else if (what instanceof IObservable && scope.getIdentity() instanceof ISession) {
+                    IObservation observation = ((ISession) scope.getIdentity()).getState().getObservation((IObservable) what);
                     if (observation != null) {
                         message.setTarget(Target.Observation);
                         message.setTargetId(observation.getId());
@@ -278,7 +279,7 @@ public class ExplorerBehavior {
                             break;
                         }
                     } else if (arg != null) {
-                        IArtifact artifact = ((ISession) scope.identity).getState().getArtifact(arg.toString());
+                        IArtifact artifact = ((ISession) scope.getIdentity()).getState().getArtifact(arg.toString());
                         if (artifact instanceof IObservation) {
                             message.setTarget(Target.Observation);
                             message.setTargetId(((IObservation) artifact).getId());
