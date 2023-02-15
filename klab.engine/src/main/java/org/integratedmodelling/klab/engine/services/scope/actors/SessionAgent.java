@@ -1,15 +1,11 @@
 package org.integratedmodelling.klab.engine.services.scope.actors;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
 import org.integratedmodelling.klab.components.runtime.actors.EmptyKlabMessage;
-import org.integratedmodelling.klab.components.runtime.actors.KlabActor;
+import org.integratedmodelling.klab.components.runtime.actors.KlabAgent;
 import org.integratedmodelling.klab.components.runtime.actors.RuntimeBehavior;
 import org.integratedmodelling.klab.engine.runtime.Session;
 
-import akka.actor.ActorRef;
 import akka.actor.typed.Behavior;
 import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
@@ -26,7 +22,7 @@ import akka.actor.typed.javadsl.ReceiveBuilder;
  * @author Ferd
  *
  */
-public class SessionActor extends KlabActor {
+public class SessionAgent extends KlabAgent {
 
     
     /*
@@ -41,12 +37,12 @@ public class SessionActor extends KlabActor {
      * --------- methods  --------------------
      */
 
-	public static Behavior<KlabMessage> create(Session session, String appId) {
-		return Behaviors.setup(ctx -> new SessionActor(ctx, session, appId));
+	public static Behavior<KlabMessage> create(Session session, String sessionName) {
+		return Behaviors.setup(ctx -> new SessionAgent(ctx, session, sessionName));
 	}
 
-	public SessionActor(ActorContext<KlabMessage> context, Session identity, String appId) {
-		super(context, identity, appId);
+	public SessionAgent(ActorContext<KlabMessage> context, Session identity, String sessionName) {
+		super(context, identity, sessionName);
 	}
 
 	@Override
@@ -56,7 +52,7 @@ public class SessionActor extends KlabActor {
 	}
 
 	@Override
-	protected SessionActor onPostStop() {
+	protected SessionAgent onPostStop() {
 		// TODO do something
 		return this;
 	}

@@ -15,7 +15,7 @@ import org.integratedmodelling.klab.api.engine.IScope;
 import org.integratedmodelling.klab.api.engine.ISessionScope;
 import org.integratedmodelling.klab.api.engine.ISessionScope.Status;
 import org.integratedmodelling.klab.engine.services.engine.EngineService;
-import org.integratedmodelling.klab.engine.services.scope.actors.UserActor;
+import org.integratedmodelling.klab.engine.services.scope.actors.UserAgent;
 import org.integratedmodelling.klab.utils.Parameters;
 
 import akka.actor.typed.ActorRef;
@@ -90,12 +90,12 @@ public class Scope implements IScope {
         final SessionScope ret = new SessionScope(this);
         ret.setStatus(Status.WAITING);
 
-        CompletionStage<UserActor.SessionCreated> sessionFuture = AskPattern.ask(agent,
-                replyTo -> new UserActor.CreateSession(sessionName, ret, replyTo), Duration.ofSeconds(5),
+        CompletionStage<UserAgent.SessionCreated> sessionFuture = AskPattern.ask(agent,
+                replyTo -> new UserAgent.CreateSession(sessionName, ret, replyTo), Duration.ofSeconds(5),
                 EngineService.INSTANCE.getActorSystem().scheduler());
 
         sessionFuture.whenComplete((reply, failure) -> {
-            if (reply instanceof UserActor.SessionCreated) {
+            if (reply instanceof UserAgent.SessionCreated) {
                 ret.setAgent(reply.sessionAgent);
                 ret.setToken(getToken() + "/" + sessionName);
                 ret.setStatus(Status.STARTED);
@@ -113,12 +113,12 @@ public class Scope implements IScope {
         final SessionScope ret = new SessionScope(this);
         ret.setStatus(Status.WAITING);
 
-        CompletionStage<UserActor.SessionCreated> sessionFuture = AskPattern.ask(agent,
-                replyTo -> new UserActor.CreateApplication(behaviorName, ret, replyTo), Duration.ofSeconds(25),
+        CompletionStage<UserAgent.SessionCreated> sessionFuture = AskPattern.ask(agent,
+                replyTo -> new UserAgent.CreateApplication(behaviorName, ret, replyTo), Duration.ofSeconds(25),
                 EngineService.INSTANCE.getActorSystem().scheduler());
 
         sessionFuture.whenComplete((reply, failure) -> {
-            if (reply instanceof UserActor.SessionCreated) {
+            if (reply instanceof UserAgent.SessionCreated) {
                 ret.setAgent(reply.sessionAgent);
                 ret.setToken(getToken() + "/" + behaviorName);
                 ret.setStatus(Status.STARTED);

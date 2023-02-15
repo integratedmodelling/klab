@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.engine.services.scope.actors;
+package org.integratedmodelling.klab.components.runtime.actors;
 
 import javax.annotation.processing.Messager;
 

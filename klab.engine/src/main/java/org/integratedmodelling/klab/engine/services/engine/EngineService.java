@@ -21,7 +21,7 @@ import org.integratedmodelling.klab.engine.services.engine.resources.ResourceDef
 import org.integratedmodelling.klab.engine.services.engine.runtime.RuntimeDefaultService;
 import org.integratedmodelling.klab.engine.services.scope.Scope;
 import org.integratedmodelling.klab.engine.services.scope.actors.Supervisor;
-import org.integratedmodelling.klab.engine.services.scope.actors.UserActor;
+import org.integratedmodelling.klab.engine.services.scope.actors.UserAgent;
 
 import akka.actor.typed.ActorRef;
 import akka.actor.typed.ActorSystem;
@@ -76,7 +76,7 @@ public enum EngineService implements IEngineService, IEngineIdentity {
         IScope ret = userScopes.get(user.getUsername());
         if (ret == null) {
             ActorRef<KlabMessage> userAgent = ActorSystem.create(
-                    Behaviors.supervise(UserActor.create(user)).onFailure(SupervisorStrategy.resume().withLoggingEnabled(true)),
+                    Behaviors.supervise(UserAgent.create(user)).onFailure(SupervisorStrategy.resume().withLoggingEnabled(true)),
                     user.getUsername().replace('.', '_'));
             ret = new Scope(user, userAgent, this, reasonerService, resourceService, resolverService, runtimeService);
             userScopes.put(user.getUsername(), ret);

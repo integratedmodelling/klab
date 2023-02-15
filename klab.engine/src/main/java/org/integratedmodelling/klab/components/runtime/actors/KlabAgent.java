@@ -73,8 +73,7 @@ import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.ViewImpl;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.code.ObjectExpression;
-import org.integratedmodelling.klab.engine.services.scope.actors.SessionActor;
-import org.integratedmodelling.klab.engine.services.scope.actors.UserActor;
+import org.integratedmodelling.klab.engine.services.scope.actors.SessionAgent;
 import org.integratedmodelling.klab.exceptions.KlabActorException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
@@ -562,7 +561,7 @@ public class KlabAgent extends AbstractBehavior<KlabMessage> {
              * TODO if the actor has a view, use a behavior can address enable/disable/hide messages
              * and the like.
              */
-            child = SessionActor.create((Session) this.identity, null);
+            child = SessionAgent.create((Session) this.identity, null);
         } else if (this.identity instanceof EngineUser) {
             child = UserActor.create((EngineUser) this.identity);
         }
@@ -1378,7 +1377,7 @@ public class KlabAgent extends AbstractBehavior<KlabMessage> {
             return Behaviors.same();
         }
 
-        Behavior<KlabMessage> child = SessionActor.create((Session) this.identity, null);
+        Behavior<KlabMessage> child = SessionAgent.create((Session) this.identity, null);
         String actorName = message.getGroup().getId().replaceAll("/", "_") + "_" + message.getId();
 
         // existing actors for this behavior
@@ -1798,7 +1797,7 @@ public class KlabAgent extends AbstractBehavior<KlabMessage> {
             if (message.getIdentity() instanceof Observation) {
                 behavior = ObservationActor.create((Observation) message.getIdentity(), message.getAppId());
             } else if (message.getIdentity() instanceof Session) {
-                behavior = SessionActor.create((Session) message.getIdentity(), message.getAppId());
+                behavior = SessionAgent.create((Session) message.getIdentity(), message.getAppId());
             }
             ActorRef<KlabMessage> actor = getContext().spawn(
                     /*
