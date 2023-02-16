@@ -4,33 +4,35 @@ import java.io.Serializable;
 
 import org.integratedmodelling.klab.rest.HubNotificationMessage;
 import org.joda.time.DateTime;
-import org.springframework.data.annotation.PersistenceConstructor;
 
 public class Tag implements Serializable {
 
     private static final long serialVersionUID = 7819502042440147000L;
-    
-    private String description;
-    private HubNotificationMessage.Type type;
-    private DateTime creationTime;
-    private DateTime sentTime;
+
+    public String description;
+    private HubNotificationMessage.Type type = HubNotificationMessage.Type.INFO;
+    private DateTime creationTime = null;
+    private DateTime sentTime = null;
 
     public String getDescription() {
-        return this.description;
+        return description;
     }
 
-    public DateTime getCreationTime() {
-        return creationTime;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    @PersistenceConstructor
     public Tag(String description) {
         this.description = description;
         this.creationTime = DateTime.now();
     }
 
+    public Tag() {
+        this.creationTime = DateTime.now();
+    }
+
     public Tag(String description, HubNotificationMessage.Type type) {
-        this.description = description;
+        this.description = (description);
         this.type = type;
         this.creationTime = DateTime.now();
         this.sentTime = null;
@@ -45,6 +47,7 @@ public class Tag implements Serializable {
     }
 
     public HubNotificationMessage.Type getType() {
-        return this.type;
+        return type;
     }
+
 }

@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.integratedmodelling.klab.auth.Role;
+import org.integratedmodelling.klab.rest.HubNotificationMessage;
 import org.joda.time.DateTime;
 import org.springframework.data.annotation.Reference;
 import org.springframework.data.annotation.Transient;
@@ -409,9 +410,21 @@ public class User extends IdentityModel implements UserDetails{
                 .collect(Collectors.toList());
     }
 
+    public List<Tag> getTagsOfType(HubNotificationMessage.Type type) {
+        return tags.stream()
+                .filter(t -> t.getType() == type)
+                .collect(Collectors.toList());
+    }
+
     public List<Tag> getUnsentTags() {
         return tags.stream()
                 .filter(t -> !t.isSent())
+                .collect(Collectors.toList());
+    }
+
+    public List<Tag> getUnsentTagsOfType(HubNotificationMessage.Type type) {
+        return tags.stream()
+                .filter(t -> (t.getType() == type && !t.isSent()))
                 .collect(Collectors.toList());
     }
 

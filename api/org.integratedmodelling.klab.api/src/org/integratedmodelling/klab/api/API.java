@@ -353,9 +353,17 @@ public interface API {
          */
         public static final String TAG_BASE = API_BASE + "/tags";
         /**
-         * Base URL path for adding a tag to a user.
+         * Base URL path for all tags referencing a user.
          */
-        public static final String TAG_SET_USER = TAG_BASE + "/{username}";
+        public static final String TAG_OF_USER = TAG_BASE + "/{username}";
+        /**
+         * Base URL path for every unsent tag.
+         */
+        public static final String TAG_UNSENT = API_BASE + "/tags-unsent";
+        /**
+         * Base URL path for all unsent tags referencing a user.
+         */
+        public static final String TAG_UNSENT_OF_USER = TAG_UNSENT + "/{username}";
 
         public static interface PARAMETERS {
             /**
@@ -423,6 +431,11 @@ public interface API {
              * URL PARAMETER for user group entry service, find users with a particular group
              */
             public static final String HAS_GROUP = "has-group";
+            /**
+             * Base PARAMETER for the type of a tag
+             */
+            public static final String TYPE_OF_TAG = "type";
+
         }
 
     }
