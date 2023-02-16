@@ -1,12 +1,13 @@
 package org.integratedmodelling.klab.engine.services.scope;
 
 import java.time.Duration;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.ExecutionException;
 
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
-import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
+import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.engine.IEngineService.Reasoner;
 import org.integratedmodelling.klab.api.engine.IEngineService.Resolver;
 import org.integratedmodelling.klab.api.engine.IEngineService.ResourceManager;
@@ -16,6 +17,7 @@ import org.integratedmodelling.klab.api.engine.ISessionScope;
 import org.integratedmodelling.klab.api.engine.ISessionScope.Status;
 import org.integratedmodelling.klab.engine.services.engine.EngineService;
 import org.integratedmodelling.klab.engine.services.scope.actors.UserAgent;
+import org.integratedmodelling.klab.engine.services.scope.actors.UserAgent.SessionCreated;
 import org.integratedmodelling.klab.utils.Parameters;
 
 import akka.actor.typed.ActorRef;
@@ -24,8 +26,7 @@ import akka.actor.typed.javadsl.AskPattern;
 public class Scope implements IScope {
 
     private Parameters<String> data = Parameters.create();
-    private IEngineUserIdentity user;
-    private EngineService engineService;
+    private IUserIdentity user;
     private Reasoner reasonerService;
     private ResourceManager resourceService;
     private Resolver resolverService;
@@ -33,10 +34,9 @@ public class Scope implements IScope {
     private ActorRef<KlabMessage> agent;
     private String token;
 
-    public Scope(IEngineUserIdentity user, EngineService engineService, Reasoner reasonerService,
-            ResourceManager resourceService, Resolver resolverService, Runtime runtimeService) {
+    public Scope(IUserIdentity user, Reasoner reasonerService, ResourceManager resourceService,
+            Resolver resolverService, Runtime runtimeService) {
         this.user = user;
-        this.engineService = engineService;
         this.reasonerService = reasonerService;
         this.resourceService = resourceService;
         this.resolverService = resolverService;
@@ -46,7 +46,6 @@ public class Scope implements IScope {
 
     protected Scope(Scope parent) {
         this.user = parent.user;
-        this.engineService = parent.engineService;
         this.reasonerService = parent.reasonerService;
         this.resourceService = parent.resourceService;
         this.resolverService = parent.resolverService;
@@ -90,11 +89,11 @@ public class Scope implements IScope {
         ret.setStatus(Status.WAITING);
 
         CompletionStage<UserAgent.SessionCreated> sessionFuture = AskPattern.ask(agent,
-                replyTo -> new UserAgent.CreateSession(sessionName, ret, replyTo), Duration.ofSeconds(5),
+                replyTo -> new UserAgent.CreateSession(sessionName, ret, replyTo), Duration.ofSeconds(25),
                 EngineService.INSTANCE.getActorSystem().scheduler());
 
         sessionFuture.whenComplete((reply, failure) -> {
-            if (reply instanceof UserAgent.SessionCreated) {
+            if (reply != null) {
                 ret.setAgent(reply.sessionAgent);
                 ret.setToken(getToken() + "/" + sessionName);
                 ret.setStatus(Status.STARTED);
@@ -102,6 +101,8 @@ public class Scope implements IScope {
                 ret.setStatus(Status.ABORTED);
             }
         });
+
+        sessionFuture.toCompletableFuture().join();
 
         return ret;
     }
@@ -126,11 +127,13 @@ public class Scope implements IScope {
             }
         });
 
+        sessionFuture.toCompletableFuture().join();
+
         return ret;
     }
 
     @Override
-    public IEngineUserIdentity getUser() {
+    public IUserIdentity getUser() {
         return this.user;
     }
 

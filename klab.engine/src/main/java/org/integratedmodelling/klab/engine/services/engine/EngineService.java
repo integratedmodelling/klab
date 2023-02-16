@@ -1,16 +1,18 @@
 package org.integratedmodelling.klab.engine.services.engine;
 
+import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletionStage;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
 import org.integratedmodelling.klab.api.auth.IEngineIdentity;
-import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.engine.IEngineService;
 import org.integratedmodelling.klab.api.engine.IScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -21,12 +23,9 @@ import org.integratedmodelling.klab.engine.services.engine.resources.ResourceDef
 import org.integratedmodelling.klab.engine.services.engine.runtime.RuntimeDefaultService;
 import org.integratedmodelling.klab.engine.services.scope.Scope;
 import org.integratedmodelling.klab.engine.services.scope.actors.Supervisor;
-import org.integratedmodelling.klab.engine.services.scope.actors.UserAgent;
 
-import akka.actor.typed.ActorRef;
 import akka.actor.typed.ActorSystem;
-import akka.actor.typed.SupervisorStrategy;
-import akka.actor.typed.javadsl.Behaviors;
+import akka.actor.typed.javadsl.AskPattern;
 
 /**
  * Reference implementation for the new modular engine. Should eventually allow
@@ -44,7 +43,7 @@ public enum EngineService implements IEngineService, IEngineIdentity {
 	private ResourceManager resourceService;
 	private Resolver resolverService;
 	private Runtime runtimeService;
-	private ActorSystem<Void> supervisorAgent;
+	private ActorSystem<KlabMessage> supervisorAgent;
 	private Map<String, Scope> userScopes = Collections.synchronizedMap(new HashMap<>());
 	private Monitor monitor = new Monitor(this);
 	private String name = "modular-klab-engine";
@@ -66,22 +65,34 @@ public enum EngineService implements IEngineService, IEngineIdentity {
 	}
 
 	public void boot() {
-
 		this.supervisorAgent = ActorSystem.create(Supervisor.create(), "klab");
 		this.reasonerService = createReasonerService();
+		this.resourceService = createResourceService();
+		this.resolverService = createResolverService();
+		this.runtimeService = createRuntimeService();
 
 	}
 
 	@Override
-	public IScope login(IEngineUserIdentity user) {
+	public IScope login(IUserIdentity user) {
 		Scope ret = userScopes.get(user.getUsername());
 		if (ret == null) {
-			ret = new Scope(user, this, reasonerService, resourceService, resolverService, runtimeService);
-			ActorRef<KlabMessage> userAgent = ActorSystem.create(
-					Behaviors.supervise(UserAgent.create(ret))
-							.onFailure(SupervisorStrategy.resume().withLoggingEnabled(true)),
-					user.getUsername().replace('.', '_'));
-			ret.setAgent(userAgent);
+
+		    ret = new Scope(user, reasonerService, resourceService, resolverService, runtimeService);
+		    final Scope scope = ret;
+			String agentName = user.getUsername().replace('.', '_');
+	        CompletionStage<Supervisor.UserCreated> sessionFuture = AskPattern.ask(this.supervisorAgent,
+	                replyTo -> new Supervisor.CreateUser(agentName, scope, replyTo), Duration.ofSeconds(5),
+	                this.supervisorAgent.scheduler());
+
+	        sessionFuture.whenComplete((reply, failure) -> {
+	            if (reply != null) {
+	                scope.setAgent(reply.userAgent);
+	                scope.setToken(agentName);
+	            }
+	        });
+
+	        sessionFuture.toCompletableFuture().join();
 			userScopes.put(user.getUsername(), ret);
 		}
 		return ret;
@@ -123,7 +134,7 @@ public enum EngineService implements IEngineService, IEngineIdentity {
 		return false;
 	}
 
-	public ActorSystem<Void> getActorSystem() {
+	public ActorSystem<KlabMessage> getActorSystem() {
 		return this.supervisorAgent;
 	}
 

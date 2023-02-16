@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.concurrent.Future;
 
 import org.integratedmodelling.klab.api.auth.IActorIdentity;
+import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -13,8 +14,6 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
-import org.integratedmodelling.klab.api.resolution.IResolutionScope;
-import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 
 /**
@@ -31,7 +30,7 @@ public interface IContextScope extends ISessionScope {
      * 
      * @return
      */
-    IActorIdentity<?> getObserver();
+    IIdentity getObserver();
 
     /**
      * Return a child scope with the passed observer instead of ours.

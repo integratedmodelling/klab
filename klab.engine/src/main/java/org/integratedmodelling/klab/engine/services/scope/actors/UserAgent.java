@@ -1,8 +1,8 @@
 package org.integratedmodelling.klab.engine.services.scope.actors;
 
 import org.integratedmodelling.klab.Configuration;
+import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
-import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.engine.IScope;
 import org.integratedmodelling.klab.api.engine.ISessionScope;
 import org.integratedmodelling.klab.components.runtime.actors.EmptyKlabMessage;
@@ -36,10 +36,12 @@ public class UserAgent extends KlabAgent {
 
     public static class CreateApplication extends EmptyKlabMessage {
         String behavior;
+        ISessionScope scope;
         ActorRef<SessionCreated> replyTo;
         public CreateApplication(String behavior, ISessionScope scope, ActorRef<SessionCreated> replyTo) {
             this.behavior = behavior;
             this.replyTo = replyTo;
+            this.scope = scope;
         }
     }
 
@@ -54,10 +56,6 @@ public class UserAgent extends KlabAgent {
      * --------- methods --------------------
      */
 
-//    private static Behavior<KlabMessage> create(IEngineUserIdentity user) {
-//        return Behaviors.setup(ctx -> new UserAgent(ctx, user, user.getUsername()));
-//    }
-
     public static Behavior<KlabMessage> create(IScope scope) {
         return Behaviors.setup(ctx -> new UserAgent(ctx, scope));
     }
@@ -65,10 +63,6 @@ public class UserAgent extends KlabAgent {
     public UserAgent(ActorContext<KlabMessage> context, IScope scope) {
         super(context, scope);
     }
-
-//    public UserAgent(ActorContext<KlabMessage> context, IScope scope, String id) {
-//        super(context, scope.getUser(), id);
-//    }
 
     @Override
     protected ReceiveBuilder<KlabMessage> configure() {
@@ -85,7 +79,9 @@ public class UserAgent extends KlabAgent {
     }
 
     private Behavior<KlabMessage> handleCreateApplication(CreateApplication message) {
-        message.replyTo.tell(new SessionCreated(null /* TODO */));
+        IBehavior application = scope.getResources().resolveBehavior(message.behavior, scope);
+        ActorRef<KlabMessage> actor = getContext().spawn(SessionAgent.create(message.scope, application), message.behavior);
+        message.replyTo.tell(new SessionCreated(actor));
         return Behaviors.same();
     }
 

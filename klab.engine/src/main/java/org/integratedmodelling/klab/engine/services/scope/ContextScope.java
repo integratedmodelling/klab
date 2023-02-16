@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.concurrent.Future;
 
 import org.integratedmodelling.klab.api.auth.IActorIdentity;
+import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.engine.IContextScope;
@@ -17,7 +18,7 @@ import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 
 public class ContextScope extends SessionScope implements IContextScope {
 
-    IActorIdentity<?> observer;
+    IIdentity observer;
     IDirectObservation context;
     Set<String> scenarios;
     ContextScope parent;
@@ -42,7 +43,7 @@ public class ContextScope extends SessionScope implements IContextScope {
     }
 
     @Override
-    public IActorIdentity<?> getObserver() {
+    public IIdentity getObserver() {
         return this.observer;
     }
 

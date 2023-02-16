@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Logging;
-import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
+import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.engine.IScope;
 import org.integratedmodelling.klab.api.engine.ISessionScope;
 import org.integratedmodelling.klab.auth.KlabCertificate;
@@ -53,7 +53,7 @@ public class ObservationTests {
         /*
          * get an authenticated user from the default certificate
          */
-        IEngineUserIdentity user = (IEngineUserIdentity) Authentication.INSTANCE.authenticate(KlabCertificate.createDefault());
+        IUserIdentity user = Authentication.INSTANCE.authenticate(KlabCertificate.createDefault());
 
         /*
          * obtain a root scope for this user in the engine. This creates the user actor and
@@ -63,8 +63,10 @@ public class ObservationTests {
 
         // run an application, script or raw session. If we run a script, we only need to wait until
         // the script is done.
-        ISessionScope sessionScope = scope.runSession("test session");
+        ISessionScope sessionScope = scope.runSession("testsession");
 
+        System.out.println(sessionScope);
+        
         /*
          * Scope is now user-wide. We need a context to start geometry automatically maintained. If
          * a specific application or script is requested, use run() to obtain a different scope.

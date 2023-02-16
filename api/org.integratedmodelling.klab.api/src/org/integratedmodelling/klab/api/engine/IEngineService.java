@@ -1,7 +1,7 @@
 package org.integratedmodelling.klab.api.engine;
 
 import org.integratedmodelling.klab.api.actors.IBehavior;
-import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
+import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -104,6 +104,6 @@ public interface IEngineService {
      * @param user
      * @return
      */
-    IScope login(IEngineUserIdentity user);
+    IScope login(IUserIdentity user);
 
 }

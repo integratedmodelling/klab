@@ -59,17 +59,17 @@ public class UserActor extends KlabActor {
         return Behaviors.setup(ctx -> new UserActor(ctx, user, user.getUsername()));
     }
 
-    public static Behavior<KlabMessage> create(IScope scope) {
-        return Behaviors.setup(ctx -> new UserActor(ctx, scope, scope.getUser().getUsername()));
-    }
+//    public static Behavior<KlabMessage> create(IScope scope) {
+//        return Behaviors.setup(ctx -> new UserActor(ctx, scope, scope.getUser().getUsername()));
+//    }
 
     public UserActor(ActorContext<KlabMessage> context, IEngineUserIdentity user, String id) {
         super(context, user, id);
     }
 
-    public UserActor(ActorContext<KlabMessage> context, IScope scope, String id) {
-        super(context, scope.getUser(), id);
-    }
+//    public UserActor(ActorContext<KlabMessage> context, IScope scope, String id) {
+//        super(context, scope.getUser(), id);
+//    }
 
     @Override
     protected ReceiveBuilder<KlabMessage> configure() {

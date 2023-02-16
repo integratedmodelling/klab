@@ -1,8 +1,7 @@
 package org.integratedmodelling.klab.api.engine;
 
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.klab.api.actors.IBehavior;
-import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
+import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.engine.IEngineService.Reasoner;
 import org.integratedmodelling.klab.api.engine.IEngineService.Resolver;
 import org.integratedmodelling.klab.api.engine.IEngineService.ResourceManager;
@@ -52,7 +51,7 @@ public interface IScope {
      * 
      * @return
      */
-    IEngineUserIdentity getUser();
+    IUserIdentity getUser();
 
     /**
      * The token is needed to communicate with the scope. It can represent the user, an application
