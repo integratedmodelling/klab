@@ -12,6 +12,11 @@ import org.springframework.stereotype.Service;
 public class UserTagServiceImpl implements UserTagService {
 
     UserRepository userRepository;
+    
+    private User findUserByName(String username) {
+        return userRepository.findByName(username)
+                .orElseThrow(() -> new BadRequestException("User is not present."));
+    }
 
     public UserTagServiceImpl(UserRepository userRepository) {
         super();
@@ -20,38 +25,29 @@ public class UserTagServiceImpl implements UserTagService {
 
     @Override
     public void createNewTag(String username, Tag tag) {
-        User user = userRepository.findByName(username)
-                .orElseThrow(() -> new BadRequestException("User is not present"));
+        User user = findUserByName(username);
         user.addNewTag(tag);
         userRepository.save(user);
     }
 
     @Override
     public List<Tag> getTagsOfUser(String username) {
-        User user = userRepository.findByName(username)
-                .orElseThrow(() -> new BadRequestException("User is not present"));
-        return user.getTags();
+        return findUserByName(username).getTags();
     }
 
     @Override
     public List<Tag> getTagsOfUserWithType(String username, Type type) {
-        User user = userRepository.findByName(username)
-                .orElseThrow(() -> new BadRequestException("User is not present"));
-        return user.getTagsOfType(type);
+        return findUserByName(username).getTagsOfType(type);
     }
 
     @Override
     public List<Tag> getUnsentTagsOfUser(String username) {
-        User user = userRepository.findByName(username)
-                .orElseThrow(() -> new BadRequestException("User is not present"));
-        return user.getUnsentTags();
+        return findUserByName(username).getUnsentTags();
     }
 
     @Override
     public List<Tag> getUnsentTagsOfUserWithType(String username, Type type) {
-        User user = userRepository.findByName(username)
-                .orElseThrow(() -> new BadRequestException("User is not present"));
-        return user.getUnsentTagsOfType(type);
+        return findUserByName(username).getUnsentTagsOfType(type);
     }
 
 

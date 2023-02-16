@@ -6,6 +6,7 @@ import java.util.Optional;
 import javax.annotation.security.RolesAllowed;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.hub.api.Tag;
+import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.users.services.UserTagService;
 import org.integratedmodelling.klab.rest.HubNotificationMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,13 @@ public class UserTaggingController {
     public ResponseEntity< ? > createNewTag(
             @PathVariable String username,
             @RequestBody Tag tag) {
-        userTagService.createNewTag(username, tag);
+        try {
+            userTagService.createNewTag(username, tag);
+        } catch (BadRequestException e) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
+        }
 
         return ResponseEntity
                 .status(HttpStatus.ACCEPTED)
@@ -45,24 +52,38 @@ public class UserTaggingController {
     public ResponseEntity< ? > getTagsOfUser(
             @PathVariable String username,
             @RequestParam(required = false, value = API.HUB.PARAMETERS.TYPE_OF_TAG) Optional<HubNotificationMessage.Type> type) {
-        List<Tag> tags = type.isEmpty()
-                ? userTagService.getTagsOfUser(username)
-                : userTagService.getTagsOfUserWithType(username, type.get());
+        List<Tag> tags;
+        try {
+            tags = type.isEmpty()
+                    ? userTagService.getTagsOfUser(username)
+                    : userTagService.getTagsOfUserWithType(username, type.get());
+        } catch (BadRequestException e) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
+        }
 
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(tags);
     }
-    
+
     @GetMapping(value = API.HUB.TAG_UNSENT_OF_USER, produces = "application/json", params = API.HUB.PARAMETERS.TYPE_OF_TAG)
     @RolesAllowed({"ROLE_ADMINISTRATOR", "ROLE_SYSTEM"})
     public ResponseEntity< ? > getUnsentTagsOfUser(
             @PathVariable String username,
             @RequestParam(required = false, value = API.HUB.PARAMETERS.TYPE_OF_TAG) Optional<HubNotificationMessage.Type> type) {
-        List<Tag> tags = type.isEmpty()
-                ? userTagService.getUnsentTagsOfUser(username)
-                : userTagService.getUnsentTagsOfUserWithType(username, type.get());
-        
+        List<Tag> tags;
+        try {
+            tags = type.isEmpty()
+                    ? userTagService.getUnsentTagsOfUser(username)
+                    : userTagService.getUnsentTagsOfUserWithType(username, type.get());
+        } catch (BadRequestException e) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
+        }
+
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(tags);
