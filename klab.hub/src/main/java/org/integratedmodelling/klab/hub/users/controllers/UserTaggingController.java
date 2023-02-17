@@ -12,6 +12,7 @@ import org.integratedmodelling.klab.rest.HubNotificationMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -29,6 +30,13 @@ public class UserTaggingController {
         this.userTagService = userTagService;
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity< ? > IllegalArgumentExceptionHandler(IllegalArgumentException e) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(e.getMessage());
+    }
+    
     @PutMapping(value = API.HUB.TAG_OF_USER, consumes = "application/json")
     @RolesAllowed({"ROLE_ADMINISTRATOR", "ROLE_SYSTEM"})
     public ResponseEntity< ? > createNewTag(

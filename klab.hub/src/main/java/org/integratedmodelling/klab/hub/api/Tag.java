@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.hub.api;
 
 import java.io.Serializable;
+import java.util.regex.Pattern;
 
 import org.integratedmodelling.klab.rest.HubNotificationMessage;
 import org.joda.time.DateTime;
@@ -9,7 +10,7 @@ public class Tag implements Serializable {
 
     private static final long serialVersionUID = 7819502042440147000L;
 
-    public String description;
+    private String description;
     private HubNotificationMessage.Type type = HubNotificationMessage.Type.INFO;
     private DateTime creationTime = null;
     private DateTime sentTime = null;
@@ -18,24 +19,23 @@ public class Tag implements Serializable {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    private boolean isValidDescription(String description) {
+        if(description.isEmpty()) {
+            return false;
+        }
+        return Pattern.compile("([a-zA-Z0-9])+(-([a-zA-Z0-9])+)*")
+                .matcher(description).matches();
     }
 
-    public Tag(String description) {
+    public void setDescription(String description) {
+        if(!isValidDescription(description)) {
+            throw new IllegalArgumentException("Tag has not a valid format");
+        }
         this.description = description;
-        this.creationTime = DateTime.now();
     }
 
     public Tag() {
         this.creationTime = DateTime.now();
-    }
-
-    public Tag(String description, HubNotificationMessage.Type type) {
-        this.description = (description);
-        this.type = type;
-        this.creationTime = DateTime.now();
-        this.sentTime = null;
     }
 
     public void updateSentTime() {
@@ -43,7 +43,7 @@ public class Tag implements Serializable {
     }
 
     public boolean isSent() {
-        return sentTime != null;
+        return this.sentTime != null;
     }
 
     public HubNotificationMessage.Type getType() {
