@@ -120,7 +120,7 @@ public class ViewBehavior {
 
         // never called, do nothing
         @Override
-        void run(IKActorsBehavior.Scope scope) {
+        public void run(IKActorsBehavior.Scope scope) {
         }
 
         /**
@@ -245,7 +245,7 @@ public class ViewBehavior {
         }
 
         @Override
-        void run(IKActorsBehavior.Scope scope) {
+        public void run(IKActorsBehavior.Scope scope) {
             Session session = this.identity.getParentIdentity(Session.class);
             ViewComponent message = new ViewComponent();
             message.setType(Type.Alert);
@@ -264,7 +264,7 @@ public class ViewBehavior {
         }
 
         @Override
-        void run(IKActorsBehavior.Scope scope) {
+        public void run(IKActorsBehavior.Scope scope) {
             Session session = this.identity.getParentIdentity(Session.class);
             ViewComponent message = new ViewComponent();
             message.setType(Type.Confirm);

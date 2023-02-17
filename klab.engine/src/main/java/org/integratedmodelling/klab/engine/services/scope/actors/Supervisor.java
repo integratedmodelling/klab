@@ -4,10 +4,6 @@ import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
 import org.integratedmodelling.klab.api.engine.IScope;
 import org.integratedmodelling.klab.components.runtime.actors.EmptyKlabMessage;
-import org.integratedmodelling.klab.components.runtime.actors.UserBehavior.UnknownMessage;
-import org.integratedmodelling.klab.engine.services.scope.actors.UserAgent.CreateApplication;
-import org.integratedmodelling.klab.engine.services.scope.actors.UserAgent.CreateSession;
-import org.integratedmodelling.klab.engine.services.scope.actors.UserAgent.SessionCreated;
 
 import akka.actor.typed.ActorRef;
 import akka.actor.typed.Behavior;
@@ -16,7 +12,6 @@ import akka.actor.typed.javadsl.AbstractBehavior;
 import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
 import akka.actor.typed.javadsl.Receive;
-import akka.actor.typed.javadsl.ReceiveBuilder;
 
 public class Supervisor extends AbstractBehavior<KlabMessage> {
 

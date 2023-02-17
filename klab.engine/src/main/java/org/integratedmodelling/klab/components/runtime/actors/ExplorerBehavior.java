@@ -57,7 +57,7 @@ public class ExplorerBehavior {
         }
 
         @Override
-        void run(IKActorsBehavior.Scope scope) {
+        public void run(IKActorsBehavior.Scope scope) {
 
             if (!arguments.getUnnamedKeys().isEmpty()) {
 
@@ -91,7 +91,7 @@ public class ExplorerBehavior {
         }
 
         @Override
-        void run(IKActorsBehavior.Scope scope) {
+        public void run(IKActorsBehavior.Scope scope) {
 
             Object suggestedFilename = arguments.get("filename");
             if (suggestedFilename instanceof KActorsValue) {
@@ -178,7 +178,7 @@ public class ExplorerBehavior {
         }
 
         @Override
-        void run(IKActorsBehavior.Scope scope) {
+        public void run(IKActorsBehavior.Scope scope) {
 
             if (!arguments.getUnnamedKeys().isEmpty()) {
 
@@ -245,7 +245,7 @@ public class ExplorerBehavior {
         }
 
         @Override
-        void run(IKActorsBehavior.Scope scope) {
+        public void run(IKActorsBehavior.Scope scope) {
 
             if (!arguments.getUnnamedKeys().isEmpty()) {
                 Object arg = arguments.get(arguments.getUnnamedKeys().get(0));

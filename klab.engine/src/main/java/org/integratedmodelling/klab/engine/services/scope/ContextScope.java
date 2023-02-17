@@ -25,7 +25,7 @@ public class ContextScope extends SessionScope implements IContextScope {
     IGeometry geometry;
     String token;
 
-    private ContextScope(SessionScope parent) {
+    ContextScope(SessionScope parent) {
         super(parent);
         this.observer = parent.getUser();
     }

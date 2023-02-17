@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.components.runtime.actors;
+package org.integratedmodelling.klab.components.runtime.actors.vm;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -19,6 +19,7 @@ import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage.Semaphor
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.runtime.actors.ViewScope;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.ActorReference;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;

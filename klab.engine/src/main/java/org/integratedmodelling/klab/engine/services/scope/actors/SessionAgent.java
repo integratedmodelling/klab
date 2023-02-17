@@ -2,11 +2,13 @@ package org.integratedmodelling.klab.engine.services.scope.actors;
 
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
+import org.integratedmodelling.klab.api.engine.IContextScope;
 import org.integratedmodelling.klab.api.engine.ISessionScope;
 import org.integratedmodelling.klab.components.runtime.actors.EmptyKlabMessage;
 import org.integratedmodelling.klab.components.runtime.actors.KlabAgent;
 import org.integratedmodelling.klab.components.runtime.actors.RuntimeBehavior;
 
+import akka.actor.typed.ActorRef;
 import akka.actor.typed.Behavior;
 import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
@@ -29,9 +31,22 @@ public class SessionAgent extends KlabAgent {
      */
 
     public static class CreateContext extends EmptyKlabMessage {
-
+        String id;
+        IContextScope scope;
+        ActorRef<ContextCreated> replyTo;
+        public CreateContext(String id, IContextScope scope, ActorRef<ContextCreated> replyTo) {
+            this.id = id;
+            this.scope = scope;
+            this.replyTo = replyTo;
+        }
     }
 
+    public static class ContextCreated extends EmptyKlabMessage {
+        public ActorRef<KlabMessage> contextAgent;
+        public ContextCreated(ActorRef<KlabMessage> agent) {
+            this.contextAgent = agent;
+        }
+    }
     /*
      * --------- methods --------------------
      */
@@ -57,10 +72,15 @@ public class SessionAgent extends KlabAgent {
 
     @Override
     protected ReceiveBuilder<KlabMessage> configure() {
-        // TODO add all view messages and runtime messages
-        return super.configure();
+        return super.configure()
+                .onMessage(CreateContext.class, this::handleCreateContext);
     }
 
+    private Behavior<KlabMessage> handleCreateContext(CreateContext request) {
+        return Behaviors.same();
+    }
+    
+    
     @Override
     protected SessionAgent onPostStop() {
         // TODO do something

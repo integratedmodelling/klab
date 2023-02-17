@@ -35,7 +35,7 @@ public class ObjectBehavior {
 		}
 
 		@Override
-		void run(IKActorsBehavior.Scope scope) {
+		public void run(IKActorsBehavior.Scope scope) {
 
 			if (this.identity instanceof ISubject) {
 				Object arg = evaluateArgument(0, scope);
@@ -77,7 +77,7 @@ public class ObjectBehavior {
 		}
 
 		@Override
-		void run(IKActorsBehavior.Scope scope) {
+		public void run(IKActorsBehavior.Scope scope) {
 			// TODO Auto-generated method stub
 
 		}
@@ -93,7 +93,7 @@ public class ObjectBehavior {
 		}
 
 		@Override
-		void run(IKActorsBehavior.Scope scope) {
+		public void run(IKActorsBehavior.Scope scope) {
 			IObservable what = Actors.INSTANCE.getArgument(arguments, scope, identity, IObservable.class);
 			String behavior = Actors.INSTANCE.getArgument(arguments, scope, identity, String.class);
 			IKimExpression filter = Actors.INSTANCE.getArgument(arguments, scope, identity, IKimExpression.class);
@@ -121,7 +121,7 @@ public class ObjectBehavior {
 		}
 
 		@Override
-		void run(IKActorsBehavior.Scope scope) {
+		public void run(IKActorsBehavior.Scope scope) {
 			// TODO Auto-generated method stub
 
 		}
@@ -137,7 +137,7 @@ public class ObjectBehavior {
 		}
 
 		@Override
-		void run(IKActorsBehavior.Scope scope) {
+		public void run(IKActorsBehavior.Scope scope) {
 			// TODO Auto-generated method stub
 
 		}

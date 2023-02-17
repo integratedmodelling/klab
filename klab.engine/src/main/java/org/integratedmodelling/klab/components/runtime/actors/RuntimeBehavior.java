@@ -109,7 +109,7 @@ public class RuntimeBehavior {
         }
 
         @Override
-        void run(IKActorsBehavior.Scope scope) {
+        public void run(IKActorsBehavior.Scope scope) {
 
             if (arguments.get("interrupt") instanceof IKActorsValue) {
                 KActorsValue interrupt = arguments.get("interrupt", KActorsValue.class);
@@ -232,7 +232,7 @@ public class RuntimeBehavior {
         }
 
         @Override
-        void run(IKActorsBehavior.Scope scope) {
+        public void run(IKActorsBehavior.Scope scope) {
 
             if (!arguments.getUnnamedKeys().isEmpty()) {
                 fire(Status.WAITING, scope);
@@ -297,7 +297,7 @@ public class RuntimeBehavior {
         }
 
         @Override
-        void run(IKActorsBehavior.Scope scope) {
+        public void run(IKActorsBehavior.Scope scope) {
 
             Set<IConcept> roles = new HashSet<>();
             Set<IConcept> observables = new HashSet<>();
@@ -355,7 +355,7 @@ public class RuntimeBehavior {
         }
 
         @Override
-        void run(IKActorsBehavior.Scope scope) {
+        public void run(IKActorsBehavior.Scope scope) {
             Set<String> scenarios = new HashSet<>();
             for (String key : arguments.getUnnamedKeys()) {
                 scenarios.add(((IKActorsValue) arguments.get(key)).evaluate(scope, identity, true).toString());
@@ -383,7 +383,7 @@ public class RuntimeBehavior {
         }
 
         @Override
-        void run(IKActorsBehavior.Scope scope) {
+        public void run(IKActorsBehavior.Scope scope) {
 
             if (arguments == null || arguments.getUnnamedKeys().isEmpty()) {
                 this.listenerId = scope.getMonitor().getIdentity().getParentIdentity(Session.class).getState()
@@ -450,7 +450,7 @@ public class RuntimeBehavior {
         }
 
         @Override
-        void run(IKActorsBehavior.Scope scope) {
+        public void run(IKActorsBehavior.Scope scope) {
             if (random.nextDouble() < probability) {
                 fire(fired == null ? DEFAULT_FIRE : fired, scope);
             } else {
@@ -469,7 +469,7 @@ public class RuntimeBehavior {
         }
 
         @Override
-        void run(IKActorsBehavior.Scope scope) {
+        public void run(IKActorsBehavior.Scope scope) {
 //            ISession session = scope.getRuntimeScope().getSession();
             scope.tellSender(new AppReset(scope, scope.getAppId()));
         }
@@ -484,7 +484,7 @@ public class RuntimeBehavior {
         }
 
         @Override
-        void run(IKActorsBehavior.Scope scope) {
+        public void run(IKActorsBehavior.Scope scope) {
             List<Object> args = new ArrayList<>();
             for (Object arg : arguments.values()) {
                 args.add(arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, identity, true) : arg);
@@ -502,7 +502,7 @@ public class RuntimeBehavior {
         }
 
         @Override
-        void run(IKActorsBehavior.Scope scope) {
+        public void run(IKActorsBehavior.Scope scope) {
             List<Object> args = new ArrayList<>();
             for (Object arg : arguments.values()) {
                 args.add(arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, identity, true) : arg);
@@ -520,7 +520,7 @@ public class RuntimeBehavior {
         }
 
         @Override
-        void run(IKActorsBehavior.Scope scope) {
+        public void run(IKActorsBehavior.Scope scope) {
             List<Object> args = new ArrayList<>();
             for (Object arg : arguments.values()) {
                 args.add(arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, identity, true) : arg);
@@ -538,7 +538,7 @@ public class RuntimeBehavior {
         }
 
         @Override
-        void run(IKActorsBehavior.Scope scope) {
+        public void run(IKActorsBehavior.Scope scope) {
             List<Object> args = new ArrayList<>();
             for (Object arg : arguments.values()) {
                 args.add(arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, identity, true) : arg);
@@ -556,7 +556,7 @@ public class RuntimeBehavior {
         }
 
         @Override
-        void run(final IKActorsBehavior.Scope scope) {
+        public void run(final IKActorsBehavior.Scope scope) {
             final List<Object> args = new ArrayList<>();
             boolean tables = false;
             if (arguments.containsKey("tables")) {
@@ -619,7 +619,7 @@ public class RuntimeBehavior {
         }
 
         @Override
-        void run(IKActorsBehavior.Scope scope) {
+        public void run(IKActorsBehavior.Scope scope) {
             this.listener = scope.getMonitor().getIdentity().getParentIdentity(ISession.class).getState()
                     .addApplicationGlobalListener(new ISessionState.Listener(){
                         @Override

@@ -61,7 +61,7 @@ public class TestBehavior {
         }
 
         @Override
-        void run(IKActorsBehavior.Scope scope) {
+        public void run(IKActorsBehavior.Scope scope) {
             for (Object arg : arguments.values()) {
                 runTest(evaluate(arg, scope), scope);
             }
@@ -270,7 +270,7 @@ public class TestBehavior {
         }
 
         @Override
-        void run(IKActorsBehavior.Scope scope) {
+        public void run(IKActorsBehavior.Scope scope) {
 
             List<Object> args = new ArrayList<>();
             for (Object o : arguments.getUnnamedArguments()) {
@@ -295,7 +295,7 @@ public class TestBehavior {
         }
 
         @Override
-        void run(IKActorsBehavior.Scope scope) {
+        public void run(IKActorsBehavior.Scope scope) {
 
         }
     }
@@ -309,7 +309,7 @@ public class TestBehavior {
         }
 
         @Override
-        void run(IKActorsBehavior.Scope scope) {
+        public void run(IKActorsBehavior.Scope scope) {
             List<Object> args = new ArrayList<>();
             for (Object o : arguments.getUnnamedArguments()) {
                 if (o instanceof KActorsValue) {
@@ -332,7 +332,7 @@ public class TestBehavior {
         }
 
         @Override
-        void run(IKActorsBehavior.Scope scope) {
+        public void run(IKActorsBehavior.Scope scope) {
 
             List<Object> triggerArguments = new ArrayList<>();
 

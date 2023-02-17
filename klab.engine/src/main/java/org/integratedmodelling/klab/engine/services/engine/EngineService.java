@@ -8,7 +8,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletionStage;
 
+import org.eclipse.xtext.testing.IInjectorProvider;
+import org.integratedmodelling.kactors.model.KActors;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
 import org.integratedmodelling.klab.api.auth.IEngineIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
@@ -23,6 +26,10 @@ import org.integratedmodelling.klab.engine.services.engine.resources.ResourceDef
 import org.integratedmodelling.klab.engine.services.engine.runtime.RuntimeDefaultService;
 import org.integratedmodelling.klab.engine.services.scope.Scope;
 import org.integratedmodelling.klab.engine.services.scope.actors.Supervisor;
+import org.integratedmodelling.klab.utils.xtext.KactorsInjectorProvider;
+import org.integratedmodelling.klab.utils.xtext.KimInjectorProvider;
+
+import com.google.inject.Injector;
 
 import akka.actor.typed.ActorSystem;
 import akka.actor.typed.javadsl.AskPattern;
@@ -65,6 +72,9 @@ public enum EngineService implements IEngineService, IEngineIdentity {
 	}
 
 	public void boot() {
+	    
+	    initializeLanguageServices();
+	    
 		this.supervisorAgent = ActorSystem.create(Supervisor.create(), "klab");
 		this.reasonerService = createReasonerService();
 		this.resourceService = createResourceService();
@@ -192,6 +202,28 @@ public enum EngineService implements IEngineService, IEngineIdentity {
 	public Object getSystemRef() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	private void initializeLanguageServices() {
+
+	    /*
+         * set up access to the k.IM grammar
+         */
+        IInjectorProvider injectorProvider = new KimInjectorProvider();
+        Injector injector = injectorProvider.getInjector();
+        if (injector != null) {
+            Kim.INSTANCE.setup(injector);
+        }
+
+        /*
+         * ...and k.Actors
+         */
+        IInjectorProvider kActorsInjectorProvider = new KactorsInjectorProvider();
+        Injector kActorsInjector = kActorsInjectorProvider.getInjector();
+        if (kActorsInjector != null) {
+            KActors.INSTANCE.setup(kActorsInjector);
+        }
+
 	}
 
 }

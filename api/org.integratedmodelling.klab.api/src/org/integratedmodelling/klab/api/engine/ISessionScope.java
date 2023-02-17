@@ -31,7 +31,7 @@ public interface ISessionScope extends IScope {
      * 
      * @return
      */
-    IContextScope createContext();
+    IContextScope createContext(String id);
 
     /**
      * Return the status of the session scope at the time of the call.

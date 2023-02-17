@@ -68,6 +68,7 @@ import org.integratedmodelling.klab.components.runtime.actors.UserBehavior.Unkno
 import org.integratedmodelling.klab.components.runtime.actors.ViewBehavior.GroupHandler;
 import org.integratedmodelling.klab.components.runtime.actors.ViewBehavior.KlabWidgetActionExecutor;
 import org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior.Match;
+import org.integratedmodelling.klab.components.runtime.actors.vm.ActorScope;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.ViewImpl;

@@ -115,6 +115,10 @@ public abstract class KlabActionExecutor {
 	protected void dispose() {
 
 	}
+	
+	public IParameters<String> getArguments() {
+	    return this.arguments;
+	}
 
 	public void fire(Object value, IKActorsBehavior.Scope scope) {
 		if (scope.getListenerId() != null) {
@@ -206,7 +210,7 @@ public abstract class KlabActionExecutor {
 	 * 
 	 * @param scope
 	 */
-	abstract void run(IKActorsBehavior.Scope scope);
+	abstract public void run(IKActorsBehavior.Scope scope);
 
 	/**
 	 * Notify the class definition from the annotation, so that the object can be

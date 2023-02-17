@@ -15,7 +15,7 @@ public class ObservationActor extends KlabActor {
 
 	boolean transitionActionChecked;
 	Action transitionAction;
-	static Behavior<KlabMessage> create(Observation observation, String appId) {
+	static public Behavior<KlabMessage> create(Observation observation, String appId) {
 		return Behaviors.setup(ctx -> new ObservationActor(ctx, observation, appId));
 	}
 

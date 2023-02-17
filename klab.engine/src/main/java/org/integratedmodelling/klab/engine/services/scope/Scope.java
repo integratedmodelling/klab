@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Consumer;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
@@ -15,6 +16,7 @@ import org.integratedmodelling.klab.api.engine.IEngineService.Runtime;
 import org.integratedmodelling.klab.api.engine.IScope;
 import org.integratedmodelling.klab.api.engine.ISessionScope;
 import org.integratedmodelling.klab.api.engine.ISessionScope.Status;
+import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.engine.services.engine.EngineService;
 import org.integratedmodelling.klab.engine.services.scope.actors.UserAgent;
 import org.integratedmodelling.klab.engine.services.scope.actors.UserAgent.SessionCreated;
@@ -142,12 +144,76 @@ public class Scope implements IScope {
         return this.data;
     }
 
+    public ActorRef<KlabMessage> getAgent() {
+        return this.agent;
+    }
+    
     public void setAgent(ActorRef<KlabMessage> agent) {
         this.agent = agent;
     }
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    @Override
+    public void info(Object... info) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void warn(Object... o) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void error(Object... o) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void debug(Object... o) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void send(Object... message) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void post(Consumer<IMessage> handler, Object... message) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void addWait(int seconds) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public int getWaitTime() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public boolean isInterrupted() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean hasErrors() {
+        // TODO Auto-generated method stub
+        return false;
     }
 
 }

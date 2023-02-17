@@ -8,6 +8,7 @@ import java.util.function.Consumer;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
+import org.integratedmodelling.klab.api.engine.IContextScope;
 import org.integratedmodelling.klab.api.engine.IScope;
 import org.integratedmodelling.klab.api.engine.ISessionScope;
 import org.integratedmodelling.klab.auth.KlabCertificate;
@@ -71,7 +72,8 @@ public class ObservationTests {
          * Scope is now user-wide. We need a context to start geometry automatically maintained. If
          * a specific application or script is requested, use run() to obtain a different scope.
          */
-        // IObservationScope context = scope.newContext();
+        IContextScope context = sessionScope.createContext("cagada");
+
         // IObservation france = context.observe();
     }
 }
