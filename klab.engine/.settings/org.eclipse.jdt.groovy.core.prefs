@@ -1,3 +1,4 @@
 eclipse.preferences.version=1
 groovy.compiler.level=-1
-groovy.script.filters=**/*.dsld,y,**/*.gradle,n
+groovy.script.filters=**/*.dsld,y,**/*.gradle,n,src/main/resources/**/*.groovy,y,src/test/resources/**/*.groovy,y
+org.codehaus.groovy.eclipse.preferences.compiler.project=true

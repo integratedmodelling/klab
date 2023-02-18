@@ -16,8 +16,6 @@
 	<classpathentry exported="true" kind="lib" path="lib/jul-to-slf4j-1.7.25.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/log4j-api-2.10.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/log4j-to-slf4j-2.10.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/logback-classic-1.2.3.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/logback-core-1.2.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/slf4j-api-1.7.25.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/snakeyaml-1.19.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/spring-beans-5.0.5.RELEASE.jar"/>

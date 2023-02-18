@@ -306,7 +306,7 @@
 		<dependency>
 			<groupId>org.eclipse.elk</groupId>
 			<artifactId>org.eclipse.elk.core</artifactId>
-			<version>0.4.1</version>
+			<version>0.8.1</version>
 			<exclusions>
 				<exclusion>
 					<groupId>com.google.guava</groupId>
@@ -325,7 +325,7 @@
 		<dependency>
 			<groupId>org.eclipse.elk</groupId>
 			<artifactId>org.eclipse.elk.graph.json</artifactId>
-			<version>0.4.1</version>
+			<version>0.8.1</version>
 			<exclusions>
 				<exclusion>
 					<groupId>com.google.guava</groupId>
@@ -344,7 +344,7 @@
 		<dependency>
 			<groupId>org.eclipse.elk</groupId>
 			<artifactId>org.eclipse.elk.core.meta</artifactId>
-			<version>0.4.1</version>
+			<version>0.8.1</version>
 			<exclusions>
 				<exclusion>
 					<groupId>com.google.guava</groupId>
@@ -363,11 +363,15 @@
 		<dependency>
 			<groupId>org.eclipse.elk</groupId>
 			<artifactId>org.eclipse.elk.alg.layered</artifactId>
-			<version>0.4.1</version>
+			<version>0.8.1</version>
 			<exclusions>
 				<exclusion>
 					<groupId>com.google.guava</groupId>
 					<artifactId>guava</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.google.code.gson</groupId>
+					<artifactId>gson</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>org.eclipse.xtext</groupId>
@@ -603,13 +607,13 @@
 		<dependency>
 			<groupId>com.google.protobuf</groupId>
 			<artifactId>protobuf-java</artifactId>
-			<version>3.11.1</version>
+			<version>3.20.0</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java-util -->
 		<dependency>
 			<groupId>com.google.protobuf</groupId>
 			<artifactId>protobuf-java-util</artifactId>
-			<version>3.11.1</version>
+			<version>3.20.0</version>
 		</dependency>
 
 		<dependency>
@@ -692,6 +696,7 @@
 		<dependency>
 			<groupId>com.typesafe.akka</groupId>
 			<artifactId>akka-actor-typed_2.12</artifactId>
+			<!-- ACHTUNG 2.7.0 throws "Unsupported access to ActorContext" exceptions when spawning UI component actors, which do not seem right -->
 			<version>2.6.3</version>
 		</dependency>
 

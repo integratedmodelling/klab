@@ -99,7 +99,6 @@ import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.geocoding.Geocoder;
 import org.integratedmodelling.klab.components.geospace.geocoding.Geocoder.Location;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
-import org.integratedmodelling.klab.components.runtime.actors.KlabActor;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.ActorReference;
 import org.integratedmodelling.klab.components.runtime.actors.SessionActor;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior;
@@ -2046,7 +2045,7 @@ public class Session extends GroovyObjectSupport
         return ret;
     }
 
-    public String loadScript(IBehavior behavior, KlabActor.Scope scope, Runnable onExit) {
+    public String loadScript(IBehavior behavior, IKActorsBehavior.Scope scope, Runnable onExit) {
         String ret = "script" + NameGenerator.shortUUID();
         if (behavior.getDestination() != IKActorsBehavior.Type.SCRIPT
                 && behavior.getDestination() != IKActorsBehavior.Type.UNITTEST) {

@@ -8,6 +8,7 @@ import java.util.Map;
 import org.apache.groovy.util.Maps;
 import org.integratedmodelling.contrib.jgrapht.Graph;
 import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
+import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kactors.model.KActorsValue.Constructor;
@@ -20,7 +21,6 @@ import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActionExecutor.Component;
-import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.AddComponentToGroup;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.KActorsMessage;
 import org.integratedmodelling.klab.engine.runtime.Session;
@@ -103,8 +103,8 @@ public class ViewBehavior {
         // instrumenting it.
         protected ViewComponent initializedComponent;
 
-        public KlabWidgetActionExecutor(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, Scope scope,
-                ActorRef<KlabMessage> sender, String callId) {
+        public KlabWidgetActionExecutor(IActorIdentity<KlabMessage> identity, IParameters<String> arguments,
+                IKActorsBehavior.Scope scope, ActorRef<KlabMessage> sender, String callId) {
             super(identity, arguments, scope, sender, callId);
         }
 
@@ -120,20 +120,20 @@ public class ViewBehavior {
 
         // never called, do nothing
         @Override
-        void run(Scope scope) {
+        public void run(IKActorsBehavior.Scope scope) {
         }
 
         /**
          * Called when a k.Actors action is called with a component as receiver.
          */
         @Override
-        public void onMessage(KlabMessage message, Scope scope) {
+        public void onMessage(KlabMessage message, IKActorsBehavior.Scope scope) {
 
             if (message instanceof KActorsMessage) {
 
                 KActorsMessage mess = (KActorsMessage) message;
                 ViewAction action = null;
-                switch(mess.message) {
+                switch(mess.getMessage()) {
                 case "disable":
                     action = new ViewAction(this.component = enable(false));
                     break;
@@ -152,8 +152,8 @@ public class ViewBehavior {
                 default:
                     action = new ViewAction(this.component = setComponent(mess, scope));
                 }
-                action.setApplicationId(mess.appId);
-                action.setData(getMetadata(mess.arguments, scope));
+                action.setApplicationId(mess.getAppId());
+                action.setData(getMetadata(mess.getArguments(), scope));
                 action.setComponentTag(this.getName());
                 session.getState().updateView(this.component);
                 session.getMonitor().send(IMessage.MessageClass.ViewActor, IMessage.Type.ViewAction, action);
@@ -186,7 +186,7 @@ public class ViewBehavior {
          * @param scope
          * @return
          */
-        protected abstract ViewComponent setComponent(KActorsMessage message, Scope scope);
+        protected abstract ViewComponent setComponent(KActorsMessage message, IKActorsBehavior.Scope scope);
 
         /**
          * Call the virtual to create the component and save it for bookkeeping.
@@ -204,9 +204,9 @@ public class ViewBehavior {
          * 
          * @return
          */
-        protected abstract ViewComponent createViewComponent(Scope scope);
+        protected abstract ViewComponent createViewComponent(IKActorsBehavior.Scope scope);
 
-        public Object getFiredValue(ViewAction action, Scope scope) {
+        public Object getFiredValue(ViewAction action, IKActorsBehavior.Scope scope) {
             Object ret = onViewAction(action, scope);
             session.getState().updateView(this.component);
             return ret;
@@ -220,7 +220,7 @@ public class ViewBehavior {
          * @param action
          * @return
          */
-        protected abstract Object onViewAction(ViewAction action, Scope scope);
+        protected abstract Object onViewAction(ViewAction action, IKActorsBehavior.Scope scope);
 
         public void setInitializedComponent(ViewComponent viewComponent) {
             this.initializedComponent = copyComponent(viewComponent);
@@ -239,13 +239,13 @@ public class ViewBehavior {
     @Action(id = "alert")
     public static class Alert extends KlabActionExecutor {
 
-        public Alert(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+        public Alert(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, IKActorsBehavior.Scope scope,
                 ActorRef<KlabMessage> sender, String callId) {
             super(identity, arguments, scope, sender, callId);
         }
 
         @Override
-        void run(KlabActor.Scope scope) {
+        public void run(IKActorsBehavior.Scope scope) {
             Session session = this.identity.getParentIdentity(Session.class);
             ViewComponent message = new ViewComponent();
             message.setType(Type.Alert);
@@ -258,13 +258,13 @@ public class ViewBehavior {
     @Action(id = "confirm")
     public static class Confirm extends KlabActionExecutor {
 
-        public Confirm(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+        public Confirm(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, IKActorsBehavior.Scope scope,
                 ActorRef<KlabMessage> sender, String callId) {
             super(identity, arguments, scope, sender, callId);
         }
 
         @Override
-        void run(KlabActor.Scope scope) {
+        public void run(IKActorsBehavior.Scope scope) {
             Session session = this.identity.getParentIdentity(Session.class);
             ViewComponent message = new ViewComponent();
             message.setType(Type.Confirm);
@@ -279,13 +279,13 @@ public class ViewBehavior {
     @Action(id = "button")
     public static class Button extends KlabWidgetActionExecutor {
 
-        public Button(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+        public Button(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, IKActorsBehavior.Scope scope,
                 ActorRef<KlabMessage> sender, String callId) {
             super(identity, arguments, scope, sender, callId);
         }
 
         @Override
-        public ViewComponent createViewComponent(Scope scope) {
+        public ViewComponent createViewComponent(IKActorsBehavior.Scope scope) {
             ViewComponent message = new ViewComponent();
             message.setType(Type.PushButton);
             message.setName(this.evaluateArgument(0, scope, ""));
@@ -294,31 +294,31 @@ public class ViewBehavior {
         }
 
         @Override
-        protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
-            this.component.getAttributes().putAll(getMetadata(message.arguments, scope));
-            if ("update".equals(message.message)) {
-                this.component.setName(getDefaultAsString(message.arguments, this, scope));
-            } else if ("waiting".equals(message.message)) {
+        protected ViewComponent setComponent(KActorsMessage message, IKActorsBehavior.Scope scope) {
+            this.component.getAttributes().putAll(getMetadata(message.getArguments(), scope));
+            if ("update".equals(message.getMessage())) {
+                this.component.setName(getDefaultAsString(message.getArguments(), this, scope));
+            } else if ("waiting".equals(message.getMessage())) {
                 this.component.getAttributes().remove("error");
                 this.component.getAttributes().remove("done");
                 this.component.getAttributes().remove("computing");
                 this.component.getAttributes().put("waiting", "true");
-            } else if ("error".equals(message.message)) {
+            } else if ("error".equals(message.getMessage())) {
                 this.component.getAttributes().remove("waiting");
                 this.component.getAttributes().remove("done");
                 this.component.getAttributes().remove("computing");
                 this.component.getAttributes().put("error", "true");
-            } else if ("done".equals(message.message)) {
+            } else if ("done".equals(message.getMessage())) {
                 this.component.getAttributes().remove("waiting");
                 this.component.getAttributes().remove("error");
                 this.component.getAttributes().remove("computing");
                 this.component.getAttributes().put("done", "true");
-            } else if ("computing".equals(message.message)) {
+            } else if ("computing".equals(message.getMessage())) {
                 this.component.getAttributes().remove("waiting");
                 this.component.getAttributes().remove("error");
                 this.component.getAttributes().remove("done");
                 this.component.getAttributes().put("computing", "true");
-            } else if ("reset".equals(message.message)) {
+            } else if ("reset".equals(message.getMessage())) {
                 this.component.getAttributes().remove("waiting");
                 this.component.getAttributes().remove("error");
                 this.component.getAttributes().remove("done");
@@ -328,7 +328,7 @@ public class ViewBehavior {
         }
 
         @Override
-        public Object onViewAction(ViewAction action, Scope scope) {
+        public Object onViewAction(ViewAction action, IKActorsBehavior.Scope scope) {
             return true;
         }
 
@@ -337,13 +337,13 @@ public class ViewBehavior {
     @Action(id = "checkbutton")
     public static class CheckButton extends KlabWidgetActionExecutor {
 
-        public CheckButton(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+        public CheckButton(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, IKActorsBehavior.Scope scope,
                 ActorRef<KlabMessage> sender, String callId) {
             super(identity, arguments, scope, sender, callId);
         }
 
         @Override
-        public ViewComponent createViewComponent(Scope scope) {
+        public ViewComponent createViewComponent(IKActorsBehavior.Scope scope) {
             ViewComponent message = new ViewComponent();
             message.setType(Type.CheckButton);
             message.setName(this.evaluateArgument(0, scope, ""));
@@ -352,41 +352,41 @@ public class ViewBehavior {
         }
 
         @Override
-        protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
-            if ("update".equals(message.message)) {
-                this.component.setName(getDefaultAsString(message.arguments, this, scope));
-            } else if ("waiting".equals(message.message)) {
+        protected ViewComponent setComponent(KActorsMessage message, IKActorsBehavior.Scope scope) {
+            if ("update".equals(message.getMessage())) {
+                this.component.setName(getDefaultAsString(message.getArguments(), this, scope));
+            } else if ("waiting".equals(message.getMessage())) {
                 this.component.getAttributes().remove("error");
                 this.component.getAttributes().remove("done");
                 this.component.getAttributes().remove("computing");
                 this.component.getAttributes().put("waiting", "true");
-            } else if ("error".equals(message.message)) {
+            } else if ("error".equals(message.getMessage())) {
                 this.component.getAttributes().remove("waiting");
                 this.component.getAttributes().remove("done");
                 this.component.getAttributes().remove("computing");
                 this.component.getAttributes().put("error", "true");
-            } else if ("done".equals(message.message)) {
+            } else if ("done".equals(message.getMessage())) {
                 this.component.getAttributes().remove("waiting");
                 this.component.getAttributes().remove("error");
                 this.component.getAttributes().remove("computing");
                 this.component.getAttributes().put("done", "true");
-            } else if ("computing".equals(message.message)) {
+            } else if ("computing".equals(message.getMessage())) {
                 this.component.getAttributes().remove("waiting");
                 this.component.getAttributes().remove("error");
                 this.component.getAttributes().remove("done");
                 this.component.getAttributes().put("computing", "true");
-            } else if ("reset".equals(message.message)) {
+            } else if ("reset".equals(message.getMessage())) {
                 this.component.getAttributes().remove("waiting");
                 this.component.getAttributes().remove("error");
                 this.component.getAttributes().remove("done");
                 this.component.getAttributes().remove("computing");
-            } else if ("check".equals(message.message)) {
+            } else if ("check".equals(message.getMessage())) {
                 this.component.getAttributes().remove("waiting");
                 this.component.getAttributes().remove("error");
                 this.component.getAttributes().remove("done");
                 this.component.getAttributes().remove("computing");
                 this.component.getAttributes().put("checked", "true");
-            } else if ("uncheck".equals(message.message)) {
+            } else if ("uncheck".equals(message.getMessage())) {
                 this.component.getAttributes().remove("waiting");
                 this.component.getAttributes().remove("error");
                 this.component.getAttributes().remove("done");
@@ -397,7 +397,7 @@ public class ViewBehavior {
         }
 
         @Override
-        public Object onViewAction(ViewAction action, Scope scope) {
+        public Object onViewAction(ViewAction action, IKActorsBehavior.Scope scope) {
             if (action.isBooleanValue()) {
                 this.component.getAttributes().put("checked", "true");
             } else {
@@ -410,13 +410,13 @@ public class ViewBehavior {
     @Action(id = "radiobutton")
     public static class RadioButton extends KlabWidgetActionExecutor {
 
-        public RadioButton(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+        public RadioButton(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, IKActorsBehavior.Scope scope,
                 ActorRef<KlabMessage> sender, String callId) {
             super(identity, arguments, scope, sender, callId);
         }
 
         @Override
-        public ViewComponent createViewComponent(Scope scope) {
+        public ViewComponent createViewComponent(IKActorsBehavior.Scope scope) {
             ViewComponent message = new ViewComponent();
             message.setType(Type.RadioButton);
             message.setName(this.evaluateArgument(0, scope, ""));
@@ -425,15 +425,15 @@ public class ViewBehavior {
         }
 
         @Override
-        protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
-            if ("update".equals(message.message)) {
-                this.component.setName(getDefaultAsString(message.arguments, this, scope));
+        protected ViewComponent setComponent(KActorsMessage message, IKActorsBehavior.Scope scope) {
+            if ("update".equals(message.getMessage())) {
+                this.component.setName(getDefaultAsString(message.getArguments(), this, scope));
             }
             return this.component;
         }
 
         @Override
-        protected Object onViewAction(ViewAction action, Scope scope) {
+        protected Object onViewAction(ViewAction action, IKActorsBehavior.Scope scope) {
             if (action.isBooleanValue()) {
                 this.component.getAttributes().put("checked", "true");
             } else {
@@ -447,13 +447,13 @@ public class ViewBehavior {
     @Action(id = "label")
     public static class Label extends KlabWidgetActionExecutor {
 
-        public Label(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+        public Label(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, IKActorsBehavior.Scope scope,
                 ActorRef<KlabMessage> sender, String callId) {
             super(identity, arguments, scope, sender, callId);
         }
 
         @Override
-        public ViewComponent createViewComponent(Scope scope) {
+        public ViewComponent createViewComponent(IKActorsBehavior.Scope scope) {
             ViewComponent message = new ViewComponent();
             message.setType(Type.Label);
             message.setContent(this.evaluateArgument(0, scope, null));
@@ -462,15 +462,15 @@ public class ViewBehavior {
         }
 
         @Override
-        protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
-            if ("update".equals(message.message)) {
-                this.component.setContent(getDefaultAsString(message.arguments, this, scope));
+        protected ViewComponent setComponent(KActorsMessage message, IKActorsBehavior.Scope scope) {
+            if ("update".equals(message.getMessage())) {
+                this.component.setContent(getDefaultAsString(message.getArguments(), this, scope));
             }
             return this.component;
         }
 
         @Override
-        protected Object onViewAction(ViewAction action, Scope scope) {
+        protected Object onViewAction(ViewAction action, IKActorsBehavior.Scope scope) {
             /*
              * this is on toggle. Should fire something else on hover.
              */
@@ -487,13 +487,13 @@ public class ViewBehavior {
     @Action(id = "textinput")
     public static class Text extends KlabWidgetActionExecutor {
 
-        public Text(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+        public Text(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, IKActorsBehavior.Scope scope,
                 ActorRef<KlabMessage> sender, String callId) {
             super(identity, arguments, scope, sender, callId);
         }
 
         @Override
-        public ViewComponent createViewComponent(Scope scope) {
+        public ViewComponent createViewComponent(IKActorsBehavior.Scope scope) {
             ViewComponent message = new ViewComponent();
             message.setType(Type.TextInput);
             message.setContent(this.evaluateArgument(0, scope, (String) null));
@@ -502,22 +502,22 @@ public class ViewBehavior {
         }
 
         @Override
-        protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
-            if ("update".equals(message.message)) {
-                this.component.setContent(getDefaultAsString(message.arguments, this, scope));
+        protected ViewComponent setComponent(KActorsMessage message, IKActorsBehavior.Scope scope) {
+            if ("update".equals(message.getMessage())) {
+                this.component.setContent(getDefaultAsString(message.getArguments(), this, scope));
             }
             return this.component;
         }
 
         @Override
-        protected Object onViewAction(ViewAction action, Scope scope) {
+        protected Object onViewAction(ViewAction action, IKActorsBehavior.Scope scope) {
             this.component.setContent(action.getStringValue());
             return action.getStringValue();
         }
 
     }
 
-    public static String getStaticPath(String resourceId, Scope scope) {
+    public static String getStaticPath(String resourceId, IKActorsBehavior.Scope scope) {
         if (resourceId.startsWith("http")) {
             return resourceId;
         }
@@ -529,13 +529,13 @@ public class ViewBehavior {
     @Action(id = "html")
     public static class Html extends KlabWidgetActionExecutor {
 
-        public Html(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+        public Html(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, IKActorsBehavior.Scope scope,
                 ActorRef<KlabMessage> sender, String callId) {
             super(identity, arguments, scope, sender, callId);
         }
 
         @Override
-        public ViewComponent createViewComponent(Scope scope) {
+        public ViewComponent createViewComponent(IKActorsBehavior.Scope scope) {
             ViewComponent message = new ViewComponent();
             message.setType(Type.Browser);
             message.setContent(getStaticPath(this.evaluateArgument(0, scope, (String) null), scope));
@@ -544,15 +544,15 @@ public class ViewBehavior {
         }
 
         @Override
-        protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
-            if ("update".equals(message.message)) {
-                this.component.setContent(getDefaultAsString(message.arguments, this, scope));
+        protected ViewComponent setComponent(KActorsMessage message, IKActorsBehavior.Scope scope) {
+            if ("update".equals(message.getMessage())) {
+                this.component.setContent(getDefaultAsString(message.getArguments(), this, scope));
             }
             return this.component;
         }
 
         @Override
-        protected Object onViewAction(ViewAction action, Scope scope) {
+        protected Object onViewAction(ViewAction action, IKActorsBehavior.Scope scope) {
             this.component.setContent(action.getStringValue());
             return action.getStringValue();
         }
@@ -562,13 +562,13 @@ public class ViewBehavior {
     @Action(id = "image")
     public static class Image extends KlabWidgetActionExecutor {
 
-        public Image(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+        public Image(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, IKActorsBehavior.Scope scope,
                 ActorRef<KlabMessage> sender, String callId) {
             super(identity, arguments, scope, sender, callId);
         }
 
         @Override
-        public ViewComponent createViewComponent(Scope scope) {
+        public ViewComponent createViewComponent(IKActorsBehavior.Scope scope) {
             ViewComponent message = new ViewComponent();
             message.setType(Type.Image);
             message.setContent(getStaticPath(this.evaluateArgument(0, scope, (String) null), scope));
@@ -577,15 +577,15 @@ public class ViewBehavior {
         }
 
         @Override
-        protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
-            if ("update".equals(message.message)) {
-                this.component.setContent(getDefaultAsString(message.arguments, this, scope));
+        protected ViewComponent setComponent(KActorsMessage message, IKActorsBehavior.Scope scope) {
+            if ("update".equals(message.getMessage())) {
+                this.component.setContent(getDefaultAsString(message.getArguments(), this, scope));
             }
             return this.component;
         }
 
         @Override
-        protected Object onViewAction(ViewAction action, Scope scope) {
+        protected Object onViewAction(ViewAction action, IKActorsBehavior.Scope scope) {
             return true;
         }
 
@@ -600,7 +600,7 @@ public class ViewBehavior {
      * @param value
      * @return
      */
-    public static Triple<String, String, IKActorsValue> getItem(IKActorsValue value, Scope scope) {
+    public static Triple<String, String, IKActorsValue> getItem(IKActorsValue value, IKActorsBehavior.Scope scope) {
 
         String id = value.getTag();
         String label = null;
@@ -609,9 +609,9 @@ public class ViewBehavior {
             List<?> list = (List<?>) ((KActorsValue) value).getStatedValue();
             if (list.size() == 2) {
                 if (id == null) {
-                    id = KlabActor.evaluateInScope(((KActorsValue) list.get(0)), scope, scope.identity).toString();
+                    id = KlabActor.evaluateInScope(((KActorsValue) list.get(0)), scope, scope.getIdentity()).toString();
                 } else {
-                    label = KlabActor.evaluateInScope(((KActorsValue) list.get(0)), scope, scope.identity).toString();
+                    label = KlabActor.evaluateInScope(((KActorsValue) list.get(0)), scope, scope.getIdentity()).toString();
                 }
                 val = ((KActorsValue) list.get(1));
             }
@@ -629,13 +629,13 @@ public class ViewBehavior {
 
         private Map<String, IKActorsValue> values = new HashMap<>();
 
-        public Combo(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+        public Combo(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, IKActorsBehavior.Scope scope,
                 ActorRef<KlabMessage> sender, String callId) {
             super(identity, arguments, scope, sender, callId);
         }
 
         @Override
-        public ViewComponent createViewComponent(Scope scope) {
+        public ViewComponent createViewComponent(IKActorsBehavior.Scope scope) {
             ViewComponent message = new ViewComponent();
             message.setType(Type.Combo);
             for (String argument : arguments.getUnnamedKeys()) {
@@ -649,15 +649,15 @@ public class ViewBehavior {
         }
 
         @Override
-        protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
-            if ("update".equals(message.message)) {
-                this.component.getAttributes().put("selected", getDefaultAsString(message.arguments, this, scope));
+        protected ViewComponent setComponent(KActorsMessage message, IKActorsBehavior.Scope scope) {
+            if ("update".equals(message.getMessage())) {
+                this.component.getAttributes().put("selected", getDefaultAsString(message.getArguments(), this, scope));
             }
             return this.component;
         }
 
         @Override
-        protected Object onViewAction(ViewAction action, Scope scope) {
+        protected Object onViewAction(ViewAction action, IKActorsBehavior.Scope scope) {
             // TODO set selection
             return action.getStringValue();
         }
@@ -679,19 +679,19 @@ public class ViewBehavior {
         // keep this for resetting
         private ViewComponent originalGroup;
 
-        public GroupHandler(IActorIdentity<KlabMessage> identity, String appId, KlabActor.Scope scope,
+        public GroupHandler(IActorIdentity<KlabMessage> identity, String appId, IKActorsBehavior.Scope scope,
                 ActorRef<KlabMessage> sender, String callId) {
             super(identity, null, scope, sender, callId);
             this.appId = appId;
-            this.group = copyComponent(scope.viewScope.currentComponent);
+            this.group = copyComponent(scope.getViewScope().getCurrentComponent());
             this.originalGroup = copyComponent(this.group);
         }
 
         @Override
-        protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
+        protected ViewComponent setComponent(KActorsMessage message, IKActorsBehavior.Scope scope) {
 
-            if ("add".equals(message.message) && message.arguments.getUnnamedArguments().size() > 0) {
-                Object arg = message.arguments.getUnnamedArguments().get(0);
+            if ("add".equals(message.getMessage()) && message.getArguments().getUnnamedArguments().size() > 0) {
+                Object arg = message.getArguments().getUnnamedArguments().get(0);
                 if (arg instanceof KActorsValue) {
                     arg = ((KActorsValue) arg).evaluate(scope, identity, false);
                 }
@@ -699,7 +699,7 @@ public class ViewBehavior {
                     this.sender.tell(new AddComponentToGroup(group, ((Constructor) arg).getComponent(),
                             ((Constructor) arg).getArguments(), scope));
                 }
-            } else if ("remove".equals(message.message)) {
+            } else if ("remove".equals(message.getMessage())) {
                 // TODO - requires tagging of component and similar support at actor's side
             }
 
@@ -709,14 +709,14 @@ public class ViewBehavior {
         }
 
         @Override
-        public void onMessage(KlabMessage message, Scope scope) {
+        public void onMessage(KlabMessage message, IKActorsBehavior.Scope scope) {
 
-            if (message instanceof KActorsMessage && "reset".equals(((KActorsMessage) message).message)) {
+            if (message instanceof KActorsMessage && "reset".equals(((KActorsMessage) message).getMessage())) {
                 KActorsMessage mess = (KActorsMessage) message;
                 this.group = copyComponent(this.originalGroup);
                 ViewAction action = new ViewAction(this.originalGroup);
-                action.setApplicationId(mess.appId);
-                action.setData(getMetadata(mess.arguments, scope));
+                action.setApplicationId(mess.getAppId());
+                action.setData(getMetadata(mess.getArguments(), scope));
                 action.setComponentTag(this.getName());
                 session.getState().updateView(this.originalGroup);
                 session.getMonitor().send(IMessage.MessageClass.ViewActor, IMessage.Type.ViewAction, action);
@@ -726,13 +726,13 @@ public class ViewBehavior {
         }
 
         @Override
-        protected Object onViewAction(ViewAction action, Scope scope) {
+        protected Object onViewAction(ViewAction action, IKActorsBehavior.Scope scope) {
             // won't happen, groups don't do things
             return true;
         }
 
         @Override
-        protected ViewComponent createViewComponent(Scope scope) {
+        protected ViewComponent createViewComponent(IKActorsBehavior.Scope scope) {
             // won't be called, bypassed by actors
             return null;
         }
@@ -742,13 +742,13 @@ public class ViewBehavior {
     @Action(id = "separator")
     public static class Separator extends KlabWidgetActionExecutor {
 
-        public Separator(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+        public Separator(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, IKActorsBehavior.Scope scope,
                 ActorRef<KlabMessage> sender, String callId) {
             super(identity, arguments, scope, sender, callId);
         }
 
         @Override
-        public ViewComponent createViewComponent(Scope scope) {
+        public ViewComponent createViewComponent(IKActorsBehavior.Scope scope) {
             ViewComponent message = new ViewComponent();
             message.setType(Type.Separator);
             if (arguments.getUnnamedKeys().size() > 0) {
@@ -759,12 +759,12 @@ public class ViewBehavior {
         }
 
         @Override
-        protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
+        protected ViewComponent setComponent(KActorsMessage message, IKActorsBehavior.Scope scope) {
             return this.component;
         }
 
         @Override
-        protected Object onViewAction(ViewAction action, Scope scope) {
+        protected Object onViewAction(ViewAction action, IKActorsBehavior.Scope scope) {
             // TODO info on hover
             return true;
         }
@@ -776,13 +776,13 @@ public class ViewBehavior {
 
         private Map<String, IKActorsValue> values = new HashMap<>();
 
-        public Tree(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+        public Tree(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, IKActorsBehavior.Scope scope,
                 ActorRef<KlabMessage> sender, String callId) {
             super(identity, arguments, scope, sender, callId);
         }
 
         @Override
-        public ViewComponent createViewComponent(Scope scope) {
+        public ViewComponent createViewComponent(IKActorsBehavior.Scope scope) {
             ViewComponent message = new ViewComponent();
             message.setType(Type.Tree);
             if (arguments.getUnnamedKeys().size() == 0) {
@@ -799,12 +799,12 @@ public class ViewBehavior {
         }
 
         @Override
-        protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
+        protected ViewComponent setComponent(KActorsMessage message, IKActorsBehavior.Scope scope) {
             return this.component;
         }
 
         @Override
-        protected Object onViewAction(ViewAction action, Scope scope) {
+        protected Object onViewAction(ViewAction action, IKActorsBehavior.Scope scope) {
             List<Object> ret = new ArrayList<>();
             if (action.getListValue() != null) {
                 for (String choice : action.getListValue()) {
@@ -832,7 +832,7 @@ public class ViewBehavior {
     @Action(id = "text")
     public static class RichText extends KlabWidgetActionExecutor {
 
-        public RichText(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+        public RichText(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, IKActorsBehavior.Scope scope,
                 ActorRef<KlabMessage> sender, String callId) {
             super(identity, arguments, scope, sender, callId);
             // TODO compile template and set dynamic status if text contains runtime
@@ -840,7 +840,7 @@ public class ViewBehavior {
         }
 
         @Override
-        public ViewComponent createViewComponent(Scope scope) {
+        public ViewComponent createViewComponent(IKActorsBehavior.Scope scope) {
             ViewComponent message = new ViewComponent();
             message.setType(Type.Text);
             message.setContent(processTemplate(arguments.get(arguments.getUnnamedKeys().iterator().next()), scope));
@@ -849,15 +849,15 @@ public class ViewBehavior {
         }
 
         @Override
-        protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
-            if ("update".equals(message.message)) {
-                this.component.setContent(processTemplate(getDefaultAsString(message.arguments, this, scope), scope));
+        protected ViewComponent setComponent(KActorsMessage message, IKActorsBehavior.Scope scope) {
+            if ("update".equals(message.getMessage())) {
+                this.component.setContent(processTemplate(getDefaultAsString(message.getArguments(), this, scope), scope));
             }
             return this.component;
         }
 
         @Override
-        protected Object onViewAction(ViewAction action, Scope scope) {
+        protected Object onViewAction(ViewAction action, IKActorsBehavior.Scope scope) {
             /**
              * TODO eventually handle links in the text; for now the Eclipse widget cannot use them,
              * and the explorer can implement them directly but should be able to also fire the link
@@ -870,7 +870,7 @@ public class ViewBehavior {
     /*
      * TODO use the scope!
      */
-    public static ViewComponent.Tree getTree(KActorsValue tree, Map<String, IKActorsValue> values, Scope scope) {
+    public static ViewComponent.Tree getTree(KActorsValue tree, Map<String, IKActorsValue> values, IKActorsBehavior.Scope scope) {
         @SuppressWarnings("unchecked")
         Graph<KActorsValue, DefaultEdge> graph = (Graph<KActorsValue, DefaultEdge>) tree.getStatedValue();
         ViewComponent.Tree ret = new ViewComponent.Tree();
@@ -892,7 +892,8 @@ public class ViewBehavior {
         return ret;
     }
 
-    public static String getDefaultAsString(IParameters<String> arguments, KlabActionExecutor action, Scope scope) {
+    public static String getDefaultAsString(IParameters<String> arguments, KlabActionExecutor action,
+            IKActorsBehavior.Scope scope) {
         String ret = "";
         if (arguments.getUnnamedKeys().size() > 0) {
             Object a = arguments.get(arguments.getUnnamedKeys().iterator().next());
@@ -908,7 +909,7 @@ public class ViewBehavior {
         return ret;
     }
 
-    public static String processTemplate(Object value, Scope scope) {
+    public static String processTemplate(Object value, IKActorsBehavior.Scope scope) {
         String template = value instanceof String ? (String) value : null;
         if (template == null && value instanceof KActorsValue) {
             template = ((KActorsValue) value).getStatedValue().toString();
@@ -930,7 +931,7 @@ public class ViewBehavior {
         return MarkdownUtils.INSTANCE.format(template);
     }
 
-    public static Map<String, String> getMetadata(IParameters<String> arguments, Scope scope) {
+    public static Map<String, String> getMetadata(IParameters<String> arguments, IKActorsBehavior.Scope scope) {
         Map<String, String> ret = new HashMap<>();
         if (arguments != null) {
             for (String key : arguments.getNamedKeys()) {
@@ -939,7 +940,7 @@ public class ViewBehavior {
                     o = ((KActorsValue) o).evaluate(scope, scope.getIdentity(), true);
                 }
                 if (o instanceof String) {
-                    o = scope == null ? (String)o : scope.localize((String) o);
+                    o = scope == null ? (String) o : scope.localize((String) o);
                 }
                 if (o == null) {
                     ret.put(key, "null");

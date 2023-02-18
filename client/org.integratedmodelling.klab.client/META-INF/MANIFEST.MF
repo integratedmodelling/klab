@@ -19,8 +19,8 @@ Bundle-ClassPath: .,
  lib/jul-to-slf4j-1.7.25.jar,
  lib/log4j-api-2.10.0.jar,
  lib/log4j-to-slf4j-2.10.0.jar,
- lib/logback-classic-1.2.3.jar,
- lib/logback-core-1.2.3.jar,
+ lib/logback-classic-1.1.0.jar,
+ lib/logback-core-1.1.0.jar,
  lib/slf4j-api-1.7.25.jar,
  lib/snakeyaml-1.19.jar,
  lib/spring-beans-5.0.5.RELEASE.jar,
@@ -89,8 +89,8 @@ Export-Package: org.integratedmodelling.klab.client,
  org.joda.time.base
 Require-Bundle: org.eclipse.core.runtime;bundle-version="3.13.0",
  org.integratedmodelling.klab.api;bundle-version="0.11.0",
- ch.qos.logback.classic;bundle-version="1.2.3",
- ch.qos.logback.core;bundle-version="1.2.3"
+ ch.qos.logback.classic;bundle-version="1.1.0",
+ ch.qos.logback.core;bundle-version="1.1.0"
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.integratedmodelling.klab.client.Activator
 Import-Package: org.slf4j;version="1.7.30"

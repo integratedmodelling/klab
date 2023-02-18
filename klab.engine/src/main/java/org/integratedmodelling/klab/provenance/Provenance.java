@@ -374,18 +374,6 @@ public class Provenance extends GroovyObjectSupport implements IProvenance {
         }
 
         @Override
-        public String load(IBehavior behavior, IContextualizationScope scope) {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
-        public boolean stop(String behaviorId) {
-            // TODO Auto-generated method stub
-            return false;
-        }
-
-        @Override
         public boolean stop() {
             // TODO Auto-generated method stub
             return false;
@@ -401,6 +389,18 @@ public class Provenance extends GroovyObjectSupport implements IProvenance {
         public IParameters<String> getState() {
             // TODO Auto-generated method stub
             return null;
+        }
+
+        @Override
+        public String load(IBehavior behavior, IContextualizationScope scope) {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public boolean stop(String behaviorId) {
+            // TODO Auto-generated method stub
+            return false;
         }
 
     };
@@ -480,18 +480,6 @@ public class Provenance extends GroovyObjectSupport implements IProvenance {
         }
 
         @Override
-        public String load(IBehavior behavior, IContextualizationScope scope) {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
-        public boolean stop(String behaviorId) {
-            // TODO Auto-generated method stub
-            return false;
-        }
-
-        @Override
         public boolean stop() {
             // TODO Auto-generated method stub
             return false;
@@ -507,6 +495,18 @@ public class Provenance extends GroovyObjectSupport implements IProvenance {
         public IParameters<String> getState() {
             // TODO Auto-generated method stub
             return null;
+        }
+
+        @Override
+        public String load(IBehavior behavior, IContextualizationScope scope) {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public boolean stop(String behaviorId) {
+            // TODO Auto-generated method stub
+            return false;
         }
     };
 
