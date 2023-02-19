@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.engine.services.scope.actors.messages.kactor;
+package org.integratedmodelling.klab.services.actors.messages.kactor;
 
 import java.io.Serializable;
 

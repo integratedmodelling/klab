@@ -12,8 +12,8 @@ import org.integratedmodelling.klab.api.engine.IContextScope;
 import org.integratedmodelling.klab.api.engine.IScope;
 import org.integratedmodelling.klab.api.engine.ISessionScope;
 import org.integratedmodelling.klab.auth.KlabCertificate;
-import org.integratedmodelling.klab.engine.services.engine.EngineService;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.services.engine.EngineService;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -64,7 +64,7 @@ public class ObservationTests {
 
         // run an application, script or raw session. If we run a script, we only need to wait until
         // the script is done.
-        ISessionScope sessionScope = scope.runSession(
+        ISessionScope sessionScope = scope.runApplication(
                 "testsession" /*
                                * TODO pass the kind of instrumentation we want (raw, API, Explorer)
                                */);

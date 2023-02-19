@@ -1,7 +1,7 @@
-package org.integratedmodelling.klab.engine.services.scope.actors;
+package org.integratedmodelling.klab.services.actors;
 
 import org.integratedmodelling.klab.api.engine.IScope;
-import org.integratedmodelling.klab.engine.services.scope.actors.messages.kactor.RunBehavior;
+import org.integratedmodelling.klab.services.actors.messages.kactor.RunBehavior;
 
 import io.reacted.core.config.reactors.ReActorConfig;
 import io.reacted.core.reactors.ReActions;

@@ -1,8 +1,6 @@
-package org.integratedmodelling.klab.engine.services.scope;
+package org.integratedmodelling.klab.services.scope;
 
-import java.io.Serializable;
 import java.time.Duration;
-import java.util.concurrent.CompletionStage;
 import java.util.function.Consumer;
 
 import org.integratedmodelling.kim.api.IParameters;
@@ -15,14 +13,14 @@ import org.integratedmodelling.klab.api.engine.IScope;
 import org.integratedmodelling.klab.api.engine.ISessionScope;
 import org.integratedmodelling.klab.api.engine.ISessionScope.Status;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
-import org.integratedmodelling.klab.engine.services.engine.EngineService;
-import org.integratedmodelling.klab.engine.services.scope.actors.messages.user.CreateAgentResponse;
-import org.integratedmodelling.klab.engine.services.scope.actors.messages.user.CreateApplication;
+import org.integratedmodelling.klab.services.actors.messages.user.CreateApplication;
+import org.integratedmodelling.klab.services.actors.messages.user.CreateSession;
+import org.integratedmodelling.klab.services.engine.EngineService;
 import org.integratedmodelling.klab.utils.Parameters;
 
 import io.reacted.core.reactorsystem.ReActorRef;
 
-public class Scope implements IScope, Serializable {
+public class Scope implements IScope {
 
     private static final long serialVersionUID = 605310381727313326L;
 
@@ -50,7 +48,6 @@ public class Scope implements IScope, Serializable {
         this.resourceService = parent.resourceService;
         this.resolverService = parent.resolverService;
         this.runtimeService = parent.runtimeService;
-        this.agent = parent.agent;
     }
 
     @Override
@@ -87,23 +84,15 @@ public class Scope implements IScope, Serializable {
 
         final SessionScope ret = new SessionScope(this);
         ret.setStatus(Status.WAITING);
-
-        // CompletionStage<UserAgent.SessionCreated> sessionFuture = AskPattern.ask(agent,
-        // replyTo -> new UserAgent.CreateSession(sessionName, ret, replyTo),
-        // Duration.ofSeconds(25),
-        // EngineService.INSTANCE.getActorSystem().scheduler());
-        //
-        // sessionFuture.whenComplete((reply, failure) -> {
-        // if (reply != null) {
-        // ret.setAgent(reply.sessionAgent);
-        // ret.setToken(getToken() + "/" + sessionName);
-        // ret.setStatus(Status.STARTED);
-        // } else {
-        // ret.setStatus(Status.ABORTED);
-        // }
-        // });
-        //
-        // sessionFuture.toCompletableFuture().join();
+        this.agent.ask(new CreateSession(this, sessionName), ReActorRef.class, Duration.ofSeconds(3), sessionName)
+                .whenComplete((reply, failure) -> {
+                    if (reply instanceof ReActorRef) {
+                        ret.setAgent(reply);
+                        ret.setStatus(Status.STARTED);
+                    } else {
+                        ret.setStatus(Status.ABORTED);
+                    }
+                }).toCompletableFuture().join();
 
         return ret;
     }
@@ -113,10 +102,10 @@ public class Scope implements IScope, Serializable {
 
         final SessionScope ret = new SessionScope(this);
         ret.setStatus(Status.WAITING);
-        this.agent.ask(new CreateApplication(ret), CreateAgentResponse.class, Duration.ofSeconds(3), behaviorName)
+        this.agent.ask(new CreateApplication(this, behaviorName), ReActorRef.class, Duration.ofSeconds(3), behaviorName)
                 .whenComplete((reply, failure) -> {
-                    if (reply instanceof CreateAgentResponse) {
-                        ret.setAgent(reply.getAgent());
+                    if (reply instanceof ReActorRef) {
+                        ret.setAgent(reply);
                         ret.setStatus(Status.STARTED);
                     } else {
                         ret.setStatus(Status.ABORTED);

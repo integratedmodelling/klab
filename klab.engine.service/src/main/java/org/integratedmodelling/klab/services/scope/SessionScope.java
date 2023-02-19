@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.engine.services.scope;
+package org.integratedmodelling.klab.services.scope;
 
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.engine.IContextScope;

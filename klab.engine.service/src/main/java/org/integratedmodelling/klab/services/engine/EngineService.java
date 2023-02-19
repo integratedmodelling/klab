@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.engine.services.engine;
+package org.integratedmodelling.klab.services.engine;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -17,12 +17,12 @@ import org.integratedmodelling.klab.api.engine.IEngineService;
 import org.integratedmodelling.klab.api.engine.IScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.runtime.rest.IClient;
-import org.integratedmodelling.klab.engine.services.engine.reasoner.ReasonerDefaultService;
-import org.integratedmodelling.klab.engine.services.engine.resolver.ResolverDefaultService;
-import org.integratedmodelling.klab.engine.services.engine.resources.ResourceDefaultService;
-import org.integratedmodelling.klab.engine.services.engine.runtime.RuntimeDefaultService;
-import org.integratedmodelling.klab.engine.services.scope.Scope;
-import org.integratedmodelling.klab.engine.services.scope.actors.UserAgent;
+import org.integratedmodelling.klab.services.actors.UserAgent;
+import org.integratedmodelling.klab.services.engine.reasoner.ReasonerDefaultService;
+import org.integratedmodelling.klab.services.engine.resolver.ResolverDefaultService;
+import org.integratedmodelling.klab.services.engine.resources.ResourceDefaultService;
+import org.integratedmodelling.klab.services.engine.runtime.RuntimeDefaultService;
+import org.integratedmodelling.klab.services.scope.Scope;
 import org.integratedmodelling.klab.utils.xtext.KactorsInjectorProvider;
 import org.integratedmodelling.klab.utils.xtext.KimInjectorProvider;
 
@@ -86,7 +86,6 @@ public enum EngineService implements IEngineService, IEngineIdentity {
 
         Scope ret = userScopes.get(user.getUsername());
         if (ret == null) {
-
             ret = new Scope(user, reasonerService, resourceService, resolverService, runtimeService);
             final Scope scope = ret;
             String agentName = user.getUsername();

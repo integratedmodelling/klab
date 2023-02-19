@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.api.engine;
 
+import java.io.Serializable;
+
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.engine.IEngineService.Reasoner;
@@ -8,7 +10,7 @@ import org.integratedmodelling.klab.api.engine.IEngineService.ResourceManager;
 import org.integratedmodelling.klab.api.engine.IEngineService.Runtime;
 import org.integratedmodelling.klab.api.runtime.monitoring.IChannel;
 
-public interface IScope extends IChannel {
+public interface IScope extends IChannel, Serializable {
 
     enum Type {
         USER, // root-level scope

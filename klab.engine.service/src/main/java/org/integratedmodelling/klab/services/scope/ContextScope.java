@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.engine.services.scope;
+package org.integratedmodelling.klab.services.scope;
 
 import java.util.Collection;
 import java.util.HashSet;
