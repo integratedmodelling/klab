@@ -13,7 +13,7 @@ public class CreateApplication implements Serializable {
     }
 
     public CreateApplication(IScope scope, String sessionId) {
-        this.setScope(scope);
+        this.scope = scope;
         this.applicationId = sessionId;
     }
 

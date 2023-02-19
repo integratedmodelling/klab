@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.integratedmodelling.klab.engine.test;
+package org.integratedmodelling.klab.services.engine.test;
 
 import java.util.function.Consumer;
 
@@ -64,7 +64,7 @@ public class ObservationTests {
 
         // run an application, script or raw session. If we run a script, we only need to wait until
         // the script is done.
-        ISessionScope sessionScope = scope.runApplication(
+        ISessionScope sessionScope = scope.runSession(
                 "testsession" /*
                                * TODO pass the kind of instrumentation we want (raw, API, Explorer)
                                */);
