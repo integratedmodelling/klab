@@ -1,13 +1,11 @@
 package org.integratedmodelling.klab.engine.services.scope;
 
+import java.io.Serializable;
 import java.time.Duration;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
-import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.engine.IEngineService.Reasoner;
 import org.integratedmodelling.klab.api.engine.IEngineService.Resolver;
@@ -18,14 +16,15 @@ import org.integratedmodelling.klab.api.engine.ISessionScope;
 import org.integratedmodelling.klab.api.engine.ISessionScope.Status;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.engine.services.engine.EngineService;
-import org.integratedmodelling.klab.engine.services.scope.actors.UserAgent;
-import org.integratedmodelling.klab.engine.services.scope.actors.UserAgent.SessionCreated;
+import org.integratedmodelling.klab.engine.services.scope.actors.messages.user.CreateAgentResponse;
+import org.integratedmodelling.klab.engine.services.scope.actors.messages.user.CreateApplication;
 import org.integratedmodelling.klab.utils.Parameters;
 
-import akka.actor.typed.ActorRef;
-import akka.actor.typed.javadsl.AskPattern;
+import io.reacted.core.reactorsystem.ReActorRef;
 
-public class Scope implements IScope {
+public class Scope implements IScope, Serializable {
+
+    private static final long serialVersionUID = 605310381727313326L;
 
     private Parameters<String> data = Parameters.create();
     private IUserIdentity user;
@@ -33,11 +32,10 @@ public class Scope implements IScope {
     private ResourceManager resourceService;
     private Resolver resolverService;
     private Runtime runtimeService;
-    private ActorRef<KlabMessage> agent;
-    private String token;
+    private ReActorRef agent;
 
-    public Scope(IUserIdentity user, Reasoner reasonerService, ResourceManager resourceService,
-            Resolver resolverService, Runtime runtimeService) {
+    public Scope(IUserIdentity user, Reasoner reasonerService, ResourceManager resourceService, Resolver resolverService,
+            Runtime runtimeService) {
         this.user = user;
         this.reasonerService = reasonerService;
         this.resourceService = resourceService;
@@ -79,10 +77,10 @@ public class Scope implements IScope {
         return null;
     }
 
-    @Override
-    public String getToken() {
-        return this.token;
-    }
+    // @Override
+    // public String getToken() {
+    // return this.token;
+    // }
 
     @Override
     public ISessionScope runSession(String sessionName) {
@@ -90,21 +88,22 @@ public class Scope implements IScope {
         final SessionScope ret = new SessionScope(this);
         ret.setStatus(Status.WAITING);
 
-        CompletionStage<UserAgent.SessionCreated> sessionFuture = AskPattern.ask(agent,
-                replyTo -> new UserAgent.CreateSession(sessionName, ret, replyTo), Duration.ofSeconds(25),
-                EngineService.INSTANCE.getActorSystem().scheduler());
-
-        sessionFuture.whenComplete((reply, failure) -> {
-            if (reply != null) {
-                ret.setAgent(reply.sessionAgent);
-                ret.setToken(getToken() + "/" + sessionName);
-                ret.setStatus(Status.STARTED);
-            } else {
-                ret.setStatus(Status.ABORTED);
-            }
-        });
-
-        sessionFuture.toCompletableFuture().join();
+        // CompletionStage<UserAgent.SessionCreated> sessionFuture = AskPattern.ask(agent,
+        // replyTo -> new UserAgent.CreateSession(sessionName, ret, replyTo),
+        // Duration.ofSeconds(25),
+        // EngineService.INSTANCE.getActorSystem().scheduler());
+        //
+        // sessionFuture.whenComplete((reply, failure) -> {
+        // if (reply != null) {
+        // ret.setAgent(reply.sessionAgent);
+        // ret.setToken(getToken() + "/" + sessionName);
+        // ret.setStatus(Status.STARTED);
+        // } else {
+        // ret.setStatus(Status.ABORTED);
+        // }
+        // });
+        //
+        // sessionFuture.toCompletableFuture().join();
 
         return ret;
     }
@@ -114,22 +113,15 @@ public class Scope implements IScope {
 
         final SessionScope ret = new SessionScope(this);
         ret.setStatus(Status.WAITING);
-
-        CompletionStage<UserAgent.SessionCreated> sessionFuture = AskPattern.ask(agent,
-                replyTo -> new UserAgent.CreateApplication(behaviorName, ret, replyTo), Duration.ofSeconds(25),
-                EngineService.INSTANCE.getActorSystem().scheduler());
-
-        sessionFuture.whenComplete((reply, failure) -> {
-            if (reply instanceof UserAgent.SessionCreated) {
-                ret.setAgent(reply.sessionAgent);
-                ret.setToken(getToken() + "/" + behaviorName);
-                ret.setStatus(Status.STARTED);
-            } else {
-                ret.setStatus(Status.ABORTED);
-            }
-        });
-
-        sessionFuture.toCompletableFuture().join();
+        this.agent.ask(new CreateApplication(ret), CreateAgentResponse.class, Duration.ofSeconds(3), behaviorName)
+                .whenComplete((reply, failure) -> {
+                    if (reply instanceof CreateAgentResponse) {
+                        ret.setAgent(reply.getAgent());
+                        ret.setStatus(Status.STARTED);
+                    } else {
+                        ret.setStatus(Status.ABORTED);
+                    }
+                }).toCompletableFuture().join();
 
         return ret;
     }
@@ -144,58 +136,58 @@ public class Scope implements IScope {
         return this.data;
     }
 
-    public ActorRef<KlabMessage> getAgent() {
+    public ReActorRef getAgent() {
         return this.agent;
     }
-    
-    public void setAgent(ActorRef<KlabMessage> agent) {
+
+    public void setAgent(ReActorRef agent) {
         this.agent = agent;
     }
 
-    public void setToken(String token) {
-        this.token = token;
-    }
+    // public void setToken(String token) {
+    // this.token = token;
+    // }
 
     @Override
     public void info(Object... info) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void warn(Object... o) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void error(Object... o) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void debug(Object... o) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void send(Object... message) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void post(Consumer<IMessage> handler, Object... message) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void addWait(int seconds) {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override

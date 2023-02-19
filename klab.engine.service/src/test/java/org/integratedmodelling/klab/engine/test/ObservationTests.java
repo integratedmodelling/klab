@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.integratedmodelling.klab.test;
+package org.integratedmodelling.klab.engine.test;
 
 import java.util.function.Consumer;
 
@@ -64,15 +64,18 @@ public class ObservationTests {
 
         // run an application, script or raw session. If we run a script, we only need to wait until
         // the script is done.
-        ISessionScope sessionScope = scope.runSession("testsession");
+        ISessionScope sessionScope = scope.runSession(
+                "testsession" /*
+                               * TODO pass the kind of instrumentation we want (raw, API, Explorer)
+                               */);
 
-        System.out.println(sessionScope);
-        
         /*
          * Scope is now user-wide. We need a context to start geometry automatically maintained. If
          * a specific application or script is requested, use run() to obtain a different scope.
          */
         IContextScope context = sessionScope.createContext("cagada");
+
+        System.out.println(sessionScope);
 
         // IObservation france = context.observe();
     }

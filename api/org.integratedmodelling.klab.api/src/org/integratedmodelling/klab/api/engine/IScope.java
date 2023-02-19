@@ -55,16 +55,6 @@ public interface IScope extends IChannel {
     IUserIdentity getUser();
 
     /**
-     * The token is needed to communicate with the scope. It can represent the user, an application
-     * (or raw session), or a context; the hierarchial structure of these is reflected in the token,
-     * which always starts with the user token possibly followed by slash-separated tokens for the
-     * running app (or raw session) and context.
-     * 
-     * @return
-     */
-    String getToken();
-
-    /**
      * Each scope can carry arbitrary data linked to it.
      * 
      * @return

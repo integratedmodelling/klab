@@ -89,6 +89,8 @@
 		<module>authorities</module>
 		<module>klab.authentication</module>
 		<module>klab.activity</module>
+		<!-- later (only runs with j17 as the Maven artifacts are j17, although it should compile) -->
+		<!-- <module>klab.engine.service</module> -->
 	</modules>
 
 	<properties>

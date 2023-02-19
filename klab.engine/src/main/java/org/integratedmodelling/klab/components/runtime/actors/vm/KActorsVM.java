@@ -86,7 +86,14 @@ import akka.actor.typed.ActorRef;
 import akka.actor.typed.Behavior;
 
 /**
- * The basic k.Actors VM. Eventually to be used in place of the same code within KlabActor.
+ * The basic k.Actors VM. Eventually to be used in place of the same code within KlabActor. Each
+ * actor should own a VM but components will be routines, not actors, thereby saving the whole mess
+ * of forward IDs. The VM must be fully reentrant w.r.t. behaviors, actions and state.
+ * 
+ * VM should be usable without an actor as long as no actor-specific calls are made. These should 
+ * be aware that the actor can be null and terminate gracefully or warn and move on.
+ * 
+ * All deprecated state should either be eliminated or moved to the scope.
  * 
  * @author Ferd
  *
@@ -125,7 +132,7 @@ public class KActorsVM {
             for (Pair<Match, IKActorsStatement> match : matches) {
 
                 if (match.getFirst().matches(value, scope)) {
-                    ActorScope s = ((ActorScope) scope).withMatch(match.getFirst(), value, matchingScope);
+                    KActorsScope s = ((KActorsScope) scope).withMatch(match.getFirst(), value, matchingScope);
                     execute(match.getSecond(), behavior, s);
                     break;
                 }
@@ -205,10 +212,10 @@ public class KActorsVM {
      * @param behavior
      */
     public void runBehavior(IBehavior behavior, IParameters<String> arguments, IScope scope) {
-        runBehavior(behavior, arguments, (ActorScope) null);
+        runBehavior(behavior, arguments, (KActorsScope) null);
     }
 
-    public void runBehavior(IBehavior behavior, IParameters<String> arguments, ActorScope scope) {
+    public void runBehavior(IBehavior behavior, IParameters<String> arguments, KActorsScope scope) {
 
         this.globalState = scope.getGlobalSymbols();
 
@@ -278,7 +285,7 @@ public class KActorsVM {
                      */
                     for (IBehavior.Action action : behavior.getActions("init", "@init")) {
 
-                        ActorScope initScope = scope.forInit();
+                        KActorsScope initScope = scope.forInit();
                         initScope.setMetadata(new Parameters<>(scope.getMetadata()));
                         initScope.setLocalizedSymbols(behavior.getLocalization());
                         if (behavior.getDestination() == Type.SCRIPT || behavior.getDestination() == Type.UNITTEST) {
@@ -306,7 +313,7 @@ public class KActorsVM {
                      * run any main actions. This is the only action that may create a UI.
                      */
                     for (IBehavior.Action action : behavior.getActions("main", "@main")) {
-                        ActorScope ascope = scope.getChild(KActorsVM.this.appId, action);
+                        KActorsScope ascope = scope.getChild(KActorsVM.this.appId, action);
                         KActorsVM.this.layout = ascope.getViewScope() == null ? null : ascope.getViewScope().getLayout();
                         ascope.setMetadata(new Parameters<>(ascope.getMetadata()));
                         ascope.setLocalizedSymbols(behavior.getLocalization());
@@ -330,7 +337,7 @@ public class KActorsVM {
 
                             if (desc.get("enabled", Boolean.TRUE) && !desc.get("disabled", Boolean.FALSE)) {
 
-                                ActorScope testScope = scope.forTest(action);
+                                KActorsScope testScope = scope.forTest(action);
                                 testScope.setMetadata(new Parameters<>(scope.getMetadata()));
                                 testScope.setLocalizedSymbols(behavior.getLocalization());
                                 testScope.getRuntimeScope().getMonitor()
@@ -404,23 +411,23 @@ public class KActorsVM {
         }
 
         if (wspecs != null) {
-            scope = ((ActorScope) scope).forWindow(wspecs, action.getName());
+            scope = ((KActorsScope) scope).forWindow(wspecs, action.getName());
         }
 
         if (action.isFunction()) {
-            scope = ((ActorScope) scope).functional();
+            scope = ((KActorsScope) scope).functional();
         }
 
         try {
 
-            execute(action.getStatement().getCode(), behavior, ((ActorScope) scope).forAction(action));
+            execute(action.getStatement().getCode(), behavior, ((KActorsScope) scope).forAction(action));
 
         } catch (Throwable t) {
 
-            ((ActorScope) scope).onException(t, "action " + action.getBehavior() + " " + action.getName());
+            ((KActorsScope) scope).onException(t, "action " + action.getBehavior() + " " + action.getName());
 
-            if (((ActorScope) scope).getSender() != null) {
-                ((ActorScope) scope).getSender().tell(new Fire(scope.getListenerId(), t, scope.getAppId(), scope.getSemaphore(),
+            if (((KActorsScope) scope).getSender() != null) {
+                ((KActorsScope) scope).getSender().tell(new Fire(scope.getListenerId(), t, scope.getAppId(), scope.getSemaphore(),
                         scope.getSymbols(this.identity)));
             } else if (parentActor != null) {
 
@@ -767,7 +774,7 @@ public class KActorsVM {
             executeCall(calls.get(i), behavior, fscope);
             contextReceiver = fscope.getValueScope();
         }
-        ((ActorScope) scope).setValueScope(contextReceiver);
+        ((KActorsScope) scope).setValueScope(contextReceiver);
     }
 
     /**
@@ -780,8 +787,8 @@ public class KActorsVM {
     private boolean executeFire(FireValue code, IKActorsBehavior.Scope scope) {
 
         if (scope.isFunctional()) {
-            // ((ActorScope) scope).hasValueScope = true;
-            ((ActorScope) scope).setValueScope(code.getValue().evaluate(scope, identity, false));
+            // ((AgentScope) scope).hasValueScope = true;
+            ((KActorsScope) scope).setValueScope(code.getValue().evaluate(scope, identity, false));
             return false;
         }
 
@@ -795,13 +802,13 @@ public class KActorsVM {
             }
         }
 
-        if (((ActorScope) scope).getSender() != null) {
+        if (((KActorsScope) scope).getSender() != null) {
 
             /*
              * this should happen when a non-main action executes the fire. Must be checked first.
              * Fire may happen if the action firing is called again, so don't remove the listener.
              */
-            ((ActorScope) scope).getSender()
+            ((KActorsScope) scope).getSender()
                     .tell(new Fire(scope.getListenerId(), code.getValue().evaluate(scope, identity, false), scope.getAppId(),
                             scope.getSemaphore(), scope.getSymbols(this.identity)));
 
@@ -1032,7 +1039,7 @@ public class KActorsVM {
 
         if (code.getGroup() != null) {
             // TODO finish handling group actions
-            execute(code.getGroup(), behavior, ((ActorScope) scope).withNotifyId(notifyId));
+            execute(code.getGroup(), behavior, ((KActorsScope) scope).withNotifyId(notifyId));
             return;
         }
 
@@ -1079,9 +1086,9 @@ public class KActorsVM {
              */
             if (this.localActionExecutors.containsKey(receiverName)) {
                 KActorsMessage m = new KActorsMessage(receiver, messageName, code.getCallId(), code.getArguments(),
-                        ((ActorScope) scope).withNotifyId(notifyId), appId);
+                        ((KActorsScope) scope).withNotifyId(notifyId), appId);
                 this.localActionExecutors.get(receiverName).onMessage(m, scope);
-                ((ActorScope) scope).waitForGreen(code.getFirstLine());
+                ((KActorsScope) scope).waitForGreen(code.getFirstLine());
                 return;
             }
 
@@ -1128,7 +1135,7 @@ public class KActorsVM {
             }
 
             recipient.tell(new KActorsMessage(receiver, messageName, code.getCallId(), code.getArguments(),
-                    ((ActorScope) scope).withNotifyId(notifyId), appId));
+                    ((KActorsScope) scope).withNotifyId(notifyId), appId));
 
             return;
 
@@ -1169,7 +1176,7 @@ public class KActorsVM {
                         args.add(arg instanceof KActorsValue ? evaluateInScope((KActorsValue) arg, scope, identity) : arg);
                     }
                     try {
-                        ((ActorScope) scope)
+                        ((KActorsScope) scope)
                                 .setValueScope(method.method.invoke(nativeLibraryInstances.get(library.name), args.toArray()));
                         return;
                     } catch (Throwable e) {
@@ -1190,7 +1197,7 @@ public class KActorsVM {
          * at this point if we have a valueScope, we are calling a method on it.
          */
         if (scope.getValueScope() != null) {
-            ((ActorScope) scope).setValueScope(Actors.INSTANCE.invokeReactorMethod(scope.getValueScope(), messageName,
+            ((KActorsScope) scope).setValueScope(Actors.INSTANCE.invokeReactorMethod(scope.getValueScope(), messageName,
                     code.getArguments(), scope, identity));
             return;
         }
@@ -1214,7 +1221,7 @@ public class KActorsVM {
             /*
              * local action overrides a library action
              */
-            run(actionCode, behavior, ((ActorScope) scope)
+            run(actionCode, behavior, ((KActorsScope) scope)
                     .matchFormalArguments(code, (actionCode == null ? libraryActionCode : actionCode)).withNotifyId(notifyId));
             return;
         }
@@ -1234,13 +1241,13 @@ public class KActorsVM {
             if (actionClass != null) {
 
                 executor = Actors.INSTANCE.getSystemAction(messageName, (IActorIdentity<KlabMessage>) scope.getIdentity(),
-                        code.getArguments(), ((ActorScope) scope).withNotifyId(notifyId), receiver, executorId);
+                        code.getArguments(), ((KActorsScope) scope).withNotifyId(notifyId), receiver, executorId);
 
                 if (executor != null) {
 
                     if (!executor.isSynchronized()) {
                         // disable the fencing if it's there
-                        ((ActorScope) scope).setSemaphore(null);
+                        ((KActorsScope) scope).setSemaphore(null);
                     }
 
                     actionCache.put(executorId, executor);
@@ -1296,7 +1303,7 @@ public class KActorsVM {
             }
 
         } else if (executor != null) {
-            executor.run(((ActorScope) scope).withNotifyId(notifyId).withSender(receiver, appId));
+            executor.run(((KActorsScope) scope).withNotifyId(notifyId).withSender(receiver, appId));
         }
 
         /*
@@ -1304,7 +1311,7 @@ public class KActorsVM {
          * nothing. TODO In case of errors causing no fire, though, it will wait forever, so there
          * should be a way to break the wait.
          */
-        ((ActorScope) scope).waitForGreen(code.getFirstLine());
+        ((KActorsScope) scope).waitForGreen(code.getFirstLine());
 
     }
 }
