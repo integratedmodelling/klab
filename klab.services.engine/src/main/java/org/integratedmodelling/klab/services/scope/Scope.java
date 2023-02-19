@@ -53,31 +53,26 @@ public class Scope implements IScope {
     @Override
     public Reasoner getReasoner() {
         // TODO Auto-generated method stub
-        return null;
+        return this.reasonerService;
     }
 
     @Override
     public Resolver getResolver() {
         // TODO Auto-generated method stub
-        return null;
+        return this.resolverService;
     }
 
     @Override
     public Runtime getRuntime() {
         // TODO Auto-generated method stub
-        return null;
+        return this.runtimeService;
     }
 
     @Override
     public ResourceManager getResources() {
         // TODO Auto-generated method stub
-        return null;
+        return this.resourceService;
     }
-
-    // @Override
-    // public String getToken() {
-    // return this.token;
-    // }
 
     @Override
     public ISessionScope runSession(String sessionName) {
@@ -86,9 +81,15 @@ public class Scope implements IScope {
         ret.setStatus(Status.WAITING);
         this.agent.ask(new CreateSession(this, sessionName), ReActorRef.class, Duration.ofSeconds(3), sessionName)
                 .whenComplete((reply, failure) -> {
-                    if (reply instanceof ReActorRef) {
-                        ret.setAgent(reply);
-                        ret.setStatus(Status.STARTED);
+                    if (failure != null) {
+                        ret.setStatus(Status.ABORTED);
+                    } else if (reply instanceof ReActorRef) {
+                        if (reply == ReActorRef.NO_REACTOR_REF) {
+                            ret.setStatus(Status.ABORTED);
+                        } else {
+                            ret.setAgent(reply);
+                            ret.setStatus(Status.STARTED);
+                        }
                     } else {
                         ret.setStatus(Status.ABORTED);
                     }
@@ -104,9 +105,15 @@ public class Scope implements IScope {
         ret.setStatus(Status.WAITING);
         this.agent.ask(new CreateApplication(this, behaviorName), ReActorRef.class, Duration.ofSeconds(3), behaviorName)
                 .whenComplete((reply, failure) -> {
-                    if (reply instanceof ReActorRef) {
-                        ret.setAgent(reply);
-                        ret.setStatus(Status.STARTED);
+                    if (failure != null) {
+                        ret.setStatus(Status.ABORTED);
+                    } else if (reply instanceof ReActorRef) {
+                        if (reply == ReActorRef.NO_REACTOR_REF) {
+                            ret.setStatus(Status.ABORTED);
+                        } else {
+                            ret.setAgent(reply);
+                            ret.setStatus(Status.STARTED);
+                        }
                     } else {
                         ret.setStatus(Status.ABORTED);
                     }

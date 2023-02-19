@@ -6,6 +6,7 @@ import org.integratedmodelling.klab.services.actors.messages.user.CreateSession;
 
 import io.reacted.core.reactors.ReActions.Builder;
 import io.reacted.core.reactorsystem.ReActorContext;
+import io.reacted.core.reactorsystem.ReActorRef;
 
 public class UserAgent extends KAgent {
 
@@ -26,12 +27,11 @@ public class UserAgent extends KAgent {
     private void createApplication(ReActorContext rctx, CreateApplication message) {
         IBehavior behavior = message.getScope().getResources().resolveBehavior(message.getApplicationId(), message.getScope());
         if (behavior == null) {
-            /*
-             * TODO reply with error - decide how to best do that (configuration of agent should
-             * have a universal receiver) - or just throw an exception to be captured outside?
-             */
+            message.getScope().error("cannot find behavior " + message.getApplicationId());
+            rctx.reply(ReActorRef.NO_REACTOR_REF);
+        } else {
+            rctx.spawnChild(new SessionAgent(behavior)).ifSuccess((ref) -> rctx.reply(ref));
         }
-        rctx.spawnChild(new SessionAgent(behavior)).ifSuccess((ref) -> rctx.reply(ref));
     }
 
 }
