@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.services.scope;
 import java.time.Duration;
 import java.util.function.Consumer;
 
+import org.integratedmodelling.kactors.api.IKActorsBehavior.Ref;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.engine.IEngineService.Reasoner;
@@ -30,7 +31,7 @@ public class Scope implements IScope {
     private ResourceManager resourceService;
     private Resolver resolverService;
     private Runtime runtimeService;
-    private ReActorRef agent;
+    private Ref agent;
 
     public Scope(IUserIdentity user, Reasoner reasonerService, ResourceManager resourceService, Resolver resolverService,
             Runtime runtimeService) {
@@ -79,22 +80,13 @@ public class Scope implements IScope {
 
         final SessionScope ret = new SessionScope(this);
         ret.setStatus(Status.WAITING);
-        this.agent.ask(new CreateSession(this, sessionName), ReActorRef.class, Duration.ofSeconds(3), sessionName)
-                .whenComplete((reply, failure) -> {
-                    if (failure != null) {
-                        ret.setStatus(Status.ABORTED);
-                    } else if (reply instanceof ReActorRef) {
-                        if (reply == ReActorRef.NO_REACTOR_REF) {
-                            ret.setStatus(Status.ABORTED);
-                        } else {
-                            ret.setAgent(reply);
-                            ret.setStatus(Status.STARTED);
-                        }
-                    } else {
-                        ret.setStatus(Status.ABORTED);
-                    }
-                }).toCompletableFuture().join();
-
+        Ref sessionAgent = this.agent.ask(new CreateSession(this, sessionName), Ref.class);
+        if (!sessionAgent.isEmpty()) {
+            ret.setStatus(Status.STARTED);
+            ret.setAgent(sessionAgent);
+        } else {
+            ret.setStatus(Status.ABORTED);
+        }
         return ret;
     }
 
@@ -103,22 +95,13 @@ public class Scope implements IScope {
 
         final SessionScope ret = new SessionScope(this);
         ret.setStatus(Status.WAITING);
-        this.agent.ask(new CreateApplication(this, behaviorName), ReActorRef.class, Duration.ofSeconds(3), behaviorName)
-                .whenComplete((reply, failure) -> {
-                    if (failure != null) {
-                        ret.setStatus(Status.ABORTED);
-                    } else if (reply instanceof ReActorRef) {
-                        if (reply == ReActorRef.NO_REACTOR_REF) {
-                            ret.setStatus(Status.ABORTED);
-                        } else {
-                            ret.setAgent(reply);
-                            ret.setStatus(Status.STARTED);
-                        }
-                    } else {
-                        ret.setStatus(Status.ABORTED);
-                    }
-                }).toCompletableFuture().join();
-
+        Ref sessionAgent = this.agent.ask(new CreateApplication(this, behaviorName), Ref.class);
+        if (!sessionAgent.isEmpty()) {
+            ret.setStatus(Status.STARTED);
+            ret.setAgent(sessionAgent);
+        } else {
+            ret.setStatus(Status.ABORTED);
+        }
         return ret;
     }
 
@@ -132,11 +115,11 @@ public class Scope implements IScope {
         return this.data;
     }
 
-    public ReActorRef getAgent() {
+    public Ref getAgent() {
         return this.agent;
     }
 
-    public void setAgent(ReActorRef agent) {
+    public void setAgent(Ref agent) {
         this.agent = agent;
     }
 

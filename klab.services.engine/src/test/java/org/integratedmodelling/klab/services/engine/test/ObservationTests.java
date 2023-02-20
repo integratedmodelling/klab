@@ -77,6 +77,9 @@ public class ObservationTests {
          * These are independent agents so we can have as many as needed. This one uses the
          * resources service to resolve the application to a behavior, then creates a session
          * application running it.
+         * 
+         * Default instrumentation should depend on the type of application, overriddable in the
+         * call.
          */
         ISessionScope applicationScope = scope.runApplication("aries.seea.en");
 

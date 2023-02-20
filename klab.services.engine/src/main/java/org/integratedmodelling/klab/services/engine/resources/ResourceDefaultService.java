@@ -2,6 +2,8 @@ package org.integratedmodelling.klab.services.engine.resources;
 
 import java.io.Serializable;
 
+import org.integratedmodelling.klab.Actors;
+import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
@@ -16,13 +18,13 @@ public class ResourceDefaultService implements ResourceManager, Serializable {
     @Override
     public IBehavior resolveBehavior(String urn, IScope scope) {
         // TODO Auto-generated method stub
-        return null;
+        return Actors.INSTANCE.getBehavior(urn);
     }
 
     @Override
     public IResource resolveResource(String urn, IScope scope) {
         // TODO Auto-generated method stub
-        return null;
+        return Resources.INSTANCE.resolveResource(urn);
     }
 
     @Override

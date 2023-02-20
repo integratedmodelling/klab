@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.api.engine.IEngineService;
 import org.integratedmodelling.klab.api.engine.IScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.runtime.rest.IClient;
+import org.integratedmodelling.klab.services.actors.KAgent.KAgentRef;
 import org.integratedmodelling.klab.services.actors.UserAgent;
 import org.integratedmodelling.klab.services.engine.reasoner.ReasonerDefaultService;
 import org.integratedmodelling.klab.services.engine.resolver.ResolverDefaultService;
@@ -89,7 +90,7 @@ public enum EngineService implements IEngineService, IEngineIdentity {
             ret = new Scope(user, reasonerService, resourceService, resolverService, runtimeService);
             final Scope scope = ret;
             String agentName = user.getUsername();
-            actorSystem.spawn(new UserAgent(agentName)).ifSuccess((t) -> scope.setAgent(t)).orElseSneakyThrow();
+            actorSystem.spawn(new UserAgent(agentName)).ifSuccess((t) -> scope.setAgent(KAgentRef.get(t))).orElseSneakyThrow();
             userScopes.put(user.getUsername(), ret);
         }
         return ret;
