@@ -5,7 +5,8 @@ import java.util.Optional;
 
 import javax.annotation.security.RolesAllowed;
 import org.integratedmodelling.klab.api.API;
-import org.integratedmodelling.klab.hub.api.Tag;
+import org.integratedmodelling.klab.hub.api.MongoTag;
+import org.integratedmodelling.klab.hub.api.TagEntry;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.users.services.UserTagService;
 import org.integratedmodelling.klab.rest.HubNotificationMessage;
@@ -41,7 +42,7 @@ public class UserTaggingController {
     @RolesAllowed({"ROLE_ADMINISTRATOR", "ROLE_SYSTEM"})
     public ResponseEntity< ? > createNewTag(
             @PathVariable String username,
-            @RequestBody Tag tag) {
+            @RequestBody MongoTag tag) {
         try {
             userTagService.createNewTag(username, tag);
         } catch (BadRequestException e) {
@@ -60,7 +61,7 @@ public class UserTaggingController {
     public ResponseEntity< ? > getTagsOfUser(
             @PathVariable String username,
             @RequestParam(required = false, value = API.HUB.PARAMETERS.TYPE_OF_TAG) Optional<HubNotificationMessage.Type> type) {
-        List<Tag> tags;
+        List<TagEntry> tags;
         try {
             tags = type.isEmpty()
                     ? userTagService.getTagsOfUser(username)
@@ -76,12 +77,12 @@ public class UserTaggingController {
                 .body(tags);
     }
 
-    @GetMapping(value = API.HUB.TAG_UNSENT_OF_USER, produces = "application/json", params = API.HUB.PARAMETERS.TYPE_OF_TAG)
+    @GetMapping(value = API.HUB.TAG_UNSENT_OF_USER, produces = "application/json")
     @RolesAllowed({"ROLE_ADMINISTRATOR", "ROLE_SYSTEM"})
     public ResponseEntity< ? > getUnsentTagsOfUser(
             @PathVariable String username,
             @RequestParam(required = false, value = API.HUB.PARAMETERS.TYPE_OF_TAG) Optional<HubNotificationMessage.Type> type) {
-        List<Tag> tags;
+        List<TagEntry> tags;
         try {
             tags = type.isEmpty()
                     ? userTagService.getUnsentTagsOfUser(username)

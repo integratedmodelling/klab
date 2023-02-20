@@ -71,7 +71,8 @@ public class User extends IdentityModel implements UserDetails{
 
     private Set<Role> roles = new HashSet<>();;
 
-    private List<Tag> tags = new ArrayList<>();
+    @Reference
+    private List<TagEntry> tags = new ArrayList<>();
 
     @Reference
     private Set<GroupEntry> groupEntries =  new HashSet<>(); // research groups, etc. in web tool
@@ -392,39 +393,38 @@ public class User extends IdentityModel implements UserDetails{
 		this.email = email;
 	}
 
-    public void addNewTag(Tag tag) {
-        this.tags.add(tag);
+    public void addNewTag(MongoTag mongoTag) {
+        TagEntry tagEntry = new TagEntry(mongoTag);
+        this.tags.add(tagEntry);
     }
 
-    public void addNewTags(Collection<Tag> tags) {
-        this.tags.addAll(tags);
+    public void addNewTags(Collection<MongoTag> tags) {
+        for(MongoTag t : tags) {
+            addNewTag(t);
+        }
     }
 
-    public List<Tag> getTags() {
+    public List<TagEntry> getTags() {
         return tags;
     }
 
-    public List<Tag> getTagsWithDescription(String description) {
+    public List<TagEntry> getTagsOfType(HubNotificationMessage.Type type) {
         return tags.stream()
-                .filter(t -> t.getDescription().equals(description))
+                .filter(
+                        t -> t.getTag().getType() == type
+                )
                 .collect(Collectors.toList());
     }
 
-    public List<Tag> getTagsOfType(HubNotificationMessage.Type type) {
-        return tags.stream()
-                .filter(t -> t.getType() == type)
-                .collect(Collectors.toList());
-    }
-
-    public List<Tag> getUnsentTags() {
+    public List<TagEntry> getUnsentTags() {
         return tags.stream()
                 .filter(t -> !t.isSent())
                 .collect(Collectors.toList());
     }
 
-    public List<Tag> getUnsentTagsOfType(HubNotificationMessage.Type type) {
+    public List<TagEntry> getUnsentTagsOfType(HubNotificationMessage.Type type) {
         return tags.stream()
-                .filter(t -> (t.getType() == type && !t.isSent()))
+                .filter(t -> (t.getTag().getType() == type && !t.isSent()))
                 .collect(Collectors.toList());
     }
 
