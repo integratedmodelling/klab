@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
-import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage.Semaphore;
 
 public abstract class AbstractKlabMessage implements KlabMessage {
 

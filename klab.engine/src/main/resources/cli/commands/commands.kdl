@@ -103,14 +103,15 @@ void "."
 	class org.integratedmodelling.klab.cli.commands.Test
 }
 
-void network
-	"Turn REST network services on and off"
+void explorer 
+	"Launch k.Explorer in the local browser"
 {
-	
-	optional boolean browser
-		"Start a session viewer on the local browser when the network services have booted"
-		default false
-	
+	class org.integratedmodelling.klab.cli.commands.Explorer
+}
+
+void network
+	"Turn REST network services on and off. Pass the 'nodes' argument to list the currently available nodes."
+{
 	class org.integratedmodelling.klab.cli.commands.Network
 }
 

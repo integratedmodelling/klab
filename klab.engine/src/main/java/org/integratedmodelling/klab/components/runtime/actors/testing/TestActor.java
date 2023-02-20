@@ -1,9 +1,9 @@
 package org.integratedmodelling.klab.components.runtime.actors.testing;
 
 import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
+import org.integratedmodelling.klab.components.runtime.actors.SessionActor;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Load;
 import org.integratedmodelling.klab.engine.runtime.Session;
-import org.integratedmodelling.klab.engine.services.scope.actors.SessionActor;
 
 import akka.actor.typed.Behavior;
 import akka.actor.typed.javadsl.ActorContext;
@@ -33,7 +33,5 @@ public class TestActor extends SessionActor {
 		// TODO exec all tests
 		return Behaviors.same();
 	}
-
-	
 	
 }

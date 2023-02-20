@@ -3,6 +3,8 @@ package org.integratedmodelling.klab.api.auth;
 import java.util.List;
 import java.util.Map;
 
+import org.integratedmodelling.klab.api.actors.IBehavior;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.rest.ViewComponent;
 
@@ -146,4 +148,16 @@ public interface IActorIdentity<T> extends IRuntimeIdentity {
 	// must be in the API for now. Called to create the view.
 	void setView(View layout);
 
+
+    /**
+     * Load a specified behavior in a specified runtime scope. Returns a string
+     * identifying the running behavior, which can be passed to
+     * {@link #stop(String)}.
+     * 
+     * @param behavior
+     * @param scope
+     */
+    String load(IBehavior behavior, IContextualizationScope scope);
+
+    boolean stop(String behaviorId);
 }

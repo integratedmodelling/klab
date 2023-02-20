@@ -4,11 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.api.auth.IActorIdentity;
 import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
-import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.rest.MenuAction;
@@ -29,7 +29,7 @@ import akka.actor.typed.ActorRef;
 public class SystemBehavior {
 
     static AtomicLong nextId = new AtomicLong(1l);
-    
+
     /**
      * Load a behavior
      * 
@@ -38,22 +38,22 @@ public class SystemBehavior {
      */
     public static class Load extends AbstractKlabMessage {
 
-        String behavior;
-        Scope scope;
+        private String behavior;
+        private IKActorsBehavior.Scope scope;
         // application ID for forwarding
-        String forwardApplicationId;
+        private String forwardApplicationId;
         // application ID to put in new actor
-        String applicationId;
-        IActorIdentity<KlabMessage> identity;
+        private String applicationId;
+        private IActorIdentity<KlabMessage> identity;
         // if not null, this is a child behavior from a 'new' instruction and it carries
         // a ref to the parent
-        ActorRef<KlabMessage> parent = null;
-        Map<String, Object> metadata;
-        Map<String, Object> arguments;
+        private ActorRef<KlabMessage> parent = null;
+        private Map<String, Object> metadata;
+        private Map<String, Object> arguments;
         // if not null, loading happens as a response to a 'new' and the base name
         // identifies the instantiation for all needed purposes
-        String instanceBaseName;
-        String childActorPath;
+        private String instanceBaseName;
+        private String childActorPath;
 
         /**
          * Called from actor identities, instantiates the actor scope
@@ -67,9 +67,9 @@ public class SystemBehavior {
             this.behavior = behavior;
             this.forwardApplicationId = appId;
             this.identity = identity;
-            this.scope = new Scope(identity, appId, scope, Actors.INSTANCE.getBehavior(behavior));
+            this.scope = new ActorScope(identity, appId, scope, Actors.INSTANCE.getBehavior(behavior));
         }
-        
+
         /**
          * Called from instantiator in actors, uses the scope it's run into.
          * 
@@ -78,7 +78,7 @@ public class SystemBehavior {
          * @param appId
          * @param scope
          */
-        public Load(IActorIdentity<KlabMessage> identity, String behavior, String appId, Scope scope) {
+        public Load(IActorIdentity<KlabMessage> identity, String behavior, String appId, IKActorsBehavior.Scope scope) {
             this.behavior = behavior;
             this.forwardApplicationId = appId;
             this.identity = identity;
@@ -92,6 +92,55 @@ public class SystemBehavior {
             this.scope = load.scope;
         }
 
+        @Deprecated
+        public String getForwardApplicationId() {
+            return forwardApplicationId;
+        }
+
+        public void setForwardApplicationId(String forwardApplicationId) {
+            this.forwardApplicationId = forwardApplicationId;
+        }
+
+        public String getApplicationId() {
+            return applicationId;
+        }
+
+        public void setApplicationId(String applicationId) {
+            this.applicationId = applicationId;
+        }
+
+        public ActorRef<KlabMessage> getParent() {
+            return parent;
+        }
+
+        public void setParent(ActorRef<KlabMessage> parent) {
+            this.parent = parent;
+        }
+
+        public Map<String, Object> getArguments() {
+            return arguments;
+        }
+
+        public void setArguments(Map<String, Object> arguments) {
+            this.arguments = arguments;
+        }
+
+        public String getInstanceBaseName() {
+            return instanceBaseName;
+        }
+
+        public void setInstanceBaseName(String instanceBaseName) {
+            this.instanceBaseName = instanceBaseName;
+        }
+
+        public String getChildActorPath() {
+            return childActorPath;
+        }
+
+        public void setChildActorPath(String childActorPath) {
+            this.childActorPath = childActorPath;
+        }
+
         /**
          * Pass when the main() function may have arguments, typically in components instantiated
          * through 'new'.
@@ -103,7 +152,7 @@ public class SystemBehavior {
             this.arguments = arguments;
             return this;
         }
-        
+
         public Load withMetadata(Map<String, Object> metadata) {
             this.metadata = metadata;
             return this;
@@ -135,6 +184,39 @@ public class SystemBehavior {
             this.applicationId = appId;
             return this;
         }
+
+        public String getBehavior() {
+            return behavior;
+        }
+
+        public void setBehavior(String behavior) {
+            this.behavior = behavior;
+        }
+
+        public IKActorsBehavior.Scope getScope() {
+            return scope;
+        }
+
+        public void setScope(IKActorsBehavior.Scope scope) {
+            this.scope = scope;
+        }
+
+        public IActorIdentity<KlabMessage> getIdentity() {
+            return identity;
+        }
+
+        public void setIdentity(IActorIdentity<KlabMessage> identity) {
+            this.identity = identity;
+        }
+
+        public Map<String, Object> getMetadata() {
+            return metadata;
+        }
+
+        public void setMetadata(Map<String, Object> metadata) {
+            this.metadata = metadata;
+        }
+
     }
 
     /**
@@ -145,7 +227,7 @@ public class SystemBehavior {
      */
     public static class Stop extends AbstractKlabMessage {
 
-        String appId;
+        private String appId;
 
         public Stop(String appId) {
             this.appId = appId;
@@ -154,6 +236,14 @@ public class SystemBehavior {
         @Override
         public Stop direct() {
             throw new KlabIllegalStateException("Actors shouldn't stop themselves.");
+        }
+
+        public String getAppId() {
+            return appId;
+        }
+
+        public void setAppId(String appId) {
+            this.appId = appId;
         }
     }
 
@@ -165,9 +255,9 @@ public class SystemBehavior {
      */
     public static class UserAction extends AbstractKlabMessage {
 
-        ViewAction action;
-        IRuntimeScope scope;
-        String appId;
+        private ViewAction action;
+        private IRuntimeScope scope;
+        private String appId;
 
         public UserAction(ViewAction action, String appId, IRuntimeScope scope) {
             this.action = action;
@@ -179,6 +269,30 @@ public class SystemBehavior {
         public UserAction direct() {
             return new UserAction(action, null, scope);
         }
+
+        public ViewAction getAction() {
+            return action;
+        }
+
+        public void setAction(ViewAction action) {
+            this.action = action;
+        }
+
+        public String getAppId() {
+            return appId;
+        }
+
+        public void setAppId(String appId) {
+            this.appId = appId;
+        }
+
+        public IRuntimeScope getScope() {
+            return scope;
+        }
+
+        public void setScope(IRuntimeScope scope) {
+            this.scope = scope;
+        }
     }
 
     /**
@@ -189,9 +303,9 @@ public class SystemBehavior {
      */
     public static class UserMenuAction extends AbstractKlabMessage {
 
-        MenuAction action;
-        IRuntimeScope scope;
-        String appId;
+        private MenuAction action;
+        private IRuntimeScope scope;
+        private String appId;
 
         public UserMenuAction(MenuAction action, String appId, IRuntimeScope scope) {
             this.action = action;
@@ -203,8 +317,33 @@ public class SystemBehavior {
         public UserMenuAction direct() {
             return new UserMenuAction(action, null, scope);
         }
+
+        public MenuAction getAction() {
+            return action;
+        }
+
+        public void setAction(MenuAction action) {
+            this.action = action;
+        }
+
+        public IRuntimeScope getScope() {
+            return scope;
+        }
+
+        public void setScope(IRuntimeScope scope) {
+            this.scope = scope;
+        }
+
+        public String getAppId() {
+            return appId;
+        }
+
+        public void setAppId(String appId) {
+            this.appId = appId;
+        }
+
     }
-    
+
     /**
      * Bind an action's notification ID to the ID of a component in the associated view, so that
      * matches can be triggered from the view even if the view was built before the action existed.
@@ -214,9 +353,9 @@ public class SystemBehavior {
      */
     public static class BindUserAction extends AbstractKlabMessage {
 
-        long notifyId;
-        String componentId;
-        String appId;
+        private long notifyId;
+        private String componentId;
+        private String appId;
 
         public BindUserAction(long notifyId, String appId, String componentId) {
             this.notifyId = notifyId;
@@ -228,6 +367,31 @@ public class SystemBehavior {
         public BindUserAction direct() {
             return new BindUserAction(notifyId, null, componentId);
         }
+
+        public long getNotifyId() {
+            return notifyId;
+        }
+
+        public void setNotifyId(long notifyId) {
+            this.notifyId = notifyId;
+        }
+
+        public String getComponentId() {
+            return componentId;
+        }
+
+        public void setComponentId(String componentId) {
+            this.componentId = componentId;
+        }
+
+        public String getAppId() {
+            return appId;
+        }
+
+        public void setAppId(String appId) {
+            this.appId = appId;
+        }
+
     }
 
     /**
@@ -254,10 +418,10 @@ public class SystemBehavior {
      */
     public static class Transition extends AbstractKlabMessage {
 
-        KlabActor.Scope scope;
-        String appId;
+        private IKActorsBehavior.Scope scope;
+        private String appId;
 
-        public Transition(String appId, KlabActor.Scope scope) {
+        public Transition(String appId, IKActorsBehavior.Scope scope) {
             this.scope = scope;
             this.appId = appId;
         }
@@ -266,6 +430,23 @@ public class SystemBehavior {
         public Transition direct() {
             return new Transition(null, scope);
         }
+
+        public IKActorsBehavior.Scope getScope() {
+            return scope;
+        }
+
+        public void setScope(IKActorsBehavior.Scope scope) {
+            this.scope = scope;
+        }
+
+        public String getAppId() {
+            return appId;
+        }
+
+        public void setAppId(String appId) {
+            this.appId = appId;
+        }
+
     }
 
     /**
@@ -276,8 +457,8 @@ public class SystemBehavior {
      */
     public static class Spawn extends AbstractKlabMessage {
 
-        IActorIdentity<KlabMessage> identity;
-        String appId;
+        private IActorIdentity<KlabMessage> identity;
+        private String appId;
 
         public Spawn(IActorIdentity<KlabMessage> identity, String appId) {
             this.identity = identity;
@@ -287,6 +468,22 @@ public class SystemBehavior {
         @Override
         public Spawn direct() {
             return new Spawn(identity, null);
+        }
+
+        public IActorIdentity<KlabMessage> getIdentity() {
+            return identity;
+        }
+
+        public void setIdentity(IActorIdentity<KlabMessage> identity) {
+            this.identity = identity;
+        }
+
+        public String getAppId() {
+            return appId;
+        }
+
+        public void setAppId(String appId) {
+            this.appId = appId;
         }
 
     }
@@ -301,17 +498,15 @@ public class SystemBehavior {
      */
     public static class Fire extends AbstractKlabMessage {
 
-        Object value;
-//        boolean finalize;
-        Long listenerId;
-        String appId;
-        Semaphore semaphore;
-        Map<String, Object> scopeVars;
+        private Object value;
+        private Long listenerId;
+        private String appId;
+        private Semaphore semaphore;
+        private Map<String, Object> scopeVars;
 
         public Fire(Long listenerId, Object firedValue/* , boolean isFinal */, String appId, Semaphore semaphore,
                 Map<String, Object> scopeVars) {
             this.value = firedValue;
-//            this.finalize = isFinal;
             this.listenerId = listenerId;
             this.appId = appId;
             this.semaphore = semaphore;
@@ -328,6 +523,46 @@ public class SystemBehavior {
             return new Fire(listenerId, value/* , finalize */, null, semaphore, scopeVars);
         }
 
+        public String getAppId() {
+            return appId;
+        }
+
+        public void setAppId(String appId) {
+            this.appId = appId;
+        }
+
+        public Long getListenerId() {
+            return listenerId;
+        }
+
+        public void setListenerId(Long listenerId) {
+            this.listenerId = listenerId;
+        }
+
+        public Object getValue() {
+            return value;
+        }
+
+        public void setValue(Object value) {
+            this.value = value;
+        }
+
+        public Map<String, Object> getScopeVars() {
+            return scopeVars;
+        }
+
+        public void setScopeVars(Map<String, Object> scopeVars) {
+            this.scopeVars = scopeVars;
+        }
+
+        public Semaphore getSemaphore() {
+            return semaphore;
+        }
+
+        public void setSemaphore(Semaphore semaphore) {
+            this.semaphore = semaphore;
+        }
+
     }
 
     /**
@@ -339,10 +574,10 @@ public class SystemBehavior {
      */
     public static class ComponentFire extends AbstractKlabMessage {
 
-        Object value;
-        boolean finalize;
-        String listenerId;
-        ActorRef<KlabMessage> child;
+        private Object value;
+        private boolean finalize;
+        private String listenerId;
+        private ActorRef<KlabMessage> child;
 
         public ComponentFire(String listenerId, Object firedValue, ActorRef<KlabMessage> child) {
             this.value = firedValue;
@@ -360,6 +595,22 @@ public class SystemBehavior {
             return new ComponentFire(listenerId, value, child);
         }
 
+        public String getListenerId() {
+            return listenerId;
+        }
+
+        public void setListenerId(String listenerId) {
+            this.listenerId = listenerId;
+        }
+
+        public Object getValue() {
+            return value;
+        }
+
+        public void setValue(Object value) {
+            this.value = value;
+        }
+
     }
 
     /**
@@ -373,13 +624,14 @@ public class SystemBehavior {
      */
     public static class AddComponentToGroup extends AbstractKlabMessage {
 
-        ViewComponent group;
-        String componentPath;
-        IParameters<String> arguments;
-        Scope scope;
-        long id = nextId.incrementAndGet();
-        
-        public AddComponentToGroup(ViewComponent group, String componentPath, IParameters<String> arguments, Scope scope) {
+        private ViewComponent group;
+        private String componentPath;
+        private IParameters<String> arguments;
+        private IKActorsBehavior.Scope scope;
+        private long id = nextId.incrementAndGet();
+
+        public AddComponentToGroup(ViewComponent group, String componentPath, IParameters<String> arguments,
+                IKActorsBehavior.Scope scope) {
             this.group = group;
             this.componentPath = componentPath;
             this.arguments = arguments;
@@ -396,14 +648,54 @@ public class SystemBehavior {
             return new AddComponentToGroup(group, componentPath, arguments, scope);
         }
 
+        public ViewComponent getGroup() {
+            return group;
+        }
+
+        public void setGroup(ViewComponent group) {
+            this.group = group;
+        }
+
+        public String getComponentPath() {
+            return componentPath;
+        }
+
+        public void setComponentPath(String componentPath) {
+            this.componentPath = componentPath;
+        }
+
+        public IParameters<String> getArguments() {
+            return arguments;
+        }
+
+        public void setArguments(IParameters<String> arguments) {
+            this.arguments = arguments;
+        }
+
+        public IKActorsBehavior.Scope getScope() {
+            return scope;
+        }
+
+        public void setScope(IKActorsBehavior.Scope scope) {
+            this.scope = scope;
+        }
+
+        public long getId() {
+            return id;
+        }
+
+        public void setId(long id) {
+            this.id = id;
+        }
+
     }
 
     public static class AppReset extends AbstractKlabMessage {
 
-        Scope scope;
-        String appId;
+        private IKActorsBehavior.Scope scope;
+        private String appId;
 
-        public AppReset(Scope scope, String appId) {
+        public AppReset(IKActorsBehavior.Scope scope, String appId) {
             this.scope = scope;
             this.appId = appId;
         }
@@ -418,6 +710,22 @@ public class SystemBehavior {
             return this;
         }
 
+        public IKActorsBehavior.Scope getScope() {
+            return scope;
+        }
+
+        public void setScope(IKActorsBehavior.Scope scope) {
+            this.scope = scope;
+        }
+
+        public String getAppId() {
+            return appId;
+        }
+
+        public void setAppId(String appId) {
+            this.appId = appId;
+        }
+
     }
 
     /**
@@ -429,16 +737,16 @@ public class SystemBehavior {
      */
     public static class KActorsMessage extends AbstractKlabMessage {
 
-        ActorRef<KlabMessage> sender;
-        String message;
-        IParameters<String> arguments = Parameters.create();
-        KlabActor.Scope scope;
-        String appId;
+        private ActorRef<KlabMessage> sender;
+        private String message;
+        private IParameters<String> arguments = Parameters.create();
+        private IKActorsBehavior.Scope scope;
+        private String appId;
         // for caching
-        String actionInternalId;
+        private String actionInternalId;
 
         public KActorsMessage(ActorRef<KlabMessage> sender, String actionId, String actionInternalId,
-                IParameters<String> arguments, KlabActor.Scope scope, String appId) {
+                IParameters<String> arguments, IKActorsBehavior.Scope scope, String appId) {
 
             this.sender = sender;
             this.message = actionId;
@@ -458,6 +766,54 @@ public class SystemBehavior {
         @Override
         public KActorsMessage direct() {
             return new KActorsMessage(sender, message, actionInternalId, arguments, scope, null);
+        }
+
+        public ActorRef<KlabMessage> getSender() {
+            return sender;
+        }
+
+        public void setSender(ActorRef<KlabMessage> sender) {
+            this.sender = sender;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+
+        public IParameters<String> getArguments() {
+            return arguments;
+        }
+
+        public void setArguments(IParameters<String> arguments) {
+            this.arguments = arguments;
+        }
+
+        public IKActorsBehavior.Scope getScope() {
+            return scope;
+        }
+
+        public void setScope(IKActorsBehavior.Scope scope) {
+            this.scope = scope;
+        }
+
+        public String getAppId() {
+            return appId;
+        }
+
+        public void setAppId(String appId) {
+            this.appId = appId;
+        }
+
+        public String getActionInternalId() {
+            return actionInternalId;
+        }
+
+        public void setActionInternalId(String actionInternalId) {
+            this.actionInternalId = actionInternalId;
         }
 
     }

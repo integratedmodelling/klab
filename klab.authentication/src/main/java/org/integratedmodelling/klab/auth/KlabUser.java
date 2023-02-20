@@ -117,12 +117,6 @@ public class KlabUser extends UserIdentity implements IKlabUserIdentity {
 	}
 
 	@Override
-	public String load(IBehavior behavior, IContextualizationScope scope) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public void instrument(Reference actor) {
 		// TODO Auto-generated method stub
 	}
@@ -157,12 +151,6 @@ public class KlabUser extends UserIdentity implements IKlabUserIdentity {
 	}
 
 	@Override
-	public boolean stop(String behaviorId) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public boolean stop() {
 		// TODO Auto-generated method stub
 		return false;
@@ -173,6 +161,18 @@ public class KlabUser extends UserIdentity implements IKlabUserIdentity {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+    @Override
+    public String load(IBehavior behavior, IContextualizationScope scope) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean stop(String behaviorId) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
 //	@Override
 ////	public void setStateChangeListener(String name, BiConsumer<String, Object> listener) {

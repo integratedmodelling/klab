@@ -14,19 +14,11 @@
 package org.integratedmodelling.klab.api.runtime.monitoring;
 
 import java.util.concurrent.Future;
-import java.util.function.Consumer;
-
-import javax.sound.midi.Receiver;
 
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessage.MessageClass;
-import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.observations.ISubject;
-import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
-import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
-import org.integratedmodelling.klab.api.runtime.IScript;
-import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.api.services.IRuntimeService;
 
@@ -46,70 +38,12 @@ import org.integratedmodelling.klab.api.services.IRuntimeService;
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-public interface IMonitor {
+public interface IMonitor extends IChannel {
 
     interface Listener {
         void notifyRootContext(ISubject subject);
     }
 
-    /**
-     * For info to be seen by users: pass a string. Will also take an exception, but usually
-     * exceptions shouldn't turn into warnings. These will be reported to the user unless the
-     * verbosity is set low. Do not abuse of these - there should be only few, really necessary info
-     * messages so that things do not get lost.
-     *
-     * In addition to the main object, you can pass a string that will be interpreted as the info
-     * message class. The class parameter is used by the client to categorize messages so they can
-     * be shown in special ways and easily identified in a list of info messages. Other objects can
-     * also be sent along with the message, according to implementation.
-     *
-     * @param info
-     * @param infoClass
-     */
-    void info(Object... info);
-
-    /**
-     * Pass a string. Will also take an exception, but usually exceptions shouldn't turn into
-     * warnings. These will be reported to the user unless the verbosity is set lowest.
-     *
-     * @param o a {@link java.lang.Object} object.
-     */
-    void warn(Object... o);
-
-    /**
-     * Pass a string or an exception (usually the latter as a reaction to an exception in the
-     * execution). These will interrupt execution from outside, so you should return after raising
-     * one of these.
-     *
-     * In addition, you can pass a statement to communicate errors in k.IM, or other objects that
-     * can be sent and used as necessary.
-     *
-     * @param o a {@link java.lang.Object} object.
-     */
-    void error(Object... o);
-
-    /**
-     * Any message that is just for you or is too verbose to be an info message should be sent as
-     * debug, which is not shown by default unless you enable a higher verbosity. Don't abuse of
-     * these - it's never cheap or good to show hundreds of messages even when testing.
-     *
-     * @param o a {@link java.lang.Object} object.
-     */
-    void debug(Object... o);
-
-    /**
-     * This is to send out serializable objects or other messages through any {@link IMessageBus}
-     * registered with the runtime. Information sent through this channel will only be received by
-     * {@link Receiver receivers} that have subscribed with the {@link IMessageBus} exposed by the
-     * {@link IRuntimeService runtime}. The messages are signed with the monitor's
-     * {@link #getIdentity() identity string}.
-     *
-     * @param message anything that may be sent as a message: either a preconstructed
-     *        {@link IMessage} or the necessary info to build one, including a {@link MessageClass}
-     *        and {@IMessage.Type} along with any payload (any serializable object). Sending a
-     *        {@link INotification} should automatically promote it to a suitable logging message.
-     */
-    void send(Object... message);
 
     /**
      * Like {@link #send(Object...)} but returns a message future for the response.
@@ -124,54 +58,11 @@ public interface IMonitor {
     Future<IMessage> ask(Object... message);
 
     /**
-     * Like {@link #send(Object...)} but takes a handler to process a response when it comes.
-     *
-     * @param handler the handler for the response message
-     * @param message anything that may be sent as a message: either a preconstructed
-     *        {@link IMessage} or the necessary info to build one, including a {@link MessageClass}
-     *        and {@IMessage.Type} along with any payload (any serializable object). Sending a
-     *        {@link INotification} should automatically promote it to a suitable logging message.
-     * 
-     * @return a future, or null if there is no message bus.
-     */
-    void post(Consumer<IMessage> handler, Object... message);
-
-    /**
-     * Use to communicate that a wait is necessary. The receiving end should check getWaitTime().
-     * 
-     * @param seconds
-     */
-    void addWait(int seconds);
-
-    /**
-     * When an operation that may require to wait is called, this should be checked (with a
-     * client-side timeout) until it returns 0 or times out at the server side (-1).
-     * 
-     * @return
-     */
-    int getWaitTime();
-
-    /**
      * A monitor always operates and reports on behalf of some runtime identity, usually with an
      * {@link org.integratedmodelling.klab.api.auth.IServerIdentity} for the top-level monitors.
      *
      * @return the running identity, e.g. a session, task or engine.
      */
     IIdentity getIdentity();
-
-    /**
-     * Check if the monitored identity has been interrupted by a client action. Applies to any task,
-     * such as a {@link ITask} or {@link IScript}. In other identities it will always return false.
-     * 
-     * @return true if interrupted
-     */
-    boolean isInterrupted();
-
-    /**
-     * Tells us that errors have happened in the context we're monitoring.
-     *
-     * @return true if errors have happened in this context of monitoring.
-     */
-    boolean hasErrors();
 
 }
