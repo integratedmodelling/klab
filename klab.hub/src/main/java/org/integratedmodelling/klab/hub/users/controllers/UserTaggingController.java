@@ -44,7 +44,7 @@ public class UserTaggingController {
             @PathVariable String username,
             @RequestBody MongoTag tag) {
         try {
-            userTagService.createNewTag(username, tag);
+            userTagService.assignTagToUser(username, tag);
         } catch (BadRequestException e) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)

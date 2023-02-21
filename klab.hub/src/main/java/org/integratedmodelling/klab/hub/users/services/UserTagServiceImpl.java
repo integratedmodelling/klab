@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.hub.users.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.integratedmodelling.klab.hub.api.MongoTag;
 import org.integratedmodelling.klab.hub.api.TagEntry;
@@ -22,6 +23,15 @@ public class UserTagServiceImpl implements UserTagService {
                 .orElseThrow(() -> new BadRequestException("User is not present."));
     }
 
+    private boolean checkIfTagExists(MongoTag tag) {
+        Optional<MongoTag> tagInTheDatabase = tagRepository.findByName(tag.getName());
+        if(tagInTheDatabase.isPresent()) {
+            tag = tagInTheDatabase.get();
+            return true;
+        }
+        return false;
+    }
+
     public UserTagServiceImpl(MongoTagRepository tagRepository, UserRepository userRepository) {
         super();
         this.tagRepository = tagRepository;
@@ -29,10 +39,12 @@ public class UserTagServiceImpl implements UserTagService {
     }
 
     @Override
-    public void createNewTag(String username, MongoTag tag) {
+    public void assignTagToUser(String username, MongoTag tag) {
         User user = findUserByName(username);
+        if (!checkIfTagExists(tag)) {
+            tagRepository.save(tag);
+        }
         user.addNewTag(tag);
-        tagRepository.save(tag);
         userRepository.save(user);
     }
 

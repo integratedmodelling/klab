@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @Service
 public interface UserTagService {
 
-    public void createNewTag(String username, MongoTag tag);
+    public void assignTagToUser(String username, MongoTag tag);
 
     public List<TagEntry> getTagsOfUser(String username);
 

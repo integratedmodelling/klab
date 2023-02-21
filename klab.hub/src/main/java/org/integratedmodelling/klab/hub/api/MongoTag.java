@@ -46,6 +46,10 @@ public class MongoTag {
         }
         this.name = name;
     }
+    
+    public String getName() {
+        return this.name;
+    }
 
     public HubNotificationMessage.Type getType() {
         return type;
