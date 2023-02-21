@@ -140,10 +140,7 @@ public class KAgent implements ReActor {
      */
     protected ReActorConfig.Builder configure() {
         return ReActorConfig.newBuilder()
-                .setReActorName(name)/*
-                                      * .setTypedSubscriptions(TypedSubscriptionPolicy.FULL.forType(
-                                      * KlabException.class))
-                                      */;
+                .setReActorName(name);
     }
 
     @Override

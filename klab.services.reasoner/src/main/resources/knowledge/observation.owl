@@ -1,0 +1,1943 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://integratedmodelling.org/ks/observation.owl#"
+     xml:base="http://integratedmodelling.org/ks/observation.owl"
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:obo="http://purl.obolibrary.org/obo/"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:foaf="http://xmlns.com/foaf/0.1/"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+    <owl:Ontology rdf:about="http://integratedmodelling.org/ks/observation.owl">
+        <owl:versionIRI rdf:resource="http://integratedmodelling.org/ks/observation.owl/0.10.0"/>
+        <owl:imports rdf:resource="http://purl.obolibrary.org/obo/bfo/2.0/bfo.owl"/>
+        <dc:contributor xml:lang="en">Ferdinando Villa (ferdinando.villa at bc3research.org)
+Main author</dc:contributor>
+        <dc:license xml:lang="en">Copyright (c) 2010-2017 integratedmodelling.org.  All rights reserved. This work is licensed under the Creative Commons Attribution 3.0 Unported License. To view a copy of this license, visit http://creativecommons.org/licenses/by/3.0/ or send a letter to Creative Commons, 444 Castro Street, Suite 900, Mountain View, California, 94041, USA.</dc:license>
+        <rdfs:comment>The IM observation ontology establishes the taxonomy of observables (and their attributes), their observations and their fundamental properties. The observable characterization is intentionally shallow as observables are meant to specialize types in an externally provided upper ontology to form the basis of a worldview. Such links are made in the root domain of the worldview. Similarly, only object properties that support the k.IM concept predicates are provided, meant to specialize the correspondent properties in the upper ontology. This ontology, along with the upper ontology, drives all k.LAB validations and inferences.</rdfs:comment>
+        <owl:versionInfo xml:lang="en">Version 0.10.0</owl:versionInfo>
+    </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotation properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#baseDeclaration -->
+
+    <owl:AnnotationProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#baseDeclaration"/>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#inherencyIsDistributed -->
+
+    <owl:AnnotationProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#inherencyIsDistributed"/>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#isAbstract -->
+
+    <owl:AnnotationProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#isAbstract"/>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#isCoreKimType -->
+
+    <owl:AnnotationProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#isCoreKimType">
+        <rdfs:comment>Key property: a value of true is necessary for k.LAB to recognize a core concept in the worldview as the official representative of the base observable mentioned in it. It&apos;s a 2-way validation between expressions like &quot;Subject is core observable:Subject&apos; and the ontology.</rdfs:comment>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#isDeniable -->
+
+    <owl:AnnotationProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#isDeniable">
+        <rdfs:comment>Used to indicate a trait that can be denied.</rdfs:comment>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#isSubjective -->
+
+    <owl:AnnotationProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#isSubjective"/>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#isTypeDelegate -->
+
+    <owl:AnnotationProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#isTypeDelegate">
+        <rdfs:comment>Added to &quot;type&quot; delegates that contextualize traits and were not directly declared by users, so that they can be recognized and translated in output and visualization.</rdfs:comment>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#orderingRank -->
+
+    <owl:AnnotationProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#orderingRank"/>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#unit -->
+
+    <owl:AnnotationProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#unit">
+        <unit>kg,N</unit>
+        <rdfs:comment>Note that kg is allowed as the SI unit, although the actual SI unit for weight (a force) is the Newton (N). It would be quite confusing for now to mandate N for a majority of users.</rdfs:comment>
+    </owl:AnnotationProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#affects -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#affects">
+        <rdfs:domain rdf:resource="http://integratedmodelling.org/ks/observation.owl#Process"/>
+        <rdfs:range rdf:resource="http://integratedmodelling.org/ks/observation.owl#Observable"/>
+        <rdfs:comment>A process affects a state in its context when it is able to change the state of the correspondent quality as time moves on. If this relationship exists, the state is dynamic.</rdfs:comment>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#appliesTo -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#appliesTo">
+        <rdfs:comment>Allows restricting the range of observables that an observable applies to, the meaning of which depends on the type of observable. TODO specialize this and use the proper one for each type.</rdfs:comment>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#changed -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#changed">
+        <rdfs:subPropertyOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#affects"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#changes -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#changes">
+        <rdfs:subPropertyOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#affects"/>
+        <rdfs:comment>For observables modified by a process but owned by the context where the process occurs, so existing independently of the process itself.</rdfs:comment>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#classifiesQuality -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#classifiesQuality"/>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#confersTrait -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#confersTrait"/>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#containsPart -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#containsPart">
+        <rdfs:subPropertyOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#relatesTo"/>
+        <owl:inverseOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#isPartOf"/>
+        <rdfs:comment>Used to express generic containment (&apos;contains&apos;) in a mereological sense. For spatial containment the system will automatically use the spatial child.</rdfs:comment>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#containsPartSpatially -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#containsPartSpatially">
+        <rdfs:subPropertyOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#containsPart"/>
+        <rdfs:comment>Used to express stated containment when the domain and range are spatial (includes spatial realms).</rdfs:comment>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#contextualizes -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#contextualizes">
+        <rdfs:domain>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://integratedmodelling.org/ks/observation.owl#contextualizes"/>
+                <owl:allValuesFrom rdf:resource="http://integratedmodelling.org/ks/observation.owl#Observation"/>
+            </owl:Restriction>
+        </rdfs:domain>
+        <rdfs:comment>The relationship that links an observation to its observable.</rdfs:comment>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#creates -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#creates">
+        <rdfs:subPropertyOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#affects"/>
+        <rdfs:comment>For affected observables that are owned by a process: e.g., runoff water volume created by waterflow.</rdfs:comment>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#dependsOn -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#dependsOn">
+        <rdfs:subPropertyOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#relatesTo"/>
+        <rdfs:comment>Used to express true stated dependency (&apos;uses&apos;).</rdfs:comment>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#describesObservable -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#describesObservable">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://integratedmodelling.org/ks/observation.owl#Quality"/>
+        <rdfs:range rdf:resource="http://integratedmodelling.org/ks/observation.owl#Observable"/>
+        <rdfs:comment>The specific inherency that describes the reinterpretation of an observable to make a descriptive quality from an observable aspect of it. Used to point to the original observables in reinterpreting operators such as distance, presence, count, change or type.</rdfs:comment>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#describesQuality -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#describesQuality"/>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#discretizesQuality -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#discretizesQuality"/>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#exposesTrait -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#exposesTrait">
+        <rdfs:domain rdf:resource="http://integratedmodelling.org/ks/observation.owl#Type"/>
+        <rdfs:range rdf:resource="http://integratedmodelling.org/ks/observation.owl#Trait"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#hasAttribute -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#hasAttribute">
+        <rdfs:subPropertyOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#traitProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#hasCausant -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#hasCausant">
+        <rdfs:subPropertyOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#relatesTo"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#hasCaused -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#hasCaused">
+        <rdfs:subPropertyOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#relatesTo"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#hasCompresent -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#hasCompresent">
+        <rdfs:subPropertyOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#relatesTo"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#hasContext -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#hasContext">
+        <rdfs:subPropertyOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#structuringObjectProperty"/>
+        <rdfs:comment>The context of an observation is mandatorily a direct observation.</rdfs:comment>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#hasDestination -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#hasDestination">
+        <rdfs:domain rdf:resource="http://integratedmodelling.org/ks/observation.owl#Relationship"/>
+        <rdfs:range rdf:resource="http://integratedmodelling.org/ks/observation.owl#Subject"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#hasIdentity -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#hasIdentity">
+        <rdfs:subPropertyOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#traitProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#hasPurpose -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#hasPurpose">
+        <rdfs:subPropertyOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#relatesTo"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#hasRealm -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#hasRealm">
+        <rdfs:subPropertyOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#traitProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#hasRole -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#hasRole">
+        <rdfs:domain rdf:resource="http://integratedmodelling.org/ks/observation.owl#Observable"/>
+        <rdfs:range rdf:resource="http://integratedmodelling.org/ks/observation.owl#Role"/>
+        <rdfs:comment>Points to the roles of an observable in the current context.</rdfs:comment>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#hasScale -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#hasScale">
+        <rdfs:domain rdf:resource="http://integratedmodelling.org/ks/observation.owl#Observation"/>
+        <rdfs:range rdf:resource="http://integratedmodelling.org/ks/observation.owl#Scale"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#hasSource -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#hasSource">
+        <rdfs:domain rdf:resource="http://integratedmodelling.org/ks/observation.owl#Relationship"/>
+        <rdfs:range rdf:resource="http://integratedmodelling.org/ks/observation.owl#Subject"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#hasSubjectiveTrait -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#hasSubjectiveTrait">
+        <rdfs:subPropertyOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#traitProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#impliesDestination -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#impliesDestination">
+        <rdfs:comment>Used for a role that applies to a relationship, to restrict the type of destination the relationship can lead into.</rdfs:comment>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#impliesObservable -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#impliesObservable">
+        <rdfs:domain rdf:resource="http://integratedmodelling.org/ks/observation.owl#Trait"/>
+        <rdfs:range rdf:resource="http://integratedmodelling.org/ks/observation.owl#Observable"/>
+        <rdfs:comment>This property embodies the notion of &quot;implication&quot; of another observable, whose existence is implied by observing a particular trait. For example, the trait &quot;warm&quot; implies presence of a process in which energy moves particles causing heat, or more prosaically, observability of buildings in a point implies that a building is there.</rdfs:comment>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#impliesRole -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#impliesRole">
+        <rdfs:domain rdf:resource="http://integratedmodelling.org/ks/observation.owl#Role"/>
+        <rdfs:range rdf:resource="http://integratedmodelling.org/ks/observation.owl#Role"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#impliesSource -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#impliesSource">
+        <rdfs:comment>Used for a role that applies to a relationship, to restrict the type of source the relationship can start from.</rdfs:comment>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#inverselyProportionalQuality -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#inverselyProportionalQuality"/>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#isAdjacentTo -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#isAdjacentTo">
+        <rdfs:subPropertyOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#relatesTo"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#isComparedTo -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#isComparedTo">
+        <rdfs:subPropertyOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#relatesTo"/>
+        <rdfs:comment>An observable may be defined by comparing an observable to another. For example, this may affect a valued observable or a ratio observable. In such cases, this property points to the comparison observable, while the inherent observable is the one being compared to it.</rdfs:comment>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#isConstituentOf -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#isConstituentOf">
+        <rdfs:subPropertyOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#isInherentTo"/>
+        <rdfs:subPropertyOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#isPartOf"/>
+        <rdfs:comment>Constituency is a functional type of inherency: removing a constituent of an entity makes the entity cease to exist.</rdfs:comment>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#isInherentTo -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#isInherentTo">
+        <rdfs:subPropertyOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#structuringObjectProperty"/>
+        <rdfs:comment>The generic &quot;participation&quot; relationship, specified by the &apos;of&apos; keyword and distinct from context (within) which is not identity-defining.</rdfs:comment>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#isNegationOf -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#isNegationOf">
+        <rdfs:subPropertyOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#traitProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#isPartOf -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#isPartOf">
+        <rdfs:subPropertyOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#hasContext"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#limitedBy -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#limitedBy">
+        <rdfs:range>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#universal"/>
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/BFO_0000001"/>
+                </owl:unionOf>
+            </owl:Class>
+        </rdfs:range>
+        <rdfs:comment>Used to limit the possible value of a categorical observer to a partial union of subtypes.</rdfs:comment>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#marksQuality -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#marksQuality"/>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#observes -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#observes">
+        <rdfs:domain rdf:resource="http://integratedmodelling.org/ks/observation.owl#ObservationProcess"/>
+        <rdfs:range rdf:resource="http://integratedmodelling.org/ks/observation.owl#Observable"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#occursDuring -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#occursDuring">
+        <rdfs:subPropertyOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#relatesTo"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#proportionalQuality -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#proportionalQuality"/>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#relatesTo -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#relatesTo">
+        <rdfs:comment>Most generic stated restriction used to imply an allowed dependency.</rdfs:comment>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#representedBy -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#representedBy">
+        <rdfs:range>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#universal"/>
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/BFO_0000001"/>
+                </owl:unionOf>
+            </owl:Class>
+        </rdfs:range>
+        <rdfs:comment>Used to restrict an observable when it is observed through another - e.g. geographical direction by presence of moss on trees.</rdfs:comment>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#requiresIdentity -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#requiresIdentity">
+        <rdfs:domain rdf:resource="http://integratedmodelling.org/ks/observation.owl#Observable"/>
+        <rdfs:range rdf:resource="http://integratedmodelling.org/ks/observation.owl#Identity"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#structuringObjectProperty -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#structuringObjectProperty"/>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#traitProperty -->
+
+    <owl:ObjectProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#traitProperty"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Absence -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Absence">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Trait"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://integratedmodelling.org/ks/observation.owl#impliesObservable"/>
+                <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality>
+                <owl:onClass rdf:resource="http://integratedmodelling.org/ks/observation.owl#Observable"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <rdfs:comment>The absence trait, which must specialize another, mandatorily defines at least one observable whose existence in the context it denies.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Acceleration -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Acceleration">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#IntensivePhysicalProperty"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
+        <unit>m/s^2</unit>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Agent -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Agent">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#PhysicalObject"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
+        <rdfs:comment>An Agent is always physical and material.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Amount -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Amount">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#ExtensivePhysicalProperty"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
+        <unit>mol</unit>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Angle -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Angle">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#IntensivePhysicalProperty"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
+        <unit>degree_angle</unit>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Area -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Area">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#ExtensivePhysicalProperty"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
+        <unit>m^2</unit>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Areal -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Areal">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#SpatialIdentity"/>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Asimmetry -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Asimmetry">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#DistributionProperty"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#AssertedQuality -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#AssertedQuality">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#ObservedQuality"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Assessment -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Assessment">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#ObservationProcess"/>
+        <rdfs:comment>An assessment is an observation process that produces a quality in a context where the observation can not be made atomically (for example because of distributed values).</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Attribute -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Attribute">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Trait"/>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Change -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Change">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Process"/>
+        <rdfs:comment>A process that is inherent to a quality, causing its states to change in time.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#ChangeEvent -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#ChangeEvent">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Event"/>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#ChangeRate -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#ChangeRate">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#ContinuousNumericallyQuantifiableQuality"/>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Charge -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Charge">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#IntensivePhysicalProperty"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
+        <unit>C</unit>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Classification -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Classification">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#IndirectObservation"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://integratedmodelling.org/ks/observation.owl#contextualizes"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://integratedmodelling.org/ks/observation.owl#Type"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#CoefficientOfVariation -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#CoefficientOfVariation">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#DistributionProperty"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Compilation -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Compilation">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Observation"/>
+        <rdfs:comment>Compilation is the observation of a Void observable, producing a non-semantic artifact</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Configuration -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Configuration">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#universal"/>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
+        <rdfs:comment>A configuration is what human observation perceives as a resultant &quot;pattern&quot; summing up the perceived effects of multiple qualities in a subject. It is not observable in k.LAB, but it can be used (exclusively) as the inherent subject for qualities. It must specify the subject type it pertains to (using an inherentTo restriction), and the subject type must match the subject where any observation of Q/Ts inherent to it are made.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#ContextualQuality -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#ContextualQuality">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Quality"/>
+        <owl:disjointWith rdf:resource="http://integratedmodelling.org/ks/observation.owl#ObservedQuality"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Contextualization -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Contextualization">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
+        <rdfs:comment>The process that creates observations. It is an activity in provenance sense, and may be triggered by any agent. Contextualization incarnates a concept into an observation, producing any other observations necessary.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#ContinuousNumericallyQuantifiableQuality -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#ContinuousNumericallyQuantifiableQuality">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#QuantifiableQuality"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#CountObservation -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#CountObservation">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Quantification"/>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#CountableThing -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#CountableThing">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#DirectObservable"/>
+        <rdfs:comment>An entity that can be counted at the scale of observation. This includes processes when they happen fast enough to be perceived as events.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Daily -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Daily">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#TemporalIdentity"/>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#DeliberativeAgent -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#DeliberativeAgent">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#ReactiveAgent"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <rdfs:comment>The deliberative agent can change its own state. If the relationship with other agents is &apos;affects&apos;, it can also modify other agents&apos; state. A deliberative agent is not necessarily interactive.
+Importantly, a deliberative agent can access history, although the full meaning of this is still under definition and more specification may be added.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Density -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Density">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#IntensivePhysicalProperty"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <unit>kg/m^3</unit>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#DirectObservable -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#DirectObservable">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Observable"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <rdfs:comment>A direct observable is observed by simply acknowledging its existence.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#DirectObservation -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#DirectObservation">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Observation"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://integratedmodelling.org/ks/observation.owl#contextualizes"/>
+                <owl:allValuesFrom rdf:resource="http://integratedmodelling.org/ks/observation.owl#DirectObservable"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://integratedmodelling.org/ks/observation.owl#hasScale"/>
+                <owl:allValuesFrom rdf:resource="http://integratedmodelling.org/ks/observation.owl#ScaleObservation"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <owl:disjointWith rdf:resource="http://integratedmodelling.org/ks/observation.owl#IndirectObservation"/>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Distance -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Distance">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Length"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#DistanceMeasurement -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#DistanceMeasurement">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Measurement"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://integratedmodelling.org/ks/observation.owl#contextualizes"/>
+                <owl:allValuesFrom rdf:resource="http://integratedmodelling.org/ks/observation.owl#Distance"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#DistributionProperty -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#DistributionProperty">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#ContinuousNumericallyQuantifiableQuality"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Domain -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Domain">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#universal"/>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Duration -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Duration">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#ExtensivePhysicalProperty"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
+        <unit>s</unit>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#ElectricPotential -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#ElectricPotential">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#IntensivePhysicalProperty"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
+        <unit>J/C</unit>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Energy -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Energy">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#IntensivePhysicalProperty"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
+        <unit>J</unit>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Entropy -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Entropy">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#IntensivePhysicalProperty"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
+        <unit>J/K</unit>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#EnumerableQuality -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#EnumerableQuality">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#ObservedQuality"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Event -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Event">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#CountableThing"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#ExtensivePhysicalProperty -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#ExtensivePhysicalProperty">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#PhysicalProperty"/>
+        <owl:disjointWith rdf:resource="http://integratedmodelling.org/ks/observation.owl#IntensivePhysicalProperty"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Extent -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Extent">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#ContextualQuality"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://integratedmodelling.org/ks/observation.owl#hasContext"/>
+                <owl:allValuesFrom rdf:resource="http://integratedmodelling.org/ks/observation.owl#Scale"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#FunctionalRelationship -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#FunctionalRelationship">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Relationship"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
+        <rdfs:comment>A functional relationship is a process happening between two subjects.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Hourly -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Hourly">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#TemporalIdentity"/>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Identity -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Identity">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Trait"/>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#IndirectObservation -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#IndirectObservation">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Observation"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://integratedmodelling.org/ks/observation.owl#contextualizes"/>
+                <owl:allValuesFrom rdf:resource="http://integratedmodelling.org/ks/observation.owl#Quality"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#IntensivePhysicalProperty -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#IntensivePhysicalProperty">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#PhysicalProperty"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#InteractiveAgent -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#InteractiveAgent">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#ReactiveAgent"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <rdfs:comment>Interactive agents have the ability to see other agents and read their state as long as their semantics relates to them through restrictions.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Kurtosis -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Kurtosis">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#DistributionProperty"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Length -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Length">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#IntensivePhysicalProperty"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
+        <unit>m</unit>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Level -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Level">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#EnumerableQuality"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <rdfs:comment>An enumerated quality that summarizes the values of a continuous one into a set of ordered classes.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Lineal -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Lineal">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#SpatialIdentity"/>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Magnitude -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Magnitude">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#ContinuousNumericallyQuantifiableQuality"/>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Mass -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Mass">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#ExtensivePhysicalProperty"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
+        <unit>kg</unit>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Mean -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Mean">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#DistributionProperty"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Measurement -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Measurement">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Quantification"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://integratedmodelling.org/ks/observation.owl#contextualizes"/>
+                <owl:allValuesFrom rdf:resource="http://integratedmodelling.org/ks/observation.owl#PhysicalProperty"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#MonetaryValue -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#MonetaryValue">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Value"/>
+        <owl:disjointWith rdf:resource="http://integratedmodelling.org/ks/observation.owl#PreferenceValue"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Monthly -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Monthly">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#TemporalIdentity"/>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Multiplicity -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Multiplicity">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Extent"/>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Numerosity -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Numerosity">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#QuantifiableQuality"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Observability -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Observability">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Trait"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <rdfs:comment>An abstract trait that describes the observability of another observable or trait. Subclassed automatically in class specifications when they expose something other than a direct trait.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Observable -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Observable">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000001"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://integratedmodelling.org/ks/observation.owl#traitProperty"/>
+                <owl:someValuesFrom rdf:resource="http://integratedmodelling.org/ks/observation.owl#Trait"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Observation -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Observation">
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000002"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://integratedmodelling.org/ks/observation.owl#contextualizes"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://integratedmodelling.org/ks/observation.owl#Void"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://integratedmodelling.org/ks/observation.owl#hasContext"/>
+                <owl:maxQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:maxQualifiedCardinality>
+                <owl:onClass rdf:resource="http://integratedmodelling.org/ks/observation.owl#DirectObservation"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment>A continuant that represents the state of an observable, produced by a Contextualization instance.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#ObservationMultiplicityReduction -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#ObservationMultiplicityReduction">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Attribute"/>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#ObservationProcess -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#ObservationProcess">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Process"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://integratedmodelling.org/ks/observation.owl#observes"/>
+                <owl:someValuesFrom rdf:resource="http://integratedmodelling.org/ks/observation.owl#Quality"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#ObservationTransformation -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#ObservationTransformation">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Attribute"/>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#ObservedQuality -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#ObservedQuality">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Quality"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Occurrence -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Occurrence">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Probability"/>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Ordering -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Ordering">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Attribute"/>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#PhysicalGroup -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#PhysicalGroup">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Subject"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000027"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#PhysicalObject -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#PhysicalObject">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Subject"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000030"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <rdfs:comment>A physical object is material, although it can be a cavity, defined by the absence of physical matter within a physical medium.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#PhysicalProperty -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#PhysicalProperty">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#ContinuousNumericallyQuantifiableQuality"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Predicted -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Predicted">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Attribute"/>
+        <rdfs:comment>Attribute tagging predicted qualities. Used in learning models.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#PreferenceValue -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#PreferenceValue">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Value"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Presence -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Presence">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#EnumerableQuality"/>
+        <owl:disjointWith rdf:resource="http://integratedmodelling.org/ks/observation.owl#Type"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#PresenceObservation -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#PresenceObservation">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#IndirectObservation"/>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Pressure -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Pressure">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#IntensivePhysicalProperty"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
+        <unit>Pa</unit>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Priority -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Priority">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#QuantifiableQuality"/>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Probability -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Probability">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#ContinuousNumericallyQuantifiableQuality"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#ProbabilityObservation -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#ProbabilityObservation">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Quantification"/>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Process -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Process">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#DirectObservable"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000015"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://integratedmodelling.org/ks/observation.owl#affects"/>
+                <owl:someValuesFrom rdf:resource="http://integratedmodelling.org/ks/observation.owl#Quality"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Proportion -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Proportion">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#RelativeQuantity"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#ProportionObservation -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#ProportionObservation">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Quantification"/>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Puntal -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Puntal">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#SpatialIdentity"/>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Quality -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Quality">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Observable"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000019"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <rdfs:comment>A quality is observed only indirectly, by comparison with a reference quality. The comparison produces different outcomes according to the nature of the quality. The observation resulting from the contextualization of a quality is called a state, and contains values in the same numerosity as the scale.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#QuantifiableQuality -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#QuantifiableQuality">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#ObservedQuality"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Quantification -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Quantification">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#IndirectObservation"/>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Ranking -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Ranking">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Quantification"/>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Ratio -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Ratio">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#RelativeQuantity"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#RatioObservation -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#RatioObservation">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Quantification"/>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#ReactiveAgent -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#ReactiveAgent">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Agent"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <rdfs:comment>Reactive agents have the ability of reacting to events, reading and if necessary changing their state and scale.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#ReactiveSubject -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#ReactiveSubject">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#PhysicalObject"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <rdfs:comment>Reactive subjects have the ability of reacting to events, reading their state and scale.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Realm -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Realm">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Trait"/>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Relationship -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Relationship">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#DirectObservable"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#RelativeQuantity -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#RelativeQuantity">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#ContinuousNumericallyQuantifiableQuality"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <rdfs:comment>Any quality that compares to a compatible other. These are allowed to have another quality as the inherent type.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Resistance -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Resistance">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#IntensivePhysicalProperty"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
+        <unit>Ohm</unit>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Resistivity -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Resistivity">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#IntensivePhysicalProperty"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
+        <unit>Ohm/m</unit>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Role -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Role">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#universal"/>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Scale -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Scale">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#DirectObservable"/>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#ScaleObservation -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#ScaleObservation">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Observation"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://integratedmodelling.org/ks/observation.owl#contextualizes"/>
+                <owl:allValuesFrom rdf:resource="http://integratedmodelling.org/ks/observation.owl#Scale"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Space -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Space">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Extent"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://integratedmodelling.org/ks/observation.owl#contextualizes"/>
+                <owl:allValuesFrom rdf:resource="http://purl.obolibrary.org/obo/BFO_0000011"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <owl:disjointWith rdf:resource="http://integratedmodelling.org/ks/observation.owl#Time"/>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#SpatialIdentity -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#SpatialIdentity">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Identity"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Speed -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Speed">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#IntensivePhysicalProperty"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
+        <unit>m/s</unit>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#StandardDeviation -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#StandardDeviation">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#DistributionProperty"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#StructuralRelationship -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#StructuralRelationship">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Relationship"/>
+        <rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/BFO_0000145"/>
+        <rdfs:comment>A structural relationship is a continuant that joins two subjects.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Subject -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Subject">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#CountableThing"/>
+        <rdfs:subClassOf>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/BFO_0000040"/>
+                    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/BFO_0000141"/>
+                </owl:unionOf>
+            </owl:Class>
+        </rdfs:subClassOf>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#SubjectiveTrait -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#SubjectiveTrait">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Attribute"/>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Temperature -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Temperature">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#IntensivePhysicalProperty"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
+        <unit>K</unit>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#TemporalIdentity -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#TemporalIdentity">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Identity"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Time -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Time">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Extent"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://integratedmodelling.org/ks/observation.owl#contextualizes"/>
+                <owl:allValuesFrom rdf:resource="http://purl.obolibrary.org/obo/BFO_0000008"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Trait -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Trait">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#universal"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://integratedmodelling.org/ks/observation.owl#impliesObservable"/>
+                <owl:someValuesFrom rdf:resource="http://integratedmodelling.org/ks/observation.owl#Observable"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Type -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Type">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#EnumerableQuality"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://integratedmodelling.org/ks/observation.owl#exposesTrait"/>
+                <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality>
+                <owl:onClass rdf:resource="http://integratedmodelling.org/ks/observation.owl#Trait"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <rdfs:comment>A type exposes one or more traits of its context. A trait is a universal, but a type is a quality, so it allows attributing the universal to a context.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Uncertainty -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Uncertainty">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#DistributionProperty"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#UncertaintyObservation -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#UncertaintyObservation">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Quantification"/>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Valuation -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Valuation">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Quantification"/>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Value -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Value">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#QuantifiableQuality"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Variance -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Variance">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#DistributionProperty"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Viscosity -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Viscosity">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#IntensivePhysicalProperty"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
+        <unit>100 Pa*s</unit>
+        <rdfs:comment>Unit is Poise (P) which is not available in JScience, and corresponds to 100 mPa.s</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Void -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Void">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Observable"/>
+        <rdfs:comment>Void is a &quot;semantic zero&quot;, used to make those observations that produce only side effects and non-semantic artifacts such as tables, reports, scenario visualizations and the like.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Volume -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Volume">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#ExtensivePhysicalProperty"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
+        <unit>m^3</unit>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Volumetric -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Volumetric">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#SpatialIdentity"/>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Weekly -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Weekly">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#TemporalIdentity"/>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Weight -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Weight">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#ExtensivePhysicalProperty"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
+        <unit>kg</unit>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Yearly -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Yearly">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#TemporalIdentity"/>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#universal -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#universal">
+        <owl:disjointWith rdf:resource="http://purl.obolibrary.org/obo/BFO_0000001"/>
+        <rdfs:comment>Placeholder to be switched to BFO&apos;s forthcoming universal class when BFO includes it. Should be disjoint with the non-existing class &apos;particular&apos;.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://purl.obolibrary.org/obo/BFO_0000001 -->
+
+    <rdf:Description rdf:about="http://purl.obolibrary.org/obo/BFO_0000001"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // General axioms
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <owl:members rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#Acceleration"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#Angle"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#Area"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#Charge"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#Density"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#Duration"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#ElectricPotential"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#Energy"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#Entropy"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#Length"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#Pressure"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#Resistance"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#Resistivity"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#Speed"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#Temperature"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#Viscosity"/>
+        </owl:members>
+    </rdf:Description>
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <owl:members rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#Amount"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#Mass"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#Volume"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#Weight"/>
+        </owl:members>
+    </rdf:Description>
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <owl:members rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#Asimmetry"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#CoefficientOfVariation"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#Kurtosis"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#Mean"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#StandardDeviation"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#Uncertainty"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#Variance"/>
+        </owl:members>
+    </rdf:Description>
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <owl:members rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#AssertedQuality"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#EnumerableQuality"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#QuantifiableQuality"/>
+        </owl:members>
+    </rdf:Description>
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <owl:members rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#Classification"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#PresenceObservation"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#Quantification"/>
+        </owl:members>
+    </rdf:Description>
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <owl:members rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#ContinuousNumericallyQuantifiableQuality"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#Numerosity"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#Value"/>
+        </owl:members>
+    </rdf:Description>
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <owl:members rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#CountObservation"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#DistanceMeasurement"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#ProbabilityObservation"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#ProportionObservation"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#Ranking"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#RatioObservation"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#UncertaintyObservation"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#Valuation"/>
+        </owl:members>
+    </rdf:Description>
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <owl:members rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#DistributionProperty"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#PhysicalProperty"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#Probability"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#Proportion"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#Ratio"/>
+        </owl:members>
+    </rdf:Description>
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <owl:members rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#Identity"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#Observability"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#Ordering"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#Realm"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#Role"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#SubjectiveTrait"/>
+        </owl:members>
+    </rdf:Description>
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <owl:members rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#Mass"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#Volume"/>
+            <rdf:Description rdf:about="http://integratedmodelling.org/ks/observation.owl#Weight"/>
+        </owl:members>
+    </rdf:Description>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi -->
+

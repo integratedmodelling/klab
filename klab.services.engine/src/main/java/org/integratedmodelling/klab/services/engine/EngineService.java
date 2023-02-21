@@ -10,6 +10,7 @@ import org.eclipse.xtext.testing.IInjectorProvider;
 import org.integratedmodelling.kactors.model.KActors;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.model.Kim;
+import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.api.auth.IEngineIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
@@ -72,6 +73,11 @@ public enum EngineService implements IEngineService, IEngineIdentity {
 
         initializeLanguageServices();
 
+        /*
+         * boot the actor system
+         */
+        Actors.INSTANCE.setup();
+        
         this.actorSystem = new ReActorSystem(ReActorSystemConfig.newBuilder().setReactorSystemName("klab").build())
                 .initReActorSystem();
 

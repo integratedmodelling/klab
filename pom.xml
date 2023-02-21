@@ -90,7 +90,9 @@
 		<module>klab.authentication</module>
 		<module>klab.activity</module>
 		<!-- later (only runs with j17 as the Maven artifacts are j17, although it should compile) -->
-		<!-- <module>klab.services.engine</module> -->
+		<!-- <module>klab.services.engine</module> 
+			 <module>klab.services.reasoner</module> 
+		<module>klab.services.core</module> -->
 	</modules>
 
 	<properties>
