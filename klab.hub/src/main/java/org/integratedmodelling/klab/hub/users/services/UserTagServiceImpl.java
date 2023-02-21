@@ -72,4 +72,14 @@ public class UserTagServiceImpl implements UserTagService {
         return findUserByName(username).getUnsentTagsOfType(type);
     }
 
+    @Override
+    public List<MongoTag> getAllTags() {
+        return tagRepository.findAll();
+    }
+
+    @Override
+    public List<MongoTag> getAllTagsWithType(Type type) {
+        return tagRepository.getMongoTagsByType(type);
+    }
+
 }
