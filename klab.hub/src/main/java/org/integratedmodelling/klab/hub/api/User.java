@@ -415,9 +415,7 @@ public class User extends IdentityModel implements UserDetails{
 
     public List<TagEntry> getTagsOfType(HubNotificationMessage.Type type) {
         return tags.stream()
-                .filter(
-                        t -> t.getTag().getType() == type
-                )
+                .filter(t -> t.getTag().getType() == type)
                 .collect(Collectors.toList());
     }
 

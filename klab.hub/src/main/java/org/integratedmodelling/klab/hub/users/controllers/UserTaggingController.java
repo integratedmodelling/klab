@@ -37,8 +37,8 @@ public class UserTaggingController {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(e.getMessage());
     }
-    
-    @GetMapping(value = API.HUB.TAG_BASE)
+
+    @GetMapping(value = API.HUB.TAG_BASE, produces = "application/json")
     @RolesAllowed({"ROLE_ADMINISTRATOR", "ROLE_SYSTEM"})
     public ResponseEntity< ? > getAllTags(
             @RequestParam(required = false, value = API.HUB.PARAMETERS.TYPE_OF_TAG) Optional<HubNotificationMessage.Type> type) {

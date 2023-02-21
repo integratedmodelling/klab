@@ -33,7 +33,7 @@ public class MongoTag {
     }
 
     private boolean isValidName(String name) {
-        if(name.isEmpty()) {
+        if (name.isEmpty()) {
             return false;
         }
         return Pattern.compile("([a-zA-Z0-9])+(-([a-zA-Z0-9])+)*")
@@ -46,7 +46,7 @@ public class MongoTag {
         }
         this.name = name;
     }
-    
+
     public String getName() {
         return this.name;
     }
