@@ -393,14 +393,19 @@ public class User extends IdentityModel implements UserDetails{
 		this.email = email;
 	}
 
-    public void addNewTag(MongoTag mongoTag) {
+	public boolean hasTag(String tagName) {
+	    return tags.stream()
+        .anyMatch(t -> t.getTag().getName().equals(tagName));
+	}
+	
+    public void addTag(MongoTag mongoTag) {
         TagEntry tagEntry = new TagEntry(mongoTag);
         this.tags.add(tagEntry);
     }
 
-    public void addNewTags(Collection<MongoTag> tags) {
+    public void addTags(Collection<MongoTag> tags) {
         for(MongoTag t : tags) {
-            addNewTag(t);
+            addTag(t);
         }
     }
 

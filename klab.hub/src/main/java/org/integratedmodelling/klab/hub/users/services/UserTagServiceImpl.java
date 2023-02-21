@@ -23,7 +23,7 @@ public class UserTagServiceImpl implements UserTagService {
                 .orElseThrow(() -> new BadRequestException("User is not present."));
     }
 
-    private boolean checkIfTagExists(MongoTag tag) {
+    private boolean doesTagExistInTheDatabase(MongoTag tag) {
         Optional<MongoTag> tagInTheDatabase = tagRepository.findByName(tag.getName());
         if(tagInTheDatabase.isPresent()) {
             tag = tagInTheDatabase.get();
@@ -39,13 +39,17 @@ public class UserTagServiceImpl implements UserTagService {
     }
 
     @Override
-    public void assignTagToUser(String username, MongoTag tag) {
+    public boolean assignTagToUser(String username, MongoTag tag) {
         User user = findUserByName(username);
-        if (!checkIfTagExists(tag)) {
+        if (user.hasTag(tag.getName())) {
+            return false;
+        }
+        if (!doesTagExistInTheDatabase(tag)) {
             tagRepository.save(tag);
         }
-        user.addNewTag(tag);
+        user.addTag(tag);
         userRepository.save(user);
+        return true;
     }
 
     @Override

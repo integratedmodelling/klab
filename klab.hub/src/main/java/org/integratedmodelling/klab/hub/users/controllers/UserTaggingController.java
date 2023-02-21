@@ -43,17 +43,19 @@ public class UserTaggingController {
     public ResponseEntity< ? > createNewTag(
             @PathVariable String username,
             @RequestBody MongoTag tag) {
+        final boolean isTagAdded;
         try {
-            userTagService.assignTagToUser(username, tag);
+            isTagAdded = userTagService.assignTagToUser(username, tag);
         } catch (BadRequestException e) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body(e.getMessage());
         }
 
+        final String body = isTagAdded ? "Tag sucessfully created." : "Tag already exists for the user.";
         return ResponseEntity
                 .status(HttpStatus.ACCEPTED)
-                .body("Tag sucessfully created.");
+                .body(body);
     }
 
     @GetMapping(value = API.HUB.TAG_OF_USER, produces = "application/json")
