@@ -9,22 +9,22 @@ public class GroupEntry {
 	
 	@DBRef
 	private MongoGroup group;
-	private DateTime experation;
+	private DateTime expiration;
 	private DateTime inception;
 	
 	public GroupEntry(MongoGroup group, DateTime experation) {
 		this.group = group;
 		if(experation != null) {
-			this.experation = experation;
+			this.expiration = experation;
 		} else {
-			this.experation = DateTime.now().plusDays(365);
+			this.expiration = DateTime.now().plusDays(365);
 		}
 		setInception();
 	}
 	
 	public GroupEntry(MongoGroup group) {
 		this.group = group;
-		this.experation = DateTime.now().plusDays(365);
+		this.expiration = DateTime.now().plusDays(365);
 		setInception();
 	}
 	
@@ -41,15 +41,15 @@ public class GroupEntry {
 	}
 
 	public DateTime getExperation() {
-		if(experation == null) {
+		if(expiration == null) {
 			return DateTime.now().plusMonths(6);
 		} else {
-			return experation;
+			return expiration;
 		}
 	}
 
 	public void setRenewal(DateTime experation) {
-		this.experation = experation;
+		this.expiration = experation;
 	}
 
 	public DateTime getInception() {
