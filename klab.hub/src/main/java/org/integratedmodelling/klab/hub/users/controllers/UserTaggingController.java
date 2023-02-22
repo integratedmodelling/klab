@@ -16,10 +16,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.mongodb.MongoWriteException;
 
 @RestController
 public class UserTaggingController {
@@ -36,6 +39,13 @@ public class UserTaggingController {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(e.getMessage());
+    }
+
+    @ExceptionHandler(MongoWriteException.class)
+    public ResponseEntity< ? > MongoWriteExceptionHandler(MongoWriteException e) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body("Duplicated key. Element already exists.");
     }
 
     @GetMapping(value = API.HUB.TAG_BASE, produces = "application/json")
@@ -58,7 +68,28 @@ public class UserTaggingController {
                 .body(tags);
     }
 
-    
+    @PostMapping(value = API.HUB.TAG_BASE, consumes = "application/json")
+    @RolesAllowed({"ROLE_ADMINISTRATOR", "ROLE_SYSTEM"})
+    public ResponseEntity< ? > createNewTag(
+            @RequestBody MongoTag tag) {
+        userTagService.insertTag(tag);
+
+        return ResponseEntity
+                .status(HttpStatus.ACCEPTED)
+                .body("Tag sucessfully created.");
+    }
+
+    @PutMapping(value = API.HUB.TAG_BASE, consumes = "application/json")
+    @RolesAllowed({"ROLE_ADMINISTRATOR", "ROLE_SYSTEM"})
+    public ResponseEntity< ? > createOrUpdateTag(
+            @RequestBody MongoTag tag) {
+        userTagService.insertOrUpdateTag(tag);
+
+        return ResponseEntity
+                .status(HttpStatus.ACCEPTED)
+                .body("Tag sucessfully created.");
+    }
+
     @PutMapping(value = API.HUB.TAG_OF_USER, consumes = "application/json")
     @RolesAllowed({"ROLE_ADMINISTRATOR", "ROLE_SYSTEM"})
     public ResponseEntity< ? > createNewTag(

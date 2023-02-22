@@ -82,4 +82,14 @@ public class UserTagServiceImpl implements UserTagService {
         return tagRepository.getMongoTagsByType(type);
     }
 
+    @Override
+    public void insertTag(MongoTag tag) {
+        tagRepository.insert(tag);
+    }
+
+    @Override
+    public void insertOrUpdateTag(MongoTag tag) {
+        tagRepository.save(tag);
+    }
+
 }

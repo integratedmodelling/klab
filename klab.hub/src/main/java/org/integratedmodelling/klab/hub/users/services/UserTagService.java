@@ -29,6 +29,11 @@ public interface UserTagService {
     public List<TagEntry> getUnsentTagsOfUserWithType(String username, HubNotificationMessage.Type type);
 
     public List<MongoTag> getAllTags();
-    
+
     public List<MongoTag> getAllTagsWithType(HubNotificationMessage.Type type);
+
+    public void insertTag(MongoTag tag);
+
+    public void insertOrUpdateTag(MongoTag tag);
+
 }
