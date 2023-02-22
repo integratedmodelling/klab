@@ -3,6 +3,10 @@ package org.integratedmodelling.klab.hub.api;
 import org.joda.time.DateTime;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
+/**
+ * Case of event by MongoTag.
+ * Contains the information of the MongoTag itself, its creation date and, if needed, the sent time.
+ */
 public class TagEntry {
 
     @DBRef
@@ -23,6 +27,10 @@ public class TagEntry {
         this.sentTime = sentTime;
     }
 
+    /**
+     * Checks if the tag has been sent.
+     * @return true if the tag has been sent.
+     */
     public boolean isSent() {
         return this.sentTime != null;
     }
